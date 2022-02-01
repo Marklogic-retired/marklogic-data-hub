@@ -654,7 +654,7 @@ const Sidebar: React.FC<Props> = (props) => {
                   onChange={e => props.setDatabasePreferences(e.target.value)}
                 />
                 <label aria-label="switch-database-final" htmlFor="switch-database-final" className={`d-flex justify-content-center align-items-center ${styles.button}`}>
-                  Final
+                  <span>Final</span>
                 </label>
               </span>
 
@@ -668,7 +668,7 @@ const Sidebar: React.FC<Props> = (props) => {
                   onChange={e => props.setDatabasePreferences(e.target.value)}
                 />
                 <label aria-label="switch-database-staging" htmlFor="switch-database-staging" className={`d-flex justify-content-center align-items-center ${styles.button}`}>
-                  Staging
+                  <span>Staging</span>
                 </label>
               </span>
             </div>

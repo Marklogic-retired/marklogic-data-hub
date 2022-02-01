@@ -139,7 +139,7 @@ describe("json scenario for table on browse documents page", () => {
 
     //Verify if the facet, search text and view persists.
     browsePage.getSelectedEntity().should("contain", "Customer");
-    browsePage.getFinalDatabaseButton().parent().find("input").invoke("attr", "checked").should("exist");
+    browsePage.getFinalDatabaseButton().parent().parent().find("input").invoke("attr", "checked").should("exist");
     browsePage.getClearFacetSearchSelection("mapCustomersJSON").should("exist");
     browsePage.getAppliedFacets("adamscole@nutralab.com").should("exist");
     browsePage.getAppliedFacets("coleadams39@nutralab.com").should("exist");
@@ -176,7 +176,7 @@ describe("json scenario for table on browse documents page", () => {
     //Verify navigating back from detail view should persist search options
     browsePage.getSelectedEntity().should("contain", "Customer");
     browsePage.getDatabaseButton("final").should("have.attr", "checked");
-    browsePage.getFinalDatabaseButton().parent().find("input").invoke("attr", "checked").should("exist");
+    browsePage.getFinalDatabaseButton().parent().parent().find("input").invoke("attr", "checked").should("exist");
     browsePage.getClearFacetSearchSelection("mapCustomersJSON").should("exist");
     browsePage.getSearchBar().should("have.value", "Adams Cole");
     browsePage.getTableView().should("have.css", "color", "rgb(57, 68, 148)");
