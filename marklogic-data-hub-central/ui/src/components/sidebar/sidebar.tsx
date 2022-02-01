@@ -84,6 +84,13 @@ const Sidebar: React.FC<Props> = (props) => {
   }, [searchOptions.sidebarQuery]);
 
   useEffect(() => {
+    let facets = {...greyedOptions.selectedFacets};
+    if (dateRangeValue && !facets["createdOnRange"]) {
+      setDateRangeValue("");
+    }
+  }, [greyedOptions, searchOptions]);
+
+  useEffect(() => {
     let relatedEntitiesList = new Map();
     if (!props.isAllEntitiesSelected) {
       props.currentBaseEntities.forEach(base => {
@@ -434,6 +441,7 @@ const Sidebar: React.FC<Props> = (props) => {
     setDateRangeValue(option.value);
     if (option.value === "Custom") {
       setDatePickerValue([null, null]);
+      return;
     }
     let updateFacets = {...allSelectedFacets};
     updateFacets = {
@@ -855,7 +863,7 @@ const Sidebar: React.FC<Props> = (props) => {
                 id="date-select-wrapper"
                 inputId="date-select"
                 placeholder="Select time"
-                value={selectTimeOptions.find(oItem => oItem.value === dateRangeValue)}
+                value={selectTimeOptions.find(oItem => oItem.value === dateRangeValue) || ""}
                 onChange={handleOptionSelect}
                 isSearchable={false}
                 aria-label="date-select"
