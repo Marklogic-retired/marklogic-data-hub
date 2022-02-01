@@ -39,9 +39,10 @@
             padding: 1px;
         }
         td.label {
-            .form-check {
-                margin-bottom: 0;
+            display: flex;
+            .form-check-input {
                 margin-left: 5px;
+                margin-right: 8px;
             }
             .form-check-input:checked {
                 background-color: #394494;
