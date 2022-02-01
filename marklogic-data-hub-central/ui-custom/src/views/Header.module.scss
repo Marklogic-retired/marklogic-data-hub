@@ -1,0 +1,29 @@
+header {
+    width: 100%;
+    padding : 10px 20px;
+    background-color: rgb(43, 51, 60);
+    display: flex;
+    justify-content: space-between;
+    div {
+        display: flex;
+        align-items: center;
+        .logo {
+            margin-right: 10px;
+            margin-bottom: 4px;
+            margin-left: 10px;
+        }
+        .title {
+            white-space: nowrap;
+            font-size: 28px;
+            a {
+                text-decoration: none;
+                color: #ddd;
+            }
+            margin-right: 60px;
+        }
+    }
+    .account {
+        margin-left: 20px; 
+        margin-right: 40px; 
+    }
+}
