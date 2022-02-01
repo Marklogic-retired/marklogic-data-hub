@@ -1,0 +1,99 @@
+.facets {
+    padding-left: 25px;
+    font-size: 15px;
+    .facet {
+        border-bottom: solid 1px #ddd;
+        padding-top: 15px;
+        padding-bottom: 10px;
+    }
+    .facet:first-child {
+        padding-top: 0;
+    }
+    .facet:last-child {
+        margin-bottom: 20px;
+    }
+    .title {
+        text-transform: uppercase;
+        padding-bottom: 8px;
+        font-weight: bold;
+        margin-left: 5px;
+        color: #666;
+        .facetInfo {
+            display: inline-block;
+            padding-left: 5px;
+        }
+    }
+    .facetValues {
+        table {
+            margin-bottom: 0;
+            width: 320px;
+        }
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+    tbody {
+        tr {
+            border-bottom: 0 none transparent;
+        }
+        td {
+            padding: 1px;
+        }
+        td.label {
+            .form-check {
+                margin-bottom: 0;
+                margin-left: 5px;
+            }
+            .form-check-input:checked {
+                background-color: #394494;
+                border-color: none;
+            }
+            label {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                width: 160px;
+            }
+        }
+        td.meter {
+            width: 100%;
+            .total {
+                position: relative;
+                top: 8px;
+                height: 9px;
+                width: 100%;
+                background-color: transparent;
+                transform: rotate(180deg);
+                padding: 0 2px;
+                .count {
+                    position: relative;
+                    height: 9px;
+                    width: 40px;
+                    border-radius: 4px;
+                }
+            }
+        }
+        td.count {
+            position: relative;
+            top: 3px;
+            font-size: 13px;
+            text-align: right;
+        }
+    }
+    .moreLess {
+        font-size: 14px;
+        color: #394494;
+        margin-left: 5px;
+        cursor: pointer;
+        .doubleRight, .doubleLeft {
+            position: relative;
+            top: -1px;
+            display: inline-block;
+        }
+        .doubleRight {
+            margin-left: 2px;
+        }
+        .doubleLeft {
+            margin-right: 2px;
+        }
+    }
+}

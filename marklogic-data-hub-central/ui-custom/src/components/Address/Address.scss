@@ -1,0 +1,7 @@
+.Address {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    span {
+        display: inline !important;
+    }
+}
