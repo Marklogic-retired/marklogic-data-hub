@@ -64,6 +64,7 @@ const Facets: React.FC<Props> = (props) => {
   }
 
   const [moreLess, setMoreLess] = useState<any>(moreLessInit);
+  const [tooltipShow, setTooltipShow] = useState<any>({});
 
   // Set up thresholds for more/less links
   const displayThreshold: number = props.config.displayThreshold || 3;
@@ -87,6 +88,20 @@ const Facets: React.FC<Props> = (props) => {
     })
   }
 
+  // Only show/hide if label overflows (has ellipsis)
+  const handleTooltip = (id) => () => {
+    const label = document?.getElementById(id);
+    setTooltipShow(prevState => {
+      const tooltipCopy = Object.assign({}, prevState.tooltipShow);
+      if (label !== null && (label.offsetWidth < label.scrollWidth)) {
+        tooltipCopy[id] = !tooltipShow[id]; // toggle show/hide
+      } else {
+        tooltipCopy[id] = false; // never show
+      }           
+      return tooltipCopy;
+    })
+  }
+
   const displayFacetValues = (facetObj, disabled=false, moreLess) => {
     let total = 2000000; // TODO Remove: for testing larger counts
     let result = facetObj["facet-value"] ? 
@@ -96,17 +111,28 @@ const Facets: React.FC<Props> = (props) => {
           return (
             <tr className="facetValue" key={"facetValue-" + index}>
               <td className="label">
-                <Form.Check 
-                  type={"checkbox"}
-                  checked={searchContext.facetStrings && searchContext.facetStrings.includes(facetObj.name + ":" + fv.name)}
-                  disabled={disabled ? disabled : false}
-                  id={facetObj.name + ":" + fv.name}
-                  data-testid={facetObj.name + ":" + fv.name}
-                  label={fv.name}
-                  title={fv.name}
-                  className="shadow-none"
-                  onChange={handleSelect}
-                />
+                  <Form.Check 
+                    id={facetObj.name + ":" + fv.name}
+                    type={"checkbox"}
+                    checked={searchContext.facetStrings && searchContext.facetStrings.includes(facetObj.name + ":" + fv.name)}
+                    disabled={disabled ? disabled : false}
+                    data-testid={facetObj.name + ":" + fv.name}
+                    title={fv.name}
+                    className="shadow-none"
+                    onChange={handleSelect}
+                  />
+                  <OverlayTrigger
+                    overlay={<Tooltip>{fv.name}</Tooltip>}
+                    onToggle={handleTooltip("tooltip-" + facetObj.name + ":" + fv.name)}
+                    show={tooltipShow["tooltip-" + facetObj.name + ":" + fv.name]}
+                    placement="right"
+                  >
+                    <label
+                      id={"tooltip-" + facetObj.name + ":" + fv.name}
+                      htmlFor={facetObj.name + ":" + fv.name}
+                      className="form-check-label"
+                    >{fv.name}</label>
+                  </OverlayTrigger>
               </td>
               <td className="meter">
                 <div className="total">
@@ -129,10 +155,6 @@ const Facets: React.FC<Props> = (props) => {
         }
       }) : null;
     return <tbody>{result}</tbody>
-  }
-
-  const getTooltip = (content) => {
-    return <Tooltip>{content}</Tooltip>
   }
 
   // Get object for a facet based on facet name
@@ -158,7 +180,7 @@ const Facets: React.FC<Props> = (props) => {
               <OverlayTrigger
                 key={f.name}
                 placement="right"
-                overlay={getTooltip(f.tooltip)}
+                overlay={<Tooltip>{f.tooltip}</Tooltip>}
               >
                 <InfoCircleFill 
                   data-testid={"info-" + f.name}
