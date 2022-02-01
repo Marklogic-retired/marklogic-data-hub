@@ -205,3 +205,10 @@ span.readOnlyLabel {
     outline-offset: 2px;
     height: 32px;
 }
+
+.popoverInterceptor {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+    border: 0px !important;
+    font-size: 14px !important;
+    min-width: 670px !important;
+}

@@ -10,7 +10,7 @@ import {CurationContext} from "../../../util/curation-context";
 import {QuestionCircleFill, Search} from "react-bootstrap-icons";
 import {HCInput, HCAlert, HCButton, HCTooltip} from "@components/common";
 import Popover from "react-bootstrap/Popover";
-import {OverlayTrigger} from "react-bootstrap";
+import {Overlay} from "react-bootstrap";
 import {Typeahead} from "react-bootstrap-typeahead";
 import "react-bootstrap-typeahead/css/Typeahead.css";
 
@@ -187,8 +187,18 @@ const CreateEditStep: React.FC<Props> = (props) => {
     return result;
   };
 
-  const collectionQueryInfo = <Popover id={`popover-create-edit-step`} className={styles.popoverCreateEditStep}><Popover.Body className={styles.popoverCreateEditStepBody}>
-    <div className={styles.collectionQueryInfo}>{CommonStepTooltips.radioCollection}</div></Popover.Body></Popover>;
+  const [showCollectionPopover, setShowCollectionPopover] = useState(false);
+  const [targetCollectionPopover, setTargetCollectionPopover] = useState(null);
+
+  const collectionQueryInfo =
+  <Overlay
+    show={showCollectionPopover}
+    target={targetCollectionPopover}
+    placement="left"
+  >
+    <Popover id={`popover-create-edit-step`} className={styles.popoverCreateEditStep}><Popover.Body className={styles.popoverCreateEditStepBody}>
+      <div className={styles.collectionQueryInfo}>{CommonStepTooltips.radioCollection}</div></Popover.Body></Popover>
+  </Overlay>;
 
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
     if (!stepName) {
@@ -409,6 +419,11 @@ const CreateEditStep: React.FC<Props> = (props) => {
     }
   };
 
+  const handleShowCollectionPopover = (event) => {
+    setShowCollectionPopover(!showCollectionPopover);
+    setTargetCollectionPopover(event.target);
+  };
+
   return (
 
 
@@ -529,10 +544,10 @@ const CreateEditStep: React.FC<Props> = (props) => {
                   disabled={!props.canReadWrite}
                   className={"mb-0"}
                 />
-                <span id={props.stepType !== StepType.Merging ? "radioCollectionPopover" : "radioCollectionMergePopover" } className={"me-4"}>
-                  <OverlayTrigger placement="left" overlay={collectionQueryInfo} trigger={["hover", "focus"]} delay={{show: 0, hide: 2000}} rootClose>
-                    <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircleCollection} data-testid="collectionTooltip"/>
-                  </OverlayTrigger>
+                <span id={props.stepType !== StepType.Merging ? "radioCollectionPopover" : "radioCollectionMergePopover" } className={"me-4"}
+                  onMouseEnter={handleShowCollectionPopover} onMouseLeave={() => setShowCollectionPopover(false)}>
+                  {collectionQueryInfo}
+                  <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircleCollection} data-testid="collectionTooltip"/>
                 </span>
                 <Form.Check
                   inline

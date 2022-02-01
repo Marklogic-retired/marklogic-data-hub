@@ -13,6 +13,8 @@ import AdvancedTargetCollections from "./advanced-target-collections";
 import {CurationContext} from "../../util/curation-context";
 import {ChevronDown, ChevronRight, QuestionCircleFill} from "react-bootstrap-icons";
 import {HCInput, HCAlert, HCButton, HCTooltip} from "@components/common";
+import Popover from "react-bootstrap/Popover";
+import {Overlay} from "react-bootstrap";
 
 type Props = {
   tabKey: string;
@@ -152,7 +154,6 @@ const AdvancedSettings: React.FC<Props> = (props) => {
 
   const interceptorRef = React.createRef<HTMLTextAreaElement>();
   const interceptorTooltipRef = React.createRef<HTMLDivElement>();
-  const [interceptorTooltipVisible, setInterceptorTooltipVisible] = useState(false);
 
   const customHookRef = React.createRef<HTMLTextAreaElement>();
   const customHookTooltipRef = React.createRef<HTMLDivElement>();
@@ -633,7 +634,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     setProvGranTooltipVisible2(false);
     setBatchSizeToolTipVisible(false);
     setHeaderContentTooltipVisible(false);
-    setInterceptorTooltipVisible(false);
+    setShowInterceptorPopover(false);
     setCustomHookTooltipVisible(false);
   };
 
@@ -653,7 +654,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       if (component === "provGranularityTooltip") setProvGranTooltipVisible2(true);
       if (component === "batchSizeTooltip") setBatchSizeToolTipVisible(true);
       if (component === "headerContentTooltip") setHeaderContentTooltipVisible(true);
-      if (component === "interceptorTooltip") setInterceptorTooltipVisible(true);
+      if (component === "interceptorTooltip") { handleShowInterceptorPopover(event); }
       if (component === "customHookTooltip") setCustomHookTooltipVisible(true);
     }
 
@@ -728,7 +729,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       }
       if (component === "interceptorTooltip") {
           interceptorRef.current!.focus();
-          setInterceptorTooltipVisible(false);
+          setShowInterceptorPopover(false);
       }
       if (component === "customHookTooltip") {
           customHookRef.current!.focus();
@@ -774,6 +775,29 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       //Closing All Tooltips when user presses Tab Key
       closeAllTooltips();
     }
+  };
+
+  const [showInterceptorPopover, setShowInterceptorPopover] = useState(false);
+  const [targetInterceptorPopover, setTargetInterceptorPopover] = useState(null);
+  const content = (
+    <Overlay
+      show={showInterceptorPopover}
+      target={targetInterceptorPopover}
+      placement="left"
+    >
+      <Popover id={`interceptors-tooltip`} className={styles.popoverInterceptor}
+        onMouseEnter={() => setShowInterceptorPopover(true)}
+        onMouseLeave={() => setShowInterceptorPopover(false)}>
+        <Popover.Body className={styles.popoverInterceptor}>
+          {tooltips.interceptors}
+        </Popover.Body>
+      </Popover>
+    </Overlay>
+  );
+
+  const handleShowInterceptorPopover = (event) => {
+    setShowInterceptorPopover(!showInterceptorPopover);
+    setTargetInterceptorPopover(event.target);
   };
 
   return (
@@ -1284,14 +1308,10 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                   />
                   <span tabIndex={0} ref={interceptorTooltipRef} onKeyDown={(e) => serviceNameKeyDownHandler(e, "interceptorTooltip")} className={styles.tooltipRef}>
                     <div className={"p-2 d-flex align-items-center"}>
-                      <HCTooltip
-                        text={tooltips.interceptors}
-                        id="interceptors-tooltip"
-                        placement="left"
-                        show={interceptorTooltipVisible ? interceptorTooltipVisible : undefined}
-                      >
-                        <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
-                      </HCTooltip>
+                      <div>
+                        {content}
+                        <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} onMouseEnter={handleShowInterceptorPopover} onMouseLeave={() => setShowInterceptorPopover(false)}/>
+                      </div>
                     </div>
                   </span>
                 </Col>
