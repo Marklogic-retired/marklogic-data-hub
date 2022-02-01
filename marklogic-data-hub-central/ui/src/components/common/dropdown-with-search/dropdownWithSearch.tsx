@@ -108,6 +108,7 @@ const DropDownWithSearch = (props) => {
     <div ref={node}>
       {menuVisible && <Select
         id="dropdownList-select-wrapper"
+        className={styles.wrapper}
         inputId="dropdownList-select"
         components={{MenuList: props => MenuList("dropdownList", props), DropdownIndicator}}
         menuIsOpen={selList}
