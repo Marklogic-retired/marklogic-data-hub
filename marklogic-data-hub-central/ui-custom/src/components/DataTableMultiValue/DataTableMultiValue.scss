@@ -1,0 +1,92 @@
+.dataTableMultiValue {
+    display: flex;
+    align-items: flex-start;
+
+    div.label {
+        width: 150px;
+        position: relative;
+        top: 4px;
+        display: flex;
+        justify-content: space-between;
+        margin-right: 2px;
+        span.title {
+            flex-basis: 100%;
+            margin-right: 4px;
+            white-space: nowrap;
+        }
+        span.hide {
+            cursor: pointer;
+            color: #5d6aaa;
+            display: inline-block;
+            margin: 0 8px 0 0;
+        }
+    }
+
+    tbody tr.singular td {
+        border-bottom-width: 0 !important;
+    }
+
+    thead tr th {
+        font-weight: normal;
+    }
+    thead {
+        th:nth-last-child(3), th:nth-last-child(2), th:nth-last-child(1) {
+            width: 1%;
+        }
+    }
+
+    tbody tr:first-child td span {
+        font-weight: bold;
+    }
+
+    tbody tr td, thead tr th {
+        border-bottom-color: #a0e2d3 !important;
+        padding: 4px 2px;
+        white-space: nowrap;
+    }
+
+    tbody {
+        border-top-width: 0 !important;
+        td:nth-last-child(3), td:nth-last-child(2), td:nth-last-child(1) {
+            width: 1%;
+        }
+        td.metadata div {
+            font-size: 12px;
+            text-align: center;
+            font-weight: bold;
+            height: 18px;
+            width: 16px;
+            border-radius: 2px;
+            color: white;
+            margin: 0;
+            position: relative;
+            top: 4px;
+        }
+    }
+
+    .mapTrigger {
+        cursor: pointer;
+    }
+
+    .hide tbody tr {
+        display: none;
+    }
+    .hide tbody tr:first-child {
+        display: table-row;
+    }
+}
+
+#mapPopover {
+    width: 400px !important;
+    height: 300px;
+    max-width: 100%;
+    .mapContent {
+        width: 600px !important;
+    }
+    .popover-body {
+        padding: 0 !important;
+    }
+    .popover-arrow::after {
+        border-right-color: #eee;
+    }
+}
