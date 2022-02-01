@@ -19,7 +19,7 @@ import StepsConfig from "../../../../config/steps.config";
 import {QuestionCircleFill, XLg, ChevronDown, ChevronRight, Search} from "react-bootstrap-icons";
 import {DropDownWithSearch, HCButton, HCInput, HCTooltip, HCTable} from "@components/common";
 import Popover from "react-bootstrap/Popover";
-import {OverlayTrigger} from "react-bootstrap";
+import {OverlayTrigger, Overlay} from "react-bootstrap";
 
 interface Props {
   setScrollRef: any;
@@ -80,14 +80,27 @@ const EntityMapTable: React.FC<Props> = (props) => {
     <div className={styles.contextHelp}>{MappingDetailsTooltips.context}</div>
   </Popover.Body></Popover>;
   //Text for URI Icon
-  const uriHelp = <Popover id={`popover-emt-urihelp`} className={styles.popoverEntityMapTableUriHelp}><Popover.Body>
+  const uriHelp = <Popover id={`popover-emt-urihelp`} className={styles.popoverEntityMapTableUriHelp} style={{minWidth: 300}}><Popover.Body>
     <div className={styles.uriHelp}>{MappingDetailsTooltips.uri}</div>
   </Popover.Body></Popover>;
 
   //Text for related entities help icon
-  const relatedInfo = <Popover id={`popover-emt-related-info`} className={styles.popoverEntityMapTableRelated}><Popover.Body>
-    <div data-testid="relatedInfoContent">Map related entities by selecting them from the dropdown below. <br />Refer to the <a href="https://docs.marklogic.com/datahub/5.5/flows/about-mapping.html" target="_blank">documentation</a> for more details.</div>
-  </Popover.Body></Popover>;
+  const [showDocPopover, setShowDocPopover] = useState(false);
+  const [targetDocPopover, setTargetDocPopover] = useState(null);
+  const relatedInfo = <Overlay
+    show={showDocPopover}
+    target={targetDocPopover}
+    placement="right"
+  >
+    <Popover id={`popover-emt-related-info`} className={styles.popoverEntityMapTableRelated}
+      style={{paddingLeft: "10px"}}
+      onMouseEnter={() => setShowDocPopover(true)}
+      onMouseLeave={() => setShowDocPopover(false)}>
+      <Popover.Body>
+        <div data-testid="relatedInfoContent">Map related entities by selecting them from the dropdown below. <br />Refer to the <a href="https://docs.marklogic.com/datahub/5.5/flows/about-mapping.html" target="_blank">documentation</a> for more details.</div>
+      </Popover.Body>
+    </Popover>
+  </Overlay>;
 
   //For Entity table
   const [searchEntityText, setSearchEntityText] = useState("");
@@ -131,19 +144,39 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const [entitiesReferencing, setEntitiesReferencing] = useState<any>([]);
   const [pendingOptions, setPendingOptions] = useState<any>([]);
 
+  const [showDocLinksPopover, setShowDocLinksPopover] = useState(false);
+  const [targetDocLinksPopover, setTargetDocLinksPopover] = useState(null);
+
+  const handleShowDocPopover = (event) => {
+    setShowDocPopover(!showDocPopover);
+    setTargetDocPopover(event.target);
+  };
+  const handleShowDocLinksPopover = (event) => {
+    setShowDocLinksPopover(!showDocLinksPopover);
+    setTargetDocLinksPopover(event.target);
+  };
+
   let directRelation = props.isRelatedEntity ? ("(" + props.entityMappingId.split(".")[0]) === props.entityTypeTitle.split(" ")[1] ? true : false : null;
 
   let firstRowKeys = new Array(100).fill(0).map((_, i) => i);
   //Documentation links for using Xpath expressions
-  const xPathDocLinks = <Popover id={`popover-emt-xpathdoclinks`} className={styles.xPathDocLinks}><Popover.Body>
-    <div className={styles.xpathDoc}><span id="doc">Documentation:</span>
-      <div><ul className={styles.docLinksUl}>
-        <li><a href="https://www.w3.org/TR/xpath/all/" target="_blank" rel="noopener noreferrer" className={styles.docLink}>XPath Expressions</a></li>
-        <li><a href="https://docs.marklogic.com/guide/app-dev/TDE#id_99178" target="_blank" rel="noopener noreferrer" className={styles.docLink}>Extraction Functions</a></li>
-        <li><a href="https://docs.marklogic.com/datahub/flows/dhf-mapping-functions.html" target="_blank" rel="noopener noreferrer" className={styles.docLink}>Mapping Functions</a></li>
-      </ul></div>
-    </div>
-  </Popover.Body></Popover>;
+  const xPathDocLinks =
+  <Overlay
+    show={showDocLinksPopover}
+    target={targetDocLinksPopover}
+    placement="top"
+  >
+    <Popover id={`popover-emt-xpathdoclinks`} className={styles.xPathDocLinks} onMouseEnter={() => setShowDocLinksPopover(true)} onMouseLeave={() => setShowDocLinksPopover(false)}>
+      <Popover.Body>
+        <div className={styles.xpathDoc}><span id="doc">Documentation:</span>
+          <div><ul className={styles.docLinksUl}>
+            <li><a href="https://www.w3.org/TR/xpath/all/" target="_blank" rel="noopener noreferrer" className={styles.docLink}>XPath Expressions</a></li>
+            <li><a href="https://docs.marklogic.com/guide/app-dev/TDE#id_99178" target="_blank" rel="noopener noreferrer" className={styles.docLink}>Extraction Functions</a></li>
+            <li><a href="https://docs.marklogic.com/datahub/flows/dhf-mapping-functions.html" target="_blank" rel="noopener noreferrer" className={styles.docLink}>Mapping Functions</a></li>
+          </ul></div>
+        </div>
+      </Popover.Body></Popover>
+  </Overlay>;
 
   const getColumnsForEntityTable: any = (type: string) => {
     return type === "upper" ? entityColumns.map(el => props.checkedEntityColumns[el.key] ? el : "").filter(item => item) : lowerEntityColumns.map(el => props.checkedEntityColumns[el.key] ? el : "").filter(item => item);
@@ -1171,9 +1204,11 @@ const EntityMapTable: React.FC<Props> = (props) => {
         <div className={styles.entityTitle} aria-label={`${props.entityTypeTitle}-title`}>
           {expandTableIcon}<strong>{props.entityTypeTitle}</strong>
           {props.relatedMappings &&
-            <OverlayTrigger placement="right" overlay={relatedInfo} trigger="hover" delay={{show: 0, hide: 2000}} rootClose>
-              <img className={styles.arrayImage} src={DocIcon} alt={""} data-testid="relatedInfoIcon" />
-            </OverlayTrigger>}
+            <>
+              <img className={styles.arrayImage} src={DocIcon} alt={""} data-testid="relatedInfoIcon" onMouseEnter={handleShowDocPopover} onMouseLeave={() => setShowDocPopover(false)}/>
+              {relatedInfo}
+            </>
+          }
         </div>
         <div className={styles.entitySettingsLink}>
           <EntitySettings canReadWrite={props.canReadWrite} tooltipsData={props.tooltipsData} stepData={props.savedMappingArt} updateStep={props.updateStep} entityMappingId={props.entityMappingId} entityTitle={props.isRelatedEntity ? props.entityModel.info.title : props.entityTypeTitle} />
@@ -1453,17 +1488,10 @@ const EntityMapTable: React.FC<Props> = (props) => {
     },
     {
       text: "XPath Expression",
-      headerFormatter: () => <span>XPath Expression <OverlayTrigger
-        overlay={xPathDocLinks}
-        trigger="hover"
-        placement="top"
-        delay={{show: 0, hide: 2000}}
-        rootClose
-      >
-        <img className={styles.arrayImage} src={DocIcon} alt={""} data-testid="XPathInfoIcon" />
-      </OverlayTrigger>
+      headerFormatter: () => <span>XPath Expression
+        <img className={styles.arrayImage} src={DocIcon} alt={""} data-testid="XPathInfoIcon" onMouseEnter={handleShowDocLinksPopover} onMouseLeave={() => setShowDocLinksPopover(false)}/>
+        {xPathDocLinks}
       </span>,
-
       dataField: "key",
       key: "key",
       width: "40%",
@@ -1708,17 +1736,10 @@ const EntityMapTable: React.FC<Props> = (props) => {
     },
     {
       text: "XPath Expression",
-      headerFormatter: () => <span>XPath Expression <OverlayTrigger
-        overlay={xPathDocLinks}
-        trigger="hover"
-        placement="top"
-        delay={{show: 0, hide: 2000}}
-        rootClose
-      >
-        <img className={styles.arrayImage} src={DocIcon} alt={""} data-testid="XPathInfoIcon" />
-      </OverlayTrigger>
+      headerFormatter: () => <span>XPath Expression
+        <img className={styles.arrayImage} src={DocIcon} alt={""} data-testid="XPathInfoIcon" onMouseEnter={handleShowDocLinksPopover} onMouseLeave={() => setShowDocLinksPopover(false)}/>
+        {xPathDocLinks}
       </span>,
-
       dataField: "key",
       key: "key",
       width: "45%",

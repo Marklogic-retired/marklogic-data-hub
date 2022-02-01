@@ -197,6 +197,7 @@ const RecordCardView = (props) => {
                   </span></span>
                   <span className={styles.cardIcons}>
                     <OverlayTrigger
+                      rootClose
                       overlay={displayRecordMetadata(elem)}
                       placement="bottom-end"
                       trigger="click">

@@ -285,7 +285,7 @@ class MappingStepDetail {
 
   XPathInfoIcon() {
     cy.get(`#mainTable > thead > tr > :nth-child(3) > span > [data-testid=XPathInfoIcon]`).trigger("mouseover");
-    cy.findByText("Documentation:").should("be.visible");
+    cy.get("#popover-emt-xpathdoclinks").should("be.visible");
     cy.get(`#mainTable > thead > tr > :nth-child(3) > span > [data-testid=XPathInfoIcon]`).trigger("mouseout");
   }
 
