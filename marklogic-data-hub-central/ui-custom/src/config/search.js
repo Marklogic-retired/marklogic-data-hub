@@ -28,11 +28,11 @@ export const configSearch = {
                 name: "status",
                 tooltip: "Filter by status."
             },
-            {
-                type: "category",
-                name: "email",
-                tooltip: "Filter by email."
-            },
+            // {
+            //     type: "category",
+            //     name: "email",
+            //     tooltip: "Filter by email."
+            // },
             {
                 type: "category",
                 name: "name",
