@@ -179,14 +179,30 @@ div[role="dialog"][aria-modal="true"]:nth-last-child(5) {
 
     label:hover {
         cursor: pointer;
+        svg {
+            color: $hover-link !important;
+         }
+         span {
+            color: $span-hover;
+         }
+    }
+
+    input:checked + label:hover {
+        background-color: $border-input;
+        border-color: $border-input;
+        color: $white;
+        box-shadow: none;
+        span {
+            color:$white !important;
+         }
     }
 
     input:checked + label {
         background-color: $primary;
-        color: #ffffff;
+        color: $white;
         box-shadow: none;
         svg {
-            color: #ffffff;
+            color: $white;
         }
     }
 
