@@ -1,0 +1,19 @@
+.saved {
+    th.isWatching, td.isWatching, td.hasChanges {
+        text-align: center;
+    }
+
+    td.name {
+        color: #5d6aaa;
+        cursor: pointer;
+    }
+
+    tbody {
+        border-top-width: 1px !important;
+        border-top-color: #a0e2d3 !important;
+    }
+
+    td, th {
+        border-bottom-color: #a0e2d3 !important;
+    }
+}

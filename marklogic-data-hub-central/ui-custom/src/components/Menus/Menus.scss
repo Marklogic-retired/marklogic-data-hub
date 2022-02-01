@@ -1,0 +1,17 @@
+.dropdown .nav-link {
+    color:#ddd; 
+    text-decoration: none;
+    &:hover, &.hover, &:active, &.active, &:focus, &.focus {
+        color:#ddd; 
+        text-decoration: none;
+    }
+}
+.dropdown .dropdown-item {
+    color:#333; 
+    text-decoration: none;
+    &:hover, &.hover, &:active, &.active, &:focus, &.focus {
+        color:#333; 
+        background-color: #eee;
+        text-decoration: none;
+    }
+}
