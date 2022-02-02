@@ -18,8 +18,8 @@
     }
 
     .expand-cell-header {
-        width: 20px;
-        min-width: 20px;
+        width: 50px;
+        min-width: 50px;
         background: #e8e8e8 !important;
     }
     .selection-cell-header {
@@ -27,8 +27,8 @@
         color: transparent;
         vertical-align: middle;
         text-align: center;
-        width: 20px;
-        min-width: 20px;
+        width: 50px;
+        min-width: 50px;
         background: #e8e8e8 !important;
 
         .hc-table_subTableHeader {
@@ -51,8 +51,8 @@
     .expand-cell {
         vertical-align: middle !important;
         background-color: inherit !important;
-        width: 20px;
-        min-width: 20px;
+        width: 50px;
+        min-width: 50px;
         text-align: center;
         svg {
             cursor: pointer;
@@ -182,7 +182,7 @@
 }
 
 .exploreInternalTable {
-    padding: 30px 20px 30px 100px;
+    padding: 30px 20px 30px 50px;
     margin: 0;
     table {
         thead {
@@ -225,6 +225,11 @@
                 }
             }
         }
+    }
+
+    [class^="hc-table_childrenIndentIndicatorCell"] {
+        width: 30px !important;
+        min-width: 30px;
     }
 }
 

@@ -937,7 +937,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     },
     {
       text: "Match Type Details",
-      //width: "58%",
+      width: "58%",
       headerFormatter: () => <span data-testid="matchTypeDetailsTitle">Match Type Details</span>,
       formatter: (text, row, extraData) => {
         switch (matchTypes[row.propertyPath]) {
@@ -1288,6 +1288,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
               columns={multipleRulesetsTableColumns}
               data={multipleRulesetsData}
               rowKey="propertyPath"
+              component="ruleset-multiple-modal"
               showExpandIndicator={true}
               childrenIndent={true}
               nestedParams={{headerColumns: multipleRulesetsTableColumns, state: [expandedRowKeys, setExpandedRowKeys]}}

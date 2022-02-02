@@ -223,7 +223,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
 
   const mapExpressionStyle = (propName, isProperty) => {
     const mapStyle: CSSProperties = {
-      width: "21vw",
+      width: "100%",
       verticalAlign: "top",
       justifyContent: "top",
       borderColor: checkFieldInErrors(propName, isProperty) ? "red" : ""
@@ -1313,7 +1313,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
       headerFormatter: () => <div><span data-testid="entityTableName" className={styles.nameHeaderText}>Name</span><OverlayTrigger placement="bottom" show={popoverVisibility} overlay={renderFilter()} trigger="click"><i><FontAwesomeIcon className={styles.filterIcon} data-testid={`filterIcon-${props.entityTypeTitle}-entity`} icon={faSearch} size="lg" onClick={() => togglePopover()}/></i></OverlayTrigger></div>,
       dataField: "name",
       key: "name",
-      width: props.isRelatedEntity ? "18%" : "20%",
+      width: "25%",
       attrs: (text, row, index) => {
         if (row.key <= 100 && index === 0) {
           return {colSpan: `4`};
@@ -1381,7 +1381,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
       headerFormatter: () => <span data-testid="entityTableType">Type</span>,
       dataField: "type",
       key: "type",
-      width: props.isRelatedEntity ? "14.4%" : "16%",
+      width: "16%",
       attrs: (text, row, index) => {
         if (row.key <= 100 && index === 0) {
           return {hidden: true};
@@ -1568,7 +1568,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
       headerFormatter: () => <span data-testid="entityTableName" className={styles.nameHeaderText}>Name</span>,
       dataField: "name",
       key: "name",
-      width: "18%",
+      width: "25%",
       attrs: (text, row, index) => {
         if (row.key <= 100 && index === 0) {
           return {colSpan: `4`};
@@ -1721,7 +1721,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
 
       dataField: "key",
       key: "key",
-      width: "45%",
+      width: "40%",
       className: "overflow-visible",
       attrs: (text, row, index) => {
         if (row.key <= 100 && index === 0) {
