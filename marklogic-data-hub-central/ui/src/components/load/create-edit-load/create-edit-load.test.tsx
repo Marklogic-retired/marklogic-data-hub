@@ -137,4 +137,12 @@ describe("New/edit load step configuration", () => {
     });
   });
 
+  test("Verify 'Source Format' and 'Target Format' should have JSON as default value", async () => {
+    const {baseElement} =
+    render(<BrowserRouter><CreateEditLoad {...loadProps} /></BrowserRouter>);
+
+    expect(baseElement.querySelector("#sourceFormat-select-wrapper")).toHaveTextContent("JSON");
+    expect(baseElement.querySelector("#targetFormat-select-wrapper")).toHaveTextContent("JSON");
+  });
+
 });
