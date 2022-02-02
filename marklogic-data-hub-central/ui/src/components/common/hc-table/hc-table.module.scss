@@ -135,7 +135,7 @@
 }
 
 .childrenIndentIndicatorCell {
-    display: table-cell;
+    display: inline-block;
     width: 50px;
     min-width: 50px;
     text-align: center;
@@ -144,13 +144,13 @@
     }
 }
 .childrenIndentIndicatorEmptyCell {
-    width: 4%;
-    display: table-cell;
+    width: 50px;
+    display: inline-block;
 }
 
 .childrenTextContainer {
     position: relative;
-    display: flex;
+    display: inline-block;
     gap: 5px;
      svg {
         cursor: pointer;

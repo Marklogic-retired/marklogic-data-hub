@@ -473,7 +473,7 @@ const ResultsTabularView = (props) => {
       {
         text: "Value",
         dataField: "value",
-        width: "calc(34% - 50px)",
+        width: "34%",
         formatter: (_, row) => {
           return <span>{row.value}</span>;
         },

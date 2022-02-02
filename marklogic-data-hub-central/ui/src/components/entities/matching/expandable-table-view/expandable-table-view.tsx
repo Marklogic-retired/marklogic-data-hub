@@ -18,7 +18,7 @@ const testMatchedUriTableColumns = [
     text: "Ruleset",
     dataField: "ruleName",
     key: "ruleName "+ (counter++),
-    width: "16%",
+    width: "40%",
     formatter: (ruleName, key) => (ruleName.map(property => {
       return <span className={styles.rulesetColumn} key={key} aria-label={ruleName}>{property}
       </span>;

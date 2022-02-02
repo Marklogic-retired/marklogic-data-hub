@@ -135,7 +135,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     {
       text: "Property Name",
       dataField: "propertyName",
-      width: 200,
+      width: "20%",
       headerFormatter: () => <span aria-label="propertyName-header">Property Name</span>,
       formatter: (text, record) => {
         let renderText = text;
@@ -182,7 +182,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     {
       text: "Type",
       dataField: "type",
-      width: 145,
+      width: "10%",
       headerFormatter: () => <span aria-label="type-header">Type</span>,
       formatter: (text, record) => {
         let renderText = text;
@@ -230,7 +230,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       ),*/
       text: "Identifier",
       dataField: "identifier",
-      width: 100,
+      width: "10%",
       headerFormatter: () => (
         <HCTooltip text={ModelingTooltips.identifier} id="identifier-title-tooltip" placement="top">
           <span aria-label="identifier-header">Identifier</span>
@@ -248,7 +248,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       ),*/
       text: "Multiple",
       dataField: "multiple",
-      width: 100,
+      width: "10%",
       headerFormatter: () => (
         <HCTooltip text={ModelingTooltips.multiple} id="identifier-title-tooltip" placement="top">
           <span aria-label="multiple-header">Multiple</span>
@@ -266,7 +266,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       ),*/
       text: "Sort",
       dataField: "sortable",
-      width: 75,
+      width: "10%",
       headerFormatter: () => (
         <HCTooltip text={ModelingTooltips.sort} id="identifier-title-tooltip" placement="top">
           <span aria-label="sort-header">Sort</span>
@@ -284,7 +284,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       ),*/
       text: "Facet",
       dataField: "facetable",
-      width: 100,
+      width: "10%",
       headerFormatter: () => (
         <HCTooltip text={ModelingTooltips.facet} id="identifier-title-tooltip" placement="top">
           <span aria-label="facet-header">Facet</span>
@@ -314,7 +314,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       ),*/
       text: "PII",
       dataField: "pii",
-      width: 75,
+      width: "10%",
       headerFormatter: () => (
         <HCTooltip text={ModelingTooltips.pii} id="identifier-title-tooltip" placement="top">
           <span aria-label="pii-header">PII</span>
@@ -327,7 +327,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     {
       text: "Delete",
       dataField: "delete",
-      width: 75,
+      width: "10%",
       headerAttrs: {
         "aria-label": "delete-header"
       },
@@ -367,7 +367,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     {
       text: "Add",
       dataField: "add",
-      width: 45,
+      width: "10%",
       headerAttrs: {
         "aria-label": "add-header",
       },
