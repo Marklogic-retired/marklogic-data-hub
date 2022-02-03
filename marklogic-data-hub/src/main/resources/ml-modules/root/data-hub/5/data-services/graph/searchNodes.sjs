@@ -148,10 +148,11 @@ result.map(item => {
   if (item.nodeCount && item.nodeCount >= 1) {
     let objectIRI = item.firstObjectIRI.toString();
     let objectIRIArr = objectIRI.split("/");
-    if (item.firstObjectLabel === null) {
-      item.firstObjectLabel = objectIRIArr[objectIRIArr.length - 1];
+    let objectLabel = "";
+    if (item.firstObjectLabel !== undefined &&  item.firstObjectLabel.toString().length === 0) {
+      objectLabel = objectIRIArr[objectIRIArr.length - 1];
     }
-    let objectLabel = item.firstObjectLabel.toString();
+
     let objectId = item.firstObjectIRI.toString();
     let objectUri = item.firstDocURI.toString();
     let objectGroup = objectIRI.substring(0, objectIRI.length - objectIRIArr[objectIRIArr.length - 1].length - 1);

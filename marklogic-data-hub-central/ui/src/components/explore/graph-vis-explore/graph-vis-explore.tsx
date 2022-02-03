@@ -216,7 +216,8 @@ const GraphVisExplore: React.FC<Props> = (props) => {
           nodeObj[nodeId] = e;
         }
       }
-      let nodeLabel = e.label.length > 9 ? e.label.substring(0, 6) + "..." : e.label;
+      let tempLabel = e.label !== "" ? e.label : e.docUri;
+      let nodeLabel = tempLabel.length > 9 ? tempLabel.substring(0, 6) + "..." : tempLabel;
       // let positionX = undefined;
       // let positionY = undefined;
       // if (props.coords && props.coords[nodeId] && props.coords[nodeId].x && props.coords[nodeId].y) {
