@@ -304,8 +304,7 @@ const ResultsTabularView = (props) => {
     props.handleViewChange("graph");
   };
 
-
-  const tableHeaders = props.selectedEntities?.length === 0 ? DEFAULT_ALL_ENTITIES_HEADER : updatedTableHeader();
+  const tableHeaders = searchOptions.baseEntities ? searchOptions.baseEntities.length !== 1 ? DEFAULT_ALL_ENTITIES_HEADER : updatedTableHeader() : DEFAULT_ALL_ENTITIES_HEADER;
 
   const tableDataRender = (item) => {
     let dataObj = {};
@@ -580,7 +579,7 @@ const ResultsTabularView = (props) => {
         <div className={styles.queryExport} data-cy="query-export">
           {canExportQuery && searchOptions.entityTypeIds.length > 0 && <QueryExport hasStructured={props.hasStructured} columns={props.columns} selectedPropertyDefinitions={props.selectedPropertyDefinitions} />}
         </div>
-        {props.selectedEntities?.length !== 0 ? <div className={styles.columnSelector} data-cy="column-selector">
+        {searchOptions.baseEntities?.length === 1 ? <div className={styles.columnSelector} data-cy="column-selector">
           <ColumnSelector popoverVisibility={popoverVisibility} setPopoverVisibility={setPopoverVisibility} entityPropertyDefinitions={props.entityPropertyDefinitions} selectedPropertyDefinitions={props.selectedPropertyDefinitions} setColumnSelectorTouched={props.setColumnSelectorTouched} columns={props.columns} primaryKey={primaryKey} />
         </div> : ""}
       </div>

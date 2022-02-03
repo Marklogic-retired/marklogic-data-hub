@@ -15,7 +15,7 @@ describe("Search Result view component", () => {
   const defaultSearchOptions = {
     query: "",
     entityTypeIds: [],
-    nextEntityType: "",
+    nextEntityTypes: [],
     start: 1,
     pageNumber: 1,
     pageLength: 20,

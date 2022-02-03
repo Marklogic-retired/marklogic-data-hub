@@ -61,6 +61,21 @@ class BaseEntitySidebar {
     return cy.get("[aria-label='related-entity-Person']");
   }
 
+  getRelatedEntityPanel() {
+    return cy.get(`[data-testid="related-entity-panel"]`);
+  }
+
+  toggleAllDataView() {
+    return cy.get(`[aria-label="switch-datasource-all-data"]`).click();
+  }
+
+  toggleEntitiesView() {
+    return cy.get(`[aria-label="switch-datasource-entities"]`).click();
+  }
+
+  verifyCollapsedRelatedEntityPanel() {
+    return cy.get(`[class="after-indicator sidebar_disabledTitleCheckbox__PJkN4 accordion-button collapsed"]`);
+  }
   //Actions
   clickOnBaseEntity(entity: string) {
     return this.getBaseEntity(entity).click();

@@ -11,10 +11,11 @@ interface Props {
   checked?: boolean;
   dataTestId?: string;
   ariaLabel?: string;
+  disabled?: boolean;
 }
 
 const HCCheckbox: React.FC<Props> = (props) => {
-  const {id, tooltip, handleClick, value, label, checked, dataTestId, ariaLabel, children} = props;
+  const {id, tooltip, handleClick, value, label, checked, dataTestId, ariaLabel, children, disabled} = props;
   const checkLabel = <FormCheck.Label style={{"marginLeft": 5, "color": "#333333"}}>{label}</FormCheck.Label>;
 
   const getLabel = () => {
@@ -25,16 +26,30 @@ const HCCheckbox: React.FC<Props> = (props) => {
   };
 
   return <FormCheck id={id} style={{display: "flex", alignItems: "center", gap: "6px", justifyContent: "flex-start"}}>
-    <FormCheck.Input
-      type="checkbox"
-      value={value}
-      checked={checked}
-      onChange={(e) => handleClick(e)}
-      onClick={(e) => e.stopPropagation()}
-      data-testid={dataTestId}
-      aria-label={ariaLabel}
-      style={{marginTop: "0", verticalAlign: "middle"}}
-    />
+    {disabled ?
+      <FormCheck.Input
+        type="checkbox"
+        disabled
+        value={value}
+        checked={checked}
+        onChange={(e) => handleClick(e)}
+        onClick={(e) => e.stopPropagation()}
+        data-testid={dataTestId}
+        aria-label={ariaLabel}
+        style={{marginTop: "0", verticalAlign: "middle"}}
+      />
+      :
+      <FormCheck.Input
+        type="checkbox"
+        value={value}
+        checked={checked}
+        onChange={(e) => handleClick(e)}
+        onClick={(e) => e.stopPropagation()}
+        data-testid={dataTestId}
+        aria-label={ariaLabel}
+        style={{marginTop: "0", verticalAlign: "middle"}}
+      />
+    }
     {label ? getLabel() : children}
   </FormCheck>;
 };

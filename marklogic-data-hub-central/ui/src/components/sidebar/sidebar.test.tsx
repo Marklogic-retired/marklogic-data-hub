@@ -65,54 +65,35 @@ describe("Sidebar createdOn face time window dropdown", () => {
     expect(document.querySelector("#hub-properties .accordion-button")).toHaveAttribute("aria-expanded", "false");
   });
 
-  test("Verify that entity properties is expanded when entity is selected", () => {
-    const {getByText} = render(<Sidebar
-      entityDefArray={entityDefArray}
-      facets={searchPayloadFacets}
-      selectedEntities={["Customer"]}
-      facetRender = {jest.fn()}
-      checkFacetRender = {jest.fn()}
-      currentRelatedEntities={new Map<string, any>()}
-      setCurrentRelatedEntities={jest.fn()}
-      currentBaseEntities={[]}
-      setCurrentBaseEntities={jest.fn()}
-    />);
-    expect(document.querySelector("#entity-properties .accordion-button")).toHaveAttribute("aria-expanded", "true");
-    expect(document.querySelector("#hub-properties .accordion-button")).toHaveAttribute("aria-expanded", "false");
-    userEvent.click(getByText("Entity Properties"));
-    userEvent.click(getByText("Hub Properties"));
-    expect(document.querySelector("#entity-properties .accordion-button")).toHaveAttribute("aria-expanded", "false");
-    expect(document.querySelector("#hub-properties .accordion-button")).toHaveAttribute("aria-expanded", "true");
-  });
+  //******TEST WITH NEW ENTITY-SPECIFIC PANEL DHFPROD-7950*********
+  // test("Verify entity properties, marked as facetable in entityModel, are rendered properly as facets", () => {
+  //   const {getByText, getByTestId} = render(<Sidebar
+  //     entityDefArray={entityDefArray}
+  //     facets={searchPayloadFacets}
+  //     selectedEntities={["Customer"]}
+  //     facetRender = {jest.fn()}
+  //     checkFacetRender = {jest.fn()}
+  //     currentRelatedEntities={new Map<string, any>()}
+  //     setCurrentRelatedEntities={jest.fn()}
+  //     currentBaseEntities={[]}
+  //     setCurrentBaseEntities={jest.fn()}
+  //   />);
+  //   expect(getByText("Entity Properties")).toBeInTheDocument(); //Checking if Entity Properties label is available
 
-  test("Verify entity properties, marked as facetable in entityModel, are rendered properly as facets", () => {
-    const {getByText, getByTestId} = render(<Sidebar
-      entityDefArray={entityDefArray}
-      facets={searchPayloadFacets}
-      selectedEntities={["Customer"]}
-      facetRender = {jest.fn()}
-      checkFacetRender = {jest.fn()}
-      currentRelatedEntities={new Map<string, any>()}
-      setCurrentRelatedEntities={jest.fn()}
-      currentBaseEntities={[]}
-      setCurrentBaseEntities={jest.fn()}
-    />);
-    expect(getByText("Entity Properties")).toBeInTheDocument(); //Checking if Entity Properties label is available
+  //   //Validate if gender property and its values
+  //   expect(getByTestId("gender-facet")).toBeInTheDocument();
+  //   expect(getByText("F")).toBeInTheDocument();
+  //   expect(getByText("454")).toBeInTheDocument(); //Count of documents with gender as F
+  //   expect(getByText("M")).toBeInTheDocument();
+  //   expect(getByText("546")).toBeInTheDocument(); //Count of documents with gender as M
 
-    //Validate if gender property and its values
-    expect(getByTestId("gender-facet")).toBeInTheDocument();
-    expect(getByText("F")).toBeInTheDocument();
-    expect(getByText("454")).toBeInTheDocument(); //Count of documents with gender as F
-    expect(getByText("M")).toBeInTheDocument();
-    expect(getByText("546")).toBeInTheDocument(); //Count of documents with gender as M
-
-    //Validate if sales_region property and its values
-    expect(getByTestId("sales_region-facet")).toBeInTheDocument();
-    expect(getByText("Alabama")).toBeInTheDocument();
-    expect(getByText("18")).toBeInTheDocument(); //Count of documents with sales region as Alabama
-    expect(getByText("Alaska")).toBeInTheDocument();
-    expect(getByText("15")).toBeInTheDocument(); //Count of documents with sales region as Alaska
-  });
+  //   //Validate if sales_region property and its values
+  //   expect(getByTestId("sales_region-facet")).toBeInTheDocument();
+  //   expect(getByText("Alabama")).toBeInTheDocument();
+  //   expect(getByText("18")).toBeInTheDocument(); //Count of documents with sales region as Alabama
+  //   expect(getByText("Alaska")).toBeInTheDocument();
+  //   expect(getByText("15")).toBeInTheDocument(); //Count of documents with sales region as Alaska
+  // });
 
   test("Verify onclick is called for final/staging buttons", () => {
     const {getByText} = render(
@@ -189,17 +170,6 @@ describe("Sidebar createdOn face time window dropdown", () => {
     expect(document.querySelector("#database .accordion-button.after-indicator")).toHaveAttribute("aria-expanded", "false");
     expect(document.querySelector("#database .accordion-collapse")).not.toHaveClass("collapse");
 
-    expect(document.querySelector("#entity-properties .accordion-button.after-indicator")).toHaveAttribute("aria-expanded", "true");
-    expect(document.querySelector("#entity-properties .accordion-collapse")).not.toHaveClass("collapsed");
-    userEvent.click(getByText("Entity Properties"));
-    expect(document.querySelector("#entity-properties .accordion-button.after-indicator")).toHaveAttribute("aria-expanded", "false");
-    expect(document.querySelector("#entity-properties .accordion-collapse")).not.toHaveClass("collapse");
-
-    expect(document.querySelector("#hub-properties .accordion-button.after-indicator")).toHaveAttribute("aria-expanded", "false");
-    expect(document.querySelector("#hub-properties .accordion-collapse")).toHaveClass("collapse");
-    userEvent.click(getByText("Hub Properties"));
-    expect(document.querySelector("#hub-properties .accordion-button.after-indicator")).toHaveAttribute("aria-expanded", "true");
-    expect(document.querySelector("#hub-properties .accordion-collapse")).not.toHaveClass("collapse");
   });
 
   test("Verify Include Data Hub Artifacts switch is rendered properly and user is able to toggle it", () => {

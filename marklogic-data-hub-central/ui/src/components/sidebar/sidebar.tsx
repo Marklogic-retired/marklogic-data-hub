@@ -11,9 +11,6 @@ import {facetParser} from "../../util/data-conversion";
 import hubPropertiesConfig from "../../config/hub-properties.config";
 import tooltipsConfig from "../../config/explorer-tooltips.config";
 import styles from "./sidebar.module.scss";
-import NumericFacet from "../numeric-facet/numeric-facet";
-import DateFacet from "../date-facet/date-facet";
-import DateTimeFacet from "../date-time-facet/date-time-facet";
 import {getUserPreferences, updateUserPreferences} from "../../services/user-preferences";
 import {UserContext} from "../../util/user-context";
 import reactSelectThemeConfig from "../../config/react-select-theme.config";
@@ -34,6 +31,7 @@ interface Props {
   setHubArtifactsVisibilityPreferences: any;
   hideDataHubArtifacts: boolean;
   cardView: boolean;
+  graphView: boolean;
   setEntitySpecificPanel: (entity: any) => void;
   currentBaseEntities: any[];
   setCurrentBaseEntities: (entity: any[]) => void;
@@ -52,8 +50,6 @@ const Sidebar: React.FC<Props> = (props) => {
     clearConstraint,
     clearFacet,
     clearGreyFacet,
-    clearRangeFacet,
-    clearGreyRangeFacet,
     greyedOptions,
     setAllGreyedOptions,
     setSidebarQuery,
@@ -133,10 +129,10 @@ const Sidebar: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (props.facets) {
-      props.selectedEntities.length === 1 ? setActiveKey(["database", "entityProperties"]) : setActiveKey(["database", "hubProperties", "entityProperties"]);
+      setActiveKey(["database", "hubProperties", "baseEntities"]);
       for (let i in hubFacets) {
         if (searchOptions.selectedFacets.hasOwnProperty(hubFacets[i] && hubFacets[i].facetName) || greyedOptions.selectedFacets.hasOwnProperty(hubFacets[i] && hubFacets[i].facetName)) {
-          setActiveKey(["database", "hubProperties", "entityProperties"]);
+          setActiveKey(["database", "hubProperties", "baseEntities"]);
         }
       }
       const parsedFacets = facetParser(props.facets);
@@ -158,17 +154,15 @@ const Sidebar: React.FC<Props> = (props) => {
       if (selectedHubFacets.length) {
         initializeFacetPreferences();
       } else {
-        props.selectedEntities.length === 1
-          ? setActiveKey(["database", "entityProperties"])
-          : activeKey.includes("related-entities")
-            ? setActiveKey(["database", "hubProperties", "entityProperties", "baseEntities", "related-entities"])
-            : setActiveKey(["database", "hubProperties", "entityProperties", "baseEntities"]);
+        searchOptions.baseEntities?.length && activeKey.includes("related-entities") ?
+          setActiveKey(["database", "hubProperties", "baseEntities", "related-entities"])
+          : setActiveKey(["database", "hubProperties", "baseEntities"]);
       }
 
       let entityFacets: any[] = [];
-      if (props.selectedEntities.length) {
-        let newEntityFacets = parsedFacets.filter(facet => facet.facetName.split(".")[0] === props.selectedEntities[0]);
-        const entityDef = props.entityDefArray.find(entity => entity.name === props.selectedEntities[0]);
+      if (searchOptions.baseEntities?.length) {
+        let newEntityFacets = parsedFacets.filter(facet => facet.facetName.split(".")[0] ===  searchOptions.baseEntities[0]);
+        const entityDef = props.entityDefArray.find(entity => entity.name ===  searchOptions.baseEntities[0]);
 
         if (newEntityFacets) {
           for (let i in newEntityFacets) {
@@ -224,7 +218,7 @@ const Sidebar: React.FC<Props> = (props) => {
         setDatePickerValue([null, null]);
       }
     }
-  }, [props.selectedEntities, props.facets]);
+  }, [searchOptions.baseEntities, props.facets]);
 
 
   useEffect(() => {
@@ -497,42 +491,6 @@ const Sidebar: React.FC<Props> = (props) => {
     setAllGreyedOptions(updateFacets);
   };
 
-  const onNumberFacetChange = (datatype, facet, value, isNested) => {
-    let updateFacets = {...allSelectedFacets};
-    //let facetName = setFacetName(facet, isNested);
-    if (value.length > 1) {
-      updateFacets = {...updateFacets, [facet]: {dataType: datatype, rangeValues: {lowerBound: value[0].toString(), upperBound: value[1].toString()}}};
-    }
-    setAllSelectedFacets(updateFacets);
-    setAllGreyedOptions(updateFacets);
-  };
-
-  const onDateFacetChange = (datatype, facet, value, isNested) => {
-    let updateFacets = {...allSelectedFacets};
-    //let facetName = setFacetName(facet, isNested);
-    if (value.length > 1 && value[0]) {
-      updateFacets = {...updateFacets, [facet]: {dataType: datatype, rangeValues: {lowerBound: moment(value[0]).format("YYYY-MM-DD"), upperBound: moment(value[1]).format("YYYY-MM-DD")}}};
-      setAllGreyedOptions(updateFacets);
-      setAllSelectedFacets(updateFacets);
-    } else if (value.length === 0) {
-      clearRangeFacet(facet);
-      clearGreyRangeFacet(facet);
-    }
-  };
-
-  const onDateTimeFacetChange = (datatype, facet, value, isNested) => {
-    let updateFacets = {...allSelectedFacets};
-    //let facetName = setFacetName(facet, isNested);
-    if (value.length > 1) {
-      updateFacets = {...updateFacets, [facet]: {dataType: datatype, rangeValues: {lowerBound: moment(value[0]).format("YYYY-MM-DDTHH:mm:ss"), upperBound: moment(value[1]).format("YYYY-MM-DDTHH:mm:ss")}}};
-      setAllGreyedOptions(updateFacets);
-      setAllSelectedFacets(updateFacets);
-    } else if (value.length === 0) {
-      clearRangeFacet(facet);
-      clearGreyRangeFacet(facet);
-    }
-  };
-
   // const setFacetName = (facet: string, isNested: boolean) => {
   //   let name = facet;
   //   if (isNested) {
@@ -560,9 +518,6 @@ const Sidebar: React.FC<Props> = (props) => {
       let parsedPreferences = JSON.parse(defaultPreferences);
       if (parsedPreferences.activeFacets) {
         setUserPreferences({...parsedPreferences});
-        setActiveKey([...parsedPreferences.activeFacets]);
-      } else {
-        props.selectedEntities.length === 1 ? setActiveKey(["database", "entityProperties"]) : setActiveKey(["database", "hubProperties", "entityProperties"]);
       }
     }
   };
@@ -577,11 +532,12 @@ const Sidebar: React.FC<Props> = (props) => {
 
 
   const panelTitle = (title, tooltipTitle) => {
+    let disabled = !props.graphView && tooltipTitle === exploreSidebar.relatedEntities;
     return (
       <div className={styles.panelTitle}>
         {title}
-        <HCTooltip text={tooltipTitle} id="entities-tooltip" placement="right">
-          <i><FontAwesomeIcon className={styles.entitiesInfoIcon} icon={faInfoCircle} size="sm" /></i>
+        <HCTooltip text={disabled ? "" : tooltipTitle} id="entities-tooltip" placement="right">
+          <i><FontAwesomeIcon className={disabled? styles.disabledEntitiesInfoIcon : styles.entitiesInfoIcon} icon={faInfoCircle} size="sm" /></i>
         </HCTooltip>
       </div>
     );
@@ -696,17 +652,21 @@ const Sidebar: React.FC<Props> = (props) => {
           </Accordion.Item>
         </Accordion>
         {props.currentRelatedEntities.size > 0 &&
-        <Accordion id="related-entities" className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("related-entities") ? "related-entities" : ""} defaultActiveKey={activeKey.includes("related-entities") ? "related-entities" : ""}>
-          <Accordion.Item eventKey="related-entities" className={"bg-transparent"}>
-            <div className={"p-0 d-flex"}>
-              <Accordion.Button className={`after-indicator ${styles.titleCheckbox}`} onClick={() =>  setActiveAccordion("related-entities")}>{
-                panelTitle(<span><HCCheckbox id="check-all" value="check-all" handleClick={onCheckAllChanges} checked={checkAll} />related entity types</span>, exploreSidebar.relatedEntities)}</Accordion.Button>
-            </div>
-            <Accordion.Body>
-              <RelatedEntitiesFacet currentRelatedEntities={props.currentRelatedEntities} setCurrentRelatedEntities={props.setCurrentRelatedEntities} onSettingCheckedList={onSettingCheckedList} setEntitySpecificPanel={props.setEntitySpecificPanel}/>
-            </Accordion.Body>
-          </Accordion.Item>
-        </Accordion>
+        <div className={styles.relatedEntityPanel}>
+          <HCTooltip text={!props.graphView ? exploreSidebar.disabledRelatedEntities: ""} aria-label="disabled-related-entity-tooltip" id="disabled-related-entity-tooltip" placement="bottom">
+            <Accordion id="related-entities" data-testid={"related-entity-panel"} className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("related-entities") && props.graphView ? "related-entities" : ""} defaultActiveKey={activeKey.includes("related-entities") ? "related-entities" : ""}>
+              <Accordion.Item eventKey="related-entities" className={"bg-transparent"}>
+                <div className={"p-0 d-flex"}>
+                  <Accordion.Button className={!props.graphView ? `after-indicator ${styles.disabledTitleCheckbox}` : `after-indicator ${styles.titleCheckbox}`} onClick={() =>  setActiveAccordion("related-entities")}>{
+                    panelTitle(<span><HCCheckbox id="check-all" value="check-all" disabled={!props.graphView} handleClick={onCheckAllChanges} checked={checkAll} />related entity types</span>, exploreSidebar.relatedEntities)}</Accordion.Button>
+                </div>
+                <Accordion.Body>
+                  <RelatedEntitiesFacet currentRelatedEntities={props.currentRelatedEntities} setCurrentRelatedEntities={props.setCurrentRelatedEntities} onSettingCheckedList={onSettingCheckedList} setEntitySpecificPanel={props.setEntitySpecificPanel}/>
+                </Accordion.Body>
+              </Accordion.Item>
+            </Accordion>
+          </HCTooltip>
+        </div>
         }
       </>}
 
@@ -727,126 +687,6 @@ const Sidebar: React.FC<Props> = (props) => {
           }
         />
       </div> : ""}
-      {props.selectedEntities.length === 1 && (
-        <Accordion id="entity-properties" className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("entityProperties") ? "entityProperties" : ""} defaultActiveKey={activeKey.includes("entityProperties") ? "entityProperties" : ""}>
-          <Accordion.Item eventKey="entityProperties" className={"bg-transparent"}>
-            <div className={"p-0 d-flex"}>
-              <Accordion.Button className={`after-indicator ${styles.title}`} onClick={() => setActiveAccordion("entityProperties")}>Entity Properties</Accordion.Button>
-            </div>
-            <Accordion.Body>
-              {entityFacets.length ? entityFacets.map((facet, index) => {
-                let datatype = "";
-                let step;
-                switch (facet.type) {
-                case "xs:string": {
-                  return Object.entries(facet).length !== 0 && facet.facetValues.length > 0 && (
-                    <Facet
-                      name={facet.propertyPath}
-                      constraint={facet.facetName}
-                      facetValues={facet.facetValues}
-                      key={facet.facetName}
-                      tooltip=""
-                      facetType={facet.type}
-                      facetCategory="entity"
-                      referenceType={facet.referenceType}
-                      entityTypeId={facet.entityTypeId}
-                      propertyPath={facet.propertyPath}
-                      updateSelectedFacets={updateSelectedFacets}
-                      addFacetValues={addFacetValues}
-                    />
-                  );
-                }
-                case "xs:date": {
-                  datatype = "date";
-                  return Object.entries(facet).length !== 0 && (
-                    <DateFacet
-                      constraint={facet.facetName}
-                      name={facet.propertyPath}
-                      datatype={datatype}
-                      key={facet.facetName}
-                      propertyPath={facet.propertyPath}
-                      onChange={onDateFacetChange}
-                    />
-                  );
-                }
-                case "xs:dateTime": {
-                  datatype = "dateTime";
-                  return Object.entries(facet).length !== 0 && (
-                    <DateTimeFacet
-                      constraint={facet.facetName}
-                      name={facet.propertyPath}
-                      datatype={datatype}
-                      key={facet.facetName}
-                      propertyPath={facet.propertyPath}
-                      onChange={onDateTimeFacetChange}
-                    />
-                  );
-                }
-                case "xs:int": {
-                  datatype = "int";
-                  step = 1;
-                  break;
-                }
-                case "xs:integer": {
-                  datatype = "integer";
-                  step = 1;
-                  break;
-                }
-                case "xs:short": {
-                  datatype = "short";
-                  step = 1;
-                  break;
-                }
-                case "xs:long": {
-                  datatype = "long";
-                  step = 1;
-                  break;
-                }
-                case "xs:decimal": {
-                  datatype = "decimal";
-                  step = 0.1;
-                  break;
-                }
-                case "xs:double": {
-                  datatype = "double";
-                  step = 0.1;
-                  break;
-                }
-                case "xs:float": {
-                  datatype = "float";
-                  step = 0.1;
-                  break;
-                }
-                //add date type cases
-
-                default:
-                  break;
-                }
-
-                if (step && facet.facetValues.length) {
-                  return (
-                    <div key={index}>
-                      <NumericFacet
-                        constraint={facet.facetName}
-                        name={facet.propertyPath}
-                        step={step}
-                        referenceType={facet.referenceType}
-                        entityTypeId={facet.entityTypeId}
-                        propertyPath={facet.propertyPath}
-                        datatype={datatype}
-                        key={facet.facetName}
-                        onChange={onNumberFacetChange}
-                      />
-                    </div>
-                  );
-                }
-              }) :
-                <div>No Facets</div>
-              }
-            </Accordion.Body>
-          </Accordion.Item>
-        </Accordion>
-      )}
       <Accordion id="hub-properties" className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("hubProperties") ? "hubProperties" : ""} defaultActiveKey={activeKey.includes("hubProperties") ? "hubProperties" : ""}>
         <Accordion.Item eventKey="hubProperties" className={"bg-transparent"}>
           <div className={"p-0 d-flex"}>

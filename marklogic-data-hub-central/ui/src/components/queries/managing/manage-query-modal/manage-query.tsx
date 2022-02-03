@@ -100,7 +100,7 @@ const QueryModal = (props) => {
     clearAllGreyFacets();
     let options: QueryOptions = {
       searchText: "",
-      entityTypeIds: searchOptions.entityTypeIds,
+      entityTypeIds: searchOptions.baseEntities,
       selectedFacets: {},
       selectedQuery: "select a query",
       propertiesToDisplay: [],

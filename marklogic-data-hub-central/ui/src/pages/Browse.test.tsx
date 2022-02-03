@@ -22,7 +22,7 @@ describe("Explorer Browse page tests ", () => {
     query: "",
     entityTypeIds: [],
     relatedEntityTypeIds: [],
-    nextEntityType: "",
+    nextEntityType: [],
     start: 1,
     pageNumber: 1,
     pageLength: 20,

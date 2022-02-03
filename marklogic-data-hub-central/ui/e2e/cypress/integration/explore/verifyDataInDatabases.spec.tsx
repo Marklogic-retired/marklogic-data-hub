@@ -7,6 +7,7 @@ import "cypress-wait-until";
 // import detailPageNonEntity from "../../support/pages/detail-nonEntity";
 import LoginPage from "../../support/pages/login";
 import {ConfirmationType} from "../../support/types/modeling-types";
+import entitiesSideBar from "../../support/pages/entitiesSidebar";
 
 describe("Verify All Data for final/staging databases and non-entity detail page", () => {
 
@@ -34,7 +35,7 @@ describe("Verify All Data for final/staging databases and non-entity detail page
 
   it("Switch on zero state page and select query parameters for final database", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-    browsePage.selectEntity("All Data");
+    entitiesSideBar.toggleAllDataView();
     browsePage.getSearchText().type("Adams");
     cy.get("[data-testid='hc-inputSearch-btn']").click();
     //verify the query data for final database on explore page
@@ -74,15 +75,15 @@ describe("Verify All Data for final/staging databases and non-entity detail page
   it("Verify if switching between All Data and specific entities works properly", () => {
     browsePage.getFinalDatabaseButton().click();
     cy.waitForAsyncRequest();
-    browsePage.selectEntity("Customer");
+    entitiesSideBar.toggleEntitiesView();
+    entitiesSideBar.getBaseEntityDropdown().click();
+    entitiesSideBar.selectBaseEntityOption("Customer");
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
-    browsePage.getSelectedEntity().should("contain", "Customer");
     browsePage.getTotalDocuments().should("be.equal", 11);
-    browsePage.selectEntity("All Data");
+    entitiesSideBar.toggleAllDataView();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
-    browsePage.getSelectedEntity().should("contain", "All Data");
 
     browsePage.getIncludeHubArtifactsSwitch().click();
     browsePage.waitForSpinnerToDisappear();

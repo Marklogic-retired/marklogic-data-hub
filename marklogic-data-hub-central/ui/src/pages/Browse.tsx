@@ -74,7 +74,7 @@ const Browse: React.FC<Props> = ({location}) => {
   const resultsRef = useRef<HTMLDivElement>(null);
   let state: any = location.state;
   const [cardView, setCardView] = useState(state && state["isEntityInstance"] ? true : JSON.parse(getUserPreferences(user.name)).cardView ? true : false);
-  const [hideDataHubArtifacts, toggleDataHubArtifacts] = useState(JSON.parse(getUserPreferences(user.name)).query.hideHubArtifacts);
+  const [hideDataHubArtifacts, toggleDataHubArtifacts] = useState(JSON.parse(getUserPreferences(user.name)).query?.hideHubArtifacts);
   const [entitiesData, setEntitiesData] = useState<any[]>([]);
   const [showNoDefinitionAlertMessage, setShowNoDefinitionAlertMessage] = useState(false);
   const [coords, setCoords] = useState<any>(undefined);
@@ -175,7 +175,7 @@ const Browse: React.FC<Props> = ({location}) => {
   const setHubCentralConfigFromServer = async (parsedEntityDef) => {
     try {
       const response = await getHubCentralConfig();
-      if (response["status"] === 200) {
+      if (response["status"] === 200 && response.data && Object.keys(response.data).length > 0) {
         sethubCentralConfig(response.data);
 
         const {data: {modeling: {entities}}} = response;
@@ -188,6 +188,9 @@ const Browse: React.FC<Props> = ({location}) => {
         });
         setEntityDefArray(entitiesDef);
         setCurrentBaseEntities(entitiesDef);
+      } else {
+        setEntityDefArray(parsedEntityDef);
+        setCurrentBaseEntities(parsedEntityDef);
       }
     } catch (error) {
       handleError(error);
@@ -216,7 +219,6 @@ const Browse: React.FC<Props> = ({location}) => {
 
   const getSearchResults = async (allEntities: string[]) => {
     let searchText = searchOptions.query;
-    let entityTypeIds = cardView ? [] : searchOptions.entityTypeIds.length ? searchOptions.entityTypeIds : allEntities;
     try {
       handleUserPreferences();
       setIsLoading(true);
@@ -226,7 +228,7 @@ const Browse: React.FC<Props> = ({location}) => {
         data: {
           query: {
             searchText,
-            entityTypeIds,
+            entityTypeIds: cardView ? [] : searchOptions.baseEntities && searchOptions.baseEntities.length ? searchOptions.baseEntities : allEntities,
             selectedFacets: searchOptions.selectedFacets,
             hideHubArtifacts: cardView ? hideDataHubArtifacts : true
           },
@@ -399,8 +401,6 @@ const Browse: React.FC<Props> = ({location}) => {
     } else if (state && state.hasOwnProperty("targetDatabase") && state.hasOwnProperty("jobId")) {
       setCardView(true);
       setLatestDatabase(state["targetDatabase"], state["jobId"]);
-    } else if (state && state.hasOwnProperty("tileIconClicked") && state["tileIconClicked"]) {
-      resetSearchOptions(true);
     }
   }, [state]);
 
@@ -438,7 +438,8 @@ const Browse: React.FC<Props> = ({location}) => {
       sortOrder: searchOptions.sortOrder,
       cardView: cardView,
       graphView: view ? (view === "graph" ? true : false) : graphView,
-      database: searchOptions.database
+      database: searchOptions.database,
+      baseEntities: searchOptions.baseEntities
     };
     updateUserPreferences(user.name, preferencesObject);
   };
@@ -590,6 +591,7 @@ const Browse: React.FC<Props> = ({location}) => {
               setHubArtifactsVisibilityPreferences={setHubArtifactsVisibilityPreferences}
               hideDataHubArtifacts={hideDataHubArtifacts}
               cardView={cardView}
+              graphView={graphView}
               setEntitySpecificPanel={handleEntitySelected}
               currentBaseEntities={currentBaseEntities}
               setCurrentBaseEntities={setCurrentBaseEntities}
