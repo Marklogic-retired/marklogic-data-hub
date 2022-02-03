@@ -968,35 +968,39 @@ const PropertyModal: React.FC<Props> = (props) => {
         </Row>
 
         {showJoinProperty && (
-          <div className={`mb-3 ${styles.joinPropertyContainer}`}>
-            <span className={styles.joinPropertyText}>You can select the foreign key now or later:</span>
-            <div className={`ms-3 ${styles.joinPropertyInput}`}>
-              <Select
-                id="foreignKey-select-wrapper"
-                inputId="foreignKey-select"
-                components={{MenuList: props => MenuList("foreignKey", props)}}
-                placeholder="Select foreign key"
-                value={foreignKeyOptions.find(oItem => oItem.value === joinDisplayValue)}
-                onChange={onJoinPropertyChange}
-                isSearchable={false}
-                aria-label="foreignKey-select"
-                options={foreignKeyOptions}
-                styles={reactSelectThemeConfig}
-                formatOptionLabel={({value, label}) => {
-                  return (
-                    <span aria-label={`${value}-option`} role={"option"}>
-                      {label}
-                    </span>
-                  );
-                }}
-              />
-              <div className={"d-flex p-2 align-items-center"}>
-                <HCTooltip text={ModelingTooltips.foreignKeyInfo} id="join-property-tooltip" placement="top">
-                  <QuestionCircleFill color="#7F86B5" size={13} className={styles.icon} data-testid={"foreign-key-tooltip"} />
-                </HCTooltip>
+          <Row className={"mb-3"}>
+            <Col lg={{span: 9, offset: 3}}>
+              <div className={`${styles.joinPropertyContainer}`}>
+                <span className={styles.joinPropertyText}>You can select the foreign key now or later:</span>
+                <div className={`ms-3 ${styles.joinPropertyInput}`}>
+                  <Select
+                    id="foreignKey-select-wrapper"
+                    inputId="foreignKey-select"
+                    components={{MenuList: props => MenuList("foreignKey", props)}}
+                    placeholder="Select foreign key"
+                    value={foreignKeyOptions.find(oItem => oItem.value === joinDisplayValue)}
+                    onChange={onJoinPropertyChange}
+                    isSearchable={false}
+                    aria-label="foreignKey-select"
+                    options={foreignKeyOptions}
+                    styles={reactSelectThemeConfig}
+                    formatOptionLabel={({value, label}) => {
+                      return (
+                        <span aria-label={`${value}-option`} role={"option"}>
+                          {label}
+                        </span>
+                      );
+                    }}
+                  />
+                  <div className={"d-flex p-2 align-items-center"}>
+                    <HCTooltip text={ModelingTooltips.foreignKeyInfo} id="join-property-tooltip" placement="top">
+                      <QuestionCircleFill color="#7F86B5" size={13} className={styles.icon} data-testid={"foreign-key-tooltip"} />
+                    </HCTooltip>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            </Col>
+          </Row>
         )}
 
         {renderRadios}
