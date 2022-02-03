@@ -5,7 +5,7 @@ import ReactHtmlParser from "react-html-parser";
 import {dateConverter} from "../../util/date-conversion";
 import ExpandableTableView from "../expandable-table-view/expandable-table-view";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faExternalLinkAlt, faCode, faProjectDiagram} from "@fortawesome/free-solid-svg-icons";
+import {faThList, faCode, faProjectDiagram} from "@fortawesome/free-solid-svg-icons";
 import {SearchContext} from "../../util/search-context";
 import {ChevronDown, ChevronRight} from "react-bootstrap-icons";
 import {HCTooltip} from "@components/common";
@@ -105,7 +105,7 @@ const SearchResult: React.FC<Props> = (props) => {
             targetDatabase: searchOptions.database
           }}} id={"instance"} data-cy="instance" >
             <HCTooltip text="Show the processed data" id="instance-icon-tooltip" placement="top-start">
-              <i><FontAwesomeIcon  className={styles.iconHover} icon={faExternalLinkAlt} size="sm" data-testid="instance-icon"/></i>
+              <i><FontAwesomeIcon  className={styles.iconHover} icon={faThList} size="sm" data-testid="instance-icon"/></i>
             </HCTooltip>
           </Link>
           <Link to={{pathname: "/tiles/explore/detail", state: {selectedValue: "source",

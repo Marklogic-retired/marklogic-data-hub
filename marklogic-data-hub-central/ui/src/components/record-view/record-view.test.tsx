@@ -67,7 +67,7 @@ describe("Raw data card view component", () => {
     await waitForElement(() => getByText("View info"));
 
     fireEvent.mouseOver(getByTestId("/Customer/Cust1.json-detailViewIcon"));
-    await waitForElement(() => getByText("Detail view"));
+    await waitForElement(() => getByText("View details"));
 
     //verify snippet content for json/xml/text docs
     expect(getByTestId("/Customer/Cust1.json-snippet").textContent).toContain(entitySearch.results[0].matches[0]["match-text"][0]);
