@@ -152,7 +152,9 @@ const PropertyTable: React.FC<Props> = (props) => {
             onClick={() => {
               editPropertyShowModal(text, record);
             }}>
-            {record.joinPropertyType && record.joinPropertyType !== "" ? <i>{text}</i> : text}
+            <HCTooltip text={ModelingTooltips.entityPropertyName} id={`property-${text}-tooltip`} placement="top">
+              <span data-testid={`${recordKey}` + text + "-tooltip-trigger"} className={`p-2 inline-block cursor-pointer ${record.joinPropertyType && record.joinPropertyType !== "" ? "fst-italic" : ""}`}>{text}</span>
+            </HCTooltip>
             {record.multiple === record.propertyName &&
               <HCTooltip text={"Multiple"} id={"tooltip-" + record.propertyName} placement={"bottom"}>
                 <img className={styles.arrayImage} src={arrayIcon} alt={""} data-testid={"multiple-icon-" + text} />
@@ -350,18 +352,21 @@ const PropertyTable: React.FC<Props> = (props) => {
         let recordKey = recordArray[0];
         let id = definitionName === text ? `delete-${text}-${record.propertyName}` : `delete-${text}-${definitionName}-${recordKey}-${record.propertyName}`;
 
-
-        return <FontAwesomeIcon className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconTrashReadOnly : props.sidePanelView ? styles.iconTrashSidePanel : styles.iconTrash}
-          icon={faTrashAlt}
-          size="2x"
-          data-testid={id}
-          onClick={(event) => {
-            if (!props.canWriteEntityModel && props.canReadEntityModel) {
-              return event.preventDefault();
-            } else {
-              deletePropertyShowModal(text, record, definitionName);
-            }
-          }} />;
+        return <HCTooltip text={ModelingTooltips.deleteProperty} id={`${id}-tooltip`} placement="top-end">
+          <span className="p-2 inline-block cursor-pointer">
+            <FontAwesomeIcon className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconTrashReadOnly : props.sidePanelView ? styles.iconTrashSidePanel : styles.iconTrash}
+              icon={faTrashAlt}
+              size="2x"
+              data-testid={id}
+              onClick={(event) => {
+                if (!props.canWriteEntityModel && props.canReadEntityModel) {
+                  return event.preventDefault();
+                } else {
+                  deletePropertyShowModal(text, record, definitionName);
+                }
+              }} />
+          </span>
+        </HCTooltip>;
       }
     },
     {
@@ -376,8 +381,8 @@ const PropertyTable: React.FC<Props> = (props) => {
         let structuredTypeName = Array.isArray(textParse) ? textParse[textParse.length - 1] : text;
 
         const addIcon = props.canWriteEntityModel ? (
-          <HCTooltip text={ModelingTooltips.addStructuredProperty} id="add-struct-tooltip" placement="top-end">
-            <i>
+          <HCTooltip text={ModelingTooltips.addStructuredProperty} id={`add-struct-${structuredTypeName}-tooltip`} placement="top-end">
+            <span className="p-2 inline-block cursor-pointer">
               <FontAwesomeIcon
                 data-testid={"add-struct-" + structuredTypeName}
                 className={styles.addIcon}
@@ -397,7 +402,7 @@ const PropertyTable: React.FC<Props> = (props) => {
                   }
                 }}
               />
-            </i>
+            </span>
           </HCTooltip>
         ) : (
           <HCTooltip text={ModelingTooltips.addStructuredProperty + " " + ModelingTooltips.noWriteAccess} id="disabled-add-struct-tooltip" placement="top-end">

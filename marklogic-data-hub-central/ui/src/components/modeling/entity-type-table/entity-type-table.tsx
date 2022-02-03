@@ -301,28 +301,30 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         return (
           <div className={styles.iconContainer}>
             <HCTooltip text={ModelingTooltips.viewGraph} id="graph-view-tooltip" placement="top">
-              <i>
+              <span className="p-2 inline-block cursor-pointer">
                 <FontAwesomeIcon
                   data-testid={text + "-graphView-icon"}
                   className={styles.iconViewGraph}
                   icon={faProjectDiagram}
                   onClick={() => navigateToGraphView(text)}
-                /></i>
+                /></span>
             </HCTooltip>
             <HCTooltip text={props.canWriteEntityModel ? ModelingTooltips.deleteIcon : "Delete Entity: " + SecurityTooltips.missingPermission} id="trash-icon-tooltip" placement="top">
-              <i><FontAwesomeIcon
-                data-testid={text + "-trash-icon"}
-                className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconTrashReadOnly : styles.iconTrash}
-                icon={faTrashAlt}
-                onClick={(event) => {
-                  if (!props.canWriteEntityModel && props.canReadEntityModel) {
-                    return event.preventDefault();
-                  } else {
-                    getEntityReferences(text);
-                  }
-                }}
-                size="2x"
-              /></i>
+              <span className="p-2 inline-block cursor-pointer">
+                <FontAwesomeIcon
+                  data-testid={text + "-trash-icon"}
+                  className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconTrashReadOnly : styles.iconTrash}
+                  icon={faTrashAlt}
+                  onClick={(event) => {
+                    if (!props.canWriteEntityModel && props.canReadEntityModel) {
+                      return event.preventDefault();
+                    } else {
+                      getEntityReferences(text);
+                    }
+                  }}
+                  size="2x"
+                />
+              </span>
             </HCTooltip>
           </div>
         );

@@ -70,7 +70,7 @@ describe("Entity Modeling: Reader Role", () => {
     propertyTable.getAddPropertyButton("Customer").should("be.visible").click({force: true});
     propertyModal.getSubmitButton().should("not.exist");
 
-    propertyTable.getDeletePropertyIcon("Customer", "pin");
+    propertyTable.getDeletePropertyIcon("Customer", "pin").click({force: true});
     confirmationModal.getDeletePropertyStepWarnText().should("not.exist");
 
     propertyTable.getAddPropertyToStructureType("Address").click({force: true});

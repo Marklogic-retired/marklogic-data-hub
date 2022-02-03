@@ -29,7 +29,7 @@ const ModelingTooltips = {
   entityTypeName: 'Click to view or edit settings for this entity type.',
   instanceNumber: 'Click to view all instances of this entity type.',
   lastProcessed: 'Click to view all instances of this entity type that were processed by the job that ended at this time.',
-  entityPropertyName:  'Click to view or edit settings for this entity property.',
+  entityPropertyName:  'Click to view or edit settings for this property.',
 
   /* Icons for entity types */
   saveIcon: 'Save changes to this entity type.',

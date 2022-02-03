@@ -163,6 +163,30 @@ describe("Entity Modeling Property Table Component", () => {
     expect(getByLabelText("property-modal-cancel")).toBeInTheDocument();
   });
 
+  test("Property Table renders with structured and external datatypes to verify that the tooltips show up", async () => {
+    let entityName = propertyTableEntities[2].entityName;
+    let definitions = propertyTableEntities[2].model.definitions;
+    const {getByText, getByTestId, getAllByTestId} =  render(
+      <PropertyTable
+        canReadEntityModel={true}
+        canWriteEntityModel={true}
+        entityName={entityName}
+        definitions={definitions}
+        sidePanelView={false}
+        updateSavedEntity={jest.fn()}
+      />
+    );
+
+    fireEvent.mouseOver(getByTestId("shipping-shipping-tooltip-trigger"));
+    await wait(() => expect(getByText(ModelingTooltips.entityPropertyName)).toBeInTheDocument());
+
+    fireEvent.mouseOver(getAllByTestId("add-struct-Address")[0]);
+    await wait(() => expect(getByText(ModelingTooltips.addStructuredProperty)).toBeInTheDocument());
+
+    fireEvent.mouseOver(getByTestId("delete-Customer-shipping"));
+    await wait(() => expect(getByText(ModelingTooltips.deleteProperty)).toBeInTheDocument());
+  });
+
   // TODO DHFPROD-7711 skipping failing tests to enable component replacement
   test("Property Table renders with structured and external datatypes, no writer role", async () => {
     let entityName = propertyTableEntities[2].entityName;

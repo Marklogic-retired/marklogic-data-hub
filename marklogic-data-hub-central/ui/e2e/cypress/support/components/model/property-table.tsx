@@ -61,7 +61,7 @@ class PropertyTable {
   }
 
   getDeletePropertyIcon(entityName: string, propertyName: string) {
-    return cy.findByTestId(`delete-${entityName}-${propertyName}`).click({force: true});
+    return cy.findByTestId(`delete-${entityName}-${propertyName}`);
   }
 
   getDeleteStructuredPropertyIcon(entityName: string, structuredTypeName: string, propertyName: string) {
@@ -78,6 +78,18 @@ class PropertyTable {
 
   getExpandIcon(propertyName: string) {
     return cy.findByTestId(`${propertyName}-expand-icon`);
+  }
+
+  getTooltipForPropertyName(propertyName: string) {
+    return cy.get(`[id=property-${propertyName}-tooltip]`);
+  }
+
+  getTooltipForAddIconInStructuredType(structuredTypeName: string) {
+    return cy.get(`[id=add-struct-${structuredTypeName}-tooltip]`);
+  }
+
+  getTooltipForDeletePropertyIcon(entity: string, propertyName: string) {
+    return cy.get(`[id=delete-${entity}-${propertyName}-tooltip]`);
   }
 }
 

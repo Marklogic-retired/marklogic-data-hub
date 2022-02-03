@@ -254,12 +254,12 @@ describe("Entity Modeling: Writer Role", () => {
     cy.waitForAsyncRequest();
     propertyTable.getProperty("streetAlt").should("not.exist");*/
     //Property
-    propertyTable.getDeletePropertyIcon("User3", "alt_address");
+    propertyTable.getDeletePropertyIcon("User3", "alt_address").click({force: true});
     confirmationModal.getDeletePropertyWarnText().should("exist");
     confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn);
     cy.waitForAsyncRequest();
     propertyTable.getProperty("alt_address").should("not.exist");
-    propertyTable.getDeletePropertyIcon("User3", "OrderedBy");
+    propertyTable.getDeletePropertyIcon("User3", "OrderedBy").click({force: true});
     confirmationModal.getDeletePropertyWarnText().should("exist");
     confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn);
     cy.waitForAsyncRequest();
@@ -345,7 +345,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.getTypeFromDropdown("More date types").click();
     propertyModal.getCascadedTypeFromDropdown("yearMonthDuration").click();
     propertyModal.getSubmitButton().click();
-    propertyTable.getDeletePropertyIcon("Concept", "testing");
+    propertyTable.getDeletePropertyIcon("Concept", "testing").click({force: true});
     confirmationModal.getDeletePropertyWarnText().should("exist");
     confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn);
     propertyTable.getProperty("testing").should("not.exist");
