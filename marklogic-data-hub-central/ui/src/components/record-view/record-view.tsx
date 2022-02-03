@@ -3,7 +3,6 @@ import styles from "./record-view.module.scss";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faExternalLinkAlt} from "@fortawesome/free-solid-svg-icons";
 import ReactHtmlParser from "react-html-parser";
 import {Link} from "react-router-dom";
 import sourceFormatOptions from "../../config/formats.config";
@@ -13,7 +12,7 @@ import {CardViewDateConverter} from "../../util/date-conversion";
 import {SearchContext} from "../../util/search-context";
 import {getRecord} from "../../api/record";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
-import {Download, FileEarmark} from "react-bootstrap-icons";
+import {Download, FileEarmark, ArrowRightSquare} from "react-bootstrap-icons";
 import {HCCard, HCTooltip} from "@components/common";
 import Popover from "react-bootstrap/Popover";
 import {OverlayTrigger} from "react-bootstrap";
@@ -216,19 +215,15 @@ const RecordCardView = (props) => {
                     {elem.format === "binary" ?
                       <span id={"instance"}
                         data-cy="instance">
-                        <HCTooltip text="Detail view" id="binary-detail-view-tooltip" placement="bottom">
-                          <i role="detail-link icon" data-testid={elem.uri + "-detailViewIcon"}>
-                            <FontAwesomeIcon icon={faExternalLinkAlt} className={styles.detailLinkIconDisabled} size="lg" />
-                          </i>
+                        <HCTooltip text="View details" id="binary-detail-view-tooltip" placement="bottom">
+                          <ArrowRightSquare className={styles.arrowRightSquare}/>
                         </HCTooltip>
                       </span>
                       :
                       <Link to={getLinkProperties(elem)} id={"instance"}
                         data-cy="instance">
-                        <HCTooltip text="Detail view" id="detail-view-tooltip" placement="bottom">
-                          <i role="detail-link icon" data-testid={elem.uri + "-detailViewIcon"}>
-                            <FontAwesomeIcon icon={faExternalLinkAlt} className={styles.detailLinkIcon} size="lg" />
-                          </i>
+                        <HCTooltip text="View details" id="detail-view-tooltip" placement="bottom">
+                          <ArrowRightSquare className={styles.arrowRightSquare} role="detail-link icon" data-testid={elem.uri + "-detailViewIcon"}/>
                         </HCTooltip>
                       </Link>
                     }

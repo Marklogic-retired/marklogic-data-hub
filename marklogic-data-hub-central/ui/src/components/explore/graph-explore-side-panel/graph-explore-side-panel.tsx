@@ -1,14 +1,15 @@
-import {faCode, faExternalLinkAlt, faThList} from "@fortawesome/free-solid-svg-icons";
+import {faCode, faThList} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import React, {useContext, useEffect, useState, useRef} from "react";
 import {getDetails} from "../../../api/record";
 import {Tab, Tabs} from "react-bootstrap";
-import {ChevronRight, XLg} from "react-bootstrap-icons";
+import {ChevronRight, XLg, ArrowRightSquare} from "react-bootstrap-icons";
 import {Link} from "react-router-dom";
 import {SearchContext} from "../../../util/search-context";
 import styles from "./graph-explore-side-panel.module.scss";
 import {xmlParser, xmlDecoder, xmlFormatter, jsonFormatter} from "../../../util/record-parser";
 import TableView from "@components/table-view/table-view";
+import {HCTooltip} from "@components/common";
 
 type Props = {
     onCloseSidePanel:() => void;
@@ -17,7 +18,6 @@ type Props = {
 
 const DEFAULT_TAB = "instance";
 const INSTANCE_TITLE =  <span aria-label="instanceTab"><i><FontAwesomeIcon icon={faThList} size="sm" /></i> Instance</span>;
-const RECORD_TITLE =  <span aria-label="recordTab"><i><FontAwesomeIcon icon={faCode} size="sm" /></i> Record</span>;
 
 const GraphExploreSidePanel: React.FC<Props> = (props) => {
   const {onCloseSidePanel, graphView} = props;
@@ -38,6 +38,8 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
   const [contentType, setContentType] = useState<string>("");
   const [xml, setXml] = useState();
   const data = useRef<any[]>();
+  const RECORD_TITLE =  <span aria-label="recordTab">{contentType.toUpperCase()=== "XML" ? <i className={styles.xmlIcon} aria-label="xmlTypeData"><FontAwesomeIcon icon={faCode} size="sm" /></i>
+    : <span className={styles.jsonIcon} aria-label="jsonTypeData"></span>}{contentType ? contentType.toUpperCase() : ""}</span>;
 
   useEffect(() => {
     if (docUri && label !== currentLabel) {
@@ -131,9 +133,11 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
           <ChevronRight className={styles.arrowRight}/>
           {entityInstanceLabel}
         </span>
-        <Link to={{pathname, state}} id="instance" data-cy="instance">
-          <i><FontAwesomeIcon icon={faExternalLinkAlt} size="lg" style={{"marginTop": "-10px"}}/></i>
-        </Link>
+        <HCTooltip text="View full details" id="processed-data-tooltip" placement="top-end">
+          <Link to={{pathname, state}} id="instance" data-cy="instance">
+            <ArrowRightSquare className={styles.arrowRightSquare} aria-label="graphViewRightArrow"/>
+          </Link>
+        </HCTooltip>
         <span>
           <i className={styles.close} aria-label="closeGraphExploreSidePanel" onClick={onCloseSidePanel}>
             <XLg />

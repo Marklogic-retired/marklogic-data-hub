@@ -5,7 +5,7 @@ import styles from "./results-tabular-view.module.scss";
 import ColumnSelector from "../../components/column-selector/column-selector";
 import {SearchContext} from "../../util/search-context";
 import {Link} from "react-router-dom";
-import {faExternalLinkAlt, faCode, faProjectDiagram} from "@fortawesome/free-solid-svg-icons";
+import {faCode, faProjectDiagram, faThList} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {dateConverter} from "../../util/date-conversion";
 import {HCTooltip, HCTable} from "@components/common";
@@ -337,7 +337,7 @@ const ResultsTabularView = (props) => {
         }} id={"instance"}
         data-cy="instance">
           <HCTooltip text="Show the processed data" id="processed-data-tooltip" placement="top-end">
-            <i><FontAwesomeIcon className={styles.iconHover} icon={faExternalLinkAlt} size="sm" data-testid={`${primaryKeyValue}-detailOnSeparatePage`} /></i>
+            <i><FontAwesomeIcon className={styles.iconHover} icon={faThList} size="sm" data-testid={`${primaryKeyValue}-detailOnSeparatePage`} /></i>
           </HCTooltip>
         </Link>
         <Link to={{
@@ -360,7 +360,7 @@ const ResultsTabularView = (props) => {
         }} id={"source"}
         data-cy="source">
           <HCTooltip text={"Show the complete " + item.format.toUpperCase()} id="show-json-tooltip" placement="top-end">
-            {item.format.toUpperCase() !== "XML" ?
+            {item.format.toUpperCase() !== "JSON" ?
               <i><FontAwesomeIcon className={styles.iconHover} icon={faCode} size="sm" data-testid={`${primaryKeyValue}-sourceOnSeparatePage`} /></i>
               :
               <span className={styles.jsonIcon} data-testid={`${primaryKeyValue}-sourceOnSeparatePage`}></span>
@@ -516,7 +516,7 @@ const ResultsTabularView = (props) => {
             }}
             data-cy="nested-instance">
               <HCTooltip text="Show nested detail on a separate page" id="show-separate-page-tooltip" placement="top">
-                <i><FontAwesomeIcon icon={faExternalLinkAlt} size="sm" /></i>
+                <i><FontAwesomeIcon icon={faThList} size="sm" /></i>
               </HCTooltip>
             </Link>
           });
