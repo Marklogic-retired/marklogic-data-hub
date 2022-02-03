@@ -53,6 +53,10 @@ describe("Test '/Explore' graph right panel", () => {
     graphExplore.getRecordTab().click();
     graphExplore.getJsonRecordData().should("be.visible");
 
+    cy.log("**Inspect detail view icons and labels**");
+    graphExplore.getGraphViewRightArrow().should("have.length.gt", 0);
+    graphExplore.getJsonTypeDetailView().should("have.length.gt", 0);
+
     cy.log("**Inspect instance tab content**");
     graphExplore.getInstanceTab().click();
     const headers = graphExplore.getTableHeaders();

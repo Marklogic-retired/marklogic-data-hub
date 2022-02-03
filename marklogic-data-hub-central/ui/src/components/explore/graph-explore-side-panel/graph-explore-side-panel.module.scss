@@ -52,3 +52,25 @@
         padding-top: 5px;
     }
 }
+
+.arrowRightSquare{
+    font-size: 22px;
+    &:hover{
+        color: var(--hoverColor);
+    }
+}
+
+.jsonIcon:before {
+    content: "\e94c";
+    font-family: MLCustomFont;
+    font-size: 18px;
+    position: relative;
+    font-weight: 200;
+    top: 2px;
+    padding-right: 4px;
+    display: inline-block;
+}
+
+.xmlIcon {
+    padding-right: 2px;
+}

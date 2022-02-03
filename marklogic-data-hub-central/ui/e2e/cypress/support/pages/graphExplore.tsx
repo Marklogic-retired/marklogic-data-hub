@@ -76,5 +76,12 @@ class GraphExplore {
     return cy.findByTestId("graphView-json-container");
   }
 
+  getGraphViewRightArrow() {
+    return cy.findByLabelText("graphViewRightArrow");
+  }
+
+  getJsonTypeDetailView() {
+    return cy.findByLabelText("jsonTypeData");
+  }
 }
 export default new GraphExplore();
