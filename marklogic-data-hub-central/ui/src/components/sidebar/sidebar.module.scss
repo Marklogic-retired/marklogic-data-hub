@@ -22,7 +22,11 @@
 
 .titleBaseEntities,
 .titleCheckbox {
-
+  .panelTitle{
+    div{
+      padding-right: 2px;
+    }
+  }
   span {
     font-size: 15px;
     color: #979797 !important;;
@@ -35,7 +39,19 @@
   }
 }
 
-.titleCheckbox {
+.disabledTitleCheckbox {
+  cursor: not-allowed !important;
+  span {
+    cursor: not-allowed !important;
+    font-size: 15px;
+    color: #cecece !important;;
+    text-transform: uppercase;
+    font-weight: bold;
+    display: flex;
+    input {
+      padding-right: 3px;
+    }
+  }
   .panelTitle{
     div{
       padding-right: 2px;
@@ -178,6 +194,13 @@
 
 .panelTitle {
   display: flex;
+}
+
+.disabledEntitiesInfoIcon {
+  font-size: 12px;
+  margin-left: 6px;
+  position: relative;
+  color: #cecece; 
 }
 
 .entitiesInfoIcon {

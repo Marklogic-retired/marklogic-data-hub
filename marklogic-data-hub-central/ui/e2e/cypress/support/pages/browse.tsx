@@ -746,6 +746,11 @@ class BrowsePage {
     return cy.findByTestId(text).should("have.length.gt", 0);
   }
 
+
+  getTableViewCell(text:string) {
+    return cy.findByText(text);
+  }
+
   getSnippetView() {
     return cy.get("#snippetView");
   }

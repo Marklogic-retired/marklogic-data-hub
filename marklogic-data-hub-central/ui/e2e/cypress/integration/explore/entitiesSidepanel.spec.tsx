@@ -120,7 +120,7 @@ describe("Test '/Explore' left sidebar", () => {
     entitiesSidebar.backToMainSidebarButton.should("be.visible").click();
   });
 
-  it("Base Entity Filtering in side panel", () => {
+  it("Base Entity Filtering from side panel", () => {
     cy.log("Navigate to Graph View and verify all entities displayed");
     cy.wait(8000);
     browsePage.clickGraphView().click();
@@ -146,9 +146,43 @@ describe("Test '/Explore' left sidebar", () => {
       expect(orderCoordinates).to.not.equal(undefined);
     });
 
-    cy.log("Select Customer Entity and verify both Customer and Order nodes are present");
+    cy.log("Navigate to Table View and verify Order filtered with entity-specific columns");
+    browsePage.getTableView().click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.waitForHCTableToLoad();
+    browsePage.getColumnTitle(2).should("contain", "orderId");
+    browsePage.getColumnTitle(3).should("contain", "address");
+    browsePage.getColumnTitle(4).should("contain", "orderDetails");
+
+    //orderId value should be present while customerID should not
+    browsePage.getTableViewCell("10248").should("have.length.gt", 0);
+    browsePage.getTableViewCell("101").should("not.have.length.gt", 0);
+
+    cy.log("Select Customer Entity and verify default table columns since > 1 entity filtered");
     entitiesSidebar.getBaseEntityDropdown().click();
     entitiesSidebar.selectBaseEntityOption("Customer");
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.waitForHCTableToLoad();
+    browsePage.getColumnTitle(2).should("contain", "Identifier");
+    browsePage.getColumnTitle(3).should("contain", "Entity Type");
+    browsePage.getColumnTitle(4).should("contain", "Record Type");
+    browsePage.getColumnTitle(5).should("contain", "Created");
+
+    //both Order and Customer ID's should be present in table
+    browsePage.getTableViewCell("10248").should("have.length.gt", 0);
+    browsePage.getTableViewCell("101").should("have.length.gt", 0);
+
+    cy.log("Select BabyRegistry and verify related entities panel appears but is disabled in table view");
+    entitiesSidebar.getBaseEntityDropdown().click("right");
+    entitiesSidebar.selectBaseEntityOption("BabyRegistry");
+    entitiesSidebar.getRelatedEntityPanel().should("be.visible");
+    entitiesSidebar.verifyCollapsedRelatedEntityPanel().should("exist");
+    entitiesSidebar.getRelatedEntityPanel().click();
+    //related entity panel should remain collapsed
+    entitiesSidebar.verifyCollapsedRelatedEntityPanel().should("exist");
+
+    cy.log("verify both Customer and Order nodes are still present in graph");
+    browsePage.clickGraphView().click();
     cy.wait(1000);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
       let custCoordinates: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
@@ -158,6 +192,10 @@ describe("Test '/Explore' left sidebar", () => {
       let orderCoordinates: any = nodePositions[ExploreGraphNodes.ORDER_10258];
       expect(orderCoordinates).to.not.equal(undefined);
     });
+
+    cy.log("verify that related entity panel is not disabled in graph view");
+    entitiesSidebar.verifyCollapsedRelatedEntityPanel().should("not.exist");
+    cy.pause();
   });
 
   //TODO: this test is commented because a refresh graph error
@@ -182,7 +220,7 @@ describe("Test '/Explore' left sidebar", () => {
     browsePage.clickGraphView().click();
     browsePage.getGraphSearchSummary().should("have.length.gt", 0);
 
-    cy.log("verify search filtered on top of base entity selections and Order is now gone");
+    cy.log("verify search filtered on top of base entity selections and Order is now gone in graph");
     graphExplore.nodeInCanvas(ExploreGraphNodes.ORDER_10258).then((nodePositions: any) => {
       let orderCoordinates: any = nodePositions[ExploreGraphNodes.ORDER_10258];
       expect(orderCoordinates).to.equal(undefined);

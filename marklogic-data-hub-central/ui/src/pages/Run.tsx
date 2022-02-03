@@ -3,6 +3,7 @@ import styles from "./Run.module.scss";
 import Flows from "@components/flows/flows";
 import {Accordion, Modal} from "react-bootstrap";
 import axios from "axios";
+import {SearchContext} from "../util/search-context";
 import {AuthoritiesContext} from "../util/authorities";
 import {UserContext} from "../util/user-context";
 import {useHistory} from "react-router-dom";
@@ -80,6 +81,7 @@ const defaultFailedModal = {
 
 const Run = (props) => {
   const {handleError} = useContext(UserContext);
+  const {setBaseEntities} = useContext(SearchContext);
   const {setErrorMessageOptions} = useContext(ErrorMessageContext);
 
   const history: any = useHistory();
@@ -258,6 +260,7 @@ const Run = (props) => {
   };
 
   const goToExplorer = async (entityName, targetDatabase, jobId, stepType, stepName) => {
+    let entityView = entityName;
     if (stepType === "ingestion") {
       history.push({
         pathname: "/tiles/explore",
@@ -265,9 +268,10 @@ const Run = (props) => {
       });
     } else if (stepType === "mapping") {
       let mapArtifacts = await getMappingArtifactByStepName(stepName);
+      entityView = mapArtifacts?.relatedEntityMappings?.length > 0 ? "All Entities" : entityName;
       history.push(
         {pathname: "/tiles/explore",
-          state: {entityName: mapArtifacts?.relatedEntityMappings?.length > 0 ? "All Entities" : entityName, targetDatabase: targetDatabase, jobId: jobId}
+          state: {entityName: entityView, targetDatabase: targetDatabase, jobId: jobId}
         });
     } else if (stepType === "merging") {
       history.push({
@@ -275,6 +279,7 @@ const Run = (props) => {
         state: {entityName: entityName, targetDatabase: targetDatabase, jobId: jobId, Collection: "sm-"+entityName+"-merged"}
       });
     }
+    setBaseEntities([entityView]);
   };
 
   function showStepRunResponse(step, jobId, response) {

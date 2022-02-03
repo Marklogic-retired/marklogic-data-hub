@@ -28,16 +28,22 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
   const {
     searchOptions: {baseEntities},
     setBaseEntities,
+    setRelatedEntityTypeIds
   } = useContext(SearchContext);
 
   const [entityNames, setEntityNames] = useState<string[]>(baseEntities);
   const [displayList, setDisplayList] = useState<any[]>(entitiesSorting(currentBaseEntities));
   const [showMore, setShowMore] = useState<boolean>(false);
 
-
   useEffect(() => {
     setDisplayList(currentBaseEntities);
   }, [currentBaseEntities]);
+
+  useEffect(() => {
+    if (baseEntities === [] || baseEntities === ["All Entities"]) {
+      setCurrentBaseEntities(allBaseEntities);
+    }
+  }, [baseEntities]);
 
   const childrenOptions = allBaseEntities.map(element => ({value: element.name, label: element.name, isDisabled: false})).filter(obj => obj.value && obj.label);
   childrenOptions.unshift({
@@ -59,6 +65,7 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
       setEntityNames(["All Entities"]);
       setCurrentBaseEntities(allBaseEntities);
       setBaseEntities([]);
+      setRelatedEntityTypeIds([]);
       if (props.activeKey.indexOf("related-entities") !== -1) { props.setActiveAccordionRelatedEntities("related-entities"); }
     } else {
       const clearSelection = selectedItems.filter(entity => entity !== "All Entities").map((entity => entity));
