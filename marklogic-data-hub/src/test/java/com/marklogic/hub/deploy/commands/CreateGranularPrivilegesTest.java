@@ -1,7 +1,10 @@
 package com.marklogic.hub.deploy.commands;
 
 import com.marklogic.appdeployer.command.CommandContext;
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.FailedRequestException;
 import com.marklogic.hub.AbstractHubCoreTest;
+import com.marklogic.hub.impl.Versions;
 import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.security.Privilege;
 import com.marklogic.mgmt.mapper.DefaultResourceMapper;
@@ -21,6 +24,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class CreateGranularPrivilegesTest extends AbstractHubCoreTest {
 
@@ -198,4 +202,48 @@ public class CreateGranularPrivilegesTest extends AbstractHubCoreTest {
         command = new CreateGranularPrivilegesCommand(getHubConfig());
         assertEquals("Default", command.getGroupNamesForScheduledTaskPrivileges().get(0));
     }
+
+    /**
+     * Ensures that granular privileges that have bad database IDs are cleaned up before deploy
+     */
+    @Test
+    void verifiyBadPrivilegesAreCleanedUp() {
+        assumeTrue(new Versions(getHubConfig()).getMarkLogicVersion().isVersionCompatibleWith520Roles());
+        DatabaseClient client = getHubConfig().newFinalClient();
+        String xquery = "xquery version \"1.0-ml\";\n" +
+                "import module namespace sec=\"http://marklogic.com/xdmp/security\" at \n" +
+                "    \"/MarkLogic/security.xqy\";\n" +
+                "\n" +
+                "xdmp:invoke-function(function() {\n" +
+                "  for $privilege in (\n" +
+                "      \"admin-database-clear-data-hub-STAGING\",\n" +
+                "      \"admin-database-clear-data-hub-FINAL\",\n" +
+                "      \"admin-database-clear-data-hub-JOBS\",\n" +
+                "      \"admin-database-index-data-hub-STAGING\",\n" +
+                "      \"admin-database-index-data-hub-FINAL\",\n" +
+                "      \"admin-database-index-data-hub-JOBS\",\n" +
+                "      \"admin-database-triggers-data-hub-staging-TRIGGERS\",\n" +
+                "      \"admin-database-triggers-data-hub-final-TRIGGERS\",\n" +
+                "      \"admin-database-temporal-data-hub-STAGING\",\n" +
+                "      \"admin-database-temporal-data-hub-FINAL\",\n" +
+                "      \"admin-database-alerts-data-hub-STAGING\",\n" +
+                "      \"admin-database-alerts-data-hub-FINAL\",\n" +
+                "      \"admin-database-amp-data-hub-MODULES\"\n" +
+                "  )\n" +
+                "  \n" +
+                "  return sec:create-privilege(\"$privilege\", \n" +
+                "      \"/\" || $privilege || \"/\" || xdmp:random(), \n" +
+                "      \"execute\", \n" +
+                "      ())\n" +
+                "}, map:entry(\"database\", xdmp:security-database()))\n";
+        try {
+            client.newServerEval().xquery(xquery).eval();
+        } catch (FailedRequestException e) {}
+        CreateGranularPrivilegesCommand command = new CreateGranularPrivilegesCommand(getHubConfig());
+        assertDoesNotThrow(() -> {
+            command.execute(newCommandContext());
+        });
+
+    }
+
 }
