@@ -16,6 +16,7 @@ interface HCDateTimePickerProps extends Options {
     onChange?: (startDate?: DateOrString, endDate?: DateOrString) => void;
     bindChange?: (startDate?: DateOrString, endDate?: DateOrString) => void;
     onOk?: (picker, element) => void;
+    parentEl?: string;
 }
 
 function formatPlaceHolder(input) {
@@ -88,13 +89,15 @@ function HCDateTimePicker({time, name, className, value, format, placeholder = [
     initialSettings.timePicker = true;
   }
 
-  return <DateRangePicker initialSettings={initialSettings} {...{onShow, ref}} onCallback={onChange} onApply={onOk}>
-    <div className={`${className || ""} ${styles.pickerContainer}`} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
-      <input data-testid={name} readOnly id={name} placeholder={formatPlaceHolder(placeholder)} className={styles.input} value={formatValue(value, {format, time})} />
-      {!showClear ? <Calendar4 className={`${styles.calendarIcon}`} /> :
-        <XLg className={`${styles.clearIcon}`} onClick={resetValue} data-testid="datetime-picker-reset"/>}
-    </div>
-  </DateRangePicker>;
+  return  (
+    <DateRangePicker initialSettings={initialSettings} {...{onShow, ref}} onCallback={onChange} onApply={onOk}>
+      <div className={`${className || ""} ${styles.pickerContainer}`} id="date-picker-container" onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
+        <input data-testid={name} readOnly id={name} placeholder={formatPlaceHolder(placeholder)} className={styles.input} value={formatValue(value, {format, time})} />
+        {!showClear ? <Calendar4 className={`${styles.calendarIcon}`} /> :
+          <XLg className={`${styles.clearIcon}`} onClick={resetValue} data-testid="datetime-picker-reset"/>}
+      </div>
+    </DateRangePicker>
+  );
 }
 
 export default HCDateTimePicker;
