@@ -1,5 +1,6 @@
 export const configHeader = { 
-    title: "Twizzlers-UI",
+    title: "Entity Viewer",
+    subtitle: "Beta",
     menus: [
         {
             label: "Search",
