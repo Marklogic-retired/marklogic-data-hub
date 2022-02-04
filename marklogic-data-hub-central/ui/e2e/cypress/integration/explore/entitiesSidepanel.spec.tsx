@@ -119,7 +119,7 @@ describe("Test '/Explore' left sidebar", () => {
     browsePage.getHCTableRows().should("have.length", 2);
 
     cy.log("**Testing date facet**");
-    entitiesSidebar.getDateFacet().should("have.text", "birthDate");
+    entitiesSidebar.getDateFacetTitle().should("have.text", "birthDate");
     entitiesSidebar.selectDateRange({time: "facet-datetime-picker-date"});
     entitiesSidebar.getDateFacet().should("not.be.empty");
     entitiesSidebar.backToMainSidebar().should("be.visible").click();

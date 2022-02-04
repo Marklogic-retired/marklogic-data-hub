@@ -717,7 +717,8 @@ const Sidebar: React.FC<Props> = (props) => {
               name="range-picker"
               className={styles.datePicker}
               value={datePickerValue}
-              onChange={onDateChange} />}
+              onChange={onDateChange}
+              parentEl="#date-select-wrapper" />}
             {hubFacets.map(facet => {
               return facet && (
                 <Facet

@@ -290,7 +290,8 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
           name="range-picker"
           className={styles.datePicker}
           value={datePickerValue}
-          onChange={onDateChange} />}
+          onChange={onDateChange}
+          parentEl="#date-select-wrapper" />}
       </div>
       {facetsList.map(facet => {
         return facet && (

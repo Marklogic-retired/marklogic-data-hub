@@ -31,6 +31,11 @@ class BaseEntitySidebar {
     return cy.get("[data-testid='facet-date-picker']");
   }
 
+  getDateFacetTitle() {
+    return cy.get("[data-testid='facet-date-picker'] > p");
+  }
+
+
   getBaseEntityDropdown() {
     return cy.get("#entitiesSidebar-select-wrapper");
   }
