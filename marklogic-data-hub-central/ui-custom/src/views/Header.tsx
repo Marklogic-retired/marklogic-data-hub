@@ -4,7 +4,7 @@ import SearchBox from "../components/SearchBox/SearchBox";
 import Menus from "../components/Menus/Menus";
 import { configHeader } from "../config/header.js";
 import { configSearchbox } from "../config/searchbox.js";
-import { ArrowUpRightSquare, PersonCircle } from "react-bootstrap-icons";
+import { PersonCircle } from "react-bootstrap-icons";
 import styles from "./Header.module.scss";
 
 type Props = {};
@@ -15,10 +15,11 @@ const Header: React.FC<Props> = (props) => {
     <header className="sticky-top">
       <div>
         <span className={styles.logo}>
-          <ArrowUpRightSquare color="#ccc" size={24} />
+          <img src="/marklogic.png" alt="image" />
         </span>
         <span className={styles.title}>
           <Link to="/">{configHeader.title}</Link>
+          <span className={styles.subtitle}>{configHeader.subtitle}</span>
         </span>
         <Menus config={configHeader.menus} />
       </div>
