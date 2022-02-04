@@ -5,6 +5,8 @@ import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.SortOrderConstants;
 import com.marklogic.appdeployer.command.UndoableCommand;
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
@@ -132,6 +134,39 @@ public class CreateGranularPrivilegesCommand extends LoggingObject implements Co
     @Override
     public void execute(CommandContext context) {
         if (new MarkLogicVersion(hubConfig.getManageClient()).isVersionCompatibleWith520Roles()) {
+            try {
+                DatabaseClient client = hubConfig.newFinalClient();
+                String xquery = "xquery version \"1.0-ml\";\n" +
+                        "import module namespace sec=\"http://marklogic.com/xdmp/security\" at \n" +
+                        "    \"/MarkLogic/security.xqy\";\n" +
+                        "\n" +
+                        "xdmp:invoke-function(function() {\n" +
+                        "  for $privilege in (\n" +
+                        "      \"admin-database-clear-data-hub-STAGING\",\n" +
+                        "      \"admin-database-clear-data-hub-FINAL\",\n" +
+                        "      \"admin-database-clear-data-hub-JOBS\",\n" +
+                        "      \"admin-database-index-data-hub-STAGING\",\n" +
+                        "      \"admin-database-index-data-hub-FINAL\",\n" +
+                        "      \"admin-database-index-data-hub-JOBS\",\n" +
+                        "      \"admin-database-triggers-data-hub-staging-TRIGGERS\",\n" +
+                        "      \"admin-database-triggers-data-hub-final-TRIGGERS\",\n" +
+                        "      \"admin-database-temporal-data-hub-STAGING\",\n" +
+                        "      \"admin-database-temporal-data-hub-FINAL\",\n" +
+                        "      \"admin-database-alerts-data-hub-STAGING\",\n" +
+                        "      \"admin-database-alerts-data-hub-FINAL\",\n" +
+                        "      \"admin-database-amp-data-hub-MODULES\"\n" +
+                        "  )\n" +
+                        "  for $privilege-xml in /sec:privilege[sec:privilege-name eq $privilege][sec:kind eq \"execute\"]\n" +
+                        "  let $action := $privilege-xml/sec:action ! fn:string(.)\n" +
+                        "  let $db-id := fn:substring($action, fn:index-of(fn:string-to-codepoints($action), fn:string-to-codepoints(\"/\"))[fn:last()] + 1)\n" +
+                        "  let $db-exists := try { let $_name := xdmp:database-name(xs:unsignedLong($db-id)) return fn:true() } catch * {fn:false()}\n" +
+                        "  where fn:not($db-exists)\n" +
+                        "  return sec:remove-privilege($action, \"execute\")\n" +
+                        "}, map:entry(\"database\", xdmp:security-database()))\n";
+                client.newServerEval().xquery(xquery).eval();
+            } catch (FailedRequestException e) {
+                throw new RuntimeException("Unable to fix broken granular privileges", e);
+            }
             Map<String, Privilege> granularPrivileges = buildGranularPrivileges(context.getManageClient());
             saveGranularPrivileges(context.getManageClient(), granularPrivileges);
         } else {
