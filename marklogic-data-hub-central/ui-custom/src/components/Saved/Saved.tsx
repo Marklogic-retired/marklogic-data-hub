@@ -56,7 +56,8 @@ const Saved: React.FC<Props> = (props) => {
       let parts = row[cfg.value].split("T");
       return _.isNil(parts[0]) ? null : parts[0];
     } else if (cfg.type === "icon") {
-      return cfg.test.call(null, row[cfg.value]) ?
+      // return cfg.test.call(null, row[cfg.value]) ? // TODO no functions in JSON config
+      return row[cfg.value] === true ?
         (cfg.value === "hasChanges") ?
           <ExclamationTriangleFill color="#d48b32" size={16} /> :
           <EyeFill color="#e96d80" size={16} /> :
