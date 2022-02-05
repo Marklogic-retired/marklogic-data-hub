@@ -111,7 +111,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
             "/static/**",
             "/img/**",
             "/favicon.ico",
-            "/api/explore/twizzlers/login"
+            "/api/explore/login",
+            "/api/explore/proxyAddress",
         };
     }
 }

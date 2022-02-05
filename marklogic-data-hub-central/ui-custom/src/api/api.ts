@@ -137,7 +137,7 @@ export const getRecent = (opts) => {
 
 export const twizzlersLogin = async () => { 
   try {
-    const response = await axios.get("/api/explore/twizzlers/login");
+    const response = await axios.get("/api/explore/login");
     if (response && response.status === 200) {
       return response;
     }
