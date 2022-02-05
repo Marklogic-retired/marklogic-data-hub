@@ -1,21 +1,23 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useContext} from "react";
 import Metrics from "../components/Metrics/Metrics";
 import SearchBox from "../components/SearchBox/SearchBox";
 import Saved from "../components/Saved/Saved";
 import New from "../components/New/New";
 import Recent from "../components/Recent/Recent";
 import Section from "../components/Section/Section";
-import {configDashboard} from "../config/dashboard.js";
-import {configSearchbox} from "../config/searchbox.js";
+import { UserContext } from "../store/UserContext";
 import {getRecent} from "../api/api";
 import {getSaved} from "../api/api";
 import {getSummary} from "../api/api";
-import styles from "./Dashboard.module.scss";
+import "./Dashboard.scss";
 
 type Props = {};
 
 const Dashboard: React.FC<Props> = (props) => {
 
+  const userContext = useContext(UserContext);
+
+  const [config, setConfig] = useState<any>(null);
   const [recent, setRecent] = useState<any>({});
   const [saved, setSaved] = useState<any>({});
   const [summary, setSummary] = useState<any>({});
@@ -24,15 +26,18 @@ const Dashboard: React.FC<Props> = (props) => {
     setRecent(getRecent({}));
     setSaved(getSaved({}));
     setSummary(getSummary({}));
+    setConfig(userContext.config);
   }, []);
 
   return (
-    <div className={styles.dashboard}>
+    <div className="dashboard">
       <div className="dashboard container-fluid">
 
         <div className="row">
 
-          <Metrics data={summary.metrics} config={configDashboard.metrics} />
+          {config?.dashboard.metrics ? 
+            <Metrics data={summary.metrics} config={config.dashboard.metrics} />
+          : null}
 
         </div>
 
@@ -41,14 +46,20 @@ const Dashboard: React.FC<Props> = (props) => {
           <div className="col-lg">
 
             <Section title="Search">
-              <div className={styles.newSearch}>
-                <h4 style={{marginBottom: "20px"}}>New Search</h4>
-                <SearchBox config={configSearchbox} button="vertical" width="100%" />
-              </div>
-              <div className={styles.divider}>- or -</div>
+              <h4 style={{marginBottom: "20px"}}>New Search</h4>
+
+              {config?.searchbox ? 
+                <SearchBox config={config.searchbox} button="vertical" width="100%" />
+              : null}
+
+              <div className="divider">- or -</div>
               <div style={{marginTop: "20px"}}>
                 <h4>Saved Searches</h4>
-                <Saved data={saved} config={configDashboard.saved} />
+
+                {config?.dashboard.saved ? 
+                  <Saved data={saved} config={config.dashboard.saved} />
+                : null}
+
               </div>
             </Section>
 
@@ -61,7 +72,11 @@ const Dashboard: React.FC<Props> = (props) => {
             </Section>
 
             <Section title="Recently Visited">
-              <Recent data={recent} config={configDashboard.recent} />
+
+              {config?.dashboard.recent ? 
+                <Recent data={recent} config={config.dashboard.recent} />
+              : null}
+
             </Section>
 
           </div>

@@ -1,14 +1,14 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { UserContext } from "../store/UserContext";
 import { DetailContext } from "../store/DetailContext";
 import Occupations from "../components/Occupations/Occupations";
 import Relationships from "../components/Relationships/Relationships";
 import DataTableValue from "../components/DataTableValue/DataTableValue";
 import DataTableMultiValue from "../components/DataTableMultiValue/DataTableMultiValue";
 import Section from "../components/Section/Section";
-import {configDetail} from "../config/detail.js";
 import { ArrowLeft } from "react-bootstrap-icons";
-import styles from "./Detail.module.scss";
+import "./Detail.scss";
 import { getValByPath } from "../util/util";
 import _ from "lodash";
 
@@ -22,6 +22,13 @@ const Detail: React.FC<Props> = (props) => {
     navigate(-1);
   };
 
+  const userContext = useContext(UserContext);
+  const [config, setConfig] = useState<any>(null);
+
+  useEffect(() => {
+    setConfig(userContext.config);
+  }, []);
+
   const detailContext = useContext(DetailContext);
   let { id } = useParams();
   if (_.isEmpty(detailContext.detail)) {
@@ -29,27 +36,26 @@ const Detail: React.FC<Props> = (props) => {
   }
 
   let thumbStyle = {
-    width: (configDetail.heading.thumbnail && configDetail.heading.thumbnail.width) ? 
-    configDetail.heading.thumbnail.width : "auto",
-    height: (configDetail.heading.thumbnail && configDetail.heading.thumbnail.height) ? 
-    configDetail.heading.thumbnail.height : "auto"
+    width: (config?.detail.heading.thumbnail && config.detail.heading.thumbnail.width) ? 
+    config.detail.heading.thumbnail.width : "auto",
+    height: (config?.detail.heading.thumbnail && config.detail.heading.thumbnail.height) ? 
+    config.detail.heading.thumbnail.height : "auto"
   };
   
-  const getHeading = () => {
-    console.log("getHeading", configDetail.heading, detailContext.detail);
-    let config = configDetail.heading;
+  const getHeading = (configHeading) => {
+    console.log("getHeading", configHeading, detailContext.detail);
     return (
-      <div className={styles.heading}>
-      <div className={styles.icon} onClick={handleBackClick}>
+      <div className="heading">
+      <div className="icon" onClick={handleBackClick}>
         <ArrowLeft color="#394494" size={28} />
       </div>
-      <div className={styles.title}>
-        {getValByPath(detailContext.detail, config.title)}
+      <div className="title">
+        {getValByPath(detailContext.detail, configHeading.title)}
       </div>
-      {config.thumbnail && <div className={styles.thumbnail}>
+      {configHeading.thumbnail && <div className="thumbnail">
         <img
-            src={getValByPath(detailContext.detail, config.thumbnail.src)}
-            alt={getValByPath(detailContext.detail, config.title)}
+            src={getValByPath(detailContext.detail, configHeading.thumbnail.src)}
+            alt={getValByPath(detailContext.detail, configHeading.title)}
             style={thumbStyle}
         ></img>
       </div>}
@@ -59,12 +65,14 @@ const Detail: React.FC<Props> = (props) => {
 
   return (
 
-    <div className={styles.detail}>
+    <div className="detail">
       {(!_.isEmpty(detailContext.detail)) ? (
 
       <div>
 
-        {getHeading()}
+        {config?.detail.heading ? 
+          getHeading(config.detail.heading)
+        : null}
 
         <div className="dashboard container-fluid">
 
@@ -76,12 +84,31 @@ const Detail: React.FC<Props> = (props) => {
             <div className="col-lg-7">
 
               <Section title="Personal Info">
-                <DataTableValue config={configDetail.personal.name} />
-                <DataTableValue config={configDetail.personal.phone} />
-                <DataTableValue config={configDetail.personal.email} />
-                <DataTableValue config={configDetail.personal.ssn} />
-                <DataTableMultiValue config={configDetail.personal.address} />
-                <DataTableMultiValue config={configDetail.personal.school} />
+
+                {config?.detail.personal.name ? 
+                  <DataTableValue config={config.detail.personal.name} />
+                : null}
+
+                {config?.detail.personal.phone ? 
+                  <DataTableValue config={config.detail.personal.phone} />
+                : null}
+
+                {config?.detail.personal.email ? 
+                  <DataTableValue config={config.detail.personal.email} />
+                : null}
+
+                {config?.detail.personal.ssn ? 
+                  <DataTableValue config={config.detail.personal.ssn} />
+                : null}
+
+                {config?.detail.personal.address ? 
+                  <DataTableMultiValue config={config.detail.personal.address} />
+                : null}
+
+                {config?.detail.personal.school ? 
+                  <DataTableMultiValue config={config.detail.personal.school} />
+                : null}
+
               </Section>
 
             </div>

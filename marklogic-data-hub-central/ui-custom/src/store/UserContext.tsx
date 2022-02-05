@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { twizzlersLogin, hcLogin, hcGetSession } from "../api/api";
+import { twizzlersLogin, hcLogin } from "../api/api";
 import { auth } from "../config/auth";
+import config from "../config/config.json"; // TODO load from database via endpoint
 interface UserContextInterface {
     userid: string;
+    config: any;
     handleTwizzlersLogin: any;
     handleHCLogin: any;
-    handleHCGetSession: any;
+    handleGetConfig: any;
 }
   
 const defaultState = {
     userid: "",
+    config: "",
     handleTwizzlersLogin: () => {},
     handleHCLogin: () => {},
-    handleHCGetSession: () => {}
+    handleGetConfig: () => {}
 };
 
 /**
@@ -29,7 +32,7 @@ export const UserContext = React.createContext<UserContextInterface>(defaultStat
 const UserProvider: React.FC = ({ children }) => {
 
   const [userid, setUserid] = useState<string>("");
-  const [authorities, setAuthorities] = useState<any>([]);
+  const [authorities, setAuthorities] = useState<any>(null);
 
   const handleTwizzlersLogin = () => {
     let sr = twizzlersLogin();
@@ -64,30 +67,33 @@ const UserProvider: React.FC = ({ children }) => {
   };
 
   useEffect(() => {
-    if (authorities.length > 0) {
+    if (authorities) {
       console.log("useEffect authorities", authorities);
-      handleHCGetSession();
+      handleGetConfig();
     }
   }, [authorities]);
 
-  const handleHCGetSession = () => {
-    let sr = hcGetSession(userid);
-    sr.then(result => {
-        if (result && result.data) {
-            console.log("handleHCGetSession result", result);
-        }
-    }).catch(error => {
-        console.error(error);
-    })
+  const handleGetConfig = () => {
+    console.log("handleGetConfig");
+    // TODO load from database via endpoint
+    // let sr = getConfig(userid);
+    // sr.then(result => {
+    //     if (result && result.data) {
+    //         console.log("handleGetConfig result", result);
+    //     }
+    // }).catch(error => {
+    //     console.error(error);
+    // })
   };
 
   return (
     <UserContext.Provider
       value={{
         userid,
+        config,
         handleTwizzlersLogin,
         handleHCLogin,
-        handleHCGetSession
+        handleGetConfig
       }}
     >
       {children}

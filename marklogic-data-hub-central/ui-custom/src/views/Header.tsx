@@ -1,31 +1,49 @@
-import React from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import SearchBox from "../components/SearchBox/SearchBox";
 import Menus from "../components/Menus/Menus";
-import { configHeader } from "../config/header.js";
-import { configSearchbox } from "../config/searchbox.js";
+import { UserContext } from "../store/UserContext";
 import { PersonCircle } from "react-bootstrap-icons";
-import styles from "./Header.module.scss";
+import "./Header.scss";
 
 type Props = {};
 
 const Header: React.FC<Props> = (props) => {
 
+  const userContext = useContext(UserContext);
+
+  const [config, setConfig] = useState<any>(null);
+
+  useEffect(() => {
+    setConfig(userContext.config);
+  }, []);
+
   return (
     <header className="sticky-top">
       <div>
-        <span className={styles.logo}>
+        <span className="logo">
           <img src="/marklogic.png" alt="image" />
         </span>
-        <span className={styles.title}>
-          <Link to="/">{configHeader.title}</Link>
-          <span className={styles.subtitle}>{configHeader.subtitle}</span>
-        </span>
-        <Menus config={configHeader.menus} />
+
+        {config?.header ? 
+          <span className="title">
+            <Link to="/">{config.header.title}</Link>
+            <span className="subtitle">{config.header.subtitle}</span>
+          </span>
+        : null}
+
+        {config?.header.menus ? 
+          <Menus config={config.header.menus} />
+        : null}
+
       </div>
       <div>
-        <SearchBox config={configSearchbox} width="600px" />
-        <div className={styles.account}>
+
+        {config?.searchbox ? 
+          <SearchBox config={config.searchbox} width="600px" />
+        : null}
+
+        <div className="account">
             <PersonCircle color="#ccc" size={28} />
         </div>
       </div>
