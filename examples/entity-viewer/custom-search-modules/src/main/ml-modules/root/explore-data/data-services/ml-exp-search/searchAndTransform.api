@@ -1,0 +1,15 @@
+{
+  "functionName": "searchAndTransform",
+  "params": [
+    {
+      "name": "searchParams",
+      "datatype": "jsonDocument",
+      "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+    }
+  ],
+  "return": {
+    "datatype": "jsonDocument",
+    "$javaClass": "com.fasterxml.jackson.databind.JsonNode",
+    "description": "Returns transformed search results"
+  }
+}
