@@ -1,25 +1,46 @@
-import React from "react";
+import React, { useState, useContext, useEffect } from "react";
+import { UserContext } from "../store/UserContext";
 import SummaryMeter from "../components/SummaryMeter/SummaryMeter";
 import Facets from "../components/Facets/Facets";
-import ResultsList from "../components/ResultsList/ResultsList";
 import SelectedFacets from "../components/SelectedFacets/SelectedFacets";
+import ResultsList from "../components/ResultsList/ResultsList";
 import "./Search.scss";
-import {configSearch} from "../config/search.js";
-import _ from "lodash";
 
 type Props = {};
 
 const Search: React.FC<Props> = (props) => {
 
+  const userContext = useContext(UserContext);
+
+  const [config, setConfig] = useState<any>(null);
+
+  useEffect(() => {
+    setConfig(userContext.config);
+  }, [userContext.config]);
+
   return (
     <div className="search">
       <aside>
-        <SummaryMeter config={configSearch.meter} />
-        <Facets config={configSearch.facets} />
+
+        {config?.search?.meter ? 
+          <SummaryMeter config={config.search.meter} />
+        : null}
+
+        {config?.search?.facets ? 
+          <Facets config={config.search.facets} />
+        : null}
+
       </aside>
       <div className="results">
-        <SelectedFacets />
-        <ResultsList config={configSearch.results} />
+
+        {config?.search ? // TODO pass config into SelectedFacets
+          <SelectedFacets />
+        : null}
+
+        {config?.search?.results ? 
+          <ResultsList config={config.search.results} />
+        : null}
+
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ import {searchResults} from "../mocks/results";
 import {summary} from "../mocks/summary";
 import {saved} from "../mocks/saved";
 import {detail} from "../mocks/detail";
+import config from "../config/config.json";
 import _ from "lodash";
 
 export const getSearchResults = async (query, userid) => { 
@@ -139,7 +140,6 @@ export const getProxy = async () => {
   try {
     const response = await axios.get("/api/explore/proxyAddress");
     if (response && response.status === 200) {
-      console.log("getProxy response", response);
       return response;
     }
   } catch (error) {
@@ -183,4 +183,23 @@ export const login = async (username, password, userid) => {
     let message = error;
     console.error("Error: login", message);
   }
+};
+
+export const getConfig = async (userid) => { 
+  return config;
+  // TODO get application config from database
+  // let config = {
+  //   headers: {
+  //     userid: userid ? userid : null
+  //   }
+  // }
+  // try {
+  //   const response = await axios.get("/api/explore/config", config);
+  //   if (response && response.status === 200) {
+  //     return response;
+  //   }
+  // } catch (error) {
+  //   let message = error;
+  //   console.error("Error: getUserid", message);
+  // }
 };
