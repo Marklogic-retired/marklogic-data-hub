@@ -1,20 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { getProxy, getUserid, login } from "../api/api";
+import { getProxy, getUserid, login, getConfig } from "../api/api";
 import { auth } from "../config/auth";
 interface UserContextInterface {
     userid: string;
     proxy: string;
+    config: any;
     handleGetProxy: any;
     handleGetUserid: any;
     handleLogin: any;
+    handleGetConfig: any;
 }
   
 const defaultState = {
     userid: "",
     proxy: "",
+    config: {},
     handleGetProxy: () => {},
     handleGetUserid: () => {},
-    handleLogin: () => {}
+    handleLogin: () => {},
+    handleGetConfig: () => {}
 };
 
 /**
@@ -32,6 +36,8 @@ const UserProvider: React.FC = ({ children }) => {
 
   const [proxy, setProxy] = useState<string>("");
   const [userid, setUserid] = useState<string>("");
+  const [authorities, setAuthorites] = useState<any>(null);
+  const [config, setConfig] = useState<any>({});
 
   const handleGetProxy = () => {
     let sr = getProxy();
@@ -69,8 +75,30 @@ const UserProvider: React.FC = ({ children }) => {
 
   const handleLogin = () => {
     let sr = login(auth.hubCentral.username, auth.hubCentral.password, userid);
-    sr.then(() => {})
-    .catch(error => {
+    sr.then(result => {
+      if (result && result.data) {
+        setAuthorites(result.data.authorities);
+      }
+    }).catch(error => {
+        console.error(error);
+    })
+  };
+
+  useEffect(() => {
+    if (authorities !== null) {
+      handleGetConfig();
+    }
+  }, [authorities]);
+
+  const handleGetConfig = () => {
+    // TODO load from database via endpoint
+    let sr = getConfig(userid);
+    sr.then(result => {
+        // if (result && result.data) {
+        //     console.log("handleGetConfig result", result);
+        // }
+        setConfig(result);
+    }).catch(error => {
         console.error(error);
     })
   };
@@ -80,9 +108,11 @@ const UserProvider: React.FC = ({ children }) => {
       value={{
         userid,
         proxy,
+        config,
         handleGetProxy,
         handleGetUserid,
-        handleLogin
+        handleLogin,
+        handleGetConfig
       }}
     >
       {children}
