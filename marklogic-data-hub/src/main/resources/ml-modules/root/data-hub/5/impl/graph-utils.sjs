@@ -38,7 +38,7 @@ function getOrderedLabelPredicates() {
   ];
 }
 
-function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, ctsQueryCustom) {
+function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, ctsQueryCustom, limit) {
   const subjectPlan = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                  SELECT ?subjectIRI ?subjectLabel ?docURI WHERE {
@@ -71,7 +71,7 @@ function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, ctsQue
       }
   `);
   let joinOn = op.on(op.col("subjectIRI"),op.col("subjectIRI"));
-  let fullPlan = subjectPlan.joinLeftOuter(firstLevelConnectionsPlan, joinOn);
+  let fullPlan = subjectPlan.joinLeftOuter(firstLevelConnectionsPlan, joinOn).limit(limit);
   if (entityTypeIRIs.length > 1) {
     let otherEntityIRIs = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
