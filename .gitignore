@@ -34,3 +34,5 @@ installer.log
 .java-version
 logs/
 snyk
+marklogic-data-hub-central/test.properties
+marklogic-data-hub-central/LOG_PATH_IS_UNDEFINED/hub-central.log
