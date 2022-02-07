@@ -24,12 +24,11 @@ describe("Create and verify load steps, map step and flows with a custom header"
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer", "hub-central-load-writer").withRequest();
     LoginPage.postLogin();
-    cy.waitForAsyncRequest();
   });
   beforeEach(() => {
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer", "hub-central-load-writer").withRequest();
-    cy.waitForAsyncRequest();
-    cy.intercept("/api/jobs/**").as("getJobs");
+    // Looks like it's not being used.
+    //cy.intercept("/api/jobs/**").as("getJobs");
   });
   afterEach(() => {
     cy.resetTestUser();
@@ -43,11 +42,10 @@ describe("Create and verify load steps, map step and flows with a custom header"
     //cy.deleteFlows("orderCustomHeaderFlow", "orderE2eFlow");
     cy.deleteFlows("orderCustomHeaderFlow");
     cy.resetTestUser();
-    cy.waitForAsyncRequest();
   });
   it("Create load step", () => {
     toolbar.getLoadToolbarIcon().click();
-    cy.waitUntil(() => loadPage.stepName("ingestion-step").should("be.visible"));
+    loadPage.stepName("ingestion-step").should("be.visible");
     loadPage.addNewButton("card").click();
     loadPage.stepNameInput().type(loadStep);
     loadPage.stepDescriptionInput().type("load order with a custom header");
@@ -56,14 +54,16 @@ describe("Create and verify load steps, map step and flows with a custom header"
     cy.findByText(loadStep).should("be.visible");
   });
   it("Edit load step and Run", {defaultCommandTimeout: 120000}, () => {
-    // Open step settings and switch to Advanced tab
+    cy.log("**Open step settings and switch to Advanced tab**");
     loadPage.editStepInCardView(loadStep).click({force: true});
     loadPage.switchEditAdvanced().click();
-    // add custom header to load step
+    
+    cy.log("**add custom header to load step**");
     advancedSettingsDialog.setHeaderContent("loadTile/customHeader");
     advancedSettingsDialog.saveSettings(loadStep).click();
     advancedSettingsDialog.saveSettings(loadStep).should("not.be.exist");
-    // add step to a new flow
+    
+    cy.log("**add step to a new flow**");
     loadPage.addStepToNewFlow(loadStep);
     cy.waitForAsyncRequest();
     cy.findByText("New Flow").should("be.visible");
@@ -71,7 +71,8 @@ describe("Create and verify load steps, map step and flows with a custom header"
     runPage.setFlowDescription(`${flowName} description`);
     loadPage.confirmationOptions("Save").click();
     cy.verifyStepAddedToFlow("Load", loadStep, flowName);
-    //Run the ingest with JSON
+    
+    cy.log("**Run the ingest with JSON**");
     cy.waitForAsyncRequest();
     runPage.runStep(loadStep, flowName);
     cy.uploadFile("input/10260.json");
