@@ -112,7 +112,7 @@ if(queryObj.searchText !== undefined && queryObj.searchText.toString().length > 
 
 const relatedEntityTypeIRIs = allEntityTypeIRIs.filter((e1) => !entityTypeIRIs.some((e2) => fn.string(e1) === fn.string(e2)));
 
-const result = graphUtils.getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, ctsQuery);
+const result = graphUtils.getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, ctsQuery, pageLength);
 
 let nodes = [];
 let edges = [];
