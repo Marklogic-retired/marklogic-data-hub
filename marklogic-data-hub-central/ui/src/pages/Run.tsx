@@ -262,6 +262,7 @@ const Run = (props) => {
   const goToExplorer = async (entityName, targetDatabase, jobId, stepType, stepName) => {
     let entityView = entityName;
     if (stepType === "ingestion") {
+      setBaseEntities([entityView]);
       history.push({
         pathname: "/tiles/explore",
         state: {targetDatabase: targetDatabase, jobId: jobId}
@@ -269,17 +270,18 @@ const Run = (props) => {
     } else if (stepType === "mapping") {
       let mapArtifacts = await getMappingArtifactByStepName(stepName);
       entityView = mapArtifacts?.relatedEntityMappings?.length > 0 ? "All Entities" : entityName;
+      setBaseEntities([entityView]);
       history.push(
         {pathname: "/tiles/explore",
           state: {entityName: entityView, targetDatabase: targetDatabase, jobId: jobId}
         });
     } else if (stepType === "merging") {
+      setBaseEntities([entityView]);
       history.push({
         pathname: "/tiles/explore",
         state: {entityName: entityName, targetDatabase: targetDatabase, jobId: jobId, Collection: "sm-"+entityName+"-merged"}
       });
     }
-    setBaseEntities([entityView]);
   };
 
   function showStepRunResponse(step, jobId, response) {

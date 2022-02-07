@@ -61,11 +61,11 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
     setShowMore(false);
     const selectedItems = selection.map(element => element.value);
     if (selectedItems.length === 0 || selectedItems[selectedItems.length -1] === "All Entities") {
+      setRelatedEntityTypeIds([]);
       setIsAllEntitiesSelected(true);
       setEntityNames(["All Entities"]);
       setCurrentBaseEntities(allBaseEntities);
       setBaseEntities([]);
-      setRelatedEntityTypeIds([]);
       if (props.activeKey.indexOf("related-entities") !== -1) { props.setActiveAccordionRelatedEntities("related-entities"); }
     } else {
       const clearSelection = selectedItems.filter(entity => entity !== "All Entities").map((entity => entity));

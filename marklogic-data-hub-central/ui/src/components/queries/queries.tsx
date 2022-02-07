@@ -82,7 +82,7 @@ const Query: React.FC<Props> = (props) => {
         description: queryDescription,
         query: {
           searchText: searchOptions.query,
-          entityTypeIds: searchOptions.baseEntities.length ? searchOptions.baseEntities : props.entities,
+          entityTypeIds: searchOptions.baseEntities?.length && searchOptions.baseEntities[0] !== "All Entities" ? searchOptions.baseEntities : props.entities,
           selectedFacets: facets,
         },
         propertiesToDisplay: searchOptions.selectedTableProperties,

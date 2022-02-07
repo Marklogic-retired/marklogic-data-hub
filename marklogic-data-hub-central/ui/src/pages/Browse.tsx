@@ -156,7 +156,7 @@ const Browse: React.FC<Props> = ({location}) => {
         "data": {
           "query": {
             "searchText": searchOptions.query,
-            "entityTypeIds": searchOptions.baseEntities && searchOptions.baseEntities.length ? searchOptions.baseEntities : allEntities,
+            "entityTypeIds": searchOptions.baseEntities && searchOptions.baseEntities.length && searchOptions.baseEntities[0] !== "All Entities" ? searchOptions.baseEntities : allEntities,
             "selectedFacets": searchOptions.selectedFacets,
             "relatedEntityTypeIds": searchOptions.relatedEntityTypeIds
           },
@@ -229,7 +229,7 @@ const Browse: React.FC<Props> = ({location}) => {
         data: {
           query: {
             searchText,
-            entityTypeIds: cardView ? [] : searchOptions.baseEntities && searchOptions.baseEntities.length ? searchOptions.baseEntities : allEntities,
+            entityTypeIds: cardView ? [] : searchOptions.baseEntities && searchOptions.baseEntities.length && searchOptions.baseEntities[0] !== "All Entities" ? searchOptions.baseEntities : allEntities,
             selectedFacets: searchOptions.selectedFacets,
             hideHubArtifacts: cardView ? hideDataHubArtifacts : true
           },
@@ -334,14 +334,16 @@ const Browse: React.FC<Props> = ({location}) => {
   }, [searchOptions, entities, user.error.type, hideDataHubArtifacts]);
 
   useEffect(() => {
-    let noBaseEntitiesSelected = Object.keys(searchOptions.baseEntities).length === 0;
-    let noRelatedEntities = Object.keys(searchOptions.relatedEntityTypeIds).length === 0;
-    if ((noBaseEntitiesSelected && noRelatedEntities) || !noBaseEntitiesSelected) {
-      getGraphSearchResult(entities);
+    if (searchOptions.baseEntities) {
+      let noBaseEntitiesSelected = Object.keys(searchOptions.baseEntities).length === 0;
+      let noRelatedEntities = Object.keys(searchOptions.relatedEntityTypeIds).length === 0;
+      if ((noBaseEntitiesSelected && noRelatedEntities) || !noBaseEntitiesSelected) {
+        getGraphSearchResult(entities);
+      }
+      return () => {
+        setGraphSearchData({});
+      };
     }
-    return () => {
-      setGraphSearchData({});
-    };
   }, [searchOptions.baseEntities, searchOptions.relatedEntityTypeIds, searchOptions.database, searchOptions.query, searchOptions.selectedFacets, entities, user.error.type, hideDataHubArtifacts]);
 
   useEffect(() => {
