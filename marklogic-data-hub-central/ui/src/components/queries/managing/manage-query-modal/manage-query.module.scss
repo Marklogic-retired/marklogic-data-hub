@@ -1,3 +1,5 @@
+@import "../../../../theme/HCVariables.scss";
+
 .title {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size :22px;
@@ -43,13 +45,9 @@
 }
 
 .modal1000w table thead tr th {
-    background-color: #e8e8e8 !important;
-}
-
-.modal1000w table thead tr th:hover {
-    background-color: #f5f5f5 !important;
+    background-color: $bg-header-table !important;
 }
 
 .modal1000w th:nth-child(4):hover, .modal1000w th:nth-child(5):hover, .modal1000w th:nth-child(6):hover {
-    background-color: #e8e8e8 !important;
+    background-color: $bg-header-table !important;
 }
