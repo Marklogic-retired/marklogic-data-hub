@@ -198,7 +198,7 @@ const CommonStepTooltips = {
       ),
   headers: 'A JSON object that represents additional metadata to add to the header section of the envelope of each record.',
   additionalCollections: 'The collection tags to add to the default tags assigned to the processed record.',
-  provGranularity: 'The level of detail logged for provenance. Choose *coarse* for the default level or *off* for no provenance logging.',
+  provGranularity: <>The level of detail logged for provenance. Choose <strong>coarse</strong> for the default level or <strong>off</strong> for no provenance logging.</>,
   validateEntity: 'Choose whether to validate each document against the entity type definition and how to handle documents with errors.',
   batchSize : 'The maximum number of items to process in a batch.',
   interceptors: 'Custom modules that perform additional processes after the core step processes are completed and before the results are saved.',
@@ -289,7 +289,7 @@ const MappingStepTooltips = {
   sourceQuery: 'The collection or CTS query that selects the source data to process in this configuration.',
   sourceDatabase: 'The database where the input data is read from. For mapping, the default is data-hub-STAGING.',
   targetDatabase: 'The database where to store the processed data. For mapping, the default is data-hub-FINAL.',
-  provGranularity: 'The level of detail logged for provenance. Choose *coarse* for the default level or *off* for no provenance logging.'
+  provGranularity: <>The level of detail logged for provenance. Choose <strong>coarse</strong> for the default level or <strong>off</strong> for no provenance logging.</>
 };
 
 const MappingDetailsTooltips = {
@@ -560,7 +560,7 @@ const AdvancedSettingsTooltips = {
       <span style={{fontFamily: "monospace"}}> execute</span>.</span>
       ),
   headers: 'A JSON object that represents additional metadata to add to the header section of the envelope of each record.',
-  provGranularity: 'The level of detail logged for provenance. Choose *coarse* for the default level or *off* for no provenance logging.',
+  provGranularity: <>The level of detail logged for provenance. Choose <strong>coarse</strong> for the default level or <strong>off</strong> for no provenance logging.</>,
   validateEntity: 'Choose whether to validate each document against the entity type definition and how to handle documents with errors.',
   sourceRecordScope: (
     <span>The scope of the source record you want to map to. Choose <strong>Instance Only</strong> to map to the source instance in your envelope. Choose <strong>Entire Record</strong> to map to any of the source fields in your envelope.</span>
@@ -625,7 +625,7 @@ const NewMapTooltips = {
 const AdvMapTooltips = {
   sourceDatabase: 'The database where the input data is read from. For mapping, the default is data-hub-STAGING.',
   targetDatabase: 'The database where to store the processed data. For mapping, the default is data-hub-FINAL.',
-  provGranularity: 'The level of detail logged for provenance. Choose *coarse* for the default level or *off* for no provenance logging.',
+  provGranularity: <>The level of detail logged for provenance. Choose <strong>coarse</strong> for the default level or <strong>off</strong> for no provenance logging.</>,
 
   /* TO BE DEPRECATED. Please use SecurityTooltips.missingPermission. */
   missingPermission: 'Contact your security administrator for access.'
