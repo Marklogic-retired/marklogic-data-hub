@@ -8,8 +8,8 @@
         vertical-align: middle;
 
         .hc-table_subTableHeader {
-            background: #e0e0e0 !important;
-            color: #333;
+            background: $bg-header-table-hover !important;
+            color: $text-color;
         }
     }
 
@@ -20,7 +20,7 @@
     .expand-cell-header {
         width: 50px;
         min-width: 50px;
-        background: #e8e8e8 !important;
+        background: $bg-header-table !important;
     }
     .selection-cell-header {
         padding: 16px 16px !important;
@@ -29,16 +29,16 @@
         text-align: center;
         width: 50px;
         min-width: 50px;
-        background: #e8e8e8 !important;
+        background: $bg-header-table !important;
 
         .hc-table_subTableHeader {
-            background: #e0e0e0 !important;
+            background: $bg-header-table-hover !important;
             color: #333;
         }
     }
     &.sub-table {
         .expand-cell-header, .selection-cell-header {
-            background: #e0e0e0 !important;
+            background: $bg-header-table !important;
         }
         &.side-panel th:nth-child(2),
         &.side-panel td:nth-child(2) {
@@ -47,6 +47,7 @@
         &.side-panel .reset-expansion-style {
             background-color: initial !important;
         }
+        background-color: $bg-nested-table;
     }
     .expand-cell {
         vertical-align: middle !important;
@@ -105,18 +106,18 @@
                         border: none;
                         padding: 1px 7px;
                         box-shadow: none;
-                        background: #fff;
+                        background: $white;
                         margin-left: 0;
                         &:hover,
                         :focus {
-                            background: #fff;
+                            background: $white;
                         }
                     }
                     &.active {
                         margin-left: 0 !important;
                         .page-link {
                             border: 1px solid $primary;
-                            background: #fff;
+                            background: $white;
                             border-radius: 4px;
                             color: $text-color;
                         }
@@ -135,17 +136,16 @@
         }
     }
     .hc-table_row:hover {
-        background-color: #e9f7fe;
+        background-color: $background-hover;
     }
     .hc-table_row:not(:last-child) {
-        border-bottom: 1px solid #e8e8e8;
+        border-bottom: 1px solid $border-table-row;
     }
     .table-bordered {
-        border: 1px solid #e8e8e8;
+        border: 1px solid $border-table-row;
         border-top-left-radius: 4px;
     }
 }
-
 
 .mappingSettingRow {
   td {
@@ -161,7 +161,7 @@
         thead {
             tr {
                 th {
-                    background: $bg-clean !important;
+                    background: $bg-header-table !important;
                 }
             }
         }
@@ -174,10 +174,19 @@
         thead {
             tr {
                 th {
-                    background: $bg-clean !important;
+                    background: $bg-header-table !important;
                 }
             }
         }
+        thead th:hover {
+            background-color: $bg-header-table !important;
+        }
+        thead th:nth-child(2):hover, thead th:nth-child(3):hover, thead th:nth-child(5):hover, thead th:nth-child(6):hover {
+            background-color:$bg-header-table-hover !important;
+        }
+    }
+    thead {
+        vertical-align: middle !important;
     }
 }
 
@@ -188,9 +197,9 @@
         thead {
             tr {
                 th {
-                    background-color: $bg-clean !important;
+                    background-color: $bg-header-table !important;
                     &:hover {
-                        background-color: $bg-clean !important;
+                        background-color: $bg-header-table !important;
                     }
                 }
             }
@@ -233,20 +242,60 @@
     }
 }
 
+//To recover outside borders in explore table comment this style ".resultTableMain table" 
+//and uncomment styles inside ".resultTableMain"
+.resultTableMain table {
+        border: none !important;
+    }
 .resultTableMain {
+    thead {
+        border: none;
+    }
     th {
         white-space: nowrap;
     }
+    .sortable:hover {
+        background-color: $bg-header-table-hover !important;
+    }
+    tr {
+        border-top: none;
+        border-bottom: none;
+    }
     td {
         vertical-align: top !important;
+        border: none !important;
+        // border-bottom: 1px solid $border-table-row;
+        // border-right: 1px solid $border-table-row;
     }
     .nestedColumn {
         padding: 0 !important;
         vertical-align: top;
         & > div {
             padding: 16px 24px;
-            border-bottom: 1px solid #e8e8e8;
-            background-color: #fafafa;
+            border-bottom: 1px solid $border-table-row;
+            background-color: $background-light;
         }
+    }
+    .hc-table_row {
+        border-top: 1px solid $border-table-row;
+    }
+    //.table-bordered {
+        // border: 1px solid $border-table-row;
+        // border-top-left-radius: 4px;
+        // border-top-right-radius: 4px;
+        // border-top: none;
+        // border-right: none;
+    //}
+}
+
+tbody {
+    border-top: 1px solid $bg-header-table !important;
+}
+
+.divPropertyTable {
+    table thead th {
+        background-color: $bg-header-table !important;
+        pointer-events: none;
+        border: none;
     }
 }

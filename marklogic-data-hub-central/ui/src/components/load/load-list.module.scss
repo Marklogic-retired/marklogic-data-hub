@@ -16,9 +16,12 @@
 .loadTable {
     padding-top: 20px;
     & thead > tr > th {
-        color: #44499C;
-        background-color: #fafafa;
+        color: $th-color;
+        background-color: $bg-header-table !important;
       };
+    thead th:nth-child(6):hover {
+        pointer-events: none;
+    }
 }
 
 .editLoadConfig{

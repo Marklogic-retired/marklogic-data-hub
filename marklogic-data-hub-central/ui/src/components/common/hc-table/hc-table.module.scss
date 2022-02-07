@@ -15,20 +15,20 @@
         background-color: #f5f5f5 !important;
     }
     &.hasExpandedRow {
-        background-color: #e8e8e8 !important;
+        background-color: $bg-header-table !important;
         color: #333;
     }
     &.hasExpandedRowXML {
-      background-color: #e8e8e8 !important;
+      background-color: $bg-header-table !important;
       color: #333;
       // width: 185px !important;
     }
     &.subTableHeader {
-        background: #e0e0e0 !important;
+        background: $bg-header-table !important;
         color: #333;
     }
     &.childrenIndentHeader {
-        background: #e0e0e0;
+        background: $bg-header-table;
         color: #333;
     }
 }
@@ -75,7 +75,7 @@
     font-size: 12px;
 }
 .expandedRowWrapper {
-    background-color: #fbfbfb !important;
+    background-color: $bg-nested-table !important;
     padding-left: 9% !important;
 }
 .sidePanel {

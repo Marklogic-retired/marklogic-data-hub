@@ -13,7 +13,7 @@ interface Props {
 const PropertiesTab: React.FC<Props> = (props) => {
 
   return (
-    <div>
+    <div className={`divPropertyTable`}>
       <div><ModelingLegend/></div>
       <PropertyTable
         entityName={props.entityTypeData?.entityName}
