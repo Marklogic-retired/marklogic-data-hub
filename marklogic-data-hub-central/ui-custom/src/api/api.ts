@@ -135,9 +135,27 @@ export const getRecent = (opts) => {
   return personsSlice;
 };
 
-export const twizzlersLogin = async () => { 
+export const getProxy = async () => { 
   try {
-    const response = await axios.get("/api/explore/login");
+    const response = await axios.get("/api/explore/proxyAddress");
+    if (response && response.status === 200) {
+      console.log("getProxy response", response);
+      return response;
+    }
+  } catch (error) {
+    let message = error;
+    console.error("Error: getProxy", message);
+  }
+};
+
+export const getUserid = async (proxy) => { 
+  let config = {
+    headers: {
+      'x-forward': proxy
+    }
+  }
+  try {
+    const response = await axios.get("/api/explore/login", config);
     if (response && response.status === 200) {
       return response;
     }
@@ -147,7 +165,7 @@ export const twizzlersLogin = async () => {
   }
 };
 
-export const hcLogin = async (username, password, userid) => { 
+export const login = async (username, password, userid) => { 
   let config = {
     headers: {
       userid: userid ? userid : null
@@ -163,23 +181,6 @@ export const hcLogin = async (username, password, userid) => {
     }
   } catch (error) {
     let message = error;
-    console.error("Error: hcLogin", message);
-  }
-};
-
-export const hcGetSession = async (userid) => { 
-  let config = {
-    headers: {
-      userid: userid ? userid : null
-    }
-  }
-  try {
-    const response = await axios.get("/api/environment/systemInfo", config);
-    if (response && response.status === 200) {
-      return response;
-    }
-  } catch (error) {
-    let message = error;
-    console.error("Error: hcGetSession", message);
+    console.error("Error: login", message);
   }
 };

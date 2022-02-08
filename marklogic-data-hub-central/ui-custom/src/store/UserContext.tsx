@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { twizzlersLogin, hcLogin, hcGetSession } from "../api/api";
+import { getProxy, getUserid, login } from "../api/api";
 import { auth } from "../config/auth";
 interface UserContextInterface {
     userid: string;
-    handleTwizzlersLogin: any;
-    handleHCLogin: any;
-    handleHCGetSession: any;
+    proxy: string;
+    handleGetProxy: any;
+    handleGetUserid: any;
+    handleLogin: any;
 }
   
 const defaultState = {
     userid: "",
-    handleTwizzlersLogin: () => {},
-    handleHCLogin: () => {},
-    handleHCGetSession: () => {}
+    proxy: "",
+    handleGetProxy: () => {},
+    handleGetUserid: () => {},
+    handleLogin: () => {}
 };
 
 /**
@@ -28,14 +30,30 @@ export const UserContext = React.createContext<UserContextInterface>(defaultStat
 
 const UserProvider: React.FC = ({ children }) => {
 
+  const [proxy, setProxy] = useState<string>("");
   const [userid, setUserid] = useState<string>("");
-  const [authorities, setAuthorities] = useState<any>([]);
 
-  const handleTwizzlersLogin = () => {
-    let sr = twizzlersLogin();
+  const handleGetProxy = () => {
+    let sr = getProxy();
     sr.then(result => {
         if (result && result.data) {
-            console.log("handleTwizzlersLogin result", result);
+            setProxy(result.data);
+        }
+    }).catch(error => {
+        console.error(error);
+    })
+  };
+
+  useEffect(() => {
+    if (proxy) {
+      handleGetUserid();
+    }
+  }, [proxy]);
+
+  const handleGetUserid = () => {
+    let sr = getUserid(proxy);
+    sr.then(result => {
+        if (result && result.data) {
             setUserid(result.data);
         }
     }).catch(error => {
@@ -45,38 +63,14 @@ const UserProvider: React.FC = ({ children }) => {
 
   useEffect(() => {
     if (userid) {
-      console.log("useEffect userid", userid);
-      handleHCLogin();
+      handleLogin();
     }
   }, [userid]);
 
-  const handleHCLogin = () => {
-    let sr = hcLogin(auth.hubCentral.username, auth.hubCentral.password, userid);
-    sr.then(result => {
-        if (result && result.data) {
-            console.log("handleHCLogin result", result);
-            localStorage.setItem("loginResp", JSON.stringify(result.data));
-            setAuthorities(result.data.authorities);
-        }
-    }).catch(error => {
-        console.error(error);
-    })
-  };
-
-  useEffect(() => {
-    if (authorities.length > 0) {
-      console.log("useEffect authorities", authorities);
-      handleHCGetSession();
-    }
-  }, [authorities]);
-
-  const handleHCGetSession = () => {
-    let sr = hcGetSession(userid);
-    sr.then(result => {
-        if (result && result.data) {
-            console.log("handleHCGetSession result", result);
-        }
-    }).catch(error => {
+  const handleLogin = () => {
+    let sr = login(auth.hubCentral.username, auth.hubCentral.password, userid);
+    sr.then(() => {})
+    .catch(error => {
         console.error(error);
     })
   };
@@ -85,9 +79,10 @@ const UserProvider: React.FC = ({ children }) => {
     <UserContext.Provider
       value={{
         userid,
-        handleTwizzlersLogin,
-        handleHCLogin,
-        handleHCGetSession
+        proxy,
+        handleGetProxy,
+        handleGetUserid,
+        handleLogin
       }}
     >
       {children}
