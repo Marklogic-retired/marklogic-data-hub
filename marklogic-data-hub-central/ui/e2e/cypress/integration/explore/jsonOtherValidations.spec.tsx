@@ -103,6 +103,7 @@ describe("Verify numeric/date facet can be applied", () => {
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Person");
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.PERSON);
+    browsePage.clickMoreLink("fname");
     browsePage.getFacetItemCheckbox("fname", "Alice").click();
     browsePage.getGreySelectedFacets("Alice").should("exist");
     toolbar.getExploreToolbarIcon().click();
@@ -114,6 +115,7 @@ describe("Verify numeric/date facet can be applied", () => {
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Person");
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.PERSON);
+    browsePage.clickMoreLink("fname");
     browsePage.getFacetItemCheckbox("fname", "Alice").click();
     browsePage.getGreySelectedFacets("Alice").should("exist");
     toolbar.getRunToolbarIcon().click();

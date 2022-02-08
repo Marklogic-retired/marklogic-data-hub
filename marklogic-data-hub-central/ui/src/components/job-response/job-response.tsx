@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useContext} from "react";
 import {HCButton} from "@components/common";
 import {Modal, Accordion} from "react-bootstrap";
+import {SearchContext} from "../../util/search-context";
 import {dateConverter, renderDuration, durationFromDateTime} from "../../util/date-conversion";
 import styles from "./job-response.module.scss";
 import axios from "axios";
@@ -31,7 +32,7 @@ const JobResponse: React.FC<Props> = (props) => {
   const [lastSuccessfulStep, setLastSuccessfulStep]  = useState<any>(null);
   const [isLoading, setIsLoading]  = useState<boolean>(true);
   const {handleError} = useContext(UserContext);
-
+  const {setLatestDatabase, setLatestJobFacet} = useContext(SearchContext);
   const history: any = useHistory();
 
   useEffect(() => {
@@ -162,26 +163,16 @@ const JobResponse: React.FC<Props> = (props) => {
   const goToExplorer = async (entityName, targetDatabase, jobId, stepType, stepName) => {
     if (stepType === "mapping") {
       let mapArtifacts = await getMappingArtifactByStepName(stepName);
-      history.push(
-        {pathname: "/tiles/explore",
-          state: {entityName: mapArtifacts?.relatedEntityMappings?.length > 0 ? "All Entities" : entityName, targetDatabase: targetDatabase, jobId: jobId}
-        });
+      let entityView = mapArtifacts?.relatedEntityMappings?.length > 0 ? "All Entities" : entityName;
+      setLatestJobFacet(jobId, entityView, targetDatabase);
     } else if (stepType === "merging") {
-      history.push({
-        pathname: "/tiles/explore",
-        state: {entityName: entityName, targetDatabase: targetDatabase, jobId: jobId, Collection: "sm-"+entityName+"-merged"}
-      });
+      setLatestJobFacet(jobId, entityName, targetDatabase, `sm-${entityName}-merged`);
     } else if (entityName) {
-      history.push({
-        pathname: "/tiles/explore",
-        state: {targetDatabase: targetDatabase, entityName: entityName, jobId: jobId}
-      });
+      setLatestJobFacet(jobId, entityName, targetDatabase);
     } else {
-      history.push({
-        pathname: "/tiles/explore",
-        state: {targetDatabase: targetDatabase, jobId: jobId}
-      });
+      setLatestDatabase(targetDatabase, jobId);
     }
+    history.push({pathname: "/tiles/explore"});
   };
 
   const renderExploreButton = (stepResponse) => {

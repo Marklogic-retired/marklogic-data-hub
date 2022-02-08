@@ -102,7 +102,6 @@ describe("Test '/Explore' left sidebar", () => {
     // browsePage.getTableView().click();
     cy.log(`**Selecting 'Customer' base entity**`);
     cy.wait(8000);
-    entitiesSidebar.showMoreEntities().click();
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
 
     cy.log("**Checking facet is selected**");

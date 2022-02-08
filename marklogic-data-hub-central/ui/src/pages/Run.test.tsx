@@ -272,8 +272,7 @@ describe("Verify step running", () => {
     fireEvent.click(exploreButton);
 
     await wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles/explore",
-        "state": {"targetDatabase": "staging", "jobId": "e4590649-8c4b-419c-b6a1-473069186592"}});
+      expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles/explore"});
     });
 
     //Run mapping step
@@ -365,8 +364,7 @@ describe("Verify step running", () => {
     fireEvent.click(exploreButton);
 
     await wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles/explore",
-        "state": {"targetDatabase": "staging", "jobId": "e4590649-8c4b-419c-b6a1-473069186592"}});
+      expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles/explore"});
     });
 
     //Run mapping step
@@ -481,8 +479,7 @@ describe("Verify step display", () => {
     let exploreButton = await(waitForElement(() => getByText("Explore Curated Data")));
     fireEvent.click(exploreButton);
     await wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles/explore",
-        "state": {"entityName": "Customer", "jobId": "350da405-c1e9-4fa7-8269-d9aefe3b4b9a", "targetDatabase": "final"}});
+      expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles/explore"});
     });
   });
 
@@ -794,8 +791,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
       fireEvent.click(exploreButton);
     }
     await wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles/explore",
-        "state": {"entityName": "Customer", "targetDatabase": "final", "jobId": "350da405-c1e9-4fa7-8269-d9aefe3b4b9a"}});
+      expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles/explore"});
     });
     //TODO- E2E test to check if the explore tile is loaded or not.*/
   });

@@ -44,9 +44,8 @@ const Query: React.FC<Props> = (props) => {
     searchOptions,
     applySaveQuery,
     clearAllGreyFacets,
-    setEntity,
     setNextEntity,
-    setBaseEntities,
+    setEntityTypeIds,
     setSavedQueries,
     savedQueries
   } = useContext(SearchContext);
@@ -82,7 +81,7 @@ const Query: React.FC<Props> = (props) => {
         description: queryDescription,
         query: {
           searchText: searchOptions.query,
-          entityTypeIds: searchOptions.baseEntities?.length && searchOptions.baseEntities[0] !== "All Entities" ? searchOptions.baseEntities : props.entities,
+          entityTypeIds: searchOptions.entityTypeIds.length ? searchOptions.entityTypeIds : props.entities,
           selectedFacets: facets,
         },
         propertiesToDisplay: searchOptions.selectedTableProperties,
@@ -259,7 +258,7 @@ const Query: React.FC<Props> = (props) => {
 
   const isNewQueryChanged = () => {
     if (currentQuery && Object.keys(currentQuery).length === 0) {
-      if (props.isSavedQueryUser && searchOptions.baseEntities.length > 0 &&
+      if (props.isSavedQueryUser && searchOptions.entityTypeIds.length > 0 &&
         (props.selectedFacets.length > 0 || searchOptions.query.length > 0
           || searchOptions.sortOrder.length > 0 || props.isColumnSelectorTouched)
         && searchOptions.selectedQuery === "select a query") {
@@ -286,7 +285,7 @@ const Query: React.FC<Props> = (props) => {
 
   useEffect(() => {
     getSaveQueries();
-  }, [searchOptions.baseEntities]);
+  }, [searchOptions.entityTypeIds]);
 
   useEffect(() => {
     props.setQueries(savedQueries);
@@ -363,12 +362,12 @@ const Query: React.FC<Props> = (props) => {
   };
 
   const setCurrentQueryOnEntityChange = () => {
-    if (searchOptions.nextEntityType === "All Data") {
-      props.setCardView(true);
-    } else {
-      props.setCardView(false);
-    }
-    setEntity(searchOptions.nextEntityType);
+    // if (searchOptions.nextEntityType === "All Data") {
+    //   props.setCardView(true);
+    // } else {
+    //   props.setCardView(false);
+    // }
+    // setEntity();
     toggleSaveNewIcon(false);
     props.setColumnSelectorTouched(false);
     setCurrentQuery({});
@@ -413,7 +412,7 @@ const Query: React.FC<Props> = (props) => {
   const resetIconClicked = () => {
     const resetQueryEditedConfirmation = props.isSavedQueryUser && props.queries.length > 0
       && searchOptions.selectedQuery !== "select a query" && isSaveQueryChanged();
-    const resetQueryNewConfirmation = props.isSavedQueryUser && props.queries.length > 0 && searchOptions.baseEntities.length > 0 &&
+    const resetQueryNewConfirmation = props.isSavedQueryUser && props.queries.length > 0 && searchOptions.entityTypeIds.length > 0 &&
       (props.selectedFacets.length > 0 || searchOptions.query.length > 0
         || searchOptions.sortOrder.length > 0)
       && searchOptions.selectedQuery === "select a query";
@@ -432,7 +431,7 @@ const Query: React.FC<Props> = (props) => {
         database: "final",
       };
       applySaveQuery(options);
-      setBaseEntities([]);
+      setEntityTypeIds([]);
       clearAllGreyFacets();
     }
   };
@@ -488,7 +487,7 @@ const Query: React.FC<Props> = (props) => {
             <div className={styles.iconBar}>
               {(props.selectedFacets.length > 0 || searchOptions.query
                 || props.isColumnSelectorTouched || searchOptions.sortOrder.length > 0) &&
-                showSaveNewIcon && searchOptions.baseEntities?.length === 1 && searchOptions.selectedQuery === "select a query" &&
+                showSaveNewIcon && searchOptions.entityTypeIds?.length === 1 && searchOptions.selectedQuery === "select a query" &&
                 <div>
                   <HCTooltip text={props.isSavedQueryUser ? "Save the current query" : "Save Query: Contact your security administrator to get the roles and permissions to access this functionality"} id="save-current-query-tooltip" placement="top">
                     <i><FontAwesomeIcon

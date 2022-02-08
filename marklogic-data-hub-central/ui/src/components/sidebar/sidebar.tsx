@@ -155,15 +155,15 @@ const Sidebar: React.FC<Props> = (props) => {
       if (selectedHubFacets.length) {
         initializeFacetPreferences();
       } else {
-        searchOptions.baseEntities?.length && activeKey.includes("related-entities") ?
+        searchOptions.entityTypeIds?.length && activeKey.includes("related-entities") ?
           setActiveKey(["database", "hubProperties", "baseEntities", "related-entities"])
           : setActiveKey(["database", "hubProperties", "baseEntities"]);
       }
 
       let entityFacets: any[] = [];
-      if (searchOptions.baseEntities?.length) {
-        let newEntityFacets = parsedFacets.filter(facet => facet.facetName.split(".")[0] ===  searchOptions.baseEntities[0]);
-        const entityDef = props.entityDefArray.find(entity => entity.name ===  searchOptions.baseEntities[0]);
+      if (searchOptions.entityTypeIds?.length) {
+        let newEntityFacets = parsedFacets.filter(facet => facet.facetName.split(".")[0] === searchOptions.entityTypeIds[0]);
+        const entityDef = props.entityDefArray.find(entity => entity.name === searchOptions.entityTypeIds[0]);
 
         if (newEntityFacets) {
           for (let i in newEntityFacets) {
@@ -219,7 +219,7 @@ const Sidebar: React.FC<Props> = (props) => {
         setDatePickerValue([null, null]);
       }
     }
-  }, [searchOptions.baseEntities, props.facets]);
+  }, [searchOptions.entityTypeIds, props.facets]);
 
 
   useEffect(() => {

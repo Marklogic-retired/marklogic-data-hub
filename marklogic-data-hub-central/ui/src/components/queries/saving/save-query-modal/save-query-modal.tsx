@@ -95,7 +95,7 @@ const SaveQueryModal: React.FC<Props> = (props) => {
         applySaveQuery(options);
       }
       props.setColumnSelectorTouched(false);
-      props.existingQueryYesClicked && setEntity(searchOptions.nextEntityType);
+      props.existingQueryYesClicked && setEntity();
     } catch (error) {
       if (error.response.status === 400) {
         if (error.response.data.hasOwnProperty("message")) {

@@ -4,34 +4,32 @@ import "@testing-library/jest-dom/extend-expect";
 import {MemoryRouter} from "react-router-dom";
 import Browse from "./Browse";
 import {SearchContext} from "../util/search-context";
-import userEvent from "@testing-library/user-event";
 import axiosMock from "axios";
-import {act} from "react-dom/test-utils";
-import {getHubCentralConfig} from "../api/modeling";
-import {mockHubCentralConfig} from "../../src/assets/mock-data/modeling/modeling";
 import {exploreModelResponse} from "../../src/assets/mock-data/explore/model-response";
 
 jest.mock("axios");
 jest.setTimeout(30000);
 jest.mock("../api/modeling");
-const mockGetHubCentralConfig = getHubCentralConfig as jest.Mock;
 
 describe("Explorer Browse page tests ", () => {
 
   const defaultSearchOptions = {
     query: "",
-    entityTypeIds: [],
+    entityTypeIds: ["Customer"],
     relatedEntityTypeIds: [],
-    nextEntityType: [],
+    nextEntityType: "",
+    baseEntities: [],
     start: 1,
     pageNumber: 1,
     pageLength: 20,
     pageSize: 20,
     selectedFacets: {},
     maxRowsPerPage: 100,
+    sidebarQuery: "Select a saved query",
     selectedQuery: "select a query",
     selectedTableProperties: [],
     view: null,
+    tileId: "explore",
     sortOrder: [],
     database: "final",
     datasource: "entities"
@@ -95,33 +93,4 @@ describe("Explorer Browse page tests ", () => {
     expect(document.querySelector("#switch-view-table")).toHaveStyle("color: rgb(127, 134, 181");
   });
 
-  test("can close entity icon sidebar", async () => {
-    mockGetHubCentralConfig.mockResolvedValueOnce({status: 200, data: mockHubCentralConfig});
-
-    let getByLabelText;
-    let queryByText;
-    await act(async () => {
-      const result = render(<MemoryRouter>
-        <SearchContext.Provider value={{
-          searchOptions: defaultSearchOptions,
-          greyedOptions: defaultSearchOptions,
-          setRelatedEntityTypeIds: jest.fn(),
-          setEntity: jest.fn(),
-          applySaveQuery: jest.fn()
-        }}>
-          <Browse />
-        </SearchContext.Provider></MemoryRouter>);
-
-      getByLabelText = result.getByLabelText;
-      queryByText = result.queryByText;
-
-    });
-    expect(axiosMock.get).toHaveBeenCalledWith("/api/models");
-    const baseEntity = getByLabelText("base-entities-Customer");
-    userEvent.click(baseEntity);
-    expect(getByLabelText("specif-sidebar-Customer")).toBeInTheDocument();
-    const close = getByLabelText("base-entity-icons-list-close");
-    userEvent.click(close);
-    expect(queryByText("base-entities-Customer")).toBeNull();
-  });
 });

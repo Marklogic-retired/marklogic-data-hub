@@ -5,8 +5,30 @@ import ResultsTabularView from "./results-tabular-view";
 import {BrowserRouter as Router} from "react-router-dom";
 import {validateTableRow} from "../../util/test-utils";
 import moment from "moment";
+import {SearchContext} from "../../util/search-context";
 
 describe("Results Table view component", () => {
+  const defaultSearchOptions = {
+    query: "",
+    entityTypeIds: [],
+    baseEntities: [],
+    relatedEntityTypeIds: [],
+    nextEntityType: "",
+    start: 1,
+    pageNumber: 1,
+    pageLength: 20,
+    pageSize: 20,
+    selectedFacets: {},
+    maxRowsPerPage: 100,
+    sidebarQuery: "Select a saved query",
+    selectedQuery: "select a query",
+    selectedTableProperties: [],
+    view: null,
+    tileId: "",
+    sortOrder: [],
+    database: "final",
+    datasource: "entities",
+  };
 
   // TODO DHFPROD-7711 skipping failing tests to enable component replacement
   test.skip("Results table with data renders", async () => {
@@ -52,9 +74,16 @@ describe("Results Table view component", () => {
     await(waitForElement(() => (getByText("Show the complete JSON"))));
   });
 
-  test("Result table with no data renders", () => {
+  test("Result table with no data renders", async () => {
+
     const {getByText} = render(
-      <Router>
+      <SearchContext.Provider value={{
+        searchOptions: defaultSearchOptions,
+        greyedOptions: defaultSearchOptions,
+        setRelatedEntityTypeIds: jest.fn(),
+        setEntity: jest.fn(),
+        applySaveQuery: jest.fn()
+      }}>
         <ResultsTabularView
           data={[]}
           entityPropertyDefinitions={[]}
@@ -64,7 +93,7 @@ describe("Results Table view component", () => {
           hasStructured={false}
           selectedEntities={[]}
         />
-      </Router>
+      </SearchContext.Provider>
     );
     // Check for Empty Table
     expect(getByText(/No Data/i)).toBeInTheDocument();
@@ -100,17 +129,25 @@ describe("Results Table view component", () => {
 
   test("Results table with data renders when All Entities option is selected", async () => {
     const {getByText, getByTestId} = render(
-      <Router>
-        <ResultsTabularView
-          data={entitySearchAllEntities.results}
-          entityPropertyDefinitions={[]}
-          selectedPropertyDefinitions={[]}
-          entityDefArray={entityDefArray}
-          columns={[]}
-          hasStructured={false}
-          selectedEntities={[]}
-        />
-      </Router>
+      <SearchContext.Provider value={{
+        searchOptions: defaultSearchOptions,
+        greyedOptions: defaultSearchOptions,
+        setRelatedEntityTypeIds: jest.fn(),
+        setEntity: jest.fn(),
+        applySaveQuery: jest.fn()
+      }}>
+        <Router>
+          <ResultsTabularView
+            data={entitySearchAllEntities.results}
+            entityPropertyDefinitions={[]}
+            selectedPropertyDefinitions={[]}
+            entityDefArray={entityDefArray}
+            columns={[]}
+            hasStructured={false}
+            selectedEntities={["Customer", "Order"]}
+          />
+        </Router>
+      </SearchContext.Provider>
     );
 
     // Check table column headers are rendered
