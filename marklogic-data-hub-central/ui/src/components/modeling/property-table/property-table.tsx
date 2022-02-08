@@ -135,7 +135,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     {
       text: "Property Name",
       dataField: "propertyName",
-      width: "20%",
+      width: props.sidePanelView ? "60%" : "20%",
       headerFormatter: () => <span aria-label="propertyName-header">Property Name</span>,
       formatter: (text, record) => {
         let renderText = text;
@@ -184,7 +184,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     {
       text: "Type",
       dataField: "type",
-      width: "10%",
+      width: props.sidePanelView ? "20%" : "10%",
       headerFormatter: () => <span aria-label="type-header">Type</span>,
       formatter: (text, record) => {
         let renderText = text;

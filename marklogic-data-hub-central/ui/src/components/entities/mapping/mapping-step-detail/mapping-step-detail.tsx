@@ -882,14 +882,14 @@ const MappingStepDetail: React.FC = () => {
     togglePopover();
   };
 
-  const getRenderOutput = (textToSearchInto, valueToDisplay, columnName, searchedCol, searchTxt, rowNum) => {
-    if (searchedCol === columnName && rowNum !== 0 && filterActive) {
+  const getRenderOutput = (textToSearchInto, valueToDisplay, columnName, rowNum) => {
+    if (searchedSourceColumn === columnName && rowNum !== 0 && filterActive) {
       if (sourceFormat === "xml" && rowNum === 1) {
         return <div className={styles.filteredXMLHeader}>
           {/* <span className={styles.tableExpandIcon}>{expandTableIcon}</span> */}
           <Highlighter
             highlightClassName={styles.highlightStyle}
-            searchWords={[searchTxt]}
+            searchWords={[searchSourceText]}
             autoEscape
             textToHighlight={textToSearchInto}
           />
@@ -897,7 +897,7 @@ const MappingStepDetail: React.FC = () => {
       } else {
         return <Highlighter
           highlightClassName={styles.highlightStyle}
-          searchWords={[searchTxt]}
+          searchWords={[searchSourceText]}
           autoEscape
           textToHighlight={textToSearchInto}
         />;
@@ -1004,16 +1004,25 @@ const MappingStepDetail: React.FC = () => {
   const headerColumns = [
     {
       text: "Name",
-      headerFormatter: () => <div className={sourceFormat === "xml" ? styles.nameHeaderXML : styles.nameHeader }><span data-testid="sourceTableKey" className={sourceFormat === "xml" ? styles.nameHeaderTextXML : styles.nameHeaderText}>Name</span><OverlayTrigger placement="bottom" show={popoverVisibility} overlay={renderFilter()} trigger="click"><i><FontAwesomeIcon className={styles.filterIcon} data-testid={`filterIcon-srcName`} icon={faSearch} size="lg" onClick={() => togglePopover()}/></i></OverlayTrigger></div>,
+      headerFormatter: () => <div className={"d-flex justify-content-between align-items-center"}>
+        <span data-testid="sourceTableKey">
+          Name
+        </span>
+        <OverlayTrigger placement="bottom" show={popoverVisibility} overlay={renderFilter()} trigger="click">
+          <i>
+            <FontAwesomeIcon className={filterActive || popoverVisibility ? styles.filterIconActive : styles.filterIcon} data-testid={`filterIcon-srcName`} icon={faSearch} size="lg" onClick={() => togglePopover()}/>
+          </i>
+        </OverlayTrigger>
+      </div>,
       dataField: "key",
       key: "rowKey",
       // sorter: (a: any, b: any) => a.key?.localeCompare(b.key),
-      width: sourceFormat === "xml" ? "55%" : 185,
+      width: "55%",
       formatter: (text, row, index, extraData) => {
         let textToSearchInto = text?.split(":").length > 1 ? text?.split(":")[0] + ": " + text?.split(":")[1] : text;
         let valueToDisplay = sourceFormat === "xml" && row.rowKey === 1 ? <div>
           <span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><HCTooltip text={text?.split(":")[0]+" = \""+namespaces[text?.split(":")[0]]+"\""} id="xml-source-name-tooltip" placement="top"><span className={styles.namespace}>{text?.split(":")[0]+": "}</span></HCTooltip><span>{text?.split(":")[1]}</span></span> : text}</span></div>: <span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><HCTooltip text={text?.split(":")[0]+" = \""+namespaces[text?.split(":")[0]]+"\""} id="source-name-tooltip" placement="top"><span className={styles.namespace}>{text?.split(":")[0]+": "}</span></HCTooltip><span>{text?.split(":")[1]}</span></span> : text}</span>;
-        return getRenderOutput(textToSearchInto, valueToDisplay, "key", searchedSourceColumn, searchSourceText, row.rowKey);
+        return getRenderOutput(textToSearchInto, valueToDisplay, "key", row.rowKey);
       },
       formatExtraData: {filterActive}
     },
@@ -1024,7 +1033,7 @@ const MappingStepDetail: React.FC = () => {
       key: "val",
       // ellipsis: true,
       sorter: (a: any, b: any) => a.val?.localeCompare(b.val),
-      width: sourceFormat === "xml" ? "45%" : 160,
+      width: "45%",
       formatter: (text, row) => (<div data-testid={row.key + "-srcValue"} className={styles.sourceValue}>{(text || text === "") ? getTextforSourceValue(text, row) : ""}</div>)
     }
   ];
@@ -1032,16 +1041,45 @@ const MappingStepDetail: React.FC = () => {
   const lowerXMLColumns = [
     {
       text: "Name",
-      headerFormatter: () => <div className={styles.nameHeader}><span data-testid="sourceTableKey" className={styles.nameHeaderText}>Name</span></div>,
+      headerFormatter: () => <div className={"d-flex justify-content-between align-items-center"}>
+        <span data-testid="sourceTableKey" className={styles.nameHeaderText}>
+          Name
+        </span>
+      </div>,
       dataField: "key",
       key: "rowKey",
-      width: 185,
+      width: "55%",
       formatter: (text, row, index, extraData) => {
-        let textToSearchInto = text?.split(":").length > 1 ? text?.split(":")[0] + ": " + text?.split(":")[1] : text;
-        let valueToDisplay = sourceFormat === "xml" && row.rowKey !== 1 ? <div>
-          {firstLevelKeysXML.includes(row.rowKey) ? row.children ? <span onClick={() => toggleSourceRowExpanded(row, "", "rowKey")} className={styles.tableExpandIcon}>{!extraData.sourceExpandedKeys?.includes(row.rowKey) ? <span><ChevronRight/></span> : <span><ChevronDown/></span>}</span> : <span className={styles.noTableExpandIcon}>{null}</span>: null}
-          <span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><HCTooltip text={text?.split(":")[0]+" = \""+namespaces[text?.split(":")[0]]+"\""} id="xml-source-name-tooltip" placement="top"><span className={styles.namespace}>{text?.split(":")[0]+": "}</span></HCTooltip><span>{text?.split(":")[1]}</span></span> : text}</span></div>: <span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><HCTooltip text={text?.split(":")[0]+" = \""+namespaces[text?.split(":")[0]]+"\""} id="source-name-tooltip" placement="top"><span className={styles.namespace}>{text?.split(":")[0]+": "}</span></HCTooltip><span>{text?.split(":")[1]}</span></span> : text}</span>;
-        return getRenderOutput(textToSearchInto, valueToDisplay, "key", searchedSourceColumn, searchSourceText, row.rowKey);
+        let textHaveTwoDotsSeparator: boolean = text?.split(":").length > 1;
+        let renderText = (textToSearchInto, textToHighlight) => getRenderOutput(textToSearchInto, textToHighlight, "key", row.rowKey);
+        return <div>
+          {sourceFormat === "xml" && row.rowKey !== 1 && firstLevelKeysXML.includes(row.rowKey) ?
+            row.children ?
+              <span onClick={() => toggleSourceRowExpanded(row, "", "rowKey")} className={styles.tableExpandIcon}>
+                {!extraData.sourceExpandedKeys?.includes(row.rowKey) ?
+                  <span><ChevronRight/></span>
+                  : <span><ChevronDown/></span>
+                }
+              </span>
+              : <span className={styles.noTableExpandIcon}>{null}</span>
+            : null
+          }
+          <span className={styles.sourceName}>
+            {textHaveTwoDotsSeparator ?
+              <span>
+                <HCTooltip text={text?.split(":")[0]+" = \""+namespaces[text?.split(":")[0]]+"\""} id={sourceFormat === "xml" && row.rowKey !== 1 ? "xml-source-name-tooltip" : "source-name-tooltip"} placement="top">
+                  <span className={styles.namespace}>
+                    {renderText(text?.split(":")[0]+": ", text?.split(":")[0]+": ")}
+                  </span>
+                </HCTooltip>
+                <span>
+                  {renderText(text?.split(":")[1], text?.split(":")[1])}
+                </span>
+              </span>
+              : renderText(text, text)
+            }
+          </span>
+        </div>;
       },
       formatExtraData: {sourceExpandedKeys, filterActive}
     },
@@ -1052,7 +1090,7 @@ const MappingStepDetail: React.FC = () => {
       key: "val",
       // ellipsis: true,
       sorter: (a: any, b: any) => a.val?.localeCompare(b.val),
-      width: 160,
+      width: "45%",
       formatter: (text, row) => (<div data-testid={row.key + "-srcValue"} className={styles.sourceValue}>{(text || text === "") ? getTextforSourceValue(text, row) : ""}</div>)
     }
   ];
@@ -1452,12 +1490,11 @@ const MappingStepDetail: React.FC = () => {
           <span className={styles.stepSettingsLabel}>Step Settings</span>
         </div>
         <span className={styles.clearTestIcons} id="ClearTestButtons">
-          <HCButton id="Clear-btn" mat-raised-button="true" variant="outline-light" disabled={emptyData} onClick={() => onClear()}>
-                                Clear
+          <HCButton id="Clear-btn" mat-raised-button="true" variant="outline-light" disabled={emptyData} onClick={() => onClear()} className={"me-2"}>
+            Clear
           </HCButton>
-                        &nbsp;&nbsp;
           <HCButton className={styles.btn_test} id="Test-btn" mat-raised-button="true" variant="primary" disabled={emptyData || mapExpTouched} onClick={() => getMapValidationResp(sourceURI)}>
-                                Test
+            Test
           </HCButton>
         </span>
         <div className={styles.legendContainer}><ModelingLegend/></div>
@@ -1484,7 +1521,7 @@ const MappingStepDetail: React.FC = () => {
               id="srcContainer"
               data-testid="srcContainer"
               className={styles.sourceContainer}>
-              <div id="srcDetails" data-testid="srcDetails" className={styles.sourceDetails}>
+              <div id="srcDetails" data-testid="srcDetails">
                 <div className={styles.sourceTitle}
                 ><span className={styles.sourceDataIcon}></span><strong>Source Data</strong>
                 </div>
@@ -1524,13 +1561,15 @@ const MappingStepDetail: React.FC = () => {
                     </div>
                     :
                     <div id="dataPresent">
-                      <br/><br/><br/>
                       {!isLoading  && !emptyData  && interceptorExecuted && interceptorExecutionError === "" ?
                         <HCAlert
                           className={styles.interceptorSuccessAlert}
                           showIcon={true}
                           variant="info"
-                        ><span aria-label="interceptorMessage">{MappingStepMessages.interceptorMessage}</span></HCAlert> : null}
+                        >
+                          <span aria-label="interceptorMessage">{MappingStepMessages.interceptorMessage}</span>
+                        </HCAlert> : null
+                      }
                       <div className={styles.sourceButtons}>
                         <span className={styles.navigationButtons}>{navigationButtons}</span>
                         <span className={styles.sourceCollapseButtons}><ExpandCollapse handleSelection={(id) => handleSourceExpandCollapse(id)} currentSelection={""} /></span>
@@ -1551,6 +1590,7 @@ const MappingStepDetail: React.FC = () => {
                                 expandedRowKeys={upperSrcExpandedKeys}
                                 className={styles.sourceTable}
                                 showHeader={true}
+                                component={"mapping-step-detail"}
                                 keyUtil={"rowKey"}
                                 baseIndent={0}
                                 expandedRowRender={(row) => {
@@ -1573,6 +1613,7 @@ const MappingStepDetail: React.FC = () => {
                                   className={styles.sourceTable}
                                   showExpandIndicator={true}
                                   showHeader={false}
+                                  component={"mapping-step-detail"}
                                   childrenIndent={true}
                                   subTableHeader={true}
                                   nestedParams={{headerColumns: lowerXMLColumns, iconCellList: ["Name", "Value"], state: [sourceExpandedKeys, setSourceExpandedKeys]}}
@@ -1594,6 +1635,7 @@ const MappingStepDetail: React.FC = () => {
                               expandedRowKeys={sourceExpandedKeys}
                               className={styles.sourceTable}
                               showHeader={true}
+                              component={"mapping-step-detail"}
                               keyUtil={"rowKey"}
                               showExpandIndicator={true}
                               childrenIndent={true}
