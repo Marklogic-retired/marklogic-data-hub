@@ -2,6 +2,9 @@ package com.marklogic.hub.central.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.document.JSONDocumentManager;
+import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.central.schemas.EntitySearchResponseSchema;
 import com.marklogic.hub.dataservices.ExploreDataService;
 import io.swagger.annotations.ApiOperation;
@@ -42,7 +45,17 @@ public class ExploreDataController extends BaseController {
         return environment.getProperty("proxyAddress");
     }
 
+    @RequestMapping(value = "/uiconfig", method = RequestMethod.GET)
+    @ResponseBody
+    public JsonNode getUIConfig() {
+        DatabaseClient client = getHubClient().getCustomDbModulesClient();
+        JSONDocumentManager docMgr = client.newJSONDocumentManager();
+        JacksonHandle handleJSON = new JacksonHandle();
+        docMgr.read("/ui-config/config.json", handleJSON);
+        return handleJSON.get();
+    }
+
     private ExploreDataService newExploreDataService() {
-        return ExploreDataService.on(getHubClient().getNewClient());
+        return ExploreDataService.on(getHubClient().getCustomDbClient());
     }
 }
