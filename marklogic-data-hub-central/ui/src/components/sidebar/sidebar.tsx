@@ -16,6 +16,7 @@ import {UserContext} from "../../util/user-context";
 import reactSelectThemeConfig from "../../config/react-select-theme.config";
 import BaseEntitiesFacet from "../base-entities-facet/base-entities-facet";
 import RelatedEntitiesFacet from "../related-entities-facet/related-entities-facet";
+import {ExploreGraphViewToolTips} from "../../config/tooltips.config";
 
 const tooltips = tooltipsConfig.browseDocuments;
 const {exploreSidebar} = tooltipsConfig;
@@ -532,7 +533,7 @@ const Sidebar: React.FC<Props> = (props) => {
 
 
   const panelTitle = (title, tooltipTitle) => {
-    let disabled = !props.graphView && tooltipTitle === exploreSidebar.relatedEntities;
+    let disabled = !props.graphView && tooltipTitle === ExploreGraphViewToolTips.relatedEntities;
     return (
       <div className={styles.panelTitle}>
         {title}
@@ -636,7 +637,7 @@ const Sidebar: React.FC<Props> = (props) => {
         <Accordion id="baseEntities" className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("baseEntities") ? "baseEntities" : ""} defaultActiveKey={activeKey.includes("baseEntities") ? "baseEntities" : ""}>
           <Accordion.Item eventKey="baseEntities" className={"bg-transparent"}>
             <div className={"p-0 d-flex"}>
-              <Accordion.Button className={`after-indicator ${styles.titleBaseEntities}`} onClick={() => setActiveAccordion("baseEntities")}>{panelTitle(<span>base entities</span>, exploreSidebar.baseEntities)}</Accordion.Button>
+              <Accordion.Button className={`after-indicator ${styles.titleBaseEntities}`} onClick={() => setActiveAccordion("baseEntities")}>{panelTitle(<span>base entities</span>, ExploreGraphViewToolTips.baseEntities)}</Accordion.Button>
             </div>
             <Accordion.Body>
               <BaseEntitiesFacet
@@ -658,7 +659,7 @@ const Sidebar: React.FC<Props> = (props) => {
               <Accordion.Item eventKey="related-entities" className={"bg-transparent"}>
                 <div className={"p-0 d-flex"}>
                   <Accordion.Button className={!props.graphView ? `after-indicator ${styles.disabledTitleCheckbox}` : `after-indicator ${styles.titleCheckbox}`} onClick={() =>  setActiveAccordion("related-entities")}>{
-                    panelTitle(<span><HCCheckbox id="check-all" value="check-all" disabled={!props.graphView} handleClick={onCheckAllChanges} checked={checkAll} />related entity types</span>, exploreSidebar.relatedEntities)}</Accordion.Button>
+                    panelTitle(<span><HCCheckbox id="check-all" value="check-all" disabled={!props.graphView} handleClick={onCheckAllChanges} checked={checkAll} />related entity types</span>, ExploreGraphViewToolTips.relatedEntities)}</Accordion.Button>
                 </div>
                 <Accordion.Body>
                   <RelatedEntitiesFacet currentRelatedEntities={props.currentRelatedEntities} setCurrentRelatedEntities={props.setCurrentRelatedEntities} onSettingCheckedList={onSettingCheckedList} setEntitySpecificPanel={props.setEntitySpecificPanel}/>

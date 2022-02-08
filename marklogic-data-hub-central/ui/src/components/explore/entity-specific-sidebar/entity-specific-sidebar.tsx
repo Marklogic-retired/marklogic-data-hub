@@ -8,6 +8,7 @@ import DateTimeFacet from "@components/date-time-facet/date-time-facet";
 import moment from "moment";
 import {SearchContext} from "../../../util/search-context";
 import DynamicIcons from "@components/common/dynamic-icons/dynamic-icons";
+import {ExploreGraphViewToolTips} from "../../../config/tooltips.config";
 
 interface Props {
   entitySelected: any;
@@ -353,7 +354,7 @@ const EntitySpecificSidebar: React.FC<Props> = (props) => {
               break;
             }
           })
-          : <div aria-label={`no-facets-${name}`}>No Facets</div>}
+          : <div aria-label={`no-facets-${name}`}>{ExploreGraphViewToolTips.noFacetToolTip}</div>}
       </div>
     </div>
   );
