@@ -335,7 +335,6 @@ const isMappingXML = (showHeader) => {
 const isEntityMapping = (keyUtil, showHeader) => {
   return keyUtil === "key" && !showHeader;
 };
-
 const renderRow = ({row, rowIndex, parentRowIndex, keyUtil, component, indentList, baseIndent, headerColumns, showHeader, iconCellList, state, showIndicator, isExpanded, bordered, selectRow, rowKey}) => {
   const [expandedNestedRows] = state;
   const nextColumnHasStaticWidth = headerColumns[0].width && !`${headerColumns[0].width}`.includes("%");
@@ -355,7 +354,7 @@ const renderRow = ({row, rowIndex, parentRowIndex, keyUtil, component, indentLis
 
   //temp fix for mapping tables after merge conflicts
   if (isMapping(keyUtil)) {
-    indentation -= isMappingXML(showHeader) ? 1.2 : 1.5;
+    indentation -= 0.8;
   } else if (isEntityMapping(keyUtil, showHeader)) {
     //entity map tables case
     indentation -= 1.6;
@@ -371,7 +370,7 @@ const renderRow = ({row, rowIndex, parentRowIndex, keyUtil, component, indentLis
     <div className={nextColumnHasStaticWidth ? styles.childrenIndentIndicatorCell : styles.childrenIndentIndicatorEmptyCell}></div>;
 
   return <div key={expandKey} className={`${isEntityMapping(keyUtil, showHeader) ? styles.childrenIndentTableRowColored : styles.childrenIndentTableRow} hc-table_row`} data-row-key={dataRowKey}>
-    {["property", "explore", "ruleset-multiple-modal"].includes(component) ? indicatorContent : null}
+    {["property", "explore", "ruleset-multiple-modal", "mapping-step-detail"].includes(component) ? indicatorContent : null}
     {selectRow ?
       <div style={{...selectRow.selectColumnStyle({record: row})}} className={styles.childrenIndentSelectCell}>
         {selectRow.selectionRenderer && selectRow.selectionRenderer({disabled: false, record: row, childrenIndent: true, checked: row[rowKey] !== undefined && selected.includes(row[rowKey])})}
@@ -386,10 +385,10 @@ const renderRow = ({row, rowIndex, parentRowIndex, keyUtil, component, indentLis
           className={styles.childrenIndentElementCell}
           style={{
             padding: hasIconCell ? `12px 12px 12px ${leftIndent}px` : `16px 16px 16px ${leftIndent}px`,
-            width: isMapping(keyUtil) ? col.width - 90 : col.width || "auto"
+            width: component === "mapping-step-detail" ? col.width : (isMapping(keyUtil) ? col.width - 90 : col.width || "auto")
           }}
         >
-          {!["property", "explore", "ruleset-multiple-modal"].includes(component) ? indicatorContent : null}
+          {!["property", "explore", "ruleset-multiple-modal", "mapping-step-detail"].includes(component) ? indicatorContent : null}
           {isKeyColumn(colIndex) && expandIcon ?
             <div className={styles.childrenTextContainer}>
               {isKeyColumn(colIndex) ? expandIcon : null}

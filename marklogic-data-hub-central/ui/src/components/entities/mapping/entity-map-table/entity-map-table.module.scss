@@ -18,10 +18,17 @@
 }
 
 .filterIcon {
-  color: #bfbfbf;
+  color: $icon-light;
   font-size: 16px;
   cursor: pointer;
 }
+
+.filterIconActive {
+  color: $primary;
+  font-size: 16px;
+  cursor: pointer;
+}
+
 
 .entityTopRow {
   width: 101%;

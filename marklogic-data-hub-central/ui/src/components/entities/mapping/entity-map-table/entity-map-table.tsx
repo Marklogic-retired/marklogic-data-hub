@@ -1345,7 +1345,16 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const entityColumns = [
     {
       text: "Name",
-      headerFormatter: () => <div><span data-testid="entityTableName" className={styles.nameHeaderText}>Name</span><OverlayTrigger placement="bottom" show={popoverVisibility} overlay={renderFilter()} trigger="click"><i><FontAwesomeIcon className={styles.filterIcon} data-testid={`filterIcon-${props.entityTypeTitle}-entity`} icon={faSearch} size="lg" onClick={() => togglePopover()}/></i></OverlayTrigger></div>,
+      headerFormatter: () => <div>
+        <span data-testid="entityTableName" className={styles.nameHeaderText}>
+          Name
+        </span>
+        <OverlayTrigger placement="bottom" show={popoverVisibility} overlay={renderFilter()} trigger="click">
+          <i>
+            <FontAwesomeIcon className={props.filterStr.length > 0 || popoverVisibility ? styles.filterIconActive : styles.filterIcon} data-testid={`filterIcon-${props.entityTypeTitle}-entity`} icon={faSearch} size="lg" onClick={() => togglePopover()}/>
+          </i>
+        </OverlayTrigger>
+      </div>,
       dataField: "name",
       key: "name",
       width: "25%",
@@ -1376,7 +1385,26 @@ const EntityMapTable: React.FC<Props> = (props) => {
         } else {
           let renderOutput = getRenderOutput(textToSearchInto, valueToDisplay, "name", searchedEntityColumn, searchEntityText, row.key);
           renderText =
-            <span>{props.initialEntityKeys.includes(row.key) || extraData ? row.children ? <span onClick={() => toggleRowExpanded(row, "", "key")} className={styles.tableExpandIcon}>{!extraData.rowExpandedKeys?.includes(row.key) ? <span><ChevronRight/></span> : <span><ChevronDown/></span>} </span> : <span className={styles.noTableExpandIcon}>{null}</span> : null}<span data-testid={`${props.entityTypeTitle}-${valueToDisplay}-name`}>{row.relatedEntityType ? <i>{renderOutput}</i> : renderOutput}</span>
+            <span>
+              {props.initialEntityKeys.includes(row.key) || extraData ?
+                row.children ?
+                  <span onClick={() => toggleRowExpanded(row, "", "key")} className={styles.tableExpandIcon}>
+                    {!extraData.rowExpandedKeys?.includes(row.key) ?
+                      <span><ChevronRight/></span>
+                      : <span><ChevronDown/></span>
+                    }
+                  </span>
+                  : <span className={styles.noTableExpandIcon}>
+                    {null}
+                  </span>
+                : null
+              }
+              <span data-testid={`${props.entityTypeTitle}-${valueToDisplay}-name`}>
+                {row.relatedEntityType ?
+                  <i>{renderOutput}</i>
+                  : renderOutput
+                }
+              </span>
               {row.key > 100 && row.type.includes("[ ]") &&
                 <span>
                   <HCTooltip text="Multiple" id="multiple-source-tooltip" placement="top">

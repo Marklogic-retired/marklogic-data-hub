@@ -1,3 +1,5 @@
+@import "../../../../theme/HCVariables.scss";
+
 @font-face {
 	font-family: 'MLCustomFont';
 	src: url('../../../../fonts/icomoon.ttf') format('truetype');
@@ -18,7 +20,13 @@
 }
 
 .filterIcon {
-    color: #bfbfbf;
+    color: $icon-light;
+    font-size: 16px;
+    cursor: pointer;
+}
+  
+.filterIconActive {
+    color: $primary;
     font-size: 16px;
     cursor: pointer;
 }
@@ -69,34 +77,17 @@
     white-space: nowrap;
 }
 
-.nameHeaderText{
-    padding-right: 60%;
-}
-
-.nameHeaderTextXML{
-    padding-right: 73%;
-}
-
-.nameHeader{
-    width: 115%;
-}
-
-.nameHeaderXML {
-    width: 100%;
-}
-
 .valueHeader{
     padding-bottom: 6px;
 }
 
 .noTableExpandIcon {
-  padding-right: 30px;
+  padding-right: 20px;
   margin-left: -2px;
 }
 
 .tableExpandIcon {
     padding-right: 4px;
-    margin-left: 10px;
 }
 
 .filteredXMLHeader {
@@ -105,8 +96,6 @@
 
 .sourceTitle{
     font-size: 16px;
-    margin-top: 8px;
-    margin-bottom: -10px;
     white-space: nowrap;
 }
 
@@ -144,8 +133,6 @@
         vertical-align: middle;
         margin-bottom: 3px;
         > .entityTypeTitle{
-            float: left;
-            margin-top: -10px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -170,22 +157,15 @@
 
 .sourceButtons{
   display: flex;
-  float: right;
-  margin-top: -25px;
-}
-
-.navigationButtons{
-  width: 100%;
+  justify-content: end;
 }
 
 .navigationButtonsError{
-  width: 100%;
   margin-right: 50px;
 }
 
 .sourceCollapseButtons{
-width: 100%;
-padding-top: 23px;
+padding-top: 29px;
 padding-bottom: 9px;
 }
 
@@ -314,10 +294,6 @@ hr {
 .entityDetails{
     align-items: flex-start;
     float: left;
-}
-.sourceDetails{
-    margin-top: -19px;
-    margin-bottom: -21px;
 }
 .sourceDataIcon:before {
   content: "\e934";
