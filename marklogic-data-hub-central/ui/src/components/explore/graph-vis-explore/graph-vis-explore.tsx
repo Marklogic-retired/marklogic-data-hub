@@ -8,7 +8,6 @@ import {renderToStaticMarkup} from "react-dom/server";
 import * as FontIcon from "react-icons/fa";
 import {graphViewConfig} from "../../../config/explore.config";
 import tooltipsConfig from "../../../config/explorer-tooltips.config";
-import {Link} from "react-router-dom";
 import {updateUserPreferences, getUserPreferences} from "../../../services/user-preferences";
 import {UserContext} from "../../../util/user-context";
 import {expandGroupNode} from "../../../api/queries";
@@ -544,7 +543,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     return (
       <div id="contextMenu" className={styles.contextMenu} style={{left: menuPosition.x, top: menuPosition.y}}
         onClick={handleMenuClick}>
-        {nodeIdExists() &&
+        {/* {nodeIdExists() &&
           <div id="viewRecordsInTableView" key="1" className={styles.contextMenuItem} >
             <Link to={
               {
@@ -554,7 +553,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
               View all related {entityType} records in a table
             </Link>
           </div>
-        }
+        } */}
         {nodeIdExists() && isGroupNode() && !isExpandedChildNode() &&
           <div id="expand3SampleRecords" key="2" className={styles.contextMenuItem} onClick={handleMenuClick}>
             Expand 3 {entityType} records from this group
