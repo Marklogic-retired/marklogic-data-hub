@@ -114,7 +114,9 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
                     return new AuthenticationToken(username, password, authorities, false);
                 }
             } else if(e instanceof MarkLogicIOException && e.getMessage().contains("Failed to connect to")) {
-                DatabaseClient client = hubClientProvider.getHubClient().setNewClient(Integer.parseInt(environment.getProperty("mlContentServerPort")));
+                DatabaseClient client = hubClientProvider.getHubClient().setCustomDbClient(Integer.parseInt(environment.getProperty("mlContentServerPort")));
+                hubClientProvider.getHubClient().setCustomDbModulesClient("entity-viewer-search-modules",
+                    Integer.parseInt(environment.getProperty("mlContentServerPort")));
                 DatabaseClient.ConnectionResult result = client.checkConnection();
                 if (result.getStatusCode() == 401) {
                     throw new BadCredentialsException("Unauthorized");
@@ -126,7 +128,7 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
         }
 
         if(!environment.getProperty("mlContentServerPort").isEmpty()) {
-            hubClientProvider.getHubClient().setNewClient(Integer.parseInt(environment.getProperty("mlContentServerPort")));
+            hubClientProvider.getHubClient().setCustomDbClient(Integer.parseInt(environment.getProperty("mlContentServerPort")));
         }
         response.get("authorities").iterator().forEachRemaining(node -> {
             String authority = node.asText();
@@ -137,7 +139,7 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
 
     // Work in progress
     private ManageClient getManageClient() {
-        String markLogicHost = hubClientProvider.getHubClient().getNewClient().getHost();
+        String markLogicHost = hubClientProvider.getHubClient().getCustomDbClient().getHost();
         hubClientProvider.getHubClient().getManageClient();
         ManageConfig config = new ManageConfig(markLogicHost, 8002, "marklogicUsername", "marklogicPassword");
         return new ManageClient(config);
