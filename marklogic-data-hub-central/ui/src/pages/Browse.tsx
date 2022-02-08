@@ -5,7 +5,6 @@ import {UserContext} from "../util/user-context";
 import {SearchContext} from "../util/search-context";
 import AsyncLoader from "../components/async-loader/async-loader";
 import Sidebar from "../components/sidebar/sidebar";
-import SearchBar from "../components/search-bar/search-bar";
 import SearchPagination from "../components/search-pagination/search-pagination";
 import SearchSummary from "../components/search-summary/search-summary";
 import SearchResults from "../components/search-results/search-results";
@@ -648,8 +647,6 @@ const Browse: React.FC<Props> = ({location}) => {
             <div className={styles.stickyHeader}>
               {/* TODO Fix searchBar widths, it currently overlaps at narrow browser widths */}
               <div className={styles.searchBar} ref={searchBarRef} >
-
-                {!graphView ? <SearchBar entities={entities} cardView={cardView} setHubArtifactsVisibilityPreferences={setHubArtifactsVisibilityPreferences} /> : ""}
                 {showNoDefinitionAlertMessage ? <div aria-label="titleNoDefinition" className={styles.titleNoDefinition}>{ModelingMessages.titleNoDefinition}</div> :
                   <span className="d-flex justify-content-between">
                     {!graphView &&

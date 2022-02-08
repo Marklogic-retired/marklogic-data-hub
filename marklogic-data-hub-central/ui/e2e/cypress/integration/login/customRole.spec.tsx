@@ -6,7 +6,6 @@ import loadPage from "../../support/pages/load";
 import runPage from "../../support/pages/run";
 import curatePage from "../../support/pages/curate";
 import {ConfirmationType} from "../../support/types/modeling-types";
-import browsePage from "../../support/pages/browse";
 
 describe("customRole", () => {
 
@@ -56,9 +55,10 @@ describe("customRole", () => {
     runPage.createFlowButton().should("be.disabled");
     cy.findByText(flowName).should("be.visible");
 
-    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-    cy.waitForAsyncRequest();
-    browsePage.getSelectedEntity().should("contain", "All Entities");
+    //Revalidate below with DHFPROD-8455
+    // cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    // cy.waitForAsyncRequest();
+    // browsePage.getSelectedEntity().should("contain", "All Entities");
 
   });
 

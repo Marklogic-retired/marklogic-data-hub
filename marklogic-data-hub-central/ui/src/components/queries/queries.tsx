@@ -488,7 +488,7 @@ const Query: React.FC<Props> = (props) => {
             <div className={styles.iconBar}>
               {(props.selectedFacets.length > 0 || searchOptions.query
                 || props.isColumnSelectorTouched || searchOptions.sortOrder.length > 0) &&
-                showSaveNewIcon && searchOptions.baseEntities?.length > 0 && searchOptions.selectedQuery === "select a query" &&
+                showSaveNewIcon && searchOptions.baseEntities?.length === 1 && searchOptions.selectedQuery === "select a query" &&
                 <div>
                   <HCTooltip text={props.isSavedQueryUser ? "Save the current query" : "Save Query: Contact your security administrator to get the roles and permissions to access this functionality"} id="save-current-query-tooltip" placement="top">
                     <i><FontAwesomeIcon

@@ -8,7 +8,6 @@ import loadPage from "../../support/pages/load";
 import modelPage from "../../support/pages/model";
 import runPage from "../../support/pages/run";
 import curatePage from "../../support/pages/curate";
-import browsePage from "../../support/pages/browse";
 
 describe("login", () => {
 
@@ -202,7 +201,8 @@ describe("login", () => {
     loginPage.getLoginButton().click();
     cy.location("pathname").should("include", "/tiles/explore");
     tiles.getExploreTile().should("exist");
-    browsePage.getSelectedEntity().should("contain", "All Entities");
+    //Revalidate below with DHFPROD-8455
+    // browsePage.getSelectedEntity().should("contain", "All Entities");
   });
 
   it("should redirect a bookmark to login screen when not authenticated", () => {

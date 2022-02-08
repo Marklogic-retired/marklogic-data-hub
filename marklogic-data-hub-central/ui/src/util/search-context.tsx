@@ -79,6 +79,7 @@ interface ISearchContextInterface {
   setSelectedQuery: (query: string) => void;
   setSidebarQuery: (query: string) => void;
   setSelectedTableProperties: (propertiesToDisplay: string[]) => void;
+  setBaseEntitiesWithProperties: (baseEntities: string[], propertiesToDisplay: string[]) => void;
   setView: (tileId: string, viewId: JSX.Element | null) => void;
   setPageWithEntity: (option: [], pageNumber: number, start: number, facets: any, searchString: string, sortOrder: [], targetDatabase: string) => void;
   setSortOrder: (propertyName: string, sortOrder: any) => void;
@@ -135,6 +136,7 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setSelectedQuery: () => { },
   setSidebarQuery: () => { },
   setSelectedTableProperties: () => { },
+  setBaseEntitiesWithProperties: () => { },
   setView: () => { },
   setPageWithEntity: () => { },
   setSortOrder: () => { },
@@ -534,6 +536,14 @@ const SearchProvider: React.FC<{children: any}> = ({children}) => {
     });
   };
 
+  const setBaseEntitiesWithProperties = (baseEntities: string[], propertiesToDisplay: string[]) => {
+    setSearchOptions({
+      ...searchOptions,
+      baseEntities: baseEntities,
+      selectedTableProperties: propertiesToDisplay
+    });
+  };
+
   const setSelectedTableProperties = (propertiesToDisplay: string[]) => {
     setSearchOptions({
       ...searchOptions,
@@ -688,6 +698,7 @@ const SearchProvider: React.FC<{children: any}> = ({children}) => {
       setSelectedQuery,
       setSidebarQuery,
       setSelectedTableProperties,
+      setBaseEntitiesWithProperties,
       setView,
       setPageWithEntity,
       setSortOrder,

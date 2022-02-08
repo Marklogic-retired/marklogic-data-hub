@@ -77,7 +77,9 @@ describe("Run Tile tests", () => {
     browsePage.waitForHCTableToLoad();
 
     //Verify detail page renders with expected content
-    browsePage.getSelectedEntity().should("contain", "Person");
+
+    //Revalidate below with DHFPROD-8455
+    // browsePage.getSelectedEntity().should("contain", "Person");
     browsePage.getTotalDocuments().should("eq", 1);
     browsePage.getSelectedFacet("sm-Person-merged").should("exist");
     browsePage.getSourceViewIcon().first().click();

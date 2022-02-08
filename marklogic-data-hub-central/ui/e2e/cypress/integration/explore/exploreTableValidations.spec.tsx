@@ -46,9 +46,6 @@ describe("Validate table and column selector in explore", () => {
     browsePage.getColumnSelectorIcon().click({force: true});
     browsePage.getColumnSelector().should("be.visible");
     browsePage.getTreeItem(2).should("have.class", "rc-tree-treenode-draggable").should("have.class", "rc-tree-treenode-checkbox-checked");
-    // Validate that alert message is displayed if there is no matching definition
-    browsePage.selectEntity("ProductDetail");
-    cy.findByLabelText("titleNoDefinition").should("be.visible");
   });
 });
 
