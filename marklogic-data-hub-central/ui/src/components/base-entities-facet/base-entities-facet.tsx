@@ -27,6 +27,7 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
 
   const {
     searchOptions: {baseEntities},
+    setBaseEntitiesWithProperties,
     setBaseEntities,
     setRelatedEntityTypeIds
   } = useContext(SearchContext);
@@ -73,8 +74,14 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
       setIsAllEntitiesSelected(false);
       setEntityNames(clearSelection);
       setCurrentBaseEntities(filteredEntities);
-      setBaseEntities(clearSelection);
       if (props.activeKey.indexOf("related-entities") === -1) { props.setActiveAccordionRelatedEntities("related-entities"); }
+
+      if (filteredEntities.length === 1) {
+        let queryColumnsToDisplay = filteredEntities[0].properties?.map(property => { return property.name; });
+        setBaseEntitiesWithProperties(clearSelection, queryColumnsToDisplay);
+      } else {
+        setBaseEntities(clearSelection);
+      }
     }
   };
 
