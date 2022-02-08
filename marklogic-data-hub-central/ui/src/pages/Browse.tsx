@@ -14,7 +14,7 @@ import {updateUserPreferences, createUserPreferences, getUserPreferences} from "
 import {entityFromJSON, entityParser, facetParser, getTableProperties} from "../util/data-conversion";
 import styles from "./Browse.module.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faStream, faTable, faProjectDiagram} from "@fortawesome/free-solid-svg-icons";
+import {faStream, faTable, faProjectDiagram, faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
 import Query from "../components/queries/queries";
 import {AuthoritiesContext} from "../util/authorities";
 import ResultsTabularView from "../components/results-tabular-view/results-tabular-view";
@@ -563,8 +563,9 @@ const Browse: React.FC<Props> = ({location}) => {
 
   const helpIcon = () => (
     <span>
-      <HCTooltip text={ExploreToolTips.numberOfResults} id="asterisk-help-tooltip" placement="right">
-        <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} />
+      <HCTooltip text={graphSearchData["limit"] > 1000 ? ExploreToolTips.largeDatasetWarning : ExploreToolTips.numberOfResults} id="asterisk-help-tooltip" placement="right">
+        {graphSearchData["limit"] > 1000 ? <i data-testid="warning-large-data"><FontAwesomeIcon icon={faExclamationTriangle} className={styles.largeDatasetWarning}/></i> :
+          <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} />}
       </HCTooltip>
     </span>
   );
