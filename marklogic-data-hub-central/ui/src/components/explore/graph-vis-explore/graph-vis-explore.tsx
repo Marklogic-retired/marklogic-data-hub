@@ -227,7 +227,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       return {
         id: nodeId,
         shape: "custom",
-        title: e.count > 1 ? tooltipsConfig.graphVis.groupNode(entityType) : e.label,
+        title: e.count > 1 ? tooltipsConfig.graphVis.groupNode(entityType) : e.label.length > 0 ? tooltipsConfig.graphVis.singleNode(e.label): tooltipsConfig.graphVis.singleNodeNoLabel,
         label: nodeLabel,
         color: colorExistsForEntity(entityType) ? entity["color"] : "#EEEFF1",
         // x: positionX,

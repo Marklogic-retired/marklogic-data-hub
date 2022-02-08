@@ -23,7 +23,10 @@ const tooltipsConfig = {
   graphVis: {
     groupNode: (entityType) => (`Group of ${entityType} records
     Click to expand 3 sample records in this group.
-      Double click to expand all records in this group.`)
+      Double click to expand all records in this group.`),
+    singleNode: (entityId) => (`${entityId}
+    Click to view details.`),
+    singleNodeNoLabel: "Click to view details."
   }
 };
 

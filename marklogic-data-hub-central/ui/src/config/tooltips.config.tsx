@@ -492,6 +492,12 @@ const ExploreToolTips = {
   largeDatasetWarning: "The query returned more records than the graph can display. To view all records, switch to the Table or Snippet view."
 };
 
+const ExploreGraphViewToolTips = {
+  baseEntities: <span>Base entities are the entities whose data you want to explore. Choose one or more base entities.<br />If you choose <strong>All Entities</strong> in the Graph view, the graph will not show relationships between records.</span>,
+  relatedEntities: <span>Related entities are entities related to the base entities. Select the check boxes for related entities you want to explore. To add or edit relationships, go to the <strong>Model</strong> screen.</span>,
+  noFacetToolTip: <span>There are no facets for this entity. Facets enable you to filter results by property values. To enable facets for properties, go to the <strong>Model</strong> screen.</span>
+};
+
 const ExplorePlaceholders = {
   nameQuery: 'Enter the name.',  /* intended dupe (value only): common */
   descriptionQuery: 'Enter the description.',  /* intended dupe (value only): common */
@@ -783,6 +789,7 @@ export {
   ErrorTooltips,
   ExploreIntros,
   ExploreToolTips,
+  ExploreGraphViewToolTips,
   ExplorePlaceholders,
   ExploreMessages,
   SecurityIntros,
