@@ -213,7 +213,7 @@ public class HubClientConfig {
         return configuredDatabaseClientFactory.newDatabaseClient(config);
     }
 
-    public DatabaseClient newClient(String dbName, int port) {
+    public DatabaseClient newDatabaseClient(String dbName, int port) {
         DatabaseClientConfig config = new DatabaseClientConfig(host, port, username, password);
         if (dbName != null) {
             config.setDatabase(dbName);
@@ -249,6 +249,10 @@ public class HubClientConfig {
     public DatabaseClient newModulesDbClient() {
         // Uses the final app server, which is known to use the OOTB REST rewriter, and staging does not
         return newFinalClient(modulesDbName);
+    }
+
+    public DatabaseClient newModulesDbClient(String modulesDbName, int port) {
+        return newDatabaseClient(modulesDbName, port);
     }
 
     @JsonIgnore
