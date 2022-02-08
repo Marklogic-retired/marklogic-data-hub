@@ -15,8 +15,8 @@ const App: React.FC<Props> = (props) => {
 
   const userContext = useContext(UserContext);
 
-  if (!userContext.userid) {
-    userContext.handleTwizzlersLogin();
+  if (!userContext.proxy) {
+    userContext.handleGetProxy();
   }
 
   return (
