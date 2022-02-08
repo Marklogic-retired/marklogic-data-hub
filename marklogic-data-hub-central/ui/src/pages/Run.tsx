@@ -81,7 +81,7 @@ const defaultFailedModal = {
 
 const Run = (props) => {
   const {handleError} = useContext(UserContext);
-  const {setBaseEntities} = useContext(SearchContext);
+  const {setLatestJobFacet, setLatestDatabase} = useContext(SearchContext);
   const {setErrorMessageOptions} = useContext(ErrorMessageContext);
 
   const history: any = useHistory();
@@ -262,26 +262,15 @@ const Run = (props) => {
   const goToExplorer = async (entityName, targetDatabase, jobId, stepType, stepName) => {
     let entityView = entityName;
     if (stepType === "ingestion") {
-      setBaseEntities([entityView]);
-      history.push({
-        pathname: "/tiles/explore",
-        state: {targetDatabase: targetDatabase, jobId: jobId}
-      });
+      setLatestDatabase(targetDatabase, jobId);
     } else if (stepType === "mapping") {
       let mapArtifacts = await getMappingArtifactByStepName(stepName);
       entityView = mapArtifacts?.relatedEntityMappings?.length > 0 ? "All Entities" : entityName;
-      setBaseEntities([entityView]);
-      history.push(
-        {pathname: "/tiles/explore",
-          state: {entityName: entityView, targetDatabase: targetDatabase, jobId: jobId}
-        });
+      setLatestJobFacet(jobId, entityView, targetDatabase);
     } else if (stepType === "merging") {
-      setBaseEntities([entityView]);
-      history.push({
-        pathname: "/tiles/explore",
-        state: {entityName: entityName, targetDatabase: targetDatabase, jobId: jobId, Collection: "sm-"+entityName+"-merged"}
-      });
+      setLatestJobFacet(jobId, entityName, targetDatabase, `sm-${entityName}-merged`);
     }
+    history.push({pathname: "/tiles/explore"});
   };
 
   function showStepRunResponse(step, jobId, response) {

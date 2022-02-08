@@ -24,7 +24,7 @@ export const defaultUserPreferences = {
   resultTableColumns: [],
   selectedQuery: "select a query",
   sidebarQuery: "Select a saved query",
-  baseEntities: ["All Entities"]
+  baseEntities: []
 };
 
 export const createUserPreferences = (username: string) => {

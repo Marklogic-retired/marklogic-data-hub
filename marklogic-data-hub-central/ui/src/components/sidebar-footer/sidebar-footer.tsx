@@ -62,7 +62,6 @@ const SidebarFooter: React.FC = () => {
 
   const clearFacets = () => {
     clearAllFacets();
-    setQuery("");
   };
 
   return (

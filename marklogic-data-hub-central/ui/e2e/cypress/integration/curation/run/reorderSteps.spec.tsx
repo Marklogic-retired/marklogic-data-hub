@@ -1,8 +1,7 @@
 import {Application} from "../../../support/application.config";
-import {tiles, toolbar} from "../../../support/components/common";
+import {toolbar} from "../../../support/components/common";
 import runPage from "../../../support/pages/run";
 import loadPage from "../../../support/pages/load";
-import browsePage from "../../../support/pages/browse";
 import LoginPage from "../../../support/pages/login";
 
 describe("Run Tile tests", () => {
@@ -23,7 +22,7 @@ describe("Run Tile tests", () => {
     cy.resetTestUser();
   });
 
-  it("can create flow and add steps to flow, reorder flow, and should load xml merged document and display content", {defaultCommandTimeout: 120000}, () => {
+  it("can create flow and add steps to flow and reorder flow", {defaultCommandTimeout: 120000}, () => {
 
     const flowName = "testPerson";
     //Verify create flow and add all user-defined steps to flow via Run tile
@@ -57,38 +56,6 @@ describe("Run Tile tests", () => {
     runPage.moveStepLeft("loadPersonXML");
     runPage.moveStepLeft("master-person");
     runPage.moveStepLeft("merge-xml-person");
-
-    //Run map,match and merge step for Person entity using xml documents
-    runPage.runStep("mapPersonXML", flowName);
-    cy.verifyStepRunResult("success", "Mapping", "mapPersonXML");
-    tiles.closeRunMessage();
-    cy.waitForAsyncRequest();
-    runPage.runStep("match-xml-person", flowName);
-    cy.verifyStepRunResult("success", "Matching", "match-xml-person");
-    tiles.closeRunMessage();
-    cy.waitForAsyncRequest();
-    runPage.runStep("merge-xml-person", flowName);
-    cy.verifyStepRunResult("success", "Merging", "merge-xml-person");
-
-    //Navigate to explorer tile using the explorer link
-    runPage.explorerLink().click();
-    browsePage.waitForSpinnerToDisappear();
-    cy.waitForAsyncRequest();
-    browsePage.waitForHCTableToLoad();
-
-    //Verify detail page renders with expected content
-
-    //Revalidate below with DHFPROD-8455
-    // browsePage.getSelectedEntity().should("contain", "Person");
-    browsePage.getTotalDocuments().should("eq", 1);
-    browsePage.getSelectedFacet("sm-Person-merged").should("exist");
-    browsePage.getSourceViewIcon().first().click();
-    cy.waitForAsyncRequest();
-    browsePage.waitForSpinnerToDisappear();
-
-    cy.contains("URI: /com.marklogic.smart-mastering/merged/").should("be.visible");
-    cy.contains("123 Wilson St").scrollIntoView().should("be.visible");
-    cy.contains("123 Wilson Rd").should("be.visible");
   });
 
 });

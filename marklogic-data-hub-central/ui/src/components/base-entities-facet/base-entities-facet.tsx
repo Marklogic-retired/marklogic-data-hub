@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState}  from "react";
+import React, {useContext, useEffect, useState} from "react";
 import Select from "react-select";
 import reactSelectThemeConfig from "../../config/react-select-theme.config";
 import {SearchContext} from "../../util/search-context";
@@ -14,8 +14,8 @@ interface Props {
   currentBaseEntities: any;
   setCurrentBaseEntities: (entities: any[]) => void;
   allBaseEntities: any[];
-  setActiveAccordionRelatedEntities: (entity: string)=>void;
-  activeKey:any[];
+  setActiveAccordionRelatedEntities: (entity: string) => void;
+  activeKey: any[];
   setEntitySpecificPanel: (entity: any) => void;
   setIsAllEntitiesSelected: (isSelected: boolean) => void;
 }
@@ -27,25 +27,36 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
   const {setCurrentBaseEntities, setEntitySpecificPanel, currentBaseEntities, allBaseEntities, setIsAllEntitiesSelected} = props;
 
   const {
-    searchOptions: {baseEntities},
     setBaseEntitiesWithProperties,
-    setBaseEntities,
-    setRelatedEntityTypeIds
+    setEntityTypeIds,
+    setRelatedEntityTypeIds,
+    searchOptions,
+    setSearchOptions,
   } = useContext(SearchContext);
 
-  const [entityNames, setEntityNames] = useState<string[]>(entitiesSorting(baseEntities));
-  const [displayList, setDisplayList] = useState<any[]>(baseEntitiesSorting(currentBaseEntities));
+  const [entityNames, setEntityNames] = useState<string[]>(searchOptions.entityTypeIds.length === 0 ? ["All Entities"] : searchOptions.entityTypeIds);
+  const [displayList, setDisplayList] = useState<any[]>(entitiesSorting(currentBaseEntities));
   const [showMore, setShowMore] = useState<boolean>(false);
+
+
+
+  useEffect(() => {
+    const isAllEntities = searchOptions.entityTypeIds.length === 0 || searchOptions.entityTypeIds.length === allBaseEntities.length;
+    if (isAllEntities) {
+      setEntityNames(["All Entities"]);
+    }
+    if (allBaseEntities.length !== 0 && searchOptions.entityTypeIds.length > 0 && searchOptions.entityTypeIds.length !== allBaseEntities.length) {
+      const {entityTypeIds} = searchOptions;
+      let entitiesFiltered = allBaseEntities.map(element => (
+        {value: element.name, label: element.name, isDisabled: false}
+      )).filter(obj => obj.value && entityTypeIds.includes(obj.value) && obj.label);
+      if (entitiesFiltered.length > 0) handleChange(entitiesFiltered);
+    }
+  }, [allBaseEntities]);
 
   useEffect(() => {
     setDisplayList(currentBaseEntities);
   }, [currentBaseEntities]);
-
-  useEffect(() => {
-    if (baseEntities === [] || baseEntities === ["All Entities"]) {
-      setCurrentBaseEntities(baseEntitiesSorting(allBaseEntities));
-    }
-  }, [baseEntities]);
 
   const childrenOptions = allBaseEntities.map(element => ({value: element.name, label: element.name, isDisabled: false})).filter(obj => obj.value && obj.label);
   childrenOptions.unshift({
@@ -62,31 +73,41 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
   const handleChange = (selection) => {
     setShowMore(false);
     const selectedItems = selection.map(element => element.value);
-    if (selectedItems.length === 0 || selectedItems[selectedItems.length -1] === "All Entities") {
+    if (selectedItems.length === 0 || selectedItems[selectedItems.length - 1] === "All Entities") {
       setRelatedEntityTypeIds([]);
       setIsAllEntitiesSelected(true);
       setEntityNames(["All Entities"]);
       setCurrentBaseEntities(allBaseEntities);
-      setBaseEntities([]);
+      setSearchOptions({
+        ...searchOptions,
+        entityTypeIds: allBaseEntities.map(entities => entities.name),
+        baseEntities: allBaseEntities,
+        relatedEntityTypeIds: []
+      });
       if (props.activeKey.indexOf("related-entities") !== -1) { props.setActiveAccordionRelatedEntities("related-entities"); }
     } else {
       const clearSelection = selectedItems.filter(entity => entity !== "All Entities").map((entity => entity));
       const filteredEntities = allBaseEntities.filter(entity => clearSelection.includes(entity.name));
       setIsAllEntitiesSelected(false);
       setEntityNames(clearSelection);
-      setCurrentBaseEntities(baseEntitiesSorting(filteredEntities));
+      setCurrentBaseEntities(filteredEntities);
+      setSearchOptions({
+        ...searchOptions,
+        entityTypeIds: clearSelection,
+        baseEntities: filteredEntities
+      });
       if (props.activeKey.indexOf("related-entities") === -1) { props.setActiveAccordionRelatedEntities("related-entities"); }
 
       if (filteredEntities.length === 1) {
         let queryColumnsToDisplay = filteredEntities[0].properties?.map(property => { return property.name; });
         setBaseEntitiesWithProperties(clearSelection, queryColumnsToDisplay);
       } else {
-        setBaseEntities(clearSelection);
+        setEntityTypeIds(clearSelection);
       }
     }
   };
 
-  const showFilter= (filter) => filter === 1 ? `(${filter} filter)  ` : `(${filter} filters)  `;
+  const showFilter = (filter) => filter === 1 ? `(${filter} filter)  ` : `(${filter} filters)  `;
 
   const updateDisplayList = () => {
     if (!showMore) {
@@ -127,7 +148,8 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
             </span>
           );
         }}
-        styles={{...reactSelectThemeConfig,
+        styles={{
+          ...reactSelectThemeConfig,
           container: (provided, state) => ({
             ...provided,
             height: "auto",
@@ -175,7 +197,7 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
       </div>
 
       <div className={styles.more} onClick={onShowMore} data-cy="show-more-base-entities" style={{display: (currentBaseEntities.length > MINIMUM_ENTITIES) ? "block" : "none"}}>
-        {(showMore) ?  "<< less" : "more >>"}
+        {(showMore) ? "<< less" : "more >>"}
       </div>
     </>
   );

@@ -45,19 +45,20 @@ const Browse: React.FC<Props> = ({location}) => {
     searchOptions,
     greyedOptions,
     setEntityClearQuery,
-    setLatestJobFacet,
     resetSearchOptions,
     applySaveQuery,
     setPageWithEntity,
     setDatabase,
-    setLatestDatabase,
     setEntityDefinitionsArray,
-    clearAllGreyFacets
+    clearAllGreyFacets,
+    setEntityTypeIds,
   } = useContext(SearchContext);
   const searchBarRef = useRef<HTMLDivElement>(null);
   const authorityService = useContext(AuthoritiesContext);
   const [data, setData] = useState<any[]>([]);
-  const [entities, setEntites] = useState<any[]>([]);
+  const [currentBaseEntities, setCurrentBaseEntities] = useState<any[]>([]);
+  const [currentEntitiesIcons, setCurrentEntitiesIcons] = useState<any[]>([]);
+  const [currentRelatedEntities, setCurrentRelatedEntities] = useState<Map<string, any>>(new Map());
   const [entityDefArray, setEntityDefArray] = useState<any[]>([]);
   const [facets, setFacets] = useState<any>();
   const [isLoading, setIsLoading] = useState(true);
@@ -84,14 +85,17 @@ const Browse: React.FC<Props> = ({location}) => {
   const [showMainSidebar, setShowMainSidebar] = useState<boolean>(true);
   const [showEntitySpecificPanel, setShowEntitySpecificPanel] = useState<boolean>(false);
   const [graphView, setGraphView] = useState(state && state.graphView ? true : JSON.parse(getUserPreferences(user.name)).graphView);
-  const [currentBaseEntities, setCurrentBaseEntities] = useState<any[]>([]);
-  const [currentEntitiesIcons, setCurrentEntitiesIcons] = useState<any[]>([]);
-  const [currentRelatedEntities, setCurrentRelatedEntities] = useState<Map<string, any>>(new Map());
   const [applyClicked, toggleApplyClicked] = useState(false);
   const [showApply, toggleApply] = useState(false);
   const [updateSpecificFacets, setUpdateSpecificFacets] = useState<boolean>(false);
   const [isAllEntitiesSelected, setIsAllEntitiesSelected] = useState(true);
   const [parsedFacets, setParsedFacets] = React.useState<any[]>([]);
+
+
+  const isGraphView = () => {
+    const isGraph = searchOptions.nextEntityType !== "All Data" && graphView;
+    return isGraph;
+  };
 
   const setEntitySpecificFacets = (entity) => {
     const {name} = entity;
@@ -155,7 +159,7 @@ const Browse: React.FC<Props> = ({location}) => {
         "data": {
           "query": {
             "searchText": searchOptions.query,
-            "entityTypeIds": searchOptions.baseEntities && searchOptions.baseEntities.length && searchOptions.baseEntities[0] !== "All Entities" ? searchOptions.baseEntities : allEntities,
+            "entityTypeIds": allEntities,
             "selectedFacets": searchOptions.selectedFacets,
             "relatedEntityTypeIds": searchOptions.relatedEntityTypeIds
           },
@@ -172,51 +176,6 @@ const Browse: React.FC<Props> = ({location}) => {
     }
   };
 
-  const setHubCentralConfigFromServer = async (parsedEntityDef) => {
-    try {
-      const response = await getHubCentralConfig();
-      if (response["status"] === 200 && response.data && Object.keys(response.data).length > 0) {
-        sethubCentralConfig(response.data);
-
-        const {data: {modeling: {entities}}} = response;
-        let entitiesDef = parsedEntityDef.map(entity => {
-          if (entities[entity.name]) {
-            entity.icon = entities[entity.name].icon;
-            entity.color = entities[entity.name].color;
-          }
-          return entity;
-        });
-        setEntityDefArray(entitiesDef);
-        setCurrentBaseEntities(entitiesDef);
-      } else {
-        setEntityDefArray(parsedEntityDef);
-        setCurrentBaseEntities(parsedEntityDef);
-      }
-    } catch (error) {
-      handleError(error);
-    }
-  };
-
-
-  const getEntityModel = async () => {
-    try {
-      const response = await axios.get(`/api/models`);
-      if (componentIsMounted.current) {
-        const parsedModelData = entityFromJSON(response.data);
-        let entityArray = [...entityFromJSON(response.data).map(entity => entity.info.title)];
-        let parsedEntityDef = entityParser(parsedModelData);
-        setEntites(entityArray);
-        setHubCentralConfigFromServer(parsedEntityDef);
-        setEntityDefinitionsArray(parsedEntityDef);
-        setEntitiesData(response.data);
-        getGraphSearchResult(entityArray);
-      }
-    } catch (error) {
-      handleError(error);
-    }
-  };
-
-
   const getSearchResults = async (allEntities: string[]) => {
     let searchText = searchOptions.query;
     try {
@@ -228,11 +187,11 @@ const Browse: React.FC<Props> = ({location}) => {
         data: {
           query: {
             searchText,
-            entityTypeIds: cardView ? [] : searchOptions.baseEntities && searchOptions.baseEntities.length && searchOptions.baseEntities[0] !== "All Entities" ? searchOptions.baseEntities : allEntities,
+            entityTypeIds: searchOptions.nextEntityType === "All Data" ? [] : allEntities,
             selectedFacets: searchOptions.selectedFacets,
-            hideHubArtifacts: cardView ? hideDataHubArtifacts : true
+            hideHubArtifacts: searchOptions.nextEntityType === "All Data" ? hideDataHubArtifacts : true
           },
-          propertiesToDisplay: searchOptions.selectedTableProperties,
+          propertiesToDisplay: searchOptions.nextEntityType === "All Data" ? [] : searchOptions.selectedTableProperties,
           start: searchOptions.start,
           pageLength: searchOptions.pageLength,
           sortOrder: searchOptions.sortOrder
@@ -246,7 +205,7 @@ const Browse: React.FC<Props> = ({location}) => {
       if (componentIsMounted.current && response.data) {
         if (response.data.entityPropertyDefinitions && graphView) {
           setData(response.data.results);
-        } else if (!graphView) {
+        } else if (!isGraphView()) {
           setData(response.data.results);
         }
         if (response.data.hasOwnProperty("entityPropertyDefinitions")) {
@@ -290,21 +249,15 @@ const Browse: React.FC<Props> = ({location}) => {
   };
 
   const fetchUpdatedSearchResults = () => {
-    let entityTypesExistOrNoEntityTypeIsSelected = (entities.length > 0 || (searchOptions.nextEntityType === "All Data" || searchOptions.nextEntityType === "All Entities" || searchOptions.nextEntityType === undefined));
-    let defaultOptionsForPageRefresh = !searchOptions.nextEntityType && (entities.length > 0 || cardView);
-    let selectingAllEntitiesOption = (searchOptions.nextEntityType === "All Entities" && !isColumnSelectorTouched && !searchOptions.entityTypeIds.length && !cardView && entities.length > 0 && !entitySpecificPanel);
-    let selectingAllDataOption = (searchOptions.nextEntityType === "All Data" && !isColumnSelectorTouched && !searchOptions.entityTypeIds.length && cardView && !entitySpecificPanel);
+    let entityTypesExist = searchOptions.entityTypeIds.length > 0;
+    let defaultOptionsForPageRefresh = !searchOptions.nextEntityType && (searchOptions.entityTypeIds.length > 0 || cardView);
+    let selectingAllEntitiesOption = (searchOptions.nextEntityType === "All Entities" && !isColumnSelectorTouched && !entitySpecificPanel);
+    let selectingAllDataOption = (searchOptions.nextEntityType === "All Data" && !isColumnSelectorTouched && !entitySpecificPanel);
     let selectingEntityType = (searchOptions.nextEntityType && !["All Entities", "All Data"].includes(searchOptions.nextEntityType) && searchOptions.entityTypeIds[0] === searchOptions.nextEntityType || entitySpecificPanel);
-    let notSelectingCardViewWhenNoEntities = !cardView && (!entities.length && !searchOptions.entityTypeIds.length || !searchOptions.nextEntityType);
+    let notSelectingCardViewWhenNoEntities = !cardView && !searchOptions.entityTypeIds.length;
 
-    if (entityTypesExistOrNoEntityTypeIsSelected &&
-      (
-        defaultOptionsForPageRefresh ||
-        selectingAllEntitiesOption ||
-        selectingAllDataOption ||
-        selectingEntityType
-      )) {
-      getSearchResults(entities);
+    if (selectingAllDataOption || (entityTypesExist && (defaultOptionsForPageRefresh || selectingAllEntitiesOption || selectingEntityType))) {
+      getSearchResults(searchOptions.entityTypeIds);
     } else {
       if (notSelectingCardViewWhenNoEntities) {
         setData([]);
@@ -318,7 +271,6 @@ const Browse: React.FC<Props> = ({location}) => {
   };
 
   useEffect(() => {
-    getEntityModel();
     initializeUserPreferences();
     return () => {
       componentIsMounted.current = false;
@@ -326,29 +278,74 @@ const Browse: React.FC<Props> = ({location}) => {
   }, []);
 
   useEffect(() => {
-    if (searchOptions.nextEntityType && searchOptions.nextEntityType !== "All Data") {
-      setCardView(false);
-    }
-    fetchUpdatedSearchResults();
-  }, [searchOptions, entities, user.error.type, hideDataHubArtifacts]);
+    let loaded = true;
+    (async () => {
+      try {
+        const modelsResponse = await axios.get(`/api/models`);
+        const HubCentralConfigResponse = await getHubCentralConfig();
+        const parsedModelData = entityFromJSON(modelsResponse.data);
+        let parsedEntityDef = entityParser(parsedModelData).filter(entity => entity.name && entity);
+        const entitiesTypeIds = parsedEntityDef.map(entity => entity.name);
+
+        // this block is to add colors an icons to the entities
+        let entitiesWithFullProperties = parsedEntityDef;
+        if (HubCentralConfigResponse["status"] === 200 && HubCentralConfigResponse.data && Object.keys(HubCentralConfigResponse.data).length > 0) {
+          const {data: {modeling: {entities}}} = HubCentralConfigResponse;
+          entitiesWithFullProperties = parsedEntityDef.map(entity => {
+            if (entities[entity.name]) {
+              entity.icon = entities[entity.name].icon;
+              entity.color = entities[entity.name].color;
+            }
+            return entity;
+          });
+        }
+
+
+        if (loaded) {
+          if (searchOptions.entityTypeIds.length === 0 && searchOptions.nextEntityType !== "All Data") {
+            setEntityTypeIds(entitiesTypeIds);
+          }
+          setEntityDefinitionsArray(parsedEntityDef);
+          setEntitiesData(modelsResponse.data);
+          sethubCentralConfig(HubCentralConfigResponse.data);
+          setEntityDefArray(entitiesWithFullProperties);
+          setCurrentBaseEntities(entitiesWithFullProperties);
+
+        }
+
+      } catch (error) {
+        handleError(error);
+      }
+    })();
+    return () => {
+      loaded = false;
+    };
+  }, []);
 
   useEffect(() => {
-    if (searchOptions.baseEntities) {
-      let noBaseEntitiesSelected = Object.keys(searchOptions.baseEntities).length === 0;
-      let noRelatedEntities = Object.keys(searchOptions.relatedEntityTypeIds).length === 0;
-      if ((noBaseEntitiesSelected && noRelatedEntities) || !noBaseEntitiesSelected) {
-        getGraphSearchResult(entities);
-      }
-      return () => {
-        setGraphSearchData({});
-      };
+    //This can be a toggle when nextEntityType is replaced with the All Data/All Entities toggle.
+    if (searchOptions.nextEntityType && searchOptions.nextEntityType === "All Entities") {
+      if (cardView) setCardView(false);
+    } else if (searchOptions.nextEntityType && searchOptions.nextEntityType === "All Data") {
+      if (!cardView) setCardView(true);
     }
-  }, [searchOptions.baseEntities, searchOptions.relatedEntityTypeIds, searchOptions.database, searchOptions.query, searchOptions.selectedFacets, entities, user.error.type, hideDataHubArtifacts]);
+    fetchUpdatedSearchResults();
+  }, [tableView, graphView, searchOptions.database, searchOptions.entityTypeIds, searchOptions.nextEntityType, searchOptions.query, searchOptions.selectedFacets, user.error.type, hideDataHubArtifacts]);
+
+  useEffect(() => {
+    let baseEntitiesSelected = searchOptions.entityTypeIds.length > 0;
+    if (graphView && baseEntitiesSelected && searchOptions.nextEntityType !== "All Data") {
+      getGraphSearchResult(searchOptions.entityTypeIds);
+    }
+    return () => {
+      setGraphSearchData({});
+    };
+  }, [graphView, searchOptions.entityTypeIds, searchOptions.relatedEntityTypeIds, searchOptions.database, searchOptions.query, searchOptions.selectedFacets, user.error.type, hideDataHubArtifacts]);
 
   useEffect(() => {
     let state: any = location.state;
     if (state && state["isBackToResultsClicked"]) {
-      getSearchResults(entities);
+      getSearchResults(searchOptions.entityTypeIds);
     }
   }, []);
 
@@ -388,31 +385,12 @@ const Browse: React.FC<Props> = ({location}) => {
         state["sortOrder"],
         state["targetDatabase"]);
       state["tableView"] ? toggleTableView(true) : toggleTableView(false);
-    } else if (state
-      && state.hasOwnProperty("entityName")
-      && state.hasOwnProperty("targetDatabase")
-      && state.hasOwnProperty("jobId")
-      && state.hasOwnProperty("Collection")) {
-      setCardView(false);
-      setLatestJobFacet(state["jobId"], state["entityName"], state["targetDatabase"], state["Collection"]);
-    } else if (state
-      && state.hasOwnProperty("entityName")
-      && state.hasOwnProperty("targetDatabase")
-      && state.hasOwnProperty("jobId")) {
-      setCardView(false);
-      setLatestJobFacet(state["jobId"], state["entityName"], state["targetDatabase"]);
-    } else if (state && state.hasOwnProperty("entityName") && state.hasOwnProperty("jobId")) {
-      setCardView(false);
-      setLatestJobFacet(state["jobId"], state["entityName"]);
     } else if (state && state.hasOwnProperty("entity")) {
       if (Array.isArray(state["entity"])) {
         setEntityClearQuery(state["entity"][0]);
       } else {
         setEntityClearQuery(state["entity"]);
       }
-    } else if (state && state.hasOwnProperty("targetDatabase") && state.hasOwnProperty("jobId")) {
-      setCardView(true);
-      setLatestDatabase(state["targetDatabase"], state["jobId"]);
     }
   }, [state]);
 
@@ -459,7 +437,7 @@ const Browse: React.FC<Props> = ({location}) => {
   const handleUserPreferences = () => {
     setUserPreferences();
 
-    if (searchOptions.entityTypeIds.length > 0 && !entities.includes(searchOptions.entityTypeIds[0])) {
+    if (searchOptions.entityTypeIds.length > 0 && !searchOptions.entityTypeIds.includes(searchOptions.entityTypeIds[0])) {
       // entityName is not part of entity model from model payload
       // change user preferences to default user pref.
       createUserPreferences(user.name);
@@ -563,7 +541,7 @@ const Browse: React.FC<Props> = ({location}) => {
   const helpIcon = () => (
     <span>
       <HCTooltip text={graphSearchData["limit"] > 1000 ? ExploreToolTips.largeDatasetWarning : ExploreToolTips.numberOfResults} id="asterisk-help-tooltip" placement="right">
-        {graphSearchData["limit"] > 1000 ? <i data-testid="warning-large-data"><FontAwesomeIcon icon={faExclamationTriangle} className={styles.largeDatasetWarning}/></i> :
+        {graphSearchData["limit"] > 1000 ? <i data-testid="warning-large-data"><FontAwesomeIcon icon={faExclamationTriangle} className={styles.largeDatasetWarning} /></i> :
           <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} />}
       </HCTooltip>
     </span>
@@ -591,7 +569,7 @@ const Browse: React.FC<Props> = ({location}) => {
                 isSavedQueryUser={isSavedQueryUser}
                 columns={columns}
                 setIsLoading={setIsLoading}
-                entities={entities}
+                entities={searchOptions.entityTypeIds}
                 selectedFacets={selectedFacets}
                 greyFacets={greyFacets}
                 isColumnSelectorTouched={isColumnSelectorTouched}
@@ -650,7 +628,7 @@ const Browse: React.FC<Props> = ({location}) => {
               <div className={styles.searchBar} ref={searchBarRef} >
                 {showNoDefinitionAlertMessage ? <div aria-label="titleNoDefinition" className={styles.titleNoDefinition}>{ModelingMessages.titleNoDefinition}</div> :
                   <span className="d-flex justify-content-between">
-                    {!graphView &&
+                    {!isGraphView() &&
                       <div className={styles.searchSummaryGraphView}>
                         <SearchSummary
                           total={totalDocuments}
@@ -663,7 +641,7 @@ const Browse: React.FC<Props> = ({location}) => {
 
                     <div className={styles.spinViews}>
                       <div style={switchViewsGraphStyle()}>
-                        {graphView && <div className={styles.graphViewSearchSummary} aria-label={"graph-view-searchSummary"}>
+                        {isGraphView() && <div className={styles.graphViewSearchSummary} aria-label={"graph-view-searchSummary"}>
                           {numberOfResultsBanner}
                         </div>}
                         {isLoading && <div className={styles.spinnerContainer}><Spinner animation="border" data-testid="spinner" variant="primary" /></div>}
@@ -739,7 +717,7 @@ const Browse: React.FC<Props> = ({location}) => {
               </div>
             </div>
             {!showNoDefinitionAlertMessage &&
-              <div className={graphView ? styles.viewGraphContainer : styles.viewContainer} >
+              <div className={isGraphView() ? styles.viewGraphContainer : styles.viewContainer} >
                 <div>
                   {cardView ?
                     <RecordCardView
@@ -779,7 +757,7 @@ const Browse: React.FC<Props> = ({location}) => {
                 </div>
                 <br />
               </div>}
-            {!showNoDefinitionAlertMessage && !graphView &&
+            {!showNoDefinitionAlertMessage && !isGraphView() &&
               <div>
                 <SearchSummary
                   total={totalDocuments}
