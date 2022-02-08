@@ -112,7 +112,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
             "/img/**",
             "/favicon.ico",
             "/api/explore/login",
-            "/api/explore/proxyAddress",
+            "/api/explore/proxyAddress"
         };
     }
 }
