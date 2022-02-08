@@ -488,7 +488,8 @@ const ExploreIntros = {
 const ExploreToolTips = {
   nameQuery: 'The name of this query.',
   descriptionQuery: 'A description of this query.',
-  numberOfResults: "Pan around the graph to view more results."
+  numberOfResults: "Pan around the graph to view more results.",
+  largeDatasetWarning: "The query returned more records than the graph can display. To view all records, switch to the Table or Snippet view."
 };
 
 const ExplorePlaceholders = {
