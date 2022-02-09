@@ -7,7 +7,6 @@ import { SearchContext } from "../../store/SearchContext";
 import { DetailContext } from "../../store/DetailContext";
 import {GearFill, CodeSlash, ArrowRepeat} from "react-bootstrap-icons";
 import "./ResultsList.scss";
-import {colors} from "../../config/colors";
 import { getValByPath, getValByPathAsArray } from "../../util/util";
 
 type Props = {
@@ -38,7 +37,7 @@ const COMPONENTS = {
  * @prop {object} config.items.config  Object of configuration properties for item component.
  * @prop {object} config.categories  Categories configuration object.
  * @prop {string} config.categories.value  Path to categories.
- * @prop {string} config.categories.colors  Key to colors configuration object in colors.js.
+ * @prop {object} config.categories.colors  Key/value pairs specifying categories and their colors.
  * @prop {object} config.timestamp  Timestamp configuration object.
  * @prop {string} config.timestamp.value  Path to timestamp.
  * @prop {string} config.timestamp.label  Label prefix for timestamp.
@@ -85,7 +84,7 @@ const ResultsList: React.FC<Props> = (props) => {
   const searchContext = useContext(SearchContext);
   const detailContext = useContext(DetailContext);
 
-  const catColors = colors[props.config.categories.colors] ? colors[props.config.categories.colors] : {};
+  const catColors = props.config.categories.colors || {};
   let thumbStyle = {
     width: (props.config && props.config.thumbnail && props.config.thumbnail.width) ? 
       props.config.thumbnail.width : "auto",

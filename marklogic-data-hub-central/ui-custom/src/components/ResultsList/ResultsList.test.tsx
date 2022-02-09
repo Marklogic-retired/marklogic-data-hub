@@ -7,8 +7,8 @@ import userEvent from '@testing-library/user-event'
 const resultsListConfig = {
     thumbnail: {
         src: "extracted.person.image",
-        width: 100,
-        height: 100,
+        width: "70px",
+        height: "70px",
         alt: "result thumbnail"
     },
     title: {
@@ -23,17 +23,23 @@ const resultsListConfig = {
                 state: "extracted.person.address.state"
             }
         },
-        { value: "extracted.person.phone", class: "phone"},
-        { value: "extracted.person.ssn"}
+        { path: "extracted.person.phone", className: "phone"},
+        { path: "extracted.person.ssn"}
     ],
-    categories: "extracted.person.sources",
+    categories: {
+        path: "extracted.person.sources",
+        colors: {
+            "source1": "#d5e1de",
+            "source2": "#ebe1fa"
+        }
+    },
     timestamp: {
-        value: "extracted.person.createdOn",
+        path: "extracted.person.createdOn",
         type: "datetime",
         format: "yyyy-MM-dd",
         label: "Time is"
     },
-    status: "extracted.person.status"
+    status: { path: "extracted.person.status" }
 };
 
 const searchResults = {
