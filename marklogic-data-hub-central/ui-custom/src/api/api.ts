@@ -1,18 +1,17 @@
 import axios from "axios";
-import {endpoints} from "../config/endpoints.js";
 import persons from "../mocks/persons.json";
 import {summary} from "../mocks/summary";
 import {saved} from "../mocks/saved";
 import _ from "lodash";
 
-export const getSearchResults = async (query, userid) => { 
+export const getSearchResults = async (endpoint, query, userid) => { 
   let config = {
     headers: {
       userid: userid ? userid : null
     }
   }
   try {
-    const response = await axios.post(endpoints.searchResults, query, config);
+    const response = await axios.post(endpoint, query, config);
     if (response && response.status === 200) {
       return response;
     }
@@ -36,14 +35,14 @@ export const getSaved = (opts) => {
   return saved;
 };
 
-export const getDetail = async (query, userid) => {
+export const getDetail = async (endpoint, query, userid) => {
   let config = {
     headers: {
       userid: userid ? userid : null
     }
   }
   try {
-    const response = await axios.post(endpoints.detail, query, config);
+    const response = await axios.post(endpoint, query, config);
     if (response && response.status === 200) {
       return response;
     }
