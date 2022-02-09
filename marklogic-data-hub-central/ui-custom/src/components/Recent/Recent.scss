@@ -6,6 +6,7 @@
         margin-top: 0;
     }
     .result {
+        border-top-width: 0 !important; 
         display: flex;
         align-items: flex-start;
         min-height: 83px;
@@ -17,7 +18,8 @@
     }
     .alert {
         position: relative;
-        top: 20px;
+        top: 4px;
+        right: 8px;
         width: 36px;
     }
     .thumbnail {
