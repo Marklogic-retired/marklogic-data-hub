@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { DetailContext } from "../../store/DetailContext";
-import styles from "./Recent.module.scss";
+import "./Recent.scss";
 import { getValByPath, getValByPathAsArray } from "../../util/util";
 import {ExclamationTriangleFill} from "react-bootstrap-icons";
 
@@ -49,6 +49,8 @@ type Props = {
  */
 const Recent: React.FC<Props> = (props) => {
 
+  console.log("Recent props", props.config, props.data);
+
   const detailContext = useContext(DetailContext);
 
   const recentColors = props.config.categories.colors || {};
@@ -62,39 +64,39 @@ const Recent: React.FC<Props> = (props) => {
     let res = props.data.map((recent, index) => {
       let items = props.config.items.map((it, index) => {
         return (
-          <div key={"item-" + index} className={styles.item}>
+          <div key={"item-" + index} className="item">
             {getValByPath(recent, it)}
           </div>
         );
       });
       return (
-        <div key={"recent-" + index} className={styles.result}>
-          <div className={styles.alert}>
+        <div key={"recent-" + index} className="result">
+          <div className="alert">
             {recent.alert ? <ExclamationTriangleFill color="#d48b32" size={16} /> : null}
           </div>
-          <div className={styles.thumbnail}>
+          <div className="thumbnail">
             <img
               src={getValByPath(recent, props.config.thumbnail.src)}
               alt={getValByPath(recent, props.config.title)}
               style={{width: props.config.thumbnail.width, height: props.config.thumbnail.height}}
             ></img>
           </div>
-          <div className={styles.text}>
-            <div className={styles.title} id={getValByPath(recent, props.config.id)} onClick={handleNameClick}>
+          <div className="text">
+            <div className="title" id={getValByPath(recent, props.config.id)} onClick={handleNameClick}>
               {getValByPath(recent, props.config.title)}
             </div>
-            <div className={styles.address}>
+            <div className="address">
               {getValByPath(recent, props.config.address.street)},&nbsp;
               {getValByPath(recent, props.config.address.city)},&nbsp;
               {getValByPath(recent, props.config.address.state)}&nbsp;
               {getValByPath(recent, props.config.address.zip[0])}-
               {getValByPath(recent, props.config.address.zip[1])}
             </div>
-            <div className={styles.items}>
+            <div className="items">
               {items}
             </div>
-            <div className={styles.categories}>
-              {getValByPathAsArray(recent, props.config.categories).map((s, i) => {
+            <div className="categories">
+              {getValByPathAsArray(recent, props.config.categories.path).map((s, i) => {
                 return (
                   <div key={"category-" + i} style={{backgroundColor: recentColors[s]}}>{s}</div>
                 )
@@ -110,7 +112,7 @@ const Recent: React.FC<Props> = (props) => {
   return (
     <div>
       {(props.data && props.data.length > 0) ? (
-        <div className={styles.recent}>{getRecent()}</div>
+        <div className="recent">{getRecent()}</div>
       ) : null
       }
     </div>
