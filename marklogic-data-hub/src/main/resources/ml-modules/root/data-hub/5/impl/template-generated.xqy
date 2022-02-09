@@ -85,13 +85,14 @@ declare function extraction-template-generate(
                 for $property-name in map:keys($properties)
                 let $property-definition := map:get($properties, $property-name)
                 let $items-map := map:get($property-definition, "items")
+                let $thisPropertyIsRequired := fn:exists(index-of(($required-properties), $property-name))
                 let $datatype :=
                   if (map:get($property-definition, "datatype") eq "iri")
                   then "IRI"
                   else map:get($property-definition, "datatype")
-                let $is-nullable :=
-                  if ($property-name = $required-properties)
-                  then ()
+                  let $is-nullable :=
+                  if($thisPropertyIsRequired)
+                  then <tde:nullable>false</tde:nullable>
                   else <tde:nullable>true</tde:nullable>
                 return
                 (: if the column is an array, skip it in scalar row :)
@@ -166,10 +167,11 @@ declare function extraction-template-generate(
       let $reference-value :=
         $property-definition=>map:get("items")=>map:get("$ref")
       let $ref-name := functx:substring-after-last($reference-value, "/")
-      let $is-nullable :=
-        if ($property-name = $required-properties)
-        then ()
-        else <tde:nullable>true</tde:nullable>
+       let $thisPropertyIsRequired := fn:exists(index-of(($required-properties), $property-name))
+       let $is-nullable :=
+       if($thisPropertyIsRequired)
+       then <tde:nullable>false</tde:nullable>
+       else <tde:nullable>true</tde:nullable>
       let $items-datatype :=
         if (map:get($items-map, "datatype") eq "iri")
         then "string"
