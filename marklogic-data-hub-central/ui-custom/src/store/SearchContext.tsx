@@ -94,7 +94,7 @@ const SearchProvider: React.FC = ({ children }) => {
     if (newSearch) {
       setNewSearch(false);
       let newQuery = buildQuery(startInit, pageLengthInit, qtext, facetStrings);
-      let sr = getSearchResults(newQuery, userContext.userid);
+      let sr = getSearchResults(userContext.config.endpoints.searchResults, newQuery, userContext.userid);
       sr.then(result => {
         setSearchResults(result?.data.searchResults.response);
         setReturned(result?.data.searchResults.response.total);
