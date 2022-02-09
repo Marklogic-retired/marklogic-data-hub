@@ -3,7 +3,6 @@ import { DetailContext } from "../../store/DetailContext";
 import styles from "./Recent.module.scss";
 import { getValByPath, getValByPathAsArray } from "../../util/util";
 import {ExclamationTriangleFill} from "react-bootstrap-icons";
-import {colors} from "../../config/colors";
 
 type Props = {
   data: any;
@@ -52,6 +51,8 @@ const Recent: React.FC<Props> = (props) => {
 
   const detailContext = useContext(DetailContext);
 
+  const recentColors = props.config.categories.colors || {};
+
   const handleNameClick = (e) => {
     console.log("handleNameClick", e);
     detailContext.handleDetail(e.target.id);
@@ -95,7 +96,7 @@ const Recent: React.FC<Props> = (props) => {
             <div className={styles.categories}>
               {getValByPathAsArray(recent, props.config.categories).map((s, i) => {
                 return (
-                  <div key={"category-" + i} style={{backgroundColor: colors["sourcesColors"][s]}}>{s}</div>
+                  <div key={"category-" + i} style={{backgroundColor: recentColors[s]}}>{s}</div>
                 )
               })}
             </div>
