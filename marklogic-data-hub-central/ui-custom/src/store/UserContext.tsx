@@ -91,13 +91,11 @@ const UserProvider: React.FC = ({ children }) => {
   }, [authorities]);
 
   const handleGetConfig = () => {
-    // TODO load from database via endpoint
     let sr = getConfig(userid);
     sr.then(result => {
-        // if (result && result.data) {
-        //     console.log("handleGetConfig result", result);
-        // }
-        setConfig(result);
+        if (result && result.data) {
+            setConfig(result.data);
+        }
     }).catch(error => {
         console.error(error);
     })
