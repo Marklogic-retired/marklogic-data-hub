@@ -16,22 +16,22 @@
         "metrics": [
             {
                 "title": "New entities this week",
-                "value": "entities.value",
+                "path": "entities.value",
                 "color": "#70d8c1"
             },
             {
                 "title": "Sources added this week",
-                "value": "sources.value",
+                "path": "sources.value",
                 "color": "#f5d881"
             },
             {
                 "title": "Tasks created today",
-                "value": "tasks.value",
+                "path": "tasks.value",
                 "color": "#ffbd8e"
             },
             {
                 "title": "Activities unassigned",
-                "value": "activities.value",
+                "path": "activities.value",
                 "color": "#ff984e"
             }
         ],
