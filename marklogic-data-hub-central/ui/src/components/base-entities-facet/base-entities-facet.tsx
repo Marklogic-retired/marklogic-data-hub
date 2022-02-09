@@ -4,7 +4,7 @@ import reactSelectThemeConfig from "../../config/react-select-theme.config";
 import {SearchContext} from "../../util/search-context";
 import styles from "./base-entities-facet.module.scss";
 import {ChevronDoubleRight} from "react-bootstrap-icons";
-import {entitiesSorting} from "../../util/entities-sorting";
+import {baseEntitiesSorting, entitiesSorting} from "../../util/entities-sorting";
 import {HCDivider} from "@components/common";
 import {exploreSidebar} from "../../config/explore.config";
 import DynamicIcons from "@components/common/dynamic-icons/dynamic-icons";
@@ -32,8 +32,8 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
     setRelatedEntityTypeIds
   } = useContext(SearchContext);
 
-  const [entityNames, setEntityNames] = useState<string[]>(baseEntities);
-  const [displayList, setDisplayList] = useState<any[]>(entitiesSorting(currentBaseEntities));
+  const [entityNames, setEntityNames] = useState<string[]>(entitiesSorting(baseEntities));
+  const [displayList, setDisplayList] = useState<any[]>(baseEntitiesSorting(currentBaseEntities));
   const [showMore, setShowMore] = useState<boolean>(false);
 
   useEffect(() => {
@@ -42,7 +42,7 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (baseEntities === [] || baseEntities === ["All Entities"]) {
-      setCurrentBaseEntities(allBaseEntities);
+      setCurrentBaseEntities(baseEntitiesSorting(allBaseEntities));
     }
   }, [baseEntities]);
 
@@ -73,7 +73,7 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
       const filteredEntities = allBaseEntities.filter(entity => clearSelection.includes(entity.name));
       setIsAllEntitiesSelected(false);
       setEntityNames(clearSelection);
-      setCurrentBaseEntities(filteredEntities);
+      setCurrentBaseEntities(baseEntitiesSorting(filteredEntities));
       if (props.activeKey.indexOf("related-entities") === -1) { props.setActiveAccordionRelatedEntities("related-entities"); }
 
       if (filteredEntities.length === 1) {
@@ -90,9 +90,9 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
   const updateDisplayList = () => {
     if (!showMore) {
       const entitiesListSlice = currentBaseEntities.slice(0, MINIMUM_ENTITIES);
-      setDisplayList(entitiesListSlice);
+      setDisplayList(baseEntitiesSorting(entitiesListSlice));
     } else {
-      setDisplayList(currentBaseEntities);
+      setDisplayList(baseEntitiesSorting(currentBaseEntities));
     }
   };
 

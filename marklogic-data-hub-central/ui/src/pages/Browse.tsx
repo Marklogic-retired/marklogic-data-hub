@@ -569,7 +569,7 @@ const Browse: React.FC<Props> = ({location}) => {
     </span>
   );
 
-  const numberOfResultsBanner = <span>Viewing {graphSearchData["limit"]} of {graphSearchData["total"]} results {helpIcon()}</span>;
+  const numberOfResultsBanner = <span className={styles.graphViewSummaryIcon}>Viewing {graphSearchData["limit"]} of {graphSearchData["total"]} results {helpIcon()}</span>;
 
 
   return (
