@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./Metric.module.scss";
+import "./Metric.scss";
 import { getValByPath } from "../../util/util";
 import _ from "lodash";
 
@@ -16,9 +16,9 @@ const Metric: React.FC<Props> = (props) => {
   }
 
   return (
-    <div className={styles.metric} style={{borderColor: props.config.color}}>
-      <div className={styles.value}>{display(props.data, props.config.value)}</div>
-      <div className={styles.title}>{props.config.title}</div>
+    <div className="metric" style={{borderColor: props.config.color}}>
+      <div className="value">{display(props.data, props.config.path)}</div>
+      <div className="title">{props.config.title}</div>
     </div>
   );
 };
