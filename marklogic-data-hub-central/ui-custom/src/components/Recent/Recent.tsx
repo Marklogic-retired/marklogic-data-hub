@@ -49,8 +49,6 @@ type Props = {
  */
 const Recent: React.FC<Props> = (props) => {
 
-  console.log("Recent props", props.config, props.data);
-
   const detailContext = useContext(DetailContext);
 
   const recentColors = props.config.categories.colors || {};

@@ -1,5 +1,5 @@
 {
-  "name": "twizzlers-ui",
+  "name": "marklogic-entity-viewer",
   "version": "0.1.0",
   "dependencies": {
     "@types/node": "^12.20.33",
