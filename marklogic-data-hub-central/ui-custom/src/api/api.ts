@@ -1,11 +1,8 @@
 import axios from "axios";
 import {endpoints} from "../config/endpoints.js";
 import persons from "../mocks/persons.json";
-import {searchResults} from "../mocks/results";
 import {summary} from "../mocks/summary";
 import {saved} from "../mocks/saved";
-import {detail} from "../mocks/detail";
-import config from "../config/config.json";
 import _ from "lodash";
 
 export const getSearchResults = async (query, userid) => { 
@@ -22,53 +19,6 @@ export const getSearchResults = async (query, userid) => {
   } catch (error) {
     let message = error;
     console.error("Error: getSearchResults", message);
-  }
-};
-
-// export const getSearchResults = async (query) => { // TODO
-export const getSearchResultsOld = (query) => {
-  // return await axios.get(`/api/searchResults`); // TODO
-  //console.log("getSearchResults", query);
-  const results = _.clone(searchResults);
-  results["start"] = query.start;
-  results["pageLength"] = query.pageLength;
-  let personsSlice = persons.slice((query.start - 1), (query.start + query.pageLength -1));
-  let fsKeys = Object.keys(query.facetStrings);
-  let newArr;
-  // TODO Fake faceted search for now...
-  fsKeys.forEach(key => {
-    if (key === "Status") {
-      newArr = personsSlice.filter(p => {
-        return query.facetStrings[key].includes(p.entityInstance.status);
-      })
-      personsSlice = newArr;
-    }
-    if (key === "Sources") {
-      newArr = personsSlice.filter(p => {
-        let intersected = _.intersection(query.facetStrings[key], p.entityInstance.sources);
-        return intersected.length > 0;
-      })
-      personsSlice = newArr;
-    }
-  });
-  // TODO Fake qtext search for now...
-  let qRes;
-  if (query.qtext.trim() !== '') {
-    let test;
-    // Check first name
-    qRes = personsSlice.filter(p => {
-      test = Array.isArray(p.entityInstance.name) ? 
-        p.entityInstance.name.join(' ').toLowerCase() : 
-        p.entityInstance.name.toLowerCase();
-      return test.includes(query.qtext.trim().toLowerCase());
-    });
-  }
-  personsSlice = (qRes !== undefined && qRes.length > 0) ? qRes : personsSlice;
-  return {
-    ...results,
-    results: personsSlice,
-    returned: personsSlice.length,
-    total: persons.length
   }
 };
 
@@ -101,18 +51,6 @@ export const getDetail = async (query, userid) => {
     let message = error;
     console.error("Error: getDetail", message);
   }
-};
-
-// export const getDetail = async (opts) => { // TODO
-export const getDetailOld = (opts) => {
-  // return await axios.get(`/api/saved`); // TODO
-  const result = _.clone(detail);
-  const person = persons.find(p => p.entityInstance.personId === parseInt(opts));
-  if (person !== undefined) {
-    result["docUri"] = person["uri"];
-    result["entityInstanceProperties"] = person.entityInstance;
-  }
-  return result;
 };
 
 const getRandomInt = (min, max) => {
@@ -186,7 +124,6 @@ export const login = async (username, password, userid) => {
 };
 
 export const getConfig = async (userid) => { 
-  // TODO get application config from database
   let config = {
     headers: {
       userid: userid ? userid : null
