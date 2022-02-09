@@ -47,7 +47,7 @@ const DetailProvider: React.FC = ({ children }) => {
               "personId": [detailId]
           }
       }
-      let sr = getDetail(newQuery, userContext.userid);
+      let sr = getDetail(userContext.config.endpoints.detail, newQuery, userContext.userid);
       sr.then(result => {
         setDetail(result?.data.searchResults.response);
         setNewDetail(false);
@@ -68,7 +68,7 @@ const DetailProvider: React.FC = ({ children }) => {
             "personId": [id]
         }
     }
-    let sr = getDetail(newQuery, userContext.userid);
+    let sr = getDetail(userContext.config.endpoints.detail, newQuery, userContext.userid);
     sr.then(result => {
       setDetail(result?.data.searchResults.response);
       if (location.pathname !== "/detail/" + id) {
