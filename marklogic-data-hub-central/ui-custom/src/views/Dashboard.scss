@@ -1,6 +1,17 @@
 .dashboard {
     padding: 0;
 
+    .spinner {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 400px;
+
+        .spinner-border {
+            color: #ddd
+        }
+    }
+
     .divider {
         width: 100%;
         font-size: 22px;
