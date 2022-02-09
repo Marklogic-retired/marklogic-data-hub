@@ -83,7 +83,7 @@
             },
             "items": ["entityInstance.phone", "entityInstance.email"],
             "categories": {
-                "path": "extracted.person.sources",
+                "path": "entityInstance.sources",
                 "colors": {
                     "New York Times": "#d5e1de",
                     "USA Today": "#ebe1fa",
