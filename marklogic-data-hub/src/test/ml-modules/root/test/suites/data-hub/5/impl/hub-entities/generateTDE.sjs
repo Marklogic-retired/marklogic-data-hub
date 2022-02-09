@@ -82,7 +82,8 @@ function generateTdeWithViewJoin() {
     if (billingJoinTemplateExists) {
         for (const columnNode of billingJoinTemplate.xpath("*:rows/*:row/*:columns/*:column")) {
             const columnNodeDesc = xdmp.describe(columnNode, Sequence.from([]), Sequence.from([]));
-            assertions.push(test.assertTrue(xs.boolean(fn.head(columnNode.xpath('*:nullable'))), `All columns should be nullable. ${columnNodeDesc}`));
+            //this case doesnt work since 6661 story was implemented, and it is covered in generateTDEWithRequiredProperties.sjs
+            //assertions.push(test.assertTrue(xs.boolean(fn.head(columnNode.xpath('*:nullable'))), `All columns should be nullable. ${columnNodeDesc}`));
             assertions.push(test.assertEqual('ignore', fn.string(fn.head(columnNode.xpath('*:invalid-values'))), `All columns should ignore invalid values ${columnNodeDesc}`));
         }
     }

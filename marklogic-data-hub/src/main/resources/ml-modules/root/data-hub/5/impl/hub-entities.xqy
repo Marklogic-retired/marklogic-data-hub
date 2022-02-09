@@ -623,7 +623,7 @@ declare function hent:get-primary-entity-type-title($entity-definition as item()
   return $primary-definition ! fn:substring-after(., "#/definitions/")
 };
 
-declare variable $default-nullable as element(tde:nullable) := element tde:nullable {fn:true()};
+
 declare variable $default-invalid-values as element(tde:invalid-values) := element tde:invalid-values {"ignore"};
 
 declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:string*, $uber-model as map:map)
@@ -640,8 +640,6 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
         document {
           hent:fix-tde($n/node(), $entity-model-contexts, $uber-model, $entity-name)
         }
-      case element(tde:nullable) return
-        $default-nullable
       case element(tde:invalid-values) return
         $default-invalid-values
       case element(tde:val) return
@@ -676,8 +674,7 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
         element { fn:node-name($n) } {
           $n/namespace::node(),
           $n/@*,
-          hent:fix-tde($n/* except $n/(tde:nullable|tde:invalid-values), $entity-model-contexts, $uber-model, ()),
-          $default-nullable,
+          hent:fix-tde($n/* except $n/tde:invalid-values, $entity-model-contexts, $uber-model, ()),
           $default-invalid-values
         }
       case element(tde:subject)|element(tde:predicate)|element(tde:object) return
@@ -732,8 +729,7 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
                                 $tde-val || "/" || $primary-key
                             }
                         ) else
-                          hent:fix-tde($column/tde:val, $entity-model-contexts, $uber-model, ()),
-                        $default-nullable,
+                        hent:fix-tde($column/(tde:val|tde:nullable), $entity-model-contexts, $uber-model, ()),
                         $default-invalid-values,
                         hent:fix-tde($column/(tde:default|tde:reindexing|tde:collation), $entity-model-contexts, $uber-model, ())
                       }
