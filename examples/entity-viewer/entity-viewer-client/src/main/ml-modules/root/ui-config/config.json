@@ -12,6 +12,56 @@
         "detail": "/api/explore"
     },
 
+    "header": { 
+        "title": "Entity Viewer",
+        "subtitle": "Beta",
+        "menus": [
+            {
+                "label": "Search",
+                "to": "/search"
+            },
+            {
+                "label": "ML Home",
+                "url": "http://www.marklogic.com"
+            },
+            {
+                "label": "Submenu",
+                "submenu": [
+                    {
+                        "label": "ML Docs",
+                        "url": "https://docs.marklogic.com/"
+                    },
+                    {
+                        "label": "Search",
+                        "to": "/search"
+                    }
+                ]
+            }
+        ]
+    },
+
+    "searchbox": { 
+        "items": [
+            {
+                "label": "All Entities",
+                "value": ["person", "place", "thing"]
+            },
+            {
+                "label": "Person",
+                "value": "person",
+                "default": true
+            },
+            {
+                "label": "Place",
+                "value": "place"
+            },
+            {
+                "label": "Thing",
+                "value": "thing"
+            }
+        ]
+    },
+
     "dashboard": { 
         "metrics": [
             {
@@ -321,34 +371,6 @@
         }
     },
 
-    "header": { 
-        "title": "Entity Viewer",
-        "subtitle": "Beta",
-        "menus": [
-            {
-                "label": "Search",
-                "to": "/search"
-            },
-            {
-                "label": "ML Home",
-                "url": "http://www.marklogic.com"
-            },
-            {
-                "label": "Submenu",
-                "submenu": [
-                    {
-                        "label": "ML Docs",
-                        "url": "https://docs.marklogic.com/"
-                    },
-                    {
-                        "label": "Search",
-                        "to": "/search"
-                    }
-                ]
-            }
-        ]
-    },
-
     "search": { 
         "meter": {
             "colors": {
@@ -450,28 +472,6 @@
             },
             "status": { "path": "extracted.person.status" }
         }
-    },
-
-    "searchbox": { 
-        "items": [
-            {
-                "label": "All Entities",
-                "value": ["person", "place", "thing"]
-            },
-            {
-                "label": "Person",
-                "value": "person",
-                "default": true
-            },
-            {
-                "label": "Place",
-                "value": "place"
-            },
-            {
-                "label": "Thing",
-                "value": "thing"
-            }
-        ]
     }
 
 }
