@@ -87,12 +87,14 @@ export const getProxy = async () => {
 };
 
 export const getUserid = async (proxy) => { 
+  // setupProxy.js script will dynamically proxy to x-forward value
   let config = {
     headers: {
       'x-forward': proxy
     }
   }
   try {
+    // URL string here just needs to match what is in steupProxy.js
     const response = await axios.get("/api/explore/login", config);
     if (response && response.status === 200) {
       return response;
