@@ -1,6 +1,6 @@
 import React from "react";
 import Metric from "./Metric";
-import styles from "./Metrics.module.scss";
+import "./Metrics.scss";
 import _ from "lodash";
 
 type Props = {
@@ -15,13 +15,13 @@ type Props = {
  * @prop {object} data - Data payload.
  * @prop {object[]} config  Array of metric configuration objects.
  * @prop {string} config[].title - Metric label.
- * @prop {string} config[].value - Path to metric value in payload.
+ * @prop {string} config[].path - Path to metric value in payload.
  * @prop {string} config[].color - HTML color code for container.
  * @example
  * [
  *   {
  *      title: "New data this week",
- *      value: "path.to.metric",
+ *      path: "path.to.metric",
  *      color: "#ff0000"
  *   }
  * ]
@@ -29,7 +29,7 @@ type Props = {
 const Metrics: React.FC<Props> = (props) => {
 
   return (
-    <div className={styles.metrics}>
+    <div className="metrics">
       {_.isArray(props.config) && props.config.map((m, i) => {
         return (
           <Metric key={"metric-" + i} data={props.data} config={m} />
