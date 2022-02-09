@@ -5,6 +5,7 @@ import Saved from "../components/Saved/Saved";
 import New from "../components/New/New";
 import Recent from "../components/Recent/Recent";
 import Section from "../components/Section/Section";
+import Spinner from "react-bootstrap/Spinner";
 import { UserContext } from "../store/UserContext";
 import {getRecent} from "../api/api";
 import {getSaved} from "../api/api";
@@ -32,15 +33,24 @@ const Dashboard: React.FC<Props> = (props) => {
     setConfig(userContext.config);
   }, [userContext.config]);
 
+  const spinner = (
+    <div className="spinner">
+      <Spinner animation="border" role="status">
+        <span className="visually-hidden">Loading...</span>
+      </Spinner>
+    </div>
+  );
+
   return (
     <div className="dashboard">
-      <div className="dashboard container-fluid">
+
+      {config?.dashboard ?   
+
+      <div className="container-fluid">
 
         <div className="row">
 
-          {config?.dashboard?.metrics ? 
             <Metrics data={summary.metrics} config={config.dashboard.metrics} />
-          : null}
 
         </div>
 
@@ -49,21 +59,13 @@ const Dashboard: React.FC<Props> = (props) => {
           <div className="col-lg">
 
             <Section title="Search">
-              <h4 style={{marginBottom: "20px"}}>New Search</h4>
-
-              {config?.searchbox ? 
+                <h4 style={{marginBottom: "20px"}}>New Search</h4>
                 <SearchBox config={config.searchbox} button="vertical" width="100%" />
-              : null}
-
-              <div className="divider">- or -</div>
-              <div style={{marginTop: "20px"}}>
-                <h4>Saved Searches</h4>
-
-                {config?.dashboard?.saved ? 
+                <div className="divider">- or -</div>
+                <div style={{marginTop: "20px"}}>
+                  <h4>Saved Searches</h4>
                   <Saved data={saved} config={config.dashboard.saved} />
-                : null}
-
-              </div>
+                </div>
             </Section>
 
           </div>
@@ -75,11 +77,7 @@ const Dashboard: React.FC<Props> = (props) => {
             </Section>
 
             <Section title="Recently Visited">
-
-              {config?.dashboard?.recent ? 
                 <Recent data={recent} config={config.dashboard.recent} />
-              : null}
-
             </Section>
 
           </div>
@@ -87,6 +85,9 @@ const Dashboard: React.FC<Props> = (props) => {
         </div>
 
       </div>
+
+      : spinner}
+
     </div>
   );
 };
