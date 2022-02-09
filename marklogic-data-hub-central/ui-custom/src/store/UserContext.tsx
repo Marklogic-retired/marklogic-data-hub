@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { getProxy, getUserid, login, getConfig } from "../api/api";
-import { auth } from "../config/auth";
 interface UserContextInterface {
     userid: string;
     proxy: string;
@@ -74,7 +73,7 @@ const UserProvider: React.FC = ({ children }) => {
   }, [userid]);
 
   const handleLogin = () => {
-    let sr = login(auth.hubCentral.username, auth.hubCentral.password, userid);
+    let sr = login("", "", userid); // empty auth values for HC login
     sr.then(result => {
       if (result && result.data) {
         setAuthorites(result.data.authorities);
