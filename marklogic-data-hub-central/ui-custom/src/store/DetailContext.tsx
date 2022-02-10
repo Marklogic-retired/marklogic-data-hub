@@ -7,6 +7,11 @@ interface DetailContextInterface {
   detail: any;
   handleDetail: any;
 }
+interface QueryInterface {
+  searchText: string;
+  entityTypeIds: string[];
+  selectedFacets: any;
+}
   
 const defaultState = {
   detail: {},
@@ -36,18 +41,22 @@ const DetailProvider: React.FC = ({ children }) => {
   const [detail, setDetail] = useState<any>({});
   const [newDetail, setNewDetail] = useState<boolean>(false);
 
+  const buildQuery = (id):QueryInterface => {
+    let query = {
+      "searchText": "",
+      "entityTypeIds": [userContext.config.api.detailType] as any,
+      "selectedFacets": {}
+    }
+    query["selectedFacets"][userContext.config.api.detailConstraint] = [id];
+    return query;
+  };
+
   // TODO determine if useEffect is needed like in searchContext
   useEffect(() => {
     if (newDetail) {
       setNewDetail(false);
-      let newQuery = {
-          "searchText": "",
-          "entityTypeIds": ["person"],
-          "selectedFacets": {
-              "personId": [detailId]
-          }
-      }
-      let sr = getDetail(userContext.config.endpoints.detail, newQuery, userContext.userid);
+      let newQuery = buildQuery(detailId);
+      let sr = getDetail(userContext.config.api.detailEndpoint, newQuery, userContext.userid);
       sr.then(result => {
         setDetail(result?.data.searchResults.response);
         setNewDetail(false);
@@ -61,14 +70,8 @@ const DetailProvider: React.FC = ({ children }) => {
     console.log("handleDetail", id);
     setDetailId(id);
     // TODO using search results endpoint for now filtered by ID
-    let newQuery = {
-        "searchText": "",
-        "entityTypeIds": ["person"],
-        "selectedFacets": {
-            "personId": [id]
-        }
-    }
-    let sr = getDetail(userContext.config.endpoints.detail, newQuery, userContext.userid);
+    let newQuery = buildQuery(id);
+    let sr = getDetail(userContext.config.api.detailEndpoint, newQuery, userContext.userid);
     sr.then(result => {
       setDetail(result?.data.searchResults.response);
       if (location.pathname !== "/detail/" + id) {

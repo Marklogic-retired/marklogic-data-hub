@@ -1,15 +1,10 @@
 {
 
-    "auth": {
-        "hubCentral": {
-            "username": "",
-            "password": ""
-        }
-    },
-
-    "endpoints": { 
-        "searchResults": "/api/explore",
-        "detail": "/api/explore"
+    "api": { 
+        "searchResultsEndpoint": "/api/explore",
+        "detailEndpoint": "/api/explore",
+        "detailType": "person",
+        "detailConstraint": "personId"
     },
 
     "header": { 

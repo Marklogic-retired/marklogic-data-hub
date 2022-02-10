@@ -23,17 +23,20 @@ const Detail: React.FC<Props> = (props) => {
   };
 
   const userContext = useContext(UserContext);
+  const detailContext = useContext(DetailContext);
+  
   const [config, setConfig] = useState<any>(null);
+
+  let { id } = useParams();
 
   useEffect(() => {
     setConfig(userContext.config);
+    // If config is loaded and id is present but detail context is 
+    // empty, load detail context so content is displayed
+    if (userContext.config.detail && id && _.isEmpty(detailContext.detail)) {
+      detailContext.handleDetail(id);
+    }
   }, [userContext.config]);
-
-  const detailContext = useContext(DetailContext);
-  let { id } = useParams();
-  if (_.isEmpty(detailContext.detail)) {
-    detailContext.handleDetail(id);
-  }
 
   let thumbStyle = {
     width: (config?.detail?.heading?.thumbnail && config?.detail?.heading?.thumbnail.width) ? 
@@ -65,7 +68,7 @@ const Detail: React.FC<Props> = (props) => {
   return (
 
     <div className="detail">
-      {(!_.isEmpty(detailContext.detail)) ? (
+      {(config?.detail && !_.isEmpty(detailContext.detail)) ? (
 
       <div>
 
