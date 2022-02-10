@@ -12,6 +12,7 @@ div.siderContainer {
     a.siderIndicatorContainer {
         display: flex;
         gap: 4px;
+        z-index: 999;
         position: absolute;
         align-items: center;
         text-decoration: none;

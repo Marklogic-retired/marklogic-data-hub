@@ -268,7 +268,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         let color = parseText[1];
         return (
           <HCTooltip placement="top" id="color-tooltip" text={<span>This color is associated with the <b>{entityName}</b> entity throughout your project.</span>}>
-            <div style={{width: "30px", height: "32px", background: color, marginLeft: "3%"}} data-testid={`${entityName}-${color}-color`} aria-label={`${entityName}-${color}-color`}></div>
+            <div style={{width: "33px", height: "35px", background: color, marginLeft: "3%", borderStyle: "solid", borderWidth: "1px", borderColor: "#eeeeee", borderRadius: "4px"}} data-testid={`${entityName}-${color}-color`} aria-label={`${entityName}-${color}-color`}></div>
           </HCTooltip>
         );
       }
@@ -383,7 +383,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
       entityName: entity.entityName,
       instances: entity.entityName + "," + parseInt(entity.entityInstanceCount),
       lastProcessed: entity.entityName + "," + entity.latestJobId + "," + entity.latestJobDateTime,
-      color: colorExistsForEntity(entity.entityName) ? (entity.entityName + "," + props.hubCentralConfig.modeling.entities[entity.entityName].color) : (entity.entityName + "," + "#EEEEFF1"),
+      color: colorExistsForEntity(entity.entityName) ? (entity.entityName + "," + props.hubCentralConfig.modeling.entities[entity.entityName].color) : (entity.entityName + "," + "#EEEFF1"),
       icon: iconExistsForEntity(entity.entityName) ? (entity.entityName + "," + props.hubCentralConfig.modeling.entities[entity.entityName].icon) : (entity.entityName + "," + "FaShapes"),
       actions: entity.entityName,
       definitions: entity.model.definitions,
