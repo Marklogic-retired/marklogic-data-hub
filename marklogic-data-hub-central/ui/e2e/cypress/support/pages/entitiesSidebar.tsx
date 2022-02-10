@@ -1,11 +1,19 @@
 class BaseEntitySidebar {
   //Elements
-  get backToMainSidebarButton() {
+  backToMainSidebar() {
     return cy.findByLabelText("base-entity-icons-list-close");
   }
   getBaseEntity(entity: string) {
     return cy.get(`div[aria-label="base-entities-${entity}"]`);
   }
+  getBaseEntityOption(entity: string) {
+    return cy.get(`[aria-label="base-option-${entity}"]`);
+  }
+
+  removeSelectedBaseEntity() {
+    return cy.get(`[class="css-xb97g8"]`).first().click();
+  }
+
   getEntityTitle(entity: string) {
     return cy.get(`div[aria-label="specif-sidebar-${entity}"]`);
   }
@@ -24,6 +32,10 @@ class BaseEntitySidebar {
 
   getBaseEntityDropdown() {
     return cy.get("#entitiesSidebar-select-wrapper");
+  }
+
+  openBaseEntityDropdown() {
+    return cy.get("#entitiesSidebar-select-wrapper").click("right");
   }
 
   selectBaseEntityOption(entityName: string) {
@@ -77,7 +89,7 @@ class BaseEntitySidebar {
     return cy.get(`[class="after-indicator sidebar_disabledTitleCheckbox__PJkN4 accordion-button collapsed"]`);
   }
   //Actions
-  clickOnBaseEntity(entity: string) {
+  openBaseEntityFacets(entity: string) {
     return this.getBaseEntity(entity).click();
   }
   clickFacetCheckbox(name: string) {

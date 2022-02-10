@@ -1,5 +1,9 @@
 export const exploreSidebar = {
-    MINIMUM_ENTITIES: 5
+    MINIMUM_ENTITIES: 5,
+    entitySpecificSidebar: {
+        integers: ["int", "integer", "short", "long"],
+        decimals: ["decimal", "double", "float"]
+    }
 }
 
 export const graphViewConfig = {

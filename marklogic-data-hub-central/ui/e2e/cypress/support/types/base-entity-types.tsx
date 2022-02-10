@@ -1,3 +1,5 @@
 export enum BaseEntityTypes {
-    CUSTOMER = "Customer"
+    CUSTOMER = "Customer",
+    PERSON = "Person",
+    CLIENT = "Client"
 }
