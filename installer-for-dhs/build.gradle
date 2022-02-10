@@ -1,6 +1,6 @@
 plugins {
     id "java-library"
-    id 'com.github.johnrengelman.shadow' version '5.2.0'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
     id "io.snyk.gradle.plugin.snykplugin" version "0.4"
     id 'maven-publish'
 }
@@ -21,7 +21,6 @@ dependencies {
     implementation "com.beust:jcommander:1.81"
     implementation 'commons-io:commons-io:2.11.0'
     implementation "org.slf4j:slf4j-api:1.7.31"
-    implementation 'ch.qos.logback:logback-classic:1.2.4'
 
     testImplementation(testFixtures(project(":marklogic-data-hub")))
 }

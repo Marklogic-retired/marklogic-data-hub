@@ -24,7 +24,6 @@ dependencies {
     api "com.marklogic:marklogic-unit-test-client:1.1.0"
 
     testImplementation(testFixtures(project(":marklogic-data-hub")))
-    testImplementation "ch.qos.logback:logback-classic:1.2.4"
 }
 
 test {
