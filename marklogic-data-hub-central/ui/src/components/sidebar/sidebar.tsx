@@ -1,4 +1,5 @@
-import React, {useState, useEffect, useContext} from "react";
+import React, {useState, useEffect, useContext, useRef} from "react";
+import axios from "axios";
 import moment from "moment";
 import Select from "react-select";
 import {Accordion, FormCheck} from "react-bootstrap";
@@ -7,16 +8,18 @@ import {faInfoCircle, faSearch} from "@fortawesome/free-solid-svg-icons";
 import {HCDateTimePicker, HCTooltip, HCInput, HCCheckbox} from "@components/common";
 import Facet from "../facet/facet";
 import {SearchContext} from "../../util/search-context";
-import {facetParser} from "../../util/data-conversion";
+import {entityFromJSON, entityParser, facetParser} from "../../util/data-conversion";
 import hubPropertiesConfig from "../../config/hub-properties.config";
 import tooltipsConfig from "../../config/explorer-tooltips.config";
 import styles from "./sidebar.module.scss";
 import {getUserPreferences, updateUserPreferences} from "../../services/user-preferences";
 import {UserContext} from "../../util/user-context";
+import {CurationContext} from "../../util/curation-context";
 import reactSelectThemeConfig from "../../config/react-select-theme.config";
 import BaseEntitiesFacet from "../base-entities-facet/base-entities-facet";
 import RelatedEntitiesFacet from "../related-entities-facet/related-entities-facet";
 import {ExploreGraphViewToolTips} from "../../config/tooltips.config";
+import {graphSearchQuery, getEntities} from "../../api/queries";
 
 const tooltips = tooltipsConfig.browseDocuments;
 const {exploreSidebar} = tooltipsConfig;
@@ -45,7 +48,8 @@ interface Props {
 const PLACEHOLDER: string = "Select a saved query";
 
 const Sidebar: React.FC<Props> = (props) => {
-
+  const componentIsMounted = useRef(true);
+  const entitiesArrayRef = useRef<any[]>();
   const {
     searchOptions,
     clearConstraint,
@@ -68,7 +72,6 @@ const Sidebar: React.FC<Props> = (props) => {
   const [dateRangeValue, setDateRangeValue] = useState<string>();
   const [searchBox, setSearchBox] = useState(searchOptions.query);
   const [currentQueryName, setCurrentQueryName] = useState(PLACEHOLDER); // eslint-disable-line @typescript-eslint/no-unused-vars
-
 
   let integers = ["int", "integer", "short", "long"];
   let decimals = ["decimal", "double", "float"];
@@ -269,6 +272,71 @@ const Sidebar: React.FC<Props> = (props) => {
       props.checkFacetRender([]);
     }
   }, [greyedOptions]);
+
+  useEffect(() => {
+    getEntities().then((res) => {
+          entitiesArrayRef.current! = ([...entityFromJSON(res.data).map(entity => entity.info.title)]);
+          checkGraphData("final").then((count) => {
+            console.log("Number of entities in final database is ", count);
+            if (count === 0) {
+              checkGraphData("staging").then((count2) => {
+                console.log("Number of entities in staging database is ", count2);
+                if (count2 === 0) {
+                  checkEntitiesData("final").then((count3) => {
+                    console.log("Number of All Data in final database is ", count3);
+                  });
+                } else {
+                  console.log("We have reached All Data in staging database at end now");
+                }
+              });
+            }});
+  });
+  }, []);
+
+  const checkGraphData = async (database) => {
+    let payload = {
+      "database": database,
+      "data": {
+        "query": {
+          "searchText": searchOptions.query,
+          "entityTypeIds": searchOptions.baseEntities && searchOptions.baseEntities.length && searchOptions.baseEntities[0] !== "All Entities" ? searchOptions.baseEntities : entitiesArrayRef.current!,
+          "selectedFacets": searchOptions.selectedFacets,
+          "relatedEntityTypeIds": searchOptions.relatedEntityTypeIds
+        },
+        "start": 0,
+        "pageLength": 0,
+      }
+    };
+    const response = await graphSearchQuery(payload);
+    if (componentIsMounted.current && response.data) {
+      // console.log(`GraphData for database ${database}`, response.data.total);
+    return response.data.total;
+    }
+  };
+
+  const checkEntitiesData = async (database) => {
+    let searchText = "";
+    const response = await axios({
+      method: "POST",
+      url: `/api/entitySearch?database=${database}`,
+      data: {
+        query: {
+          searchText,
+          entityTypeIds: [],
+          selectedFacets: searchOptions.selectedFacets,
+          hideHubArtifacts: true
+        },
+        propertiesToDisplay: searchOptions.selectedTableProperties,
+        start: searchOptions.start,
+        pageLength: 0,
+        sortOrder: searchOptions.sortOrder
+      }
+    });
+    if (componentIsMounted.current && response.data) {
+      // console.log(`GraphData for database ${database}`, response.data.total);
+      return response.data.total;
+    }
+  };
 
   const updateSelectedFacets = (constraint: string, vals: string[], datatype: string, isNested: boolean, toDelete = false, toDeleteAll: boolean = false) => {
     let facets = {...allSelectedFacets};
