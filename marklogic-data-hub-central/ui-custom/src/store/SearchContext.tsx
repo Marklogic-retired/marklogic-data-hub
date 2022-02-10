@@ -99,7 +99,7 @@ const SearchProvider: React.FC = ({ children }) => {
         setSearchResults(result?.data.searchResults.response);
         setReturned(result?.data.searchResults.response.total);
         // TODO need total records in database in result
-        setTotal(5);
+        setTotal(userContext.config.search.meter.totalRecords);
         setNewSearch(false);
         if (location.pathname !== "/search") {
           navigate("/search"); // Handle search submit from another view
