@@ -71,7 +71,6 @@ dependencies {
     testImplementation 'org.skyscreamer:jsonassert:1.5.0'
     testImplementation 'org.hamcrest:hamcrest-junit:2.0.0.0'
     testImplementation 'org.easymock:easymock:3.4'
-    testImplementation 'ch.qos.logback:logback-classic:1.2.4'
     testImplementation 'org.slf4j:log4j-over-slf4j:1.7.31'
 
     // How MLCP handles errors in a transform changed between 10.0.4.2 and 10.0.5, such that these errors do not result

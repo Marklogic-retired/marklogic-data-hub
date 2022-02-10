@@ -41,10 +41,7 @@ dependencies {
         testImplementation "com.marklogic:marklogic-data-hub-junit5:5.5.0"
     }
 
-    // Adds logging support for tests
-    testImplementation "ch.qos.logback:logback-classic:1.2.3"
-
-    mlcp "com.marklogic:mlcp:10.0.6.2"
+    mlcp "com.marklogic:mlcp:10.0.8.2"
     mlcp files("lib")
 }
 
