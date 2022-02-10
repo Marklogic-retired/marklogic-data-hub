@@ -4,7 +4,7 @@ plugins {
 
         // Used the construct a single jar of core DHF classes which can then be copied to the JMeter installation. Copying
         // a single jar is much cleaner than copying dozens of jars.
-        id "com.github.johnrengelman.shadow" version "5.2.0"
+        id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
 repositories {

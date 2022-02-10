@@ -29,7 +29,7 @@ configurations {
 }
 
 dependencies {
-    mlcp "com.marklogic:mlcp:10.0.6.2"
+    mlcp "com.marklogic:mlcp:10.0.8.2"
     mlcp files("lib")
 }
 

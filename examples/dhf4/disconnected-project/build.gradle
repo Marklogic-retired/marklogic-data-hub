@@ -46,7 +46,7 @@ dependencies {
     compile 'com.marklogic:marklogic-xcc:9.0.7'
 
     //sample mlcp dependency. Remove if not required
-	mlcp "com.marklogic:mlcp:9.0.7"
+	mlcp "com.marklogic:mlcp:10.0.8.2"
 	/**
 	 * mlcp uses Log4j for logging, and if Log4j can't find a configuration file, it will complain and you'll
 	 * get none of mlcp's usually-useful logging. It is recommended then that your Gradle configuration for
@@ -109,7 +109,7 @@ task mlcpExample(type: com.marklogic.gradle.task.MlcpTask) {
 	classpath = configurations.mlcp
 	command = "IMPORT"
 	port = Integer.parseInt(mlStagingPort)
-	input_file_path = "data/sample.csv" //assumes a csv file exists at "data/sample.csv" 
+	input_file_path = "data/sample.csv" //assumes a csv file exists at "data/sample.csv"
 	input_file_type = "delimited_text"
 	delimiter = ";"
 	document_type = "json"
