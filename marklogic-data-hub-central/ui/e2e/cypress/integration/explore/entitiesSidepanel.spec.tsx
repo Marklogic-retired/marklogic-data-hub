@@ -39,7 +39,7 @@ describe("Test '/Explore' left sidebar", () => {
     cy.log(`**Selecting 'Customer' base entity**`);
     cy.wait(8000);
     entitiesSidebar.showMoreEntities().click({force: true});
-    entitiesSidebar.clickOnBaseEntity(BaseEntityTypes.CUSTOMER);
+    entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
     browsePage.getSearchField().should("not.exist");
     entitiesSidebar.getEntityTitle(BaseEntityTypes.CUSTOMER).should("be.visible");
 
@@ -47,7 +47,7 @@ describe("Test '/Explore' left sidebar", () => {
     entitiesSidebar.getEntityIconFromList(BaseEntityTypes.CUSTOMER).should("be.visible");
 
     cy.log("**Returning to main sidebar and confirming it's visible**");
-    entitiesSidebar.backToMainSidebarButton.should("be.visible").click();
+    entitiesSidebar.backToMainSidebar().should("be.visible").click();
     browsePage.getSearchField().should("be.visible");
     entitiesSidebar.getEntityTitle(BaseEntityTypes.CUSTOMER).should("not.exist");
   });
@@ -99,7 +99,7 @@ describe("Test '/Explore' left sidebar", () => {
     cy.log(`**Selecting 'Customer' base entity**`);
     cy.wait(8000);
     entitiesSidebar.showMoreEntities().click();
-    entitiesSidebar.clickOnBaseEntity(BaseEntityTypes.CUSTOMER);
+    entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
 
     cy.log("**Checking facet is selected**");
     entitiesSidebar.clickFacetCheckbox("Adams Cole");
@@ -117,7 +117,7 @@ describe("Test '/Explore' left sidebar", () => {
     entitiesSidebar.getDateFacet().should("have.text", "birthDate");
     entitiesSidebar.selectDateRange({time: "facet-datetime-picker-date"});
     entitiesSidebar.getDateFacet().should("not.be.empty");
-    entitiesSidebar.backToMainSidebarButton.should("be.visible").click();
+    entitiesSidebar.backToMainSidebar().should("be.visible").click();
   });
 
   it("Base Entity Filtering from side panel", () => {
@@ -244,7 +244,7 @@ describe("Test '/Explore' left sidebar", () => {
     entitiesSidebar.clickOnApplyFacetsButton();
     browsePage.getHCTableRows().should("have.length", 0);
     entitiesSidebar.clickOnClearFacetsButton();
-    entitiesSidebar.backToMainSidebarButton.click();
+    entitiesSidebar.backToMainSidebar().click();
     browsePage.waitForHCTableToLoad();
   });
   /*

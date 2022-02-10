@@ -4,9 +4,10 @@ import browsePage from "../../support/pages/browse";
 import {Application} from "../../support/application.config";
 import {toolbar} from "../../support/components/common";
 import "cypress-wait-until";
-// import detailPageNonEntity from "../../support/pages/detail-nonEntity";
 import LoginPage from "../../support/pages/login";
 import runPage from "../../support/pages/run";
+import entitiesSidebar from "../../support/pages/entitiesSidebar";
+import {BaseEntityTypes} from "../../support/types/base-entity-types";
 
 
 describe("Verify numeric/date facet can be applied", () => {
@@ -34,9 +35,11 @@ describe("Verify numeric/date facet can be applied", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
-    browsePage.selectEntity("Customer");
-    browsePage.getSelectedEntity().should("contain", "Customer");
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Customer");
+    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.waitForSpinnerToDisappear();
+    entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
     browsePage.changeNumericSlider("2273");
     browsePage.getGreyRangeFacet(2273).should("exist");
     browsePage.getFacetApplyButton().click();
@@ -63,10 +66,12 @@ describe("Verify numeric/date facet can be applied", () => {
   });
   it("Verify functionality of clear and apply facet buttons", () => {
     //verify no facets selected case.
-    browsePage.selectEntity("Customer");
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Customer");
     browsePage.getClearAllFacetsButton().should("be.disabled");
     browsePage.getApplyFacetsButton().should("be.disabled");
     //verify selecting facets case.
+    entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
     browsePage.getFacetItemCheckbox("name", "Adams Cole").click();
     browsePage.getGreySelectedFacets("Adams Cole").should("exist");
     browsePage.getClearAllFacetsButton().should("not.be.disabled");
@@ -90,8 +95,14 @@ describe("Verify numeric/date facet can be applied", () => {
   });
   it("Verify gray facets don't persist when switching between browse, zero state explorer and run views", {defaultCommandTimeout: 120000}, () => {
     cy.intercept("/api/jobs/**").as("getJobs");
-    browsePage.selectEntity("Person");
-    browsePage.getShowMoreLink("fname").click();
+    cy.log("**Return to main sidebar");
+    entitiesSidebar.backToMainSidebar().click();
+
+    cy.log("**Remove Customer entity and select Person entity to facet");
+    entitiesSidebar.removeSelectedBaseEntity();
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Person");
+    entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.PERSON);
     browsePage.getFacetItemCheckbox("fname", "Alice").click();
     browsePage.getGreySelectedFacets("Alice").should("exist");
     toolbar.getExploreToolbarIcon().click();
@@ -100,8 +111,9 @@ describe("Verify numeric/date facet can be applied", () => {
     browsePage.waitForHCTableToLoad();
     browsePage.getGreySelectedFacets("Alice").should("not.exist");
     //verify gray facets don't persist when switching between browse and run views.
-    browsePage.selectEntity("Person");
-    browsePage.getShowMoreLink("fname").click();
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Person");
+    entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.PERSON);
     browsePage.getFacetItemCheckbox("fname", "Alice").click();
     browsePage.getGreySelectedFacets("Alice").should("exist");
     toolbar.getRunToolbarIcon().click();
@@ -117,7 +129,10 @@ describe("Verify numeric/date facet can be applied", () => {
   });
   it("Verify clearing date time range facet clears corresponding selected facet", () => {
     toolbar.getExploreToolbarIcon().click();
-    browsePage.selectEntity("Client");
+    entitiesSidebar.removeSelectedBaseEntity();
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Client");
+    entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CLIENT);
     browsePage.selectDateRange({time: "updated"});
     browsePage.getFacetApplyButton().click();
     browsePage.getSelectedFacet("updated:").should("exist");
