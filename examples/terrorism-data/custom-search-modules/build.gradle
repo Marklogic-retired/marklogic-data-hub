@@ -1,0 +1,41 @@
+plugins {
+	id "maven-publish"
+}
+
+group = "com.marklogic"
+version = "1.0-SNAPSHOT"
+
+configurations {
+	bundle
+}
+
+task bundleJar(type: Jar) {
+	from("src/main/ml-modules") {
+		into("entity-viewer-modules/ml-modules")
+	}
+	destinationDirectory = file("build/libs")
+	archiveBaseName = "entity-viewer-modules"
+}
+
+artifacts {
+	bundle bundleJar
+}
+
+publishing {
+	publications {
+		mainBundle(MavenPublication) {
+			artifactId "entity-viewer-modules"
+			artifact bundleJar
+		}
+	}
+	repositories {
+        maven {
+            credentials {
+                username ""
+                password ""
+            }
+            url "https://nexus.marklogic.com/repository/maven-snapshots"
+            allowInsecureProtocol = true
+        }
+    }
+}
