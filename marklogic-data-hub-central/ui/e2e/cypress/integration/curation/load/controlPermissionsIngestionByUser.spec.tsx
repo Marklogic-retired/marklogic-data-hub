@@ -23,17 +23,15 @@ describe("Custom Ingestion", () => {
       it("Verify tooltip is showing up for reader role after mouse hover for select flow in cards", () => {
         cy.loginAsTestUserWithRoles(users[0]).withRequest();
         LoginPage.postLogin();
-        cy.visit("/tiles/load");
-        cy.intercept("/api/jobs/**").as("getJobs");
         toolbar.getLoadToolbarIcon().click();
-        cy.waitUntil(() => loadPage.stepName(stepName).should("be.visible"));
+        cy.intercept("/api/jobs/**").as("getJobs");
         loadPage.stepName(stepName).should("be.visible");
 
         cy.log("**-------- Before mouse hover card -------------**");
-        loadPage.stepName(stepName).should("be.visible").trigger("mouseover", {force: true}).trigger("mousedown", {force: true});
+        loadPage.stepName(stepName).trigger("mouseover", {force: true}).trigger("mousedown", {force: true});
         cy.log("**-- Before mouse hover disabled select --**");
-        cy.get("[aria-label=\"ingestion-step-flowsList\"]").trigger("mouseover", {force: true, bubbles: false}).trigger("focus", {force: true});
-        cy.get("#ingestion-stepmissing-permission-tooltip").should("be.visible");
+        loadPage.existingFlowsList(stepName).trigger("mouseover", {force: true, bubbles: false}).trigger("focus", {force: true});
+        loadPage.missingPermissionTooltip(stepName).should("be.visible");
       });
     }
 
@@ -41,17 +39,15 @@ describe("Custom Ingestion", () => {
       it("Verify tooltip is not showing up for writer role trying to select flow in cards", () => {
         cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer", "hub-central-load-writer").withRequest();
         LoginPage.postLogin();
-        cy.visit("/tiles/load");
-        cy.intercept("/api/jobs/**").as("getJobs");
         toolbar.getLoadToolbarIcon().click();
-        cy.waitUntil(() => loadPage.stepName(stepName).should("be.visible"));
+        cy.intercept("/api/jobs/**").as("getJobs");
         loadPage.stepName(stepName).should("be.visible");
 
         cy.log("**-------- Before mouse hover card -------------**");
-        loadPage.stepName(stepName).should("be.visible").trigger("mouseover", {force: true}).trigger("mousedown", {force: true});
+        loadPage.stepName(stepName).trigger("mouseover", {force: true}).trigger("mousedown", {force: true});
         cy.log("**-- Before mouse hover select --**");
-        cy.get("[aria-label=\"ingestion-step-flowsList\"]").trigger("mouseover", {force: true, bubbles: false}).trigger("focus", {force: true});
-        cy.get("#ingestion-stepmissing-permission-tooltip").should("not.exist");
+        loadPage.existingFlowsList(stepName).trigger("mouseover", {force: true, bubbles: false}).trigger("focus", {force: true});
+        loadPage.missingPermissionTooltip(stepName).should("not.exist");
       });
     }
   });
