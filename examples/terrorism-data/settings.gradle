@@ -1,0 +1,3 @@
+rootProject.name = 'entity-viewer'
+include ':custom-search-modules'
+include ':entity-viewer-client'
