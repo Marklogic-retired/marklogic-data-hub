@@ -42,7 +42,7 @@ public class ExploreDataController extends BaseController {
     @RequestMapping(value = "/proxyAddress", method = RequestMethod.GET)
     @ResponseBody
     public String getProxyAddress() {
-        return environment.getProperty("proxyAddress");
+        return environment.getProperty("loginAddress");
     }
 
     @RequestMapping(value = "/uiconfig", method = RequestMethod.GET)
@@ -51,7 +51,7 @@ public class ExploreDataController extends BaseController {
         DatabaseClient client = getHubClient().getCustomDbModulesClient();
         JSONDocumentManager docMgr = client.newJSONDocumentManager();
         JacksonHandle handleJSON = new JacksonHandle();
-        docMgr.read("/ui-config/config.json", handleJSON);
+        docMgr.read("/explore-data/ui-config/config.json", handleJSON);
         return handleJSON.get();
     }
 
