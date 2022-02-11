@@ -1,0 +1,236 @@
+{
+
+    "api": { 
+        "searchResultsEndpoint": "/api/explore",
+        "detailEndpoint": "/api/explore",
+        "detailType": "event",
+        "detailConstraint": "eventid"
+    },
+
+    "header": { 
+        "title": "Entity Viewer",
+        "subtitle": "Beta",
+        "menus": [
+            {
+                "label": "GTD Terrorism Database",
+                "url": "https://gtd.terrorismdata.com/"
+            }
+        ]
+    },
+
+    "searchbox": { 
+        "items": [
+            {
+                "label": "Event",
+                "value": "event",
+                "default": true
+            }
+        ]
+    },
+
+    "dashboard": { 
+        "metrics": [
+            {
+                "title": "New entities this week",
+                "path": "entities.value",
+                "color": "#70d8c1"
+            },
+            {
+                "title": "Sources added this week",
+                "path": "sources.value",
+                "color": "#f5d881"
+            },
+            {
+                "title": "Tasks created today",
+                "path": "tasks.value",
+                "color": "#ffbd8e"
+            },
+            {
+                "title": "Activities unassigned",
+                "path": "activities.value",
+                "color": "#ff984e"
+            }
+        ]
+
+    },
+
+    "search": { 
+        "meter": {
+            "colors": {
+                "all": "#cccccc",
+                "filters": "#1ACCA8"
+            },
+            "totalRecords": 5
+        },
+        "facets": {
+            "selected": "#1acca8",
+            "unselected": "#dfdfdf",
+            "displayThreshold": 3,
+            "displayShort": 3,
+            "displayLong": 5,
+            "items": [
+                {
+                    "type": "category",
+                    "name": "attacktype1_txt",
+                    "tooltip": "Filter by attack type.",
+                    "disabled": true
+                },
+                {
+                    "type": "category",
+                    "name": "targtype1_txt",
+                    "tooltip": "Filter by target type."
+                },
+                {
+                    "type": "category",
+                    "name": "weaptype1_txt",
+                    "tooltip": "Filter by weapon type."
+                },
+                {
+                    "type": "category",
+                    "name": "country_txt",
+                    "tooltip": "Filter by country."
+                },
+                {
+                    "type": "category",
+                    "name": "region_txt",
+                    "tooltip": "Filter by region."
+                }
+            ]
+        },
+        "results": {
+            "title": { 
+                "id": "extracted.eventid",
+                "path": "extracted.target1"
+            },
+            "items": [
+                { "path": "extracted.attacktype1_txt" },
+                { "path": "extracted.targtype1_txt" },
+                { "path": "extracted.weaptype1_txt" },
+                { "path": "extracted.country_txt" },
+                { "path": "extracted.region_txt" }
+            ],
+            "categories": {
+                "path": "extracted.region_txt",
+                "colors": {
+                    "Middle East & North Africa": "#d5e1de",
+                    "Southeast Asia": "#ebe1fa",
+                    "North America": "#cae4ea",
+                    "Western Europe": "#fae9d3",
+                    "Sub-Saharan Africa": "#fae3df",
+                    "South America": "#f0f6d9"
+                }
+            },
+            "timestamp": {
+                "path": "extracted.iyear",
+                "type": "datetime",
+                "format": "yyyy",
+                "label": "Occurred ",
+                "style": {
+                    "fontStyle": "normal"
+                }
+            },
+            "status": { "path": "extracted.motive" }
+        }
+    },
+
+    "detail": { 
+        "heading": {
+            "id": "result[0].extracted.eventid",
+            "title": "result[0].extracted.target1"
+        },
+        "personal": {
+            "target": {
+                "id": "target",
+                "title": "Target",
+                "dataPath": "result[0].extracted.target1",
+                "width": "400px",
+                "metadata": [
+                    {
+                        "type": "block",
+                        "color": "#96bde4",
+                        "value": "B"
+                    },
+                    {
+                        "type": "block",
+                        "color": "#5d6aaa",
+                        "value": "3"
+                    }
+                ]
+            },
+            "attacktype": {
+                "id": "attacktype",
+                "title": "Attack Type",
+                "dataPath": "result[0].extracted.attacktype1_txt",
+                "width": "400px",
+                "metadata": [
+                    {
+                        "type": "block",
+                        "color": "#96bde4",
+                        "value": "B"
+                    },
+                    {
+                        "type": "block",
+                        "color": "#5d6aaa",
+                        "value": "4"
+                    }
+                ]
+            },
+            "targettype": {
+                "id": "targettype",
+                "title": "Target Type",
+                "dataPath": "result[0].extracted.targtype1_txt",
+                "width": "400px",
+                "metadata": [
+                    {
+                        "type": "block",
+                        "color": "#96bde4",
+                        "value": "B"
+                    },
+                    {
+                        "type": "block",
+                        "color": "#5d6aaa",
+                        "value": "4"
+                    }
+                ]
+            },
+            "weapontype": {
+                "id": "weapontype",
+                "title": "Weapon Type",
+                "dataPath": "result[0].extracted.weaptype1_txt",
+                "width": "400px",
+                "metadata": [
+                    {
+                        "type": "block",
+                        "color": "#e67485",
+                        "value": "R"
+                    },
+                    {
+                        "type": "block",
+                        "color": "#5d6aaa",
+                        "value": "4"
+                    }
+                ]
+            },
+            "country": {
+                "id": "country",
+                "title": "Sountry",
+                "dataPath": "result[0].extracted.country_txt",
+                "icon": "sources",
+                "width": "400px",
+                "metadata": [
+                    {
+                        "type": "block",
+                        "color": "#96bde4",
+                        "value": "B"
+                    },
+                    {
+                        "type": "block",
+                        "color": "#5d6aaa",
+                        "value": "4"
+                    }
+                ]
+            }
+        }
+    }
+
+}
