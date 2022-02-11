@@ -251,10 +251,6 @@ public class HubClientConfig {
         return newFinalClient(modulesDbName);
     }
 
-    public DatabaseClient newModulesDbClient(String modulesDbName, int port) {
-        return newDatabaseClient(modulesDbName, port);
-    }
-
     @JsonIgnore
     public Map<DatabaseKind, String> getDatabaseNames() {
         Map<DatabaseKind, String> databaseNames = new HashMap<>();
