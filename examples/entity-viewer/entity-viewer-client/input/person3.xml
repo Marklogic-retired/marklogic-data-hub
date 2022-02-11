@@ -15,6 +15,32 @@
       <plusFour>2690</plusFour>
     </zip>
   </address>
+  <school>
+    <name>Highgate Middle School</name>
+    <address>
+      <street>082 Bayside Way</street>
+      <city>Richmond</city>
+      <state>VA</state>
+      <zip>
+        <fiveDigit>23219</fiveDigit>
+        <plusFour>2690</plusFour>
+      </zip>
+    </address>
+    <enrolled>2003-09-05</enrolled>
+  </school>
+  <school>
+    <name>Northgate High School</name>
+    <address>
+      <street>2333 District Drive</street>
+      <city>Richmond</city>
+      <state>VA</state>
+      <zip>
+        <fiveDigit>23219</fiveDigit>
+        <plusFour>2655</plusFour>
+      </zip>
+    </address>
+    <enrolled>2005-09-01</enrolled>
+  </school>
   <geo>
     <lat>37.539769</lat>
     <lon>-77.435528</lon>

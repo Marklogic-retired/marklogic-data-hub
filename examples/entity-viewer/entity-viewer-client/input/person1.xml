@@ -4,8 +4,20 @@
   <lastName>Rutherford</lastName>
   <name>Georges Rutherford</name>
   <email>grutherford0@blogspot.com</email>
+  <email>grutherford1@blogspot.com</email>
+  <email>grutherford1234567890@blogspot.com</email>
   <phone>336-873-3770</phone>
+  <phone>336-873-3771</phone>
   <image>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</image>
+  <address>
+    <street>77 Steensland Alley</street>
+    <city>Springfield</city>
+    <state>IL</state>
+    <zip>
+      <fiveDigit>62756</fiveDigit>
+      <plusFour>1134</plusFour>
+    </zip>
+  </address>
   <address>
     <street>04325 Mallard Pass</street>
     <city>Winston Salem</city>
@@ -15,6 +27,28 @@
       <plusFour>2771</plusFour>
     </zip>
   </address>
+  <address>
+    <street>51 Continental Pass</street>
+    <city>Huntsville</city>
+    <state>AL</state>
+    <zip>
+      <fiveDigit>35805</fiveDigit>
+      <plusFour>3194</plusFour>
+    </zip>
+  </address>
+  <school>
+    <name>Highgate Middle School</name>
+    <address>
+      <street>082 Bayside Way</street>
+      <city>Richmond</city>
+      <state>VA</state>
+      <zip>
+        <fiveDigit>23219</fiveDigit>
+        <plusFour>2690</plusFour>
+      </zip>
+    </address>
+    <enrolled>1999-03-01</enrolled>
+  </school>
   <geo>
     <lat>-80.223362</lat>
     <lon>36.090635</lon>
