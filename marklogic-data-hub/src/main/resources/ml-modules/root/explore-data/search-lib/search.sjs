@@ -25,8 +25,8 @@ class Search {
     const searchText = searchParams.searchText;
 
     let entityTypeIds = searchParams.entityTypeIds;
-    entityTypeIds = entityTypeIds.map(i => 'Collection:' + i);
-    const collectionConstraint = "(" + entityTypeIds.join(" OR ") + ")";
+    let collections = entityTypeIds.map(i => 'Collection:' + i);
+    const collectionConstraint = "(" + collections.join(" OR ") + ")";
 
     let facets = searchParams.selectedFacets;
     let keys = Object.keys(facets);
@@ -45,7 +45,7 @@ class Search {
       searchConstraint.push(facetConstraint)
     }
     searchConstraint = searchConstraint.join(" AND ");
-    return searchImpl.getSearchResults(searchConstraint);
+    return searchImpl.getSearchResults(searchConstraint, entityTypeIds[0]);
   }
 
   getSnippetResults(searchResults) {
