@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "cy:open": "cypress open",
-    "cy:run": "npm install && cypress run",
+    "cy:run": "npm install && cypress run --spec cypress/integration/explore/crudQueriesfromExplore.spec.tsx",
     "cy:run-chrome": "npm install && cypress run --browser chrome --headless",
     "cy:run-firefox": "npm install && cypress run --browser firefox --headless",
     "cy:run-sanity": "npm install && cypress run --spec cypress/integration/mastering/e2eMasteringflow.spec.tsx",
