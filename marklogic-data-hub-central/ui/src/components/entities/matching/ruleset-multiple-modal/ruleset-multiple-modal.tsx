@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext, CSSProperties} from "react";
 import {Row, Col, Modal, Form, FormLabel, FormCheck} from "react-bootstrap";
-import Select, {components as SelectComponents} from "react-select";
+import {components as SelectComponents} from "react-select";
 import reactSelectThemeConfig from "../../../../config/react-select-theme.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLayerGroup} from "@fortawesome/free-solid-svg-icons";
@@ -17,6 +17,7 @@ import {updateMatchingArtifact} from "../../../../api/matching";
 import DeleteModal from "../delete-modal/delete-modal";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {ConfirmYesNo, HCAlert, HCInput, HCButton, HCTag, HCTooltip, HCTable} from "@components/common";
+import {HCSelect} from "@components/common";
 
 type Props = {
   editRuleset: any;
@@ -87,6 +88,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
   const [showDeleteConfirmModal, toggleDeleteConfirmModal] = useState(false);
 
   const [saveClicked, setSaveClicked] = useState(false);
+  const [changeSelect, setChangeSelect] = useState(false);
 
   //For expand-collapse
   const [expandedRowKeys, setExpandedRowKeys] = useState<any[]>([]);
@@ -405,9 +407,11 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     if (!selectedRowKeys.length) {
       propertyErrorMessage = "A property to match is required.";
     } else {
+      let indentMainKeyPropertyRow;
       selectedRowKeys.forEach(key => {
         let propertyPath = key;
-        if (!matchTypes[key]) {
+        if (key?.includes(".")) { indentMainKeyPropertyRow = key.split(".")[0]; }
+        if (key && key!==indentMainKeyPropertyRow && !matchTypes[key]) {
           matchErrorMessageObj[key] = "A match type is required";
         } else {
           switch (matchTypes[key]) {
@@ -669,9 +673,9 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     return errorCheck;
   };
 
-  const inputUriStyle = (propertyPath, fieldType) => {
+  const inputUriStyle = (propertyPath, fieldType, hasParent?) => {
     const inputFieldStyle: CSSProperties = {
-      width: ["dictionary-uri-input", "thesaurus-uri-input"].includes(fieldType) ? "17vw" : (fieldType === "distance-threshold-input" ? "18vw" : "13vw"),
+      width: ["dictionary-uri-input", "thesaurus-uri-input"].includes(fieldType) ? "17vw" : (fieldType === "distance-threshold-input" ? hasParent ? "19vw": "25vw": "13vw"),
       marginRight: "5px",
       marginLeft: ["distance-threshold-input", "function-input"].includes(fieldType) ? "15px" : "0px",
       justifyContent: "top",
@@ -705,7 +709,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     </span>
   );
 
-  const renderSynonymOptions = (propertyPath) => {
+  const renderSynonymOptions = (propertyPath, hasParent) => {
     return <div className={styles.matchTypeDetailsContainer}>
       <span>
         <span className={styles.mandatoryFieldContainer}>
@@ -713,7 +717,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
             id={`${propertyPath}-thesaurus-uri-input`}
             ariaLabel={`${propertyPath}-thesaurus-uri-input`}
             placeholder="Enter thesaurus URI"
-            style={inputUriStyle(propertyPath, "thesaurus-uri-input")}
+            style={inputUriStyle(propertyPath, "thesaurus-uri-input", hasParent)}
             value={thesaurusValues[propertyPath]}
             onChange={(e) => handleInputChange(e, propertyPath)}
             onBlur={(e) => handleInputChange(e, propertyPath)}
@@ -727,7 +731,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
           id={`${propertyPath}-filter-input`}
           ariaLabel={`${propertyPath}-filter-input`}
           placeholder="Enter a node in the thesaurus to use as a filter"
-          className={styles.filterInput}
+          className={ hasParent ? styles.filterInputChild: styles.filterInput}
           value={filterValues[propertyPath]}
           onChange={(e) => handleInputChange(e, propertyPath)}
           onBlur={(e) => handleInputChange(e, propertyPath)}
@@ -739,7 +743,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     </div>;
   };
 
-  const renderDoubleMetaphoneOptions = (propertyPath) => {
+  const renderDoubleMetaphoneOptions = (propertyPath, hasParent) => {
     return <div className={styles.matchTypeDetailsContainer}>
       <span>
         <span className={styles.mandatoryFieldContainer}>
@@ -747,7 +751,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
             id={`${propertyPath}-dictionary-uri-input`}
             ariaLabel={`${propertyPath}-dictionary-uri-input`}
             placeholder="Enter dictionary URI"
-            style={inputUriStyle(propertyPath, "dictionary-uri-input")}
+            style={inputUriStyle(propertyPath, "dictionary-uri-input", hasParent)}
             value={dictionaryValues[propertyPath]}
             onChange={(e) => handleInputChange(e, propertyPath)}
             onBlur={(e) => handleInputChange(e, propertyPath)}
@@ -762,7 +766,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
             id={`${propertyPath}-distance-threshold-input`}
             ariaLabel={`${propertyPath}-distance-threshold-input`}
             placeholder="Enter distance threshold"
-            style={inputUriStyle(propertyPath, "distance-threshold-input")}
+            style={inputUriStyle(propertyPath, "distance-threshold-input", hasParent)}
             value={distanceThresholdValues[propertyPath]}
             onChange={(e) => handleInputChange(e, propertyPath)}
             onBlur={(e) => handleInputChange(e, propertyPath)}
@@ -774,7 +778,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     </div>;
   };
 
-  const renderCustomOptions = (propertyPath) => {
+  const renderCustomOptions = (propertyPath, hasParent) => {
     return <div className={styles.matchTypeDetailsContainer}>
       <span>
         <span className={styles.mandatoryFieldContainer}>
@@ -782,7 +786,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
             id={`${propertyPath}-uri-input`}
             ariaLabel={`${propertyPath}-uri-input`}
             placeholder="Enter URI"
-            style={inputUriStyle(propertyPath, "uri-input")}
+            style={inputUriStyle(propertyPath, "uri-input", hasParent)}
             value={uriValues[propertyPath]}
             onChange={(e) => handleInputChange(e, propertyPath)}
             onBlur={(e) => handleInputChange(e, propertyPath)}
@@ -797,7 +801,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
             id={`${propertyPath}-function-input`}
             ariaLabel={`${propertyPath}-function-input`}
             placeholder="Enter a function"
-            style={inputUriStyle(propertyPath, "function-input")}
+            style={inputUriStyle(propertyPath, "function-input", hasParent)}
             value={functionValues[propertyPath]}
             onChange={(e) => handleInputChange(e, propertyPath)}
             onBlur={(e) => handleInputChange(e, propertyPath)}
@@ -811,7 +815,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
           id={`${propertyPath}-namespace-input`}
           ariaLabel={`${propertyPath}-namespace-input`}
           placeholder="Enter a namespace"
-          className={styles.functionInput}
+          className={hasParent ? styles.functionInputChild:styles.functionInput}
           value={namespaceValues[propertyPath]}
           onChange={(e) => handleInputChange(e, propertyPath)}
           onBlur={(e) => handleInputChange(e, propertyPath)}
@@ -862,7 +866,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     }
   };
 
-  const MenuList  = (selector, props) => (
+  const MenuList = (selector, props) => (
     <div id={`${selector}-select-MenuList`}>
       <SelectComponents.MenuList {...props} />
     </div>
@@ -885,6 +889,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
         if (row.hasChildren) {
           return {
             colspan: 4,
+            key: "name",
           };
         }
       }
@@ -893,6 +898,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       ellipsis: true,
       text: "Match Type",
       width: "15%",
+      dataField: "matchType",
       headerFormatter: () => <span data-testid="matchTypeTitle">Match Type</span>,
       style: (cell, row) => {
         if (row.hasChildren) {
@@ -900,26 +906,30 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
         }
         return "";
       },
+      attrs: {
+        key: "matchTypeTitle"
+      },
       formatter: (text, row, extraData) => {
         return !row.hasOwnProperty("children") ? <div className={styles.typeContainer}>
-          <Select
+          <HCSelect
             id={`${row.propertyPath}-select-wrapper`}
             inputId={`${row.propertyPath}-select`}
             components={{MenuList: props => MenuList(`${row.propertyPath}`, props)}}
-            placeholder="Select match type"
-            value={Object.keys(matchTypes).length > 0 ? renderMatchOptions.find(item => item.value === matchTypes[row.propertyPath]) : undefined}
             onChange={(e) => onMatchTypeSelect(row.propertyPath, e)}
-            aria-label={`${row.propertyPath}-match-type-dropdown`}
-            isSearchable={false}
             options={renderMatchOptions}
+            matchTypesProp={matchTypes}
+            row={row}
+            changeTagKey={changeSelect}
             formatOptionLabel={({value, label}) => {
               return (
                 <span aria-label={`${value}-option`}>
                   {label}
                 </span>
               );
-            }}
-            styles={{...reactSelectThemeConfig,
+            }
+            }
+            styles={{
+              ...reactSelectThemeConfig,
               container: (provided, state) => ({
                 ...provided,
                 width: "180px",
@@ -930,6 +940,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
               })
             }}
           />
+
           {checkFieldInErrors(row.propertyPath, "match-type-input") ? <div id="errorInMatchType" data-testid={row.propertyPath + "-match-type-err"} style={validationErrorStyle("match-type-input")}>{!matchTypes[row.propertyPath] ? "A match type is required" : ""}</div> : ""}
         </div> : null;
       },
@@ -938,12 +949,16 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     {
       text: "Match Type Details",
       width: "58%",
+      dataField: "matchTypeDetails",
       headerFormatter: () => <span data-testid="matchTypeDetailsTitle">Match Type Details</span>,
+      attrs: {
+        key: "matchTypeDetails"
+      },
       formatter: (text, row, extraData) => {
         switch (matchTypes[row.propertyPath]) {
-        case "synonym": return renderSynonymOptions(row.propertyPath);
-        case "doubleMetaphone": return renderDoubleMetaphoneOptions(row.propertyPath);
-        case "custom": return renderCustomOptions(row.propertyPath);
+        case "synonym": return renderSynonymOptions(row.propertyPath, row.hasParent);
+        case "doubleMetaphone": return renderDoubleMetaphoneOptions(row.propertyPath, row.hasParent);
+        case "custom": return renderCustomOptions(row.propertyPath, row.hasParent);
         default:
           break;
         }
@@ -979,10 +994,16 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
 
   const getMatchOnTags = (selectedRowKeys) => {
     let matchTags = {};
+    let indentMainPropertyRow;
+
     selectedRowKeys.forEach(key => {
       if (key) {
-        let tag = key.split(".").join(" > ");
-        matchTags[`${key}`] = tag;
+        if (key.includes(".")) { indentMainPropertyRow = key.split(".")[0]; }
+
+        if (key !== indentMainPropertyRow) {
+          let tag = key.split(".").join(" > ");
+          matchTags[`${key}`] = tag;
+        }
       }
     });
     return matchTags;
@@ -1068,6 +1089,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
   };
 
   const handlePropertyDeselection = (tagKey) => {
+    setChangeSelect(tagKey);
     if (tagKey in matchTypes) {
       let obj = matchTypes;
       let matchType = matchTypes[tagKey];
@@ -1085,10 +1107,23 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
 
   const rowSelection = {
     onSelect: (record, selected) => {
+      const rowMainParentKey = record?.hasParent ? record.parentKeys[0].split(",")[0]: "";
       if (selectedRowKeys.includes(record.propertyPath)) {
-        setSelectedRowKeys([...selectedRowKeys.filter(key => key !== record.propertyPath)]);
+
+        let selectedRowsKeysAux = [...selectedRowKeys.filter(key => key !== record.propertyPath)];
+        const existAux = selectedRowsKeysAux?.filter(key => key ? key.includes(rowMainParentKey) && key.length !== rowMainParentKey.length: "");
+
+        if (existAux.length === 0) {
+          selectedRowsKeysAux = [...selectedRowsKeysAux.filter(key => key !== rowMainParentKey)];
+        }
+
+        setSelectedRowKeys(selectedRowsKeysAux);
       } else {
-        setSelectedRowKeys([...selectedRowKeys, record.propertyPath]);
+        if (selectedRowKeys.includes(rowMainParentKey)) {
+          setSelectedRowKeys([...selectedRowKeys, record.propertyPath]);
+        } else {
+          setSelectedRowKeys([...selectedRowKeys, record.propertyPath, rowMainParentKey]);
+        }
       }
 
       if (!selected) {
@@ -1097,8 +1132,8 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     },
     onSelectAll: (isSelect) => {
       if (isSelect) {
-        const recursiveSelectAllKeys = (dataArr, allKeys:Array<string> = []) => {
-          dataArr.forEach((obj: {children?: any[], propertyPath: string}) => {
+        const recursiveSelectAllKeys = (dataArr, allKeys: Array<string> = []) => {
+          dataArr.forEach((obj: { children?: any[], propertyPath: string }) => {
             if (obj.hasOwnProperty("children")) {
               recursiveSelectAllKeys(obj["children"], allKeys);
             } else {
@@ -1149,8 +1184,11 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
 
   const generateExpandRowKeys = (dataArr, allKeysToExpand: any = []) => {
     dataArr.forEach(obj => {
-      if (obj.hasOwnProperty("children")) {
-        allKeysToExpand.push(obj["propertyPath"]);
+      if (obj.hasOwnProperty("children") && !obj.hasParent) {
+        allKeysToExpand.push(obj["propertyName"]);
+        generateExpandRowKeys(obj["children"], allKeysToExpand);
+      } else if (obj.hasOwnProperty("children") && obj.hasParent) {
+        allKeysToExpand.push(obj["key"]);
         generateExpandRowKeys(obj["children"], allKeysToExpand);
       }
     });
