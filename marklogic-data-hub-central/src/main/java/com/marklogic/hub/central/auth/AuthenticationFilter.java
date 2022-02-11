@@ -115,7 +115,7 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
                 }
             } else if(e instanceof MarkLogicIOException && e.getMessage().contains("Failed to connect to")) {
                 DatabaseClient client = hubClientProvider.getHubClient().setCustomDbClient(Integer.parseInt(environment.getProperty("mlContentServerPort")));
-                hubClientProvider.getHubClient().setCustomDbModulesClient("entity-viewer-search-modules",
+                hubClientProvider.getHubClient().setCustomDbModulesClient(environment.getProperty("mlContentModulesDatabase"),
                     Integer.parseInt(environment.getProperty("mlContentServerPort")));
                 DatabaseClient.ConnectionResult result = client.checkConnection();
                 if (result.getStatusCode() == 401) {
