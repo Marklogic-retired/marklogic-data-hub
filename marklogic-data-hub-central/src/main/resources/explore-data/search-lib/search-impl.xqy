@@ -25,7 +25,7 @@ import module namespace json="http://marklogic.com/xdmp/json"
 at "/MarkLogic/json/json.xqy";
 
 declare function expsearch:get-search-results($search-constraints as xs:string, $entity-type-id as xs:string) {
-  let $options := xdmp:eval("doc('/options/search-options.xml')",  (),
+  let $options := xdmp:eval("doc('/explore-data/options/search-options.xml')",  (),
     <options xmlns="xdmp:eval">
       <database>{xdmp:modules-database()}</database>
     </options>)

@@ -16,7 +16,6 @@ configurations {
 dependencies {
     mlcp "com.marklogic:mlcp:10.0.6.2"
     mlcp files("lib")
-    mlBundle "com.marklogic:entity-viewer-modules:1.0-SNAPSHOT"
 }
 
 /**
