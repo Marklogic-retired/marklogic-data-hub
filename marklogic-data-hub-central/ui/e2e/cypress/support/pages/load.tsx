@@ -308,6 +308,10 @@ class LoadPage {
   getContainerTitle() {
     return cy.get(`[aria-label="title-load"]`);
   }
+
+  missingPermissionTooltip(stepName: string) {
+    return cy.get(`#${stepName}missing-permission-tooltip`);
+  }
 }
 
 const loadPage = new LoadPage();
