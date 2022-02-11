@@ -7,6 +7,15 @@
   <phone>806-236-3145</phone>
   <image>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</image>
   <address>
+    <street>7 Shelley Plaza</street>
+    <city>Springfield</city>
+    <state>MO</state>
+    <zip>
+      <fiveDigit>65810</fiveDigit>
+      <plusFour>8016</plusFour>
+    </zip>
+  </address>
+  <address>
     <street>0 Kensington Lane</street>
     <city>Lubbock</city>
     <state>TX</state>
