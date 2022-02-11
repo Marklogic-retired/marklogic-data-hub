@@ -61,11 +61,16 @@ const Dashboard: React.FC<Props> = (props) => {
             <Section title="Search">
                 <h4 style={{marginBottom: "20px"}}>New Search</h4>
                 <SearchBox config={config.searchbox} button="vertical" width="100%" />
-                <div className="divider">- or -</div>
-                <div style={{marginTop: "20px"}}>
-                  <h4>Saved Searches</h4>
-                  <Saved data={saved} config={config.dashboard.saved} />
-                </div>
+
+                {config?.dachboard?.saved ? 
+                  <div>
+                    <div className="divider">- or -</div>
+                    <div style={{marginTop: "20px"}}>
+                      <h4>Saved Searches</h4>
+                      <Saved data={saved} config={config.dashboard.saved} />
+                    </div>
+                  </div>
+                : null}
             </Section>
 
           </div>
@@ -76,9 +81,11 @@ const Dashboard: React.FC<Props> = (props) => {
               <New />
             </Section>
 
-            <Section title="Recently Visited">
-                <Recent data={recent} config={config.dashboard.recent} />
-            </Section>
+            {config?.dachboard?.recent ? 
+              <Section title="Recently Visited">
+                  <Recent data={recent} config={config.dashboard.recent} />
+              </Section>
+            : null}
 
           </div>
 
