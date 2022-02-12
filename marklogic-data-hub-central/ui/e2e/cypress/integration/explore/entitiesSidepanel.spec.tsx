@@ -36,9 +36,13 @@ describe("Test '/Explore' left sidebar", () => {
   });
 
   it("Validate that the left sidebar opens up and closes correctly when un/selecting a base entity", () => {
-    cy.log(`**Selecting 'Customer' base entity**`);
     cy.wait(8000);
     entitiesSidebar.showMoreEntities().click({force: true});
+    cy.log("**Base entity tooltip is visible**");
+    entitiesSidebar.getBaseEntity("Client").trigger("mouseover");
+    entitiesSidebar.getBaseEntityToolTip().should("be.visible");
+
+    cy.log(`**Selecting 'Customer' base entity**`);
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
     browsePage.getSearchField().should("not.exist");
     entitiesSidebar.getEntityTitle(BaseEntityTypes.CUSTOMER).should("be.visible");

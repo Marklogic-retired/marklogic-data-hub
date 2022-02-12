@@ -9,11 +9,12 @@ class BaseEntitySidebar {
   getBaseEntityOption(entity: string) {
     return cy.get(`[aria-label="base-option-${entity}"]`);
   }
-
   removeSelectedBaseEntity() {
     return cy.get(`[class="css-xb97g8"]`).first().click();
   }
-
+  getBaseEntityToolTip() {
+    return cy.get("#baseEntityToolTip");
+  }
   getEntityTitle(entity: string) {
     return cy.get(`div[aria-label="specif-sidebar-${entity}"]`);
   }

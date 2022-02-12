@@ -5,9 +5,10 @@ import {SearchContext} from "../../util/search-context";
 import styles from "./base-entities-facet.module.scss";
 import {ChevronDoubleRight} from "react-bootstrap-icons";
 import {baseEntitiesSorting, entitiesSorting} from "../../util/entities-sorting";
-import {HCDivider} from "@components/common";
+import {HCDivider, HCTooltip} from "@components/common";
 import {exploreSidebar} from "../../config/explore.config";
 import DynamicIcons from "@components/common/dynamic-icons/dynamic-icons";
+import {ExploreGraphViewToolTips} from "../../config/tooltips.config";
 
 interface Props {
   currentBaseEntities: any;
@@ -147,25 +148,26 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
           let finalColor = color ? color : "#EEEFF1";
           if (name) {
             return (
-              <div
-                key={name}
-                aria-label={`base-entities-${name}`}
-                style={{backgroundColor: finalColor, borderStyle: "solid", borderWidth: "1px", borderColor: "#d9d9d9", borderRadius: "4px"}}
-                className={styles.entityItem}
-                onClick={() => setEntitySpecificPanel({name, color: finalColor, icon: finalIcon})}
-              >
-                <span className={styles.entityIcon}>
-                  <DynamicIcons name={finalIcon}/>
-                </span>
-                <span className={styles.entityName}>{name}</span>
-                <span className={styles.entityChevron}>
-                  <ChevronDoubleRight/>
-                </span>
-                <span className={styles.entityAmount}>
-                  {filter && showFilter(filter)}
-                  {amount}
-                </span>
-              </div>
+              <HCTooltip text={ExploreGraphViewToolTips.entityToolTip} placement="top" id="baseEntityToolTip">
+                <div
+                  key={name}
+                  aria-label={`base-entities-${name}`}
+                  style={{backgroundColor: finalColor, borderStyle: "solid", borderWidth: "1px", borderColor: "#d9d9d9", borderRadius: "4px"}}
+                  className={styles.entityItem}
+                  onClick={() => setEntitySpecificPanel({name, color: finalColor, icon: finalIcon})}
+                >
+                  <span className={styles.entityIcon}>
+                    <DynamicIcons name={finalIcon}/>
+                  </span>
+                  <span className={styles.entityName}>{name}</span>
+                  <span className={styles.entityChevron}>
+                    <ChevronDoubleRight/>
+                  </span>
+                  <span className={styles.entityAmount}>
+                    {filter && showFilter(filter)}
+                    {amount}
+                  </span>
+                </div></HCTooltip>
             );
           }
         }
