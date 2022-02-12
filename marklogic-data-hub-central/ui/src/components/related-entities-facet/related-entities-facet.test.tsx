@@ -1,5 +1,5 @@
 import React from "react";
-import {render, cleanup} from "@testing-library/react";
+import {render, cleanup, fireEvent} from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import RelatedEntitiesFacet from "./related-entities-facet";
 
@@ -19,5 +19,9 @@ describe("Related Entities Facet", () => {
     expect(dropdown).toBeInTheDocument();
     const option = getByLabelText("related-entity-check-Customers");
     expect(option).toBeInTheDocument();
+
+    //To test tooltip over related entities in explore sideView panel
+    fireEvent.mouseOver(option);
+    expect(getByLabelText("relatedEntityToolTip")).toBeVisible();
   });
 });

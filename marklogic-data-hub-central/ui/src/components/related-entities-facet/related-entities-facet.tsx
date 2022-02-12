@@ -6,6 +6,8 @@ import {entitiesSorting} from "../../util/entities-sorting";
 import {exploreSidebar} from "../../config/explore.config";
 import DynamicIcons from "@components/common/dynamic-icons/dynamic-icons";
 import {SearchContext} from "../../util/search-context";
+import {ExploreGraphViewToolTips} from "../../config/tooltips.config";
+import {HCTooltip} from "@components/common";
 
 const SHOW_MINIMUM = (values) => values.length >= MINIMUM_ENTITIES ? MINIMUM_ENTITIES: values.length;
 const SHOW_FILTER = (filter) => filter === 1 ? `(${filter} filter)  ` : `(${filter} filters)  `;
@@ -67,28 +69,31 @@ const RelatedEntitiesFacet: React.FC<Props> = (props) => {
           let finalIcon = icon ? icon : "FaShapes";
           let finalColor = color ? color : "#EEEFF1";
           return (
-            <div
-              style={{backgroundColor: finalColor}}
-              className={styles.entityItem}
-              key={name}
-              onClick={() => setEntitySpecificPanel({name, color: finalColor, icon: finalIcon})}>
-              <HCCheckbox
-                id={name}
-                checked={checked}
-                handleClick={handleColOptionsChecked}
-                value={name}
-                ariaLabel={`related-entity-check-${name}`}>
-                <DynamicIcons name={finalIcon}/>
-                <span className={styles.entityName}>{name}</span>
-                <span className={styles.entityChevron}>
-                  <ChevronDoubleRight/>
-                </span>
-                <span className={styles.entityAmount}>
-                  {filter && SHOW_FILTER(filter)}
-                  {amount}
-                </span>
-              </HCCheckbox>
-            </div>);
+            <HCTooltip text={ExploreGraphViewToolTips.entityToolTip} placement="top" id="relatedEntityToolTip" aria-label="relatedEntityToolTip">
+              <div
+                style={{backgroundColor: finalColor}}
+                className={styles.entityItem}
+                key={name}
+                onClick={() => setEntitySpecificPanel({name, color: finalColor, icon: finalIcon})}>
+                <HCCheckbox
+                  id={name}
+                  checked={checked}
+                  handleClick={handleColOptionsChecked}
+                  value={name}
+                  ariaLabel={`related-entity-check-${name}`}>
+                  <DynamicIcons name={finalIcon}/>
+                  <span className={styles.entityName}>{name}</span>
+                  <span className={styles.entityChevron}>
+                    <ChevronDoubleRight/>
+                  </span>
+                  <span className={styles.entityAmount}>
+                    {filter && SHOW_FILTER(filter)}
+                    {amount}
+                  </span>
+                </HCCheckbox>
+              </div>
+            </HCTooltip>
+          );
         })}
       </div>
       {currentRelatedEntities.size > MINIMUM_ENTITIES &&
