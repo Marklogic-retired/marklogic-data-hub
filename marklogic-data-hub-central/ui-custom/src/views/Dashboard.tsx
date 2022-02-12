@@ -77,9 +77,11 @@ const Dashboard: React.FC<Props> = (props) => {
 
           <div className="col-lg">
 
-            <Section title="What's New with Entities">
-              <New />
-            </Section>
+            {config?.dashboard?.new ? 
+              <Section title="What's New with Entities">
+                <New />
+              </Section>
+            : null}
 
             {config?.dashboard?.recent ? 
               <Section title="Recently Visited">
