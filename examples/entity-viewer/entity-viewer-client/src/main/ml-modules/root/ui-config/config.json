@@ -111,6 +111,8 @@
                 }
             ]
         },
+
+        "new": {},
     
         "recent": {
             "id": "entityInstance.personId",
@@ -230,7 +232,8 @@
         }
     },
 
-    "detail": { 
+    "detail": {
+
         "heading": {
             "id": "result[0].extracted.person.personId",
             "thumbnail": {
@@ -240,6 +243,7 @@
             },
             "title": "result[0].extracted.person.name"
         },
+
         "personal": {
             "name": {
                 "id": "name",
@@ -452,7 +456,11 @@
                     }
                 ]
             }
-        }
+        },
+
+        "relationships": {},
+
+        "occupations": {}
     }
 
 }
