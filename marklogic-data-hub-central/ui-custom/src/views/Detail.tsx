@@ -85,44 +85,50 @@ const Detail: React.FC<Props> = (props) => {
           <div className="row">
             <div className="col-lg-7">
 
-              <Section title="Personal Info">
+              {config?.detail?.personal ? 
+                <Section title="Personal Info">
 
-                {config?.detail?.personal?.name ? 
-                  <DataTableValue config={config.detail.personal.name} />
-                : null}
+                  {config?.detail?.personal?.name ? 
+                    <DataTableValue config={config.detail.personal.name} />
+                  : null}
 
-                {config?.detail?.personal?.phone ? 
-                  <DataTableValue config={config.detail.personal.phone} />
-                : null}
+                  {config?.detail?.personal?.phone ? 
+                    <DataTableValue config={config.detail.personal.phone} />
+                  : null}
 
-                {config?.detail?.personal?.email ? 
-                  <DataTableValue config={config.detail.personal.email} />
-                : null}
+                  {config?.detail?.personal?.email ? 
+                    <DataTableValue config={config.detail.personal.email} />
+                  : null}
 
-                {config?.detail?.personal?.ssn ? 
-                  <DataTableValue config={config.detail.personal.ssn} />
-                : null}
+                  {config?.detail?.personal?.ssn ? 
+                    <DataTableValue config={config.detail.personal.ssn} />
+                  : null}
 
-                {config?.detail?.personal?.address ? 
-                  <DataTableMultiValue config={config.detail.personal.address} />
-                : null}
+                  {config?.detail?.personal?.address ? 
+                    <DataTableMultiValue config={config.detail.personal.address} />
+                  : null}
 
-                {config?.detail?.personal?.school ? 
-                  <DataTableMultiValue config={config.detail.personal.school} />
-                : null}
+                  {config?.detail?.personal?.school ? 
+                    <DataTableMultiValue config={config.detail.personal.school} />
+                  : null}
 
-              </Section>
+                </Section>
+              : null}
 
             </div>
             <div className="col-lg-5">
 
-              <Section title="Relationships">
-                <Relationships id={id ? parseInt(id) : 0} />
-              </Section>
+              {config?.detail?.relationships ? 
+                <Section title="Relationships">
+                  <Relationships id={id ? parseInt(id) : 0} />
+                </Section>
+              : null}
 
-              <Section title="Occupations">
-                <Occupations />
-              </Section>
+              {config?.detail?.occupations ? 
+                <Section title="Occupations">
+                  <Occupations />
+                </Section>
+              : null}
 
             </div>
           </div>
