@@ -232,7 +232,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     cy.waitUntil(() => curatePage.dataPresent().should("exist"));
     curatePage.verifyStepDetailsOpen(mapStep);
 
-    mappingStepDetail.entitySettingsLink().should("be.visible").click();
+    mappingStepDetail.entitySettingsLink().scrollIntoView().should("be.visible").click({force: true});
     advancedSettingsDialog.getTargetPermissions().should("have.value", "data-hub-common,read,data-hub-common,update");
     advancedSettingsDialog.setTargetPermissions("data-hub-common,read");
     advancedSettingsDialog.saveEntitySettings();

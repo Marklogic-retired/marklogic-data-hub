@@ -6,6 +6,9 @@ class BrowsePage {
     return cy.get("#entity-select-wrapper").invoke("text");
   }
 
+  getFirstTableViewInstanceIcon() {
+    return cy.get("a#instance").first();
+  }
   getSpinner() {
     return cy.findByTestId("spinner");
   }
