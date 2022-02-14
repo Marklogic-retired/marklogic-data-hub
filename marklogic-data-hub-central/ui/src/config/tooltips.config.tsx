@@ -23,6 +23,7 @@ const ModelingTooltips = {
   addNewEntityGraph: 'Add a new entity type or relationship.',
   saveAll: 'Save all changes to all entity types.',
   revertAll: 'Discard unsaved changes made to all entity types.',
+  revertChanges: 'Revert your unpublished changes to the last published state.',
   addProperty: 'Add properties to this entity type.',
 
   /* Values made into links */
@@ -155,6 +156,7 @@ const ModelingPlaceholders = {
 const ModelingMessages = {
   entityEditedAlert: <span>You have unpublished changes for one or more entity types. Unpublished changes are saved automatically and have no impact on your project. Click the <strong>Publish</strong> button to apply changes to the rest of your project.</span>,
   saveEntityConfirm: <span>You have unpublished changes that are only available in the <strong>Model</strong> screen. Publish changes to apply changes to the rest of your project. Publishing changes could trigger a reindex of your data.</span>,
+  revertChangesConfirm: <span>You have unpublished changes that are only available in the <strong>Model</strong> screen. Reverting your changes would restore your entity model to the most recent published state.</span>,
   titleNoDefinition: <span>Unable to display properties because the definition cannot be found for this entity type. To learn more, see <a href="https://docs.marklogic.com/datahub/refs/troubleshooting.html" target="_blank">Troubleshooting</a> in the documentation.</span>,
 };
 

@@ -28,6 +28,8 @@ import com.marklogic.client.admin.QueryOptionsManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.JacksonHandle;
+import com.marklogic.client.query.DeleteQueryDefinition;
+import com.marklogic.client.query.QueryManager;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.central.managers.ModelManager;
 import com.marklogic.hub.central.schemas.ModelDefinitions;
@@ -212,6 +214,25 @@ public class ModelController extends BaseController {
         // deploy the configs for the newly published models
         deployModelConfigs();
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/clearDraftModels", method = RequestMethod.PUT)
+    @Secured("ROLE_writeEntityModel")
+    public ResponseEntity<Void> clearDraftModels() {
+        deleteDraftsInDB(getHubClient().getStagingClient());
+        deleteDraftsInDB(getHubClient().getFinalClient());
+        //deploy the configs for the newly published models
+        deployModelConfigs();
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    private void deleteDraftsInDB(DatabaseClient client) {
+        QueryManager qm = client.newQueryManager();
+        //publish models to ES collection
+        DeleteQueryDefinition def=qm.newDeleteDefinition();
+        def.setCollections("http://marklogic.com/entity-services/models/draft");
+        //clearing the draft in respective databases
+        qm.delete(def);
     }
 
     void deployModelConfigs() {

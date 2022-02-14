@@ -34,4 +34,16 @@ public class PublishModelsTest extends ModelTest {
         assertEquals(0, getFinalDocCount(draftEntityCollection), "There should be no entities in draft after publishing");
     }
 
+    @Test
+    @WithMockUser(roles = {"writeEntityModel"})
+    void testClearModels() {
+        runAsTestUserWithRoles("hub-central-entity-model-writer");
+        createModel();
+        updateModelInfo();
+        assertEquals(1, getStagingDocCount(draftEntityCollection), "There should be one entity in draft for staging database");
+        assertEquals(1, getFinalDocCount(draftEntityCollection), "There should be one entity in draft for final database");
+        clearDraftModels();
+        assertEquals(0, getStagingDocCount(draftEntityCollection), "There should be no entities in draft for staging database");
+        assertEquals(0, getFinalDocCount(draftEntityCollection), "There should be no entities in draft for final database");
+    }
 }

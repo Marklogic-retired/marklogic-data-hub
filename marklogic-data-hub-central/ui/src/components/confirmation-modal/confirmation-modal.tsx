@@ -233,10 +233,15 @@ const ConfirmationModal: React.FC<Props> = (props) => {
           {(props.type === ConfirmationType.PublishAll) && (
             <>
               <p aria-label="save-all-text">Are you sure you want to publish your changes to the entity model?</p>
-              <p>{ModelingMessages.saveEntityConfirm}</p>
+              <p className={styles.publishAllText}>{ModelingMessages.saveEntityConfirm}</p>
             </>
           )}
-
+          {(props.type === ConfirmationType.RevertChanges) && (
+            <>
+              <p aria-label="save-all-text">Are you sure you want to revert all of your unpublished changes?</p>
+              <p className={styles.revertChangeText}>{ModelingMessages.revertChangesConfirm}</p>
+            </>
+          )}
           {props.type === ConfirmationType.NavigationWarn && (
             <>
               <HCAlert

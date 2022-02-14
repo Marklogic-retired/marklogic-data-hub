@@ -3,7 +3,7 @@ import styles from "./graph-view.module.scss";
 import {ModelingTooltips} from "../../../config/tooltips.config";
 import PublishToDatabaseIcon from "../../../assets/publish-to-database-icon";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faFileExport} from "@fortawesome/free-solid-svg-icons";
+import {faFileExport, faUndoAlt} from "@fortawesome/free-solid-svg-icons";
 import SplitPane from "react-split-pane";
 import GraphViewSidePanel from "./side-panel/side-panel";
 import {ModelingContext} from "../../../util/modeling-context";
@@ -28,9 +28,12 @@ type Props = {
   toggleIsEditModal: any;
   setEntityTypesFromServer: any;
   toggleConfirmModal: any;
+  toggleRevertConfirmModal: any;
   setConfirmType: any;
   hubCentralConfig: any;
   updateHubCentralConfig: (hubCentralConfig: any) => void;
+  revertUnpublishedChanges: boolean;
+  setRevertUnpublishedChanges: (flag: boolean) => void;
 };
 
 const GraphView: React.FC<Props> = (props) => {
@@ -62,6 +65,13 @@ const GraphView: React.FC<Props> = (props) => {
 
   useEffect(() => {
   }, [modelingOptions]);
+
+  useEffect(() => {
+    if (props.revertUnpublishedChanges) {
+      onCloseSidePanel();
+      props.setRevertUnpublishedChanges(false);
+    }
+  }, [props.revertUnpublishedChanges]);
 
   const publishIconStyle: CSSProperties = {
     width: "1rem",
@@ -139,6 +149,22 @@ const GraphView: React.FC<Props> = (props) => {
     </span>
   </HCButton>;
 
+  const revertButton = <HCButton
+    className={props.canWriteEntityModel ? (!modelingOptions.isModified ? styles.disabledPointerEvents : "") : styles.disabledPointerEvents}
+    disabled={props.canWriteEntityModel ? !modelingOptions.isModified : true}
+    aria-label="revert-changes-graph-view"
+    size="sm"
+    variant="outline-light"
+    onClick={() => {
+      props.toggleRevertConfirmModal(true);
+      props.setConfirmType(ConfirmationType.RevertChanges);
+    }}>
+    <span className={styles.publishButtonContainer}>
+      <FontAwesomeIcon icon={faUndoAlt} className={styles.revertButton}/>
+      <span className={styles.publishButtonText}>Revert</span>
+    </span>
+  </HCButton>;
+
   const headerButtons = <span className={styles.buttons}>
     {graphEditMode ?
       <div className={styles.editModeInfoContainer}>
@@ -158,6 +184,11 @@ const GraphView: React.FC<Props> = (props) => {
         </HCTooltip>
       }
     </span>
+
+    <HCTooltip id="revert-tooltip" text={ModelingTooltips.revertChanges} placement="top">
+      <span className={styles.revertDisabledCursor}>{revertButton}</span>
+    </HCTooltip>
+
     <HCTooltip id="publish-tooltip" text={ModelingTooltips.publish} placement="top">
       <span className={styles.disabledCursor}>{publishButton}</span>
     </HCTooltip>

@@ -44,6 +44,10 @@ class EntityTypeTable {
   viewEntityInGraphView(entityName: string) {
     cy.findByTestId(`${entityName}-graphView-icon`).click({force: true});
   }
+
+  getRevertButtonTableView() {
+    return cy.findByLabelText("revert-changes-table-view");
+  }
 }
 
 const entityTypeTable = new EntityTypeTable();

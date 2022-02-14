@@ -39,6 +39,10 @@ export const publishDraftModels = async () => {
   return await axios.put(`/api/models/publishDraftModels`);
 };
 
+export const clearDraftModels = async () => {
+  return await axios.put(`/api/models/clearDraftModels`);
+};
+
 export const getHubCentralConfig = async () => {
   return await axios.get(`/api/models/hubCentralConfig`);
 };

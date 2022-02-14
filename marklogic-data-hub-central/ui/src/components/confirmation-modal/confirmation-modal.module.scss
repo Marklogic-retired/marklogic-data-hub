@@ -4,14 +4,14 @@
 }
 
 .toggleSteps {
- cursor: pointer; 
+ cursor: pointer;
  color: #5B69AF;
 }
 
 .stepList {
   list-style: none;
   li {
-    margin-left: 15px; 
+    margin-left: 15px;
   }
 
   li::before {
@@ -25,5 +25,13 @@
     margin-bottom: 30px;
     text-align: center;
   }
+}
+
+.revertChangeText {
+  padding-left: 1.8vw !important;
+}
+
+.publishAllText {
+  padding-left: 1.3vw !important;
 }
 
