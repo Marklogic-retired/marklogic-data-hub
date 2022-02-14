@@ -225,7 +225,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     cy.waitUntil(() => runPage.getFlowName(flowName).should("be.visible"));
     cy.verifyStepRunResult("success", "Mapping", mapStep);
     runPage.explorerLink().click();
-    browsePage.getTableViewInstanceIcon().click();
+    browsePage.getFirstTableViewInstanceIcon().should("be.visible").click({force: true});
     detailPage.getDocumentSource().should("contain", "backup-ABC123");
     detailPage.getDocumentTimestamp().should("not.exist");
     detailPage.getSourceView().click();
@@ -248,8 +248,10 @@ describe("Create and verify load steps, map step and flows with a custom header"
     curatePage.selectFlowToRunIn(flowName);
     cy.waitForAsyncRequest();
     runPage.explorerLink().click();
-    browsePage.getTableViewInstanceIcon().click();
+
+    browsePage.getFirstTableViewInstanceIcon().should("be.visible").click({force: true});
     detailPage.getSourceView().click();
+
     // attachment is present in detailed view of document
     detailPage.attachmentPresent().should("exist");
   });
