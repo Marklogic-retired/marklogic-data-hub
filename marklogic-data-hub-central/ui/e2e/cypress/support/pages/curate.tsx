@@ -43,6 +43,13 @@ class CuratePage {
     cy.get(`#${stepName}-flowsList-select-wrapper`).should("be.visible", {timeout: 5000}).scrollIntoView().click();
   }
 
+  openExistingFlowDropdownAndTooltip(entityTypeId: string, stepName: string) {
+    this.getEntityMappingStep(entityTypeId, stepName).should("be.visible", {timeout: 5000}).trigger("mouseover");
+    cy.log("**Before select element and check tooltip does't exist**");
+    cy.get(`${stepName}curate-disabled-tooltip`).should("not.exist");
+    cy.get(`#${stepName}-flowsList-select-wrapper`).should("be.visible", {timeout: 5000}).scrollIntoView().click();
+  }
+
   openStepDetails(stepName: string) {
     cy.findByTestId(`${stepName}-stepDetails`).should("be.visible", {timeout: 5000}).click();
   }

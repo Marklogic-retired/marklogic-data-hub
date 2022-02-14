@@ -132,7 +132,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     //mappingStepDetail.goBackToCurateHomePage();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Order").should("be.visible"));
     //curatePage.toggleEntityTypeId("Order");
-    curatePage.openExistingFlowDropdown("Order", mapStep);
+    curatePage.openExistingFlowDropdownAndTooltip("Order", mapStep);
     curatePage.getExistingFlowFromDropdown(mapStep, flowName).click();
     curatePage.addStepToFlowConfirmationMessage();
     curatePage.confirmAddStepToFlow(mapStep, flowName);
