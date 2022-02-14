@@ -81,6 +81,52 @@ describe("Graph View Component", () => {
     userEvent.click(getByLabelText("closeGraphViewSidePanel"));
   });
 
+  test("can view, check properties as empty description and close side panel for selected entities within graph view", async () => {
+
+    const mockDeleteEntity = jest.fn();
+
+    const {getByTestId, getByLabelText, queryByLabelText, rerender, queryByPlaceholderText} =  render(
+      <ModelingContext.Provider value={isModified}>
+        <GraphView
+          entityTypes={getEntityTypes}
+          canReadEntityModel={true}
+          canWriteEntityModel={true}
+          deleteEntityType={mockDeleteEntity}
+          relationshipModalVisible={false}
+          toggleRelationshipModal={jest.fn()}
+          updateSavedEntity={jest.fn()}
+          setEntityTypesFromServer={jest.fn()}
+          hubCentralConfig={hubCentralConfig}
+          updateHubCentralConfig={jest.fn()}
+        />
+      </ModelingContext.Provider>
+    );
+
+    expect(queryByLabelText("Product-selectedEntity")).not.toBeInTheDocument();
+
+    rerender(withEntityAs("Product"));
+    await wait(() => expect(getByLabelText("Product-selectedEntity")).toBeInTheDocument());
+
+    //Verify side panel content
+    await (() => expect(getByTestId("description")).toHaveValue("ajx"));
+
+    //Render new entity and verify side panel content
+    expect(queryByLabelText("Order-selectedEntity")).not.toBeInTheDocument();
+    rerender(withEntityAs("Order"));
+    await wait(() => expect(getByLabelText("Order-selectedEntity")).toBeInTheDocument());
+    expect(queryByPlaceholderText("Enter description"));
+
+    userEvent.hover(getByTestId("Order-delete"));
+    await wait(() => expect(screen.getByText(ModelingTooltips.deleteIcon)).toBeInTheDocument());
+
+    expect(getByLabelText("closeGraphViewSidePanel")).toBeInTheDocument();
+    expect(getByLabelText("propertiesTabInSidePanel")).toBeInTheDocument();
+    expect(getByLabelText("entityTypeTabInSidePanel")).toBeInTheDocument();
+
+    //Closing side panel
+    userEvent.click(getByLabelText("closeGraphViewSidePanel"));
+  });
+
   test("Publish button should be disabled when user don't have permission to write entity model", async () => {
 
     const mockDeleteEntity = jest.fn();
