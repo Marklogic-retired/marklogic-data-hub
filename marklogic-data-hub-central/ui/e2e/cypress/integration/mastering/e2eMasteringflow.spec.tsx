@@ -32,14 +32,14 @@ describe("Validate E2E Mastering Flow", () => {
   before(() => {
     cy.visit("/");
     cy.contains(Application.title);
-    cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-match-merge-writer", "hub-central-mapping-writer", "hub-central-load-writer", "hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
+    cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
     cy.waitForAsyncRequest();
   });
   beforeEach(() => {
-    cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-match-merge-writer", "hub-central-mapping-writer", "hub-central-load-writer", "hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
-    cy.waitForAsyncRequest();
+    cy.loginAsDeveloper().withRequest();
     cy.intercept("/api/jobs/**").as("getJobs");
+    cy.waitForAsyncRequest();
   });
   afterEach(() => {
     cy.resetTestUser();
@@ -94,7 +94,7 @@ describe("Validate E2E Mastering Flow", () => {
     browsePage.getFacet("collection").should("exist");
     browsePage.getFacetItemCheckbox("collection", loadStepName).should("to.exist");
   });
-  it("Create a new entity", {defaultCommandTimeout: 120000}, () => {
+  it("Create a new entity and Add properties", {defaultCommandTimeout: 120000}, () => {
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
@@ -103,10 +103,7 @@ describe("Validate E2E Mastering Flow", () => {
     entityTypeModal.newEntityDescription("An entity for patients");
     entityTypeModal.getAddButton().click();
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => propertyTable.getExpandIcon("Patient").click());
-  });
-  it("Add properties", () => {
-    cy.waitUntil(() => propertyTable.getExpandIcon("Patient").click());
+    // Add properties
     propertyTable.getAddPropertyButton("Patient").should("be.visible").click();
     propertyModal.newPropertyName("FirstName");
     propertyModal.openPropertyDropdown();
