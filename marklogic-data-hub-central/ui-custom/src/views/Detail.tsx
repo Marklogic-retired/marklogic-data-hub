@@ -14,6 +14,11 @@ import _ from "lodash";
 
 type Props = {};
 
+const COMPONENTS = {
+  DataTableValue: DataTableValue,
+  DataTableMultiValue: DataTableMultiValue
+}
+
 const Detail: React.FC<Props> = (props) => {
   
   const navigate = useNavigate();
@@ -65,6 +70,22 @@ const Detail: React.FC<Props> = (props) => {
     );
   };
 
+  let getPersonalItems = (items) => {
+    const personaItems = items.map((it, index) => {
+      if (it.component) {
+        return (
+          <div key={"item-" + index} className="item">
+            {React.createElement(
+              COMPONENTS[it.component], 
+              { config: it }, null
+            )}
+          </div>
+        );
+      }
+    });
+    return personaItems;
+  };
+
   return (
 
     <div className="detail">
@@ -87,31 +108,7 @@ const Detail: React.FC<Props> = (props) => {
 
               {config?.detail?.personal ? 
                 <Section title="Personal Info">
-
-                  {config?.detail?.personal?.name ? 
-                    <DataTableValue config={config.detail.personal.name} />
-                  : null}
-
-                  {config?.detail?.personal?.phone ? 
-                    <DataTableValue config={config.detail.personal.phone} />
-                  : null}
-
-                  {config?.detail?.personal?.email ? 
-                    <DataTableValue config={config.detail.personal.email} />
-                  : null}
-
-                  {config?.detail?.personal?.ssn ? 
-                    <DataTableValue config={config.detail.personal.ssn} />
-                  : null}
-
-                  {config?.detail?.personal?.address ? 
-                    <DataTableMultiValue config={config.detail.personal.address} />
-                  : null}
-
-                  {config?.detail?.personal?.school ? 
-                    <DataTableMultiValue config={config.detail.personal.school} />
-                  : null}
-
+                  {getPersonalItems(config?.detail?.personal?.items)}
                 </Section>
               : null}
 
