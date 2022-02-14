@@ -271,7 +271,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
               dataTestid="description"
               disabled={props.canReadEntityModel && !props.canWriteEntityModel}
               placeholder="Enter description"
-              value={selectedEntityDescription}
+              value={selectedEntityDescription ? selectedEntityDescription: " "}
               onChange={handlePropertyChange}
               onBlur={onSubmit}
             />
