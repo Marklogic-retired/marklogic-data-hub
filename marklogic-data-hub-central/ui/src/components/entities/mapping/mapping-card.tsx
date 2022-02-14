@@ -463,7 +463,7 @@ const MappingCard: React.FC<Props> = (props) => {
                         Add step to an existing flow
                         {
                           selectVisible ?
-                            <HCTooltip id="curate-disabled-tooltip" text={"Curate: " + SecurityTooltips.missingPermission} placement={"top"} ><div className={styles.cardLinkSelect}>
+                            <HCTooltip id={`${elem.name}curate-disabled-tooltip`} show={props?.canWriteFlow ? !props?.canWriteFlow: undefined} text={"Curate: " + SecurityTooltips.missingPermission} placement={"bottom"} ><div className={styles.cardLinkSelect}>
                               <Select
                                 id={`${elem.name}-flowsList-select-wrapper`}
                                 inputId={`${elem.name}-flowsList`}
