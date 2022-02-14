@@ -5,9 +5,9 @@ import {
   entityTypeModal,
   entityTypeTable,
   graphView,
+  graphViewSidePanel,
   propertyModal,
   propertyTable,
-  graphViewSidePanel,
   relationshipModal
 } from "../../support/components/model/index";
 import {mappingStepDetail} from "../../support/components/mapping";

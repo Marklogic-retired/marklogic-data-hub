@@ -456,4 +456,13 @@ public class ModelTest extends AbstractHubCentralTest {
         }
         assertDoesNotThrow(() -> controller.publishDraftModels(), "Should publish the deleted draft with no issues.");
     }
+
+    protected void clearDraftModels() {
+        if (isVersionCompatibleWith520Roles()) {
+            runAsDataHubDeveloper();
+        } else {
+            runAsAdmin();
+        }
+        assertDoesNotThrow(() -> controller.clearDraftModels(), "Should clear the unpublished entities data");
+    }
 }

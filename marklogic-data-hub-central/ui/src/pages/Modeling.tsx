@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext, CSSProperties} from "react";
-import {faProjectDiagram, faTable} from "@fortawesome/free-solid-svg-icons";
+import {faProjectDiagram, faTable, faUndoAlt} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import "./Modeling.scss";
 
@@ -8,7 +8,7 @@ import EntityTypeModal from "../components/modeling/entity-type-modal/entity-typ
 import EntityTypeTable from "../components/modeling/entity-type-table/entity-type-table";
 import styles from "./Modeling.module.scss";
 
-import {deleteEntity, entityReferences, updateHubCentralConfig, primaryEntityTypes, publishDraftModels, updateEntityModels, getHubCentralConfig} from "../api/modeling";
+import {deleteEntity, entityReferences, updateHubCentralConfig, primaryEntityTypes, publishDraftModels, clearDraftModels, updateEntityModels, getHubCentralConfig} from "../api/modeling";
 import {UserContext} from "../util/user-context";
 import {ModelingContext} from "../util/modeling-context";
 import {ModelingTooltips} from "../config/tooltips.config";
@@ -41,6 +41,7 @@ const Modeling: React.FC = () => {
   const [width, setWidth] = React.useState(window.innerWidth);
 
   const [showConfirmModal, toggleConfirmModal] = useState(false);
+  const [showRevertConfirmModal, toggleRevertConfirmModal] = useState(false);
   const [showRelationshipModal, toggleRelationshipModal] = useState(true);
 
   const [confirmType, setConfirmType] = useState<ConfirmationType>(ConfirmationType.PublishAll);
@@ -57,6 +58,7 @@ const Modeling: React.FC = () => {
 
   //hubCentral Config
   const [hubCentralConfig, sethubCentralConfig] = useState({});
+  const [revertUnpublishedChanges, setRevertUnpublishedChanges] = useState(false);
 
 
   useEffect(() => {
@@ -159,6 +161,21 @@ const Modeling: React.FC = () => {
     }
   };
 
+  const clearDraftModel = async () => {
+    try {
+      let response = await clearDraftModels();
+      if (response["status"] === 200) {
+        await setEntityTypesFromServer();
+      }
+    } catch (error) {
+      handleError(error);
+    } finally {
+      clearEntityModified();
+      toggleRevertConfirmModal(false);
+      setRevertUnpublishedChanges(true);
+    }
+  };
+
   const publishHubCentralConfig = async (hubCentralConfig: hubCentralConfig) => {
     try {
       let response = await updateHubCentralConfig(hubCentralConfig);
@@ -204,6 +221,8 @@ const Modeling: React.FC = () => {
       publishDraftModelToServer();
     } else if (confirmType === ConfirmationType.DeleteEntityRelationshipOutstandingEditWarn || confirmType === ConfirmationType.DeleteEntityNoRelationshipOutstandingEditWarn || confirmType === ConfirmationType.DeleteEntity) {
       deleteEntityFromServer();
+    } else if (confirmType === ConfirmationType.RevertChanges) {
+      clearDraftModel();
     }
   };
 
@@ -297,6 +316,24 @@ const Modeling: React.FC = () => {
   </HCButton>
   </span>;
 
+  const revertButton = <span className={styles.publishButtonParent}><HCButton
+    className={canWriteEntityModel ? (!modelingOptions.isModified ? styles.disabledPointerEvents : "") : styles.disabledPointerEvents}
+    disabled={canWriteEntityModel ? !modelingOptions.isModified : true}
+    aria-label="revert-changes-table-view"
+    variant="outline-light"
+    onClick={() => {
+      toggleRevertConfirmModal(true);
+      setConfirmType(ConfirmationType.RevertChanges);
+    }}
+    size="sm"
+  >
+    <span className={styles.publishButtonContainer}>
+      <FontAwesomeIcon icon={faUndoAlt} className={styles.revertButton}/>
+      <span className={styles.publishButtonText}>Revert</span>
+    </span>
+  </HCButton>
+  </span>;
+
   const handleViewChange = (view) => {
     if (view === "table") {
       setView("table");
@@ -376,6 +413,17 @@ const Modeling: React.FC = () => {
                       </HCTooltip>
                     }
                     {canWriteEntityModel ?
+                      <HCTooltip id="publish-tooltip" text={ModelingTooltips.revertChanges} className={styles.tooltipOverlay} placement="top">
+                        <span className={modelingOptions.isModified ? styles.CursorButton : styles.disabledCursor}>
+                          {revertButton}
+                        </span>
+                      </HCTooltip>
+                      :
+                      <HCTooltip id="publish-disabled-tooltip" text={ModelingTooltips.revertChanges + " " + ModelingTooltips.noWriteAccess} placement="top" className={styles.tooltipOverlay}>
+                        <span className={styles.revertDisabledCursor}>{revertButton}</span>
+                      </HCTooltip>
+                    }
+                    {canWriteEntityModel ?
                       <HCTooltip id="publish-tooltip" text={ModelingTooltips.publish} className={styles.tooltipOverlay} placement="top">
                         <span className={modelingOptions.isModified ? styles.CursorButton : styles.disabledCursor}>
                           {publishButton}
@@ -419,9 +467,12 @@ const Modeling: React.FC = () => {
               toggleIsEditModal={toggleIsEditModal}
               setEntityTypesFromServer={setEntityTypesFromServer}
               toggleConfirmModal={toggleConfirmModal}
+              toggleRevertConfirmModal = {toggleRevertConfirmModal}
               setConfirmType={setConfirmType}
               hubCentralConfig={hubCentralConfig}
               updateHubCentralConfig={publishHubCentralConfig}
+              revertUnpublishedChanges={revertUnpublishedChanges}
+              setRevertUnpublishedChanges={setRevertUnpublishedChanges}
             />
           </>
         }
@@ -444,6 +495,14 @@ const Modeling: React.FC = () => {
           boldTextArray={![ConfirmationType.PublishAll].includes(confirmType) ? confirmBoldTextArray : []}
           arrayValues={![ConfirmationType.PublishAll].includes(confirmType) ? arrayValues : []}
           toggleModal={toggleConfirmModal}
+          confirmAction={confirmAction}
+        />
+        <ConfirmationModal
+          isVisible={showRevertConfirmModal}
+          type={ConfirmationType.RevertChanges}
+          arrayValues={![ConfirmationType.RevertChanges].includes(confirmType) ? arrayValues : []}
+          boldTextArray={![ConfirmationType.RevertChanges].includes(confirmType) ? confirmBoldTextArray : []}
+          toggleModal={toggleRevertConfirmModal}
           confirmAction={confirmAction}
         />
         <EntityTypeModal

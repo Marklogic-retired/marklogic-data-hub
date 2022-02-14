@@ -13,5 +13,6 @@ export enum ConfirmationType {
   RevertAll = "revertAllEntity",
   NavigationWarn = "navigationWarn",
   discardChanges = "discardChanges",
-  PublishAll = "publishAllEntity"
+  PublishAll = "publishAllEntity",
+  RevertChanges = "revertEntityChanges"
 }

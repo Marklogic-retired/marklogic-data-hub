@@ -87,6 +87,15 @@
   cursor: not-allowed;
 }
 
+.revertDisabledCursor{
+  cursor: not-allowed;
+  margin-right: 0.5vw;
+}
+
+.revertButton {
+ margin-top: 4px;
+}
+
 .dropdown-item.active {
   all: unset;
   margin-left: 10px !important;
