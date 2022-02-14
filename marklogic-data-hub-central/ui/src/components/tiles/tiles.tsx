@@ -9,7 +9,7 @@ import Run from "../../pages/Run";
 import {SearchContext} from "../../util/search-context";
 import {AuthoritiesContext} from "../../util/authorities";
 import QueryModal from "../queries/managing/manage-query-modal/manage-query";
-import modelingInfoIcon from "../../assets/icon_helpInfo.png";
+import infoIcon from "../../assets/icon_helpInfo.png";
 import {primaryEntityTypes} from "../../api/modeling";
 import {ToolbarBulbIconInfo} from "../../config/tooltips.config";
 import {ArrowsAngleContract, ArrowsAngleExpand, XLg} from "react-bootstrap-icons";
@@ -34,7 +34,7 @@ const Tiles: React.FC<Props> = (props) => {
   const viewId = props.id;
   const {savedQueries, entityDefinitionsArray} = useContext(SearchContext);
   const [manageQueryModal, setManageQueryModal] = useState(false);
-  const [modelingInfoVisible, setModelingInfoVisible] = useState(false);
+  const [infoVisible, setInfoVisible] = useState(false);
 
   /*** For Manage Queries - Explore tab ****/
   const auth = useContext(AuthoritiesContext);
@@ -49,13 +49,6 @@ const Tiles: React.FC<Props> = (props) => {
     entityDefArray={entityDefinitionsArray}
   />;
   /******************************************/
-
-  const modelInfo =
-  <Popover id={`popover-tiles`} className={styles.popoverModelInfo}>
-    <Popover.Body className={styles.popoverModelInfoBody}>
-      <div className={styles.modelingInfoPopover} aria-label="modelingInfo">{ToolbarBulbIconInfo.modelingInfo}</div>
-    </Popover.Body>
-  </Popover>;
 
   const showControl = (control) => {
     return controls.indexOf(control) !== -1;
@@ -92,7 +85,7 @@ const Tiles: React.FC<Props> = (props) => {
     try {
       const res = await primaryEntityTypes();
       if (res && componentIsMounted.current) {
-        if (res.data.length === 0) setModelingInfoVisible(true);
+        if (res.data.length === 0) setInfoVisible(true);
       }
     } catch (error) {
       let message = error;
@@ -116,11 +109,10 @@ const Tiles: React.FC<Props> = (props) => {
     return () => { componentIsMounted.current = false; };
   }, []);
 
-  const modelingInfoViewChange = (visible) => {
-    if (visible) setModelingInfoVisible(true);
-    else setModelingInfoVisible(false);
+  const infoViewChange = (visible) => {
+    if (visible) setInfoVisible(true);
+    else setInfoVisible(false);
   };
-
 
   const renderHeader = function (props) {
     return (
@@ -132,16 +124,27 @@ const Tiles: React.FC<Props> = (props) => {
           {(options["iconType"] === "custom") ? (<>
             <span className={options["icon"] + "Header"} aria-label={"icon-" + viewId} style={{color: options["color"]}}></span>
             <div className={styles.exploreText} aria-label={"title-" + viewId}>{options["title"]}</div>
-            {viewId === "model" && <span id="modelInfo">
+            {["model", "explore"].includes(viewId) && <span id={`${viewId}Info`}>
               <OverlayTrigger
-                show={modelingInfoVisible}
-                overlay={modelInfo}
+                show={infoVisible}
+                overlay={
+                  <Popover id={`popover-tiles`} className={styles.popoverInfo}>
+                    <Popover.Body className={styles.popoverInfoBody}>
+                      {
+                        {
+                          "model": <div className={styles.infoPopover} aria-label="modelingInfo">{ToolbarBulbIconInfo.modelingInfo}</div>,
+                          "explore": <div className={styles.infoPopover} aria-label={`${viewId}Info`}>{ToolbarBulbIconInfo.exploreInfo}</div>
+                        }[viewId]
+                      }
+                    </Popover.Body>
+                  </Popover>
+                }
                 trigger="click"
                 placement="bottom-end"
                 rootClose
-                onToggle={modelingInfoViewChange}
+                onToggle={infoViewChange}
               >
-                <span className={styles.modelingInfoIcon} aria-label="modelInfoIcon"><img src={modelingInfoIcon}/></span>
+                <span className={styles.infoIcon} aria-label={`${viewId}InfoIcon`}><img src={infoIcon}/></span>
               </OverlayTrigger>
             </span>}
           </>) : (<>

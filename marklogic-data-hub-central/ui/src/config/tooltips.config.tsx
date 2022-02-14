@@ -726,14 +726,21 @@ const AdvCustomTooltips = {
 
 const ToolbarBulbIconInfo = {
     modelingInfo: <div><strong>Effective data curation begins with defining an entity model.</strong><br/><br/>
-    A model is composed of one or more entity types, which represent the high-level business objects in your enterprise. Employee, product, purchase order, and department are all examples of entity types. Each entity type is composed of properties. Properties can have single or multiple values, and you can arrange them in a flat or hierarchical structure.<br/><br/>
-    Unlike relational models, you do not have to worry about building the perfect model upfront; you can <strong>evolve the model</strong> as you learn more about your data or bring in new data. As your business needs change, it’s normal to add new properties to existing entity types, or add new entity types entirely.<br/><br/>
-    The entity type is comprised of properties, which can be of any of the following types:<br/><br/>
-  <ul>
-    <li>A <strong>basic</strong> data type, including integer, string, dateTime, boolean, or other less common data types.</li><br/>
-    <li><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup}/> A <strong>structured</strong> type, which is comprised of its own properties, which can also be of other structured types. Use structured types to create hierarchies of properties within your entity type. For example, the structured type property <span className={styles.lightFont}>FullName</span> of the entity <span className={styles.lightFont}>Employee</span> might have a <span className={styles.lightFont}>firstName, middleName</span>, and <span className={styles.lightFont}>lastName</span> properties within it. The depth of nested structured types is not limited.</li><br/>
-    <li><FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey}/> A <strong>relationship</strong> type, which links to an entity of the selected type. Use a relationship type when there's a relationship between two entities — for example, an employee belongs to a department, so there's a relationship between Employee and Department.</li>
-  </ul></div>,
+      A model is composed of one or more entity types, which represent the high-level business objects in your enterprise. Employee, product, purchase order, and department are all examples of entity types. Each entity type is composed of properties. Properties can have single or multiple values, and you can arrange them in a flat or hierarchical structure.<br/><br/>
+      Unlike relational models, you do not have to worry about building the perfect model upfront; you can <strong>evolve the model</strong> as you learn more about your data or bring in new data. As your business needs change, it’s normal to add new properties to existing entity types, or add new entity types entirely.<br/><br/>
+      The entity type is comprised of properties, which can be of any of the following types:<br/><br/>
+    <ul>
+      <li>A <strong>basic</strong> data type, including integer, string, dateTime, boolean, or other less common data types.</li><br/>
+      <li><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup}/> A <strong>structured</strong> type, which is comprised of its own properties, which can also be of other structured types. Use structured types to create hierarchies of properties within your entity type. For example, the structured type property <span className={styles.lightFont}>FullName</span> of the entity <span className={styles.lightFont}>Employee</span> might have a <span className={styles.lightFont}>firstName, middleName</span>, and <span className={styles.lightFont}>lastName</span> properties within it. The depth of nested structured types is not limited.</li><br/>
+      <li><FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey}/> A <strong>relationship</strong> type, which links to an entity of the selected type. Use a relationship type when there's a relationship between two entities — for example, an employee belongs to a department, so there's a relationship between Employee and Department.</li>
+    </ul></div>,
+    exploreInfo: <div>Use the <strong>Explore</strong> screen to view and query your data.<br/><br/>
+    The <strong>Explore</strong> screen contains a visual representation of the data processed in the <strong>Model</strong> and <strong>Curate</strong> screens.<br/><br/>
+    To begin, enter a query or apply facets in the left-hand panel to see specific entity types.<br/><br/>
+    Click on the records to view specific information about each one. <br/><br/>
+    The Graph, Table, and Snippet views, on the right-hand side, display your data in various layouts. Use the Graph view to show relationships between entity types.<br/><br/>
+    For more detailed information, visit the <a href="https://docs.marklogic.com/datahub/tools/hubcentral/exploring-with-hubcentral.html" target="_blank">Documentation</a> page about <strong>Explore</strong>.<br/><br/>
+    </div>,
   homePageInfo: <div>
       <span style={{fontSize:"larger"}}><strong>Ready to get started?</strong></span><br/><br/>
       To understand exactly what Data Hub Central can do for you, first try to get a very simple use case working. When you are happy with the results, you can build on it to satisfy all your requirements.<br/><br/>
