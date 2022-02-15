@@ -4,12 +4,12 @@ class ModelPage {
   * @param type - accepts `table` for table-view or `project-diagram` for graph-view
   */
   selectView(view: string) {
-    cy.get(`[data-icon="${view}"]`).first().trigger("mouseover").click({force: true});
+    cy.get(`[data-icon="${view}"]`).first().scrollIntoView().trigger("mouseover").click({force: true});
     cy.wait(1000);
     cy.get("body")
       .then(($body) => {
         if ($body.find("[class*=\"rbt-input\"]")) {
-          cy.get(`[data-icon="${view}"]`).first().trigger("mouseover").click({force: true});
+          cy.get(`[data-icon="${view}"]`).first().scrollIntoView().trigger("mouseover").click({force: true});
         }
       });
   }

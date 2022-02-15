@@ -101,7 +101,9 @@ describe("Test '/Explore' left sidebar", () => {
     // cy.log("**Opening table view**");
     // browsePage.getTableView().click();
     cy.log(`**Selecting 'Customer' base entity**`);
-    cy.wait(8000);
+    cy.wait(2000);
+    //TODO: Need to click on Show more because a 6th entity it's being created in another test and not being deleted after
+    entitiesSidebar.showMoreEntities().click();
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
 
     cy.log("**Checking facet is selected**");
