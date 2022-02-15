@@ -12,6 +12,4 @@ marklogic-data-hub-central/ui/* @wooldridge @briantang @xnikhil08 @Sanjeevani19 
 
 marklogic-data-hub-spark-connector/* @anu3990 @SameeraPriyathamTadikonda
 
-performance-tests/* @devinnicholson
-
 specs/* @ryanjdew
