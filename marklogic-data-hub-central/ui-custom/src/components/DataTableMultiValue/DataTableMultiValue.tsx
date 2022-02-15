@@ -110,7 +110,7 @@ const DataTableMultiValue: React.FC<Props> = (props) => {
                 <tr>
                     {_.isArray(props.config.cols) && props.config.cols.map((col, i) => {
                         return (
-                            <th key={"head-" + i}>{col.title}</th>
+                            <th key={"head-" + i} style={{width: col.width}}>{col.title}</th>
                         );
                     })}
                     {_.isArray(props.config.metadata) && props.config.metadata.map((col, i2) => {
