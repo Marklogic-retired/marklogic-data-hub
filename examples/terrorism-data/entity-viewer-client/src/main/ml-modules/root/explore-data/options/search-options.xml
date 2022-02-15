@@ -11,43 +11,43 @@
   <search:constraint name="eventid">
     <search:range collation="http://marklogic.com/collation/codepoint" facet="true" type="xs:string">
       <search:element name="eventid" ns="" xmlns:es="http://marklogic.com/entity-services"/>
-      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>limit=100</search:facet-option>
     </search:range>
   </search:constraint>
   <search:constraint name="attacktype1_txt">
     <search:range collation="http://marklogic.com/collation/codepoint" facet="true" type="xs:string">
       <search:element name="attacktype1_txt" ns="" xmlns:es="http://marklogic.com/entity-services"/>
-      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>limit=100</search:facet-option>
     </search:range>
   </search:constraint>
   <search:constraint name="targtype1_txt">
     <search:range collation="http://marklogic.com/collation/codepoint" facet="true" type="xs:string">
       <search:element name="targtype1_txt" ns="" xmlns:es="http://marklogic.com/entity-services"/>
-      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>limit=100</search:facet-option>
     </search:range>
   </search:constraint>
   <search:constraint name="weaptype1_txt">
     <search:range collation="http://marklogic.com/collation/codepoint" facet="true" type="xs:string">
       <search:element name="weaptype1_txt" ns="" xmlns:es="http://marklogic.com/entity-services"/>
-      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>limit=100</search:facet-option>
     </search:range>:q!
   </search:constraint>
   <search:constraint name="country_txt">
     <search:range collation="http://marklogic.com/collation/codepoint" facet="true" type="xs:string">
       <search:element name="country_txt" ns="" xmlns:es="http://marklogic.com/entity-services"/>
-      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>limit=100</search:facet-option>
     </search:range>
   </search:constraint>
   <search:constraint name="region_txt">
     <search:range collation="http://marklogic.com/collation/codepoint" facet="true" type="xs:string">
       <search:element name="region_txt" ns="" xmlns:es="http://marklogic.com/entity-services"/>
-      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>limit=100</search:facet-option>
     </search:range>
   </search:constraint>
   <search:constraint name="iyear">
     <search:range collation="http://marklogic.com/collation/codepoint" facet="true" type="xs:string">
       <search:element name="iyear" ns="" xmlns:es="http://marklogic.com/entity-services"/>
-      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>limit=100</search:facet-option>
     </search:range>
   </search:constraint>
   <search:tuples name="event">
