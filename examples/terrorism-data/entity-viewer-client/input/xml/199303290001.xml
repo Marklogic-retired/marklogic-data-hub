@@ -1,0 +1,63 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199303290001</eventid>
+    <iyear>1993</iyear>
+    <imonth>3</imonth>
+    <iday>29</iday>
+    <extended>0</extended>
+    <country>36</country>
+    <country_txt>Cambodia</country_txt>
+    <region>5</region>
+    <region_txt>Southeast Asia</region_txt>
+    <provstate>Phnom Penh (Province)</provstate>
+    <city>Phnom Penh</city>
+    <vicinity>0</vicinity>
+    <summary>03/29/1993: A motorist threw grenades into a crowded Vietnamese restaurant, killing two people and wounding 20 others. The Khmer Rouge is suspected of orchestrating the attack, however, there was no claim of responsibility.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Ethnic Vietnamese</corp1>
+    <target1>Vietnamese restaurant in Phnom Penh</target1>
+    <natlty1>223</natlty1>
+    <natlty1_txt>Vietnam</natlty1_txt>
+    <gname>Khmer Rouge</gname>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperps>1</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>7</weapsubtype1>
+    <weapsubtype1_txt>Grenade</weapsubtype1_txt>
+    <nkill>2</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>20</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <addnotes>The Khmer Rouge killed many ethnic Vietnamese and hundreds of thousands of Cambodians in its reign in the 1970s. A government official claimed to have information that four (opposition) factions were introducing terrorist groups as part of a new anti-Vietnamese terrorist campaign. The violence caused over 2,000 Vietnamese to begin fleeing by boat to Vietnam. The Khmer Rouge denied any involvement in the attack, but the group was still largely suspected of orchestrating the attack. 20 injuries and 2 casualties resulted from the attack.</addnotes>
+    <scite1>Sue Downie, “Cambodian government says terrorist hit squad in Phnom Penh,” United Press International, March 30, 1993.</scite1>
+    <scite2>Sheila McNulty, “U.N.: More Than 2,000 Vietnamese Fleeing Cambodia by Boat,” The Associated Press, March 29, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

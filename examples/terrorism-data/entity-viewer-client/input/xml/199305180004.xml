@@ -1,0 +1,54 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199305180004</eventid>
+    <iyear>1993</iyear>
+    <imonth>5</imonth>
+    <iday>18</iday>
+    <extended>0</extended>
+    <country>110</country>
+    <country_txt>Lebanon</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>UNIFIL Security Zone</provstate>
+    <city>Unknown</city>
+    <vicinity>0</vicinity>
+    <location>Northern Perimeter of security zone in the eastern sector (Southern Lebanon)</location>
+    <summary>05/19/1993: An IDF officer was killed and two others were wounded by Hizballah fighters in heavy fighting near the northern perimeter of the security zone.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>4</targtype1>
+    <targtype1_txt>Military</targtype1_txt>
+    <corp1>Israeli Security Forces</corp1>
+    <target1>Israeli Defense Force Soldiers</target1>
+    <natlty1>97</natlty1>
+    <natlty1_txt>Israel</natlty1_txt>
+    <gname>Hezbollah</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>1</claimed>
+    <claimmode>8</claimmode>
+    <claimmode_txt>Personal claim</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>2</weapsubtype1>
+    <weapsubtype1_txt>Automatic or Semi-Automatic Rifle</weapsubtype1_txt>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <scite1>David Rudge and Yigal Kotzer, "IDF Officer Killed in South Lebanon. Two Other Men Injured, One Seriously," The Jerusalem Post, May 19, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

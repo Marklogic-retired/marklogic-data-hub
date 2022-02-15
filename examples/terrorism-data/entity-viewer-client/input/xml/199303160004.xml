@@ -1,0 +1,63 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199303160004</eventid>
+    <iyear>1993</iyear>
+    <imonth>3</imonth>
+    <iday>16</iday>
+    <extended>0</extended>
+    <country>98</country>
+    <country_txt>Italy</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Rome (Province)</provstate>
+    <city>Rome</city>
+    <vicinity>0</vicinity>
+    <summary>03/17/1993: Mohammed Hussein Naqdi, the representative in Italy of the National Council of the Iranian Resistance and a former Iranian ambassador to Rome, was assassinated. There were no claims of responsibility for the attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>1</attacktype1>
+    <attacktype1_txt>Assassination</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>The National Council of the Iranian Resistance</corp1>
+    <target1>Mohammed Hussein Naqdi</target1>
+    <natlty1>94</natlty1>
+    <natlty1_txt>Iran</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>2</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>2</weapsubtype1>
+    <weapsubtype1_txt>Automatic or Semi-Automatic Rifle</weapsubtype1_txt>
+    <weapdetail>An Israeli-made Uzi submachine gun was used in the attack.</weapdetail>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>Naghdi had been ambassador to Italy until 1982, before joining opponents of the Tehran government. Naghdi's National Council of Resistance of Iran is a collection of groups dominated by the Mujahedeen Khalq, the leading armed group opposing the fundamentalist Islamic government in Tehran. One casualty and no injuries resulted from the attack.</addnotes>
+    <scite1>Charles Richards, “Italy points finger at Islamic terrorists in assassination,” The Independent (London), March 19, 1993.</scite1>
+    <scite2>Daniel J. Wakin, “Iranian Opposition Official Fatally Shot,” The Associated Press, March 16, 1993.</scite2>
+    <scite3>William D. Montalbano, “Iran Opposition Figure Killed In Rome; Exiles Blame Tehran,” Los Angeles Times, March 17, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

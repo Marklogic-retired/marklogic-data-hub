@@ -1,0 +1,64 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199302260001</eventid>
+    <iyear>1993</iyear>
+    <imonth>2</imonth>
+    <iday>26</iday>
+    <extended>0</extended>
+    <country>217</country>
+    <country_txt>United States</country_txt>
+    <region>1</region>
+    <region_txt>North America</region_txt>
+    <provstate>New York</provstate>
+    <city>New York City</city>
+    <vicinity>0</vicinity>
+    <summary>02/26/1993: A car bomb was detonated at 12:17pm EST by Islamist terrorists, notably Ramzi Yousef, in the underground parking garage below Tower One of the World Trade Center in New York City. This attack killed six, injured over 1,000 and cut off the center's main electrical power line, and telephone service for much of lower Manhattan. In addition the explosion caused smoke to rise up to the 93rd floor of both towers, and cut off the towers' four stairwells and emergency lighting system. On March 4, 1993 authorities announced the capture of one of the suspected bombing conspirators, a Palestinian named Mohammad Salameh. The capture of Salameh and Abdul Rahman Yasin led authorities to Ramzi Yousef's apartment, where they found bomb-making materials. In May 1994 Mohammad Salameh, Nidal Ayyad, Mahmud Abouhalima and Ahmad Ajaj were each convicted and sentenced to life imprisonment for the World Trade Center bombing.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>1</targtype1>
+    <targtype1_txt>Business</targtype1_txt>
+    <corp1>World Trade Center</corp1>
+    <target1>Parking garage in World Trade Center building in New York</target1>
+    <natlty1>217</natlty1>
+    <natlty1_txt>United States</natlty1_txt>
+    <gname>Liberation Army Fifth Battalion</gname>
+    <motive>According to Ramzi Yousef, the attack was a response to American aid to Israel and involvement in the Middle East.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>7</nperps>
+    <nperpcap>6</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>1</claimmode>
+    <claimmode_txt>Letter</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>15</weapsubtype1>
+    <weapsubtype1_txt>Vehicle</weapsubtype1_txt>
+    <weapdetail>Yasin designed the 1310 lb (600 kg) bomb, which was made of urea pellets, nitroglycerin, sulfuric acid, aluminum azide, magnesium azide, and bottled hydrogen, and sodium cyanide, for this attack.  The van that Yousef used had four 20 ft (6 m) long fuses, all covered in surgical tubing. Yasin calculated that the fuse would trigger the bomb in twelve minutes after he had used a cigarette lighter to light the fuse.</weapdetail>
+    <nkill>6</nkill>
+    <nkillus>6</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>1000</nwound>
+    <property>1</property>
+    <propextent>2</propextent>
+    <propextent_txt>Major (likely >= $1 million but &lt; $1 billion)</propextent_txt>
+    <propcomment>The explosion caused major damage to buildings in the area and the roof collapsed in the railway station under the buildings.</propcomment>
+    <ishostkid>0</ishostkid>
+    <addnotes>Fifteen minutes prior to the attack a group claiming to represent Croatian militants telephoned a warning to the police however a group calling itself the Serbian Liberation Front also claimed responsibility for the blast. Despite these claims, authorities discovered that Ramzi Yousef, assisted by Iraqi bomb maker Abdul Rahman Yasin, was behind this attack. Yasin designed the 1310 lb (600 kg) bomb, which was made of urea pellets, nitroglycerin, sulfuric acid, aluminum azide, magnesium azide, and bottled hydrogen, and sodium cyanide, for this attack.  The van that Yousef used had four 20 ft (6 m) long fuses, all covered in surgical tubing. Yasin calculated that the fuse would trigger the bomb in twelve minutes after he had used a cigarette lighter to light the fuse.</addnotes>
+    <scite1>Tom Hays, “Huge Blast Shakes World Trade Center, Killing 5; Car Bomb Suspected,” The Associated Press, February 27, 1993.</scite1>
+    <scite2>“Key Figures in Bombing Investigation,” The Associated Press, March 24, 1993.</scite2>
+    <scite3>“Report: Computer evidence links suspect to bombing letter,” United Press International, March 30, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

@@ -1,0 +1,62 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199312300004</eventid>
+    <iyear>1993</iyear>
+    <imonth>12</imonth>
+    <iday>30</iday>
+    <extended>0</extended>
+    <country>183</country>
+    <country_txt>South Africa</country_txt>
+    <region>11</region>
+    <region_txt>Sub-Saharan Africa</region_txt>
+    <provstate>Western Cape (Province)</provstate>
+    <city>Cape Town</city>
+    <vicinity>0</vicinity>
+    <summary>12/30/1993: Unidentified gunman attacked a tavern in Cape Town, South Africa, killing four people. According to reports, the gunmen were black and the patrons in the tavern were white.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>1</targtype1>
+    <targtype1_txt>Business</targtype1_txt>
+    <corp1>Bar (Pub)</corp1>
+    <target1>Tavern in Cape Town</target1>
+    <natlty1>183</natlty1>
+    <natlty1_txt>South Africa</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>2</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <nkill>4</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propcomment>The tavern was damaged from this attack.</propcomment>
+    <ishostkid>0</ishostkid>
+    <scite1>“De Klerk condemns "barbaric" attack on tavern,” Agence France Presse, December 31, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

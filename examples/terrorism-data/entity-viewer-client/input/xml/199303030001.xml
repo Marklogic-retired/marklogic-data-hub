@@ -1,0 +1,62 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199303030001</eventid>
+    <iyear>1993</iyear>
+    <imonth>3</imonth>
+    <iday>3</iday>
+    <extended>0</extended>
+    <country>185</country>
+    <country_txt>Spain</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Madrid (Province)</provstate>
+    <city>Madrid</city>
+    <vicinity>0</vicinity>
+    <summary>03/03/1993: The 1 October Anti-Fascists Resistance Group (GRAPO) bombed the building complex that housed the labor ministry and the various committees of Madrid’s regional assembly. No casualties resulted from the incident.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>1</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>Spanish Labor Ministry</corp1>
+    <target1>Spanish Labor Ministry Office in Madrid</target1>
+    <natlty1>185</natlty1>
+    <natlty1_txt>Spain</natlty1_txt>
+    <gname>First of October Antifascist Resistance Group (GRAPO)</gname>
+    <motive>The attack served as a protest against the government's labor and economic policies.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>3</claimmode>
+    <claimmode_txt>Call (pre-incident)</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>16</weapsubtype1>
+    <weapsubtype1_txt>Unknown Explosive Type</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <addnotes>This incident was part of a multiple attack in which GRAPO also bombed both the Spanish employer's association and the Integral Steel Corporation. GRAPO notified authorities from three separate locations about the bombs, in order to allow the police time to evacuate civilians from the buildings. No casualties resulted from the attack. However, the attack on the Spanish employers association caused one minor injury, in which an individual suffered from nervous shock.  Please see event ID # 199303030002 and # 199303030003 for more information.</addnotes>
+    <scite1>“Left-wing group claims three blasts in Madrid,” France Agence Presse, March 3, 1993.</scite1>
+    <scite2>“Three bomb blasts rock Madrid,” The Independent (London), March 4, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

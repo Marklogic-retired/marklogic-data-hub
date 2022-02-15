@@ -1,0 +1,62 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199310130001</eventid>
+    <iyear>1993</iyear>
+    <imonth>10</imonth>
+    <iday>13</iday>
+    <extended>0</extended>
+    <country>209</country>
+    <country_txt>Turkey</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Igdir (Province)</provstate>
+    <city>Asagi Alican</city>
+    <vicinity>0</vicinity>
+    <summary>10/13/1993: A unknown group of terrorists raided the Asagi Alican village of Igdir's Karakoyunlu District with rockets and rifles. One of them was killed. Meanwhile, 24 persons believed to have abetted the terrorists were captured.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <attacktype2>3</attacktype2>
+    <attacktype2_txt>Bombing/Explosion</attacktype2_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Asagi Alican village</corp1>
+    <target1>Residents of Asagi Alican village</target1>
+    <natlty1>209</natlty1>
+    <natlty1_txt>Turkey</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>24</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>11</weapsubtype1>
+    <weapsubtype1_txt>Projectile (rockets, mortars, RPGs, etc.)</weapsubtype1_txt>
+    <weaptype2>5</weaptype2>
+    <weaptype2_txt>Firearms</weaptype2_txt>
+    <weapsubtype2>4</weapsubtype2>
+    <weapsubtype2_txt>Rifle/Shotgun (non-automatic)</weapsubtype2_txt>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>1</nkillter>
+    <nwoundus>0</nwoundus>
+    <property>-9</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <scite1>"Rebel Killed, 24 Abettors Captured in Southeast,” British Broadcasting Corporation, October 14, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

@@ -1,0 +1,70 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199306090001</eventid>
+    <iyear>1993</iyear>
+    <imonth>6</imonth>
+    <iday>9</iday>
+    <extended>0</extended>
+    <country>603</country>
+    <country_txt>United Kingdom</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Northern Ireland</provstate>
+    <city>Belfast</city>
+    <vicinity>0</vicinity>
+    <location>Ulster (Province)</location>
+    <summary>06/09/1993: The Ulster Freedom Fighters threw a grenade at the home of Gerry Adams in Andersontown, West Belfas. Adams was not home at the time. His wife and son suffered from shock as a result of the attack. The home only had minor damage.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>Sinn Fein</corp1>
+    <target1>Gerry Adams</target1>
+    <natlty1>233</natlty1>
+    <natlty1_txt>Northern Ireland</natlty1_txt>
+    <targtype2>14</targtype2>
+    <targtype2_txt>Private Citizens &amp; Property</targtype2_txt>
+    <corp2>Civilians</corp2>
+    <target2>Family of Gerry Adams</target2>
+    <natlty2>233</natlty2>
+    <natlty2_txt>Northern Ireland</natlty2_txt>
+    <gname>Ulster Freedom Fighters (UFF)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>1</nperps>
+    <claimed>1</claimed>
+    <claimmode>10</claimmode>
+    <claimmode_txt>Unknown</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>7</weapsubtype1>
+    <weapsubtype1_txt>Grenade</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <addnotes>The Ulster Freedom Fighters, a branch of the Ulster Defense Association, claimed responsibility for the attack. This is not the first time they attempted to kill Mr. Adams.</addnotes>
+    <scite1>John Hicks, “Midnight Grenade attack on Gerry Adam,” The Evening Standard, June 9, 1993.</scite1>
+    <scite2>Owen Bowcott, “Grenade attack at home of Sinn Fein President,” The Guardian (London), June 10, 1993.</scite2>
+    <scite3>“UDA admits to Adams attack,” The Irish Times, June 10, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

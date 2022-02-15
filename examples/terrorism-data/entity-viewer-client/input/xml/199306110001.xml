@@ -1,0 +1,66 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199306110001</eventid>
+    <iyear>1993</iyear>
+    <imonth>6</imonth>
+    <iday>11</iday>
+    <extended>0</extended>
+    <country>97</country>
+    <country_txt>Israel</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Upper Galilee (Region)</provstate>
+    <city>Upper Galilee</city>
+    <vicinity>0</vicinity>
+    <summary>06/11/1993: Hizballah and the Revolutionary Army for the Liberation of Palestine were suspected of firing Katyushas rockets into Upper Galilee. No one was reported killed or injured.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>1</alternative>
+    <alternative_txt>Insurgency/Guerilla Action</alternative_txt>
+    <multiple>1</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>20</targtype1>
+    <targtype1_txt>Unknown</targtype1_txt>
+    <corp1>Unknown</corp1>
+    <target1>Upper Galilee area</target1>
+    <natlty1>97</natlty1>
+    <natlty1_txt>Israel</natlty1_txt>
+    <gname>Hezbollah</gname>
+    <gname2>Revolutionary Army for the Liberation of Palestine</gname2>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <guncertain2>0</guncertain2>
+    <individual>0</individual>
+    <claimed>1</claimed>
+    <claimmode>10</claimmode>
+    <claimmode_txt>Unknown</claimmode_txt>
+    <claim2>1</claim2>
+    <claimmode2>10</claimmode2>
+    <claimmode2_txt>Unknown</claimmode2_txt>
+    <compclaim>0</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>11</weapsubtype1>
+    <weapsubtype1_txt>Projectile (rockets, mortars, RPGs, etc.)</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <scite1>David Rudge and Michael Rotem, “Katyushas hit upper Galilee after two gunmen are killed in security zone,” The Jerusalem Post, June 13, 1993.</scite1>
+    <scite2>“Katyusha rockets hit Northern Israel,” Xinhua General Overseas News Service, June 12, 1993.</scite2>
+    <scite3>“Guerrillas fire rockets at Israel,” Agence France Presse, June 12, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>1</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

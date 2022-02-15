@@ -1,0 +1,76 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199304190001</eventid>
+    <iyear>1993</iyear>
+    <imonth>4</imonth>
+    <iday>19</iday>
+    <extended>0</extended>
+    <country>36</country>
+    <country_txt>Cambodia</country_txt>
+    <region>5</region>
+    <region_txt>Southeast Asia</region_txt>
+    <provstate>Kompong Speu (Province)</provstate>
+    <city>New Oral</city>
+    <vicinity>0</vicinity>
+    <summary>04/19/1993: One hundred-fifty suspected Khmer Rouge members attacked the village of New Oral, Cambodia, targeting Cambodian Armed Forces in the city. The perpetrators used mortar rounds, B-40 rocket propelled grenades, and automatic weapons. A United Nations Transitional Authority in Cambodia (UNTAC) armored personnel carrier was also hit with a grenade during the attack, killing one Bulgarian soldier and injuring two others.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>1</alternative>
+    <alternative_txt>Insurgency/Guerilla Action</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>4</targtype1>
+    <targtype1_txt>Military</targtype1_txt>
+    <corp1>Cambodian Armed Forces</corp1>
+    <target1>Cambodian Armed Forces in New Oral</target1>
+    <natlty1>36</natlty1>
+    <natlty1_txt>Cambodia</natlty1_txt>
+    <targtype2>13</targtype2>
+    <targtype2_txt>Other</targtype2_txt>
+    <corp2>United Nations</corp2>
+    <target2>UN Peacekeepers from the United Nations Transitional Authority in Cambodia</target2>
+    <natlty2>32</natlty2>
+    <natlty2_txt>Bulgaria</natlty2_txt>
+    <gname>Khmer Rouge</gname>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperps>150</nperps>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>11</weapsubtype1>
+    <weapsubtype1_txt>Projectile (rockets, mortars, RPGs, etc.)</weapsubtype1_txt>
+    <weaptype2>5</weaptype2>
+    <weaptype2_txt>Firearms</weaptype2_txt>
+    <weapsubtype2>2</weapsubtype2>
+    <weapsubtype2_txt>Automatic or Semi-Automatic Rifle</weapsubtype2_txt>
+    <weaptype3>8</weaptype3>
+    <weaptype3_txt>Incendiary</weaptype3_txt>
+    <weapsubtype3>18</weapsubtype3>
+    <weapsubtype3_txt>Arson/Fire</weapsubtype3_txt>
+    <weapdetail>The Khmer Rouge attacked the village firing mortar rounds, B-40 rocket propelled grenades, and automatic weapons.  The UNTAC armored personnel carrier was hit with a grenade.</weapdetail>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>2</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <propcomment>The Khmer Rouge set fire to the village of New Oral.</propcomment>
+    <ishostkid>0</ishostkid>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

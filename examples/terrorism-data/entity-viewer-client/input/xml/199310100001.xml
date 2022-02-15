@@ -1,0 +1,70 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199310100001</eventid>
+    <iyear>1993</iyear>
+    <imonth>10</imonth>
+    <iday>10</iday>
+    <extended>0</extended>
+    <country>110</country>
+    <country_txt>Lebanon</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>South (Governorate)</provstate>
+    <city>Barasheet</city>
+    <vicinity>0</vicinity>
+    <summary>10/10/1993: Two rival Muslim guerrilla groups jointly attacked Israeli-backed forces in South Lebanon to protest the Israeli-PLO accord. Two soldiers were injured in the attack.</summary>
+    <crit1>1</crit1>
+    <crit2>0</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>1</alternative>
+    <alternative_txt>Insurgency/Guerilla Action</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>4</targtype1>
+    <targtype1_txt>Military</targtype1_txt>
+    <corp1>South Lebanon Army (SLA)</corp1>
+    <target1>South Lebanon Army operating near the village of Barasheet</target1>
+    <natlty1>110</natlty1>
+    <natlty1_txt>Lebanon</natlty1_txt>
+    <gname>Hezbollah</gname>
+    <gname2>Amal</gname2>
+    <motive>The attack was perpetrated in an effort to derail peace talks.</motive>
+    <guncertain1>0</guncertain1>
+    <guncertain2>0</guncertain2>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>9</claimmode>
+    <claimmode_txt>Other</claimmode_txt>
+    <claim2>1</claim2>
+    <claimmode2>10</claimmode2>
+    <claimmode2_txt>Unknown</claimmode2_txt>
+    <compclaim>0</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>11</weapsubtype1>
+    <weapsubtype1_txt>Projectile (rockets, mortars, RPGs, etc.)</weapsubtype1_txt>
+    <weaptype2>5</weaptype2>
+    <weaptype2_txt>Firearms</weaptype2_txt>
+    <weapsubtype2>5</weapsubtype2>
+    <weapsubtype2_txt>Unknown Gun Type</weapsubtype2_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>2</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <scite1>Yigal Kotzer, “Two IDF Soldiers Wounded in Zone,” The Jerusalem Post, October 11, 1993.</scite1>
+    <scite2>"Shiite Guerrillas Launch Attacks in Southern Lebanon,” The Associated Press, October 11, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

@@ -1,0 +1,57 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199308230001</eventid>
+    <iyear>1993</iyear>
+    <imonth>8</imonth>
+    <iday>23</iday>
+    <extended>0</extended>
+    <country>183</country>
+    <country_txt>South Africa</country_txt>
+    <region>11</region>
+    <region_txt>Sub-Saharan Africa</region_txt>
+    <provstate>Gauteng (Province)</provstate>
+    <city>Johannesburg</city>
+    <vicinity>0</vicinity>
+    <summary>08/23/1993: An unidentified gunman opened fire at a workers' hostel in Johannesburg, killing 12 and injuring 20.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <target1>Workers' hostel in Johannesburg</target1>
+    <natlty1>183</natlty1>
+    <natlty1_txt>South Africa</natlty1_txt>
+    <gname>Unaffiliated Individual(s)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>1</nperps>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>2</weapsubtype1>
+    <weapsubtype1_txt>Automatic or Semi-Automatic Rifle</weapsubtype1_txt>
+    <nkill>12</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>20</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>-9</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <scite1>Keith B. Richburg and Phillip van Niekerk, “Gunman Kills 12 Blacks in S. Africa,” The Washington Post, August 23, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

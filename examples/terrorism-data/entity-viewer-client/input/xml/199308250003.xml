@@ -1,0 +1,63 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199308250003</eventid>
+    <iyear>1993</iyear>
+    <imonth>8</imonth>
+    <iday>25</iday>
+    <extended>1</extended>
+    <resolution>9/4/93</resolution>
+    <country>209</country>
+    <country_txt>Turkey</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Unknown</provstate>
+    <city>Unknown</city>
+    <vicinity>0</vicinity>
+    <summary>08/25/1993: Four unknown perpetrators dressed as Turkish Security Officers kidnapped Iranian dissident, Mohammad Khaderi from his home in Turkey. Khaderi was found on September 4, 1993.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>6</attacktype1>
+    <attacktype1_txt>Hostage Taking (Kidnapping)</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Dissident</corp1>
+    <target1>Iranian dissident, Mohammad Khaderi</target1>
+    <natlty1>94</natlty1>
+    <natlty1_txt>Iran</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>4</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>13</weaptype1>
+    <weaptype1_txt>Unknown</weaptype1_txt>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>1</ishostkid>
+    <nhostkid>1</nhostkid>
+    <nhostkidus>0</nhostkidus>
+    <ndays>10</ndays>
+    <ransom>0</ransom>
+    <hostkidoutcome>4</hostkidoutcome>
+    <hostkidoutcome_txt>Hostage(s) killed (not during rescue attempt)</hostkidoutcome_txt>
+    <nreleased>0</nreleased>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

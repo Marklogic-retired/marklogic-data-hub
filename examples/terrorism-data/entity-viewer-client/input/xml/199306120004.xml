@@ -1,0 +1,61 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199306120004</eventid>
+    <iyear>1993</iyear>
+    <imonth>6</imonth>
+    <iday>12</iday>
+    <extended>0</extended>
+    <country>75</country>
+    <country_txt>Germany</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>North Rhine-Westphalia (State)</provstate>
+    <city>Bergisch Gladbach</city>
+    <vicinity>0</vicinity>
+    <summary>06/12/1993: Suspected right-wing radicals were believed to be responsible for a fire that broke out at a house occupied by three Turkish families in Bergisch Gladbach. Two men were injured.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>7</attacktype1>
+    <attacktype1_txt>Facility/Infrastructure Attack</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Civilians</corp1>
+    <target1>Turkish civilians in Bergisch Gladbach</target1>
+    <natlty1>209</natlty1>
+    <natlty1_txt>Turkey</natlty1_txt>
+    <gname>Other</gname>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>8</weaptype1>
+    <weaptype1_txt>Incendiary</weaptype1_txt>
+    <weapsubtype1>18</weapsubtype1>
+    <weapsubtype1_txt>Arson/Fire</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>2</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <propcomment>The home attacked was going to be condemned and torn down, so estimates about property damage could not be made.</propcomment>
+    <ishostkid>0</ishostkid>
+    <addnotes>This was one of a number of attacks on foreigners living in Germany and/or foreign-owned establishments, most employing arson as the attack type. (cf. 199305300001-2; 199306010004; 199306030001; 199306040001; 199306070002-5; 199306070008; 199305290004-5; 199306060004; 199306110003; 199306120004; 199306170005)</addnotes>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

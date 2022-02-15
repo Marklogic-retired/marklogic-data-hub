@@ -1,0 +1,68 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199309210004</eventid>
+    <iyear>1993</iyear>
+    <imonth>9</imonth>
+    <iday>21</iday>
+    <extended>0</extended>
+    <country>6</country>
+    <country_txt>Algeria</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Unknown</provstate>
+    <city>Tlelac</city>
+    <vicinity>0</vicinity>
+    <summary>09/21/1993: Three employees of a French-owned utility company were taken hostage by unknown perpetrators in Tlelac, Algeria. The Moroccan hostage was set free while the two French hostages were found with their throats cut.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <attacktype2>6</attacktype2>
+    <attacktype2_txt>Hostage Taking (Kidnapping)</attacktype2_txt>
+    <targtype1>1</targtype1>
+    <targtype1_txt>Business</targtype1_txt>
+    <target1>Two French employees of a French-owned utility company</target1>
+    <natlty1>69</natlty1>
+    <natlty1_txt>France</natlty1_txt>
+    <targtype2>1</targtype2>
+    <targtype2_txt>Business</targtype2_txt>
+    <target2>Moroccan employee of a French-owned utility company</target2>
+    <natlty2>136</natlty2>
+    <natlty2_txt>Morocco</natlty2_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>13</weaptype1>
+    <weaptype1_txt>Unknown</weaptype1_txt>
+    <nkill>2</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>1</ishostkid>
+    <nhostkid>3</nhostkid>
+    <nhostkidus>0</nhostkidus>
+    <nhours>-99</nhours>
+    <ransom>0</ransom>
+    <hostkidoutcome>6</hostkidoutcome>
+    <hostkidoutcome_txt>Combination</hostkidoutcome_txt>
+    <nreleased>1</nreleased>
+    <addnotes>One of the victims was Francois Barthelet, age 32.</addnotes>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

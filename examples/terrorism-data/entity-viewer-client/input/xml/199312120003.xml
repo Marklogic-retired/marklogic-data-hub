@@ -1,0 +1,58 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199312120003</eventid>
+    <iyear>1993</iyear>
+    <imonth>12</imonth>
+    <iday>12</iday>
+    <extended>0</extended>
+    <country>95</country>
+    <country_txt>Iraq</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Baghdad (Governorate)</provstate>
+    <city>Baghdad</city>
+    <vicinity>0</vicinity>
+    <summary>12/12/1993: The Mujahedeen-e-Khalq announced that it had mistakenly killed Caglar Yucel and injured Huseiyn Kerimoglu, two employees of the Turkish Embassy in Baghdad, Iraq. The group had meant to target Iranian Embassy employees.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>0</success>
+    <suicide>0</suicide>
+    <attacktype1>1</attacktype1>
+    <attacktype1_txt>Assassination</attacktype1_txt>
+    <targtype1>7</targtype1>
+    <targtype1_txt>Government (Diplomatic)</targtype1_txt>
+    <corp1>Iranian Ministry of Foreign Affairs</corp1>
+    <target1>Embassy employee of the Iranian government</target1>
+    <natlty1>94</natlty1>
+    <natlty1_txt>Iran</natlty1_txt>
+    <gname>Mujahedin-e Khalq (MEK)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>10</claimmode>
+    <claimmode_txt>Unknown</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>1</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

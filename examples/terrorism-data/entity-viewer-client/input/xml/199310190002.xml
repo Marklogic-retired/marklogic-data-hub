@@ -1,0 +1,63 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199310190002</eventid>
+    <iyear>1993</iyear>
+    <imonth>10</imonth>
+    <iday>19</iday>
+    <extended>0</extended>
+    <country>185</country>
+    <country_txt>Spain</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Madrid (Province)</provstate>
+    <city>Madrid</city>
+    <vicinity>0</vicinity>
+    <summary>10/19/1993: The National Industry Institute, a state holding company, was targeted by an ETA car bomb. In a separate incident a Spanish Air Force general was shot dead in central Madrid.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>1</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <attacktype2>3</attacktype2>
+    <attacktype2_txt>Bombing/Explosion</attacktype2_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>The National Industry Institute</corp1>
+    <target1>National Industry Institute, a state holding company</target1>
+    <natlty1>185</natlty1>
+    <natlty1_txt>Spain</natlty1_txt>
+    <gname>Basque Fatherland and Freedom (ETA)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>15</weapsubtype1>
+    <weapsubtype1_txt>Vehicle</weapsubtype1_txt>
+    <weapdetail>A booby-trapped vehicle, which was double-parked, was the same car used by the general's attackers</weapdetail>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>1</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>2</propextent>
+    <propextent_txt>Major (likely >= $1 million but &lt; $1 billion)</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <addnotes>This was one of two related attacks (cf. 199310190001).</addnotes>
+    <scite1>Jane Walker, “General Shot Dead by ETA in Madrid,” The Guardian (London), October 20, 1993.</scite1>
+    <scite2>"ETA Blamed as General Shot, Car Bomb Explodes in Madrid, Agence France Presse, October 19, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

@@ -1,0 +1,59 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199308040001</eventid>
+    <iyear>1993</iyear>
+    <imonth>8</imonth>
+    <iday>4</iday>
+    <extended>0</extended>
+    <country>45</country>
+    <country_txt>Colombia</country_txt>
+    <region>3</region>
+    <region_txt>South America</region_txt>
+    <provstate>Antioquia (Department)</provstate>
+    <city>Remedios</city>
+    <vicinity>0</vicinity>
+    <summary>08/04/1993: Suspected National Liberation Army (ELN) militants exploded dynamite at an oil pipeline in Remedios (200 km northwest of Santa Fe de Bogota), which resulted in a 3,000-barrel oil spill. No one was killed or injured.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>0</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>21</targtype1>
+    <targtype1_txt>Utilities</targtype1_txt>
+    <corp1>Colombian Oil Utility</corp1>
+    <target1>Oil pipeline in Remedios</target1>
+    <natlty1>45</natlty1>
+    <natlty1_txt>Colombia</natlty1_txt>
+    <gname>National Liberation Army of Colombia (ELN)</gname>
+    <motive>The group believes that oil exploration by foreign companies violates national sovereignty.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>-9</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>14</weapsubtype1>
+    <weapsubtype1_txt>Time Fuse</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <addnotes>The spill caused severe ecological damage in surrounding creeks and fields.</addnotes>
+    <scite1>“Government says guerilla attack causes 3,000-barrel oil spill,” BBC Summary of World Broadcasts, August 7, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

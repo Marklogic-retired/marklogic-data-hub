@@ -1,0 +1,64 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199303090001</eventid>
+    <iyear>1993</iyear>
+    <imonth>3</imonth>
+    <iday>9</iday>
+    <extended>0</extended>
+    <country>110</country>
+    <country_txt>Lebanon</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Beirut (Governorate)</provstate>
+    <city>Beirut</city>
+    <vicinity>0</vicinity>
+    <summary>03/09/1993: A bomb was thrown from a car at the Kuwaiti Embassy, causing slight damage to the courtyard. No one was hurt from the attack. The bomb consisted of dynamite. Two groups with different motives claimed responsibility for the attack. The Harakat al-Intilaqah al-Thawriyah (Revolutionary Outburst Movement) said it carried out the attack as a warning to Arab traitors in Kuwait. Harakat al-Madd al-Thawri al-‘Arabi (Arab Revolutionary Resurgence Movement) claimed responsibility for the attack as a warning to “Arab traitor regimes” that carry out killings, arrests and expulsions of Palestinian Arab people in Kuwait.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>7</attacktype1>
+    <attacktype1_txt>Facility/Infrastructure Attack</attacktype1_txt>
+    <targtype1>7</targtype1>
+    <targtype1_txt>Government (Diplomatic)</targtype1_txt>
+    <corp1>Kuwaiti Ministry of Foreign Affairs</corp1>
+    <target1>Kuwaiti Embassy in Beirut</target1>
+    <natlty1>106</natlty1>
+    <natlty1_txt>Kuwait</natlty1_txt>
+    <gname>Revolutionary Outburst Movement</gname>
+    <gname2>Arab Revolutionary Resurgence Movement</gname2>
+    <motive>Two groups with different motives claimed responsibility for the attack. The Harakat al-Intilaqah al-Thawriyah (Revolutionary Outburst Movement) said it carried out the attack as a warning to Arab traitors in Kuwait. Harakat al-Madd al-Thawri al-‘Arabi (Arab Revolutionary Resurgence Movement) claimed responsibility for the attack as a warning to “Arab traitor regimes” that carry out killings, arrests and expulsions of Palestinian Arab people in Kuwait.</motive>
+    <guncertain1>0</guncertain1>
+    <guncertain2>0</guncertain2>
+    <individual>0</individual>
+    <claimed>1</claimed>
+    <claimmode>10</claimmode>
+    <claimmode_txt>Unknown</claimmode_txt>
+    <claim2>1</claim2>
+    <claimmode2>10</claimmode2>
+    <claimmode2_txt>Unknown</claimmode2_txt>
+    <compclaim>1</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>17</weapsubtype1>
+    <weapsubtype1_txt>Other Explosive Type</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <scite1>Center for Terrorism and Intelligence Studies, Critical Infrastructure Terrorist Attack Database, San Jose, CA: Akribis Group, July 7 2006.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

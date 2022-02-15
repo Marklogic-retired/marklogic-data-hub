@@ -1,0 +1,71 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199308080004</eventid>
+    <iyear>1993</iyear>
+    <imonth>8</imonth>
+    <iday>8</iday>
+    <extended>0</extended>
+    <country>182</country>
+    <country_txt>Somalia</country_txt>
+    <region>11</region>
+    <region_txt>Sub-Saharan Africa</region_txt>
+    <provstate>Banaadir (Region)</provstate>
+    <city>Mogadishu</city>
+    <vicinity>1</vicinity>
+    <location>This incident occurred on a road near Mogadishu.</location>
+    <summary>08/08/1993: Near Mogadishu, Somalia, a landmine was detonated under a U.S. Army Humvee by the Islamic Salvation Movement, a previously unknown Somali militant group, killing four soldiers. Snipers then fired on the convoy.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>1</alternative>
+    <alternative_txt>Insurgency/Guerilla Action</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <attacktype2>2</attacktype2>
+    <attacktype2_txt>Armed Assault</attacktype2_txt>
+    <targtype1>4</targtype1>
+    <targtype1_txt>Military</targtype1_txt>
+    <corp1>U.S. Army</corp1>
+    <target1>Two-vehicle U.S. Army convoy</target1>
+    <natlty1>217</natlty1>
+    <natlty1_txt>United States</natlty1_txt>
+    <gname>Islamic Salvation Movement</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>9</claimmode>
+    <claimmode_txt>Other</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>8</weapsubtype1>
+    <weapsubtype1_txt>Landmine</weapsubtype1_txt>
+    <weaptype2>5</weaptype2>
+    <weaptype2_txt>Firearms</weaptype2_txt>
+    <weapsubtype2>2</weapsubtype2>
+    <weapsubtype2_txt>Automatic or Semi-Automatic Rifle</weapsubtype2_txt>
+    <nkill>4</nkill>
+    <nkillus>4</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propcomment>Two U.S. Army Humvees were destroyed.</propcomment>
+    <ishostkid>0</ishostkid>
+    <addnotes>On August 11th, the previously unknown Somali Islamic Salvation Movement claimed responsibility for the incident in a press conference at a Mogadishu hotel used by the foreign press corps. The Movement blamed the U.S. for arbitrary killings and neocolonialism. The fatalities were: Spec. Gutting, 25 years old, Grand Rapids, MI; Spec. Keith Pearson, 25 years old, Tavares, FL (both from the 977th Military Police Co. from Ft. Riley, KS); Sgt. Ronald Richerson, 24, Portage, IN (300th Military Police Co. from Ft. Leonard Wood, MO); Sgt. Christopher Hilgert, 27, Blomington, IN (Ft. Riley).</addnotes>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

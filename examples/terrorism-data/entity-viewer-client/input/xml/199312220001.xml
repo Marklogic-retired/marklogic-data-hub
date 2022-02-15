@@ -1,0 +1,66 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199312220001</eventid>
+    <iyear>1993</iyear>
+    <imonth>12</imonth>
+    <iday>22</iday>
+    <extended>0</extended>
+    <country>110</country>
+    <country_txt>Lebanon</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>South (Governorate)</provstate>
+    <city>Barasheet</city>
+    <vicinity>1</vicinity>
+    <location>Just South of Barasheet</location>
+    <summary>12/22/1993: Members of Amal attacked a South Lebanon Army position south of Barasheet village, Lebanon. The attackers used mortars, Sagger anti-tank missiles, rocket propelled grenades and automatic weapons. Reports did not indicate the degree of damage or whether there were casualties.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <attacktype2>2</attacktype2>
+    <attacktype2_txt>Armed Assault</attacktype2_txt>
+    <targtype1>4</targtype1>
+    <targtype1_txt>Military</targtype1_txt>
+    <corp1>South Lebanon Army (SLA)</corp1>
+    <target1>South Lebanon Army Post near Barasheet</target1>
+    <natlty1>110</natlty1>
+    <natlty1_txt>Lebanon</natlty1_txt>
+    <gname>Amal</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>10</claimmode>
+    <claimmode_txt>Unknown</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>7</weapsubtype1>
+    <weapsubtype1_txt>Grenade</weapsubtype1_txt>
+    <weaptype2>6</weaptype2>
+    <weaptype2_txt>Explosives</weaptype2_txt>
+    <weapsubtype2>11</weapsubtype2>
+    <weapsubtype2_txt>Projectile (rockets, mortars, RPGs, etc.)</weapsubtype2_txt>
+    <weaptype3>5</weaptype3>
+    <weaptype3_txt>Firearms</weaptype3_txt>
+    <weapsubtype3>2</weapsubtype3>
+    <weapsubtype3_txt>Automatic or Semi-Automatic Rifle</weapsubtype3_txt>
+    <weapdetail>The attackers used mortars, Sagger anti-tank missiles, rocket propelled grenades and automatic weapons.</weapdetail>
+    <property>-9</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <scite1>David Rudge, “Amal claims responsibility for latest attack in security zone,” The Jerusalem Post, December 23, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

@@ -1,0 +1,58 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199309110003</eventid>
+    <iyear>1993</iyear>
+    <imonth>9</imonth>
+    <iday>11</iday>
+    <extended>0</extended>
+    <country>110</country>
+    <country_txt>Lebanon</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>South (Governorate)</provstate>
+    <city>Unknown</city>
+    <vicinity>0</vicinity>
+    <summary>09/11/1993: Four South Lebanon Army soldiers were wounded in Hizballah mortar attacks on two SLA outposts in Southern Lebanon. There were no fatalities in the attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>4</targtype1>
+    <targtype1_txt>Military</targtype1_txt>
+    <corp1>South Lebanon Army (SLA)</corp1>
+    <target1>South Lebanon Army (SLA) Soldiers</target1>
+    <natlty1>110</natlty1>
+    <natlty1_txt>Lebanon</natlty1_txt>
+    <gname>Hezbollah</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>11</weapsubtype1>
+    <weapsubtype1_txt>Projectile (rockets, mortars, RPGs, etc.)</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>4</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>Israel and the United States formally recognized the Palestine Liberation Organization on Friday September 10th.</addnotes>
+    <scite1>“Hizbullah Fire Wounds Four SLA Soldiers in Zone," The Jerusalem Post, September 12, 1993.</scite1>
+    <scite2>“As PLO Pact Is Sealed, Unrest Mounts," Chicago Sun-Times, September 11, 1993.</scite2>
+    <scite3>“Hezbollah attacks Israeli posts in south Lebanon to protest accord," Agence France Presse, September 14, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

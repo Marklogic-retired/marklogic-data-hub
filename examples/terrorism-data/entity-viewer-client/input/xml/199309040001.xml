@@ -1,0 +1,55 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199309040001</eventid>
+    <iyear>1993</iyear>
+    <imonth>9</imonth>
+    <iday>4</iday>
+    <extended>0</extended>
+    <country>110</country>
+    <country_txt>Lebanon</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>South (Governorate)</provstate>
+    <city>Jezzine</city>
+    <vicinity>0</vicinity>
+    <summary>09/04/1993: Two South Lebanon Army soldiers were slightly wounded when a mine exploded in the Jezzine region of Lebanon, north of the security zone, amid an escalation of Hizballah attacks. The number of injured was unknown.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>4</targtype1>
+    <targtype1_txt>Military</targtype1_txt>
+    <corp1>South Lebanon Army (SLA)</corp1>
+    <target1>South Lebanon Army (SLA) Soldiers</target1>
+    <natlty1>110</natlty1>
+    <natlty1_txt>Lebanon</natlty1_txt>
+    <gname>Hezbollah</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>8</weapsubtype1>
+    <weapsubtype1_txt>Landmine</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>2</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <scite1>“Two SLA Soldiers Wounded in Mine Blast," The Jerusalem Post, September 5, 1993</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

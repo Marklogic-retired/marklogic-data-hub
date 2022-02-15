@@ -1,0 +1,62 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199307190001</eventid>
+    <iyear>1993</iyear>
+    <imonth>7</imonth>
+    <iday>19</iday>
+    <extended>0</extended>
+    <country>60</country>
+    <country_txt>Egypt</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Al Qahirah (Governorate)</provstate>
+    <city>Cairo</city>
+    <vicinity>0</vicinity>
+    <summary>07/19/1993: The Moslem extremist group al-Gamaa al-Islamiya claimed responsibility for an attack on the car of an Army General in Cairo, which led to four deaths. A member of the group said the move was taken to avenge the government's executions of five militants on Saturday, July 17th.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>4</targtype1>
+    <targtype1_txt>Military</targtype1_txt>
+    <corp1>Egyptian Army</corp1>
+    <target1>Maj. Gen. Osman Ahmed Metwalli Shaheen, commander of the Central Zone</target1>
+    <natlty1>60</natlty1>
+    <natlty1_txt>Egypt</natlty1_txt>
+    <gname>Al-Gama'at al-Islamiyya (IG)</gname>
+    <motive>This attack was revenge for the Government's assassination of militants.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>7</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>2</claimmode>
+    <claimmode_txt>Call (post-incident)</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>2</weapsubtype1>
+    <weapsubtype1_txt>Automatic or Semi-Automatic Rifle</weapsubtype1_txt>
+    <nkill>4</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>2</nkillter>
+    <nwound>6</nwound>
+    <nwoundus>0</nwoundus>
+    <property>-9</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <scite1>Chris Hedges, “4 Die in Egypt as Militants Attack General’s Car,” The New York Times, July 19, 1993.</scite1>
+    <scite2>“Moslem Extremists Claim Responsibility for Attack on Army General,” Xinhua, July 19, 1993.</scite2>
+    <scite3>Caryle Murphy, “Egyptian Ambush Leaves 4 Dead; Extremists Attack Police Patrol in Apparent Retaliation for Hangings,” The Washington Post, July 19, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

@@ -1,0 +1,71 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199301250001</eventid>
+    <iyear>1993</iyear>
+    <imonth>1</imonth>
+    <iday>25</iday>
+    <extended>0</extended>
+    <country>222</country>
+    <country_txt>Venezuela</country_txt>
+    <region>3</region>
+    <region_txt>South America</region_txt>
+    <provstate>Caracas (Capital District)</provstate>
+    <city>Caracas</city>
+    <vicinity>0</vicinity>
+    <summary>01/25/1993: Mr. Sebastian Mendez kidnapped Archbishop Mario Moronta in Caracas, Venezuela. The incident lasted for three hours before Mr. Mendez released Mr. Moronta and turned himself into police.</summary>
+    <crit1>1</crit1>
+    <crit2>0</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>6</attacktype1>
+    <attacktype1_txt>Hostage Taking (Kidnapping)</attacktype1_txt>
+    <targtype1>15</targtype1>
+    <targtype1_txt>Religious Figures/Institutions</targtype1_txt>
+    <corp1>Archbishop of Caracas</corp1>
+    <target1>Mario Moronta</target1>
+    <natlty1>222</natlty1>
+    <natlty1_txt>Venezuela</natlty1_txt>
+    <gname>Unaffiliated Individual(s)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>1</nperps>
+    <nperpcap>1</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>8</claimmode>
+    <claimmode_txt>Personal claim</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>3</weapsubtype1>
+    <weapsubtype1_txt>Handgun</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>1</ishostkid>
+    <nhostkid>1</nhostkid>
+    <nhostkidus>0</nhostkidus>
+    <nhours>3</nhours>
+    <ransom>0</ransom>
+    <hostkidoutcome>2</hostkidoutcome>
+    <hostkidoutcome_txt>Hostage(s) released by perpetrators</hostkidoutcome_txt>
+    <nreleased>1</nreleased>
+    <addnotes>Sebastian Mendez turned himself in to the Police. He had been trying to meet with the Archbishop for more than a week before the kidnapping.</addnotes>
+    <scite1>“Hostage taker gives up,” Sun-Sentinel, January 26, 1993.</scite1>
+    <scite2>“Abductor sets free Caracas archbishop,” The Record, January 26, 1993.</scite2>
+    <scite3>“Venezuela,” Miami Herald, January 26, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

@@ -1,0 +1,60 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199312050002</eventid>
+    <iyear>1993</iyear>
+    <imonth>12</imonth>
+    <iday>5</iday>
+    <extended>0</extended>
+    <country>15</country>
+    <country_txt>Austria</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Vienna (State)</provstate>
+    <city>Vienna</city>
+    <vicinity>0</vicinity>
+    <summary>12/05/1993: Mayor Helmut Zilk of Vienna was seriously wounded when a letter bomb exploded when Zilk, age 66, opened his mail after returning home from a trip to Switzerland. He was taken to a hospital in Vienna where he had two fingers on his left hand amputated. Police arrested two right-wing extremists, Peter B. and Alexander W., for mailing the letter bombs.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>1</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>Mayor of Vienna</corp1>
+    <target1>Helmut Zilk</target1>
+    <natlty1>15</natlty1>
+    <natlty1_txt>Austria</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Possibly in protest of the programs to aid refugees from war-torn Yugoslavia</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>2</nperps>
+    <nperpcap>2</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>9</weapsubtype1>
+    <weapsubtype1_txt>Letter Bomb</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>1</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>At least 10 letter bombs were sent, four exploded and six were defused over a four-day period ending on December 6, 1993. All of the recipients were involved in programs to aid refugees from war-torn Yugoslavia or other parts of Eastern Europe. Zilk was regarded as a champion of minority rights and was instrumental in the recent opening of Vienna's first postwar Jewish museum. Both accused perpetrators have ties to neo-Nazi groups in Germany. This was one of 4 related attacks (199312030001-02, 199312040001, 199312050002).</addnotes>
+    <scite1>“Mail Bomb in Austria Hits Mayor; Anti-Refugee Groups Suspected in Attack,” St. Louis Post-Dispatch, December 6, 1993.</scite1>
+    <scite2>Maud S. Beelman, “Vienna Mayor Injured in Fifth Letter Bomb Attack in Three Days,” The Associated Press Worldstream, December 5, 1993.</scite2>
+    <scite3>Ken Olsen, “Alert Clerk, Border Guards and Luck Led to Letter Bomb Arrests,” The Associated Press, December 10, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

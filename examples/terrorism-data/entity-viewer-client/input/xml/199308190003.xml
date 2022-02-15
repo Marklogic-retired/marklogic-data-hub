@@ -1,0 +1,65 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199308190003</eventid>
+    <iyear>1993</iyear>
+    <imonth>8</imonth>
+    <iday>19</iday>
+    <extended>1</extended>
+    <resolution>9/14/93</resolution>
+    <country>209</country>
+    <country_txt>Turkey</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Agri (Province)</provstate>
+    <city>Dogubeyazit</city>
+    <vicinity>0</vicinity>
+    <summary>08/19/1993: Seven tourists -- two Germans, two Italians, two Swiss nationals and a New Zealander -- were kidnapped in eastern Turkey on August 19 by hardliners from the main Kurdish rebel party, the Kurdistan Workers' Party (PKK). They were released on 09/14/1993.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>6</attacktype1>
+    <attacktype1_txt>Hostage Taking (Kidnapping)</attacktype1_txt>
+    <targtype1>18</targtype1>
+    <targtype1_txt>Tourists</targtype1_txt>
+    <corp1>Tourists</corp1>
+    <target1>Tourists from Germany (2), Italy (2), Switzerland (2) and New Zealand (1)</target1>
+    <natlty1>999</natlty1>
+    <natlty1_txt>Multinational</natlty1_txt>
+    <gname>Kurdistan Workers' Party (PKK)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>1</claimed>
+    <claimmode>8</claimmode>
+    <claimmode_txt>Personal claim</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>13</weaptype1>
+    <weaptype1_txt>Unknown</weaptype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>1</ishostkid>
+    <nhostkid>7</nhostkid>
+    <nhostkidus>0</nhostkidus>
+    <ndays>26</ndays>
+    <ransom>0</ransom>
+    <hostkidoutcome>2</hostkidoutcome>
+    <hostkidoutcome_txt>Hostage(s) released by perpetrators</hostkidoutcome_txt>
+    <nreleased>7</nreleased>
+    <scite1>“Kurdish rebels release foreign tourists: reports," Agence France Presse, September 14, 1993.</scite1>
+    <scite2>“Kurdish rebels release foreign tourist: ministries," Agence France Presse, September 14, 1993</scite2>
+    <scite3>“Seven captured tourists freed in Turkey," Agence France Presse, September 14, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

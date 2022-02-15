@@ -1,0 +1,57 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199306160001</eventid>
+    <iyear>1993</iyear>
+    <imonth>6</imonth>
+    <iday>16</iday>
+    <extended>0</extended>
+    <country>159</country>
+    <country_txt>Peru</country_txt>
+    <region>3</region>
+    <region_txt>South America</region_txt>
+    <provstate>Lima (Province)</provstate>
+    <city>Lima</city>
+    <vicinity>0</vicinity>
+    <summary>06/16/1993: Michel Azcueta, former leftist mayor of Villa el Salvador, Lima's oldest shantytown, was gunned down as he walked to work. Six other people were wounded in the attack. Shining Path was believed to be behind the attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Former Public Figure</corp1>
+    <target1>Michel Azcueta</target1>
+    <natlty1>159</natlty1>
+    <natlty1_txt>Peru</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>2</weapsubtype1>
+    <weapsubtype1_txt>Automatic or Semi-Automatic Rifle</weapsubtype1_txt>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>6</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <scite1>Pamela Constable, “Series of raids has Peruvians fearing Shining Path rebirth,” The Boston Globe, June 18, 1993.</scite1>
+    <scite2>Malcolm Coad, “Sendero Strikes,” The Guardian (London), June 18, 1993.</scite2>
+    <scite3>“Police capture rebels who tried to kill former mayor,” United Press International, June 17, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

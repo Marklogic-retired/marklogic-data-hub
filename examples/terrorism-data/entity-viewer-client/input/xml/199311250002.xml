@@ -1,0 +1,72 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199311250002</eventid>
+    <iyear>1993</iyear>
+    <imonth>11</imonth>
+    <iday>25</iday>
+    <extended>1</extended>
+    <resolution>11/29/93</resolution>
+    <country>228</country>
+    <country_txt>Yemen</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Sana'a (Governorate)</provstate>
+    <city>Sana'a</city>
+    <vicinity>0</vicinity>
+    <summary>11/25/1993: The U.S. Director of Information Services in Yemen, Haynes Mahoney, was kidnapped in Sana'a by Yemini tribesmen. He was released unharmed on November 29, 1993.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>6</attacktype1>
+    <attacktype1_txt>Hostage Taking (Kidnapping)</attacktype1_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>U.S. Government</corp1>
+    <target1>Director of Information Service</target1>
+    <natlty1>228</natlty1>
+    <natlty1_txt>Yemen</natlty1_txt>
+    <gname>Other</gname>
+    <motive>The group was demanding revenue from American oil pumps on their property</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>5</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>10</claimmode>
+    <claimmode_txt>Unknown</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>13</weaptype1>
+    <weaptype1_txt>Unknown</weaptype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>1</ishostkid>
+    <nhostkid>1</nhostkid>
+    <nhostkidus>1</nhostkidus>
+    <ndays>4</ndays>
+    <ransom>1</ransom>
+    <ransomamt>-99</ransomamt>
+    <ransomamtus>-99</ransomamtus>
+    <ransompaid>0</ransompaid>
+    <ransompaidus>0</ransompaidus>
+    <ransomnote>Ransom amount was undisclosed</ransomnote>
+    <hostkidoutcome>2</hostkidoutcome>
+    <hostkidoutcome_txt>Hostage(s) released by perpetrators</hostkidoutcome_txt>
+    <nreleased>1</nreleased>
+    <addnotes>The kidnapping was a result of infighting between rivaling factions in Yemen and not political in nature.</addnotes>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <scite2>Steven Holmes, "An American diplomat is abducted in Yemen," November 27, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

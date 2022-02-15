@@ -1,0 +1,59 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199311200001</eventid>
+    <iyear>1993</iyear>
+    <imonth>11</imonth>
+    <iday>20</iday>
+    <extended>0</extended>
+    <country>6</country>
+    <country_txt>Algeria</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Chlef (Province)</provstate>
+    <city>Tenes</city>
+    <vicinity>0</vicinity>
+    <summary>11/20/1993: Unknown militants killed the head of the Court of Justice of Tenes. No one else was killed or injured.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>Head of Court of Justice of Tenes</corp1>
+    <target1>Redouane Chaouch</target1>
+    <natlty1>6</natlty1>
+    <natlty1_txt>Algeria</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>3</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <scite1>“Judge, 12 militants killed in latest Algerian violence,” Orlando Sentinel, November 22, 1993.</scite1>
+    <scite2>Rachel Khiari, “Judge killed, leading doctor attacked; 12 militants killed,” The Associated Press, November 21, 1993.</scite2>
+    <scite3>“Judge Assassinated in Chlef Province, 13 terrorists killed,” BBC, November 23, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

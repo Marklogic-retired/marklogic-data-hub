@@ -1,0 +1,61 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199308230003</eventid>
+    <iyear>1993</iyear>
+    <imonth>8</imonth>
+    <iday>23</iday>
+    <extended>0</extended>
+    <country>222</country>
+    <country_txt>Venezuela</country_txt>
+    <region>3</region>
+    <region_txt>South America</region_txt>
+    <provstate>Caracas (Capital District)</provstate>
+    <city>Caracas</city>
+    <vicinity>0</vicinity>
+    <summary>08/23/1993: Unidentified militants in a passing red Fiat hurled a bomb into the stolen vehicle division of a police station in east-central Caracas. No one was injured.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>0</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>3</targtype1>
+    <targtype1_txt>Police</targtype1_txt>
+    <corp1>Venezuelan Police Department</corp1>
+    <target1>Police station in Caracas</target1>
+    <natlty1>222</natlty1>
+    <natlty1_txt>Venezuela</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Possibly to destroy evidence pertaining to a car bomb that exploded in a shopping mall parking garage the previous week.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>16</weapsubtype1>
+    <weapsubtype1_txt>Unknown Explosive Type</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propcomment>The interior of the police station was severely damaged; most of the stolen vehicle archives were destroyed.</propcomment>
+    <ishostkid>0</ishostkid>
+    <scite1>“Bomb thrown into police building causes damage,” Agence France Presse, August 24, 1993.</scite1>
+    <scite2>“Venezuela: Tensions increase after police station bomb,” IPS-Inter Press Service, August 24, 1993.</scite2>
+    <scite3>Alberto Garnica, “Former Venezuelan president rejects bomb accusations,” United Press International, August 24, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

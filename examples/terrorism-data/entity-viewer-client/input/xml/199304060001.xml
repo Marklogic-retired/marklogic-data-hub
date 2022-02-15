@@ -1,0 +1,58 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199304060001</eventid>
+    <iyear>1993</iyear>
+    <imonth>4</imonth>
+    <iday>6</iday>
+    <extended>0</extended>
+    <country>603</country>
+    <country_txt>United Kingdom</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Northern Ireland</provstate>
+    <city>Castlerock</city>
+    <vicinity>0</vicinity>
+    <location>Londonderry (County)</location>
+    <summary>04/06/1993: Four Catholics were gunned down by Loyalists from the Ulster Volunteer Force (UVF) at a construction site in Castlerock on the outskirts of Coleraine.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Civilians</corp1>
+    <target1>Four Catholics at a construction site in Castlerock</target1>
+    <natlty1>233</natlty1>
+    <natlty1_txt>Northern Ireland</natlty1_txt>
+    <gname>Ulster Volunteer Force (UVF)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>3</weapsubtype1>
+    <weapsubtype1_txt>Handgun</weapsubtype1_txt>
+    <weapdetail>Handgun</weapdetail>
+    <nkill>4</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <scite1>Ed Moloney, "Loyalist Reprisals Leave Six Dead: IRA Bombs Give Fresh Impetus to Deadly Campaign," Irish Voice, April 6, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

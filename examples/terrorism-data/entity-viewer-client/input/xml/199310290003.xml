@@ -1,0 +1,76 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199310290003</eventid>
+    <iyear>1993</iyear>
+    <imonth>10</imonth>
+    <iday>29</iday>
+    <extended>1</extended>
+    <resolution>10/30/93</resolution>
+    <country>155</country>
+    <country_txt>West Bank and Gaza Strip</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>West Bank (Occupied Territory)</provstate>
+    <city>Ramallah</city>
+    <vicinity>1</vicinity>
+    <location>A chicken farm outside Ramallah.</location>
+    <summary>10/29/1993: An Israeli settler was stabbed in the neck, abducted and killed by three masked HAMAS gunmen near Ramallah.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <attacktype2>6</attacktype2>
+    <attacktype2_txt>Hostage Taking (Kidnapping)</attacktype2_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Civilian</corp1>
+    <target1>Israeli settler at a chicken farm near Ramallah</target1>
+    <natlty1>97</natlty1>
+    <natlty1_txt>Israel</natlty1_txt>
+    <gname>Hamas (Islamic Resistance Movement)</gname>
+    <motive>The attack was perpetrated in an effort to derail peace talks.</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperps>3</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>9</weaptype1>
+    <weaptype1_txt>Melee</weaptype1_txt>
+    <weapsubtype1>23</weapsubtype1>
+    <weapsubtype1_txt>Knife or Other Sharp Object</weapsubtype1_txt>
+    <weaptype2>8</weaptype2>
+    <weaptype2_txt>Incendiary</weaptype2_txt>
+    <weapsubtype2>18</weapsubtype2>
+    <weapsubtype2_txt>Arson/Fire</weapsubtype2_txt>
+    <weapdetail>Settler was found stabbed the next day, along with his burned out car.</weapdetail>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <ishostkid>1</ishostkid>
+    <nhostkid>1</nhostkid>
+    <nhostkidus>0</nhostkidus>
+    <ndays>1</ndays>
+    <ransom>0</ransom>
+    <hostkidoutcome>4</hostkidoutcome>
+    <hostkidoutcome_txt>Hostage(s) killed (not during rescue attempt)</hostkidoutcome_txt>
+    <nreleased>0</nreleased>
+    <scite1>Michael Parks, “Israeli Settler Stabbed in the Neck by Palestinians,” Los Angeles Times, October 30, 1993.</scite1>
+    <scite2>"Abducted West Bank Settler found Dead” Agence France Presse, October 30, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

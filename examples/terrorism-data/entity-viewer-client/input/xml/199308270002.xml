@@ -1,0 +1,70 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199308270002</eventid>
+    <iyear>1993</iyear>
+    <imonth>8</imonth>
+    <iday>27</iday>
+    <extended>0</extended>
+    <country>177</country>
+    <country_txt>Sierra Leone</country_txt>
+    <region>11</region>
+    <region_txt>Sub-Saharan Africa</region_txt>
+    <provstate>Southern (Province)</provstate>
+    <city>Golahun</city>
+    <vicinity>1</vicinity>
+    <location>This incident occurred near Golahun village.</location>
+    <summary>08/27/1993: United Revolutionary Front gunmen killed two nurses from the International Committee of the Red Cross and wounded another while traveling in a convoy near Golahun village in Sierra Leone. The gunmen kidnapped the truck drivers and destroyed their vehicles. The perpetrators also kidnapped the convoy's two Gambian drivers.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>12</targtype1>
+    <targtype1_txt>NGO</targtype1_txt>
+    <corp1>International Committee of the Red Cross</corp1>
+    <target1>An Red Cross two-truck aid convoy</target1>
+    <natlty1>999</natlty1>
+    <natlty1_txt>Multinational</natlty1_txt>
+    <gname>Revolutionary United Front (RUF)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <weaptype2>8</weaptype2>
+    <weaptype2_txt>Incendiary</weaptype2_txt>
+    <weapsubtype2>18</weapsubtype2>
+    <weapsubtype2_txt>Arson/Fire</weapsubtype2_txt>
+    <nkill>2</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>1</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propcomment>The trucks were burned.</propcomment>
+    <ishostkid>1</ishostkid>
+    <nhostkid>2</nhostkid>
+    <nhostkidus>0</nhostkidus>
+    <ndays>-99</ndays>
+    <ransom>0</ransom>
+    <hostkidoutcome>7</hostkidoutcome>
+    <hostkidoutcome_txt>Unknown</hostkidoutcome_txt>
+    <nreleased>-99</nreleased>
+    <addnotes>The Red Cross victims were: Susanne Buser, 36, a Swiss citizen, and Sarah Leomy, 36, of Sierra Leone were killed. Bernadette Peterhans, a Swiss nurse, was wounded in the arm. The fate of the kidnapped Gambian drivers was unknown. The International Committee of the Red Cross suspended its operations in the area after this incident.</addnotes>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

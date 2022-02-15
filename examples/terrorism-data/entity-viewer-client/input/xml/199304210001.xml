@@ -1,0 +1,84 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199304210001</eventid>
+    <iyear>1993</iyear>
+    <imonth>4</imonth>
+    <iday>21</iday>
+    <extended>0</extended>
+    <country>110</country>
+    <country_txt>Lebanon</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Nabatiye (Governorate)</provstate>
+    <city>Razlan</city>
+    <vicinity>1</vicinity>
+    <location>The incident occurred along the roadside in the area of Razlan</location>
+    <summary>04/21/1993: A road side bomb detonated alongside a South Lebanon Army vehicle in Razlan, which then came under fire from rocket-propelled grenade and small arms by Hizballah soldiers. Two South Lebanon soldiers were kidnapped. One, who was wounded, managed to escape.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>1</alternative>
+    <alternative_txt>Insurgency/Guerilla Action</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <attacktype2>2</attacktype2>
+    <attacktype2_txt>Armed Assault</attacktype2_txt>
+    <targtype1>4</targtype1>
+    <targtype1_txt>Military</targtype1_txt>
+    <corp1>South Lebanon Army (SLA)</corp1>
+    <target1>South Lebanon Army (SLA) Soldiers</target1>
+    <natlty1>110</natlty1>
+    <natlty1_txt>Lebanon</natlty1_txt>
+    <gname>Hezbollah</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>9</claimmode>
+    <claimmode_txt>Other</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>8</weapsubtype1>
+    <weapsubtype1_txt>Landmine</weapsubtype1_txt>
+    <weaptype2>5</weaptype2>
+    <weaptype2_txt>Firearms</weaptype2_txt>
+    <weapsubtype2>2</weapsubtype2>
+    <weapsubtype2_txt>Automatic or Semi-Automatic Rifle</weapsubtype2_txt>
+    <weaptype3>6</weaptype3>
+    <weaptype3_txt>Explosives</weaptype3_txt>
+    <weapsubtype3>11</weapsubtype3>
+    <weapsubtype3_txt>Projectile (rockets, mortars, RPGs, etc.)</weapsubtype3_txt>
+    <weapdetail>The attack consisted of three strikes. First was a roadside bomb, followed by Rocket-propelled grenades, then Katyusha rockets.</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>1</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>1</ishostkid>
+    <nhostkid>2</nhostkid>
+    <nhostkidus>0</nhostkidus>
+    <nhours>-99</nhours>
+    <ransom>0</ransom>
+    <hostkidoutcome>7</hostkidoutcome>
+    <hostkidoutcome_txt>Unknown</hostkidoutcome_txt>
+    <nreleased>1</nreleased>
+    <addnotes>One South Lebanon Army soldier managed to escape, there was no report of what happened to the second soldier.</addnotes>
+    <scite1>David Rudge, "One Terrorist, two civilians killed in South Lebanon clashes, One Kidnapped SLA Soldier," The Jerusalem Post, April 22, 1993.</scite1>
+    <scite2>"A dozen Katyusha rockets fired into Northern Israel," Agence France Presse, April 21, 1993.</scite2>
+    <scite3>Israel Broadcasting Authority TV, Jerusalem 1800 gmt 20 apr. 1993, "Israeli television: Hezbollah kidnaps two Army of South Lebanon militiamen," BBC Summary of World Broadcasts, April 22, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

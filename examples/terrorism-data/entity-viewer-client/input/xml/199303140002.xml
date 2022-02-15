@@ -1,0 +1,59 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199303140002</eventid>
+    <iyear>1993</iyear>
+    <imonth>3</imonth>
+    <iday>14</iday>
+    <extended>0</extended>
+    <country>153</country>
+    <country_txt>Pakistan</country_txt>
+    <region>6</region>
+    <region_txt>South Asia</region_txt>
+    <provstate>Sindh (Province)</provstate>
+    <city>Karachi</city>
+    <vicinity>0</vicinity>
+    <summary>03/14/1993: A letter bomb killed Khalid Iqbal, Superintendent of the Karachi Central Jail, along with a prison guard. The bomb was wrapped inside a diary addressed to Iqbal. The perpetrators of this attack were unknown.</summary>
+    <crit1>0</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>Superintendent of Karachi Central Prison</corp1>
+    <target1>Khalid Iqbal</target1>
+    <natlty1>153</natlty1>
+    <natlty1_txt>Pakistan</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>9</weapsubtype1>
+    <weapsubtype1_txt>Letter Bomb</weapsubtype1_txt>
+    <nkill>2</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <scite1>“Parcel bomb kills jail chief,” United Press International, March 15, 1993.</scite1>
+    <scite2>“Parcel bomb kills jail chief in Pakistan,” Xinhua, March 15, 1993.</scite2>
+    <scite3>“Sunday, AM Cycle,” The Associated Press, March 14, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

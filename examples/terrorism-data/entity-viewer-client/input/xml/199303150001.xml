@@ -1,0 +1,61 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199303150001</eventid>
+    <iyear>1993</iyear>
+    <imonth>3</imonth>
+    <iday>15</iday>
+    <extended>0</extended>
+    <country>209</country>
+    <country_txt>Turkey</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Unknown</provstate>
+    <city>Unknown</city>
+    <vicinity>0</vicinity>
+    <summary>03/15/1993: Explosives and firebombs damaged more than two dozen banks and several businesses. At least 8 people were injured and no casualties resulted from the incident.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>1</targtype1>
+    <targtype1_txt>Business</targtype1_txt>
+    <corp1>Banks</corp1>
+    <target1>Banks</target1>
+    <natlty1>209</natlty1>
+    <natlty1_txt>Turkey</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>16</weapsubtype1>
+    <weapsubtype1_txt>Unknown Explosive Type</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>8</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <propcomment>At least two dozen banks and other businesses were damaged.</propcomment>
+    <ishostkid>0</ishostkid>
+    <addnotes>Although no links were made to the group Dev Sol, the bombings came after a recent crack down on that terrorist group. Mostly banks and insurance companies were attacked. At least 8 people were injured and no casualties resulted from the incident.</addnotes>
+    <scite1>“Bombs Explode Throughout Turkey,” The Associated Press, March 15, 1993.</scite1>
+    <scite2>“Series of bombings injures 8 in Turkey,” Chicago Tribune, March 16, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

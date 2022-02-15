@@ -1,0 +1,55 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199304050002</eventid>
+    <iyear>1993</iyear>
+    <imonth>4</imonth>
+    <iday>5</iday>
+    <extended>0</extended>
+    <country>159</country>
+    <country_txt>Peru</country_txt>
+    <region>3</region>
+    <region_txt>South America</region_txt>
+    <provstate>Sanchez Carrion (Province)</provstate>
+    <city>Quisquenda</city>
+    <vicinity>0</vicinity>
+    <summary>04/05/1993: Shining Path guerrillas ambushed a military patrol along a narrow highway 290 miles northwest of Lima. Forty-seven people died as a result of the incident.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>4</targtype1>
+    <targtype1_txt>Military</targtype1_txt>
+    <corp1>Peruvian Army</corp1>
+    <target1>Peruvian Army</target1>
+    <natlty1>159</natlty1>
+    <natlty1_txt>Peru</natlty1_txt>
+    <gname>Shining Path (SL)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>2</weapsubtype1>
+    <weapsubtype1_txt>Automatic or Semi-Automatic Rifle</weapsubtype1_txt>
+    <nkill>30</nkill>
+    <nkillus>0</nkillus>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <scite1>"30 police, troops slain in Peruvian Andes ambush," Chicago Tribune, April 6, 1993.</scite1>
+    <scite2>Vidal Silva, "Battles between Peruvian troops, rebels leave 47 dead," United Press International, April 5, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>
