@@ -1,5 +1,5 @@
 import React from "react";
-import {render, fireEvent, wait, cleanup, screen} from "@testing-library/react";
+import {render, fireEvent, waitFor, cleanup, screen} from "@testing-library/react";
 import {MemoryRouter} from "react-router-dom";
 import LoadCard from "./load-card";
 import data from "../../assets/mock-data/curation/common.data";
@@ -72,7 +72,7 @@ describe("Load Card component", () => {
     fireEvent.click(getByTestId("testLoadXML-to-FlowStepNoExist-Confirm"));
 
     //Check if the /tiles/run/add route has been called
-    wait(() => {
+    waitFor(() => {
       expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add");
     });
     //TODO- E2E test to check if the Run tile is loaded or not.
@@ -107,7 +107,7 @@ describe("Load Card component", () => {
     fireEvent.click(getByTestId("FlowStepNoExist-run-step"));
 
     //Check if the /tiles/run/add-run route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
+    waitFor(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
 
   });
 
@@ -166,7 +166,7 @@ describe("Load Card component", () => {
     fireEvent.click(getByLabelText("continue-confirm"));
 
     //Check if the /tiles/run/run-step route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/run-step"); });
+    waitFor(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/run-step"); });
 
   });
 
@@ -198,7 +198,7 @@ describe("Load Card component", () => {
     fireEvent.click(getByTestId("FlowStepMultExist-run-step"));
 
     //Check if the /tiles/run/add-run route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
+    waitFor(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
   });
 
   test("Load Card - Verify card sort order, Add step to a new Flow, and Run step in a new Flow", async () => {
@@ -233,13 +233,13 @@ describe("Load Card component", () => {
 
     // check if delete tooltip appears
     fireEvent.mouseOver(getByTestId("testLoadXML-delete"));
-    await wait(() => expect(getByText("Delete")).toBeInTheDocument());
+    await waitFor(() => expect(getByText("Delete")).toBeInTheDocument());
 
     //Click on the select field to open the list of existing flows.
     fireEvent.click(getByTestId("testLoadXML-toNewFlow"));
 
-    //Wait for the route to be pushed into History(which means that the route is working fine. Remaining can be verified in E2E test)
-    wait(() => {
+    //waitFor for the route to be pushed into History(which means that the route is working fine. Remaining can be verified in E2E test)
+    waitFor(() => {
       expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add");
     });
     //TODO- E2E test to check if the Run tile is loaded or not.
@@ -257,7 +257,7 @@ describe("Load Card component", () => {
     fireEvent.click(getByTestId("testLoadXML-run-toNewFlow"));
 
     //Check if the /tiles/run/add-run route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
+    waitFor(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
 
   });
 
@@ -311,19 +311,19 @@ describe("Load Card component", () => {
 
     //test tooltip over disabled add new card
     fireEvent.mouseOver(getByTestId("disabledAddNewCard"));
-    wait(() => expect(screen.getByText("Load: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
+    waitFor(() => expect(screen.getByText("Load: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
 
     //test tooltip over disabled card
     fireEvent.mouseOver(getByText(loadStepName));
-    wait(() => expect(screen.getByText("Load: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
+    waitFor(() => expect(screen.getByText("Load: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
 
     // test delete icon displays correct tooltip when disabled
     fireEvent.mouseOver(getByTestId(loadStepName + "-disabled-delete"));
-    await wait(() => expect(screen.getByText("Delete: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText("Delete: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
 
     // test run icon displays correct tooltip when disabled
     fireEvent.mouseOver(getByTestId(`${loadStepName}-disabled-run`));
-    await wait(() => expect(getByText("Run: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
+    await waitFor(() => expect(getByText("Run: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
 
     await fireEvent.click(getByTestId(`${loadStepName}-disabled-run`));
     expect(queryByLabelText("step-in-no-flows-confirmation")).not.toBeInTheDocument();
@@ -338,7 +338,7 @@ describe("Load Card component", () => {
     // test adding to new flow
     fireEvent.mouseOver(getByText(loadStepName));
     fireEvent.click(getByTestId(`${loadStepName}-toNewFlow`));
-    await wait(() => {
+    await waitFor(() => {
       expect(mockHistoryPush).not.toHaveBeenCalledWith("/tiles/run/add");
     });
   });

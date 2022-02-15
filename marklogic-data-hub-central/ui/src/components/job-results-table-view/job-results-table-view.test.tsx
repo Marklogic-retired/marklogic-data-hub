@@ -1,5 +1,5 @@
 import React from "react";
-import {render, fireEvent, waitForElement} from "@testing-library/react";
+import {render, fireEvent, waitFor} from "@testing-library/react";
 import {BrowserRouter as Router} from "react-router-dom";
 import JobResultsTableView from "./job-results-table-view";
 import {jobResults} from "../../assets/mock-data/monitor/job-results";
@@ -35,15 +35,15 @@ describe("Job results Table view component", () => {
 
     //Check if the tooltip on 'completed Status works fine'.
     fireEvent.mouseOver(getByTestId("success"));
-    await (waitForElement(() => (getByText("Completed Successfully"))));
+    await (waitFor(() => (getByText("Completed Successfully"))));
 
     //Check if the tooltip on 'Finished with errors works fine'.
     fireEvent.mouseOver(getByTestId("error"));
-    await (waitForElement(() => (getByText("Completed With Errors"))));
+    await (waitFor(() => (getByText("Completed With Errors"))));
 
     //Check if the tooltip on 'Running status works fine'.
     fireEvent.mouseOver(getByTestId("progress"));
-    await (waitForElement(() => (getByText("Running"))));
+    await (waitFor(() => (getByText("Running"))));
   });
 
   test("Job result table with no data renders", () => {
@@ -129,7 +129,7 @@ describe("Column Selector in Job results Table view component", () => {
 
     expect(getByTestId("column-selector-icon")).toBeInTheDocument();
     fireEvent.mouseOver(getByTestId("column-selector-icon"));
-    await (waitForElement(() => (getByText("Select the columns to display."))));
+    await (waitFor(() => (getByText("Select the columns to display."))));
     await fireEvent.click(getByTestId("column-selector-icon"));
 
     expect(getByTestId("column-selector-popover")).toBeVisible();
@@ -146,7 +146,7 @@ describe("Column Selector in Job results Table view component", () => {
 
     expect(getByTestId("column-selector-icon")).toBeInTheDocument();
     fireEvent.mouseOver(getByTestId("column-selector-icon"));
-    await (waitForElement(() => (getByText("Select the columns to display."))));
+    await (waitFor(() => (getByText("Select the columns to display."))));
     await fireEvent.click(getByTestId("column-selector-icon"));
     expect(getByTestId("columnOptionsCheckBox-user")).toBeInTheDocument();
     expect(getByTestId("columnOptionsCheckBox-user")).toBeChecked();

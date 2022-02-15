@@ -7,8 +7,8 @@ export default class NodeSvg {
     this.icon = icon;
   }
 
-    getSvg = () => {
-      return encodeURIComponent(`<svg class="box" width="550" height="170" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  getSvg = () => {
+    return encodeURIComponent(`<svg class="box" width="550" height="170" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
         <style type="text/css">
           @namespace svg url(http://www.w3.org/2000/svg);
           svg|a:link, svg|a:visited {
@@ -56,6 +56,6 @@ export default class NodeSvg {
             <text x="20" y="120" class="instances">${this.numInstances}</text>
           </a>
       </svg>`);
-    }
+  };
 
 }

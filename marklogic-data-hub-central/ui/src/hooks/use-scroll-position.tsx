@@ -2,7 +2,7 @@ import {useRef, useEffect} from "react";
 
 const isBrowser = typeof window !== `undefined`;
 
-export const useScrollPosition = (effect, dependencies, wait) => {
+export const useScrollPosition = (effect, dependencies, waitFor) => {
   const position = useRef(getScrollPosition());
 
   let debounceTime = null;
@@ -20,7 +20,7 @@ export const useScrollPosition = (effect, dependencies, wait) => {
     }
 
     const handleScroll = () => {
-      if (wait) {
+      if (waitFor) {
         if (debounceTime === null) {
           //TODO add support for debounce
         }
@@ -52,5 +52,5 @@ const getScrollPosition = () => {
 
 useScrollPosition.defaultProps = {
   dependencies: [],
-  wait: null,
+  waitFor: null,
 };

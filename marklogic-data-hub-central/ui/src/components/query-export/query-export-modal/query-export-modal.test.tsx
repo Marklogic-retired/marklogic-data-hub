@@ -1,5 +1,5 @@
 import React from "react";
-import {fireEvent, render, wait} from "@testing-library/react";
+import {fireEvent, render, waitFor} from "@testing-library/react";
 import QueryExportModal from "./query-export-modal";
 
 
@@ -91,7 +91,7 @@ describe("Query Export Component", () => {
 
   test("Verify export preview renders", () => {
     const {getByTestId, getByText} = render(<QueryExportModal exportModalVisibility={true} columns={columnsNested} hasStructured={true} tableColumns={tableColumns} />);
-    wait(() => {
+    waitFor(() => {
       fireEvent.click(getByText("Show Preview"));
       expect(getByTestId("export-preview-table")).toBeInTheDocument();
     });

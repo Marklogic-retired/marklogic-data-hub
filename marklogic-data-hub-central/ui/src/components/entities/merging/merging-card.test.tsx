@@ -1,5 +1,5 @@
 import React from "react";
-import {render, wait, cleanup, fireEvent, screen} from "@testing-library/react";
+import {render, waitFor, cleanup, fireEvent, screen} from "@testing-library/react";
 import {BrowserRouter as Router} from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 
@@ -66,9 +66,9 @@ describe("Merging cards view component", () => {
 
     // check if delete tooltip appears and user is able to proceed with deletion of the step
     userEvent.hover(getByTestId("mergeCustomers-delete"));
-    wait(() => expect(getByText("Delete")).toBeInTheDocument());
+    waitFor(() => expect(getByText("Delete")).toBeInTheDocument());
     userEvent.click(getByTestId("mergeCustomers-delete"));
-    wait(() => expect(getByLabelText("delete-step-text")).toBeInTheDocument());
+    waitFor(() => expect(getByLabelText("delete-step-text")).toBeInTheDocument());
     userEvent.click(getByText("Yes"));
     expect(deleteMergingArtifact).toBeCalled();
   });
@@ -86,10 +86,10 @@ describe("Merging cards view component", () => {
     );
 
     fireEvent.mouseOver(getByLabelText("add-new-card-disabled"));
-    wait(() => expect(getByText("Curate: "+SecurityTooltips.missingPermission)).toBeInTheDocument());
+    waitFor(() => expect(getByText("Curate: "+SecurityTooltips.missingPermission)).toBeInTheDocument());
     expect(queryByLabelText("icon: plus-circle")).toBeInTheDocument();
     fireEvent.mouseOver(getByText("mergeCustomers"));
-    wait(() => expect(getByText("Curate: "+SecurityTooltips.missingPermission)).toBeInTheDocument());
+    waitFor(() => expect(getByText("Curate: "+SecurityTooltips.missingPermission)).toBeInTheDocument());
     expect(getByText("mergeCustomersEmpty")).toBeInTheDocument();
 
     //Verify if the card renders fine
@@ -100,12 +100,12 @@ describe("Merging cards view component", () => {
     // check run icon is disabled
     let runIcon = getByTestId("mergeCustomers-disabled-run");
     userEvent.hover(runIcon);
-    wait(() => expect(getByText("Run: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
+    waitFor(() => expect(getByText("Run: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
 
     // check if delete icon displays correct tooltip when disabled
     let disabledDeleteIcon = getByTestId("mergeCustomers-disabled-delete");
     userEvent.hover(disabledDeleteIcon);
-    wait(() => expect(getByText("Delete: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
+    waitFor(() => expect(getByText("Delete: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
     userEvent.click(disabledDeleteIcon);
     expect(queryAllByText("Yes")).toHaveLength(0);
     expect(deleteMergingArtifact).not.toBeCalled();
@@ -132,9 +132,9 @@ describe("Merging cards view component", () => {
 
     // check if delete tooltip appears and user is able to proceed with deletion of the step
     userEvent.hover(getByTestId("mergeCustomers-delete"));
-    wait(() => expect(getByText("Delete")).toBeInTheDocument());
+    waitFor(() => expect(getByText("Delete")).toBeInTheDocument());
     userEvent.click(getByTestId("mergeCustomers-delete"));
-    wait(() => expect(getByLabelText("delete-step-text")).toBeInTheDocument());
+    waitFor(() => expect(getByLabelText("delete-step-text")).toBeInTheDocument());
     userEvent.click(getByText("Yes"));
     expect(deleteMergingArtifact).toBeCalled();
   });
@@ -149,17 +149,17 @@ describe("Merging cards view component", () => {
     expect(getByText("mergeCustomers")).toBeInTheDocument();
     fireEvent.mouseOver(getByTestId("Customer-mergeCustomers-step"));
 
-    wait(() => {
+    waitFor(() => {
       expect(getByText("Add Step to a new flow")).toBeInTheDocument();
       userEvent.click(getByText("Add Step to a new flow"));
     });
-    wait(() => {
+    waitFor(() => {
       expect(screen.getByText("NewFlow")).toBeInTheDocument();
       userEvent.type(screen.getByPlaceholderText("Enter name"), "testFlow");
       userEvent.click(screen.getByText("Save"));
     });
     // Check if the /tiles/run/add route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add"); });
+    waitFor(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add"); });
   });
 
   it("can add/run a step in a new flow from run button", () => {
@@ -171,17 +171,17 @@ describe("Merging cards view component", () => {
 
     expect(getByText("mergeCustomers")).toBeInTheDocument();
     userEvent.click(getByTestId("mergeCustomers-run"));
-    wait(() => {
+    waitFor(() => {
       expect(getByLabelText("step-in-no-flows-confirmation")).toBeInTheDocument();
       userEvent.click(getByTestId("mergeCustomers-run-toNewFlow"));
     });
-    wait(() => {
+    waitFor(() => {
       expect(screen.getByText("NewFlow")).toBeInTheDocument();
       userEvent.type(screen.getByPlaceholderText("Enter name"), "testFlow");
       userEvent.click(screen.getByText("Save"));
     });
     // Check if the /tiles/run/add route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add"); });
+    waitFor(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add"); });
   });
 
   it("can add a step to an existing flow", () => {
@@ -195,18 +195,18 @@ describe("Merging cards view component", () => {
 
     //mouseover to trigger flow menu
     fireEvent.mouseOver(getByTestId("Customer-mergeCustomersEmpty-step"));
-    wait(() => {
+    waitFor(() => {
       expect(getByText("Add step to an existing flow")).toBeInTheDocument();
       fireEvent.click(getByTestId(`mergeCustomersEmpty-flowsList`));
       fireEvent.click(getByLabelText("customerJSONFlow-option"));
     });
 
-    wait(() => {
+    waitFor(() => {
       expect(getByLabelText("step-not-in-flow")).toBeInTheDocument();
       userEvent.click(getByTestId("mergeCustomersEmpty-to-test-Confirm"));
     });
     // Check if the /tiles/run/add route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add"); });
+    waitFor(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add"); });
   });
 
   it("can run a step in an existing flow where step DOES NOT exist", () => {
@@ -227,7 +227,7 @@ describe("Merging cards view component", () => {
     fireEvent.click(getByTestId("customerJSONFlow-run-step"));
 
     //Check if the /tiles/run/add-run route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
+    waitFor(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
   });
 
   it("can run a step in an existing flow where step DOES exist", () => {
@@ -248,7 +248,7 @@ describe("Merging cards view component", () => {
     fireEvent.click(getByLabelText("continue-confirm"));
 
     //Check if the /tiles/run/run-step route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/run-step"); });
+    waitFor(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/run-step"); });
   });
 
   it("can run a step in an existing flow where step exists in MORE THAN ONE flow", () => {
@@ -269,7 +269,7 @@ describe("Merging cards view component", () => {
     fireEvent.click(getByTestId("customerXMLFlow-run-step"));
 
     //Check if the /tiles/run/add-run route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
+    waitFor(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
   });
 
   it("can open step settings and navigate to merge step details", () => {
@@ -282,15 +282,15 @@ describe("Merging cards view component", () => {
     expect(getByText("mergeCustomers")).toBeInTheDocument();
     //open step settings
     userEvent.click(getByTestId("mergeCustomers-edit"));
-    wait(() => {
+    waitFor(() => {
       expect(screen.getByText("Merging Step Settings")).toBeInTheDocument();
       userEvent.click(screen.getByText("Cancel"));
     });
     //open step details
-    wait(() => {
+    waitFor(() => {
       userEvent.click(getByTestId("mergeCustomers-stepDetails"));
     });
 
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/curate/merge"); });
+    waitFor(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/curate/merge"); });
   });
 });

@@ -1,6 +1,6 @@
 import React from "react";
 import {BrowserRouter as Router} from "react-router-dom";
-import {fireEvent, render, wait, waitForElement} from "@testing-library/react";
+import {fireEvent, render, waitFor} from "@testing-library/react";
 import CustomCard from "./custom-card";
 import axiosMock from "axios";
 import data from "../../../assets/mock-data/curation/flows.data";
@@ -38,14 +38,20 @@ describe("Custom Card component", () => {
       <Router><AuthoritiesContext.Provider value={authorityService}>
         <CustomCard
           data={customData}
+          flows=""
+          entityTypeTitle= ""
+          updateCustomArtifact= ""
           canReadOnly={true}
           canReadWrite={true}
+          canWriteFlow= ""
           entityModel={{entityTypeId: "Customer"}}
+          addStepToFlow= ""
+          addStepToNew= ""
           getArtifactProps={() => { return customData[0]; }}
         />
       </AuthoritiesContext.Provider></Router>);
 
-    await wait(() => {
+    await waitFor(() => {
       fireEvent.click(getByTestId("customJSON-edit"));
     });
 
@@ -62,7 +68,7 @@ describe("Custom Card component", () => {
     expect(getByPlaceholderText("Enter source query")).toHaveTextContent("cts.collectionQuery(['loadCustomerJSON'])");
 
     // Switch to Advanced settings
-    await wait(() => {
+    await waitFor(() => {
       fireEvent.click(getByText("Advanced"));
     });
     expect(getByText("Basic").closest("button")).not.toHaveClass("nav-link active");
@@ -101,7 +107,7 @@ describe("Custom Card component", () => {
     expect(getByText("Additional Settings:")).toBeInTheDocument();
 
     fireEvent.click(getByLabelText("Close"));
-    await wait(() => {
+    await waitFor(() => {
       expect(queryByText("Custom Step Settings")).not.toBeInTheDocument();
     });
 
@@ -115,14 +121,20 @@ describe("Custom Card component", () => {
       <Router><AuthoritiesContext.Provider value={authorityService}>
         <CustomCard
           data={customData}
+          flows=""
+          entityTypeTitle= ""
+          updateCustomArtifact= ""
           canReadOnly={true}
           canReadWrite={false}
+          canWriteFlow= ""
           entityModel={{entityTypeId: "Customer"}}
+          addStepToFlow= ""
+          addStepToNew= ""
           getArtifactProps={() => { return customData[0]; }}
         />
       </AuthoritiesContext.Provider></Router>);
 
-    await wait(() => {
+    await waitFor(() => {
       fireEvent.click(getByTestId("customJSON-edit"));
     });
 
@@ -139,7 +151,7 @@ describe("Custom Card component", () => {
     expect(getByPlaceholderText("Enter source query")).toHaveTextContent("cts.collectionQuery(['loadCustomerJSON'])");
 
     // Switch to Advanced settings
-    await wait(() => {
+    await waitFor(() => {
       fireEvent.click(getByText("Advanced"));
     });
     expect(getByText("Basic").closest("button")).not.toHaveClass("nav-link active");
@@ -166,7 +178,7 @@ describe("Custom Card component", () => {
     expect(getByText("Additional Settings:")).toBeInTheDocument();
 
     fireEvent.click(getByLabelText("Close"));
-    await wait(() => {
+    await waitFor(() => {
       expect(queryByText("Custom Step Settings")).not.toBeInTheDocument();
     });
 
@@ -177,7 +189,7 @@ describe("Custom Card component", () => {
     let getByRole, queryAllByRole, getByText, getByTestId;
     await act(async () => {
       const renderResults = render(
-        <Router><CustomCard data={customData} canReadOnly={true} canReadWrite={false} entityModel={{entityTypeId: "Customer"}}/></Router>
+        <Router><CustomCard data={customData} flows="" entityTypeTitle= "" updateCustomArtifact= "" canReadOnly={true} canReadWrite={false} canWriteFlow="" entityModel={{entityTypeId: "Customer"}} addStepToFlow= "" addStepToNew= ""getArtifactProps={() => { return customData[0]; }}/></Router>
       );
       getByRole = renderResults.getByRole;
       queryAllByRole = renderResults.queryAllByRole;
@@ -190,7 +202,7 @@ describe("Custom Card component", () => {
 
     let tipIconView = getByTestId("customJSON-edit");
     fireEvent.mouseOver(tipIconView);
-    await waitForElement(() => getByText(CustomStepTooltips.viewCustom));
+    await waitFor(() => getByText(CustomStepTooltips.viewCustom));
   });
 
   test("Can add step to flow", async () => {
@@ -203,11 +215,14 @@ describe("Custom Card component", () => {
         <CustomCard
           data={customData}
           flows={flows}
+          entityTypeTitle= ""
+          updateCustomArtifact= ""
           canReadOnly={true}
           canReadWrite={false}
           canWriteFlow={true}
           entityModel={{entityTypeId: "Customer"}}
           addStepToFlow={() => {}}
+          addStepToNew= ""
           getArtifactProps={() => { return customData[0]; }}
         />
       </AuthoritiesContext.Provider></Router>);
@@ -228,6 +243,6 @@ describe("Custom Card component", () => {
     fireEvent.click(getByTestId("customJSON-to-testFlow-Confirm"));
 
     // Check if the /tiles/run/add route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add"); });
+    waitFor(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add"); });
   });
 });

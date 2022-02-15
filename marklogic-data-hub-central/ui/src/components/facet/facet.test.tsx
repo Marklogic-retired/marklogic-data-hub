@@ -1,5 +1,5 @@
 import React from "react";
-import {render, fireEvent, waitForElement} from "@testing-library/react";
+import {render, fireEvent, waitFor} from "@testing-library/react";
 import Facet from "./facet";
 import {facetProps, sourceNameFacetProps, sourceTypeFacetProps} from "../../assets/mock-data/explore/facet-props";
 
@@ -96,7 +96,7 @@ describe("Facet component", () => {
     expect(getByText(/12/i)).toBeInTheDocument();
 
     fireEvent.mouseOver(getByTestId("info-tooltip-SourceName"));
-    await(waitForElement(() => (getByText("The name of the source of the files."))));
+    await(waitFor(() => (getByText("The name of the source of the files."))));
   });
 
   it("SourceType facets renders properly", async () => {
@@ -109,7 +109,7 @@ describe("Facet component", () => {
     expect(getByText(/5/i)).toBeInTheDocument();
 
     fireEvent.mouseOver(getByTestId("info-tooltip-SourceType"));
-    await(waitForElement(() => (getByText("The type of source of the files."))));
+    await(waitFor(() => (getByText("The type of source of the files."))));
   });
 
 });

@@ -1,5 +1,5 @@
 import React from "react";
-import {render, fireEvent, waitForElement} from "@testing-library/react";
+import {render, fireEvent, waitFor} from "@testing-library/react";
 import {entitySearch} from "../../assets/mock-data/explore/entity-search";
 import {BrowserRouter as Router} from "react-router-dom";
 import RecordCardView from "./record-view";
@@ -61,13 +61,13 @@ describe("Raw data card view component", () => {
 
     //verify tooltips
     fireEvent.mouseOver(getByTestId("/Customer/Cust1.json-URI"));
-    await waitForElement(() => getByText("/Customer/Cust1.json"));
+    await waitFor(() => getByText("/Customer/Cust1.json"));
 
     fireEvent.mouseOver(getByTestId("/Customer/Cust1.json-InfoIcon"));
-    await waitForElement(() => getByText("View info"));
+    await waitFor(() => getByText("View info"));
 
     fireEvent.mouseOver(getByTestId("/Customer/Cust1.json-detailViewIcon"));
-    await waitForElement(() => getByText("View details"));
+    await waitFor(() => getByText("View details"));
 
     //verify snippet content for json/xml/text docs
     expect(getByTestId("/Customer/Cust1.json-snippet").textContent).toContain(entitySearch.results[0].matches[0]["match-text"][0]);
@@ -108,7 +108,7 @@ describe("Raw data card view component", () => {
     expect(getByTestId("/Customer/Cust1.json-download-icon")).toBeInTheDocument();
     //verify download icon tooltip
     fireEvent.mouseOver(getByTestId("/Customer/Cust1.json-download-icon"));
-    await waitForElement(() => getByText("Download (815 B)"));
+    await waitFor(() => getByText("Download (815 B)"));
     //click on download icon and verify api call.
     fireEvent.click(getByTestId("/Customer/Cust1.json-download-icon"));
     expect(axiosMock).toHaveBeenCalledWith({"method": "GET", "responseType": "blob", "url": "/api/record/download?docUri=%2FCustomer%2FCust1.json&database=final"});

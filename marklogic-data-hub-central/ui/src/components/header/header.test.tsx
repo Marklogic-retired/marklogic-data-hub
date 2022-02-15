@@ -1,5 +1,5 @@
 import React from "react";
-import {render, cleanup, waitForElement, getByTestId} from "@testing-library/react";
+import {render, cleanup, waitFor, getByTestId} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {BrowserRouter as Router} from "react-router-dom";
 import {UserContext} from "../../util/user-context";
@@ -48,13 +48,13 @@ describe("Header component", () => {
 
     //verify icons and respective tooltips
     fireEvent.mouseOver(getByLabelText("icon: user"));
-    await waitForElement(() => getByText("User"));
+    await waitFor(() => getByText("User"));
 
     fireEvent.mouseOver(getByLabelText("icon: question-circle"));
-    await waitForElement(() => getByText("Help"));
+    await waitFor(() => getByText("Help"));
 
     fireEvent.mouseOver(getByLabelText("icon: info-circle"));
-    await waitForElement(() => getByLabelText("info-text"));
+    await waitFor(() => getByLabelText("info-text"));
 
     //verify correct version specific link when environment hub version data is set to '5.3-SNAPSHOT'
     expect(document.querySelector("#help-link")).toHaveAttribute("href", "https://docs.marklogic.com/datahub/5.3");

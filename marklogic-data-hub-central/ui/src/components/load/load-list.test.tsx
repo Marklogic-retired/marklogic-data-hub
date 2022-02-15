@@ -1,5 +1,5 @@
 import React from "react";
-import {render, fireEvent, wait, within, cleanup, waitForElement} from "@testing-library/react";
+import {render, fireEvent, waitFor, within, cleanup} from "@testing-library/react";
 import LoadList from "./load-list";
 import data from "../../assets/mock-data/curation/common.data";
 import axiosMock from "axios";
@@ -36,7 +36,7 @@ describe("Load data component", () => {
 
   test("Verify Load list view renders correctly with no data", () => {
     const {getByText} = render(<MemoryRouter><LoadList {...data.loadData} data={[]} /></MemoryRouter>);
-    const tableColumns = within(getByText("Name").closest("tr"));
+    const tableColumns = within(getByText("Name").closest("tr")!);
 
     expect(getByText("Add New")).toBeInTheDocument();
     expect(tableColumns.getByText("Name")).toBeInTheDocument();
@@ -50,7 +50,7 @@ describe("Load data component", () => {
 
   test("Verify Load list view renders correctly with data", async () => {
     const {getByText, getByTestId} = render(<MemoryRouter><LoadList {...data.loadData} /></MemoryRouter>);
-    const dataRow = within(getByText("testLoadXML").closest("tr"));
+    const dataRow = within(getByText("testLoadXML").closest("tr")!);
     expect(dataRow.getByText(data.loadData.data[1].name)).toBeInTheDocument();
     expect(dataRow.getByText(data.loadData.data[1].description)).toBeInTheDocument();
     expect(dataRow.getByText(data.loadData.data[1].sourceFormat)).toBeInTheDocument();
@@ -62,7 +62,7 @@ describe("Load data component", () => {
 
     // check if delete tooltip appears
     fireEvent.mouseOver(getByTestId(data.loadData.data[1].name + "-delete"));
-    await wait(() => expect(getByText("Delete")).toBeInTheDocument());
+    await waitFor(() => expect(getByText("Delete")).toBeInTheDocument());
 
     //verify load list table enforces last updated sort order by default
     let loadTable: any = document.querySelectorAll(".ant-table-row-level-0");
@@ -140,7 +140,7 @@ describe("Load data component", () => {
     );
 
     // Click name to open default Basic settings
-    await wait(() => {
+    await waitFor(() => {
       fireEvent.click(getByText(data.loadData.data[0].name));
     });
     expect(getByText("Basic").closest("button")).toHaveClass("nav-link active");
@@ -154,7 +154,7 @@ describe("Load data component", () => {
     // Note: Can't test mock API call since is being called by <Load> parent, which isn't being rendered in this test
 
     // Switch to Advanced settings
-    await wait(() => {
+    await waitFor(() => {
       fireEvent.click(getByText("Advanced"));
     });
     expect(getByText("Basic").closest("button")).not.toHaveClass("nav-link active");
@@ -227,8 +227,8 @@ describe("Load data component", () => {
     fireEvent.click(getByLabelText("testLoadXML-add-icon")); // Click the Add to Flow Icon to get more options
 
     //Verify if the flow related options are availble on click
-    await waitForElement(() => expect(getByTestId(`testLoadXML-toNewFlow`))); // check if option 'Add to a new Flow' is visible
-    await waitForElement(() => expect(getByTestId(`testLoadXML-toExistingFlow`))); // check if option 'Add to an existing Flow' is visible
+    await waitFor(() => expect(getByTestId(`testLoadXML-toNewFlow`))); // check if option 'Add to a new Flow' is visible
+    await waitFor(() => expect(getByTestId(`testLoadXML-toExistingFlow`))); // check if option 'Add to an existing Flow' is visible
 
     //Click on the select field to open the list of existing flows.
     fireEvent.keyDown(getByLabelText("testLoadXML-flowsList"), {key: "ArrowDown"});
@@ -241,7 +241,7 @@ describe("Load data component", () => {
     fireEvent.click(getByLabelText("Yes"));
 
     //Check if the /tiles/run/add route has been called
-    wait(() => {
+    waitFor(() => {
       expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add");
     });
     //TODO- E2E test to check if the Run tile is loaded or not.
@@ -267,8 +267,8 @@ describe("Load data component", () => {
     fireEvent.click(getByLabelText("testLoadXML-add-icon")); // Clik over the Add to Flow Icon to get more options
 
     //Verify if the flow related options are availble on click
-    await waitForElement(() => expect(getByTestId(`testLoadXML-toNewFlow`))); // check if option 'Add to a new Flow' is visible
-    await waitForElement(() => expect(getByTestId(`testLoadXML-toExistingFlow`))); // check if option 'Add to an existing Flow' is visible
+    await waitFor(() => expect(getByTestId(`testLoadXML-toNewFlow`))); // check if option 'Add to a new Flow' is visible
+    await waitFor(() => expect(getByTestId(`testLoadXML-toExistingFlow`))); // check if option 'Add to an existing Flow' is visible
 
     //Click on the select field to open the list of existing flows.
     fireEvent.keyDown(getByLabelText("testLoadXML-flowsList"), {key: "ArrowDown"});
@@ -310,7 +310,7 @@ describe("Load data component", () => {
     fireEvent.click(getByTestId("FlowStepNoExist-run-step"));
 
     //Check if the /tiles/run/add-run route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
+    waitFor(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
 
   });
 
@@ -340,7 +340,7 @@ describe("Load data component", () => {
     fireEvent.click(getByLabelText("continue-confirm"));
 
     //Check if the /tiles/run/run-step route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/run-step"); });
+    waitFor(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/run-step"); });
   });
 
   test("Load List - Run step in an existing flow where step exists in MORE THAN ONE flow", async () => {
@@ -371,7 +371,7 @@ describe("Load data component", () => {
     fireEvent.click(getByTestId("FlowStepMultExist-run-step"));
 
     //Check if the /tiles/run/add-run route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
+    waitFor(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
   });
 
   test("Load List - Add step to an new Flow", async () => {
@@ -396,14 +396,14 @@ describe("Load data component", () => {
     fireEvent.click(getByLabelText("testLoadXML-add-icon")); // Click over the Add to Flow Icon to get more options
 
     //Verify if the flow related options are availble on mouseOver
-    await waitForElement(() => expect(getByTestId(`testLoadXML-toNewFlow`))); // check if option 'Add to a new Flow' is visible
-    await waitForElement(() => expect(getByTestId(`testLoadXML-toExistingFlow`))); // check if option 'Add to an existing Flow' is visible
+    await waitFor(() => expect(getByTestId(`testLoadXML-toNewFlow`))); // check if option 'Add to a new Flow' is visible
+    await waitFor(() => expect(getByTestId(`testLoadXML-toExistingFlow`))); // check if option 'Add to an existing Flow' is visible
 
     //Click on the select field to open the list of existing flows.
     fireEvent.click(getByTestId("testLoadXML-toNewFlow"));
 
     //Check if the /tiles/run/add route has been called
-    wait(() => {
+    waitFor(() => {
       expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add");
     });
     //TODO- E2E test to check if the Run tile is loaded or not.
@@ -421,7 +421,7 @@ describe("Load data component", () => {
     fireEvent.click(getByTestId("testLoadXML-run-toNewFlow"));
 
     //Check if the /tiles/run/add-run route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
+    waitFor(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
 
   });
 
@@ -449,11 +449,11 @@ describe("Load data component", () => {
     fireEvent.click(getByLabelText("testLoad-add-icon"));
 
     //verify components and text appear on click
-    await waitForElement(() => expect(getByTestId(`${loadStepName}-toNewFlow`)));
-    await waitForElement(() => expect(getByTestId(`${loadStepName}-toExistingFlow`)));
-    await waitForElement(() => expect(getByLabelText(`${loadStepName}-flowsList`)));
-    await waitForElement(() => expect(getByText("Add step to a new flow")));
-    await waitForElement(() => expect(getByText("Add step to an existing flow")));
+    await waitFor(() => expect(getByTestId(`${loadStepName}-toNewFlow`)));
+    await waitFor(() => expect(getByTestId(`${loadStepName}-toExistingFlow`)));
+    await waitFor(() => expect(getByLabelText(`${loadStepName}-flowsList`)));
+    await waitFor(() => expect(getByText("Add step to a new flow")));
+    await waitFor(() => expect(getByText("Add step to an existing flow")));
 
     // test adding to existing flow
     fireEvent.keyDown(getByLabelText(`${loadStepName}-flowsList`), {key: "ArrowDown"});
@@ -485,7 +485,7 @@ describe("Load data component", () => {
     const loadStepName = data.loadData.data[0].name;
     // adding to new flow icon is disabled and shows correct tooltip
     fireEvent.mouseOver(getByLabelText(`${loadStepName}-disabled-add-icon`));
-    await wait(() => expect(getByText("Add to Flow: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
+    await waitFor(() => expect(getByText("Add to Flow: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
 
 
     // test adding to existing flow option does not appear
@@ -497,11 +497,11 @@ describe("Load data component", () => {
 
     // test delete icon displays correct tooltip when disabled
     fireEvent.mouseOver(getByTestId(loadStepName + "-disabled-delete"));
-    await wait(() => expect(getByText("Delete: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
+    await waitFor(() => expect(getByText("Delete: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
 
     // test run icon displays correct tooltip when disabled
     fireEvent.mouseOver(getByTestId(loadStepName + "-disabled-run"));
-    await wait(() => expect(getByText("Run: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
+    await waitFor(() => expect(getByText("Run: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
 
     await fireEvent.click(getByTestId(loadStepName + "-disabled-run"));
     expect(queryByTestId(`${loadStepName}-run-flowsList`)).not.toBeInTheDocument();

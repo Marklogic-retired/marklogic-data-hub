@@ -216,7 +216,7 @@ export class STOMPService {
 
     // Clear callback
     this.resolvePromise = () => {};
-  }
+  };
 
   // Handle errors from stomp.js
   public onError = async (error: string, ...other: any[]) => {
@@ -248,7 +248,7 @@ export class STOMPService {
           }
         });
     }
-  }
+  };
 
 
   // On message RX, notify the Observable with the message object
@@ -258,7 +258,7 @@ export class STOMPService {
     } else {
       console.error("Empty message received!");
     }
-  }
+  };
 
   public subscribe(endpoint: string, resolveFunc: (...args: any[]) => void): void {
     if (!this._isActive) {

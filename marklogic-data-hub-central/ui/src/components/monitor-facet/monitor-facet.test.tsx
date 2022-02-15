@@ -1,5 +1,5 @@
 import React from "react";
-import {render, fireEvent, waitForElement} from "@testing-library/react";
+import {render, fireEvent, waitFor} from "@testing-library/react";
 import {flowNameFacetProps, stepNameFacetProps, stepTypeFacetProps} from "../../assets/mock-data/monitor/facet-props";
 import MonitorFacet from "./monitor-facet";
 
@@ -19,7 +19,7 @@ describe("Facet component", () => {
     expect(getByText(/personXML/i)).toBeInTheDocument();
 
     fireEvent.mouseOver(getByTestId("info-tooltip-flowName"));
-    await(waitForElement(() => (getByText("A sequence of one or more steps that process the data."))));
+    await(waitFor(() => (getByText("A sequence of one or more steps that process the data."))));
   });
 
   it("Collapse/Expand carets render properly for facet properties", () => {
@@ -46,7 +46,7 @@ describe("Facet component", () => {
     expect(getByText(/loadCustomersWithRelatedEntitiesJSON/i)).toBeInTheDocument();
 
     fireEvent.mouseOver(getByTestId("info-tooltip-Step"));
-    await(waitForElement(() => (getByText("Code that processes the data."))));
+    await(waitFor(() => (getByText("Code that processes the data."))));
   });
 
 });

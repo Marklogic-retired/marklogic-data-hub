@@ -1,6 +1,6 @@
 import React from "react";
 import {BrowserRouter as Router} from "react-router-dom";
-import {render, wait, screen, within, fireEvent} from "@testing-library/react";
+import {render, waitFor, screen, within, fireEvent} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import EntityTypeTable from "./entity-type-table";
 import {ModelingTooltips, SecurityTooltips} from "../../../config/tooltips.config";
@@ -82,7 +82,7 @@ describe("EntityTypeModal Component", () => {
 
     // test trash icons display correct tooltip when disabled
     fireEvent.mouseOver(getByTestId("Customer-trash-icon"));
-    await wait(() => expect(getByText("Delete Entity: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
+    await waitFor(() => expect(getByText("Delete Entity: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
 
     expect(getByText(/Order/i)).toBeInTheDocument();
     expect(getByText(/2,384/i)).toBeInTheDocument();
@@ -197,13 +197,13 @@ describe("EntityTypeModal Component", () => {
 
     // check if delete tooltip appears
     fireEvent.mouseOver(getByTestId("Order-trash-icon"));
-    await wait(() => expect(screen.getByText(ModelingTooltips.deleteIcon)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(ModelingTooltips.deleteIcon)).toBeInTheDocument());
 
     userEvent.click(getByTestId("Order-trash-icon"));
     expect(mockEntityReferences).toBeCalledWith("Order");
     expect(mockEntityReferences).toBeCalledTimes(1);
 
-    await wait(() =>
+    await waitFor(() =>
       expect(screen.getByLabelText("delete-text")).toBeInTheDocument(),
     );
 
@@ -236,7 +236,7 @@ describe("EntityTypeModal Component", () => {
     expect(mockEntityReferences).toBeCalledWith("Product");
     expect(mockEntityReferences).toBeCalledTimes(1);
 
-    await wait(() =>
+    await waitFor(() =>
       expect(screen.getByLabelText("delete-relationship-text")).toBeInTheDocument()
     );
     expect(screen.getByText("Existing entity type relationships.")).toBeInTheDocument();
@@ -270,7 +270,7 @@ describe("EntityTypeModal Component", () => {
     expect(mockEntityReferences).toBeCalledWith("Product");
     expect(mockEntityReferences).toBeCalledTimes(1);
 
-    await wait(() =>
+    await waitFor(() =>
       expect(screen.getByLabelText("delete-step-text")).toBeInTheDocument()
     );
     expect(screen.getByText("Entity type is used in one or more steps.")).toBeInTheDocument();
@@ -302,7 +302,7 @@ describe("EntityTypeModal Component", () => {
     expect(mockEntityReferences).toBeCalledWith("Product");
     expect(mockEntityReferences).toBeCalledTimes(1);
 
-    await wait(() =>
+    await waitFor(() =>
       expect(screen.getByLabelText("delete-entity-foreign-key-text")).toBeInTheDocument()
     );
     expect(screen.getByText("Entity type appears in foreign key relationship in 1 or more other entity types.")).toBeInTheDocument();
@@ -353,7 +353,7 @@ describe("EntityTypeModal Component", () => {
     expect(mockEntityReferences).toBeCalledWith("Product");
     expect(mockEntityReferences).toBeCalledTimes(1);
 
-    await wait(() =>
+    await waitFor(() =>
       expect(screen.getByLabelText("delete-text")).toBeInTheDocument(),
     );
     userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeleteEntity}-yes`));
@@ -403,7 +403,7 @@ describe("EntityTypeModal Component", () => {
 
     // check if graph view icon tooltip appears
     fireEvent.mouseOver(getByTestId("Order-graphView-icon"));
-    await wait(() => expect(screen.getByText(ModelingTooltips.viewGraph)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(ModelingTooltips.viewGraph)).toBeInTheDocument());
 
     userEvent.click(getByTestId("Order-graphView-icon"));
     expect(isModified.setGraphViewOptions).toBeCalledWith({view: "graph", selectedEntity: "Order"});

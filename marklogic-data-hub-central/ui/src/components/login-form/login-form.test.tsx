@@ -1,5 +1,5 @@
 import React from "react";
-import {render, fireEvent, wait} from "@testing-library/react";
+import {render, fireEvent, waitFor} from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import axiosMock from "axios";
 import LoginForm from "./login-form";
@@ -61,7 +61,7 @@ describe("Login page test", () => {
 
     fireEvent.change(userField, {target: {value: "validUser"}});
     fireEvent.change(passField, {target: {value: "pass"}});
-    await wait(() => {
+    await waitFor(() => {
       fireEvent.submit(loginBtn);
     });
     let url = "/api/login";
@@ -81,7 +81,7 @@ describe("Login page test", () => {
 
     fireEvent.change(userField, {target: {value: "validUser"}});
     fireEvent.change(passField, {target: {value: "invalidPass"}});
-    await wait(() => {
+    await waitFor(() => {
       fireEvent.submit(loginBtn);
     });
     expect(axiosMock.post).toHaveBeenCalledTimes(1);
@@ -99,7 +99,7 @@ describe("Login page test", () => {
     fireEvent.change(userField, {target: {value: "invalidUser"}});
 
     fireEvent.change(passField, {target: {value: "pass"}});
-    await wait(() => {
+    await waitFor(() => {
       fireEvent.submit(loginBtn);
     });
     expect(axiosMock.post).toHaveBeenCalledTimes(1);

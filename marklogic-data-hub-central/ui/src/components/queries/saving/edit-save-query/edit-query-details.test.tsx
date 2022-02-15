@@ -1,5 +1,5 @@
 import React from "react";
-import {fireEvent, render, wait} from "@testing-library/react";
+import {fireEvent, render, waitFor} from "@testing-library/react";
 import EditQueryDetails from "./edit-query-details";
 import axiosMock from "axios";
 import userEvent from "@testing-library/user-event";
@@ -60,7 +60,7 @@ describe("<EditQueryDetails/>", () => {
     fireEvent.change(queryDescription, {target: {value: "edit query description"}});
     expect(queryField).toHaveAttribute("value", "edit new query");
     expect(queryDescription).toHaveAttribute("value", "edit query description");
-    await wait(() => {
+    await waitFor(() => {
       userEvent.click(getByText("Save"));
     });
 
@@ -96,7 +96,7 @@ describe("<EditQueryDetails/>", () => {
     fireEvent.change(queryField, {target: {value: "edit new query"}});
     queryDescription = getByPlaceholderText("Enter new query description");
     fireEvent.change(queryDescription, {target: {value: ""}});
-    await wait(() => {
+    await waitFor(() => {
       userEvent.click(getByText("Save"));
     });
 

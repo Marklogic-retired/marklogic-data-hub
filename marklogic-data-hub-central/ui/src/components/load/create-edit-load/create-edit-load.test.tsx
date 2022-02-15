@@ -1,5 +1,5 @@
 import React from "react";
-import {render, fireEvent, waitForElement, wait} from "@testing-library/react";
+import {render, fireEvent, waitFor} from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import CreateEditLoad from "./create-edit-load";
 import {BrowserRouter} from "react-router-dom";
@@ -45,23 +45,23 @@ describe("New/edit load step configuration", () => {
 
     // Tooltip for name
     fireEvent.mouseOver(tooltip[0]);
-    await waitForElement(() => getByText(NewLoadTooltips.name));
+    await waitFor(() => getByText(NewLoadTooltips.name));
     // Tooltip for Description
     fireEvent.mouseOver(tooltip[1]);
-    await waitForElement(() => getByText(NewLoadTooltips.description));
+    await waitFor(() => getByText(NewLoadTooltips.description));
     // Tooltip for Source Format
     fireEvent.mouseOver(tooltip[2]);
-    await waitForElement(() => getByText(NewLoadTooltips.sourceFormat));
+    await waitFor(() => getByText(NewLoadTooltips.sourceFormat));
     // Tooltip for Target Format
     fireEvent.mouseOver(tooltip[3]);
-    await waitForElement(() => getByText(NewLoadTooltips.targetFormat));
+    await waitFor(() => getByText(NewLoadTooltips.targetFormat));
     fireEvent.mouseOver(tooltip[4]);
-    await waitForElement(() => getByText(NewLoadTooltips.sourceName));
+    await waitFor(() => getByText(NewLoadTooltips.sourceName));
     fireEvent.mouseOver(tooltip[5]);
-    await waitForElement(() => getByText(NewLoadTooltips.sourceType));
+    await waitFor(() => getByText(NewLoadTooltips.sourceType));
     // Tooltip for Target URI Prefix
     fireEvent.mouseOver(tooltip[6]);
-    await waitForElement(() => getByText(NewLoadTooltips.outputURIPrefix));
+    await waitFor(() => getByText(NewLoadTooltips.outputURIPrefix));
     expect(getByText("Target Format:")).toHaveTextContent("Target Format: *");
     expect(getByText("Target URI Prefix:")).toHaveTextContent("Target URI Prefix:");
   });
@@ -86,7 +86,7 @@ describe("New/edit load step configuration", () => {
 
     // Tooltip for disabled name field
     fireEvent.mouseOver(queryAllByPlaceholderText("Enter name")[0]);
-    await waitForElement(() => getByText(NewLoadTooltips.nameField));
+    await waitFor(() => getByText(NewLoadTooltips.nameField));
 
   });
 
@@ -131,7 +131,7 @@ describe("New/edit load step configuration", () => {
     //enter in a valid name and verify error message disappears (test hyphen and underscores are allowed)
     fireEvent.change(nameInput, {target: {value: "test_Load_Step--"}});
 
-    await wait(() => {
+    await waitFor(() => {
       expect(queryByText("Name is required")).toBeNull();
       expect(queryByText("Names must start with a letter and can contain letters, numbers, hyphens, and underscores only.")).toBeNull();
     });

@@ -1,5 +1,5 @@
 import React from "react";
-import {fireEvent, render, waitForElement} from "@testing-library/react";
+import {fireEvent, render, waitFor} from "@testing-library/react";
 import ManageQuery from "./manage-query";
 import axiosMock from "axios";
 import {Router} from "react-router";
@@ -44,7 +44,7 @@ describe("Query Modal Component", () => {
     expect(axiosMock).toHaveBeenCalledWith({"method": "GET", "url": "/api/entitySearch/savedQueries"});
     expect(getByTestId("manage-queries-modal")).toBeInTheDocument();
 
-    waitForElement(() => {
+    waitFor(() => {
       expect(getByTestId("export")).toBeInTheDocument();
       expect(getByTestId("delete")).toBeInTheDocument();
       expect(getByTestId("edit")).toBeInTheDocument();
@@ -67,10 +67,10 @@ describe("Query Modal Component", () => {
     axiosMock.get["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200, data: query})));
     const {getByTestId, getByText} = render(<Router history={history}><ManageQuery {...defaultProps} isSavedQueryUser={true} /></Router>);
 
-    waitForElement(() => {
+    waitFor(() => {
       expect(getByTestId("delete")).toBeInTheDocument();
       fireEvent.click(getByTestId("delete"));
-      expect((waitForElement(() => getByText((content, node) => {
+      expect((waitFor(() => getByText((content, node) => {
         return getSubElements(content, node, "Are you sure you would like to delete the Lee query? This action cannot be undone.");
       })))).toBeInTheDocument();
     });

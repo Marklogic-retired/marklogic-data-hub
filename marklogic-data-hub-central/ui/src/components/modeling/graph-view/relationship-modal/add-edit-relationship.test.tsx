@@ -1,5 +1,5 @@
 import React from "react";
-import {render, fireEvent, cleanup, wait, waitForElement} from "@testing-library/react";
+import {render, fireEvent, cleanup, waitFor} from "@testing-library/react";
 import AddEditRelationship from "./add-edit-relationship";
 import {ModelingTooltips} from "../../../../config/tooltips.config";
 import {mockEditRelationshipInfo, mockAddRelationshipInfo, entityTypesWithRelationship, mockHubCentralConfig} from "../../../../assets/mock-data/modeling/modeling";
@@ -50,7 +50,7 @@ describe("Add Edit Relationship component", () => {
     expect(queryByText("You can select the foreign key now or later:")).toBeInTheDocument();
 
     fireEvent.mouseOver(getByTestId("foreign-key-tooltip"));
-    await wait(() => expect(getByText(ModelingTooltips.foreignKeyInfo)).toBeInTheDocument());
+    await waitFor(() => expect(getByText(ModelingTooltips.foreignKeyInfo)).toBeInTheDocument());
 
     expect(getByText("customerId")).toBeInTheDocument();
     fireEvent.keyDown(getByLabelText("foreignKey-dropdown"), {key: "ArrowDown"});
@@ -76,13 +76,13 @@ describe("Add Edit Relationship component", () => {
 
     //verify error message is only present upon Save click
     fireEvent.click(getByText("Save"));
-    wait(() => expect(getByLabelText("error-circle")).toBeInTheDocument());
+    waitFor(() => expect(getByLabelText("error-circle")).toBeInTheDocument());
     fireEvent.mouseOver(getByTestId("error-circle"));
-    wait(() => expect(getByText(ModelingTooltips.relationshipEmpty)).toBeInTheDocument());
+    waitFor(() => expect(getByText(ModelingTooltips.relationshipEmpty)).toBeInTheDocument());
 
     //error icon disappears
     fireEvent.change(relationshipInput, {target: {value: "usedBy"}});
-    wait(() => expect(queryByLabelText("error-circle")).not.toBeInTheDocument());
+    waitFor(() => expect(queryByLabelText("error-circle")).not.toBeInTheDocument());
 
     //target entity dropdown should not exist in Edit Relationship
     expect(queryByTestId("targetEntityDropdown")).not.toBeInTheDocument();
@@ -128,9 +128,9 @@ describe("Add Edit Relationship component", () => {
 
     // verify error message upon Save click with no selected entity, entity selection tested in e2e
     fireEvent.click(getByText("Add"));
-    wait(() => expect(getByLabelText("error-circle")).toBeInTheDocument());
+    waitFor(() => expect(getByLabelText("error-circle")).toBeInTheDocument());
     fireEvent.mouseOver(getByTestId("error-circle"));
-    wait(() => expect(getByText(ModelingTooltips.targetEntityEmpty)).toBeInTheDocument());
+    waitFor(() => expect(getByText(ModelingTooltips.targetEntityEmpty)).toBeInTheDocument());
 
     const mockRelationshipWithTarget = {...mockAddRelationshipInfo, targetNodeName: "Customer", targetNodeColor: "#ecf7fd"};
 
@@ -151,9 +151,9 @@ describe("Add Edit Relationship component", () => {
     //verify duplicate property error message with relationship name same as entity name
     fireEvent.change(getByLabelText("relationship-textarea"), {target: {value: "BabyRegistry"}});
     fireEvent.click(getByText("Add"));
-    wait(() => expect(getByLabelText("error-circle")).toBeInTheDocument());
+    waitFor(() => expect(getByLabelText("error-circle")).toBeInTheDocument());
     fireEvent.mouseOver(getByTestId("error-circle"));
-    wait(() => expect(getByTestId("name-error")).toBeInTheDocument());
+    waitFor(() => expect(getByTestId("name-error")).toBeInTheDocument());
 
     //verify node colors and updated colors with target entity selections
     expect(getByTestId("sourceEntityNode")).toHaveStyle("background-color: rgb(227, 235, 188)"); //to have BabyRegistry color
@@ -161,7 +161,7 @@ describe("Add Edit Relationship component", () => {
     expect(getByTestId("targetEntityNode")).toHaveStyle("background-color: rgb(236, 247, 253)"); //to have Customer color
 
     fireEvent.click(getByTestId("targetEntityDropdown"));
-    await (waitForElement(() => getAllByRole("option"), {"timeout": 200}));
+    await (waitFor(() => getAllByRole("option"), {"timeout": 200}));
     expect(getByTestId("Order-option")).toBeInTheDocument();
     fireEvent.click(getByTestId("Order-option"));
     expect(getByTestId("Order-targetNodeName")).toHaveTextContent("Order");

@@ -1,7 +1,7 @@
 import React from "react";
 import {AuthoritiesContext, AuthoritiesService} from "../util/authorities";
 import {MemoryRouter} from "react-router-dom";
-import {render, waitForElement} from "@testing-library/react";
+import {render, waitFor} from "@testing-library/react";
 import {MissingPagePermission} from "../config/messages.config";
 import Monitor from "./Monitor";
 import tiles from "../config/tiles.config";
@@ -12,7 +12,7 @@ describe("Monitor component", () => {
     const authorityService = new AuthoritiesService();
     const {getByText} = await render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><Monitor/></AuthoritiesContext.Provider></MemoryRouter>);
 
-    expect(await(waitForElement(() => getByText(MissingPagePermission)))).toBeInTheDocument();
+    expect(await(waitFor(() => getByText(MissingPagePermission)))).toBeInTheDocument();
   });
 
   test("Verify user with right authorities can access page", async () => {

@@ -1,5 +1,5 @@
 import React from "react";
-import {render, cleanup, fireEvent, screen, waitForElement, within, wait} from "@testing-library/react";
+import {render, cleanup, fireEvent, screen, waitFor, within} from "@testing-library/react";
 import MergeRuleDialog from "./merge-rule-dialog";
 import data from "../../../../assets/mock-data/curation/merging.data";
 import {CurationContext} from "../../../../util/curation-context";
@@ -42,7 +42,7 @@ describe("Merge Rule Dialog component", () => {
     expect(getByLabelText("formItem-Property")).toBeInTheDocument();
 
     userEvent.click(getByTestId("property-to-match-dropdown"));
-    wait(() => { userEvent.click(getByText("customerId")); });
+    waitFor(() => { userEvent.click(getByText("customerId")); });
 
     //Confirming that URI, function and namespace fields are not available now, because Custom merge type is not selected yet.
     expect(queryByLabelText("uri-input")).not.toBeInTheDocument();
@@ -67,8 +67,8 @@ describe("Merge Rule Dialog component", () => {
     fireEvent.click(saveButton); //Will throw an error because URI and Function are mandatory fields.
 
     //verify if the below error messages are displayed properly
-    wait(() => { expect(getByText("URI is required")).toBeInTheDocument(); });
-    wait(() => { expect(getByText("Function is required")).toBeInTheDocument(); });
+    waitFor(() => { expect(getByText("URI is required")).toBeInTheDocument(); });
+    waitFor(() => { expect(getByText("Function is required")).toBeInTheDocument(); });
 
     //Enter the values for URI and Function fields and see if the save button gets enabled.
     fireEvent.change(uri, {target: {value: "Customer/Cust1.json"}});
@@ -78,7 +78,7 @@ describe("Merge Rule Dialog component", () => {
     fireEvent.click(cancelButton); //Modal will close now
     fireEvent.click(getByText("Yes"));
     expect(data.mergeRuleDataProps.setOpenMergeRuleDialog).toHaveBeenCalledTimes(1);
-    wait(() => { expect(mockMergingUpdate).toHaveBeenCalledTimes(1); });
+    waitFor(() => { expect(mockMergingUpdate).toHaveBeenCalledTimes(1); });
 
   });
 
@@ -99,7 +99,7 @@ describe("Merge Rule Dialog component", () => {
     expect(getByLabelText("formItem-Property")).toBeInTheDocument();
 
     userEvent.click(getByTestId("property-to-match-dropdown"));
-    wait(() => { userEvent.click(getByText("nicknames")); });
+    waitFor(() => { userEvent.click(getByText("nicknames")); });
 
     //Confirming that max values, max sources and add button are not available now, because property-specific merge type is not selected yet.
     expect(queryByLabelText("Enter max values")).not.toBeInTheDocument();
@@ -120,7 +120,7 @@ describe("Merge Rule Dialog component", () => {
 
     //Verify priority Order slider tooltip
     userEvent.hover(getAllByLabelText("icon: question-circle")[3]);
-    expect((await(waitForElement(() => getByLabelText("priorityOrderTooltip"))))).toBeInTheDocument();
+    expect((await(waitFor(() => getByLabelText("priorityOrderTooltip"))))).toBeInTheDocument();
 
     //Default Timeline is visible by default
     expect(queryByTestId("default-priorityOrder-timeline")).toBeInTheDocument();
@@ -137,7 +137,7 @@ describe("Merge Rule Dialog component", () => {
     fireEvent.click(cancelButton); //Modal will close now
     fireEvent.click(getByText("Yes"));
     expect(data.mergeRuleDataProps.setOpenMergeRuleDialog).toHaveBeenCalledTimes(1);
-    wait(() => { expect(mockMergingUpdate).toHaveBeenCalledTimes(1); });
+    waitFor(() => { expect(mockMergingUpdate).toHaveBeenCalledTimes(1); });
   });
 
   it("Verify Add Merge Rule dialog with strategy mergeType renders correctly", () => {
@@ -157,7 +157,7 @@ describe("Merge Rule Dialog component", () => {
     expect(getByLabelText("formItem-Property")).toBeInTheDocument();
 
     userEvent.click(getByTestId("property-to-match-dropdown"));
-    wait(() => { userEvent.click(getByText("status")); });
+    waitFor(() => { userEvent.click(getByText("status")); });
 
     //Checking if strategy name select is available now, because strategy merge type is not selected yet.
     expect(queryByText("Select strategy name")).not.toBeInTheDocument();
@@ -190,7 +190,7 @@ describe("Merge Rule Dialog component", () => {
     fireEvent.click(cancelButton); //Modal will close now
     fireEvent.click(getByText("Yes"));
     expect(data.mergeRuleDataProps.setOpenMergeRuleDialog).toHaveBeenCalledTimes(1);
-    wait(() => { expect(mockMergingUpdate).toHaveBeenCalledTimes(1); });
+    waitFor(() => { expect(mockMergingUpdate).toHaveBeenCalledTimes(1); });
   });
 
   it("Verify Add Merge Rule dialog with existing rule for property is disabled in the dropdown", async () => {
@@ -204,11 +204,11 @@ describe("Merge Rule Dialog component", () => {
     );
 
     userEvent.click(getByTestId("property-to-match-dropdown"));
-    wait(() => { userEvent.click(getByText("name")); });
+    waitFor(() => { userEvent.click(getByText("name")); });
 
     //Verify property dropdown tooltip
     userEvent.hover(getByLabelText("icon: question-circle"));
-    expect((await (waitForElement(() => getByText(MergeRuleTooltips.disabledProperties))))).toBeInTheDocument();
+    expect((await (waitFor(() => getByText(MergeRuleTooltips.disabledProperties))))).toBeInTheDocument();
 
     //Selecting the merge type to Property-Specific
     fireEvent.keyDown(getByLabelText("mergeType-select"), {key: "ArrowDown"});
@@ -272,7 +272,7 @@ describe("Merge Rule Dialog component", () => {
     fireEvent.click(saveButton);
     //Modal will close now
     fireEvent.click(cancelButton);
-    wait(() => { expect(data.mergeRuleDataProps.setOpenMergeRuleDialog).toHaveBeenCalledTimes(2); });
+    waitFor(() => { expect(data.mergeRuleDataProps.setOpenMergeRuleDialog).toHaveBeenCalledTimes(2); });
   });
 
   it("can select structured property and click save", async () => {
@@ -289,8 +289,8 @@ describe("Merge Rule Dialog component", () => {
 
     expect(queryByText("Add Merge Rule")).toBeInTheDocument();
     userEvent.click(getByTestId("property-to-match-dropdown"));
-    wait(() => { userEvent.click(within(getByLabelText("shipping-option")).getByLabelText("icon: caret-down")); });
-    wait(() => { userEvent.click(within(getByLabelText("shipping > street-option")).getByLabelText("street-option")); });
+    waitFor(() => { userEvent.click(within(getByLabelText("shipping-option")).getByLabelText("icon: caret-down")); });
+    waitFor(() => { userEvent.click(within(getByLabelText("shipping > street-option")).getByLabelText("street-option")); });
     //Checking if strategy name select is available now, because strategy merge type is not selected yet.
     expect(queryByText("Select strategy name")).not.toBeInTheDocument();
 
@@ -315,7 +315,7 @@ describe("Merge Rule Dialog component", () => {
     fireEvent.click(cancelButton); //Modal will close now
     fireEvent.click(getByText("Yes"));
     expect(data.mergeRuleDataProps.setOpenMergeRuleDialog).toHaveBeenCalledTimes(1);
-    wait(() => { expect(mockMergingUpdate).toHaveBeenCalledTimes(1); });
+    waitFor(() => { expect(mockMergingUpdate).toHaveBeenCalledTimes(1); });
   });
 
 

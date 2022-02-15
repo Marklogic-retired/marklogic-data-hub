@@ -1,5 +1,5 @@
 import React from "react";
-import {fireEvent, render, wait} from "@testing-library/react";
+import {fireEvent, render, waitFor} from "@testing-library/react";
 import SaveChangesModal from "./save-changes-modal";
 import axiosMock from "axios";
 import {saveQueryResponse, putQueryResponse, duplicateQueryNameErrorResponse} from "../../../../assets/mock-data/explore/query";
@@ -74,7 +74,7 @@ describe("<SaveChangesModal/>", () => {
     expect(queryField).toHaveAttribute("value", "Edit new query");
     queryDescription = getByPlaceholderText("Enter query description");
     expect(queryDescription).toHaveAttribute("value", "saved order query");
-    await wait(() => {
+    await waitFor(() => {
       userEvent.click(getByText("Save"));
     });
     let payload = {
@@ -125,7 +125,7 @@ describe("<SaveChangesModal/>", () => {
     />);
     queryField = getByPlaceholderText("Enter query name");
     fireEvent.change(queryField, {target: {value: "Edit new query"}});
-    await wait(() => {
+    await waitFor(() => {
       userEvent.click(getByText("Save"));
     });
     let payload = {

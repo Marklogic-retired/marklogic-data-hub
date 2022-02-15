@@ -1,6 +1,6 @@
 import React from "react";
 import ColumnSelector from "./column-selector";
-import {render, fireEvent, waitForElement} from "@testing-library/react";
+import {render, fireEvent, waitFor} from "@testing-library/react";
 import {entityPropertyDefinitions, selectedPropertyDefinitions} from "../../assets/mock-data/explore/entity-search";
 
 let defaultProps = {
@@ -62,9 +62,9 @@ describe("Column selector component", () => {
     expect(getByTestId("pk-tooltip")).toBeInTheDocument();
     expect(getByTestId("column-selector-tooltip")).toBeInTheDocument();
     fireEvent.mouseOver(getByTestId("column-selector-tooltip"));
-    await(waitForElement(() => (getByText("Select the columns to display."))));
+    await(waitFor(() => (getByText("Select the columns to display."))));
     fireEvent.mouseOver(getByTestId("pk-tooltip"));
-    await(waitForElement(() => (getByText("The column identified as the unique identifier must always be displayed."))));
+    await(waitFor(() => (getByText("The column identified as the unique identifier must always be displayed."))));
   });
 
 });

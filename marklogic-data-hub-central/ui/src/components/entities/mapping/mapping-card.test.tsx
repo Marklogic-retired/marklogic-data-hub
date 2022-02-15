@@ -1,6 +1,6 @@
 import React from "react";
 import {BrowserRouter as Router, MemoryRouter} from "react-router-dom";
-import {fireEvent, render, wait, cleanup, waitForElement, screen} from "@testing-library/react";
+import {fireEvent, render, cleanup, waitFor, screen} from "@testing-library/react";
 import MappingCard from "./mapping-card";
 import axiosMock from "axios";
 import data from "../../../assets/mock-data/curation/flows.data";
@@ -79,19 +79,19 @@ describe("Mapping Card component", () => {
     });
 
     fireEvent.mouseOver(getByLabelText("add-new-card-disabled"));
-    await wait(() => expect(getByText("Curate: "+SecurityTooltips.missingPermission)).toBeInTheDocument());
+    await waitFor(() => expect(getByText("Curate: "+SecurityTooltips.missingPermission)).toBeInTheDocument());
 
     fireEvent.mouseOver(getByText("Mapping1"));
-    wait(() => expect(getByText("Curate: "+SecurityTooltips.missingPermission)).toBeInTheDocument());
-    wait(() => expect(getByText("Step Details")).toBeInTheDocument());
+    waitFor(() => expect(getByText("Curate: "+SecurityTooltips.missingPermission)).toBeInTheDocument());
+    waitFor(() => expect(getByText("Step Details")).toBeInTheDocument());
     expect(queryAllByRole("delete-mapping")).toHaveLength(0);
     fireEvent.mouseOver(getByRole("edit-mapping"));
-    await wait(() => expect(getByText("Step Settings")).toBeInTheDocument());
+    await waitFor(() => expect(getByText("Step Settings")).toBeInTheDocument());
     fireEvent.mouseOver(getByTestId("Mapping1-stepDetails"));
 
     // test delete icon displays correct tooltip when disabled
     fireEvent.mouseOver(getByRole("disabled-delete-mapping"));
-    await wait(() => expect(getByText("Delete: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
+    await waitFor(() => expect(getByText("Delete: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
 
     await fireEvent.click(getByRole("disabled-delete-mapping"));
     expect(queryAllByText("Yes")).toHaveLength(0);
@@ -124,9 +124,9 @@ describe("Mapping Card component", () => {
 
     // check if delete tooltip appears
     fireEvent.mouseOver(getByRole("delete-mapping"));
-    await wait(() => expect(getByText("Delete")).toBeInTheDocument());
+    await waitFor(() => expect(getByText("Delete")).toBeInTheDocument());
     await fireEvent.click(getByRole("delete-mapping"));
-    expect(await(waitForElement(() => getByText((content, node) => {
+    expect(await(waitFor(() => getByText((content, node) => {
       return getSubElements(content, node, "Are you sure you want to delete the Mapping1 step?");
     })))).toBeInTheDocument();
     await fireEvent.click(getByText("Yes"));
@@ -151,7 +151,7 @@ describe("Mapping Card component", () => {
 
     expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles/curate/map"});
 
-    wait(async () => {
+    waitFor(async () => {
       const orderDetailsNode = await screen.findByText("OrderDetails");
       expect(orderDetailsNode.parentNode).toHaveTextContent("OrderNS:");
     });
@@ -170,10 +170,10 @@ describe("Mapping Card component", () => {
     );
 
     // Open default Basic settings
-    await wait(() => {
+    await waitFor(() => {
       fireEvent.click(getByTestId("Mapping1-edit"));
     });
-    wait(async () => {
+    waitFor(async () => {
       expect(screen.getByText("Mapping Step Settings")).toBeInTheDocument();
       expect(getByText("Basic").closest("button")).toHaveClass("nav-link active");
       expect(getByText("Advanced").closest("button")).not.toHaveClass("nav-link active");
@@ -191,7 +191,7 @@ describe("Mapping Card component", () => {
       expect(getByPlaceholderText("Enter source query")).toHaveTextContent("cts.collectionQuery(['default-ingestion'])");
 
       // Switch to Advanced settings
-      await wait(() => {
+      await waitFor(() => {
         fireEvent.click(getByText("Advanced"));
       });
       expect(getByText("Basic").closest("button")).not.toHaveClass("nav-link active");
@@ -216,7 +216,7 @@ describe("Mapping Card component", () => {
       expect(getByText("Interceptors")).toBeInTheDocument();
       expect(getByText("Custom Hook")).toBeInTheDocument();
 
-      await wait(() => {
+      await waitFor(() => {
         fireEvent.click(getByLabelText("Close"));
       });
     });
@@ -266,7 +266,7 @@ describe("Mapping Card component", () => {
     fireEvent.click(getByTestId("Mapping2-to-testFlow-Confirm"));
 
     // Check if the /tiles/run/add route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add"); });
+    waitFor(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add"); });
     // TODO- E2E test to check if the Run tile is loaded or not.
 
 
@@ -282,7 +282,7 @@ describe("Mapping Card component", () => {
     fireEvent.click(getByTestId("testFlow-run-step"));
 
     //Check if the /tiles/run/add-run route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
+    waitFor(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
 
   });
 
@@ -313,7 +313,7 @@ describe("Mapping Card component", () => {
     fireEvent.click(getByTestId("Mapping1-to-testFlow-Confirm"));
 
     //Check if the /tiles/run/add route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add"); });
+    waitFor(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add"); });
     //TODO- E2E test to check if the Run tile is loaded or not.
 
     //Verify run step in an existing flow where step does exist
@@ -328,7 +328,7 @@ describe("Mapping Card component", () => {
     fireEvent.click(getByLabelText("continue-confirm"));
 
     //Check if the /tiles/run/run-step route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/run-step"); });
+    waitFor(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/run-step"); });
 
   });
 
@@ -365,7 +365,7 @@ describe("Mapping Card component", () => {
     fireEvent.click(getByTestId("testStepInMultFlow-run-step"));
 
     //Check if the /tiles/run/add-run route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
+    waitFor(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
   });
 
   test("Adding the step to a new flow", async () => {
@@ -401,8 +401,8 @@ describe("Mapping Card component", () => {
     //Click on the link 'Add step to a new Flow'.
     fireEvent.click(getByTestId("Mapping1-toNewFlow"));
 
-    //Wait for the route to be pushed into History( which means that the route is working fine. Remaining can be verified in E2E test)
-    wait(() => {
+    //waitFor for the route to be pushed into History( which means that the route is working fine. Remaining can be verified in E2E test)
+    waitFor(() => {
       expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add");
     });
 
@@ -438,7 +438,7 @@ describe("Mapping Card component", () => {
     fireEvent.click(getByTestId("Mapping2-run-toNewFlow"));
 
     //Check if the /tiles/run/add-run route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
+    waitFor(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
 
   });
 
@@ -503,7 +503,7 @@ describe("Mapping Card component", () => {
 
     // test run icon displays correct tooltip when disabled
     fireEvent.mouseOver(getByRole("disabled-run-mapping"));
-    await wait(() => expect(getByText("Run: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
+    await waitFor(() => expect(getByText("Run: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
 
     await fireEvent.click(getByRole("disabled-run-mapping"));
     expect(queryByTestId("Mapping1-run-flowsList")).not.toBeInTheDocument();

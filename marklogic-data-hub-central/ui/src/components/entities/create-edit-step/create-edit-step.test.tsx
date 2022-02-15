@@ -1,5 +1,5 @@
 import React from "react";
-import {render, fireEvent, cleanup, wait} from "@testing-library/react";
+import {render, fireEvent, cleanup, waitFor} from "@testing-library/react";
 import CreateEditStep from "./create-edit-step";
 import data from "../../../assets/mock-data/curation/create-edit-step.data";
 import axiosMock from "axios";
@@ -69,15 +69,16 @@ describe("Create Edit Step Dialog component", () => {
     expect(timestamp).toBeDisabled();
 
     fireEvent.mouseOver(getByText("Save"));
-    wait(() => expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument());
+    waitFor(() => expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument());
     // TODO DHFPROD-7711 skipping failing checks to enable component replacement
     // expect(getByText("Save")).toBeDisabled();
     // expect(getByText("Cancel")).toBeEnabled();
   });
 
   test("Verify New Merging Dialog renders ", () => {
+	const step = {...data.newMerging, updateStepArtifact:jest.fn()};
     const {getByText, getByLabelText, getByPlaceholderText} = render(
-      <CreateEditStep {...data.newMerging} />
+      <CreateEditStep {...step} />
     );
 
     expect(getByPlaceholderText("Enter name")).toBeInTheDocument();
@@ -93,7 +94,8 @@ describe("Create Edit Step Dialog component", () => {
   });
 
   test("Verify save button is always enabled and error messaging appears as needed", async () => {
-    const {getByText, getByPlaceholderText, queryByText} = render(<CreateEditStep {...data.newMerging} />);
+	const step = {...data.newMerging, updateStepArtifact:jest.fn()};
+    const {getByText, getByPlaceholderText, queryByText} = render(<CreateEditStep {...step} />);
     const nameInput = getByPlaceholderText("Enter name");
     const saveButton = getByText("Save");
 
@@ -128,7 +130,7 @@ describe("Create Edit Step Dialog component", () => {
     //enter in a valid name and verify error message disappears (test hyphen and underscores are allowed)
     fireEvent.change(nameInput, {target: {value: "test-Create-Step__"}});
 
-    await wait(() => {
+    await waitFor(() => {
       expect(queryByText("Name is required")).toBeNull();
       expect(queryByText("Names must start with a letter and can contain letters, numbers, hyphens, and underscores only.")).toBeNull();
     });
@@ -137,7 +139,8 @@ describe("Create Edit Step Dialog component", () => {
   });
 
   test("Verify Save button requires all mandatory fields", async () => {
-    const {getByText, getByPlaceholderText} = render(<CreateEditStep {...data.newMerging} />);
+	const step = {...data.newMerging, updateStepArtifact:jest.fn()};
+    const {getByText, getByPlaceholderText} = render(<CreateEditStep {...step} />);
     const nameInput = getByPlaceholderText("Enter name");
     const collInput = document.querySelector(("#collList .ant-input"));
 
@@ -159,7 +162,7 @@ describe("Create Edit Step Dialog component", () => {
 
     // clear name and enter collection only
     fireEvent.change(nameInput, {target: {value: ""}});
-    await wait(() => {
+    await waitFor(() => {
       if (collInput) {
         fireEvent.change(collInput, {target: {value: "testCollection"}});
       }
@@ -174,7 +177,8 @@ describe("Create Edit Step Dialog component", () => {
 
   test("Verify able to type in input fields and typeahead search in collections field", async () => {
     axiosMock.post["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200, data: stringSearchResponse})));
-    const {getByText, getByLabelText, getByPlaceholderText} = render(<CreateEditStep {...data.newMerging} />);
+    const step = {...data.newMerging, updateStepArtifact:jest.fn()};
+    const {getByText, getByLabelText, getByPlaceholderText} = render(<CreateEditStep {...step} />);
 
     const descInput = getByPlaceholderText("Enter description");
     const collInput = document.querySelector(("#collList .ant-input"));
@@ -183,7 +187,7 @@ describe("Create Edit Step Dialog component", () => {
 
     fireEvent.change(descInput, {target: {value: "test description"}});
     expect(descInput).toHaveValue("test description");
-    await wait(() => {
+    await waitFor(() => {
       if (collInput) {
         fireEvent.change(collInput, {target: {value: "ada"}});
       }
@@ -201,7 +205,7 @@ describe("Create Edit Step Dialog component", () => {
     await(() => expect(axiosMock.post).toHaveBeenCalledTimes(1));
     await(() => expect(getByText("Adams Cole")).toBeInTheDocument());
 
-    await wait(() => {
+    await waitFor(() => {
       if (collInput) {
         fireEvent.change(collInput, {target: {value: "testCollection"}});
       }
@@ -217,7 +221,8 @@ describe("Create Edit Step Dialog component", () => {
 
   test("Verify able to type in input fields and typeahead search in collections field", async () => {
     axiosMock.post["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200, data: stringSearchResponse})));
-    const {getByText, getByLabelText, getByPlaceholderText} = render(<CreateEditStep {...data.newMerging} />);
+    const step = {...data.newMerging, updateStepArtifact:jest.fn()};
+    const {getByText, getByLabelText, getByPlaceholderText} = render(<CreateEditStep {...step} />);
 
     const descInput = getByPlaceholderText("Enter description");
     const collInput = document.querySelector(("#collList .ant-input"));
@@ -227,7 +232,7 @@ describe("Create Edit Step Dialog component", () => {
 
     fireEvent.change(descInput, {target: {value: "test description"}});
     expect(descInput).toHaveValue("test description");
-    await wait(() => {
+    await waitFor(() => {
       if (collInput) {
         fireEvent.change(collInput, {target: {value: "ada"}});
       }
@@ -245,7 +250,7 @@ describe("Create Edit Step Dialog component", () => {
     await(() => expect(axiosMock.post).toHaveBeenCalledTimes(1));
     await(() => expect(getByText("Adams Cole")).toBeInTheDocument());
 
-    await wait(() => {
+    await waitFor(() => {
       if (collInput) {
         fireEvent.change(collInput, {target: {value: "testCollection"}});
       }
@@ -266,11 +271,12 @@ describe("Create Edit Step Dialog component", () => {
 
   test("Verify collection and query tooltips appear when hovered", () => {
     const {getByText, getByTestId} = render(<CreateEditStep {...data.editMerging} />);
+    const radioCollection = render(CommonStepTooltips.radioCollection)
 
     fireEvent.mouseOver(getByTestId("collectionTooltip"));
-    wait(() => expect(getByText(CommonStepTooltips.radioCollection)).toBeInTheDocument());
+    waitFor(() => expect(radioCollection).toBeInTheDocument());
 
     fireEvent.mouseOver(getByTestId("queryTooltip"));
-    wait(() => expect(getByText(CommonStepTooltips.radioQuery)).toBeInTheDocument());
+    waitFor(() => expect(getByText(CommonStepTooltips.radioQuery)).toBeInTheDocument());
   });
 });

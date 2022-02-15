@@ -1,5 +1,5 @@
 import React from "react";
-import {render, cleanup, fireEvent, waitForElement, wait} from "@testing-library/react";
+import {render, cleanup, fireEvent, waitFor} from "@testing-library/react";
 import SystemInfo from "./system-info";
 import {AuthoritiesContext, AuthoritiesService} from "../../util/authorities";
 import {BrowserRouter as Router} from "react-router-dom";
@@ -77,7 +77,7 @@ describe("Update data load settings component", () => {
 
     //verify copy icon and tooltip
     fireEvent.mouseOver(getByTestId("copyServiceName"));
-    await waitForElement(() => getByText("Copy to clipboard"));
+    await waitFor(() => getByText("Copy to clipboard"));
     jest.spyOn(navigator.clipboard, "writeText");
     fireEvent.click(getByTestId("copyServiceName"));
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(data.environment.serviceName);
@@ -108,7 +108,7 @@ describe("Update data load settings component", () => {
     fireEvent.click(confirm);
     expect(axiosMock.post).toBeCalledWith("/api/environment/clearUserData");
 
-    expect(await(waitForElement(() => getByText((content, node) => {
+    expect(await(waitFor(() => getByText((content, node) => {
       return getSubElements(content, node, "Clear All User Data completed successfully");
     })))).toBeInTheDocument();
   });
@@ -123,15 +123,15 @@ describe("Update data load settings component", () => {
     </AuthoritiesContext.Provider></Router>);
 
     fireEvent.mouseOver(getByTestId("downloadHubCentralFiles"));
-    wait(() => expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument());
+    waitFor(() => expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument());
     expect(getByTestId("downloadHubCentralFiles")).toBeDisabled();
 
     fireEvent.mouseOver(getByTestId("downloadProjectFiles"));
-    wait(() => expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument());
+    waitFor(() => expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument());
     expect(getByTestId("downloadProjectFiles")).toBeDisabled();
 
     fireEvent.mouseOver(getByTestId("clearUserData"));
-    wait(() => expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument());
+    waitFor(() => expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument());
     expect(getByTestId("clearUserData")).toBeDisabled();
   });
 });

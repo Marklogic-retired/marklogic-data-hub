@@ -1,5 +1,5 @@
 import React from "react";
-import {render, screen, fireEvent, wait, waitForElement} from "@testing-library/react";
+import {render, screen, fireEvent, waitFor} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import MatchingStepDetail from "./matching-step-detail";
 
@@ -33,9 +33,9 @@ describe("Matching Step Detail view component", () => {
     expect(getByTestId("default-ruleset-timeline")).toBeInTheDocument();
     expect(getByTestId("default-threshold-timeline")).toBeInTheDocument();
     fireEvent.mouseOver(getByTestId("info-tooltip-threshold"));
-    await(waitForElement(() => (getByText("Enable the scale to position, edit or delete thresholds."))));
+    await(waitFor(() => (getByText("Enable the scale to position, edit or delete thresholds."))));
     fireEvent.mouseOver(getByTestId("info-tooltip-ruleset"));
-    await(waitForElement(() => (getByText("Enable the scale to position, edit or delete rulesets."))));
+    await(waitFor(() => (getByText("Enable the scale to position, edit or delete rulesets."))));
 
     userEvent.click(getByLabelText("threshold-less"));
     expect(queryByLabelText("threshold-more")).toBeInTheDocument();
@@ -121,7 +121,7 @@ describe("Matching Step Detail view component", () => {
 
     expect(getByLabelText("matchCombinationsHeading")).toBeInTheDocument();
 
-    wait(() => {
+    waitFor(() => {
       expect(getByLabelText("combinationLabel-sameThreshold")).toBeInTheDocument();
       expect(getByLabelText("combinationLabel-similarThreshold")).toBeInTheDocument();
     });

@@ -1,5 +1,5 @@
 import React from "react";
-import {render, fireEvent, waitForElement} from "@testing-library/react";
+import {render, fireEvent, waitFor} from "@testing-library/react";
 import {entitySearch, entityPropertyDefinitions, selectedPropertyDefinitions, entityDefArray, entitySearchAllEntities} from "../../assets/mock-data/explore/entity-search";
 import ResultsTabularView from "./results-tabular-view";
 import {BrowserRouter as Router} from "react-router-dom";
@@ -45,11 +45,11 @@ describe("Results Table view component", () => {
 
     //Check if the tooltip on 'Detail on separate page' icon works fine.
     fireEvent.mouseOver(getByTestId("101-detailOnSeparatePage"));
-    await(waitForElement(() => (getByText("Show the processed data"))));
+    await(waitFor(() => (getByText("Show the processed data"))));
 
     //Check if the tooltip on 'source on separate page' icon works fine.
     fireEvent.mouseOver(getByTestId("101-sourceOnSeparatePage"));
-    await(waitForElement(() => (getByText("Show the complete JSON"))));
+    await(waitFor(() => (getByText("Show the complete JSON"))));
   });
 
   test("Result table with no data renders", () => {
@@ -132,15 +132,15 @@ describe("Results Table view component", () => {
 
     //Check if the tooltip on 'Detail on separate page' icon works fine.
     fireEvent.mouseOver(getByTestId("101-detailOnSeparatePage"));
-    await(waitForElement(() => (getByText("Show the processed data"))));
+    await(waitFor(() => (getByText("Show the processed data"))));
 
     //Check if the tooltip on 'source on separate page' icon works fine.
     fireEvent.mouseOver(getByTestId("101-sourceOnSeparatePage"));
-    await(waitForElement(() => (getByText("Show the complete JSON"))));
+    await(waitFor(() => (getByText("Show the complete JSON"))));
 
     //Check if the tooltip on 'graph' icon works fine.
     fireEvent.mouseOver(getByTestId("101-graphOnSeparatePage"));
-    await(waitForElement(() => (getByText("View entity in graph view"))));
+    await(waitFor(() => (getByText("View entity in graph view"))));
 
   });
 

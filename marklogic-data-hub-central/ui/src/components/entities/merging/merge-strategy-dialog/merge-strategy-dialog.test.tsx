@@ -1,5 +1,5 @@
 import React from "react";
-import {render, cleanup, fireEvent, screen, waitForElement} from "@testing-library/react";
+import {render, cleanup, fireEvent, screen, waitFor} from "@testing-library/react";
 import data from "../../../../assets/mock-data/curation/merging.data";
 import {CurationContext} from "../../../../util/curation-context";
 import {customerMergingStep} from "../../../../assets/mock-data/curation/curation-context-mock";
@@ -43,7 +43,7 @@ describe("Merge Strategy Dialog component", () => {
 
     //Verify priority option slider tooltip
     userEvent.hover(getAllByLabelText("icon: question-circle")[2]);
-    expect((await(waitForElement(() => getByLabelText("priorityOrderTooltip"))))).toBeInTheDocument();
+    expect((await(waitFor(() => getByLabelText("priorityOrderTooltip"))))).toBeInTheDocument();
 
     //Default Timeline is visible by default
     expect(queryByTestId("default-priorityOrder-timeline")).toBeInTheDocument();

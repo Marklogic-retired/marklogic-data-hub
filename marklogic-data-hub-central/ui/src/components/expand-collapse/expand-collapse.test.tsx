@@ -1,5 +1,5 @@
 import React from "react";
-import {render, fireEvent, wait} from "@testing-library/react";
+import {render, fireEvent, waitFor} from "@testing-library/react";
 import ExpandCollapse from "./expand-collapse";
 
 describe("Expand/Collapse component tests", () => {
@@ -25,9 +25,9 @@ describe("Expand/Collapse component tests", () => {
     const {getByLabelText, getByText} = render(<ExpandCollapse handleSelection={handleSelectionMock} currentSelection={"collapse"}/>);
 
     fireEvent.mouseOver(getByLabelText("radio-button-expand"));
-    wait(() => expect(getByText("Expand All")));
+    waitFor(() => expect(getByText("Expand All")));
 
     fireEvent.mouseOver(getByLabelText("radio-button-collapse"));
-    wait(() => expect(getByText("Collapse All")));
+    waitFor(() => expect(getByText("Collapse All")));
   });
 });

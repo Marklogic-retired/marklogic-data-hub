@@ -2,7 +2,7 @@ import React from "react";
 import {BrowserRouter as Router} from "react-router-dom";
 import {createMemoryHistory} from "history";
 const history = createMemoryHistory();
-import {render, wait, waitForElement} from "@testing-library/react";
+import {render, waitFor} from "@testing-library/react";
 import axiosMock from "axios";
 import userEvent from "@testing-library/user-event";
 
@@ -42,7 +42,7 @@ describe("Modal Status Component", () => {
         </UserContext.Provider>
       </Router>);
 
-    await wait(() => {
+    await waitFor(() => {
       expect(getByText("Continue Session")).toBeInTheDocument();
       expect(getByText("Due to Inactivity, you will be logged out in")).toBeInTheDocument();
       userEvent.click(getByText("Continue Session"));
@@ -60,7 +60,7 @@ describe("Modal Status Component", () => {
         </UserContext.Provider>
       </Router>);
 
-    await wait(() => {
+    await waitFor(() => {
       expect(getByText("Continue Session")).toBeInTheDocument();
       expect(getByText("Due to Inactivity, you will be logged out in")).toBeInTheDocument();
       userEvent.click(getByText("Log Out"));
@@ -77,10 +77,10 @@ describe("Modal Status Component", () => {
         </UserContext.Provider>
       </Router>);
 
-    await waitForElement(() => getByText("500 Internal Server Error"));
+    await waitFor(() => getByText("500 Internal Server Error"));
     expect(getByText("java.net.ConnectException: Failed to connect to localhost/0:0:0:0:0:0:0:1:8011")).toBeInTheDocument();
 
-    await wait(() => {
+    await waitFor(() => {
       userEvent.click(getByText("OK"));
     });
     expect(userModalError.clearErrorMessage).toBeCalledTimes(1);
@@ -96,10 +96,10 @@ describe("Modal Status Component", () => {
         </UserContext.Provider>
       </Router>);
 
-    await waitForElement(() => getByText("500 Internal Server Error"));
+    await waitFor(() => getByText("500 Internal Server Error"));
     await (() => expect(getByText("java.net.ConnectException: Failed to connect to localhost/0:0:0:0:0:0:0:1:8011")).toBeInTheDocument());
 
-    await wait(() => {
+    await waitFor(() => {
       userEvent.click(getByText("Cancel"));
     });
     await (() => expect(getByText("Operation failed")).toBeInTheDocument());
@@ -126,7 +126,7 @@ describe("Modal Status Component", () => {
         </UserContext.Provider>
       </Router>);
 
-    await waitForElement(() => getByText("500 Internal Server Error"));
+    await waitFor(() => getByText("500 Internal Server Error"));
     await (() => expect(getByText("java.net.ConnectException: Failed to connect to localhost/0:0:0:0:0:0:0:1:8011")).toBeInTheDocument());
     await (() => expect(queryByText("Due to Inactivity, you will be logged out in")).toBeNull());
   });
@@ -140,7 +140,7 @@ describe("Modal Status Component", () => {
         </UserContext.Provider>
       </Router>);
 
-    await waitForElement(() => getByText("Session Timeout"));
+    await waitFor(() => getByText("Session Timeout"));
     expect(mockHistoryPush.mock.calls.length).toBe(1);
     expect(mockHistoryPush.mock.calls[0][0]).toBe("/noresponse");
   });

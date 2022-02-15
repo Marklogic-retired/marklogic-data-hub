@@ -2,8 +2,8 @@ import React from "react";
 import {
   cleanup,
   fireEvent,
-  render, wait,
-  waitForElement
+  render,
+  waitFor
 } from "@testing-library/react";
 import {CurationContext} from "../../../../util/curation-context";
 import {customerMergingStep, customerMergingStepEmpty} from "../../../../assets/mock-data/curation/curation-context-mock";
@@ -67,7 +67,7 @@ describe("Merging Step Detail view component", () => {
 
     //Verify priority option slider tooltip
     userEvent.hover(getByLabelText("icon: question-circle"));
-    expect((await(waitForElement(() => getByLabelText("priorityOrderTooltip"))))).toBeInTheDocument();
+    expect((await(waitFor(() => getByLabelText("priorityOrderTooltip"))))).toBeInTheDocument();
 
     //Verify default timeline is visible and no edit strategy button is present
     expect(queryByTestId("default-priorityOrder-timeline")).toBeInTheDocument();
@@ -101,7 +101,7 @@ describe("Merging Step Detail view component", () => {
     );
     expect(getByTestId("mergestrategy-myFavoriteSource")).toBeInTheDocument();
     fireEvent.mouseOver(getByTestId("mergestrategy-myFavoriteSource"));
-    await wait(() => expect(getByText(MergeStrategyTooltips.delete)).toBeInTheDocument());
+    await waitFor(() => expect(getByText(MergeStrategyTooltips.delete)).toBeInTheDocument());
   });
 
   it("Verify clicking yes deletes the merge rule ", async () => {
@@ -113,7 +113,7 @@ describe("Merging Step Detail view component", () => {
     );
     expect(getByTestId("mergerule-address")).toBeInTheDocument();
     userEvent.click(getByTestId("mergerule-address"));
-    expect(await (waitForElement(() => getByText((content, node) => {
+    expect(await (waitFor(() => getByText((content, node) => {
       return getSubElements(content, node, "Are you sure you want to delete address - custom merge rule ?");
     })))).toBeInTheDocument();
     expect(getByText("Yes")).toBeInTheDocument();
@@ -131,7 +131,7 @@ describe("Merging Step Detail view component", () => {
     );
     expect(getByTestId("mergerule-phone")).toBeInTheDocument();
     userEvent.click(getByTestId("mergerule-phone"));
-    expect(await (waitForElement(() => getByText((content, node) => {
+    expect(await (waitFor(() => getByText((content, node) => {
       return getSubElements(content, node, "Are you sure you want to delete phone - property-specific merge rule ?");
     })))).toBeInTheDocument();
     userEvent.click(getByText("No"));
@@ -148,7 +148,7 @@ describe("Merging Step Detail view component", () => {
     );
     expect(getByTestId("mergestrategy-customMergeStrategy")).toBeInTheDocument();
     userEvent.click(getByTestId("mergestrategy-customMergeStrategy"));
-    expect(await (waitForElement(() => getByText((content, node) => {
+    expect(await (waitFor(() => getByText((content, node) => {
       return getSubElements(content, node, "Are you sure you want to delete customMergeStrategy merge strategy ?");
     })))).toBeInTheDocument();
     expect(getByText("Yes")).toBeInTheDocument();
@@ -166,7 +166,7 @@ describe("Merging Step Detail view component", () => {
     );
     expect(getByTestId("mergestrategy-testMerge")).toBeInTheDocument();
     userEvent.click(getByTestId("mergestrategy-testMerge"));
-    expect(await (waitForElement(() => getByText((content, node) => {
+    expect(await (waitFor(() => getByText((content, node) => {
       return getSubElements(content, node, "Are you sure you want to delete testMerge merge strategy ?");
     })))).toBeInTheDocument();
     userEvent.click(getByText("No"));

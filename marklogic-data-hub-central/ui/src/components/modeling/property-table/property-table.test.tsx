@@ -1,5 +1,5 @@
 import React from "react";
-import {render, screen, fireEvent, cleanup, wait} from "@testing-library/react";
+import {render, screen, fireEvent, cleanup, waitFor} from "@testing-library/react";
 import {waitFor} from "@testing-library/dom";
 import userEvent from "@testing-library/user-event";
 import PropertyTable from "./property-table";
@@ -130,22 +130,22 @@ describe("Entity Modeling Property Table Component", () => {
     );
 
     fireEvent.mouseOver(getByLabelText("identifier-header"));
-    await wait(() => expect(screen.getByText(ModelingTooltips.identifier)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(ModelingTooltips.identifier)).toBeInTheDocument());
 
     fireEvent.mouseOver(getByLabelText("multiple-header"));
-    await wait(() => expect(screen.getByText(ModelingTooltips.multiple)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(ModelingTooltips.multiple)).toBeInTheDocument());
 
     fireEvent.mouseOver(getByLabelText("sort-header"));
-    await wait(() => expect(screen.getByText(ModelingTooltips.sort)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(ModelingTooltips.sort)).toBeInTheDocument());
 
     fireEvent.mouseOver(getByLabelText("facet-header"));
-    await wait(() => expect(screen.getByText(ModelingTooltips.facet)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(ModelingTooltips.facet)).toBeInTheDocument());
 
     // fireEvent.mouseOver(getByLabelText('wildcard-header'));
-    // await wait (() => expect(screen.getByText(ModelingTooltips.wildcard)).toBeInTheDocument());
+    // await waitFor (() => expect(screen.getByText(ModelingTooltips.wildcard)).toBeInTheDocument());
 
     fireEvent.mouseOver(getByLabelText("pii-header"));
-    await wait(() => expect(screen.getByText(ModelingTooltips.pii)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(ModelingTooltips.pii)).toBeInTheDocument());
 
     expect(getByTestId("identifier-concept_name")).toBeInTheDocument();
     expect(getByTestId("multiple-synonyms")).toBeInTheDocument();
@@ -178,13 +178,13 @@ describe("Entity Modeling Property Table Component", () => {
     );
 
     fireEvent.mouseOver(getByTestId("shipping-shipping-tooltip-trigger"));
-    await wait(() => expect(getByText(ModelingTooltips.entityPropertyName)).toBeInTheDocument());
+    await waitFor(() => expect(getByText(ModelingTooltips.entityPropertyName)).toBeInTheDocument());
 
     fireEvent.mouseOver(getAllByTestId("add-struct-Address")[0]);
-    await wait(() => expect(getByText(ModelingTooltips.addStructuredProperty)).toBeInTheDocument());
+    await waitFor(() => expect(getByText(ModelingTooltips.addStructuredProperty)).toBeInTheDocument());
 
     fireEvent.mouseOver(getByTestId("delete-Customer-shipping"));
-    await wait(() => expect(getByText(ModelingTooltips.deleteProperty)).toBeInTheDocument());
+    await waitFor(() => expect(getByText(ModelingTooltips.deleteProperty)).toBeInTheDocument());
   });
 
   // TODO DHFPROD-7711 skipping failing tests to enable component replacement
@@ -290,10 +290,10 @@ describe("Entity Modeling Property Table Component", () => {
     fireEvent.click(getByTestId("collapseBtn"));
 
     //all nested properties should not be present
-    await wait(() => expect(queryByText("street")).not.toBeInTheDocument());
-    await wait(() => expect(queryByText("state")).not.toBeInTheDocument());
-    await wait(() => expect(queryByText("fiveDigit")).not.toBeInTheDocument());
-    await wait(() => expect(queryByText("plusFour")).not.toBeInTheDocument());
+    await waitFor(() => expect(queryByText("street")).not.toBeInTheDocument());
+    await waitFor(() => expect(queryByText("state")).not.toBeInTheDocument());
+    await waitFor(() => expect(queryByText("fiveDigit")).not.toBeInTheDocument());
+    await waitFor(() => expect(queryByText("plusFour")).not.toBeInTheDocument());
   });
 
 

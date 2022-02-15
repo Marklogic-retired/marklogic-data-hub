@@ -1,5 +1,5 @@
 import React from "react";
-import {render, waitForElement, fireEvent} from "@testing-library/react";
+import {render, waitFor, fireEvent} from "@testing-library/react";
 import MonitorSelectedFacets from "./monitor-selected-facets";
 
 
@@ -47,7 +47,7 @@ test("Grey Facets: Verify apply/discard icons", async () => {
   expect(discardButton).toBeInTheDocument();
   expect(applyButton).toBeInTheDocument();
   fireEvent.mouseOver(applyButton);
-  await(waitForElement(() => (getByText("Apply facets"))));
+  await(waitFor(() => (getByText("Apply facets"))));
   fireEvent.mouseOver(discardButton);
-  await(waitForElement(() => (getByText("Clear unapplied facets"))));
+  await(waitFor(() => (getByText("Clear unapplied facets"))));
 });

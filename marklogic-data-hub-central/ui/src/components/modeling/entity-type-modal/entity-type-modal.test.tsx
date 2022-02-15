@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-import {render, wait} from "@testing-library/react";
+import {render, waitFor} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import EntityTypeModal from "./entity-type-modal";
 import {ModelingTooltips} from "../../../config/tooltips.config";
@@ -66,11 +66,11 @@ describe("EntityTypeModal Component", () => {
     userEvent.click(getByTestId("edit-color-icon"));
     userEvent.click(getByTitle("#CEE0ED"));
 
-    await wait(() => {
+    await waitFor(() => {
       expect(getByTestId("AnotherModel-color")).toHaveStyle("background: #CEE0ED");
     });
 
-    await wait(() => {
+    await waitFor(() => {
       userEvent.click(getByText("Add"));
     });
     expect(axiosMock.post).toHaveBeenCalledWith(url, payload);
@@ -92,7 +92,7 @@ describe("EntityTypeModal Component", () => {
     userEvent.type(getByPlaceholderText(placeholders.name), "123-Box");
     userEvent.type(getByPlaceholderText(placeholders.description), "Product entity description");
 
-    await wait(() => {
+    await waitFor(() => {
       userEvent.click(getByText("Add"));
     });
 
@@ -114,13 +114,13 @@ describe("EntityTypeModal Component", () => {
     userEvent.type(getByPlaceholderText(placeholders.name), payload.name);
     userEvent.type(getByPlaceholderText(placeholders.description), payload.description);
 
-    await wait(() => {
+    await waitFor(() => {
       userEvent.click(getByText("Add"));
     });
     expect(axiosMock.post).toHaveBeenCalledWith(url, payload);
     expect(axiosMock.post).toHaveBeenCalledTimes(1);
 
-    await wait(() => { expect(getByLabelText("entity-name-error")).toBeInTheDocument(); });
+    await waitFor(() => { expect(getByLabelText("entity-name-error")).toBeInTheDocument(); });
   });
 
   test("Edit modal is not visible", () => {
@@ -166,11 +166,11 @@ describe("EntityTypeModal Component", () => {
     userEvent.click(getByTestId("edit-color-icon"));
     userEvent.click(getByTitle("#F8F8DE"));
 
-    await wait(() => {
+    await waitFor(() => {
       expect(getByTestId("ModelName-color")).toHaveStyle("background: #F8F8DE");
     });
 
-    await wait(() => {
+    await waitFor(() => {
       userEvent.click(getByText("OK"));
     });
     expect(axiosMock.put).toHaveBeenCalledWith(url, payload);
@@ -200,7 +200,7 @@ describe("EntityTypeModal Component", () => {
     userEvent.type(getByPlaceholderText(placeholders.namespace), payload.namespace);
     userEvent.type(getByPlaceholderText(placeholders.namespacePrefix), payload.namespacePrefix);
 
-    await wait(() => {
+    await waitFor(() => {
       userEvent.click(getByText("Add"));
     });
     expect(axiosMock.post).toHaveBeenCalledWith(url, payload);
@@ -227,7 +227,7 @@ describe("EntityTypeModal Component", () => {
     userEvent.type(getByPlaceholderText(placeholders.namespace), payload.namespace);
     userEvent.type(getByPlaceholderText(placeholders.namespacePrefix), payload.namespacePrefix);
 
-    await wait(() => {
+    await waitFor(() => {
       userEvent.click(getByText("Add"));
     });
     expect(axiosMock.post).toHaveBeenCalledWith(url, payload);

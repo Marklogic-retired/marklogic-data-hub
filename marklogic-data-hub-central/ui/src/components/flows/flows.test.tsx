@@ -1,6 +1,6 @@
 import React from "react";
 import {Router} from "react-router";
-import {render, fireEvent, cleanup, wait} from "@testing-library/react";
+import {render, fireEvent, cleanup, waitFor} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
 import {createMemoryHistory} from "history";
@@ -67,7 +67,7 @@ describe("Flows component", () => {
       <Router history={history}>
         <Flows {...data.flowProps} flows={allKindsOfIngestInAFlow} />
       </Router>);
-    userEvent.click(document.querySelector(".accordion-button"));
+    userEvent.click(document.querySelector(".accordion-button")!);
     ["CSV", "BIN", "TXT", "JSON", "XML"].forEach(format => {
       expect(getByText(format)).toBeInTheDocument();
       expect(getByText(format)).toHaveStyle("height: 35px; width: 35px; line-height: 35px; text-align: center;");
@@ -129,7 +129,7 @@ describe("Flows component", () => {
     expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument();
     fireEvent.mouseOut(getByText("Add Step"));
     fireEvent.mouseOver(getByLabelText("create-flow-disabled"));
-    wait(() => expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument());
+    waitFor(() => expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument());
 
     // Open flow
     fireEvent.click(flowButton);
@@ -228,10 +228,10 @@ describe("Flows component", () => {
 
     let i : number;
 
-    userEvent.click(document.querySelector(".accordion-button"));
+    userEvent.click(document.querySelector(".accordion-button")!);
     for (i = 1; i < data.flows.data[0].steps.length + 1; ++i) {
       const pathname = `http://localhost/tiles/${data.flows.data[0].steps[i-1]["stepDefinitionType"] === "ingestion" ? "load": "curate"}`;
-      expect(getByLabelText(`${flowName}-${i}-cardlink`).firstChild.href).toBe(pathname);
+      expect(getByLabelText(`${flowName}-${i}-cardlink`).firstChild).toHaveAttribute('href', pathname);
     }
 
   });

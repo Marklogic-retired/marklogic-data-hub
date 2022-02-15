@@ -1,5 +1,5 @@
 import React from "react";
-import {render, fireEvent, screen, wait} from "@testing-library/react";
+import {render, fireEvent, screen, waitFor} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import PropertyModal from "./property-modal";
 import {
@@ -555,7 +555,7 @@ describe("Property Modal Component", () => {
     expect(mockEntityReferences).toBeCalledWith(entityType?.entityName);
     expect(mockEntityReferences).toBeCalledTimes(1);
 
-    await wait(() =>
+    await waitFor(() =>
       expect(getByText("Show Steps...")).toBeInTheDocument()
     );
 
@@ -649,7 +649,7 @@ describe("Property Modal Component", () => {
     await(() => expect(getByText("Relationship: Customer")).toBeInTheDocument());
 
     // Change Join Property
-    wait(() => {
+    waitFor(() => {
       expect(getByText("You can select the foreign key now or later:")).toBeInTheDocument();
       expect(getByText("customerId")).toBeInTheDocument();
       userEvent.click(getByLabelText("foreignKey-select"));
@@ -717,7 +717,7 @@ describe("Property Modal Component", () => {
     expect(mockEntityReferences).toBeCalledWith(entityType?.entityName);
     expect(mockEntityReferences).toBeCalledTimes(1);
 
-    await wait(() =>
+    await waitFor(() =>
       expect(getByText("Show Steps...")).toBeInTheDocument()
     );
 
@@ -876,7 +876,7 @@ describe("Property Modal Component", () => {
     expect(mockEntityReferences).toBeCalledWith(entityType?.entityName);
     expect(mockEntityReferences).toBeCalledTimes(2);
 
-    await wait(() =>
+    await waitFor(() =>
       expect(screen.getByLabelText("delete-property-text")).toBeInTheDocument(),
     );
     userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeletePropertyWarn}-yes`));
@@ -939,7 +939,7 @@ describe("Property Modal Component", () => {
     expect(mockEntityReferences).toBeCalledWith(entityType?.entityName);
     expect(mockEntityReferences).toBeCalledTimes(2);
 
-    await wait(() =>
+    await waitFor(() =>
       expect(screen.getByLabelText("delete-property-step-text")).toBeInTheDocument(),
     );
     userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeletePropertyStepWarn}-yes`));
@@ -995,7 +995,7 @@ describe("Property Modal Component", () => {
     expect(mockEntityReferences).toBeCalledWith(entityType?.entityName);
     expect(mockEntityReferences).toBeCalledTimes(2);
 
-    await wait(() =>
+    await waitFor(() =>
       expect(screen.getByLabelText("delete-property-text")).toBeInTheDocument(),
     );
     userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeletePropertyWarn}-yes`));

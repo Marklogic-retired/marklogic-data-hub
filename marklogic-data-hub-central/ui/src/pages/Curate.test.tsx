@@ -1,5 +1,5 @@
 import React from "react";
-import {render, fireEvent, waitForElement, cleanup, wait} from "@testing-library/react";
+import {render, fireEvent, waitFor, cleanup, waitFor} from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import {AuthoritiesContext, AuthoritiesService} from "../util/authorities";
 import axiosMock from "axios";
@@ -37,7 +37,7 @@ describe("Curate component", () => {
         </CurationContext.Provider>
       </AuthoritiesContext.Provider></MemoryRouter>);
 
-    expect(await (waitForElement(() => getByText("Customer")))).toBeInTheDocument();
+    expect(await (waitFor(() => getByText("Customer")))).toBeInTheDocument();
 
     expect(getByText(tiles.curate.intro)).toBeInTheDocument(); // tile intro text
 
@@ -53,8 +53,8 @@ describe("Curate component", () => {
 
     // test edit
     fireEvent.click(getByTestId("Mapping3-edit"));
-    wait(async () => {
-      expect(await (waitForElement(() => getByText("Mapping Step Settings")))).toBeInTheDocument();
+    waitFor(async () => {
+      expect(await (waitFor(() => getByText("Mapping Step Settings")))).toBeInTheDocument();
       expect(getAllByText("Save")[0]).toBeDisabled();
       userEvent.click(getAllByText("Cancel")[0]);
     });
@@ -74,7 +74,7 @@ describe("Curate component", () => {
         </CurationContext.Provider>
       </AuthoritiesContext.Provider></MemoryRouter>);
 
-    expect(await (waitForElement(() => getByText("Customer")))).toBeInTheDocument();
+    expect(await (waitFor(() => getByText("Customer")))).toBeInTheDocument();
     // Check for steps to be populated
     expect(axiosMock.get).toBeCalledWith("/api/steps/mapping");
     fireEvent.click(getByText("Customer"));
@@ -90,18 +90,18 @@ describe("Curate component", () => {
 
     // test edit
     fireEvent.click(getByTestId("Mapping1-edit"));
-    wait(async () => {
-      expect(await (waitForElement(() => getByText("Mapping Step Settings")))).toBeInTheDocument();
+    waitFor(async () => {
+      expect(await (waitFor(() => getByText("Mapping Step Settings")))).toBeInTheDocument();
       expect(getByTestId("mapping-dialog-save")).not.toBeDisabled();
       fireEvent.click(getByTestId("mapping-dialog-cancel"));
     });
     // test delete
     fireEvent.click(getByTestId("Mapping1-delete"));
-    await wait(() => {
+    await waitFor(() => {
       fireEvent.click(getByText("No"));
     });
     fireEvent.click(getByTestId("Mapping1-delete"));
-    await wait(() => {
+    await waitFor(() => {
       fireEvent.click(getByText("Yes"));
     });
     expect(axiosMock.delete).toHaveBeenNthCalledWith(1, "/api/steps/mapping/Mapping1");
@@ -111,7 +111,7 @@ describe("Curate component", () => {
     const authorityService = new AuthoritiesService();
     const {getByText, queryByText} = await render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><Curate /></AuthoritiesContext.Provider></MemoryRouter>);
 
-    expect(await (waitForElement(() => getByText(MissingPagePermission)))).toBeInTheDocument();
+    expect(await (waitFor(() => getByText(MissingPagePermission)))).toBeInTheDocument();
 
     // entities should not be visible
     expect(queryByText("Customer")).not.toBeInTheDocument();

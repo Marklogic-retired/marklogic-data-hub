@@ -2,9 +2,9 @@ import React from "react";
 import {
   render,
   fireEvent,
-  waitForElement,
+  waitFor,
   cleanup,
-  wait
+  waitFor
 } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import axiosMock from "axios";
@@ -149,9 +149,9 @@ describe("Verify load step failures in a flow", () => {
     fireEvent.click(document.querySelector(".accordion-button"));
     let runButton = await getByLabelText("runStep-failedIngest");
     fireEvent.mouseOver(getAllByLabelText("icon: play-circle")[0]); //temporarily fixing for DHFPROD-7820, change back to 1 eventually
-    await waitForElement(() => getByText(RunToolTips.ingestionStep));
+    await waitFor(() => getByText(RunToolTips.ingestionStep));
     fireEvent.mouseOver(getAllByLabelText("icon: close")[0]);
-    await waitForElement(() => getByText(RunToolTips.removeStep));
+    await waitFor(() => getByText(RunToolTips.removeStep));
 
     let upload;
     upload = document.querySelector("#fileUpload");
@@ -170,7 +170,7 @@ describe("Verify load step failures in a flow", () => {
 
     // New Modal with Error message, uri and details is opened
 
-    expect(await(waitForElement(() => getByText((content, node) => {
+    expect(await(waitFor(() => getByText((content, node) => {
       return getSubElements(content, node, "The ingestion step failedIngest completed with errors");
     })))).toBeInTheDocument();
 
@@ -180,10 +180,10 @@ describe("Verify load step failures in a flow", () => {
     expect(getAllByText("/test/data/nestedPerson1.json")[0]).toBeInTheDocument();
 
     expect(document.querySelector("#error-list")).toHaveTextContent("Out of 3 batches, 1 succeeded and 2 failed. The error messages are listed below");
-    expect(await(waitForElement(() => getByText("Explore Loaded Data")))).toBeInTheDocument();
+    expect(await(waitFor(() => getByText("Explore Loaded Data")))).toBeInTheDocument();
 
     // Error 2 is present
-    expect(await(waitForElement(() => getByText("Error 2")))).toBeInTheDocument();
+    expect(await(waitFor(() => getByText("Error 2")))).toBeInTheDocument();
 
     fireEvent.click(getByText("Close"));
   });
@@ -209,7 +209,7 @@ describe("Verify load step failures in a flow", () => {
 
     fireEvent.click(getByLabelText("runStep-failedIngest"));
 
-    expect(await(waitForElement(() => getByText((content, node) => {
+    expect(await(waitFor(() => getByText((content, node) => {
       return getSubElements(content, node, "The ingestion step failedIngest failed");
     })))).toBeInTheDocument();
     expect(getByText("Message:")).toBeInTheDocument();
@@ -257,21 +257,21 @@ describe("Verify step running", () => {
     runButton = await getByLabelText(`runStep-${steps[6].stepName}`);
     fireEvent.click(runButton);
 
-    expect(await(waitForElement(() => getByText((content, node) => {
+    expect(await(waitFor(() => getByText((content, node) => {
       return getSubElements(content, node, `The ingestion step ${steps[6].stepName} completed successfully`);
     })))).toBeInTheDocument();
     expect(getByLabelText("icon: check-circle")).toBeInTheDocument();
     let stepType = `${steps[6].stepDefinitionType}`;
     if (stepType === "ingestion") {
-      expect(await(waitForElement(() => getByText("Explore Loaded Data")))).toBeInTheDocument();
+      expect(await(waitFor(() => getByText("Explore Loaded Data")))).toBeInTheDocument();
     } else {
       expect(getByText(" ")).toBeInTheDocument();
     }
 
-    let exploreButton = await(waitForElement(() => getByText("Explore Loaded Data")));
+    let exploreButton = await(waitFor(() => getByText("Explore Loaded Data")));
     fireEvent.click(exploreButton);
 
-    await wait(() => {
+    await waitFor(() => {
       expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles/explore",
         "state": {"targetDatabase": "staging", "jobId": "e4590649-8c4b-419c-b6a1-473069186592"}});
     });
@@ -279,15 +279,15 @@ describe("Verify step running", () => {
     //Run mapping step
     runButton = await getByLabelText(`runStep-${steps[1].stepName}`);
     fireEvent.click(runButton);
-    expect(await(waitForElement(() => getAllByText("Running...")[0]))).toBeInTheDocument();
+    expect(await(waitFor(() => getAllByText("Running...")[0]))).toBeInTheDocument();
 
-    expect(await(waitForElement(() => getByText((content, node) => {
+    expect(await(waitFor(() => getByText((content, node) => {
       return getSubElements(content, node, `The mapping step ${steps[1].stepName} completed successfully`);
     })))).toBeInTheDocument();
     expect(getByLabelText("icon: check-circle")).toBeInTheDocument();
     stepType = `${steps[1].stepDefinitionType}`;
     if (stepType === "mapping") {
-      expect(await(waitForElement(() => getByText("Explore Curated Data")))).toBeInTheDocument();
+      expect(await(waitFor(() => getByText("Explore Curated Data")))).toBeInTheDocument();
     } else {
       expect(getByText(" ")).toBeInTheDocument();
     }
@@ -296,8 +296,8 @@ describe("Verify step running", () => {
     //Run match step
     runButton = await getByLabelText(`runStep-${steps[3].stepName}`);
     fireEvent.click(runButton);
-    expect(await(waitForElement(() => getAllByText("Running...")[0]))).toBeInTheDocument();
-    expect(await(waitForElement(() => getByText((content, node) => {
+    expect(await(waitFor(() => getAllByText("Running...")[0]))).toBeInTheDocument();
+    expect(await(waitFor(() => getByText((content, node) => {
       return getSubElements(content, node, `The matching step ${steps[3].stepName} completed successfully`);
     })))).toBeInTheDocument();
     expect(getByLabelText("icon: check-circle")).toBeInTheDocument();
@@ -306,8 +306,8 @@ describe("Verify step running", () => {
     //Run merge step
     runButton = await getByLabelText(`runStep-${steps[4].stepName}`);
     fireEvent.click(runButton);
-    expect(await(waitForElement(() => getAllByText("Running...")[0]))).toBeInTheDocument();
-    expect(await(waitForElement(() => getByText((content, node) => {
+    expect(await(waitFor(() => getAllByText("Running...")[0]))).toBeInTheDocument();
+    expect(await(waitFor(() => getByText((content, node) => {
       return getSubElements(content, node, `The merging step ${steps[4].stepName} completed successfully`);
     })))).toBeInTheDocument();
     expect(getByLabelText("icon: check-circle")).toBeInTheDocument();
@@ -316,8 +316,8 @@ describe("Verify step running", () => {
     //Run master step
     runButton = await getByLabelText(`runStep-${steps[5].stepName}`);
     fireEvent.click(runButton);
-    expect(await(waitForElement(() => getAllByText("Running...")[0]))).toBeInTheDocument();
-    expect(await(waitForElement(() => getByText((content, node) => {
+    expect(await(waitFor(() => getAllByText("Running...")[0]))).toBeInTheDocument();
+    expect(await(waitFor(() => getByText((content, node) => {
       return getSubElements(content, node, `The mastering step ${steps[5].stepName} completed successfully`);
     })))).toBeInTheDocument();
     expect(getByLabelText("icon: check-circle")).toBeInTheDocument();
@@ -350,21 +350,21 @@ describe("Verify step running", () => {
     runButton = await getByLabelText(`runStep-${steps[6].stepName}`);
     fireEvent.click(runButton);
 
-    expect(await(waitForElement(() => getByText((content, node) => {
+    expect(await(waitFor(() => getByText((content, node) => {
       return getSubElements(content, node, `The ingestion step ${steps[6].stepName} completed successfully`);
     })))).toBeInTheDocument();
     expect(getByLabelText("icon: check-circle")).toBeInTheDocument();
     let stepType = `${steps[6].stepDefinitionType}`;
     if (stepType === "ingestion") {
-      expect(await(waitForElement(() => getByText("Explore Loaded Data")))).toBeInTheDocument();
+      expect(await(waitFor(() => getByText("Explore Loaded Data")))).toBeInTheDocument();
     } else {
       expect(getByText(" ")).toBeInTheDocument();
     }
 
-    let exploreButton = await(waitForElement(() => getByText("Explore Loaded Data")));
+    let exploreButton = await(waitFor(() => getByText("Explore Loaded Data")));
     fireEvent.click(exploreButton);
 
-    await wait(() => {
+    await waitFor(() => {
       expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles/explore",
         "state": {"targetDatabase": "staging", "jobId": "e4590649-8c4b-419c-b6a1-473069186592"}});
     });
@@ -372,14 +372,14 @@ describe("Verify step running", () => {
     //Run mapping step
     runButton = await getByLabelText(`runStep-${steps[1].stepName}`);
     fireEvent.click(runButton);
-    expect(await(waitForElement(() => getAllByText("Running...")[0]))).toBeInTheDocument();
-    expect(await(waitForElement(() => getByText((content, node) => {
+    expect(await(waitFor(() => getAllByText("Running...")[0]))).toBeInTheDocument();
+    expect(await(waitFor(() => getByText((content, node) => {
       return getSubElements(content, node, `The mapping step ${steps[1].stepName} completed successfully`);
     })))).toBeInTheDocument();
     expect(getByLabelText("icon: check-circle")).toBeInTheDocument();
     stepType = `${steps[1].stepDefinitionType}`;
     if (stepType === "mapping") {
-      expect(await(waitForElement(() => getByText("Explore Curated Data")))).toBeInTheDocument();
+      expect(await(waitFor(() => getByText("Explore Curated Data")))).toBeInTheDocument();
     } else {
       expect(getByText(" ")).toBeInTheDocument();
     }
@@ -389,8 +389,8 @@ describe("Verify step running", () => {
     //Run match step
     runButton = await getByLabelText(`runStep-${steps[3].stepName}`);
     fireEvent.click(runButton);
-    expect(await(waitForElement(() => getAllByText("Running...")[0]))).toBeInTheDocument();
-    expect(await(waitForElement(() => getByText((content, node) => {
+    expect(await(waitFor(() => getAllByText("Running...")[0]))).toBeInTheDocument();
+    expect(await(waitFor(() => getByText((content, node) => {
       return getSubElements(content, node, `The matching step ${steps[3].stepName} completed successfully`);
     })))).toBeInTheDocument();
     expect(getByLabelText("icon: check-circle")).toBeInTheDocument();
@@ -399,8 +399,8 @@ describe("Verify step running", () => {
     //Run merge step
     runButton = await getByLabelText(`runStep-${steps[4].stepName}`);
     fireEvent.click(runButton);
-    expect(await(waitForElement(() => getAllByText("Running...")[0]))).toBeInTheDocument();
-    expect(await(waitForElement(() => getByText((content, node) => {
+    expect(await(waitFor(() => getAllByText("Running...")[0]))).toBeInTheDocument();
+    expect(await(waitFor(() => getByText((content, node) => {
       return getSubElements(content, node, `The merging step ${steps[4].stepName} completed successfully`);
     })))).toBeInTheDocument();
     expect(getByLabelText("icon: check-circle")).toBeInTheDocument();
@@ -409,8 +409,8 @@ describe("Verify step running", () => {
     //Run master step
     runButton = await getByLabelText(`runStep-${steps[5].stepName}`);
     fireEvent.click(runButton);
-    expect(await(waitForElement(() => getAllByText("Running...")[0]))).toBeInTheDocument();
-    expect(await(waitForElement(() => getByText((content, node) => {
+    expect(await(waitFor(() => getAllByText("Running...")[0]))).toBeInTheDocument();
+    expect(await(waitFor(() => getByText((content, node) => {
       return getSubElements(content, node, `The mastering step ${steps[5].stepName} completed successfully`);
     })))).toBeInTheDocument();
     expect(getByLabelText("icon: check-circle")).toBeInTheDocument();
@@ -433,11 +433,11 @@ describe("Verify step display", () => {
 
     // Click disclosure icon
     fireEvent.click(document.querySelector(".accordion-button"));
-    expect(await(waitForElement(() => getByText("XML")))).toBeInTheDocument();
+    expect(await(waitFor(() => getByText("XML")))).toBeInTheDocument();
 
-    expect(await(waitForElement(() => getByText("loadXML")))).toBeInTheDocument();
+    expect(await(waitFor(() => getByText("loadXML")))).toBeInTheDocument();
 
-    let notification = await(waitForElement(() => getByLabelText("icon: check-circle")));
+    let notification = await(waitFor(() => getByLabelText("icon: check-circle")));
     expect(getByText("XML")).toBeInTheDocument();
     expect(getByText("XML")).toHaveStyle("height: 35px; width: 35px; line-height: 35px; text-align: center;");
     expect(notification).toBeInTheDocument();
@@ -445,7 +445,7 @@ describe("Verify step display", () => {
     let ts: string = curateData.flowsXMLLatestJob.data.steps[0].stepEndTime; // "2020-07-13T23:54:06.30257-07:00"
     let dateExpected: string = moment(ts).format("M/D/YYYY");
     let timeExpected: string = moment(ts).format("h:mm:ss A");
-    expect(await(waitForElement(() => getByText("Step last ran successfully on " + dateExpected + ", " + timeExpected)))).toBeInTheDocument(); // "Step last ran successfully on 7/13/2020, 11:54:06 PM"
+    expect(await(waitFor(() => getByText("Step last ran successfully on " + dateExpected + ", " + timeExpected)))).toBeInTheDocument(); // "Step last ran successfully on 7/13/2020, 11:54:06 PM"
   });
 
   test("Verify a mapping step's notification shows up correctly", async () => {
@@ -454,18 +454,18 @@ describe("Verify step display", () => {
 
     // Click disclosure icon
     fireEvent.click(document.querySelector(".accordion-button"));
-    expect(await(waitForElement(() => getByText("Mapping1")))).toBeInTheDocument();
-    let notification = await(waitForElement(() => getByLabelText("icon: exclamation-circle")));
+    expect(await(waitFor(() => getByText("Mapping1")))).toBeInTheDocument();
+    let notification = await(waitFor(() => getByLabelText("icon: exclamation-circle")));
     expect(notification).toBeInTheDocument();
     fireEvent.mouseOver(notification);
     let ts: string = curateData.jobRespFailedWithError.data.stepResponses["1"].stepEndTime; // "2020-04-04T01:17:45.012137-07:00"
     let dateExpected: string = moment(ts).format("M/D/YYYY");
     let timeExpected: string = moment(ts).format("H:mm:ss A");
-    expect(await(waitForElement(() => getByText("Step last ran with errors on " + dateExpected + ", " + timeExpected)))).toBeInTheDocument(); // "Step last ran with errors on 4/4/2020, 1:17:45 AM"
+    expect(await(waitFor(() => getByText("Step last ran with errors on " + dateExpected + ", " + timeExpected)))).toBeInTheDocument(); // "Step last ran with errors on 4/4/2020, 1:17:45 AM"
 
     fireEvent.click(notification);
     // New Modal with Error message, uri and details is opened
-    expect(await(waitForElement(() => getByText((content, node) => {
+    expect(await(waitFor(() => getByText((content, node) => {
       return getSubElements(content, node, "The mapping step Mapping1 completed with errors");
     })))).toBeInTheDocument();
     expect(getAllByLabelText("icon: exclamation-circle").length).toEqual(2);
@@ -475,12 +475,12 @@ describe("Verify step display", () => {
     expect(getAllByText("URI:")[0]).toBeInTheDocument();
     // Error 2 is present
     expect(getByText("Error 2")).toBeInTheDocument();
-    expect(await(waitForElement(() => getByText("Error 2")))).toBeInTheDocument();
+    expect(await(waitFor(() => getByText("Error 2")))).toBeInTheDocument();
 
     // Navigate to Explore tile
-    let exploreButton = await(waitForElement(() => getByText("Explore Curated Data")));
+    let exploreButton = await(waitFor(() => getByText("Explore Curated Data")));
     fireEvent.click(exploreButton);
-    await wait(() => {
+    await waitFor(() => {
       expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles/explore",
         "state": {"entityName": "Customer", "jobId": "350da405-c1e9-4fa7-8269-d9aefe3b4b9a", "targetDatabase": "final"}});
     });
@@ -506,7 +506,7 @@ describe("Verify Run CRUD operations", () => {
 
     const newFlowValues = {name: "newFlow", description: "newFlow description"};
     fireEvent.click(getByText("Create Flow"));
-    await(waitForElement(() => getByText("Name:")));
+    await(waitFor(() => getByText("Name:")));
     fireEvent.change(getByPlaceholderText("Enter name"), {target: {value: newFlowValues.name}});
     fireEvent.change(getByPlaceholderText("Enter description"), {target: {value: newFlowValues.description}});
     fireEvent.click(getByText("Save"));
@@ -524,7 +524,7 @@ describe("Verify Run CRUD operations", () => {
 
     const updatedFlow = {name: existingFlowName, description: `updated ${existingFlowName} description`};
     fireEvent.click(getByText(existingFlowName));
-    await(waitForElement(() => getByText("Name:")));
+    await(waitFor(() => getByText("Name:")));
     expect(getByPlaceholderText("Enter name")).toBeDisabled();
     fireEvent.change(getByPlaceholderText("Enter description"), {target: {value: updatedFlow.description}});
     fireEvent.click(getByText("Save"));
@@ -589,11 +589,11 @@ describe("Verify Run CRUD operations", () => {
     expect(axiosMock.post).toHaveBeenNthCalledWith(1, "/api/flows", newFlowValues);
     const newStepValues = {stepDefinitionType: data.newStepToFlowOptions.stepDefinitionType, stepName: data.newStepToFlowOptions.newStepName};
     // Add step to new flow
-    await wait(() => {
+    await waitFor(() => {
       expect(axiosMock.post).toHaveBeenNthCalledWith(2, `/api/flows/${newFlowValues.name}/steps`, newStepValues);
     });
     // Run step
-    await wait(() => {
+    await waitFor(() => {
       expect(axiosMock.post).toHaveBeenNthCalledWith(3, `/api/flows/${newFlowValues.name}/steps/2`);
     });
   });
@@ -611,7 +611,7 @@ describe("Verify Run CRUD operations", () => {
     expect(getByText("New Flow")).toBeInTheDocument();
     // Clicking Cancel returns to Curate tile
     fireEvent.click(getByLabelText("Cancel"));
-    await wait(() => {
+    await waitFor(() => {
       expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles/curate",
         "state": {
           "pageSize": data.newStepToFlowOptions.pageSize,
@@ -645,7 +645,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
 
     //Mapping step failed error
     fireEvent.click(getByLabelText(`runStep-${steps[1].stepName}`));
-    expect(await(waitForElement(() => getByText((content, node) => {
+    expect(await(waitFor(() => getByText((content, node) => {
       return getSubElements(content, node, `The mapping step ${steps[1].stepName} failed`);
     })))).toBeInTheDocument();
     expect(getByLabelText("icon: exclamation-circle")).toBeInTheDocument();
@@ -655,7 +655,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
 
     //Matching step failed error
     fireEvent.click(getByLabelText(`runStep-${steps[3].stepName}`));
-    expect(await(waitForElement(() => getByText((content, node) => {
+    expect(await(waitFor(() => getByText((content, node) => {
       return getSubElements(content, node, `The matching step ${steps[3].stepName} failed`);
     })))).toBeInTheDocument();
     expect(getByLabelText("icon: exclamation-circle")).toBeInTheDocument();
@@ -665,7 +665,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
 
     //Merging step failed error
     fireEvent.click(getByLabelText(`runStep-${steps[4].stepName}`));
-    expect(await(waitForElement(() => getByText((content, node) => {
+    expect(await(waitFor(() => getByText((content, node) => {
       return getSubElements(content, node, `The merging step ${steps[4].stepName} failed`);
     })))).toBeInTheDocument();
     expect(getByLabelText("icon: exclamation-circle")).toBeInTheDocument();
@@ -675,7 +675,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
 
     //Mastering step failed error
     fireEvent.click(getByLabelText(`runStep-${steps[5].stepName}`));
-    expect(await(waitForElement(() => getByText((content, node) => {
+    expect(await(waitFor(() => getByText((content, node) => {
       return getSubElements(content, node, `The mastering step ${steps[5].stepName} failed`);
     })))).toBeInTheDocument();
     expect(getByLabelText("icon: exclamation-circle")).toBeInTheDocument();
@@ -696,7 +696,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     //Mapping step error
     fireEvent.click(await getByLabelText(`runStep-${steps[1].stepName}`));
     // New Modal with Error message, uri and details is opened
-    expect(await(waitForElement(() => getByText((content, node) => {
+    expect(await(waitFor(() => getByText((content, node) => {
       return getSubElements(content, node, `The mapping step ${steps[1].stepName} completed with errors`);
     })))).toBeInTheDocument();
     expect(getByLabelText("icon: exclamation-circle")).toBeInTheDocument();
@@ -706,10 +706,10 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     expect(getAllByText("URI:")[0]).toBeInTheDocument();
     // Error 2 is present
     //expect(getByText("Error 2")).toBeInTheDocument();
-    expect(await(waitForElement(() => getByText("Error 2")))).toBeInTheDocument();
+    expect(await(waitFor(() => getByText("Error 2")))).toBeInTheDocument();
     let stepType = `${steps[1].stepDefinitionType}`;
     if (stepType === "mapping") {
-      expect(await(waitForElement(() => getByText("Explore Curated Data")))).toBeInTheDocument();
+      expect(await(waitFor(() => getByText("Explore Curated Data")))).toBeInTheDocument();
     } else {
       expect(getByText(" ")).toBeInTheDocument();
     }
@@ -718,7 +718,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     //Matching step error
     fireEvent.click(await getByLabelText(`runStep-${steps[3].stepName}`));
     // New Modal with Error message, uri and details is opened
-    expect(await(waitForElement(() => getByText((content, node) => {
+    expect(await(waitFor(() => getByText((content, node) => {
       return getSubElements(content, node, `The matching step ${steps[3].stepName} completed with errors`);
     })))).toBeInTheDocument();
     expect(getByLabelText("icon: exclamation-circle")).toBeInTheDocument();
@@ -734,7 +734,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     //Merging step error
     fireEvent.click(await getByLabelText(`runStep-${steps[4].stepName}`));
     // New Modal with Error message, uri and details is opened
-    expect(await(waitForElement(() => getByText((content, node) => {
+    expect(await(waitFor(() => getByText((content, node) => {
       return getSubElements(content, node, `The merging step ${steps[4].stepName} completed with errors`);
     })))).toBeInTheDocument();
     expect(getByLabelText("icon: exclamation-circle")).toBeInTheDocument();
@@ -749,7 +749,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     // //Mastering step error
     fireEvent.click(await getByLabelText(`runStep-${steps[5].stepName}`));
     // New Modal with Error message, uri and details is opened
-    expect(await(waitForElement(() => getByText((content, node) => {
+    expect(await(waitFor(() => getByText((content, node) => {
       return getSubElements(content, node, `The mastering step ${steps[5].stepName} completed with errors`);
     })))).toBeInTheDocument();
     expect(getByLabelText("icon: exclamation-circle")).toBeInTheDocument();
@@ -784,16 +784,16 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     fireEvent.click(await getByLabelText(`runStep-${steps[1].stepName}`));
 
     // New Modal with Error message, uri and details is opened
-    expect(await(waitForElement(() => getByText((content, node) => {
+    expect(await(waitFor(() => getByText((content, node) => {
       return getSubElements(content, node, `The mapping step ${steps[1].stepName} completed with errors`);
     })))).toBeInTheDocument();
     expect(getByLabelText("icon: exclamation-circle")).toBeInTheDocument();
     let stepType = `${steps[1].stepDefinitionType}`;
     if (stepType === "mapping") {
-      let exploreButton = await(waitForElement(() => getByText("Explore Curated Data")));
+      let exploreButton = await(waitFor(() => getByText("Explore Curated Data")));
       fireEvent.click(exploreButton);
     }
-    await wait(() => {
+    await waitFor(() => {
       expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles/explore",
         "state": {"entityName": "Customer", "targetDatabase": "final", "jobId": "350da405-c1e9-4fa7-8269-d9aefe3b4b9a"}});
     });
@@ -825,13 +825,13 @@ describe("Verify Add Step function", () => {
     fireEvent.click(step);
 
     // Click to confirm the add in the dialog
-    expect(await(waitForElement(() => getByText((content, node) => {
+    expect(await(waitFor(() => getByText((content, node) => {
       return getSubElements(content, node, `Are you sure you want to add step ${data.steps.data["ingestionSteps"][0].name} to flow ${data.flows.data[0].name}?`);
     })))).toBeInTheDocument();
 
     let confirm = getByLabelText("Yes");
     fireEvent.click(confirm);
-    await wait(() => {
+    await waitFor(() => {
       expect(axiosMock.post).toHaveBeenNthCalledWith(1, `/api/flows/${data.flows.data[0].name}/steps`, {"stepDefinitionType": "ingestion", "stepName": data.steps.data["ingestionSteps"][0].name});
     });
 
@@ -864,11 +864,11 @@ describe("Verify Add Step function", () => {
     //Create a flow
     const newFlowValues = {name: "newFlow", description: "newFlow description"};
     fireEvent.click(getByText("Create Flow"));
-    await(waitForElement(() => getByText("Name:")));
+    await(waitFor(() => getByText("Name:")));
     fireEvent.change(getByPlaceholderText("Enter name"), {target: {value: newFlowValues.name}});
     fireEvent.change(getByPlaceholderText("Enter description"), {target: {value: newFlowValues.description}});
     fireEvent.click(getByLabelText("Save"));
-    await wait(() => {
+    await waitFor(() => {
       expect(axiosMock.post).toHaveBeenNthCalledWith(1, "/api/flows", {name: newFlowValues.name, description: newFlowValues.description});
     });
 
@@ -879,13 +879,13 @@ describe("Verify Add Step function", () => {
     fireEvent.click(step);
 
     // Click to confirm the add in the dialog
-    expect(await(waitForElement(() => getByText((content, node) => {
+    expect(await(waitFor(() => getByText((content, node) => {
       return getSubElements(content, node, `Are you sure you want to add step ${data.steps.data["ingestionSteps"][0].name} to flow ${data.flows.data[0].name}?`);
     })))).toBeInTheDocument();
 
     let confirm = getByLabelText("Yes");
     fireEvent.click(confirm);
-    await wait(() => {
+    await waitFor(() => {
       expect(axiosMock.post).toHaveBeenNthCalledWith(2, `/api/flows/${data.flows.data[0].name}/steps`, {"stepDefinitionType": "ingestion", "stepName": data.steps.data["ingestionSteps"][0].name});
     });
 
@@ -896,8 +896,8 @@ describe("Verify Add Step function", () => {
     let steps = data.flows.data[0].steps;
     let runButton = await getByLabelText(`runStep-${steps[1].stepName}`);
     fireEvent.click(runButton);
-    expect(await(waitForElement(() => getAllByText("Running...")[0]))).toBeInTheDocument();
-    expect(await(waitForElement(() => getByText((content, node) => {
+    expect(await(waitFor(() => getAllByText("Running...")[0]))).toBeInTheDocument();
+    expect(await(waitFor(() => getByText((content, node) => {
       return getSubElements(content, node, `The mapping step ${steps[1].stepName} completed successfully`);
     })))).toBeInTheDocument();
     expect(getByLabelText("icon: check-circle")).toBeInTheDocument();
@@ -924,6 +924,6 @@ describe("Verify Add Step function", () => {
         </ErrorMessageContext.Provider>
       </AuthoritiesContext.Provider>
     </MemoryRouter>);
-    await(waitForElement(() => getByText("Error message")));
+    await(waitFor(() => getByText("Error message")));
   });
 });

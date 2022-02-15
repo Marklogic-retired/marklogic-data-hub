@@ -1,5 +1,5 @@
 import React from "react";
-import {render, wait, screen, fireEvent} from "@testing-library/react";
+import {render, waitFor, screen, fireEvent} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {BrowserRouter as Router} from "react-router-dom";
 
@@ -65,7 +65,7 @@ describe("Modeling Page", () => {
       getByLabelText = renderResults.getByLabelText;
     });
 
-    await wait(() => expect(mockPrimaryEntityType).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(mockPrimaryEntityType).toHaveBeenCalledTimes(2));
 
     expect(getByText(tiles.model.intro)).toBeInTheDocument(); // tile intro text
 
@@ -77,9 +77,9 @@ describe("Modeling Page", () => {
 
     // test add, publish icons display correct tooltip when enabled
     fireEvent.mouseOver(getByText("Add"));
-    await wait(() => expect(getByText(ModelingTooltips.addNewEntity)).toBeInTheDocument());
+    await waitFor(() => expect(getByText(ModelingTooltips.addNewEntity)).toBeInTheDocument());
     fireEvent.mouseOver(getByLabelText("publish-to-database"));
-    await wait(() => expect(getByText(ModelingTooltips.publish)).toBeInTheDocument());
+    await waitFor(() => expect(getByText(ModelingTooltips.publish)).toBeInTheDocument());
 
     userEvent.click(screen.getByTestId("AnotherModel-span"));
     expect(screen.getByText("Edit Entity Type")).toBeInTheDocument();
@@ -115,7 +115,7 @@ describe("Modeling Page", () => {
       queryByLabelText = renderResults.queryByLabelText;
     });
 
-    await wait(() => expect(mockPrimaryEntityType).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(mockPrimaryEntityType).toHaveBeenCalledTimes(2));
 
     expect(getByText("Entity Types")).toBeInTheDocument();
     expect(getByText("Instances")).toBeInTheDocument();
@@ -125,9 +125,9 @@ describe("Modeling Page", () => {
 
     // test add, save, revert icons display correct tooltip when disabled
     fireEvent.mouseOver(getByText("Add"));
-    await wait(() => expect(getByText(ModelingTooltips.addNewEntity + " " + ModelingTooltips.noWriteAccess)).toBeInTheDocument());
+    await waitFor(() => expect(getByText(ModelingTooltips.addNewEntity + " " + ModelingTooltips.noWriteAccess)).toBeInTheDocument());
     fireEvent.mouseOver(getByText("Publish"));
-    await wait(() => expect(getByText(ModelingTooltips.publish + " " + ModelingTooltips.noWriteAccess)).toBeInTheDocument());
+    await waitFor(() => expect(getByText(ModelingTooltips.publish + " " + ModelingTooltips.noWriteAccess)).toBeInTheDocument());
     expect(queryByLabelText("entity-modified-alert")).toBeNull();
     expect(getByLabelText("publish-to-database")).toBeDisabled();
   });
@@ -145,7 +145,7 @@ describe("Modeling Page", () => {
       </AuthoritiesContext.Provider>
     );
 
-    await wait(() => expect(mockPrimaryEntityType).toHaveBeenCalledTimes(0));
+    await waitFor(() => expect(mockPrimaryEntityType).toHaveBeenCalledTimes(0));
     expect(queryByText("Entity Types")).toBeNull();
     expect(queryByText("Instances")).toBeNull();
     expect(queryByText("Last Processed")).toBeNull();

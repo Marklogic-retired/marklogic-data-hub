@@ -1,5 +1,5 @@
 import React from "react";
-import {render, screen, wait, cleanup} from "@testing-library/react";
+import {render, screen, waitFor, cleanup} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import GraphView from "./graph-view";
 import {ModelingContext} from "../../../util/modeling-context";
@@ -66,12 +66,12 @@ describe("Graph View Component", () => {
     expect(queryByLabelText("Product-selectedEntity")).not.toBeInTheDocument();
 
     rerender(withEntityAs("Product"));
-    await wait(() => expect(getByLabelText("Product-selectedEntity")).toBeInTheDocument());
+    await waitFor(() => expect(getByLabelText("Product-selectedEntity")).toBeInTheDocument());
 
     //Verify side panel content
 
     userEvent.hover(getByTestId("Product-delete"));
-    await wait(() => expect(screen.getByText(ModelingTooltips.deleteIcon)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(ModelingTooltips.deleteIcon)).toBeInTheDocument());
 
     expect(getByLabelText("closeGraphViewSidePanel")).toBeInTheDocument();
     expect(getByLabelText("propertiesTabInSidePanel")).toBeInTheDocument();

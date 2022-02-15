@@ -1,7 +1,7 @@
 import React from "react";
 import {BrowserRouter as Router} from "react-router-dom";
-import {waitForElement, waitForElementToBeRemoved, render, wait, cleanup, fireEvent, within} from "@testing-library/react";
-import {waitFor} from "@testing-library/dom";
+import {waitFor, waitForElementToBeRemoved, render, cleanup, fireEvent, within} from "@testing-library/react";
+//import {waitFor} from "@testing-library/dom";
 import MappingStepDetail from "./mapping-step-detail";
 import data from "../../../../assets/mock-data/curation/common.data";
 import {shallow} from "enzyme";
@@ -247,7 +247,7 @@ describe("RTL Source-to-entity map tests", () => {
     // rerender(<CurationContext.Provider value={personMappingStepWithData}><MappingStepDetail />
     //   </CurationContext.Provider>)
 
-    //await(waitForElement(() => getByTestId("spinTest")));
+    //await(waitFor(() => getByTestId("spinTest")));
 
     //await(waitForElementToBeRemoved(() => getByTestId("spinTest")));
     //});
@@ -300,7 +300,7 @@ describe("RTL Source-to-entity map tests", () => {
 
     fireEvent.change(getAllByTestId("propName-mapexpression")[0], {target: {value: "concat(propName,'-NEW')"}});
     fireEvent.blur(getAllByTestId("propName-mapexpression")[0]);
-    await (waitForElement(() => (getByTestId("successMessage"))));
+    await (waitFor(() => (getByTestId("successMessage"))));
 
     //Appropriate field should be saved when there are duplicate property names
     expect(getAllByTestId("propName-mapexpression")[0]).toHaveTextContent("concat(propName,'-NEW')");
@@ -512,7 +512,7 @@ describe("RTL Source-to-entity map tests", () => {
     // //Verify entity settings icon also exist in the first row
     // expect(getByLabelText("entitySettings").closest("tr")).toBe(entTableTopRow);
 
-    await wait(() => fireEvent.keyDown(getByLabelText("entities-filter-select"), {key: "ArrowDown"})); // focus on the search box
+    await waitFor(() => fireEvent.keyDown(getByLabelText("entities-filter-select"), {key: "ArrowDown"})); // focus on the search box
 
 
     //Related entity options should appear
@@ -521,7 +521,7 @@ describe("RTL Source-to-entity map tests", () => {
 
     //Select both Order and BabyRegistry related entities to display
     fireEvent.click(getByLabelText("Order (orderedBy Person)-option"));
-    await wait(() => fireEvent.keyDown(getAllByLabelText("entities-filter-select")[0], {key: "ArrowDown"})); // focus on the search box again
+    await waitFor(() => fireEvent.keyDown(getAllByLabelText("entities-filter-select")[0], {key: "ArrowDown"})); // focus on the search box again
     fireEvent.click(getByLabelText("BabyRegistry (ownedBy Person)-option"));
 
     let entityFilterValue = getAllByLabelText("multioption-container");
@@ -536,7 +536,7 @@ describe("RTL Source-to-entity map tests", () => {
 
     expect(getByText("orderedBy")).toBeInTheDocument();
     fireEvent.mouseOver((getByTestId("foreign-orderedBy")));
-    await wait(() => expect(document.querySelector("#tooltip-orderedBy")).toBeInTheDocument());
+    await waitFor(() => expect(document.querySelector("#tooltip-orderedBy")).toBeInTheDocument());
 
     //Verify that there are now three entity filters, one in the primary table and one in each related table
     let entityFilters = getAllByLabelText("entities-filter-select");
@@ -692,10 +692,10 @@ describe("RTL Source-to-entity map tests", () => {
 
     //All mapped entity tables should be present on the screen by default
     expect(getByLabelText("Person-title")).toBeInTheDocument();
-    await wait(() => expect(getByLabelText("Order (orderedBy Person)-title")).toBeInTheDocument());
-    await wait(() => expect(getByLabelText("Product (Order hasProduct)-title")).toBeInTheDocument());
-    await wait(() => expect(getByLabelText("BabyRegistry (ownedBy Person)-title")).toBeInTheDocument());
-    await wait(() => expect(getByLabelText("Product (BabyRegistry hasProduct)-title")).toBeInTheDocument());
+    await waitFor(() => expect(getByLabelText("Order (orderedBy Person)-title")).toBeInTheDocument());
+    await waitFor(() => expect(getByLabelText("Product (Order hasProduct)-title")).toBeInTheDocument());
+    await waitFor(() => expect(getByLabelText("BabyRegistry (ownedBy Person)-title")).toBeInTheDocument());
+    await waitFor(() => expect(getByLabelText("Product (BabyRegistry hasProduct)-title")).toBeInTheDocument());
 
     // Verify top-level entity does not have Context row
     expect(queryByTestId("Person-Context-name")).not.toBeInTheDocument();
@@ -715,7 +715,7 @@ describe("RTL Source-to-entity map tests", () => {
     //Try deleting the BabyRegistry table via X button
     fireEvent.click(getByTestId("BabyRegistry (ownedBy Person)-delete"));
 
-    expect(await(waitForElement(() => getByLabelText("entity-being-referenced-msg")))).toBeInTheDocument();
+    expect(await(waitFor(() => getByLabelText("entity-being-referenced-msg")))).toBeInTheDocument();
 
     //Close the confirmation modal
     fireEvent.click(getByText("OK"));
@@ -724,13 +724,13 @@ describe("RTL Source-to-entity map tests", () => {
     fireEvent.click(getByTestId("Product (BabyRegistry hasProduct)-delete"));
 
     //Confirmation modal to confirm deletion of the entity should appear
-    expect(await(waitForElement(() => getByLabelText("confirm-deletion-msg")))).toBeInTheDocument();
+    expect(await(waitFor(() => getByLabelText("confirm-deletion-msg")))).toBeInTheDocument();
 
     //Confirm deletion of Product (BabyRegistry hasProduct) table
     fireEvent.click(getByText("Yes"));
 
     //Product (BabyRegistry hasProduct) table should no longer be shown
-    await wait(() => expect(queryByLabelText("Product (BabyRegistry hasProduct)-title")).not.toBeInTheDocument());
+    await waitFor(() => expect(queryByLabelText("Product (BabyRegistry hasProduct)-title")).not.toBeInTheDocument());
 
     //Test deletion of BabyRegistry related entity through the X button on the filter label of its parent table (Person) now
 
@@ -743,7 +743,7 @@ describe("RTL Source-to-entity map tests", () => {
     fireEvent.click(getAllByLabelText("icon: close")[1]);
 
     //Should display confirmation message now, instead of the entity being referenced message because Product child table has been deleted
-    expect(await(waitForElement(() => getByLabelText("confirm-deletion-msg")))).toBeInTheDocument();
+    expect(await(waitFor(() => getByLabelText("confirm-deletion-msg")))).toBeInTheDocument();
 
     //Confirm deletion of BabyRegistry table
     fireEvent.click(getByText("Yes"));
@@ -751,17 +751,17 @@ describe("RTL Source-to-entity map tests", () => {
     entityFilterValue = getAllByLabelText("multioption-container");
 
     //BabyRegistry (ownedBy Person) table should no longer be shown
-    await wait(() => expect(queryByLabelText("BabyRegistry (ownedBy Person)-title")).not.toBeInTheDocument());
+    await waitFor(() => expect(queryByLabelText("BabyRegistry (ownedBy Person)-title")).not.toBeInTheDocument());
 
     //BabyRegistry label should no longer exist in Person's entity filter
     expect(entityFilterValue[1]).not.toEqual("BabyRegistry (ownedBy Person)");
 
     //only target entity table (Person) and Order and its related entity table Product should remain
     expect(getByLabelText("Person-title")).toBeInTheDocument();
-    await wait(() => expect(getByLabelText("Order (orderedBy Person)-title")).toBeInTheDocument());
-    await wait(() => expect(getByLabelText("Product (Order hasProduct)-title")).toBeInTheDocument());
-    await wait(() => expect(queryByLabelText("BabyRegistry (ownedBy Person)-title")).not.toBeInTheDocument());
-    await wait(() => expect(queryByLabelText("Product (BabyRegistry hasProduct)-title")).not.toBeInTheDocument());
+    await waitFor(() => expect(getByLabelText("Order (orderedBy Person)-title")).toBeInTheDocument());
+    await waitFor(() => expect(getByLabelText("Product (Order hasProduct)-title")).toBeInTheDocument());
+    await waitFor(() => expect(queryByLabelText("BabyRegistry (ownedBy Person)-title")).not.toBeInTheDocument());
+    await waitFor(() => expect(queryByLabelText("Product (BabyRegistry hasProduct)-title")).not.toBeInTheDocument());
 
     //verify advanced settings of related entity
     //click on the related entity table order settings
@@ -838,12 +838,12 @@ describe("RTL Source-to-entity map tests", () => {
 
     userEvent.type(mapExp, "{selectall}{backspace}");
 
-    let sourceSelector = await waitForElement(() => getByTestId("BabyRegistry (ownedBy Person)-Context-listIcon"));
+    let sourceSelector = await waitFor(() => getByTestId("BabyRegistry (ownedBy Person)-Context-listIcon"));
 
     //corresponds to 'Context' source selector
     fireEvent.click(sourceSelector);
 
-    await (waitForElement(() => getAllByRole("option"), {"timeout": 600}));
+    await (waitFor(() => getAllByRole("option"), {"timeout": 600}));
     //Set 'Context' for BabyRegistry related entity to 'BabyRegistry'
 
     fireEvent.click(getByTestId("BabyRegistry-option"));
@@ -897,7 +897,7 @@ describe("RTL Source-to-entity map tests", () => {
     expect(document.querySelector("#Test-btn")).toBeDisabled();
 
     // waiting for success message before clicking on Test button
-    await (waitForElement(() => (getByTestId("successMessage"))));
+    await (waitFor(() => (getByTestId("successMessage"))));
     // checking successMessage is still there before waitForElementToBeRemoved as this would occasionally fail under load
     if (queryByTestId("successMessage")) {
       await (waitForElementToBeRemoved(() => (queryByTestId("successMessage"))));
@@ -909,14 +909,14 @@ describe("RTL Source-to-entity map tests", () => {
     //Verify Test button click
     fireEvent.click(getByText("Test"));
 
-    await (waitForElement(() => getByTestId("Person-propName-value")));
+    await (waitFor(() => getByTestId("Person-propName-value")));
 
     //Target entity table should show evaluated expressions
     expect(getByTestId("Person-propName-value")).toHaveTextContent("123EAC");
     expect(getByTestId("Person-propAttribute-value")).toHaveTextContent("home");
 
     //BabyRegistry Related Entity should also show evaluated expressions
-    await (waitForElement(() => getByTestId("BabyRegistry (ownedBy Person)-babyRegistryId-value")));
+    await (waitFor(() => getByTestId("BabyRegistry (ownedBy Person)-babyRegistryId-value")));
     expect(getByTestId("BabyRegistry (ownedBy Person)-babyRegistryId-value")).toHaveTextContent("3039");
     expect(getByTestId("BabyRegistry (ownedBy Person)-arrivalDate-value")).toHaveTextContent("2021-01-07-07:00");
   });
@@ -958,7 +958,7 @@ describe("RTL Source-to-entity map tests", () => {
     expect(document.querySelector("#Test-btn")).toBeDisabled();
 
     // waiting for success message before clicking on Test button
-    await (waitForElement(() => (getByTestId("successMessage"))));
+    await (waitFor(() => (getByTestId("successMessage"))));
     // checking successMessage is still there before waitForElementToBeRemoved as this would occasionally fail under load
     if (queryByTestId("successMessage")) {
       await (waitForElementToBeRemoved(() => (queryByTestId("successMessage"))));
@@ -969,15 +969,15 @@ describe("RTL Source-to-entity map tests", () => {
 
     //Clicking 'Test' should display evaluated URI expression values in target and related entity tables
     fireEvent.click(getByText("Test"));
-    await (waitForElement(() => getByTestId("Person-URI-value")));
+    await (waitFor(() => getByTestId("Person-URI-value")));
     expect(getByTestId("Person-URI-value")).toHaveTextContent("/Person/personWithRelat...");
     //Verify tooltip shows full value when hovering truncated URI value
     fireEvent.mouseOver(getByText("/Person/personWithRelat..."));
-    await waitForElement(() => getByText("/Person/personWithRelatedEntities.json"));
+    await waitFor(() => getByText("/Person/personWithRelatedEntities.json"));
 
     //Verify error message in evaluated URI expression for related entity table
     expect(getByTestId("BabyRegistry (ownedBy Person)-URI-value")).toHaveTextContent("");
-    await waitForElement(() => getByText("Invalid XPath expression: ###"));
+    await waitFor(() => getByText("Invalid XPath expression: ###"));
 
   });
 
@@ -997,7 +997,7 @@ describe("RTL Source-to-entity map tests", () => {
       queryByTestId = renderResults.queryByTestId;
       getByTestId = renderResults.getByTestId;
     });
-    await (waitForElement(() => getByTestId("proteinId-srcValue")));
+    await (waitFor(() => getByTestId("proteinId-srcValue")));
     expect(getByTestId("proteinId-srcValue")).toHaveTextContent("123EAC");
 
     fireEvent.mouseOver(getByText("123EAC"));
@@ -1016,7 +1016,7 @@ describe("RTL Source-to-entity map tests", () => {
     expect(document.querySelector("#Test-btn")).toBeDisabled();
 
     // waiting for success message before clicking on Test button
-    await (waitForElement(() => (getByTestId("successMessage"))));
+    await (waitFor(() => (getByTestId("successMessage"))));
     // checking successMessage is still there before waitForElementToBeRemoved as this would occasionally fail under load
     if (queryByTestId("successMessage")) {
       await (waitForElementToBeRemoved(() => (queryByTestId("successMessage"))));
@@ -1027,7 +1027,7 @@ describe("RTL Source-to-entity map tests", () => {
 
     //Verify Test button click
     fireEvent.click(getByText("Test"));
-    await (waitForElement(() => getByTestId("Person-propName-value")));
+    await (waitFor(() => getByTestId("Person-propName-value")));
     expect(getByTestId("Person-propName-value")).toHaveTextContent("123EAC");
     expect(getByTestId("Person-propAttribute-value")).toHaveTextContent("home");
 
@@ -1068,37 +1068,37 @@ describe("RTL Source-to-entity map tests", () => {
     expect(document.querySelector("#Test-btn")).toBeDisabled();
 
     // waiting for success message before clicking on Test button
-    await (waitForElement(() => (getByTestId("successMessage"))));
+    await (waitFor(() => (getByTestId("successMessage"))));
     if (queryByTestId("successMessage")) {
       await (waitForElementToBeRemoved(() => (queryByTestId("successMessage"))));
     }
 
     //Verify truncated text in Source table
-    await (waitForElement(() => getByTestId("proteinId-srcValue")));
+    await (waitFor(() => getByTestId("proteinId-srcValue")));
     expect(getByTestId("proteinId-srcValue")).toHaveTextContent("extremelylongu...");
     expect(getByTestId("proteinType-srcValue")).toHaveTextContent("s@ml.com (7 more)");
 
     //Verify tooltip shows full value when hovering Source values
     fireEvent.mouseOver(getByText("extremelylongu..."));
-    await waitForElement(() => getByText("extremelylongusername@marklogic.com"));
+    await waitFor(() => getByText("extremelylongusername@marklogic.com"));
     fireEvent.mouseOut(getByText("extremelylongu..."));
 
     //Verify tooltip shows all values in a list when hovering values with multiple items
     fireEvent.mouseOver(getByText((_, node) => node.textContent === "(7 more)"));
-    await waitForElement(() => getByText("s@ml.com, , t@ml.com, u@ml.com, v@ml.com, w@ml.com, x@ml.com, y@ml.com, z@ml.com"));
+    await waitFor(() => getByText("s@ml.com, , t@ml.com, u@ml.com, v@ml.com, w@ml.com, x@ml.com, y@ml.com, z@ml.com"));
     fireEvent.mouseOut(getByText((_, node) => node.textContent === "(7 more)"));
     // Test button should be enabled after mapping expression is saved
     expect(document.querySelector("#Test-btn")).toBeEnabled();
 
     //Verify Test button click and truncated text in Entity table
     fireEvent.click(getByText("Test"));
-    await (waitForElement(() => getByTestId("Person-propName-value")));
+    await (waitFor(() => getByTestId("Person-propName-value")));
     expect(getByTestId("Person-propName-value")).toHaveTextContent("extremelylongusername@m...");
     expect(getByTestId("Person-propAttribute-value")).toHaveTextContent("s@ml.com (7 more)");
 
     // Verify tooltip shows full value when hovering Test values
     fireEvent.mouseOver(getByText("extremelylongusername@m..."));
-    await waitForElement(() => getByText("extremelylongusername@marklogic.com"));
+    await waitFor(() => getByText("extremelylongusername@marklogic.com"));
   });
 
   test("Verify evaluation of valid expression for mapping reader user", async () => {
@@ -1126,7 +1126,7 @@ describe("RTL Source-to-entity map tests", () => {
     fireEvent.blur(propAttributeExpression);
 
     // waiting for success message before clicking on Test button
-    await (waitForElement(() => (getByTestId("successMessage"))));
+    await (waitFor(() => (getByTestId("successMessage"))));
 
     //Rerendering as a mapping reader user
     authorityService.setAuthorities(["readMapping"]);
@@ -1138,7 +1138,7 @@ describe("RTL Source-to-entity map tests", () => {
 
     //Verify Test button click
     fireEvent.click(getByText("Test"));
-    await (waitForElement(() => getByTestId("Person-propAttribute-value")));
+    await (waitFor(() => getByTestId("Person-propAttribute-value")));
     expect(getByTestId("Person-propAttribute-value")).toHaveTextContent("home");
 
     //Verify Clear button click
@@ -1174,11 +1174,11 @@ describe("RTL Source-to-entity map tests", () => {
     fireEvent.blur(propIdExpression);
 
     // waiting for success message before clicking on Test button
-    await (waitForElement(() => (getByTestId("successMessage"))));
+    await (waitFor(() => (getByTestId("successMessage"))));
 
     //Verify Test button click
     fireEvent.click(getByText("Test"));
-    await (waitForElement(() => getByTestId("propId-expErr")));
+    await (waitFor(() => getByTestId("propId-expErr")));
 
     //debug(onClosestTableRow(getByTestId('propId-value')))
     let errorMessage = mappingStepPerson.artifacts[3].properties.propId ? mappingStepPerson.artifacts[3].properties.propId.errorMessage : "";
@@ -1229,7 +1229,7 @@ describe("RTL Source-to-entity map tests", () => {
     fireEvent.blur(propIdExpression);
 
     // waiting for success message before clicking on Test button
-    await (waitForElement(() => (getByTestId("successMessage"))));
+    await (waitFor(() => (getByTestId("successMessage"))));
 
     //Rerendering as a mapping reader user
     authorityService.setAuthorities(["readMapping"]);
@@ -1241,7 +1241,7 @@ describe("RTL Source-to-entity map tests", () => {
 
     //Verify Test button click
     fireEvent.click(getByText("Test"));
-    await (waitForElement(() => getByTestId("propId-expErr")));
+    await (waitFor(() => getByTestId("propId-expErr")));
 
     //debug(onClosestTableRow(getByTestId('propId-value')))
     let errorMessage = mappingStepPerson.artifacts[3].properties.propId ? mappingStepPerson.artifacts[3].properties.propId.errorMessage : "";
@@ -1438,7 +1438,7 @@ describe("RTL Source-to-entity map tests", () => {
     fireEvent.click(functionSelector);
     let inputBox = getByLabelText("dropdownList-select-wrapper");
 
-    await (waitForElement(() => getAllByRole("option"), {"timeout": 200}));
+    await (waitFor(() => getAllByRole("option"), {"timeout": 200}));
     expect(getByText("concat")).toBeInTheDocument();
     expect(getByText("documentLookup")).toBeInTheDocument();
 
@@ -1456,14 +1456,14 @@ describe("RTL Source-to-entity map tests", () => {
     expect(propAttributeExpression).toHaveTextContent("concat(xs:anyAtomicType?)");
 
     // Verify auto-save on population of function signature
-    await (waitForElement(() => (getByTestId("successMessage"))));
+    await (waitFor(() => (getByTestId("successMessage"))));
     if (queryByTestId("successMessage")) {
       await (waitForElementToBeRemoved(() => (queryByTestId("successMessage"))));
     }
 
     // Click the same function button again to verify it opens up with the same list of functions
     fireEvent.click(functionSelector);
-    await (waitForElement(() => getAllByRole("option"), {"timeout": 200}));
+    await (waitFor(() => getAllByRole("option"), {"timeout": 200}));
     fireEvent.click(inputBox);
 
     //Verify multiple matches
@@ -1477,7 +1477,7 @@ describe("RTL Source-to-entity map tests", () => {
 
     //Verify if value appears in the Value column after clicking on Test button
     fireEvent.click(getByText("Test"));
-    await (waitForElement(() => getByTestId("Person-propAttribute-value")));
+    await (waitFor(() => getByTestId("Person-propAttribute-value")));
     expect(getByTestId("Person-propAttribute-value")).toHaveTextContent("home-NEW"); // home should be mapped as home-New
   });
 
@@ -1514,7 +1514,7 @@ describe("RTL Source-to-entity map tests", () => {
 
     let inputBox = getByLabelText("dropdownList-select-wrapper");
 
-    await (waitForElement(() => getAllByRole("option"), {"timeout": 200}));
+    await (waitFor(() => getAllByRole("option"), {"timeout": 200}));
     expect(getByTestId("$URI-option")).toBeInTheDocument();
     expect(getByTestId("$ZIP_POINTS-option")).toBeInTheDocument();
 
@@ -1533,7 +1533,7 @@ describe("RTL Source-to-entity map tests", () => {
     fireEvent.blur(propAttributeExpression);
 
     // Verify auto-save on population of reference
-    await (waitForElement(() => (getByTestId("successMessage"))));
+    await (waitFor(() => (getByTestId("successMessage"))));
     if (queryByTestId("successMessage")) {
       await (waitForElementToBeRemoved(() => (queryByTestId("successMessage"))));
     }
@@ -1558,8 +1558,8 @@ describe("RTL Source-to-entity map tests", () => {
 
     // Click next, URI index is 2
     fireEvent.click(getByTestId("navigate-uris-right"));
-    uriIndex = await waitForElement(() => within(getByLabelText("uriIndex")));
-    wait(() => expect(uriIndex.getByText("2")).toBeInTheDocument());
+    uriIndex = await waitFor(() => within(getByLabelText("uriIndex")));
+    waitFor(() => expect(uriIndex.getByText("2")).toBeInTheDocument());
 
     // Going back to curate home page
     fireEvent.click(getByLabelText("Back"));
@@ -1663,8 +1663,8 @@ describe("RTL Source-to-entity map tests", () => {
 
     //All mapped entity tables should be present on the screen by default
     expect(getByLabelText("Person-title")).toBeInTheDocument();
-    await wait(() => expect(getByLabelText("Order (orderedBy Person)-title")).toBeInTheDocument());
-    await wait(() => expect(getByLabelText("BabyRegistry (ownedBy Person)-title")).toBeInTheDocument());
+    await waitFor(() => expect(getByLabelText("Order (orderedBy Person)-title")).toBeInTheDocument());
+    await waitFor(() => expect(getByLabelText("BabyRegistry (ownedBy Person)-title")).toBeInTheDocument());
 
     await waitFor(() => {
       //Check the elements of page 1 are visible in target entity and related entity tablbes
@@ -1758,7 +1758,7 @@ describe("RTL Source-to-entity map tests", () => {
 
     //Verify page size changing for source table
     fireEvent.click(getAllByText("20 / page")[0]);
-    await wait(() => fireEvent.click(getByText("1 / page")));
+    await waitFor(() => fireEvent.click(getByText("1 / page")));
 
     expect(queryByText("CustomerID")).toBeInTheDocument(); //only first property is present
     expect(getAllByText("Name")).toHaveLength(2); //second "Name" property should not be present, two instances come from table headers
@@ -1767,8 +1767,8 @@ describe("RTL Source-to-entity map tests", () => {
 
     //test page 4 should only have fourth property
     fireEvent.click(getAllByTitle("4")[0]);
-    await wait(() => expect(queryByText("Email")).toBeInTheDocument());
-    await wait(() => expect(queryByText("CustomerID")).not.toBeInTheDocument());
+    await waitFor(() => expect(queryByText("Email")).toBeInTheDocument());
+    await waitFor(() => expect(queryByText("CustomerID")).not.toBeInTheDocument());
 
     //reopen page size options
     fireEvent.click(getAllByText("1 / page")[0]);
@@ -1829,16 +1829,16 @@ describe("RTL Source-to-entity map tests", () => {
     });
 
     //Verify all XML source properties are displayed at first
-    await wait(() => expect(getByText("sampleProtein")).toBeInTheDocument());
-    await wait(() => expect(getByText("@proteinType")).toBeInTheDocument());
-    await wait(() => expect(getByText("home")).toBeInTheDocument());
-    await wait(() => expect(getByText("proteinId")).toBeInTheDocument());
-    await wait(() => expect(getByText("123EAC")).toBeInTheDocument());
-    await wait(() => expect(getByText("proteinCat")).toBeInTheDocument());
+    await waitFor(() => expect(getByText("sampleProtein")).toBeInTheDocument());
+    await waitFor(() => expect(getByText("@proteinType")).toBeInTheDocument());
+    await waitFor(() => expect(getByText("home")).toBeInTheDocument());
+    await waitFor(() => expect(getByText("proteinId")).toBeInTheDocument());
+    await waitFor(() => expect(getByText("123EAC")).toBeInTheDocument());
+    await waitFor(() => expect(getByText("proteinCat")).toBeInTheDocument());
 
     //Verify page size starts at 20/page by default and can be changed for source table
     fireEvent.click(getAllByText("20 / page")[0]);
-    await wait(() => fireEvent.click(getByText("1 / page")));
+    await waitFor(() => fireEvent.click(getByText("1 / page")));
 
     //only first child property is present, in addition to top level parent
     expect(getByText("sampleProtein")).toBeInTheDocument();
@@ -1851,8 +1851,8 @@ describe("RTL Source-to-entity map tests", () => {
 
     //test page 4 should only have fourth property
     fireEvent.click(getAllByTitle("4")[0]);
-    await wait(() => expect(queryByText("nutFree:")).toBeInTheDocument());
-    await wait(() => expect(queryByText("@proteinType")).not.toBeInTheDocument());
+    await waitFor(() => expect(queryByText("nutFree:")).toBeInTheDocument());
+    await waitFor(() => expect(queryByText("@proteinType")).not.toBeInTheDocument());
 
     //reopen page size options
     fireEvent.click(getAllByText("1 / page")[0]);
@@ -1928,7 +1928,7 @@ describe("Enzyme Source-to-entity map tests", () => {
     });
 
     //Expanding all the nested levels first
-    await wait(() => fireEvent.click(within(getByTestId("srcContainer")).getByLabelText("radio-button-expand")));
+    await waitFor(() => fireEvent.click(within(getByTestId("srcContainer")).getByLabelText("radio-button-expand")));
     fireEvent.click(within(getByTestId("entityContainer")).getByLabelText("radio-button-expand"));
 
     expect(getByText("Source Data")).toBeInTheDocument();
@@ -1940,7 +1940,7 @@ describe("Enzyme Source-to-entity map tests", () => {
     expect(getByText("FirstNamePreferred")).toBeInTheDocument();
     expect(getByTestId("nutFree:proteinDog-srcValue")).toHaveTextContent("retriever (2 more)");
     fireEvent.mouseOver(getByText("(2 more)"));
-    await waitForElement(() => getByText("retriever, , golden, labrador"));
+    await waitFor(() => getByText("retriever, , golden, labrador"));
   });
 
   test("Nested entity data renders properly", async () => {
@@ -1959,7 +1959,7 @@ describe("Enzyme Source-to-entity map tests", () => {
     });
 
     //Expanding all the nested levels first
-    await wait(() => fireEvent.click(within(getByTestId("srcContainer")).getByLabelText("radio-button-expand")));
+    await waitFor(() => fireEvent.click(within(getByTestId("srcContainer")).getByLabelText("radio-button-expand")));
     fireEvent.click(within(getByTestId("entityContainer")).getByLabelText("radio-button-expand"));
 
     expect(getByText("propId")).toBeInTheDocument();
@@ -2004,12 +2004,12 @@ describe("RTL Source Selector/Source Search tests", () => {
       getByLabelText = renderResults.getByLabelText;
     });
 
-    let sourceSelector = await waitForElement(() => getByTestId("itemTypes-listIcon"));
+    let sourceSelector = await waitFor(() => getByTestId("itemTypes-listIcon"));
 
     //corresponds to 'itemTypes' source selector
     fireEvent.click(sourceSelector);
 
-    await (waitForElement(() => getAllByRole("option"), {"timeout": 200}));
+    await (waitFor(() => getAllByRole("option"), {"timeout": 200}));
     let firstName = getAllByText("FirstNamePreferred");
     expect(firstName.length).toEqual(2);
 
@@ -2032,7 +2032,7 @@ describe("RTL Source Selector/Source Search tests", () => {
     fireEvent.keyDown(inputBox, {key: "Enter", code: "Enter", keyCode: 13, charCode: 13});
 
     //mapping is saved
-    await (waitForElement(() => (getByTestId("successMessage"))));
+    await (waitFor(() => (getByTestId("successMessage"))));
     if (queryByTestId("successMessage")) {
       await (waitForElementToBeRemoved(() => (queryByTestId("successMessage"))));
     }
@@ -2058,8 +2058,8 @@ describe("RTL Source Selector/Source Search tests", () => {
       getAllByTestId = renderResults.getAllByTestId;
     });
 
-    let sourceSelector = await waitForElement(() => getByTestId("itemTypes-listIcon"));
-    await wait(() => fireEvent.click(sourceSelector));
+    let sourceSelector = await waitFor(() => getByTestId("itemTypes-listIcon"));
+    await waitFor(() => fireEvent.click(sourceSelector));
 
     //Verify object properties in source dropdown only appear once when data is an array of Objects
     expect(getAllByTestId("nutFreeName-option").length).toEqual(1);
@@ -2075,9 +2075,9 @@ describe("RTL Source Selector/Source Search tests", () => {
 
     //Verify tooltip for Array icon
     fireEvent.mouseOver(getByTestId("LastName-optionIcon"));
-    await waitForElement(() => getByTestId("LastNameMultiple-option-tooltip"));
+    await waitFor(() => getByTestId("LastNameMultiple-option-tooltip"));
     fireEvent.mouseOver(getByTestId("nutFreeName-optionIcon"));
-    await waitForElement(() => getByTestId("nutFreeNameMultiple-option-tooltip"));
+    await waitFor(() => getByTestId("nutFreeNameMultiple-option-tooltip"));
 
   });
 
@@ -2098,8 +2098,8 @@ describe("RTL Source Selector/Source Search tests", () => {
       getAllByTestId = renderResults.getAllByTestId;
     });
 
-    let sourceSelector = await waitForElement(() => getByTestId("itemTypes-listIcon"));
-    await wait(() => fireEvent.click(sourceSelector));
+    let sourceSelector = await waitFor(() => getByTestId("itemTypes-listIcon"));
+    await waitFor(() => fireEvent.click(sourceSelector));
 
     //Verify object properties in source dropdown only appear once when data is an array of Objects
     expect(getAllByTestId("nutFree:name-option").length).toEqual(1);
@@ -2114,7 +2114,7 @@ describe("RTL Source Selector/Source Search tests", () => {
 
     //Verify tooltip for Array icon
     fireEvent.mouseOver(getByTestId("nutFree:name-optionIcon"));
-    await waitForElement(() => getByTestId("nutFree:nameMultiple-option-tooltip"));
+    await waitFor(() => getByTestId("nutFree:nameMultiple-option-tooltip"));
   });
 
   test("Nested JSON source data - Right XPATH expression", async () => {
@@ -2138,14 +2138,14 @@ describe("RTL Source Selector/Source Search tests", () => {
 
     expect(getByText("Source Data")).toBeInTheDocument();
     expect(getByText("Entity Type: Person")).toBeInTheDocument();
-    await wait(() => expect(getByText("Test")).toBeEnabled());
+    await waitFor(() => expect(getByText("Test")).toBeEnabled());
 
     let sourceSelector = getByTestId("itemTypes-listIcon");
 
     //corresponds to 'itemTypes' source selector
     fireEvent.click(sourceSelector);
 
-    await (waitForElement(() => getAllByRole("option"), {"timeout": 200}));
+    await (waitFor(() => getAllByRole("option"), {"timeout": 200}));
     let firstName = getAllByText("FirstNamePreferred");
     expect(firstName.length).toEqual(2);
 
@@ -2157,13 +2157,13 @@ describe("RTL Source Selector/Source Search tests", () => {
 
     //Verify tooltip for Array icon
     fireEvent.mouseOver(getByTestId("proteinDog-optionIcon"));
-    await waitForElement(() => getByTestId("proteinDogMultiple-option-tooltip"));
+    await waitFor(() => getByTestId("proteinDogMultiple-option-tooltip"));
 
     //Click on 'FirstNamePreferred'
     fireEvent.click(firstName[1]);
 
     //mapping is saved
-    expect(await (waitForElement(() => getByTestId("successMessage"), {"timeout": 200})));
+    expect(await (waitFor(() => getByTestId("successMessage"), {"timeout": 200})));
 
     let mapExp = getByTestId("itemTypes-mapexpression");
     //Right Xpath is populated
@@ -2191,14 +2191,14 @@ describe("RTL Source Selector/Source Search tests", () => {
     });
 
     //Expanding all the nested levels first
-    await wait(() => fireEvent.click(within(getByTestId("srcContainer")).getByLabelText("radio-button-expand")));
+    await waitFor(() => fireEvent.click(within(getByTestId("srcContainer")).getByLabelText("radio-button-expand")));
     fireEvent.click(within(getByTestId("entityContainer")).getByLabelText("radio-button-expand"));
     let sourceSelector = getByTestId("itemTypes-listIcon");
 
     //corresponds to 'itemTypes' source selector
     fireEvent.click(sourceSelector);
 
-    await (waitForElement(() => getAllByRole("option"), {"timeout": 200}));
+    await (waitFor(() => getAllByRole("option"), {"timeout": 200}));
     let lastName = getAllByText("LastName");
     expect(lastName.length).toEqual(2);
 
@@ -2224,13 +2224,13 @@ describe("RTL Source Selector/Source Search tests", () => {
 
     //Verify tooltip for Array icon
     fireEvent.mouseOver(getByTestId("LastName-optionIcon"));
-    await waitForElement(() => getByTestId("LastNameMultiple-option-tooltip"));
+    await waitFor(() => getByTestId("LastNameMultiple-option-tooltip"));
 
     //Click on 'FirstNamePreferred'
     fireEvent.click(lastName[1]);
 
     //mapping is saved
-    expect(await (waitForElement(() => getByTestId("successMessage"), {"timeout": 200})));
+    expect(await (waitFor(() => getByTestId("successMessage"), {"timeout": 200})));
 
     let mapExp = getByTestId("itemTypes-mapexpression");
     //Right Xpath is populated
@@ -2239,7 +2239,7 @@ describe("RTL Source Selector/Source Search tests", () => {
     //Right Xpath population for namespaced option representing array of values
     sourceSelector = getByTestId("items-listIcon");
     fireEvent.click(sourceSelector);
-    await (waitForElement(() => getAllByRole("option"), {"timeout": 200}));
+    await (waitFor(() => getAllByRole("option"), {"timeout": 200}));
     let proteinDogOption = (getAllByTestId("nutFree:proteinDog-option"));
     expect(proteinDogOption.length).toEqual(2);
     fireEvent.click(proteinDogOption[0]);
@@ -2269,17 +2269,17 @@ describe("RTL Source Selector/Source Search tests", () => {
     });
 
 
-    let sourceSelector = await waitForElement(() => getByTestId("items-listIcon"));
+    let sourceSelector = await waitFor(() => getByTestId("items-listIcon"));
 
     //corresponds to 'items' source selector
     fireEvent.click(sourceSelector);
 
-    await (waitForElement(() => getAllByRole("option"), {"timeout": 600}));
+    await (waitFor(() => getAllByRole("option"), {"timeout": 600}));
     //Set 'sourceContext' to 'nutFreeName'
     let nutFreeName = getAllByText("nutFreeName");
     expect(nutFreeName.length).toEqual(2);
     fireEvent.click(getAllByText("nutFreeName")[1]);
-    await wait(() => expect(findByTestId("successMessage")));
+    await waitFor(() => expect(findByTestId("successMessage")));
 
     let mapExp = getByTestId("items-mapexpression");
     //Right Xpath is populated
@@ -2287,11 +2287,11 @@ describe("RTL Source Selector/Source Search tests", () => {
 
     sourceSelector = getByTestId("itemTypes-listIcon");
     fireEvent.click(sourceSelector);
-    await (waitForElement(() => getAllByRole("option"), {"timeout": 600}));
+    await (waitFor(() => getAllByRole("option"), {"timeout": 600}));
     let firstName = getAllByText("FirstNamePreferred");
     fireEvent.click(firstName[2]);
     //mapping is saved
-    await wait(() => expect(findByTestId("successMessage")));
+    await waitFor(() => expect(findByTestId("successMessage")));
     if (queryByTestId("successMessage")) {
       await (waitForElementToBeRemoved(() => (queryByTestId("successMessage"))));
     }
@@ -2314,28 +2314,28 @@ describe("RTL Source Selector/Source Search tests", () => {
       getByTestId = renderResults.getByTestId;
     });
     // URI index starts at 1
-    let uriIndex = await waitForElement(() => within(getByLabelText("uriIndex")));
+    let uriIndex = await waitFor(() => within(getByLabelText("uriIndex")));
     expect(uriIndex.getByText("1")).toBeInTheDocument();
 
     // Click next, URI index is 2
     userEvent.click(getByTestId("navigate-uris-right"));
-    uriIndex = await waitForElement(() => within(getByLabelText("uriIndex")));
-    wait(() => expect(uriIndex.getByText("2")).toBeInTheDocument());
+    uriIndex = await waitFor(() => within(getByLabelText("uriIndex")));
+    waitFor(() => expect(uriIndex.getByText("2")).toBeInTheDocument());
 
     // Click next, URI index is 3
     userEvent.click(getByTestId("navigate-uris-right"));
-    uriIndex = await waitForElement(() => within(getByLabelText("uriIndex")));
-    wait(() => expect(uriIndex.getByText("3")).toBeInTheDocument());
+    uriIndex = await waitFor(() => within(getByLabelText("uriIndex")));
+    waitFor(() => expect(uriIndex.getByText("3")).toBeInTheDocument());
 
     // Click previous, URI index is 2
     fireEvent.click(getByTestId("navigate-uris-left"));
-    uriIndex = await waitForElement(() => within(getByLabelText("uriIndex")));
-    wait(() => expect(uriIndex.getByText("2")).toBeInTheDocument());
+    uriIndex = await waitFor(() => within(getByLabelText("uriIndex")));
+    waitFor(() => expect(uriIndex.getByText("2")).toBeInTheDocument());
 
     // Click previous, URI index is 1
     fireEvent.click(getByTestId("navigate-uris-left"));
-    uriIndex = await waitForElement(() => within(getByLabelText("uriIndex")));
-    wait(() => expect(uriIndex.getByText("1")).toBeInTheDocument());
+    uriIndex = await waitFor(() => within(getByLabelText("uriIndex")));
+    waitFor(() => expect(uriIndex.getByText("1")).toBeInTheDocument());
   });
 
   test("Verify legend visibility", async () => {
@@ -2376,7 +2376,7 @@ describe("RTL Source Selector/Source Search tests", () => {
     fireEvent.click(getByTestId("pencil-icon"));
     fireEvent.change(getByTestId("hc-input-component"), {target: {value: "/dummy/uri/person-102.json"}});
     fireEvent.click(getByLabelText("icon: check"));
-    await (waitForElement(() => getByText("/dummy/uri/person-102.json")));
+    await (waitFor(() => getByText("/dummy/uri/person-102.json")));
     expect(getByText("/dummy/uri/person-102.json")).toBeInTheDocument();
   });
 });

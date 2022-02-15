@@ -1,5 +1,5 @@
 import React from "react";
-import {render, fireEvent, wait, waitForElement, act, cleanup} from "@testing-library/react";
+import {render, fireEvent, waitFor, waitFor, act, cleanup} from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import {AuthoritiesContext, AuthoritiesService} from "../util/authorities";
 import axiosMock from "axios";
@@ -36,7 +36,7 @@ describe("Load component", () => {
       <MemoryRouter><AuthoritiesContext.Provider value={authorityService}><Load/></AuthoritiesContext.Provider></MemoryRouter>
     );
 
-    expect(await(waitForElement(() => getByLabelText("switch-view-list")))).toBeInTheDocument();
+    expect(await(waitFor(() => getByLabelText("switch-view-list")))).toBeInTheDocument();
 
     // Check for steps to be populated
     expect(axiosMock.get).toBeCalledWith("/api/steps/ingestion");
@@ -62,13 +62,13 @@ describe("Load component", () => {
     expect(baseElement.querySelector("#outputUriPrefix")).toHaveProperty("disabled");
 
     // Advanced settings
-    await wait(() => {
+    await waitFor(() => {
       fireEvent.click(getByText("Advanced"));
     });
     expect(getByText("Basic").closest("button")).not.toHaveClass("nav-link active");
     expect(getByText("Advanced").closest("button")).toHaveClass("nav-link active");
 
-    expect(await(waitForElement(() => getByText("Target Database:")))).toBeInTheDocument();
+    expect(await(waitFor(() => getByText("Target Database:")))).toBeInTheDocument();
     expect(getByLabelText("headers-textarea")).toBeDisabled();
     fireEvent.click(getByText("Interceptors"));
     expect(getByLabelText("interceptors-textarea")).toBeDisabled();
@@ -98,7 +98,7 @@ describe("Load component", () => {
       <MemoryRouter><AuthoritiesContext.Provider value={authorityService}><Load/></AuthoritiesContext.Provider></MemoryRouter>
     );
 
-    expect(await(waitForElement(() => getByLabelText("switch-view-list")))).toBeInTheDocument();
+    expect(await(waitFor(() => getByLabelText("switch-view-list")))).toBeInTheDocument();
 
     // Check for steps to be populated
     expect(axiosMock.get).toBeCalledWith("/api/steps/ingestion");
@@ -126,7 +126,7 @@ describe("Load component", () => {
     expect(baseElement.querySelector("#outputUriPrefix")).not.toHaveClass("ant-input-disabled");
 
     // Advanced settings
-    await wait(() => {
+    await waitFor(() => {
       fireEvent.click(getByText("Advanced"));
     });
     expect(getByText("Basic").closest("button")).not.toHaveClass("nav-link active");
@@ -178,7 +178,7 @@ describe("Load component", () => {
 
     // test delete
     fireEvent.click(getByTestId("testLoad-delete"));
-    expect(await(waitForElement(() => getByText("Yes")))).toBeInTheDocument();
+    expect(await(waitFor(() => getByText("Yes")))).toBeInTheDocument();
     await act(async () => {
       fireEvent.click(getByText("Yes"));
     });
@@ -193,7 +193,7 @@ describe("Load component", () => {
       <MemoryRouter><AuthoritiesContext.Provider value={authorityService}><Load/></AuthoritiesContext.Provider></MemoryRouter>
     );
 
-    expect(await(waitForElement(() => getByLabelText("switch-view-list")))).toBeInTheDocument();
+    expect(await(waitFor(() => getByLabelText("switch-view-list")))).toBeInTheDocument();
 
     expect(getByText(tiles.load.intro)).toBeInTheDocument(); // tile intro text
 

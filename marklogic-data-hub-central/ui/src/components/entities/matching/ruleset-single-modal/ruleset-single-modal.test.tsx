@@ -1,5 +1,5 @@
 import React from "react";
-import {cleanup, render, screen, wait, within} from "@testing-library/react";
+import {cleanup, render, screen, waitFor, within} from "@testing-library/react";
 import {fireEvent} from "@testing-library/dom";
 import userEvent from "@testing-library/user-event";
 
@@ -54,7 +54,7 @@ describe("Matching Ruleset Single Modal component", () => {
     expect(getByLabelText("reduceToggle")).toBeInTheDocument();
 
     userEvent.click(getByTestId("property-to-match-dropdown"));
-    wait(() => { userEvent.click(getByText("customerId")); });
+    waitFor(() => { userEvent.click(getByText("customerId")); });
 
     fireEvent.keyDown(screen.getByLabelText("match-type-dropdown"), {key: "ArrowDown"});
     userEvent.click(screen.getByText("Exact"));
@@ -108,7 +108,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
     userEvent.click(getByText("Save"));
 
-    wait(() => {
+    waitFor(() => {
       expect(mockMatchingUpdate).toHaveBeenCalledTimes(1);
       expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
       expect(toggleModalMock).toHaveBeenCalledTimes(1);
@@ -135,7 +135,7 @@ describe("Matching Ruleset Single Modal component", () => {
     expect(getByLabelText("reduceToggle")).toBeInTheDocument();
 
     userEvent.click(getByTestId("property-to-match-dropdown"));
-    wait(() => { userEvent.click(getByText("nicknames")); });
+    waitFor(() => { userEvent.click(getByText("nicknames")); });
 
     fireEvent.keyDown(screen.getByLabelText("match-type-dropdown"), {key: "ArrowDown"});
     userEvent.click(screen.getByText("Synonym"));
@@ -144,7 +144,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
 
     userEvent.click(getByText("Save"));
-    wait(() => {
+    waitFor(() => {
       expect(mockMatchingUpdate).toHaveBeenCalledTimes(1);
       expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
       expect(toggleModalMock).toHaveBeenCalledTimes(1);
@@ -171,7 +171,7 @@ describe("Matching Ruleset Single Modal component", () => {
     expect(getByLabelText("reduceToggle")).toBeInTheDocument();
 
     userEvent.click(getByTestId("property-to-match-dropdown"));
-    wait(() => { userEvent.click(getByText("orders")); });
+    waitFor(() => { userEvent.click(getByText("orders")); });
 
     fireEvent.keyDown(screen.getByLabelText("match-type-dropdown"), {key: "ArrowDown"});
     userEvent.click(screen.getByText("Double Metaphone"));
@@ -180,7 +180,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
     userEvent.click(getByText("Save"));
 
-    wait(() => {
+    waitFor(() => {
       expect(mockMatchingUpdate).toHaveBeenCalledTimes(1);
       expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
       expect(toggleModalMock).toHaveBeenCalledTimes(1);
@@ -207,7 +207,7 @@ describe("Matching Ruleset Single Modal component", () => {
     expect(getByLabelText("reduceToggle")).toBeInTheDocument();
 
     userEvent.click(getByTestId("property-to-match-dropdown"));
-    wait(() => { userEvent.click(getByText("nicknames")); });
+    waitFor(() => { userEvent.click(getByText("nicknames")); });
 
     fireEvent.keyDown(screen.getByLabelText("match-type-dropdown"), {key: "ArrowDown"});
     userEvent.click(screen.getByText("Custom"));
@@ -217,7 +217,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
 
     userEvent.click(getByText("Save"));
-    wait(() => {
+    waitFor(() => {
       expect(mockMatchingUpdate).toHaveBeenCalledTimes(1);
       expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
       expect(toggleModalMock).toHaveBeenCalledTimes(1);
@@ -247,13 +247,13 @@ describe("Matching Ruleset Single Modal component", () => {
     userEvent.click(screen.getByLabelText("reduceToggle"));
 
     userEvent.click(getByTestId("property-to-match-dropdown"));
-    wait(() => { userEvent.click(getByText("nicknames")); });
+    waitFor(() => { userEvent.click(getByText("nicknames")); });
 
     fireEvent.keyDown(screen.getByLabelText("match-type-dropdown"), {key: "ArrowDown"});
     userEvent.click(screen.getByText("Exact"));
 
     userEvent.click(getByText("Save"));
-    wait(() => {
+    waitFor(() => {
       const expectedMatchStep = {...customerMatchingStep.curationOptions.activeStep.stepArtifact};
       expectedMatchStep.matchRulesets = [...expectedMatchStep.matchRulesets, {
         name: "nicknames - Exact",
@@ -343,7 +343,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
     userEvent.click(screen.getByText("Save"));
 
-    wait(() => {
+    waitFor(() => {
       expect(mockMatchingUpdate).toHaveBeenCalledTimes(1);
       expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
       expect(toggleModalMock).toHaveBeenCalledTimes(1);
@@ -369,8 +369,8 @@ describe("Matching Ruleset Single Modal component", () => {
     expect(getByLabelText("reduceToggle")).toBeInTheDocument();
 
     userEvent.click(getByTestId("property-to-match-dropdown"));
-    wait(() => { userEvent.click(within(getByLabelText("shipping-option")).getByLabelText("icon: caret-down")); });
-    wait(() => { userEvent.click(within(getByLabelText("shipping > street-option")).getByLabelText("street-option")); });
+    waitFor(() => { userEvent.click(within(getByLabelText("shipping-option")).getByLabelText("icon: caret-down")); });
+    waitFor(() => { userEvent.click(within(getByLabelText("shipping > street-option")).getByLabelText("street-option")); });
 
     fireEvent.keyDown(screen.getByLabelText("match-type-dropdown"), {key: "ArrowDown"});
     userEvent.click(screen.getByText("Synonym"));
@@ -379,7 +379,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
 
     userEvent.click(getByText("Save"));
-    wait(() => {
+    waitFor(() => {
       expect(mockMatchingUpdate).toHaveBeenCalledTimes(1);
       expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
       expect(toggleModalMock).toHaveBeenCalledTimes(1);
@@ -403,7 +403,7 @@ describe("Matching Ruleset Single Modal component", () => {
     expect(queryByText("Add Match Ruleset for Single Property")).toBeInTheDocument();
     userEvent.click(getByTestId("property-to-match-dropdown"));
 
-    wait(() => {
+    waitFor(() => {
       userEvent.click(getByText("shipping"));
       expect(getByLabelText("shipping > street-option")).toBeInTheDocument();
       expect(getByLabelText("shipping > city-option")).toBeInTheDocument();

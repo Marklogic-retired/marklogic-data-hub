@@ -1,5 +1,5 @@
 import React from "react";
-import {render, fireEvent, waitForElement} from "@testing-library/react";
+import {render, fireEvent, waitFor} from "@testing-library/react";
 import SearchResult from "./search-result";
 import {BrowserRouter as Router} from "react-router-dom";
 import {entityFromJSON, entityParser} from "../../util/data-conversion";
@@ -48,13 +48,13 @@ describe("Search Result view component", () => {
     expect(getByTestId("sources")).toBeInTheDocument();
 
     fireEvent.mouseOver(getByTestId("source-icon"));
-    await (waitForElement(() => (getByText("Show the complete JSON"))));
+    await (waitFor(() => (getByText("Show the complete JSON"))));
 
     fireEvent.mouseOver(getByTestId("instance-icon"));
-    await (waitForElement(() => (getByText("Show the processed data"))));
+    await (waitFor(() => (getByText("Show the processed data"))));
 
     fireEvent.mouseOver(getByTestId("graph-icon"));
-    await (waitForElement(() => (getByText("View entity in graph view"))));
+    await (waitFor(() => (getByText("View entity in graph view"))));
   });
 
   test("Verify expandable icon closes if page number changes", async () => {

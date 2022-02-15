@@ -1,5 +1,5 @@
 import React from "react";
-import {fireEvent, render, wait, cleanup, screen} from "@testing-library/react";
+import {fireEvent, render, waitFor, cleanup, screen} from "@testing-library/react";
 import Steps from "./steps";
 import axiosMock from "axios";
 import mocks from "../../api/__mocks__/mocks.data";
@@ -35,7 +35,7 @@ describe("Steps settings component", () => {
     // Other Basic settings details tested in create-edit-*.test.tsx
 
     // Switch to Advanced tab
-    await wait(() => {
+    await waitFor(() => {
       fireEvent.click(getByText("Advanced"));
     });
     expect(getByText("Basic").closest("button")).not.toHaveClass("nav-link active");
@@ -50,7 +50,7 @@ describe("Steps settings component", () => {
     getByPlaceholderText("Please enter target permissions").blur();
 
     // Switch to Basic tab and cancel
-    await wait(() => {
+    await waitFor(() => {
       fireEvent.click(getByText("Basic"));
     });
     expect(getByText("Basic").closest("button")).toHaveClass("nav-link active");
@@ -74,7 +74,7 @@ describe("Steps settings component", () => {
     expect(yesButton.onclick).toHaveBeenCalledTimes(1);
 
     // Save
-    await wait(() => {
+    await waitFor(() => {
       fireEvent.click(getAllByLabelText("Save")[0]);
     });
     const saveButton = getAllByLabelText("Save")[0];
@@ -103,7 +103,7 @@ describe("Steps settings component", () => {
     expect(getByText("Advanced").closest("button")).not.toHaveClass("nav-link active");
 
     // Switch to Advanced tab, create error, verify other tab disabled
-    await wait(() => {
+    await waitFor(() => {
       fireEvent.click(getByText("Advanced"));
     });
     expect(getByPlaceholderText("Please enter target permissions")).toHaveValue("data-hub-common,read,data-hub-common,update");
@@ -116,7 +116,7 @@ describe("Steps settings component", () => {
 
     expect(getByText("Basic").closest("button")).toHaveClass("nav-link disabled");
     fireEvent.mouseOver(getByText("Basic"));
-    wait(() => expect(screen.getByText(ErrorTooltips.disabledTab)).toBeInTheDocument());
+    waitFor(() => expect(screen.getByText(ErrorTooltips.disabledTab)).toBeInTheDocument());
 
     // Fix error, verify other tab enabled
     getByPlaceholderText("Please enter target permissions").focus();
@@ -128,7 +128,7 @@ describe("Steps settings component", () => {
     expect(getByText("Basic").closest("button")).not.toHaveClass("nav-link disabled");
 
     // Close dialog, verify discard changes confirm dialog
-    await wait(() => {
+    await waitFor(() => {
       fireEvent.click(getByLabelText("Close"));
     });
     const yesButton =  screen.getByRole("button", {
@@ -171,11 +171,11 @@ describe("Steps settings component", () => {
     expect(getByLabelText("Close")).toBeInTheDocument();
 
     // Additional collection change doesn't trigger Discard Changes alert (DHFPROD-6660)
-    await wait(() => {
+    await waitFor(() => {
       fireEvent.click(getByText("Advanced"));
     });
     fireEvent.click(getByTestId("onMerge-edit"));
-    await wait(() => {
+    await waitFor(() => {
       expect(getByLabelText("additionalColl-select-onMerge")).toBeInTheDocument();
     });
     let collectionInput = getByLabelText("additionalColl-select-onMerge")!;
@@ -220,7 +220,7 @@ describe("Steps settings component", () => {
     nameField.blur();
 
     // Switch to enabled Advanced tab, check default collections
-    await wait(() => {
+    await waitFor(() => {
       fireEvent.click(getByText("Advanced"));
     });
     await(() => expect(getByTestId("defaultCollections-" + testName)).toBeInTheDocument());

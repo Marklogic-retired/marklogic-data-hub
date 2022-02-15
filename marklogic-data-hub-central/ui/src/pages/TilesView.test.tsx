@@ -2,7 +2,7 @@ import React from "react";
 import {Router} from "react-router";
 import {createMemoryHistory} from "history";
 const history = createMemoryHistory();
-import {render, fireEvent, waitForElement, cleanup, wait} from "@testing-library/react";
+import {render, fireEvent, waitFor, cleanup, waitFor} from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import TilesView from "./TilesView";
 import {AuthoritiesContext, AuthoritiesService} from "../util/authorities";
@@ -74,8 +74,8 @@ describe("Tiles View component tests for Developer user", () => {
     tools.forEach(async (tool, i) => {
       expect(getByLabelText("tool-" + tool)).toBeInTheDocument();
       fireEvent.click(getByLabelText("tool-" + tool));
-      expect(await(waitForElement(() => getByLabelText("icon-" + tool)))).toBeInTheDocument();
-      expect(await(waitForElement(() => getByLabelText("close")))).toBeInTheDocument();
+      expect(await(waitFor(() => getByLabelText("icon-" + tool)))).toBeInTheDocument();
+      expect(await(waitFor(() => getByLabelText("close")))).toBeInTheDocument();
       fireEvent.click(getByLabelText("close"));
       expect(getByLabelText("overview")).toBeInTheDocument();
     });
@@ -98,7 +98,7 @@ describe("Tiles View component tests for Developer user", () => {
     fireEvent.click(getByLabelText("tool-curate"));
 
     // Curate tile shown with entityTypes after click
-    await wait(() => expect(getByLabelText("icon-curate")).toBeInTheDocument());
+    await waitFor(() => expect(getByLabelText("icon-curate")).toBeInTheDocument());
     expect(getByLabelText("title-curate")).toBeInTheDocument();
 
     expect(getByText("Customer")).toBeInTheDocument();
@@ -129,7 +129,7 @@ describe("Tiles View component tests for Developer user", () => {
     fireEvent.click(getByLabelText("tool-load"));
 
     // Load tile shown with entityTypes after click
-    await wait(() => expect(getByLabelText("icon-load")).toBeInTheDocument());
+    await waitFor(() => expect(getByLabelText("icon-load")).toBeInTheDocument());
     expect(getByLabelText("title-load")).toBeInTheDocument();
     expect(getByText("testLoad")).toBeInTheDocument();
   });
@@ -196,7 +196,7 @@ describe("Tiles View component tests for Developer user", () => {
     fireEvent.click(getByLabelText("tool-curate"));
 
     // Curate tile shown with entityTypes after click
-    await wait(() => expect(getByLabelText("icon-curate")).toBeInTheDocument());
+    await waitFor(() => expect(getByLabelText("icon-curate")).toBeInTheDocument());
     expect(getByLabelText("title-curate")).toBeInTheDocument();
 
     // test cannot access Mapping tab
@@ -224,7 +224,7 @@ describe("Tiles View component tests for Developer user", () => {
     fireEvent.click(getByLabelText("tool-run"));
 
     // Run tile shown with entityTypes after click
-    await wait(() => expect(getByLabelText("icon-run")).toBeInTheDocument());
+    await waitFor(() => expect(getByLabelText("icon-run")).toBeInTheDocument());
     expect(getByLabelText("title-run")).toBeInTheDocument();
     expect(document.querySelector("#flows-container")).toBeInTheDocument();
     expect(getByText("Create Flow")).toBeInTheDocument();
@@ -263,7 +263,7 @@ describe("Tiles View component tests for Developer user", () => {
     fireEvent.click(getByLabelText("tool-run"));
 
     // Run tile shown with entityTypes after click
-    await wait(() => expect(getByLabelText("icon-run")).toBeInTheDocument());
+    await waitFor(() => expect(getByLabelText("icon-run")).toBeInTheDocument());
     expect(getByLabelText("title-run")).toBeInTheDocument();
     expect(document.querySelector("#flows-container")).toBeInTheDocument();
     expect(getByText("testFlow")).toBeInTheDocument();
@@ -303,7 +303,7 @@ describe("Tiles View component tests for Developer user", () => {
 
     fireEvent.click(getByLabelText("tool-run"));
 
-    await wait(() => expect(getByLabelText("icon-run")).toBeInTheDocument());
+    await waitFor(() => expect(getByLabelText("icon-run")).toBeInTheDocument());
     // test run
     fireEvent.click(document.querySelector(".accordion-button"));
     expect(getByTestId("runStep-1")).toBeInTheDocument();
@@ -352,7 +352,7 @@ describe("Tiles View component tests for Developer user", () => {
     fireEvent.click(getByLabelText("tool-load"));
 
     // Load tile shown after click
-    await wait(() => expect(getByLabelText("icon-load")).toBeInTheDocument());
+    await waitFor(() => expect(getByLabelText("icon-load")).toBeInTheDocument());
     expect(getByLabelText("title-load")).toBeInTheDocument();
     // Default Card view
     expect(getByLabelText("switch-view")).toBeInTheDocument();
@@ -391,7 +391,7 @@ describe("Tiles View component tests for Operator user", () => {
     fireEvent.click(getByLabelText("tool-curate"));
 
     // Curate tile shown with entityTypes after click
-    await wait(() => expect(getByLabelText("icon-curate")).toBeInTheDocument());
+    await waitFor(() => expect(getByLabelText("icon-curate")).toBeInTheDocument());
     expect(getByLabelText("title-curate")).toBeInTheDocument();
 
     fireEvent.click(getByText("Customer"));

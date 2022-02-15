@@ -1,5 +1,5 @@
 import React from "react";
-import {render, fireEvent, wait} from "@testing-library/react";
+import {render, fireEvent, waitFor} from "@testing-library/react";
 import PopOverSearch from "./pop-over-search";
 import axiosMock from "axios";
 import {stringSearchResponse} from "../../assets/mock-data/explore/facet-props";
@@ -35,7 +35,7 @@ describe("<PopOverSearch/>", () => {
 
     fireEvent.click(getByText("See all"));
     let inputField = getByPlaceholderText("Search");
-    await wait(() => {
+    await waitFor(() => {
       fireEvent.change(inputField, {target: {value: "ad"}});
     });
     let url = "/api/entitySearch/facet-values?database=final";
@@ -73,7 +73,7 @@ describe("<PopOverSearch/>", () => {
 
     fireEvent.click(getByText("See all"));
     let inputField = getByPlaceholderText("Search");
-    await wait(() => {
+    await waitFor(() => {
       fireEvent.change(inputField, {target: {value: "ad"}});
     });
     let url = "/api/jobs/stepResponses/facetValues";

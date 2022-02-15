@@ -1,6 +1,6 @@
 import React from "react";
 import axiosMock from "axios";
-import {render, waitForElement, act, cleanup} from "@testing-library/react";
+import {render, waitFor, act, cleanup} from "@testing-library/react";
 import mocks from "../../api/__mocks__/mocks.data";
 import JobResponse from "./job-response";
 import {BrowserRouter as Router} from "react-router-dom";
@@ -52,7 +52,7 @@ describe("Job response modal", () => {
 
     /* Commenting out for DHFPROD-7820, remove unfinished run flow epic stories from 5.6
     // verify modal text and headers
-    expect(await(waitForElement(() => getByText((content, node) => {
+    expect(await(waitFor(() => getByText((content, node) => {
       return getSubElements(content, node, "The flow testFlow completed");
     })))).toBeInTheDocument();
 
@@ -66,7 +66,7 @@ describe("Job response modal", () => {
     */
 
     // check that
-    await (waitForElement(() => (getByText("testFlow"))));
+    await (waitFor(() => (getByText("testFlow"))));
     let ts: string = curateData.jobRespSuccess.data.timeEnded; // "2020-04-24T14:05:01.019819-07:00"
     let tsExpected: string = moment(ts).format("YYYY-MM-DD HH:mm");
     expect(getByText(tsExpected)).toBeInTheDocument(); // "2020-04-24 14:05"
@@ -98,7 +98,7 @@ describe("Job response modal", () => {
     });
 
     // check that
-    await (waitForElement(() => (getByText("testFlow"))));
+    await (waitFor(() => (getByText("testFlow"))));
     let ts: string = curateData.jobRespFailedWithError.data.stepResponses["1"].stepEndTime; // "2020-04-04T01:17:45.012137-07:00"
     let tsExpected: string = moment(ts).format("YYYY-MM-DD HH:mm");
     expect(getByText(tsExpected)).toBeInTheDocument(); // "2020-04-04 01:17"
