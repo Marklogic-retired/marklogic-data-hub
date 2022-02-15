@@ -100,7 +100,7 @@ def dhfWinTests(String mlVersion, String type){
 }
 def winParallel(){
 script{
-                                copyMSI "Release","10.0-8";
+                                copyMSI "Release","10.0-9";
                                 def pkgOutput=bat(returnStdout:true , script: '''
                         	                    cd xdmp/src
                         	                    for /f "delims=" %%a in ('dir /s /b *.msi') do set "name=%%~a"
@@ -165,7 +165,7 @@ def isPRUITest(){
 }
 
 void runCypressE2e(String cmd){
-   copyRPM 'Release','10.0-8'
+   copyRPM 'Release','10.0-9'
    setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
    sh 'rm -rf *central*.rpm || true'
    copyArtifacts filter: '**/*.rpm', fingerprintArtifacts: true, flatten: true, projectName: '${JOB_NAME}', selector: specific('${BUILD_NUMBER}')
@@ -225,7 +225,7 @@ void runCypressE2e(String cmd){
 
 void UnitTest(){
         props = readProperties file:'data-hub/pipeline.properties';
-        copyRPM 'Release','10.0-8'
+        copyRPM 'Release','10.0-9'
         setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
         sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;set +e;./gradlew clean;./gradlew marklogic-data-hub:bootstrap -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-central:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew ml-data-hub:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew installer-for-dhs:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-client-jar:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/'
         junit '**/TEST-*.xml'
@@ -264,7 +264,7 @@ void Tests(){
         cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
 
         props = readProperties file:'data-hub/pipeline.properties';
-        copyRPM 'Release','10.0-8'
+        copyRPM 'Release','10.0-9'
         def mlHubHosts=setupMLDockerNodes 3
         sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;set +e;./gradlew clean;./gradlew marklogic-data-hub:testAcceptance -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ -PmlHost='+mlHubHosts
         junit '**/TEST-*.xml'
@@ -327,7 +327,7 @@ void BuildDatahub(){
 
 void dh5Example() {
     sh 'cd $WORKSPACE/data-hub/examples/dh-5-example;repo="maven {";url="url \'https://nexus.marklogic.com/repository/maven-snapshots/\'";protocal="allowInsecureProtocol = true}";cred="credentials {";uname="username mavenUser";pass="password mavenPassword }";sed -i "/repositories {/a$protocal" build.gradle;sed -i "/repositories {/a$url" build.gradle;sed -i "/repositories {/a$pass" build.gradle;sed -i "/repositories {/a$uname" build.gradle;sed -i "/repositories {/a$cred" build.gradle;sed -i "/repositories {/a$repo" build.gradle;mkdir -p $WORKSPACE$GRADLE_DIR;cp ~/.gradle/gradle.properties $WORKSPACE$GRADLE_DIR;'
-    copyRPM 'Release','10.0-8'
+    copyRPM 'Release','10.0-9'
     script{
         props = readProperties file:'data-hub/pipeline.properties';
         def dockerhost=setupMLDockerCluster 3
@@ -351,7 +351,7 @@ void dh5Example() {
 
 void dhCustomHook() {
                      sh 'cd $WORKSPACE/data-hub/examples/dhf5-custom-hook;repo="maven {";url="url \'https://nexus.marklogic.com/repository/maven-snapshots/\'";protocal="allowInsecureProtocol = true}";cred="credentials {";uname="username mavenUser";pass="password mavenPassword }";sed -i "/repositories {/a$protocal" build.gradle;sed -i "/repositories {/a$url" build.gradle;sed -i "/repositories {/a$pass" build.gradle;sed -i "/repositories {/a$uname" build.gradle;sed -i "/repositories {/a$cred" build.gradle;sed -i "/repositories {/a$repo" build.gradle;mkdir -p $WORKSPACE$GRADLE_DIR;cp ~/.gradle/gradle.properties $WORKSPACE$GRADLE_DIR;'
-                     copyRPM 'Release','10.0-8'
+                     copyRPM 'Release','10.0-9'
                      script{
                         props = readProperties file:'data-hub/pipeline.properties';
                         def dockerhost=setupMLDockerCluster 3
@@ -374,7 +374,7 @@ void dhCustomHook() {
 
 void mappingExample() {
                      sh 'cd $WORKSPACE/data-hub/examples/mapping-example;repo="maven {";url="url \'https://nexus.marklogic.com/repository/maven-snapshots/\'";protocal="allowInsecureProtocol = true}";cred="credentials {";uname="username mavenUser";pass="password mavenPassword }";sed -i "/repositories {/a$protocal" build.gradle;sed -i "/repositories {/a$url" build.gradle;sed -i "/repositories {/a$pass" build.gradle;sed -i "/repositories {/a$uname" build.gradle;sed -i "/repositories {/a$cred" build.gradle;sed -i "/repositories {/a$repo" build.gradle;mkdir -p $WORKSPACE$GRADLE_DIR;cp ~/.gradle/gradle.properties $WORKSPACE$GRADLE_DIR;'
-                     copyRPM 'Release','10.0-8'
+                     copyRPM 'Release','10.0-9'
                      script{
                         props = readProperties file:'data-hub/pipeline.properties';
                         def dockerhost=setupMLDockerCluster 3
@@ -399,7 +399,7 @@ void mappingExample() {
 
 void smartMastering() {
                      sh 'cd $WORKSPACE/data-hub/examples/smart-mastering-complete;repo="maven {";url="url \'https://nexus.marklogic.com/repository/maven-snapshots/\'";protocal="allowInsecureProtocol = true}";cred="credentials {";uname="username mavenUser";pass="password mavenPassword }";sed -i "/repositories {/a$protocal" build.gradle;sed -i "/repositories {/a$url" build.gradle;sed -i "/repositories {/a$pass" build.gradle;sed -i "/repositories {/a$uname" build.gradle;sed -i "/repositories {/a$cred" build.gradle;sed -i "/repositories {/a$repo" build.gradle;mkdir -p $WORKSPACE$GRADLE_DIR;cp ~/.gradle/gradle.properties $WORKSPACE$GRADLE_DIR;'
-                     copyRPM 'Release','10.0-8'
+                     copyRPM 'Release','10.0-9'
                      script{
                         props = readProperties file:'data-hub/pipeline.properties';
                         def dockerhost=setupMLDockerCluster 3
@@ -896,7 +896,7 @@ pipeline{
         agent { label 'dhfLinuxAgent'}
         steps {
            timeout(time: 3,  unit: 'HOURS'){
-             catchError(buildResult: 'SUCCESS',catchInterruptions: true, stageResult: 'UNSTABLE') { RTLTests('Release','10.0-8') }
+             catchError(buildResult: 'SUCCESS',catchInterruptions: true, stageResult: 'UNSTABLE') { RTLTests('Release','10.0-9') }
         }}
         post{
            success {
@@ -1068,23 +1068,23 @@ pipeline{
                   }
                   }
 		}
-         stage('rh7_cluster_10.0-3'){
+         stage('rh7_cluster_10.0-9'){
              agent { label 'dhfLinuxAgent'}
              steps{
               timeout(time: 4,  unit: 'HOURS'){
-               catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhflinuxTests("10.0-3","Release")}
+               catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhflinuxTests("10.0-9","Release")}
              }}
              post{
                  always{
                      sh 'rm -rf $WORKSPACE/xdmp'
                    }
                            success {
-                             println("rh7_cluster_10.0-3 Tests Completed")
-                             sendMail Email,'<h3>Tests Passed on  10.0-3 ML Server Cluster </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-10.0-3 | Cluster | Passed'
+                             println("rh7_cluster_10.0-9 Tests Completed")
+                             sendMail Email,'<h3>Tests Passed on  10.0-9 ML Server Cluster </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-10.0-9 | Cluster | Passed'
                             }
                             unstable {
-                               println("rh7_cluster_10.0-3 Tests Failed")
-                               sendMail Email,'<h3>Some Tests Failed on 10.0-3 ML Server Cluster </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-10.0-3 | Cluster | Failed'
+                               println("rh7_cluster_10.0-9 Tests Failed")
+                               sendMail Email,'<h3>Some Tests Failed on 10.0-9 ML Server Cluster </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-10.0-9 | Cluster | Failed'
                            }
                            }
              }
@@ -1092,7 +1092,7 @@ pipeline{
                agent { label 'dhfLinuxAgent'}
                steps{
                 timeout(time: 4,  unit: 'HOURS'){
-                 catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhflinuxTests("10.0-8","Release")}
+                 catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhflinuxTests("10.0-8.3","Release")}
                }}
                post{
                  always{
@@ -1108,51 +1108,11 @@ pipeline{
                            }
                            }
              }
-             stage('rh7_cluster_10.0-5'){
-                agent { label 'dhfLinuxAgent'}
-                steps{
-                timeout(time: 4,  unit: 'HOURS'){
-                 catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhflinuxTests("10.0-5.3","Release")}
-                }}
-                post{
-                  always{
-                      sh 'rm -rf $WORKSPACE/xdmp'
-                    }
-                            success {
-                              println("rh7_cluster_10.0-5 Tests Completed")
-                              sendMail Email,'<h3>Tests Passed on  10.0-5 ML Server Cluster </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-10.0-5 | Cluster | Passed'
-                             }
-                             unstable {
-                                println("rh7_cluster_10.0-5 Tests Failed")
-                                sendMail Email,'<h3>Some Tests Failed on 10.0-5 ML Server Cluster </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-10.0-5 | Cluster | Failed'
-                            }
-                            }
-              }
-		stage('rh7_cluster_10.0-6'){
-            agent { label 'dhfLinuxAgent'}
-            steps{
-             timeout(time: 4,  unit: 'HOURS'){
-               catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhflinuxTests("10.0-6","Release")}
-            }}
-            post{
-                  always{
-                      sh 'rm -rf $WORKSPACE/xdmp'
-                    }
-                            success {
-                              println("rh7_cluster_10.0-6 Tests Completed")
-                              sendMail Email,'<h3>Tests Passed on  10.0-6 ML Server Cluster </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-10.0-6 | Cluster | Passed'
-                             }
-                             unstable {
-                                println("rh7_cluster_10.0-6 Tests Failed")
-                                sendMail Email,'<h3>Some Tests Failed on 10.0-6 ML Server Cluster </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-10.0-6 | Cluster | Failed'
-                            }
-                            }
-              }
          stage('rh7_cluster_10.0-7'){
             agent { label 'dhfLinuxAgent'}
             steps{
              timeout(time: 4,  unit: 'HOURS'){
-               catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhflinuxTests("10.0-7","Release")}
+               catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhflinuxTests("10.0-7.3","Release")}
             }}
             post{
                   always{
@@ -1311,7 +1271,7 @@ pipeline{
                           }
                           }
         		}
-        		stage('w12_cluster_10.0-8'){
+        		stage('w12_cluster_10.0-9'){
         			agent { label 'dhfWinCluster'}
         			steps{
                     timeout(time: 4,  unit: 'HOURS'){
@@ -1322,12 +1282,12 @@ pipeline{
         				  	bat 'RMDIR /S/Q xdmp'
         				  }
                           success {
-                            println("w12_cluster_10.0-8 Tests Completed")
-                            sendMail Email,'<h3>Tests Passed on Released 10.0 ML Server Cluster on Windows Platform</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Windows W2k12 | ML-10.0-8 | Cluster | Passed'
+                            println("w12_cluster_10.0-9 Tests Completed")
+                            sendMail Email,'<h3>Tests Passed on Released 10.0 ML Server Cluster on Windows Platform</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Windows W2k12 | ML-10.0-9 | Cluster | Passed'
                            }
                            unstable {
-                              println("w12_cluster_10.0-8 Tests Failed")
-                              sendMail Email,'<h3>Some Tests Failed on Released 10.0 ML Server on Windows Platform </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Windows W2k12 | ML-10.0-8 | Cluster | Failed'
+                              println("w12_cluster_10.0-9 Tests Failed")
+                              sendMail Email,'<h3>Some Tests Failed on Released 10.0 ML Server on Windows Platform </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Windows W2k12 | ML-10.0-9 | Cluster | Failed'
                           }
                           }
         		}
@@ -1363,7 +1323,7 @@ pipeline{
                     }
                 }
 
-                stage('10.0-8-Win10-On-Prem'){
+                stage('10.0-9-Win10-On-Prem'){
                     agent { label 'Win10HCPrem'}
                     environment{
                         JAVA_HOME="C:\\Program Files (x86)\\OpenJDK\\jdk-8.0.262.10-hotspot"
@@ -1372,7 +1332,7 @@ pipeline{
                     }
                     steps{
                      timeout(time: 3,  unit: 'HOURS'){
-                        catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){cypressE2EOnPremWinTests("Release","10.0-8")}
+                        catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){cypressE2EOnPremWinTests("Release","10.0-9")}
                     }}
                     post{
                         success {
@@ -1411,7 +1371,7 @@ pipeline{
                 }
                 */
 
-                stage('10.0-8-Win10-On-Prem-chrome'){
+                stage('10.0-9-Win10-On-Prem-chrome'){
                     agent { label 'sel-w10v-90-8'}
                     environment{
                         JAVA_HOME="C:\\Program Files (x86)\\OpenJDK\\jdk-8.0.262.10-hotspot"
@@ -1421,7 +1381,7 @@ pipeline{
 
                     steps{
                      timeout(time: 3,  unit: 'HOURS'){
-                        catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){cypressE2EOnPremWinChromeTests("Release","10.0-8")}
+                        catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){cypressE2EOnPremWinChromeTests("Release","10.0-9")}
                     }}
                    post{
                         success {
