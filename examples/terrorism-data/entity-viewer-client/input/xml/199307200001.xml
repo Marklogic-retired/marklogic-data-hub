@@ -1,0 +1,63 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199307200001</eventid>
+    <iyear>1993</iyear>
+    <imonth>7</imonth>
+    <iday>20</iday>
+    <extended>0</extended>
+    <country>217</country>
+    <country_txt>United States</country_txt>
+    <region>1</region>
+    <region_txt>North America</region_txt>
+    <provstate>California</provstate>
+    <city>Sacramento</city>
+    <vicinity>0</vicinity>
+    <summary>07/20/1993: The firebombing of the NAACP's Sacramento office resulted in the destruction of the building. Fire officials say "a flammable liquid-type device" was thrown through a window of an unoccupied office. Wayne Paul Wooten, 18, Jeremiah Gordon Knesal, 19, and Mark Kowaalski, 24, were held by the FBI as suspects.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>1</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>7</attacktype1>
+    <attacktype1_txt>Facility/Infrastructure Attack</attacktype1_txt>
+    <targtype1>12</targtype1>
+    <targtype1_txt>NGO</targtype1_txt>
+    <corp1>National Association for the Advancement of Colored People (NAACP)</corp1>
+    <target1>National Association for the Advancement of Colored People (NAACP) office in Sacramento</target1>
+    <natlty1>217</natlty1>
+    <natlty1_txt>United States</natlty1_txt>
+    <gname>Unaffiliated Individual(s)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperps>3</nperps>
+    <nperpcap>3</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>8</weaptype1>
+    <weaptype1_txt>Incendiary</weaptype1_txt>
+    <weapsubtype1>18</weapsubtype1>
+    <weapsubtype1_txt>Arson/Fire</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <propcomment>The early morning blaze destroyed the building.</propcomment>
+    <ishostkid>0</ishostkid>
+    <addnotes>The men were reportedly members of the neo-Nazi Church of the Creator. Authorities believed that the perpetrators were intent on starting a race war. This was one of three linked incidents (cf. 199307200001, 199307200003, 199207220001).</addnotes>
+    <scite1>“Racists’ Terror Plot,” Newsday, July 30, 1993.</scite1>
+    <scite2>John Snell, “FBI Says Terror Group Had Plans to Bomb Synagogue in Portland,” The Oregonian (Portland, Oregon), July 30, 1993.</scite2>
+    <scite3>Wayne Wurzer, “3 Suspects in NAACP Bombing in Custody—Two Tacoma Men Arrested in Calif.,” The Seattle Times, July 29, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

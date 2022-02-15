@@ -1,0 +1,68 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199301300003</eventid>
+    <iyear>1993</iyear>
+    <imonth>1</imonth>
+    <iday>30</iday>
+    <extended>1</extended>
+    <resolution>2/21/93</resolution>
+    <country>92</country>
+    <country_txt>India</country_txt>
+    <region>6</region>
+    <region_txt>South Asia</region_txt>
+    <provstate>Andhra Pradesh (State)</provstate>
+    <city>Warangal</city>
+    <vicinity>0</vicinity>
+    <summary>01/30/1993: The People's War Group kidnapped eight government officials in Warangal, India. Four of the hostages were released on 2/11/93 and the last two were released on 2/21/93. No ransom was demanded; the Naxalites wanted the release of their jailed comrades.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>6</attacktype1>
+    <attacktype1_txt>Hostage Taking (Kidnapping)</attacktype1_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>Indian Government</corp1>
+    <target1>Indian Government Officials</target1>
+    <natlty1>92</natlty1>
+    <natlty1_txt>India</natlty1_txt>
+    <gname>People's War Group (PWG)</gname>
+    <motive>For the release of three of their jailed comrades</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>9</claimmode>
+    <claimmode_txt>Other</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>1</ishostkid>
+    <nhostkid>8</nhostkid>
+    <nhostkidus>0</nhostkidus>
+    <ndays>23</ndays>
+    <ransom>0</ransom>
+    <hostkidoutcome>2</hostkidoutcome>
+    <hostkidoutcome_txt>Hostage(s) released by perpetrators</hostkidoutcome_txt>
+    <nreleased>8</nreleased>
+    <scite1>“Rebels threaten to kill eight hostages,” United Press International, January 31, 1993.</scite1>
+    <scite2>“Andhra Pradesh Naxalites free last two hostages,” All-India Radio, February 22, 1993.</scite2>
+    <scite3>“Guerillas release four of six hostages in Andhra Pradesh,” All-India Radio, February 17, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

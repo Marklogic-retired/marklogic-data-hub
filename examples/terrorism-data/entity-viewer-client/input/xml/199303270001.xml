@@ -1,0 +1,63 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199303270001</eventid>
+    <iyear>1993</iyear>
+    <imonth>3</imonth>
+    <iday>27</iday>
+    <extended>0</extended>
+    <country>60</country>
+    <country_txt>Egypt</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Al Qahirah (Governorate)</provstate>
+    <city>Cairo</city>
+    <vicinity>0</vicinity>
+    <summary>03/27/1993: In Cairo, a time bomb exploded as it was being examined by an explosives expert, killing one person and injuring seven other people. Al-Jama a al-Islamiyya (Islamic Group) may have been responsible for the attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>3</targtype1>
+    <targtype1_txt>Police</targtype1_txt>
+    <corp1>Egyptian Police</corp1>
+    <target1>Egyptian Police in Cairo</target1>
+    <natlty1>60</natlty1>
+    <natlty1_txt>Egypt</natlty1_txt>
+    <gname>Al-Gama'at al-Islamiyya (IG)</gname>
+    <motive>Militants had vowed revenge for the killing of 28 Islamists by government forces during the month.</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>10</claimmode>
+    <claimmode_txt>Unknown</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>14</weapsubtype1>
+    <weapsubtype1_txt>Time Fuse</weapsubtype1_txt>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>7</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>-9</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <addnotes>The officer killed was the 54th person to die in violence waged by militants, seeking to oust the government and create a religious state. This was the third bomb in a month in downtown Cairo. A member of Al-Jama a al-Islamiyya (Islamic Group) claimed responsibility for the attack, but it remained unclear as to whether or not the claim was valid.</addnotes>
+    <scite1>“Police Expert Killed By Time bomb,” Press Association, March 27, 1993.</scite1>
+    <scite2>Dalia Baligh, “Time Bomb Explodes in Civil Defense Building; 1 Dead,” The Associated Press, March 27, 1993.</scite2>
+    <scite3>“Four policemen injured in time bomb explosion,” Xinhua, March 27, 1993</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

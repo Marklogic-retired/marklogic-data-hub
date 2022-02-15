@@ -1,0 +1,69 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199308200003</eventid>
+    <iyear>1993</iyear>
+    <imonth>8</imonth>
+    <iday>20</iday>
+    <extended>1</extended>
+    <resolution>8/25/93</resolution>
+    <country>145</country>
+    <country_txt>Nicaragua</country_txt>
+    <region>2</region>
+    <region_txt>Central America &amp; Caribbean</region_txt>
+    <provstate>Managua (Administrative Region)</provstate>
+    <city>Managua</city>
+    <vicinity>0</vicinity>
+    <summary>08/20/1993: Pro-Sandinista gunmen seized the vice president and other opposition leaders and vowed to hold them hostage until former "Contra" rebels released government and security personnel, which were kidnapped the previous day. No one was killed or injured.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>0</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>6</attacktype1>
+    <attacktype1_txt>Hostage Taking (Kidnapping)</attacktype1_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>National Opposition Union</corp1>
+    <target1>Vice President Virgilio Godoy</target1>
+    <natlty1>145</natlty1>
+    <natlty1_txt>Nicaragua</natlty1_txt>
+    <gname>Other</gname>
+    <motive>In retaliation for the kidnapping of pro-Sandinista government and security personnel</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>20</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>6</claimmode>
+    <claimmode_txt>Video</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>2</weapsubtype1>
+    <weapsubtype1_txt>Automatic or Semi-Automatic Rifle</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>1</nwoundte>
+    <property>0</property>
+    <ishostkid>1</ishostkid>
+    <nhostkid>34</nhostkid>
+    <nhostkidus>0</nhostkidus>
+    <ndays>5</ndays>
+    <ransom>0</ransom>
+    <hostkidoutcome>2</hostkidoutcome>
+    <hostkidoutcome_txt>Hostage(s) released by perpetrators</hostkidoutcome_txt>
+    <nreleased>34</nreleased>
+    <addnotes>Other opposition leaders, including Alfredo Cesar, were also targeted.</addnotes>
+    <scite1>Eloy O. Aguilar, “Pro-Sandinista Gunmen Seize Hostages in Reprisal for Contra Abductions,” The Associated Press, August 21, 1993.</scite1>
+    <scite2>Tracy Wilkinson, “Nicaragua’s dual hostage dramas near peaceful resolution; Central America: Rearmed Contras free last five captives, and Sandinista gunmen vow to do the same,” Los Angeles Times, August 26, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

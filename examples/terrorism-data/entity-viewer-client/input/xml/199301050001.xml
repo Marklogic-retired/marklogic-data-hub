@@ -1,0 +1,56 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199301050001</eventid>
+    <iyear>1993</iyear>
+    <imonth>1</imonth>
+    <iday>5</iday>
+    <extended>0</extended>
+    <country>110</country>
+    <country_txt>Lebanon</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>South (Governorate)</provstate>
+    <city>UNIFIL Security Zone</city>
+    <vicinity>0</vicinity>
+    <summary>01/05/1993: A South Lebanon Army soldier was injured by an unidentified gunman in Liban-Sud Governorate, the central section of the security zone in Lebanon. Hizballah claimed responsibility for this attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>0</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>4</targtype1>
+    <targtype1_txt>Military</targtype1_txt>
+    <corp1>South Lebanon Army (SLA)</corp1>
+    <target1>South Lebanon Army (SLA) Soldier</target1>
+    <natlty1>110</natlty1>
+    <natlty1_txt>Lebanon</natlty1_txt>
+    <gname>Hezbollah</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>1</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <scite1>David Rudge, “SLA soldier lightly wounded in first Hizbullah attack since deportations,” The Jerusalem Post, January 6, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

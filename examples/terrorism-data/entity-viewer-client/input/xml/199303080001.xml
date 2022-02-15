@@ -1,0 +1,76 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199303080001</eventid>
+    <iyear>1993</iyear>
+    <imonth>3</imonth>
+    <iday>8</iday>
+    <extended>1</extended>
+    <resolution>3/21/93</resolution>
+    <country>49</country>
+    <country_txt>Costa Rica</country_txt>
+    <region>2</region>
+    <region_txt>Central America &amp; Caribbean</region_txt>
+    <provstate>San Jose (Province)</provstate>
+    <city>San Jose</city>
+    <vicinity>0</vicinity>
+    <summary>03/08/1993: The Yolaina Command took 24 hostages at the Nicaraguan embassy in Costa Rica. The assailants demanded 6 million dollars and a variety of changes to the Nicaraguan government. The gunmen received $250,000 to end the 13 day siege on March 21. No injuries or casualties resulted from the incident.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>5</attacktype1>
+    <attacktype1_txt>Hostage Taking (Barricade Incident)</attacktype1_txt>
+    <targtype1>7</targtype1>
+    <targtype1_txt>Government (Diplomatic)</targtype1_txt>
+    <corp1>Nicaraguan Ministry of Foreign Affairs</corp1>
+    <target1>Nicaraguan Embassy in Costa Rica</target1>
+    <natlty1>145</natlty1>
+    <natlty1_txt>Nicaragua</natlty1_txt>
+    <gname>Yolaina Command</gname>
+    <motive>The Yolaina Command reportedly took the embassy to protest President Chamorro's policy of letting leftist Sandinistas keep control of the police and army after she defeated the  Sandinistas in the 1990 elections.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>5</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>10</claimmode>
+    <claimmode_txt>Unknown</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <weapdetail>The assailants had various weapons, including guns and explosives. The attackers also had containers of gasoline.</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>1</ishostkid>
+    <nhostkid>24</nhostkid>
+    <nhostkidus>0</nhostkidus>
+    <ndays>13</ndays>
+    <ransom>1</ransom>
+    <ransomamt>6000000</ransomamt>
+    <ransomamtus>0</ransomamtus>
+    <ransompaid>250000</ransompaid>
+    <ransompaidus>0</ransompaidus>
+    <ransomnote>The Yolaina Command requested that negotiations be conducted through Nicaraguan Cardinal Miguel Obando y Bravo.  The group demanded 5 million dollars for the Nicaraguan Catholic church, in order to set up social programs for war victims and 1 million dollars for themselves.  The assailants also demanded the resignations of Nicaraguan armed forces chief Gen. Humberto Ortega and Chief of Staff Antonio Lacayo.</ransomnote>
+    <hostkidoutcome>2</hostkidoutcome>
+    <hostkidoutcome_txt>Hostage(s) released by perpetrators</hostkidoutcome_txt>
+    <nreleased>24</nreleased>
+    <addnotes>The leader of the Yolaina Command, Jose Urbina Lara, was granted political asylum in the Dominican Republic. Guillermo Oporta, another gunmen may have also been granted political asylum in the Dominican Republic. At least 3 gunmen were released in an undisclosed location in the Nicaraguan mountains. The gunmen initially took 24 hostages, but later released 14, and finally released the remaining 10 hostages on Sunday, March 21st. No injuries or casualties resulted from the incident. The rebel Contras and the Sandinistas fought each other in Nicaragua's recent war that ended in 1990. President Chamorro's inclusion of Sandinistas in high government positions had brought fierce criticism and caused some former Contras to take up arms again in protest.</addnotes>
+    <scite1>Carlos Sandi, “Gunmen Leave Embassy, Costa Rica,” The Associated Press, March 21, 1993.</scite1>
+    <scite2>“Embassy siege ends in Costa Rica,” Chicago Tribune, March 22, 1993.</scite2>
+    <scite3>William Cespedes, “Nicaraguan gunmen free two hostages,” United Press International, March 11, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

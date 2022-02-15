@@ -1,0 +1,65 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199308180002</eventid>
+    <iyear>1993</iyear>
+    <imonth>8</imonth>
+    <iday>18</iday>
+    <extended>0</extended>
+    <country>60</country>
+    <country_txt>Egypt</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Al Qahirah (Governorate)</provstate>
+    <city>Cairo</city>
+    <vicinity>0</vicinity>
+    <summary>08/18/1993: Two men on motorcycles, members of the revolutionary Talaeh al-Fatah (Vanguard of the Conquest), detonated an explosive device as the Egyptian Interior Minister's motorcade drove by Tahrir Square in Cairo, killing 7 people and injuring 16.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>1</suicide>
+    <attacktype1>1</attacktype1>
+    <attacktype1_txt>Assassination</attacktype1_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>Egyptian Interior Ministry</corp1>
+    <target1>Hassan al-Alfi (Egyptian Interior Minister)</target1>
+    <natlty1>60</natlty1>
+    <natlty1_txt>Egypt</natlty1_txt>
+    <gname>Egyptian Islamic Jihad (Al-Jihad)</gname>
+    <gsubname>Talaa'al al-Fateh</gsubname>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperps>2</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>9</claimmode>
+    <claimmode_txt>Other</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>13</weapsubtype1>
+    <weapsubtype1_txt>Suicide (carried bodily by human being)</weapsubtype1_txt>
+    <nkill>7</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>2</nkillter>
+    <nwound>16</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <addnotes>The revolutionary group Talaeh al-Fatah (Vanguard of the Conquest) claimed responsibility for the attack by fax. The two would-be assassins were members of the group.</addnotes>
+    <scite1>“Bombers were members of Islamic fundamentalist group,” Agence France Presse, August 21, 1993.</scite1>
+    <scite2>“Egypt – Aftermath of attack on minister; Interior Ministry statement naming second dead suspect in attack on minister,” BBC Summary of World Broadcasts, August 21, 1993.</scite2>
+    <scite3>“Bomb Targeted at Minister Kills Five,” Facts on File World News Digest, August 26, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

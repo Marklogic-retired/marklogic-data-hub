@@ -1,0 +1,79 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199305030003</eventid>
+    <iyear>1993</iyear>
+    <imonth>5</imonth>
+    <iday>3</iday>
+    <extended>0</extended>
+    <country>36</country>
+    <country_txt>Cambodia</country_txt>
+    <region>5</region>
+    <region_txt>Southeast Asia</region_txt>
+    <provstate>Siem Reap (Province)</provstate>
+    <city>Siem Reap</city>
+    <vicinity>0</vicinity>
+    <summary>05/03/1993: The Khmer Rouge attacked a garrison of government troops, the residences of five United Nations Peacekeepers, and the power plant in the town of Siem Reap, Cambodia. Perpetrators also burned down 15 homes, attacked the home of New Zealand mine clearance specialists, and hit the Polish logistics camp. The Cambodian government announced that one soldier and three civilians were killed and thirteen perpetrators were killed and two were captured. The United Nations stated additionally that twenty-one were injured in the attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>1</alternative>
+    <alternative_txt>Insurgency/Guerilla Action</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>13</targtype1>
+    <targtype1_txt>Other</targtype1_txt>
+    <corp1>United Nations</corp1>
+    <target1>United Nations Transitional Authority in Cambodia Facilities</target1>
+    <natlty1>999</natlty1>
+    <natlty1_txt>Multinational</natlty1_txt>
+    <targtype2>21</targtype2>
+    <targtype2_txt>Utilities</targtype2_txt>
+    <corp2>Power Plant</corp2>
+    <target2>Power Plant in Siem Reap</target2>
+    <natlty2>36</natlty2>
+    <natlty2_txt>Cambodia</natlty2_txt>
+    <targtype3>14</targtype3>
+    <targtype3_txt>Private Citizens &amp; Property</targtype3_txt>
+    <corp3>Civilians</corp3>
+    <target3>Civilians' homes in Siem Reap</target3>
+    <natlty3>36</natlty3>
+    <natlty3_txt>Cambodia</natlty3_txt>
+    <gname>Khmer Rouge</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>2</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>11</weapsubtype1>
+    <weapsubtype1_txt>Projectile (rockets, mortars, RPGs, etc.)</weapsubtype1_txt>
+    <weaptype2>5</weaptype2>
+    <weaptype2_txt>Firearms</weaptype2_txt>
+    <weapsubtype2>2</weapsubtype2>
+    <weapsubtype2_txt>Automatic or Semi-Automatic Rifle</weapsubtype2_txt>
+    <weaptype3>6</weaptype3>
+    <weaptype3_txt>Explosives</weaptype3_txt>
+    <weapsubtype3>7</weapsubtype3>
+    <weapsubtype3_txt>Grenade</weapsubtype3_txt>
+    <nkill>17</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>13</nkillter>
+    <nwound>21</nwound>
+    <nwoundus>0</nwoundus>
+    <property>1</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

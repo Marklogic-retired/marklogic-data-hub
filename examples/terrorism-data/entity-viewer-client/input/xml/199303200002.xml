@@ -1,0 +1,59 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199303200002</eventid>
+    <iyear>1993</iyear>
+    <imonth>3</imonth>
+    <iday>20</iday>
+    <extended>0</extended>
+    <country>155</country>
+    <country_txt>West Bank and Gaza Strip</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Gaza Strip (Occupied Territory)</provstate>
+    <city>Jabaliya</city>
+    <vicinity>0</vicinity>
+    <summary>03/20/1993: HAMAS gunmen killed an Israeli soldier in an ambush in the Jabaliya refugee camp in the Gaza strip. One casualty resulted from the attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>0</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>4</targtype1>
+    <targtype1_txt>Military</targtype1_txt>
+    <corp1>Israeli Security Forces</corp1>
+    <target1>Israeli Defense Forces Soldier</target1>
+    <natlty1>97</natlty1>
+    <natlty1_txt>Israel</natlty1_txt>
+    <gname>Hamas (Islamic Resistance Movement)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperps>3</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>10</claimmode>
+    <claimmode_txt>Unknown</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>4</weapsubtype1>
+    <weapsubtype1_txt>Rifle/Shotgun (non-automatic)</weapsubtype1_txt>
+    <weapdetail>A Kalashnikov rifle was used in the assault.</weapdetail>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nwoundus>0</nwoundus>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>Palestinians had killed 11 Israelis since Israel deported 415 alleged "Islamic activists" to Lebanon in December 1992. One casualty resulted from the incident.</addnotes>
+    <scite1>“Gunmen Kill Two Israeli Soldiers,” Los Angeles Times, March 21, 1993.</scite1>
+    <scite2>Michael Rotem and Itim, “Terrorists kill soldier in Gaza patrol ambush,” The Jerusalem Post, March 21, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

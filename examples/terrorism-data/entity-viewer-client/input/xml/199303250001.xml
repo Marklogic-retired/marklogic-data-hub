@@ -1,0 +1,67 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199303250001</eventid>
+    <iyear>1993</iyear>
+    <imonth>3</imonth>
+    <iday>25</iday>
+    <extended>0</extended>
+    <country>101</country>
+    <country_txt>Japan</country_txt>
+    <region>4</region>
+    <region_txt>East Asia</region_txt>
+    <provstate>Tokyo (Prefecture)</provstate>
+    <city>Tokyo</city>
+    <vicinity>0</vicinity>
+    <summary>03/25/1993: A car erupted in flames outside of the Akasaka Palace in Tokyo after leftist radicals used it as a base for a rocket attack. The radicals were believed to have been targeting the Palace and possibly the Parliament building. No injuries or casualties occurred.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>0</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>Akasaka Palace</corp1>
+    <target1>Akasaka Palace in Tokyo</target1>
+    <natlty1>101</natlty1>
+    <natlty1_txt>Japan</natlty1_txt>
+    <targtype2>2</targtype2>
+    <targtype2_txt>Government (General)</targtype2_txt>
+    <corp2>Parliament building</corp2>
+    <target2>Parliament building in Tokyo</target2>
+    <natlty2>101</natlty2>
+    <natlty2_txt>Japan</natlty2_txt>
+    <gname>Unknown</gname>
+    <motive>Authorities believe that the suspected attack may have been intended as a protest at the scheduled visit to Okinawa in late April by Emperor Akihito and Empress Michiko or the June 9 wedding of Crown Prince Naruhito and Masako Owada.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>11</weapsubtype1>
+    <weapsubtype1_txt>Projectile (rockets, mortars, RPGs, etc.)</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>The incident is the eighth attack by extremists since the beginning of this year and the third involving explosives. No injuries or casualties occurred.  In addition to targeting the Akasaka Palace, the Parliament building is believed to have also been a target.</addnotes>
+    <scite1>“Extremists may be behind suspected attack on palace,” Japan Economic Newswire, March 25, 1993.</scite1>
+    <scite2>“Car bomb in Tokyo near imperial residence,” British Broadcasting Company, March 26, 1993.</scite2>
+    <scite3>“Car Explodes in Tokyo, Apparently After Rocket Firing,” The Associated Press, March 25, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

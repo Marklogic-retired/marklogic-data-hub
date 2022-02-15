@@ -1,0 +1,78 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199304230002</eventid>
+    <iyear>1993</iyear>
+    <imonth>4</imonth>
+    <iday>23</iday>
+    <extended>1</extended>
+    <resolution>5/13/93</resolution>
+    <country>4</country>
+    <country_txt>Afghanistan</country_txt>
+    <region>6</region>
+    <region_txt>South Asia</region_txt>
+    <provstate>Kandahar (Province)</provstate>
+    <city>Spin Boldak</city>
+    <vicinity>0</vicinity>
+    <summary>04/23/1993: Afghan tribesmen kidnapped three European Drug Liasion Officers: Jack Dodds, a British national, Stephen Elhert, a German national, and Gert Piening, a Dutch national, as well as Sardar Agha Saadat Ali Hazara, their Pakistani host. The Liaison Officers were stationed in Pakistan but often worked in Spin Boldak, Afghanistan near the Pakistan border. The tribesmen demanded the release of two Afghani men who had been arrested in Pakistan for gunrunning. On May 13, 1993 the hostages were released to authorities on the Pakistani side of the border.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>6</attacktype1>
+    <attacktype1_txt>Hostage Taking (Kidnapping)</attacktype1_txt>
+    <targtype1>20</targtype1>
+    <targtype1_txt>Unknown</targtype1_txt>
+    <corp1>Drug Liaison Officers</corp1>
+    <target1>Jack Dodds</target1>
+    <natlty1>216</natlty1>
+    <natlty1_txt>Great Britain</natlty1_txt>
+    <targtype2>20</targtype2>
+    <targtype2_txt>Unknown</targtype2_txt>
+    <corp2>Drug Liaison Officers</corp2>
+    <target2>Stephen Elhert</target2>
+    <natlty2>75</natlty2>
+    <natlty2_txt>Germany</natlty2_txt>
+    <targtype3>20</targtype3>
+    <targtype3_txt>Unknown</targtype3_txt>
+    <corp3>Drug Liaison Officers</corp3>
+    <target3>Gert Piening</target3>
+    <natlty3>142</natlty3>
+    <natlty3_txt>Netherlands</natlty3_txt>
+    <gname>Other</gname>
+    <motive>Noorzai demanded that two of his men be released by Pakistan in exchange for the hostages.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>1</claimed>
+    <claimmode>1</claimmode>
+    <claimmode_txt>Letter</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>13</weaptype1>
+    <weaptype1_txt>Unknown</weaptype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>-9</property>
+    <ishostkid>1</ishostkid>
+    <nhostkid>4</nhostkid>
+    <nhostkidus>0</nhostkidus>
+    <ndays>21</ndays>
+    <divert>Pakistan</divert>
+    <kidhijcountry>Pakistan</kidhijcountry>
+    <ransom>0</ransom>
+    <hostkidoutcome>2</hostkidoutcome>
+    <hostkidoutcome_txt>Hostage(s) released by perpetrators</hostkidoutcome_txt>
+    <nreleased>4</nreleased>
+    <addnotes>The fourth victim was Sardar Agha Saadat Ali Hazara. The exact employer of the Drug Liaison Officers was unclear.</addnotes>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

@@ -1,0 +1,61 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199308100003</eventid>
+    <iyear>1993</iyear>
+    <imonth>8</imonth>
+    <iday>10</iday>
+    <extended>0</extended>
+    <country>603</country>
+    <country_txt>United Kingdom</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Northern Ireland</provstate>
+    <city>Hilltown</city>
+    <vicinity>0</vicinity>
+    <location>Down (County)</location>
+    <summary>08/10/1993: The aunt of a member of Sinn Fein was wounded when she received a letter bomb, which exploded in her home in the city of Hilltown, 60 kilometers (40 miles) south of Belfast.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>1</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Sinn Fein</corp1>
+    <target1>Aunt of a member of Sinn Fein</target1>
+    <natlty1>233</natlty1>
+    <natlty1_txt>Northern Ireland</natlty1_txt>
+    <gname>Ulster Freedom Fighters (UFF)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>9</weapsubtype1>
+    <weapsubtype1_txt>Letter Bomb</weapsubtype1_txt>
+    <weapdetail>The letter bomb was disguised as a brown paper parcel.</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>1</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>-9</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <addnotes>This was one of two related attacks (cf. 199308100002). The victim's nephew also received a letter bomb the same day. The victim suffered eye and arm injuries.</addnotes>
+    <scite1>“Letter bombs wound two in Northern Ireland,” United Press International, August 10, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

@@ -1,0 +1,63 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199310040004</eventid>
+    <iyear>1993</iyear>
+    <imonth>10</imonth>
+    <iday>4</iday>
+    <extended>0</extended>
+    <country>603</country>
+    <country_txt>United Kingdom</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>England</provstate>
+    <city>London</city>
+    <vicinity>0</vicinity>
+    <location>London (City of)</location>
+    <summary>10/04/1993: In a series of attacks on London five bombs went off at intervals just after 6.30am and one was defused. None of the devices caused serious injuries. Two of the bombs exploded near a YMCA in Crouch End, two more about a mile to the west on the main A1. In this incident an art gallery in Highgate on High Street was targeted.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>1</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Private Art Gallery</corp1>
+    <target1>An art gallery in Highgate on High Street</target1>
+    <natlty1>216</natlty1>
+    <natlty1_txt>Great Britain</natlty1_txt>
+    <gname>Irish Republican Army (IRA)</gname>
+    <motive>The attack was perpetrated in an effort to derail peace talks.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>14</weapsubtype1>
+    <weapsubtype1_txt>Time Fuse</weapsubtype1_txt>
+    <weapdetail>Each device was composed of less than one pound of high explosive with a 1 hour timing device</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propcomment>Each blast blew out shop-front windows, scattering glass over a wide area, but structural damage was light</propcomment>
+    <ishostkid>0</ishostkid>
+    <addnotes>This was one of four related attacks (cf. 199310040002; 199310040003; 199310040005).</addnotes>
+    <scite1>Michael Harvey and David Mason, “More Bombs Rock London Streets—Without Warning,” Press Association, October 4, 1993.</scite1>
+    <scite2>Terry Kirby, “Police find Sixth Unexploded Device in North London ; 'Sinister Change of Strategy' by IRA over Bomb Warnings,” The Independent (London), October 5, 1993.</scite2>
+    <scite3>Duncan Campbell, “IRA Blasts Mark ‘Sinister Change of Tactics,’” The Guardian (London), October 5, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>1</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

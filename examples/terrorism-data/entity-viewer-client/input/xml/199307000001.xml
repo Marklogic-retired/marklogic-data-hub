@@ -1,0 +1,71 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199307000001</eventid>
+    <iyear>1993</iyear>
+    <imonth>7</imonth>
+    <iday>0</iday>
+    <approxdate>July 1993</approxdate>
+    <extended>0</extended>
+    <country>603</country>
+    <country_txt>United Kingdom</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Northern Ireland</provstate>
+    <city>Belfast</city>
+    <vicinity>0</vicinity>
+    <location>Ulster (Province)</location>
+    <summary>07/00/1993: Masked Irish Republican Army (IRA) men seized control of a house and then kept watch over a Catholic prayer session as the perpetrators tried to bomb the Stormont Hotel in Belfast. Nineteen people attending the meeting were held hostage in the home of Danny McCaffrey, 52, whose car was used to transport the 500lb bomb across the city. Army explosives experts called to the Stormont Hotel defused the bomb.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>0</success>
+    <suicide>0</suicide>
+    <attacktype1>5</attacktype1>
+    <attacktype1_txt>Hostage Taking (Barricade Incident)</attacktype1_txt>
+    <attacktype2>3</attacktype2>
+    <attacktype2_txt>Bombing/Explosion</attacktype2_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Civilians</corp1>
+    <target1>Catholic Prayer Group</target1>
+    <natlty1>96</natlty1>
+    <natlty1_txt>Ireland</natlty1_txt>
+    <targtype2>1</targtype2>
+    <targtype2_txt>Business</targtype2_txt>
+    <corp2>Stormont Hotel</corp2>
+    <target2>Stormont Hotel</target2>
+    <gname>Irish Republican Army (IRA)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>-9</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>15</weapsubtype1>
+    <weapsubtype1_txt>Vehicle</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>1</ishostkid>
+    <nhostkid>19</nhostkid>
+    <nhostkidus>0</nhostkidus>
+    <nhours>-99</nhours>
+    <ransom>0</ransom>
+    <hostkidoutcome>2</hostkidoutcome>
+    <hostkidoutcome_txt>Hostage(s) released by perpetrators</hostkidoutcome_txt>
+    <nreleased>19</nreleased>
+    <addnotes>Even though they were held captive, members of the prayer group carried on with the meeting at the house in Stewartstown Park, Lenadoon. They moved to a kitchen while the terrorists kept watch from the front room.</addnotes>
+    <scite1>Deric Henderson, “Masked IRA Men Hold Praying Catholics Hostage,” The Press Association Limited, July 9, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

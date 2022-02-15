@@ -1,0 +1,66 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199312270003</eventid>
+    <iyear>1993</iyear>
+    <imonth>12</imonth>
+    <iday>27</iday>
+    <extended>0</extended>
+    <country>60</country>
+    <country_txt>Egypt</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Al Qahirah (Governorate)</provstate>
+    <city>Cairo</city>
+    <vicinity>0</vicinity>
+    <summary>12/27/1993: Suspected Islamic extremists from Al-Jama a al-Islamiyya (Islamic Group) used explosives and firearms to attack a bus carrying Austrian tourists who were visiting an ancient church site in Cairo, Egypt. Eight tourists were wounded, three of them seriously, and another eight bystanders were injured.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <attacktype2>2</attacktype2>
+    <attacktype2_txt>Armed Assault</attacktype2_txt>
+    <targtype1>18</targtype1>
+    <targtype1_txt>Tourists</targtype1_txt>
+    <corp1>Tourists</corp1>
+    <target1>Austrian tourists in Cairo</target1>
+    <natlty1>60</natlty1>
+    <natlty1_txt>Egypt</natlty1_txt>
+    <gname>Al-Gama'at al-Islamiyya (IG)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperps>2</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>16</weapsubtype1>
+    <weapsubtype1_txt>Unknown Explosive Type</weapsubtype1_txt>
+    <weaptype2>5</weaptype2>
+    <weaptype2_txt>Firearms</weaptype2_txt>
+    <weapsubtype2>2</weapsubtype2>
+    <weapsubtype2_txt>Automatic or Semi-Automatic Rifle</weapsubtype2_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>16</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <scite1>Youssef M. Ibrahim, “16 Are Injured In Cairo Attack On a Tourist Bus,” The New York Times, December 28, 1993.</scite1>
+    <scite2>Kim Murphy, “Attack on Tourist Bus Hurts 16 in Cairo; Islamic Extremists Suspected,” Los Angeles Times, December 28, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

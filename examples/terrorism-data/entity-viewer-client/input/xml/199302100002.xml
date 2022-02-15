@@ -1,0 +1,76 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199302100002</eventid>
+    <iyear>1993</iyear>
+    <imonth>2</imonth>
+    <iday>10</iday>
+    <extended>0</extended>
+    <country>36</country>
+    <country_txt>Cambodia</country_txt>
+    <region>5</region>
+    <region_txt>Southeast Asia</region_txt>
+    <provstate>Siem Reap (Province)</provstate>
+    <city>Siem Reap</city>
+    <vicinity>0</vicinity>
+    <summary>02/10/1993: Armed gunmen, believed to be members of Khmer Rouge, attacked structures in the provincial capital of Siem Reap. Two fatalities and 10 injuries were reported.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>Transitional Authority</corp1>
+    <target1>Office in Siem Reap</target1>
+    <natlty1>36</natlty1>
+    <natlty1_txt>Cambodia</natlty1_txt>
+    <targtype2>13</targtype2>
+    <targtype2_txt>Other</targtype2_txt>
+    <corp2>United Nations</corp2>
+    <target2>United Nations office in Siem Reap</target2>
+    <targtype3>14</targtype3>
+    <targtype3_txt>Private Citizens &amp; Property</targtype3_txt>
+    <target3>Private homes in Siem Reap</target3>
+    <natlty3>36</natlty3>
+    <natlty3_txt>Cambodia</natlty3_txt>
+    <gname>Khmer Rouge</gname>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperps>20</nperps>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <weaptype2>6</weaptype2>
+    <weaptype2_txt>Explosives</weaptype2_txt>
+    <weapsubtype2>11</weapsubtype2>
+    <weapsubtype2_txt>Projectile (rockets, mortars, RPGs, etc.)</weapsubtype2_txt>
+    <weaptype3>6</weaptype3>
+    <weaptype3_txt>Explosives</weaptype3_txt>
+    <weapsubtype3>7</weapsubtype3>
+    <weapsubtype3_txt>Grenade</weapsubtype3_txt>
+    <nkill>2</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>10</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <addnotes>The attackers wore military uniforms as disguises.</addnotes>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

@@ -1,0 +1,62 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199304010002</eventid>
+    <iyear>1993</iyear>
+    <imonth>4</imonth>
+    <iday>1</iday>
+    <extended>0</extended>
+    <country>36</country>
+    <country_txt>Cambodia</country_txt>
+    <region>5</region>
+    <region_txt>Southeast Asia</region_txt>
+    <provstate>Kompong Thom (Province)</provstate>
+    <city>Unknown</city>
+    <vicinity>0</vicinity>
+    <summary>04/01/1993: Suspected Khmer Rouge members attacked a village in the Kompong Thom Province, using rockets and rifles. Twenty-seven people were killed.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>1</alternative>
+    <alternative_txt>Insurgency/Guerilla Action</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Civilians</corp1>
+    <target1>Civilians a village in Kompong Thom Province</target1>
+    <natlty1>36</natlty1>
+    <natlty1_txt>Cambodia</natlty1_txt>
+    <gname>Khmer Rouge</gname>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>11</weapsubtype1>
+    <weapsubtype1_txt>Projectile (rockets, mortars, RPGs, etc.)</weapsubtype1_txt>
+    <weaptype2>5</weaptype2>
+    <weaptype2_txt>Firearms</weaptype2_txt>
+    <weapsubtype2>4</weapsubtype2>
+    <weapsubtype2_txt>Rifle/Shotgun (non-automatic)</weapsubtype2_txt>
+    <nkill>27</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

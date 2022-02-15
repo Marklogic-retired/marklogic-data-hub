@@ -1,0 +1,65 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199308310001</eventid>
+    <iyear>1993</iyear>
+    <imonth>8</imonth>
+    <iday>31</iday>
+    <extended>1</extended>
+    <resolution>9/1/93</resolution>
+    <country>145</country>
+    <country_txt>Nicaragua</country_txt>
+    <region>2</region>
+    <region_txt>Central America &amp; Caribbean</region_txt>
+    <provstate>Matagalpa (Department)</provstate>
+    <city>San Ramon</city>
+    <vicinity>1</vicinity>
+    <location>This incident occurred on a road on the outskirts of San Ramon.</location>
+    <summary>08/31/1993: Forty former soldiers of the previous Sandinista government kidnapped 200 civilians and seized 20 vehicles en route to San Ramon village, Nicaragua. The rebels demanded to talk to the Organization of American States (OAS) monitors of the Nicaraguan truce accord and to the government's Special Disarmament Brigades. During a rescue operation on September 1, 1993, three rebels were killed and the kidnap victims were released.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>0</success>
+    <suicide>0</suicide>
+    <attacktype1>6</attacktype1>
+    <attacktype1_txt>Hostage Taking (Kidnapping)</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Civilians</corp1>
+    <target1>200 civilians in 20 vehicles en route to San Ramon village</target1>
+    <natlty1>145</natlty1>
+    <natlty1_txt>Nicaragua</natlty1_txt>
+    <gname>Other</gname>
+    <motive>The perpetrators wanted to discuss the truce accord with OAS members.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>40</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>13</weaptype1>
+    <weaptype1_txt>Unknown</weaptype1_txt>
+    <nkill>3</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>3</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>1</ishostkid>
+    <nhostkid>200</nhostkid>
+    <nhostkidus>0</nhostkidus>
+    <ndays>1</ndays>
+    <ransom>0</ransom>
+    <hostkidoutcome>5</hostkidoutcome>
+    <hostkidoutcome_txt>Successful Rescue</hostkidoutcome_txt>
+    <nreleased>200</nreleased>
+    <addnotes>Government troops staged a pre-dawn raid on September 1st, killing three rebels and freeing the hostages. Many other rebels escaped.</addnotes>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

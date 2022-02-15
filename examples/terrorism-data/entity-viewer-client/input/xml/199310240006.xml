@@ -1,0 +1,63 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199310240006</eventid>
+    <iyear>1993</iyear>
+    <imonth>10</imonth>
+    <iday>24</iday>
+    <extended>0</extended>
+    <country>217</country>
+    <country_txt>United States</country_txt>
+    <region>1</region>
+    <region_txt>North America</region_txt>
+    <provstate>Florida</provstate>
+    <city>Miami</city>
+    <vicinity>0</vicinity>
+    <location>6101 NW Second St.</location>
+    <summary>10/24/1993: Suspected Macoute sympathizers shot and killed Dona St. Plite outside of Edison Middle School in Miami, Florida, United States. Plite hosted Haitian radio programs on WKAT and WLQY in Miami and was an outspoken critic of Haiti's military regime. This incident occurred a week before Haiti's Military Junta was supposed to transfer power to the democratically elected Jean-Bertrand Aristide.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>1</attacktype1>
+    <attacktype1_txt>Assassination</attacktype1_txt>
+    <targtype1>10</targtype1>
+    <targtype1_txt>Journalists &amp; Media</targtype1_txt>
+    <corp1>Haitian Radio host supporting Haitian democracy</corp1>
+    <target1>Dona St. Plite</target1>
+    <natlty1>87</natlty1>
+    <natlty1_txt>Haiti</natlty1_txt>
+    <gname>Macoute sympathizers</gname>
+    <motive>To protest Haitian supporters of Jean-Bertrand Aristide's presidency and critics of Haiti's Military Junta.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>-99</nperps>
+    <nperpcap>1</nperpcap>
+    <claimed>0</claimed>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <ransom>0</ransom>
+    <addnotes>Dona St. Plite was gunned down at 9:40 PM.  He was also robbed and authorities were unsure whether this incident was politically motivated.  That being said, Plite had previously received three death threat letters and when he was shot he was leaving a benefit for Fritz Dor, a pro-Aristide Haitian radio broadcaster who was gunned down in Miami two years earlier (199103150023).  Another Haitian broadcaster, Jean Claude Olivier, was also assassinated in Miami around the same time (199102180013).  Frenchy St. Louis Joseph was convicted of driving the getaway car.  Joseph originally accused Edy Pierre and Jean-Jacques Macton of being the shooters, but he refused to testify against them.</addnotes>
+    <scite1>Michael Kirkland, "FBI Joins Probe Into Murder of Haitian Radio Commentator," United Press International, October 27, 1993.</scite1>
+    <scite2>Richard Cole, "One Arrested, Others Sought in Haitian Broadcaster's Death," Associated Press, December 7, 1993.</scite2>
+    <scite3>Sabrina Walters, "Getaway Driver Sentenced to Life in Murder of Haitian Radio Host," Miami Herald, February 24, 1996.</scite3>
+    <dbsource>Hewitt Project</dbsource>
+    <INT_LOG>1</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

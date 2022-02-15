@@ -1,0 +1,60 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199312210001</eventid>
+    <iyear>1993</iyear>
+    <imonth>12</imonth>
+    <iday>21</iday>
+    <extended>0</extended>
+    <country>603</country>
+    <country_txt>United Kingdom</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>England</provstate>
+    <city>London</city>
+    <vicinity>0</vicinity>
+    <location>Greater London (Region)</location>
+    <summary>12/21/1993: Police received a series of bomb threats during rush hour causing authorities to close more than three dozen train stations in Southeast England and suspending service on two London subway lines. Thousands of commuters were stranded or delayed by the closures. The Irish Republican Army (IRA) was suspected of making the calls. There were no bombs found.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>19</targtype1>
+    <targtype1_txt>Transportation</targtype1_txt>
+    <corp1>London Underground System</corp1>
+    <target1>London Underground System</target1>
+    <natlty1>216</natlty1>
+    <natlty1_txt>Great Britain</natlty1_txt>
+    <gname>Irish Republican Army (IRA)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>16</weapsubtype1>
+    <weapsubtype1_txt>Unknown Explosive Type</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>Due to the bomb threats, all six London railway stations served by the line - Victoria, Blackfriars, London Bridge, Charing Cross, Cannon Street and Waterloo East - were also closed. On the London Underground, service was halted on the Central and Northern lines, two of the busiest lines into the business and shopping districts.</addnotes>
+    <scite1>“Bomb Alerts Close Dozens of Train, Subway Stations,” The Associated Press, December 21, 1993.</scite1>
+    <scite2>Tony Maguire, “Bomb Alerts Cause Chaos; IRA Warnings Sabotage Tube and Rail Rush Hour,” The The Evening Standard, December 21, 1993.</scite2>
+    <scite3>John von Radowitz, “IRA Bomb Alerts Bring Rail Travel Chaos,” The Press Association, December 21, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>1</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

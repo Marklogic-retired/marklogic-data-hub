@@ -1,0 +1,68 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199302230001</eventid>
+    <iyear>1993</iyear>
+    <imonth>2</imonth>
+    <iday>23</iday>
+    <extended>1</extended>
+    <resolution>3/3/94</resolution>
+    <country>45</country>
+    <country_txt>Colombia</country_txt>
+    <region>3</region>
+    <region_txt>South America</region_txt>
+    <provstate>Choco (Department)</provstate>
+    <city>Choco</city>
+    <vicinity>1</vicinity>
+    <location>Near Choco</location>
+    <summary>02/23/1993: Eight Ejercito de Liberación Nacional (ELN) gunmen kidnapped U.S. citizen Lewis Manning near Choco. Manning worked for the gold-mining company Oresom. He was released unharmed on March 3, 1994.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>6</attacktype1>
+    <attacktype1_txt>Hostage Taking (Kidnapping)</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Oresom Company</corp1>
+    <target1>Lewis Manning</target1>
+    <natlty1>217</natlty1>
+    <natlty1_txt>United States</natlty1_txt>
+    <gname>National Liberation Army of Colombia (ELN)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>8</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>-9</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>1</ishostkid>
+    <nhostkid>1</nhostkid>
+    <nhostkidus>1</nhostkidus>
+    <ndays>373</ndays>
+    <ransom>0</ransom>
+    <hostkidoutcome>2</hostkidoutcome>
+    <hostkidoutcome_txt>Hostage(s) released by perpetrators</hostkidoutcome_txt>
+    <nreleased>1</nreleased>
+    <addnotes>The Red Cross received proof that Manning was alive in December 1993.</addnotes>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <scite2>"Significant incidents of political violence against Americans: 1993," U.S. Department of State, August 1994.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

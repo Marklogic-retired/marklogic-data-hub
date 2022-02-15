@@ -1,0 +1,59 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199304270002</eventid>
+    <iyear>1993</iyear>
+    <imonth>4</imonth>
+    <iday>27</iday>
+    <extended>0</extended>
+    <country>160</country>
+    <country_txt>Philippines</country_txt>
+    <region>5</region>
+    <region_txt>Southeast Asia</region_txt>
+    <provstate>Rizal (Province)</provstate>
+    <city>Manila</city>
+    <vicinity>0</vicinity>
+    <summary>04/27/1993: A time bomb, placed in a bag and left outside Terminal 1’s check-in area, exploded at the Manila Domestic Airport. a janitorial supervisor was injured from the attack. Another explosive device, made out of mortar shell with blasting caps and a timing device, was discovered and defused. Police blamed Muslim Extremists.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>7</attacktype1>
+    <attacktype1_txt>Facility/Infrastructure Attack</attacktype1_txt>
+    <targtype1>6</targtype1>
+    <targtype1_txt>Airports &amp; Aircraft</targtype1_txt>
+    <corp1>Manila Domestic Airport</corp1>
+    <target1>Manila Domestic Airport Terminal 1</target1>
+    <natlty1>160</natlty1>
+    <natlty1_txt>Philippines</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>14</weapsubtype1>
+    <weapsubtype1_txt>Time Fuse</weapsubtype1_txt>
+    <weapdetail>One bomb was a homemade time bomb filled with gunpowder. The other was made out of mortar shell with blasting caps and a timing device. The second one was discovered and difused.</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>1</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <scite2>Center for Terrorism and Intelligence Studies, Critical Infrastructure Terrorist Attack Database, San Jose, CA: Akribis Group, July 7 2006.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

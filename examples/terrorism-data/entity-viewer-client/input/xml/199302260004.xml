@@ -1,0 +1,59 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199302260004</eventid>
+    <iyear>1993</iyear>
+    <imonth>2</imonth>
+    <iday>26</iday>
+    <extended>0</extended>
+    <country>50</country>
+    <country_txt>Croatia</country_txt>
+    <region>9</region>
+    <region_txt>Eastern Europe</region_txt>
+    <provstate>Zagreb (City District)</provstate>
+    <city>Zagreb</city>
+    <vicinity>0</vicinity>
+    <summary>02/26/1993: Police dismantled an explosive device found near the U.S. Embassy. Reports did not indicate whether a group or individual was responsible for the bomb.</summary>
+    <crit1>0</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>0</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>7</targtype1>
+    <targtype1_txt>Government (Diplomatic)</targtype1_txt>
+    <corp1>U.S. Department of State</corp1>
+    <target1>U.S. Embassy in Zagreb</target1>
+    <natlty1>217</natlty1>
+    <natlty1_txt>United States</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>17</weapsubtype1>
+    <weapsubtype1_txt>Other Explosive Type</weapsubtype1_txt>
+    <weapdetail>Suitcase bomb with magnets attached</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>The magnets attached to the bomb led authorities to believe the device might have simply fallen off a car near the Embassy.</addnotes>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <scite2>"Blast at US Belgrade Embassy," Press International, March 4, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

@@ -1,0 +1,64 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199309210007</eventid>
+    <iyear>1993</iyear>
+    <imonth>9</imonth>
+    <iday>21</iday>
+    <extended>0</extended>
+    <country>217</country>
+    <country_txt>United States</country_txt>
+    <region>1</region>
+    <region_txt>North America</region_txt>
+    <provstate>California</provstate>
+    <city>Bakersfield</city>
+    <vicinity>0</vicinity>
+    <summary>9/21/1993:  Unknown perpetrators ignited a fire the Family Planning Associates clinic in Bakersfield, California, United States. There were no casualties but the abortion clinic was destroyed and two adjacent buildings were also damaged. In total, the damages amounted to $1,400,000.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>7</attacktype1>
+    <attacktype1_txt>Facility/Infrastructure Attack</attacktype1_txt>
+    <targtype1>5</targtype1>
+    <targtype1_txt>Abortion Related</targtype1_txt>
+    <corp1>Family Planning Associates, INC.</corp1>
+    <target1>Family Planning Associates</target1>
+    <natlty1>217</natlty1>
+    <natlty1_txt>United States</natlty1_txt>
+    <gname>Anti-Abortion extremists</gname>
+    <motive>To protest the practice of abortion and to sabotage abortion facilities operating in California.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>-99</nperps>
+    <nperpcap>-99</nperpcap>
+    <claimed>0</claimed>
+    <weaptype1>8</weaptype1>
+    <weaptype1_txt>Incendiary</weaptype1_txt>
+    <weapsubtype1>18</weapsubtype1>
+    <weapsubtype1_txt>Arson/Fire</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>2</propextent>
+    <propextent_txt>Major (likely >= $1 million but &lt; $1 billion)</propextent_txt>
+    <propvalue>1400000</propvalue>
+    <propcomment>The abortion clinic was destroyed and two adjacent buildings were damaged.</propcomment>
+    <ishostkid>0</ishostkid>
+    <ransom>0</ransom>
+    <addnotes>The firefighters first arrived on the scene at 3:40 AM and the blaze was extinguished 1.5 hours later.  The abortion clinic, the only one in Bakersfield, was the target of many previous protests.</addnotes>
+    <scite1>Joe Bigham, "Bakersfield Abortion Clinic Burned.  Facility Owner has Riverside Tie," The Press-Enterprise, September 21, 1993.</scite1>
+    <scite2>"California City's Abortion Clinic Burns, and Police Suspect Arson," New York Times, September 21, 1993.</scite2>
+    <scite3>"Attacks on the West Coast," The Oregonian, January 31, 1994.</scite3>
+    <dbsource>Anti-Abortion Project 2010</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

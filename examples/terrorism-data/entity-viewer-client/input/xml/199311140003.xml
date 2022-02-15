@@ -1,0 +1,63 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199311140003</eventid>
+    <iyear>1993</iyear>
+    <imonth>11</imonth>
+    <iday>14</iday>
+    <extended>1</extended>
+    <resolution>12/7/93</resolution>
+    <country>160</country>
+    <country_txt>Philippines</country_txt>
+    <region>5</region>
+    <region_txt>Southeast Asia</region_txt>
+    <provstate>Sulu (Province)</provstate>
+    <city>Pangutaran Island</city>
+    <vicinity>0</vicinity>
+    <summary>11/14/1993: Charles M. Walton, a US citizen, was kidnapped on Pangutaran Island by unidentified Muslim guerrillas. He was released unharmed on December 7, 1993.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>6</attacktype1>
+    <attacktype1_txt>Hostage Taking (Kidnapping)</attacktype1_txt>
+    <targtype1>15</targtype1>
+    <targtype1_txt>Religious Figures/Institutions</targtype1_txt>
+    <corp1>Civilian</corp1>
+    <target1>Charles M. Walton</target1>
+    <natlty1>217</natlty1>
+    <natlty1_txt>United States</natlty1_txt>
+    <gname>Abu Sayyaf Group (ASG)</gname>
+    <motive>The group wanted the withdrawal of Christian missionaries from the southern islands.</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>13</weaptype1>
+    <weaptype1_txt>Unknown</weaptype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>1</ishostkid>
+    <nhostkid>1</nhostkid>
+    <nhostkidus>1</nhostkidus>
+    <ndays>23</ndays>
+    <ransom>0</ransom>
+    <hostkidoutcome>2</hostkidoutcome>
+    <hostkidoutcome_txt>Hostage(s) released by perpetrators</hostkidoutcome_txt>
+    <nreleased>1</nreleased>
+    <addnotes>Additional motives for the kidnapping included the desire for a ban on foreign fishing in the area, a ban on the translation of the Bible, and the restoration of Muslim barter trade to the area.  The source info listed the victim's last name as both Walton or Watson.  Abu Sayyaf (ASG) was suspected of the kidnapping.</addnotes>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

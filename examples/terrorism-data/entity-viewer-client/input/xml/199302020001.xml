@@ -1,0 +1,65 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199302020001</eventid>
+    <iyear>1993</iyear>
+    <imonth>2</imonth>
+    <iday>2</iday>
+    <extended>1</extended>
+    <resolution>2/6/93</resolution>
+    <country>228</country>
+    <country_txt>Yemen</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Sana'a (Province)</provstate>
+    <city>Dhinm</city>
+    <vicinity>1</vicinity>
+    <location>Near Dhinm</location>
+    <summary>02/02/1993: Japanese national Koichiro Katsurai of the Japan International Cooperation Agency was kidnapped by angry tribesmen near Dhinm. He escaped unharmed on February 6, 1993.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>6</attacktype1>
+    <attacktype1_txt>Hostage Taking (Kidnapping)</attacktype1_txt>
+    <targtype1>12</targtype1>
+    <targtype1_txt>NGO</targtype1_txt>
+    <corp1>Japan International Cooperation Agency</corp1>
+    <target1>Koichiro Katsurai</target1>
+    <natlty1>101</natlty1>
+    <natlty1_txt>Japan</natlty1_txt>
+    <gname>Other</gname>
+    <motive>Tribesmen demanded inclusion in irrigation projects</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>1</claimed>
+    <claimmode>10</claimmode>
+    <claimmode_txt>Unknown</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>13</weaptype1>
+    <weaptype1_txt>Unknown</weaptype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>1</ishostkid>
+    <nhostkid>1</nhostkid>
+    <nhostkidus>0</nhostkidus>
+    <ndays>4</ndays>
+    <ransom>0</ransom>
+    <hostkidoutcome>3</hostkidoutcome>
+    <hostkidoutcome_txt>Hostage(s) escaped (not during rescue attempt)</hostkidoutcome_txt>
+    <nreleased>1</nreleased>
+    <addnotes>Tribesmen wanted to use the kidnapping to pressure the government to include them in the Agency's irrigation projects in the area.</addnotes>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

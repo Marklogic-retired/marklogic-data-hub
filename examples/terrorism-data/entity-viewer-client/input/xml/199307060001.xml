@@ -1,0 +1,63 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199307060001</eventid>
+    <iyear>1993</iyear>
+    <imonth>7</imonth>
+    <iday>6</iday>
+    <extended>0</extended>
+    <country>209</country>
+    <country_txt>Turkey</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Erzincan (Province)</provstate>
+    <city>Basbaglar</city>
+    <vicinity>0</vicinity>
+    <summary>07/06/1993: Members of the Kurdish Workers' Party (PKK) attacked the village of Basbaglar in Erzincan province. The guerrillas massacred 32 people and burned down 50 of the 57 homes.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <attacktype2>7</attacktype2>
+    <attacktype2_txt>Facility/Infrastructure Attack</attacktype2_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Village of Basbaglar</corp1>
+    <target1>Village of Basbaglar</target1>
+    <natlty1>209</natlty1>
+    <natlty1_txt>Turkey</natlty1_txt>
+    <gname>Kurdistan Workers' Party (PKK)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <weaptype2>8</weaptype2>
+    <weaptype2_txt>Incendiary</weaptype2_txt>
+    <nkill>32</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>2</propextent>
+    <propextent_txt>Major (likely >= $1 million but &lt; $1 billion)</propextent_txt>
+    <propcomment>Guerrillas burned down 50 of the 57 homes in the village.</propcomment>
+    <ishostkid>0</ishostkid>
+    <scite1>“Attack on Eastern Turkish Village Kills 28,” United Press International, July 6, 1993.</scite1>
+    <scite2>Pam O’Toole, “Kurdish Militants Murder 32 in Raid on Turkish Village,” The Guardian (London), July 7, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

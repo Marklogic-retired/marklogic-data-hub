@@ -1,0 +1,64 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199312050001</eventid>
+    <iyear>1993</iyear>
+    <imonth>12</imonth>
+    <iday>5</iday>
+    <extended>0</extended>
+    <country>97</country>
+    <country_txt>Israel</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Tel Aviv (District)</provstate>
+    <city>Holon</city>
+    <vicinity>0</vicinity>
+    <summary>12/05/1993: Khaled Awad Shahada, a Palestinian from the Jabalya refugee camp in the Gaza Strip, got out of a car at a highway bus stop in Holon, just outside Tel Aviv, boarded a crowded intercity bus armed with an AK-47 assault weapon and fired at the passengers, killing one and injuring another. Bus driver Moshe Benita, age 28, jumped from his seat and knocked Shahada off the bus. An Israeli soldier then shot and killed Shahada. Police launched a massive manhunt for the attacker's accomplice who apparently fled the scene in a waiting car that was reported stolen earlier in the day.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Israeli Busing System</corp1>
+    <target1>Intercity Public Bus in Holon</target1>
+    <natlty1>97</natlty1>
+    <natlty1_txt>Israel</natlty1_txt>
+    <gname>Palestinian Islamic Jihad (PIJ)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>2</nperps>
+    <nperpcap>1</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>9</claimmode>
+    <claimmode_txt>Other</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>2</weapsubtype1>
+    <weapsubtype1_txt>Automatic or Semi-Automatic Rifle</weapsubtype1_txt>
+    <nkill>2</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>1</nkillter>
+    <nwound>1</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propcomment>Windows on the bus were shattered</propcomment>
+    <ishostkid>0</ishostkid>
+    <addnotes>The Islamic Jihad, which is opposed to the Middle East peace process, took responsibility for the attack in leaflets distributed in the Gaza Strip. They identified the Shahada as a martyr for their cause. This attack came eight days before Israel was to begin transferring power to the Palestine Liberation Organization in the Gaza Strip and the West Bank town of Jericho.</addnotes>
+    <scite1>“Gunman, Passenger, Die in Israeli Bus Hijack Attempt,” United Press International, December 5, 1993.</scite1>
+    <scite2>Ethan Bronner, “Bus Hijacking Attempt Kills 2 in Israel,” The Boston Globe, December 6, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>1</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

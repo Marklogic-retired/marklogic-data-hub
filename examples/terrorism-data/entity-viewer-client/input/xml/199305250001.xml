@@ -1,0 +1,70 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199305250001</eventid>
+    <iyear>1993</iyear>
+    <imonth>5</imonth>
+    <iday>25</iday>
+    <extended>1</extended>
+    <resolution>5/29/93</resolution>
+    <country>228</country>
+    <country_txt>Yemen</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Ma'rib (Governorate)</provstate>
+    <city>Ma'rib</city>
+    <vicinity>0</vicinity>
+    <summary>05/25/1993: Yemeni tribesmen abducted two American engineers working for the Hunt Oil Company, along with their Yemeni driver. The men were released on May 25, 1993, both in good health.</summary>
+    <crit1>0</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>6</attacktype1>
+    <attacktype1_txt>Hostage Taking (Kidnapping)</attacktype1_txt>
+    <targtype1>1</targtype1>
+    <targtype1_txt>Business</targtype1_txt>
+    <corp1>Hunt Oil Company</corp1>
+    <target1>American employees of Hunt Oil Company</target1>
+    <natlty1>217</natlty1>
+    <natlty1_txt>United States</natlty1_txt>
+    <targtype2>1</targtype2>
+    <targtype2_txt>Business</targtype2_txt>
+    <corp2>Hunt Oil Company</corp2>
+    <target2>Driver for Hunt Oil Company Employees</target2>
+    <natlty2>228</natlty2>
+    <natlty2_txt>Yemen</natlty2_txt>
+    <gname>Other</gname>
+    <motive>Members of the tribe had been sentenced to death by the Yemeni government and this kidnapping was intended to pressure the government into commuting those sentences.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>1</ishostkid>
+    <nhostkid>3</nhostkid>
+    <nhostkidus>2</nhostkidus>
+    <ndays>5</ndays>
+    <ransom>0</ransom>
+    <nreleased>3</nreleased>
+    <addnotes>The tribesmen had lost appeals in court the day before on different charges and it is believed that these kidnappings were meant to pressure the Yemeni government into commuting the sentences.</addnotes>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

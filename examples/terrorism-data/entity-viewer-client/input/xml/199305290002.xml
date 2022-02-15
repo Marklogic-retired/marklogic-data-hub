@@ -1,0 +1,58 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199305290002</eventid>
+    <iyear>1993</iyear>
+    <imonth>5</imonth>
+    <iday>29</iday>
+    <extended>0</extended>
+    <country>185</country>
+    <country_txt>Spain</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Madrid (Province)</provstate>
+    <city>Madrid</city>
+    <vicinity>0</vicinity>
+    <summary>05/29/1993: 1 October Antifascist Resistance Group (GRAPO) launched their bomb attack on the election eve by bombing an election center of the Socialist Party in Madrid.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>1</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>Spanish Electoral System</corp1>
+    <target1>Election administration center</target1>
+    <natlty1>185</natlty1>
+    <natlty1_txt>Spain</natlty1_txt>
+    <gname>First of October Antifascist Resistance Group (GRAPO)</gname>
+    <motive>The attack was targeted against the Spanish government.</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>-9</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>16</weapsubtype1>
+    <weapsubtype1_txt>Unknown Explosive Type</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <scite1>"Spanish Terrorists Launch Election Bomb Campaign," The Herald, May 29, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

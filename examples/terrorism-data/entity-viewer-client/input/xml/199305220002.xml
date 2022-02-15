@@ -1,0 +1,60 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199305220002</eventid>
+    <iyear>1993</iyear>
+    <imonth>5</imonth>
+    <iday>22</iday>
+    <extended>0</extended>
+    <country>110</country>
+    <country_txt>Lebanon</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Unknown</provstate>
+    <city>Dib'l Village</city>
+    <vicinity>1</vicinity>
+    <location>Near Dib'l Village in the Security Zone</location>
+    <summary>05/22/1993: Two terrorists were killed by the mines they were planting along a route near Dib'l village in the Western Sector of the Security Zone.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>1</multiple>
+    <success>0</success>
+    <suicide>1</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>20</targtype1>
+    <targtype1_txt>Unknown</targtype1_txt>
+    <corp1>Unknown</corp1>
+    <target1>Unknown</target1>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>2</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>8</weapsubtype1>
+    <weapsubtype1_txt>Landmine</weapsubtype1_txt>
+    <weapdetail>Mines</weapdetail>
+    <nkill>2</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>2</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>-9</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <addnotes>This was one of 2 related attacks. (199305220001)</addnotes>
+    <scite1>David Rudge, "Two SLA men killed by security zone roadside bomb. Two terrorists killed planting explosives," The Jerusalem Post, May 23, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>-9</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

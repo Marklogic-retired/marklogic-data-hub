@@ -1,0 +1,58 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199306170006</eventid>
+    <iyear>1993</iyear>
+    <imonth>6</imonth>
+    <iday>17</iday>
+    <extended>0</extended>
+    <country>110</country>
+    <country_txt>Lebanon</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>South (Governorate)</provstate>
+    <city>Sidon</city>
+    <vicinity>1</vicinity>
+    <location>The attack occurred in the 'Ayn al-Hulway Palestinian Refugee camp near Sidon</location>
+    <summary>06/17/1993: A bomb killed Fatah Officer 'Ali Iskandar and his wife and wounded three other family members when it exploded at their home in the 'Ayn al-Hulway Palestinian Refugee camp near Sidon. The perpetrators were unknown.</summary>
+    <crit1>0</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>22</targtype1>
+    <targtype1_txt>Violent Political Party</targtype1_txt>
+    <corp1>Fatah Party Officer</corp1>
+    <target1>Home of Fatah Party Officer 'Ali Iskandar in the 'Ayn al-Hulway Palestinian Refugee camp near Sidon</target1>
+    <natlty1>155</natlty1>
+    <natlty1_txt>West Bank and Gaza Strip</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>16</weapsubtype1>
+    <weapsubtype1_txt>Unknown Explosive Type</weapsubtype1_txt>
+    <nkill>2</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>3</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

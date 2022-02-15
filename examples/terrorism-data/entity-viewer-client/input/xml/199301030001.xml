@@ -1,0 +1,59 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199301030001</eventid>
+    <iyear>1993</iyear>
+    <imonth>1</imonth>
+    <iday>3</iday>
+    <extended>0</extended>
+    <country>186</country>
+    <country_txt>Sri Lanka</country_txt>
+    <region>6</region>
+    <region_txt>South Asia</region_txt>
+    <provstate>North (Province)</provstate>
+    <city>Vavuniya</city>
+    <vicinity>0</vicinity>
+    <summary>01/03/1993: The Liberation Tigers of Tamil Eelam (LTTE) attacked Sri Lankan military troops in Vavuniya, Sri Lanka. Two soldiers were killed in the attack and the extent of damage was unknown.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>4</targtype1>
+    <targtype1_txt>Military</targtype1_txt>
+    <corp1>Sri Lankan Military</corp1>
+    <target1>Sri Lankan Military troops</target1>
+    <natlty1>186</natlty1>
+    <natlty1_txt>Sri Lanka</natlty1_txt>
+    <gname>Liberation Tigers of Tamil Eelam (LTTE)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <nkill>2</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>-9</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <addnotes>The soldiers represented the first victims of LTTE in 1993.</addnotes>
+    <scite1>“Tigers kill two soldiers – first victims in New Year,” Agence France Presse, January 3, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

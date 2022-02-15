@@ -1,0 +1,56 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199305120001</eventid>
+    <iyear>1993</iyear>
+    <imonth>5</imonth>
+    <iday>12</iday>
+    <extended>0</extended>
+    <country>155</country>
+    <country_txt>West Bank and Gaza Strip</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>West Bank (Occupied Territory)</provstate>
+    <city>Nablus</city>
+    <vicinity>0</vicinity>
+    <summary>05/12/1993: Two Israeli Defence Forces paratroopers were stabbed in Nablus in what seemed to be a well-coordinated attack. The perpetrators fled with the soldiers' weapons. HAMAS claimed responsibility for the attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>4</targtype1>
+    <targtype1_txt>Military</targtype1_txt>
+    <corp1>Israeli Security Forces</corp1>
+    <target1>Israeli Defense Force Soldiers</target1>
+    <natlty1>97</natlty1>
+    <natlty1_txt>Israel</natlty1_txt>
+    <gname>Hamas (Islamic Resistance Movement)</gname>
+    <motive>HAMAS wanted to kill Israeli soldiers while stealing their weapons.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>10</claimmode>
+    <claimmode_txt>Unknown</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>9</weaptype1>
+    <weaptype1_txt>Melee</weaptype1_txt>
+    <weapsubtype1>23</weapsubtype1>
+    <weapsubtype1_txt>Knife or Other Sharp Object</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillter>0</nkillter>
+    <nwound>2</nwound>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <scite1>Michael Rotem and Jon Immanuel, "Two Paratroopers Stabbed in Nablus. Weapons Are Also Stolen in Apparent Well-Planned Ambush," May 13, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

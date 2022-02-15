@@ -1,0 +1,58 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199307170003</eventid>
+    <iyear>1993</iyear>
+    <imonth>7</imonth>
+    <iday>17</iday>
+    <extended>0</extended>
+    <country>209</country>
+    <country_txt>Turkey</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Antalya (Province)</provstate>
+    <city>Antalya</city>
+    <vicinity>0</vicinity>
+    <summary>07/17/1993: One of three attacks seemingly carried out by the PKK. In the Mediterranean resort city of Antalya, grenade attacks on three hotels killed one Turk and wounded two others. According to Anatolia News Agency, In this incident a grenade was lobbed from a speeding car at the entrance of Ozkonak Hotel. It caused no damage or injuries. Anatolia News Agency also stated that there were no foreign guests at any of the hotels.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>1</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>7</attacktype1>
+    <attacktype1_txt>Facility/Infrastructure Attack</attacktype1_txt>
+    <targtype1>18</targtype1>
+    <targtype1_txt>Tourists</targtype1_txt>
+    <corp1>Ozkonak Hotel</corp1>
+    <target1>Ozkonak Hotel in Antalya</target1>
+    <natlty1>209</natlty1>
+    <natlty1_txt>Turkey</natlty1_txt>
+    <gname>Kurdistan Workers' Party (PKK)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>7</weapsubtype1>
+    <weapsubtype1_txt>Grenade</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>This case was one of three related attacks (cf. 199307170001; 199307170002). The Sources' information was gathered from a local “semi-official news agency.”</addnotes>
+    <scite1>“One Killed, two Injured by Grenades in Turkish Resort,” Agence France Presse, July 17, 1993.</scite1>
+    <scite2>“Terrorist bombs Kill one in Resort City, The Associated Press, July  17, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

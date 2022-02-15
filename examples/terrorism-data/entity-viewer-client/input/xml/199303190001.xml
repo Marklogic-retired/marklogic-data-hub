@@ -1,0 +1,62 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199303190001</eventid>
+    <iyear>1993</iyear>
+    <imonth>3</imonth>
+    <iday>19</iday>
+    <extended>0</extended>
+    <country>183</country>
+    <country_txt>South Africa</country_txt>
+    <region>11</region>
+    <region_txt>Sub-Saharan Africa</region_txt>
+    <provstate>Gauteng (Province)</provstate>
+    <city>Johannesburg</city>
+    <vicinity>0</vicinity>
+    <summary>03/19/1993: The Azanian Liberation Army killed two white people and injured three more during a rush hour attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Civilians</corp1>
+    <target1>Two civilians</target1>
+    <natlty1>183</natlty1>
+    <natlty1_txt>South Africa</natlty1_txt>
+    <gname>Azania People's Organization (AZAPO)</gname>
+    <gsubname>Azanian National Liberation Army</gsubname>
+    <motive>The Azanian group advocates for the overthrow of the white minority government in South Africa.</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>2</claimmode>
+    <claimmode_txt>Call (post-incident)</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>4</weapsubtype1>
+    <weapsubtype1_txt>Rifle/Shotgun (non-automatic)</weapsubtype1_txt>
+    <weapdetail>AK-47 assault rifles were used in the attack.</weapdetail>
+    <nkill>2</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>3</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>The Azanian Liberation Army claimed that it carried out several gun and bomb attacks previously on white people that resulted in the death of 5 people last year. The Azanian group is the military wing of the radical Pan Africanist Congress. At least 4 men fired on two vehicles. The attack resulted in three injuries and two casualties. One women in a separate vehicle escaped injury.</addnotes>
+    <scite1>Tom Cohen, “Two Whites Killed, Three Injured, in Apparent Racial Attack,” The Associated Press, March 19, 1993.</scite1>
+    <scite2>“Attack on South African Motorists Kills Two,” Orlando Sentinel, March 20, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

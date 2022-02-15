@@ -1,0 +1,69 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199311270003</eventid>
+    <iyear>1993</iyear>
+    <imonth>11</imonth>
+    <iday>27</iday>
+    <extended>0</extended>
+    <country>217</country>
+    <country_txt>United States</country_txt>
+    <region>1</region>
+    <region_txt>North America</region_txt>
+    <provstate>Illinois</provstate>
+    <city>Chicago</city>
+    <vicinity>0</vicinity>
+    <location>at Saks Fifth Avenue department store in Chicago</location>
+    <summary>11/27/1993: Two incendiary devices made of matchbooks and timers attached to 9-volt batteries were tightly wrapped in paper bags and secured with paper clips, and planted in the Saks Fifth Avenue department store in downtown Chicago, Illinois, in the United States. One device was found by a store clerk, on a seventh floor shelf, and erupted as a security guard tried to open the bag. Later in the evening, a the second incendiary started a fire on the sixth floor in the Christmas tree department. There were no casualties in the incident, and the fire caused minor damage. This incident is linked to three others in which altogether nine incendiary devices were placed in four department stores in Chicago on the same day and the following day. On November 29, the Animal Liberation Front (ALF) sent out a communiqué to the Chicago Sun Times as well as faxed the statement to PETA (People for the Ethical Treatment of Animals) claiming responsibility for the incident and stating the "action signals the start of a new, more intense campaign of economic sabotage against stores that sell fur."</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>7</attacktype1>
+    <attacktype1_txt>Facility/Infrastructure Attack</attacktype1_txt>
+    <targtype1>1</targtype1>
+    <targtype1_txt>Business</targtype1_txt>
+    <corp1>Saks Fifth Avenue</corp1>
+    <target1>Saks Fifth Avenue department store in Chicago, Illinois</target1>
+    <natlty1>217</natlty1>
+    <natlty1_txt>United States</natlty1_txt>
+    <gname>Animal Liberation Front (ALF)</gname>
+    <motive>Specifically to activate the store's sprinkler system, causing water damage to the store and its inventory as a campaign against stores that sell clothing made from animal fur.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>-99</nperps>
+    <nperpcap>-99</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>1</claimmode>
+    <claimmode_txt>Letter</claimmode_txt>
+    <compclaim>0</compclaim>
+    <weaptype1>8</weaptype1>
+    <weaptype1_txt>Incendiary</weaptype1_txt>
+    <weapsubtype1>18</weapsubtype1>
+    <weapsubtype1_txt>Arson/Fire</weapsubtype1_txt>
+    <weapdetail>incendiaries made from matchbooks and timers attached to  9-volt batteries and secured tightly inside brown paper bags</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propvalue>-99</propvalue>
+    <propcomment>minor damage</propcomment>
+    <ishostkid>0</ishostkid>
+    <ransom>0</ransom>
+    <addnotes>The incident occurred at 7:00pm. This incident is linked to three others in which altogether nine incendiary devices were placed in four department stores in Chicago on the same day and the following day (1128932, 1128933, 1128934).</addnotes>
+    <scite1>FBI, "Terrorism in the United States: 1993," Terrorist Research and Analytical Center, National Security Division, FBI, 1993.</scite1>
+    <scite2>"Anti-fur Activists Take Responsibility for Planting Fire-starters at Stores," Associated Press, November 30, 1993.</scite2>
+    <scite3>"Animal rights group claims responsibility for fires," United Press International, November 29, 1993.</scite3>
+    <dbsource>Eco Project 2010</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

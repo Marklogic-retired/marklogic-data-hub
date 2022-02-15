@@ -1,0 +1,60 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199303110005</eventid>
+    <iyear>1993</iyear>
+    <imonth>3</imonth>
+    <iday>11</iday>
+    <extended>0</extended>
+    <country>97</country>
+    <country_txt>Israel</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Unknown</provstate>
+    <city>Unknown</city>
+    <vicinity>0</vicinity>
+    <summary>03/11/1993: Masked gunmen killed three Arabs suspected of collaborating with Israeli authorities.</summary>
+    <crit1>0</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>1</attacktype1>
+    <attacktype1_txt>Assassination</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Civilians</corp1>
+    <target1>Arabs</target1>
+    <natlty1>155</natlty1>
+    <natlty1_txt>West Bank and Gaza Strip</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <nkill>3</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>Three casualties resulted from the attack. The location of the incident was unknown and the assailants weren't identified. There was no claim of responsibility for the attack.</addnotes>
+    <scite1>Ben Lynfield, “Two more Israelis stabbed in wave of violence,” United Press International, March 11, 1993.</scite1>
+    <scite2>“Two Israelis Reported Stabbed; Three Alleged Collaborators Killed,” The Associated Press, March 11, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

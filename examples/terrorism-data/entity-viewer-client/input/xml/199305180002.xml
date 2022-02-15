@@ -1,0 +1,72 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199305180002</eventid>
+    <iyear>1993</iyear>
+    <imonth>5</imonth>
+    <iday>18</iday>
+    <extended>1</extended>
+    <resolution>5/20/93</resolution>
+    <country>159</country>
+    <country_txt>Peru</country_txt>
+    <region>3</region>
+    <region_txt>South America</region_txt>
+    <provstate>Ayacucho (Province)</provstate>
+    <city>Ayacucho</city>
+    <vicinity>0</vicinity>
+    <summary>05/18/1993: Sendero Luminoso (Shining Path) rebels called for and launched a three-day armed strike against the government. In Ayacucho, rebels gunned down a woman in an attack where 20 houses were torched.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>1</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>7</attacktype1>
+    <attacktype1_txt>Facility/Infrastructure Attack</attacktype1_txt>
+    <attacktype2>2</attacktype2>
+    <attacktype2_txt>Armed Assault</attacktype2_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Private Homes</corp1>
+    <target1>Private Homes in Ayacucho</target1>
+    <natlty1>159</natlty1>
+    <natlty1_txt>Peru</natlty1_txt>
+    <targtype2>14</targtype2>
+    <targtype2_txt>Private Citizens &amp; Property</targtype2_txt>
+    <corp2>Civilian</corp2>
+    <target2>Civilian Woman</target2>
+    <natlty2>159</natlty2>
+    <natlty2_txt>Peru</natlty2_txt>
+    <gname>Shining Path (SL)</gname>
+    <motive>Sendero Luminoso (Shining Path) launched a general strike in protest against the Peruvian government.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>1</claimed>
+    <claimmode>9</claimmode>
+    <claimmode_txt>Other</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>8</weaptype1>
+    <weaptype1_txt>Incendiary</weaptype1_txt>
+    <weapsubtype1>18</weapsubtype1>
+    <weapsubtype1_txt>Arson/Fire</weapsubtype1_txt>
+    <weaptype2>5</weaptype2>
+    <weaptype2_txt>Firearms</weaptype2_txt>
+    <weapsubtype2>2</weapsubtype2>
+    <weapsubtype2_txt>Automatic or Semi-Automatic Rifle</weapsubtype2_txt>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nwoundus>0</nwoundus>
+    <property>1</property>
+    <propextent>2</propextent>
+    <propextent_txt>Major (likely >= $1 million but &lt; $1 billion)</propextent_txt>
+    <propcomment>Houses and livestock</propcomment>
+    <ishostkid>0</ishostkid>
+    <addnotes>This was one of 3 related attacks (199305180001,3)</addnotes>
+    <scite1>"Shining Path Launches Armed Strikes with Power Cuts, Three Killings," Agence France Presse, May 18, 1993.</scite1>
+    <scite2>Monte Hayes, "Rebel Strikes Call Cripples Public Transport, Shuts Business," The Associated Press, May 17, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>
