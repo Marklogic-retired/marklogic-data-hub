@@ -1,0 +1,62 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199307010002</eventid>
+    <iyear>1993</iyear>
+    <imonth>7</imonth>
+    <iday>1</iday>
+    <extended>0</extended>
+    <country>142</country>
+    <country_txt>Netherlands</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>South Holland (Province)</provstate>
+    <city>The Hague</city>
+    <vicinity>0</vicinity>
+    <summary>07/01/1993: The Revolutionary Anti-Racist Action (RARA) planted and detonated a time bomb at 3 a.m. in a toilet at the Dutch Social Affairs Ministry creating a six-meter-wide hole in the 5th floor. Damage was minor and there were no reported injuries.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>7</attacktype1>
+    <attacktype1_txt>Facility/Infrastructure Attack</attacktype1_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>Government of the Netherlands</corp1>
+    <target1>Dutch Social Affairs Ministry</target1>
+    <natlty1>142</natlty1>
+    <natlty1_txt>Netherlands</natlty1_txt>
+    <gname>Revolutionary Anti-Racist Action</gname>
+    <motive>Opposition to Netherlands' immigration policy.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>1</claimed>
+    <claimmode>1</claimmode>
+    <claimmode_txt>Letter</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>14</weapsubtype1>
+    <weapsubtype1_txt>Time Fuse</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propcomment>The bomb caused a six-meter-wide hole in the 5th floor.</propcomment>
+    <ishostkid>0</ishostkid>
+    <scite1>“Bombing at Ministry of Social Affairs,” United Press International, July 1, 1993.</scite1>
+    <scite2>“Dutch Terror Blast,” The Press Association Limited, July 1, 1993.</scite2>
+    <scite3>Center for Terrorism and Intelligence Studies, Critical Infrastructure Terrorist Attack Database, San Jose, CA: Akribis Group, July 7 2006.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

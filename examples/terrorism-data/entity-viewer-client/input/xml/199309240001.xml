@@ -1,0 +1,61 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199309240001</eventid>
+    <iyear>1993</iyear>
+    <imonth>9</imonth>
+    <iday>24</iday>
+    <extended>0</extended>
+    <country>97</country>
+    <country_txt>Israel</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Gush Dan (Region)</provstate>
+    <city>Batzna</city>
+    <vicinity>0</vicinity>
+    <summary>09/24/1993: An Israeli man was stabbed to death by HAMAS rebels near Tel Aviv, Israel. Yigal Waknin, 21, was killed while driving a tractor in an orchard near Batzna. No one else was injured or killed in the attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Israeli Civilian</corp1>
+    <target1>Yigal Waknin</target1>
+    <natlty1>97</natlty1>
+    <natlty1_txt>Israel</natlty1_txt>
+    <gname>Hamas (Islamic Resistance Movement)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>1</claimmode>
+    <claimmode_txt>Letter</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>9</weaptype1>
+    <weaptype1_txt>Melee</weaptype1_txt>
+    <weapsubtype1>23</weapsubtype1>
+    <weapsubtype1_txt>Knife or Other Sharp Object</weapsubtype1_txt>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>A leaflet signed by Hamas was found near the body claiming responsibility for the killing.</addnotes>
+    <scite1>“Israeli stabbed to death by HAMAS activists, PLO stops fighting," Agence France Presse, September 24, 1993.</scite1>
+    <scite2>“Israeli stabbed to death by HAMAS activists," Agence France Presse, September 24, 1993.</scite2>
+    <scite3>“Israeli Stabbed to Death," Newsday, September 25, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>1</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

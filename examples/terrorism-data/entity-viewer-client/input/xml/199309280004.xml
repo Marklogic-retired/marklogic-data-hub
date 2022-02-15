@@ -1,0 +1,64 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199309280004</eventid>
+    <iyear>1993</iyear>
+    <imonth>9</imonth>
+    <iday>28</iday>
+    <extended>0</extended>
+    <country>109</country>
+    <country_txt>Latvia</country_txt>
+    <region>9</region>
+    <region_txt>Eastern Europe</region_txt>
+    <provstate>Riga (County)</provstate>
+    <city>Riga</city>
+    <vicinity>0</vicinity>
+    <summary>09/28/1993: A bomb planted near the U.S. Embassy and British Embassy was detonated, causing relatively minor damage to the area, knocking out satellite communications and breaking nearby windows.</summary>
+    <crit1>1</crit1>
+    <crit2>0</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>7</attacktype1>
+    <attacktype1_txt>Facility/Infrastructure Attack</attacktype1_txt>
+    <targtype1>7</targtype1>
+    <targtype1_txt>Government (Diplomatic)</targtype1_txt>
+    <corp1>U.S. Department of State</corp1>
+    <target1>U.S. Embassy in Riga</target1>
+    <natlty1>217</natlty1>
+    <natlty1_txt>United States</natlty1_txt>
+    <targtype2>7</targtype2>
+    <targtype2_txt>Government (Diplomatic)</targtype2_txt>
+    <corp2>British Foreign Office</corp2>
+    <target2>British Embassy in Riga</target2>
+    <natlty2>216</natlty2>
+    <natlty2_txt>Great Britain</natlty2_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>16</weapsubtype1>
+    <weapsubtype1_txt>Unknown Explosive Type</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propcomment>There was relatively minor damage to the area, knocking out satellite communications and breaking nearby windows.</propcomment>
+    <ishostkid>0</ishostkid>
+    <scite1>Center for Terrorism and Intelligence Studies, Critical Infrastructure Terrorist Attack Database, San Jose, CA: Akribis Group, July 7 2006.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

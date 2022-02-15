@@ -1,0 +1,61 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199309020003</eventid>
+    <iyear>1993</iyear>
+    <imonth>9</imonth>
+    <iday>2</iday>
+    <approxdate>September 1993</approxdate>
+    <extended>1</extended>
+    <country>45</country>
+    <country_txt>Colombia</country_txt>
+    <region>3</region>
+    <region_txt>South America</region_txt>
+    <provstate>Bogota (Capital District)</provstate>
+    <city>Bogota</city>
+    <vicinity>0</vicinity>
+    <summary>09/02/1993: In Colombia, a total of 33 soldiers and policemen were killed in ambushes when the Revolutionary Armed Forces of Colombia (FARC) and the National Liberation Army (ELN) launched their "Black September" offensive. The total number of injuries was unknown.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>1</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>3</targtype1>
+    <targtype1_txt>Police</targtype1_txt>
+    <corp1>Colombian Law Enforcement</corp1>
+    <target1>Bogota Police</target1>
+    <natlty1>45</natlty1>
+    <natlty1_txt>Colombia</natlty1_txt>
+    <gname>Revolutionary Armed Forces of Colombia (FARC)</gname>
+    <gname2>National Liberation Army of Colombia (ELN)</gname2>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <guncertain2>0</guncertain2>
+    <individual>0</individual>
+    <claimed>1</claimed>
+    <claimmode>8</claimmode>
+    <claimmode_txt>Personal claim</claimmode_txt>
+    <claim2>-9</claim2>
+    <compclaim>0</compclaim>
+    <weaptype1>13</weaptype1>
+    <weaptype1_txt>Unknown</weaptype1_txt>
+    <nkill>33</nkill>
+    <nkillus>0</nkillus>
+    <nwoundus>0</nwoundus>
+    <property>-9</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <addnotes>FARC leadership reportedly decided to step up its attacks to pressure the government in the run-up to general elections. (This one of two related attacks [cf: 19930902000]).</addnotes>
+    <scite1>“‘Black September’ Rebel Offensive Leaves 30 Security Forces Dead," Agence France Presse, September 3, 1993.</scite1>
+    <scite2>“Police Blame Guerrillas For Bombings and Kidnapping," Inter-Press Service, September 6, 1993.</scite2>
+    <scite3>“Security Stepped Up in Colombia Against Rebel Offensive," Agence France Presse, September 9, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

@@ -1,0 +1,58 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199312050004</eventid>
+    <iyear>1993</iyear>
+    <imonth>12</imonth>
+    <iday>5</iday>
+    <extended>0</extended>
+    <country>15</country>
+    <country_txt>Austria</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Unknown</provstate>
+    <city>Unknown</city>
+    <vicinity>0</vicinity>
+    <summary>12/05/1993: Police intercepted a letter bomb addressed to Floor Leader, Madeleine Petrovic, a member of the Green Party in Austria. The perpetrators of this incident were unknown.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>1</multiple>
+    <success>0</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>The Green Party</corp1>
+    <target1>Floor Leader, Madeleine Petrovic</target1>
+    <natlty1>15</natlty1>
+    <natlty1_txt>Austria</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>17</weapsubtype1>
+    <weapsubtype1_txt>Other Explosive Type</weapsubtype1_txt>
+    <weapdetail>The device was a parcel bomb.</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>There were a series of letter bombs that were sent over a four-day period, ending on December 6, 1993. (cf. 199312030001-02, 199312040001, 199312050002; 199312050004; 199312060007-9).</addnotes>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

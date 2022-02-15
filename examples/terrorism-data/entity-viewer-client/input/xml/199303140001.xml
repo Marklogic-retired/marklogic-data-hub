@@ -1,0 +1,59 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199303140001</eventid>
+    <iyear>1993</iyear>
+    <imonth>3</imonth>
+    <iday>14</iday>
+    <extended>0</extended>
+    <country>6</country>
+    <country_txt>Algeria</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Algiers (Province)</provstate>
+    <city>Algiers</city>
+    <vicinity>0</vicinity>
+    <summary>03/14/1993: Hafid Senhadri, chief of staff at the Algerian Ministry of Vocational Training was shot and seriously injured by extremists. There was no claim of responsibility for the attack. This was part of a multiple incident, see event ID#'s 199303160001, 199303160002, 199303170002, for more information.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>1</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>1</attacktype1>
+    <attacktype1_txt>Assassination</attacktype1_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>Algerian Ministry of Vocational Training</corp1>
+    <target1>Hafid Senhadri</target1>
+    <natlty1>6</natlty1>
+    <natlty1_txt>Algeria</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>1</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>One injury and no casualties resulted from the attack. See event ID 199303160001 for more information.</addnotes>
+    <scite1>Rachid Khiari, “New Slaying of High-Ranking Official as Terror Wave Continues,” The Associated Press, March 17, 1993.</scite1>
+    <scite2>“Murder in Algiers,” Mideast Mirror, March 16, 1993.</scite2>
+    <scite3>“Algerian terrorism mounts; top government adviser slain,” Chicago Tribune, March 18, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

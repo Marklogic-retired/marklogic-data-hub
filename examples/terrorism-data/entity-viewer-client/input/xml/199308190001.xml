@@ -1,0 +1,78 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199308190001</eventid>
+    <iyear>1993</iyear>
+    <imonth>8</imonth>
+    <iday>19</iday>
+    <extended>1</extended>
+    <resolution>8/25/93</resolution>
+    <country>145</country>
+    <country_txt>Nicaragua</country_txt>
+    <region>2</region>
+    <region_txt>Central America &amp; Caribbean</region_txt>
+    <provstate>Quilali (Administrative Region)</provstate>
+    <city>Caulata</city>
+    <vicinity>0</vicinity>
+    <summary>08/19/1993: Former "Contra" rebels kidnapped three members of parliament and two senior officers in Caulata, 200 km north of Managua. No one was killed or injured.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>0</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>6</attacktype1>
+    <attacktype1_txt>Hostage Taking (Kidnapping)</attacktype1_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>Sandinista National Liberation Front (FSLN)</corp1>
+    <target1>Carlos Gallo (FSLN parliamentarian)</target1>
+    <natlty1>145</natlty1>
+    <natlty1_txt>Nicaragua</natlty1_txt>
+    <targtype2>2</targtype2>
+    <targtype2_txt>Government (General)</targtype2_txt>
+    <corp2>Independent Liberal Party (PLI)</corp2>
+    <target2>Anibal Martinez</target2>
+    <natlty2>222</natlty2>
+    <natlty2_txt>Venezuela</natlty2_txt>
+    <targtype3>3</targtype3>
+    <targtype3_txt>Police</targtype3_txt>
+    <corp3>Special Disarmament Brigade (BED)</corp3>
+    <target3>Lieutenant-Colonel Ramon Ernesto Soza</target3>
+    <natlty3>222</natlty3>
+    <natlty3_txt>Venezuela</natlty3_txt>
+    <gname>Other</gname>
+    <motive>To demand the removal of General Humberto Ortega, the Sandinista defense minister.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>9</claimmode>
+    <claimmode_txt>Other</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>13</weaptype1>
+    <weaptype1_txt>Unknown</weaptype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>1</ishostkid>
+    <nhostkid>41</nhostkid>
+    <nhostkidus>0</nhostkidus>
+    <ndays>6</ndays>
+    <ransom>0</ransom>
+    <hostkidoutcome>2</hostkidoutcome>
+    <hostkidoutcome_txt>Hostage(s) released by perpetrators</hostkidoutcome_txt>
+    <nreleased>41</nreleased>
+    <addnotes>FSLN parliamentarian Doris Tijerino, as well as Major Ivan Portocarrero and 12 other officers of the Special Disarmament Brigade were also targeted. Former Nicaraguan Resistance (RN), or 'Contra," rebels conducted the kidnapping operation.</addnotes>
+    <scite1>“Nicaragua: Former “Contra” rebels kidnap parliamentarians,” IPS-Inter Press Service, August 19, 1993.</scite1>
+    <scite2>Tracy Wilkinson, “Nicaragua’s dual hostage dramas near peaceful resolution; Central America: Rearmed Contras free last five captives, and Sandinista gunmen vow to do the same,” Los Angeles Times, August 26, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

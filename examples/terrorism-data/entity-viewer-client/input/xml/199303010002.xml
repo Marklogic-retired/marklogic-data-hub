@@ -1,0 +1,72 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199303010002</eventid>
+    <iyear>1993</iyear>
+    <imonth>3</imonth>
+    <iday>1</iday>
+    <extended>0</extended>
+    <country>110</country>
+    <country_txt>Lebanon</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>South (Governorate)</provstate>
+    <city>Talousa</city>
+    <vicinity>1</vicinity>
+    <location>Near Talousa village, southwest of Marjayoun in the central sector of the security zone.</location>
+    <summary>03/01/1993: Hizballah guerrillas fired rockets at an Israeli military vehicle and at the South Lebanon Army (SLA) near Talousa village in the central sector of the security zone, injuring one soldier.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>0</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>1</alternative>
+    <alternative_txt>Insurgency/Guerilla Action</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>4</targtype1>
+    <targtype1_txt>Military</targtype1_txt>
+    <corp1>Israeli Security Forces</corp1>
+    <target1>Israeli Defense Forces in the security zone of Lebanon</target1>
+    <natlty1>97</natlty1>
+    <natlty1_txt>Israel</natlty1_txt>
+    <targtype2>4</targtype2>
+    <targtype2_txt>Military</targtype2_txt>
+    <corp2>South Lebanon Army (SLA)</corp2>
+    <target2>South Lebanon Army (SLA)</target2>
+    <natlty2>110</natlty2>
+    <natlty2_txt>Lebanon</natlty2_txt>
+    <gname>Hezbollah</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>10</claimmode>
+    <claimmode_txt>Unknown</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>11</weapsubtype1>
+    <weapsubtype1_txt>Projectile (rockets, mortars, RPGs, etc.)</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>1</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propcomment>A military vehicle was damaged.</propcomment>
+    <ishostkid>0</ishostkid>
+    <addnotes>Hizballah issued a statement claiming responsibility for the attack. One injury and no casualties resulted from the attack. The Israeli Air Force conducted a helicopter raid and exchanged rocket fire with Hizballah when Hizballah fired Katyusha rockets into Galilee.</addnotes>
+    <scite1>David Rudge and Asher Wallfish, “Soldier hurt in Hizbullah missile attack,” The Jerusalem Post, March 2, 1993.</scite1>
+    <scite2>“Israel, NL Bgt,” The Canadian Press, March 1, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

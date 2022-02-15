@@ -1,0 +1,69 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199310170003</eventid>
+    <iyear>1993</iyear>
+    <imonth>10</imonth>
+    <iday>17</iday>
+    <extended>0</extended>
+    <country>603</country>
+    <country_txt>United Kingdom</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Northern Ireland</provstate>
+    <city>Belfast</city>
+    <vicinity>0</vicinity>
+    <location>Ulster (Province)</location>
+    <summary>10/17/1993: A Protestant man in his 30s was fighting for his life in the hospital after he was shot by IRA gunmen at his mother's house in South Belfast.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <attacktype2>6</attacktype2>
+    <attacktype2_txt>Hostage Taking (Kidnapping)</attacktype2_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Civilian</corp1>
+    <target1>Civilian in Belfast (at a private residence on Walmour Street, near the Ormeau Road)</target1>
+    <natlty1>233</natlty1>
+    <natlty1_txt>Northern Ireland</natlty1_txt>
+    <gname>Irish Republican Army (IRA)</gname>
+    <motive>The attack was perpetrated in an effort to derail peace talks.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>3</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>2</claimmode>
+    <claimmode_txt>Call (post-incident)</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>1</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>1</ishostkid>
+    <nhostkid>1</nhostkid>
+    <nhostkidus>0</nhostkidus>
+    <nhours>2</nhours>
+    <ransom>0</ransom>
+    <hostkidoutcome>2</hostkidoutcome>
+    <hostkidoutcome_txt>Hostage(s) released by perpetrators</hostkidoutcome_txt>
+    <nreleased>1</nreleased>
+    <scite1>Gerry Moriarty, “Belfast Man Shot in Attack by IRA Critical,” The Irish Times, October 18, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

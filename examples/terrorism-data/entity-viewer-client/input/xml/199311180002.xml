@@ -1,0 +1,64 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199311180002</eventid>
+    <iyear>1993</iyear>
+    <imonth>11</imonth>
+    <iday>18</iday>
+    <extended>0</extended>
+    <country>75</country>
+    <country_txt>Germany</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Berlin (State)</provstate>
+    <city>Berlin</city>
+    <vicinity>0</vicinity>
+    <summary>11/18/1993: Militants from the group Class against Class bombed two homes of housing officials in Berlin. No one was killed or injured.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>German Housing Officials</corp1>
+    <target1>Housing Officials' homes in Berlin</target1>
+    <natlty1>75</natlty1>
+    <natlty1_txt>Germany</natlty1_txt>
+    <gname>Class Against Class</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>1</claimed>
+    <claimmode>2</claimmode>
+    <claimmode_txt>Call (post-incident)</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>16</weapsubtype1>
+    <weapsubtype1_txt>Unknown Explosive Type</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propcomment>2 cars were burnt and windows were shattered</propcomment>
+    <ishostkid>0</ishostkid>
+    <scite1>“Extreme left militants bomb homes of housing officials,” Agence France Presse, November 19, 1993.</scite1>
+    <scite2>“Leftists bomb Berlin house,” The Gazette (Montreal, Quebec), November 20, 1993.</scite2>
+    <scite3>“Berlin bombs,” Independent, November 20, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

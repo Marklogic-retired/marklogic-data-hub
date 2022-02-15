@@ -1,0 +1,62 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199302150001</eventid>
+    <iyear>1993</iyear>
+    <imonth>2</imonth>
+    <iday>15</iday>
+    <extended>0</extended>
+    <country>45</country>
+    <country_txt>Colombia</country_txt>
+    <region>3</region>
+    <region_txt>South America</region_txt>
+    <provstate>Bogota (Capital District)</provstate>
+    <city>Bogota</city>
+    <vicinity>0</vicinity>
+    <summary>02/15/1993: A bomb exploded at 10:20am EST near a billiard hall and court buildings in a commercial district of Bogotá, Colombia, killing two people. This is one of two related attacks; the second bomb was detonated nearby and together the attacks caused 120 casualties. The explosion damaged homes, shops and a petrol station. Officials suspected Pablo Escobar.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Bogota Commercial District</corp1>
+    <target1>Billiard Hall and Court Buildings in the Bogota Commercial District</target1>
+    <natlty1>45</natlty1>
+    <natlty1_txt>Colombia</natlty1_txt>
+    <gname>Other</gname>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperpcap>1</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>15</weapsubtype1>
+    <weapsubtype1_txt>Vehicle</weapsubtype1_txt>
+    <nkill>2</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>120</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propcomment>The explosion damaged homes, shops and a petrol station.</propcomment>
+    <ishostkid>0</ishostkid>
+    <addnotes>This is one of two related attacks (cf. 199302150002). Following the attack officials arrested Ms. Adelina Meza Santamaria, age 35, for allegedly parking one of the car bombs in Bogotá. She was discovered by a hospital where she sought treatment for minor blast injuries. Three witnesses saw her leave a car, which exploded, on a busy downtown avenue. According to reports, she allegedly belongs to a terrorist group that is affiliated with fugitive drug lord Pablo Escobar.</addnotes>
+    <scite1>“BC-Colombia Bombings,” The Canadian Press, February 15, 1993.</scite1>
+    <scite2>“Drug Lord Brings Chaos to Bogotá,” Calgary Herald, February 16, 1993.</scite2>
+    <scite3>“Colombian police arrest woman in fatal car bombing,” Chicago Tribune, February 18, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

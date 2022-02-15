@@ -1,0 +1,63 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199310250007</eventid>
+    <iyear>1993</iyear>
+    <imonth>10</imonth>
+    <iday>25</iday>
+    <extended>1</extended>
+    <resolution>10/28/93</resolution>
+    <country>146</country>
+    <country_txt>Niger</country_txt>
+    <region>11</region>
+    <region_txt>Sub-Saharan Africa</region_txt>
+    <provstate>Niamey (Capital District)</provstate>
+    <city>Niamey</city>
+    <vicinity>0</vicinity>
+    <summary>10/25/1993: Four unnamed perpetrators hijacked a Nigerian airliner carrying 137 passengers en route from Lagos to Abuja, Nigeria. The plane diverted to Niger, and after initial negotiations the hijackers let out more than 100 passengers. After fruitless additional negotiations, Nigerian police stormed the plane on October 28, 1993. Aside from two victims killed in a rescue operation, all were eventually rescued. The four hijackers surrendered, but one of the crew and one of the hijackers were killed during the rescue operation.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>4</attacktype1>
+    <attacktype1_txt>Hijacking</attacktype1_txt>
+    <targtype1>6</targtype1>
+    <targtype1_txt>Airports &amp; Aircraft</targtype1_txt>
+    <corp1>Nigeria Airways</corp1>
+    <target1>Nigeria Airways Airbus-310</target1>
+    <natlty1>147</natlty1>
+    <natlty1_txt>Nigeria</natlty1_txt>
+    <gname>Unaffiliated Individual(s)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>4</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>13</weaptype1>
+    <weaptype1_txt>Unknown</weaptype1_txt>
+    <nkill>2</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>1</nkillter>
+    <property>0</property>
+    <ishostkid>1</ishostkid>
+    <nhostkid>137</nhostkid>
+    <nhostkidus>0</nhostkidus>
+    <ndays>3</ndays>
+    <divert>Niger</divert>
+    <kidhijcountry>Niger</kidhijcountry>
+    <ransom>0</ransom>
+    <hostkidoutcome>6</hostkidoutcome>
+    <hostkidoutcome_txt>Combination</hostkidoutcome_txt>
+    <nreleased>135</nreleased>
+    <addnotes>The hijackers had originally wanted to go to Frankfurt, Germany, but when they were refused entry into the N'djamena Airport in Chad for refueling, they diverted to Niger instead. Among the passengers were four members of a Chinese bank delegation, led by the bank's Vice Governor Tu Jianji. Three other foreigners were also on the plane.</addnotes>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

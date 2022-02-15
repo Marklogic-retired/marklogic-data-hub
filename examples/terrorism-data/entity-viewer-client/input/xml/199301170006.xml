@@ -1,0 +1,58 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199301170006</eventid>
+    <iyear>1993</iyear>
+    <imonth>1</imonth>
+    <iday>17</iday>
+    <extended>0</extended>
+    <country>157</country>
+    <country_txt>Papua New Guinea</country_txt>
+    <region>12</region>
+    <region_txt>Australasia &amp; Oceania</region_txt>
+    <provstate>Unknown</provstate>
+    <city>Liatora</city>
+    <vicinity>0</vicinity>
+    <summary>01/17/1993: Members of the Bougainville Revolutionary Army shot and killed nine people in Liatora, Papua New Guinea. Property damage was not reported.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>1</alternative>
+    <alternative_txt>Insurgency/Guerilla Action</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Private Citizens</corp1>
+    <target1>Private Citizens</target1>
+    <natlty1>157</natlty1>
+    <natlty1_txt>Papua New Guinea</natlty1_txt>
+    <gname>Bougainville Revolutionary Army (BRA)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <nkill>9</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <scite1>“Civilians Killed in Secessionist Violence in Bougainville,” Radio Australia Melbourne, January 21, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

@@ -1,0 +1,70 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199303010001</eventid>
+    <iyear>1993</iyear>
+    <imonth>3</imonth>
+    <iday>1</iday>
+    <extended>0</extended>
+    <country>97</country>
+    <country_txt>Israel</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Tel Aviv (District)</provstate>
+    <city>Tel Aviv</city>
+    <vicinity>0</vicinity>
+    <summary>03/01/1993: A Palestinian youth stabbed at least 9 Israelis in southern Tel Aviv, including a Russian immigrant, killing at least 2 people. The Palestinian youth was also wounded in the attack. Palestinian Islamic Jihad (PIJ) claimed responsibility for the attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Civilians</corp1>
+    <target1>Natan Azarya</target1>
+    <natlty1>97</natlty1>
+    <natlty1_txt>Israel</natlty1_txt>
+    <targtype2>14</targtype2>
+    <targtype2_txt>Private Citizens &amp; Property</targtype2_txt>
+    <corp2>Civilians</corp2>
+    <target2>Russian Civilian</target2>
+    <natlty2>167</natlty2>
+    <natlty2_txt>Russia</natlty2_txt>
+    <gname>Palestinian Islamic Jihad (PIJ)</gname>
+    <gsubname>Palestinian Islamic Jihad</gsubname>
+    <motive>The Palestinian youth was angered at his inability to obtain work.</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>2</claimmode>
+    <claimmode_txt>Call (post-incident)</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>9</weaptype1>
+    <weaptype1_txt>Melee</weaptype1_txt>
+    <weapsubtype1>23</weapsubtype1>
+    <weapsubtype1_txt>Knife or Other Sharp Object</weapsubtype1_txt>
+    <nkill>2</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>7</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>1</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>The 19 year old Palestinian youth, Zyad Salim Silmi, reportedly stabbed at least 9 people. The incident resulted in at least 2 deaths and 7 injuries. Discrepancies were reported between multiple sources on the exact number of wounded victims. Natan Azarya and Gregory Abramov died as a result of the attack. The attack may have occurred as a result of Silmi's frustration at being unable to obtain work. However, Palestinian Islamic Jihad claimed responsibility for the attack. It is unclear whether or not Silmi executed the attack on behalf of the militant group.</addnotes>
+    <scite1>“Two Die When Teen Runs Amok with Knife,” Reuters-AP-CP, March 2, 1993.</scite1>
+    <scite2>Clyde Haberman, “Arab Kills 2 Israelis in Stabbing Spree in Tele Aviv,” The New York Times, March 2, 1993.</scite2>
+    <scite3>“Israel: Gaza Strip closed after Israeli deaths; PLO condemns closure,” The British Broadcasting Corporation, March 3, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>1</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

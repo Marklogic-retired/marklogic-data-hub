@@ -1,0 +1,77 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199304260005</eventid>
+    <iyear>1993</iyear>
+    <imonth>4</imonth>
+    <iday>26</iday>
+    <extended>1</extended>
+    <resolution>4/29/93</resolution>
+    <country>49</country>
+    <country_txt>Costa Rica</country_txt>
+    <region>2</region>
+    <region_txt>Central America &amp; Caribbean</region_txt>
+    <provstate>San Jose (Province)</provstate>
+    <city>San Jose</city>
+    <vicinity>0</vicinity>
+    <summary>04/26/1993: In San Jose, five gunmen stormed the Costa Rican Supreme Court and seized nineteen Supreme Court justices, along with five other hostages. The gunmen demanded $20 million in ransom, safe passage to a country with no extradition, and the release of three men from prison. The incident ended on four days later when the gunmen released the hostages in exchange for $150,000 and a promise of safe passage to Panama or Guatemala. The gunmen were arrested at the airport.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <attacktype2>5</attacktype2>
+    <attacktype2_txt>Hostage Taking (Barricade Incident)</attacktype2_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>Supreme Court</corp1>
+    <target1>Nineteen Supreme Court Justices in the Supreme Court building in San Jose</target1>
+    <natlty1>49</natlty1>
+    <natlty1_txt>Costa Rica</natlty1_txt>
+    <targtype2>14</targtype2>
+    <targtype2_txt>Private Citizens &amp; Property</targtype2_txt>
+    <corp2>Civilians</corp2>
+    <target2>Five Civilians</target2>
+    <natlty2>49</natlty2>
+    <natlty2_txt>Costa Rica</natlty2_txt>
+    <gname>Unaffiliated Individual(s)</gname>
+    <motive>The gunmen were demanding money, safe passage to a country with no extradition, and the release of three men from prison.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>5</nperps>
+    <nperpcap>5</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>1</ishostkid>
+    <nhostkid>24</nhostkid>
+    <nhostkidus>0</nhostkidus>
+    <ndays>4</ndays>
+    <ransom>1</ransom>
+    <ransomamt>20000000</ransomamt>
+    <ransomamtus>0</ransomamtus>
+    <ransompaid>150000</ransompaid>
+    <ransompaidus>0</ransompaidus>
+    <nreleased>24</nreleased>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

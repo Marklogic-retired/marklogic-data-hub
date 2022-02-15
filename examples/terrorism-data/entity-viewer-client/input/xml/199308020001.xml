@@ -1,0 +1,68 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199308020001</eventid>
+    <iyear>1993</iyear>
+    <imonth>8</imonth>
+    <iday>2</iday>
+    <extended>0</extended>
+    <country>155</country>
+    <country_txt>West Bank and Gaza Strip</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Gaza Strip (Occupied Territory)</provstate>
+    <city>Gaza City</city>
+    <vicinity>0</vicinity>
+    <summary>08/02/1993: A Palestinian man carrying explosives hijacked a United Nations Relief and Works Agency (UNRWA) bus in the Gaza Strip, forced everyone off, then drove south, ramming the bus into oncoming vehicles carrying Israeli police and soldiers. One person was killed and 7 injured.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>4</attacktype1>
+    <attacktype1_txt>Hijacking</attacktype1_txt>
+    <attacktype2>3</attacktype2>
+    <attacktype2_txt>Bombing/Explosion</attacktype2_txt>
+    <targtype1>3</targtype1>
+    <targtype1_txt>Police</targtype1_txt>
+    <corp1>Israeli Security Forces</corp1>
+    <target1>Israeli Security Forces in Gaza City</target1>
+    <natlty1>97</natlty1>
+    <natlty1_txt>Israel</natlty1_txt>
+    <gname>Palestinian Islamic Jihad (PIJ)</gname>
+    <gsubname>Iranian Islamic Jihad</gsubname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>1</nperps>
+    <claimed>1</claimed>
+    <claimmode>9</claimmode>
+    <claimmode_txt>Other</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>10</weaptype1>
+    <weaptype1_txt>Vehicle (not to include vehicle-borne explosives, i.e., car or truck bombs)</weaptype1_txt>
+    <weaptype2>6</weaptype2>
+    <weaptype2_txt>Explosives</weaptype2_txt>
+    <weapsubtype2>16</weapsubtype2>
+    <weapsubtype2_txt>Unknown Explosive Type</weapsubtype2_txt>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>7</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propcomment>A bus and other vehicles were smashed.</propcomment>
+    <ishostkid>0</ishostkid>
+    <addnotes>Islamic Jihad claimed responsibility through loudspeakers on the streets.</addnotes>
+    <scite1>“Arab bus hijacker kills one Israeli, injures seven,” Agence France Presse, August 2, 1993.</scite1>
+    <scite2>“Israel’s war on Hezbollah spurs Islamic Jihad into action,” Agence France Presse, August 5, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

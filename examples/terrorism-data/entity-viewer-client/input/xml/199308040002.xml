@@ -1,0 +1,57 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199308040002</eventid>
+    <iyear>1993</iyear>
+    <imonth>8</imonth>
+    <iday>4</iday>
+    <extended>0</extended>
+    <country>75</country>
+    <country_txt>Germany</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Nordrhein-Westfalen (State)</provstate>
+    <city>Pulheim</city>
+    <vicinity>0</vicinity>
+    <summary>08/04/1993: Unknown arsonists set fire to a Turkish restaurant in Pulheim, Germany. Three people were injured and the building was destroyed in this attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>7</attacktype1>
+    <attacktype1_txt>Facility/Infrastructure Attack</attacktype1_txt>
+    <targtype1>1</targtype1>
+    <targtype1_txt>Business</targtype1_txt>
+    <target1>A Turkish restaurant in Pulheim</target1>
+    <natlty1>209</natlty1>
+    <natlty1_txt>Turkey</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>13</weaptype1>
+    <weaptype1_txt>Unknown</weaptype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>3</nwound>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propcomment>The building was completely destroyed and swastikas were painted at the scene.</propcomment>
+    <ishostkid>0</ishostkid>
+    <addnotes>One person suffered from smoke poisoning and two others sustained shock.</addnotes>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

@@ -1,0 +1,78 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199308210003</eventid>
+    <iyear>1993</iyear>
+    <imonth>8</imonth>
+    <iday>21</iday>
+    <extended>1</extended>
+    <resolution>9/15/93</resolution>
+    <country>209</country>
+    <country_txt>Turkey</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Istanbul (Province)</provstate>
+    <city>Istanbul</city>
+    <vicinity>1</vicinity>
+    <location>The Agri mountains</location>
+    <summary>08/21/1993: Members of the Kurdistan Workers' Party (PKK) kidnapped seven tourists in the Agri Mountains of Turkey at gunpoint. The victims were released on September 15, 1993.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>0</success>
+    <suicide>0</suicide>
+    <attacktype1>6</attacktype1>
+    <attacktype1_txt>Hostage Taking (Kidnapping)</attacktype1_txt>
+    <targtype1>18</targtype1>
+    <targtype1_txt>Tourists</targtype1_txt>
+    <corp1>Tourists</corp1>
+    <target1>Two Italian Tourists</target1>
+    <natlty1>98</natlty1>
+    <natlty1_txt>Italy</natlty1_txt>
+    <targtype2>18</targtype2>
+    <targtype2_txt>Tourists</targtype2_txt>
+    <corp2>Tourists</corp2>
+    <target2>A Swiss Tourist</target2>
+    <natlty2>199</natlty2>
+    <natlty2_txt>Switzerland</natlty2_txt>
+    <targtype3>18</targtype3>
+    <targtype3_txt>Tourists</targtype3_txt>
+    <corp3>Tourists</corp3>
+    <target3>A New Zealander tourist</target3>
+    <natlty3>144</natlty3>
+    <natlty3_txt>New Zealand</natlty3_txt>
+    <gname>Kurdistan Workers' Party (PKK)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>1</ishostkid>
+    <nhostkid>7</nhostkid>
+    <nhostkidus>0</nhostkidus>
+    <ndays>25</ndays>
+    <ransom>0</ransom>
+    <hostkidoutcome>2</hostkidoutcome>
+    <hostkidoutcome_txt>Hostage(s) released by perpetrators</hostkidoutcome_txt>
+    <nreleased>7</nreleased>
+    <addnotes>The victims of this kidnapping were the following: Angelo Palego, Anna D'Andrea (Italian); Anna di Nico Pianta (Swiss); Henry Butler, Christoph Lehmann (German); Paul Thompson (New Zealand).</addnotes>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

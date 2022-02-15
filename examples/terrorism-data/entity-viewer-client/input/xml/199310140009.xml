@@ -1,0 +1,66 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199310140009</eventid>
+    <iyear>1993</iyear>
+    <imonth>10</imonth>
+    <iday>14</iday>
+    <extended>0</extended>
+    <country>217</country>
+    <country_txt>United States</country_txt>
+    <region>1</region>
+    <region_txt>North America</region_txt>
+    <provstate>California</provstate>
+    <city>Sacramento</city>
+    <vicinity>0</vicinity>
+    <summary>10/14/1993: Richard Joseph Campos, the sole member of the Aryan Liberation Front, threw two Molotov cocktails at the Fair Employment and Housing Department in Sacramento, California, United States. There were no casualties but one firebomb shattered the glass door of the building and burnt a desk. The other firebomb did not ignite.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>7</attacktype1>
+    <attacktype1_txt>Facility/Infrastructure Attack</attacktype1_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>Fair Employment and Housing Department</corp1>
+    <target1>Fair Employment and Housing Department of California, Sacramento</target1>
+    <natlty1>217</natlty1>
+    <natlty1_txt>United States</natlty1_txt>
+    <gname>Aryan Liberation Front</gname>
+    <motive>Richard Joseph Campos adopted the racist ideology of the White Aryan Resistance (WAR) and wanted to create an all-White society.  He believed that this attack was a strike against "Jew Capitalism."</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperps>1</nperps>
+    <nperpcap>1</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>2</claimmode>
+    <claimmode_txt>Call (post-incident)</claimmode_txt>
+    <weaptype1>8</weaptype1>
+    <weaptype1_txt>Incendiary</weaptype1_txt>
+    <weapsubtype1>20</weapsubtype1>
+    <weapsubtype1_txt>Gasoline or Alcohol</weapsubtype1_txt>
+    <weapdetail>Two Molotov cocktails</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propcomment>Desk damaged and glass door shattered</propcomment>
+    <ishostkid>0</ishostkid>
+    <ransom>0</ransom>
+    <addnotes>The incident took place at 3:30  AM.  Richard Joseph Campos bombed four other buildings in the Sacramento area including the NAACP headquarters, a synagogue, the Japanese American Citizens League, and the home of city councilman Jimmie Yee (199307250005, 199310020003, and 199310050004).  Forty-five minutes after the  firebombing of the government facility, Campos called the Sacramento television station KCRA and claimed the incident on behalf of the Aryan Liberation Front.  The Fair Employment and Housing Department handled claims of discrimination.  Campos was the only member of the Aryan Liberation Front.  Before carrying out his bombing campaign, Campos called the White Aryan Resistance (WAR) hotline 34 times to listen to messages from the organizations leader Tom Metzger.  Campos had a WAR poster in his bedroom when he was arrested.</addnotes>
+    <scite1>Steve Geissinger, "Another Firebombing Shakes California's Capital," Associated Press, October 15, 1993.</scite1>
+    <scite2>"Man Convicted Of 2 Bombings Tied to Racism," New York Times, August 31, 1994.</scite2>
+    <scite3>Mareva Brown, "Racist's Rampage Was 'Wake-Up Call.'  The White Supremacist Convicted in '93 Bombings is Out of Prison," Sacramento Bee, July 7, 2003.</scite3>
+    <dbsource>Hewitt Project</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

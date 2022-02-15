@@ -1,0 +1,61 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199307150001</eventid>
+    <iyear>1993</iyear>
+    <imonth>7</imonth>
+    <iday>15</iday>
+    <extended>0</extended>
+    <country>603</country>
+    <country_txt>United Kingdom</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Northern Ireland</provstate>
+    <city>Belfast</city>
+    <vicinity>0</vicinity>
+    <location>Ulster (Province)</location>
+    <summary>07/15/1993: Belfast's main rail terminus, Central Station, was reported as extensively damaged in a suspected Irish Republican Army (IRA) bomb attack early in the morning. There were no reports of any injuries, but the building was badly damaged.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>7</attacktype1>
+    <attacktype1_txt>Facility/Infrastructure Attack</attacktype1_txt>
+    <targtype1>19</targtype1>
+    <targtype1_txt>Transportation</targtype1_txt>
+    <corp1>Northern Irish Railway System</corp1>
+    <target1>Belfast's Central Rail Station</target1>
+    <natlty1>216</natlty1>
+    <natlty1_txt>Great Britain</natlty1_txt>
+    <gname>Irish Republican Army (IRA)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>16</weapsubtype1>
+    <weapsubtype1_txt>Unknown Explosive Type</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>2</propextent>
+    <propextent_txt>Major (likely >= $1 million but &lt; $1 billion)</propextent_txt>
+    <propcomment>The building was badly damaged.</propcomment>
+    <ishostkid>0</ishostkid>
+    <scite1>Gerry Moriarty, “ Belfast Station Bomb,” The Irish Times, July 15,1993.</scite1>
+    <scite2>Reuters, “Bomb Explodes in Belfast,” The New York Times, July 15, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

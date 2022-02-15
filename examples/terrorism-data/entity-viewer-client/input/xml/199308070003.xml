@@ -1,0 +1,61 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199308070003</eventid>
+    <iyear>1993</iyear>
+    <imonth>8</imonth>
+    <iday>7</iday>
+    <extended>0</extended>
+    <country>185</country>
+    <country_txt>Spain</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Murcia (Autonomous Community)</provstate>
+    <city>La Manga del Mar Menor</city>
+    <vicinity>0</vicinity>
+    <summary>08/07/1993: Euskadi ta Askatasuna (ETA) claimed responsibility for two bombs set off the Doblemar Hotel in La Manga del Mar Menor in Murcia, Spain. One of the bombs was planted in the back of an armchair, which a few days later had been taken out of a first-floor room and placed next to the elevator. A German tourist was injured and an Italian woman suffered a slightly injured ear. The ETA warned of the bomb in a call to the hotel receptionist.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>1</targtype1>
+    <targtype1_txt>Business</targtype1_txt>
+    <corp1>Doblemar Hotel</corp1>
+    <target1>Doblemar Hotel</target1>
+    <natlty1>185</natlty1>
+    <natlty1_txt>Spain</natlty1_txt>
+    <gname>Basque Fatherland and Freedom (ETA)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>3</claimmode>
+    <claimmode_txt>Call (pre-incident)</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>16</weapsubtype1>
+    <weapsubtype1_txt>Unknown Explosive Type</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>2</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <addnotes>Eight-hundred hotel guests were evacuated.</addnotes>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

@@ -1,0 +1,57 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199310020002</eventid>
+    <iyear>1993</iyear>
+    <imonth>10</imonth>
+    <iday>2</iday>
+    <extended>0</extended>
+    <country>60</country>
+    <country_txt>Egypt</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Suez (Governorate)</provstate>
+    <city>Suez City</city>
+    <vicinity>0</vicinity>
+    <summary>10/02/1993: A police officer was killed by shotgun pellets and another injured in clashes with a group of Muslim militants in Suez city.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>3</targtype1>
+    <targtype1_txt>Police</targtype1_txt>
+    <corp1>Egyptian Police</corp1>
+    <target1>A police officer in Suez City</target1>
+    <natlty1>60</natlty1>
+    <natlty1_txt>Egypt</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>The attack was perpetrated in Protest of Mubarak's re-election.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>6</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>4</weapsubtype1>
+    <weapsubtype1_txt>Rifle/Shotgun (non-automatic)</weapsubtype1_txt>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>1</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <scite1>“Police Officer Killed in Clashes with Extremists,” Xinhua, October 3, 1993.</scite1>
+    <scite2>“Police Officer Killed in Clash with "Terrorists" in Suez,” The British Broadcasting Corporation, October 5, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

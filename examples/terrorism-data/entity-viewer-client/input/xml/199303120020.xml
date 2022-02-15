@@ -1,0 +1,68 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199303120020</eventid>
+    <iyear>1993</iyear>
+    <imonth>3</imonth>
+    <iday>12</iday>
+    <extended>1</extended>
+    <resolution>3/18/93</resolution>
+    <country>65</country>
+    <country_txt>Ethiopia</country_txt>
+    <region>11</region>
+    <region_txt>Sub-Saharan Africa</region_txt>
+    <provstate>Dire Dawa (Chartered City)</provstate>
+    <city>Dire Dawa</city>
+    <vicinity>0</vicinity>
+    <summary>03/12/1993: Four hijackers seized a plane on its way to Addis Ababa, Ethiopia, resulting in a 6-day standoff that ended when the plane set down to refuel in Dire Dawa. There, security forces stormed the plane and killed two of the hijackers, ending the incident.</summary>
+    <crit1>0</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>4</attacktype1>
+    <attacktype1_txt>Hijacking</attacktype1_txt>
+    <targtype1>6</targtype1>
+    <targtype1_txt>Airports &amp; Aircraft</targtype1_txt>
+    <corp1>Ethiopian Airlines</corp1>
+    <target1>Ethiopian Airlines domestic flight</target1>
+    <natlty1>65</natlty1>
+    <natlty1_txt>Ethiopia</natlty1_txt>
+    <gname>Unaffiliated Individual(s)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>4</nperps>
+    <nperpcap>1</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <nkill>2</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>2</nkillter>
+    <nwound>1</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>1</ishostkid>
+    <nhostkid>24</nhostkid>
+    <nhostkidus>0</nhostkidus>
+    <ndays>6</ndays>
+    <ransom>0</ransom>
+    <nreleased>24</nreleased>
+    <addnotes>The flight was diverted from Addis Ababa to Dire Dawa with the demand that the plane be refueled there.  In Dire Dawa, refused to refuel the plane and stormed it, resulting in a successful diffusion of the situation.</addnotes>
+    <scite1>“Hijacked Plane Stormed, Two Killed,” The Associated Press, March 18, 1993</scite1>
+    <scite2>“Hijack ends,” Press Association, March 18, 1993.</scite2>
+    <scite3>“Ethiopian security men subdue hijackers,” Xinhua, March 18, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

@@ -1,0 +1,64 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199308080002</eventid>
+    <iyear>1993</iyear>
+    <imonth>8</imonth>
+    <iday>8</iday>
+    <extended>0</extended>
+    <country>167</country>
+    <country_txt>Russia</country_txt>
+    <region>9</region>
+    <region_txt>Eastern Europe</region_txt>
+    <provstate>Chechnya (Republic)</provstate>
+    <city>Grozny</city>
+    <vicinity>0</vicinity>
+    <summary>08/08/1993: At 4 a.m., unidentified gunmen in three cars opened fire on the ninth floor of the government building where Chechen President Dzhokhar Dudayev's office is located, injuring 2 of Dudayev's bodyguards. The gunmen also fired at the nearby Chechen Interior Ministry building.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>0</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>Chechen Administration</corp1>
+    <target1>Chechen President Dzhokhar Dudayev's Office</target1>
+    <natlty1>167</natlty1>
+    <natlty1_txt>Russia</natlty1_txt>
+    <targtype2>2</targtype2>
+    <targtype2_txt>Government (General)</targtype2_txt>
+    <corp2>Chechen Interior Ministry</corp2>
+    <target2>Interior Ministry building</target2>
+    <natlty2>167</natlty2>
+    <natlty2_txt>Russia</natlty2_txt>
+    <gname>Chechen Rebels</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>2</weapsubtype1>
+    <weapsubtype1_txt>Automatic or Semi-Automatic Rifle</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>2</nwound>
+    <nwoundus>0</nwoundus>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <scite1>“ITAR-TASS News Digest of August 9,” ITAR-TASS, August 9, 1993.</scite1>
+    <scite2>“Attempt to assassinate Chechen President Dudayev failed,” Komsomolskaya Pravda, August 10, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

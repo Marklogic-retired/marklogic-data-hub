@@ -1,0 +1,69 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199307070001</eventid>
+    <iyear>1993</iyear>
+    <imonth>7</imonth>
+    <iday>7</iday>
+    <extended>0</extended>
+    <country>182</country>
+    <country_txt>Somalia</country_txt>
+    <region>11</region>
+    <region_txt>Sub-Saharan Africa</region_txt>
+    <provstate>Banaadir (Region)</provstate>
+    <city>Mogadishu</city>
+    <vicinity>0</vicinity>
+    <summary>07/07/1993: As many as six Somali employees of the United Nations were slain in an ambush in Mogadishu. Two of the Somalis were dragged from their car and shot dead in a busy street market while four others wounded in the attack were abducted and presumed dead. Gunmen were believed to be loyal to the fugitive warlord Mohamed Farrah Aidid.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>1</alternative>
+    <alternative_txt>Insurgency/Guerilla Action</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <attacktype2>6</attacktype2>
+    <attacktype2_txt>Hostage Taking (Kidnapping)</attacktype2_txt>
+    <targtype1>13</targtype1>
+    <targtype1_txt>Other</targtype1_txt>
+    <corp1>United Nations</corp1>
+    <target1>UN Employees</target1>
+    <natlty1>182</natlty1>
+    <natlty1_txt>Somalia</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <nkill>6</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>1</ishostkid>
+    <nhostkid>4</nhostkid>
+    <nhostkidus>0</nhostkidus>
+    <nhours>-99</nhours>
+    <ransom>0</ransom>
+    <hostkidoutcome>7</hostkidoutcome>
+    <hostkidoutcome_txt>Unknown</hostkidoutcome_txt>
+    <nreleased>0</nreleased>
+    <addnotes>The Hostages were presumed dead.</addnotes>
+    <scite1>Angus Shaw, “United Nations Workers Slain In Ambush,” The Associated Press, July 7, 1993.  </scite1>
+    <scite2>“Somali Employees of UN Ambushed: 6 Feared Dead,” Los Angeles Times, July 8, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

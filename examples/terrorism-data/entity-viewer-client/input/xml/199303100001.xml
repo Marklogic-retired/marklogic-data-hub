@@ -1,0 +1,65 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199303100001</eventid>
+    <iyear>1993</iyear>
+    <imonth>3</imonth>
+    <iday>10</iday>
+    <extended>0</extended>
+    <country>217</country>
+    <country_txt>United States</country_txt>
+    <region>1</region>
+    <region_txt>North America</region_txt>
+    <provstate>Florida</provstate>
+    <city>Pensacola</city>
+    <vicinity>0</vicinity>
+    <summary>03/10/1993: An abortion doctor was killed in the United States for the first time during an anti-abortion protest by Rescue America. One casualty occurred and no injuries resulted from the attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>1</attacktype1>
+    <attacktype1_txt>Assassination</attacktype1_txt>
+    <targtype1>5</targtype1>
+    <targtype1_txt>Abortion Related</targtype1_txt>
+    <corp1>Abortion clinic</corp1>
+    <target1>Dr. David Gunn</target1>
+    <natlty1>217</natlty1>
+    <natlty1_txt>United States</natlty1_txt>
+    <gname>Unaffiliated Individual(s)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>1</nperps>
+    <nperpcap>1</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>8</claimmode>
+    <claimmode_txt>Personal claim</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>6</weapsubtype1>
+    <weapsubtype1_txt>Other Gun Type</weapsubtype1_txt>
+    <weapdetail>.38-caliber revolver</weapdetail>
+    <nkill>1</nkill>
+    <nkillus>1</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>Dr. David Gunn was the first abortion doctor to be killed. Anti-abortion activist, Michael Frederick Griffin, was responsible for the murder and was believed to have acted alone. Mr. Griffin was protesting with the anti-abortion group Rescue America. One casualty resulted from the incident.</addnotes>
+    <scite1>Garry Mitchell, “Clinic Across Country React to Slaying of Abortion Doctor,” The Associated Press, March 12, 1993.</scite1>
+    <scite2>Anthony Lewis, “Abroad at Home; Right to Life,” The New York Times, March 12, 1993.</scite2>
+    <scite3>Mike Williams, “Doctor slain at abortion clinic in Fla. Pensacola demonstrator is charged with murder,” The Atlanta Journal and Constitution, March 11, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

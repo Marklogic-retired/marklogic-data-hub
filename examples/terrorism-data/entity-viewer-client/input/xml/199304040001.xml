@@ -1,0 +1,61 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199304040001</eventid>
+    <iyear>1993</iyear>
+    <imonth>4</imonth>
+    <iday>4</iday>
+    <extended>0</extended>
+    <country>36</country>
+    <country_txt>Cambodia</country_txt>
+    <region>5</region>
+    <region_txt>Southeast Asia</region_txt>
+    <provstate>Siem Reap (Province)</provstate>
+    <city>Kralanh District</city>
+    <vicinity>0</vicinity>
+    <summary>04/04/1993: Sixty suspected Khmer Rouge members attacked the United Nations Transitional Authority in Cambodia (UNTAC), as well as civilians, in the Kralanh District. One person was killed and three others were injured, including an UNTAC soldier.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>1</alternative>
+    <alternative_txt>Insurgency/Guerilla Action</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>13</targtype1>
+    <targtype1_txt>Other</targtype1_txt>
+    <corp1>United Nations</corp1>
+    <target1>United Nations Transitional Authority in Cambodia</target1>
+    <natlty1>999</natlty1>
+    <natlty1_txt>Multinational</natlty1_txt>
+    <targtype2>14</targtype2>
+    <targtype2_txt>Private Citizens &amp; Property</targtype2_txt>
+    <corp2>Civilians</corp2>
+    <target2>Civilians in the Kralanh District</target2>
+    <natlty2>36</natlty2>
+    <natlty2_txt>Cambodia</natlty2_txt>
+    <gname>Khmer Rouge</gname>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>13</weaptype1>
+    <weaptype1_txt>Unknown</weaptype1_txt>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>3</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>-9</property>
+    <ishostkid>0</ishostkid>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

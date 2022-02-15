@@ -1,0 +1,58 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199310260005</eventid>
+    <iyear>1993</iyear>
+    <imonth>10</imonth>
+    <iday>26</iday>
+    <extended>0</extended>
+    <country>159</country>
+    <country_txt>Peru</country_txt>
+    <region>3</region>
+    <region_txt>South America</region_txt>
+    <provstate>Lima (Province)</provstate>
+    <city>Lima</city>
+    <vicinity>1</vicinity>
+    <location>1,300 km southeast of Lima</location>
+    <summary>10/26/1993: Suspected Shining Path guerrillas shot Mayor Carlos Ramos in a wave of assaults that began with the bombing earlier in the week of the Lima airport.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>1</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>1</attacktype1>
+    <attacktype1_txt>Assassination</attacktype1_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>City Mayor</corp1>
+    <target1>Mayor Carlos Ramos</target1>
+    <natlty1>159</natlty1>
+    <natlty1_txt>Peru</natlty1_txt>
+    <gname>Shining Path (SL)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>1</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>This was one of three related attacks (cf. 199310250003; 199310260004).</addnotes>
+    <scite1>"Shining Path Attacks Kill One, Injure Dozens,” United Press International, October 26, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

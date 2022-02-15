@@ -1,0 +1,58 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199308260002</eventid>
+    <iyear>1993</iyear>
+    <imonth>8</imonth>
+    <iday>26</iday>
+    <extended>0</extended>
+    <country>8</country>
+    <country_txt>Angola</country_txt>
+    <region>11</region>
+    <region_txt>Sub-Saharan Africa</region_txt>
+    <provstate>Huambo (Province)</provstate>
+    <city>Cambambo and Cabal</city>
+    <vicinity>1</vicinity>
+    <location>In this incident the target, UN trucks, were on their way to Cambambo and Cabal.</location>
+    <summary>08/26/1993: Unknown men attacked a 75-truck World Food Programme convoy in a government controlled area in Huambo Province, Angola. One person was killed another wounded and the trucks and their cargo were destroyed.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>12</targtype1>
+    <targtype1_txt>NGO</targtype1_txt>
+    <corp1>World Food Programme</corp1>
+    <target1>World Food Programme convoy of 75 trucks and 1,970 tons of foodstuffs</target1>
+    <natlty1>999</natlty1>
+    <natlty1_txt>Multinational</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>13</weaptype1>
+    <weaptype1_txt>Unknown</weaptype1_txt>
+    <nkill>1</nkill>
+    <nkillter>0</nkillter>
+    <nwound>1</nwound>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>2</propextent>
+    <propextent_txt>Major (likely >= $1 million but &lt; $1 billion)</propextent_txt>
+    <propcomment>Three trucks and their cargo were destroyed.</propcomment>
+    <ishostkid>0</ishostkid>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

@@ -1,0 +1,62 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199301240005</eventid>
+    <iyear>1993</iyear>
+    <imonth>1</imonth>
+    <iday>24</iday>
+    <extended>1</extended>
+    <country>228</country>
+    <country_txt>Yemen</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Sana'a (Governorate)</provstate>
+    <city>Sana'a</city>
+    <vicinity>1</vicinity>
+    <location>The kidnapping occurred on the Sana'a-Aden Road.</location>
+    <summary>01/24/1993: Al-Hada tribesmen kidnapped Mike Schmitz, a Canadian employee of Sterling Services, on the Sana'a-Aden Road in Yemen. The tribesmen said the victim would be released when two police officers responsible for killing a fellow tribesmen were turned over to them. The outcome of this incident was unknown.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>6</attacktype1>
+    <attacktype1_txt>Hostage Taking (Kidnapping)</attacktype1_txt>
+    <targtype1>1</targtype1>
+    <targtype1_txt>Business</targtype1_txt>
+    <corp1>Sterling Services Company</corp1>
+    <target1>Mike Schmitz</target1>
+    <natlty1>38</natlty1>
+    <natlty1_txt>Canada</natlty1_txt>
+    <gname>Other</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>13</weaptype1>
+    <weaptype1_txt>Unknown</weaptype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>1</ishostkid>
+    <nhostkid>1</nhostkid>
+    <nhostkidus>0</nhostkidus>
+    <ndays>-99</ndays>
+    <ransom>0</ransom>
+    <hostkidoutcome>7</hostkidoutcome>
+    <hostkidoutcome_txt>Unknown</hostkidoutcome_txt>
+    <nreleased>-99</nreleased>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

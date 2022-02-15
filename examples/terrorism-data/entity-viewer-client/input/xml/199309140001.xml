@@ -1,0 +1,65 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199309140001</eventid>
+    <iyear>1993</iyear>
+    <imonth>9</imonth>
+    <iday>14</iday>
+    <extended>0</extended>
+    <country>155</country>
+    <country_txt>West Bank and Gaza Strip</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Gaza Strip (Occupied Territory)</provstate>
+    <city>Gaza City</city>
+    <vicinity>0</vicinity>
+    <summary>09/14/1993: In Gaza City, HAMAS member Ismael Sheber, 21, climbed the stairs of the Gaza City municipal building to a rooftop lookout held by Israeli soldiers. Holding a Koran and a knife he stabbed one soldier, then was shot dead by another. The stabbed soldier was slightly injured. No one else was killed or injured in the attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>0</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>4</targtype1>
+    <targtype1_txt>Military</targtype1_txt>
+    <corp1>Israeli Security Forces</corp1>
+    <target1>Israeli Defense Force Soldiers</target1>
+    <natlty1>97</natlty1>
+    <natlty1_txt>Israel</natlty1_txt>
+    <gname>Hamas (Islamic Resistance Movement)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>1</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>8</claimmode>
+    <claimmode_txt>Personal claim</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>9</weaptype1>
+    <weaptype1_txt>Melee</weaptype1_txt>
+    <weapsubtype1>23</weapsubtype1>
+    <weapsubtype1_txt>Knife or Other Sharp Object</weapsubtype1_txt>
+    <weaptype2>5</weaptype2>
+    <weaptype2_txt>Firearms</weaptype2_txt>
+    <weapsubtype2>5</weapsubtype2>
+    <weapsubtype2_txt>Unknown Gun Type</weapsubtype2_txt>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>1</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>Leaflets were distributed claiming responsibility for the attacks.</addnotes>
+    <scite1>“2 Palestinians Die in Gaza Incidents Claimed by Militant Group," The Washington Post, September 15, 1993.</scite1>
+    <scite2>“Clashes Leave Two Dead In Occupied Territories," The Washington Post, September 12, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

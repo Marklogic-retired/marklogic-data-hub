@@ -1,0 +1,63 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199310250002</eventid>
+    <iyear>1993</iyear>
+    <imonth>10</imonth>
+    <iday>25</iday>
+    <extended>0</extended>
+    <country>603</country>
+    <country_txt>United Kingdom</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>England</provstate>
+    <city>Berkshire</city>
+    <vicinity>0</vicinity>
+    <location>Berksire (County)</location>
+    <summary>10/25/1993: The IRA planted three bombs - one of which exploded on the rail network west of London, causing no injuries but disrupting transport. The bomb that exploded was close to Reading Railway Station in Berkshire.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>19</targtype1>
+    <targtype1_txt>Transportation</targtype1_txt>
+    <corp1>British Rail</corp1>
+    <target1>British Rail Reading station at Berkshire</target1>
+    <natlty1>216</natlty1>
+    <natlty1_txt>Great Britain</natlty1_txt>
+    <gname>Irish Republican Army (IRA)</gname>
+    <motive>The perpetrators wanted to  intimidate the government into accepting the IRA’s proposals.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>3</claimmode>
+    <claimmode_txt>Call (pre-incident)</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>14</weapsubtype1>
+    <weapsubtype1_txt>Time Fuse</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <scite1>"New Bomb Outrage,” Herald Sun, October 26, 1993.</scite1>
+    <scite2>Charles Batchelor, “IRA Explosion causes Rail Chaos in South: Bomb Damage Delays 40,000 Commuters - Belfast Holds Silent Memorial / Ulster's economic image dented,” Financial Times, October, 26, 1993.</scite2>
+    <scite3>David Wallen, “IRA Blast Disrupts Commuters in London,” South China Morning Post, October 26, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>1</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

@@ -1,0 +1,59 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199311280001</eventid>
+    <iyear>1993</iyear>
+    <imonth>11</imonth>
+    <iday>28</iday>
+    <extended>0</extended>
+    <country>75</country>
+    <country_txt>Germany</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Bavaria (State)</provstate>
+    <city>Nuremberg</city>
+    <vicinity>0</vicinity>
+    <summary>11/28/1993: 25 Kurdish citizens forced their way into the Nuremberg Kurdistan Arts and Cultural Center and occupied the building. No one was killed or injured.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>1</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>7</attacktype1>
+    <attacktype1_txt>Facility/Infrastructure Attack</attacktype1_txt>
+    <targtype1>13</targtype1>
+    <targtype1_txt>Other</targtype1_txt>
+    <corp1>Kurdistan Arts and Cultural Center</corp1>
+    <target1>Kurdistan Arts and Cultural Center Facilities in Nuremberg</target1>
+    <natlty1>75</natlty1>
+    <natlty1_txt>Germany</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>In protest of the banning of the Kurdistan Workers' Party by the German government</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>25</nperps>
+    <nperpcap>25</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>13</weaptype1>
+    <weaptype1_txt>Unknown</weaptype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <propcomment>Windows in the Center were smashed</propcomment>
+    <ishostkid>0</ishostkid>
+    <addnotes>This occupation coincided with demonstrations in Frankfurt and Ingolstadt by hundreds of Kurdish citizens.</addnotes>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

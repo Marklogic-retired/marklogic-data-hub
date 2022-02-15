@@ -1,0 +1,74 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199309120004</eventid>
+    <iyear>1993</iyear>
+    <imonth>9</imonth>
+    <iday>12</iday>
+    <extended>0</extended>
+    <country>87</country>
+    <country_txt>Haiti</country_txt>
+    <region>2</region>
+    <region_txt>Central America &amp; Caribbean</region_txt>
+    <provstate>Port-au-Prince (Capital City)</provstate>
+    <city>Port-au-Prince</city>
+    <vicinity>0</vicinity>
+    <summary>09/12/1993: In Port-au-Prince, Haiti, a prominent supporter of Haiti's exiled President Jean-Bertrand Aristide was dragged from church and assassinated. Another person was killed and a third was stabbed and wounded during the attack. No one claimed responsibility for the attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Civilian</corp1>
+    <target1>Antoine Izmery</target1>
+    <natlty1>87</natlty1>
+    <natlty1_txt>Haiti</natlty1_txt>
+    <targtype2>14</targtype2>
+    <targtype2_txt>Private Citizens &amp; Property</targtype2_txt>
+    <corp2>Civilian</corp2>
+    <target2>Civilian</target2>
+    <targtype3>14</targtype3>
+    <targtype3_txt>Private Citizens &amp; Property</targtype3_txt>
+    <corp3>Civilian</corp3>
+    <target3>Civilian</target3>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <weaptype2>9</weaptype2>
+    <weaptype2_txt>Melee</weaptype2_txt>
+    <weapsubtype2>22</weapsubtype2>
+    <weapsubtype2_txt>Hands, Feet, Fists</weapsubtype2_txt>
+    <weaptype3>9</weaptype3>
+    <weaptype3_txt>Melee</weaptype3_txt>
+    <weapsubtype3>23</weapsubtype3>
+    <weapsubtype3_txt>Knife or Other Sharp Object</weapsubtype3_txt>
+    <nkill>2</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>1</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>No additional information was provided concerning the second and third casualties.</addnotes>
+    <scite1>“Aristide Backer Dragged From Haiti Church, Slain," Chicago Sun-Times, September 12, 1993.</scite1>
+    <scite2>Bowers, Faye. “Events," Christian Science Monitor, September 13, 1993</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

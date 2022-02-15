@@ -1,0 +1,66 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199309200001</eventid>
+    <iyear>1993</iyear>
+    <imonth>9</imonth>
+    <iday>20</iday>
+    <extended>0</extended>
+    <country>155</country>
+    <country_txt>West Bank and Gaza Strip</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Gaza Strip (Occupied Territory)</provstate>
+    <city>Jabalya</city>
+    <vicinity>0</vicinity>
+    <summary>09/20/1993: HAMAS gunmen shot dead two armed Palestinians in Jabalya, in the Gaza Strip, for collaborating with Israel. The gunmen ambushed two in a car and took their Israeli-issued weapons. Villagers said the men, Jamal Abu Warda and Jamal Shahda, were well-known as collaborators with the army and General Security Service. No one else was injured or killed in the attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Palestinian Civilian</corp1>
+    <target1>Jamal Abu Warda</target1>
+    <natlty1>155</natlty1>
+    <natlty1_txt>West Bank and Gaza Strip</natlty1_txt>
+    <targtype2>14</targtype2>
+    <targtype2_txt>Private Citizens &amp; Property</targtype2_txt>
+    <corp2>Palestinian Civilian</corp2>
+    <target2>Jamal Shahda</target2>
+    <natlty2>155</natlty2>
+    <natlty2_txt>West Bank and Gaza Strip</natlty2_txt>
+    <gname>Hamas (Islamic Resistance Movement)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>8</claimmode>
+    <claimmode_txt>Personal claim</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <nkill>2</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <scite1>“Fatah gunmen claim execution of two Gaza informers," The Jerusalem Post, September 20, 1993.</scite1>
+    <scite2>“Gaza killing bursts transition bubble," The Jerusalem Post, September 24, 1993.</scite2>
+    <scite3>“Killing blamed on Fatah feud; Signs of Palestinian political vacuum at local level," The Independent (London), September 23, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

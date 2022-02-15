@@ -1,0 +1,58 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199308090003</eventid>
+    <iyear>1993</iyear>
+    <imonth>8</imonth>
+    <iday>9</iday>
+    <extended>0</extended>
+    <country>36</country>
+    <country_txt>Cambodia</country_txt>
+    <region>5</region>
+    <region_txt>Southeast Asia</region_txt>
+    <provstate>Kompong Chhnang (Province)</provstate>
+    <city>Tonle Sap</city>
+    <vicinity>1</vicinity>
+    <location>A home near Tonle Sap</location>
+    <summary>08/09/1993: Khmer Rouge guerrillas massacred six Vietnamese civilians in their home near Tonle Sap, Cambodia.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>1</alternative>
+    <alternative_txt>Insurgency/Guerilla Action</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Civilians</corp1>
+    <target1>Two Vietnamese fishing families</target1>
+    <natlty1>223</natlty1>
+    <natlty1_txt>Vietnam</natlty1_txt>
+    <gname>Khmer Rouge</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>13</weaptype1>
+    <weaptype1_txt>Unknown</weaptype1_txt>
+    <nkill>6</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>-9</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>The six victims were a 63-year-old man and a 17-year-old boy from one family, along with a 72-year-old man, a 15-year-old boy, a 13-year-old girl, and a 36-year-old woman from a second family.</addnotes>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

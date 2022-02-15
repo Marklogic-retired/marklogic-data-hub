@@ -1,0 +1,61 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199302250001</eventid>
+    <iyear>1993</iyear>
+    <imonth>2</imonth>
+    <iday>25</iday>
+    <extended>0</extended>
+    <country>45</country>
+    <country_txt>Colombia</country_txt>
+    <region>3</region>
+    <region_txt>South America</region_txt>
+    <provstate>Antioquia (Department)</provstate>
+    <city>Medellin</city>
+    <vicinity>0</vicinity>
+    <summary>02/25/1993: Terrorists with links to Pablo Escobar are believed to be responsible for detonating a car bomb in downtown Berrio Park in Medellin, Colombia, injuring 35 civilians. The remote-control activated bomb detonated at 10:02pm, exploding 176 pounds of dynamite inside a metal tank used to carry milk. The tank was hidden in the trunk of a stolen car parked in front of the headquarters of the National Telecommunications Company in downtown Medellin.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Berrio Park</corp1>
+    <target1>Berrio Park</target1>
+    <natlty1>45</natlty1>
+    <natlty1_txt>Colombia</natlty1_txt>
+    <gname>Other</gname>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperpcap>7</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>15</weapsubtype1>
+    <weapsubtype1_txt>Vehicle</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>35</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propcomment>The blast shattered thousands of windows in the area and blasted out doors of dozens of office buildings.</propcomment>
+    <ishostkid>0</ishostkid>
+    <addnotes>Following this attack, police arrested seven men suspected of planting car bombs in the Colombian capital on orders from Pablo Escobar. Reports did not indicate what happened with the suspects and whether they were charged for perpetrating the attack.</addnotes>
+    <scite1>Federico Fulleda, “Prosecutors Question Seven Medellin Cartel Suspects,” United Press International, February 27, 1993.</scite1>
+    <scite2>Mary Speck, “Bomb Rips Medellin Downtown as Search for Escobar Intensifies,” Miami Herald, February 27, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

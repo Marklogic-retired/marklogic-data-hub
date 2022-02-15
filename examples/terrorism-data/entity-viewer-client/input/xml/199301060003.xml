@@ -1,0 +1,55 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199301060003</eventid>
+    <iyear>1993</iyear>
+    <imonth>1</imonth>
+    <iday>6</iday>
+    <extended>0</extended>
+    <country>60</country>
+    <country_txt>Egypt</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Al Fayyum (Governorate)</provstate>
+    <city>Al-Fayyum</city>
+    <vicinity>0</vicinity>
+    <summary>01/06/1993: Mahmud 'Ali 'Abd-al-Hamid, a member of al-Shawqiyun, stabbed two passengers aboard a bus in al-Fayyum, Egypt. Other passengers on the bus prevented the attacker from fleeing the scene.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Civilians</corp1>
+    <target1>Civilians traveling in a bus in Al-Fayyum</target1>
+    <gname>al-Shawqiyun</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>1</nperps>
+    <nperpcap>1</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>9</weaptype1>
+    <weaptype1_txt>Melee</weaptype1_txt>
+    <weapsubtype1>23</weapsubtype1>
+    <weapsubtype1_txt>Knife or Other Sharp Object</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>2</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>-9</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

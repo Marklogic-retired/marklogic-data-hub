@@ -1,0 +1,66 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199301250002</eventid>
+    <iyear>1993</iyear>
+    <imonth>1</imonth>
+    <iday>25</iday>
+    <extended>0</extended>
+    <country>217</country>
+    <country_txt>United States</country_txt>
+    <region>1</region>
+    <region_txt>North America</region_txt>
+    <provstate>Virginia</provstate>
+    <city>Langley</city>
+    <vicinity>0</vicinity>
+    <summary>01/25/1993: A Pakistani individual, Mir Aimal Kansi, fired a Chinese-made AK47 type assault rife at cars turning into the 123 Entrance of the Central Intelligence Agency in Langley, Virginia, USA. Two people, Dr. Lansing C. Bennett and Frank Darling, both CIA employees, were killed in this incident. Three others, Nicholas Star and Calvin Morgan, CIA employees, and Stephen Williams, an AT&amp;T employee, were injured.</summary>
+    <crit1>0</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>Central Intelligence Agency</corp1>
+    <target1>Employees of the Central Intelligence Agency</target1>
+    <natlty1>217</natlty1>
+    <natlty1_txt>United States</natlty1_txt>
+    <gname>Unaffiliated Individual(s)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>1</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>9</claimmode>
+    <claimmode_txt>Other</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>2</weapsubtype1>
+    <weapsubtype1_txt>Automatic or Semi-Automatic Rifle</weapsubtype1_txt>
+    <weapdetail>Chinese-made AK-47-type assault rifle</weapdetail>
+    <nkill>2</nkill>
+    <nkillus>2</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>3</nwound>
+    <nwoundus>3</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <propcomment>The gunman fired at the cars of CIA employees as they were leaving work.</propcomment>
+    <ishostkid>0</ishostkid>
+    <addnotes>On June 17, 1997, Mir Amal Kansi confessed to the crime during a long flight aboard a military aircraft from a base in Pakistan to Dulles airport, USA. He was convicted in 1997 and sentenced to death on one count and life on another count. He was executed on November 15, 2002.</addnotes>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

@@ -1,0 +1,63 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199301310001</eventid>
+    <iyear>1993</iyear>
+    <imonth>1</imonth>
+    <iday>31</iday>
+    <extended>1</extended>
+    <country>156</country>
+    <country_txt>Panama</country_txt>
+    <region>2</region>
+    <region_txt>Central America &amp; Caribbean</region_txt>
+    <provstate>Darien (Province)</provstate>
+    <city>Boca de Cupe</city>
+    <vicinity>0</vicinity>
+    <summary>01/31/1993: One hundred-fifty members of the Revolutionary Armed Forces of Colombia (FARC) kidnapped three American missionaries in the Boca de Cupe region of Panama. Between three and five million U.S. dollars was demanded for the release of the victims. By June 16, 1993, no agreement had been reached and the fate of the victims remained unknown.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>6</attacktype1>
+    <attacktype1_txt>Hostage Taking (Kidnapping)</attacktype1_txt>
+    <targtype1>15</targtype1>
+    <targtype1_txt>Religious Figures/Institutions</targtype1_txt>
+    <corp1>New Tribes Mission</corp1>
+    <target1>New Tribes Missionaries in Colombia</target1>
+    <natlty1>217</natlty1>
+    <natlty1_txt>United States</natlty1_txt>
+    <gname>Revolutionary Armed Forces of Colombia (FARC)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>150</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>13</weaptype1>
+    <weaptype1_txt>Unknown</weaptype1_txt>
+    <nkillter>0</nkillter>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>1</ishostkid>
+    <nhostkid>3</nhostkid>
+    <nhostkidus>3</nhostkidus>
+    <ndays>-99</ndays>
+    <divert>Colombia</divert>
+    <kidhijcountry>Unknown</kidhijcountry>
+    <ransom>1</ransom>
+    <ransomamt>5000000</ransomamt>
+    <ransompaid>0</ransompaid>
+    <ransompaidus>0</ransompaidus>
+    <hostkidoutcome>7</hostkidoutcome>
+    <hostkidoutcome_txt>Unknown</hostkidoutcome_txt>
+    <nreleased>-99</nreleased>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>1</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

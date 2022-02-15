@@ -1,0 +1,58 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199306170003</eventid>
+    <iyear>1993</iyear>
+    <imonth>6</imonth>
+    <iday>17</iday>
+    <extended>0</extended>
+    <country>603</country>
+    <country_txt>United Kingdom</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Northern Ireland</provstate>
+    <city>Ballymena</city>
+    <vicinity>0</vicinity>
+    <location>Antrim (County)</location>
+    <summary>06/17/1993: The British army defused a bomb outside the front door of a SDLP councilor's home in the Tardee Grove section of Ballymena.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>0</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>22</targtype1>
+    <targtype1_txt>Violent Political Party</targtype1_txt>
+    <corp1>Social Democratic and Labour Party (SDLP) Party</corp1>
+    <target1>SDLP council members</target1>
+    <natlty1>233</natlty1>
+    <natlty1_txt>Northern Ireland</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>16</weapsubtype1>
+    <weapsubtype1_txt>Unknown Explosive Type</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>One source states that this attack is part of a larger plot to target SDLP council members.</addnotes>
+    <scite1>“Ex-policeman shot dead,” Press Association, June 18, 1993.</scite1>
+    <scite2>Martin Cowley, “Man killed in Belfast had served in RUC,” The Irish Times, June 19, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

@@ -1,0 +1,60 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199309160001</eventid>
+    <iyear>1993</iyear>
+    <imonth>9</imonth>
+    <iday>16</iday>
+    <extended>0</extended>
+    <country>603</country>
+    <country_txt>United Kingdom</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Northern Ireland</provstate>
+    <city>Lisburn</city>
+    <vicinity>0</vicinity>
+    <location>Ulster (Province)</location>
+    <summary>09/16/1993: The IRA shot dead a Catholic man at his home on the outskirts of Lisburn, County Antrim, Northern Ireland. Gunmen entered his bungalow in an isolated area, and opened fire, hitting him five times. No one else was injured or killed in the attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>15</targtype1>
+    <targtype1_txt>Religious Figures/Institutions</targtype1_txt>
+    <corp1>Catholic Civilian</corp1>
+    <target1>Adrian McGovern</target1>
+    <natlty1>233</natlty1>
+    <natlty1_txt>Northern Ireland</natlty1_txt>
+    <gname>Irish Republican Army (IRA)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>10</claimmode>
+    <claimmode_txt>Unknown</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>1</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <scite1>“Man shot dead by IRA in Lisburn," The Irish Times, September 16, 1993.</scite1>
+    <scite2>Johnson, Paul. “The Time to Talk is Now," The Guardian (London), September 18, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

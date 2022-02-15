@@ -1,0 +1,63 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199301300001</eventid>
+    <iyear>1993</iyear>
+    <imonth>1</imonth>
+    <iday>30</iday>
+    <extended>0</extended>
+    <country>155</country>
+    <country_txt>West Bank and Gaza Strip</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Gaza Strip (Occupied Territory)</provstate>
+    <city>Unknown</city>
+    <vicinity>0</vicinity>
+    <summary>01/30/1993: Members of HAMAS shot and killed two Israeli soldiers and injured another in the Gaza Strip, Palestine.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>4</targtype1>
+    <targtype1_txt>Military</targtype1_txt>
+    <corp1>Israeli Soldiers</corp1>
+    <target1>Israeli Soldiers</target1>
+    <natlty1>97</natlty1>
+    <natlty1_txt>Israel</natlty1_txt>
+    <gname>Hamas (Islamic Resistance Movement)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>9</claimmode>
+    <claimmode_txt>Other</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>2</weapsubtype1>
+    <weapsubtype1_txt>Automatic or Semi-Automatic Rifle</weapsubtype1_txt>
+    <nkill>2</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>1</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>-9</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <addnotes>HAMAS faxed a statement to foreign news agencies, stating that the ambush was to avenge an Israeli supreme court ruling on 1/28/93 that upheld the 12/17/92 decision by Prime Minister Yitzhak Rabin's government to expel more than 400 Palestinians to South Lebanon.</addnotes>
+    <scite1>“2 Israeli soldiers slain in 1st such killings since deportations,” Dallas Morning News, January 31, 1993.</scite1>
+    <scite2>Clyde Haberman, “2 Israeli soldiers ambushed in Gaza,” The New York Times, January 31, 1993.</scite2>
+    <scite3>“Hamas claims responsibility for killing Israeli soldiers,” Xinhua General News Service, January 31, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

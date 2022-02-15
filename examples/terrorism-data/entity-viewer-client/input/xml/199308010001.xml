@@ -1,0 +1,62 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199308010001</eventid>
+    <iyear>1993</iyear>
+    <imonth>8</imonth>
+    <iday>1</iday>
+    <extended>0</extended>
+    <country>160</country>
+    <country_txt>Philippines</country_txt>
+    <region>5</region>
+    <region_txt>Southeast Asia</region_txt>
+    <provstate>Zamboanga Sibugay (Province)</provstate>
+    <city>Zamboanga City</city>
+    <vicinity>0</vicinity>
+    <summary>08/01/1993: Suspected Muslim militants of the Moro National Liberation Front detonated a bomb at a Roman Catholic shrine in the city of Zamboanga, Philippines, injuring 13.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>1</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>15</targtype1>
+    <targtype1_txt>Religious Figures/Institutions</targtype1_txt>
+    <corp1>Roman Catholic Church</corp1>
+    <target1>Statue of Our Lady of Pilar Roman Catholic shrine</target1>
+    <natlty1>160</natlty1>
+    <natlty1_txt>Philippines</natlty1_txt>
+    <gname>Moro National Liberation Front (MNLF)</gname>
+    <motive>To demand a halt to Philippine military operations in nearby Basilan island.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>9</claimmode>
+    <claimmode_txt>Other</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>16</weapsubtype1>
+    <weapsubtype1_txt>Unknown Explosive Type</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>13</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <addnotes>Anggoling Sali, an MNLF commander, claimed responsibility over the radio.</addnotes>
+    <scite1>“Troops hunt down Moslem guerillas after weekend bombings,” Agence France Presse, August 2, 1993.</scite1>
+    <scite2>“Blast At Catholic Shrine Injures 13,” The Associated Press, August 2, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

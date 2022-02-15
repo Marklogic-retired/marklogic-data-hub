@@ -1,0 +1,67 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199310030001</eventid>
+    <iyear>1993</iyear>
+    <imonth>10</imonth>
+    <iday>3</iday>
+    <extended>1</extended>
+    <country>182</country>
+    <country_txt>Somalia</country_txt>
+    <region>11</region>
+    <region_txt>Sub-Saharan Africa</region_txt>
+    <provstate>Banaadir (Region)</provstate>
+    <city>Mogadishu</city>
+    <vicinity>0</vicinity>
+    <summary>10/03/1993: Aideed's bloody assault on U.S.-led U.N. peacekeepers in Mogadishu resulted in 12 American deaths. 78 were wounded and others were missing and/or held hostage.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>1</alternative>
+    <alternative_txt>Insurgency/Guerilla Action</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <attacktype2>6</attacktype2>
+    <attacktype2_txt>Hostage Taking (Kidnapping)</attacktype2_txt>
+    <targtype1>4</targtype1>
+    <targtype1_txt>Military</targtype1_txt>
+    <corp1>United Nations</corp1>
+    <target1>U.S.-led U.N. Peacekeepers</target1>
+    <natlty1>217</natlty1>
+    <natlty1_txt>United States</natlty1_txt>
+    <gname>Aidid Militia</gname>
+    <motive>The attack was perpetrated in an effort to avenge a recent U.S. Attack on Aideed's forces.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>1</claimed>
+    <claimmode>9</claimmode>
+    <claimmode_txt>Other</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>13</weaptype1>
+    <weaptype1_txt>Unknown</weaptype1_txt>
+    <nkill>12</nkill>
+    <nkillus>12</nkillus>
+    <nwound>78</nwound>
+    <nwoundus>78</nwoundus>
+    <property>-9</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>1</ishostkid>
+    <nhostkid>-99</nhostkid>
+    <nhostkidus>-99</nhostkidus>
+    <ndays>-99</ndays>
+    <ransom>0</ransom>
+    <hostkidoutcome>7</hostkidoutcome>
+    <hostkidoutcome_txt>Unknown</hostkidoutcome_txt>
+    <nreleased>-99</nreleased>
+    <scite1>Keith B. Richburg, “Attack in Somalia; Somali Warlord Benefits from Miscalculation,” The Houston Chronicle, October 6, 1993.</scite1>
+    <scite2>Keith B. Richburg, “Somali Warlord turns Vietnam Tactics on U.S.; Aidid Wins even when he Loses,” Hamilton Spectator, October 7, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

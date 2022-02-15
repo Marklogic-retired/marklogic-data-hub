@@ -1,0 +1,89 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199310180002</eventid>
+    <iyear>1993</iyear>
+    <imonth>10</imonth>
+    <iday>18</iday>
+    <extended>0</extended>
+    <country>209</country>
+    <country_txt>Turkey</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Igdir (Province)</provstate>
+    <city>Aralik District</city>
+    <vicinity>0</vicinity>
+    <summary>10/18/1993: A soldier was killed and eight people (7 civil servants and 1 private citizen) were abducted when terrorists attacked their vehicle in the Aralik District of eastern Igdir Province. The Kurdistan Workers' Party (PKK) carried out the attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <attacktype2>6</attacktype2>
+    <attacktype2_txt>Hostage Taking (Kidnapping)</attacktype2_txt>
+    <attacktype3>3</attacktype3>
+    <attacktype3_txt>Bombing/Explosion</attacktype3_txt>
+    <targtype1>4</targtype1>
+    <targtype1_txt>Military</targtype1_txt>
+    <corp1>Turkish Military</corp1>
+    <target1>A Turkish soldier</target1>
+    <natlty1>209</natlty1>
+    <natlty1_txt>Turkey</natlty1_txt>
+    <targtype2>2</targtype2>
+    <targtype2_txt>Government (General)</targtype2_txt>
+    <corp2>Turkish Civil Service</corp2>
+    <target2>7 Turkish Civil Servants</target2>
+    <natlty2>209</natlty2>
+    <natlty2_txt>Turkey</natlty2_txt>
+    <targtype3>14</targtype3>
+    <targtype3_txt>Private Citizens &amp; Property</targtype3_txt>
+    <corp3>Civilian</corp3>
+    <target3>A Civilian in the car with the soldier and civil servants</target3>
+    <natlty3>209</natlty3>
+    <natlty3_txt>Turkey</natlty3_txt>
+    <gname>Kurdistan Workers' Party (PKK)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>21</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>3</weapsubtype1>
+    <weapsubtype1_txt>Handgun</weapsubtype1_txt>
+    <weaptype2>5</weaptype2>
+    <weaptype2_txt>Firearms</weaptype2_txt>
+    <weapsubtype2>4</weapsubtype2>
+    <weapsubtype2_txt>Rifle/Shotgun (non-automatic)</weapsubtype2_txt>
+    <weaptype3>6</weaptype3>
+    <weaptype3_txt>Explosives</weaptype3_txt>
+    <weapsubtype3>7</weapsubtype3>
+    <weapsubtype3_txt>Grenade</weapsubtype3_txt>
+    <nkill>9</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>1</ishostkid>
+    <nhostkid>8</nhostkid>
+    <nhostkidus>0</nhostkidus>
+    <nhours>6</nhours>
+    <ransom>0</ransom>
+    <hostkidoutcome>4</hostkidoutcome>
+    <hostkidoutcome_txt>Hostage(s) killed (not during rescue attempt)</hostkidoutcome_txt>
+    <nreleased>0</nreleased>
+    <scite1>"Soldier Killed, Eight Abducted in Igdir,” British Broadcasting Corporation, October 21, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

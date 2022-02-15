@@ -1,0 +1,65 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199306120002</eventid>
+    <iyear>1993</iyear>
+    <imonth>6</imonth>
+    <iday>12</iday>
+    <extended>0</extended>
+    <country>69</country>
+    <country_txt>France</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Corsica</provstate>
+    <city>Sainte-Lucie-de-Ponte-Vecchio</city>
+    <vicinity>0</vicinity>
+    <summary>06/12/1993: Five armed members of the Corsican National Liberation Front (FLNC) attacked the homes of two families in Sainte-Lucie-de-Ponte-Vecchio. The attackers removed the families then set off explosives that leveled the homes. No one was injured in this incident.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>1</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>7</attacktype1>
+    <attacktype1_txt>Facility/Infrastructure Attack</attacktype1_txt>
+    <attacktype2>3</attacktype2>
+    <attacktype2_txt>Bombing/Explosion</attacktype2_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Homes of civilians</corp1>
+    <target1>Homes of civilians in Sainte-Lucie-de-Ponte-Vecchio</target1>
+    <gname>Corsican National Liberation Front (FLNC)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperps>5</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <weaptype2>6</weaptype2>
+    <weaptype2_txt>Explosives</weaptype2_txt>
+    <weapsubtype2>16</weapsubtype2>
+    <weapsubtype2_txt>Unknown Explosive Type</weapsubtype2_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <propcomment>The attack leveled two homes.</propcomment>
+    <ishostkid>0</ishostkid>
+    <addnotes>This was one of two attacks with very similar incident characteristics (cf. 199306120003).</addnotes>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>-9</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

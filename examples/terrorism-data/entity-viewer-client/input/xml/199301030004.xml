@@ -1,0 +1,75 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199301030004</eventid>
+    <iyear>1993</iyear>
+    <imonth>1</imonth>
+    <iday>3</iday>
+    <extended>0</extended>
+    <country>603</country>
+    <country_txt>United Kingdom</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Northern Ireland</provstate>
+    <city>Lisnagleer</city>
+    <vicinity>0</vicinity>
+    <location>Tyrone (County)</location>
+    <summary>01/03/1993: The Ulster Volunteer Force (UVF) entered a house and killed a father, his son and injured one other son in Lisnagleer, Northern Ireland. The UVF claimed responsibility for attack, stating that the father was a well-known Republican and a member of Sinn Fein, the Irish Republican Army's political wing.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Private Citizens</corp1>
+    <target1>Diarmuid Shields</target1>
+    <natlty1>233</natlty1>
+    <natlty1_txt>Northern Ireland</natlty1_txt>
+    <targtype2>14</targtype2>
+    <targtype2_txt>Private Citizens &amp; Property</targtype2_txt>
+    <corp2>Civilian</corp2>
+    <target2>Pat Shields</target2>
+    <natlty2>233</natlty2>
+    <natlty2_txt>Northern Ireland</natlty2_txt>
+    <targtype3>14</targtype3>
+    <targtype3_txt>Private Citizens &amp; Property</targtype3_txt>
+    <corp3>Private Citizens</corp3>
+    <target3>Davog Shields</target3>
+    <natlty3>233</natlty3>
+    <natlty3_txt>Northern Ireland</natlty3_txt>
+    <gname>Ulster Volunteer Force (UVF)</gname>
+    <motive>Due to the father's political affiliation</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>10</claimmode>
+    <claimmode_txt>Unknown</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <nkill>2</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>1</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <scite1>“Gunmen kill father and son in attack on family home,” The Herald (Glasgow), January 4, 1993.</scite1>
+    <scite2>David McKittrick, “Loyalist Terrorist Groups Intent on a Bloody Year,” The Independent (London), January 5, 1993.</scite2>
+    <scite3>David Sharrock, “Surge in Loyalist Killings Feared,” The Guardian (London), January 5, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

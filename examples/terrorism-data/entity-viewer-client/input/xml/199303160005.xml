@@ -1,0 +1,62 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199303160005</eventid>
+    <iyear>1993</iyear>
+    <imonth>3</imonth>
+    <iday>16</iday>
+    <extended>0</extended>
+    <country>209</country>
+    <country_txt>Turkey</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Unknown</provstate>
+    <city>Unknown</city>
+    <vicinity>0</vicinity>
+    <summary>03/16/1993: The Turkish Communist Toilers Party bombed the office of the Social Democratic Populist Party. No injuries or casualties resulted from the incident.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>Social Democratic Populist Party</corp1>
+    <target1>Social Democratic Populist Party office</target1>
+    <natlty1>209</natlty1>
+    <natlty1_txt>Turkey</natlty1_txt>
+    <gname>Turkish Communist Toilers Party</gname>
+    <motive>Members of the Turkish Communist Toilers Party claimed that the Social Democrats, junior partners in the governing coalition, had bowed to the will of conservative premier Suleyman Demirel.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>3</nperps>
+    <claimed>1</claimed>
+    <claimmode>10</claimmode>
+    <claimmode_txt>Unknown</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>16</weapsubtype1>
+    <weapsubtype1_txt>Unknown Explosive Type</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <propcomment>Three bombs exploded causing moderate damage to the office building.</propcomment>
+    <ishostkid>0</ishostkid>
+    <addnotes>The attack on the political party came after a night of over a dozen bombings on banks and businesses throughout Turkey. The attacks followed a recent police crack down on Dev Sol. No one claimed responsibility for the attacks. There were no injuries or casualties from the attack on the political party office.</addnotes>
+    <scite1>“Bomb Attacks Continue in Turkey,” The Associated Press, March 16, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

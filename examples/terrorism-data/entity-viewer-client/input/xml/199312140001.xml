@@ -1,0 +1,58 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199312140001</eventid>
+    <iyear>1993</iyear>
+    <imonth>12</imonth>
+    <iday>14</iday>
+    <extended>0</extended>
+    <country>6</country>
+    <country_txt>Algeria</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Blida (Province)</provstate>
+    <city>Blida</city>
+    <vicinity>0</vicinity>
+    <summary>12/14/1993: Twelve technicians, all Christian, from Croatia and Bosnia and Herzegovina were killed in a surprise attack on their living quarters at a construction site in Blida, Algeria. The victims' throats were slit while about 50 attackers took control of the compound for about two hours.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Hidroelektra (Croatian Company)</corp1>
+    <target1>Foreign Employees of Hidroelektra</target1>
+    <natlty1>999</natlty1>
+    <natlty1_txt>Multinational</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>To rid Algeria of foreign elements</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>50</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>9</weaptype1>
+    <weaptype1_txt>Melee</weaptype1_txt>
+    <weapsubtype1>23</weapsubtype1>
+    <weapsubtype1_txt>Knife or Other Sharp Object</weapsubtype1_txt>
+    <nkill>12</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>In September, two French surveyors working on a pipeline in western Algeria became the first foreigners believed to have been killed by Muslim militants. In October, three French consular employees were kidnapped, then freed with a note threatening all foreigners with death if they did not leave by Dec. 1, 1993. Since Dec. 1st, 16 foreigners had been killed, including a Frenchman, a Russian, a Briton and a Spaniard.</addnotes>
+    <scite1>“12 Foreign Workers Slain at Algerian Building Site,” The New York Times, December 16, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

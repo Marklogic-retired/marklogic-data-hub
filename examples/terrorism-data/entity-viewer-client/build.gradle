@@ -3,7 +3,6 @@ plugins {
 }
 
 repositories {
-    mavenLocal()
 	mavenCentral()
 	maven { url "https://developer.marklogic.com/maven2/" }
     maven { url "https://nexus.marklogic.com/repository/maven-snapshots"}
@@ -17,7 +16,6 @@ configurations {
 dependencies {
     mlcp "com.marklogic:mlcp:10.0.6.2"
     mlcp files("lib")
-    mlBundle "com.marklogic:entity-viewer-modules:1.1-SNAPSHOT"
 }
 
 /**
@@ -33,7 +31,7 @@ task importEventsViaMlcp(type: com.marklogic.gradle.task.MlcpTask) {
     username = "admin"
     password = "admin"
     output_collections = "event"
-    input_file_path = "input"
+    input_file_path = "input/xml"
     input_file_type = "documents"
     output_collections = "event"
     output_permissions = "rest-reader,read,rest-reader,update"

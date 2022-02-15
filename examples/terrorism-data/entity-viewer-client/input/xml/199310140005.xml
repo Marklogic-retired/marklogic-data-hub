@@ -1,0 +1,56 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199310140005</eventid>
+    <iyear>1993</iyear>
+    <imonth>10</imonth>
+    <iday>14</iday>
+    <extended>1</extended>
+    <resolution>10/16/93</resolution>
+    <country>159</country>
+    <country_txt>Peru</country_txt>
+    <region>3</region>
+    <region_txt>South America</region_txt>
+    <provstate>Cajamarca (Region)</provstate>
+    <city>Puno</city>
+    <vicinity>0</vicinity>
+    <summary>10/14/1993: At least 11 people had been killed over the previous 48 hours in subversive actions across Chuquibamba conducted by Shining Path militants. A  justice of the peace for the Orurillo District was targeted in this incident.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>1</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>Peruvian Justice system</corp1>
+    <target1>Eugenio Quispe, justice of the peace</target1>
+    <natlty1>159</natlty1>
+    <natlty1_txt>Peru</natlty1_txt>
+    <gname>Shining Path (SL)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>This was one of four related attacks (Cf. 199310140003;199310140004;199310150001)</addnotes>
+    <scite1>"Shining Path Violence; State of Emergency Extended in Several Provinces,” British Broadcasting Corporation, October 18, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>
