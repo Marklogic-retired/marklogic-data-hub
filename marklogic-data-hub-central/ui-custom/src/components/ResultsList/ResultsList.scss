@@ -29,6 +29,11 @@
                 text-decoration: none;
                 color: #394494;
                 cursor: pointer;
+                span {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    display: inline-block;
+                }
             }
             div.subtitle {
                 line-height: 18px;
