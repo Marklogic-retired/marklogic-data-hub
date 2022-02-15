@@ -8,7 +8,7 @@
     },
 
     "header": { 
-        "title": "Entity Viewer",
+        "title": "Terrorist Events",
         "subtitle": "Beta",
         "menus": [
             {
@@ -60,7 +60,7 @@
                 "all": "#cccccc",
                 "filters": "#1ACCA8"
             },
-            "totalRecords": 5
+            "totalRecords": 747
         },
         "facets": {
             "selected": "#1acca8",
@@ -72,8 +72,7 @@
                 {
                     "type": "category",
                     "name": "attacktype1_txt",
-                    "tooltip": "Filter by attack type.",
-                    "disabled": true
+                    "tooltip": "Filter by attack type."
                 },
                 {
                     "type": "category",
@@ -100,7 +99,10 @@
         "results": {
             "title": { 
                 "id": "extracted.event.eventid",
-                "path": "extracted.event.target1"
+                "path": "extracted.event.target1",
+                "style": {
+                    "width": "800px"
+                }
             },
             "items": [
                 { "path": "extracted.event.attacktype1_txt" },
@@ -129,7 +131,7 @@
                     "fontStyle": "normal"
                 }
             },
-            "status": { "path": "extracted.event.motive" }
+            "status": { "path": "extracted.event.nkill", "suffix": " killed" }
         }
     },
 
@@ -145,96 +147,126 @@
                     "component": "DataTableValue",
                     "title": "Target",
                     "dataPath": "result[0].extracted.event.target1",
-                    "width": "400px",
-                    "metadata": [
-                        {
-                            "type": "block",
-                            "color": "#96bde4",
-                            "value": "B"
-                        },
-                        {
-                            "type": "block",
-                            "color": "#5d6aaa",
-                            "value": "3"
-                        }
-                    ]
+                    "width": "760px"
                 },
                 {
                     "id": "attacktype",
                     "component": "DataTableValue",
                     "title": "Attack Type",
                     "dataPath": "result[0].extracted.event.attacktype1_txt",
-                    "width": "400px",
-                    "metadata": [
-                        {
-                            "type": "block",
-                            "color": "#96bde4",
-                            "value": "B"
-                        },
-                        {
-                            "type": "block",
-                            "color": "#5d6aaa",
-                            "value": "4"
-                        }
-                    ]
+                    "width": "760px"
                 },
                 {
                     "id": "targettype",
                     "component": "DataTableValue",
                     "title": "Target Type",
                     "dataPath": "result[0].extracted.event.targtype1_txt",
-                    "width": "400px",
-                    "metadata": [
-                        {
-                            "type": "block",
-                            "color": "#96bde4",
-                            "value": "B"
-                        },
-                        {
-                            "type": "block",
-                            "color": "#5d6aaa",
-                            "value": "4"
-                        }
-                    ]
+                    "width": "760px"
                 },
                 {
                     "id": "weapontype",
                     "component": "DataTableValue",
                     "title": "Weapon Type",
                     "dataPath": "result[0].extracted.event.weaptype1_txt",
-                    "width": "400px",
-                    "metadata": [
+                    "width": "760px"
+                },
+                {
+                    "id": "weapsubtype1_txt",
+                    "component": "DataTableValue",
+                    "title": "Weapon Subtype",
+                    "dataPath": "result[0].extracted.event.weapsubtype1_txt",
+                    "width": "760px"
+                },
+                {
+                    "id": "claimmode_txt",
+                    "component": "DataTableValue",
+                    "title": "Claim Mode",
+                    "dataPath": "result[0].extracted.event.claimmode_txt",
+                    "width": "760px"
+                },
+                {
+                    "id": "location",
+                    "component": "DataTableMultiValue",
+                    "title": "Location",
+                    "width": "760px",
+                    "dataPath": "result[0].extracted.event",
+                    "cols": [
                         {
-                            "type": "block",
-                            "color": "#e67485",
-                            "value": "R"
+                            "title": "City",
+                            "value": "city",
+                            "width": "170px"
                         },
                         {
-                            "type": "block",
-                            "color": "#5d6aaa",
-                            "value": "4"
+                            "title": "State/Prov.",
+                            "value": "provstate",
+                            "width": "170px"
+                        },
+                        {
+                            "title": "Country",
+                            "value": "country_txt",
+                            "width": "170px"
+                        },
+                        {
+                            "title": "Region",
+                            "value": "region_txt",
+                            "width": "170px"
                         }
                     ]
                 },
                 {
-                    "id": "country",
+                    "id": "summary",
                     "component": "DataTableValue",
-                    "title": "Country",
-                    "dataPath": "result[0].extracted.event.country_txt",
-                    "icon": "sources",
-                    "width": "400px",
-                    "metadata": [
-                        {
-                            "type": "block",
-                            "color": "#96bde4",
-                            "value": "B"
-                        },
-                        {
-                            "type": "block",
-                            "color": "#5d6aaa",
-                            "value": "4"
-                        }
-                    ]
+                    "title": "Summary",
+                    "dataPath": "result[0].extracted.event.summary",
+                    "width": "760px",
+                    "style": {
+                        "fontWeight": "normal"
+                    }
+                },
+                {
+                    "id": "gname",
+                    "component": "DataTableValue",
+                    "title": "Group Name",
+                    "dataPath": "result[0].extracted.event.gname",
+                    "width": "760px"
+                },
+                {
+                    "id": "motive",
+                    "component": "DataTableValue",
+                    "title": "Motive",
+                    "dataPath": "result[0].extracted.event.motive",
+                    "width": "760px"
+                },
+                {
+                    "id": "nkill",
+                    "component": "DataTableValue",
+                    "title": "Killed",
+                    "dataPath": "result[0].extracted.event.nkill",
+                    "width": "760px"
+                },
+                {
+                    "id": "nwound",
+                    "component": "DataTableValue",
+                    "title": "Wounded",
+                    "dataPath": "result[0].extracted.event.nwound",
+                    "width": "760px"
+                },
+                {
+                    "id": "propextent_txt",
+                    "component": "DataTableValue",
+                    "title": "Property Damage",
+                    "dataPath": "result[0].extracted.event.propextent_txt",
+                    "width": "760px"
+                },
+                {
+                    "id": "scite1",
+                    "component": "DataTableValue",
+                    "title": "Citation",
+                    "dataPath": "result[0].extracted.event.scite1",
+                    "width": "760px",
+                    "style": {
+                        "fontWeight": "normal"
+                    }
                 }
             ]
         }
