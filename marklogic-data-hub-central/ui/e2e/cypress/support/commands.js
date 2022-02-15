@@ -288,13 +288,13 @@ Cypress.Commands.add("setupHubCentralConfig", () => {
 });
 
 Cypress.Commands.add("publishEntityModel", () => {
-  modelPage.getPublishButton().click({force: true});
+  modelPage.getPublishButton().scrollIntoView().should("be.visible").click();
   cy.waitForAsyncRequest();
   cy.wait(1000);
 
   cy.get("body")
     .then(($body) => {
-      if (!$body.find(`[aria-label=confirm-PublishAllEntity-yes]`).length) {
+      if (!$body.find(`[aria-label=confirm-publishAllEntity-yes]`).length) {
         modelPage.getPublishButton().click({force: true});
       }
     });
@@ -304,7 +304,17 @@ Cypress.Commands.add("publishEntityModel", () => {
   confirmationModal.getSaveAllEntityText().should("not.exist");
   modelPage.getEntityModifiedAlert().should("not.exist");
 });
+Cypress.Commands.add("publishEntityModelOnce", () => {
+  modelPage.getPublishButton().click();
+  cy.waitForAsyncRequest();
+  cy.wait(1000);
 
+  confirmationModal.getYesButton(ConfirmationType.PublishAll);
+  cy.waitForAsyncRequest();
+  confirmationModal.getSaveAllEntityText().should("exist");
+  confirmationModal.getSaveAllEntityText().should("not.exist");
+  modelPage.getEntityModifiedAlert().should("not.exist");
+});
 Cypress.Commands.add("typeTab", (shiftKey, ctrlKey) => {
   cy.focused().trigger("keydown", {
     keyCode: 9,

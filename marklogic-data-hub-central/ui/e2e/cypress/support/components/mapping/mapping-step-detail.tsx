@@ -179,7 +179,11 @@ class MappingStepDetail {
   }
 
   setXpathExpressionInput(propertyName: string, value: string) {
-    cy.findByTestId(`${propertyName}-mapexpression`).scrollIntoView().clear().type(value);
+    this.getXpathExpressionInput(propertyName).scrollIntoView().clear().type(value);
+  }
+
+  getPropertyNameCell(propertyName: string, entity: string) {
+    return cy.get(`[data-testid="${entity}-${propertyName}-name"]`);
   }
 
   validateContextInput(entityTitle: string, value:string) {
