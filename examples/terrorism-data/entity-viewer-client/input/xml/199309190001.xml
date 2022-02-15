@@ -1,0 +1,62 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199309190001</eventid>
+    <iyear>1993</iyear>
+    <imonth>9</imonth>
+    <iday>19</iday>
+    <extended>0</extended>
+    <country>98</country>
+    <country_txt>Italy</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Catania (Province)</provstate>
+    <city>Catania</city>
+    <vicinity>0</vicinity>
+    <summary>09/19/1993: A powerful car bomb ripped through a police station in Catania, Italy, wounding at least four police officers, one of them seriously. Officials said the bomb appeared to have been set by the Mafia, though no group claimed responsibility for the attack. No one was killed in the attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>3</targtype1>
+    <targtype1_txt>Police</targtype1_txt>
+    <corp1>Catania Law Enforcement</corp1>
+    <target1>Catania Police Station</target1>
+    <natlty1>98</natlty1>
+    <natlty1_txt>Italy</natlty1_txt>
+    <gname>Mafia</gname>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>14</weapsubtype1>
+    <weapsubtype1_txt>Time Fuse</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>4</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>-9</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <scite1>“4 police officers injured in Italy blast Officials attribute car bomb to Mafia," The Dallas Morning News, September 19, 1993.</scite1>
+    <scite2>“Police Station in Sicily Bombed; Mafia Suspected," The New York Times, September 19, 1993.</scite2>
+    <scite3>“Car Bomb Wounds Four Police," The Associated Press, September 17, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

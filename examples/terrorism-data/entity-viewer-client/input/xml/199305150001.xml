@@ -1,0 +1,58 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199305150001</eventid>
+    <iyear>1993</iyear>
+    <imonth>5</imonth>
+    <iday>15</iday>
+    <extended>0</extended>
+    <country>98</country>
+    <country_txt>Italy</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Rome (Province)</provstate>
+    <city>Pariolli</city>
+    <vicinity>0</vicinity>
+    <summary>05/15/1993: Fifteen people were injured when a car bomb, believed to have been planted by the Mafia, exploded in the Roman suburb of Pariolli.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Civilians</corp1>
+    <target1>15 Civilians</target1>
+    <natlty1>98</natlty1>
+    <natlty1_txt>Italy</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>15</weapsubtype1>
+    <weapsubtype1_txt>Vehicle</weapsubtype1_txt>
+    <weapdetail>The car was a Fiat 126 packed with explosives.</weapdetail>
+    <nkill>0</nkill>
+    <nwound>15</nwound>
+    <property>1</property>
+    <propextent>2</propextent>
+    <propextent_txt>Major (likely >= $1 million but &lt; $1 billion)</propextent_txt>
+    <propcomment>The explosion destroyed windows and cars stretching for a mile.</propcomment>
+    <ishostkid>0</ishostkid>
+    <addnotes>It is possible that the Mafia was trying to assassinate television presenter Maurizo Costanzo, whose show had become an anti-Mafia sounding board.</addnotes>
+    <scite1>Ed Vulliamy, "Mafia Suspected as Car Bomb in Rome Leaves 15 Wounded," The Guardian (London), May 15, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

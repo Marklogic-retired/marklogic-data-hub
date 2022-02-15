@@ -1,0 +1,61 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199308250002</eventid>
+    <iyear>1993</iyear>
+    <imonth>8</imonth>
+    <iday>25</iday>
+    <extended>0</extended>
+    <country>92</country>
+    <country_txt>India</country_txt>
+    <region>6</region>
+    <region_txt>South Asia</region_txt>
+    <provstate>Manipur (State)</provstate>
+    <city>Imphal</city>
+    <vicinity>0</vicinity>
+    <summary>08/25/1993: Separatist tribal militants attacked soldiers and civilians in Manipur's capital city of Imphal, killing six and injuring seven others.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>4</targtype1>
+    <targtype1_txt>Military</targtype1_txt>
+    <corp1>Indian Paramilitary Forces (PMF)</corp1>
+    <target1>Paramilitary troopers in Imphal</target1>
+    <natlty1>92</natlty1>
+    <natlty1_txt>India</natlty1_txt>
+    <targtype2>14</targtype2>
+    <targtype2_txt>Private Citizens &amp; Property</targtype2_txt>
+    <corp2>Civilians</corp2>
+    <target2>Unidentified civilians in Imphal</target2>
+    <natlty2>92</natlty2>
+    <natlty2_txt>India</natlty2_txt>
+    <gname>Unknown</gname>
+    <motive>Possibly to press separatist demands.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>13</weaptype1>
+    <weaptype1_txt>Unknown</weaptype1_txt>
+    <nkill>6</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>7</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>The most active separatist tribal group in the region in the National Socialist Council of Nagaland.</addnotes>
+    <scite1>“Six killed in terrorist strike in eastern India,” Agence France Presse, August 25, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

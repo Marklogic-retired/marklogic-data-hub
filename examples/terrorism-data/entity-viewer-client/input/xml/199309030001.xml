@@ -1,0 +1,62 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199309030001</eventid>
+    <iyear>1993</iyear>
+    <imonth>9</imonth>
+    <iday>3</iday>
+    <extended>0</extended>
+    <country>155</country>
+    <country_txt>West Bank and Gaza Strip</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>West Bank (Occupied Territory)</provstate>
+    <city>Hebron</city>
+    <vicinity>0</vicinity>
+    <summary>09/03/1993: In Israel, an Israeli Defence Forces (IDF) soldier was killed and another injured when their vehicle was shot at by HAMAS gunmen waiting in a car on a roadside in the Hebron area. No other injuries or fatalities were reported.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>4</targtype1>
+    <targtype1_txt>Military</targtype1_txt>
+    <corp1>Israeli Security Forces</corp1>
+    <target1>Military Jeep carrying 2 IDF soldiers (Sgt. Zion Elkobi killed)</target1>
+    <natlty1>97</natlty1>
+    <natlty1_txt>Israel</natlty1_txt>
+    <gname>Hamas (Islamic Resistance Movement)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>4</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>1</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propcomment>The military jeep flipped off of the road after the driver was killed in the attack.</propcomment>
+    <ishostkid>0</ishostkid>
+    <scite1>“Killing of IDF Soldier Near Hebron Will ‘Not Affect Peace Process,'" BBC Summary of World Broadcasts, September 4, 1993.</scite1>
+    <scite2>“Gunmen Kill IDF Soldier in Ambush Near Hebron," The Jerusalem Post, September 3, 1993.</scite2>
+    <scite3>“Palestinian Gunmen Kill Israeli Soldier," United Press International, September 3, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

@@ -1,0 +1,63 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199306090003</eventid>
+    <iyear>1993</iyear>
+    <imonth>6</imonth>
+    <iday>9</iday>
+    <extended>0</extended>
+    <country>603</country>
+    <country_txt>United Kingdom</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>England</provstate>
+    <city>North Shields</city>
+    <vicinity>0</vicinity>
+    <location>Northumberland (County)</location>
+    <summary>06/09/1993: Irish Republican Army (IRA) exploded bomb at the Esso oil terminal in North Shields. No one was hurt.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>1</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>7</attacktype1>
+    <attacktype1_txt>Facility/Infrastructure Attack</attacktype1_txt>
+    <targtype1>1</targtype1>
+    <targtype1_txt>Business</targtype1_txt>
+    <corp1>Esso Oil</corp1>
+    <target1>North Shields Oil Terminal</target1>
+    <natlty1>216</natlty1>
+    <natlty1_txt>Great Britain</natlty1_txt>
+    <gname>Irish Republican Army (IRA)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>1</claimed>
+    <claimmode>10</claimmode>
+    <claimmode_txt>Unknown</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>16</weapsubtype1>
+    <weapsubtype1_txt>Unknown Explosive Type</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <addnotes>This was three of three related attacks (199306080002, 199306080003).</addnotes>
+    <scite1>Malcolm Pithers, “IRA admits bombing terminal and gas tank; Terrorists 'ahead of the game' as safety fears grow in North-east” The Independent (London), June 11, 1993.</scite1>
+    <scite2>Roger Scott, “The Night Fear Lit Up The Sky; Hundreds Flee Gasworks Blasts,” Daily Mail (London), June, 10, 1993.</scite2>
+    <scite3>David Sharrock and Martin Wainwright, “New Tyneside Blast At Bomb-Hit Oil Terminal,” The Guardian (London), June 10, 1993</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>1</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

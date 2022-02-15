@@ -1,0 +1,90 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199307010001</eventid>
+    <iyear>1993</iyear>
+    <imonth>7</imonth>
+    <iday>1</iday>
+    <extended>0</extended>
+    <country>97</country>
+    <country_txt>Israel</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Jerusalem (District)</provstate>
+    <city>Jerusalem</city>
+    <vicinity>0</vicinity>
+    <summary>07/01/1993: In Jerusalem, two Palestinian gunmen and a hostage were killed following an attack on an Egged Bus commuter bus. The gunmen opened fire inside the bus, wounding two Israelis and a Palestinian. The suspects then commandeered a car driven by an Israeli woman. All three were killed when security troops opened fire at a roadblock and a grenade apparently went off in the car.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <attacktype2>6</attacktype2>
+    <attacktype2_txt>Hostage Taking (Kidnapping)</attacktype2_txt>
+    <attacktype3>3</attacktype3>
+    <attacktype3_txt>Bombing/Explosion</attacktype3_txt>
+    <targtype1>19</targtype1>
+    <targtype1_txt>Transportation</targtype1_txt>
+    <corp1>Egged Bus Company</corp1>
+    <target1>Egged Bus Company commuter bus</target1>
+    <natlty1>97</natlty1>
+    <natlty1_txt>Israel</natlty1_txt>
+    <targtype2>14</targtype2>
+    <targtype2_txt>Private Citizens &amp; Property</targtype2_txt>
+    <corp2>Civilian</corp2>
+    <target2>Jeanette Kadosh Dayan (39-year old Israeli woman)</target2>
+    <natlty2>97</natlty2>
+    <natlty2_txt>Israel</natlty2_txt>
+    <targtype3>3</targtype3>
+    <targtype3_txt>Police</targtype3_txt>
+    <corp3>Military Checkpoint</corp3>
+    <target3>Gilo Checkpoint</target3>
+    <natlty3>97</natlty3>
+    <natlty3_txt>Israel</natlty3_txt>
+    <gname>Hamas (Islamic Resistance Movement)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>2</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>2</weapsubtype1>
+    <weapsubtype1_txt>Automatic or Semi-Automatic Rifle</weapsubtype1_txt>
+    <weaptype2>6</weaptype2>
+    <weaptype2_txt>Explosives</weaptype2_txt>
+    <weapsubtype2>7</weapsubtype2>
+    <weapsubtype2_txt>Grenade</weapsubtype2_txt>
+    <nkill>3</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>2</nkillter>
+    <nwound>3</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propcomment>A Private car was damaged.</propcomment>
+    <ishostkid>1</ishostkid>
+    <nhostkid>1</nhostkid>
+    <nhostkidus>0</nhostkidus>
+    <nhours>-99</nhours>
+    <ransom>0</ransom>
+    <hostkidoutcome>4</hostkidoutcome>
+    <hostkidoutcome_txt>Hostage(s) killed (not during rescue attempt)</hostkidoutcome_txt>
+    <nreleased>75</nreleased>
+    <addnotes>Approximately 75 passengers were able to flee the bus when the bus driver attempted to overpower the gunmen. The two suspects then commandeered a car driven by an Israeli woman. All three were killed when security troops opened fire at a roadblock and a grenade apparently went off in the car.</addnotes>
+    <scite1>Bill Hutman et al, “Woman Dies after Capital Bus Attack Police Identify Terrorists as Hamas Members,” The Jerusalem Post, July 2, 1993.</scite1>
+    <scite2>David Horovitz, “Palestinian Raid Seen as Effort to Halt Talks,” The Irish Times, July 2, 1993.</scite2>
+    <scite3>Clyde Haberman, “Attackers of Bus Sought Hostages, Israel Says,” The New York Times, July 3, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>1</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

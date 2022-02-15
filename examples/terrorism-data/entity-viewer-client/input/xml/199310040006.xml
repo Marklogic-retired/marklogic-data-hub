@@ -1,0 +1,62 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199310040006</eventid>
+    <iyear>1993</iyear>
+    <imonth>10</imonth>
+    <iday>4</iday>
+    <extended>0</extended>
+    <country>204</country>
+    <country_txt>Togo</country_txt>
+    <region>11</region>
+    <region_txt>Sub-Saharan Africa</region_txt>
+    <provstate>Maritime (Region)</provstate>
+    <city>Lome</city>
+    <vicinity>0</vicinity>
+    <summary>10/04/1993: A small bomb detonated outside the French Cultural Center in Lome, Togo. Three passersby were injured and substantial damage was caused. No one had claimed responsibility for this incident.</summary>
+    <crit1>0</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>7</targtype1>
+    <targtype1_txt>Government (Diplomatic)</targtype1_txt>
+    <corp1>French Ministry of Foreign Affairs</corp1>
+    <target1>French Cultural Center</target1>
+    <natlty1>69</natlty1>
+    <natlty1_txt>France</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>17</weapsubtype1>
+    <weapsubtype1_txt>Other Explosive Type</weapsubtype1_txt>
+    <weapdetail>The device was a low-power bomb.</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>3</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propcomment>The bomb left a 20-centimeter hole in the wall of the French Cultural Center, crumpled roofing sheets, shattered windows, broke the windshield of a parked car, and damaged a home 150 meters away.</propcomment>
+    <ishostkid>0</ishostkid>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

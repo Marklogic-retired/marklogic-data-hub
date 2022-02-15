@@ -1,0 +1,59 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199301190001</eventid>
+    <iyear>1993</iyear>
+    <imonth>1</imonth>
+    <iday>19</iday>
+    <extended>0</extended>
+    <country>155</country>
+    <country_txt>West Bank and Gaza Strip</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>West Bank (Occupied Territory)</provstate>
+    <city>Beit Sahur</city>
+    <vicinity>0</vicinity>
+    <summary>01/19/1993: Mr. Maher Abu Srur shot Mr. Yoram Fahima, a security guard in Beit Sahur, Israel. The guard was critically injured in the attack. Reports did not state whether Mr. Abu Srur was affiliated with a group.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>0</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>3</targtype1>
+    <targtype1_txt>Police</targtype1_txt>
+    <corp1>Security Guard</corp1>
+    <target1>Yoram Fahima</target1>
+    <natlty1>97</natlty1>
+    <natlty1_txt>Israel</natlty1_txt>
+    <gname>Unaffiliated Individual(s)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>1</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>3</weapsubtype1>
+    <weapsubtype1_txt>Handgun</weapsubtype1_txt>
+    <weapdetail>A 9 mm. gun was used in the attack.</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>1</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>Another person escaped injury when the assailant's gun apparently jammed as he tried to fire a second and third time, and missed when he fired a fourth time.</addnotes>
+    <scite1>Jon Immanuel, “Security Guard Shot in Beit Sahur,” The Jerusalem Post, January 20, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

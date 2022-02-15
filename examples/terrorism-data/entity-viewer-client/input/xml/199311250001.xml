@@ -1,0 +1,68 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199311250001</eventid>
+    <iyear>1993</iyear>
+    <imonth>11</imonth>
+    <iday>25</iday>
+    <extended>0</extended>
+    <country>60</country>
+    <country_txt>Egypt</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Al Qahirah (Governorate)</provstate>
+    <city>Heliopolis</city>
+    <vicinity>0</vicinity>
+    <summary>11/25/1993: There was a failed assassination attempt on the Egyptian Prime Minister. The attack injured 20 and killed 1. The attack was claimed by both Vanguards of Victory and Islamic Jihad.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>0</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>Egyptian Prime Minister</corp1>
+    <target1>Egypt's Prime Minister Atef Sedki</target1>
+    <natlty1>60</natlty1>
+    <natlty1_txt>Egypt</natlty1_txt>
+    <gname>Egyptian Islamic Jihad (Al-Jihad)</gname>
+    <gsubname>Talaa'al al-Fateh</gsubname>
+    <gname2>Islamic Jihad (Ideological Grouping)</gname2>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <guncertain2>1</guncertain2>
+    <individual>0</individual>
+    <claimed>1</claimed>
+    <claimmode>10</claimmode>
+    <claimmode_txt>Unknown</claimmode_txt>
+    <claim2>1</claim2>
+    <claimmode2>10</claimmode2>
+    <claimmode2_txt>Unknown</claimmode2_txt>
+    <compclaim>1</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>12</weapsubtype1>
+    <weapsubtype1_txt>Remote Trigger</weapsubtype1_txt>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>20</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propcomment>Damage to a nearby school</propcomment>
+    <ishostkid>0</ishostkid>
+    <scite1>“Police arrest 190 in attempt on Egypt PM,” Commercial Appeal, November 27, 1993.</scite1>
+    <scite2>“Girl buried as Egypt urges support to fight extremists,” Houston Chronicle, November 27, 1993.</scite2>
+    <scite3>“Remote-control bomb used in attack on Sedki: police,” Agence France Presse, November 26, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

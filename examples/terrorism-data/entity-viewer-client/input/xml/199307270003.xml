@@ -1,0 +1,63 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199307270003</eventid>
+    <iyear>1993</iyear>
+    <imonth>7</imonth>
+    <iday>27</iday>
+    <extended>0</extended>
+    <country>98</country>
+    <country_txt>Italy</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Rome (Province)</provstate>
+    <city>Rome</city>
+    <vicinity>0</vicinity>
+    <summary>07/27/1993: Three bombs exploded overnight in Milan and Rome. In this third incident a car bomb exploded by a 12th century church near the Forum in Rome The "Armed Phalange," claimed responsibility.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>1</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>15</targtype1>
+    <targtype1_txt>Religious Figures/Institutions</targtype1_txt>
+    <corp1>The Church of San Giorgio di Velabro</corp1>
+    <target1>A 12th century church near the Forum in Rome</target1>
+    <natlty1>98</natlty1>
+    <natlty1_txt>Italy</natlty1_txt>
+    <gname>Armed Falange</gname>
+    <motive>The perpetrators were demanding political reform in light of the nation's massive corruption scandal</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>2</claimmode>
+    <claimmode_txt>Call (post-incident)</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>15</weapsubtype1>
+    <weapsubtype1_txt>Vehicle</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>12</nwound>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>1</propextent>
+    <propextent_txt>Catastrophic (likely >= $1 billion)</propextent_txt>
+    <propcomment>The explosion devastated the church of San Giorgio di Velabro</propcomment>
+    <ishostkid>0</ishostkid>
+    <addnotes>Police discounted the "Armed Phalange" as a real force, pointing out that the organization, if it really exists, only calls in after terrorist acts have been reported by the media. This case was one of three related attacks (cf. 1993072702;1993072702)</addnotes>
+    <scite1>Charles Ridley, “Car Bombs in Rome and Milan Kill Five, Wound at least 32,” United Press International, July 27, 1993.</scite1>
+    <scite2>“Mystery of Car Bombings Deepen,” Hobart Mercury, July, 30, 1993.</scite2>
+    <scite3>“Terror Bomb Blasts Kill Five, Wound 29, Agence France Presse, July 28, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

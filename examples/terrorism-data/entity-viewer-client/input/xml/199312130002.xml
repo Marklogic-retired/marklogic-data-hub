@@ -1,0 +1,57 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199312130002</eventid>
+    <iyear>1993</iyear>
+    <imonth>12</imonth>
+    <iday>13</iday>
+    <extended>0</extended>
+    <country>160</country>
+    <country_txt>Philippines</country_txt>
+    <region>5</region>
+    <region_txt>Southeast Asia</region_txt>
+    <provstate>Maguindanao (Province)</provstate>
+    <city>Buluan</city>
+    <vicinity>0</vicinity>
+    <summary>12/13/1993: Unidentified gunmen attacked a bus on a highway on the island of Mindanao in Buluan, Philippines, killing nine and injuring at least 15 people. Survivor and witness, Maria Judith Enriquez, age 30, reported that the bus was surrounded by a group of 50-armed men when it stopped. The gunmen ordered the passengers to get out and separate into groups according to religion. When they refused, the men ordered them to lie on the road, took their valuables and then shot them.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Filipino Busing System</corp1>
+    <target1>Passengers on the bus</target1>
+    <natlty1>160</natlty1>
+    <natlty1_txt>Philippines</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>50</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>2</weapsubtype1>
+    <weapsubtype1_txt>Automatic or Semi-Automatic Rifle</weapsubtype1_txt>
+    <nkill>9</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>15</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <scite1>“Gunmen Kill 8, Injure 10 in Attack on Bus in Mindanao,” Japan Economic Newswire, December 13, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

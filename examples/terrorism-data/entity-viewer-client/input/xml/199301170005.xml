@@ -1,0 +1,64 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199301170005</eventid>
+    <iyear>1993</iyear>
+    <imonth>1</imonth>
+    <iday>17</iday>
+    <extended>0</extended>
+    <country>69</country>
+    <country_txt>France</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Corsica</provstate>
+    <city>Unknown</city>
+    <vicinity>0</vicinity>
+    <summary>01/17/1993: The National Liberation Front of Corsica (FLNC) set fire to five homes in northern Corsica, France. A specific city was not disclosed in reports. No one was injured in the attacks; however, the homes sustained minor damage.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>7</attacktype1>
+    <attacktype1_txt>Facility/Infrastructure Attack</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Private homes</corp1>
+    <target1>Holiday homes in Corsica, France</target1>
+    <natlty1>69</natlty1>
+    <natlty1_txt>France</natlty1_txt>
+    <gname>Corsican National Liberation Front (FLNC)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>5</claimmode>
+    <claimmode_txt>Note left at scene</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>8</weaptype1>
+    <weaptype1_txt>Incendiary</weaptype1_txt>
+    <weapsubtype1>18</weapsubtype1>
+    <weapsubtype1_txt>Arson/Fire</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propcomment>The homes sustained some fire damage.</propcomment>
+    <ishostkid>0</ishostkid>
+    <addnotes>The letters "FLNC" were sprayed on the homes. A war had started between Resistenza and the National Liberation Front of Corsica (FLNC), which are rival factions, with Resistenza trying to outdo the FLNC. Both groups set fire to homes on 01/17/1993 (cf. 199301170003 - 04)</addnotes>
+    <scite1>“Around the World,” The Ottawa Citizen, January 19, 1993.</scite1>
+    <scite2>Tony Rocca, “Separatist Blitz Rocks Corsica,” The Guardian (London), January 19, 1993.</scite2>
+    <scite3>Tony Rocca, “Separatist Gangs Attack 40 Homes on Corsica,” The Gazette (Montreal, Quebec) (Montreal, Quebec), January 19, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

@@ -1,0 +1,61 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199303170002</eventid>
+    <iyear>1993</iyear>
+    <imonth>3</imonth>
+    <iday>17</iday>
+    <extended>0</extended>
+    <country>6</country>
+    <country_txt>Algeria</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Algiers (Province)</provstate>
+    <city>Algiers</city>
+    <vicinity>0</vicinity>
+    <summary>03/17/1993: Laadi Flici - a member of Algeria's stop advisory committee, as well as a prominent doctor and member of the 60-person Consultative Committee - was killed when a man posing as a patient shot him in the head. This attack was apart of a multiple incident see event ID#'s 199303140001, 199303160001, and 199303160002 for more information.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>1</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>1</attacktype1>
+    <attacktype1_txt>Assassination</attacktype1_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>Consultative Committee</corp1>
+    <target1>Laadi Flici</target1>
+    <natlty1>6</natlty1>
+    <natlty1_txt>Algeria</natlty1_txt>
+    <gname>Islamic Salvation Front (FIS)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperps>1</nperps>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>The Consultative Committee was appointed by the military-installed government to broaden the public's say on government policy. The military formed the government after launching a coup in January 1992 and canceling legislative elections that the Islamic Salvation Front, a fundamentalist group, was winning. Three other high ranking governmental officials had also been assassinated this week. There was no claim of responsibility, but the Islamic Salvation Front is suspected of being involved in the recent attacks. See event ID 199303160001 for more information.</addnotes>
+    <scite1>Rachid Khiari, “New Slaying of High-Ranking Official as Terror Wave Continues,” The Associated Press, March 17, 1993.</scite1>
+    <scite2>“Murder in Algiers,” Mideast Mirror, March 16, 1993.</scite2>
+    <scite3>“Algerian terrorism mounts; top government adviser slain,” Chicago Tribune, March 18, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

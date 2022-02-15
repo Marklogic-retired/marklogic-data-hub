@@ -1,0 +1,71 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199310250001</eventid>
+    <iyear>1993</iyear>
+    <imonth>10</imonth>
+    <iday>25</iday>
+    <extended>1</extended>
+    <country>146</country>
+    <country_txt>Niger</country_txt>
+    <region>11</region>
+    <region_txt>Sub-Saharan Africa</region_txt>
+    <provstate>Niamey (Capital District)</provstate>
+    <city>Niamey</city>
+    <vicinity>0</vicinity>
+    <summary>10/25/1993: The Movement for the Advancement of Democracy claimed responsibility for the hijacking of a Nigerian Airways jetliner. Most of the 159 passengers were released in Niger while four to six hijackers remained with as many as 34 hostages.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>6</attacktype1>
+    <attacktype1_txt>Hostage Taking (Kidnapping)</attacktype1_txt>
+    <targtype1>6</targtype1>
+    <targtype1_txt>Airports &amp; Aircraft</targtype1_txt>
+    <corp1>Nigerian Airways</corp1>
+    <target1>An Airbus 310 commandeered in Nigeria</target1>
+    <natlty1>147</natlty1>
+    <natlty1_txt>Nigeria</natlty1_txt>
+    <gname>Movement for the Advancement of Democracy (MAD)</gname>
+    <motive>The attack was carried out as a protest against the military's voiding of the results of the June 12 presidential election.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>6</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>1</claimmode>
+    <claimmode_txt>Letter</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>6</weapsubtype1>
+    <weapsubtype1_txt>Other Gun Type</weapsubtype1_txt>
+    <weaptype2>9</weaptype2>
+    <weaptype2_txt>Melee</weaptype2_txt>
+    <weapsubtype2>23</weapsubtype2>
+    <weapsubtype2_txt>Knife or Other Sharp Object</weapsubtype2_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>1</ishostkid>
+    <nhostkid>159</nhostkid>
+    <nhostkidus>-99</nhostkidus>
+    <ndays>-99</ndays>
+    <ransom>0</ransom>
+    <hostkidoutcome>7</hostkidoutcome>
+    <hostkidoutcome_txt>Unknown</hostkidoutcome_txt>
+    <nreleased>125</nreleased>
+    <addnotes>Most of the 159 passengers were released in Niger including a Nigerian General. The hijackers only negotiated with officials from Niger and refused to speak to Nigerian authorities.</addnotes>
+    <scite1>Dalatou Mamane, “Group Claims Responsibility for Hijacking,” The Associated Press, October 27, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

@@ -1,0 +1,58 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199309210002</eventid>
+    <iyear>1993</iyear>
+    <imonth>9</imonth>
+    <iday>21</iday>
+    <extended>0</extended>
+    <country>60</country>
+    <country_txt>Egypt</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Asyut (Governorate)</provstate>
+    <city>Nazlet Bakour</city>
+    <vicinity>0</vicinity>
+    <summary>09/21/1993: Gunmen believed to be Muslim militants shot and killed a policeman in the southern province of Asyut, in Egypt. No one else was killed or injured in the attack, and no group claimed responsibility.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>3</targtype1>
+    <targtype1_txt>Police</targtype1_txt>
+    <corp1>Asyut Law Enforcement</corp1>
+    <target1>Kamal Anwar Abdel-Hamid</target1>
+    <natlty1>60</natlty1>
+    <natlty1_txt>Egypt</natlty1_txt>
+    <gname>Other</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>2</weapsubtype1>
+    <weapsubtype1_txt>Automatic or Semi-Automatic Rifle</weapsubtype1_txt>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <scite1>“Coptic teacher, policeman slain in south Egypt," Agence France Presse, September 21, 1993.</scite1>
+    <scite2>“Two killed in moslem extremist attacks," Xinhua General News Service, September 21, 1993.</scite2>
+    <scite3>“Policeman Is Slain in Egypt; Security Aides Cite Militants," The New York Times,  September 26, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

@@ -1,0 +1,58 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199306130002</eventid>
+    <iyear>1993</iyear>
+    <imonth>6</imonth>
+    <iday>13</iday>
+    <extended>0</extended>
+    <country>59</country>
+    <country_txt>Ecuador</country_txt>
+    <region>3</region>
+    <region_txt>South America</region_txt>
+    <provstate>Pichincha (Province)</provstate>
+    <city>Quito</city>
+    <vicinity>0</vicinity>
+    <summary>06/13/1993: A bomb exploded outside the offices of the Ecuadorian Institute of Agrarian Reform and Settlement in Quito. No casualties were reported. The police suspected the Maoist Inti Puka (Red Sun in Quechua) group.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>Ecuadorian Institute of Agrarian Reform and Settlement</corp1>
+    <target1>Office of the Ecuadorian Institute of Agrarian Reform and Settlement in Quito</target1>
+    <natlty1>59</natlty1>
+    <natlty1_txt>Ecuador</natlty1_txt>
+    <gname>Puka Inti Maoist Communist Party</gname>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>16</weapsubtype1>
+    <weapsubtype1_txt>Unknown Explosive Type</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propcomment>The blast shattered windows and doors in the area.</propcomment>
+    <ishostkid>0</ishostkid>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

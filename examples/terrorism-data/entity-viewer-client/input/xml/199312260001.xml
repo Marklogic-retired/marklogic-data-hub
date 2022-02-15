@@ -1,0 +1,64 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199312260001</eventid>
+    <iyear>1993</iyear>
+    <imonth>12</imonth>
+    <iday>26</iday>
+    <extended>0</extended>
+    <country>160</country>
+    <country_txt>Philippines</country_txt>
+    <region>5</region>
+    <region_txt>Southeast Asia</region_txt>
+    <provstate>Davao (Region)</provstate>
+    <city>Davao</city>
+    <vicinity>0</vicinity>
+    <summary>12/26/1993: Two grenades and a homemade bomb were used to attack the San Pedro Catholic Cathedral during Sunday Mass in Davao, Philippines. The attack killed six people and injured 151 others. No group claimed responsibility, however officials suspected Muslim extremists.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>15</targtype1>
+    <targtype1_txt>Religious Figures/Institutions</targtype1_txt>
+    <corp1>San Pedro Cathedral</corp1>
+    <target1>San Pedro Cathedral in Davao</target1>
+    <natlty1>160</natlty1>
+    <natlty1_txt>Philippines</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>2</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>7</weapsubtype1>
+    <weapsubtype1_txt>Grenade</weapsubtype1_txt>
+    <weaptype2>6</weaptype2>
+    <weaptype2_txt>Explosives</weaptype2_txt>
+    <weapsubtype2>16</weapsubtype2>
+    <weapsubtype2_txt>Unknown Explosive Type</weapsubtype2_txt>
+    <nkill>6</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>151</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <scite1>“Philippines: Bomb Blasts Threaten Talks with Muslim Rebels,” IPS-Inter Press Service, December 27, 1993.</scite1>
+    <scite2>“Death toll from church bombing in southern Philippines rises to six,” Agence France Presse, December 27, 1993.</scite2>
+    <scite3>“Police detain two suspects in bombing of Catholic Church,” United Press International, December 29, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

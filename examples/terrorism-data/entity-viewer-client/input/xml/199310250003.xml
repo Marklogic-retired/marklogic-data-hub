@@ -1,0 +1,61 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199310250003</eventid>
+    <iyear>1993</iyear>
+    <imonth>10</imonth>
+    <iday>25</iday>
+    <extended>0</extended>
+    <country>159</country>
+    <country_txt>Peru</country_txt>
+    <region>3</region>
+    <region_txt>South America</region_txt>
+    <provstate>Lima (Province)</provstate>
+    <city>Lima</city>
+    <vicinity>0</vicinity>
+    <summary>10/25/1993: Two people died and at least seven others were injured when suspected Maoist rebels detonated a powerful car bomb in the parking lot of Peru's Jorge Chavez International Airport. The bomb, placed under a minibus, exploded near the Departure area one person and injuring 20. The American Airlines cargo office sustained damage during the attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>1</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>6</targtype1>
+    <targtype1_txt>Airports &amp; Aircraft</targtype1_txt>
+    <corp1>Jorge Chavez International Airport</corp1>
+    <target1>Parking lot of Jorge Chavez International Airport</target1>
+    <natlty1>159</natlty1>
+    <natlty1_txt>Peru</natlty1_txt>
+    <gname>Shining Path (SL)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>15</weapsubtype1>
+    <weapsubtype1_txt>Vehicle</weapsubtype1_txt>
+    <nkill>2</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>12</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <addnotes>This was one of three related attacks (cf. 199310260004-5).</addnotes>
+    <scite1>"Bomb Kills 2 at Lima Airport In Raid Laid to Shining Path,” The New York Times, October 27, 1993.</scite1>
+    <scite2>"Killed, 7 Hurt In Peru Blast,” Newsday, October 26,1993.</scite2>
+    <scite3>"Bomb Attacks on Airport Car Park and Lima Municipal Office Reported,” British Broadcasting Corporation, October 29, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

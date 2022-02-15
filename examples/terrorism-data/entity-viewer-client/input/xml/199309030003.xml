@@ -1,0 +1,56 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199309030003</eventid>
+    <iyear>1993</iyear>
+    <imonth>9</imonth>
+    <iday>3</iday>
+    <extended>0</extended>
+    <country>92</country>
+    <country_txt>India</country_txt>
+    <region>6</region>
+    <region_txt>South Asia</region_txt>
+    <provstate>Maharashtra (State)</provstate>
+    <city>Mumbai</city>
+    <vicinity>0</vicinity>
+    <summary>09/03/1993: In Bombay, India, a powerful firecracker exploded inside a toilet in the Bombay Stock Exchange (BSE) building, causing no damage or injuries but triggering a panic. The perpetrator group was unknown.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>0</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>1</targtype1>
+    <targtype1_txt>Business</targtype1_txt>
+    <corp1>Bombay Stock Exchange</corp1>
+    <target1>Restroom facility in the Bombay Stock Exchange</target1>
+    <natlty1>92</natlty1>
+    <natlty1_txt>India</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>16</weapsubtype1>
+    <weapsubtype1_txt>Unknown Explosive Type</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <scite1>“Bomb Explodes at Bombay Stock Exchange," United Press International, September 3, 1993.</scite1>
+    <scite2>“Firecracker in Loo Flushes out Bombay Brokers," Agence France Presse, September 3, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

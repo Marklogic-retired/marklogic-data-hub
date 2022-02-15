@@ -1,0 +1,61 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199307020001</eventid>
+    <iyear>1993</iyear>
+    <imonth>7</imonth>
+    <iday>2</iday>
+    <extended>0</extended>
+    <country>209</country>
+    <country_txt>Turkey</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Sivas (Province)</provstate>
+    <city>Sivas</city>
+    <vicinity>0</vicinity>
+    <summary>07/02/1993: Thirty-five people were killed and about 60 injured when Turkish fundamentalists, engaged in a protest against the visit of Salman Rushdie's editor, set fire to the hotel in which he was staying.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>7</attacktype1>
+    <attacktype1_txt>Facility/Infrastructure Attack</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Madimak Hotel</corp1>
+    <target1>Turkish author Aziz Nesin, who had translated Salman Rushdie's novel The Satanic Verses.</target1>
+    <natlty1>209</natlty1>
+    <natlty1_txt>Turkey</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>To protest against Salman Rushdie's novel The Satanic Verses.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>8</weaptype1>
+    <weaptype1_txt>Incendiary</weaptype1_txt>
+    <weapsubtype1>18</weapsubtype1>
+    <weapsubtype1_txt>Arson/Fire</weapsubtype1_txt>
+    <nkill>35</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>60</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>2</propextent>
+    <propextent_txt>Major (likely >= $1 million but &lt; $1 billion)</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <scite1>“35 dead, 60 injured in hotel fire set by Turkish fundamentalists,” Agence France Presse, July 3, 1993.</scite1>
+    <scite2>“Rushdie appalled as 40 die in book protests,” Agence France Presse, July 2, 1993.</scite2>
+    <scite3>Hugh Pope, “Muslim Mob Torches Hotel,” Los Angeles Times, July 3, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

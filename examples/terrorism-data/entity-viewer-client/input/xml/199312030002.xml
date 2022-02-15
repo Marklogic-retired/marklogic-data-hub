@@ -1,0 +1,59 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199312030002</eventid>
+    <iyear>1993</iyear>
+    <imonth>12</imonth>
+    <iday>3</iday>
+    <extended>0</extended>
+    <country>15</country>
+    <country_txt>Austria</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Vienna (State)</provstate>
+    <city>Vienna</city>
+    <vicinity>0</vicinity>
+    <summary>12/03/1993: A letter-bomb exploded injuring the journalist, Silvana Meixner, age 35, who suffered severe head injuries and facial wounds The letter, addressed to Meixner, was mailed to the television headquarters in Vienna. Meiner is a native of the former Yugoslav republic of Croatia and anchors a weekly program for ethnic minorities in Austria, titled ''Homeland, Foreign Homeland.'' Vienna's Mayor, Mayor Helmut Zilk, was also targeted and injured from an attack of similar nature. Police arrested two right-wing extremists, Peter B. and Alexander W., for mailing the letter bombs.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>1</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Journalist</corp1>
+    <target1>Silvana Meixner</target1>
+    <natlty1>50</natlty1>
+    <natlty1_txt>Croatia</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Possibly in protest of the programs to aid refugees from war-torn Yugoslavia</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>2</nperps>
+    <nperpcap>2</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>9</weapsubtype1>
+    <weapsubtype1_txt>Letter Bomb</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>1</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>At least 10 letter bombs were sent, four exploded and six were defused over a four-day period ending on December 6, 1993. All of the recipients were involved in programs to aid refugees from war-torn Yugoslavia or other parts of Eastern Europe. Both accused perpetrators have ties to neo-Nazi groups in Germany. This was one of 4 related attacks (199312030001-02, 199312040001, 199312050002).</addnotes>
+    <scite1>“Fourth Letter Bomb in Three Days Uncovered,” The Associated Press Worldstream, December 5, 1993.</scite1>
+    <scite2>Ken Olsen, “Alert Clerk, Border Guards and Luck Led to Letter Bomb Arrests,” The Associated Press, December 10, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

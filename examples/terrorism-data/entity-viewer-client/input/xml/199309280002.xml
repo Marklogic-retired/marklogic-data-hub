@@ -1,0 +1,57 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199309280002</eventid>
+    <iyear>1993</iyear>
+    <imonth>9</imonth>
+    <iday>28</iday>
+    <extended>0</extended>
+    <country>64</country>
+    <country_txt>Estonia</country_txt>
+    <region>9</region>
+    <region_txt>Eastern Europe</region_txt>
+    <provstate>Harju (County)</provstate>
+    <city>Tallinn</city>
+    <vicinity>0</vicinity>
+    <summary>09/28/1993: While three Baltic Presidents, from Estonia, Latvia and Lithuania, were meeting with President Bill Clinton of the U.S., a bomb exploded behind the U.S. Embassy. No casualties were reported.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>7</attacktype1>
+    <attacktype1_txt>Facility/Infrastructure Attack</attacktype1_txt>
+    <targtype1>7</targtype1>
+    <targtype1_txt>Government (Diplomatic)</targtype1_txt>
+    <corp1>U.S. Department of State</corp1>
+    <target1>U.S. Embassy in Tallinn</target1>
+    <natlty1>217</natlty1>
+    <natlty1_txt>United States</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Protesting President Clinton's visit.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>16</weapsubtype1>
+    <weapsubtype1_txt>Unknown Explosive Type</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>-9</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <scite1>Center for Terrorism and Intelligence Studies, Critical Infrastructure Terrorist Attack Database, San Jose, CA: Akribis Group, July 7 2006.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

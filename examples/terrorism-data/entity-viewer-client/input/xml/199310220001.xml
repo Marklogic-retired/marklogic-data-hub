@@ -1,0 +1,64 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199310220001</eventid>
+    <iyear>1993</iyear>
+    <imonth>10</imonth>
+    <iday>22</iday>
+    <extended>0</extended>
+    <country>98</country>
+    <country_txt>Italy</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Padua (Province)</provstate>
+    <city>Padua</city>
+    <vicinity>0</vicinity>
+    <summary>10/22/1993: A bomb exploded in a courthouse in the northern Italian town of Padua early Friday. The bomb, which caused serious damage but no injuries, was placed in the office of the court secretariat. The Italian Mafia claimed responsibility for the attack.</summary>
+    <crit1>0</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>Italian Justice System</corp1>
+    <target1>Padua Courthouse</target1>
+    <natlty1>98</natlty1>
+    <natlty1_txt>Italy</natlty1_txt>
+    <gname>Mafia</gname>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>2</claimmode>
+    <claimmode_txt>Call (post-incident)</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>16</weapsubtype1>
+    <weapsubtype1_txt>Unknown Explosive Type</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>2</propextent>
+    <propextent_txt>Major (likely >= $1 million but &lt; $1 billion)</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <scite1>"Bomb Explodes in Padua Courthouse,” Agence France Presse, October 22, 1993.</scite1>
+    <scite2>"Bomb Explodes in Padua Courthouse, Mafia Suspected,” Agence France Presse, October 22, 1993.</scite2>
+    <scite3>"Mystery Group Claims Padua Courthouse Blast,” Agence France Presse, October 22, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

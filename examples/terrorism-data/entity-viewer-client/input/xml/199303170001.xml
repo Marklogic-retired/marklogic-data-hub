@@ -1,0 +1,60 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199303170001</eventid>
+    <iyear>1993</iyear>
+    <imonth>3</imonth>
+    <iday>17</iday>
+    <extended>0</extended>
+    <country>603</country>
+    <country_txt>United Kingdom</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Northern Ireland</provstate>
+    <city>Keady</city>
+    <vicinity>0</vicinity>
+    <location>Ulster (Province)</location>
+    <summary>03/17/1993: The Irish Republican Army (IRA) bombed two construction workers in a van. No injuries or casualties resulted from the attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>0</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>1</targtype1>
+    <targtype1_txt>Business</targtype1_txt>
+    <corp1>Civilians</corp1>
+    <target1>Two construction workers</target1>
+    <natlty1>233</natlty1>
+    <natlty1_txt>Northern Ireland</natlty1_txt>
+    <gname>Irish Republican Army (IRA)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>17</weapsubtype1>
+    <weapsubtype1_txt>Other Explosive Type</weapsubtype1_txt>
+    <weapdetail>A limpet bomb exploded under the van.</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>The Irish Republican Army (IRA) did not issue a claim of responsibility for the attack, but authorities believed the IRA carried it out as part of its strategy of targeting construction companies that do work for the security forces. The IRA has previously killed 28 workers and executives of civilian companies that carry out contract work on security bases. No injuries or casualties resulted from the incident.</addnotes>
+    <scite1>Deric Henderson, “Building Workers Escaped in Booby Trap Blast,” Press Association, March 17, 1993.</scite1>
+    <scite2>Ric Clark, “St. Patrick's Day marred by violence in Ulster,” United Press International, March 17, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

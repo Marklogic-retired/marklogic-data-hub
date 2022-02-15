@@ -1,0 +1,67 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199303270003</eventid>
+    <iyear>1993</iyear>
+    <imonth>3</imonth>
+    <iday>27</iday>
+    <extended>0</extended>
+    <country>75</country>
+    <country_txt>Germany</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Hesse (State)</provstate>
+    <city>Darmstadt</city>
+    <vicinity>0</vicinity>
+    <summary>03/27/1993: The Red Army Faction tied up prison personnel and then bombed a newly built prison in Darmstadt, Germany. No injuries or casualties occurred. The explosions caused at least $60 million in damages.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>0</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>1</alternative>
+    <alternative_txt>Insurgency/Guerilla Action</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>German Prison</corp1>
+    <target1>Prison in Darmstadt</target1>
+    <natlty1>75</natlty1>
+    <natlty1_txt>Germany</natlty1_txt>
+    <gname>Red Army Faction (RAF)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>4</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>5</claimmode>
+    <claimmode_txt>Note left at scene</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>16</weapsubtype1>
+    <weapsubtype1_txt>Unknown Explosive Type</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>2</propextent>
+    <propextent_txt>Major (likely >= $1 million but &lt; $1 billion)</propextent_txt>
+    <propvalue>60000000</propvalue>
+    <ishostkid>0</ishostkid>
+    <addnotes>The Red Army Faction (RAF) was responsible for a string of bombings, murders and other attacks against NATO, government and industrial targets in Germany during the previous two decades. No injuries or casualties resulted from the attack.</addnotes>
+    <scite1>“Suspected Red Army Faction Bomb Damages New Prison,” The Associated Press, March 27, 1993.</scite1>
+    <scite2>“Red Army Faction returns to action with attack in Germany,” The Gazette (Montreal, Quebec), March 29, 1993.</scite2>
+    <scite3>“Bombing Wrecks a New Jail, Officials in Germany Report,” The New York Times, March 28, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

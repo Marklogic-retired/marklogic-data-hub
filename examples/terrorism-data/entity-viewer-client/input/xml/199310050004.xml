@@ -1,0 +1,66 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199310050004</eventid>
+    <iyear>1993</iyear>
+    <imonth>10</imonth>
+    <iday>5</iday>
+    <extended>0</extended>
+    <country>217</country>
+    <country_txt>United States</country_txt>
+    <region>1</region>
+    <region_txt>North America</region_txt>
+    <provstate>California</provstate>
+    <city>Sacramento</city>
+    <vicinity>0</vicinity>
+    <summary>10/5/1993: Richard Joseph Campos, the sole member of the Aryan Liberation Front, threw a Molotov cocktail into the Sacramento, California, United States home of Asian American city councilman Jimmie Yee. The firebomb landed in an unoccupied bedroom. There were no casualties but the bedroom was damaged.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>7</attacktype1>
+    <attacktype1_txt>Facility/Infrastructure Attack</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Asian American city councilman</corp1>
+    <target1>Home of Jimmie Yee</target1>
+    <natlty1>217</natlty1>
+    <natlty1_txt>United States</natlty1_txt>
+    <gname>Aryan Liberation Front</gname>
+    <motive>Richard Joseph Campos adopted the racist ideology of the White Aryan Resistance (WAR) and wanted to create an all-White society.</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperps>1</nperps>
+    <nperpcap>1</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>2</claimmode>
+    <claimmode_txt>Call (post-incident)</claimmode_txt>
+    <weaptype1>8</weaptype1>
+    <weaptype1_txt>Incendiary</weaptype1_txt>
+    <weapsubtype1>20</weapsubtype1>
+    <weapsubtype1_txt>Gasoline or Alcohol</weapsubtype1_txt>
+    <weapdetail>Molotov cocktail thrown at bedroom window</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propcomment>Bedroom damaged</propcomment>
+    <ishostkid>0</ishostkid>
+    <ransom>0</ransom>
+    <addnotes>The incident took place at 1:50  AM.  Richard Joseph Campos bombed four other buildings in the Sacramento area including the NAACP headquarters, a synagogue, the Japanese American Citizens League, and the state Office of Fair Employment and Housing building (199307250005, 199310020003, and 199310140009). Hours after the incident, Campos called the Sacramento television station KOVR claiming that the Aryan Liberation Front firebombed Jimmy Yee's house and the NAACP headquarters, synagogue, and Japanese American Citizens League.  Campos was the only member of the Aryan Liberation Front.  Before carrying out his bombing campaign, Campos called the White Aryan Resistance (WAR) hotline 34 times to listen to messages from the organizations leader Tom Metzger.  Campos had a WAR poster in his bedroom when he was arrested.</addnotes>
+    <scite1>Ann Bancroft, "Councilman's Home Attacked In Sacramento," San Francisco Chronicle, October 6, 1993.</scite1>
+    <scite2>"Man Convicted Of 2 Bombings Tied to Racism," New York Times, August 31, 1994.</scite2>
+    <scite3>Mareva Brown, "Racist's Rampage Was 'Wake-Up Call.'  The White Supremacist Convicted in '93 Bombings is Out of Prison," Sacramento Bee, July 7, 2003.</scite3>
+    <dbsource>Hewitt Project</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

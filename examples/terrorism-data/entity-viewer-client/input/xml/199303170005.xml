@@ -1,0 +1,63 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199303170005</eventid>
+    <iyear>1993</iyear>
+    <imonth>3</imonth>
+    <iday>17</iday>
+    <extended>1</extended>
+    <resolution>5/4/93</resolution>
+    <country>160</country>
+    <country_txt>Philippines</country_txt>
+    <region>5</region>
+    <region_txt>Southeast Asia</region_txt>
+    <provstate>Basilan (Province)</provstate>
+    <city>Basilan Island</city>
+    <vicinity>0</vicinity>
+    <summary>03/17/1993: Spanish priest Bernardo Blanco was abducted at gunpoint by members of the Abu Sayyaf Group (ASG) while driving in a rural area of the island of Basilan in the Philippines. The Group demanded 14 million Philippine pesos (approximately $500,000) in ransom. On May 3, 1993, a Philippine military rescue operation began, which resulted in the death of 41 members of the terrorist group. Blanco escaped on May 4th, stealing away while his captors were asleep.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>6</attacktype1>
+    <attacktype1_txt>Hostage Taking (Kidnapping)</attacktype1_txt>
+    <targtype1>15</targtype1>
+    <targtype1_txt>Religious Figures/Institutions</targtype1_txt>
+    <corp1>Priest</corp1>
+    <target1>Father Bernardo Blanco</target1>
+    <natlty1>185</natlty1>
+    <natlty1_txt>Spain</natlty1_txt>
+    <gname>Abu Sayyaf Group (ASG)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>-9</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>13</weaptype1>
+    <weaptype1_txt>Unknown</weaptype1_txt>
+    <nkill>41</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>41</nkillter>
+    <nwound>6</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>6</nwoundte>
+    <property>-9</property>
+    <ishostkid>1</ishostkid>
+    <nhostkid>1</nhostkid>
+    <nhostkidus>0</nhostkidus>
+    <ndays>48</ndays>
+    <ransom>1</ransom>
+    <ransomamt>290274</ransomamt>
+    <ransomamtus>0</ransomamtus>
+    <ransompaid>0</ransompaid>
+    <ransompaidus>0</ransompaidus>
+    <ransomnote>14 million Philippine Pesos [converted to 2009 USD]</ransomnote>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

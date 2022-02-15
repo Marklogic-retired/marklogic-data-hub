@@ -1,0 +1,64 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199310070001</eventid>
+    <iyear>1993</iyear>
+    <imonth>10</imonth>
+    <iday>7</iday>
+    <extended>0</extended>
+    <country>45</country>
+    <country_txt>Colombia</country_txt>
+    <region>3</region>
+    <region_txt>South America</region_txt>
+    <provstate>Bogota (Capital District)</provstate>
+    <city>Bogota</city>
+    <vicinity>0</vicinity>
+    <summary>10/07/1993: According to authorities, the urban militias of the 22nd Front of the FARC were responsible for detonating a remote-controlled bomb against a National Police bus. Other devices were planted in the headquarters of a political party and the National Civil Registry office.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>1</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>3</targtype1>
+    <targtype1_txt>Police</targtype1_txt>
+    <corp1>Columbian National Police</corp1>
+    <target1>National Police bus in Bogota</target1>
+    <natlty1>45</natlty1>
+    <natlty1_txt>Colombia</natlty1_txt>
+    <gname>Revolutionary Armed Forces of Colombia (FARC)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>2</claimmode>
+    <claimmode_txt>Call (post-incident)</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>12</weapsubtype1>
+    <weapsubtype1_txt>Remote Trigger</weapsubtype1_txt>
+    <nkill>2</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>45</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propcomment>Between the three related attacks (cf.1993100702/3) damages were estimated at 200 million pesos.</propcomment>
+    <ishostkid>0</ishostkid>
+    <addnotes>This was one of three related attacks (cf. 199310070002; 199310070003).</addnotes>
+    <scite1>"Authorities (sic) Blame Leftist Rebels for Bogota Terrorism," The Associated Press Worldstream, October 8, 1993.</scite1>
+    <scite2>Columbia Examining Anti-Rebel Measures in Wake of Police Bus Bombing,” United Press International, October 8, 1993.</scite2>
+    <scite3>"Minster Blames FARC for Bogota Bomb Attacks which Kill Two Policeman,” The British Broadcasting Corporation, October 11, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

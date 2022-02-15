@@ -1,0 +1,66 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199304280001</eventid>
+    <iyear>1993</iyear>
+    <imonth>4</imonth>
+    <iday>28</iday>
+    <extended>0</extended>
+    <country>156</country>
+    <country_txt>Panama</country_txt>
+    <region>2</region>
+    <region_txt>Central America &amp; Caribbean</region_txt>
+    <provstate>Panama (Province)</provstate>
+    <city>Panama</city>
+    <vicinity>0</vicinity>
+    <summary>04/28/1993: Alto Bayano Indians kidnapped Panama Province Governor Plutarco Arrocha and Chepo Mayor Ernesto Carrera. The Indians were attempting to get a parliamentary commission to pay attention to problems with land settlers. A few hours later, the hostages were released unharmed after Assembly Vice President Roberto Garibaldo offered to have a Special Assembly Commission hold a dialogue with them and talk about a bill for the creation of an Indian reservation.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>6</attacktype1>
+    <attacktype1_txt>Hostage Taking (Kidnapping)</attacktype1_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>Panama Government</corp1>
+    <target1>Panama Province Governor Plutarco Arrocha</target1>
+    <natlty1>156</natlty1>
+    <natlty1_txt>Panama</natlty1_txt>
+    <targtype2>2</targtype2>
+    <targtype2_txt>Government (General)</targtype2_txt>
+    <corp2>Panama Government</corp2>
+    <target2>Chepo Mayor Ernesto Carrera</target2>
+    <natlty2>156</natlty2>
+    <natlty2_txt>Panama</natlty2_txt>
+    <gname>Other</gname>
+    <motive>The kidnappers wanted a parliamentary commission to pay attention to problems with land settlers.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>1</claimed>
+    <claimmode>10</claimmode>
+    <claimmode_txt>Unknown</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>13</weaptype1>
+    <weaptype1_txt>Unknown</weaptype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>1</ishostkid>
+    <nhostkid>2</nhostkid>
+    <nhostkidus>0</nhostkidus>
+    <nhours>2</nhours>
+    <ransom>0</ransom>
+    <nreleased>2</nreleased>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

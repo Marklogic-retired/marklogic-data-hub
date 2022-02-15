@@ -1,0 +1,58 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199311140002</eventid>
+    <iyear>1993</iyear>
+    <imonth>11</imonth>
+    <iday>14</iday>
+    <extended>0</extended>
+    <country>182</country>
+    <country_txt>Somalia</country_txt>
+    <region>11</region>
+    <region_txt>Sub-Saharan Africa</region_txt>
+    <provstate>Banaadir (Region)</provstate>
+    <city>Mogadishu</city>
+    <vicinity>0</vicinity>
+    <summary>11/14/1993: Militants attacked a convoy of 14 trucks in Somalia. 15 people were killed and 13 were injured. The militants escaped with 10 of the 14 trucks.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>1</alternative>
+    <alternative_txt>Insurgency/Guerilla Action</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>13</targtype1>
+    <targtype1_txt>Other</targtype1_txt>
+    <corp1>United Nations</corp1>
+    <target1>UN Convoy in Somalia</target1>
+    <natlty1>999</natlty1>
+    <natlty1_txt>Multinational</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>4</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <nkill>15</nkill>
+    <nkillter>0</nkillter>
+    <nwound>13</nwound>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <scite1>“Bandit attack on convoy leaves 15 Somalis dead,” Houston Chronicle News Service, November 15, 1993.</scite1>
+    <scite2>“15 die in bold strikes by bandits; Somalia slips back into anarchy,” Hamilton Spectator, November 15, 1993.</scite2>
+    <scite3>Aidan Hartley, “15 civilians die in Somali ambush; 10 trucks grabbed from convoy,” Chicago Sun Times, November 15, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

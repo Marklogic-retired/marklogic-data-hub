@@ -1,0 +1,62 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199311050001</eventid>
+    <iyear>1993</iyear>
+    <imonth>11</imonth>
+    <iday>5</iday>
+    <extended>0</extended>
+    <country>45</country>
+    <country_txt>Colombia</country_txt>
+    <region>3</region>
+    <region_txt>South America</region_txt>
+    <provstate>Antioquia (Department)</provstate>
+    <city>Medellin</city>
+    <vicinity>0</vicinity>
+    <summary>11/05/1993: The Vice President of the Colombian Senate was shot to death by a group calling itself Death to Protectors of the Cali Cartel. His driver was injured in the attack as well.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>1</attacktype1>
+    <attacktype1_txt>Assassination</attacktype1_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>Colombian Senator</corp1>
+    <target1>Senator Dario Londono Cardona</target1>
+    <natlty1>45</natlty1>
+    <natlty1_txt>Colombia</natlty1_txt>
+    <gname>Death to Protectors of the Cali Cartel</gname>
+    <motive>The Senator was killed for his role in helping write a new law offering leniency to drug traffickers.</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperps>4</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>2</claimmode>
+    <claimmode_txt>Call (post-incident)</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>1</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>Although the group Death to Protectors of the Cali Cartel claimed responsibility for the crime and their claimed was confirmed, some thought it was committed by the National Liberation Army.</addnotes>
+    <scite1>Andrew Selsky, “Senate Vice President of Senate Shot, Critically Wounded,” The Associated Press, November 5, 1993.</scite1>
+    <scite2>“Senator Londono dies of gunshot wounds; prosecutor general to head investigation,” Agence France Presse, November 9, 1993.</scite2>
+    <scite3>“Colombia,” Miami Herald, November 8, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

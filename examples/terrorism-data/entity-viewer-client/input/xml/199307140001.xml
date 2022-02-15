@@ -1,0 +1,61 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199307140001</eventid>
+    <iyear>1993</iyear>
+    <imonth>7</imonth>
+    <iday>14</iday>
+    <extended>0</extended>
+    <country>603</country>
+    <country_txt>United Kingdom</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>England</provstate>
+    <city>Cricklewood</city>
+    <vicinity>0</vicinity>
+    <location>Barnet (London Borough)</location>
+    <summary>07/14/1993: A man was arrested at a north London bus stop carrying a large Semtex bomb in a shoulder bag. The perpetrator is believed to be a key figure in the Irish Republican Army's (IRA) mainland bombing campaign. Police believe he intended to take the 8 lb bomb into the City of London by public transport. The motive for the attack was cited as the IRA's response to new traffic restrictions.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>0</success>
+    <suicide>0</suicide>
+    <attacktype1>9</attacktype1>
+    <attacktype1_txt>Unknown</attacktype1_txt>
+    <targtype1>20</targtype1>
+    <targtype1_txt>Unknown</targtype1_txt>
+    <corp1>City of London</corp1>
+    <target1>City of London</target1>
+    <natlty1>216</natlty1>
+    <natlty1_txt>Great Britain</natlty1_txt>
+    <gname>Irish Republican Army (IRA)</gname>
+    <motive>This was the IRA's response to new traffic restrictions.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>1</nperps>
+    <nperpcap>1</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>14</weapsubtype1>
+    <weapsubtype1_txt>Time Fuse</weapsubtype1_txt>
+    <weapdetail>8 pound Semtex bomb with a timing device and detonator</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <scite1>Peter Burden, “Bomber at Bus Stop: Dramatic Moment when Armed Police Swooped on IRA Suspect,” Daily Mail (London), July 15, 1993.</scite1>
+    <scite2>“Police Question Bomb Suspect,” Agence France Presse, July 14, 1993.</scite2>
+    <scite3>Edward Pilkington, “Bomb-in-Bag Suspect Held in Street,” The Guardian (London), July 15, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>1</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>
