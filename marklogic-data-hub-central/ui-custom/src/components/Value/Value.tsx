@@ -6,6 +6,7 @@ type Props = {
   config?: any;
   data?: any;
   style?: any;
+  title?: any;
   getFirst?: boolean;
 };
 
@@ -25,14 +26,24 @@ const Value: React.FC<Props> = (props) => {
         val = getValByPath(props.data, props.config.path, props.getFirst! );
     }
 
-    let valueStyle: any = props.config.style ? props.config.style : {};
+    if (val && props.config?.prefix) {
+        val = props.config?.prefix.concat(val);
+    }
+
+    if (val && props.config?.suffix) {
+        val = val.concat(props.config?.suffix);
+    }
+
+    let valueClassName: any = props.style ? props.style : props.config?.style ? props.config.style : "";
+    let valueStyle: any = props.style ? props.style : props.config?.style ? props.config.style : {};
+    let valueTitle: string = val;
 
     return (
         <span 
-            id={getValByPath(props.data, props.config.id)} 
-            className={props.config.className} 
+            id={props.config?.id ? getValByPath(props.data, props.config.id): null} 
+            className={valueClassName} 
             style={valueStyle}
-            title={val}
+            title={valueTitle}
         >{val}</span>
     );
 };
