@@ -1,0 +1,65 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199301170009</eventid>
+    <iyear>1993</iyear>
+    <imonth>1</imonth>
+    <iday>17</iday>
+    <extended>0</extended>
+    <country>217</country>
+    <country_txt>United States</country_txt>
+    <region>1</region>
+    <region_txt>North America</region_txt>
+    <provstate>Illinois</provstate>
+    <city>Chicago</city>
+    <vicinity>0</vicinity>
+    <location>5782 North Elston Ave.</location>
+    <summary>1/17/1993: Unknown perpetrators threw three Molotov cocktails into the Serbian National Defense Council of America in Chicago, Illinois, United States. There were no casualties but the building sustained around $20,000 in damages. This incident took place at the same time as the wars in the Balkans following the dissolution of Yugoslavia.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>7</attacktype1>
+    <attacktype1_txt>Facility/Infrastructure Attack</attacktype1_txt>
+    <targtype1>13</targtype1>
+    <targtype1_txt>Other</targtype1_txt>
+    <corp1>Serbian National Defense Council of America</corp1>
+    <target1>Serbian National Defense Council of America in Chicago</target1>
+    <natlty1>217</natlty1>
+    <natlty1_txt>United States</natlty1_txt>
+    <gname>Unknown</gname>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>-99</nperps>
+    <nperpcap>-99</nperpcap>
+    <claimed>0</claimed>
+    <weaptype1>8</weaptype1>
+    <weaptype1_txt>Incendiary</weaptype1_txt>
+    <weapsubtype1>20</weapsubtype1>
+    <weapsubtype1_txt>Gasoline or Alcohol</weapsubtype1_txt>
+    <weapdetail>Three Molotov cocktails thrown through window</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propvalue>20000</propvalue>
+    <propcomment>Window broken and floor damaged</propcomment>
+    <ishostkid>0</ishostkid>
+    <ransom>0</ransom>
+    <addnotes>Two days later, there was a fire was set at the same facility (199301190004).  The Serbian National Defense Council of America presented the views of the US Serbian community on the Balkans conflict.  The building had previously been vandalized and received threatening phone calls.</addnotes>
+    <scite1>"Serbian Organization Firebombed in Chicago," United Press International, January 18, 1993.</scite1>
+    <scite2>"Chicago Headquarters of Serbian Group Firebombed," Associated Press, January  18, 1993.</scite2>
+    <scite3>"Serbian HQ Bombed," Chicago Sun-Times, January 19, 1993.</scite3>
+    <dbsource>Hewitt Project</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

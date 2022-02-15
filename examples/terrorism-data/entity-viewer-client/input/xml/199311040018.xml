@@ -1,0 +1,61 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199311040018</eventid>
+    <iyear>1993</iyear>
+    <imonth>11</imonth>
+    <iday>4</iday>
+    <extended>0</extended>
+    <country>75</country>
+    <country_txt>Germany</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Baden-Württemberg (State)</provstate>
+    <city>Stuttgart</city>
+    <vicinity>0</vicinity>
+    <summary>11/04/1993: The Turkish Consulate was attacked in Stuttgart, Germany. No one was killed, however 3 people were injured. It was thought that the attacks were carried out by the Kurdistan Workers' Party (PKK), but the PKK refused to comment.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>1</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>7</targtype1>
+    <targtype1_txt>Government (Diplomatic)</targtype1_txt>
+    <corp1>Turkish Ministry of Foreign Affairs</corp1>
+    <target1>Turkish Consulate in Germany</target1>
+    <natlty1>209</natlty1>
+    <natlty1_txt>Turkey</natlty1_txt>
+    <gname>Kurdistan Workers' Party (PKK)</gname>
+    <motive>Police said they found leaflets protesting "Turkish genocide" on the scene.</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperpcap>1</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>16</weapsubtype1>
+    <weapsubtype1_txt>Unknown Explosive Type</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>3</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <addnotes>This was one attack of around 60 that occurred at Turkish establishments across Europe. (cf. 199311040001-22).</addnotes>
+    <scite1>“Germany clamps down on Kurds after bombings,” Press Association, November 5, 1993.</scite1>
+    <scite2>“1 killed as Kurds attack Turk-owned businesses,” St. Louis Post Dispatch, November 5, 1993.</scite2>
+    <scite3>Tyler Marshall, “1 killed as Turkish targets are attacked across Europe; terrorism: separatists Kurds are apparently responsible for violence in more than 30 cities. Consulates, businesses are hit,” Los Angeles Times, November 5, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>1</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

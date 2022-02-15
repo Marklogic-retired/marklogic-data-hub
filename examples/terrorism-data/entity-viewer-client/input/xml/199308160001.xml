@@ -1,0 +1,59 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199308160001</eventid>
+    <iyear>1993</iyear>
+    <imonth>8</imonth>
+    <iday>16</iday>
+    <extended>0</extended>
+    <country>60</country>
+    <country_txt>Egypt</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Asyut (Governorate)</provstate>
+    <city>Manfalut</city>
+    <vicinity>1</vicinity>
+    <location>The target was a tour ship traveling along the Nile River</location>
+    <summary>08/16/1993: Shots were fired by suspected Muslim militants at an Egyptian tour ship 200 miles south of Cairo along the Nile River. The ship was carrying mostly British tourists. No one was injured.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>18</targtype1>
+    <targtype1_txt>Tourists</targtype1_txt>
+    <corp1>Royal Orchid (Tour Boat)</corp1>
+    <target1>Tour boat carrying British tourists</target1>
+    <natlty1>216</natlty1>
+    <natlty1_txt>Great Britain</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>To disrupt the tourist industry</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>Three tourists had been killed and a dozen injured in political violence in the area over the last 18 months.</addnotes>
+    <scite1>“Nile gunman opens fire on Britons,” Daily Mail (London), August 17, 1993.</scite1>
+    <scite2>Peter Bakogeorge, “Gunfire rattles Egypt’s tourist industry again,” The Gazette (Montreal, Quebec) (Montreal, Quebec), August 18, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

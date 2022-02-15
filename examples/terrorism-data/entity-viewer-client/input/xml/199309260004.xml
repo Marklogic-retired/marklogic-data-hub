@@ -1,0 +1,64 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199309260004</eventid>
+    <iyear>1993</iyear>
+    <imonth>9</imonth>
+    <iday>26</iday>
+    <extended>0</extended>
+    <country>217</country>
+    <country_txt>United States</country_txt>
+    <region>1</region>
+    <region_txt>North America</region_txt>
+    <provstate>Illinois</provstate>
+    <city>Peoria</city>
+    <vicinity>0</vicinity>
+    <summary>9/26/1993: Randal Maske firebombed the National Health Care Services Clinic in Peoria, Illinois, United States. There were no casualties, but the clinic sustained $10,000 in damages.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>7</attacktype1>
+    <attacktype1_txt>Facility/Infrastructure Attack</attacktype1_txt>
+    <targtype1>5</targtype1>
+    <targtype1_txt>Abortion Related</targtype1_txt>
+    <target1>National Health Care Services Clinic</target1>
+    <natlty1>217</natlty1>
+    <natlty1_txt>United States</natlty1_txt>
+    <gname>Anti-Abortion extremists</gname>
+    <motive>To protest the practice of abortion and to sabotage abortion facilities operating in Illinois.  Furthermore, Randal Maske claimed that God commanded him to commit the attack.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>1</nperps>
+    <nperpcap>1</nperpcap>
+    <claimed>0</claimed>
+    <weaptype1>8</weaptype1>
+    <weaptype1_txt>Incendiary</weaptype1_txt>
+    <weapsubtype1>20</weapsubtype1>
+    <weapsubtype1_txt>Gasoline or Alcohol</weapsubtype1_txt>
+    <weapdetail>Firebomb</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propvalue>100000</propvalue>
+    <propcomment>Entrance and outside sidewalk damaged.</propcomment>
+    <ishostkid>0</ishostkid>
+    <ransom>0</ransom>
+    <addnotes>Randal Maske did not confess to the firebombing until around nine years after the incident.</addnotes>
+    <scite1>"Man Who Confessed to Peoria Bombing Sentenced to Prison," Associated Press, June 18, 2002.</scite1>
+    <scite2>"Planned Parenthood Office Firebombed," Associated Press, September 29, 1993.</scite2>
+    <scite3>Christopher Hewitt, "Political Violence and Terrorism in Modern America: A Chronology," Praeger Security International, 2005.</scite3>
+    <dbsource>Anti-Abortion Project 2010</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

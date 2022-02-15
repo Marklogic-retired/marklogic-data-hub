@@ -1,0 +1,82 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199312230001</eventid>
+    <iyear>1993</iyear>
+    <imonth>12</imonth>
+    <iday>23</iday>
+    <extended>1</extended>
+    <resolution>12/27/93</resolution>
+    <country>167</country>
+    <country_txt>Russia</country_txt>
+    <region>9</region>
+    <region_txt>Eastern Europe</region_txt>
+    <provstate>Rostov (Oblast)</provstate>
+    <city>Rostov-on-Don</city>
+    <vicinity>0</vicinity>
+    <summary>12/23/1993: Four masked and armed men entered the grounds of School No. 25, in the southern city of Rostov-on-Don, in a mini-van and forced 12 students and their teacher into a bus. The attackers took the hostages and commandeered a military helicopter to fly them to Tehran, Iran. Before taking off, the gunmen forced a bus driver on board, but released three students as well as a soldier who had been seized during negotiations. During the incident the perpetrators demanded a $10 million ransom. After authorities paid the kidnappers, they dumped the stolen military helicopter and its two pilots, their last remaining captives, in Dagestan, Russia. On December 27, 1993 officials captured the four assailants and retrieved the $10 million.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>6</attacktype1>
+    <attacktype1_txt>Hostage Taking (Kidnapping)</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Civilians</corp1>
+    <target1>Children and a school teacher from Russian School No. 25 in Rostov-on-Don</target1>
+    <natlty1>167</natlty1>
+    <natlty1_txt>Russia</natlty1_txt>
+    <targtype2>4</targtype2>
+    <targtype2_txt>Military</targtype2_txt>
+    <corp2>Russian Military</corp2>
+    <target2>Military Helicopter</target2>
+    <natlty2>167</natlty2>
+    <natlty2_txt>Russia</natlty2_txt>
+    <gname>Unknown</gname>
+    <motive>To receive payment for hostages</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>4</nperps>
+    <nperpcap>4</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>2</weapsubtype1>
+    <weapsubtype1_txt>Automatic or Semi-Automatic Rifle</weapsubtype1_txt>
+    <weaptype2>6</weaptype2>
+    <weaptype2_txt>Explosives</weaptype2_txt>
+    <weapsubtype2>14</weapsubtype2>
+    <weapsubtype2_txt>Time Fuse</weapsubtype2_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>1</ishostkid>
+    <nhostkid>13</nhostkid>
+    <nhostkidus>0</nhostkidus>
+    <ndays>4</ndays>
+    <ransom>1</ransom>
+    <ransomamt>10000000</ransomamt>
+    <ransompaid>10000000</ransompaid>
+    <hostkidoutcome>6</hostkidoutcome>
+    <hostkidoutcome_txt>Combination</hostkidoutcome_txt>
+    <nreleased>13</nreleased>
+    <addnotes>Russian news agencies police recovered the $ 10 million ransom paid to the kidnappers. The police seized $ 6.5 million when they arrested two of the gunmen on December 26, 2006 after a brief shootout. The remainder was recovered when the other two were arrested on December 27, 1993 near Makhachkala, capital of the Russian republic of Dagestan. Russian television said the gunmen had told authorities during negotiations that they were each infected with the AIDS virus and had "nothing to lose." The victims were all released at various periods.</addnotes>
+    <scite1>Christopher Boian, “Gunman Seize Students, Flee in Helicopter,” Agence France Presse, December 23, 1993.</scite1>
+    <scite2>Richard Balmforth, “Russian Kidnappers Hold Child Hostages,” The Guardian (London), December 24, 1993.</scite2>
+    <scite3>Vanora Bennett, “A $ 10 Million Chase in Russia; All 4 Kidnappers Reported Captured,” Chicago Sun-Times, December 27, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

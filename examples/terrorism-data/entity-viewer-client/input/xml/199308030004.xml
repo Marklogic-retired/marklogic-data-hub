@@ -1,0 +1,60 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199308030004</eventid>
+    <iyear>1993</iyear>
+    <imonth>8</imonth>
+    <iday>3</iday>
+    <extended>0</extended>
+    <country>603</country>
+    <country_txt>United Kingdom</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Northern Ireland</provstate>
+    <city>Belleeks</city>
+    <vicinity>0</vicinity>
+    <location>Armagh (County)</location>
+    <summary>08/03/1993: The Irish Republican Army (IRA) attempted to detonate a 1,000lb bomb at a British army checkpoint on the Carrickananny Road. The explosives were attached to the back of a remote-controlled tractor with a straw-filled dummy inside, but as the tractor approached, the vehicle veered into a ditch 125 yards from the checkpoint. No one was killed or injured.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>0</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>0</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>4</targtype1>
+    <targtype1_txt>Military</targtype1_txt>
+    <corp1>British Army</corp1>
+    <target1>British Army checkpoint in Belleeks</target1>
+    <natlty1>216</natlty1>
+    <natlty1_txt>Great Britain</natlty1_txt>
+    <gname>Irish Republican Army (IRA)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>-9</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>16</weapsubtype1>
+    <weapsubtype1_txt>Unknown Explosive Type</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>-9</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <scite1>Gerry Moriarty, “IRA tractor bomb attack fails,” The Irish Times, August 6, 1993.</scite1>
+    <scite2>Paul Cheston, “IRA dummy driver used in bomb attack,” The Evening Standard (London), August 5, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

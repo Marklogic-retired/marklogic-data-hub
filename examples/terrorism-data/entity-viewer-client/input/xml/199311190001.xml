@@ -1,0 +1,55 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199311190001</eventid>
+    <iyear>1993</iyear>
+    <imonth>11</imonth>
+    <iday>19</iday>
+    <extended>0</extended>
+    <country>159</country>
+    <country_txt>Peru</country_txt>
+    <region>3</region>
+    <region_txt>South America</region_txt>
+    <provstate>Lima (Province)</provstate>
+    <city>Lima</city>
+    <vicinity>0</vicinity>
+    <summary>11/19/1993: Sendero Luminoso was responsible for attacking the U.S.- Peruvian Binational Cultural Center. There is no additional information on this attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>7</attacktype1>
+    <attacktype1_txt>Facility/Infrastructure Attack</attacktype1_txt>
+    <targtype1>8</targtype1>
+    <targtype1_txt>Educational Institution</targtype1_txt>
+    <corp1>U.S. - Peruvian Binational Cultural Center</corp1>
+    <target1>U.S. - Peruvian Binational Cultural Center</target1>
+    <natlty1>999</natlty1>
+    <natlty1_txt>Multinational</natlty1_txt>
+    <gname>Shining Path (SL)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>13</weaptype1>
+    <weaptype1_txt>Unknown</weaptype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>-9</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <scite1>Center for Terrorism and Intelligence Studies, Critical Infrastructure Terrorist Attack Database, San Jose, CA: Akribis Group, July 7 2006.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

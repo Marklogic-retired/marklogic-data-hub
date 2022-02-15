@@ -1,0 +1,64 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199301190004</eventid>
+    <iyear>1993</iyear>
+    <imonth>1</imonth>
+    <iday>19</iday>
+    <extended>0</extended>
+    <country>217</country>
+    <country_txt>United States</country_txt>
+    <region>1</region>
+    <region_txt>North America</region_txt>
+    <provstate>Illinois</provstate>
+    <city>Chicago</city>
+    <vicinity>0</vicinity>
+    <location>5782 North Elston Ave.</location>
+    <summary>1/19/1993: Unknown perpetrators ignited a fire at the rear door of Ideal Mikron Typesetters in Chicago, Illinois, United States. There were no casualties and the building sustained only minor damages. Authorities suspected that the fire was meant for the Serbian National Defense Council of America, which was housed in the same facility. This incident took place at the same time as the wars in the Balkans following the dissolution of Yugoslavia.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>7</attacktype1>
+    <attacktype1_txt>Facility/Infrastructure Attack</attacktype1_txt>
+    <targtype1>13</targtype1>
+    <targtype1_txt>Other</targtype1_txt>
+    <corp1>Serbian National Defense Council of America</corp1>
+    <target1>Serbian National Defense Council of America in Chicago</target1>
+    <natlty1>217</natlty1>
+    <natlty1_txt>United States</natlty1_txt>
+    <gname>Unknown</gname>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>-99</nperps>
+    <nperpcap>-99</nperpcap>
+    <claimed>0</claimed>
+    <weaptype1>8</weaptype1>
+    <weaptype1_txt>Incendiary</weaptype1_txt>
+    <weapsubtype1>18</weapsubtype1>
+    <weapsubtype1_txt>Arson/Fire</weapsubtype1_txt>
+    <weapdetail>Fire ignited in rear of building</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propcomment>Minor damage</propcomment>
+    <ishostkid>0</ishostkid>
+    <ransom>0</ransom>
+    <addnotes>Two days earlier, there were three Molotov cocktails ignited at the same facility (199301170009).  The Serbian National Defense Council of America presented the views of the US Serbian community on the Balkans conflict.  The building had previously been vandalized and received threatening phone calls.</addnotes>
+    <scite1>"Serbian Organization Firebombed in Chicago," United Press International, January 18, 1993.</scite1>
+    <dbsource>Hewitt Project</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

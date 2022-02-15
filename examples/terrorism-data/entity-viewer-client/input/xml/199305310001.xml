@@ -1,0 +1,59 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199305310001</eventid>
+    <iyear>1993</iyear>
+    <imonth>5</imonth>
+    <iday>31</iday>
+    <extended>0</extended>
+    <country>75</country>
+    <country_txt>Germany</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>North Rhine-Westphalia (State)</provstate>
+    <city>Solingen</city>
+    <vicinity>0</vicinity>
+    <summary>05/31/1993: Right wing racists set fire to a house containing a 20 member Turkish family in the German city of Solingen. Five members of the family were killed.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>7</attacktype1>
+    <attacktype1_txt>Facility/Infrastructure Attack</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Civilians</corp1>
+    <target1>Turkish immigrants</target1>
+    <natlty1>209</natlty1>
+    <natlty1_txt>Turkey</natlty1_txt>
+    <gname>Neo-Nazi extremists</gname>
+    <motive>The attack appeared to target Turkish minorities in Germany.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>0</claimed>
+    <claimmode>10</claimmode>
+    <claimmode_txt>Unknown</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>8</weaptype1>
+    <weaptype1_txt>Incendiary</weaptype1_txt>
+    <weapsubtype1>18</weapsubtype1>
+    <weapsubtype1_txt>Arson/Fire</weapsubtype1_txt>
+    <nkill>5</nkill>
+    <nwound>2</nwound>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propcomment>The house was destroyed.</propcomment>
+    <ishostkid>0</ishostkid>
+    <addnotes>The perpetrator was probably a neo-Nazi group.</addnotes>
+    <scite1>"Nazi Fear after Blaze Kills Five," Reuter, May 31, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

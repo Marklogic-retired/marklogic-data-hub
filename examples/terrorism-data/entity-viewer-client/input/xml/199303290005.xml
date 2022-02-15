@@ -1,0 +1,65 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199303290005</eventid>
+    <iyear>1993</iyear>
+    <imonth>3</imonth>
+    <iday>29</iday>
+    <extended>0</extended>
+    <country>217</country>
+    <country_txt>United States</country_txt>
+    <region>1</region>
+    <region_txt>North America</region_txt>
+    <provstate>Montana</provstate>
+    <city>Missoula</city>
+    <vicinity>0</vicinity>
+    <location>Fire ignited in two places in building</location>
+    <summary>3/29/1993: Richard Thomas Andrews firebombed the Blue Mountain Clinic in Missoula, Montana, United States. There were no casualties, but the abortion clinic was destroyed resulting in $100,000 in damages.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>7</attacktype1>
+    <attacktype1_txt>Facility/Infrastructure Attack</attacktype1_txt>
+    <targtype1>5</targtype1>
+    <targtype1_txt>Abortion Related</targtype1_txt>
+    <target1>Blue Mountain Clinic</target1>
+    <natlty1>217</natlty1>
+    <natlty1_txt>United States</natlty1_txt>
+    <gname>Anti-Abortion extremists</gname>
+    <motive>To protest the practice of abortion and to sabotage abortion facilities operating in Montana.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>1</nperps>
+    <nperpcap>1</nperpcap>
+    <claimed>0</claimed>
+    <weaptype1>8</weaptype1>
+    <weaptype1_txt>Incendiary</weaptype1_txt>
+    <weapsubtype1>20</weapsubtype1>
+    <weapsubtype1_txt>Gasoline or Alcohol</weapsubtype1_txt>
+    <weapdetail>Firebomb</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propvalue>100000</propvalue>
+    <propcomment>Building destroyed</propcomment>
+    <ishostkid>0</ishostkid>
+    <ransom>0</ransom>
+    <addnotes>The incident took place during the early morning hours.  The clinic was previously the target of many protest.  Two years later, the new Blue Mountain Clinic was opened.</addnotes>
+    <scite1>"Arson Destroys Montana Abortion Clinic," Associated Press, March 29, 1993.</scite1>
+    <scite2>Adam Clymer, "Reno Urges Senate to Curb Anti-Abortion Violence," New York Times, May 13, 1993.</scite2>
+    <scite3>"Sentence Imposed in Abortion Arson," United Press International, April 28, 1998.</scite3>
+    <dbsource>Anti-Abortion Project 2010</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

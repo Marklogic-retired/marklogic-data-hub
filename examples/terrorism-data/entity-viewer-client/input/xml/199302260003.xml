@@ -1,0 +1,62 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199302260003</eventid>
+    <iyear>1993</iyear>
+    <imonth>2</imonth>
+    <iday>26</iday>
+    <extended>0</extended>
+    <country>60</country>
+    <country_txt>Egypt</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Al Qahirah (Governorate)</provstate>
+    <city>Cairo</city>
+    <vicinity>0</vicinity>
+    <summary>02/26/1993: A bomb exploded at the Wadi el-Nil coffee shop in al-Tahrir square in Cairo, Egypt, killing 2 Egyptians, 2 foreigners and injuring 15 (2 Americans, a Canadian, 3 Somalis and a Frenchman, in addition to eight Egyptians). Officials suspected Al-Jama an al-Islamiyya (Islamic Group) was behind the attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>18</targtype1>
+    <targtype1_txt>Tourists</targtype1_txt>
+    <corp1>Wadi el-Nil coffee shop</corp1>
+    <target1>Wadi el-Nil coffee shop</target1>
+    <natlty1>999</natlty1>
+    <natlty1_txt>Multinational</natlty1_txt>
+    <gname>Al-Gama'at al-Islamiyya (IG)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>16</weapsubtype1>
+    <weapsubtype1_txt>Unknown Explosive Type</weapsubtype1_txt>
+    <nkill>4</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>15</nwound>
+    <nwoundus>2</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propcomment>The coffee shop was destroyed and nearby stores were damaged.</propcomment>
+    <ishostkid>0</ishostkid>
+    <addnotes>Officials reported that many of the coffee shop's customers are typically foreigners. Americans, Germans and Swedes were among the wounded.</addnotes>
+    <scite1>“2 Killed and 16 Hurt in Blast At Central Cairo Coffee Shop, ” The New York Times, February 27, 1993.</scite1>
+    <scite2>“Moslem Extremists Claimed Responsibility for Bombing Downtown Cairo Coffee Shop,” Xinhua General News Service, February 27, 1993.</scite2>
+    <scite3>“Bombs rock Cairo coffee shop, London shopping area; Muslim militants claim they didn't do it,” The Houston Chronicle, February 28, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

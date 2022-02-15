@@ -1,0 +1,63 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199307250001</eventid>
+    <iyear>1993</iyear>
+    <imonth>7</imonth>
+    <iday>25</iday>
+    <extended>0</extended>
+    <country>186</country>
+    <country_txt>Sri Lanka</country_txt>
+    <region>6</region>
+    <region_txt>South Asia</region_txt>
+    <provstate>North (Province)</provstate>
+    <city>Unknown</city>
+    <vicinity>0</vicinity>
+    <summary>07/25/1993: Rebels from Liberation Tigers of Tamil Eelam (LTTE) fired mortar bombs and automatic weapons against strategic army detachments in northeast Sri Lanka, killing 22 soldiers and 15 civilians.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>0</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>1</alternative>
+    <alternative_txt>Insurgency/Guerilla Action</alternative_txt>
+    <multiple>1</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <attacktype2>3</attacktype2>
+    <attacktype2_txt>Bombing/Explosion</attacktype2_txt>
+    <targtype1>4</targtype1>
+    <targtype1_txt>Military</targtype1_txt>
+    <corp1>Sri Lankan Army</corp1>
+    <target1>Janakpura army camp</target1>
+    <natlty1>186</natlty1>
+    <natlty1_txt>Sri Lanka</natlty1_txt>
+    <gname>Liberation Tigers of Tamil Eelam (LTTE)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>2</weapsubtype1>
+    <weapsubtype1_txt>Automatic or Semi-Automatic Rifle</weapsubtype1_txt>
+    <weaptype2>6</weaptype2>
+    <weaptype2_txt>Explosives</weaptype2_txt>
+    <weapsubtype2>11</weapsubtype2>
+    <weapsubtype2_txt>Projectile (rockets, mortars, RPGs, etc.)</weapsubtype2_txt>
+    <nkill>37</nkill>
+    <nkillus>0</nkillus>
+    <nwoundus>0</nwoundus>
+    <property>-9</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <scite1>“Tamil Tigers Kill 37 in Camp Raids,” Agence France Presse, July 25, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

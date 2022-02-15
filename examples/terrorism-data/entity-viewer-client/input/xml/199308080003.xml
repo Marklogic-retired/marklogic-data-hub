@@ -1,0 +1,61 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199308080003</eventid>
+    <iyear>1993</iyear>
+    <imonth>8</imonth>
+    <iday>8</iday>
+    <extended>0</extended>
+    <country>92</country>
+    <country_txt>India</country_txt>
+    <region>6</region>
+    <region_txt>South Asia</region_txt>
+    <provstate>Tamil Nadu (State)</provstate>
+    <city>Madras</city>
+    <vicinity>0</vicinity>
+    <summary>08/08/1993: The regional office headquarters of radical Hindu group, Rashtriya Swayamsevak Sangh (RSS), was destroyed by a powerful "suitcase" bomb in southern India. The bomb, planted in the heart of the two-story RSS building, killed 11 people and seven other people were injured.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>Rashtriya Swayamsevak Sangh (RSS) [National Volunteer Corps.]</corp1>
+    <target1>RSS headquarters in Madras</target1>
+    <natlty1>92</natlty1>
+    <natlty1_txt>India</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>16</weapsubtype1>
+    <weapsubtype1_txt>Unknown Explosive Type</weapsubtype1_txt>
+    <nkill>11</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>7</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propcomment>The entire 2-story building was destroyed.</propcomment>
+    <ishostkid>0</ishostkid>
+    <addnotes>Rashtriya Swayamsevak Sangh (National Volunteer Corps), RSS, is a radical Hindu revivalist organization that claims to have more than 1 million members. Although officially the group proclaims to be non-political, many of its members are activists and leaders in India's main opposition group, the right-wing Bharatiya Janata Party (Indian People's Party), or BJP. Muslim extremists recently threatened to blow-up RSS and BJP facilities.</addnotes>
+    <scite1>“Police find another body in rubble of bombed Hindu headquarters,” United Press International, August 9, 1993.</scite1>
+    <scite2>“India jails Muslim cleric after bombing of Hindu headquarters,” United Press International, August 10, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

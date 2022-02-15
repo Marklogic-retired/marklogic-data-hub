@@ -1,0 +1,62 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199312280001</eventid>
+    <iyear>1993</iyear>
+    <imonth>12</imonth>
+    <iday>28</iday>
+    <extended>0</extended>
+    <country>159</country>
+    <country_txt>Peru</country_txt>
+    <region>3</region>
+    <region_txt>South America</region_txt>
+    <provstate>Lima (Province)</provstate>
+    <city>Lima</city>
+    <vicinity>0</vicinity>
+    <summary>12/28/1993: Two vehicles carrying a total of 506 pounds of explosives were driven up to the exterior wall of a building in Lima, which houses Peru's anti-terrorist police, and detonated. The drivers and passengers fled from the vehicles shortly before the bombs went off, knocking down a section of the wall and injuring at least 21 people. Police suspect Maoist guerrillas, however no one claimed responsibility.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>1</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>3</targtype1>
+    <targtype1_txt>Police</targtype1_txt>
+    <corp1>Peruvian Police Anti-Terrorist Division</corp1>
+    <target1>Peruvian Police Anti-Terrorist Division office in Lima</target1>
+    <natlty1>159</natlty1>
+    <natlty1_txt>Peru</natlty1_txt>
+    <gname>Other</gname>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperpcap>1</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>15</weapsubtype1>
+    <weapsubtype1_txt>Vehicle</weapsubtype1_txt>
+    <weapdetail>Two vehicles carrying 506 lb of explosives</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>21</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propcomment>The building was heavily damaged.</propcomment>
+    <ishostkid>0</ishostkid>
+    <addnotes>This is one of 2 related attacks (cf. 199312280001 - 02).</addnotes>
+    <scite1>“Police Station, Funeral Home are Bombed are Bombed in Peru,” Orlando Sentinel, December 29, 1993.</scite1>
+    <scite2>“Guerillas Hit Hard at Capital of Peru,” The Record, December 29, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

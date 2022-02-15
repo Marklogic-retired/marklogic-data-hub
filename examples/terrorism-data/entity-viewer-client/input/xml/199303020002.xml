@@ -1,0 +1,60 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199303020002</eventid>
+    <iyear>1993</iyear>
+    <imonth>3</imonth>
+    <iday>2</iday>
+    <extended>0</extended>
+    <country>183</country>
+    <country_txt>South Africa</country_txt>
+    <region>11</region>
+    <region_txt>Sub-Saharan Africa</region_txt>
+    <provstate>KwaZulu-Natal (Province)</provstate>
+    <city>Pietermaritzburg</city>
+    <vicinity>0</vicinity>
+    <summary>03/02/1993: Gunmen firing automatic rifles ambushed a school van in the KwaZulu-Natal province of South Africa. The African National Congress is suspected of conducting the attack. 7 people were wounded in the attack and there were 6 casualties.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Civilians</corp1>
+    <target1>Children of supporters of the Inkatha Freedom Party</target1>
+    <natlty1>183</natlty1>
+    <natlty1_txt>South Africa</natlty1_txt>
+    <gname>African National Congress (South Africa)</gname>
+    <motive>The attack may have been politically motivated, as a result of rivalry between the African National Congress and the Inkatha Freedom Party.</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperpcap>3</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>2</weapsubtype1>
+    <weapsubtype1_txt>Automatic or Semi-Automatic Rifle</weapsubtype1_txt>
+    <nkill>6</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>7</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>Political rivalries between the African National Congress and the Inkatha Freedom Party was the suspected cause of the violence. The Human Rights Commission has designated most of the 1,400 politically motivated deaths as due to political rivalry between the two parties. 7 people were wounded and 6 casualties occurred as a result of the attack. This attack was part of a multiple incident, in which a minibus was attacked just 6 miles from where the school van was attacked. 3 people were wounded and there were 10 casualties.</addnotes>
+    <scite1>Rob Golden, “Attacks Threaten to Derail South African Negotiations,” CNN, March 6, 1993.</scite1>
+    <scite2>“Police say killing of 10 may be revenge attack,” United Press International, March 6, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

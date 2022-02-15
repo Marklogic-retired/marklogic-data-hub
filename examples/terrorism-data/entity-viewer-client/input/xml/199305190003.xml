@@ -1,0 +1,61 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199305190003</eventid>
+    <iyear>1993</iyear>
+    <imonth>5</imonth>
+    <iday>19</iday>
+    <extended>0</extended>
+    <country>26</country>
+    <country_txt>Bolivia</country_txt>
+    <region>3</region>
+    <region_txt>South America</region_txt>
+    <provstate>Unknown</provstate>
+    <city>Unknown</city>
+    <vicinity>0</vicinity>
+    <summary>05/19/1993: Police in Bolivia intercepted two letter bombs, sent by unknown perpetrators, that were addressed to Presidential Candidates Carlos Palenque and Hugo Banzar Suarez. There were no casualties in this attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>0</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>Condepa Party Presidential Candidate</corp1>
+    <target1>Carlos Palenque</target1>
+    <natlty1>26</natlty1>
+    <natlty1_txt>Bolivia</natlty1_txt>
+    <targtype2>2</targtype2>
+    <targtype2_txt>Government (General)</targtype2_txt>
+    <corp2>National Accord Party Presidential Candidate</corp2>
+    <target2>Hugo Banzer Suarez</target2>
+    <natlty2>26</natlty2>
+    <natlty2_txt>Bolivia</natlty2_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>9</weapsubtype1>
+    <weapsubtype1_txt>Letter Bomb</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

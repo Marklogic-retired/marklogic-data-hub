@@ -1,0 +1,62 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199311220002</eventid>
+    <iyear>1993</iyear>
+    <imonth>11</imonth>
+    <iday>22</iday>
+    <extended>0</extended>
+    <country>155</country>
+    <country_txt>West Bank and Gaza Strip</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Gaza Strip (Occupied Territory)</provstate>
+    <city>Gaza</city>
+    <vicinity>0</vicinity>
+    <summary>11/22/1993: A Palestinian suicide bomber rammed a stolen garbage truck into an army vehicle in Gaza city. The suicide vest he was wearing failed to go off, and he was eventually shot and killed. No one else was killed or injured. HAMAS was the suspected perpetrator of this incident.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>0</success>
+    <suicide>1</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>4</targtype1>
+    <targtype1_txt>Military</targtype1_txt>
+    <corp1>Israeli Police</corp1>
+    <target1>Israeli Police</target1>
+    <natlty1>97</natlty1>
+    <natlty1_txt>Israel</natlty1_txt>
+    <gname>Hamas (Islamic Resistance Movement)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperps>2</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>13</weapsubtype1>
+    <weapsubtype1_txt>Suicide (carried bodily by human being)</weapsubtype1_txt>
+    <weaptype2>10</weaptype2>
+    <weaptype2_txt>Vehicle (not to include vehicle-borne explosives, i.e., car or truck bombs)</weaptype2_txt>
+    <weapdetail>The suicide bomber stole a garbage truck and used it to ram the army convoy.</weapdetail>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>1</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <scite1>“Suicide bomber badly hurt,” Agence France Presse, November 22, 1993.</scite1>
+    <scite2>“Army shoots dead Moslem suicide bomber,” Agence France Presse, November 22, 1993.</scite2>
+    <scite3>“Terrorist killed after trying to ram IDF convoy in stolen garbage,” The Jerusalem Post, November 23, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

@@ -1,0 +1,72 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199311110002</eventid>
+    <iyear>1993</iyear>
+    <imonth>11</imonth>
+    <iday>11</iday>
+    <extended>1</extended>
+    <resolution>11/15/93</resolution>
+    <country>186</country>
+    <country_txt>Sri Lanka</country_txt>
+    <region>6</region>
+    <region_txt>South Asia</region_txt>
+    <provstate>North (Province)</provstate>
+    <city>Kilinochchi District</city>
+    <vicinity>0</vicinity>
+    <summary>11/11/1993: The Tamil Tigers invaded and took over the Pooneryn Military base in Sri Lanka. All in all there were at least 970 deaths and 400 wounded. 900 soldiers were held hostage until the incident was resolved on 11/15/1993.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>1</alternative>
+    <alternative_txt>Insurgency/Guerilla Action</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>5</attacktype1>
+    <attacktype1_txt>Hostage Taking (Barricade Incident)</attacktype1_txt>
+    <attacktype2>2</attacktype2>
+    <attacktype2_txt>Armed Assault</attacktype2_txt>
+    <targtype1>4</targtype1>
+    <targtype1_txt>Military</targtype1_txt>
+    <corp1>Pooneryn Military Base</corp1>
+    <target1>Pooneryn Military Base in Sri Lanka</target1>
+    <natlty1>186</natlty1>
+    <natlty1_txt>Sri Lanka</natlty1_txt>
+    <gname>Liberation Tigers of Tamil Eelam (LTTE)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>1000</nperps>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <nkill>970</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>470</nkillter>
+    <nwound>400</nwound>
+    <nwoundus>0</nwoundus>
+    <property>1</property>
+    <propextent>2</propextent>
+    <propextent_txt>Major (likely >= $1 million but &lt; $1 billion)</propextent_txt>
+    <propcomment>The perpetrators destroyed the base and stole equipment.</propcomment>
+    <ishostkid>1</ishostkid>
+    <nhostkid>900</nhostkid>
+    <nhostkidus>0</nhostkidus>
+    <kidhijcountry>4</kidhijcountry>
+    <ransom>0</ransom>
+    <hostkidoutcome>5</hostkidoutcome>
+    <hostkidoutcome_txt>Successful Rescue</hostkidoutcome_txt>
+    <nreleased>900</nreleased>
+    <scite1>“Sri Lanka camp toll set to reach 1,000,” Agence France Presse, November 15, 1993.</scite1>
+    <scite2>Keith Noyahr, “Sri Lankan troops rescue 900 trapped comrades, retake key base,” The Associated Press, November 14, 1993</scite2>
+    <scite3>“Sri Lanka reports ending rebel siege at base,” The New York Times, November 14, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

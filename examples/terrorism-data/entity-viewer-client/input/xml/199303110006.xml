@@ -1,0 +1,63 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199303110006</eventid>
+    <iyear>1993</iyear>
+    <imonth>3</imonth>
+    <iday>11</iday>
+    <extended>0</extended>
+    <country>110</country>
+    <country_txt>Lebanon</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Beirut (Governorate)</provstate>
+    <city>Beirut</city>
+    <vicinity>0</vicinity>
+    <summary>03/11/1993: Unidentified perpetrators threw dynamite at the Kuwaiti Embassy in Beirut. No injuries were reported. The Revolutionary Outburst Movement and the Arab Revolutionary Resurgence Movement both claimed responsibility for the attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>7</attacktype1>
+    <attacktype1_txt>Facility/Infrastructure Attack</attacktype1_txt>
+    <targtype1>7</targtype1>
+    <targtype1_txt>Government (Diplomatic)</targtype1_txt>
+    <corp1>Kuwaiti Ministry of Foreign Affairs</corp1>
+    <target1>Kuwaiti Embassy in Beirut</target1>
+    <natlty1>106</natlty1>
+    <natlty1_txt>Kuwait</natlty1_txt>
+    <gname>Revolutionary Outburst Movement</gname>
+    <gname2>Arab Revolutionary Resurgence Movement</gname2>
+    <motive>Protesting against the U.S. and Israeli governments as well as the "treacherous Arab regimes."</motive>
+    <guncertain1>0</guncertain1>
+    <guncertain2>0</guncertain2>
+    <individual>0</individual>
+    <claimed>1</claimed>
+    <claimmode>10</claimmode>
+    <claimmode_txt>Unknown</claimmode_txt>
+    <compclaim>1</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>17</weapsubtype1>
+    <weapsubtype1_txt>Other Explosive Type</weapsubtype1_txt>
+    <weapdetail>Dynamite</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <addnotes>The Revolutionary Outburst Movement and the Arab Revolutionary Resurgence Movement both claimed responsibility for the attack.</addnotes>
+    <scite1>Center for Terrorism and Intelligence Studies, Critical Infrastructure Terrorist Attack Database, San Jose, CA: Akribis Group, July 7 2006.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

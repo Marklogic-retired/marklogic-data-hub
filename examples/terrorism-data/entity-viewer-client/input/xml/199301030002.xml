@@ -1,0 +1,65 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199301030002</eventid>
+    <iyear>1993</iyear>
+    <imonth>1</imonth>
+    <iday>3</iday>
+    <extended>0</extended>
+    <country>97</country>
+    <country_txt>Israel</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Jerusalem (District)</provstate>
+    <city>West Jerusalem</city>
+    <vicinity>0</vicinity>
+    <summary>01/03/1993: Two male members of HAMAS stabbed and killed Mr. Haim Nahmani, an Israeli intelligence agent, in West Jerusalem, Israel.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>Agent for the Israeli Shin Beth Intelligence Service</corp1>
+    <target1>Haim Nahmani</target1>
+    <natlty1>97</natlty1>
+    <natlty1_txt>Israel</natlty1_txt>
+    <gname>Hamas (Islamic Resistance Movement)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>2</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>9</weaptype1>
+    <weaptype1_txt>Melee</weaptype1_txt>
+    <weapsubtype1>23</weapsubtype1>
+    <weapsubtype1_txt>Knife or Other Sharp Object</weapsubtype1_txt>
+    <weaptype2>9</weaptype2>
+    <weaptype2_txt>Melee</weaptype2_txt>
+    <weapsubtype2>21</weapsubtype2>
+    <weapsubtype2_txt>Blunt Object</weapsubtype2_txt>
+    <weapdetail>Haim Nahmani was stabbed and beaten with a hammer.</weapdetail>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>Haim Nahmani had arranged to meet a HAMAS informant, but was attacked and killed prior to the meeting.</addnotes>
+    <scite1>“HAMAS militant kills Israeli intelligence agent: minister,” Agence France Presse, January 3, 1993.</scite1>
+    <scite2>“Agent Killed in Palestinian Attack,” The Associated Press, January 3, 1993.</scite2>
+    <scite3>Jonathan Ferziger, “Police Search for Killer of Shin-Bet Agent,” United Press International, January 4, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>1</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

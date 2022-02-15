@@ -1,0 +1,65 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199310100003</eventid>
+    <iyear>1993</iyear>
+    <imonth>10</imonth>
+    <iday>10</iday>
+    <extended>0</extended>
+    <country>217</country>
+    <country_txt>United States</country_txt>
+    <region>1</region>
+    <region_txt>North America</region_txt>
+    <provstate>Texas</provstate>
+    <city>Houston</city>
+    <vicinity>0</vicinity>
+    <location>Container of gasoline lowered through rooftop air-conditioning vent</location>
+    <summary>10/10/1993: Joshua Graff set fire a fire at the West Loop Clinic in Houston, Texas, United States. There were no casualties, but the abortion clinic sustained $20,000 in damages.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>7</attacktype1>
+    <attacktype1_txt>Facility/Infrastructure Attack</attacktype1_txt>
+    <targtype1>5</targtype1>
+    <targtype1_txt>Abortion Related</targtype1_txt>
+    <target1>West Loop Clinic</target1>
+    <natlty1>217</natlty1>
+    <natlty1_txt>United States</natlty1_txt>
+    <gname>Anti-Abortion extremists</gname>
+    <motive>To protest the practice of abortion and to sabotage abortion facilities operating in Texas.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>1</nperps>
+    <nperpcap>1</nperpcap>
+    <claimed>0</claimed>
+    <weaptype1>8</weaptype1>
+    <weaptype1_txt>Incendiary</weaptype1_txt>
+    <weapsubtype1>20</weapsubtype1>
+    <weapsubtype1_txt>Gasoline or Alcohol</weapsubtype1_txt>
+    <weapdetail>Gasoline ignited on fire</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propvalue>20000</propvalue>
+    <propcomment>Attic of building damaged</propcomment>
+    <ishostkid>0</ishostkid>
+    <ransom>0</ransom>
+    <addnotes>The abortion clinic was previously the target of many protests.  Joshua Graff accidently left his wallet on the roof of the health care facility which subsequently led to his capture.</addnotes>
+    <scite1>"Teen-Ager Admits He Set Fire to Texas Abortion Clinic," Los Angeles Times, October 15, 1993.</scite1>
+    <scite2>"Abortion Foe Reportedly Admits Setting Fire to Clinic in Houston," Associated Press, October 15, 1993.</scite2>
+    <scite3>"Abortion Clinic Fire in Houston Ruled Arson," Associated Press, October 13, 1993.</scite3>
+    <dbsource>Anti-Abortion Project 2010</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

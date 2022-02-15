@@ -1,0 +1,72 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199308220002</eventid>
+    <iyear>1993</iyear>
+    <imonth>8</imonth>
+    <iday>22</iday>
+    <extended>0</extended>
+    <country>182</country>
+    <country_txt>Somalia</country_txt>
+    <region>11</region>
+    <region_txt>Sub-Saharan Africa</region_txt>
+    <provstate>Banaadir (Region)</provstate>
+    <city>Mogadishu</city>
+    <vicinity>0</vicinity>
+    <summary>08/22/1993: In Mogadishu, Somalia, six U.S. soldiers were injured when a remote controlled landmine destroyed their truck. The unknown perpetrators then used mortars, grenades and firearms to attack the rest of the 22-vehicle convoy.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>1</alternative>
+    <alternative_txt>Insurgency/Guerilla Action</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <attacktype2>3</attacktype2>
+    <attacktype2_txt>Bombing/Explosion</attacktype2_txt>
+    <targtype1>4</targtype1>
+    <targtype1_txt>Military</targtype1_txt>
+    <corp1>U.S. Army</corp1>
+    <target1>A 22-vehicle U.S. Army convoy</target1>
+    <natlty1>217</natlty1>
+    <natlty1_txt>United States</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>12</weapsubtype1>
+    <weapsubtype1_txt>Remote Trigger</weapsubtype1_txt>
+    <weaptype2>6</weaptype2>
+    <weaptype2_txt>Explosives</weaptype2_txt>
+    <weapsubtype2>7</weapsubtype2>
+    <weapsubtype2_txt>Grenade</weapsubtype2_txt>
+    <weaptype3>5</weaptype3>
+    <weaptype3_txt>Firearms</weaptype3_txt>
+    <weapsubtype3>5</weapsubtype3>
+    <weapsubtype3_txt>Unknown Gun Type</weapsubtype3_txt>
+    <weapdetail>Remote-controlled land mine</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>6</nwound>
+    <nwoundus>6</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propcomment>The truck in which the victims were riding was destroyed.</propcomment>
+    <ishostkid>0</ishostkid>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

@@ -1,0 +1,78 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199304160002</eventid>
+    <iyear>1993</iyear>
+    <imonth>4</imonth>
+    <iday>16</iday>
+    <extended>0</extended>
+    <country>45</country>
+    <country_txt>Colombia</country_txt>
+    <region>3</region>
+    <region_txt>South America</region_txt>
+    <provstate>Antioquia (Department)</provstate>
+    <city>Medellin</city>
+    <vicinity>0</vicinity>
+    <summary>04/16/1993: Fifteen gunmen from the vigilante group, People Persecuted by Pablo Escobar, dragged Guido Parro and his 16 year old son from their condominium and then killed them. A third body was found in another location, who was identified as the taxi driver of the stolen cab used in the kidnapping. The kidnapping and killings were in response to car bomb explosion, blamed on Pablo Escobar, in a shopping mall in Bogota that killed 200.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>6</attacktype1>
+    <attacktype1_txt>Hostage Taking (Kidnapping)</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Civilian</corp1>
+    <target1>Guido Parro</target1>
+    <natlty1>45</natlty1>
+    <natlty1_txt>Colombia</natlty1_txt>
+    <targtype2>14</targtype2>
+    <targtype2_txt>Private Citizens &amp; Property</targtype2_txt>
+    <corp2>Civilian</corp2>
+    <target2>Guido Parro's 16 year old son</target2>
+    <natlty2>45</natlty2>
+    <natlty2_txt>Colombia</natlty2_txt>
+    <targtype3>14</targtype3>
+    <targtype3_txt>Private Citizens &amp; Property</targtype3_txt>
+    <corp3>Civilian</corp3>
+    <target3>Taxi Driver</target3>
+    <gname>People Persecuted by Pablo Escobar (PEPES)</gname>
+    <motive>Reprisal for car bomb explosion in a shopping mall in Bogota, Columbia</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>15</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>1</claimmode>
+    <claimmode_txt>Letter</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>13</weaptype1>
+    <weaptype1_txt>Unknown</weaptype1_txt>
+    <nkill>3</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>1</ishostkid>
+    <nhostkid>2</nhostkid>
+    <nhostkidus>0</nhostkidus>
+    <nhours>-99</nhours>
+    <ransom>0</ransom>
+    <hostkidoutcome>4</hostkidoutcome>
+    <hostkidoutcome_txt>Hostage(s) killed (not during rescue attempt)</hostkidoutcome_txt>
+    <nreleased>0</nreleased>
+    <addnotes>Guido Parro was a lawyer working for Pablo Escobar, head of Cocaine cartel. The bodies were found in the trunk of a stolen tax, with two signs attached to them. One said "what do you think of the trade for the bombing in Bogota, Pablo?" and the other said "you were kidnapped because of your work for Pablo Escobar."</addnotes>
+    <scite1>The Associated Press, "Vigilantes kill drug lord's lawyer, son to avenge Bogota bomb," Chicago Tribune, April 17, 1993.</scite1>
+    <scite2>Mary Speck, "Revenge Came Quickly," Calgary Herald, April 17, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

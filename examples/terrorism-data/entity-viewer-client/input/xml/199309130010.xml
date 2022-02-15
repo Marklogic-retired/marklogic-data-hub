@@ -1,0 +1,61 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199309130010</eventid>
+    <iyear>1993</iyear>
+    <imonth>9</imonth>
+    <iday>13</iday>
+    <extended>0</extended>
+    <country>603</country>
+    <country_txt>United Kingdom</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Northern Ireland</provstate>
+    <city>Belfast</city>
+    <vicinity>0</vicinity>
+    <location>Ulster (Province)</location>
+    <summary>09/13/1993: A policeman was injured when a car bomb exploded in Belfast, Northern Ireland, badly damaging a hotel. No one was killed and no group claimed responsibility for the attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Civilians</corp1>
+    <target1>Civilians</target1>
+    <natlty1>233</natlty1>
+    <natlty1_txt>Northern Ireland</natlty1_txt>
+    <gname>Irish Republican Army (IRA)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>14</weapsubtype1>
+    <weapsubtype1_txt>Time Fuse</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>1</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propcomment>The blast damaged the side and rear of the hotel.</propcomment>
+    <ishostkid>0</ishostkid>
+    <scite1>“Policeman Injured in Car Bomb Blast," Agence France Presse, September 13, 1993.</scite1>
+    <scite2>“Car bomb blast injures police officer," United Press International, September 13, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

@@ -1,0 +1,63 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199310230001</eventid>
+    <iyear>1993</iyear>
+    <imonth>10</imonth>
+    <iday>23</iday>
+    <extended>0</extended>
+    <country>603</country>
+    <country_txt>United Kingdom</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Northern Ireland</provstate>
+    <city>Belfast</city>
+    <vicinity>0</vicinity>
+    <location>Ulster (Province)</location>
+    <summary>10/23/1993: Nine people were killed and more than 50 injured when the outlawed Irish Republican Army set off a bomb in the Protestant section of Belfast. The bomb was placed near a fishmonger's shop on Shankill Road and was targeted against a meeting of Ulster Freedom Fighters members.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>13</targtype1>
+    <targtype1_txt>Other</targtype1_txt>
+    <corp1>Ulster Freedom Fighters</corp1>
+    <target1>A meeting of UFF members taking place in an office above a fishmonger's shop on Shankill Road</target1>
+    <natlty1>233</natlty1>
+    <natlty1_txt>Northern Ireland</natlty1_txt>
+    <gname>Irish Republican Army (IRA)</gname>
+    <motive>The perpetrators believed the targeted building was being used for a meeting of the UFF.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>10</claimmode>
+    <claimmode_txt>Unknown</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>16</weapsubtype1>
+    <weapsubtype1_txt>Unknown Explosive Type</weapsubtype1_txt>
+    <nkill>10</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>1</nkillter>
+    <nwound>58</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>1</nwoundte>
+    <property>1</property>
+    <propextent>2</propextent>
+    <propextent_txt>Major (likely >= $1 million but &lt; $1 billion)</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <scite1>William Tuohy, “IRA Bombing Kills 9, Injures 50 in Belfast,” Chicago Sun Times, October 24, 1993.</scite1>
+    <scite2>David McKittrick, “Nine Die in IRA Bombing; Loyalist Promise Vengeance after Attack without Warning on Belfast Paramilitary HQ,” The Independent (London), October 24, 1993.</scite2>
+    <scite3>William Tuohy, “9 Die, 50 Hurt as IRA Bomb hits Belfast Protestant Area; Attackers Claim Targeted Building was Being used by Outlawed Ulster Freedom Fighters,” Los Angeles Times, October 24, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

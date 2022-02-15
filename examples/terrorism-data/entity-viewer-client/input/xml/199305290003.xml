@@ -1,0 +1,64 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199305290003</eventid>
+    <iyear>1993</iyear>
+    <imonth>5</imonth>
+    <iday>29</iday>
+    <extended>1</extended>
+    <resolution>5/30/93</resolution>
+    <country>45</country>
+    <country_txt>Colombia</country_txt>
+    <region>3</region>
+    <region_txt>South America</region_txt>
+    <provstate>Bolivar (Department)</provstate>
+    <city>San Jacinto</city>
+    <vicinity>0</vicinity>
+    <summary>05/29/1993: Javier Cirujano Arjona, a priest from the church in San Jacinto, Colombia was abducted and killed by the Revolutionary Armed Forces of Colombia (FARC) and the Popular Liberation Army (EPL). The priest had been protecting former guerillas who had returned to civilian life.</summary>
+    <crit1>0</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>6</attacktype1>
+    <attacktype1_txt>Hostage Taking (Kidnapping)</attacktype1_txt>
+    <targtype1>15</targtype1>
+    <targtype1_txt>Religious Figures/Institutions</targtype1_txt>
+    <corp1>Spanish Priest</corp1>
+    <target1>Javier Cirujano Arjona</target1>
+    <natlty1>185</natlty1>
+    <natlty1_txt>Spain</natlty1_txt>
+    <gname>Revolutionary Armed Forces of Colombia (FARC)</gname>
+    <gname2>Popular Liberation Army (EPL)</gname2>
+    <motive>The priest was killed because he had been protecting former guerillas who had returned to civilian life.</motive>
+    <guncertain1>1</guncertain1>
+    <guncertain2>1</guncertain2>
+    <individual>0</individual>
+    <claimed>0</claimed>
+    <claim2>0</claim2>
+    <compclaim>0</compclaim>
+    <weaptype1>13</weaptype1>
+    <weaptype1_txt>Unknown</weaptype1_txt>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>1</ishostkid>
+    <nhostkid>1</nhostkid>
+    <nhostkidus>0</nhostkidus>
+    <ndays>1</ndays>
+    <ransom>0</ransom>
+    <nreleased>0</nreleased>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

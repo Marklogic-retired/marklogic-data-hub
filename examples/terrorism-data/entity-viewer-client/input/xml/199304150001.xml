@@ -1,0 +1,67 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199304150001</eventid>
+    <iyear>1993</iyear>
+    <imonth>4</imonth>
+    <iday>15</iday>
+    <extended>0</extended>
+    <country>45</country>
+    <country_txt>Colombia</country_txt>
+    <region>3</region>
+    <region_txt>South America</region_txt>
+    <provstate>Bogota (Capital District)</provstate>
+    <city>Bogota</city>
+    <vicinity>0</vicinity>
+    <summary>04/15/1993: A car laced with dynamite exploded at about 2:30pm local time alongside the "93" Shopping Mall in Bogota during peak hours, killing 12 people and injuring 100 (seriously injuring 20). The act was blamed on Escobar's Medellin Cocaine Cartel.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>7</targtype1>
+    <targtype1_txt>Government (Diplomatic)</targtype1_txt>
+    <corp1>Brazilian Ministry of Foreign Affairs</corp1>
+    <target1>Brazilian Embassy in Bogota</target1>
+    <natlty1>30</natlty1>
+    <natlty1_txt>Brazil</natlty1_txt>
+    <targtype2>14</targtype2>
+    <targtype2_txt>Private Citizens &amp; Property</targtype2_txt>
+    <corp2>"99" Shopping Center</corp2>
+    <target2>"99" Shopping Center in Bogota</target2>
+    <natlty2>45</natlty2>
+    <natlty2_txt>Colombia</natlty2_txt>
+    <gname>Medellin Drug Cartel</gname>
+    <motive>Supposedly to push the Columbian government to pardon Escobar and allow his cartel free reign in his cocaine business.</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>15</weapsubtype1>
+    <weapsubtype1_txt>Vehicle</weapsubtype1_txt>
+    <weapdetail>The car bomb was filled with 100 kilograms of dynamite.</weapdetail>
+    <nkill>12</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>100</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <scite1>Tom Wells, "Car Bomb kills at Least 11," The Associated Press, April 15, 1993.</scite1>
+    <scite2>Federico Fulleda, "Colombian car bombing kills at least 12," United Press International, April 15, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

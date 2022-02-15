@@ -1,0 +1,64 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199310180001</eventid>
+    <iyear>1993</iyear>
+    <imonth>10</imonth>
+    <iday>18</iday>
+    <extended>1</extended>
+    <country>92</country>
+    <country_txt>India</country_txt>
+    <region>6</region>
+    <region_txt>South Asia</region_txt>
+    <provstate>Jammu and Kashmir (State)</provstate>
+    <city>Srinagar</city>
+    <vicinity>0</vicinity>
+    <summary>10/18/1993: A unidentified group of Muslim militants holed up in Kashmir's holiest mosque threatened to blow it up if the Indian government did not lift the siege by soldiers which on October 18th had entered its third day.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>7</attacktype1>
+    <attacktype1_txt>Facility/Infrastructure Attack</attacktype1_txt>
+    <attacktype2>3</attacktype2>
+    <attacktype2_txt>Bombing/Explosion</attacktype2_txt>
+    <targtype1>15</targtype1>
+    <targtype1_txt>Religious Figures/Institutions</targtype1_txt>
+    <corp1>Hazratbal Mosque</corp1>
+    <target1>Hazratbal Mosque in Srinagar</target1>
+    <natlty1>92</natlty1>
+    <natlty1_txt>India</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Militants demand the Indian army end its siege of the mosque and permit people to enter.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>-9</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <weaptype2>6</weaptype2>
+    <weaptype2_txt>Explosives</weaptype2_txt>
+    <weapsubtype2>16</weapsubtype2>
+    <weapsubtype2_txt>Unknown Explosive Type</weapsubtype2_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <scite1>"India: Stalemate in Kashmir, Militants Threaten Mosque,” Inter Press International, October 18, 1993.</scite1>
+    <scite2>"Muslim Rebels in Kashmir Refuse to Leave Mosque,” Japan Economic Newswire, October 21, 1993.</scite2>
+    <scite3>"Indian Media, Opposition want Kashmir Mosque Protected,” Agence France Presse, October 19, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

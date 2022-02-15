@@ -1,0 +1,63 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199307200003</eventid>
+    <iyear>1993</iyear>
+    <imonth>7</imonth>
+    <iday>20</iday>
+    <extended>0</extended>
+    <country>217</country>
+    <country_txt>United States</country_txt>
+    <region>1</region>
+    <region_txt>North America</region_txt>
+    <provstate>Washington</provstate>
+    <city>Tacoma</city>
+    <vicinity>0</vicinity>
+    <summary>07/20/1993: A pipe bomb was thrown into a National Association for the Advancement of Colored People (NAACP) office in Tacoma, Washington, USA, causing minor property damage. The office was empty at the time, and no casualties resulted. Supremacist Mark Kowaalski pleaded guilty to this incident in October 1993 and fellow supremacists Jeremiah Gordon Knesal and Wayne Paul Wooten Jr. were arrested in December 1993 for this attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>1</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>National Association for the Advancement of Colored People (NAACP)</corp1>
+    <target1>National Association for the Advancement of Colored People (NAACP) office in Tacoma</target1>
+    <natlty1>217</natlty1>
+    <natlty1_txt>United States</natlty1_txt>
+    <gname>Unaffiliated Individual(s)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>1</claimed>
+    <claimmode>9</claimmode>
+    <claimmode_txt>Other</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>17</weapsubtype1>
+    <weapsubtype1_txt>Other Explosive Type</weapsubtype1_txt>
+    <weapdetail>Pipebomb</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <addnotes>The men were reportedly members of the neo-Nazi Church of the Creator. Authorities believed that the perpetrators were intent on starting a race war. This was one of three linked incidents (cf. 199307200001, 199307200003, 199207220001).</addnotes>
+    <scite1>Eric Houston,  “Supremacists to Plead Guilty to Bombings: Two Admit to July Incidents Involving NAACP, Gay Bar,” Seattle Post-Intelligencer, December 4, 1993.</scite1>
+    <scite2>Maria Alicia Gaura, “2 Neo-Nazis Plead Guilty: They admit bombing NAACP building and gay bar in Washington,” The San Francisco Chronicle, February 11, 1994.</scite2>
+    <scite3>Stephen Schwartz, “Arson Destroys Sacramento NAACP Office,” The San Francisco Chronicle, July 28, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

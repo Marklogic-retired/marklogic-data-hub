@@ -1,0 +1,58 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199312270004</eventid>
+    <iyear>1993</iyear>
+    <imonth>12</imonth>
+    <iday>27</iday>
+    <extended>0</extended>
+    <country>603</country>
+    <country_txt>United Kingdom</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Northern Ireland</provstate>
+    <city>Portadown</city>
+    <vicinity>0</vicinity>
+    <location>Armagh (County)</location>
+    <summary>12/27/1993: A member of the Irish Republican Army (IRA) was suspected of firing shots from a passing car at a Territorial Army base at Charles Street, Portadown, County Armagh, Northern Ireland. A woman suffered minor injuries, however the base was not damaged.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>4</targtype1>
+    <targtype1_txt>Military</targtype1_txt>
+    <corp1>Territorial Army Base</corp1>
+    <target1>Territorial Army Base at Charles Street</target1>
+    <natlty1>233</natlty1>
+    <natlty1_txt>Northern Ireland</natlty1_txt>
+    <gname>Irish Republican Army (IRA)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperps>1</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>16</weapsubtype1>
+    <weapsubtype1_txt>Unknown Explosive Type</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>2</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <scite1>Suzanne Breen, “Army base attacked by gunmen,” The Guardian (London), December 27, 1993</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

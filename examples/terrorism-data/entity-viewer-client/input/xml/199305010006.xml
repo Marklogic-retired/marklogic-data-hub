@@ -1,0 +1,54 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199305010006</eventid>
+    <iyear>1993</iyear>
+    <imonth>5</imonth>
+    <iday>1</iday>
+    <extended>0</extended>
+    <country>69</country>
+    <country_txt>France</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Midi-Pyrenees (Region)</provstate>
+    <city>Pyrenees</city>
+    <vicinity>0</vicinity>
+    <summary>05/01/1993: Euskadi ta Askatasuna (ETA) was responsible for sabotaging a natural gas pipeline in the Pyrenees, causing minor damage.</summary>
+    <crit1>1</crit1>
+    <crit2>0</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>7</attacktype1>
+    <attacktype1_txt>Facility/Infrastructure Attack</attacktype1_txt>
+    <targtype1>13</targtype1>
+    <targtype1_txt>Other</targtype1_txt>
+    <target1>Natural gas pipeline in the Pyrenees</target1>
+    <natlty1>69</natlty1>
+    <natlty1_txt>France</natlty1_txt>
+    <gname>Basque Fatherland and Freedom (ETA)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>13</weaptype1>
+    <weaptype1_txt>Unknown</weaptype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <scite1>Center for Terrorism and Intelligence Studies, Critical Infrastructure Terrorist Attack Database, San Jose, CA: Akribis Group, July 7 2006.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

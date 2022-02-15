@@ -1,0 +1,65 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199306240004</eventid>
+    <iyear>1993</iyear>
+    <imonth>6</imonth>
+    <iday>24</iday>
+    <extended>0</extended>
+    <country>69</country>
+    <country_txt>France</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Bouches-du-Rhône (Department)</provstate>
+    <city>Marseille</city>
+    <vicinity>0</vicinity>
+    <summary>06/24/1993: In a series of related Kurdistan Workers' Party (PKK) attacks against Turkish targets across Europe, members of the PKK, who claimed to have bombs, took over the Turkish Consulate in Marseille along with 10 hostages. No injuries were reported and the hostages were released without incident after three hours.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>1</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>5</attacktype1>
+    <attacktype1_txt>Hostage Taking (Barricade Incident)</attacktype1_txt>
+    <targtype1>7</targtype1>
+    <targtype1_txt>Government (Diplomatic)</targtype1_txt>
+    <corp1>Turkish Ministry of Foreign Affairs</corp1>
+    <target1>Turkish Consulate in Marseilles</target1>
+    <natlty1>209</natlty1>
+    <natlty1_txt>Turkey</natlty1_txt>
+    <gname>Kurdistan Workers' Party (PKK)</gname>
+    <motive>Protesting Turkish treatment of Kurds</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>7</weaptype1>
+    <weaptype1_txt>Fake Weapons</weaptype1_txt>
+    <weapdetail>The hostage takers claimed to have explosives, but it was unclear from the reports if they actually had them.</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>-9</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>1</ishostkid>
+    <nhostkid>10</nhostkid>
+    <nhostkidus>0</nhostkidus>
+    <nhours>3</nhours>
+    <ransom>0</ransom>
+    <hostkidoutcome>2</hostkidoutcome>
+    <hostkidoutcome_txt>Hostage(s) released by perpetrators</hostkidoutcome_txt>
+    <addnotes>This was one of seventeen related attacks (cf. 199306240001-4; 199306240006-16; 199306240019-20).</addnotes>
+    <scite1>“Terrorism Militant Kurds attack Turkish holdings in five European countries; one dies,” Chicago Tribune, June 24, 1993.</scite1>
+    <scite2>Cayol T, “Kurds seize hostages,” Herald Sun, June 25, 1993.</scite2>
+    <scite3>“Kurdish activists hit Turkish targets across Europe as coalition govt pact is signed,” Mideast Mirror, June 24, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>1</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

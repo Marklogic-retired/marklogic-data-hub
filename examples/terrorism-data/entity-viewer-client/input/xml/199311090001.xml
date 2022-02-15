@@ -1,0 +1,66 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199311090001</eventid>
+    <iyear>1993</iyear>
+    <imonth>11</imonth>
+    <iday>9</iday>
+    <extended>0</extended>
+    <country>155</country>
+    <country_txt>West Bank and Gaza Strip</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Gaza Strip (Occupied Territory)</provstate>
+    <city>Gaza</city>
+    <vicinity>0</vicinity>
+    <summary>11/09/1993: Terrorists stole a garbage truck and crushed an Israeli man to death. There were no claims of responsibility or injuries.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Arab Israeli Civilian</corp1>
+    <target1>Salman Hawajleh</target1>
+    <natlty1>155</natlty1>
+    <natlty1_txt>West Bank and Gaza Strip</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>3</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>9</weaptype1>
+    <weaptype1_txt>Melee</weaptype1_txt>
+    <weapsubtype1>23</weapsubtype1>
+    <weapsubtype1_txt>Knife or Other Sharp Object</weapsubtype1_txt>
+    <weaptype2>10</weaptype2>
+    <weaptype2_txt>Vehicle (not to include vehicle-borne explosives, i.e., car or truck bombs)</weaptype2_txt>
+    <weapdetail>3 men stole a garbage truck using knives and crashed the garbage truck into another car.</weapdetail>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <scite1>Jon Immanuel, “Terrorists in stolen garbage truck crush Beduin to death. 3 masked men were looking for Israeli to attack,” The Jerusalem Post, November 10, 1993.</scite1>
+    <scite2>“Rabin says he won’t abandon Jewish settlers; Mideast: Prime Minister assures Israelis in occupied territories that they’re safe. Meeting follows riots in Gaza and West Bank,” Los Angeles Times, November 10, 1993.</scite2>
+    <scite3>“Palestinians kill Israeli Arab, Rabin confers with settlers,” The New York Times, November 10, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

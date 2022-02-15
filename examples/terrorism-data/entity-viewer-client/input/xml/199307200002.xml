@@ -1,0 +1,75 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199307200002</eventid>
+    <iyear>1993</iyear>
+    <imonth>7</imonth>
+    <iday>20</iday>
+    <extended>0</extended>
+    <country>603</country>
+    <country_txt>United Kingdom</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Northern Ireland</provstate>
+    <city>Belfast</city>
+    <vicinity>0</vicinity>
+    <location>Ulster (Province)</location>
+    <summary>07/20/1993: Loyalists from The Ulster Freedom Fighters launched coordinated bomb attacks at the Belfast homes of three prominent members of the nationalist SDLP. No one was hurt in the attacks.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>1</attacktype1>
+    <attacktype1_txt>Assassination</attacktype1_txt>
+    <targtype1>22</targtype1>
+    <targtype1_txt>Violent Political Party</targtype1_txt>
+    <corp1>Irish Government Political Party (SDLP)</corp1>
+    <target1>Dr. Joe Hendron (MP)</target1>
+    <natlty1>96</natlty1>
+    <natlty1_txt>Ireland</natlty1_txt>
+    <targtype2>22</targtype2>
+    <targtype2_txt>Violent Political Party</targtype2_txt>
+    <corp2>Irish Government Political Party (SDLP)</corp2>
+    <target2>Dr. Brian Feeney (member)</target2>
+    <natlty2>96</natlty2>
+    <natlty2_txt>Ireland</natlty2_txt>
+    <targtype3>22</targtype3>
+    <targtype3_txt>Violent Political Party</targtype3_txt>
+    <corp3>Irish Government Political Party (SDLP Affiliate)</corp3>
+    <target3>Mary Muldoon (Councillor)</target3>
+    <natlty3>96</natlty3>
+    <natlty3_txt>Ireland</natlty3_txt>
+    <gname>Ulster Freedom Fighters (UFF)</gname>
+    <motive>The perpetrators claimed that SDLP was linked to the IRA and Sinn Fein.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>3</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>2</claimmode>
+    <claimmode_txt>Call (post-incident)</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>17</weapsubtype1>
+    <weapsubtype1_txt>Other Explosive Type</weapsubtype1_txt>
+    <weapdetail>Three one-pound bombs</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>-9</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <scite1>“Terrorists in Bomb Attacks on SDLP Politicians; Blasts Display UFF's Increasing Sophistication,” The Independent (London), July 21, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

@@ -1,0 +1,61 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199301150001</eventid>
+    <iyear>1993</iyear>
+    <imonth>1</imonth>
+    <iday>15</iday>
+    <extended>0</extended>
+    <country>97</country>
+    <country_txt>Israel</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Tel Aviv (District)</provstate>
+    <city>Tel Aviv</city>
+    <vicinity>0</vicinity>
+    <summary>01/15/1993: Mr. Fakhri Dahduh, a member of the Palestinian Islamic Jihad (PIJ), stabbed and killed four people in Tel Aviv, Israel. The PIJ claimed responsibility via a letter to authorities.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Private Citizens</corp1>
+    <target1>Private Citizens</target1>
+    <natlty1>97</natlty1>
+    <natlty1_txt>Israel</natlty1_txt>
+    <gname>Palestinian Islamic Jihad (PIJ)</gname>
+    <gsubname>Palestinian Islamic Jihad</gsubname>
+    <motive>This attack was committed as revenge for the deportation of "the strugglers by the Zionist enemy and in tribute to Seyyed Abbas Musawi."</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>1</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>1</claimmode>
+    <claimmode_txt>Letter</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>9</weaptype1>
+    <weaptype1_txt>Melee</weaptype1_txt>
+    <weapsubtype1>23</weapsubtype1>
+    <weapsubtype1_txt>Knife or Other Sharp Object</weapsubtype1_txt>
+    <nkill>4</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>Musawi, the person whose death the PIJ was avenging, was the leader of the Hizballah until he was killed during an Israeli helicopter attack on his convoy in southern Lebanon on February 16, 1992.</addnotes>
+    <scite1>“Islamic Jihad claims Tel Aviv’s attack,” United Press International, January 15, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>1</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

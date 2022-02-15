@@ -1,0 +1,65 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199303280002</eventid>
+    <iyear>1993</iyear>
+    <imonth>3</imonth>
+    <iday>28</iday>
+    <extended>0</extended>
+    <country>92</country>
+    <country_txt>India</country_txt>
+    <region>6</region>
+    <region_txt>South Asia</region_txt>
+    <provstate>National Capital Territory of Delhi (Union Territory)</provstate>
+    <city>New Delhi</city>
+    <vicinity>1</vicinity>
+    <location>Indian Airlines plane in route to Amritsar</location>
+    <summary>03/28/1993: A lone perpetrator hijacked an Indian Airlines flight taking off from New Delhi. He attempted to have the pilot fly to Pakistan, but the plane ended up landing in Amritsar. The perpetrators surrendered after 5 hours. There were no injuries.</summary>
+    <crit1>0</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>6</attacktype1>
+    <attacktype1_txt>Hostage Taking (Kidnapping)</attacktype1_txt>
+    <targtype1>6</targtype1>
+    <targtype1_txt>Airports &amp; Aircraft</targtype1_txt>
+    <corp1>Indian Airlines</corp1>
+    <target1>Indian Airlines plane</target1>
+    <natlty1>92</natlty1>
+    <natlty1_txt>India</natlty1_txt>
+    <gname>Unaffiliated Individual(s)</gname>
+    <motive>Protesting Hindu-Muslim violence in India.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>1</nperps>
+    <nperpcap>1</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>13</weaptype1>
+    <weaptype1_txt>Unknown</weaptype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>1</ishostkid>
+    <nhostkid>-99</nhostkid>
+    <nhostkidus>-99</nhostkidus>
+    <nhours>5</nhours>
+    <ransom>0</ransom>
+    <hostkidoutcome>2</hostkidoutcome>
+    <hostkidoutcome_txt>Hostage(s) released by perpetrators</hostkidoutcome_txt>
+    <nreleased>-99</nreleased>
+    <scite1>Center for Terrorism and Intelligence Studies, Critical Infrastructure Terrorist Attack Database, San Jose, CA: Akribis Group, July 7 2006.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

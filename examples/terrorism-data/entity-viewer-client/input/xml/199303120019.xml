@@ -1,0 +1,60 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199303120019</eventid>
+    <iyear>1993</iyear>
+    <imonth>3</imonth>
+    <iday>12</iday>
+    <extended>0</extended>
+    <country>106</country>
+    <country_txt>Kuwait</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Al Farwaniyah (Province)</provstate>
+    <city>Farwaniyah</city>
+    <vicinity>0</vicinity>
+    <summary>03/12/1993: At approximately 9:00pm local time, a bomb exploded in the garden facing of the Holiday Inn Hotel in Farwaniyah, Kuwait, followed by a second bomb in the same location a few minutes later. The incident caused no casualties and little damage. The perpetrators of this attack were unknown.</summary>
+    <crit1>0</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>1</targtype1>
+    <targtype1_txt>Business</targtype1_txt>
+    <corp1>Holiday Inn</corp1>
+    <target1>Holiday Inn hotel</target1>
+    <natlty1>217</natlty1>
+    <natlty1_txt>United States</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>16</weapsubtype1>
+    <weapsubtype1_txt>Unknown Explosive Type</weapsubtype1_txt>
+    <weapdetail>Two bombs</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <scite1>“Kuwait; Three further explosions; no casualties, little damage reported,” Kuwait News Agency, March 15, 1993.</scite1>
+    <scite2>“Bombs explode in Kuwait,” Moneyclips, March 14, 1993.</scite2>
+    <scite3>“Three explosions reported in Kuwait,” Xinhua, March 13, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

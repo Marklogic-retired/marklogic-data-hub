@@ -1,0 +1,68 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199301080002</eventid>
+    <iyear>1993</iyear>
+    <imonth>1</imonth>
+    <iday>8</iday>
+    <extended>0</extended>
+    <country>603</country>
+    <country_txt>United Kingdom</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Northern Ireland</provstate>
+    <city>Fermanagh</city>
+    <vicinity>0</vicinity>
+    <location>Fermanagh (County)</location>
+    <summary>01/08/1993: The Irish Republican Army (IRA) used rockets and firearms to attack soldiers in Fermanagh, Northern Ireland. No one was injured in the attack. The IRA claimed responsibility for this incident.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <attacktype2>2</attacktype2>
+    <attacktype2_txt>Armed Assault</attacktype2_txt>
+    <targtype1>3</targtype1>
+    <targtype1_txt>Police</targtype1_txt>
+    <corp1>Security Forces</corp1>
+    <target1>Soldiers of the Security Forces</target1>
+    <natlty1>233</natlty1>
+    <natlty1_txt>Northern Ireland</natlty1_txt>
+    <gname>Irish Republican Army (IRA)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>10</claimmode>
+    <claimmode_txt>Unknown</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>11</weapsubtype1>
+    <weapsubtype1_txt>Projectile (rockets, mortars, RPGs, etc.)</weapsubtype1_txt>
+    <weaptype2>5</weaptype2>
+    <weaptype2_txt>Firearms</weaptype2_txt>
+    <weapsubtype2>5</weapsubtype2>
+    <weapsubtype2_txt>Unknown Gun Type</weapsubtype2_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <scite1>Ian Graham, “Army Fires Across Border at Terrorist Suspects,” Press Association, January 8, 1993.</scite1>
+    <scite2>David Sharrock, “Army Fires Across Border at Terrorist Suspects,” Guardian, January 8, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

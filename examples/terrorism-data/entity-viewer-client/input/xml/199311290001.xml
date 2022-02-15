@@ -1,0 +1,79 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199311290001</eventid>
+    <iyear>1993</iyear>
+    <imonth>11</imonth>
+    <iday>29</iday>
+    <extended>1</extended>
+    <resolution>11/30/93</resolution>
+    <country>94</country>
+    <country_txt>Iran</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Kohgiluyen va Buyer Ahmad (Province)</provstate>
+    <city>Gachsaran</city>
+    <vicinity>0</vicinity>
+    <summary>11/29/1993: An Iranian attempting to gain political asylum hijacked an Iranian plane and flew to Iraq. No one was killed or injured. 38 people were on the plane. Mujahedeen-e-Khalq (MKO) also claimed responsibility for the incident, but the Iranian denied MKO-affiliation.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>4</attacktype1>
+    <attacktype1_txt>Hijacking</attacktype1_txt>
+    <targtype1>6</targtype1>
+    <targtype1_txt>Airports &amp; Aircraft</targtype1_txt>
+    <corp1>Iranian Airliner</corp1>
+    <target1>Iranian Airliner</target1>
+    <natlty1>94</natlty1>
+    <natlty1_txt>Iran</natlty1_txt>
+    <gname>Unaffiliated Individual(s)</gname>
+    <gname2>Mujahedin-e Khalq (MEK)</gname2>
+    <motive>The perpetrator wanted to flee repression and gain political asylum.</motive>
+    <guncertain1>0</guncertain1>
+    <guncertain2>0</guncertain2>
+    <individual>0</individual>
+    <nperps>1</nperps>
+    <nperpcap>1</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>8</claimmode>
+    <claimmode_txt>Personal claim</claimmode_txt>
+    <claim2>1</claim2>
+    <claimmode2>2</claimmode2>
+    <claimmode2_txt>Call (post-incident)</claimmode2_txt>
+    <compclaim>1</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>1</ishostkid>
+    <nhostkid>38</nhostkid>
+    <nhostkidus>0</nhostkidus>
+    <ndays>1</ndays>
+    <divert>Iraq</divert>
+    <kidhijcountry>Iraq</kidhijcountry>
+    <ransom>0</ransom>
+    <hostkidoutcome>2</hostkidoutcome>
+    <hostkidoutcome_txt>Hostage(s) released by perpetrators</hostkidoutcome_txt>
+    <nreleased>38</nreleased>
+    <addnotes>The man who hijacked the plane claimed he had no affiliation with the Mujahedeen-e-Khalq (MKO). He said he had only personal reasons (political asylum) for hijacking the plane. However, the MKO also claimed responsibility for the hijacking.</addnotes>
+    <scite1>“MKO takes blame for hijacking plane to Basra,” Moneyclips, November 30, 1993.</scite1>
+    <scite2>“Iranian hijacker was fireman fleeing repression,” Agence France Presse, November 30, 1993.</scite2>
+    <scite3>“Passengers, crew of hijacked plane arrived in Baghdad,” Agence France Presse, November 30, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

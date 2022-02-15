@@ -1,0 +1,58 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199304130001</eventid>
+    <iyear>1993</iyear>
+    <imonth>4</imonth>
+    <iday>13</iday>
+    <extended>0</extended>
+    <country>110</country>
+    <country_txt>Lebanon</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>South (Governorate)</provstate>
+    <city>Qantara</city>
+    <vicinity>1</vicinity>
+    <location>Soldiers were on patrol near the village of Qantara</location>
+    <summary>04/13/1993: Hizballah ambushed Israeli soldiers on patrol near the village of Qantara. Members of Hizballah set off a bomb which killed three and injured two others.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>4</targtype1>
+    <targtype1_txt>Military</targtype1_txt>
+    <corp1>Israeli Security Forces</corp1>
+    <target1>Israeli Soldiers patrolling near Qantara</target1>
+    <natlty1>97</natlty1>
+    <natlty1_txt>Israel</natlty1_txt>
+    <gname>Hezbollah</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>1</claimed>
+    <claimmode>10</claimmode>
+    <claimmode_txt>Unknown</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>16</weapsubtype1>
+    <weapsubtype1_txt>Unknown Explosive Type</weapsubtype1_txt>
+    <nkill>3</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>2</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>-9</property>
+    <ishostkid>0</ishostkid>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

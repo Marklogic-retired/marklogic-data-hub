@@ -1,0 +1,60 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199301080003</eventid>
+    <iyear>1993</iyear>
+    <imonth>1</imonth>
+    <iday>8</iday>
+    <extended>0</extended>
+    <country>45</country>
+    <country_txt>Colombia</country_txt>
+    <region>3</region>
+    <region_txt>South America</region_txt>
+    <provstate>Antioquia (Department)</provstate>
+    <city>Medellin</city>
+    <vicinity>0</vicinity>
+    <summary>01/08/1993: A car bomb exploded in front of an apartment complex housing several judges and magistrates in Medellin, Colombia. The two people who planted the bomb were killed, and 39 were injured in the attack that officials blamed on the Medellin Cartel. The apartment complex was damaged considerably.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>1</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>Government Judges and Magistrates</corp1>
+    <target1>Apartment Complex for Government Employees</target1>
+    <natlty1>45</natlty1>
+    <natlty1_txt>Colombia</natlty1_txt>
+    <gname>Medellin Drug Cartel</gname>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>15</weapsubtype1>
+    <weapsubtype1_txt>Vehicle</weapsubtype1_txt>
+    <weapdetail>The car was carrying 220 pounds of dynamite.</weapdetail>
+    <nkill>2</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>2</nkillter>
+    <nwound>39</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <scite1>“Medellin Car Bomb Kills 2, Injures 39,” Times-Picayune (New Orleans), January 9, 1993.</scite1>
+    <scite2>“Two Terror Suspects Die When Bomb Explodes,” Miami Herald, January 9, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

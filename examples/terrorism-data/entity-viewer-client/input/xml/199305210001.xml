@@ -1,0 +1,55 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199305210001</eventid>
+    <iyear>1993</iyear>
+    <imonth>5</imonth>
+    <iday>21</iday>
+    <extended>0</extended>
+    <country>60</country>
+    <country_txt>Egypt</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Al Qahirah (Governorate)</provstate>
+    <city>Cairo</city>
+    <vicinity>0</vicinity>
+    <summary>05/21/1993: A car bomb exploded in Cairo, spraying glass and nail-size shards downtown, killing 4 and injuring 16. There was no immediate claim of responsibility, but it conformed to the tactics of the Islamic Holy War Group.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <target1>Downtown Cairo</target1>
+    <natlty1>60</natlty1>
+    <natlty1_txt>Egypt</natlty1_txt>
+    <gname>Islamic Holy War Group</gname>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>15</weapsubtype1>
+    <weapsubtype1_txt>Vehicle</weapsubtype1_txt>
+    <weapdetail>The bomb sprayed glass and nails.</weapdetail>
+    <nkill>4</nkill>
+    <nkillter>0</nkillter>
+    <nwound>16</nwound>
+    <property>1</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <addnotes>The Islamic Holy War Group wants to install a Islamic government in Egypt.</addnotes>
+    <scite1>"Car Bomb Explodes in Cairo, Kills Three, Wounds 15," The Associated Press, May 21, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

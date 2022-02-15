@@ -1,0 +1,59 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199308110002</eventid>
+    <iyear>1993</iyear>
+    <imonth>8</imonth>
+    <iday>11</iday>
+    <extended>0</extended>
+    <country>74</country>
+    <country_txt>Georgia</country_txt>
+    <region>7</region>
+    <region_txt>Central Asia</region_txt>
+    <provstate>Kvemo Kartli (Region)</provstate>
+    <city>Marneuli</city>
+    <vicinity>0</vicinity>
+    <summary>08/11/1993: A bomb exploded in a busy marketplace in the southern Georgian town of Marneuli, 19 miles outside the capital, Tbilisi. Twenty people were injured, though no one was killed by the blast.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <target1>Georgian market in Marneuli</target1>
+    <natlty1>74</natlty1>
+    <natlty1_txt>Georgia</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>16</weapsubtype1>
+    <weapsubtype1_txt>Unknown Explosive Type</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>20</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>-9</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <addnotes>Marneuli has a large Azerbaijani population. The attack at the market may be connected to hostilities between Azerbaijan and Armenia over the Nagorno-Karabach enclave.</addnotes>
+    <scite1>“Bomb kills four in busy Georgian market,” United Press International, August 11, 1993.</scite1>
+    <scite2>“Georgia blast,” The Evening Standard (London), August 11, 1993</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

@@ -1,0 +1,62 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199307070004</eventid>
+    <iyear>1993</iyear>
+    <imonth>7</imonth>
+    <iday>7</iday>
+    <extended>0</extended>
+    <country>101</country>
+    <country_txt>Japan</country_txt>
+    <region>4</region>
+    <region_txt>East Asia</region_txt>
+    <provstate>Osaka (Prefecture)</provstate>
+    <city>Osaka</city>
+    <vicinity>0</vicinity>
+    <summary>07/07/1993: This was one of two attacks carried out by a small militant group, the Kakurokyo (Revolutionary Workers), in protest to the G-7 Summit in Tokyo. In this attack a building under construction (to house the International Centre for Environmental Technology) in Osaka was bombed. There were no injuries.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>1</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>7</attacktype1>
+    <attacktype1_txt>Facility/Infrastructure Attack</attacktype1_txt>
+    <targtype1>8</targtype1>
+    <targtype1_txt>Educational Institution</targtype1_txt>
+    <corp1>International Centre for Environmental Technology</corp1>
+    <target1>Building under construction intended to house the International Centre for Environmental Technology</target1>
+    <natlty1>101</natlty1>
+    <natlty1_txt>Japan</natlty1_txt>
+    <gname>Revolutionary Workers' Council (Kakurokyo)</gname>
+    <motive>To protest against the Tokyo G-7 summit.</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>17</weapsubtype1>
+    <weapsubtype1_txt>Other Explosive Type</weapsubtype1_txt>
+    <weapdetail>Homemade Bomb</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propcomment>Damage was limited to broken window panes</propcomment>
+    <ishostkid>0</ishostkid>
+    <addnotes>This case was one of 2 related attacks (cf. 199307070002)</addnotes>
+    <scite1>“Radical Protesters in Bomb, Missile Blast,” Herald Sun, July 8, 1993.</scite1>
+    <scite2>MIPT Terrorism Knowledge Base. "TKB Incident Page: Kakurokyo attacked Diplomatic target (July 7, 1993, Japan)." Website. Available from http://www.tkb.org/Incident.jsp?incID=7123.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>
