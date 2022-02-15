@@ -1,5 +1,6 @@
 import React, { useState, useContext } from "react";
 import MetadataValue from "../MetadataValue/MetadataValue";
+import Value from "../Value/Value";
 import Table from "react-bootstrap/Table";
 import { DetailContext } from "../../store/DetailContext";
 import "./DataTableValue.scss";
@@ -98,7 +99,7 @@ const DataTableValue: React.FC<Props> = (props) => {
                                     {i === 0 ? getIcon(props.config.icon) : null}
                                 </td>}
                                 <td key={"data-" + i} className="value">
-                                    <div>{d}</div>
+                                    <Value style={props.config.style}>{d}</Value>
                                 </td>
                                 {_.isArray(props.config.metadata) && props.config.metadata.map((meta, i2) => {
                                 return (
