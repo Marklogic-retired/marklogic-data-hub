@@ -1,0 +1,63 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199301120001</eventid>
+    <iyear>1993</iyear>
+    <imonth>1</imonth>
+    <iday>12</iday>
+    <extended>0</extended>
+    <country>36</country>
+    <country_txt>Cambodia</country_txt>
+    <region>5</region>
+    <region_txt>Southeast Asia</region_txt>
+    <provstate>Unknown</provstate>
+    <city>Ang Kron</city>
+    <vicinity>0</vicinity>
+    <summary>01/12/1993: A rocket and mortar attack preceded a ground assault on a United Nations Transitional Authority (UNTAC) barracks in Ang Kron, Cambodia. Two Cambodian women employed by UNTAC and a child were killed in the attack. The ground assault by four 10-man teams using AK-47 rifles resulted in two UNTAC civilian policemen injured - an Indian and a Ghanaian. A tent used to register voters for the scheduled spring elections was deliberately fired upon. It was suspected that the Khmer Rouge was responsible.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>13</targtype1>
+    <targtype1_txt>Other</targtype1_txt>
+    <corp1>United Nations</corp1>
+    <target1>United Nations Transitional Authority (UNTAC) barracks</target1>
+    <natlty1>36</natlty1>
+    <natlty1_txt>Cambodia</natlty1_txt>
+    <gname>Khmer Rouge</gname>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>2</weapsubtype1>
+    <weapsubtype1_txt>Automatic or Semi-Automatic Rifle</weapsubtype1_txt>
+    <weaptype2>6</weaptype2>
+    <weaptype2_txt>Explosives</weaptype2_txt>
+    <weapsubtype2>11</weapsubtype2>
+    <weapsubtype2_txt>Projectile (rockets, mortars, RPGs, etc.)</weapsubtype2_txt>
+    <nkill>3</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>2</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <addnotes>This was the first time in the 14-month-old peacekeeping operation in Cambodia that United Nations workers were killed by hostile fire.</addnotes>
+    <scite1>“U.N. Workers Killed by Cambodian Gunmen,” The Washington Post, January 14, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

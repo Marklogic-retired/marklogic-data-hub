@@ -1,0 +1,64 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199308070002</eventid>
+    <iyear>1993</iyear>
+    <imonth>8</imonth>
+    <iday>7</iday>
+    <extended>0</extended>
+    <country>182</country>
+    <country_txt>Somalia</country_txt>
+    <region>11</region>
+    <region_txt>Sub-Saharan Africa</region_txt>
+    <provstate>Shabeellaha Hoose (Region)</provstate>
+    <city>Beli Dogle</city>
+    <vicinity>1</vicinity>
+    <location>This incident occurred near Beli Dogle.</location>
+    <summary>08/06/1993: Five Somali gunmen were killed and 15 captured when they attempted to ambush a Joint U.S.-French UN convoy with RPGs and automatic weapons near Bali Dogle, Somalia. Two U.S. soldiers were wounded in the one-hour attack, including Sgt. Jennifer Alloway.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>1</alternative>
+    <alternative_txt>Insurgency/Guerilla Action</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>4</targtype1>
+    <targtype1_txt>Military</targtype1_txt>
+    <corp1>United Nations</corp1>
+    <target1>United Nations convoy of 30 United States and French military vehicles</target1>
+    <natlty1>999</natlty1>
+    <natlty1_txt>Multinational</natlty1_txt>
+    <gname>Other</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>20</nperps>
+    <nperpcap>15</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>11</weapsubtype1>
+    <weapsubtype1_txt>Projectile (rockets, mortars, RPGs, etc.)</weapsubtype1_txt>
+    <weaptype2>5</weaptype2>
+    <weaptype2_txt>Firearms</weaptype2_txt>
+    <weapsubtype2>2</weapsubtype2>
+    <weapsubtype2_txt>Automatic or Semi-Automatic Rifle</weapsubtype2_txt>
+    <nkill>5</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>5</nkillter>
+    <nwound>2</nwound>
+    <nwoundus>2</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

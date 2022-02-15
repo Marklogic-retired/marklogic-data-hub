@@ -1,0 +1,64 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199307160002</eventid>
+    <iyear>1993</iyear>
+    <imonth>7</imonth>
+    <iday>16</iday>
+    <extended>0</extended>
+    <country>217</country>
+    <country_txt>United States</country_txt>
+    <region>1</region>
+    <region_txt>North America</region_txt>
+    <provstate>Pennsylvania</provstate>
+    <city>Lancaster</city>
+    <vicinity>0</vicinity>
+    <location>Front door of facility</location>
+    <summary>7/16/1993: Unknown perpetrators threw a firebomb at the front door of the Planned Parenthood of Lancaster, Pennsylvania, United States. The incendiary device failed to ignite but still managed to cause minor damage to the abortion clinic.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>0</success>
+    <suicide>0</suicide>
+    <attacktype1>7</attacktype1>
+    <attacktype1_txt>Facility/Infrastructure Attack</attacktype1_txt>
+    <targtype1>5</targtype1>
+    <targtype1_txt>Abortion Related</targtype1_txt>
+    <corp1>Planned Parenthood</corp1>
+    <target1>Planned Parenthood clinic in Lancaster, Pennsylvania</target1>
+    <natlty1>217</natlty1>
+    <natlty1_txt>United States</natlty1_txt>
+    <gname>Anti-Abortion extremists</gname>
+    <motive>To protest the practice of abortion and to sabotage abortion facilities operating in Pennsylvania.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>-99</nperps>
+    <nperpcap>-99</nperpcap>
+    <claimed>0</claimed>
+    <weaptype1>8</weaptype1>
+    <weaptype1_txt>Incendiary</weaptype1_txt>
+    <weapsubtype1>20</weapsubtype1>
+    <weapsubtype1_txt>Gasoline or Alcohol</weapsubtype1_txt>
+    <weapdetail>Firebomb consisting of a bottle full of gasoline with a wick</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <ransom>0</ransom>
+    <addnotes>Two months after the incident, the same abortion clinic was destroyed by a firebomb (199309300001).</addnotes>
+    <scite1>Nathan Lee Gadsden, "Firebomb Destroys Lancaster Clinic/Agency Plans Tighter Security," Patriot-News, September 30, 1993.</scite1>
+    <scite2>"Lancaster Planned Parenthood Clinic Firebombed," Associated Press, September 29, 1993.</scite2>
+    <scite3>Patricia Baird-Windle and Eleanor J. Bader, "Targets of Hatred: Anti-Abortion Terrorism," Palgrave, 2001.</scite3>
+    <dbsource>Anti-Abortion Project 2010</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

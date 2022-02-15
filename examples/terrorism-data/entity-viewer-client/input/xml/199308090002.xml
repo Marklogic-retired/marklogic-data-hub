@@ -1,0 +1,59 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199308090002</eventid>
+    <iyear>1993</iyear>
+    <imonth>8</imonth>
+    <iday>9</iday>
+    <extended>0</extended>
+    <country>60</country>
+    <country_txt>Egypt</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Asyut (Governorate)</provstate>
+    <city>Qussiya</city>
+    <vicinity>0</vicinity>
+    <summary>08/09/1993: Muslim extremists killed a police guard in an attempt to storm a building housing police officers in the Egyptian city of Qussiya, 350 kilometers (217 miles) south of Cairo.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>0</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>3</targtype1>
+    <targtype1_txt>Police</targtype1_txt>
+    <corp1>Egyptian Security Personnel</corp1>
+    <target1>Building housing police officers in Qussiya</target1>
+    <natlty1>60</natlty1>
+    <natlty1_txt>Egypt</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Possibly in retaliation for the recent execution of 15 Muslim militants by Egyptian authorities.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>6</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwoundus>0</nwoundus>
+    <property>-9</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <addnotes>A guard, Mohammad Rashwan, was killed in the attack.</addnotes>
+    <scite1>“Fundamentalists kill policeman in Upper Egypt,” Agence France Presse, August 9, 1993.</scite1>
+    <scite2>“Another policeman gunned down by suspected militants in Egypt,” United Press International, August 10, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

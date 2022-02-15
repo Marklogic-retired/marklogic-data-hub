@@ -1,0 +1,66 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199308300001</eventid>
+    <iyear>1993</iyear>
+    <imonth>8</imonth>
+    <iday>30</iday>
+    <extended>0</extended>
+    <country>6</country>
+    <country_txt>Algeria</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Algiers (Province)</provstate>
+    <city>Algiers</city>
+    <vicinity>0</vicinity>
+    <summary>08/30/1993: Forty to fifty unidentified gunmen set fire to a shoe factory in Algiers after ordering the workers to their knees at gunpoint. No one was reportedly killed or injured.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>0</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>1</targtype1>
+    <targtype1_txt>Business</targtype1_txt>
+    <target1>Shoe factory in Algiers</target1>
+    <natlty1>6</natlty1>
+    <natlty1_txt>Algeria</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>40</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>8</weaptype1>
+    <weaptype1_txt>Incendiary</weaptype1_txt>
+    <weapsubtype1>18</weapsubtype1>
+    <weapsubtype1_txt>Arson/Fire</weapsubtype1_txt>
+    <weaptype2>5</weaptype2>
+    <weaptype2_txt>Firearms</weaptype2_txt>
+    <weapsubtype2>5</weapsubtype2>
+    <weapsubtype2_txt>Unknown Gun Type</weapsubtype2_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>2</propextent>
+    <propextent_txt>Major (likely >= $1 million but &lt; $1 billion)</propextent_txt>
+    <propvalue>2000000</propvalue>
+    <ishostkid>0</ishostkid>
+    <addnotes>The factory employed 430 people. It was unclear whether the attack was connected to recent Islamic extremist violence.</addnotes>
+    <scite1>“Gunmen Destroy Shoe Factory,” The Associated Press, August 30, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

@@ -1,0 +1,60 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199310210001</eventid>
+    <iyear>1993</iyear>
+    <imonth>10</imonth>
+    <iday>21</iday>
+    <extended>0</extended>
+    <country>155</country>
+    <country_txt>West Bank and Gaza Strip</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Gaza Strip (Occupied Territory)</provstate>
+    <city>Gaza</city>
+    <vicinity>0</vicinity>
+    <summary>10/21/1993: A prominent moderate in the Palestine Liberation Organization's Fatah wing and associate of Chairman Yasser Arafat was slain by masked gunmen. The gunmen were suspected members of the Arab Palestine Organization.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>22</targtype1>
+    <targtype1_txt>Violent Political Party</targtype1_txt>
+    <corp1>Fatah</corp1>
+    <target1>Fatah party member, Assad Saftawi</target1>
+    <natlty1>155</natlty1>
+    <natlty1_txt>West Bank and Gaza Strip</natlty1_txt>
+    <gname>Arab Palestine Organization</gname>
+    <motive>The attack was carried out in an effort to gain political control of Gaza.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>10</claimmode>
+    <claimmode_txt>Unknown</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <scite1>"Adherent to PLO Chief’s Policy Killed in Gaza,” Tass, October 21, 1993.</scite1>
+    <scite2>Ethan Bronner, “PLO Moderate Slain in Blow to Peace Pact,” Boston Globe, October 22, 1993.</scite2>
+    <scite3>David Hoffman, “Senior PLO Leader Slain in Gaza Strip; Palestinians, Israelis Set Prisoner Exchange,” The Washington Post, October 22, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

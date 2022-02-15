@@ -1,0 +1,86 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199302260002</eventid>
+    <iyear>1993</iyear>
+    <imonth>2</imonth>
+    <iday>26</iday>
+    <extended>0</extended>
+    <country>603</country>
+    <country_txt>United Kingdom</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>England</provstate>
+    <city>Warrington</city>
+    <vicinity>0</vicinity>
+    <location>Chesire (County)</location>
+    <summary>02/26/1993: Three bombs planted at the gasworks in Warrington, Cheshire, United Kingdom caused a huge explosion as a container holding millions of cubic feet of gas was destroyed. A fourth bomb failed to go off and was recovered intact. The terrorists broke into the British Gas distribution plant in Warrington simply by cutting a hole in the perimeter fence. A young policeman was shot and injured and a teenage motorist hijacked at gunpoint.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <attacktype2>6</attacktype2>
+    <attacktype2_txt>Hostage Taking (Kidnapping)</attacktype2_txt>
+    <targtype1>21</targtype1>
+    <targtype1_txt>Utilities</targtype1_txt>
+    <corp1>Warrington Gas Complex</corp1>
+    <target1>Warrington Gas Complex (natural gas utility)</target1>
+    <natlty1>216</natlty1>
+    <natlty1_txt>Great Britain</natlty1_txt>
+    <targtype2>14</targtype2>
+    <targtype2_txt>Private Citizens &amp; Property</targtype2_txt>
+    <corp2>Civilian</corp2>
+    <target2>Motorist and his car</target2>
+    <natlty2>216</natlty2>
+    <natlty2_txt>Great Britain</natlty2_txt>
+    <gname>Irish Republican Army (IRA)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>4</nperps>
+    <nperpcap>2</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>10</claimmode>
+    <claimmode_txt>Unknown</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>16</weapsubtype1>
+    <weapsubtype1_txt>Unknown Explosive Type</weapsubtype1_txt>
+    <weaptype2>5</weaptype2>
+    <weaptype2_txt>Firearms</weaptype2_txt>
+    <weapsubtype2>3</weapsubtype2>
+    <weapsubtype2_txt>Handgun</weapsubtype2_txt>
+    <weapdetail>Four bombs were planted, but only three detonated.</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>2</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>1</nwoundte>
+    <property>1</property>
+    <propextent>2</propextent>
+    <propextent_txt>Major (likely >= $1 million but &lt; $1 billion)</propextent_txt>
+    <propcomment>One bomb destroyed a 120ft holder and ignited 2million cubic feet of natural gas. A second structure was damaged by a bomb placed at its base and an adjacent holder was badly scorched as the flames engulfed the network of pipes.</propcomment>
+    <ishostkid>1</ishostkid>
+    <nhostkid>1</nhostkid>
+    <nhostkidus>0</nhostkidus>
+    <nhours>-99</nhours>
+    <ransom>0</ransom>
+    <hostkidoutcome>5</hostkidoutcome>
+    <hostkidoutcome_txt>Successful Rescue</hostkidoutcome_txt>
+    <nreleased>1</nreleased>
+    <addnotes>In addition to the bombing, a teenage motorist in a Ford Escort was flagged down by three of the perpetrators in the village of Lymm. The driver was bundled into the trunk at gunpoint. The attackers, who were being chased by the police, took the hijacked car and crashed near the Manchester-Cheshire border. The young driver was freed from the trunk uninjured.</addnotes>
+    <scite1>Peter Beal, “Disaster Averted in Callous Attack,” Press Association, February 26, 1993.</scite1>
+    <scite2>John Woodcock, “A fireball 'like an atomic bomb'; Families flee the blast that turned night into day,” Daily Mail (London), February 27, 1993.</scite2>
+    <scite3>“Shot policeman raises alarm IRA gunman hunted after gaswork blast,” The Herald, February 27, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>1</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

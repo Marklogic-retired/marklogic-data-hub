@@ -1,0 +1,62 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199309130009</eventid>
+    <iyear>1993</iyear>
+    <imonth>9</imonth>
+    <iday>13</iday>
+    <extended>0</extended>
+    <country>92</country>
+    <country_txt>India</country_txt>
+    <region>6</region>
+    <region_txt>South Asia</region_txt>
+    <provstate>National Capital Territory of Delhi (Union Territory)</provstate>
+    <city>New Delhi</city>
+    <vicinity>0</vicinity>
+    <summary>09/13/1993: A car bomb exploded in central New Delhi, India, in an attempt to assassinate a top politician, Maninder Singh Bitta. He escaped with shrapnel wounds to the chest, but at least eight people were killed and 36 wounded. No group claimed responsibility for this attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>President of the Congress Party's Youth Wing</corp1>
+    <target1>Maninder Singh Bitta</target1>
+    <natlty1>92</natlty1>
+    <natlty1_txt>India</natlty1_txt>
+    <gname>Other</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>12</weapsubtype1>
+    <weapsubtype1_txt>Remote Trigger</weapsubtype1_txt>
+    <nkill>8</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>36</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propcomment>The vehicle housing the bomb was destroyed.</propcomment>
+    <ishostkid>0</ishostkid>
+    <addnotes>No one immediately claimed responsibility for the bombing, but police suspected Sikh terrorists. Bitta, a Sikh from Punjab, had been the target of several attacks by rebels from the northern state.</addnotes>
+    <scite1>“New Delhi car bomb blast sparks concern over Sikh militancy," Agence France Presse, September 13, 1993.</scite1>
+    <scite2>“India to Probe Car Bombs," Financial Times, September 13, 1993.</scite2>
+    <scite3>“A Car Bomb in New Delhi Kills 8 and Wounds 36," The New York Times, September 12, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

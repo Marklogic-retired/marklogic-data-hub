@@ -1,0 +1,58 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199306060001</eventid>
+    <iyear>1993</iyear>
+    <imonth>6</imonth>
+    <iday>6</iday>
+    <extended>0</extended>
+    <country>182</country>
+    <country_txt>Somalia</country_txt>
+    <region>11</region>
+    <region_txt>Sub-Saharan Africa</region_txt>
+    <provstate>Banaadir (Region)</provstate>
+    <city>Mogadishu</city>
+    <vicinity>0</vicinity>
+    <summary>06/06/1993: Pakistani peacekeepers were ambushed while on patrol in Mogadishu. 23 soldiers were killed and 74 were wounded.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>0</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>1</alternative>
+    <alternative_txt>Insurgency/Guerilla Action</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>4</targtype1>
+    <targtype1_txt>Military</targtype1_txt>
+    <corp1>United Nations</corp1>
+    <target1>Pakistani Peacekeepers</target1>
+    <natlty1>153</natlty1>
+    <natlty1_txt>Pakistan</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <nkill>23</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>23</nkillter>
+    <nwound>74</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>15</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <scite1>Paul Alexander, “Radios, Timing Point to Well-Planned Attack,” The Associated Press, June 11, 1993</scite1>
+    <scite2>“Pakistanis protest massacre of U.N. troops in Somalia,” Agence France Presse, June 11, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

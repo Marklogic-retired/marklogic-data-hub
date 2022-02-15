@@ -1,0 +1,57 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199309270002</eventid>
+    <iyear>1993</iyear>
+    <imonth>9</imonth>
+    <iday>27</iday>
+    <extended>0</extended>
+    <country>186</country>
+    <country_txt>Sri Lanka</country_txt>
+    <region>6</region>
+    <region_txt>South Asia</region_txt>
+    <provstate>Western (Province)</provstate>
+    <city>Colombo</city>
+    <vicinity>0</vicinity>
+    <summary>09/27/1993: In Sri Lanka, five soldiers were killed and another one was wounded in an operation against separatist Tamil guerrillas in the country's northwest section of Vankalai.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>1</alternative>
+    <alternative_txt>Insurgency/Guerilla Action</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>4</targtype1>
+    <targtype1_txt>Military</targtype1_txt>
+    <corp1>Sri Lankan Army</corp1>
+    <target1>Sri Lankan Army</target1>
+    <natlty1>186</natlty1>
+    <natlty1_txt>Sri Lanka</natlty1_txt>
+    <gname>Liberation Tigers of Tamil Eelam (LTTE)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <nkill>5</nkill>
+    <nkillus>0</nkillus>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <scite1>“Five solders killed, one wounded in terrorist attack," United Press International, September 27, 1993.</scite1>
+    <scite2>“Two airmen killed in Tamil separatist attack," United Press International, September 26, 1993.</scite2>
+    <scite3>“Sri Lankan guerrilla attack kills four policemen," United Press International, September 25, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

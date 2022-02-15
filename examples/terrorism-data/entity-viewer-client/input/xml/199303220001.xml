@@ -1,0 +1,64 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199303220001</eventid>
+    <iyear>1993</iyear>
+    <imonth>3</imonth>
+    <iday>22</iday>
+    <extended>0</extended>
+    <country>603</country>
+    <country_txt>United Kingdom</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>England</provstate>
+    <city>Warrington</city>
+    <vicinity>0</vicinity>
+    <location>North West England (Region)</location>
+    <summary>03/22/1993: The Irish Republican Army (IRA) bombed a town shopping square in Warrington, England, wounding at least 56 people and killing one four year old boy.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Civilians</corp1>
+    <target1>Shopping Square in Warrington</target1>
+    <natlty1>216</natlty1>
+    <natlty1_txt>Great Britain</natlty1_txt>
+    <gname>Irish Republican Army (IRA)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>3</claimmode>
+    <claimmode_txt>Call (pre-incident)</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>16</weapsubtype1>
+    <weapsubtype1_txt>Unknown Explosive Type</weapsubtype1_txt>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>56</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <addnotes>2 bombs were planted outside of a store branch, "Boots," by the Irish Republican Army (IRA). The attack came on the day before Mother's Day. The IRA reported that the attack would occur outside the Boots in Liverpool to police prior to the detonation of the bombs. The IRA strategically positioned the bombs to allow the first bomb to detonate a few seconds before the second bomb, sending people running toward the second bomb. At least 56 people were injured and one casualty resulted from the attack.</addnotes>
+    <scite1>Chester Stern, Andrew Chapman, Tanya Reed, “IRA Carnage For Mother’s Day; After the Second Bomb Went Off There Was A Deathly Silence.  It Lasted About 15 Seconds – Then People Started Screaming,” Mail on Sunday, March 21, 1993.</scite1>
+    <scite2>William Tuohy, “Bomb Blasts In Northern England City Kill 1, Injure 40; Violence: 4 Year Old Dies As Explosions Hit Crowded Shopping Center In Warrington, Police Blame IRA,” Los Angeles Times, March 21, 1993.</scite2>
+    <scite3>Malcolm Pithers and Ian Mackinnon, “Boy of four dies as IRA bombers attack shoppers,” The Independent (London), March 21, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>1</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

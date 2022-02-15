@@ -1,0 +1,59 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199306170005</eventid>
+    <iyear>1993</iyear>
+    <imonth>6</imonth>
+    <iday>17</iday>
+    <extended>0</extended>
+    <country>75</country>
+    <country_txt>Germany</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>North Rhine-Westphalia (State)</provstate>
+    <city>Munster</city>
+    <vicinity>1</vicinity>
+    <location>The attack occurred in the Munsterland region.</location>
+    <summary>06/17/1993: Two young men shot to death a Kurdish asylum seeker in Munsterland. The two men rang the front door of a hostel in Munsterland where 15 Kurdish asylum-seekers lived. A 6 year-old boy answered the door and called for his father. When his father answered the men shot him three times. He died in the hospital later the same day. Right-wing radicals were suspected in the attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Civilian</corp1>
+    <target1>Kurdish civilian in Munsterland</target1>
+    <gname>Other</gname>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperps>2</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>This was one of a number of attacks on foreigners living in Germany and/or foreign-owned establishments, most employing arson as the attack type. (cf. 199305300001-2; 199306010004; 199306030001; 199306040001; 199306070002-5; 199306070008; 199305290004-5; 199306060004; 199306110003; 199306120004; 199306170005)</addnotes>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>-9</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

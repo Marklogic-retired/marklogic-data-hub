@@ -1,0 +1,63 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199310110005</eventid>
+    <iyear>1993</iyear>
+    <imonth>10</imonth>
+    <iday>11</iday>
+    <extended>0</extended>
+    <country>43</country>
+    <country_txt>Chile</country_txt>
+    <region>3</region>
+    <region_txt>South America</region_txt>
+    <provstate>Santiago Metropolitan Region (Region)</provstate>
+    <city>Santiago</city>
+    <vicinity>0</vicinity>
+    <summary>10/11/1993: Four bomb attacks, which produced no victims, took place  in different districts of Santiago. In this incident the Municipal office of the Pedro Aguirre Cerda workers' association in Santiago was targeted.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>1</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>Pedro Aguirre Cerda workers' association</corp1>
+    <target1>Municipal office of the Pedro Aguirre Cerda workers' association</target1>
+    <natlty1>43</natlty1>
+    <natlty1_txt>Chile</natlty1_txt>
+    <gname>Manuel Rodriguez Patriotic Front (FPMR)</gname>
+    <motive>The attacks were perpetrated to mark the first anniversary of a frustrated escape attempt from the Santiago Penitentiary.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>3</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>5</claimmode>
+    <claimmode_txt>Note left at scene</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>17</weapsubtype1>
+    <weapsubtype1_txt>Other Explosive Type</weapsubtype1_txt>
+    <weapdetail>The bombs used in the four attacks contained ammonium gelignite</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>2</propextent>
+    <propextent_txt>Major (likely >= $1 million but &lt; $1 billion)</propextent_txt>
+    <propcomment>The bombs caused considerable damage to the buildings where the attacks took place.</propcomment>
+    <ishostkid>0</ishostkid>
+    <addnotes>This was one of five related attacks (cf. 199310110002; 199310110004;199310110006;199310110007 ).</addnotes>
+    <scite1>"News Summary," British Broadcasting Corporation, October 14, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

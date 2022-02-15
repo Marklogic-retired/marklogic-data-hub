@@ -1,0 +1,64 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199306220001</eventid>
+    <iyear>1993</iyear>
+    <imonth>6</imonth>
+    <iday>22</iday>
+    <extended>0</extended>
+    <country>603</country>
+    <country_txt>United Kingdom</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Northern Ireland</provstate>
+    <city>Newry</city>
+    <vicinity>0</vicinity>
+    <location>Ulster (Province)</location>
+    <summary>06/22/1993: The IRA exploded a 300 lb. bomb in an Austin Metro van near the Mourne Country Hotel causing minor damage and injuries.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>1</targtype1>
+    <targtype1_txt>Business</targtype1_txt>
+    <corp1>Mourne Country Hotel</corp1>
+    <target1>Mourne Country Hotel in Newry</target1>
+    <natlty1>233</natlty1>
+    <natlty1_txt>Northern Ireland</natlty1_txt>
+    <gname>Irish Republican Army (IRA)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>1</claimed>
+    <claimmode>10</claimmode>
+    <claimmode_txt>Unknown</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>15</weapsubtype1>
+    <weapsubtype1_txt>Vehicle</weapsubtype1_txt>
+    <weapdetail>The 300lb. bomb was planted in a stolen van. Officials believed it was made of fertilizer.</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>2</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propcomment>The front wall of the hotel fell down and some minor damage was caused to surrounding homes.</propcomment>
+    <ishostkid>0</ishostkid>
+    <addnotes>Reports stated that the IRA warned officials beforehand, but it did not specify how. The IRA usually phoned in such warnings.</addnotes>
+    <scite1>“Bomb injuries two after terror blitz warning,” Press Association, June 22, 1993.</scite1>
+    <scite2>Owen Bowcott, “IRA van bomb damages country hotel and 70 homes,” The Guardian (London), June 23, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

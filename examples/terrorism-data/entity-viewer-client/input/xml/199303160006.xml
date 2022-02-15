@@ -1,0 +1,61 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199303160006</eventid>
+    <iyear>1993</iyear>
+    <imonth>3</imonth>
+    <iday>16</iday>
+    <extended>0</extended>
+    <country>92</country>
+    <country_txt>India</country_txt>
+    <region>6</region>
+    <region_txt>South Asia</region_txt>
+    <provstate>West Bengal (State)</provstate>
+    <city>Calcutta</city>
+    <vicinity>0</vicinity>
+    <summary>03/16/1993: Two building complexes were bombed, killing at least 60 people and injuring at least 100 people. There was no claim of responsibility for the attacks.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Civilians</corp1>
+    <target1>Civilians in two Calcutta building complexes</target1>
+    <natlty1>92</natlty1>
+    <natlty1_txt>India</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>16</weapsubtype1>
+    <weapsubtype1_txt>Unknown Explosive Type</weapsubtype1_txt>
+    <nkill>60</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>100</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <addnotes>The bombing in Calcutta followed a recent attack just four days earlier in Mumbai, in which 13 bombs killed at least 300 people. Hindu-Muslim violence resulted in the deaths of some 2,000 people last December and January. No claim of responsibility was made for the attacks that injured at 100 and killed at least 60 people.</addnotes>
+    <scite1>John Rettie, “Two Muslims Held As Calcutta Blast Toll Rises; Indian cities wait in fear of terrorist attacks, Muslims fear reprisals and the army goes on alert,” The Guardian (London), March 18, 1993.</scite1>
+    <scite2>Krishnan Guruswamy, “Police Take Two Muslim Suspects Into Custody After Blast Kills 60,” The Associated Press, March 17, 1993.</scite2>
+    <scite3>“50 Killed, 100 injured In Calcutta Bomb Blast,” Chicago Sun-Times, March 17, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

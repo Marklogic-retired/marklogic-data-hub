@@ -1,0 +1,66 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199311070003</eventid>
+    <iyear>1993</iyear>
+    <imonth>11</imonth>
+    <iday>7</iday>
+    <extended>0</extended>
+    <country>217</country>
+    <country_txt>United States</country_txt>
+    <region>1</region>
+    <region_txt>North America</region_txt>
+    <provstate>California</provstate>
+    <city>Ventura</city>
+    <vicinity>0</vicinity>
+    <location>Roof of building</location>
+    <summary>11/7/1995: Unknown perpetrators tossed an incendiary onto the roof of the Family Planning Associates clinic in Ventura, California, United States. There were no casualties, but the building sustained $500 in damages.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>7</attacktype1>
+    <attacktype1_txt>Facility/Infrastructure Attack</attacktype1_txt>
+    <targtype1>5</targtype1>
+    <targtype1_txt>Abortion Related</targtype1_txt>
+    <corp1>Family Planning Associates, INC.</corp1>
+    <target1>Family Planning Associates</target1>
+    <natlty1>217</natlty1>
+    <natlty1_txt>United States</natlty1_txt>
+    <gname>Anti-Abortion extremists</gname>
+    <motive>To protest the practice of abortion and to sabotage abortion facilities operating in California.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>-99</nperps>
+    <nperpcap>-99</nperpcap>
+    <claimed>0</claimed>
+    <weaptype1>8</weaptype1>
+    <weaptype1_txt>Incendiary</weaptype1_txt>
+    <weapsubtype1>18</weapsubtype1>
+    <weapsubtype1_txt>Arson/Fire</weapsubtype1_txt>
+    <weapdetail>Flare bundled with what is believed to be a quick start fire log thrown onto the roof of the building.</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propvalue>500</propvalue>
+    <propcomment>Roof sustained minor damage</propcomment>
+    <ishostkid>0</ishostkid>
+    <ransom>0</ransom>
+    <addnotes>Fifteen months after this incident, there was an attack at the same abortion clinic (199502090009).  The Family Planning Associates clinic was the target of many demonstrations.</addnotes>
+    <scite1>Julie Fields, "Ventura: Medical Center Roof Fire Investigated," Los Angeles Times, November 9, 1993.</scite1>
+    <scite2>Julie Fields, "2nd Arson Fire at Ventura Clinic Probed," Los Angeles Times, February 10, 1995.</scite2>
+    <scite3>"Across the USA: News From Every State," USA Today, November 9, 1993.</scite3>
+    <dbsource>Anti-Abortion Project 2010</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

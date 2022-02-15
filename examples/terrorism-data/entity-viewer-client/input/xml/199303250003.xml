@@ -1,0 +1,60 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199303250003</eventid>
+    <iyear>1993</iyear>
+    <imonth>3</imonth>
+    <iday>25</iday>
+    <extended>0</extended>
+    <country>204</country>
+    <country_txt>Togo</country_txt>
+    <region>11</region>
+    <region_txt>Sub-Saharan Africa</region_txt>
+    <provstate>Maritime (Region)</provstate>
+    <city>Lome</city>
+    <vicinity>0</vicinity>
+    <summary>03/25/1993: An unknown group attacked a military compound in Lome, housing the President of Togo, Gnassingbe Eyadema, killing five and injuring one. President Eyadema was not killed in this attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>1</alternative>
+    <alternative_txt>Insurgency/Guerilla Action</alternative_txt>
+    <multiple>0</multiple>
+    <success>0</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <attacktype2>1</attacktype2>
+    <attacktype2_txt>Assassination</attacktype2_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>President of Togo</corp1>
+    <target1>Gnassingbe Eyadema</target1>
+    <natlty1>204</natlty1>
+    <natlty1_txt>Togo</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>2</weapsubtype1>
+    <weapsubtype1_txt>Automatic or Semi-Automatic Rifle</weapsubtype1_txt>
+    <nkill>5</nkill>
+    <nkillus>0</nkillus>
+    <nwound>1</nwound>
+    <nwoundus>0</nwoundus>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>The Togo government accused neighboring Ghana of supporting the attackers.</addnotes>
+    <scite1>"Togo minister accuses Ghana over attack on Eyadema residence,” Agence France Presse, March 29, 1993.</scite1>
+    <scite2>Combiete Combey, “Gunmen Attack President's Home in Togo, Kill Top Aide,” The Associated Press, March 25, 1993.</scite2>
+    <scite3>"Attack On Presidential Barracks Repulsed, Eyadema Safe,” The Associated Press, March 25, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

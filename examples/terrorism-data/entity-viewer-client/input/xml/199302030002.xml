@@ -1,0 +1,65 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199302030002</eventid>
+    <iyear>1993</iyear>
+    <imonth>2</imonth>
+    <iday>3</iday>
+    <extended>0</extended>
+    <country>603</country>
+    <country_txt>United Kingdom</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>England</provstate>
+    <city>London</city>
+    <vicinity>0</vicinity>
+    <location>Royal Borough of Kensington and Chelsea (London Borough)</location>
+    <summary>02/03/1993: The Irish Republican Army (IRA) planted a bomb which exploded at the South Kensington Tube station in London, after officials received two warning calls from a man with an Irish accent giving the London Underground 20 minutes to clear the area. Two hundred people were evacuated from the terminal and the bomb went off 14 minutes after the last call had been received. There were no casualties but services on the District, Circle and Piccadilly lines were badly disrupted.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>1</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>19</targtype1>
+    <targtype1_txt>Transportation</targtype1_txt>
+    <corp1>London Underground System</corp1>
+    <target1>London South Kensington Tube Station</target1>
+    <natlty1>216</natlty1>
+    <natlty1_txt>Great Britain</natlty1_txt>
+    <gname>Irish Republican Army (IRA)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>10</claimmode>
+    <claimmode_txt>Unknown</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>16</weapsubtype1>
+    <weapsubtype1_txt>Unknown Explosive Type</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propcomment>There was damaged brickwork but not the platform was unaffected. Track services on the District, Circle and Piccadilly lines, however, were badly disrupted.</propcomment>
+    <ishostkid>0</ishostkid>
+    <addnotes>This is one of two related attacks (cf. 199302030001). Another bomb exploded at 9.05am, 5 hours prior to this attack, on the Victoria to Ramsgate train, which was stopped at Kent House station in Penge, south- east London. Officials received a warning call for this attack as well.</addnotes>
+    <scite1>Will Bennett, “IRA bombs train and Tube station,” The Independent (London), February 4, 1993.</scite1>
+    <scite2>Peter Burden, “IRA Terror on the Line; Train and Tube Station Blasted as the Bombers Switch Tactics,” The Daily, February 4, 1993.</scite2>
+    <scite3>“IRA threatens more bombings,” The Herald, February 5, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>1</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

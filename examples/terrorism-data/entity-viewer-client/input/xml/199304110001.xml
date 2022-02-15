@@ -1,0 +1,71 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199304110001</eventid>
+    <iyear>1993</iyear>
+    <imonth>4</imonth>
+    <iday>11</iday>
+    <extended>0</extended>
+    <country>60</country>
+    <country_txt>Egypt</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Asyut (Governorate)</provstate>
+    <city>Abu Tig</city>
+    <vicinity>0</vicinity>
+    <summary>04/11/1993: Major General Mohamed el-Sheimy, Asyut's provincial security chef, his bodyguard, and his driver were killed by four Muslim militants with automatic weapons in Abu Tig, a village 12 miles south of Asyut.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>4</targtype1>
+    <targtype1_txt>Military</targtype1_txt>
+    <corp1>Asyut Provincial Security Chief</corp1>
+    <target1>Major General Mohamed el-Sheimy</target1>
+    <natlty1>60</natlty1>
+    <natlty1_txt>Egypt</natlty1_txt>
+    <targtype2>14</targtype2>
+    <targtype2_txt>Private Citizens &amp; Property</targtype2_txt>
+    <corp2>Civilian</corp2>
+    <target2>Major General Mohamed el-Sheimy's Bodyguard</target2>
+    <natlty2>60</natlty2>
+    <natlty2_txt>Egypt</natlty2_txt>
+    <targtype3>14</targtype3>
+    <targtype3_txt>Private Citizens &amp; Property</targtype3_txt>
+    <corp3>Civilian</corp3>
+    <target3>Major General Mohamed el-Sheimy's Driver</target3>
+    <natlty3>60</natlty3>
+    <natlty3_txt>Egypt</natlty3_txt>
+    <gname>Al-Gama'at al-Islamiyya (IG)</gname>
+    <motive>Reprisal for government attacks on Al-Gamaa al-Islamiya leaders</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperps>4</nperps>
+    <nperpcap>76</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>2</claimmode>
+    <claimmode_txt>Call (post-incident)</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>2</weapsubtype1>
+    <weapsubtype1_txt>Automatic or Semi-Automatic Rifle</weapsubtype1_txt>
+    <nkill>3</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <scite1>"Extremists Claim Responsibility for Killing Top Security Official," The Associated Press, April 13, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

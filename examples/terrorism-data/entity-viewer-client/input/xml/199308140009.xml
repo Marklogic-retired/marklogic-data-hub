@@ -1,0 +1,63 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199308140009</eventid>
+    <iyear>1993</iyear>
+    <imonth>8</imonth>
+    <iday>14</iday>
+    <extended>0</extended>
+    <country>603</country>
+    <country_txt>United Kingdom</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>England</provstate>
+    <city>Bournemouth</city>
+    <vicinity>0</vicinity>
+    <location>Dorset (County)</location>
+    <summary>08/14/1993: A firebomb planted by the IRA exploded at 4:12 a.m. at a furniture shop in the seaside resort of Bournemouth. No one was killed or injured.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>1</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>1</targtype1>
+    <targtype1_txt>Business</targtype1_txt>
+    <corp1>Staks furniture shop</corp1>
+    <target1>Staks furniture shop in Bournemouth</target1>
+    <natlty1>216</natlty1>
+    <natlty1_txt>Great Britain</natlty1_txt>
+    <gname>Irish Republican Army (IRA)</gname>
+    <motive>To disrupt the tourist industry</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>1</claimmode>
+    <claimmode_txt>Letter</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>8</weaptype1>
+    <weaptype1_txt>Incendiary</weaptype1_txt>
+    <weapsubtype1>18</weapsubtype1>
+    <weapsubtype1_txt>Arson/Fire</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <addnotes>This was one of six related attacks (cf. 199308140004, 199308140005, 199308140006, 199308140007, 199308140008).The IRA planted a total of 8 explosive devices in Bournemouth.</addnotes>
+    <scite1>Peter Burden and Suzanne O’Shea, “IRA’s damp squib,” Daily Mail (London), August 14, 1993.</scite1>
+    <scite2>Chris Parkin and Paul Edwards, “We planted Bournemouth firebombs, say IRA,” Press Association, August 14, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>1</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

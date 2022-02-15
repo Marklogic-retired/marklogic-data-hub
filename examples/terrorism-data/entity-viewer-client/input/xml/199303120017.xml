@@ -1,0 +1,61 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199303120017</eventid>
+    <iyear>1993</iyear>
+    <imonth>3</imonth>
+    <iday>12</iday>
+    <extended>0</extended>
+    <country>97</country>
+    <country_txt>Israel</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Jerusalem (District)</provstate>
+    <city>Jerusalem</city>
+    <vicinity>1</vicinity>
+    <location>The body of the IDF soldier was discovered 9 miles west of Jerusalem.</location>
+    <summary>03/12/1993: The body of an Israeli Defense Force soldier was discovered along the main highway to Tel Aviv. No claim of responsibility was made.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>0</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>4</targtype1>
+    <targtype1_txt>Military</targtype1_txt>
+    <corp1>Israeli Security Forces</corp1>
+    <target1>Yehoshua Friedberg</target1>
+    <natlty1>97</natlty1>
+    <natlty1_txt>Israel</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>Yehoshua Friedberg was the sixth Israeli to die this month. There was no claim of responsibility. See event ID 199303120001 for more information on Israelis killed in a string of attacks during March 1993.</addnotes>
+    <scite1>Joel Greenberg, “Israelis to increase road blocks as 3 die in surging violence,” The Houston Chronicle, March 13, 1993.</scite1>
+    <scite2>Michael Parks, “2 More Israelis Die As Violence Swells; Terrorism: Police Official Blames Islamic Fundamentalists, Sees Effort To Undermine Middle East Peace Talks,” Los Angeles Times, March 13, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

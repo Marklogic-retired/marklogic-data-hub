@@ -1,0 +1,61 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199309280001</eventid>
+    <iyear>1993</iyear>
+    <imonth>9</imonth>
+    <iday>28</iday>
+    <extended>0</extended>
+    <country>97</country>
+    <country_txt>Israel</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Gaza Strip (Occupied Territory)</provstate>
+    <city>Moshav Batzra</city>
+    <vicinity>0</vicinity>
+    <summary>09/28/1993: The body of Yigal Vaknin, 22, was found on Yom Kippur Eve lying face down under a grapefruit tree in a citrus grove at Moshav Batzra, five kilometers north of Ra'anana in the Gaza Strip. HAMAS rebels perpetrated the attack, and no one else was injured or killed.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Israeli Civilian</corp1>
+    <target1>Yigal Vaknin</target1>
+    <natlty1>97</natlty1>
+    <natlty1_txt>Israel</natlty1_txt>
+    <gname>Hamas (Islamic Resistance Movement)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>1</nperps>
+    <nperpcap>1</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>8</claimmode>
+    <claimmode_txt>Personal claim</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>9</weaptype1>
+    <weaptype1_txt>Melee</weaptype1_txt>
+    <weapsubtype1>23</weapsubtype1>
+    <weapsubtype1_txt>Knife or Other Sharp Object</weapsubtype1_txt>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <scite1>“Gaza man confesses to murdering Vaknin," The Jerusalem Post, September 28, 1993.</scite1>
+    <scite2>“Terror victim buried; 'killers had national and criminal motives,'" The Jerusalem Post, September 27, 1993.</scite2>
+    <scite3>“Hamas claims responsibility for citrus grove murder," The Jerusalem Post, September  26, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>1</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

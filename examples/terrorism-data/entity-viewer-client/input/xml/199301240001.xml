@@ -1,0 +1,74 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199301240001</eventid>
+    <iyear>1993</iyear>
+    <imonth>1</imonth>
+    <iday>24</iday>
+    <extended>0</extended>
+    <country>209</country>
+    <country_txt>Turkey</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Ankara (Province)</provstate>
+    <city>Ankara</city>
+    <vicinity>0</vicinity>
+    <summary>01/24/1993: A bomb that exploded in Ankara, Turkey killed Mr. Ugur Mumcu, a Turkish journalist. The bomb was placed under Mumcu's vehicle. Three different Islamic fundamentalist groups claimed responsibility for the attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>10</targtype1>
+    <targtype1_txt>Journalists &amp; Media</targtype1_txt>
+    <corp1>Turkish Journalist</corp1>
+    <target1>Ugur Mumcu</target1>
+    <natlty1>209</natlty1>
+    <natlty1_txt>Turkey</natlty1_txt>
+    <gname>Islamic Movement Organization</gname>
+    <gname2>Islamic Jihad (Ideological Grouping)</gname2>
+    <gname3>Islamic Liberation Organization</gname3>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <guncertain2>1</guncertain2>
+    <guncertain3>1</guncertain3>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>2</claimmode>
+    <claimmode_txt>Call (post-incident)</claimmode_txt>
+    <claim2>1</claim2>
+    <claimmode2>2</claimmode2>
+    <claimmode2_txt>Call (post-incident)</claimmode2_txt>
+    <claim3>0</claim3>
+    <claimmode3>2</claimmode3>
+    <claimmode3_txt>Call (post-incident)</claimmode3_txt>
+    <compclaim>1</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>15</weapsubtype1>
+    <weapsubtype1_txt>Vehicle</weapsubtype1_txt>
+    <weapdetail>The bomb was placed under Ugur's vehicle.</weapdetail>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <addnotes>Ugur Mumcu was an outspoken critic of Islamic fundamentalism and had received many death threats in the past.</addnotes>
+    <scite1>Zeynep Alemdar, “Prominent Turkey journalist killed by bomb,” The Associated Press, January 24, 1993.</scite1>
+    <scite2>“President condemns assassination of journalist,” Xinhua General News Service, January 24, 1993.</scite2>
+    <scite3>“Prominent Turkey journalist killed by car bomb,” United Press International, January 24, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

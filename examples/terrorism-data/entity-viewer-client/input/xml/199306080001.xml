@@ -1,0 +1,63 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199306080001</eventid>
+    <iyear>1993</iyear>
+    <imonth>6</imonth>
+    <iday>8</iday>
+    <extended>0</extended>
+    <country>60</country>
+    <country_txt>Egypt</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Al Qahirah (Governorate)</provstate>
+    <city>Cairo</city>
+    <vicinity>1</vicinity>
+    <location>On the road to the Pyramids</location>
+    <summary>06/08/1993: Suspected members of Al-Jama a al-Islamiyya (The Islamic Group) planted a nail bomb on a bicycle under an overpass on the highway to the pyramids. One person was killed and twenty-two others were wounded when the bomb went off in front of a tourist bus carrying British tourists. The car traveling in front of the bus took a majority of the impact.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Tourists</corp1>
+    <target1>Tourists on their way to see the Pyramids</target1>
+    <natlty1>216</natlty1>
+    <natlty1_txt>Great Britain</natlty1_txt>
+    <gname>Al-Gama'at al-Islamiyya (IG)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>2</nperps>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>14</weapsubtype1>
+    <weapsubtype1_txt>Time Fuse</weapsubtype1_txt>
+    <weapdetail>The bomb contained a maximum of 3 1/2 lbs. of explosives (probably TNT) and at least 2 lbs. of nails.</weapdetail>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>22</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <addnotes>Initial reports stated that 15 had been injured, but it appears that the final number was 22.</addnotes>
+    <scite1>“Bomb near Pyramids kills one,” Chicago Tribune, June 9,1993.</scite1>
+    <scite2>David Daure, “Egyptian Dies in Nail Bomb Attack on Bus,” Chicago Sun-Times, June 9, 1993.</scite2>
+    <scite3>Al Aham Weekly, “Single handed suspected behind time-bombings in Egypt,” Moneyclips, June 10, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

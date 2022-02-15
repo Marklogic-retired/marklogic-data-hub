@@ -1,0 +1,67 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199311150002</eventid>
+    <iyear>1993</iyear>
+    <imonth>11</imonth>
+    <iday>15</iday>
+    <extended>0</extended>
+    <country>155</country>
+    <country_txt>West Bank and Gaza Strip</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>West Bank (Occupied Territory)</provstate>
+    <city>Hebron</city>
+    <vicinity>0</vicinity>
+    <summary>11/15/1993: An Israeli was attacked in Hebron by two militants from the Popular Front for Liberation of Palestine. 1 attacker was killed and the Israeli escaped with just an injury. HAMAS also claimed responsibility for the attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>0</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Israeli Civilian</corp1>
+    <target1>Arraham Zarbiv</target1>
+    <natlty1>97</natlty1>
+    <natlty1_txt>Israel</natlty1_txt>
+    <gname>Popular Front for the Liberation of Palestine (PFLP)</gname>
+    <gname2>Hamas (Islamic Resistance Movement)</gname2>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <guncertain2>0</guncertain2>
+    <individual>0</individual>
+    <nperps>2</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>2</claimmode>
+    <claimmode_txt>Call (post-incident)</claimmode_txt>
+    <claim2>1</claim2>
+    <claimmode2>2</claimmode2>
+    <claimmode2_txt>Call (post-incident)</claimmode2_txt>
+    <compclaim>1</compclaim>
+    <weaptype1>9</weaptype1>
+    <weaptype1_txt>Melee</weaptype1_txt>
+    <weapsubtype1>23</weapsubtype1>
+    <weapsubtype1_txt>Knife or Other Sharp Object</weapsubtype1_txt>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>1</nkillter>
+    <nwound>1</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>Arraham Zarbir shot one of his attackers with a pistol and managed to escape.</addnotes>
+    <scite1>Jon Immanuel, “Ax-Wielding terrorists wound Hebron settler,” The Jerusalem Post, November 16, 1993.</scite1>
+    <scite2>“PFLP claims responsibility for attack on Jewish settler in Hebron,” BBC, November 17, 1993.</scite2>
+    <scite3>“Palestinian shot dead by settler,” Advertiser, November 16, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

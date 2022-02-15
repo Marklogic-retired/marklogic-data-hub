@@ -1,0 +1,61 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199301150006</eventid>
+    <iyear>1993</iyear>
+    <imonth>1</imonth>
+    <iday>15</iday>
+    <extended>0</extended>
+    <country>36</country>
+    <country_txt>Cambodia</country_txt>
+    <region>5</region>
+    <region_txt>Southeast Asia</region_txt>
+    <provstate>Unknown</provstate>
+    <city>Ang Kron</city>
+    <vicinity>0</vicinity>
+    <summary>01/15/1993: The Khmer Rouge was responsible for launching a rocket attack and shooting at the UN Transitional Authority barracks in Ang Kron. Three people were killed and two others injured in the attack. The explosion caused minor damage.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <attacktype2>2</attacktype2>
+    <attacktype2_txt>Armed Assault</attacktype2_txt>
+    <targtype1>13</targtype1>
+    <targtype1_txt>Other</targtype1_txt>
+    <corp1>United Nations</corp1>
+    <target1>United Nations Transitional Authority (UNTAC) barracks in Ang Kron</target1>
+    <gname>Khmer Rouge</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>11</weapsubtype1>
+    <weapsubtype1_txt>Projectile (rockets, mortars, RPGs, etc.)</weapsubtype1_txt>
+    <weaptype2>5</weaptype2>
+    <weaptype2_txt>Firearms</weaptype2_txt>
+    <weapsubtype2>5</weapsubtype2>
+    <weapsubtype2_txt>Unknown Gun Type</weapsubtype2_txt>
+    <weapdetail>Combination attack included explosive - projectile and shooting.</weapdetail>
+    <nkill>3</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>2</nwound>
+    <nwoundus>0</nwoundus>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <scite1>Center for Terrorism and Intelligence Studies, Critical Infrastructure Terrorist Attack Database, San Jose, CA: Akribis Group, July 7 2006.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>-9</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

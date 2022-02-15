@@ -1,0 +1,70 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199305280003</eventid>
+    <iyear>1993</iyear>
+    <imonth>5</imonth>
+    <iday>28</iday>
+    <extended>0</extended>
+    <country>217</country>
+    <country_txt>United States</country_txt>
+    <region>1</region>
+    <region_txt>North America</region_txt>
+    <provstate>Missouri</provstate>
+    <city>Kansas City</city>
+    <vicinity>0</vicinity>
+    <location>Shots fired into family room and play room of Dr. Crist's son.</location>
+    <summary>5/28/1993: Unknown perpetrators fired shotgun blasts into the Kansas City, Missouri, United States, home of Dr. Robert Crist. Dr. Crist had recently taken a position as the medical director of the Planned Parenthood of Greater Kansas City. There were no casualties, but the house was damaged.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>5</targtype1>
+    <targtype1_txt>Abortion Related</targtype1_txt>
+    <corp1>Physician who performed abortions</corp1>
+    <target1>Residence of Dr. Robert Crist</target1>
+    <natlty1>217</natlty1>
+    <natlty1_txt>United States</natlty1_txt>
+    <targtype2>5</targtype2>
+    <targtype2_txt>Abortion Related</targtype2_txt>
+    <corp2>Planned Parenthood</corp2>
+    <target2>Medical Director of the Planned Parenthood of Greater Kansas City</target2>
+    <natlty2>217</natlty2>
+    <natlty2_txt>United States</natlty2_txt>
+    <gname>Anti-Abortion extremists</gname>
+    <motive>To protest the practice of abortion and to instill fear in physicians who perform abortions.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>-99</nperps>
+    <nperpcap>-99</nperpcap>
+    <claimed>0</claimed>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>4</weapsubtype1>
+    <weapsubtype1_txt>Rifle/Shotgun (non-automatic)</weapsubtype1_txt>
+    <weapdetail>Shotgun</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <ransom>0</ransom>
+    <addnotes>The attack took place at 1:45 AM while Dr. Crist and his family were asleep.  Nine days before the incident an anti-abortion hotline told callers that it was suspected that Dr. Crist had taken a position at the Planned Parenthood clinic.  Moreover, the message stated that "he will be monitored and appropriate action will be taken."</addnotes>
+    <scite1>Peter Slevin, "Slaying Raises Fears on Both Sides of Abortion Debate," Washington Post, June 2, 2009.</scite1>
+    <scite2>Judy Lundstrom, "Abortion Providers Put Under the Gun," Wichita Eagle, August 7, 1994.</scite2>
+    <scite3>Patricia Baird-Windle and Eleanor J. Bader, "Targets of Hatred: Anti-Abortion Terrorism," Palgrave, 2001.</scite3>
+    <dbsource>Anti-Abortion Project 2010</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

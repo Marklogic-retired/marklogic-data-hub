@@ -1,0 +1,60 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199301220001</eventid>
+    <iyear>1993</iyear>
+    <imonth>1</imonth>
+    <iday>22</iday>
+    <extended>0</extended>
+    <country>153</country>
+    <country_txt>Pakistan</country_txt>
+    <region>6</region>
+    <region_txt>South Asia</region_txt>
+    <provstate>Sindh (Province)</provstate>
+    <city>Hyderabad</city>
+    <vicinity>0</vicinity>
+    <summary>01/22/1993: A bomb blast in Hyderabad, Pakistan killed 22 people, injured 100, and caused substantial damage to the surrounding area. No group claimed the attack, but police suspected the Jeay Sindh group.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Private Citizens</corp1>
+    <target1>Private Citizens</target1>
+    <natlty1>153</natlty1>
+    <natlty1_txt>Pakistan</natlty1_txt>
+    <gname>Jeay Sindh</gname>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>16</weapsubtype1>
+    <weapsubtype1_txt>Unknown Explosive Type</weapsubtype1_txt>
+    <nkill>22</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>100</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>4</propextent>
+    <propextent_txt>Unknown</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <addnotes>Hyderabad is the second-largest city in Sindh Province and had been the center of political and ethnic violence for nearly a decade. The extremist group Jeay Sindh, which demands statehood for Sindh, had been blamed for much of the violence.</addnotes>
+    <scite1>“Bomb blast kill 22, injure 100 in Pakistan,” Chicago Tribune, January 24, 1993.</scite1>
+    <scite2>“Two bomb blast kill 22, injure 100,” The Associated Press, January 23, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

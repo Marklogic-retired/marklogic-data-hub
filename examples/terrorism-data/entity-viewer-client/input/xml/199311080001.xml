@@ -1,0 +1,72 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199311080001</eventid>
+    <iyear>1993</iyear>
+    <imonth>11</imonth>
+    <iday>8</iday>
+    <extended>1</extended>
+    <resolution>11/15/93</resolution>
+    <country>4</country>
+    <country_txt>Afghanistan</country_txt>
+    <region>6</region>
+    <region_txt>South Asia</region_txt>
+    <provstate>Kapisa (Province)</provstate>
+    <city>Tagab</city>
+    <vicinity>1</vicinity>
+    <location>Near Tagab</location>
+    <summary>11/08/1993: Members of the Hezb-i-Islami militia kidnapped 30 individuals near the village of Tagab, including one American and one New Zealander. No other injuries or fatalities were reported. The westerners were released one week later.</summary>
+    <crit1>1</crit1>
+    <crit2>0</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>6</attacktype1>
+    <attacktype1_txt>Hostage Taking (Kidnapping)</attacktype1_txt>
+    <targtype1>10</targtype1>
+    <targtype1_txt>Journalists &amp; Media</targtype1_txt>
+    <corp1>Associated Press</corp1>
+    <target1>Reporter John Jennings</target1>
+    <natlty1>217</natlty1>
+    <natlty1_txt>United States</natlty1_txt>
+    <targtype2>10</targtype2>
+    <targtype2_txt>Journalists &amp; Media</targtype2_txt>
+    <corp2>Agence France-Presse</corp2>
+    <target2>Reporter Terence White</target2>
+    <natlty2>144</natlty2>
+    <natlty2_txt>New Zealand</natlty2_txt>
+    <targtype3>14</targtype3>
+    <targtype3_txt>Private Citizens &amp; Property</targtype3_txt>
+    <corp3>Civilians</corp3>
+    <target3>Native Afghans</target3>
+    <natlty3>4</natlty3>
+    <natlty3_txt>Afghanistan</natlty3_txt>
+    <gname>Hizb-I-Islami</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>-9</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>13</weaptype1>
+    <weaptype1_txt>Unknown</weaptype1_txt>
+    <nkillus>0</nkillus>
+    <nwoundus>1</nwoundus>
+    <property>0</property>
+    <ishostkid>1</ishostkid>
+    <nhostkid>30</nhostkid>
+    <nhostkidus>1</nhostkidus>
+    <ndays>7</ndays>
+    <ransom>0</ransom>
+    <hostkidoutcome>2</hostkidoutcome>
+    <hostkidoutcome_txt>Hostage(s) released by perpetrators</hostkidoutcome_txt>
+    <nreleased>2</nreleased>
+    <addnotes>The journalists were not intentionally targeted for kidnapping and were released one week later.  The source said nothing about the main targets - the 28 Afghans captured with the reporters.  It is unknown whether these citizens were civilian or military.</addnotes>
+    <scite1>Edward F. Mickolus, Terrorism, 1992-1995: A Chronology of Events and a Selectively Annotated Bibliography, Westport, CT: Greenwood Press, 1997.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

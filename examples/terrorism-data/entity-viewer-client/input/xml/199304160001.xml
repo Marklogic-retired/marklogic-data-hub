@@ -1,0 +1,74 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199304160001</eventid>
+    <iyear>1993</iyear>
+    <imonth>4</imonth>
+    <iday>16</iday>
+    <extended>0</extended>
+    <country>155</country>
+    <country_txt>West Bank and Gaza Strip</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>West Bank (Occupied Territory)</provstate>
+    <city>Mehola</city>
+    <vicinity>0</vicinity>
+    <summary>04/16/1993: An apparent suicide car bombing killed two (one the assailant) and slightly wounded 9 outside Moshav Mehola roadside cafeteria near the Jewish settlement of Mehola. Responsibility for this attack was claimed by Hamas, Hizballah, Hizbollah-Palestine, Islamic Jihad, and Ezzeddin al-Kassam.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>0</success>
+    <suicide>1</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>4</targtype1>
+    <targtype1_txt>Military</targtype1_txt>
+    <corp1>Israeli Security Forces</corp1>
+    <target1>Israeli Defense Force Soldiers</target1>
+    <natlty1>97</natlty1>
+    <natlty1_txt>Israel</natlty1_txt>
+    <gname>Hamas (Islamic Resistance Movement)</gname>
+    <gname2>Hezbollah</gname2>
+    <gname3>Islamic Jihad (Ideological Grouping)</gname3>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <guncertain2>1</guncertain2>
+    <guncertain3>1</guncertain3>
+    <individual>0</individual>
+    <nperps>1</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>2</claimmode>
+    <claimmode_txt>Call (post-incident)</claimmode_txt>
+    <claim2>1</claim2>
+    <claimmode2>2</claimmode2>
+    <claimmode2_txt>Call (post-incident)</claimmode2_txt>
+    <claim3>1</claim3>
+    <claimmode3>2</claimmode3>
+    <claimmode3_txt>Call (post-incident)</claimmode3_txt>
+    <compclaim>1</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>15</weapsubtype1>
+    <weapsubtype1_txt>Vehicle</weapsubtype1_txt>
+    <nkill>2</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>1</nkillter>
+    <nwound>9</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <addnotes>The attack came as Israel prepared for the resumption of the Middle East peace talks. The following groups all claimed responsibility Hamas, Hizballah, Hizbollah-Palestine, Islamic Jihad, and Ezzeddin al-Kassam.</addnotes>
+    <scite1>Jon Immanuel, Michael Rotem and David Rudge, "Only luck prevents disaster in suicide car-bomb attack in territories," The Jerusalem Post, April 18, 1993.</scite1>
+    <scite2>"Car Bomb Kills 2 Arabs in West Bank; Suicide Bomber May Be Involved," St. Louis Post-Dispatch (Missouri), April 17, 1993.</scite2>
+    <scite3>"Car Bomb in West Bank Kills 2 Arabs; 8 Israelis Wounded," The New York Times, April 17, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>1</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

@@ -1,0 +1,72 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199310090003</eventid>
+    <iyear>1993</iyear>
+    <imonth>10</imonth>
+    <iday>9</iday>
+    <extended>0</extended>
+    <country>97</country>
+    <country_txt>Israel</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Hazafon (District)</provstate>
+    <city>Rosh Hanikra</city>
+    <vicinity>1</vicinity>
+    <location>Off the coast near the city of Rosh Hanikra.</location>
+    <summary>10/09/1993: A terrorist riding a high-speed water scooter and armed with Kalashnikov rifles, pistols, hand grenades, knives and ammunition was "blown out of the water" by the Israeli Navy off the cost of Rosh Hanikra. Popular Front for the Liberation of Palestine (PLFP) claimed responsibility for the attempted attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>0</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <attacktype2>3</attacktype2>
+    <attacktype2_txt>Bombing/Explosion</attacktype2_txt>
+    <targtype1>18</targtype1>
+    <targtype1_txt>Tourists</targtype1_txt>
+    <corp1>Tourists</corp1>
+    <target1>Tourists on Rosh Hanikra Beach</target1>
+    <natlty1>97</natlty1>
+    <natlty1_txt>Israel</natlty1_txt>
+    <gname>Popular Front for the Liberation of Palestine (PFLP)</gname>
+    <motive>The attack was perpetrated in an effort to derail peace talks.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>1</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>9</claimmode>
+    <claimmode_txt>Other</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>2</weapsubtype1>
+    <weapsubtype1_txt>Automatic or Semi-Automatic Rifle</weapsubtype1_txt>
+    <weaptype2>9</weaptype2>
+    <weaptype2_txt>Melee</weaptype2_txt>
+    <weapsubtype2>23</weapsubtype2>
+    <weapsubtype2_txt>Knife or Other Sharp Object</weapsubtype2_txt>
+    <weaptype3>6</weaptype3>
+    <weaptype3_txt>Explosives</weaptype3_txt>
+    <weapsubtype3>7</weapsubtype3>
+    <weapsubtype3_txt>Grenade</weapsubtype3_txt>
+    <weapdetail>Kalashnikov rifles, pistols, hand grenades, knives and ammunition</weapdetail>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>1</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <scite1>Yigal Kotzer, ‘Navy Thwarts Attempted Attack,” The Jerusalem Post, October 10, 1993.</scite1>
+    <scite2>"The Silent Peace Partner,” The Jerusalem Post, October 10, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

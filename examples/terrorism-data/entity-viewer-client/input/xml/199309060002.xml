@@ -1,0 +1,59 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199309060002</eventid>
+    <iyear>1993</iyear>
+    <imonth>9</imonth>
+    <iday>6</iday>
+    <extended>0</extended>
+    <country>153</country>
+    <country_txt>Pakistan</country_txt>
+    <region>6</region>
+    <region_txt>South Asia</region_txt>
+    <provstate>Balochistan (Province)</provstate>
+    <city>Quetta</city>
+    <vicinity>0</vicinity>
+    <summary>09/06/1993: Unknown assailants shot dead Abdul Wahid Khilji, an influential leader of Awami National Party, a Pakistani left-leaning party, and injured two others. No group claimed responsibility for the attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>1</attacktype1>
+    <attacktype1_txt>Assassination</attacktype1_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>Awami National Party</corp1>
+    <target1>City President Abdul Wahid Khilji</target1>
+    <natlty1>153</natlty1>
+    <natlty1_txt>Pakistan</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>5</weapsubtype1>
+    <weapsubtype1_txt>Unknown Gun Type</weapsubtype1_txt>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>2</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>Khilji's younger brother and another guest who were sitting with him on the lawns of the house were critically wounded.</addnotes>
+    <scite1>“Pakistani Leftist Party Leader Shot Dead," Agence France Presse, September 6, 1993.</scite1>
+    <scite2>“Gunmen Kill Leftist Political Leader in Pakistan," The Associated Press, September 6, 1993.</scite2>
+    <scite3>“Quetta city Awami National Party President Assassinated," BBC Summary of World Broadcasts, September 7, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

@@ -1,0 +1,61 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199309120002</eventid>
+    <iyear>1993</iyear>
+    <imonth>9</imonth>
+    <iday>12</iday>
+    <extended>0</extended>
+    <country>97</country>
+    <country_txt>Israel</country_txt>
+    <region>10</region>
+    <region_txt>Middle East &amp; North Africa</region_txt>
+    <provstate>Gaza Strip (Occupied Territory)</provstate>
+    <city>Ashdod</city>
+    <vicinity>1</vicinity>
+    <location>Between Ashdod and Ashqelon</location>
+    <summary>09/12/1993: A man stabbed to death an Israeli bus driver and was then shot dead by an IDF soldier in Gaza City. The perpetrator was a member of HAMAS. No one else was injured in the attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>1</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Israeli Bus System</corp1>
+    <target1>Israeli Bus Driver</target1>
+    <natlty1>97</natlty1>
+    <natlty1_txt>Israel</natlty1_txt>
+    <gname>Hamas (Islamic Resistance Movement)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>1</nperps>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>9</weaptype1>
+    <weaptype1_txt>Melee</weaptype1_txt>
+    <weapsubtype1>23</weapsubtype1>
+    <weapsubtype1_txt>Knife or Other Sharp Object</weapsubtype1_txt>
+    <nkill>2</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>1</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>This was one of three related attacks (cf: [199309120001] and [199309120003]).</addnotes>
+    <scite1>“Three IDF soldiers killed; buses attacked: Israeli, Palestinian," BBC Summary of World Broadcasts, September 14, 1993.</scite1>
+    <scite2>“Foes of Mideast accord blamed in 7 deaths; Violence flares in occupied territories as Arafat goes to Washington," The Gazette (Montreal, Quebec) (Montreal, Quebec), September 13, 1993.</scite2>
+    <scite3>“Jihad Kills Three Israelis on Eve of Peace Deal," The Guardian (London), September 13, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>1</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

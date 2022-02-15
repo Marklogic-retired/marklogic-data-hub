@@ -1,0 +1,58 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199305270001</eventid>
+    <iyear>1993</iyear>
+    <imonth>5</imonth>
+    <iday>27</iday>
+    <extended>0</extended>
+    <country>98</country>
+    <country_txt>Italy</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Florence (Province)</provstate>
+    <city>Florence</city>
+    <vicinity>0</vicinity>
+    <summary>05/27/1993: A car bomb exploded near Florence's Uffizi Gallery, killing five people and destroying or badly damaging gallery masterpieces.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>13</targtype1>
+    <targtype1_txt>Other</targtype1_txt>
+    <corp1>Uffizi Gallery</corp1>
+    <target1>Uffizi Art Gallery in Florence</target1>
+    <natlty1>98</natlty1>
+    <natlty1_txt>Italy</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>15</weapsubtype1>
+    <weapsubtype1_txt>Vehicle</weapsubtype1_txt>
+    <nkill>5</nkill>
+    <nwound>50</nwound>
+    <property>1</property>
+    <propextent>2</propextent>
+    <propextent_txt>Major (likely >= $1 million but &lt; $1 billion)</propextent_txt>
+    <propcomment>Art masterpieces were damaged.</propcomment>
+    <ishostkid>0</ishostkid>
+    <addnotes>The Mafia was suspected.</addnotes>
+    <scite1>Warren Gerrard, "Terrorists Bomb Florence Museum," Toronto Star, May 30, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

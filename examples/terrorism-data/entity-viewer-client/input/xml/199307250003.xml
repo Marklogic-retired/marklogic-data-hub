@@ -1,0 +1,60 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199307250003</eventid>
+    <iyear>1993</iyear>
+    <imonth>7</imonth>
+    <iday>25</iday>
+    <extended>0</extended>
+    <country>159</country>
+    <country_txt>Peru</country_txt>
+    <region>3</region>
+    <region_txt>South America</region_txt>
+    <provstate>Lima (Province)</provstate>
+    <city>Lima</city>
+    <vicinity>0</vicinity>
+    <summary>07/25/1993: A car-bomb packed with 30 kilos of explosives exploded outside the Champanac Catholic School in the Miraflores residential district of Lima. Although no deaths or injuries were reported, the explosion caused major damage to the school building and neighboring businesses. Shining Path rebels were suspected.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>8</targtype1>
+    <targtype1_txt>Educational Institution</targtype1_txt>
+    <corp1>Champanac Catholic School</corp1>
+    <target1>Champanac Catholic School</target1>
+    <natlty1>159</natlty1>
+    <natlty1_txt>Peru</natlty1_txt>
+    <gname>Shining Path (SL)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>15</weapsubtype1>
+    <weapsubtype1_txt>Vehicle</weapsubtype1_txt>
+    <weapdetail>A vehicle packed with 30 kilos of explosives.</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>2</propextent>
+    <propextent_txt>Major (likely >= $1 million but &lt; $1 billion)</propextent_txt>
+    <propcomment>The explosion caused major damage to the school building and shattered the doors and windows of neighboring shops and businesses.</propcomment>
+    <ishostkid>0</ishostkid>
+    <scite1>“Peru: Shining Path Blamed for Car-Bomb Explosion Outside School,” Inter Press Service, July 26, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

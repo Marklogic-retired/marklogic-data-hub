@@ -1,0 +1,58 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199302280001</eventid>
+    <iyear>1993</iyear>
+    <imonth>2</imonth>
+    <iday>28</iday>
+    <extended>0</extended>
+    <country>160</country>
+    <country_txt>Philippines</country_txt>
+    <region>5</region>
+    <region_txt>Southeast Asia</region_txt>
+    <provstate>Zamboanga Sibugay (Province)</provstate>
+    <city>Zamboanga City</city>
+    <vicinity>0</vicinity>
+    <summary>02/28/1993: Two bombs exploded at the Zamboanga International Airport injuring 30 people and causing extensive damage, including the collapse of the roof in the main terminal. One bomb was a 2-kilogram bomb packed with explosives, a grenade and nails. The Abu Sayyaf Group (ASG) later claimed responsibility for the attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>0</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>7</attacktype1>
+    <attacktype1_txt>Facility/Infrastructure Attack</attacktype1_txt>
+    <targtype1>6</targtype1>
+    <targtype1_txt>Airports &amp; Aircraft</targtype1_txt>
+    <corp1>Zamboanga International Airport</corp1>
+    <target1>Zamboanga International Airport</target1>
+    <natlty1>160</natlty1>
+    <natlty1_txt>Philippines</natlty1_txt>
+    <gname>Abu Sayyaf Group (ASG)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <claimed>1</claimed>
+    <claimmode>10</claimmode>
+    <claimmode_txt>Unknown</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>17</weapsubtype1>
+    <weapsubtype1_txt>Other Explosive Type</weapsubtype1_txt>
+    <weapdetail>One bomb was a 2-kilogram bomb packed with explosives, a grenade and nails.</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>30</nwound>
+    <property>1</property>
+    <propextent>2</propextent>
+    <propextent_txt>Major (likely >= $1 million but &lt; $1 billion)</propextent_txt>
+    <ishostkid>0</ishostkid>
+    <scite1>Center for Terrorism and Intelligence Studies, Critical Infrastructure Terrorist Attack Database, San Jose, CA: Akribis Group, July 7 2006.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

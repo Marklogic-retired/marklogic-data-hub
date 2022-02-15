@@ -1,0 +1,62 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199302270001</eventid>
+    <iyear>1993</iyear>
+    <imonth>2</imonth>
+    <iday>27</iday>
+    <extended>0</extended>
+    <country>603</country>
+    <country_txt>United Kingdom</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>England</provstate>
+    <city>London</city>
+    <vicinity>0</vicinity>
+    <location>Camden (London Borough)</location>
+    <summary>02/27/1993: A bomb exploded in a trash can on the Camden High Street, near crowded markets, in north London, United Kingdom, injuring more then 12 people. Police received two coded telephone warnings 28 minutes before the blast; the first warning said that a bomb had been planted somewhere on Oxford Street, in the heart of central London's shopping district and the second call said a device had been placed outside a chicken and burger restaurant in Camden, two miles north of Oxford Street.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>London Shopping District</corp1>
+    <target1>Camden High Street in London's Shopping District</target1>
+    <natlty1>216</natlty1>
+    <natlty1_txt>Great Britain</natlty1_txt>
+    <gname>Irish Republican Army (IRA)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>16</weapsubtype1>
+    <weapsubtype1_txt>Unknown Explosive Type</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>12</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propcomment>Windows were shattered and cars were damaged.</propcomment>
+    <ishostkid>0</ishostkid>
+    <scite1>“Bomb blast in north London injures 12,” United Press International, February 27, 1993.</scite1>
+    <scite2>Ten Injured in Explosion in London,” Xinhua General News Service, February 27, 1993.</scite2>
+    <scite3>William Tuohy, “Bomb Explodes on Busy London Shopping Street; 18 Injured,” Los Angeles Times, February 28, 1993</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>1</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

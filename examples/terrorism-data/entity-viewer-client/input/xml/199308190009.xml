@@ -1,0 +1,67 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199308190009</eventid>
+    <iyear>1993</iyear>
+    <imonth>8</imonth>
+    <iday>19</iday>
+    <extended>0</extended>
+    <country>217</country>
+    <country_txt>United States</country_txt>
+    <region>1</region>
+    <region_txt>North America</region_txt>
+    <provstate>Kansas</provstate>
+    <city>Wichita</city>
+    <latitude>37.688889</latitude>
+    <longitude>-97.336111</longitude>
+    <specificity>1</specificity>
+    <vicinity>0</vicinity>
+    <summary>08/19/1993: An assailant opened fire on Dr. George Tiller outside an abortion clinic in Wichita, Kansas, United States. Dr. Tiller, an abortion doctor, was injured in both arms. An anti-abortion extremist, identified as Rachelle "Shelley" Shannon, was convicted for carrying out the attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>0</success>
+    <suicide>0</suicide>
+    <attacktype1>1</attacktype1>
+    <attacktype1_txt>Assassination</attacktype1_txt>
+    <targtype1>5</targtype1>
+    <targtype1_txt>Abortion Related</targtype1_txt>
+    <targsubtype1>41</targsubtype1>
+    <targsubtype1_txt>Personnel</targsubtype1_txt>
+    <corp1>Unknown</corp1>
+    <target1>Abortion Doctor: George Tiller</target1>
+    <natlty1>217</natlty1>
+    <natlty1_txt>United States</natlty1_txt>
+    <gname>Anti-Abortion extremists</gname>
+    <motive>To protest the practice of abortion and to sabotage abortion facilities operating in Kansas.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>1</individual>
+    <nperps>1</nperps>
+    <nperpcap>1</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>8</claimmode>
+    <claimmode_txt>Personal claim</claimmode_txt>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>3</weapsubtype1>
+    <weapsubtype1_txt>Handgun</weapsubtype1_txt>
+    <weapdetail>A .32-caliber gun was used in the attack.</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>1</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>Shannon was also convicted for carrying out several firebomb attacks on abortion clinics in Caliornia, Nevada, and Oregon in 1992.</addnotes>
+    <scite1>Ronald J. Ostrow and James Risen, "U.S. to Act in 10 Abortion Clinic Attacks : Indictments: Charges are expected against an extremist in prison for attempted murder. Authorities hope action will lead to names of others," Los Angeles Times, October 23, 1994.</scite1>
+    <scite2>Dirk Johnson, "Abortions, Bibles and Bullets, And the Making of a Militant," The New York Times, August 28, 1993.</scite2>
+    <scite3>Harriet Ryan, "Kopp fifth clinic shooter to face trial," Court TV, March 11, 2003.</scite3>
+    <dbsource>UMD Miscellaneous</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

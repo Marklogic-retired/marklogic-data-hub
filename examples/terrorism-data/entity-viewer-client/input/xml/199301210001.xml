@@ -1,0 +1,64 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199301210001</eventid>
+    <iyear>1993</iyear>
+    <imonth>1</imonth>
+    <iday>21</iday>
+    <extended>0</extended>
+    <country>45</country>
+    <country_txt>Colombia</country_txt>
+    <region>3</region>
+    <region_txt>South America</region_txt>
+    <provstate>Bogota (Capital District)</provstate>
+    <city>Bogota</city>
+    <vicinity>0</vicinity>
+    <summary>01/21/1993: Twenty people were injured in a car bomb explosion in Bogota, Colombia. The attack caused extensive damage over an 8 block radius. Although no one claimed the attack, police blamed it on drug traffickers, however a specific group name was not disclosed.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Private Citizens</corp1>
+    <target1>Private Citizens</target1>
+    <natlty1>45</natlty1>
+    <natlty1_txt>Colombia</natlty1_txt>
+    <gname>Other</gname>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperpcap>3</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>15</weapsubtype1>
+    <weapsubtype1_txt>Vehicle</weapsubtype1_txt>
+    <weapdetail>80 pounds of explosives were left in the vehicle.</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>20</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>2</propextent>
+    <propextent_txt>Major (likely >= $1 million but &lt; $1 billion)</propextent_txt>
+    <propvalue>2000000</propvalue>
+    <propcomment>The attack caused extensive damage over an 8 block radius.</propcomment>
+    <ishostkid>0</ishostkid>
+    <addnotes>No perpetrators were identified, but the police suspected drug traffickers.</addnotes>
+    <scite1>“Escobar blamed for bomb blasts that injure 17,” The Associated Press, January 22, 1993.</scite1>
+    <scite2>“Colombia- 20 injured in car bomb explosion,” IPS-Inter Press Service, January 22, 1993.</scite2>
+    <scite3>“Bomb blasts in Bogota wound at least 17,” Los Angeles Times, January 23, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

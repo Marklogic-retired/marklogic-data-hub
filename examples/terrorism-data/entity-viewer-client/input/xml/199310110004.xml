@@ -1,0 +1,59 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199310110004</eventid>
+    <iyear>1993</iyear>
+    <imonth>10</imonth>
+    <iday>11</iday>
+    <extended>0</extended>
+    <country>43</country>
+    <country_txt>Chile</country_txt>
+    <region>3</region>
+    <region_txt>South America</region_txt>
+    <provstate>Santiago Metropolitan Region (Region)</provstate>
+    <city>Santiago</city>
+    <vicinity>0</vicinity>
+    <summary>10/11/1993: A prison police guard was killed after an extremist attack against a police prison building in the capital. The Manuel Rodriguez Front's Raul Pellegrin Squad claimed responsibility for the attack.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>1</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>2</attacktype1>
+    <attacktype1_txt>Armed Assault</attacktype1_txt>
+    <targtype1>2</targtype1>
+    <targtype1_txt>Government (General)</targtype1_txt>
+    <corp1>Santiago Prison</corp1>
+    <target1>Santiago Prison Guard</target1>
+    <natlty1>43</natlty1>
+    <natlty1_txt>Chile</natlty1_txt>
+    <gname>Manuel Rodriguez Patriotic Front (FPMR)</gname>
+    <motive>The attack was perpetrated to mark the first anniversary of a frustrated escape attempt from the Santiago Penitentiary.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>3</nperps>
+    <claimed>1</claimed>
+    <claimmode>1</claimmode>
+    <claimmode_txt>Letter</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>2</weapsubtype1>
+    <weapsubtype1_txt>Automatic or Semi-Automatic Rifle</weapsubtype1_txt>
+    <nkill>1</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>This was one of five related attacks cf. (199310110002;199310110005;199310110006; 199310110007).</addnotes>
+    <scite1>"Manuel Rodriguez Front Claims Responsibility for Attack on Prison,” British Broadcasting Corporation, October 14, 1993.</scite1>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>0</INT_ANY>
+</event>

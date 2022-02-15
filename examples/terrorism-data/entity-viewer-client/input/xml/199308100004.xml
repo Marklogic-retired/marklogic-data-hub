@@ -1,0 +1,70 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199308100004</eventid>
+    <iyear>1993</iyear>
+    <imonth>8</imonth>
+    <iday>10</iday>
+    <extended>0</extended>
+    <country>44</country>
+    <country_txt>China</country_txt>
+    <region>4</region>
+    <region_txt>East Asia</region_txt>
+    <provstate>Beijing (Municipality)</provstate>
+    <city>Beijing</city>
+    <vicinity>0</vicinity>
+    <summary>08/10/1993: A Chinese passenger onboard an Air China flight from Beijing threatened to pour acid over passengers unless the flight changed course to Taiwan. Air China Flight CA973 left Beijing at 09:51 (Beijing time) and was hijacked at 11:15 (Beijing time). At this time, the plane was diverted to Taiwan and landed at the Taipei international airport, where the lone hijacker exited. The crew with all its passengers (save for the hijacker) returned to Xiamen, China at 16:03 (Beijing time). No one was injured.</summary>
+    <crit1>0</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>4</attacktype1>
+    <attacktype1_txt>Hijacking</attacktype1_txt>
+    <targtype1>6</targtype1>
+    <targtype1_txt>Airports &amp; Aircraft</targtype1_txt>
+    <corp1>Air China</corp1>
+    <target1>Air China Flight CA-973 from Beijing to Jakarta via Xiamen</target1>
+    <natlty1>44</natlty1>
+    <natlty1_txt>China</natlty1_txt>
+    <gname>Unaffiliated Individual(s)</gname>
+    <motive>Escape to Taiwan from China</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>1</nperps>
+    <nperpcap>1</nperpcap>
+    <claimed>1</claimed>
+    <claimmode>8</claimmode>
+    <claimmode_txt>Personal claim</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>2</weaptype1>
+    <weaptype1_txt>Chemical</weaptype1_txt>
+    <weapdetail>Acid</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>1</ishostkid>
+    <nhostkid>151</nhostkid>
+    <nhostkidus>-99</nhostkidus>
+    <nhours>7</nhours>
+    <divert>Taiwan</divert>
+    <kidhijcountry>Taiwan</kidhijcountry>
+    <ransom>0</ransom>
+    <hostkidoutcome>2</hostkidoutcome>
+    <hostkidoutcome_txt>Hostage(s) released by perpetrators</hostkidoutcome_txt>
+    <nreleased>151</nreleased>
+    <scite1>“Taiwan authorities asked to help prevent airliner hijackings,” The Xinhua General Overseas News Service, August 10, 1993.</scite1>
+    <scite2>“Hijacker, whose weapon was acid, gives himself up,” Seattle Post-Intelligencer, August 11, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>0</INT_MISC>
+    <INT_ANY>-9</INT_ANY>
+</event>

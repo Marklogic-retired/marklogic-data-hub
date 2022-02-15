@@ -1,0 +1,62 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199312190001</eventid>
+    <iyear>1993</iyear>
+    <imonth>12</imonth>
+    <iday>19</iday>
+    <extended>0</extended>
+    <country>603</country>
+    <country_txt>United Kingdom</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Northern Ireland</provstate>
+    <city>Londonderry</city>
+    <vicinity>0</vicinity>
+    <location>Ulster (Province)</location>
+    <summary>12/19/1993: Four people, three of them children, were taken to a hospital suffering from shock after a landmine went off on the Buncrana Road, in Londonderry. The explosion occurred just moments after a security patrol passed the scene. Officials suspected the Irish Republican Army (IRA).</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>14</targtype1>
+    <targtype1_txt>Private Citizens &amp; Property</targtype1_txt>
+    <corp1>Public Road in Londonderry</corp1>
+    <target1>Public Road in Londonderry</target1>
+    <natlty1>233</natlty1>
+    <natlty1_txt>Northern Ireland</natlty1_txt>
+    <gname>Irish Republican Army (IRA)</gname>
+    <motive>Unknown</motive>
+    <guncertain1>1</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>8</weapsubtype1>
+    <weapsubtype1_txt>Landmine</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>4</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <propcomment>It shattered windows in dozens of nearby houses and a boys' grammar school, and blasted a huge crater in the road.</propcomment>
+    <ishostkid>0</ishostkid>
+    <addnotes>It was the first explosion in Ulster since the British and Irish governments announced a joint peace initiative five days ago and came as the IRA considered its response to the plan.</addnotes>
+    <scite1>Ian Graham, “Children Escape as IRA Bomb Rocks City,” Press Association, December 19, 1993.</scite1>
+    <scite2>“Four Treated in Hospital after Ulster Bomb Blast,” The Independent (London), December 20, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>0</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

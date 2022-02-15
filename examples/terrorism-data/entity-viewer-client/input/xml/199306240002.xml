@@ -1,0 +1,79 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199306240002</eventid>
+    <iyear>1993</iyear>
+    <imonth>6</imonth>
+    <iday>24</iday>
+    <extended>0</extended>
+    <country>75</country>
+    <country_txt>Germany</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>Bavaria (State)</provstate>
+    <city>Munich</city>
+    <vicinity>0</vicinity>
+    <summary>06/24/1993: In a series of related Kurdistan Workers' Party (PKK) attacks against Turkish targets across Europe, a group of PKK members attacked and took over the Turkish Consulate in Munich along with 21 hostages. They surrendered after 14 hours. No injuries were reported.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>0</doubtterr>
+    <multiple>1</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>5</attacktype1>
+    <attacktype1_txt>Hostage Taking (Barricade Incident)</attacktype1_txt>
+    <targtype1>7</targtype1>
+    <targtype1_txt>Government (Diplomatic)</targtype1_txt>
+    <corp1>Turkish Ministry of Foreign Affairs</corp1>
+    <target1>Turkish Consulate in Munich</target1>
+    <natlty1>209</natlty1>
+    <natlty1_txt>Turkey</natlty1_txt>
+    <gname>Kurdistan Workers' Party (PKK)</gname>
+    <motive>Protesting Turkish treatment of Kurds</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperps>5</nperps>
+    <claimed>1</claimed>
+    <claimmode>2</claimmode>
+    <claimmode_txt>Call (post-incident)</claimmode_txt>
+    <compclaim>-9</compclaim>
+    <weaptype1>5</weaptype1>
+    <weaptype1_txt>Firearms</weaptype1_txt>
+    <weapsubtype1>2</weapsubtype1>
+    <weapsubtype1_txt>Automatic or Semi-Automatic Rifle</weapsubtype1_txt>
+    <weaptype2>5</weaptype2>
+    <weaptype2_txt>Firearms</weaptype2_txt>
+    <weapsubtype2>3</weapsubtype2>
+    <weapsubtype2_txt>Handgun</weapsubtype2_txt>
+    <weaptype3>8</weaptype3>
+    <weaptype3_txt>Incendiary</weaptype3_txt>
+    <weapsubtype3>20</weapsubtype3>
+    <weapsubtype3_txt>Gasoline or Alcohol</weapsubtype3_txt>
+    <weapdetail>The Kurds put gasoline all over the building and threatened to light it if anyone stormed the building.</weapdetail>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>1</property>
+    <propextent>3</propextent>
+    <propextent_txt>Minor (likely &lt; $1 million)</propextent_txt>
+    <ishostkid>1</ishostkid>
+    <nhostkid>21</nhostkid>
+    <nhostkidus>0</nhostkidus>
+    <nhours>14</nhours>
+    <ransom>1</ransom>
+    <hostkidoutcome>2</hostkidoutcome>
+    <hostkidoutcome_txt>Hostage(s) released by perpetrators</hostkidoutcome_txt>
+    <nreleased>21</nreleased>
+    <addnotes>Two hostages were released almost immediately due to a heart attack and shock. The women were released at dusk and the others sometime later. The incident lasted 14 hours. This was one of seventeen related attacks (cf. 199306240001-4; 199306240006-16; 199306240019-20).</addnotes>
+    <scite1>“Terrorism Militant Kurds attack Turkish holdings in five European countries; one dies,” Chicago Tribune, June 24, 1993.</scite1>
+    <scite2>AAPINTNEWS, “Militant Kurds free hostages,” Courier-Mail, June 26, 1993.</scite2>
+    <scite3>Cayol T, “Kurds seize hostages,” Herald Sun, June 25, 1993.</scite3>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>1</INT_LOG>
+    <INT_IDEO>0</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>

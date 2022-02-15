@@ -1,0 +1,61 @@
+<?xml version='1.0'?>
+<event>
+    <eventid>199303230003</eventid>
+    <iyear>1993</iyear>
+    <imonth>3</imonth>
+    <iday>23</iday>
+    <extended>0</extended>
+    <country>603</country>
+    <country_txt>United Kingdom</country_txt>
+    <region>8</region>
+    <region_txt>Western Europe</region_txt>
+    <provstate>England</provstate>
+    <city>Huntingdon</city>
+    <vicinity>0</vicinity>
+    <location>Cambridgeshire (County)</location>
+    <summary>03/23/1993: A letter bomb exploded in the offices of Anglian Water in Scotland. The Scottish National Party (SNP) was suspected of conducting the attack, however there was no claim of responsibility. No injuries or casualties resulted from the incident.</summary>
+    <crit1>1</crit1>
+    <crit2>1</crit2>
+    <crit3>1</crit3>
+    <doubtterr>1</doubtterr>
+    <alternative>2</alternative>
+    <alternative_txt>Other Crime Type</alternative_txt>
+    <multiple>0</multiple>
+    <success>1</success>
+    <suicide>0</suicide>
+    <attacktype1>3</attacktype1>
+    <attacktype1_txt>Bombing/Explosion</attacktype1_txt>
+    <targtype1>9</targtype1>
+    <targtype1_txt>Food or Water Supply</targtype1_txt>
+    <corp1>Anglian Water</corp1>
+    <target1>Anglian Water office in Scotland</target1>
+    <natlty1>216</natlty1>
+    <natlty1_txt>Great Britain</natlty1_txt>
+    <gname>Unknown</gname>
+    <motive>The assailants may have been protesting against a recent government move to privatize water.</motive>
+    <guncertain1>0</guncertain1>
+    <individual>0</individual>
+    <nperpcap>0</nperpcap>
+    <claimed>0</claimed>
+    <compclaim>-9</compclaim>
+    <weaptype1>6</weaptype1>
+    <weaptype1_txt>Explosives</weaptype1_txt>
+    <weapsubtype1>9</weapsubtype1>
+    <weapsubtype1_txt>Letter Bomb</weapsubtype1_txt>
+    <nkill>0</nkill>
+    <nkillus>0</nkillus>
+    <nkillter>0</nkillter>
+    <nwound>0</nwound>
+    <nwoundus>0</nwoundus>
+    <nwoundte>0</nwoundte>
+    <property>0</property>
+    <ishostkid>0</ishostkid>
+    <addnotes>No claims of responsibility were made. The Scottish National Party (SNP) was suspected of being involved in the attack, as it has waged a campaign against the privatization of water. No injuries or casualties resulted from the attack.</addnotes>
+    <scite1>“Letter bomb blast,” Daily Mail (London), March 24, 1993.</scite1>
+    <scite2>Louise Jury, “Scottish Protesters Blamed For Letter Bomb At Water Authority,” The Guardian (London), March 24, 1993.</scite2>
+    <dbsource>CETIS</dbsource>
+    <INT_LOG>-9</INT_LOG>
+    <INT_IDEO>-9</INT_IDEO>
+    <INT_MISC>1</INT_MISC>
+    <INT_ANY>1</INT_ANY>
+</event>
