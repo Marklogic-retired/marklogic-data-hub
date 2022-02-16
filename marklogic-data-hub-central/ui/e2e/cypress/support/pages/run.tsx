@@ -51,7 +51,8 @@ class RunPage {
 
   verifyStepInFlow(stepType: string, stepName: string, flowName: string) {
     cy.waitForModalToDisappear();
-    cy.get(`#${flowName} ${this.flowBodyContainer}`).findAllByText(stepType).first().should("be.visible");
+    cy.get(`#${flowName} ${this.flowBodyContainer}`).findAllByText(stepType).first().scrollIntoView().should("exist");
+    cy.get(`#${flowName} ${this.flowBodyContainer}`).findAllByText(stepType).first().scrollIntoView().should("be.visible");
     cy.get(`#${flowName} ${this.flowBodyContainer}`).findAllByText(stepName).first().should("be.visible");
   }
 

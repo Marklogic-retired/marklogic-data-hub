@@ -44,6 +44,8 @@ describe("Run Tile tests", () => {
     runPage.addStepToFlow("merge-xml-person");
     runPage.verifyStepInFlow("Merge", "merge-xml-person", flowName);
     runPage.addStep(flowName);
+
+    cy.log("**Add Master Step**");
     runPage.addStepToFlow("master-person");
     runPage.verifyStepInFlow("Master", "master-person", flowName);
     runPage.addStep(flowName);
