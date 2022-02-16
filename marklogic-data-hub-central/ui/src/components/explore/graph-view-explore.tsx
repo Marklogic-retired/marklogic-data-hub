@@ -3,9 +3,12 @@ import styles from "./graph-view-explore.module.scss";
 import FormCheck from "react-bootstrap/FormCheck";
 import SplitPane from "react-split-pane";
 import GraphVisExplore from "./graph-vis-explore/graph-vis-explore";
-import {HCCheckbox} from "@components/common";
+import {HCCheckbox, HCTooltip} from "@components/common";
 import GraphExploreSidePanel from "./graph-explore-side-panel/graph-explore-side-panel";
 import {SearchContext} from "../../util/search-context";
+import {ModelingTooltips} from "../../config/tooltips.config";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faFileExport} from "@fortawesome/free-solid-svg-icons";
 
 
 type Props = {
@@ -19,19 +22,19 @@ type Props = {
 const GraphViewExplore: React.FC<Props> = (props) => {
 
   const [viewRelationshipLabels, toggleRelationShipLabels] = useState(true);
+  const [exportPngButtonClicked, setExportPngButtonClicked] = useState(false);
 
   const {
     savedNode,
     setSavedNode
   } = useContext(SearchContext);
 
-  /* TODO:- To be added in future release.
   const headerButtons = <span className={styles.buttons}>
-    <HCTooltip text={ModelingTooltips.exportGraph} id="export-graph-icon" placement="top">
-      <i>{<FontAwesomeIcon className={styles.graphExportIcon} icon={faFileExport} aria-label="graph-export"/>}</i>
+    <HCTooltip text={ModelingTooltips.exportGraph} id="export-graph-icon-tooltip" placement="top">
+      <i>{<FontAwesomeIcon className={styles.graphExportIcon} icon={faFileExport} aria-label="graph-export" onClick={() => { setExportPngButtonClicked(true); }}/>}</i>
     </HCTooltip>
   </span>;
-  */
+
   const splitPaneStyles = {
     pane1: {minWidth: "150px"},
     pane2: {minWidth: "140px", maxWidth: "90%"},
@@ -89,9 +92,7 @@ const GraphViewExplore: React.FC<Props> = (props) => {
       : (<div className={styles.graphViewExploreContainer}>
         <div className={styles.graphHeader}>
           {relationshipsToggle}
-          {/* Supposed to be added in future release
           {headerButtons}
-          */}
         </div>
         <div className={styles.borderBelowHeader}></div>
         <div>
@@ -102,6 +103,8 @@ const GraphViewExplore: React.FC<Props> = (props) => {
             setCoords={props.setCoords}
             hubCentralConfig={props.hubCentralConfig}
             viewRelationshipLabels={viewRelationshipLabels}
+            exportPngButtonClicked = {exportPngButtonClicked}
+            setExportPngButtonClicked = {setExportPngButtonClicked}
           />
         </div>
       </div>
