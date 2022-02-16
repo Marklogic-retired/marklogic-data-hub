@@ -12,9 +12,7 @@
 - [ ] Rebase the branch with upstream
 - [ ] Squashed all commits into a single commit
 - [ ] Code passes ESLint tests
-- [ ] Added Tests
-- [ ] Run UI tests
-  
+- [ ] Added Tests  
 
 - ##### Reviewer:
 
