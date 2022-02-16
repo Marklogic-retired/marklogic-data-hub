@@ -237,6 +237,8 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     advancedSettingsDialog.setTargetPermissions("data-hub-common,read");
     advancedSettingsDialog.saveEntitySettings();
 
+    //TODO: BUG: Page re-renders
+    cy.wait(2000);
     mappingStepDetail.entityData().should("exist");
     mappingStepDetail.entitySettingsLink().should("be.visible").click();
     advancedSettingsDialog.getTargetPermissions().should("have.value", "data-hub-common,read");

@@ -61,7 +61,7 @@ class GraphViewSidePanel {
   }
 
   getIconTooltip(property: string, tooltip: string) {
-    return cy.get(`#tooltip-${property}`, {timeout: 5000}).contains(`${tooltip}`).should("exist");
+    return cy.get(`#tooltip-${property}`, {timeout: 5000}).find("div.tooltip-inner").contains(`${tooltip}`).should("exist");
   }
 }
 
