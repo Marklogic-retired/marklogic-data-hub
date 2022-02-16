@@ -20,6 +20,8 @@ type Props = {
   setCoords: (coords: any[]) => void;
   hubCentralConfig: any;
   viewRelationshipLabels: any;
+  exportPngButtonClicked: boolean;
+  setExportPngButtonClicked: any;
 };
 
 const GraphVisExplore: React.FC<Props> = (props) => {
@@ -128,6 +130,18 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     };
 
   }, [network, props.graphView]);
+
+  useEffect(() => {
+    if (props.exportPngButtonClicked)  {
+      let canvas = document.getElementsByClassName("vis-network")[0]["canvas"];
+      let link = document.createElement("a");
+      link.href = canvas.toDataURL();
+      link.setAttribute("download", "graph-view-explore");
+      document.body.appendChild(link);
+      link.click();
+      props.setExportPngButtonClicked(false);
+    }
+  }, [props.exportPngButtonClicked]);
 
   useLayoutEffect(() => {
     if (network) {

@@ -90,5 +90,13 @@ class GraphExplore {
   getJsonTypeDetailView() {
     return cy.findByLabelText("jsonTypeData");
   }
+
+  getExportPNGIcon() {
+    return cy.get(`[aria-label="graph-export"]`);
+  }
+
+  getExportPNGIconTooltip() {
+    return cy.get(`[id="export-graph-icon-tooltip"]`);
+  }
 }
 export default new GraphExplore();
