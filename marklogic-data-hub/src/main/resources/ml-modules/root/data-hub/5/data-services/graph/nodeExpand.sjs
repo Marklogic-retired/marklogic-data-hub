@@ -146,6 +146,7 @@ if (isByEntityType) {
 
     let edge = {};
     edge.id = "edge-" + item.subjectIRI + "-" + item.predicateIRI + "-" + objectIRI;
+    edge.predicate = item.predicateIRI;
     edge.label = edgeLabel;
     edge.from = item.subjectIRI;
     edge.to = objectIRI;
@@ -163,6 +164,7 @@ if (isByEntityType) {
       additionalNode.count = totalEstimate - limit;
       //creating additional edge
       additionalEdge.id = "edge-" + item.subjectIRI + "-" + item.predicateIRI + "-" + nodeToExpand;
+      additionalEdge.predicate = item.predicateIRI;
       additionalEdge.label = edgeLabel;
       additionalEdge.from = item.subjectIRI;
       additionalEdge.to = nodeToExpand;
@@ -221,6 +223,7 @@ if (isByEntityType) {
 
     let edge = {};
     edge.id = "edge-" + nodeToExpand + "-" + item.predicateIRI + "-" + objectIRI;
+    edge.predicate = item.predicateIRI;
     edge.label = edgeLabel;
     edge.from = nodeToExpand;
     edge.to = nodeId;

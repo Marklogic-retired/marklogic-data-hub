@@ -172,6 +172,7 @@ result.map(item => {
     }
     let predicateArr = item.predicateIRI.toString().split("/");
     let edgeLabel = predicateArr[predicateArr.length - 1];
+    edge.predicate = item.predicateIRI;
     edge.label = edgeLabel;
     edge.from = item.subjectIRI;
     edge.to = objectId;
@@ -195,6 +196,7 @@ result.map(item => {
       let predicateArr = item.predicateIRI.toString().split("/");
       let edgeLabel = predicateArr[predicateArr.length - 1];
       edge.id = "edge-" + item.subjectIRI + "-" + item.predicateIRI + "-" + item.objectIRI;
+      edge.predicate = item.predicateIRI;
       edge.label = edgeLabel;
       edge.from = item.subjectIRI.toString();
       edge.to = item.objectIRI;
