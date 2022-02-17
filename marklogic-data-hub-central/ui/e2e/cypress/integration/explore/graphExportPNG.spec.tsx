@@ -25,11 +25,10 @@ describe("Test graph export to png", () => {
   it("Validate that the export png icon appear only in graph view and can export", () => {
     cy.log("**Go to Explore section**");
     toolbar.getExploreToolbarIcon().click();
-
+    browsePage.getTableView().click();
+    graphExplore.getExportPNGIcon().should("not.exist");
     cy.log("**Export button should not exist in snippet and table view**");
     browsePage.clickFacetView();
-    graphExplore.getExportPNGIcon().should("not.exist");
-    browsePage.clickTableView();
     graphExplore.getExportPNGIcon().should("not.exist");
 
     cy.log("**Select Graph view and check that the export button exist and show the tooltip**");

@@ -192,6 +192,7 @@ describe("Validate E2E Mastering Flow", () => {
     runPage.explorerLink().click();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
+    browsePage.getTableView().click();
     browsePage.waitForHCTableToLoad();
     browsePage.getTotalDocuments().should("eq", 14);
     browsePage.getHubPropertiesExpanded();
@@ -394,6 +395,7 @@ describe("Validate E2E Mastering Flow", () => {
     runPage.explorerLink().click();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
+    browsePage.getTableView().click();
     browsePage.waitForHCTableToLoad();
     browsePage.getTotalDocuments().should("eq", 2);
     browsePage.getHubPropertiesExpanded();
