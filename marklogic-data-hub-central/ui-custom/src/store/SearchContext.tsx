@@ -71,10 +71,10 @@ const SearchProvider: React.FC = ({ children }) => {
   const [searchResults, setSearchResults] = useState<any>({});
   const [newSearch, setNewSearch] = useState<boolean>(false);
 
-  const buildQuery = (start, pageLength, _qtext, _facetStrings):QueryInterface => {
+  const buildQuery = (start, pageLength, _qtext, _facetStrings, _entityType):QueryInterface => {
     let query = {
       searchText: _qtext,
-      entityTypeIds: Array.isArray(entityType) ? entityType : [entityType],
+      entityTypeIds: Array.isArray(_entityType) ? _entityType : [_entityType],
       selectedFacets: {}
     };
     if (facetStrings && facetStrings.length > 0) {
@@ -93,7 +93,7 @@ const SearchProvider: React.FC = ({ children }) => {
   useEffect(() => {
     if (newSearch) {
       setNewSearch(false);
-      let newQuery = buildQuery(startInit, pageLengthInit, qtext, facetStrings);
+      let newQuery = buildQuery(startInit, pageLengthInit, qtext, facetStrings, entityType);
       let sr = getSearchResults(userContext.config.api.searchResultsEndpoint, newQuery, userContext.userid);
       sr.then(result => {
         setSearchResults(result?.data.searchResults.response);
@@ -110,32 +110,20 @@ const SearchProvider: React.FC = ({ children }) => {
     }
   }, [newSearch]);
 
-  const handleSearch = async (qtext, entityType) => {
-    setQtext(qtext);
-    setEntityType(entityType);
-    setNewSearch(true);
-  };
-
-  const handleSearchOld = (qtext) => {
-    if (location.pathname !== "/search") {
-      navigate("/search"); // Handle search submit from another view
+  const handleSearch = async (_qtext=null, _entityType=null) => {
+    if (_qtext!==null) {
+      setQtext(_qtext);
     }
-    setQtext(qtext);
+    if (_entityType!==null) {
+      setEntityType(_entityType);
+    } else {
+      // If entityType hasn't been set, use search.defaultEntity if available
+      setEntityType(userContext.config.search.defaultEntity || "");
+    }
     setNewSearch(true);
   };
 
   const handleFacetString = async (name, value, selected) => {
-    if (selected) {
-      let newFacetString = name + ":" + value;
-      setFacetStrings(prevState => [...prevState, newFacetString]);
-    } else {
-      let newFacetStrings = facetStrings.filter(f => (f !== (name + ":" + value)));
-      setFacetStrings(newFacetStrings);
-    }
-    setNewSearch(true);
-  };
-
-  const handleFacetStringOld = (name, value, selected) => {
     if (selected) {
       let newFacetString = name + ":" + value;
       setFacetStrings(prevState => [...prevState, newFacetString]);
