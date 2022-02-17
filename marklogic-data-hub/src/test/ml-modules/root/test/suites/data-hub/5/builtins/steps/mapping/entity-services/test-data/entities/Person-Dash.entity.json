@@ -1,0 +1,48 @@
+{
+  "info": {
+    "title": "Person-Dash",
+    "version": "1.0.0",
+    "baseUri": "http://marklogic.com/data-hub/example/"
+  },
+  "definitions": {
+    "First-name": {
+      "properties": {
+        "value": {
+          "datatype": "string"
+        },
+        "prefix": {
+          "datatype": "string"
+        }
+      }
+    },
+    "Full-naming": {
+      "properties": {
+        "first-name": {
+          "$ref": "#/definitions/First-name"
+        },
+        "middle-names": {
+          "datatype": "string"
+        },
+        "last-name": {
+          "datatype": "string"
+        }
+      }
+    },
+    "Person-Dash": {
+      "properties": {
+        "id": {
+          "datatype": "int"
+        },
+        "full-naming": {
+          "$ref": "#/definitions/Full-naming"
+        },
+        "alias": {
+          "$ref": "#/definitions/Full-naming"
+        },
+        "nickname": {
+          "datatype": "string"
+        }
+      }
+    }
+  }
+}
