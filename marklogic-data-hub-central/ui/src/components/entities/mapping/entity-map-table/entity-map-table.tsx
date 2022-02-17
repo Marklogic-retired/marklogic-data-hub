@@ -170,8 +170,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
       <Popover.Body>
         <div className={styles.xpathDoc}><span id="doc">Documentation:</span>
           <div><ul className={styles.docLinksUl}>
-            <li><a href="https://www.w3.org/TR/xpath/all/" target="_blank" rel="noopener noreferrer" className={styles.docLink}>XPath Expressions</a></li>
-            <li><a href="https://docs.marklogic.com/guide/app-dev/TDE#id_99178" target="_blank" rel="noopener noreferrer" className={styles.docLink}>Extraction Functions</a></li>
+            <li><a href="https://docs.marklogic.com/guide/xquery/xpath" target="_blank" rel="noopener noreferrer" className={styles.docLink}>XPath Expressions</a></li>
             <li><a href="https://docs.marklogic.com/datahub/flows/dhf-mapping-functions.html" target="_blank" rel="noopener noreferrer" className={styles.docLink}>Mapping Functions</a></li>
           </ul></div>
         </div>
