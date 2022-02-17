@@ -1,6 +1,6 @@
 import SearchBox from "./SearchBox";
 import { SearchContext } from "../../store/SearchContext";
-import {render, act, cleanup} from "@testing-library/react";
+import {render, act} from "@testing-library/react";
 import userEvent from '@testing-library/user-event'
 
 const searchContextValue = {
