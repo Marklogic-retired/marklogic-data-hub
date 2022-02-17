@@ -1,12 +1,12 @@
 import React, {useState, useEffect, useContext} from "react";
+import { UserContext } from "../store/UserContext";
 import Metrics from "../components/Metrics/Metrics";
 import SearchBox from "../components/SearchBox/SearchBox";
 import Saved from "../components/Saved/Saved";
 import New from "../components/New/New";
 import Recent from "../components/Recent/Recent";
 import Section from "../components/Section/Section";
-import Spinner from "react-bootstrap/Spinner";
-import { UserContext } from "../store/UserContext";
+import Loading from "../components/Loading/Loading";
 import {getRecent} from "../api/api";
 import {getSaved} from "../api/api";
 import {getSummary} from "../api/api";
@@ -32,14 +32,6 @@ const Dashboard: React.FC<Props> = (props) => {
   useEffect(() => {
     setConfig(userContext.config);
   }, [userContext.config]);
-
-  const spinner = (
-    <div className="spinner">
-      <Spinner animation="border" role="status">
-        <span className="visually-hidden">Loading...</span>
-      </Spinner>
-    </div>
-  );
 
   return (
     <div className="dashboard">
@@ -95,7 +87,7 @@ const Dashboard: React.FC<Props> = (props) => {
 
       </div>
 
-      : spinner}
+      : <Loading />}
 
     </div>
   );
