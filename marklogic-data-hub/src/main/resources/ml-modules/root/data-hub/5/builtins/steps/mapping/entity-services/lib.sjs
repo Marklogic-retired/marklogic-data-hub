@@ -668,7 +668,9 @@ function testMapping(mapping, sourceInstance, userParameterNames, parameterMap,
         mappedProperty["errorMessage"] = resp.errorMessage;
       }
     }
-    eval('delete propMapping.' + paths.join('.')) ;
+    
+    let propertiesPath = paths.map((p) => { return '["' +p + '"]' });
+    eval(`delete propMapping${propertiesPath.join("")}`) ;
     paths.pop();
   });
   return mapping;

@@ -91,6 +91,18 @@ function testvalidateAndTestMappingWithErrors() {
   ];
 }
 
+function testValidateAndTestMappingWithDash(mapURI = "/mappings/PersonMapping/PersonDashMapping.mapping.json", uri = "/content/person2.json") {
+  let map = cts.doc(mapURI).toObject();
+  let result = esMappingLib.validateAndTestMapping(map, uri);
+  return [
+    test.assertEqual(222, fn.number(result.properties.id.output), `Expected output '222', got '${xdmp.describe(result.properties)}'`),
+    test.assertEqual("Middle", result.properties["full-naming"]["properties"]["middle-names"]["output"], `Expected output 'Middle', got '${xdmp.describe(result.properties["full-naming"]["properties"]["middle-names"]["output"])}'`),
+    test.assertEqual("Last", result.properties["full-naming"]["properties"]["last-name"]["output"], `Expected output 'Last', got '${xdmp.describe(result.properties["full-naming"]["properties"]["last-name"]["output"])}'`),
+    test.assertEqual("First", result.properties["full-naming"]["properties"]["first-name"]["properties"]["value"]["output"], `Expected output 'First', got '${xdmp.describe(result.properties["full-naming"]["properties"]["first-name"]["properties"]["value"]["output"])}'`),
+    test.assertEqual("SomePrefix", result.properties["full-naming"]["properties"]["first-name"]["properties"]["prefix"]["output"], `Expected output 'SomePrefix', got '${xdmp.describe(result.properties["full-naming"]["properties"]["first-name"]["properties"]["prefix"]["output"])}'`)
+  ];
+}
+
 []
   .concat(validMapping())
   .concat(unrecognizedProperty())
@@ -98,6 +110,7 @@ function testvalidateAndTestMappingWithErrors() {
   .concat(incorrectNumberOfFunctionArguments())
   .concat(testvalidateAndTestMapping())
   .concat(testvalidateAndTestMappingArrayValues())
+  .concat(testValidateAndTestMappingWithDash())
   .concat(testvalidateAndTestMapping("/mappings/PersonNsMapping/PersonNsMapping-1.mapping.json", "/content/person-ns.xml"))
   // Test JSON to XML scenario
   .concat(testvalidateAndTestMapping("/mappings/PersonMapping/PersonMapping-3.mapping.json", "/content/json-to-xml.xml"))

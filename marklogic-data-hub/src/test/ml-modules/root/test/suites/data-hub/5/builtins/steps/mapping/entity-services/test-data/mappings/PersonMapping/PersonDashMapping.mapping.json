@@ -1,0 +1,37 @@
+{
+  "lang": "zxx",
+  "name": "PersonDashMapping",
+  "description": "TBD",
+  "version": 4,
+  "sourceContext": "/",
+  "targetEntityType": "http://marklogic.com/data-hub/example/Person-Dash-1.0.0/Person-Dash",
+  "properties": {
+    "id": {
+      "sourcedFrom": "personId"
+    },
+    "full-naming": {
+      "sourcedFrom": "theName",
+      "targetEntityType": "http://marklogic.com/data-hub/example/Person-Dash-1.0.0/Full-naming",
+      "properties": {
+        "middle-names" : {
+          "sourcedFrom": "middleName"
+        },
+        "last-name" : {
+          "sourcedFrom": "lastName"
+        },
+        "first-name": {
+          "sourcedFrom": "firstName",
+          "targetEntityType": "http://marklogic.com/data-hub/example/Person-Dash-1.0.0/First-name",
+          "properties": {
+            "value": {
+              "sourcedFrom": "theValue"
+            },
+            "prefix": {
+              "sourcedFrom": "thePrefix"
+            }
+          }
+        }
+      }
+    }
+  }
+}
