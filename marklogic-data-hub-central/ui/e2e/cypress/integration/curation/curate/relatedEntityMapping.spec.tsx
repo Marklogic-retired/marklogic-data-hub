@@ -162,6 +162,7 @@ describe("Mapping", () => {
     runPage.newFlowModal().should("be.visible");
     runPage.setFlowName("relationFlow");
     loadPage.confirmationOptions("Save").click();
+    cy.wait(1000);
     runPage.addStep("relationFlow");
     runPage.addStepToFlow("mapRelation");
     runPage.verifyStepInFlow("Map", "mapRelation", "relationFlow");
@@ -172,6 +173,7 @@ describe("Mapping", () => {
 
     // Navigate to Explore
     runPage.explorerLink().click();
+    browsePage.getTableView().click();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     browsePage.waitForHCTableToLoad();

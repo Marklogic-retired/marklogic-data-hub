@@ -26,6 +26,7 @@ describe("json scenario for table on browse documents page", () => {
     cy.loginAsDeveloper().withRequest();
     cy.waitForAsyncRequest();
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    browsePage.getTableView().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
   });
@@ -225,13 +226,13 @@ describe("json scenario for table on browse documents page", () => {
     // TODO DHFPROD-7711 skip since fails for Ant Design components
     // browsePage.clickClearFacetSearchSelection("adamscole@nutralab.com");
     browsePage.clickTableView();
+    browsePage.getClearAllFacetsButton().click({force: true});
     // TODO DHFPROD-7711 skip since fails for Ant Design components
     // browsePage.getClearFacetSearchSelection("Adams Cole").should("exist");
     // browsePage.getTotalDocuments().should("be.equal", 2);
   });
 
   it("verify hub properties grey facets are not being removed when entity properties are selected", () => {
-    browsePage.getClearAllFacetsButton().click();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
     entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
@@ -241,10 +242,8 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getGreySelectedFacets("Adams Cole").should("exist");
     browsePage.getFacetApplyButton().click();
     entitiesSidebar.backToMainSidebar().click();
-    browsePage.getFacetItemCheckbox("collection", "mapCustomersJSON").scrollIntoView().click({force: true});
+    cy.wait(1000);
     browsePage.getFacetItemCheckbox("flow", "CurateCustomerJSON").click({force: true});
-    browsePage.getFacetItemCheckbox("collection", "mapCustomersJSON").should("exist");
-    browsePage.getFacetItemCheckbox("collection", "mapCustomersJSON").should("be.checked");
     browsePage.getFacetItemCheckbox("flow", "CurateCustomerJSON").should("exist");
     browsePage.getFacetItemCheckbox("flow", "CurateCustomerJSON").should("be.checked");
 
@@ -256,7 +255,6 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getFacetItemCheckbox("source-type", "CustomerSourceType").should("exist");
     browsePage.getFacetItemCheckbox("source-type", "CustomerSourceType").should("be.checked");
 
-    browsePage.getGreySelectedFacets("mapCustomersJSON").should("exist");
     browsePage.getGreySelectedFacets("CurateCustomerJSON").should("exist");
     browsePage.getGreySelectedFacets("CustomerSourceName").should("exist");
     browsePage.getGreySelectedFacets("CustomerSourceType").should("exist");
@@ -264,26 +262,24 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.clickClearFacetSearchSelection("Adams Cole");
     browsePage.getGreySelectedFacets("Adams Cole").should("not.exist");
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
-    browsePage.getFacetItemCheckbox("name", "Bowman Hale").click();
-    browsePage.getGreySelectedFacets("mapCustomersJSON").should("exist");
+    browsePage.getFacetItemCheckbox("name", "Adams Cole").click();
     browsePage.getGreySelectedFacets("CurateCustomerJSON").should("exist");
     browsePage.getGreySelectedFacets("CustomerSourceName").should("exist");
     browsePage.getGreySelectedFacets("CustomerSourceType").should("exist");
-    browsePage.getGreySelectedFacets("Bowman Hale").should("exist");
+    browsePage.getGreySelectedFacets("Adams Cole").should("exist");
     browsePage.getFacetApplyButton().click();
-    browsePage.getSelectedFacet("mapCustomersJSON").should("exist");
     browsePage.getSelectedFacet("CurateCustomerJSON").should("exist");
-    browsePage.getSelectedFacet("Bowman Hale").should("exist");
+    browsePage.getSelectedFacet("Adams Cole").should("exist");
     entitiesSidebar.backToMainSidebar().click();
-    entitiesSidebar.openBaseEntityDropdown();
-    entitiesSidebar.selectBaseEntityOption("All Entities");
-    entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
-    browsePage.getClearAllFacetsButton().click();
+    cy.wait(5000);
     browsePage.waitForSpinnerToDisappear();
-  });
+    // });
 
-  it("apply multiple facets, select and discard new facet, verify original facets checked", () => {
-    entitiesSidebar.showMoreEntities().click();
+    // it("apply multiple facets, select and discard new facet, verify original facets checked", () => {
+    cy.log("*apply multiple facets, select and discard new facet, verify original facets checked*");
+    browsePage.getClearAllFacetsButton().click();
+    cy.wait(3000);
+    entitiesSidebar.toggleEntitiesView();
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
     browsePage.getShowMoreLink("name").click();
     browsePage.getFacetItemCheckbox("name", "Jacqueline Knowles").click();

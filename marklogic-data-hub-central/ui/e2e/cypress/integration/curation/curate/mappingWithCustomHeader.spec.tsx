@@ -225,6 +225,8 @@ describe("Create and verify load steps, map step and flows with a custom header"
     cy.waitUntil(() => runPage.getFlowName(flowName).should("be.visible"));
     cy.verifyStepRunResult("success", "Mapping", mapStep);
     runPage.explorerLink().click();
+    browsePage.getTableView().click();
+    browsePage.waitForSpinnerToDisappear();
     browsePage.getFirstTableViewInstanceIcon().should("be.visible").click({force: true});
     detailPage.getDocumentSource().should("contain", "backup-ABC123");
     detailPage.getDocumentTimestamp().should("not.exist");

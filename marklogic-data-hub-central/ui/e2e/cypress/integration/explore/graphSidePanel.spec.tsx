@@ -1,6 +1,5 @@
 import {Application} from "../../support/application.config";
 import {toolbar} from "../../support/components/common";
-import browsePage from "../../support/pages/browse";
 import graphExplore from "../../support/pages/graphExplore";
 import LoginPage from "../../support/pages/login";
 import {ExploreGraphNodes} from "../../support/types/explore-graph-nodes";
@@ -29,8 +28,7 @@ describe("Test '/Explore' graph right panel", () => {
     cy.log("**Go to Explore section?**");
     toolbar.getExploreToolbarIcon().click();
 
-    cy.log("**Select Graph view**");
-    browsePage.clickGraphView();
+    cy.log("**Verify Graph view is default view**");
     graphExplore.getGraphVisCanvas().should("be.visible");
     //cy.wait(2000);
     graphExplore.stopStabilization();

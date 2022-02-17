@@ -33,6 +33,7 @@ describe("Verify numeric/date facet can be applied", () => {
   });
   it("Apply numeric facet values multiple times, clears the previous values and applies the new one", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    browsePage.getTableView().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
     entitiesSidebar.openBaseEntityDropdown();

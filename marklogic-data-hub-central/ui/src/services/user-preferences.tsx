@@ -19,7 +19,8 @@ export const defaultUserPreferences = {
     selectedFacets: {}
   },
   pageLength: 20,
-  tableView: true,
+  tableView: false,
+  graphView: true,
   // pageRoute: '/view',
   resultTableColumns: [],
   selectedQuery: "select a query",

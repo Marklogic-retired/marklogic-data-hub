@@ -131,3 +131,6 @@ export const expandGroupNode = async (payload: any, limit?: number) => {
 export const searchResultsQuery = async (searchPayload: any) => {
   return await axios.post(`/api/entitySearch?database=${searchPayload.database}`, searchPayload.data);
 };
+export const getEntities = async () => {
+  return await axios.get(`/api/models`);
+};

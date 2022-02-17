@@ -597,26 +597,28 @@ function getPredicatesByModelAndBaseEntities(model,relatedEntityTypeIds) {
   const predicateList = [];
   const entityName = model.info.title;
   const entityNameIri = getEntityTypeId(model, entityName);
-  let entityProperties = model.definitions[entityName].properties;
-  for(let entityPropertyName in entityProperties){
-    let entityPropertyValue = entityProperties[entityPropertyName];
-    if(entityPropertyValue["relatedEntityType"] != null){
-      let relatedEntityTypeArray = entityPropertyValue["relatedEntityType"].split("/");
-      let foreignEntity = relatedEntityTypeArray[relatedEntityTypeArray.length-1];
-      if(relatedEntityTypeIds.includes(foreignEntity)){
-        predicateList.push(sem.iri(entityNameIri+"/"+entityPropertyName));
-      }
+  if(model.definitions[entityName] !== undefined && model.definitions[entityName].toString().length > 0) {
+    let entityProperties = model.definitions[entityName].properties;
+    for (let entityPropertyName in entityProperties) {
+      let entityPropertyValue = entityProperties[entityPropertyName];
+      if (entityPropertyValue["relatedEntityType"] != null) {
+        let relatedEntityTypeArray = entityPropertyValue["relatedEntityType"].split("/");
+        let foreignEntity = relatedEntityTypeArray[relatedEntityTypeArray.length - 1];
+        if (relatedEntityTypeIds.includes(foreignEntity)) {
+          predicateList.push(sem.iri(entityNameIri + "/" + entityPropertyName));
+        }
 
-    }else{
-      if(entityPropertyValue["items"] != null){
-        let items = entityPropertyValue["items"]
-        if(items["relatedEntityType"] != null){
-          let relatedEntityTypeArray = items["relatedEntityType"].split("/");
-          let foreignEntity = relatedEntityTypeArray[relatedEntityTypeArray.length-1];
-          if(relatedEntityTypeIds.includes(foreignEntity)){
-            predicateList.push(sem.iri(entityNameIri+"/"+entityPropertyName));
+      } else {
+        if (entityPropertyValue["items"] != null) {
+          let items = entityPropertyValue["items"]
+          if (items["relatedEntityType"] != null) {
+            let relatedEntityTypeArray = items["relatedEntityType"].split("/");
+            let foreignEntity = relatedEntityTypeArray[relatedEntityTypeArray.length - 1];
+            if (relatedEntityTypeIds.includes(foreignEntity)) {
+              predicateList.push(sem.iri(entityNameIri + "/" + entityPropertyName));
+            }
+
           }
-
         }
       }
     }

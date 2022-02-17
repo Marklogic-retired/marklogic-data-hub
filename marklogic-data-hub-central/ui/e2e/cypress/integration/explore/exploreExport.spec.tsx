@@ -26,6 +26,7 @@ describe("Test table export icon", () => {
   it("Validate that the export icon appear only when an entity is selected", () => {
     cy.log("**Go to Explore section**");
     toolbar.getExploreToolbarIcon().click();
+    browsePage.getTableView().click();
 
     cy.log("**Export button should not exist in snippet, graph and table view**");
     browsePage.clickFacetView();

@@ -29,6 +29,7 @@ describe("Validate table and column selector in explore", () => {
   });
   it("Navigate to Explore", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    browsePage.getTableView().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
   });
