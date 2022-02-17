@@ -100,34 +100,37 @@ function assertMatchExists(matchSummary, urisOfMatchingDocuments) {
 
   const expectedPrefix = "/com.marklogic.smart-mastering/merged/";
   const uriToProcess = matchSummary.URIsToProcess.filter((uri) => uri.startsWith(expectedPrefix))[0];
-  const actionDetails = matchSummary.actionDetails[uriToProcess];
-
-  // Add the input doc
-  const expectedUriCount = urisOfMatchingDocuments.length + 1;
-
-  const actualUris = actionDetails ? actionDetails.uris : [];
-  const prettyActionDetailsUris = xdmp.toJsonString(actualUris);
-
   let assertions = [
-    test.assertTrue(uriToProcess.startsWith(expectedPrefix),
-      `Since a merge is expected, the URI to process should start with ${expectedPrefix}; actual URI: ${uriToProcess}`
-    ),
-    test.assertEqual(expectedUriCount, actualUris.length,
-      `Expected ${expectedUriCount} matching URIs; actual URIs: ${prettyActionDetailsUris}`
-    ),
-    test.assertTrue(actualUris.includes(TEST_DOC_URI),
-      `Expected the test doc ${TEST_DOC_URI} to be in actionDetails.uris; actual URIs: ${prettyActionDetailsUris}`
-    )
+    test.assertTrue(urisOfMatchingDocuments.length === 0 || fn.exists(urisOfMatchingDocuments), `There should be a merge. Match Summary: ${xdmp.toJsonString(matchSummary)}`)
   ];
+  if (uriToProcess) {
+    const actionDetails = matchSummary.actionDetails[uriToProcess];
 
-  urisOfMatchingDocuments.forEach(uri => {
-    assertions.push(
-      test.assertTrue(actualUris.includes(uri),
-        `Expected actionDetails.uris to include ${uri}; actual URIs: ${prettyActionDetailsUris}`
+    // Add the input doc
+    const expectedUriCount = urisOfMatchingDocuments.length + 1;
+
+    const actualUris = actionDetails ? actionDetails.uris : [];
+    const prettyActionDetailsUris = xdmp.toJsonString(actualUris);
+    assertions = [
+      test.assertTrue(uriToProcess.startsWith(expectedPrefix),
+        `Since a merge is expected, the URI to process should start with ${expectedPrefix}; actual URI: ${uriToProcess}`
+      ),
+      test.assertEqual(expectedUriCount, actualUris.length,
+        `Expected ${expectedUriCount} matching URIs; actual URIs: ${prettyActionDetailsUris}`
+      ),
+      test.assertTrue(actualUris.includes(TEST_DOC_URI),
+        `Expected the test doc ${TEST_DOC_URI} to be in actionDetails.uris; actual URIs: ${prettyActionDetailsUris}`
       )
-    );
-  });
+    ];
 
+    urisOfMatchingDocuments.forEach(uri => {
+      assertions.push(
+        test.assertTrue(actualUris.includes(uri),
+          `Expected actionDetails.uris to include ${uri}; actual URIs: ${prettyActionDetailsUris}`
+        )
+      );
+    });
+  }
   return assertions;
 }
 
