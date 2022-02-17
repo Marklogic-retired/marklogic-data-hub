@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from "react";
+import React, {useState, useEffect, useContext, useRef} from "react";
 import moment from "moment";
 import Select from "react-select";
 import {Accordion, FormCheck} from "react-bootstrap";
@@ -7,7 +7,7 @@ import {faInfoCircle, faSearch} from "@fortawesome/free-solid-svg-icons";
 import {HCDateTimePicker, HCTooltip, HCInput, HCCheckbox} from "@components/common";
 import Facet from "../facet/facet";
 import {SearchContext} from "../../util/search-context";
-import {facetParser} from "../../util/data-conversion";
+import {facetParser, entityFromJSON} from "../../util/data-conversion";
 import hubPropertiesConfig from "../../config/hub-properties.config";
 import tooltipsConfig from "../../config/explorer-tooltips.config";
 import styles from "./sidebar.module.scss";
@@ -18,6 +18,7 @@ import BaseEntitiesFacet from "../base-entities-facet/base-entities-facet";
 import RelatedEntitiesFacet from "../related-entities-facet/related-entities-facet";
 import {ExploreGraphViewToolTips} from "../../config/tooltips.config";
 import {HCDivider} from "@components/common";
+import {graphSearchQuery, getEntities} from "../../api/queries";
 
 const tooltips = tooltipsConfig.browseDocuments;
 const {exploreSidebar} = tooltipsConfig;
@@ -45,6 +46,9 @@ const PLACEHOLDER: string = "Select a saved query";
 
 const Sidebar: React.FC<Props> = (props) => {
 
+  const componentIsMounted = useRef(true);
+  const entitiesArrayRef = useRef<any[]>();
+
   const {
     searchOptions,
     clearConstraint,
@@ -58,7 +62,8 @@ const Sidebar: React.FC<Props> = (props) => {
     setRelatedEntityTypeIds
   } = useContext(SearchContext);
   const {
-    user
+    user,
+    handleError
   } = useContext(UserContext);
   const [entityFacets, setEntityFacets] = useState<any[]>([]);
   const [hubFacets, setHubFacets] = useState<any[]>([]);
@@ -268,6 +273,54 @@ const Sidebar: React.FC<Props> = (props) => {
       props.checkFacetRender([]);
     }
   }, [greyedOptions]);
+
+  //To handle default views for first-time user experience
+  useEffect(() => {
+    getEntities().then((res) => {
+        entitiesArrayRef.current! = ([...entityFromJSON(res.data).map(entity => entity.info.title)]);
+        checkGraphData("final").then((countEntityFinalCount) => {
+          //By Default entities datasource and final database is selected
+          if (countEntityFinalCount === 0) {
+            checkGraphData("staging").then((countEntityStagingCount) => {
+              if (countEntityStagingCount > 0) {
+                //Setting the staging database if there is no data in final database
+                props.setDatabasePreferences("staging");
+              } else {
+                //Setting the All Data datasource with final database at end
+                setDatasourcePreferences("all-data");
+              }
+            });
+          }
+        });
+    })
+      .catch((error) => {
+        handleError(error);
+      });
+  }, []);
+
+  const checkGraphData = async (database) => {
+    try {
+      let payload = {
+        "database": database,
+        "data": {
+          "query": {
+            "searchText": "",
+            "entityTypeIds": entitiesArrayRef.current!,
+            "selectedFacets": searchOptions.selectedFacets,
+            "relatedEntityTypeIds": searchOptions.relatedEntityTypeIds
+          },
+          "start": 0,
+          "pageLength": 1,
+        }
+      };
+      const response = await graphSearchQuery(payload);
+      if (componentIsMounted.current && response.data) {
+        return response.data.total;
+      }
+    } catch (error) {
+      handleError(error);
+    }
+  };
 
   const updateSelectedFacets = (constraint: string, vals: string[], datatype: string, isNested: boolean, toDelete = false, toDeleteAll: boolean = false) => {
     let facets = {...allSelectedFacets};

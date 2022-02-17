@@ -26,6 +26,7 @@ describe("json scenario for table on browse documents page", () => {
     cy.loginAsDeveloper().withRequest();
     cy.waitForAsyncRequest();
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    browsePage.getTableView().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
   });
@@ -275,14 +276,12 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getSelectedFacet("CurateCustomerJSON").should("exist");
     browsePage.getSelectedFacet("Bowman Hale").should("exist");
     entitiesSidebar.backToMainSidebar().click();
-    entitiesSidebar.openBaseEntityDropdown();
-    entitiesSidebar.selectBaseEntityOption("All Entities");
-    entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
-    browsePage.getClearAllFacetsButton().click();
     browsePage.waitForSpinnerToDisappear();
-  });
+    // });
 
-  it("apply multiple facets, select and discard new facet, verify original facets checked", () => {
+    // it("apply multiple facets, select and discard new facet, verify original facets checked", () => {
+    cy.log("*apply multiple facets, select and discard new facet, verify original facets checked*");
+    browsePage.getClearAllFacetsButton().click();
     entitiesSidebar.showMoreEntities().click();
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
     browsePage.getShowMoreLink("name").click();

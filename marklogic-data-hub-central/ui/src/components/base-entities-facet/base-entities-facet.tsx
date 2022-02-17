@@ -32,8 +32,8 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
     setSearchOptions,
   } = useContext(SearchContext);
 
-  const [entityNames, setEntityNames] = useState<string[]>(searchOptions.entityTypeIds.length === 0 ? ["All Entities"] : searchOptions.entityTypeIds);
-  const [displayList, setDisplayList] = useState<any[]>(entitiesSorting(currentBaseEntities));
+  const [entityNames, setEntityNames] = useState<string[]>(searchOptions.entityTypeIds.length === 0 ? ["All Entities"] : entitiesSorting(searchOptions.entityTypeIds));
+  const [displayList, setDisplayList] = useState<any[]>(baseEntitiesSorting(currentBaseEntities));
   const [showMore, setShowMore] = useState<boolean>(false);
 
 
@@ -53,10 +53,10 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
   }, [allBaseEntities, searchOptions.entityTypeIds]);
 
   useEffect(() => {
-    setDisplayList(currentBaseEntities);
+    setDisplayList(baseEntitiesSorting(currentBaseEntities));
   }, [currentBaseEntities]);
 
-  const childrenOptions = allBaseEntities.map(element => ({value: element.name, label: element.name, isDisabled: false})).filter(obj => obj.value && obj.label);
+  const childrenOptions = baseEntitiesSorting(allBaseEntities).map(element => ({value: element.name, label: element.name, isDisabled: false})).filter(obj => obj.value && obj.label);
   childrenOptions.unshift({
     value: "-",
     label: "-",
@@ -73,7 +73,7 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
     const selectedItems = selection.map(element => element.value);
     if (selectedItems.length === 0 || selectedItems[selectedItems.length - 1] === "All Entities") {
       setEntityNames(["All Entities"]);
-      setCurrentBaseEntities(allBaseEntities);
+      setCurrentBaseEntities(baseEntitiesSorting(allBaseEntities));
       setSearchOptions({
         ...searchOptions,
         entityTypeIds: allBaseEntities.map(entities => entities.name),
@@ -85,7 +85,7 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
       const clearSelection = selectedItems.filter(entity => entity !== "All Entities").map((entity => entity));
       const filteredEntities = allBaseEntities.filter(entity => clearSelection.includes(entity.name));
       setEntityNames(clearSelection);
-      setCurrentBaseEntities(filteredEntities);
+      setCurrentBaseEntities(baseEntitiesSorting(filteredEntities));
       setSearchOptions({
         ...searchOptions,
         entityTypeIds: clearSelection,

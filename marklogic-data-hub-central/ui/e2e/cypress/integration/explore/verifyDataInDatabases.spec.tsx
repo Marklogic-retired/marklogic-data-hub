@@ -35,8 +35,8 @@ describe("Verify All Data for final/staging databases and non-entity detail page
 
   it("Switch on zero state page and select query parameters for final database", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-    entitiesSidebar.toggleAllDataView();
     cy.wait(3000);
+    entitiesSidebar.toggleAllDataView();
     browsePage.search("Adams");
     //verify the query data for final database on explore page
     browsePage.waitForSpinnerToDisappear();
@@ -79,6 +79,8 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     entitiesSidebar.selectBaseEntityOption("Customer");
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
+    browsePage.getTableView().click();
+    browsePage.waitForSpinnerToDisappear();
     browsePage.getTotalDocuments().should("be.equal", 11);
     entitiesSidebar.toggleAllDataView();
     browsePage.waitForSpinnerToDisappear();
@@ -121,6 +123,8 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     //Verify if the pagination gets reset upon cliking on database buttons
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("All Entities");
+    browsePage.getTableView().click();
+    browsePage.waitForSpinnerToDisappear();
     browsePage.getTotalDocuments().then(val => {
       browsePage.scrollToBottom();
       browsePage.getPaginationPageSizeOptions().select("10 / page", {force: true});
@@ -146,6 +150,8 @@ describe("Verify All Data for final/staging databases and non-entity detail page
   it("Switch to final database and verify the number of documents for the search string is 1", () => {
 
     toolbar.getExploreToolbarIcon().click();
+    browsePage.getTableView().click();
+    browsePage.waitForSpinnerToDisappear();
     browsePage.getFinalDatabaseButton().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.search("Powers");

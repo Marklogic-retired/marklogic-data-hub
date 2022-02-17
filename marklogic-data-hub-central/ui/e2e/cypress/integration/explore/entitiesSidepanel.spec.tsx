@@ -30,12 +30,12 @@ describe("Test '/Explore' left sidebar", () => {
     Cypress.Cookies.preserveOnce("HubCentralSession");
     cy.restoreLocalStorage().then(() => {
       cy.log(`**Go to Explore section**`);
-      cy.visit("/tiles/explore");
     });
 
   });
 
   it("Validate that the left sidebar opens up and closes correctly when un/selecting a base entity", () => {
+    cy.visit("/tiles/explore");
     cy.wait(8000);
     entitiesSidebar.showMoreEntities().click({force: true});
     cy.log("**Base entity tooltip is visible**");
@@ -100,6 +100,8 @@ describe("Test '/Explore' left sidebar", () => {
   it("Validate facets on table view and applying them over a base entities", () => {
     // cy.log("**Opening table view**");
     // browsePage.getTableView().click();
+    browsePage.waitForSpinnerToDisappear();
+
     cy.log(`**Selecting 'Customer' base entity**`);
     cy.wait(2000);
     //TODO: Need to click on Show more because a 6th entity it's being created in another test and not being deleted after
@@ -116,6 +118,7 @@ describe("Test '/Explore' left sidebar", () => {
     browsePage.getAppliedFacets("Adams Cole").should("exist");
 
     cy.log("**Checking table rows amount shown**");
+    browsePage.getTableView().click();
     browsePage.getHCTableRows().should("have.length", 2);
 
     cy.log("**Testing date facet**");
@@ -144,6 +147,8 @@ describe("Test '/Explore' left sidebar", () => {
     entitiesSidebar.selectBaseEntityOption("Order");
     entitiesSidebar.getBaseEntityOption("Order").should("be.visible");
     cy.wait(1000);
+    browsePage.getStagingDatabaseButton().click();
+    browsePage.getFinalDatabaseButton().click();
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
       let custCoordinates: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
       expect(custCoordinates).to.equal(undefined);

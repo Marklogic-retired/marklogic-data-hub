@@ -113,6 +113,7 @@ describe("Run Tile tests", () => {
     runPage.explorerLink().click();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
+    browsePage.getTableView().click();
     browsePage.waitForHCTableToLoad();
 
     cy.wait(3000);
@@ -145,6 +146,7 @@ describe("Run Tile tests", () => {
     runPage.explorerLink().click();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
+    browsePage.getTableView().click();
     browsePage.waitForHCTableToLoad();
 
     //Revalidate below with DHFPROD-8455

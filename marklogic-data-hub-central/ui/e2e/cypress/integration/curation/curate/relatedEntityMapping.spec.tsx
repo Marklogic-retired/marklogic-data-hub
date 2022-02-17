@@ -172,6 +172,7 @@ describe("Mapping", () => {
 
     // Navigate to Explore
     runPage.explorerLink().click();
+    browsePage.getTableView().click();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     browsePage.waitForHCTableToLoad();
