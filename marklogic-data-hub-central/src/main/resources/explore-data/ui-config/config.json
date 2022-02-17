@@ -144,6 +144,7 @@
     },
 
     "search": { 
+        "defaultEntity": "person",
         "meter": {
             "colors": {
                 "all": "#cccccc",
