@@ -23,7 +23,6 @@ const Search: React.FC<Props> = (props) => {
     // If config is loaded but searchResults context is empty, 
     // load searchResults context so content is displayed
     if (userContext.config.search && _.isEmpty(searchContext.searchResults)) {
-      console.log("Search useEffect", userContext.config.search);
       searchContext.handleSearch();
     }
   }, [userContext.config]);
