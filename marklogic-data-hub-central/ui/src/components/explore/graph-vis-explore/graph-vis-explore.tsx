@@ -61,6 +61,8 @@ const GraphVisExplore: React.FC<Props> = (props) => {
 
   const {handleError} = useContext(UserContext);
   const [groupNodes, setGroupNodes] = useState({});
+  const [leafNodes, setLeafNodes] = useState({});
+  const [predicates, setPredicates] = useState({});
 
   // Load coords *once* on init
 
@@ -68,7 +70,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     network.body.data.nodes.update(nodes);
   };
   const updateEdgesData = (edges) => {
-    network.body.data.edges.update(getEdges());
+    network.body.data.edges.update(edges);
   };
 
   const clearGraphData = () => {
@@ -76,6 +78,16 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     let removededgeIds = network.body.data.edges.getIds();
     network.body.data.nodes.remove(removedIds);
     network.body.data.edges.remove(removededgeIds);
+  };
+
+  const getEdgePredicate = (nodeId, network) => {
+    let edges: any = [];
+    if (network) {
+      edges = network.getConnectedEdges(nodeId);
+    }
+    let edgeId = edges[0];
+
+    return predicates[edgeId];
   };
 
   const initializeGraphData = () => {
@@ -127,6 +139,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     }
     return () => {
       setClickedNode({});
+      setExpandedNodeData({});
     };
 
   }, [network, props.graphView]);
@@ -170,8 +183,8 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         ...parsedPreferences,
         graphViewOptions: {
           groupNodeId: clickedNode["nodeId"],
-          parentIRI: "http://marklogic/dummyIRI",
-          predicateFilter: "dummyPredicateFilter"
+          parentIRI: clickedNode["parentIRI"],
+          predicateFilter: clickedNode["predicate"]
         }
       };
       updateUserPreferences(user.name, preferencesObject);
@@ -180,10 +193,13 @@ const GraphVisExplore: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (network && entityInstanceId && graphDataLoaded) {
-      let parentNode = network.getConnectedNodes(entityInstanceId, "from");
+      let parentNodes = network.getConnectedNodes(entityInstanceId, "from");
+      let predicate = getEdgePredicate(entityInstanceId, network);
+      let parentNode = parentNodes[0];
+      let expandId = parentNode + "-" + predicate;
       let selectedEntityExists = false;
-      if (parentNode && expandedNodeData[parentNode]) {
-        selectedEntityExists = expandedNodeData[parentNode]?.nodes?.some(node => node.id === entityInstanceId);
+      if (parentNode && expandedNodeData[expandId]) {
+        selectedEntityExists = expandedNodeData[expandId]?.nodes?.some(node => node.id === entityInstanceId);
       } else {
         selectedEntityExists = props.entityTypeInstances?.nodes?.some(node => node.id === entityInstanceId);
       }
@@ -216,9 +232,21 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     return () => window.removeEventListener("resize", updateSize);
   }, [network && window.innerHeight && window.devicePixelRatio]);
 
+  const isExpandedLeaf = (nodeId?) => {
+    let expandId = "";
+    if (!nodeId) {
+      expandId = clickedNode["leafNodeExpandId"];
+    } else {
+      let predicate = getEdgePredicate(nodeId, network);
+      expandId = nodeId + "-" + predicate;
+    }
+    return expandedNodeData.hasOwnProperty(expandId);
+  };
+
   const getNodes = (nodesToExpand?: any) => {
     let nodes;
     let nodeObj = groupNodes;
+    let leafNodesObj = leafNodes;
     let entityInstNodes = props.entityTypeInstances?.nodes?.slice();
     entityInstNodes = !nodesToExpand ? entityInstNodes : nodesToExpand;
     nodes = entityInstNodes?.map((e) => {
@@ -226,26 +254,23 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       let entity = props.hubCentralConfig?.modeling?.entities[entityType];
       let nodeId = e.id;
       if (e.count > 1) {
-        if (!Object.keys(nodeObj).includes(nodeId)) {
+        if (!nodeObj.hasOwnProperty(nodeId)) {
           nodeObj[nodeId] = e;
         }
       }
       let tempLabel = e.label !== "" ? e.label : e.docUri;
       let nodeLabel = tempLabel.length > 9 ? tempLabel.substring(0, 6) + "..." : tempLabel;
-      // let positionX = undefined;
-      // let positionY = undefined;
-      // if (props.coords && props.coords[nodeId] && props.coords[nodeId].x && props.coords[nodeId].y) {
-      //   positionX = props.coords[nodeId].x;
-      //   positionY = props.coords[nodeId].y;
-      // }
+      if (e.hasRelationships) {
+        if (!leafNodesObj.hasOwnProperty(nodeId)) {
+          leafNodesObj[nodeId] = e;
+        }
+      }
       return {
         id: nodeId,
         shape: "custom",
         title: e.count > 1 ? tooltipsConfig.graphVis.groupNode(entityType) : e.label.length > 0 ? tooltipsConfig.graphVis.singleNode(e.label): tooltipsConfig.graphVis.singleNodeNoLabel,
         label: nodeLabel,
         color: colorExistsForEntity(entityType) ? entity["color"] : "#EEEFF1",
-        // x: positionX,
-        // y: positionY,
         ctxRenderer: ({ctx, x, y, state: {selected, hover}, style, label}) => {
           const r = style.size;
           const color = style.color;
@@ -292,11 +317,10 @@ const GraphVisExplore: React.FC<Props> = (props) => {
               let customLabel = e.count >= 2 ? entityType : nodeLabel;
               ctx.fillText(customLabel, x, y + 10);
             }
-            if (e.hasRelationships) {
-              let ellipsisImg = new Image();
-              ellipsisImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAD8AAABQCAYAAACu/a1QAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAnZJREFUeJzt189LVHEUBfBzv05SIqUIhS1q3apVCGlBpgkJisoM/QdtzHKUxJWbSEGaWgVB0K5FqSC4CCenxjZFGyFqIQW1CaWg0VSIee+dNgU1Pp0fbxHh+Szvvd/D9z7eWzxARERERERERERERERERP4FA4BUx3QjfE4Q6DJYXdFTxCYNadJGhhd6l3cbvd02c4IMJgi0mVlN8Wx+A2zW8/zR69nEym6jqfapZtJuGHEahuqi2cAKgIfVeX+sP5vYsFTHdCN9vDTgWAmH/74nmDOfLcln8bdh/VsXpk/Cx6IZDpabDeCTC2JN1zLdq6HZbVMXDZgFLFZuMIlX2PTPOficqGRxADBYHZ27u+OAj3sVLg4Ax33n3QxrjMUfVYO4X8niAGCGJtRWDTgCXRVe7nfQ2fHOufrC+p3W2SNmaIqSDbA7rHoo506ZWWOUZAO6XEnfeBHV+a2GwpoXy297IOUy2LZcAAgCFzmbQIOLGvI/0/J7lZbfq7T8XrXHlyc2o4bEHNYKa+YF36PmklgPq5shcjbAdUdDOlIEuXT1SeJLYT2ZiX8G8C5KNozzYeXa/bHXwPYHXhYi7UgbIZir7DzyRg6E9QxGGK4A9CrLZg4uGA3rXZ7r2iIwWEnur/QPzquadMMLvcvms4XEYlnHySULgvPJTPzFTjPJdF/GyHaAb8rKBp4HQdA8NJ94v9PM0NO+BwF5ieTH0u8Mn+QMquzMYLYnZ382xzvn6sN+UgrFHNbCXvXdTLZPH3bmF/29dT/2fR3M9pT8JhK0VOvjo4jhwG5zfj7GmsBb7c8mNkrNFhEREREREREREREREREREZFK/QT3i+BFtIzcWAAAAABJRU5ErkJggg==";
+            if (e.hasRelationships && !isExpandedLeaf(nodeId)) {
+              ctx.font = "14pt calibre";
               ctx.fillStyle = "#777";
-              ctx.drawImage(ellipsisImg, x - 5, y + 20, 10, 10);
+              ctx.fillText("...", x, imagePositionY+50);
             }
             if (e.count >= 2 && displayLabel) {
               //Creating the group node badge
@@ -338,7 +362,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       };
     });
     setGroupNodes(nodeObj);
-
+    setLeafNodes(leafNodesObj);
     return nodes;
   };
 
@@ -372,9 +396,13 @@ const GraphVisExplore: React.FC<Props> = (props) => {
 
   const getEdges = (edgesToExpand?: any) => {
     let edges: any = [];
+    let predicatesObject = predicates;
     let edgesFinal: any = props.entityTypeInstances?.edges?.slice();
     edgesFinal = !edgesToExpand ? edgesFinal : edgesToExpand;
     edges = edgesFinal?.map((edge, i) => {
+      if (!predicatesObject.hasOwnProperty(edge.id)) {
+        predicatesObject[edge.id] = edge.predicate;
+      }
       return {
         ...edge,
         id: edge.id,
@@ -391,6 +419,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         smooth: getSmoothOpts(edge.to, edge.from, edges)
       };
     });
+    setPredicates(predicatesObject);
     return edges;
   };
 
@@ -425,7 +454,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     },
   };
 
-  const updateGraphDataWith = (nodes, edges) => {
+  const updateGraphDataWith = async (nodes, edges) => {
     let graphDataTemp: any = graphData;
     graphDataTemp.nodes = getNodes(nodes);
     graphDataTemp.edges = getEdges(edges);
@@ -434,13 +463,32 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     network.body.data.edges.update(graphDataTemp.edges);
   };
 
+  const updateGroupAndLeafNodesDataset = async (expandedNodes) => {
+    let groupNodeObj = groupNodes;
+    let leafNodeObj = leafNodes;
+    expandedNodes.forEach(e => {
+      if (e.count > 1) {
+        if (!groupNodeObj.hasOwnProperty(e.id)) {
+          groupNodeObj[e.id] = e;
+        }
+      }
+      if (e.hasRelationships) {
+        if (!leafNodeObj.hasOwnProperty(e.id)) {
+          leafNodeObj[e.id] = e;
+        }
+      }
+    });
+    setGroupNodes(groupNodeObj);
+    setLeafNodes(leafNodeObj);
+  };
+
   const handleGroupNodeExpand = async (payloadData) => {
     setContextMenuVisible(false);
     let payload = {
       database: searchOptions.database,
       data: {
-        "parentIRI": clickedNode && clickedNode["nodeId"] ? clickedNode["nodeId"] : payloadData.nodeInfo["nodeId"], //"http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/3039-Product",
-        "predicateFilter": clickedNode && clickedNode["predicateIRI"] ? clickedNode["predicateIRI"] : payloadData.nodeInfo["predicateIRI"] //"http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/includes"
+        "parentIRI": clickedNode && clickedNode["nodeId"] ? clickedNode["nodeId"] : payloadData.nodeInfo["nodeId"],
+        "predicateFilter": clickedNode && clickedNode["predicateIRI"] ? clickedNode["predicateIRI"] : payloadData.nodeInfo["predicateIRI"]
       }
     };
     try {
@@ -453,24 +501,16 @@ const GraphVisExplore: React.FC<Props> = (props) => {
 
       if (response.status === 200) {
         let expandedNodeInfo = expandedNodeData;
-        let parentNode = payloadData["nodeInfo"] ? payloadData.nodeInfo["parentNode"] : clickedNode["parentNode"];
-        expandedNodeInfo[parentNode] = {
+        let expandId = payloadData["nodeInfo"] ? payloadData.nodeInfo["expandId"] : clickedNode["expandId"];
+        expandedNodeInfo[expandId] = {
           nodes: response.data.nodes,
           edges: response.data.edges,
           removedNode: payload.data["parentIRI"]
         };
         setExpandedNodeData(expandedNodeInfo);
         network.body.data.nodes.remove(payload.data["parentIRI"]);
-        let groupNodeObj = groupNodes;
-        response.data.nodes.forEach(e => {
-          if (e.count > 1) {
-            if (!Object.keys(groupNodeObj).includes(e.id)) {
-              groupNodeObj[e.id] = e;
-            }
-          }
-        });
-        setGroupNodes(groupNodeObj);
-        updateGraphDataWith(response.data.nodes, response.data.edges);
+        await updateGroupAndLeafNodesDataset(response.data.nodes);
+        await updateGraphDataWith(response.data.nodes, response.data.edges);
       }
     } catch (error) {
       handleError(error);
@@ -479,14 +519,119 @@ const GraphVisExplore: React.FC<Props> = (props) => {
 
   const handleCollapse = async () => {
     try {
-      let expandedGroupNodeObject = expandedNodeData[clickedNode["parentNode"]];
-      let graphNodesDataTemp = expandedGroupNodeObject.nodes.map(e => e["id"]);
-      let graphEdgesDataTemp = expandedGroupNodeObject.edges.map(e => e["id"]);
-      let removedNodeIRI = expandedGroupNodeObject.removedNode;
+      let expandId = clickedNode["expandId"];
+      expandId = !expandId ? clickedNode["parentNode"] + "-" + clickedNode["predicateIRI"] : expandId;
+      let expandedGroupNodeObject = expandedNodeData[expandId];
+      let nodesToDelete = getNodesToDelete(clickedNode["nodeId"]);
+      let graphNodesDataTemp = expandedGroupNodeObject?.nodes.map(e => e["id"]);
+      let graphEdgesDataTemp = expandedGroupNodeObject?.edges.map(e => e["id"]);
+      let removedNodeIRI = expandedGroupNodeObject?.removedNode;
+
+      let tempExpandedData = expandedNodeData;
+      if (graphNodesDataTemp) {
+        graphNodesDataTemp.forEach(nodeId => delete tempExpandedData[nodeId]);
+        delete tempExpandedData[expandId];
+      }
+
+      setExpandedNodeData(tempExpandedData);
       network.body.data.nodes.remove(graphNodesDataTemp);
+      network.body.data.nodes.remove(nodesToDelete);
       network.body.data.edges.remove(graphEdgesDataTemp);
       let removedNode = getNodes([groupNodes[removedNodeIRI]]);
       network.body.data.nodes.update(removedNode);
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
+  const getNodesToDelete = (nodeId, nodesToDelete: any[] = []) => {
+    let nodeIds = network.getConnectedNodes(nodeId, "to");
+
+    if (nodeIds.length) {
+      nodeIds.forEach(nodeId => {
+        nodesToDelete.push(nodeId);
+        getNodesToDelete(nodeId, nodesToDelete);
+      });
+    }
+    return nodesToDelete;
+  };
+
+  const getExpandedNodeIdsToRemove = (leafNodeExpandId, nodeIdsToRemove: any[] = []) => {
+    if (expandedNodeData[leafNodeExpandId]) {
+      let expandedGroupNodeObject = expandedNodeData[leafNodeExpandId];
+      expandedGroupNodeObject.nodes.forEach(e => {
+        let id:any = e["id"];
+        let predicate = getEdgePredicate(id, network);
+        let expandId = predicate ? id + "-" + predicate : id;
+        nodeIdsToRemove.push(expandId);
+        return getExpandedNodeIdsToRemove(expandId, nodeIdsToRemove);
+      });
+    }
+
+    return nodeIdsToRemove;
+  };
+
+  const getExpandedEdgeIdsToRemove = (leafNodeExpandId, edgeIdsToRemove:any [] = []) => {
+    if (expandedNodeData[leafNodeExpandId]) {
+      let expandedGroupNodeObject = expandedNodeData[leafNodeExpandId];
+      expandedGroupNodeObject.edges.forEach(e => {
+        let id:any = e["id"];
+        let predicate = getEdgePredicate(id, network);
+        let expandId = id + "-" + predicate;
+        edgeIdsToRemove.push(id);
+        getExpandedEdgeIdsToRemove(expandId, edgeIdsToRemove);
+      });
+    }
+    return edgeIdsToRemove;
+  };
+
+  const handleLeafNodeCollapse = () => {
+    try {
+      let nodesToDelete = getNodesToDelete(clickedNode["nodeId"]);
+      let graphNodesDataTemp = getExpandedNodeIdsToRemove(clickedNode["leafNodeExpandId"]);
+      let graphEdgesDataTemp = getExpandedEdgeIdsToRemove(clickedNode["leafNodeExpandId"]);
+      let tempExpandedData = expandedNodeData;
+      graphNodesDataTemp.forEach(expandId => delete tempExpandedData[expandId]);
+      delete tempExpandedData[clickedNode["leafNodeExpandId"]];
+      setExpandedNodeData(tempExpandedData);
+      network.body.data.nodes.remove(graphNodesDataTemp);
+      network.body.data.nodes.remove(nodesToDelete);
+      network.body.data.edges.remove(graphEdgesDataTemp);
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
+  const handleLeafNodeExpansion = async (payloadData) => {
+    setContextMenuVisible(false);
+    let payload = {
+      database: searchOptions.database,
+      data: {
+        "parentIRI": clickedNode && clickedNode["nodeId"] ? clickedNode["nodeId"] : payloadData.nodeInfo["nodeId"]
+      }
+    };
+    try {
+      let response: any;
+      if (!payloadData.expandAll) {
+        response = await expandGroupNode(payload, 3);
+      } else {
+        response = await expandGroupNode(payload);
+      }
+
+      if (response.status === 200) {
+        let expandedNodeInfo = expandedNodeData;
+        let expandId = payloadData["nodeInfo"] ? payloadData.nodeInfo["leafNodeExpandId"] : clickedNode["leafNodeExpandId"];
+        expandedNodeInfo[expandId] = {
+          nodes: response.data.nodes,
+          edges: response.data.edges,
+        };
+        setExpandedNodeData(expandedNodeInfo);
+        let nodes = getNodes(response.data.nodes);
+        let edges = getEdges(response.data.edges);
+        network.body.data.nodes.update(nodes);
+        network.body.data.edges.update(edges);
+        await updateGroupAndLeafNodesDataset(response.data.nodes);
+      }
     } catch (error) {
       handleError(error);
     }
@@ -498,6 +643,12 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     let id = event.target.id;
     if (id === "viewRecordsInTableView") {
       if (network) {
+        setUserPreferences();
+      }
+    } else if (id === "showRelated") {
+      if (network) {
+        let payloadData = {expandAll: true};
+        handleLeafNodeExpansion(payloadData);
         setUserPreferences();
       }
     } else if (id === "expand3SampleRecords") {
@@ -517,6 +668,11 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         handleCollapse();
         setUserPreferences();
       }
+    } else if (id === "collapseLeafNode") {
+      if (network) {
+        handleLeafNodeCollapse();
+        setUserPreferences();
+      }
     }
   };
 
@@ -526,12 +682,15 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       return false;
     } else {
       let parentId = clickedNode["parentNode"];
-      let expandedNodeObject = expandedNodeData[parentId];
-      if (parentId && expandedNodeObject) {
+      let predicate = getEdgePredicate(clickedNode["nodeId"], network);
+      let expandId = clickedNode["currentNodeExpandId"] || clickedNode["leafNodeExpandId"];
+      expandId = !expandId ? parentId + "-" + predicate : expandId;
+      let expandedNodeObject = expandedNodeData[expandId];
+      if (parentId && expandId && expandedNodeObject) {
         let expandedNodeChildren = expandedNodeObject.nodes;
         let nodeId = clickedNode["nodeId"];
         let childIndex = expandedNodeChildren.findIndex(node => node.id === nodeId);
-        return expandedNodeIds.includes(parentId) && childIndex !== -1;
+        return expandedNodeIds.includes(expandId) && childIndex !== -1;
       } else {
         return false;
       }
@@ -546,6 +705,10 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     return clickedNode && clickedNode["nodeId"];
   };
 
+  const isLeafNode = () => {
+    return clickedNode && clickedNode["hasRelationships"];
+  };
+
   const menu = () => {
     let entityType = "";
     if (nodeIdExists()) {
@@ -556,8 +719,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       }
     }
     return (
-      <div id="contextMenu" className={styles.contextMenu} style={{left: menuPosition.x, top: menuPosition.y}}
-        onClick={handleMenuClick}>
+      <div id="contextMenu" className={styles.contextMenu} style={{left: menuPosition.x, top: menuPosition.y}}>
         {/* {nodeIdExists() &&
           <div id="viewRecordsInTableView" key="1" className={styles.contextMenuItem} >
             <Link to={
@@ -569,7 +731,13 @@ const GraphVisExplore: React.FC<Props> = (props) => {
             </Link>
           </div>
         } */}
-        {nodeIdExists() && isGroupNode() && !isExpandedChildNode() &&
+        {
+          nodeIdExists() && isLeafNode() && !isExpandedLeaf() &&
+          <div id="showRelated" key="1" className={styles.contextMenuItem} onClick={handleMenuClick}>
+            Show related
+          </div>
+        }
+        {nodeIdExists() && isGroupNode() && !isExpandedChildNode() && clickedNode["count"] > 3 &&
           <div id="expand3SampleRecords" key="2" className={styles.contextMenuItem} onClick={handleMenuClick}>
             Expand 3 {entityType} records from this group
           </div>
@@ -584,6 +752,11 @@ const GraphVisExplore: React.FC<Props> = (props) => {
             Collapse all {entityType} records into a group
           </div>
         }
+        {nodeIdExists() && isExpandedLeaf() &&
+          <div id="collapseLeafNode" key="5" className={styles.contextMenuItem} onClick={handleMenuClick}>
+            Collapse related
+          </div>
+        }
       </div>
     );
   };
@@ -596,27 +769,53 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     }
   }, [clickedNode]);
 
-  const handleSelect = _.debounce((event) => {
+  const getExpandedNodeObject = (nodeId) => {
+    let expandedInstanceInfo = {nodeObject: {}, edgeObject: {}, currentNodeExpandId: "", parentNodeExpandId: ""};
+    let parentNodes = network.getConnectedNodes(nodeId, "from");
+    let edgesFrom = network.getConnectedEdges(nodeId);
+    let parentNode = parentNodes[0];
+    let edgeIdFrom = edgesFrom[0];
+    let parentNodePredicate = getEdgePredicate(parentNode, network);
+    let currentNodePredicate = predicates[edgeIdFrom];
+    let parentNodeExpandId = parentNode + "-" + parentNodePredicate;
+    let currentNodeExpandId = parentNode + "-" + currentNodePredicate;
+    if (parentNode && expandedNodeData[currentNodeExpandId]) {
+      expandedInstanceInfo["nodeObject"] = expandedNodeData[currentNodeExpandId].nodes.find(node => node.id === nodeId);
+      expandedInstanceInfo["edgeObject"] = expandedNodeData[currentNodeExpandId].edges.find(edge => edge.id === edgeIdFrom);
+      expandedInstanceInfo["currentNodeExpandId"] = currentNodeExpandId;
+    } else if (parentNode && expandedNodeData[parentNodeExpandId]) {
+      expandedInstanceInfo["nodeObject"] = expandedNodeData[parentNodeExpandId].nodes.find(node => node.id === nodeId);
+      expandedInstanceInfo["edgeObject"] = expandedNodeData[parentNodeExpandId].edges.find(edge => edge.id === edgeIdFrom);
+      expandedInstanceInfo["parentNodeExpandId"] = parentNodeExpandId;
+    } else {
+      expandedInstanceInfo["nodeObject"] = props.entityTypeInstances.nodes.find(node => node.id === nodeId);
+      expandedInstanceInfo["edgeObject"] = props.entityTypeInstances.edges.find(edge => edge.id === edgeIdFrom);
+    }
+    return expandedInstanceInfo;
+  };
+
+  const handleSelect = _.debounce(async (event) => {
     const {nodes} = event;
     if (nodes.length > 0) {
       const [node] = nodes;
       const nodeId = node;
+      const {nodeObject, edgeObject, currentNodeExpandId, parentNodeExpandId} = getExpandedNodeObject(nodeId);
+      if (groupNodes.hasOwnProperty(nodeId)) {
+        let nodeInfo = getNodeObject(nodeId, edgeObject);
+        nodeInfo["entityName"] = nodeObject && nodeObject["group"] ? nodeObject["group"].split("/").pop() : "";
+        nodeInfo["hasRelationships"] = nodeObject && nodeObject["hasRelationships"] ? nodeObject["hasRelationships"] : false;
+        nodeInfo["count"] = nodeObject && nodeObject["count"] ? nodeObject["count"]  : 1;
+        nodeInfo["currentNodeExpandId"] = currentNodeExpandId;
+        nodeInfo["parentNodeExpandId"] = parentNodeExpandId;
 
-      let nodeObject = {};
-      let parentNode = network.getConnectedNodes(nodeId, "from");
-      if (parentNode && expandedNodeData[parentNode]) {
-        nodeObject = expandedNodeData[parentNode].nodes.find(node => node.id === nodeId);
-      } else {
-        nodeObject = props.entityTypeInstances.nodes.find(node => node.id === nodeId);
-      }
+        //Reset ClickedNode upon double click
+        setClickedNode({nodeId: undefined, isGroupNode: false});
 
-      if (Object.keys(groupNodes).includes(nodeId)) {
-        let nodeInfo = getNodeObject(nodeId);
         let payloadData = {
           expandAll: false,
           nodeInfo: nodeInfo
         };
-        handleGroupNodeExpand(payloadData);
+        await handleGroupNodeExpand(payloadData);
       } else {
         setSavedNode(nodeObject);
         setGraphViewOptions(node);
@@ -659,31 +858,58 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     const {nodes} = event;
     if (nodes.length > 0) {
       const [nodeId] = nodes;
-      if (Object.keys(groupNodes).includes(nodeId)) {
-        let nodeInfo = getNodeObject(nodeId);
+      const {nodeObject, edgeObject, currentNodeExpandId, parentNodeExpandId} = getExpandedNodeObject(nodeId);
+      let nodeInfo = getNodeObject(nodeId, edgeObject);
+      nodeInfo["entityName"] = nodeObject && nodeObject["group"] ? nodeObject["group"].split("/").pop() : "";
+      nodeInfo["hasRelationships"] = nodeObject && nodeObject["hasRelationships"] ? nodeObject["hasRelationships"] : false;
+      nodeInfo["count"] = nodeObject && nodeObject["count"] ? nodeObject["count"]  : 1;
+      nodeInfo["currentNodeExpandId"] = currentNodeExpandId;
+      nodeInfo["parentNodeExpandId"] = parentNodeExpandId;
+
+      //Reset ClickedNode upon double click
+      setClickedNode({nodeId: undefined, isGroupNode: false});
+
+      if (groupNodes.hasOwnProperty(nodeId)) {
         let payloadData = {
           expandAll: true,
           nodeInfo: nodeInfo
         };
         handleGroupNodeExpand(payloadData);
+      } else if (leafNodes.hasOwnProperty(nodeId)) {
+        let payloadData = {
+          expandAll: true,
+          nodeInfo: nodeInfo
+        };
+        handleLeafNodeExpansion(payloadData);
       }
+    }  else {
+      let nodeInfo = {
+        nodeId: undefined,
+        isGroupNode: false
+      };
+      setClickedNode(nodeInfo);
     }
   };
 
-  const getNodeObject = (nodeId) => {
+  const getNodeObject = (nodeId, edgeObject?) => {
     let nodeInfo = {};
     nodeInfo["nodeId"] = nodeId;
-    nodeInfo["nodeObject"] = nodeId;
     let parentNode = network.getConnectedNodes(nodeId, "from");
     nodeInfo["parentNode"] = parentNode[0];
-
-    if (Object.keys(groupNodes).includes(nodeId)) {
-      let edges = network.getConnectedEdges(nodeId);
-      let predicateIRI = edges[0].split("-").slice(3, -1).join("-");
-      nodeInfo["isGroupNode"] = true;
-      nodeInfo["predicateIRI"] = predicateIRI;
+    if (edgeObject && Object.keys(edgeObject).length) {
+      nodeInfo["predicateIRI"] = edgeObject["predicate"];
+    } else {
+      nodeInfo["predicateIRI"] = getEdgePredicate(nodeId, network);
     }
 
+    if (groupNodes.hasOwnProperty(nodeId)) {
+      nodeInfo["isGroupNode"] = true;
+      nodeInfo["expandId"] = parentNode[0] + "-" + nodeInfo["predicateIRI"];
+    } else if (leafNodes.hasOwnProperty(nodeId)) {
+      if (edgeObject && Object.keys(edgeObject).length) {
+        nodeInfo["leafNodeExpandId"] = nodeId + "-" + nodeInfo["predicateIRI"];
+      }
+    }
     return nodeInfo;
   };
 
@@ -717,7 +943,9 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     blurEdge: (event) => {
       event.event.target.style.cursor = "";
     },
-    doubleClick: handleDoubleClick,
+    doubleClick: (event) => {
+      handleDoubleClick(event);
+    },
     stabilized: (event) => {
       // NOTE if user doesn't manipulate graph on load, stabilize event
       // fires forever. This avoids reacting to infinite events
@@ -741,15 +969,13 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       if (nodeId) {
         event.event.preventDefault();
         setMenuPosition({x: event.event.offsetX, y: event.event.offsetY});
-        let nodeObject:any = {};
-        let parentNode = network.getConnectedNodes(nodeId, "from");
-        if (parentNode && expandedNodeData[parentNode]) {
-          nodeObject = expandedNodeData[parentNode].nodes.find(node => node.id === nodeId);
-        } else {
-          nodeObject = props.entityTypeInstances.nodes.find(node => node.id === nodeId);
-        }
-        let nodeInfo = getNodeObject(nodeId);
-        nodeInfo["entityName"] = nodeObject && nodeObject["group"] ? nodeObject.group.split("/").pop() : "";
+        const {nodeObject, edgeObject, currentNodeExpandId, parentNodeExpandId} = getExpandedNodeObject(nodeId);
+        let nodeInfo = getNodeObject(nodeId, edgeObject);
+        nodeInfo["entityName"] = nodeObject && nodeObject["group"] ? nodeObject["group"].split("/").pop() : "";
+        nodeInfo["hasRelationships"] = nodeObject && nodeObject["hasRelationships"] ? nodeObject["hasRelationships"] : false;
+        nodeInfo["count"] = nodeObject && nodeObject["count"] ? nodeObject["count"]  : 1;
+        nodeInfo["currentNodeExpandId"] = currentNodeExpandId;
+        nodeInfo["parentNodeExpandId"] = parentNodeExpandId;
         setClickedNode(nodeInfo);
       } else {
         let nodeInfo = {
