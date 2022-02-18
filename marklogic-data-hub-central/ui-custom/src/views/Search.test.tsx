@@ -18,7 +18,7 @@ const userContextValueEmptyConfig = {...userContextValue, config: {}};
 describe("Search view", () => {
 
     test("Renders configured content with non-empty config", async () => {
-        let getByText, debug;
+        let getByText;
         await act(async () => {
             const renderResults = render(
                 <UserContext.Provider value={userContextValue}>
@@ -26,7 +26,6 @@ describe("Search view", () => {
                 </UserContext.Provider>
             );
             getByText = renderResults.getByText;
-            debug = renderResults.debug;
         });
         expect(document.querySelector(".meter")).toBeInTheDocument();
         expect(getByText(config.search.facets.items[0].name)).toBeInTheDocument();
@@ -34,17 +33,14 @@ describe("Search view", () => {
     });
 
     test("Renders loading content with empty config", async () => {
-        let getByText, debug;
         await act(async () => {
             const renderResults = render(
                 <UserContext.Provider value={userContextValueEmptyConfig}>
                     <Search />
                 </UserContext.Provider>
             );
-            getByText = renderResults.getByText;
-            debug = renderResults.debug;
         });
-        expect(getByText("Loading...")).toBeInTheDocument();
+        expect(document.querySelector(".loading")).toBeInTheDocument();
     });
 
 });
