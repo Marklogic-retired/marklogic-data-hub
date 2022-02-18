@@ -6,6 +6,7 @@ import {Application} from "../../support/application.config";
 import {toolbar} from "../../support/components/common";
 import "cypress-wait-until";
 import detailPageNonEntity from "../../support/pages/detail-nonEntity";
+import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import LoginPage from "../../support/pages/login";
 
 describe("xml scenario for snippet view on browse documents page", () => {
@@ -34,8 +35,10 @@ describe("xml scenario for snippet view on browse documents page", () => {
   it("select Customer XML entity instances and verify entity, docs, hub/entity properties", () => {
     toolbar.getExploreToolbarIcon().should("be.visible").click();
     browsePage.clickFacetView();
-    browsePage.selectEntity("Customer");
-    browsePage.getSelectedEntity().should("contain", "Customer");
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Customer");
+    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
+    browsePage.waitForSpinnerToDisappear();
     browsePage.getHubPropertiesExpanded();
     browsePage.scrollSideBar();
     browsePage.getFacetItemCheckbox("collection", "mapCustomersXML").scrollIntoView().click({force: true});
@@ -58,11 +61,12 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.clickClearFacetSearchSelection("mapCustomersXML");
   });
   it("apply facet search and verify docs, hub/entity properties", () => {
-    browsePage.selectEntity("All Entities");
-    browsePage.getSelectedEntity().should("contain", "All Entities");
-    browsePage.getShowMoreLink("collection").scrollIntoView().click({force: true});
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("All Entities");
+    entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
     browsePage.scrollSideBar();
+    browsePage.getShowMoreLink("collection").scrollIntoView().click({force: true});
     browsePage.getFacetItemCheckbox("collection", "mapCustomersXML").click();
     browsePage.getSelectedFacets().should("exist");
     browsePage.getGreySelectedFacets("mapCustomersXML").should("exist");
@@ -75,8 +79,9 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.clickClearFacetSearchSelection("mapCustomersXML");
   });
   it("apply facet search and clear individual grey facet", () => {
-    browsePage.selectEntity("All Entities");
-    browsePage.getSelectedEntity().should("contain", "All Entities");
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("All Entities");
+    entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
     browsePage.getShowMoreLink("collection").scrollIntoView().click({force: true});
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
     browsePage.showMoreCollection();
@@ -86,8 +91,9 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
   });
   it("apply facet search and clear all grey facets", () => {
-    browsePage.selectEntity("All Entities");
-    browsePage.getSelectedEntity().should("contain", "All Entities");
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("All Entities");
+    entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
     browsePage.getShowMoreLink("collection").scrollIntoView().click({force: true});
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
     browsePage.showMoreCollection();
@@ -140,8 +146,9 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.getSearchText().should("be.visible");
   });
   it.skip("select Customer xml entity instances and verify table", () => {
-    browsePage.selectEntity("Customer");
-    browsePage.getSelectedEntity().should("contain", "Customer");
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Customer");
+    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.getHubPropertiesExpanded();
     browsePage.scrollSideBar();
     browsePage.getFacetItemCheckbox("collection", "mapCustomersXML").should("be.visible").click();
@@ -200,7 +207,9 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.getSearchText().clear();
   });
   it("verify record view of the XML document in non-entity detail page", () => {
-    browsePage.selectEntity("All Data");
+    entitiesSidebar.toggleAllDataView();
+    browsePage.getSearchText().clear();
+    browsePage.getApplyFacetsButton().click();
     browsePage.getNavigationIconForDocument("/dictionary/first-names.xml").click({force: true});
     browsePage.waitForSpinnerToDisappear();
     detailPageNonEntity.getRecordView().should("exist");
@@ -217,10 +226,9 @@ describe("xml scenario for snippet view on browse documents page", () => {
     detailPageNonEntity.clickBackButton();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
-    browsePage.getSelectedEntity().should("contain", "All Data");
   });
   it.skip("verify metadata view of the document properties", () => {
-    browsePage.selectEntity("All Data");
+    entitiesSidebar.toggleAllDataView();
     browsePage.search("robert");
     browsePage.getNavigationIconForDocument("/thesaurus/nicknames.xml").click({force: true});
     browsePage.waitForSpinnerToDisappear();

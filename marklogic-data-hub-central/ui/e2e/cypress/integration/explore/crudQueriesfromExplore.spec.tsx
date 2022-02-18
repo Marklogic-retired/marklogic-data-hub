@@ -2,6 +2,7 @@
 
 import browsePage from "../../support/pages/browse";
 import queryComponent from "../../support/components/query/manage-queries-modal";
+import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import {Application} from "../../support/application.config";
 import {toolbar} from "../../support/components/common/index";
 import "cypress-wait-until";
@@ -35,14 +36,17 @@ describe("save/manage queries scenarios, developer role", () => {
     toolbar.getExploreToolbarIcon().should("be.visible").click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
-    browsePage.selectEntity("Customer");
-    browsePage.getSelectedEntity().should("contain", "Customer");
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Customer");
+    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
+    entitiesSidebar.openBaseEntityFacets("Customer");
     browsePage.getFacetItemCheckbox("name", "Adams Cole").click();
     browsePage.getSelectedFacets().should("exist");
     browsePage.getGreySelectedFacets("Adams Cole").should("exist");
     browsePage.getFacetApplyButton().click();
     browsePage.clickColumnTitle(2);
     browsePage.waitForSpinnerToDisappear();
+    entitiesSidebar.backToMainSidebar().click();
     browsePage.getSaveModalIcon().scrollIntoView().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getSaveQueryName().should("be.visible");
@@ -83,6 +87,7 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.waitForSpinnerToDisappear();
     browsePage.getTableCell(1, 2).should("contain", "102");
     browsePage.getTableCell(2, 2).should("contain", "103");
+    cy.wait(3000);
     //Refresh the browser page.
     cy.reload();
     browsePage.waitForSpinnerToDisappear();
@@ -93,9 +98,11 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getTableCell(2, 2).should("contain", "103");
 
     // it("save more queries with duplicate query name from browse and manage queries view", () => {
-    cy.wait(1000);
+    cy.wait(3000);
     browsePage.waitForSpinnerToDisappear();
+    entitiesSidebar.openBaseEntityFacets("Customer");
     browsePage.getFacetItemCheckbox("email", "adamscole@nutralab.com").click();
+    entitiesSidebar.backToMainSidebar().click();
     // clicking on save changes icon
     browsePage.getSaveModalIcon().scrollIntoView().click();
     browsePage.getEditSaveChangesFormName().invoke("val").should("contain", "new-query-2");
@@ -209,10 +216,13 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getSaveQueryCancelButton().click();
   });
   it("Edit saved query and verify discard changes functionality", () => {
-    browsePage.selectEntity("Person");
+    entitiesSidebar.removeSelectedBaseEntity();
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Person");
+    entitiesSidebar.getBaseEntityOption("Person").should("be.visible");
     browsePage.getEntityConfirmationNoClick().click();
     cy.waitForModalToDisappear();
-    browsePage.getSelectedEntity().should("contain", "Person");
+    entitiesSidebar.getBaseEntityOption("Person").should("be.visible");
     browsePage.getFacetItemCheckbox("lname", "Bates").click();
     browsePage.getSelectedFacets().should("exist");
     browsePage.getGreySelectedFacets("Bates").should("exist");
@@ -240,10 +250,12 @@ describe("save/manage queries scenarios, developer role", () => {
   });
   it("Switching between queries when making changes to saved query", () => {
     // creating query 1 with customer entity
-    browsePage.selectEntity("Customer");
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Customer");
+    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.getEntityConfirmationNoClick().click();
     cy.waitForModalToDisappear();
-    browsePage.getSelectedEntity().should("contain", "Customer");
+    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.waitForSpinnerToDisappear();
     browsePage.getHubPropertiesExpanded();
     browsePage.getFacetItemCheckbox("collection", "mapCustomersJSON").click({force: true});
@@ -280,19 +292,26 @@ describe("save/manage queries scenarios, developer role", () => {
   it("Switching between entities when making changes to saved query", () => {
     browsePage.selectQuery("new-query");
     browsePage.getClearFacetSearchSelection("Adams Cole").click();
-    browsePage.selectEntity("Person");
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Person");
+    entitiesSidebar.getBaseEntityOption("Person").should("be.visible");
     browsePage.getEntityConfirmationNoClick().click();
-    browsePage.getSelectedEntity().should("contain", "Person");
-    browsePage.selectEntity("Customer");
+    entitiesSidebar.getBaseEntityOption("Person").should("be.visible");
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Customer");
+    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.getSelectedQuery().should("contain", "select a query");
     browsePage.selectQuery("new-query");
     browsePage.getFacetItemCheckbox("email", "adamscole@nutralab.com").click();
     browsePage.clickColumnTitle(3);
-    browsePage.selectEntity("Person");
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Person");
     browsePage.getEntityConfirmationYesClick().click();
     browsePage.getEditSaveChangesButton().click();
-    browsePage.getSelectedEntity().should("contain", "Person");
-    browsePage.selectEntity("Customer");
+    entitiesSidebar.getBaseEntityOption("Person").should("be.visible");
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Customer");
+    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.selectQuery("new-query");
     cy.wait(5000);
     browsePage.waitForSpinnerToDisappear();
@@ -302,18 +321,26 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getTableCell(2, 3).should("contain", "Adams Cole");
   });
   it("Switching between entities when there are saved queries", () => {
-    browsePage.selectEntity("Customer");
-    browsePage.selectEntity("Person");
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Customer");
+    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
+    entitiesSidebar.removeSelectedBaseEntity();
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Person");
+    entitiesSidebar.getBaseEntityOption("Person").should("be.visible");
     browsePage.getSaveQueriesDropdown().should("be.visible");
     browsePage.getSelectedQuery().should("contain", "select a query");
     //Checking if you are in person entity,select a saved query related to customer and shifting back to person
     browsePage.selectQuery("new-query");
-    browsePage.getSelectedEntity().should("contain", "Customer");
-    browsePage.selectEntity("Person");
-    browsePage.getSelectedEntity().should("contain", "Person");
+    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Person");
+    entitiesSidebar.getBaseEntityOption("Person").should("be.visible");
   });
   it("Save query button should not show up in all entities view", () => {
-    browsePage.selectEntity("All Entities");
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("All Entities");
+    entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
     browsePage.getSaveQueriesDropdown().should("be.visible");
     browsePage.getSelectedQuery().should("contain", "select a query");
     // Should comment below line after DHFPROD-5392 is done
@@ -325,8 +352,9 @@ describe("save/manage queries scenarios, developer role", () => {
   // Reset query confirmation
   it("Show Reset query button, open reset confirmation", () => {
     // Clicking on reset after selected facets are applied, saves new query and navigates to zero state
-    browsePage.selectEntity("Customer");
-    browsePage.getSelectedEntity().should("contain", "Customer");
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Customer");
+    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.getFacetItemCheckbox("name", "Adams Cole").click();
     browsePage.getSelectedFacets().should("exist");
     browsePage.getFacetApplyButton().click();
@@ -334,8 +362,10 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getResetQueryButton().click();
     // clicking on no doesn't create a new query and navigates to zero state
     browsePage.getResetConfirmationNoClick();
-    browsePage.getSelectedEntity().should("contain", "All Entities");
-    browsePage.selectEntity("Customer");
+    entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Customer");
+    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.getFacetItemCheckbox("name", "Adams Cole").click();
     browsePage.getSelectedFacets().should("exist");
     browsePage.getFacetApplyButton().click();
@@ -347,7 +377,9 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getSaveQueryName().should("be.visible");
     browsePage.getSaveQueryName().type("reset-query");
     browsePage.getSaveQueryButton().click();
-    browsePage.selectEntity("Customer");
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Customer");
+    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.selectQuery("reset-query");
     browsePage.waitForSpinnerToDisappear();
     browsePage.getAppliedFacets("Adams Cole").should("exist");
@@ -357,8 +389,9 @@ describe("save/manage queries scenarios, developer role", () => {
   });
   it("Show Reset query button, clicking reset confirmation when making changes to saved query", () => {
     // Select saved query, make changes, click on reset opens a confirmation
-    browsePage.selectEntity("Customer");
-    browsePage.getSelectedEntity().should("contain", "Customer");
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Customer");
+    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.getSaveQueriesDropdown().should("be.visible");
     browsePage.selectQuery("reset-query");
     browsePage.getSelectedQuery().should("contain", "reset-query");
@@ -366,9 +399,11 @@ describe("save/manage queries scenarios, developer role", () => {
     // clicking on no doesn't update query and navigates to zero state
     browsePage.getResetQueryButton().should("be.visible").click();
     browsePage.getResetConfirmationNoClick();
-    browsePage.getSelectedEntity().should("contain", "All Entities");
+    entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
     //selecting yes will update the query and navigates to zero state
-    browsePage.selectEntity("Customer");
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Customer");
+    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.selectQuery("reset-query");
     browsePage.clickColumnTitle(2);
     browsePage.waitForSpinnerToDisappear();
@@ -378,7 +413,9 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getEditSaveChangesButton().should("be.visible").click();
     cy.waitForAsyncRequest();
     browsePage.getTotalDocuments();
-    browsePage.selectEntity("Customer");
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Customer");
+    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.selectQuery("reset-query");
     cy.waitForAsyncRequest();
     browsePage.getAppliedFacets("Adams Cole").should("exist");
@@ -389,19 +426,23 @@ describe("save/manage queries scenarios, developer role", () => {
   });
   it("Show Reset query button, verify confirmation modal displays if only selected columns changed, clicking reset icon resets to all entities", () => {
     //verifying the confirmation modal displays if no query selected and selected columns changed
-    browsePage.selectEntity("Customer");
-    browsePage.getSelectedEntity().should("contain", "Customer");
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Customer");
+    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.getColumnSelectorIcon().should("be.visible");
     browsePage.getColumnSelectorIcon().click();
     browsePage.getColumnSelector().should("be.visible");
     browsePage.selectColumnSelectorProperty("status");
     browsePage.getColumnSelectorApply().click({force: true});
-    browsePage.selectEntity("Person");
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Person");
+    entitiesSidebar.getBaseEntityOption("Person").should("be.visible");
     //verifying the confirmation modal appearing and selection cancel
     browsePage.getEntityConfirmationNoClick().click();
     // Select saved query, make changes, click on reset opens a confirmation
-    browsePage.selectEntity("Customer");
-    browsePage.getSelectedEntity().should("contain", "Customer");
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Customer");
+    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.getSaveQueriesDropdown().should("be.visible");
     browsePage.selectQuery("reset-query");
     //changing the selecte column list should trigger modal confirmation
@@ -413,14 +454,15 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getResetQueryButton().click({force: true});
     //verifying the confirmation modal appearing and selection cancel
     browsePage.getResetConfirmationNoClick();
-    browsePage.getSelectedEntity().should("contain", "All Entities");
+    entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
     //verify no confirmation modal after reset.
-    browsePage.selectEntity("Customer");
-    browsePage.getSelectedEntity().should("contain", "Customer");
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Customer");
+    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.getSaveQueriesDropdown().should("be.visible");
     browsePage.selectQuery("reset-query");
     browsePage.getResetQueryButton().click();
-    browsePage.getSelectedEntity().should("contain", "All Entities");
+    entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
   });
 
   xit("verify export array/structured data warning", () => {
@@ -438,7 +480,9 @@ describe("save/manage queries scenarios, developer role", () => {
   });
 
   it("Apply facet,save query using save as is option", () => {
-    browsePage.selectEntity("Person");
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Person");
+    entitiesSidebar.getBaseEntityOption("Person").should("be.visible");
     browsePage.getFacetItemCheckbox("lname", "Bates").click();
     browsePage.getFacetItemCheckbox("lname", "Bates").should("be.checked");
     browsePage.getGreySelectedFacets("Bates").should("exist");
@@ -463,14 +507,16 @@ describe("save/manage queries scenarios, developer role", () => {
     cy.wait(1000);*/
   });
   it("Verify facets checked on sidebar", () => {
-    browsePage.selectEntity("All Entities");
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("All Entities");
+    entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
     browsePage.getFacetItemCheckbox("collection", "Person").click();
     browsePage.getFacetItemCheckbox("collection", "Person").should("be.checked");
     browsePage.getGreySelectedFacets("Person").should("exist");
     browsePage.getResetQueryButton().click();
-    browsePage.getSelectedEntity().should("contain", "All Entities");
+    entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
     browsePage.waitForSpinnerToDisappear();
     browsePage.getFacetItemCheckbox("collection", "Person").should("not.be.checked");
     browsePage.getGreySelectedFacets("Person").should("not.exist");
@@ -480,12 +526,12 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.selectQuery("person-query");
     browsePage.getSelectedQuery().should("contain", "person-query");
     browsePage.waitForSpinnerToDisappear();
-    browsePage.getSelectedEntity().should("contain", "Person");
+    entitiesSidebar.getBaseEntityOption("Person").should("be.visible");
     browsePage.getFacetItemCheckbox("lname", "Bates").should("be.checked");
     //switch the database
     browsePage.getStagingDatabaseButton().click();
     browsePage.waitForSpinnerToDisappear();
-    browsePage.getSelectedEntity().should("contain", "Person");
+    entitiesSidebar.getBaseEntityOption("Person").should("be.visible");
     browsePage.getSaveQueriesDropdown().should("be.visible");
     browsePage.getSelectedQuery().should("contain", "select a query");
     //Person entity is not available in stage database

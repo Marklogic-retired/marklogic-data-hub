@@ -41,7 +41,7 @@ class BaseEntitySidebar {
   }
 
   openBaseEntityDropdown() {
-    return cy.get("#entitiesSidebar-select-wrapper").click("right");
+    return cy.get("#entitiesSidebar-select-wrapper").scrollIntoView().click("right");
   }
 
   selectBaseEntityOption(entityName: string) {

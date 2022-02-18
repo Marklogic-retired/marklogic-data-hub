@@ -3,6 +3,7 @@
 import browsePage from "../../support/pages/browse";
 import detailPage from "../../support/pages/detail";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
+import {BaseEntityTypes} from "../../support/types/base-entity-types";
 import {Application} from "../../support/application.config";
 import {toolbar} from "../../support/components/common";
 import "cypress-wait-until";
@@ -37,7 +38,7 @@ describe("json scenario for table on browse documents page", () => {
     cy.waitForAsyncRequest();
   });
   it("select \"all entities\" and verify table default columns", () => {
-    browsePage.getSelectedEntity().should("contain", "All Entities");
+    entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
     browsePage.getColumnTitle(2).should("contain", "Identifier");
     browsePage.getColumnTitle(3).should("contain", "Entity Type");
@@ -51,7 +52,7 @@ describe("json scenario for table on browse documents page", () => {
   });
 
   it("select \"all entities\" and verify table", () => {
-    browsePage.getSelectedEntity().should("contain", "All Entities");
+    entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
     //check table rows
     browsePage.getHCTableRows().should("have.length", 20);
@@ -61,14 +62,14 @@ describe("json scenario for table on browse documents page", () => {
 
 
   it("select Person entity and verify table", () => {
-    entitiesSidebar.getBaseEntityDropdown().click();
+    entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Person");
     browsePage.getHubPropertiesExpanded();
     browsePage.getTotalDocuments().should("be.greaterThan", 5);
     //check table rows
     browsePage.getHCTableRows().should("have.length", 14);
     //check table columns
-    browsePage.getTableColumns().should("to.have.length.of.at.most", 6);
+    browsePage.getTableColumns().should("to.have.length.of.at.most", 9);
   });
 
 
@@ -81,12 +82,7 @@ describe("json scenario for table on browse documents page", () => {
   });
 
   it("verify instance view of the document without pk", () => {
-    entitiesSidebar.getBaseEntityDropdown().click();
-    entitiesSidebar.selectBaseEntityOption("Person");
-    browsePage.waitForSpinnerToDisappear();
-    entitiesSidebar.getMainPanelSearchInput().type("Alice");
-    entitiesSidebar.getApplyFacetsButton().click();
-    browsePage.waitForSpinnerToDisappear();
+    entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.PERSON);
     browsePage.getFacetItemCheckbox("fname", "Alice").click();
     browsePage.getGreySelectedFacets("Alice").should("exist");
     browsePage.getFacetApplyButton().click();
@@ -113,7 +109,11 @@ describe("json scenario for table on browse documents page", () => {
   });
 
   it("verify instance view of the document with pk", () => {
+    browsePage.getClearAllFacetsButton().click();
     entitiesSidebar.getMainPanelSearchInput().type("10248");
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("All Entities");
+    entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
     entitiesSidebar.getApplyFacetsButton().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getTotalDocuments().should("be.equal", 1);
@@ -128,17 +128,21 @@ describe("json scenario for table on browse documents page", () => {
   });
 
   it("verify source view of the document", () => {
-    entitiesSidebar.getBaseEntityDropdown().click();
+    entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
+    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.waitForSpinnerToDisappear();
     browsePage.getFinalDatabaseButton().click();
+    browsePage.getClearAllFacetsButton().click();
     entitiesSidebar.getMainPanelSearchInput().type("Adams Cole");
     entitiesSidebar.getApplyFacetsButton().click();
     browsePage.waitForSpinnerToDisappear();
+    entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
     browsePage.getFacetItemCheckbox("email", "adamscole@nutralab.com").click();
     browsePage.getFacetItemCheckbox("email", "coleadams39@nutralab.com").click();
     browsePage.getGreySelectedFacets("adamscole@nutralab.com").should("exist");
     browsePage.getGreySelectedFacets("coleadams39@nutralab.com").should("exist");
+    entitiesSidebar.backToMainSidebar().click();
     browsePage.getHubPropertiesExpanded();
     browsePage.getFacetItemCheckbox("collection", "mapCustomersJSON").click({force: true});
     browsePage.getGreySelectedFacets("mapCustomersJSON").should("exist");
@@ -150,12 +154,11 @@ describe("json scenario for table on browse documents page", () => {
     cy.waitForAsyncRequest();
 
     //Verify if the facet, search text and view persists.
-    browsePage.getFinalDatabaseButton().parent().find("input").invoke("attr", "checked").should("exist");
     browsePage.getClearFacetSearchSelection("mapCustomersJSON").should("exist");
     browsePage.getAppliedFacets("adamscole@nutralab.com").should("exist");
     browsePage.getAppliedFacets("coleadams39@nutralab.com").should("exist");
-    browsePage.getAppliedFacetName("adamscole@nutralab.com").should("be.equal", "Customer.email: adamscole@nutralab.com");
-    browsePage.getAppliedFacetName("coleadams39@nutralab.com").should("be.equal", "Customer.email: coleadams39@nutralab.com");
+    browsePage.getAppliedFacetName("adamscole@nutralab.com").should("be.equal", "email: adamscole@nutralab.com");
+    browsePage.getAppliedFacetName("coleadams39@nutralab.com").should("be.equal", "email: coleadams39@nutralab.com");
     browsePage.getSearchBar().should("have.value", "Adams Cole");
     browsePage.getTableView().should("have.css", "color", "rgb(57, 68, 148)");
 
@@ -185,17 +188,17 @@ describe("json scenario for table on browse documents page", () => {
     cy.waitForAsyncRequest();
     browsePage.waitForSpinnerToDisappear();
     //Verify navigating back from detail view should persist search options
-    browsePage.getSelectedEntity().should("contain", "Customer");
+    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.getDatabaseButton("final").should("have.attr", "checked");
-    browsePage.getFinalDatabaseButton().parent().parent().find("input").invoke("attr", "checked").should("exist");
     browsePage.getClearFacetSearchSelection("mapCustomersJSON").should("exist");
     browsePage.getSearchBar().should("have.value", "Adams Cole");
     browsePage.getTableView().should("have.css", "color", "rgb(57, 68, 148)");
   });
 
   it.skip("search for multiple facets, switch to snippet view, delete a facet, switch to table view, verify search query", () => {
-    entitiesSidebar.getBaseEntityDropdown().click();
+    entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
+    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.waitForSpinnerToDisappear();
 
     //TODO: re-test facet search without using ml-tooltip-container
@@ -228,13 +231,16 @@ describe("json scenario for table on browse documents page", () => {
   });
 
   it("verify hub properties grey facets are not being removed when entity properties are selected", () => {
-    entitiesSidebar.getBaseEntityDropdown().click();
+    browsePage.getClearAllFacetsButton().click();
+    entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
+    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.waitForSpinnerToDisappear();
+    entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
     browsePage.getFacetItemCheckbox("name", "Adams Cole").click();
     browsePage.getGreySelectedFacets("Adams Cole").should("exist");
     browsePage.getFacetApplyButton().click();
-    browsePage.getHubPropertiesExpanded();
+    entitiesSidebar.backToMainSidebar().click();
     browsePage.getFacetItemCheckbox("collection", "mapCustomersJSON").scrollIntoView().click({force: true});
     browsePage.getFacetItemCheckbox("flow", "CurateCustomerJSON").click({force: true});
     browsePage.getFacetItemCheckbox("collection", "mapCustomersJSON").should("exist");
@@ -257,6 +263,7 @@ describe("json scenario for table on browse documents page", () => {
 
     browsePage.clickClearFacetSearchSelection("Adams Cole");
     browsePage.getGreySelectedFacets("Adams Cole").should("not.exist");
+    entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
     browsePage.getFacetItemCheckbox("name", "Bowman Hale").click();
     browsePage.getGreySelectedFacets("mapCustomersJSON").should("exist");
     browsePage.getGreySelectedFacets("CurateCustomerJSON").should("exist");
@@ -267,12 +274,17 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getSelectedFacet("mapCustomersJSON").should("exist");
     browsePage.getSelectedFacet("CurateCustomerJSON").should("exist");
     browsePage.getSelectedFacet("Bowman Hale").should("exist");
+    entitiesSidebar.backToMainSidebar().click();
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("All Entities");
+    entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
+    browsePage.getClearAllFacetsButton().click();
+    browsePage.waitForSpinnerToDisappear();
   });
 
   it("apply multiple facets, select and discard new facet, verify original facets checked", () => {
-    entitiesSidebar.getBaseEntityDropdown().click();
-    entitiesSidebar.selectBaseEntityOption("Customer");
-    browsePage.waitForSpinnerToDisappear();
+    entitiesSidebar.showMoreEntities().click();
+    entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
     browsePage.getShowMoreLink("name").click();
     browsePage.getFacetItemCheckbox("name", "Jacqueline Knowles").click();
     browsePage.getFacetItemCheckbox("name", "Lola Dunn").click();
@@ -290,9 +302,12 @@ describe("json scenario for table on browse documents page", () => {
   });
 
   it("apply multiple facets, deselect them, apply changes, apply multiple, clear them, verify no facets checked", () => {
-    entitiesSidebar.getBaseEntityDropdown().click();
+    entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
+    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
+    browsePage.getClearAllFacetsButton().click();
     browsePage.waitForSpinnerToDisappear();
+    entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
     browsePage.getShowMoreLink("name").click();
     browsePage.getFacetItemCheckbox("name", "Adams Cole").click();
     browsePage.getGreySelectedFacets("Adams Cole").should("exist");
@@ -325,9 +340,11 @@ describe("json scenario for table on browse documents page", () => {
 
 
   it("Verify facets can be selected, applied and cleared using clear text", () => {
-    entitiesSidebar.getBaseEntityDropdown().click();
-    entitiesSidebar.selectBaseEntityOption("Customer");
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Person");
+    entitiesSidebar.getBaseEntityOption("Person").should("be.visible");
     browsePage.waitForSpinnerToDisappear();
+    entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.PERSON);
     browsePage.getShowMoreLink("fname").click();
     browsePage.getFacetItemCheckbox("fname", "Gary").click();
     browsePage.getGreySelectedFacets("Gary").should("exist");
@@ -341,9 +358,11 @@ describe("json scenario for table on browse documents page", () => {
   });
 
   it("Apply facets, unchecking them should not recheck original facets", () => {
-    entitiesSidebar.getBaseEntityDropdown().click();
+    entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
+    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.waitForSpinnerToDisappear();
+    entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
     browsePage.getShowMoreLink("name").click();
     browsePage.getFacetItemCheckbox("name", "Mcgee Burch").click();
     browsePage.getFacetItemCheckbox("name", "Powers Bauer").click();

@@ -2,12 +2,12 @@
 
 import browsePage from "../../support/pages/browse";
 import {Application} from "../../support/application.config";
-import {confirmationModal, toolbar} from "../../support/components/common";
+import entitiesSidebar from "../../support/pages/entitiesSidebar";
+import {BaseEntityTypes} from "../../support/types/base-entity-types";
+import {toolbar} from "../../support/components/common";
 import "cypress-wait-until";
 // import detailPageNonEntity from "../../support/pages/detail-nonEntity";
 import LoginPage from "../../support/pages/login";
-import {ConfirmationType} from "../../support/types/modeling-types";
-import entitiesSideBar from "../../support/pages/entitiesSidebar";
 
 describe("Verify All Data for final/staging databases and non-entity detail page", () => {
 
@@ -35,9 +35,9 @@ describe("Verify All Data for final/staging databases and non-entity detail page
 
   it("Switch on zero state page and select query parameters for final database", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-    entitiesSideBar.toggleAllDataView();
-    browsePage.getSearchText().type("Adams");
-    cy.get("[data-testid='hc-inputSearch-btn']").click();
+    entitiesSidebar.toggleAllDataView();
+    cy.wait(3000);
+    browsePage.search("Adams");
     //verify the query data for final database on explore page
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
@@ -45,8 +45,6 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     browsePage.getAllDataSnippetByUri("/json/customers/Cust2.json").should("contain", "ColeAdams");
   });
   it("Select query parameters for final database", () => {
-    browsePage.clearSearchText();
-    browsePage.waitForSpinnerToDisappear();
     browsePage.search("Barbi");
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
@@ -55,8 +53,8 @@ describe("Verify All Data for final/staging databases and non-entity detail page
   it("Switch to staging database and verify data for query parameters", () => {
     browsePage.getStagingDatabaseButton().click();
     cy.waitForAsyncRequest();
+    cy.wait(4000);
     browsePage.search("Adams");
-    cy.get("[data-testid='hc-inputSearch-btn']").click();
     cy.waitForAsyncRequest();
     cy.contains("Showing 1-2 of 2 results", {timeout: 10000});
     browsePage.getAllDataSnippetByUri("/json/customers/Cust2.json").should("contain", "Adams");
@@ -72,16 +70,17 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     browsePage.getTotalDocuments().should("be.equal", 1);
     browsePage.getAllDataSnippetByUri("/json/clients/client1.json").should("contain", "Barbi");
   });
+
   it("Verify if switching between All Data and specific entities works properly", () => {
     browsePage.getFinalDatabaseButton().click();
     cy.waitForAsyncRequest();
-    entitiesSideBar.toggleEntitiesView();
-    entitiesSideBar.getBaseEntityDropdown().click();
-    entitiesSideBar.selectBaseEntityOption("Customer");
+    entitiesSidebar.toggleEntitiesView();
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Customer");
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     browsePage.getTotalDocuments().should("be.equal", 11);
-    entitiesSideBar.toggleAllDataView();
+    entitiesSidebar.toggleAllDataView();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
 
@@ -98,7 +97,7 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     // The test will be handle as part of DHFPROD-6670
 
     // Verifying non-entity detail page for JSON document
-    browsePage.clearSearchText();
+    browsePage.getSearchText().clear();
 
     // cy.waitUntil(() => browsePage.getNavigationIconForDocument("/steps/custom/mapping-step.step.json")).click();
     // browsePage.waitForSpinnerToDisappear();
@@ -114,34 +113,17 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     // browsePage.getSelectedEntity().should("contain", "All Data");
     // browsePage.getDatabaseButton("final").should("have.attr", "checked");
   });
-  it("Verify Explorer Search option entity dropdown doesn't default to 'All Data' for subsequent navigations", () => {
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
-    cy.waitForAsyncRequest();
-    cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
-    cy.waitForAsyncRequest();
-    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
-    cy.waitForAsyncRequest();
-    cy.get("body")
-      .then(($body) => {
-        if ($body.find("[aria-label=\"confirm-navigationWarn-yes\"]").length) {
-          confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
-        }
-      });
-    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
-    cy.waitForAsyncRequest();
-    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-    cy.waitForAsyncRequest();
-    browsePage.waitForSpinnerToDisappear();
-    cy.waitForAsyncRequest();
-    browsePage.getSelectedEntity().should("contain", "All Entities");
-  });
 
   it("Verify query parameters for final database on browse page", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    entitiesSidebar.toggleEntitiesView();
+    entitiesSidebar.getClearFacetsButton().click();
     //Verify if the pagination gets reset upon cliking on database buttons
-    browsePage.selectEntity("All Entities");
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("All Entities");
     browsePage.getTotalDocuments().then(val => {
-      browsePage.getPaginationPageSizeOptions().select("10 / page");
+      browsePage.scrollToBottom();
+      browsePage.getPaginationPageSizeOptions().select("10 / page", {force: true});
       browsePage.waitForSpinnerToDisappear();
       browsePage.clickPaginationItem(4);
       browsePage.waitForSpinnerToDisappear();
@@ -172,12 +154,14 @@ describe("Verify All Data for final/staging databases and non-entity detail page
   });
   it("Switch to staging database and verify documents deployed to staging", () => {
     browsePage.getStagingDatabaseButton().click();
-    browsePage.selectEntity("Client");
-    browsePage.getSelectedEntity().should("contain", "Client");
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Client");
+    entitiesSidebar.getBaseEntityOption("Client").should("be.visible");
     browsePage.waitForSpinnerToDisappear();
     browsePage.getTotalDocuments().should("be.equal", 5);
   });
   it("Apply facet search for the documents deployed to staging", () => {
+    entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CLIENT);
     browsePage.getFacetItemCheckbox("firstname", "Barbi").click();
     browsePage.getGreySelectedFacets("Barbi").should("exist");
     browsePage.getFacetApplyButton().click();
@@ -199,6 +183,7 @@ describe("Verify All Data for final/staging databases and non-entity detail page
   });
   it("Apply string search for the documents deployed to staging", () => {
     browsePage.waitForSpinnerToDisappear();
+    entitiesSidebar.backToMainSidebar().click();
     browsePage.search("Barbi");
     browsePage.waitForSpinnerToDisappear();
     browsePage.getTotalDocuments().should("be.equal", 1);
