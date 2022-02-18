@@ -224,13 +224,7 @@ const ResultsTabularView = (props) => {
             if (expandedNestedTableColumn.includes(key)) {
               return renderStructuredProperty(properties, cell);
             } else {
-              return (properties?.map((col, index) => <HCTooltip
-                key={col.propertyPath}
-                text={col.propertyLabel}
-                id={`title-tooltip-${index}`}
-                placement="top">
-                <div style={{textOverflow: "ellipsis", overflow: "hidden"}}>{col.propertyLabel}</div>
-              </HCTooltip>));
+              return (properties?.map((col, index) => <div style={{textOverflow: "ellipsis", overflow: "hidden"}}>{col.propertyLabel}</div>));
             }
           },
           onCell: () => {
@@ -252,13 +246,7 @@ const ResultsTabularView = (props) => {
           ...setSortOptions(item),
           formatter: (value) => {
             if (!Array.isArray(value)) return (<div>{value}</div>);
-            return (value?.map((el, index) => <HCTooltip
-              key={el}
-              text={el}
-              id={`title-tooltip-${index}`}
-              placement="top">
-              <div style={{textOverflow: "ellipsis", overflow: "hidden"}}>{el}</div>
-            </HCTooltip>));
+            return (value?.map((el, index) => <div style={{textOverflow: "ellipsis", overflow: "hidden"}}>{el}</div>));
           }
         };
       }
