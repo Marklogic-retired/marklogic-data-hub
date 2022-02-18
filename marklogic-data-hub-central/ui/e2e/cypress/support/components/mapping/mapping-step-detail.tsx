@@ -303,6 +303,10 @@ class MappingStepDetail {
     return cy.findByTestId("relatedInfoContent");
   }
 
+  saveMapInput() {
+    return cy.get(`[data-testid=foreignKeyIconLegend]`).click({force: true});
+  }
+
   verifySourceFieldTooltip(entityName: string) {
     cy.findByTestId(`${entityName}-URI-listIcon1`).trigger("mouseover");
     cy.findByText("Source Field").should("be.visible");

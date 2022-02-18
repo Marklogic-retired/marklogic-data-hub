@@ -110,21 +110,20 @@ describe("Mapping", () => {
     cy.log("**Clicking outside to move the focus out of the field and trigger auto-save**");
     mappingStepDetail.getXpathExpressionInput("id").type("SSN"); // tab to auto-save
     //Clicking twice due to bug
-    mappingStepDetail.getPropertyNameCell("id", "Person").click();
-    mappingStepDetail.getPropertyNameCell("id", "Person").click();
+    mappingStepDetail.saveMapInput();
+    mappingStepDetail.saveMapInput();
     mappingStepDetail.successMessage().should("exist");
     mappingStepDetail.successMessage().should("not.exist");
     mappingStepDetail.setXpathExpressionInput("relatedTo", "SSN");
 
     cy.log("**Clicking outside the field to auto-save**");
-    mappingStepDetail.getPropertyNameCell("id", "Person").click({force: true});
+    mappingStepDetail.saveMapInput(); // click outside field to auto-save
     mappingStepDetail.successMessage().should("exist");
     mappingStepDetail.successMessage().should("not.exist");
     // URI field
     mappingStepDetail.getURIInput("Relation (relatedTo Person)").clear().type("concat('/Relation/', SSN)");
-
     cy.log("**Clicking outside the field to auto-save**");
-    mappingStepDetail.getPropertyNameCell("id", "Person").click({force: true});
+    mappingStepDetail.saveMapInput();
     mappingStepDetail.successMessage().should("exist");
     mappingStepDetail.successMessage().should("not.exist");
     // Test expresssions
@@ -178,11 +177,11 @@ describe("Mapping", () => {
     browsePage.waitForHCTableToLoad();
 
     // Verify Explore results
-    entitiesSidebar.getBaseEntityDropdown().should("contain", "All Entities");
+    entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
     browsePage.getTotalDocuments().should("be.greaterThan", 21);
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Relation");
-    browsePage.waitForSpinnerToDisappear();
+    entitiesSidebar.getBaseEntityOption("Relation").should("be.visible");
     browsePage.getTotalDocuments().should("be.greaterThan", 7);
   });
   it("Edit advanced settings for each entity", () => {

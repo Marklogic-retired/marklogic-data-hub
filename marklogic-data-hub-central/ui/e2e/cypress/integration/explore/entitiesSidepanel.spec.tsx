@@ -127,8 +127,9 @@ describe("Test '/Explore' left sidebar", () => {
 
   it("Base Entity Filtering from side panel", () => {
     cy.log("Navigate to Graph View and verify all entities displayed");
-    cy.wait(8000);
+    cy.wait(5000);
     browsePage.clickGraphView().click();
+    cy.wait(5000);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
       let custCoordinates: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
       expect(custCoordinates).to.not.equal(undefined);
@@ -139,8 +140,9 @@ describe("Test '/Explore' left sidebar", () => {
     });
 
     cy.log("Select Order Entity from dropdown and verify Customer node is gone");
-    entitiesSidebar.getBaseEntityDropdown().click();
+    entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Order");
+    entitiesSidebar.getBaseEntityOption("Order").should("be.visible");
     cy.wait(1000);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
       let custCoordinates: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
@@ -164,8 +166,9 @@ describe("Test '/Explore' left sidebar", () => {
     browsePage.getTableViewCell("101").should("not.have.length.gt", 0);
 
     cy.log("Select Customer Entity and verify default table columns since > 1 entity filtered");
-    entitiesSidebar.getBaseEntityDropdown().click();
+    entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
+    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
     browsePage.getColumnTitle(2).should("contain", "Identifier");
@@ -178,8 +181,9 @@ describe("Test '/Explore' left sidebar", () => {
     browsePage.getTableViewCell("101").should("have.length.gt", 0);
 
     cy.log("Select BabyRegistry and verify related entities panel appears but is disabled in table view");
-    entitiesSidebar.getBaseEntityDropdown().click("right");
+    entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("BabyRegistry");
+    entitiesSidebar.getBaseEntityOption("BabyRegistry").should("exist");
     entitiesSidebar.getRelatedEntityPanel().should("be.visible");
     entitiesSidebar.verifyCollapsedRelatedEntityPanel().should("exist");
     entitiesSidebar.getRelatedEntityPanel().click();
@@ -200,7 +204,6 @@ describe("Test '/Explore' left sidebar", () => {
 
     cy.log("verify that related entity panel is not disabled in graph view");
     entitiesSidebar.verifyCollapsedRelatedEntityPanel().should("not.exist");
-    cy.pause();
   });
 
   //TODO: this test is commented because a refresh graph error

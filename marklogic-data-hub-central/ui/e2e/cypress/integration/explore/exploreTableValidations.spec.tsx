@@ -39,7 +39,7 @@ describe("Validate table and column selector in explore", () => {
     browsePage.getExpandable().should("be.visible");
   });
   it("Validate columns selector popover, draggable titles and checkable titles", () => {
-    entitiesSidebar.getBaseEntityDropdown().click("right");
+    entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
     browsePage.waitForSpinnerToDisappear();
     browsePage.getColumnSelectorIcon().should("be.visible");

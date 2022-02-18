@@ -29,6 +29,9 @@ class BrowsePage {
     cy.waitUntil(() => this.getCard().should("have.length.gt", 0));
   }
 
+  scrollToBottom() {
+    return cy.get(`#browseContainer`).scrollTo("bottom");
+  }
   selectEntity(entity: string) {
     this.waitForSpinnerToDisappear();
     cy.get(`#entity-select-wrapper div[class=" css-1s2thzd-control"]`, {timeout: 6000}).should("be.visible").click();
@@ -157,7 +160,7 @@ class BrowsePage {
 
   clickClearFacetSearchSelection(facet: string) {
     cy.findByTestId(`clear-${facet}`).scrollIntoView();
-    cy.findByTestId(`clear-${facet}`).trigger("mousemove").dblclick({force: true});
+    cy.findByTestId(`clear-${facet}`).trigger("mousemove").click({force: true});
     this.waitForSpinnerToDisappear();
   }
 
@@ -200,7 +203,7 @@ class BrowsePage {
   }
 
   getClearGreyFacets() {
-    return cy.get("[data-cy=clear-all-grey-button]");
+    return cy.get("[data-testid=clear-all-grey-button]");
   }
 
   getDateFacetPicker(options?: {time?: string}) {
@@ -270,8 +273,8 @@ class BrowsePage {
 
   //search bar
   search(str: string) {
-    cy.findByPlaceholderText("Enter text to search for").clear().type(str);
-    cy.findByTestId("hc-inputSearch-btn").click();
+    cy.findByPlaceholderText("Search").clear().type(str);
+    this.getApplyFacetsButton().click();
     // this.waitForTableToLoad();
     this.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
@@ -282,11 +285,11 @@ class BrowsePage {
   }
 
   getSearchText() {
-    return cy.findByPlaceholderText("Enter text to search for").clear();
+    return cy.findByPlaceholderText("Search").clear();
   }
 
   getSearchBar() {
-    return cy.findByPlaceholderText("Enter text to search for");
+    return cy.findByPlaceholderText("Search");
   }
 
   getShowMoreLink(facet: string) {
