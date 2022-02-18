@@ -32,16 +32,14 @@ describe("Dashboard view", () => {
     });
 
     test("Renders loading content with empty config", async () => {
-        let getByText;
         await act(async () => {
             const renderResults = render(
                 <UserContext.Provider value={userContextValueEmptyConfig}>
                     <Dashboard />
                 </UserContext.Provider>
             );
-            getByText = renderResults.getByText;
         });
-        expect(getByText("Loading...")).toBeInTheDocument();
+        expect(document.querySelector(".loading")).toBeInTheDocument();
     });
 
 });

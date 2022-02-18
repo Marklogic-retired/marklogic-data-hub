@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../store/UserContext";
 import { DetailContext } from "../store/DetailContext";
+import Loading from "../components/Loading/Loading";
 import Occupations from "../components/Occupations/Occupations";
 import Relationships from "../components/Relationships/Relationships";
 import DataTableValue from "../components/DataTableValue/DataTableValue";
@@ -57,7 +58,7 @@ const Detail: React.FC<Props> = (props) => {
         <ArrowLeft color="#394494" size={28} />
       </div>
       <div className="title">
-        {getValByPath(detailContext.detail, configHeading.title)}
+        {getValByPath(detailContext.detail, configHeading.title, true)}
       </div>
       {configHeading.thumbnail && <div className="thumbnail">
         <img
@@ -89,7 +90,8 @@ const Detail: React.FC<Props> = (props) => {
   return (
 
     <div className="detail">
-      {(config?.detail && !_.isEmpty(detailContext.detail)) ? (
+
+      {config?.detail && !_.isEmpty(detailContext.detail) ? (
 
       <div>
 
@@ -97,7 +99,7 @@ const Detail: React.FC<Props> = (props) => {
           getHeading(config.detail.heading)
         : null}
 
-        <div className="dashboard container-fluid">
+        <div className="container-fluid">
 
           <div className="row">
             {/* Membership... */}
@@ -134,7 +136,7 @@ const Detail: React.FC<Props> = (props) => {
 
       </div>
 
-      ) : null}
+      ) : <Loading />}
 
     </div>
   );
