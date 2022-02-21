@@ -348,8 +348,14 @@ div[role="dialog"][aria-modal="true"]:nth-last-child(5) {
 }
 .dropdown-item.active {
     all: unset;
-    margin-left: 6px !important;
+    margin-left: -1px !important;
+    background-color: #e9f7fe !important;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 18px;
+
 }
+.rbt-menu.dropdown-menu.show a { display: block}
 .active {
     color: $text-color;
 }
