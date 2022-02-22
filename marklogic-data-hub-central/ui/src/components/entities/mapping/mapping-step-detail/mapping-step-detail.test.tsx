@@ -1908,7 +1908,7 @@ describe("Enzyme Source-to-entity map tests", () => {
       "source collection or query that will return some results.";
     //wrapper.setProps({sourceData: []});
     expect(wrapper.find("#noData").length).toEqual(1);
-    expect(wrapper.find(".emptyText").text().includes(noDataMessage)).toBeTruthy();
+    expect(wrapper.find("#emptyTextMessage").text().includes(noDataMessage)).toBeTruthy();
     expect(wrapper.find("#dataPresent").length).toEqual(0);
     const splitPane = wrapper.find(SplitPane);
     expect(splitPane).toHaveLength(1);
