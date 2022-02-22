@@ -41,6 +41,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
   const {
     searchOptions,
     setGraphViewOptions,
+    savedNode,
     setSavedNode,
     entityInstanceId
   } = useContext(SearchContext);
@@ -187,10 +188,18 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       } else {
         selectedEntityExists = props.entityTypeInstances?.nodes?.some(node => node.id === entityInstanceId);
       }
-
       if (selectedEntityExists) {
         setPhysicsEnabled(false);
         network.selectNodes([entityInstanceId]);
+      } else {
+        setGraphViewOptions(undefined);
+      }
+    } else if (network && entityInstanceId && !graphDataLoaded && savedNode) { //case where exploring from table/snippet view
+      let instanceId = entityInstanceId.split("-")[1];
+      let selectedEntity = props.entityTypeInstances?.nodes?.find(node => node.id.includes(instanceId));
+      if (selectedEntity) {
+        setPhysicsEnabled(false);
+        network.selectNodes([selectedEntity.id]);
       } else {
         setGraphViewOptions(undefined);
       }

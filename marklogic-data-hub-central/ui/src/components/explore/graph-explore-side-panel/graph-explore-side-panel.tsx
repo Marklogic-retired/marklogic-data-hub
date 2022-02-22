@@ -43,16 +43,22 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
     : <span className={styles.jsonIcon} aria-label="jsonTypeData"></span>}{contentType ? contentType.toUpperCase() : ""}</span>;
 
   useEffect(() => {
-    if (docUri && label !== currentLabel) {
+    let uri;
+    if (savedNode && !docUri && !label) { // case where exploring from table/snippet
+      uri = savedNode["uri"];
+    } else {
+      uri = docUri;
+    }
+    if (uri && label !== currentLabel) {
       setCurrentLabel(label);
-      const getNodeData = async (docUri, database) => {
-        const result = await getDetails(docUri, database);
+      const getNodeData = async (uri, database) => {
+        const result = await getDetails(uri, database);
         data.current! = result.data;
         setContentData();
         const {entityInstanceProperties} = result.data;
         setDetails(entityInstanceProperties);
       };
-      getNodeData(docUri, database);
+      getNodeData(uri, database);
     }
   }, [details, label, currentLabel]);
 
