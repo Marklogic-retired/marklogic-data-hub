@@ -12,7 +12,6 @@ import EditQueryDetails from "./saving/edit-save-query/edit-query-details";
 import SaveChangesModal from "./saving/edit-save-query/save-changes-modal";
 import DiscardChangesModal from "./saving/discard-changes/discard-changes-modal";
 import {QueryOptions} from "../../types/query-types";
-import {getUserPreferences} from "../../services/user-preferences";
 import {HCButton, HCTooltip} from "@components/common";
 
 interface Props {
@@ -32,12 +31,12 @@ interface Props {
   cardView: boolean;
   toggleApply: (value: boolean) => void;
   toggleApplyClicked: (value: boolean) => void;
+  setCurrentBaseEntities: (entity: any[]) => void;
 }
 
 const Query: React.FC<Props> = (props) => {
 
   const {
-    user,
     handleError
   } = useContext(UserContext);
   const {
@@ -45,7 +44,6 @@ const Query: React.FC<Props> = (props) => {
     applySaveQuery,
     clearAllGreyFacets,
     setNextEntity,
-    setEntityTypeIds,
     setSavedQueries,
     savedQueries
   } = useContext(SearchContext);
@@ -304,14 +302,11 @@ const Query: React.FC<Props> = (props) => {
     }
   }, [savedQueries]);
 
-  useEffect(() => {
-    initializeUserPreferences();
-  }, []);
 
   useEffect(() => {
-    if (searchOptions.nextEntityType && !entityCancelClicked && searchOptions.nextEntityType !== searchOptions.entityTypeIds[0]) {
+    if (searchOptions.nextEntityType === "All Entities" && !entityCancelClicked && searchOptions.entityTypeIds.length > 1 && searchOptions.selectedQuery !== "select a query") {
       // TO CHECK IF THERE HAS BEEN A CANCEL CLICKED WHILE CHANGING ENTITY
-      if ((isSaveQueryChanged() || isNewQueryChanged())) {
+      if ((searchOptions.entityTypeIds.length > 1 || isSaveQueryChanged() || isNewQueryChanged())) {
         toggleEntityConfirmation(true);
       } else {
         setCurrentQueryOnEntityChange();
@@ -320,22 +315,6 @@ const Query: React.FC<Props> = (props) => {
       toggleEntityCancelClicked(false); // RESETTING THE STATE TO FALSE
     }
   }, [searchOptions.nextEntityType]);
-
-  const initializeUserPreferences = async () => {
-
-    let defaultPreferences = getUserPreferences(user.name);
-    if (defaultPreferences !== null) {
-      let parsedPreferences = JSON.parse(defaultPreferences);
-      if (parsedPreferences.selectedQuery !== "select a query" && JSON.stringify(parsedPreferences) !== JSON.stringify([])) {
-        if (parsedPreferences.queries && Array.isArray(parsedPreferences.queries)) {
-          let queryObject = parsedPreferences.queries.find(obj => parsedPreferences.selectedQuery === obj.savedQuery?.name);
-          if (queryObject?.savedQuery && queryObject.savedQuery.hasOwnProperty("description") && queryObject.savedQuery.description) {
-            setCurrentQueryDescription(queryObject?.savedQuery.description);
-          }
-        }
-      }
-    }
-  };
 
   // Switching between entity confirmation modal buttons
   const onCancel = () => {
@@ -362,12 +341,6 @@ const Query: React.FC<Props> = (props) => {
   };
 
   const setCurrentQueryOnEntityChange = () => {
-    // if (searchOptions.nextEntityType === "All Data") {
-    //   props.setCardView(true);
-    // } else {
-    //   props.setCardView(false);
-    // }
-    // setEntity();
     toggleSaveNewIcon(false);
     props.setColumnSelectorTouched(false);
     setCurrentQuery({});
@@ -394,6 +367,7 @@ const Query: React.FC<Props> = (props) => {
   };
 
   const onNoResetClick = () => {
+    const {entityDefArray, setCurrentBaseEntities} = props;
     let options: QueryOptions = {
       searchText: "",
       entityTypeIds: [],
@@ -403,13 +377,19 @@ const Query: React.FC<Props> = (props) => {
       sortOrder: [],
       database: "final",
     };
+    if (entityDefArray.length > 0) {
+      const entitiesTitles = entityDefArray.map(entity => entity.name);
+      options.entityTypeIds = entitiesTitles;
+    }
     applySaveQuery(options);
+    if (entityDefArray.length > 0) setCurrentBaseEntities(entityDefArray);
     toggleResetQueryEditedConfirmation(false);
     toggleResetQueryNewConfirmation(false);
     props.setColumnSelectorTouched(false);
   };
 
   const resetIconClicked = () => {
+    const {entityDefArray, setCurrentBaseEntities} = props;
     const resetQueryEditedConfirmation = props.isSavedQueryUser && props.queries.length > 0
       && searchOptions.selectedQuery !== "select a query" && isSaveQueryChanged();
     const resetQueryNewConfirmation = props.isSavedQueryUser && props.queries.length > 0 && searchOptions.entityTypeIds.length > 0 &&
@@ -430,8 +410,12 @@ const Query: React.FC<Props> = (props) => {
         sortOrder: [],
         database: "final",
       };
+      if (entityDefArray.length > 0) {
+        const entitiesTitles = entityDefArray.map(entity => entity.name);
+        options.entityTypeIds = entitiesTitles;
+      }
       applySaveQuery(options);
-      setEntityTypeIds([]);
+      if (entityDefArray.length > 0) setCurrentBaseEntities(entityDefArray);
       clearAllGreyFacets();
     }
   };
@@ -535,6 +519,7 @@ const Query: React.FC<Props> = (props) => {
                   <div id={"saveChangedQueries"}>
                     {openSaveChangesModal &&
                       <SaveChangesModal
+                        entityDefArray={props.entityDefArray}
                         setSaveChangesModalVisibility={() => setOpenSaveChangesModal(false)}
                         setSaveNewIconVisibility={(visibility) => toggleSaveNewIcon(visibility)}
                         greyFacets={props.greyFacets}

@@ -88,7 +88,6 @@ const Browse: React.FC<Props> = ({location}) => {
   const [applyClicked, toggleApplyClicked] = useState(false);
   const [showApply, toggleApply] = useState(false);
   const [updateSpecificFacets, setUpdateSpecificFacets] = useState<boolean>(false);
-  const [isAllEntitiesSelected, setIsAllEntitiesSelected] = useState(true);
   const [parsedFacets, setParsedFacets] = React.useState<any[]>([]);
 
 
@@ -580,6 +579,7 @@ const Browse: React.FC<Props> = ({location}) => {
                 cardView={cardView}
                 toggleApplyClicked={toggleApplyClicked}
                 toggleApply={toggleApply}
+                setCurrentBaseEntities={setCurrentBaseEntities}
               />
             </div>
             <Sidebar
@@ -599,8 +599,6 @@ const Browse: React.FC<Props> = ({location}) => {
               setCurrentBaseEntities={setCurrentBaseEntities}
               currentRelatedEntities={currentRelatedEntities}
               setCurrentRelatedEntities={setCurrentRelatedEntities}
-              isAllEntitiesSelected={isAllEntitiesSelected}
-              setIsAllEntitiesSelected={setIsAllEntitiesSelected}
             />
           </>
         </HCSider>

@@ -17,19 +17,17 @@ interface Props {
   setActiveAccordionRelatedEntities: (entity: string) => void;
   activeKey: any[];
   setEntitySpecificPanel: (entity: any) => void;
-  setIsAllEntitiesSelected: (isSelected: boolean) => void;
 }
 
 const {MINIMUM_ENTITIES} = exploreSidebar;
 
 const BaseEntitiesFacet: React.FC<Props> = (props) => {
 
-  const {setCurrentBaseEntities, setEntitySpecificPanel, currentBaseEntities, allBaseEntities, setIsAllEntitiesSelected} = props;
+  const {setCurrentBaseEntities, setEntitySpecificPanel, currentBaseEntities, allBaseEntities} = props;
 
   const {
     setBaseEntitiesWithProperties,
     setEntityTypeIds,
-    setRelatedEntityTypeIds,
     searchOptions,
     setSearchOptions,
   } = useContext(SearchContext);
@@ -52,7 +50,7 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
       )).filter(obj => obj.value && entityTypeIds.includes(obj.value) && obj.label);
       if (entitiesFiltered.length > 0) handleChange(entitiesFiltered);
     }
-  }, [allBaseEntities]);
+  }, [allBaseEntities, searchOptions.entityTypeIds]);
 
   useEffect(() => {
     setDisplayList(currentBaseEntities);
@@ -74,8 +72,6 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
     setShowMore(false);
     const selectedItems = selection.map(element => element.value);
     if (selectedItems.length === 0 || selectedItems[selectedItems.length - 1] === "All Entities") {
-      setRelatedEntityTypeIds([]);
-      setIsAllEntitiesSelected(true);
       setEntityNames(["All Entities"]);
       setCurrentBaseEntities(allBaseEntities);
       setSearchOptions({
@@ -88,7 +84,6 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
     } else {
       const clearSelection = selectedItems.filter(entity => entity !== "All Entities").map((entity => entity));
       const filteredEntities = allBaseEntities.filter(entity => clearSelection.includes(entity.name));
-      setIsAllEntitiesSelected(false);
       setEntityNames(clearSelection);
       setCurrentBaseEntities(filteredEntities);
       setSearchOptions({

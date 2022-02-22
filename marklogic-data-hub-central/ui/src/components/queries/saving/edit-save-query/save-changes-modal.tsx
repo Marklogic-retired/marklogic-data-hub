@@ -26,6 +26,7 @@ interface Props {
   toggleEntityQueryUpdate: () => void;
   resetYesClicked: boolean
   setColumnSelectorTouched: (state: boolean) => void;
+  entityDefArray: any[];
 }
 
 const SaveChangesModal: React.FC<Props> = (props) => {
@@ -100,6 +101,7 @@ const SaveChangesModal: React.FC<Props> = (props) => {
       const response = await axios.put(`/api/entitySearch/savedQueries`, currentQuery);
       if (response.data) {
         props.setSaveChangesModalVisibility();
+        const {entityDefArray} = props;
         if (props.currentQueryName && !props.entityQueryUpdate) {
           let options: QueryOptions = {
             searchText: searchOptions.query,
@@ -110,6 +112,10 @@ const SaveChangesModal: React.FC<Props> = (props) => {
             sortOrder: searchOptions?.sortOrder || [],
             database: searchOptions.database,
           };
+          if (entityDefArray.length > 0) {
+            const entitiesTitles = entityDefArray.map(entity => entity.name);
+            options.entityTypeIds = entitiesTitles;
+          }
           applySaveQuery(options);
         }
         if (props.nextQueryName && !props.entityQueryUpdate) {
