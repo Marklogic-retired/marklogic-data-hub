@@ -83,7 +83,15 @@
     "test": "react-app-rewired test --coverage --watchAll=false",
     "client": "react-app-rewired start",
     "lint": "eslint --ext .js,.ts,.tsx",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "preinstall": "npx npm-force-resolutions"
+  },
+  "resolutions": {
+    "shell-quote": "^1.7.3",
+    "nan": "2.14.1",
+    "string_decoder": "1.2.0",
+    "ansi-regex": "^5.0.1",
+    "node-gyp": "8.4.1"
   },
   "jest": {
     "snapshotSerializers": [
@@ -147,6 +155,13 @@
     "eslint-plugin-react": "^7.21.3",
     "eslint-plugin-standard": "^4.0.1",
     "jest-canvas-mock": "^2.3.1",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "readable-stream": "3.5.0",
+    "nan": "2.14.1",
+    "shell-quote": "^1.7.3",
+    "string_decoder": "1.2.0",
+    "ansi-regex": "^5.0.1",
+    "immer": "^9.0.7",
+    "node-gyp": "8.4.1"
   }
 }

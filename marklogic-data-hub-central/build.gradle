@@ -91,6 +91,12 @@ dependencies {
             because 'gradle automatically ups the version to 2.12.4 but Palamida scan still thinks that version 2.6.7 ' +
                     'is being used so setting the version forcibly here to avoid confusing Palamida'
         }
+        implementation('org.apache.logging.log4j:log4j-api:2.17.0') {
+            because 'CVE-2021-44228, CVE-2021-45046, CVE-2021-45105: Log4j vulnerable to remote code execution and other critical security vulnerabilities'
+        }
+        implementation('org.apache.tomcat.embed:tomcat-embed-el:10.0.16') {
+            because 'tomcat-embed-el:9.0.50 is vulnerable to remote code execution and other critical security vulnerabilities'
+        }
     }
 
 
