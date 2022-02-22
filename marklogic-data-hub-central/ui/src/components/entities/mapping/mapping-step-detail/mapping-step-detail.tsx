@@ -27,7 +27,7 @@ import ModelingLegend from "../../../modeling/modeling-legend/modeling-legend";
 import CustomPageHeader from "../../page-header/page-header";
 import {ChevronDown, ChevronRight, Search, XLg, CheckSquare} from "react-bootstrap-icons";
 import {Dropdown} from "react-bootstrap";
-import {HCAlert, HCButton, HCCard, HCCheckbox, HCInput, HCTooltip, HCTable} from "@components/common";
+import {HCAlert, HCButton, HCCheckbox, HCInput, HCTooltip, HCTable} from "@components/common";
 import Popover from "react-bootstrap/Popover";
 import {OverlayTrigger} from "react-bootstrap";
 
@@ -1530,15 +1530,17 @@ const MappingStepDetail: React.FC = () => {
                 <Spinner animation="border" data-testid="spinTest" variant="primary" />
               </div> :
                 emptyData ?
-                  <div id="noData">
-                    <br/><br/>
-                    <HCCard className={styles.emptyCard}>
-                      <div className={styles.emptyText}>
-                        <p>Unable to find source records using the specified collection or query.</p>
+                  <div id="noData" style={{paddingTop: "80px"}}>
+                    <HCAlert
+                      className={styles.interceptorFailureAlert}
+                      showIcon={true}
+                      variant="info"
+                    >
+                      <span aria-label="emptyTextMessage" id="emptyTextMessage"><p>Unable to find source records using the specified collection or query.</p>
                         <p>Load some data that mapping can use as reference and/or edit the step
-                          settings to use a source collection or query that will return some results.</p>
-                      </div>
-                    </HCCard>
+                        settings to use a source collection or query that will return some results.</p>
+                      </span>
+                    </HCAlert>
                   </div>
                   :
                   (interceptorExecuted && interceptorExecutionError !== "") ?
