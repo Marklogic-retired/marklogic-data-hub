@@ -528,7 +528,7 @@ const SearchProvider: React.FC<{children: any}> = ({children}) => {
       selectedFacets: query.selectedFacets,
       query: query.searchText,
       entityTypeIds: query.entityTypeIds,
-      nextEntityType: query.entityTypeIds.length ? query.entityTypeIds[0] : "All Entities",
+      nextEntityType: "All Entities",
       pageNumber: 1,
       pageLength: searchOptions.pageSize,
       selectedQuery: query.selectedQuery,

@@ -38,8 +38,6 @@ interface Props {
   setCurrentBaseEntities: (entity: any[]) => void;
   currentRelatedEntities: Map<string, any>;
   setCurrentRelatedEntities: (entity: Map<string, any>) => void;
-  isAllEntitiesSelected: boolean;
-  setIsAllEntitiesSelected: (isAllEntitiesSelected: boolean) => void;
 }
 
 const PLACEHOLDER: string = "Select a saved query";
@@ -90,7 +88,7 @@ const Sidebar: React.FC<Props> = (props) => {
 
   useEffect(() => {
     let relatedEntitiesList = new Map();
-    if (!props.isAllEntitiesSelected) {
+    if (props.currentBaseEntities.length !== props.entityDefArray.length) {
       props.currentBaseEntities.forEach(base => {
         base.relatedEntities.map(entityName => {
           const relEntity = props.entityDefArray.find(entity => entity.name === entityName);
@@ -646,7 +644,6 @@ const Sidebar: React.FC<Props> = (props) => {
                 currentBaseEntities={props.currentBaseEntities}
                 setActiveAccordionRelatedEntities={setActiveAccordion}
                 allBaseEntities={props.entityDefArray}
-                setIsAllEntitiesSelected={props.setIsAllEntitiesSelected}
                 activeKey={activeKey}
               />
             </Accordion.Body>

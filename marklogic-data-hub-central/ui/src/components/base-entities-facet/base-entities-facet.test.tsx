@@ -20,8 +20,7 @@ describe("Base Entities Facet", () => {
         setActiveAccordionRelatedEntities={jest.fn()}
         activeKey={["baseEntities"]}
         setEntitySpecificPanel={jest.fn()}
-        allBaseEntities={entities}
-        setIsAllEntitiesSelected={jest.fn()}/>
+        allBaseEntities={entities}/>
     );
     const dropdown = getByLabelText("base-entities-dropdown-list");
     expect(dropdown).toBeInTheDocument();
@@ -35,8 +34,7 @@ describe("Base Entities Facet", () => {
         setActiveAccordionRelatedEntities={jest.fn()}
         activeKey={["baseEntities"]}
         setEntitySpecificPanel={jest.fn()}
-        allBaseEntities={entities}
-        setIsAllEntitiesSelected={jest.fn()}/>
+        allBaseEntities={entities}/>
     );
     const dropdown = getByLabelText("base-entities-dropdown-list");
     fireEvent.keyDown(dropdown, {key: "ArrowDown"});
