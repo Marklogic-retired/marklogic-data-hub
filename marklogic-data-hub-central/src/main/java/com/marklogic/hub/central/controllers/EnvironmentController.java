@@ -15,6 +15,7 @@
  */
 package com.marklogic.hub.central.controllers;
 
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.central.HubCentral;
 import com.marklogic.hub.central.pendo.PendoKeyProvider;
 import com.marklogic.hub.hubcentral.HubCentralManager;
@@ -90,6 +91,8 @@ public class EnvironmentController extends BaseController {
         info.dataHubVersion = versionInfo.getHubVersion();
         info.marklogicVersion = versionInfo.getMarkLogicVersion();
         info.host = hubCentral.getHost();
+        info.stagingDb = versionInfo.getStagingDbName();
+        info.finalDb = versionInfo.getFinalDbName();
         info.pendoKey = pendoKeyProvider.getPendoKey();
         info.sessionTimeout = environment.getProperty("server.servlet.session.timeout");
         Object hubCentralSessionToken = session.getAttribute("hubCentralSessionToken");
@@ -104,6 +107,8 @@ public class EnvironmentController extends BaseController {
         public String dataHubVersion;
         public String marklogicVersion;
         public String host;
+        public String stagingDb;
+        public String finalDb;
         public String sessionTimeout;
         public String sessionToken;
         public String pendoKey;

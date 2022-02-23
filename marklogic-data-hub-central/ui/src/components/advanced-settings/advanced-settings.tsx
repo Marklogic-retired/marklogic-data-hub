@@ -15,6 +15,7 @@ import {ChevronDown, ChevronRight, QuestionCircleFill} from "react-bootstrap-ico
 import {HCInput, HCAlert, HCButton, HCTooltip} from "@components/common";
 import Popover from "react-bootstrap/Popover";
 import {Overlay} from "react-bootstrap";
+import {getEnvironment} from "../../util/environment";
 
 type Props = {
   tabKey: string;
@@ -46,13 +47,14 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   const [isCustomIngestion, setIsCustomIngestion] = useState(false);
   const [stepDefinitionName, setStepDefinitionName] = useState("");
 
+  const stagingDbName = getEnvironment().stagingDb ? getEnvironment().stagingDb : StepsConfig.stagingDb;
+  const finalDbName = getEnvironment().finalDb ? getEnvironment().finalDb : StepsConfig.finalDb;
   const usesSourceDatabase = stepType !== "ingestion";
-  const defaultSourceDatabase = usesSourceDatabase && stepType === "mapping" ? StepsConfig.stagingDb : StepsConfig.finalDb;
+  const defaultSourceDatabase = usesSourceDatabase && stepType === "mapping" ? stagingDbName : finalDbName;
   const [sourceDatabase, setSourceDatabase] = useState(defaultSourceDatabase);
   const [sourceDatabaseTouched, setSourceDatabaseTouched] = useState(false);
-
-  const defaultTargetDatabase = !usesSourceDatabase ? StepsConfig.stagingDb : StepsConfig.finalDb;
-  const databaseOptions = [StepsConfig.stagingDb, StepsConfig.finalDb];
+  const databaseOptions = [stagingDbName, finalDbName];
+  const defaultTargetDatabase = !usesSourceDatabase ? stagingDbName : finalDbName;
   const [targetDatabase, setTargetDatabase] = useState(defaultTargetDatabase);
   const [targetDatabaseTouched, setTargetDatabaseTouched] = useState(false);
 
