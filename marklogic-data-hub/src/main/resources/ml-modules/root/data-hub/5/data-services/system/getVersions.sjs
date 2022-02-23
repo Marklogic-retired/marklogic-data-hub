@@ -21,6 +21,8 @@ const config = require("/com.marklogic.hub/config.sjs");
 
 const versions = {
   hubVersion: config.HUBVERSION,
+  stagingDbName: config.STAGINGDATABASE,
+  finalDbName: config.FINALDATABASE,
   markLogicVersion: xdmp.version(),
   clusterName: xdmp.clusterName()
 };
