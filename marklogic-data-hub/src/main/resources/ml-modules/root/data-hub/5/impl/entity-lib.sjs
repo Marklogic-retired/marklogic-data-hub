@@ -237,6 +237,26 @@ function deleteDraftModel(entityName) {
   writeDraftModel(entityName, model)
 }
 
+function cleanupModelsFromHubCentralConfig(retainEntityNames) {
+  const hubCentralConfigURI = "/config/hubCentral.json";
+  const hubCentralConfig = fn.head(hubUtils.invokeFunction(() => cts.doc(hubCentralConfigURI), config.FINALDATABASE));
+  if (hubCentralConfig) {
+    const hubCentralConfigObj = hubCentralConfig.toObject();
+    if (hubCentralConfigObj.modeling && hubCentralConfigObj.modeling.entities) {
+      let changesMade = false;
+      for (let entityName of Object.keys(hubCentralConfigObj.modeling.entities)) {
+        if (!retainEntityNames.includes(entityName)) {
+          changesMade = true;
+          delete hubCentralConfigObj.modeling.entities[entityName];
+        }
+      }
+      if (changesMade) {
+        hubUtils.writeDocument(hubCentralConfigURI, hubCentralConfigObj, xdmp.nodePermissions(hubCentralConfig), xdmp.nodeCollections(hubCentralConfig), config.FINALDATABASE);
+      }
+    }
+  }
+}
+
 function deleteModel(entityName) {
   const uri = getModelUri(entityName);
   [...new Set([config.STAGINGDATABASE, config.FINALDATABASE])].forEach(db => {
@@ -448,6 +468,12 @@ function writeModelToDatabases(entityName, model, databases, isDraft = false) {
   });
 }
 
+function getEntityNames() {
+  return hubUtils.invokeFunction(() => cts.search(cts.collectionQuery(consts.ENTITY_MODEL_COLLECTION)), config.FINALDATABASE)
+    .toArray()
+    .map(entityNode => entityNode.toObject().info.title);
+}
+
 function publishDraftModels() {
   hubUtils.hubTrace(consts.TRACE_ENTITY,`publishing in database: ${xdmp.databaseName(xdmp.database())}`);
   const draftModels = hubUtils.invokeFunction(() => cts.search(cts.collectionQuery(consts.DRAFT_ENTITY_MODEL_COLLECTION)), xdmp.databaseName(xdmp.database()));
@@ -505,6 +531,7 @@ function publishDraftModels() {
       xdmp.invokeFunction(deleteDraftsOperation, {database, update: "true", commit: "auto"});
     }
   });
+  cleanupModelsFromHubCentralConfig(getEntityNames());
 }
 
 function getModelPermissions() {
