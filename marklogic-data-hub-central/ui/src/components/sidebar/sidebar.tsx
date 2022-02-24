@@ -17,6 +17,7 @@ import reactSelectThemeConfig from "../../config/react-select-theme.config";
 import BaseEntitiesFacet from "../base-entities-facet/base-entities-facet";
 import RelatedEntitiesFacet from "../related-entities-facet/related-entities-facet";
 import {ExploreGraphViewToolTips} from "../../config/tooltips.config";
+import {HCDivider} from "@components/common";
 
 const tooltips = tooltipsConfig.browseDocuments;
 const {exploreSidebar} = tooltipsConfig;
@@ -631,6 +632,7 @@ const Sidebar: React.FC<Props> = (props) => {
           </Accordion.Body>
         </Accordion.Item>
       </Accordion>
+      <HCDivider className={"mt-1 mb-2"}  style={{backgroundColor: "#ccc"}}/>
       {(searchOptions.datasource && searchOptions.datasource !== "all-data") && <>
         <Accordion id="baseEntities" className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("baseEntities") ? "baseEntities" : ""} defaultActiveKey={activeKey.includes("baseEntities") ? "baseEntities" : ""}>
           <Accordion.Item eventKey="baseEntities" className={"bg-transparent"}>
@@ -649,6 +651,7 @@ const Sidebar: React.FC<Props> = (props) => {
             </Accordion.Body>
           </Accordion.Item>
         </Accordion>
+        <HCDivider className={"mt-0 mb-2"}  style={{backgroundColor: "#ccc"}}/>
         {props.currentRelatedEntities.size > 0 &&
         <div className={styles.relatedEntityPanel}>
           <HCTooltip text={!props.graphView ? exploreSidebar.disabledRelatedEntities: ""} aria-label="disabled-related-entity-tooltip" id="disabled-related-entity-tooltip" placement="bottom">
@@ -664,6 +667,7 @@ const Sidebar: React.FC<Props> = (props) => {
               </Accordion.Item>
             </Accordion>
           </HCTooltip>
+          <HCDivider className={"mt-0 mb-2"} style={{backgroundColor: "#ccc"}}/>
         </div>
         }
       </>}
