@@ -541,7 +541,7 @@ const MappingStepDetail: React.FC = () => {
       let entEntityTempData: any = [];
       let uriKey = EntityTableKeyIndex + 1;
       EntityTableKeyIndex++;
-      let nestedEntityProps = extractNestedEntityData(entProps, entEntityTempData);
+      let nestedEntityProps = extractNestedEntityData(entProps, entEntityTempData, rootEntityName);
       nestedEntityProps.unshift({key: uriKey, name: "URI", type: "", isProperty: false, filterName: "URI", filterMatch: false}); //add URI field to front of properties
       setEntityTypeProperties([...nestedEntityProps]);
       setTargetRelatedMappings(resp.data[0]["relatedEntityMappings"]);
@@ -555,7 +555,7 @@ const MappingStepDetail: React.FC = () => {
             let contextKey = EntityTableKeyIndex + 1;
             uriKey = contextKey + 1;
             EntityTableKeyIndex += 2;
-            let relatedEntityProps = extractNestedEntityData(relatedEntProps, relatedEntityTempData);
+            let relatedEntityProps = extractNestedEntityData(relatedEntProps, relatedEntityTempData, relatedEntityName);
             relatedEntityProps.unshift({key: uriKey, name: "URI", type: "", isProperty: false, filterName: "URI", filterMatch: false}); //add URI field to front of properties
             relatedEntityProps.unshift({key: contextKey, name: "Context", type: "", isProperty: false, filterName: "Context", filterMatch: false}); //add Context field to front of properties
             relatedEntities.push({entityType: entityObject.entityType, entityModel: entityObject.entityModel, entityLabel: entityObject.mappingTitle, entityMappingId: entityObject.entityMappingId, relatedEntityMappings: entityObject.relatedEntityMappings, entityProps: relatedEntityProps});
@@ -580,8 +580,7 @@ const MappingStepDetail: React.FC = () => {
   };
 
 
-  const extractNestedEntityData = (entProps, nestedEntityData: Array<any>, parentKey = "") => {
-
+  const extractNestedEntityData = (entProps, nestedEntityData: Array<any>, entityTitle: string, parentKey = "") => {
     Object.keys(entProps).forEach(key => {
       let val = entProps[key];
       let propty;
@@ -591,7 +590,7 @@ const MappingStepDetail: React.FC = () => {
         EntityTableKeyIndex = EntityTableKeyIndex + 1;
         if (val.$ref || val.items.$ref) {
           let ref = val.$ref ? val.$ref : val.items.$ref;
-          tgtRefs[parentKey] = ref;
+          tgtRefs[`${entityTitle ? entityTitle + "/": ""}${parentKey}`] = ref;
         }
 
         propty = {
@@ -604,7 +603,7 @@ const MappingStepDetail: React.FC = () => {
           children: []
         };
         nestedEntityData.push(propty);
-        extractNestedEntityData(val.subProperties, propty.children, parentKey);
+        extractNestedEntityData(val.subProperties, propty.children, entityTitle, parentKey);
         parentKey = (parentKey.indexOf("/") !== -1) ? parentKey.substring(0, parentKey.lastIndexOf("/")) : "";
 
       } else {
@@ -838,14 +837,14 @@ const MappingStepDetail: React.FC = () => {
     return obj;
   };
 
-  const getTgtEntityTypesInMap = (mapExp, parentKey = "") => {
+  const getTgtEntityTypesInMap = (mapExp, entityType: string, parentKey = "") => {
     Object.keys(mapExp).forEach(key => {
       let val = mapExp[key];
       if (val.constructor.name === "Object") {
         if (val.hasOwnProperty("properties")) {
           let tempKey = parentKey ? parentKey + "/" + key : key;
-          val["targetEntityType"] = tgtEntityReferences[tempKey];
-          getTgtEntityTypesInMap(val.properties, tempKey);
+          val["targetEntityType"] = tgtEntityReferences[`${entityType ? entityType + "/": ""}${tempKey}`];
+          getTgtEntityTypesInMap(val.properties, entityType, tempKey);
         }
       }
     });
@@ -974,7 +973,7 @@ const MappingStepDetail: React.FC = () => {
           }}
           dataTestid={`searchInput-source`}
           placeholder={`Search name`}
-          value={searchedKeys[0]}
+          value={searchedKeys[0] || ""}
           onChange={e => setSearchedKeys(e.target.value ? [e.target.value] : [])}
           onPressEnter={(enter) => enter ? searchedKeys?.length > 0 ? "" : false : null}
           className={styles.searchInput}
@@ -1253,10 +1252,11 @@ const MappingStepDetail: React.FC = () => {
 
   const saveMapping = async (mapObject, entityMappingId, updatedContext, updatedUri, relatedEntityModel) => {
     let obj = {};
+    let entityName = curationOptions.activeStep.entityName;
     Object.keys(mapObject).forEach(key => {
       convertMapExpToMapArt(obj, key, {"sourcedFrom": mapObject[key]});
     });
-    await getTgtEntityTypesInMap(obj);
+    await getTgtEntityTypesInMap(obj, entityName);
     let {lastUpdated, properties, ...dataPayload} = savedMappingArt;
     if (entityMappingId) {
       if (!dataPayload.relatedEntityMappings) {
@@ -1708,6 +1708,7 @@ const MappingStepDetail: React.FC = () => {
               />
               {relatedEntityTypeProperties.map((entity, i) => relatedEntitiesSelected.map(selectedEntity => selectedEntity.entityMappingId).includes(entity.entityMappingId) ?
                 <EntityMapTable
+                  key={`relatedEntity-${i}`}
                   setScrollRef={setRef}
                   executeScroll={executeScroll}
                   mapResp={mapResp}

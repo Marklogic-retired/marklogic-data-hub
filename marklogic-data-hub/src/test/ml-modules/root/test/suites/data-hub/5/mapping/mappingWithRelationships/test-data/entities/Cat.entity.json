@@ -1,0 +1,34 @@
+{
+  "info": {
+    "title": "Cat",
+    "draft": false,
+    "version": "1.0.0",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "Cat": {
+      "properties": {
+        "id": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "favourite_food": {
+          "$ref": "#/definitions/CatFood"
+        }
+      },
+      "primaryKey": "id"
+    },
+    "CatFood": {
+      "properties": {
+        "brand": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "info": {
+    "title": "Dog",
+    "draft": false,
+    "version": "1.0.0",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "Dog": {
+      "properties": {
+        "id": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "hates_cats": {
+          "datatype": "array",
+          "facetable": false,
+          "sortable": false,
+          "items": {
+            "datatype": "string",
+            "relatedEntityType": "http://example.org/Cat-1.0.0/Cat",
+            "joinPropertyName": "id"
+          }
+        },
+        "favourite_food": {
+          "$ref": "#/definitions/DogFood"
+        }
+      },
+      "primaryKey": "id"
+    },
+    "DogFood": {
+      "properties": {
+        "brand": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}
