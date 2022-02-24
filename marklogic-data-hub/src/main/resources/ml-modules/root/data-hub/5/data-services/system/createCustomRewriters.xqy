@@ -20,6 +20,36 @@ import module namespace config = "http://marklogic.com/data-hub/config"
 import module namespace system = "http://marklogic.com/data-hub/system"
   at "/data-hub/5/system/system-lib.xqy";
 
+declare function local:add-transform-reroutes($rewriter) {
+  xdmp:xslt-eval(<xsl:stylesheet
+          xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rewriter="http://marklogic.com/xdmp/rewriter" version="2.0">
+          <xsl:template match="rewriter:match-query-param[@name eq 'transform'][empty(@value)]">
+            {
+            for $colonTransform in ("ml:inputFlow","ml:sjsInputFlow","ml:extractContent","ml:prettifyXML")
+            let $postfix := fn:tokenize($colonTransform, ":")[2]
+            let $camelCaseExtension := "ml" || fn:upper-case(fn:substring($postfix, 1, 1)) || fn:substring($postfix, 2)
+            return
+              <xsl:element name="rewriter:match-query-param">
+                <xsl:copy-of select="./@*" />
+                <xsl:attribute name="value">{$colonTransform}</xsl:attribute>
+                <rewriter:set-query-param name="transform">{$camelCaseExtension}</rewriter:set-query-param>
+                <rewriter:dispatch include-request-query-params="true" xdbc="false"><xsl:value-of select="./rewriter:dispatch"/></rewriter:dispatch>
+              </xsl:element>
+            }
+            <xsl:copy>
+              <xsl:copy-of select="./@*" />
+              <xsl:apply-templates/>
+            </xsl:copy>
+          </xsl:template>
+          <xsl:template match="node()">
+            <xsl:copy>
+              <xsl:copy-of select="./@*" />
+              <xsl:apply-templates/>
+            </xsl:copy>
+          </xsl:template>
+    </xsl:stylesheet>,$rewriter)/element()
+};
+
 xdmp:security-assert("http://marklogic.com/xdmp/privileges/any-uri", "execute"),
 
 let $rewriter := system:get-default-rewriter()
@@ -62,7 +92,7 @@ let $job-routes := <wrapper xmlns="http://marklogic.com/xdmp/rewriter">
 let $jobs-rewriter := element {fn:node-name($rewriter)} {
   $rewriter/@*,
   $job-routes/element(),
-  $rewriter/element()
+  local:add-transform-reroutes($rewriter)/element()
 }
 
 (:
@@ -133,7 +163,7 @@ let $staging-routes := <wrapper xmlns="http://marklogic.com/xdmp/rewriter">
 let $staging-rewriter := element {fn:node-name($rewriter)} {
   $rewriter/@*,
   $staging-routes/element(),
-  $rewriter/element()
+  local:add-transform-reroutes($rewriter)/element()
 }
 
 let $_ := xdmp:invoke-function(
@@ -155,4 +185,4 @@ let $_ := xdmp:invoke-function(
   </options>
 )
 
-return ()
+return ($staging-rewriter)
