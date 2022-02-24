@@ -2,10 +2,9 @@
 
 .specificSidebar {
     padding-inline: 15px;
-}
-
-.specificSidebar {
-    padding-inline: 15px;
+    height: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 .entityHeader {
