@@ -1272,7 +1272,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
           }}
           dataTestid={`searchInput-entity`}
           placeholder={`Search name`}
-          value={searchedKeys[0]}
+          value={searchedKeys[0] || ""}
           onChange={e => setSearchedKeys(e.target.value ? [e.target.value] : [])}
           onPressEnter={(enter) => enter ? searchedKeys?.length > 0 ? "" : false : null}
           className={styles.searchInput}

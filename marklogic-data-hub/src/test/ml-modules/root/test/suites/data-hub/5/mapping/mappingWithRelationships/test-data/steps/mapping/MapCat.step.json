@@ -1,0 +1,39 @@
+{
+  "collections": [
+    "MapCat",
+    "Cat"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "JSON",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "MapCat",
+  "targetEntityType": "http://example.org/Cat-1.0.0/Cat",
+  "description": "",
+  "collection": "cat",
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['cat'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "MapCat-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-01-24T15:30:01.026789Z",
+  "uriExpression": "$URI",
+  "properties": {
+    "id": {
+      "sourcedFrom": "id"
+    },
+    "favourite_food": {
+      "sourcedFrom": "food"
+    }
+  }
+}

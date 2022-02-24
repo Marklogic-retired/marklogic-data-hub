@@ -1,0 +1,39 @@
+{
+  "collections": [
+    "MapDog",
+    "Dog"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "JSON",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "MapDog",
+  "targetEntityType": "http://example.org/Dog-1.0.0/Dog",
+  "description": "",
+  "collection": "dog",
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['dog'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "MapDog-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-01-24T15:30:25.891426Z",
+  "uriExpression": "$URI",
+  "properties": {
+    "id": {
+      "sourcedFrom": "id"
+    },
+    "favourite_food": {
+      "sourcedFrom": "food"
+    }
+  }
+}
