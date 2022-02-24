@@ -66,13 +66,14 @@ const DateFacet: React.FC<Props> = (props) => {
   };
 
   return (
-    <div className={styles.name} data-testid="facet-date-picker">
+    <div className={styles.name} data-testid="facet-date-picker" id={`${props.name}-facet-date-picker`}>
       <p className={styles.name} ><HCTooltip text={props.name.replace(/\./g, " > ")} id={props.name+"-date-tooltip"} placement="top">{formatTitle()}</HCTooltip></p>
       <HCDateTimePicker
         onChange={onChange}
         key={props.name}
         name="facet-datetime-picker-date"
         value={datePickerValue}
+        parentEl={`#${props.name}-facet-date-picker`}
       />
     </div>
   );
