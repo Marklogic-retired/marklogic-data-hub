@@ -146,6 +146,24 @@ function getEntityNodesBySubject(entityTypeIRI, relatedEntityTypeIRIs, limit) {
   return subjectPlan.result(null, {entityTypeIRI, entityTypeOrConceptIRI: relatedEntityTypeIRIs.concat(getRdfConceptTypes()), labelIRI: getOrderedLabelPredicates()}).toArray();
 }
 
+
+function getRelatedEntitiesCounting(allRelatedPredicateList,ctsQueryCustom) {
+  const totalCountRelated = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT (COUNT(?s) AS ?total)  WHERE {
+?s @allRelatedPredicateList ?o } `).where(ctsQueryCustom);
+  return totalCountRelated.result(null,{allRelatedPredicateList});
+}
+
+function getEntityTypeIRIsCounting(entityTypeIRIs,ctsQueryCustom) {
+  const totalCountEntityBaseEntities = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT (COUNT(DISTINCT(?subjectIRI)) AS ?total)  WHERE {
+?subjectIRI rdf:type @entityTypeIRIs.
+?subjectIRI ?p ?o
+} `).where(ctsQueryCustom);
+
+  return totalCountEntityBaseEntities.result(null,{entityTypeIRIs});
+}
+
 function relatedObjHasRelationships(objectIRI, predicatesMap) {
   let hasRelationships = false;
   const objectIRIArr = objectIRI.split("/");
@@ -163,5 +181,7 @@ module.exports = {
   getEntityNodesWithRelated,
   getEntityNodes,
   getEntityNodesBySubject,
+  getEntityTypeIRIsCounting,
+  getRelatedEntitiesCounting,
   relatedObjHasRelationships
 }

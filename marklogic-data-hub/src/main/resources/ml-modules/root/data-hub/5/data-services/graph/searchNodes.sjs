@@ -66,6 +66,7 @@ let queryObj = JSON.parse(query);
 let relatedEntityTypeIds = queryObj.relatedEntityTypeIds;
 let allEntityTypeIRIs = [];
 let entityTypeIRIs = [];
+let allRelatedPredicateList = [];
 start = start || 0;
 pageLength = pageLength || 1000;
 let hashmapPredicate = new Map();
@@ -93,6 +94,10 @@ fn.collection(entityLib.getModelCollection()).toArray().forEach(model => {
     }
   }
   if (queryObj.entityTypeIds.includes(entityName)) {
+    if(relatedEntityTypeIds != null){
+      const predicateListBaseEntities = entityLib.getPredicatesByModelAndBaseEntities(model,relatedEntityTypeIds);
+      allRelatedPredicateList = allRelatedPredicateList.concat(predicateListBaseEntities);
+    }
     entityTypeIRIs.push(sem.iri(entityNameIri));
   }
 });
@@ -206,11 +211,17 @@ result.map(item => {
   }
 })
 
-let finalQuery = cts.andQuery([ctsQuery, cts.tripleRangeQuery(null, sem.curieExpand("rdf:type"), entityTypeIRIs)]);
+//get total from base entities
+let resultBaseCounting = graphUtils.getEntityTypeIRIsCounting(entityTypeIRIs, ctsQuery);
+let totalCount = fn.head(resultBaseCounting).total;
 if (relatedEntityTypeIRIs.length) {
-  finalQuery = cts.orQuery([finalQuery, cts.tripleRangeQuery(null, sem.curieExpand("rdf:type"), relatedEntityTypeIRIs)]);
+  //get total from related entities
+  let totalRelatedEntities = graphUtils.getRelatedEntitiesCounting(allRelatedPredicateList, ctsQuery);
+  let totalRelated = fn.head(totalRelatedEntities).total;
+  totalCount += totalRelated;
 }
-const totalEstimate = cts.estimate(finalQuery);
+
+const totalEstimate = totalCount;
 const nodesValues = hubUtils.getObjectValues(nodes)
 const response = {
   'total': totalEstimate,
