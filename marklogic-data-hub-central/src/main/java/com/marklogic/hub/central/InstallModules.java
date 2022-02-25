@@ -32,6 +32,16 @@ public class InstallModules extends LoggingObject implements ApplicationRunner {
     Environment environment;
 
     private HubClientConfig hubClientConfig;
+    private DatabaseClient modulesClient;
+    private GenericDocumentManager modulesDocMgr;
+    private DocumentWriteSet modulesWriteSet;
+    private String[] classPathDirectories = {
+        "explore-data/data-services/ml-exp-search/",
+        "explore-data/options/",
+        "explore-data/search-lib/",
+        "explore-data/ui-config/"
+    };
+
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -46,25 +56,34 @@ public class InstallModules extends LoggingObject implements ApplicationRunner {
 
     public void loadModules(HubClientConfig hubConfig, String dbName, int serverPort) {
         logger.info("Loading Modules");
-        DatabaseClient modulesClient = hubConfig.newDatabaseClient(dbName, serverPort);
+        modulesClient = hubConfig.newDatabaseClient(dbName, serverPort);
+        modulesDocMgr = modulesClient.newDocumentManager();
+        modulesWriteSet = modulesDocMgr.newWriteSet();
+
+        for(String classpathDirectory: classPathDirectories) {
+            logger.info(String.format("Adding modules from %s directory to load into %s database", classpathDirectory, dbName));
+            addModulesToWriteSet(classpathDirectory);
+        }
+        modulesDocMgr.write(modulesWriteSet);
+        logger.info("Loading Modules complete");
+    }
+
+    private void addModulesToWriteSet(String classPathDirectory) {
         ClassLoader cl = this.getClass().getClassLoader();
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(cl);
-        GenericDocumentManager modulesDocMgr = modulesClient.newDocumentManager();
-        DocumentWriteSet modulesWriteSet = modulesDocMgr.newWriteSet();
         try {
-            Resource resources[] = resolver.getResources("classpath:explore-data/**");
+            Resource resources[] = resolver.getResources("classpath:".concat(classPathDirectory).concat("*.*"));
             for(Resource r: resources) {
                 if(r.exists() && r.contentLength() > 0) {
                     StringHandle handle = new StringHandle(IOUtils.toString(r.getInputStream()));
-                    String modulePath = StringUtils.substringBetween(r.getDescription(), "[", "]");
-                    String uri = "/".concat(modulePath);
-                    logger.info(String.format("Adding module %s to load into %s database", uri, dbName));
+                    String modulePath = "/".concat(classPathDirectory).concat(r.getFilename());
+                    System.out.println(modulePath);
+                    String uri = modulePath.startsWith("/") ? modulePath : "/".concat(modulePath);
+                    logger.info(String.format("Adding module %s", uri));
                     DocumentWriteOperation op = new DocumentWriteOperationImpl(DocumentWriteOperation.OperationType.DOCUMENT_WRITE, uri, buildMetadata(), handle);
                     modulesWriteSet.add(op);
                 }
             }
-            modulesDocMgr.write(modulesWriteSet);
-            logger.info("Loading Modules complete");
         } catch (IOException e) {
             e.printStackTrace();
         }
