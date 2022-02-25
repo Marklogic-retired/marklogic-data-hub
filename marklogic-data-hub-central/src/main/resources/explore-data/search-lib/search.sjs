@@ -45,7 +45,14 @@ class Search {
       searchConstraint.push(facetConstraint)
     }
     searchConstraint = searchConstraint.join(" AND ");
-    return searchImpl.getSearchResults(searchConstraint, entityTypeIds[0]);
+
+    let searchResponse = searchImpl.getSearchResults(searchConstraint, entityTypeIds[0]).toObject();
+    let results = searchResponse["response"]["result"];
+    for(let result of results) {
+      let jsonObject = result["extracted"][entityTypeIds[0]];
+      this.fixArrayIssue(jsonObject);
+    }
+    return searchResponse;
   }
 
   getSnippetResults(searchResults) {
@@ -66,6 +73,26 @@ class Search {
 
   getEntityModel(modelName) {
 
+  }
+
+  fixArrayIssue(jsonObject) {
+    const keys = Object.keys(jsonObject);
+
+    for(let key of keys) {
+      if(Array.isArray(jsonObject[key])) {
+        if(jsonObject[key].length == 1) {
+          jsonObject[key] = jsonObject[key][0];
+        }
+
+        if(Array.isArray(jsonObject[key])) {
+          for(var obj of jsonObject[key]) {
+            this.fixArrayIssue(obj)
+          }
+        } else {
+          this.fixArrayIssue(jsonObject[key]);
+        }
+      }
+    }
   }
 }
 
