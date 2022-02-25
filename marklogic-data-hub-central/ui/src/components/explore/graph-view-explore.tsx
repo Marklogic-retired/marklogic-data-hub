@@ -14,12 +14,12 @@ import {faFileExport} from "@fortawesome/free-solid-svg-icons";
 type Props = {
   entityTypeInstances: any;
   graphView: any;
-  coords: any[];
-  setCoords: (coords: any[]) => void;
   hubCentralConfig: any;
+  setGraphPageInfo: (pageInfo: any) => void;
 };
 
 const GraphViewExplore: React.FC<Props> = (props) => {
+  const {entityTypeInstances, graphView, hubCentralConfig, setGraphPageInfo} = props;
 
   const [viewRelationshipLabels, toggleRelationShipLabels] = useState(true);
   const [exportPngButtonClicked, setExportPngButtonClicked] = useState(false);
@@ -87,7 +87,7 @@ const GraphViewExplore: React.FC<Props> = (props) => {
   const relationshipsToggle = <span>{HCSwitch}</span>;
 
   const graphViewExploreMainPanel = (
-    !Object.keys(props.entityTypeInstances).length
+    !Object.keys(entityTypeInstances).length
       ? <span></span>
       : (<div className={styles.graphViewExploreContainer}>
         <div className={styles.graphHeader}>
@@ -97,14 +97,13 @@ const GraphViewExplore: React.FC<Props> = (props) => {
         <div className={styles.borderBelowHeader}></div>
         <div>
           <GraphVisExplore
-            entityTypeInstances={props.entityTypeInstances}
-            graphView={props.graphView}
-            coords={props.coords}
-            setCoords={props.setCoords}
-            hubCentralConfig={props.hubCentralConfig}
+            entityTypeInstances={entityTypeInstances}
+            graphView={graphView}
+            hubCentralConfig={hubCentralConfig}
             viewRelationshipLabels={viewRelationshipLabels}
             exportPngButtonClicked = {exportPngButtonClicked}
             setExportPngButtonClicked = {setExportPngButtonClicked}
+            setGraphPageInfo = {setGraphPageInfo}
           />
         </div>
       </div>
@@ -116,7 +115,7 @@ const GraphViewExplore: React.FC<Props> = (props) => {
   };
 
   const sidePanel = (<div>
-    <GraphExploreSidePanel onCloseSidePanel={onCloseSidePanel} graphView={props.graphView}/>
+    <GraphExploreSidePanel onCloseSidePanel={onCloseSidePanel} graphView={graphView}/>
   </div>);
 
   return (

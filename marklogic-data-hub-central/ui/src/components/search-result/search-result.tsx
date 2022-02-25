@@ -76,6 +76,7 @@ const SearchResult: React.FC<Props> = (props) => {
     toggleShow(!show);
   }
   const navigateToGraphView = (item) => {
+    item["navigatingFromOtherView"] = true;
     setSavedNode(item);
     setGraphViewOptions(`${item.entityName}-${primaryKeyValue}`);
     props.handleViewChange("graph");

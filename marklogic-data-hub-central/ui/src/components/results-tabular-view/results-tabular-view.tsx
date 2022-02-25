@@ -289,6 +289,7 @@ const ResultsTabularView = (props) => {
   };
 
   const navigateToGraphView = (item) => {
+    item["navigatingFromOtherView"] = true;
     setSavedNode(item);
     let primaryKeyValue = item.primaryKey?.propertyValue;
     setGraphViewOptions(`${item.entityName}-${primaryKeyValue}`);

@@ -17,24 +17,27 @@ import TableViewGroupNodes from "../table-view-group-nodes/table-view-group-node
 type Props = {
   entityTypeInstances: any;
   graphView: any;
-  coords: any[];
-  setCoords: (coords: any[]) => void;
   hubCentralConfig: any;
   viewRelationshipLabels: any;
   exportPngButtonClicked: boolean;
   setExportPngButtonClicked: any;
+  setGraphPageInfo: (pageInfo: any) => void;
 };
 
 const GraphVisExplore: React.FC<Props> = (props) => {
+  const {
+    entityTypeInstances,
+    graphView,
+    hubCentralConfig,
+    viewRelationshipLabels,
+    exportPngButtonClicked,
+    setExportPngButtonClicked,
+    setGraphPageInfo
+  } = props;
   const [expandedNodeData, setExpandedNodeData] = useState({});
   let graphData = {nodes: [], edges: []};
-
-  const coordinatesExist = () => {
-    let coordsExist = !!props.coords;
-    return coordsExist;
-  };
   const [menuPosition, setMenuPosition] = useState<{ x: number, y: number }>({x: 0, y: 0});
-  const [physicsEnabled, setPhysicsEnabled] = useState(!coordinatesExist());
+  const [physicsEnabled, setPhysicsEnabled] = useState(false);
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
   const [clickedNode, setClickedNode] = useState({});
   const [hasStabilized, setHasStabilized] = useState(false);
@@ -108,7 +111,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
   };
 
   useEffect(() => {
-    if (Object.keys(props.entityTypeInstances).length && network) {
+    if (Object.keys(entityTypeInstances).length && network) {
 
       initializeGraphData();
 
@@ -125,10 +128,10 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       setGraphDataLoaded(false);
     };
 
-  }, [props.entityTypeInstances, props.viewRelationshipLabels]);
+  }, [entityTypeInstances, viewRelationshipLabels]);
 
   useEffect(() => {
-    if (network && props.graphView) {
+    if (network && graphView) {
       let nodes = getNodes() || [];
       let edges = getEdges() || [];
       updateNodesData(nodes);
@@ -147,19 +150,19 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       setExpandedNodeData({});
     };
 
-  }, [network, props.graphView]);
+  }, [network, graphView]);
 
   useEffect(() => {
-    if (props.exportPngButtonClicked)  {
+    if (exportPngButtonClicked)  {
       let canvas = document.getElementsByClassName("vis-network")[0]["canvas"];
       let link = document.createElement("a");
       link.href = canvas.toDataURL();
       link.setAttribute("download", "graph-view-explore");
       document.body.appendChild(link);
       link.click();
-      props.setExportPngButtonClicked(false);
+      setExportPngButtonClicked(false);
     }
-  }, [props.exportPngButtonClicked]);
+  }, [exportPngButtonClicked]);
 
   useLayoutEffect(() => {
     if (network) {
@@ -173,11 +176,11 @@ const GraphVisExplore: React.FC<Props> = (props) => {
   }, [network, graphData]);
 
   const iconExistsForEntity = (entityName) => {
-    return (!props.hubCentralConfig?.modeling?.entities[entityName]?.icon ? false : true);
+    return (!hubCentralConfig?.modeling?.entities[entityName]?.icon ? false : true);
   };
 
   const colorExistsForEntity = (entityName) => {
-    return (!props.hubCentralConfig?.modeling?.entities[entityName]?.color ? false : true);
+    return (!hubCentralConfig?.modeling?.entities[entityName]?.color ? false : true);
   };
 
   const setUserPreferences = () => {
@@ -206,7 +209,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       if (parentNode && expandedNodeData[expandId]) {
         selectedEntityExists = expandedNodeData[expandId]?.nodes?.some(node => node.id === entityInstanceId);
       } else {
-        selectedEntityExists = props.entityTypeInstances?.nodes?.some(node => node.id === entityInstanceId);
+        selectedEntityExists = entityTypeInstances?.nodes?.some(node => node.id === entityInstanceId);
       }
       if (selectedEntityExists) {
         setPhysicsEnabled(false);
@@ -216,7 +219,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       }
     } else if (network && entityInstanceId && !graphDataLoaded && savedNode) { //case where exploring from table/snippet view
       let instanceId = entityInstanceId.split("-")[1];
-      let selectedEntity = props.entityTypeInstances?.nodes?.find(node => node.id.includes(instanceId));
+      let selectedEntity = entityTypeInstances?.nodes?.find(node => node.id.includes(instanceId));
       if (selectedEntity) {
         setPhysicsEnabled(false);
         network.selectNodes([selectedEntity.id]);
@@ -260,11 +263,11 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     let nodes;
     let nodeObj = groupNodes;
     let leafNodesObj = leafNodes;
-    let entityInstNodes = props.entityTypeInstances?.nodes?.slice();
+    let entityInstNodes = entityTypeInstances?.nodes?.slice();
     entityInstNodes = !nodesToExpand ? entityInstNodes : nodesToExpand;
     nodes = entityInstNodes?.map((e) => {
       let entityType = e.group.split("/").pop();
-      let entity = props.hubCentralConfig?.modeling?.entities[entityType];
+      let entity = hubCentralConfig?.modeling?.entities[entityType];
       let nodeId = e.id;
       if (e.count > 1) {
         if (!nodeObj.hasOwnProperty(nodeId)) {
@@ -410,7 +413,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
   const getEdges = (edgesToExpand?: any) => {
     let edges: any = [];
     let predicatesObject = predicates;
-    let edgesFinal: any = props.entityTypeInstances?.edges?.slice();
+    let edgesFinal: any = entityTypeInstances?.edges?.slice();
     edgesFinal = !edgesToExpand ? edgesFinal : edgesToExpand;
     edges = edgesFinal?.map((edge, i) => {
       if (!predicatesObject.hasOwnProperty(edge.id)) {
@@ -419,7 +422,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       return {
         ...edge,
         id: edge.id,
-        label: props.viewRelationshipLabels ? edge.label : "",
+        label: viewRelationshipLabels ? edge.label : "",
         arrows: {
           to: {
             enabled: false,
@@ -474,6 +477,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     network.body.data.nodes.remove(graphDataTemp.nodes);
     updateNodesData(graphDataTemp.nodes);
     updateEdgesData(graphDataTemp.edges);
+    updateGraphPageInfo();
   };
 
   const handleTableViewRecords = (exceededThreshold?: string) => {
@@ -512,6 +516,14 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     });
     setGroupNodes(groupNodeObj);
     setLeafNodes(leafNodeObj);
+  };
+
+  const updateGraphPageInfo = () => {
+    let pageInfo = {
+      pageLength: network.body.data.nodes.length,
+      total: entityTypeInstances?.total
+    };
+    setGraphPageInfo(pageInfo);
   };
 
   const handleGroupNodeExpand = async (payloadData) => {
@@ -577,6 +589,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       network.body.data.edges.remove(graphEdgesDataTemp);
       let removedNode = getNodes([groupNodes[removedNodeIRI]]);
       updateNodesData(removedNode);
+      updateGraphPageInfo();
     } catch (error) {
       handleError(error);
     }
@@ -635,6 +648,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       network.body.data.nodes.remove(graphNodesDataTemp);
       network.body.data.nodes.remove(nodesToDelete);
       network.body.data.edges.remove(graphEdgesDataTemp);
+      updateGraphPageInfo();
     } catch (error) {
       handleError(error);
     }
@@ -669,6 +683,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         network.body.data.nodes.update(nodes);
         network.body.data.edges.update(edges);
         await updateGroupAndLeafNodesDataset(response.data.nodes);
+        updateGraphPageInfo();
       }
     } catch (error) {
       handleError(error);
@@ -820,8 +835,8 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       expandedInstanceInfo["edgeObject"] = expandedNodeData[parentNodeExpandId].edges.find(edge => edge.id === edgeIdFrom);
       expandedInstanceInfo["parentNodeExpandId"] = parentNodeExpandId;
     } else {
-      expandedInstanceInfo["nodeObject"] = props.entityTypeInstances.nodes.find(node => node.id === nodeId);
-      expandedInstanceInfo["edgeObject"] = props.entityTypeInstances.edges.find(edge => edge.id === edgeIdFrom);
+      expandedInstanceInfo["nodeObject"] = entityTypeInstances.nodes.find(node => node.id === nodeId);
+      expandedInstanceInfo["edgeObject"] = entityTypeInstances.edges.find(edge => edge.id === edgeIdFrom);
     }
     return expandedInstanceInfo;
   };
@@ -989,9 +1004,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         let positions = network.getPositions();
         // When graph is stabilized, nodePositions no longer empty
         if (positions && Object.keys(positions).length) {
-          //   saveUnsavedCoords();
           setHasStabilized(true);
-          //props.setCoords(positions);
           if (physicsEnabled) {
             setPhysicsEnabled(false);
             return false;

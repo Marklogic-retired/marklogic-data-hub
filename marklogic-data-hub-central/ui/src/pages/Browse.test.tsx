@@ -57,7 +57,9 @@ describe("Explorer Browse page tests ", () => {
         greyedOptions: defaultSearchOptions,
         setRelatedEntityTypeIds: jest.fn(),
         setEntity: jest.fn(),
-        applySaveQuery: jest.fn()
+        applySaveQuery: jest.fn(),
+        savedNode: undefined,
+        setSavedNode: jest.fn()
       }}>
         <Browse />
       </SearchContext.Provider></MemoryRouter>);
@@ -76,7 +78,9 @@ describe("Explorer Browse page tests ", () => {
         greyedOptions: defaultSearchOptions,
         setRelatedEntityTypeIds: jest.fn(),
         setEntity: jest.fn(),
-        applySaveQuery: jest.fn()
+        applySaveQuery: jest.fn(),
+        savedNode: undefined,
+        setSavedNode: jest.fn()
       }}>
         <Browse />
       </SearchContext.Provider></MemoryRouter>);
