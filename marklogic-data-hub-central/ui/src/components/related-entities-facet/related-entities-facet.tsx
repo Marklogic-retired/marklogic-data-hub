@@ -64,36 +64,38 @@ const RelatedEntitiesFacet: React.FC<Props> = (props) => {
   return (
     <>
       <div aria-label="related-entities-list">
-        {options.map((option) => {
-          const {color, name, filter, amount, checked, icon} = currentRelatedEntities.get(option);
-          let finalIcon = icon ? icon : "FaShapes";
-          let finalColor = color ? color : "#EEEFF1";
-          return (
-            <HCTooltip text={ExploreGraphViewToolTips.entityToolTip} placement="top" id="relatedEntityToolTip" aria-label="relatedEntityToolTip">
-              <div
-                style={{backgroundColor: finalColor}}
-                className={styles.entityItem}
-                key={name}
-                onClick={() => setEntitySpecificPanel({name, color: finalColor, icon: finalIcon})}>
-                <HCCheckbox
-                  id={name}
-                  checked={checked}
-                  handleClick={handleColOptionsChecked}
-                  value={name}
-                  ariaLabel={`related-entity-check-${name}`}>
-                  <DynamicIcons name={finalIcon}/>
-                  <span className={styles.entityName}>{name}</span>
-                  <span className={styles.entityChevron}>
-                    <ChevronDoubleRight/>
-                  </span>
-                  <span className={styles.entityAmount}>
-                    {filter && SHOW_FILTER(filter)}
-                    {amount}
-                  </span>
-                </HCCheckbox>
-              </div>
-            </HCTooltip>
-          );
+        {options?.map((option) => {
+          if (currentRelatedEntities?.get(option)) {
+            const {color, name, filter, amount, checked, icon} = currentRelatedEntities.get(option);
+            let finalIcon = icon ? icon : "FaShapes";
+            let finalColor = color ? color : "#EEEFF1";
+            return (
+              <HCTooltip text={ExploreGraphViewToolTips.entityToolTip} placement="top" id="relatedEntityToolTip" aria-label="relatedEntityToolTip">
+                <div
+                  style={{backgroundColor: finalColor}}
+                  className={styles.entityItem}
+                  key={name}
+                  onClick={() => setEntitySpecificPanel({name, color: finalColor, icon: finalIcon})}>
+                  <HCCheckbox
+                    id={name}
+                    checked={checked}
+                    handleClick={handleColOptionsChecked}
+                    value={name}
+                    ariaLabel={`related-entity-check-${name}`}>
+                    <DynamicIcons name={finalIcon}/>
+                    <span className={styles.entityName}>{name}</span>
+                    <span className={styles.entityChevron}>
+                      <ChevronDoubleRight/>
+                    </span>
+                    <span className={styles.entityAmount}>
+                      {filter && SHOW_FILTER(filter)}
+                      {amount}
+                    </span>
+                  </HCCheckbox>
+                </div>
+              </HCTooltip>
+            );
+          }
         })}
       </div>
       {currentRelatedEntities.size > MINIMUM_ENTITIES &&
