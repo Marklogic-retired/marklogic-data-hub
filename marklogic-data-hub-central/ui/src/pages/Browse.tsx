@@ -53,7 +53,9 @@ const Browse: React.FC<Props> = ({location}) => {
     setDatabase,
     setEntityDefinitionsArray,
     clearAllGreyFacets,
-    setEntityTypeIds
+    setEntityTypeIds,
+    savedNode,
+    setSavedNode
   } = useContext(SearchContext);
   const searchBarRef = useRef<HTMLDivElement>(null);
   const authorityService = useContext(AuthoritiesContext);
@@ -83,7 +85,6 @@ const Browse: React.FC<Props> = ({location}) => {
   const [hideDataHubArtifacts, toggleDataHubArtifacts] = useState(JSON.parse(getUserPreferences(user.name)).query?.hideHubArtifacts);
   const [entitiesData, setEntitiesData] = useState<any[]>([]);
   const [showNoDefinitionAlertMessage, setShowNoDefinitionAlertMessage] = useState(false);
-  const [coords, setCoords] = useState<any>(undefined);
   const [entitySpecificPanel, setEntitySpecificPanel] = useState<any>(undefined);
   const [facetsSpecificPanel, setFacetsEntitySpecificPanel] = useState<any>(undefined);
   const [showMainSidebar, setShowMainSidebar] = useState<boolean>(true);
@@ -146,6 +147,7 @@ const Browse: React.FC<Props> = ({location}) => {
 
   const [graphSearchData, setGraphSearchData] = useState({});
   const [hubCentralConfig, sethubCentralConfig] = useState({});
+  const [graphPageInfo, setGraphPageInfo] = useState({});
 
   useEffect(() => {
     if (entitySpecificPanel) {
@@ -166,12 +168,17 @@ const Browse: React.FC<Props> = ({location}) => {
             "relatedEntityTypeIds": searchOptions.relatedEntityTypeIds
           },
           "start": 0,
-          "pageLength": 1000,
+          "pageLength": 100,
         }
       };
       const response = await graphSearchQuery(payload);
       if (componentIsMounted.current && response.data) {
         setGraphSearchData(response.data);
+        let pageInfo = {
+          pageLength: response.data.limit,
+          total: response.data.total
+        };
+        setGraphPageInfo(pageInfo);
       }
     } catch (error) {
       handleError(error);
@@ -206,7 +213,7 @@ const Browse: React.FC<Props> = ({location}) => {
       } else {
         setShowNoDefinitionAlertMessage(false);
       }
-      if (componentIsMounted.current && response.data) {
+      if (componentIsMounted.current && response && response.data) {
         if (response.data.entityPropertyDefinitions && viewOptions.graphView) {
           setData(response.data.results);
         } else if (!isGraphView()) {
@@ -340,6 +347,9 @@ const Browse: React.FC<Props> = ({location}) => {
   useEffect(() => {
     let baseEntitiesSelected = searchOptions.entityTypeIds.length > 0;
     if (isGraphView() && baseEntitiesSelected) {
+      if (savedNode && !savedNode["navigatingFromOtherView"]) {
+        setSavedNode(undefined);
+      }
       getGraphSearchResult(searchOptions.entityTypeIds);
     }
     return () => {
@@ -507,6 +517,14 @@ const Browse: React.FC<Props> = ({location}) => {
     setGreyFacets(facets);
   };
 
+  const handleEntitySpecificPanelDisplay = () => {
+    if (entitySpecificPanel && entitySpecificPanel.hasOwnProperty("name")) {
+      if (searchOptions.relatedEntityTypeIds.includes(entitySpecificPanel.name)) {
+        setShowEntitySpecificPanel(false);
+      }
+    }
+  };
+
   const handleViewChange = (view) => {
     let tableView = "";
     if (view === "graph") {
@@ -514,9 +532,11 @@ const Browse: React.FC<Props> = ({location}) => {
       tableView = "graph";
     } else if (view === "snippet") {
       setViewOptions({graphView: false, tableView: false});
+      handleEntitySpecificPanelDisplay();
       tableView = "snippet";
     } else {
       setViewOptions({graphView: false, tableView: true});
+      handleEntitySpecificPanelDisplay();
       tableView = "table";
     }
     setUserPreferences(tableView);
@@ -543,14 +563,14 @@ const Browse: React.FC<Props> = ({location}) => {
 
   const helpIcon = () => (
     <span>
-      <HCTooltip text={graphSearchData["limit"] > 1000 ? ExploreToolTips.largeDatasetWarning : ExploreToolTips.numberOfResults} id="asterisk-help-tooltip" placement="right">
-        {graphSearchData["limit"] > 1000 ? <i data-testid="warning-large-data"><FontAwesomeIcon icon={faExclamationTriangle} className={styles.largeDatasetWarning} /></i> :
+      <HCTooltip text={graphPageInfo["pageLength"] > 100 ? ExploreToolTips.largeDatasetWarning : ExploreToolTips.numberOfResults} id="asterisk-help-tooltip" placement="right">
+        {graphPageInfo["pageLength"] > 100 ? <i data-testid="warning-large-data"><FontAwesomeIcon icon={faExclamationTriangle} className={styles.largeDatasetWarning} /></i> :
           <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} />}
       </HCTooltip>
     </span>
   );
 
-  const numberOfResultsBanner = <span className={styles.graphViewSummaryIcon}>Viewing {graphSearchData["limit"]} of {graphSearchData["total"]} results {helpIcon()}</span>;
+  const numberOfResultsBanner = Object.keys(graphPageInfo).length > 0 && <span className={styles.graphViewSummaryIcon}>Viewing {graphPageInfo["pageLength"]} of {graphPageInfo["total"]} results {helpIcon()}</span>;
 
   return (
     <div className={styles.layout}>
@@ -675,9 +695,8 @@ const Browse: React.FC<Props> = ({location}) => {
                         <GraphViewExplore
                           entityTypeInstances={graphSearchData}
                           graphView={viewOptions.graphView}
-                          coords={coords}
-                          setCoords={setCoords}
                           hubCentralConfig={hubCentralConfig}
+                          setGraphPageInfo={setGraphPageInfo}
                         />
                       </div> :
                       (viewOptions.tableView ?
