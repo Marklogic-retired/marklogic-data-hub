@@ -1,0 +1,137 @@
+<person>
+	<personId>10039</personId>
+	<nameGroup>
+		<givenname>
+			<value>Syman</value>
+		</givenname>
+		<surname>
+			<value>Adamo</value>
+		</surname>
+		<fullname>
+			<classification>U</classification>
+			<restricted>true</restricted>
+			<value>Adamo Syman</value>
+			<source>
+				<name>Washington Post</name>
+				<ts>2013-02-27T22:47:23Z</ts>
+			</source>
+			<source>
+				<name>USA Today</name>
+				<ts>2012-03-09T00:33:57Z</ts>
+			</source>
+		</fullname>
+	</nameGroup>
+	<emails>
+		<email>
+			<value>nstrainge0@goodreads.com</value>
+			<classification>C</classification>
+			<restricted>false</restricted>
+		</email>
+		<email>
+			<value>hglasson1@whitehouse.gov</value>
+			<classification>S</classification>
+			<restricted>false</restricted>
+		</email>
+		<email>
+			<value>fmonnelly2@intel.com</value>
+			<classification>S</classification>
+			<restricted>false</restricted>
+		</email>
+	</emails>
+	<phone>614-613-7742</phone>
+	<ssn>
+		<value>280-11-5498</value>
+		<restricted>true</restricted>
+	</ssn>
+	<images>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+			<source>
+				<name>Chicago Tribune</name>
+				<ts>2011-08-28T00:57:58Z</ts>
+			</source>
+		</image>
+	</images>
+	<addresses>
+		<address>
+			<street>43575 Messerschmidt Alley</street>
+			<city>New York City</city>
+			<state>NY</state>
+			<postal>10090</postal>
+			<country>United States</country>
+			<latitude>40.7808</latitude>
+			<longitude>-73.9772</longitude>
+		</address>
+	</addresses>
+	<schools>
+		<school>
+			<country>United States</country>
+			<name>VanderCook College of Music</name>
+			<city>Richmond</city>
+			<state>VA</state>
+			<postal>23289</postal>
+			<latitude>37.54</latitude>
+			<longitude>-77.45</longitude>
+		</school>
+	</schools>
+	<status>Active</status>
+	<sources>
+		<source>
+			<name>Chicago Tribune</name>
+			<ts>2012-09-11T17:33:36Z</ts>
+		</source>
+	</sources>
+	<relations>
+		<relation>
+			<id>10057</id>
+			<predicate>relatedTo</predicate>
+		</relation>
+		<relation>
+			<id>10054</id>
+			<predicate>livesWith</predicate>
+		</relation>
+		<relation>
+			<id>10026</id>
+			<predicate>relatedTo</predicate>
+		</relation>
+		<relation>
+			<id>10027</id>
+			<predicate>relatedTo</predicate>
+		</relation>
+	</relations>
+	<createdOn>
+		<ts>2022-01-26T13:38:38Z</ts>
+		<user>sadamo12</user>
+	</createdOn>
+	<lastUpdated>
+		<ts>2022-02-12T16:00:40Z</ts>
+		<user>sadamo12</user>
+	</lastUpdated>
+	<socials/>
+	<memberships>
+		<membership>
+			<list>list2</list>
+			<important>true</important>
+		</membership>
+		<membership>
+			<list>list7</list>
+			<important>true</important>
+		</membership>
+		<membership>
+			<list>list3</list>
+			<important>false</important>
+		</membership>
+		<membership>
+			<list>list3</list>
+			<important>false</important>
+		</membership>
+		<membership>
+			<list>list6</list>
+			<important>true</important>
+		</membership>
+		<membership>
+			<list>list9</list>
+			<important>false</important>
+		</membership>
+	</memberships>
+</person>

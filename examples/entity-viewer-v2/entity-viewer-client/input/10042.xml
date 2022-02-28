@@ -1,0 +1,151 @@
+<person>
+	<personId>10042</personId>
+	<nameGroup>
+		<givenname>
+			<value>Charlene</value>
+		</givenname>
+		<surname>
+			<value>Chastenet</value>
+		</surname>
+		<fullname>
+			<classification>S</classification>
+			<restricted>false</restricted>
+			<value>Chastenet Charlene</value>
+			<source>
+				<name>USA Today</name>
+				<ts>2020-12-23T00:20:22Z</ts>
+			</source>
+			<source>
+				<name>USA Today</name>
+				<ts>2010-01-13T16:52:54Z</ts>
+			</source>
+			<source>
+				<name>Wall Street Journal</name>
+				<ts>2016-08-20T15:48:24Z</ts>
+			</source>
+		</fullname>
+	</nameGroup>
+	<emails>
+		<email>
+			<value>mnewband0@woothemes.com</value>
+			<classification>S</classification>
+			<restricted>false</restricted>
+		</email>
+		<email>
+			<value>etorricella1@accuweather.com</value>
+			<classification>U</classification>
+			<restricted>false</restricted>
+		</email>
+		<email>
+			<value>cayto2@time.com</value>
+			<classification>U</classification>
+			<restricted>false</restricted>
+		</email>
+	</emails>
+	<phone>166-766-8757</phone>
+	<ssn>
+		<value>663-23-8030</value>
+		<restricted>true</restricted>
+	</ssn>
+	<images>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+			<source>
+				<name>Los Angeles Times</name>
+				<ts>2019-08-08T12:43:44Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
+			<source>
+				<name>USA Today</name>
+				<ts>2012-05-26T18:44:19Z</ts>
+			</source>
+		</image>
+	</images>
+	<addresses>
+		<address>
+			<street>0093 Harbort Court</street>
+			<city>Carol Stream</city>
+			<state>IL</state>
+			<postal>60158</postal>
+			<country>United States</country>
+			<latitude>41.9166</latitude>
+			<longitude>-88.1208</longitude>
+		</address>
+		<address>
+			<street>86782 Onsgard Place</street>
+			<city>Chicago</city>
+			<state>IL</state>
+			<postal>60609</postal>
+			<country>United States</country>
+			<latitude>41.8097</latitude>
+			<longitude>-87.6533</longitude>
+		</address>
+	</addresses>
+	<schools>
+		<school>
+			<country>Canada</country>
+			<name>College of New Caledonia</name>
+			<city>Waterloo</city>
+			<state>QC</state>
+			<postal>V9J</postal>
+			<latitude>45.35008</latitude>
+			<longitude>-72.51582</longitude>
+		</school>
+		<school>
+			<country>Mexico</country>
+			<name>Instituto Tecnologico de Durango</name>
+			<city>Santa Elena</city>
+			<state>COA</state>
+			<postal>30807</postal>
+			<latitude>20.3278427</latitude>
+			<longitude>-89.6440716</longitude>
+		</school>
+	</schools>
+	<status>Active</status>
+	<sources>
+		<source>
+			<name>Los Angeles Times</name>
+			<ts>2019-10-16T01:10:13Z</ts>
+		</source>
+	</sources>
+	<relations>
+		<relation>
+			<id>10071</id>
+			<predicate>livesWith</predicate>
+		</relation>
+		<relation>
+			<id>10034</id>
+			<predicate>worksWith</predicate>
+		</relation>
+		<relation>
+			<id>10064</id>
+			<predicate>relatedTo</predicate>
+		</relation>
+	</relations>
+	<createdOn>
+		<ts>2022-02-22T00:30:41Z</ts>
+		<user>cchastenet15</user>
+	</createdOn>
+	<lastUpdated>
+		<ts>2022-01-01T05:44:27Z</ts>
+		<user>cchastenet15</user>
+	</lastUpdated>
+	<socials>
+		<social>
+			<site>facebook</site>
+			<address>http://pen.io/hac/habitasse/platea/dictumst/etiam.png</address>
+		</social>
+	</socials>
+	<memberships>
+		<membership>
+			<list>list3</list>
+			<important>true</important>
+		</membership>
+		<membership>
+			<list>list5</list>
+			<important>false</important>
+		</membership>
+	</memberships>
+</person>

@@ -1,0 +1,150 @@
+<person>
+	<personId>10087</personId>
+	<nameGroup>
+		<givenname>
+			<value>Halette</value>
+		</givenname>
+		<surname>
+			<value>Beidebeke</value>
+		</surname>
+		<fullname>
+			<classification>C</classification>
+			<restricted>true</restricted>
+			<value>Beidebeke Halette</value>
+			<source>
+				<name>Chicago Tribune</name>
+				<ts>2020-01-11T13:49:05Z</ts>
+			</source>
+			<source>
+				<name>USA Today</name>
+				<ts>2013-10-11T09:48:25Z</ts>
+			</source>
+			<source>
+				<name>Wall Street Journal</name>
+				<ts>2019-08-03T07:04:18Z</ts>
+			</source>
+		</fullname>
+	</nameGroup>
+	<emails>
+		<email>
+			<value>ablunn0@fda.gov</value>
+			<classification>S</classification>
+			<restricted>false</restricted>
+		</email>
+		<email>
+			<value>czukierman1@bandcamp.com</value>
+			<classification>S</classification>
+			<restricted>false</restricted>
+		</email>
+	</emails>
+	<phone>789-799-0413</phone>
+	<ssn>
+		<value>424-01-5292</value>
+		<restricted>true</restricted>
+	</ssn>
+	<images>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
+			<source>
+				<name>Washington Post</name>
+				<ts>2013-12-01T06:10:45Z</ts>
+			</source>
+		</image>
+	</images>
+	<addresses>
+		<address>
+			<street>29303 Annamark Plaza</street>
+			<city>Toledo</city>
+			<state>OH</state>
+			<postal>43699</postal>
+			<country>United States</country>
+			<latitude>41.6538</latitude>
+			<longitude>-83.6589</longitude>
+		</address>
+		<address>
+			<street>539 Dexter Junction</street>
+			<city>Washington</city>
+			<state>DC</state>
+			<postal>20244</postal>
+			<country>United States</country>
+			<latitude>38.8933</latitude>
+			<longitude>-77.0146</longitude>
+		</address>
+	</addresses>
+	<schools>
+		<school>
+			<country>Mexico</country>
+			<name>Universidad Anáhuac</name>
+			<city>Chapultepec</city>
+			<state>VER</state>
+			<postal>95600</postal>
+			<latitude>19.4194815</latitude>
+			<longitude>-99.1894558</longitude>
+		</school>
+	</schools>
+	<status>Active</status>
+	<sources>
+		<source>
+			<name>Los Angeles Times</name>
+			<ts>2015-09-09T09:22:56Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>New York Times</name>
+			<ts>2016-06-25T13:29:35Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>Wall Street Journal</name>
+			<ts>2017-07-10T19:54:00Z</ts>
+		</source>
+	</sources>
+	<relations>
+		<relation>
+			<id>10032</id>
+			<predicate>livesWith</predicate>
+		</relation>
+		<relation>
+			<id>10077</id>
+			<predicate>relatedTo</predicate>
+		</relation>
+	</relations>
+	<createdOn>
+		<ts>2022-02-20T21:25:23Z</ts>
+		<user>hbeidebeke2e</user>
+	</createdOn>
+	<lastUpdated>
+		<ts>2022-01-26T12:00:57Z</ts>
+		<user>hbeidebeke2e</user>
+	</lastUpdated>
+	<socials>
+		<social>
+			<site>twitter</site>
+			<address>http://1688.com/commodo.jsp</address>
+		</social>
+	</socials>
+	<memberships>
+		<membership>
+			<list>list3</list>
+			<important>true</important>
+		</membership>
+		<membership>
+			<list>list12</list>
+			<important>true</important>
+		</membership>
+		<membership>
+			<list>list5</list>
+			<important>false</important>
+		</membership>
+		<membership>
+			<list>list8</list>
+			<important>true</important>
+		</membership>
+		<membership>
+			<list>list8</list>
+			<important>true</important>
+		</membership>
+	</memberships>
+</person>

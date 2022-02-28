@@ -1,0 +1,131 @@
+<person>
+	<personId>10049</personId>
+	<nameGroup>
+		<givenname>
+			<value>Daryn</value>
+		</givenname>
+		<surname>
+			<value>Crosi</value>
+		</surname>
+		<fullname>
+			<classification>C</classification>
+			<restricted>true</restricted>
+			<value>Crosi Daryn</value>
+			<source>
+				<name>Chicago Tribune</name>
+				<ts>2014-05-27T05:44:14Z</ts>
+			</source>
+			<source>
+				<name>USA Today</name>
+				<ts>2017-10-25T06:49:39Z</ts>
+			</source>
+		</fullname>
+	</nameGroup>
+	<emails>
+		<email>
+			<value>cdillon0@canalblog.com</value>
+			<classification>U</classification>
+			<restricted>false</restricted>
+		</email>
+		<email>
+			<value>bjedrasik1@amazon.com</value>
+			<classification>U</classification>
+			<restricted>false</restricted>
+		</email>
+		<email>
+			<value>pvongladbach2@chron.com</value>
+			<classification>C</classification>
+			<restricted>false</restricted>
+		</email>
+	</emails>
+	<phone>124-522-9483</phone>
+	<ssn>
+		<value>650-57-4568</value>
+		<restricted>true</restricted>
+	</ssn>
+	<images>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+			<source>
+				<name>Chicago Tribune</name>
+				<ts>2019-07-31T23:32:42Z</ts>
+			</source>
+		</image>
+	</images>
+	<addresses>
+		<address>
+			<street>1 Weeping Birch Terrace</street>
+			<city>Tacoma</city>
+			<state>WA</state>
+			<postal>98411</postal>
+			<country>United States</country>
+			<latitude>47.0662</latitude>
+			<longitude>-122.1132</longitude>
+		</address>
+		<address>
+			<street>5391 Portage Place</street>
+			<city>Decatur</city>
+			<state>GA</state>
+			<postal>30089</postal>
+			<country>United States</country>
+			<latitude>33.7749</latitude>
+			<longitude>-84.3046</longitude>
+		</address>
+	</addresses>
+	<schools>
+		<school>
+			<country>United States</country>
+			<name>California College of Arts and Crafts</name>
+			<city>Alexandria</city>
+			<state>VA</state>
+			<postal>22313</postal>
+			<latitude>38.8</latitude>
+			<longitude>-77.05</longitude>
+		</school>
+		<school>
+			<country>Canada</country>
+			<name>University College of Cape Breton</name>
+			<city>Windsor</city>
+			<state>QC</state>
+			<postal>J1S</postal>
+			<latitude>45.5787215</latitude>
+			<longitude>-72.001055</longitude>
+		</school>
+	</schools>
+	<status>Active</status>
+	<sources>
+		<source>
+			<name>Chicago Tribune</name>
+			<ts>2012-02-03T17:45:39Z</ts>
+		</source>
+	</sources>
+	<relations>
+		<relation>
+			<id>10017</id>
+			<predicate>worksWith</predicate>
+		</relation>
+		<relation>
+			<id>10030</id>
+			<predicate>relatedTo</predicate>
+		</relation>
+	</relations>
+	<createdOn>
+		<ts>2022-01-10T04:34:15Z</ts>
+		<user>dcrosi1c</user>
+	</createdOn>
+	<lastUpdated>
+		<ts>2022-01-11T08:31:59Z</ts>
+		<user>dcrosi1c</user>
+	</lastUpdated>
+	<socials/>
+	<memberships>
+		<membership>
+			<list>list5</list>
+			<important>true</important>
+		</membership>
+		<membership>
+			<list>list9</list>
+			<important>true</important>
+		</membership>
+	</memberships>
+</person>

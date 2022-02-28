@@ -1,0 +1,153 @@
+<person>
+	<personId>10081</personId>
+	<nameGroup>
+		<givenname>
+			<value>Tybi</value>
+		</givenname>
+		<surname>
+			<value>Swallow</value>
+		</surname>
+		<fullname>
+			<classification>S</classification>
+			<restricted>false</restricted>
+			<value>Swallow Tybi</value>
+			<source>
+				<name>USA Today</name>
+				<ts>2015-03-19T04:59:24Z</ts>
+			</source>
+			<source>
+				<name>New York Times</name>
+				<ts>2015-04-04T20:15:19Z</ts>
+			</source>
+		</fullname>
+	</nameGroup>
+	<emails>
+		<email>
+			<value>mstanyon0@google.fr</value>
+			<classification>C</classification>
+			<restricted>false</restricted>
+		</email>
+		<email>
+			<value>pbaldung1@sun.com</value>
+			<classification>S</classification>
+			<restricted>false</restricted>
+		</email>
+	</emails>
+	<phone>187-771-8442</phone>
+	<ssn>
+		<value>715-63-6456</value>
+		<restricted>true</restricted>
+	</ssn>
+	<images>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
+			<source>
+				<name>Wall Street Journal</name>
+				<ts>2011-10-03T22:33:20Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+			<source>
+				<name>Washington Post</name>
+				<ts>2018-09-21T04:36:30Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+			<source>
+				<name>Los Angeles Times</name>
+				<ts>2018-05-15T19:23:37Z</ts>
+			</source>
+		</image>
+	</images>
+	<addresses>
+		<address>
+			<street>6925 International Drive</street>
+			<city>Ventura</city>
+			<state>CA</state>
+			<postal>93005</postal>
+			<country>United States</country>
+			<latitude>34.0324</latitude>
+			<longitude>-119.1343</longitude>
+		</address>
+		<address>
+			<street>621 Twin Pines Center</street>
+			<city>Washington</city>
+			<state>DC</state>
+			<postal>20062</postal>
+			<country>United States</country>
+			<latitude>38.9</latitude>
+			<longitude>-77.0369</longitude>
+		</address>
+		<address>
+			<street>3 Haas Park</street>
+			<city>Atlanta</city>
+			<state>GA</state>
+			<postal>31132</postal>
+			<country>United States</country>
+			<latitude>33.7488</latitude>
+			<longitude>-84.3883</longitude>
+		</address>
+	</addresses>
+	<schools>
+		<school>
+			<country>United States</country>
+			<name>Florida Metropolitan University, Tampa College Lakeland</name>
+			<city>Irving</city>
+			<state>TX</state>
+			<postal>75037</postal>
+			<latitude>32.886855</latitude>
+			<longitude>-96.967936</longitude>
+		</school>
+	</schools>
+	<status>Active</status>
+	<sources>
+		<source>
+			<name>Los Angeles Times</name>
+			<ts>2013-03-07T05:02:09Z</ts>
+		</source>
+	</sources>
+	<relations>
+		<relation>
+			<id>10050</id>
+			<predicate>livesWith</predicate>
+		</relation>
+		<relation>
+			<id>10012</id>
+			<predicate>livesWith</predicate>
+		</relation>
+		<relation>
+			<id>10053</id>
+			<predicate>livesWith</predicate>
+		</relation>
+		<relation>
+			<id>10006</id>
+			<predicate>worksWith</predicate>
+		</relation>
+	</relations>
+	<createdOn>
+		<ts>2022-01-16T18:48:01Z</ts>
+		<user>tswallow28</user>
+	</createdOn>
+	<lastUpdated>
+		<ts>2022-01-06T02:14:26Z</ts>
+		<user>tswallow28</user>
+	</lastUpdated>
+	<socials>
+		<social>
+			<site>linkedin</site>
+			<address>https://toplist.cz/orci/luctus/et.aspx</address>
+		</social>
+	</socials>
+	<memberships>
+		<membership>
+			<list>list11</list>
+			<important>false</important>
+		</membership>
+		<membership>
+			<list>list2</list>
+			<important>false</important>
+		</membership>
+	</memberships>
+</person>

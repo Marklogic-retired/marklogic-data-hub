@@ -1,0 +1,160 @@
+<person>
+	<personId>10003</personId>
+	<nameGroup>
+		<givenname>
+			<value>Maryellen</value>
+		</givenname>
+		<surname>
+			<value>Dymoke</value>
+		</surname>
+		<fullname>
+			<classification>C</classification>
+			<restricted>true</restricted>
+			<value>Dymoke Maryellen</value>
+			<source>
+				<name>Washington Post</name>
+				<ts>2020-06-10T21:55:40Z</ts>
+			</source>
+			<source>
+				<name>Wall Street Journal</name>
+				<ts>2016-11-19T05:28:46Z</ts>
+			</source>
+			<source>
+				<name>Washington Post</name>
+				<ts>2019-01-16T12:44:54Z</ts>
+			</source>
+		</fullname>
+	</nameGroup>
+	<emails>
+		<email>
+			<value>aproger0@dmoz.org</value>
+			<classification>S</classification>
+			<restricted>false</restricted>
+		</email>
+		<email>
+			<value>cmoralis1@blinklist.com</value>
+			<classification>C</classification>
+			<restricted>false</restricted>
+		</email>
+		<email>
+			<value>ttiller2@berkeley.edu</value>
+			<classification>U</classification>
+			<restricted>false</restricted>
+		</email>
+	</emails>
+	<phone>760-223-0490</phone>
+	<ssn>
+		<value>798-09-7268</value>
+		<restricted>true</restricted>
+	</ssn>
+	<images>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
+			<source>
+				<name>Washington Post</name>
+				<ts>2018-01-28T06:12:26Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
+			<source>
+				<name>Wall Street Journal</name>
+				<ts>2010-12-23T06:00:15Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+			<source>
+				<name>Chicago Tribune</name>
+				<ts>2011-05-26T11:29:57Z</ts>
+			</source>
+		</image>
+	</images>
+	<addresses>
+		<address>
+			<street>9 Londonderry Street</street>
+			<city>Fairbanks</city>
+			<state>AK</state>
+			<postal>99709</postal>
+			<country>United States</country>
+			<latitude>64.8544</latitude>
+			<longitude>-147.8469</longitude>
+		</address>
+	</addresses>
+	<schools>
+		<school>
+			<country>Mexico</country>
+			<name>Instituto Tecnológico de Morelia</name>
+			<city>Emiliano Zapata</city>
+			<state>BCN</state>
+			<postal>21460</postal>
+			<latitude>17.7409147</latitude>
+			<longitude>-91.7660525</longitude>
+		</school>
+		<school>
+			<country>United States</country>
+			<name>University of Michigan - Ann Arbor</name>
+			<city>Jamaica</city>
+			<state>NY</state>
+			<postal>11470</postal>
+			<latitude>40.6998888</latitude>
+			<longitude>-73.8076421</longitude>
+		</school>
+	</schools>
+	<status>Active</status>
+	<sources>
+		<source>
+			<name>USA Today</name>
+			<ts>2020-10-10T12:18:22Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>Wall Street Journal</name>
+			<ts>2013-10-26T02:34:46Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>Chicago Tribune</name>
+			<ts>2012-06-03T05:26:31Z</ts>
+		</source>
+	</sources>
+	<relations>
+		<relation>
+			<id>10043</id>
+			<predicate>relatedTo</predicate>
+		</relation>
+		<relation>
+			<id>10089</id>
+			<predicate>relatedTo</predicate>
+		</relation>
+		<relation>
+			<id>10078</id>
+			<predicate>livesWith</predicate>
+		</relation>
+		<relation>
+			<id>10098</id>
+			<predicate>relatedTo</predicate>
+		</relation>
+	</relations>
+	<createdOn>
+		<ts>2022-02-25T12:23:00Z</ts>
+		<user>mdymoke2</user>
+	</createdOn>
+	<lastUpdated>
+		<ts>2022-01-18T13:10:39Z</ts>
+		<user>mdymoke2</user>
+	</lastUpdated>
+	<socials>
+		<social>
+			<site>facebook</site>
+			<address>https://bluehost.com/at.html</address>
+		</social>
+		<social>
+			<site>linkedin</site>
+			<address>http://elpais.com/quis/libero.json</address>
+		</social>
+	</socials>
+	<memberships/>
+</person>

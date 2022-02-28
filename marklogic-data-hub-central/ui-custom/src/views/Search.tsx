@@ -30,7 +30,7 @@ const Search: React.FC<Props> = (props) => {
   return (
     <div className="search">
 
-      {config?.search ? 
+      {config?.search && !searchContext.loading ? 
       
       <>
 
