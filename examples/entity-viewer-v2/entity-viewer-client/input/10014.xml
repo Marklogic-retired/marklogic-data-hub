@@ -1,0 +1,125 @@
+<person>
+	<personId>10014</personId>
+	<nameGroup>
+		<givenname>
+			<value>Lissa</value>
+		</givenname>
+		<surname>
+			<value>Blunderfield</value>
+		</surname>
+		<fullname>
+			<classification>S</classification>
+			<restricted>true</restricted>
+			<value>Blunderfield Lissa</value>
+			<source>
+				<name>Wall Street Journal</name>
+				<ts>2016-11-05T17:00:26Z</ts>
+			</source>
+			<source>
+				<name>Wall Street Journal</name>
+				<ts>2011-07-09T08:53:30Z</ts>
+			</source>
+		</fullname>
+	</nameGroup>
+	<emails>
+		<email>
+			<value>pcowin0@gnu.org</value>
+			<classification>S</classification>
+			<restricted>false</restricted>
+		</email>
+		<email>
+			<value>caleksankov1@delicious.com</value>
+			<classification>C</classification>
+			<restricted>false</restricted>
+		</email>
+	</emails>
+	<phone>911-531-0679</phone>
+	<ssn>
+		<value>403-34-9815</value>
+		<restricted>true</restricted>
+	</ssn>
+	<images>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+			<source>
+				<name>Wall Street Journal</name>
+				<ts>2010-01-23T19:27:18Z</ts>
+			</source>
+		</image>
+	</images>
+	<addresses>
+		<address>
+			<street>1093 Monterey Junction</street>
+			<city>Crawfordsville</city>
+			<state>IN</state>
+			<postal>47937</postal>
+			<country>United States</country>
+			<latitude>40.04</latitude>
+			<longitude>-86.8936</longitude>
+		</address>
+	</addresses>
+	<schools>
+		<school>
+			<country>Mexico</country>
+			<name>Benemerita Universidad Autónoma de Puebla</name>
+			<city>Buenos Aires</city>
+			<state>VER</state>
+			<postal>93380</postal>
+			<latitude>19.4052965</latitude>
+			<longitude>-99.1504583</longitude>
+		</school>
+	</schools>
+	<status>Active</status>
+	<sources>
+		<source>
+			<name>New York Times</name>
+			<ts>2016-10-10T10:29:25Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>USA Today</name>
+			<ts>2010-03-14T01:57:35Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>New York Times</name>
+			<ts>2019-12-15T12:48:54Z</ts>
+		</source>
+	</sources>
+	<relations>
+		<relation>
+			<id>10006</id>
+			<predicate>relatedTo</predicate>
+		</relation>
+		<relation>
+			<id>10062</id>
+			<predicate>livesWith</predicate>
+		</relation>
+		<relation>
+			<id>10011</id>
+			<predicate>livesWith</predicate>
+		</relation>
+	</relations>
+	<createdOn>
+		<ts>2022-02-24T14:53:33Z</ts>
+		<user>lblunderfieldd</user>
+	</createdOn>
+	<lastUpdated>
+		<ts>2022-02-24T22:30:50Z</ts>
+		<user>lblunderfieldd</user>
+	</lastUpdated>
+	<socials>
+		<social>
+			<site>twitter</site>
+			<address>https://nationalgeographic.com/mollis.xml</address>
+		</social>
+	</socials>
+	<memberships>
+		<membership>
+			<list>list1</list>
+			<important>false</important>
+		</membership>
+	</memberships>
+</person>

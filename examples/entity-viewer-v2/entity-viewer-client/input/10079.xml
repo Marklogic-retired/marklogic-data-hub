@@ -1,0 +1,164 @@
+<person>
+	<personId>10079</personId>
+	<nameGroup>
+		<givenname>
+			<value>Westbrook</value>
+		</givenname>
+		<surname>
+			<value>Houten</value>
+		</surname>
+		<fullname>
+			<classification>C</classification>
+			<restricted>true</restricted>
+			<value>Houten Westbrook</value>
+			<source>
+				<name>Washington Post</name>
+				<ts>2013-08-10T16:56:07Z</ts>
+			</source>
+			<source>
+				<name>Los Angeles Times</name>
+				<ts>2014-06-15T14:29:06Z</ts>
+			</source>
+		</fullname>
+	</nameGroup>
+	<emails>
+		<email>
+			<value>nsharrard0@webmd.com</value>
+			<classification>U</classification>
+			<restricted>false</restricted>
+		</email>
+		<email>
+			<value>cgroombridge1@abc.net.au</value>
+			<classification>C</classification>
+			<restricted>false</restricted>
+		</email>
+	</emails>
+	<phone>353-853-5568</phone>
+	<ssn>
+		<value>317-30-6305</value>
+		<restricted>true</restricted>
+	</ssn>
+	<images>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
+			<source>
+				<name>New York Times</name>
+				<ts>2019-08-02T06:29:26Z</ts>
+			</source>
+		</image>
+	</images>
+	<addresses>
+		<address>
+			<street>1 Brentwood Trail</street>
+			<city>Springfield</city>
+			<state>IL</state>
+			<postal>62723</postal>
+			<country>United States</country>
+			<latitude>39.7495</latitude>
+			<longitude>-89.606</longitude>
+		</address>
+		<address>
+			<street>540 Old Shore Pass</street>
+			<city>South Bend</city>
+			<state>IN</state>
+			<postal>46634</postal>
+			<country>United States</country>
+			<latitude>41.5968</latitude>
+			<longitude>-86.293</longitude>
+		</address>
+		<address>
+			<street>4955 Steensland Circle</street>
+			<city>San Francisco</city>
+			<state>CA</state>
+			<postal>94177</postal>
+			<country>United States</country>
+			<latitude>37.7848</latitude>
+			<longitude>-122.7278</longitude>
+		</address>
+	</addresses>
+	<schools>
+		<school>
+			<country>United States</country>
+			<name>Freed-Hardeman University</name>
+			<city>Mesa</city>
+			<state>AZ</state>
+			<postal>85205</postal>
+			<latitude>33.4335164</latitude>
+			<longitude>-111.7256936</longitude>
+		</school>
+		<school>
+			<country>Mexico</country>
+			<name>Universidad Autónoma de Nayarit</name>
+			<city>Morelos</city>
+			<state>PUE</state>
+			<postal>73795</postal>
+			<latitude>19.4468231</latitude>
+			<longitude>-99.1303962</longitude>
+		</school>
+	</schools>
+	<status>Active</status>
+	<sources>
+		<source>
+			<name>USA Today</name>
+			<ts>2016-06-30T21:05:27Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>USA Today</name>
+			<ts>2016-01-20T17:57:24Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>Washington Post</name>
+			<ts>2018-11-24T19:52:36Z</ts>
+		</source>
+	</sources>
+	<relations>
+		<relation>
+			<id>10086</id>
+			<predicate>livesWith</predicate>
+		</relation>
+		<relation>
+			<id>10008</id>
+			<predicate>livesWith</predicate>
+		</relation>
+		<relation>
+			<id>10039</id>
+			<predicate>worksWith</predicate>
+		</relation>
+		<relation>
+			<id>10002</id>
+			<predicate>relatedTo</predicate>
+		</relation>
+	</relations>
+	<createdOn>
+		<ts>2022-02-05T16:56:00Z</ts>
+		<user>whouten26</user>
+	</createdOn>
+	<lastUpdated>
+		<ts>2022-01-28T07:37:27Z</ts>
+		<user>whouten26</user>
+	</lastUpdated>
+	<socials>
+		<social>
+			<site>facebook</site>
+			<address>https://yellowbook.com/eget/massa/tempor/convallis/nulla.json</address>
+		</social>
+	</socials>
+	<memberships>
+		<membership>
+			<list>list2</list>
+			<important>false</important>
+		</membership>
+		<membership>
+			<list>list11</list>
+			<important>false</important>
+		</membership>
+		<membership>
+			<list>list6</list>
+			<important>false</important>
+		</membership>
+	</memberships>
+</person>

@@ -1,6 +1,6 @@
 import React from "react";
 import "./Chiclet.scss";
-import { getValByPath } from "../../util/util";
+import { getValByConfig } from "../../util/util";
 
 type Props = {
   config?: any;
@@ -21,7 +21,7 @@ const Chiclet: React.FC<Props> = (props) => {
     if (props.children) {
         val = props.children;
     } else {
-        val = getValByPath(props.data, props.config.path, true);
+        val = getValByConfig(props.data, props.config, true)
     }
 
     const chicletColors = props.config.colors || {};

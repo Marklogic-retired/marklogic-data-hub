@@ -1,0 +1,152 @@
+<person>
+	<personId>10038</personId>
+	<nameGroup>
+		<givenname>
+			<value>Pat</value>
+		</givenname>
+		<surname>
+			<value>Helliwell</value>
+		</surname>
+		<fullname>
+			<classification>U</classification>
+			<restricted>false</restricted>
+			<value>Helliwell Pat</value>
+			<source>
+				<name>Los Angeles Times</name>
+				<ts>2017-03-23T16:18:33Z</ts>
+			</source>
+		</fullname>
+	</nameGroup>
+	<emails>
+		<email>
+			<value>mdelasalle0@amazon.de</value>
+			<classification>U</classification>
+			<restricted>false</restricted>
+		</email>
+		<email>
+			<value>efenck1@engadget.com</value>
+			<classification>U</classification>
+			<restricted>false</restricted>
+		</email>
+	</emails>
+	<phone>905-256-6683</phone>
+	<ssn>
+		<value>653-27-9967</value>
+		<restricted>true</restricted>
+	</ssn>
+	<images>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+			<source>
+				<name>USA Today</name>
+				<ts>2013-04-28T12:59:17Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+			<source>
+				<name>USA Today</name>
+				<ts>2020-08-10T19:56:05Z</ts>
+			</source>
+		</image>
+	</images>
+	<addresses>
+		<address>
+			<street>8 Doe Crossing Parkway</street>
+			<city>Milwaukee</city>
+			<state>WI</state>
+			<postal>53215</postal>
+			<country>United States</country>
+			<latitude>43.006</latitude>
+			<longitude>-87.9429</longitude>
+		</address>
+	</addresses>
+	<schools>
+		<school>
+			<country>Canada</country>
+			<name>Carleton University</name>
+			<city>Bay Roberts</city>
+			<state>NL</state>
+			<postal>V3B</postal>
+			<latitude>47.59989</latitude>
+			<longitude>-53.26478</longitude>
+		</school>
+		<school>
+			<country>United States</country>
+			<name>Georgia State University</name>
+			<city>Nashville</city>
+			<state>TN</state>
+			<postal>37215</postal>
+			<latitude>36.0802326</latitude>
+			<longitude>-86.8320743</longitude>
+		</school>
+	</schools>
+	<status>Active</status>
+	<sources>
+		<source>
+			<name>Washington Post</name>
+			<ts>2018-04-06T15:51:54Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>New York Times</name>
+			<ts>2013-08-05T04:42:43Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>Chicago Tribune</name>
+			<ts>2013-09-18T21:51:00Z</ts>
+		</source>
+	</sources>
+	<relations>
+		<relation>
+			<id>10079</id>
+			<predicate>livesWith</predicate>
+		</relation>
+		<relation>
+			<id>10087</id>
+			<predicate>worksWith</predicate>
+		</relation>
+		<relation>
+			<id>10036</id>
+			<predicate>relatedTo</predicate>
+		</relation>
+	</relations>
+	<createdOn>
+		<ts>2022-02-19T01:31:27Z</ts>
+		<user>phelliwell11</user>
+	</createdOn>
+	<lastUpdated>
+		<ts>2022-02-04T18:08:47Z</ts>
+		<user>phelliwell11</user>
+	</lastUpdated>
+	<socials/>
+	<memberships>
+		<membership>
+			<list>list8</list>
+			<important>true</important>
+		</membership>
+		<membership>
+			<list>list6</list>
+			<important>true</important>
+		</membership>
+		<membership>
+			<list>list6</list>
+			<important>true</important>
+		</membership>
+		<membership>
+			<list>list6</list>
+			<important>false</important>
+		</membership>
+		<membership>
+			<list>list6</list>
+			<important>false</important>
+		</membership>
+		<membership>
+			<list>list9</list>
+			<important>true</important>
+		</membership>
+	</memberships>
+</person>

@@ -1,0 +1,182 @@
+<person>
+	<personId>10084</personId>
+	<nameGroup>
+		<givenname>
+			<value>Meggie</value>
+		</givenname>
+		<surname>
+			<value>Dommerque</value>
+		</surname>
+		<fullname>
+			<classification>U</classification>
+			<restricted>true</restricted>
+			<value>Dommerque Meggie</value>
+			<source>
+				<name>Chicago Tribune</name>
+				<ts>2018-11-10T09:36:38Z</ts>
+			</source>
+			<source>
+				<name>Wall Street Journal</name>
+				<ts>2015-03-23T12:41:14Z</ts>
+			</source>
+			<source>
+				<name>USA Today</name>
+				<ts>2020-06-16T13:16:59Z</ts>
+			</source>
+		</fullname>
+	</nameGroup>
+	<emails>
+		<email>
+			<value>jclarson0@soup.io</value>
+			<classification>C</classification>
+			<restricted>false</restricted>
+		</email>
+		<email>
+			<value>jbrass1@ihg.com</value>
+			<classification>C</classification>
+			<restricted>false</restricted>
+		</email>
+		<email>
+			<value>vnation2@yolasite.com</value>
+			<classification>C</classification>
+			<restricted>false</restricted>
+		</email>
+	</emails>
+	<phone>108-463-5636</phone>
+	<ssn>
+		<value>698-83-0743</value>
+		<restricted>true</restricted>
+	</ssn>
+	<images>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+			<source>
+				<name>New York Times</name>
+				<ts>2015-05-01T10:36:01Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
+			<source>
+				<name>New York Times</name>
+				<ts>2013-12-27T17:04:52Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+			<source>
+				<name>USA Today</name>
+				<ts>2010-01-01T17:09:27Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
+			<source>
+				<name>Wall Street Journal</name>
+				<ts>2021-12-30T12:16:11Z</ts>
+			</source>
+		</image>
+	</images>
+	<addresses>
+		<address>
+			<street>00 Buell Court</street>
+			<city>Round Rock</city>
+			<state>TX</state>
+			<postal>78682</postal>
+			<country>United States</country>
+			<latitude>30.6568</latitude>
+			<longitude>-97.6026</longitude>
+		</address>
+		<address>
+			<street>27942 Dottie Pass</street>
+			<city>New York City</city>
+			<state>NY</state>
+			<postal>10034</postal>
+			<country>United States</country>
+			<latitude>40.8662</latitude>
+			<longitude>-73.9221</longitude>
+		</address>
+		<address>
+			<street>82 Carberry Court</street>
+			<city>El Paso</city>
+			<state>TX</state>
+			<postal>79934</postal>
+			<country>United States</country>
+			<latitude>31.9386</latitude>
+			<longitude>-106.4073</longitude>
+		</address>
+	</addresses>
+	<schools>
+		<school>
+			<country>Canada</country>
+			<name>King's College</name>
+			<city>Nicolet</city>
+			<state>QC</state>
+			<postal>J3T</postal>
+			<latitude>46.239782</latitude>
+			<longitude>-72.597424</longitude>
+		</school>
+		<school>
+			<country>Canada</country>
+			<name>University of Moncton, Edmundston</name>
+			<city>High River</city>
+			<state>AB</state>
+			<postal>T1V</postal>
+			<latitude>50.5801021</latitude>
+			<longitude>-113.8707312</longitude>
+		</school>
+	</schools>
+	<status>Inactive</status>
+	<sources>
+		<source>
+			<name>USA Today</name>
+			<ts>2018-06-04T06:49:47Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>Chicago Tribune</name>
+			<ts>2016-03-26T10:27:13Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>USA Today</name>
+			<ts>2019-04-20T16:12:25Z</ts>
+		</source>
+	</sources>
+	<relations>
+		<relation>
+			<id>10048</id>
+			<predicate>relatedTo</predicate>
+		</relation>
+		<relation>
+			<id>10003</id>
+			<predicate>livesWith</predicate>
+		</relation>
+	</relations>
+	<createdOn>
+		<ts>2022-02-12T20:16:44Z</ts>
+		<user>mdommerque2b</user>
+	</createdOn>
+	<lastUpdated>
+		<ts>2022-02-03T09:27:26Z</ts>
+		<user>mdommerque2b</user>
+	</lastUpdated>
+	<socials>
+		<social>
+			<site>linkedin</site>
+			<address>http://hc360.com/enim/blandit/mi.png</address>
+		</social>
+	</socials>
+	<memberships>
+		<membership>
+			<list>list11</list>
+			<important>false</important>
+		</membership>
+		<membership>
+			<list>list7</list>
+			<important>false</important>
+		</membership>
+	</memberships>
+</person>

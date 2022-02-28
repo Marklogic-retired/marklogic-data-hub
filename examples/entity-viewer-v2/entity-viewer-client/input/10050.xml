@@ -1,0 +1,150 @@
+<person>
+	<personId>10050</personId>
+	<nameGroup>
+		<givenname>
+			<value>Jojo</value>
+		</givenname>
+		<surname>
+			<value>Hinkley</value>
+		</surname>
+		<fullname>
+			<classification>U</classification>
+			<restricted>false</restricted>
+			<value>Hinkley Jojo</value>
+			<source>
+				<name>Chicago Tribune</name>
+				<ts>2014-10-29T01:47:57Z</ts>
+			</source>
+		</fullname>
+	</nameGroup>
+	<emails>
+		<email>
+			<value>jbradie0@ft.com</value>
+			<classification>S</classification>
+			<restricted>false</restricted>
+		</email>
+		<email>
+			<value>fdarth1@blogs.com</value>
+			<classification>U</classification>
+			<restricted>false</restricted>
+		</email>
+	</emails>
+	<phone>911-244-6891</phone>
+	<ssn>
+		<value>183-54-2067</value>
+		<restricted>true</restricted>
+	</ssn>
+	<images>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+			<source>
+				<name>New York Times</name>
+				<ts>2012-09-30T09:07:52Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
+			<source>
+				<name>USA Today</name>
+				<ts>2011-09-18T03:56:40Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+			<source>
+				<name>Washington Post</name>
+				<ts>2010-12-05T18:52:36Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
+			<source>
+				<name>USA Today</name>
+				<ts>2020-04-30T03:54:14Z</ts>
+			</source>
+		</image>
+	</images>
+	<addresses>
+		<address>
+			<street>39 Eastlawn Drive</street>
+			<city>Richmond</city>
+			<state>VA</state>
+			<postal>23208</postal>
+			<country>United States</country>
+			<latitude>37.5593</latitude>
+			<longitude>-77.4471</longitude>
+		</address>
+	</addresses>
+	<schools>
+		<school>
+			<country>Mexico</country>
+			<name>Universidad Insurgentes Plantel León</name>
+			<city>Providencia</city>
+			<state>DUR</state>
+			<postal>35364</postal>
+			<latitude>32.458113</latitude>
+			<longitude>-116.9193767</longitude>
+		</school>
+		<school>
+			<country>United States</country>
+			<name>Dominion College</name>
+			<city>Provo</city>
+			<state>UT</state>
+			<postal>84605</postal>
+			<latitude>40.2299999</latitude>
+			<longitude>-111.66</longitude>
+		</school>
+	</schools>
+	<status>Inactive</status>
+	<sources>
+		<source>
+			<name>Chicago Tribune</name>
+			<ts>2011-11-28T00:23:39Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>Los Angeles Times</name>
+			<ts>2014-05-21T20:04:47Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>Los Angeles Times</name>
+			<ts>2010-12-07T22:48:17Z</ts>
+		</source>
+	</sources>
+	<relations>
+		<relation>
+			<id>10051</id>
+			<predicate>worksWith</predicate>
+		</relation>
+		<relation>
+			<id>10052</id>
+			<predicate>livesWith</predicate>
+		</relation>
+		<relation>
+			<id>10023</id>
+			<predicate>worksWith</predicate>
+		</relation>
+		<relation>
+			<id>10059</id>
+			<predicate>worksWith</predicate>
+		</relation>
+	</relations>
+	<createdOn>
+		<ts>2022-02-15T22:35:54Z</ts>
+		<user>jhinkley1d</user>
+	</createdOn>
+	<lastUpdated>
+		<ts>2022-01-30T09:09:20Z</ts>
+		<user>jhinkley1d</user>
+	</lastUpdated>
+	<socials/>
+	<memberships>
+		<membership>
+			<list>list10</list>
+			<important>true</important>
+		</membership>
+	</memberships>
+</person>

@@ -7,7 +7,7 @@ const configMultiple = {
     id: "address",
     title: "Address",
     width: 600,
-    dataPath: "result[0].extracted.person.address",
+    path: "result[0].extracted.person.address",
     cols: [
         {
             title: "City",
@@ -36,7 +36,7 @@ const configSingular = {
     id: "school",
     title: "School",
     width: 600,
-    dataPath: "result[0].extracted.person.school",
+    path: "result[0].extracted.person.school",
     cols: [
         {
             title: "Name",
@@ -49,6 +49,39 @@ const configSingular = {
         {
             title: "Year",
             value: "year"
+        }
+    ],
+    metadata: [
+        {
+            type: "block",
+            color: "#96bde4",
+            value: "B"
+        },
+        {
+            type: "block",
+            color: "#5d6aaa",
+            value: "4"
+        }
+    ]
+};
+
+const configSingularComplex = {
+    id: "school",
+    title: "School",
+    width: 600,
+    path: "result[0].extracted.person.college",
+    cols: [
+        {
+            title: "Name",
+            value: "name.value"
+        },
+        {
+            title: "City",
+            value: "city.value"
+        },
+        {
+            title: "Year",
+            value: "year.value"
         }
     ],
     metadata: [
@@ -96,6 +129,22 @@ const detail = {
                             "city": "Anytown",
                             "year": "2022"
                         }
+                    ],
+                    "college": [
+                        {
+                            "name": {
+                                "value": "Anytown College",
+                                "restricted": false
+                            },
+                            "city": {
+                                "value": "Anytown",
+                                "restricted": false
+                            },
+                            "year": {
+                                "value": "2026",
+                                "restricted": true
+                            }
+                        }
                     ]
 		        }
 		    }
@@ -138,6 +187,19 @@ describe("DataTableMultiValue component", () => {
         expect(getByText("Anytown High School")).toBeInTheDocument();
         expect(getByText("Anytown")).toBeInTheDocument();
         expect(getByText("2022")).toBeInTheDocument();
+    });
+
+    test("Verify data table renders with a property object with nested data", () => {
+        const {getByText, queryByTestId} = render(
+            <DetailContext.Provider value={detailContextValue}>
+                <DataTableMultiValue config={configSingularComplex} />
+            </DetailContext.Provider>
+        );
+        expect(getByText(configSingularComplex.title)).toBeInTheDocument();
+        expect(queryByTestId("hideUp")).not.toBeInTheDocument();
+        expect(getByText("Anytown College")).toBeInTheDocument();
+        expect(getByText("Anytown")).toBeInTheDocument();
+        expect(getByText("2026")).toBeInTheDocument();
     });
 
     test("Verify data table does not render with a property object that does not exist in the results", () => {

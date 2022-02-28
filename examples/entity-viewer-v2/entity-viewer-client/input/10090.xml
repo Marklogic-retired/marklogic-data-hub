@@ -1,0 +1,166 @@
+<person>
+	<personId>10090</personId>
+	<nameGroup>
+		<givenname>
+			<value>Rufe</value>
+		</givenname>
+		<surname>
+			<value>Youthead</value>
+		</surname>
+		<fullname>
+			<classification>C</classification>
+			<restricted>false</restricted>
+			<value>Youthead Rufe</value>
+			<source>
+				<name>New York Times</name>
+				<ts>2020-04-02T21:52:58Z</ts>
+			</source>
+			<source>
+				<name>USA Today</name>
+				<ts>2014-06-10T09:25:54Z</ts>
+			</source>
+			<source>
+				<name>New York Times</name>
+				<ts>2014-02-07T22:18:55Z</ts>
+			</source>
+		</fullname>
+	</nameGroup>
+	<emails>
+		<email>
+			<value>apestridge0@oakley.com</value>
+			<classification>C</classification>
+			<restricted>false</restricted>
+		</email>
+		<email>
+			<value>knapolione1@posterous.com</value>
+			<classification>U</classification>
+			<restricted>false</restricted>
+		</email>
+		<email>
+			<value>rdunseith2@plala.or.jp</value>
+			<classification>S</classification>
+			<restricted>false</restricted>
+		</email>
+	</emails>
+	<phone>980-436-8896</phone>
+	<ssn>
+		<value>232-59-6327</value>
+		<restricted>true</restricted>
+	</ssn>
+	<images>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+			<source>
+				<name>Chicago Tribune</name>
+				<ts>2014-05-20T01:01:35Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+			<source>
+				<name>Los Angeles Times</name>
+				<ts>2017-07-25T13:30:55Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
+			<source>
+				<name>USA Today</name>
+				<ts>2017-07-26T14:41:25Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
+			<source>
+				<name>USA Today</name>
+				<ts>2010-07-13T16:06:04Z</ts>
+			</source>
+		</image>
+	</images>
+	<addresses>
+		<address>
+			<street>8629 Esch Terrace</street>
+			<city>Carlsbad</city>
+			<state>CA</state>
+			<postal>92013</postal>
+			<country>United States</country>
+			<latitude>33.0169</latitude>
+			<longitude>-116.846</longitude>
+		</address>
+		<address>
+			<street>6 Tomscot Court</street>
+			<city>Chicago</city>
+			<state>IL</state>
+			<postal>60641</postal>
+			<country>United States</country>
+			<latitude>41.9453</latitude>
+			<longitude>-87.7474</longitude>
+		</address>
+	</addresses>
+	<schools>
+		<school>
+			<country>Mexico</country>
+			<name>Universidad Fray Luca Paccioli</name>
+			<city>Emiliano Zapata</city>
+			<state>CHP</state>
+			<postal>25740</postal>
+			<latitude>19.3174558</latitude>
+			<longitude>-99.1103392</longitude>
+		</school>
+	</schools>
+	<status>Inactive</status>
+	<sources>
+		<source>
+			<name>USA Today</name>
+			<ts>2018-11-06T22:30:28Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>New York Times</name>
+			<ts>2021-12-08T14:55:51Z</ts>
+		</source>
+	</sources>
+	<relations>
+		<relation>
+			<id>10060</id>
+			<predicate>livesWith</predicate>
+		</relation>
+		<relation>
+			<id>10006</id>
+			<predicate>worksWith</predicate>
+		</relation>
+		<relation>
+			<id>10077</id>
+			<predicate>worksWith</predicate>
+		</relation>
+	</relations>
+	<createdOn>
+		<ts>2022-01-07T09:29:27Z</ts>
+		<user>ryouthead2h</user>
+	</createdOn>
+	<lastUpdated>
+		<ts>2022-02-05T22:02:52Z</ts>
+		<user>ryouthead2h</user>
+	</lastUpdated>
+	<socials>
+		<social>
+			<site>twitter</site>
+			<address>https://ustream.tv/lacinia/sapien.js</address>
+		</social>
+		<social>
+			<site>twitter</site>
+			<address>https://samsung.com/eleifend/quam/a.png</address>
+		</social>
+	</socials>
+	<memberships>
+		<membership>
+			<list>list9</list>
+			<important>true</important>
+		</membership>
+		<membership>
+			<list>list11</list>
+			<important>true</important>
+		</membership>
+	</memberships>
+</person>

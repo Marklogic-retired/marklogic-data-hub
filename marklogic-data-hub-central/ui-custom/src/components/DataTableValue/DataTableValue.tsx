@@ -5,7 +5,7 @@ import Table from "react-bootstrap/Table";
 import { DetailContext } from "../../store/DetailContext";
 import "./DataTableValue.scss";
 import {ArrowBarDown, ArrowBarRight, EnvelopeFill, TelephoneFill} from "react-bootstrap-icons";
-import { getValByPathAsArray } from "../../util/util";
+import { getValByConfig } from "../../util/util";
 import _ from "lodash";
 
 type Props = {
@@ -48,7 +48,10 @@ const DataTableValue: React.FC<Props> = (props) => {
         setHide(!hide);
     };
 
-    const data = (props.config && props.config.dataPath) ? getValByPathAsArray(detailContext.detail, props.config.dataPath) : null;
+    let data: any = [];
+
+    data = getValByConfig(detailContext.detail, props.config);
+    data = _.isNil(data) ? null : (Array.isArray(data) ? data : [data]);
 
     let hideClass: string = hide ? "hide" : "";
     let tableStyle: any = {
