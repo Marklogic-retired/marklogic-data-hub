@@ -18,7 +18,7 @@ const config = {
                     "id": "phone",
                     "component": "DataTableValue",
                     "title": "Phone Number",
-                    "dataPath": "result[0].extracted.person.phone"
+                    "path": "result[0].extracted.person.phone"
                 }
             ]
         }

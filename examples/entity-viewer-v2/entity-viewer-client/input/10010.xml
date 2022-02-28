@@ -1,0 +1,136 @@
+<person>
+	<personId>10010</personId>
+	<nameGroup>
+		<givenname>
+			<value>Terrence</value>
+		</givenname>
+		<surname>
+			<value>Heinemann</value>
+		</surname>
+		<fullname>
+			<classification>S</classification>
+			<restricted>false</restricted>
+			<value>Heinemann Terrence</value>
+			<source>
+				<name>Wall Street Journal</name>
+				<ts>2015-03-12T13:22:51Z</ts>
+			</source>
+		</fullname>
+	</nameGroup>
+	<emails>
+		<email>
+			<value>dsiderfin0@sogou.com</value>
+			<classification>S</classification>
+			<restricted>false</restricted>
+		</email>
+		<email>
+			<value>sbrade1@bbc.co.uk</value>
+			<classification>C</classification>
+			<restricted>false</restricted>
+		</email>
+	</emails>
+	<phone>853-761-9331</phone>
+	<ssn>
+		<value>451-53-0007</value>
+		<restricted>true</restricted>
+	</ssn>
+	<images>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+			<source>
+				<name>Wall Street Journal</name>
+				<ts>2015-10-30T03:51:01Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
+			<source>
+				<name>Chicago Tribune</name>
+				<ts>2016-09-04T05:08:23Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
+			<source>
+				<name>Chicago Tribune</name>
+				<ts>2011-11-12T18:47:42Z</ts>
+			</source>
+		</image>
+	</images>
+	<addresses>
+		<address>
+			<street>8718 Huxley Way</street>
+			<city>New York City</city>
+			<state>NY</state>
+			<postal>10045</postal>
+			<country>United States</country>
+			<latitude>40.7086</latitude>
+			<longitude>-74.0087</longitude>
+		</address>
+		<address>
+			<street>608 Trailsway Park</street>
+			<city>Torrance</city>
+			<state>CA</state>
+			<postal>90505</postal>
+			<country>United States</country>
+			<latitude>33.8106</latitude>
+			<longitude>-118.3507</longitude>
+		</address>
+	</addresses>
+	<schools>
+		<school>
+			<country>United States</country>
+			<name>Central Bible College</name>
+			<city>Austin</city>
+			<state>TX</state>
+			<postal>78732</postal>
+			<latitude>30.3788578</latitude>
+			<longitude>-97.8923749</longitude>
+		</school>
+	</schools>
+	<status>Inactive</status>
+	<sources>
+		<source>
+			<name>Wall Street Journal</name>
+			<ts>2016-01-01T00:50:52Z</ts>
+		</source>
+	</sources>
+	<relations>
+		<relation>
+			<id>10100</id>
+			<predicate>worksWith</predicate>
+		</relation>
+		<relation>
+			<id>10016</id>
+			<predicate>worksWith</predicate>
+		</relation>
+		<relation>
+			<id>10093</id>
+			<predicate>worksWith</predicate>
+		</relation>
+	</relations>
+	<createdOn>
+		<ts>2022-02-03T03:20:10Z</ts>
+		<user>theinemann9</user>
+	</createdOn>
+	<lastUpdated>
+		<ts>2022-02-10T03:22:38Z</ts>
+		<user>theinemann9</user>
+	</lastUpdated>
+	<socials>
+		<social>
+			<site>linkedin</site>
+			<address>https://1und1.de/justo/morbi/ut/odio.png</address>
+		</social>
+		<social>
+			<site>linkedin</site>
+			<address>http://google.fr/nulla/sed/vel/enim.png</address>
+		</social>
+	</socials>
+	<memberships>
+		<membership>
+			<list>list12</list>
+			<important>true</important>
+		</membership>
+	</memberships>
+</person>

@@ -1,0 +1,147 @@
+<person>
+	<personId>10055</personId>
+	<nameGroup>
+		<givenname>
+			<value>Daisi</value>
+		</givenname>
+		<surname>
+			<value>Elvins</value>
+		</surname>
+		<fullname>
+			<classification>C</classification>
+			<restricted>true</restricted>
+			<value>Elvins Daisi</value>
+			<source>
+				<name>Washington Post</name>
+				<ts>2019-05-22T02:04:16Z</ts>
+			</source>
+			<source>
+				<name>Wall Street Journal</name>
+				<ts>2011-05-17T21:47:27Z</ts>
+			</source>
+			<source>
+				<name>Los Angeles Times</name>
+				<ts>2018-01-17T13:45:56Z</ts>
+			</source>
+		</fullname>
+	</nameGroup>
+	<emails>
+		<email>
+			<value>ppitt0@xrea.com</value>
+			<classification>C</classification>
+			<restricted>false</restricted>
+		</email>
+		<email>
+			<value>vgalbraith1@redcross.org</value>
+			<classification>C</classification>
+			<restricted>false</restricted>
+		</email>
+	</emails>
+	<phone>476-135-3563</phone>
+	<ssn>
+		<value>819-72-8708</value>
+		<restricted>true</restricted>
+	</ssn>
+	<images>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+			<source>
+				<name>Chicago Tribune</name>
+				<ts>2021-07-08T23:48:30Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
+			<source>
+				<name>Los Angeles Times</name>
+				<ts>2012-08-19T00:16:38Z</ts>
+			</source>
+		</image>
+	</images>
+	<addresses>
+		<address>
+			<street>3352 Fallview Circle</street>
+			<city>El Paso</city>
+			<state>TX</state>
+			<postal>79945</postal>
+			<country>United States</country>
+			<latitude>31.6948</latitude>
+			<longitude>-106.3</longitude>
+		</address>
+		<address>
+			<street>09850 Muir Plaza</street>
+			<city>Reno</city>
+			<state>NV</state>
+			<postal>89505</postal>
+			<country>United States</country>
+			<latitude>39.5224</latitude>
+			<longitude>-119.8353</longitude>
+		</address>
+	</addresses>
+	<schools>
+		<school>
+			<country>United States</country>
+			<name>Mayo Medical School</name>
+			<city>Cincinnati</city>
+			<state>OH</state>
+			<postal>45254</postal>
+			<latitude>39.0745039</latitude>
+			<longitude>-84.33211</longitude>
+		</school>
+	</schools>
+	<status>Active</status>
+	<sources>
+		<source>
+			<name>New York Times</name>
+			<ts>2019-09-24T12:25:49Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>USA Today</name>
+			<ts>2021-01-28T15:08:10Z</ts>
+		</source>
+	</sources>
+	<relations>
+		<relation>
+			<id>10096</id>
+			<predicate>worksWith</predicate>
+		</relation>
+		<relation>
+			<id>10086</id>
+			<predicate>worksWith</predicate>
+		</relation>
+		<relation>
+			<id>10097</id>
+			<predicate>livesWith</predicate>
+		</relation>
+	</relations>
+	<createdOn>
+		<ts>2022-01-09T14:21:46Z</ts>
+		<user>delvins1i</user>
+	</createdOn>
+	<lastUpdated>
+		<ts>2022-02-01T15:45:56Z</ts>
+		<user>delvins1i</user>
+	</lastUpdated>
+	<socials>
+		<social>
+			<site>linkedin</site>
+			<address>https://foxnews.com/pede/morbi/porttitor/lorem/id/ligula/suspendisse.js</address>
+		</social>
+		<social>
+			<site>linkedin</site>
+			<address>https://de.vu/in/sagittis/dui/vel/nisl/duis.aspx</address>
+		</social>
+	</socials>
+	<memberships>
+		<membership>
+			<list>list5</list>
+			<important>true</important>
+		</membership>
+		<membership>
+			<list>list9</list>
+			<important>false</important>
+		</membership>
+	</memberships>
+</person>

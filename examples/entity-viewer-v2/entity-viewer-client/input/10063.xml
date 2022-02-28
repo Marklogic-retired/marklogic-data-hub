@@ -1,0 +1,165 @@
+<person>
+	<personId>10063</personId>
+	<nameGroup>
+		<givenname>
+			<value>Hodge</value>
+		</givenname>
+		<surname>
+			<value>Insley</value>
+		</surname>
+		<fullname>
+			<classification>U</classification>
+			<restricted>true</restricted>
+			<value>Insley Hodge</value>
+			<source>
+				<name>Los Angeles Times</name>
+				<ts>2020-01-10T14:33:16Z</ts>
+			</source>
+			<source>
+				<name>Los Angeles Times</name>
+				<ts>2021-11-15T13:47:30Z</ts>
+			</source>
+		</fullname>
+	</nameGroup>
+	<emails>
+		<email>
+			<value>mwhieldon0@artisteer.com</value>
+			<classification>C</classification>
+			<restricted>false</restricted>
+		</email>
+	</emails>
+	<phone>267-521-9652</phone>
+	<ssn>
+		<value>704-49-4549</value>
+		<restricted>true</restricted>
+	</ssn>
+	<images>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
+			<source>
+				<name>Washington Post</name>
+				<ts>2014-06-22T23:06:29Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
+			<source>
+				<name>Washington Post</name>
+				<ts>2021-07-26T03:18:37Z</ts>
+			</source>
+		</image>
+	</images>
+	<addresses>
+		<address>
+			<street>0 Green Ridge Park</street>
+			<city>Greenville</city>
+			<state>SC</state>
+			<postal>29605</postal>
+			<country>United States</country>
+			<latitude>34.8001</latitude>
+			<longitude>-82.3932</longitude>
+		</address>
+		<address>
+			<street>717 Transport Terrace</street>
+			<city>Boston</city>
+			<state>MA</state>
+			<postal>02203</postal>
+			<country>United States</country>
+			<latitude>42.3615</latitude>
+			<longitude>-71.0604</longitude>
+		</address>
+		<address>
+			<street>5 Armistice Point</street>
+			<city>Inglewood</city>
+			<state>CA</state>
+			<postal>90310</postal>
+			<country>United States</country>
+			<latitude>33.7866</latitude>
+			<longitude>-118.2987</longitude>
+		</address>
+	</addresses>
+	<schools>
+		<school>
+			<country>United States</country>
+			<name>Western Maryland College</name>
+			<city>Albany</city>
+			<state>GA</state>
+			<postal>31704</postal>
+			<latitude>31.5547633</latitude>
+			<longitude>-84.06035</longitude>
+		</school>
+	</schools>
+	<status>Active</status>
+	<sources>
+		<source>
+			<name>Wall Street Journal</name>
+			<ts>2016-03-08T01:26:35Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>USA Today</name>
+			<ts>2014-05-07T15:01:42Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>Wall Street Journal</name>
+			<ts>2010-12-11T09:55:40Z</ts>
+		</source>
+	</sources>
+	<relations>
+		<relation>
+			<id>10061</id>
+			<predicate>relatedTo</predicate>
+		</relation>
+		<relation>
+			<id>10060</id>
+			<predicate>livesWith</predicate>
+		</relation>
+		<relation>
+			<id>10057</id>
+			<predicate>worksWith</predicate>
+		</relation>
+		<relation>
+			<id>10065</id>
+			<predicate>livesWith</predicate>
+		</relation>
+		<relation>
+			<id>10002</id>
+			<predicate>relatedTo</predicate>
+		</relation>
+	</relations>
+	<createdOn>
+		<ts>2022-01-19T05:54:03Z</ts>
+		<user>hinsley1q</user>
+	</createdOn>
+	<lastUpdated>
+		<ts>2022-02-04T12:23:18Z</ts>
+		<user>hinsley1q</user>
+	</lastUpdated>
+	<socials>
+		<social>
+			<site>facebook</site>
+			<address>https://baidu.com/ipsum/praesent/blandit/lacinia/erat/vestibulum/sed.xml</address>
+		</social>
+	</socials>
+	<memberships>
+		<membership>
+			<list>list5</list>
+			<important>false</important>
+		</membership>
+		<membership>
+			<list>list5</list>
+			<important>false</important>
+		</membership>
+		<membership>
+			<list>list8</list>
+			<important>true</important>
+		</membership>
+		<membership>
+			<list>list6</list>
+			<important>true</important>
+		</membership>
+	</memberships>
+</person>

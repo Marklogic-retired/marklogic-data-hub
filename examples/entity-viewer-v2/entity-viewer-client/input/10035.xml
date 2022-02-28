@@ -1,0 +1,129 @@
+<person>
+	<personId>10035</personId>
+	<nameGroup>
+		<givenname>
+			<value>Vinny</value>
+		</givenname>
+		<surname>
+			<value>Bresnahan</value>
+		</surname>
+		<fullname>
+			<classification>C</classification>
+			<restricted>false</restricted>
+			<value>Bresnahan Vinny</value>
+			<source>
+				<name>Wall Street Journal</name>
+				<ts>2012-01-26T04:56:50Z</ts>
+			</source>
+		</fullname>
+	</nameGroup>
+	<emails>
+		<email>
+			<value>ccliburn0@amazon.de</value>
+			<classification>C</classification>
+			<restricted>false</restricted>
+		</email>
+		<email>
+			<value>yallen1@joomla.org</value>
+			<classification>U</classification>
+			<restricted>false</restricted>
+		</email>
+	</emails>
+	<phone>808-849-7531</phone>
+	<ssn>
+		<value>125-55-9757</value>
+		<restricted>true</restricted>
+	</ssn>
+	<images>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
+			<source>
+				<name>Chicago Tribune</name>
+				<ts>2018-07-17T01:22:34Z</ts>
+			</source>
+		</image>
+	</images>
+	<addresses>
+		<address>
+			<street>4186 Eagle Crest Road</street>
+			<city>Stockton</city>
+			<state>CA</state>
+			<postal>95298</postal>
+			<country>United States</country>
+			<latitude>37.9577</latitude>
+			<longitude>-121.2897</longitude>
+		</address>
+	</addresses>
+	<schools>
+		<school>
+			<country>Mexico</country>
+			<name>Universidad Autónoma de Campeche</name>
+			<city>San Francisco</city>
+			<state>SLP</state>
+			<postal>78490</postal>
+			<latitude>20.8965838</latitude>
+			<longitude>-105.4093552</longitude>
+		</school>
+		<school>
+			<country>Mexico</country>
+			<name>Universidad Autónoma de Tlaxcala</name>
+			<city>Las Flores</city>
+			<state>GUA</state>
+			<postal>38823</postal>
+			<latitude>20.123518</latitude>
+			<longitude>-101.1833267</longitude>
+		</school>
+	</schools>
+	<status>Inactive</status>
+	<sources>
+		<source>
+			<name>Wall Street Journal</name>
+			<ts>2014-04-02T21:59:34Z</ts>
+		</source>
+	</sources>
+	<relations>
+		<relation>
+			<id>10090</id>
+			<predicate>livesWith</predicate>
+		</relation>
+		<relation>
+			<id>10093</id>
+			<predicate>worksWith</predicate>
+		</relation>
+		<relation>
+			<id>10035</id>
+			<predicate>worksWith</predicate>
+		</relation>
+		<relation>
+			<id>10068</id>
+			<predicate>worksWith</predicate>
+		</relation>
+		<relation>
+			<id>10022</id>
+			<predicate>relatedTo</predicate>
+		</relation>
+	</relations>
+	<createdOn>
+		<ts>2022-01-23T11:18:24Z</ts>
+		<user>vbresnahany</user>
+	</createdOn>
+	<lastUpdated>
+		<ts>2022-02-17T07:08:55Z</ts>
+		<user>vbresnahany</user>
+	</lastUpdated>
+	<socials/>
+	<memberships>
+		<membership>
+			<list>list3</list>
+			<important>true</important>
+		</membership>
+		<membership>
+			<list>list4</list>
+			<important>false</important>
+		</membership>
+		<membership>
+			<list>list11</list>
+			<important>false</important>
+		</membership>
+	</memberships>
+</person>

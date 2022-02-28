@@ -32,7 +32,7 @@ const data2 = {
 
 // If multiple addresses returned, addressPath points to array
 const configArray = { 
-    addressPath: "address",
+    arrayPath: "address",
     street1: "street1",
     street2: "street2",
     city: "city",

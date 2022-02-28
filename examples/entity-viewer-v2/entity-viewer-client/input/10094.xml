@@ -1,0 +1,126 @@
+<person>
+	<personId>10094</personId>
+	<nameGroup>
+		<givenname>
+			<value>Barrie</value>
+		</givenname>
+		<surname>
+			<value>Lindenblatt</value>
+		</surname>
+		<fullname>
+			<classification>S</classification>
+			<restricted>false</restricted>
+			<value>Lindenblatt Barrie</value>
+			<source>
+				<name>New York Times</name>
+				<ts>2016-11-25T01:01:23Z</ts>
+			</source>
+			<source>
+				<name>New York Times</name>
+				<ts>2016-04-08T05:24:15Z</ts>
+			</source>
+			<source>
+				<name>Los Angeles Times</name>
+				<ts>2018-11-16T11:15:31Z</ts>
+			</source>
+		</fullname>
+	</nameGroup>
+	<emails>
+		<email>
+			<value>bpavia0@ebay.co.uk</value>
+			<classification>C</classification>
+			<restricted>false</restricted>
+		</email>
+		<email>
+			<value>dlakes1@amazon.co.uk</value>
+			<classification>S</classification>
+			<restricted>false</restricted>
+		</email>
+	</emails>
+	<phone>880-225-8866</phone>
+	<ssn>
+		<value>349-09-8251</value>
+		<restricted>true</restricted>
+	</ssn>
+	<images>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
+			<source>
+				<name>Washington Post</name>
+				<ts>2016-12-29T22:05:19Z</ts>
+			</source>
+		</image>
+	</images>
+	<addresses>
+		<address>
+			<street>7 Clemons Road</street>
+			<city>Trenton</city>
+			<state>NJ</state>
+			<postal>08638</postal>
+			<country>United States</country>
+			<latitude>40.251</latitude>
+			<longitude>-74.7627</longitude>
+		</address>
+	</addresses>
+	<schools>
+		<school>
+			<country>United States</country>
+			<name>Mary Baldwin College</name>
+			<city>El Paso</city>
+			<state>TX</state>
+			<postal>88514</postal>
+			<latitude>31.77</latitude>
+			<longitude>-106.43</longitude>
+		</school>
+	</schools>
+	<status>Active</status>
+	<sources>
+		<source>
+			<name>Los Angeles Times</name>
+			<ts>2011-06-21T05:51:22Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>Washington Post</name>
+			<ts>2019-04-19T07:55:38Z</ts>
+		</source>
+	</sources>
+	<relations>
+		<relation>
+			<id>10010</id>
+			<predicate>livesWith</predicate>
+		</relation>
+		<relation>
+			<id>10050</id>
+			<predicate>relatedTo</predicate>
+		</relation>
+		<relation>
+			<id>10044</id>
+			<predicate>livesWith</predicate>
+		</relation>
+		<relation>
+			<id>10068</id>
+			<predicate>worksWith</predicate>
+		</relation>
+		<relation>
+			<id>10038</id>
+			<predicate>livesWith</predicate>
+		</relation>
+	</relations>
+	<createdOn>
+		<ts>2022-01-22T03:31:19Z</ts>
+		<user>blindenblatt2l</user>
+	</createdOn>
+	<lastUpdated>
+		<ts>2022-01-25T23:02:08Z</ts>
+		<user>blindenblatt2l</user>
+	</lastUpdated>
+	<socials>
+		<social>
+			<site>facebook</site>
+			<address>http://forbes.com/rutrum/neque.jpg</address>
+		</social>
+	</socials>
+	<memberships/>
+</person>

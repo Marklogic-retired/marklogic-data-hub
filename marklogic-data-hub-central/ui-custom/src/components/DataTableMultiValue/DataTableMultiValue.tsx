@@ -6,7 +6,7 @@ import "./DataTableMultiValue.scss";
 import {ArrowBarDown, ArrowBarRight, GeoAltFill} from "react-bootstrap-icons";
 import Popover from "react-bootstrap/Popover";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import { getValByPath, getValByPathAsArray } from "../../util/util";
+import { getValByPath, getValByConfig } from "../../util/util";
 import _ from "lodash";
 import GeoMap from "../GeoMap/GeoMap"
 
@@ -69,7 +69,10 @@ const DataTableMultiValue: React.FC<Props> = (props) => {
         setHide(!hide);
     };
 
-    const data: any = (props.config && props.config.dataPath) ? getValByPathAsArray(detailContext.detail, props.config.dataPath) : null;
+    let data: any = [];
+
+    data = getValByConfig(detailContext.detail, props.config);
+    data = _.isNil(data) ? null : (Array.isArray(data) ? data : [data]);
 
     let hideClass: string = hide ? "hide" : "";
     let tableStyle: any = {

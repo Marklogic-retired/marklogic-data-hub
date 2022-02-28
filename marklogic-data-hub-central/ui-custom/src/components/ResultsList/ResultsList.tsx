@@ -7,7 +7,7 @@ import { SearchContext } from "../../store/SearchContext";
 import { DetailContext } from "../../store/DetailContext";
 import {GearFill, CodeSlash, ArrowRepeat} from "react-bootstrap-icons";
 import "./ResultsList.scss";
-import { getValByPath, getValByPathAsArray } from "../../util/util";
+import { getValByConfig } from "../../util/util";
 
 type Props = {
   config?: any;
@@ -118,10 +118,10 @@ const ResultsList: React.FC<Props> = (props) => {
       });
       return (
         <div key={"result-" + index} className="result">
-          <div className="thumbnail">
+          <div className="thumbnail"> 
             {props.config.thumbnail ? 
             <img
-              src={getValByPath(results, props.config.thumbnail.src, true)}
+              src={getValByConfig(results, props.config.thumbnail, true)}
               alt={props.config && props.config.thumbnail && props.config.thumbnail.alt}
               style={thumbStyle}
             ></img> : null}
@@ -135,7 +135,7 @@ const ResultsList: React.FC<Props> = (props) => {
             </div>
             {props.config.categories ? 
             <div className="categories">
-              {getValByPathAsArray(results, props.config.categories.path)!.map((s, index2) => {
+              {getValByConfig(results, props.config.categories)!.map((s, index2) => {
                 return (
                   <Chiclet 
                     key={"category-" + index2} 

@@ -1,0 +1,145 @@
+<person>
+	<personId>10071</personId>
+	<nameGroup>
+		<givenname>
+			<value>Kettie</value>
+		</givenname>
+		<surname>
+			<value>Bolton</value>
+		</surname>
+		<fullname>
+			<classification>U</classification>
+			<restricted>true</restricted>
+			<value>Bolton Kettie</value>
+			<source>
+				<name>Wall Street Journal</name>
+				<ts>2013-08-09T09:09:42Z</ts>
+			</source>
+			<source>
+				<name>USA Today</name>
+				<ts>2020-04-10T15:53:40Z</ts>
+			</source>
+			<source>
+				<name>Los Angeles Times</name>
+				<ts>2012-11-08T15:06:42Z</ts>
+			</source>
+		</fullname>
+	</nameGroup>
+	<emails>
+		<email>
+			<value>kbrade0@webs.com</value>
+			<classification>S</classification>
+			<restricted>false</restricted>
+		</email>
+	</emails>
+	<phone>341-139-1107</phone>
+	<ssn>
+		<value>714-87-5572</value>
+		<restricted>true</restricted>
+	</ssn>
+	<images>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
+			<source>
+				<name>Wall Street Journal</name>
+				<ts>2016-04-16T00:34:55Z</ts>
+			</source>
+		</image>
+	</images>
+	<addresses>
+		<address>
+			<street>5174 Kennedy Lane</street>
+			<city>Des Moines</city>
+			<state>IA</state>
+			<postal>50369</postal>
+			<country>United States</country>
+			<latitude>41.6727</latitude>
+			<longitude>-93.5722</longitude>
+		</address>
+		<address>
+			<street>096 Ilene Place</street>
+			<city>Colorado Springs</city>
+			<state>CO</state>
+			<postal>80915</postal>
+			<country>United States</country>
+			<latitude>38.8558</latitude>
+			<longitude>-104.7134</longitude>
+		</address>
+	</addresses>
+	<schools>
+		<school>
+			<country>United States</country>
+			<name>University of New England</name>
+			<city>Colorado Springs</city>
+			<state>CO</state>
+			<postal>80905</postal>
+			<latitude>38.8163486</latitude>
+			<longitude>-104.8512993</longitude>
+		</school>
+	</schools>
+	<status>Active</status>
+	<sources>
+		<source>
+			<name>Chicago Tribune</name>
+			<ts>2010-01-26T22:47:37Z</ts>
+		</source>
+	</sources>
+	<relations>
+		<relation>
+			<id>10089</id>
+			<predicate>worksWith</predicate>
+		</relation>
+		<relation>
+			<id>10076</id>
+			<predicate>worksWith</predicate>
+		</relation>
+		<relation>
+			<id>10061</id>
+			<predicate>relatedTo</predicate>
+		</relation>
+		<relation>
+			<id>10092</id>
+			<predicate>relatedTo</predicate>
+		</relation>
+		<relation>
+			<id>10082</id>
+			<predicate>relatedTo</predicate>
+		</relation>
+	</relations>
+	<createdOn>
+		<ts>2022-01-17T21:41:23Z</ts>
+		<user>kbolton1y</user>
+	</createdOn>
+	<lastUpdated>
+		<ts>2022-02-06T04:06:27Z</ts>
+		<user>kbolton1y</user>
+	</lastUpdated>
+	<socials>
+		<social>
+			<site>linkedin</site>
+			<address>http://cdbaby.com/eros.json</address>
+		</social>
+	</socials>
+	<memberships>
+		<membership>
+			<list>list1</list>
+			<important>false</important>
+		</membership>
+		<membership>
+			<list>list8</list>
+			<important>true</important>
+		</membership>
+		<membership>
+			<list>list12</list>
+			<important>false</important>
+		</membership>
+		<membership>
+			<list>list9</list>
+			<important>true</important>
+		</membership>
+		<membership>
+			<list>list8</list>
+			<important>true</important>
+		</membership>
+	</memberships>
+</person>

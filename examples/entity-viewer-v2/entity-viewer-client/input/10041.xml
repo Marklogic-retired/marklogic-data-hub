@@ -1,0 +1,144 @@
+<person>
+	<personId>10041</personId>
+	<nameGroup>
+		<givenname>
+			<value>Dallas</value>
+		</givenname>
+		<surname>
+			<value>Friedlos</value>
+		</surname>
+		<fullname>
+			<classification>S</classification>
+			<restricted>false</restricted>
+			<value>Friedlos Dallas</value>
+			<source>
+				<name>USA Today</name>
+				<ts>2015-02-12T17:04:30Z</ts>
+			</source>
+			<source>
+				<name>Wall Street Journal</name>
+				<ts>2012-04-10T08:40:36Z</ts>
+			</source>
+		</fullname>
+	</nameGroup>
+	<emails>
+		<email>
+			<value>kdurkin0@pcworld.com</value>
+			<classification>C</classification>
+			<restricted>false</restricted>
+		</email>
+	</emails>
+	<phone>159-114-1798</phone>
+	<ssn>
+		<value>461-03-2996</value>
+		<restricted>true</restricted>
+	</ssn>
+	<images>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
+			<source>
+				<name>Los Angeles Times</name>
+				<ts>2013-06-04T11:55:07Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
+			<source>
+				<name>Los Angeles Times</name>
+				<ts>2018-11-23T20:20:32Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
+			<source>
+				<name>USA Today</name>
+				<ts>2013-05-08T02:23:37Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
+			<source>
+				<name>Wall Street Journal</name>
+				<ts>2014-03-09T02:11:38Z</ts>
+			</source>
+		</image>
+	</images>
+	<addresses>
+		<address>
+			<street>3 Everett Trail</street>
+			<city>Long Beach</city>
+			<state>CA</state>
+			<postal>90810</postal>
+			<country>United States</country>
+			<latitude>33.8193</latitude>
+			<longitude>-118.2325</longitude>
+		</address>
+	</addresses>
+	<schools>
+		<school>
+			<country>Mexico</country>
+			<name>Universidad Franciscana de México</name>
+			<city>20 de Noviembre</city>
+			<state>COA</state>
+			<postal>30478</postal>
+			<latitude>19.4449916</latitude>
+			<longitude>-99.1082647</longitude>
+		</school>
+	</schools>
+	<status>Active</status>
+	<sources>
+		<source>
+			<name>Washington Post</name>
+			<ts>2018-03-06T21:42:07Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>USA Today</name>
+			<ts>2020-12-10T12:49:22Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>Washington Post</name>
+			<ts>2021-09-05T08:31:43Z</ts>
+		</source>
+	</sources>
+	<relations>
+		<relation>
+			<id>10046</id>
+			<predicate>relatedTo</predicate>
+		</relation>
+		<relation>
+			<id>10036</id>
+			<predicate>livesWith</predicate>
+		</relation>
+		<relation>
+			<id>10013</id>
+			<predicate>relatedTo</predicate>
+		</relation>
+		<relation>
+			<id>10018</id>
+			<predicate>worksWith</predicate>
+		</relation>
+		<relation>
+			<id>10036</id>
+			<predicate>relatedTo</predicate>
+		</relation>
+	</relations>
+	<createdOn>
+		<ts>2022-02-11T15:55:20Z</ts>
+		<user>dfriedlos14</user>
+	</createdOn>
+	<lastUpdated>
+		<ts>2022-01-01T10:31:03Z</ts>
+		<user>dfriedlos14</user>
+	</lastUpdated>
+	<socials>
+		<social>
+			<site>twitter</site>
+			<address>http://sakura.ne.jp/sapien/iaculis.js</address>
+		</social>
+	</socials>
+	<memberships/>
+</person>

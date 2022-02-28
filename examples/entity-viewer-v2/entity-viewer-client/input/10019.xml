@@ -1,0 +1,129 @@
+<person>
+	<personId>10019</personId>
+	<nameGroup>
+		<givenname>
+			<value>Thatch</value>
+		</givenname>
+		<surname>
+			<value>Spaldin</value>
+		</surname>
+		<fullname>
+			<classification>S</classification>
+			<restricted>true</restricted>
+			<value>Spaldin Thatch</value>
+			<source>
+				<name>USA Today</name>
+				<ts>2016-07-23T21:09:22Z</ts>
+			</source>
+			<source>
+				<name>New York Times</name>
+				<ts>2017-09-09T22:41:31Z</ts>
+			</source>
+		</fullname>
+	</nameGroup>
+	<emails>
+		<email>
+			<value>dwheeldon0@people.com.cn</value>
+			<classification>U</classification>
+			<restricted>false</restricted>
+		</email>
+	</emails>
+	<phone>450-371-9583</phone>
+	<ssn>
+		<value>881-37-9197</value>
+		<restricted>true</restricted>
+	</ssn>
+	<images>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
+			<source>
+				<name>Wall Street Journal</name>
+				<ts>2012-04-05T20:11:23Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+			<source>
+				<name>Wall Street Journal</name>
+				<ts>2019-12-07T07:29:54Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
+			<source>
+				<name>Wall Street Journal</name>
+				<ts>2012-10-07T16:42:04Z</ts>
+			</source>
+		</image>
+	</images>
+	<addresses>
+		<address>
+			<street>3179 1st Hill</street>
+			<city>Kansas City</city>
+			<state>MO</state>
+			<postal>64109</postal>
+			<country>United States</country>
+			<latitude>39.0663</latitude>
+			<longitude>-94.5674</longitude>
+		</address>
+	</addresses>
+	<schools>
+		<school>
+			<country>United States</country>
+			<name>Alaska Bible College</name>
+			<city>Chicago</city>
+			<state>IL</state>
+			<postal>60686</postal>
+			<latitude>41.8499561</latitude>
+			<longitude>-87.650042</longitude>
+		</school>
+		<school>
+			<country>United States</country>
+			<name>Kendall College of Art and Design</name>
+			<city>Cincinnati</city>
+			<state>OH</state>
+			<postal>45999</postal>
+			<latitude>39.07</latitude>
+			<longitude>-84.53</longitude>
+		</school>
+	</schools>
+	<status>Inactive</status>
+	<sources>
+		<source>
+			<name>Wall Street Journal</name>
+			<ts>2014-11-26T04:18:35Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>Wall Street Journal</name>
+			<ts>2019-12-15T15:20:35Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>Wall Street Journal</name>
+			<ts>2011-06-27T22:32:15Z</ts>
+		</source>
+	</sources>
+	<relations>
+		<relation>
+			<id>10046</id>
+			<predicate>worksWith</predicate>
+		</relation>
+		<relation>
+			<id>10002</id>
+			<predicate>relatedTo</predicate>
+		</relation>
+	</relations>
+	<createdOn>
+		<ts>2022-02-16T10:17:17Z</ts>
+		<user>tspaldini</user>
+	</createdOn>
+	<lastUpdated>
+		<ts>2022-01-28T10:34:59Z</ts>
+		<user>tspaldini</user>
+	</lastUpdated>
+	<socials/>
+	<memberships/>
+</person>
