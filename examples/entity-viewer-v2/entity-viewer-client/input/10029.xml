@@ -1,0 +1,163 @@
+<person>
+	<personId>10029</personId>
+	<nameGroup>
+		<givenname>
+			<value>Mikael</value>
+		</givenname>
+		<surname>
+			<value>Freed</value>
+		</surname>
+		<fullname>
+			<classification>C</classification>
+			<restricted>true</restricted>
+			<value>Freed Mikael</value>
+			<source>
+				<name>Los Angeles Times</name>
+				<ts>2021-12-20T02:54:57Z</ts>
+			</source>
+			<source>
+				<name>Chicago Tribune</name>
+				<ts>2012-05-07T02:34:27Z</ts>
+			</source>
+			<source>
+				<name>Washington Post</name>
+				<ts>2019-06-05T20:06:29Z</ts>
+			</source>
+		</fullname>
+	</nameGroup>
+	<emails>
+		<email>
+			<value>gwinckle0@artisteer.com</value>
+			<classification>U</classification>
+			<restricted>false</restricted>
+		</email>
+	</emails>
+	<phone>357-194-4838</phone>
+	<ssn>
+		<value>370-23-5274</value>
+		<restricted>true</restricted>
+	</ssn>
+	<images>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
+			<source>
+				<name>Los Angeles Times</name>
+				<ts>2014-11-01T01:59:04Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+			<source>
+				<name>Los Angeles Times</name>
+				<ts>2012-10-27T09:26:01Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
+			<source>
+				<name>New York Times</name>
+				<ts>2020-01-17T13:40:03Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+			<source>
+				<name>Washington Post</name>
+				<ts>2020-04-27T16:51:00Z</ts>
+			</source>
+		</image>
+	</images>
+	<addresses>
+		<address>
+			<street>155 Hollow Ridge Hill</street>
+			<city>Decatur</city>
+			<state>IL</state>
+			<postal>62525</postal>
+			<country>United States</country>
+			<latitude>39.854</latitude>
+			<longitude>-88.9815</longitude>
+		</address>
+	</addresses>
+	<schools>
+		<school>
+			<country>United States</country>
+			<name>American University</name>
+			<city>Kansas City</city>
+			<state>MO</state>
+			<postal>64125</postal>
+			<latitude>39.1070379</latitude>
+			<longitude>-94.4928531</longitude>
+		</school>
+	</schools>
+	<status>Inactive</status>
+	<sources>
+		<source>
+			<name>Wall Street Journal</name>
+			<ts>2017-04-21T15:16:35Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>Los Angeles Times</name>
+			<ts>2015-11-21T21:09:22Z</ts>
+		</source>
+	</sources>
+	<relations>
+		<relation>
+			<id>10063</id>
+			<predicate>relatedTo</predicate>
+		</relation>
+		<relation>
+			<id>10064</id>
+			<predicate>livesWith</predicate>
+		</relation>
+		<relation>
+			<id>10055</id>
+			<predicate>relatedTo</predicate>
+		</relation>
+		<relation>
+			<id>10030</id>
+			<predicate>relatedTo</predicate>
+		</relation>
+	</relations>
+	<createdOn>
+		<ts>2022-02-21T23:17:50Z</ts>
+		<user>mfreeds</user>
+	</createdOn>
+	<lastUpdated>
+		<ts>2022-02-05T23:26:18Z</ts>
+		<user>mfreeds</user>
+	</lastUpdated>
+	<socials>
+		<social>
+			<site>twitter</site>
+			<address>http://reference.com/sed.xml</address>
+		</social>
+	</socials>
+	<memberships>
+		<membership>
+			<list>list4</list>
+			<important>true</important>
+		</membership>
+		<membership>
+			<list>list12</list>
+			<important>false</important>
+		</membership>
+		<membership>
+			<list>list1</list>
+			<important>false</important>
+		</membership>
+		<membership>
+			<list>list3</list>
+			<important>true</important>
+		</membership>
+		<membership>
+			<list>list7</list>
+			<important>false</important>
+		</membership>
+		<membership>
+			<list>list10</list>
+			<important>false</important>
+		</membership>
+	</memberships>
+</person>

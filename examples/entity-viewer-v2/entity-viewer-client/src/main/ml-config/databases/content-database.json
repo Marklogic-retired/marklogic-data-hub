@@ -1,0 +1,38 @@
+{
+    "database-name": "%%DATABASE%%",
+    "range-element-index": [
+        {
+            "collation": "http://marklogic.com/collation/codepoint",
+            "invalid-values": "reject",
+            "localname": "status",
+            "namespace-uri": null,
+            "range-value-positions": false,
+            "scalar-type": "string"
+        },
+        {
+            "collation": "http://marklogic.com/collation/codepoint",
+            "invalid-values": "reject",
+            "localname": "personId",
+            "namespace-uri": null,
+            "range-value-positions": false,
+            "scalar-type": "string"
+        },
+        {
+            "collation": "http://marklogic.com/collation/codepoint",
+            "invalid-values": "reject",
+            "localname": "country",
+            "namespace-uri": null,
+            "range-value-positions": false,
+            "scalar-type": "string"
+        }
+    ],
+    "range-path-index": [
+        {
+          "scalar-type": "string",
+          "path-expression": "/person/sources/source/name",
+          "collation": "http://marklogic.com/collation/codepoint",
+          "range-value-positions": false,
+          "invalid-values": "reject"
+        }
+      ]
+}

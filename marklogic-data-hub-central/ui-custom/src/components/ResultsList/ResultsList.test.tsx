@@ -37,7 +37,7 @@ const resultsListConfig = {
         path: "extracted.person.createdOn",
         type: "datetime",
         format: "yyyy-MM-dd",
-        label: "Time is"
+        prefix: "Time is "
     },
     status: { path: "extracted.person.status" }
 };
@@ -84,6 +84,7 @@ const searchContextValue = {
     searchResults: searchResults,
     returned: 0,
     total: 0,
+    loading: false,
     handleSearch: jest.fn(),
     handleFacetString: jest.fn(),
     handleSaved: jest.fn()
@@ -98,6 +99,7 @@ const searchContextValueEmpty = {
     searchResults: searchResultsEmpty,
     returned: 0,
     total: 0,
+    loading: false,
     handleSearch: jest.fn(),
     handleFacetString: jest.fn(),
     handleSaved: jest.fn()

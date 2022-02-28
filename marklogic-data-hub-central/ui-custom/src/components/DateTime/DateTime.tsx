@@ -1,6 +1,6 @@
 import React from "react";
 import "./DateTime.scss";
-import { getValByPath } from "../../util/util";
+import { getValByConfig } from "../../util/util";
 import { DateTime as dt } from "luxon";
 
 type Props = {
@@ -22,12 +22,19 @@ const DateTime: React.FC<Props> = (props) => {
     if (props.children) {
         val = props.children;
     } else {
-        val = getValByPath(props.data, props.config.path, true);
+        val = getValByConfig(props.data, props.config, true)
     }
 
     let formattedDateTime;
     formattedDateTime = dt.fromISO(val).toFormat(props.config.format);
-    formattedDateTime = props.config.label ? props.config.label + " " + formattedDateTime : formattedDateTime;
+
+    if (formattedDateTime && props.config?.prefix) {
+        formattedDateTime = props.config?.prefix.concat(formattedDateTime);
+    }
+
+    if (formattedDateTime && props.config?.suffix) {
+        formattedDateTime = formattedDateTime.concat(props.config?.suffix);
+    }
 
     const dateTimeStyle: any = props.style ? props.style : {};
 

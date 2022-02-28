@@ -10,6 +10,7 @@ interface SearchContextInterface {
   searchResults: any;
   returned: number;
   total: number;
+  loading: boolean;
   handleSearch: any;
   handleFacetString: any;
   handleSaved: any;
@@ -27,6 +28,7 @@ const defaultState = {
   searchResults: {},
   returned: 0,
   total: 0,
+  loading: false,
   handleSearch: () => {},
   handleFacetString: () => {},
   handleSaved: () => {}
@@ -70,6 +72,7 @@ const SearchProvider: React.FC = ({ children }) => {
   const [facetStrings, setFacetStrings] = useState<string[]>([]);
   const [searchResults, setSearchResults] = useState<any>({});
   const [newSearch, setNewSearch] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const buildQuery = (start, pageLength, _qtext, _facetStrings, _entityType):QueryInterface => {
     let query = {
@@ -93,6 +96,10 @@ const SearchProvider: React.FC = ({ children }) => {
   useEffect(() => {
     if (newSearch) {
       setNewSearch(false);
+      setLoading(true);
+      if (location.pathname !== "/search") {
+        navigate("/search"); // Handle search submit from another view
+      }
       let newQuery = buildQuery(startInit, pageLengthInit, qtext, facetStrings, entityType);
       let sr = getSearchResults(userContext.config.api.searchResultsEndpoint, newQuery, userContext.userid);
       sr.then(result => {
@@ -101,9 +108,7 @@ const SearchProvider: React.FC = ({ children }) => {
         // TODO need total records in database in result
         setTotal(userContext.config.search.meter.totalRecords);
         setNewSearch(false);
-        if (location.pathname !== "/search") {
-          navigate("/search"); // Handle search submit from another view
-        }
+        setLoading(false);
       }).catch(error => {
         console.error(error);
       })
@@ -152,6 +157,7 @@ const SearchProvider: React.FC = ({ children }) => {
         searchResults,
         returned,
         total,
+        loading,
         handleSearch,
         handleFacetString,
         handleSaved

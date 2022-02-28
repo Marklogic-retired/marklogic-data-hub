@@ -1,0 +1,185 @@
+<person>
+	<personId>10080</personId>
+	<nameGroup>
+		<givenname>
+			<value>Janene</value>
+		</givenname>
+		<surname>
+			<value>Bartod</value>
+		</surname>
+		<fullname>
+			<classification>S</classification>
+			<restricted>true</restricted>
+			<value>Bartod Janene</value>
+			<source>
+				<name>New York Times</name>
+				<ts>2014-12-18T02:20:39Z</ts>
+			</source>
+			<source>
+				<name>Chicago Tribune</name>
+				<ts>2019-02-06T01:32:35Z</ts>
+			</source>
+		</fullname>
+	</nameGroup>
+	<emails>
+		<email>
+			<value>gfulop0@livejournal.com</value>
+			<classification>S</classification>
+			<restricted>false</restricted>
+		</email>
+	</emails>
+	<phone>959-553-0260</phone>
+	<ssn>
+		<value>863-50-2583</value>
+		<restricted>true</restricted>
+	</ssn>
+	<images>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
+			<source>
+				<name>Washington Post</name>
+				<ts>2018-04-27T15:13:56Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+			<source>
+				<name>Washington Post</name>
+				<ts>2019-11-09T11:13:55Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+			<source>
+				<name>USA Today</name>
+				<ts>2013-01-20T07:17:12Z</ts>
+			</source>
+		</image>
+	</images>
+	<addresses>
+		<address>
+			<street>9778 Lakeland Way</street>
+			<city>Albany</city>
+			<state>NY</state>
+			<postal>12242</postal>
+			<country>United States</country>
+			<latitude>42.6149</latitude>
+			<longitude>-73.9708</longitude>
+		</address>
+		<address>
+			<street>2 Valley Edge Way</street>
+			<city>Corpus Christi</city>
+			<state>TX</state>
+			<postal>78415</postal>
+			<country>United States</country>
+			<latitude>27.7262</latitude>
+			<longitude>-97.4078</longitude>
+		</address>
+		<address>
+			<street>9367 Mariners Cove Circle</street>
+			<city>Phoenix</city>
+			<state>AZ</state>
+			<postal>85053</postal>
+			<country>United States</country>
+			<latitude>33.6299</latitude>
+			<longitude>-112.1316</longitude>
+		</address>
+	</addresses>
+	<schools>
+		<school>
+			<country>Mexico</country>
+			<name>Universidad Autónoma del Carmen</name>
+			<city>Los Angeles</city>
+			<state>SIN</state>
+			<postal>81426</postal>
+			<latitude>25.4765601</latitude>
+			<longitude>-108.0887656</longitude>
+		</school>
+		<school>
+			<country>Canada</country>
+			<name>MacEwan University</name>
+			<city>Jasper Park Lodge</city>
+			<state>AB</state>
+			<postal>H3R</postal>
+			<latitude>52.8861365</latitude>
+			<longitude>-118.0572366</longitude>
+		</school>
+	</schools>
+	<status>Inactive</status>
+	<sources>
+		<source>
+			<name>Washington Post</name>
+			<ts>2014-12-11T04:36:18Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>Los Angeles Times</name>
+			<ts>2021-03-03T05:49:20Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>USA Today</name>
+			<ts>2011-10-01T03:03:47Z</ts>
+		</source>
+	</sources>
+	<relations>
+		<relation>
+			<id>10091</id>
+			<predicate>livesWith</predicate>
+		</relation>
+		<relation>
+			<id>10036</id>
+			<predicate>relatedTo</predicate>
+		</relation>
+		<relation>
+			<id>10097</id>
+			<predicate>livesWith</predicate>
+		</relation>
+		<relation>
+			<id>10043</id>
+			<predicate>relatedTo</predicate>
+		</relation>
+		<relation>
+			<id>10067</id>
+			<predicate>livesWith</predicate>
+		</relation>
+	</relations>
+	<createdOn>
+		<ts>2022-02-15T06:40:27Z</ts>
+		<user>jbartod27</user>
+	</createdOn>
+	<lastUpdated>
+		<ts>2022-02-10T20:48:16Z</ts>
+		<user>jbartod27</user>
+	</lastUpdated>
+	<socials>
+		<social>
+			<site>twitter</site>
+			<address>http://home.pl/luctus/et/ultrices/posuere/cubilia.js</address>
+		</social>
+	</socials>
+	<memberships>
+		<membership>
+			<list>list2</list>
+			<important>true</important>
+		</membership>
+		<membership>
+			<list>list8</list>
+			<important>true</important>
+		</membership>
+		<membership>
+			<list>list11</list>
+			<important>false</important>
+		</membership>
+		<membership>
+			<list>list12</list>
+			<important>false</important>
+		</membership>
+		<membership>
+			<list>list6</list>
+			<important>false</important>
+		</membership>
+	</memberships>
+</person>

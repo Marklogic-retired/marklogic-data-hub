@@ -1,0 +1,159 @@
+<person>
+	<personId>10004</personId>
+	<nameGroup>
+		<givenname>
+			<value>Penelope</value>
+		</givenname>
+		<surname>
+			<value>Anmore</value>
+		</surname>
+		<fullname>
+			<classification>S</classification>
+			<restricted>false</restricted>
+			<value>Anmore Penelope</value>
+			<source>
+				<name>Washington Post</name>
+				<ts>2021-05-22T15:45:09Z</ts>
+			</source>
+			<source>
+				<name>Los Angeles Times</name>
+				<ts>2018-12-03T14:50:30Z</ts>
+			</source>
+		</fullname>
+	</nameGroup>
+	<emails>
+		<email>
+			<value>jhoultham0@technorati.com</value>
+			<classification>S</classification>
+			<restricted>false</restricted>
+		</email>
+		<email>
+			<value>edemcik1@tripod.com</value>
+			<classification>C</classification>
+			<restricted>false</restricted>
+		</email>
+		<email>
+			<value>tlowndesbrough2@cam.ac.uk</value>
+			<classification>U</classification>
+			<restricted>false</restricted>
+		</email>
+	</emails>
+	<phone>142-422-6973</phone>
+	<ssn>
+		<value>662-04-2126</value>
+		<restricted>true</restricted>
+	</ssn>
+	<images>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
+			<source>
+				<name>New York Times</name>
+				<ts>2020-10-07T21:48:31Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+			<source>
+				<name>USA Today</name>
+				<ts>2016-09-27T05:28:15Z</ts>
+			</source>
+		</image>
+	</images>
+	<addresses>
+		<address>
+			<street>7415 Warrior Circle</street>
+			<city>Syracuse</city>
+			<state>NY</state>
+			<postal>13205</postal>
+			<country>United States</country>
+			<latitude>43.0123</latitude>
+			<longitude>-76.1452</longitude>
+		</address>
+		<address>
+			<street>74400 Marquette Junction</street>
+			<city>Lancaster</city>
+			<state>PA</state>
+			<postal>17605</postal>
+			<country>United States</country>
+			<latitude>40.0185</latitude>
+			<longitude>-76.2976</longitude>
+		</address>
+		<address>
+			<street>853 Menomonie Place</street>
+			<city>Pocatello</city>
+			<state>ID</state>
+			<postal>83206</postal>
+			<country>United States</country>
+			<latitude>42.6395</latitude>
+			<longitude>-112.3138</longitude>
+		</address>
+	</addresses>
+	<schools>
+		<school>
+			<country>Mexico</country>
+			<name>Universidad de Ciencias y Artes de Chiapas</name>
+			<city>La Soledad</city>
+			<state>OAX</state>
+			<postal>68430</postal>
+			<latitude>24.762172</latitude>
+			<longitude>-104.927894</longitude>
+		</school>
+		<school>
+			<country>Canada</country>
+			<name>Capilano College</name>
+			<city>Revelstoke</city>
+			<state>BC</state>
+			<postal>H9K</postal>
+			<latitude>50.98317</latitude>
+			<longitude>-118.2023</longitude>
+		</school>
+	</schools>
+	<status>Inactive</status>
+	<sources>
+		<source>
+			<name>USA Today</name>
+			<ts>2020-10-17T22:28:58Z</ts>
+		</source>
+	</sources>
+	<relations>
+		<relation>
+			<id>10078</id>
+			<predicate>livesWith</predicate>
+		</relation>
+		<relation>
+			<id>10020</id>
+			<predicate>livesWith</predicate>
+		</relation>
+		<relation>
+			<id>10053</id>
+			<predicate>worksWith</predicate>
+		</relation>
+		<relation>
+			<id>10002</id>
+			<predicate>worksWith</predicate>
+		</relation>
+	</relations>
+	<createdOn>
+		<ts>2022-01-23T23:32:03Z</ts>
+		<user>panmore3</user>
+	</createdOn>
+	<lastUpdated>
+		<ts>2022-01-09T09:34:41Z</ts>
+		<user>panmore3</user>
+	</lastUpdated>
+	<socials/>
+	<memberships>
+		<membership>
+			<list>list8</list>
+			<important>true</important>
+		</membership>
+		<membership>
+			<list>list2</list>
+			<important>true</important>
+		</membership>
+		<membership>
+			<list>list11</list>
+			<important>true</important>
+		</membership>
+	</memberships>
+</person>

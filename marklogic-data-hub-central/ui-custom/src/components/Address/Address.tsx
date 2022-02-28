@@ -1,6 +1,6 @@
 import React from "react";
 import "./Address.scss";
-import { getValByPath } from "../../util/util";
+import { getValByPath, getValByConfig } from "../../util/util";
 
 type Props = {
   config?: any;
@@ -24,7 +24,7 @@ const Address: React.FC<Props> = (props) => {
     const addressStyle: any = props.style ? props.style : {};
 
     // Get address-containing object (if array, use first element)
-    const addressData = props.config.addressPath ? getValByPath(props.data, props.config.addressPath, true) : props.data;
+    let addressData = props.config.arrayPath ? getValByConfig(props.data, props.config, true) : props.data;
 
     const street1: any = getValByPath(addressData, props.config.street1, true) || null;
     const street2: any = getValByPath(addressData, props.config.street2, true) || null;
@@ -32,13 +32,15 @@ const Address: React.FC<Props> = (props) => {
     const state: any = getValByPath(addressData, props.config.state, true) || null;
     const postal1: any = getValByPath(addressData, props.config.postal1, true) || null;
     const postal2: any = getValByPath(addressData, props.config.postal2, true) || null;
+    const country: any = getValByPath(addressData, props.config.country, true) || null;
 
     const addrFormatted: string = display(street1, "", (street2 || city) ? ", " : "") +
                           display(street2, "", city ? ", " : "") +
                           display(city, "", state ? ", " : "") +
                           display(state, "", " ") +
-                          display(postal1, "", "") +
-                          display(postal2, "-", "");
+                          display(postal1, "", postal2 ? "" : " ") +
+                          display(postal2, "-", " ") +
+                          display(country, "", "");
 
     return (
         <span className="Address" style={addressStyle} title={addrFormatted}>
