@@ -1,0 +1,150 @@
+<person>
+	<personId>10056</personId>
+	<nameGroup>
+		<givenname>
+			<value>Conni</value>
+		</givenname>
+		<surname>
+			<value>Thamelt</value>
+		</surname>
+		<fullname>
+			<classification>S</classification>
+			<restricted>false</restricted>
+			<value>Thamelt Conni</value>
+			<source>
+				<name>Los Angeles Times</name>
+				<ts>2021-03-20T12:51:31Z</ts>
+			</source>
+		</fullname>
+	</nameGroup>
+	<emails>
+		<email>
+			<value>sklaaassen0@acquirethisname.com</value>
+			<classification>U</classification>
+			<restricted>false</restricted>
+		</email>
+		<email>
+			<value>ucheetam1@deviantart.com</value>
+			<classification>S</classification>
+			<restricted>false</restricted>
+		</email>
+		<email>
+			<value>rdivill2@soundcloud.com</value>
+			<classification>U</classification>
+			<restricted>false</restricted>
+		</email>
+	</emails>
+	<phone>935-531-3857</phone>
+	<ssn>
+		<value>622-28-4176</value>
+		<restricted>true</restricted>
+	</ssn>
+	<images>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+			<source>
+				<name>Wall Street Journal</name>
+				<ts>2016-10-14T06:10:51Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
+			<source>
+				<name>Los Angeles Times</name>
+				<ts>2021-06-24T18:50:33Z</ts>
+			</source>
+		</image>
+	</images>
+	<addresses>
+		<address>
+			<street>7041 Sutteridge Way</street>
+			<city>Memphis</city>
+			<state>TN</state>
+			<postal>38188</postal>
+			<country>United States</country>
+			<latitude>35.2017</latitude>
+			<longitude>-89.9715</longitude>
+		</address>
+		<address>
+			<street>9 Prentice Drive</street>
+			<city>Santa Monica</city>
+			<state>CA</state>
+			<postal>90405</postal>
+			<country>United States</country>
+			<latitude>34.01</latitude>
+			<longitude>-118.4717</longitude>
+		</address>
+		<address>
+			<street>7 Cherokee Terrace</street>
+			<city>Naples</city>
+			<state>FL</state>
+			<postal>33963</postal>
+			<country>United States</country>
+			<latitude>26.2626</latitude>
+			<longitude>-81.8071</longitude>
+		</address>
+	</addresses>
+	<schools>
+		<school>
+			<country>United States</country>
+			<name>Troy University</name>
+			<city>Lawrenceville</city>
+			<state>GA</state>
+			<postal>30045</postal>
+			<latitude>33.9255183</latitude>
+			<longitude>-83.9214896</longitude>
+		</school>
+	</schools>
+	<status>Inactive</status>
+	<sources>
+		<source>
+			<name>Los Angeles Times</name>
+			<ts>2012-10-10T06:06:31Z</ts>
+		</source>
+	</sources>
+	<relations>
+		<relation>
+			<id>10084</id>
+			<predicate>livesWith</predicate>
+		</relation>
+		<relation>
+			<id>10089</id>
+			<predicate>worksWith</predicate>
+		</relation>
+		<relation>
+			<id>10076</id>
+			<predicate>livesWith</predicate>
+		</relation>
+		<relation>
+			<id>10085</id>
+			<predicate>livesWith</predicate>
+		</relation>
+		<relation>
+			<id>10085</id>
+			<predicate>worksWith</predicate>
+		</relation>
+	</relations>
+	<createdOn>
+		<ts>2022-01-10T20:09:48Z</ts>
+		<user>cthamelt1j</user>
+	</createdOn>
+	<lastUpdated>
+		<ts>2022-02-04T08:07:47Z</ts>
+		<user>cthamelt1j</user>
+	</lastUpdated>
+	<socials/>
+	<memberships>
+		<membership>
+			<list>list7</list>
+			<important>true</important>
+		</membership>
+		<membership>
+			<list>list11</list>
+			<important>false</important>
+		</membership>
+		<membership>
+			<list>list7</list>
+			<important>true</important>
+		</membership>
+	</memberships>
+</person>

@@ -1,17 +1,18 @@
 import React from "react";
 import "./Value.scss";
-import { getValByPath } from "../../util/util";
+import { getValByPath, getValByConfig } from "../../util/util";
 
 type Props = {
   config?: any;
   data?: any;
+  className?: string;
   style?: any;
   title?: any;
   getFirst?: boolean;
 };
 
 /**
- * Component for showing value in colored container.
+ * Component for showing normal value.
  *
  * @component
  * @example
@@ -23,7 +24,7 @@ const Value: React.FC<Props> = (props) => {
     if (props.children) {
         val = props.children;
     } else {
-        val = getValByPath(props.data, props.config.path, props.getFirst! );
+        val = getValByConfig(props.data, props.config, true);
     }
 
     if (val && props.config?.prefix) {
@@ -34,7 +35,7 @@ const Value: React.FC<Props> = (props) => {
         val = val.concat(props.config?.suffix);
     }
 
-    let valueClassName: any = props.style ? props.style : props.config?.style ? props.config.style : "";
+    let valueClassName: any = props.className ? props.className : props.config?.className ? props.config.className : "";
     let valueStyle: any = props.style ? props.style : props.config?.style ? props.config.style : {};
     let valueTitle: string = val;
 

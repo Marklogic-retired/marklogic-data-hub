@@ -1,0 +1,157 @@
+<person>
+	<personId>10092</personId>
+	<nameGroup>
+		<givenname>
+			<value>Raeann</value>
+		</givenname>
+		<surname>
+			<value>Hackly</value>
+		</surname>
+		<fullname>
+			<classification>S</classification>
+			<restricted>true</restricted>
+			<value>Hackly Raeann</value>
+			<source>
+				<name>Wall Street Journal</name>
+				<ts>2018-11-04T10:01:47Z</ts>
+			</source>
+			<source>
+				<name>Chicago Tribune</name>
+				<ts>2011-02-11T23:33:38Z</ts>
+			</source>
+		</fullname>
+	</nameGroup>
+	<emails>
+		<email>
+			<value>ramoore0@scribd.com</value>
+			<classification>C</classification>
+			<restricted>false</restricted>
+		</email>
+	</emails>
+	<phone>810-501-1023</phone>
+	<ssn>
+		<value>192-44-4694</value>
+		<restricted>true</restricted>
+	</ssn>
+	<images>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+			<source>
+				<name>New York Times</name>
+				<ts>2016-05-25T15:26:53Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
+			<source>
+				<name>Washington Post</name>
+				<ts>2015-07-28T14:23:41Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
+			<source>
+				<name>Washington Post</name>
+				<ts>2012-01-24T01:42:37Z</ts>
+			</source>
+		</image>
+	</images>
+	<addresses>
+		<address>
+			<street>41 Lien Plaza</street>
+			<city>Saint Louis</city>
+			<state>MO</state>
+			<postal>63131</postal>
+			<country>United States</country>
+			<latitude>38.6171</latitude>
+			<longitude>-90.4504</longitude>
+		</address>
+	</addresses>
+	<schools>
+		<school>
+			<country>Canada</country>
+			<name>Brandon University</name>
+			<city>Petrolia</city>
+			<state>ON</state>
+			<postal>N0N</postal>
+			<latitude>42.8818379</latitude>
+			<longitude>-82.1444338</longitude>
+		</school>
+		<school>
+			<country>United States</country>
+			<name>Kent State University - Trumbull</name>
+			<city>Kansas City</city>
+			<state>KS</state>
+			<postal>66112</postal>
+			<latitude>39.1140535</latitude>
+			<longitude>-94.7743365</longitude>
+		</school>
+	</schools>
+	<status>Active</status>
+	<sources>
+		<source>
+			<name>Los Angeles Times</name>
+			<ts>2010-09-25T11:17:50Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>New York Times</name>
+			<ts>2011-08-29T09:45:13Z</ts>
+		</source>
+	</sources>
+	<relations>
+		<relation>
+			<id>10082</id>
+			<predicate>worksWith</predicate>
+		</relation>
+		<relation>
+			<id>10009</id>
+			<predicate>worksWith</predicate>
+		</relation>
+	</relations>
+	<createdOn>
+		<ts>2022-01-23T23:08:22Z</ts>
+		<user>rhackly2j</user>
+	</createdOn>
+	<lastUpdated>
+		<ts>2022-01-26T07:01:55Z</ts>
+		<user>rhackly2j</user>
+	</lastUpdated>
+	<socials>
+		<social>
+			<site>twitter</site>
+			<address>http://cpanel.net/condimentum/neque/sapien.json</address>
+		</social>
+		<social>
+			<site>twitter</site>
+			<address>http://statcounter.com/pede/venenatis/non/sodales.json</address>
+		</social>
+	</socials>
+	<memberships>
+		<membership>
+			<list>list9</list>
+			<important>false</important>
+		</membership>
+		<membership>
+			<list>list3</list>
+			<important>true</important>
+		</membership>
+		<membership>
+			<list>list1</list>
+			<important>true</important>
+		</membership>
+		<membership>
+			<list>list5</list>
+			<important>true</important>
+		</membership>
+		<membership>
+			<list>list12</list>
+			<important>false</important>
+		</membership>
+		<membership>
+			<list>list10</list>
+			<important>true</important>
+		</membership>
+	</memberships>
+</person>

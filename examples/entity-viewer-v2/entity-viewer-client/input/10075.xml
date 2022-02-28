@@ -1,0 +1,162 @@
+<person>
+	<personId>10075</personId>
+	<nameGroup>
+		<givenname>
+			<value>Sonny</value>
+		</givenname>
+		<surname>
+			<value>Desson</value>
+		</surname>
+		<fullname>
+			<classification>U</classification>
+			<restricted>true</restricted>
+			<value>Desson Sonny</value>
+			<source>
+				<name>New York Times</name>
+				<ts>2019-08-19T10:39:42Z</ts>
+			</source>
+			<source>
+				<name>Washington Post</name>
+				<ts>2016-02-22T22:51:50Z</ts>
+			</source>
+		</fullname>
+	</nameGroup>
+	<emails>
+		<email>
+			<value>obonelle0@engadget.com</value>
+			<classification>S</classification>
+			<restricted>false</restricted>
+		</email>
+		<email>
+			<value>ldimic1@myspace.com</value>
+			<classification>U</classification>
+			<restricted>false</restricted>
+		</email>
+		<email>
+			<value>eperigoe2@nasa.gov</value>
+			<classification>C</classification>
+			<restricted>false</restricted>
+		</email>
+	</emails>
+	<phone>592-511-0245</phone>
+	<ssn>
+		<value>559-74-0239</value>
+		<restricted>true</restricted>
+	</ssn>
+	<images>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+			<source>
+				<name>Chicago Tribune</name>
+				<ts>2012-04-11T18:36:15Z</ts>
+			</source>
+		</image>
+	</images>
+	<addresses>
+		<address>
+			<street>288 Crest Line Parkway</street>
+			<city>Lake Charles</city>
+			<state>LA</state>
+			<postal>70616</postal>
+			<country>United States</country>
+			<latitude>30.2642</latitude>
+			<longitude>-93.3265</longitude>
+		</address>
+		<address>
+			<street>604 Brown Drive</street>
+			<city>Pensacola</city>
+			<state>FL</state>
+			<postal>32520</postal>
+			<country>United States</country>
+			<latitude>30.4124</latitude>
+			<longitude>-87.2035</longitude>
+		</address>
+		<address>
+			<street>093 Elmside Drive</street>
+			<city>Reading</city>
+			<state>PA</state>
+			<postal>19610</postal>
+			<country>United States</country>
+			<latitude>40.338</latitude>
+			<longitude>-75.978</longitude>
+		</address>
+	</addresses>
+	<schools>
+		<school>
+			<country>Mexico</country>
+			<name>Universidad La Salle</name>
+			<city>San Isidro</city>
+			<state>MEX</state>
+			<postal>54730</postal>
+			<latitude>19.6632775</latitude>
+			<longitude>-99.2058279</longitude>
+		</school>
+	</schools>
+	<status>Inactive</status>
+	<sources>
+		<source>
+			<name>Chicago Tribune</name>
+			<ts>2019-09-05T23:50:27Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>New York Times</name>
+			<ts>2011-12-17T23:41:09Z</ts>
+		</source>
+	</sources>
+	<relations>
+		<relation>
+			<id>10052</id>
+			<predicate>worksWith</predicate>
+		</relation>
+		<relation>
+			<id>10018</id>
+			<predicate>livesWith</predicate>
+		</relation>
+	</relations>
+	<createdOn>
+		<ts>2022-01-16T21:31:48Z</ts>
+		<user>sdesson22</user>
+	</createdOn>
+	<lastUpdated>
+		<ts>2022-02-11T02:03:09Z</ts>
+		<user>sdesson22</user>
+	</lastUpdated>
+	<socials>
+		<social>
+			<site>facebook</site>
+			<address>https://nbcnews.com/quis/tortor/id/nulla/ultrices/aliquet.js</address>
+		</social>
+		<social>
+			<site>facebook</site>
+			<address>http://hao123.com/luctus/ultricies/eu.jpg</address>
+		</social>
+	</socials>
+	<memberships>
+		<membership>
+			<list>list7</list>
+			<important>true</important>
+		</membership>
+		<membership>
+			<list>list5</list>
+			<important>true</important>
+		</membership>
+		<membership>
+			<list>list8</list>
+			<important>false</important>
+		</membership>
+		<membership>
+			<list>list1</list>
+			<important>true</important>
+		</membership>
+		<membership>
+			<list>list5</list>
+			<important>true</important>
+		</membership>
+		<membership>
+			<list>list7</list>
+			<important>true</important>
+		</membership>
+	</memberships>
+</person>

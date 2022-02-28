@@ -6,7 +6,7 @@ import userEvent from "@testing-library/user-event";
 const configMultiple = {
     id: "phone", 
     title: "Phone Number", 
-    dataPath: "result[0].extracted.person.phone", 
+    path: "result[0].extracted.person.phone", 
     icon: "phone",
     metadata: [
         {
@@ -25,7 +25,45 @@ const configMultiple = {
 const configSingular = {
     id: "ssn", 
     title: "SSN", 
-    dataPath: "result[0].extracted.person.ssn",
+    path: "result[0].extracted.person.ssn",
+    metadata: [
+        {
+            type: "block",
+            color: "#96bde4",
+            value: "B"
+        },
+        {
+            type: "block",
+            color: "#5d6aaa",
+            value: "4"
+        }
+    ]
+};
+
+const configArrayPathMultiple = {
+    id: "email", 
+    title: "Email", 
+    arrayPath: "result[0].extracted.person.email",
+    path: "value",
+    metadata: [
+        {
+            type: "block",
+            color: "#96bde4",
+            value: "B"
+        },
+        {
+            type: "block",
+            color: "#5d6aaa",
+            value: "4"
+        }
+    ]
+};
+
+const configArrayPathSingular = {
+    id: "email", 
+    title: "Email", 
+    arrayPath: "result[0].extracted.person.image",
+    path: "value",
     metadata: [
         {
             type: "block",
@@ -54,17 +92,20 @@ const detail = {
 		            "id": "101",
 		            "name": [ "John Doe", "Johnny Doe"],
 		            "phone": ["123-456-7890", "321-654-9876"],
-		            "image": ["http://example.org/entity.jpg"],
-		            "address": [
+                    "email": [
                         {
-                            "city": "Anytown",
-                            "state": "CA"
-		                },
+                            "value": "jdoe1@example.org",
+                            "restricted": false
+                        }, 
                         {
-                            "city": "Anyville",
-                            "state": "CA"
-		                }
+                            "value": "jdoe2@example.org",
+                            "restricted": true
+                        }
                     ],
+                    "image": {
+                        "value": "http://example.org/entity1.jpg",
+                        "restricted": false
+                    },
 		            "status": ["active"],
 		            "ssn": ["123-45-6789"],
 		            "sources": ["source1", "source2"],
@@ -112,6 +153,29 @@ describe("DataTableValue component", () => {
         expect(getByText("123-45-6789")).toBeInTheDocument();
         expect(queryAllByText(configMultiple.metadata[0].value).length > 0);
         expect(queryAllByText(configMultiple.metadata[1].value).length > 0);
+    });
+
+    test("Verify data table renders with a property in an array of objects using arrayPath", () => {
+        const {getByText, getByTestId} = render(
+            <DetailContext.Provider value={detailContextValue}>
+                <DataTableValue config={configArrayPathMultiple} />
+            </DetailContext.Provider>
+        );
+        expect(getByText(configArrayPathMultiple.title)).toBeInTheDocument();
+        expect(getByTestId("hideUp")).toBeInTheDocument();
+        expect(getByText("jdoe1@example.org")).toBeInTheDocument();
+        expect(getByText("jdoe2@example.org")).toBeInTheDocument();
+    });
+
+    test("Verify data table renders with a property in a single object using arrayPath", () => {
+        const {getByText, queryByTestId} = render(
+            <DetailContext.Provider value={detailContextValue}>
+                <DataTableValue config={configArrayPathSingular} />
+            </DetailContext.Provider>
+        );
+        expect(getByText(configArrayPathSingular.title)).toBeInTheDocument();
+        expect(queryByTestId("hideUp")).not.toBeInTheDocument();
+        expect(getByText("http://example.org/entity1.jpg")).toBeInTheDocument();
     });
 
     test("Verify data table does not render with a property that does not exist in the results", () => {

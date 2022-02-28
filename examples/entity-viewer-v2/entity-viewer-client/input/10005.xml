@@ -1,0 +1,144 @@
+<person>
+	<personId>10005</personId>
+	<nameGroup>
+		<givenname>
+			<value>Perry</value>
+		</givenname>
+		<surname>
+			<value>Perillo</value>
+		</surname>
+		<fullname>
+			<classification>S</classification>
+			<restricted>true</restricted>
+			<value>Perillo Perry</value>
+			<source>
+				<name>Los Angeles Times</name>
+				<ts>2012-12-21T08:11:47Z</ts>
+			</source>
+			<source>
+				<name>Los Angeles Times</name>
+				<ts>2012-01-31T20:28:30Z</ts>
+			</source>
+			<source>
+				<name>Washington Post</name>
+				<ts>2017-03-08T10:16:22Z</ts>
+			</source>
+		</fullname>
+	</nameGroup>
+	<emails>
+		<email>
+			<value>hausello0@cnn.com</value>
+			<classification>U</classification>
+			<restricted>false</restricted>
+		</email>
+	</emails>
+	<phone>295-881-7383</phone>
+	<ssn>
+		<value>618-31-6459</value>
+		<restricted>true</restricted>
+	</ssn>
+	<images>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+			<source>
+				<name>USA Today</name>
+				<ts>2016-01-07T02:59:12Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+			<source>
+				<name>New York Times</name>
+				<ts>2018-08-19T02:46:45Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+			<source>
+				<name>Wall Street Journal</name>
+				<ts>2015-12-18T00:42:00Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
+			<source>
+				<name>Washington Post</name>
+				<ts>2017-01-17T21:18:44Z</ts>
+			</source>
+		</image>
+	</images>
+	<addresses>
+		<address>
+			<street>85292 Anzinger Drive</street>
+			<city>El Paso</city>
+			<state>TX</state>
+			<postal>88584</postal>
+			<country>United States</country>
+			<latitude>31.6948</latitude>
+			<longitude>-106.3</longitude>
+		</address>
+	</addresses>
+	<schools>
+		<school>
+			<country>Canada</country>
+			<name>Quest University</name>
+			<city>Mascouche</city>
+			<state>QC</state>
+			<postal>J6W</postal>
+			<latitude>45.7055658</latitude>
+			<longitude>-73.6072341</longitude>
+		</school>
+	</schools>
+	<status>Inactive</status>
+	<sources>
+		<source>
+			<name>Wall Street Journal</name>
+			<ts>2010-04-05T10:16:06Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>Chicago Tribune</name>
+			<ts>2018-02-02T02:34:46Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>Chicago Tribune</name>
+			<ts>2012-01-12T14:31:54Z</ts>
+		</source>
+	</sources>
+	<relations>
+		<relation>
+			<id>10081</id>
+			<predicate>relatedTo</predicate>
+		</relation>
+		<relation>
+			<id>10049</id>
+			<predicate>livesWith</predicate>
+		</relation>
+		<relation>
+			<id>10073</id>
+			<predicate>relatedTo</predicate>
+		</relation>
+	</relations>
+	<createdOn>
+		<ts>2022-01-03T06:48:40Z</ts>
+		<user>pperillo4</user>
+	</createdOn>
+	<lastUpdated>
+		<ts>2022-02-22T11:41:19Z</ts>
+		<user>pperillo4</user>
+	</lastUpdated>
+	<socials>
+		<social>
+			<site>twitter</site>
+			<address>https://nationalgeographic.com/imperdiet/nullam/orci/pede/venenatis/non.aspx</address>
+		</social>
+		<social>
+			<site>linkedin</site>
+			<address>https://cargocollective.com/luctus/tincidunt/nulla/mollis.aspx</address>
+		</social>
+	</socials>
+	<memberships/>
+</person>

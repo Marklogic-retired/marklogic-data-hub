@@ -1,0 +1,141 @@
+<person>
+	<personId>10096</personId>
+	<nameGroup>
+		<givenname>
+			<value>Rora</value>
+		</givenname>
+		<surname>
+			<value>Dell Casa</value>
+		</surname>
+		<fullname>
+			<classification>C</classification>
+			<restricted>false</restricted>
+			<value>Dell Casa Rora</value>
+			<source>
+				<name>Washington Post</name>
+				<ts>2018-07-21T18:10:52Z</ts>
+			</source>
+			<source>
+				<name>Washington Post</name>
+				<ts>2013-12-11T02:53:56Z</ts>
+			</source>
+		</fullname>
+	</nameGroup>
+	<emails>
+		<email>
+			<value>ewarlow0@yolasite.com</value>
+			<classification>C</classification>
+			<restricted>false</restricted>
+		</email>
+	</emails>
+	<phone>975-962-8795</phone>
+	<ssn>
+		<value>439-47-7489</value>
+		<restricted>true</restricted>
+	</ssn>
+	<images>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
+			<source>
+				<name>Wall Street Journal</name>
+				<ts>2021-06-18T20:18:30Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+			<source>
+				<name>New York Times</name>
+				<ts>2018-09-26T14:57:15Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+			<source>
+				<name>Chicago Tribune</name>
+				<ts>2012-08-02T08:23:25Z</ts>
+			</source>
+		</image>
+		<image>
+			<url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
+			<source>
+				<name>Los Angeles Times</name>
+				<ts>2019-11-12T00:03:06Z</ts>
+			</source>
+		</image>
+	</images>
+	<addresses>
+		<address>
+			<street>33209 Michigan Terrace</street>
+			<city>Sparks</city>
+			<state>NV</state>
+			<postal>89436</postal>
+			<country>United States</country>
+			<latitude>39.6269</latitude>
+			<longitude>-119.7081</longitude>
+		</address>
+	</addresses>
+	<schools>
+		<school>
+			<country>United States</country>
+			<name>Davenport College of Business, Grand Rapids</name>
+			<city>Miami Beach</city>
+			<state>FL</state>
+			<postal>33141</postal>
+			<latitude>25.8535635</latitude>
+			<longitude>-80.1484407</longitude>
+		</school>
+	</schools>
+	<status>Inactive</status>
+	<sources>
+		<source>
+			<name>Wall Street Journal</name>
+			<ts>2012-09-05T06:14:36Z</ts>
+		</source>
+	</sources>
+	<relations>
+		<relation>
+			<id>10076</id>
+			<predicate>relatedTo</predicate>
+		</relation>
+		<relation>
+			<id>10043</id>
+			<predicate>relatedTo</predicate>
+		</relation>
+		<relation>
+			<id>10082</id>
+			<predicate>relatedTo</predicate>
+		</relation>
+		<relation>
+			<id>10016</id>
+			<predicate>worksWith</predicate>
+		</relation>
+	</relations>
+	<createdOn>
+		<ts>2022-02-25T06:15:17Z</ts>
+		<user>rdellcasa2n</user>
+	</createdOn>
+	<lastUpdated>
+		<ts>2022-01-20T10:20:23Z</ts>
+		<user>rdellcasa2n</user>
+	</lastUpdated>
+	<socials>
+		<social>
+			<site>twitter</site>
+			<address>https://google.com.au/platea/dictumst.jsp</address>
+		</social>
+		<social>
+			<site>facebook</site>
+			<address>https://discovery.com/tempus/semper/est.js</address>
+		</social>
+		<social>
+			<site>facebook</site>
+			<address>http://booking.com/tellus.js</address>
+		</social>
+	</socials>
+	<memberships>
+		<membership>
+			<list>list4</list>
+			<important>true</important>
+		</membership>
+	</memberships>
+</person>
