@@ -6,6 +6,7 @@ type Props = {
   config?: any;
   data?: any;
   style?: any;
+  className?: any;
 };
 
 /**
@@ -21,7 +22,8 @@ const Address: React.FC<Props> = (props) => {
         return val ? "".concat(pre, val, post) : "";
     }
 
-    const addressStyle: any = props.style ? props.style : {};
+    const addressClassName: any = props.className ? props.className : props.config?.className ? props.config.className : "";
+    const addressStyle: any = props.style ? props.style : (props.config.style ? props.config.style : {});
 
     // Get address-containing object (if array, use first element)
     let addressData = props.config.arrayPath ? getValByConfig(props.data, props.config, true) : props.data;
@@ -43,7 +45,7 @@ const Address: React.FC<Props> = (props) => {
                           display(country, "", "");
 
     return (
-        <span className="Address" style={addressStyle} title={addrFormatted}>
+        <span className={addressClassName ? addressClassName : "Address"} style={addressStyle} title={addrFormatted}>
             {addrFormatted}
         </span>
     );

@@ -6,10 +6,15 @@ import userEvent from '@testing-library/user-event'
 
 const resultsListConfig = {
     thumbnail: {
-        src: "extracted.person.image",
-        width: "70px",
-        height: "70px",
-        alt: "result thumbnail"
+        component: "Image",
+        config: {
+            path: "extracted.person.image",
+            alt: "result thumbnail",
+            style: {
+                width: "70px",
+                height: "70px"
+            }
+        }
     },
     title: {
         path: "extracted.person.name",
@@ -23,7 +28,13 @@ const resultsListConfig = {
                 state: "extracted.person.address.state"
             }
         },
-        { path: "extracted.person.phone", className: "phone"},
+        { 
+            component: "Value",
+            config: {
+                path: "extracted.person.phone", 
+                className: "phone"
+            }
+        },
         { path: "extracted.person.ssn"}
     ],
     categories: {

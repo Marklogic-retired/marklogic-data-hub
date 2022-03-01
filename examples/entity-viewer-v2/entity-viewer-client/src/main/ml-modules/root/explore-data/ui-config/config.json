@@ -150,7 +150,7 @@
                 "all": "#cccccc",
                 "filters": "#1ACCA8"
             },
-            "totalRecords": 100
+            "totalRecords": 99
         },
         "facets": {
             "selected": "#1acca8",
@@ -178,11 +178,16 @@
         },
         "results": {
             "thumbnail": {
-                "arrayPath": "extracted.person.images.image",
-                "path": "url",
-                "width": "70px",
-                "height": "70px",
-                "alt": "result thumbnail"
+                "component": "Image",
+                "config": {
+                    "arrayPath": "extracted.person.images.image",
+                    "path": "url",
+                    "alt": "result thumbnail",
+                    "style": {
+                        "width": "70px",
+                        "height": "70px"
+                    }
+                }
             },
             "title": { 
                 "id": "extracted.person.personId",
@@ -198,17 +203,20 @@
                         "city": "city",
                         "state": "state",
                         "postal1": "postal",
-                        "country": "country"
-                    },
-                    "style": {
-                        "width": "350px",
-                        "overflow": "hidden",
-                        "textOverflow": "ellipsis"
+                        "country": "country",
+                        "style": {
+                            "width": "350px",
+                            "overflow": "hidden",
+                            "textOverflow": "ellipsis"
+                        }
                     }
                 },
                 { 
-                    "path": "extracted.person.phone", 
-                    "className": "phone" 
+                    "component": "Value",
+                    "config": {
+                        "path": "extracted.person.phone", 
+                        "className": "phone"
+                    }
                 },
                 { 
                     "arrayPath": "extracted.person.emails.email",
@@ -250,11 +258,16 @@
         "heading": {
             "id": "result[0].extracted.person.personId",
             "thumbnail": {
-                "arrayPath": "result[0].extracted.person.images.image",
-                "path": "url",
-                "width": "70px",
-                "height": "70px",
-                "alt": "detail thumbnail"
+                "component": "Image",
+                "config": {
+                    "arrayPath": "result[0].extracted.person.images.image",
+                    "path": "url",
+                    "alt": "detail thumbnail",
+                    "style": {
+                        "width": "60px",
+                        "height": "60px"
+                    }
+                }
             },
             "title": { 
                 "path": "result[0].extracted.person.nameGroup.fullname.value"
@@ -264,213 +277,225 @@
         "personal": {
             "items": [
                 {
-                    "id": "name",
                     "component": "DataTableValue",
-                    "title": "Name",
-                    "path": "result[0].extracted.person.nameGroup.fullname.value",
-                    "width": "400px",
-                    "metadata": [
-                        {
-                            "type": "block",
-                            "color": "#96bde4",
-                            "value": "B"
-                        },
-                        {
-                            "type": "block",
-                            "color": "#5d6aaa",
-                            "value": "3",
-                            "popover": {
-                                "title": "Sources",
-                                "dataPath": "result[0].extracted.person.sources",
-                                "placement": "right",
-                                "cols": [
-                                    {
-                                        "path": "name",
-                                        "type": "chiclet",
-                                        "colors": {
-                                            "New York Times": "#d5e1de",
-                                            "USA Today": "#ebe1fa",
-                                            "Los Angeles Times": "#cae4ea",
-                                            "Wall Street Journal": "#fae9d3",
-                                            "Washington Post": "#fae3df",
-                                            "Chicago Tribune": "#f0f6d9"
+                    "config": {
+                        "id": "name",
+                        "title": "Name",
+                        "path": "result[0].extracted.person.nameGroup.fullname.value",
+                        "width": "400px",
+                        "metadata": [
+                            {
+                                "type": "block",
+                                "color": "#96bde4",
+                                "value": "B"
+                            },
+                            {
+                                "type": "block",
+                                "color": "#5d6aaa",
+                                "value": "3",
+                                "popover": {
+                                    "title": "Sources",
+                                    "dataPath": "result[0].extracted.person.sources",
+                                    "placement": "right",
+                                    "cols": [
+                                        {
+                                            "path": "name",
+                                            "type": "chiclet",
+                                            "colors": {
+                                                "New York Times": "#d5e1de",
+                                                "USA Today": "#ebe1fa",
+                                                "Los Angeles Times": "#cae4ea",
+                                                "Wall Street Journal": "#fae9d3",
+                                                "Washington Post": "#fae3df",
+                                                "Chicago Tribune": "#f0f6d9"
+                                            }
+                                        },
+                                        {
+                                            "path": "timestamp",
+                                            "type": "datetime",
+                                            "format": "yyyy-MM-dd"
                                         }
-                                    },
-                                    {
-                                        "path": "timestamp",
-                                        "type": "datetime",
-                                        "format": "yyyy-MM-dd"
-                                    }
-                                ]
+                                    ]
+                                }
                             }
-                        }
-                    ]
+                        ]
+                    }
                 },
                 {
-                    "id": "phone",
                     "component": "DataTableValue",
-                    "title": "Phone Number",
-                    "path": "result[0].extracted.person.phone",
-                    "icon": "phone",
-                    "width": "400px",
-                    "metadata": [
-                        {
-                            "type": "block",
-                            "color": "#96bde4",
-                            "value": "B"
-                        },
-                        {
-                            "type": "block",
-                            "color": "#5d6aaa",
-                            "value": "4"
-                        }
-                    ]
+                    "config": {
+                        "id": "phone",
+                        "title": "Phone Number",
+                        "path": "result[0].extracted.person.phone",
+                        "icon": "phone",
+                        "width": "400px",
+                        "metadata": [
+                            {
+                                "type": "block",
+                                "color": "#96bde4",
+                                "value": "B"
+                            },
+                            {
+                                "type": "block",
+                                "color": "#5d6aaa",
+                                "value": "4"
+                            }
+                        ]
+                    }
                 },        
                 {
-                    "id": "email",
                     "component": "DataTableValue",
-                    "title": "Email",
-                    "arrayPath": "result[0].extracted.person.emails.email",
-                    "path": "value", 
-                    "icon": "email",
-                    "width": "400px",
-                    "metadata": [
-                        {
-                            "type": "block",
-                            "color": "#96bde4",
-                            "value": "B"
-                        },
-                        {
-                            "type": "block",
-                            "color": "#5d6aaa",
-                            "value": "4"
-                        }
-                    ]
-                },
-                {
-                    "id": "ssn",
-                    "component": "DataTableValue",
-                    "title": "SSN",
-                    "path": "result[0].extracted.person.ssn.value",
-                    "width": "400px",
-                    "metadata": [
-                        {
-                            "type": "block",
-                            "color": "#e67485",
-                            "value": "R"
-                        },
-                        {
-                            "type": "block",
-                            "color": "#5d6aaa",
-                            "value": "4"
-                        }
-                    ]
-                },
-                {
-                    "id": "address",
-                    "component": "DataTableMultiValue",
-                    "title": "Address",
-                    "width": "680px",
-                    "arrayPath": "result[0].extracted.person.addresses.address",
-                    "cols": [
-                        {
-                            "title": "Street",
-                            "value": "street",
-                            "width": "220px"
-                        },
-                        {
-                            "title": "City",
-                            "value": "city",
-                            "width": "130px"
-                        },
-                        {
-                            "title": "State",
-                            "value": "state",
-                            "width": "60px"
-                        },
-                        {
-                            "title": "Postal Code",
-                            "value": "postal",
-                            "width": "85px"
-                        },
-                        {
-                            "title": "Country",
-                            "value": "country",
-                            "width": "100px"
-                        }
-                    ],
-                    "metadata": [
-                        {
-                            "type": "block",
-                            "color": "#96bde4",
-                            "value": "B"
-                        },
-                        {
-                            "type": "block",
-                            "color": "#5d6aaa",
-                            "value": "4"
-                        }
-                    ]
-                },
-                {
-                    "id": "school",
-                    "component": "DataTableMultiValue",
-                    "title": "School",
-                    "width": "680px",
-                    "arrayPath": "result[0].extracted.person.schools.school",
-                    "cols": [
-                        {
-                            "title": "Name",
-                            "value": "name",
-                            "width": "240px"
-                        },
-                        {
-                            "title": "City",
-                            "value": "city",
-                            "width": "130px"
-                        },
-                        {
-                            "title": "Country",
-                            "value": "country",
-                            "width": "100px"
-                        }
-                    ],
-                    "metadata": [
-                        {
-                            "type": "block",
-                            "color": "#96bde4",
-                            "value": "B"
-                        },
-                        {
-                            "type": "block",
-                            "color": "#5d6aaa",
-                            "value": "3",
-                            "popover": {
-                                "title": "Sources",
-                                "dataPath": "result[0].extracted.person.sources",
-                                "placement": "right",
-                                "cols": [
-                                    {
-                                        "path": "name",
-                                        "type": "chiclet",
-                                        "colors": {
-                                            "New York Times": "#d5e1de",
-                                            "USA Today": "#ebe1fa",
-                                            "Los Angeles Times": "#cae4ea",
-                                            "Wall Street Journal": "#fae9d3",
-                                            "Washington Post": "#fae3df",
-                                            "Chicago Tribune": "#f0f6d9"
-                                        }
-                                    },
-                                    {
-                                        "path": "timestamp",
-                                        "type": "datetime",
-                                        "format": "yyyy-MM-dd"
-                                    }
-                                ]
+                    "config": {
+                        "id": "email",
+                        "title": "Email",
+                        "arrayPath": "result[0].extracted.person.emails.email",
+                        "path": "value", 
+                        "icon": "email",
+                        "width": "400px",
+                        "metadata": [
+                            {
+                                "type": "block",
+                                "color": "#96bde4",
+                                "value": "B"
+                            },
+                            {
+                                "type": "block",
+                                "color": "#5d6aaa",
+                                "value": "4"
                             }
-                        }
-                    ]
+                        ]
+                    }
+                },
+                {
+                    "component": "DataTableValue",
+                    "config": {
+                        "id": "ssn",
+                        "title": "SSN",
+                        "path": "result[0].extracted.person.ssn.value",
+                        "width": "400px",
+                        "metadata": [
+                            {
+                                "type": "block",
+                                "color": "#e67485",
+                                "value": "R"
+                            },
+                            {
+                                "type": "block",
+                                "color": "#5d6aaa",
+                                "value": "4"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "component": "DataTableMultiValue",
+                    "config": {
+                        "id": "address",
+                        "title": "Address",
+                        "width": "680px",
+                        "arrayPath": "result[0].extracted.person.addresses.address",
+                        "cols": [
+                            {
+                                "title": "Street",
+                                "value": "street",
+                                "width": "220px"
+                            },
+                            {
+                                "title": "City",
+                                "value": "city",
+                                "width": "130px"
+                            },
+                            {
+                                "title": "State",
+                                "value": "state",
+                                "width": "60px"
+                            },
+                            {
+                                "title": "Postal Code",
+                                "value": "postal",
+                                "width": "85px"
+                            },
+                            {
+                                "title": "Country",
+                                "value": "country",
+                                "width": "100px"
+                            }
+                        ],
+                        "metadata": [
+                            {
+                                "type": "block",
+                                "color": "#96bde4",
+                                "value": "B"
+                            },
+                            {
+                                "type": "block",
+                                "color": "#5d6aaa",
+                                "value": "4"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "component": "DataTableMultiValue",
+                    "config": {
+                        "id": "school",
+                        "title": "School",
+                        "width": "680px",
+                        "arrayPath": "result[0].extracted.person.schools.school",
+                        "cols": [
+                            {
+                                "title": "Name",
+                                "value": "name",
+                                "width": "240px"
+                            },
+                            {
+                                "title": "City",
+                                "value": "city",
+                                "width": "130px"
+                            },
+                            {
+                                "title": "Country",
+                                "value": "country",
+                                "width": "100px"
+                            }
+                        ],
+                        "metadata": [
+                            {
+                                "type": "block",
+                                "color": "#96bde4",
+                                "value": "B"
+                            },
+                            {
+                                "type": "block",
+                                "color": "#5d6aaa",
+                                "value": "3",
+                                "popover": {
+                                    "title": "Sources",
+                                    "dataPath": "result[0].extracted.person.sources",
+                                    "placement": "right",
+                                    "cols": [
+                                        {
+                                            "path": "name",
+                                            "type": "chiclet",
+                                            "colors": {
+                                                "New York Times": "#d5e1de",
+                                                "USA Today": "#ebe1fa",
+                                                "Los Angeles Times": "#cae4ea",
+                                                "Wall Street Journal": "#fae9d3",
+                                                "Washington Post": "#fae3df",
+                                                "Chicago Tribune": "#f0f6d9"
+                                            }
+                                        },
+                                        {
+                                            "path": "timestamp",
+                                            "type": "datetime",
+                                            "format": "yyyy-MM-dd"
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
                 }
             ]
         },

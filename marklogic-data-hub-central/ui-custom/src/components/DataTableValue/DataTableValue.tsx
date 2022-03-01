@@ -2,14 +2,14 @@ import React, { useState, useContext } from "react";
 import MetadataValue from "../MetadataValue/MetadataValue";
 import Value from "../Value/Value";
 import Table from "react-bootstrap/Table";
-import { DetailContext } from "../../store/DetailContext";
 import "./DataTableValue.scss";
 import {ArrowBarDown, ArrowBarRight, EnvelopeFill, TelephoneFill} from "react-bootstrap-icons";
 import { getValByConfig } from "../../util/util";
 import _ from "lodash";
 
 type Props = {
-  config?: any
+    data?: any;
+    config?: any;
 };
 
 /**
@@ -41,7 +41,6 @@ type Props = {
  */
 const DataTableValue: React.FC<Props> = (props) => {
 
-    const detailContext = useContext(DetailContext);
     const [hide, setHide] = useState<boolean>(false);
 
     const handleHide = (e) => {
@@ -50,7 +49,7 @@ const DataTableValue: React.FC<Props> = (props) => {
 
     let data: any = [];
 
-    data = getValByConfig(detailContext.detail, props.config);
+    data = getValByConfig(props.data, props.config);
     data = _.isNil(data) ? null : (Array.isArray(data) ? data : [data]);
 
     let hideClass: string = hide ? "hide" : "";

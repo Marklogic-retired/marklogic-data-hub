@@ -25,12 +25,15 @@ const Chiclet: React.FC<Props> = (props) => {
     }
 
     const chicletColors = props.config.colors || {};
-
+    const defaultColor = "#dfdfdf";
+    
     let chicletStyle: any = props.config.style ? props.config.style : {};
-    chicletStyle = Object.assign({backgroundColor: chicletColors[val]}, chicletStyle);
+    chicletStyle = Object.assign({
+        backgroundColor: chicletColors[val] ? chicletColors[val] : defaultColor
+    }, chicletStyle);
 
     return (
-        <span className="Chiclet" style={Object.assign({backgroundColor: chicletColors[val]}, chicletStyle)}>
+        <span className="Chiclet" style={chicletStyle}>
             {val}
         </span>
     );

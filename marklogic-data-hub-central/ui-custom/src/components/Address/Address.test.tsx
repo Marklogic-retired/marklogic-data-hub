@@ -30,21 +30,24 @@ const data2 = {
     }
 };
 
-// If multiple addresses returned, addressPath points to array
+// If array of multiple addresses returned, arrayPath points to array property
 const configArray = { 
-    arrayPath: "address",
-    street1: "street1",
-    street2: "street2",
-    city: "city",
-    state: "state",
-    postal1: "postal1",
-    postal2: "postal2"
+    arrayPath: "addresses",
+    street1: "address.street1",
+    street2: "address.street2",
+    city: "address.city",
+    state: "address.state",
+    postal1: "address.postal1",
+    postal2: "address.postal2",
+    style: {
+        fontWeight: "bold"
+    }
 };
 
 const dataArray = { 
-    address: [
-        data.address,
-        data2.address
+    addresses: [
+        { address: data.address },
+        { address: data2.address }
     ]
 };
 
@@ -63,11 +66,14 @@ describe("Address component", () => {
             + data.address.state + " " + data.address.postal1)).toBeInTheDocument();
     });
 
-    test("Verify first address is rendered for address array", () => {
+    test("Verify first address is rendered for address array with style", () => {
         const {getByText} = render(<Address config={configArray} data={dataArray} />);
         expect(getByText(data.address.street1 + ", " + data.address.street2 + 
             ", " + data.address.city + ", " + data.address.state + " " + 
             data.address.postal1 + "-" + data.address.postal2)).toBeInTheDocument();
+        let addresses = document.getElementsByClassName("Address");
+        let style = window.getComputedStyle(addresses[0]);
+        expect(style.fontWeight).toBe(configArray.style.fontWeight);
     });
 
 });
