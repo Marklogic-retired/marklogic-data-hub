@@ -25,7 +25,7 @@ import SidebarFooter from "../components/sidebar-footer/sidebar-footer";
 import {CSSProperties} from "react";
 import GraphViewExplore from "../components/explore/graph-view-explore";
 import {HCTooltip, HCSider} from "@components/common";
-import {graphSearchQuery} from "../api/queries";
+import {graphSearchQuery, searchResultsQuery} from "../api/queries";
 import {getHubCentralConfig} from "../api/modeling"; // eslint-disable-line @typescript-eslint/no-unused-vars
 import SelectedFacets from "@components/selected-facets/selected-facets";
 import EntitySpecificSidebar from "@components/explore/entity-specific-sidebar/entity-specific-sidebar";
@@ -53,8 +53,7 @@ const Browse: React.FC<Props> = ({location}) => {
     setDatabase,
     setEntityDefinitionsArray,
     clearAllGreyFacets,
-    setEntityTypeIds,
-    setEntitiesAndRelatedData
+    setEntityTypeIds
   } = useContext(SearchContext);
   const searchBarRef = useRef<HTMLDivElement>(null);
   const authorityService = useContext(AuthoritiesContext);
@@ -179,33 +178,29 @@ const Browse: React.FC<Props> = ({location}) => {
     }
   };
 
-  const getSearchResults = async (allEntities: string[], relatedTableData: any) => {
+  const getSearchResults = async (allEntities: string[]) => {
     let searchText = searchOptions.query;
     try {
-      if (!relatedTableData) {
-        handleUserPreferences();
-      }
+      handleUserPreferences();
       setIsLoading(true);
-      const response = await axios({
-        method: "POST",
-        url: `/api/entitySearch?database=${searchOptions.database}`,
+      let searchPayload = {
+        database: searchOptions.database,
         data: {
           query: {
             searchText,
             entityTypeIds: searchOptions.nextEntityType === "All Data" ? [] : allEntities,
             selectedFacets: searchOptions.selectedFacets,
-            hideHubArtifacts: searchOptions.nextEntityType === "All Data" ? hideDataHubArtifacts : true,
-            relatedDocument: !relatedTableData ? null : {
-              docIRI: relatedTableData.parentNode,
-              predicate: relatedTableData.predicateFilter
-            }
+            hideHubArtifacts: searchOptions.nextEntityType === "All Data" ? hideDataHubArtifacts : true
           },
           propertiesToDisplay: searchOptions.nextEntityType === "All Data" ? [] : searchOptions.selectedTableProperties,
           start: searchOptions.start,
           pageLength: searchOptions.pageLength,
           sortOrder: searchOptions.sortOrder
         }
-      });
+      };
+
+      const response = await searchResultsQuery(searchPayload);
+
       if (!["All Data"].includes(searchOptions.nextEntityType) && searchOptions.nextEntityType !== "") {
         setShowNoDefinitionAlertMessage(titleNoDefinition(searchOptions.nextEntityType));
       } else {
@@ -266,7 +261,7 @@ const Browse: React.FC<Props> = ({location}) => {
     let notSelectingCardViewWhenNoEntities = !cardView && !searchOptions.entityTypeIds.length;
 
     if (selectingAllDataOption || (entityTypesExist && (defaultOptionsForPageRefresh || selectingAllEntitiesOption || selectingEntityType))) {
-      getSearchResults(searchOptions.entityTypeIds, searchOptions.relatedToData);
+      getSearchResults(searchOptions.entityTypeIds);
     } else {
       if (notSelectingCardViewWhenNoEntities) {
         setData([]);
@@ -280,13 +275,7 @@ const Browse: React.FC<Props> = ({location}) => {
   };
 
   useEffect(() => {
-    if (searchOptions.relatedToData || initializeRelatedTableView()) {
-      if (viewOptions.graphView || !viewOptions.tableView) {
-        setViewOptions({graphView: false, tableView: true});
-      }
-    } else {
-      initializeUserPreferences();
-    }
+    initializeUserPreferences();
     return () => {
       componentIsMounted.current = false;
     };
@@ -361,7 +350,7 @@ const Browse: React.FC<Props> = ({location}) => {
   useEffect(() => {
     let state: any = location.state;
     if (state && state["isBackToResultsClicked"]) {
-      getSearchResults(searchOptions.entityTypeIds, searchOptions.relatedToData);
+      getSearchResults(searchOptions.entityTypeIds);
     }
   }, []);
 
@@ -410,26 +399,6 @@ const Browse: React.FC<Props> = ({location}) => {
     }
   }, [state]);
 
-  const initializeRelatedTableView = () => {
-    let defaultPreferences = getUserPreferences(user.name);
-    if (defaultPreferences !== null) {
-      let parsedPreferences = JSON.parse(defaultPreferences);
-      if (parsedPreferences && parsedPreferences.hasOwnProperty("graphViewOptions")
-        && parsedPreferences.graphViewOptions.hasOwnProperty("relatedView")) {
-        const relatedData = parsedPreferences.graphViewOptions.relatedView;
-        setEntitiesAndRelatedData([relatedData.entityTypeId], relatedData);
-
-        let preferencesObject = {
-          ...parsedPreferences
-        };
-        delete preferencesObject.graphViewOptions.relatedView;
-        updateUserPreferences(user.name, preferencesObject);
-        return true;
-      }
-    }
-    return false;
-  };
-
   const initializeUserPreferences = async () => {
     let state: any = location.state;
     let defaultPreferences = getUserPreferences(user.name);
@@ -447,29 +416,27 @@ const Browse: React.FC<Props> = ({location}) => {
   };
 
   const setUserPreferences = (view: string = "") => {
-    if (!searchOptions.relatedToData) {
-      let preferencesObject = {
-        query: {
-          searchText: searchOptions.query,
-          entityTypeIds: searchOptions.entityTypeIds,
-          selectedFacets: searchOptions.selectedFacets,
-          hideHubArtifacts: cardView ? hideDataHubArtifacts : true
-        },
-        pageLength: searchOptions.pageLength,
-        pageNumber: searchOptions.pageNumber,
-        start: searchOptions.start,
-        tableView: view ? (view === "table" ? true : false) : viewOptions.tableView,
-        selectedQuery: searchOptions.selectedQuery,
-        queries: queries,
-        propertiesToDisplay: searchOptions.selectedTableProperties,
-        sortOrder: searchOptions.sortOrder,
-        cardView: cardView,
-        graphView: view ? (view === "graph" ? true : false) : viewOptions.graphView,
-        database: searchOptions.database,
-        baseEntities: searchOptions.baseEntities
-      };
-      updateUserPreferences(user.name, preferencesObject);
-    }
+    let preferencesObject = {
+      query: {
+        searchText: searchOptions.query,
+        entityTypeIds: searchOptions.entityTypeIds,
+        selectedFacets: searchOptions.selectedFacets,
+        hideHubArtifacts: cardView ? hideDataHubArtifacts : true
+      },
+      pageLength: searchOptions.pageLength,
+      pageNumber: searchOptions.pageNumber,
+      start: searchOptions.start,
+      tableView: view ? (view === "table" ? true : false) : viewOptions.tableView,
+      selectedQuery: searchOptions.selectedQuery,
+      queries: queries,
+      propertiesToDisplay: searchOptions.selectedTableProperties,
+      sortOrder: searchOptions.sortOrder,
+      cardView: cardView,
+      graphView: view ? (view === "graph" ? true : false) : viewOptions.graphView,
+      database: searchOptions.database,
+      baseEntities: searchOptions.baseEntities
+    };
+    updateUserPreferences(user.name, preferencesObject);
   };
 
   const handleUserPreferences = () => {
@@ -552,10 +519,8 @@ const Browse: React.FC<Props> = ({location}) => {
       setViewOptions({graphView: false, tableView: true});
       tableView = "table";
     }
-    if (!searchOptions.relatedToData) {
-      setUserPreferences(tableView);
-      setSelectedView(ViewType[tableView]);
-    }
+    setUserPreferences(tableView);
+    setSelectedView(ViewType[tableView]);
 
     if (resultsRef && resultsRef.current) {
       resultsRef.current["style"]["boxShadow"] = "none";

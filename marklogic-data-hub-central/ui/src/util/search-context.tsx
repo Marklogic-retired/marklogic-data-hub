@@ -22,8 +22,7 @@ type SearchContextInterface = {
   tileId: string,
   sortOrder: any,
   database: string,
-  datasource: string,
-  relatedToData: any
+  datasource: string
 }
 
 const defaultSearchOptions = {
@@ -45,8 +44,7 @@ const defaultSearchOptions = {
   tileId: "",
   sortOrder: [],
   database: "final",
-  datasource: "entities",
-  relatedToData: null
+  datasource: "entities"
 };
 
 
@@ -59,8 +57,6 @@ interface ISearchContextInterface {
   setSearchFacets: (constraint: string, vals: string[]) => void;
   setEntity: () => void;
   setEntityTypeIds: (setEntityIds: string[]) => void;
-  setRelatedToData: (relatedToData: any) => void;
-  setEntitiesAndRelatedData: (entityIds: string[], relatedToData: any) => void;
   setNextEntity: (option: string) => void;
   setRelatedEntityTypeIds: (option: any[]) => void;
   setEntityClearQuery: (option: string) => void;
@@ -119,8 +115,6 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setSearchFacets: () => { },
   setEntity: () => { },
   setEntityTypeIds: () => { },
-  setRelatedToData: () => { },
-  setEntitiesAndRelatedData: () => { },
   setNextEntity: () => { },
   setRelatedEntityTypeIds: () => { },
   setEntityClearQuery: () => { },
@@ -662,23 +656,6 @@ const SearchProvider: React.FC<{children: any}> = ({children}) => {
     setSearchOptions(NEWOPTIONS);
   };
 
-  const setRelatedToData = (relatedToData: any) => {
-    const NEWOPTIONS = {
-      ...searchOptions,
-      relatedToData: relatedToData,
-    };
-    setSearchOptions(NEWOPTIONS);
-  };
-
-  const setEntitiesAndRelatedData = (entityTypeIds: string[], relatedToData: any) => {
-    const NEWOPTIONS = {
-      ...searchOptions,
-      entityTypeIds: entityTypeIds,
-      relatedToData: relatedToData,
-    };
-    setSearchOptions(NEWOPTIONS);
-  };
-
   useEffect(() => {
     if (user.authenticated) {
       setSearchFromUserPref(user.name);
@@ -733,9 +710,7 @@ const SearchProvider: React.FC<{children: any}> = ({children}) => {
       setGraphViewOptions,
       setDatasource,
       setEntityTypeIds,
-      setRelatedToData,
-      setEntitiesAndRelatedData,
-      setSearchOptions,
+      setSearchOptions
     }}>
       {children}
     </SearchContext.Provider>

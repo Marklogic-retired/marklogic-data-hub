@@ -1453,5 +1453,426 @@ export const entityDefArray = [{
 }];
 
 
+export const defaultSearchOptions = {
+  query: "",
+  database: "final",
+  entityTypeIds: [],
+  nextEntityType: "",
+  start: 1,
+  pageNumber: 1,
+  pageLength: 20,
+  pageSize: 20,
+  selectedFacets: {},
+  maxRowsPerPage: 100,
+  selectedQuery: "select a query",
+  manageQueryModal: false,
+  selectedTableProperties: [],
+  view: null,
+  sortOrder: [],
+};
 
 
+export const groupNodeSearchResponse = {
+  "snippet-format": "snippet",
+  "total": 21,
+  "start": 1,
+  "page-length": 20,
+  "results": [
+    {
+      "index": 1,
+      "uri": "/Product/60.json",
+      "path": "fn:doc(\"/Product/60.json\")",
+      "score": 0,
+      "confidence": 0,
+      "fitness": 0,
+      "href": "/v1/documents?uri=%2FProduct%2F60.json",
+      "mimetype": "application/json",
+      "format": "json",
+      "matches": [
+        {
+          "path": "fn:doc(\"/Product/60.json\")/envelope/instance/info/text(\"title\")",
+          "match-text": [
+            {
+              "highlight": "Product"
+            }
+          ]
+        },
+        {
+          "path": "fn:doc(\"/Product/60.json\")/envelope/instance/info/text(\"version\")",
+          "match-text": [
+            {
+              "highlight": "1.0.0"
+            }
+          ]
+        },
+        {
+          "path": "fn:doc(\"/Product/60.json\")/envelope/instance/info/text(\"baseUri\")",
+          "match-text": [
+            {
+              "highlight": "http://example.org/"
+            }
+          ]
+        },
+        {
+          "path": "fn:doc(\"/Product/60.json\")/envelope/instance/Product/number-node(\"productId\")",
+          "match-text": [
+            {
+              "highlight": "60"
+            }
+          ]
+        }
+      ],
+      "entityName": "Product",
+      "createdOn": "2022-03-01T18:59:46.857905-08:00",
+      "createdBy": "hub-developer",
+      "entityProperties": [
+        {
+          "propertyPath": "productId",
+          "propertyValue": 60
+        },
+        {
+          "propertyPath": "productName",
+          "propertyValue": "BlueSnail Newborn Receiving Blanket Baby Sleeping Wrap Swaddle (Gray)"
+        }
+      ],
+      "sources": [],
+      "entityInstance": {
+        "productId": 60,
+        "productName": "BlueSnail Newborn Receiving Blanket Baby Sleeping Wrap Swaddle (Gray)"
+      },
+      "primaryKey": {
+        "propertyPath": "productId",
+        "propertyValue": 60
+      }
+    },
+    {
+      "index": 2,
+      "uri": "/Product/71.json",
+      "path": "fn:doc(\"/Product/71.json\")",
+      "score": 0,
+      "confidence": 0,
+      "fitness": 0,
+      "href": "/v1/documents?uri=%2FProduct%2F71.json",
+      "mimetype": "application/json",
+      "format": "json",
+      "matches": [
+        {
+          "path": "fn:doc(\"/Product/71.json\")/envelope/instance/info/text(\"title\")",
+          "match-text": [
+            {
+              "highlight": "Product"
+            }
+          ]
+        },
+        {
+          "path": "fn:doc(\"/Product/71.json\")/envelope/instance/info/text(\"version\")",
+          "match-text": [
+            {
+              "highlight": "1.0.0"
+            }
+          ]
+        },
+        {
+          "path": "fn:doc(\"/Product/71.json\")/envelope/instance/info/text(\"baseUri\")",
+          "match-text": [
+            {
+              "highlight": "http://example.org/"
+            }
+          ]
+        },
+        {
+          "path": "fn:doc(\"/Product/71.json\")/envelope/instance/Product/number-node(\"productId\")",
+          "match-text": [
+            {
+              "highlight": "71"
+            }
+          ]
+        }
+      ],
+      "entityName": "Product",
+      "createdOn": "2022-03-01T18:59:46.857905-08:00",
+      "createdBy": "hub-developer",
+      "entityProperties": [
+        {
+          "propertyPath": "productId",
+          "propertyValue": 71
+        },
+        {
+          "propertyPath": "productName",
+          "propertyValue": "Carters receiving blanket"
+        }
+      ],
+      "sources": [],
+      "entityInstance": {
+        "productId": 71,
+        "productName": "Carters receiving blanket"
+      },
+      "primaryKey": {
+        "propertyPath": "productId",
+        "propertyValue": 71
+      }
+    },
+    {
+      "index": 3,
+      "uri": "/Product/57.json",
+      "path": "fn:doc(\"/Product/57.json\")",
+      "score": 0,
+      "confidence": 0,
+      "fitness": 0,
+      "href": "/v1/documents?uri=%2FProduct%2F57.json",
+      "mimetype": "application/json",
+      "format": "json",
+      "matches": [
+        {
+          "path": "fn:doc(\"/Product/57.json\")/envelope/instance/info/text(\"title\")",
+          "match-text": [
+            {
+              "highlight": "Product"
+            }
+          ]
+        },
+        {
+          "path": "fn:doc(\"/Product/57.json\")/envelope/instance/info/text(\"version\")",
+          "match-text": [
+            {
+              "highlight": "1.0.0"
+            }
+          ]
+        },
+        {
+          "path": "fn:doc(\"/Product/57.json\")/envelope/instance/info/text(\"baseUri\")",
+          "match-text": [
+            {
+              "highlight": "http://example.org/"
+            }
+          ]
+        },
+        {
+          "path": "fn:doc(\"/Product/57.json\")/envelope/instance/Product/number-node(\"productId\")",
+          "match-text": [
+            {
+              "highlight": "57"
+            }
+          ]
+        }
+      ],
+      "entityName": "Product",
+      "createdOn": "2022-03-01T18:59:46.857905-08:00",
+      "createdBy": "hub-developer",
+      "entityProperties": [
+        {
+          "propertyPath": "productId",
+          "propertyValue": 57
+        },
+        {
+          "propertyPath": "productName",
+          "propertyValue": "Alepo Baby Beanie Hat, Infant Newborn Toddler Kids Winter Warm Knit Cap for Boys Girls"
+        }
+      ],
+      "sources": [],
+      "entityInstance": {
+        "productId": 57,
+        "productName": "Alepo Baby Beanie Hat, Infant Newborn Toddler Kids Winter Warm Knit Cap for Boys Girls"
+      },
+      "primaryKey": {
+        "propertyPath": "productId",
+        "propertyValue": 57
+      }
+    },
+    {
+      "index": 4,
+      "uri": "/Product/68.json",
+      "path": "fn:doc(\"/Product/68.json\")",
+      "score": 0,
+      "confidence": 0,
+      "fitness": 0,
+      "href": "/v1/documents?uri=%2FProduct%2F68.json",
+      "mimetype": "application/json",
+      "format": "json",
+      "matches": [
+        {
+          "path": "fn:doc(\"/Product/68.json\")/envelope/instance/info/text(\"title\")",
+          "match-text": [
+            {
+              "highlight": "Product"
+            }
+          ]
+        },
+        {
+          "path": "fn:doc(\"/Product/68.json\")/envelope/instance/info/text(\"version\")",
+          "match-text": [
+            {
+              "highlight": "1.0.0"
+            }
+          ]
+        },
+        {
+          "path": "fn:doc(\"/Product/68.json\")/envelope/instance/info/text(\"baseUri\")",
+          "match-text": [
+            {
+              "highlight": "http://example.org/"
+            }
+          ]
+        },
+        {
+          "path": "fn:doc(\"/Product/68.json\")/envelope/instance/Product/number-node(\"productId\")",
+          "match-text": [
+            {
+              "highlight": "68"
+            }
+          ]
+        }
+      ],
+      "entityName": "Product",
+      "createdOn": "2022-03-01T18:59:46.857905-08:00",
+      "createdBy": "hub-developer",
+      "entityProperties": [
+        {
+          "propertyPath": "productId",
+          "propertyValue": 68
+        },
+        {
+          "propertyPath": "productName",
+          "propertyValue": "Grey Newborn Blanket buy buy baby"
+        }
+      ],
+      "sources": [],
+      "entityInstance": {
+        "productId": 68,
+        "productName": "Grey Newborn Blanket buy buy baby"
+      },
+      "primaryKey": {
+        "propertyPath": "productId",
+        "propertyValue": 68
+      }
+    }
+  ],
+  "facets": {
+    "Collection": {
+      "type": "collection",
+      "facetValues": [
+        {
+          "name": "mapCustomersWithRelatedEntitiesJSON",
+          "count": 21,
+          "value": "mapCustomersWithRelatedEntitiesJSON"
+        }
+      ]
+    },
+    "createdByStep": {
+      "type": "xs:string",
+      "facetValues": [
+        {
+          "name": "mapCustomersWithRelatedEntitiesJSON",
+          "count": 21,
+          "value": "mapCustomersWithRelatedEntitiesJSON"
+        }
+      ]
+    },
+    "createdInFlowRange": {
+      "type": "xs:string",
+      "facetValues": [
+        {
+          "name": "CurateCustomerWithRelatedEntitiesJSON",
+          "count": 21,
+          "value": "CurateCustomerWithRelatedEntitiesJSON"
+        }
+      ]
+    },
+    "sourceName": {
+      "type": "xs:string",
+      "facetValues": []
+    },
+    "sourceType": {
+      "type": "xs:string",
+      "facetValues": []
+    },
+    "Office.name": {
+      "type": "xs:string",
+      "facetValues": []
+    },
+    "Office.email": {
+      "type": "xs:string",
+      "facetValues": []
+    },
+    "Office.pin": {
+      "type": "xs:decimal",
+      "facetValues": []
+    },
+    "Office.birthDate": {
+      "type": "xs:date",
+      "facetValues": []
+    },
+    "Customer.name": {
+      "type": "xs:string",
+      "facetValues": []
+    },
+    "Customer.email": {
+      "type": "xs:string",
+      "facetValues": []
+    },
+    "Customer.pin": {
+      "type": "xs:decimal",
+      "facetValues": []
+    },
+    "Customer.birthDate": {
+      "type": "xs:date",
+      "facetValues": []
+    },
+    "NamespacedCustomer.status": {
+      "type": "xs:string",
+      "facetValues": []
+    }
+  },
+  "qtext": "entityType:\"Product\" hideHubArtifacts:true",
+  "metrics": {
+    "query-resolution-time": "PT0.011908S",
+    "facet-resolution-time": "PT0.02237S",
+    "snippet-resolution-time": "PT0.028355S",
+    "total-time": "PT0.068428S"
+  },
+  "selectedPropertyDefinitions": [
+    {
+      "propertyPath": "productId",
+      "propertyLabel": "productId",
+      "datatype": "integer",
+      "multiple": false
+    },
+    {
+      "propertyPath": "productName",
+      "propertyLabel": "productName",
+      "datatype": "string",
+      "multiple": false
+    }
+  ],
+  "entityPropertyDefinitions": [
+    {
+      "propertyPath": "productId",
+      "propertyLabel": "productId",
+      "datatype": "integer",
+      "multiple": false
+    },
+    {
+      "propertyPath": "productName",
+      "propertyLabel": "productName",
+      "datatype": "string",
+      "multiple": false
+    }
+  ]
+};
+
+export const groupNodeSearchPayload = {
+  query: {
+    searchText: "",
+    entityTypeIds: ["Product"],
+    selectedFacets: {},
+    hideHubArtifacts: true,
+    relatedDocument: {
+      docIRI: "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/3039",
+      predicate: "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/includes"
+    }
+  },
+  propertiesToDisplay: ["babyRegistryId", "arrivalDate", "ownedBy", "includes"],
+  start: 1,
+  pageLength: 20,
+  sortOrder: []
+};

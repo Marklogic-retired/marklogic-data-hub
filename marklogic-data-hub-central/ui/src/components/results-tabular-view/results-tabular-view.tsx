@@ -20,7 +20,8 @@ interface Props {
   tableView: boolean;
   entityDefArray: any[];
   database: string;
-  handleViewChange: any
+  handleViewChange: any;
+  groupNodeTableView?: boolean;
 }
 /* eslint-enable */
 
@@ -274,14 +275,16 @@ const ResultsTabularView = (props) => {
 
   const updatedTableHeader = () => {
     let header = tableHeaderRender(selectedTableColumns);
-    let detailView = {
-      table: "Detail View",
-      text: "Detail View",
-      dataField: "detailView",
-      key: "0-d",
-      headerFormatter: (column) => <span className="resultsTableHeaderColumn" >{column.text}</span>,
-    };
-    header.length > 0 && header.push(detailView);
+    if (!props.groupNodeTableView) {
+      let detailView = {
+        table: "Detail View",
+        text: "Detail View",
+        dataField: "detailView",
+        key: "0-d",
+        headerFormatter: (column) => <span className="resultsTableHeaderColumn" >{column.text}</span>,
+      };
+      header.length > 0 && header.push(detailView);
+    }
     return header;
   };
 
@@ -292,7 +295,7 @@ const ResultsTabularView = (props) => {
     props.handleViewChange("graph");
   };
 
-  const tableHeaders = searchOptions.entityTypeIds.length !== 0 ? searchOptions.entityTypeIds.length > 1 ? DEFAULT_ALL_ENTITIES_HEADER : updatedTableHeader() : DEFAULT_ALL_ENTITIES_HEADER;
+  const tableHeaders = searchOptions.entityTypeIds?.length !== 0 ? searchOptions.entityTypeIds?.length > 1 ? DEFAULT_ALL_ENTITIES_HEADER : updatedTableHeader() : DEFAULT_ALL_ENTITIES_HEADER;
 
   const tableDataRender = (item) => {
     let dataObj = {};
@@ -304,6 +307,7 @@ const ResultsTabularView = (props) => {
     };
     let options = {};
     let detailView =
+    !props.groupNodeTableView ?
       <div className={styles.redirectIcons}>
         <Link to={{
           pathname: `${path.pathname}`, state: {
@@ -360,7 +364,7 @@ const ResultsTabularView = (props) => {
               size="sm" data-testid={`${primaryKeyValue}-graphOnSeparatePage`} onClick={() => navigateToGraphView(item)} /></i>
           </HCTooltip>
         </div>
-      </div>;
+      </div> : "";
     if (props.selectedEntities?.length > 1 && item.hasOwnProperty("entityName")) {
       let itemIdentifier = item.identifier?.propertyValue;
       let itemEntityName = item.entityName;
@@ -377,7 +381,6 @@ const ResultsTabularView = (props) => {
         primaryKeyPath: path,
         sources: item.sources,
         entityInstance: item.entityInstance,
-        detailView: detailView,
         database: searchOptions.database
       };
     } else {
@@ -387,9 +390,11 @@ const ResultsTabularView = (props) => {
         primaryKeyPath: path,
         sources: item.sources,
         entityInstance: item.entityInstance,
-        detailView: detailView,
         database: searchOptions.database
       };
+    }
+    if (!props.groupNodeTableView) {
+      options["detailView"] = detailView;
     }
     dataObj = {...dataObj, ...options};
     if (item?.hasOwnProperty("entityProperties")) {
@@ -432,7 +437,7 @@ const ResultsTabularView = (props) => {
     ;
 
   useEffect(() => {
-    if (props.columns && props.columns.length > 0 && searchOptions.selectedTableProperties.length === 0) {
+    if (props.columns && props.columns.length > 0 && searchOptions.selectedTableProperties?.length === 0) {
       setSelectedTableProperties(props.columns);
     }
   }, [props.columns]);
@@ -460,20 +465,24 @@ const ResultsTabularView = (props) => {
       {
         text: "Value",
         dataField: "value",
-        width: "34%",
+        width: !props.groupNodeTableView ? "34%" : "67%",
         formatter: (_, row) => {
           return <span>{row.value}</span>;
         },
-      },
-      {
+      }
+    ];
+
+    if (!props.groupNodeTableView) {
+      let view = {
         text: "View",
         dataField: "view",
         width: "33%",
         formatter: (_, row) => {
           return <span>{row.view}</span>;
         },
-      },
-    ];
+      };
+      nestedColumns.push(view);
+    }
 
     let nestedData: any[] = [];
     const parseJson = (obj: Object) => {
@@ -563,14 +572,14 @@ const ResultsTabularView = (props) => {
 
   return (
     <>
-      <div className={styles.icon}>
+      {!props.groupNodeTableView ? <div className={styles.icon}>
         <div className={styles.queryExport} data-cy="query-export">
           {canExportQuery && searchOptions.entityTypeIds.length > 0 && <QueryExport hasStructured={props.hasStructured} columns={props.columns} selectedPropertyDefinitions={props.selectedPropertyDefinitions} />}
         </div>
         {searchOptions.entityTypeIds?.length === 1 ? <div className={styles.columnSelector} data-cy="column-selector">
           <ColumnSelector popoverVisibility={popoverVisibility} setPopoverVisibility={setPopoverVisibility} entityPropertyDefinitions={props.entityPropertyDefinitions} selectedPropertyDefinitions={props.selectedPropertyDefinitions} setColumnSelectorTouched={props.setColumnSelectorTouched} columns={props.columns} primaryKey={primaryKey} />
         </div> : ""}
-      </div>
+      </div> : ""}
       <div className={styles.tabular}>
         {tableHeaders.length > 0 && <HCTable
           data-testid="result-table"
