@@ -10,15 +10,19 @@ const config = {
     "detail": {
         "heading": {
             "id": "result[0].extracted.person.personId",
-            "title": "result[0].extracted.person.name"
+            "title": { 
+                "path": "result[0].extracted.person.name"
+            }
         },
         "personal": {
             "items": [
                 {
-                    "id": "phone",
                     "component": "DataTableValue",
-                    "title": "Phone Number",
-                    "path": "result[0].extracted.person.phone"
+                    "config": {
+                        "id": "phone",
+                        "title": "Phone Number",
+                        "path": "result[0].extracted.person.phone"
+                    }
                 }
             ]
         }
@@ -73,7 +77,7 @@ describe("Detail view", () => {
             getByText = renderResults.getByText;
         });
         expect(document.querySelector(".heading")).toBeInTheDocument();
-        expect(getByText(config.detail.personal.items[0].title)).toBeInTheDocument();
+        expect(getByText(config.detail.personal.items[0].config.title)).toBeInTheDocument();
     });
 
     test("Renders loading content with empty config", async () => {

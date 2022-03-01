@@ -7,6 +7,7 @@ type Props = {
   config?: any;
   data?: any;
   style?: any;
+  className?: any;
 };
 
 /**
@@ -18,6 +19,8 @@ type Props = {
  */
 const DateTime: React.FC<Props> = (props) => {
 
+    const defaultFormat = "yyyy-MM-dd";
+
     let val;
     if (props.children) {
         val = props.children;
@@ -26,7 +29,7 @@ const DateTime: React.FC<Props> = (props) => {
     }
 
     let formattedDateTime;
-    formattedDateTime = dt.fromISO(val).toFormat(props.config.format);
+    formattedDateTime = dt.fromISO(val).toFormat(props.config.format ? props.config.format : defaultFormat);
 
     if (formattedDateTime && props.config?.prefix) {
         formattedDateTime = props.config?.prefix.concat(formattedDateTime);
@@ -36,10 +39,11 @@ const DateTime: React.FC<Props> = (props) => {
         formattedDateTime = formattedDateTime.concat(props.config?.suffix);
     }
 
+    const dateTimeClassName: any = props.className ? props.className : props.config?.className ? props.config.className : "";
     const dateTimeStyle: any = props.style ? props.style : {};
 
     return (
-        <span className="DateTime" style={dateTimeStyle}>
+        <span className={dateTimeClassName ? dateTimeClassName : "DateTime"} style={dateTimeStyle}>
             {formattedDateTime}
         </span>
     );
