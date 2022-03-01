@@ -7,18 +7,22 @@ import Occupations from "../components/Occupations/Occupations";
 import Relationships from "../components/Relationships/Relationships";
 import DataTableValue from "../components/DataTableValue/DataTableValue";
 import DataTableMultiValue from "../components/DataTableMultiValue/DataTableMultiValue";
+import DateTime from "../components/DateTime/DateTime";
+import Image from "../components/Image/Image";
 import Section from "../components/Section/Section";
 import Value from "../components/Value/Value";
 import { ArrowLeft } from "react-bootstrap-icons";
 import "./Detail.scss";
-import { getValByPath, getValByPathAsArray, getValByConfig } from "../util/util";
 import _ from "lodash";
 
 type Props = {};
 
 const COMPONENTS = {
   DataTableValue: DataTableValue,
-  DataTableMultiValue: DataTableMultiValue
+  DataTableMultiValue: DataTableMultiValue,
+  DateTime: DateTime,
+  Image: Image,
+  Value: Value
 }
 
 const Detail: React.FC<Props> = (props) => {
@@ -44,13 +48,6 @@ const Detail: React.FC<Props> = (props) => {
       detailContext.handleDetail(id);
     }
   }, [userContext.config]);
-
-  let thumbStyle = {
-    width: (config?.detail?.heading?.thumbnail && config?.detail?.heading?.thumbnail.width) ? 
-    config.detail.heading.thumbnail.width : "auto",
-    height: (config?.detail?.heading?.thumbnail && config?.detail?.heading?.thumbnail.height) ? 
-    config.detail.heading.thumbnail.height : "auto"
-  };
   
   const getHeading = (configHeading) => {
     return (
@@ -62,11 +59,7 @@ const Detail: React.FC<Props> = (props) => {
         <Value data={detailContext.detail} config={configHeading.title} getFirst={true} />
       </div>
       {configHeading.thumbnail && <div className="thumbnail">
-        <img
-            src={getValByConfig(detailContext.detail, configHeading.thumbnail, true)}
-            alt={getValByPath(detailContext.detail, configHeading.title)}
-            style={thumbStyle}
-        ></img>
+        <Image data={detailContext.detail} config={configHeading.thumbnail.config} />
       </div>}
     </div>
     );
@@ -79,7 +72,7 @@ const Detail: React.FC<Props> = (props) => {
           <div key={"item-" + index} className="item">
             {React.createElement(
               COMPONENTS[it.component], 
-              { config: it }, null
+              { config: it.config, data: detailContext.detail}, null
             )}
           </div>
         );

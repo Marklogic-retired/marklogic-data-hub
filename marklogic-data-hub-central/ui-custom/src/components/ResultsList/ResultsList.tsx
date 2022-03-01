@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import Address from "../Address/Address";
 import Chiclet from "../Chiclet/Chiclet";
 import DateTime from "../DateTime/DateTime";
+import Image from "../Image/Image";
 import Value from "../Value/Value";
 import { SearchContext } from "../../store/SearchContext";
 import { DetailContext } from "../../store/DetailContext";
@@ -14,7 +15,9 @@ type Props = {
 };
 
 const COMPONENTS = {
-  Address: Address
+  Address: Address,
+  DateTime: DateTime,
+  Value: Value
 }
 
 /**
@@ -84,14 +87,6 @@ const ResultsList: React.FC<Props> = (props) => {
   const searchContext = useContext(SearchContext);
   const detailContext = useContext(DetailContext);
 
-  const catColors = props.config.categories.colors || {};
-  let thumbStyle = {
-    width: (props.config && props.config.thumbnail && props.config.thumbnail.width) ? 
-      props.config.thumbnail.width : "auto",
-    height: (props.config && props.config.thumbnail && props.config.thumbnail.height) ? 
-      props.config.thumbnail.height : "auto"
-  };
-
   const handleNameClick = (e) => {
     detailContext.handleDetail(e.target.id);
   };
@@ -120,11 +115,8 @@ const ResultsList: React.FC<Props> = (props) => {
         <div key={"result-" + index} className="result">
           <div className="thumbnail"> 
             {props.config.thumbnail ? 
-            <img
-              src={getValByConfig(results, props.config.thumbnail, true)}
-              alt={props.config && props.config.thumbnail && props.config.thumbnail.alt}
-              style={thumbStyle}
-            ></img> : null}
+              <Image data={results} config={props.config.thumbnail.config} />
+            : null}
           </div>
           <div className="details">
             <div className="title" onClick={handleNameClick}>
@@ -140,7 +132,6 @@ const ResultsList: React.FC<Props> = (props) => {
                   <Chiclet 
                     key={"category-" + index2} 
                     config={props.config.categories}
-                    style={{backgroundColor: catColors[s]}}
                   >{s}</Chiclet>
                 )
               })}

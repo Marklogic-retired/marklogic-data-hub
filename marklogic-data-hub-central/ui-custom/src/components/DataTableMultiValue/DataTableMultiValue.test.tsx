@@ -4,104 +4,116 @@ import {render} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 const configMultiple = {
-    id: "address",
-    title: "Address",
-    width: 600,
-    path: "result[0].extracted.person.address",
-    cols: [
-        {
-            title: "City",
-            value: "city"
-        },
-        {
-            title: "State",
-            value: "state"
-        }
-    ],
-    metadata: [
-        {
-            type: "block",
-            color: "#96bde4",
-            value: "B"
-        },
-        {
-            type: "block",
-            color: "#5d6aaa",
-            value: "4"
-        }
-    ]
+    component: "DataTableMultiValue",
+    config: {
+        id: "address",
+        title: "Address",
+        width: 600,
+        path: "result[0].extracted.person.address",
+        cols: [
+            {
+                title: "City",
+                value: "city"
+            },
+            {
+                title: "State",
+                value: "state"
+            }
+        ],
+        metadata: [
+            {
+                type: "block",
+                color: "#96bde4",
+                value: "B"
+            },
+            {
+                type: "block",
+                color: "#5d6aaa",
+                value: "4"
+            }
+        ]
+    }
 };
 
 const configSingular = {
-    id: "school",
-    title: "School",
-    width: 600,
-    path: "result[0].extracted.person.school",
-    cols: [
-        {
-            title: "Name",
-            value: "name"
-        },
-        {
-            title: "City",
-            value: "city"
-        },
-        {
-            title: "Year",
-            value: "year"
-        }
-    ],
-    metadata: [
-        {
-            type: "block",
-            color: "#96bde4",
-            value: "B"
-        },
-        {
-            type: "block",
-            color: "#5d6aaa",
-            value: "4"
-        }
-    ]
+    component: "DataTableMultiValue",
+    config: {
+        id: "school",
+        title: "School",
+        width: 600,
+        path: "result[0].extracted.person.school",
+        cols: [
+            {
+                title: "Name",
+                value: "name"
+            },
+            {
+                title: "City",
+                value: "city"
+            },
+            {
+                title: "Year",
+                value: "year"
+            }
+        ],
+        metadata: [
+            {
+                type: "block",
+                color: "#96bde4",
+                value: "B"
+            },
+            {
+                type: "block",
+                color: "#5d6aaa",
+                value: "4"
+            }
+        ]
+    }
 };
 
 const configSingularComplex = {
-    id: "school",
-    title: "School",
-    width: 600,
-    path: "result[0].extracted.person.college",
-    cols: [
-        {
-            title: "Name",
-            value: "name.value"
-        },
-        {
-            title: "City",
-            value: "city.value"
-        },
-        {
-            title: "Year",
-            value: "year.value"
-        }
-    ],
-    metadata: [
-        {
-            type: "block",
-            color: "#96bde4",
-            value: "B"
-        },
-        {
-            type: "block",
-            color: "#5d6aaa",
-            value: "4"
-        }
-    ]
+    component: "DataTableMultiValue",
+    config: {
+        id: "school",
+        title: "School",
+        width: 600,
+        path: "result[0].extracted.person.college",
+        cols: [
+            {
+                title: "Name",
+                value: "name.value"
+            },
+            {
+                title: "City",
+                value: "city.value"
+            },
+            {
+                title: "Year",
+                value: "year.value"
+            }
+        ],
+        metadata: [
+            {
+                type: "block",
+                color: "#96bde4",
+                value: "B"
+            },
+            {
+                type: "block",
+                color: "#5d6aaa",
+                value: "4"
+            }
+        ]
+    }
 };
 
 const configNoExist = {
-    id: "noexist", 
-    title: "No Exist", 
-    dataPath: "result[0].extracted.person.noexist",
+    component: "DataTableMultiValue",
+    config: {
+        id: "noexist", 
+        title: "No Exist", 
+        path: "result[0].extracted.person.noexist"
+    }
 };
 
 const detail = {
@@ -162,10 +174,10 @@ describe("DataTableMultiValue component", () => {
     test("Verify data table renders with a property object with multiple values", () => {
         const {getByText, queryAllByText, getByTestId} = render(
             <DetailContext.Provider value={detailContextValue}>
-                <DataTableMultiValue config={configMultiple} />
+                <DataTableMultiValue config={configMultiple.config} data={detail} />
             </DetailContext.Provider>
         );
-        expect(getByText(configMultiple.title)).toBeInTheDocument();
+        expect(getByText(configMultiple.config.title)).toBeInTheDocument();
         expect(getByTestId("hideUp")).toBeInTheDocument();
         expect(getByText("Anytown")).toBeInTheDocument();
         expect(getByText("Anyville")).toBeInTheDocument();
@@ -179,10 +191,10 @@ describe("DataTableMultiValue component", () => {
     test("Verify data table renders with a property object with a single value", () => {
         const {getByText, queryByTestId} = render(
             <DetailContext.Provider value={detailContextValue}>
-                <DataTableMultiValue config={configSingular} />
+                <DataTableMultiValue config={configSingular.config} data={detail} />
             </DetailContext.Provider>
         );
-        expect(getByText(configSingular.title)).toBeInTheDocument();
+        expect(getByText(configSingular.config.title)).toBeInTheDocument();
         expect(queryByTestId("hideUp")).not.toBeInTheDocument();
         expect(getByText("Anytown High School")).toBeInTheDocument();
         expect(getByText("Anytown")).toBeInTheDocument();
@@ -192,10 +204,10 @@ describe("DataTableMultiValue component", () => {
     test("Verify data table renders with a property object with nested data", () => {
         const {getByText, queryByTestId} = render(
             <DetailContext.Provider value={detailContextValue}>
-                <DataTableMultiValue config={configSingularComplex} />
+                <DataTableMultiValue config={configSingularComplex.config} data={detail} />
             </DetailContext.Provider>
         );
-        expect(getByText(configSingularComplex.title)).toBeInTheDocument();
+        expect(getByText(configSingularComplex.config.title)).toBeInTheDocument();
         expect(queryByTestId("hideUp")).not.toBeInTheDocument();
         expect(getByText("Anytown College")).toBeInTheDocument();
         expect(getByText("Anytown")).toBeInTheDocument();
@@ -205,11 +217,11 @@ describe("DataTableMultiValue component", () => {
     test("Verify data table does not render with a property object that does not exist in the results", () => {
         const {queryByText, queryByTestId} = render(
             <DetailContext.Provider value={detailContextValue}>
-                <DataTableMultiValue config={configNoExist} />
+                <DataTableMultiValue config={configNoExist.config} data={detail} />
             </DetailContext.Provider>
         );
-        expect(queryByText(configNoExist.title)).not.toBeInTheDocument();
-        expect(queryByTestId(configNoExist.id)).not.toBeInTheDocument();
+        expect(queryByText(configNoExist.config.title)).not.toBeInTheDocument();
+        expect(queryByTestId(configNoExist.config.id)).not.toBeInTheDocument();
     });
 
 });
