@@ -7,7 +7,7 @@ import {faInfoCircle, faSearch} from "@fortawesome/free-solid-svg-icons";
 import {HCDateTimePicker, HCTooltip, HCInput, HCCheckbox} from "@components/common";
 import Facet from "../facet/facet";
 import {SearchContext} from "../../util/search-context";
-import {facetParser} from "../../util/data-conversion";
+import {facetParser, deepCopy} from "../../util/data-conversion";
 import hubPropertiesConfig from "../../config/hub-properties.config";
 import tooltipsConfig from "../../config/explorer-tooltips.config";
 import styles from "./sidebar.module.scss";
@@ -67,6 +67,7 @@ const Sidebar: React.FC<Props> = (props) => {
   const [dateRangeValue, setDateRangeValue] = useState<string>();
   const [searchBox, setSearchBox] = useState(searchOptions.query);
   const [currentQueryName, setCurrentQueryName] = useState(PLACEHOLDER); // eslint-disable-line @typescript-eslint/no-unused-vars
+  const [activeRelatedEntities, setActiveRelatedEntities] = useState(true);
 
 
   let integers = ["int", "integer", "short", "long"];
@@ -86,6 +87,20 @@ const Sidebar: React.FC<Props> = (props) => {
       setDateRangeValue("");
     }
   }, [greyedOptions, searchOptions]);
+
+  useEffect(() => {
+    let copyKey = deepCopy(activeKey);
+    if (!activeRelatedEntities) {
+      if (copyKey.includes("related-entities")) {
+        copyKey.splice(copyKey.indexOf("related-entities"), 1);
+      }
+    } else {
+      if (!copyKey.includes("related-entities")) {
+        copyKey.push("related-entities");
+      }
+    }
+    setActiveKey(copyKey);
+  }, [activeRelatedEntities]);
 
   useEffect(() => {
     let relatedEntitiesList = new Map();
@@ -154,7 +169,7 @@ const Sidebar: React.FC<Props> = (props) => {
       if (selectedHubFacets.length) {
         initializeFacetPreferences();
       } else {
-        searchOptions.entityTypeIds?.length && activeKey.includes("related-entities") ?
+        searchOptions.entityTypeIds?.length && activeRelatedEntities && activeKey.includes("related-entities") ?
           setActiveKey(["database", "hubProperties", "baseEntities", "related-entities"])
           : setActiveKey(["database", "hubProperties", "baseEntities"]);
       }
@@ -653,16 +668,16 @@ const Sidebar: React.FC<Props> = (props) => {
         </Accordion>
         <HCDivider className={"mt-0 mb-2"}  style={{backgroundColor: "#ccc"}}/>
         {props.currentRelatedEntities.size > 0 &&
-        <div className={styles.relatedEntityPanel}>
+        <div className={activeRelatedEntities ? styles.relatedEntityPanel : styles.relatedEntityPanelDisabled}>
           <HCTooltip text={!props.graphView ? exploreSidebar.disabledRelatedEntities: ""} aria-label="disabled-related-entity-tooltip" id="disabled-related-entity-tooltip" placement="bottom">
             <Accordion id="related-entities" data-testid={"related-entity-panel"} className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("related-entities") && props.graphView ? "related-entities" : ""} defaultActiveKey={activeKey.includes("related-entities") ? "related-entities" : ""}>
               <Accordion.Item eventKey="related-entities" className={"bg-transparent"}>
                 <div className={"p-0 d-flex"}>
                   <Accordion.Button className={!props.graphView ? `after-indicator ${styles.disabledTitleCheckbox}` : `after-indicator ${styles.titleCheckbox}`} onClick={() =>  setActiveAccordion("related-entities")}>{
-                    panelTitle(<span><HCCheckbox id="check-all" value="check-all" disabled={!props.graphView} handleClick={onCheckAllChanges} checked={checkAll} />related entity types</span>, ExploreGraphViewToolTips.relatedEntities)}</Accordion.Button>
+                    panelTitle(<span><HCCheckbox id="check-all" value="check-all" disabled={!props.graphView} handleClick={activeRelatedEntities ? onCheckAllChanges : () => { return; }} checked={checkAll} />related entities</span>, ExploreGraphViewToolTips.relatedEntities)}</Accordion.Button>
                 </div>
                 <Accordion.Body>
-                  <RelatedEntitiesFacet currentRelatedEntities={props.currentRelatedEntities} setCurrentRelatedEntities={props.setCurrentRelatedEntities} onSettingCheckedList={onSettingCheckedList} setEntitySpecificPanel={props.setEntitySpecificPanel}/>
+                  <RelatedEntitiesFacet currentRelatedEntities={props.currentRelatedEntities} setCurrentRelatedEntities={props.setCurrentRelatedEntities} onSettingCheckedList={onSettingCheckedList} setEntitySpecificPanel={props.setEntitySpecificPanel} setActiveRelatedEntities={setActiveRelatedEntities}/>
                 </Accordion.Body>
               </Accordion.Item>
             </Accordion>

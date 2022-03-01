@@ -12,6 +12,11 @@ class BaseEntitySidebar {
   removeSelectedBaseEntity() {
     return cy.get(`[class="css-xb97g8"]`).first().click();
   }
+
+  removeLastSelectedBaseEntity() {
+    return cy.get(`[class="css-xb97g8"]`).last().click();
+  }
+
   getBaseEntityToolTip() {
     return cy.get("#baseEntityToolTip");
   }
@@ -35,6 +40,9 @@ class BaseEntitySidebar {
     return cy.get("[data-testid='facet-date-picker'] > p");
   }
 
+  getRelatedEntity(entityName: string) {
+    return cy.get(`[aria-label="related-entity-${entityName}"]`);
+  }
 
   getBaseEntityDropdown() {
     return cy.get("#entitiesSidebar-select-wrapper");
@@ -75,10 +83,6 @@ class BaseEntitySidebar {
     return cy.get("button[aria-label='clear-facets-button']");
   }
 
-  getRelatedEntity() {
-    return cy.get("[aria-label='related-entity-Person']");
-  }
-
   getRelatedEntityPanel() {
     return cy.get(`[data-testid="related-entity-panel"]`);
   }
@@ -94,6 +98,15 @@ class BaseEntitySidebar {
   verifyCollapsedRelatedEntityPanel() {
     return cy.get(`[class="after-indicator sidebar_disabledTitleCheckbox__PJkN4 accordion-button collapsed"]`);
   }
+
+  toggleRelatedEntityPanel() {
+    return cy.get("#related-entities .accordion-button").click({force: true});
+  }
+
+  getDisabledEntityTooltip() {
+    return cy.get(`[aria-label="disabled-entity-tooltip"]`);
+  }
+
   //Actions
   openBaseEntityFacets(entity: string) {
     return this.getBaseEntity(entity).click();
@@ -108,7 +121,7 @@ class BaseEntitySidebar {
     return this.getClearFacetsButton().click();
   }
   clickOnRelatedEntity(entity: string) {
-    return this.getRelatedEntity().click();
+    return this.getRelatedEntity(entity).click();
   }
 }
 export default new BaseEntitySidebar();

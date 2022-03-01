@@ -12,10 +12,11 @@ interface Props {
   dataTestId?: string;
   ariaLabel?: string;
   disabled?: boolean;
+  cursorDisabled?: boolean;
 }
 
 const HCCheckbox: React.FC<Props> = (props) => {
-  const {id, tooltip, handleClick, value, label, checked, dataTestId, ariaLabel, children, disabled} = props;
+  const {id, tooltip, handleClick, value, label, checked, dataTestId, ariaLabel, children, disabled, cursorDisabled} = props;
   const checkLabel = <FormCheck.Label style={{"marginLeft": 5, "color": "#333333"}}>{label}</FormCheck.Label>;
 
   const getLabel = () => {
@@ -36,7 +37,7 @@ const HCCheckbox: React.FC<Props> = (props) => {
         onClick={(e) => e.stopPropagation()}
         data-testid={dataTestId}
         aria-label={ariaLabel}
-        style={{marginTop: "0", verticalAlign: "middle"}}
+        style={cursorDisabled ? {marginTop: "0", verticalAlign: "middle", cursor: "not-allowed"} : {marginTop: "0", verticalAlign: "middle"}}
       />
       :
       <FormCheck.Input
@@ -47,7 +48,7 @@ const HCCheckbox: React.FC<Props> = (props) => {
         onClick={(e) => e.stopPropagation()}
         data-testid={dataTestId}
         aria-label={ariaLabel}
-        style={{marginTop: "0", verticalAlign: "middle"}}
+        style={cursorDisabled ? {marginTop: "0", verticalAlign: "middle", cursor: "not-allowed"} : {marginTop: "0", verticalAlign: "middle"}}
       />
     }
     {label ? getLabel() : children}
