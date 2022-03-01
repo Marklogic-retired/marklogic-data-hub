@@ -8,6 +8,7 @@ import DynamicIcons from "@components/common/dynamic-icons/dynamic-icons";
 import {SearchContext} from "../../util/search-context";
 import {ExploreGraphViewToolTips} from "../../config/tooltips.config";
 import {HCTooltip} from "@components/common";
+import {deepCopy} from "../../util/data-conversion";
 
 const SHOW_MINIMUM = (values) => values.length >= MINIMUM_ENTITIES ? MINIMUM_ENTITIES: values.length;
 const SHOW_FILTER = (filter) => filter === 1 ? `(${filter} filter)  ` : `(${filter} filters)  `;
@@ -17,11 +18,13 @@ interface Props {
   onSettingCheckedList: (checkAll: any) => void;
   setCurrentRelatedEntities: (relatedEntities: Map<string, any>) => void;
   setEntitySpecificPanel: (entity: any) => void;
+  setActiveRelatedEntities: (boolean) => void;
 }
 
 const RelatedEntitiesFacet: React.FC<Props> = (props) => {
 
   const {
+    searchOptions,
     setRelatedEntityTypeIds
   } = useContext(SearchContext);
   const {currentRelatedEntities, onSettingCheckedList, setCurrentRelatedEntities, setEntitySpecificPanel} = props;
@@ -29,11 +32,33 @@ const RelatedEntitiesFacet: React.FC<Props> = (props) => {
   const [showMore, setShowMore] = useState<boolean>(false);
   const [options, setOptions] = useState<any[]>([]);
   const [checkedList, setCheckedList] = useState<any[]>([]);
+  const [relatedEntitiesDisabled, setRelatedEntitiesDisabled] = useState<any[]>([]);
 
   useEffect(() => {
     const entityNames = Array.from(currentRelatedEntities.keys());
     setEntitiesList(entitiesSorting(entityNames));
   }, [currentRelatedEntities, checkedList]);
+
+  useEffect(() => {
+    let updateDisabledEntities = deepCopy(relatedEntitiesDisabled);
+    Array.from(currentRelatedEntities.keys()).forEach((entity) => {
+      if (selectedInBase(entity) && !relatedEntitiesDisabled.includes(entity)) {
+        updateDisabledEntities.push(entity);
+      } else if (!selectedInBase(entity) && relatedEntitiesDisabled.includes(entity)) {
+        updateDisabledEntities.splice(updateDisabledEntities.indexOf(entity), 1);
+      }
+    });
+    setRelatedEntitiesDisabled(updateDisabledEntities);
+  }, [searchOptions.entityTypeIds]);
+
+  useEffect(() => {
+    if (relatedEntitiesDisabled.length === currentRelatedEntities.size) {
+      //if all related entities possible have been disabled, tell sidebar to disable the entire panel
+      props.setActiveRelatedEntities(false);
+    } else {
+      props.setActiveRelatedEntities(true);
+    }
+  }, [relatedEntitiesDisabled]);
 
   useEffect(() => {
     if (!showMore) {
@@ -61,6 +86,15 @@ const RelatedEntitiesFacet: React.FC<Props> = (props) => {
     setRelatedEntityTypeIds(relatedEntityIds);
   };
 
+  const selectedInBase = (relatedEntity) => {
+    if (searchOptions?.entityTypeIds && relatedEntity && searchOptions.entityTypeIds.includes(relatedEntity)) {
+      //if the related entity is already selected as a base entity
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   return (
     <>
       <div aria-label="related-entities-list">
@@ -70,20 +104,21 @@ const RelatedEntitiesFacet: React.FC<Props> = (props) => {
             let finalIcon = icon ? icon : "FaShapes";
             let finalColor = color ? color : "#EEEFF1";
             return (
-              <HCTooltip text={ExploreGraphViewToolTips.entityToolTip} placement="top" id="relatedEntityToolTip" aria-label="relatedEntityToolTip">
+              <HCTooltip text={relatedEntitiesDisabled.includes(option) ? ExploreGraphViewToolTips.entityToolTipDisabled(option) : ExploreGraphViewToolTips.entityToolTip} placement="top" id="relatedEntityToolTip" aria-label="relatedEntityToolTip">
                 <div
-                  style={{backgroundColor: finalColor}}
-                  className={styles.entityItem}
+                  style={{backgroundColor: finalColor, borderStyle: "solid", borderWidth: "1px", borderColor: "#d9d9d9", borderRadius: "4px"}}
+                  className={relatedEntitiesDisabled.includes(option)  ? styles.entityItemDisabled : styles.entityItem}
                   key={name}
-                  onClick={() => setEntitySpecificPanel({name, color: finalColor, icon: finalIcon})}>
+                  onClick={() => relatedEntitiesDisabled.includes(option) ? "" : setEntitySpecificPanel({name, color: finalColor, icon: finalIcon})}>
                   <HCCheckbox
                     id={name}
                     checked={checked}
-                    handleClick={handleColOptionsChecked}
+                    cursorDisabled={relatedEntitiesDisabled.includes(option)}
+                    handleClick={relatedEntitiesDisabled.includes(option) ? () => { return; } : handleColOptionsChecked}
                     value={name}
                     ariaLabel={`related-entity-check-${name}`}>
                     <DynamicIcons name={finalIcon}/>
-                    <span className={styles.entityName}>{name}</span>
+                    <span className={styles.entityName} aria-label={`related-entity-${name}`}>{name}</span>
                     <span className={styles.entityChevron}>
                       <ChevronDoubleRight/>
                     </span>

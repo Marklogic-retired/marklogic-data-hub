@@ -202,8 +202,20 @@ describe("Test '/Explore' left sidebar", () => {
       expect(orderCoordinates).to.not.equal(undefined);
     });
 
-    cy.log("verify that related entity panel is not disabled in graph view");
-    entitiesSidebar.verifyCollapsedRelatedEntityPanel().should("not.exist");
+    cy.log("verify that related entity panel is collapsed due to related entity (Customer) being selected as a base");
+    entitiesSidebar.getRelatedEntity("Customer").should("not.be.visible");
+
+    cy.log("related entity panel is expandable and disabled tooltip applies to each item");
+    entitiesSidebar.toggleRelatedEntityPanel();
+    entitiesSidebar.getRelatedEntity("Customer").should("be.visible");
+    entitiesSidebar.getRelatedEntity("Customer").trigger("mouseover");
+    entitiesSidebar.getDisabledEntityTooltip().should("be.visible");
+
+    cy.log("verify related entity panel is enabled when Customer is deselected as a base entity");
+    entitiesSidebar.removeLastSelectedBaseEntity();
+    entitiesSidebar.getRelatedEntity("Customer").should("be.visible");
+    entitiesSidebar.getRelatedEntity("Customer").trigger("mouseover");
+    entitiesSidebar.getDisabledEntityTooltip().should("not.exist");
   });
 
   //TODO: this test is commented because a refresh graph error

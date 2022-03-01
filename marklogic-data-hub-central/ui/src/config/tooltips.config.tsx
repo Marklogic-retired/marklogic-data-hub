@@ -498,7 +498,10 @@ const ExploreGraphViewToolTips = {
   baseEntities: <>Base entities are the entities whose data you want to explore. Choose one or more base entities.</>,
   relatedEntities: <>Related entities are entities related to the base entities. Select the check boxes for related entities you want to explore. To add or edit relationships, go to the <strong>Model</strong> screen.</>,
   noFacetToolTip: <>There are no facets for this entity. Facets enable you to filter results by property values. To enable facets for properties, go to the <strong>Model</strong> screen.</>,
-  entityToolTip : <>Click to filter results by property values.</>
+  entityToolTip : <>Click to filter results by property values.</>,
+  entityToolTipDisabled: function(entityName) {
+    return <span aria-label="disabled-entity-tooltip">The graph is already displaying all <strong>{entityName}</strong> records. To enable this selection, remove the <strong>{entityName}</strong> entity from the Base Entities section.</span>
+  }
 };
 
 const ExplorePlaceholders = {

@@ -12,8 +12,10 @@ describe("Related Entities Facet", () => {
   test("Render base entities", () => {
     const currentRelatedEntities = new Map<string, any>([["Customer", CUSTOMERS]]);
     const setCurrentRelatedEntities = () => {};
+    const setActiveRelatedEntities = () => {};
+    const setEntitySpecificPanel = () => {};
     const {getByLabelText} = render(
-      <RelatedEntitiesFacet currentRelatedEntities={currentRelatedEntities} setCurrentRelatedEntities={setCurrentRelatedEntities} onSettingCheckedList={() => {}}/>
+      <RelatedEntitiesFacet currentRelatedEntities={currentRelatedEntities} setCurrentRelatedEntities={setCurrentRelatedEntities} setActiveRelatedEntities={setActiveRelatedEntities} setEntitySpecificPanel={setEntitySpecificPanel} onSettingCheckedList={() => {}}/>
     );
     const dropdown = getByLabelText("related-entities-list");
     expect(dropdown).toBeInTheDocument();
