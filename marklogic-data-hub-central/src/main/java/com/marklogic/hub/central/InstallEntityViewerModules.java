@@ -12,7 +12,6 @@ import com.marklogic.client.impl.DocumentWriteOperationImpl;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.HubClientConfig;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -26,7 +25,7 @@ import java.io.IOException;
 
 
 @Component
-public class InstallModules extends LoggingObject implements ApplicationRunner {
+public class InstallEntityViewerModules extends LoggingObject implements ApplicationRunner {
 
     @Autowired
     Environment environment;
@@ -35,13 +34,16 @@ public class InstallModules extends LoggingObject implements ApplicationRunner {
     private DatabaseClient modulesClient;
     private GenericDocumentManager modulesDocMgr;
     private DocumentWriteSet modulesWriteSet;
-    private String[] classPathDirectories = {
+    private String[] defaultModulesDir = {
         "explore-data/data-services/ml-exp-search/",
+        "explore-data/ml-search-lib/"
+    };
+
+    private String[] configurableModulesDir = {
         "explore-data/options/",
         "explore-data/search-lib/",
         "explore-data/ui-config/"
     };
-
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -60,15 +62,20 @@ public class InstallModules extends LoggingObject implements ApplicationRunner {
         modulesDocMgr = modulesClient.newDocumentManager();
         modulesWriteSet = modulesDocMgr.newWriteSet();
 
-        for(String classpathDirectory: classPathDirectories) {
+        for(String classpathDirectory: defaultModulesDir) {
             logger.info(String.format("Adding modules from %s directory to load into %s database", classpathDirectory, dbName));
-            addModulesToWriteSet(classpathDirectory);
+            addModulesToWriteSet(classpathDirectory, false);
+        }
+
+        for(String classpathDirectory: configurableModulesDir) {
+            logger.info(String.format("Adding modules from %s directory to load into %s database", classpathDirectory, dbName));
+            addModulesToWriteSet(classpathDirectory, true);
         }
         modulesDocMgr.write(modulesWriteSet);
         logger.info("Loading Modules complete");
     }
 
-    private void addModulesToWriteSet(String classPathDirectory) {
+    private void addModulesToWriteSet(String classPathDirectory, boolean isConfigurableModulesDir) {
         ClassLoader cl = this.getClass().getClassLoader();
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(cl);
         try {
@@ -77,8 +84,11 @@ public class InstallModules extends LoggingObject implements ApplicationRunner {
                 if(r.exists() && r.contentLength() > 0) {
                     StringHandle handle = new StringHandle(IOUtils.toString(r.getInputStream()));
                     String modulePath = "/".concat(classPathDirectory).concat(r.getFilename());
-                    System.out.println(modulePath);
                     String uri = modulePath.startsWith("/") ? modulePath : "/".concat(modulePath);
+                    if(isConfigurableModulesDir && modulesDocMgr.exists(uri) != null) {
+                        logger.info(String.format("File %s already exists. Not overriding the file", uri));
+                        continue;
+                    }
                     logger.info(String.format("Adding module %s", uri));
                     DocumentWriteOperation op = new DocumentWriteOperationImpl(DocumentWriteOperation.OperationType.DOCUMENT_WRITE, uri, buildMetadata(), handle);
                     modulesWriteSet.add(op);
