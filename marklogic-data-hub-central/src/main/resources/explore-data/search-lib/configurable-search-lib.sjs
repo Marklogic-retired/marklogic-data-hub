@@ -14,7 +14,7 @@
  limitations under the License.
  */
 'use strict';
-const Search = require("/explore-data/search-lib/search.sjs");
+const Search = require("/explore-data/ml-search-lib/search.sjs");
 
 class ConfigurableSearch extends Search {
   constructor() {
