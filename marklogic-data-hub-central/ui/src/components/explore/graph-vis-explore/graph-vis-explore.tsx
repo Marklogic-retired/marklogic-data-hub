@@ -11,7 +11,7 @@ import tooltipsConfig from "../../../config/explorer-tooltips.config";
 import {updateUserPreferences, getUserPreferences} from "../../../services/user-preferences";
 import {UserContext} from "../../../util/user-context";
 import {expandGroupNode} from "../../../api/queries";
-import {Link} from "react-router-dom";
+import TableViewGroupNodes from "../table-view-group-nodes/table-view-group-nodes";
 
 
 type Props = {
@@ -65,6 +65,9 @@ const GraphVisExplore: React.FC<Props> = (props) => {
   const [groupNodes, setGroupNodes] = useState({});
   const [leafNodes, setLeafNodes] = useState({});
   const [predicates, setPredicates] = useState({});
+
+  const [openTableViewForGroupNodes, toggleTableViewForGroupNodes] = useState(false);
+  const [relatedToData, setRelatedToData] = useState({});
 
   // Load coords *once* on init
 
@@ -187,20 +190,6 @@ const GraphVisExplore: React.FC<Props> = (props) => {
           groupNodeId: clickedNode["nodeId"],
           parentIRI: clickedNode["parentIRI"],
           predicateFilter: clickedNode["predicate"]
-        }
-      };
-      updateUserPreferences(user.name, preferencesObject);
-    }
-  };
-
-  const setUserPreferencesForTableView = (relatedPayload) => {
-    let defaultPreferences = getUserPreferences(user.name);
-    if (defaultPreferences !== null) {
-      let parsedPreferences = JSON.parse(defaultPreferences);
-      let preferencesObject = {
-        ...parsedPreferences,
-        graphViewOptions: {
-          relatedView: relatedPayload
         }
       };
       updateUserPreferences(user.name, preferencesObject);
@@ -487,7 +476,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     updateEdgesData(graphDataTemp.edges);
   };
 
-  const handleTableViewRecords = () => {
+  const handleTableViewRecords = (exceededThreshold?: string) => {
     if (network) {
       const selectedNodeType = clickedNode && clickedNode["nodeId"] ? clickedNode["nodeId"].split("/").pop().split("-").pop() : undefined;
       const predicate = clickedNode && clickedNode["predicateIRI"];
@@ -497,8 +486,12 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         predicateFilter: predicate,
         parentNode: parentNode
       };
+      if (exceededThreshold) {
+        relatedView["exceededThreshold"] = true;
+      }
 
-      setUserPreferencesForTableView(relatedView);
+      setRelatedToData(relatedView);
+      toggleTableViewForGroupNodes(true);
     }
   };
 
@@ -532,24 +525,30 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     };
     try {
       let response: any;
+      let checkThreshold = false;
       if (!payloadData.expandAll) {
         response = await expandGroupNode(payload, 3);
       } else {
         response = await expandGroupNode(payload);
+        checkThreshold = true;
       }
 
       if (response.status === 200) {
-        let expandedNodeInfo = expandedNodeData;
-        let expandId = payloadData["nodeInfo"] ? payloadData.nodeInfo["expandId"] : clickedNode["expandId"];
-        expandedNodeInfo[expandId] = {
-          nodes: response.data.nodes,
-          edges: response.data.edges,
-          removedNode: payload.data["parentIRI"]
-        };
-        setExpandedNodeData(expandedNodeInfo);
-        network.body.data.nodes.remove(payload.data["parentIRI"]);
-        await updateGroupAndLeafNodesDataset(response.data.nodes);
-        await updateGraphDataWith(response.data.nodes, response.data.edges);
+        if (checkThreshold && response.data.total > 1000) {
+          handleTableViewRecords("exceededThreshold");
+        } else {
+          let expandedNodeInfo = expandedNodeData;
+          let expandId = payloadData["nodeInfo"] ? payloadData.nodeInfo["expandId"] : clickedNode["expandId"];
+          expandedNodeInfo[expandId] = {
+            nodes: response.data.nodes,
+            edges: response.data.edges,
+            removedNode: payload.data["parentIRI"]
+          };
+          setExpandedNodeData(expandedNodeInfo);
+          network.body.data.nodes.remove(payload.data["parentIRI"]);
+          await updateGroupAndLeafNodesDataset(response.data.nodes);
+          await updateGraphDataWith(response.data.nodes, response.data.edges);
+        }
       }
     } catch (error) {
       handleError(error);
@@ -760,11 +759,9 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     return (
       <div id="contextMenu" onClick={handleMenuClick} className={styles.contextMenu} style={{left: menuPosition.x, top: menuPosition.y}}>
         { nodeIdExists() && isGroupNode() &&
-          <Link to="/tiles/explore" target="_blank" className={styles.viewRecordsInTableLink}>
             <div id="viewRecordsInTableView" key="1" className={styles.contextMenuItem}>
-            View all related {entityType} records in a table
+            Open related {entityType} records in a table
             </div>
-          </Link>
         }
         {
           nodeIdExists() && isLeafNode() && !isExpandedLeaf() &&
@@ -1044,6 +1041,11 @@ const GraphVisExplore: React.FC<Props> = (props) => {
           getNetwork={initNetworkInstance}
         />
         {contextMenuVisible && menu()}
+        <TableViewGroupNodes
+          isVisible={openTableViewForGroupNodes}
+          toggleTableViewForGroupNodes={toggleTableViewForGroupNodes}
+          relatedToData={relatedToData}
+        />
       </div>
     </div>
   );

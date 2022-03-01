@@ -7,3 +7,11 @@ export interface QueryOptions {
     sortOrder: any[];
     database: string;
   }
+
+export interface pagePropertiesType {
+    start: number,
+    pageNumber: number,
+    pageLength: number,
+    pageSize: number,
+    maxRowsPerPage: number,
+}

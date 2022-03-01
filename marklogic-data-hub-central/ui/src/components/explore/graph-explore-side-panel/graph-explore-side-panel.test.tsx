@@ -4,27 +4,11 @@ import "@testing-library/jest-dom/extend-expect";
 import GraphExploreSidePanel from "./graph-explore-side-panel";
 import {SearchContext} from "../../../util/search-context";
 import {BrowserRouter as Router} from "react-router-dom";
+import {defaultSearchOptions} from "../../../assets/mock-data/explore/entity-search";
 
 describe("Query Dropdown", () => {
 
   afterEach(cleanup);
-
-  const defaultSearchOptions = {selectedNode: {
-    query: "",
-    entityTypeIds: [],
-    nextEntityType: "",
-    start: 1,
-    pageNumber: 1,
-    pageLength: 20,
-    pageSize: 20,
-    selectedFacets: {},
-    maxRowsPerPage: 100,
-    selectedQuery: "select a query",
-    manageQueryModal: false,
-    selectedTableProperties: [],
-    view: null,
-    sortOrder: [],
-  }};
 
   const defaultSavedNode ={entityName: "Order", primaryKey: {propertyValue: "1234"}, docUri: "10260.json", sources: "", entityInstance: {}, label: "1234"};
   test("Render graph side bar", () => {

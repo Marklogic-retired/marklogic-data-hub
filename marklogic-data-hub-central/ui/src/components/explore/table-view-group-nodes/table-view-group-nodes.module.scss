@@ -1,0 +1,149 @@
+@import "../../../theme/HCVariables.scss";
+@import "../../../theme/HCUtils.scss";
+.modalDialog {
+    @extend .modal1400w;
+    height: 90vh;
+    overflow: auto;
+  }
+
+.modalInfoContainer {
+  padding-left: 10px;
+  .modalTitleContainer {
+
+    .modalTitle{
+      font-size: 25px;
+      padding-bottom: 10px;
+    }
+  
+    .baseEntity{
+      font-size: 13px;
+      font-weight: 700;
+    }
+  }
+  
+  .exceededThresholdWarning {
+    display: flex;
+  
+    border: 1px solid #CE8406;
+    border-radius: 4px;
+    width: inherit;
+    align-items: center;
+    margin-left: 15px;
+    margin-right: 25px;
+    padding: 5px 5px;
+  
+    .largeDatasetWarning {
+      color: #CE8406;
+      font-size: 18px;
+      margin-right: 10px;
+    }
+  }
+}
+
+.tableViewResult {
+  padding-left: 10px;
+  padding-right: 10px;
+  //margin-top: -10px;
+  max-height: 60vh;
+  overflow: auto;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 10px;
+}
+
+.searchPaginationContainer {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 10px;
+  margin-right: 10px;
+
+  .paginationContainer {
+    display: flex;
+    gap: 4px;
+  }
+}
+
+.paginationContainer {
+    display: flex;
+    gap: 4px;
+}
+.paginationWrapper {
+    li[class="page-item active"] {
+        border: none;
+        margin-left: 0 !important;
+        a[class="page-link"],
+        span[class="page-link"] {
+            background: #fff;
+            border: 1px solid $primary;
+            color: $primary;
+            border-radius: 4px;
+            padding: 1px 7px;
+        }
+    }
+    a[class="page-link"],
+    span[class="page-link"] {
+        margin-left: 0 !important;
+        border: none;
+        background: #fff;
+        padding: 2px 8px;
+        &:focus,
+        &:hover {
+            border: none;
+            box-shadow: none;
+        }
+    }
+    &:first-child {
+        li {
+            &:first-child {
+                a[class="page-link"],
+                span[class="page-link"] {
+                    span {
+                       display: none;
+                    }
+                    &::after {
+                        content: "<";
+                    }
+                }
+            }
+            &:last-child {
+                 a[class="page-link"],
+                span[class="page-link"] {
+                    span {
+                       display: none;
+                    }
+                    &::after {
+                        content: ">";
+                    }
+                }
+            }
+        }
+    }
+}
+
+.select {
+    padding-top: 0px !important;
+    padding-bottom: 0 !important;
+    margin-top: 2px;
+    height: 27px;
+}
+.corner {
+    a[class="page-link"],
+    span[class="page-link"] {
+        font-size: 16px;
+    }
+}
+.disable {
+    cursor: not-allowed;
+    border: none;
+    a {
+        border: none;
+    }
+}
+.optionSelected {
+    font-weight: 600;
+    background-color: $bg-clean;
+}
+
