@@ -1,7 +1,6 @@
 import React, { useState, useContext } from "react";
 import MetadataValue from "../MetadataValue/MetadataValue";
 import Table from "react-bootstrap/Table";
-import { DetailContext } from "../../store/DetailContext";
 import "./DataTableMultiValue.scss";
 import {ArrowBarDown, ArrowBarRight, GeoAltFill} from "react-bootstrap-icons";
 import Popover from "react-bootstrap/Popover";
@@ -12,7 +11,8 @@ import GeoMap from "../GeoMap/GeoMap"
 
 
 type Props = {
-  config?: any;
+    data?: any;
+    config?: any;
 };
 
 /**
@@ -62,7 +62,6 @@ type Props = {
  */
 const DataTableMultiValue: React.FC<Props> = (props) => {
 
-    const detailContext = useContext(DetailContext);
     const [hide, setHide] = useState<boolean>(false);
 
     const handleHide = (e) => {
@@ -71,7 +70,7 @@ const DataTableMultiValue: React.FC<Props> = (props) => {
 
     let data: any = [];
 
-    data = getValByConfig(detailContext.detail, props.config);
+    data = getValByConfig(props.data, props.config);
     data = _.isNil(data) ? null : (Array.isArray(data) ? data : [data]);
 
     let hideClass: string = hide ? "hide" : "";
