@@ -1,0 +1,16 @@
+{
+  "info": {
+    "title": "TestTitle",
+    "version": "0.0.1",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "TestTitle": {
+      "properties": {
+        "title": {
+          "datatype": "string"
+        }
+      }
+    }
+  }
+}
