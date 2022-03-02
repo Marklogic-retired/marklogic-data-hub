@@ -15,6 +15,7 @@
  */
 'use strict';
 const searchImpl = require("/explore-data/ml-search-lib/search-impl.xqy");
+const json = require('/MarkLogic/json/json.xqy');
 
 class Search {
   constructor() {
@@ -63,8 +64,11 @@ class Search {
 
   }
 
-  getDocument() {
-
+  getDocument(uri) {
+    let result = searchImpl.transformXmlToJsonFromDocUri(uri).toObject();
+    this.fixArrayIssue(result);
+    result["uri"] = uri;
+    return result;
   }
 
   getEntityModels() {
@@ -77,7 +81,6 @@ class Search {
 
   fixArrayIssue(jsonObject) {
     const keys = Object.keys(jsonObject);
-
     for(let key of keys) {
       if(Array.isArray(jsonObject[key])) {
         if(jsonObject[key].length == 1) {
