@@ -1,176 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <person>
-	<personId>10100</personId>
-	<nameGroup>
-		<givenname>
-			<value>Gradey</value>
-		</givenname>
-		<surname>
-			<value>Swendell</value>
-		</surname>
-		<fullname>
-			<classification>C</classification>
-			<restricted>true</restricted>
-			<value>Swendell Gradey</value>
-			<source>
-				<name>Los Angeles Times</name>
-				<ts>2011-04-11T14:15:59Z</ts>
-			</source>
-		</fullname>
-	</nameGroup>
-	<emails>
-		<email>
-			<value>ksproul0@furl.net</value>
-			<classification>S</classification>
-			<restricted>false</restricted>
-		</email>
-		<email>
-			<value>smalek1@bravesites.com</value>
-			<classification>C</classification>
-			<restricted>false</restricted>
-		</email>
-		<email>
-			<value>fbushrod2@addthis.com</value>
-			<classification>U</classification>
-			<restricted>false</restricted>
-		</email>
-	</emails>
-	<phone>892-770-7456</phone>
-	<ssn>
-		<value>240-06-6891</value>
-		<restricted>true</restricted>
-	</ssn>
-	<images>
-		<image>
-			<url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
-			<source>
-				<name>New York Times</name>
-				<ts>2011-05-19T01:00:15Z</ts>
-			</source>
-		</image>
-		<image>
-			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
-			<source>
-				<name>Wall Street Journal</name>
-				<ts>2017-06-10T07:20:26Z</ts>
-			</source>
-		</image>
-		<image>
-			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
-			<source>
-				<name>Washington Post</name>
-				<ts>2013-05-17T13:56:35Z</ts>
-			</source>
-		</image>
-	</images>
-	<addresses>
-		<address>
-			<street>560 Johnson Parkway</street>
-			<city>Charleston</city>
-			<state>SC</state>
-			<postal>29411</postal>
-			<country>United States</country>
-			<latitude>32.8715</latitude>
-			<longitude>-79.9947</longitude>
-		</address>
-		<address>
-			<street>0017 Brickson Park Street</street>
-			<city>Terre Haute</city>
-			<state>IN</state>
-			<postal>47812</postal>
-			<country>United States</country>
-			<latitude>39.4336</latitude>
-			<longitude>-87.4101</longitude>
-		</address>
-		<address>
-			<street>4 Starling Place</street>
-			<city>Wichita</city>
-			<state>KS</state>
-			<postal>67205</postal>
-			<country>United States</country>
-			<latitude>37.7639</latitude>
-			<longitude>-97.4269</longitude>
-		</address>
-	</addresses>
-	<schools>
-		<school>
-			<country>Canada</country>
-			<name>Mount Allison University</name>
-			<city>Concord</city>
-			<state>ON</state>
-			<postal>L4K</postal>
-			<latitude>43.798329</latitude>
-			<longitude>-79.5079073</longitude>
-		</school>
-		<school>
-			<country>United States</country>
-			<name>Emmaus Bible College</name>
-			<city>Kansas City</city>
-			<state>MO</state>
-			<postal>64187</postal>
-			<latitude>39.1</latitude>
-			<longitude>-94.58</longitude>
-		</school>
-	</schools>
-	<status>Inactive</status>
-	<sources>
-		<source>
-			<name>New York Times</name>
-			<ts>2016-12-13T09:29:39Z</ts>
-		</source>
-	</sources>
-	<relations>
-		<relation>
-			<id>10052</id>
-			<predicate>worksWith</predicate>
-		</relation>
-		<relation>
-			<id>10049</id>
-			<predicate>relatedTo</predicate>
-		</relation>
-		<relation>
-			<id>10067</id>
-			<predicate>worksWith</predicate>
-		</relation>
-		<relation>
-			<id>10054</id>
-			<predicate>worksWith</predicate>
-		</relation>
-	</relations>
-	<createdOn>
-		<ts>2022-01-06T08:58:03Z</ts>
-		<user>gswendell2r</user>
-	</createdOn>
-	<lastUpdated>
-		<ts>2022-01-09T17:38:29Z</ts>
-		<user>gswendell2r</user>
-	</lastUpdated>
-	<socials>
-		<social>
-			<site>linkedin</site>
-			<address>https://archive.org/vel/augue/vestibulum/ante/ipsum/primis/in.js</address>
-		</social>
-		<social>
-			<site>linkedin</site>
-			<address>http://issuu.com/porta/volutpat/erat/quisque/erat/eros/viverra.json</address>
-		</social>
-		<social>
-			<site>linkedin</site>
-			<address>http://yellowpages.com/id/lobortis.js</address>
-		</social>
-	</socials>
-	<memberships>
-		<membership>
-			<list>list8</list>
-			<important>false</important>
-		</membership>
-		<membership>
-			<list>list2</list>
-			<important>true</important>
-		</membership>
-		<membership>
-			<list>list9</list>
-			<important>false</important>
-		</membership>
-	</memberships>
+  <personId>10100</personId>
+  <nameGroup>
+    <givenname>
+      <value>Gradey</value>
+    </givenname>
+    <surname>
+      <value>Swendell</value>
+    </surname>
+    <fullname>
+      <classification>C</classification>
+      <restricted>true</restricted>
+      <value>Swendell Gradey</value>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2011-04-11T14:15:59Z</ts>
+      </source>
+    </fullname>
+  </nameGroup>
+  <emails>
+    <email>
+      <value>ksproul0@furl.net</value>
+      <classification>S</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>smalek1@bravesites.com</value>
+      <classification>C</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>fbushrod2@addthis.com</value>
+      <classification>U</classification>
+      <restricted>false</restricted>
+    </email>
+  </emails>
+  <phone>892-770-7456</phone>
+  <ssn>
+    <value>240-06-6891</value>
+    <restricted>true</restricted>
+  </ssn>
+  <images>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+      <source>
+        <name>New York Times</name>
+        <ts>2011-05-19T01:00:15Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2017-06-10T07:20:26Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+      <source>
+        <name>Washington Post</name>
+        <ts>2013-05-17T13:56:35Z</ts>
+      </source>
+    </image>
+  </images>
+  <addresses>
+    <address>
+      <street>560 Johnson Parkway</street>
+      <city>Charleston</city>
+      <state>SC</state>
+      <postal>29411</postal>
+      <country>United States</country>
+      <latitude>32.8715</latitude>
+      <longitude>-79.9947</longitude>
+    </address>
+    <address>
+      <street>0017 Brickson Park Street</street>
+      <city>Terre Haute</city>
+      <state>IN</state>
+      <postal>47812</postal>
+      <country>United States</country>
+      <latitude>39.4336</latitude>
+      <longitude>-87.4101</longitude>
+    </address>
+    <address>
+      <street>4 Starling Place</street>
+      <city>Wichita</city>
+      <state>KS</state>
+      <postal>67205</postal>
+      <country>United States</country>
+      <latitude>37.7639</latitude>
+      <longitude>-97.4269</longitude>
+    </address>
+  </addresses>
+  <schools>
+    <school>
+      <country>Canada</country>
+      <name>Mount Allison University</name>
+      <city>Concord</city>
+      <state>ON</state>
+      <postal>L4K</postal>
+      <latitude>43.798329</latitude>
+      <longitude>-79.5079073</longitude>
+    </school>
+    <school>
+      <country>United States</country>
+      <name>Emmaus Bible College</name>
+      <city>Kansas City</city>
+      <state>MO</state>
+      <postal>64187</postal>
+      <latitude>39.1</latitude>
+      <longitude>-94.58</longitude>
+    </school>
+  </schools>
+  <status>Inactive</status>
+  <sources>
+    <source>
+      <name>New York Times</name>
+      <ts>2016-12-13T09:29:39Z</ts>
+    </source>
+  </sources>
+  <relations>
+    <relation>
+      <id>10052</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
+      <fullname>Tacey Orland</fullname>
+      <city>Oklahoma City</city>
+      <state>OK</state>
+    </relation>
+    <relation>
+      <id>10049</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Crosi Daryn</fullname>
+      <city>Tacoma</city>
+      <state>WA</state>
+    </relation>
+    <relation>
+      <id>10067</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
+      <fullname>Mertin Halimeda</fullname>
+      <city>Philadelphia</city>
+      <state>PA</state>
+    </relation>
+    <relation>
+      <id>10054</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
+      <fullname>Chessell Skye</fullname>
+      <city>Chicago</city>
+      <state>IL</state>
+    </relation>
+  </relations>
+  <createdOn>
+    <ts>2022-01-06T08:58:03Z</ts>
+    <user>gswendell2r</user>
+  </createdOn>
+  <lastUpdated>
+    <ts>2022-01-09T17:38:29Z</ts>
+    <user>gswendell2r</user>
+  </lastUpdated>
+  <socials>
+    <social>
+      <site>linkedin</site>
+      <address>https://archive.org/vel/augue/vestibulum/ante/ipsum/primis/in.js</address>
+    </social>
+    <social>
+      <site>linkedin</site>
+      <address>http://issuu.com/porta/volutpat/erat/quisque/erat/eros/viverra.json</address>
+    </social>
+    <social>
+      <site>linkedin</site>
+      <address>http://yellowpages.com/id/lobortis.js</address>
+    </social>
+  </socials>
+  <memberships>
+    <membership>
+      <list>list8</list>
+      <important>false</important>
+    </membership>
+    <membership>
+      <list>list2</list>
+      <important>true</important>
+    </membership>
+    <membership>
+      <list>list9</list>
+      <important>false</important>
+    </membership>
+  </memberships>
 </person>
-/persons>

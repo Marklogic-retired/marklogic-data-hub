@@ -1,171 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <person>
-	<personId>10064</personId>
-	<nameGroup>
-		<givenname>
-			<value>Faydra</value>
-		</givenname>
-		<surname>
-			<value>Blurton</value>
-		</surname>
-		<fullname>
-			<classification>U</classification>
-			<restricted>true</restricted>
-			<value>Blurton Faydra</value>
-			<source>
-				<name>Los Angeles Times</name>
-				<ts>2019-06-13T09:43:39Z</ts>
-			</source>
-			<source>
-				<name>USA Today</name>
-				<ts>2019-01-07T12:45:46Z</ts>
-			</source>
-			<source>
-				<name>Wall Street Journal</name>
-				<ts>2011-02-01T09:09:26Z</ts>
-			</source>
-		</fullname>
-	</nameGroup>
-	<emails>
-		<email>
-			<value>lblakey0@tamu.edu</value>
-			<classification>C</classification>
-			<restricted>false</restricted>
-		</email>
-		<email>
-			<value>emccracken1@deliciousdays.com</value>
-			<classification>S</classification>
-			<restricted>false</restricted>
-		</email>
-		<email>
-			<value>nleroux2@examiner.com</value>
-			<classification>C</classification>
-			<restricted>false</restricted>
-		</email>
-	</emails>
-	<phone>192-163-6737</phone>
-	<ssn>
-		<value>466-05-3503</value>
-		<restricted>true</restricted>
-	</ssn>
-	<images>
-		<image>
-			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
-			<source>
-				<name>Wall Street Journal</name>
-				<ts>2010-05-07T04:58:51Z</ts>
-			</source>
-		</image>
-	</images>
-	<addresses>
-		<address>
-			<street>24995 Truax Lane</street>
-			<city>Beaumont</city>
-			<state>TX</state>
-			<postal>77713</postal>
-			<country>United States</country>
-			<latitude>30.085</latitude>
-			<longitude>-94.2607</longitude>
-		</address>
-		<address>
-			<street>6 Vidon Court</street>
-			<city>Savannah</city>
-			<state>GA</state>
-			<postal>31416</postal>
-			<country>United States</country>
-			<latitude>32.0053</latitude>
-			<longitude>-81.0477</longitude>
-		</address>
-		<address>
-			<street>5781 Jackson Pass</street>
-			<city>Gainesville</city>
-			<state>FL</state>
-			<postal>32610</postal>
-			<country>United States</country>
-			<latitude>29.6813</latitude>
-			<longitude>-82.3539</longitude>
-		</address>
-	</addresses>
-	<schools>
-		<school>
-			<country>Mexico</country>
-			<name>Universidad Latina</name>
-			<city>20 de Noviembre</city>
-			<state>VER</state>
-			<postal>93828</postal>
-			<latitude>19.4449916</latitude>
-			<longitude>-99.1082647</longitude>
-		</school>
-		<school>
-			<country>United States</country>
-			<name>Roosevelt University</name>
-			<city>Schaumburg</city>
-			<state>IL</state>
-			<postal>60193</postal>
-			<latitude>42.0130165</latitude>
-			<longitude>-88.099845</longitude>
-		</school>
-	</schools>
-	<status>Inactive</status>
-	<sources>
-		<source>
-			<name>Chicago Tribune</name>
-			<ts>2013-06-09T23:05:14Z</ts>
-		</source>
-	</sources>
-	<sources>
-		<source>
-			<name>Chicago Tribune</name>
-			<ts>2021-03-15T09:28:52Z</ts>
-		</source>
-	</sources>
-	<relations>
-		<relation>
-			<id>10014</id>
-			<predicate>relatedTo</predicate>
-		</relation>
-		<relation>
-			<id>10034</id>
-			<predicate>livesWith</predicate>
-		</relation>
-		<relation>
-			<id>10023</id>
-			<predicate>worksWith</predicate>
-		</relation>
-	</relations>
-	<createdOn>
-		<ts>2022-02-19T06:49:01Z</ts>
-		<user>fblurton1r</user>
-	</createdOn>
-	<lastUpdated>
-		<ts>2022-02-05T23:56:48Z</ts>
-		<user>fblurton1r</user>
-	</lastUpdated>
-	<socials>
-		<social>
-			<site>facebook</site>
-			<address>http://msn.com/quam/sollicitudin/vitae.jpg</address>
-		</social>
-	</socials>
-	<memberships>
-		<membership>
-			<list>list1</list>
-			<important>true</important>
-		</membership>
-		<membership>
-			<list>list9</list>
-			<important>true</important>
-		</membership>
-		<membership>
-			<list>list2</list>
-			<important>true</important>
-		</membership>
-		<membership>
-			<list>list9</list>
-			<important>true</important>
-		</membership>
-		<membership>
-			<list>list4</list>
-			<important>true</important>
-		</membership>
-	</memberships>
+  <personId>10064</personId>
+  <nameGroup>
+    <givenname>
+      <value>Faydra</value>
+    </givenname>
+    <surname>
+      <value>Blurton</value>
+    </surname>
+    <fullname>
+      <classification>U</classification>
+      <restricted>true</restricted>
+      <value>Blurton Faydra</value>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2019-06-13T09:43:39Z</ts>
+      </source>
+      <source>
+        <name>USA Today</name>
+        <ts>2019-01-07T12:45:46Z</ts>
+      </source>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2011-02-01T09:09:26Z</ts>
+      </source>
+    </fullname>
+  </nameGroup>
+  <emails>
+    <email>
+      <value>lblakey0@tamu.edu</value>
+      <classification>C</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>emccracken1@deliciousdays.com</value>
+      <classification>S</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>nleroux2@examiner.com</value>
+      <classification>C</classification>
+      <restricted>false</restricted>
+    </email>
+  </emails>
+  <phone>192-163-6737</phone>
+  <ssn>
+    <value>466-05-3503</value>
+    <restricted>true</restricted>
+  </ssn>
+  <images>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2010-05-07T04:58:51Z</ts>
+      </source>
+    </image>
+  </images>
+  <addresses>
+    <address>
+      <street>24995 Truax Lane</street>
+      <city>Beaumont</city>
+      <state>TX</state>
+      <postal>77713</postal>
+      <country>United States</country>
+      <latitude>30.085</latitude>
+      <longitude>-94.2607</longitude>
+    </address>
+    <address>
+      <street>6 Vidon Court</street>
+      <city>Savannah</city>
+      <state>GA</state>
+      <postal>31416</postal>
+      <country>United States</country>
+      <latitude>32.0053</latitude>
+      <longitude>-81.0477</longitude>
+    </address>
+    <address>
+      <street>5781 Jackson Pass</street>
+      <city>Gainesville</city>
+      <state>FL</state>
+      <postal>32610</postal>
+      <country>United States</country>
+      <latitude>29.6813</latitude>
+      <longitude>-82.3539</longitude>
+    </address>
+  </addresses>
+  <schools>
+    <school>
+      <country>Mexico</country>
+      <name>Universidad Latina</name>
+      <city>20 de Noviembre</city>
+      <state>VER</state>
+      <postal>93828</postal>
+      <latitude>19.4449916</latitude>
+      <longitude>-99.1082647</longitude>
+    </school>
+    <school>
+      <country>United States</country>
+      <name>Roosevelt University</name>
+      <city>Schaumburg</city>
+      <state>IL</state>
+      <postal>60193</postal>
+      <latitude>42.0130165</latitude>
+      <longitude>-88.099845</longitude>
+    </school>
+  </schools>
+  <status>Inactive</status>
+  <sources>
+    <source>
+      <name>Chicago Tribune</name>
+      <ts>2013-06-09T23:05:14Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Chicago Tribune</name>
+      <ts>2021-03-15T09:28:52Z</ts>
+    </source>
+  </sources>
+  <relations>
+    <relation>
+      <id>10014</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Blunderfield Lissa</fullname>
+      <city>Crawfordsville</city>
+      <state>IN</state>
+    </relation>
+    <relation>
+      <id>10034</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Cabrara Kesley</fullname>
+      <city>Woburn</city>
+      <state>MA</state>
+    </relation>
+    <relation>
+      <id>10023</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
+      <fullname>Nardoni Ruddie</fullname>
+      <city>Gainesville</city>
+      <state>FL</state>
+    </relation>
+  </relations>
+  <createdOn>
+    <ts>2022-02-19T06:49:01Z</ts>
+    <user>fblurton1r</user>
+  </createdOn>
+  <lastUpdated>
+    <ts>2022-02-05T23:56:48Z</ts>
+    <user>fblurton1r</user>
+  </lastUpdated>
+  <socials>
+    <social>
+      <site>facebook</site>
+      <address>http://msn.com/quam/sollicitudin/vitae.jpg</address>
+    </social>
+  </socials>
+  <memberships>
+    <membership>
+      <list>list1</list>
+      <important>true</important>
+    </membership>
+    <membership>
+      <list>list9</list>
+      <important>true</important>
+    </membership>
+    <membership>
+      <list>list2</list>
+      <important>true</important>
+    </membership>
+    <membership>
+      <list>list9</list>
+      <important>true</important>
+    </membership>
+    <membership>
+      <list>list4</list>
+      <important>true</important>
+    </membership>
+  </memberships>
 </person>
