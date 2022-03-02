@@ -21,6 +21,7 @@ import {
 } from "../../../assets/mock-data/modeling/modeling";
 
 import {ConfirmationType} from "../../../types/common-types";
+import {ViewType} from "../../../types/modeling-types";
 import {ModelingContext} from "../../../util/modeling-context";
 import {isModified} from "../../../assets/mock-data/modeling/modeling-context-mock";
 
@@ -406,7 +407,7 @@ describe("EntityTypeModal Component", () => {
     await wait(() => expect(screen.getByText(ModelingTooltips.viewGraph)).toBeInTheDocument());
 
     userEvent.click(getByTestId("Order-graphView-icon"));
-    expect(isModified.setGraphViewOptions).toBeCalledWith({view: "graph", selectedEntity: "Order"});
+    expect(isModified.setGraphViewOptions).toBeCalledWith({view: ViewType.graph, selectedEntity: "Order"});
   });
 
 });

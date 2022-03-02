@@ -1,11 +1,12 @@
 import React, {useState, useEffect, useContext, CSSProperties} from "react";
-import {faProjectDiagram, faTable, faUndoAlt} from "@fortawesome/free-solid-svg-icons";
+import {faUndoAlt} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import "./Modeling.scss";
 
 import ConfirmationModal from "../components/confirmation-modal/confirmation-modal";
 import EntityTypeModal from "../components/modeling/entity-type-modal/entity-type-modal";
 import EntityTypeTable from "../components/modeling/entity-type-table/entity-type-table";
+import ViewSwitch from "@components/common/switch-view/view-switch";
 import styles from "./Modeling.module.scss";
 
 import {deleteEntity, entityReferences, updateHubCentralConfig, primaryEntityTypes, publishDraftModels, clearDraftModels, updateEntityModels, getHubCentralConfig} from "../api/modeling";
@@ -14,7 +15,7 @@ import {ModelingContext} from "../util/modeling-context";
 import {ModelingTooltips} from "../config/tooltips.config";
 import {AuthoritiesContext} from "../util/authorities";
 import {ConfirmationType} from "../types/common-types";
-import {hubCentralConfig} from "../types/modeling-types";
+import {hubCentralConfig, ViewType} from "../types/modeling-types";
 import tiles from "../config/tiles.config";
 import {MissingPagePermission} from "../config/messages.config";
 import GraphView from "../components/modeling/graph-view/graph-view";
@@ -62,7 +63,7 @@ const Modeling: React.FC = () => {
 
 
   useEffect(() => {
-    if (canReadEntityModel && modelingOptions.view === "table") {
+    if (canReadEntityModel && modelingOptions.view === ViewType.table) {
       setEntityTypesFromServer();
     }
   }, [modelingOptions.view]);
@@ -196,7 +197,7 @@ const Modeling: React.FC = () => {
     }
     toggleShowEntityModal(false);
     await setEntityTypesFromServer().then((resp => {
-      if (!isEditModal && modelingOptions.view === "graph") {
+      if (!isEditModal && modelingOptions.view === ViewType.graph) {
         let isDraft = true;
         setSelectedEntity(entityName, isDraft);
       }
@@ -336,54 +337,20 @@ const Modeling: React.FC = () => {
 
   const handleViewChange = (view) => {
     if (view === "table") {
-      setView("table");
+      setView(ViewType.table);
     } else {
       setView(defaultModelingView);
     }
   };
 
-  const viewSwitch = <div id="switch-view" aria-label="switch-view">
-    <div className={"switch-button-group outline"}>
-      <span aria-label="switch-view-graph">
-        <input
-          type="radio"
-          id="switch-view-graph"
-          name="switch-view-radiogroup"
-          value={"graph"}
-          checked={modelingOptions.view === "graph"}
-          onChange={e => handleViewChange(e.target.value)}
-          tabIndex={0}
-        />
-        <label htmlFor="switch-view-graph" className={`d-flex justify-content-center align-items-center`} style={{height: "40px", fontSize: "10px"}}>
-          <i>{<FontAwesomeIcon icon={faProjectDiagram} size={"2x"}/>}</i>
-        </label>
-      </span>
-
-      <span aria-label="switch-view-table">
-        <input
-          type="radio"
-          id="switch-view-table"
-          name="switch-view-radiogroup"
-          value={"table"}
-          checked={modelingOptions.view === "table"}
-          onChange={e => handleViewChange(e.target.value)}
-          tabIndex={1}
-        />
-        <label htmlFor="switch-view-table" className={`d-flex justify-content-center align-items-center`} style={{height: "40px", fontSize: "12px"}}>
-          <i>{<FontAwesomeIcon icon={faTable} size={"2x"}/>}</i>
-        </label>
-      </span>
-    </div>
-  </div>;
-
   if (canAccessModel) {
     return (
       <div className={styles.modelContainer}>
-        {modelingOptions.view === "table" ?
+        {modelingOptions.view === ViewType.table ?
           <div className={styles.stickyHeader} style={{width: width - 138, maxWidth: width - 138}}>
             <div className={styles.intro}>
               <p>{tiles.model.intro}</p>
-              {viewSwitch}
+              {<ViewSwitch handleViewChange={handleViewChange} selectedView={modelingOptions.view}/>}
             </div>
             {modelingOptions.isModified && (
               <div className={modelingOptions.isModified ? styles.alertContainer : ""}>
@@ -441,7 +408,7 @@ const Modeling: React.FC = () => {
           </div> : <>
             <div className={styles.intro}>
               <p>{tiles.model.intro}</p>
-              {viewSwitch}
+              {<ViewSwitch handleViewChange={handleViewChange} selectedView={modelingOptions.view}/>}
             </div>
             {modelingOptions.isModified && (
               <div className={modelingOptions.isModified ? styles.alertContainer : ""}>
@@ -476,7 +443,7 @@ const Modeling: React.FC = () => {
             />
           </>
         }
-        {modelingOptions.view === "table" ? <div
+        {modelingOptions.view === ViewType.table ? <div
           className={modelingOptions.isModified ? styles.entityTableContainer : styles.entityTableContainerWithoutAlert}>
           <EntityTypeTable
             canReadEntityModel={canReadEntityModel}

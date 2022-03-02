@@ -1,3 +1,5 @@
+import { ViewType } from "../types/modeling-types";
+
 export const COMMON_PROPERTY_TYPES = [
   {
     label: 'string',
@@ -140,7 +142,7 @@ export const MORE_DATE_TYPES = {
 
 export const DROPDOWN_PLACEHOLDER = (key) => { return { label: '---------------------', value: key, disabled: true };};
 
-export const defaultModelingView = "graph";
+export const defaultModelingView = ViewType.graph;
 
 export const defaultHubCentralConfig = {
   "modeling": {

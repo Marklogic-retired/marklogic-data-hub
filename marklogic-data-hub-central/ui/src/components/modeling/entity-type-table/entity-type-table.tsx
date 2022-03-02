@@ -8,7 +8,7 @@ import DynamicIcons from "../../common/dynamic-icons/dynamic-icons";
 import PropertyTable from "../property-table/property-table";
 import ConfirmationModal from "../../confirmation-modal/confirmation-modal";
 import {entityReferences, deleteEntity} from "../../../api/modeling";
-import {EntityModified} from "../../../types/modeling-types";
+import {EntityModified, ViewType} from "../../../types/modeling-types";
 import {ConfirmationType} from "../../../types/common-types";
 import {getViewSettings, setViewSettings, UserContext} from "../../../util/user-context";
 import {ModelingContext} from "../../../util/modeling-context";
@@ -140,7 +140,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
   };
 
   const navigateToGraphView = (entityName) => {
-    setGraphViewOptions({view: "graph", selectedEntity: entityName});
+    setGraphViewOptions({view: ViewType.graph, selectedEntity: entityName});
   };
 
   const columns = [

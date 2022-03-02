@@ -10,6 +10,7 @@ import NodeSvg from "./node-svg";
 import graphConfig from "../../../../config/graph-vis.config";
 import AddEditRelationship from "../relationship-modal/add-edit-relationship";
 import {defaultHubCentralConfig} from "../../../../config/modeling.config";
+import {ViewType} from "../../../../types/modeling-types";
 import * as _ from "lodash";
 
 type Props = {
@@ -71,7 +72,7 @@ const GraphVis: React.FC<Props> = (props) => {
   const [selectedRelationship, setSelectedRelationship] = useState<any>({});
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
   const [clickedNode, setClickedNode] = useState(undefined);
-  const [menuPosition, setMenuPosition] = useState<{x: number, y: number}>({x: 0, y: 0});
+  const [menuPosition, setMenuPosition] = useState<{ x: number, y: number }>({x: 0, y: 0});
   const [newRelationship, setNewRelationship] = useState(false);
   const [escKeyPressed, setEscKeyPressed] = useState(false);
   //const [saveAllCoords, setSaveAllCoords] = useState(false);
@@ -115,7 +116,7 @@ const GraphVis: React.FC<Props> = (props) => {
   }, [props.hubCentralConfig]);
 
   useEffect(() => {
-    if (modelingOptions.view === "graph") {
+    if (modelingOptions.view === ViewType.graph) {
       if (network && coordsLoaded) {
         initializeScaleAndViewPosition();
       }
@@ -123,7 +124,7 @@ const GraphVis: React.FC<Props> = (props) => {
   }, [network, modelingOptions.view]);
 
   useEffect(() => {
-    if (props.exportPngButtonClicked)  {
+    if (props.exportPngButtonClicked) {
       let canvas = document.getElementsByClassName("vis-network")[0]["canvas"];
       let link = document.createElement("a");
       link.href = canvas.toDataURL();
@@ -135,9 +136,9 @@ const GraphVis: React.FC<Props> = (props) => {
   }, [props.exportPngButtonClicked]);
 
   const updateNetworkHeight = async () => {
-    let baseHeight = Math.round(window.innerHeight-network.body.container.offsetTop);
+    let baseHeight = Math.round(window.innerHeight - network.body.container.offsetTop);
     if (window.devicePixelRatio < 2) {
-      baseHeight = Math.round(window.innerHeight-(network.body.container.offsetTop * window.devicePixelRatio));
+      baseHeight = Math.round(window.innerHeight - (network.body.container.offsetTop * window.devicePixelRatio));
     }
     let height = (baseHeight < 505 ? 505 : baseHeight) + "px";
     setNetworkHeight(height);
@@ -265,7 +266,7 @@ const GraphVis: React.FC<Props> = (props) => {
   }, []);
 
   useEffect(() => {
-  //turn off edit mode on escape keydown
+    //turn off edit mode on escape keydown
     if (network && props.graphEditMode) {
       network.disableEditMode();
       props.setGraphEditMode(false);
@@ -348,9 +349,9 @@ const GraphVis: React.FC<Props> = (props) => {
     let nodes;
     if (graphType === "shape") {
       nodes = props.entityTypes && props.entityTypes?.map((e) => {
-        let entityName =  e.entityName;
+        let entityName = e.entityName;
         if (e.entityName.length > 20) {
-          entityName=entityName.substring(0, 20) + "...";
+          entityName = entityName.substring(0, 20) + "...";
         }
         let label = "";
         let tmp = {
@@ -391,10 +392,10 @@ const GraphVis: React.FC<Props> = (props) => {
           tmp.y = coords[e.entityName].graphY;
         }
         if (e.entityName.length > 20) {
-          tmp.title =  e.entityName;
+          tmp.title = e.entityName;
         }
         if (getDescription(e.entityName) && getDescription(e.entityName).length > 0) {
-          tmp.title = e.entityName.length > 20 ? tmp.title +  "\n" + getDescription(e.entityName) : getDescription(e.entityName);
+          tmp.title = e.entityName.length > 20 ? tmp.title + "\n" + getDescription(e.entityName) : getDescription(e.entityName);
         }
         return tmp;
       });
@@ -427,7 +428,7 @@ const GraphVis: React.FC<Props> = (props) => {
       if (values.toArrowSrc === graphConfig.customEdgeSVG.oneToMany) {
         values.toArrowSrc = graphConfig.customEdgeSVG.oneToManyHover;
       } else {
-      //change one to one image
+        //change one to one image
         values.toArrowSrc = graphConfig.customEdgeSVG.oneToOneHover;
       }
     }
@@ -475,10 +476,10 @@ const GraphVis: React.FC<Props> = (props) => {
       let properties: any = Object.keys(e.model.definitions[e.entityName].properties);
       properties.forEach((p, i) => {
         let pObj = e.model.definitions[e.entityName].properties[p];
-        let relationshipName =  p;
+        let relationshipName = p;
         let title = !props.canWriteEntityModel && props.canReadEntityModel ? undefined : "Edit Relationship";
         if (relationshipName.length > 20) {
-          relationshipName=relationshipName.substring(0, 20) + "...";
+          relationshipName = relationshipName.substring(0, 20) + "...";
           if (title !== undefined) title = p + "\n" + title;
         }
         //for one to one edges
@@ -510,7 +511,7 @@ const GraphVis: React.FC<Props> = (props) => {
             },
             smooth: getSmoothOpts(e.entityName, parts[parts.length - 1], edges)
           });
-        //for one to many edges
+          //for one to many edges
         } else if (pObj.items?.relatedEntityType) {
           let parts = pObj.items.relatedEntityType.split("/");
           edges.push({
@@ -617,7 +618,7 @@ const GraphVis: React.FC<Props> = (props) => {
       let viewPosition: any = await network.getViewPosition();
       setClickedNode(undefined);
       let viewPositionPayload = defaultHubCentralConfig;
-      viewPositionPayload.modeling["viewPosition"] =  viewPosition;
+      viewPositionPayload.modeling["viewPosition"] = viewPosition;
       props.updateHubCentralConfig(viewPositionPayload);
     }
   };
@@ -626,9 +627,9 @@ const GraphVis: React.FC<Props> = (props) => {
     return (
       <div id="contextMenu" className={styles.contextMenu} style={{left: menuPosition.x, top: menuPosition.y}}>
         {clickedNode &&
-        <div key="1" className={styles.contextMenuItem} data-testid={`centerOnEntityType-${clickedNode}`} onClick={centerOnEntity}>
-          Center on entity type
-        </div>}
+          <div key="1" className={styles.contextMenuItem} data-testid={`centerOnEntityType-${clickedNode}`} onClick={centerOnEntity}>
+            Center on entity type
+          </div>}
         {/*{ clickedEdge &&
       <Menu.Item key="2">
         {"Edit relationship "}
@@ -718,7 +719,7 @@ const GraphVis: React.FC<Props> = (props) => {
           newCoords[nodes[0]] = {graphX: positions.x, graphY: positions.y};
           setCoords(newCoords);
           let coordsPayload = defaultHubCentralConfig;
-          coordsPayload.modeling.entities[nodes[0]] =  {graphX: positions.x, graphY: positions.y};
+          coordsPayload.modeling.entities[nodes[0]] = {graphX: positions.x, graphY: positions.y};
           props.updateHubCentralConfig(coordsPayload);
         }
       }
