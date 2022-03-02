@@ -1,11 +1,14 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate, useLocation } from "react-router-dom";
 import { UserContext } from "../store/UserContext";
-import { getDetail } from "../api/api";
+import { getRecentlyVisited, saveRecentlyVisited, getRecord } from "../api/api";
 
 interface DetailContextInterface {
   detail: any;
-  handleDetail: any;
+  recent: any;
+  handleGetDetail: any;
+  handleGetRecentlyVisited: any;
+  handleSaveRecentlyVisited: any;
 }
 interface QueryInterface {
   searchText: string;
@@ -15,7 +18,10 @@ interface QueryInterface {
   
 const defaultState = {
   detail: {},
-  handleDetail: () => {}
+  recent: [],
+  handleGetDetail: () => {},
+  handleGetRecentlyVisited: () => {},
+  handleSaveRecentlyVisited: () => {}
 };
 
 /**
@@ -37,10 +43,12 @@ const DetailProvider: React.FC = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [detailId, setDetailId] = useState<string>("");
+  const [detailUri, setDetailUri] = useState<string>("");
   const [detail, setDetail] = useState<any>({});
+  const [recent, setRecent] = useState<any>([]);
   const [newDetail, setNewDetail] = useState<boolean>(false);
 
+  // TODO remove when URI-based detail view is definite
   const buildQuery = (id):QueryInterface => {
     let query = {
       "searchText": "",
@@ -51,44 +59,47 @@ const DetailProvider: React.FC = ({ children }) => {
     return query;
   };
 
-  // TODO determine if useEffect is needed like in searchContext
-  useEffect(() => {
-    if (newDetail) {
-      setNewDetail(false);
-      let newQuery = buildQuery(detailId);
-      let sr = getDetail(userContext.config.api.detailEndpoint, newQuery, userContext.userid);
-      sr.then(result => {
-        setDetail(result?.data.searchResults.response);
-        setNewDetail(false);
-      }).catch(error => {
-        console.error(error);
-      })
-    }
-  }, [newDetail]);
-
-  const handleDetail = (id) => {
-    console.log("handleDetail", id);
-    setDetailId(id);
-    // TODO using search results endpoint for now filtered by ID
-    let newQuery = buildQuery(id);
-    let sr = getDetail(userContext.config.api.detailEndpoint, newQuery, userContext.userid);
+  const handleGetDetail = (uri) => {
+    console.log("handleGetDetail", uri);
+    setDetailUri(uri);
+    let sr = getRecord(uri, userContext.userid);
     sr.then(result => {
-      setDetail(result?.data.searchResults.response);
-      if (location.pathname !== "/detail/" + id) {
-        navigate("/detail/" + id); // Detail click from another view
+      setDetail(result?.data);
+      if (location.pathname !== "/detail/" + encodeURIComponent(uri)) {
+        navigate("/detail/" + encodeURIComponent(uri)); // Detail click from another view
       }
-      // setNewDetail(false);
+      handleGetRecentlyVisited();
     }).catch(error => {
       console.error(error);
     })
-    // setNewDetail(true);
+  };
+
+  const handleGetRecentlyVisited = () => {
+    let sr = getRecentlyVisited(userContext.userid);
+    sr.then(result => {
+      setRecent(result?.data);
+    }).catch(error => {
+      console.error(error);
+    })
+  };
+
+  const handleSaveRecentlyVisited = () => {
+    let sr = saveRecentlyVisited(detailUri, userContext.userid);
+    sr.then(result => {
+      console.log("handleSaveRecentlyVisited", detailUri)
+    }).catch(error => {
+      console.error(error);
+    })
   };
 
   return (
     <DetailContext.Provider
       value={{
         detail,
-        handleDetail
+        recent,
+        handleGetDetail,
+        handleGetRecentlyVisited,
+        handleSaveRecentlyVisited
       }}
     >
       {children}

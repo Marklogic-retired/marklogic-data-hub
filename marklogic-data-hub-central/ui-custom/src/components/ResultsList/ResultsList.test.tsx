@@ -118,7 +118,11 @@ const searchContextValueEmpty = {
 
 const detailContextValue = {
     detail: {},
-    handleDetail: jest.fn()
+    recent: [],
+    handleGetDetail: jest.fn(),
+    handleGetRecentlyVisited: jest.fn(),
+    handleSaveRecentlyVisited: jest.fn(),
+    handleGetRecord: jest.fn()
 };
 
 describe("ResultsList component", () => {
@@ -140,9 +144,9 @@ describe("ResultsList component", () => {
         expect(getByText("active")).toBeInTheDocument(); // Status
         expect(getByText("Time is 2020-01-01")).toBeInTheDocument(); // Timestamp
         userEvent.click(title);
-        expect(detailContextValue.handleDetail).toHaveBeenCalledWith("101");
+        expect(detailContextValue.handleGetDetail).toHaveBeenCalledWith("101");
         userEvent.click(getByText("Jane Doe"));
-        expect(detailContextValue.handleDetail).toHaveBeenCalledWith("102");
+        expect(detailContextValue.handleGetDetail).toHaveBeenCalledWith("102");
     });
 
     test("Verify messaging appears when no results returned", () => {

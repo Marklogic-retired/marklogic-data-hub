@@ -1,5 +1,4 @@
 import axios from "axios";
-import persons from "../mocks/persons.json";
 import {summary} from "../mocks/summary";
 import {saved} from "../mocks/saved";
 import _ from "lodash";
@@ -57,21 +56,6 @@ const getRandomInt = (min, max) => {
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
 }
-
-// export const getRecent = async (opts) => { // TODO
-export const getRecent = (opts) => {
-  // return await axios.get(`/api/getRecent`); // TODO
-  const rand = getRandomInt(1, 90);
-  //console.log("getRecent", opts);
-  const myPersons = _.clone(persons);
-  let personsSlice = myPersons.slice(rand, rand+5);
-  const rand2 = getRandomInt(0, 5);
-  personsSlice = personsSlice.map((p, i) => {
-    p["alert"] = i === rand2;
-    return p;
-  });
-  return personsSlice;
-};
 
 export const getProxy = async () => { 
   try {
@@ -132,6 +116,61 @@ export const getConfig = async (userid) => {
   }
   try {
     const response = await axios.get("/api/explore/uiconfig", config);
+    if (response && response.status === 200) {
+      return response;
+    }
+  } catch (error) {
+    let message = error;
+    console.error("Error: getConfig", message);
+  }
+};
+
+export const saveRecentlyVisited = async (uri, userid) => { 
+  let config = {
+    headers: {
+      userid: userid ? userid : null
+    }
+  }
+  let body = {
+    user: userid ? userid : null,
+    recordUri: uri ? uri : null
+  }
+  try {
+    const response = await axios.post("/api/explore/recentlyVisited", body, config);
+    if (response && response.status === 200) {
+      return response;
+    }
+  } catch (error) {
+    let message = error;
+    console.error("Error: getConfig", message);
+  }
+};
+
+export const getRecentlyVisited = async (userid) => { 
+  let config = {
+    headers: {
+      userid: userid ? userid : null
+    }
+  }
+  try {
+    const response = await axios.get("/api/explore/recentlyVisited?user=" + userid, config);
+    if (response && response.status === 200) {
+      return response;
+    }
+  } catch (error) {
+    let message = error;
+    console.error("Error: getConfig", message);
+  }
+};
+
+export const getRecord = async (uri, userid) => { 
+  let config = {
+    headers: {
+      userid: userid ? userid : null
+    }
+  }
+  try {
+    const response = await axios.get("/api/explore/getRecord?recordId=" + uri, config);
     if (response && response.status === 200) {
       return response;
     }

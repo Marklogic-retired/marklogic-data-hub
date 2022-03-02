@@ -1,0 +1,17 @@
+div.list {
+    line-height: 18px;
+    margin-bottom: 10px;
+    div.item {
+        position: relative;
+        display: inline-block;
+        margin-right: 20px;
+        top: 5px;
+        font-size: 15px;
+        span {
+            display: inline-block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+}
