@@ -1,152 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <person>
-	<personId>10018</personId>
-	<nameGroup>
-		<givenname>
-			<value>Clio</value>
-		</givenname>
-		<surname>
-			<value>Greenroad</value>
-		</surname>
-		<fullname>
-			<classification>S</classification>
-			<restricted>false</restricted>
-			<value>Greenroad Clio</value>
-			<source>
-				<name>Washington Post</name>
-				<ts>2019-03-02T18:36:17Z</ts>
-			</source>
-			<source>
-				<name>Wall Street Journal</name>
-				<ts>2014-09-18T18:51:54Z</ts>
-			</source>
-			<source>
-				<name>New York Times</name>
-				<ts>2010-03-10T08:52:23Z</ts>
-			</source>
-		</fullname>
-	</nameGroup>
-	<emails>
-		<email>
-			<value>gilyunin0@stumbleupon.com</value>
-			<classification>U</classification>
-			<restricted>false</restricted>
-		</email>
-		<email>
-			<value>ehedaux1@technorati.com</value>
-			<classification>C</classification>
-			<restricted>false</restricted>
-		</email>
-	</emails>
-	<phone>942-533-6198</phone>
-	<ssn>
-		<value>639-96-7158</value>
-		<restricted>true</restricted>
-	</ssn>
-	<images>
-		<image>
-			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
-			<source>
-				<name>Chicago Tribune</name>
-				<ts>2010-02-12T16:36:37Z</ts>
-			</source>
-		</image>
-		<image>
-			<url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
-			<source>
-				<name>USA Today</name>
-				<ts>2016-02-07T16:33:48Z</ts>
-			</source>
-		</image>
-	</images>
-	<addresses>
-		<address>
-			<street>517 Coleman Lane</street>
-			<city>Boston</city>
-			<state>MA</state>
-			<postal>02298</postal>
-			<country>United States</country>
-			<latitude>42.3823</latitude>
-			<longitude>-71.0323</longitude>
-		</address>
-	</addresses>
-	<schools>
-		<school>
-			<country>United States</country>
-			<name>Abilene Christian University</name>
-			<city>Kissimmee</city>
-			<state>FL</state>
-			<postal>34745</postal>
-			<latitude>28.322781</latitude>
-			<longitude>-81.3912772</longitude>
-		</school>
-		<school>
-			<country>United States</country>
-			<name>Carnegie Mellon University</name>
-			<city>Orange</city>
-			<state>CA</state>
-			<postal>92668</postal>
-			<latitude>32.4237461</latitude>
-			<longitude>-104.2655282</longitude>
-		</school>
-	</schools>
-	<status>Active</status>
-	<sources>
-		<source>
-			<name>Wall Street Journal</name>
-			<ts>2017-11-11T04:49:14Z</ts>
-		</source>
-	</sources>
-	<sources>
-		<source>
-			<name>New York Times</name>
-			<ts>2015-08-26T06:43:07Z</ts>
-		</source>
-	</sources>
-	<sources>
-		<source>
-			<name>Los Angeles Times</name>
-			<ts>2020-09-09T02:44:48Z</ts>
-		</source>
-	</sources>
-	<relations>
-		<relation>
-			<id>10083</id>
-			<predicate>livesWith</predicate>
-		</relation>
-		<relation>
-			<id>10061</id>
-			<predicate>worksWith</predicate>
-		</relation>
-		<relation>
-			<id>10090</id>
-			<predicate>worksWith</predicate>
-		</relation>
-		<relation>
-			<id>10015</id>
-			<predicate>relatedTo</predicate>
-		</relation>
-		<relation>
-			<id>10009</id>
-			<predicate>relatedTo</predicate>
-		</relation>
-	</relations>
-	<createdOn>
-		<ts>2022-01-13T11:05:44Z</ts>
-		<user>cgreenroadh</user>
-	</createdOn>
-	<lastUpdated>
-		<ts>2022-01-06T10:57:59Z</ts>
-		<user>cgreenroadh</user>
-	</lastUpdated>
-	<socials/>
-	<memberships>
-		<membership>
-			<list>list11</list>
-			<important>false</important>
-		</membership>
-		<membership>
-			<list>list8</list>
-			<important>true</important>
-		</membership>
-	</memberships>
+  <personId>10018</personId>
+  <nameGroup>
+    <givenname>
+      <value>Clio</value>
+    </givenname>
+    <surname>
+      <value>Greenroad</value>
+    </surname>
+    <fullname>
+      <classification>S</classification>
+      <restricted>false</restricted>
+      <value>Greenroad Clio</value>
+      <source>
+        <name>Washington Post</name>
+        <ts>2019-03-02T18:36:17Z</ts>
+      </source>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2014-09-18T18:51:54Z</ts>
+      </source>
+      <source>
+        <name>New York Times</name>
+        <ts>2010-03-10T08:52:23Z</ts>
+      </source>
+    </fullname>
+  </nameGroup>
+  <emails>
+    <email>
+      <value>gilyunin0@stumbleupon.com</value>
+      <classification>U</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>ehedaux1@technorati.com</value>
+      <classification>C</classification>
+      <restricted>false</restricted>
+    </email>
+  </emails>
+  <phone>942-533-6198</phone>
+  <ssn>
+    <value>639-96-7158</value>
+    <restricted>true</restricted>
+  </ssn>
+  <images>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2010-02-12T16:36:37Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+      <source>
+        <name>USA Today</name>
+        <ts>2016-02-07T16:33:48Z</ts>
+      </source>
+    </image>
+  </images>
+  <addresses>
+    <address>
+      <street>517 Coleman Lane</street>
+      <city>Boston</city>
+      <state>MA</state>
+      <postal>02298</postal>
+      <country>United States</country>
+      <latitude>42.3823</latitude>
+      <longitude>-71.0323</longitude>
+    </address>
+  </addresses>
+  <schools>
+    <school>
+      <country>United States</country>
+      <name>Abilene Christian University</name>
+      <city>Kissimmee</city>
+      <state>FL</state>
+      <postal>34745</postal>
+      <latitude>28.322781</latitude>
+      <longitude>-81.3912772</longitude>
+    </school>
+    <school>
+      <country>United States</country>
+      <name>Carnegie Mellon University</name>
+      <city>Orange</city>
+      <state>CA</state>
+      <postal>92668</postal>
+      <latitude>32.4237461</latitude>
+      <longitude>-104.2655282</longitude>
+    </school>
+  </schools>
+  <status>Active</status>
+  <sources>
+    <source>
+      <name>Wall Street Journal</name>
+      <ts>2017-11-11T04:49:14Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>New York Times</name>
+      <ts>2015-08-26T06:43:07Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Los Angeles Times</name>
+      <ts>2020-09-09T02:44:48Z</ts>
+    </source>
+  </sources>
+  <relations>
+    <relation>
+      <id>10083</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
+      <fullname>Scriven Elizabeth</fullname>
+      <city>Washington</city>
+      <state>DC</state>
+    </relation>
+    <relation>
+      <id>10061</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Igoe Christos</fullname>
+      <city>El Paso</city>
+      <state>TX</state>
+    </relation>
+    <relation>
+      <id>10090</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
+      <fullname>Youthead Rufe</fullname>
+      <city>Carlsbad</city>
+      <state>CA</state>
+    </relation>
+    <relation>
+      <id>10015</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
+      <fullname>Fretson Lief</fullname>
+      <city>Idaho Falls</city>
+      <state>ID</state>
+    </relation>
+    <relation>
+      <id>10009</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Jeger Linoel</fullname>
+      <city>Montgomery</city>
+      <state>AL</state>
+    </relation>
+  </relations>
+  <createdOn>
+    <ts>2022-01-13T11:05:44Z</ts>
+    <user>cgreenroadh</user>
+  </createdOn>
+  <lastUpdated>
+    <ts>2022-01-06T10:57:59Z</ts>
+    <user>cgreenroadh</user>
+  </lastUpdated>
+  <socials/>
+  <memberships>
+    <membership>
+      <list>list11</list>
+      <important>false</important>
+    </membership>
+    <membership>
+      <list>list8</list>
+      <important>true</important>
+    </membership>
+  </memberships>
 </person>

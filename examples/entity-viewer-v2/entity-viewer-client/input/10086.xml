@@ -1,177 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <person>
-	<personId>10086</personId>
-	<nameGroup>
-		<givenname>
-			<value>Pansy</value>
-		</givenname>
-		<surname>
-			<value>Gowthrop</value>
-		</surname>
-		<fullname>
-			<classification>S</classification>
-			<restricted>false</restricted>
-			<value>Gowthrop Pansy</value>
-			<source>
-				<name>New York Times</name>
-				<ts>2017-04-29T19:02:12Z</ts>
-			</source>
-		</fullname>
-	</nameGroup>
-	<emails>
-		<email>
-			<value>xolunney0@bloglines.com</value>
-			<classification>U</classification>
-			<restricted>false</restricted>
-		</email>
-		<email>
-			<value>mmolnar1@behance.net</value>
-			<classification>C</classification>
-			<restricted>false</restricted>
-		</email>
-	</emails>
-	<phone>329-202-5293</phone>
-	<ssn>
-		<value>492-10-0721</value>
-		<restricted>true</restricted>
-	</ssn>
-	<images>
-		<image>
-			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
-			<source>
-				<name>Washington Post</name>
-				<ts>2012-10-06T21:55:06Z</ts>
-			</source>
-		</image>
-		<image>
-			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
-			<source>
-				<name>Wall Street Journal</name>
-				<ts>2019-05-21T01:05:19Z</ts>
-			</source>
-		</image>
-		<image>
-			<url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
-			<source>
-				<name>Wall Street Journal</name>
-				<ts>2018-01-20T03:13:52Z</ts>
-			</source>
-		</image>
-		<image>
-			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
-			<source>
-				<name>Chicago Tribune</name>
-				<ts>2010-05-01T00:07:12Z</ts>
-			</source>
-		</image>
-	</images>
-	<addresses>
-		<address>
-			<street>95320 Dahle Lane</street>
-			<city>Dayton</city>
-			<state>OH</state>
-			<postal>45414</postal>
-			<country>United States</country>
-			<latitude>39.8285</latitude>
-			<longitude>-84.2024</longitude>
-		</address>
-		<address>
-			<street>07975 Nobel Junction</street>
-			<city>Syracuse</city>
-			<state>NY</state>
-			<postal>13251</postal>
-			<country>United States</country>
-			<latitude>43.0214</latitude>
-			<longitude>-76.1977</longitude>
-		</address>
-		<address>
-			<street>13 Utah Plaza</street>
-			<city>Mobile</city>
-			<state>AL</state>
-			<postal>36622</postal>
-			<country>United States</country>
-			<latitude>30.6589</latitude>
-			<longitude>-88.178</longitude>
-		</address>
-	</addresses>
-	<schools>
-		<school>
-			<country>Mexico</country>
-			<name>Universidad Olmeca</name>
-			<city>Las Palmas</city>
-			<state>NLE</state>
-			<postal>67710</postal>
-			<latitude>24.8735859</latitude>
-			<longitude>-99.5758769</longitude>
-		</school>
-		<school>
-			<country>Canada</country>
-			<name>Sheridan College</name>
-			<city>High River</city>
-			<state>AB</state>
-			<postal>T1V</postal>
-			<latitude>50.5801021</latitude>
-			<longitude>-113.8707312</longitude>
-		</school>
-	</schools>
-	<status>Active</status>
-	<sources>
-		<source>
-			<name>Washington Post</name>
-			<ts>2011-06-28T05:18:14Z</ts>
-		</source>
-	</sources>
-	<relations>
-		<relation>
-			<id>10071</id>
-			<predicate>worksWith</predicate>
-		</relation>
-		<relation>
-			<id>10002</id>
-			<predicate>livesWith</predicate>
-		</relation>
-		<relation>
-			<id>10091</id>
-			<predicate>livesWith</predicate>
-		</relation>
-	</relations>
-	<createdOn>
-		<ts>2022-01-10T08:49:43Z</ts>
-		<user>pgowthrop2d</user>
-	</createdOn>
-	<lastUpdated>
-		<ts>2022-02-06T04:45:41Z</ts>
-		<user>pgowthrop2d</user>
-	</lastUpdated>
-	<socials>
-		<social>
-			<site>linkedin</site>
-			<address>https://shop-pro.jp/morbi/sem/mauris/laoreet/ut.jpg</address>
-		</social>
-	</socials>
-	<memberships>
-		<membership>
-			<list>list10</list>
-			<important>false</important>
-		</membership>
-		<membership>
-			<list>list6</list>
-			<important>false</important>
-		</membership>
-		<membership>
-			<list>list1</list>
-			<important>false</important>
-		</membership>
-		<membership>
-			<list>list8</list>
-			<important>false</important>
-		</membership>
-		<membership>
-			<list>list10</list>
-			<important>true</important>
-		</membership>
-		<membership>
-			<list>list12</list>
-			<important>false</important>
-		</membership>
-	</memberships>
+  <personId>10086</personId>
+  <nameGroup>
+    <givenname>
+      <value>Pansy</value>
+    </givenname>
+    <surname>
+      <value>Gowthrop</value>
+    </surname>
+    <fullname>
+      <classification>S</classification>
+      <restricted>false</restricted>
+      <value>Gowthrop Pansy</value>
+      <source>
+        <name>New York Times</name>
+        <ts>2017-04-29T19:02:12Z</ts>
+      </source>
+    </fullname>
+  </nameGroup>
+  <emails>
+    <email>
+      <value>xolunney0@bloglines.com</value>
+      <classification>U</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>mmolnar1@behance.net</value>
+      <classification>C</classification>
+      <restricted>false</restricted>
+    </email>
+  </emails>
+  <phone>329-202-5293</phone>
+  <ssn>
+    <value>492-10-0721</value>
+    <restricted>true</restricted>
+  </ssn>
+  <images>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
+      <source>
+        <name>Washington Post</name>
+        <ts>2012-10-06T21:55:06Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2019-05-21T01:05:19Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2018-01-20T03:13:52Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2010-05-01T00:07:12Z</ts>
+      </source>
+    </image>
+  </images>
+  <addresses>
+    <address>
+      <street>95320 Dahle Lane</street>
+      <city>Dayton</city>
+      <state>OH</state>
+      <postal>45414</postal>
+      <country>United States</country>
+      <latitude>39.8285</latitude>
+      <longitude>-84.2024</longitude>
+    </address>
+    <address>
+      <street>07975 Nobel Junction</street>
+      <city>Syracuse</city>
+      <state>NY</state>
+      <postal>13251</postal>
+      <country>United States</country>
+      <latitude>43.0214</latitude>
+      <longitude>-76.1977</longitude>
+    </address>
+    <address>
+      <street>13 Utah Plaza</street>
+      <city>Mobile</city>
+      <state>AL</state>
+      <postal>36622</postal>
+      <country>United States</country>
+      <latitude>30.6589</latitude>
+      <longitude>-88.178</longitude>
+    </address>
+  </addresses>
+  <schools>
+    <school>
+      <country>Mexico</country>
+      <name>Universidad Olmeca</name>
+      <city>Las Palmas</city>
+      <state>NLE</state>
+      <postal>67710</postal>
+      <latitude>24.8735859</latitude>
+      <longitude>-99.5758769</longitude>
+    </school>
+    <school>
+      <country>Canada</country>
+      <name>Sheridan College</name>
+      <city>High River</city>
+      <state>AB</state>
+      <postal>T1V</postal>
+      <latitude>50.5801021</latitude>
+      <longitude>-113.8707312</longitude>
+    </school>
+  </schools>
+  <status>Active</status>
+  <sources>
+    <source>
+      <name>Washington Post</name>
+      <ts>2011-06-28T05:18:14Z</ts>
+    </source>
+  </sources>
+  <relations>
+    <relation>
+      <id>10071</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
+      <fullname>Bolton Kettie</fullname>
+      <city>Des Moines</city>
+      <state>IA</state>
+    </relation>
+    <relation>
+      <id>10002</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Delgadillo Archie</fullname>
+      <city>San Antonio</city>
+      <state>TX</state>
+    </relation>
+    <relation>
+      <id>10091</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Coen Francisco</fullname>
+      <city>Pittsburgh</city>
+      <state>PA</state>
+    </relation>
+  </relations>
+  <createdOn>
+    <ts>2022-01-10T08:49:43Z</ts>
+    <user>pgowthrop2d</user>
+  </createdOn>
+  <lastUpdated>
+    <ts>2022-02-06T04:45:41Z</ts>
+    <user>pgowthrop2d</user>
+  </lastUpdated>
+  <socials>
+    <social>
+      <site>linkedin</site>
+      <address>https://shop-pro.jp/morbi/sem/mauris/laoreet/ut.jpg</address>
+    </social>
+  </socials>
+  <memberships>
+    <membership>
+      <list>list10</list>
+      <important>false</important>
+    </membership>
+    <membership>
+      <list>list6</list>
+      <important>false</important>
+    </membership>
+    <membership>
+      <list>list1</list>
+      <important>false</important>
+    </membership>
+    <membership>
+      <list>list8</list>
+      <important>false</important>
+    </membership>
+    <membership>
+      <list>list10</list>
+      <important>true</important>
+    </membership>
+    <membership>
+      <list>list12</list>
+      <important>false</important>
+    </membership>
+  </memberships>
 </person>

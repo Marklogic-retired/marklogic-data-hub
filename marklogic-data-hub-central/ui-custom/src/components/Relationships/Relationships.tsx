@@ -1,10 +1,12 @@
 import React, {useState, useEffect, useContext} from "react";
 import { DetailContext } from "../../store/DetailContext";
 import Graph from "react-graph-vis";
-import styles from "./Relationships.module.scss";
+import "./Relationships.scss";
+import "vis-network/dist/dist/vis-network.min.css"; // required here for node popovers
+import { getValByConfig } from "../../util/util";
+import _ from "lodash";
 
 type Props = {
-    id: number;
     data?: any;
     config?: any 
 };
@@ -13,9 +15,8 @@ type Props = {
  * Component for showing relationships between records.
  *
  * @component
- * @prop {object} data - Data payload.
- * @prop {object[]} config  Array of relationship configuration objects.
- * @prop {number} id - ID of root record.
+ * @prop {object} data Data payload.
+ * @prop {object} config Relationship configuration object.
  * @example
  * TBD
  */
@@ -24,21 +25,23 @@ const Relationships: React.FC<Props> = (props) => {
     const detailContext = useContext(DetailContext);
 
     const [network, setNetwork] = useState<any>(null);
+    const [graph, setGraph] = useState({ nodes: [], edges: [] });
     const initNetworkInstance = (networkInstance) => {
         setNetwork(networkInstance);
     };
+
     useEffect(() => {
         if (network) {
             //network.stabilize();
         }
     }, [network]);
 
-    const options = {
+    let options = {
         layout: {
             hierarchical: false
         },
         edges: {
-            color: "#000000"
+            color: "#5fc9aa"
         },
         physics: {
             enabled: true,
@@ -54,39 +57,81 @@ const Relationships: React.FC<Props> = (props) => {
         },
         interaction: {
             hover: true,
-        },
+        }
     };
+    // Any option overrides from config
+    options = Object.assign(options, props.config.options);
 
-    //const currentId = detailContext.detail.result[0].extracted.person["personId"];
-    const currentId = props.id;
-    const imageArr = [
-        "https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg",
-        "https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg",
-        "https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg",
-        "https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg",
-        "https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg"
-        
-    ];
+    const getPopover = (title, city, state) => {
+        const popover = document.createElement("div");
+        popover.className = "popover";
+        const titleDiv = document.createElement("div");
+        titleDiv.className = "title";
+        const nameContent = document.createTextNode(title);
+        titleDiv.appendChild(nameContent);
+        const placeDiv = document.createElement("div");
+        const placeContent = document.createTextNode(city + ", " + state);
+        placeDiv.appendChild(placeContent);
+        popover.appendChild(titleDiv);
+        popover.appendChild(placeDiv);
+        return popover;
+    }
 
-    const graph = {
-        nodes: [
-          { id: currentId, shape: "image", size: 30, image: imageArr[(currentId)%5] },
-          { id: currentId+1, shape: "image", size: 30, image: imageArr[(currentId+1)%5] },
-          { id: currentId+2, shape: "image", size: 30, image: imageArr[(currentId+2)%5] },
-          { id: currentId+3, shape: "image", size: 30, image: imageArr[(currentId+3)%5] },
-          { id: currentId+4, shape: "image", size: 30, image: imageArr[(currentId+4)%5] },
-        ],
-        edges: [
-          { from: currentId+2, to: currentId, label: "relatedTo", font: { align: "top" } },
-          { from: currentId, to: currentId+1, label: "relatedTo", font: { align: "top" } },
-          { from: currentId+1, to: currentId+2, label: "worksWith", font: { align: "top" } },
-          { from: currentId+1, to: currentId+3, label: "livesWith", font: { align: "top" } },
-          { from: currentId, to: currentId+4, label: "worksWith", font: { align: "top" } },
-        ]
-      };
+    useEffect(() => {
+        const nodeSize = props.config.size ? props.config.size : 30;
+
+        // Set up root entity
+        const rootId = getValByConfig(props.data, props.config.root.id);
+        let rootImgSrc = getValByConfig(props.data, props.config.root.imgSrc);
+        rootImgSrc = _.isNil(rootImgSrc) ? null : (Array.isArray(rootImgSrc) ? rootImgSrc[0] : rootImgSrc);
+        const rootTitle = getValByConfig(props.data, props.config.root.title);
+        const rootCity = getValByConfig(props.data, props.config.root.city);
+        const rootState = getValByConfig(props.data, props.config.root.state);
+        const rootPopover = getPopover(
+            Array.isArray(rootTitle) ? rootTitle[0] : rootTitle, 
+            Array.isArray(rootCity) ? rootCity[0] : rootCity,
+            Array.isArray(rootState) ? rootState[0] : rootState
+        );
+
+        // Set up related entities
+        let relations = getValByConfig(props.data, props.config.relations);
+        relations = _.isNil(relations) ? null : (Array.isArray(relations) ? relations : [relations]);
+
+        // Add root, related to nodes
+        const nodes: any = [{ id: rootId, shape: "image", size: nodeSize, image: rootImgSrc, title: rootPopover}];
+        relations.forEach(rel => {
+            nodes.push({ 
+                id: rel[props.config.relations.id], 
+                image: rel[props.config.relations.imgSrc],
+                shape: "image", 
+                size: nodeSize, 
+                title: getPopover(
+                    rel[props.config.relations.title], 
+                    rel[props.config.relations.city], 
+                    rel[props.config.relations.state]
+                ) 
+            });
+        });
+
+        // Construct edges from root
+        const edges: any = [];
+        relations.forEach(rel => {
+            edges.push({ 
+                from: rootId, 
+                to: rel[props.config.relations.id], 
+                label: rel[props.config.relations.predicate]
+            });
+        });
+
+        setGraph({
+            nodes: nodes,
+            edges: edges
+        });
+    }, [detailContext.detail]);
 
     const events = {
         select: ({ nodes, edges }) => {
+            console.log("select", nodes);
             if (nodes && nodes[0]) {
                 detailContext.handleDetail(nodes[0]);
             }
@@ -97,7 +142,7 @@ const Relationships: React.FC<Props> = (props) => {
     };
 
     return (
-        <div className={styles.relationships}>
+        <div className="relationships">
             <Graph
                 graph={graph}
                 options={options}

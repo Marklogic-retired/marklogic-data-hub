@@ -1,170 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <person>
-	<personId>10020</personId>
-	<nameGroup>
-		<givenname>
-			<value>Crawford</value>
-		</givenname>
-		<surname>
-			<value>Andress</value>
-		</surname>
-		<fullname>
-			<classification>C</classification>
-			<restricted>true</restricted>
-			<value>Andress Crawford</value>
-			<source>
-				<name>New York Times</name>
-				<ts>2020-03-16T22:09:24Z</ts>
-			</source>
-			<source>
-				<name>New York Times</name>
-				<ts>2021-05-23T20:58:38Z</ts>
-			</source>
-			<source>
-				<name>Washington Post</name>
-				<ts>2018-01-12T06:07:30Z</ts>
-			</source>
-		</fullname>
-	</nameGroup>
-	<emails>
-		<email>
-			<value>jaleksic0@edublogs.org</value>
-			<classification>S</classification>
-			<restricted>false</restricted>
-		</email>
-		<email>
-			<value>tmanssuer1@prlog.org</value>
-			<classification>U</classification>
-			<restricted>false</restricted>
-		</email>
-	</emails>
-	<phone>560-281-2926</phone>
-	<ssn>
-		<value>895-23-7820</value>
-		<restricted>true</restricted>
-	</ssn>
-	<images>
-		<image>
-			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
-			<source>
-				<name>Los Angeles Times</name>
-				<ts>2016-03-17T00:12:27Z</ts>
-			</source>
-		</image>
-		<image>
-			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
-			<source>
-				<name>Wall Street Journal</name>
-				<ts>2019-08-31T05:16:32Z</ts>
-			</source>
-		</image>
-		<image>
-			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
-			<source>
-				<name>Wall Street Journal</name>
-				<ts>2014-12-11T19:26:25Z</ts>
-			</source>
-		</image>
-	</images>
-	<addresses>
-		<address>
-			<street>04645 Mockingbird Avenue</street>
-			<city>New Orleans</city>
-			<state>LA</state>
-			<postal>70179</postal>
-			<country>United States</country>
-			<latitude>30.033</latitude>
-			<longitude>-89.8826</longitude>
-		</address>
-		<address>
-			<street>261 Merchant Crossing</street>
-			<city>San Diego</city>
-			<state>CA</state>
-			<postal>92127</postal>
-			<country>United States</country>
-			<latitude>33.0279</latitude>
-			<longitude>-117.0856</longitude>
-		</address>
-		<address>
-			<street>32 Nova Road</street>
-			<city>Alpharetta</city>
-			<state>GA</state>
-			<postal>30022</postal>
-			<country>United States</country>
-			<latitude>34.0268</latitude>
-			<longitude>-84.2422</longitude>
-		</address>
-	</addresses>
-	<schools>
-		<school>
-			<country>United States</country>
-			<name>St. Mary's College of Maryland</name>
-			<city>Newton</city>
-			<state>MA</state>
-			<postal>02162</postal>
-			<latitude>40.7679191</latitude>
-			<longitude>-93.3362962</longitude>
-		</school>
-		<school>
-			<country>United States</country>
-			<name>Florida State University</name>
-			<city>Savannah</city>
-			<state>GA</state>
-			<postal>31422</postal>
-			<latitude>42.6862558</latitude>
-			<longitude>-82.7625747</longitude>
-		</school>
-	</schools>
-	<status>Active</status>
-	<sources>
-		<source>
-			<name>Chicago Tribune</name>
-			<ts>2015-04-01T18:02:36Z</ts>
-		</source>
-	</sources>
-	<sources>
-		<source>
-			<name>Chicago Tribune</name>
-			<ts>2011-10-04T21:45:45Z</ts>
-		</source>
-	</sources>
-	<sources>
-		<source>
-			<name>New York Times</name>
-			<ts>2015-11-28T20:29:13Z</ts>
-		</source>
-	</sources>
-	<relations>
-		<relation>
-			<id>10043</id>
-			<predicate>livesWith</predicate>
-		</relation>
-		<relation>
-			<id>10087</id>
-			<predicate>relatedTo</predicate>
-		</relation>
-		<relation>
-			<id>10072</id>
-			<predicate>worksWith</predicate>
-		</relation>
-	</relations>
-	<createdOn>
-		<ts>2022-02-19T22:13:39Z</ts>
-		<user>candressj</user>
-	</createdOn>
-	<lastUpdated>
-		<ts>2022-01-30T04:50:40Z</ts>
-		<user>candressj</user>
-	</lastUpdated>
-	<socials>
-		<social>
-			<site>linkedin</site>
-			<address>https://digg.com/ligula.json</address>
-		</social>
-	</socials>
-	<memberships>
-		<membership>
-			<list>list8</list>
-			<important>false</important>
-		</membership>
-	</memberships>
+  <personId>10020</personId>
+  <nameGroup>
+    <givenname>
+      <value>Crawford</value>
+    </givenname>
+    <surname>
+      <value>Andress</value>
+    </surname>
+    <fullname>
+      <classification>C</classification>
+      <restricted>true</restricted>
+      <value>Andress Crawford</value>
+      <source>
+        <name>New York Times</name>
+        <ts>2020-03-16T22:09:24Z</ts>
+      </source>
+      <source>
+        <name>New York Times</name>
+        <ts>2021-05-23T20:58:38Z</ts>
+      </source>
+      <source>
+        <name>Washington Post</name>
+        <ts>2018-01-12T06:07:30Z</ts>
+      </source>
+    </fullname>
+  </nameGroup>
+  <emails>
+    <email>
+      <value>jaleksic0@edublogs.org</value>
+      <classification>S</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>tmanssuer1@prlog.org</value>
+      <classification>U</classification>
+      <restricted>false</restricted>
+    </email>
+  </emails>
+  <phone>560-281-2926</phone>
+  <ssn>
+    <value>895-23-7820</value>
+    <restricted>true</restricted>
+  </ssn>
+  <images>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2016-03-17T00:12:27Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2019-08-31T05:16:32Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2014-12-11T19:26:25Z</ts>
+      </source>
+    </image>
+  </images>
+  <addresses>
+    <address>
+      <street>04645 Mockingbird Avenue</street>
+      <city>New Orleans</city>
+      <state>LA</state>
+      <postal>70179</postal>
+      <country>United States</country>
+      <latitude>30.033</latitude>
+      <longitude>-89.8826</longitude>
+    </address>
+    <address>
+      <street>261 Merchant Crossing</street>
+      <city>San Diego</city>
+      <state>CA</state>
+      <postal>92127</postal>
+      <country>United States</country>
+      <latitude>33.0279</latitude>
+      <longitude>-117.0856</longitude>
+    </address>
+    <address>
+      <street>32 Nova Road</street>
+      <city>Alpharetta</city>
+      <state>GA</state>
+      <postal>30022</postal>
+      <country>United States</country>
+      <latitude>34.0268</latitude>
+      <longitude>-84.2422</longitude>
+    </address>
+  </addresses>
+  <schools>
+    <school>
+      <country>United States</country>
+      <name>St. Mary's College of Maryland</name>
+      <city>Newton</city>
+      <state>MA</state>
+      <postal>02162</postal>
+      <latitude>40.7679191</latitude>
+      <longitude>-93.3362962</longitude>
+    </school>
+    <school>
+      <country>United States</country>
+      <name>Florida State University</name>
+      <city>Savannah</city>
+      <state>GA</state>
+      <postal>31422</postal>
+      <latitude>42.6862558</latitude>
+      <longitude>-82.7625747</longitude>
+    </school>
+  </schools>
+  <status>Active</status>
+  <sources>
+    <source>
+      <name>Chicago Tribune</name>
+      <ts>2015-04-01T18:02:36Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Chicago Tribune</name>
+      <ts>2011-10-04T21:45:45Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>New York Times</name>
+      <ts>2015-11-28T20:29:13Z</ts>
+    </source>
+  </sources>
+  <relations>
+    <relation>
+      <id>10043</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Kemmet Erich</fullname>
+      <city>Tucson</city>
+      <state>AZ</state>
+    </relation>
+    <relation>
+      <id>10087</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
+      <fullname>Beidebeke Halette</fullname>
+      <city>Toledo</city>
+      <state>OH</state>
+    </relation>
+    <relation>
+      <id>10072</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
+      <fullname>Cauley Ola</fullname>
+      <city>Louisville</city>
+      <state>KY</state>
+    </relation>
+  </relations>
+  <createdOn>
+    <ts>2022-02-19T22:13:39Z</ts>
+    <user>candressj</user>
+  </createdOn>
+  <lastUpdated>
+    <ts>2022-01-30T04:50:40Z</ts>
+    <user>candressj</user>
+  </lastUpdated>
+  <socials>
+    <social>
+      <site>linkedin</site>
+      <address>https://digg.com/ligula.json</address>
+    </social>
+  </socials>
+  <memberships>
+    <membership>
+      <list>list8</list>
+      <important>false</important>
+    </membership>
+  </memberships>
 </person>

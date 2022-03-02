@@ -1,181 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <person>
-	<personId>10006</personId>
-	<nameGroup>
-		<givenname>
-			<value>Merissa</value>
-		</givenname>
-		<surname>
-			<value>Illston</value>
-		</surname>
-		<fullname>
-			<classification>U</classification>
-			<restricted>false</restricted>
-			<value>Illston Merissa</value>
-			<source>
-				<name>Chicago Tribune</name>
-				<ts>2016-12-12T17:48:57Z</ts>
-			</source>
-		</fullname>
-	</nameGroup>
-	<emails>
-		<email>
-			<value>icobson0@blinklist.com</value>
-			<classification>C</classification>
-			<restricted>false</restricted>
-		</email>
-	</emails>
-	<phone>731-331-5330</phone>
-	<ssn>
-		<value>123-49-0266</value>
-		<restricted>true</restricted>
-	</ssn>
-	<images>
-		<image>
-			<url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
-			<source>
-				<name>New York Times</name>
-				<ts>2015-09-05T16:56:02Z</ts>
-			</source>
-		</image>
-		<image>
-			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
-			<source>
-				<name>Wall Street Journal</name>
-				<ts>2018-01-27T15:48:10Z</ts>
-			</source>
-		</image>
-		<image>
-			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
-			<source>
-				<name>Wall Street Journal</name>
-				<ts>2016-06-27T20:54:15Z</ts>
-			</source>
-		</image>
-		<image>
-			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
-			<source>
-				<name>New York Times</name>
-				<ts>2011-04-29T10:00:51Z</ts>
-			</source>
-		</image>
-	</images>
-	<addresses>
-		<address>
-			<street>94 Mendota Park</street>
-			<city>Mesa</city>
-			<state>AZ</state>
-			<postal>85215</postal>
-			<country>United States</country>
-			<latitude>33.4707</latitude>
-			<longitude>-111.7188</longitude>
-		</address>
-		<address>
-			<street>12 Division Terrace</street>
-			<city>Gadsden</city>
-			<state>AL</state>
-			<postal>35905</postal>
-			<country>United States</country>
-			<latitude>33.9352</latitude>
-			<longitude>-85.9576</longitude>
-		</address>
-	</addresses>
-	<schools>
-		<school>
-			<country>Mexico</country>
-			<name>Universidad Motolinía del Pedregal</name>
-			<city>Tierra y Libertad</city>
-			<state>COL</state>
-			<postal>32628</postal>
-			<latitude>31.707237</latitude>
-			<longitude>-106.45163</longitude>
-		</school>
-		<school>
-			<country>United Kingdom</country>
-			<name>Institute of Advanced Legal Studies, University of London</name>
-			<city>Ashley</city>
-			<state>ENG</state>
-			<postal>SN13</postal>
-			<latitude>51.4139633</latitude>
-			<longitude>-2.2685462</longitude>
-		</school>
-	</schools>
-	<status>Inactive</status>
-	<sources>
-		<source>
-			<name>Los Angeles Times</name>
-			<ts>2011-10-01T15:54:04Z</ts>
-		</source>
-	</sources>
-	<sources>
-		<source>
-			<name>USA Today</name>
-			<ts>2016-07-14T16:16:43Z</ts>
-		</source>
-	</sources>
-	<relations>
-		<relation>
-			<id>10008</id>
-			<predicate>relatedTo</predicate>
-		</relation>
-		<relation>
-			<id>10035</id>
-			<predicate>worksWith</predicate>
-		</relation>
-		<relation>
-			<id>10031</id>
-			<predicate>worksWith</predicate>
-		</relation>
-		<relation>
-			<id>10074</id>
-			<predicate>worksWith</predicate>
-		</relation>
-		<relation>
-			<id>10019</id>
-			<predicate>livesWith</predicate>
-		</relation>
-	</relations>
-	<createdOn>
-		<ts>2022-02-09T18:02:41Z</ts>
-		<user>millston5</user>
-	</createdOn>
-	<lastUpdated>
-		<ts>2022-01-14T04:19:00Z</ts>
-		<user>millston5</user>
-	</lastUpdated>
-	<socials>
-		<social>
-			<site>twitter</site>
-			<address>http://who.int/suspendisse/potenti/nullam/porttitor/lacus/at.xml</address>
-		</social>
-		<social>
-			<site>twitter</site>
-			<address>http://xinhuanet.com/nonummy.json</address>
-		</social>
-	</socials>
-	<memberships>
-		<membership>
-			<list>list4</list>
-			<important>false</important>
-		</membership>
-		<membership>
-			<list>list12</list>
-			<important>false</important>
-		</membership>
-		<membership>
-			<list>list12</list>
-			<important>false</important>
-		</membership>
-		<membership>
-			<list>list8</list>
-			<important>false</important>
-		</membership>
-		<membership>
-			<list>list6</list>
-			<important>false</important>
-		</membership>
-		<membership>
-			<list>list7</list>
-			<important>true</important>
-		</membership>
-	</memberships>
+  <personId>10006</personId>
+  <nameGroup>
+    <givenname>
+      <value>Merissa</value>
+    </givenname>
+    <surname>
+      <value>Illston</value>
+    </surname>
+    <fullname>
+      <classification>U</classification>
+      <restricted>false</restricted>
+      <value>Illston Merissa</value>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2016-12-12T17:48:57Z</ts>
+      </source>
+    </fullname>
+  </nameGroup>
+  <emails>
+    <email>
+      <value>icobson0@blinklist.com</value>
+      <classification>C</classification>
+      <restricted>false</restricted>
+    </email>
+  </emails>
+  <phone>731-331-5330</phone>
+  <ssn>
+    <value>123-49-0266</value>
+    <restricted>true</restricted>
+  </ssn>
+  <images>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+      <source>
+        <name>New York Times</name>
+        <ts>2015-09-05T16:56:02Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2018-01-27T15:48:10Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2016-06-27T20:54:15Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
+      <source>
+        <name>New York Times</name>
+        <ts>2011-04-29T10:00:51Z</ts>
+      </source>
+    </image>
+  </images>
+  <addresses>
+    <address>
+      <street>94 Mendota Park</street>
+      <city>Mesa</city>
+      <state>AZ</state>
+      <postal>85215</postal>
+      <country>United States</country>
+      <latitude>33.4707</latitude>
+      <longitude>-111.7188</longitude>
+    </address>
+    <address>
+      <street>12 Division Terrace</street>
+      <city>Gadsden</city>
+      <state>AL</state>
+      <postal>35905</postal>
+      <country>United States</country>
+      <latitude>33.9352</latitude>
+      <longitude>-85.9576</longitude>
+    </address>
+  </addresses>
+  <schools>
+    <school>
+      <country>Mexico</country>
+      <name>Universidad Motolinía del Pedregal</name>
+      <city>Tierra y Libertad</city>
+      <state>COL</state>
+      <postal>32628</postal>
+      <latitude>31.707237</latitude>
+      <longitude>-106.45163</longitude>
+    </school>
+    <school>
+      <country>United Kingdom</country>
+      <name>Institute of Advanced Legal Studies, University of London</name>
+      <city>Ashley</city>
+      <state>ENG</state>
+      <postal>SN13</postal>
+      <latitude>51.4139633</latitude>
+      <longitude>-2.2685462</longitude>
+    </school>
+  </schools>
+  <status>Inactive</status>
+  <sources>
+    <source>
+      <name>Los Angeles Times</name>
+      <ts>2011-10-01T15:54:04Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>USA Today</name>
+      <ts>2016-07-14T16:16:43Z</ts>
+    </source>
+  </sources>
+  <relations>
+    <relation>
+      <id>10008</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Wimmers Rocky</fullname>
+      <city>Seattle</city>
+      <state>WA</state>
+    </relation>
+    <relation>
+      <id>10035</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Bresnahan Vinny</fullname>
+      <city>Stockton</city>
+      <state>CA</state>
+    </relation>
+    <relation>
+      <id>10031</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Warmisham Augustin</fullname>
+      <city>Washington</city>
+      <state>DC</state>
+    </relation>
+    <relation>
+      <id>10074</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
+      <fullname>Ties Willie</fullname>
+      <city>Springfield</city>
+      <state>IL</state>
+    </relation>
+    <relation>
+      <id>10019</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
+      <fullname>Spaldin Thatch</fullname>
+      <city>Kansas City</city>
+      <state>MO</state>
+    </relation>
+  </relations>
+  <createdOn>
+    <ts>2022-02-09T18:02:41Z</ts>
+    <user>millston5</user>
+  </createdOn>
+  <lastUpdated>
+    <ts>2022-01-14T04:19:00Z</ts>
+    <user>millston5</user>
+  </lastUpdated>
+  <socials>
+    <social>
+      <site>twitter</site>
+      <address>http://who.int/suspendisse/potenti/nullam/porttitor/lacus/at.xml</address>
+    </social>
+    <social>
+      <site>twitter</site>
+      <address>http://xinhuanet.com/nonummy.json</address>
+    </social>
+  </socials>
+  <memberships>
+    <membership>
+      <list>list4</list>
+      <important>false</important>
+    </membership>
+    <membership>
+      <list>list12</list>
+      <important>false</important>
+    </membership>
+    <membership>
+      <list>list12</list>
+      <important>false</important>
+    </membership>
+    <membership>
+      <list>list8</list>
+      <important>false</important>
+    </membership>
+    <membership>
+      <list>list6</list>
+      <important>false</important>
+    </membership>
+    <membership>
+      <list>list7</list>
+      <important>true</important>
+    </membership>
+  </memberships>
 </person>

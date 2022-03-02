@@ -1,132 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <person>
-	<personId>10091</personId>
-	<nameGroup>
-		<givenname>
-			<value>Francisco</value>
-		</givenname>
-		<surname>
-			<value>Coen</value>
-		</surname>
-		<fullname>
-			<classification>S</classification>
-			<restricted>true</restricted>
-			<value>Coen Francisco</value>
-			<source>
-				<name>Los Angeles Times</name>
-				<ts>2015-11-30T11:29:38Z</ts>
-			</source>
-		</fullname>
-	</nameGroup>
-	<emails>
-		<email>
-			<value>trowledge0@wikispaces.com</value>
-			<classification>C</classification>
-			<restricted>false</restricted>
-		</email>
-	</emails>
-	<phone>346-177-2976</phone>
-	<ssn>
-		<value>282-82-0093</value>
-		<restricted>true</restricted>
-	</ssn>
-	<images>
-		<image>
-			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
-			<source>
-				<name>Washington Post</name>
-				<ts>2017-03-07T22:54:50Z</ts>
-			</source>
-		</image>
-		<image>
-			<url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
-			<source>
-				<name>Los Angeles Times</name>
-				<ts>2012-07-14T20:31:10Z</ts>
-			</source>
-		</image>
-		<image>
-			<url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
-			<source>
-				<name>Chicago Tribune</name>
-				<ts>2014-09-25T12:47:23Z</ts>
-			</source>
-		</image>
-	</images>
-	<addresses>
-		<address>
-			<street>316 Lillian Place</street>
-			<city>Pittsburgh</city>
-			<state>PA</state>
-			<postal>15274</postal>
-			<country>United States</country>
-			<latitude>40.4344</latitude>
-			<longitude>-80.0248</longitude>
-		</address>
-	</addresses>
-	<schools>
-		<school>
-			<country>Mexico</country>
-			<name>Centro de Enseñanza Técnica Industrial</name>
-			<city>San Miguel</city>
-			<state>COA</state>
-			<postal>30560</postal>
-			<latitude>19.3579802</latitude>
-			<longitude>-99.0806088</longitude>
-		</school>
-		<school>
-			<country>United States</country>
-			<name>William Mitchell College of Law</name>
-			<city>San Diego</city>
-			<state>CA</state>
-			<postal>92165</postal>
-			<latitude>32.7495898</latitude>
-			<longitude>-117.1046198</longitude>
-		</school>
-	</schools>
-	<status>Inactive</status>
-	<sources>
-		<source>
-			<name>New York Times</name>
-			<ts>2012-10-22T08:09:50Z</ts>
-		</source>
-	</sources>
-	<sources>
-		<source>
-			<name>Los Angeles Times</name>
-			<ts>2010-02-04T10:04:23Z</ts>
-		</source>
-	</sources>
-	<relations>
-		<relation>
-			<id>10015</id>
-			<predicate>livesWith</predicate>
-		</relation>
-		<relation>
-			<id>10033</id>
-			<predicate>relatedTo</predicate>
-		</relation>
-	</relations>
-	<createdOn>
-		<ts>2022-02-22T00:24:43Z</ts>
-		<user>fcoen2i</user>
-	</createdOn>
-	<lastUpdated>
-		<ts>2022-02-27T02:18:12Z</ts>
-		<user>fcoen2i</user>
-	</lastUpdated>
-	<socials>
-		<social>
-			<site>facebook</site>
-			<address>http://liveinternet.ru/hendrerit/at/vulputate.jpg</address>
-		</social>
-		<social>
-			<site>linkedin</site>
-			<address>https://chron.com/curabitur/convallis/duis/consequat/dui.json</address>
-		</social>
-		<social>
-			<site>facebook</site>
-			<address>http://angelfire.com/sapien/non/mi/integer/ac/neque/duis.png</address>
-		</social>
-	</socials>
-	<memberships/>
+  <personId>10091</personId>
+  <nameGroup>
+    <givenname>
+      <value>Francisco</value>
+    </givenname>
+    <surname>
+      <value>Coen</value>
+    </surname>
+    <fullname>
+      <classification>S</classification>
+      <restricted>true</restricted>
+      <value>Coen Francisco</value>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2015-11-30T11:29:38Z</ts>
+      </source>
+    </fullname>
+  </nameGroup>
+  <emails>
+    <email>
+      <value>trowledge0@wikispaces.com</value>
+      <classification>C</classification>
+      <restricted>false</restricted>
+    </email>
+  </emails>
+  <phone>346-177-2976</phone>
+  <ssn>
+    <value>282-82-0093</value>
+    <restricted>true</restricted>
+  </ssn>
+  <images>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+      <source>
+        <name>Washington Post</name>
+        <ts>2017-03-07T22:54:50Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2012-07-14T20:31:10Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2014-09-25T12:47:23Z</ts>
+      </source>
+    </image>
+  </images>
+  <addresses>
+    <address>
+      <street>316 Lillian Place</street>
+      <city>Pittsburgh</city>
+      <state>PA</state>
+      <postal>15274</postal>
+      <country>United States</country>
+      <latitude>40.4344</latitude>
+      <longitude>-80.0248</longitude>
+    </address>
+  </addresses>
+  <schools>
+    <school>
+      <country>Mexico</country>
+      <name>Centro de Enseñanza Técnica Industrial</name>
+      <city>San Miguel</city>
+      <state>COA</state>
+      <postal>30560</postal>
+      <latitude>19.3579802</latitude>
+      <longitude>-99.0806088</longitude>
+    </school>
+    <school>
+      <country>United States</country>
+      <name>William Mitchell College of Law</name>
+      <city>San Diego</city>
+      <state>CA</state>
+      <postal>92165</postal>
+      <latitude>32.7495898</latitude>
+      <longitude>-117.1046198</longitude>
+    </school>
+  </schools>
+  <status>Inactive</status>
+  <sources>
+    <source>
+      <name>New York Times</name>
+      <ts>2012-10-22T08:09:50Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Los Angeles Times</name>
+      <ts>2010-02-04T10:04:23Z</ts>
+    </source>
+  </sources>
+  <relations>
+    <relation>
+      <id>10015</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
+      <fullname>Fretson Lief</fullname>
+      <city>Idaho Falls</city>
+      <state>ID</state>
+    </relation>
+    <relation>
+      <id>10033</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Liddington Constanta</fullname>
+      <city>Des Moines</city>
+      <state>IA</state>
+    </relation>
+  </relations>
+  <createdOn>
+    <ts>2022-02-22T00:24:43Z</ts>
+    <user>fcoen2i</user>
+  </createdOn>
+  <lastUpdated>
+    <ts>2022-02-27T02:18:12Z</ts>
+    <user>fcoen2i</user>
+  </lastUpdated>
+  <socials>
+    <social>
+      <site>facebook</site>
+      <address>http://liveinternet.ru/hendrerit/at/vulputate.jpg</address>
+    </social>
+    <social>
+      <site>linkedin</site>
+      <address>https://chron.com/curabitur/convallis/duis/consequat/dui.json</address>
+    </social>
+    <social>
+      <site>facebook</site>
+      <address>http://angelfire.com/sapien/non/mi/integer/ac/neque/duis.png</address>
+    </social>
+  </socials>
+  <memberships/>
 </person>

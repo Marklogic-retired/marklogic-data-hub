@@ -1,148 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <person>
-	<personId>10058</personId>
-	<nameGroup>
-		<givenname>
-			<value>Gerri</value>
-		</givenname>
-		<surname>
-			<value>Signoret</value>
-		</surname>
-		<fullname>
-			<classification>C</classification>
-			<restricted>false</restricted>
-			<value>Signoret Gerri</value>
-			<source>
-				<name>Chicago Tribune</name>
-				<ts>2015-11-08T16:36:34Z</ts>
-			</source>
-			<source>
-				<name>USA Today</name>
-				<ts>2018-12-28T16:39:11Z</ts>
-			</source>
-			<source>
-				<name>Los Angeles Times</name>
-				<ts>2019-07-26T05:46:57Z</ts>
-			</source>
-		</fullname>
-	</nameGroup>
-	<emails>
-		<email>
-			<value>rtommaseo0@flickr.com</value>
-			<classification>U</classification>
-			<restricted>false</restricted>
-		</email>
-	</emails>
-	<phone>861-744-8818</phone>
-	<ssn>
-		<value>450-86-3773</value>
-		<restricted>true</restricted>
-	</ssn>
-	<images>
-		<image>
-			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
-			<source>
-				<name>Washington Post</name>
-				<ts>2017-06-18T04:50:38Z</ts>
-			</source>
-		</image>
-	</images>
-	<addresses>
-		<address>
-			<street>5 Sauthoff Court</street>
-			<city>Bridgeport</city>
-			<state>CT</state>
-			<postal>06606</postal>
-			<country>United States</country>
-			<latitude>41.2091</latitude>
-			<longitude>-73.2086</longitude>
-		</address>
-	</addresses>
-	<schools>
-		<school>
-			<country>United States</country>
-			<name>Arizona State University, Downtown Phoenix Campus</name>
-			<city>Baton Rouge</city>
-			<state>LA</state>
-			<postal>70820</postal>
-			<latitude>30.372807</latitude>
-			<longitude>-91.1833043</longitude>
-		</school>
-	</schools>
-	<status>Inactive</status>
-	<sources>
-		<source>
-			<name>Los Angeles Times</name>
-			<ts>2018-10-14T04:51:18Z</ts>
-		</source>
-	</sources>
-	<relations>
-		<relation>
-			<id>10094</id>
-			<predicate>worksWith</predicate>
-		</relation>
-		<relation>
-			<id>10012</id>
-			<predicate>worksWith</predicate>
-		</relation>
-		<relation>
-			<id>10004</id>
-			<predicate>worksWith</predicate>
-		</relation>
-		<relation>
-			<id>10051</id>
-			<predicate>livesWith</predicate>
-		</relation>
-		<relation>
-			<id>10057</id>
-			<predicate>worksWith</predicate>
-		</relation>
-	</relations>
-	<createdOn>
-		<ts>2022-02-12T17:58:10Z</ts>
-		<user>gsignoret1l</user>
-	</createdOn>
-	<lastUpdated>
-		<ts>2022-01-14T23:58:15Z</ts>
-		<user>gsignoret1l</user>
-	</lastUpdated>
-	<socials>
-		<social>
-			<site>facebook</site>
-			<address>http://arstechnica.com/tristique/in/tempus/sit/amet.js</address>
-		</social>
-		<social>
-			<site>twitter</site>
-			<address>http://japanpost.jp/mauris/laoreet/ut/rhoncus.js</address>
-		</social>
-		<social>
-			<site>linkedin</site>
-			<address>http://youku.com/enim/leo/rhoncus/sed/vestibulum.aspx</address>
-		</social>
-	</socials>
-	<memberships>
-		<membership>
-			<list>list1</list>
-			<important>false</important>
-		</membership>
-		<membership>
-			<list>list8</list>
-			<important>true</important>
-		</membership>
-		<membership>
-			<list>list7</list>
-			<important>true</important>
-		</membership>
-		<membership>
-			<list>list10</list>
-			<important>true</important>
-		</membership>
-		<membership>
-			<list>list8</list>
-			<important>true</important>
-		</membership>
-		<membership>
-			<list>list8</list>
-			<important>false</important>
-		</membership>
-	</memberships>
+  <personId>10058</personId>
+  <nameGroup>
+    <givenname>
+      <value>Gerri</value>
+    </givenname>
+    <surname>
+      <value>Signoret</value>
+    </surname>
+    <fullname>
+      <classification>C</classification>
+      <restricted>false</restricted>
+      <value>Signoret Gerri</value>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2015-11-08T16:36:34Z</ts>
+      </source>
+      <source>
+        <name>USA Today</name>
+        <ts>2018-12-28T16:39:11Z</ts>
+      </source>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2019-07-26T05:46:57Z</ts>
+      </source>
+    </fullname>
+  </nameGroup>
+  <emails>
+    <email>
+      <value>rtommaseo0@flickr.com</value>
+      <classification>U</classification>
+      <restricted>false</restricted>
+    </email>
+  </emails>
+  <phone>861-744-8818</phone>
+  <ssn>
+    <value>450-86-3773</value>
+    <restricted>true</restricted>
+  </ssn>
+  <images>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <source>
+        <name>Washington Post</name>
+        <ts>2017-06-18T04:50:38Z</ts>
+      </source>
+    </image>
+  </images>
+  <addresses>
+    <address>
+      <street>5 Sauthoff Court</street>
+      <city>Bridgeport</city>
+      <state>CT</state>
+      <postal>06606</postal>
+      <country>United States</country>
+      <latitude>41.2091</latitude>
+      <longitude>-73.2086</longitude>
+    </address>
+  </addresses>
+  <schools>
+    <school>
+      <country>United States</country>
+      <name>Arizona State University, Downtown Phoenix Campus</name>
+      <city>Baton Rouge</city>
+      <state>LA</state>
+      <postal>70820</postal>
+      <latitude>30.372807</latitude>
+      <longitude>-91.1833043</longitude>
+    </school>
+  </schools>
+  <status>Inactive</status>
+  <sources>
+    <source>
+      <name>Los Angeles Times</name>
+      <ts>2018-10-14T04:51:18Z</ts>
+    </source>
+  </sources>
+  <relations>
+    <relation>
+      <id>10094</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Lindenblatt Barrie</fullname>
+      <city>Trenton</city>
+      <state>NJ</state>
+    </relation>
+    <relation>
+      <id>10012</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Wingeat Bone</fullname>
+      <city>Miami</city>
+      <state>FL</state>
+    </relation>
+    <relation>
+      <id>10004</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Anmore Penelope</fullname>
+      <city>Syracuse</city>
+      <state>NY</state>
+    </relation>
+    <relation>
+      <id>10051</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Jermy Margaux</fullname>
+      <city>Fort Worth</city>
+      <state>TX</state>
+    </relation>
+    <relation>
+      <id>10057</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Stedson Elfie</fullname>
+      <city>Evansville</city>
+      <state>IN</state>
+    </relation>
+  </relations>
+  <createdOn>
+    <ts>2022-02-12T17:58:10Z</ts>
+    <user>gsignoret1l</user>
+  </createdOn>
+  <lastUpdated>
+    <ts>2022-01-14T23:58:15Z</ts>
+    <user>gsignoret1l</user>
+  </lastUpdated>
+  <socials>
+    <social>
+      <site>facebook</site>
+      <address>http://arstechnica.com/tristique/in/tempus/sit/amet.js</address>
+    </social>
+    <social>
+      <site>twitter</site>
+      <address>http://japanpost.jp/mauris/laoreet/ut/rhoncus.js</address>
+    </social>
+    <social>
+      <site>linkedin</site>
+      <address>http://youku.com/enim/leo/rhoncus/sed/vestibulum.aspx</address>
+    </social>
+  </socials>
+  <memberships>
+    <membership>
+      <list>list1</list>
+      <important>false</important>
+    </membership>
+    <membership>
+      <list>list8</list>
+      <important>true</important>
+    </membership>
+    <membership>
+      <list>list7</list>
+      <important>true</important>
+    </membership>
+    <membership>
+      <list>list10</list>
+      <important>true</important>
+    </membership>
+    <membership>
+      <list>list8</list>
+      <important>true</important>
+    </membership>
+    <membership>
+      <list>list8</list>
+      <important>false</important>
+    </membership>
+  </memberships>
 </person>
