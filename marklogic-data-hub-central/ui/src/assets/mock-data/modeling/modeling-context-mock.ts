@@ -1,6 +1,9 @@
 
-export const isModified = {
+import {ViewType, ModelingContextInterface} from "../../../types/modeling-types";
+
+export const isModified: ModelingContextInterface = {
   modelingOptions: {
+    entityPropertiesNamesArray: [],
     isModified: true,
     entityTypeNamesArray: ["Order"],
     modifiedEntitiesArray: [
@@ -36,12 +39,13 @@ export const isModified = {
         }
       }
     ],
-    view: "graph",
+    view: ViewType.graph,
     selectedEntity: "Order",
     openSidePanelInGraphView: true
   },
   toggleIsModified: jest.fn(),
   setEntityTypeNamesArray: jest.fn(),
+  setEntityPropertiesNamesArray: jest.fn(),
   updateEntityModified: jest.fn(),
   removeEntityModified: jest.fn(),
   clearEntityModified: jest.fn(),
@@ -88,7 +92,7 @@ export const isModifiedTableView = {
         }
       }
     ],
-    view: "table",
+    view: ViewType.table,
     selectedEntity: "Order",
     openSidePanelInGraphView: true
   },
@@ -116,17 +120,25 @@ export const notModified = {
   closeSidePanelInGraphView: jest.fn()
 };
 
-export const notModifiedTableView = {
+export const notModifiedTableView: ModelingContextInterface = {
   modelingOptions: {
     isModified: false,
-    view: "table"
+    view: ViewType.table,
+    entityPropertiesNamesArray: [],
+    entityTypeNamesArray: [],
+    modifiedEntitiesArray: [],
+    openSidePanelInGraphView: true,
   },
   clearEntityModified: jest.fn(),
   toggleIsModified: jest.fn(),
   setEntityTypeNamesArray: jest.fn(),
   setView: jest.fn(),
   setSelectedEntity: jest.fn(),
-  setGraphViewOptions: jest.fn()
+  setGraphViewOptions: jest.fn(),
+  setEntityPropertiesNamesArray: jest.fn(),
+  updateEntityModified: jest.fn(),
+  removeEntityModified: jest.fn(),
+  closeSidePanelInGraphView: jest.fn()
 };
 
 export const entityNamesArray = {

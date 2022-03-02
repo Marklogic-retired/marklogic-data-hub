@@ -6,18 +6,25 @@ export interface ModelingContextInterface {
   removeEntityModified: (entityModified: EntityModified) => void;
   clearEntityModified: () => void;
   setEntityPropertiesNamesArray: (entityDefinitionsArray: any[]) => void;
-  setView: (view: string) => void;
+  setView: (view: ViewType) => void;
   setSelectedEntity: (entityName: string | undefined, isDraft?: boolean) => void;
   setGraphViewOptions: (graphViewOptions: graphViewOptions) => void;
   closeSidePanelInGraphView: () => void;
 }
+
+export enum ViewType {
+  "graph",
+  "table",
+  "snippet"
+}
+
 
 export interface ModelingOptionsInterface {
   entityTypeNamesArray: any[],
   isModified: boolean,
   modifiedEntitiesArray:  any[],
   entityPropertiesNamesArray: string[],
-  view: string,
+  view: ViewType,
   selectedEntity?: string | undefined,
   openSidePanelInGraphView: boolean
 }
@@ -94,7 +101,7 @@ export interface EntityModified {
 }
 
 export interface graphViewOptions {
-  view: string,
+  view: ViewType,
   selectedEntity: string
 }
 export interface hubCentralConfig {

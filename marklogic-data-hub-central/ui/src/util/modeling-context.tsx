@@ -4,7 +4,8 @@ import {
   ModelingOptionsInterface,
   ModelingContextInterface,
   EntityModified,
-  graphViewOptions
+  graphViewOptions,
+  ViewType
 } from "../types/modeling-types";
 
 const DEFAULT_MODELING_OPTIONS = {
@@ -79,7 +80,7 @@ const ModelingProvider: React.FC<{ children: any }> = ({children}) => {
     setModelingOptions({...modelingOptions, entityPropertiesNamesArray});
   };
 
-  const setView = (view: string) => {
+  const setView = (view: ViewType) => {
     setModelingOptions({...modelingOptions, view: view});
   };
 

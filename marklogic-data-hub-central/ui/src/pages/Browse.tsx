@@ -4,6 +4,7 @@ import {RouteComponentProps, withRouter} from "react-router-dom";
 import {UserContext} from "../util/user-context";
 import {SearchContext} from "../util/search-context";
 import AsyncLoader from "../components/async-loader/async-loader";
+import ViewSwitch from "@components/common/switch-view/view-switch";
 import Sidebar from "../components/sidebar/sidebar";
 import SearchPagination from "../components/search-pagination/search-pagination";
 import SearchSummary from "../components/search-summary/search-summary";
@@ -13,7 +14,7 @@ import {updateUserPreferences, createUserPreferences, getUserPreferences} from "
 import {entityFromJSON, entityParser, facetParser, getTableProperties} from "../util/data-conversion";
 import styles from "./Browse.module.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faStream, faTable, faProjectDiagram, faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
+import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
 import Query from "../components/queries/queries";
 import {AuthoritiesContext} from "../util/authorities";
 import ResultsTabularView from "../components/results-tabular-view/results-tabular-view";
@@ -30,6 +31,7 @@ import SelectedFacets from "@components/selected-facets/selected-facets";
 import EntitySpecificSidebar from "@components/explore/entity-specific-sidebar/entity-specific-sidebar";
 import EntityIconsSidebar from "@components/explore/entity-icons-sidebar/entity-icons-sidebar";
 import {QuestionCircleFill} from "react-bootstrap-icons";
+import {ViewType} from "../types/modeling-types";
 
 
 interface Props extends RouteComponentProps<any> {
@@ -91,6 +93,7 @@ const Browse: React.FC<Props> = ({location}) => {
   const [showApply, toggleApply] = useState(false);
   const [updateSpecificFacets, setUpdateSpecificFacets] = useState<boolean>(false);
   const [parsedFacets, setParsedFacets] = React.useState<any[]>([]);
+  const [selectedView, setSelectedView] = useState<ViewType>(viewOptions.graphView? ViewType.graph : ViewType.table ? ViewType.table : ViewType.snippet);
 
   const isGraphView = () => {
     const isGraph = searchOptions.nextEntityType !== "All Data" && viewOptions.graphView;
@@ -551,6 +554,7 @@ const Browse: React.FC<Props> = ({location}) => {
     }
     if (!searchOptions.relatedToData) {
       setUserPreferences(tableView);
+      setSelectedView(ViewType[tableView]);
     }
 
     if (resultsRef && resultsRef.current) {
@@ -677,65 +681,7 @@ const Browse: React.FC<Props> = ({location}) => {
                           {numberOfResultsBanner}
                         </div>}
                         {isLoading && <div className={styles.spinnerContainer}><Spinner animation="border" data-testid="spinner" variant="primary" /></div>}
-                        {!cardView ? <div id="switch-view-explorer" aria-label="switch-view" >
-                          <div className={"switch-button-group outline"}>
-                            <span>
-                              <input
-                                type="radio"
-                                id="switch-view-graph"
-                                name="switch-view-radiogroup"
-                                key={viewOptions.graphView}
-                                value={"graph"}
-                                defaultChecked={viewOptions.graphView}
-                                onChange={e => handleViewChange(e.target.value)}
-                              />
-                              <HCTooltip text="Graph View" id="graph-view-tooltip" placement="top">
-                                <label aria-label="switch-view-graph" htmlFor="switch-view-graph" className={`d-flex justify-content-center align-items-center`} id={"graphView"} style={{height: "40px"}}>
-                                  <i data-cy="graph-view">
-                                    <FontAwesomeIcon icon={faProjectDiagram} />
-                                  </i>
-                                </label>
-                              </HCTooltip>
-                            </span>
-
-                            <span>
-                              <input
-                                type="radio"
-                                id="switch-view-table"
-                                name="switch-view-radiogroup"
-                                key={viewOptions.tableView}
-                                value={"table"}
-                                defaultChecked={viewOptions.tableView && !viewOptions.graphView}
-                                onChange={e => handleViewChange(e.target.value)}
-                              />
-                              <HCTooltip text="Table View" id="table-view-tooltip" placement="top">
-                                <label aria-label="switch-view-table" htmlFor="switch-view-table" className={`d-flex justify-content-center align-items-center`} id={"tableView"} style={{height: "40px"}}>
-                                  <i data-cy="table-view">
-                                    <FontAwesomeIcon icon={faTable} />
-                                  </i>
-                                </label>
-                              </HCTooltip>
-                            </span>
-
-                            <span>
-                              <input
-                                type="radio"
-                                id="switch-view-snippet"
-                                name="switch-view-radiogroup"
-                                value={"snippet"}
-                                defaultChecked={!viewOptions.tableView && !viewOptions.graphView}
-                                onChange={e => handleViewChange(e.target.value)}
-                              />
-                              <HCTooltip text="Snippet View" id="snippet-view-tooltip" placement="top">
-                                <label aria-label="switch-view-snippet" htmlFor="switch-view-snippet" className={`d-flex justify-content-center align-items-center`} id={"snippetView"} style={{height: "40px"}}>
-                                  <i data-cy="facet-view">
-                                    <FontAwesomeIcon icon={faStream} />
-                                  </i>
-                                </label>
-                              </HCTooltip>
-                            </span>
-                          </div>
-                        </div> : ""}
+                        {!cardView ? <ViewSwitch handleViewChange={handleViewChange} selectedView={selectedView} snippetView /> : ""}
                       </div>
                     </div></span>}
               </div>
