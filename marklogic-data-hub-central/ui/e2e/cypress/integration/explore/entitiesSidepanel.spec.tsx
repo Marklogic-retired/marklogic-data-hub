@@ -216,6 +216,7 @@ describe("Test '/Explore' left sidebar", () => {
     browsePage.getClearAllFacetsButton().trigger("mouseover", {force: true});
 
     cy.log("verify related entity panel is enabled when Customer is deselected as a base entity");
+    browsePage.scrollSideBarTop();
     entitiesSidebar.removeLastSelectedBaseEntity();
     cy.wait(500);
     entitiesSidebar.removeLastSelectedBaseEntity();
