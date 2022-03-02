@@ -59,13 +59,23 @@ const withRelatedQuery = {
 const resultsTest4 = searchNodes(withRelatedQuery);
 
 assertions.concat([
-  test.assertEqual(8, resultsTest4.total, `results: ${xdmp.toJsonString(resultsTest4)}`),
-  test.assertEqual(3, resultsTest4.nodes.length, `results: ${xdmp.toJsonString(resultsTest4)}`),
-  test.assertEqual(2, resultsTest4.edges.length, `results: ${xdmp.toJsonString(resultsTest4)}`),
-  test.assertFalse(resultsTest4.nodes[0].hasRelationships, `results: ${xdmp.toJsonString(resultsTest4)}`),
-  test.assertFalse(resultsTest4.nodes[1].hasRelationships, `results: ${xdmp.toJsonString(resultsTest4)}`),
-  test.assertTrue(resultsTest4.nodes[2].hasRelationships, `results: ${xdmp.toJsonString(resultsTest4)}`)
+  test.assertEqual(8, resultsTest4.total, `wrong total: ${xdmp.toJsonString(resultsTest4)}`),
+  test.assertEqual(3, resultsTest4.nodes.length, `wrong nodes length: ${xdmp.toJsonString(resultsTest4)}`),
+  test.assertEqual(2, resultsTest4.edges.length, `wrong edges length: ${xdmp.toJsonString(resultsTest4)}`)
 ]);
+
+resultsTest4.nodes.forEach(node => {
+  if(node.id === "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/3039") {
+    assertions.push(test.assertFalse(node.hasRelationships), "BabyRegistry 3039 must have relationships flag in false.");
+  }
+  else if(node.id === "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/3039-Product") {
+    assertions.push(test.assertFalse(node.hasRelationships), "Product group node must have relationships flag in false.");
+  }
+  else if(node.id === "http://example.org/Customer-0.0.1/Customer/301") {
+    assertions.push(test.assertTrue(node.hasRelationships), "Customer 301 node must have relationships flag in true.");
+  }
+})
+
 
 const nodeLeafQuery = {
   "searchText": "",
@@ -79,8 +89,16 @@ assertions.concat([
   test.assertEqual(2, resultsTest5.total),
   test.assertEqual(2, resultsTest5.nodes.length, xdmp.toJsonString(resultsTest5)),
   test.assertEqual(1, resultsTest5.edges.length),
-  test.assertTrue(resultsTest5.nodes[1].hasRelationships)
 ]);
+
+resultsTest5.nodes.forEach(node => {
+  if(node.id === "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/3039") {
+    assertions.push(test.assertFalse(node.hasRelationships), "BabyRegistry 3039 must have relationships flag in false.");
+  }
+  else if(node.id === "http://example.org/Customer-0.0.1/Customer/301") {
+    assertions.push(test.assertTrue(node.hasRelationships), "Customer 301 node must have relationships flag in true.");
+  }
+})
 
 const searchTextQuery = {
   "searchText": "Infant Newborn Toddler",
@@ -93,10 +111,11 @@ assertions.concat([
   test.assertEqual(6, resultsTestSearchBy.total),
   test.assertEqual(6, resultsTestSearchBy.nodes.length),
   test.assertEqual(0, resultsTestSearchBy.edges.length),
-  test.assertFalse(resultsTestSearchBy.nodes[0].hasRelationships),
-  test.assertEqual(resultsTestSearchBy.nodes[0].group, "http://example.org/Product-1.0.0/Product"),
-  test.assertEqual(resultsTestSearchBy.nodes[1].group, "http://example.org/Product-1.0.0/Product"),
 ]);
 
+resultsTestSearchBy.nodes.forEach(node => {
+  test.assertEqual(node.group, "http://example.org/Product-1.0.0/Product");
+  test.assertFalse(node.hasRelationships)
+})
 
 assertions;
