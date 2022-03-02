@@ -48,9 +48,13 @@ const Detail: React.FC<Props> = (props) => {
     // If config is loaded and id is present but detail context is 
     // empty, load detail context so content is displayed
     if (userContext.config.detail && id && _.isEmpty(detailContext.detail)) {
-      detailContext.handleDetail(id);
+      detailContext.handleGetDetail(id);
     }
   }, [userContext.config]);
+
+  useEffect(() => {
+    detailContext.handleSaveRecentlyVisited();
+  }, [detailContext.detail]);
   
   const getHeading = (configHeading) => {
     return (

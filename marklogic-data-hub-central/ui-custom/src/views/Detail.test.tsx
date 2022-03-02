@@ -45,8 +45,12 @@ const detail = {
 
 const detailContextValue = {
     detail: detail,
-    handleDetail: jest.fn()
+    recent: [],
+    handleGetDetail: jest.fn(),
+    handleGetRecentlyVisited: jest.fn(),
+    handleSaveRecentlyVisited: jest.fn()
 };
+
 
 const userContextValue = {
     userid: "",

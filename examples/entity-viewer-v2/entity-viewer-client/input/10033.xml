@@ -119,14 +119,6 @@
       <state>TX</state>
     </relation>
     <relation>
-      <id>10054</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Chessell Skye</fullname>
-      <city>Chicago</city>
-      <state>IL</state>
-    </relation>
-    <relation>
       <id>10078</id>
       <predicate>livesWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
