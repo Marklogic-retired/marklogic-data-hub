@@ -1,141 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <person>
-	<personId>10095</personId>
-	<nameGroup>
-		<givenname>
-			<value>Moss</value>
-		</givenname>
-		<surname>
-			<value>Sorbie</value>
-		</surname>
-		<fullname>
-			<classification>S</classification>
-			<restricted>false</restricted>
-			<value>Sorbie Moss</value>
-			<source>
-				<name>Los Angeles Times</name>
-				<ts>2021-02-10T18:24:50Z</ts>
-			</source>
-			<source>
-				<name>Chicago Tribune</name>
-				<ts>2016-04-09T08:32:34Z</ts>
-			</source>
-		</fullname>
-	</nameGroup>
-	<emails>
-		<email>
-			<value>babbotts0@ted.com</value>
-			<classification>S</classification>
-			<restricted>false</restricted>
-		</email>
-	</emails>
-	<phone>856-720-4477</phone>
-	<ssn>
-		<value>814-55-7156</value>
-		<restricted>true</restricted>
-	</ssn>
-	<images>
-		<image>
-			<url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
-			<source>
-				<name>Chicago Tribune</name>
-				<ts>2019-11-16T05:00:04Z</ts>
-			</source>
-		</image>
-	</images>
-	<addresses>
-		<address>
-			<street>0 Moulton Alley</street>
-			<city>Durham</city>
-			<state>NC</state>
-			<postal>27710</postal>
-			<country>United States</country>
-			<latitude>36.0512</latitude>
-			<longitude>-78.8577</longitude>
-		</address>
-		<address>
-			<street>717 Sutteridge Street</street>
-			<city>Bronx</city>
-			<state>NY</state>
-			<postal>10459</postal>
-			<country>United States</country>
-			<latitude>40.8247</latitude>
-			<longitude>-73.894</longitude>
-		</address>
-	</addresses>
-	<schools>
-		<school>
-			<country>United States</country>
-			<name>Alice Lloyd College</name>
-			<city>Clearwater</city>
-			<state>FL</state>
-			<postal>34620</postal>
-			<latitude>41.7396715</latitude>
-			<longitude>-85.9262162</longitude>
-		</school>
-	</schools>
-	<status>Inactive</status>
-	<sources>
-		<source>
-			<name>Chicago Tribune</name>
-			<ts>2017-09-26T14:37:49Z</ts>
-		</source>
-	</sources>
-	<sources>
-		<source>
-			<name>USA Today</name>
-			<ts>2021-08-27T15:39:09Z</ts>
-		</source>
-	</sources>
-	<sources>
-		<source>
-			<name>Chicago Tribune</name>
-			<ts>2014-02-20T02:42:09Z</ts>
-		</source>
-	</sources>
-	<relations>
-		<relation>
-			<id>10052</id>
-			<predicate>relatedTo</predicate>
-		</relation>
-		<relation>
-			<id>10063</id>
-			<predicate>livesWith</predicate>
-		</relation>
-	</relations>
-	<createdOn>
-		<ts>2022-01-14T15:41:00Z</ts>
-		<user>msorbie2m</user>
-	</createdOn>
-	<lastUpdated>
-		<ts>2022-01-03T09:35:08Z</ts>
-		<user>msorbie2m</user>
-	</lastUpdated>
-	<socials>
-		<social>
-			<site>facebook</site>
-			<address>https://exblog.jp/duis/ac/nibh.js</address>
-		</social>
-		<social>
-			<site>facebook</site>
-			<address>https://disqus.com/cras.jpg</address>
-		</social>
-		<social>
-			<site>linkedin</site>
-			<address>http://paginegialle.it/dui/nec/nisi/volutpat/eleifend.jsp</address>
-		</social>
-	</socials>
-	<memberships>
-		<membership>
-			<list>list1</list>
-			<important>true</important>
-		</membership>
-		<membership>
-			<list>list8</list>
-			<important>false</important>
-		</membership>
-		<membership>
-			<list>list9</list>
-			<important>false</important>
-		</membership>
-	</memberships>
+  <personId>10095</personId>
+  <nameGroup>
+    <givenname>
+      <value>Moss</value>
+    </givenname>
+    <surname>
+      <value>Sorbie</value>
+    </surname>
+    <fullname>
+      <classification>S</classification>
+      <restricted>false</restricted>
+      <value>Sorbie Moss</value>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2021-02-10T18:24:50Z</ts>
+      </source>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2016-04-09T08:32:34Z</ts>
+      </source>
+    </fullname>
+  </nameGroup>
+  <emails>
+    <email>
+      <value>babbotts0@ted.com</value>
+      <classification>S</classification>
+      <restricted>false</restricted>
+    </email>
+  </emails>
+  <phone>856-720-4477</phone>
+  <ssn>
+    <value>814-55-7156</value>
+    <restricted>true</restricted>
+  </ssn>
+  <images>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2019-11-16T05:00:04Z</ts>
+      </source>
+    </image>
+  </images>
+  <addresses>
+    <address>
+      <street>0 Moulton Alley</street>
+      <city>Durham</city>
+      <state>NC</state>
+      <postal>27710</postal>
+      <country>United States</country>
+      <latitude>36.0512</latitude>
+      <longitude>-78.8577</longitude>
+    </address>
+    <address>
+      <street>717 Sutteridge Street</street>
+      <city>Bronx</city>
+      <state>NY</state>
+      <postal>10459</postal>
+      <country>United States</country>
+      <latitude>40.8247</latitude>
+      <longitude>-73.894</longitude>
+    </address>
+  </addresses>
+  <schools>
+    <school>
+      <country>United States</country>
+      <name>Alice Lloyd College</name>
+      <city>Clearwater</city>
+      <state>FL</state>
+      <postal>34620</postal>
+      <latitude>41.7396715</latitude>
+      <longitude>-85.9262162</longitude>
+    </school>
+  </schools>
+  <status>Inactive</status>
+  <sources>
+    <source>
+      <name>Chicago Tribune</name>
+      <ts>2017-09-26T14:37:49Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>USA Today</name>
+      <ts>2021-08-27T15:39:09Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Chicago Tribune</name>
+      <ts>2014-02-20T02:42:09Z</ts>
+    </source>
+  </sources>
+  <relations>
+    <relation>
+      <id>10052</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
+      <fullname>Tacey Orland</fullname>
+      <city>Oklahoma City</city>
+      <state>OK</state>
+    </relation>
+    <relation>
+      <id>10063</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
+      <fullname>Insley Hodge</fullname>
+      <city>Greenville</city>
+      <state>SC</state>
+    </relation>
+  </relations>
+  <createdOn>
+    <ts>2022-01-14T15:41:00Z</ts>
+    <user>msorbie2m</user>
+  </createdOn>
+  <lastUpdated>
+    <ts>2022-01-03T09:35:08Z</ts>
+    <user>msorbie2m</user>
+  </lastUpdated>
+  <socials>
+    <social>
+      <site>facebook</site>
+      <address>https://exblog.jp/duis/ac/nibh.js</address>
+    </social>
+    <social>
+      <site>facebook</site>
+      <address>https://disqus.com/cras.jpg</address>
+    </social>
+    <social>
+      <site>linkedin</site>
+      <address>http://paginegialle.it/dui/nec/nisi/volutpat/eleifend.jsp</address>
+    </social>
+  </socials>
+  <memberships>
+    <membership>
+      <list>list1</list>
+      <important>true</important>
+    </membership>
+    <membership>
+      <list>list8</list>
+      <important>false</important>
+    </membership>
+    <membership>
+      <list>list9</list>
+      <important>false</important>
+    </membership>
+  </memberships>
 </person>

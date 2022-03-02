@@ -1,151 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <person>
-	<personId>10060</personId>
-	<nameGroup>
-		<givenname>
-			<value>Josie</value>
-		</givenname>
-		<surname>
-			<value>Skpsey</value>
-		</surname>
-		<fullname>
-			<classification>C</classification>
-			<restricted>true</restricted>
-			<value>Skpsey Josie</value>
-			<source>
-				<name>Chicago Tribune</name>
-				<ts>2012-03-30T05:56:32Z</ts>
-			</source>
-		</fullname>
-	</nameGroup>
-	<emails>
-		<email>
-			<value>mdecourcy0@liveinternet.ru</value>
-			<classification>S</classification>
-			<restricted>false</restricted>
-		</email>
-		<email>
-			<value>tlosebie1@cnbc.com</value>
-			<classification>C</classification>
-			<restricted>false</restricted>
-		</email>
-	</emails>
-	<phone>959-537-6676</phone>
-	<ssn>
-		<value>563-95-8345</value>
-		<restricted>true</restricted>
-	</ssn>
-	<images>
-		<image>
-			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
-			<source>
-				<name>Wall Street Journal</name>
-				<ts>2018-04-24T17:48:40Z</ts>
-			</source>
-		</image>
-		<image>
-			<url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
-			<source>
-				<name>Wall Street Journal</name>
-				<ts>2020-11-23T05:18:39Z</ts>
-			</source>
-		</image>
-		<image>
-			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
-			<source>
-				<name>Chicago Tribune</name>
-				<ts>2020-02-25T04:31:43Z</ts>
-			</source>
-		</image>
-	</images>
-	<addresses>
-		<address>
-			<street>5 Roxbury Junction</street>
-			<city>Bridgeport</city>
-			<state>CT</state>
-			<postal>06673</postal>
-			<country>United States</country>
-			<latitude>41.3089</latitude>
-			<longitude>-73.3637</longitude>
-		</address>
-		<address>
-			<street>06120 Karstens Crossing</street>
-			<city>Dayton</city>
-			<state>OH</state>
-			<postal>45414</postal>
-			<country>United States</country>
-			<latitude>39.8285</latitude>
-			<longitude>-84.2024</longitude>
-		</address>
-		<address>
-			<street>440 Clarendon Center</street>
-			<city>Montgomery</city>
-			<state>AL</state>
-			<postal>36177</postal>
-			<country>United States</country>
-			<latitude>32.2334</latitude>
-			<longitude>-86.2085</longitude>
-		</address>
-	</addresses>
-	<schools>
-		<school>
-			<country>Canada</country>
-			<name>Concordia University College of Alberta</name>
-			<city>Cochrane</city>
-			<state>AB</state>
-			<postal>T4C</postal>
-			<latitude>51.1909883</latitude>
-			<longitude>-114.4678603</longitude>
-		</school>
-	</schools>
-	<status>Active</status>
-	<sources>
-		<source>
-			<name>Wall Street Journal</name>
-			<ts>2012-05-31T05:37:11Z</ts>
-		</source>
-	</sources>
-	<sources>
-		<source>
-			<name>New York Times</name>
-			<ts>2011-02-25T08:57:16Z</ts>
-		</source>
-	</sources>
-	<sources>
-		<source>
-			<name>Los Angeles Times</name>
-			<ts>2010-02-12T21:40:51Z</ts>
-		</source>
-	</sources>
-	<relations>
-		<relation>
-			<id>10054</id>
-			<predicate>relatedTo</predicate>
-		</relation>
-		<relation>
-			<id>10001</id>
-			<predicate>worksWith</predicate>
-		</relation>
-		<relation>
-			<id>10086</id>
-			<predicate>worksWith</predicate>
-		</relation>
-		<relation>
-			<id>10062</id>
-			<predicate>relatedTo</predicate>
-		</relation>
-		<relation>
-			<id>10068</id>
-			<predicate>relatedTo</predicate>
-		</relation>
-	</relations>
-	<createdOn>
-		<ts>2022-01-06T18:57:01Z</ts>
-		<user>jskpsey1n</user>
-	</createdOn>
-	<lastUpdated>
-		<ts>2022-02-22T01:32:39Z</ts>
-		<user>jskpsey1n</user>
-	</lastUpdated>
-	<socials/>
-	<memberships/>
+  <personId>10060</personId>
+  <nameGroup>
+    <givenname>
+      <value>Josie</value>
+    </givenname>
+    <surname>
+      <value>Skpsey</value>
+    </surname>
+    <fullname>
+      <classification>C</classification>
+      <restricted>true</restricted>
+      <value>Skpsey Josie</value>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2012-03-30T05:56:32Z</ts>
+      </source>
+    </fullname>
+  </nameGroup>
+  <emails>
+    <email>
+      <value>mdecourcy0@liveinternet.ru</value>
+      <classification>S</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>tlosebie1@cnbc.com</value>
+      <classification>C</classification>
+      <restricted>false</restricted>
+    </email>
+  </emails>
+  <phone>959-537-6676</phone>
+  <ssn>
+    <value>563-95-8345</value>
+    <restricted>true</restricted>
+  </ssn>
+  <images>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2018-04-24T17:48:40Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2020-11-23T05:18:39Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2020-02-25T04:31:43Z</ts>
+      </source>
+    </image>
+  </images>
+  <addresses>
+    <address>
+      <street>5 Roxbury Junction</street>
+      <city>Bridgeport</city>
+      <state>CT</state>
+      <postal>06673</postal>
+      <country>United States</country>
+      <latitude>41.3089</latitude>
+      <longitude>-73.3637</longitude>
+    </address>
+    <address>
+      <street>06120 Karstens Crossing</street>
+      <city>Dayton</city>
+      <state>OH</state>
+      <postal>45414</postal>
+      <country>United States</country>
+      <latitude>39.8285</latitude>
+      <longitude>-84.2024</longitude>
+    </address>
+    <address>
+      <street>440 Clarendon Center</street>
+      <city>Montgomery</city>
+      <state>AL</state>
+      <postal>36177</postal>
+      <country>United States</country>
+      <latitude>32.2334</latitude>
+      <longitude>-86.2085</longitude>
+    </address>
+  </addresses>
+  <schools>
+    <school>
+      <country>Canada</country>
+      <name>Concordia University College of Alberta</name>
+      <city>Cochrane</city>
+      <state>AB</state>
+      <postal>T4C</postal>
+      <latitude>51.1909883</latitude>
+      <longitude>-114.4678603</longitude>
+    </school>
+  </schools>
+  <status>Active</status>
+  <sources>
+    <source>
+      <name>Wall Street Journal</name>
+      <ts>2012-05-31T05:37:11Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>New York Times</name>
+      <ts>2011-02-25T08:57:16Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Los Angeles Times</name>
+      <ts>2010-02-12T21:40:51Z</ts>
+    </source>
+  </sources>
+  <relations>
+    <relation>
+      <id>10054</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
+      <fullname>Chessell Skye</fullname>
+      <city>Chicago</city>
+      <state>IL</state>
+    </relation>
+    <relation>
+      <id>10001</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
+      <fullname>Cisco Felicdad</fullname>
+      <city>Washington</city>
+      <state>DC</state>
+    </relation>
+    <relation>
+      <id>10086</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
+      <fullname>Gowthrop Pansy</fullname>
+      <city>Dayton</city>
+      <state>OH</state>
+    </relation>
+    <relation>
+      <id>10062</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Welbeck Morna</fullname>
+      <city>San Diego</city>
+      <state>CA</state>
+    </relation>
+    <relation>
+      <id>10068</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
+      <fullname>Orchart Beverlee</fullname>
+      <city>Charleston</city>
+      <state>WV</state>
+    </relation>
+  </relations>
+  <createdOn>
+    <ts>2022-01-06T18:57:01Z</ts>
+    <user>jskpsey1n</user>
+  </createdOn>
+  <lastUpdated>
+    <ts>2022-02-22T01:32:39Z</ts>
+    <user>jskpsey1n</user>
+  </lastUpdated>
+  <socials/>
+  <memberships/>
 </person>

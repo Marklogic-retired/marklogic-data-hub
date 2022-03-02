@@ -22,6 +22,7 @@ const COMPONENTS = {
   DataTableMultiValue: DataTableMultiValue,
   DateTime: DateTime,
   Image: Image,
+  Relationships: Relationships,
   Value: Value
 }
 
@@ -113,7 +114,12 @@ const Detail: React.FC<Props> = (props) => {
 
               {config?.detail?.relationships ? 
                 <Section title="Relationships">
-                  <Relationships id={id ? parseInt(id) : 0} />
+                  <div className="relationships">
+                    {React.createElement(
+                      COMPONENTS[config.detail.relationships.component], 
+                      { config: config?.detail?.relationships.config, data: detailContext.detail}, null
+                    )}
+                  </div>
                 </Section>
               : null}
 

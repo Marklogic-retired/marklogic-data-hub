@@ -500,7 +500,42 @@
             ]
         },
 
-        "relationships": {},
+        "relationships": {
+            "component": "Relationships",
+            "config": {
+                "size": 30,
+                "root": {
+                    "id": {
+                        "path": "result[0].extracted.person.personId"
+                    },
+                    "imgSrc": {
+                        "arrayPath": "result[0].extracted.person.images.image",
+                        "path": "url"
+                    },
+                    "title": {
+                        "path": "result[0].extracted.person.nameGroup.fullname.value"
+                    },
+                    "city": {
+                        "arrayPath": "result[0].extracted.person.addresses.address",
+                        "path": "city"
+                    },
+                    "state": {
+                        "arrayPath": "result[0].extracted.person.addresses.address",
+                        "path": "state"
+                    }
+                },
+                "relations": {
+                    "arrayPath": "result[0].extracted.person.relations.relation",
+                    "id": "id",
+                    "predicate": "predicate",
+                    "imgSrc": "imageSrc",
+                    "title": "fullname",
+                    "city": "city",
+                    "state": "state"
+                },
+                "options": {}
+            }
+        },
 
         "occupations": {}
     }

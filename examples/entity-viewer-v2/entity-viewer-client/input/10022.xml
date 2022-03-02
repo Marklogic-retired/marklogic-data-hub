@@ -1,162 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <person>
-	<personId>10022</personId>
-	<nameGroup>
-		<givenname>
-			<value>Noella</value>
-		</givenname>
-		<surname>
-			<value>Talby</value>
-		</surname>
-		<fullname>
-			<classification>S</classification>
-			<restricted>false</restricted>
-			<value>Talby Noella</value>
-			<source>
-				<name>Los Angeles Times</name>
-				<ts>2013-05-14T14:42:41Z</ts>
-			</source>
-			<source>
-				<name>USA Today</name>
-				<ts>2010-07-22T00:03:22Z</ts>
-			</source>
-		</fullname>
-	</nameGroup>
-	<emails>
-		<email>
-			<value>jtrayford0@geocities.jp</value>
-			<classification>U</classification>
-			<restricted>false</restricted>
-		</email>
-		<email>
-			<value>dwoodier1@rediff.com</value>
-			<classification>S</classification>
-			<restricted>false</restricted>
-		</email>
-	</emails>
-	<phone>762-698-7754</phone>
-	<ssn>
-		<value>752-45-8745</value>
-		<restricted>true</restricted>
-	</ssn>
-	<images>
-		<image>
-			<url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
-			<source>
-				<name>New York Times</name>
-				<ts>2016-09-05T17:42:51Z</ts>
-			</source>
-		</image>
-	</images>
-	<addresses>
-		<address>
-			<street>86 Farragut Court</street>
-			<city>Jacksonville</city>
-			<state>FL</state>
-			<postal>32236</postal>
-			<country>United States</country>
-			<latitude>30.3449</latitude>
-			<longitude>-81.6831</longitude>
-		</address>
-		<address>
-			<street>06976 Arkansas Hill</street>
-			<city>Oklahoma City</city>
-			<state>OK</state>
-			<postal>73114</postal>
-			<country>United States</country>
-			<latitude>35.5704</latitude>
-			<longitude>-97.5257</longitude>
-		</address>
-		<address>
-			<street>31 Mcguire Circle</street>
-			<city>Sacramento</city>
-			<state>CA</state>
-			<postal>94230</postal>
-			<country>United States</country>
-			<latitude>38.3774</latitude>
-			<longitude>-121.4444</longitude>
-		</address>
-	</addresses>
-	<schools>
-		<school>
-			<country>United States</country>
-			<name>Oklahoma State University - Tulsa</name>
-			<city>Sparks</city>
-			<state>NV</state>
-			<postal>89436</postal>
-			<latitude>39.603484</latitude>
-			<longitude>-119.7078532</longitude>
-		</school>
-	</schools>
-	<status>Inactive</status>
-	<sources>
-		<source>
-			<name>Washington Post</name>
-			<ts>2010-01-22T17:27:59Z</ts>
-		</source>
-	</sources>
-	<sources>
-		<source>
-			<name>USA Today</name>
-			<ts>2018-12-25T07:48:21Z</ts>
-		</source>
-	</sources>
-	<sources>
-		<source>
-			<name>Los Angeles Times</name>
-			<ts>2017-02-25T05:51:39Z</ts>
-		</source>
-	</sources>
-	<relations>
-		<relation>
-			<id>10035</id>
-			<predicate>livesWith</predicate>
-		</relation>
-		<relation>
-			<id>10033</id>
-			<predicate>relatedTo</predicate>
-		</relation>
-		<relation>
-			<id>10095</id>
-			<predicate>worksWith</predicate>
-		</relation>
-		<relation>
-			<id>10020</id>
-			<predicate>livesWith</predicate>
-		</relation>
-	</relations>
-	<createdOn>
-		<ts>2022-02-23T22:21:00Z</ts>
-		<user>ntalbyl</user>
-	</createdOn>
-	<lastUpdated>
-		<ts>2022-02-09T10:59:45Z</ts>
-		<user>ntalbyl</user>
-	</lastUpdated>
-	<socials/>
-	<memberships>
-		<membership>
-			<list>list4</list>
-			<important>false</important>
-		</membership>
-		<membership>
-			<list>list11</list>
-			<important>true</important>
-		</membership>
-		<membership>
-			<list>list1</list>
-			<important>true</important>
-		</membership>
-		<membership>
-			<list>list8</list>
-			<important>true</important>
-		</membership>
-		<membership>
-			<list>list4</list>
-			<important>true</important>
-		</membership>
-		<membership>
-			<list>list2</list>
-			<important>false</important>
-		</membership>
-	</memberships>
+  <personId>10022</personId>
+  <nameGroup>
+    <givenname>
+      <value>Noella</value>
+    </givenname>
+    <surname>
+      <value>Talby</value>
+    </surname>
+    <fullname>
+      <classification>S</classification>
+      <restricted>false</restricted>
+      <value>Talby Noella</value>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2013-05-14T14:42:41Z</ts>
+      </source>
+      <source>
+        <name>USA Today</name>
+        <ts>2010-07-22T00:03:22Z</ts>
+      </source>
+    </fullname>
+  </nameGroup>
+  <emails>
+    <email>
+      <value>jtrayford0@geocities.jp</value>
+      <classification>U</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>dwoodier1@rediff.com</value>
+      <classification>S</classification>
+      <restricted>false</restricted>
+    </email>
+  </emails>
+  <phone>762-698-7754</phone>
+  <ssn>
+    <value>752-45-8745</value>
+    <restricted>true</restricted>
+  </ssn>
+  <images>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+      <source>
+        <name>New York Times</name>
+        <ts>2016-09-05T17:42:51Z</ts>
+      </source>
+    </image>
+  </images>
+  <addresses>
+    <address>
+      <street>86 Farragut Court</street>
+      <city>Jacksonville</city>
+      <state>FL</state>
+      <postal>32236</postal>
+      <country>United States</country>
+      <latitude>30.3449</latitude>
+      <longitude>-81.6831</longitude>
+    </address>
+    <address>
+      <street>06976 Arkansas Hill</street>
+      <city>Oklahoma City</city>
+      <state>OK</state>
+      <postal>73114</postal>
+      <country>United States</country>
+      <latitude>35.5704</latitude>
+      <longitude>-97.5257</longitude>
+    </address>
+    <address>
+      <street>31 Mcguire Circle</street>
+      <city>Sacramento</city>
+      <state>CA</state>
+      <postal>94230</postal>
+      <country>United States</country>
+      <latitude>38.3774</latitude>
+      <longitude>-121.4444</longitude>
+    </address>
+  </addresses>
+  <schools>
+    <school>
+      <country>United States</country>
+      <name>Oklahoma State University - Tulsa</name>
+      <city>Sparks</city>
+      <state>NV</state>
+      <postal>89436</postal>
+      <latitude>39.603484</latitude>
+      <longitude>-119.7078532</longitude>
+    </school>
+  </schools>
+  <status>Inactive</status>
+  <sources>
+    <source>
+      <name>Washington Post</name>
+      <ts>2010-01-22T17:27:59Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>USA Today</name>
+      <ts>2018-12-25T07:48:21Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Los Angeles Times</name>
+      <ts>2017-02-25T05:51:39Z</ts>
+    </source>
+  </sources>
+  <relations>
+    <relation>
+      <id>10035</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Bresnahan Vinny</fullname>
+      <city>Stockton</city>
+      <state>CA</state>
+    </relation>
+    <relation>
+      <id>10033</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Liddington Constanta</fullname>
+      <city>Des Moines</city>
+      <state>IA</state>
+    </relation>
+    <relation>
+      <id>10095</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Sorbie Moss</fullname>
+      <city>Durham</city>
+      <state>NC</state>
+    </relation>
+    <relation>
+      <id>10020</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
+      <fullname>Andress Crawford</fullname>
+      <city>New Orleans</city>
+      <state>LA</state>
+    </relation>
+  </relations>
+  <createdOn>
+    <ts>2022-02-23T22:21:00Z</ts>
+    <user>ntalbyl</user>
+  </createdOn>
+  <lastUpdated>
+    <ts>2022-02-09T10:59:45Z</ts>
+    <user>ntalbyl</user>
+  </lastUpdated>
+  <socials/>
+  <memberships>
+    <membership>
+      <list>list4</list>
+      <important>false</important>
+    </membership>
+    <membership>
+      <list>list11</list>
+      <important>true</important>
+    </membership>
+    <membership>
+      <list>list1</list>
+      <important>true</important>
+    </membership>
+    <membership>
+      <list>list8</list>
+      <important>true</important>
+    </membership>
+    <membership>
+      <list>list4</list>
+      <important>true</important>
+    </membership>
+    <membership>
+      <list>list2</list>
+      <important>false</important>
+    </membership>
+  </memberships>
 </person>

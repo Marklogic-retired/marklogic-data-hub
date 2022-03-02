@@ -1,174 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <person>
-	<personId>10046</personId>
-	<nameGroup>
-		<givenname>
-			<value>Lidia</value>
-		</givenname>
-		<surname>
-			<value>Slee</value>
-		</surname>
-		<fullname>
-			<classification>C</classification>
-			<restricted>false</restricted>
-			<value>Slee Lidia</value>
-			<source>
-				<name>Wall Street Journal</name>
-				<ts>2020-10-11T11:30:41Z</ts>
-			</source>
-			<source>
-				<name>Los Angeles Times</name>
-				<ts>2019-07-01T07:20:50Z</ts>
-			</source>
-			<source>
-				<name>USA Today</name>
-				<ts>2017-07-14T00:21:15Z</ts>
-			</source>
-		</fullname>
-	</nameGroup>
-	<emails>
-		<email>
-			<value>mreade0@twitter.com</value>
-			<classification>C</classification>
-			<restricted>false</restricted>
-		</email>
-		<email>
-			<value>ahowgate1@purevolume.com</value>
-			<classification>U</classification>
-			<restricted>false</restricted>
-		</email>
-	</emails>
-	<phone>987-367-5139</phone>
-	<ssn>
-		<value>527-89-3011</value>
-		<restricted>true</restricted>
-	</ssn>
-	<images>
-		<image>
-			<url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
-			<source>
-				<name>Chicago Tribune</name>
-				<ts>2020-07-22T21:06:41Z</ts>
-			</source>
-		</image>
-		<image>
-			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
-			<source>
-				<name>Washington Post</name>
-				<ts>2020-01-26T19:19:18Z</ts>
-			</source>
-		</image>
-		<image>
-			<url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
-			<source>
-				<name>Chicago Tribune</name>
-				<ts>2016-08-15T04:14:01Z</ts>
-			</source>
-		</image>
-		<image>
-			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
-			<source>
-				<name>Chicago Tribune</name>
-				<ts>2014-11-21T19:13:47Z</ts>
-			</source>
-		</image>
-	</images>
-	<addresses>
-		<address>
-			<street>886 American Point</street>
-			<city>Omaha</city>
-			<state>NE</state>
-			<postal>68164</postal>
-			<country>United States</country>
-			<latitude>41.2955</latitude>
-			<longitude>-96.1008</longitude>
-		</address>
-	</addresses>
-	<schools>
-		<school>
-			<country>Canada</country>
-			<name>Ontario College of Art and Design</name>
-			<city>Saint-Rémi</city>
-			<state>QC</state>
-			<postal>K1G</postal>
-			<latitude>45.26678</latitude>
-			<longitude>-73.61588</longitude>
-		</school>
-		<school>
-			<country>United States</country>
-			<name>Simpson College Iowa</name>
-			<city>Huntington</city>
-			<state>WV</state>
-			<postal>25705</postal>
-			<latitude>38.409359</latitude>
-			<longitude>-82.3614632</longitude>
-		</school>
-	</schools>
-	<status>Active</status>
-	<sources>
-		<source>
-			<name>Chicago Tribune</name>
-			<ts>2012-06-23T01:18:04Z</ts>
-		</source>
-	</sources>
-	<sources>
-		<source>
-			<name>Los Angeles Times</name>
-			<ts>2014-10-09T11:42:29Z</ts>
-		</source>
-	</sources>
-	<sources>
-		<source>
-			<name>Washington Post</name>
-			<ts>2011-12-07T21:24:48Z</ts>
-		</source>
-	</sources>
-	<relations>
-		<relation>
-			<id>10022</id>
-			<predicate>relatedTo</predicate>
-		</relation>
-		<relation>
-			<id>10057</id>
-			<predicate>relatedTo</predicate>
-		</relation>
-		<relation>
-			<id>10093</id>
-			<predicate>livesWith</predicate>
-		</relation>
-		<relation>
-			<id>10031</id>
-			<predicate>worksWith</predicate>
-		</relation>
-	</relations>
-	<createdOn>
-		<ts>2022-01-03T02:15:38Z</ts>
-		<user>lslee19</user>
-	</createdOn>
-	<lastUpdated>
-		<ts>2022-01-07T10:21:12Z</ts>
-		<user>lslee19</user>
-	</lastUpdated>
-	<socials/>
-	<memberships>
-		<membership>
-			<list>list12</list>
-			<important>false</important>
-		</membership>
-		<membership>
-			<list>list11</list>
-			<important>true</important>
-		</membership>
-		<membership>
-			<list>list12</list>
-			<important>false</important>
-		</membership>
-		<membership>
-			<list>list5</list>
-			<important>false</important>
-		</membership>
-		<membership>
-			<list>list7</list>
-			<important>false</important>
-		</membership>
-	</memberships>
+  <personId>10046</personId>
+  <nameGroup>
+    <givenname>
+      <value>Lidia</value>
+    </givenname>
+    <surname>
+      <value>Slee</value>
+    </surname>
+    <fullname>
+      <classification>C</classification>
+      <restricted>false</restricted>
+      <value>Slee Lidia</value>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2020-10-11T11:30:41Z</ts>
+      </source>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2019-07-01T07:20:50Z</ts>
+      </source>
+      <source>
+        <name>USA Today</name>
+        <ts>2017-07-14T00:21:15Z</ts>
+      </source>
+    </fullname>
+  </nameGroup>
+  <emails>
+    <email>
+      <value>mreade0@twitter.com</value>
+      <classification>C</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>ahowgate1@purevolume.com</value>
+      <classification>U</classification>
+      <restricted>false</restricted>
+    </email>
+  </emails>
+  <phone>987-367-5139</phone>
+  <ssn>
+    <value>527-89-3011</value>
+    <restricted>true</restricted>
+  </ssn>
+  <images>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2020-07-22T21:06:41Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
+      <source>
+        <name>Washington Post</name>
+        <ts>2020-01-26T19:19:18Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2016-08-15T04:14:01Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2014-11-21T19:13:47Z</ts>
+      </source>
+    </image>
+  </images>
+  <addresses>
+    <address>
+      <street>886 American Point</street>
+      <city>Omaha</city>
+      <state>NE</state>
+      <postal>68164</postal>
+      <country>United States</country>
+      <latitude>41.2955</latitude>
+      <longitude>-96.1008</longitude>
+    </address>
+  </addresses>
+  <schools>
+    <school>
+      <country>Canada</country>
+      <name>Ontario College of Art and Design</name>
+      <city>Saint-Rémi</city>
+      <state>QC</state>
+      <postal>K1G</postal>
+      <latitude>45.26678</latitude>
+      <longitude>-73.61588</longitude>
+    </school>
+    <school>
+      <country>United States</country>
+      <name>Simpson College Iowa</name>
+      <city>Huntington</city>
+      <state>WV</state>
+      <postal>25705</postal>
+      <latitude>38.409359</latitude>
+      <longitude>-82.3614632</longitude>
+    </school>
+  </schools>
+  <status>Active</status>
+  <sources>
+    <source>
+      <name>Chicago Tribune</name>
+      <ts>2012-06-23T01:18:04Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Los Angeles Times</name>
+      <ts>2014-10-09T11:42:29Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Washington Post</name>
+      <ts>2011-12-07T21:24:48Z</ts>
+    </source>
+  </sources>
+  <relations>
+    <relation>
+      <id>10022</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Talby Noella</fullname>
+      <city>Jacksonville</city>
+      <state>FL</state>
+    </relation>
+    <relation>
+      <id>10057</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Stedson Elfie</fullname>
+      <city>Evansville</city>
+      <state>IN</state>
+    </relation>
+    <relation>
+      <id>10093</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Friberg Sabra</fullname>
+      <city>San Diego</city>
+      <state>CA</state>
+    </relation>
+    <relation>
+      <id>10031</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Warmisham Augustin</fullname>
+      <city>Washington</city>
+      <state>DC</state>
+    </relation>
+  </relations>
+  <createdOn>
+    <ts>2022-01-03T02:15:38Z</ts>
+    <user>lslee19</user>
+  </createdOn>
+  <lastUpdated>
+    <ts>2022-01-07T10:21:12Z</ts>
+    <user>lslee19</user>
+  </lastUpdated>
+  <socials/>
+  <memberships>
+    <membership>
+      <list>list12</list>
+      <important>false</important>
+    </membership>
+    <membership>
+      <list>list11</list>
+      <important>true</important>
+    </membership>
+    <membership>
+      <list>list12</list>
+      <important>false</important>
+    </membership>
+    <membership>
+      <list>list5</list>
+      <important>false</important>
+    </membership>
+    <membership>
+      <list>list7</list>
+      <important>false</important>
+    </membership>
+  </memberships>
 </person>
