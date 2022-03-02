@@ -35,6 +35,7 @@ task importPersonsViaMlcp(type: com.marklogic.gradle.task.MlcpTask) {
     input_file_type = "documents"
     output_collections = "person"
     output_permissions = "rest-reader,read,rest-reader,update"
+    output_uri_replace = ".*input,'/record'"
     mode = "local"
 }
 

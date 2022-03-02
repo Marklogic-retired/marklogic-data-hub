@@ -1,4 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
+import { DetailContext } from "../store/DetailContext";
 import { UserContext } from "../store/UserContext";
 import Metrics from "../components/Metrics/Metrics";
 import SearchBox from "../components/SearchBox/SearchBox";
@@ -7,7 +8,6 @@ import New from "../components/New/New";
 import Recent from "../components/Recent/Recent";
 import Section from "../components/Section/Section";
 import Loading from "../components/Loading/Loading";
-import {getRecent} from "../api/api";
 import {getSaved} from "../api/api";
 import {getSummary} from "../api/api";
 import "./Dashboard.scss";
@@ -16,6 +16,7 @@ type Props = {};
 
 const Dashboard: React.FC<Props> = (props) => {
 
+  const detailContext = useContext(DetailContext);
   const userContext = useContext(UserContext);
 
   const [config, setConfig] = useState<any>(null);
@@ -24,14 +25,18 @@ const Dashboard: React.FC<Props> = (props) => {
   const [summary, setSummary] = useState<any>({});
 
   useEffect(() => {
-    setRecent(getRecent({}));
     setSaved(getSaved({}));
     setSummary(getSummary({}));
+    setRecent(detailContext.handleGetRecentlyVisited());
   }, []);
 
   useEffect(() => {
     setConfig(userContext.config);
   }, [userContext.config]);
+
+  useEffect(() => {
+    setRecent(detailContext.recent);
+  }, [detailContext.recent]);
 
   return (
     <div className="dashboard">
@@ -76,7 +81,11 @@ const Dashboard: React.FC<Props> = (props) => {
             : null}
 
             {config?.dashboard?.recent ? 
-              <Section title="Recently Visited">
+              <Section title="Recently Visited" config={{
+                "mainStyle": {
+                  "maxHeight": "500px"
+                }
+              }}>
                   <Recent data={recent} config={config.dashboard.recent} />
               </Section>
             : null}

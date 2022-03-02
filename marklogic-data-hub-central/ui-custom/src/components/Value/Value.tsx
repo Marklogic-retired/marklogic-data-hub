@@ -27,10 +27,10 @@ const Value: React.FC<Props> = (props) => {
         val = getValByConfig(props.data, props.config, true);
     }
 
+    // Handle prefix/suffix during display (different from prepend/append during extraction)
     if (val && props.config?.prefix) {
         val = props.config?.prefix.concat(val);
     }
-
     if (val && props.config?.suffix) {
         val = val.concat(props.config?.suffix);
     }

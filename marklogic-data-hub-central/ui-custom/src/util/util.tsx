@@ -50,6 +50,12 @@ export const getValByPath = (data, path, getFirst=false) => {
         })
     }
     // Return first element if array and getFirst is set
-    return _.isNil(val) ? null : 
+    let result =  _.isNil(val) ? null : 
         ((Array.isArray(val) && getFirst) ? val[0] : val);
+
+    // Handle prepend/append for non-array values (different from prefix/suffix for display)
+    result = (!Array.isArray(val) && config.prepend) ? config.prepend + result : result;
+    result = (!Array.isArray(val) && config.append) ? result + config.append : result;
+
+    return result;
 };

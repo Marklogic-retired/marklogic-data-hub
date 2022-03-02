@@ -1,8 +1,12 @@
 import React, { useContext } from "react";
 import { DetailContext } from "../../store/DetailContext";
+import Chiclet from "../Chiclet/Chiclet";
+import Image from "../Image/Image";
+import Value from "../Value/Value";
+import List from "../List/List";
 import "./Recent.scss";
-import { getValByPath, getValByPathAsArray } from "../../util/util";
-import {ExclamationTriangleFill} from "react-bootstrap-icons";
+import { getValByConfig } from "../../util/util";
+import { ExclamationTriangleFill } from "react-bootstrap-icons";
 
 type Props = {
   data: any;
@@ -10,96 +14,101 @@ type Props = {
 };
 
 /**
- * Component for showing recently viewed records.
+ * Component for showing recently visited records.
  *
  * @component
- * @prop {object} data Data payload.
+ * @prop {object} data  Raw data.
  * @prop {object} config  Configuration object.
  * @prop {string} config.id  Path to ID.
  * @prop {object} config.thumbnail  Thumbnail configuration object.
- * @prop {string} config.thumbnail.src  Thumbnail source URL.
- * @prop {string} config.thumbnail.width  Thumbnail width (in pixels).
- * @prop {string} config.thumbnail.height  Thumbnail height (in pixels).
+ * @prop {string} config.thumbnail.path  Path to source URL.
+ * @prop {string} config.thumbnail.alt  Alternative image text.
+ * @prop {string} config.thumbnail.style  Optional array of CSS styles.
  * @prop {string} config.title  Path to title.
- * @prop {object} config.address  Address configuration object.
- * @prop {string} config.address.street  Path to street.
- * @prop {string} config.address.city  Path to city.
- * @prop {string} config.address.state  Path to state.
- * @prop {string[]} config.address.zip  Array of paths to 5-digit and 4-digit codes.
- * @prop {string[]} config.items  Array of paths to properties to display.
- * @prop {string} config.categories  Path to array of sources.
+ * @prop {string} config.title.id  Path to ID for hyperlink.
+ * @prop {string} config.title.path  Path to title in raw data.
+ * @prop {object} config.items  Array of list configuration objects.
+ * @prop {string} config.categories  Categories configuration object.
+ * @prop {string} config.categories.colors  Dictionary of category names and HTML colors.
+ * 
  * @example
+ * Configuration object
  * {
- *   id: "personId",
- *   thumbnail: {
- *     src: "imageUrl",
- *     width: "100px",
- *     height: "100px"
- *   },
- *   title: "name",
- *   address: {
- *     street: "address.street",
- *     city: "address.city",
- *     state: "address.state",
- *     zip: ["address.zip.fiveDigit", "address.zip.plusFour"]
- *   },
- *   items: ["phone", "email"],
- *   categories: "sources"
+ *  "thumbnail": {
+ *      "component": "Image",
+ *      "config": {
+ *          "path": "person.image",
+ *          "alt": "recent thumbnail",
+ *          "style": {
+ *              "width": "70px",
+ *              "height": "70px"
+ *          }
+ *      }
+ *  },
+ *  "title": { 
+ *      "id": "uri",
+ *      "path": "person.id"
+ *  },
+ *  "items": [
+ *      { 
+ *          "component": "Value",
+ *          "config": {
+ *              "arrayPath": "person.email",
+ *              "path": "value"
+ *          }
+ *      }
+ *  ],
+ *  "categories": {
+ *      "arrayPath": "person.sources",
+ *      "path": "source",
+ *      "colors": {
+ *          "source1": "#d5e1de",
+ *          "source2": "#ebe1fa"
+ *      }
+ *   }
  * }
  */
 const Recent: React.FC<Props> = (props) => {
 
   const detailContext = useContext(DetailContext);
 
-  const recentColors = props.config.categories.colors || {};
-
   const handleNameClick = (e) => {
-    console.log("handleNameClick", e);
-    detailContext.handleDetail(e.target.id);
+    detailContext.handleGetDetail(e.target.id);
   };
 
   const getRecent = () => {
     let res = props.data.map((recent, index) => {
-      let items = props.config.items.map((it, index) => {
-        return (
-          <div key={"item-" + index} className="item">
-            {getValByPath(recent, it)}
-          </div>
-        );
-      });
       return (
         <div key={"recent-" + index} className="result">
+          {/* TODO icon for alerting
           <div className="alert">
             {recent.alert ? <ExclamationTriangleFill color="#d48b32" size={16} /> : null}
-          </div>
-          <div className="thumbnail">
-            <img
-              src={getValByPath(recent, props.config.thumbnail.src)}
-              alt={getValByPath(recent, props.config.title)}
-              style={{width: props.config.thumbnail.width, height: props.config.thumbnail.height}}
-            ></img>
+          </div> */}
+          <div className="thumbnail"> 
+            {props.config.thumbnail ? 
+              <Image data={recent} config={props.config.thumbnail.config} />
+            : null}
           </div>
           <div className="text">
-            <div className="title" id={getValByPath(recent, props.config.id)} onClick={handleNameClick}>
-              {getValByPath(recent, props.config.title)}
+            <div className="title" onClick={handleNameClick}>
+              <Value data={recent} config={props.config.title} getFirst={true} />
             </div>
-            <div className="address">
-              {getValByPath(recent, props.config.address.street)},&nbsp;
-              {getValByPath(recent, props.config.address.city)},&nbsp;
-              {getValByPath(recent, props.config.address.state)}&nbsp;
-              {getValByPath(recent, props.config.address.zip[0])}-
-              {getValByPath(recent, props.config.address.zip[1])}
+            <div className="subtitle">
+              {props.config.items ? 
+                <List data={recent} config={props.config.items} />
+              : null}
             </div>
-            <div className="items">
-              {items}
-            </div>
+            {props.config.categories ? 
             <div className="categories">
-              {getValByPathAsArray(recent, props.config.categories.path).map((s, i) => {
+              {getValByConfig(recent, props.config.categories)!.map((s, index2) => {
                 return (
-                  <div key={"category-" + i} style={{backgroundColor: recentColors[s]}}>{s}</div>
+                  <Chiclet 
+                    key={"category-" + index2} 
+                    config={props.config.categories}
+                  >{s}</Chiclet>
                 )
               })}
-            </div>
+            </div> : null}
           </div>
         </div>
       );
@@ -111,7 +120,8 @@ const Recent: React.FC<Props> = (props) => {
     <div>
       {(props.data && props.data.length > 0) ? (
         <div className="recent">{getRecent()}</div>
-      ) : null
+      ) : 
+      <div>No recently visited records</div>
       }
     </div>
   );
