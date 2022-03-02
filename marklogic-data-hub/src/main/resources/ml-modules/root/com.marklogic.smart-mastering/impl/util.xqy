@@ -148,19 +148,27 @@ declare function util-impl:properties-to-values-functions(
               xdmp:unpath($xpath, $namespaces, $document/(es:envelope|envelope)/(es:instance|instance))
             }
         else
+          let $entity-title := $entity-property-info => map:get("entityTitle")
           let $property-title := $entity-property-info => map:get("propertyTitle")
           let $namespace := $entity-property-info => map:get("namespace")
+          let $entity-qname := fn:QName(fn:string($namespace), fn:string($entity-title))
           let $qname := fn:QName(fn:string($namespace), fn:string($property-title))
           return
             function($document) {
               let $is-json := (xdmp:node-kind($document) = "object" or fn:exists($document/(object-node()|array-node())))
+              let $entity-qname:=
+                if($is-json)
+                then
+                  fn:QName("", fn:string($entity-title))
+                else
+                  $entity-qname
               let $qname:=
-              if($is-json)
-              then
-                fn:QName("", fn:string($property-title))
-              else
-              $qname
-              return  $document/(es:envelope|envelope)/(es:instance|instance)/*/*[fn:node-name(.) eq $qname]
+                if($is-json)
+                then
+                  fn:QName("", fn:string($property-title))
+                else
+                  $qname
+              return  $document/(es:envelope|envelope)/(es:instance|instance)/*[fn:node-name(.) eq $entity-qname]/*[fn:node-name(.) eq $qname]
             }
       else if (fn:exists($document-xpath-rule)) then
         let $xpath := fn:head(($document-xpath-rule/(@path|path),$property-name))
@@ -173,7 +181,7 @@ declare function util-impl:properties-to-values-functions(
           let $qname := fn:QName(fn:string($property-definition/(@namespace|namespace)), fn:string($property-definition/(@localname|localname)))
           return
             function($document) {
-              $document/(es:envelope|envelope)/(es:instance|instance)//*[fn:node-name(.) eq $qname]
+              $document/(es:envelope|envelope)/(es:instance|instance)/(descendant::* except (es:info|info)/descendant-or-self::*)/*[fn:node-name(.) eq $qname]
             }
       else
         util-impl:handle-option-messages("error", "Property information for '" || $property-name || "'" || (if (fn:exists($entity-type-iri)) then " entity <"||$entity-type-iri ||">" else "") || " not found!", $message-output)
