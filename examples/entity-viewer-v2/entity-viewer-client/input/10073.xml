@@ -138,14 +138,6 @@
       <state>NY</state>
     </relation>
     <relation>
-      <id>10097</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Padly Klemens</fullname>
-      <city>Miami</city>
-      <state>FL</state>
-    </relation>
-    <relation>
       <id>10053</id>
       <predicate>relatedTo</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>

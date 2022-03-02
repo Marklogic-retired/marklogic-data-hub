@@ -101,14 +101,14 @@ const Relationships: React.FC<Props> = (props) => {
         const nodes: any = [{ id: rootId, shape: "image", size: nodeSize, image: rootImgSrc, title: rootPopover}];
         relations.forEach(rel => {
             nodes.push({ 
-                id: rel[props.config.relations.id], 
-                image: rel[props.config.relations.imgSrc],
+                id: getValByConfig(rel, props.config.relations.id), 
+                image: getValByConfig(rel, props.config.relations.imgSrc),
                 shape: "image", 
                 size: nodeSize, 
                 title: getPopover(
-                    rel[props.config.relations.title], 
-                    rel[props.config.relations.city], 
-                    rel[props.config.relations.state]
+                    getValByConfig(rel, props.config.relations.title),
+                    getValByConfig(rel, props.config.relations.city),
+                    getValByConfig(rel, props.config.relations.state)
                 ) 
             });
         });
@@ -118,8 +118,8 @@ const Relationships: React.FC<Props> = (props) => {
         relations.forEach(rel => {
             edges.push({ 
                 from: rootId, 
-                to: rel[props.config.relations.id], 
-                label: rel[props.config.relations.predicate]
+                to: getValByConfig(rel, props.config.relations.id), 
+                label: getValByConfig(rel, props.config.relations.predicate)
             });
         });
 
@@ -131,9 +131,8 @@ const Relationships: React.FC<Props> = (props) => {
 
     const events = {
         select: ({ nodes, edges }) => {
-            console.log("select", nodes);
             if (nodes && nodes[0]) {
-                detailContext.handleDetail(nodes[0]);
+                detailContext.handleGetDetail(nodes[0]);
             }
         },
         hoverNode: (event) => {

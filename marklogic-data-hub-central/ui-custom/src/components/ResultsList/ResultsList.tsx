@@ -3,6 +3,7 @@ import Address from "../Address/Address";
 import Chiclet from "../Chiclet/Chiclet";
 import DateTime from "../DateTime/DateTime";
 import Image from "../Image/Image";
+import List from "../List/List";
 import Value from "../Value/Value";
 import { SearchContext } from "../../store/SearchContext";
 import { DetailContext } from "../../store/DetailContext";
@@ -17,6 +18,7 @@ type Props = {
 const COMPONENTS = {
   Address: Address,
   DateTime: DateTime,
+  Image: Image,
   Value: Value
 }
 
@@ -88,29 +90,11 @@ const ResultsList: React.FC<Props> = (props) => {
   const detailContext = useContext(DetailContext);
 
   const handleNameClick = (e) => {
-    detailContext.handleDetail(e.target.id);
+    detailContext.handleGetDetail(e.target.id);
   };
 
   const getResults = () => {
     let results = searchContext.searchResults.result.map((results, index) => {
-      let items = props.config.items && props.config.items.map((it, index) => {
-        if (it.component) {
-          return (
-            <div key={"item-" + index} className="item">
-              {React.createElement(
-                COMPONENTS[it.component], 
-                { config: it.config, data: results, style: it.style }, null
-              )}
-            </div>
-          );
-        } else {
-          return (
-            <div key={"item-" + index} className="item">
-              <Value data={results} config={it} getFirst={true} />
-            </div>
-          )
-        }
-      });
       return (
         <div key={"result-" + index} className="result">
           <div className="thumbnail"> 
@@ -123,7 +107,9 @@ const ResultsList: React.FC<Props> = (props) => {
               <Value data={results} config={props.config.title} getFirst={true} />
             </div>
             <div className="subtitle">
-              {items}
+              {props.config.items ? 
+                <List data={results} config={props.config.items} />
+              : null}
             </div>
             {props.config.categories ? 
             <div className="categories">
