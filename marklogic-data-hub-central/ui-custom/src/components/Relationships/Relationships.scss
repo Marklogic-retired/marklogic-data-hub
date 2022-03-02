@@ -1,0 +1,22 @@
+.relationships {
+    height: 400px;
+    width: 100%;
+    .popover {
+        background-color: white;
+        color: #333;
+        padding: 4px 12px;
+        white-space: nowrap;
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        font-size: 14px;
+        .title {
+            font-weight: bold;
+        }
+    }
+}
+
+.vis-tooltip {
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    border: none !important;
+    background-color: transparent !important;
+}

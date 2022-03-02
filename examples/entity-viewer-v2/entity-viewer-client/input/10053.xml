@@ -1,152 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <person>
-	<personId>10053</personId>
-	<nameGroup>
-		<givenname>
-			<value>Sibley</value>
-		</givenname>
-		<surname>
-			<value>Andrichuk</value>
-		</surname>
-		<fullname>
-			<classification>C</classification>
-			<restricted>false</restricted>
-			<value>Andrichuk Sibley</value>
-			<source>
-				<name>USA Today</name>
-				<ts>2015-02-06T03:32:26Z</ts>
-			</source>
-		</fullname>
-	</nameGroup>
-	<emails>
-		<email>
-			<value>cgrave0@deviantart.com</value>
-			<classification>S</classification>
-			<restricted>false</restricted>
-		</email>
-		<email>
-			<value>dbraundt1@wordpress.org</value>
-			<classification>U</classification>
-			<restricted>false</restricted>
-		</email>
-		<email>
-			<value>celey2@domainmarket.com</value>
-			<classification>U</classification>
-			<restricted>false</restricted>
-		</email>
-	</emails>
-	<phone>350-421-5950</phone>
-	<ssn>
-		<value>494-80-9983</value>
-		<restricted>true</restricted>
-	</ssn>
-	<images>
-		<image>
-			<url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
-			<source>
-				<name>Chicago Tribune</name>
-				<ts>2014-01-17T06:06:03Z</ts>
-			</source>
-		</image>
-	</images>
-	<addresses>
-		<address>
-			<street>4 Swallow Road</street>
-			<city>Charlotte</city>
-			<state>NC</state>
-			<postal>28256</postal>
-			<country>United States</country>
-			<latitude>35.26</latitude>
-			<longitude>-80.8042</longitude>
-		</address>
-		<address>
-			<street>33 Blue Bill Park Terrace</street>
-			<city>Kansas City</city>
-			<state>MO</state>
-			<postal>64114</postal>
-			<country>United States</country>
-			<latitude>38.9621</latitude>
-			<longitude>-94.5959</longitude>
-		</address>
-	</addresses>
-	<schools>
-		<school>
-			<country>United States</country>
-			<name>University of Oklahoma</name>
-			<city>Bellevue</city>
-			<state>WA</state>
-			<postal>98008</postal>
-			<latitude>47.6120759</latitude>
-			<longitude>-122.1112721</longitude>
-		</school>
-		<school>
-			<country>United Kingdom</country>
-			<name>London Institute of Management and Technology</name>
-			<city>Kirkton</city>
-			<state>SCT</state>
-			<postal>KW10</postal>
-			<latitude>57.961476</latitude>
-			<longitude>-4.031512</longitude>
-		</school>
-	</schools>
-	<status>Inactive</status>
-	<sources>
-		<source>
-			<name>Chicago Tribune</name>
-			<ts>2013-10-31T08:04:41Z</ts>
-		</source>
-	</sources>
-	<sources>
-		<source>
-			<name>New York Times</name>
-			<ts>2016-09-07T16:51:45Z</ts>
-		</source>
-	</sources>
-	<sources>
-		<source>
-			<name>Wall Street Journal</name>
-			<ts>2013-07-23T08:36:38Z</ts>
-		</source>
-	</sources>
-	<relations>
-		<relation>
-			<id>10007</id>
-			<predicate>livesWith</predicate>
-		</relation>
-		<relation>
-			<id>10060</id>
-			<predicate>livesWith</predicate>
-		</relation>
-		<relation>
-			<id>10057</id>
-			<predicate>worksWith</predicate>
-		</relation>
-	</relations>
-	<createdOn>
-		<ts>2022-02-02T20:48:41Z</ts>
-		<user>sandrichuk1g</user>
-	</createdOn>
-	<lastUpdated>
-		<ts>2022-02-18T13:40:50Z</ts>
-		<user>sandrichuk1g</user>
-	</lastUpdated>
-	<socials>
-		<social>
-			<site>facebook</site>
-			<address>http://vkontakte.ru/at/nibh/in/hac/habitasse.aspx</address>
-		</social>
-		<social>
-			<site>facebook</site>
-			<address>http://aol.com/volutpat/eleifend/donec/ut.json</address>
-		</social>
-		<social>
-			<site>linkedin</site>
-			<address>http://ebay.com/diam/id.aspx</address>
-		</social>
-	</socials>
-	<memberships>
-		<membership>
-			<list>list2</list>
-			<important>false</important>
-		</membership>
-	</memberships>
+  <personId>10053</personId>
+  <nameGroup>
+    <givenname>
+      <value>Sibley</value>
+    </givenname>
+    <surname>
+      <value>Andrichuk</value>
+    </surname>
+    <fullname>
+      <classification>C</classification>
+      <restricted>false</restricted>
+      <value>Andrichuk Sibley</value>
+      <source>
+        <name>USA Today</name>
+        <ts>2015-02-06T03:32:26Z</ts>
+      </source>
+    </fullname>
+  </nameGroup>
+  <emails>
+    <email>
+      <value>cgrave0@deviantart.com</value>
+      <classification>S</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>dbraundt1@wordpress.org</value>
+      <classification>U</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>celey2@domainmarket.com</value>
+      <classification>U</classification>
+      <restricted>false</restricted>
+    </email>
+  </emails>
+  <phone>350-421-5950</phone>
+  <ssn>
+    <value>494-80-9983</value>
+    <restricted>true</restricted>
+  </ssn>
+  <images>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2014-01-17T06:06:03Z</ts>
+      </source>
+    </image>
+  </images>
+  <addresses>
+    <address>
+      <street>4 Swallow Road</street>
+      <city>Charlotte</city>
+      <state>NC</state>
+      <postal>28256</postal>
+      <country>United States</country>
+      <latitude>35.26</latitude>
+      <longitude>-80.8042</longitude>
+    </address>
+    <address>
+      <street>33 Blue Bill Park Terrace</street>
+      <city>Kansas City</city>
+      <state>MO</state>
+      <postal>64114</postal>
+      <country>United States</country>
+      <latitude>38.9621</latitude>
+      <longitude>-94.5959</longitude>
+    </address>
+  </addresses>
+  <schools>
+    <school>
+      <country>United States</country>
+      <name>University of Oklahoma</name>
+      <city>Bellevue</city>
+      <state>WA</state>
+      <postal>98008</postal>
+      <latitude>47.6120759</latitude>
+      <longitude>-122.1112721</longitude>
+    </school>
+    <school>
+      <country>United Kingdom</country>
+      <name>London Institute of Management and Technology</name>
+      <city>Kirkton</city>
+      <state>SCT</state>
+      <postal>KW10</postal>
+      <latitude>57.961476</latitude>
+      <longitude>-4.031512</longitude>
+    </school>
+  </schools>
+  <status>Inactive</status>
+  <sources>
+    <source>
+      <name>Chicago Tribune</name>
+      <ts>2013-10-31T08:04:41Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>New York Times</name>
+      <ts>2016-09-07T16:51:45Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Wall Street Journal</name>
+      <ts>2013-07-23T08:36:38Z</ts>
+    </source>
+  </sources>
+  <relations>
+    <relation>
+      <id>10007</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Bellino Timothy</fullname>
+      <city>Dallas</city>
+      <state>TX</state>
+    </relation>
+    <relation>
+      <id>10060</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Skpsey Josie</fullname>
+      <city>Bridgeport</city>
+      <state>CT</state>
+    </relation>
+    <relation>
+      <id>10057</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Stedson Elfie</fullname>
+      <city>Evansville</city>
+      <state>IN</state>
+    </relation>
+  </relations>
+  <createdOn>
+    <ts>2022-02-02T20:48:41Z</ts>
+    <user>sandrichuk1g</user>
+  </createdOn>
+  <lastUpdated>
+    <ts>2022-02-18T13:40:50Z</ts>
+    <user>sandrichuk1g</user>
+  </lastUpdated>
+  <socials>
+    <social>
+      <site>facebook</site>
+      <address>http://vkontakte.ru/at/nibh/in/hac/habitasse.aspx</address>
+    </social>
+    <social>
+      <site>facebook</site>
+      <address>http://aol.com/volutpat/eleifend/donec/ut.json</address>
+    </social>
+    <social>
+      <site>linkedin</site>
+      <address>http://ebay.com/diam/id.aspx</address>
+    </social>
+  </socials>
+  <memberships>
+    <membership>
+      <list>list2</list>
+      <important>false</important>
+    </membership>
+  </memberships>
 </person>

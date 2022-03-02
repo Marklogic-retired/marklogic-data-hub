@@ -1,120 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <person>
-	<personId>10085</personId>
-	<nameGroup>
-		<givenname>
-			<value>Trudy</value>
-		</givenname>
-		<surname>
-			<value>Jellings</value>
-		</surname>
-		<fullname>
-			<classification>U</classification>
-			<restricted>true</restricted>
-			<value>Jellings Trudy</value>
-			<source>
-				<name>New York Times</name>
-				<ts>2013-02-09T02:11:37Z</ts>
-			</source>
-		</fullname>
-	</nameGroup>
-	<emails>
-		<email>
-			<value>rcato0@pbs.org</value>
-			<classification>C</classification>
-			<restricted>false</restricted>
-		</email>
-	</emails>
-	<phone>267-497-4510</phone>
-	<ssn>
-		<value>417-89-3440</value>
-		<restricted>true</restricted>
-	</ssn>
-	<images>
-		<image>
-			<url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
-			<source>
-				<name>Chicago Tribune</name>
-				<ts>2021-12-25T19:21:08Z</ts>
-			</source>
-		</image>
-	</images>
-	<addresses>
-		<address>
-			<street>4 Arizona Pass</street>
-			<city>Tulsa</city>
-			<state>OK</state>
-			<postal>74133</postal>
-			<country>United States</country>
-			<latitude>36.0467</latitude>
-			<longitude>-95.8841</longitude>
-		</address>
-		<address>
-			<street>086 Clarendon Avenue</street>
-			<city>Cincinnati</city>
-			<state>OH</state>
-			<postal>45264</postal>
-			<country>United States</country>
-			<latitude>39.1668</latitude>
-			<longitude>-84.5382</longitude>
-		</address>
-		<address>
-			<street>508 Loomis Point</street>
-			<city>Baton Rouge</city>
-			<state>LA</state>
-			<postal>70836</postal>
-			<country>United States</country>
-			<latitude>30.392</latitude>
-			<longitude>-91.0892</longitude>
-		</address>
-	</addresses>
-	<schools>
-		<school>
-			<country>Mexico</country>
-			<name>Centro de Estudios Universitarios Monterrey</name>
-			<city>San Agustin</city>
-			<state>GUA</state>
-			<postal>36800</postal>
-			<latitude>25.6502709</latitude>
-			<longitude>-100.3428618</longitude>
-		</school>
-	</schools>
-	<status>Inactive</status>
-	<sources>
-		<source>
-			<name>New York Times</name>
-			<ts>2013-12-24T04:12:57Z</ts>
-		</source>
-	</sources>
-	<relations>
-		<relation>
-			<id>10089</id>
-			<predicate>worksWith</predicate>
-		</relation>
-		<relation>
-			<id>10040</id>
-			<predicate>livesWith</predicate>
-		</relation>
-		<relation>
-			<id>10050</id>
-			<predicate>livesWith</predicate>
-		</relation>
-		<relation>
-			<id>10071</id>
-			<predicate>relatedTo</predicate>
-		</relation>
-		<relation>
-			<id>10080</id>
-			<predicate>worksWith</predicate>
-		</relation>
-	</relations>
-	<createdOn>
-		<ts>2022-02-23T14:38:10Z</ts>
-		<user>tjellings2c</user>
-	</createdOn>
-	<lastUpdated>
-		<ts>2022-02-24T10:26:30Z</ts>
-		<user>tjellings2c</user>
-	</lastUpdated>
-	<socials/>
-	<memberships/>
+  <personId>10085</personId>
+  <nameGroup>
+    <givenname>
+      <value>Trudy</value>
+    </givenname>
+    <surname>
+      <value>Jellings</value>
+    </surname>
+    <fullname>
+      <classification>U</classification>
+      <restricted>true</restricted>
+      <value>Jellings Trudy</value>
+      <source>
+        <name>New York Times</name>
+        <ts>2013-02-09T02:11:37Z</ts>
+      </source>
+    </fullname>
+  </nameGroup>
+  <emails>
+    <email>
+      <value>rcato0@pbs.org</value>
+      <classification>C</classification>
+      <restricted>false</restricted>
+    </email>
+  </emails>
+  <phone>267-497-4510</phone>
+  <ssn>
+    <value>417-89-3440</value>
+    <restricted>true</restricted>
+  </ssn>
+  <images>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2021-12-25T19:21:08Z</ts>
+      </source>
+    </image>
+  </images>
+  <addresses>
+    <address>
+      <street>4 Arizona Pass</street>
+      <city>Tulsa</city>
+      <state>OK</state>
+      <postal>74133</postal>
+      <country>United States</country>
+      <latitude>36.0467</latitude>
+      <longitude>-95.8841</longitude>
+    </address>
+    <address>
+      <street>086 Clarendon Avenue</street>
+      <city>Cincinnati</city>
+      <state>OH</state>
+      <postal>45264</postal>
+      <country>United States</country>
+      <latitude>39.1668</latitude>
+      <longitude>-84.5382</longitude>
+    </address>
+    <address>
+      <street>508 Loomis Point</street>
+      <city>Baton Rouge</city>
+      <state>LA</state>
+      <postal>70836</postal>
+      <country>United States</country>
+      <latitude>30.392</latitude>
+      <longitude>-91.0892</longitude>
+    </address>
+  </addresses>
+  <schools>
+    <school>
+      <country>Mexico</country>
+      <name>Centro de Estudios Universitarios Monterrey</name>
+      <city>San Agustin</city>
+      <state>GUA</state>
+      <postal>36800</postal>
+      <latitude>25.6502709</latitude>
+      <longitude>-100.3428618</longitude>
+    </school>
+  </schools>
+  <status>Inactive</status>
+  <sources>
+    <source>
+      <name>New York Times</name>
+      <ts>2013-12-24T04:12:57Z</ts>
+    </source>
+  </sources>
+  <relations>
+    <relation>
+      <id>10089</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Durnford Neal</fullname>
+      <city>New Haven</city>
+      <state>CT</state>
+    </relation>
+    <relation>
+      <id>10040</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
+      <fullname>Serjeant Vivyanne</fullname>
+      <city>Chattanooga</city>
+      <state>TN</state>
+    </relation>
+    <relation>
+      <id>10050</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
+      <fullname>Hinkley Jojo</fullname>
+      <city>Richmond</city>
+      <state>VA</state>
+    </relation>
+    <relation>
+      <id>10071</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
+      <fullname>Bolton Kettie</fullname>
+      <city>Des Moines</city>
+      <state>IA</state>
+    </relation>
+    <relation>
+      <id>10080</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
+      <fullname>Bartod Janene</fullname>
+      <city>Albany</city>
+      <state>NY</state>
+    </relation>
+  </relations>
+  <createdOn>
+    <ts>2022-02-23T14:38:10Z</ts>
+    <user>tjellings2c</user>
+  </createdOn>
+  <lastUpdated>
+    <ts>2022-02-24T10:26:30Z</ts>
+    <user>tjellings2c</user>
+  </lastUpdated>
+  <socials/>
+  <memberships/>
 </person>
