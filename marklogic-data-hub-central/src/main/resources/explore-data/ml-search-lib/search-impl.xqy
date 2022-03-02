@@ -43,3 +43,15 @@ declare function expsearch:get-search-results($search-constraints as xs:string, 
   return $json-response
 };
 
+declare function expsearch:transform-xml-to-json-from-doc-uri($uri) {
+  let $result := fn:doc($uri)
+  let $custom :=
+    let $config := json:config("custom")
+    let $_ := map:put( $config, "whitespace", "ignore" )
+    let $_ := map:put( $config, "array-element-names", ($result//*/name(.)))
+    return $config
+
+  let $json-response := json:transform-to-json( $result , $custom )
+  return $json-response
+};
+
