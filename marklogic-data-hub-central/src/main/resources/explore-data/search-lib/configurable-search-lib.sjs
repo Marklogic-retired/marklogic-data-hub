@@ -30,7 +30,7 @@ class ConfigurableSearch extends Search {
   }
 
   getDocument(uri) {
-    return super.getDocument();
+   return super.getDocument(uri);
   }
 
   getEntityModels() {

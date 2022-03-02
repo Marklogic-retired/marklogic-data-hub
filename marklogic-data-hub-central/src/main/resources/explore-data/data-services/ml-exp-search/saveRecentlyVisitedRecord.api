@@ -1,0 +1,10 @@
+{
+  "functionName": "saveRecentlyVisitedRecord",
+  "params": [
+    {
+      "name": "recentlyVisitedRecord",
+      "datatype": "jsonDocument",
+      "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+    }
+  ]
+}

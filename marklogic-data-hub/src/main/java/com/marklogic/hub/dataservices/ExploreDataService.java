@@ -48,6 +48,8 @@ public interface ExploreDataService {
             private BaseProxy baseProxy;
 
             private BaseProxy.DBFunctionRequest req_searchAndTransform;
+            private BaseProxy.DBFunctionRequest req_getRecentlyVisitedRecords;
+            private BaseProxy.DBFunctionRequest req_saveRecentlyVisitedRecord;
 
             private ExploreDataServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
@@ -55,6 +57,10 @@ public interface ExploreDataService {
 
                 this.req_searchAndTransform = this.baseProxy.request(
                     "searchAndTransform.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                this.req_getRecentlyVisitedRecords = this.baseProxy.request(
+                    "getRecentlyVisitedRecords.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                this.req_saveRecentlyVisitedRecord = this.baseProxy.request(
+                    "saveRecentlyVisitedRecord.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
             }
 
             @Override
@@ -71,6 +77,34 @@ public interface ExploreDataService {
                           ).responseSingle(false, Format.JSON)
                 );
             }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode getRecentlyVisitedRecords(String user) {
+                return getRecentlyVisitedRecords(
+                    this.req_getRecentlyVisitedRecords.on(this.dbClient), user
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode getRecentlyVisitedRecords(BaseProxy.DBFunctionRequest request, String user) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.atomicParam("user", false, BaseProxy.StringType.fromString(user))
+                          ).responseSingle(false, Format.JSON)
+                );
+            }
+
+            @Override
+            public void saveRecentlyVisitedRecord(com.fasterxml.jackson.databind.JsonNode recentlyVisitedRecord) {
+                saveRecentlyVisitedRecord(
+                    this.req_saveRecentlyVisitedRecord.on(this.dbClient), recentlyVisitedRecord
+                    );
+            }
+            private void saveRecentlyVisitedRecord(BaseProxy.DBFunctionRequest request, com.fasterxml.jackson.databind.JsonNode recentlyVisitedRecord) {
+              request
+                      .withParams(
+                          BaseProxy.documentParam("recentlyVisitedRecord", false, BaseProxy.JsonDocumentType.fromJsonNode(recentlyVisitedRecord))
+                          ).responseNone();
+            }
         }
 
         return new ExploreDataServiceImpl(db, serviceDeclaration);
@@ -83,5 +117,21 @@ public interface ExploreDataService {
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode searchAndTransform(com.fasterxml.jackson.databind.JsonNode searchParams);
+
+  /**
+   * Invokes the getRecentlyVisitedRecords operation on the database server
+   *
+   * @param user	provides input
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode getRecentlyVisitedRecords(String user);
+
+  /**
+   * Invokes the saveRecentlyVisitedRecord operation on the database server
+   *
+   * @param recentlyVisitedRecord	provides input
+   * 
+   */
+    void saveRecentlyVisitedRecord(com.fasterxml.jackson.databind.JsonNode recentlyVisitedRecord);
 
 }
