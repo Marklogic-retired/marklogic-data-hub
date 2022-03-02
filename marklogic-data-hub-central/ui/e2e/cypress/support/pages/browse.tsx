@@ -336,9 +336,15 @@ class BrowsePage {
   clickTableView() {
     return cy.get("[data-cy=table-view]").click();
   }
+  clickSwitchToTableView() {
+    return cy.get("#tableView").click();
+  }
 
   clickGraphView() {
     return this.getGraphView().click();
+  }
+  clickSnippetView() {
+    return this.getSnippetView().click();
   }
 
   getSideBarCollapseIcon() {
@@ -738,7 +744,11 @@ class BrowsePage {
     cy.get("#back-button").click({force: true});
   }
 
-  scrollSideBar() {
+  scrollSideBarTop() {
+    return cy.get("#hc-sider-content").scrollTo("top", {ensureScrollable: false});
+  }
+
+  scrollSideBarBottom() {
     return cy.get("#hc-sider-content").scrollTo("bottom", {ensureScrollable: false});
   }
 
