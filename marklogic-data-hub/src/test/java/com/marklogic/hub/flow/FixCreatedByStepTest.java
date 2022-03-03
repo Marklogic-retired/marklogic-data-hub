@@ -68,11 +68,11 @@ public class FixCreatedByStepTest extends AbstractHubCoreTest {
     void queryStep() {
         ReferenceModelProject project = installReferenceModelProject();
 
-        // Creating 100 records for a very mild performance test - loading and process takes under a second still, but
+        // Creating 50 records for a very mild performance test - loading and process takes under a second still, but
         // it at least causes the QueryBatcher in the implementation to do some multi-threading work.
         // Can crank this up for manual performance tests
         long start = System.currentTimeMillis();
-        for (int i = 1; i <= 100; i++) {
+        for (int i = 1; i <= 50; i++) {
             project.createRawCustomer(i, "Customer " + i);
             customerUris.add("/echo/customer" + i + ".json");
         }
@@ -82,7 +82,7 @@ public class FixCreatedByStepTest extends AbstractHubCoreTest {
         runAsAdmin();
         String provString = readStringFromClasspath("entity-reference-model/legacyProvenanceRecord2.xml");
         start = System.currentTimeMillis();
-        for (int i = 1; i <= 100; i++) {
+        for (int i = 1; i <= 50; i++) {
             writeJobsXmlDoc(String.format("/legacyProvenanceRecord%s.xml", i), String.format(provString, i, i, i, i, i, i, i), "http://marklogic.com/provenance-services/record");
         }
         logger.info("Provenance Records Insert time: " + (System.currentTimeMillis() - start));
@@ -179,8 +179,9 @@ public class FixCreatedByStepTest extends AbstractHubCoreTest {
     private void addAnotherJobIdToSomeDocuments() {
         for (int i = 1; i <= 10; i++) {
             String script = "declareUpdate(); const uri = '/echo/customer" + i + ".json'; " +
+                "if (fn.docAvailable(uri)) {" +
                 "const jobId = xdmp.documentGetMetadataValue(uri, 'datahubCreatedByJob'); " +
-                "xdmp.documentPutMetadata(uri, {datahubCreatedByJob: 'fakeJob ' + jobId});";
+                "xdmp.documentPutMetadata(uri, {datahubCreatedByJob: 'fakeJob ' + jobId})};";
             developerClient.getFinalClient().newServerEval().javascript(script).evalAs(String.class);
         }
     }
