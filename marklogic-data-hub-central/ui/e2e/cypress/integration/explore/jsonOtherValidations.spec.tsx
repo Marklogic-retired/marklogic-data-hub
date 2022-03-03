@@ -131,6 +131,7 @@ describe("Verify numeric/date facet can be applied", () => {
   });
   it("Verify clearing date time range facet clears corresponding selected facet", () => {
     toolbar.getExploreToolbarIcon().click();
+    cy.wait(1000);
     entitiesSidebar.removeSelectedBaseEntity();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Client");

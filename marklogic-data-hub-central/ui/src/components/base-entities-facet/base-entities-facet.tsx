@@ -1,5 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import Select from "react-select";
+import {components as SelectComponents} from "react-select";
 import reactSelectThemeConfig from "../../config/react-select-theme.config";
 import {SearchContext} from "../../util/search-context";
 import styles from "./base-entities-facet.module.scss";
@@ -121,6 +122,16 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
     setShowMore(!showMore);
   };
 
+  const MultiValueRemove = props => {
+    return (
+      <SelectComponents.MultiValueRemove {...props}>
+        <span aria-label={`Remove ${props.data.value}`}>
+          <svg height="14" width="14" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M14.348 14.849c-0.469 0.469-1.229 0.469-1.697 0l-2.651-3.030-2.651 3.029c-0.469 0.469-1.229 0.469-1.697 0-0.469-0.469-0.469-1.229 0-1.697l2.758-3.15-2.759-3.152c-0.469-0.469-0.469-1.228 0-1.697s1.228-0.469 1.697 0l2.652 3.031 2.651-3.031c0.469-0.469 1.228-0.469 1.697 0s0.469 1.229 0 1.697l-2.758 3.152 2.758 3.15c0.469 0.469 0.469 1.229 0 1.698z"></path></svg>
+        </span>
+      </SelectComponents.MultiValueRemove>
+    );
+  };
+
   return (
     <>
       <Select
@@ -130,6 +141,7 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
         isClearable={false}
         value={entityNames ? entityNames.map(d => ({value: d, label: d})) : [{value: "All Entities", label: "All Entities"}]}
         onChange={handleChange}
+        components={{MultiValueRemove}}
         isSearchable={false}
         aria-label="base-entities-dropdown-list"
         options={childrenOptions}

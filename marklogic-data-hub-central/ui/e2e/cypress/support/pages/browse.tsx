@@ -356,6 +356,10 @@ class BrowsePage {
     cy.get(`[aria-label='base-option-${entity}']`).scrollIntoView().click();
   }
 
+  removeBaseEntity(entity: string) {
+    cy.get(`[aria-label='Remove ${entity}']`).scrollIntoView().click();
+  }
+
   //table
   getColumnTitle(index: number) {
     return cy.get(`.table.table-bordered thead th:nth-child(${index}) .resultsTableHeaderColumn`).invoke("text");
@@ -434,7 +438,7 @@ class BrowsePage {
   }
 
   getDataExportIcon() {
-    return cy.get("[data-cy=query-export] > div > svg");
+    return cy.get("[data-cy=\"query-export\"] > div svg");
   }
 
   getColumnSelectorApply() {
