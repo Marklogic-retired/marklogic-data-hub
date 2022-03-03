@@ -14,6 +14,7 @@ import Value from "../components/Value/Value";
 import { ArrowLeft } from "react-bootstrap-icons";
 import "./Detail.scss";
 import _ from "lodash";
+import SocialMedia from "../components/SocialMedia/SocialMedia";
 
 type Props = {};
 
@@ -23,7 +24,8 @@ const COMPONENTS = {
   DateTime: DateTime,
   Image: Image,
   Relationships: Relationships,
-  Value: Value
+  Value: Value,
+  SocialMedia: SocialMedia
 }
 
 const Detail: React.FC<Props> = (props) => {
