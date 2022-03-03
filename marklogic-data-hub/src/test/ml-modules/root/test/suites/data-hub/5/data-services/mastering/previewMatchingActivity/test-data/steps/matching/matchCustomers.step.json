@@ -7,8 +7,10 @@
   "description": "",
   "selectedSource": "collection",
   "sourceQuery": "cts.collectionQuery(['Customer'])",
-  "collections": ["matchCustomers"],
-  "additionalCollections": [ ],
+  "collections": [
+    "matchCustomers"
+  ],
+  "additionalCollections": [],
   "sourceDatabase": "data-hub-FINAL",
   "targetDatabase": "data-hub-FINAL",
   "targetFormat": "JSON",
@@ -128,5 +130,16 @@
       "action": "notify",
       "score": 4.5
     }
-  ]
+  ],
+  "filterQuery": {
+    "notQuery": {
+      "query": {
+        "documentQuery": {
+          "uris": [
+            "/content/CustMatchMergeExcludedByFilter.json"
+          ]
+        }
+      }
+    }
+  }
 }

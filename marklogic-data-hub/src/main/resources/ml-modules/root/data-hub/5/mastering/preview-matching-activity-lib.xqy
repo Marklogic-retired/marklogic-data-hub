@@ -23,7 +23,12 @@ declare function pma:match-within-uris($uris as xs:string*, $options as object-n
   if (fn:count($uris) > 1) then
     let $uri1 := fn:head($uris)
     let $doc1 := fn:doc($uri1)
-    let $results := matcher:find-document-matches-by-options($doc1, $options, 1, 10000, fn:true(), cts:document-query(fn:tail($uris)))
+    let $uris-query := cts:document-query(fn:tail($uris))
+    let $filter-query := if (fn:exists($options/filterQuery[*])) then
+                          cts:and-query((cts:query($options/filterQuery), $uris-query))
+                        else
+                          $uris-query
+    let $results := matcher:find-document-matches-by-options($doc1, $options, 1, 10000, fn:true(), $filter-query)
     let $count := $count + fn:count($results/result)
     let $results := pma:transform-results($results, $uri1)
     return
@@ -147,6 +152,11 @@ declare function pma:preview-matching-activity(
   as object-node()
 {
   let $obj := json:object()
+  let $source-query :=
+    if (fn:exists($options/filterQuery[*])) then
+      cts:and-query((cts:query($options/filterQuery), $source-query))
+    else
+      $source-query
   let $uris :=
     if (fn:exists($uris)) then
       $uris
