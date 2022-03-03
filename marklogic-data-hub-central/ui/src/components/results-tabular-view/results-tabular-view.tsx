@@ -574,12 +574,14 @@ const ResultsTabularView = (props) => {
   return (
     <>
       {!props.groupNodeTableView ? <div className={styles.icon}>
-        <div className={styles.queryExport} data-cy="query-export">
-          {canExportQuery && searchOptions.entityTypeIds.length > 0 && <QueryExport hasStructured={props.hasStructured} columns={props.columns} selectedPropertyDefinitions={props.selectedPropertyDefinitions} />}
-        </div>
-        {searchOptions.entityTypeIds?.length === 1 ? <div className={styles.columnSelector} data-cy="column-selector">
-          <ColumnSelector popoverVisibility={popoverVisibility} setPopoverVisibility={setPopoverVisibility} entityPropertyDefinitions={props.entityPropertyDefinitions} selectedPropertyDefinitions={props.selectedPropertyDefinitions} setColumnSelectorTouched={props.setColumnSelectorTouched} columns={props.columns} primaryKey={primaryKey} />
-        </div> : ""}
+        {searchOptions.entityTypeIds?.length === 1 ? <>
+          <div className={styles.queryExport} data-cy="query-export">
+            {canExportQuery && <QueryExport hasStructured={props.hasStructured} columns={props.columns} selectedPropertyDefinitions={props.selectedPropertyDefinitions} />}
+          </div>
+          <div className={styles.columnSelector} data-cy="column-selector">
+            <ColumnSelector popoverVisibility={popoverVisibility} setPopoverVisibility={setPopoverVisibility} entityPropertyDefinitions={props.entityPropertyDefinitions} selectedPropertyDefinitions={props.selectedPropertyDefinitions} setColumnSelectorTouched={props.setColumnSelectorTouched} columns={props.columns} primaryKey={primaryKey} />
+          </div>
+        </> : ""}
       </div> : ""}
       <div className={styles.tabular}>
         {tableHeaders.length > 0 && <HCTable
