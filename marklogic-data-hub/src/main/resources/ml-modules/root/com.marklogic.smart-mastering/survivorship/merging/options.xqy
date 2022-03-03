@@ -845,7 +845,9 @@ declare function merge-impl:build-merge-rules-info(
     let $property-qname := fn:head((
         $property-def[localname] ! fn:QName(fn:string(./namespace), fn:string(./localname)),
         $property-def[@localname] ! fn:QName(fn:string(./@namespace), fn:string(./@localname)),
-        $target-entity-type-def ! fn:QName(fn:string(./namespaceURI), $property-name)
+        if (fn:exists($target-entity-type-def) and $property-name castable as xs:QName) then (
+          fn:QName(fn:string($target-entity-type-def/namespaceURI), $property-name)
+        ) else ()
       ))
     let $allows-multiple-values := $target-entity-property-info ! map:get(., "allowsMultipleValues")
     let $to-property-values-key := fn:string(fn:head(($property-def/(@path|path),$property-name)))
