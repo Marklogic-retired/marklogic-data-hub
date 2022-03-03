@@ -1,0 +1,11 @@
+.SocialMedia {
+  display: flex;
+  .label {
+    display: block;
+    width: 150px;
+  }
+  .social-icons {
+    display: flex;
+    gap: 15px;
+  }
+}
