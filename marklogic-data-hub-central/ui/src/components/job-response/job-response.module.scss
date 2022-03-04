@@ -28,6 +28,12 @@
     margin-right: 6px;
   }
 
+  .actionHeader {
+    display: flex;
+    align-items: center;
+    font-weight: 400;
+  }
+
   .unsuccessfulRun {
     display: inline-block;
     color: $danger;
@@ -36,14 +42,13 @@
     margin-right: 6px;
   }
 
-  .stepResponse {
-    padding-right: 15px;
-    padding-left: 1px;
-    padding-bottom: 15px;
-
-    .stepName {
-      vertical-align: center;
-    }
+  .infoIcon {
+    margin-left: 8px;
+    color: #7F86B5;
+    cursor: pointer;
+    &:hover {
+      color: var(--hoverColor);
+    }  
   }
 
   .running {
@@ -67,6 +72,42 @@
     }
 }
 
+  .stepRow{
+    display: flex;
+    flex-direction: row;
+  }
+
+.headerRow {
+    display: flex;
+    flex-direction: row;
+    padding-top: 25px;
+    margin-left: 25px;
+  }
+
+  .headerItem {
+    width: 25%;
+    margin-right: 75px;
+    padding-left: 1px;
+    text-align: left;
+  }
+
+  .documentsWritten {
+    padding-right: 15px;
+    text-align: left;
+  }
+
+.errorStepResponse {
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 1px;
+    // padding-bottom: 15px;
+
+    .stepName {
+      vertical-align: center;
+    }
+}
+
+
 .errorHeader,
 .errorLabel {
     color: rgba(0, 0, 0, 0.85);
@@ -81,6 +122,20 @@
 .errorVal {
     font-weight: bold;
 }
+
+.exploreActionIcon:before {
+    content: "\68";
+    font-family: ExploreIcon;
+    font-size: 15px;
+    padding-right: 6px;
+    vertical-align: middle;
+    color: #ffffff;
+  }
+  
+  .exploreActionText{
+    font-size: 15px;
+    padding-right: 5px;
+  }
 
 .exploreIcon:before {
     content: "\68";
@@ -122,3 +177,11 @@
 .closeButton {
   float: right;
 }
+
+.responseTable {
+  padding-top: 20px;
+
+        th {
+          background-color: white !important;
+        }
+      }

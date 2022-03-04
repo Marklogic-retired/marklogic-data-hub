@@ -73,8 +73,8 @@ class RunPage {
     cy.findByTestId(`${flowName}-StatusIcon`).click();
   }
 
-  closeFlowStatusModal() {
-    return cy.get("[aria-label=\"icon: close\"]").click();
+  closeFlowStatusModal(flowName: string) {
+    return cy.get(`[aria-label=${flowName}-close]`).click();
   }
 
   runStep(stepName: string, flowName: string) {
@@ -140,6 +140,10 @@ class RunPage {
 
   runFlow(flowName :string) {
     cy.findByTestId(`runFlow-${flowName}`).click();
+  }
+
+  verifyStepRunResult(stepName: string, jobSatus: string) {
+    cy.get(`[data-testid=${stepName}-${jobSatus}`).should("exist");
   }
 }
 

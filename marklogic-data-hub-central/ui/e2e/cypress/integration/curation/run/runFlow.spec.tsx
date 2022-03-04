@@ -1,11 +1,11 @@
 import {Application} from "../../../support/application.config";
-import {tiles, toolbar} from "../../../support/components/common";
+import {toolbar} from "../../../support/components/common";
 import runPage from "../../../support/pages/run";
 import loadPage from "../../../support/pages/load";
 import browsePage from "../../../support/pages/browse";
 import LoginPage from "../../../support/pages/login";
 
-let flowName= "testPersonXML";
+let flowName = "testPersonXML";
 
 describe("Run Tile tests", () => {
 
@@ -19,12 +19,12 @@ describe("Run Tile tests", () => {
     cy.intercept("/api/jobs/**").as("getJobs");
   });
 
-  after(() => {
-    cy.deleteRecordsInFinal("master-xml-person", "mapPersonXML");
-    // cy.deleteFlows(flowName); Add this back in when the below test is unskipped
-    cy.resetTestUser();
-  });
-
+  /*   after(() => {
+      cy.deleteRecordsInFinal("master-xml-person", "mapPersonXML");
+      cy.deleteFlows(flowName);
+      cy.resetTestUser();
+    }); */
+  // Skipped since it tests functionality on DHFPROD-7187 (run selected flows)
   it.skip("can create flow and add steps to flow, should load xml merged document and display content", {defaultCommandTimeout: 120000}, () => {
     //Verify create flow and add all user-defined steps to flow via Run tile
     runPage.createFlowButton().click();
@@ -64,80 +64,75 @@ describe("Run Tile tests", () => {
     cy.get("#merge-xml-person").click();
     cy.get("#master-person").click();
     runPage.runFlow(flowName);
-    runPage.verifyFlowModalRunning("testPersonXML");
+    cy.wait(3000);
     cy.waitForAsyncRequest();
-    runPage.getFlowStatusModal().type("{esc}");
-    runPage.clickSuccessCircleIcon("mapPersonXML", flowName);
-    cy.verifyStepRunResult("success", "Mapping", "mapPersonXML");
-    tiles.closeRunMessage();
-    runPage.clickSuccessCircleIcon("match-xml-person", flowName);
-    cy.verifyStepRunResult("success", "Matching", "match-xml-person");
-    tiles.closeRunMessage();
-    runPage.clickSuccessCircleIcon("merge-xml-person", flowName);
-    cy.verifyStepRunResult("success", "Merging", "merge-xml-person");
-    tiles.closeRunMessage();
+    runPage.verifyFlowModalRunning("testPersonXML");
+    runPage.closeFlowStatusModal(flowName);
     runPage.openFlowStatusModal("testPersonXML");
+    runPage.verifyStepRunResult("mapPersonXML", "success");
+    runPage.verifyStepRunResult("match-xml-person", "success");
+    runPage.verifyStepRunResult("merge-xml-person", "success");
     runPage.verifyFlowModalCompleted("testPersonXML");
-    runPage.getFlowStatusModal().type("{esc}");
+    runPage.closeFlowStatusModal(flowName);
 
     //Verify if no step is selected in run flow dropdown; all steps are executed
     runPage.expandFlow("testCustomFlow");
     runPage.runFlow("testCustomFlow");
     cy.uploadFile("input/test-1.zip");
     cy.waitForAsyncRequest();
+    cy.wait(3000);
     runPage.verifyFlowModalRunning("testCustomFlow");
-    runPage.getFlowStatusModal().type("{esc}");
-    runPage.expandFlow("testCustomFlow");
-    runPage.clickSuccessCircleIcon("mapping-step", flowName);
-    cy.verifyStepRunResult("success", "Custom", "mapping-step");
-    tiles.closeRunMessage();
+    runPage.verifyStepRunResult("mapping-step", "success");
+    runPage.closeFlowStatusModal("testCustomFlow");
     runPage.openFlowStatusModal("testCustomFlow");
     runPage.verifyFlowModalCompleted("testCustomFlow");
-    runPage.getFlowStatusModal().type("{esc}");
+    runPage.closeFlowStatusModal("testCustomFlow");
 
     //Run map,match and merge step for Person entity using xml documents
     runPage.runStep("mapPersonXML", flowName);
-    cy.verifyStepRunResult("success", "Mapping", "mapPersonXML");
-    tiles.closeRunMessage();
+    runPage.verifyStepRunResult("mapPersonXML", "success");
+    runPage.closeFlowStatusModal(flowName);
     cy.waitForAsyncRequest();
     runPage.runStep("match-xml-person", flowName);
-    cy.verifyStepRunResult("success", "Matching", "match-xml-person");
-    tiles.closeRunMessage();
+    runPage.verifyStepRunResult("match-xml-person", "success");
+    runPage.closeFlowStatusModal(flowName);
     cy.waitForAsyncRequest();
     runPage.runStep("merge-xml-person", flowName);
-    cy.verifyStepRunResult("success", "Merging", "merge-xml-person");
+    runPage.verifyStepRunResult("merge-xml-person", "success");
+    runPage.closeFlowStatusModal(flowName);
+    /* Commented until DHFPROD-7477 is done
+        //Navigate to explorer tile using the explorer link
+        runPage.explorerLink().click();
+        browsePage.waitForSpinnerToDisappear();
+        cy.waitForAsyncRequest();
+        browsePage.getTableView().click();
+        browsePage.waitForHCTableToLoad();
 
-    //Navigate to explorer tile using the explorer link
-    runPage.explorerLink().click();
-    browsePage.waitForSpinnerToDisappear();
-    cy.waitForAsyncRequest();
-    browsePage.getTableView().click();
-    browsePage.waitForHCTableToLoad();
+        cy.wait(3000);
+        //Verify detail page renders with expected content
+        //Revalidate below with DHFPROD-8455
+        // browsePage.getSelectedEntity().should("contain", "Person");
+        browsePage.getTotalDocuments().should("eq", 1, {timeout: 5000});
+        browsePage.getSelectedFacet("sm-Person-merged").should("exist");
+        browsePage.getSourceViewIcon().first().click();
+        cy.waitForAsyncRequest();
+        browsePage.waitForSpinnerToDisappear();
 
-    cy.wait(3000);
-    //Verify detail page renders with expected content
-    //Revalidate below with DHFPROD-8455
-    // browsePage.getSelectedEntity().should("contain", "Person");
-    browsePage.getTotalDocuments().should("eq", 1, {timeout: 5000});
-    browsePage.getSelectedFacet("sm-Person-merged").should("exist");
-    browsePage.getSourceViewIcon().first().click();
-    cy.waitForAsyncRequest();
-    browsePage.waitForSpinnerToDisappear();
-
-    cy.contains("URI: /com.marklogic.smart-mastering/merged/").should("be.visible");
-    cy.contains("123 Wilson St").scrollIntoView().should("be.visible");
-    cy.contains("123 Wilson Rd").should("be.visible");
+        cy.contains("URI: /com.marklogic.smart-mastering/merged/").should("be.visible");
+        cy.contains("123 Wilson St").scrollIntoView().should("be.visible");
+        cy.contains("123 Wilson Rd").should("be.visible"); */
   });
 
-  it("show all entity instances in Explorer after running mapping with related entities", {defaultCommandTimeout: 120000}, () => {
+  // Skipped until DHFPROD-7477 is done (explore button)
+  it.skip("show all entity instances in Explorer after running mapping with related entities", {defaultCommandTimeout: 120000}, () => {
     const flowName = "CurateCustomerWithRelatedEntitiesJSON";
     //expand flow
     runPage.expandFlow(flowName);
 
     //run mapping step
     runPage.runStep("mapCustomersWithRelatedEntitiesJSON", flowName);
-
-    cy.verifyStepRunResult("success", "Mapping", "mapCustomersWithRelatedEntitiesJSON");
+    // replace this with something that takes into consideration the Modal text, this one doesnt work
+    runPage.verifyStepRunResult("mapCustomersWithRelatedEntitiesJSON", "success");
     cy.waitForAsyncRequest();
 
     //navigate to explorer tile using the explorer link

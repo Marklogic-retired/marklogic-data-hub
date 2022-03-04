@@ -8,7 +8,7 @@ import {AuthoritiesContext} from "../util/authorities";
 import {UserContext} from "../util/user-context";
 import {useHistory} from "react-router-dom";
 import tiles from "../config/tiles.config";
-import {getFromPath} from "../util/json-utils";
+//import {getFromPath} from "../util/json-utils";
 import {MissingPagePermission} from "../config/messages.config";
 import {getMappingArtifactByStepName} from "../api/mapping";
 import JobResponse from "@components/job-response/job-response";
@@ -18,8 +18,8 @@ import {ErrorMessageContext} from "../util/error-message-context";
 //import Spinner from "react-bootstrap/Spinner";
 
 interface PollConfig {
-    interval: number;
-    retryLimit: number;
+  interval: number;
+  retryLimit: number;
 }
 
 const Statuses = {
@@ -112,7 +112,7 @@ const Run = (props) => {
 
   //For handling flows expand and collapse within Run tile
   const [newFlowName, setNewFlowName] = useState("");
-  const [flowsDefaultActiveKey, setFlowsDefaultActiveKey] = useState<any []>([]);
+  const [flowsDefaultActiveKey, setFlowsDefaultActiveKey] = useState<any[]>([]);
 
   const pollConfig: PollConfig = {
     interval: 1000, // In millseconds
@@ -276,104 +276,24 @@ const Run = (props) => {
     history.push({pathname: "/tiles/explore"});
   };
 
-  function showStepRunResponse(step, jobId, response) {
-    const stepName = step.stepName;
-    const stepType = step.stepDefinitionType;
-    const stepNumber = step.stepNumber;
-    const stepStatus = step.lastRunStatus;
-    const targetDatabase = getFromPath(["stepResponses", stepNumber, "targetDatabase"], response);
-    let entityName;
-
-    const targetEntityType = getFromPath(["stepResponses", stepNumber, "targetEntityType"], response);
-    if (targetEntityType) {
-      let splitTargetEntity = targetEntityType.split("/");
-      entityName = splitTargetEntity[splitTargetEntity.length - 1];
-    }
-    if (response["jobStatus"] === Statuses.FINISHED || (stepStatus !== undefined && stepStatus.indexOf("completed step") !== -1)) {
-      setSuccessModal({
-        isVisible: true,
-        stepName,
-        stepType,
-        entityName,
-        targetDatabase,
-        jobId
-      });
-    } else if (response["jobStatus"] === Statuses.FINISHED_WITH_ERRORS) {
-      let errors = getErrors(response, stepNumber);
-      setErrorModal({
-        isVisible: true,
-        stepName,
-        stepType,
-        errors,
-        response,
-        entityName,
-        targetDatabase,
-        jobId
-      });
-    } else if (response["jobStatus"] === Statuses.FAILED) {
-      let errors = getErrors(response, stepNumber);
-      setFailedModal({
-        isVisible: true,
-        stepName,
-        stepType,
-        errors: errors.slice(0, 1)
-      });
-    }
+  function showStepRunResponse(jobId,) {
+    setJobId(jobId);
+    setOpenJobResponse(true);
   }
-
-  // ** ------- commented until check if this modal is necessary for the DHFPROD-8521 ------- **
-  // const showStepsRunSuccess = (flowName)=> {
-  //   // Modal.success({
-  //   //   title: <div><p style={{fontWeight: 400}}>The selected steps in <strong>{flowName}</strong> flow completed successfully</p></div>,
-  //   //   icon: <Icon type="check-circle" theme="filled"/>,
-  //   //   okText: "Close",
-  //   //   mask: false,
-  //   //   width: 650,
-  //   // });
-
-  //   setSuccessModalMultipleSteps(true);
-  //   setIsStepRunning(false);
-
-  //   return (<Modal
-  //     show={successModalMultipleSteps}
-  //     size={"lg"}
-  //     animation={false}
-  //     dialogClassName={styles.modal650w}
-  //   >
-  //     <Modal.Body className={"pt-5 pb-4 ps-5 pe-4"}>
-  //       <div className={"d-flex align-items-center mb-4"}>
-  //         <CheckCircleFill className={styles.successfulRun} aria-label="icon: check-circle"/>
-  //         <span style={{fontWeight: 400}}>The selected steps in <strong>{flowName}</strong> flow completed successfully</span>
-  //       </div>
-  //       <div className={"d-flex justify-content-end pt-4 pb-2"}>
-  //         <HCButton aria-label={"Close"}
-  //         //variant={(successModal.stepType.toLowerCase() === "mapping" || successModal.stepType.toLowerCase() === "merging") && successModal.entityName ? "outline-primary" : successModal.stepType.toLowerCase() === "ingestion" ? "outline-primary" : "primary"}
-  //         //type="submit"
-  //           onClick={() => setSuccessModalMultipleSteps(false)}>
-  //                     Close
-  //         </HCButton>
-  //       </div>
-  //     </Modal.Body>
-  //   </Modal>)
-  // }
-
-  const handleCloseJobResponse = () => {
-    setOpenJobResponse(false);
-  };
-
+  /*
   function getErrors(response, stepNumber) {
     let errors = [];
     if (response["stepResponses"]) {
       errors = response["stepResponses"][stepNumber]["stepOutput"];
     }
     return errors;
-  }
+  } */
 
   function getErrorsSummary(response) {
     let maxErrors = 10; // Returned from backend
     let stepProp = Object.keys(response["stepResponses"])[0];
     let jobResp = response["stepResponses"][stepProp];
-    return (<span>Out of {jobResp["successfulBatches"]+jobResp["failedBatches"]} batches,
+    return (<span>Out of {jobResp["successfulBatches"] + jobResp["failedBatches"]} batches,
       <span className={styles.errorVal}> {jobResp["successfulBatches"]}</span> succeeded and
       <span className={styles.errorVal}> {jobResp["failedBatches"]}</span> failed.
       {(jobResp["failedBatches"] > maxErrors) ?
@@ -384,7 +304,7 @@ const Run = (props) => {
 
   const getErrorsHeader = (index) => (
     <span className={styles.errorHeader}>
-            Error {index+1}
+      Error {index + 1}
     </span>
   );
 
@@ -393,35 +313,34 @@ const Run = (props) => {
     try {
       let errorObject = JSON.parse(e);
       return <div>
-        <span className={styles.errorLabel}>Message:</span> <span> {errorObject.message}</span><br/><br/>
-        <span className={styles.errorLabel}>URI:</span> <span>  {errorObject.uri} </span><br/><br/>
+        <span className={styles.errorLabel}>Message:</span> <span> {errorObject.message}</span><br /><br />
+        <span className={styles.errorLabel}>URI:</span> <span>  {errorObject.uri} </span><br /><br />
         <span className={styles.errorLabel}>Details:</span>  <span style={{whiteSpace: "pre-line"}}> {errorObject.stack}</span>
       </div>;
     } catch (ex) {
-      return  <div key={e}><span className={styles.errorLabel} >Message:</span>  <span style={{whiteSpace: "pre-line"}}> {e}</span> </div>;
+      return <div key={e}><span className={styles.errorLabel} >Message:</span>  <span style={{whiteSpace: "pre-line"}}> {e}</span> </div>;
     }
   }
-
 
   // Poll status for running flow
   function poll(fn, interval) {
     let tries = 0;
     let checkStatus = (resolve, reject) => {
       let promise = fn();
-      promise.then(function(response) {
+      promise.then(function (response) {
         if (!response.data) {
           throw new Error("Empty response body received");
         }
         let status = response.data.jobStatus;
         if (status === Statuses.FINISHED || status === Statuses.CANCELED ||
-                    status === Statuses.FAILED || status === Statuses.FINISHED_WITH_ERRORS) {
+          status === Statuses.FAILED || status === Statuses.FINISHED_WITH_ERRORS) {
           // Non-running status, resolve promise
           resolve(response.data);
         } else {
           // Still running, poll again
           setTimeout(checkStatus, interval, resolve, reject);
         }
-      }).catch(function(error) {
+      }).catch(function (error) {
         if (tries++ > pollConfig.retryLimit) {
           // Retry limit reached, reject promise
           reject(new Error("Over limit, error for " + fn + ": " + arguments));
@@ -444,33 +363,35 @@ const Run = (props) => {
     try {
       setIsLoading(true);
       if (formData) {
-        response = await axios.post("/api/flows/" + flowName + `/run?stepNumbers=${stepNumber}`, formData, {headers: {
-          "Content-Type": "multipart/form-data; boundary=${formData._boundary}", crossorigin: true
-        }});
+        response = await axios.post("/api/flows/" + flowName + `/run?stepNumbers=${stepNumber}`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data; boundary=${formData._boundary}", crossorigin: true
+          }
+        });
       } else {
         response = await axios.post("/api/flows/" + flowName + `/run?stepNumbers=${stepNumber}`);
       }
       if (response.status === 200) {
         let jobId = response.data.jobId;
-        await setTimeout(function() {
-          poll(async    function () {
+        await setTimeout(function () {
+          poll(async function () {
             const res = await axios.get("/api/jobs/" + jobId);
             return res;
           }, pollConfig.interval)
-            .then(function(response: any) {
+            .then(function (response: any) {
               if (stepNumbers.length === 0) {
-                for (let i=1;i<=Object.keys(response.stepResponses).length;i++) {
+                for (let i = 1; i <= Object.keys(response.stepResponses).length; i++) {
                   stepNumbers.push(response.stepResponses[i]);
                 }
               }
-              for (let i=0; i<stepNumbers.length;i++) {
+              for (let i = 0; i < stepNumbers.length; i++) {
                 setRunEnded({flowId: flowName, stepId: stepNumbers[i].stepNumber});
-                // showStepRunResponse(stepNumbers[i], jobId, response);
+                showStepRunResponse(jobId);
               }
               //showStepsRunSuccess(flowName);
             }).catch(function(error) {
               console.error("Flow timeout", error);
-              for (let i=0; i<stepNumbers.length;i++) {
+              for (let i = 0; i < stepNumbers.length; i++) {
                 setRunEnded({flowId: flowName, stepId: stepNumbers[i]});
               }
             });
@@ -496,22 +417,24 @@ const Run = (props) => {
     try {
       setUploadError("");
       if (formData) {
-        response = await axios.post("/api/flows/" + flowId + "/steps/" + stepNumber, formData, {headers: {
-          "Content-Type": "multipart/form-data; boundary=${formData._boundary}", crossorigin: true
-        }});
+        response = await axios.post("/api/flows/" + flowId + "/steps/" + stepNumber, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data; boundary=${formData._boundary}", crossorigin: true
+          }
+        });
       } else {
         response = await axios.post("/api/flows/" + flowId + "/steps/" + stepNumber);
       }
       if (response.status === 200) {
         let jobId = response.data.jobId;
-        await setTimeout(function() {
-          poll(function() {
+        await setTimeout(function () {
+          poll(function () {
             return axios.get("/api/jobs/" + jobId);
           }, pollConfig.interval)
-            .then(function(response: any) {
+            .then(function (response: any) {
               setRunEnded({flowId: flowId, stepId: stepNumber});
-              showStepRunResponse(stepDetails, jobId, response);
-            }).catch(function(error) {
+              showStepRunResponse(jobId);
+            }).catch(function (error) {
               console.error("Flow timeout", error);
               setRunEnded({flowId: flowId, stepId: stepNumber});
             });
@@ -520,7 +443,7 @@ const Run = (props) => {
     } catch (error) {
       console.error("Error running step", error);
       setRunEnded({flowId: flowId, stepId: stepNumber});
-      if (error.response && error.response.data && (error.response.data.message.includes("The total size of all files in a single upload must be 100MB or less.") ||  error.response.data.message.includes("Uploading files to server failed"))) {
+      if (error.response && error.response.data && (error.response.data.message.includes("The total size of all files in a single upload must be 100MB or less.") || error.response.data.message.includes("Uploading files to server failed"))) {
         setUploadError(error.response.data.message);
       }
     }
@@ -590,13 +513,13 @@ const Run = (props) => {
               >
                 <Modal.Body className={"pt-5 pb-4 ps-5 pe-4"}>
                   <div className={"d-flex align-items-center mb-4"}>
-                    <CheckCircleFill className={styles.successfulRun} aria-label="icon: check-circle"/>
+                    <CheckCircleFill className={styles.successfulRun} aria-label="icon: check-circle" />
                     <span style={{fontWeight: 400}}>The {successModal.stepType.toLowerCase()} step <strong>{successModal.stepName}</strong> completed successfully</span>
                   </div>
                   {
                     (successModal.stepType.toLowerCase() === "mapping" || successModal.stepType.toLowerCase() === "merging") && successModal.entityName ?
                       <div className={`d-flex justify-content-center ${styles.exploreDataContainer}`}>
-                        <HCButton data-testid="explorer-link"  variant="primary" onClick={() => goToExplorer(successModal.entityName, successModal.targetDatabase, successModal.jobId, successModal.stepType, successModal.stepName)} className={styles.exploreCuratedData}>
+                        <HCButton data-testid="explorer-link" variant="primary" onClick={() => goToExplorer(successModal.entityName, successModal.targetDatabase, successModal.jobId, successModal.stepType, successModal.stepName)} className={styles.exploreCuratedData}>
                           <span className={styles.exploreIcon}></span>
                           <span className={styles.exploreText}>Explore Curated Data</span>
                         </HCButton>
@@ -623,7 +546,7 @@ const Run = (props) => {
               >
                 <Modal.Body className={"pt-5 pb-4"}>
                   <div className={"d-flex align-items-center mb-3"}>
-                    <ExclamationCircleFill aria-label="icon: exclamation-circle" className={`me-3 ${styles.unSuccessfulRun}`}/>
+                    <ExclamationCircleFill aria-label="icon: exclamation-circle" className={`me-3 ${styles.unSuccessfulRun}`} />
                     <span style={{fontWeight: 400}}>The {errorModal.stepType.toLowerCase()} step <strong>{errorModal.stepName}</strong> completed with errors</span>
                   </div>
                   <div id="error-list">
@@ -667,7 +590,7 @@ const Run = (props) => {
               >
                 <Modal.Body className={"pt-5 pb-4"}>
                   <div className={"d-flex align-items-center mb-3"}>
-                    <ExclamationCircleFill data-icon="exclamation-circle" aria-label="icon: exclamation-circle" className={`me-3 ${styles.unSuccessfulRun}`}/>
+                    <ExclamationCircleFill data-icon="exclamation-circle" aria-label="icon: exclamation-circle" className={`me-3 ${styles.unSuccessfulRun}`} />
                     <div id="error-title"><span style={{fontWeight: 400}}>The {failedModal.stepType.toLowerCase()} step <strong>{failedModal.stepName}</strong> failed</span></div>
                   </div>
                   <div id="error-list">
@@ -687,7 +610,7 @@ const Run = (props) => {
             <p>{MissingPagePermission}</p>
         }
       </div>
-      <JobResponse jobId={jobId} openJobResponse={openJobResponse} setOpenJobResponse={handleCloseJobResponse}/>
+      <JobResponse jobId={jobId} openJobResponse={openJobResponse} setOpenJobResponse={setOpenJobResponse} />
     </div>
   );
 };

@@ -362,7 +362,6 @@ const Flows: React.FC<Props> = (props) => {
     customRequest();
   }, [fileList]);
 
-
   const deleteConfirmation = (
     <Modal
       show={dialogVisible}
@@ -439,31 +438,31 @@ const Flows: React.FC<Props> = (props) => {
   const onCheckboxChange = (event, checkedValues, stepNumber, stepDefinitionType, flowNames, stepId, sourceFormat) => {
     if (currentFlowName !== flowNames) {
       if (currentFlowName.length > 0) {
-        let propertyNames=Object.getOwnPropertyNames(selectedStepOptions);
-        for (let i=0;i<propertyNames.length;i++) {
+        let propertyNames = Object.getOwnPropertyNames(selectedStepOptions);
+        for (let i = 0; i < propertyNames.length; i++) {
           delete selectedStepOptions[propertyNames[i]];
         }
-        for (let i=0;i<selectedStepDetails.length;i++) {
+        for (let i = 0; i < selectedStepDetails.length; i++) {
           selectedStepDetails.shift();
         }
         setSelectedStepDetails({stepName: "", stepNumber: -1, stepDefinitionType: "", isChecked: false});
       }
       setCurrentFlowName(flowNames);
     }
-    let data={stepName: "", stepNumber: -1, stepDefinitionType: "", isChecked: false, flowName: "", stepId: "", sourceFormat: ""};
-    data.stepName=checkedValues;
-    data.stepNumber=stepNumber;
-    data.stepDefinitionType=stepDefinitionType;
-    data.isChecked=event.target.checked;
-    data.flowName=flowNames;
-    data.stepId=stepId;
-    data.sourceFormat=sourceFormat;
+    let data = {stepName: "", stepNumber: -1, stepDefinitionType: "", isChecked: false, flowName: "", stepId: "", sourceFormat: ""};
+    data.stepName = checkedValues;
+    data.stepNumber = stepNumber;
+    data.stepDefinitionType = stepDefinitionType;
+    data.isChecked = event.target.checked;
+    data.flowName = flowNames;
+    data.stepId = stepId;
+    data.sourceFormat = sourceFormat;
 
     let obj = selectedStepDetails;
     if (data.isChecked) {
       obj.push(data);
     } else {
-      for (let i=0; i< obj.length;i++) {
+      for (let i = 0; i < obj.length; i++) {
         if (obj[i].stepName === checkedValues) {
           obj.splice(i, 1);
         }
@@ -659,33 +658,23 @@ const Flows: React.FC<Props> = (props) => {
   );
 
   const flowHeader = (name, index) => (
-    <span><HCTooltip text={props.canWriteFlow ? "Edit Flow" : "Flow Details"} id="open-edit-tooltip" placement="bottom">
-      <span className={styles.flowName} onClick={(e) => OpenEditFlowDialog(e, index)}>
-        {name}
-      </span>
-    </HCTooltip>
+    <span id={"flow-header-" + name} className={styles.flowHeader}>
+      <HCTooltip text={props.canWriteFlow ? "Edit Flow" : "Flow Details"} id="open-edit-tooltip" placement="bottom">
+        <span className={styles.flowName} onClick={(e) => OpenEditFlowDialog(e, index)}>
+          {name}
+        </span>
+      </HCTooltip>
+      {latestJobData && latestJobData[name] && latestJobData[name].find(step => step.jobId) ?
+        <HCTooltip text={"Flow Status"} placement="bottom" id="">
+          <span onClick={(e) => OpenFlowJobStatus(e, index, name)} className={styles.infoIcon} data-testid={`${name}-flow-status`}>
+            <ExclamationCircleFill data-icon="exclamation-circle" aria-label="icon: exclamation-circle" className={styles.unSuccessfulRun} />
+          </span>
+        </HCTooltip>
+        : ""
+      }
     </span>
 
-    /* Commenting out for DHFPROD-7820, remove unfinished run flow epic stories from 5.6, replace above with below later
-    // <span>
-    //   <MLTooltip title={props.canWriteFlow ? "Edit Flow" : "Flow Details"} placement="bottom">
-    //     <span className={styles.flowName} onClick={(e) => OpenEditFlowDialog(e, index)}>
-    //       {name}
-    //     </span>
-    //   </MLTooltip>
-    //   {latestJobData && latestJobData[name] && latestJobData[name].find(step => step.jobId) ?
-    //     <MLTooltip title={"Flow Status"} placement="bottom">
-    //       <span onClick={(e) => OpenFlowJobStatus(e, index, name)} className={styles.infoIcon}>
-    //         <Icon type="info-circle" theme="filled" data-testid={name + "-StatusIcon"} />
-    //       </span>
-    //     </MLTooltip>
-    //     : ""
-    //   }
-    // </span>
-    */
   );
-
-  /* Commenting out for DHFPROD-7820, remove unfinished run flow epic stories from 5.6
   const OpenFlowJobStatus = (e, index, name) => {
     e.stopPropagation();
     e.preventDefault();
@@ -693,7 +682,6 @@ const Flows: React.FC<Props> = (props) => {
     props.setJobId(latestJobData[name][jobIdIndex].jobId);
     props.setOpenJobResponse(true);
   };
-  */
 
   const OpenEditFlowDialog = (e, index) => {
     e.stopPropagation();
@@ -753,7 +741,7 @@ const Flows: React.FC<Props> = (props) => {
     try {
       let response = await axios.get("/api/jobs/" + step.jobId);
       if (response.status === 200) {
-        props.showStepRunResponse(step, step.jobId, response.data);
+        props.showStepRunResponse(step.jobId);
       }
     } catch (error) {
       handleError(error);
@@ -771,7 +759,7 @@ const Flows: React.FC<Props> = (props) => {
       tooltipText = "Step last ran successfully on " + stepEndTime;
       return (
         <HCTooltip text={tooltipText} id="success-tooltip" placement="bottom">
-          <span onClick={(e) => showStepRunResponse(step)}>
+          <span onClick={(e) => showStepRunResponse(step.jobId)}>
             <i><FontAwesomeIcon aria-label="icon: check-circle" icon={faCheckCircle} className={styles.successfulRun} size="lg" data-testid={`check-circle-${step.stepName}`} /></i>
           </span>
         </HCTooltip>
@@ -780,18 +768,18 @@ const Flows: React.FC<Props> = (props) => {
     } else if (step.lastRunStatus === "completed with errors step " + step.stepNumber) {
       tooltipText = "Step last ran with errors on " + stepEndTime;
       return (
-        <span onClick={(e) => showStepRunResponse(step)}>
+        <span onClick={(e) => showStepRunResponse(step.jobId)}>
           <HCTooltip text={tooltipText} id="complete-with-errors-tooltip" placement="bottom">
-            <ExclamationCircleFill aria-label="icon: exclamation-circle" className={styles.unSuccessfulRun}/>
+            <ExclamationCircleFill aria-label="icon: exclamation-circle" className={styles.unSuccessfulRun} />
           </HCTooltip>
         </span>
       );
     } else {
       tooltipText = "Step last failed on " + stepEndTime;
       return (
-        <span onClick={(e) => showStepRunResponse(step)}>
+        <span onClick={(e) => showStepRunResponse(step.jobId)}>
           <HCTooltip text={tooltipText} id="step-last-failed-tooltip" placement="bottom">
-            <ExclamationCircleFill data-icon="exclamation-circle" aria-label="icon: exclamation-circle" className={styles.unSuccessfulRun}/>
+            <ExclamationCircleFill data-icon="exclamation-circle" aria-label="icon: exclamation-circle" className={styles.unSuccessfulRun} />
           </HCTooltip>
         </span>
       );
@@ -907,7 +895,7 @@ const Flows: React.FC<Props> = (props) => {
                     </div>
                   }
                   <div className={styles.reorderRight}>
-                    <div className={styles.stepResponse}>
+                    <div className={styles.stepResponse} data-testid={`${step.stepName}-last-run`}>
                       {latestJobData && latestJobData[flowName] && latestJobData[flowName][index]
                         ? lastRunResponse(latestJobData[flowName][index])
                         : ""
@@ -973,7 +961,7 @@ const Flows: React.FC<Props> = (props) => {
                       aria-label={"runStepDisabled-" + step.stepName}
                       data-testid={"runStepDisabled-" + stepNumber}
                     >
-                      <PlayCircleFill size={20}/>
+                      <PlayCircleFill size={20} />
                     </div>
                   }
                   {props.canWriteFlow ?

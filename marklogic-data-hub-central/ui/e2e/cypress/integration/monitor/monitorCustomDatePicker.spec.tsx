@@ -4,7 +4,7 @@ import loadPage from "../../support/pages/load";
 import monitorSidebar from "../../support/components/monitor/monitor-sidebar";
 import {Application} from "../../support/application.config";
 import "cypress-wait-until";
-import {toolbar, tiles} from "../../support/components/common";
+import {toolbar} from "../../support/components/common";
 import LoginPage from "../../support/pages/login";
 
 let flowName= "testPersonJSON";
@@ -42,8 +42,8 @@ describe("Monitor Tile", () => {
     runPage.addStepToFlow("mapPersonJSON");
     runPage.verifyStepInFlow("Map", "mapPersonJSON", flowName);
     runPage.runStep("mapPersonJSON", flowName);
-    cy.verifyStepRunResult("success", "Mapping", "mapPersonJSON");
-    tiles.closeRunMessage();
+    runPage.verifyStepRunResult("mapPersonJSON", "success");
+    runPage.closeFlowStatusModal(flowName);
     cy.waitForAsyncRequest();
   });
 

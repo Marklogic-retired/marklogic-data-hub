@@ -123,12 +123,14 @@ describe("Verify numeric/date facet can be applied", () => {
     cy.waitUntil(() => runPage.getFlowName("personJSON").should("be.visible"));
     runPage.expandFlow("personJSON");
     runPage.runStep("mapPersonJSON", "personJSON");
-    cy.verifyStepRunResult("success", "Mapping", "mapPersonJSON");
+    runPage.verifyStepRunResult("mapPersonJSON", "success");
+    runPage.closeFlowStatusModal("personJSON");
+    /* Commented until DHFPROD-7477 is done
     runPage.explorerLink().click();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     browsePage.waitForHCTableToLoad();
-    browsePage.getGreySelectedFacets("Alice").should("not.exist");
+    browsePage.getGreySelectedFacets("Alice").should("not.exist"); */
   });
   it("Verify clearing date time range facet clears corresponding selected facet", () => {
     toolbar.getExploreToolbarIcon().click();
