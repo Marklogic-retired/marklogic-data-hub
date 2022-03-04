@@ -281,13 +281,23 @@
 }
 
 .runFlow {
-    margin-right: 1vw;
+    width: 105px;
+}
+
+.runIconToggle {
+  height: 30px;
+  border-left: 1px solid $border-grey !important;
+  &:hover{
+    background-color: $background-hover;
+  }
 }
 
 .runIcon {
     font-size: 16px;
     margin-left: -2px;
+    color: $primary;
 }
+
 .runIconAlign {
     margin-left: -2px;
     color: #3b458f;
@@ -296,6 +306,20 @@
 .runFlowLabel {
     margin-left: 4px;
     margin-right: -3px;
+}
+
+.dropdownMenu {
+  padding: 5px !important;
+  border-radius: 4px;
+}
+
+.divItem {
+  height: 25px;
+  padding-left: 10px;
+  padding-right: 10px;
+  &:hover {
+    background-color: $background-hover;
+  }
 }
 
 .settingsIcon {
@@ -307,7 +331,6 @@
     gap: 0.75rem;
     justify-content: center;
     align-items: center;
-    margin-top: -4px;
 }
 .stepMenu {
     &>.dropdown-menu {

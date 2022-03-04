@@ -1,3 +1,5 @@
+@import "../../theme/HCVariables.scss";
+
 #panelActions {
     .ant-dropdown-trigger {
         height: 32px;
@@ -7,13 +9,19 @@
 }
 
 #stepsDropdown {
-    .ant-dropdown-trigger  {
-        padding: 0px !important;
-        width: 23%;
-        margin-right: 2.4vw;
-        &:hover{
-            background-color: #E9F7FE;
-        }
+    height: 32px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    background-color: transparent;
+    &:hover{
+        border: 1px solid $primary;
+    }
+    &:active, &:focus{
+        border: 1px solid $primary;
+        color: $info;
+    }
+    button:hover{
+        color: $info;
     }
 }
 

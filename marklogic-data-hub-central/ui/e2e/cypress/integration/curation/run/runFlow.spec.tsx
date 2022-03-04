@@ -21,11 +21,11 @@ describe("Run Tile tests", () => {
 
   after(() => {
     cy.deleteRecordsInFinal("master-xml-person", "mapPersonXML");
-    cy.deleteFlows(flowName);
+    // cy.deleteFlows(flowName); Add this back in when the below test is unskipped
     cy.resetTestUser();
   });
 
-  it("can create flow and add steps to flow, should load xml merged document and display content", {defaultCommandTimeout: 120000}, () => {
+  it.skip("can create flow and add steps to flow, should load xml merged document and display content", {defaultCommandTimeout: 120000}, () => {
     //Verify create flow and add all user-defined steps to flow via Run tile
     runPage.createFlowButton().click();
     runPage.newFlowModal().should("be.visible");
@@ -56,8 +56,6 @@ describe("Run Tile tests", () => {
     cy.get("#testPersonXML").within(() => {
       cy.findByText("loadPersonXML").should("not.be.visible");
     });
-
-    /* Commenting out for DHFPROD-7820, remove unfinished run flow epic stories from 5.6
 
     //Verify selected steps in run flow dropdown are executed successfully
     runPage.openStepsSelectDropdown("testPersonXML");
@@ -96,8 +94,6 @@ describe("Run Tile tests", () => {
     runPage.openFlowStatusModal("testCustomFlow");
     runPage.verifyFlowModalCompleted("testCustomFlow");
     runPage.getFlowStatusModal().type("{esc}");
-
-    */
 
     //Run map,match and merge step for Person entity using xml documents
     runPage.runStep("mapPersonXML", flowName);

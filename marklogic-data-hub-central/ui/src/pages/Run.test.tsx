@@ -148,8 +148,8 @@ describe("Verify load step failures in a flow", () => {
     // Click disclosure icon
     fireEvent.click(document.querySelector(".accordion-button"));
     let runButton = await getByLabelText("runStep-failedIngest");
-    fireEvent.mouseOver(getAllByLabelText("icon: play-circle")[0]); //temporarily fixing for DHFPROD-7820, change back to 1 eventually
-    await waitForElement(() => getByText(RunToolTips.ingestionStep));
+    fireEvent.mouseOver(getAllByLabelText("icon: play-circle")[1]); //temporarily fixing for DHFPROD-7820, change back to 1 eventually
+    await (() => getByText(RunToolTips.ingestionStep));
     fireEvent.mouseOver(getAllByLabelText("icon: close")[0]);
     await waitForElement(() => getByText(RunToolTips.removeStep));
 
