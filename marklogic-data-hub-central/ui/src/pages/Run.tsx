@@ -15,6 +15,7 @@ import JobResponse from "@components/job-response/job-response";
 import {HCButton} from "@components/common";
 import {CheckCircleFill, ExclamationCircleFill} from "react-bootstrap-icons";
 import {ErrorMessageContext} from "../util/error-message-context";
+//import Spinner from "react-bootstrap/Spinner";
 
 interface PollConfig {
     interval: number;
@@ -92,6 +93,7 @@ const Run = (props) => {
   const [runStarted, setRunStarted] = useState<any>({});
   const [runEnded, setRunEnded] = useState<any>({});
   const [running, setRunning] = useState<any[]>([]);
+  const [isStepRunning, setIsStepRunning] = useState(false);
   const [uploadError, setUploadError] = useState("");
   const [openJobResponse, setOpenJobResponse] = useState<boolean>(false);
   const [jobId, setJobId] = useState<string>("");
@@ -99,6 +101,7 @@ const Run = (props) => {
   const [successModal, setSuccessModal] = useState<successModalType>({...defaultSuccessModal});
   const [errorModal, setErrorModal] = useState<errorModalType>({...defaultErrorModal});
   const [failedModal, setFailedModal] = useState<failedModalType>({...defaultFailedModal});
+  //const [successModalMultipleSteps, setSuccessModalMultipleSteps] = useState(false);
 
   // For role-based privileges
   const authorityService = useContext(AuthoritiesContext);
@@ -318,6 +321,42 @@ const Run = (props) => {
     }
   }
 
+  // ** ------- commented until check if this modal is necessary for the DHFPROD-8521 ------- **
+  // const showStepsRunSuccess = (flowName)=> {
+  //   // Modal.success({
+  //   //   title: <div><p style={{fontWeight: 400}}>The selected steps in <strong>{flowName}</strong> flow completed successfully</p></div>,
+  //   //   icon: <Icon type="check-circle" theme="filled"/>,
+  //   //   okText: "Close",
+  //   //   mask: false,
+  //   //   width: 650,
+  //   // });
+
+  //   setSuccessModalMultipleSteps(true);
+  //   setIsStepRunning(false);
+
+  //   return (<Modal
+  //     show={successModalMultipleSteps}
+  //     size={"lg"}
+  //     animation={false}
+  //     dialogClassName={styles.modal650w}
+  //   >
+  //     <Modal.Body className={"pt-5 pb-4 ps-5 pe-4"}>
+  //       <div className={"d-flex align-items-center mb-4"}>
+  //         <CheckCircleFill className={styles.successfulRun} aria-label="icon: check-circle"/>
+  //         <span style={{fontWeight: 400}}>The selected steps in <strong>{flowName}</strong> flow completed successfully</span>
+  //       </div>
+  //       <div className={"d-flex justify-content-end pt-4 pb-2"}>
+  //         <HCButton aria-label={"Close"}
+  //         //variant={(successModal.stepType.toLowerCase() === "mapping" || successModal.stepType.toLowerCase() === "merging") && successModal.entityName ? "outline-primary" : successModal.stepType.toLowerCase() === "ingestion" ? "outline-primary" : "primary"}
+  //         //type="submit"
+  //           onClick={() => setSuccessModalMultipleSteps(false)}>
+  //                     Close
+  //         </HCButton>
+  //       </div>
+  //     </Modal.Body>
+  //   </Modal>)
+  // }
+
   const handleCloseJobResponse = () => {
     setOpenJobResponse(false);
   };
@@ -395,6 +434,7 @@ const Run = (props) => {
     return new Promise(checkStatus);
   }
   const runFlowSteps = async (flowName, stepNumbers, formData) => {
+    setIsStepRunning(true);
     let stepNumber=[{}];
     for (let i=0; i<stepNumbers.length;i++) {
       stepNumber.push(stepNumbers[i].stepNumber);
@@ -427,6 +467,7 @@ const Run = (props) => {
                 setRunEnded({flowId: flowName, stepId: stepNumbers[i].stepNumber});
                 // showStepRunResponse(stepNumbers[i], jobId, response);
               }
+              //showStepsRunSuccess(flowName);
             }).catch(function(error) {
               console.error("Flow timeout", error);
               for (let i=0; i<stepNumbers.length;i++) {
@@ -508,6 +549,12 @@ const Run = (props) => {
             [
               <div className={styles.intro} key={"run-intro"}>
                 <p>{tiles.run.intro}</p>
+                {/* ---------------------------------------------------------------------------------------- */}
+                {/* <div className={styles.running} style={{display: isStepRunning ? "block" : "none"}}>
+                  <div><Spinner data-testid="spinner" animation="border" variant="primary" /></div>
+                  <div className={styles.runningLabel}>Running...</div>
+                </div> */}
+                {/* ---------------------------------------------------------------------------------------- */}
               </div>,
               <Flows
                 key={"run-flows-list"}
@@ -532,6 +579,7 @@ const Run = (props) => {
                 onReorderFlow={onReorderFlow}
                 setJobId={setJobId}
                 setOpenJobResponse={setOpenJobResponse}
+                isStepRunning={isStepRunning}
               />,
               // Success Message
               <Modal

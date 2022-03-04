@@ -12,9 +12,9 @@ import {AuthoritiesContext} from "../../util/authorities";
 import {getViewSettings, setViewSettings, UserContext} from "../../util/user-context";
 import styles from "./flows.module.scss";
 import "./flows.scss";
-import {ExclamationCircleFill, PlayCircleFill, X, ChevronDown} from "react-bootstrap-icons";
-import {Accordion, Card, Dropdown, Spinner, Modal} from "react-bootstrap";
-import {HCButton, HCCard, HCTooltip} from "@components/common";
+import {ExclamationCircleFill, PlayCircleFill, X, ChevronDown, GearFill} from "react-bootstrap-icons";
+import {Accordion, Card, Dropdown, Spinner, Modal, ButtonGroup} from "react-bootstrap";
+import {HCButton, HCCard, HCTooltip, HCCheckbox} from "@components/common";
 
 
 enum ReorderFlowOrderDirection {
@@ -44,6 +44,7 @@ interface Props {
   onReorderFlow: (flowIndex: number, newSteps: Array<any>) => void
   setJobId: any;
   setOpenJobResponse: any;
+  isStepRunning?: boolean
 }
 
 const StepDefinitionTypeTitles = {
@@ -433,7 +434,7 @@ const Flows: React.FC<Props> = (props) => {
     </Modal>
   );
 
-  /* Commenting out for DHFPROD-7820, remove unfinished run flow epic stories from 5.6
+  /* Commenting out for DHFPROD-7820, remove unfinished run flow epic stories from 5.6 */
 
   const onCheckboxChange = (event, checkedValues, stepNumber, stepDefinitionType, flowNames, stepId, sourceFormat) => {
     if (currentFlowName !== flowNames) {
@@ -473,65 +474,62 @@ const Flows: React.FC<Props> = (props) => {
     event.stopPropagation();
   };
 
-  // const flowMenu = (flowName) => {
-  //   return (
-  //     <Menu>
-  //       <Menu.ItemGroup title="Select the steps to include in the run.">
-  //         {props.flows.map((flow) => (
-  //           flow["name"] === flowName &&
-  //                      flow.steps.map((step, index)  => (
-  //                        <Menu.Item key={index}>
-  //                          <MLCheckbox
-  //                            id={step.stepName}
-  //                            checked={selectedStepOptions[step.stepName]}
-  //                            onClick={(event) => onCheckboxChange(event, step.stepName, step.stepNumber, step.stepDefinitionType, flowName, step.stepId, step.sourceFormat)
-  //                            }
-  //                          >{step.stepName}</MLCheckbox>
-  //                        </Menu.Item>
-  //                      ))
-  //         ))}
-  //       </Menu.ItemGroup>
-  //     </Menu>
-  //   );
-  // };
+  const flowMenu = (flowName) => {
+    return (
+      <>
+        <Dropdown.Header className="py-0 fs-6 p-0 mb-2">Select the steps to include in the run:</Dropdown.Header>
+        {props.flows.map((flow) => (
+          flow["name"] === flowName &&
+            flow.steps.map((step, index)  => (
+              <div id={index} className={styles.divItem}>
+                <HCCheckbox
+                  id={step.stepName}
+                  value={selectedStepOptions[step.stepName]}
+                  handleClick={() => (event) => onCheckboxChange(event, step.stepName, step.stepNumber, step.stepDefinitionType, flowName, step.stepId, step.sourceFormat)}
+                  checked={selectedStepOptions[step.stepName]}
+                >{step.stepName}
+                </HCCheckbox>
+              </div>
+            ))))}
+      </>
+    );
+  };
 
-  // const handleRunFlow = async (index, name) => {
-  //   setRunFlowClicked(true);
-  //   const setKey = async () => {
-  //     await setActiveKeys(`${index}`);
-  //   };
-  //   setRunningFlow(name);
-  //   selectedStepDetails.shift();
-  //   let flag=false;
+  const handleRunFlow = async (index, name) => {
+    setRunFlowClicked(true);
+    const setKey = async () => {
+      await setActiveKeys(`${index}`);
+    };
+    setRunningFlow(name);
+    selectedStepDetails.shift();
+    let flag=false;
 
-  //   await selectedStepDetails.map(async step => {
-  //     if (step.stepDefinitionType === "ingestion") {
-  //       flag=true;
-  //       setRunningStep(step);
-  //       await setKey();
-  //       await openFilePicker();
-  //     }
-  //   });
-  //   if (Object.keys(selectedStepOptions).length === 0 && selectedStepOptions.constructor === Object) {
-  //     flag=true;
-  //     await setKey();
-  //     await openFilePicker();
-  //   }
-  //   if (!flag) {
-  //     let stepNumbers=[{}];
-  //     for (let i=0;i<selectedStepDetails.length;i++) {
-  //       stepNumbers.push(selectedStepDetails[i]);
-  //     }
-  //     stepNumbers.shift();
-  //     await props.runFlowSteps(name, stepNumbers)
-  //       .then(() => {
-  //         setSelectedStepOptions({});
-  //         setSelectedStepDetails([{stepName: "", stepNumber: -1, stepDefinitionType: "", isChecked: false}]);
-  //       });
-  //   }
-  // };
-  */
-
+    await selectedStepDetails.map(async step => {
+      if (step.stepDefinitionType === "ingestion") {
+        flag=true;
+        setRunningStep(step);
+        await setKey();
+        await openFilePicker();
+      }
+    });
+    if (Object.keys(selectedStepOptions).length === 0 && selectedStepOptions.constructor === Object) {
+      flag=true;
+      await setKey();
+      await openFilePicker();
+    }
+    if (!flag) {
+      let stepNumbers=[{}];
+      for (let i=0;i<selectedStepDetails.length;i++) {
+        stepNumbers.push(selectedStepDetails[i]);
+      }
+      stepNumbers.shift();
+      await props.runFlowSteps(name, stepNumbers)
+        .then(() => {
+          setSelectedStepOptions({});
+          setSelectedStepDetails([{stepName: "", stepNumber: -1, stepDefinitionType: "", isChecked: false}]);
+        });
+    }
+  };
 
   const stepMenu = (flowName, i) => (
 
@@ -613,20 +611,27 @@ const Flows: React.FC<Props> = (props) => {
         event.preventDefault();
       }}
     >
-      {stepMenu(name, i)}
-      {/* Commenting out for DHFPROD-7820, remove unfinished run flow epic stories from 5.6
       <span id="stepsDropdown" className={styles.hoverColor}>
-        <Dropdown.Button
-          className={styles.runFlow}
-          overlay={flowMenu(name)}
-          data-testid={`runFlow-${name}`}
-          trigger={["click"]}
-          onClick={() => handleRunFlow(i, name)}
-          icon={<FontAwesomeIcon icon={faCog} type="edit" role="step-settings button" aria-label={`stepSettings-${name}`} className={styles.settingsIcon}/>}
-        >
-          <span className={styles.runIconAlign}><Icon type="play-circle" theme="filled"  className={styles.runIcon}/></span>
-          <span className={styles.runFlowLabel}>Run Flow</span>
-        </Dropdown.Button></span> */}
+        <Dropdown as={ButtonGroup}>
+          <HCButton
+            variant="transparent"
+            className={styles.runFlow}
+            //className={"btn-outline-secondary"}
+            key={`stepsDropdownButton-${name}`}
+            data-testid={`runFlow-${name}`}
+            id={`runFlow-${name}`}
+            size="sm"
+            onClick={() => handleRunFlow(i, name)}
+          ><><PlayCircleFill className={styles.runIcon}/> Run Flow</></HCButton>
+          <Dropdown.Toggle split variant="transparent" className={styles.runIconToggle}>
+            <GearFill className={styles.runIcon} role="step-settings button" aria-label={`stepSettings-${name}`} /></Dropdown.Toggle>
+          <Dropdown.Menu className={styles.dropdownMenu}>
+            {flowMenu(name)}
+          </Dropdown.Menu>
+        </Dropdown>
+      </span>
+
+      {stepMenu(name, i)}
       <span className={styles.deleteFlow}>
         {props.canWriteFlow ?
           <HCTooltip text="Delete Flow" id="disabled-trash-tooltip" placement="bottom">
