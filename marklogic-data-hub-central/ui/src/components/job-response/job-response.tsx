@@ -22,7 +22,6 @@ type Props = {
 }
 
 const JobResponse: React.FC<Props> = (props) => {
-  const [durationInterval, setDurationInterval] = useState<any>(null);
   const [jobResponse, setJobResponse] = useState<any>({});
   //const [lastSuccessfulStep, setLastSuccessfulStep] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -34,12 +33,6 @@ const JobResponse: React.FC<Props> = (props) => {
     if (props.jobId) {
       retrieveJobDoc();
     }
-    return () => {
-      if (durationInterval) {
-        clearInterval(durationInterval);
-        setDurationInterval(null);
-      }
-    };
   }, [props.openJobResponse, props.jobId]);
 
   const retrieveJobDoc = async () => {
@@ -53,15 +46,10 @@ const JobResponse: React.FC<Props> = (props) => {
          }) : []; */
         //const successfulStep = successfulSteps[successfulSteps.length - 1];
         //setLastSuccessfulStep(successfulStep);
-        if (durationInterval) {
-          clearInterval(durationInterval);
-          setDurationInterval(null);
-        }
         if (isRunning(response.data)) {
-          setDurationInterval(setInterval(() => {
-            const duration = durationFromDateTime(response.data.timeStarted);
-            setJobResponse(Object.assign({}, response.data, {duration}));
-          }, 1000));
+          const duration = durationFromDateTime(response.data.timeStarted);
+          setJobResponse(Object.assign({}, response.data, {duration}));
+          retrieveJobDoc();
         }
       }
     } catch (error) {
@@ -187,7 +175,7 @@ const JobResponse: React.FC<Props> = (props) => {
           {errors.map((e, i) => {
             return <Accordion className={"w-100"} flush key={i}>
               <Accordion.Item eventKey={response.stepName + "-error-" + i}>
-                <div className={"p-0 d-flex"} data-testid={`${response.stepName}-error-${i+1}`}>
+                <div className={"p-0 d-flex"} data-testid={`${response.stepName}-error-${i + 1}`}>
                   <Accordion.Button>{getErrorsHeader(i)}</Accordion.Button>
                 </div>
                 <Accordion.Body>

@@ -1,7 +1,7 @@
 import React from "react";
 import oneToManyIcon from "../assets/one-to-many-white.svg";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faKey, faLayerGroup} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faKey, faLayerGroup } from "@fortawesome/free-solid-svg-icons";
 import styles from "../components/tiles/tiles.module.scss";
 import "./tooltips.config.scss";
 import {Tooltip} from "react-bootstrap";
