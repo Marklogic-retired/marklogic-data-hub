@@ -186,6 +186,7 @@
     <membership>
       <list>list2</list>
       <important>true</important>
+      <ts>2020-11-28</ts>
     </membership>
   </memberships>
 </person>

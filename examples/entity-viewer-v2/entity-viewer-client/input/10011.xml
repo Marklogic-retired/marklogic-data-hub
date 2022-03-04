@@ -183,18 +183,22 @@
     <membership>
       <list>list3</list>
       <important>true</important>
+      <ts>2020-03-08</ts>
     </membership>
     <membership>
       <list>list5</list>
       <important>false</important>
+      <ts>2019-03-23</ts>
     </membership>
     <membership>
       <list>list6</list>
       <important>false</important>
+      <ts>2021-11-10</ts>
     </membership>
     <membership>
       <list>list2</list>
       <important>false</important>
+      <ts>2021-04-08</ts>
     </membership>
   </memberships>
 </person>

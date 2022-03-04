@@ -134,14 +134,17 @@
     <membership>
       <list>list5</list>
       <important>false</important>
+      <ts>2021-09-04</ts>
     </membership>
     <membership>
       <list>list10</list>
       <important>false</important>
+      <ts>2021-09-04</ts>
     </membership>
     <membership>
       <list>list4</list>
       <important>false</important>
+      <ts>2021-07-29</ts>
     </membership>
   </memberships>
 </person>
