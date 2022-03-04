@@ -123,18 +123,22 @@
     <membership>
       <list>list11</list>
       <important>false</important>
+      <ts>2019-02-26</ts>
     </membership>
     <membership>
       <list>list1</list>
       <important>true</important>
+      <ts>2020-04-22</ts>
     </membership>
     <membership>
       <list>list3</list>
       <important>true</important>
+      <ts>2021-03-25</ts>
     </membership>
     <membership>
       <list>list5</list>
       <important>true</important>
+      <ts>2019-10-02</ts>
     </membership>
   </memberships>
 </person>

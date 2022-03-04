@@ -175,28 +175,24 @@
   </socials>
   <memberships>
     <membership>
-      <list>list4</list>
+      <list>list6</list>
       <important>false</important>
-    </membership>
-    <membership>
-      <list>list12</list>
-      <important>false</important>
-    </membership>
-    <membership>
-      <list>list12</list>
-      <important>false</important>
+      <ts>2019-08-05</ts>
     </membership>
     <membership>
       <list>list8</list>
+      <important>true</important>
+      <ts>2019-11-19</ts>
+    </membership>
+    <membership>
+      <list>list5</list>
       <important>false</important>
+      <ts>2020-09-22</ts>
     </membership>
     <membership>
       <list>list6</list>
       <important>false</important>
-    </membership>
-    <membership>
-      <list>list7</list>
-      <important>true</important>
+      <ts>2020-07-10</ts>
     </membership>
   </memberships>
 </person>
