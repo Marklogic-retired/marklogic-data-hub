@@ -476,14 +476,14 @@ const Query: React.FC<Props> = (props) => {
                 showSaveNewIcon && searchOptions.entityTypeIds?.length === 1 && searchOptions.selectedQuery === "select a query" &&
                 <div>
                   <HCTooltip text={props.isSavedQueryUser ? "Save the current query" : "Save Query: Contact your security administrator to get the roles and permissions to access this functionality"} id="save-current-query-tooltip" placement="top">
-                    <i><FontAwesomeIcon
+                    <span className="p-1"><FontAwesomeIcon
                       icon={faSave}
                       onClick={props.isSavedQueryUser ? () => setOpenSaveModal(true) : () => setOpenSaveModal(false)}
                       className={props.isSavedQueryUser ? styles.enabledSaveIcon : styles.disabledSaveIcon}
                       data-testid="save-modal"
                       size="lg"
                       style={{width: "15px", color: "#5b69af", cursor: "pointer"}}
-                    /></i>
+                    /></span>
                   </HCTooltip>
                   <div id={"savedQueries"}>
                     {openSaveModal &&
@@ -508,7 +508,7 @@ const Query: React.FC<Props> = (props) => {
               {props.isSavedQueryUser && showSaveChangesIcon && props.queries.length > 0 &&
                 <div>
                   <HCTooltip text="Save changes" id="save-changes-tooltip" placement="top">
-                    <i><FontAwesomeIcon
+                    <span className="p-1"><FontAwesomeIcon
                       icon={faSave}
                       className={styles.iconHover}
                       title="save-changes"
@@ -516,7 +516,7 @@ const Query: React.FC<Props> = (props) => {
                       data-testid="save-changes-modal"
                       size="lg"
                       style={{width: "15px", color: "#5b69af", cursor: "pointer"}}
-                    /></i>
+                    /></span>
                   </HCTooltip>
                   <div id={"saveChangedQueries"}>
                     {openSaveChangesModal &&
