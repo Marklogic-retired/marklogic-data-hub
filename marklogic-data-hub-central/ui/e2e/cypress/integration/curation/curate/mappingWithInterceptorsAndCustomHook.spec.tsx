@@ -1,5 +1,5 @@
 import {Application} from "../../../support/application.config";
-import {tiles, toolbar} from "../../../support/components/common";
+import {toolbar} from "../../../support/components/common";
 import {
   advancedSettingsDialog,
   createEditMappingDialog,
@@ -98,8 +98,10 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     cy.waitForAsyncRequest();
     runPage.runStep(loadStep, flowName);
     cy.uploadFile("input/10259.json");
-    cy.verifyStepRunResult("success", "Ingestion", loadStep);
-    tiles.closeRunMessage();
+
+
+    runPage.verifyStepRunResult(loadStep, "success");
+    runPage.closeFlowStatusModal(flowName);
   });
   it("Create mapping step", () => {
     toolbar.getCurateToolbarIcon().click();

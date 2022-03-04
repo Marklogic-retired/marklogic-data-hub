@@ -1,5 +1,5 @@
 import {Application} from "../../../support/application.config";
-import {tiles, toolbar} from "../../../support/components/common";
+import {toolbar} from "../../../support/components/common";
 import loadPage from "../../../support/pages/load";
 import runPage from "../../../support/pages/run";
 import LoginPage from "../../../support/pages/login";
@@ -153,8 +153,9 @@ describe("Validate CRUD functionality from list view", () => {
     cy.verifyStepAddedToFlow("Load", stepName, flowName);
     //Upload file to start running, test with invalid input
     cy.uploadFile("input/test-1.json");
-    cy.verifyStepRunResult("success", "Ingestion", stepName);
-    tiles.closeRunMessage();
+
+    runPage.verifyStepRunResult(stepName, "success");
+    runPage.closeFlowStatusModal(flowName);
   });
   it("Delete the flow", () => {
     runPage.deleteFlow(flowName).click();
@@ -197,8 +198,8 @@ describe("Validate CRUD functionality from list view", () => {
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Load", stepName, flowName);
     cy.uploadFile("input/test-1.json");
-    cy.verifyStepRunResult("success", "Ingestion", stepName);
-    tiles.closeRunMessage();
+    runPage.verifyStepRunResult(stepName, "success");
+    runPage.closeFlowStatusModal(flowName);
   });
   it("Add step to a new flow and Verify Run Load step where step exists in multiple flows", {defaultCommandTimeout: 120000}, () => {
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
@@ -220,8 +221,9 @@ describe("Validate CRUD functionality from list view", () => {
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Load", stepName, flowName);
     cy.uploadFile("input/test-1.json");
-    cy.verifyStepRunResult("success", "Ingestion", stepName);
-    tiles.closeRunMessage();
+
+    runPage.verifyStepRunResult(stepName, "success");
+    runPage.closeFlowStatusModal(flowName);
   });
   it("Delete the flows and Verify Delete", () => {
     runPage.deleteFlow(flowName).click();
