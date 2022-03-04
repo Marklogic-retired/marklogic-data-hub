@@ -133,6 +133,7 @@
     <membership>
       <list>list1</list>
       <important>false</important>
+      <ts>2019-07-08</ts>
     </membership>
   </memberships>
 </person>

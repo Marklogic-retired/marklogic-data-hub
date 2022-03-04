@@ -140,26 +140,32 @@
     <membership>
       <list>list8</list>
       <important>true</important>
+      <ts>2020-01-05</ts>
     </membership>
     <membership>
       <list>list6</list>
       <important>true</important>
+      <ts>2019-11-10</ts>
     </membership>
     <membership>
       <list>list6</list>
       <important>true</important>
+      <ts>2020-04-27</ts>
     </membership>
     <membership>
       <list>list6</list>
       <important>false</important>
+      <ts>2021-04-14</ts>
     </membership>
     <membership>
       <list>list6</list>
       <important>false</important>
+      <ts>2021-08-09</ts>
     </membership>
     <membership>
       <list>list9</list>
       <important>true</important>
+      <ts>2019-06-28</ts>
     </membership>
   </memberships>
 </person>
