@@ -1,5 +1,5 @@
 import {Application} from "../../../support/application.config";
-import {tiles, toolbar} from "../../../support/components/common";
+import {toolbar} from "../../../support/components/common";
 import loadPage from "../../../support/pages/load";
 import runPage from "../../../support/pages/run";
 import LoginPage from "../../../support/pages/login";
@@ -142,15 +142,14 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     cy.verifyStepAddedToFlow("Load", stepName, flowName);
     //Upload file to start running, test with invalid input
     cy.uploadFile("input/test-1");
-    cy.verifyStepRunResult("failed", "Ingestion", stepName)
-      .should("contain.text", "Document is not JSON");
-    tiles.closeRunMessage();
+    runPage.verifyStepRunResult(stepName, "failure");
+    runPage.closeFlowStatusModal(flowName);
   });
   it("Run the flow with JSON input", {defaultCommandTimeout: 120000}, () => {
     runPage.runStep(stepName, flowName);
     cy.uploadFile("input/test-1.json");
-    cy.verifyStepRunResult("success", "Ingestion", stepName);
-    tiles.closeRunMessage();
+    runPage.verifyStepRunResult(stepName, "success");
+    runPage.closeFlowStatusModal(flowName);
     runPage.deleteStep(stepName, flowName).click();
     loadPage.confirmationOptions("Yes").click();
     cy.waitForAsyncRequest();
@@ -185,8 +184,8 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     runPage.runStep(stepName, flowName1);
     cy.uploadFile("input/test-1.json");
     cy.waitForAsyncRequest();
-    cy.verifyStepRunResult("success", "Ingestion", stepName);
-    tiles.closeRunMessage();
+    runPage.verifyStepRunResult(stepName, "success");
+    runPage.closeFlowStatusModal(flowName1);
   });
   it("Verify Run Load step in flow where step exists, should run automatically", {defaultCommandTimeout: 120000}, () => {
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
@@ -197,8 +196,8 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Load", stepName, flowName1);
     cy.uploadFile("input/test-1.json");
-    cy.verifyStepRunResult("success", "Ingestion", stepName);
-    tiles.closeRunMessage();
+    runPage.verifyStepRunResult(stepName, "success");
+    runPage.closeFlowStatusModal(flowName1);
   });
   it("add step to a new flow and Verify Run Load step where step exists in multiple flows", {defaultCommandTimeout: 120000}, () => {
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
@@ -220,8 +219,9 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Load", stepName, flowName1);
     cy.uploadFile("input/test-1.json");
-    cy.verifyStepRunResult("success", "Ingestion", stepName);
-    tiles.closeRunMessage();
+
+    runPage.verifyStepRunResult(stepName, "success");
+    runPage.closeFlowStatusModal(flowName1);
   });
   it("Delete the step and Navigate back to load step", () => {
     runPage.deleteStep(stepName, flowName1).click();
@@ -248,7 +248,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     //Run the flow with TEXT input
     runPage.runLastStepInAFlow(stepName);
     cy.uploadFile("input/test-1.txt");
-    cy.verifyStepRunResult("success", "Ingestion", stepName);
-    tiles.closeRunMessage();
+    runPage.verifyStepRunResult(stepName, "success");
+    runPage.closeFlowStatusModal(flowName1);
   });
 });

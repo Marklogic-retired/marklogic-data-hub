@@ -1,11 +1,11 @@
 import React from "react";
 import oneToManyIcon from "../assets/one-to-many-white.svg";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faKey, faLayerGroup} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faKey, faLayerGroup } from "@fortawesome/free-solid-svg-icons";
 import styles from "../components/tiles/tiles.module.scss";
 import modelIcon from "../assets/model-overview-helpInfo.svg";
 import "./tooltips.config.scss";
-import {Tooltip} from "react-bootstrap";
+import { Tooltip } from "react-bootstrap";
 
 /* --- MODELING --- */
 
@@ -14,7 +14,7 @@ const ModelingIntros = {
 };
 
 const keyboardNavigationTooltips = {
-    dropdownUserInfo: <span>Press <strong>Tab</strong> and then the <strong>Down arrow</strong> key to expand the drop-down menu. Select an option using the <strong>Up arrow</strong> key and <strong>Down arrow</strong> key, and then press <strong>Enter</strong>.</span>
+  dropdownUserInfo: <span>Press <strong>Tab</strong> and then the <strong>Down arrow</strong> key to expand the drop-down menu. Select an option using the <strong>Up arrow</strong> key and <strong>Down arrow</strong> key, and then press <strong>Enter</strong>.</span>
 }
 
 const ModelingTooltips = {
@@ -30,7 +30,7 @@ const ModelingTooltips = {
   entityTypeName: 'Click to view or edit settings for this entity type.',
   instanceNumber: 'Click to view all instances of this entity type.',
   lastProcessed: 'Click to view all instances of this entity type that were processed by the job that ended at this time.',
-  entityPropertyName:  'Click to view or edit settings for this property.',
+  entityPropertyName: 'Click to view or edit settings for this property.',
 
   /* Icons for entity types */
   saveIcon: 'Save changes to this entity type.',
@@ -64,40 +64,40 @@ const ModelingTooltips = {
   /* Form fields */
   joinProperty: 'Structured type properties, arrays, and unsaved properties cannot be used as join properties.',
 
-   /* Foreign key relationship tooltip in mapping tile*/
-   foreignKeyMapping: function (relatedEntityName, joinPropertyName, sourceEntityName, propertyName) {
+  /* Foreign key relationship tooltip in mapping tile*/
+  foreignKeyMapping: function (relatedEntityName, joinPropertyName, sourceEntityName, propertyName) {
     return (
       <span>
-        The <strong>{sourceEntityName}</strong> and <strong>{relatedEntityName}</strong> entity types are connected using the <strong>{joinPropertyName}</strong> property. <br/>
+        The <strong>{sourceEntityName}</strong> and <strong>{relatedEntityName}</strong> entity types are connected using the <strong>{joinPropertyName}</strong> property. <br />
         The <strong>{propertyName}</strong> property (<strong>{sourceEntityName}</strong>) and the <strong>{joinPropertyName}</strong> property (<strong>{relatedEntityName}</strong>) must return the same value.
       </span>
     )
   },
 
-    /* Foreign key relationship in modeling tile*/
-    foreignKeyModeling: function (relatedEntityName, joinPropertyName, sourceEntityName) {
-      return (
-          <span>
-              The <strong>{sourceEntityName}</strong> and <strong>{relatedEntityName}</strong> entity types are connected using the <strong>{joinPropertyName}</strong> property.
-           </span>
-      )
-    },
-    /*Relationship without Foreign Key in modeling tile*/
-    relationshipNoForeignKey: function (relatedEntityName, sourceEntityName) {
-      return(
-          <span>
-            There is a relationship between the <strong>{sourceEntityName}</strong> and <strong>{relatedEntityName}</strong> entity types.<br/>To connect the entity types using a foreign key, go to the <strong>Model</strong> screen and then add a foreign key to the relationship.
-          </span>
-      )
-    },
+  /* Foreign key relationship in modeling tile*/
+  foreignKeyModeling: function (relatedEntityName, joinPropertyName, sourceEntityName) {
+    return (
+      <span>
+        The <strong>{sourceEntityName}</strong> and <strong>{relatedEntityName}</strong> entity types are connected using the <strong>{joinPropertyName}</strong> property.
+      </span>
+    )
+  },
+  /*Relationship without Foreign Key in modeling tile*/
+  relationshipNoForeignKey: function (relatedEntityName, sourceEntityName) {
+    return (
+      <span>
+        There is a relationship between the <strong>{sourceEntityName}</strong> and <strong>{relatedEntityName}</strong> entity types.<br />To connect the entity types using a foreign key, go to the <strong>Model</strong> screen and then add a foreign key to the relationship.
+      </span>
+    )
+  },
 
-    completeRelationship: function (relatedEntityName, sourceEntityName) {
-      return(
-          <span>
-            There is a relationship between the <strong>{sourceEntityName}</strong> and <strong>{relatedEntityName}</strong> entity types.
-          </span>
-      )
-    },
+  completeRelationship: function (relatedEntityName, sourceEntityName) {
+    return (
+      <span>
+        There is a relationship between the <strong>{sourceEntityName}</strong> and <strong>{relatedEntityName}</strong> entity types.
+      </span>
+    )
+  },
 
   publish: "Publishing will apply your changes to the application. Changes are saved automatically.",
 
@@ -111,15 +111,15 @@ const ModelingTooltips = {
   addRelationshipHeader: <span aria-label="addRelationshipHeader">Set the relationship type, relationship name, and foreign key. You are not required to specify a foreign key to save the relationship.</span>,
   duplicatePropertyError: function (relationshipName) {
     return (
-    <span data-testid="property-name-error">
-      The associated entity type or one of its properties is already using the name <b>{relationshipName}</b>. A property cannot use the same name as the associated entity type or its existing properties.
-    </span>
+      <span data-testid="property-name-error">
+        The associated entity type or one of its properties is already using the name <b>{relationshipName}</b>. A property cannot use the same name as the associated entity type or its existing properties.
+      </span>
     )
   },
   relationshipNameInfo: function (entityName) {
     return (
       <span>
-        The name that identifies the relationship between the source and target entity types. The relationship is saved as a property in the <strong>{entityName}</strong> entity type.<br/>Names must start with a letter and can contain letters, numbers, hyphens, and underscores. Property names cannot use the same name as the associated entity type or its existing properties.
+        The name that identifies the relationship between the source and target entity types. The relationship is saved as a property in the <strong>{entityName}</strong> entity type.<br />Names must start with a letter and can contain letters, numbers, hyphens, and underscores. Property names cannot use the same name as the associated entity type or its existing properties.
       </span>
     )
   },
@@ -194,28 +194,28 @@ const CommonStepTooltips = {
   targetFormat: 'The format of the records in the target database.',
   targetPermissions: (
     <span>A comma-delimited string that defines permissions required to access the processed record. The string must be in the format
-      <span style={{fontFamily: "monospace"}}> role,capability,role,capability,...</span>, where
-      <i> capability</i> can be <span style={{fontFamily: "monospace"}}>read</span>,
-      <span style={{fontFamily: "monospace"}}> insert</span>,
-      <span style={{fontFamily: "monospace"}}> update</span>, or
-      <span style={{fontFamily: "monospace"}}> execute</span>.</span>
-      ),
+      <span style={{ fontFamily: "monospace" }}> role,capability,role,capability,...</span>, where
+      <i> capability</i> can be <span style={{ fontFamily: "monospace" }}>read</span>,
+      <span style={{ fontFamily: "monospace" }}> insert</span>,
+      <span style={{ fontFamily: "monospace" }}> update</span>, or
+      <span style={{ fontFamily: "monospace" }}> execute</span>.</span>
+  ),
   headers: 'A JSON object that represents additional metadata to add to the header section of the envelope of each record.',
   additionalCollections: 'The collection tags to add to the default tags assigned to the processed record.',
   provGranularity: <>The level of detail logged for provenance. Choose <strong>coarse</strong> for the default level or <strong>off</strong> for no provenance logging.</>,
   validateEntity: 'Choose whether to validate each document against the entity type definition and how to handle documents with errors.',
-  batchSize : 'The maximum number of items to process in a batch.',
+  batchSize: 'The maximum number of items to process in a batch.',
   interceptors: 'Custom modules that perform additional processes after the core step processes are completed and before the results are saved.',
   customHook: 'A custom module that performs additional processes in its own transaction before or after the core step transaction. Results are saved within a transaction.',
   options: 'Key-value pairs to pass as parameters to the custom module.',
   customModuleURI: 'The path to your custom step module.',
   radioQuery: 'A single collection that selects the source data to process in this configuration.',
-  radioCollection: <span>The CTS query that selects the source data to process in this configuration. CTS queries can be written in JavaScript or XQuery, and must return the URIs to be processed by the step. For XQuery, the query has to be passed as a string to xdmp.xqueryEval(), as shown in the example below.  Learn more: <a target="_blank" href="https://docs.marklogic.com/guide/search-dev/cts_query" style={{color: "5B69AF"}}>CTS Query.</a><br/><br/>
-  The following example source queries select data from multiple collections.<br/><br/>
-  JavaScript:<br/>
-  <span style={{fontFamily: "monospace"}}>cts.collectionQuery(['collection1', 'collection2'])</span><br/><br/>
-  XQuery:<br/>
-  <span style={{fontFamily: "monospace"}}>xdmp.xqueryEval("cts:collection-query(('loadCustomersJSON', 'loadCustomersXML'))"</span>)</span>
+  radioCollection: <span>The CTS query that selects the source data to process in this configuration. CTS queries can be written in JavaScript or XQuery, and must return the URIs to be processed by the step. For XQuery, the query has to be passed as a string to xdmp.xqueryEval(), as shown in the example below.  Learn more: <a target="_blank" href="https://docs.marklogic.com/guide/search-dev/cts_query" style={{ color: "5B69AF" }}>CTS Query.</a><br /><br />
+    The following example source queries select data from multiple collections.<br /><br />
+    JavaScript:<br />
+    <span style={{ fontFamily: "monospace" }}>cts.collectionQuery(['collection1', 'collection2'])</span><br /><br />
+    XQuery:<br />
+    <span style={{ fontFamily: "monospace" }}>xdmp.xqueryEval("cts:collection-query(('loadCustomersJSON', 'loadCustomersXML'))"</span>)</span>
 };
 
 /* Note: Some of the following are intentionally duplicated in other *Placeholders constants. */
@@ -231,7 +231,7 @@ const CommonStepPlaceholders = {
   additionalCollections: 'Enter additional collection tags.',
   provGranularity: 'Choose the level of provenance detail.',
   validateEntity: 'Choose how to handle documents with errors.',
-  batchSize : 'Enter the batch size.',
+  batchSize: 'Enter the batch size.',
   interceptors: 'Enter the array of interceptor settings.',
   customHook: 'Enter the custom hook settings.',
   options: 'Enter the parameters for the custom module.',
@@ -272,9 +272,9 @@ const LoadingStepPlaceholders = {
   sourceType: 'Enter the type of the source.',
   fieldSeparator: 'Choose the delimiter.',
   outputURIPrefix: 'Enter the URI prefix for the loaded records.'
-    /* Can we use an example like this?
-    '/myUriPrefix/'
-    */
+  /* Can we use an example like this?
+  '/myUriPrefix/'
+  */
 };
 
 const LoadingStepMessages = {
@@ -348,7 +348,7 @@ const MatchingStepTooltips = {
   testAllData: 'Tests the configuration on all the URIs in your source query with each other',
   reduceToggle: 'The Reduce match type reduces the weight of a match and makes the weight negative for the entire ruleset. Use the Reduce match type when a combination of matching properties suggests a match when there should be none. When toggled on, no other match type may be selected.',
   thresholdScale: 'Enable the scale to position, edit or delete thresholds.',
-    rulesetScale: 'Enable the scale to position, edit or delete rulesets.'
+  rulesetScale: 'Enable the scale to position, edit or delete rulesets.'
 };
 
 const MatchingStepPlaceholders = {
@@ -474,7 +474,8 @@ const RunToolTips = {
   /* Icons in step cards */
   ingestionStep: 'Run this step to select and ingest files, up to a total of 100MB.',
   otherSteps: 'Run this step.',
-  removeStep: 'Remove this step from the flow.'
+  removeStep: 'Remove this step from the flow.',
+  exploreStepData: 'The Explore Data feature only shows what documents were written by this step. The content by those ducments may or be not be overwritten by another subsequently by another step or process.'
 };
 
 const RunPlaceholders = {
@@ -500,8 +501,8 @@ const ExploreGraphViewToolTips = {
   baseEntities: <>Base entities are the entities whose data you want to explore. Choose one or more base entities.</>,
   relatedEntities: <>Related entities are entities related to the base entities. Select the check boxes for related entities you want to explore. To add or edit relationships, go to the <strong>Model</strong> screen.</>,
   noFacetToolTip: <>There are no facets for this entity. Facets enable you to filter results by property values. To enable facets for properties, go to the <strong>Model</strong> screen.</>,
-  entityToolTip : <>Click to filter results by property values.</>,
-  entityToolTipDisabled: function(entityName) {
+  entityToolTip: <>Click to filter results by property values.</>,
+  entityToolTipDisabled: function (entityName) {
     return <span aria-label="disabled-entity-tooltip">The graph is already displaying all <strong>{entityName}</strong> records. To enable this selection, remove the <strong>{entityName}</strong> entity from the Base Entities section.</span>
   }
 };
@@ -568,12 +569,12 @@ const AdvancedSettingsTooltips = {
   additionalCollections: 'The collection tags to add to the default tags assigned to the processed record.',
   targetPermissions: (
     <span>A comma-delimited string that defines permissions required to access the processed record. The string must be in the format
-      <span style={{fontFamily: "monospace"}}> role,capability,role,capability,...</span>, where
-      <i> capability</i> can be <span style={{fontFamily: "monospace"}}>read</span>,
-      <span style={{fontFamily: "monospace"}}> insert</span>,
-      <span style={{fontFamily: "monospace"}}> update</span>, or
-      <span style={{fontFamily: "monospace"}}> execute</span>.</span>
-      ),
+      <span style={{ fontFamily: "monospace" }}> role,capability,role,capability,...</span>, where
+      <i> capability</i> can be <span style={{ fontFamily: "monospace" }}>read</span>,
+      <span style={{ fontFamily: "monospace" }}> insert</span>,
+      <span style={{ fontFamily: "monospace" }}> update</span>, or
+      <span style={{ fontFamily: "monospace" }}> execute</span>.</span>
+  ),
   headers: 'A JSON object that represents additional metadata to add to the header section of the envelope of each record.',
   provGranularity: <>The level of detail logged for provenance. Choose <strong>coarse</strong> for the default level or <strong>off</strong> for no provenance logging.</>,
   validateEntity: 'Choose whether to validate each document against the entity type definition and how to handle documents with errors.',
@@ -581,21 +582,21 @@ const AdvancedSettingsTooltips = {
     <span>The scope of the source record you want to map to. Choose <strong>Instance Only</strong> to map to the source instance in your envelope. Choose <strong>Entire Record</strong> to map to any of the source fields in your envelope.</span>
   ),
   attachSourceDocument: 'Specifies whether the source document should be copied into the mapped entity instance',
-  interceptors: <span>An array of JSON objects specifying the custom modules that perform additional processes on a batch.<br/><br/>
-  <strong>Syntax:</strong><br/><span style={{fontFamily: "monospace"}}>{'{'}[<br/>&nbsp;&nbsp;"path": "/uri/of/custom/module/in/modules/database/a.sjs",<br/>&nbsp;&nbsp;"vars":{"{"}"myParameter": "myParameterValue"{"}"},<br/>
-  &nbsp;&nbsp;"when": "beforeMain | beforeContentPersisted"<br/>]{'}'}</span><br/><br/><strong>Parameters:</strong><br/>path: The URI of the interceptor module in the MODULES database that the user running the step can read and execute.<br/>
-  vars (optional): A JSON object containing parameters to pass to the interceptor.<br/>when: Defines when the interceptor will be invoked. Allowed values are <span style={{fontFamily: "monospace"}}>"beforeMain"</span> or <span style={{fontFamily: "monospace"}}>"beforeContentPersisted"</span>.<br/><br/>
-  The module identified by the <span style={{fontFamily: "monospace"}}>"path"</span> property will be invoked via MarkLogic's <a href="https://docs.marklogic.com/xdmp.invoke">xdmp.invoke function</a> with the default arguments for options. The module will be passed two arguments:<br/><br/>
-  &nbsp;&nbsp;1. contentArray: The array of content objects<br/><ul style={{}}><li>When the <span style={{fontFamily: "monospace"}}>"when"</span> property is <span style={{fontFamily: "monospace"}}>"beforeMain"</span>, this will be the array of content objects that will be passed to the <span style={{fontFamily: "monospace"}}>"main"</span> function of the step module.</li>
-  <li>When the <span style={{fontFamily: "monospace"}}>"when"</span> property is <span style={{fontFamily: "monospace"}}>"beforeContentPersisted"</span>, this will be the array of content objects returned by the <span style={{fontFamily: "monospace"}}>"main"</span> function of the step module.</li></ul>
-  &nbsp;&nbsp;2. options: The set of combined options from the step definition, flow, step, and &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;runtime options<br/><br/>
-  For a working example of step interceptors along with more details, please see the <a href="https://github.com/marklogic/marklogic-data-hub/tree/master/examples/step-interceptors/">Step Interceptors example</a>.</span>,
+  interceptors: <span>An array of JSON objects specifying the custom modules that perform additional processes on a batch.<br /><br />
+    <strong>Syntax:</strong><br /><span style={{ fontFamily: "monospace" }}>{'{'}[<br />&nbsp;&nbsp;"path": "/uri/of/custom/module/in/modules/database/a.sjs",<br />&nbsp;&nbsp;"vars":{"{"}"myParameter": "myParameterValue"{"}"},<br />
+      &nbsp;&nbsp;"when": "beforeMain | beforeContentPersisted"<br />]{'}'}</span><br /><br /><strong>Parameters:</strong><br />path: The URI of the interceptor module in the MODULES database that the user running the step can read and execute.<br />
+    vars (optional): A JSON object containing parameters to pass to the interceptor.<br />when: Defines when the interceptor will be invoked. Allowed values are <span style={{ fontFamily: "monospace" }}>"beforeMain"</span> or <span style={{ fontFamily: "monospace" }}>"beforeContentPersisted"</span>.<br /><br />
+    The module identified by the <span style={{ fontFamily: "monospace" }}>"path"</span> property will be invoked via MarkLogic's <a href="https://docs.marklogic.com/xdmp.invoke">xdmp.invoke function</a> with the default arguments for options. The module will be passed two arguments:<br /><br />
+    &nbsp;&nbsp;1. contentArray: The array of content objects<br /><ul style={{}}><li>When the <span style={{ fontFamily: "monospace" }}>"when"</span> property is <span style={{ fontFamily: "monospace" }}>"beforeMain"</span>, this will be the array of content objects that will be passed to the <span style={{ fontFamily: "monospace" }}>"main"</span> function of the step module.</li>
+      <li>When the <span style={{ fontFamily: "monospace" }}>"when"</span> property is <span style={{ fontFamily: "monospace" }}>"beforeContentPersisted"</span>, this will be the array of content objects returned by the <span style={{ fontFamily: "monospace" }}>"main"</span> function of the step module.</li></ul>
+    &nbsp;&nbsp;2. options: The set of combined options from the step definition, flow, step, and &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;runtime options<br /><br />
+    For a working example of step interceptors along with more details, please see the <a href="https://github.com/marklogic/marklogic-data-hub/tree/master/examples/step-interceptors/">Step Interceptors example</a>.</span>,
   customHook: 'A custom module that performs additional processes in its own transaction before or after the core step transaction. Results are saved within a transaction.',
   sourceDatabase: 'The database where the input data is read from.',
   targetDatabase: 'The database where to store the processed data.',
   options: 'Key-value pairs to pass as parameters to the custom module.',
   customModuleURI: 'The path to your custom step module.',
-  batchSize : 'The maximum number of items to process in a batch.',
+  batchSize: 'The maximum number of items to process in a batch.',
   customHookDeprecated: 'Custom hooks are deprecated and will be removed in a future version. Please use interceptors instead.',
 
   /* TO BE DEPRECATED. Please use SecurityTooltips.missingPermission. */
@@ -732,31 +733,31 @@ const AdvCustomTooltips = {
 };
 
 const ToolbarBulbIconInfo = {
-    modelingInfo: <div><strong>Effective data curation begins with defining an entity model.</strong><br/><br/>
-      A model is composed of one or more entity types, which represent the high-level business objects in your enterprise. Employee, product, purchase order, and department are all examples of entity types. Each entity type is composed of properties. Properties can have single or multiple values, and you can arrange them in a flat or hierarchical structure.<br/><br/>
-      Unlike relational models, you do not have to worry about building the perfect model upfront; you can <strong>evolve the model</strong> as you learn more about your data or bring in new data. As your business needs change, it’s normal to add new properties to existing entity types, or add new entity types entirely.<br/><br/>
-      The entity type is comprised of properties, which can be of any of the following types:<br/><br/>
+  modelingInfo: <div><strong>Effective data curation begins with defining an entity model.</strong><br /><br />
+    A model is composed of one or more entity types, which represent the high-level business objects in your enterprise. Employee, product, purchase order, and department are all examples of entity types. Each entity type is composed of properties. Properties can have single or multiple values, and you can arrange them in a flat or hierarchical structure.<br /><br />
+    Unlike relational models, you do not have to worry about building the perfect model upfront; you can <strong>evolve the model</strong> as you learn more about your data or bring in new data. As your business needs change, it’s normal to add new properties to existing entity types, or add new entity types entirely.<br /><br />
+    The entity type is comprised of properties, which can be of any of the following types:<br /><br />
     <ul>
-      <li>A <strong>basic</strong> data type, including integer, string, dateTime, boolean, or other less common data types.</li><br/>
-      <li><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup}/> A <strong>structured</strong> type, which is comprised of its own properties, which can also be of other structured types. Use structured types to create hierarchies of properties within your entity type. For example, the structured type property <span className={styles.lightFont}>FullName</span> of the entity <span className={styles.lightFont}>Employee</span> might have a <span className={styles.lightFont}>firstName, middleName</span>, and <span className={styles.lightFont}>lastName</span> properties within it. The depth of nested structured types is not limited.</li><br/>
-      <li><FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey}/> A <strong>relationship</strong> type, which links to an entity of the selected type. Use a relationship type when there's a relationship between two entities — for example, an employee belongs to a department, so there's a relationship between Employee and Department.</li>
+      <li>A <strong>basic</strong> data type, including integer, string, dateTime, boolean, or other less common data types.</li><br />
+      <li><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} /> A <strong>structured</strong> type, which is comprised of its own properties, which can also be of other structured types. Use structured types to create hierarchies of properties within your entity type. For example, the structured type property <span className={styles.lightFont}>FullName</span> of the entity <span className={styles.lightFont}>Employee</span> might have a <span className={styles.lightFont}>firstName, middleName</span>, and <span className={styles.lightFont}>lastName</span> properties within it. The depth of nested structured types is not limited.</li><br />
+      <li><FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey} /> A <strong>relationship</strong> type, which links to an entity of the selected type. Use a relationship type when there's a relationship between two entities — for example, an employee belongs to a department, so there's a relationship between Employee and Department.</li>
     </ul></div>,
-    exploreInfo: <div>Use the <strong>Explore</strong> screen to view and query your data.<br/><br/>
-    The <strong>Explore</strong> screen contains a visual representation of the data processed in the <strong>Model</strong> and <strong>Curate</strong> screens.<br/><br/>
-    To begin, enter a query or apply facets in the left-hand panel to see specific entity types.<br/><br/>
-    Click on the records to view specific information about each one. <br/><br/>
-    The Graph, Table, and Snippet views, on the right-hand side, display your data in various layouts. Use the Graph view to show relationships between entity types.<br/><br/>
-    For more detailed information, visit the <a href="https://docs.marklogic.com/datahub/tools/hubcentral/exploring-with-hubcentral.html" target="_blank">Documentation</a> page about <strong>Explore</strong>.<br/><br/>
-    </div>,
+  exploreInfo: <div>Use the <strong>Explore</strong> screen to view and query your data.<br /><br />
+    The <strong>Explore</strong> screen contains a visual representation of the data processed in the <strong>Model</strong> and <strong>Curate</strong> screens.<br /><br />
+    To begin, enter a query or apply facets in the left-hand panel to see specific entity types.<br /><br />
+    Click on the records to view specific information about each one. <br /><br />
+    The Graph, Table, and Snippet views, on the right-hand side, display your data in various layouts. Use the Graph view to show relationships between entity types.<br /><br />
+    For more detailed information, visit the <a href="https://docs.marklogic.com/datahub/tools/hubcentral/exploring-with-hubcentral.html" target="_blank">Documentation</a> page about <strong>Explore</strong>.<br /><br />
+  </div>,
   homePageInfo: <div>
-      <span style={{fontSize:"larger"}}><strong>Ready to get started?</strong></span><br/><br/>
-      To understand exactly what Data Hub Central can do for you, first try to get a very simple use case working. When you are happy with the results, you can build on it to satisfy all your requirements.<br/><br/>
-      <div style={{display: "flex"}}><div className={"modelIconHeader"} style={{color: "#999999"}}></div><div>Start by creating a simple entity type from the <strong>Model</strong> screen. The entity type defines the standard structures to be populated with values from your source file. Add just a few properties to start.</div></div><br/>
-      <div style={{display: "flex"}}><div style={{display: "flex", flexDirection:"column"}}><div className={"loadIconHeader"} style={{color: "#999999", marginBottom:"1.2vh"}}></div><div className={"runIconHeader"} style={{color: "#999999", marginBottom:"1.2vh"}}></div><div className={"exploreIconHeader"} style={{color: "#999999"}}></div></div>      <div>      Next, load some data from your first source system and map it to the entity type. Start by loading one source file by creating and running a Load step from the <strong>Load</strong> screen. Once you have loaded the file, create and run a Mapping step from the <strong>Curate</strong> screen. The Mapping step transforms the data from your source file to the structure defined in your entity type. Once you have this working, add the rest of the properties to your entity type and map to them. You can view and export the final data from the <strong>Explore</strong> screen.<br/><br/></div></div>
-      Once you are happy with the way the data from your first source system looks, you are ready to load and map data from additional sources. You will need to create a new Load and Mapping step for each new source.<br/><br/>
-      After you have finished mapping, if there are duplicate records from various sources that you would like to merge, do the following from the <strong>Curate</strong> screen:<br/>
-      &nbsp;&nbsp;1. Create a Matching step to identify the duplicates.<br/>
-      &nbsp;&nbsp;2. Create a Merging step to merge duplicates.
+    <span style={{ fontSize: "larger" }}><strong>Ready to get started?</strong></span><br /><br />
+    To understand exactly what Data Hub Central can do for you, first try to get a very simple use case working. When you are happy with the results, you can build on it to satisfy all your requirements.<br /><br />
+    <div style={{ display: "flex" }}><div className={"modelIconHeader"} style={{ color: "#999999" }}></div><div>Start by creating a simple entity type from the <strong>Model</strong> screen. The entity type defines the standard structures to be populated with values from your source file. Add just a few properties to start.</div></div><br />
+    <div style={{ display: "flex" }}><div style={{ display: "flex", flexDirection: "column" }}><div className={"loadIconHeader"} style={{ color: "#999999", marginBottom: "1.2vh" }}></div><div className={"runIconHeader"} style={{ color: "#999999", marginBottom: "1.2vh" }}></div><div className={"exploreIconHeader"} style={{ color: "#999999" }}></div></div>      <div>      Next, load some data from your first source system and map it to the entity type. Start by loading one source file by creating and running a Load step from the <strong>Load</strong> screen. Once you have loaded the file, create and run a Mapping step from the <strong>Curate</strong> screen. The Mapping step transforms the data from your source file to the structure defined in your entity type. Once you have this working, add the rest of the properties to your entity type and map to them. You can view and export the final data from the <strong>Explore</strong> screen.<br /><br /></div></div>
+    Once you are happy with the way the data from your first source system looks, you are ready to load and map data from additional sources. You will need to create a new Load and Mapping step for each new source.<br /><br />
+    After you have finished mapping, if there are duplicate records from various sources that you would like to merge, do the following from the <strong>Curate</strong> screen:<br />
+    &nbsp;&nbsp;1. Create a Matching step to identify the duplicates.<br />
+    &nbsp;&nbsp;2. Create a Merging step to merge duplicates.
   </div>
 }
 

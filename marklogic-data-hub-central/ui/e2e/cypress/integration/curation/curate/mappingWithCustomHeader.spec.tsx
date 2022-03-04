@@ -1,5 +1,5 @@
 import {Application} from "../../../support/application.config";
-import {tiles, toolbar} from "../../../support/components/common";
+import {toolbar} from "../../../support/components/common";
 import {
   advancedSettingsDialog,
   createEditMappingDialog,
@@ -9,7 +9,6 @@ import loadPage from "../../../support/pages/load";
 import browsePage from "../../../support/pages/browse";
 import curatePage from "../../../support/pages/curate";
 import runPage from "../../../support/pages/run";
-import detailPage from "../../../support/pages/detail";
 import LoginPage from "../../../support/pages/login";
 import "cypress-wait-until";
 
@@ -78,8 +77,8 @@ describe("Create and verify load steps, map step and flows with a custom header"
     runPage.runStep(loadStep, flowName);
     cy.uploadFile("input/10260.json");
     cy.waitForAsyncRequest();
-    cy.verifyStepRunResult("success", "Ingestion", loadStep);
-    tiles.closeRunMessage();
+    runPage.verifyStepRunResult(loadStep, "success");
+    runPage.closeFlowStatusModal(flowName);
   });
   it("Create mapping step", () => {
     toolbar.getCurateToolbarIcon().click();
@@ -140,8 +139,8 @@ describe("Create and verify load steps, map step and flows with a custom header"
     curatePage.confirmAddStepToFlow(mapStep, flowName);
     cy.waitForAsyncRequest();
     runPage.runStep(mapStep, flowName);
-    cy.verifyStepRunResult("success", "Mapping", mapStep);
-    tiles.closeRunMessage();
+    runPage.verifyStepRunResult(mapStep, "success");
+    runPage.closeFlowStatusModal(flowName);
     runPage.deleteStep(mapStep, flowName).click();
     loadPage.confirmationOptions("Yes").click();
   });
@@ -154,8 +153,8 @@ describe("Create and verify load steps, map step and flows with a custom header"
     curatePage.runStepSelectFlowConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName);
     //Step should automatically run
-    cy.verifyStepRunResult("success", "Mapping", mapStep);
-    tiles.closeRunMessage();
+    runPage.verifyStepRunResult(mapStep, "success");
+    runPage.closeFlowStatusModal(flowName);
   });
   it("Delete the flow and Verify Run Map step in a new Flow", {defaultCommandTimeout: 120000}, () => {
     runPage.deleteFlow(flowName).click();
@@ -184,8 +183,8 @@ describe("Create and verify load steps, map step and flows with a custom header"
     runPage.addStepToFlow(mapStep);
     cy.verifyStepAddedToFlow("Map", mapStep, flowName2);
     runPage.runStep(mapStep, flowName);
-    cy.verifyStepRunResult("success", "Mapping", mapStep);
-    tiles.closeRunMessage();
+    runPage.verifyStepRunResult(mapStep, "success");
+    runPage.closeFlowStatusModal(flowName);
   });
   it("Verify Run Map step in flow where step exists, should run automatically", {defaultCommandTimeout: 120000}, () => {
     toolbar.getCurateToolbarIcon().click();
@@ -196,8 +195,8 @@ describe("Create and verify load steps, map step and flows with a custom header"
     curatePage.confirmContinueRun();
     cy.waitForAsyncRequest();
     cy.waitUntil(() => runPage.getFlowName(flowName).should("be.visible"));
-    cy.verifyStepRunResult("success", "Mapping", mapStep);
-    tiles.closeRunMessage();
+    runPage.verifyStepRunResult(mapStep, "success");
+    runPage.closeFlowStatusModal(flowName);
     cy.verifyStepAddedToFlow("Map", mapStep, flowName);
   });
   // TODO DHFPROD-7711 skip since fails in Explore for Ant Design Table component
@@ -225,7 +224,9 @@ describe("Create and verify load steps, map step and flows with a custom header"
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Map", mapStep, flowName);
     cy.waitUntil(() => runPage.getFlowName(flowName).should("be.visible"));
-    cy.verifyStepRunResult("success", "Mapping", mapStep);
+    runPage.verifyStepRunResult(mapStep, "success");
+    runPage.closeFlowStatusModal(flowName);
+    /* Commented until DHFPROD-7477 is done
     runPage.explorerLink().click();
     browsePage.getTableView().click();
     browsePage.waitForSpinnerToDisappear();
@@ -236,9 +237,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     cy.contains("accessLevel");
     cy.contains("999ABC");
     // By default attachment is not present in detailed view of document
-    detailPage.attachmentPresent().should("not.exist");
-
-    detailPage.clickBackButton();
+    detailPage.attachmentPresent().should("not.exist"); */
     toolbar.getCurateToolbarIcon().click();
     curatePage.toggleEntityTypeId("Order");
     // Open step settings and switch to Advanced tab
@@ -251,12 +250,13 @@ describe("Create and verify load steps, map step and flows with a custom header"
     curatePage.runStepExistsMultFlowsConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName);
     cy.waitForAsyncRequest();
+    /* Commented until DHFPROD-7477 is done
     runPage.explorerLink().click();
 
     browsePage.getFirstTableViewInstanceIcon().should("be.visible").click({force: true});
     detailPage.getSourceView().click();
 
     // attachment is present in detailed view of document
-    detailPage.attachmentPresent().should("exist");
+    detailPage.attachmentPresent().should("exist");*/
   });
 });

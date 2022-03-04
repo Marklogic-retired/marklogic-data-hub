@@ -1,8 +1,8 @@
 import {Application} from "../../../support/application.config";
-import {tiles, toolbar} from "../../../support/components/common";
+import {toolbar} from "../../../support/components/common";
 import loadPage from "../../../support/pages/load";
 import runPage from "../../../support/pages/run";
-import browsePage from "../../../support/pages/browse";
+//import browsePage from "../../../support/pages/browse";
 import LoginPage from "../../../support/pages/login";
 
 describe("Verify ingestion for all filetypes", () => {
@@ -32,7 +32,7 @@ describe("Verify ingestion for all filetypes", () => {
   });
   it("Verify ingestion for csv filetype", {defaultCommandTimeout: 120000}, () => {
     let stepName = "cyCSVTest";
-    let flowName= "csvE2eFlow";
+    let flowName = "csvE2eFlow";
     loadPage.loadView("th-large").click();
     loadPage.addNewButton("card").click();
     loadPage.stepNameInput().type(stepName);
@@ -55,12 +55,13 @@ describe("Verify ingestion for all filetypes", () => {
     runPage.runStep(stepName, flowName);
     cy.uploadFile("input/test-1.csv");
     cy.waitForAsyncRequest();
-    cy.verifyStepRunResult("success", "Ingestion", stepName);
-    tiles.closeRunMessage();
+
+    runPage.verifyStepRunResult(stepName, "success");
+    runPage.closeFlowStatusModal(flowName);
   });
   it("Verify ingestion for zip filetype", {defaultCommandTimeout: 120000}, () => {
     let stepName = "cyZIPTest";
-    let flowName= "zipE2eFlow";
+    let flowName = "zipE2eFlow";
     loadPage.loadView("th-large").click();
     loadPage.addNewButton("card").click();
     loadPage.stepNameInput().type(stepName);
@@ -83,12 +84,14 @@ describe("Verify ingestion for all filetypes", () => {
     runPage.runStep(stepName, flowName);
     cy.uploadFile("input/test-1.zip");
     cy.waitForAsyncRequest();
-    cy.verifyStepRunResult("success", "Ingestion", stepName);
-    tiles.closeRunMessage();
+
+
+    runPage.verifyStepRunResult(stepName, "success");
+    runPage.closeFlowStatusModal(flowName);
   });
   it("Verify ingestion for xml filetype", {defaultCommandTimeout: 120000}, () => {
     let stepName = "cyXMTest";
-    let flowName= "xmlE2eFlow";
+    let flowName = "xmlE2eFlow";
     loadPage.loadView("th-large").click();
     loadPage.addNewButton("card").click();
     loadPage.stepNameInput().type(stepName);
@@ -113,14 +116,15 @@ describe("Verify ingestion for all filetypes", () => {
     runPage.runStep(stepName, flowName);
     cy.uploadFile("input/test-1.xml");
     cy.waitForAsyncRequest();
-    cy.verifyStepRunResult("success", "Ingestion", stepName);
-    //Verify step name appears as a collection facet in explorer
-    runPage.explorerLink().click({multiple: true, force: true});
-    browsePage.waitForSpinnerToDisappear();
-    cy.waitForAsyncRequest();
-    browsePage.waitForCardToLoad();
-    browsePage.getTotalDocuments().should("eq", 1);
-    browsePage.getFacet("collection").should("exist");
-    browsePage.getFacetItemCheckbox("collection", stepName).should("to.exist");
+    runPage.verifyStepRunResult(stepName, "success");
+    /* Commented until DHFPROD-7477 is done
+      //Verify step name appears as a collection facet in explorer
+      runPage.explorerLink().click({multiple: true, force: true});
+      browsePage.waitForSpinnerToDisappear();
+      cy.waitForAsyncRequest();
+      browsePage.waitForCardToLoad();
+      browsePage.getTotalDocuments().should("eq", 1);
+      browsePage.getFacet("collection").should("exist");
+      browsePage.getFacetItemCheckbox("collection", stepName).should("to.exist"); */
   });
 });

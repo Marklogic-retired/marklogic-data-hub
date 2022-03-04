@@ -1,6 +1,6 @@
 import "cypress-wait-until";
 import {Application} from "../../../support/application.config";
-import {toolbar, tiles} from "../../../support/components/common/index";
+import {toolbar} from "../../../support/components/common/index";
 import curatePage from "../../../support/pages/curate";
 import loadPage from "../../../support/pages/load";
 import runPage from "../../../support/pages/run";
@@ -54,8 +54,9 @@ describe("Add Custom step to a flow", () => {
     runPage.expandFlow(flowName);
 
     runPage.runStep(stepName, flowName);
-    cy.verifyStepRunResult("success", stepType, stepName);
-    tiles.closeRunMessage();
+
+    runPage.verifyStepRunResult(stepName, "success");
+    runPage.closeFlowStatusModal(flowName);
   });
 
   it("Remove custom steps from flow", () => {
@@ -83,7 +84,8 @@ describe("Add Custom step to a flow", () => {
     runPage.expandFlow(flowName);
 
     runPage.runStep(stepName, flowName);
-    cy.verifyStepRunResult("success", stepType, stepName);
-    tiles.closeRunMessage();
+
+    runPage.verifyStepRunResult(stepName, "success");
+    runPage.closeFlowStatusModal(flowName);
   });
 });
