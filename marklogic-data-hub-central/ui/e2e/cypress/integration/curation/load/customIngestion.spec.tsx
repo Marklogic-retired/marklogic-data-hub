@@ -1,5 +1,5 @@
 import {Application} from "../../../support/application.config";
-import {tiles, toolbar} from "../../../support/components/common";
+import {toolbar} from "../../../support/components/common";
 import loadPage from "../../../support/pages/load";
 import runPage from "../../../support/pages/run";
 import LoginPage from "../../../support/pages/login";
@@ -41,8 +41,7 @@ describe("Custom Ingestion", () => {
     runPage.runStep(loadStep, flowName);
     cy.uploadFile("input/test-1.json");
     cy.waitForAsyncRequest();
-    cy.verifyStepRunResult("success", "Ingestion", loadStep);
-    tiles.closeRunMessage();
-
+    runPage.verifyStepRunResult(loadStep, "success");
+    runPage.closeFlowStatusModal(flowName);
   });
 });

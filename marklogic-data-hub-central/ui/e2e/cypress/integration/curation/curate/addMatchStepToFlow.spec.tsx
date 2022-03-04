@@ -2,8 +2,7 @@ import "cypress-wait-until";
 import {Application} from "../../../support/application.config";
 import {
   toolbar,
-  createEditStepDialog,
-  tiles
+  createEditStepDialog
 } from "../../../support/components/common/index";
 import curatePage from "../../../support/pages/curate";
 import loadPage from "../../../support/pages/load";
@@ -82,8 +81,8 @@ describe("Add Matching step to a flow", () => {
 
     runPage.runStep(matchStep, flowName1);
     cy.log("**Verify Step Run Result is successful**");
-    cy.verifyStepRunResult("success", "Matching", matchStep);
-    tiles.closeRunMessage();
+    runPage.verifyStepRunResult(matchStep, "success");
+    runPage.closeFlowStatusModal(flowName1);
     cy.waitForAsyncRequest();
 
   });
@@ -110,8 +109,9 @@ describe("Add Matching step to a flow", () => {
 
     cy.waitForAsyncRequest();
     runPage.runStep(matchStep, flowName1);
-    cy.verifyStepRunResult("success", "Matching", matchStep);
-    tiles.closeRunMessage();
+
+    runPage.verifyStepRunResult(matchStep, "success");
+    runPage.closeFlowStatusModal(flowName1);
   });
   it("Delete the match step", () => {
     runPage.deleteStep(matchStep, flowName1).click();
@@ -159,8 +159,8 @@ describe("Add Matching step to a flow", () => {
     curatePage.selectFlowToRunIn(flowName2);
     cy.waitForAsyncRequest();
     runPage.getFlowName(flowName2).should("be.visible");
-    cy.verifyStepRunResult("success", "Matching", matchStep);
-    tiles.closeRunMessage();
+    runPage.verifyStepRunResult(matchStep, "success");
+    runPage.closeFlowStatusModal(flowName2);
     cy.verifyStepAddedToFlow("Match", matchStep, flowName2);
   });
   it("Navigating to match tab", () => {
@@ -175,9 +175,8 @@ describe("Add Matching step to a flow", () => {
     curatePage.confirmContinueRun();
 
     cy.log("**Verify the step run result**");
-    cy.verifyStepRunResult("success", "Matching", matchStep);
-
-    tiles.closeRunMessage();
+    runPage.verifyStepRunResult(matchStep, "success");
+    runPage.closeFlowStatusModal(flowName2);
     cy.verifyStepAddedToFlow("Match", matchStep, flowName2);
   });
   it("Navigating to match tab", () => {
@@ -207,8 +206,9 @@ describe("Add Matching step to a flow", () => {
     cy.waitForAsyncRequest();
 
     runPage.getFlowName(flowName1).should("be.visible");
-    cy.verifyStepRunResult("success", "Matching", matchStep);
-    tiles.closeRunMessage();
+
+    runPage.verifyStepRunResult(matchStep, "success");
+    runPage.closeFlowStatusModal(flowName1);
     cy.verifyStepAddedToFlow("Match", matchStep, flowName1);
   });
 });

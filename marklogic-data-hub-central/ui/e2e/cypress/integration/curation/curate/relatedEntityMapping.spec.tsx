@@ -19,7 +19,7 @@ import browsePage from "../../../support/pages/browse";
 import LoginPage from "../../../support/pages/login";
 import "cypress-wait-until";
 import modelPage from "../../../support/pages/model";
-import entitiesSidebar from "../../../support/pages/entitiesSidebar";
+//import entitiesSidebar from "../../../support/pages/entitiesSidebar";
 
 describe("Mapping", () => {
   before(() => {
@@ -152,12 +152,12 @@ describe("Mapping", () => {
     runPage.addStep("relationFlow");
     runPage.addStepToFlow("mapRelation");
     runPage.verifyStepInFlow("Map", "mapRelation", "relationFlow");
-
     runPage.runStep("mapRelation", "relationFlow");
-    cy.verifyStepRunResult("success", "Mapping", "mapRelation");
+    runPage.verifyStepRunResult("mapRelation", "success");
     cy.waitForAsyncRequest();
-
-    // Navigate to Explore
+    runPage.closeFlowStatusModal("relationFlow");
+    /* Commented until DHFPROD-7477 is done
+         // Navigate to Explore
     runPage.explorerLink().click();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
@@ -170,6 +170,7 @@ describe("Mapping", () => {
     entitiesSidebar.showMoreEntities().click({force: true});
     entitiesSidebar.openBaseEntityFacets("Relation");
     browsePage.getTotalDocuments().should("be.greaterThan", 7);
+    */
   });
   it("Edit advanced settings for each entity", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
@@ -238,7 +239,7 @@ describe("Mapping", () => {
   it("Verify page automically scrolls to top of table after pagination", () => {
     mappingStepDetail.relatedFilterMenu("Person");
     mappingStepDetail.getRelatedEntityFromList("Relation (relatedTo Person)");
-    cy.get("#entityContainer").scrollTo("bottom",  {ensureScrollable: false});
+    cy.get("#entityContainer").scrollTo("bottom", {ensureScrollable: false});
     mappingStepDetail.entityTitle("Person").should("not.be.visible");
     mappingStepDetail.getPaginationPageSizeOptions("person").click();
     browsePage.getPageSizeOption("10 / page").click({force: true});

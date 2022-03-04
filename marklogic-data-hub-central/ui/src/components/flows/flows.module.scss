@@ -36,8 +36,6 @@
 
 
   .infoIcon {
-    position: absolute;
-    top: 8px;
     margin-left: 8px;
     color: #7F86B5;
     cursor: pointer;
@@ -51,6 +49,10 @@
     cursor: not-allowed;
   }
 
+  .flowHeader {
+    display: flex;
+    align-items: center;
+}
   .flowName {
     color: #3f4692;
     cursor: pointer;

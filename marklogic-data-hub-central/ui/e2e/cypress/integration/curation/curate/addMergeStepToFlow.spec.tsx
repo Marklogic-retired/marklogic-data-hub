@@ -3,7 +3,6 @@ import {Application} from "../../../support/application.config";
 import {
   toolbar,
   createEditStepDialog,
-  tiles
 } from "../../../support/components/common/index";
 import curatePage from "../../../support/pages/curate";
 import loadPage from "../../../support/pages/load";
@@ -85,8 +84,9 @@ describe("Add Merge step to a flow", () => {
     cy.verifyStepAddedToFlow("Merge", mergeStep, flowName1);
     cy.waitForAsyncRequest();
     runPage.runStep(mergeStep, flowName1);
-    cy.verifyStepRunResult("success", "Merging", mergeStep);
-    tiles.closeRunMessage();
+
+    runPage.verifyStepRunResult(mergeStep, "success");
+    runPage.closeFlowStatusModal(flowName1);
   });
   it("Delete the step and Navigate back to merge tab", () => {
     runPage.deleteStep(mergeStep, flowName1).click();
@@ -106,8 +106,9 @@ describe("Add Merge step to a flow", () => {
     cy.verifyStepAddedToFlow("Merge", mergeStep, flowName1);
     cy.waitForAsyncRequest();
     runPage.runStep(mergeStep, flowName1);
-    cy.verifyStepRunResult("success", "Merging", mergeStep);
-    tiles.closeRunMessage();
+
+    runPage.verifyStepRunResult(mergeStep, "success");
+    runPage.closeFlowStatusModal(flowName1);
   });
   it("Delete the merge step", () => {
     runPage.deleteStep(mergeStep, flowName1).click();
@@ -129,8 +130,9 @@ describe("Add Merge step to a flow", () => {
     runPage.addStepToFlow(mergeStep);
     cy.verifyStepAddedToFlow("Merge", mergeStep, flowName2);
     runPage.runStep(mergeStep, flowName2);
-    cy.verifyStepRunResult("success", "Merging", mergeStep);
-    tiles.closeRunMessage();
+
+    runPage.verifyStepRunResult(mergeStep, "success");
+    runPage.closeFlowStatusModal(flowName2);
   });
   it("Delete the merge step and Navigating to merge tab", () => {
     runPage.deleteStep(mergeStep, flowName2).click();
@@ -147,8 +149,8 @@ describe("Add Merge step to a flow", () => {
     curatePage.selectFlowToRunIn(flowName2);
     cy.waitForAsyncRequest();
     runPage.getFlowName(flowName2).should("be.visible");
-    cy.verifyStepRunResult("success", "Merging", mergeStep);
-    tiles.closeRunMessage();
+    runPage.verifyStepRunResult(mergeStep, "success");
+    runPage.closeFlowStatusModal(flowName2);
     cy.verifyStepAddedToFlow("Merge", mergeStep, flowName2);
   });
   it("Navigating to merge tab", () => {
@@ -163,8 +165,9 @@ describe("Add Merge step to a flow", () => {
     curatePage.confirmContinueRun();
     cy.waitForAsyncRequest();
     runPage.getFlowName(flowName2).should("be.visible");
-    cy.verifyStepRunResult("success", "Merging", mergeStep);
-    tiles.closeRunMessage();
+
+    runPage.verifyStepRunResult(mergeStep, "success");
+    runPage.closeFlowStatusModal(flowName2);
     cy.verifyStepAddedToFlow("Merge", mergeStep, flowName2);
   });
   it("Navigating to merge tab", () => {
@@ -193,8 +196,9 @@ describe("Add Merge step to a flow", () => {
     curatePage.selectFlowToRunIn(flowName1);
     cy.waitForAsyncRequest();
     runPage.getFlowName(flowName1).should("be.visible");
-    cy.verifyStepRunResult("success", "Merging", mergeStep);
-    tiles.closeRunMessage();
+
+    runPage.verifyStepRunResult(mergeStep, "success");
+    runPage.closeFlowStatusModal(flowName1);
     cy.verifyStepAddedToFlow("Merge", mergeStep, flowName1);
   });
 });
