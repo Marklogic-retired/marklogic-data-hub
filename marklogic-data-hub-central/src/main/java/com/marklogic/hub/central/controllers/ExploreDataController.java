@@ -29,10 +29,10 @@ public class ExploreDataController extends BaseController {
         return ResponseEntity.ok(newExploreDataService().searchAndTransform(searchQuery));
     }
 
-    @RequestMapping(value = "/getRecord", method = RequestMethod.GET)
+    @RequestMapping(value = "/getRecords", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<JsonNode> getRecord(@RequestParam String recordId) {
-        return new ResponseEntity<>(newExploreDataService().getRecord(recordId), HttpStatus.OK);
+    public ResponseEntity<JsonNode> getRecords(@RequestBody JsonNode recordIds) {
+        return new ResponseEntity<>(newExploreDataService().getRecords(recordIds), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)

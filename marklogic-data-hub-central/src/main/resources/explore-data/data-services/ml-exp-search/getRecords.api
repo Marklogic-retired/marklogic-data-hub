@@ -1,9 +1,10 @@
 {
-  "functionName": "getRecord",
+  "functionName": "getRecords",
   "params": [
     {
-      "name": "recordId",
-      "datatype": "string"
+      "name": "recordIds",
+      "datatype": "jsonDocument",
+      "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
     }
   ],
   "return": {
