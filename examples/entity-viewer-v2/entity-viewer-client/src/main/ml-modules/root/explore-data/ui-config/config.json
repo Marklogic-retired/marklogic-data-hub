@@ -3,7 +3,10 @@
     "searchResultsEndpoint": "/api/explore",
     "detailEndpoint": "/api/explore",
     "detailType": "person",
-    "detailConstraint": "personId"
+    "detailConstraint": "personId",
+    "recordsEndpoint": "/api/explore/getRecords",
+    "recentEndpoint": "/api/explore/recentlyVisited",
+    "recentStorage": "local"
   },
 
   "header": {

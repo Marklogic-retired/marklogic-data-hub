@@ -53,7 +53,12 @@ const Detail: React.FC<Props> = (props) => {
   }, [userContext.config]);
 
   useEffect(() => {
-    detailContext.handleSaveRecentlyVisited();
+    if (userContext.config.api && 
+      userContext.config.api.recentStorage === "database") {
+      detailContext.handleSaveRecent();
+    } else {
+      detailContext.handleSaveRecentLocal();
+    }
   }, [detailContext.detail]);
   
   const getHeading = (configHeading) => {
@@ -92,7 +97,7 @@ const Detail: React.FC<Props> = (props) => {
 
     <div className="detail">
 
-      {config?.detail && !_.isEmpty(detailContext.detail) ? (
+      {config?.detail && !_.isEmpty(detailContext.detail) && !detailContext.loading ? (
 
       <div>
 
@@ -109,16 +114,16 @@ const Detail: React.FC<Props> = (props) => {
           <div className="row">
             <div className="col-lg-7">
 
-              {config?.detail?.personal ? 
+              {config?.detail?.personal &&
                 <Section title="Personal Info">
                   {getPersonalItems(config?.detail?.personal?.items)}
                 </Section>
-              : null}
+              }
 
             </div>
             <div className="col-lg-5">
 
-              {config?.detail?.relationships ? 
+              {config?.detail?.relationships &&
                 <Section title="Relationships">
                   <div className="relationships">
                     {React.createElement(
@@ -127,13 +132,13 @@ const Detail: React.FC<Props> = (props) => {
                     )}
                   </div>
                 </Section>
-              : null}
+              }
 
-              {config?.detail?.occupations ? 
+              {config?.detail?.occupations &&
                 <Section title="Occupations">
                   <Occupations />
                 </Section>
-              : null}
+              }
 
             </div>
           </div>
