@@ -100,14 +100,6 @@
       <state>CA</state>
     </relation>
     <relation>
-      <id>10035</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
-      <fullname>Bresnahan Vinny</fullname>
-      <city>Stockton</city>
-      <state>CA</state>
-    </relation>
-    <relation>
       <id>10068</id>
       <predicate>worksWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>

@@ -137,14 +137,6 @@
       <city>Chicago</city>
       <state>IL</state>
     </relation>
-    <relation>
-      <id>10054</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Chessell Skye</fullname>
-      <city>Chicago</city>
-      <state>IL</state>
-    </relation>
   </relations>
   <createdOn>
     <ts>2022-02-09T08:30:53Z</ts>

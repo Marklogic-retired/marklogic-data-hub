@@ -1,14 +1,18 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate, useLocation } from "react-router-dom";
 import { UserContext } from "../store/UserContext";
-import { getRecentlyVisited, saveRecentlyVisited, getRecord } from "../api/api";
+import { getRecent, saveRecent, getRecords } from "../api/api";
+import _ from "lodash";
 
 interface DetailContextInterface {
   detail: any;
   recent: any;
+  loading: boolean;
   handleGetDetail: any;
-  handleGetRecentlyVisited: any;
-  handleSaveRecentlyVisited: any;
+  handleGetRecent: any;
+  handleGetRecentLocal: any;
+  handleSaveRecent: any;
+  handleSaveRecentLocal: any;
 }
 interface QueryInterface {
   searchText: string;
@@ -19,9 +23,12 @@ interface QueryInterface {
 const defaultState = {
   detail: {},
   recent: [],
+  loading: false,
   handleGetDetail: () => {},
-  handleGetRecentlyVisited: () => {},
-  handleSaveRecentlyVisited: () => {}
+  handleGetRecent: () => {},
+  handleGetRecentLocal: () => {},
+  handleSaveRecent: () => {},
+  handleSaveRecentLocal: () => {}
 };
 
 /**
@@ -46,7 +53,7 @@ const DetailProvider: React.FC = ({ children }) => {
   const [detailUri, setDetailUri] = useState<string>("");
   const [detail, setDetail] = useState<any>({});
   const [recent, setRecent] = useState<any>([]);
-  const [newDetail, setNewDetail] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   // TODO remove when URI-based detail view is definite
   const buildQuery = (id):QueryInterface => {
@@ -62,34 +69,83 @@ const DetailProvider: React.FC = ({ children }) => {
   const handleGetDetail = (uri) => {
     console.log("handleGetDetail", uri);
     setDetailUri(uri);
-    let sr = getRecord(uri, userContext.userid);
+    setLoading(true);
+    let sr = getRecords(userContext.config.api.recordsEndpoint, [uri], userContext.userid);
     sr.then(result => {
-      setDetail(result?.data);
+      setDetail(result?.data[0]);
       if (location.pathname !== "/detail/" + encodeURIComponent(uri)) {
         navigate("/detail/" + encodeURIComponent(uri)); // Detail click from another view
       }
-      handleGetRecentlyVisited();
+      setLoading(false);
     }).catch(error => {
       console.error(error);
     })
   };
 
-  const handleGetRecentlyVisited = () => {
-    let sr = getRecentlyVisited(userContext.userid);
+  const handleGetRecent = () => {
+    setLoading(true);
+    // Get from database
+    let sr = getRecent(userContext.config.api.recentEndpoint, userContext.userid);
     sr.then(result => {
+      console.log("recent", result?.data);
       setRecent(result?.data);
+      setLoading(false);
     }).catch(error => {
       console.error(error);
     })
   };
 
-  const handleSaveRecentlyVisited = () => {
-    let sr = saveRecentlyVisited(detailUri, userContext.userid);
+  const handleGetRecentLocal = () => {
+    // Get from database via URIs in local storage
+    let json = localStorage.getItem("recent");
+    let obj = json ? JSON.parse(json) : null;
+    let sortedObj: any = {}, sortedUris: any = [];
+    if (obj && obj[userContext.userid]) {
+      sortedObj = _.fromPairs(_.sortBy(_.toPairs(obj[userContext.userid]), 1).reverse());
+      sortedUris = Object.keys(sortedObj);
+    }
+    if (sortedUris.length > 0) {
+      setLoading(true);
+      let sr = getRecords(userContext.config.api.recordsEndpoint, sortedUris, userContext.userid);
+      sr.then(result => {
+        setRecent(result?.data);
+        setLoading(false);
+      }).catch(error => {
+        console.error(error);
+      })
+    }
+  };
+
+  const handleSaveRecent = () => {
+    // Save to database
+    let sr = saveRecent(userContext.config.api.recentEndpoint, detailUri, userContext.userid);
     sr.then(result => {
-      console.log("handleSaveRecentlyVisited", detailUri)
+      console.log("handleSaveRecent", detailUri)
     }).catch(error => {
       console.error(error);
     })
+  };
+
+  const handleSaveRecentLocal = () => {
+    // Save to local storage
+    let json = localStorage.getItem("recent");
+    let dt = new Date().toISOString();
+    let newObj = {};
+    if (!detailUri) return;
+    if (!json) {
+      newObj[userContext.userid] = {};
+      newObj[userContext.userid][detailUri] = dt;
+      localStorage.setItem("recent", JSON.stringify(newObj));
+    } else {
+      newObj = JSON.parse(json);
+      if (newObj && newObj[userContext.userid]) {
+        newObj[userContext.userid][detailUri] = dt;
+      } else {
+        newObj[userContext.userid] = {};
+        newObj[userContext.userid][detailUri] = dt;
+      }
+      localStorage.setItem("recent", JSON.stringify(newObj));
+    }
   };
 
   return (
@@ -97,9 +153,12 @@ const DetailProvider: React.FC = ({ children }) => {
       value={{
         detail,
         recent,
+        loading,
         handleGetDetail,
-        handleGetRecentlyVisited,
-        handleSaveRecentlyVisited
+        handleGetRecent,
+        handleGetRecentLocal,
+        handleSaveRecent,
+        handleSaveRecentLocal
       }}
     >
       {children}
