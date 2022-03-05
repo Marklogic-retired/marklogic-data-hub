@@ -77,7 +77,7 @@ export const getUserid = async (proxy) => {
     }
   }
   try {
-    // URL string here just needs to match what is in steupProxy.js
+    // URL string here just needs to match what is in setupProxy.js
     const response = await axios.get("/api/explore/login", config);
     if (response && response.status === 200) {
       return response;
@@ -125,7 +125,7 @@ export const getConfig = async (userid) => {
   }
 };
 
-export const saveRecentlyVisited = async (uri, userid) => { 
+export const saveRecent = async (endpoint, uri, userid) => { 
   let config = {
     headers: {
       userid: userid ? userid : null
@@ -136,7 +136,7 @@ export const saveRecentlyVisited = async (uri, userid) => {
     recordUri: uri ? uri : null
   }
   try {
-    const response = await axios.post("/api/explore/recentlyVisited", body, config);
+    const response = await axios.post(endpoint, body, config);
     if (response && response.status === 200) {
       return response;
     }
@@ -146,14 +146,14 @@ export const saveRecentlyVisited = async (uri, userid) => {
   }
 };
 
-export const getRecentlyVisited = async (userid) => { 
+export const getRecent = async (endpoint, userid) => { 
   let config = {
     headers: {
       userid: userid ? userid : null
     }
   }
   try {
-    const response = await axios.get("/api/explore/recentlyVisited?user=" + userid, config);
+    const response = await axios.get(endpoint + "?user=" + userid, config);
     if (response && response.status === 200) {
       return response;
     }
@@ -163,14 +163,17 @@ export const getRecentlyVisited = async (userid) => {
   }
 };
 
-export const getRecord = async (uri, userid) => { 
+export const getRecords = async (endpoint, uris, userid) => { 
   let config = {
     headers: {
       userid: userid ? userid : null
     }
   }
+  let body = {
+    uris: uris
+  };
   try {
-    const response = await axios.get("/api/explore/getRecord?recordId=" + uri, config);
+    const response = await axios.post(endpoint, body, config);
     if (response && response.status === 200) {
       return response;
     }

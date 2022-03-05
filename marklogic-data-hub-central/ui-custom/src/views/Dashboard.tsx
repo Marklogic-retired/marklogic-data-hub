@@ -27,7 +27,12 @@ const Dashboard: React.FC<Props> = (props) => {
   useEffect(() => {
     setSaved(getSaved({}));
     setSummary(getSummary({}));
-    setRecent(detailContext.handleGetRecentlyVisited());
+    if (userContext.config.api && 
+      userContext.config.api.recentStorage === "database") {
+      detailContext.handleGetRecent();
+    } else {
+      detailContext.handleGetRecentLocal();
+    }
   }, []);
 
   useEffect(() => {
@@ -59,7 +64,7 @@ const Dashboard: React.FC<Props> = (props) => {
                 <h4 style={{marginBottom: "20px"}}>New Search</h4>
                 <SearchBox config={config.searchbox} button="vertical" width="100%" />
 
-                {config?.dashboard?.saved ? 
+                {config?.dashboard?.saved &&
                   <div>
                     <div className="divider">- or -</div>
                     <div style={{marginTop: "20px"}}>
@@ -67,20 +72,20 @@ const Dashboard: React.FC<Props> = (props) => {
                       <Saved data={saved} config={config.dashboard.saved} />
                     </div>
                   </div>
-                : null}
+                }
             </Section>
 
           </div>
 
           <div className="col-lg">
 
-            {config?.dashboard?.new ? 
+            {config?.dashboard?.new &&
               <Section title="What's New with Entities">
                 <New />
               </Section>
-            : null}
+            }
 
-            {config?.dashboard?.recent ? 
+            {config?.dashboard?.recent && !detailContext.loading ? 
               <Section title="Recently Visited" config={{
                 "mainStyle": {
                   "maxHeight": "500px"
@@ -88,7 +93,7 @@ const Dashboard: React.FC<Props> = (props) => {
               }}>
                   <Recent data={recent} config={config.dashboard.recent} />
               </Section>
-            : null}
+            : <Loading />}
 
           </div>
 

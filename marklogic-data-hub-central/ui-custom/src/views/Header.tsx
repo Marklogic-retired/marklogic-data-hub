@@ -25,23 +25,23 @@ const Header: React.FC<Props> = (props) => {
           <img src="/marklogic.png" alt="image" />
         </span>
 
-        {config?.header ? 
+        {config?.header && 
           <span className="title">
             <Link to="/">{config.header.title}</Link>
             <span className="subtitle">{config.header.subtitle}</span>
           </span>
-        : null}
+        }
 
-        {config?.header?.menus ? 
+        {config?.header?.menus && 
           <Menus config={config.header.menus} />
-        : null}
+        }
 
       </div>
       <div>
 
-        {config?.searchbox ? 
+        {config?.searchbox && 
           <SearchBox config={config.searchbox} width="600px" />
-        : null}
+        }
 
         <div className="account">
             <PersonCircle color="#ccc" size={28} />

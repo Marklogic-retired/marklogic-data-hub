@@ -31,34 +31,30 @@ const Search: React.FC<Props> = (props) => {
     <div className="search">
 
       {config?.search && !searchContext.loading ? 
-      
       <>
-
         <aside>
 
-          {config?.search?.meter ? 
+          {config?.search?.meter &&
             <SummaryMeter config={config.search.meter} />
-          : null}
+          }
 
-          {config?.search?.facets ? 
+          {config?.search?.facets && 
             <Facets config={config.search.facets} />
-          : null}
+          }
 
         </aside>
         <div className="results">
 
-          {config?.search ? // TODO pass config into SelectedFacets
+          {config?.search && // TODO pass config into SelectedFacets
             <SelectedFacets />
-          : null}
+          }
 
-          {config?.search?.results ? 
+          {config?.search?.results && 
             <ResultsList config={config.search.results} />
-          : null}
+          }
 
         </div>
-
       </>
-
       : <Loading />}
 
     </div>
