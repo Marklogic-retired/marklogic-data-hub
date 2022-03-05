@@ -14,9 +14,13 @@
  limitations under the License.
  */
 'use strict';
-var recordId;
-
+var recordIds;
+recordIds = recordIds.toObject();
 const ConfigurableSearch = require("/explore-data/search-lib/configurable-search-lib.sjs");
 const configurableSearch = new ConfigurableSearch();
 
-configurableSearch.getDocument(recordId.toString());
+const documents = [];
+const uris = recordIds["uris"];
+uris.forEach(recordId => documents.push(configurableSearch.getDocument(recordId.toString())));
+
+documents;

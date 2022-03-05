@@ -48,9 +48,9 @@ public interface ExploreDataService {
             private BaseProxy baseProxy;
 
             private BaseProxy.DBFunctionRequest req_searchAndTransform;
+            private BaseProxy.DBFunctionRequest req_getRecords;
             private BaseProxy.DBFunctionRequest req_getRecentlyVisitedRecords;
             private BaseProxy.DBFunctionRequest req_saveRecentlyVisitedRecord;
-            private BaseProxy.DBFunctionRequest req_getRecord;
 
             private ExploreDataServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
@@ -58,12 +58,12 @@ public interface ExploreDataService {
 
                 this.req_searchAndTransform = this.baseProxy.request(
                     "searchAndTransform.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                this.req_getRecords = this.baseProxy.request(
+                    "getRecords.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_getRecentlyVisitedRecords = this.baseProxy.request(
                     "getRecentlyVisitedRecords.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_saveRecentlyVisitedRecord = this.baseProxy.request(
                     "saveRecentlyVisitedRecord.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
-                this.req_getRecord = this.baseProxy.request(
-                    "getRecord.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
             }
 
             @Override
@@ -77,6 +77,21 @@ public interface ExploreDataService {
                 request
                       .withParams(
                           BaseProxy.documentParam("searchParams", false, BaseProxy.JsonDocumentType.fromJsonNode(searchParams))
+                          ).responseSingle(false, Format.JSON)
+                );
+            }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode getRecords(com.fasterxml.jackson.databind.JsonNode recordIds) {
+                return getRecords(
+                    this.req_getRecords.on(this.dbClient), recordIds
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode getRecords(BaseProxy.DBFunctionRequest request, com.fasterxml.jackson.databind.JsonNode recordIds) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.documentParam("recordIds", false, BaseProxy.JsonDocumentType.fromJsonNode(recordIds))
                           ).responseSingle(false, Format.JSON)
                 );
             }
@@ -108,21 +123,6 @@ public interface ExploreDataService {
                           BaseProxy.documentParam("recentlyVisitedRecord", false, BaseProxy.JsonDocumentType.fromJsonNode(recentlyVisitedRecord))
                           ).responseNone();
             }
-
-            @Override
-            public com.fasterxml.jackson.databind.JsonNode getRecord(String recordId) {
-                return getRecord(
-                    this.req_getRecord.on(this.dbClient), recordId
-                    );
-            }
-            private com.fasterxml.jackson.databind.JsonNode getRecord(BaseProxy.DBFunctionRequest request, String recordId) {
-              return BaseProxy.JsonDocumentType.toJsonNode(
-                request
-                      .withParams(
-                          BaseProxy.atomicParam("recordId", false, BaseProxy.StringType.fromString(recordId))
-                          ).responseSingle(false, Format.JSON)
-                );
-            }
         }
 
         return new ExploreDataServiceImpl(db, serviceDeclaration);
@@ -135,6 +135,14 @@ public interface ExploreDataService {
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode searchAndTransform(com.fasterxml.jackson.databind.JsonNode searchParams);
+
+  /**
+   * Invokes the getRecords operation on the database server
+   *
+   * @param recordIds	provides input
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode getRecords(com.fasterxml.jackson.databind.JsonNode recordIds);
 
   /**
    * Invokes the getRecentlyVisitedRecords operation on the database server
@@ -151,13 +159,5 @@ public interface ExploreDataService {
    * 
    */
     void saveRecentlyVisitedRecord(com.fasterxml.jackson.databind.JsonNode recentlyVisitedRecord);
-
-  /**
-   * Invokes the getRecord operation on the database server
-   *
-   * @param recordId	provides input
-   * @return	as output
-   */
-    com.fasterxml.jackson.databind.JsonNode getRecord(String recordId);
 
 }
