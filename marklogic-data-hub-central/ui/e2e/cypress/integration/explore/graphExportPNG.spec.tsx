@@ -40,12 +40,16 @@ describe("Test graph export to png", () => {
     graphExplore.getExportPNGIconTooltip().should("exist");
 
     cy.log("**Click on export button and check that file it's exported**");
-    graphExplore.getExportPNGIcon().click({force: true}).then(
-      () => {
-        cy.readFile("./cypress/downloads/graph-view-explore.png", "base64").then(
-          (downloadPng) => {
-            expect(downloadPng).exist;
-          });
-      });
+
+    //To test graph view model png is downloaded successfully
+    if (Cypress.isBrowser("!firefox")) {
+      graphExplore.getExportPNGIcon().click({force: true}).then(
+        () => {
+          cy.readFile("./cypress/downloads/graph-view-explore.png", "base64").then(
+            (downloadPng) => {
+              expect(downloadPng).exist;
+            });
+        });
+    }
   });
 });

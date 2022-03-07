@@ -61,11 +61,11 @@ describe("Entity Modeling Property Table Component", () => {
     expect(getByLabelText("NewEntity-add-property")).toBeDisabled();
   });
 
-  test("Property Table renders in side panel view with less columns as designed", () => {
+  test("Property Table renders in side panel view with less columns as designed", async () => {
     let entityName = propertyTableEntities[0].entityName;
     let definitions = propertyTableEntities[0].model.definitions;
 
-    const {queryByLabelText, getByText, rerender} =  render(
+    const {queryByLabelText, getByText, rerender, getByTestId} =  render(
       <PropertyTable
         canReadEntityModel={true}
         canWriteEntityModel={true}
@@ -112,6 +112,12 @@ describe("Entity Modeling Property Table Component", () => {
     expect(queryByLabelText("identifier-header")).not.toBeInTheDocument();
     expect(queryByLabelText("pii-header")).not.toBeInTheDocument();
     expect(queryByLabelText("facet-header")).not.toBeInTheDocument();
+
+    fireEvent.mouseOver(getByTestId("structured-shipping"));
+    await wait(() => expect(screen.getByText(ModelingTooltips.structuredType)).toBeInTheDocument());
+
+    fireEvent.mouseOver(getByTestId("multiple-icon-nicknames"));
+    await wait(() => expect(screen.getByText(ModelingTooltips.multipleIconTooltip)).toBeInTheDocument());
   });
 
 

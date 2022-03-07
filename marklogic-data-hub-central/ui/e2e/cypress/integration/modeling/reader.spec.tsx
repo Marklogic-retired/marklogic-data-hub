@@ -113,14 +113,6 @@ describe("Entity Modeling: Reader Role", () => {
     graphViewSidePanel.getPropertyName("name").should("be.visible");
     graphViewSidePanel.getPropertyName("email").should("be.visible");
 
-    //Verify property type icons and respective tooltips
-    graphViewSidePanel.getPropertyTypeIcon("multiple-icon", "shipping").trigger("mouseover");
-    graphViewSidePanel.getIconTooltip("shipping", "Multiple");
-    graphViewSidePanel.getPropertyTypeIcon("multiple-icon", "shipping").trigger("mouseout");
-    graphViewSidePanel.getPropertyTypeIcon("structured", "shipping").trigger("mouseover");
-    graphViewSidePanel.getIconTooltip("shipping", "Structured Type");
-    graphViewSidePanel.getPropertyTypeIcon("structured", "shipping").trigger("mouseout");
-
     //To verify cannot edit Entity Type tab without permissions (except color)
     graphViewSidePanel.getEntityTypeTab().click();
     graphViewSidePanel.getEntityDescription().should("be.disabled");
@@ -153,13 +145,16 @@ describe("Entity Modeling: Reader Role", () => {
     relationshipModal.getModalHeader().should("not.exist");
 
     //To test graph view model png is downloaded successfully
-    graphView.getExportGraphIcon().scrollIntoView().click({force: true}).then(
-      () => {
-        cy.readFile("./cypress/downloads/graph-view-model.png", "base64").then(
-          (downloadPng) => {
-            expect(downloadPng).exist;
-          });
-      });
+    if (Cypress.isBrowser("!firefox")) {
+      graphView.getExportGraphIcon().scrollIntoView().click({force: true}).then(
+        () => {
+          cy.readFile("./cypress/downloads/graph-view-model.png", "base64").then(
+            (downloadPng) => {
+              expect(downloadPng).exist;
+            });
+        });
+    }
+
 
     modelPage.scrollPageTop();
     // To verify modeling info is rendered properly in graph view
