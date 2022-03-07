@@ -1,7 +1,7 @@
-import React, { useContext, useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { UserContext } from "../store/UserContext";
-import { DetailContext } from "../store/DetailContext";
+import React, {useContext, useState, useEffect} from "react";
+import {useNavigate, useParams} from "react-router-dom";
+import {UserContext} from "../store/UserContext";
+import {DetailContext} from "../store/DetailContext";
 import Loading from "../components/Loading/Loading";
 import Occupations from "../components/Occupations/Occupations";
 import Relationships from "../components/Relationships/Relationships";
@@ -11,10 +11,11 @@ import DateTime from "../components/DateTime/DateTime";
 import Image from "../components/Image/Image";
 import Section from "../components/Section/Section";
 import Value from "../components/Value/Value";
-import { ArrowLeft } from "react-bootstrap-icons";
+import {ArrowLeft} from "react-bootstrap-icons";
 import "./Detail.scss";
 import _ from "lodash";
 import SocialMedia from "../components/SocialMedia/SocialMedia";
+import Membership from "../components/Membership/Membership";
 
 type Props = {};
 
@@ -26,10 +27,10 @@ const COMPONENTS = {
   Relationships: Relationships,
   Value: Value,
   SocialMedia: SocialMedia
-}
+};
 
 const Detail: React.FC<Props> = (props) => {
-  
+
   const navigate = useNavigate();
 
   const handleBackClick = () => {
@@ -38,14 +39,14 @@ const Detail: React.FC<Props> = (props) => {
 
   const userContext = useContext(UserContext);
   const detailContext = useContext(DetailContext);
-  
+
   const [config, setConfig] = useState<any>(null);
 
-  let { id } = useParams();
+  let {id} = useParams();
 
   useEffect(() => {
     setConfig(userContext.config);
-    // If config is loaded and id is present but detail context is 
+    // If config is loaded and id is present but detail context is
     // empty, load detail context so content is displayed
     if (userContext.config.detail && id && _.isEmpty(detailContext.detail)) {
       detailContext.handleGetDetail(id);
@@ -53,27 +54,27 @@ const Detail: React.FC<Props> = (props) => {
   }, [userContext.config]);
 
   useEffect(() => {
-    if (userContext.config.api && 
+    if (userContext.config.api &&
       userContext.config.api.recentStorage === "database") {
       detailContext.handleSaveRecent();
     } else {
       detailContext.handleSaveRecentLocal();
     }
   }, [detailContext.detail]);
-  
+
   const getHeading = (configHeading) => {
     return (
       <div className="heading">
-      <div className="icon" onClick={handleBackClick}>
-        <ArrowLeft color="#394494" size={28} />
+        <div className="icon" onClick={handleBackClick}>
+          <ArrowLeft color="#394494" size={28} />
+        </div>
+        <div className="title">
+          <Value data={detailContext.detail} config={configHeading.title} getFirst={true} />
+        </div>
+        {configHeading.thumbnail && <div className="thumbnail">
+          <Image data={detailContext.detail} config={configHeading.thumbnail.config} />
+        </div>}
       </div>
-      <div className="title">
-        <Value data={detailContext.detail} config={configHeading.title} getFirst={true} />
-      </div>
-      {configHeading.thumbnail && <div className="thumbnail">
-        <Image data={detailContext.detail} config={configHeading.thumbnail.config} />
-      </div>}
-    </div>
     );
   };
 
@@ -83,8 +84,8 @@ const Detail: React.FC<Props> = (props) => {
         return (
           <div key={"item-" + index} className="item">
             {React.createElement(
-              COMPONENTS[it.component], 
-              { config: it.config, data: detailContext.detail}, null
+              COMPONENTS[it.component],
+              {config: it.config, data: detailContext.detail}, null
             )}
           </div>
         );
@@ -99,53 +100,64 @@ const Detail: React.FC<Props> = (props) => {
 
       {config?.detail && !_.isEmpty(detailContext.detail) && !detailContext.loading ? (
 
-      <div>
+        <div>
 
-        {config?.detail?.heading ? 
-          getHeading(config.detail.heading)
-        : null}
+          {config?.detail?.heading ?
+            getHeading(config.detail.heading)
+            : null}
 
-        <div className="container-fluid">
+          <div className="container-fluid">
 
-          <div className="row">
-            {/* Membership... */}
-          </div>
-
-          <div className="row">
-            <div className="col-lg-7">
-
-              {config?.detail?.personal &&
-                <Section title="Personal Info">
-                  {getPersonalItems(config?.detail?.personal?.items)}
+            {config?.detail?.membership?.config && <div className="row">
+              <div className="col-12">
+                <Section title="Membership" config={{
+                  "headerStyle": {
+                    "backgroundColor": "transparent"
+                  },
+                  "mainStyle": {
+                    "padding-top": "8px"
+                  }
+                }}>
+                  <Membership config={config?.detail?.membership?.config} data={detailContext.detail} />
                 </Section>
-              }
+              </div>
+            </div>}
 
+            <div className="row">
+              <div className="col-lg-7">
+
+                {config?.detail?.personal &&
+                  <Section title="Personal Info">
+                    {getPersonalItems(config?.detail?.personal?.items)}
+                  </Section>
+                }
+
+              </div>
+              <div className="col-lg-5">
+
+                {config?.detail?.relationships &&
+                  <Section title="Relationships">
+                    <div className="relationships">
+                      {React.createElement(
+                        COMPONENTS[config.detail.relationships.component],
+                        {config: config?.detail?.relationships.config, data: detailContext.detail}, null
+                      )}
+                    </div>
+                  </Section>
+                }
+
+                {config?.detail?.occupations &&
+                  <Section title="Occupations">
+                    <Occupations />
+                  </Section>
+                }
+
+              </div>
             </div>
-            <div className="col-lg-5">
 
-              {config?.detail?.relationships &&
-                <Section title="Relationships">
-                  <div className="relationships">
-                    {React.createElement(
-                      COMPONENTS[config.detail.relationships.component], 
-                      { config: config?.detail?.relationships.config, data: detailContext.detail}, null
-                    )}
-                  </div>
-                </Section>
-              }
-
-              {config?.detail?.occupations &&
-                <Section title="Occupations">
-                  <Occupations />
-                </Section>
-              }
-
-            </div>
           </div>
 
         </div>
-
-      </div>
 
       ) : <Loading />}
 
