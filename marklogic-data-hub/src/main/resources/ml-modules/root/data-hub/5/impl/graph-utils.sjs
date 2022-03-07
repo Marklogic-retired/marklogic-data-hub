@@ -53,7 +53,7 @@ function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, ctsQue
       PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
       SELECT * WHERE {
       {
-        SELECT ?subjectIRI ?predicateIRI ?predicateLabel (MIN(?objectIRI) AS ?firstObjectIRI) (MIN(?docURI) AS ?firstDocURI) (COUNT(?objectIRI) AS ?nodeCount) WHERE {
+        SELECT ?subjectIRI ?predicateIRI ?predicateLabel (MIN(?objectIRI) AS ?firstObjectIRI) (MIN(?docURI) AS ?firstDocURI) (COUNT(DISTINCT(?objectIRI)) AS ?nodeCount) WHERE {
             ?objectIRI rdf:type @entityTypeOrConceptIRI;
             rdfs:isDefinedBy ?docURI.
             ?subjectIRI ?predicateIRI ?objectIRI.
@@ -126,7 +126,7 @@ function getEntityNodesBySubject(entityTypeIRI, relatedEntityTypeIRIs, limit) {
       PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
       SELECT * WHERE {
       {
-        SELECT ?subjectIRI ?predicateIRI ?predicateLabel (MIN(?objectIRI) AS ?firstObjectIRI) (MIN(?docURI) AS ?firstDocURI) (COUNT(?objectIRI) AS ?nodeCount) WHERE {
+        SELECT ?subjectIRI ?predicateIRI ?predicateLabel (MIN(?objectIRI) AS ?firstObjectIRI) (MIN(?docURI) AS ?firstDocURI) (COUNT(DISTINCT(?objectIRI)) AS ?nodeCount) WHERE {
             ?objectIRI rdf:type @entityTypeOrConceptIRI.
             @entityTypeIRI ?predicateIRI ?objectIRI;
             rdfs:isDefinedBy ?docURI.
@@ -149,7 +149,7 @@ function getEntityNodesBySubject(entityTypeIRI, relatedEntityTypeIRIs, limit) {
 
 function getRelatedEntitiesCounting(allRelatedPredicateList,ctsQueryCustom) {
   const totalCountRelated = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-SELECT (COUNT(?s) AS ?total)  WHERE {
+SELECT (COUNT(DISTINCT(?o)) AS ?total)  WHERE {
 ?s @allRelatedPredicateList ?o } `).where(ctsQueryCustom);
   return totalCountRelated.result(null,{allRelatedPredicateList});
 }
