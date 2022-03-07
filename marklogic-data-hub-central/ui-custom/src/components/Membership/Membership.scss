@@ -1,0 +1,62 @@
+$background-color: #f4f4f4;
+$border-color: #ebebeb;
+$highlighted-color: #97e7d7;
+$title-color: #a2a2a2;
+
+.Membership {
+    display: flex;
+    flex-wrap: wrap;
+    .item {
+        flex-basis: 8.3%;
+        min-width: 110px; 
+        max-width: 160px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border: 1px solid $border-color;
+        & > * {
+            padding: 8px 0px;
+            width: 100%;
+            display: block;
+            text-align: center;
+        }
+        .title {
+            background-color: $background-color;
+            color: $title-color;
+            font-weight: 500;
+        }
+        .date {
+            border-top: 1px solid $border-color;
+            &.empty {
+                padding: 20px 0;
+            }
+        }
+        &.success {
+            .title {
+                color: #000;
+            }
+            .icon {
+                background-color: lighten(
+                    $color: $highlighted-color,
+                    $amount: 20
+                );
+            }
+        }
+        &.highlighted {
+            .title {
+                color: #000;
+                font-weight: 700;
+            }
+            border: 2px solid $highlighted-color;
+            .icon {
+                background-color: lighten(
+                    $color: $highlighted-color,
+                    $amount: 20
+                );
+            }
+            + .highlighted {
+                border-left: none;
+            }
+        }
+    }
+}
