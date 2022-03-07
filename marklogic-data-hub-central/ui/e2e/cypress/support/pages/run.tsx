@@ -77,7 +77,7 @@ class RunPage {
   }
 
   runStep(stepName: string, flowName: string) {
-    cy.waitUntil(() => cy.get(`#${flowName}`).findByLabelText(`runStep-${stepName}`)).click({force: true});
+    cy.waitUntil(() => cy.get(`#${flowName}`).findByLabelText(`runStep-${stepName}`)).first().click({force: true});
     cy.waitForAsyncRequest();
   }
 

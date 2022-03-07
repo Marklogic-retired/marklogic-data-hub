@@ -63,6 +63,8 @@ describe("Create and verify load steps, map step and flows with a custom header"
     advancedSettingsDialog.setHeaderContent("loadTile/customHeader");
     advancedSettingsDialog.saveSettings(loadStep).click();
     advancedSettingsDialog.saveSettings(loadStep).should("not.be.exist");
+
+    loadPage.stepName(loadStep).should("be.visible");
     // add step to a new flow
     loadPage.addStepToNewFlow(loadStep);
     cy.waitForAsyncRequest();

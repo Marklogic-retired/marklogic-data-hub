@@ -41,6 +41,8 @@ const ModelingTooltips = {
   /* Icons for entity properties */
   addStructuredProperty: 'Add a property to this structured property.',
   deleteProperty: 'Delete this property.',
+  structuredType: 'Structured Type',
+  multipleIconTooltip: 'Multiple',
 
   /* Yes/No in modal; column headers in property list */
   identifier: 'If enabled, uniquely identifies each instance of this entity type. Restricted to only one property per entity type.',

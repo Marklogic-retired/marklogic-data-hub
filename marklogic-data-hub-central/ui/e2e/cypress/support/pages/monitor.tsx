@@ -3,6 +3,13 @@ class MonitorPage {
   getMonitorContainer() {
     return cy.get(`#monitorContent`);
   }
+
+  scrollMonitorToPageSelect() {
+    cy.get(`#monitorContent`).scrollTo("bottom", {ensureScrollable: false});
+    cy.wait(500);
+    return cy.get(`#monitorContent`).scrollTo("right", {ensureScrollable: false});
+  }
+
   getTableRows() {
     return cy.get(".hc-table_row");
   }
