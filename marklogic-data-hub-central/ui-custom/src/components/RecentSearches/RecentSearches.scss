@@ -1,0 +1,55 @@
+.recentSearches {
+    width: 100%;
+
+    thead, tbody {
+        display: block;
+    }
+
+    tbody {
+        border-top-width: 1px !important;
+        border-top-color: #a0e2d3 !important;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        max-height: 206px;
+    }
+
+    th {
+        border-bottom: none;
+    }
+
+    td {
+        border-bottom-color: #a0e2d3 !important;
+    }
+
+    th.query, td.query {
+        width: 90%;
+    }
+
+    td.query {
+        color: #5d6aaa;
+        span.query {
+            cursor: pointer;
+            display: inline-block;
+            span.qtext {
+                padding-right: 4px;
+            }
+            span.qtext.empty {
+                padding-right: 0;
+            }
+            span.facet {
+                padding-right: 4px;
+            }
+        }
+    }
+
+    th.icon, td.icon {
+        text-align: center;
+        width: 80px;
+    }
+
+    td.icon {
+        span.icon {
+            cursor: pointer;
+        }
+    }
+}

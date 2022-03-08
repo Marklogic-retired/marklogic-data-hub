@@ -95,34 +95,27 @@ const searchContextValue = {
     searchResults: searchResults,
     returned: 0,
     total: 0,
+    recentSearches: [],
     loading: false,
     handleSearch: jest.fn(),
     handleFacetString: jest.fn(),
-    handleSaved: jest.fn()
+    handleSaved: jest.fn(),
+    handleGetSearchLocal: jest.fn()
 };
 
 const searchResultsEmpty = {};
 
-const searchContextValueEmpty = {
-    qtext: "",
-    entityType: "",
-    facetStrings: [],
-    searchResults: searchResultsEmpty,
-    returned: 0,
-    total: 0,
-    loading: false,
-    handleSearch: jest.fn(),
-    handleFacetString: jest.fn(),
-    handleSaved: jest.fn()
-};
+const searchContextValueEmpty = Object.assign({}, searchContextValue, {searchResults: searchResultsEmpty});
 
 const detailContextValue = {
     detail: {},
-    recent: [],
+    recentRecords: [],
+    loading: false,
     handleGetDetail: jest.fn(),
-    handleGetRecentlyVisited: jest.fn(),
-    handleSaveRecentlyVisited: jest.fn(),
-    handleGetRecord: jest.fn()
+    handleGetRecent: jest.fn(),
+    handleGetRecentLocal: jest.fn(),
+    handleSaveRecent: jest.fn(),
+    handleSaveRecentLocal: jest.fn()
 };
 
 describe("ResultsList component", () => {

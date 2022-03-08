@@ -1,4 +1,4 @@
-import Recent from "./Recent";
+import RecentRecords from "./RecentRecords";
 import { DetailContext } from "../../store/DetailContext";
 import { render } from "@testing-library/react";
 import userEvent from '@testing-library/user-event'
@@ -58,19 +58,21 @@ const recentEmpty = [];
 
 const detailContextValue = {
     detail: {},
-    recent: recent,
+    recentRecords: recent,
+    loading: false,
     handleGetDetail: jest.fn(),
-    handleGetRecentlyVisited: jest.fn(),
-    handleSaveRecentlyVisited: jest.fn(),
-    handleGetRecord: jest.fn()
+    handleGetRecent: jest.fn(),
+    handleGetRecentLocal: jest.fn(),
+    handleSaveRecent: jest.fn(),
+    handleSaveRecentLocal: jest.fn()
 };
 
-describe("Recent component", () => {
+describe("RecentRecords component", () => {
 
     test("Verify list items appear and title is clickable when recently visited records returned", () => {
         const {getByText, getAllByAltText} = render(
             <DetailContext.Provider value={detailContextValue}>
-                <Recent data={recent} config={recentConfig} />
+                <RecentRecords data={recent} config={recentConfig} />
             </DetailContext.Provider>
         );
         let title = getByText(recent[0].person.id);
@@ -85,10 +87,10 @@ describe("Recent component", () => {
     test("Verify messaging appears when no recently visited records returned", () => {
         const {getByText} = render(
             <DetailContext.Provider value={detailContextValue}>
-                <Recent data={recentEmpty} config={recentConfig} />
+                <RecentRecords data={recentEmpty} config={recentConfig} />
             </DetailContext.Provider>
         );
-        expect(getByText("No recently visited records")).toBeInTheDocument();
+        expect(getByText("No recently visited records found.")).toBeInTheDocument();
     });
 
 });
