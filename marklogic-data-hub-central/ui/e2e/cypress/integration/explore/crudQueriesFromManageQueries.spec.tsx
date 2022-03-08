@@ -34,16 +34,20 @@ describe("manage queries modal scenarios, developer role", () => {
   });
   it("Create Queries", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    browsePage.clickTableView();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
-    entitiesSidebar.getBaseEntityDropdown().click();
+    entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
+    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
+    entitiesSidebar.openBaseEntityFacets("Customer");
     browsePage.getFacetItemCheckbox("name", "Adams Cole").click();
     browsePage.getSelectedFacets().should("exist");
     browsePage.getGreySelectedFacets("Adams Cole").should("exist");
     browsePage.getFacetApplyButton().click();
     browsePage.clickColumnTitle(2);
     browsePage.waitForSpinnerToDisappear();
+    entitiesSidebar.backToMainSidebar().click();
     browsePage.getSaveModalIcon().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getSaveQueryName().should("be.visible");
@@ -61,6 +65,7 @@ describe("manage queries modal scenarios, developer role", () => {
   });
   it("manage queries, edit, apply, delete query", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    browsePage.clickTableView();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
     //edit query
@@ -82,14 +87,16 @@ describe("manage queries modal scenarios, developer role", () => {
     queryComponent.getManageQueryModal().should("not.exist");
     browsePage.getSelectedQuery().should("contain", "select a query");
     browsePage.getSelectedQueryDescription().should("contain", "");
-    browsePage.getResetQueryButton().should("be.visible");
+    browsePage.getResetQueryButton().should("exist");
 
     browsePage.getSaveQueriesDropdown().click();
     browsePage.getQueryOption("editedQuery").should("not.exist");
     browsePage.getSaveQueriesDropdown().click();
     browsePage.waitForSpinnerToDisappear();
-    entitiesSidebar.getBaseEntityDropdown().click();
+    entitiesSidebar.removeSelectedBaseEntity();
+    entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Person");
+    entitiesSidebar.getBaseEntityOption("Person").should("be.visible");
     cy.waitUntil(() => browsePage.getDetailInstanceViewIcon("/json/persons/last-name-dob-custom1.json"), {timeout: 10000}).click({force: true});
     browsePage.waitForSpinnerToDisappear();
   });
@@ -137,21 +144,25 @@ describe("manage queries modal scenarios, developer role", () => {
     queryComponent.getManageQueryModal().should("not.exist");
   });
 
-  //THIS FAILS UNTIL ENTITY SPECIFIC FACETS PR IS IN (DHFPROD-7950), needs to use entity specific panel facets instead entity properties panel
-  it.skip("verify manage queries modal visibility and removing query scenario on the detail page", () => {
+  it("verify manage queries modal visibility and removing query scenario on the detail page", () => {
     //create a query
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    browsePage.clickTableView();
     browsePage.waitForSpinnerToDisappear();
-    entitiesSidebar.getBaseEntityDropdown().click("right");
+    browsePage.waitForHCTableToLoad();
+    entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("All Entities");
-    browsePage.waitForSpinnerToDisappear();
-    entitiesSidebar.getBaseEntityDropdown().click();
+    entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
+    entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Person");
+    entitiesSidebar.getBaseEntityOption("Person").should("be.visible");
+    entitiesSidebar.openBaseEntityFacets("Person");
     browsePage.getShowMoreLink("fname").click();
     browsePage.getFacetItemCheckbox("fname", "Alice").click();
     browsePage.getSelectedFacets().should("exist");
     browsePage.getFacetApplyButton().click();
     browsePage.waitForSpinnerToDisappear();
+    entitiesSidebar.backToMainSidebar().click();
     browsePage.getSaveModalIcon().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getSaveQueryName().should("be.visible");
@@ -187,16 +198,18 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.getTotalDocuments().should("not.be.equal", 0);
   });
 
-  //THIS FAILS UNTIL ENTITY SPECIFIC FACETS PR IS IN (DHFPROD-7950), needs to use entity specific panel facets instead entity properties panel
-  it.skip("verify query selection from All Data view page, doesn't stay on card view", () => {
+  it("verify query selection from All Data view page, doesn't stay on card view", () => {
+    browsePage.getClearAllFacetsButton().click();
     //create a query first
-    entitiesSidebar.getBaseEntityDropdown().click();
+    entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Person");
-    browsePage.getShowMoreLink("fname").click();
+    entitiesSidebar.getBaseEntityOption("Person").should("be.visible");
+    entitiesSidebar.openBaseEntityFacets("Person");
     browsePage.getFacetItemCheckbox("fname", "Alice").click();
     browsePage.getSelectedFacets().should("exist");
     browsePage.getFacetApplyButton().click();
     browsePage.waitForSpinnerToDisappear();
+    entitiesSidebar.backToMainSidebar().click();
     browsePage.getSaveModalIcon().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getSaveQueryName().should("be.visible");
@@ -217,7 +230,7 @@ describe("manage queries modal scenarios, developer role", () => {
     //check table rows
     browsePage.getHCTableRows().should("have.length", 1);
     //check table columns
-    browsePage.getTableColumns().should("have.length", 6);
+    browsePage.getTableColumns().should("have.length", 9);
     //Check query facet is applied
     browsePage.getSelectedFacet("Alice").should("exist");
 
@@ -228,14 +241,18 @@ describe("manage queries modal scenarios, developer role", () => {
     queryComponent.getManageQueryModal().should("not.exist");
   });
 
-  //THIS FAILS UNTIL ENTITY SPECIFIC FACETS PR IS IN (DHFPROD-7950), needs to use entity specific panel facets instead entity properties panel
-  it.skip("verify applying previously saved query scenario on the detail page", () => {
+  it("verify applying previously saved query scenario on the detail page", () => {
+    entitiesSidebar.toggleEntitiesView();
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Person");
+    entitiesSidebar.getBaseEntityOption("Person").should("be.visible");
     //create a query
-    browsePage.getShowMoreLink("fname").click();
+    entitiesSidebar.openBaseEntityFacets("Person");
     browsePage.getFacetItemCheckbox("fname", "Alice").click();
     browsePage.getSelectedFacets().should("exist");
     browsePage.getFacetApplyButton().click();
     browsePage.waitForSpinnerToDisappear();
+    entitiesSidebar.backToMainSidebar().click();
     browsePage.getSaveModalIcon().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getSaveQueryName().should("be.visible");
@@ -245,8 +262,11 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.getManageQueryCloseIcon().click();
 
     //open record instance view for a document of a different entity
-    entitiesSidebar.getBaseEntityDropdown().click();
+    entitiesSidebar.removeSelectedBaseEntity();
+    browsePage.getClearAllFacetsButton().click();
+    entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
+    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     cy.get("#instance").first().click({force: true});
     cy.waitForAsyncRequest();
     browsePage.waitForSpinnerToDisappear();
@@ -264,14 +284,16 @@ describe("manage queries modal scenarios, developer role", () => {
     cy.waitForAsyncRequest();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getTotalDocuments().should("not.be.equal", 0);
+    entitiesSidebar.openBaseEntityFacets("Person");
     browsePage.getFacetItemCheckbox("fname", "Alice").should("be.checked");
     browsePage.getAppliedFacets("Alice").should("exist");
+    entitiesSidebar.backToMainSidebar().click();
     browsePage.getSelectedQuery().should("contain", "personQuery");
   });
 
-  //This builds upon the skipped tests above, unskip when DHFPROD-7950 is merged and above tests are reworked to use entity specific panel facets
-  it.skip("verify editing previously saved query, updates the currently applied query name in browse page", () => {
+  it("verify editing previously saved query, updates the currently applied query name in browse page", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    browsePage.clickTableView();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
     browsePage.getSaveQueriesDropdown().should("be.visible");

@@ -83,6 +83,10 @@ class BaseEntitySidebar {
     return cy.get("button[aria-label='clear-facets-button']");
   }
 
+  clearQuery() {
+    return cy.get(`[aria-label="clear-query"]`).click();
+  }
+
   getRelatedEntityPanel() {
     return cy.get(`[data-testid="related-entity-panel"]`);
   }
