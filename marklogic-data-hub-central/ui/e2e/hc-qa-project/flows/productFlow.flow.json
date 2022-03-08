@@ -1,0 +1,12 @@
+{
+  "name": "productFlow",
+  "steps": {
+    "1": {
+      "stepId": "loadProducts-ingestion"
+    },
+    "2": {
+      "stepId": "mapProductStep-mapping"
+    }
+  },
+  "lastUpdated": "2022-03-07T13:22:34.5272522-03:00"
+}

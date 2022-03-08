@@ -28,7 +28,7 @@ class CuratePage {
   }
 
   openMappingStepDetail(entityTypeId: string, stepName: string) {
-    this.getEntityMappingStep(entityTypeId, stepName).should("be.visible", {timeout: 5000}).trigger("mouseover");
+    // this.getEntityMappingStep(entityTypeId, stepName).should("be.visible", {timeout: 5000}).trigger("mouseover");
     cy.findByTestId(`${stepName}-stepDetails`).should("be.visible", {timeout: 5000}).click();
     this.verifyStepDetailsOpen(stepName);
   }

@@ -22,6 +22,9 @@
     "nicknames": {
       "sourcedFrom": "nicknames"
     },
+    "hasOffice": {
+      "sourcedFrom": "hasOffice"
+    },
     "shipping": {
       "sourcedFrom": "/Address/Shipping",
       "properties": {

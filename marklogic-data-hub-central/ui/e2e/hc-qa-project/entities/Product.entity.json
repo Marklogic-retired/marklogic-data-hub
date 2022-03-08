@@ -1,0 +1,21 @@
+{
+  "info": {
+    "title": "Product",
+    "version": "1.0.0",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "Product": {
+      "primaryKey": "productId",
+      "properties": {
+        "productId": {
+          "datatype": "integer"
+        },
+        "productName": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}
