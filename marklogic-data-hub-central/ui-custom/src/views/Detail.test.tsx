@@ -45,10 +45,13 @@ const detail = {
 
 const detailContextValue = {
     detail: detail,
-    recent: [],
+    recentRecords: [],
+    loading: false,
     handleGetDetail: jest.fn(),
-    handleGetRecentlyVisited: jest.fn(),
-    handleSaveRecentlyVisited: jest.fn()
+    handleGetRecent: jest.fn(),
+    handleGetRecentLocal: jest.fn(),
+    handleSaveRecent: jest.fn(),
+    handleSaveRecentLocal: jest.fn()
 };
 
 

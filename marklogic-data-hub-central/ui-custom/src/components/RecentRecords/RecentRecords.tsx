@@ -4,7 +4,7 @@ import Chiclet from "../Chiclet/Chiclet";
 import Image from "../Image/Image";
 import Value from "../Value/Value";
 import List from "../List/List";
-import "./Recent.scss";
+import "./RecentRecords.scss";
 import { getValByConfig } from "../../util/util";
 import { ExclamationTriangleFill } from "react-bootstrap-icons";
 
@@ -68,7 +68,7 @@ type Props = {
  *   }
  * }
  */
-const Recent: React.FC<Props> = (props) => {
+const RecentRecords: React.FC<Props> = (props) => {
 
   const detailContext = useContext(DetailContext);
 
@@ -119,12 +119,12 @@ const Recent: React.FC<Props> = (props) => {
   return (
     <div>
       {(props.data && props.data.length > 0) ? (
-        <div className="recent">{getRecent()}</div>
+        <div className="recentRecords">{getRecent()}</div>
       ) : 
-      <div>No recently visited records</div>
+        <div className="none-found">No recently visited records found.</div>
       }
     </div>
   );
 };
 
-export default Recent;
+export default RecentRecords;

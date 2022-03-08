@@ -115,7 +115,7 @@ const Detail: React.FC<Props> = (props) => {
                     "backgroundColor": "transparent"
                   },
                   "mainStyle": {
-                    "padding-top": "8px"
+                    "paddingTop": "8px"
                   }
                 }}>
                   <Membership config={config?.detail?.membership?.config} data={detailContext.detail} />
@@ -136,7 +136,11 @@ const Detail: React.FC<Props> = (props) => {
               <div className="col-lg-5">
 
                 {config?.detail?.relationships &&
-                  <Section title="Relationships">
+                  <Section title="Relationships" config={{
+                    "mainStyle": {
+                      "padding": "0"
+                    }
+                  }}>
                     <div className="relationships">
                       {React.createElement(
                         COMPONENTS[config.detail.relationships.component],

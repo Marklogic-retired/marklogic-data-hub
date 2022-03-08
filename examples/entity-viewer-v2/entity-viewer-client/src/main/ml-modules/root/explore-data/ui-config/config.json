@@ -83,40 +83,22 @@
       }
     ],
 
-    "saved": {
+    "recentSearches": {
       "cols": [
         {
-          "title": null,
-          "type": "icon",
-          "value": "hasChanges",
-          "test": "function (value) {return (value === true)}",
-          "sortable": false
+          "title": "Search Criteria",
+          "type": "query"
         },
         {
-          "title": "Name",
-          "type": "text",
-          "value": "name",
-          "sortable": true
-        },
-        {
-          "title": "Edited On",
-          "type": "date",
-          "value": "updatedOn",
-          "sortable": true
-        },
-        {
-          "title": "Watching",
-          "type": "icon",
-          "value": "isWatching",
-          "test": "function (value) {return (value === true)}",
-          "sortable": true
+          "title": "Share",
+          "type": "icon"
         }
       ]
     },
 
     "new": {},
 
-    "recent": {
+    "recentRecords": {
       "thumbnail": {
         "component": "Image",
         "config": {

@@ -1,6 +1,5 @@
 import axios from "axios";
 import {summary} from "../mocks/summary";
-import {saved} from "../mocks/saved";
 import _ from "lodash";
 
 export const getSearchResults = async (endpoint, query, userid) => { 
@@ -25,13 +24,6 @@ export const getSummary = (opts) => {
   // return await axios.get(`/api/summary`); // TODO
   //console.log("getSummary", opts, summary);
   return summary;
-};
-
-// export const getSaved = async (opts) => { // TODO
-export const getSaved = (opts) => {
-  // return await axios.get(`/api/saved`); // TODO
-  //console.log("getSaved", opts, saved);
-  return saved;
 };
 
 export const getDetail = async (endpoint, query, userid) => {
