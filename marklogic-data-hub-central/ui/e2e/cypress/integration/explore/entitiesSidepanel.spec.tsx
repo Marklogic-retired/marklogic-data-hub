@@ -28,19 +28,17 @@ describe("Test '/Explore' left sidebar", () => {
   beforeEach(() => {
     //Restoring Local Storage to Preserve Session
     Cypress.Cookies.preserveOnce("HubCentralSession");
-    cy.restoreLocalStorage();
+    cy.restoreLocalStorage().then(() => {
+      cy.log(`**Go to Explore section**`);
+      cy.visit("/tiles/explore");
+    });
 
   });
 
   it("Validate that the left sidebar opens up and closes correctly when un/selecting a base entity", () => {
-    cy.visit("/tiles/explore");
+    cy.log(`**Selecting 'Customer' base entity**`);
     cy.wait(8000);
     entitiesSidebar.showMoreEntities().click({force: true});
-    cy.log("**Base entity tooltip is visible**");
-    entitiesSidebar.getBaseEntity("Client").trigger("mouseover");
-    entitiesSidebar.getBaseEntityToolTip().should("be.visible");
-
-    cy.log(`**Selecting 'Customer' base entity**`);
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
     browsePage.getSearchField().should("not.exist");
     entitiesSidebar.getEntityTitle(BaseEntityTypes.CUSTOMER).should("be.visible");
@@ -98,11 +96,8 @@ describe("Test '/Explore' left sidebar", () => {
   it("Validate facets on table view and applying them over a base entities", () => {
     // cy.log("**Opening table view**");
     // browsePage.getTableView().click();
-    browsePage.waitForSpinnerToDisappear();
-
     cy.log(`**Selecting 'Customer' base entity**`);
-    cy.wait(2000);
-    //TODO: Need to click on Show more because a 6th entity it's being created in another test and not being deleted after
+    cy.wait(8000);
     entitiesSidebar.showMoreEntities().click();
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
 
@@ -116,11 +111,11 @@ describe("Test '/Explore' left sidebar", () => {
     browsePage.getAppliedFacets("Adams Cole").should("exist");
 
     cy.log("**Checking table rows amount shown**");
-    browsePage.getTableView().click();
+    browsePage.clickSwitchToTableView();
     browsePage.getHCTableRows().should("have.length", 2);
 
     cy.log("**Testing date facet**");
-    entitiesSidebar.getDateFacetTitle().should("have.text", "birthDate");
+    entitiesSidebar.getDateFacetLabel().should("have.text", "birthDate");
     entitiesSidebar.selectDateRange({time: "facet-datetime-picker-date"});
     entitiesSidebar.getDateFacet().should("not.be.empty");
     entitiesSidebar.backToMainSidebar();
@@ -129,7 +124,7 @@ describe("Test '/Explore' left sidebar", () => {
   it("Base Entity Filtering from side panel", () => {
     cy.log("Navigate to Graph View and verify all entities displayed");
     cy.wait(5000);
-    browsePage.getClearAllFacetsButton().click();
+    browsePage.getClearAllFacetsButton().click({force: true});
     browsePage.clickGraphView();
     cy.wait(5000);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
@@ -142,9 +137,8 @@ describe("Test '/Explore' left sidebar", () => {
     });
 
     cy.log("Select Order Entity from dropdown and verify Customer node is gone");
-    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.getBaseEntityDropdown().click();
     entitiesSidebar.selectBaseEntityOption("Order");
-    entitiesSidebar.getBaseEntityOption("Order").should("be.visible");
     cy.wait(1000);
     browsePage.getFinalDatabaseButton();
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
@@ -169,9 +163,8 @@ describe("Test '/Explore' left sidebar", () => {
     browsePage.getTableViewCell("101").should("not.have.length.gt", 0);
 
     cy.log("Select Customer Entity and verify default table columns since > 1 entity filtered");
-    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.getBaseEntityDropdown().click();
     entitiesSidebar.selectBaseEntityOption("Customer");
-    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
     browsePage.getColumnTitle(2).should("contain", "Identifier");
@@ -184,9 +177,8 @@ describe("Test '/Explore' left sidebar", () => {
     browsePage.getTableViewCell("101").should("have.length.gt", 0);
 
     cy.log("Select BabyRegistry and verify related entities panel appears but is disabled in table view");
-    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.getBaseEntityDropdown().click("right");
     entitiesSidebar.selectBaseEntityOption("BabyRegistry");
-    entitiesSidebar.getBaseEntityOption("BabyRegistry").should("exist");
     entitiesSidebar.getRelatedEntityPanel().should("be.visible");
     entitiesSidebar.verifyCollapsedRelatedEntityPanel().should("exist");
     entitiesSidebar.getRelatedEntityPanel().click();

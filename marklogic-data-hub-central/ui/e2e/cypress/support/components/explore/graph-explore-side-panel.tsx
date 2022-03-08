@@ -6,6 +6,9 @@ class GraphExploreSidePanel {
   getInstanceViewIcon() {
     return cy.get("[data-cy=instance]");
   }
+  getTableCellValueByName(text : String) {
+    return cy.get(`[title="${text}"]`).next();
+  }
 }
 
 const graphExploreSidePanel = new GraphExploreSidePanel();
