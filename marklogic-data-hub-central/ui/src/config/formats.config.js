@@ -1,8 +1,8 @@
 //This file contains an object which stores source format options and its related properties. It can be used across the project.
 
 const sourceFormatOptions = {
-    json: { label: 'JSON', color: '#ffbf00' },
-    xml: { label: 'XML', color: '#5bd171' },
+    json: { label: 'JSON', color: '#993366' },
+    xml: { label: 'XML', color: '#37aa6c' },
     csv: { label: 'CSV', color: '#531dab' },
     text: { label: 'TXT', color: '#1254f9'},
     binary : { label: 'BIN', color: '#444444'},
