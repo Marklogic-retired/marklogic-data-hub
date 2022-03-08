@@ -6,7 +6,7 @@ import _ from "lodash";
 
 interface DetailContextInterface {
   detail: any;
-  recent: any;
+  recentRecords: any;
   loading: boolean;
   handleGetDetail: any;
   handleGetRecent: any;
@@ -22,7 +22,7 @@ interface QueryInterface {
   
 const defaultState = {
   detail: {},
-  recent: [],
+  recentRecords: [],
   loading: false,
   handleGetDetail: () => {},
   handleGetRecent: () => {},
@@ -52,7 +52,7 @@ const DetailProvider: React.FC = ({ children }) => {
 
   const [detailUri, setDetailUri] = useState<string>("");
   const [detail, setDetail] = useState<any>({});
-  const [recent, setRecent] = useState<any>([]);
+  const [recentRecords, setRecentRecords] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
   // TODO remove when URI-based detail view is definite
@@ -88,7 +88,7 @@ const DetailProvider: React.FC = ({ children }) => {
     let sr = getRecent(userContext.config.api.recentEndpoint, userContext.userid);
     sr.then(result => {
       console.log("recent", result?.data);
-      setRecent(result?.data);
+      setRecentRecords(result?.data);
       setLoading(false);
     }).catch(error => {
       console.error(error);
@@ -108,7 +108,7 @@ const DetailProvider: React.FC = ({ children }) => {
       setLoading(true);
       let sr = getRecords(userContext.config.api.recordsEndpoint, sortedUris, userContext.userid);
       sr.then(result => {
-        setRecent(result?.data);
+        setRecentRecords(result?.data);
         setLoading(false);
       }).catch(error => {
         console.error(error);
@@ -152,7 +152,7 @@ const DetailProvider: React.FC = ({ children }) => {
     <DetailContext.Provider
       value={{
         detail,
-        recent,
+        recentRecords,
         loading,
         handleGetDetail,
         handleGetRecent,

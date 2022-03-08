@@ -1,14 +1,14 @@
 import React, {useState, useEffect, useContext} from "react";
 import { DetailContext } from "../store/DetailContext";
+import { SearchContext } from "../store/SearchContext";
 import { UserContext } from "../store/UserContext";
 import Metrics from "../components/Metrics/Metrics";
 import SearchBox from "../components/SearchBox/SearchBox";
-import Saved from "../components/Saved/Saved";
+import RecentSearches from "../components/RecentSearches/RecentSearches";
 import New from "../components/New/New";
-import Recent from "../components/Recent/Recent";
+import RecentRecords from "../components/RecentRecords/RecentRecords";
 import Section from "../components/Section/Section";
 import Loading from "../components/Loading/Loading";
-import {getSaved} from "../api/api";
 import {getSummary} from "../api/api";
 import "./Dashboard.scss";
 
@@ -17,15 +17,16 @@ type Props = {};
 const Dashboard: React.FC<Props> = (props) => {
 
   const detailContext = useContext(DetailContext);
+  const searchContext = useContext(SearchContext);
   const userContext = useContext(UserContext);
 
   const [config, setConfig] = useState<any>(null);
-  const [recent, setRecent] = useState<any>({});
-  const [saved, setSaved] = useState<any>({});
+  const [recentSearches, setRecentSearches] = useState<any>([]);
+  const [recentRecords, setRecentRecords] = useState<any>({});
   const [summary, setSummary] = useState<any>({});
 
   useEffect(() => {
-    setSaved(getSaved({}));
+    searchContext.handleGetSearchLocal();
     setSummary(getSummary({}));
     if (userContext.config.api && 
       userContext.config.api.recentStorage === "database") {
@@ -40,8 +41,12 @@ const Dashboard: React.FC<Props> = (props) => {
   }, [userContext.config]);
 
   useEffect(() => {
-    setRecent(detailContext.recent);
-  }, [detailContext.recent]);
+    setRecentSearches(searchContext.recentSearches);
+  }, [searchContext.recentSearches]);
+
+  useEffect(() => {
+    setRecentRecords(detailContext.recentRecords);
+  }, [detailContext.recentRecords]);
 
   return (
     <div className="dashboard">
@@ -64,12 +69,12 @@ const Dashboard: React.FC<Props> = (props) => {
                 <h4 style={{marginBottom: "20px"}}>New Search</h4>
                 <SearchBox config={config.searchbox} button="vertical" width="100%" />
 
-                {config?.dashboard?.saved &&
+                {config?.dashboard?.recentSearches &&
                   <div>
                     <div className="divider">- or -</div>
-                    <div style={{marginTop: "20px"}}>
-                      <h4>Saved Searches</h4>
-                      <Saved data={saved} config={config.dashboard.saved} />
+                    <div style={{marginTop: "15px"}}>
+                      <h4>Recent Searches</h4>
+                      <RecentSearches data={recentSearches} config={config.dashboard.recentSearches} />
                     </div>
                   </div>
                 }
@@ -85,13 +90,13 @@ const Dashboard: React.FC<Props> = (props) => {
               </Section>
             }
 
-            {config?.dashboard?.recent && !detailContext.loading ? 
+            {config?.dashboard?.recentRecords && !detailContext.loading ? 
               <Section title="Recently Visited" config={{
                 "mainStyle": {
                   "maxHeight": "500px"
                 }
               }}>
-                  <Recent data={recent} config={config.dashboard.recent} />
+                  <RecentRecords data={recentRecords} config={config.dashboard.recentRecords} />
               </Section>
             : <Loading />}
 

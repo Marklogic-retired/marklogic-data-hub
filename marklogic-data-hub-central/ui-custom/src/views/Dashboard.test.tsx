@@ -27,8 +27,8 @@ describe("Dashboard view", () => {
             );
             getByText = renderResults.getByText;
         });
-        expect(getByText(config.dashboard.metrics[0].title)).toBeInTheDocument();
-        expect(getByText(config.dashboard.saved.cols[1].title!)).toBeInTheDocument();
+        expect(getByText("Recent Searches")).toBeInTheDocument();
+        expect(getByText("Recently Visited")).toBeInTheDocument();
     });
 
     test("Renders loading content with empty config", async () => {

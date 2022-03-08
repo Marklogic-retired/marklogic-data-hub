@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate, useLocation } from "react-router-dom";
 import { UserContext } from "../store/UserContext";
 import { getSearchResults } from "../api/api";
+import _ from "lodash";
 
 interface SearchContextInterface {
   qtext: string;
@@ -10,10 +11,12 @@ interface SearchContextInterface {
   searchResults: any;
   returned: number;
   total: number;
+  recentSearches: any;
   loading: boolean;
   handleSearch: any;
   handleFacetString: any;
   handleSaved: any;
+  handleGetSearchLocal: any;
 }
 interface QueryInterface {
   searchText: string;
@@ -28,10 +31,12 @@ const defaultState = {
   searchResults: {},
   returned: 0,
   total: 0,
+  recentSearches: [],
   loading: false,
   handleSearch: () => {},
   handleFacetString: () => {},
-  handleSaved: () => {}
+  handleSaved: () => {},
+  handleGetSearchLocal: () => {}
 };
 
 /**
@@ -72,6 +77,7 @@ const SearchProvider: React.FC = ({ children }) => {
   const [facetStrings, setFacetStrings] = useState<string[]>([]);
   const [searchResults, setSearchResults] = useState<any>({});
   const [newSearch, setNewSearch] = useState<boolean>(false);
+  const [recentSearches, setRecentSearches] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
   const buildQuery = (start, pageLength, _qtext, _facetStrings, _entityType):QueryInterface => {
@@ -107,6 +113,8 @@ const SearchProvider: React.FC = ({ children }) => {
         setReturned(result?.data.searchResults.response.total);
         // TODO need total records in database in result
         setTotal(userContext.config.search.meter.totalRecords);
+        handleSaveSearchLocal();
+        handleGetSearchLocal();
         setNewSearch(false);
         setLoading(false);
       }).catch(error => {
@@ -148,6 +156,56 @@ const SearchProvider: React.FC = ({ children }) => {
     setNewSearch(true);
   };
 
+  const handleGetSearchLocal = () => {
+    // Get from local storage
+    let json = localStorage.getItem("search");
+    let obj = json ? JSON.parse(json) : null;
+    let sortedObj: any = {}, sortedQueries: any = [];
+    if (obj && obj[userContext.userid]) {
+      sortedObj = _.fromPairs(_.sortBy(_.toPairs(obj[userContext.userid]), 1).reverse());
+      sortedQueries = Object.keys(sortedObj);
+      sortedQueries = sortedQueries.map(q => {
+        return JSON.parse(q);
+      })
+    }
+    if (sortedQueries.length > 0) {
+      setLoading(true);
+      setRecentSearches(sortedQueries);
+      setLoading(false);
+    }
+  };
+
+  const buildSavedSearch = (qtext, facetStrings) => {
+    const obj = {
+      qtext: qtext,
+      facetStrings: facetStrings
+    }
+    return JSON.stringify(obj);
+  }
+
+  const handleSaveSearchLocal = () => {
+    // Save to local storage
+    let json = localStorage.getItem("search");
+    let dt = new Date().toISOString();
+    let newObj = {};
+    if (!qtext && facetStrings.length === 0) return;
+    let key = buildSavedSearch(qtext, facetStrings);
+    if (!json) {
+      newObj[userContext.userid] = {};
+      newObj[userContext.userid][key] = dt;
+      localStorage.setItem("search", JSON.stringify(newObj));
+    } else {
+      newObj = JSON.parse(json);
+      if (newObj && newObj[userContext.userid]) {
+        newObj[userContext.userid][key] = dt;
+      } else {
+        newObj[userContext.userid] = {};
+        newObj[userContext.userid][key] = dt;
+      }
+      localStorage.setItem("search", JSON.stringify(newObj));
+    }
+  };
+
   return (
     <SearchContext.Provider
       value={{
@@ -157,10 +215,12 @@ const SearchProvider: React.FC = ({ children }) => {
         searchResults,
         returned,
         total,
+        recentSearches,
         loading,
         handleSearch,
         handleFacetString,
-        handleSaved
+        handleSaved,
+        handleGetSearchLocal
       }}
     >
       {children}
