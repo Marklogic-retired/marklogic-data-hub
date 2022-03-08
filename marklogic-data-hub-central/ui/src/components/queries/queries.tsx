@@ -611,7 +611,7 @@ const Query: React.FC<Props> = (props) => {
                   size="lg"
                   style={{width: "18px", color: "#5b69af", cursor: "pointer"}}
                 /></i>
-                <span className="text-info ps-2">Clear query</span>
+                <span className="text-info ps-2" aria-label="clear-query">Clear query</span>
               </span>
               <Modal
                 show={showResetQueryEditedConfirmation || showResetQueryNewConfirmation}

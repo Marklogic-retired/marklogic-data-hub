@@ -334,8 +334,6 @@ class BrowsePage {
   }
 
   clickTableView() {
-    this.waitForSpinnerToDisappear();
-    this.waitForHCTableToLoad();
     return cy.get("[data-cy=table-view]").click();
   }
 
