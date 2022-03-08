@@ -48,7 +48,7 @@ describe("Entity Modeling: Writer Role", () => {
     entityTypeModal.newEntityName("User3");
     entityTypeModal.newEntityDescription("An entity for User");
     entityTypeModal.getAddButton().click();
-    propertyTable.getAddPropertyButton("User3").click();
+    propertyTable.getAddPropertyButton("User3").scrollIntoView().click();
     propertyModal.newPropertyName("Address");
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Structured").click();
@@ -233,7 +233,7 @@ describe("Entity Modeling: Writer Role", () => {
     //propertyTable.getProperty("alt_address-streetAlt").should("exist");
   });
   it("Add foreign key with type as Related Entity", () => {
-    propertyTable.getAddPropertyButton("User3").click();
+    propertyTable.getAddPropertyButton("User3").scrollIntoView().click();
     propertyModal.newPropertyName("OrderedBy");
     propertyModal.getForeignKeyDropdown().should("not.exist");
     propertyModal.openPropertyDropdown();

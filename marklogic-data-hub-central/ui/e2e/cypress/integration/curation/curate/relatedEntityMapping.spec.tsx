@@ -51,6 +51,7 @@ describe("Mapping", () => {
     runPage.verifyStepRunResult("mapPersonJSON", "success");
     runPage.closeFlowStatusModal("personJSON");
     cy.resetTestUser();
+    cy.waitForAsyncRequest();
   });
   it("Define new entity, add relationship property", {defaultCommandTimeout: 120000}, () => {
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
@@ -59,7 +60,7 @@ describe("Mapping", () => {
     cy.waitUntil(() => modelPage.getAddEntityButton()).click();
     entityTypeModal.newEntityName("Relation");
     entityTypeModal.getAddButton().click();
-    propertyTable.getAddPropertyButton("Relation").should("be.visible").click();
+    propertyTable.getAddPropertyButton("Relation").scrollIntoView().should("be.visible").click();
     propertyModal.newPropertyName("relatedTo");
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Related Entity").click();
@@ -86,7 +87,7 @@ describe("Mapping", () => {
     curatePage.verifyStepDetailsOpen("mapRelation");
     browsePage.waitForSpinnerToDisappear();
     cy.waitUntil(() => mappingStepDetail.dataAvailable()).should("be.visible");
-    mappingStepDetail.entityTitle("Person").scrollIntoView().should("exist");
+    mappingStepDetail.entityTitle("Person").should("exist");
   });
   it("Verify related entities in mapping details with defaults", {defaultCommandTimeout: 120000}, () => {
     mappingStepDetail.XPathInfoIcon();
@@ -94,34 +95,29 @@ describe("Mapping", () => {
     mappingStepDetail.relatedFilterMenu("Person");
     mappingStepDetail.getRelatedEntityFromList("Relation (relatedTo Person)");
     mappingStepDetail.relatedInfoIcon();
-    mappingStepDetail.entityTitle("Person").scrollIntoView().click(); // click outside menu to close it
+    mappingStepDetail.entityTitle("Person").click(); // click outside menu to close it
     mappingStepDetail.entityTitle("Relation (relatedTo Person)").should("exist");
     mappingStepDetail.validateContextInput("Relation (relatedTo Person)", "/");
     mappingStepDetail.validateURIInput("Person", "$URI");
     mappingStepDetail.validateURIInput("Relation (relatedTo Person)", "hubURI('Relation')");
+
     // To verify tooltips for mapping property related icons
     mappingStepDetail.verifySourceFieldTooltip("Person");
     mappingStepDetail.verifyFunctionTooltip("URI");
     mappingStepDetail.verifyReferenceTooltip("Person");
   });
   it("Add and test mapping expressions with related entities", {defaultCommandTimeout: 120000}, () => {
-    cy.log("**Clicking outside to move the focus out of the field and trigger auto-save**");
-    mappingStepDetail.getXpathExpressionInput("id").type("SSN"); // tab to auto-save
-    //Clicking twice due to bug
-    mappingStepDetail.saveMapInput();
-    mappingStepDetail.saveMapInput();
+    mappingStepDetail.setXpathExpressionInput("id", "SSN");
+    mappingStepDetail.entityTitle("Person").click(); // click outside field to auto-save
     mappingStepDetail.successMessage().should("exist");
     mappingStepDetail.successMessage().should("not.exist");
     mappingStepDetail.setXpathExpressionInput("relatedTo", "SSN");
-
-    cy.log("**Clicking outside the field to auto-save**");
-    mappingStepDetail.saveMapInput(); // click outside field to auto-save
+    mappingStepDetail.entityTitle("Person").click();
     mappingStepDetail.successMessage().should("exist");
     mappingStepDetail.successMessage().should("not.exist");
     // URI field
     mappingStepDetail.getURIInput("Relation (relatedTo Person)").clear().type("concat('/Relation/', SSN)");
-    cy.log("**Clicking outside the field to auto-save**");
-    mappingStepDetail.saveMapInput();
+    mappingStepDetail.entityTitle("Person").click();
     mappingStepDetail.successMessage().should("exist");
     mappingStepDetail.successMessage().should("not.exist");
     // Test expresssions
@@ -160,7 +156,6 @@ describe("Mapping", () => {
     runPage.newFlowModal().should("be.visible");
     runPage.setFlowName("relationFlow");
     loadPage.confirmationOptions("Save").click();
-    cy.wait(1000);
     runPage.addStep("relationFlow");
     runPage.addStepToFlow("mapRelation");
     runPage.verifyStepInFlow("Map", "mapRelation", "relationFlow");
@@ -171,17 +166,16 @@ describe("Mapping", () => {
     /* Commented until DHFPROD-7477 is done
          // Navigate to Explore
     runPage.explorerLink().click();
-    browsePage.getTableView().click();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
+    browsePage.clickSwitchToTableView();
     browsePage.waitForHCTableToLoad();
 
     // Verify Explore results
-    entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
+    browsePage.getSelectedEntity().should("contain", "All Entities");
     browsePage.getTotalDocuments().should("be.greaterThan", 21);
-    entitiesSidebar.openBaseEntityDropdown();
-    entitiesSidebar.selectBaseEntityOption("Relation");
-    entitiesSidebar.getBaseEntityOption("Relation").should("be.visible");
+    entitiesSidebar.showMoreEntities().click({force: true});
+    entitiesSidebar.openBaseEntityFacets("Relation");
     browsePage.getTotalDocuments().should("be.greaterThan", 7);
     */
   });
@@ -200,13 +194,12 @@ describe("Mapping", () => {
     mappingStepDetail.getValidationError("Person").should("not.have.text");
     cy.waitUntil(() => mappingStepDetail.getSaveSettings("Person")).click({force: true});
 
-    mappingStepDetail.getEntitySettings("Relation").scrollIntoView().click();
+    mappingStepDetail.getEntitySettings("Relation").click();
     mappingStepDetail.editTargetPermissions("Relation", "data-hub-common,read,data-hub-common");
     cy.waitUntil(() => mappingStepDetail.getSaveSettings("Relation")).click({force: true});
     mappingStepDetail.getValidationError("Relation").should("exist");
     mappingStepDetail.editTargetPermissions("Relation", "data-hub-common,read");
     cy.waitUntil(() => mappingStepDetail.getSaveSettings("Relation")).click({force: true});
-
     mappingStepDetail.getValidationError("Relation").should("not.have.text");
     mappingStepDetail.editTargetPermissions("Relation", "data-hub-common,read,data-hub-common,update");
     cy.waitUntil(() => mappingStepDetail.getSaveSettings("Relation")).click({force: true});
@@ -231,7 +224,7 @@ describe("Mapping", () => {
     // Reselect deleted related entity
     mappingStepDetail.relatedFilterMenu("Person");
     mappingStepDetail.getRelatedEntityFromList("Relation (relatedTo Person)");
-    mappingStepDetail.entityTitle("Person").scrollIntoView().click(); // click outside menu to close it
+    mappingStepDetail.entityTitle("Person").click(); // click outside menu to close it
     // Related entity exists before deletion
     mappingStepDetail.entityTitle("Relation (relatedTo Person)").should("exist");
     mappingStepDetail.relatedDeleteIcon("Relation (relatedTo Person)").click();
@@ -250,13 +243,13 @@ describe("Mapping", () => {
     mappingStepDetail.entityTitle("Relation (relatedTo Person)").should("not.exist");
   });
 
-  it("Verify page automatically scrolls to top of table after pagination", () => {
+  it("Verify page automically scrolls to top of table after pagination", () => {
     mappingStepDetail.relatedFilterMenu("Person");
     mappingStepDetail.getRelatedEntityFromList("Relation (relatedTo Person)");
     cy.get("#entityContainer").scrollTo("bottom", {ensureScrollable: false});
     mappingStepDetail.entityTitle("Person").should("not.be.visible");
     mappingStepDetail.getPaginationPageSizeOptions("person").click();
     browsePage.getPageSizeOption("10 / page").click({force: true});
-    mappingStepDetail.entityTitle("Person").scrollIntoView().should("be.visible");
+    mappingStepDetail.entityTitle("Person").should("be.visible");
   });
 });

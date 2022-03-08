@@ -53,6 +53,11 @@ describe("Entity Modeling: Graph View", () => {
     entityTypeModal.newEntityName("ThisIsVeryLongNameHavingMoreThan20Characters");
     entityTypeModal.newEntityDescription("entity description");
     cy.waitUntil(() => entityTypeModal.getAddButton().click());
+    entityTypeModal.getAddButton().should("not.exist");
+
+    //It appears in the next table page
+    entityTypeTable.goToNextTablePage();
+
     entityTypeTable.viewEntityInGraphView("ThisIsVeryLongNameHavingMoreThan20Characters");
     cy.wait(5000);
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {

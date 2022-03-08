@@ -42,12 +42,15 @@ class EntityTypeTable {
   }
 
   viewEntityInGraphView(entityName: string) {
-    cy.findByTestId(`${entityName}-graphView-icon`).click({force: true});
+    cy.findByTestId(`${entityName}-graphView-icon`).scrollIntoView().click({force: true});
     cy.wait(3000);
   }
 
   getRevertButtonTableView() {
     return cy.findByLabelText("revert-changes-table-view");
+  }
+  goToNextTablePage() {
+    return cy.get("[title='Next Page']").scrollIntoView().click();
   }
 }
 

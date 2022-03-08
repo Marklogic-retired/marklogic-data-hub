@@ -127,7 +127,7 @@ describe("Verify All Data for final/staging databases and non-entity detail page
       browsePage.scrollToBottom();
       browsePage.getPaginationPageSizeOptions().select("10 / page", {force: true});
       browsePage.waitForSpinnerToDisappear();
-      browsePage.clickPaginationItem(4);
+      browsePage.clickPaginationItem(3);
       browsePage.waitForSpinnerToDisappear();
       browsePage.getStagingDatabaseButton();
       browsePage.waitForSpinnerToDisappear();
