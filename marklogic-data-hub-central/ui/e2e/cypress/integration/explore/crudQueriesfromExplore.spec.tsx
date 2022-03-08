@@ -217,7 +217,7 @@ describe("save/manage queries scenarios, developer role", () => {
     });
     browsePage.getEditQueryDetailCancelButton().click();
     // checking previous query name is set clicking save a copy modal icon
-    browsePage.getEllipsisButton().click();
+    browsePage.getEllipsisButton().scrollIntoView().click();
     browsePage.getSaveACopyModalIcon().click();
     browsePage.getSaveQueryName().invoke("val").should("be.empty");
     browsePage.getSaveQueryCancelButton().click();
@@ -245,13 +245,13 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getSelectedQuery().should("contain", "person-query");
     browsePage.search("Bates");
     browsePage.clickColumnTitle(4);
-    browsePage.getEllipsisButton().click();
+    browsePage.getEllipsisButton().scrollIntoView().click();
     browsePage.getDiscardChangesIcon().click();
     browsePage.getDiscardYesButton().click();
     browsePage.getAppliedFacets("Bates").should("exist");
     browsePage.search("Bates");
     browsePage.clickColumnTitle(4);
-    browsePage.getEllipsisButton().click();
+    browsePage.getEllipsisButton().scrollIntoView().click();
     browsePage.getDiscardChangesIcon().click();
     browsePage.getDiscardNoButton().click();
     browsePage.getSearchBar().should("have.value", "Bates");
@@ -282,7 +282,7 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getSelectedQuery().should("contain", "query-1");
     browsePage.getSelectedQueryDescription().should("contain", "query-1 description");
     // creating query 2 using save a copy
-    browsePage.getEllipsisButton().click();
+    browsePage.getEllipsisButton().scrollIntoView().click();
     browsePage.getSaveACopyModalIcon().click();
     browsePage.getSaveQueryName().type("query-2");
     browsePage.getSaveQueryButton().click();

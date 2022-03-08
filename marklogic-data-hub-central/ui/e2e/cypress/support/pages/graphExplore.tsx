@@ -98,5 +98,26 @@ class GraphExplore {
   getExportPNGIconTooltip() {
     return cy.get(`[id="export-graph-icon-tooltip"]`);
   }
+  getTooltip() {
+    return cy.get(`div.vis-tooltip`);
+  }
+  getExpand3RecordsFromGroupNode() {
+    return cy.get("#expand3SampleRecords");
+  }
+  clickExpand3RecordsFromGroupNode() {
+    this.getExpand3RecordsFromGroupNode().click();
+  }
+  clickExpandAllRecordsFromGroupNode() {
+    return cy.get("#expandAllRecords").click();
+  }
+  clickCollapseGroupNode() {
+    return cy.get("#collapseRecords").click();
+  }
+  clickCollapseLeafNode() {
+    return cy.get("#collapseLeafNode").click();
+  }
+  clickShowRelated() {
+    return cy.get("#showRelated").click();
+  }
 }
 export default new GraphExplore();

@@ -1,0 +1,65 @@
+{
+  "OfficeId": 101,
+  "Name": {
+    "FirstName": "Carmella",
+    "LastName": "Hardin"
+  },
+  "nicknames": [
+    "Carm",
+    "din"
+  ],
+  "Email": "carmellahardin@nutralab.com",
+  "Address": [
+    {
+      "Shipping": {
+        "Street": "Whitwell Place",
+        "Street2": "More info",
+        "City": "Ellerslie",
+        "State": "Georgia",
+        "Postal": "31807-1718"
+      }
+    },
+    {
+      "Shipping": {
+        "Street": "999 Skyway Road",
+        "City": "San carlos",
+        "State": "California",
+        "Postal": "94070-1851"
+      }
+    },
+    {
+      "Billing": {
+        "Street": "Anna Court",
+        "City": "Stewart",
+        "State": "Kansas",
+        "Postal": "66601-6783"
+      }
+    }
+  ],
+  "Phone": "(910) 407-2081",
+  "PIN": 2172,
+  "officeSince": "04/03/2017",
+  "Status": "New office",
+  "productList": [
+    {
+      "productId": "50",
+      "name": "Product1"
+    },
+    {
+      "productId": "60",
+      "name": "Product2"
+    },
+    {
+      "productId": "70",
+      "name": "Product3"
+    },
+    {
+      "productId": "80",
+      "name": "Product4"
+    },
+    {
+      "productId": "90",
+      "name": "Product5"
+    }
+  ]
+}

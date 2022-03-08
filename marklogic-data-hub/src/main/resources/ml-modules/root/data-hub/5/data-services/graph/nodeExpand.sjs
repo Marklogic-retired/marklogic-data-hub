@@ -49,15 +49,17 @@ function handleByPredicate(entityName, predicateIRI) {
     model = model.toObject();
     const modelName = model.info.title;
 
+  if(model.definitions[entityName] !== undefined && model.definitions[entityName].toString().length > 0) {
     const predicateList = entityLib.getPredicatesByModel(model);
     if(predicateList.length >= 1){
       hashmapPredicate.set(modelName, predicateList);
     }
-
+  
     if (modelName == entityName) {
       const entityNameIri = entityLib.getEntityTypeId(model, modelName);
       relatedTypeIRIs.push(sem.iri(entityNameIri));
     }
+  }
   });
 
   return graphUtils.getEntityNodes(entityTypeIRI, predicateIRI, relatedTypeIRIs, limit);

@@ -1,0 +1,25 @@
+{
+  "headers": { },
+  "collections": [
+    "loadOffice"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "name": "loadOffice",
+  "description": "",
+  "sourceFormat": "json",
+  "targetFormat": "json",
+  "sourceName": "JSON",
+  "sourceType": "JSON",
+  "outputURIPrefix": "JSON",
+  "additionalCollections": [ ],
+  "targetDatabase": "data-hub-STAGING",
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "stepDefinitionName": "default-ingestion",
+  "stepDefinitionType": "ingestion",
+  "stepId": "loadOffice-ingestion",
+  "lastUpdated": "2022-03-07T11:43:19.0372161-03:00",
+  "inputFilePath": "input/json/office"
+}

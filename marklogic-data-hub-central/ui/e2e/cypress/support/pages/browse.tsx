@@ -7,7 +7,7 @@ class BrowsePage {
   }
 
   getSelectedEntity() {
-    return cy.get("#entity-select-wrapper").invoke("text");
+    return cy.get("#entitiesSidebar-select-wrapper").invoke("text");
   }
 
   getFirstTableViewInstanceIcon() {
@@ -277,7 +277,7 @@ class BrowsePage {
 
   //search bar
   search(str: string) {
-    cy.findByPlaceholderText("Search").clear().type(str);
+    cy.findByPlaceholderText("Search").scrollIntoView().clear().type(str);
     this.getApplyFacetsButton().click();
     // this.waitForTableToLoad();
     this.waitForSpinnerToDisappear();
@@ -665,7 +665,7 @@ class BrowsePage {
   }
 
   getStagingDatabaseButton() {
-    cy.findByText("Staging").click();
+    cy.findByText("Staging").scrollIntoView().click();
     // cy.intercept("POST", "**/entitySearch?*").as("entitySearchStaging");
     // cy.wait("@entitySearchStaging");
     //tried intercept + wait on request but didn't work. Leaving comment as reference

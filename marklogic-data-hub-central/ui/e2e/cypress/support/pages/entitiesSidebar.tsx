@@ -37,7 +37,9 @@ class BaseEntitySidebar {
   getDateFacet() {
     return cy.get("[data-testid='facet-date-picker']");
   }
-
+  getDateFacetLabel() {
+    return this.getDateFacet().find("p");
+  }
   getDateFacetTitle() {
     return cy.get("[data-testid='facet-date-picker'] > p");
   }
@@ -94,7 +96,7 @@ class BaseEntitySidebar {
   }
 
   toggleAllDataView() {
-    return cy.get(`[aria-label="switch-datasource-all-data"]`).click();
+    return cy.get(`[aria-label="switch-datasource-all-data"]`).scrollIntoView().click();
   }
 
   toggleEntitiesView() {

@@ -26,6 +26,7 @@
       }
     }
   ],
+  "hasOffice": 101,
   "Orders": [
     {
       "OrderId": "2002",
