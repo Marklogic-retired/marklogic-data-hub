@@ -60,105 +60,132 @@
   },
 
   "dashboard": {
-    "metrics": [
-      {
-        "title": "New entities this week",
-        "path": "entities.value",
-        "color": "#70d8c1"
-      },
-      {
-        "title": "Sources added this week",
-        "path": "sources.value",
-        "color": "#f5d881"
-      },
-      {
-        "title": "Tasks created today",
-        "path": "tasks.value",
-        "color": "#ffbd8e"
-      },
-      {
-        "title": "Activities unassigned",
-        "path": "activities.value",
-        "color": "#ff984e"
-      }
-    ],
 
-    "recentSearches": {
-      "cols": [
-        {
-          "title": "Search Criteria",
-          "type": "query"
-        },
-        {
-          "title": "Share",
-          "type": "icon"
-        }
-      ]
+    "metrics": {
+      "component": "Metrics",
+      "config": {
+        "items": [
+          {
+            "title": "New entities this week",
+            "path": "entities.value",
+            "color": "#70d8c1"
+          },
+          {
+            "title": "Sources added this week",
+            "path": "sources.value",
+            "color": "#f5d881"
+          },
+          {
+            "title": "Tasks created today",
+            "path": "tasks.value",
+            "color": "#ffbd8e"
+          },
+          {
+            "title": "Activities unassigned",
+            "path": "activities.value",
+            "color": "#ff984e"
+          }
+        ]
+      }
     },
 
-    "new": {},
+    "recentSearches": {
+      "component": "RecentSearches",
+      "config": {
+        "cols": [
+          {
+            "title": "Search Criteria",
+            "type": "query"
+          },
+          {
+            "title": "Share",
+            "type": "icon"
+          }
+        ]
+      }
+    },
+
+    "whatsNew": {
+      "component": "WhatsNew",
+      "config": {
+        "items": [
+          {
+            "label": "Today"
+          },
+          {
+            "label": "This Week"
+          },
+          {
+            "label": "This Month"
+          }
+        ]
+      }
+    },
 
     "recentRecords": {
-      "thumbnail": {
-        "component": "Image",
-        "config": {
-          "arrayPath": "person.images.image",
-          "path": "url",
-          "alt": "recent thumbnail",
-          "style": {
-            "width": "70px",
-            "height": "70px"
-          }
-        }
-      },
-      "title": {
-        "id": "uri",
-        "arrayPath": "person.nameGroup",
-        "path": "fullname.value"
-      },
-      "items": [
-        {
-          "component": "Address",
+      "component": "RecentRecords",
+      "config": {
+        "thumbnail": {
+          "component": "Image",
           "config": {
-            "arrayPath": "person.addresses.address",
-            "street1": "street",
-            "city": "city",
-            "state": "state",
-            "postal1": "postal",
-            "country": "country",
+            "arrayPath": "person.images.image",
+            "path": "url",
+            "alt": "recent thumbnail",
             "style": {
-              "width": "350px",
-              "overflow": "hidden",
-              "textOverflow": "ellipsis"
+              "width": "70px",
+              "height": "70px"
             }
           }
         },
-        {
-          "component": "Value",
-          "config": {
-            "path": "person.phone",
-            "className": "phone"
+        "title": {
+          "id": "uri",
+          "arrayPath": "person.nameGroup",
+          "path": "fullname.value"
+        },
+        "items": [
+          {
+            "component": "Address",
+            "config": {
+              "arrayPath": "person.addresses.address",
+              "street1": "street",
+              "city": "city",
+              "state": "state",
+              "postal1": "postal",
+              "country": "country",
+              "style": {
+                "width": "350px",
+                "overflow": "hidden",
+                "textOverflow": "ellipsis"
+              }
+            }
+          },
+          {
+            "component": "Value",
+            "config": {
+              "path": "person.phone",
+              "className": "phone"
+            }
+          },
+          {
+            "arrayPath": "person.emails.email",
+            "path": "value",
+            "className": "email"
+          },
+          {
+            "path": "person.ssn.value"
           }
-        },
-        {
-          "arrayPath": "person.emails.email",
-          "path": "value",
-          "className": "email"
-        },
-        {
-          "path": "person.ssn.value"
-        }
-      ],
-      "categories": {
-        "arrayPath": "person.sources",
-        "path": "source.name",
-        "colors": {
-          "New York Times": "#d5e1de",
-          "USA Today": "#ebe1fa",
-          "Los Angeles Times": "#cae4ea",
-          "Wall Street Journal": "#fae9d3",
-          "Washington Post": "#fae3df",
-          "Chicago Tribune": "#f0f6d9"
+        ],
+        "categories": {
+          "arrayPath": "person.sources",
+          "path": "source.name",
+          "colors": {
+            "New York Times": "#d5e1de",
+            "USA Today": "#ebe1fa",
+            "Los Angeles Times": "#cae4ea",
+            "Wall Street Journal": "#fae9d3",
+            "Washington Post": "#fae3df",
+            "Chicago Tribune": "#f0f6d9"
+          }
         }
       }
     }
@@ -166,115 +193,134 @@
 
   "search": {
     "defaultEntity": "person",
+
     "meter": {
-      "colors": {
-        "all": "#cccccc",
-        "filters": "#1ACCA8"
-      },
-      "totalRecords": 100
+      "component": "SummaryMeter",
+      "config": {
+        "colors": {
+          "all": "#cccccc",
+          "filters": "#1ACCA8"
+        },
+        "totalRecords": 100
+      }
     },
+
     "facets": {
-      "selected": "#1acca8",
-      "unselected": "#dfdfdf",
-      "displayThreshold": 3,
-      "displayShort": 3,
-      "displayLong": 5,
-      "items": [
-        {
-          "type": "category",
-          "name": "sources",
-          "tooltip": "Filter by source."
-        },
-        {
-          "type": "category",
-          "name": "status",
-          "tooltip": "Filter by status."
-        },
-        {
-          "type": "category",
-          "name": "country",
-          "tooltip": "Filter by country."
-        }
-      ]
-    },
-    "results": {
-      "thumbnail": {
-        "component": "Image",
-        "config": {
-          "arrayPath": "extracted.person.images.image",
-          "path": "url",
-          "alt": "result thumbnail",
-          "style": {
-            "width": "70px",
-            "height": "70px"
+      "component": "Facets",
+      "config": {
+        "selected": "#1acca8",
+        "unselected": "#dfdfdf",
+        "displayThreshold": 3,
+        "displayShort": 3,
+        "displayLong": 5,
+        "items": [
+          {
+            "type": "category",
+            "name": "sources",
+            "tooltip": "Filter by source."
+          },
+          {
+            "type": "category",
+            "name": "status",
+            "tooltip": "Filter by status."
+          },
+          {
+            "type": "category",
+            "name": "country",
+            "tooltip": "Filter by country."
           }
-        }
-      },
-      "title": {
-        "id": "uri",
-        "arrayPath": "extracted.person.nameGroup",
-        "path": "fullname.value"
-      },
-      "items": [
-        {
-          "component": "Address",
+        ]
+      }
+    },
+
+    "selectedFacets": {
+      "component": "SelectedFacets",
+      "config": {}
+    },
+
+    "results": {
+      "component": "ResultsList",
+      "config": {
+        "thumbnail": {
+          "component": "Image",
           "config": {
-            "arrayPath": "extracted.person.addresses.address",
-            "street1": "street",
-            "city": "city",
-            "state": "state",
-            "postal1": "postal",
-            "country": "country",
+            "arrayPath": "extracted.person.images.image",
+            "path": "url",
+            "alt": "result thumbnail",
             "style": {
-              "width": "350px",
-              "overflow": "hidden",
-              "textOverflow": "ellipsis"
+              "width": "70px",
+              "height": "70px"
             }
           }
         },
-        {
-          "component": "Value",
-          "config": {
-            "path": "extracted.person.phone",
-            "className": "phone"
+        "title": {
+          "id": "uri",
+          "arrayPath": "extracted.person.nameGroup",
+          "path": "fullname.value"
+        },
+        "items": [
+          {
+            "component": "Address",
+            "config": {
+              "arrayPath": "extracted.person.addresses.address",
+              "street1": "street",
+              "city": "city",
+              "state": "state",
+              "postal1": "postal",
+              "country": "country",
+              "style": {
+                "width": "350px",
+                "overflow": "hidden",
+                "textOverflow": "ellipsis"
+              }
+            }
+          },
+          {
+            "component": "Value",
+            "config": {
+              "path": "extracted.person.phone",
+              "className": "phone"
+            }
+          },
+          {
+            "arrayPath": "extracted.person.emails.email",
+            "path": "value",
+            "className": "email"
+          },
+          {
+            "path": "extracted.person.ssn.value"
+          }
+        ],
+        "categories": {
+          "arrayPath": "extracted.person.sources",
+          "path": "source.name",
+          "colors": {
+            "New York Times": "#d5e1de",
+            "USA Today": "#ebe1fa",
+            "Los Angeles Times": "#cae4ea",
+            "Wall Street Journal": "#fae9d3",
+            "Washington Post": "#fae3df",
+            "Chicago Tribune": "#f0f6d9"
           }
         },
-        {
-          "arrayPath": "extracted.person.emails.email",
-          "path": "value",
-          "className": "email"
+        "timestamp": {
+          "arrayPath": "extracted.person.createdOn",
+          "path": "ts",
+          "type": "datetime",
+          "format": "yyyy-MM-dd",
+          "prefix": "Created on ",
+          "style": {
+            "fontStyle": "normal"
+          }
         },
-        {
-          "path": "extracted.person.ssn.value"
-        }
-      ],
-      "categories": {
-        "arrayPath": "extracted.person.sources",
-        "path": "source.name",
-        "colors": {
-          "New York Times": "#d5e1de",
-          "USA Today": "#ebe1fa",
-          "Los Angeles Times": "#cae4ea",
-          "Wall Street Journal": "#fae9d3",
-          "Washington Post": "#fae3df",
-          "Chicago Tribune": "#f0f6d9"
-        }
-      },
-      "timestamp": {
-        "arrayPath": "extracted.person.createdOn",
-        "path": "ts",
-        "type": "datetime",
-        "format": "yyyy-MM-dd",
-        "prefix": "Created on ",
-        "style": {
-          "fontStyle": "normal"
-        }
-      },
-      "status": { "path": "extracted.person.status" }
+        "status": { "path": "extracted.person.status" }
+      }
     }
+
   },
 
   "detail": {
+
     "heading": {
       "id": "uri",
       "thumbnail": {
@@ -294,7 +340,31 @@
       }
     },
 
-    "personal": {
+    "membership": {
+      "component": "Membership",
+      "config": {
+        "arrayPath": "person.memberships.membership",
+        "dateFormat": "yyyy-MM-dd",
+        "iconSize": 30,
+        "lists": [
+          "list1",
+          "list2",
+          "list3",
+          "list4",
+          "list5",
+          "list6",
+          "list7",
+          "list8",
+          "list9",
+          "list10",
+          "list11",
+          "list12"
+        ]
+      }
+    },
+
+    "info": {
+      "title": "Personal Info",
       "items": [
         {
           "component": "DataTableValue",
@@ -617,30 +687,6 @@
       }
     },
 
-    "occupations": {},
-
-    "membership": {
-      "component": "Membership",
-      "config": {
-        "arrayPath": "person.memberships.membership",
-        "dateFormat": "yyyy-MM-dd",
-        "iconSize": 32,
-        "lists": [
-          "list1",
-          "list2",
-          "list3",
-          "list4",
-          "list5",
-          "list6",
-          "list7",
-          "list8",
-          "list9",
-          "list10",
-          "list11",
-          "list12"
-        ]
-      }
-    },
     "imageGallery": {
       "component": "ImageGalleryMulti",
       "config": {
@@ -659,4 +705,5 @@
       }
     }
   }
+
 }

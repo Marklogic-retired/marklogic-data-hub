@@ -1,25 +1,59 @@
 .detail {
-    padding-top: 20px;
+    padding-top: 12px;
     div {
         .heading {
             display: flex;
             align-items: center;
-            .icon {
-                margin-right: 10px;
-                cursor: pointer;
-            }
+            justify-content: space-between;
             .title {
-                font-size: 28px;
+                display: flex;
+                align-items: center;
+                .icon {
+                    margin-right: 10px;
+                    cursor: pointer;
+                }
+                .text {
+                    font-size: 28px;
+                }
+                .thumbnail {
+                    position: relative;
+                    top: -4px;
+                    width: 7%;
+                    img {
+                        width: 60px;
+                        height: 60px;
+                        margin-left: 20px;
+                        border-radius: 4px;
+                    }
+                }
             }
-            .thumbnail {
-                position: relative;
-                top: -4px;
-                width: 7%;
-                img {
-                    width: 60px;
-                    height: 60px;
-                    margin-left: 20px;
-                    border-radius: 4px;
+            .actions {
+                display: flex;
+                button {
+                    background-color: white;
+                    border: solid 1px #D9D9D9;
+                    border-radius: 2px;
+                    color: #333333;
+                    padding: 2px 10px;
+                }
+                .expand {
+                    margin-right: 12px;
+                    .label {
+                        display: inline-block;
+                        padding-right: 6px;
+                    }
+                    .icon {
+                        position: relative;
+                        top: -2px;
+                        font-weight: bold;
+                    }
+                }
+                .favorite {
+                    margin-right: 12px;
+                    .label {
+                        display: inline-block;
+                        padding-right: 6px;
+                    }
                 }
             }
         }

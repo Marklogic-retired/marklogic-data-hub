@@ -11,13 +11,15 @@ import DateTime from "../components/DateTime/DateTime";
 import Image from "../components/Image/Image";
 import Section from "../components/Section/Section";
 import Value from "../components/Value/Value";
-import {ArrowLeft} from "react-bootstrap-icons";
-import "./Detail.scss";
-import _ from "lodash";
 import SocialMedia from "../components/SocialMedia/SocialMedia";
 import Membership from "../components/Membership/Membership";
 import ImageGallery from "../components/ImageGallery/ImageGallery";
 import ImageGalleryMulti from "../components/ImageGalleryMulti/ImageGalleryMulti";
+import {ArrowLeft, ChevronDoubleDown, ChevronDoubleUp} from "react-bootstrap-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faStar} from "@fortawesome/free-solid-svg-icons";
+import "./Detail.scss";
+import _ from "lodash";
 
 type Props = {};
 
@@ -30,7 +32,8 @@ const COMPONENTS = {
   Value: Value,
   SocialMedia: SocialMedia,
   ImageGallery: ImageGallery,
-  ImageGalleryMulti: ImageGalleryMulti
+  ImageGalleryMulti: ImageGalleryMulti,
+  Membership: Membership
 };
 
 const Detail: React.FC<Props> = (props) => {
@@ -41,10 +44,20 @@ const Detail: React.FC<Props> = (props) => {
     navigate(-1);
   };
 
+  const handleExpandClick = () => {
+    setExpand(!expand);
+  };
+
+  const handleFavoriteClick = () => {
+    setFavorite(!favorite);
+  };
+
   const userContext = useContext(UserContext);
   const detailContext = useContext(DetailContext);
 
   const [config, setConfig] = useState<any>(null);
+  const [favorite, setFavorite] = useState<any>(false);
+  const [expand, setExpand] = useState<any>(false);
 
   let {id} = useParams();
 
@@ -69,15 +82,34 @@ const Detail: React.FC<Props> = (props) => {
   const getHeading = (configHeading) => {
     return (
       <div className="heading">
-        <div className="icon" onClick={handleBackClick}>
-          <ArrowLeft color="#394494" size={28} />
-        </div>
         <div className="title">
-          <Value data={detailContext.detail} config={configHeading.title} getFirst={true} />
+          <div className="icon" onClick={handleBackClick}>
+            <ArrowLeft color="#394494" size={28} />
+          </div>
+          <div className="text">
+            <Value data={detailContext.detail} config={configHeading.title} getFirst={true} />
+          </div>
+          {configHeading.thumbnail && <div className="thumbnail">
+            <Image data={detailContext.detail} config={configHeading.thumbnail.config} />
+          </div>}
         </div>
-        {configHeading.thumbnail && <div className="thumbnail">
-          <Image data={detailContext.detail} config={configHeading.thumbnail.config} />
-        </div>}
+        <div className="actions">
+          <div className="expand">
+            <button onClick={handleExpandClick}>
+              <span className="label">Expand All</span>
+              <span className="icon">
+                {expand ? <ChevronDoubleUp color="#777" size={16}/> :
+                <ChevronDoubleDown color="#777" size={16}/>}
+              </span>
+            </button>
+          </div>
+          <div className="favorite">
+            <button onClick={handleFavoriteClick}>
+              <span className="label">Mark as Important</span>
+              <FontAwesomeIcon icon={faStar} style={{color: favorite ? "#FB637E" : "#777"}}></FontAwesomeIcon>
+            </button>
+          </div>
+        </div>
       </div>
     );
   };
@@ -112,17 +144,20 @@ const Detail: React.FC<Props> = (props) => {
 
           <div className="container-fluid">
 
-            {config?.detail?.membership?.config && <div className="row">
+            {config?.detail?.membership && <div className="row">
               <div className="col-12">
                 <Section title="Membership" config={{
                   "headerStyle": {
                     "backgroundColor": "transparent"
                   },
                   "mainStyle": {
-                    "paddingTop": "8px"
+                    "paddingTop": "6px"
                   }
                 }}>
-                  <Membership config={config?.detail?.membership?.config} data={detailContext.detail} />
+                  {React.createElement(
+                    COMPONENTS[config.detail.membership.component],
+                    {config: config.detail.membership.config, data: detailContext.detail}, null
+                  )}
                 </Section>
               </div>
             </div>}
@@ -130,9 +165,9 @@ const Detail: React.FC<Props> = (props) => {
             <div className="row">
               <div className="col-lg-7">
 
-                {config?.detail?.personal &&
-                  <Section title="Personal Info">
-                    {getPersonalItems(config?.detail?.personal?.items)}
+                {config?.detail?.info &&
+                  <Section title={config?.detail?.info.title}>
+                    {getPersonalItems(config?.detail?.info?.items)}
                   </Section>
                 }
 
@@ -153,16 +188,13 @@ const Detail: React.FC<Props> = (props) => {
                     </div>
                   </Section>
                 }
-                <Section title="Image Gallery">
-                  {React.createElement(
-                    COMPONENTS[config.detail.imageGallery.component],
-                    {config: config?.detail?.imageGallery?.config, data: detailContext.detail}, null
-                  )}
-                </Section>
 
-                {config?.detail?.occupations &&
-                  <Section title="Occupations">
-                    <Occupations />
+                {config?.detail?.imageGallery &&
+                  <Section title="Image Gallery">
+                    {React.createElement(
+                      COMPONENTS[config.detail.imageGallery.component],
+                      {config: config?.detail?.imageGallery?.config, data: detailContext.detail}, null
+                    )}
                   </Section>
                 }
 

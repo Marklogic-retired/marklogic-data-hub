@@ -11,6 +11,13 @@ import _ from "lodash";
 
 type Props = {};
 
+const COMPONENTS = {
+  Facets: Facets,
+  ResultsList: ResultsList,
+  SelectedFacets: SelectedFacets,
+  SummaryMeter: SummaryMeter
+};
+
 const Search: React.FC<Props> = (props) => {
 
   const userContext = useContext(UserContext);
@@ -35,23 +42,31 @@ const Search: React.FC<Props> = (props) => {
         <aside>
 
           {config?.search?.meter &&
-            <SummaryMeter config={config.search.meter} />
-          }
+            React.createElement(
+              COMPONENTS[config.search.meter.component],
+              { config: config.search.meter.config }, null
+          )}
 
-          {config?.search?.facets && 
-            <Facets config={config.search.facets} />
-          }
+          {config?.search?.facets &&
+            React.createElement(
+              COMPONENTS[config.search.facets.component],
+              { config: config.search.facets.config }, null
+          )}
 
         </aside>
         <div className="results">
+          
+          {config?.search?.selectedFacets &&
+            React.createElement(
+              COMPONENTS[config.search.selectedFacets.component],
+              { config: config.search.selectedFacets.config }, null
+          )}
 
-          {config?.search && // TODO pass config into SelectedFacets
-            <SelectedFacets />
-          }
-
-          {config?.search?.results && 
-            <ResultsList config={config.search.results} />
-          }
+          {config?.search?.results &&
+            React.createElement(
+              COMPONENTS[config.search.results.component],
+              { config: config.search.results.config }, null
+          )}
 
         </div>
       </>
