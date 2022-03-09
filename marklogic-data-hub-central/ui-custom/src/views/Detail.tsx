@@ -17,6 +17,7 @@ import _ from "lodash";
 import SocialMedia from "../components/SocialMedia/SocialMedia";
 import Membership from "../components/Membership/Membership";
 import ImageGallery from "../components/ImageGallery/ImageGallery";
+import ImageGalleryMulti from "../components/ImageGalleryMulti/ImageGalleryMulti";
 
 type Props = {};
 
@@ -27,7 +28,9 @@ const COMPONENTS = {
   Image: Image,
   Relationships: Relationships,
   Value: Value,
-  SocialMedia: SocialMedia
+  SocialMedia: SocialMedia,
+  ImageGallery: ImageGallery,
+  ImageGalleryMulti: ImageGalleryMulti
 };
 
 const Detail: React.FC<Props> = (props) => {
@@ -151,7 +154,10 @@ const Detail: React.FC<Props> = (props) => {
                   </Section>
                 }
                 <Section title="Image Gallery">
-                  <ImageGallery config={config?.detail?.imageGallery?.config} data={detailContext.detail}/>
+                  {React.createElement(
+                    COMPONENTS[config.detail.imageGallery.component],
+                    {config: config?.detail?.imageGallery?.config, data: detailContext.detail}, null
+                  )}
                 </Section>
 
                 {config?.detail?.occupations &&
