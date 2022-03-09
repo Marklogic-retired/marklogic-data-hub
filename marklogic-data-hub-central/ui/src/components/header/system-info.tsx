@@ -9,11 +9,19 @@ import {SecurityTooltips} from "../../config/tooltips.config";
 import {SystemInfoMessages} from "../../config/messages.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExclamationTriangle, faCopy} from "@fortawesome/free-solid-svg-icons";
-import {Modal, Row, Col} from "react-bootstrap";
+import {Modal, Row, Col, FormLabel, Form} from "react-bootstrap";
 import {HCAlert, HCButton, HCCard, HCTooltip} from "@components/common";
+import Select, {components as SelectComponents} from "react-select";
+import reactSelectThemeConfig from "../../config/react-select-theme.config";
+import {getEnvironment} from "../../util/environment";
+import StepsConfig from "../../config/steps.config";
+import {Search} from "react-bootstrap-icons";
+import {Typeahead} from "react-bootstrap-typeahead";
+import {facetValues, primaryEntityTypes} from "../../api/queries";
 
 
 const SystemInfo = (props) => {
+  const {handleError} = useContext(UserContext);
   const authorityService = useContext(AuthoritiesContext);
   const serviceName = props.serviceName || "";
   const dataHubVersion = props.dataHubVersion || "";
@@ -26,11 +34,100 @@ const SystemInfo = (props) => {
   const [clearDataVisible, setClearDataVisible] = useState(false);
   const [copySuccess, setCopySuccess] = useState(""); // eslint-disable-line @typescript-eslint/no-unused-vars
 
+  const stagingDbName = getEnvironment().stagingDb ? getEnvironment().stagingDb : StepsConfig.stagingDb;
+  const finalDbName = getEnvironment().finalDb ? getEnvironment().finalDb : StepsConfig.finalDb;
+  const databaseOptions = [stagingDbName, finalDbName];
+  const [targetDatabase, setTargetDatabase] = useState<string>(stagingDbName);
+  const basedOnOptions = ["None", "Collection", "Entity"];
+  const [targetBasedOn, setTargetBasedOn] = useState<string>("None");
+  const [selectedDeleteOpt, setSelectedDeleteOpt] = useState<string>("deleteAll");
+
+  const [collectionSelected, setCollectionSelected] = useState<string>("");
+  const [collectionOptions, setCollectionOptions] = useState<string[]>([]);
+  const [entitySelected, setEntitySelected] = useState<string>("");
+  const [entitiesOptions, setEntitiesOptions] = useState<string[]>([]);
+  const [allEntityNames, setAllEntityNames] = useState<string[]>([]);
+
+  const [clearBtnAvailable, setClearBtnAvailable] = useState<boolean>(true);
+
   useEffect(() => {
     if (!user.authenticated && props.systemInfoVisible) {
       props.setSystemInfoVisible(false);
     }
   }, [user.authenticated]);
+
+  useEffect(() => {
+    if (props.systemInfoVisible) {
+      getEntityOptions();
+    }
+  }, [props.systemInfoVisible]);
+
+  const getEntityOptions = async () => {
+    let response = await primaryEntityTypes();
+    if (response.status === 200) {
+      let models: string[] = [];
+      response.data.forEach(model => {
+        models.push(model.entityName);
+      });
+      setAllEntityNames(models);
+    }
+  };
+
+  const MenuList  = (selector, props) => (
+    <div id={`${selector}-select-MenuList`}>
+      <SelectComponents.MenuList {...props} />
+    </div>
+  );
+
+  const targetDbOptions = databaseOptions.map(d => ({value: d, label: d}));
+  const targetBasedOnOptions = basedOnOptions.map(d => ({value: d, label: d}));
+
+  const handleSelectedDeleteOpt = (event) => {
+    setSelectedDeleteOpt(event.target.value);
+    setTargetBasedOn("None");
+    setClearBtnAvailable(true);
+    setCollectionSelected("");
+    setEntitySelected("");
+  };
+
+  const handleSourceDatabase = (selectedItem) => {
+    setTargetDatabase(selectedItem.value);
+  };
+
+  const handleTargetBasedOn = (selectedItem) => {
+    setTargetBasedOn(selectedItem.value);
+    setCollectionSelected("");
+    setEntitySelected("");
+    if (selectedItem.value === "None") {
+      setClearBtnAvailable(true);
+    } else {
+      setClearBtnAvailable(false);
+    }
+  };
+
+  const handleCollectionChange = (selectedItem) => {
+    const selected = selectedItem[0];
+    if (selected) {
+      setCollectionSelected(selectedItem[0]);
+      if (collectionOptions.includes(selectedItem[0])) {
+        setClearBtnAvailable(true);
+      }
+    } else {
+      setClearBtnAvailable(false);
+    }
+  };
+
+  const handleEntitiesChange = (selectedItem) => {
+    const selected = selectedItem[0];
+    if (selected) {
+      setEntitySelected(selectedItem[0]);
+      if (entitiesOptions.includes(selectedItem[0])) {
+        setClearBtnAvailable(true);
+      }
+    } else {
+      setClearBtnAvailable(false);
+    }
+  };
 
   const downloadHubCentralFiles = () => {
     setMessage({show: false});
@@ -83,7 +180,20 @@ const SystemInfo = (props) => {
     try {
       setMessage({show: false});
       setIsLoading(true);
-      let response = await Axios.post("/api/environment/clearUserData");
+
+      let payload = {};
+      if (selectedDeleteOpt === "deleteSubset") {
+        const sourceType: string = targetBasedOn !== "None" ? targetBasedOn : "";
+        let sourceName: string = "";
+        if (sourceType !== "") {
+          sourceName = sourceType === "Collection" ? collectionSelected : entitySelected;
+        }
+        payload = {
+          "targetDatabase": targetDatabase,
+          "targetCollection": sourceName
+        };
+      }
+      let response = await Axios.post("/api/environment/clearUserData", payload);
       if (response.status === 200) {
         setIsLoading(false);
         setMessage({show: true});
@@ -112,6 +222,52 @@ const SystemInfo = (props) => {
     setClearDataVisible(true);
   };
 
+  const handleCollectionSearch = async (value: any) => {
+    let database: string = targetDatabase === finalDbName ? "final" : "staging";
+
+    if (value && value.length > 2) {
+      try {
+        let data = {
+          "referenceType": "collection",
+          "entityTypeId": " ",
+          "propertyPath": " ",
+          "limit": 10,
+          "dataType": "string",
+          "pattern": value,
+        };
+        const response = await facetValues(database, data);
+        if (response.status === 200) {
+          setCollectionOptions(response.data);
+          if (collectionOptions.includes(value)) {
+            setClearBtnAvailable(true);
+            setCollectionSelected(value);
+          } else {
+            setCollectionSelected("");
+            setClearBtnAvailable(false);
+          }
+        }
+      } catch (error) {
+        console.error(error);
+        handleError(error);
+      }
+
+    } else {
+      setCollectionOptions([]);
+    }
+  };
+
+  const handleEntitiesSearch = async (value: any) => {
+    let entitiesSelected = allEntityNames.filter(e => e.toLowerCase().includes(value.toLowerCase()));
+    setEntitiesOptions(entitiesSelected);
+    if (entitiesSelected.includes(value)) {
+      setEntitySelected(value);
+      setClearBtnAvailable(true);
+    } else {
+      setEntitySelected("");
+      setClearBtnAvailable(false);
+    }
+  };
+
   const clearDataConfirmation = (
     <Modal show={clearDataVisible} dialogClassName={styles.confirmationModal}>
       <Modal.Body>
@@ -135,6 +291,18 @@ const SystemInfo = (props) => {
     </Modal>
   );
 
+  const downloadHCFilesButton = (
+    <div className={styles.disabledButtonContainer}>
+      <HCButton
+        variant="primary"
+        aria-label="Download"
+        data-testid="downloadHubCentralFiles"
+        disabled={!authorityService.canDownloadProjectFiles()}
+        onClick={downloadHubCentralFiles}
+      >Download</HCButton>
+    </div>
+  );
+
   return (
     <Modal
       show={props.systemInfoVisible}
@@ -154,9 +322,9 @@ const SystemInfo = (props) => {
           <div className={styles.serviceName}>
             {serviceName}
             <HCTooltip text="Copy to clipboard" id="copy-to-clipboard-tooltip" placement={"bottom"}>
-              <i>
+              <span>
                 {<FontAwesomeIcon icon={faCopy} data-testid="copyServiceName" className={styles.copyIcon} onClick={() => copyToClipBoard(serviceName)}/>}
-              </i>
+              </span>
             </HCTooltip>
           </div>
           <div className={styles.version}>
@@ -170,110 +338,181 @@ const SystemInfo = (props) => {
           <div className={styles.cardsContainer}>
             <div className={styles.cards}>
               <Row>
-                { !authorityService.canDownloadProjectFiles() ? <Col>
+                { <Col>
                   <HCCard className={styles.download} >
                     <div className={styles.title}>Download Hub Central Files</div>
-                    <p>{SystemInfoMessages.downloadHubCentralFiles}</p>
-                    <HCTooltip id="missing-permission-tooltip" text={SecurityTooltips.missingPermission} placement="bottom">
-                      <div className={styles.disabledButtonContainer}>
-                        <HCButton
-                          aria-label="Download"
-                          data-testid="downloadHubCentralFiles"
-                          disabled
-                        >Download</HCButton>
-                      </div>
-                    </HCTooltip>
+                    <div className={styles.cardContent}><p>{SystemInfoMessages.downloadHubCentralFiles}</p></div>
+                    {!authorityService.canDownloadProjectFiles() ?
+                      <HCTooltip id="missing-permission-tooltip" text={SecurityTooltips.missingPermission}
+                        placement="top">
+                        {downloadHCFilesButton}
+                      </HCTooltip> :
+                      downloadHCFilesButton}
                   </HCCard>
-                </Col>:
-                  <Col>
-                    <HCCard className={styles.download} >
-                      <div className={styles.title}>Download Hub Central Files</div>
-                      <p>{SystemInfoMessages.downloadHubCentralFiles}</p>
-                      <div className={styles.buttonContainer}>
-                        <HCButton
-                          variant="primary"
-                          aria-label="Download"
-                          data-testid="downloadHubCentralFiles"
-                          size="sm"
-                          onClick={downloadHubCentralFiles}
-                        >Download</HCButton>
-                      </div>
-                    </HCCard>
-                  </Col>
+                </Col>
                 }
-
-                { !authorityService.canDownloadProjectFiles() ? <Col>
-                  <HCCard className={styles.download}>
+                {<Col>
+                  <HCCard className={styles.download} >
                     <div className={styles.title}>Download Project Files</div>
-                    <p>{SystemInfoMessages.downloadProjectFiles}</p>
+                    <div className={styles.cardContent}><p>{SystemInfoMessages.downloadProjectFiles}</p></div>
                     <div className={styles.buttonContainer}>
                       <HCButton
                         variant="primary"
                         aria-label="Download"
                         data-testid="downloadProjectFiles"
-                        size="sm"
                         onClick={downloadProjectFiles}
-                        disabled
+                        disabled={!authorityService.canDownloadProjectFiles()}
                       >Download</HCButton>
                     </div>
                   </HCCard>
-                </Col>:
-                  <Col>
-                    <HCCard className={styles.download} >
-                      <div className={styles.title}>Download Project Files</div>
-                      <p>{SystemInfoMessages.downloadProjectFiles}</p>
-                      <div className={styles.buttonContainer}>
-                        <HCButton
-                          variant="primary"
-                          aria-label="Download"
-                          data-testid="downloadProjectFiles"
-                          size="sm"
-                          onClick={downloadProjectFiles}
-                        >Download</HCButton>
-                      </div>
-                    </HCCard>
-                  </Col>
+                </Col>
                 }
 
-                { !authorityService.canClearUserData() ? <Col>
+                {<Col>
                   <HCCard className={styles.clearAll}>
                     {isLoading === true ? <div className={styles.spinRunning}>
                       <Spinner animation="border" variant="primary" />
                     </div> : ""}
                     <div className={styles.title} data-testid="clearData">Clear All User Data</div>
-                    <p>{SystemInfoMessages.clearAllUserData}</p>
+                    <div className={styles.cardContent}>
+                      <Row className={"mb-4"}>
+                        <Col xs lg="1">
+                          <Form.Check
+                            data-testid="deleteAll"
+                            inline
+                            id={"deleteAll"}
+                            name={"source-query"}
+                            type={"radio"}
+                            checked={selectedDeleteOpt === "deleteAll" ? true : false}
+                            onChange={handleSelectedDeleteOpt}
+                            value={"deleteAll"}
+                            aria-label={"deleteAll"}
+                            className={"mb-0"}
+                          />
+                        </Col>
+                        <Col>
+                          <span className={selectedDeleteOpt !== "deleteAll" ? styles.optionDisabled : ""}>{SystemInfoMessages.clearAllUserData}</span>
+                        </Col>
+                      </Row>
+                      <div className={styles.title}>Delete Subset of User Data</div>
+                      <Row className={"mb-2"}>
+                        <Col xs lg="1">
+                          <Form.Check
+                            inline
+                            id={"deleteSubset"}
+                            data-testid="deleteSubset"
+                            name={"source-query"}
+                            type={"radio"}
+                            checked={selectedDeleteOpt === "deleteSubset" ? true : false}
+                            onChange={handleSelectedDeleteOpt}
+                            value={"deleteSubset"}
+                            aria-label={"deleteSubset"}
+                            className={"mt-2"}
+                          />
+                        </Col>
+                        <FormLabel column
+                          className={`${styles.subSetSelection} ${selectedDeleteOpt !== "deleteSubset" ? styles.optionDisabled : ""}`}>
+                          {"Select a Database:"}
+                        </FormLabel>
+                        <Col className={"d-flex ps-1"}>
+                          <Select
+                            id="targetDatabase-select"
+                            inputId="targetDatabase"
+                            tabIndex={0}
+                            components={{MenuList: props => MenuList("targetDatabase", props)}}
+                            placeholder="Please select a database"
+                            value={targetDbOptions.find(oItem => oItem.value === targetDatabase)}
+                            onChange={handleSourceDatabase}
+                            isSearchable={false}
+                            aria-label="targetDatabase-select"
+                            isDisabled={selectedDeleteOpt !== "deleteSubset"}
+                            options={targetDbOptions}
+                            styles={reactSelectThemeConfig}
+                            formatOptionLabel={({value, label}) => {
+                              return (
+                                <span data-testid={`targetDbOptions-${value}`}>
+                                  {label}
+                                </span>
+                              );
+                            }}
+                          />
+                        </Col>
+                      </Row>
+                      <Row className={"mb-2"}>
+                        <Col xs lg="1"/>
+                        <FormLabel column
+                          className={`${styles.subSetSelection} ${selectedDeleteOpt !== "deleteSubset" ? styles.optionDisabled : ""}`}>
+                          {<span>Based on <span className="fst-italic">(optional)</span>:</span>}
+                        </FormLabel>
+                        <Col className={"d-flex ps-1"}>
+                          <Select
+                            id="targetBasedOn-select"
+                            inputId="targetBasedOn"
+                            tabIndex={0}
+                            components={{MenuList: props => MenuList("targetBasedOn", props)}}
+                            placeholder="None"
+                            value={targetBasedOnOptions.find(oItem => oItem.value === targetBasedOn)}
+                            onChange={handleTargetBasedOn}
+                            isSearchable={false}
+                            aria-label="targetBasedOn-select"
+                            isDisabled={selectedDeleteOpt !== "deleteSubset"}
+                            options={targetBasedOnOptions}
+                            styles={reactSelectThemeConfig}
+                            formatOptionLabel={({value, label}) => {
+                              return (
+                                <span data-testid={`targetBasedOnOptions-${value}`}>
+                                  {label}
+                                </span>
+                              );
+                            }}
+                          />
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col xs lg="1"/>
+                        <Col className={styles.subSetSelection}/>
+                        <Col className={"d-flex ps-1"}>
+                          {targetBasedOn === "Collection" ? <div className={"position-relative w-100"}>
+                            <Typeahead
+                              id="collectionInput"
+                              options={collectionOptions}
+                              aria-label="collection-input"
+                              placeholder={"Search collections"}
+                              value={collectionSelected}
+                              onInputChange={handleCollectionSearch}
+                              onChange={handleCollectionChange}
+                              style={{width: "100%"}}
+                              minLength={3}
+                            ></Typeahead>
+                            <Search className={styles.searchIcon} /></div> :
+                            targetBasedOn === "Entity" ? <div className={"position-relative w-100"}>
+                              <Typeahead
+                                id="entitiesInput"
+                                options={entitiesOptions}
+                                aria-label="entities-input"
+                                placeholder={"Search entities"}
+                                value={entitySelected}
+                                onInputChange={handleEntitiesSearch}
+                                onChange={handleEntitiesChange}
+                                style={{width: "100%"}}
+                                minLength={3}
+                              ></Typeahead>
+                              <Search className={styles.searchIcon} /></div> : ""}
+                        </Col>
+                      </Row>
+                    </div>
                     <div className={styles.buttonContainer}>
                       <HCButton
                         variant="primary"
                         aria-label="Clear"
                         data-testid="clearUserData"
-                        size="sm"
                         onClick={handleClearData}
-                        disabled
+                        disabled={!authorityService.canClearUserData() || !clearBtnAvailable}
                       >Clear</HCButton>
                     </div>
                   </HCCard>
-                </Col>:
-                  <Col>
-                    <HCCard className={styles.clearAll}>
-                      {isLoading === true ? <div className={styles.spinRunning}>
-                        <Spinner animation="border" variant="primary" />
-                      </div> : ""}
-                      <div className={styles.title} data-testid="clearData">Clear All User Data</div>
-                      <p>{SystemInfoMessages.clearAllUserData}</p>
-                      <div className={styles.buttonContainer}>
-                        <HCButton
-                          variant="primary"
-                          aria-label="Clear"
-                          data-testid="clearUserData"
-                          size="sm"
-                          onClick={handleClearData}
-                        >Clear</HCButton>
-                      </div>
-                    </HCCard>
-                  </Col>
+                </Col>
                 }
-
               </Row>
             </div>
           </div>
