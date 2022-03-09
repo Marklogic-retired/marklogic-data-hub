@@ -134,3 +134,11 @@ export const searchResultsQuery = async (searchPayload: any) => {
 export const getEntities = async () => {
   return await axios.get(`/api/models`);
 };
+
+export const facetValues = async (database: string, payload: any) => {
+  return await axios.post(`/api/entitySearch/facet-values?database=${database}`, payload);
+};
+
+export const primaryEntityTypes = async () => {
+  return await axios.get(`/api/models/primaryEntityTypes`);
+};
