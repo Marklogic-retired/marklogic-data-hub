@@ -642,7 +642,7 @@
       }
     },
     "imageGallery": {
-      "component": "ImageGallery",
+      "component": "ImageGalleryMulti",
       "config": {
         "style": {
           "height": "150px",

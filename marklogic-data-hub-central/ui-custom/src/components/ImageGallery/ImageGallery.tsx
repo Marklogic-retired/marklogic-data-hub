@@ -18,7 +18,7 @@ type Props = {
  * @prop {object} config  ImageGallery configuration object.
  * @example
  * {
- *    "component": "Relationships",
+ *    "component": "ImageGallery",
       "config": {
         "style": {
           "height": "150px",
@@ -44,7 +44,7 @@ const ImageGallery: React.FC<Props> = (props) => {
     const carouselItems = uris?.map((item, index) => {
       return (
         <Carousel.Item key={index}>
-          <div>
+          <div data-testid={`item-${index}`}>
             <img
               className="d-block w-100"
               src={item}

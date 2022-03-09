@@ -1,0 +1,20 @@
+.ImageGalleryMulti {
+    position: relative;
+    overflow: hidden;
+    .react-multi-carousel-list {
+        overflow: initial;
+    }
+    .react-multiple-carousel__arrow--left {
+        left: 0;
+    }
+    .react-multiple-carousel__arrow--right {
+        right: 0;
+    }
+    .react-multi-carousel-list {
+        position: inherit;
+    }
+    .ImageGalleryMultiContainer {
+        margin: 0 51px;
+        overflow: hidden;
+    }
+}
