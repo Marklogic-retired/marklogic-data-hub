@@ -15,7 +15,6 @@
  */
 package com.marklogic.hub.central.controllers;
 
-import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.central.HubCentral;
 import com.marklogic.hub.central.pendo.PendoKeyProvider;
 import com.marklogic.hub.hubcentral.HubCentralManager;
@@ -28,6 +27,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -77,8 +77,10 @@ public class EnvironmentController extends BaseController {
 
     @RequestMapping(value = "/api/environment/clearUserData", method = RequestMethod.POST)
     @Secured("ROLE_clearUserData")
-    public ResponseEntity<Void> clearUserData() {
-        new DataHubImpl(getHubClient()).clearUserData();
+    public ResponseEntity<Void> clearUserData(@RequestBody(required=false) ClearDataInfo info) {
+      String targetDatabase = info != null ? info.targetDatabase : null;
+      String targetCollection = info != null ? info.targetCollection : null;
+        new DataHubImpl(getHubClient()).clearUserData(info.targetDatabase, info.targetCollection);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -101,6 +103,11 @@ public class EnvironmentController extends BaseController {
         }
         return info;
     }
+
+  public static class ClearDataInfo {
+    public String targetDatabase;
+    public String targetCollection;
+  }
 
     public static class SystemInfo {
         public String serviceName;

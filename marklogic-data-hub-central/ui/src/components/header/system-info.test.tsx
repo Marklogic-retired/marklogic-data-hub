@@ -7,6 +7,8 @@ import data from "../../assets/mock-data/system-info.data";
 import axiosMock from "axios";
 import mocks from "../../api/__mocks__/mocks.data";
 import {SecurityTooltips} from "../../config/tooltips.config";
+import userEvent from "@testing-library/user-event";
+import curateData from "../../assets/mock-data/curation/flows.data";
 
 jest.mock("axios");
 
@@ -27,8 +29,15 @@ Object.assign(navigator, {
 
 describe("Update data load settings component", () => {
 
-
   beforeEach(() => {
+    axiosMock.get["mockImplementation"]((url) => {
+      switch (url) {
+      case "/api/models/primaryEntityTypes":
+        return Promise.resolve({status: 200, data: curateData.primaryEntityTypes.data});
+      default:
+        return Promise.resolve([]);
+      }
+    });
   });
 
   afterEach(() => {
@@ -36,7 +45,7 @@ describe("Update data load settings component", () => {
     cleanup();
   });
 
-  test("Verify project info display, user with \"Download\" and \"Clear\" button disabled", async () => {
+  test("Verify project info display, user with no authority to have \"Download\" and \"Clear\" button disabled", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities([""]);
     const {getByText, getByTestId} = render(<Router><AuthoritiesContext.Provider value={authorityService}>
@@ -45,6 +54,7 @@ describe("Update data load settings component", () => {
         setSystemInfoVisible={jest.fn()}
       />
     </AuthoritiesContext.Provider></Router>);
+
     expect(getByText(data.environment.serviceName)).toBeInTheDocument();
     expect(getByText("Data Hub Version:")).toBeInTheDocument();
     expect(getByText(data.environment.dataHubVersion)).toBeInTheDocument();
@@ -58,19 +68,20 @@ describe("Update data load settings component", () => {
     expect(getByText("Delete all user data in the STAGING, FINAL, and JOBS databases. Project files and artifacts remain.")).toBeInTheDocument();
     expect(getByTestId("downloadProjectFiles")).toBeDisabled();
     expect(getByTestId("downloadHubCentralFiles")).toBeDisabled();
-    // TODO DHFPROD-7711 skipping failing checks to enable component replacement
-    // expect(getByText("Clear")).toBeDisabled();
+    expect(getByTestId("clearUserData")).toBeDisabled();
   });
 
   test("Verify project info display, user with \"Download\" button enabled, and copy service name to clipboard", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["downloadProjectFiles"]);
+
     const {getByText, getByTestId} = render(<Router><AuthoritiesContext.Provider value={authorityService}>
       <SystemInfo {...data.environment}
         systemInfoVisible={true}
         setSystemInfoVisible={jest.fn()}
       />
     </AuthoritiesContext.Provider></Router>);
+
     expect(getByTestId("downloadProjectFiles")).toBeEnabled();
     expect(getByTestId("downloadHubCentralFiles")).toBeEnabled();
     // expect(getByText("Clear")).toBeDisabled();
@@ -84,8 +95,9 @@ describe("Update data load settings component", () => {
 
   });
 
-  test("Verify project info display, user with \"Clear\" button enabled", async () => {
+  test("Verify project info display, user with \"Clear\" button enabled and deletes all data", async () => {
     mocks.clearUserDataAPI(axiosMock);
+
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["clearUserData"]);
     const {getByText, getByTestId, getByLabelText} = render(<Router><AuthoritiesContext.Provider value={authorityService}>
@@ -106,11 +118,62 @@ describe("Update data load settings component", () => {
     expect(getByText(`Are you sure you want to clear all user data? This action will reset your instance to a state similar to a newly created DHS instance with your project artifacts.`));
     let confirm = getByLabelText("Yes");
     fireEvent.click(confirm);
-    expect(axiosMock.post).toBeCalledWith("/api/environment/clearUserData");
+    expect(axiosMock.post).toBeCalledWith("/api/environment/clearUserData", {});
 
     expect(await(waitForElement(() => getByText((content, node) => {
       return getSubElements(content, node, "Clear All User Data completed successfully");
     })))).toBeInTheDocument();
+  });
+
+  test("Verify project info display, user with \"Clear\" button enabled and options work correctly", async () => {
+    mocks.clearUserDataAPI(axiosMock);
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(["clearUserData"]);
+
+    const {getByText, getByTestId, getByLabelText, getByPlaceholderText} = render(<Router><AuthoritiesContext.Provider value={authorityService}>
+      <SystemInfo
+        systemInfoVisible={true}
+        setSystemInfoVisible={jest.fn()}
+      />
+    </AuthoritiesContext.Provider></Router>);
+
+    await(() => expect(axiosMock.get).toHaveBeenCalledTimes(1));
+
+    await wait(()  => {
+      expect(getByText("Clear")).toBeEnabled();
+      expect(getByTestId("deleteAll")).toBeChecked();
+      expect(getByText("Select a Database:")).toBeInTheDocument();
+      expect(getByLabelText("targetDatabase-select")).not.toBeEnabled();
+      expect(getByLabelText("targetBasedOn-select")).not.toBeEnabled();
+
+      fireEvent.click(getByTestId("deleteSubset"));
+      expect(getByTestId("deleteSubset")).toBeChecked();
+
+      expect(getByLabelText("targetDatabase-select")).toBeEnabled();
+      expect(getByLabelText("targetBasedOn-select")).toBeEnabled();
+      expect(getByTestId("targetBasedOnOptions-None")).toBeInTheDocument();
+      expect(getByText("Clear")).toBeEnabled();
+
+      fireEvent.keyDown(getByLabelText("targetBasedOn-select"), {key: "ArrowDown"});
+      expect(getByText("Collection")).toBeInTheDocument();
+      fireEvent.click(getByText("Collection"));
+      const collectionsInput = getByPlaceholderText("Search collections");
+      expect(collectionsInput).toBeInTheDocument();
+
+      expect(getByText("Clear")).not.toBeEnabled();
+      fireEvent.keyDown(getByLabelText("targetBasedOn-select"), {key: "ArrowDown"});
+      expect(getByText("Entity")).toBeInTheDocument();
+      fireEvent.click(getByText("Entity"));
+      const entitiesInput = getByPlaceholderText("Search entities");
+      expect(entitiesInput).toBeInTheDocument();
+      expect(getByText("Clear")).not.toBeEnabled();
+
+      userEvent.type(entitiesInput, "cust");
+      expect(getByLabelText("Customer")).toBeInTheDocument();
+      fireEvent.click(getByLabelText("Customer"));
+      expect(getByText("Clear")).toBeEnabled();
+
+    });
   });
 
   test("Verify user with incorrect permissions sees security permissions tooltip and buttons are disabled", () => {
