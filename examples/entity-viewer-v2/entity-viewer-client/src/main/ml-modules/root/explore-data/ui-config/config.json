@@ -636,9 +636,9 @@
     },
 
     "occupations": {},
-    
+
     "membership": {
-      "component": "Relationships",
+      "component": "Membership",
       "config": {
         "arrayPath": "person.memberships.membership",
         "dateFormat": "yyyy-MM-dd",
@@ -657,6 +657,23 @@
           "list11",
           "list12"
         ]
+      }
+    },
+    "imageGallery": {
+      "component": "ImageGallery",
+      "config": {
+        "style": {
+          "height": "150px",
+          "width": "150px"
+        },
+        "images": {
+          "url": {
+            "arrayPath": "person.images.image",
+            "path": "url"
+          }
+        },
+        "metadata": {},
+        "download": true
       }
     }
   }

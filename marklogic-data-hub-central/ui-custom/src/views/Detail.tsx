@@ -16,6 +16,7 @@ import "./Detail.scss";
 import _ from "lodash";
 import SocialMedia from "../components/SocialMedia/SocialMedia";
 import Membership from "../components/Membership/Membership";
+import ImageGallery from "../components/ImageGallery/ImageGallery";
 
 type Props = {};
 
@@ -115,7 +116,7 @@ const Detail: React.FC<Props> = (props) => {
                     "backgroundColor": "transparent"
                   },
                   "mainStyle": {
-                    "padding-top": "8px"
+                    "paddingTop": "8px"
                   }
                 }}>
                   <Membership config={config?.detail?.membership?.config} data={detailContext.detail} />
@@ -145,6 +146,9 @@ const Detail: React.FC<Props> = (props) => {
                     </div>
                   </Section>
                 }
+                <Section title="Image Gallery">
+                  <ImageGallery config={config?.detail?.imageGallery?.config} data={detailContext.detail}/>
+                </Section>
 
                 {config?.detail?.occupations &&
                   <Section title="Occupations">
