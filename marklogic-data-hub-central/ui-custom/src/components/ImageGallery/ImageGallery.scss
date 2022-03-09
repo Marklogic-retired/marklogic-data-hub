@@ -1,0 +1,20 @@
+.ImageGallery {
+    display: flex;
+    justify-content: center;
+    .carouselContainer {
+        width: 150px;
+        height: 150px;
+        img {
+            width: 100%;
+        }
+    }
+    .carousel-control-prev {
+      left: -15%;
+    }
+    .carousel-control-next {
+      right: -15%;
+    }
+    .carousel-indicators {
+      margin-bottom: 0;
+    }
+}

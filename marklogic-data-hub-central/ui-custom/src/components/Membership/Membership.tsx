@@ -46,6 +46,7 @@ const Membership: React.FC<Props> = (props) => {
   const iconSize = config.iconSize ? config.iconSize : 30
   const getItems = () => {
     let memberships = getValByConfig(data, config);
+    memberships = _.isNil(memberships) ? null : (Array.isArray(memberships) ? memberships : [memberships]);
     let membershipStyle: React.CSSProperties = props.style ? props.style : props.config?.style ? props.config.style : {};
     const items = config?.lists?.map((list, index) => {
       const membership = memberships?.find(el => el?.list.toLowerCase() === list.toLowerCase());
