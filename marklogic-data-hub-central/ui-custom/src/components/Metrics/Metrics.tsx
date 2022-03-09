@@ -30,7 +30,7 @@ const Metrics: React.FC<Props> = (props) => {
 
   return (
     <div className="metrics">
-      {_.isArray(props.config) && props.config.map((m, i) => {
+      {_.isArray(props.config.items) && props.config.items.map((m, i) => {
         return (
           <Metric key={"metric-" + i} data={props.data} config={m} />
         );

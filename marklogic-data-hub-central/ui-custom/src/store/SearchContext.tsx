@@ -9,12 +9,15 @@ interface SearchContextInterface {
   entityType: any;
   facetStrings: string[];
   searchResults: any;
+  start: number;
+  pageLength: number;
   returned: number;
   total: number;
   recentSearches: any;
   loading: boolean;
   handleSearch: any;
   handleFacetString: any;
+  handlePagination: any;
   handleSaved: any;
   handleGetSearchLocal: any;
 }
@@ -29,12 +32,15 @@ const defaultState = {
   entityType: "",
   facetStrings: [],
   searchResults: {},
+  start: 0,
+  pageLength: 10,
   returned: 0,
   total: 0,
   recentSearches: [],
   loading: false,
   handleSearch: () => {},
   handleFacetString: () => {},
+  handlePagination: () => {},
   handleSaved: () => {},
   handleGetSearchLocal: () => {}
 };
@@ -66,7 +72,7 @@ const SearchProvider: React.FC = ({ children }) => {
   const location = useLocation();
 
   const startInit = 1;
-  const pageLengthInit = 100;
+  const pageLengthInit = 10;
 
   const [start, setStart] = useState<number>(startInit);
   const [pageLength, setPagePength] = useState<number>(pageLengthInit);
@@ -80,8 +86,10 @@ const SearchProvider: React.FC = ({ children }) => {
   const [recentSearches, setRecentSearches] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const buildQuery = (start, pageLength, _qtext, _facetStrings, _entityType):QueryInterface => {
+  const buildQuery = (_start, _pageLength, _qtext, _facetStrings, _entityType):QueryInterface => {
     let query = {
+      start: _start,
+      pageLength: _pageLength,
       searchText: _qtext,
       entityTypeIds: Array.isArray(_entityType) ? _entityType : [_entityType],
       selectedFacets: {}
@@ -106,7 +114,7 @@ const SearchProvider: React.FC = ({ children }) => {
       if (location.pathname !== "/search") {
         navigate("/search"); // Handle search submit from another view
       }
-      let newQuery = buildQuery(startInit, pageLengthInit, qtext, facetStrings, entityType);
+      let newQuery = buildQuery(start, pageLength, qtext, facetStrings, entityType);
       let sr = getSearchResults(userContext.config.api.searchResultsEndpoint, newQuery, userContext.userid);
       sr.then(result => {
         setSearchResults(result?.data.searchResults.response);
@@ -143,6 +151,16 @@ const SearchProvider: React.FC = ({ children }) => {
     } else {
       let newFacetStrings = facetStrings.filter(f => (f !== (name + ":" + value)));
       setFacetStrings(newFacetStrings);
+    }
+    setNewSearch(true);
+  };
+
+  const handlePagination = async (_start=null, _pageLength=null) => {
+    if (_start!==null) {
+      setStart(_start);
+    }
+    if (_pageLength!==null) {
+      setPagePength(_pageLength);
     }
     setNewSearch(true);
   };
@@ -212,6 +230,8 @@ const SearchProvider: React.FC = ({ children }) => {
         qtext,
         entityType,
         facetStrings,
+        start,
+        pageLength,
         searchResults,
         returned,
         total,
@@ -219,6 +239,7 @@ const SearchProvider: React.FC = ({ children }) => {
         loading,
         handleSearch,
         handleFacetString,
+        handlePagination,
         handleSaved,
         handleGetSearchLocal
       }}

@@ -14,7 +14,8 @@ const config = {
                 "path": "result[0].extracted.person.name"
             }
         },
-        "personal": {
+        "info": {
+            "title": "Personal Data",
             "items": [
                 {
                     "component": "DataTableValue",
@@ -84,7 +85,7 @@ describe("Detail view", () => {
             getByText = renderResults.getByText;
         });
         expect(document.querySelector(".heading")).toBeInTheDocument();
-        expect(getByText(config.detail.personal.items[0].config.title)).toBeInTheDocument();
+        expect(getByText(config.detail.info.items[0].config.title)).toBeInTheDocument();
     });
 
     test("Renders loading content with empty config", async () => {

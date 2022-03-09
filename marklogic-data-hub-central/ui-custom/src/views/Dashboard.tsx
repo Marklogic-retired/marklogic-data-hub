@@ -5,14 +5,40 @@ import { UserContext } from "../store/UserContext";
 import Metrics from "../components/Metrics/Metrics";
 import SearchBox from "../components/SearchBox/SearchBox";
 import RecentSearches from "../components/RecentSearches/RecentSearches";
-import New from "../components/New/New";
 import RecentRecords from "../components/RecentRecords/RecentRecords";
+import WhatsNew from "../components/WhatsNew/WhatsNew";
 import Section from "../components/Section/Section";
 import Loading from "../components/Loading/Loading";
 import {getSummary} from "../api/api";
 import "./Dashboard.scss";
 
 type Props = {};
+
+const COMPONENTS = {
+  Metrics: Metrics,
+  RecentRecords: RecentRecords,
+  RecentSearches: RecentSearches,
+  WhatsNew: WhatsNew,
+};
+
+// TODO pull data from endpoint
+const whatsNewData = [
+  {
+    label: "New",
+    value: 15567000,
+    color: "#3CDBC0"
+  },
+  {
+    label: "Changed",
+    value: 6040000,
+    color: "#09ABDE"
+  },
+  {
+    label: "Submitted",
+    value: 4777000,
+    color: "#09EFEF"
+  }
+];
 
 const Dashboard: React.FC<Props> = (props) => {
 
@@ -57,7 +83,11 @@ const Dashboard: React.FC<Props> = (props) => {
 
         <div className="row">
 
-            <Metrics data={summary.metrics} config={config.dashboard.metrics} />
+            {config?.dashboard?.metrics &&
+              React.createElement(
+                COMPONENTS[config.dashboard.metrics.component],
+                { data: summary.metrics, config: config.dashboard.metrics.config }, null
+            )}
 
         </div>
 
@@ -74,7 +104,11 @@ const Dashboard: React.FC<Props> = (props) => {
                     <div className="divider">- or -</div>
                     <div style={{marginTop: "15px"}}>
                       <h4>Recent Searches</h4>
-                      <RecentSearches data={recentSearches} config={config.dashboard.recentSearches} />
+                      {config?.dashboard?.recentSearches &&
+                        React.createElement(
+                          COMPONENTS[config.dashboard.recentSearches.component],
+                          { data: recentSearches, config: config.dashboard.recentSearches.config }, null
+                      )}
                     </div>
                   </div>
                 }
@@ -84,9 +118,17 @@ const Dashboard: React.FC<Props> = (props) => {
 
           <div className="col-lg">
 
-            {config?.dashboard?.new &&
-              <Section title="What's New with Entities">
-                <New />
+            {config?.dashboard?.whatsNew &&
+              <Section title="What's New with Entities" config={{
+                "mainStyle": {
+                  "minHeight": "240px"
+                }
+              }}>
+                {config?.dashboard?.whatsNew &&
+                  React.createElement(
+                    COMPONENTS[config.dashboard.whatsNew.component],
+                    { data: whatsNewData, config: config.dashboard.whatsNew.config }, null
+                )}
               </Section>
             }
 
@@ -96,7 +138,11 @@ const Dashboard: React.FC<Props> = (props) => {
                   "maxHeight": "500px"
                 }
               }}>
-                  <RecentRecords data={recentRecords} config={config.dashboard.recentRecords} />
+                  {config?.dashboard?.recentRecords &&
+                    React.createElement(
+                      COMPONENTS[config.dashboard.recentRecords.component],
+                      { data: recentRecords, config: config.dashboard.recentRecords.config }, null
+                  )}
               </Section>
             : <Loading />}
 
