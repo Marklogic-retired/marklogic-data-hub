@@ -22,8 +22,19 @@ public class ClearUserDataTest extends AbstractHubCoreTest {
 
     private AllArtifactsProject project;
 
+    private final static String CUSTOMER_DOC = "{\n" +
+      "\t\"envelope\": {\n" +
+      "\t\t\"instance\": {\n" +
+      "\t\t\t\"id\": \"10260\",\n" +
+      "\t\t\t\"Order\": \"123\"\n" +
+      "\t\t},\n" +
+      "\t\t\"attachments\": null\n" +
+      "\t}\n" +
+      "}";
+
     @BeforeEach
     void beforeEach() {
+        runAsAdmin();
         installProjectInFolder("test-projects/all-artifacts");
     }
 
@@ -56,17 +67,29 @@ public class ClearUserDataTest extends AbstractHubCoreTest {
         project.writeHubCentralFilesToZipFile();
         project.verifyZipArtifacts();
 
-        // Now clear the data
+        //Now clear a collection in Final
         runAsTestUserWithRoles("hub-central-clear-user-data");
-        new DataHubImpl(getHubClient()).clearUserData();
+        new DataHubImpl(getHubClient()).clearUserData("data-hub-FINAL", "Customer");
+
+        runAsAdmin();
+        assertEquals(documentCountsBeforeClear[1] - 1, getDocumentCount(getHubClient().getFinalClient()),
+        "Expecting final database to have only one document extra.");
+
+        // Now clear all the data
+        runAsTestUserWithRoles("hub-central-clear-user-data");
+        new DataHubImpl(getHubClient()).clearUserData(null, null);
 
         // And verify that the artifacts are back
         runAsAdmin();
         int[] documentCountsAfterRestore = getDatabaseCounts();
-        for (int i = 0; i < 2; i++) {
-            assertEquals(documentCountsBeforeClear[i] - 2, documentCountsAfterRestore[i], "There should be two " +
-                "fewer documents than before the restore; all the artifacts should be back, but not the 2 test documents we created");
-        }
+
+        assertEquals(documentCountsBeforeClear[0] - 2, documentCountsAfterRestore[0], "There should be two " +
+            "fewer documents than before the restore in staging; all the artifacts should be back, but not the 2 test documents we created");
+        assertEquals(documentCountsBeforeClear[1] - 3, documentCountsAfterRestore[1], "There should be two " +
+          "fewer documents than before the restore in final; all the artifacts should be back, but not the 2 test documents we created");
+        assertEquals(documentCountsBeforeClear[2] - 2, documentCountsAfterRestore[2], "There should be two " +
+          "fewer documents than before the restore in jobs; all the artifacts should be back, but not the 2 test documents we created");
+
         assertEquals(0, documentCountsAfterRestore[2], "The jobs database should still be empty, since there was " +
             "nothing in that to restore");
 
@@ -85,7 +108,7 @@ public class ClearUserDataTest extends AbstractHubCoreTest {
 
         runAsTestUserWithRoles("data-hub-developer");
         try {
-            new DataHubImpl(getHubClient()).clearUserData();
+            new DataHubImpl(getHubClient()).clearUserData(null, null);
             fail("This should have failed because a data-hub-developer does not have the privileges for clearing a database");
         } catch (Exception e) {
             assertTrue(e instanceof HttpClientErrorException);
@@ -116,6 +139,16 @@ public class ClearUserDataTest extends AbstractHubCoreTest {
             assertEquals(originalCounts[i] + 1, newCounts[i], "Expecting to be able to single just " +
                 "1 new document, since 1 of the 2 documents was written with manage-admin permissions which this user cannot set");
         }
+
+        getHubClient().getFinalClient().newJSONDocumentManager().write(
+          "/customer/customer1.json",
+          new DocumentMetadataHandle()
+            .withPermission("data-hub-operator", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE)
+            .withCollections("Customer"),
+          new StringHandle(CUSTOMER_DOC).withFormat(Format.JSON));
+
+        assertEquals(originalCounts[1] + 2, getDocumentCount(getHubClient().getFinalClient()),
+        "Expecting final to have the new document and the extra customer document.");
     }
 
     private int[] getDatabaseCounts() {

@@ -42,6 +42,8 @@ import com.marklogic.client.impl.DocumentWriteOperationImpl;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.QueryOptionsListHandle;
+import com.marklogic.client.query.DeleteQueryDefinition;
+import com.marklogic.client.query.QueryManager;
 import com.marklogic.hub.*;
 import com.marklogic.hub.dataservices.ArtifactService;
 import com.marklogic.hub.deploy.commands.*;
@@ -56,6 +58,7 @@ import com.marklogic.mgmt.resource.databases.DatabaseManager;
 import com.marklogic.rest.util.Fragment;
 import com.marklogic.rest.util.ResourcesFragment;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -977,7 +980,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
      * This is intentionally not exposed in the DataHub interface, as there's no use case yet for a client of this
      * library to perform this operation. It can instead be accessed via Hub Central and Gradle.
      */
-    public void clearUserData() {
+    public void clearUserData(String targetDatabase, String sourceCollection) {
         final HubClient hubClientToUse = hubClient != null ? hubClient : hubConfig.newHubClient();
 
         long start = System.currentTimeMillis();
@@ -988,29 +991,50 @@ public class DataHubImpl implements DataHub, InitializingBean {
 
         final DatabaseManager databaseManager = new DatabaseManager(hubClientToUse.getManageClient());
 
-        // Jobs is cleared first; in case this fails, there's no chance of staging/final having been cleared and their
-        // artifacts not being reloaded
-        clearDatabase(databaseManager, hubClientToUse.getDbName(DatabaseKind.JOB));
-
-        final String stagingDbName = hubClientToUse.getDbName(DatabaseKind.STAGING);
-        try {
-            clearDatabase(databaseManager, stagingDbName);
-        } finally {
-            // Still attempt to write artifacts in case the ML error still resulted in the database (or most of it) being cleared
-            writeUserAndHubArtifacts(hubClientToUse.getStagingClient().newJSONDocumentManager(), userAndHubArtifacts, stagingDbName);
+        if (StringUtils.isEmpty(targetDatabase)) {
+          // If we clear a database Jobs is cleared first; in case this fails, there's no chance of staging/final having been cleared and their
+          // artifacts not being reloaded
+          clearDatabase(databaseManager, hubClientToUse.getDbName(DatabaseKind.JOB));
         }
+        final String stagingDbName = hubClientToUse.getDbName(DatabaseKind.STAGING);
 
+        if (StringUtils.isEmpty(targetDatabase) || targetDatabase.equals(stagingDbName)) {
+          try {
+            if (StringUtils.isEmpty(sourceCollection)) {
+              clearDatabase(databaseManager, stagingDbName);
+            } else {
+              clearDatabaseCollection(sourceCollection, hubClientToUse.getStagingClient());
+            }
+          } finally {
+              // Still attempt to write artifacts in case the ML error still resulted in the database (or most of it) being cleared
+              writeUserAndHubArtifacts(hubClientToUse.getStagingClient().newJSONDocumentManager(), userAndHubArtifacts, stagingDbName);
+          }
+        }
         final String finalDbName = hubClientToUse.getDbName(DatabaseKind.FINAL);
+
+      if (StringUtils.isEmpty(targetDatabase) || targetDatabase.equals(finalDbName)) {
         try {
+          if (StringUtils.isEmpty(sourceCollection)) {
             clearDatabase(databaseManager, finalDbName);
+          } else {
+            clearDatabaseCollection(sourceCollection, hubClientToUse.getFinalClient());
+          }
         } finally {
             // Still attempt to write artifacts in case the ML error still resulted in the database (or most of it) being cleared
             writeUserAndHubArtifacts(hubClientToUse.getFinalClient().newJSONDocumentManager(), userAndHubArtifacts, finalDbName);
         }
+      }
         logger.info("Finished clearing user data; time elapsed: " + (System.currentTimeMillis() - start));
     }
 
-    private void clearDatabase(DatabaseManager databaseManager, String databaseName) {
+  private void clearDatabaseCollection(String sourceName, DatabaseClient databaseClientToUse) {
+    QueryManager qm = databaseClientToUse.newQueryManager();
+    DeleteQueryDefinition def=qm.newDeleteDefinition();
+    def.setCollections(sourceName);
+    qm.delete(def);
+  }
+
+  private void clearDatabase(DatabaseManager databaseManager, String databaseName) {
         long start = System.currentTimeMillis();
         logger.info("Clearing database: " + databaseName);
         final boolean catchException = false;
