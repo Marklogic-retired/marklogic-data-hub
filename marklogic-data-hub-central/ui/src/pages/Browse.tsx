@@ -95,6 +95,20 @@ const Browse: React.FC<Props> = ({location}) => {
   const [parsedFacets, setParsedFacets] = React.useState<any[]>([]);
   const [selectedView, setSelectedView] = useState<ViewType>(viewOptions.graphView? ViewType.graph : ViewType.table ? ViewType.table : ViewType.snippet);
 
+  const searchResultDependencies = [
+    searchOptions.pageLength,
+    searchOptions.start,
+    searchOptions.pageNumber,
+    viewOptions.tableView,
+    searchOptions.database,
+    searchOptions.entityTypeIds,
+    searchOptions.nextEntityType,
+    searchOptions.query,
+    searchOptions.selectedFacets,
+    user.error.type,
+    hideDataHubArtifacts
+  ];
+
   const isGraphView = () => {
     const isGraph = searchOptions.nextEntityType !== "All Data" && viewOptions.graphView;
     return isGraph;
@@ -342,7 +356,7 @@ const Browse: React.FC<Props> = ({location}) => {
     }
     fetchUpdatedSearchResults();
 
-  }, [viewOptions.tableView, searchOptions.database, searchOptions.entityTypeIds, searchOptions.nextEntityType, searchOptions.query, searchOptions.selectedFacets, user.error.type, hideDataHubArtifacts]);
+  }, searchResultDependencies);
 
   useEffect(() => {
     let baseEntitiesSelected = searchOptions.entityTypeIds.length > 0;
