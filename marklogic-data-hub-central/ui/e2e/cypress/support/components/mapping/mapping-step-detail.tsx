@@ -268,7 +268,7 @@ class MappingStepDetail {
   }
 
   searchIcon(entityName: string) {
-    return cy.get(`[data-testid=filterIcon-${entityName}-entity]`).parent();
+    return cy.get(`[data-testid=filterIcon-${entityName}-entity] > path`).scrollIntoView();
   }
 
   searchName() {

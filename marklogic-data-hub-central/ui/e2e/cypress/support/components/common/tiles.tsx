@@ -33,6 +33,7 @@ class Tiles {
   }
 
   closeRunMessage() {
+    cy.wait(1500); //double requests are returning multiple modals - wait
     cy.get("button[aria-label=\"Close\"]").click({multiple: true});
     cy.get("body")
       .then(($body) => {

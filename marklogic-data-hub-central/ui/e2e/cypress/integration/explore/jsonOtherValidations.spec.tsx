@@ -97,7 +97,7 @@ describe("Verify numeric/date facet can be applied", () => {
   it("Verify gray facets don't persist when switching between browse, zero state explorer and run views", {defaultCommandTimeout: 120000}, () => {
     cy.intercept("/api/jobs/**").as("getJobs");
     cy.log("**Return to main sidebar");
-    entitiesSidebar.backToMainSidebar().click();
+    entitiesSidebar.backToMainSidebar();
 
     cy.log("**Remove Customer entity and select Person entity to facet");
     entitiesSidebar.removeSelectedBaseEntity();

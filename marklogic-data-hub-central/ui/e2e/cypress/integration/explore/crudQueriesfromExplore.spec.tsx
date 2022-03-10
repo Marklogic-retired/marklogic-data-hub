@@ -47,7 +47,7 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getFacetApplyButton().click();
     browsePage.clickColumnTitle(2);
     browsePage.waitForSpinnerToDisappear();
-    entitiesSidebar.backToMainSidebar().click();
+    entitiesSidebar.backToMainSidebar();
     browsePage.getSaveModalIcon().scrollIntoView().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getSaveQueryName().should("be.visible");
@@ -109,7 +109,7 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.openBaseEntityFacets("Customer");
     browsePage.getFacetItemCheckbox("email", "adamscole@nutralab.com").click();
-    entitiesSidebar.backToMainSidebar().click();
+    entitiesSidebar.backToMainSidebar();
     // clicking on save changes icon
     browsePage.getSaveModalIcon().scrollIntoView().click();
     browsePage.getEditSaveChangesFormName().invoke("val").should("contain", "new-query-2");
@@ -235,7 +235,7 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getSelectedFacets().should("exist");
     browsePage.getGreySelectedFacets("Bates").should("exist");
     browsePage.getFacetApplyButton().click();
-    entitiesSidebar.backToMainSidebar().click();
+    entitiesSidebar.backToMainSidebar();
     browsePage.getSaveModalIcon().scrollIntoView().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getSaveQueryName().type("person-query");
@@ -375,7 +375,7 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getSelectedFacets().should("exist");
     browsePage.getFacetApplyButton().click();
     browsePage.waitForSpinnerToDisappear();
-    entitiesSidebar.backToMainSidebar().click();
+    entitiesSidebar.backToMainSidebar();
     entitiesSidebar.clearQuery();
     // clicking on no doesn't create a new query and navigates to zero state
     browsePage.getResetConfirmationNoClick();
@@ -389,7 +389,7 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getFacetApplyButton().click();
     browsePage.clickColumnTitle(2);
     browsePage.waitForSpinnerToDisappear();
-    entitiesSidebar.backToMainSidebar().click();
+    entitiesSidebar.backToMainSidebar();
     entitiesSidebar.clearQuery();
     //selecting yes will save the new query and navigates to zero state
     browsePage.getResetConfirmationYesClick();
@@ -418,7 +418,7 @@ describe("save/manage queries scenarios, developer role", () => {
     entitiesSidebar.openBaseEntityFacets("Customer");
     browsePage.getFacetItemCheckbox("email", "adamscole@nutralab.com").click();
     // clicking on no doesn't update query and navigates to zero state
-    entitiesSidebar.backToMainSidebar().click();
+    entitiesSidebar.backToMainSidebar();
     entitiesSidebar.clearQuery();
     browsePage.getResetConfirmationNoClick();
     entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
@@ -485,23 +485,9 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.selectQuery("reset-query");
     browsePage.getResetQueryButton().click();
     entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
-  });
+    // });
 
-  xit("verify export array/structured data warning", () => {
-    browsePage.waitForSpinnerToDisappear();
-    browsePage.waitForHCTableToLoad();
-    // TODO DHFPROD-7711 skip since fails for Ant Design Table component
-    // TODO selecting "Order" leads to blank screen and error in browser
-    // browsePage.selectEntity("Order");
-    // browsePage.getSelectedEntity().should("contain", "Order");
-    // browsePage.getDataExportIcon().click({force: true});
-    // browsePage.getStructuredDataWarning().should("be.visible");
-    // browsePage.getStructuredDataCancel().should("be.visible");
-    // browsePage.getStructuredDataCancel().click();
-    // browsePage.getStructuredDataWarning().should("not.exist");
-  });
-
-  it("Apply facet,save query using save as is option", () => {
+    // it("Apply facet,save query using save as is option", () => {
     browsePage.getClearAllFacetsButton().click();
     entitiesSidebar.clearQuery();
     browsePage.getResetConfirmationNoClick();
@@ -516,7 +502,7 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.waitForSpinnerToDisappear();
     browsePage.getFacetItemCheckbox("fname", "Bob").click();
     browsePage.getFacetItemCheckbox("fname", "Bob").should("be.checked");
-    entitiesSidebar.backToMainSidebar().click();
+    entitiesSidebar.backToMainSidebar();
     browsePage.getSaveModalIcon().scrollIntoView().click({force: true});
     browsePage.waitForSpinnerToDisappear();
     browsePage.getSaveQueryName().should("be.visible");
@@ -533,6 +519,21 @@ describe("save/manage queries scenarios, developer role", () => {
     cy.waitForModalToDisappear();
     cy.wait(1000);*/
   });
+
+  xit("verify export array/structured data warning", () => {
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.waitForHCTableToLoad();
+    // TODO DHFPROD-7711 skip since fails for Ant Design Table component
+    // TODO selecting "Order" leads to blank screen and error in browser
+    // browsePage.selectEntity("Order");
+    // browsePage.getSelectedEntity().should("contain", "Order");
+    // browsePage.getDataExportIcon().click({force: true});
+    // browsePage.getStructuredDataWarning().should("be.visible");
+    // browsePage.getStructuredDataCancel().should("be.visible");
+    // browsePage.getStructuredDataCancel().click();
+    // browsePage.getStructuredDataWarning().should("not.exist");
+  });
+
   it.skip("Verify facets checked on sidebar", () => {
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("All Entities");
@@ -560,8 +561,8 @@ describe("save/manage queries scenarios, developer role", () => {
     entitiesSidebar.openBaseEntityFacets("Person");
     browsePage.getFacetItemCheckbox("lname", "Bates").should("be.checked");
     //switch the database
-    entitiesSidebar.backToMainSidebar().click();
-    browsePage.getStagingDatabaseButton().click();
+    entitiesSidebar.backToMainSidebar();
+    browsePage.getStagingDatabaseButton();
     browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.getBaseEntityOption("Person").should("be.visible");
     browsePage.getSaveQueriesDropdown().should("be.visible");

@@ -94,8 +94,10 @@ describe("Validate E2E Mastering Flow", () => {
     browsePage.getTotalDocuments().should("eq", 14);
     browsePage.getFacet("collection").should("exist");
     browsePage.getFacetItemCheckbox("collection", loadStepName).should("to.exist");
-  });
-  it("Create a new entity and Add properties", {defaultCommandTimeout: 120000}, () => {
+    cy.wait(3000);
+    // });
+    //add back in using storage saving with DHFPROD-8523
+    // it("Create a new entity and Add properties", {defaultCommandTimeout: 120000}, () => {
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
@@ -144,8 +146,9 @@ describe("Validate E2E Mastering Flow", () => {
     structuredTypeModal.newName("DetailsProperty");
     structuredTypeModal.getAddButton().click();
     propertyModal.getSubmitButton().click();
-  });
-  it("Save Patient entity", () => {
+    // });
+    // it("Save Patient entity", () => {
+    cy.wait(1000); // stall as click was happening before request completed
     modelPage.getPublishButton().click({force: true});
     confirmationModal.getYesButton(ConfirmationType.PublishAll);
     cy.waitForAsyncRequest();

@@ -133,7 +133,7 @@ describe("json scenario for table on browse documents page", () => {
     entitiesSidebar.selectBaseEntityOption("Customer");
     entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.waitForSpinnerToDisappear();
-    browsePage.getFinalDatabaseButton().click();
+    browsePage.getFinalDatabaseButton();
     browsePage.getClearAllFacetsButton().click();
     entitiesSidebar.getMainPanelSearchInput().type("Adams Cole");
     entitiesSidebar.getApplyFacetsButton().click();
@@ -143,7 +143,7 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getFacetItemCheckbox("email", "coleadams39@nutralab.com").click();
     browsePage.getGreySelectedFacets("adamscole@nutralab.com").should("exist");
     browsePage.getGreySelectedFacets("coleadams39@nutralab.com").should("exist");
-    entitiesSidebar.backToMainSidebar().click();
+    entitiesSidebar.backToMainSidebar();
     browsePage.getHubPropertiesExpanded();
     browsePage.getFacetItemCheckbox("collection", "mapCustomersJSON").click({force: true});
     browsePage.getGreySelectedFacets("mapCustomersJSON").should("exist");
@@ -241,7 +241,7 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getFacetItemCheckbox("name", "Adams Cole").click();
     browsePage.getGreySelectedFacets("Adams Cole").should("exist");
     browsePage.getFacetApplyButton().click();
-    entitiesSidebar.backToMainSidebar().click();
+    entitiesSidebar.backToMainSidebar();
     cy.wait(1000);
     browsePage.getFacetItemCheckbox("flow", "CurateCustomerJSON").click({force: true});
     browsePage.getFacetItemCheckbox("flow", "CurateCustomerJSON").should("exist");
@@ -270,7 +270,7 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getFacetApplyButton().click();
     browsePage.getSelectedFacet("CurateCustomerJSON").should("exist");
     browsePage.getSelectedFacet("Adams Cole").should("exist");
-    entitiesSidebar.backToMainSidebar().click();
+    entitiesSidebar.backToMainSidebar();
     cy.wait(5000);
     browsePage.waitForSpinnerToDisappear();
     // });
