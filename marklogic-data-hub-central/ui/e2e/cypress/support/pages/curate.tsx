@@ -24,7 +24,7 @@ class CuratePage {
      * @example map-orders
      */
   getEntityMappingStep(entityTypeId: string, stepName: string) {
-    return cy.findByTestId(`${entityTypeId}-${stepName}-step`);
+    return cy.get(`[data-testid=${entityTypeId}-${stepName}-step] > .hc-card_cardStyle__2KVre > .card-body`);
   }
 
   openMappingStepDetail(entityTypeId: string, stepName: string) {
@@ -34,8 +34,8 @@ class CuratePage {
   }
 
   addToNewFlow(entityTypeId: string, stepName: string) {
-    this.getEntityMappingStep(entityTypeId, stepName).should("be.visible", {timeout: 5000}).trigger("mouseover");
-    cy.findByTestId(`${stepName}-toNewFlow`).should("be.visible", {timeout: 5000}).click();
+    this.getEntityMappingStep(entityTypeId, stepName).should("be.visible", {timeout: 5000}).trigger("mouseover", {force: true});
+    cy.findByTestId(`${stepName}-toNewFlow`).should("be.visible", {timeout: 5000}).click({force: true});
   }
 
   openExistingFlowDropdown(entityTypeId: string, stepName: string) {
@@ -158,8 +158,11 @@ class CuratePage {
   }
 
   verifyStepDetailsOpen(stepName: string) {
-    // cy.get('#name').should('be.visible');
-    cy.findByLabelText(`${stepName}-details-header`).should("be.visible");
+    cy.findByLabelText(`${stepName}-details-header`).should("exist");
+  }
+
+  scrollEntityContainer() {
+    return cy.get("#entityContainer").scrollTo("top", {ensureScrollable: false});
   }
 
   saveEdit() {

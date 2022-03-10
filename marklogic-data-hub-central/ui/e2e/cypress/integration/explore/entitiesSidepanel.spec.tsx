@@ -49,7 +49,7 @@ describe("Test '/Explore' left sidebar", () => {
     entitiesSidebar.getEntityIconFromList(BaseEntityTypes.CUSTOMER).should("be.visible");
 
     cy.log("**Returning to main sidebar and confirming it's visible**");
-    entitiesSidebar.backToMainSidebar().should("be.visible").click();
+    entitiesSidebar.backToMainSidebar();
     browsePage.getSearchField().should("be.visible");
     entitiesSidebar.getEntityTitle(BaseEntityTypes.CUSTOMER).should("not.exist");
   });
@@ -123,14 +123,14 @@ describe("Test '/Explore' left sidebar", () => {
     entitiesSidebar.getDateFacetTitle().should("have.text", "birthDate");
     entitiesSidebar.selectDateRange({time: "facet-datetime-picker-date"});
     entitiesSidebar.getDateFacet().should("not.be.empty");
-    entitiesSidebar.backToMainSidebar().should("be.visible").click();
+    entitiesSidebar.backToMainSidebar();
   });
 
   it("Base Entity Filtering from side panel", () => {
     cy.log("Navigate to Graph View and verify all entities displayed");
     cy.wait(5000);
     browsePage.getClearAllFacetsButton().click();
-    browsePage.clickGraphView().click();
+    browsePage.clickGraphView();
     cy.wait(5000);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
       let custCoordinates: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
@@ -146,7 +146,7 @@ describe("Test '/Explore' left sidebar", () => {
     entitiesSidebar.selectBaseEntityOption("Order");
     entitiesSidebar.getBaseEntityOption("Order").should("be.visible");
     cy.wait(1000);
-    browsePage.getFinalDatabaseButton().click();
+    browsePage.getFinalDatabaseButton();
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
       let custCoordinates: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
       expect(custCoordinates).to.equal(undefined);
@@ -194,7 +194,7 @@ describe("Test '/Explore' left sidebar", () => {
     entitiesSidebar.verifyCollapsedRelatedEntityPanel().should("exist");
 
     cy.log("verify both Customer and Order nodes are still present in graph");
-    browsePage.clickGraphView().click();
+    browsePage.clickGraphView();
     cy.wait(1000);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
       let custCoordinates: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
@@ -243,7 +243,7 @@ describe("Test '/Explore' left sidebar", () => {
     browsePage.getSnippetViewResults("Customer-103").should("be.visible");
 
     cy.log("Switch to graph view and verify search summary is visible");
-    browsePage.clickGraphView().click();
+    browsePage.clickGraphView();
     browsePage.getGraphSearchSummary().should("have.length.gt", 0);
 
     cy.log("verify search filtered on top of base entity selections and Order is now gone in graph");
@@ -270,7 +270,7 @@ describe("Test '/Explore' left sidebar", () => {
     entitiesSidebar.clickOnApplyFacetsButton();
     browsePage.getHCTableRows().should("have.length", 0);
     entitiesSidebar.clickOnClearFacetsButton();
-    entitiesSidebar.backToMainSidebar().click();
+    entitiesSidebar.backToMainSidebar();
     browsePage.waitForHCTableToLoad();
   });
   /*

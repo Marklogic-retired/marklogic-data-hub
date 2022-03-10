@@ -43,6 +43,7 @@ class EntityTypeTable {
 
   viewEntityInGraphView(entityName: string) {
     cy.findByTestId(`${entityName}-graphView-icon`).click({force: true});
+    cy.wait(3000);
   }
 
   getRevertButtonTableView() {
