@@ -119,5 +119,14 @@ class GraphExplore {
   clickShowRelated() {
     return cy.get("#showRelated").click();
   }
+  getContextMenu() {
+    return cy.waitUntil(() => cy.get("#contextMenu"));
+  }
+  showRecordsInCluster() {
+    return cy.waitUntil(() => cy.get("#focusOnCluster")).click();
+  }
+  showAllRecordsFromQuery() {
+    return cy.waitUntil(() => cy.get("#defocus")).trigger("mouseover").click();
+  }
 }
 export default new GraphExplore();
