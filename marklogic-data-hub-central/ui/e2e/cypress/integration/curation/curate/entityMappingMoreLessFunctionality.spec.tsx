@@ -35,7 +35,8 @@ describe("Mapping", () => {
     mappingStepDetail.customerEntity().click();
     curatePage.openMappingStepDetail("Customer", "mapCustomersJSON");
     browsePage.waitForSpinnerToDisappear();
-    mappingStepDetail.searchIcon("Customer").click();
+    curatePage.scrollEntityContainer();
+    mappingStepDetail.searchIcon("Customer").click({force: true});
     mappingStepDetail.searchName().type("street");
     mappingStepDetail.searchButton().click();
     cy.findAllByText("more").should("have.length.gt", 1);

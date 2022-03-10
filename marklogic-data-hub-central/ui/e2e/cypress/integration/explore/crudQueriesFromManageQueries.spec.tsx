@@ -47,7 +47,7 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.getFacetApplyButton().click();
     browsePage.clickColumnTitle(2);
     browsePage.waitForSpinnerToDisappear();
-    entitiesSidebar.backToMainSidebar().click();
+    entitiesSidebar.backToMainSidebar();
     browsePage.getSaveModalIcon().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getSaveQueryName().should("be.visible");
@@ -162,7 +162,7 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.getSelectedFacets().should("exist");
     browsePage.getFacetApplyButton().click();
     browsePage.waitForSpinnerToDisappear();
-    entitiesSidebar.backToMainSidebar().click();
+    entitiesSidebar.backToMainSidebar();
     browsePage.getSaveModalIcon().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getSaveQueryName().should("be.visible");
@@ -209,7 +209,7 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.getSelectedFacets().should("exist");
     browsePage.getFacetApplyButton().click();
     browsePage.waitForSpinnerToDisappear();
-    entitiesSidebar.backToMainSidebar().click();
+    entitiesSidebar.backToMainSidebar();
     browsePage.getSaveModalIcon().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getSaveQueryName().should("be.visible");
@@ -252,7 +252,7 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.getSelectedFacets().should("exist");
     browsePage.getFacetApplyButton().click();
     browsePage.waitForSpinnerToDisappear();
-    entitiesSidebar.backToMainSidebar().click();
+    entitiesSidebar.backToMainSidebar();
     browsePage.getSaveModalIcon().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getSaveQueryName().should("be.visible");
@@ -287,7 +287,7 @@ describe("manage queries modal scenarios, developer role", () => {
     entitiesSidebar.openBaseEntityFacets("Person");
     browsePage.getFacetItemCheckbox("fname", "Alice").should("be.checked");
     browsePage.getAppliedFacets("Alice").should("exist");
-    entitiesSidebar.backToMainSidebar().click();
+    entitiesSidebar.backToMainSidebar();
     browsePage.getSelectedQuery().should("contain", "personQuery");
   });
 

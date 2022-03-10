@@ -1,7 +1,8 @@
 class BaseEntitySidebar {
   //Elements
   backToMainSidebar() {
-    return cy.findByLabelText("base-entity-icons-list-close");
+    cy.findByLabelText("base-entity-icons-list-close").should("be.visible").click();
+    cy.wait(1000); //element is detached from DOM issue following this, so stall before next command
   }
   getBaseEntity(entity: string) {
     return cy.get(`div[aria-label="base-entities-${entity}"]`);
@@ -10,6 +11,7 @@ class BaseEntitySidebar {
     return cy.get(`[aria-label="base-option-${entity}"]`);
   }
   removeSelectedBaseEntity() {
+    cy.get(`[class="css-xb97g8"]`).should("be.visible");
     return cy.get(`[class="css-xb97g8"]`).first().click();
   }
 

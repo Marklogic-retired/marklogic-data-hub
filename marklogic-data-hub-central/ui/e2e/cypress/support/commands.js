@@ -142,7 +142,7 @@ Cypress.Commands.add("verifyStepAddedToFlow", (stepType, stepName, flowName) => 
 });
 
 Cypress.Commands.add("waitForModalToDisappear", () => {
-  cy.get("[class=\"ant-modal-mask\"]").should("not.exist");
+  cy.get("[class=\"modal-dialog\"]").should("not.exist");
 });
 
 Cypress.Commands.add("waitForBootstrapModalToDisappear", () => {
