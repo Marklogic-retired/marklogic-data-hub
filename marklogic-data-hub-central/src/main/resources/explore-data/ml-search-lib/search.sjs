@@ -24,6 +24,8 @@ class Search {
 
   getSearchResults(searchParams) {
     const searchText = searchParams.searchText;
+    const start = searchParams.start ? searchParams.start : 1
+    const pageLength = searchParams.pageLength ? searchParams.pageLength : 10
 
     let entityTypeIds = searchParams.entityTypeIds;
     let collections = entityTypeIds.map(i => 'Collection:' + i);
@@ -47,7 +49,7 @@ class Search {
     }
     searchConstraint = searchConstraint.join(" AND ");
 
-    let searchResponse = searchImpl.getSearchResults(searchConstraint, entityTypeIds[0]).toObject();
+    let searchResponse = searchImpl.getSearchResults(searchConstraint, entityTypeIds[0], start, pageLength).toObject();
     let results = searchResponse["response"]["result"];
     for(let result of results) {
       let jsonObject = result["extracted"][entityTypeIds[0]];
