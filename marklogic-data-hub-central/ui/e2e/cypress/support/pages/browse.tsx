@@ -334,7 +334,8 @@ class BrowsePage {
   }
 
   clickTableView() {
-    return cy.get("[data-cy=table-view]").click();
+    cy.wait(1500);
+    return cy.get("[data-cy=table-view]").click({force: true});
   }
   clickSwitchToTableView() {
     return cy.get("#tableView").click();
@@ -658,11 +659,19 @@ class BrowsePage {
   }
 
   getFinalDatabaseButton() {
-    return cy.findByText("Final");
+    cy.findByText("Final").click();
+    // cy.intercept("POST", "/api/entitySearch?database=final").as("entitySearchFinal");
+    // cy.wait("@entitySearchFinal");
+    //tried intercept + wait on request but didn't work. Leaving comment as reference
+    cy.wait(3000);
   }
 
   getStagingDatabaseButton() {
-    return cy.findByText("Staging");
+    cy.findByText("Staging").click();
+    // cy.intercept("POST", "**/entitySearch?*").as("entitySearchStaging");
+    // cy.wait("@entitySearchStaging");
+    //tried intercept + wait on request but didn't work. Leaving comment as reference
+    cy.wait(3000);
   }
 
   getDatabaseButton(database: string) {

@@ -16,7 +16,7 @@ class RunPage {
   }
 
   isFlowNotVisible(flowName: string) {
-    return cy.findByText(flowName).should("have.length.lt", 1);
+    return cy.get(`#${flowName}`).should("not.exist");
   }
 
   editSave() {
@@ -51,6 +51,7 @@ class RunPage {
 
   verifyStepInFlow(stepType: string, stepName: string, flowName: string) {
     cy.waitForModalToDisappear();
+    cy.wait(1500);
     cy.get(`#${flowName} ${this.flowBodyContainer}`).findAllByText(stepType).first().scrollIntoView().should("exist");
     cy.get(`#${flowName} ${this.flowBodyContainer}`).findAllByText(stepType).first().scrollIntoView().should("be.visible");
     cy.get(`#${flowName} ${this.flowBodyContainer}`).findAllByText(stepName).first().should("be.visible");
@@ -77,7 +78,7 @@ class RunPage {
   }
 
   runStep(stepName: string, flowName: string) {
-    cy.waitUntil(() => cy.get(`#${flowName}`).findByLabelText(`runStep-${stepName}`)).first().click({force: true});
+    cy.waitUntil(() => cy.get(`#${flowName}`).findAllByLabelText(`runStep-${stepName}`)).first().click({force: true});
     cy.waitForAsyncRequest();
   }
 
