@@ -71,8 +71,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
 
   const [openTableViewForGroupNodes, toggleTableViewForGroupNodes] = useState(false);
   const [relatedToData, setRelatedToData] = useState({});
-
-  // Load coords *once* on init
+  const [nodesDefocussed, setNodesDefocussed] = useState<any []>([]);
 
   const updateNodesData = (nodes) => {
     network.body.data.nodes.update(nodes);
@@ -93,7 +92,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     if (network) {
       edges = network.getConnectedEdges(nodeId);
     }
-    let edgeId = edges[0];
+    let edgeId = edges && edges.length > 0 && edges[0];
 
     return predicates[edgeId];
   };
@@ -148,6 +147,10 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     return () => {
       setClickedNode({});
       setExpandedNodeData({});
+      setPredicates({});
+      setGroupNodes({});
+      setLeafNodes({});
+      setNodesDefocussed([]);
     };
 
   }, [network, graphView]);
@@ -690,6 +693,46 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     }
   };
 
+  const resetSavedNode = () => {
+    if (savedNode) {
+      setSavedNode(undefined);
+      network.unselectAll();
+    }
+  };
+
+  const handleClusterFocus = () => {
+    let clickedNodeId = clickedNode && clickedNode["nodeId"];
+    const getNodesInCluster = (nodeId: string, nodesInCluster = {}) => {
+      if (nodesInCluster[nodeId]) {
+        return nodesInCluster;
+      }
+      let nodeIds = network.getConnectedNodes(nodeId);
+      nodesInCluster[nodeId] = "covered";
+      if (nodeIds.length) {
+        nodeIds.forEach(nodeId => {
+          getNodesInCluster(nodeId, nodesInCluster);
+        });
+      }
+      return nodesInCluster;
+    };
+
+    let nodesInCluster = getNodesInCluster(clickedNodeId);
+    let nodesToHide = network.body.data.nodes.get({
+      filter: (node) => !nodesInCluster.hasOwnProperty(node.id)
+    });
+
+    nodesToHide.forEach(node => node["hidden"] = true);
+    setNodesDefocussed(nodesToHide);
+    resetSavedNode();
+    updateNodesData(nodesToHide);
+  };
+
+  const handleDefocusCluster = () => {
+    nodesDefocussed.forEach(node => node["hidden"] = false);
+    resetSavedNode();
+    updateNodesData(nodesDefocussed);
+    setNodesDefocussed([]);
+  };
 
   const handleMenuClick = async (event) => {
     setContextMenuVisible(false);
@@ -697,6 +740,14 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     if (id === "viewRecordsInTableView") {
       if (network) {
         handleTableViewRecords();
+      }
+    } else if (id === "focusOnCluster") {
+      if (network) {
+        handleClusterFocus();
+      }
+    }  else if (id === "defocus") {
+      if (network) {
+        handleDefocusCluster();
       }
     } else if (id === "showRelated") {
       if (network) {
@@ -762,6 +813,10 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     return clickedNode && clickedNode["hasRelationships"];
   };
 
+  const isClusterFocused = () => {
+    return !!nodesDefocussed.length;
+  };
+
   const menu = () => {
     let entityType = "";
     if (nodeIdExists()) {
@@ -803,6 +858,16 @@ const GraphVisExplore: React.FC<Props> = (props) => {
           <div id="collapseLeafNode" key="6" className={styles.contextMenuItem}>
             Collapse related
           </div>
+        }
+        { nodeIdExists() && !isClusterFocused() &&
+            <div id="focusOnCluster" key="7" className={styles.contextMenuItem}>
+            Show only records in this cluster
+            </div>
+        }
+        { nodeIdExists() && isClusterFocused() &&
+            <div id="defocus" key="8" className={styles.contextMenuItem}>
+            Show all records returned from the query
+            </div>
         }
       </div>
     );

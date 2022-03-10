@@ -177,7 +177,7 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
           let finalColor = color ? color : "#EEEFF1";
           if (name) {
             return (
-              <HCTooltip text={ExploreGraphViewToolTips.entityToolTip} placement="top" id="baseEntityToolTip">
+              <HCTooltip text={ExploreGraphViewToolTips.entityToolTip} placement="top" id="baseEntityToolTip" key={name}>
                 <div
                   key={name}
                   aria-label={`base-entities-${name}`}
