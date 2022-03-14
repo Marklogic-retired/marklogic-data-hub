@@ -276,7 +276,7 @@ const Run = (props) => {
     history.push({pathname: "/tiles/explore"});
   };
 
-  function showStepRunResponse(jobId,) {
+  function showStepRunResponse(jobId) {
     setJobId(jobId);
     setOpenJobResponse(true);
   }
