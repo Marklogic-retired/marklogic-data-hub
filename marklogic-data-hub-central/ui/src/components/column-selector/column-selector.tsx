@@ -83,29 +83,29 @@ const ColumnSelector: React.FC<Props> = (props) => {
       if (item.children) {
         if (item.visible === false) {
           return (
-            <TreeNode style={{display: "none"}} key={item.key} title={title} >
+            <TreeNode style={{display: "none"}} key={item.key} title={title} aria-label="column-option" >
               {treeRenderer(item.children)}
             </TreeNode>
           );
 
         } else {
           return (
-            <TreeNode key={item.key} title={title} >
+            <TreeNode key={item.key} title={title} aria-label="column-option" >
               {treeRenderer(item.children)}
             </TreeNode>
           );
         }
       }
       if (item.visible === false) {
-        return <TreeNode style={{display: "none"}} title={title} key={item.key} />;
+        return <TreeNode style={{display: "none"}} title={title} key={item.key} aria-label="column-option"/>;
       } else {
         if (item && primaryKey && item.key === primaryKey.key) {
           let pkTitle = <HCTooltip text="The column identified as the unique identifier must always be displayed." id="column-identifier-tooltip" placement="top">
             <div data-testid="pk-tooltip">{title}</div>
           </HCTooltip>;
-          return <TreeNode title={pkTitle} disabled={true} disableCheckbox={true} key={item.key} data-testid={`node-${item.title}`}/>;
+          return <TreeNode title={pkTitle} disabled={true} disableCheckbox={true} key={item.key} data-testid={`node-${item.title}`} aria-label="column-option"/>;
         } else {
-          return <TreeNode title={title} key={item.key} data-testid={`node-${item.title}`}/>;
+          return <TreeNode title={title} key={item.key} data-testid={`node-${item.title}`} aria-label="column-option" />;
         }
       }
     });
@@ -166,8 +166,8 @@ const ColumnSelector: React.FC<Props> = (props) => {
           <footer>
             <HCDivider className={styles.divider} />
             <div className={styles.footer}>
-              <HCButton size="sm" variant="outline-light" onClick={onClose} >Cancel</HCButton>
-              <HCButton size="sm" onClick={onApply} disabled={!checkedKeys.length} >Apply</HCButton>
+              <HCButton size="sm" variant="outline-light" onClick={onClose} data-testid={"cancel-column-selector"} >Cancel</HCButton>
+              <HCButton size="sm" onClick={onApply} disabled={!checkedKeys.length} data-testid={"apply-column-selector"} >Apply</HCButton>
             </div>
           </footer>
         </div>

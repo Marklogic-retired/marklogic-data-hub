@@ -41,9 +41,9 @@ const Query: React.FC<Props> = (props) => {
   } = useContext(UserContext);
   const {
     searchOptions,
+    setSearchOptions,
     applySaveQuery,
     clearAllGreyFacets,
-    setNextEntity,
     setSavedQueries,
     savedQueries
   } = useContext(SearchContext);
@@ -60,15 +60,13 @@ const Query: React.FC<Props> = (props) => {
   const [currentQueryName, setCurrentQueryName] = useState(searchOptions.selectedQuery);
   const [nextQueryName, setNextQueryName] = useState("");
   const [currentQueryDescription, setCurrentQueryDescription] = useState("");
-  const [showEntityConfirmation, toggleEntityConfirmation] = useState(false);
   const [entityQueryUpdate, toggleEntityQueryUpdate] = useState(false);
-  const [entityCancelClicked, toggleEntityCancelClicked] = useState(false);
   const [resetQueryIcon, setResetQueryIcon] = useState(true); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [showResetQueryNewConfirmation, toggleResetQueryNewConfirmation] = useState(false);
   const [showResetQueryEditedConfirmation, toggleResetQueryEditedConfirmation] = useState(false);
   const [deleteModalVisibility, setDeleteModalVisibility] = useState(false);
 
-  const [existingQueryYesClicked, toggleExistingQueryYesClicked] = useState(false);
+  const [existingQueryYesClicked, toggleExistingQueryYesClicked] = useState(false); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [resetYesClicked, toggleResetYesClicked] = useState(false);
 
   const saveNewQuery = async (queryName, queryDescription, facets) => {
@@ -241,13 +239,14 @@ const Query: React.FC<Props> = (props) => {
           }
         }
       }
+
       if ((
         (JSON.stringify(currentQuery.savedQuery.query.selectedFacets) !== JSON.stringify(searchOptions.selectedFacets)) ||
         (currentQuery.savedQuery.query.searchText !== searchOptions.query) ||
         (JSON.stringify(currentQuery.savedQuery.sortOrder) !== JSON.stringify(searchOptions.sortOrder)) ||
         (JSON.stringify(currentQuery.savedQuery.propertiesToDisplay) !== JSON.stringify(searchOptions.selectedTableProperties)) ||
-        (props.greyFacets.length > 0) || props.isColumnSelectorTouched) &&
-        searchOptions.selectedQuery !== "select a query") {
+        (currentQuery.savedQuery.query.entityTypeIds.sort().join("") !== searchOptions.entityTypeIds.sort().join("")) ||
+        (props.greyFacets.length > 0) || props.isColumnSelectorTouched) && searchOptions.selectedQuery !== "select a query") {
         return true;
       }
     }
@@ -275,7 +274,6 @@ const Query: React.FC<Props> = (props) => {
       for (let key of props.queries) {
         if (key.savedQuery.name === currentQueryName) {
           setCurrentQuery(key);
-          // setCurrentQueryDescription(key['savedQuery']['description']);
         }
       }
     }
@@ -302,43 +300,14 @@ const Query: React.FC<Props> = (props) => {
     }
   }, [savedQueries]);
 
-
   useEffect(() => {
-    if (searchOptions.nextEntityType === "All Entities" && !entityCancelClicked && searchOptions.entityTypeIds.length > 1 && searchOptions.selectedQuery !== "select a query") {
+    if (searchOptions.nextEntityType === "All Entities" && searchOptions.entityTypeIds.length > 1 && searchOptions.selectedQuery !== "select a query") {
       // TO CHECK IF THERE HAS BEEN A CANCEL CLICKED WHILE CHANGING ENTITY
-      if ((searchOptions.entityTypeIds.length > 1 || isSaveQueryChanged() || isNewQueryChanged())) {
-        toggleEntityConfirmation(true);
-      } else {
+      if (!(searchOptions.entityTypeIds.length > 1 || isSaveQueryChanged() || isNewQueryChanged())) {
         setCurrentQueryOnEntityChange();
       }
-    } else {
-      toggleEntityCancelClicked(false); // RESETTING THE STATE TO FALSE
     }
   }, [searchOptions.nextEntityType]);
-
-  // Switching between entity confirmation modal buttons
-  const onCancel = () => {
-    toggleEntityConfirmation(false);
-    toggleEntityCancelClicked(true);
-    setNextEntity(searchOptions.entityTypeIds[0]);
-  };
-
-  const onNoClick = () => {
-    toggleEntityConfirmation(false);
-    setCurrentQueryOnEntityChange();
-  };
-
-  const onOk = () => {
-    if (Object.keys(currentQuery).length === 0) {
-      toggleEntityConfirmation(false);
-      toggleExistingQueryYesClicked(true);
-      setOpenSaveModal(true);
-    } else {
-      setOpenSaveChangesModal(true);
-      toggleEntityConfirmation(false);
-      toggleEntityQueryUpdate(true);
-    }
-  };
 
   const setCurrentQueryOnEntityChange = () => {
     toggleSaveNewIcon(false);
@@ -422,6 +391,10 @@ const Query: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (Object.entries(currentQuery).length !== 0 && searchOptions.selectedQuery !== "select a query") {
+      setSearchOptions({
+        ...searchOptions,
+        selectedTableProperties: currentQuery.savedQuery.propertiesToDisplay
+      });
       setCurrentQueryName(currentQuery.hasOwnProperty("name") ? currentQuery["name"] : currentQuery["savedQuery"]["name"]);
       setCurrentQueryDescription(currentQuery.hasOwnProperty("description") ? currentQuery["description"] : currentQuery["savedQuery"]["description"]);
     } else {
@@ -471,7 +444,7 @@ const Query: React.FC<Props> = (props) => {
             <div className={styles.iconBar}>
               {(props.selectedFacets.length > 0 || searchOptions.query
                 || props.isColumnSelectorTouched || searchOptions.sortOrder.length > 0) &&
-                showSaveNewIcon && searchOptions.entityTypeIds?.length === 1 && searchOptions.selectedQuery === "select a query" &&
+                showSaveNewIcon && searchOptions.selectedQuery === "select a query" &&
                 <div>
                   <HCTooltip text={props.isSavedQueryUser ? "Save the current query" : "Save Query: Contact your security administrator to get the roles and permissions to access this functionality"} id="save-current-query-tooltip" placement="top">
                     <span className="p-1"><FontAwesomeIcon
@@ -639,27 +612,7 @@ const Query: React.FC<Props> = (props) => {
           }
 
         </div>}
-        <Modal
-          show={showEntityConfirmation}
-        >
-          <Modal.Header>
-            <span className={"fs-5"}>{"Existing Query"}</span>
-            <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
-          </Modal.Header>
-          <Modal.Body>
-            <p>Changing the entity selection starts a new query. Would you like to save the existing query before changing the selection?</p>
-          </Modal.Body>
-          <Modal.Footer className={"d-flex justify-content-center"}>
-            <HCButton variant="outline-light" key="back" id="entity-confirmation-no-button" onClick={() => onNoClick()}>
-              No
-            </HCButton>
-            <HCButton key="submit" id="entity-confirmation-yes-button" variant="primary" onClick={() => onOk()}>
-              Yes
-            </HCButton>
-          </Modal.Footer>
-        </Modal>
       </div>
-      {/* } */}
     </>
   );
 };

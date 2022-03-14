@@ -783,6 +783,30 @@ class BrowsePage {
   getSnippetViewResults(text:string) {
     return cy.findByLabelText(text);
   }
+
+  getColumnSelectorPopover() {
+    return cy.get(`[data-testid="column-selector-popover"]`).scrollIntoView();
+  }
+
+  getColumnSelectorColumns() {
+    return cy.get(`[aria-label="column-option"]`);
+  }
+
+  getColumnSelectorCancelButton() {
+    return cy.get(`[data-testId="cancel-column-selector"]`);
+  }
+
+  getColumnSelectorApplyButton() {
+    return cy.get(`[data-testid="apply-column-selector"]`);
+  }
+
+  getTableHeaders() {
+    return cy.get(`th[class*="hc-table_header"]`);
+  }
+
+  getColumnSelectorCheckboxs() {
+    return cy.get(`[class^="rc-tree-checkbox"]`);
+  }
 }
 
 const browsePage = new BrowsePage();
