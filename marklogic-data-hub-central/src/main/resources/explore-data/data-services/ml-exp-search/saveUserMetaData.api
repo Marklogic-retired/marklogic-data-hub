@@ -1,0 +1,10 @@
+{
+  "functionName": "saveUserMetaData",
+  "params": [
+    {
+      "name": "userMetaData",
+      "datatype": "jsonDocument",
+      "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+    }
+  ]
+}

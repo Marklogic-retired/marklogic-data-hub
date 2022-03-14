@@ -78,8 +78,20 @@ public class ExploreDataController extends BaseController {
     @RequestMapping(method = RequestMethod.GET, value = "/recentlyVisited")
     @ResponseBody
     public ResponseEntity<JsonNode> getQueryDocuments(@RequestParam String user) {
-        System.out.println(user);
         return new ResponseEntity<>(newExploreDataService().getRecentlyVisitedRecords(user), HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/userMetaData")
+    @ResponseBody
+    public ResponseEntity<Void> saveUserMetaData(@RequestBody JsonNode userMetaData) {
+        newExploreDataService().saveUserMetaData(userMetaData);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/userMetaData")
+    @ResponseBody
+    public ResponseEntity<JsonNode> getUserMetaData(@RequestParam String user) {
+        return new ResponseEntity<>(newExploreDataService().getUserMetaData(user), HttpStatus.OK);
     }
 
     private ExploreDataService newExploreDataService() {
