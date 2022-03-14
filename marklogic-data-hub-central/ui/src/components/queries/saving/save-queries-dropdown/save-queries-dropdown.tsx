@@ -28,7 +28,6 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
   const {
     searchOptions
   } = useContext(SearchContext);
-  // const {Option} = Select;
   const [showConfirmation, toggleConfirmation] = useState(false);
   const [switchedQueryName, setSwitchedQueryName] = useState(searchOptions.selectedQuery);
 

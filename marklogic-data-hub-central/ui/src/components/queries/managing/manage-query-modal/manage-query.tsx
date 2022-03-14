@@ -209,12 +209,19 @@ const QueryModal = (props) => {
       ),
     },
     {
+      // ToDo: Disabled export icon should have tooltip to include in task DHFPROD-8519
       text: "Export",
       dataField: "export",
       key: "export",
       formatter: (text, row) => (
-        <span className={styles.tableRow}>{text}<i aria-label="exportIcon">
-          <FontAwesomeIcon icon={faFileExport} color={themeColors.info} size="lg" className={styles.manageQueryIconsHover} onClick={() => displayExportModal(row.key)} /></i>
+        <span className={styles.tableRow}>
+          {text}
+          <span aria-label="exportIcon">
+            {row.canExport
+              ? <FontAwesomeIcon icon={faFileExport} color={themeColors.info} size="lg" className={styles.manageQueryIconsHover} onClick={() => displayExportModal(row.key)} />
+              : <FontAwesomeIcon icon={faFileExport} color={themeColors.light} size="lg" />
+            }
+          </span>
         </span>
       ),
     },
@@ -297,6 +304,7 @@ const QueryModal = (props) => {
           name: query["savedQuery"]["name"],
           description: query["savedQuery"]["description"],
           edited: queryDateConverter(query["savedQuery"]["systemMetadata"]["lastUpdatedDateTime"]),
+          canExport: query["savedQuery"]["propertiesToDisplay"]?.length !== 0
           //edit: <FontAwesomeIcon icon={faPencilAlt} color={themeColors.info} size="lg" className={styles.manageQueryIconsHover} />,
           //export: <FontAwesomeIcon icon={faFileExport} color={themeColors.info} size="lg" className={styles.manageQueryIconsHover} />,
           // TODO: Uncomment once link for query is implemented
