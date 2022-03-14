@@ -47,7 +47,9 @@ public interface ExploreDataService {
             private DatabaseClient dbClient;
             private BaseProxy baseProxy;
 
+            private BaseProxy.DBFunctionRequest req_saveUserMetaData;
             private BaseProxy.DBFunctionRequest req_searchAndTransform;
+            private BaseProxy.DBFunctionRequest req_getUserMetaData;
             private BaseProxy.DBFunctionRequest req_getRecords;
             private BaseProxy.DBFunctionRequest req_getRecentlyVisitedRecords;
             private BaseProxy.DBFunctionRequest req_saveRecentlyVisitedRecord;
@@ -56,14 +58,31 @@ public interface ExploreDataService {
                 this.dbClient  = dbClient;
                 this.baseProxy = new BaseProxy("/explore-data/data-services/ml-exp-search/", servDecl);
 
+                this.req_saveUserMetaData = this.baseProxy.request(
+                    "saveUserMetaData.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_searchAndTransform = this.baseProxy.request(
                     "searchAndTransform.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                this.req_getUserMetaData = this.baseProxy.request(
+                    "getUserMetaData.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_getRecords = this.baseProxy.request(
                     "getRecords.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_getRecentlyVisitedRecords = this.baseProxy.request(
                     "getRecentlyVisitedRecords.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_saveRecentlyVisitedRecord = this.baseProxy.request(
                     "saveRecentlyVisitedRecord.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+            }
+
+            @Override
+            public void saveUserMetaData(com.fasterxml.jackson.databind.JsonNode userMetaData) {
+                saveUserMetaData(
+                    this.req_saveUserMetaData.on(this.dbClient), userMetaData
+                    );
+            }
+            private void saveUserMetaData(BaseProxy.DBFunctionRequest request, com.fasterxml.jackson.databind.JsonNode userMetaData) {
+              request
+                      .withParams(
+                          BaseProxy.documentParam("userMetaData", false, BaseProxy.JsonDocumentType.fromJsonNode(userMetaData))
+                          ).responseNone();
             }
 
             @Override
@@ -77,6 +96,21 @@ public interface ExploreDataService {
                 request
                       .withParams(
                           BaseProxy.documentParam("searchParams", false, BaseProxy.JsonDocumentType.fromJsonNode(searchParams))
+                          ).responseSingle(false, Format.JSON)
+                );
+            }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode getUserMetaData(String user) {
+                return getUserMetaData(
+                    this.req_getUserMetaData.on(this.dbClient), user
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode getUserMetaData(BaseProxy.DBFunctionRequest request, String user) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.atomicParam("user", false, BaseProxy.StringType.fromString(user))
                           ).responseSingle(false, Format.JSON)
                 );
             }
@@ -129,12 +163,28 @@ public interface ExploreDataService {
     }
 
   /**
+   * Invokes the saveUserMetaData operation on the database server
+   *
+   * @param userMetaData	provides input
+   * 
+   */
+    void saveUserMetaData(com.fasterxml.jackson.databind.JsonNode userMetaData);
+
+  /**
    * Invokes the searchAndTransform operation on the database server
    *
    * @param searchParams	provides input
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode searchAndTransform(com.fasterxml.jackson.databind.JsonNode searchParams);
+
+  /**
+   * Invokes the getUserMetaData operation on the database server
+   *
+   * @param user	provides input
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode getUserMetaData(String user);
 
   /**
    * Invokes the getRecords operation on the database server
