@@ -4,8 +4,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faKey, faLayerGroup } from "@fortawesome/free-solid-svg-icons";
 import styles from "../components/tiles/tiles.module.scss";
 import "./tooltips.config.scss";
-import {Tooltip} from "react-bootstrap";
-import {themeColors} from "./themes.config";
+import { Tooltip } from "react-bootstrap";
+import { themeColors } from "./themes.config";
 
 /* --- MODELING --- */
 
@@ -476,7 +476,20 @@ const RunToolTips = {
   ingestionStep: 'Run this step to select and ingest files, up to a total of 100MB.',
   otherSteps: 'Run this step.',
   removeStep: 'Remove this step from the flow.',
-  exploreStepData: 'The Explore Data feature only shows what documents were written by this step. The content by those ducments may or be not be overwritten by another subsequently by another step or process.'
+  exploreStepData: 'The Explore Data feature only shows what documents were written by this step. The content by those ducments may or be not be overwritten by another subsequently by another step or process.',
+
+  /* Check load step in popover */
+  loadStepRunFlow: 'Only one Loading step can be included in a flow',
+  selectAStep: 'At least one step must be selected to start the run.',
+
+  flowEdit: 'Edit Flow',
+  flowDetails: 'Flow Details',
+  moveLeft: 'Move left'
+};
+
+const PopoverRunSteps = {
+  selectStepTitle: 'Select the steps to run in this flow:',
+  selectOneStepError: 'Select at least one step to run a flow.'
 };
 
 const RunPlaceholders = {
@@ -801,6 +814,7 @@ export {
   CustomStepMessages,
   RunIntros,
   RunToolTips,
+  PopoverRunSteps,
   RunPlaceholders,
   RunMessages,
   ErrorTooltips,

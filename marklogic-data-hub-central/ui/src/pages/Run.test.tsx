@@ -446,7 +446,7 @@ describe("Verify step display", () => {
     // Click disclosure icon
     fireEvent.click(document.querySelector(".accordion-button"));
     expect(await (waitForElement(() => getByText("Mapping1")))).toBeInTheDocument();
-    let notification = await (waitForElement(() => getAllByLabelText("icon: exclamation-circle")[1]));
+    let notification = await (waitForElement(() => getAllByLabelText("icon: exclamation-circle")[0]));
     expect(notification).toBeInTheDocument();
     fireEvent.mouseOver(notification);
     let ts: string = curateData.jobRespFailedWithError.data.stepResponses["1"].stepEndTime; // "2020-04-04T01:17:45.012137-07:00"
