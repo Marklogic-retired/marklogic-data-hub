@@ -78,11 +78,11 @@ describe("Run Tile tests", () => {
     cy.get("#merge-xml-person").click();
     cy.get("#master-person").click();
     cy.get("#generate-dictionary").click();
-    cy.get("#errorMessageEmptySteps").contains("At least one step must be selected to start the run");
+    cy.get("#errorMessageEmptySteps").contains("Select at least one step to run a flow.");
     cy.get("#ingest-orders").click();
     cy.get("#loadPersonXML").should("be.disabled");
     cy.get("#ingest-orders").click();
-    cy.get("#errorMessageEmptySteps").contains("At least one step must be selected to start the run");
+    cy.get("#errorMessageEmptySteps").contains("Select at least one step to run a flow.");
     runPage.verifyDisabledRunButton(flowName);
 
     cy.log("**Click Necessary Steps and Run**");
@@ -92,7 +92,7 @@ describe("Run Tile tests", () => {
     cy.get("#merge-xml-person").click();
     cy.get("#master-person").click();
     cy.get("#generate-dictionary").click();
-    cy.contains("At least one step must be selected to start the run").should("not.exist");
+    cy.contains("Select at least one step to run a flow.").should("not.exist");
 
     runPage.runFlow(flowName);
     cy.uploadFile("input/person.xml");

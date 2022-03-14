@@ -36,6 +36,8 @@
 
 
   .infoIcon {
+    position: absolute;
+    top: 8px;
     margin-left: 8px;
     color: #7F86B5;
     cursor: pointer;
@@ -49,10 +51,6 @@
     cursor: not-allowed;
   }
 
-  .flowHeader {
-    display: flex;
-    align-items: center;
-}
   .flowName {
     color: #3f4692;
     cursor: pointer;
@@ -313,24 +311,26 @@
 .dropdownMenu {
   padding-top: 15px !important;
   padding-bottom: 15px !important;
-  padding-left: 5px;
   border-radius: 4px;
-  width: 355px;
+  width: 300px;
 }
 
 .divItem {
   height: 25px;
-  padding-left: 15px;
+  padding-left: 20px;
   padding-right: 15px;
+  padding-bottom: 5px;
   &:hover {
     background-color: $background-hover;
   }
 }
-
+.divCheckAll {
+  padding-left: 20px;
+  padding-bottom: 5px;
+}
 .settingsIcon {
     color: #3b458f;
 }
-
 .panelActionsContainer {
     display: flex;
     gap: 0.75rem;
@@ -350,4 +350,9 @@
     background-color: transparent !important;
     border-color: #cccc !important;
   }
+}
+.titleTypeStep { 
+  padding-left: 7px;
+  padding-bottom: 5px;
+  color: $secondary-gray;
 }
