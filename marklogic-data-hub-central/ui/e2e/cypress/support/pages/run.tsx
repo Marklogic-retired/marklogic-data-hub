@@ -74,7 +74,8 @@ class RunPage {
   }
 
   closeFlowStatusModal(flowName: string) {
-    return cy.get(`[aria-label=${flowName}-close]`).click();
+    cy.wait(2000);
+    return cy.get(`[aria-label=${flowName}-close]`).click({force: true, multiple: true});
   }
 
   runStep(stepName: string, flowName: string) {
@@ -139,11 +140,15 @@ class RunPage {
   }
 
   runFlow(flowName :string) {
-    cy.findByTestId(`runFlow-${flowName}`).click();
+    cy.get(`#runFlow-${flowName}`).click({force: true});
   }
 
   verifyStepRunResult(stepName: string, jobSatus: string) {
     cy.get(`[data-testid=${stepName}-${jobSatus}`).should("exist");
+  }
+
+  verifyDisabledRunButton(stepName: string) {
+    cy.findByTestId(`runFlow-${stepName}`).should("be.disabled");
   }
 }
 

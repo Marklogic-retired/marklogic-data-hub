@@ -50,6 +50,9 @@ describe("Run Tile tests", () => {
     runPage.addStepToFlow("merge-xml-person");
     runPage.verifyStepInFlow("Merge", "merge-xml-person", flowName);
     runPage.addStep(flowName);
+    runPage.addStepToFlow("ingest-orders");
+    runPage.verifyStepInFlow("Load", "ingest-orders", flowName);
+    runPage.addStep(flowName);
 
     cy.log("**Add Master Step**");
     runPage.addStepToFlow("master-person");
@@ -64,15 +67,42 @@ describe("Run Tile tests", () => {
     });
 
     //Verify selected steps in run flow dropdown are executed successfully
+    cy.log("**Verify selected steps executed successfully**");
     runPage.openStepsSelectDropdown("testPersonXML");
+
+    cy.log("**Unclick All Steps**");
+    cy.get("#ingest-orders").should("be.disabled");
+    cy.get("#loadPersonXML").click();
     cy.get("#mapPersonXML").click();
     cy.get("#match-xml-person").click();
     cy.get("#merge-xml-person").click();
     cy.get("#master-person").click();
+    cy.get("#generate-dictionary").click();
+    cy.get("#errorMessageEmptySteps").contains("At least one step must be selected to start the run");
+    cy.get("#ingest-orders").click();
+    cy.get("#loadPersonXML").should("be.disabled");
+    cy.get("#ingest-orders").click();
+    cy.get("#errorMessageEmptySteps").contains("At least one step must be selected to start the run");
+    runPage.verifyDisabledRunButton(flowName);
+
+    cy.log("**Click Necessary Steps and Run**");
+    cy.get("#loadPersonXML").click();
+    cy.get("#mapPersonXML").click();
+    cy.get("#match-xml-person").click();
+    cy.get("#merge-xml-person").click();
+    cy.get("#master-person").click();
+    cy.get("#generate-dictionary").click();
+    cy.contains("At least one step must be selected to start the run").should("not.exist");
+
     runPage.runFlow(flowName);
+    cy.uploadFile("input/person.xml");
     cy.wait(3000);
     cy.waitForAsyncRequest();
+
+    cy.log("**Checking the modal**");
     runPage.verifyFlowModalRunning("testPersonXML");
+    runPage.closeFlowStatusModal(flowName);
+    runPage.openFlowStatusModal("testPersonXML");
     runPage.closeFlowStatusModal(flowName);
     runPage.openFlowStatusModal("testPersonXML");
     runPage.verifyStepRunResult("mapPersonXML", "success");
