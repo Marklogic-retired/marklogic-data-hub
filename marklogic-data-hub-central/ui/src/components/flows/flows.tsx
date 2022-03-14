@@ -7,7 +7,7 @@ import axios from "axios";
 import {useDropzone} from "react-dropzone";
 import {Link, useLocation} from "react-router-dom";
 import sourceFormatOptions from "../../config/formats.config";
-import {RunToolTips, SecurityTooltips} from "../../config/tooltips.config";
+import {RunToolTips, SecurityTooltips, PopoverRunSteps} from "../../config/tooltips.config";
 import {AuthoritiesContext} from "../../util/authorities";
 import {getViewSettings, setViewSettings, UserContext} from "../../util/user-context";
 import styles from "./flows.module.scss";
@@ -15,7 +15,7 @@ import "./flows.scss";
 import {ExclamationCircleFill, PlayCircleFill, X, ChevronDown, GearFill} from "react-bootstrap-icons";
 import {Accordion, Card, Dropdown, Spinner, Modal, ButtonGroup} from "react-bootstrap";
 import {HCButton, HCCard, HCTooltip, HCCheckbox} from "@components/common";
-
+import * as _ from "lodash";
 
 enum ReorderFlowOrderDirection {
   LEFT = "left",
@@ -100,7 +100,10 @@ const Flows: React.FC<Props> = (props) => {
   const [currentFlowName, setCurrentFlowName] = useState(""); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [arrayLoadChecksSteps, setArrayLoadChecksSteps] = useState<any>([{flowName: "", stepNumber: -1}]);
   const [selectedStepDetails, setSelectedStepDetails] = useState<any>([{stepName: "", stepNumber: -1, stepDefinitionType: "", isChecked: false}]);
-  const [runFlowClicked, setRunFlowClicked] = useState(false); // eslint-disable-line @typescript-eslint/no-unused-vars
+  const [flowsDeepCopy, setFlowsDeepCopy] = useState<any>([]);
+  //const [runFlowClicked, setRunFlowClicked] = useState(false);
+  const [checkAll, setCheckAll] = useState(true);
+  const [showTooltip, setShowTooltip] = useState(false);
   const location = useLocation();
 
   // maintain a list of panel refs
@@ -142,16 +145,13 @@ const Flows: React.FC<Props> = (props) => {
     }
 
     if (props.flows) {
-      props.flows.map((flow, i) => {
-        let flowName = flow.name;
-        {
-          props.flows.map((flow) => (
-            flow["name"] === flowName &&
-            flow.steps.map((step) => {
-              controlsCheckboxes(step, step.stepDefinitionType, flowName);
-            })));
-        }
-      });
+      {
+        setFlowsDeepCopy(_.cloneDeep(props.flows));
+        props.flows.map((flow) => (
+          flow?.steps && flow.steps.map((step) => {
+            controlsCheckboxes(step, step.stepDefinitionType, flow.name);
+          })));
+      }
     }
   }, [props.flows]);
 
@@ -180,7 +180,7 @@ const Flows: React.FC<Props> = (props) => {
           getFlowWithJobInfo(props.newStepToFlowOptions.flowsDefaultKey);
           if (startRun) {
             //run step after step is added to an existing flow
-            if (props.newStepToFlowOptions.stepDefinitionType === "ingestion") {
+            if (props.newStepToFlowOptions.stepDefinitionType.toLowerCase() === "ingestion") {
               setShowUploadError(false);
               setRunningStep(stepsInFlow[stepsInFlow.length - 1]);
               setRunningFlow(props.newStepToFlowOptions?.flowName);
@@ -195,7 +195,7 @@ const Flows: React.FC<Props> = (props) => {
         } else if (props.newStepToFlowOptions && !props.newStepToFlowOptions.addingStepToFlow && props.newStepToFlowOptions.startRunStep && props.newStepToFlowOptions.flowsDefaultKey && props.newStepToFlowOptions.flowsDefaultKey !== -1) {
           let runStepNum = stepsInFlow.findIndex(s => s.stepName === props.newStepToFlowOptions?.newStepName);
           if (startRun) {
-            if (props.newStepToFlowOptions.stepDefinitionType === "ingestion") {
+            if (props.newStepToFlowOptions.stepDefinitionType.toLowerCase() === "ingestion") {
               setShowUploadError(false);
               setRunningStep(stepsInFlow[runStepNum]);
               setRunningFlow(props.newStepToFlowOptions?.flowName);
@@ -220,7 +220,7 @@ const Flows: React.FC<Props> = (props) => {
       let indexFlow = props.flows?.findIndex(i => i.name === addedFlowName);
       if (props.flows[indexFlow]?.steps.length > 0) {
         let indexStep = props.flows[indexFlow].steps.findIndex(s => s.stepName === props.newStepToFlowOptions.newStepName);
-        if (props.flows[indexFlow].steps[indexStep].stepDefinitionType === "ingestion") {
+        if (props.flows[indexFlow].steps[indexStep].stepDefinitionType.toLowerCase() === "ingestion") {
           setShowUploadError(false);
           setRunningStep(props.flows[indexFlow].steps[indexStep]);
           setRunningFlow(addedFlowName);
@@ -375,6 +375,8 @@ const Flows: React.FC<Props> = (props) => {
     customRequest();
   }, [fileList]);
 
+
+
   const deleteConfirmation = (
     <Modal
       show={dialogVisible}
@@ -446,47 +448,84 @@ const Flows: React.FC<Props> = (props) => {
     </Modal>
   );
 
-  const onCheckboxChange = (event, checkedValues, stepNumber, stepDefinitionType, flowNames, stepId, sourceFormat) => {
+  const onCheckboxChange = (event, checkedValues?, stepNumber?, stepDefinitionType?, flowNames?, stepId?, sourceFormat?, fromCheckAll?) => {
+
+    let checkAllAux;
+    if (event !== "default" && fromCheckAll) {
+      checkAllAux = checkAll ? false : true;
+      setCheckAll(checkAllAux);
+    }
+
     if (currentFlowName !== flowNames) {
-      if (currentFlowName.length > 0) {
-        let selectedStepDetailsAux = selectedStepDetails.filter(function (obj) {
-          return obj.flowName !== flowNames && obj.stepName !== checkedValues;
-        });
-        setSelectedStepDetails(selectedStepDetailsAux);
-        selectedStepDetails.shift();
-      }
       setCurrentFlowName(flowNames);
     }
 
-    let data = {stepName: "", stepNumber: -1, stepDefinitionType: "", isChecked: false, flowName: "", stepId: "", sourceFormat: ""};
-    data.stepName = checkedValues;
-    data.stepNumber = stepNumber;
-    data.stepDefinitionType = stepDefinitionType;
-    data.isChecked = event !== "default" ? event.target.checked : true;
-    data.flowName = flowNames;
-    data.stepId = stepId;
-    data.sourceFormat = sourceFormat;
+    if (fromCheckAll) {
+      if (checkAll) {
 
-    let obj = selectedStepDetails;
+        let stepsSelectedFlow = selectedStepDetails.filter(function (obj) {
+          return obj.flowName === flowNames;
+        });
 
-    if (data.isChecked) {
-      obj.push(data);
-    } else {
-      for (let i = 0; i < obj.length; i++) {
-        if (obj[i].stepName === checkedValues) {
-          obj.splice(i, 1);
+        stepsSelectedFlow.map((obj) => {
+          let selectedStepOptionsAux = selectedStepOptions;
+          selectedStepOptionsAux[flowNames + "_" + obj.stepName + "_" + obj.stepNumber] = false;
+          setSelectedStepOptions(selectedStepOptionsAux);
+        });
+
+        if (currentFlowName.length > 0) {
+          let selectedStepDetailsAux = selectedStepDetails.filter(function (obj) {
+            return obj.flowName !== flowNames && obj.stepName !== checkedValues;
+          });
+          setSelectedStepDetails(selectedStepDetailsAux);
+          selectedStepDetails.shift();
+        }
+
+        let arrayLoadChecksStepsAux = arrayLoadChecksSteps;
+        arrayLoadChecksStepsAux.map(function (obj) {
+          if (obj.flowName === flowNames) obj.checked = false;
+        });
+        setArrayLoadChecksSteps(arrayLoadChecksStepsAux);
+      } else {
+        {
+          props.flows.map((flow) => (
+            flow["name"] === flowNames &&
+            flow?.steps && flow.steps.map((step) => {
+              controlsCheckboxes(step, step.stepDefinitionType, flow.name);
+            })));
         }
       }
-    }
+    } else {
+      let originRender = event !== "default" ? true : false;
+      let data = {stepName: "", stepNumber: -1, stepDefinitionType: "", isChecked: false, flowName: "", stepId: "", sourceFormat: ""};
+      data.stepName = checkedValues;
+      data.stepNumber = stepNumber;
+      data.stepDefinitionType = stepDefinitionType;
+      data.isChecked = originRender ? event.target.checked : true;
+      data.flowName = flowNames;
+      data.stepId = stepId;
+      data.sourceFormat = sourceFormat;
 
-    if (event !== "default" && stepDefinitionType === "ingestion") {
-      handleArrayLoadChecksSteps(flowNames, checkedValues, stepNumber);
-    }
+      let obj = selectedStepDetails;
+      if (data.isChecked) {
+        obj.push(data);
+      } else {
+        for (let i = 0; i < obj.length; i++) {
+          if (obj[i].stepName === checkedValues) {
+            obj.splice(i, 1);
+          }
+        }
+      }
 
-    setSelectedStepDetails(obj);
-    selectedStepOptions[flowNames + "_" + checkedValues + "_" + stepNumber] = true;
-    setSelectedStepOptions({...selectedStepOptions, [flowNames + "_" + checkedValues + "_" + stepNumber]: event !== "default" ? event.target.checked : true});
-    if (event !== "default") event.stopPropagation();
+      if (originRender && stepDefinitionType.toLowerCase() === "ingestion") {
+        handleArrayLoadChecksSteps(flowNames, checkedValues, stepNumber);
+      }
+
+      setSelectedStepDetails(obj);
+      selectedStepOptions[flowNames + "_" + checkedValues + "_" + stepNumber] = true;
+      setSelectedStepOptions({...selectedStepOptions, [flowNames + "_" + checkedValues + "_" + stepNumber]: originRender ? event.target.checked : true});
+      if (originRender) event.stopPropagation();
+    }
   };
 
   let flagOneLoadSelected = true, flowNameCheckAux = "";
@@ -512,7 +551,7 @@ const Flows: React.FC<Props> = (props) => {
 
     if (flowNameCheckAux !== flowNameCheck) { flowNameCheckAux = flowNameCheck; flagOneLoadSelected = true; }
 
-    if (stepDefinition === "ingestion") {
+    if (stepDefinition.toLowerCase() === "ingestion") {
       if (flagOneLoadSelected) {
         if (flowNameCheckAux === flowNameCheck) {
           flagOneLoadSelected = false;
@@ -557,33 +596,59 @@ const Flows: React.FC<Props> = (props) => {
     return disabledCheck;
   };
 
+  let titleTypeStep; let currentTitle = "";
+  let mapTypeSteps = new Map([["mapping", "Mapping"], ["merging", "Merging"], ["custom", "Custom"], ["mastering", "Mastering"], ["ingestion", "Loading"]]);
+  const handleTitleSteps = (stepType) => {
+    if (currentTitle !== stepType) {
+      titleTypeStep = mapTypeSteps.get(stepType) ? mapTypeSteps.get(stepType) : "";
+    } else { titleTypeStep = ""; }
+
+    currentTitle = stepType;
+    return titleTypeStep;
+  };
+
   const flowMenu = (flowName) => {
     return (
       <>
-        <Dropdown.Header className="py-0 fs-6 mb-2">Select the steps to include in the run:</Dropdown.Header>
-        {props.flows.map((flow) => (
+        <Dropdown.Header className="py-0 fs-6 mb-2 text-dark">{PopoverRunSteps.selectStepTitle}</Dropdown.Header>
+        <hr />
+        <div className={styles.divCheckAll}>
+          <HCCheckbox
+            id={"checkAll"}
+            value={checkAll}
+            checked={checkAll}
+            handleClick={(event) => onCheckboxChange(event, "", "", "", flowName, "", "", true)}
+            label={controlStepSelected(flowName) ? "Deselect All" : "Select All"}
+          >
+          </HCCheckbox>
+        </div>
+        {flowsDeepCopy.map((flow) => (
+          flow.steps.sort((a, b) => a.stepDefinitionType.localeCompare(b.stepDefinitionType)),
           flow["name"] === flowName &&
           flow.steps.map((step, index) => (
-            <div id={index} className={styles.divItem}>
-              <HCTooltip text={step.stepDefinitionType === "ingestion" ? controlDisabled(step, flowName) ? "Only 1 load step can be selected": "": ""} placement="left" id={`tooltip`}>
-                <div>
-                  <HCCheckbox
-                    id={step.stepName}
-                    value={step.stepName}
-                    handleClick={(event) => onCheckboxChange(event, step.stepName, step.stepNumber, step.stepDefinitionType, flowName, step.stepId, step.sourceFormat)}
-                    checked={selectedStepOptions[flowName + "_" + step.stepName + "_" + step.stepNumber] ? true:false}
-                    disabled={step.stepDefinitionType === "ingestion" ? controlDisabled(step, flowName) : false}
-                  >{step.stepName}
-                  </HCCheckbox></div></HCTooltip>
-            </div>
+            <>
+              <div className={styles.titleTypeStep}>{handleTitleSteps(step.stepDefinitionType)}</div>
+              <div id={index} className={styles.divItem}>
+                <HCTooltip text={step.stepDefinitionType.toLowerCase() === "ingestion" ? controlDisabled(step, flowName) ? RunToolTips.loadStepRunFlow : "" : ""} placement="left" id={`tooltip`}>
+                  <div>
+                    <HCCheckbox
+                      id={step.stepName}
+                      value={step.stepName}
+                      handleClick={(event) => onCheckboxChange(event, step.stepName, step.stepNumber, step.stepDefinitionType, flowName, step.stepId, step.sourceFormat)}
+                      checked={selectedStepOptions[flowName + "_" + step.stepName + "_" + step.stepNumber] ? true : false}
+                      disabled={step.stepDefinitionType.toLowerCase() === "ingestion" ? controlDisabled(step, flowName) : false}
+                    >{step.stepName}
+                    </HCCheckbox></div></HCTooltip>
+              </div>
+            </>
           ))))}
-        <Dropdown.Header className="py-0 fs-6 mt-2 text-danger" id="errorMessageEmptySteps">{controlStepSelected(flowName) ? "": "At least one step must be selected to start the run"}</Dropdown.Header>
+        <Dropdown.Header className="py-0 fs-6 mt-2 text-danger" style={{whiteSpace: "pre-line"}} id="errorMessageEmptySteps">{controlStepSelected(flowName) ? "" : PopoverRunSteps.selectOneStepError}</Dropdown.Header>
       </>
     );
   };
 
   const handleRunFlow = async (index, name) => {
-    setRunFlowClicked(true);
+    //setRunFlowClicked(true);
     const setKey = async () => {
       await setActiveKeys(`${index}`);
     };
@@ -591,7 +656,7 @@ const Flows: React.FC<Props> = (props) => {
     let flag = false;
 
     await selectedStepDetails.map(async step => {
-      if (step.stepDefinitionType === "ingestion" && step.flowName === name) {
+      if (step.stepDefinitionType.toLowerCase() === "ingestion" && step.flowName === name) {
         flag = true;
         setRunningStep(step);
         await setKey();
@@ -698,26 +763,29 @@ const Flows: React.FC<Props> = (props) => {
         event.preventDefault();
       }}
     >
-      <span id="stepsDropdown" className={styles.hoverColor}>
-        <Dropdown as={ButtonGroup}>
-          <HCButton
-            variant="transparent"
-            className={styles.runFlow}
-            //className={"btn-outline-secondary"}
-            key={`stepsDropdownButton-${name}`}
-            data-testid={`runFlow-${name}`}
-            id={`runFlow-${name}`}
-            size="sm"
-            onClick={() => handleRunFlow(i, name)}
-            disabled={!controlStepSelected(name)}
-          ><><PlayCircleFill className={styles.runIcon} /> Run Flow</></HCButton>
-          <Dropdown.Toggle split variant="transparent" className={styles.runIconToggle}>
-            <GearFill className={styles.runIcon} role="step-settings button" aria-label={`stepSettings-${name}`} /></Dropdown.Toggle>
-          <Dropdown.Menu className={styles.dropdownMenu}>
-            {flowMenu(name)}
-          </Dropdown.Menu>
-        </Dropdown>
-      </span>
+      <HCTooltip show={!controlStepSelected(name) && showTooltip} text={RunToolTips.selectAStep} placement="top" id={`tooltip`}>
+
+        <span id="stepsDropdown" className={styles.hoverColor}
+          onMouseLeave={(e) => setShowTooltip(false)} onMouseEnter={(e) => setShowTooltip(!controlStepSelected(name))}>
+          <Dropdown as={ButtonGroup}>
+            <HCButton
+              variant="transparent"
+              className={styles.runFlow}
+              key={`stepsDropdownButton-${name}`}
+              data-testid={`runFlow-${name}`}
+              id={`runFlow-${name}`}
+              size="sm"
+              onClick={() => handleRunFlow(i, name)}
+              disabled={!controlStepSelected(name)}
+            ><><PlayCircleFill className={styles.runIcon} /> Run Flow</></HCButton>
+            <Dropdown.Toggle split variant="transparent" className={styles.runIconToggle}>
+              <GearFill className={styles.runIcon} role="step-settings button" aria-label={`stepSettings-${name}`} /></Dropdown.Toggle>
+            <Dropdown.Menu className={styles.dropdownMenu}>
+              {flowMenu(name)}
+            </Dropdown.Menu>
+          </Dropdown>
+        </span>
+      </HCTooltip>
 
       {stepMenu(name, i)}
       <span className={styles.deleteFlow}>
@@ -747,30 +815,13 @@ const Flows: React.FC<Props> = (props) => {
   );
 
   const flowHeader = (name, index) => (
-    <span id={"flow-header-" + name} className={styles.flowHeader}>
-      <HCTooltip text={props.canWriteFlow ? "Edit Flow" : "Flow Details"} id="open-edit-tooltip" placement="bottom">
-        <span className={styles.flowName} onClick={(e) => OpenEditFlowDialog(e, index)}>
-          {name}
-        </span>
-      </HCTooltip>
-      {latestJobData && latestJobData[name] && latestJobData[name].find(step => step.jobId) ?
-        <HCTooltip text={"Flow Status"} placement="bottom" id="">
-          <span onClick={(e) => OpenFlowJobStatus(e, index, name)} className={styles.infoIcon} data-testid={`${name}-flow-status`}>
-            <ExclamationCircleFill data-icon="exclamation-circle" aria-label="icon: exclamation-circle" className={styles.unSuccessfulRun} />
-          </span>
-        </HCTooltip>
-        : ""
-      }
+    <span><HCTooltip text={props.canWriteFlow ? RunToolTips.flowEdit : RunToolTips.flowDetails} id="open-edit-tooltip" placement="bottom">
+      <span className={styles.flowName} onClick={(e) => OpenEditFlowDialog(e, index)}>
+        {name}
+      </span>
+    </HCTooltip>
     </span>
-
   );
-  const OpenFlowJobStatus = (e, index, name) => {
-    e.stopPropagation();
-    e.preventDefault();
-    let jobIdIndex = latestJobData[name].findIndex(step => step.hasOwnProperty("jobId"));
-    props.setJobId(latestJobData[name][jobIdIndex].jobId);
-    props.setOpenJobResponse(true);
-  };
 
   const OpenEditFlowDialog = (e, index) => {
     e.stopPropagation();
@@ -813,7 +864,7 @@ const Flows: React.FC<Props> = (props) => {
           // setSelectedStepOptions({});
           // setSelectedStepDetails([{stepName: "", stepNumber: -1, stepDefinitionType: "", isChecked: false}]);
           // setArrayLoadChecksSteps([{flowName: "", stepNumber: -1}]);
-          setRunFlowClicked(false);
+          //setRunFlowClicked(false);
         });
       //}
     }
@@ -850,7 +901,7 @@ const Flows: React.FC<Props> = (props) => {
       tooltipText = "Step last ran successfully on " + stepEndTime;
       return (
         <HCTooltip text={tooltipText} id="success-tooltip" placement="bottom">
-          <span onClick={(e) => showStepRunResponse(step.jobId)}>
+          <span onClick={(e) => showStepRunResponse(step)}>
             <i><FontAwesomeIcon aria-label="icon: check-circle" icon={faCheckCircle} className={styles.successfulRun} size="lg" data-testid={`check-circle-${step.stepName}`} /></i>
           </span>
         </HCTooltip>
@@ -859,7 +910,7 @@ const Flows: React.FC<Props> = (props) => {
     } else if (step.lastRunStatus === "completed with errors step " + step.stepNumber) {
       tooltipText = "Step last ran with errors on " + stepEndTime;
       return (
-        <span onClick={(e) => showStepRunResponse(step.jobId)}>
+        <span onClick={(e) => showStepRunResponse(step)}>
           <HCTooltip text={tooltipText} id="complete-with-errors-tooltip" placement="bottom">
             <ExclamationCircleFill aria-label="icon: exclamation-circle" className={styles.unSuccessfulRun} />
           </HCTooltip>
@@ -868,7 +919,7 @@ const Flows: React.FC<Props> = (props) => {
     } else {
       tooltipText = "Step last failed on " + stepEndTime;
       return (
-        <span onClick={(e) => showStepRunResponse(step.jobId)}>
+        <span onClick={(e) => showStepRunResponse(step)}>
           <HCTooltip text={tooltipText} id="step-last-failed-tooltip" placement="bottom">
             <ExclamationCircleFill data-icon="exclamation-circle" aria-label="icon: exclamation-circle" className={styles.unSuccessfulRun} />
           </HCTooltip>
@@ -971,7 +1022,7 @@ const Flows: React.FC<Props> = (props) => {
                 <div className={styles.reorder}>
                   {index !== 0 && props.canWriteFlow &&
                     <div className={styles.reorderLeft}>
-                      <HCTooltip text="Move left" id="move-left-tooltip" placement="bottom">
+                      <HCTooltip text={RunToolTips.moveLeft} id="move-left-tooltip" placement="bottom">
                         <i>
                           <FontAwesomeIcon
                             aria-label={`leftArrow-${step.stepName}`}
@@ -986,7 +1037,7 @@ const Flows: React.FC<Props> = (props) => {
                     </div>
                   }
                   <div className={styles.reorderRight}>
-                    <div className={styles.stepResponse} data-testid={`${step.stepName}-last-run`}>
+                    <div className={styles.stepResponse}>
                       {latestJobData && latestJobData[flowName] && latestJobData[flowName][index]
                         ? lastRunResponse(latestJobData[flowName][index])
                         : ""
@@ -1084,7 +1135,7 @@ const Flows: React.FC<Props> = (props) => {
                 >
                   <Link id={"tiles-step-view-" + viewStepId}
                     to={{
-                      pathname: `/tiles/${stepDefinitionType === "ingestion" ? "load" : "curate"}`,
+                      pathname: `/tiles/${stepDefinitionType.toLowerCase() === "ingestion" ? "load" : "curate"}`,
                       state: {
                         stepToView: step.stepId,
                         stepDefinitionType: stepDefinitionType,
