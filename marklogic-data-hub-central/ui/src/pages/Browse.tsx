@@ -103,6 +103,7 @@ const Browse: React.FC<Props> = ({location}) => {
     searchOptions.pageNumber,
     viewOptions.tableView,
     searchOptions.database,
+    searchOptions.selectedTableProperties,
     searchOptions.entityTypeIds,
     searchOptions.nextEntityType,
     searchOptions.query,
@@ -281,10 +282,12 @@ const Browse: React.FC<Props> = ({location}) => {
     let selectingAllEntitiesOption = (searchOptions.nextEntityType === "All Entities" && !isColumnSelectorTouched && !entitySpecificPanel);
     let selectingAllDataOption = (searchOptions.nextEntityType === "All Data" && !isColumnSelectorTouched && !entitySpecificPanel);
     let selectingEntityType = (searchOptions.nextEntityType && !["All Entities", "All Data"].includes(searchOptions.nextEntityType) && searchOptions.entityTypeIds[0] === searchOptions.nextEntityType || entitySpecificPanel);
+    let selectingColumnsInOneEntity = searchOptions.entityTypeIds.length === 1 && isColumnSelectorTouched;
     let notSelectingCardViewWhenNoEntities = !cardView && !searchOptions.entityTypeIds.length;
 
-    if (selectingAllDataOption || (entityTypesExist && (defaultOptionsForPageRefresh || selectingAllEntitiesOption || selectingEntityType))) {
+    if (selectingAllDataOption || (entityTypesExist && (defaultOptionsForPageRefresh || selectingAllEntitiesOption || selectingEntityType || selectingColumnsInOneEntity))) {
       getSearchResults(searchOptions.entityTypeIds);
+      setColumnSelectorTouched(false);
     } else {
       if (notSelectingCardViewWhenNoEntities) {
         setData([]);

@@ -76,6 +76,7 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
         entityTypeIds: allBaseEntities.map(entities => entities.name),
         baseEntities: allBaseEntities,
         relatedEntityTypeIds: [],
+        selectedTableProperties: [],
         ...defaultPaginationOptions
       });
       if (props.activeKey.indexOf("related-entities") !== -1) { props.setActiveAccordionRelatedEntities("related-entities"); }
@@ -90,10 +91,11 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
         ...searchOptions,
         entityTypeIds: clearSelection,
         baseEntities: filteredEntities,
+        selectedTableProperties: [],
         ...defaultPaginationOptions
       };
       if (filteredEntities.length === 1) {
-        let queryColumnsToDisplay = filteredEntities[0].properties?.map(property => { return property.name; });
+        let queryColumnsToDisplay = filteredEntities[0].properties?.map(property => property.name);
         updatedSearchOptions["selectedTableProperties"] = queryColumnsToDisplay;
       }
       setSearchOptions(updatedSearchOptions);
