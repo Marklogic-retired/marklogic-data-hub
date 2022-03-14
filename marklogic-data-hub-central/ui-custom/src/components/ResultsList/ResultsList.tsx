@@ -1,15 +1,16 @@
-import React, { useContext } from "react";
+import React, {useContext, useEffect, useState} from "react";
 import Address from "../Address/Address";
 import Chiclet from "../Chiclet/Chiclet";
 import DateTime from "../DateTime/DateTime";
 import Image from "../Image/Image";
 import List from "../List/List";
 import Value from "../Value/Value";
-import { SearchContext } from "../../store/SearchContext";
-import { DetailContext } from "../../store/DetailContext";
+import {SearchContext} from "../../store/SearchContext";
+import {DetailContext} from "../../store/DetailContext";
 import {GearFill, CodeSlash, ArrowRepeat} from "react-bootstrap-icons";
 import "./ResultsList.scss";
-import { getValByConfig } from "../../util/util";
+import {getValByConfig} from "../../util/util";
+import Pagination from "../Pagination/Pagination";
 
 type Props = {
   config?: any;
@@ -89,50 +90,62 @@ const ResultsList: React.FC<Props> = (props) => {
   const searchContext = useContext(SearchContext);
   const detailContext = useContext(DetailContext);
 
+  const pageLengths = props?.config?.pageLengths ? props?.config?.pageLengths : [10, 20, 80, 100];
+
+  const {returned, start, pageNumber, pageLength} = searchContext;
+
   const handleNameClick = (e) => {
     detailContext.handleGetDetail(e.target.id);
   };
+
+  const handleChangePage = (page: number) => {
+    const startValue = page === 1 ? page : ((page - 1) * pageLength) + 1;
+    searchContext.handlePagination(page, startValue, pageLength);
+  }
+  const handleChangesetPageLength = (length: number) => {
+    searchContext.handlePagination(1, 1, length);
+  }
 
   const getResults = () => {
     let results = searchContext.searchResults.result.map((results, index) => {
       return (
         <div key={"result-" + index} className="result">
-          <div className="thumbnail"> 
-            {props.config.thumbnail ? 
+          <div className="thumbnail">
+            {props.config.thumbnail ?
               <Image data={results} config={props.config.thumbnail.config} />
-            : null}
+              : null}
           </div>
           <div className="details">
             <div className="title" onClick={handleNameClick}>
               <Value data={results} config={props.config.title} getFirst={true} />
             </div>
             <div className="subtitle">
-              {props.config.items ? 
+              {props.config.items ?
                 <List data={results} config={props.config.items} />
-              : null}
+                : null}
             </div>
-            {props.config.categories ? 
-            <div className="categories">
-              {getValByConfig(results, props.config.categories)!.map((s, index2) => {
-                return (
-                  <Chiclet 
-                    key={"category-" + index2} 
-                    config={props.config.categories}
-                  >{s}</Chiclet>
-                )
-              })}
-            </div> : null}
+            {props.config.categories ?
+              <div className="categories">
+                {getValByConfig(results, props.config.categories)!.map((s, index2) => {
+                  return (
+                    <Chiclet
+                      key={"category-" + index2}
+                      config={props.config.categories}
+                    >{s}</Chiclet>
+                  )
+                })}
+              </div> : null}
           </div>
           <div className="actions">
-            {props.config.timestamp ? 
-            <div className="timestamp">
-              <DateTime config={props.config.timestamp} data={results} style={props.config.timestamp.style} />
-            </div> : null}
-            <div className="icons">
-              {props.config.status ? 
-              <div className="status">
-                <Value data={results} config={props.config.status} getFirst={true} />
+            {props.config.timestamp ?
+              <div className="timestamp">
+                <DateTime config={props.config.timestamp} data={results} style={props.config.timestamp.style} />
               </div> : null}
+            <div className="icons">
+              {props.config.status ?
+                <div className="status">
+                  <Value data={results} config={props.config.status} getFirst={true} />
+                </div> : null}
               <GearFill color="#5d6aaa" size={16} />
               <CodeSlash color="#5d6aaa" size={16} />
               <ArrowRepeat color="#5d6aaa" size={16} />
@@ -147,7 +160,13 @@ const ResultsList: React.FC<Props> = (props) => {
   return (
     <div className="resultsList">
       {(searchContext.searchResults?.result?.length) > 0 ? (
-        <div>{getResults()}</div>
+        <div>
+          <Pagination pageNumber={pageNumber} pageLength={pageLength} setPageNumber={handleChangePage} total={returned} pageLengths={pageLengths} setPageLength={handleChangesetPageLength} />
+          {getResults()}
+          <div className="pt-4">
+            <Pagination pageNumber={pageNumber} pageLength={pageLength} setPageNumber={handleChangePage} total={returned} pageLengths={pageLengths} setPageLength={handleChangesetPageLength} />
+          </div>
+        </div>
       ) : <div className="noResults">No results</div>
       }
     </div>

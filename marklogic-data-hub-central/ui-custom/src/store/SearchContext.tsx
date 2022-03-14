@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useContext } from 'react';
-import { useNavigate, useLocation } from "react-router-dom";
-import { UserContext } from "../store/UserContext";
-import { getSearchResults } from "../api/api";
+import React, {useEffect, useState, useContext} from 'react';
+import {useNavigate, useLocation} from "react-router-dom";
+import {UserContext} from "../store/UserContext";
+import {getSearchResults} from "../api/api";
 import _ from "lodash";
 
 interface SearchContextInterface {
@@ -15,18 +15,20 @@ interface SearchContextInterface {
   total: number;
   recentSearches: any;
   loading: boolean;
+  pageNumber: number;
   handleSearch: any;
   handleFacetString: any;
   handlePagination: any;
   handleSaved: any;
   handleGetSearchLocal: any;
+  setPageNumber: (value: number) => void;
 }
 interface QueryInterface {
   searchText: string;
   entityTypeIds: string[];
   selectedFacets: any;
 }
-  
+
 const defaultState = {
   qtext: "",
   entityType: "",
@@ -38,11 +40,13 @@ const defaultState = {
   total: 0,
   recentSearches: [],
   loading: false,
-  handleSearch: () => {},
-  handleFacetString: () => {},
-  handlePagination: () => {},
-  handleSaved: () => {},
-  handleGetSearchLocal: () => {}
+  pageNumber: 1,
+  handleSearch: () => { },
+  handleFacetString: () => { },
+  handlePagination: () => { },
+  handleSaved: () => { },
+  handleGetSearchLocal: () => { },
+  setPageNumber: () => { },
 };
 
 /**
@@ -64,7 +68,7 @@ const defaultState = {
  */
 export const SearchContext = React.createContext<SearchContextInterface>(defaultState);
 
-const SearchProvider: React.FC = ({ children }) => {
+const SearchProvider: React.FC = ({children}) => {
 
   const userContext = useContext(UserContext);
 
@@ -73,7 +77,7 @@ const SearchProvider: React.FC = ({ children }) => {
 
   const startInit = 1;
   const pageLengthInit = 10;
-
+  const [pageNumber, setPageNumber] = useState<number>(1);
   const [start, setStart] = useState<number>(startInit);
   const [pageLength, setPagePength] = useState<number>(pageLengthInit);
   const [returned, setReturned] = useState<number>(0);
@@ -86,7 +90,7 @@ const SearchProvider: React.FC = ({ children }) => {
   const [recentSearches, setRecentSearches] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const buildQuery = (_start, _pageLength, _qtext, _facetStrings, _entityType):QueryInterface => {
+  const buildQuery = (_start, _pageLength, _qtext, _facetStrings, _entityType): QueryInterface => {
     let query = {
       start: _start,
       pageLength: _pageLength,
@@ -120,7 +124,7 @@ const SearchProvider: React.FC = ({ children }) => {
         setSearchResults(result?.data.searchResults.response);
         setReturned(result?.data.searchResults.response.total);
         // TODO need total records in database in result
-        setTotal(userContext.config.search.meter.totalRecords);
+        setTotal(userContext.config.search.meter.config.totalRecords);
         handleSaveSearchLocal();
         handleGetSearchLocal();
         setNewSearch(false);
@@ -131,16 +135,17 @@ const SearchProvider: React.FC = ({ children }) => {
     }
   }, [newSearch]);
 
-  const handleSearch = async (_qtext=null, _entityType=null) => {
-    if (_qtext!==null) {
+  const handleSearch = async (_qtext = null, _entityType = null) => {
+    if (_qtext !== null) {
       setQtext(_qtext);
     }
-    if (_entityType!==null) {
+    if (_entityType !== null) {
       setEntityType(_entityType);
     } else {
       // If entityType hasn't been set, use search.defaultEntity if available
       setEntityType(userContext.config.search.defaultEntity || "");
     }
+    setPageNumber(1);
     setNewSearch(true);
   };
 
@@ -152,14 +157,18 @@ const SearchProvider: React.FC = ({ children }) => {
       let newFacetStrings = facetStrings.filter(f => (f !== (name + ":" + value)));
       setFacetStrings(newFacetStrings);
     }
+    setPageNumber(1);
     setNewSearch(true);
   };
 
-  const handlePagination = async (_start=null, _pageLength=null) => {
-    if (_start!==null) {
+  const handlePagination = async (_pageNumber = 1, _start = null, _pageLength = null) => {
+    if (_pageNumber !== pageNumber) {
+      setPageNumber(_pageNumber);
+    }
+    if (_start !== null) {
       setStart(_start);
     }
-    if (_pageLength!==null) {
+    if (_pageLength !== null) {
       setPagePength(_pageLength);
     }
     setNewSearch(true);
@@ -237,6 +246,8 @@ const SearchProvider: React.FC = ({ children }) => {
         total,
         recentSearches,
         loading,
+        pageNumber,
+        setPageNumber,
         handleSearch,
         handleFacetString,
         handlePagination,
