@@ -241,6 +241,7 @@
     "results": {
       "component": "ResultsList",
       "config": {
+        "pageLengths": [3,5,10,20],
         "thumbnail": {
           "component": "Image",
           "config": {
