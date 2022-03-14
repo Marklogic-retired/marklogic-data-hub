@@ -37,7 +37,7 @@ if (queryDocument.savedQuery.query == null || Object.keys(queryDocument.savedQue
     httpUtils.throwBadRequest("Query to be saved cannot be empty");
 }
 
-if (queryDocument.savedQuery.propertiesToDisplay == null || queryDocument.savedQuery.propertiesToDisplay.length == 0) {
+if (queryDocument.savedQuery.query.entityTypeIds.length === 1 && (queryDocument.savedQuery.propertiesToDisplay == null || queryDocument.savedQuery.propertiesToDisplay.length == 0)) {
     httpUtils.throwBadRequest("Entity type properties to be displayed cannot be empty");
 }
 
