@@ -1,8 +1,8 @@
 import React, {useContext, useState, useEffect} from "react";
 import {Modal} from "react-bootstrap";
 import Select, {components as SelectComponents} from "react-select";
-import reactSelectThemeConfig from "../../../../config/react-select-theme.config";
-import {SearchContext} from "../../../../util/search-context";
+import reactSelectThemeConfig from "@config/react-select-theme.config";
+import {SearchContext} from "@util/search-context";
 import {HCButton} from "@components/common";
 
 interface Props {

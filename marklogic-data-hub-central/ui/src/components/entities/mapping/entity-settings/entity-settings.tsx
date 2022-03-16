@@ -1,17 +1,18 @@
 import React, {useState, useEffect} from "react";
 import {Row, Col, Form, FormLabel} from "react-bootstrap";
 import CreatableSelect from "react-select/creatable";
-import reactSelectThemeConfig from "../../../../config/react-select-theme.config";
+import reactSelectThemeConfig from "@config/react-select-theme.config";
 import styles from "./entity-settings.module.scss";
-import {AdvancedSettingsTooltips} from "../../../../config/tooltips.config";
-import {AdvancedSettingsMessages} from "../../../../config/messages.config";
-import StepsConfig from "../../../../config/steps.config";
+import {AdvancedSettingsTooltips} from "@config/tooltips.config";
+import {AdvancedSettingsMessages} from "@config/messages.config";
+import StepsConfig from "@config/steps.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCog} from "@fortawesome/free-solid-svg-icons";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {HCButton, HCTooltip, HCInput} from "@components/common";
 import Popover from "react-bootstrap/Popover";
 import {OverlayTrigger} from "react-bootstrap";
+import {themeColors} from "@config/themes.config";
 
 type Props = {
   canReadWrite: any;
@@ -191,7 +192,7 @@ const EntitySettings: React.FC<Props> = (props) => {
                   />
                   <div className={"p-2 d-flex align-items-center"}>
                     <HCTooltip text={tooltips.additionalCollections} id="additional-collection-tooltip" placement="left">
-                      <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} />
+                      <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} />
                     </HCTooltip>
                   </div>
                 </Col>
@@ -220,7 +221,7 @@ const EntitySettings: React.FC<Props> = (props) => {
                       />
                       <div className={"p-2 d-flex align-items-center"}>
                         <HCTooltip text={tooltips.targetPermissions} id="target-permissions-tooltip" placement="left">
-                          <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} />
+                          <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} />
                         </HCTooltip>
                       </div>
                     </Col>

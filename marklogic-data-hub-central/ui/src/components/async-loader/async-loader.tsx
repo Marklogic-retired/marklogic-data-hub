@@ -1,6 +1,6 @@
 import React, {useContext} from "react";
-import {UserContext} from "../../util/user-context";
-import {SearchContext} from "../../util/search-context";
+import {UserContext} from "@util/user-context";
+import {SearchContext} from "@util/search-context";
 import Spinner from "react-bootstrap/Spinner";
 import styles from "./async-loader.module.scss";
 import {HCAlert} from "@components/common";

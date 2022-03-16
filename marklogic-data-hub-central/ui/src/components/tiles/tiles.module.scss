@@ -1,3 +1,5 @@
+@import "../../theme/HCVariables.scss";
+
 .paneHeader {
     display: flex;
     flex-direction: row;
@@ -46,7 +48,7 @@
         i.faCog {
             top: 2px;
             font-size: 20px;
-            color: #394494;
+            color: $primary;
         }
         i.ant {
             font-size: 24px;
@@ -84,7 +86,7 @@
 }
 
 .structuredIcon {
-    color: #5B69AF;
+    color: $info;
     font-size: 14px;
     margin-left: 5px;
     margin-bottom: -1px;

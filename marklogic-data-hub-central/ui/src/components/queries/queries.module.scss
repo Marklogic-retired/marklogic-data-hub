@@ -1,3 +1,5 @@
+@import "../../theme/HCVariables.scss";
+
 .description {
     margin-left: 10px;
     font-size: 12px;
@@ -24,7 +26,7 @@
 
 .enabledSaveIcon {
     cursor: pointer;
-    color: #5b69af;
+    color: $info;
     margin-bottom: 9px;
 }
 

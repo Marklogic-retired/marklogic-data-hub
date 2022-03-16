@@ -3,20 +3,21 @@ import {Modal} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencilAlt, faFileExport} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
-import {UserContext} from "../../../../util/user-context";
-import {queryDateConverter} from "../../../../util/date-conversion";
+import {UserContext} from "@util/user-context";
+import {queryDateConverter} from "@util/date-conversion";
 import EditQueryDialog from "../edit-query-dialog/edit-query-dialog";
-import {SearchContext} from "../../../../util/search-context";
+import {SearchContext} from "@util/search-context";
 import styles from "./manage-query.module.scss";
-import {fetchQueries, removeQuery} from "../../../../api/queries";
+import {fetchQueries, removeQuery} from "@api/queries";
 import axios from "axios";
-import {getSavedQueryPreview} from "../../../../api/queries";
+import {getSavedQueryPreview} from "@api/queries";
 import ExportQueryModal from "../../../query-export/query-export-modal/query-export-modal";
 import {getExportPreview} from "../../../query-export/export-preview/export-preview";
 import {QueryOptions} from "../../../../types/query-types";
 import {useHistory, useLocation} from "react-router-dom";
 import HCButton from "../../../common/hc-button/hc-button";
 import {HCTable} from "@components/common";
+import {themeColors} from "@config/themes.config";
 
 const QueryModal = (props) => {
   const {
@@ -203,7 +204,7 @@ const QueryModal = (props) => {
       key: "edit",
       formatter: (text, key) => (
         <span className={styles.tableRow}>{text}<i aria-label="editIcon">
-          <FontAwesomeIcon icon={faPencilAlt} color="#5B69AF" className={styles.manageQueryIconsHover} onClick={onEdit} size="lg" /></i>
+          <FontAwesomeIcon icon={faPencilAlt} color={themeColors.info} className={styles.manageQueryIconsHover} onClick={onEdit} size="lg" /></i>
         </span>
       ),
     },
@@ -213,7 +214,7 @@ const QueryModal = (props) => {
       key: "export",
       formatter: (text, row) => (
         <span className={styles.tableRow}>{text}<i aria-label="exportIcon">
-          <FontAwesomeIcon icon={faFileExport} color="#5B69AF" size="lg" className={styles.manageQueryIconsHover} onClick={() => displayExportModal(row.key)} /></i>
+          <FontAwesomeIcon icon={faFileExport} color={themeColors.info} size="lg" className={styles.manageQueryIconsHover} onClick={() => displayExportModal(row.key)} /></i>
         </span>
       ),
     },
@@ -223,7 +224,7 @@ const QueryModal = (props) => {
       key: "delete",
       formatter: (text, row) => (
         <span className={styles.tableRow}>{text}<i aria-label="deleteIcon">
-          <FontAwesomeIcon icon={faTrashAlt} color="#5B69AF" size="lg" className={styles.manageQueryIconsHover} onClick={() => onDelete(row)} /></i>
+          <FontAwesomeIcon icon={faTrashAlt} color={themeColors.info} size="lg" className={styles.manageQueryIconsHover} onClick={() => onDelete(row)} /></i>
         </span>
       ),
     }
@@ -296,11 +297,11 @@ const QueryModal = (props) => {
           name: query["savedQuery"]["name"],
           description: query["savedQuery"]["description"],
           edited: queryDateConverter(query["savedQuery"]["systemMetadata"]["lastUpdatedDateTime"]),
-          //edit: <FontAwesomeIcon icon={faPencilAlt} color="#5B69AF" size="lg" className={styles.manageQueryIconsHover} />,
-          //export: <FontAwesomeIcon icon={faFileExport} color="#5B69AF" size="lg" className={styles.manageQueryIconsHover} />,
+          //edit: <FontAwesomeIcon icon={faPencilAlt} color={themeColors.info} size="lg" className={styles.manageQueryIconsHover} />,
+          //export: <FontAwesomeIcon icon={faFileExport} color={themeColors.info} size="lg" className={styles.manageQueryIconsHover} />,
           // TODO: Uncomment once link for query is implemented
-          // link: <FontAwesomeIcon icon={faLink} color='#5B69AF' size='lg' />,
-          //delete: <FontAwesomeIcon icon={faTrashAlt} color="#5B69AF" size="lg" className={styles.manageQueryIconsHover} />
+          // link: <FontAwesomeIcon icon={faLink} color={themeColors.info} size='lg' />,
+          //delete: <FontAwesomeIcon icon={faTrashAlt} color={themeColors.info} size="lg" className={styles.manageQueryIconsHover} />
         }
       );
     });

@@ -2,20 +2,21 @@ import React, {useState, useEffect, useContext} from "react";
 import Axios from "axios";
 import Select, {components as SelectComponents} from "react-select";
 import CreatableSelect from "react-select/creatable";
-import reactSelectThemeConfig from "../../config/react-select-theme.config";
+import reactSelectThemeConfig from "@config/react-select-theme.config";
 import {Form, Row, Col, FormCheck, FormLabel, FormControl, OverlayTrigger, Tooltip} from "react-bootstrap";
 import styles from "./advanced-settings.module.scss";
-import {AdvancedSettingsTooltips, keyboardNavigationTooltips} from "../../config/tooltips.config";
-import {AdvancedSettingsMessages} from "../../config/messages.config";
-import StepsConfig from "../../config/steps.config";
+import {AdvancedSettingsTooltips, keyboardNavigationTooltips} from "@config/tooltips.config";
+import {AdvancedSettingsMessages} from "@config/messages.config";
+import StepsConfig from "@config/steps.config";
 import "./advanced-settings.scss";
 import AdvancedTargetCollections from "./advanced-target-collections";
-import {CurationContext} from "../../util/curation-context";
+import {CurationContext} from "@util/curation-context";
 import {ChevronDown, ChevronRight, QuestionCircleFill} from "react-bootstrap-icons";
 import {HCInput, HCAlert, HCButton, HCTooltip} from "@components/common";
 import Popover from "react-bootstrap/Popover";
 import {Overlay} from "react-bootstrap";
-import {getEnvironment} from "../../util/environment";
+import {getEnvironment} from "@util/environment";
+import {themeColors} from "@config/themes.config";
 
 type Props = {
   tabKey: string;
@@ -869,7 +870,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                   id="source-database-tooltip"
                   placement="left"
                 >
-                  <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+                  <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
                 </HCTooltip>
               </div>
             </Col>
@@ -911,7 +912,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                   placement="left"
                   show={tgtDatabaseTooltipVisible2 ? tgtDatabaseTooltipVisible2 : undefined}
                 >
-                  <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+                  <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
                 </HCTooltip>
               </div>
             </span>
@@ -958,7 +959,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                     placement="left"
                     show={tgtCollectionTooltipVisible2 ? tgtCollectionTooltipVisible2 :undefined}
                   >
-                    <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+                    <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
                   </HCTooltip>
                 </div></span>
             </Col>
@@ -999,7 +1000,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                       placement="left"
                       show={tgtPermissionTooltipVisible ? tgtPermissionTooltipVisible : undefined}
                     >
-                      <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+                      <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
                     </HCTooltip>
                   </div>
                 </span>
@@ -1041,7 +1042,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                   id="target-format-tooltip"
                   placement="left"
                 >
-                  <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+                  <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
                 </HCTooltip>
               </div>
             </Col>
@@ -1083,7 +1084,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                   placement="left"
                   show={provGranTooltipVisible2 ? provGranTooltipVisible2 : undefined}
                 >
-                  <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+                  <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
                 </HCTooltip>
               </div></span>
           </Col>
@@ -1119,7 +1120,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                   id="validate-entity-tooltip"
                   placement="left"
                 >
-                  <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+                  <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
                 </HCTooltip>
               </div>
             </Col>
@@ -1153,7 +1154,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                   />
                   <div className={"p-2 d-flex"}>
                     <HCTooltip text={tooltips.sourceRecordScope} id="source-record-scope-tooltip" placement="left">
-                      <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+                      <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
                     </HCTooltip>
                   </div>
                 </Col>
@@ -1200,7 +1201,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                   id="attach-source-document-tooltip"
                   placement="left"
                 >
-                  <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+                  <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
                 </HCTooltip>
               </div>
             </Col>
@@ -1229,7 +1230,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                   placement="right"
                   show={batchSizeTooltipVisible ? batchSizeTooltipVisible : undefined}
                 >
-                  <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+                  <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
                 </HCTooltip>
               </div>
             </div>
@@ -1264,7 +1265,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                         placement="left"
                         show={headerContentTooltipVisible ? headerContentTooltipVisible : undefined}
                       >
-                        <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+                        <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
                       </HCTooltip>
                     </div>
                   </span>
@@ -1312,7 +1313,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                     <div className={"p-2 d-flex align-items-center"}>
                       <div>
                         {content}
-                        <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} onMouseEnter={handleShowInterceptorPopover} onMouseLeave={() => setShowInterceptorPopover(false)}/>
+                        <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} onMouseEnter={handleShowInterceptorPopover} onMouseLeave={() => setShowInterceptorPopover(false)}/>
                       </div>
                     </div>
                   </span>
@@ -1371,7 +1372,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                         placement="left"
                         show={customHookTooltipVisible ? customHookTooltipVisible : undefined}
                       >
-                        <QuestionCircleFill color="#7F86B5" size={13} />
+                        <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} />
                       </HCTooltip>
                     </div>
                   </span>
@@ -1406,7 +1407,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                       id="additional-settings-tooltip"
                       placement="left"
                     >
-                      <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+                      <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
                     </HCTooltip>
                   </div>
                 </Col>

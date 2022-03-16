@@ -6,15 +6,17 @@ import {HCTooltip, HCInput} from "@components/common";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styles from "./side-panel.module.scss";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
-import {ModelingTooltips, SecurityTooltips} from "../../../../config/tooltips.config";
-import {ModelingContext} from "../../../../util/modeling-context";
+import {ModelingTooltips, SecurityTooltips} from "@config/tooltips.config";
+import {ModelingContext} from "@util/modeling-context";
 import PropertiesTab from "../properties-tab/properties-tab";
-import {primaryEntityTypes, updateModelInfo} from "../../../../api/modeling";
-import {UserContext} from "../../../../util/user-context";
-import graphConfig from "../../../../config/graph-vis.config";
+import {primaryEntityTypes, updateModelInfo} from "@api/modeling";
+import {UserContext} from "@util/user-context";
+import graphConfig from "@config/graph-vis.config";
 import {EntityModified} from "../../../../types/modeling-types";
-import {defaultHubCentralConfig} from "../../../../config/modeling.config";
+import {defaultHubCentralConfig} from "@config/modeling.config";
 import {IconPicker} from "react-fa-icon-picker";
+import {themeColors} from "@config/themes.config";
+import {defaultIcon} from "@config/explore.config";
 
 type Props = {
   entityTypes: any;
@@ -44,7 +46,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
   const [namespaceTouched, setisNamespaceTouched] = useState(false);
   const [prefixTouched, setisPrefixTouched] = useState(false);
   const [errorServer, setErrorServer] = useState("");
-  const [colorSelected, setColorSelected] = useState("#EEEFF1");
+  const [colorSelected, setColorSelected] = useState(themeColors.defaults.entityColor);
   const [displayColorPicker, setDisplayColorPicker] = useState(false);
   const [eventValid, setEventValid] = useState(false);
   const [iconSelected, setIconSelected] = useState<any>("");
@@ -89,13 +91,13 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
     if (entColor) {
       setColorSelected(entColor);
     } else {
-      setColorSelected("#EEEFF1");
+      setColorSelected(themeColors.defaults.entityColor);
     }
 
     if (entIcon) {
       setIconSelected(entIcon);
     } else {
-      setIconSelected("FaShapes");
+      setIconSelected(defaultIcon);
     }
   };
 
@@ -277,7 +279,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
             />
             <div className={"p-2 d-flex align-items-center"}>
               <HCTooltip text={ModelingTooltips.entityDescription} id="description-tooltip" placement="top-end">
-                <QuestionCircleFill color="#7F86B5" size={13} className={styles.icon} data-testid="entityDescriptionTooltip" />
+                <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.icon} data-testid="entityDescriptionTooltip" />
               </HCTooltip>
             </div>
           </Col>
@@ -316,7 +318,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
               </Col>
               <div className={"col-auto p-1 ps-0 pe-3 me-1 align-items-center"}>
                 <HCTooltip text={ModelingTooltips.namespace} id="prefix-tooltip" placement="left">
-                  <QuestionCircleFill color="#7F86B5" size={13} className={styles.icon} data-testid="entityPrefixTooltip" />
+                  <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.icon} data-testid="entityPrefixTooltip" />
                 </HCTooltip>
               </div>
               <Col xs={12} className={styles.validationError}>
@@ -332,7 +334,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
               <div className={styles.colorPickerBorder} onClick={handleEditColorMenu} data-testid={"edit-color-icon"}><div data-testid={`${modelingOptions.selectedEntity}-color`} style={{width: "32px", height: "30px", background: colorSelected, margin: "8px"}}></div></div>
               <div className={"d-flex align-items-center"}>
                 <HCTooltip id="colo-selector" text={<span>Select a color to associate it with the <b>{modelingOptions.selectedEntity}</b> entity throughout your project.</span>} placement="right">
-                  <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.colorsIcon} />
+                  <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.colorsIcon} />
                 </HCTooltip>
               </div>
             </div>
@@ -345,7 +347,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
               <div data-testid={`${modelingOptions.selectedEntity}-icon-selector`} aria-label={`${modelingOptions.selectedEntity}-${iconSelected}-icon`}><IconPicker value={iconSelected} onChange={(value) => handleIconChange(value)}/></div>
               <div className={"d-flex align-items-center"}>
                 <HCTooltip id="icon-selector" text={<span>Select an icon to associate it with the <b>{modelingOptions.selectedEntity}</b> entity in the Explore screen.</span>} placement="right">
-                  <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.iconPickerTooltip} />
+                  <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.iconPickerTooltip} />
                 </HCTooltip>
               </div>
             </div>

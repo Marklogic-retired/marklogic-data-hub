@@ -6,11 +6,11 @@ import DateTimeFacet from "@components/date-time-facet/date-time-facet";
 // import {HCInput} from "@components/common";
 // import {faSearch} from "@fortawesome/free-solid-svg-icons";
 import moment from "moment";
-import {SearchContext} from "../../../util/search-context";
+import {SearchContext} from "@util/search-context";
 import DynamicIcons from "@components/common/dynamic-icons/dynamic-icons";
-import {ExploreGraphViewToolTips} from "../../../config/tooltips.config";
+import {ExploreGraphViewToolTips} from "@config/tooltips.config";
 import NumericFacet from "@components/numeric-facet/numeric-facet";
-import {exploreSidebar} from "../../../config/explore.config";
+import {exploreSidebar} from "@config/explore.config";
 
 interface Props {
   entitySelected: any;

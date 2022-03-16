@@ -1,3 +1,5 @@
+@import "../../theme/HCVariables.scss";
+
 .sideBarContainer {
   background-color: #f1f2f5;
 }
@@ -145,7 +147,7 @@
 
 .queryIconsSave {
   width: 18px;
-  color: #5b69af;
+  color: $info;
   cursor: pointer;
 }
 
@@ -168,7 +170,7 @@
 .clearQuery {
   padding-left: 16px;
   padding-bottom: 10px;
-  color:  #5B69AF;
+  color:  $info;
   svg {
     margin-right: 5px;
     font-size: 14px;
@@ -207,7 +209,7 @@
   font-size: 12px;
   margin-left: 6px;
   position: relative;
-  color: #5B69AF;
+  color: $info;
 }
 
 .relatedEntityPanelDisabled {

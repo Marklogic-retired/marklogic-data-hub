@@ -3,14 +3,14 @@ import styles from "./load-card.module.scss";
 import {Link, useHistory} from "react-router-dom";
 import {Row, Col, Modal} from "react-bootstrap";
 import Select, {components as SelectComponents} from "react-select";
-import reactSelectThemeConfig from "../../config/react-select-theme.config";
+import reactSelectThemeConfig from "@config/react-select-theme.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCog} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
-import sourceFormatOptions from "../../config/formats.config";
-import {convertDateFromISO} from "../../util/conversionFunctions";
+import sourceFormatOptions from "@config/formats.config";
+import {convertDateFromISO} from "@util/conversionFunctions";
 import Steps from "../steps/steps";
-import {AdvLoadTooltips, SecurityTooltips} from "../../config/tooltips.config";
+import {AdvLoadTooltips, SecurityTooltips} from "@config/tooltips.config";
 import {PlayCircleFill, PlusCircleFill} from "react-bootstrap-icons";
 import {HCButton, HCCard, HCDivider, HCTooltip} from "@components/common";
 

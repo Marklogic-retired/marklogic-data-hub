@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import {withRouter} from "react-router-dom";
-import {UserContext} from "../util/user-context";
+import {UserContext} from "@util/user-context";
 import {HCButton} from "@components/common";
 import styles from "./noMatchRedirect.module.scss";
 import oopsIcon from "../assets/oopsIcon.png";

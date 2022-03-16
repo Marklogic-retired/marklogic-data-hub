@@ -1,12 +1,12 @@
 import React, {useState, useEffect, useContext} from "react";
 import {HCButton, HCTable, HCTooltip} from "@components/common";
 import {Modal, Accordion} from "react-bootstrap";
-import {RunToolTips} from "../../config/tooltips.config";
+import {RunToolTips} from "@config/tooltips.config";
 //import {SearchContext} from "../../util/search-context";
-import {dateConverter, renderDuration, durationFromDateTime} from "../../util/date-conversion";
+import {dateConverter, renderDuration, durationFromDateTime} from "@util/date-conversion";
 import styles from "./job-response.module.scss";
 import axios from "axios";
-import {UserContext} from "../../util/user-context";
+import {UserContext} from "@util/user-context";
 //import {getMappingArtifactByStepName} from "../../api/mapping";
 //import {useHistory} from "react-router-dom";
 import Spinner from "react-bootstrap/Spinner";

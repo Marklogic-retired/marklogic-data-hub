@@ -5,11 +5,11 @@ import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
 import styles from "./table-view-group-nodes.module.scss";
 import {HCButton} from "@components/common";
 import ResultsTabularView from "@components/results-tabular-view/results-tabular-view";
-import {searchResultsQuery} from "../../../api/queries";
-import {SearchContext} from "../../../util/search-context";
-import {getTableProperties} from "../../../util/data-conversion";
-import {UserContext} from "../../../util/user-context";
-import {expandThresholdExceededWarning, graphViewConfig} from "../../../config/explore.config";
+import {searchResultsQuery} from "@api/queries";
+import {SearchContext} from "@util/search-context";
+import {getTableProperties} from "@util/data-conversion";
+import {UserContext} from "@util/user-context";
+import {expandThresholdExceededWarning, graphViewConfig} from "@config/explore.config";
 import {pagePropertiesType} from "types/query-types";
 
 type Props = {

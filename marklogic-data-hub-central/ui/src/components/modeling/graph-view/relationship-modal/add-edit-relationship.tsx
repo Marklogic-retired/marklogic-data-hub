@@ -3,18 +3,18 @@ import Select, {components as SelectComponents} from "react-select";
 import {Modal, Dropdown} from "react-bootstrap";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import reactSelectThemeConfig from "../../../../config/react-select-theme.config";
+import reactSelectThemeConfig from "@config/react-select-theme.config";
 import styles from "./add-edit-relationship.module.scss";
-import {ModelingContext} from "../../../../util/modeling-context";
-// import graphConfig from "../../../../config/graph-vis.config";
+import {ModelingContext} from "@util/modeling-context";
+// import graphConfig from "@config/graph-vis.config";
 import oneToManyIcon from "../../../../assets/one-to-many.svg";
 import oneToOneIcon from "../../../../assets/one-to-one.svg";
 import {faExclamationCircle, faChevronDown, faChevronRight, faSearch} from "@fortawesome/free-solid-svg-icons";
-import {ModelingTooltips} from "../../../../config/tooltips.config";
+import {ModelingTooltips} from "@config/tooltips.config";
 import ConfirmationModal from "../../../confirmation-modal/confirmation-modal";
 import {ConfirmationType} from "../../../../types/common-types";
-import {getSystemInfo} from "../../../../api/environment";
-import {entityReferences} from "../../../../api/modeling";
+import {getSystemInfo} from "@api/environment";
+import {entityReferences} from "@api/modeling";
 import {
   PropertyOptions,
   PropertyType,
@@ -22,6 +22,7 @@ import {
 } from "../../../../types/modeling-types";
 import {ChevronDown, QuestionCircleFill} from "react-bootstrap-icons";
 import {HCButton, HCInput, HCTooltip, HCCard} from "@components/common";
+import {themeColors} from "@config/themes.config";
 
 type Props = {
   openRelationshipModal: boolean;
@@ -454,7 +455,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
     if (props.hubCentralConfig.modeling.entities.hasOwnProperty(entityName) && props.hubCentralConfig.modeling.entities[entityName].hasOwnProperty("color")) {
       setTargetEntityColor(props.hubCentralConfig.modeling.entities[entityName].color);
     } else {
-      setTargetEntityColor("#EEEFF1"); //assigning default color if entity is not assigned a color yet
+      setTargetEntityColor(themeColors.defaults.entityColor); //assigning default color if entity is not assigned a color yet
     }
   }
 
@@ -645,7 +646,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
                 <i data-testid="error-circle"><FontAwesomeIcon icon={faExclamationCircle} size="1x" className={styles.errorIcon} /></i>
               </HCTooltip> : ""}
             <HCTooltip text={ModelingTooltips.relationshipNameInfo(props.relationshipInfo.sourceNodeName)} placement={"bottom"} id="relationship-name-tooltip">
-              <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle} />
+              <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
             </HCTooltip>
           </div>
           <hr className={styles.horizontalLine}></hr>
@@ -689,7 +690,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
             <div className={`mx-3 ${styles.foreignKeyDropdownContainer}`}>
               {foreignKeyDropdown}
               <HCTooltip id="foreign-key-tooltip" text={ModelingTooltips.foreignKeyInfo} placement={"right"}>
-                <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle} data-testid={"foreign-key-tooltip"}/>
+                <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} data-testid={"foreign-key-tooltip"}/>
               </HCTooltip>
             </div>
           </div>

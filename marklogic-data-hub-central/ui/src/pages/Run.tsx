@@ -3,18 +3,18 @@ import styles from "./Run.module.scss";
 import Flows from "@components/flows/flows";
 import {Accordion, Modal} from "react-bootstrap";
 import axios from "axios";
-import {SearchContext} from "../util/search-context";
-import {AuthoritiesContext} from "../util/authorities";
-import {UserContext} from "../util/user-context";
+import {SearchContext} from "@util/search-context";
+import {AuthoritiesContext} from "@util/authorities";
+import {UserContext} from "@util/user-context";
 import {useHistory} from "react-router-dom";
 import tiles from "../config/tiles.config";
 //import {getFromPath} from "../util/json-utils";
-import {MissingPagePermission} from "../config/messages.config";
-import {getMappingArtifactByStepName} from "../api/mapping";
+import {MissingPagePermission} from "@config/messages.config";
+import {getMappingArtifactByStepName} from "@api/mapping";
 import JobResponse from "@components/job-response/job-response";
 import {HCButton} from "@components/common";
 import {CheckCircleFill, ExclamationCircleFill} from "react-bootstrap-icons";
-import {ErrorMessageContext} from "../util/error-message-context";
+import {ErrorMessageContext} from "@util/error-message-context";
 //import Spinner from "react-bootstrap/Spinner";
 
 interface PollConfig {

@@ -1,12 +1,12 @@
 import React, {useState, useContext} from "react";
 import {faFileExport} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {SearchContext} from "../../util/search-context";
+import {SearchContext} from "@util/search-context";
 import styles from "../query-export/query-export.module.scss";
 import ExportQueryModal from "./query-export-modal/query-export-modal";
-import {UserContext} from "../../util/user-context";
+import {UserContext} from "@util/user-context";
 import {getExportPreview} from "../query-export/export-preview/export-preview";
-import {getExportQueryPreview} from "../../api/queries";
+import {getExportQueryPreview} from "@api/queries";
 import {HCTooltip} from "@components/common";
 
 const QueryExport = (props) => {

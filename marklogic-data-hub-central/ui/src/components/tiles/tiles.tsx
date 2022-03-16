@@ -6,19 +6,19 @@ import {faExternalLinkAlt, faCog} from "@fortawesome/free-solid-svg-icons";
 import styles from "./tiles.module.scss";
 import "./tiles.scss";
 import Run from "../../pages/Run";
-import {SearchContext} from "../../util/search-context";
-import {AuthoritiesContext} from "../../util/authorities";
+import {SearchContext} from "@util/search-context";
+import {AuthoritiesContext} from "@util/authorities";
 import QueryModal from "../queries/managing/manage-query-modal/manage-query";
 import infoIcon from "../../assets/icon_helpInfo.png";
-import {getHubCentralConfig, primaryEntityTypes} from "../../api/modeling";
-import {ToolbarBulbIconInfo} from "../../config/tooltips.config";
+import {getHubCentralConfig, primaryEntityTypes} from "@api/modeling";
+import {ToolbarBulbIconInfo} from "@config/tooltips.config";
 import {ArrowsAngleContract, ArrowsAngleExpand, XLg} from "react-bootstrap-icons";
 import {HCTooltip} from "@components/common";
 import Popover from "react-bootstrap/Popover";
 import {Dropdown, NavDropdown, OverlayTrigger} from "react-bootstrap";
 import EntityTypeDisplaySettingsModal from "@components/explore/entity-type-display-settings-modal/entity-type-display-settings-modal";
-import {UserContext} from "../../util/user-context";
-import tooltipsConfig from "../../config/explorer-tooltips.config";
+import {UserContext} from "@util/user-context";
+import tooltipsConfig from "@config/explorer-tooltips.config";
 
 interface Props {
   id: string;

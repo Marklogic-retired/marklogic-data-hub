@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {defaultModelingView} from "../config/modeling.config";
+import {defaultModelingView} from "@config/modeling.config";
 import {
   ModelingOptionsInterface,
   ModelingContextInterface,

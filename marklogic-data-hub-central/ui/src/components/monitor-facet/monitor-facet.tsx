@@ -1,7 +1,7 @@
 import React, {useState, useContext, useEffect} from "react";
 import styles from "../facet/facet.module.scss";
-import {stringConverter} from "../../util/string-conversion";
-import {MonitorContext} from "../../util/monitor-context";
+import {stringConverter} from "@util/string-conversion";
+import {MonitorContext} from "@util/monitor-context";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import PopOverSearch from "../pop-over-search/pop-over-search";

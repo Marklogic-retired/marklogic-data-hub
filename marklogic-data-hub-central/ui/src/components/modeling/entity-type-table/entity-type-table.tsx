@@ -7,15 +7,17 @@ import styles from "./entity-type-table.module.scss";
 import DynamicIcons from "../../common/dynamic-icons/dynamic-icons";
 import PropertyTable from "../property-table/property-table";
 import ConfirmationModal from "../../confirmation-modal/confirmation-modal";
-import {entityReferences, deleteEntity} from "../../../api/modeling";
+import {entityReferences, deleteEntity} from "@api/modeling";
 import {EntityModified, ViewType} from "../../../types/modeling-types";
 import {ConfirmationType} from "../../../types/common-types";
-import {getViewSettings, setViewSettings, UserContext} from "../../../util/user-context";
-import {ModelingContext} from "../../../util/modeling-context";
-import {queryDateConverter, relativeTimeConverter} from "../../../util/date-conversion";
-import {numberConverter} from "../../../util/number-conversion";
-import {ModelingTooltips, SecurityTooltips} from "../../../config/tooltips.config";
+import {getViewSettings, setViewSettings, UserContext} from "@util/user-context";
+import {ModelingContext} from "@util/modeling-context";
+import {queryDateConverter, relativeTimeConverter} from "@util/date-conversion";
+import {numberConverter} from "@util/number-conversion";
+import {ModelingTooltips, SecurityTooltips} from "@config/tooltips.config";
 import {HCTooltip, HCTable} from "@components/common";
+import {themeColors} from "@config/themes.config";
+import {defaultIcon} from "@config/explore.config";
 
 type Props = {
   allEntityTypesData: any[];
@@ -335,10 +337,10 @@ const EntityTypeTable: React.FC<Props> = (props) => {
   const getEntityTypeProp = (entityName: any, prop: string) => {
     const entity = allEntityTypes.find(e => e.entityName === entityName);
     if (prop === "color") {
-      return colorExistsForEntity(entityName) ? props.hubCentralConfig.modeling.entities[entityName][prop]: "#EEEFF1";
+      return colorExistsForEntity(entityName) ? props.hubCentralConfig.modeling.entities[entityName][prop]: themeColors.defaults.entityColor;
     }
     if (prop === "icon") {
-      return iconExistsForEntity(entityName) ? props.hubCentralConfig.modeling.entities[entityName][prop]: "FaShapes";
+      return iconExistsForEntity(entityName) ? props.hubCentralConfig.modeling.entities[entityName][prop]: defaultIcon;
     }
     return (entity.hasOwnProperty("model") &&
       entity.model.hasOwnProperty("definitions") &&
@@ -383,8 +385,8 @@ const EntityTypeTable: React.FC<Props> = (props) => {
       entityName: entity.entityName,
       instances: entity.entityName + "," + parseInt(entity.entityInstanceCount),
       lastProcessed: entity.entityName + "," + entity.latestJobId + "," + entity.latestJobDateTime,
-      color: colorExistsForEntity(entity.entityName) ? (entity.entityName + "," + props.hubCentralConfig.modeling.entities[entity.entityName].color) : (entity.entityName + "," + "#EEEFF1"),
-      icon: iconExistsForEntity(entity.entityName) ? (entity.entityName + "," + props.hubCentralConfig.modeling.entities[entity.entityName].icon) : (entity.entityName + "," + "FaShapes"),
+      color: colorExistsForEntity(entity.entityName) ? (entity.entityName + "," + props.hubCentralConfig.modeling.entities[entity.entityName].color) : (entity.entityName + "," + themeColors.defaults.entityColor),
+      icon: iconExistsForEntity(entity.entityName) ? (entity.entityName + "," + props.hubCentralConfig.modeling.entities[entity.entityName].icon) : (entity.entityName + "," + defaultIcon),
       actions: entity.entityName,
       definitions: entity.model.definitions,
     };

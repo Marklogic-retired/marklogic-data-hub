@@ -1,5 +1,5 @@
 import React, {useContext, useEffect} from "react";
-import {SearchContext} from "../../util/search-context";
+import {SearchContext} from "@util/search-context";
 import styles from "./selected-facets.module.scss";
 import moment from "moment";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";

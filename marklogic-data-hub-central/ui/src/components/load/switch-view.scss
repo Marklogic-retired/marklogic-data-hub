@@ -1,3 +1,5 @@
+@import "../../theme/HCVariables.scss";
+
 #switch-view .ant-radio-group-large .ant-radio-button-wrapper {
     height: 40px;
     font-size: 24px;
@@ -6,8 +8,8 @@
 }
 
 #switch-view .ant-radio-group-large .ant-radio-button-wrapper.ant-radio-button-wrapper-checked {
-    border-color: #5B69AF;
-    color: #5B69AF
+    border-color: $info;
+    color: $info
 }
 
 #switch-view .ant-radio-group-large .ant-radio-button-wrapper:hover {

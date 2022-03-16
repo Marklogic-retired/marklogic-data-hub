@@ -1,7 +1,7 @@
 import React, {useContext} from "react";
 import {Modal} from "react-bootstrap";
-import {updateMatchingArtifact} from "../../../../api/matching";
-import {CurationContext} from "../../../../util/curation-context";
+import {updateMatchingArtifact} from "@api/matching";
+import {CurationContext} from "@util/curation-context";
 import {HCButton} from "@components/common";
 
 

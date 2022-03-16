@@ -1,5 +1,7 @@
+@import "../../theme/HCVariables.scss";
+
 .structuredIcon {
-    color: #5b69af;
+    color: $info;
     font-size: 14px;
     margin: 0 2px;
 }

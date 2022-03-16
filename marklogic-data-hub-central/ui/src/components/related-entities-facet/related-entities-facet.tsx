@@ -2,13 +2,14 @@ import React, {useEffect, useState, useContext}  from "react";
 import styles from "./related-entities-facet.module.scss";
 import {ChevronDoubleRight} from "react-bootstrap-icons";
 import HCCheckbox from "../common/hc-checkbox/hc-checkbox";
-import {entitiesSorting} from "../../util/entities-sorting";
-import {exploreSidebar} from "../../config/explore.config";
+import {entitiesSorting} from "@util/entities-sorting";
+import {defaultIcon, exploreSidebar} from "@config/explore.config";
 import DynamicIcons from "@components/common/dynamic-icons/dynamic-icons";
-import {SearchContext} from "../../util/search-context";
-import {ExploreGraphViewToolTips} from "../../config/tooltips.config";
+import {SearchContext} from "@util/search-context";
+import {ExploreGraphViewToolTips} from "@config/tooltips.config";
 import {HCTooltip} from "@components/common";
-import {deepCopy} from "../../util/data-conversion";
+import {deepCopy} from "@util/data-conversion";
+import {themeColors} from "@config/themes.config";
 
 const SHOW_MINIMUM = (values) => values.length >= MINIMUM_ENTITIES ? MINIMUM_ENTITIES: values.length;
 const SHOW_FILTER = (filter) => filter === 1 ? `(${filter} filter)  ` : `(${filter} filters)  `;
@@ -101,8 +102,8 @@ const RelatedEntitiesFacet: React.FC<Props> = (props) => {
         {options?.map((option) => {
           if (currentRelatedEntities?.get(option)) {
             const {color, name, filter, amount, checked, icon} = currentRelatedEntities.get(option);
-            let finalIcon = icon ? icon : "FaShapes";
-            let finalColor = color ? color : "#EEEFF1";
+            let finalIcon = icon ? icon : defaultIcon;
+            let finalColor = color ? color : themeColors.defaults.entityColor;
             return (
               <HCTooltip text={relatedEntitiesDisabled.includes(option) ? ExploreGraphViewToolTips.entityToolTipDisabled(option) : ExploreGraphViewToolTips.entityToolTip} placement="top" id="relatedEntityToolTip" aria-label="relatedEntityToolTip" key={name}>
                 <div
