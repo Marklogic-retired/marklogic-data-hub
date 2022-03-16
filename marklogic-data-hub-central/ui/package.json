@@ -111,7 +111,10 @@
     ],
     "moduleNameMapper": {
       "^lodash-es(.*)": "lodash$1",
-      "@components/(.*)$": "<rootDir>/src/components/$1"
+      "@api/(.*)$": "<rootDir>/src/api/$1",
+      "@config/(.*)$": "<rootDir>/src/config/$1",
+      "@components/(.*)$": "<rootDir>/src/components/$1",
+      "@util/(.*)$": "<rootDir>/src/util/$1"
     }
   },
   "jest-junit": {

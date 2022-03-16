@@ -3,7 +3,7 @@ import {Modal} from "react-bootstrap";
 import "./compare-values-modal.scss";
 import styles from "./compare-values-modal.module.scss";
 import {Definition} from "../../../../types/modeling-types";
-import {CurationContext} from "../../../../util/curation-context";
+import {CurationContext} from "@util/curation-context";
 import backgroundImage from "../../../../assets/white-for-dark-bg.png";
 import {HCTable} from "@components/common";
 

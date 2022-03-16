@@ -1,8 +1,8 @@
 import React, {useState, useEffect, useContext} from "react";
-import {SearchContext} from "../../util/search-context";
-import {UserContext} from "../../util/user-context";
+import {SearchContext} from "@util/search-context";
+import {UserContext} from "@util/user-context";
 import styles from "./numeric-facet.module.scss";
-import {rangeFacet} from "../../api/facets";
+import {rangeFacet} from "@api/facets";
 import {HCSlider, HCTooltip} from "@components/common";
 
 interface Props {

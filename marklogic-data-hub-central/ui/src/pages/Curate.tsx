@@ -1,13 +1,13 @@
 import React, {useState, useContext, useEffect} from "react";
 import styles from "./Curate.module.scss";
-import {AuthoritiesContext} from "../util/authorities";
-import {getViewSettings, UserContext} from "../util/user-context";
+import {AuthoritiesContext} from "@util/authorities";
+import {getViewSettings, UserContext} from "@util/user-context";
 import axios from "axios";
-import EntityTiles from "../components/entities/entity-tiles";
-import tiles from "../config/tiles.config";
-import {MissingPagePermission} from "../config/messages.config";
+import EntityTiles from "@components/entities/entity-tiles";
+import tiles from "@config/tiles.config";
+import {MissingPagePermission} from "@config/messages.config";
 import {useHistory} from "react-router-dom";
-import {ErrorMessageContext} from "../util/error-message-context";
+import {ErrorMessageContext} from "@util/error-message-context";
 
 const Curate: React.FC = () => {
 

@@ -1,11 +1,12 @@
 import React, {useEffect, useState, useContext} from "react";
 import {Row, Col, Modal, Form, FormLabel} from "react-bootstrap";
 import styles from "./structured-type-modal.module.scss";
-import {ModelingContext} from "../../../util/modeling-context";
-import {ModelingTooltips} from "../../../config/tooltips.config";
-import {UserContext} from "../../../util/user-context";
+import {ModelingContext} from "@util/modeling-context";
+import {ModelingTooltips} from "@config/tooltips.config";
+import {UserContext} from "@util/user-context";
 import {HCButton, HCInput, HCTooltip} from "@components/common";
 import {QuestionCircleFill} from "react-bootstrap-icons";
+import {themeColors} from "@config/themes.config";
 
 type Props = {
   isVisible: boolean;
@@ -190,7 +191,7 @@ const StructuredTypeModal: React.FC<Props> = (props) => {
                 />
                 <div className={"p-2 d-flex align-items-center"}>
                   <HCTooltip text={ModelingTooltips.nameRegex} id="structured-name-tooltip" placement="top">
-                    <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} />
+                    <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} />
                   </HCTooltip>
                 </div>
               </Col>
@@ -225,7 +226,7 @@ const StructuredTypeModal: React.FC<Props> = (props) => {
                 />
                 <div className={"p-2 d-flex align-items-center"}>
                   <HCTooltip text={ModelingTooltips.namespace} id="prefix-tooltip" placement="top">
-                    <QuestionCircleFill color="#7F86B5" size={13} />
+                    <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} />
                   </HCTooltip>
                 </div>
               </Col>

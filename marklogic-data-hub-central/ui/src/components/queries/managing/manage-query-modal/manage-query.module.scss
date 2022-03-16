@@ -9,7 +9,7 @@
 .name {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size :14px;
-    color: #5B69AF;
+    color: $info;
     &:hover{
         color: var(--hoverColor);
     }

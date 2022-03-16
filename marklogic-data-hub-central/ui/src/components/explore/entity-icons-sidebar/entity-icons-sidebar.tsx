@@ -3,6 +3,7 @@ import styles from "./entity-icons-sidebar.module.scss";
 import {ChevronDoubleRight} from "react-bootstrap-icons";
 import {HCTooltip} from "@components/common";
 import DynamicIcons from "@components/common/dynamic-icons/dynamic-icons";
+import {defaultIcon} from "@config/explore.config";
 
 interface Props {
   currentBaseEntities: any[];
@@ -38,7 +39,7 @@ const EntityIconsSidebar: React.FC<Props> = (props) => {
         </HCTooltip>
         {currentBaseEntities.map(({color, icon, name}, index) => name &&
           <div key={name} aria-label={`base-entity-icon-${name}`} style={{backgroundColor: color}} className={styles.entityIconListItem} onClick={() => handleBaseEntityClicked(index)}>
-            {icon ? <DynamicIcons name={icon} /> : <DynamicIcons name="FaShapes" />}
+            {icon ? <DynamicIcons name={icon} /> : <DynamicIcons name={defaultIcon} />}
           </div>
         )}
       </div>
@@ -47,7 +48,7 @@ const EntityIconsSidebar: React.FC<Props> = (props) => {
         <div className={styles.relatedEntityIconList} aria-label="related-entity-icons-list">
           {currentRelatedEntitiesArray.map(({color, icon, name}, index) => name &&
             <div key={name} aria-label={`related-entity-icon-${name}`} style={{backgroundColor: color}} className={styles.entityIconListItem} onClick={() => handleRelatedEntityClicked(index)}>
-              {icon ? <DynamicIcons name={icon} /> : <DynamicIcons name="FaShapes" />}
+              {icon ? <DynamicIcons name={icon} /> : <DynamicIcons name={defaultIcon} />}
             </div>
           )}
         </div>

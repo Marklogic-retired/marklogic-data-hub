@@ -1,10 +1,11 @@
 import React from "react";
 import oneToManyIcon from "../assets/one-to-many-white.svg";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faKey, faLayerGroup } from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faKey, faLayerGroup} from "@fortawesome/free-solid-svg-icons";
 import styles from "../components/tiles/tiles.module.scss";
 import "./tooltips.config.scss";
-import { Tooltip } from "react-bootstrap";
+import {Tooltip} from "react-bootstrap";
+import {themeColors} from "./themes.config";
 
 /* --- MODELING --- */
 
@@ -209,7 +210,7 @@ const CommonStepTooltips = {
   options: 'Key-value pairs to pass as parameters to the custom module.',
   customModuleURI: 'The path to your custom step module.',
   radioQuery: 'A single collection that selects the source data to process in this configuration.',
-  radioCollection: <span>The CTS query that selects the source data to process in this configuration. CTS queries can be written in JavaScript or XQuery, and must return the URIs to be processed by the step. For XQuery, the query has to be passed as a string to xdmp.xqueryEval(), as shown in the example below.  Learn more: <a target="_blank" href="https://docs.marklogic.com/guide/search-dev/cts_query" style={{ color: "5B69AF" }}>CTS Query.</a><br /><br />
+  radioCollection: <span>The CTS query that selects the source data to process in this configuration. CTS queries can be written in JavaScript or XQuery, and must return the URIs to be processed by the step. For XQuery, the query has to be passed as a string to xdmp.xqueryEval(), as shown in the example below.  Learn more: <a target="_blank" href="https://docs.marklogic.com/guide/search-dev/cts_query" style={{ color: themeColors.info }}>CTS Query.</a><br /><br />
     The following example source queries select data from multiple collections.<br /><br />
     JavaScript:<br />
     <span style={{ fontFamily: "monospace" }}>cts.collectionQuery(['collection1', 'collection2'])</span><br /><br />

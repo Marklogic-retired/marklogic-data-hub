@@ -2,7 +2,7 @@ import React, {useState, useEffect, CSSProperties} from "react";
 import styles from "./entity-map-table.module.scss";
 import "./entity-map-table.scss";
 import Select, {components as SelectComponents} from "react-select";
-import reactSelectThemeConfig from "../../../../config/react-select-theme.config";
+import reactSelectThemeConfig from "@config/react-select-theme.config";
 import {Modal, ButtonGroup, Dropdown, Spinner, FormControl} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Highlighter from "react-highlight-words";
@@ -12,14 +12,15 @@ import {faKey, faLayerGroup} from "@fortawesome/free-solid-svg-icons";
 import arrayIcon from "../../../../assets/icon_array.png";
 import DocIcon from "../../../../assets/DocIcon.png";
 import {css} from "@emotion/css";
-import {getParentKey, getKeys, deepCopy} from "../../../../util/data-conversion";
-import {paginationMapping} from "../../../../config/mapping.config";
-import {ModelingTooltips, MappingDetailsTooltips} from "../../../../config/tooltips.config";
-import StepsConfig from "../../../../config/steps.config";
+import {getParentKey, getKeys, deepCopy} from "@util/data-conversion";
+import {paginationMapping} from "@config/mapping.config";
+import {ModelingTooltips, MappingDetailsTooltips} from "@config/tooltips.config";
+import StepsConfig from "@config/steps.config";
 import {QuestionCircleFill, XLg, ChevronDown, ChevronRight, Search} from "react-bootstrap-icons";
 import {DropDownWithSearch, HCButton, HCInput, HCTooltip, HCTable} from "@components/common";
 import Popover from "react-bootstrap/Popover";
 import {OverlayTrigger, Overlay} from "react-bootstrap";
+import {themeColors} from "@config/themes.config";
 
 interface Props {
   setScrollRef: any;
@@ -1421,14 +1422,14 @@ const EntityMapTable: React.FC<Props> = (props) => {
               {row.key > 100 && row.name === "Context" && !row.isProperty &&
                 <span>
                   &nbsp;<OverlayTrigger placement="right" overlay={contextHelp} rootClose trigger="click">
-                    <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircle} />
+                    <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
                   </OverlayTrigger>
                 </span>
               }
               {row.key > 100 && row.name === "URI" && !row.isProperty &&
                 <span>
                 &nbsp;<OverlayTrigger placement="right" overlay={uriHelp} rootClose trigger="click">
-                    <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircle} />
+                    <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
                   </OverlayTrigger>
                 </span>
               }
@@ -1467,7 +1468,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
                   <div className={styles.typeContextContainer}>
                     <span className={styles.typeContext}>Context</span>&nbsp;
                     <OverlayTrigger placement="right" overlay={contextHelp} rootClose trigger="click">
-                      <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircle} />
+                      <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
                     </OverlayTrigger>
                     <p className={styles.typeText}>{dType}</p>
                   </div>
@@ -1506,7 +1507,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
         return <div className={styles.typeContainer}>
           {expanded && row.joinPropertyName !== "" && !row.joinPropertyType && !row.relatedEntityType ? <div className={styles.typeContextContainer}><span className={styles.typeContext}>Context</span>&nbsp;
             <OverlayTrigger placement="right" overlay={contextHelp} rootClose trigger="click">
-              <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircleContext} />
+              <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircleContext} />
             </OverlayTrigger>
             <p className={styles.typeText}>{dType}</p></div>
             : renderText}
@@ -1669,14 +1670,14 @@ const EntityMapTable: React.FC<Props> = (props) => {
               {row.key > 100 && row.name === "Context" && !row.isProperty &&
                 <span>
                   &nbsp;<OverlayTrigger placement="right" overlay={contextHelp} rootClose trigger="click">
-                    <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircle} />
+                    <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
                   </OverlayTrigger>
                 </span>
               }
               {row.key > 100 && row.name === "URI" && !row.isProperty &&
                 <span>
                 &nbsp;<OverlayTrigger placement="right" overlay={uriHelp} rootClose trigger="click">
-                    <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircle} />
+                    <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
                   </OverlayTrigger>
                 </span>
               }
@@ -1715,7 +1716,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
                   <div className={styles.typeContextContainer}>
                     <span className={styles.typeContext}>Context</span>&nbsp;
                     <OverlayTrigger placement="right" overlay={contextHelp} rootClose trigger="click">
-                      <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircle} />
+                      <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
                     </OverlayTrigger>
                     <p className={styles.typeText}>{dType}</p>
                   </div>
@@ -1754,7 +1755,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
         return <div className={styles.typeContainer}>
           {expanded && row.joinPropertyName !== "" && !row.joinPropertyType && !row.relatedEntityType ? <div className={styles.typeContextContainer}><span className={styles.typeContext}>Context</span>&nbsp;
             <OverlayTrigger placement="right" overlay={contextHelp} rootClose trigger="click">
-              <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircleContext} />
+              <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircleContext} />
             </OverlayTrigger>
             <p className={styles.typeText}>{dType}</p></div>
             : renderText}
@@ -1871,12 +1872,12 @@ const EntityMapTable: React.FC<Props> = (props) => {
       backgroundColor: props.tableColor,
       paddingTop: "12px",
       paddingBottom: "12px",
-      borderColor: "#CCCCCC"
+      borderColor: themeColors.light
     },
     "& tbody > tr > td": {
       backgroundColor: props.tableColor,
       verticalAlign: "top",
-      borderColor: "#CCCCCC",
+      borderColor: themeColors.light,
       lineHeight: "2px"
     },
     "& tbody > tr > .ant-table-column-has-actions": {

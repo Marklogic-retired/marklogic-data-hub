@@ -2,11 +2,11 @@ import React, {useState, useContext, useEffect} from "react";
 import {Link, withRouter, RouteComponentProps} from "react-router-dom";
 import styles from "./search-result.module.scss";
 import ReactHtmlParser from "react-html-parser";
-import {dateConverter} from "../../util/date-conversion";
+import {dateConverter} from "@util/date-conversion";
 import ExpandableTableView from "../expandable-table-view/expandable-table-view";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faThList, faCode, faProjectDiagram} from "@fortawesome/free-solid-svg-icons";
-import {SearchContext} from "../../util/search-context";
+import {SearchContext} from "@util/search-context";
 import {ChevronDown, ChevronRight} from "react-bootstrap-icons";
 import {HCTooltip} from "@components/common";
 

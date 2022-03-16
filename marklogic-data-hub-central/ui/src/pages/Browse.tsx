@@ -1,37 +1,38 @@
 import React, {useState, useEffect, useContext, useRef, useLayoutEffect} from "react";
 import axios from "axios";
 import {RouteComponentProps, withRouter} from "react-router-dom";
-import {UserContext} from "../util/user-context";
-import {SearchContext} from "../util/search-context";
-import AsyncLoader from "../components/async-loader/async-loader";
+import {UserContext} from "@util/user-context";
+import {SearchContext} from "@util/search-context";
+import AsyncLoader from "@components/async-loader/async-loader";
 import ViewSwitch from "@components/common/switch-view/view-switch";
-import Sidebar from "../components/sidebar/sidebar";
-import SearchPagination from "../components/search-pagination/search-pagination";
-import SearchSummary from "../components/search-summary/search-summary";
-import SearchResults from "../components/search-results/search-results";
-import {ExploreToolTips, ModelingMessages} from "../config/tooltips.config";
+import Sidebar from "@components/sidebar/sidebar";
+import SearchPagination from "@components/search-pagination/search-pagination";
+import SearchSummary from "@components/search-summary/search-summary";
+import SearchResults from "@components/search-results/search-results";
+import {ExploreToolTips, ModelingMessages} from "@config/tooltips.config";
 import {updateUserPreferences, createUserPreferences, getUserPreferences} from "../services/user-preferences";
-import {entityFromJSON, entityParser, facetParser, getTableProperties} from "../util/data-conversion";
+import {entityFromJSON, entityParser, facetParser, getTableProperties} from "@util/data-conversion";
 import styles from "./Browse.module.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
-import Query from "../components/queries/queries";
-import {AuthoritiesContext} from "../util/authorities";
-import ResultsTabularView from "../components/results-tabular-view/results-tabular-view";
+import Query from "@components/queries/queries";
+import {AuthoritiesContext} from "@util/authorities";
+import ResultsTabularView from "@components/results-tabular-view/results-tabular-view";
 import {QueryOptions} from "../types/query-types";
 import Spinner from "react-bootstrap/Spinner";
-import RecordCardView from "../components/record-view/record-view";
-import SidebarFooter from "../components/sidebar-footer/sidebar-footer";
+import RecordCardView from "@components/record-view/record-view";
+import SidebarFooter from "@components/sidebar-footer/sidebar-footer";
 import {CSSProperties} from "react";
-import GraphViewExplore from "../components/explore/graph-view-explore";
+import GraphViewExplore from "@components/explore/graph-view-explore";
 import {HCTooltip, HCSider} from "@components/common";
-import {graphSearchQuery, searchResultsQuery} from "../api/queries";
-import {getHubCentralConfig} from "../api/modeling"; // eslint-disable-line @typescript-eslint/no-unused-vars
+import {graphSearchQuery, searchResultsQuery} from "@api/queries";
+import {getHubCentralConfig} from "@api/modeling";
 import SelectedFacets from "@components/selected-facets/selected-facets";
 import EntitySpecificSidebar from "@components/explore/entity-specific-sidebar/entity-specific-sidebar";
 import EntityIconsSidebar from "@components/explore/entity-icons-sidebar/entity-icons-sidebar";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {ViewType} from "../types/modeling-types";
+import {themeColors} from "@config/themes.config";
 
 
 interface Props extends RouteComponentProps<any> {
@@ -581,7 +582,7 @@ const Browse: React.FC<Props> = ({location}) => {
     <span>
       <HCTooltip text={graphPageInfo["pageLength"] > 100 ? ExploreToolTips.largeDatasetWarning : ExploreToolTips.numberOfResults} id="asterisk-help-tooltip" placement="right">
         {graphPageInfo["pageLength"] > 100 ? <i data-testid="warning-large-data"><FontAwesomeIcon icon={faExclamationTriangle} className={styles.largeDatasetWarning} /></i> :
-          <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} />}
+          <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} />}
       </HCTooltip>
     </span>
   );

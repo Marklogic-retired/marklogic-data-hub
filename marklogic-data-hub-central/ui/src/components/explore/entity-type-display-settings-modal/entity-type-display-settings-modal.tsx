@@ -6,13 +6,13 @@ import {faPencilAlt} from "@fortawesome/free-solid-svg-icons";
 import styles from "./entity-type-display-settings-modal.module.scss";
 import HCTable from "@components/common/hc-table/hc-table";
 import HCButton from "@components/common/hc-button/hc-button";
-import graphConfig from "../../../config/graph-vis.config";
+import graphConfig from "@config/graph-vis.config";
 import HCTooltip from "@components/common/hc-tooltip/hc-tooltip";
 import {QuestionCircleFill} from "react-bootstrap-icons";
-import tooltipsConfig from "../../../config/explorer-tooltips.config";
-import {themeColors} from "../../../config/themes.config";
+import tooltipsConfig from "@config/explorer-tooltips.config";
+import {themeColors} from "@config/themes.config";
 import entityIcon from "../../../assets/Entity-Services.png";
-import {defaultIcon} from "../../../config/explore.config";
+import {defaultIcon} from "@config/explore.config";
 
 type Props = {
   isVisible: boolean;

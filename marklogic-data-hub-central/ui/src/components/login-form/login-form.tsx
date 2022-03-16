@@ -2,7 +2,7 @@ import React, {useContext, useState} from "react";
 import {Row, Col, Form} from "react-bootstrap";
 import axios from "axios";
 import styles from "./login-form.module.scss";
-import {UserContext} from "../../util/user-context";
+import {UserContext} from "@util/user-context";
 import {Spinner} from "react-bootstrap";
 import {Lock, Person} from "react-bootstrap-icons";
 import {HCAlert, HCButton, HCInput} from "@components/common";

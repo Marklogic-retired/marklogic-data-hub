@@ -1,23 +1,23 @@
 import React, {useContext, useEffect, useState} from "react";
 import styles from "./system-info.module.scss";
 import axios from "axios";
-import {UserContext} from "../../util/user-context";
-import {AuthoritiesContext} from "../../util/authorities";
+import {UserContext} from "@util/user-context";
+import {AuthoritiesContext} from "@util/authorities";
 import Axios from "axios";
 import Spinner from "react-bootstrap/Spinner";
-import {SecurityTooltips} from "../../config/tooltips.config";
-import {SystemInfoMessages} from "../../config/messages.config";
+import {SecurityTooltips} from "@config/tooltips.config";
+import {SystemInfoMessages} from "@config/messages.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExclamationTriangle, faCopy} from "@fortawesome/free-solid-svg-icons";
 import {Modal, Row, Col, FormLabel, Form} from "react-bootstrap";
 import {HCAlert, HCButton, HCCard, HCTooltip} from "@components/common";
 import Select, {components as SelectComponents} from "react-select";
-import reactSelectThemeConfig from "../../config/react-select-theme.config";
-import {getEnvironment} from "../../util/environment";
-import StepsConfig from "../../config/steps.config";
+import reactSelectThemeConfig from "@config/react-select-theme.config";
+import {getEnvironment} from "@util/environment";
+import StepsConfig from "@config/steps.config";
 import {Search} from "react-bootstrap-icons";
 import {Typeahead} from "react-bootstrap-typeahead";
-import {facetValues, primaryEntityTypes} from "../../api/queries";
+import {facetValues, primaryEntityTypes} from "@api/queries";
 
 
 const SystemInfo = (props) => {

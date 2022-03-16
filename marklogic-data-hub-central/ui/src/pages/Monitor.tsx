@@ -1,16 +1,16 @@
 import React, {useContext, useEffect, useState, useRef} from "react";
 import styles from "./Monitor.module.scss";
-import {AuthoritiesContext} from "../util/authorities";
-import tiles from "../config/tiles.config";
-import {MissingPagePermission} from "../config/messages.config";
+import {AuthoritiesContext} from "@util/authorities";
+import tiles from "@config/tiles.config";
+import {MissingPagePermission} from "@config/messages.config";
 import axios from "axios";
-import {UserContext} from "../util/user-context";
-import JobResultsTableView from "../components/job-results-table-view/job-results-table-view";
-import SearchPagination from "../components/search-pagination/search-pagination";
-import SidebarFooter from "../components/sidebar-footer/sidebar-footer";
-import MonitorSidebar from "../components/monitor-sidebar/monitor-sidebar";
-import MonitorSelectedFacets from "../components/monitor-selected-facets/monitor-selected-facets";
-import {MonitorContext} from "../util/monitor-context";
+import {UserContext} from "@util/user-context";
+import JobResultsTableView from "@components/job-results-table-view/job-results-table-view";
+import SearchPagination from "@components/search-pagination/search-pagination";
+import SidebarFooter from "@components/sidebar-footer/sidebar-footer";
+import MonitorSidebar from "@components/monitor-sidebar/monitor-sidebar";
+import MonitorSelectedFacets from "@components/monitor-selected-facets/monitor-selected-facets";
+import {MonitorContext} from "@util/monitor-context";
 import {HCSider} from "@components/common";
 
 

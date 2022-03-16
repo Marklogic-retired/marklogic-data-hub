@@ -1,24 +1,25 @@
 import {Row, Col, Modal, Form, FormLabel, FormCheck} from "react-bootstrap";
 import Select, {components as SelectComponents} from "react-select";
-import reactSelectThemeConfig from "../../../../config/react-select-theme.config";
+import reactSelectThemeConfig from "@config/react-select-theme.config";
 import React, {useState, useContext, useEffect} from "react";
 import styles from "./merge-rule-dialog.module.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLayerGroup} from "@fortawesome/free-solid-svg-icons";
 import EntityPropertyTreeSelect from "../../../entity-property-tree-select/entity-property-tree-select";
 import {Definition} from "../../../../types/modeling-types";
-import {CurationContext} from "../../../../util/curation-context";
+import {CurationContext} from "@util/curation-context";
 import arrayIcon from "../../../../assets/icon_array.png";
-import {MergeRuleTooltips, multiSliderTooltips} from "../../../../config/tooltips.config";
+import {MergeRuleTooltips, multiSliderTooltips} from "@config/tooltips.config";
 import {MergingStep, defaultPriorityOption} from "../../../../types/curation-types";
-import {updateMergingArtifact, getMergingRulesWarnings} from "../../../../api/merging";
-import {addSliderOptions, parsePriorityOrder, handleDeleteSliderOptions} from "../../../../util/priority-order-conversion";
+import {updateMergingArtifact, getMergingRulesWarnings} from "@api/merging";
+import {addSliderOptions, parsePriorityOrder, handleDeleteSliderOptions} from "@util/priority-order-conversion";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {ConfirmYesNo, HCInput, HCAlert, HCButton, HCTooltip} from "@components/common";
 import moment from "moment";
 import TimelineVis from "../../matching/matching-step-detail/timeline-vis/timeline-vis";
 import TimelineVisDefault from "../../matching/matching-step-detail/timeline-vis-default/timeline-vis-default";
 import MergeDeleteModal from "../merge-delete-modal/merge-delete-modal";
+import {themeColors} from "@config/themes.config";
 
 type Props = {
   sourceNames: string[];
@@ -702,7 +703,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                     />
                     <div className={"p-2 d-flex align-items-center"}>
                       <HCTooltip text={MergeRuleTooltips.disabledProperties} id="property-name-tooltip" placement="top">
-                        <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+                        <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
                       </HCTooltip>
                     </div>
                   </Col>
@@ -767,7 +768,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                         />
                         <div className={"p-2 d-flex align-items-center"}>
                           <HCTooltip text={MergeRuleTooltips.uri} id="uri-tooltip" placement="top">
-                            <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+                            <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
                           </HCTooltip>
                         </div>
                       </Col>
@@ -796,7 +797,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                         />
                         <div className={"p-2 d-flex align-items-center"}>
                           <HCTooltip text={MergeRuleTooltips.function} id="function-tooltip" placement="top">
-                            <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+                            <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
                           </HCTooltip>
                         </div>
                       </Col>
@@ -823,7 +824,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                     />
                     <div className={"p-2 d-flex align-items-center"}>
                       <HCTooltip text={MergeRuleTooltips.namespace} id="namespace-tooltip" placement="top">
-                        <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+                        <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
                       </HCTooltip>
                     </div>
                   </Col>
@@ -889,7 +890,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                     </Form.Check>
                     <div className={"d-flex align-items-center"}>
                       <HCTooltip text={MergeRuleTooltips.maxValues} id="max-values-tooltip" placement="top">
-                        <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+                        <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
                       </HCTooltip>
                     </div>
                   </Col>
@@ -915,7 +916,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                     </Form.Check>
                     <div className={"d-flex align-items-center"}>
                       <HCTooltip text={MergeRuleTooltips.maxSources} id="max-sources-tooltip" placement="top">
-                        <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+                        <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
                       </HCTooltip>
                     </div>
                   </Col>
@@ -924,7 +925,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                   <div>
                     <p className={styles.priorityText}>Priority Order
                       <HCTooltip text={multiSliderTooltips.priorityOrder} id="priority-order-tooltip" placement="right">
-                        <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+                        <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
                       </HCTooltip>
                     </p>
                   </div>
@@ -955,7 +956,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                     <div className="d-flex pe-2 align-items-center"><span className={styles.enableStrategySwitch}><b>Enable Priority Order Scale </b></span><FormCheck type="switch" aria-label="mergeStrategy-scale-switch" defaultChecked={false} onChange={({target}) => toggleDisplayPriorityOrderTimeline(target.checked)} className={styles.switchToggleMergeStrategy}></FormCheck>
                       <span>
                         <HCTooltip text={MergeRuleTooltips.strategyScale} id="priority-order-tooltip" placement="right">
-                          <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+                          <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
                         </HCTooltip>
                       </span></div>
                     {displayPriorityOrderTimeline ? renderPriorityOrderTimeline() : renderDefaultPriorityOrderTimeline()}

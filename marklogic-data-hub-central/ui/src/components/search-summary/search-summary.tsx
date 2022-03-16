@@ -1,5 +1,5 @@
 import React from "react";
-import {numberConverter} from "../../util/number-conversion";
+import {numberConverter} from "@util/number-conversion";
 import styles from "./search-summary.module.scss";
 
 interface Props {

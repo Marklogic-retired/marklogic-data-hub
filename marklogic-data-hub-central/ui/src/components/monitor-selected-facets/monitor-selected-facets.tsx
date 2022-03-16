@@ -2,7 +2,7 @@ import React, {useContext} from "react";
 import styles from "../selected-facets/selected-facets.module.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheckSquare, faWindowClose} from "@fortawesome/free-solid-svg-icons";
-import {MonitorContext} from "../../util/monitor-context";
+import {MonitorContext} from "@util/monitor-context";
 import {XLg} from "react-bootstrap-icons";
 import {HCButton, HCTooltip} from "@components/common";
 

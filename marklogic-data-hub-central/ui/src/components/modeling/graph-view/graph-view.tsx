@@ -1,12 +1,12 @@
 import React, {CSSProperties, useContext, useState, useEffect} from "react";
 import styles from "./graph-view.module.scss";
-import {ModelingTooltips} from "../../../config/tooltips.config";
+import {ModelingTooltips} from "@config/tooltips.config";
 import PublishToDatabaseIcon from "../../../assets/publish-to-database-icon";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faFileExport, faUndoAlt} from "@fortawesome/free-solid-svg-icons";
 import SplitPane from "react-split-pane";
 import GraphViewSidePanel from "./side-panel/side-panel";
-import {ModelingContext} from "../../../util/modeling-context";
+import {ModelingContext} from "@util/modeling-context";
 import GraphVis from "./graph-vis/graph-vis";
 import {ConfirmationType} from "../../../types/common-types";
 import {ChevronDown, Search} from "react-bootstrap-icons";
@@ -14,6 +14,8 @@ import {Dropdown, DropdownButton} from "react-bootstrap";
 import {HCAlert, HCButton, HCTooltip} from "@components/common";
 import {Typeahead} from "react-bootstrap-typeahead";
 import "react-bootstrap-typeahead/css/Typeahead.css";
+import {themeColors} from "@config/themes.config";
+import {defaultIcon} from "@config/explore.config";
 
 type Props = {
   entityTypes: any;
@@ -230,7 +232,7 @@ const GraphView: React.FC<Props> = (props) => {
   };
 
   const getColor = (entityName) => {
-    let color = "#EEEFF1";
+    let color = themeColors.defaults.entityColor;
     if (colorExistsForEntity(entityName) && filterMenuSuggestions.length > 0 && !filterMenuSuggestions.includes("a")) {
       let entityDisplayed = filterMenuSuggestions.filter(function (obj) { return obj["entityName"] === entityName; }).length > 0;
       if (filterMenuSuggestions && entityDisplayed) {
@@ -241,25 +243,25 @@ const GraphView: React.FC<Props> = (props) => {
     } else if (colorExistsForEntity(entityName)) {
       color = props.hubCentralConfig.modeling.entities[entityName]["color"];
     } else {
-      color = "#EEEFF1";
+      color = themeColors.defaults.entityColor;
     }
     return color;
   };
 
   const getIcon = (entityName) => {
-    let icon = "FaShapes";
+    let icon = defaultIcon;
 
     if (iconExistsForEntityName(entityName) && filterMenuSuggestions.length > 0 && !filterMenuSuggestions.includes("a")) {
       let entityDisplayed = filterMenuSuggestions.filter(function (obj) { return obj["entityName"] === entityName; }).length > 0;
       if (filterMenuSuggestions && entityDisplayed) {
         icon = props.hubCentralConfig.modeling.entities[entityName]["icon"];
       } else {
-        icon = "FaShapes";
+        icon = defaultIcon;
       }
     } else if (iconExistsForEntityName(entityName)) {
       icon = props.hubCentralConfig.modeling.entities[entityName]["icon"];
     } else {
-      icon = "FaShapes";
+      icon = defaultIcon;
     }
     return icon;
   };

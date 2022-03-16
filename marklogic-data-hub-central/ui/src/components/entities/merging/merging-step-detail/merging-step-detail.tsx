@@ -4,24 +4,25 @@ import {useHistory} from "react-router-dom";
 import styles from "./merging-step-detail.module.scss";
 import "./merging-step-detail.scss";
 import NumberIcon from "../../../number-icon/number-icon";
-import {CurationContext} from "../../../../util/curation-context";
+import {CurationContext} from "@util/curation-context";
 import {
   MergingStep, defaultPriorityOption
 } from "../../../../types/curation-types";
-import {MergeStrategyTooltips, MergingStepIntros, multiSliderTooltips} from "../../../../config/tooltips.config";
+import {MergeStrategyTooltips, MergingStepIntros, multiSliderTooltips} from "@config/tooltips.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {faCheck} from "@fortawesome/free-solid-svg-icons";
 import MergeStrategyDialog from "../merge-strategy-dialog/merge-strategy-dialog";
 import MergeRuleDialog from "../add-merge-rule/merge-rule-dialog";
 import {Modal} from "react-bootstrap";
-import {updateMergingArtifact} from "../../../../api/merging";
+import {updateMergingArtifact} from "@api/merging";
 import CustomPageHeader from "../../page-header/page-header";
-import {clearSessionStorageOnRefresh, getViewSettings, setViewSettings} from "../../../../util/user-context";
+import {clearSessionStorageOnRefresh, getViewSettings, setViewSettings} from "@util/user-context";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {HCButton, HCTable, HCTooltip} from "@components/common";
 import moment from "moment";
 import TimelineVisDefault from "../../matching/matching-step-detail/timeline-vis-default/timeline-vis-default";
+import {themeColors} from "@config/themes.config";
 
 const DEFAULT_MERGING_STEP: MergingStep = {
   name: "",
@@ -300,7 +301,7 @@ const MergingStepDetail: React.FC = () => {
         property: i["entityPropertyPath"]?.split(".").join(" > "),
         mergeType: i["mergeType"],
         strategy: i["mergeStrategyName"],
-        delete: <i><FontAwesomeIcon icon={faTrashAlt} className={styles.enabledDeleteIcon} color="#5B69AF" size="lg" data-testid={`mergerule-${i.entityPropertyPath}`} onClick={() => onDelete(i)}/></i>
+        delete: <i><FontAwesomeIcon icon={faTrashAlt} className={styles.enabledDeleteIcon} color={themeColors.info} size="lg" data-testid={`mergerule-${i.entityPropertyPath}`} onClick={() => onDelete(i)}/></i>
       }
     );
   });
@@ -340,7 +341,7 @@ const MergingStepDetail: React.FC = () => {
         <p className={styles.priorityText}>
           Priority Order
           <HCTooltip text={multiSliderTooltips.priorityOrder} id="priority-order-tooltip" placement="right">
-            <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" className={styles.questionCircle} size={13} />
+            <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} />
           </HCTooltip>
         </p>
         <div id="strategyText">

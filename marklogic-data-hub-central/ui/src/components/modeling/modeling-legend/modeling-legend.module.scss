@@ -1,3 +1,5 @@
+@import "../../../theme/HCVariables.scss";
+
 @font-face {
   font-family: 'MLCustomFont';
   src: url('../../..//fonts/ML_IconFont.ttf') format('truetype');
@@ -66,7 +68,7 @@
   }
 
   .structuredIcon {
-    color: #5B69AF;
+    color: $info;
     font-size: 14px;
   }
 

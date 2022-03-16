@@ -2,12 +2,12 @@ import React, {useState} from "react";
 import styles from "./custom-card.module.scss";
 import {Row, Col, Modal} from "react-bootstrap";
 import Select, {components as SelectComponents} from "react-select";
-import reactSelectThemeConfig from "../../../config/react-select-theme.config";
-import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from "../../../util/conversionFunctions";
+import reactSelectThemeConfig from "@config/react-select-theme.config";
+import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from "@util/conversionFunctions";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCog} from "@fortawesome/free-solid-svg-icons";
 import {Link, useHistory} from "react-router-dom";
-import {CustomStepTooltips, SecurityTooltips} from "../../../config/tooltips.config";
+import {CustomStepTooltips, SecurityTooltips} from "@config/tooltips.config";
 import {HCTooltip, HCCard, HCButton} from "@components/common";
 import Steps from "../../steps/steps";
 

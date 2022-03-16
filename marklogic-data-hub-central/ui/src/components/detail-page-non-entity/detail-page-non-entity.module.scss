@@ -1,8 +1,10 @@
+@import "../../theme/HCVariables.scss";
+
 .container {
     display: flex;
 }
 .title {
-    color: #5b69af;
+    color: $info;
     cursor: pointer;
 }
 .menu {
@@ -186,7 +188,7 @@
 
 .download {
     font-size: 12px;
-    color: #5b69af;
+    color: $info;
     margin-left: 40px;
     margin-top: 20px;
 }
@@ -233,8 +235,8 @@
 
 .tabActive {
     border: 0 !important;
-    border-bottom: 2px solid #5b69af !important;
-    color: #5b69af !important;
+    border-bottom: 2px solid $info !important;
+    color: $info !important;
 }
 
 div.siderContainer {

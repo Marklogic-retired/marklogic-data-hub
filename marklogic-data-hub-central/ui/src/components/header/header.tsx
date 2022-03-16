@@ -1,11 +1,11 @@
 import React, {useContext, useState} from "react";
 import {RouteComponentProps, withRouter, useHistory, Link} from "react-router-dom";
 import axios from "axios";
-import {UserContext} from "../../util/user-context";
-import {parseVersion} from "../../util/environment";
+import {UserContext} from "@util/user-context";
+import {parseVersion} from "@util/environment";
 import logo from "./logo.svg";
 import styles from "./header.module.scss";
-import {Application} from "../../config/application.config";
+import {Application} from "@config/application.config";
 import SystemInfo from "./system-info";
 import {Image, Nav, NavDropdown} from "react-bootstrap";
 import {QuestionCircle} from "react-bootstrap-icons";

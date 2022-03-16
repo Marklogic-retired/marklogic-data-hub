@@ -2,14 +2,14 @@ import React, {useState, useEffect, useContext, useLayoutEffect, useCallback} fr
 import Graph from "react-graph-vis";
 import "./graph-vis.scss";
 import styles from "./graph-vis.module.scss";
-import {ModelingContext} from "../../../../util/modeling-context";
+import {ModelingContext} from "@util/modeling-context";
 import ReactDOMServer from "react-dom/server";
 import {faFileExport} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import NodeSvg from "./node-svg";
-import graphConfig from "../../../../config/graph-vis.config";
+import graphConfig from "@config/graph-vis.config";
 import AddEditRelationship from "../relationship-modal/add-edit-relationship";
-import {defaultHubCentralConfig} from "../../../../config/modeling.config";
+import {defaultHubCentralConfig} from "@config/modeling.config";
 import {ViewType} from "../../../../types/modeling-types";
 import * as _ from "lodash";
 

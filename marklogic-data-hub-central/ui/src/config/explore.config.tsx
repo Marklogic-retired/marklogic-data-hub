@@ -1,3 +1,5 @@
+import {themeColors} from "./themes.config";
+
 export const exploreSidebar = {
   MINIMUM_ENTITIES: 5,
   entitySpecificSidebar: {
@@ -7,7 +9,7 @@ export const exploreSidebar = {
 }
 
 export const graphViewConfig = {
-  groupNodeBadgeColor: "#5b69af",
+  groupNodeBadgeColor: themeColors.info,
   groupNodeTableView: {
     defaultPageProperties: {
       start: 1,

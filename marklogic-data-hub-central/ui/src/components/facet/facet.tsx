@@ -1,8 +1,8 @@
 import React, {useState, useContext, useEffect} from "react";
-import {SearchContext} from "../../util/search-context";
+import {SearchContext} from "@util/search-context";
 import {FacetName} from "./facet-element";
 import styles from "./facet.module.scss";
-import {stringConverter} from "../../util/string-conversion";
+import {stringConverter} from "@util/string-conversion";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import PopOverSearch from "../pop-over-search/pop-over-search";
