@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useContext} from "react";
-import {ModelingContext} from "../../util/modeling-context";
+import {ModelingContext} from "@util/modeling-context";
 
 const NavigationPrompt: React.FC = () => {
   const hasUnsavedChanges = useRef(false);

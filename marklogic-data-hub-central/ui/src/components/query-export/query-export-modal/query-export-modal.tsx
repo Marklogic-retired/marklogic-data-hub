@@ -2,9 +2,9 @@ import React, {useState, useContext} from "react";
 import {Row, Col, Modal, Form, FormLabel, Table} from "react-bootstrap";
 import {Accordion} from "react-bootstrap";
 import styles from "./query-export-modal.module.scss";
-import {SearchContext} from "../../../util/search-context";
-import {UserContext} from "../../../util/user-context";
-import {exportQuery, exportSavedQuery} from "../../../api/queries";
+import {SearchContext} from "@util/search-context";
+import {UserContext} from "@util/user-context";
+import {exportQuery, exportSavedQuery} from "@api/queries";
 import {HCInput, HCAlert, HCButton} from "@components/common";
 
 const QueryExportModal = (props) => {

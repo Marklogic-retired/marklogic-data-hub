@@ -6,8 +6,8 @@ import {IUserContextInterface, UserContextInterface} from "../types/user-types";
 import {ViewSettingsType} from "../types/view-types";
 import {AuthoritiesContext} from "./authorities";
 import {StompContext, STOMPState} from "./stomp";
-import {resetEnvironment, setEnvironment} from "../util/environment";
-import {MAX_SESSION_TIME} from "../config/application.config";
+import {resetEnvironment, setEnvironment} from "@util/environment";
+import {MAX_SESSION_TIME} from "@config/application.config";
 
 const defaultUserData = {
   name: "",

@@ -1,3 +1,5 @@
+@import "../../theme/HCVariables.scss";
+
 .recordDataCard {
   .cardStyle {
     width: 370px;
@@ -34,7 +36,7 @@
   }
 
   .detailLinkIcon {
-    color: #5b69af;
+    color: $info;
     font-size: 18px;
   }
 

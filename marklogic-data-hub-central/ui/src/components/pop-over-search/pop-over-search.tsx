@@ -1,8 +1,8 @@
 import React, {useState, useContext, useEffect} from "react";
 import styles from "./pop-over-search.module.scss";
 import axios from "axios";
-import {UserContext} from "../../util/user-context";
-import {SearchContext} from "../../util/search-context";
+import {UserContext} from "@util/user-context";
+import {SearchContext} from "@util/search-context";
 import {CheckSquare} from "react-bootstrap-icons";
 import {HCInput, HCCheckbox} from "@components/common";
 import Popover from "react-bootstrap/Popover";

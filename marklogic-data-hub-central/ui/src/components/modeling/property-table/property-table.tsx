@@ -20,13 +20,13 @@ import {
 } from "../../../types/modeling-types";
 import {ConfirmationType} from "../../../types/common-types";
 
-import {entityReferences} from "../../../api/modeling";
-import {getViewSettings, setViewSettings, UserContext} from "../../../util/user-context";
-import {ModelingContext} from "../../../util/modeling-context";
-import {definitionsParser} from "../../../util/data-conversion";
-import {ModelingTooltips} from "../../../config/tooltips.config";
-import {ModelingMessages} from "../../../config/tooltips.config";
-import {getSystemInfo} from "../../../api/environment";
+import {entityReferences} from "@api/modeling";
+import {getViewSettings, setViewSettings, UserContext} from "@util/user-context";
+import {ModelingContext} from "@util/modeling-context";
+import {definitionsParser} from "@util/data-conversion";
+import {ModelingTooltips} from "@config/tooltips.config";
+import {ModelingMessages} from "@config/tooltips.config";
+import {getSystemInfo} from "@api/environment";
 import arrayIcon from "../../../assets/icon_array.png";
 import {HCButton, HCTooltip, HCTable} from "@components/common";
 

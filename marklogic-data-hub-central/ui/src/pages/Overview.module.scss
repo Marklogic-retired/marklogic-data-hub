@@ -1,3 +1,5 @@
+@import "../theme/HCVariables.scss";
+
 @font-face {
     font-family: 'MLCustomFont';
     src: url('../fonts/ML_IconFont.ttf') format('truetype');
@@ -44,7 +46,7 @@
                 .docLink, .vidLink {
                     font-size: 14px;
                     span {
-                        color: #5B69AF;
+                        color: $info;
                         cursor: pointer;
                     }
                     span:hover {
@@ -76,7 +78,7 @@
             .cardCurate.enabled:hover,
             .cardExplore.enabled:hover,
             .cardRun.enabled:hover {
-                border: 1px solid #394494;
+                border: 1px solid $primary;
                 cursor: pointer;
             }
 
@@ -267,7 +269,7 @@
 
 a {
     text-decoration: none;
-    color: #5B69AF;
+    color: $info;
 }
 
 .links {

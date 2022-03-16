@@ -1,10 +1,11 @@
 import {Form, Row, Col, FormLabel, Modal} from "react-bootstrap";
 import React, {useState, useEffect} from "react";
 import styles from "./new-flow-dialog.module.scss";
-import {NewFlowTooltips} from "../../../config/tooltips.config";
+import {NewFlowTooltips} from "@config/tooltips.config";
 import {useHistory} from "react-router-dom";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {HCInput, HCButton, HCTooltip} from "@components/common";
+import {themeColors} from "@config/themes.config";
 
 const NewFlowDialog = (props) => {
 
@@ -153,7 +154,7 @@ const NewFlowDialog = (props) => {
                     />}
                   <div className={"p-2 d-flex"}>
                     <HCTooltip text={NewFlowTooltips.name} id="additional-settings-tooltip" placement="left">
-                      <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} />
+                      <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} />
                     </HCTooltip>
                   </div>
                 </Col>
@@ -177,7 +178,7 @@ const NewFlowDialog = (props) => {
               />
               <div className={"p-2 d-flex"}>
                 <HCTooltip text={NewFlowTooltips.description} id="additional-settings-tooltip" placement="left">
-                  <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} />
+                  <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} />
                 </HCTooltip>
               </div>
             </Col>

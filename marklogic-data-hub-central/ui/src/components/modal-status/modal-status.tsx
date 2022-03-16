@@ -3,10 +3,10 @@ import {RouteComponentProps, withRouter, useLocation, useHistory} from "react-ro
 import {Modal} from "react-bootstrap";
 import axios from "axios";
 
-import {UserContext} from "../../util/user-context";
+import {UserContext} from "@util/user-context";
 import {useInterval} from "../../hooks/use-interval";
-import {MAX_SESSION_TIME, SESSION_WARNING_COUNTDOWN} from "../../config/application.config";
-import {getSystemInfo} from "../../api/environment";
+import {MAX_SESSION_TIME, SESSION_WARNING_COUNTDOWN} from "@config/application.config";
+import {getSystemInfo} from "@api/environment";
 import {HCButton} from "@components/common";
 
 interface Props extends RouteComponentProps<any>{

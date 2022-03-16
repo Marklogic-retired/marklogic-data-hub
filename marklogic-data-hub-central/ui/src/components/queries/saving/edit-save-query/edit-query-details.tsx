@@ -2,8 +2,8 @@ import React, {useState, useEffect, useContext} from "react";
 import {Row, Col, Modal, Form, FormLabel} from "react-bootstrap";
 import styles from "../save-query-modal/save-query-modal.module.scss";
 import axios from "axios";
-import {UserContext} from "../../../../util/user-context";
-import {SearchContext} from "../../../../util/search-context";
+import {UserContext} from "@util/user-context";
+import {SearchContext} from "@util/search-context";
 import {HCInput, HCButton} from "@components/common";
 
 interface Props {

@@ -1,19 +1,20 @@
 import {Row, Col, Modal, Form, FormLabel, FormCheck} from "react-bootstrap";
 import Select from "react-select";
-import reactSelectThemeConfig from "../../../../config/react-select-theme.config";
+import reactSelectThemeConfig from "@config/react-select-theme.config";
 import React, {useState, useEffect, useContext} from "react";
 import styles from "./merge-strategy-dialog.module.scss";
-import {CurationContext} from "../../../../util/curation-context";
-import {MergeRuleTooltips, multiSliderTooltips, MergingStepTooltips} from "../../../../config/tooltips.config";
-import {addSliderOptions, parsePriorityOrder, handleDeleteSliderOptions} from "../../../../util/priority-order-conversion";
+import {CurationContext} from "@util/curation-context";
+import {MergeRuleTooltips, multiSliderTooltips, MergingStepTooltips} from "@config/tooltips.config";
+import {addSliderOptions, parsePriorityOrder, handleDeleteSliderOptions} from "@util/priority-order-conversion";
 import {MergingStep, defaultPriorityOption} from "../../../../types/curation-types";
-import {updateMergingArtifact} from "../../../../api/merging";
+import {updateMergingArtifact} from "@api/merging";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {ConfirmYesNo, HCInput, HCButton, HCTooltip} from "@components/common";
 import moment from "moment";
 import TimelineVis from "../../matching/matching-step-detail/timeline-vis/timeline-vis";
 import TimelineVisDefault from "../../matching/matching-step-detail/timeline-vis-default/timeline-vis-default";
 import MergeDeleteModal from "../merge-delete-modal/merge-delete-modal";
+import {themeColors} from "@config/themes.config";
 
 type Props = {
   sourceNames: string[];
@@ -515,7 +516,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
                 <Form.Check.Input type={"radio"} name={"maxValues"} onChange={handleChange} value={2}  aria-label="maxValuesOtherRadio" checked={radioValuesOptionClicked === 2} className={"me-2 flex-shrink-0"} />
                 <HCInput id="maxValuesStrategyInput" value={maxValues} placeholder={"Enter max values"} onChange={handleChange} />
                 <HCTooltip text={MergeRuleTooltips.maxValues} id="max-values-tooltip" placement="top">
-                  <QuestionCircleFill color="#7F86B5" className={`flex-shrink-0 ${styles.questionCircle}`} size={13} aria-label="icon: question-circle"/>
+                  <QuestionCircleFill color={themeColors.defaults.questionCircle} className={`flex-shrink-0 ${styles.questionCircle}`} size={13} aria-label="icon: question-circle"/>
                 </HCTooltip>
               </Form.Check>
             </Col>
@@ -539,7 +540,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
                 <Form.Check.Input type={"radio"} name={"maxSources"} onChange={handleChange} value={2} checked={radioSourcesOptionClicked === 2} className={"me-2 flex-shrink-0"}  aria-label="maxSourcesOtherRadio"/>
                 <HCInput id="maxSourcesStrategyInput" value={maxSources} onChange={handleChange} placeholder={"Enter max sources"}/>
                 <HCTooltip text={MergeRuleTooltips.maxSources} id="max-sources-tooltip" placement="top">
-                  <QuestionCircleFill color="#7F86B5" className={`flex-shrink-0 ${styles.questionCircle}`} size={13} aria-label="icon: question-circle"/>
+                  <QuestionCircleFill color={themeColors.defaults.questionCircle} className={`flex-shrink-0 ${styles.questionCircle}`} size={13} aria-label="icon: question-circle"/>
                 </HCTooltip>
               </Form.Check>
             </Col>
@@ -589,7 +590,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
               <p className={`d-flex align-items-center ${styles.priorityText}`}>
                 Priority Order
                 <HCTooltip text={multiSliderTooltips.priorityOrder} id="priority-order-tooltip" placement="right">
-                  <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+                  <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
                 </HCTooltip>
               </p>
             </div>
@@ -620,7 +621,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
               <div className="d-flex align-items-center"><span className={styles.enableStrategySwitch}><b>Enable Priority Order Scale </b></span><FormCheck type="switch" aria-label="mergeStrategy-scale-switch" defaultChecked={false} onChange={({target}) => toggleDisplayPriorityOrderTimeline(target.checked)} className={styles.switchToggleMergeStrategy}></FormCheck>
                 <span>
                   <HCTooltip text={MergingStepTooltips.strategyScale} id="priority-order-tooltip" placement="right">
-                    <QuestionCircleFill color="#7F86B5" className={`${styles.questionCircle} ms-0`} size={13} aria-label="icon: question-circle"/>
+                    <QuestionCircleFill color={themeColors.defaults.questionCircle} className={`${styles.questionCircle} ms-0`} size={13} aria-label="icon: question-circle"/>
                   </HCTooltip>
                 </span></div>
               {displayPriorityOrderTimeline ? renderPriorityOrderTimeline() : renderDefaultPriorityOrderTimeline()}

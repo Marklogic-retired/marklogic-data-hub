@@ -1,12 +1,13 @@
 import React, {useState, useEffect} from "react";
 import {components as SelectComponents} from "react-select";
 import CreatableSelect from "react-select/creatable";
-import reactSelectThemeConfig from "../../config/react-select-theme.config";
+import reactSelectThemeConfig from "@config/react-select-theme.config";
 import styles from "./advanced-target-collections.module.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencilAlt, faCheck, faTimes, faSquare} from "@fortawesome/free-solid-svg-icons";
 import {HCTooltip, HCTable} from "@components/common";
 import {QuestionCircleFill} from "react-bootstrap-icons";
+import {themeColors} from "@config/themes.config";
 
 export const breakLine = "\u000A";
 
@@ -46,7 +47,7 @@ const defaultTargetCollectionHeaders = [
   },
   {
     text: "Default Collections",
-    headerFormatter: () => <span>Default Collections <HCTooltip text="Collection tags that are added to the resulting records by default." id="additional-collections-tooltip" placement="top"><QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/></HCTooltip></span>,
+    headerFormatter: () => <span>Default Collections <HCTooltip text="Collection tags that are added to the resulting records by default." id="additional-collections-tooltip" placement="top"><QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle}/></HCTooltip></span>,
     dataField: "defaultCollections",
     visible: true,
     attrs: (_, row, index) => {
@@ -56,7 +57,7 @@ const defaultTargetCollectionHeaders = [
   },
   {
     text: "Additional Collections",
-    headerFormatter: () => <span>Additional Collections <HCTooltip text="Collection tags that you specify to be added to the resulting records." id="default-collections-tooltip" placement="top"><QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/></HCTooltip></span>,
+    headerFormatter: () => <span>Additional Collections <HCTooltip text="Collection tags that you specify to be added to the resulting records." id="default-collections-tooltip" placement="top"><QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle}/></HCTooltip></span>,
     dataField: "additionalCollectionsField",
     visible: true,
     attrs: (_, row, index) => {

@@ -1,23 +1,24 @@
 import React, {useState, useEffect, useContext, CSSProperties} from "react";
 import {Row, Col, Modal, Form, FormLabel, FormCheck} from "react-bootstrap";
 import {components as SelectComponents} from "react-select";
-import reactSelectThemeConfig from "../../../../config/react-select-theme.config";
+import reactSelectThemeConfig from "@config/react-select-theme.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLayerGroup} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import "./ruleset-multiple-modal.scss";
 import styles from "./ruleset-multiple-modal.module.scss";
 import arrayIcon from "../../../../assets/icon_array.png";
-import {CurationContext} from "../../../../util/curation-context";
+import {CurationContext} from "@util/curation-context";
 import {Definition} from "../../../../types/modeling-types";
-import {MatchingStepTooltips} from "../../../../config/tooltips.config";
+import {MatchingStepTooltips} from "@config/tooltips.config";
 import ExpandCollapse from "../../../expand-collapse/expand-collapse";
 import {MatchingStep, MatchRule, MatchRuleset} from "../../../../types/curation-types";
-import {updateMatchingArtifact} from "../../../../api/matching";
+import {updateMatchingArtifact} from "@api/matching";
 import DeleteModal from "../delete-modal/delete-modal";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {ConfirmYesNo, HCAlert, HCInput, HCButton, HCTag, HCTooltip, HCTable} from "@components/common";
 import {HCSelect} from "@components/common";
+import {themeColors} from "@config/themes.config";
 
 type Props = {
   editRuleset: any;
@@ -703,7 +704,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       <div className={styles.asterisk}>*</div>
       <div>
         <HCTooltip text={title} id="asterisk-help-tooltip" placement={title === MatchingStepTooltips.distanceThreshold ? "bottom-end" : "top"}>
-          <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} />
+          <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} />
         </HCTooltip>
       </div>
     </span>
@@ -737,7 +738,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
           onBlur={(e) => handleInputChange(e, propertyPath)}
         />
         <HCTooltip text={MatchingStepTooltips.filter} id="node-thesaurus-tooltip" placement="bottom">
-          <QuestionCircleFill color="#7F86B5" className={`${styles.questionCircle} mt-2`} size={13} />
+          <QuestionCircleFill color={themeColors.defaults.questionCircle} className={`${styles.questionCircle} mt-2`} size={13} />
         </HCTooltip>
       </span>
     </div>;
@@ -821,7 +822,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
           onBlur={(e) => handleInputChange(e, propertyPath)}
         />
         <HCTooltip text={MatchingStepTooltips.namespace} id="namespace-input-tooltip" placement="bottom">
-          <QuestionCircleFill color="#7F86B5" className={`${styles.questionCircle} mt-2`} size={13} />
+          <QuestionCircleFill color={themeColors.defaults.questionCircle} className={`${styles.questionCircle} mt-2`} size={13} />
         </HCTooltip>
       </span>
     </div>;
@@ -1295,7 +1296,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
               />
               <div className={"p-2 d-flex"}>
                 <HCTooltip text={<span aria-label="reduce-tooltip-text">{MatchingStepTooltips.reduceToggle}</span>} id="reduce-weight-tooltip" placement="right">
-                  <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" className={styles.icon} size={13} />
+                  <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} className={styles.icon} size={13} />
                 </HCTooltip>
               </div>
             </Col>

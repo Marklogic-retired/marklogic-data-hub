@@ -1,3 +1,5 @@
+@import "./theme/HCVariables.scss";
+
 @font-face {
   font-family: MLCustomFont;
   src: url(./fonts/ML_IconFont.ttf) format('truetype');
@@ -187,7 +189,7 @@ tr.ant-table-row:hover > td {
 #export-preview-table .ant-collapse-header {
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 14px;
-  color: #5b69af;
+  color: $info;
 }
 
 /* Modeling - Property table type dropdown */
@@ -366,8 +368,8 @@ ul.ant-cascader-menu:nth-child(2) {
 }
 
 #switch-view-explorer .ant-radio-group-large .ant-radio-button-wrapper.ant-radio-button-wrapper-checked  {
-  border-color: #5B69AF;
-  color: #5B69AF
+  border-color: $info;
+  color: $info;
 }
 
 #switch-view-explorer .ant-radio-group-large .ant-radio-button-wrapper:hover {
@@ -405,7 +407,7 @@ ul.ant-cascader-menu:nth-child(2) {
 .ml-btn.ant-btn-primary:focus {
   outline: 2px solid #7f86b5;
   outline-offset: 1px;
-  background-color: #5b69af;
+  background-color: $info;
 }
 
 /* styling for close button focus */
@@ -416,7 +418,7 @@ ul.ant-cascader-menu:nth-child(2) {
 
 /* styling for explore zero-state dropdown */
 #entity-select.ant-select {
-  background: #5B69AF;
+  background: $info;
   color: #fff;
   .ant-select-selection-selected-value {
     color: #FFF
@@ -439,7 +441,7 @@ ul.ant-cascader-menu:nth-child(2) {
 }
 
 .ant-input-search > .ant-input-wrapper > .ant-input-group-addon {
-  background-color: #5B69AF;
+  background-color: $info;
   border-bottom-left-radius: 5px;
   border-top-left-radius: 5px;
 }
@@ -452,7 +454,7 @@ ul.ant-cascader-menu:nth-child(2) {
 }
 
 .header-back-button {
-  color: #5B69AF;
+  color: $info;
 }
 
 .header-back-button:hover {
@@ -465,10 +467,10 @@ ul.ant-cascader-menu:nth-child(2) {
 
 /* hover style for color picker */
 .twitter-picker div:nth-child(3) span div:hover {
-  border: solid #5B69AF 2px;
+  border: solid $info 2px;
 }
 
 input[type="radio"]:hover, input[type="checkbox"]:hover {
-  border-color:#5B69AF;
+  border-color: $info;
   cursor: pointer;
 }

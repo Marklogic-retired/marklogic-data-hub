@@ -1,8 +1,8 @@
 import React, {useState, useEffect, useContext} from "react";
 import {Row, Col, Modal, Form, FormLabel} from "react-bootstrap";
 import styles from "./edit-query-dialog.module.scss";
-import {UserContext} from "../../../../util/user-context";
-import {SearchContext} from "../../../../util/search-context";
+import {UserContext} from "@util/user-context";
+import {SearchContext} from "@util/search-context";
 import {HCInput, HCButton} from "@components/common";
 
 const EditQueryDialog = (props) => {

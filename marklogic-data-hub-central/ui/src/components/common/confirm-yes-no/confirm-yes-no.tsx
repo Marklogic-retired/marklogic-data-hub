@@ -1,6 +1,6 @@
 import React from "react";
 import {Modal} from "react-bootstrap";
-import {ConfirmYesNoMessages} from "../../../config/messages.config";
+import {ConfirmYesNoMessages} from "@config/messages.config";
 import HCButton from "../hc-button/hc-button";
 
 type Props = {

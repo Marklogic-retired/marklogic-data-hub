@@ -1,18 +1,18 @@
 import React, {useState, useEffect, useContext} from "react";
 import styles from "./Load.module.scss";
 import {useLocation} from "react-router-dom";
-import SwitchView from "../components/load/switch-view";
-import LoadList from "../components/load/load-list";
-import LoadCard from "../components/load/load-card";
-import {getViewSettings, setViewSettings, UserContext} from "../util/user-context";
+import SwitchView from "@components/load/switch-view";
+import LoadList from "@components/load/load-list";
+import LoadCard from "@components/load/load-card";
+import {getViewSettings, setViewSettings, UserContext} from "@util/user-context";
 import axios from "axios";
-import {createStep, updateStep, getSteps, deleteStep} from "../api/steps";
-import {sortStepsByUpdated} from "../util/conversionFunctions";
-import {AuthoritiesContext} from "../util/authorities";
-import tiles from "../config/tiles.config";
-import {LoadingContext} from "../util/loading-context";
-import {MissingPagePermission} from "../config/messages.config";
-import {ErrorMessageContext} from "../util/error-message-context";
+import {createStep, updateStep, getSteps, deleteStep} from "@api/steps";
+import {sortStepsByUpdated} from "@util/conversionFunctions";
+import {AuthoritiesContext} from "@util/authorities";
+import tiles from "@config/tiles.config";
+import {LoadingContext} from "@util/loading-context";
+import {MissingPagePermission} from "@config/messages.config";
+import {ErrorMessageContext} from "@util/error-message-context";
 
 export type ViewType = "card" | "list";
 

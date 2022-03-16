@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./detail-header.module.scss";
-import {dateConverter} from "../../util/date-conversion";
+import {dateConverter} from "@util/date-conversion";
 import {ChevronRight} from "react-bootstrap-icons";
 
 interface Props {

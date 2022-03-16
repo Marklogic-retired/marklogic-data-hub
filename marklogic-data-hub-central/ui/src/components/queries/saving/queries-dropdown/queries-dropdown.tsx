@@ -1,7 +1,7 @@
 import Select, {components as SelectComponents} from "react-select";
-import reactSelectThemeConfig from "../../../../config/react-select-theme.config";
+import reactSelectThemeConfig from "@config/react-select-theme.config";
 import React, {useContext} from "react";
-import {SearchContext} from "../../../../util/search-context";
+import {SearchContext} from "@util/search-context";
 
 interface Props {
     savedQueryList: any[];

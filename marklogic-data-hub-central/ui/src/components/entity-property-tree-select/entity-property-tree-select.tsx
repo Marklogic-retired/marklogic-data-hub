@@ -3,7 +3,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLayerGroup} from "@fortawesome/free-solid-svg-icons";
 import styles from "./entity-property-tree-select.module.scss";
 import arrayIcon from "../../assets/icon_array.png";
-import {CurationContext} from "../../util/curation-context";
+import {CurationContext} from "@util/curation-context";
 import {Definition, Property} from "../../types/modeling-types";
 import "rc-tree-select/assets/index.less";
 import TreeSelect from "rc-tree-select";

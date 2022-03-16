@@ -6,16 +6,18 @@ import NewFlowDialog from "./new-flow-dialog/new-flow-dialog";
 import axios from "axios";
 import {useDropzone} from "react-dropzone";
 import {Link, useLocation} from "react-router-dom";
-import sourceFormatOptions from "../../config/formats.config";
-import {RunToolTips, SecurityTooltips, PopoverRunSteps} from "../../config/tooltips.config";
-import {AuthoritiesContext} from "../../util/authorities";
-import {getViewSettings, setViewSettings, UserContext} from "../../util/user-context";
+import sourceFormatOptions from "@config/formats.config";
+import {RunToolTips, SecurityTooltips, PopoverRunSteps} from "@config/tooltips.config";
+import {AuthoritiesContext} from "@util/authorities";
+import {getViewSettings, setViewSettings, UserContext} from "@util/user-context";
 import styles from "./flows.module.scss";
 import "./flows.scss";
 import {ExclamationCircleFill, PlayCircleFill, X, ChevronDown, GearFill} from "react-bootstrap-icons";
 import {Accordion, Card, Dropdown, Spinner, Modal, ButtonGroup} from "react-bootstrap";
 import {HCButton, HCCard, HCTooltip, HCCheckbox} from "@components/common";
 import * as _ from "lodash";
+import {themeColors} from "@config/themes.config";
+
 
 enum ReorderFlowOrderDirection {
   LEFT = "left",
@@ -1078,7 +1080,7 @@ const Flows: React.FC<Props> = (props) => {
                           }}
                         >
                           <HCTooltip text={RunToolTips.ingestionStep} id="run-ingestion-tooltip" placement="bottom">
-                            <PlayCircleFill aria-label="icon: play-circle" color="#7F86B5" size={20} />
+                            <PlayCircleFill aria-label="icon: play-circle" color={themeColors.defaults.questionCircle} size={20} />
                           </HCTooltip>
                         </div>
                       </div>
@@ -1093,7 +1095,7 @@ const Flows: React.FC<Props> = (props) => {
                         data-testid={"runStep-" + stepNumber}
                       >
                         <HCTooltip text={RunToolTips.otherSteps} id="run-tooltip" placement="bottom">
-                          <PlayCircleFill aria-label="icon: play-circle" color="#7F86B5" size={20} />
+                          <PlayCircleFill aria-label="icon: play-circle" color={themeColors.defaults.questionCircle} size={20} />
                         </HCTooltip>
                       </div>
                     :
@@ -1109,12 +1111,12 @@ const Flows: React.FC<Props> = (props) => {
                   {props.canWriteFlow ?
                     <HCTooltip text={RunToolTips.removeStep} id="delete-step-tooltip" placement="bottom">
                       <div className={styles.delete} aria-label={`deleteStep-${step.stepName}`} onClick={() => handleStepDelete(flowName, step)}>
-                        <X aria-label="icon: close" color="#7F86B5" size={27} />
+                        <X aria-label="icon: close" color={themeColors.defaults.questionCircle} size={27} />
                       </div>
                     </HCTooltip> :
                     <HCTooltip text={RunToolTips.removeStep} id="delete-step-tooltip" placement="bottom">
                       <div className={styles.disabledDelete} aria-label={`deleteStepDisabled-${step.stepName}`} onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}>
-                        <X aria-label="icon: close" color="#7F86B5" size={27} />
+                        <X aria-label="icon: close" color={themeColors.defaults.questionCircle} size={27} />
                       </div>
                     </HCTooltip>
                   }

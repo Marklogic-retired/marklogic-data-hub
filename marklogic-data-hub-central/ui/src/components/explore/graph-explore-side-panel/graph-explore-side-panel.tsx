@@ -1,13 +1,13 @@
 import {faCode, faThList} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import React, {useContext, useEffect, useState, useRef} from "react";
-import {getDetails} from "../../../api/record";
+import {getDetails} from "@api/record";
 import {Tab, Tabs} from "react-bootstrap";
 import {ChevronRight, XLg, ArrowRightSquare} from "react-bootstrap-icons";
 import {Link} from "react-router-dom";
-import {SearchContext} from "../../../util/search-context";
+import {SearchContext} from "@util/search-context";
 import styles from "./graph-explore-side-panel.module.scss";
-import {xmlParser, xmlDecoder, xmlFormatter, jsonFormatter} from "../../../util/record-parser";
+import {xmlParser, xmlDecoder, xmlFormatter, jsonFormatter} from "@util/record-parser";
 import TableView from "@components/table-view/table-view";
 import {HCTooltip} from "@components/common";
 

@@ -51,7 +51,7 @@
 
     .link {
         margin-left: 10px;
-        color: #5b69af;
+        color: $info;
         cursor: pointer;
     }
 
@@ -151,7 +151,7 @@
     cursor: pointer;
     font-size: 21px;
     margin-left: 6px;
-    color: #5b69af;
+    color: $info;
     margin-top: 1vh;
     &:hover {
         color: var(--hoverColor);
@@ -340,12 +340,12 @@
 }
 
 .structuredIcon {
-    color: #5b69af;
+    color: $info;
     font-size: 14px;
 }
 
 .matchRulesetStyle {
-    color: #5b69af;
+    color: $info;
     margin-left: 0vw;
     font-weight: bold;
     margin-bottom: 1vh;
@@ -364,12 +364,12 @@
 
 .uri1Position {
     margin-top: 1.5vh;
-    color: #5b69af;
+    color: $info;
 }
 
 .uri2Position {
     margin-bottom: -1.5vh;
-    color: #5b69af;
+    color: $info;
 }
 
 .scoreDisplay {

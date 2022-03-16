@@ -1,15 +1,16 @@
 import React, {useContext, useEffect, useState} from "react";
 import Select from "react-select";
 import {components as SelectComponents} from "react-select";
-import reactSelectThemeConfig from "../../config/react-select-theme.config";
-import {SearchContext} from "../../util/search-context";
+import reactSelectThemeConfig from "@config/react-select-theme.config";
+import {SearchContext} from "@util/search-context";
 import styles from "./base-entities-facet.module.scss";
 import {ChevronDoubleRight} from "react-bootstrap-icons";
-import {baseEntitiesSorting, entitiesSorting} from "../../util/entities-sorting";
+import {baseEntitiesSorting, entitiesSorting} from "@util/entities-sorting";
 import {HCDivider, HCTooltip} from "@components/common";
-import {defaultPaginationOptions, exploreSidebar} from "../../config/explore.config";
+import {defaultPaginationOptions, defaultIcon, exploreSidebar} from "@config/explore.config";
 import DynamicIcons from "@components/common/dynamic-icons/dynamic-icons";
-import {ExploreGraphViewToolTips} from "../../config/tooltips.config";
+import {ExploreGraphViewToolTips} from "@config/tooltips.config";
+import {themeColors} from "@config/themes.config";
 
 interface Props {
   currentBaseEntities: any;
@@ -172,8 +173,8 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
       />
       <div aria-label="base-entities-selection">
         {displayList.map(({name, color, filter, amount, icon}) => {
-          let finalIcon = icon ? icon : "FaShapes";
-          let finalColor = color ? color : "#EEEFF1";
+          let finalIcon = icon ? icon : defaultIcon;
+          let finalColor = color ? color : themeColors.defaults.entityColor;
           if (name) {
             return (
               <HCTooltip text={ExploreGraphViewToolTips.entityToolTip} placement="top" id="baseEntityToolTip" key={name}>

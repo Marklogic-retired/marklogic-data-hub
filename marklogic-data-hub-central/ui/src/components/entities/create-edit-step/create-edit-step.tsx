@@ -3,16 +3,17 @@ import {Row, Col, Form, FormControl, FormLabel} from "react-bootstrap";
 import axios from "axios";
 import styles from "./create-edit-step.module.scss";
 import "./create-edit-step.scss";
-import {UserContext} from "../../../util/user-context";
-import {NewMapTooltips, NewMatchTooltips, NewMergeTooltips, CommonStepTooltips} from "../../../config/tooltips.config";
+import {UserContext} from "@util/user-context";
+import {NewMapTooltips, NewMatchTooltips, NewMergeTooltips, CommonStepTooltips} from "@config/tooltips.config";
 import {StepType} from "../../../types/curation-types";
-import {CurationContext} from "../../../util/curation-context";
+import {CurationContext} from "@util/curation-context";
 import {QuestionCircleFill, Search} from "react-bootstrap-icons";
 import {HCInput, HCAlert, HCButton, HCTooltip} from "@components/common";
 import Popover from "react-bootstrap/Popover";
 import {Overlay} from "react-bootstrap";
 import {Typeahead} from "react-bootstrap-typeahead";
 import "react-bootstrap-typeahead/css/Typeahead.css";
+import {themeColors} from "@config/themes.config";
 
 type Props = {
   tabKey: string;
@@ -479,14 +480,14 @@ const CreateEditStep: React.FC<Props> = (props) => {
                 <div className={"p-2 d-flex align-items-center"}>
                   { props.stepType === StepType.Mapping ?
                     <HCTooltip text={NewMapTooltips.name} id="map-step-name-tooltip" placement={"left"}>
-                      <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/>
+                      <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle}/>
                     </HCTooltip>:
                     props.stepType === StepType.Matching ?
                       <HCTooltip text={NewMatchTooltips.name} id="match-step-name-tooltip" placement={"left"}>
-                        <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/>
+                        <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle}/>
                       </HCTooltip>:
                       <HCTooltip text={NewMergeTooltips.name} id="merge-step-name-tooltip" placement={"left"}>
-                        <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/>
+                        <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle}/>
                       </HCTooltip>
                   }
                 </div>
@@ -512,14 +513,14 @@ const CreateEditStep: React.FC<Props> = (props) => {
             <div className={"p-2 d-flex align-items-center"}>
               { props.stepType === StepType.Mapping ?
                 <HCTooltip text={NewMapTooltips.description} id="map-step-description-tooltip" placement={"left"}>
-                  <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/>
+                  <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle}/>
                 </HCTooltip>:
                 props.stepType === StepType.Matching ?
                   <HCTooltip text={NewMatchTooltips.description} id="match-step-description-tooltip" placement={"left"}>
-                    <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/>
+                    <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle}/>
                   </HCTooltip>:
                   <HCTooltip text={NewMergeTooltips.description} id="merge-step-description-tooltip" placement={"left"}>
-                    <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/>
+                    <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle}/>
                   </HCTooltip>
               }
             </div>
@@ -547,7 +548,7 @@ const CreateEditStep: React.FC<Props> = (props) => {
                 <span id={props.stepType !== StepType.Merging ? "radioCollectionPopover" : "radioCollectionMergePopover" } className={"me-4"}
                   onMouseEnter={handleShowCollectionPopover} onMouseLeave={() => setShowCollectionPopover(false)}>
                   {collectionQueryInfo}
-                  <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircleCollection} data-testid="collectionTooltip"/>
+                  <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircleCollection} data-testid="collectionTooltip"/>
                 </span>
                 <Form.Check
                   inline
@@ -563,7 +564,7 @@ const CreateEditStep: React.FC<Props> = (props) => {
                   className={"mb-0"}
                 />
                 <HCTooltip text={CommonStepTooltips.radioQuery} id="radio-query-tooltip" placement={"top"}>
-                  <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircleQuery} data-testid="queryTooltip"/>
+                  <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircleQuery} data-testid="queryTooltip"/>
                 </HCTooltip>
               </Col>
               <Col xs={12} className={((collections && selectedSource === "collection") || (srcQuery && selectedSource !== "collection") || (!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched)) ? "d-flex pe-4" : "d-flex pe-4 has-error"}>
@@ -613,7 +614,7 @@ const CreateEditStep: React.FC<Props> = (props) => {
               />
               <div className={"p-2 d-flex align-items-center"}>
                 <HCTooltip text={NewMergeTooltips.timestampPath} id="timestamp-path-tooltip" placement="left">
-                  <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircle} />
+                  <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
                 </HCTooltip>
               </div>
             </Col>

@@ -3,6 +3,7 @@ import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import {XCircleFill, Search} from "react-bootstrap-icons";
 import styles from "./hc-search.module.scss";
+import {themeColors} from "@config/themes.config";
 
 interface Props {
   id?: string;
@@ -127,7 +128,7 @@ function HCSearch(props: Props) {
         {props?.suffix ? <InputGroup.Text style={{backgroundColor: !props?.disabled ? "white" : ""}} className={[props.classNameFull, styles.noBorders].join(" ")} data-testid={"hc-input-suffix"} >
           {props.suffix}</InputGroup.Text> : null}
 
-        {<InputGroup.Text style={{backgroundColor: !props?.disabled && props?.enterButton ? "#394494" : "transparent", cursor: "pointer"}}
+        {<InputGroup.Text style={{backgroundColor: !props?.disabled && props?.enterButton ? themeColors.primary : "transparent", cursor: "pointer"}}
           className={[props.classNameFull, styles.noBorders, !props?.enterButton ? "" : props?.enterButton === true ? styles.enterButton : styles.searchWord].join(" ")}
           data-testid={"hc-inputSearch-btn"}
           onClick={() => props?.onSearch ? props?.onSearch(message) : false}

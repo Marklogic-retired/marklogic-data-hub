@@ -1,15 +1,17 @@
 import React, {useContext, useEffect, useState, useRef, useCallback} from "react";
 import {Row, Col, Modal, Form, FormLabel} from "react-bootstrap";
 import styles from "./entity-type-modal.module.scss";
-import {UserContext} from "../../../util/user-context";
-import {ModelingTooltips, ErrorTooltips} from "../../../config/tooltips.config";
-import {createEntityType, updateModelInfo} from "../../../api/modeling";
+import {UserContext} from "@util/user-context";
+import {ModelingTooltips, ErrorTooltips} from "@config/tooltips.config";
+import {createEntityType, updateModelInfo} from "@api/modeling";
 import {TwitterPicker} from "react-color";
-import graphConfig from "../../../config/graph-vis.config";
-import {defaultHubCentralConfig} from "../../../config/modeling.config";
+import graphConfig from "@config/graph-vis.config";
+import {defaultHubCentralConfig} from "@config/modeling.config";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {HCButton, HCInput, HCTooltip} from "@components/common";
 import {IconPicker} from "react-fa-icon-picker";
+import {themeColors} from "@config/themes.config";
+import {defaultIcon} from "@config/explore.config";
 
 type Props = {
   isVisible: boolean;
@@ -42,7 +44,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
   const [versionTouched, setisVersionTouched] = useState(false);
   const [errorMessage, setErrorMessage] = useState(""); // Uncategorized errors from backend
   const [loading, toggleLoading] = useState(false);
-  const [colorSelected, setColorSelected] = useState("#EEEFF1");
+  const [colorSelected, setColorSelected] = useState(themeColors.defaults.entityColor);
   const [colorTouched, setisColorTouched] = useState(false);
   const [iconSelected, setIconSelected] = useState<any>("");
   const [iconTouched, setIsIconTouched] = useState<any>("");
@@ -68,8 +70,8 @@ const EntityTypeModal: React.FC<Props> = (props) => {
         setVersion("");
         setNamespace("");
         setPrefix("");
-        setColorSelected("#EEEFF1");
-        setIconSelected("FaShapes");
+        setColorSelected(themeColors.defaults.entityColor);
+        setIconSelected(defaultIcon);
       }
       setErrorName("");
       setErrorMessage("");
@@ -326,7 +328,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
                 />}
                 <div className={"p-2 d-flex"}>
                   {props.isEditModal ? null : <HCTooltip text={ModelingTooltips.nameRegex} id="entity-name-tooltip" placement="top">
-                    <QuestionCircleFill color="#7F86B5" size={13} />
+                    <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} />
                   </HCTooltip>}
                 </div>
               </Col>
@@ -348,7 +350,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
             />
             <div className={"p-2 d-flex align-items-center"}>
               <HCTooltip text={ModelingTooltips.entityDescription} id="description-tooltip" placement="top">
-                <QuestionCircleFill color="#7F86B5" size={13} />
+                <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} />
               </HCTooltip>
             </div>
           </Col>

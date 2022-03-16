@@ -1,3 +1,5 @@
+@import "../../theme/HCVariables.scss";
+
 .clearContainer {
     margin: 3px 0 0 10px;
 }
@@ -7,8 +9,8 @@
 }
 
 .facetButton {
-    color: #5b69af;
-    border: 1px solid #5b69af;
+    color: $info;
+    border: 1px solid $info;
     margin: 0 2px 2px 0;
     display: inline-flex !important;
     align-items: center;
@@ -28,11 +30,11 @@
 
 .facetGreyButton:hover {
     background-color: #cccccc !important;
-    color: #5b69af !important;
+    color: $info !important;
 }
 
 .checkIcon {
-    color: #5b69af;
+    color: $info;
     margin-right: 6px;
     margin-left: 6px;
     cursor: pointer;
@@ -42,7 +44,7 @@
 }
 
 .closeIcon {
-    color: #5b69af;
+    color: $info;
     cursor: pointer;
     &:hover {
         color: var(--hoverColor);

@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useRef, useCallback} from "react";
 import Select, {components as SelectComponents} from "react-select";
-import reactSelectThemeConfig from "../../../config/react-select-theme.config";
+import reactSelectThemeConfig from "@config/react-select-theme.config";
 import styles from "./dropdownWithSearch.module.scss";
 import arrayIcon from "../../../assets/icon_array.png";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
