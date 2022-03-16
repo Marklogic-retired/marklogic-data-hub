@@ -1,13 +1,13 @@
 import React, {useContext, useState, useEffect} from "react";
 import QueryExport from "../query-export/query-export";
-import {AuthoritiesContext} from "../../util/authorities";
+import {AuthoritiesContext} from "@util/authorities";
 import styles from "./results-tabular-view.module.scss";
-import ColumnSelector from "../../components/column-selector/column-selector";
-import {SearchContext} from "../../util/search-context";
+import ColumnSelector from "@components/column-selector/column-selector";
+import {SearchContext} from "@util/search-context";
 import {Link} from "react-router-dom";
 import {faCode, faProjectDiagram, faThList} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {dateConverter} from "../../util/date-conversion";
+import {dateConverter} from "@util/date-conversion";
 import {HCTooltip, HCTable} from "@components/common";
 
 /* eslint-disable */

@@ -1,6 +1,8 @@
+@import "../../theme/HCVariables.scss";
+
 .numberIcon {
-  background-color: #5B69AF;
-  border-color: #5B69AF;
+  background-color: $info;
+  border-color: $info;
   width: 32px;
   height: 32px;
   border-radius: 32px;

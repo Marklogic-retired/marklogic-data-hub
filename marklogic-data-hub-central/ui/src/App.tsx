@@ -2,26 +2,26 @@ import React, {useEffect, useContext} from "react";
 import axios from "axios";
 import {Switch} from "react-router";
 import {Route, Redirect, RouteComponentProps, withRouter} from "react-router-dom";
-import {UserContext} from "./util/user-context";
-import SearchProvider from "./util/search-context";
-import ModelingProvider from "./util/modeling-context";
-import CurationProvider from "./util/curation-context";
-import LoadingProvider from "./util/loading-context";
-import MonitorProvider from "./util/monitor-context";
-import Header from "./components/header/header";
-import Footer from "./components/footer/footer";
+import {UserContext} from "@util/user-context";
+import SearchProvider from "@util/search-context";
+import ModelingProvider from "@util/modeling-context";
+import CurationProvider from "@util/curation-context";
+import LoadingProvider from "@util/loading-context";
+import MonitorProvider from "@util/monitor-context";
+import Header from "@components/header/header";
+import Footer from "@components/footer/footer";
 import Login from "./pages/Login";
 import TilesView from "./pages/TilesView";
 import NoMatchRedirect from "./pages/noMatchRedirect";
 import NoResponse from "./pages/NoResponse";
-import ModalStatus from "./components/modal-status/modal-status";
-import NavigationPrompt from "./components/navigation-prompt/navigation-prompt";
+import ModalStatus from "@components/modal-status/modal-status";
+import NavigationPrompt from "@components/navigation-prompt/navigation-prompt";
 
 import "./App.scss";
-import {Application} from "./config/application.config";
-import {themes, themeMap} from "./config/themes.config";
-import {getEnvironment} from "./util/environment";
-import ErrorMessageProvider from "./util/error-message-context";
+import {Application} from "@config/application.config";
+import {themes, themeMap} from "@config/themes.config";
+import {getEnvironment} from "@util/environment";
+import ErrorMessageProvider from "@util/error-message-context";
 
 interface Props extends RouteComponentProps<any> {}
 

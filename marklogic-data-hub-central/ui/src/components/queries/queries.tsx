@@ -1,18 +1,19 @@
 import React, {useState, useEffect, useContext} from "react";
 import {ButtonGroup, Dropdown, Modal} from "react-bootstrap";
-import {UserContext} from "../../util/user-context";
-import {SearchContext} from "../../util/search-context";
+import {UserContext} from "@util/user-context";
+import {SearchContext} from "@util/search-context";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencilAlt, faSave, faCopy, faUndo, faWindowClose, faEllipsisV, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
-import SaveQueryModal from "../../components/queries/saving/save-query-modal/save-query-modal";
-import SaveQueriesDropdown from "../../components/queries/saving/save-queries-dropdown/save-queries-dropdown";
-import {fetchQueries, creatNewQuery, fetchQueryById, removeQuery} from "../../api/queries";
+import SaveQueryModal from "@components/queries/saving/save-query-modal/save-query-modal";
+import SaveQueriesDropdown from "@components/queries/saving/save-queries-dropdown/save-queries-dropdown";
+import {fetchQueries, creatNewQuery, fetchQueryById, removeQuery} from "@api/queries";
 import styles from "./queries.module.scss";
 import EditQueryDetails from "./saving/edit-save-query/edit-query-details";
 import SaveChangesModal from "./saving/edit-save-query/save-changes-modal";
 import DiscardChangesModal from "./saving/discard-changes/discard-changes-modal";
 import {QueryOptions} from "../../types/query-types";
 import {HCButton, HCTooltip} from "@components/common";
+import {themeColors} from "@config/themes.config";
 
 interface Props {
   queries: any[];
@@ -453,7 +454,7 @@ const Query: React.FC<Props> = (props) => {
                       className={props.isSavedQueryUser ? styles.enabledSaveIcon : styles.disabledSaveIcon}
                       data-testid="save-modal"
                       size="lg"
-                      style={{width: "15px", color: "#5b69af", cursor: "pointer"}}
+                      style={{width: "15px", color: themeColors.info, cursor: "pointer"}}
                     /></span>
                   </HCTooltip>
                   <div id={"savedQueries"}>
@@ -486,7 +487,7 @@ const Query: React.FC<Props> = (props) => {
                       onClick={() => setOpenSaveChangesModal(true)}
                       data-testid="save-changes-modal"
                       size="lg"
-                      style={{width: "15px", color: "#5b69af", cursor: "pointer"}}
+                      style={{width: "15px", color: themeColors.info, cursor: "pointer"}}
                     /></span>
                   </HCTooltip>
                   <div id={"saveChangedQueries"}>
@@ -582,7 +583,7 @@ const Query: React.FC<Props> = (props) => {
                   icon={faWindowClose}
                   title={"reset-changes"}
                   size="lg"
-                  style={{width: "18px", color: "#5b69af", cursor: "pointer"}}
+                  style={{width: "18px", color: themeColors.info, cursor: "pointer"}}
                 /></i>
                 <span className="text-info ps-2" aria-label="clear-query">Clear query</span>
               </span>

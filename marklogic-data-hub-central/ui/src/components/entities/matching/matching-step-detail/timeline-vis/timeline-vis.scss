@@ -26,8 +26,8 @@
 }
 
 .vis-item.vis-dot {
-    background-color: #5B69AF;
-    border-color: #5B69Af;
+    background-color: $info;
+    border-color: $info;
 }
 
 .vis-timeline.vis-bottom{
@@ -37,7 +37,7 @@
 .itemValue{
     display: inline-block;
     background-color: white;
-    border-color: #5B69AF;
+    border-color: $info;
     width: 22px;
     height: 18px;
     border-radius: 12px;
@@ -51,7 +51,7 @@
 .itemReduceValue{
     display: inline-block;
     background-color: white;
-    border-color: #5B69AF;
+    border-color: $info;
     width: 26px;
     height: 18px;
     border-radius: 12px;

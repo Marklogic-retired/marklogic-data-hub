@@ -39,6 +39,23 @@ let themes = {
 // Default theme if none mapped to pathname
 themes['default'] = themes['white'];
 
+// Color scheme for use in typescript files
+const themeColors = {
+    "primary": "#394494",
+    "secondary": "#993366",
+    "success": "#389e0d",
+    "info": "#5b69af",
+    "warning": "#ce8406",
+    "danger": "#b32424",
+    "light": "#cccc",
+    "dark": "#343a40",
+
+    "defaults": {
+        "entityColor": "#eeeff1",
+        "questionCircle": "#7f86b5"
+    }
+}
+
 // Pathnames mapped to themes
 const themeMap = {
     '/':         'image',
@@ -47,5 +64,6 @@ const themeMap = {
 
 export {
     themes,
-    themeMap
+    themeMap,
+    themeColors
 };

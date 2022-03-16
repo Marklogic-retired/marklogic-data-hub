@@ -6,7 +6,7 @@ import styles from "./toolbar.module.scss";
 import "./toolbar.scss";
 import ConfirmationModal from "../confirmation-modal/confirmation-modal";
 import {ConfirmationType} from "../../types/common-types";
-import {ModelingContext} from "../../util/modeling-context";
+import {ModelingContext} from "@util/modeling-context";
 import {HCTooltip} from "@components/common";
 
 

@@ -4,6 +4,7 @@ import {ChevronDoubleRight} from "react-bootstrap-icons";
 import {HCTooltip} from "@components/common";
 import DynamicIcons from "@components/common/dynamic-icons/dynamic-icons";
 import tooltipsConfig from "../../../config/explorer-tooltips.config";
+import {defaultIcon} from "@config/explore.config";
 
 interface Props {
   currentBaseEntities: any[];
@@ -40,7 +41,7 @@ const EntityIconsSidebar: React.FC<Props> = (props) => {
         </HCTooltip>
         {currentBaseEntities.map(({color, icon, name}, index) => name &&
           <div key={name} aria-label={`base-entity-icon-${name}`} style={{backgroundColor: color}} className={styles.entityIconListItem} onClick={() => handleBaseEntityClicked(index)}>
-            {icon ? <DynamicIcons name={icon} /> : <DynamicIcons name="FaShapes" />}
+            {icon ? <DynamicIcons name={icon} /> : <DynamicIcons name={defaultIcon} />}
           </div>
         )}
       </div>
@@ -50,7 +51,7 @@ const EntityIconsSidebar: React.FC<Props> = (props) => {
           {currentRelatedEntitiesArray.map(({color, icon, name}, index) => name &&
           <HCTooltip text={!props.graphView ? exploreSidebar.disabledRelatedEntities: ""} aria-label="disabled-related-entity-tooltip" id="disabled-related-entity-tooltip" placement="bottom">
             <div key={name} aria-label={`related-entity-icon-${name}`} style={{backgroundColor: color}} className={!graphView ? styles.entityIconListItemDisabled : styles.entityIconListItem} onClick={(e) => !graphView ? e.preventDefault() : handleRelatedEntityClicked(index)}>
-              {icon ? <DynamicIcons name={icon} /> : <DynamicIcons name="FaShapes" />}
+              {icon ? <DynamicIcons name={icon} /> : <DynamicIcons name={defaultIcon} />}
             </div>
           </HCTooltip>
           )}

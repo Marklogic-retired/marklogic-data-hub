@@ -1,3 +1,5 @@
+@import "../../theme/HCVariables.scss";
+
 .preWrap {
   white-space: pre-wrap;
 }
@@ -28,7 +30,7 @@
 }
 
 .iconLink {
-  color: #5B69AF;
+  color: $info;
   font-size: 14px;
   margin-left: 8px;
   cursor: pointer;

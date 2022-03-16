@@ -2,7 +2,7 @@ import React, {useContext, useEffect} from "react";
 import {ListGroup} from "react-bootstrap";
 import SearchResult from "../search-result/search-result";
 import styles from "./search-results.module.scss";
-import {SearchContext} from "../../util/search-context";
+import {SearchContext} from "@util/search-context";
 
 
 type Props = {

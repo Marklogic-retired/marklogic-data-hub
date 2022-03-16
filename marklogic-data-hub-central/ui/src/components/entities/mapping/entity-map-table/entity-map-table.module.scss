@@ -207,7 +207,7 @@
 }
 
 .listIcon {
-  color: #394494;
+  color: $primary;
   background: transparent;
   border: none;
   margin-top: 5px;
@@ -227,11 +227,11 @@
 }
 
 .functionIcon {
-  color: #394494;
+  color: $primary;
   font-size: 14px;
   width: 22px;
   height: 20px;
-  border: 1px solid #394494 !important;
+  border: 1px solid $primary !important;
   border-radius: 2px;
   padding: 0 !important;
   text-align: center;
@@ -244,10 +244,10 @@
 
 .refIcon {
   color: #e2e0e6;
-  background: #394494;
+  background: $primary;
   width: 21px !important;
   height: 20px;
-  border: 1px solid #394494;
+  border: 1px solid $primary;
   border-radius: 2px;
   padding: 5px 1px 3px 1px;
   margin-top: 5px;
@@ -398,7 +398,7 @@
 }
 
 .structuredIcon {
-  color: #5B69AF;
+  color: $info;
   font-size: 14px;
   margin-left: 5px;
   margin-bottom: -1px;

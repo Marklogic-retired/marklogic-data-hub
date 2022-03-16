@@ -1,10 +1,10 @@
 import React, {useContext, useEffect, useState} from "react";
-import {facetParser} from "../../util/data-conversion";
-import monitorPropertiesConfig from "../../config/monitoring.config";
+import {facetParser} from "@util/data-conversion";
+import monitorPropertiesConfig from "@config/monitoring.config";
 import MonitorFacet from "../monitor-facet/monitor-facet";
-import {MonitorContext} from "../../util/monitor-context";
+import {MonitorContext} from "@util/monitor-context";
 import Select from "react-select";
-import reactSelectThemeConfig from "../../config/react-select-theme.config";
+import reactSelectThemeConfig from "@config/react-select-theme.config";
 import styles from "../facet/facet.module.scss";
 import moment from "moment";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";

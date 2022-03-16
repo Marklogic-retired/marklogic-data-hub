@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {SearchContext} from "../../util/search-context";
+import {SearchContext} from "@util/search-context";
 import styles from "./date-facet.module.scss";
 import moment from "moment";
 import {HCTooltip, HCDateTimePicker} from "@components/common";

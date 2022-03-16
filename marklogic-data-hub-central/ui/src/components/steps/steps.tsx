@@ -8,9 +8,9 @@ import "./steps.scss";
 import {StepType} from "../../types/curation-types";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencilAlt} from "@fortawesome/free-solid-svg-icons";
-import {ErrorTooltips} from "../../config/tooltips.config";
+import {ErrorTooltips} from "@config/tooltips.config";
 import {ConfirmYesNo, HCTooltip} from "@components/common";
-import {CurationContext} from "../../util/curation-context";
+import {CurationContext} from "@util/curation-context";
 
 interface Props {
     isEditing: boolean;

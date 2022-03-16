@@ -1,14 +1,14 @@
 import React, {useState} from "react";
 import styles from "./Overview.module.scss";
 import {useHistory} from "react-router-dom";
-import overviewConfig from "../config/overview.config";
-import tiles from "../config/tiles.config";
+import overviewConfig from "@config/overview.config";
+import tiles from "@config/tiles.config";
 import "./Overview.scss";
 import modelingInfoIcon from "../assets/icon_helpInfo.png";
-import {ToolbarBulbIconInfo} from "../config/tooltips.config";
+import {ToolbarBulbIconInfo} from "@config/tooltips.config";
 import Popover from "react-bootstrap/Popover";
 import {OverlayTrigger} from "react-bootstrap";
-import {parseVersion} from "../util/environment";
+import {parseVersion} from "@util/environment";
 
 interface Props {
     enabled: any;

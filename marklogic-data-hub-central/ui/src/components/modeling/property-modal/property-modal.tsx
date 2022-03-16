@@ -1,22 +1,19 @@
 import React, {useState, useEffect, useContext} from "react";
 import {Row, Col, Modal, Form, FormLabel, FormCheck} from "react-bootstrap";
 import Select, {components as SelectComponents} from "react-select";
-import reactSelectThemeConfig from "../../../config/react-select-theme.config";
+import reactSelectThemeConfig from "@config/react-select-theme.config";
 import {faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styles from "./property-modal.module.scss";
 import StructuredTypeModal from "../structured-type-modal/structured-type-modal";
 import ConfirmationModal from "../../confirmation-modal/confirmation-modal";
-import {UserContext} from "../../../util/user-context";
-import {ModelingContext} from "../../../util/modeling-context";
-import {entityReferences, primaryEntityTypes} from "../../../api/modeling";
-import {ModelingTooltips} from "../../../config/tooltips.config";
-import {getSystemInfo} from "../../../api/environment";
+import {UserContext} from "@util/user-context";
+import {ModelingContext} from "@util/modeling-context";
+import {entityReferences, primaryEntityTypes} from "@api/modeling";
+import {ModelingTooltips} from "@config/tooltips.config";
+import {getSystemInfo} from "@api/environment";
 import Cascader from "rc-cascader";
 import "rc-cascader/assets/index.less";
-
-
-
 import {EditPropertyOptions, PropertyOptions, PropertyType, StructuredTypeOptions} from "../../../types/modeling-types";
 import {ConfirmationType} from "../../../types/common-types";
 
@@ -26,9 +23,10 @@ import {
   MORE_DATE_TYPES,
   MORE_NUMBER_TYPES,
   MORE_STRING_TYPES
-} from "../../../config/modeling.config";
+} from "@config/modeling.config";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {HCAlert, HCButton, HCTooltip, HCInput} from "@components/common";
+import {themeColors} from "@config/themes.config";
 
 type Props = {
   entityName: any;
@@ -777,7 +775,7 @@ const PropertyModal: React.FC<Props> = (props) => {
           />
           <div className={"p-2 d-flex align-items-center"}>
             <HCTooltip text={radio.tooltip} id={radio.value + "-tooltip"} placement="top">
-              <QuestionCircleFill color="#7F86B5" size={13} className={styles.radioQuestionIcon} />
+              <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.radioQuestionIcon} />
             </HCTooltip>
           </div>
         </Col>
@@ -801,7 +799,7 @@ const PropertyModal: React.FC<Props> = (props) => {
           </FormCheck>
           <div className={"p-2 ps-4 d-flex align-items-center"}>
             <HCTooltip text={checkbox.tooltip} id={checkbox.value + "-tooltip"} placement="top">
-              <QuestionCircleFill color="#7F86B5" size={13} />
+              <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} />
             </HCTooltip>
           </div>
         </Col>
@@ -919,7 +917,7 @@ const PropertyModal: React.FC<Props> = (props) => {
                 />
                 <div className={"p-2 d-flex align-items-center"}>
                   <HCTooltip text={ModelingTooltips.nameEntityProperty} id="property-name-tooltip" placement="top">
-                    <QuestionCircleFill color="#7F86B5" size={13} className={styles.icon} />
+                    <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.icon} />
                   </HCTooltip>
                 </div>
               </Col>
@@ -994,7 +992,7 @@ const PropertyModal: React.FC<Props> = (props) => {
                   />
                   <div className={"d-flex p-2 align-items-center"}>
                     <HCTooltip text={ModelingTooltips.foreignKeyInfo} id="join-property-tooltip" placement="top">
-                      <QuestionCircleFill color="#7F86B5" size={13} className={styles.icon} data-testid={"foreign-key-tooltip"} />
+                      <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.icon} data-testid={"foreign-key-tooltip"} />
                     </HCTooltip>
                   </div>
                 </div>

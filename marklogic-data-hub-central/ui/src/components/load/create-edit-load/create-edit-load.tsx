@@ -1,14 +1,15 @@
 import React, {useState, useEffect, useContext} from "react";
 import {Form, Row, Col, FormLabel, OverlayTrigger, Tooltip} from "react-bootstrap";
 import Select from "react-select";
-import reactSelectThemeConfig from "../../../config/react-select-theme.config";
+import reactSelectThemeConfig from "@config/react-select-theme.config";
 import styles from "./create-edit-load.module.scss";
-import {srcOptions, tgtOptions, fieldSeparatorOptions} from "../../../config/formats.config";
-import StepsConfig from "../../../config/steps.config";
-import {NewLoadTooltips, keyboardNavigationTooltips} from "../../../config/tooltips.config";
+import {srcOptions, tgtOptions, fieldSeparatorOptions} from "@config/formats.config";
+import StepsConfig from "@config/steps.config";
+import {NewLoadTooltips, keyboardNavigationTooltips} from "@config/tooltips.config";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {HCInput, HCButton, HCTooltip} from "@components/common";
-import {CurationContext} from "../../../util/curation-context";
+import {CurationContext} from "@util/curation-context";
+import {themeColors} from "@config/themes.config";
 
 interface Props {
   tabKey: string;
@@ -682,7 +683,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
                 <span tabIndex={0} ref={nameInputTooltipRef} onKeyDown={(e) => serviceNameKeyDownHandler(e, "nameTooltip")} className={styles.tooltipRef}>
                   <div className={"p-2 d-flex"}>
                     <HCTooltip text={NewLoadTooltips.name} id="name-tooltip" placement="left" show={nameTooltipVisible ? nameTooltipVisible : undefined}>
-                      <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+                      <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
                     </HCTooltip>
                   </div>
                 </span>
@@ -711,7 +712,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             <span tabIndex={0} ref={descInputTooltipRef} onKeyDown={(e) => serviceNameKeyDownHandler(e, "descTooltip")} className={styles.tooltipRef}>
               <div className={"p-2 d-flex"}>
                 <HCTooltip text={NewLoadTooltips.description} id="description-tooltip" placement="left" show={descTooltipVisible ? descTooltipVisible : undefined}>
-                  <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+                  <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
                 </HCTooltip>
               </div>
             </span>
@@ -741,7 +742,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             <span tabIndex={0} ref={srcFormatSelectTooltipRef} onKeyDown={(e) => serviceNameKeyDownHandler(e, "srcFormatTooltip")} className={styles.tooltipRef}>
               <div className={"p-2 d-flex"}>
                 <HCTooltip text={NewLoadTooltips.sourceFormat} id="source-format-tooltip" placement="left"  show={srcFormatTooltipVisible2 ? srcFormatTooltipVisible2 : undefined} >
-                  <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+                  <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
                 </HCTooltip>
               </div>
             </span>
@@ -787,7 +788,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
                   <span tabIndex={0} ref={fieldSepInputTooltipRef} onKeyDown={(e) => serviceNameKeyDownHandler(e, "fieldSepTooltip")} className={styles.tooltipRef}>
                     <div className={"p-2 d-flex"}>
                       <HCTooltip text={NewLoadTooltips.fieldSeparator} id="field-separator-tooltip" placement="top" show={fieldSepTooltipVisible ? fieldSepTooltipVisible : undefined}>
-                        <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+                        <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
                       </HCTooltip>
                     </div>
                   </span>
@@ -796,7 +797,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
                 <span tabIndex={0} ref={fieldSepInputTooltipRef2} onKeyDown={(e) => serviceNameKeyDownHandler(e, "fieldSepTooltip")} className={styles.tooltipRef}>
                   <div className={"p-2 d-flex"}>
                     <HCTooltip text={NewLoadTooltips.fieldSeparator} id="field-separator-tooltip" placement="right" show={fieldSepTooltipVisible2 ? fieldSepTooltipVisible2 : undefined}>
-                      <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+                      <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
                     </HCTooltip>
                   </div>
                 </span>
@@ -827,7 +828,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             <span tabIndex={0} ref={tgtFormatSelectTooltipRef} onKeyDown={(e) => serviceNameKeyDownHandler(e, "tgtFormatTooltip")} className={styles.tooltipRef}>
               <div className={"p-2 d-flex"}>
                 <HCTooltip text={NewLoadTooltips.targetFormat} id="target-format-tooltip" placement="left" show={tgtFormatTooltipVisible === true ? true : undefined}>
-                  <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+                  <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
                 </HCTooltip>
               </div></span>
           </Col>
@@ -851,7 +852,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
               <span tabIndex={0} ref={srcNameInputTooltipRef} onKeyDown={(e) => serviceNameKeyDownHandler(e, "srcNameTooltip")} className={styles.tooltipRef}>
                 <div className={"p-2 d-flex"}>
                   <HCTooltip text={NewLoadTooltips.sourceName} id="source-name-tooltip" placement="left" show={srcNameTooltipVisible === true ? true : undefined}>
-                    <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+                    <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
                   </HCTooltip>
                 </div>
               </span>
@@ -877,7 +878,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
               <span tabIndex={0} ref={srcTypeInputTooltipRef} onKeyDown={(e) => serviceNameKeyDownHandler(e, "srcTypeTooltip")} className={styles.tooltipRef}>
                 <div className={"p-2 d-flex"}>
                   <HCTooltip text={NewLoadTooltips.sourceType} id="source-type-tooltip" placement="left" show={srcTypeTooltipVisible === true ? true : undefined}>
-                    <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+                    <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
                   </HCTooltip>
                 </div>
               </span>
@@ -902,7 +903,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             <span tabIndex={0} ref={tgtPrefixInputTooltipRef} onKeyDown={(e) => serviceNameKeyDownHandler(e, "tgtPrefixTooltip")} className={styles.tooltipRef}>
               <div className={"p-2 d-flex"}>
                 <HCTooltip text={NewLoadTooltips.outputURIPrefix} id="output-uri-refix-tooltip" placement="left"  show={tgtPrefixTooltipVisible === true ? true : undefined}>
-                  <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+                  <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
                 </HCTooltip>
               </div>
             </span>

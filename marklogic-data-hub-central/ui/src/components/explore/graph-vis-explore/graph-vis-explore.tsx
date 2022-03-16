@@ -1,18 +1,18 @@
 import React, {useState, useEffect, useContext, useLayoutEffect, createElement} from "react";
 import styles from "./graph-vis-explore.module.scss";
 import Graph from "react-graph-vis";
-import graphConfig from "../../../config/graph-vis.config";
+import graphConfig from "@config/graph-vis.config";
 import * as _ from "lodash";
-import {SearchContext} from "../../../util/search-context";
+import {SearchContext} from "@util/search-context";
 import {renderToStaticMarkup} from "react-dom/server";
 import * as FontIcon from "react-icons/fa";
-import {graphViewConfig} from "../../../config/explore.config";
-import tooltipsConfig from "../../../config/explorer-tooltips.config";
+import {defaultIcon, graphViewConfig} from "@config/explore.config";
+import tooltipsConfig from "@config/explorer-tooltips.config";
 import {updateUserPreferences, getUserPreferences} from "../../../services/user-preferences";
-import {UserContext} from "../../../util/user-context";
-import {expandGroupNode} from "../../../api/queries";
+import {UserContext} from "@util/user-context";
+import {expandGroupNode} from "@api/queries";
 import TableViewGroupNodes from "../table-view-group-nodes/table-view-group-nodes";
-
+import {themeColors} from "@config/themes.config";
 
 type Props = {
   entityTypeInstances: any;
@@ -286,11 +286,11 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         shape: "custom",
         title: e.count > 1 ? tooltipsConfig.graphVis.groupNode(entityType) : e.label.length > 0 ? tooltipsConfig.graphVis.singleNode(e.label): tooltipsConfig.graphVis.singleNodeNoLabel,
         label: nodeLabel,
-        color: colorExistsForEntity(entityType) ? entity["color"] : "#EEEFF1",
+        color: colorExistsForEntity(entityType) ? entity["color"] : themeColors.defaults.entityColor,
         ctxRenderer: ({ctx, x, y, state: {selected, hover}, style, label}) => {
           const r = style.size;
           const color = style.color;
-          let iconName = iconExistsForEntity(entityType) ? entity.icon : "FaShapes";
+          let iconName = iconExistsForEntity(entityType) ? entity.icon : defaultIcon;
           const drawNode = () => {
             let scale = graphConfig.sampleMetadata?.modeling?.scale ? graphConfig.sampleMetadata?.modeling?.scale : 0.5;
             if (network) {
@@ -304,11 +304,11 @@ const GraphVisExplore: React.FC<Props> = (props) => {
             const imagePositionY = displayLabel ? y - 25 : y - 15;
             ctx.beginPath();
             ctx.arc(x, y, radius, 0, 2 * Math.PI);
-            ctx.fillStyle = !hover ? color : "#EEEFF1";
+            ctx.fillStyle = !hover ? color : themeColors.defaults.entityColor;
             ctx.fill();
             ctx.lineWidth = 0.01;
             if (selected) {
-              ctx.strokeStyle = "#5B69AF";
+              ctx.strokeStyle = themeColors.info;
               ctx.lineWidth = 4;
             }
             ctx.stroke();
@@ -322,12 +322,12 @@ const GraphVisExplore: React.FC<Props> = (props) => {
             }
             if (scale > 0.3 && scale < 0.6) {
               let img = new Image();   // Create new img element
-              img.src = FontIcon[iconName] ? `data:image/svg+xml,${encodeURIComponent(renderToStaticMarkup(createElement(FontIcon[iconName])))}` : `data:image/svg+xml,${encodeURIComponent(renderToStaticMarkup(createElement(FontIcon["FaShapes"])))}`;
+              img.src = FontIcon[iconName] ? `data:image/svg+xml,${encodeURIComponent(renderToStaticMarkup(createElement(FontIcon[iconName])))}` : `data:image/svg+xml,${encodeURIComponent(renderToStaticMarkup(createElement(FontIcon[defaultIcon])))}`;
               //Drawing the image on canvas
               ctx.drawImage(img, x - 12, imagePositionY, 24, 24);
             } else if (scale > 0.6) {
               let img = new Image();   // Create new img element
-              img.src = FontIcon[iconName] ? `data:image/svg+xml,${encodeURIComponent(renderToStaticMarkup(createElement(FontIcon[iconName])))}` : `data:image/svg+xml,${encodeURIComponent(renderToStaticMarkup(createElement(FontIcon["FaShapes"])))}`;
+              img.src = FontIcon[iconName] ? `data:image/svg+xml,${encodeURIComponent(renderToStaticMarkup(createElement(FontIcon[iconName])))}` : `data:image/svg+xml,${encodeURIComponent(renderToStaticMarkup(createElement(FontIcon[defaultIcon])))}`;
               //Drawing the image on canvas
               ctx.drawImage(img, x - 12, imagePositionY, 24, 24);
               let customLabel = e.count >= 2 ? entityType : nodeLabel;

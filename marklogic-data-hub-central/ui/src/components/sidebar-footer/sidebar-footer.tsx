@@ -1,8 +1,9 @@
 import React, {useContext} from "react";
 import styles from "./sidebar-footer.module.scss";
-import {SearchContext} from "../../util/search-context";
-import {MonitorContext} from "../../util/monitor-context";
+import {SearchContext} from "@util/search-context";
+import {MonitorContext} from "@util/monitor-context";
 import {HCButton, HCDivider} from "@components/common";
+import {themeColors} from "@config/themes.config";
 
 const SidebarFooter: React.FC = () => {
   const {
@@ -66,7 +67,7 @@ const SidebarFooter: React.FC = () => {
 
   return (
     <div>
-      <HCDivider style={{"backgroundColor": "#CCCCCC", "height": "1px", "opacity": "0.5", "margin": "10px 0px 0px 0px"}} />
+      <HCDivider style={{"backgroundColor": themeColors.light, "height": "1px", "opacity": "0.5", "margin": "10px 0px 0px 0px"}} />
       <div className={styles.facetFooter}>
         <HCButton
           variant="outline-light"

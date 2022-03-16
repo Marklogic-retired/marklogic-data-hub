@@ -1,8 +1,8 @@
 import React, {useContext, useState, useEffect} from "react";
 import {Pagination, Form} from "react-bootstrap";
-import {SearchContext} from "../../util/search-context";
+import {SearchContext} from "@util/search-context";
 import styles from "./search-pagination.module.scss";
-import {MonitorContext} from "../../util/monitor-context";
+import {MonitorContext} from "@util/monitor-context";
 
 interface Props {
   total: number;

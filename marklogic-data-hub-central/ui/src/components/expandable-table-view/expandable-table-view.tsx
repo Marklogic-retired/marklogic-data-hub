@@ -2,7 +2,7 @@ import React, {useContext, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExternalLinkAlt} from "@fortawesome/free-solid-svg-icons";
 import {Link} from "react-router-dom";
-import {SearchContext} from "../../util/search-context";
+import {SearchContext} from "@util/search-context";
 import {HCTooltip, HCTable} from "@components/common";
 
 interface Props {

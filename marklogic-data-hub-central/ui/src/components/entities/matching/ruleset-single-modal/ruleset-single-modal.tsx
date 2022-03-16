@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext} from "react";
 import {Row, Col, Modal, Form, FormLabel, FormCheck} from "react-bootstrap";
 import Select, {components as SelectComponents} from "react-select";
-import reactSelectThemeConfig from "../../../../config/react-select-theme.config";
+import reactSelectThemeConfig from "@config/react-select-theme.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLayerGroup, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import styles from "./ruleset-single-modal.module.scss";
@@ -10,14 +10,15 @@ import arrayIcon from "../../../../assets/icon_array.png";
 
 import EntityPropertyTreeSelect from "../../../entity-property-tree-select/entity-property-tree-select";
 
-import {CurationContext} from "../../../../util/curation-context";
+import {CurationContext} from "@util/curation-context";
 import {MatchingStep, MatchRule, MatchRuleset} from "../../../../types/curation-types";
 import {Definition} from "../../../../types/modeling-types";
-import {MatchingStepTooltips} from "../../../../config/tooltips.config";
-import {updateMatchingArtifact} from "../../../../api/matching";
+import {MatchingStepTooltips} from "@config/tooltips.config";
+import {updateMatchingArtifact} from "@api/matching";
 import DeleteModal from "../delete-modal/delete-modal";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {ConfirmYesNo, HCInput, HCButton, HCTooltip} from "@components/common";
+import {themeColors} from "@config/themes.config";
 
 type Props = {
   editRuleset: any;
@@ -531,7 +532,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
               />
               <div className={"p-2 d-flex align-items-center"}>
                 <HCTooltip text={MatchingStepTooltips.thesaurusUri} id="thesaurus-uri-tooltip" placement="top">
-                  <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} aria-label="icon: question-circle" />
+                  <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} aria-label="icon: question-circle" />
                 </HCTooltip>
               </div>
             </Col>
@@ -556,7 +557,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
           />
           <div className={"p-2 d-flex align-items-center"}>
             <HCTooltip text={MatchingStepTooltips.filter} id="filter-tooltip" placement="top">
-              <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} aria-label="icon: question-circle" />
+              <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} aria-label="icon: question-circle" />
             </HCTooltip>
           </div>
         </Col>
@@ -582,7 +583,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
               />
               <div className={"p-2 d-flex align-items-center"}>
                 <HCTooltip text={MatchingStepTooltips.dictionaryUri} id="dictionary-uri-tooltip" placement="top">
-                  <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} aria-label="icon: question-circle" />
+                  <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} aria-label="icon: question-circle" />
                 </HCTooltip>
               </div>
             </Col>
@@ -609,7 +610,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
               />
               <div className={"p-2 d-flex align-items-center"}>
                 <HCTooltip text={MatchingStepTooltips.distanceThreshold} id="distance-threshold-tooltip" placement="top">
-                  <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} aria-label="icon: question-circle" />
+                  <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} aria-label="icon: question-circle" />
                 </HCTooltip>
               </div>
             </Col>
@@ -640,7 +641,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
               />
               <div className={"p-2 d-flex align-items-center"}>
                 <HCTooltip text={MatchingStepTooltips.uri} id="uri-tooltip" placement="top">
-                  <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} aria-label="icon: question-circle" />
+                  <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} aria-label="icon: question-circle" />
                 </HCTooltip>
               </div>
             </Col>
@@ -666,7 +667,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
               />
               <div className={"p-2 d-flex align-items-center"}>
                 <HCTooltip text={MatchingStepTooltips.function} id="function-tooltip" placement="top">
-                  <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} aria-label="icon: question-circle" />
+                  <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} aria-label="icon: question-circle" />
                 </HCTooltip>
               </div>
             </Col>
@@ -690,7 +691,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
           />
           <div className={"p-2 d-flex align-items-center"}>
             <HCTooltip text={MatchingStepTooltips.namespace} id="namespace-tooltip" placement="top">
-              <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} aria-label="icon: question-circle" />
+              <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} aria-label="icon: question-circle" />
             </HCTooltip>
           </div>
         </Col>
@@ -777,7 +778,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
               />
               <div className={"p-2 d-flex align-items-center"}>
                 <HCTooltip text={<span aria-label="reduce-tooltip-text">{MatchingStepTooltips.reduceToggle}</span>} id="reduce-tooltip" placement="top">
-                  <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} aria-label="icon: question-circle" />
+                  <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} aria-label="icon: question-circle" />
                 </HCTooltip>
               </div>
             </Col>

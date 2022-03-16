@@ -9,12 +9,12 @@ import RulesetSingleModal from "../ruleset-single-modal/ruleset-single-modal";
 import RulesetMultipleModal from "../ruleset-multiple-modal/ruleset-multiple-modal";
 import NumberIcon from "../../../number-icon/number-icon";
 import ThresholdModal from "../threshold-modal/threshold-modal";
-import {CurationContext} from "../../../../util/curation-context";
+import {CurationContext} from "@util/curation-context";
 import {MatchingStep} from "../../../../types/curation-types";
-import {MatchingStepDetailText, MatchingStepTooltips} from "../../../../config/tooltips.config";
-import {updateMatchingArtifact, calculateMatchingActivity, previewMatchingActivity, getDocFromURI} from "../../../../api/matching";
+import {MatchingStepDetailText, MatchingStepTooltips} from "@config/tooltips.config";
+import {updateMatchingArtifact, calculateMatchingActivity, previewMatchingActivity, getDocFromURI} from "@api/matching";
 import {ChevronDown} from "react-bootstrap-icons";
-import {getViewSettings, setViewSettings, clearSessionStorageOnRefresh} from "../../../../util/user-context";
+import {getViewSettings, setViewSettings, clearSessionStorageOnRefresh} from "@util/user-context";
 import ExpandCollapse from "../../../expand-collapse/expand-collapse";
 import ExpandableTableView from "../expandable-table-view/expandable-table-view";
 import CompareValuesModal from "../compare-values-modal/compare-values-modal";
@@ -26,6 +26,7 @@ import styles from "./matching-step-detail.module.scss";
 import {DropdownButton, Dropdown} from "react-bootstrap";
 import {HCButton, HCCard, HCInput, HCTooltip, HCTable} from "@components/common";
 import "./matching-step-detail.scss";
+import {themeColors} from "@config/themes.config";
 
 const DEFAULT_MATCHING_STEP: MatchingStep = {
   name: "",
@@ -788,7 +789,7 @@ const MatchingStepDetail: React.FC = () => {
           <div className={styles.switchToggleContainer}><span className={styles.editingLabel}><b>Edit Thresholds</b></span><FormCheck type="switch" aria-label="threshold-scale-switch" onChange={({target}) => toggleDisplayThresholdTimeline(target.checked)} defaultChecked={false} className={styles.switchToggle}></FormCheck>
             <span>
               <HCTooltip text={MatchingStepTooltips.thresholdScale} id="threshold-scale-tooltip" placement="right">
-                <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.scaleTooltip} data-testid={"info-tooltip-threshold"} />
+                <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.scaleTooltip} data-testid={"info-tooltip-threshold"} />
               </HCTooltip>
               <br />
             </span></div>
@@ -825,7 +826,7 @@ const MatchingStepDetail: React.FC = () => {
           <div className={styles.switchToggleContainer}><span className={styles.editingLabel}><b>Edit Rulesets</b></span><FormCheck type="switch" aria-label="ruleset-scale-switch" onChange={({target}) => toggleDisplayRulesetTimeline(target.checked)} defaultChecked={false} className={styles.switchToggle}></FormCheck>
             <span>
               <HCTooltip text={MatchingStepTooltips.rulesetScale} id="ruleset-scale-tooltip" placement="right">
-                <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={`${styles.scaleTooltip} ps-0`} data-testid={`info-tooltip-ruleset`} />
+                <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={`${styles.scaleTooltip} ps-0`} data-testid={`info-tooltip-ruleset`} />
               </HCTooltip>
               <br />
             </span></div>
@@ -856,7 +857,7 @@ const MatchingStepDetail: React.FC = () => {
               />
               <span className={styles.selectTooltip} aria-label="testUriOnlyTooltip">
                 <HCTooltip text={MatchingStepTooltips.testUris} id="test-all-uris-tooltip" placement="right">
-                  <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle} />
+                  <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
                 </HCTooltip><br />
               </span>
               <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", paddingRight: 12}}>
@@ -906,7 +907,7 @@ const MatchingStepDetail: React.FC = () => {
             />
             <span aria-label="testUriTooltip">
               <HCTooltip text={MatchingStepTooltips.testUrisAllData} id="test-uris-all-data-tooltip" placement="right">
-                <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle} />
+                <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
               </HCTooltip>
             </span><br />
             <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", paddingRight: 12}}>
@@ -955,7 +956,7 @@ const MatchingStepDetail: React.FC = () => {
             />
             <span aria-label={"allDataTooltip"}>
               <HCTooltip text={MatchingStepTooltips.testAllData} id="test-all-data-tooltip" placement="right">
-                <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle} />
+                <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
               </HCTooltip>
             </span>
             <div aria-label="allDataContent" className={styles.allDataContent}>

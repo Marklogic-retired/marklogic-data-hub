@@ -1,18 +1,19 @@
 import React, {useState, useEffect, useContext} from "react";
 import {Row, Col, Modal, Form, FormLabel} from "react-bootstrap";
 import Select from "react-select";
-import reactSelectThemeConfig from "../../../../config/react-select-theme.config";
+import reactSelectThemeConfig from "@config/react-select-theme.config";
 import styles from "./threshold-modal.module.scss";
 
-import {CurationContext} from "../../../../util/curation-context";
+import {CurationContext} from "@util/curation-context";
 import {MatchingStep, Threshold} from "../../../../types/curation-types";
-import {NewMatchTooltips} from "../../../../config/tooltips.config";
-import {updateMatchingArtifact} from "../../../../api/matching";
+import {NewMatchTooltips} from "@config/tooltips.config";
+import {updateMatchingArtifact} from "@api/matching";
 import DeleteModal from "../delete-modal/delete-modal";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {ConfirmYesNo, HCInput, HCButton, HCTooltip} from "@components/common";
+import {themeColors} from "@config/themes.config";
 
 type Props = {
   isVisible: boolean;
@@ -354,7 +355,7 @@ const ThresholdModal: React.FC<Props> = (props) => {
               />
               <div className={"p-2 d-flex align-items-center"}>
                 <HCTooltip text={NewMatchTooltips.uri} id="uri-tooltip" placement="top">
-                  <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} />
+                  <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} />
                 </HCTooltip>
               </div>
             </Col>
@@ -380,7 +381,7 @@ const ThresholdModal: React.FC<Props> = (props) => {
               />
               <div className={"p-2 d-flex align-items-center"}>
                 <HCTooltip text={NewMatchTooltips.function} id="function-tooltip" placement="top">
-                  <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} />
+                  <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} />
                 </HCTooltip>
               </div>
             </Col>
@@ -406,7 +407,7 @@ const ThresholdModal: React.FC<Props> = (props) => {
               />
               <div className={"p-2 d-flex align-items-center"}>
                 <HCTooltip text={NewMatchTooltips.namespace} id="function-tooltip" placement="top">
-                  <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} />
+                  <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} />
                 </HCTooltip>
               </div>
             </Col>

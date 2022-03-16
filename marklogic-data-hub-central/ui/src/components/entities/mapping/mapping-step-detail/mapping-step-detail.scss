@@ -1,3 +1,4 @@
+@import "../../../../theme/HCVariables.scss";
 
 .active{
     color: #fafafa;
@@ -5,7 +6,7 @@
 }
 
 .ant-table-filter-icon.ant-dropdown-trigger.ant-table-filter-selected{
-    background: #394494; 
+    background: $primary; 
 }
 
 #srcContainer {

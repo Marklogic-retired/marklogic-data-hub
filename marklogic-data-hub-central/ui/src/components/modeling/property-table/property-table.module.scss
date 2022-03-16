@@ -31,7 +31,7 @@
   cursor: pointer;
   font-size: 21px;
   margin-left: 6px;
-  color: #5B69AF;
+  color: $info;
 }
 
 .addIconReadOnly {
@@ -65,7 +65,7 @@
   cursor: pointer;
   font-size: 21px;
   margin-left: 11px;
-  color: #5B69AF;
+  color: $info;
   &:hover{
     color:var(--hoverColor) !important;
   }
@@ -131,7 +131,7 @@
 }
 
 .link {
-  color: #5B69AF;
+  color: $info;
   cursor: pointer;
   &:hover{
       color: var(--hoverColor);
@@ -152,7 +152,7 @@
 }
 
 .structuredIcon {
-  color: #5B69AF;
+  color: $info;
   font-size: 14px;
   margin-left: 5px;
   margin-bottom: -1px;

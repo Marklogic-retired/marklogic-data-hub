@@ -5,8 +5,8 @@ import SplitPane from "react-split-pane";
 import GraphVisExplore from "./graph-vis-explore/graph-vis-explore";
 import {HCCheckbox, HCTooltip} from "@components/common";
 import GraphExploreSidePanel from "./graph-explore-side-panel/graph-explore-side-panel";
-import {SearchContext} from "../../util/search-context";
-import {ModelingTooltips} from "../../config/tooltips.config";
+import {SearchContext} from "@util/search-context";
+import {ModelingTooltips} from "@config/tooltips.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faFileExport} from "@fortawesome/free-solid-svg-icons";
 

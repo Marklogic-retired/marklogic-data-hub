@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react";
 import {Modal} from "react-bootstrap";
 import styles from "./confirmation-modal.module.scss";
-import {ModelingMessages} from "../../config/tooltips.config";
+import {ModelingMessages} from "@config/tooltips.config";
 import {ConfirmationType} from "../../types/common-types";
 import {HCAlert, HCButton} from "@components/common";
 

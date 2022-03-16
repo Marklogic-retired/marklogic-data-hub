@@ -1,3 +1,5 @@
+@import "../../../../theme/HCVariables.scss";
+
 #testMatchedUriDataPanel .ant-collapse-content-inactive{
     display: none;
 }
@@ -9,11 +11,11 @@
 }
 
 #testMatchedUriDataPanel .ant-collapse-arrow{
-    color: #5b69af;
+    color: $info;
     margin-top: 2px !important;
 }
 #testMatchedPanel .ant-collapse-arrow{
-    color: #5b69af;
+    color: $info;
     margin-top: -11px;
 }
 #testMatchedPanel .ant-collapse-item{

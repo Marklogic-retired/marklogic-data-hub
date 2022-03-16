@@ -1,15 +1,16 @@
 import React, {useContext, useState} from "react";
 import styles from "./job-results-table-view.module.scss";
-import {dateConverter, renderDuration} from "../../util/date-conversion";
+import {dateConverter, renderDuration} from "@util/date-conversion";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faColumns} from "@fortawesome/free-solid-svg-icons";
 import "./job-results-table-view.scss";
-import {MonitorContext} from "../../util/monitor-context";
+import {MonitorContext} from "@util/monitor-context";
 import JobResponse from "../job-response/job-response";
 import {CheckCircleFill, ClockFill, XCircleFill} from "react-bootstrap-icons";
 import {HCButton, HCCheckbox, HCDivider, HCTooltip, HCTable} from "@components/common";
 import Popover from "react-bootstrap/Popover";
 import {OverlayTrigger} from "react-bootstrap";
+import {themeColors} from "@config/themes.config";
 
 const JobResultsTableView = (props) => {
   const [popoverVisibility, setPopoverVisibility] = useState<boolean>(false);
@@ -71,14 +72,14 @@ const JobResultsTableView = (props) => {
         if (status === "running" || /^running/.test(status)) {
           return <>
             <HCTooltip text="Running" id="running-tooltip" placement="bottom">
-              <ClockFill data-testid= "progress" style={{color: "#5B69AF"}}/>
+              <ClockFill data-testid= "progress" style={{color: themeColors.info}}/>
             </HCTooltip>
           </>;
 
         } else if (status === "finished") {
           return <>
             <HCTooltip text="Completed Successfully" id="complete-success-tooltip" placement="bottom">
-              <CheckCircleFill data-testid= "success" style={{color: "#389E0D"}}/>
+              <CheckCircleFill data-testid= "success" style={{color: themeColors.success}}/>
             </HCTooltip>
           </>;
         } else {
@@ -220,7 +221,7 @@ const JobResultsTableView = (props) => {
             <span data-testid={"tooltip-wrapper"}>
               <HCTooltip id="select-columns-tooltip" text="Select the columns to display." placement="top-end">
                 <i>
-                  <FontAwesomeIcon onClick={() => { setPopoverVisibility(true); }} className={styles.columnIcon} icon={faColumns} color="#5B69AF" size="lg" data-testid="column-selector-icon"/>
+                  <FontAwesomeIcon onClick={() => { setPopoverVisibility(true); }} className={styles.columnIcon} icon={faColumns} color={themeColors.info} size="lg" data-testid="column-selector-icon"/>
                 </i>
               </HCTooltip>
             </span>

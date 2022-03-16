@@ -10,7 +10,7 @@
     }
 
     .deleteIcon {
-        color: #5b69af;
+        color: $info;
         font-size: 24px;
     }
 
@@ -75,7 +75,7 @@
 
 .editIcon {
     font-size: 26px;
-    color: #394494;
+    color: $primary;
     background-color: #f8f8f8;
     padding: 5px 3px 5px 3px;
     margin-bottom: -2px;
