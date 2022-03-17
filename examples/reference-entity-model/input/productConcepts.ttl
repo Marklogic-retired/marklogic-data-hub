@@ -1,0 +1,54 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix cat: <http://www.example.com/Category/> .
+
+cat:Bedding rdf:type skos:TopLevelConcept;
+  skos:prefLabel "Bedding"@en;
+  skos:narrower cat:Blanket.
+
+cat:Blanket rdf:type skos:Concept;
+  skos:prefLabel "Blanket"@en;
+  skos:broader cat:Bedding.
+
+cat:Apparel rdf:type skos:TopLevelConcept;
+  skos:prefLabel "Apparel"@en;
+  skos:narrower skos:Shoes;
+  skos:narrower skos:Hat.
+
+cat:Shoes rdf:type skos:Concept;
+  skos:prefLabel "Shoes"@en;
+  skos:narrower cat:Sneakers;
+  skos:narrower cat:BasketballShoes;
+  skos:broader cat:Apparel.
+
+cat:Hat rdf:type skos:Concept;
+  skos:prefLabel "Hat"@en;
+  skos:broader cat:Apparel.
+
+cat:Houseware rdf:type skos:TopLevelConcept;
+  skos:prefLabel "Houseware"@en.
+
+cat:CookingAppliances rdf:type skos:Concept;
+  skos:prefLabel "Cooking Appliances"@en;
+  skos:narrower cat:SlowCooker;
+  skos:narrower cat:Kettle;
+  skos:narrower cat:PressureCooker;
+  skos:narrower cat:AirFryer;
+  skos:broader cat:Houseware.
+
+cat:AirFyer rdf:type skos:Concept;
+  skos:prefLabel "Air Fryer"@en;
+  skos:broader cat:CookingApplicances.
+
+cat:PressureCooker rdf:type skos:Concept;
+  skos:prefLabel "Pressure Cooker"@en;
+  skos:broader cat:CookingApplicances.
+
+cat:SlowCooker rdf:type skos:Concept;
+  skos:prefLabel "Slow Cooker"@en;
+  skos:broader cat:CookingApplicances.
+
+cat:Kettle rdf:type skos:Concept;
+  skos:prefLabel "Kettle"@en;
+  skos:broader cat:CookingApplicances.

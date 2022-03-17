@@ -32,11 +32,13 @@
           <Quantity>1</Quantity>
           <ProductId>70</ProductId>
           <Name>Skechers GOrun Razor +</Name>
+          <Category>Sneakers</Category>
         </Product>
         <Product>
           <Quantity>3</Quantity>
           <ProductId>80</ProductId>
           <Name>Air Jordan 1 Mid</Name>
+          <Category>Basketball Shoes</Category>
         </Product>
       </Products>
     </Order>
@@ -49,11 +51,13 @@
           <Quantity>1</Quantity>
           <ProductId>90</ProductId>
           <Name>Instant Pot Duo Plus 6 Quart 9-in-1 Electric Pressure Cooker</Name>
+          <Category>Pressure Cooker</Category>
         </Product>
         <Product>
           <Quantity>2</Quantity>
           <ProductId>100</ProductId>
           <Name>Air Fryer Lid Pressure Cooker Lid Air Fryer Transformer</Name>
+          <Category>Air Fryer</Category>
         </Product>
       </Products>
     </Order>
@@ -65,10 +69,12 @@
       <Product>
         <ProductId>110</ProductId>
         <Name>Glow in The Dark Throw Blanket for Kids</Name>
+        <Category>Blanket</Category>
       </Product>
       <Product>
         <ProductId>120</ProductId>
         <Name>adidas Originals Kid's Trefoil Beanie</Name>
+        <Category>Hat</Category>
       </Product>
     </Products>
   </BabyRegistry>

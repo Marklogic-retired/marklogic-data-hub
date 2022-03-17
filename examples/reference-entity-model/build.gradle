@@ -8,7 +8,7 @@ buildscript {
         if (project.hasProperty("testing")) {
             classpath "com.marklogic:ml-data-hub:5.8-SNAPSHOT"
         } else {
-            classpath "com.marklogic:ml-data-hub:5.5.0"
+            classpath "com.marklogic:ml-data-hub:5.7.0"
         }
     }
 }
@@ -20,6 +20,7 @@ plugins {
 apply plugin: "com.marklogic.ml-data-hub"
 
 repositories {
+    maven {url "https://developer.marklogic.com/maven2/"}
     mavenCentral()
     if (project.hasProperty("testing")) {
         mavenLocal()
@@ -38,10 +39,10 @@ dependencies {
     if (project.hasProperty("testing")) {
         testImplementation "com.marklogic:marklogic-data-hub-junit5:5.8-SNAPSHOT"
     } else {
-        testImplementation "com.marklogic:marklogic-data-hub-junit5:5.5.0"
+        testImplementation "com.marklogic:marklogic-data-hub-junit5:5.7.0"
     }
 
-    mlcp "com.marklogic:mlcp:10.0.8.2"
+    mlcp "com.marklogic:mlcp:10.0.9"
     mlcp files("lib")
 }
 
@@ -67,6 +68,18 @@ task importZipCodes(type: com.marklogic.gradle.task.MlcpTask) {
 	delimiter = ","
 }
 
+task importProductConcepts(type: com.marklogic.gradle.task.MlcpTask) {
+    description = "Imports a document for each zip code defined in the zipCodes.zip file. These are used by the mapCustomersJSON mapping step."
+    classpath = configurations.mlcp
+    command = "IMPORT"
+    port = 8011
+    input_file_path = "input/productConcepts.ttl"
+    input_file_type = "rdf"
+    output_permissions = "data-hub-common,read,data-hub-developer,update"
+    output_collections = "productConcepts,http://marklogic.com/semantics#default-graph"
+    thread_count = 16
+}
+
 ["CurateCustomerJSON", "CurateCustomerXML", "CurateNamespacedCustomers",
  "CurateCustomerWithRelatedEntitiesJSON", "CurateCustomerWithRelatedEntitiesXML"].each {theFlowName ->
     task "run${theFlowName}" (type: com.marklogic.gradle.task.RunFlowTask, group: "Run flow") {
@@ -87,8 +100,8 @@ task mergeJsonCustomers(type: com.marklogic.gradle.task.RunFlowTask) {
     steps = ["3", "4"]
 }
 
-mlDeploy.finalizedBy importZipCodes, runFlows, mergeJsonCustomers
-runFlows.mustRunAfter importZipCodes
+mlDeploy.finalizedBy importZipCodes, importProductConcepts, runFlows, mergeJsonCustomers
+runFlows.mustRunAfter importZipCodes, importProductConcepts
 mergeJsonCustomers.mustRunAfter runFlows
 
 
