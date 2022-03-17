@@ -5,6 +5,7 @@ import LoginPage from "../../support/pages/login";
 import {ExploreGraphNodes} from "../../support/types/explore-graph-nodes";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import graphExploreSidePanel from "../../support/components/explore/graph-explore-side-panel";
+import tables from "../../support/components/common/tables";
 
 describe("Group Nodes", () => {
   before(() => {
@@ -28,7 +29,7 @@ describe("Group Nodes", () => {
     cy.restoreLocalStorage();
   });
 
-  it("Validate group nodes are working correctly", () => {
+  it("Validate group nodes are working correctly in the graph", () => {
     //Graph view
     cy.log("**Go to graph view**");
     browsePage.clickGraphView();
@@ -49,9 +50,10 @@ describe("Group Nodes", () => {
 
       //Validate tooltip appears when the group node it's collapsed
       canvas.click(orderCoordinates.x, orderCoordinates.y, {force: true});
-      graphExplore.getTooltip().should("contain", "Group of Product records");
-      graphExplore.getTooltip().should("contain", "Click to expand 3 sample records in this group.");
-      graphExplore.getTooltip().should("contain", "Double click to expand all records in this group.");
+      graphExplore.getTooltip().should("contain", "Group of Product records")
+        .should("contain", "Click to expand 3 sample records in this group.")
+        .should("contain", "Double click to expand all records in this group.");
+
     });
 
     cy.log("**Right click and select expand 3 records of the Product group node**");
@@ -178,11 +180,30 @@ describe("Group Nodes", () => {
 
       //Validate tooltip appears
       canvas.click(orderCoordinates.x, orderCoordinates.y, {force: true});
-      graphExplore.getTooltip().should("contain", "Group of Product records");
-      graphExplore.getTooltip().should("contain", "Click to expand 3 sample records in this group.");
-      graphExplore.getTooltip().should("contain", "Double click to expand all records in this group.");
+      graphExplore.getTooltip().should("contain", "Group of Product records")
+        .should("contain", "Click to expand 3 sample records in this group.")
+        .should("contain", "Double click to expand all records in this group.");
     });
 
   });
 
+  it("Validate Expand records on table", () => {
+    cy.wait(1000);
+    cy.log("**Right click and select expand in the table**");
+    graphExplore.focusNode(ExploreGraphNodes.PRODUCT_GROUP);
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.PRODUCT_GROUP).then((nodePositions: any) => {
+      let orderCoordinates: any = nodePositions[ExploreGraphNodes.PRODUCT_GROUP];
+      const canvas = graphExplore.getGraphVisCanvas();
+
+      // Right click and expand all records on a table
+      canvas.rightclick(orderCoordinates.x, orderCoordinates.y, {force: true}).then(() => {
+        graphExplore.getViewRecordsInTable().should("be.visible").click();
+      });
+
+      cy.log("**Validate all the records appear in the table**");
+      tables.getTableRows().should("contain", "50").should("contain", "60").should("contain", "70").should("contain", "80").should("contain", "90").should("not.contain", "101");
+
+    });
+
+  });
 });
