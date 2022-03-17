@@ -75,7 +75,8 @@ for (let prop of doc2DeepArray.root.myprop.xpath('./object-node()')) {
 let allDeepArrayProperties = doc2DeepArrayProps.concat(doc1DeepArrayProps);
 
 let deepArrayResults = stdMerge.standard(propName, allDeepArrayProperties, null);
-deepArrayResults.toArray().forEach((result) => {
+assertions.push(test.assertExists(deepArrayResults, `deep array results should exist: ${xdmp.describe(deepArrayResults)}`));
+Sequence.from(deepArrayResults).toArray().forEach((result) => {
   if (result.values instanceof Sequence) {
     result.values.toArray().forEach((val) => assertions.push(test.assertExists(val.array)));
   } else {
