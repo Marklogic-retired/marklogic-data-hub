@@ -592,13 +592,11 @@
           "component": "SocialMedia",
           "config": {
             "title": "Social Media",
-            "site": {
+            "social": {
               "arrayPath": "person.socials.social",
-              "path": "site"
-            },
-            "url": {
-              "arrayPath": "person.socials.social",
-              "path": "address"
+              "site": "site",
+              "handle":"handle",
+              "url": "address"
             },
             "sites": {
               "facebook": {
