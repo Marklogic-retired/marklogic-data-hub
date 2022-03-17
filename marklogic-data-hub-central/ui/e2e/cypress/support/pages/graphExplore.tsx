@@ -101,6 +101,18 @@ class GraphExplore {
   getTooltip() {
     return cy.get(`div.vis-tooltip`);
   }
+  getContextMenu() {
+    return cy.waitUntil(() => cy.get("#contextMenu"));
+  }
+  showRecordsInCluster() {
+    return cy.waitUntil(() => cy.get("#focusOnCluster")).click();
+  }
+  showAllRecordsFromQuery() {
+    return cy.waitUntil(() => cy.get("#defocus")).trigger("mouseover").click();
+  }
+  /*
+   * GROUP/LEAF NODE DROPDOWN ITEMS
+   */
   getExpand3RecordsFromGroupNode() {
     return cy.get("#expand3SampleRecords");
   }
@@ -119,14 +131,8 @@ class GraphExplore {
   clickShowRelated() {
     return cy.get("#showRelated").click();
   }
-  getContextMenu() {
-    return cy.waitUntil(() => cy.get("#contextMenu"));
-  }
-  showRecordsInCluster() {
-    return cy.waitUntil(() => cy.get("#focusOnCluster")).click();
-  }
-  showAllRecordsFromQuery() {
-    return cy.waitUntil(() => cy.get("#defocus")).trigger("mouseover").click();
+  getViewRecordsInTable() {
+    return cy.get("#viewRecordsInTableView");
   }
 }
 export default new GraphExplore();

@@ -279,6 +279,7 @@ Cypress.Commands.add("getAttached", selector => {
 
 Cypress.Commands.add("setupHubCentralConfig", () => {
   cy.fixture("config/hubCentral.json").then((hubCentralConfig) => {
+    cy.log("**Setting up HubCentralConfig**");
     cy.request({
       method: "PUT",
       url: `/api/models/hubCentralConfig`,
