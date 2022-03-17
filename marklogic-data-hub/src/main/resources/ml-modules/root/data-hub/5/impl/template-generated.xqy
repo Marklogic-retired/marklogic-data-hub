@@ -291,8 +291,30 @@ declare function extraction-template-generate(
                        <tde:object><tde:val>sem:iri(concat("{ $related-entity-type}/", fn:encode-for-uri(xs:string(./{ $property-name}))))</tde:val></tde:object>
                      </tde:triple>
                   }
-
-                </tde:triples>
+                   </tde:triples>
+                   {
+                      let $related-concepts :=
+                          let $has-related-concepts := map:contains($entity-type, "relatedConcepts")
+                          let $map-related-concepts := map:get($entity-type, "relatedConcepts")
+                          for $concept in json:array-values($map-related-concepts)
+                          let $predicate_concept:=map:get($concept, "predicate")
+                          let $context:=map:get($concept, "context")
+                          let $conceptExpression:=map:get($concept, "conceptExpression")
+                          where exists($has-related-concepts)
+                          return
+                            <tde:template>
+                             <tde:context>{ $context}</tde:context>
+                            <tde:triples>
+                            <tde:triple>
+                               <tde:subject><tde:val>$subject-iri</tde:val></tde:subject>
+                               <tde:predicate><tde:val>sem:iri("{ $predicate_concept}")</tde:val></tde:predicate>
+                                <tde:object><tde:val>{ $conceptExpression}</tde:val></tde:object>
+                            </tde:triple>
+                            </tde:triples>
+                            </tde:template>
+                      where fn:exists($related-concepts)
+                      return <tde:templates>{$related-concepts}</tde:templates>
+                   }
               </tde:template>)
 
           else (),

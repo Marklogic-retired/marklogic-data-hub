@@ -35,12 +35,14 @@
         {
           "Quantity": "1",
           "ProductId": "10",
-          "Name": "New Balance FuelCell Echo V1 Sneaker"
+          "Name": "New Balance FuelCell Echo V1 Sneaker",
+          "Category": "Sneakers"
         },
         {
           "Quantity": "3",
           "ProductId": "20",
-          "Name": "Air Jordan 6 DMP Retro VI Black Metallic Gold"
+          "Name": "Air Jordan 6 DMP Retro VI Black Metallic Gold",
+          "Category": "Basketball Shoes"
         }
       ]
     },
@@ -52,12 +54,14 @@
         {
           "Quantity": "1",
           "ProductId": "30",
-          "Name": "Crock-Pot 8 Quart Manual Slow Cooker with 16 Oz Little Dipper Food Warmer, Stainless"
+          "Name": "Crock-Pot 8 Quart Manual Slow Cooker with 16 Oz Little Dipper Food Warmer, Stainless",
+          "Category": "Slow Cooker"
         },
         {
           "Quantity": "2",
           "ProductId": "40",
-          "Name": "Cuisinart 8-Cup Stainless Steel Electric Kettle with Automatic Shut-off"
+          "Name": "Cuisinart 8-Cup Stainless Steel Electric Kettle with Automatic Shut-off",
+          "Category": "Kettle"
         }
       ]
     }
@@ -68,11 +72,13 @@
     "Products": [
       {
         "ProductId": "50",
-        "Name": "Alepo Baby Beanie Hat, Infant Newborn Toddler Kids Winter Warm Knit Cap for Boys Girls"
+        "Name": "Alepo Baby Beanie Hat, Infant Newborn Toddler Kids Winter Warm Knit Cap for Boys Girls",
+        "Category": "Hat"
       },
       {
         "ProductId": "60",
-        "Name": "BlueSnail Newborn Receiving Blanket Baby Sleeping Wrap Swaddle (Gray)"
+        "Name": "BlueSnail Newborn Receiving Blanket Baby Sleeping Wrap Swaddle (Gray)",
+        "Category": "Blanket"
       }
     ]
   }

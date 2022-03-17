@@ -167,6 +167,9 @@
         },
         "productName": {
           "sourcedFrom": "customerInfo:Name"
+        },
+        "category": {
+          "sourcedFrom": "Category"
         }
       },
       "targetEntityType": "http://example.org/Product-1.0.0/Product"
