@@ -5,8 +5,16 @@
     display: block;
     width: 150px;
   }
-  .social-icons {
+  .social-items {
     display: flex;
-    gap: 15px;
+    gap: 28px;
+    a {
+      text-decoration: none;
+      .handle {
+        color: #394494;
+        padding-left: 6px;
+      }
+    }
   }
+
 }

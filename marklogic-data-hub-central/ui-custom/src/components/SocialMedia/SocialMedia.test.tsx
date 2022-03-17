@@ -7,13 +7,11 @@ const configMultiple = {
   config: {
     id: "socialmedia",
     title: "Social Media",
-    site: {
+    social: {
       arrayPath: "result[0].extracted.person.socials.social",
-      path: "site"
-    },
-    url: {
-      arrayPath: "result[0].extracted.person.socials.social",
-      path: "address"
+      site:"site",
+      handle: "handle",
+      url: "address"
     },
     sites: {
       facebook: {
@@ -54,13 +52,11 @@ const configSingular = {
   config: {
     id: "socialmedia",
     title: "Social Media",
-    site: {
+    social: {
       arrayPath: "result[0].extracted.person.social",
-      path: "site"
-    },
-    url: {
-      arrayPath: "result[0].extracted.person.social",
-      path: "address"
+      site:"site",
+      handle: "handle",
+      url: "address"
     },
     sites: {
       facebook: {
@@ -105,15 +101,15 @@ const socials = {
             "social": [
               {
                 "site": "twitter",
-                "address": "https://dmoz.org/sit/amet/erat/nulla/tempus/vivamus/in.aspx"
+                "address": "https://example.org/jsmith"
               },
               {
                 "site": "linkedin",
-                "address": "http://printfriendly.com/viverra/dapibus/nulla/suscipit/ligula/in.jsp"
+                "address": "https://example.com/jsmith1"
               },
               {
                 "site": "twitter",
-                "address": "http://globo.com/hac/habitasse/platea/dictumst.json"
+                "address": "https://example.org/johnsmith"
               }
             ]
           }
@@ -141,7 +137,13 @@ const social = {
 
 const detailContextValue = {
   detail: socials,
-  handleDetail: jest.fn()
+  recentRecords: [],
+  loading: false,
+  handleGetDetail: jest.fn(),
+  handleGetRecent: jest.fn(),
+  handleGetRecentLocal: jest.fn(),
+  handleSaveRecent: jest.fn(),
+  handleSaveRecentLocal: jest.fn()
 };
 describe("SocialMedia component", () => {
   test("Verify social media widget renders with a property object with multiple values", () => {
@@ -151,7 +153,7 @@ describe("SocialMedia component", () => {
       </DetailContext.Provider>
     );
     expect(getByText(configMultiple.config.title)).toBeInTheDocument();
-    expect(getByTestId("social-icons")).toBeInTheDocument();
+    expect(getByTestId("social-items")).toBeInTheDocument();
   })
   test("Verify social media widget renders with a property object with a single value", () => {
     const {getByText, getByTestId} = render(
@@ -160,6 +162,6 @@ describe("SocialMedia component", () => {
       </DetailContext.Provider>
     );
     expect(getByText(configSingular.config.title)).toBeInTheDocument();
-    expect(getByTestId("social-icons")).toBeInTheDocument();
+    expect(getByTestId("social-items")).toBeInTheDocument();
   })
 });

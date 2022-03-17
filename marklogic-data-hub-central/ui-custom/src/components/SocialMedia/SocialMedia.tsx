@@ -1,4 +1,6 @@
-import React, {useContext} from 'react';
+import React from 'react';
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
 import "./SocialMedia.scss";
 import * as IconDictionary from 'react-bootstrap-icons';
 import {getValByConfig} from '../../util/util';
@@ -27,14 +29,12 @@ type Props = {
       "component": "SocialMedia",
       "config": {
         "title": "Social Media",
-        "site": {
-          "arrayPath": "result[0].extracted.person.socials.social",
-          "path": "site"
-        },
-        "url": {
-          "arrayPath": "result[0].extracted.person.socials.social",
-          "path": "address"
-        },
+        "social": {
+            "arrayPath": "person.socials.social",
+            "site": "site",
+            "handle":"handle",
+            "url": "address"
+          },
         "sites": {
           "facebook": {
             "title": "facebook",
@@ -71,35 +71,47 @@ type Props = {
     }
  */
 const SocialMedia: React.FC<Props> = (props) => {
-  const {sites, site, url} = props.config;
+  const {sites, social} = props.config;
+  const {site, handle, url} = social;
 
 
-  let socialsName = getValByConfig(props.data, site);
-  socialsName = _.isNil(socialsName) ? null : (Array.isArray(socialsName) ? socialsName : [socialsName]);
-  let urls = getValByConfig(props.data, url);
-  urls = _.isNil(urls) ? null : (Array.isArray(urls) ? urls : [urls]);
+  let socials = getValByConfig(props.data, social);
+  socials = _.isNil(socials) ? null : (Array.isArray(socials) ? socials : [socials]);
 
-  const getIcons = () => {
-    if (Object.keys(sites).length === 0 || !socialsName || socialsName.length === 0) return [];
+  const getItems = () => {
+    if (Object.keys(sites).length === 0 || !socials || socials.length === 0) return [];
 
-    const icons = socialsName.reduce((acc, social, index) => {
-      if (!sites[social]) return acc;
-      const {title, color, icon, size = 18} = sites[social];
+    const icons = socials.reduce((acc, socialItem, index) => {
+      let siteVal: any = _.get(socialItem, site, []);
+      let handleVal: any = _.get(socialItem, handle, []);
+      let urlVal: any = _.get(socialItem, url, []);
+
+      if (!sites[siteVal]) return acc;
+      const {title, color, icon, size = 18} = sites[siteVal];
       if (!icon || !IconDictionary[icon]) return acc;
 
       const Icon = IconDictionary[icon];
-      const _icons = [...acc, (<a key={`${title}-${index}`} target="_blank" href={urls[index] ? urls[index] : "#"}><Icon color={color} size={size}/></a>)];
+      const link = (
+        <OverlayTrigger key={`${title}-${index}`} placement="bottom" overlay={props => (
+          <Tooltip {...props}>{urlVal ? urlVal : ""}</Tooltip>
+        )}>
+          <a target="_blank" href={urlVal ? urlVal : "#"}>
+            <Icon color={color} size={size} />
+            <span className="handle">{handleVal}</span>
+          </a>
+        </OverlayTrigger>);
+      const _icons = [...acc, link];
       return _icons
     }, []);
     return icons;
   }
-  return socialsName && socialsName.length > 0 ? (<div className="SocialMedia">
+  return socials && socials.length > 0 ? (<div className="SocialMedia">
     <div className="label">
       <span className="title">{props.config.title}</span>
     </div>
-    <div data-testid="social-icons" className="social-icons">
+    <div data-testid="social-items" className="social-items">
       {
-        getIcons()
+        getItems()
       }
     </div>
   </div>) : null;
