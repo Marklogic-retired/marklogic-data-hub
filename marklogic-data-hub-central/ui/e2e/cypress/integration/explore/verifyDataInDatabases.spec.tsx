@@ -35,7 +35,7 @@ describe("Verify All Data for final/staging databases and non-entity detail page
 
   it("Switch on zero state page and select query parameters for final database", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-    cy.wait(3000);
+    cy.wait(6000);
     entitiesSidebar.toggleAllDataView();
     browsePage.search("Adams");
     //verify the query data for final database on explore page

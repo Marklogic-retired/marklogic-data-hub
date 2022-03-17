@@ -123,7 +123,7 @@ describe("Graph Validations", () => {
       expect(centeredPersonX).to.be.greaterThan(700);
       expect(centeredPersonX).to.be.lessThan(800);
       expect(centeredPersonY).to.be.greaterThan(300);
-      expect(centeredPersonY).to.be.lessThan(400);
+      expect(centeredPersonY).to.be.lessThan(500);
     });
   });
 

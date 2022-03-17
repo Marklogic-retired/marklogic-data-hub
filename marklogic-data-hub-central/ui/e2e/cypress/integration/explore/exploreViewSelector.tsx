@@ -29,7 +29,7 @@ describe("Test '/Explore' view selector", () => {
     toolbar.getExploreToolbarIcon().click();
 
     cy.log(`**Selecting 'Graph' view**`);
-    browsePage.viewSelector("graph").should("be.visible").click();
+    browsePage.switchView("graph");
     browsePage.getGraphVisExploreContainer().should("be.visible");
 
     cy.log(`**Go to Monitor section**`);
@@ -52,7 +52,7 @@ describe("Test '/Explore' view selector", () => {
     toolbar.getExploreToolbarIcon().click();
 
     cy.log(`**Selecting 'Table' view**`);
-    browsePage.viewSelector("table").should("be.visible").click();
+    browsePage.switchView("table");
     browsePage.getMainTableContainer().should("be.visible");
 
     cy.log(`**Go to Monitor section**`);
@@ -75,7 +75,7 @@ describe("Test '/Explore' view selector", () => {
     toolbar.getExploreToolbarIcon().click();
 
     cy.log(`**Selecting 'Snippet' view**`);
-    browsePage.viewSelector("snippet").should("be.visible").click();
+    browsePage.switchView("snippet");
     browsePage.getSnippetContainer().should("be.visible");
 
     cy.log(`**Go to Monitor section**`);

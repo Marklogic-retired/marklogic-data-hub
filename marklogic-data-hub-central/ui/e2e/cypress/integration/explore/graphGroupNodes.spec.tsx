@@ -57,6 +57,7 @@ describe("Group Nodes", () => {
     });
 
     cy.log("**Right click and select expand 3 records of the Product group node**");
+
     graphExplore.focusNode(ExploreGraphNodes.PRODUCT_GROUP);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.PRODUCT_GROUP).then((nodePositions: any) => {
       let orderCoordinates: any = nodePositions[ExploreGraphNodes.PRODUCT_GROUP];
@@ -71,7 +72,7 @@ describe("Group Nodes", () => {
 
     });
     // Wait needed for the graph to get stabilized
-    cy.wait(1000);
+    cy.wait(3000);
     cy.log("**Validating the record's IDs that have been expanded in the side panel**");
 
     cy.log("**Click Product node '50' to open side panel and validate productID**");

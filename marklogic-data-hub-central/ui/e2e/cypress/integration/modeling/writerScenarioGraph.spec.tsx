@@ -362,6 +362,7 @@ describe("Entity Modeling: Graph View", () => {
 
     //return to Model tile and publish
     toolbar.getModelToolbarIcon().click();
+    cy.wait(2500); //wait for DOM as following element becomes detached
     cy.publishEntityModel();
 
     //verify relationship is visible in mapping

@@ -182,7 +182,7 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getSaveQueryCancelButton().click();
   });
   it("Checking manage query", () => {
-    browsePage.getExploreSettingsMenuIcon().click();
+    browsePage.clickExploreSettingsMenuIcon();
     browsePage.getManageQueriesModalOpened();
     queryComponent.getManageQueryModal().should("be.visible");
     queryComponent.getEditQuery().click();
