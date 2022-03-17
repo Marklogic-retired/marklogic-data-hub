@@ -542,7 +542,10 @@ const SearchProvider: React.FC<{children: any}> = ({children}) => {
     setSearchOptions({
       ...searchOptions,
       entityTypeIds: entityTypeIds,
-      selectedTableProperties: propertiesToDisplay
+      selectedTableProperties: propertiesToDisplay,
+      pageLength: 20,
+      start: 1,
+      pageNumber: 1
     });
   };
 
