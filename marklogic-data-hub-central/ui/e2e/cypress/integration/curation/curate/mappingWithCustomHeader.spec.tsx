@@ -229,6 +229,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     runPage.explorerLink().click();
     browsePage.getTableView().click();
     browsePage.waitForSpinnerToDisappear();
+    cy.wait(3000);
     browsePage.getFirstTableViewInstanceIcon().should("be.visible").click({force: true});
     detailPage.getDocumentSource().should("contain", "backup-ABC123");
     detailPage.getDocumentTimestamp().should("not.exist");

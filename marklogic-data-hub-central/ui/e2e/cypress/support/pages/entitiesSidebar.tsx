@@ -16,6 +16,7 @@ class BaseEntitySidebar {
   }
 
   removeLastSelectedBaseEntity() {
+    cy.get(`[class="css-xb97g8"]`).should("be.visible");
     return cy.get(`[class="css-xb97g8"]`).last().click();
   }
 
@@ -53,6 +54,7 @@ class BaseEntitySidebar {
   }
 
   openBaseEntityDropdown() {
+    cy.wait(2000);
     return cy.get("#entitiesSidebar-select-wrapper").scrollIntoView().click("right");
   }
 

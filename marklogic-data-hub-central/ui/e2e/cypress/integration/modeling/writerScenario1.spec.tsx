@@ -62,8 +62,8 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     //verify color and icon is reflected in the table
     modelPage.getColorSelected("Buyer", "#d5d3dd").should("exist");
     modelPage.getIconSelected("Buyer", "FaAccessibleIcon").should("exist");
-  });
-  it("Add a Multiple Value property", () => {
+    // });
+    // it("Add a Multiple Value property", () => {
     propertyModal.newPropertyName("user");
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Related Entity").click();
@@ -148,7 +148,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyModal.clearPropertyName();
     propertyModal.newPropertyName("buyer-id");
     propertyModal.getSubmitButton().click();
-    propertyTable.getProperty("buyer-id").should("not.exist");
+    cy.wait(1000);
     propertyTable.getProperty("buyer-id").should("exist");
     propertyTable.getMultipleIcon("buyer-id").should("exist");
     // check edited entity description

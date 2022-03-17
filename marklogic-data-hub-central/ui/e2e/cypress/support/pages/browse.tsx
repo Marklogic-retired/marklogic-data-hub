@@ -59,6 +59,10 @@ class BrowsePage {
     return cy.get(`[aria-label="switch-view-${view}"]`);
   }
 
+  switchView(view: string) {
+    return cy.get(`[aria-label="switch-view-${view}"]`).should("be.visible").click({force: true, waitForAnimations: false});
+  }
+
   getGraphVisExploreContainer() {
     return cy.get(`#graphVisExplore`);
   }
@@ -587,8 +591,10 @@ class BrowsePage {
     this.getHCTableRows().should("have.length.gt", 0);
   }
 
-  getExploreSettingsMenuIcon() {
-    return cy.get("[aria-label=explore-settings-menu]");
+  clickExploreSettingsMenuIcon() {
+    cy.wait(1000);
+    cy.get("[aria-label=explore-settingsIcon-menu]").should("exist");
+    return cy.get("[aria-label=explore-settingsIcon-menu]").click({force: true});
   }
 
   getManageQueriesButton() {
@@ -675,7 +681,7 @@ class BrowsePage {
     // cy.intercept("POST", "**/entitySearch?*").as("entitySearchStaging");
     // cy.wait("@entitySearchStaging");
     //tried intercept + wait on request but didn't work. Leaving comment as reference
-    cy.wait(3000);
+    cy.wait(6000);
   }
 
   getDatabaseButton(database: string) {

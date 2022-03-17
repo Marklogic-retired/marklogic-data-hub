@@ -69,7 +69,7 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
     //edit query
-    browsePage.getExploreSettingsMenuIcon().click();
+    browsePage.clickExploreSettingsMenuIcon();
     browsePage.getManageQueriesModalOpened();
     queryComponent.getManageQueryModal().should("be.visible");
     queryComponent.getEditQuery().click();
@@ -81,7 +81,7 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.waitForSpinnerToDisappear();
     browsePage.getSelectedQuery().should("contain", "editedQuery");
     //remove query
-    browsePage.getExploreSettingsMenuIcon().click();
+    browsePage.clickExploreSettingsMenuIcon();
     browsePage.getManageQueriesModalOpened();
     queryComponent.getManageQueryModal().should("be.visible");
     queryComponent.getDeleteQuery();
@@ -111,7 +111,7 @@ describe("manage queries modal scenarios, developer role", () => {
     detailPage.getMetadataView().should("exist");
     detailPage.getMetadataView().click();
     detailPage.getDocumentUri().should("contain", "/json/persons/last-name-dob-custom1.json");
-    browsePage.getExploreSettingsMenuIcon().click();
+    browsePage.clickExploreSettingsMenuIcon();
     browsePage.getManageQueriesModalOpened();
     queryComponent.getManageQueryModal().should("be.visible");
     queryComponent.getEditQueryIconForFirstRow().should("be.visible");
@@ -123,7 +123,7 @@ describe("manage queries modal scenarios, developer role", () => {
   });
   it("manage queries, edit, apply, delete query on zero state page", () => {
     //edit query
-    browsePage.getExploreSettingsMenuIcon().click();
+    browsePage.clickExploreSettingsMenuIcon();
     browsePage.getManageQueriesModalOpened();
     queryComponent.getManageQueryModal().should("be.visible");
     queryComponent.getEditQuery().click();
@@ -141,7 +141,7 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.getSelectedQueryDescription().should("contain", "editedQuery-description");
     //remove query
     browsePage.getResetQueryButton().click();
-    browsePage.getExploreSettingsMenuIcon().click();
+    browsePage.clickExploreSettingsMenuIcon();
     browsePage.getManageQueriesModalOpened();
     queryComponent.getManageQueryModal().should("be.visible");
     queryComponent.getDeleteQuery();
@@ -181,15 +181,13 @@ describe("manage queries modal scenarios, developer role", () => {
     cy.waitForAsyncRequest();
     browsePage.waitForSpinnerToDisappear();
     //verify the manage queries modal button is visible
-    browsePage.getExploreSettingsMenuIcon().click();
+    browsePage.clickExploreSettingsMenuIcon();
     browsePage.getManageQueriesButton().should("be.visible");
     //reload page and verify the manage queries modal button persist
     cy.reload();
     cy.waitForAsyncRequest();
     browsePage.waitForSpinnerToDisappear();
-    cy.waitUntil(() => browsePage.getExploreSettingsMenuIcon().should("be.visible"), {timeout: 10000});
-    cy.wait(1000);
-    browsePage.getExploreSettingsMenuIcon().click();
+    browsePage.clickExploreSettingsMenuIcon();
     cy.waitUntil(() => browsePage.getManageQueriesButton().should("have.length.gt", 0));
     cy.wait(1000);
     cy.waitForAsyncRequest();
@@ -230,7 +228,7 @@ describe("manage queries modal scenarios, developer role", () => {
     entitiesSidebar.toggleAllDataView();
 
     //Open the manage query modal to apply the recently created query
-    browsePage.getExploreSettingsMenuIcon().click();
+    browsePage.clickExploreSettingsMenuIcon();
     browsePage.getManageQueriesModalOpened();
     queryComponent.getManageQueryModal().should("be.visible");
     queryComponent.getQueryByName("personQuery-test").click();
@@ -245,7 +243,7 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.getSelectedFacet("Alice").should("exist");
 
     //open manage queries modal dialog and remove previously saved query
-    browsePage.getExploreSettingsMenuIcon().click();
+    browsePage.clickExploreSettingsMenuIcon();
     browsePage.getManageQueriesModalOpened();
     queryComponent.getManageQueryModal().should("be.visible");
     queryComponent.getDeleteQuery();
@@ -283,7 +281,7 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.waitForSpinnerToDisappear();
 
     //verify the manage queries modal button is visible
-    browsePage.getExploreSettingsMenuIcon().click();
+    browsePage.clickExploreSettingsMenuIcon();
     browsePage.getManageQueriesButton().should("be.visible");
 
     //open manage queries modal dialog and apply previosly saved query
@@ -317,7 +315,7 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.getSelectedQuery().should("contain", "personQuery");
 
     //verify the manage queries modal button is visible
-    browsePage.getExploreSettingsMenuIcon().click();
+    browsePage.clickExploreSettingsMenuIcon();
     browsePage.getManageQueriesButton().should("be.visible");
 
     //open manage queries modal dialog and apply previosly saved query

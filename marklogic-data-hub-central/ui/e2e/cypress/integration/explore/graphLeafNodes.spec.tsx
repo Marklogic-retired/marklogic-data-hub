@@ -75,6 +75,7 @@ describe("Leaf Nodes", () => {
     });*/
 
     cy.log("**Clicking collapse all records**");
+    cy.wait(1500); //wait for graph to stabilize
     graphExplore.focusNode(ExploreGraphNodes.OFFICE_101);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.OFFICE_101).then((nodePositions: any) => {
       let orderCoordinates: any = nodePositions[ExploreGraphNodes.OFFICE_101];
