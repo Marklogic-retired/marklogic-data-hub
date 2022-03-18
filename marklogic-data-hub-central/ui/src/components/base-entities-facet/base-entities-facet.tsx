@@ -7,7 +7,7 @@ import styles from "./base-entities-facet.module.scss";
 import {ChevronDoubleRight} from "react-bootstrap-icons";
 import {baseEntitiesSorting, entitiesSorting} from "../../util/entities-sorting";
 import {HCDivider, HCTooltip} from "@components/common";
-import {exploreSidebar} from "../../config/explore.config";
+import {defaultPaginationOptions, exploreSidebar} from "../../config/explore.config";
 import DynamicIcons from "@components/common/dynamic-icons/dynamic-icons";
 import {ExploreGraphViewToolTips} from "../../config/tooltips.config";
 
@@ -27,8 +27,6 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
   const {setCurrentBaseEntities, setEntitySpecificPanel, currentBaseEntities, allBaseEntities} = props;
 
   const {
-    setBaseEntitiesWithProperties,
-    setEntityTypeIds,
     searchOptions,
     setSearchOptions,
   } = useContext(SearchContext);
@@ -36,8 +34,6 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
   const [entityNames, setEntityNames] = useState<string[]>(searchOptions.entityTypeIds.length === 0 ? ["All Entities"] : entitiesSorting(searchOptions.entityTypeIds));
   const [displayList, setDisplayList] = useState<any[]>(baseEntitiesSorting(currentBaseEntities));
   const [showMore, setShowMore] = useState<boolean>(false);
-
-
 
   useEffect(() => {
     const isAllEntities = searchOptions.entityTypeIds.length === 0 || searchOptions.entityTypeIds.length === allBaseEntities.length;
@@ -79,7 +75,8 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
         ...searchOptions,
         entityTypeIds: allBaseEntities.map(entities => entities.name),
         baseEntities: allBaseEntities,
-        relatedEntityTypeIds: []
+        relatedEntityTypeIds: [],
+        ...defaultPaginationOptions
       });
       if (props.activeKey.indexOf("related-entities") !== -1) { props.setActiveAccordionRelatedEntities("related-entities"); }
     } else {
@@ -87,19 +84,19 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
       const filteredEntities = allBaseEntities.filter(entity => clearSelection.includes(entity.name));
       setEntityNames(clearSelection);
       setCurrentBaseEntities(baseEntitiesSorting(filteredEntities));
-      setSearchOptions({
-        ...searchOptions,
-        entityTypeIds: clearSelection,
-        baseEntities: filteredEntities
-      });
       if (props.activeKey.indexOf("related-entities") === -1) { props.setActiveAccordionRelatedEntities("related-entities"); }
 
+      let updatedSearchOptions = {
+        ...searchOptions,
+        entityTypeIds: clearSelection,
+        baseEntities: filteredEntities,
+        ...defaultPaginationOptions
+      };
       if (filteredEntities.length === 1) {
         let queryColumnsToDisplay = filteredEntities[0].properties?.map(property => { return property.name; });
-        setBaseEntitiesWithProperties(clearSelection, queryColumnsToDisplay);
-      } else {
-        setEntityTypeIds(clearSelection);
+        updatedSearchOptions["selectedTableProperties"] = queryColumnsToDisplay;
       }
+      setSearchOptions(updatedSearchOptions);
     }
   };
 
@@ -177,7 +174,7 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
           let finalColor = color ? color : "#EEEFF1";
           if (name) {
             return (
-              <HCTooltip text={ExploreGraphViewToolTips.entityToolTip} placement="top" id="baseEntityToolTip">
+              <HCTooltip text={ExploreGraphViewToolTips.entityToolTip} placement="top" id="baseEntityToolTip" key={name}>
                 <div
                   key={name}
                   aria-label={`base-entities-${name}`}

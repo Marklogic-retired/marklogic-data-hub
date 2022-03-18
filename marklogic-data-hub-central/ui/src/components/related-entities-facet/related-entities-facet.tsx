@@ -104,7 +104,7 @@ const RelatedEntitiesFacet: React.FC<Props> = (props) => {
             let finalIcon = icon ? icon : "FaShapes";
             let finalColor = color ? color : "#EEEFF1";
             return (
-              <HCTooltip text={relatedEntitiesDisabled.includes(option) ? ExploreGraphViewToolTips.entityToolTipDisabled(option) : ExploreGraphViewToolTips.entityToolTip} placement="top" id="relatedEntityToolTip" aria-label="relatedEntityToolTip">
+              <HCTooltip text={relatedEntitiesDisabled.includes(option) ? ExploreGraphViewToolTips.entityToolTipDisabled(option) : ExploreGraphViewToolTips.entityToolTip} placement="top" id="relatedEntityToolTip" aria-label="relatedEntityToolTip" key={name}>
                 <div
                   style={{backgroundColor: finalColor, borderStyle: "solid", borderWidth: "1px", borderColor: "#d9d9d9", borderRadius: "4px"}}
                   className={relatedEntitiesDisabled.includes(option)  ? styles.entityItemDisabled : styles.entityItem}
