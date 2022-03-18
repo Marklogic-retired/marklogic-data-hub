@@ -225,7 +225,7 @@ const ResultsTabularView = (props) => {
             if (expandedNestedTableColumn.includes(key)) {
               return renderStructuredProperty(properties, cell);
             } else {
-              return (properties?.map((col, index) => <div style={{textOverflow: "ellipsis", overflow: "hidden"}}>{col.propertyLabel}</div>));
+              return (properties?.map((col, index) => <div style={{textOverflow: "ellipsis", overflow: "hidden"}} key={index}>{col.propertyLabel}</div>));
             }
           },
           onCell: () => {
@@ -247,7 +247,7 @@ const ResultsTabularView = (props) => {
           ...setSortOptions(item),
           formatter: (value) => {
             if (!Array.isArray(value)) return (<div>{value}</div>);
-            return (value?.map((el, index) => <div style={{textOverflow: "ellipsis", overflow: "hidden"}}>{el}</div>));
+            return (value?.map((el, index) => <div style={{textOverflow: "ellipsis", overflow: "hidden"}} key={index}>{el}</div>));
           }
         };
       }
