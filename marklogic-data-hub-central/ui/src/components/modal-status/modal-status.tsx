@@ -137,7 +137,7 @@ const ModalStatus: React.FC<Props> = (props) => {
   return (
     <Modal
       show={showModal}
-      style={{"z-index": "5000"}}
+      style={{zIndex: "5000"}}
     >
       <Modal.Header className={"pe-4"}>
         <span className={"fs-4"}>{title}</span>

@@ -306,7 +306,7 @@ const SearchProvider: React.FC<{children: any}> = ({children}) => {
       ...searchOptions,
       start: 1,
       selectedFacets: facets,
-      entityTypeIds: entityName === "All Entities" ? entityDefinitionsArray : [entityName],
+      entityTypeIds: entityName === "All Entities" ? entityDefinitionsArray.map(entity => entity.name) : [entityName],
       nextEntityType: entityName ? "All Entities" : "All Data",
       datasource: entityName ? "entities" : "all-data",
       selectedTableProperties: [],

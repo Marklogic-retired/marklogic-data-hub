@@ -8,23 +8,29 @@ import LoginPage from "../../../support/pages/login";
 let flowName = "testPersonXML";
 
 describe("Run Tile tests", () => {
-
-  beforeEach(() => {
+  before(() => {
     cy.visit("/");
     cy.contains(Application.title);
-    cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer").withRequest();
-    LoginPage.postLogin();
-    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
-    cy.waitUntil(() => runPage.getFlowName("personJSON").should("be.visible"));
-    cy.intercept("/api/jobs/**").as("getJobs");
-  });
 
-  /*   after(() => {
-      cy.deleteRecordsInFinal("master-xml-person", "mapPersonXML");
-      cy.deleteFlows(flowName);
-      cy.resetTestUser();
-    }); */
+    cy.log("**Logging into the app as a developer**");
+    cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer").withRequest();
+    //Saving Local Storage to preserve session
+    cy.saveLocalStorage();
+
+    LoginPage.postLogin();
+    cy.waitForAsyncRequest();
+  });
+  beforeEach(() => {
+    //Restoring Local Storage to Preserve Session
+    Cypress.Cookies.preserveOnce("HubCentralSession");
+    cy.restoreLocalStorage();
+  });
+  after(() => {
   // Skipped since it tests functionality on DHFPROD-7187 (run selected flows)
+    // cy.deleteRecordsInFinal("master-xml-person", "mapPersonXML");
+    // cy.deleteFlows(flowName);
+    cy.resetTestUser();
+  });
   it.skip("can create flow and add steps to flow, should load xml merged document and display content", {defaultCommandTimeout: 120000}, () => {
     //Verify create flow and add all user-defined steps to flow via Run tile
     runPage.createFlowButton().click();
@@ -122,30 +128,92 @@ describe("Run Tile tests", () => {
         cy.contains("123 Wilson St").scrollIntoView().should("be.visible");
         cy.contains("123 Wilson Rd").should("be.visible"); */
   });
-
   // Skipped until DHFPROD-7477 is done (explore button)
-  it.skip("show all entity instances in Explorer after running mapping with related entities", {defaultCommandTimeout: 120000}, () => {
+  it.skip("show all entity instances in Explorer after running mapping with related entities", () => {
     const flowName = "CurateCustomerWithRelatedEntitiesJSON";
-    //expand flow
+    const stepName = "mapCustomersWithRelatedEntitiesJSON";
+
+    cy.log("**Navigate to run tile and check visibility of the personJSON flow**");
+    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    cy.waitUntil(() => runPage.getFlowName("personJSON").should("be.visible"));
+    cy.intercept("/api/jobs/**").as("getJobs");
+
+    cy.log(`**Expand flow: ${flowName}**`);
     runPage.expandFlow(flowName);
 
-    //run mapping step
-    runPage.runStep("mapCustomersWithRelatedEntitiesJSON", flowName);
-    // replace this with something that takes into consideration the Modal text, this one doesnt work
-    runPage.verifyStepRunResult("mapCustomersWithRelatedEntitiesJSON", "success");
+    cy.log(`**Run mapping step (${stepName}) and verify results dialog**`);
+    runPage.runStep(stepName, flowName);
+    cy.verifyStepRunResult("success", "Mapping", stepName);
     cy.waitForAsyncRequest();
 
-    //navigate to explorer tile using the explorer link
+    cy.log("**Navigate to explorer tile using the explorer link**");
     runPage.explorerLink().click();
     browsePage.waitForSpinnerToDisappear();
+    browsePage.getTitleExplore().should("be.visible");
     cy.waitForAsyncRequest();
     browsePage.getTableView().click();
     browsePage.waitForHCTableToLoad();
 
     //Revalidate below with DHFPROD-8455
     // browsePage.getSelectedEntity().should("contain", "All Entities");
+    cy.log("**Verify the totals results and the createdByJob facet**");
     browsePage.getTotalDocuments().should("eq", 2);
     browsePage.getSelectedFacet("createdByJob").should("exist");
   });
+  it.skip("Explore results after run two map steps being the second one with related entities", () => {
+    const firstFlowName = "personJSON";
+    const firstStepName = "mapPersonJSON";
+    const secondFlowName = "CurateCustomerWithRelatedEntitiesJSON";
+    const secondStepName = "mapCustomersWithRelatedEntitiesJSON";
 
+    cy.log("**Navigate to run tile and check visibility of the personJSON flow**");
+    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    cy.waitUntil(() => runPage.getFlowName("personJSON").should("be.visible"));
+    cy.intercept("/api/jobs/**").as("getJobs");
+
+    cy.log(`**Expand flow: ${firstFlowName}**`);
+    runPage.expandFlow(firstFlowName);
+
+    cy.log(`**Run mapping step (${firstStepName}) and verify results dialog**`);
+    runPage.runStep(firstStepName, firstFlowName);
+    cy.verifyStepRunResult("success", "Mapping", firstStepName);
+    cy.waitForAsyncRequest();
+
+    cy.log("**Navigate to explorer tile using the explorer link**");
+    runPage.explorerLink().click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getTitleExplore().should("be.visible");
+    cy.waitForAsyncRequest();
+    browsePage.getTableView().click();
+    browsePage.waitForHCTableToLoad();
+
+    cy.log("**Verify the totals results and the createdByJob facet**");
+    browsePage.getTotalDocuments().should("eq", 14);
+    browsePage.getSelectedFacet("createdByJob").should("exist");
+
+    cy.log("**Navigate to run tile and check visibility of the personJSON flow**");
+    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    cy.waitUntil(() => runPage.getFlowName("personJSON").should("be.visible"));
+    cy.intercept("/api/jobs/**").as("getJobs");
+
+    cy.log(`**Expand flow: ${secondFlowName}**`);
+    runPage.expandFlow(secondFlowName);
+
+    cy.log(`**Run mapping step (${secondStepName}) and verify results dialog**`);
+    runPage.runStep(secondStepName, secondFlowName);
+    cy.verifyStepRunResult("success", "Mapping", secondStepName);
+    cy.waitForAsyncRequest();
+
+    cy.log("**Navigate to explorer tile using the explorer link**");
+    runPage.explorerLink().click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getTitleExplore().should("be.visible");
+    cy.waitForAsyncRequest();
+    browsePage.getTableView().click();
+    browsePage.waitForHCTableToLoad();
+
+    cy.log("**Verify the totals results and the createdByJob facet**");
+    browsePage.getTotalDocuments().should("eq", 2);
+    browsePage.getSelectedFacet("createdByJob").should("exist");
+  });
 });
