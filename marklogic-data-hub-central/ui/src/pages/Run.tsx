@@ -510,6 +510,7 @@ const Run = (props) => {
                 size={"lg"}
                 animation={false}
                 dialogClassName={styles.modal650w}
+                key={"success-message"}
               >
                 <Modal.Body className={"pt-5 pb-4 ps-5 pe-4"}>
                   <div className={"d-flex align-items-center mb-4"}>
@@ -543,6 +544,7 @@ const Run = (props) => {
                 show={errorModal.isVisible}
                 size={"lg"}
                 animation={false}
+                key={"error-message"}
               >
                 <Modal.Body className={"pt-5 pb-4"}>
                   <div className={"d-flex align-items-center mb-3"}>
@@ -587,6 +589,7 @@ const Run = (props) => {
                 show={failedModal.isVisible}
                 size={"lg"}
                 animation={false}
+                key={"failed-message"}
               >
                 <Modal.Body className={"pt-5 pb-4"}>
                   <div className={"d-flex align-items-center mb-3"}>

@@ -2,6 +2,10 @@ import "cypress-wait-until";
 
 class BrowsePage {
 
+  getTitleExplore() {
+    return cy.get(`[aria-label="title-explore"]`);
+  }
+
   getSelectedEntity() {
     return cy.get("#entitiesSidebar-select-wrapper").invoke("text");
   }
