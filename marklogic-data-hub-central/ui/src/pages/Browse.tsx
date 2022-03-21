@@ -43,6 +43,7 @@ const Browse: React.FC<Props> = ({location}) => {
     user,
     handleError
   } = useContext(UserContext);
+  const userPreferences = JSON.parse(getUserPreferences(user.name));
   const {
     searchOptions,
     greyedOptions,
@@ -68,8 +69,9 @@ const Browse: React.FC<Props> = ({location}) => {
   const [isLoading, setIsLoading] = useState(true);
   const [totalDocuments, setTotalDocuments] = useState(0);
   const [viewOptions, setViewOptions] = useState({
-    graphView: JSON.parse(getUserPreferences(user.name)).graphView ? JSON.parse(getUserPreferences(user.name)).graphView : false,
-    tableView: JSON.parse(getUserPreferences(user.name)).tableView ? JSON.parse(getUserPreferences(user.name)).tableView : false});
+    graphView: userPreferences.graphView ? userPreferences.graphView : false,
+    tableView: userPreferences.tableView ? userPreferences.tableView : false
+  });
   const [endScroll, setEndScroll] = useState(false);
   const [selectedFacets, setSelectedFacets] = useState<any[]>([]);
   const [greyFacets, setGreyFacets] = useState<any[]>([]);
@@ -81,8 +83,8 @@ const Browse: React.FC<Props> = ({location}) => {
   const [isColumnSelectorTouched, setColumnSelectorTouched] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
   let state: any = location.state;
-  const [cardView, setCardView] = useState(state && state["isEntityInstance"] ? true : JSON.parse(getUserPreferences(user.name)).cardView ? true : false);
-  const [hideDataHubArtifacts, toggleDataHubArtifacts] = useState(JSON.parse(getUserPreferences(user.name)).query?.hideHubArtifacts);
+  const [cardView, setCardView] = useState(state && state["isEntityInstance"] ? true : userPreferences.cardView ? true : false);
+  const [hideDataHubArtifacts, toggleDataHubArtifacts] = useState(userPreferences.query?.hideHubArtifacts);
   const [entitiesData, setEntitiesData] = useState<any[]>([]);
   const [showNoDefinitionAlertMessage, setShowNoDefinitionAlertMessage] = useState(false);
   const [entitySpecificPanel, setEntitySpecificPanel] = useState<any>(undefined);
@@ -93,7 +95,7 @@ const Browse: React.FC<Props> = ({location}) => {
   const [showApply, toggleApply] = useState(false);
   const [updateSpecificFacets, setUpdateSpecificFacets] = useState<boolean>(false);
   const [parsedFacets, setParsedFacets] = React.useState<any[]>([]);
-  const [selectedView, setSelectedView] = useState<ViewType>(viewOptions.graphView? ViewType.graph : ViewType.table ? ViewType.table : ViewType.snippet);
+  const [selectedView, setSelectedView] = useState<ViewType>(viewOptions.graphView ? ViewType.graph : (viewOptions.tableView ? ViewType.table : ViewType.snippet));
 
   const searchResultDependencies = [
     searchOptions.pageLength,
