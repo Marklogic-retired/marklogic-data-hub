@@ -1,6 +1,6 @@
 @import "../../../theme/HCVariables.scss";
 
-.entityIconList, .relatedEntityIconList {
+.entityIconList, .relatedEntityIconList, .relatedEntityIconListDisabled {
     color: $secondary-gray;
     font-weight: bold;
     display: flex;
@@ -13,8 +13,14 @@
     margin-top: 12px;
 }
 
-.relatedEntityIconList {
+.relatedEntityIconList, .relatedEntityIconListDisabled {
     margin-top: 4px;
+}
+
+.relatedEntityIconListDisabled {
+    opacity: 50%;
+    cursor: not-allowed;
+    color: #777 !important;
 }
 
 .chevronBack {
@@ -26,7 +32,7 @@
     cursor: pointer;
 }
 
-.entityIconListItem{
+.entityIconListItem, .entityIconListItemDisabled {
     padding-block: 12px;
     padding-left: 17px;
     margin-block: 3px;
@@ -35,6 +41,10 @@
     font-size: 14px;
     border-radius: 3px 0px 0px 3px;
     cursor: pointer;
+}
+
+.entityIconListItemDisabled {
+    cursor: not-allowed;
 }
 
 .separator {
