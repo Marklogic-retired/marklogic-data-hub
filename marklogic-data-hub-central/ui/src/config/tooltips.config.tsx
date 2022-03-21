@@ -3,7 +3,6 @@ import oneToManyIcon from "../assets/one-to-many-white.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faKey, faLayerGroup } from "@fortawesome/free-solid-svg-icons";
 import styles from "../components/tiles/tiles.module.scss";
-import modelIcon from "../assets/model-overview-helpInfo.svg";
 import "./tooltips.config.scss";
 import { Tooltip } from "react-bootstrap";
 
@@ -391,6 +390,7 @@ const MergingStepTooltips = {
   /* For strategies */
   nameStrategy: 'The name of this strategy.',
   strategyScale: 'Enable the scale to position or delete length and sources.',
+  defaultStrategy: <span aria-label="defaultStrategyTooltip">Select <strong>Yes</strong> to make the merge strategy the default strategy. The default strategy is applied to all properties not assigned a merge rule.</span>,
 
   /* For rulesets */
   function: 'The merge function to run.',

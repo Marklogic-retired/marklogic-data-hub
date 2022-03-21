@@ -4,6 +4,7 @@ import {definitionsParser} from "../../../util/data-conversion";
 import {mergingStep} from "./merging.data";
 import {mappingStep} from "./mapping.data";
 import curateData from "./flows.data";
+import MappingOptionsInterface from "../../../types/curation-types";
 
 const customerEntityDefsArray = definitionsParser(customerEntityDef[0]["entityModel"].definitions);
 const customerEntityDefsArrWithLargePropCount = definitionsParser(customerEntityDefWithLargePropCount[0]["entityModel"].definitions);
@@ -47,6 +48,18 @@ export const customerMergingStep = {
       hasWarnings: []
     }
   },
+  validateCalled: false,
+  validateMerge: false,
+  loadModalClicked: false,
+  mappingOptions: MappingOptionsInterface,
+  setLoadModalClickedCalled: jest.fn(),
+  setValidateMatchCalled: jest.fn(),
+  setValidateMergeCalled: jest.fn(),
+  setActiveStepWarning: jest.fn(),
+  setOpenStepSettings: jest.fn(),
+  setOpenStep: jest.fn(),
+  setIsEditing: jest.fn(),
+  setStepOpenOptions: jest.fn(),
   setActiveStep: jest.fn(),
   updateActiveStepArtifact: jest.fn()
 };

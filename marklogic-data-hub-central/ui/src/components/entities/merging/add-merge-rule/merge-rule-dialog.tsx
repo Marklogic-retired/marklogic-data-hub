@@ -82,6 +82,18 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
   const dropdownTypes = ["Length"].concat(props.sourceNames);
   const dropdownTypeOptions = dropdownTypes.map(elem => ({value: elem, label: elem}));
 
+
+  useEffect(() => {
+    if (props.createEditMergeRuleDialog) {
+      let mergeStrategies = curationOptions.activeStep.stepArtifact.mergeStrategies;
+      let defaultStrategy = mergeStrategies.filter(strategy => strategy.default);
+      if (defaultStrategy.length > 0) {
+        setStrategyValue(defaultStrategy[0].strategyName);
+      }
+    }
+  }, [props.createEditMergeRuleDialog]);
+
+
   useEffect(() => {
     if (!props.isEditRule && curationOptions.entityDefinitionsArray.length > 0 && curationOptions.activeStep.entityName !== "") {
       let entityTypeDefinition: Definition = curationOptions.entityDefinitionsArray.find(entityDefinition => entityDefinition.name === curationOptions.activeStep.entityName) || DEFAULT_ENTITY_DEFINITION;

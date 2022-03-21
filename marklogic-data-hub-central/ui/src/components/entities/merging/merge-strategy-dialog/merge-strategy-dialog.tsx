@@ -572,7 +572,11 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
                     value={2}
                     aria-label="defaultStrategyNo"
                     className={"mb-0 flex-shrink-0"}
-                  />
+                  >
+                  </Form.Check>
+                  <HCTooltip text={MergingStepTooltips.defaultStrategy} id="default-strategy-tooltip" placement="top">
+                    <QuestionCircleFill color="#7F86B5" className={`flex-shrink-1 ${styles.questionCircleDefault}`} size={13} aria-label="icon: question-circle"/>
+                  </HCTooltip>
                 </Col>
                 <Col xs={12} className={styles.validationError}>
                   {defaultStrategyErrorMessage}

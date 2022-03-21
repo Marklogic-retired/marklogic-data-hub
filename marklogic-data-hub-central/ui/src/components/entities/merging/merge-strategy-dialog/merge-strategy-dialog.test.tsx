@@ -42,8 +42,12 @@ describe("Merge Strategy Dialog component", () => {
     expect(getByTestId("prioritySlider")).toBeInTheDocument();
 
     //Verify priority option slider tooltip
-    userEvent.hover(getAllByLabelText("icon: question-circle")[2]);
+    userEvent.hover(getAllByLabelText("icon: question-circle")[3]);
     expect((await(waitForElement(() => getByLabelText("priorityOrderTooltip"))))).toBeInTheDocument();
+
+    //Verify Default Strategy Tooltip
+    userEvent.hover(getAllByLabelText("icon: question-circle")[2]);
+    expect((await(waitForElement(() => getByLabelText("defaultStrategyTooltip"))))).toBeInTheDocument();
 
     //Default Timeline is visible by default
     expect(queryByTestId("default-priorityOrder-timeline")).toBeInTheDocument();
