@@ -21,7 +21,6 @@ describe("Mapping", () => {
   });
   beforeEach(() => {
     //Restoring Local Storage to Preserve Session
-    Cypress.Cookies.preserveOnce("HubCentralSession");
     cy.restoreLocalStorage();
   });
   after(() => {

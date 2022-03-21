@@ -15,16 +15,13 @@ describe("Custom step settings: ", () => {
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-match-merge-writer", "hub-central-mapping-writer", "hub-central-load-writer", "hub-central-custom-writer").withRequest();
     LoginPage.postLogin();
+    //Saving Local Storage to preserve session
+    cy.saveLocalStorage();
   });
+
   beforeEach(() => {
-    cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-match-merge-writer", "hub-central-mapping-writer", "hub-central-load-writer", "hub-central-custom-writer").withRequest();
-  });
-  afterEach(() => {
-    cy.resetTestUser();
-  });
-  after(() => {
-    cy.loginAsDeveloper().withRequest();
-    cy.resetTestUser();
+    //Restoring Local Storage to Preserve Session
+    cy.restoreLocalStorage();
   });
 
   it("Navigate to Curate tile -> Customer entity -> custom tab", () => {

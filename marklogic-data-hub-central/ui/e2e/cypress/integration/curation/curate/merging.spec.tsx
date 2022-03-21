@@ -18,15 +18,12 @@ describe("Merging", () => {
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-match-merge-writer", "hub-central-mapping-writer", "hub-central-load-writer").withRequest();
     LoginPage.postLogin();
-    cy.waitForAsyncRequest();
+    //Saving Local Storage to preserve session
+    cy.saveLocalStorage();
   });
   beforeEach(() => {
-    cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-match-merge-writer", "hub-central-mapping-writer", "hub-central-load-writer").withRequest();
-    cy.waitForAsyncRequest();
-  });
-  afterEach(() => {
-    cy.resetTestUser();
-    cy.waitForAsyncRequest();
+    //Restoring Local Storage to Preserve Session
+    cy.restoreLocalStorage();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();

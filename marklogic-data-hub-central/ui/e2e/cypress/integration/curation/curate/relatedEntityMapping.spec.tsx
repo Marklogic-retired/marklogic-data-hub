@@ -27,15 +27,12 @@ describe("Mapping", () => {
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer", "hub-central-load-writer", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
     LoginPage.postLogin();
-    cy.waitForAsyncRequest();
+    //Saving Local Storage to preserve session
+    cy.saveLocalStorage();
   });
   beforeEach(() => {
-    cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer", "hub-central-load-writer", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
-    cy.waitForAsyncRequest();
-  });
-  afterEach(() => {
-    cy.resetTestUser();
-    cy.waitForAsyncRequest();
+    //Restoring Local Storage to Preserve Session
+    cy.restoreLocalStorage();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();

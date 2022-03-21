@@ -18,21 +18,17 @@ describe("Check visibility of dropdown with search in mapping step details table
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-mapping-writer").withRequest();
     LoginPage.postLogin();
+    //Saving Local Storage to preserve session
     cy.saveLocalStorage();
   });
   beforeEach(() => {
-    Cypress.Cookies.preserveOnce("HubCentralSession");
+    //Restoring Local Storage to Preserve Session
     cy.restoreLocalStorage();
-  });
-  afterEach(() => {
-    cy.resetTestUser();
-    cy.waitForAsyncRequest();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.deleteSteps("mapping", mapStep);
     cy.resetTestUser();
-    cy.waitForAsyncRequest();
   });
 
 

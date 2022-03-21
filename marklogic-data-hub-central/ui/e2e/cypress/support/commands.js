@@ -337,6 +337,7 @@ Cypress.Commands.add("saveLocalStorage", () => {
 });
 //Restore (preserve) Local Storage Data
 Cypress.Commands.add("restoreLocalStorage", () => {
+  Cypress.Cookies.preserveOnce("HubCentralSession");
   Object.keys(LOCAL_STORAGE_MEMORY).forEach(key => {
     localStorage.setItem(key, LOCAL_STORAGE_MEMORY[key]);
   });

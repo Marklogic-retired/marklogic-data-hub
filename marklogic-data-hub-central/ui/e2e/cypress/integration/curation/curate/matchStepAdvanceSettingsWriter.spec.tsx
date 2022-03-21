@@ -17,15 +17,12 @@ describe("Validate Advance Settings for hub-central-match-merge-writer role", ()
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-match-merge-writer").withRequest();
     LoginPage.postLogin();
-    cy.waitForAsyncRequest();
+    //Saving Local Storage to preserve session
+    cy.saveLocalStorage();
   });
   beforeEach(() => {
-    cy.loginAsTestUserWithRoles("hub-central-match-merge-writer").withRequest();
-    cy.waitForAsyncRequest();
-  });
-  afterEach(() => {
-    cy.resetTestUser();
-    cy.waitForAsyncRequest();
+    //Restoring Local Storage to Preserve Session
+    cy.restoreLocalStorage();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();
