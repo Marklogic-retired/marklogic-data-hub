@@ -131,5 +131,13 @@ class BaseEntitySidebar {
   clickOnRelatedEntity(entity: string) {
     return this.getRelatedEntity(entity).click();
   }
+
+  getRelatedEntityIcon(entityName: string) {
+    return cy.get(`[aria-label="related-entity-icon-${entityName}"]`);
+  }
+
+  getDisabledRelatedEntityTooltip() {
+    return cy.get(`[aria-label="disabled-related-entity-tooltip"]`);
+  }
 }
 export default new BaseEntitySidebar();
