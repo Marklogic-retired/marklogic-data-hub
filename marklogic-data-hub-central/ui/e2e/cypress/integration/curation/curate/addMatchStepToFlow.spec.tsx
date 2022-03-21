@@ -20,22 +20,18 @@ describe("Add Matching step to a flow", () => {
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
+    //Saving Local Storage to preserve session
+    cy.saveLocalStorage();
   });
   beforeEach(() => {
-    cy.loginAsDeveloper().withRequest();
-    cy.intercept("/api/jobs/**").as("getJobs");
-    cy.waitForAsyncRequest();
-  });
-  afterEach(() => {
-    cy.resetTestUser();
-    cy.waitForAsyncRequest();
+    //Restoring Local Storage to Preserve Session
+    cy.restoreLocalStorage();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.deleteSteps("matching", matchStep);
     cy.deleteFlows(flowName1, flowName2);
     cy.resetTestUser();
-
   });
   it("Navigating to Customer Match tab", () => {
     toolbar.getCurateToolbarIcon().should("be.visible").click();

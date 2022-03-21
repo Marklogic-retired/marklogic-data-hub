@@ -20,23 +20,18 @@ describe("Add Merge step to a flow", () => {
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
-    cy.waitForAsyncRequest();
+    //Saving Local Storage to preserve session
+    cy.saveLocalStorage();
   });
   beforeEach(() => {
-    cy.loginAsDeveloper().withRequest();
-    cy.waitForAsyncRequest();
-    cy.intercept("/api/jobs/**").as("getJobs");
-  });
-  afterEach(() => {
-    cy.resetTestUser();
-    cy.waitForAsyncRequest();
+    //Restoring Local Storage to Preserve Session
+    cy.restoreLocalStorage();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.deleteSteps("merging", mergeStep);
     cy.deleteFlows(flowName2, flowName1);
     cy.resetTestUser();
-    cy.waitForAsyncRequest();
   });
   it("Navigating to Customer Merge tab", () => {
     toolbar.getCurateToolbarIcon().should("be.visible").click();
