@@ -176,6 +176,14 @@ describe("Test '/Explore' left sidebar", () => {
     browsePage.getTableViewCell("10248").should("have.length.gt", 0);
     browsePage.getTableViewCell("101").should("have.length.gt", 0);
 
+    cy.log("Verify related entity icons are disabled in table view");
+    entitiesSidebar.openBaseEntityFacets("Customer");
+    entitiesSidebar.getEntityIconFromList("Customer").should("be.visible");
+    entitiesSidebar.getRelatedEntityIcon("Office").should("be.visible");
+    entitiesSidebar.getRelatedEntityIcon("Office").trigger("mouseover");
+    entitiesSidebar.getDisabledRelatedEntityTooltip().should("be.visible");
+    entitiesSidebar.backToMainSidebar();
+
     cy.log("Select BabyRegistry and verify related entities panel appears but is disabled in table view");
     entitiesSidebar.getBaseEntityDropdown().click("right");
     entitiesSidebar.selectBaseEntityOption("BabyRegistry");
