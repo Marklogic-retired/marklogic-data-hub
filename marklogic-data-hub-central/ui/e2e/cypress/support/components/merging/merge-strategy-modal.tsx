@@ -36,6 +36,14 @@ class MergeStrategyModal extends ModalDialogBase {
   defaultStrategyYes() {
     return cy.findByLabelText("defaultStrategyYes");
   }
+
+  defaultStrategyNo() {
+    return cy.findByLabelText("defaultStrategyNo");
+  }
+
+  defaultStrategyIcon(strategyName: string) {
+    return cy.get(`[data-testid="default-${strategyName}-icon"]`);
+  }
 }
 
 const mergeStrategyModal = new MergeStrategyModal();
