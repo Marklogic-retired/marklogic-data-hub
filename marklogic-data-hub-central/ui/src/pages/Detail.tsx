@@ -429,7 +429,7 @@ const Detail: React.FC<Props> = ({history, location}) => {
                 {data && <DetailHeader document={data} contentType={contentType} uri={uri} primaryKey={pkValue} sources={sources.length ? sources : parentPagePreferences["sources"]} />}
               </div>
               <div id="menu" className={styles.menu}>
-                <Tabs onSelect={(event) => handleClick(event)} variant="tabs" className={styles.tabsContainer}>
+                <Tabs onSelect={(event) => handleClick(event)} variant="tabs" className={styles.tabsContainer} activeKey={selected}>
                   <Tab eventKey="instance" id="instance" data-cy="instance-view" tabClassName={`${styles.tabActive} ${selected === "instance" && styles.active}`}
                     title={<HCTooltip id="instance-view-tooltip" placement="top" text={"Show the processed data"}>
                       <span>
