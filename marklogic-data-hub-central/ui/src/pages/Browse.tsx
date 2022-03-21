@@ -598,6 +598,7 @@ const Browse: React.FC<Props> = ({location}) => {
             onClose={closeSpecificSidebar}
             currentRelatedEntities={currentRelatedEntities}
             updateSelectedEntity={onSetEntitySpecificPanel}
+            graphView={viewOptions.graphView}
           />
         </HCSider>
         : <HCSider placement="left" show={showMainSidebar} footer={<SidebarFooter />}>
