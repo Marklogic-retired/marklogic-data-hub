@@ -27,8 +27,14 @@
 
 .questionCircle {
     font-size: 12px;
-    color: #7f86b5;
+    color: $info;
     margin-left: 12px;
+}
+
+.questionCircleDefault {
+  font-size: 12px;
+  color: $info;
+  margin-top: 4px;
 }
 
 .addButtonContainer {

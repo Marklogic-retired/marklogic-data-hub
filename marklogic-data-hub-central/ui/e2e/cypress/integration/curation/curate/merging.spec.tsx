@@ -104,11 +104,13 @@ describe("Merging", () => {
     mergingStepDetail.addStrategyButton().click();
     mergeStrategyModal.setStrategyName("myFavourite");
     mergeStrategyModal.addSliderOptionsButton().click();
+    mergeStrategyModal.defaultStrategyYes().click();
     multiSlider.getHandleName("Length").should("have.length.gt", 1);
     mergeStrategyModal.saveButton().click();
     cy.waitForAsyncRequest();
     cy.waitUntil(() => cy.findAllByText("myFavourite").should("have.length.gt", 0));
     cy.findByText("myFavourite").should("exist");
+    mergeStrategyModal.defaultStrategyIcon("myFavourite").should("exist");
   });
   it("Edit strategy", () => {
     cy.findByText("myFavourite").click();
@@ -135,8 +137,7 @@ describe("Merging", () => {
     mergeStrategyModal.cancelButton().click();
     cy.waitUntil(() =>  confirmYesNo.getDiscardText().should("be.visible"));
     cy.findByLabelText("DiscardChangesNoButton").click();
-
-    mergeStrategyModal.defaultStrategyYes().click();
+    mergeStrategyModal.defaultStrategyNo().click();
     mergeStrategyModal.cancelButton().click();
     confirmYesNo.getDiscardText().should("be.visible");
     cy.findByLabelText("DiscardChangesYesButton").click();
@@ -148,17 +149,14 @@ describe("Merging", () => {
     cy.waitUntil(() => cy.findAllByText("myFavouriteEdited").should("have.length.gt", 0));
     cy.findByText("myFavouriteEdited").should("exist");
   });
-  it("Delete Strategy", () => {
-    mergingStepDetail.getDeleteMergeStrategyButton("myFavouriteEdited").click();
-    mergingStepDetail.confirmMergeDeleteModalButton().click();
-    cy.waitForAsyncRequest();
-    cy.waitUntil(() => cy.findAllByText("myFavouriteEdited").should("have.length", 0));
-    cy.findByText("myFavouriteEdited").should("not.exist");
-  });
   it("add merge rule of type custom ", () => {
     mergingStepDetail.addMergeRuleButton().click();
     cy.contains("Add Merge Rule");
     mergeRuleModal.selectPropertyToMerge("orderId");
+    cy.log("**Dropdown should be populated with Default strategy**");
+    mergeRuleModal.selectMergeTypeDropdown("Strategy");
+    mergeRuleModal.getStrategySelect().should("contain", "myFavouriteEdited");
+
     mergeRuleModal.selectMergeTypeDropdown("Custom");
     mergeRuleModal.setUriText("/custom/merge/strategy.sjs");
     mergeRuleModal.setFunctionText("customMergeFunction");
@@ -191,6 +189,13 @@ describe("Merging", () => {
     cy.waitForAsyncRequest();
     cy.waitUntil(() => cy.findAllByText("orderId").should("have.length", 0));
     cy.findByText("orderId").should("not.exist");
+  });
+  it("Delete Strategy", () => {
+    mergingStepDetail.getDeleteMergeStrategyButton("myFavouriteEdited").click();
+    mergingStepDetail.confirmMergeDeleteModalButton().click();
+    cy.waitForAsyncRequest();
+    cy.waitUntil(() => cy.findAllByText("myFavouriteEdited").should("have.length", 0));
+    cy.findByText("myFavouriteEdited").should("not.exist");
   });
   it("add another strategy ", () => {
     mergingStepDetail.addStrategyButton().click();

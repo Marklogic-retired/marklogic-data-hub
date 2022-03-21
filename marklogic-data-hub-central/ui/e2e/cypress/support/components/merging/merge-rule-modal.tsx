@@ -61,6 +61,10 @@ class MergeRuleModal {
     cy.waitUntil(() => cy.findByTestId(`strategyNameOptions-${strategyName}`).should("be.visible")).click({force: true});
   }
 
+  getStrategySelect() {
+    return cy.get("#strategyName-select-wrapper");
+  }
+
   alertContent() {
     return cy.get(`[id="hc-alert-component-content"]`);
   }
