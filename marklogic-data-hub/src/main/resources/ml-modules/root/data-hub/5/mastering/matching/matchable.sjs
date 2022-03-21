@@ -1,4 +1,5 @@
 'use strict';
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
 /*
  * A class that encapsulates the configurable portions of teh matching process.
@@ -15,7 +16,41 @@ class Matchable {
    * @since 5.8.0
    */
   baselineQuery() {
-    // TODO DHFPROD-8589
+    if (!this._baselineQuery) {
+      let firstBaseline;
+      if (this.matchStep.targetEntityType) {
+        const targetEntityType = this.matchStep.targetEntityType;
+        const tripleQuery = cts.tripleRangeQuery(null, sem.iri("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), sem.iri(targetEntityType))
+        // check for TDE for entity to be enabled
+        if (cts.exists(tripleQuery)) {
+          firstBaseline = tripleQuery;
+        } else {
+          firstBaseline = cts.collectionQuery(targetEntityType.substring(targetEntityType.lastIndexOf("/") + 1));
+        }
+      } else if (this.matchStep.collections && this.matchStep.collections.content) {
+        firstBaseline = cts.collectionQuery(this.matchStep.collections.content);
+      } else {
+        firstBaseline = null;
+      }
+      let finalQuery = firstBaseline;
+      if (this.matchStep.baselineQueryInterceptors) {
+        this.matchStep.baselineQueryInterceptors.forEach((interceptorObj) => {
+          let interceptorModule;
+          try {
+            interceptorModule = require(interceptorObj.path);
+          } catch(e) {
+            httpUtils.throwBadRequest( `Module defined by Baseline Query Interceptor not found: ${interceptorObj.path}`);
+          }
+          const interceptorFunction = interceptorModule[interceptorObj.function];
+          if (!interceptorFunction) {
+            httpUtils.throwBadRequest( `Function defined by Baseline Query Interceptor not exported by module: ${interceptorObj.function}#${interceptorObj.path}`);
+          }
+          finalQuery = interceptorFunction(finalQuery);
+        });
+      }
+      this._baselineQuery = finalQuery;
+    }
+    return this._baselineQuery;
   }
   /*
    * Returns an array of MatchRulesetDefinition class instances that describe the rule sets for matching
