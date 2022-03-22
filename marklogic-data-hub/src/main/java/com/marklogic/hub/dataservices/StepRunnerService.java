@@ -2,6 +2,7 @@ package com.marklogic.hub.dataservices;
 
 // IMPORTANT: Do not edit. This file is generated.
 
+import com.marklogic.client.SessionState;
 import com.marklogic.client.io.Format;
 
 
@@ -56,16 +57,21 @@ public interface StepRunnerService {
                 this.req_processBatch = this.baseProxy.request(
                     "processBatch.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
             }
+            @Override
+            public SessionState newSessionState() {
+              return baseProxy.newSessionState();
+            }
 
             @Override
-            public com.fasterxml.jackson.databind.JsonNode processBatch(com.fasterxml.jackson.databind.JsonNode inputs) {
+            public com.fasterxml.jackson.databind.JsonNode processBatch(SessionState api_session, com.fasterxml.jackson.databind.JsonNode inputs) {
                 return processBatch(
-                    this.req_processBatch.on(this.dbClient), inputs
+                    this.req_processBatch.on(this.dbClient), api_session, inputs
                     );
             }
-            private com.fasterxml.jackson.databind.JsonNode processBatch(BaseProxy.DBFunctionRequest request, com.fasterxml.jackson.databind.JsonNode inputs) {
+            private com.fasterxml.jackson.databind.JsonNode processBatch(BaseProxy.DBFunctionRequest request, SessionState api_session, com.fasterxml.jackson.databind.JsonNode inputs) {
               return BaseProxy.JsonDocumentType.toJsonNode(
                 request
+                      .withSession("api_session", api_session, false)
                       .withParams(
                           BaseProxy.documentParam("inputs", false, BaseProxy.JsonDocumentType.fromJsonNode(inputs))
                           ).responseSingle(false, Format.JSON)
@@ -75,13 +81,21 @@ public interface StepRunnerService {
 
         return new StepRunnerServiceImpl(db, serviceDeclaration);
     }
+    /**
+     * Creates an object to track a session for a set of operations
+     * that require session state on the database server.
+     *
+     * @return	an object for session state
+     */
+    SessionState newSessionState();
 
   /**
    * Replacement for the mlRunFlow REST extension; processes a batch of items using the given flow and step
    *
+   * @param api_session	Holds the session object
    * @param inputs	provides input
    * @return	as output
    */
-    com.fasterxml.jackson.databind.JsonNode processBatch(com.fasterxml.jackson.databind.JsonNode inputs);
+    com.fasterxml.jackson.databind.JsonNode processBatch(SessionState api_session, com.fasterxml.jackson.databind.JsonNode inputs);
 
 }
