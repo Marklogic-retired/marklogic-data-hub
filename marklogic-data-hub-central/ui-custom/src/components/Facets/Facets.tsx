@@ -4,8 +4,11 @@ import Form from "react-bootstrap/Form";
 import Table from "react-bootstrap/Table";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
-import {InfoCircleFill, ChevronDoubleRight, ChevronDoubleLeft} from "react-bootstrap-icons";
+import {InfoCircleFill, ChevronDoubleRight, ChevronDoubleLeft, Calendar4, XLg} from "react-bootstrap-icons";
 import "./Facets.scss";
+import moment from "moment";
+import DateRangePicker from 'react-bootstrap-daterangepicker';
+import {HCDateTimePicker} from "../../../../ui/src/components/common";
 
 type Props = {
     config?: any;
@@ -19,7 +22,7 @@ type Props = {
  * @prop {object[]} config Configuration object for all facets.
  * @prop {string} config.selected  Color of selected facet bar (as HTML color).
  * @prop {string} config.selected  Color of unselected facet bar (as HTML color).
- * @prop {number} config.displayThreshold  Threshold value cotrolling the maximum number of facet 
+ * @prop {number} config.displayThreshold  Threshold value cotrolling the maximum number of facet
  * values displayed without a more/less link.
  * @prop {number} config.displayShort Mximum number of facet values displayed without a more/less
  * link when the number of facets is at or below the `config.displayThreshold` value.
@@ -56,6 +59,14 @@ type Props = {
 const Facets: React.FC<Props> = (props) => {
 
   const searchContext = useContext(SearchContext);
+  const [showClear, updateShowClear] = React.useState(false);
+  const range = {};
+  const initialSettings = {
+      parentEl: '#date-range-picker-facet',
+      autoApply: true,
+  };
+  const [datePickerValue, setDatePickerValue] = useState<any[]>([null, null]);
+  const ref = React.useRef<any>();
 
   let moreLessInit: any = {};
   const moreLessDefault: boolean = true;
@@ -83,7 +94,7 @@ const Facets: React.FC<Props> = (props) => {
   const handleMoreLess = (value) => () => {
     setMoreLess(prevState => {
       let newState = Object.assign({}, prevState);
-      newState[value] = !prevState[value];              
+      newState[value] = !prevState[value];
       return newState;
     })
   }
@@ -97,21 +108,21 @@ const Facets: React.FC<Props> = (props) => {
         tooltipCopy[id] = !tooltipShow[id]; // toggle show/hide
       } else {
         tooltipCopy[id] = false; // never show
-      }           
+      }
       return tooltipCopy;
     })
   }
 
   const displayFacetValues = (facetObj, disabled=false, moreLess) => {
     let total = 2000000; // TODO Remove: for testing larger counts
-    let result = facetObj["facet-value"] ? 
+    let result = facetObj["facet-value"] ?
       facetObj["facet-value"].map((fv, index) => {
         let value = Math.floor(Math.random() * (total + 1)); // TODO Remove: for testing larger counts
         if (!(moreLess && index >= moreThreshold)) {
           return (
             <tr className="facetValue" key={"facetValue-" + index}>
               <td className="label">
-                  <Form.Check 
+                  <Form.Check
                     id={facetObj.name + ":" + fv.name}
                     type={"checkbox"}
                     checked={searchContext.facetStrings && searchContext.facetStrings.includes(facetObj.name + ":" + fv.name)}
@@ -136,13 +147,13 @@ const Facets: React.FC<Props> = (props) => {
               </td>
               <td className="meter">
                 <div className="total">
-                  <div 
+                  <div
                     className="count"
                     data-testid={"meter-" + facetObj.name + ":" + fv.name}
                     style={{
                       width: (fv.count*100/searchContext.total).toString().concat("%"),
                       // width: (value*100/total).toString().concat("%"), // TODO Remove: for testing larger counts
-                      backgroundColor: (searchContext.facetStrings && searchContext.facetStrings.includes(facetObj.name + ":" + fv.name)) ? 
+                      backgroundColor: (searchContext.facetStrings && searchContext.facetStrings.includes(facetObj.name + ":" + fv.name)) ?
                         props.config.selected : props.config.unselected
                     }}
                   ></div>
@@ -168,11 +179,45 @@ const Facets: React.FC<Props> = (props) => {
     return (facetObj && facetObj["facet-value"]) ? facetObj["facet-value"].length : 0;
   }
 
+    const formatPlaceHolder = (input) => {
+        return Array.isArray(input) && input.length > 1 ? input.map(text => text.length > 15 ? text.slice(0, 15) + "..." : text).join(" ~ ") : input;
+    }
+
+    const handleMouseOver = (e) => {
+        // if (value.length > 0 && value[0]) {
+        console.log("entered 180")
+        updateShowClear(true);
+        // }
+    }
+
+    const handleMouseOut = (e) => {
+        // if (value.length > 0 && value[0]) {
+        console.log("entered 187")
+        updateShowClear(false);
+        // }
+    }
+
+    const onShow = (event, picker) => {
+        const applyButton = document.querySelector(".applyBtn");
+
+        if (applyButton) {
+            applyButton.innerHTML = "OK";
+        }
+    }
+
+    const onOK = (event) => {
+      console.log("On ok is  clicked");
+    }
+
+    const onChange = () => {
+        console.log("On change is  clicked");
+    }
+
   return (
     <div className="facets">
       {/* Show each facet */}
       {props.config.items && searchContext.searchResults && props.config.items.map((f, index) => {
-        return ( 
+        return (
         <div className="facet" key={"facet-" + index}>
           <div className="title">
             {f.name}
@@ -182,11 +227,11 @@ const Facets: React.FC<Props> = (props) => {
                 placement="right"
                 overlay={<Tooltip>{f.tooltip}</Tooltip>}
               >
-                <InfoCircleFill 
+                <InfoCircleFill
                   data-testid={"info-" + f.name}
-                  color="#5d6aaa" 
+                  color="#5d6aaa"
                   size={21}
-                  className="facetInfo" 
+                  className="facetInfo"
                 />
               </OverlayTrigger>
             }
@@ -197,27 +242,36 @@ const Facets: React.FC<Props> = (props) => {
             <Table size="sm" style={{padding: 0, margin: 0}}>
                 {displayFacetValues(getFacetObj(f.name, searchContext.searchResults.facet), f.disabled, moreLess[f.name])}
             </Table> : null }
-            {(getNumValues(f.name, searchContext.searchResults.facet) > moreThreshold) ? moreLess[f.name] ? 
+            {(getNumValues(f.name, searchContext.searchResults.facet) > moreThreshold) ? moreLess[f.name] ?
               <div className="moreLess" data-testid={"more-" + f.name} onClick={handleMoreLess(f.name)}>
                 {getNumValues(f.name, searchContext.searchResults.facet) - moreThreshold} more
-                <ChevronDoubleRight 
+                <ChevronDoubleRight
                   data-testid="doubleRight"
-                  color="#5d6aaa" 
+                  color="#5d6aaa"
                   size={11}
-                  className="doubleRight" 
+                  className="doubleRight"
                 /></div> :
               <div className="moreLess" data-testid={"less-" + f.name} onClick={handleMoreLess(f.name)}>
-                <ChevronDoubleLeft 
+                <ChevronDoubleLeft
                   data-testid="doubleLeft"
-                  color="#5d6aaa" 
+                  color="#5d6aaa"
                   size={11}
-                  className="doubleLeft" 
+                  className="doubleLeft"
                 />less</div> : null
             }
           </div>
-      </div> ) 
+      </div> )
     })}
-    </div> 
+        <div className="dateRangeFacet" >
+            <DateRangePicker initialSettings={initialSettings} {...{onShow, ref}} onApply={onOK} onCallback={onChange}>
+                <div  onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} className="pickerContainer">
+                    <input type="text"  className="input" placeholder={formatPlaceHolder(["Start date", "End date"])}/>
+                    {!showClear ? <Calendar4 className="calendarIcon" /> :
+                        <XLg className="clearIcon"  data-testid="datetime-picker-reset"/>}
+                </div>
+            </DateRangePicker>
+        </div>
+    </div>
   );
 };
 
