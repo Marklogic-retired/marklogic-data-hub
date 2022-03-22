@@ -182,6 +182,8 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
                 <div
                   key={name}
                   aria-label={`base-entities-${name}`}
+                  data-icon={finalIcon}
+                  data-color={finalColor}
                   style={{backgroundColor: finalColor, borderStyle: "solid", borderWidth: "1px", borderColor: "#d9d9d9", borderRadius: "4px"}}
                   className={styles.entityItem}
                   onClick={() => setEntitySpecificPanel({name, color: finalColor, icon: finalIcon})}

@@ -66,7 +66,7 @@ describe("EntityTypeModal Component", () => {
     userEvent.type(getByPlaceholderText(placeholders.version), payload.version);
 
     //modify the entity color via color picker and verify it is sent in hub central config payload
-    userEvent.click(getByTestId("edit-color-icon"));
+    userEvent.click(getByTestId(`${payload.name}-color-button`));
     userEvent.click(getByTitle("#CEE0ED"));
 
     await wait(() => {
@@ -168,7 +168,7 @@ describe("EntityTypeModal Component", () => {
     userEvent.type(getByPlaceholderText(placeholders.namespacePrefix), payload.namespacePrefix);
     userEvent.type(getByPlaceholderText(placeholders.version), payload.version);
     //edit the entity color via color picker and verify it is sent in payload
-    userEvent.click(getByTestId("edit-color-icon"));
+    userEvent.click(getByTestId("ModelName-color-button"));
     userEvent.click(getByTitle("#F8F8DE"));
 
     await wait(() => {

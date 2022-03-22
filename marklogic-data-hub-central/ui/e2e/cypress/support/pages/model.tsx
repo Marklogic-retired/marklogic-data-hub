@@ -66,8 +66,8 @@ class ModelPage {
     return cy.get(`[aria-label="${entityName}-${color}-color"]`);
   }
 
-  toggleColorSelector() {
-    return cy.findByTestId("edit-color-icon").click();
+  toggleColorSelector(entityType: string) {
+    return cy.get(`[id="${entityType}-color-button"]`).click();
   }
 
   selectColorFromPicker(color: string) {

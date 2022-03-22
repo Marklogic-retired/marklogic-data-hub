@@ -66,7 +66,7 @@ describe("Graph Validations", () => {
     graphViewSidePanel.getEntityNamespace().clear().type("http://example.org/test");
     graphViewSidePanel.getEntityDescription().click();
     cy.findByText("Invalid model: Namespace property must be a valid absolute URI. Value is test.").should("not.exist");
-    modelPage.toggleColorSelector();
+    modelPage.toggleColorSelector("Person");
     modelPage.selectColorFromPicker("#D5D3DD").click();
     if (Cypress.isBrowser("!firefox")) {
       graphViewSidePanel.getEntityTypeColor("Person").should("have.css", "background", "rgb(213, 211, 221) none repeat scroll 0% 0% / auto padding-box border-box");

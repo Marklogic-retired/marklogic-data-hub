@@ -4,6 +4,7 @@ import Graph from "react-graph-vis";
 import graphConfig from "@config/graph-vis.config";
 import * as _ from "lodash";
 import {SearchContext} from "@util/search-context";
+import {HubCentralConfigContext} from "@util/hubCentralConfig-context";
 import {renderToStaticMarkup} from "react-dom/server";
 import * as FontIcon from "react-icons/fa";
 import {defaultIcon, graphViewConfig} from "@config/explore.config";
@@ -17,7 +18,6 @@ import {themeColors} from "@config/themes.config";
 type Props = {
   entityTypeInstances: any;
   graphView: any;
-  hubCentralConfig: any;
   viewRelationshipLabels: any;
   exportPngButtonClicked: boolean;
   setExportPngButtonClicked: any;
@@ -28,7 +28,6 @@ const GraphVisExplore: React.FC<Props> = (props) => {
   const {
     entityTypeInstances,
     graphView,
-    hubCentralConfig,
     viewRelationshipLabels,
     exportPngButtonClicked,
     setExportPngButtonClicked,
@@ -52,6 +51,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
   const {
     user
   } = useContext(UserContext);
+  const {hubCentralConfig} = useContext(HubCentralConfigContext);
 
   // Get network instance on init
   const [network, setNetwork] = useState<any>(null);
@@ -127,7 +127,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       setGraphDataLoaded(false);
     };
 
-  }, [entityTypeInstances, viewRelationshipLabels]);
+  }, [entityTypeInstances, viewRelationshipLabels, hubCentralConfig]);
 
   useEffect(() => {
     if (network && graphView) {
@@ -177,14 +177,6 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       };
     }
   }, [network, graphData]);
-
-  const iconExistsForEntity = (entityName) => {
-    return (!hubCentralConfig?.modeling?.entities[entityName]?.icon ? false : true);
-  };
-
-  const colorExistsForEntity = (entityName) => {
-    return (!hubCentralConfig?.modeling?.entities[entityName]?.color ? false : true);
-  };
 
   const setUserPreferences = () => {
     let defaultPreferences = getUserPreferences(user.name);
@@ -271,6 +263,8 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     nodes = entityInstNodes?.map((e) => {
       let entityType = e.group.split("/").pop();
       let entity = hubCentralConfig?.modeling?.entities[entityType];
+      let iconName = entity?.icon || defaultIcon;
+      let nodeColor = entity?.color || themeColors.defaults.entityColor;
       let nodeId = e.id;
       if (e.count > 1) {
         if (!nodeObj.hasOwnProperty(nodeId)) {
@@ -289,11 +283,10 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         shape: "custom",
         title: e.count > 1 ? tooltipsConfig.graphVis.groupNode(entityType) : e.label.length > 0 ? tooltipsConfig.graphVis.singleNode(e.label): tooltipsConfig.graphVis.singleNodeNoLabel,
         label: nodeLabel,
-        color: colorExistsForEntity(entityType) ? entity["color"] : themeColors.defaults.entityColor,
+        color: nodeColor,
         ctxRenderer: ({ctx, x, y, state: {selected, hover}, style, label}) => {
           const r = style.size;
           const color = style.color;
-          let iconName = iconExistsForEntity(entityType) ? entity.icon : defaultIcon;
           const drawNode = () => {
             let scale = graphConfig.sampleMetadata?.modeling?.scale ? graphConfig.sampleMetadata?.modeling?.scale : 0.5;
             if (network) {
@@ -325,12 +318,12 @@ const GraphVisExplore: React.FC<Props> = (props) => {
             }
             if (scale > 0.3 && scale < 0.6) {
               let img = new Image();   // Create new img element
-              img.src = FontIcon[iconName] ? `data:image/svg+xml,${encodeURIComponent(renderToStaticMarkup(createElement(FontIcon[iconName])))}` : `data:image/svg+xml,${encodeURIComponent(renderToStaticMarkup(createElement(FontIcon[defaultIcon])))}`;
+              img.src = `data:image/svg+xml,${encodeURIComponent(renderToStaticMarkup(createElement(FontIcon[iconName])))}`;
               //Drawing the image on canvas
               ctx.drawImage(img, x - 12, imagePositionY, 24, 24);
             } else if (scale > 0.6) {
               let img = new Image();   // Create new img element
-              img.src = FontIcon[iconName] ? `data:image/svg+xml,${encodeURIComponent(renderToStaticMarkup(createElement(FontIcon[iconName])))}` : `data:image/svg+xml,${encodeURIComponent(renderToStaticMarkup(createElement(FontIcon[defaultIcon])))}`;
+              img.src = `data:image/svg+xml,${encodeURIComponent(renderToStaticMarkup(createElement(FontIcon[iconName])))}`;
               //Drawing the image on canvas
               ctx.drawImage(img, x - 12, imagePositionY, 24, 24);
               let customLabel = e.count >= 2 ? entityType : nodeLabel;
@@ -375,7 +368,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
           };
           return {
             drawNode,
-            nodeDimensions: {width: 1 * r, height: 1 * r},
+            nodeDimensions: {width: 2.5 * r, height: 2.5 * r},
           };
         }
       };

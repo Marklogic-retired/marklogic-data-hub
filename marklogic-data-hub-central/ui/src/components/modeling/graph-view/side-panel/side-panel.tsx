@@ -1,8 +1,7 @@
-import React, {useContext, useEffect, useState, useRef, useCallback} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {Row, Col, Form, FormLabel, Tab, Tabs} from "react-bootstrap";
-import {TwitterPicker} from "react-color";
 import {QuestionCircleFill, XLg} from "react-bootstrap-icons";
-import {HCTooltip, HCInput} from "@components/common";
+import {EntityTypeColorPicker, HCTooltip, HCInput} from "@components/common";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styles from "./side-panel.module.scss";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
@@ -11,7 +10,6 @@ import {ModelingContext} from "@util/modeling-context";
 import PropertiesTab from "../properties-tab/properties-tab";
 import {primaryEntityTypes, updateModelInfo} from "@api/modeling";
 import {UserContext} from "@util/user-context";
-import graphConfig from "@config/graph-vis.config";
 import {EntityModified} from "../../../../types/modeling-types";
 import {defaultHubCentralConfig} from "@config/modeling.config";
 import {IconPicker} from "react-fa-icon-picker";
@@ -50,10 +48,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
   const [prefixTouched, setisPrefixTouched] = useState(false);
   const [errorServer, setErrorServer] = useState("");
   const [colorSelected, setColorSelected] = useState(themeColors.defaults.entityColor);
-  const [displayColorPicker, setDisplayColorPicker] = useState(false);
-  const [eventValid, setEventValid] = useState(false);
   const [iconSelected, setIconSelected] = useState<any>("");
-  const node: any = useRef();
 
   const [selectedEntityInfo, setSelectedEntityInfo] = useState<any>({});
 
@@ -106,25 +101,6 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
       setIconSelected(defaultIcon);
     }
   };
-
-  const handleOuterClick = useCallback(
-    e => {
-      if (node.current && !node.current.contains(e.target)) {
-      // Clicked outside the color picker menu
-        setDisplayColorPicker(prev => false);
-        setEventValid(prev => false);
-      }
-    }, []);
-
-  useEffect(() => {
-    if (eventValid) {
-      document.addEventListener("click", handleOuterClick);
-    }
-
-    return () => {
-      document.removeEventListener("click", handleOuterClick);
-    };
-  });
 
   const handlePropertyChange = async (event) => {
     let entity: any = modelingOptions.selectedEntity;
@@ -224,11 +200,6 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
       initializeEntityColorIcon();
     }
   }, [modelingOptions.selectedEntity]);
-
-  const handleEditColorMenu = () => {
-    setEventValid(prev => true);
-    setDisplayColorPicker(!displayColorPicker);
-  };
 
   const handleColorChange = async (color, event) => {
     setColorSelected(color.hex);
@@ -358,7 +329,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
             />
             <div className={"d-flex align-items-center"}>
               <HCTooltip id="colo-selector" text={<span>Select a color to associate it with the <b>{modelingOptions.selectedEntity}</b> entity throughout your project.</span>} placement="right">
-                <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.colorsIcon} />
+                <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.colorsIcon} />
               </HCTooltip>
             </div>
           </Col>
@@ -367,7 +338,9 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
           <FormLabel column lg={3} style={{marginTop: "10px"}}>{"Color:"}</FormLabel>
           <Col className={"d-flex align-items-center"}>
             <div className={styles.colorContainer}>
-              <div className={styles.colorPickerBorder} onClick={handleEditColorMenu} data-testid={"edit-color-icon"}><div data-testid={`${modelingOptions.selectedEntity}-color`} style={{width: "32px", height: "30px", background: colorSelected, margin: "8px"}}></div></div>
+              {modelingOptions.selectedEntity &&
+                <EntityTypeColorPicker color={colorSelected} entityType={modelingOptions.selectedEntity} handleColorChange={handleColorChange} />
+              }
               <div className={"d-flex align-items-center"}>
                 <HCTooltip id="colo-selector" text={<span>Select a color to associate it with the <b>{modelingOptions.selectedEntity}</b> entity throughout your project.</span>} placement="right">
                   <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.colorsIcon} />
@@ -438,7 +411,6 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
         </Tabs>
       </div>
       {displayPanelContent()}
-      {displayColorPicker ? <div ref={node} id={"color-picker-menu"} className={styles.colorPickerContainer}><TwitterPicker colors={graphConfig.colorOptionsArray} color={colorSelected} onChangeComplete={handleColorChange}/></div> : null}
     </div>
   );
 };

@@ -5,6 +5,7 @@ import {
   entityTypeModal,
   entityTypeTable,
   propertyModal,
+  graphViewSidePanel,
   propertyTable
 } from "../../support/components/model/index";
 import {confirmationModal, toolbar, tiles} from "../../support/components/common/index";
@@ -51,10 +52,15 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     entityTypeModal.newEntityVersion("3.0.0");
     modelPage.openIconSelector("Buyer");
     modelPage.selectNthIcon(3);
-    modelPage.toggleColorSelector();
+    modelPage.toggleColorSelector("Buyer");
     modelPage.selectColorFromPicker("#D5D3DD").click();
-    modelPage.toggleColorSelector();
-    modelPage.getColorSelected("Buyer", "#d5d3dd").should("exist");
+    modelPage.toggleColorSelector("Buyer");
+    if (Cypress.isBrowser("!firefox")) {
+      graphViewSidePanel.getEntityTypeColor("Buyer").should("have.css", "background", "rgb(213, 211, 221) none repeat scroll 0% 0% / auto padding-box border-box");
+    }
+    if (Cypress.isBrowser("firefox")) {
+      graphViewSidePanel.getEntityTypeColor("Buyer").should("have.css", "background-color", "rgb(213, 211, 221)");
+    }
 
     modelPage.getIconSelected("Buyer", "FaAccessibleIcon").should("exist");
     entityTypeModal.getAddButton().click();

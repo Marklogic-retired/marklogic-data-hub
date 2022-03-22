@@ -25,7 +25,7 @@ class GraphViewSidePanel {
     return cy.get("#description");
   }
   getEntityTypeColor(entityName: string) {
-    return cy.get(`[data-testid="${entityName}-color"]`);
+    return cy.get(`[id="${entityName}-color-button"] > div`);
   }
 
   getPropertyTableHeader(headerName: string) {

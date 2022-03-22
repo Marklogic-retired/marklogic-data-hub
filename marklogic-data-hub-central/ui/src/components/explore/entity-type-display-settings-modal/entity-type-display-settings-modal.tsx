@@ -1,42 +1,58 @@
-import React, {useState, useEffect} from "react";
-import {Modal} from "react-bootstrap";
-import Select from "react-select";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPencilAlt} from "@fortawesome/free-solid-svg-icons";
+import React, {useState, useEffect, useContext} from "react";
+import {Alert, Modal} from "react-bootstrap";
+import Select, {components as SelectComponents} from "react-select";
 import styles from "./entity-type-display-settings-modal.module.scss";
-import HCTable from "@components/common/hc-table/hc-table";
-import HCButton from "@components/common/hc-button/hc-button";
-import graphConfig from "@config/graph-vis.config";
-import HCTooltip from "@components/common/hc-tooltip/hc-tooltip";
+import {EntityTypeColorPicker, HCTable, HCButton, HCTooltip} from "@components/common";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import tooltipsConfig from "@config/explorer-tooltips.config";
 import {themeColors} from "@config/themes.config";
-import entityIcon from "../../../assets/Entity-Services.png";
 import {defaultIcon} from "@config/explore.config";
+import {UserContext} from "@util/user-context";
+import {HubCentralConfigContext} from "@util/hubCentralConfig-context";
+import {IconPicker} from "react-fa-icon-picker";
+import * as _ from "lodash";
 
 type Props = {
   isVisible: boolean;
-  toggleModal: (isVisible: boolean) => void;
-  hubCentralConfig: any;
+  toggleModal: (reloadData: boolean) => void;
   entityDefinitionsArray: any;
 };
 
+enum TableColumns {
+  EntityType,
+  Color,
+  Icon,
+  EntityLabel,
+  PropertiesOnHover
+}
+
 const {entityTypeDisplaySettings} = tooltipsConfig;
 
-const EntityTypeDisplaySettingsModal: React.FC<Props> = ({isVisible, hubCentralConfig, toggleModal, entityDefinitionsArray}) => {
-  const [entityLabels, setEntityLabels] = useState({});
+const EntityTypeDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal, entityDefinitionsArray}) => {
+  const {handleError} = useContext(UserContext);
   const [propertiesOnHover, setPropertiesOnHover] = useState({});
+  const [entitiesData, setEntitiesData] = useState({});
+  const [entitiesIndexes, setEntitiesIndexes] = useState({});
   const [exploreSettingsData, setExploreSettingsData] = useState<any[]>([]);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const {hubCentralConfig, updateHubCentralConfigOnServer} = useContext(HubCentralConfigContext);
 
   useEffect(() => {
     if (isVisible && hubCentralConfig && hubCentralConfig?.modeling?.entities) {
-      let settingsData:any = Object.keys(hubCentralConfig?.modeling?.entities).map(entityType => {
+      let tmpEntitiesData = _.clone(hubCentralConfig?.modeling?.entities);
+      let tmpEntitiesIndexes = {};
+      let settingsData:any = Object.keys(hubCentralConfig?.modeling?.entities).map((entityType, index) => {
+        tmpEntitiesIndexes[entityType] = index;
         return {
           entityType: entityType,
-          color: hubCentralConfig?.modeling?.entities[entityType]?.color ? hubCentralConfig?.modeling?.entities[entityType]?.color : themeColors.defaults.entityColor,
-          icon: defaultIcon
+          color: hubCentralConfig?.modeling?.entities[entityType]?.color || themeColors.defaults.entityColor,
+          icon: hubCentralConfig?.modeling?.entities[entityType]?.icon || defaultIcon,
+          label: hubCentralConfig?.modeling?.entities[entityType]?.label
         };
       });
+      setEntitiesData(tmpEntitiesData);
+      setEntitiesIndexes(tmpEntitiesIndexes);
       setExploreSettingsData(settingsData);
     }
 
@@ -54,8 +70,32 @@ const EntityTypeDisplaySettingsModal: React.FC<Props> = ({isVisible, hubCentralC
     return options;
   };
 
-  const onEntityLabelChange = (row, e) => {
-    setEntityLabels({...entityLabels, [row.entityType]: e});
+  const onColumnValueChange = (row, e, column: TableColumns) => {
+    const updateValue = (entityData) => {
+      switch (column) {
+      case TableColumns.Color:
+        entityData.color = e.color.hex;
+        break;
+      case TableColumns.Icon:
+        entityData.icon = e;
+        break;
+      case TableColumns.EntityLabel:
+        entityData.label = e.value;
+        break;
+      }
+    };
+
+    setEntitiesData(entitiesData => {
+      const tmpEntitiesData = _.cloneDeep(entitiesData);
+      updateValue(tmpEntitiesData[row.entityType]);
+      return tmpEntitiesData;
+    });
+
+    setExploreSettingsData(exploreSettingsData => {
+      const settingsData = exploreSettingsData.map(entityData => Object.assign({}, entityData));
+      updateValue(settingsData[entitiesIndexes[row.entityType]]);
+      return settingsData;
+    });
   };
 
   const onPropertiesOnHoverChange = (row, e) => {
@@ -64,7 +104,7 @@ const EntityTypeDisplaySettingsModal: React.FC<Props> = ({isVisible, hubCentralC
 
   const getHeaderLabel = (label, tooltipInfo) => {
     let headerLabel = <span className={styles.labelContainer}>
-      <span className={styles.headerLabel}>{label} </span>
+      <span className={styles.headerLabel}>{label}</span>
       <HCTooltip id="entity-label" text={tooltipInfo} placement="right">
         <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.infoIcon} />
       </HCTooltip>
@@ -72,6 +112,31 @@ const EntityTypeDisplaySettingsModal: React.FC<Props> = ({isVisible, hubCentralC
 
     return headerLabel;
   };
+
+  const handleSave = () => {
+    try {
+      let updatedPayload = _.cloneDeep(hubCentralConfig);
+      updatedPayload.modeling.entities = Object.assign({}, entitiesData);
+      updateHubCentralConfigOnServer(updatedPayload);
+      closeModal();
+    } catch (error) {
+      if (error.response.status === 400) {
+        if (error.response.data.hasOwnProperty("message")) {
+          setErrorMessage("name-error");
+        } else {
+          setErrorMessage(error["response"]["data"]["message"]);
+        }
+      } else {
+        handleError(error);
+      }
+    }
+  };
+
+  const MenuList  = (selector, props) => (
+    <div id={`${selector}-select-MenuList`}>
+      <SelectComponents.MenuList {...props} />
+    </div>
+  );
 
   const exploreSettingsColumns: any = [
     {
@@ -92,12 +157,7 @@ const EntityTypeDisplaySettingsModal: React.FC<Props> = ({isVisible, hubCentralC
       align: "center" as "center",
       headerAlign: "center",
       formatter: (text, row) => {
-        return (<div className={styles.valueContainer}>
-          <div aria-label={`${row.entityType}-color`} style={{width: "26px", height: "26px", background: themeColors.defaults.entityColor}}></div>
-          <div className={"d-flex align-items-center"}>
-            <span className={styles.editIconContainer}><FontAwesomeIcon icon={faPencilAlt} size="sm" onClick={(e) => { e.preventDefault(); }} className={styles.editIcon} aria-label={`edit-${row.entityType}-color`} /></span>
-          </div>
-        </div>);
+        return <EntityTypeColorPicker color={row.color} entityType={row.entityType} handleColorChange={(color, event) => onColumnValueChange(row, {color, event}, TableColumns.Color)} />;
       }
     },
     {
@@ -106,11 +166,9 @@ const EntityTypeDisplaySettingsModal: React.FC<Props> = ({isVisible, hubCentralC
       align: "center" as "center",
       headerAlign: "center",
       formatter: (text, row) => {
-        let entityInfo = graphConfig.sampleMetadata["modeling"]["entities"][row.entityType];
-        let iconsrc = entityInfo && entityInfo.icon ? entityInfo.icon : entityIcon;
-        return <span className={styles.valueContainer}><img src={iconsrc} aria-label={`${row.entityType}-icon`}/>
-          <span className={styles.editIconContainer}><FontAwesomeIcon icon={faPencilAlt} size="sm" onClick={(e) => { e.preventDefault(); }} className={styles.editIcon} aria-label={`edit-${row.entityType}-icon`} /></span>
-        </span>;
+        return (<div className={"m-auto d-inline-block"} aria-label={`${row.entityType}-icon-picker`} id={`${row.entityType}-icon-picker`} data-icon={row.icon}>
+          <IconPicker value={row.icon} onChange={value => onColumnValueChange(row, value, TableColumns.Icon)}/>
+        </div>);
       }
     },
     {
@@ -119,11 +177,21 @@ const EntityTypeDisplaySettingsModal: React.FC<Props> = ({isVisible, hubCentralC
       formatter: (text, row) => {
         return (
           <Select
-            value={entityLabels[row.entityType]}
+            id={`${row.entityType}-entityLabel-select-wrapper`}
+            inputId={`${row.entityType}-entityLabel-select`}
+            components={{MenuList: props => MenuList(`${row.entityType}-entityLabel`, props)}}
+            defaultValue={row.label ? {label: row.label, value: row.label} : null}
             options={renderOptions(row.entityType)}
-            onChange={(e) => onEntityLabelChange(row, e)}
+            onChange={(e) => onColumnValueChange(row, e, TableColumns.EntityLabel)}
             classNamePrefix="select"
             aria-label={`${row.entityType}-label-select-dropdown`}
+            formatOptionLabel={({value, label}) => {
+              return (
+                <span data-testid={`${row.entityType}-labelOption-${value}`} aria-label={`${row.entityType}-labelOption-${value}`}>
+                  {label}
+                </span>
+              );
+            }}
           />);
       },
     },
@@ -133,12 +201,22 @@ const EntityTypeDisplaySettingsModal: React.FC<Props> = ({isVisible, hubCentralC
       formatter: (text, row) => {
         return (
           <Select
+            id={`${row.entityType}-entityProperties-select-wrapper`}
+            inputId={`${row.entityType}-entityProperties-select`}
+            components={{MenuList: props => MenuList(`${row.entityType}-entityProperties`, props)}}
             value={propertiesOnHover[row.entityType]}
             isMulti
             options={renderOptions(row.entityType)}
             classNamePrefix="select"
             aria-label={`${row.entityType}-propertiesOnHover`}
             onChange={(e) => onPropertiesOnHoverChange(row, e)}
+            formatOptionLabel={({value, label}) => {
+              return (
+                <span data-testid={`${row.entityType}-propertiesOption-${value}`}>
+                  {label}
+                </span>
+              );
+            }}
           />
         );
       }
@@ -153,14 +231,17 @@ const EntityTypeDisplaySettingsModal: React.FC<Props> = ({isVisible, hubCentralC
         <HCButton
           size="sm"
           variant="outline-light"
-          aria-label={`cancel-multiple-ruleset`}
-          onClick={closeModal}
+          id={`cancel-entityType-settings-modal`}
+          aria-label={`cancel-entityType-settings-modal`}
+          onClick={() => closeModal()}
         >Cancel</HCButton>
         <HCButton
           className={styles.saveButton}
           size="sm"
-          aria-label={`confirm-multiple-ruleset`}
+          id={`save-entityType-settings-modal`}
+          aria-label={`save-entityType-settings-modal`}
           variant="primary"
+          onClick={handleSave}
         >Save</HCButton>
       </div>
     </div>
@@ -175,9 +256,14 @@ const EntityTypeDisplaySettingsModal: React.FC<Props> = ({isVisible, hubCentralC
         <span className={"fs-4"}>
           Entity Type Display Settings
         </span>
-        <button type="button" className="btn-close" aria-label="Close" onClick={closeModal}></button>
+        <button type="button" className="btn-close" aria-label="Close" id={"close-settings-modal"} onClick={() => closeModal()}></button>
       </Modal.Header>
       <Modal.Body>
+        {errorMessage &&
+          <Alert variant="danger" className="alert">
+            {errorMessage}
+          </Alert>
+        }
         <div id="entityTypeDisplaySettingsContainer" data-testid="entityTypeDisplaySettingsContainer">
           <HCTable
             rowKey="entityType"

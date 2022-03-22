@@ -14,12 +14,11 @@ import {faFileExport} from "@fortawesome/free-solid-svg-icons";
 type Props = {
   entityTypeInstances: any;
   graphView: any;
-  hubCentralConfig: any;
   setGraphPageInfo: (pageInfo: any) => void;
 };
 
 const GraphViewExplore: React.FC<Props> = (props) => {
-  const {entityTypeInstances, graphView, hubCentralConfig, setGraphPageInfo} = props;
+  const {entityTypeInstances, graphView, setGraphPageInfo} = props;
 
   const [viewRelationshipLabels, toggleRelationShipLabels] = useState(true);
   const [exportPngButtonClicked, setExportPngButtonClicked] = useState(false);
@@ -99,7 +98,6 @@ const GraphViewExplore: React.FC<Props> = (props) => {
           <GraphVisExplore
             entityTypeInstances={entityTypeInstances}
             graphView={graphView}
-            hubCentralConfig={hubCentralConfig}
             viewRelationshipLabels={viewRelationshipLabels}
             exportPngButtonClicked = {exportPngButtonClicked}
             setExportPngButtonClicked = {setExportPngButtonClicked}

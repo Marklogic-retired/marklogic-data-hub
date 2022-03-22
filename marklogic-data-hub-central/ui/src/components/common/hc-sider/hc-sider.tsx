@@ -5,6 +5,7 @@ import {faAngleDoubleRight, faAngleDoubleLeft} from "@fortawesome/free-solid-svg
 
 
 export interface HCSiderProps {
+  identity?: string,
   show: boolean,
   showButtonLabel?: boolean,
   openIcon?: React.ReactNode,
@@ -21,7 +22,7 @@ export interface HCSiderProps {
   color?: string,
 }
 
-function HCSider({show, footer, children, closeIcon, openIcon, labelButton, showButtonLabel, placement, width, contentClassName, indicatorCLassName, containerClassName, updateVisibility, color}: HCSiderProps): JSX.Element {
+function HCSider({identity, show, footer, children, closeIcon, openIcon, labelButton, showButtonLabel, placement, width, contentClassName, indicatorCLassName, containerClassName, updateVisibility, color}: HCSiderProps): JSX.Element {
   const [open, setOpen] = useState(show);
   let button = labelButton ? labelButton : open ? "close" : "open";
   let size = !open ? `0` : width ? width : `20vw`;
@@ -46,9 +47,9 @@ function HCSider({show, footer, children, closeIcon, openIcon, labelButton, show
   const HCSiderStyle = color ? {width: size, backgroundColor: color} : {width: size};
 
   return (
-    <div data-testid="hc-sider-component" className={`${styles.siderContainer} ${containerClassName && containerClassName}`} style={HCSiderStyle}>
-      <a data-testid="sider-action" aria-label="sider-action" onClick={handleOpen} className={`${styles.siderIndicatorContainer} ${indicatorCLassName && indicatorCLassName}`} style={buttonPlacement}>{icon}{showButtonLabel && button}</a>
-      {open && <div data-testid="hc-sider-content" id="hc-sider-content" className={`${styles.siderContentContainer} ${footer && styles.containerWithFooter} ${contentClassName && contentClassName}`}>{children}</div>}
+    <div data-testid={`${identity ? identity + "-" : ""}hc-sider-component`} className={`${styles.siderContainer} ${containerClassName && containerClassName}`} style={HCSiderStyle}>
+      <a data-testid={`${identity ? identity + "-" : ""}sider-action`} aria-label={`${identity ? identity + "-" : ""}sider-action`} onClick={handleOpen} className={`${styles.siderIndicatorContainer} ${indicatorCLassName && indicatorCLassName}`} style={buttonPlacement}>{icon}{showButtonLabel && button}</a>
+      {open && <div data-testid={`${identity ? identity + "-" : ""}hc-sider-content`} id={`${identity ? identity + "-" : ""}hc-sider-content`} className={`${styles.siderContentContainer} ${footer && styles.containerWithFooter} ${contentClassName && contentClassName}`}>{children}</div>}
       {open && (footer && <div className={styles.siderFooterContainer}>{footer}</div>)}
     </div>
   );
