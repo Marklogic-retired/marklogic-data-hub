@@ -1,0 +1,16 @@
+{
+  "collections" : [ "testTransactionsStep" ],
+  "permissions" : "data-hub-common,read,data-hub-common,update",
+  "batchSize" : 100,
+  "sourceDatabase" : "data-hub-FINAL",
+  "targetDatabase" : "data-hub-FINAL",
+  "provenanceGranularityLevel" : "off",
+  "name" : "testTransactionsStep",
+  "description" : "",
+  "stepDefinitionType" : "custom",
+  "stepDefinitionName" : "testTransactionsStep",
+  "selectedSource" : "query",
+  "sourceQuery" : "cts.collectionQuery('runThroughSeparateTransactions')",
+  "stepId" : "testTransactionsStep-custom",
+  "lastUpdated" : "2022-03-22T16:26:36.169064Z"
+}
