@@ -60,7 +60,6 @@
   },
 
   "dashboard": {
-
     "metrics": {
       "component": "Metrics",
       "config": {
@@ -241,7 +240,7 @@
     "results": {
       "component": "ResultsList",
       "config": {
-        "pageLengths": [3,5,10,20],
+        "pageLengths": [3, 5, 10, 20],
         "thumbnail": {
           "component": "Image",
           "config": {
@@ -317,11 +316,9 @@
         "status": { "path": "extracted.person.status" }
       }
     }
-
   },
 
   "detail": {
-
     "heading": {
       "id": "uri",
       "thumbnail": {
@@ -694,15 +691,46 @@
           "width": "150px"
         },
         "images": {
-          "url": {
-            "arrayPath": "person.images.image",
-            "path": "url"
-          }
+          "arrayPath": "person.images.image",
+          "url": "url"
         },
-        "metadata": {},
+        "modal": {
+          "title": {
+            "component": "Value",
+            "path": "url",
+            "config": {
+              "style": {
+                "fontStyle": "bold"
+              }
+            }
+          },
+          "items": [
+            {
+              "component": "Value",
+              "label": "Source",
+              "path": "source.name",
+              "config": {}
+            },
+            {
+              "component": "DateTime",
+              "label": "Uploaded on",
+              "path": "source.ts",
+              "config": {
+                "format": "MMMM dd, yyyy"
+              }
+            },
+            {
+              "component": "Value",
+              "label": "Uploaded by",
+              "path": "source.uploadedBy",
+              "config": {
+                "className": "foo"
+              }
+            }
+          ]
+        },
         "download": true
       }
     }
   }
-
 }
