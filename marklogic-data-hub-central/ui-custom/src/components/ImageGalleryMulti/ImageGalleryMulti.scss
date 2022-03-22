@@ -16,5 +16,45 @@
     .ImageGalleryMultiContainer {
         margin: 0 51px;
         overflow: hidden;
+        .image-item {
+            cursor: pointer;
+            border-radius: 4px;
+        }
+    }
+}
+.image-gallery-modal {
+    .modal-header {
+        border-bottom: none;
+        padding: 20px 20px 0 20px;
+        .modal-title {
+            line-height: normal;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+    .modal-body {
+        padding: 20px 20px 10px 20px;
+    }
+    .modal-footer {
+        border-top: none;
+        padding: 0 20px 20px 20px;
+    }
+    .metadata-container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        .metadata-row {
+            display: flex;
+            gap: 10px;
+            font-size: 14px;
+            .metadata-label {
+                display: inline-block;
+                width: 110px;
+            }
+            .metadata-value {
+                font-weight: 600;
+            }
+        }
     }
 }

@@ -51,13 +51,16 @@
   <images>
     <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
+      <title>1612313387205.jpeg</title>
       <source>
         <name>Washington Post</name>
         <ts>2018-01-28T06:12:26Z</ts>
+        <uploadedBy>Mirian Doe</uploadedBy>
       </source>
     </image>
     <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
+      <title>1612313387205.jpeg</title>
       <source>
         <name>Wall Street Journal</name>
         <ts>2010-12-23T06:00:15Z</ts>
@@ -65,9 +68,11 @@
     </image>
     <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+      <title>Diane-Burley-MarkLogic-2015.jpg</title>
       <source>
         <name>Chicago Tribune</name>
         <ts>2011-05-26T11:29:57Z</ts>
+        <uploadedBy>Mirian Doe</uploadedBy>
       </source>
     </image>
   </images>
