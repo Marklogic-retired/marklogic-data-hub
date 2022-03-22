@@ -24,3 +24,8 @@ test("should not render a Slider component ", () => {
   const content = screen.queryByText("This is an sider");
   expect(content).not.toBeInTheDocument();
 });
+test("should render a Slider component with the personlized testid ", () => {
+  render(<HCSider placement="left" identity="Custom" show={true} footer={<span>The footer</span>}>This is an sider</HCSider>);
+  const siderElement = screen.getByTestId("Custom-hc-sider-component");
+  expect(siderElement).toBeInTheDocument();
+});

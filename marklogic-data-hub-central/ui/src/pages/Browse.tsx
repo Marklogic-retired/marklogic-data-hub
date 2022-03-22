@@ -26,14 +26,14 @@ import {CSSProperties} from "react";
 import GraphViewExplore from "@components/explore/graph-view-explore";
 import {HCTooltip, HCSider} from "@components/common";
 import {graphSearchQuery, searchResultsQuery} from "@api/queries";
-import {getHubCentralConfig} from "@api/modeling";
 import SelectedFacets from "@components/selected-facets/selected-facets";
 import EntitySpecificSidebar from "@components/explore/entity-specific-sidebar/entity-specific-sidebar";
 import EntityIconsSidebar from "@components/explore/entity-icons-sidebar/entity-icons-sidebar";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {ViewType} from "../types/modeling-types";
 import {themeColors} from "@config/themes.config";
-
+import {HubCentralConfigContext} from "@util/hubCentralConfig-context";
+import {baseEntitiesSorting} from "@util/entities-sorting";
 
 interface Props extends RouteComponentProps<any> {
 }
@@ -59,6 +59,7 @@ const Browse: React.FC<Props> = ({location}) => {
     savedNode,
     setSavedNode
   } = useContext(SearchContext);
+  const {hubCentralConfig} = useContext(HubCentralConfigContext);
   const searchBarRef = useRef<HTMLDivElement>(null);
   const authorityService = useContext(AuthoritiesContext);
   const [data, setData] = useState<any[]>([]);
@@ -164,7 +165,6 @@ const Browse: React.FC<Props> = ({location}) => {
   };
 
   const [graphSearchData, setGraphSearchData] = useState({});
-  const [hubCentralConfig, sethubCentralConfig] = useState({});
   const [graphPageInfo, setGraphPageInfo] = useState({});
 
   useEffect(() => {
@@ -313,24 +313,23 @@ const Browse: React.FC<Props> = ({location}) => {
     (async () => {
       try {
         const modelsResponse = await axios.get(`/api/models`);
-        const HubCentralConfigResponse = await getHubCentralConfig();
         const parsedModelData = entityFromJSON(modelsResponse.data);
-        let parsedEntityDef = entityParser(parsedModelData).filter(entity => entity.name && entity);
+        const parsedEntityDef = entityParser(parsedModelData).filter(entity => entity.name && entity);
         const entitiesTypeIds = parsedEntityDef.map(entity => entity.name);
 
         // this block is to add colors an icons to the entities
         let entitiesWithFullProperties = parsedEntityDef;
-        if (HubCentralConfigResponse["status"] === 200 && HubCentralConfigResponse.data && Object.keys(HubCentralConfigResponse.data).length > 0) {
-          const {data: {modeling: {entities}}} = HubCentralConfigResponse;
+        if (hubCentralConfig && hubCentralConfig.modeling && Object.keys(hubCentralConfig.modeling.entities).length > 0) {
+          const {modeling: {entities}} = hubCentralConfig;
           entitiesWithFullProperties = parsedEntityDef.map(entity => {
+            let tmpEntity = {...entity};
             if (entities[entity.name]) {
-              entity.icon = entities[entity.name].icon;
-              entity.color = entities[entity.name].color;
+              tmpEntity.icon = entities[entity.name].icon;
+              tmpEntity.color = entities[entity.name].color;
             }
-            return entity;
+            return tmpEntity;
           });
         }
-
 
         if (loaded) {
           if (searchOptions.entityTypeIds.length === 0 && searchOptions.nextEntityType !== "All Data") {
@@ -338,10 +337,8 @@ const Browse: React.FC<Props> = ({location}) => {
           }
           setEntityDefinitionsArray(parsedEntityDef);
           setEntitiesData(modelsResponse.data);
-          sethubCentralConfig(HubCentralConfigResponse.data);
           setEntityDefArray(entitiesWithFullProperties);
           setCurrentBaseEntities(entitiesWithFullProperties);
-
         }
 
       } catch (error) {
@@ -351,7 +348,24 @@ const Browse: React.FC<Props> = ({location}) => {
     return () => {
       loaded = false;
     };
-  }, []);
+  }, [hubCentralConfig]);
+
+  useEffect(() => {
+    if (currentBaseEntities.length > 0) {
+      setCurrentEntitiesIcons(baseEntitiesSorting(currentBaseEntities));
+    } else {
+      setCurrentEntitiesIcons(baseEntitiesSorting(entityDefArray));
+    }
+  }, [currentBaseEntities]);
+
+  useEffect(() => {
+    if (entitySpecificPanel) {
+      let entitySelectd = {...entitySpecificPanel};
+      entitySelectd.color = hubCentralConfig?.modeling?.entities[entitySpecificPanel.name]?.color;
+      entitySelectd.icon = hubCentralConfig?.modeling?.entities[entitySpecificPanel.name]?.icon;
+      setEntitySpecificPanel(entitySelectd);
+    }
+  }, [hubCentralConfig]);
 
   useEffect(() => {
     //This can be a toggle when nextEntityType is replaced with the All Data/All Entities toggle.
@@ -648,7 +662,7 @@ const Browse: React.FC<Props> = ({location}) => {
         </HCSider>
       }
       {entitySpecificPanel &&
-        <HCSider color={entitySpecificPanel.color} placement="left" show={showEntitySpecificPanel} footer={<SidebarFooter />} updateVisibility={updateVisibility}>
+        <HCSider identity={entitySpecificPanel.name} color={entitySpecificPanel.color} placement="left" show={showEntitySpecificPanel} footer={<SidebarFooter />} updateVisibility={updateVisibility}>
           <EntitySpecificSidebar
             entitySelected={entitySpecificPanel}
             entityFacets={facetsSpecificPanel}
@@ -716,7 +730,6 @@ const Browse: React.FC<Props> = ({location}) => {
                         <GraphViewExplore
                           entityTypeInstances={graphSearchData}
                           graphView={viewOptions.graphView}
-                          hubCentralConfig={hubCentralConfig}
                           setGraphPageInfo={setGraphPageInfo}
                         />
                       </div> :

@@ -9,7 +9,7 @@ import EntityTypeTable from "@components/modeling/entity-type-table/entity-type-
 import ViewSwitch from "@components/common/switch-view/view-switch";
 import styles from "./Modeling.module.scss";
 
-import {deleteEntity, entityReferences, updateHubCentralConfig, primaryEntityTypes, publishDraftModels, clearDraftModels, updateEntityModels, getHubCentralConfig} from "@api/modeling";
+import {deleteEntity, entityReferences, primaryEntityTypes, publishDraftModels, clearDraftModels, updateEntityModels} from "@api/modeling";
 import {UserContext} from "@util/user-context";
 import {ModelingContext} from "@util/modeling-context";
 import {ModelingTooltips} from "@config/tooltips.config";
@@ -25,6 +25,7 @@ import PublishToDatabaseIcon from "../assets/publish-to-database-icon";
 import {HCAlert, HCButton, HCTooltip} from "@components/common";
 import {updateUserPreferences} from "../services/user-preferences";
 import {entitiesConfigExist} from "@util/modeling-utils";
+import {HubCentralConfigContext} from "@util/hubCentralConfig-context";
 
 const Modeling: React.FC = () => {
   const {user, handleError} = useContext(UserContext);
@@ -61,7 +62,7 @@ const Modeling: React.FC = () => {
   const [arrayValues, setArrayValues] = useState<string[]>([]);
 
   //hubCentral Config
-  const [hubCentralConfig, sethubCentralConfig] = useState({});
+  const {hubCentralConfig, updateHubCentralConfigOnServer} = useContext(HubCentralConfigContext);
   const [revertUnpublishedChanges, setRevertUnpublishedChanges] = useState(false);
 
 
@@ -74,7 +75,7 @@ const Modeling: React.FC = () => {
   useEffect(() => {
     if (canReadEntityModel) {
       setEntityTypesFromServer();
-      setHubCentralConfigFromServer();
+      updateUserPreferencesFromConfig();
     }
   }, []);
 
@@ -113,17 +114,13 @@ const Modeling: React.FC = () => {
     }
   };
 
-  const setHubCentralConfigFromServer = async () => {
+  const updateUserPreferencesFromConfig = async () => {
     try {
-      const response = await getHubCentralConfig();
-      if (response["status"] === 200) {
-        sethubCentralConfig(response.data);
-        if (!entitiesConfigExist(response.data)) {
-          let preferencesObject = {
-            modelingGraphOptions: {physicsEnabled: true}
-          };
-          updateUserPreferences(user.name, preferencesObject);
-        }
+      if (!entitiesConfigExist(hubCentralConfig)) {
+        let preferencesObject = {
+          modelingGraphOptions: {physicsEnabled: true}
+        };
+        updateUserPreferences(user.name, preferencesObject);
       }
     } catch (error) {
       handleError(error);
@@ -188,9 +185,9 @@ const Modeling: React.FC = () => {
 
   const publishHubCentralConfig = async (hubCentralConfig: hubCentralConfig) => {
     try {
-      let response = await updateHubCentralConfig(hubCentralConfig);
+      let response = await updateHubCentralConfigOnServer(hubCentralConfig);
       if (response["status"] === 200) {
-        await setHubCentralConfigFromServer();
+        updateUserPreferencesFromConfig();
       }
     } catch (error) {
       handleError(error);

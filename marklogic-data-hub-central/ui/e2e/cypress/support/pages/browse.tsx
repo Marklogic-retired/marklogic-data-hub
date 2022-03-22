@@ -605,6 +605,10 @@ class BrowsePage {
     return cy.get("[aria-label=manageQueries]");
   }
 
+  getEntityTypeDisplaySettingsButton() {
+    return cy.get("[aria-label=entityTypeDisplaySettings]");
+  }
+
   //saved query dropdown
   getSelectedQuery() {
     return this.getSaveQueriesDropdown().invoke("text");

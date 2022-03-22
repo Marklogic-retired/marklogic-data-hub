@@ -14,3 +14,4 @@ export {default as HCTooltip} from "./hc-tooltip/hc-tooltip";
 export {default as HCSearch} from "./hc-search/hc-search";
 export {default as HCSider} from "./hc-sider/hc-sider";
 export {default as HCSelect} from "./hc-select/hc-select";
+export {default as EntityTypeColorPicker} from "./entity-type-color-picker/entity-type-color-picker";

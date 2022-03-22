@@ -10,15 +10,15 @@ import {SearchContext} from "@util/search-context";
 import {AuthoritiesContext} from "@util/authorities";
 import QueryModal from "../queries/managing/manage-query-modal/manage-query";
 import infoIcon from "../../assets/icon_helpInfo.png";
-import {getHubCentralConfig, primaryEntityTypes} from "@api/modeling";
+import {primaryEntityTypes} from "@api/modeling";
 import {ToolbarBulbIconInfo} from "@config/tooltips.config";
 import {ArrowsAngleContract, ArrowsAngleExpand, XLg} from "react-bootstrap-icons";
 import {HCTooltip} from "@components/common";
 import Popover from "react-bootstrap/Popover";
 import {Dropdown, NavDropdown, OverlayTrigger} from "react-bootstrap";
 import EntityTypeDisplaySettingsModal from "@components/explore/entity-type-display-settings-modal/entity-type-display-settings-modal";
-import {UserContext} from "@util/user-context";
 import tooltipsConfig from "@config/explorer-tooltips.config";
+import {HubCentralConfigContext} from "@util/hubCentralConfig-context";
 
 interface Props {
   id: string;
@@ -38,6 +38,7 @@ const Tiles: React.FC<Props> = (props) => {
   const controls = props.options.controls;
   const viewId = props.id;
   const {savedQueries, entityDefinitionsArray} = useContext(SearchContext);
+  const {getHubCentralConfigFromServer} = useContext(HubCentralConfigContext);
   const [manageQueryModal, setManageQueryModal] = useState(false);
   const [infoVisible, setInfoVisible] = useState(false);
   const [exploreSettingsModal, setExploreSettingsModal] = useState(false);
@@ -46,8 +47,6 @@ const Tiles: React.FC<Props> = (props) => {
   const auth = useContext(AuthoritiesContext);
   const canExportQuery = auth.canExportEntityInstances();
   const isSavedQueryUser = auth.isSavedQueryUser();
-
-  const {handleError} = useContext(UserContext);
 
   const queryModal = <QueryModal
     canExportQuery={canExportQuery}
@@ -114,6 +113,7 @@ const Tiles: React.FC<Props> = (props) => {
 
   useEffect(() => {
     getEntities();
+    getHubCentralConfigFromServer();
     return () => { componentIsMounted.current = false; };
   }, []);
 
@@ -122,30 +122,12 @@ const Tiles: React.FC<Props> = (props) => {
     else setInfoVisible(false);
   };
 
-  const [hubCentralConfig, setHubCentralConfig] = useState<any>([]);
-
-  const getHubCentralConfigFromServer = async () => {
-    try {
-      const response = await getHubCentralConfig();
-      if (response["status"] === 200) {
-        setHubCentralConfig(response.data);
-      }
-    } catch (error) {
-      handleError(error);
-    }
-  };
-
-  const openExploreSettingsModal = () => {
-    getHubCentralConfigFromServer();
-    setExploreSettingsModal(true);
-  };
-
   const handleExploreSettingsMenu = (key) => {
     if (key === "manageQueries") {
       onMenuClick();
     }
     if (key === "entityTypeDisplaySettings") {
-      openExploreSettingsModal();
+      setExploreSettingsModal(true);
     }
   };
 
@@ -177,10 +159,8 @@ const Tiles: React.FC<Props> = (props) => {
   const entityTypeDisplaySettingsModal = <EntityTypeDisplaySettingsModal
     isVisible={exploreSettingsModal}
     toggleModal={setExploreSettingsModal}
-    hubCentralConfig={hubCentralConfig}
     entityDefinitionsArray={entityDefinitionsArray}
   />;
-
 
   const renderHeader = function (props) {
     return (

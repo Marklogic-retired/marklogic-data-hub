@@ -276,7 +276,7 @@ const EntitySpecificSidebar: React.FC<Props> = (props) => {
   return (
     <div aria-label={`specif-sidebar-${name}`} className={styles.specificSidebar}>
       <div className={styles.entityHeader}>
-        <span aria-label={`specif-icon-${name}`} className={styles.entityHeaderIcon}>
+        <span aria-label={`specif-icon-${name}`} className={styles.entityHeaderIcon} data-icon={icon}>
           <DynamicIcons name={icon} />
         </span>
         <span className={styles.entityHeaderName} aria-label={`specif-title-${name}`}>{name}</span>

@@ -1,14 +1,12 @@
-import React, {useContext, useEffect, useState, useRef, useCallback} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {Row, Col, Modal, Form, FormLabel} from "react-bootstrap";
 import styles from "./entity-type-modal.module.scss";
 import {UserContext} from "@util/user-context";
 import {ModelingTooltips, ErrorTooltips} from "@config/tooltips.config";
 import {createEntityType, updateModelInfo} from "@api/modeling";
-import {TwitterPicker} from "react-color";
-import graphConfig from "@config/graph-vis.config";
 import {defaultHubCentralConfig} from "@config/modeling.config";
 import {QuestionCircleFill} from "react-bootstrap-icons";
-import {HCButton, HCInput, HCTooltip} from "@components/common";
+import {EntityTypeColorPicker, HCButton, HCInput, HCTooltip} from "@components/common";
 import {IconPicker} from "react-fa-icon-picker";
 import {themeColors} from "@config/themes.config";
 import {defaultIcon} from "@config/explore.config";
@@ -48,10 +46,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
   const [colorTouched, setisColorTouched] = useState(false);
   const [iconSelected, setIconSelected] = useState<any>("");
   const [iconTouched, setIsIconTouched] = useState<any>("");
-  const [displayColorPicker, setDisplayColorPicker] = useState(false);
-  const [eventValid, setEventValid] = useState(false);
   const [version, setVersion] = useState<string>("");
-  const node: any = useRef();
 
   useEffect(() => {
     if (props.isVisible) {
@@ -123,25 +118,6 @@ const EntityTypeModal: React.FC<Props> = (props) => {
       setVersion(event.target.value);
     }
   };
-
-  const handleOuterClick = useCallback(
-    e => {
-      if (node.current && !node.current.contains(e.target)) {
-      // Clicked outside the color picker menu
-        setDisplayColorPicker(prev => false);
-        setEventValid(prev => false);
-      }
-    }, []);
-
-  useEffect(() => {
-    if (eventValid) {
-      document.addEventListener("click", handleOuterClick);
-    }
-
-    return () => {
-      document.removeEventListener("click", handleOuterClick);
-    };
-  });
 
   const getErrorMessage = () => {
     if (errorMessage) {
@@ -276,11 +252,6 @@ const EntityTypeModal: React.FC<Props> = (props) => {
     setName("");
   };
 
-  const handleEditColorMenu = () => {
-    setEventValid(prev => true);
-    setDisplayColorPicker(!displayColorPicker);
-  };
-
   const handleColorChange = async (color, event) => {
     if (color.hex !== props.color) {
       setisColorTouched(true);
@@ -395,7 +366,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
           <FormLabel column lg={3} style={{marginTop: "10px"}}>{"Color:"}</FormLabel>
           <Col className={"d-flex"}>
             <div className={styles.colorContainer}>
-              <div className={styles.colorPickerBorder} onClick={handleEditColorMenu} data-testid={"edit-color-icon"}><div data-testid={`${name}-color`} aria-label={`${name}-${colorSelected}-color`} style={{width: "32px", height: "30px", background: colorSelected, margin: "8px"}}></div></div>
+              <EntityTypeColorPicker color={colorSelected} entityType={name} handleColorChange={handleColorChange} />
             </div>
             <div className={"p-2 ps-3 d-flex align-items-center"}>
               <HCTooltip id="select-color-tooltip" text={props.isEditModal ? <span>The selected color will be associated with the <b>{name}</b> entity throughout your project</span> : <span>The selected color will be associated with this entity throughout your project</span>} placement={"right"}>
@@ -436,7 +407,6 @@ const EntityTypeModal: React.FC<Props> = (props) => {
           </Col>
         </Row>
       </Form>
-      {displayColorPicker ? <div ref={node} id={"color-picker-menu"} className={styles.colorPickerContainer}><TwitterPicker colors={graphConfig.colorOptionsArray} color={colorSelected} onChangeComplete={handleColorChange}/></div> : null}
     </Modal.Body>
     <Modal.Footer className={"d-flex justify-content-end py-2"}>
       <HCButton className={"me-2"} variant="outline-light" id={"entity-modal-cancel"} aria-label={"Cancel"} onClick={onCancel}>

@@ -4,7 +4,7 @@ import {ChevronDoubleRight} from "react-bootstrap-icons";
 import {HCTooltip} from "@components/common";
 import DynamicIcons from "@components/common/dynamic-icons/dynamic-icons";
 import {defaultIcon} from "@config/explore.config";
-import tooltipsConfig from "../../../config/explorer-tooltips.config";
+import tooltipsConfig from "@config/explorer-tooltips.config";
 
 interface Props {
   currentBaseEntities: any[];
@@ -40,7 +40,7 @@ const EntityIconsSidebar: React.FC<Props> = (props) => {
           <ChevronDoubleRight aria-label="base-entity-icons-list-close" className={styles.chevronBack} onClick={closeSpecificSidebar} />
         </HCTooltip>
         {currentBaseEntities.map(({color, icon, name}, index) => name &&
-          <div key={name} aria-label={`base-entity-icon-${name}`} style={{backgroundColor: color}} className={styles.entityIconListItem} onClick={() => handleBaseEntityClicked(index)}>
+          <div key={name} aria-label={`base-entity-icon-${name}`} data-icon={icon || defaultIcon} style={{backgroundColor: color}} className={styles.entityIconListItem} onClick={() => handleBaseEntityClicked(index)}>
             {icon ? <DynamicIcons name={icon} /> : <DynamicIcons name={defaultIcon} />}
           </div>
         )}
