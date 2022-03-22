@@ -22,13 +22,13 @@ import com.marklogic.client.datamovement.*;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubClient;
-import com.marklogic.hub.util.DiskQueue;
 import com.marklogic.hub.dataservices.JobService;
 import com.marklogic.hub.dataservices.StepRunnerService;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.impl.JobStatus;
 import com.marklogic.hub.step.*;
+import com.marklogic.hub.util.DiskQueue;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -330,7 +330,9 @@ public class QueryStepRunner extends LoggingObject implements StepRunner {
                     logger.debug(String.format("Processing %d items in batch %d of %d", batch.getItems().length, batch.getJobBatchNumber(),(int) batchCount));
                     // Invoke the DS endpoint. A StepRunnerService is created based on the DatabaseClient associated
                     // with the batch to help distribute load, per DHFPROD-1172.
-                    JsonNode jsonResponse = StepRunnerService.on(batch.getClient()).processBatch(inputs);
+                    StepRunnerService stepRunner = StepRunnerService.on(batch.getClient());
+                    // Use SessionState to allow custom steps to create new sessions
+                    JsonNode jsonResponse = stepRunner.processBatch(stepRunner.newSessionState(),inputs);
                     ResponseHolder response = objectMapper.readerFor(ResponseHolder.class).readValue(jsonResponse);
 
                     stepMetrics.getFailedEvents().addAndGet(response.errorCount);

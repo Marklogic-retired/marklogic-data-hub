@@ -3,6 +3,11 @@
     "desc": "Replacement for the mlRunFlow REST extension; processes a batch of items using the given flow and step",
     "params": [
         {
+          "name" : "api_session",
+          "datatype" : "session",
+          "desc" : "Holds the session object"
+        },
+        {
             "name": "inputs",
             "datatype": "jsonDocument",
             "$javaClass": "com.fasterxml.jackson.databind.JsonNode"

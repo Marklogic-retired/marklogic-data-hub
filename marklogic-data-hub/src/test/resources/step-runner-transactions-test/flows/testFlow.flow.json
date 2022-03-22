@@ -1,0 +1,10 @@
+{
+  "name" : "testFlow",
+  "description" : "Flow description",
+  "steps" : {
+    "1" : {
+      "stepId" : "testTransactionsStep-custom"
+    }
+  },
+  "lastUpdated" : "2022-03-22T16:29:04.483Z"
+}
