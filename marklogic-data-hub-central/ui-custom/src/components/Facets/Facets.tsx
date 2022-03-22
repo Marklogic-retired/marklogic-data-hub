@@ -8,6 +8,7 @@ import {InfoCircleFill, ChevronDoubleRight, ChevronDoubleLeft, Calendar4, XLg} f
 import "./Facets.scss";
 import moment from "moment";
 import DateRangePicker from 'react-bootstrap-daterangepicker';
+import "bootstrap-daterangepicker/daterangepicker.css";
 import {HCDateTimePicker} from "../../../../ui/src/components/common";
 
 type Props = {
@@ -184,17 +185,17 @@ const Facets: React.FC<Props> = (props) => {
     }
 
     const handleMouseOver = (e) => {
-        // if (value.length > 0 && value[0]) {
+        if (datePickerValue.length > 0 && datePickerValue[0]) {
         console.log("entered 180")
         updateShowClear(true);
-        // }
+        }
     }
 
     const handleMouseOut = (e) => {
-        // if (value.length > 0 && value[0]) {
+        if (datePickerValue.length > 0 && datePickerValue[0]) {
         console.log("entered 187")
         updateShowClear(false);
-        // }
+        }
     }
 
     const onShow = (event, picker) => {
@@ -204,13 +205,51 @@ const Facets: React.FC<Props> = (props) => {
             applyButton.innerHTML = "OK";
         }
     }
-
     const onOK = (event) => {
-      console.log("On ok is  clicked");
+        console.log("On ok is  clicked");
     }
 
-    const onChange = () => {
+    const  resetValue = (event) => {
+        console.log("resetValue is  clicked");
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (ref.current && datePickerValue.length > 0) {
+            ref.current.setStartDate(null);ref.current.setEndDate(null);
+            setDatePickerValue([null,null])
+        }
+
+        if (onChange) {
+            updateShowClear(false);
+            return onChange(null,null);
+        }
+
+        // if (onOk && bindChange) {
+        //     updateShowClear(false);
+        //     bindChange();
+        //     return;
+        // }
+    }
+
+    const onChange = (startDate, endDate)  => {
+        const dateArray = [startDate, endDate];
         console.log("On change is  clicked");
+        if (dateArray.length && dateArray[0] && startDate.isValid()) {
+            (dateArray[0] && dateArray[1]) && setDatePickerValue([moment(dateArray[0].format("YYYY-MM-DD")), moment(dateArray[1].format("YYYY-MM-DD"))]);
+        }
+    }
+    const formatValue = (input) => {
+        if (!Array.isArray(input) || input.length !== 2) {
+            return "";
+        }
+
+        if (input.some(dateValue => dateValue === null)) {
+            return "";
+        }
+
+        let dateFormat = "YYYY-MM-DD";
+
+        return input.map(dateValue => moment(dateValue).format(dateFormat)).join(" ~ ");
     }
 
   return (
@@ -265,9 +304,9 @@ const Facets: React.FC<Props> = (props) => {
         <div className="dateRangeFacet" >
             <DateRangePicker initialSettings={initialSettings} {...{onShow, ref}} onApply={onOK} onCallback={onChange}>
                 <div  onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} className="pickerContainer">
-                    <input type="text"  className="input" placeholder={formatPlaceHolder(["Start date", "End date"])}/>
+                    <input type="text"  readOnly className="input" placeholder={formatPlaceHolder(["Start date", "End date"])} value={formatValue(datePickerValue)}/>
                     {!showClear ? <Calendar4 className="calendarIcon" /> :
-                        <XLg className="clearIcon"  data-testid="datetime-picker-reset"/>}
+                        <XLg className="clearIcon"  data-testid="datetime-picker-reset" onClick={resetValue}/>}
                 </div>
             </DateRangePicker>
         </div>

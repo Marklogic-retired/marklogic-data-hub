@@ -97,8 +97,12 @@
             margin-right: 2px;
         }
     }
+    .daterangepicker {
+        position: fixed !important;
+    }
     .dateRangeFacet {
         padding-top: 2vh;
+        //padding-bottom: 30vh;
 
         .pickerContainer {
             background-color: white;
