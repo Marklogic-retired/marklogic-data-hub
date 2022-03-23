@@ -213,11 +213,6 @@
         "displayThreshold": 3,
         "displayShort": 3,
         "displayLong": 5,
-        "dateRangeFacet": {
-          "type": "dateRange",
-          "name": "created On",
-          "tooltip": "Filter by date created."
-        },
         "items": [
           {
             "type": "category",
