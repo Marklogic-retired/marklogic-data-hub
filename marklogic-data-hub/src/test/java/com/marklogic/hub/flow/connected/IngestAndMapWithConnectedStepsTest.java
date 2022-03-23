@@ -85,6 +85,20 @@ public class IngestAndMapWithConnectedStepsTest extends AbstractHubCoreTest {
     }
 
     @Test
+    void xmlIngestedAsJsonAndElementOptions() {
+        installProjectFromUnitTestFolder("data-hub/5/flow/ingestAndMapConnected");
+
+        // Verify options are handled correctly by adjust the source format of the ingestion step
+        String input = "<input><flowName>ingestAndMap</flowName>";
+        input += "<options><sourceFormat>json</sourceFormat></options>";
+        input += "<content><uri>/customer1.json</uri><value><customerId>1</customerId></value></content>";
+        input += "<content><uri>/customer2.json</uri><value><customerId>2</customerId></value></content>";
+        input += "</input>";
+
+        verifyResults(newResource().runFlowWithXmlInput(input));
+    }
+
+    @Test
     void jsonSelectSteps() {
         installProjectFromUnitTestFolder("data-hub/5/flow/ingestAndMapConnected");
 
