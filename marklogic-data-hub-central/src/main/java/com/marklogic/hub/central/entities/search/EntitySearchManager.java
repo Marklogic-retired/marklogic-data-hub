@@ -33,6 +33,7 @@ import com.marklogic.hub.central.entities.search.impl.CollectionFacetHandler;
 import com.marklogic.hub.central.entities.search.impl.CreatedOnFacetHandler;
 import com.marklogic.hub.central.entities.search.impl.EntityPropertyFacetHandler;
 import com.marklogic.hub.central.entities.search.impl.JobRangeFacetHandler;
+import com.marklogic.hub.central.entities.search.impl.StepRangeFacetHandler;
 import com.marklogic.hub.central.entities.search.models.DocSearchQueryInfo;
 import com.marklogic.hub.central.entities.search.models.SearchQuery;
 import com.marklogic.hub.central.exceptions.DataHubException;
@@ -231,6 +232,7 @@ public class EntitySearchManager {
         facetHandlerMap = new HashMap<>();
         facetHandlerMap.put(Constants.COLLECTION_CONSTRAINT_NAME, new CollectionFacetHandler());
         facetHandlerMap.put(Constants.JOB_RANGE_CONSTRAINT_NAME, new JobRangeFacetHandler());
+        facetHandlerMap.put(Constants.RAN_STEP_RANGE_CONSTRAINT_NAME, new StepRangeFacetHandler());
         facetHandlerMap.put(Constants.CREATED_ON_CONSTRAINT_NAME, new CreatedOnFacetHandler());
     }
 

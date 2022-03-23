@@ -591,8 +591,8 @@ const sem = require("/MarkLogic/semantics.xqy");
     metaData[consts.CREATED_BY] = fn.string(evalSubstituteVal(consts.CREATED_BY));
     metaData[consts.CREATED_IN_FLOW] = flowName;
     metaData[consts.CREATED_BY_STEP] = stepName;
+    metaData[consts.RAN_BY_STEPS] = fn.stringJoin(fn.distinctValues(Sequence.from([fn.tokenize(metaData[consts.RAN_BY_STEPS],"\\s+"),stepName])), " ");
     metaData[consts.CREATED_BY_JOB] = fn.stringJoin(fn.distinctValues(Sequence.from([fn.tokenize(metaData[consts.CREATED_BY_JOB],"\\s+"),jobId])), " ");
-
     return metaData;
   }
 
@@ -697,7 +697,6 @@ const sem = require("/MarkLogic/semantics.xqy");
 function addMetadataToContent(content, flowName, stepName, jobId) {
   content.context = content.context || {};
   content.context.metadata = createMetadata(content.context.metadata || {}, flowName, stepName, jobId);
-
   if (content.context.collections) {
     content.context.collections = hubUtils.normalizeToArray(content.context.collections);
   }
