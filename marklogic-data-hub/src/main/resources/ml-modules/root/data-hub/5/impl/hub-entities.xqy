@@ -311,6 +311,11 @@ declare private function build-static-explorer-constraints() as element(search:c
         <field name="datahubCreatedByJob"/>
       </word>
     </constraint>
+    <constraint name="ranByStepWord">
+      <word>
+        <field name="datahubRanBySteps"/>
+      </word>
+    </constraint>
     <constraint name="createdOnRange">
       <range facet="false">
         <field name="datahubCreatedOn"/>
