@@ -225,13 +225,13 @@ const Facets: React.FC<Props> = (props) => {
             updateShowClear(false);
             return onChange(null,null);
         }
-
-        console.log("resetValue 2 is  clicked ",datePickerValue);
-        // if (onOk && bindChange) {
-        //     updateShowClear(false);
-        //     bindChange();
-            return;
-        // }
+        //
+        // console.log("resetValue 2 is  clicked ",datePickerValue);
+        // // if (onOk && bindChange) {
+        // //     updateShowClear(false);
+        // //     bindChange();
+        //     return;
+        // // }
     }
 
     const onChange = (startDate, endDate)  => {
@@ -261,16 +261,35 @@ const Facets: React.FC<Props> = (props) => {
   return (
     <div className="facets">
       {/* Show each facet */}
-        <div className="dateRangeFacet" >
-            <DateRangePicker initialSettings={initialSettings} {...{onShow, ref}} onApply={onOK} onCallback={onChange}>
-                <div  onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} className="pickerContainer">
-                    <input type="text"  readOnly className="input" placeholder={formatPlaceHolder(["Start date", "End date"])} value={formatValue(datePickerValue)}/>
-                    {!showClear ?
-                        <Calendar4 className="calendarIcon" /> :
-                        <XLg className="clearIcon"  data-testid="datetime-picker-reset" onClick={resetValue}/>}
-                </div>
-            </DateRangePicker>
+        {<div className="title">
+            {props.config.dateRangeFacet.name}
+            <OverlayTrigger
+                key={props.config.dateRangeFacet.name}
+                placement="right"
+                overlay={<Tooltip>{props.config.dateRangeFacet.tooltip}</Tooltip>}
+            >
+                <InfoCircleFill
+                    data-testid={"info-" + props.config.dateRangeFacet.name}
+                    color="#5d6aaa"
+                    size={21}
+                    className="facetInfo"
+                />
+            </OverlayTrigger>
         </div>
+        }
+            <div  className="createdOnFacet"><span className="dateRangeFacet">
+                <DateRangePicker initialSettings={initialSettings} {...{onShow, ref}} onApply={onOK}
+                                 onCallback={onChange}>
+                    <div onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} className="pickerContainer">
+                        <input type="text" readOnly className="input"
+                               placeholder={formatPlaceHolder(["Start date", "End date"])}
+                               value={formatValue(datePickerValue)}/>
+                        {!showClear ?
+                            <Calendar4 className="calendarIcon"/> :
+                            <XLg className="clearIcon" data-testid="datetime-picker-reset" onClick={resetValue}/>}
+                    </div>
+                </DateRangePicker>
+            </span></div>
       {props.config.items && searchContext.searchResults && props.config.items.map((f, index) => {
         return (
         <div className="facet" key={"facet-" + index}>

@@ -105,7 +105,7 @@
            background-color: white;
            position: relative;
            max-width: 265px;
-
+           padding-left: 5px;
             &:focus-visible {
                 border: none;
                 outline: none;
@@ -157,6 +157,10 @@
             z-index: 10;
         }
 
+    }
+    .createdOnFacet {
+        padding-bottom: 2vh;
+        border-bottom: 1px solid lightgrey !important;
     }
 }
 .daterangepicker {
