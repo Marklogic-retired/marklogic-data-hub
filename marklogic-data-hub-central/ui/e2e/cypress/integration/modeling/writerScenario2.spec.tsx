@@ -23,22 +23,20 @@ describe("Entity Modeling: Writer Role", () => {
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-mapping-writer", "hub-central-saved-query-user").withRequest();
     LoginPage.postLogin();
-    cy.waitForAsyncRequest();
+
+    //Setup hubCentral config for testing
     cy.setupHubCentralConfig();
-    cy.waitForAsyncRequest();
+
+    //Saving Local Storage to preserve session
+    cy.saveLocalStorage();
   });
   beforeEach(() => {
-    cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-mapping-writer", "hub-central-saved-query-user").withRequest();
-    cy.waitForAsyncRequest();
-  });
-  afterEach(() => {
-    cy.resetTestUser();
-    cy.waitForAsyncRequest();
+    //Restoring Local Storage to Preserve Session
+    cy.restoreLocalStorage();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.resetTestUser();
-    cy.waitForAsyncRequest();
   });
   it("Create an entity with property that already exists", {defaultCommandTimeout: 120000}, () => {
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click({force: true});
@@ -265,6 +263,7 @@ describe("Entity Modeling: Writer Role", () => {
     cy.waitForAsyncRequest();
     propertyTable.getProperty("OrderedBy").should("not.exist");
     entityTypeTable.viewEntityInGraphView("User3");
+    graphVis.getGraphVisCanvas().scrollIntoView();
     //To verify tooltip over particular node
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
       let customerCoordinates: any = nodePositions["User3"];

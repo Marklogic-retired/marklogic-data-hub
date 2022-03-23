@@ -13,33 +13,29 @@ import graphVis from "../../support/components/model/graph-vis";
 import {ConfirmationType} from "../../support/types/modeling-types";
 
 describe("Graph Validations", () => {
-  //Setup hubCentral config for testing
+
   before(() => {
     cy.visit("/");
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
-    cy.waitForAsyncRequest();
+    //Setup hubCentral config for testing
     cy.setupHubCentralConfig();
-    cy.waitForAsyncRequest();
+    //Saving Local Storage to preserve session
+    cy.saveLocalStorage();
   });
   //login with valid account
   beforeEach(() => {
-    cy.visit("/");
+    //Restoring Local Storage to Preserve Session
+    cy.restoreLocalStorage();
+
+    cy.visit("/tiles/model");
     cy.contains(Application.title);
-    cy.loginAsDeveloper().withRequest();
-    LoginPage.postLogin();
-    cy.waitForAsyncRequest();
-    cy.waitUntil(() => toolbar.getModelToolbarIcon().should("have.length.gt", 0)).click({force: true});
+    toolbar.getModelToolbarIcon().should("have.length.gt", 0).click({force: true});
     cy.wait(3000);
-    cy.waitForAsyncRequest();
     modelPage.selectView("table");
     cy.wait(1000);
     entityTypeTable.waitForTableToLoad();
-  });
-  afterEach(() => {
-    cy.resetTestUser();
-    cy.waitForAsyncRequest();
   });
   it("can view and edit Entity Type tab in side panel", {defaultCommandTimeout: 120000}, () => {
     entityTypeTable.viewEntityInGraphView("Person");

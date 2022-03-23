@@ -20,29 +20,29 @@ import LoginPage from "../../support/pages/login";
 import "cypress-wait-until";
 
 describe("Entity Modeling: Graph View", () => {
-  //Setup hubCentral config for testing
+
   before(() => {
     cy.visit("/");
     cy.contains(Application.title);
+    //login with valid account
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-mapping-writer", "hub-central-saved-query-user").withRequest();
     LoginPage.postLogin();
-    cy.waitForAsyncRequest();
+
+    //Setup hubCentral config for testing
     cy.setupHubCentralConfig();
-    cy.waitForAsyncRequest();
+
+    //Saving Local Storage to preserve session
+    cy.saveLocalStorage();
   });
-  //login with valid account
+
   beforeEach(() => {
-    cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-mapping-writer", "hub-central-saved-query-user").withRequest();
-    cy.waitForAsyncRequest();
+    //Restoring Local Storage to Preserve Session
+    cy.restoreLocalStorage();
   });
-  afterEach(() => {
-    cy.resetTestUser();
-    cy.waitForAsyncRequest();
-  });
+
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.resetTestUser();
-    cy.waitForAsyncRequest();
   });
 
   it("Create an entity with name having more than 20 chars", () => {
@@ -252,10 +252,9 @@ describe("Entity Modeling: Graph View", () => {
     //verify helpful icon present on the property, should show relationship icon but no foreign key
     propertyTable.verifyRelationshipIcon("purchased").should("exist");
     propertyTable.verifyForeignKeyIcon("purchased").should("not.exist");
-    // });
+  });
 
-    // it("can edit graph edit mode and add edge relationships (with foreign key scenario) via drag/drop", () => {
-
+  it("can edit graph edit mode and add edge relationships (with foreign key scenario) via drag/drop", () => {
     entityTypeTable.viewEntityInGraphView("Person");
     modelPage.closeSidePanel();
     cy.wait(2000);

@@ -18,18 +18,17 @@ describe("Entity Modeling: Graph View", () => {
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-mapping-writer", "hub-central-saved-query-user").withRequest();
     LoginPage.postLogin();
-    cy.waitForAsyncRequest();
+
+    //Setup hubCentral config for testing
     cy.setupHubCentralConfig();
-    cy.waitForAsyncRequest();
+
+    //Saving Local Storage to preserve session
+    cy.saveLocalStorage();
   });
   //login with valid account
   beforeEach(() => {
-    cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-mapping-writer", "hub-central-saved-query-user").withRequest();
-    cy.waitForAsyncRequest();
-  });
-  afterEach(() => {
-    cy.resetTestUser();
-    cy.waitForAsyncRequest();
+    //Restoring Local Storage to Preserve Session
+    cy.restoreLocalStorage();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();

@@ -17,22 +17,37 @@ import graphVis from "../../support/components/model/graph-vis";
 import "cypress-wait-until";
 
 describe("Entity Modeling: Reader Role", () => {
-  //login with valid account
-  beforeEach(() => {
+  before(() => {
     cy.visit("/");
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-saved-query-user").withRequest();
     LoginPage.postLogin();
-    cy.waitForAsyncRequest();
-    cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
+    toolbar.getModelToolbarIcon().click();
     cy.waitForAsyncRequest();
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
+
+    //Setup hubCentral config for testing
+    cy.setupHubCentralConfig();
+
+    //Saving Local Storage to preserve session
+    cy.saveLocalStorage();
+  });
+  //login with valid account
+  beforeEach(() => {
+    //Restoring Local Storage to Preserve Session
+    cy.restoreLocalStorage();
+
+    cy.visit("/");
+    toolbar.getModelToolbarIcon().click();
+    cy.waitForAsyncRequest();
+    modelPage.selectView("table");
+    entityTypeTable.waitForTableToLoad();
+
   });
   after(() => {
     //resetting the test user back to only have 'hub-central-user' role
     cy.resetTestUser();
-    cy.waitForAsyncRequest();
   });
   it("can navigate by clicking instance count and last processed, can not create, edit, or delete entity models", () => {
     // Removed navigation tests unitl DHFPROD-6152 is resolved
