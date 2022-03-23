@@ -15,7 +15,7 @@ import "cypress-wait-until";
 const entityName = "ProductCategory";
 
 describe("Entity Modeling: Graph View", () => {
-  //Setup hubCentral config for testing
+
   before(() => {
     cy.visit("/");
     cy.contains(Application.title);
@@ -23,14 +23,14 @@ describe("Entity Modeling: Graph View", () => {
     cy.log("**Logging into the app as a hub-central-entity-model-writer**");
     cy.loginAsTestUserWithRoles("hub-central-entity-model-writer").withRequest();
     LoginPage.postLogin();
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
-  });
 
+    //Setup hubCentral config for testing
+    cy.setupHubCentralConfig();
+
+  });
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.deleteEntities(entityName);
-    cy.resetTestUser();
   });
 
   it("create an entity type for active the publish button", () => {
@@ -60,8 +60,6 @@ describe("Entity Modeling: Graph View", () => {
     cy.log("**Logging into the app as a hub-central-entity-model-reader**");
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader").withRequest();
     LoginPage.postLogin();
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
 
 
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click({force: true});

@@ -20,21 +20,21 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
     LoginPage.postLogin();
-    cy.waitForAsyncRequest();
+
+    //Setup hubCentral config for testing
+    cy.setupHubCentralConfig();
+
+    //Saving Local Storage to preserve session
+    cy.saveLocalStorage();
   });
   beforeEach(() => {
-    cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
-    cy.waitForAsyncRequest();
-  });
-  afterEach(() => {
-    cy.resetTestUser();
-    cy.waitForAsyncRequest();
+    //Restoring Local Storage to Preserve Session
+    cy.restoreLocalStorage();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.deleteEntities("Buyer");
     cy.resetTestUser();
-    cy.waitForAsyncRequest();
   });
   it("Create a new entity", {defaultCommandTimeout: 120000}, () => {
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
@@ -62,8 +62,8 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     //verify color and icon is reflected in the table
     modelPage.getColorSelected("Buyer", "#d5d3dd").should("exist");
     modelPage.getIconSelected("Buyer", "FaAccessibleIcon").should("exist");
-    // });
-    // it("Add a Multiple Value property", () => {
+  });
+  it("Add a Multiple Value property", () => {
     propertyModal.newPropertyName("user");
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Related Entity").click();
@@ -192,7 +192,12 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     cy.location("pathname").should("eq", "/");
   });
   it("Add new property to Order entity", () => {
+    cy.log("**Re-login**");
+    cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
     LoginPage.postLogin();
+    //Setup hubCentral config for testing
+    cy.setupHubCentralConfig();
+
     toolbar.getModelToolbarIcon().click();
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
@@ -210,7 +215,12 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     //propertyTable.getWildcardIcon('orderID').should('exist');
   });
   it("Add related property to Buyer, check Join Property menu, cancel the addition", () => {
+    cy.log("**Re-login**");
+    cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
     LoginPage.postLogin();
+    //Setup hubCentral config for testing
+    cy.setupHubCentralConfig();
+
     toolbar.getModelToolbarIcon().click();
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();

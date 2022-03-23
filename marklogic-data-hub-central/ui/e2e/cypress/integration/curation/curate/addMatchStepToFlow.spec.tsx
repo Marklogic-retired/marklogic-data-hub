@@ -113,8 +113,7 @@ describe("Add Matching step to a flow", () => {
     runPage.deleteStep(matchStep, flowName1).click();
     loadPage.confirmationOptions("Yes").click();
 
-    // });    /********   TODO: Add this separation back in during replace repeated logins work      *******/
-    // it("Navigating to match tab", () => {
+    cy.log("**Navigating to match tab**");
     toolbar.getCurateToolbarIcon().should("be.visible").click();
     curatePage.getEntityTypePanel("Customer").should("be.visible");
     curatePage.toggleEntityTypeId("Customer");
