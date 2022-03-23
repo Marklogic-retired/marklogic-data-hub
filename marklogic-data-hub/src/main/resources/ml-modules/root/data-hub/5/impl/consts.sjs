@@ -39,6 +39,7 @@ module.exports = {
 
   CREATED_IN_FLOW: "datahubCreatedInFlow",
   CREATED_BY_STEP: "datahubCreatedByStep",
+  RAN_BY_STEPS: "datahubRanBySteps",
 
   CREATED_BY_JOB: "datahubCreatedByJob",
 
@@ -86,7 +87,7 @@ module.exports = {
   PROVENANCE_OFF: "off",
   PROVENANCE_COARSE: "coarse",
   PROVENANCE_FINE: "fine",
-  
+
   // Define all DH trace events here
   TRACE_STEP: "hub-step",
   TRACE_FLOW: "hub-flow",
