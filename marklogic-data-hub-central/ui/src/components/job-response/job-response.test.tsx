@@ -1,6 +1,6 @@
 import React from "react";
 import axiosMock from "axios";
-import {render, waitForElement, act, cleanup, wait} from "@testing-library/react";
+import {render, waitForElement, act, cleanup, wait, fireEvent} from "@testing-library/react";
 import mocks from "../../api/__mocks__/mocks.data";
 import JobResponse from "./job-response";
 import {BrowserRouter as Router} from "react-router-dom";
@@ -11,16 +11,23 @@ import curateData from "../../assets/mock-data/curation/flows.data";
 
 jest.mock("axios");
 
-/* Commenting out for DHFPROD-7820, remove unfinished run flow epic stories from 5.6
-// const getSubElements=(content, node, title) => {
-//   const hasText = node => node.textContent === title;
-//   const nodeHasText = hasText(node);
-//   const childrenDontHaveText = Array.from(node.children).every(
-//     child => !hasText(child)
-//   );
-//   return nodeHasText && childrenDontHaveText;
-// };
-*/
+const mockHistoryPush = jest.fn();
+
+jest.mock("react-router-dom", () => ({
+  ...jest.requireActual("react-router-dom"), useHistory: () => ({
+    push: mockHistoryPush,
+  }),
+}));
+
+const getSubElements = (content, node, title) => {
+  const hasText = node => node.textContent === title;
+  const nodeHasText = hasText(node);
+  const childrenDontHaveText = Array.from(node.children).every(
+    child => !hasText(child)
+  );
+  return nodeHasText && childrenDontHaveText;
+};
+
 
 describe("Job response modal", () => {
 
@@ -36,23 +43,24 @@ describe("Job response modal", () => {
   test("Verify successful job response information displays", async () => {
     mocks.runAPI(axiosMock);
     let getByText;
+    let getAllByText;
+    let getByTestId;
     act(() => {
-      ({getByText} = render(
+      ({getByText, getAllByText, getByTestId} = render(
         <Router>
           <CurationContext.Provider value={curationContextMock}>
             <JobResponse
               jobId={"e4590649-8c4b-419c-b6a1-473069186592"}
               openJobResponse={true}
-              setOpenJobResponse={() => {}}
+              setOpenJobResponse={() => { }}
             />
           </CurationContext.Provider>
         </Router>
       ));
     });
 
-    /* Commenting out for DHFPROD-7820, remove unfinished run flow epic stories from 5.6
     // verify modal text and headers
-    expect(await(waitForElement(() => getByText((content, node) => {
+    expect(await (waitForElement(() => getByText((content, node) => {
       return getSubElements(content, node, "The flow testFlow completed");
     })))).toBeInTheDocument();
 
@@ -63,7 +71,7 @@ describe("Job response modal", () => {
     expect(getByText("e4590649-8c4b-419c-b6a1-473069186592")).toBeInTheDocument();
     expect(getByText("2020-04-24 14:05")).toBeInTheDocument();
     expect(getByText("0s 702ms")).toBeInTheDocument();
-    */
+
 
     // check that
     await (waitForElement(() => (getByText("testFlow"))));
@@ -73,11 +81,30 @@ describe("Job response modal", () => {
     expect(getByText("0s 702ms")).toBeInTheDocument();
 
     // check that expected steps are listed
-    expect(getByText("Mapping1")).toBeInTheDocument();
-    expect(getByText("match-customer")).toBeInTheDocument();
-    expect(getByText("merge-customer")).toBeInTheDocument();
-    expect(getByText("master-customer")).toBeInTheDocument();
-    expect(getByText("Ingestion1")).toBeInTheDocument();
+    expect(getAllByText("Mapping1")[0]).toBeInTheDocument();
+    expect(getAllByText("match-customer")[0]).toBeInTheDocument();
+    expect(getAllByText("merge-customer")[0]).toBeInTheDocument();
+    expect(getAllByText("master-customer")[0]).toBeInTheDocument();
+    expect(getAllByText("Ingestion1")[0]).toBeInTheDocument();
+
+    // checks merge-customer explore button
+    let exploreButton = await (waitForElement(() => getByTestId(`merge-customer-explorer-link`)));
+    fireEvent.click(exploreButton);
+    await wait(() => {
+      expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles/explore"});
+    });
+    // checks Mapping1 explore button
+    exploreButton = await (waitForElement(() => getByTestId(`Mapping1-explorer-link`)));
+    fireEvent.click(exploreButton);
+    await wait(() => {
+      expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles/explore"});
+    });
+    // checks Ingestion1 explore button
+    exploreButton = await (waitForElement(() => getByTestId(`Ingestion1-explorer-link`)));
+    fireEvent.click(exploreButton);
+    await wait(() => {
+      expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles/explore"});
+    });
   });
 
   test("Verify failed job response information displays", async () => {
@@ -90,7 +117,7 @@ describe("Job response modal", () => {
             <JobResponse
               jobId={"350da405-c1e9-4fa7-8269-d9aefe3b4b9a"}
               openJobResponse={true}
-              setOpenJobResponse={() => {}}
+              setOpenJobResponse={() => { }}
             />
           </CurationContext.Provider>
         </Router>

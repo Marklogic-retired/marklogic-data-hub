@@ -67,8 +67,8 @@ describe("json scenario for table on browse documents page", () => {
     entitiesSidebar.selectBaseEntityOption("Person");
     browsePage.getHubPropertiesExpanded();
     browsePage.getTotalDocuments().should("be.greaterThan", 5);
-    //check table rows
-    browsePage.getHCTableRows().should("have.length", 14);
+    //check table rows. Validates the records were filtered
+    browsePage.getHCTableRows().should("have.length.lt", 52);
     //check table columns
     browsePage.getTableColumns().should("to.have.length.of.at.most", 9);
   });

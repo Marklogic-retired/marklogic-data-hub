@@ -2,16 +2,16 @@ import React, {useState, useEffect, useContext} from "react";
 import {HCButton, HCTable, HCTooltip} from "@components/common";
 import {Modal, Accordion} from "react-bootstrap";
 import {RunToolTips} from "@config/tooltips.config";
-//import {SearchContext} from "../../util/search-context";
+import {SearchContext} from "../../util/search-context";
 import {dateConverter, renderDuration, durationFromDateTime} from "@util/date-conversion";
 import styles from "./job-response.module.scss";
 import axios from "axios";
 import {UserContext} from "@util/user-context";
-//import {getMappingArtifactByStepName} from "../../api/mapping";
-//import {useHistory} from "react-router-dom";
+import {getMappingArtifactByStepName} from "../../api/mapping";
+import {useHistory} from "react-router-dom";
 import Spinner from "react-bootstrap/Spinner";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faClock, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
+import {faClock} from "@fortawesome/free-solid-svg-icons";
 import "./job-response.scss";
 import {CheckCircleFill, ExclamationCircleFill} from "react-bootstrap-icons";
 
@@ -21,28 +21,28 @@ type Props = {
   jobId: string;
 }
 
-const JobResponse: React.FC<Props> = (props) => {
+const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, openJobResponse}) => {
   const [jobResponse, setJobResponse] = useState<any>({});
   //const [lastSuccessfulStep, setLastSuccessfulStep] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const {handleError} = useContext(UserContext);
-  //const {setLatestDatabase, setLatestJobFacet} = useContext(SearchContext);
-  //const history: any = useHistory();
+  const {setLatestDatabase, setLatestJobFacet} = useContext(SearchContext);
+  const history: any = useHistory();
 
   useEffect(() => {
-    if (props.jobId) {
+    if (jobId) {
       retrieveJobDoc();
     }
-  }, [props.openJobResponse, props.jobId]);
+  }, [openJobResponse, jobId]);
 
   const retrieveJobDoc = async () => {
     try {
       setIsLoading(true);
-      let response = await axios.get("/api/jobs/" + props.jobId);
+      let response = await axios.get("/api/jobs/" + jobId);
       if (response.status === 200) {
         setJobResponse(response.data);
         /*  const successfulSteps = response.data.stepResponses ? Object.values(response.data.stepResponses).filter((stepResponse: any) => {
-           return stepResponse.success;
+          return stepResponse.success;
          }) : []; */
         //const successfulStep = successfulSteps[successfulSteps.length - 1];
         //setLastSuccessfulStep(successfulStep);
@@ -143,12 +143,13 @@ const JobResponse: React.FC<Props> = (props) => {
       dataField: "successfulEvents",
       width: "25%",
       headerFormatter: (column) => <strong>Documents Written</strong>,
-      formatter: (stepName, response) => {
+      formatter: (successfulEvents, response) => {
+        const {stepName, success} = response;
         const stepIsFinished = response.stepEndTime && response.stepEndTime !== "N/A";
         if (stepIsFinished) {
-          if (response.success) {
+          if (success) {
             return (<span className={styles.documentsWritten}>
-              {response.successfulEvents}
+              {successfulEvents}
             </span>);
           }
         } else {
@@ -163,18 +164,27 @@ const JobResponse: React.FC<Props> = (props) => {
       key: "action",
       dataField: "successfulEvents",
       width: "25%",
-      headerFormatter: (column) => <span className={styles.actionHeader}><strong>Action</strong><HCTooltip text={RunToolTips.exploreStepData} id="explore-data" placement="top"><FontAwesomeIcon icon={faInfoCircle} size="1x" aria-label="icon: info-circle" className={styles.infoIcon}/></HCTooltip></span>,
-      formatter: (stepName, response) => {
-        const stepIsFinished = response.stepEndTime && response.stepEndTime !== "N/A";
+      headerFormatter: (column) => <span className={styles.actionHeader}><strong>Action</strong><HCTooltip text={RunToolTips.exploreStepData} id="explore-data" placement="top"><ExclamationCircleFill data-icon="exclamation-circle" aria-label="icon: exclamation-circle" className={styles.infoIcon} /></HCTooltip></span>,
+      formatter: (successfulEvents, response) => {
+        const {targetEntityType, targetDatabase, stepDefinitionType, stepName, stepEndTime} = response;
+        const stepIsFinished = stepEndTime && stepEndTime !== "N/A";
+        const isButtonDisabled = stepDefinitionType === "matching" || stepDefinitionType === "custom" || successfulEvents === 0;
         if (stepIsFinished) {
-          if (response.successfulEvents > 0) {
-            return (
-              <HCButton data-testid="explorer-link" size="sm" onClick={() => { }} className={styles.exploreCuratedData}>
-                <span className={styles.exploreActionIcon}></span>
-                <span className={styles.exploreActionText}>Explore Data</span>
-              </HCButton>
-            );
+          let entityName;
+          if (targetEntityType) {
+            let splitTargetEntity = targetEntityType.split("/");
+            entityName = splitTargetEntity[splitTargetEntity.length - 1];
           }
+          return (
+            <HCTooltip placement="top" id={`${stepName}-explore-button`} text={isButtonDisabled ? "You can explore documents for each Loading, Mapping, and Merging step that wrote documents to the database." : "You will be redirected to the Explore screen in the same browser tab."}>
+              <span>
+                <HCButton data-testid={`${stepName}-explorer-link`} size="sm" disabled={isButtonDisabled} onClick={() => { goToExplorer(entityName, targetDatabase, jobId, stepDefinitionType, stepName); }} className={styles.exploreCuratedData}>
+                  <span className={styles.exploreActionIcon}></span>
+                  <span className={styles.exploreActionText}>Explore Data</span>
+                </HCButton>
+              </span>
+            </HCTooltip>
+          );
         }
       }
     }
@@ -219,24 +229,24 @@ const JobResponse: React.FC<Props> = (props) => {
       />);
     }
   };
-  /*
-    const goToExplorer = async (entityName, targetDatabase, jobId, stepType, stepName) => {
-      if (stepType === "mapping") {
-        let mapArtifacts = await getMappingArtifactByStepName(stepName);
-        let entityView = mapArtifacts?.relatedEntityMappings?.length > 0 ? "All Entities" : entityName;
-        setLatestJobFacet(jobId, entityView, targetDatabase);
-      } else if (stepType === "merging") {
-        setLatestJobFacet(jobId, entityName, targetDatabase, `sm-${entityName}-merged`);
-      } else if (entityName) {
-        setLatestJobFacet(jobId, entityName, targetDatabase);
-      } else {
-        setLatestDatabase(targetDatabase, jobId);
-      }
-      history.push({ pathname: "/tiles/explore" });
-    };
-   */
+
+  const goToExplorer = async (entityName: string, targetDatabase: string, jobId: string, stepType: string, stepName: string) => {
+    if (stepType === "mapping") {
+      let mapArtifacts = await getMappingArtifactByStepName(stepName);
+      let entityView = mapArtifacts?.relatedEntityMappings?.length > 0 ? "All Entities" : entityName;
+      setLatestJobFacet(jobId, entityView, stepName, targetDatabase);
+    } else if (stepType === "merging") {
+      setLatestJobFacet(jobId, entityName, stepName, targetDatabase, `sm-${entityName}-merged`);
+    } else if (entityName) {
+      setLatestJobFacet(jobId, entityName, stepName, targetDatabase);
+    } else {
+      setLatestDatabase(targetDatabase, jobId);
+    }
+    history.push({pathname: "/tiles/explore"});
+  };
+
   return (<Modal
-    show={props.openJobResponse}
+    show={openJobResponse}
     size={"lg"}
     data-testid="job-response-modal"
     id="job-response-modal"
@@ -249,17 +259,16 @@ const JobResponse: React.FC<Props> = (props) => {
         </span>
         :
         <span className={`fs-5 ${styles.title}`} aria-label={`${jobResponse.flow}-completed`}>The flow <strong>{jobResponse.flow}</strong> completed</span>}
-      <button type="button" className="btn-close" aria-label={`${jobResponse.flow}-close`} data-testid={`${jobResponse.flow}-close`} onClick={() => props.setOpenJobResponse(false)}></button>
+      <button type="button" className="btn-close" aria-label={`${jobResponse.flow}-close`} data-testid={`${jobResponse.flow}-close`} onClick={() => setOpenJobResponse(false)}></button>
     </Modal.Header>
     <Modal.Body>
       <div aria-label="jobResponse" id="jobResponse" style={isLoading ? {display: "none"} : {}} className={styles.jobResponseContainer} >
         <div>
           <div className={styles.descriptionContainer}>
-            <div key={"jobId"}><span className={styles.descriptionLabel}>Job ID:</span><strong>{props.jobId}</strong></div>
+            <div key={"jobId"}><span className={styles.descriptionLabel}>Job ID:</span><strong>{jobId}</strong></div>
             <div key={"startTime"}><span className={styles.descriptionLabel}>Start Time:</span><strong>{dateConverter(jobResponse.timeStarted)}</strong></div>
             <div key={"duration"}><span className={styles.descriptionLabel}>Duration:</span><strong>{renderDuration(jobResponse.duration)}</strong></div>
           </div>
-          {jobResponse.flowOrStepsUpdatedSinceRun ? <div className={styles.flowOrStepsUpdatedSinceRun}>* The flow or steps are updated since the previous flow run.</div> : ""}
         </div>
         <div>
           {responses(jobResponse)}
@@ -268,7 +277,6 @@ const JobResponse: React.FC<Props> = (props) => {
       </div>
     </Modal.Body>
   </Modal>);
-
 };
 
 export default JobResponse;

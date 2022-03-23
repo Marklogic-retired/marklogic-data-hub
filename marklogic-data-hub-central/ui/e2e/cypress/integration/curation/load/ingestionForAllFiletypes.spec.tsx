@@ -2,7 +2,7 @@ import {Application} from "../../../support/application.config";
 import {toolbar} from "../../../support/components/common";
 import loadPage from "../../../support/pages/load";
 import runPage from "../../../support/pages/run";
-//import browsePage from "../../../support/pages/browse";
+import browsePage from "../../../support/pages/browse";
 import LoginPage from "../../../support/pages/login";
 
 describe("Verify ingestion for all filetypes", () => {
@@ -116,14 +116,14 @@ describe("Verify ingestion for all filetypes", () => {
     cy.uploadFile("input/test-1.xml");
     cy.waitForAsyncRequest();
     runPage.verifyStepRunResult(stepName, "success");
-    /* Commented until DHFPROD-7477 is done
-      //Verify step name appears as a collection facet in explorer
-      runPage.explorerLink().click({multiple: true, force: true});
-      browsePage.waitForSpinnerToDisappear();
-      cy.waitForAsyncRequest();
-      browsePage.waitForCardToLoad();
-      browsePage.getTotalDocuments().should("eq", 1);
-      browsePage.getFacet("collection").should("exist");
-      browsePage.getFacetItemCheckbox("collection", stepName).should("to.exist"); */
+    // Commented until DHFPROD-7477 is done
+    //Verify step name appears as a collection facet in explorer
+    runPage.explorerLink(stepName).click({multiple: true, force: true});
+    browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
+    browsePage.waitForCardToLoad();
+    browsePage.getTotalDocuments().should("eq", 1);
+    browsePage.getFacet("collection").should("exist");
+    browsePage.getFacetItemCheckbox("collection", stepName).should("to.exist");
   });
 });

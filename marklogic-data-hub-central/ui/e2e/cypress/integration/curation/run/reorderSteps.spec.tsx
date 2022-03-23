@@ -30,7 +30,7 @@ describe("Run Tile tests", () => {
   });
 
   it("can create flow and add steps to flow and reorder flow", {defaultCommandTimeout: 120000}, () => {
-
+    cy.wait(3000);
     const flowName = "testPerson";
     //Verify create flow and add all user-defined steps to flow via Run tile
     runPage.createFlowButton().click({force: true});

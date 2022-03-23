@@ -86,10 +86,9 @@ describe("Validate E2E Mastering Flow", () => {
     cy.get("input[type=\"file\"]").attachFile(["patients/first-name-double-metaphone1.json", "patients/first-name-double-metaphone2.json", "patients/first-name-synonym1.json", "patients/first-name-synonym2.json", "patients/last-name-address-reduce1.json", "patients/last-name-address-reduce2.json", "patients/last-name-dob-custom1.json", "patients/last-name-dob-custom2.json", "patients/last-name-plus-zip-boost1.json", "patients/last-name-plus-zip-boost2.json", "patients/last-name-slight-match1.json", "patients/last-name-slight-match2.json", "patients/ssn-match1.json", "patients/ssn-match2.json"], {force: true});
     cy.waitForAsyncRequest();
     runPage.verifyStepRunResult(loadStepName, "success");
-    runPage.closeFlowStatusModal(flowName);
-    /*  Commented until DHFPROD-7477 is done
-    //Verify step name appears as a collection facet in explorer
-    runPage.explorerLink().click();
+
+    // Verify step name appears as a collection facet in explorer
+    runPage.explorerLink(loadStepName).should("exist").click({force: true});
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     browsePage.waitForCardToLoad();
@@ -97,7 +96,7 @@ describe("Validate E2E Mastering Flow", () => {
     browsePage.getFacet("collection").should("exist");
     browsePage.getFacetItemCheckbox("collection", loadStepName).should("to.exist");
     cy.wait(3000);
-    // });*/
+    /* });*/
     //add back in using storage saving with DHFPROD-8523
     // it("Create a new entity and Add properties", {defaultCommandTimeout: 120000}, () => {
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
@@ -193,10 +192,9 @@ describe("Validate E2E Mastering Flow", () => {
     curatePage.runStepSelectFlowConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName);
     runPage.verifyStepRunResult(mapStep, "success");
-    runPage.closeFlowStatusModal(flowName);
-    /* Commented until DHFPROD-7477 is done
+
     //Explore Mapped data
-    runPage.explorerLink().click();
+    runPage.explorerLink(mapStep).click();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     browsePage.getTableView().click();
@@ -204,7 +202,7 @@ describe("Validate E2E Mastering Flow", () => {
     browsePage.getTotalDocuments().should("eq", 14);
     browsePage.getHubPropertiesExpanded();
     browsePage.getFacet("collection").should("exist");
-    browsePage.getFacetItemCheckbox("collection", mapStep).should("to.exist"); */
+    browsePage.getFacetItemCheckbox("collection", mapStep).should("to.exist");
   });
   it("Create a new match step", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
@@ -398,11 +396,9 @@ describe("Validate E2E Mastering Flow", () => {
     curatePage.runStepSelectFlowConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName);
     runPage.verifyStepRunResult(mergeStep, "success");
-    runPage.closeFlowStatusModal(flowName);
-    //Verify merged Data
 
-    /* Commented until DHFPROD-7477 is done
-    runPage.explorerLink().click();
+    //Verify merged Data
+    runPage.explorerLink(mergeStep).click();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     browsePage.getTableView().click();
@@ -411,7 +407,7 @@ describe("Validate E2E Mastering Flow", () => {
     browsePage.getHubPropertiesExpanded();
     browsePage.getFacet("collection").should("exist");
     browsePage.getFacetItemCheckbox("collection", mergeStep).should("to.exist");
-    cy.findByTestId("clear-sm-Patient-merged").should("to.exist"); */
+    cy.findByTestId("clear-sm-Patient-merged").should("to.exist");
   });
   it.skip("Explore other collections", () => {   //THIS FAILS UNTIL ENTITY SPECIFIC FACETS PR IS IN (DHFPROD-7950), needs to use entity specific panel facets instead entity properties panel
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
