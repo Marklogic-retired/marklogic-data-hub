@@ -22,5 +22,7 @@ public class Constants {
     public static final String CREATED_ON_CONSTRAINT_NAME = "createdOnRange";
     public static final String JOB_WORD_CONSTRAINT_NAME = "createdByJobWord";
     public static final String JOB_RANGE_CONSTRAINT_NAME = "createdByJob";
+    public static final String RAN_STEP_WORD_CONSTRAINT_NAME = "ranByStepWord";
+    public static final String RAN_STEP_RANGE_CONSTRAINT_NAME = "ranByStep";
     public static final String RELATED_TO_CONSTRAINT_NAME = "relatedTo";
 }

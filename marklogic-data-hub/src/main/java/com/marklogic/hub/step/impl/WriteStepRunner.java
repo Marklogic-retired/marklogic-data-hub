@@ -525,6 +525,7 @@ public class WriteStepRunner implements StepRunner {
         DocumentMetadataHandle.DocumentMetadataValues metadataValues = metadataHandle.getMetadataValues();
         metadataValues.add("datahubCreatedByJob", jobId);
         metadataValues.add("datahubCreatedInFlow", flow.getName());
+        metadataValues.add("datahubRanBySteps", flow.getStep(step).getName());
         metadataValues.add("datahubCreatedByStep", flow.getStep(step).getName());
         // TODO createdOn/createdBy data may not be accurate enough. Unfortunately REST transforms don't allow for writing metadata
         metadataValues.add("datahubCreatedOn", new SimpleDateFormat(DATE_TIME_FORMAT_PATTERN).format(new Date()));
