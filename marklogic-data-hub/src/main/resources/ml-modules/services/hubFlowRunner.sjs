@@ -17,6 +17,7 @@
 
 const flowApi = require("/data-hub/public/flow/flow-api.sjs");
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
+const json = require('/MarkLogic/json/json.xqy');
 
 function post(context, params, input) {
   xdmp.securityAssert("http://marklogic.com/data-hub/privileges/run-step", "execute");
@@ -46,7 +47,7 @@ function processJsonInput(input) {
 function processXmlInput(input) {
   const jobId = fn.head(input.xpath("/input/jobId/text()")) || sem.uuidString();
   const flowName = fn.head(input.xpath("/input/flowName/text()"));
-  const options = parseJsonOptions(input);
+  const options = parseJsonOptionsFromXml(input);
   const contentArray = buildContentArray(input);
 
   let stepNumbers = fn.head(input.xpath("/input/steps/text()"));
@@ -55,13 +56,28 @@ function processXmlInput(input) {
   return flowApi.runFlowOnContent(flowName, contentArray, jobId, options, stepNumbers);
 }
 
-function parseJsonOptions(input) {
-  if (fn.head(input.xpath("/input/options"))) {
-    let options = input.xpath("/input/options/text()");
-    try {
-      return fn.head(xdmp.fromJsonString(options));
-    } catch (error) {
-      httpUtils.throwBadRequest(`Could not parse JSON options; cause: ${error.message}; options: ${options}`);
+function parseJsonOptionsFromXml(input) {
+  if (fn.exists(input.xpath("/input/options"))) {
+    let options = fn.head(input.xpath("/input/options"));
+    // Convert elements to a JSON Object
+    if (fn.exists(options.xpath("*"))) {
+      let jsonConfig = json.config("custom");
+      jsonConfig["whitespace"] = "ignore";
+      let optionsJson = fn.head(json.transformToJsonObject(options, jsonConfig)).options;
+      for (let key of Object.keys(optionsJson)) {
+        let value = optionsJson[key];
+        if (value === "true" || value === "false") {
+          optionsJson[key] = xs.boolean(value);
+        }
+      }
+      return optionsJson;
+    // Fall-back to JSON String if provided
+    } else if (fn.exists(options.xpath("text()[normalize-space()]"))) {
+      try {
+        return xdmp.fromJsonString(fn.string(options));
+      } catch (error) {
+        httpUtils.throwBadRequest(`Could not parse JSON options; cause: ${error.message}; options: ${options}`);
+      }
     }
   }
   // An empty object is returned instead of null to avoid the chance of null breaking something elsewhere
