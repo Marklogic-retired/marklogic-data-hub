@@ -547,7 +547,8 @@ const jobRespSuccess = {
         "stepDefinitionName": "entity-services-mapping",
         "success": "true",
         "stepDefinitionType": "mapping",
-        "targetEntityType": "http://example.org/Customer-0.0.1/Customer"
+        "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+        "stepEndTime": "2020-04-24T14:05:01.019819-07:00",
       },
       "4": {
         "flowName": "testFlow",
@@ -555,6 +556,7 @@ const jobRespSuccess = {
         "success": "true",
         "stepDefinitionName": "default-matching",
         "stepDefinitionType": "matching",
+        "stepEndTime": "2020-04-24T14:05:01.019819-07:00",
       },
       "5": {
         "flowName": "testFlow",
@@ -562,6 +564,7 @@ const jobRespSuccess = {
         "success": "true",
         "stepDefinitionName": "default-merging",
         "stepDefinitionType": "merging",
+        "stepEndTime": "2020-04-24T14:05:01.019819-07:00",
       },
       "6": {
         "flowName": "testFlow",
@@ -569,6 +572,7 @@ const jobRespSuccess = {
         "success": "true",
         "stepDefinitionName": "default-mastering",
         "stepDefinitionType": "mastering",
+        "stepEndTime": "2020-04-24T14:05:01.019819-07:00",
       },
       "7": {
         "flowName": "testFlow",
@@ -577,7 +581,8 @@ const jobRespSuccess = {
         "stepDefinitionName": "default-ingestion",
         "stepDefinitionType": "ingestion",
         "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
-        "targetDatabase": "staging"
+        "targetDatabase": "staging",
+        "stepEndTime": "2020-04-24T14:05:01.019819-07:00",
       }
     },
     "jobStatus": "finished"

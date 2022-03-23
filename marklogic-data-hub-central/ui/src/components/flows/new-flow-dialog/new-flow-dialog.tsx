@@ -77,7 +77,7 @@ const NewFlowDialog = (props) => {
     };
     setIsLoading(true);
     if (props.title === "Edit Flow") {
-      await props.updateFlow(dataPayload, flowName);
+      await props.updateFlow(flowName, description);
     } else {
       await props.createFlow(dataPayload);
       if (props.createAdd && props.newStepToFlowOptions && props.newStepToFlowOptions.addingStepToFlow) {

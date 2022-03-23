@@ -115,8 +115,8 @@ class RunPage {
     return cy.get("div").should("contain.text", `Are you sure you want to remove the ${stepName} step from the ${flowName} flow?`);
   }
 
-  explorerLink() {
-    return cy.findByTestId("explorer-link");
+  explorerLink(stepName: string) {
+    return cy.findByTestId(`${stepName}-explorer-link`);
   }
 
   expandFlow(flowName: string) {

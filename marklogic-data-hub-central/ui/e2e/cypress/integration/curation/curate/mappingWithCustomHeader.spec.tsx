@@ -10,6 +10,7 @@ import browsePage from "../../../support/pages/browse";
 import curatePage from "../../../support/pages/curate";
 import runPage from "../../../support/pages/run";
 import LoginPage from "../../../support/pages/login";
+import detailPage from "../../../support/pages/detail";
 import "cypress-wait-until";
 
 const flowName = "orderCustomHeaderFlow";
@@ -199,7 +200,6 @@ describe("Create and verify load steps, map step and flows with a custom header"
     runPage.closeFlowStatusModal(flowName);
     cy.verifyStepAddedToFlow("Mapping", mapStep, flowName);
   });
-  // TODO DHFPROD-7711 skip since fails in Explore for Ant Design Table component
   it("Add step to a new flow, Run Map step where step exists in multiple flows and explore data", {defaultCommandTimeout: 120000}, () => {
     toolbar.getCurateToolbarIcon().click({force: true});
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
@@ -225,9 +225,8 @@ describe("Create and verify load steps, map step and flows with a custom header"
     cy.verifyStepAddedToFlow("Mapping", mapStep, flowName);
     runPage.getFlowStatusSuccess(flowName).should("be.visible");
     runPage.verifyStepRunResult(mapStep, "success");
-    runPage.closeFlowStatusModal(flowName);
-    /* Commented until DHFPROD-7477 is done
-    runPage.explorerLink().click();
+    // Commented until DHFPROD-7477 is done
+    runPage.explorerLink(mapStep).click();
     browsePage.getTableView().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getFirstTableViewInstanceIcon().should("be.visible").click({force: true});
@@ -237,7 +236,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     cy.contains("accessLevel");
     cy.contains("999ABC");
     // By default attachment is not present in detailed view of document
-    detailPage.attachmentPresent().should("not.exist"); */
+    detailPage.attachmentPresent().should("not.exist");
     toolbar.getCurateToolbarIcon().click();
     curatePage.toggleEntityTypeId("Order");
     // Open step settings and switch to Advanced tab
@@ -250,13 +249,13 @@ describe("Create and verify load steps, map step and flows with a custom header"
     curatePage.runStepExistsMultFlowsConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName);
     cy.waitForAsyncRequest();
-    /* Commented until DHFPROD-7477 is done
-    runPage.explorerLink().click();
+    // Commented until DHFPROD-7477 is done
+    runPage.explorerLink(mapStep).click();
 
     browsePage.getFirstTableViewInstanceIcon().should("be.visible").click({force: true});
     detailPage.getSourceView().click();
 
     // attachment is present in detailed view of document
-    detailPage.attachmentPresent().should("exist");*/
+    detailPage.attachmentPresent().should("exist");
   });
 });

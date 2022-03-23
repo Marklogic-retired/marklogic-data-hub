@@ -60,7 +60,7 @@ interface ISearchContextInterface {
   setNextEntity: (option: string) => void;
   setRelatedEntityTypeIds: (option: any[]) => void;
   setEntityClearQuery: (option: string) => void;
-  setLatestJobFacet: (vals: string, entityName: string, targetDatabase?: string, collectionVals?: string) => void;
+  setLatestJobFacet: (vals: string, entityName: string, stepName: string, targetDatabase?: string, collectionVals?: string) => void;
   clearFacet: (constraint: string, val: string) => void;
   clearAllFacets: () => void;
   clearDateFacet: () => void;
@@ -148,7 +148,7 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setSearchOptions: () => { },
 });
 
-const SearchProvider: React.FC<{children: any}> = ({children}) => {
+const SearchProvider: React.FC<{ children: any }> = ({children}) => {
 
   const [searchOptions, setSearchOptions] = useState<SearchContextInterface>(defaultSearchOptions);
   const [greyedOptions, setGreyedOptions] = useState<SearchContextInterface>(defaultSearchOptions);
@@ -296,9 +296,19 @@ const SearchProvider: React.FC<{children: any}> = ({children}) => {
   };
 
   //The "targetDatabase" parameter is temporary optional. Passing the database from the model view needs to be handleled in the separate story DHFPROD-6152.
-  const setLatestJobFacet = (vals: string, entityName: string, targetDatabase?: string, collectionValues?: string) => {
+  const setLatestJobFacet = (vals: string, entityName: string, stepName: string, targetDatabase?: string, collectionValues?: string) => {
     let facets = {};
-    facets = {createdByJob: {dataType: "string", stringValues: [vals]}};
+    facets = {
+      createdByJob: {
+        dataType: "string",
+        stringValues: [vals]
+      },
+      ranByStep: {
+        dataType: "string",
+        stringValues: [stepName]
+      },
+    };
+
     if (collectionValues) {
       facets["Collection"] = {dataType: "string", stringValues: [collectionValues]};
     }
@@ -312,7 +322,8 @@ const SearchProvider: React.FC<{children: any}> = ({children}) => {
       selectedTableProperties: [],
       pageNumber: 1,
       pageLength: searchOptions.pageSize,
-      database: targetDatabase ? targetDatabase : "final"
+      database: targetDatabase ? targetDatabase : "final",
+      stepName: stepName,
     };
     setSearchOptions(NEWOPTIONS);
   };
