@@ -210,12 +210,14 @@ const Facets: React.FC<Props> = (props) => {
     }
 
     const  resetValue = (event) => {
-        console.log("resetValue is  clicked");
+        console.log("resetValue is  clicked ",datePickerValue);
         event.preventDefault();
         event.stopPropagation();
+        let dateArray = [new Date(),new Date()]
+        // let startDate = moment(dateArray[0]).format("YYYY-MM-DD")
+        // let endDate = moment(dateArray[1]).format("YYYY-MM-DD")
 
-        if (ref.current && datePickerValue.length > 0) {
-            ref.current.setStartDate(null);ref.current.setEndDate(null);
+        if (ref.current) {
             setDatePickerValue([null,null])
         }
 
@@ -224,20 +226,24 @@ const Facets: React.FC<Props> = (props) => {
             return onChange(null,null);
         }
 
+        console.log("resetValue 2 is  clicked ",datePickerValue);
         // if (onOk && bindChange) {
         //     updateShowClear(false);
         //     bindChange();
-        //     return;
+            return;
         // }
     }
 
     const onChange = (startDate, endDate)  => {
+      console.log("startDate ",startDate);
+        console.log("endDate ",endDate);
         const dateArray = [startDate, endDate];
-        console.log("On change is  clicked");
-        if (dateArray.length && dateArray[0] && startDate.isValid()) {
+        if (dateArray.length && dateArray[0] && startDate.isValid() && !showClear) {
+            console.log("On change is  clicked",dateArray);
             (dateArray[0] && dateArray[1]) && setDatePickerValue([moment(dateArray[0].format("YYYY-MM-DD")), moment(dateArray[1].format("YYYY-MM-DD"))]);
         }
     }
+
     const formatValue = (input) => {
         if (!Array.isArray(input) || input.length !== 2) {
             return "";
@@ -255,6 +261,16 @@ const Facets: React.FC<Props> = (props) => {
   return (
     <div className="facets">
       {/* Show each facet */}
+        <div className="dateRangeFacet" >
+            <DateRangePicker initialSettings={initialSettings} {...{onShow, ref}} onApply={onOK} onCallback={onChange}>
+                <div  onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} className="pickerContainer">
+                    <input type="text"  readOnly className="input" placeholder={formatPlaceHolder(["Start date", "End date"])} value={formatValue(datePickerValue)}/>
+                    {!showClear ?
+                        <Calendar4 className="calendarIcon" /> :
+                        <XLg className="clearIcon"  data-testid="datetime-picker-reset" onClick={resetValue}/>}
+                </div>
+            </DateRangePicker>
+        </div>
       {props.config.items && searchContext.searchResults && props.config.items.map((f, index) => {
         return (
         <div className="facet" key={"facet-" + index}>
@@ -301,15 +317,6 @@ const Facets: React.FC<Props> = (props) => {
           </div>
       </div> )
     })}
-        <div className="dateRangeFacet" >
-            <DateRangePicker initialSettings={initialSettings} {...{onShow, ref}} onApply={onOK} onCallback={onChange}>
-                <div  onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} className="pickerContainer">
-                    <input type="text"  readOnly className="input" placeholder={formatPlaceHolder(["Start date", "End date"])} value={formatValue(datePickerValue)}/>
-                    {!showClear ? <Calendar4 className="calendarIcon" /> :
-                        <XLg className="clearIcon"  data-testid="datetime-picker-reset" onClick={resetValue}/>}
-                </div>
-            </DateRangePicker>
-        </div>
     </div>
   );
 };

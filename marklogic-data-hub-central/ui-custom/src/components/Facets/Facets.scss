@@ -97,17 +97,14 @@
             margin-right: 2px;
         }
     }
-    .daterangepicker {
-        position: fixed !important;
-    }
+
     .dateRangeFacet {
         padding-top: 2vh;
-        //padding-bottom: 30vh;
-
+        padding-bottom: 2vh;
         .pickerContainer {
-            background-color: white;
-            position: relative;
-            max-width: 265px;
+           background-color: white;
+           position: relative;
+           max-width: 265px;
 
             &:focus-visible {
                 border: none;
@@ -160,5 +157,15 @@
             z-index: 10;
         }
 
+    }
+}
+.daterangepicker {
+    position: fixed !important;
+    width: 330px !important;
+    padding: 0px 0px 0px 30px !important;
+
+    td.active,
+    td.active:hover {
+        background-color: #394494 !important;
     }
 }
