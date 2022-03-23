@@ -754,7 +754,6 @@ function addNode(obj, paths, mappedProperty, isNested ) {
 }
 
 function extractInstance(docNode) {
-  console.log(docNode)
   let instance = docNode.xpath('/*:envelope/(object-node("instance")|*:instance/(element() except *:info))');
   if (fn.empty(instance)) {
     instance = docNode;
