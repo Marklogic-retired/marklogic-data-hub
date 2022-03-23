@@ -19,7 +19,7 @@ import browsePage from "../../../support/pages/browse";
 import LoginPage from "../../../support/pages/login";
 import "cypress-wait-until";
 import modelPage from "../../../support/pages/model";
-//import entitiesSidebar from "../../../support/pages/entitiesSidebar";
+import entitiesSidebar from "../../../support/pages/entitiesSidebar";
 
 describe("Mapping", () => {
   before(() => {
@@ -152,10 +152,8 @@ describe("Mapping", () => {
     runPage.runStep("mapRelation", "relationFlow");
     runPage.verifyStepRunResult("mapRelation", "success");
     cy.waitForAsyncRequest();
-    runPage.closeFlowStatusModal("relationFlow");
-    /* Commented until DHFPROD-7477 is done
-         // Navigate to Explore
-    runPage.explorerLink().click();
+    // Navigate to Explore
+    runPage.explorerLink("mapRelation").click();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     browsePage.clickSwitchToTableView();
@@ -167,7 +165,7 @@ describe("Mapping", () => {
     entitiesSidebar.showMoreEntities().click({force: true});
     entitiesSidebar.openBaseEntityFacets("Relation");
     browsePage.getTotalDocuments().should("be.greaterThan", 7);
-    */
+
   });
   it("Edit advanced settings for each entity", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();

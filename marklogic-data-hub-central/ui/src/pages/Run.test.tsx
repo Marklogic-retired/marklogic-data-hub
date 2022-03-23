@@ -4,7 +4,7 @@ import {
   fireEvent,
   waitForElement,
   cleanup,
-  wait
+  wait,
 } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import axiosMock from "axios";
@@ -18,8 +18,6 @@ import {act} from "react-dom/test-utils";
 import {MemoryRouter} from "react-router-dom";
 import tiles from "../config/tiles.config";
 import {createMemoryHistory} from "history";
-import moment from "moment";
-import curateData from "../assets/mock-data/curation/flows.data";
 import TilesView from "./TilesView";
 import {ErrorMessageContext} from "../util/error-message-context";
 
@@ -214,251 +212,7 @@ describe("Verify load step failures in a flow", () => {
 
 });
 
-describe("Verify step running", () => {
-
-  beforeEach(() => {
-    mocks.runAPI(axiosMock);
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
-    cleanup();
-  });
-
-  // Skipped test until DHFPROD-7255 is done since it tests status being updated without closing and reopening modal
-  test.skip("Verify a load/mapping/match/merge/master step can be run from a flow as data-hub-developer", async () => {
-    axiosMock.post["mockImplementation"](jest.fn(() => Promise.resolve(data.jobRespSuccess)));
-    const {getByText, getAllByText, getByLabelText, getByTestId} = await render(<MemoryRouter><AuthoritiesContext.Provider value={mockDevRolesService}><Run /></AuthoritiesContext.Provider></MemoryRouter>);
-
-    let steps = data.flows.data[0].steps;
-    let runButton;
-
-    // Click disclosure icon
-    fireEvent.click(document.querySelector(".accordion-button"));
-
-    let upload;
-    upload = document.querySelector("#fileUpload");
-    const files = [new File(["cust1.json"], "cust1.json", {
-      type: "application/json"
-    })];
-
-    Object.defineProperty(upload, "files", {
-      value: files
-    });
-    fireEvent.change(upload);
-
-    //Run  ingestion step
-    runButton = await getByLabelText(`runStep-${steps[6].stepName}`);
-    fireEvent.click(runButton);
-
-    expect(await (waitForElement(() => getByLabelText("jobResponse")))).toBeInTheDocument();
-    expect(await (waitForElement(() => getByTestId(`${steps[6].stepName}-success`)))).toBeInTheDocument();
-    let stepType = `${steps[6].stepDefinitionType}`;
-    if (stepType === "ingestion") {
-      expect(await (waitForElement(() => getByText("Explore Loaded Data")))).toBeInTheDocument();
-    } else {
-      expect(getByText(" ")).toBeInTheDocument();
-    }
-    /* Commented until explore button functionality is added
-        let exploreButton = await (waitForElement(() => getByText("Explore Loaded Data")));
-        fireEvent.click(exploreButton);
-
-        await wait(() => {
-          expect(mockHistoryPush).toHaveBeenCalledWith({ "pathname": "/tiles/explore" });
-        });
-     */
-    //Run mapping step
-    runButton = await getByLabelText(`runStep-${steps[1].stepName}`);
-    fireEvent.click(runButton);
-    expect(await (waitForElement(() => getAllByText("Running...")[0]))).toBeInTheDocument();
-
-    expect(await (waitForElement(() => getByText((content, node) => {
-      return getSubElements(content, node, `The mapping step ${steps[1].stepName} completed successfully`);
-    })))).toBeInTheDocument();
-    expect(getByLabelText("icon: check-circle")).toBeInTheDocument();
-    stepType = `${steps[1].stepDefinitionType}`;
-    if (stepType === "mapping") {
-      expect(await (waitForElement(() => getByText("Explore Curated Data")))).toBeInTheDocument();
-    } else {
-      expect(getByText(" ")).toBeInTheDocument();
-    }
-    fireEvent.click(getByText("Close"));
-
-    //Run match step
-    runButton = await getByLabelText(`runStep-${steps[3].stepName}`);
-    fireEvent.click(runButton);
-    expect(await (waitForElement(() => getAllByText("Running...")[0]))).toBeInTheDocument();
-    expect(await (waitForElement(() => getByText((content, node) => {
-      return getSubElements(content, node, `The matching step ${steps[3].stepName} completed successfully`);
-    })))).toBeInTheDocument();
-    expect(getByLabelText("icon: check-circle")).toBeInTheDocument();
-    fireEvent.click(getByText("Close"));
-
-    //Run merge step
-    runButton = await getByLabelText(`runStep-${steps[4].stepName}`);
-    fireEvent.click(runButton);
-    expect(await (waitForElement(() => getAllByText("Running...")[0]))).toBeInTheDocument();
-    expect(await (waitForElement(() => getByText((content, node) => {
-      return getSubElements(content, node, `The merging step ${steps[4].stepName} completed successfully`);
-    })))).toBeInTheDocument();
-    expect(getByLabelText("icon: check-circle")).toBeInTheDocument();
-    fireEvent.click(getByText("Close"));
-
-    //Run master step
-    runButton = await getByLabelText(`runStep-${steps[5].stepName}`);
-    fireEvent.click(runButton);
-    expect(await (waitForElement(() => getAllByText("Running...")[0]))).toBeInTheDocument();
-    expect(await (waitForElement(() => getByText((content, node) => {
-      return getSubElements(content, node, `The mastering step ${steps[5].stepName} completed successfully`);
-    })))).toBeInTheDocument();
-    expect(getByLabelText("icon: check-circle")).toBeInTheDocument();
-    fireEvent.click(getByText("Close"));
-
-  }, 10000);
-
-  // Skipped test until DHFPROD-7255 is done since it tests status being updated without closing and reopening modal
-  test.skip("Verify a load/mapping/match/merge/master step can be run from a flow as data-hub-operator", async () => {
-    axiosMock.post["mockImplementation"](jest.fn(() => Promise.resolve(data.jobRespSuccess)));
-    const {getByText, getAllByText, getByLabelText} = await render(<MemoryRouter><AuthoritiesContext.Provider value={mockOpRolesService}><Run /></AuthoritiesContext.Provider></MemoryRouter>);
-
-    let steps = data.flows.data[0].steps;
-    let runButton;
-
-    // Click disclosure icon
-    fireEvent.click(document.querySelector(".accordion-button"));
-
-    let upload;
-    upload = document.querySelector("#fileUpload");
-    const files = [new File(["cust1.json"], "cust1.json", {
-      type: "application/json"
-    })];
-
-    Object.defineProperty(upload, "files", {
-      value: files
-    });
-    fireEvent.change(upload);
-
-    //Run  ingestion step
-    runButton = await getByLabelText(`runStep-${steps[6].stepName}`);
-    fireEvent.click(runButton);
-
-    expect(await (waitForElement(() => getByText((content, node) => {
-      return getSubElements(content, node, `The ingestion step ${steps[6].stepName} completed successfully`);
-    })))).toBeInTheDocument();
-    expect(getByLabelText("icon: check-circle")).toBeInTheDocument();
-    let stepType = `${steps[6].stepDefinitionType}`;
-    if (stepType === "ingestion") {
-      expect(await (waitForElement(() => getByText("Explore Loaded Data")))).toBeInTheDocument();
-    } else {
-      expect(getByText(" ")).toBeInTheDocument();
-    }
-
-    let exploreButton = await (waitForElement(() => getByText("Explore Loaded Data")));
-    fireEvent.click(exploreButton);
-
-    await wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles/explore"});
-    });
-
-    //Run mapping step
-    runButton = await getByLabelText(`runStep-${steps[1].stepName}`);
-    fireEvent.click(runButton);
-    expect(await (waitForElement(() => getAllByText("Running...")[0]))).toBeInTheDocument();
-    expect(await (waitForElement(() => getByText((content, node) => {
-      return getSubElements(content, node, `The mapping step ${steps[1].stepName} completed successfully`);
-    })))).toBeInTheDocument();
-    expect(getByLabelText("icon: check-circle")).toBeInTheDocument();
-    stepType = `${steps[1].stepDefinitionType}`;
-    if (stepType === "mapping") {
-      expect(await (waitForElement(() => getByText("Explore Curated Data")))).toBeInTheDocument();
-    } else {
-      expect(getByText(" ")).toBeInTheDocument();
-    }
-
-    fireEvent.click(getByText("Close"));
-
-    //Run match step
-    runButton = await getByLabelText(`runStep-${steps[3].stepName}`);
-    fireEvent.click(runButton);
-    expect(await (waitForElement(() => getAllByText("Running...")[0]))).toBeInTheDocument();
-    expect(await (waitForElement(() => getByText((content, node) => {
-      return getSubElements(content, node, `The matching step ${steps[3].stepName} completed successfully`);
-    })))).toBeInTheDocument();
-    expect(getByLabelText("icon: check-circle")).toBeInTheDocument();
-    fireEvent.click(getByText("Close"));
-
-    //Run merge step
-    runButton = await getByLabelText(`runStep-${steps[4].stepName}`);
-    fireEvent.click(runButton);
-    expect(await (waitForElement(() => getAllByText("Running...")[0]))).toBeInTheDocument();
-    expect(await (waitForElement(() => getByText((content, node) => {
-      return getSubElements(content, node, `The merging step ${steps[4].stepName} completed successfully`);
-    })))).toBeInTheDocument();
-    expect(getByLabelText("icon: check-circle")).toBeInTheDocument();
-    fireEvent.click(getByText("Close"));
-
-    //Run master step
-    runButton = await getByLabelText(`runStep-${steps[5].stepName}`);
-    fireEvent.click(runButton);
-    expect(await (waitForElement(() => getAllByText("Running...")[0]))).toBeInTheDocument();
-    expect(await (waitForElement(() => getByText((content, node) => {
-      return getSubElements(content, node, `The mastering step ${steps[5].stepName} completed successfully`);
-    })))).toBeInTheDocument();
-    expect(getByLabelText("icon: check-circle")).toBeInTheDocument();
-    fireEvent.click(getByText("Close"));
-
-  });
-
-});
-
-describe("Verify step display", () => {
-
-  afterEach(() => {
-    jest.clearAllMocks();
-    cleanup();
-  });
-
-  test("Verify a load step with XML source is displayed correctly", async () => {
-    mocks.runXMLAPI(axiosMock);
-    const {getByText, getByLabelText} = await render(<MemoryRouter><AuthoritiesContext.Provider value={mockDevRolesService}><Run /></AuthoritiesContext.Provider></MemoryRouter>);
-
-    // Click disclosure icon
-    fireEvent.click(document.querySelector(".accordion-button"));
-    expect(await (waitForElement(() => getByText("XML")))).toBeInTheDocument();
-
-    expect(await (waitForElement(() => getByText("loadXML")))).toBeInTheDocument();
-
-    let notification = await (waitForElement(() => getByLabelText("icon: check-circle")));
-    expect(getByText("XML")).toBeInTheDocument();
-    expect(getByText("XML")).toHaveStyle("height: 35px; width: 35px; line-height: 35px; text-align: center;");
-    expect(notification).toBeInTheDocument();
-    fireEvent.mouseOver(notification);
-    let ts: string = curateData.flowsXMLLatestJob.data.steps[0].stepEndTime; // "2020-07-13T23:54:06.30257-07:00"
-    let dateExpected: string = moment(ts).format("M/D/YYYY");
-    let timeExpected: string = moment(ts).format("h:mm:ss A");
-    expect(await (waitForElement(() => getByText("Step last ran successfully on " + dateExpected + ", " + timeExpected)))).toBeInTheDocument(); // "Step last ran successfully on 7/13/2020, 11:54:06 PM"
-  });
-
-  test("Verify a mapping step's notification shows up correctly", async () => {
-    mocks.runXMLAPI(axiosMock);
-    const {getByText, getAllByLabelText} = await render(<MemoryRouter><AuthoritiesContext.Provider value={mockDevRolesService}><Run /></AuthoritiesContext.Provider></MemoryRouter>);
-
-    // Click disclosure icon
-    fireEvent.click(document.querySelector(".accordion-button"));
-    expect(await (waitForElement(() => getByText("Mapping1")))).toBeInTheDocument();
-    let notification = await (waitForElement(() => getAllByLabelText("icon: exclamation-circle")[0]));
-    expect(notification).toBeInTheDocument();
-    fireEvent.mouseOver(notification);
-    let ts: string = curateData.jobRespFailedWithError.data.stepResponses["1"].stepEndTime; // "2020-04-04T01:17:45.012137-07:00"
-    let dateExpected: string = moment(ts).format("M/D/YYYY");
-    let timeExpected: string = moment(ts).format("H:mm:ss A");
-    expect(await (waitForElement(() => getByText("Step last ran with errors on " + dateExpected + ", " + timeExpected)))).toBeInTheDocument(); // "Step last ran with errors on 4/4/2020, 1:17:45 AM"
-  });
-
-});
-
 describe("Verify Run CRUD operations", () => {
-
   afterEach(() => {
     jest.clearAllMocks();
     cleanup();
@@ -749,16 +503,15 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
 
   }, 10000);
 
-  test.skip("Check if explore curated data is clicked and exists in history", async () => {
+  test("Check if explore curated data is clicked and exists in history", async () => {
     mocks.runErrorsAPI(axiosMock);
     axiosMock.post["mockImplementation"](jest.fn(() => Promise.resolve(data.response)));
-    let getByText, getByLabelText, getByTestId;
+    let getByLabelText, getByTestId;
     await act(async () => {
       const renderResults = render(<MemoryRouter>
         <AuthoritiesContext.Provider value={mockDevRolesService}>
           <Run />
         </AuthoritiesContext.Provider></MemoryRouter>);
-      getByText = renderResults.getByText;
       getByLabelText = renderResults.getByLabelText;
       getByTestId = renderResults.getByTestId;
     });
@@ -776,7 +529,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
 
     let stepType = `${steps[1].stepDefinitionType}`;
     if (stepType === "mapping") {
-      let exploreButton = await (waitForElement(() => getByText("Explore Curated Data")));
+      let exploreButton = await (waitForElement(() => getByTestId(`${steps[1].stepName}-explorer-link`)));
       fireEvent.click(exploreButton);
     }
     await wait(() => {

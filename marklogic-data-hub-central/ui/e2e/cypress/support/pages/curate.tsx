@@ -24,7 +24,7 @@ class CuratePage {
      * @example map-orders
      */
   getEntityMappingStep(entityTypeId: string, stepName: string) {
-    return cy.get(`[data-testid=${entityTypeId}-${stepName}-step] > .hc-card_cardStyle__2KVre > .card-body`);
+    return cy.get(`[data-testid=${entityTypeId}-${stepName}-step] .card-body`);
   }
 
   openMappingStepDetail(entityTypeId: string, stepName: string) {
