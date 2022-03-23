@@ -174,8 +174,8 @@
 }
 
 .exploreText {
-    font-size: 17px;
-    padding-right: 5px;
+  font-size: 17px;
+  padding-right: 5px;
 }
 
 .closeButton {
@@ -184,8 +184,11 @@
 
 .responseTable {
   padding-top: 20px;
+  th {
+    background-color: white !important;
+  }
+}
 
-        th {
-          background-color: white !important;
-        }
-      }
+.stepType {
+  text-transform: capitalize;
+}

@@ -8,17 +8,23 @@ import LoginPage from "../../../support/pages/login";
 let flowName = "testPersonXML";
 
 describe("Run Tile tests", () => {
+
   before(() => {
     cy.visit("/");
     cy.contains(Application.title);
-
-    cy.log("**Logging into the app as a developer**");
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer").withRequest();
+    LoginPage.postLogin();
     //Saving Local Storage to preserve session
     cy.saveLocalStorage();
+  });
 
-    LoginPage.postLogin();
-    cy.waitForAsyncRequest();
+  beforeEach(() => {
+    //Restoring Local Storage to Preserve Session
+    cy.restoreLocalStorage();
+
+    cy.visit("/");
+    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    cy.waitUntil(() => runPage.getFlowName("personJSON").should("be.visible"));
   });
   beforeEach(() => {
     //Restoring Local Storage to Preserve Session
@@ -31,9 +37,11 @@ describe("Run Tile tests", () => {
     // cy.deleteFlows(flowName);
     cy.resetTestUser();
   });
-  it.skip("can create flow and add steps to flow, should load xml merged document and display content", {defaultCommandTimeout: 120000}, () => {
+  it("can create flow and add steps to flow, should load xml merged document and display content", {defaultCommandTimeout: 120000}, () => {
     //Verify create flow and add all user-defined steps to flow via Run tile
-    runPage.createFlowButton().click();
+    // Wait for the request to finish so the test doesn't fail. Tried with a smaller wait and had the same issue.
+    cy.wait(5000);
+    runPage.createFlowButton().should("exist").click({force: true});
     runPage.newFlowModal().should("be.visible");
     runPage.setFlowName(flowName);
     loadPage.confirmationOptions("Save").click();
@@ -68,7 +76,7 @@ describe("Run Tile tests", () => {
 
     //Verify selected steps in run flow dropdown are executed successfully
     cy.log("**Verify selected steps executed successfully**");
-    runPage.openStepsSelectDropdown("testPersonXML");
+    runPage.openStepsSelectDropdown(flowName);
 
     cy.log("**Unclick All Steps**");
     cy.get("#ingest-orders").should("be.disabled");
@@ -97,34 +105,24 @@ describe("Run Tile tests", () => {
     runPage.runFlow(flowName);
     cy.uploadFile("input/person.xml");
     cy.wait(3000);
-    cy.waitForAsyncRequest();
 
     cy.log("**Checking the modal**");
-    runPage.verifyFlowModalRunning("testPersonXML");
-    runPage.closeFlowStatusModal(flowName);
-    runPage.openFlowStatusModal("testPersonXML");
-    runPage.closeFlowStatusModal(flowName);
-    runPage.openFlowStatusModal("testPersonXML");
     runPage.verifyStepRunResult("mapPersonXML", "success");
     runPage.verifyStepRunResult("match-xml-person", "success");
     runPage.verifyStepRunResult("merge-xml-person", "success");
-    runPage.verifyFlowModalCompleted("testPersonXML");
+    runPage.verifyFlowModalCompleted(flowName);
     runPage.closeFlowStatusModal(flowName);
 
     //Verify if no step is selected in run flow dropdown; all steps are executed
     runPage.expandFlow("testCustomFlow");
     runPage.runFlow("testCustomFlow");
     cy.uploadFile("input/test-1.zip");
-    cy.waitForAsyncRequest();
     cy.wait(3000);
-    runPage.verifyFlowModalRunning("testCustomFlow");
     runPage.verifyStepRunResult("mapping-step", "success");
-    runPage.closeFlowStatusModal("testCustomFlow");
-    runPage.openFlowStatusModal("testCustomFlow");
     runPage.verifyFlowModalCompleted("testCustomFlow");
     runPage.closeFlowStatusModal("testCustomFlow");
 
-    //Run map,match and merge step for Person entity using xml documents
+    //Run map,match and merge steps for Person entity individually using xml documents
     runPage.runStep("mapPersonXML", flowName);
     runPage.verifyStepRunResult("mapPersonXML", "success");
     runPage.closeFlowStatusModal(flowName);
@@ -135,31 +133,27 @@ describe("Run Tile tests", () => {
     cy.waitForAsyncRequest();
     runPage.runStep("merge-xml-person", flowName);
     runPage.verifyStepRunResult("merge-xml-person", "success");
-    runPage.closeFlowStatusModal(flowName);
-    /* Commented until DHFPROD-7477 is done
-        //Navigate to explorer tile using the explorer link
-        runPage.explorerLink().click();
-        browsePage.waitForSpinnerToDisappear();
-        cy.waitForAsyncRequest();
-        browsePage.getTableView().click();
-        browsePage.waitForHCTableToLoad();
+    //Navigate to explorer tile using the explorer link
+    runPage.explorerLink("merge-xml-person").click();
+    browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
+    browsePage.getTableView().click();
+    browsePage.waitForHCTableToLoad();
+    cy.wait(3000);
+    //Verify detail page renders with expected content
+    //Revalidate below with DHFPROD-8455
+    // browsePage.getSelectedEntity().should("contain", "Person");
+    browsePage.getTotalDocuments().should("eq", 1, {timeout: 5000});
+    browsePage.getSelectedFacet("sm-Person-merged").should("exist");
+    browsePage.getSourceViewIcon().first().click();
+    cy.waitForAsyncRequest();
+    browsePage.waitForSpinnerToDisappear();
 
-        cy.wait(3000);
-        //Verify detail page renders with expected content
-        //Revalidate below with DHFPROD-8455
-        // browsePage.getSelectedEntity().should("contain", "Person");
-        browsePage.getTotalDocuments().should("eq", 1, {timeout: 5000});
-        browsePage.getSelectedFacet("sm-Person-merged").should("exist");
-        browsePage.getSourceViewIcon().first().click();
-        cy.waitForAsyncRequest();
-        browsePage.waitForSpinnerToDisappear();
-
-        cy.contains("URI: /com.marklogic.smart-mastering/merged/").should("be.visible");
-        cy.contains("123 Wilson St").scrollIntoView().should("be.visible");
-        cy.contains("123 Wilson Rd").should("be.visible"); */
+    cy.contains("URI: /com.marklogic.smart-mastering/merged/").should("be.visible");
+    cy.contains("123 Wilson St").scrollIntoView().should("be.visible");
+    cy.contains("123 Wilson Rd").should("be.visible");
   });
-  // Skipped until DHFPROD-7477 is done (explore button)
-  it.skip("show all entity instances in Explorer after running mapping with related entities", () => {
+  it("show all entity instances in Explorer after running mapping with related entities", () => {
     const flowName = "CurateCustomerWithRelatedEntitiesJSON";
     const stepName = "mapCustomersWithRelatedEntitiesJSON";
 
@@ -173,11 +167,11 @@ describe("Run Tile tests", () => {
 
     cy.log(`**Run mapping step (${stepName}) and verify results dialog**`);
     runPage.runStep(stepName, flowName);
-    cy.verifyStepRunResult("success", "Mapping", stepName);
+    runPage.verifyStepRunResult(stepName, "success");
     cy.waitForAsyncRequest();
 
     cy.log("**Navigate to explorer tile using the explorer link**");
-    runPage.explorerLink().click();
+    runPage.explorerLink(stepName).click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getTitleExplore().should("be.visible");
     cy.waitForAsyncRequest();
@@ -190,7 +184,7 @@ describe("Run Tile tests", () => {
     browsePage.getTotalDocuments().should("eq", 2);
     browsePage.getSelectedFacet("createdByJob").should("exist");
   });
-  it.skip("Explore results after run two map steps being the second one with related entities", () => {
+  it("Explore results after run two map steps being the second one with related entities", () => {
     const firstFlowName = "personJSON";
     const firstStepName = "mapPersonJSON";
     const secondFlowName = "CurateCustomerWithRelatedEntitiesJSON";
@@ -206,11 +200,11 @@ describe("Run Tile tests", () => {
 
     cy.log(`**Run mapping step (${firstStepName}) and verify results dialog**`);
     runPage.runStep(firstStepName, firstFlowName);
-    cy.verifyStepRunResult("success", "Mapping", firstStepName);
+    runPage.verifyStepRunResult(firstStepName, "success");
     cy.waitForAsyncRequest();
 
     cy.log("**Navigate to explorer tile using the explorer link**");
-    runPage.explorerLink().click();
+    runPage.explorerLink(firstStepName).click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getTitleExplore().should("be.visible");
     cy.waitForAsyncRequest();
@@ -231,11 +225,11 @@ describe("Run Tile tests", () => {
 
     cy.log(`**Run mapping step (${secondStepName}) and verify results dialog**`);
     runPage.runStep(secondStepName, secondFlowName);
-    cy.verifyStepRunResult("success", "Mapping", secondStepName);
+    runPage.verifyStepRunResult(secondStepName, "success");
     cy.waitForAsyncRequest();
 
     cy.log("**Navigate to explorer tile using the explorer link**");
-    runPage.explorerLink().click();
+    runPage.explorerLink(secondStepName).click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getTitleExplore().should("be.visible");
     cy.waitForAsyncRequest();
