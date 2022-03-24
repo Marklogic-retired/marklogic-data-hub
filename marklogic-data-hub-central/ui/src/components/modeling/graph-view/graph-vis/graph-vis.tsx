@@ -12,6 +12,9 @@ import AddEditRelationship from "../relationship-modal/add-edit-relationship";
 import {defaultHubCentralConfig} from "../../../../config/modeling.config";
 import {ViewType} from "../../../../types/modeling-types";
 import * as _ from "lodash";
+import {UserContext} from "../../../../util/user-context";
+import {getUserPreferences, updateUserPreferences} from "../../../../services/user-preferences";
+import {entitiesConfigExist} from "../../../../util/modeling-utils";
 
 type Props = {
   entityTypes: any;
@@ -42,17 +45,25 @@ let entityMetadata = {};
 
 const GraphVis: React.FC<Props> = (props) => {
 
+  const {
+    user
+  } = useContext(UserContext);
+  const userPreferences = JSON.parse(getUserPreferences(user.name));
+
+  const setGraphPreferences = (options) => {
+    let preferencesObject = {
+      modelingGraphOptions: options
+    };
+    updateUserPreferences(user.name, preferencesObject);
+  };
+
   const graphType = "shape";
 
   const {modelingOptions, setSelectedEntity} = useContext(ModelingContext);
 
-  const entitiesConfigExist = () => {
-    return !props.hubCentralConfig?.modeling?.entities ? false : (!Object.keys(props.hubCentralConfig?.modeling?.entities).length ? false : true);
-  };
-
   const coordinatesExist = () => {
     let coordsExist = true;
-    if (entitiesConfigExist()) {
+    if (entitiesConfigExist(props.hubCentralConfig)) {
       let allEntityCoordinates = props.hubCentralConfig["modeling"]["entities"];
       for (const entity of props.entityTypes) {
         if (!allEntityCoordinates[entity.entityName]) {
@@ -65,7 +76,7 @@ const GraphVis: React.FC<Props> = (props) => {
     }
     return coordsExist;
   };
-  const [physicsEnabled, setPhysicsEnabled] = useState(!coordinatesExist());
+  const [physicsEnabled, setPhysicsEnabled] = useState(userPreferences?.modelingGraphOptions?.physicsEnabled);
   const [graphData, setGraphData] = useState({nodes: [], edges: []});
   let testingMode = true; // Should be used further to handle testing only in non-production environment
   const [openRelationshipModal, setOpenRelationshipModal] = useState(false);
@@ -75,7 +86,6 @@ const GraphVis: React.FC<Props> = (props) => {
   const [menuPosition, setMenuPosition] = useState<{ x: number, y: number }>({x: 0, y: 0});
   const [newRelationship, setNewRelationship] = useState(false);
   const [escKeyPressed, setEscKeyPressed] = useState(false);
-  //const [saveAllCoords, setSaveAllCoords] = useState(false);
   const [coordsLoaded, setCoordsLoaded] = useState(false);
   const [coords, setCoords] = useState<any>({});
   const [hasStabilized, setHasStabilized] = useState(false);
@@ -90,18 +100,16 @@ const GraphVis: React.FC<Props> = (props) => {
 
   // Load coords *once* on init
   useEffect(() => {
-    if (!coordsLoaded && entitiesConfigExist()) {
+    if (!coordsLoaded && entitiesConfigExist(props.hubCentralConfig)) {
       let newCoords = {};
-      if (entitiesConfigExist()) {
-        let allCoordinates = props.hubCentralConfig["modeling"]["entities"];
+      let allCoordinates = props.hubCentralConfig["modeling"]["entities"];
 
-        Object.keys(allCoordinates).forEach(entity => {
-          let entityCoordinates = allCoordinates[entity];
-          if (entityCoordinates.graphX && entityCoordinates.graphY) {
-            newCoords[entity] = {graphX: entityCoordinates.graphX, graphY: entityCoordinates.graphY};
-          }
-        });
-      }
+      Object.keys(allCoordinates).forEach(entity => {
+        let entityCoordinates = allCoordinates[entity];
+        if (entityCoordinates.graphX && entityCoordinates.graphY) {
+          newCoords[entity] = {graphX: entityCoordinates.graphX, graphY: entityCoordinates.graphY};
+        }
+      });
       setCoords(newCoords);
       setCoordsLoaded(true);
       if (network) {
@@ -215,7 +223,7 @@ const GraphVis: React.FC<Props> = (props) => {
 
   const coordsExist = (entityName) => {
     let result = false;
-    if (entitiesConfigExist()) {
+    if (entitiesConfigExist(props.hubCentralConfig)) {
       let entities = props.hubCentralConfig["modeling"]["entities"];
       if (entities[entityName]) {
         if (entities[entityName].graphX &&
@@ -305,7 +313,7 @@ const GraphVis: React.FC<Props> = (props) => {
       if (selectedEntityExists()) {
         // Persist selection and coords
         network.selectNodes([modelingOptions.selectedEntity]);
-        if (entitiesConfigExist()) {
+        if (entitiesConfigExist(props.hubCentralConfig)) {
           saveUnsavedCoords();
         }
       } else {
@@ -659,7 +667,7 @@ const GraphVis: React.FC<Props> = (props) => {
   const updateConfigOnNavigation = _.debounce(async (event) => {
     let {nodes} = event;
     if (!nodes.length || modelingOptions.selectedEntity) {
-      if (entitiesConfigExist()) {
+      if (entitiesConfigExist(props.hubCentralConfig)) {
         let scale: any = await network.getScale();
         let viewPosition: any = await network.getViewPosition();
         let updatedHubCentralConfig: any = defaultHubCentralConfig;
@@ -742,14 +750,17 @@ const GraphVis: React.FC<Props> = (props) => {
       // NOTE if user doesn't manipulate graph on load, stabilize event
       // fires forever. This avoids reacting to infinite events
       if (hasStabilized) return;
-      if (network) {
+      if (network && userPreferences?.modelingGraphOptions?.physicsEnabled) {
         let positions = network.getPositions();
         // When graph is stabilized, nodePositions no longer empty
         if (positions && Object.keys(positions).length) {
-          saveUnsavedCoords();
+          if (!entitiesConfigExist(props.hubCentralConfig)) {
+            saveUnsavedCoords();
+          }
           setHasStabilized(true);
           if (physicsEnabled) {
             setPhysicsEnabled(false);
+            setGraphPreferences({physicsEnabled: false});
             return false;
           }
         }
