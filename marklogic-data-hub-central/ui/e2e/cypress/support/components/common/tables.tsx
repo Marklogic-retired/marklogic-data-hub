@@ -4,7 +4,10 @@ class Tables {
     return cy.get("#mainTable");
   }
   getTableRows() {
-    return cy.get(".hc-table_row");
+    return cy.get("tr.hc-table_row");
+  }
+  getActiveTablePage() {
+    return cy.get("li.page-item.active");
   }
 }
 export default new Tables();
