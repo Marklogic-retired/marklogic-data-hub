@@ -980,6 +980,10 @@ public class DataHubImpl implements DataHub, InitializingBean {
      * This is intentionally not exposed in the DataHub interface, as there's no use case yet for a client of this
      * library to perform this operation. It can instead be accessed via Hub Central and Gradle.
      */
+    public void clearUserData() {
+        clearUserData(null, null);
+    }
+
     public void clearUserData(String targetDatabase, String sourceCollection) {
         final HubClient hubClientToUse = hubClient != null ? hubClient : hubConfig.newHubClient();
 
