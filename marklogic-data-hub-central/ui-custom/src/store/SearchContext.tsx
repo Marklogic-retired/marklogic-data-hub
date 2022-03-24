@@ -50,7 +50,7 @@ const defaultState = {
 };
 
 /**
- * Component for storing state of search query and search results. 
+ * Component for storing state of search query and search results.
  * Also provides methods for executing searches.
  * Made available to components that perform searches or display search results.
  *
@@ -60,9 +60,9 @@ const defaultState = {
  * @prop {object} searchResults - Search results object.
  * @prop {number} returned - Number of records returned in search results.
  * @prop {number} total - Total number of records available.
- * @prop {HandleSearch} handleSearch - Callback to execute a search via query text (TODO document interface). 
- * @prop {HandleFacetString} handleFacetString - Callback to execute a search via facet selection (TODO document interface). 
- * @prop {HandleSaved} handleSaved - Callback to execute a search via selection of a saved query (TODO document interface). 
+ * @prop {HandleSearch} handleSearch - Callback to execute a search via query text (TODO document interface).
+ * @prop {HandleFacetString} handleFacetString - Callback to execute a search via facet selection (TODO document interface).
+ * @prop {HandleSaved} handleSaved - Callback to execute a search via selection of a saved query (TODO document interface).
  * @example
  * TBD
  */
@@ -119,6 +119,12 @@ const SearchProvider: React.FC = ({children}) => {
         navigate("/search"); // Handle search submit from another view
       }
       let newQuery = buildQuery(start, pageLength, qtext, facetStrings, entityType);
+      if(newQuery.selectedFacets["createdOn"]) {
+          newQuery.selectedFacets["createdOn"][0] =  newQuery.selectedFacets["createdOn"][0].replace(/ ~ /g,",");
+      }
+      // let date = newQuery.selectedFacets["createdOn"][0].replace(/ ~ /g,",");
+      //   console.log("newSearch ",date);
+
       let sr = getSearchResults(userContext.config.api.searchResultsEndpoint, newQuery, userContext.userid);
       sr.then(result => {
         setSearchResults(result?.data.searchResults.response);
@@ -155,6 +161,7 @@ const SearchProvider: React.FC = ({children}) => {
       setFacetStrings(prevState => [...prevState, newFacetString]);
     } else {
       let newFacetStrings = facetStrings.filter(f => (f !== (name + ":" + value)));
+      if(name === "createdOn") newFacetStrings = facetStrings.filter(f => (f.split(":")[0] !== (name)));
       setFacetStrings(newFacetStrings);
     }
     setPageNumber(1);

@@ -209,9 +209,9 @@ const Facets: React.FC<Props> = (props) => {
   };
 
   const  resetValue = (event) => {
-    console.log("resetValue is  clicked ", datePickerValue);
-    event.preventDefault();
-    event.stopPropagation();
+    // console.log("resetValue is  clicked ", datePickerValue);
+      event.preventDefault();
+      // event.stopPropagation();
     let dateArray = [new Date(), new Date()];
     // let startDate = moment(dateArray[0]).format("YYYY-MM-DD")
     // let endDate = moment(dateArray[1]).format("YYYY-MM-DD")
@@ -232,19 +232,19 @@ const Facets: React.FC<Props> = (props) => {
     //     return;
     // // }
   };
-////////////////// Find a way to change moment to string ////////////
-  const onChange = (startDate, endDate)  => {
-    console.log("startDate ", startDate);
-    console.log("endDate ", endDate);
-    const dateArray = [startDate, endDate];
-    if (dateArray.length && dateArray[0] && startDate.isValid() && !showClear) {
-      console.log("On change is  clicked", dateArray);
-      searchContext.handleFacetString("createdOn", "placeHolderDate", true);
-      (dateArray[0] && dateArray[1]) && setDatePickerValue([moment(dateArray[0].format("YYYY-MM-DD")), moment(dateArray[1].format("YYYY-MM-DD"))]);
 
+  const onChange = (startDate, endDate)  => {
+    console.log("startDate .....", startDate);
+    console.log("endDate ", endDate);
+    let creationDate = moment(startDate).format("YYYY-MM-DD") + " ~ " + moment(endDate).format("YYYY-MM-DD");
+    const dateArray = [startDate, endDate];
+
+    if (dateArray.length && dateArray[0] && startDate.isValid() && !showClear) {
+      searchContext.handleFacetString("createdOn", creationDate, true);
+      (dateArray[0] && dateArray[1]) && setDatePickerValue([moment(dateArray[0].format("YYYY-MM-DD")), moment(dateArray[1].format("YYYY-MM-DD"))]);
     }
     else {
-        searchContext.handleFacetString("createdOn", "placeHolderDate", false);
+        searchContext.handleFacetString("createdOn", creationDate, false);
     }
   };
 
@@ -260,9 +260,11 @@ const Facets: React.FC<Props> = (props) => {
     let dateFormat = "YYYY-MM-DD";
 
     let placeHolderDate = input.map(dateValue => moment(dateValue).format(dateFormat)).join(" ~ ");
-    // handleSelect("createdOn:placeHolderDate")
-    //      searchContext.handleFacetString(createdOn, placeHolderDate, true);
-    console.log("placeHolderDate is ",placeHolderDate)
+    let flag;
+      searchContext.facetStrings.map((facet => {
+          if(facet.split(":")[0] === "createdOn") flag=true;
+      }))
+      if(!flag) setDatePickerValue([null,null]);
     return placeHolderDate;
   };
 
@@ -299,7 +301,9 @@ const Facets: React.FC<Props> = (props) => {
         </DateRangePicker>
       </span></div>
       {props.config.items && searchContext.searchResults && props.config.items.map((f, index) => {
-        return (
+        // @ts-ignore
+          // @ts-ignore
+          return (
           <div className="facet" key={"facet-" + index}>
             <div className="title">
               {f.name}
