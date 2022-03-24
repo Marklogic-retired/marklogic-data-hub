@@ -74,7 +74,7 @@ class BrowsePage {
   }
 
   clickPaginationItem(index: number) {
-    return cy.get(`#pagination-item-${index}`).click();
+    return cy.get(`#pagination-item-${index}`).scrollIntoView().click();
   }
 
   getSelectedPaginationNumber() {

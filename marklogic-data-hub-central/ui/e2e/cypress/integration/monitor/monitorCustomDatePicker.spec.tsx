@@ -54,24 +54,7 @@ describe("Monitor Tile", () => {
     monitorSidebar.getStartTimeSelect().click();
     monitorSidebar.getStartTimeSelectOption("Custom").click();
     monitorSidebar.getDateRangePicker().should("be.visible").click();
-    monitorSidebar.getTodayItemInDateRangePicker().click({force: true, multiple: true});
-    monitorSidebar.getAllAvailableDaysInDateRangePicker().then($listOfTd => {
-      //TODO: investigate cypress dom re-render in DHFPROD-8671
-      // let found: boolean = false;
-      //   cy.wrap($listOfTd).each($td => {
-      //     if (found) {
-      //       cy.wrap($td).click();
-      //       found = false;
-      //     }
-      //     if ($td.hasClass("today")) {
-      //       found = true;
-      //     }
-      //   });
-      // });
-      cy.wrap($listOfTd[0]).then($td => {
-        cy.wrap($td).click();
-      });
-    });
+    monitorSidebar.getTodayItemInDateRangePicker().click();
     monitorSidebar.getDateRangePicker().invoke("val").then((value) => {
       if (value) {
         const dateArray = value.toString().split(" ~ ").map(d => d.split("-"));
