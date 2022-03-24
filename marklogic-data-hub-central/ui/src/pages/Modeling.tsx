@@ -23,9 +23,11 @@ import ModelingLegend from "@components/modeling/modeling-legend/modeling-legend
 import {defaultModelingView} from "@config/modeling.config";
 import PublishToDatabaseIcon from "../assets/publish-to-database-icon";
 import {HCAlert, HCButton, HCTooltip} from "@components/common";
+import {updateUserPreferences} from "../services/user-preferences";
+import {entitiesConfigExist} from "@util/modeling-utils";
 
 const Modeling: React.FC = () => {
-  const {handleError} = useContext(UserContext);
+  const {user, handleError} = useContext(UserContext);
   const {modelingOptions, setEntityTypeNamesArray, clearEntityModified, setView, setSelectedEntity} = useContext(ModelingContext);
   const [entityTypes, setEntityTypes] = useState<any[]>([]);
   const [showEntityModal, toggleShowEntityModal] = useState(false);
@@ -115,6 +117,12 @@ const Modeling: React.FC = () => {
       const response = await getHubCentralConfig();
       if (response["status"] === 200) {
         sethubCentralConfig(response.data);
+        if (!entitiesConfigExist(response.data)) {
+          let preferencesObject = {
+            modelingGraphOptions: {physicsEnabled: true}
+          };
+          updateUserPreferences(user.name, preferencesObject);
+        }
       }
     } catch (error) {
       handleError(error);
