@@ -490,6 +490,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
             onClick={() => handleMenuClick(item.value)}
             eventKey={index}
             role={"option"}
+            key={index}
           >
             {item.value}
           </Dropdown.Item>
