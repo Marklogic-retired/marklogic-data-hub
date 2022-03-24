@@ -1,5 +1,5 @@
-import React, { useContext, useState } from "react";
-import { SearchContext } from "../../store/SearchContext";
+import React, {useContext, useState} from "react";
+import {SearchContext} from "../../store/SearchContext";
 import Form from "react-bootstrap/Form";
 import Table from "react-bootstrap/Table";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
@@ -7,7 +7,7 @@ import Tooltip from "react-bootstrap/Tooltip";
 import {InfoCircleFill, ChevronDoubleRight, ChevronDoubleLeft, Calendar4, XLg} from "react-bootstrap-icons";
 import "./Facets.scss";
 import moment from "moment";
-import DateRangePicker from 'react-bootstrap-daterangepicker';
+import DateRangePicker from "react-bootstrap-daterangepicker";
 import "bootstrap-daterangepicker/daterangepicker.css";
 import {HCDateTimePicker} from "../../../../ui/src/components/common";
 
@@ -63,8 +63,8 @@ const Facets: React.FC<Props> = (props) => {
   const [showClear, updateShowClear] = React.useState(false);
   const range = {};
   const initialSettings = {
-      parentEl: '#date-range-picker-facet',
-      autoApply: true,
+    parentEl: "#date-range-picker-facet",
+    autoApply: true,
   };
   const [datePickerValue, setDatePickerValue] = useState<any[]>([null, null]);
   const ref = React.useRef<any>();
@@ -72,7 +72,7 @@ const Facets: React.FC<Props> = (props) => {
   let moreLessInit: any = {};
   const moreLessDefault: boolean = true;
   if (props.config.items) {
-    props.config.items.forEach(f => {moreLessInit[f.name] = moreLessDefault;});
+    props.config.items.forEach(f => { moreLessInit[f.name] = moreLessDefault; });
   }
 
   const [moreLess, setMoreLess] = useState<any>(moreLessInit);
@@ -89,6 +89,7 @@ const Facets: React.FC<Props> = (props) => {
 
   const handleSelect = (e) => {
     let parts: any = e.target.id.split(":");
+    console.log("parts ",parts);
     searchContext.handleFacetString(parts[0], parts[1], e.target.checked);
   };
 
@@ -97,8 +98,8 @@ const Facets: React.FC<Props> = (props) => {
       let newState = Object.assign({}, prevState);
       newState[value] = !prevState[value];
       return newState;
-    })
-  }
+    });
+  };
 
   // Only show/hide if label overflows (has ellipsis)
   const handleTooltip = (id) => () => {
@@ -111,8 +112,8 @@ const Facets: React.FC<Props> = (props) => {
         tooltipCopy[id] = false; // never show
       }
       return tooltipCopy;
-    })
-  }
+    });
+  };
 
   const displayFacetValues = (facetObj, disabled=false, moreLess) => {
     let total = 2000000; // TODO Remove: for testing larger counts
@@ -123,28 +124,28 @@ const Facets: React.FC<Props> = (props) => {
           return (
             <tr className="facetValue" key={"facetValue-" + index}>
               <td className="label">
-                  <Form.Check
-                    id={facetObj.name + ":" + fv.name}
-                    type={"checkbox"}
-                    checked={searchContext.facetStrings && searchContext.facetStrings.includes(facetObj.name + ":" + fv.name)}
-                    disabled={disabled ? disabled : false}
-                    data-testid={facetObj.name + ":" + fv.name}
-                    title={fv.name}
-                    className="shadow-none"
-                    onChange={handleSelect}
-                  />
-                  <OverlayTrigger
-                    overlay={<Tooltip>{fv.name}</Tooltip>}
-                    onToggle={handleTooltip("tooltip-" + facetObj.name + ":" + fv.name)}
-                    show={tooltipShow["tooltip-" + facetObj.name + ":" + fv.name]}
-                    placement="right"
-                  >
-                    <label
-                      id={"tooltip-" + facetObj.name + ":" + fv.name}
-                      htmlFor={facetObj.name + ":" + fv.name}
-                      className="form-check-label"
-                    >{fv.name}</label>
-                  </OverlayTrigger>
+                <Form.Check
+                  id={facetObj.name + ":" + fv.name}
+                  type={"checkbox"}
+                  checked={searchContext.facetStrings && searchContext.facetStrings.includes(facetObj.name + ":" + fv.name)}
+                  disabled={disabled ? disabled : false}
+                  data-testid={facetObj.name + ":" + fv.name}
+                  title={fv.name}
+                  className="shadow-none"
+                  onChange={handleSelect}
+                />
+                <OverlayTrigger
+                  overlay={<Tooltip>{fv.name}</Tooltip>}
+                  onToggle={handleTooltip("tooltip-" + facetObj.name + ":" + fv.name)}
+                  show={tooltipShow["tooltip-" + facetObj.name + ":" + fv.name]}
+                  placement="right"
+                >
+                  <label
+                    id={"tooltip-" + facetObj.name + ":" + fv.name}
+                    htmlFor={facetObj.name + ":" + fv.name}
+                    className="form-check-label"
+                  >{fv.name}</label>
+                </OverlayTrigger>
               </td>
               <td className="meter">
                 <div className="total">
@@ -163,139 +164,146 @@ const Facets: React.FC<Props> = (props) => {
               <td className="count">{(fv.count).toLocaleString()}</td>
               {/* <td className="count">{(value).toLocaleString()}</td> */}
             </tr>
-          )
+          );
         }
       }) : null;
-    return <tbody>{result}</tbody>
-  }
+    return <tbody>{result}</tbody>;
+  };
 
   // Get object for a facet based on facet name
   const getFacetObj = (facetName, facetObjs) => {
     return facetObjs ? facetObjs.find(obj => obj.name === facetName) : null;
-  }
+  };
 
   // Get number of facet values for a facet based on facet name
   const getNumValues = (facetName, facetObjs) => {
     let facetObj = getFacetObj(facetName, facetObjs);
     return (facetObj && facetObj["facet-value"]) ? facetObj["facet-value"].length : 0;
-  }
+  };
 
-    const formatPlaceHolder = (input) => {
+  const formatPlaceHolder = (input) => {
         return Array.isArray(input) && input.length > 1 ? input.map(text => text.length > 15 ? text.slice(0, 15) + "..." : text).join(" ~ ") : input;
+  };
+
+  const handleMouseOver = (e) => {
+    if (datePickerValue.length > 0 && datePickerValue[0]) {
+      updateShowClear(true);
+    }
+  };
+
+  const handleMouseOut = (e) => {
+    if (datePickerValue.length > 0 && datePickerValue[0]) {
+      updateShowClear(false);
+    }
+  };
+
+  const onShow = (event, picker) => {
+    const applyButton = document.querySelector(".applyBtn");
+
+    if (applyButton) {
+      applyButton.innerHTML = "OK";
+    }
+  };
+  const onOK = (event) => {
+    console.log("On ok is  clicked");
+  };
+
+  const  resetValue = (event) => {
+    console.log("resetValue is  clicked ", datePickerValue);
+    event.preventDefault();
+    event.stopPropagation();
+    let dateArray = [new Date(), new Date()];
+    // let startDate = moment(dateArray[0]).format("YYYY-MM-DD")
+    // let endDate = moment(dateArray[1]).format("YYYY-MM-DD")
+
+    if (ref.current) {
+      setDatePickerValue([null, null]);
     }
 
-    const handleMouseOver = (e) => {
-        if (datePickerValue.length > 0 && datePickerValue[0]) {
-        console.log("entered 180")
-        updateShowClear(true);
-        }
+    if (onChange) {
+      updateShowClear(false);
+      return onChange(null, null);
+    }
+    //
+    // console.log("resetValue 2 is  clicked ",datePickerValue);
+    // // if (onOk && bindChange) {
+    // //     updateShowClear(false);
+    // //     bindChange();
+    //     return;
+    // // }
+  };
+////////////////// Find a way to change moment to string ////////////
+  const onChange = (startDate, endDate)  => {
+    console.log("startDate ", startDate);
+    console.log("endDate ", endDate);
+    const dateArray = [startDate, endDate];
+    if (dateArray.length && dateArray[0] && startDate.isValid() && !showClear) {
+      console.log("On change is  clicked", dateArray);
+      searchContext.handleFacetString("createdOn", "placeHolderDate", true);
+      (dateArray[0] && dateArray[1]) && setDatePickerValue([moment(dateArray[0].format("YYYY-MM-DD")), moment(dateArray[1].format("YYYY-MM-DD"))]);
+
+    }
+    else {
+        searchContext.handleFacetString("createdOn", "placeHolderDate", false);
+    }
+  };
+
+  const formatValue = (input) => {
+    if (!Array.isArray(input) || input.length !== 2) {
+      return "";
     }
 
-    const handleMouseOut = (e) => {
-        if (datePickerValue.length > 0 && datePickerValue[0]) {
-        console.log("entered 187")
-        updateShowClear(false);
-        }
+    if (input.some(dateValue => dateValue === null)) {
+      return "";
     }
 
-    const onShow = (event, picker) => {
-        const applyButton = document.querySelector(".applyBtn");
+    let dateFormat = "YYYY-MM-DD";
 
-        if (applyButton) {
-            applyButton.innerHTML = "OK";
-        }
-    }
-    const onOK = (event) => {
-        console.log("On ok is  clicked");
-    }
-
-    const  resetValue = (event) => {
-        console.log("resetValue is  clicked ",datePickerValue);
-        event.preventDefault();
-        event.stopPropagation();
-        let dateArray = [new Date(),new Date()]
-        // let startDate = moment(dateArray[0]).format("YYYY-MM-DD")
-        // let endDate = moment(dateArray[1]).format("YYYY-MM-DD")
-
-        if (ref.current) {
-            setDatePickerValue([null,null])
-        }
-
-        if (onChange) {
-            updateShowClear(false);
-            return onChange(null,null);
-        }
-        //
-        // console.log("resetValue 2 is  clicked ",datePickerValue);
-        // // if (onOk && bindChange) {
-        // //     updateShowClear(false);
-        // //     bindChange();
-        //     return;
-        // // }
-    }
-
-    const onChange = (startDate, endDate)  => {
-      console.log("startDate ",startDate);
-        console.log("endDate ",endDate);
-        const dateArray = [startDate, endDate];
-        if (dateArray.length && dateArray[0] && startDate.isValid() && !showClear) {
-            console.log("On change is  clicked",dateArray);
-            (dateArray[0] && dateArray[1]) && setDatePickerValue([moment(dateArray[0].format("YYYY-MM-DD")), moment(dateArray[1].format("YYYY-MM-DD"))]);
-        }
-    }
-
-    const formatValue = (input) => {
-        if (!Array.isArray(input) || input.length !== 2) {
-            return "";
-        }
-
-        if (input.some(dateValue => dateValue === null)) {
-            return "";
-        }
-
-        let dateFormat = "YYYY-MM-DD";
-
-        return input.map(dateValue => moment(dateValue).format(dateFormat)).join(" ~ ");
-    }
+    let placeHolderDate = input.map(dateValue => moment(dateValue).format(dateFormat)).join(" ~ ");
+    // handleSelect("createdOn:placeHolderDate")
+    //      searchContext.handleFacetString(createdOn, placeHolderDate, true);
+    console.log("placeHolderDate is ",placeHolderDate)
+    return placeHolderDate;
+  };
 
   return (
     <div className="facets">
       {/* Show each facet */}
-        {<div className="title">
-            {props.config.dateRangeFacet.name}
-            <OverlayTrigger
-                key={props.config.dateRangeFacet.name}
-                placement="right"
-                overlay={<Tooltip>{props.config.dateRangeFacet.tooltip}</Tooltip>}
-            >
-                <InfoCircleFill
-                    data-testid={"info-" + props.config.dateRangeFacet.name}
-                    color="#5d6aaa"
-                    size={21}
-                    className="facetInfo"
-                />
-            </OverlayTrigger>
-        </div>
-        }
-            <div  className="createdOnFacet"><span className="dateRangeFacet">
-                <DateRangePicker initialSettings={initialSettings} {...{onShow, ref}} onApply={onOK}
-                                 onCallback={onChange}>
-                    <div onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} className="pickerContainer">
-                        <input type="text" readOnly className="input"
-                               placeholder={formatPlaceHolder(["Start date", "End date"])}
-                               value={formatValue(datePickerValue)}/>
-                        {!showClear ?
-                            <Calendar4 className="calendarIcon"/> :
-                            <XLg className="clearIcon" data-testid="datetime-picker-reset" onClick={resetValue}/>}
-                    </div>
-                </DateRangePicker>
-            </span></div>
+      {<div className="title">
+        {props.config.dateRangeFacet.name}
+        <OverlayTrigger
+          key={props.config.dateRangeFacet.name}
+          placement="right"
+          overlay={<Tooltip>{props.config.dateRangeFacet.tooltip}</Tooltip>}
+        >
+          <InfoCircleFill
+            data-testid={"info-" + props.config.dateRangeFacet.name}
+            color="#5d6aaa"
+            size={21}
+            className="facetInfo"
+          />
+        </OverlayTrigger>
+      </div>
+      }
+      <div  className="createdOnFacet"><span className="dateRangeFacet">
+        <DateRangePicker initialSettings={initialSettings} {...{onShow, ref}} onApply={onOK}
+          onCallback={onChange}>
+          <div onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} className="pickerContainer">
+            <input type="text" readOnly className="input"
+              placeholder={formatPlaceHolder(["Start date", "End date"])}
+              value={formatValue(datePickerValue)}/>
+            {!showClear ?
+              <Calendar4 className="calendarIcon"/> :
+              <XLg className="clearIcon" data-testid="datetime-picker-reset" onClick={resetValue}/>}
+          </div>
+        </DateRangePicker>
+      </span></div>
       {props.config.items && searchContext.searchResults && props.config.items.map((f, index) => {
         return (
-        <div className="facet" key={"facet-" + index}>
-          <div className="title">
-            {f.name}
-            {f.tooltip &&
+          <div className="facet" key={"facet-" + index}>
+            <div className="title">
+              {f.name}
+              {f.tooltip &&
               <OverlayTrigger
                 key={f.name}
                 placement="right"
@@ -308,34 +316,34 @@ const Facets: React.FC<Props> = (props) => {
                   className="facetInfo"
                 />
               </OverlayTrigger>
-            }
-          </div>
-          <div className="facetValues">
-            {/* Show each facet value (and count) */}
-            {searchContext.searchResults?.facet && searchContext.searchResults.facet?.length > 0 ?
-            <Table size="sm" style={{padding: 0, margin: 0}}>
-                {displayFacetValues(getFacetObj(f.name, searchContext.searchResults.facet), f.disabled, moreLess[f.name])}
-            </Table> : null }
-            {(getNumValues(f.name, searchContext.searchResults.facet) > moreThreshold) ? moreLess[f.name] ?
-              <div className="moreLess" data-testid={"more-" + f.name} onClick={handleMoreLess(f.name)}>
-                {getNumValues(f.name, searchContext.searchResults.facet) - moreThreshold} more
-                <ChevronDoubleRight
-                  data-testid="doubleRight"
-                  color="#5d6aaa"
-                  size={11}
-                  className="doubleRight"
-                /></div> :
-              <div className="moreLess" data-testid={"less-" + f.name} onClick={handleMoreLess(f.name)}>
-                <ChevronDoubleLeft
-                  data-testid="doubleLeft"
-                  color="#5d6aaa"
-                  size={11}
-                  className="doubleLeft"
-                />less</div> : null
-            }
-          </div>
-      </div> )
-    })}
+              }
+            </div>
+            <div className="facetValues">
+              {/* Show each facet value (and count) */}
+              {searchContext.searchResults?.facet && searchContext.searchResults.facet?.length > 0 ?
+                <Table size="sm" style={{padding: 0, margin: 0}}>
+                  {displayFacetValues(getFacetObj(f.name, searchContext.searchResults.facet), f.disabled, moreLess[f.name])}
+                </Table> : null }
+              {(getNumValues(f.name, searchContext.searchResults.facet) > moreThreshold) ? moreLess[f.name] ?
+                <div className="moreLess" data-testid={"more-" + f.name} onClick={handleMoreLess(f.name)}>
+                  {getNumValues(f.name, searchContext.searchResults.facet) - moreThreshold} more
+                  <ChevronDoubleRight
+                    data-testid="doubleRight"
+                    color="#5d6aaa"
+                    size={11}
+                    className="doubleRight"
+                  /></div> :
+                <div className="moreLess" data-testid={"less-" + f.name} onClick={handleMoreLess(f.name)}>
+                  <ChevronDoubleLeft
+                    data-testid="doubleLeft"
+                    color="#5d6aaa"
+                    size={11}
+                    className="doubleLeft"
+                  />less</div> : null
+              }
+            </div>
+          </div>);
+      })}
     </div>
   );
 };
