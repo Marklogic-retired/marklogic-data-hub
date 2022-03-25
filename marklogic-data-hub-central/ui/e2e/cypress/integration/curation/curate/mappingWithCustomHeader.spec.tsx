@@ -223,7 +223,6 @@ describe("Create and verify load steps, map step and flows with a custom header"
     curatePage.selectFlowToRunIn(flowName);
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Map", mapStep, flowName);
-    cy.waitUntil(() => runPage.getFlowName(flowName).should("be.visible"));
     runPage.verifyStepRunResult(mapStep, "success");
     runPage.closeFlowStatusModal(flowName);
     /* Commented until DHFPROD-7477 is done

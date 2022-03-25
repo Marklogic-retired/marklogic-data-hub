@@ -13,7 +13,7 @@ class MonitorSidebar {
   }
 
   getTodayItemInDateRangePicker() {
-    return cy.get(".table-condensed:nth-child(1) tbody td.today");
+    return cy.get(".table-condensed:nth-child(1) tbody td.today").first();
   }
 
   getAllAvailableDaysInDateRangePicker() {

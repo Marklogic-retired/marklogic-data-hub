@@ -104,7 +104,7 @@ class BaseEntitySidebar {
   }
 
   verifyCollapsedRelatedEntityPanel() {
-    return cy.get(`[class="after-indicator sidebar_disabledTitleCheckbox__PJkN4 accordion-button collapsed"]`);
+    return cy.get(`[class^="after-indicator sidebar_disabledTitleCheckbox"]`);
   }
 
   toggleRelatedEntityPanel() {
