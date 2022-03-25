@@ -6,6 +6,7 @@
       "stepDefinitionName": "simpleCustomStep-step",
       "stepDefinitionType": "CUSTOM",
       "options": {
+        "provenanceGranularityLevel": "coarse",
         "sourceQuery": "cts.collectionQuery('Customer')",
         "sourceDatabase": "data-hub-STAGING",
         "targetDatabase": "data-hub-FINAL",

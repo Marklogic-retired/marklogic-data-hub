@@ -87,6 +87,8 @@ public class RunCustomStepTest extends AbstractHubCoreTest {
     void processXmlViaHubFlowRunner() {
         String input = format("<input><flowName>%s</flowName>", "simpleCustomStepFlow");
         input += "<content><uri>/customer1.xml</uri><value><content><name>Jane</name></content></value></content>";
+        // using custom jobId and provenanceGranularityLevel: coarse in the step to test for DHFPROD-8528
+        input += "<jobId>123</jobId>";
         input += "</input>";
 
         replaceCustomStepModuleWithTemplateModifiedForXml();
