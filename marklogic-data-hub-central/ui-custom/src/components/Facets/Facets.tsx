@@ -4,8 +4,11 @@ import Form from "react-bootstrap/Form";
 import Table from "react-bootstrap/Table";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
-import {InfoCircleFill, ChevronDoubleRight, ChevronDoubleLeft} from "react-bootstrap-icons";
+import {InfoCircleFill, ChevronDoubleRight, ChevronDoubleLeft, Calendar4, XLg} from "react-bootstrap-icons";
 import "./Facets.scss";
+import moment from "moment";
+import DateRangePicker from "react-bootstrap-daterangepicker";
+import "bootstrap-daterangepicker/daterangepicker.css";
 
 type Props = {
     config?: any;
@@ -56,6 +59,13 @@ type Props = {
 const Facets: React.FC<Props> = (props) => {
 
   const searchContext = useContext(SearchContext);
+  const [showClear, updateShowClear] = React.useState(false);
+  const initialSettings = {
+      parentEl: "#date-range-picker-facet",
+      autoApply: true,
+  };
+  const [datePickerValue, setDatePickerValue] = useState<any[]>([null, null]);
+  const ref = React.useRef<any>();
 
   let moreLessInit: any = {};
   const moreLessDefault: boolean = true;
@@ -168,9 +178,126 @@ const Facets: React.FC<Props> = (props) => {
     return (facetObj && facetObj["facet-value"]) ? facetObj["facet-value"].length : 0;
   }
 
-  return (
+  // Format placeholder for create on date input
+  const formatPlaceHolder = (input) => {
+      return Array.isArray(input) && input.length > 1 ? input.map(text => text.length > 15 ? text.slice(0, 15) + "..." : text).join(" ~ ") : input;
+  };
+
+  // To handle close/calender icon on created on date picker
+  const handleMouseOver = (e) => {
+      if (datePickerValue.length > 0 && datePickerValue[0]) {
+          updateShowClear(true);
+      }
+  };
+
+  // To handle close/calender icon on created on date picker
+  const handleMouseOut = (e) => {
+      if (datePickerValue.length > 0 && datePickerValue[0]) {
+          updateShowClear(false);
+      }
+  };
+
+  const onShow = () => {
+      const applyButton = document.querySelector(".applyBtn");
+
+      if (applyButton) {
+          applyButton.innerHTML = "OK";
+      }
+  };
+
+  const onOK = () => {
+      return;
+  };
+
+  // To Reset date range on date range picker
+  const  resetValue = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      // let dateArray = [new Date(), new Date()];
+      // let startDate = moment(dateArray[0]).format("YYYY-MM-DD")
+      // let endDate = moment(dateArray[1]).format("YYYY-MM-DD")
+
+      if (ref.current) {
+        setDatePickerValue([null, null]);
+      }
+
+      if (onChange) {
+          updateShowClear(false);
+          return onChange(null, null);
+      }
+        // // if (onOk && bindChange) {
+        // //     updateShowClear(false);
+        // //     bindChange();
+        //     return;
+        // // }
+  };
+
+  // Handles on change event on created on date widget
+  const onChange = (startDate, endDate)  => {
+      let creationDate = moment(startDate).format("YYYY-MM-DD") + " ~ " + moment(endDate).format("YYYY-MM-DD");
+      const dateArray = [startDate, endDate];
+
+      if (dateArray.length && dateArray[0] && startDate.isValid() && !showClear) {
+          searchContext.handleFacetString("createdOn", creationDate, true);
+          (dateArray[0] && dateArray[1]) && setDatePickerValue([moment(dateArray[0].format("YYYY-MM-DD")), moment(dateArray[1].format("YYYY-MM-DD"))]);
+      }
+      else {
+          searchContext.handleFacetString("createdOn", creationDate, false);
+      }
+  };
+
+  //Formats the placeholder text for created on input
+  const formatValue = (input) => {
+      if (!Array.isArray(input) || input.length !== 2) {
+          return "";
+      }
+
+      if (input.some(dateValue => dateValue === null)) {
+          return "";
+      }
+
+    let dateFormat = "YYYY-MM-DD";
+
+    let placeHolderDate = input.map(dateValue => moment(dateValue).format(dateFormat)).join(" ~ ");
+    let flag;
+      searchContext.facetStrings.map((facet => {
+          if(facet.split(":")[0] === "createdOn") flag=true;
+    }))
+    if(!flag) setDatePickerValue([null,null]);
+    return placeHolderDate;
+    };
+
+    return (
     <div className="facets">
       {/* Show each facet */}
+      {<div className="title" data-testid={props.config.dateRangeFacet?.name}>
+          {props.config.dateRangeFacet?.name}
+          <OverlayTrigger
+              key={props.config.dateRangeFacet?.name}
+              placement="right"
+              overlay={<Tooltip data-testid={props.config.dateRangeFacet?.tooltip}>{props.config.dateRangeFacet?.tooltip}</Tooltip>}
+          >
+            <InfoCircleFill
+                data-testid={"info-" + props.config.dateRangeFacet?.name}
+                color="#5d6aaa"
+                size={21}
+                className="facetInfo"
+            />
+        </OverlayTrigger>
+        </div>
+        }
+        <div  className="createdOnFacet"><span className="dateRangeFacet">
+        <DateRangePicker initialSettings={initialSettings} {...{onShow, ref}} onApply={onOK} onCallback={onChange}>
+          <div onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} className="pickerContainer">
+            <input type="text" readOnly className="input"
+               placeholder={formatPlaceHolder(["Start date", "End date"])}
+               value={formatValue(datePickerValue)}/>
+            {!showClear ?
+              <Calendar4 className="calendarIcon" data-testid="calenderIcon"/> :
+              <XLg className="clearIcon" data-testid="datetime-picker-reset" onClick={resetValue}/>}
+        </div>
+      </DateRangePicker>
+      </span></div>
       {props.config.items && searchContext.searchResults && props.config.items.map((f, index) => {
         return ( 
         <div className="facet" key={"facet-" + index}>

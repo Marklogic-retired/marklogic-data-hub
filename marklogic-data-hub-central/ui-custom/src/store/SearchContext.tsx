@@ -119,6 +119,9 @@ const SearchProvider: React.FC = ({children}) => {
         navigate("/search"); // Handle search submit from another view
       }
       let newQuery = buildQuery(start, pageLength, qtext, facetStrings, entityType);
+      if(newQuery.selectedFacets["createdOn"]) {
+        newQuery.selectedFacets["createdOn"][0] =  newQuery.selectedFacets["createdOn"][0].replace(/ ~ /g,",");
+      }
       let sr = getSearchResults(userContext.config.api.searchResultsEndpoint, newQuery, userContext.userid);
       sr.then(result => {
         setSearchResults(result?.data.searchResults.response);
@@ -155,6 +158,7 @@ const SearchProvider: React.FC = ({children}) => {
       setFacetStrings(prevState => [...prevState, newFacetString]);
     } else {
       let newFacetStrings = facetStrings.filter(f => (f !== (name + ":" + value)));
+      if(name === "createdOn") newFacetStrings = facetStrings.filter(f => (f.split(":")[0] !== (name)));
       setFacetStrings(newFacetStrings);
     }
     setPageNumber(1);
