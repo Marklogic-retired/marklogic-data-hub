@@ -23,6 +23,8 @@ import {
 import {ChevronDown, QuestionCircleFill} from "react-bootstrap-icons";
 import {HCButton, HCInput, HCTooltip, HCCard} from "@components/common";
 import {themeColors} from "@config/themes.config";
+import {defaultIcon} from "@config/explore.config";
+import DynamicIcons from "@components/common/dynamic-icons/dynamic-icons";
 
 type Props = {
   openRelationshipModal: boolean;
@@ -609,6 +611,11 @@ const AddEditRelationship: React.FC<Props> = (props) => {
     toggleConfirmModal(false);
   };
 
+  const getEntityTypeIcon = entityType =>
+    props.hubCentralConfig.modeling?.entities.hasOwnProperty(entityType) && props.hubCentralConfig.modeling?.entities[entityType].hasOwnProperty("icon")
+      ? props.hubCentralConfig.modeling.entities[entityType].icon
+      : defaultIcon;
+
   return (<Modal
     show={props.openRelationshipModal}
     dialogClassName={styles.dialog960w}
@@ -627,8 +634,13 @@ const AddEditRelationship: React.FC<Props> = (props) => {
         <div aria-label="relationshipActions" className={styles.relationshipDisplay}>
           <div className={styles.nodeDisplay}>
             <span className={styles.nodeLabel}>SOURCE</span>
-            <HCCard data-testid={"sourceEntityNode"} style={{width: 204, backgroundColor: props.relationshipInfo.sourceNodeColor}} bodyClassName={styles.cardBody} className={styles.cardContainer}>
-              <p data-testid={`${props.relationshipInfo.sourceNodeName}-sourceNodeName`} className={styles.entityName}><b>{props.relationshipInfo.sourceNodeName}</b></p>
+            <HCCard data-testid={"sourceEntityNode"} style={{width: 240, backgroundColor: props.relationshipInfo.sourceNodeColor}} bodyClassName={styles.cardBody} className={styles.cardContainer}>
+              <div className={`${styles.cardText} w-100 h-100 d-flex justify-content-center align-items-center`}>
+                <p data-testid={`${props.relationshipInfo.sourceNodeName}-sourceNodeName`} className={"m-0 text-center"}>
+                  <DynamicIcons name={getEntityTypeIcon(props.relationshipInfo.sourceNodeName)}/>
+                  <b>{props.relationshipInfo.sourceNodeName}</b>
+                </p>
+              </div>
             </HCCard>
           </div>
           <div className={styles.relationshipInputContainer}>
@@ -661,15 +673,18 @@ const AddEditRelationship: React.FC<Props> = (props) => {
           <div className={styles.nodeDisplay}>
             <span className={styles.nodeLabel}>TARGET</span>
             <div className={submitClicked && emptyTargetEntity ? styles.targetEntityErrorContainer : styles.targetEntityContainer}>
-              <HCCard data-testid={"targetEntityNode"} style={{width: 204, backgroundColor: targetEntityColor}} bodyClassName={styles.cardBody} className={styles.cardContainer}>
-                <p data-testid={`${targetEntityName}-targetNodeName`} className={styles.entityName}>{emptyTargetEntity ? targetEntityName : <b>{targetEntityName}</b>}</p>
+              <HCCard data-testid={"targetEntityNode"} style={{width: 240, backgroundColor: targetEntityColor}} bodyClassName={styles.cardBody} className={styles.cardContainer}>
+                <div className={`${styles.cardText} w-100 h-100 d-flex justify-content-center align-items-center`}>
+                  <p data-testid={`${targetEntityName}-targetNodeName`} className={"m-0 text-center"}>
+                    <DynamicIcons name={getEntityTypeIcon(targetEntityName)}/>{emptyTargetEntity ? targetEntityName : <b>{targetEntityName}</b>}
+                  </p>
+                </div>
               </HCCard>
               {!props.isEditing ?
                 <Dropdown>
                   <Dropdown.Toggle data-testid={"targetEntityDropdown"} className={`p-0 border-none rounded-0 ${styles.dropdownButtonMenu}`}>
                     <ChevronDown />
                   </Dropdown.Toggle>
-
                   {DropdownMenu}
                 </Dropdown>
                 : null }
