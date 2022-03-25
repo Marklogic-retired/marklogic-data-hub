@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext, useLayoutEffect, useCallback} from "react";
+import React, {useState, useEffect, useContext, useLayoutEffect, useCallback, createElement} from "react";
 import Graph from "react-graph-vis";
 import "./graph-vis.scss";
 import styles from "./graph-vis.module.scss";
@@ -10,11 +10,15 @@ import NodeSvg from "./node-svg";
 import graphConfig from "@config/graph-vis.config";
 import AddEditRelationship from "../relationship-modal/add-edit-relationship";
 import {defaultHubCentralConfig} from "@config/modeling.config";
+import {defaultIcon} from "@config/explore.config";
 import {ViewType} from "../../../../types/modeling-types";
 import * as _ from "lodash";
 import {UserContext} from "@util/user-context";
 import {getUserPreferences, updateUserPreferences} from "../../../../services/user-preferences";
 import {entitiesConfigExist} from "@util/modeling-utils";
+import * as FontIcon from "react-icons/fa";
+import {renderToStaticMarkup} from "react-dom/server";
+import {DEFAULT_NODE_CONFIG} from "@config/modeling.config";
 
 type Props = {
   entityTypes: any;
@@ -37,6 +41,8 @@ type Props = {
   setSplitPaneResized: any;
   exportPngButtonClicked: boolean;
   setExportPngButtonClicked: any;
+  nodeNeedRedraw: boolean;
+  setNodeNeedRedraw: any;
 };
 
 let entityMetadata = {};
@@ -197,6 +203,14 @@ const GraphVis: React.FC<Props> = (props) => {
     }
   }, [props.entityTypes, props.filteredEntityTypes.length, coordsLoaded]);
 
+  // Initialize or update graph
+  useEffect(() => {
+    setGraphData({
+      nodes: getNodes(),
+      edges: getEdges()
+    });
+  }, [props.hubCentralConfig]);
+
   useEffect(() => {
     if (props.splitPaneResized) {
       setGraphData({
@@ -323,6 +337,16 @@ const GraphVis: React.FC<Props> = (props) => {
     }
   }, [network, modelingOptions.selectedEntity]);
 
+  useEffect(() => {
+    if (props.nodeNeedRedraw) {
+      if (network) {
+        network.selectNodes([modelingOptions.selectedEntity]);
+        network.deleteSelected();
+      }
+      props.setNodeNeedRedraw(false);
+    }
+  }, [props.nodeNeedRedraw]);
+
   useLayoutEffect(() => {
     if (testingMode && network) {
       window.graphVisApi = {
@@ -353,59 +377,94 @@ const GraphVis: React.FC<Props> = (props) => {
     return num;
   };
 
+  const iconExistsForEntity = (entityName) => {
+    return (!props.hubCentralConfig?.modeling?.entities[entityName]?.icon ? false : true);
+  };
+
+  const roundedRect = (ctx: any, x: number, y: number, width: number, height: number, radius: number) => {
+    ctx.beginPath();
+    ctx.moveTo(x, y + radius);
+    ctx.arcTo(x, y + height, x + radius, y + height, radius);
+    ctx.arcTo(x + width, y + height, x + width, y + height - radius, radius);
+    ctx.arcTo(x + width, y, x + width - radius, y, radius);
+    ctx.arcTo(x, y, x, y + radius, radius);
+  };
+
   const getNodes = () => {
     let nodes;
     if (graphType === "shape") {
+      const {boxWidth: defaultBoxWidth, boxHeight, boxPadding, boxRadius, iconWidth, iconHeight, iconRightMargin} = DEFAULT_NODE_CONFIG;
       nodes = props.entityTypes && props.entityTypes?.map((e) => {
-        let entityName = e.entityName;
-        if (e.entityName.length > 20) {
-          entityName = entityName.substring(0, 20) + "...";
-        }
-        let label = "";
-        let tmp = {
-          ...graphConfig.defaultNodeProps,
-          id: e.entityName,
-          label: label.concat(
-            "<b>", entityName, "</b>\n",
-            // "<code>", getNumInstances(e.entityName).toString(), "</code>"
-          ),
-          color: {
-            background: props.getColor(e.entityName),
-            border: e.entityName === modelingOptions.selectedEntity && props.entitySelected ? graphConfig.nodeStyles.selectColor : props.getColor(e.entityName),
-          },
-          borderWidth: e.entityName === modelingOptions.selectedEntity && props.entitySelected ? 3 : 0,
-          // physics: {
-          //   enabled: true
-          // },
-          chosen: {
-            node: function (values, id, selected, hovering) {
-              if (selected && hovering) {
-                values.color = graphConfig.nodeStyles.hoverColor;
-                values.borderColor = graphConfig.nodeStyles.selectColor;
-                values.borderWidth = 3;
-              } else if (selected) {
-                values.color = props.getColor(id);
-                values.borderColor = graphConfig.nodeStyles.selectColor;
-                values.borderWidth = 3;
-              } else if (hovering) {
-                values.color = graphConfig.nodeStyles.hoverColor;
-                values.borderWidth = 0;
-              }
-            }
-          },
+        const {entityName} = e;
+        const nodeId = entityName;
+        const nodeSettings: any = {
+          id: nodeId,
+          shape: "custom"
         };
-        if (coords[e.entityName] && coords[e.entityName].graphX && coords[e.entityName].graphY) {
-          //tmp.physics.enabled = false;
-          tmp.x = coords[e.entityName].graphX;
-          tmp.y = coords[e.entityName].graphY;
+        let entity = props.hubCentralConfig?.modeling?.entities[nodeId];
+        let boxLabel = entityName;
+        if (entityName.length > 20) {
+          nodeSettings.title = entityName;
+          boxLabel = entityName.substring(0, 20) + "...";
         }
-        if (e.entityName.length > 20) {
-          tmp.title = e.entityName;
+        if (getDescription(entityName) && getDescription(entityName).length > 0) {
+          nodeSettings.title = entityName.length > 20 ? nodeSettings.title + "\n" + getDescription(entityName) : getDescription(entityName);
         }
-        if (getDescription(e.entityName) && getDescription(e.entityName).length > 0) {
-          tmp.title = e.entityName.length > 20 ? tmp.title + "\n" + getDescription(e.entityName) : getDescription(e.entityName);
+        if (coords[entityName] && coords[entityName].graphX && coords[entityName].graphY) {
+          nodeSettings.x = coords[entityName].graphX;
+          nodeSettings.y = coords[entityName].graphY;
         }
-        return tmp;
+
+        return {
+          ...nodeSettings,
+          ctxRenderer: ({ctx, x, y, state: {selected, hover}, style, label}) => {
+            let iconName = iconExistsForEntity(nodeId) ? entity.icon : defaultIcon;
+            ctx.font = "bold 14px Arial";
+            let measureText = ctx.measureText(boxLabel);
+            let boxWidth = measureText.width + iconWidth + iconRightMargin + boxPadding * 2;
+            boxWidth = boxWidth < defaultBoxWidth ? defaultBoxWidth : boxWidth;
+            const drawNode = () => {
+
+              roundedRect(ctx, x - boxWidth/2, y - boxHeight/2, boxWidth, boxHeight, boxRadius);
+              ctx.fillStyle = props.getColor(entityName);
+              ctx.strokeStyle = entityName === modelingOptions.selectedEntity && props.entitySelected ? graphConfig.nodeStyles.selectColor : props.getColor(entityName);
+              ctx.lineWidth = entityName === modelingOptions.selectedEntity && props.entitySelected ? 2 : 0;
+              if (selected && hover) {
+                ctx.fillStyle = graphConfig.nodeStyles.hoverColor;
+                ctx.strokeStyle = graphConfig.nodeStyles.selectColor;
+                ctx.lineWidth = 2;
+              } else if (selected) {
+                ctx.fillStyle = props.getColor(nodeId);
+                ctx.strokeStyle = graphConfig.nodeStyles.selectColor;
+                ctx.lineWidth = 2;
+              } else if (hover) {
+                ctx.fillStyle = graphConfig.nodeStyles.hoverColor;
+                ctx.lineWidth = 0;
+              }
+              ctx.closePath();
+              ctx.save();
+              ctx.fill();
+              ctx.stroke();
+              ctx.restore();
+
+              ctx.fillStyle = "Black";
+              ctx.textAlign = "left";
+              ctx.textBaseline = "middle";
+              const textOffsetX = x - boxWidth/2 + boxPadding + iconWidth + iconRightMargin;
+              ctx.fillText(boxLabel, textOffsetX, y);
+              let img = new Image();   // Create new img element
+              img.src = `data:image/svg+xml,${encodeURIComponent(renderToStaticMarkup(createElement(FontIcon[iconName])))}`;
+              //Drawing the image on canvas
+              const iconOffsetX = x - boxWidth/2 + boxPadding;
+              const iconOffsetY = y - iconHeight/2;
+              ctx.drawImage(img, iconOffsetX, iconOffsetY, iconWidth, iconHeight);
+            };
+            return {
+              drawNode,
+              nodeDimensions: {width: boxWidth, height: boxHeight},
+            };
+          }
+        };
       });
     } else if (graphType === "image") { // TODO for custom SVG node, not currently used
       nodes = props.entityTypes && props.entityTypes?.map((e) => {

@@ -405,13 +405,13 @@ const EntityTypeModal: React.FC<Props> = (props) => {
           </Col>
         </Row>
         <Row className={"mb-3"}>
-          <FormLabel column lg={3} style={{marginTop: "11px"}}>{"Icon in Explore:"}</FormLabel>
+          <FormLabel column lg={3} style={{marginTop: "11px"}}>{"Icon:"}</FormLabel>
           <Col className={"d-flex align-items-center"}>
             <div className={styles.iconContainer} data-testid={`${name}-icon-selector`} aria-label={`${name}-${iconSelected}-icon`}>
               <IconPicker value={iconSelected} onChange={(value) => handleIconChange(value)} />
             </div>
             <div className={"p-2 ps-3 d-flex align-items-center"}>
-              <HCTooltip id="icon-selector" text={<span>Select an icon to associate it with the <b>{name}</b> entity in the Explore screen.</span>} placement="right">
+              <HCTooltip id="icon-selector" text={<span>Select an icon to associate it with the <b>{name}</b> entity throughout your project.</span>} placement="right">
                 <QuestionCircleFill aria-label="icon: question-circle" size={13} className={styles.questionCircle} />
               </HCTooltip>
             </div>
