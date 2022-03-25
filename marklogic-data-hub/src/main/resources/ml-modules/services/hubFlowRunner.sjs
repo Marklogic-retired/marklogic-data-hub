@@ -45,7 +45,8 @@ function processJsonInput(input) {
 }
 
 function processXmlInput(input) {
-  const jobId = fn.head(input.xpath("/input/jobId/text()")) || sem.uuidString();
+  // Job ID must be a string. A Text Node causes PROVO library to throw an error.
+  const jobId = fn.string(fn.head(input.xpath("/input/jobId/text()"))) || sem.uuidString();
   const flowName = fn.head(input.xpath("/input/flowName/text()"));
   const options = parseJsonOptionsFromXml(input);
   const contentArray = buildContentArray(input);
