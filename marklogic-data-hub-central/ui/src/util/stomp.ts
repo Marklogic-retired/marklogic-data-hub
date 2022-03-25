@@ -241,7 +241,7 @@ export class STOMPService {
           }, 5000);
         })
         .catch(err => {
-          if (err.response.status === 401) {
+          if (err.response && err.response.status === 401) {
             localStorage.setItem("dataHubUser", "");
             localStorage.setItem("loginResp", "");
             window.location.reload();

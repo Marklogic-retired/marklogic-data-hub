@@ -2,7 +2,7 @@
   "name": "map-customer",
   "stepDefinitionName": "entity-services-mapping",
   "stepDefinitionType": "mapping",
-  "stepId": "mapCustomersJSON-mapping",
+  "stepId": "map-customer-mapping",
   "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
   "description": "",
   "selectedSource": "collection",

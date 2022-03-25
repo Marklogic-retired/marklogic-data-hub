@@ -13,6 +13,9 @@
         "inputFilePath": "somewhere",
         "inputFileType": "json"
       }
+    },
+    "2":{
+      "stepId": "stepIdWithoutEndingType"
     }
   }
 }
