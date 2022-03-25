@@ -1,5 +1,15 @@
 import { ViewType } from "../types/modeling-types";
 
+export const DEFAULT_NODE_CONFIG = {
+  boxWidth: 140,
+  boxHeight: 60,
+  boxPadding: 20,
+  boxRadius: 30,
+  iconWidth: 16,
+  iconHeight: 16,
+  iconRightMargin: 8,
+}
+
 export const COMMON_PROPERTY_TYPES = [
   {
     label: 'string',

@@ -105,6 +105,17 @@
 
 }
 
+.cardText {
+  p {
+    word-break: break-all;
+  }
+  svg {
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+  }
+}
+
 .foreignKeyQuestionCircle {
   font-size: 12px;
   vertical-align: top;
@@ -195,10 +206,6 @@
   color: #777777;
   font-size: 12px;
   margin-bottom: -15px;
-}
-
-.entityName {
-    text-align: center;
 }
 
 .dropdownButtonMenu {
