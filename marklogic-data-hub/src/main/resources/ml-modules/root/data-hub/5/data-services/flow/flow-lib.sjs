@@ -33,6 +33,13 @@ function getFlowsWithStepDetails(flowName = null){
   }
 }
 
+function findStepsByIds(stepIds) {
+  return cts.search(cts.andQuery([
+    cts.collectionQuery("http://marklogic.com/data-hub/steps"),
+    cts.jsonPropertyValueQuery("stepId", stepIds, ["case-insensitive", "unstemmed"])
+  ]));
+}
+
 function getStepDetails(flow){
   const flowWithStepDetails = {name: flow.name};
   if (flow.description) {
@@ -46,9 +53,12 @@ function getStepDetails(flow){
       let step = flow.steps[stepNumber];
       const stepId = flow.steps[stepNumber].stepId;
       if (stepId) {
-        let index = stepId.lastIndexOf('-');
-        stepDetails.stepName = stepId.substring(0, index);
-        stepDetails.stepDefinitionType = stepId.substring(index + 1, stepId.length);
+        let stepDoc = stepMap[stepId];
+        if (!stepDoc) {
+          stepDoc = fn.head(findStepsByIds(stepId)).toObject();
+        }
+        stepDetails.stepName = stepDoc.name || stepId;
+        stepDetails.stepDefinitionType = stepDoc.stepDefinitionType;
         //'stepMap' is generated only when getting all flows ('flowName' is null)
         if (Object.keys(stepMap).length > 0) {
           step = stepMap[stepId];
@@ -84,11 +94,7 @@ function buildStepMap(flows){
   });
 
 // Query for referenced steps, if any exist
-  const steps = stepIds.length < 1 ? [] :
-    cts.search(cts.andQuery([
-      cts.collectionQuery("http://marklogic.com/data-hub/steps"),
-      cts.jsonPropertyValueQuery("stepId", stepIds, "case-insensitive")
-    ]));
+  const steps = stepIds.length < 1 ? [] : findStepsByIds(stepIds);
 
 // Build a map of steps for fast access
   for (var step of steps) {

@@ -26,7 +26,7 @@
         "stepStartTime": "2019-06-26T23:11:22.836606Z",
         "stepEndTime": "2019-06-26T23:11:27.462273Z"
       },
-      "2": {
+      "3": {
         "flowName": "flowWithStepDetails",
         "stepName": "testMapper",
         "stepDefinitionName": "entity-services-mapping",
@@ -34,7 +34,7 @@
         "stepOutput":  null,
         "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
         "fullOutput": null,
-        "status": "completed step 2",
+        "status": "completed step 3",
         "totalEvents": 3,
         "successfulEvents": 3,
         "failedEvents": 0,

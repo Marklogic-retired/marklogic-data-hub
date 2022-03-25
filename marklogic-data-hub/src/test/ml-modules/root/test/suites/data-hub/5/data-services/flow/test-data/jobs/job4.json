@@ -3,13 +3,13 @@
     "jobId": "567da405-c1e9-4fa7-8269-d9cdfe3b4b9a",
     "flow": "flowWithStepDetails",
     "user": "pari",
-    "lastAttemptedStep": "4",
-    "lastCompletedStep": "4",
+    "lastAttemptedStep": "5",
+    "lastCompletedStep": "5",
     "jobStatus": "finished",
     "timeStarted": "2019-06-28T23:11:28.802106Z",
     "timeEnded": "2019-06-28T23:11:31.026434Z",
     "stepResponses": {
-      "4": {
+      "5": {
         "flowName": "flowWithStepDetails",
         "stepName": "testMapper",
         "stepDefinitionName": "entity-services-mapping",
@@ -17,7 +17,7 @@
         "stepOutput":  null,
         "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
         "fullOutput": null,
-        "status": "completed step 4",
+        "status": "completed step 5",
         "totalEvents": 3,
         "successfulEvents": 3,
         "failedEvents": 0,

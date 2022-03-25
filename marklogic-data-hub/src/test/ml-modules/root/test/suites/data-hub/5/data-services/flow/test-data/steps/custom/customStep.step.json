@@ -1,0 +1,6 @@
+{
+  "name": "customStep",
+  "stepId": "stepIdWithoutEndingType",
+  "stepDefinitionName": "customStep",
+  "stepDefinitionType": "custom"
+}
