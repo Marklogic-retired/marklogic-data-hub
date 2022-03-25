@@ -232,7 +232,7 @@ void UnitTest(){
         jacoco classPattern: 'data-hub/marklogic-data-hub-central/build/classes/java/main/com/marklogic/hub/central,data-hub/marklogic-data-hub-spark-connector/build/classes/java/main/com/marklogic/hub/spark,data-hub/marklogic-data-hub/build/classes/java/main/com/marklogic/hub',exclusionPattern: '**/*Test*.class'
         if(env.CHANGE_TITLE){
             JIRA_ID=env.CHANGE_TITLE.split(':')[0]
-            jiraAddComment comment: 'Jenkins Unit Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+            //jiraAddComment comment: 'Jenkins Unit Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
         }
         if(!env.CHANGE_URL){
             env.CHANGE_URL=" "
@@ -270,7 +270,7 @@ void Tests(){
         junit '**/TEST-*.xml'
         if(env.CHANGE_TITLE){
             JIRA_ID=env.CHANGE_TITLE.split(':')[0]
-            jiraAddComment comment: 'Jenkins Core Unit Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+            //jiraAddComment comment: 'Jenkins Core Unit Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
         }
         if(!env.CHANGE_URL){
             env.CHANGE_URL=" "
@@ -303,7 +303,7 @@ void RTLTests(String type,String mlVersion){
 
     if(env.CHANGE_TITLE){
         JIRA_ID=env.CHANGE_TITLE.split(':')[0]
-        jiraAddComment comment: 'Jenkins Core Unit Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+       // jiraAddComment comment: 'Jenkins Core Unit Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
     }
     if(!env.CHANGE_URL){
         env.CHANGE_URL=" "
