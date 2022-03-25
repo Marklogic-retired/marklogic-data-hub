@@ -48,6 +48,7 @@ const GraphView: React.FC<Props> = (props) => {
   const [coordsChanged, setCoordsChanged] = useState(false);
   const [splitPaneResized, setSplitPaneResized] = useState(false);
   const [exportPngButtonClicked, setExportPngButtonClicked] = useState(false);
+  const [nodeNeedRedraw, setNodeNeedRedraw] = useState(false);
 
   useEffect(() => {
     if (coordsChanged) {
@@ -294,6 +295,8 @@ const GraphView: React.FC<Props> = (props) => {
           setSplitPaneResized={setSplitPaneResized}
           exportPngButtonClicked = {exportPngButtonClicked}
           setExportPngButtonClicked = {setExportPngButtonClicked}
+          nodeNeedRedraw={nodeNeedRedraw}
+          setNodeNeedRedraw={setNodeNeedRedraw}
         />
       </div>
     </div>;
@@ -330,6 +333,7 @@ const GraphView: React.FC<Props> = (props) => {
             updateHubCentralConfig={props.updateHubCentralConfig}
             getColor={getColor}
             getIcon={getIcon}
+            setNodeNeedRedraw={setNodeNeedRedraw}
           />
         </div>
       </SplitPane>

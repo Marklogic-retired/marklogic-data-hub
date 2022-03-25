@@ -30,6 +30,7 @@ type Props = {
   updateHubCentralConfig: (hubCentralConfig: any) => void;
   getColor: any;
   getIcon: any;
+  setNodeNeedRedraw: any;
 };
 
 const DEFAULT_TAB = "properties";
@@ -231,6 +232,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
 
   const handleColorChange = async (color, event) => {
     setColorSelected(color.hex);
+    props.setNodeNeedRedraw(true);
     try {
       if (modelingOptions.selectedEntity !== undefined) {
         let colorPayload = defaultHubCentralConfig;
@@ -251,6 +253,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
 
   const handleIconChange = async (iconSelected) => {
     setIconSelected(iconSelected);
+    props.setNodeNeedRedraw(true);
     try {
       if (modelingOptions.selectedEntity !== undefined) {
         let iconPayload = defaultHubCentralConfig;
@@ -374,12 +377,12 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
           </Col>
         </Row>
         <Row>
-          <FormLabel column lg={3} style={{marginTop: "11px"}}>{"Icon in Explore:"}</FormLabel>
+          <FormLabel column lg={3} style={{marginTop: "11px"}}>{"Icon:"}</FormLabel>
           <Col className={"d-flex align-items-center"}>
             <div className={styles.iconContainer}>
               <div data-testid={`${modelingOptions.selectedEntity}-icon-selector`} aria-label={`${modelingOptions.selectedEntity}-${iconSelected}-icon`}><IconPicker value={iconSelected} onChange={(value) => handleIconChange(value)}/></div>
               <div className={"d-flex align-items-center"}>
-                <HCTooltip id="icon-selector" text={<span>Select an icon to associate it with the <b>{modelingOptions.selectedEntity}</b> entity in the Explore screen.</span>} placement="right">
+                <HCTooltip id="icon-selector" text={<span>Select an icon to associate it with the <b>{modelingOptions.selectedEntity}</b> entity throughout your project.</span>} placement="right">
                   <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.iconPickerTooltip} />
                 </HCTooltip>
               </div>

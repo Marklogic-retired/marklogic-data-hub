@@ -288,7 +288,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         let entityName = parseText[0];
         let icon = parseText[1];
         return (
-          <HCTooltip placement="top" id="icon-tooltip" text={<span>This icon is associated with the <b>{entityName}</b> entity in the Explore screen.</span>}>
+          <HCTooltip placement="top" id="icon-tooltip" text={<span>This icon is associated with the <b>{entityName}</b> entity throughout your project.</span>}>
             <div style={{width: "30px", height: "32px", marginLeft: "3%", fontSize: "24px", marginTop: "-11%"}} data-testid={`${entityName}-${icon}-icon`} aria-label={`${entityName}-${icon}-icon`}>
               <DynamicIcons name={icon}/>
             </div>
