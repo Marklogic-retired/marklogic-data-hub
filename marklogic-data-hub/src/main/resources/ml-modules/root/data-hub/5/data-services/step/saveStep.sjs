@@ -95,7 +95,7 @@ else {
   }
   stepProperties.stepDefinitionName = stepDefinitionName;
   stepProperties.stepDefinitionType = stepDefinitionType;
-  stepProperties.stepId = stepName + "-" + stepDefinitionType;
+  stepProperties.stepId = stepProperties.stepId || stepName + "-" + stepDefinitionType;
 
   if (!stepProperties.stepDefinitionName){
     throw new Error(`Missing required property 'stepDefinitionName' for step: ${stepName}`);
