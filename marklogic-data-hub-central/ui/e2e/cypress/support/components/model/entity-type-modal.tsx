@@ -11,6 +11,14 @@ class EntityTypeModal {
     cy.get("#description").type(str);
   }
 
+  newEntityVersion(str: string) {
+    cy.get("#version").clear().type(str);
+  }
+
+  getEntityVersion() {
+    return cy.get("#version");
+  }
+
   clearEntityDescription() {
     cy.get("#description").focus().clear();
   }
