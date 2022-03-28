@@ -48,6 +48,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     entityTypeModal.clearEntityName();
     entityTypeModal.newEntityName("Buyer");
     entityTypeModal.newEntityDescription("An entity for buyers");
+    entityTypeModal.newEntityVersion("3.0.0");
     modelPage.openIconSelector("Buyer");
     modelPage.selectNthIcon(3);
     modelPage.toggleColorSelector();
@@ -78,6 +79,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     entityTypeTable.getEntity("Buyer").click();
     entityTypeModal.clearEntityDescription();
     entityTypeModal.newEntityDescription("Description has changed");
+    entityTypeModal.newEntityVersion("3.0.1");
     entityTypeModal.getAddButton().click();
     entityTypeModal.getAddButton().should("not.exist");
     propertyTable.editProperty("user");
@@ -90,6 +92,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     // check edited entity description
     entityTypeTable.getEntity("Buyer").click();
     entityTypeModal.getEntityDescription().should("have.value", "Description has changed");
+    entityTypeModal.getEntityVersion().should("have.value", "3.0.1");
     entityTypeModal.getCancelButton().click();
   });
   it("Add cascaded type with identifer", () => {
@@ -151,8 +154,9 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     cy.wait(1000);
     propertyTable.getProperty("buyer-id").should("exist");
     propertyTable.getMultipleIcon("buyer-id").should("exist");
-    // check edited entity description
+    // check edited entity version description
     entityTypeTable.getEntity("Buyer").scrollIntoView().click();
+    entityTypeModal.getEntityVersion().should("have.value", "3.0.1");
     entityTypeModal.getEntityDescription().should("have.value", "Description has changed");
     entityTypeModal.getCancelButton().click();
   });

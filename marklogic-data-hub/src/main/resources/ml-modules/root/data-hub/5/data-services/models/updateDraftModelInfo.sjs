@@ -30,6 +30,7 @@ const description = input.description ? input.description : "";
 const namespace = input.namespace;
 const namespacePrefix = input.namespacePrefix;
 const hubCentralConfig = input.hubCentral;
+const version = input.version ? input.version : null;
 
 const uri = entityLib.getModelUri(name);
 const draftUri = entityLib.getDraftModelUri(name);
@@ -39,6 +40,10 @@ if (!(fn.docAvailable(uri) || draftExists)) {
 }
 
 const model = (draftExists) ? cts.doc(draftUri).toObject() : cts.doc(uri).toObject();
+
+if (version) {
+  model.info.version = version;
+} 
 
 if (!model.definitions[name]) {
   httpUtils.throwBadRequest("Could not find model with an entity type with name: " + name);

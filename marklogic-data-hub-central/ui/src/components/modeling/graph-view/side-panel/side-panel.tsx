@@ -42,6 +42,8 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
   const [selectedEntityDescription, setSelectedEntityDescription] = useState("");
   const [selectedEntityNamespace, setSelectedEntityNamespace] = useState("");
   const [selectedEntityNamespacePrefix, setSelectedEntityNamespacePrefix] = useState("");
+  const [selectedEntityVersion, setSelectedEntityVersion] = useState("");
+  const [versionTouched, setVersionTouched] = useState(false);
   const [descriptionTouched, setisDescriptionTouched] = useState(false);
   const [namespaceTouched, setisNamespaceTouched] = useState(false);
   const [prefixTouched, setisPrefixTouched] = useState(false);
@@ -67,10 +69,13 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
           const selectedEntityDetails = await response.data.find(ent => ent.entityName === modelingOptions.selectedEntity);
           if (selectedEntityDetails) {
             setSelectedEntityInfo(selectedEntityDetails);
-            if (entity !== undefined && selectedEntityDetails.model.definitions[entity]) {
+            if (entity !== undefined && selectedEntityDetails.model?.definitions[entity]) {
               setSelectedEntityDescription(entity !== undefined && selectedEntityDetails.model.definitions[entity].description);
               setSelectedEntityNamespace(entity !== undefined && selectedEntityDetails.model.definitions[entity].namespace);
               setSelectedEntityNamespacePrefix(entity !== undefined && selectedEntityDetails.model.definitions[entity].namespacePrefix);
+            }
+            if (entity !== undefined && selectedEntityDetails.model?.info?.version) {
+              setSelectedEntityVersion(selectedEntityDetails.model.info.version);
             }
             initializeEntityColorIcon();
           } else {
@@ -146,10 +151,18 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
       }
       setSelectedEntityNamespacePrefix(event.target.value);
     }
+    if (event.target.id === "version") {
+      if (event.target.value !== selectedEntityInfo.model.info.version) {
+        setVersionTouched(true);
+      } else {
+        setVersionTouched(false);
+      }
+      setSelectedEntityVersion(event.target.value);
+    }
   };
 
   const entityPropertiesEdited = () => {
-    return (descriptionTouched || namespaceTouched || prefixTouched);
+    return (descriptionTouched || namespaceTouched || prefixTouched || versionTouched);
   };
 
   const setEntityTypesFromServer = async (entityName) => {
@@ -168,7 +181,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
   const handlePropertyUpdate = async () => {
     try {
       if (modelingOptions.selectedEntity !== undefined) {
-        const response = await updateModelInfo(modelingOptions.selectedEntity, selectedEntityDescription, selectedEntityNamespace, selectedEntityNamespacePrefix);
+        const response = await updateModelInfo(modelingOptions.selectedEntity, selectedEntityDescription, selectedEntityNamespace, selectedEntityNamespacePrefix, selectedEntityVersion);
         if (response["status"] === 200) {
           setErrorServer("");
           setEntityTypesFromServer(modelingOptions.selectedEntity);
@@ -325,6 +338,26 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
                 { errorServer ? <p className={styles.errorServer}>{errorServer}</p> : null }
               </Col>
             </Row>
+          </Col>
+        </Row>
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3} style={{marginTop: "10px"}}>{"Version:"}</FormLabel>
+          <Col className={"d-flex align-items-center"}>
+            <HCInput
+              id="version"
+              data-testid="version"
+              placeholder="0.0.1"
+              disabled={props.canReadEntityModel && !props.canWriteEntityModel}
+              value={selectedEntityVersion}
+              onChange={handlePropertyChange}
+              onBlur={onSubmit}
+              style={{width: "50px", verticalAlign: "text-bottom"}}
+            />
+            <div className={"d-flex align-items-center"}>
+              <HCTooltip id="colo-selector" text={<span>Select a color to associate it with the <b>{modelingOptions.selectedEntity}</b> entity throughout your project.</span>} placement="right">
+                <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.colorsIcon} />
+              </HCTooltip>
+            </div>
           </Col>
         </Row>
         <Row className={"mb-3"}>

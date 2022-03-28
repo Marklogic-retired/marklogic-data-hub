@@ -60,7 +60,7 @@ const ModelingTooltips = {
     'Property names cannot use the same name as the associated entity type or its existing properties.',
   descriptionEntityProperty: 'A description of this entity property.',
   namespace: 'You can use a namespace to differentiate between XML elements that use the same name. If you use a namespace, you must define both a namespace URI and prefix. If your record is in JSON format, the namespace will have no effect.',
-
+  versionField: 'Change the version number of this entity type to organize your updates',
   /* Form fields */
   joinProperty: 'Structured type properties, arrays, and unsaved properties cannot be used as join properties.',
 
