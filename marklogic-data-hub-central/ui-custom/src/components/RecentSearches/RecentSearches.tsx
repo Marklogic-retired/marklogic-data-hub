@@ -1,11 +1,11 @@
-import React, { useContext } from "react";
-import { SearchContext } from "../../store/SearchContext";
+import React, {useContext} from "react";
+import {SearchContext} from "../../store/SearchContext";
 import Table from "react-bootstrap/Table";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import "./RecentSearches.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faShareSquare} from "@fortawesome/free-solid-svg-icons";
+import {faPaste} from "@fortawesome/free-solid-svg-icons";
 import _ from "lodash";
 
 type Props = {
@@ -42,16 +42,15 @@ const RecentSearches: React.FC<Props> = (props) => {
   const handleQueryClick = (opts) => () => {
     console.log("handleQueryClick", opts);
     searchContext.handleSaved(opts);
-  }
+  };
 
   const handleShareClick = (query) => () => {
     console.log("handleShareClick", query);
     // TODO build URL based on configured hostname, port, etc.
     let str = "http://localhost:8080/explore/search?query=" + encodeURIComponent(JSON.stringify(query));
-    if (navigator && navigator.clipboard && navigator.clipboard.writeText)
-      return navigator.clipboard.writeText(str);
-    return Promise.reject('Clipboard not available.');
-  }
+    if (navigator && navigator.clipboard && navigator.clipboard.writeText) { return navigator.clipboard.writeText(str); }
+    return Promise.reject("Clipboard not available.");
+  };
 
   const formatQuery = (query) => {
     let qtextFmt = <span className={query.qtext ? "qtext" : "qtext empty"}>{query.qtext} </span>;
@@ -59,7 +58,7 @@ const RecentSearches: React.FC<Props> = (props) => {
       return <span key={"facet-" + i} className="facet">{f} </span>; // space at the end to help wrapping
     });
     return <span className="query" onClick={handleQueryClick(query)}>{qtextFmt}{facetsFmt}</span>;
-  }
+  };
 
   function display(cfg, row) {
     if (cfg.type === "query") {
@@ -69,7 +68,7 @@ const RecentSearches: React.FC<Props> = (props) => {
         <Tooltip {...props}>Copy to clipboard</Tooltip>
       )}>
         <span className="icon" onClick={handleShareClick(row)} data-testid="share-icon">
-          <FontAwesomeIcon size={"lg"} icon={faShareSquare} style={{color: "#394494"}}></FontAwesomeIcon>
+          <FontAwesomeIcon size={"lg"} icon={faPaste} style={{color: "#394494"}}></FontAwesomeIcon>
         </span>
       </OverlayTrigger>;
     }
@@ -78,31 +77,31 @@ const RecentSearches: React.FC<Props> = (props) => {
   return (
     <div className="recentSearches">
       {(props.data && props.data.length > 0) ? (
-      <Table>
-        <thead>
-          <tr>
-            {_.isArray(props.config.cols) && props.config.cols.map((c, i) => {
+        <Table>
+          <thead>
+            <tr>
+              {_.isArray(props.config.cols) && props.config.cols.map((c, i) => {
+                return (
+                  <th key={"col-" + i} className={c.type}>{c.title}</th>
+                );
+              })}
+            </tr>
+          </thead>
+          <tbody>
+            {_.isArray(props.data) && props.data.map((r, i) => {
               return (
-                <th key={"col-" + i} className={c.type}>{c.title}</th>
+                <tr key={"row-" + i}>
+                  {_.isArray(props.config.cols) && props.config.cols.map((c, i) => {
+                    return (
+                      <td key={"dat-" + i} className={c.type}>{display(c, r)}</td>
+                    );
+                  })}
+                </tr>
               );
             })}
-          </tr>
-        </thead>
-        <tbody>
-          {_.isArray(props.data) && props.data.map((r, i) => {
-            return (
-              <tr key={"row-" + i}>
-                {_.isArray(props.config.cols) && props.config.cols.map((c, i) => {
-                  return (
-                    <td key={"dat-" + i} className={c.type}>{display(c, r)}</td>
-                  );
-                })}
-              </tr>
-            );
-          })}
-        </tbody>
-      </Table>
-      ) : 
+          </tbody>
+        </Table>
+      ) :
         <div className="none-found">No recent searches found.</div>
       }
     </div>
