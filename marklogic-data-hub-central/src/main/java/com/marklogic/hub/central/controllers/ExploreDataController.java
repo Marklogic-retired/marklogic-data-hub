@@ -1,6 +1,7 @@
 package com.marklogic.hub.central.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.JSONDocumentManager;
@@ -21,6 +22,7 @@ public class ExploreDataController extends BaseController {
 
     @Autowired
     private Environment environment;
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
@@ -33,6 +35,14 @@ public class ExploreDataController extends BaseController {
     @ResponseBody
     public ResponseEntity<JsonNode> getRecords(@RequestBody JsonNode recordIds) {
         return new ResponseEntity<>(newExploreDataService().getRecords(recordIds), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/getRecord", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<JsonNode> getRecord(@RequestParam String recordId) {
+        ObjectNode input = objectMapper.createObjectNode();
+        input.putArray("uris").add(recordId);
+        return new ResponseEntity<>(newExploreDataService().getRecords(input), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
