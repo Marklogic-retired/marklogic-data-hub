@@ -721,13 +721,14 @@ const Sidebar: React.FC<Props> = (props) => {
         </Accordion>
         <HCDivider className={"mt-0 mb-2"}  style={{backgroundColor: "#ccc"}}/>
         {props.currentRelatedEntities.size > 0 &&
-        <div className={activeRelatedEntities ? styles.relatedEntityPanel : styles.relatedEntityPanelDisabled}>
+        <div className={styles.relatedEntityPanel}>
           <HCTooltip text={!props.graphView ? exploreSidebar.disabledRelatedEntities: ""} aria-label="disabled-related-entity-tooltip" id="disabled-related-entity-tooltip" placement="bottom">
             <Accordion id="related-entities" data-testid={"related-entity-panel"} className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("related-entities") && props.graphView ? "related-entities" : ""} defaultActiveKey={activeKey.includes("related-entities") ? "related-entities" : ""}>
               <Accordion.Item eventKey="related-entities" className={"bg-transparent"}>
                 <div className={"p-0 d-flex"}>
                   <Accordion.Button className={!props.graphView ? `after-indicator ${styles.disabledTitleCheckbox}` : `after-indicator ${styles.titleCheckbox}`} onClick={() =>  setActiveAccordion("related-entities")}>{
-                    panelTitle(<span><HCCheckbox id="check-all" value="check-all" disabled={!props.graphView} handleClick={activeRelatedEntities ? onCheckAllChanges : () => { return; }} checked={checkAll} />related entities</span>, ExploreGraphViewToolTips.relatedEntities)}</Accordion.Button>
+                    panelTitle(<span><span className={!activeRelatedEntities ? styles.disabledCheckbox : ""}><HCCheckbox id="check-all" value="check-all" disabled={!props.graphView} cursorDisabled={!activeRelatedEntities} handleClick={activeRelatedEntities ? onCheckAllChanges : () => { return; }} checked={checkAll} /></span>related entities</span>, ExploreGraphViewToolTips.relatedEntities)}
+                  </Accordion.Button>
                 </div>
                 <Accordion.Body>
                   <RelatedEntitiesFacet currentRelatedEntities={props.currentRelatedEntities} setCurrentRelatedEntities={props.setCurrentRelatedEntities} onSettingCheckedList={onSettingCheckedList} setEntitySpecificPanel={props.setEntitySpecificPanel} setActiveRelatedEntities={setActiveRelatedEntities}/>
