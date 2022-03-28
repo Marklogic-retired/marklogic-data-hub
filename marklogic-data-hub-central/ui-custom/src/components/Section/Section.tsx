@@ -1,10 +1,15 @@
 import React from "react";
 import "./Section.scss";
+import {ChevronDoubleDown, ChevronDoubleUp} from 'react-bootstrap-icons'
 
 type Props = {
-    title: string;
-    width?: string;
-    config?: any;
+  title: string;
+  width?: string;
+  config?: any;
+  collapsible?: boolean;
+  expand?: boolean;
+  onExpand?: () => void;
+  onCollapse?: () => void;
 };
 
 /**
@@ -42,11 +47,29 @@ const Section: React.FC<Props> = (props) => {
 
   let headerStyle: any = props.config?.headerStyle ? props.config.headerStyle : {};
   let mainStyle: any = props.config?.mainStyle ? props.config.mainStyle : {};
+  let expandClass = props?.expand ? 'expand' : 'collapse';
+
+  const handleExpand = () => {
+    if (props?.onExpand) {
+      props.onExpand();
+    }
+  }
+  const handleCollapse = () => {
+    if (props?.onCollapse) {
+      props.onCollapse();
+    }
+  }
 
   return (
     <div className="section" style={divStyle}>
-      <header style={headerStyle}><span>{props.title}</span></header>
-      <main style={mainStyle}>{props.children}</main>
+      <header style={headerStyle}>
+        <span>{props.title}</span>
+        {props.collapsible && <div className="collapse-container">
+          <a className="collapse-button" onClick={handleCollapse}><ChevronDoubleUp /></a>
+          <a className="collapse-button" onClick={handleExpand}><ChevronDoubleDown /></a>
+        </div>}
+      </header>
+      <main className={props.collapsible ? expandClass : ""} style={mainStyle}>{props.children}</main>
     </div>
   );
 };

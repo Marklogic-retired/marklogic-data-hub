@@ -44,9 +44,6 @@ const Detail: React.FC<Props> = (props) => {
     navigate(-1);
   };
 
-  const handleExpandClick = () => {
-    setExpand(!expand);
-  };
 
   const handleFavoriteClick = () => {
     setFavorite(!favorite);
@@ -54,12 +51,35 @@ const Detail: React.FC<Props> = (props) => {
 
   const userContext = useContext(UserContext);
   const detailContext = useContext(DetailContext);
+  const {expandIds, handleExpandIds} = detailContext;
 
   const [config, setConfig] = useState<any>(null);
   const [favorite, setFavorite] = useState<any>(false);
-  const [expand, setExpand] = useState<any>(false);
+  const [expand, setExpand] = useState<any>(true);
 
   let {id} = useParams();
+
+
+  const handleExpandClick = () => {
+    if (expand) {
+      handleExpandIds(
+        {
+          membership: false,
+          info: false,
+          relationships: false,
+          imageGallery: false
+        }
+      );
+    } else {
+      handleExpandIds({
+        membership: true,
+        info: true,
+        relationships: true,
+        imageGallery: true
+      });
+    }
+    setExpand(!expand);
+  };
 
   useEffect(() => {
     setConfig(userContext.config);
@@ -96,10 +116,10 @@ const Detail: React.FC<Props> = (props) => {
         <div className="actions">
           <div className="expand">
             <button onClick={handleExpandClick}>
-              <span className="label">Expand All</span>
+              <span className="label">{expand ? `Collapse All` : `Expand All`}</span>
               <span className="icon">
-                {expand ? <ChevronDoubleUp color="#777" size={16}/> :
-                <ChevronDoubleDown color="#777" size={16}/>}
+                {expand ? <ChevronDoubleUp color="#777" size={16} /> :
+                  <ChevronDoubleDown color="#777" size={16} />}
               </span>
             </button>
           </div>
@@ -130,6 +150,11 @@ const Detail: React.FC<Props> = (props) => {
     return personaItems;
   };
 
+  const handleExpandIdsClick = (id, value) => {
+    const newExpandId = {...expandIds, [id]: value}
+    handleExpandIds(newExpandId);
+  }
+
   return (
 
     <div className="detail">
@@ -153,7 +178,11 @@ const Detail: React.FC<Props> = (props) => {
                   "mainStyle": {
                     "paddingTop": "6px"
                   }
-                }}>
+                }}
+                  collapsible={true}
+                  expand={expandIds.membership}
+                  onExpand={() => {handleExpandIdsClick('membership', true)}}
+                  onCollapse={() => {handleExpandIdsClick('membership', false)}}>
                   {React.createElement(
                     COMPONENTS[config.detail.membership.component],
                     {config: config.detail.membership.config, data: detailContext.detail}, null
@@ -166,7 +195,11 @@ const Detail: React.FC<Props> = (props) => {
               <div className="col-lg-7">
 
                 {config?.detail?.info &&
-                  <Section title={config?.detail?.info.title}>
+                  <Section title={config?.detail?.info.title}
+                    collapsible={true}
+                    expand={expandIds.info}
+                    onExpand={() => {handleExpandIdsClick('info', true)}}
+                    onCollapse={() => {handleExpandIdsClick('info', false)}} >
                     {getPersonalItems(config?.detail?.info?.items)}
                   </Section>
                 }
@@ -175,11 +208,16 @@ const Detail: React.FC<Props> = (props) => {
               <div className="col-lg-5">
 
                 {config?.detail?.relationships &&
-                  <Section title="Relationships" config={{
-                    "mainStyle": {
-                      "padding": "0"
-                    }
-                  }}>
+                  <Section
+                    title="Relationships"
+                    collapsible={true}
+                    expand={expandIds.relationships}
+                    onExpand={() => {handleExpandIdsClick('relationships', true)}}
+                    onCollapse={() => {handleExpandIdsClick('relationships', false)}} config={{
+                      "mainStyle": {
+                        "padding": "0"
+                      }
+                    }}>
                     <div className="relationships">
                       {React.createElement(
                         COMPONENTS[config.detail.relationships.component],
@@ -190,7 +228,12 @@ const Detail: React.FC<Props> = (props) => {
                 }
 
                 {config?.detail?.imageGallery &&
-                  <Section title="Image Gallery">
+                  <Section title="Image Gallery"
+                    collapsible={true}
+                    expand={expandIds.imageGallery}
+                    onExpand={() => {handleExpandIdsClick('imageGallery', true)}}
+                    onCollapse={() => {handleExpandIdsClick('imageGallery', false)}}
+                  >
                     {React.createElement(
                       COMPONENTS[config.detail.imageGallery.component],
                       {config: config?.detail?.imageGallery?.config, data: detailContext.detail}, null
