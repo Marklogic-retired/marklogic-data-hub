@@ -342,6 +342,10 @@ class BrowsePage {
     return cy.get("[data-cy=table-view]").click({force: true});
   }
 
+  clickSwitchToTableView() {
+    return cy.get("#tableView").click();
+  }
+
   clickGraphView() {
     return this.getGraphView().click();
   }
@@ -599,7 +603,7 @@ class BrowsePage {
   }
 
   selectQuery(query: string) {
-    this.getSaveQueriesDropdownInput().click({force: true});
+    this.getSaveQueriesDropdownInput().scrollIntoView().click({force: true});
     this.getQueryOption(query).click({force: true});
     this.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
