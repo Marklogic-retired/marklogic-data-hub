@@ -35,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ModelTest extends AbstractHubCentralTest {
     protected final static String MODEL_NAME = "Customer";
+    protected final static String MODEL_VERSION = "3.0.1"
     protected final static String ENTITY_PROPERTY_1 = "someProperty";
     protected final static String ENTITY_PROPERTY_2 = "someOtherProperty";
     protected final static String DATABASE_PROPERTY_1 = "testRangeIndexForDHFPROD4704";
@@ -90,8 +91,10 @@ public class ModelTest extends AbstractHubCentralTest {
 
         ObjectNode input = objectMapper.createObjectNode();
         input.put("name", MODEL_NAME);
+        input.put("version", MODEL_VERSION);
         JsonNode model = controller.createDraftModel(input).getBody();
         assertEquals(MODEL_NAME, model.get("info").get("title").asText());
+        assertEquals(MODEL_VERSION, model.get("info").get("version").asText());
         assertTrue(model.get("info").get("draft").asBoolean());
 
         // Create a customer in final so we have a way to verify the entity instance count
@@ -194,12 +197,14 @@ public class ModelTest extends AbstractHubCentralTest {
 
         //Remove namespace and namespacePrefix from entity model
         input.put("description", "Description updated again");
+        input.put("version", MODEL_VERSION)
         input.remove("namespace");
         input.remove("namespacePrefix");
         controller.updateDraftModelInfo(MODEL_NAME, input);
 
         model = getModel(getHubClient().getFinalClient(), true);
         assertEquals("Description updated again", model.get("definitions").get(MODEL_NAME).get("description").asText());
+        assertEquals(MODEL_VERSION, model.get("info").get("version").asText());
         assertNull(model.get("definitions").get(MODEL_NAME).get("namespace"));
         assertNull(model.get("definitions").get(MODEL_NAME).get("namespacePrefix"));
 

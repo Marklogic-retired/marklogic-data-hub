@@ -20,6 +20,7 @@ type Props = {
   prefix: string;
   color: string;
   icon: string;
+  version: string;
   toggleModal: (isVisible: boolean) => void;
   updateEntityTypesAndHideModal: (entityName: string, description: string) => void;
   updateHubCentralConfig: (hubCentralConfig: any) => void;
@@ -38,6 +39,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
   const [namespaceTouched, setisNamespaceTouched] = useState(false);
   const [prefix, setPrefix] = useState("");
   const [prefixTouched, setisPrefixTouched] = useState(false);
+  const [versionTouched, setisVersionTouched] = useState(false);
   const [errorMessage, setErrorMessage] = useState(""); // Uncategorized errors from backend
   const [loading, toggleLoading] = useState(false);
   const [colorSelected, setColorSelected] = useState("#EEEFF1");
@@ -46,6 +48,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
   const [iconTouched, setIsIconTouched] = useState<any>("");
   const [displayColorPicker, setDisplayColorPicker] = useState(false);
   const [eventValid, setEventValid] = useState(false);
+  const [version, setVersion] = useState<string>("");
   const node: any = useRef();
 
   useEffect(() => {
@@ -55,12 +58,14 @@ const EntityTypeModal: React.FC<Props> = (props) => {
         setDescription(props.description);
         setNamespace(props.namespace);
         setPrefix(props.prefix);
+        setVersion(props.version);
         setColorSelected(props.color);
         setIconSelected(props.icon);
       } else {
         // Add Modal
         setName("");
         setDescription("");
+        setVersion("");
         setNamespace("");
         setPrefix("");
         setColorSelected("#EEEFF1");
@@ -106,6 +111,14 @@ const EntityTypeModal: React.FC<Props> = (props) => {
         setisPrefixTouched(false);
       }
       setPrefix(event.target.value);
+    }
+    if (event.target.id === "version") {
+      if (event.target.value !== props.version) {
+        setisVersionTouched(true);
+      } else {
+        setisVersionTouched(false);
+      }
+      setVersion(event.target.value);
     }
   };
 
@@ -159,9 +172,9 @@ const EntityTypeModal: React.FC<Props> = (props) => {
     return result;
   };
 
-  const updateEntityDescription = async (name: string, description: string, namespace: string, prefix: string) => {
+  const updateEntityDescription = async (name: string, description: string, namespace: string, prefix: string, version: string) => {
     try {
-      const response = await updateModelInfo(name, description, namespace, prefix);
+      const response = await updateModelInfo(name, description, namespace, prefix, version);
       if (response["status"] === 200) {
         props.updateEntityTypesAndHideModal(name, description);
       }
@@ -188,7 +201,8 @@ const EntityTypeModal: React.FC<Props> = (props) => {
         name: name,
         description: description,
         namespace: namespace,
-        namespacePrefix: prefix
+        namespacePrefix: prefix,
+        version: version
       };
       const response = await createEntityType(payload);
       if (response["status"] === 201) {
@@ -210,13 +224,13 @@ const EntityTypeModal: React.FC<Props> = (props) => {
   };
 
   const entityPropertiesEdited = () => {
-    return (descriptionTouched || namespaceTouched || prefixTouched);
+    return (descriptionTouched || namespaceTouched || prefixTouched || versionTouched);
   };
 
   const handleSubmit = async () => {
     try {
       if (entityPropertiesEdited()) {
-        await updateEntityDescription(name, description, namespace, prefix);
+        await updateEntityDescription(name, description, namespace, prefix, version);
       }
       if (colorTouched || iconTouched) {
         await updateHubCentralConfig(name, colorSelected, iconSelected);
@@ -364,7 +378,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
                 />
                 <div className={"p-2 d-flex align-items-center"}>
                   <HCTooltip text={ModelingTooltips.namespace} id="prefix-tooltip" placement="top">
-                    <QuestionCircleFill color="#7F86B5" size={13} />
+                    <QuestionCircleFill aria-label="icon: question-circle" size={13} className={styles.questionCircle}/>
                   </HCTooltip>
                 </div>
               </Col>
@@ -374,6 +388,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
             </Row>
           </Col>
         </Row>
+
         <Row className={"mb-3"}>
           <FormLabel column lg={3} style={{marginTop: "10px"}}>{"Color:"}</FormLabel>
           <Col className={"d-flex"}>
@@ -382,7 +397,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
             </div>
             <div className={"p-2 ps-3 d-flex align-items-center"}>
               <HCTooltip id="select-color-tooltip" text={props.isEditModal ? <span>The selected color will be associated with the <b>{name}</b> entity throughout your project</span> : <span>The selected color will be associated with this entity throughout your project</span>} placement={"right"}>
-                <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13}/>
+                <QuestionCircleFill className={styles.questionCircle} size={13}/>
               </HCTooltip>
             </div>
           </Col>
@@ -395,7 +410,25 @@ const EntityTypeModal: React.FC<Props> = (props) => {
             </div>
             <div className={"p-2 ps-3 d-flex align-items-center"}>
               <HCTooltip id="icon-selector" text={<span>Select an icon to associate it with the <b>{name}</b> entity in the Explore screen.</span>} placement="right">
-                <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircle} />
+                <QuestionCircleFill aria-label="icon: question-circle" size={13} className={styles.questionCircle} />
+              </HCTooltip>
+            </div>
+          </Col>
+        </Row>
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3}>{"Version:"}</FormLabel>
+          <Col className={"d-flex align-items-center"}>
+            <HCInput
+              id="version"
+              placeholder="0.0.1"
+              value={version}
+              onChange={handleChange}
+              onBlur={handleChange}
+              style={{width: "8.8%"}}
+            />
+            <div className={"p-2 ps-3 d-flex align-items-center"}>
+              <HCTooltip id="version-tooltip" text={ModelingTooltips.versionField} placement="right">
+                <QuestionCircleFill aria-label="icon: question-circle" size={13} className={styles.questionCircle} />
               </HCTooltip>
             </div>
           </Col>
