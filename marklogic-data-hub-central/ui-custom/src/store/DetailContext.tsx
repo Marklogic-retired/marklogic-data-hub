@@ -1,35 +1,54 @@
-import React, { useState, useContext } from 'react';
-import { useNavigate, useLocation } from "react-router-dom";
-import { UserContext } from "../store/UserContext";
-import { getRecent, saveRecent, getRecords } from "../api/api";
+import React, {useState, useContext} from 'react';
+import {useNavigate, useLocation} from "react-router-dom";
+import {UserContext} from "../store/UserContext";
+import {getRecent, saveRecent, getRecords} from "../api/api";
 import _ from "lodash";
 
+interface ExpandIdsInterface {
+  membership: boolean;
+  info: boolean;
+  relationships: boolean;
+  imageGallery: boolean;
+}
+
+const EXPANDIDS = {
+  membership: true,
+  info: true,
+  relationships: true,
+  imageGallery: true
+}
 interface DetailContextInterface {
   detail: any;
   recentRecords: any;
   loading: boolean;
+  expandIds: ExpandIdsInterface;
   handleGetDetail: any;
   handleGetRecent: any;
   handleGetRecentLocal: any;
   handleSaveRecent: any;
   handleSaveRecentLocal: any;
+  handleExpandIds: (idsObject: ExpandIdsInterface) => void;
 }
 interface QueryInterface {
   searchText: string;
   entityTypeIds: string[];
   selectedFacets: any;
 }
-  
+
 const defaultState = {
   detail: {},
   recentRecords: [],
   loading: false,
-  handleGetDetail: () => {},
-  handleGetRecent: () => {},
-  handleGetRecentLocal: () => {},
-  handleSaveRecent: () => {},
-  handleSaveRecentLocal: () => {}
+  expandIds: EXPANDIDS,
+  handleGetDetail: () => { },
+  handleGetRecent: () => { },
+  handleGetRecentLocal: () => { },
+  handleSaveRecent: () => { },
+  handleSaveRecentLocal: () => { },
+  handleExpandIds: (idsObject = EXPANDIDS) => { }
 };
+
+
 
 /**
  * Component for storing detail of a selected record (e.g., from search results).
@@ -43,7 +62,7 @@ const defaultState = {
  */
 export const DetailContext = React.createContext<DetailContextInterface>(defaultState);
 
-const DetailProvider: React.FC = ({ children }) => {
+const DetailProvider: React.FC = ({children}) => {
 
   const userContext = useContext(UserContext);
 
@@ -54,9 +73,10 @@ const DetailProvider: React.FC = ({ children }) => {
   const [detail, setDetail] = useState<any>({});
   const [recentRecords, setRecentRecords] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [expandIds, setExpandIds] = useState<ExpandIdsInterface>(EXPANDIDS);
 
   // TODO remove when URI-based detail view is definite
-  const buildQuery = (id):QueryInterface => {
+  const buildQuery = (id): QueryInterface => {
     let query = {
       "searchText": "",
       "entityTypeIds": [userContext.config.api.detailType] as any,
@@ -65,6 +85,10 @@ const DetailProvider: React.FC = ({ children }) => {
     query["selectedFacets"][userContext.config.api.detailConstraint] = [id];
     return query;
   };
+
+  const handleExpandIds = (idsObject) => {
+    setExpandIds(idsObject)
+  }
 
   const handleGetDetail = (uri) => {
     console.log("handleGetDetail", uri);
@@ -154,11 +178,13 @@ const DetailProvider: React.FC = ({ children }) => {
         detail,
         recentRecords,
         loading,
+        expandIds,
         handleGetDetail,
         handleGetRecent,
         handleGetRecentLocal,
         handleSaveRecent,
-        handleSaveRecentLocal
+        handleSaveRecentLocal,
+        handleExpandIds
       }}
     >
       {children}
