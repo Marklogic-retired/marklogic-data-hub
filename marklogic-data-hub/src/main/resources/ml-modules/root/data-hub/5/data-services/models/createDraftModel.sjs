@@ -29,6 +29,7 @@ const name = input.name;
 const description = input.description;
 const namespace = input.namespace ? input.namespace : null;
 const namespacePrefix = input.namespacePrefix ? input.namespacePrefix : null;
+const version = input.version ? input.version : null;
 const hubCentralConfig = input.hubCentral ? input.hubCentral : null;
 
 if (name == null) {
@@ -68,6 +69,10 @@ if(namespace || namespacePrefix){
 
 if (input.description) {
   model.definitions[name].description = description;
+}
+
+if (input.version) {
+  model.info.version = version;
 }
 
 if(hubCentralConfig){
