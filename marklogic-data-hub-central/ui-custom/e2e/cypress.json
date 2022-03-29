@@ -1,0 +1,23 @@
+{
+    "baseUrl": "http://localhost:8080",
+    "video": true,
+    "viewportWidth": 1680,
+    "viewportHeight": 1050,
+    "numTestsKeptInMemory": 1,
+    "defaultCommandTimeout": 12000,
+    "firefoxGcInterval": { "runMode": 1, "openMode": 1 },
+    "ignoreTestFiles": [],
+    "reporter": "junit",
+    "reporterOptions": {
+      "mochaFile": "results/cypress-report[hash].xml",
+      "toConsole": true
+    },
+    "retries": {
+      "runMode": 2,
+      "openMode": 0
+    },
+    "env": {
+      "mlHost": "localhost",
+      "FAIL_FAST_STRATEGY": "spec"
+    }
+}
