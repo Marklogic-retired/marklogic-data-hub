@@ -3,169 +3,185 @@
   <personId>10038</personId>
   <nameGroup>
     <givenname>
-      <value>Pat</value>
+      <value>Dinnie</value>
     </givenname>
     <surname>
-      <value>Helliwell</value>
+      <value>Girardi</value>
     </surname>
     <fullname>
       <classification>U</classification>
       <restricted>false</restricted>
-      <value>Helliwell Pat</value>
+      <value>Girardi Dinnie</value>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2017-03-23T16:18:33Z</ts>
+        <name>USA Today</name>
+        <ts>2012-12-08T05:01:32Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>mdelasalle0@amazon.de</value>
-      <classification>U</classification>
+      <value>sseers0@comcast.net</value>
+      <classification>C</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>efenck1@engadget.com</value>
-      <classification>U</classification>
+      <value>iabramovitz1@pbs.org</value>
+      <classification>S</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>vhawthorn2@baidu.com</value>
+      <classification>C</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>905-256-6683</phone>
+  <phone>907-786-5703</phone>
   <ssn>
-    <value>653-27-9967</value>
+    <value>628-68-8526</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+      <uploadedBy>dvondruska0</uploadedBy>
+      <uploadedOn>2013-09-26T17:37:33Z</uploadedOn>
       <source>
-        <name>USA Today</name>
-        <ts>2013-04-28T12:59:17Z</ts>
+        <name>New York Times</name>
+        <ts>2018-05-04T10:25:20Z</ts>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
+      <uploadedBy>fmewe1</uploadedBy>
+      <uploadedOn>2011-08-13T13:41:45Z</uploadedOn>
       <source>
-        <name>USA Today</name>
-        <ts>2020-08-10T19:56:05Z</ts>
+        <name>Washington Post</name>
+        <ts>2014-10-22T10:05:18Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+      <uploadedBy>cdrowsfield2</uploadedBy>
+      <uploadedOn>2013-04-09T03:48:59Z</uploadedOn>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2010-06-07T08:22:02Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
+      <uploadedBy>epakeman3</uploadedBy>
+      <uploadedOn>2017-08-05T02:57:18Z</uploadedOn>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2015-10-25T05:08:04Z</ts>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>8 Doe Crossing Parkway</street>
-      <city>Milwaukee</city>
-      <state>WI</state>
-      <postal>53215</postal>
+      <street>018 Welch Street</street>
+      <city>Tucson</city>
+      <state>AZ</state>
+      <postal>85710</postal>
       <country>United States</country>
-      <latitude>43.006</latitude>
-      <longitude>-87.9429</longitude>
+      <latitude>32.2138</latitude>
+      <longitude>-110.824</longitude>
     </address>
   </addresses>
   <schools>
     <school>
       <country>Canada</country>
-      <name>Carleton University</name>
-      <city>Bay Roberts</city>
-      <state>NL</state>
-      <postal>V3B</postal>
-      <latitude>47.59989</latitude>
-      <longitude>-53.26478</longitude>
+      <name>Columbia College</name>
+      <city>Pembroke</city>
+      <state>ON</state>
+      <postal>K8B</postal>
+      <latitude>45.805566</latitude>
+      <longitude>-77.0941047</longitude>
     </school>
     <school>
       <country>United States</country>
-      <name>Georgia State University</name>
-      <city>Nashville</city>
-      <state>TN</state>
-      <postal>37215</postal>
-      <latitude>36.0802326</latitude>
-      <longitude>-86.8320743</longitude>
+      <name>The Dickinson School of Law</name>
+      <city>San Francisco</city>
+      <state>CA</state>
+      <postal>94121</postal>
+      <latitude>37.7813454</latitude>
+      <longitude>-122.497668</longitude>
     </school>
   </schools>
-  <status>Active</status>
+  <status>Inactive</status>
   <sources>
     <source>
-      <name>Washington Post</name>
-      <ts>2018-04-06T15:51:54Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>New York Times</name>
-      <ts>2013-08-05T04:42:43Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>Chicago Tribune</name>
-      <ts>2013-09-18T21:51:00Z</ts>
+      <name>Los Angeles Times</name>
+      <ts>2015-03-19T18:02:51Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10079</id>
+      <id>10092</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
-      <fullname>Houten Westbrook</fullname>
-      <city>Springfield</city>
-      <state>IL</state>
-    </relation>
-    <relation>
-      <id>10087</id>
-      <predicate>worksWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
-      <fullname>Beidebeke Halette</fullname>
-      <city>Toledo</city>
-      <state>OH</state>
+      <fullname>Mettetal Claresta</fullname>
+      <city>San Diego</city>
+      <state>CA</state>
     </relation>
     <relation>
-      <id>10036</id>
+      <id>10031</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
-      <fullname>Coleyshaw Devonne</fullname>
-      <city>Atlanta</city>
-      <state>GA</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
+      <fullname>Lohoar Lucina</fullname>
+      <city>Washington</city>
+      <state>DC</state>
+    </relation>
+    <relation>
+      <id>10064</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
+      <fullname>De Banke Vassily</fullname>
+      <city>Sacramento</city>
+      <state>CA</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-19T01:31:27Z</ts>
-    <user>phelliwell11</user>
+    <ts>2022-02-08T03:31:20Z</ts>
+    <user>dgirardi11</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-04T18:08:47Z</ts>
-    <user>phelliwell11</user>
+    <ts>2022-02-23T14:47:10Z</ts>
+    <user>dgirardi11</user>
   </lastUpdated>
-  <socials/>
+  <socials>
+    <social>
+      <site>facebook</site>
+      <address>https://w3.org/massa/volutpat/convallis/morbi.json</address>
+      <handle>ascahill0</handle>
+    </social>
+  </socials>
   <memberships>
     <membership>
-      <list>list8</list>
-      <important>true</important>
-      <ts>2020-01-05</ts>
-    </membership>
-    <membership>
-      <list>list6</list>
-      <important>true</important>
-      <ts>2019-11-10</ts>
-    </membership>
-    <membership>
-      <list>list6</list>
-      <important>true</important>
-      <ts>2020-04-27</ts>
-    </membership>
-    <membership>
-      <list>list6</list>
+      <list>list1</list>
+      <ts>2020-10-05</ts>
       <important>false</important>
-      <ts>2021-04-14</ts>
     </membership>
     <membership>
-      <list>list6</list>
+      <list>list7</list>
+      <ts>2021-11-12</ts>
+      <important>true</important>
+    </membership>
+    <membership>
+      <list>list10</list>
+      <ts>2021-11-10</ts>
+      <important>true</important>
+    </membership>
+    <membership>
+      <list>list12</list>
+      <ts>2021-05-17</ts>
       <important>false</important>
-      <ts>2021-08-09</ts>
     </membership>
     <membership>
       <list>list9</list>
-      <important>true</important>
-      <ts>2019-06-28</ts>
+      <ts>2021-02-19</ts>
+      <important>false</important>
     </membership>
   </memberships>
 </person>

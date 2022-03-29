@@ -3,70 +3,66 @@
   <personId>10073</personId>
   <nameGroup>
     <givenname>
-      <value>Timmi</value>
+      <value>Terrel</value>
     </givenname>
     <surname>
-      <value>England</value>
+      <value>Pierrepoint</value>
     </surname>
     <fullname>
       <classification>C</classification>
-      <restricted>true</restricted>
-      <value>England Timmi</value>
-      <source>
-        <name>Los Angeles Times</name>
-        <ts>2020-09-11T10:37:21Z</ts>
-      </source>
-      <source>
-        <name>New York Times</name>
-        <ts>2018-05-11T08:47:13Z</ts>
-      </source>
+      <restricted>false</restricted>
+      <value>Pierrepoint Terrel</value>
       <source>
         <name>Wall Street Journal</name>
-        <ts>2010-01-09T23:19:20Z</ts>
+        <ts>2015-03-25T21:48:04Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>lhairyes0@ft.com</value>
-      <classification>C</classification>
+      <value>sbatie0@exblog.jp</value>
+      <classification>S</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>pcastellaccio1@themeforest.net</value>
-      <classification>C</classification>
+      <value>swantling1@bloglines.com</value>
+      <classification>S</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>cferminger2@zdnet.com</value>
-      <classification>U</classification>
+      <value>flacroutz2@biblegateway.com</value>
+      <classification>C</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>388-933-9267</phone>
+  <phone>491-147-8277</phone>
   <ssn>
-    <value>826-37-6575</value>
+    <value>642-31-8243</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+      <uploadedBy>ishalloo0</uploadedBy>
+      <uploadedOn>2018-11-30T02:42:29Z</uploadedOn>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2010-10-27T20:25:41Z</ts>
+        <name>New York Times</name>
+        <ts>2018-11-27T16:29:20Z</ts>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
+      <uploadedBy>hbradberry1</uploadedBy>
+      <uploadedOn>2012-06-02T18:36:25Z</uploadedOn>
       <source>
-        <name>New York Times</name>
-        <ts>2014-03-28T08:31:21Z</ts>
+        <name>Chicago Tribune</name>
+        <ts>2019-01-01T20:37:54Z</ts>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>69 Redwing Road</street>
+      <street>883 Lien Crossing</street>
       <city>Valley Forge</city>
       <state>PA</state>
       <postal>19495</postal>
@@ -75,111 +71,119 @@
       <longitude>-75.7481</longitude>
     </address>
     <address>
-      <street>832 Crest Line Trail</street>
-      <city>Washington</city>
-      <state>DC</state>
-      <postal>20337</postal>
+      <street>95 Dunning Street</street>
+      <city>Waterloo</city>
+      <state>IA</state>
+      <postal>50706</postal>
       <country>United States</country>
-      <latitude>38.8933</latitude>
-      <longitude>-77.0146</longitude>
+      <latitude>42.4156</latitude>
+      <longitude>-92.2703</longitude>
     </address>
     <address>
-      <street>26577 Katie Center</street>
-      <city>Norfolk</city>
-      <state>VA</state>
-      <postal>23520</postal>
+      <street>068 Clyde Gallagher Avenue</street>
+      <city>Marietta</city>
+      <state>GA</state>
+      <postal>30061</postal>
       <country>United States</country>
-      <latitude>36.9312</latitude>
-      <longitude>-76.2397</longitude>
+      <latitude>33.9328</latitude>
+      <longitude>-84.556</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>United States</country>
-      <name>Rose-Hulman Institute of Technology</name>
-      <city>Shreveport</city>
-      <state>LA</state>
-      <postal>71137</postal>
-      <latitude>32.59</latitude>
-      <longitude>-93.85</longitude>
+      <country>Mexico</country>
+      <name>Universidad Chapultepéc</name>
+      <city>Las Flores</city>
+      <state>VER</state>
+      <postal>95096</postal>
+      <latitude>20.900993</latitude>
+      <longitude>-100.747182</longitude>
     </school>
     <school>
       <country>United States</country>
-      <name>Dana College</name>
-      <city>Lancaster</city>
+      <name>Cardinal Stritch University</name>
+      <city>Simi Valley</city>
       <state>CA</state>
-      <postal>93584</postal>
-      <latitude>34.7</latitude>
-      <longitude>-118.14</longitude>
+      <postal>93094</postal>
+      <latitude>34.28</latitude>
+      <longitude>-118.7</longitude>
     </school>
   </schools>
-  <status>Inactive</status>
+  <status>Active</status>
   <sources>
     <source>
       <name>USA Today</name>
-      <ts>2011-04-20T18:09:46Z</ts>
+      <ts>2020-02-25T17:14:10Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10097</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Padly Klemens</fullname>
-      <city>Miami</city>
-      <state>FL</state>
-    </relation>
-    <relation>
-      <id>10010</id>
+      <id>10018</id>
       <predicate>worksWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Heinemann Terrence</fullname>
-      <city>New York City</city>
-      <state>NY</state>
+      <fullname>Batey Amii</fullname>
+      <city>San Jose</city>
+      <state>CA</state>
     </relation>
     <relation>
-      <id>10053</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Andrichuk Sibley</fullname>
-      <city>Charlotte</city>
-      <state>NC</state>
+      <id>10077</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
+      <fullname>Brockhurst Pinchas</fullname>
+      <city>Maple Plain</city>
+      <state>MN</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-13T08:01:23Z</ts>
-    <user>tengland20</user>
+    <ts>2022-02-21T08:50:33Z</ts>
+    <user>tpierrepoint20</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-02T02:59:12Z</ts>
-    <user>tengland20</user>
+    <ts>2022-01-05T20:28:21Z</ts>
+    <user>tpierrepoint20</user>
   </lastUpdated>
-  <socials/>
+  <socials>
+    <social>
+      <site>twitter</site>
+      <address>http://kickstarter.com/morbi/non/lectus/aliquam/sit/amet/diam.jpg</address>
+      <handle>spolkinghorne0</handle>
+    </social>
+    <social>
+      <site>twitter</site>
+      <address>https://ucoz.ru/tincidunt/eget/tempus/vel/pede/morbi.aspx</address>
+      <handle>nsemeradova1</handle>
+    </social>
+  </socials>
   <memberships>
     <membership>
       <list>list12</list>
+      <ts>2021-04-26</ts>
       <important>false</important>
-      <ts>2020-09-15</ts>
+    </membership>
+    <membership>
+      <list>list3</list>
+      <ts>2021-01-01</ts>
+      <important>false</important>
     </membership>
     <membership>
       <list>list12</list>
+      <ts>2020-12-05</ts>
       <important>true</important>
-      <ts>2020-12-30</ts>
-    </membership>
-    <membership>
-      <list>list7</list>
-      <important>false</important>
-      <ts>2020-07-19</ts>
     </membership>
     <membership>
       <list>list2</list>
+      <ts>2020-03-18</ts>
       <important>true</important>
-      <ts>2019-01-13</ts>
     </membership>
     <membership>
-      <list>list8</list>
+      <list>list11</list>
+      <ts>2020-10-18</ts>
       <important>false</important>
-      <ts>2020-09-17</ts>
+    </membership>
+    <membership>
+      <list>list9</list>
+      <ts>2021-03-20</ts>
+      <important>false</important>
     </membership>
   </memberships>
 </person>

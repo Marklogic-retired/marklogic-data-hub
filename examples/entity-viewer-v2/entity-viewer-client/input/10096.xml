@@ -3,157 +3,166 @@
   <personId>10096</personId>
   <nameGroup>
     <givenname>
-      <value>Rora</value>
+      <value>Guillermo</value>
     </givenname>
     <surname>
-      <value>Dell Casa</value>
+      <value>Heal</value>
     </surname>
     <fullname>
-      <classification>C</classification>
+      <classification>U</classification>
       <restricted>false</restricted>
-      <value>Dell Casa Rora</value>
+      <value>Heal Guillermo</value>
       <source>
-        <name>Washington Post</name>
-        <ts>2018-07-21T18:10:52Z</ts>
-      </source>
-      <source>
-        <name>Washington Post</name>
-        <ts>2013-12-11T02:53:56Z</ts>
+        <name>Chicago Tribune</name>
+        <ts>2017-01-07T04:06:42Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>ewarlow0@yolasite.com</value>
+      <value>dplaide0@usda.gov</value>
+      <classification>U</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>ethunderman1@freewebs.com</value>
+      <classification>U</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>mhurrell2@instagram.com</value>
       <classification>C</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>975-962-8795</phone>
+  <phone>503-830-1895</phone>
   <ssn>
-    <value>439-47-7489</value>
+    <value>119-78-2789</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
-      <source>
-        <name>Wall Street Journal</name>
-        <ts>2021-06-18T20:18:30Z</ts>
-      </source>
-    </image>
-    <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
-      <source>
-        <name>New York Times</name>
-        <ts>2018-09-26T14:57:15Z</ts>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2012-08-02T08:23:25Z</ts>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
+      <uploadedBy>wkleinhaus0</uploadedBy>
+      <uploadedOn>2018-06-20T19:17:13Z</uploadedOn>
       <source>
         <name>Los Angeles Times</name>
-        <ts>2019-11-12T00:03:06Z</ts>
+        <ts>2017-01-20T08:18:17Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <uploadedBy>ekynvin1</uploadedBy>
+      <uploadedOn>2018-08-25T06:10:22Z</uploadedOn>
+      <source>
+        <name>New York Times</name>
+        <ts>2016-12-19T18:17:55Z</ts>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>33209 Michigan Terrace</street>
-      <city>Sparks</city>
-      <state>NV</state>
-      <postal>89436</postal>
+      <street>7176 Eastwood Point</street>
+      <city>Delray Beach</city>
+      <state>FL</state>
+      <postal>33448</postal>
       <country>United States</country>
-      <latitude>39.6269</latitude>
-      <longitude>-119.7081</longitude>
+      <latitude>26.6459</latitude>
+      <longitude>-80.4303</longitude>
     </address>
   </addresses>
   <schools>
     <school>
       <country>United States</country>
-      <name>Davenport College of Business, Grand Rapids</name>
-      <city>Miami Beach</city>
-      <state>FL</state>
-      <postal>33141</postal>
-      <latitude>25.8535635</latitude>
-      <longitude>-80.1484407</longitude>
+      <name>Millennia Atlantic University</name>
+      <city>Vancouver</city>
+      <state>WA</state>
+      <postal>98664</postal>
+      <latitude>45.616422</latitude>
+      <longitude>-122.5804528</longitude>
+    </school>
+    <school>
+      <country>United States</country>
+      <name>Holy Family College</name>
+      <city>Dayton</city>
+      <state>OH</state>
+      <postal>45440</postal>
+      <latitude>39.6720868</latitude>
+      <longitude>-84.0960056</longitude>
     </school>
   </schools>
-  <status>Inactive</status>
+  <status>Active</status>
   <sources>
     <source>
-      <name>Wall Street Journal</name>
-      <ts>2012-09-05T06:14:36Z</ts>
+      <name>Los Angeles Times</name>
+      <ts>2020-10-12T08:54:09Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Los Angeles Times</name>
+      <ts>2020-06-26T14:22:34Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10076</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Denziloe Shirleen</fullname>
-      <city>Charleston</city>
-      <state>SC</state>
+      <id>10098</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Perfitt Cullan</fullname>
+      <city>Norwalk</city>
+      <state>CT</state>
     </relation>
     <relation>
-      <id>10043</id>
+      <id>10051</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
-      <fullname>Kemmet Erich</fullname>
-      <city>Tucson</city>
-      <state>AZ</state>
-    </relation>
-    <relation>
-      <id>10082</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
-      <fullname>Else Viola</fullname>
-      <city>Charlotte</city>
-      <state>NC</state>
-    </relation>
-    <relation>
-      <id>10016</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
-      <fullname>Lehrian Homer</fullname>
-      <city>Roanoke</city>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
+      <fullname>Carder Gabriell</fullname>
+      <city>Reston</city>
       <state>VA</state>
+    </relation>
+    <relation>
+      <id>10014</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Halford Freddy</fullname>
+      <city>Billings</city>
+      <state>MT</state>
+    </relation>
+    <relation>
+      <id>10066</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Hedditeh Griffith</fullname>
+      <city>Boston</city>
+      <state>MA</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-25T06:15:17Z</ts>
-    <user>rdellcasa2n</user>
+    <ts>2022-02-21T10:54:51Z</ts>
+    <user>gheal2n</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-20T10:20:23Z</ts>
-    <user>rdellcasa2n</user>
+    <ts>2022-02-13T14:58:08Z</ts>
+    <user>gheal2n</user>
   </lastUpdated>
   <socials>
     <social>
-      <site>twitter</site>
-      <address>https://google.com.au/platea/dictumst.jsp</address>
-    </social>
-    <social>
       <site>facebook</site>
-      <address>https://discovery.com/tempus/semper/est.js</address>
-    </social>
-    <social>
-      <site>facebook</site>
-      <address>http://booking.com/tellus.js</address>
+      <address>https://blogtalkradio.com/adipiscing/molestie/hendrerit/at/vulputate.json</address>
+      <handle>efried0</handle>
     </social>
   </socials>
   <memberships>
     <membership>
-      <list>list4</list>
-      <important>true</important>
-      <ts>2021-08-06</ts>
+      <list>list3</list>
+      <ts>2020-07-18</ts>
+      <important>false</important>
+    </membership>
+    <membership>
+      <list>list11</list>
+      <ts>2021-02-26</ts>
+      <important>false</important>
     </membership>
   </memberships>
 </person>

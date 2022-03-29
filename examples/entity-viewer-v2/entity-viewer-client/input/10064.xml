@@ -3,187 +3,203 @@
   <personId>10064</personId>
   <nameGroup>
     <givenname>
-      <value>Faydra</value>
+      <value>Vassily</value>
     </givenname>
     <surname>
-      <value>Blurton</value>
+      <value>De Banke</value>
     </surname>
     <fullname>
-      <classification>U</classification>
-      <restricted>true</restricted>
-      <value>Blurton Faydra</value>
+      <classification>S</classification>
+      <restricted>false</restricted>
+      <value>De Banke Vassily</value>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2019-06-13T09:43:39Z</ts>
+        <name>Chicago Tribune</name>
+        <ts>2021-09-21T20:58:14Z</ts>
       </source>
       <source>
         <name>USA Today</name>
-        <ts>2019-01-07T12:45:46Z</ts>
-      </source>
-      <source>
-        <name>Wall Street Journal</name>
-        <ts>2011-02-01T09:09:26Z</ts>
+        <ts>2012-01-18T01:49:48Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>lblakey0@tamu.edu</value>
-      <classification>C</classification>
+      <value>cgoatcher0@washingtonpost.com</value>
+      <classification>U</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>emccracken1@deliciousdays.com</value>
-      <classification>S</classification>
+      <value>nmclugish1@dailymail.co.uk</value>
+      <classification>U</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>nleroux2@examiner.com</value>
-      <classification>C</classification>
+      <value>rcranidge2@google.com.br</value>
+      <classification>U</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>192-163-6737</phone>
+  <phone>428-227-8258</phone>
   <ssn>
-    <value>466-05-3503</value>
+    <value>138-42-6586</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
+      <uploadedBy/>
+      <uploadedOn>2020-08-28T19:43:17Z</uploadedOn>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2010-05-07T04:58:51Z</ts>
+        <name>Washington Post</name>
+        <ts>2012-06-15T14:56:41Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
+      <uploadedBy>ccreighton1</uploadedBy>
+      <uploadedOn>2019-05-18T21:41:35Z</uploadedOn>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2013-05-12T00:14:44Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
+      <uploadedBy>rclempton2</uploadedBy>
+      <uploadedOn>2020-12-19T23:52:39Z</uploadedOn>
+      <source>
+        <name>Washington Post</name>
+        <ts>2020-09-19T08:06:25Z</ts>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>24995 Truax Lane</street>
-      <city>Beaumont</city>
+      <street>1 Manufacturers Hill</street>
+      <city>Sacramento</city>
+      <state>CA</state>
+      <postal>95833</postal>
+      <country>United States</country>
+      <latitude>38.6157</latitude>
+      <longitude>-121.5053</longitude>
+    </address>
+    <address>
+      <street>9 Union Avenue</street>
+      <city>El Paso</city>
       <state>TX</state>
-      <postal>77713</postal>
+      <postal>79955</postal>
       <country>United States</country>
-      <latitude>30.085</latitude>
-      <longitude>-94.2607</longitude>
-    </address>
-    <address>
-      <street>6 Vidon Court</street>
-      <city>Savannah</city>
-      <state>GA</state>
-      <postal>31416</postal>
-      <country>United States</country>
-      <latitude>32.0053</latitude>
-      <longitude>-81.0477</longitude>
-    </address>
-    <address>
-      <street>5781 Jackson Pass</street>
-      <city>Gainesville</city>
-      <state>FL</state>
-      <postal>32610</postal>
-      <country>United States</country>
-      <latitude>29.6813</latitude>
-      <longitude>-82.3539</longitude>
+      <latitude>31.6948</latitude>
+      <longitude>-106.3</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Mexico</country>
-      <name>Universidad Latina</name>
-      <city>20 de Noviembre</city>
-      <state>VER</state>
-      <postal>93828</postal>
-      <latitude>19.4449916</latitude>
-      <longitude>-99.1082647</longitude>
+      <country>United States</country>
+      <name>Danville Area Community College</name>
+      <city>Seattle</city>
+      <state>WA</state>
+      <postal>98185</postal>
+      <latitude>47.6060781</latitude>
+      <longitude>-122.3329957</longitude>
     </school>
     <school>
-      <country>United States</country>
-      <name>Roosevelt University</name>
-      <city>Schaumburg</city>
-      <state>IL</state>
-      <postal>60193</postal>
-      <latitude>42.0130165</latitude>
-      <longitude>-88.099845</longitude>
+      <country>Canada</country>
+      <name>Laurentian University of Sudbury</name>
+      <city>Vegreville</city>
+      <state>AB</state>
+      <postal>T9C</postal>
+      <latitude>53.495408</latitude>
+      <longitude>-112.0538628</longitude>
     </school>
   </schools>
-  <status>Inactive</status>
+  <status>Active</status>
   <sources>
     <source>
-      <name>Chicago Tribune</name>
-      <ts>2013-06-09T23:05:14Z</ts>
+      <name>USA Today</name>
+      <ts>2017-12-26T05:46:44Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>Chicago Tribune</name>
-      <ts>2021-03-15T09:28:52Z</ts>
+      <name>USA Today</name>
+      <ts>2014-03-13T13:00:17Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10014</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Blunderfield Lissa</fullname>
-      <city>Crawfordsville</city>
-      <state>IN</state>
-    </relation>
-    <relation>
-      <id>10034</id>
+      <id>10021</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
-      <fullname>Cabrara Kesley</fullname>
-      <city>Woburn</city>
-      <state>MA</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Jansson Cecelia</fullname>
+      <city>Washington</city>
+      <state>DC</state>
     </relation>
     <relation>
-      <id>10023</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Nardoni Ruddie</fullname>
-      <city>Gainesville</city>
-      <state>FL</state>
+      <id>10071</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
+      <fullname>Allingham Elisa</fullname>
+      <city>Albuquerque</city>
+      <state>NM</state>
+    </relation>
+    <relation>
+      <id>10065</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Fibbit Rafaela</fullname>
+      <city>Hampton</city>
+      <state>VA</state>
+    </relation>
+    <relation>
+      <id>10013</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Grafton Anny</fullname>
+      <city>Syracuse</city>
+      <state>NY</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-19T06:49:01Z</ts>
-    <user>fblurton1r</user>
+    <ts>2022-01-30T23:28:11Z</ts>
+    <user>vdebanke1r</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-05T23:56:48Z</ts>
-    <user>fblurton1r</user>
+    <ts>2022-02-05T16:34:04Z</ts>
+    <user>vdebanke1r</user>
   </lastUpdated>
   <socials>
     <social>
       <site>facebook</site>
-      <address>http://msn.com/quam/sollicitudin/vitae.jpg</address>
+      <address>https://springer.com/bibendum/felis/sed/interdum/venenatis/turpis.html</address>
+      <handle>dcoll0</handle>
+    </social>
+    <social>
+      <site>linkedin</site>
+      <address>http://myspace.com/mauris/laoreet/ut/rhoncus/aliquet/pulvinar/sed.html</address>
+      <handle>agarden1</handle>
+    </social>
+    <social>
+      <site>twitter</site>
+      <address>https://live.com/sodales/scelerisque.html</address>
+      <handle>aleckey2</handle>
     </social>
   </socials>
   <memberships>
     <membership>
-      <list>list1</list>
+      <list>list6</list>
+      <ts>2021-01-20</ts>
       <important>true</important>
-      <ts>2020-02-02</ts>
     </membership>
     <membership>
-      <list>list9</list>
-      <important>true</important>
-      <ts>2019-08-18</ts>
+      <list>list8</list>
+      <ts>2020-10-06</ts>
+      <important>false</important>
     </membership>
     <membership>
-      <list>list2</list>
+      <list>list7</list>
+      <ts>2021-11-16</ts>
       <important>true</important>
-      <ts>2021-04-17</ts>
-    </membership>
-    <membership>
-      <list>list9</list>
-      <important>true</important>
-      <ts>2021-08-04</ts>
-    </membership>
-    <membership>
-      <list>list4</list>
-      <important>true</important>
-      <ts>2019-09-07</ts>
     </membership>
   </memberships>
 </person>

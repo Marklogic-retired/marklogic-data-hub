@@ -3,129 +3,191 @@
   <personId>10061</personId>
   <nameGroup>
     <givenname>
-      <value>Christos</value>
+      <value>Geoffry</value>
     </givenname>
     <surname>
-      <value>Igoe</value>
+      <value>Chieco</value>
     </surname>
     <fullname>
-      <classification>U</classification>
-      <restricted>true</restricted>
-      <value>Igoe Christos</value>
+      <classification>C</classification>
+      <restricted>false</restricted>
+      <value>Chieco Geoffry</value>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2012-06-10T01:37:17Z</ts>
-      </source>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2015-11-11T10:34:54Z</ts>
-      </source>
-      <source>
-        <name>Wall Street Journal</name>
-        <ts>2014-01-10T04:25:25Z</ts>
+        <name>New York Times</name>
+        <ts>2010-10-29T06:08:49Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>bsobtka0@japanpost.jp</value>
+      <value>fkrzyzanowski0@twitpic.com</value>
       <classification>C</classification>
       <restricted>false</restricted>
     </email>
-    <email>
-      <value>cdignon1@yelp.com</value>
-      <classification>S</classification>
-      <restricted>false</restricted>
-    </email>
   </emails>
-  <phone>798-731-7076</phone>
+  <phone>915-870-0848</phone>
   <ssn>
-    <value>794-21-5884</value>
+    <value>596-82-6962</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+      <uploadedBy>ebeacom0</uploadedBy>
+      <uploadedOn>2016-06-10T05:01:39Z</uploadedOn>
       <source>
         <name>USA Today</name>
-        <ts>2018-05-15T20:15:47Z</ts>
+        <ts>2015-03-17T15:59:08Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+      <uploadedBy>mkillingbeck1</uploadedBy>
+      <uploadedOn>2011-08-24T07:04:44Z</uploadedOn>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2020-09-21T13:34:24Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+      <uploadedBy>vebbutt2</uploadedBy>
+      <uploadedOn>2014-11-25T03:02:29Z</uploadedOn>
+      <source>
+        <name>New York Times</name>
+        <ts>2019-10-19T21:02:07Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+      <uploadedBy>knoblet3</uploadedBy>
+      <uploadedOn>2011-12-13T05:40:15Z</uploadedOn>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2016-03-11T05:32:37Z</ts>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>81273 Trailsway Terrace</street>
-      <city>El Paso</city>
-      <state>TX</state>
-      <postal>79950</postal>
+      <street>618 Declaration Way</street>
+      <city>Jersey City</city>
+      <state>NJ</state>
+      <postal>07310</postal>
       <country>United States</country>
-      <latitude>31.6948</latitude>
-      <longitude>-106.3</longitude>
+      <latitude>40.7324</latitude>
+      <longitude>-74.0431</longitude>
+    </address>
+    <address>
+      <street>27 West Way</street>
+      <city>Knoxville</city>
+      <state>TN</state>
+      <postal>37924</postal>
+      <country>United States</country>
+      <latitude>36.032</latitude>
+      <longitude>-83.8021</longitude>
     </address>
   </addresses>
   <schools>
     <school>
       <country>United States</country>
-      <name>Mount St. Mary's College California</name>
-      <city>Reno</city>
-      <state>NV</state>
-      <postal>89510</postal>
-      <latitude>40.0115285</latitude>
-      <longitude>-119.6962677</longitude>
+      <name>University of Texas</name>
+      <city>Orlando</city>
+      <state>FL</state>
+      <postal>32891</postal>
+      <latitude>28.54</latitude>
+      <longitude>-81.38</longitude>
+    </school>
+    <school>
+      <country>Mexico</country>
+      <name>Universidad Autonoma  de Durango</name>
+      <city>Morelos</city>
+      <state>MEX</state>
+      <postal>54455</postal>
+      <latitude>19.7899891</latitude>
+      <longitude>-99.6684882</longitude>
     </school>
   </schools>
   <status>Inactive</status>
   <sources>
     <source>
       <name>Chicago Tribune</name>
-      <ts>2015-07-28T05:00:07Z</ts>
+      <ts>2015-08-09T00:31:15Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10034</id>
+      <id>10079</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
-      <fullname>Cabrara Kesley</fullname>
-      <city>Woburn</city>
-      <state>MA</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Feltoe Currey</fullname>
+      <city>Chula Vista</city>
+      <state>CA</state>
     </relation>
     <relation>
-      <id>10069</id>
+      <id>10064</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Crips Ollie</fullname>
-      <city>Lexington</city>
-      <state>KY</state>
-    </relation>
-    <relation>
-      <id>10037</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
-      <fullname>Cobbe Genia</fullname>
-      <city>Crawfordsville</city>
-      <state>IN</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
+      <fullname>De Banke Vassily</fullname>
+      <city>Sacramento</city>
+      <state>CA</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-14T13:14:42Z</ts>
-    <user>cigoe1o</user>
+    <ts>2022-01-25T19:33:23Z</ts>
+    <user>gchieco1o</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-15T00:18:37Z</ts>
-    <user>cigoe1o</user>
+    <ts>2022-02-16T14:34:04Z</ts>
+    <user>gchieco1o</user>
   </lastUpdated>
   <socials>
     <social>
       <site>facebook</site>
-      <address>http://skyrock.com/congue/eget/semper/rutrum.html</address>
+      <address>https://google.cn/felis/sed/interdum/venenatis/turpis/enim.xml</address>
+      <handle>eheakey0</handle>
+    </social>
+    <social>
+      <site>linkedin</site>
+      <address>https://shop-pro.jp/dolor/sit/amet/consectetuer.aspx</address>
+      <handle>swensley1</handle>
+    </social>
+    <social>
+      <site>facebook</site>
+      <address>https://pinterest.com/turpis/sed/ante/vivamus/tortor.xml</address>
+      <handle>hbreache2</handle>
     </social>
   </socials>
   <memberships>
     <membership>
-      <list>list4</list>
+      <list>list7</list>
+      <ts>2020-06-10</ts>
+      <important>true</important>
+    </membership>
+    <membership>
+      <list>list1</list>
+      <ts>2020-05-19</ts>
+      <important>true</important>
+    </membership>
+    <membership>
+      <list>list3</list>
+      <ts>2022-02-03</ts>
       <important>false</important>
-      <ts>2019-10-16</ts>
+    </membership>
+    <membership>
+      <list>list2</list>
+      <ts>2020-09-21</ts>
+      <important>true</important>
+    </membership>
+    <membership>
+      <list>list2</list>
+      <ts>2021-01-23</ts>
+      <important>false</important>
+    </membership>
+    <membership>
+      <list>list8</list>
+      <ts>2020-07-06</ts>
+      <important>true</important>
     </membership>
   </memberships>
 </person>

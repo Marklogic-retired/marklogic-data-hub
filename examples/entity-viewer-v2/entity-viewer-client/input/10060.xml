@@ -3,170 +3,194 @@
   <personId>10060</personId>
   <nameGroup>
     <givenname>
-      <value>Josie</value>
+      <value>Aleda</value>
     </givenname>
     <surname>
-      <value>Skpsey</value>
+      <value>Keelinge</value>
     </surname>
     <fullname>
-      <classification>C</classification>
+      <classification>S</classification>
       <restricted>true</restricted>
-      <value>Skpsey Josie</value>
+      <value>Keelinge Aleda</value>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2012-03-30T05:56:32Z</ts>
+        <name>USA Today</name>
+        <ts>2011-03-21T09:31:57Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>mdecourcy0@liveinternet.ru</value>
-      <classification>S</classification>
+      <value>tsprigging0@microsoft.com</value>
+      <classification>U</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>tlosebie1@cnbc.com</value>
-      <classification>C</classification>
+      <value>ogrinishin1@usgs.gov</value>
+      <classification>U</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>959-537-6676</phone>
+  <phone>984-582-3849</phone>
   <ssn>
-    <value>563-95-8345</value>
+    <value>530-90-5384</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
+      <uploadedBy>awaplinton0</uploadedBy>
+      <uploadedOn>2021-11-15T18:01:52Z</uploadedOn>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2018-04-24T17:48:40Z</ts>
+        <name>USA Today</name>
+        <ts>2011-12-25T08:44:32Z</ts>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
+      <uploadedBy>jwaterworth1</uploadedBy>
+      <uploadedOn>2012-05-26T16:07:41Z</uploadedOn>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2020-11-23T05:18:39Z</ts>
+        <name>Los Angeles Times</name>
+        <ts>2019-07-10T15:42:49Z</ts>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+      <uploadedBy>shenzer2</uploadedBy>
+      <uploadedOn>2010-05-31T22:23:33Z</uploadedOn>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2020-02-25T04:31:43Z</ts>
+        <name>Wall Street Journal</name>
+        <ts>2013-11-10T11:43:42Z</ts>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>5 Roxbury Junction</street>
-      <city>Bridgeport</city>
-      <state>CT</state>
-      <postal>06673</postal>
+      <street>0524 Lighthouse Bay Parkway</street>
+      <city>Vero Beach</city>
+      <state>FL</state>
+      <postal>32964</postal>
       <country>United States</country>
-      <latitude>41.3089</latitude>
-      <longitude>-73.3637</longitude>
+      <latitude>27.709</latitude>
+      <longitude>-80.5726</longitude>
     </address>
     <address>
-      <street>06120 Karstens Crossing</street>
-      <city>Dayton</city>
-      <state>OH</state>
-      <postal>45414</postal>
+      <street>2 Park Meadow Crossing</street>
+      <city>Mesa</city>
+      <state>AZ</state>
+      <postal>85215</postal>
       <country>United States</country>
-      <latitude>39.8285</latitude>
-      <longitude>-84.2024</longitude>
+      <latitude>33.4707</latitude>
+      <longitude>-111.7188</longitude>
     </address>
     <address>
-      <street>440 Clarendon Center</street>
-      <city>Montgomery</city>
-      <state>AL</state>
-      <postal>36177</postal>
+      <street>6 Reindahl Junction</street>
+      <city>Denver</city>
+      <state>CO</state>
+      <postal>80223</postal>
       <country>United States</country>
-      <latitude>32.2334</latitude>
-      <longitude>-86.2085</longitude>
+      <latitude>39.7002</latitude>
+      <longitude>-105.0028</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Canada</country>
-      <name>Concordia University College of Alberta</name>
-      <city>Cochrane</city>
-      <state>AB</state>
-      <postal>T4C</postal>
-      <latitude>51.1909883</latitude>
-      <longitude>-114.4678603</longitude>
+      <country>United States</country>
+      <name>Bastyr University</name>
+      <city>Birmingham</city>
+      <state>AL</state>
+      <postal>35263</postal>
+      <latitude>33.7098769</latitude>
+      <longitude>-117.7431372</longitude>
     </school>
   </schools>
   <status>Active</status>
   <sources>
     <source>
       <name>Wall Street Journal</name>
-      <ts>2012-05-31T05:37:11Z</ts>
+      <ts>2017-01-23T23:23:26Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>New York Times</name>
-      <ts>2011-02-25T08:57:16Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>Los Angeles Times</name>
-      <ts>2010-02-12T21:40:51Z</ts>
+      <name>Washington Post</name>
+      <ts>2019-05-05T19:55:00Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10054</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Chessell Skye</fullname>
-      <city>Chicago</city>
-      <state>IL</state>
-    </relation>
-    <relation>
-      <id>10001</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Cisco Felicdad</fullname>
-      <city>Washington</city>
-      <state>DC</state>
-    </relation>
-    <relation>
-      <id>10086</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
-      <fullname>Gowthrop Pansy</fullname>
-      <city>Dayton</city>
-      <state>OH</state>
-    </relation>
-    <relation>
-      <id>10062</id>
-      <predicate>relatedTo</predicate>
+      <id>10052</id>
+      <predicate>livesWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
-      <fullname>Welbeck Morna</fullname>
-      <city>San Diego</city>
+      <fullname>Boanas Lola</fullname>
+      <city>Fresno</city>
       <state>CA</state>
     </relation>
     <relation>
-      <id>10068</id>
+      <id>10008</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Orchart Beverlee</fullname>
-      <city>Charleston</city>
-      <state>WV</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Shreve Osborne</fullname>
+      <city>Jeffersonville</city>
+      <state>IN</state>
+    </relation>
+    <relation>
+      <id>10045</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Gentric Allayne</fullname>
+      <city>Saint Petersburg</city>
+      <state>FL</state>
+    </relation>
+    <relation>
+      <id>10075</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Trays Addison</fullname>
+      <city>Albany</city>
+      <state>NY</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-06T18:57:01Z</ts>
-    <user>jskpsey1n</user>
+    <ts>2022-02-08T22:02:05Z</ts>
+    <user>akeelinge1n</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-22T01:32:39Z</ts>
-    <user>jskpsey1n</user>
+    <ts>2022-02-23T11:04:49Z</ts>
+    <user>akeelinge1n</user>
   </lastUpdated>
-  <socials/>
-  <memberships/>
+  <socials>
+    <social>
+      <site>twitter</site>
+      <address>http://mozilla.org/pretium.jsp</address>
+      <handle/>
+    </social>
+  </socials>
+  <memberships>
+    <membership>
+      <list>list12</list>
+      <ts>2020-05-29</ts>
+      <important>true</important>
+    </membership>
+    <membership>
+      <list>list8</list>
+      <ts>2020-11-12</ts>
+      <important>true</important>
+    </membership>
+    <membership>
+      <list>list10</list>
+      <ts>2021-10-18</ts>
+      <important>true</important>
+    </membership>
+    <membership>
+      <list>list7</list>
+      <ts>2022-02-17</ts>
+      <important>false</important>
+    </membership>
+    <membership>
+      <list>list9</list>
+      <ts>2020-04-20</ts>
+      <important>true</important>
+    </membership>
+  </memberships>
 </person>

@@ -3,172 +3,144 @@
   <personId>10056</personId>
   <nameGroup>
     <givenname>
-      <value>Conni</value>
+      <value>Karlene</value>
     </givenname>
     <surname>
-      <value>Thamelt</value>
+      <value>Kynston</value>
     </surname>
     <fullname>
-      <classification>S</classification>
-      <restricted>false</restricted>
-      <value>Thamelt Conni</value>
+      <classification>C</classification>
+      <restricted>true</restricted>
+      <value>Kynston Karlene</value>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2021-03-20T12:51:31Z</ts>
+        <name>Washington Post</name>
+        <ts>2014-01-05T17:45:55Z</ts>
+      </source>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2018-05-14T15:54:00Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>sklaaassen0@acquirethisname.com</value>
-      <classification>U</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>ucheetam1@deviantart.com</value>
+      <value>fhaberfield0@cnn.com</value>
       <classification>S</classification>
       <restricted>false</restricted>
     </email>
-    <email>
-      <value>rdivill2@soundcloud.com</value>
-      <classification>U</classification>
-      <restricted>false</restricted>
-    </email>
   </emails>
-  <phone>935-531-3857</phone>
+  <phone>848-598-5114</phone>
   <ssn>
-    <value>622-28-4176</value>
+    <value>405-96-5540</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
+      <uploadedBy>nschwander0</uploadedBy>
+      <uploadedOn>2014-11-08T07:43:57Z</uploadedOn>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2016-10-14T06:10:51Z</ts>
+        <name>USA Today</name>
+        <ts>2014-11-27T00:09:29Z</ts>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+      <uploadedBy>swaddicor1</uploadedBy>
+      <uploadedOn>2016-02-09T19:13:23Z</uploadedOn>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2021-06-24T18:50:33Z</ts>
+        <name>New York Times</name>
+        <ts>2021-07-13T14:47:10Z</ts>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>7041 Sutteridge Way</street>
-      <city>Memphis</city>
-      <state>TN</state>
-      <postal>38188</postal>
+      <street>3 John Wall Drive</street>
+      <city>Shreveport</city>
+      <state>LA</state>
+      <postal>71130</postal>
       <country>United States</country>
-      <latitude>35.2017</latitude>
-      <longitude>-89.9715</longitude>
+      <latitude>32.6076</latitude>
+      <longitude>-93.7526</longitude>
     </address>
     <address>
-      <street>9 Prentice Drive</street>
-      <city>Santa Monica</city>
-      <state>CA</state>
-      <postal>90405</postal>
+      <street>6 Mccormick Avenue</street>
+      <city>Lafayette</city>
+      <state>IN</state>
+      <postal>47905</postal>
       <country>United States</country>
-      <latitude>34.01</latitude>
-      <longitude>-118.4717</longitude>
-    </address>
-    <address>
-      <street>7 Cherokee Terrace</street>
-      <city>Naples</city>
-      <state>FL</state>
-      <postal>33963</postal>
-      <country>United States</country>
-      <latitude>26.2626</latitude>
-      <longitude>-81.8071</longitude>
+      <latitude>40.4001</latitude>
+      <longitude>-86.8602</longitude>
     </address>
   </addresses>
   <schools>
     <school>
+      <country>Canada</country>
+      <name>Lansbridge University</name>
+      <city>Asbestos</city>
+      <state>QC</state>
+      <postal>J1T</postal>
+      <latitude>45.7784442</latitude>
+      <longitude>-71.9229466</longitude>
+    </school>
+    <school>
       <country>United States</country>
-      <name>Troy University</name>
-      <city>Lawrenceville</city>
-      <state>GA</state>
-      <postal>30045</postal>
-      <latitude>33.9255183</latitude>
-      <longitude>-83.9214896</longitude>
+      <name>Clark University</name>
+      <city>Albuquerque</city>
+      <state>NM</state>
+      <postal>87140</postal>
+      <latitude>35.0820413</latitude>
+      <longitude>-106.6478031</longitude>
     </school>
   </schools>
-  <status>Inactive</status>
+  <status>Active</status>
   <sources>
     <source>
-      <name>Los Angeles Times</name>
-      <ts>2012-10-10T06:06:31Z</ts>
+      <name>Chicago Tribune</name>
+      <ts>2011-01-19T07:06:59Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10084</id>
+      <id>10082</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Dommerque Meggie</fullname>
-      <city>Round Rock</city>
-      <state>TX</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
+      <fullname>Puddle Lula</fullname>
+      <city>Portland</city>
+      <state>OR</state>
     </relation>
     <relation>
-      <id>10089</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Durnford Neal</fullname>
-      <city>New Haven</city>
-      <state>CT</state>
-    </relation>
-    <relation>
-      <id>10076</id>
+      <id>10028</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Denziloe Shirleen</fullname>
-      <city>Charleston</city>
-      <state>SC</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Edwardson Nikolia</fullname>
+      <city>New Bedford</city>
+      <state>MA</state>
     </relation>
     <relation>
-      <id>10085</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Jellings Trudy</fullname>
-      <city>Tulsa</city>
-      <state>OK</state>
-    </relation>
-    <relation>
-      <id>10085</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Jellings Trudy</fullname>
-      <city>Tulsa</city>
-      <state>OK</state>
+      <id>10013</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Grafton Anny</fullname>
+      <city>Syracuse</city>
+      <state>NY</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-10T20:09:48Z</ts>
-    <user>cthamelt1j</user>
+    <ts>2022-01-09T09:13:18Z</ts>
+    <user>kkynston1j</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-04T08:07:47Z</ts>
-    <user>cthamelt1j</user>
+    <ts>2022-02-13T16:02:25Z</ts>
+    <user>kkynston1j</user>
   </lastUpdated>
-  <socials/>
-  <memberships>
-    <membership>
-      <list>list7</list>
-      <important>true</important>
-      <ts>2021-09-03</ts>
-    </membership>
-    <membership>
-      <list>list11</list>
-      <important>false</important>
-      <ts>2019-06-14</ts>
-    </membership>
-    <membership>
-      <list>list7</list>
-      <important>true</important>
-      <ts>2020-10-18</ts>
-    </membership>
-  </memberships>
+  <socials>
+    <social>
+      <site>linkedin</site>
+      <address>http://cafepress.com/natoque/penatibus/et.xml</address>
+      <handle>cchaloner0</handle>
+    </social>
+  </socials>
+  <memberships/>
 </person>

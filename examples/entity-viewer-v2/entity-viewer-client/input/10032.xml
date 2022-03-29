@@ -3,140 +3,157 @@
   <personId>10032</personId>
   <nameGroup>
     <givenname>
-      <value>Whitney</value>
+      <value>Coretta</value>
     </givenname>
     <surname>
-      <value>Glisane</value>
+      <value>Crehan</value>
     </surname>
     <fullname>
-      <classification>C</classification>
-      <restricted>false</restricted>
-      <value>Glisane Whitney</value>
+      <classification>S</classification>
+      <restricted>true</restricted>
+      <value>Crehan Coretta</value>
       <source>
-        <name>New York Times</name>
-        <ts>2017-12-23T10:43:30Z</ts>
+        <name>Los Angeles Times</name>
+        <ts>2010-11-13T16:15:49Z</ts>
       </source>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2016-09-20T02:39:53Z</ts>
+        <name>Los Angeles Times</name>
+        <ts>2014-07-04T06:31:14Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>jpinilla0@discuz.net</value>
+      <value>ntigner0@friendfeed.com</value>
+      <classification>S</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>vokeeffe1@usatoday.com</value>
       <classification>C</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>kleal1@wunderground.com</value>
-      <classification>U</classification>
+      <value>mianne2@blog.com</value>
+      <classification>S</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>196-972-1348</phone>
+  <phone>692-804-8656</phone>
   <ssn>
-    <value>241-82-2068</value>
+    <value>789-28-9716</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <uploadedBy>mbiddlecombe0</uploadedBy>
+      <uploadedOn>2014-10-20T12:04:50Z</uploadedOn>
       <source>
         <name>Los Angeles Times</name>
-        <ts>2012-09-19T14:38:01Z</ts>
+        <ts>2011-08-11T14:17:12Z</ts>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
+      <uploadedBy/>
+      <uploadedOn>2020-10-20T01:19:44Z</uploadedOn>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2010-01-04T16:00:52Z</ts>
+        <name>Chicago Tribune</name>
+        <ts>2019-08-14T13:39:56Z</ts>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>36 Laurel Parkway</street>
-      <city>Worcester</city>
-      <state>MA</state>
-      <postal>01654</postal>
+      <street>3 Mayer Trail</street>
+      <city>Albany</city>
+      <state>NY</state>
+      <postal>12242</postal>
       <country>United States</country>
-      <latitude>42.3648</latitude>
-      <longitude>-71.8969</longitude>
+      <latitude>42.6149</latitude>
+      <longitude>-73.9708</longitude>
     </address>
     <address>
-      <street>30710 Del Mar Road</street>
-      <city>Greensboro</city>
-      <state>NC</state>
-      <postal>27415</postal>
+      <street>6 Becker Park</street>
+      <city>Detroit</city>
+      <state>MI</state>
+      <postal>48224</postal>
       <country>United States</country>
-      <latitude>36.0807</latitude>
-      <longitude>-80.0244</longitude>
+      <latitude>42.4098</latitude>
+      <longitude>-82.9441</longitude>
     </address>
     <address>
-      <street>116 Mockingbird Alley</street>
-      <city>Arlington</city>
-      <state>VA</state>
-      <postal>22225</postal>
+      <street>7059 Becker Center</street>
+      <city>El Paso</city>
+      <state>TX</state>
+      <postal>88569</postal>
       <country>United States</country>
-      <latitude>38.8808</latitude>
-      <longitude>-77.113</longitude>
+      <latitude>31.6948</latitude>
+      <longitude>-106.3</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Mexico</country>
-      <name>Universidad Autónoma Metropolitana</name>
-      <city>San Sebastian</city>
-      <state>COA</state>
-      <postal>29950</postal>
-      <latitude>19.782027</latitude>
-      <longitude>-99.0598732</longitude>
+      <country>United States</country>
+      <name>Bethany College California</name>
+      <city>Las Vegas</city>
+      <state>NV</state>
+      <postal>89105</postal>
+      <latitude>35.99</latitude>
+      <longitude>-115.09</longitude>
     </school>
     <school>
-      <country>Mexico</country>
-      <name>Universidad Franciscana de México</name>
-      <city>La Palma</city>
-      <state>MEX</state>
-      <postal>52600</postal>
-      <latitude>19.5576165</latitude>
-      <longitude>-99.1393889</longitude>
+      <country>United States</country>
+      <name>American International College</name>
+      <city>Saint Joseph</city>
+      <state>MO</state>
+      <postal>64504</postal>
+      <latitude>39.6924206</latitude>
+      <longitude>-94.9143239</longitude>
     </school>
   </schools>
-  <status>Active</status>
+  <status>Inactive</status>
   <sources>
     <source>
-      <name>New York Times</name>
-      <ts>2020-12-12T06:51:09Z</ts>
+      <name>Washington Post</name>
+      <ts>2011-04-20T03:33:55Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10085</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Jellings Trudy</fullname>
-      <city>Tulsa</city>
-      <state>OK</state>
+      <id>10097</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Aizikovich Sigmund</fullname>
+      <city>Norfolk</city>
+      <state>VA</state>
     </relation>
     <relation>
-      <id>10038</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Helliwell Pat</fullname>
-      <city>Milwaukee</city>
-      <state>WI</state>
+      <id>10009</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
+      <fullname>Gremane Violante</fullname>
+      <city>El Paso</city>
+      <state>TX</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-17T14:02:10Z</ts>
-    <user>wglisanev</user>
+    <ts>2022-01-20T16:31:17Z</ts>
+    <user>ccrehanv</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-08T10:58:41Z</ts>
-    <user>wglisanev</user>
+    <ts>2022-01-28T16:52:28Z</ts>
+    <user>ccrehanv</user>
   </lastUpdated>
-  <socials/>
-  <memberships/>
+  <socials>
+    <social/>
+  </socials>
+  <memberships>
+    <membership>
+      <list>list5</list>
+      <ts>2020-04-09</ts>
+      <important>true</important>
+    </membership>
+  </memberships>
 </person>

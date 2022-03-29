@@ -3,185 +3,210 @@
   <personId>10023</personId>
   <nameGroup>
     <givenname>
-      <value>Ruddie</value>
+      <value>Ajay</value>
     </givenname>
     <surname>
-      <value>Nardoni</value>
+      <value>Reidshaw</value>
     </surname>
     <fullname>
       <classification>U</classification>
       <restricted>false</restricted>
-      <value>Nardoni Ruddie</value>
+      <value>Reidshaw Ajay</value>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2015-02-21T19:19:45Z</ts>
+        <name>USA Today</name>
+        <ts>2014-02-14T21:05:27Z</ts>
+      </source>
+      <source>
+        <name>Washington Post</name>
+        <ts>2019-02-14T02:03:32Z</ts>
       </source>
       <source>
         <name>New York Times</name>
-        <ts>2010-05-26T10:22:50Z</ts>
+        <ts>2020-04-18T10:57:43Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>ehardaker0@netvibes.com</value>
+      <value>btinham0@dion.ne.jp</value>
       <classification>U</classification>
       <restricted>false</restricted>
     </email>
-    <email>
-      <value>dmulhall1@dailymail.co.uk</value>
-      <classification>S</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>mbennion2@accuweather.com</value>
-      <classification>S</classification>
-      <restricted>false</restricted>
-    </email>
   </emails>
-  <phone>657-260-6096</phone>
+  <phone>804-387-7806</phone>
   <ssn>
-    <value>877-47-5698</value>
+    <value>207-14-8191</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
+      <uploadedBy>vboland0</uploadedBy>
+      <uploadedOn>2016-11-21T14:17:12Z</uploadedOn>
       <source>
-        <name>New York Times</name>
-        <ts>2013-12-27T19:35:11Z</ts>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
-      <source>
-        <name>Los Angeles Times</name>
-        <ts>2014-09-10T01:06:38Z</ts>
+        <name>Wall Street Journal</name>
+        <ts>2018-01-03T17:09:32Z</ts>
       </source>
     </image>
     <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
+      <uploadedBy>rnormadell1</uploadedBy>
+      <uploadedOn>2011-10-09T01:04:13Z</uploadedOn>
       <source>
         <name>USA Today</name>
-        <ts>2010-10-13T02:04:34Z</ts>
+        <ts>2021-09-14T17:21:11Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
+      <uploadedBy>amantram2</uploadedBy>
+      <uploadedOn>2016-02-25T12:09:29Z</uploadedOn>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2016-10-19T22:21:51Z</ts>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>2598 East Junction</street>
-      <city>Gainesville</city>
-      <state>FL</state>
-      <postal>32605</postal>
+      <street>22957 Veith Hill</street>
+      <city>Albuquerque</city>
+      <state>NM</state>
+      <postal>87140</postal>
       <country>United States</country>
-      <latitude>29.6785</latitude>
-      <longitude>-82.3679</longitude>
+      <latitude>35.0443</latitude>
+      <longitude>-106.6729</longitude>
     </address>
     <address>
-      <street>256 Union Street</street>
-      <city>Springfield</city>
-      <state>IL</state>
-      <postal>62776</postal>
+      <street>24 Calypso Center</street>
+      <city>Arlington</city>
+      <state>TX</state>
+      <postal>76004</postal>
       <country>United States</country>
-      <latitude>39.7495</latitude>
-      <longitude>-89.606</longitude>
-    </address>
-    <address>
-      <street>8 Anhalt Pass</street>
-      <city>Tulsa</city>
-      <state>OK</state>
-      <postal>74170</postal>
-      <country>United States</country>
-      <latitude>36.1398</latitude>
-      <longitude>-96.0297</longitude>
+      <latitude>32.7714</latitude>
+      <longitude>-97.2915</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>United States</country>
-      <name>Indiana University-Purdue University at Columbus</name>
-      <city>Tulsa</city>
-      <state>OK</state>
-      <postal>74193</postal>
-      <latitude>36.15</latitude>
-      <longitude>-96</longitude>
+      <country>Mexico</country>
+      <name>Universidad Autónoma de Campeche</name>
+      <city>Bellavista</city>
+      <state>VER</state>
+      <postal>92736</postal>
+      <latitude>19.3972335</latitude>
+      <longitude>-99.1933664</longitude>
     </school>
     <school>
-      <country>United States</country>
-      <name>Adelphi University</name>
-      <city>El Paso</city>
-      <state>TX</state>
-      <postal>88530</postal>
-      <latitude>31.77</latitude>
-      <longitude>-106.43</longitude>
+      <country>Canada</country>
+      <name>Okanagan University College</name>
+      <city>Les Cèdres</city>
+      <state>QC</state>
+      <postal>J6S</postal>
+      <latitude>45.3095043</latitude>
+      <longitude>-74.0590779</longitude>
     </school>
   </schools>
-  <status>Inactive</status>
-  <sources>
-    <source>
-      <name>USA Today</name>
-      <ts>2012-06-29T16:00:09Z</ts>
-    </source>
-  </sources>
+  <status>Active</status>
   <sources>
     <source>
       <name>Los Angeles Times</name>
-      <ts>2016-12-01T07:56:57Z</ts>
+      <ts>2011-12-13T10:35:54Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>New York Times</name>
-      <ts>2015-02-08T17:36:53Z</ts>
+      <name>USA Today</name>
+      <ts>2016-07-30T22:25:25Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10099</id>
+      <id>10061</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Chieco Geoffry</fullname>
+      <city>Jersey City</city>
+      <state>NJ</state>
+    </relation>
+    <relation>
+      <id>10006</id>
       <predicate>worksWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
-      <fullname>Pestricke Toinette</fullname>
-      <city>Savannah</city>
-      <state>GA</state>
+      <fullname>Mardling Christie</fullname>
+      <city>Boston</city>
+      <state>MA</state>
     </relation>
     <relation>
-      <id>10048</id>
-      <predicate>worksWith</predicate>
+      <id>10100</id>
+      <predicate>relatedTo</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
-      <fullname>Nickerson Charmain</fullname>
-      <city>Richmond</city>
-      <state>VA</state>
+      <fullname>Martensen Annalee</fullname>
+      <city>Greensboro</city>
+      <state>NC</state>
     </relation>
     <relation>
-      <id>10008</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
-      <fullname>Wimmers Rocky</fullname>
-      <city>Seattle</city>
-      <state>WA</state>
+      <id>10073</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
+      <fullname>Pierrepoint Terrel</fullname>
+      <city>Valley Forge</city>
+      <state>PA</state>
+    </relation>
+    <relation>
+      <id>10099</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
+      <fullname>Chrispin Martina</fullname>
+      <city>Jersey City</city>
+      <state>NJ</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-22T07:16:25Z</ts>
-    <user>rnardonim</user>
+    <ts>2022-02-13T12:50:50Z</ts>
+    <user>areidshawm</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-14T16:22:57Z</ts>
-    <user>rnardonim</user>
+    <ts>2022-02-23T20:14:35Z</ts>
+    <user>areidshawm</user>
   </lastUpdated>
   <socials>
     <social>
-      <site>facebook</site>
-      <address>http://sbwire.com/pulvinar/lobortis/est/phasellus/sit/amet/erat.jsp</address>
-    </social>
-    <social>
-      <site>twitter</site>
-      <address>http://theglobeandmail.com/lorem/id/ligula/suspendisse/ornare.html</address>
-    </social>
-    <social>
       <site>linkedin</site>
-      <address>http://cafepress.com/nisl/nunc.png</address>
+      <address>https://hud.gov/semper/sapien/a/libero.json</address>
+      <handle>acunah0</handle>
     </social>
   </socials>
-  <memberships/>
+  <memberships>
+    <membership>
+      <list>list2</list>
+      <ts>2021-10-26</ts>
+      <important>false</important>
+    </membership>
+    <membership>
+      <list>list6</list>
+      <ts>2020-06-30</ts>
+      <important>true</important>
+    </membership>
+    <membership>
+      <list>list2</list>
+      <ts>2020-10-07</ts>
+      <important>false</important>
+    </membership>
+    <membership>
+      <list>list7</list>
+      <ts>2021-12-26</ts>
+      <important>false</important>
+    </membership>
+    <membership>
+      <list>list2</list>
+      <ts>2021-10-26</ts>
+      <important>false</important>
+    </membership>
+    <membership>
+      <list>list9</list>
+      <ts>2021-02-01</ts>
+      <important>false</important>
+    </membership>
+  </memberships>
 </person>

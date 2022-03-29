@@ -3,196 +3,190 @@
   <personId>10089</personId>
   <nameGroup>
     <givenname>
-      <value>Neal</value>
+      <value>Caron</value>
     </givenname>
     <surname>
-      <value>Durnford</value>
+      <value>Lehenmann</value>
     </surname>
     <fullname>
       <classification>U</classification>
       <restricted>true</restricted>
-      <value>Durnford Neal</value>
+      <value>Lehenmann Caron</value>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2012-07-01T21:43:45Z</ts>
+        <name>USA Today</name>
+        <ts>2018-02-16T05:35:56Z</ts>
       </source>
       <source>
-        <name>Washington Post</name>
-        <ts>2021-05-31T08:19:58Z</ts>
-      </source>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2014-05-17T19:05:00Z</ts>
+        <name>Los Angeles Times</name>
+        <ts>2014-07-10T06:11:50Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>bgerardet0@google.co.uk</value>
+      <value>mlambdean0@privacy.gov.au</value>
       <classification>C</classification>
       <restricted>false</restricted>
     </email>
+    <email>
+      <value>lreadhead1@prnewswire.com</value>
+      <classification>S</classification>
+      <restricted>false</restricted>
+    </email>
   </emails>
-  <phone>908-953-4319</phone>
+  <phone>944-413-4353</phone>
   <ssn>
-    <value>621-01-2746</value>
+    <value>813-50-3108</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
+      <uploadedBy>ddart0</uploadedBy>
+      <uploadedOn>2013-11-24T21:34:00Z</uploadedOn>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2021-09-06T15:01:04Z</ts>
+        <name>Washington Post</name>
+        <ts>2012-03-04T04:33:26Z</ts>
       </source>
     </image>
     <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+      <uploadedBy>acatcherside1</uploadedBy>
+      <uploadedOn>2012-08-26T10:58:25Z</uploadedOn>
       <source>
-        <name>New York Times</name>
-        <ts>2018-07-19T22:09:07Z</ts>
+        <name>USA Today</name>
+        <ts>2014-01-07T11:26:38Z</ts>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
+      <uploadedBy>amoody2</uploadedBy>
+      <uploadedOn>2012-10-30T12:47:34Z</uploadedOn>
       <source>
         <name>New York Times</name>
-        <ts>2012-07-31T02:47:49Z</ts>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
-      <source>
-        <name>Washington Post</name>
-        <ts>2019-06-08T11:28:24Z</ts>
+        <ts>2014-01-15T23:55:38Z</ts>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>6 Spohn Hill</street>
-      <city>New Haven</city>
-      <state>CT</state>
-      <postal>06505</postal>
+      <street>6545 Autumn Leaf Crossing</street>
+      <city>Providence</city>
+      <state>RI</state>
+      <postal>02905</postal>
       <country>United States</country>
-      <latitude>41.3057</latitude>
-      <longitude>-72.7799</longitude>
-    </address>
-    <address>
-      <street>966 South Trail</street>
-      <city>Wilkes Barre</city>
-      <state>PA</state>
-      <postal>18706</postal>
-      <country>United States</country>
-      <latitude>41.2044</latitude>
-      <longitude>-75.9113</longitude>
+      <latitude>41.7845</latitude>
+      <longitude>-71.3959</longitude>
     </address>
   </addresses>
   <schools>
     <school>
       <country>Canada</country>
-      <name>University of British Columbia</name>
-      <city>Langenburg</city>
-      <state>SK</state>
-      <postal>V7P</postal>
-      <latitude>50.84999</latitude>
-      <longitude>-101.71763</longitude>
+      <name>University of Prince Edward Island</name>
+      <city>Petawawa</city>
+      <state>ON</state>
+      <postal>K8H</postal>
+      <latitude>45.8903748</latitude>
+      <longitude>-77.2672051</longitude>
     </school>
     <school>
-      <country>United States</country>
-      <name>Florida University of Medicine</name>
-      <city>San Jose</city>
-      <state>CA</state>
-      <postal>95123</postal>
-      <latitude>37.2374847</latitude>
-      <longitude>-121.8277925</longitude>
+      <country>Canada</country>
+      <name>Canadian College of Business &amp; Computers</name>
+      <city>Labrador City</city>
+      <state>NL</state>
+      <postal>A2V</postal>
+      <latitude>52.9369158</latitude>
+      <longitude>-66.9238331</longitude>
     </school>
   </schools>
-  <status>Active</status>
+  <status>Inactive</status>
+  <sources>
+    <source>
+      <name>Wall Street Journal</name>
+      <ts>2011-06-12T06:57:43Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Wall Street Journal</name>
+      <ts>2012-07-29T18:09:41Z</ts>
+    </source>
+  </sources>
   <sources>
     <source>
       <name>New York Times</name>
-      <ts>2021-03-28T02:07:36Z</ts>
+      <ts>2012-02-25T13:43:39Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10099</id>
-      <predicate>worksWith</predicate>
+      <id>10072</id>
+      <predicate>livesWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
-      <fullname>Pestricke Toinette</fullname>
-      <city>Savannah</city>
-      <state>GA</state>
+      <fullname>Limbrick Tybalt</fullname>
+      <city>Fort Lauderdale</city>
+      <state>FL</state>
+    </relation>
+    <relation>
+      <id>10017</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
+      <fullname>Poulglais Robbert</fullname>
+      <city>Troy</city>
+      <state>MI</state>
     </relation>
     <relation>
       <id>10092</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Hackly Raeann</fullname>
-      <city>Saint Louis</city>
-      <state>MO</state>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
+      <fullname>Mettetal Claresta</fullname>
+      <city>San Diego</city>
+      <state>CA</state>
     </relation>
     <relation>
-      <id>10061</id>
+      <id>10079</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
-      <fullname>Igoe Christos</fullname>
-      <city>El Paso</city>
-      <state>TX</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Feltoe Currey</fullname>
+      <city>Chula Vista</city>
+      <state>CA</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-09T18:05:33Z</ts>
-    <user>ndurnford2g</user>
+    <ts>2022-02-24T20:03:01Z</ts>
+    <user>clehenmann2g</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-09T08:42:01Z</ts>
-    <user>ndurnford2g</user>
+    <ts>2022-01-14T22:27:07Z</ts>
+    <user>clehenmann2g</user>
   </lastUpdated>
   <socials>
     <social>
       <site>linkedin</site>
-      <address>https://mediafire.com/sagittis/dui/vel/nisl/duis/ac/nibh.xml</address>
-    </social>
-    <social>
-      <site>facebook</site>
-      <address>http://oakley.com/ut/erat.jpg</address>
-    </social>
-    <social>
-      <site>linkedin</site>
-      <address>http://exblog.jp/natoque/penatibus.xml</address>
+      <address>https://addtoany.com/vestibulum/sed/magna/at/nunc/commodo/placerat.jsp</address>
+      <handle>ysalan0</handle>
     </social>
   </socials>
   <memberships>
     <membership>
-      <list>list6</list>
-      <important>true</important>
-      <ts>2021-02-08</ts>
-    </membership>
-    <membership>
       <list>list9</list>
-      <important>true</important>
-      <ts>2020-03-07</ts>
-    </membership>
-    <membership>
-      <list>list7</list>
-      <important>true</important>
-      <ts>2021-04-28</ts>
-    </membership>
-    <membership>
-      <list>list12</list>
+      <ts>2021-01-22</ts>
       <important>false</important>
-      <ts>2019-03-05</ts>
     </membership>
     <membership>
       <list>list9</list>
-      <important>true</important>
-      <ts>2020-01-06</ts>
+      <ts>2020-10-16</ts>
+      <important>false</important>
     </membership>
     <membership>
-      <list>list9</list>
-      <important>true</important>
-      <ts>2021-10-23</ts>
+      <list>list11</list>
+      <ts>2021-11-17</ts>
+      <important>false</important>
+    </membership>
+    <membership>
+      <list>list5</list>
+      <ts>2022-01-29</ts>
+      <important>false</important>
     </membership>
   </memberships>
 </person>

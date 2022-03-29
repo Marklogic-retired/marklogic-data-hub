@@ -3,163 +3,189 @@
   <personId>10041</personId>
   <nameGroup>
     <givenname>
-      <value>Dallas</value>
+      <value>Carine</value>
     </givenname>
     <surname>
-      <value>Friedlos</value>
+      <value>Tompkiss</value>
     </surname>
     <fullname>
       <classification>S</classification>
       <restricted>false</restricted>
-      <value>Friedlos Dallas</value>
+      <value>Tompkiss Carine</value>
       <source>
-        <name>USA Today</name>
-        <ts>2015-02-12T17:04:30Z</ts>
+        <name>Chicago Tribune</name>
+        <ts>2019-05-29T16:50:05Z</ts>
       </source>
       <source>
         <name>Wall Street Journal</name>
-        <ts>2012-04-10T08:40:36Z</ts>
+        <ts>2015-03-26T23:14:02Z</ts>
+      </source>
+      <source>
+        <name>Washington Post</name>
+        <ts>2021-12-04T19:31:20Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>kdurkin0@pcworld.com</value>
+      <value>kburburough0@go.com</value>
       <classification>C</classification>
       <restricted>false</restricted>
     </email>
+    <email>
+      <value>afiller1@dailymotion.com</value>
+      <classification>C</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>eesler2@theglobeandmail.com</value>
+      <classification>U</classification>
+      <restricted>false</restricted>
+    </email>
   </emails>
-  <phone>159-114-1798</phone>
+  <phone>386-682-5172</phone>
   <ssn>
-    <value>461-03-2996</value>
+    <value>513-61-0225</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <uploadedBy>ychater0</uploadedBy>
+      <uploadedOn>2014-01-05T14:34:34Z</uploadedOn>
       <source>
         <name>Los Angeles Times</name>
-        <ts>2013-06-04T11:55:07Z</ts>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
-      <source>
-        <name>Los Angeles Times</name>
-        <ts>2018-11-23T20:20:32Z</ts>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
-      <source>
-        <name>USA Today</name>
-        <ts>2013-05-08T02:23:37Z</ts>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
-      <source>
-        <name>Wall Street Journal</name>
-        <ts>2014-03-09T02:11:38Z</ts>
+        <ts>2018-02-01T19:12:10Z</ts>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>3 Everett Trail</street>
-      <city>Long Beach</city>
+      <street>71 Sachtjen Center</street>
+      <city>Los Angeles</city>
       <state>CA</state>
-      <postal>90810</postal>
+      <postal>90101</postal>
       <country>United States</country>
-      <latitude>33.8193</latitude>
-      <longitude>-118.2325</longitude>
+      <latitude>33.7866</latitude>
+      <longitude>-118.2987</longitude>
+    </address>
+    <address>
+      <street>88289 Sloan Alley</street>
+      <city>Spartanburg</city>
+      <state>SC</state>
+      <postal>29305</postal>
+      <country>United States</country>
+      <latitude>35.1114</latitude>
+      <longitude>-82.1055</longitude>
+    </address>
+    <address>
+      <street>6861 Lawn Avenue</street>
+      <city>Kansas City</city>
+      <state>MO</state>
+      <postal>64142</postal>
+      <country>United States</country>
+      <latitude>39.035</latitude>
+      <longitude>-94.3567</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Mexico</country>
-      <name>Universidad Franciscana de México</name>
-      <city>20 de Noviembre</city>
-      <state>COA</state>
-      <postal>30478</postal>
-      <latitude>19.4449916</latitude>
-      <longitude>-99.1082647</longitude>
+      <country>Canada</country>
+      <name>École des Hautes Études Commerciales</name>
+      <city>Roblin</city>
+      <state>MB</state>
+      <postal>R7N</postal>
+      <latitude>51.22999</latitude>
+      <longitude>-101.3565</longitude>
+    </school>
+    <school>
+      <country>Canada</country>
+      <name>University College of Cape Breton</name>
+      <city>Nipawin</city>
+      <state>SK</state>
+      <postal>V9B</postal>
+      <latitude>53.36678</latitude>
+      <longitude>-104.00092</longitude>
     </school>
   </schools>
-  <status>Active</status>
+  <status>Inactive</status>
   <sources>
     <source>
-      <name>Washington Post</name>
-      <ts>2018-03-06T21:42:07Z</ts>
+      <name>Los Angeles Times</name>
+      <ts>2014-06-17T10:12:49Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>USA Today</name>
-      <ts>2020-12-10T12:49:22Z</ts>
+      <name>Chicago Tribune</name>
+      <ts>2016-05-01T02:05:32Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>Washington Post</name>
-      <ts>2021-09-05T08:31:43Z</ts>
+      <name>Chicago Tribune</name>
+      <ts>2019-03-26T06:11:01Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10046</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Slee Lidia</fullname>
-      <city>Omaha</city>
-      <state>NE</state>
+      <id>10056</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Kynston Karlene</fullname>
+      <city>Shreveport</city>
+      <state>LA</state>
     </relation>
     <relation>
-      <id>10036</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
-      <fullname>Coleyshaw Devonne</fullname>
-      <city>Atlanta</city>
-      <state>GA</state>
-    </relation>
-    <relation>
-      <id>10013</id>
+      <id>10041</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Bend Mychal</fullname>
-      <city>Oakland</city>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
+      <fullname>Tompkiss Carine</fullname>
+      <city>Los Angeles</city>
       <state>CA</state>
     </relation>
     <relation>
-      <id>10018</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Greenroad Clio</fullname>
-      <city>Boston</city>
-      <state>MA</state>
+      <id>10037</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Dulinty Gaspard</fullname>
+      <city>Lincoln</city>
+      <state>NE</state>
     </relation>
     <relation>
-      <id>10036</id>
+      <id>10074</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
-      <fullname>Coleyshaw Devonne</fullname>
-      <city>Atlanta</city>
-      <state>GA</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
+      <fullname>Kondratovich Nadine</fullname>
+      <city>Kansas City</city>
+      <state>MO</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-11T15:55:20Z</ts>
-    <user>dfriedlos14</user>
+    <ts>2022-02-24T11:26:50Z</ts>
+    <user>ctompkiss14</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-01T10:31:03Z</ts>
-    <user>dfriedlos14</user>
+    <ts>2022-02-08T01:53:32Z</ts>
+    <user>ctompkiss14</user>
   </lastUpdated>
   <socials>
     <social>
       <site>twitter</site>
-      <address>http://sakura.ne.jp/sapien/iaculis.js</address>
+      <address>https://hud.gov/felis/sed.html</address>
+      <handle>inorthen0</handle>
     </social>
   </socials>
-  <memberships/>
+  <memberships>
+    <membership>
+      <list>list8</list>
+      <ts>2021-03-12</ts>
+      <important>true</important>
+    </membership>
+    <membership>
+      <list>list5</list>
+      <ts>2020-06-07</ts>
+      <important>false</important>
+    </membership>
+  </memberships>
 </person>

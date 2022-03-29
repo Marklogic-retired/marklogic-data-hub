@@ -3,143 +3,150 @@
   <personId>10035</personId>
   <nameGroup>
     <givenname>
-      <value>Vinny</value>
+      <value>Madelaine</value>
     </givenname>
     <surname>
-      <value>Bresnahan</value>
+      <value>Gajownik</value>
     </surname>
     <fullname>
-      <classification>C</classification>
-      <restricted>false</restricted>
-      <value>Bresnahan Vinny</value>
+      <classification>S</classification>
+      <restricted>true</restricted>
+      <value>Gajownik Madelaine</value>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2012-01-26T04:56:50Z</ts>
+        <name>New York Times</name>
+        <ts>2016-05-01T21:18:29Z</ts>
+      </source>
+      <source>
+        <name>Washington Post</name>
+        <ts>2019-09-03T11:22:09Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>ccliburn0@amazon.de</value>
-      <classification>C</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>yallen1@joomla.org</value>
-      <classification>U</classification>
+      <value>rstroobant0@acquirethisname.com</value>
+      <classification>S</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>808-849-7531</phone>
+  <phone>483-815-9406</phone>
   <ssn>
-    <value>125-55-9757</value>
+    <value>889-65-2222</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
+      <uploadedBy>stravis0</uploadedBy>
+      <uploadedOn>2017-07-16T03:07:41Z</uploadedOn>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2018-07-17T01:22:34Z</ts>
+        <name>Wall Street Journal</name>
+        <ts>2013-05-23T01:16:36Z</ts>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>4186 Eagle Crest Road</street>
-      <city>Stockton</city>
-      <state>CA</state>
-      <postal>95298</postal>
+      <street>118 Rusk Court</street>
+      <city>Fort Worth</city>
+      <state>TX</state>
+      <postal>76178</postal>
       <country>United States</country>
-      <latitude>37.9577</latitude>
-      <longitude>-121.2897</longitude>
+      <latitude>32.7714</latitude>
+      <longitude>-97.2915</longitude>
+    </address>
+    <address>
+      <street>88 Melody Drive</street>
+      <city>Washington</city>
+      <state>DC</state>
+      <postal>20409</postal>
+      <country>United States</country>
+      <latitude>38.8933</latitude>
+      <longitude>-77.0146</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Mexico</country>
-      <name>Universidad Autónoma de Campeche</name>
-      <city>San Francisco</city>
-      <state>SLP</state>
-      <postal>78490</postal>
-      <latitude>20.8965838</latitude>
-      <longitude>-105.4093552</longitude>
+      <country>United States</country>
+      <name>Boston University</name>
+      <city>Boynton Beach</city>
+      <state>FL</state>
+      <postal>33436</postal>
+      <latitude>26.5114554</latitude>
+      <longitude>-80.109357</longitude>
     </school>
     <school>
-      <country>Mexico</country>
-      <name>Universidad Autónoma de Tlaxcala</name>
-      <city>Las Flores</city>
-      <state>GUA</state>
-      <postal>38823</postal>
-      <latitude>20.123518</latitude>
-      <longitude>-101.1833267</longitude>
+      <country>United States</country>
+      <name>Martin Luther College</name>
+      <city>Greensboro</city>
+      <state>NC</state>
+      <postal>27404</postal>
+      <latitude>36.09</latitude>
+      <longitude>-79.83</longitude>
     </school>
   </schools>
-  <status>Inactive</status>
+  <status>Active</status>
   <sources>
     <source>
       <name>Wall Street Journal</name>
-      <ts>2014-04-02T21:59:34Z</ts>
+      <ts>2015-04-22T17:41:45Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>USA Today</name>
+      <ts>2018-02-24T08:50:33Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10090</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Youthead Rufe</fullname>
-      <city>Carlsbad</city>
-      <state>CA</state>
+      <id>10099</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
+      <fullname>Chrispin Martina</fullname>
+      <city>Jersey City</city>
+      <state>NJ</state>
     </relation>
     <relation>
-      <id>10093</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
-      <fullname>Friberg Sabra</fullname>
-      <city>San Diego</city>
-      <state>CA</state>
-    </relation>
-    <relation>
-      <id>10068</id>
+      <id>10032</id>
       <predicate>worksWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Orchart Beverlee</fullname>
-      <city>Charleston</city>
-      <state>WV</state>
-    </relation>
-    <relation>
-      <id>10022</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Talby Noella</fullname>
-      <city>Jacksonville</city>
-      <state>FL</state>
+      <fullname>Crehan Coretta</fullname>
+      <city>Albany</city>
+      <state>NY</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-23T11:18:24Z</ts>
-    <user>vbresnahany</user>
+    <ts>2022-01-03T20:15:30Z</ts>
+    <user>mgajowniky</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-17T07:08:55Z</ts>
-    <user>vbresnahany</user>
+    <ts>2022-01-19T08:58:36Z</ts>
+    <user>mgajowniky</user>
   </lastUpdated>
-  <socials/>
+  <socials>
+    <social/>
+  </socials>
   <memberships>
     <membership>
-      <list>list3</list>
+      <list>list1</list>
+      <ts>2022-01-04</ts>
       <important>true</important>
-      <ts>2020-01-11</ts>
     </membership>
     <membership>
-      <list>list4</list>
+      <list>list2</list>
+      <ts>2020-12-12</ts>
       <important>false</important>
-      <ts>2020-05-03</ts>
     </membership>
     <membership>
-      <list>list11</list>
+      <list>list9</list>
+      <ts>2020-06-01</ts>
+      <important>true</important>
+    </membership>
+    <membership>
+      <list>list7</list>
+      <ts>2020-09-05</ts>
       <important>false</important>
-      <ts>2020-10-11</ts>
     </membership>
   </memberships>
 </person>

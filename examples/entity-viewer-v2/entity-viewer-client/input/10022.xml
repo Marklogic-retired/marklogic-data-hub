@@ -3,183 +3,191 @@
   <personId>10022</personId>
   <nameGroup>
     <givenname>
-      <value>Noella</value>
+      <value>Sergent</value>
     </givenname>
     <surname>
-      <value>Talby</value>
+      <value>Vivien</value>
     </surname>
     <fullname>
-      <classification>S</classification>
+      <classification>U</classification>
       <restricted>false</restricted>
-      <value>Talby Noella</value>
+      <value>Vivien Sergent</value>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2013-05-14T14:42:41Z</ts>
+        <name>Washington Post</name>
+        <ts>2021-06-03T16:54:17Z</ts>
       </source>
       <source>
-        <name>USA Today</name>
-        <ts>2010-07-22T00:03:22Z</ts>
+        <name>Washington Post</name>
+        <ts>2011-12-30T07:15:01Z</ts>
+      </source>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2011-09-14T11:18:20Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>jtrayford0@geocities.jp</value>
+      <value>cvondra0@sfgate.com</value>
+      <classification>S</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>fcarbery1@theguardian.com</value>
       <classification>U</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>dwoodier1@rediff.com</value>
+      <value>ecapoun2@macromedia.com</value>
       <classification>S</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>762-698-7754</phone>
+  <phone>528-335-9156</phone>
   <ssn>
-    <value>752-45-8745</value>
+    <value>186-22-7636</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+      <uploadedBy>wgodsell0</uploadedBy>
+      <uploadedOn>2016-11-22T04:44:12Z</uploadedOn>
+      <source>
+        <name>USA Today</name>
+        <ts>2013-03-09T09:05:43Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <uploadedBy>jbubb1</uploadedBy>
+      <uploadedOn>2020-05-01T02:36:13Z</uploadedOn>
+      <source>
+        <name>Washington Post</name>
+        <ts>2019-01-25T19:42:33Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
+      <uploadedBy>ddawney2</uploadedBy>
+      <uploadedOn>2010-01-17T00:39:03Z</uploadedOn>
       <source>
         <name>New York Times</name>
-        <ts>2016-09-05T17:42:51Z</ts>
+        <ts>2013-08-09T04:46:41Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+      <uploadedBy>mjefford3</uploadedBy>
+      <uploadedOn>2015-04-17T09:02:09Z</uploadedOn>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2016-07-14T06:41:22Z</ts>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>86 Farragut Court</street>
-      <city>Jacksonville</city>
-      <state>FL</state>
-      <postal>32236</postal>
-      <country>United States</country>
-      <latitude>30.3449</latitude>
-      <longitude>-81.6831</longitude>
-    </address>
-    <address>
-      <street>06976 Arkansas Hill</street>
-      <city>Oklahoma City</city>
-      <state>OK</state>
-      <postal>73114</postal>
-      <country>United States</country>
-      <latitude>35.5704</latitude>
-      <longitude>-97.5257</longitude>
-    </address>
-    <address>
-      <street>31 Mcguire Circle</street>
+      <street>0 Continental Plaza</street>
       <city>Sacramento</city>
       <state>CA</state>
-      <postal>94230</postal>
+      <postal>95865</postal>
       <country>United States</country>
-      <latitude>38.3774</latitude>
-      <longitude>-121.4444</longitude>
+      <latitude>38.596</latitude>
+      <longitude>-121.3978</longitude>
+    </address>
+    <address>
+      <street>71 Farragut Street</street>
+      <city>Houston</city>
+      <state>TX</state>
+      <postal>77070</postal>
+      <country>United States</country>
+      <latitude>29.9781</latitude>
+      <longitude>-95.5803</longitude>
     </address>
   </addresses>
   <schools>
     <school>
       <country>United States</country>
-      <name>Oklahoma State University - Tulsa</name>
-      <city>Sparks</city>
-      <state>NV</state>
-      <postal>89436</postal>
-      <latitude>39.603484</latitude>
-      <longitude>-119.7078532</longitude>
+      <name>South Carolina State University</name>
+      <city>Des Moines</city>
+      <state>IA</state>
+      <postal>50369</postal>
+      <latitude>41.6</latitude>
+      <longitude>-93.61</longitude>
     </school>
   </schools>
   <status>Inactive</status>
   <sources>
     <source>
-      <name>Washington Post</name>
-      <ts>2010-01-22T17:27:59Z</ts>
+      <name>Chicago Tribune</name>
+      <ts>2012-11-28T20:47:11Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>USA Today</name>
-      <ts>2018-12-25T07:48:21Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>Los Angeles Times</name>
-      <ts>2017-02-25T05:51:39Z</ts>
+      <name>Wall Street Journal</name>
+      <ts>2019-10-05T05:47:47Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10035</id>
+      <id>10075</id>
       <predicate>livesWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
-      <fullname>Bresnahan Vinny</fullname>
-      <city>Stockton</city>
-      <state>CA</state>
+      <fullname>Trays Addison</fullname>
+      <city>Albany</city>
+      <state>NY</state>
     </relation>
     <relation>
-      <id>10033</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Liddington Constanta</fullname>
-      <city>Des Moines</city>
-      <state>IA</state>
-    </relation>
-    <relation>
-      <id>10095</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
-      <fullname>Sorbie Moss</fullname>
-      <city>Durham</city>
-      <state>NC</state>
-    </relation>
-    <relation>
-      <id>10020</id>
+      <id>10028</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
-      <fullname>Andress Crawford</fullname>
-      <city>New Orleans</city>
-      <state>LA</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Edwardson Nikolia</fullname>
+      <city>New Bedford</city>
+      <state>MA</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-23T22:21:00Z</ts>
-    <user>ntalbyl</user>
+    <ts>2022-01-23T01:10:39Z</ts>
+    <user>svivienl</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-09T10:59:45Z</ts>
-    <user>ntalbyl</user>
+    <ts>2022-02-14T09:43:24Z</ts>
+    <user>svivienl</user>
   </lastUpdated>
-  <socials/>
+  <socials>
+    <social>
+      <site>linkedin</site>
+      <address>https://cpanel.net/at/lorem/integer/tincidunt/ante/vel/ipsum.xml</address>
+      <handle>asymson0</handle>
+    </social>
+  </socials>
   <memberships>
     <membership>
-      <list>list4</list>
-      <important>false</important>
-      <ts>2019-01-14</ts>
+      <list>list8</list>
+      <ts>2020-10-01</ts>
+      <important>true</important>
     </membership>
     <membership>
-      <list>list11</list>
-      <important>true</important>
-      <ts>2019-09-30</ts>
+      <list>list7</list>
+      <ts>2021-02-27</ts>
+      <important>false</important>
     </membership>
     <membership>
       <list>list1</list>
+      <ts>2021-09-27</ts>
       <important>true</important>
-      <ts>2021-07-22</ts>
+    </membership>
+    <membership>
+      <list>list3</list>
+      <ts>2021-07-30</ts>
+      <important>false</important>
     </membership>
     <membership>
       <list>list8</list>
+      <ts>2022-01-09</ts>
       <important>true</important>
-      <ts>2019-12-20</ts>
-    </membership>
-    <membership>
-      <list>list4</list>
-      <important>true</important>
-      <ts>2019-03-29</ts>
-    </membership>
-    <membership>
-      <list>list2</list>
-      <important>false</important>
-      <ts>2021-03-16</ts>
     </membership>
   </memberships>
 </person>

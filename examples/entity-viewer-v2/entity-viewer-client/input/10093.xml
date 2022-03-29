@@ -3,202 +3,198 @@
   <personId>10093</personId>
   <nameGroup>
     <givenname>
-      <value>Sabra</value>
+      <value>Daren</value>
     </givenname>
     <surname>
-      <value>Friberg</value>
+      <value>Dunkley</value>
     </surname>
     <fullname>
-      <classification>C</classification>
-      <restricted>false</restricted>
-      <value>Friberg Sabra</value>
+      <classification>U</classification>
+      <restricted>true</restricted>
+      <value>Dunkley Daren</value>
       <source>
-        <name>Washington Post</name>
-        <ts>2017-01-03T08:22:57Z</ts>
+        <name>Los Angeles Times</name>
+        <ts>2010-01-04T15:58:21Z</ts>
       </source>
       <source>
-        <name>New York Times</name>
-        <ts>2011-11-05T21:07:39Z</ts>
+        <name>USA Today</name>
+        <ts>2013-02-18T09:12:13Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>alawles0@webmd.com</value>
-      <classification>C</classification>
+      <value>tfrancom0@businesswire.com</value>
+      <classification>U</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>342-959-5611</phone>
+  <phone>663-304-1235</phone>
   <ssn>
-    <value>383-87-5437</value>
+    <value>561-48-7910</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
+      <uploadedBy>jcaustic0</uploadedBy>
+      <uploadedOn>2010-05-17T05:45:13Z</uploadedOn>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2018-12-30T21:16:28Z</ts>
+        <name>Los Angeles Times</name>
+        <ts>2015-07-10T18:39:06Z</ts>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <uploadedBy>fmattiassi1</uploadedBy>
+      <uploadedOn>2013-08-03T05:35:19Z</uploadedOn>
       <source>
-        <name>USA Today</name>
-        <ts>2011-05-13T01:21:02Z</ts>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
-      <source>
-        <name>Washington Post</name>
-        <ts>2021-10-22T02:40:44Z</ts>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
-      <source>
-        <name>Washington Post</name>
-        <ts>2018-01-08T19:12:09Z</ts>
+        <name>New York Times</name>
+        <ts>2013-11-27T21:03:59Z</ts>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>8 Mcguire Trail</street>
-      <city>San Diego</city>
-      <state>CA</state>
-      <postal>92127</postal>
+      <street>7 Hudson Court</street>
+      <city>Bridgeport</city>
+      <state>CT</state>
+      <postal>06673</postal>
       <country>United States</country>
-      <latitude>33.0279</latitude>
-      <longitude>-117.0856</longitude>
+      <latitude>41.3089</latitude>
+      <longitude>-73.3637</longitude>
+    </address>
+    <address>
+      <street>135 Roxbury Court</street>
+      <city>Wichita</city>
+      <state>KS</state>
+      <postal>67215</postal>
+      <country>United States</country>
+      <latitude>37.6333</latitude>
+      <longitude>-97.425</longitude>
     </address>
   </addresses>
   <schools>
     <school>
       <country>United States</country>
-      <name>John Marshall Law School</name>
-      <city>Wichita</city>
-      <state>KS</state>
-      <postal>67210</postal>
-      <latitude>37.6346281</latitude>
-      <longitude>-97.2383178</longitude>
+      <name>Skadron College</name>
+      <city>Olympia</city>
+      <state>WA</state>
+      <postal>98506</postal>
+      <latitude>47.0378741</latitude>
+      <longitude>-122.9006951</longitude>
     </school>
     <school>
-      <country>Canada</country>
-      <name>Camosun College</name>
-      <city>Unity</city>
-      <state>SK</state>
-      <postal>J8R</postal>
-      <latitude>45.4139794</latitude>
-      <longitude>-75.7103682</longitude>
+      <country>United States</country>
+      <name>St. Joseph's College of Maine</name>
+      <city>Jefferson City</city>
+      <state>MO</state>
+      <postal>65105</postal>
+      <latitude>38.5</latitude>
+      <longitude>-92.15</longitude>
     </school>
   </schools>
-  <status>Active</status>
+  <status>Inactive</status>
   <sources>
     <source>
-      <name>Wall Street Journal</name>
-      <ts>2016-01-08T07:22:18Z</ts>
+      <name>Los Angeles Times</name>
+      <ts>2013-02-18T20:56:25Z</ts>
     </source>
   </sources>
   <sources>
     <source>
       <name>USA Today</name>
-      <ts>2013-11-14T01:16:11Z</ts>
+      <ts>2016-11-08T08:26:56Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>Wall Street Journal</name>
-      <ts>2016-11-06T20:46:26Z</ts>
+      <name>Chicago Tribune</name>
+      <ts>2021-03-25T11:40:59Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10094</id>
+      <id>10081</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Dearden Keen</fullname>
+      <city>Dayton</city>
+      <state>OH</state>
+    </relation>
+    <relation>
+      <id>10049</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Wollaston Barn</fullname>
+      <city>Cambridge</city>
+      <state>MA</state>
+    </relation>
+    <relation>
+      <id>10015</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
-      <fullname>Lindenblatt Barrie</fullname>
-      <city>Trenton</city>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Spafford Giuditta</fullname>
+      <city>Pensacola</city>
+      <state>FL</state>
+    </relation>
+    <relation>
+      <id>10061</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Chieco Geoffry</fullname>
+      <city>Jersey City</city>
       <state>NJ</state>
     </relation>
     <relation>
-      <id>10100</id>
+      <id>10023</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Swendell Gradey</fullname>
-      <city>Charleston</city>
-      <state>SC</state>
-    </relation>
-    <relation>
-      <id>10078</id>
-      <predicate>livesWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
-      <fullname>McNish Guy</fullname>
-      <city>New Orleans</city>
-      <state>LA</state>
-    </relation>
-    <relation>
-      <id>10089</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Durnford Neal</fullname>
-      <city>New Haven</city>
-      <state>CT</state>
-    </relation>
-    <relation>
-      <id>10062</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
-      <fullname>Welbeck Morna</fullname>
-      <city>San Diego</city>
-      <state>CA</state>
+      <fullname>Reidshaw Ajay</fullname>
+      <city>Albuquerque</city>
+      <state>NM</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-04T21:41:19Z</ts>
-    <user>sfriberg2k</user>
+    <ts>2022-01-13T11:56:45Z</ts>
+    <user>ddunkley2k</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-12T09:02:05Z</ts>
-    <user>sfriberg2k</user>
+    <ts>2022-02-12T02:25:06Z</ts>
+    <user>ddunkley2k</user>
   </lastUpdated>
   <socials>
     <social>
-      <site>facebook</site>
-      <address>http://si.edu/vel/ipsum/praesent/blandit/lacinia/erat/vestibulum.png</address>
+      <site>twitter</site>
+      <address>https://mlb.com/venenatis/turpis/enim/blandit/mi/in/porttitor.jpg</address>
+      <handle>eharflete0</handle>
     </social>
     <social>
-      <site>linkedin</site>
-      <address>http://merriam-webster.com/donec/ut/mauris/eget/massa/tempor/convallis.json</address>
+      <site>facebook</site>
+      <address>http://ehow.com/faucibus/orci/luctus/et.jsp</address>
+      <handle/>
+    </social>
+    <social>
+      <site>facebook</site>
+      <address>http://cdc.gov/posuere/cubilia.html</address>
+      <handle>eahrendsen2</handle>
     </social>
   </socials>
   <memberships>
     <membership>
-      <list>list5</list>
-      <important>true</important>
-      <ts>2020-12-29</ts>
-    </membership>
-    <membership>
-      <list>list5</list>
-      <important>false</important>
-      <ts>2022-01-21</ts>
-    </membership>
-    <membership>
-      <list>list3</list>
-      <important>true</important>
-      <ts>2021-09-25</ts>
-    </membership>
-    <membership>
       <list>list4</list>
-      <important>true</important>
-      <ts>2019-06-09</ts>
+      <ts>2022-02-15</ts>
+      <important>false</important>
     </membership>
     <membership>
-      <list>list6</list>
+      <list>list11</list>
+      <ts>2021-07-24</ts>
       <important>true</important>
-      <ts>2019-12-23</ts>
+    </membership>
+    <membership>
+      <list>list2</list>
+      <ts>2020-07-12</ts>
+      <important>false</important>
     </membership>
   </memberships>
 </person>

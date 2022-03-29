@@ -3,186 +3,177 @@
   <personId>10025</personId>
   <nameGroup>
     <givenname>
-      <value>Dasie</value>
+      <value>Boyce</value>
     </givenname>
     <surname>
-      <value>Rosell</value>
+      <value>Pods</value>
     </surname>
     <fullname>
-      <classification>S</classification>
-      <restricted>true</restricted>
-      <value>Rosell Dasie</value>
+      <classification>U</classification>
+      <restricted>false</restricted>
+      <value>Pods Boyce</value>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2016-02-04T23:59:43Z</ts>
+        <name>Los Angeles Times</name>
+        <ts>2021-10-11T05:20:25Z</ts>
       </source>
       <source>
-        <name>Washington Post</name>
-        <ts>2011-04-04T04:18:02Z</ts>
+        <name>Chicago Tribune</name>
+        <ts>2021-12-27T20:09:20Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>mbarde0@blogtalkradio.com</value>
-      <classification>C</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>mhasell1@nih.gov</value>
-      <classification>U</classification>
+      <value>hmathewson0@icq.com</value>
+      <classification>S</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>881-894-4672</phone>
+  <phone>816-740-8414</phone>
   <ssn>
-    <value>788-86-7593</value>
+    <value>673-29-9266</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
+      <uploadedBy>yarnault0</uploadedBy>
+      <uploadedOn>2013-08-17T04:16:58Z</uploadedOn>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2011-05-12T03:51:28Z</ts>
+        <name>New York Times</name>
+        <ts>2019-10-06T09:37:33Z</ts>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>0 Monterey Circle</street>
-      <city>Burbank</city>
-      <state>CA</state>
-      <postal>91505</postal>
+      <street>27 Namekagon Circle</street>
+      <city>Baltimore</city>
+      <state>MD</state>
+      <postal>21239</postal>
       <country>United States</country>
-      <latitude>34.169</latitude>
-      <longitude>-118.3442</longitude>
+      <latitude>39.361</latitude>
+      <longitude>-76.5891</longitude>
+    </address>
+    <address>
+      <street>2 David Court</street>
+      <city>Pittsburgh</city>
+      <state>PA</state>
+      <postal>15230</postal>
+      <country>United States</country>
+      <latitude>40.4344</latitude>
+      <longitude>-80.0248</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Mexico</country>
-      <name>Universidad de Comunicación Avanzada</name>
-      <city>Lindavista</city>
-      <state>GRO</state>
-      <postal>40800</postal>
-      <latitude>19.5037694</latitude>
-      <longitude>-99.1324282</longitude>
-    </school>
-    <school>
-      <country>Canada</country>
-      <name>Royal Roads University</name>
-      <city>Pemberton</city>
-      <state>BC</state>
-      <postal>E1W</postal>
-      <latitude>50.31641</latitude>
-      <longitude>-122.80273</longitude>
+      <country>United States</country>
+      <name>University of Connecticut at Avery Point</name>
+      <city>Jackson</city>
+      <state>MS</state>
+      <postal>39204</postal>
+      <latitude>32.2821952</latitude>
+      <longitude>-90.2291565</longitude>
     </school>
   </schools>
   <status>Inactive</status>
   <sources>
     <source>
       <name>Washington Post</name>
-      <ts>2015-08-19T00:11:12Z</ts>
+      <ts>2018-11-02T11:05:14Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>New York Times</name>
+      <ts>2018-02-05T08:20:56Z</ts>
     </source>
   </sources>
   <sources>
     <source>
       <name>Chicago Tribune</name>
-      <ts>2010-01-13T10:10:15Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>Washington Post</name>
-      <ts>2017-04-03T19:05:39Z</ts>
+      <ts>2011-07-28T04:50:26Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10071</id>
+      <id>10066</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
-      <fullname>Bolton Kettie</fullname>
-      <city>Des Moines</city>
-      <state>IA</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Hedditeh Griffith</fullname>
+      <city>Boston</city>
+      <state>MA</state>
     </relation>
     <relation>
-      <id>10030</id>
+      <id>10067</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
-      <fullname>Bend Chiarra</fullname>
-      <city>Clearwater</city>
-      <state>FL</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Gownge Roberto</fullname>
+      <city>Sacramento</city>
+      <state>CA</state>
     </relation>
     <relation>
-      <id>10084</id>
+      <id>10016</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Dommerque Meggie</fullname>
-      <city>Round Rock</city>
-      <state>TX</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Proback Jeno</fullname>
+      <city>Roanoke</city>
+      <state>VA</state>
     </relation>
     <relation>
-      <id>10011</id>
+      <id>10042</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
-      <fullname>Brisley Cirilo</fullname>
-      <city>Miami</city>
-      <state>FL</state>
-    </relation>
-    <relation>
-      <id>10068</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Orchart Beverlee</fullname>
-      <city>Charleston</city>
-      <state>WV</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Ashard Karol</fullname>
+      <city>Shawnee Mission</city>
+      <state>KS</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-03T18:17:56Z</ts>
-    <user>drosello</user>
+    <ts>2022-02-18T07:44:49Z</ts>
+    <user>bpodso</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-30T15:59:16Z</ts>
-    <user>drosello</user>
+    <ts>2022-02-22T23:18:17Z</ts>
+    <user>bpodso</user>
   </lastUpdated>
   <socials>
     <social>
-      <site>twitter</site>
-      <address>https://japanpost.jp/duis/bibendum.png</address>
-    </social>
-    <social>
       <site>facebook</site>
-      <address>http://google.de/pede/malesuada.jpg</address>
+      <address>https://nature.com/orci.xml</address>
+      <handle>gmelmar0</handle>
     </social>
   </socials>
   <memberships>
     <membership>
+      <list>list12</list>
+      <ts>2021-10-14</ts>
+      <important>false</important>
+    </membership>
+    <membership>
+      <list>list7</list>
+      <ts>2020-10-13</ts>
+      <important>false</important>
+    </membership>
+    <membership>
+      <list>list12</list>
+      <ts>2020-04-21</ts>
+      <important>true</important>
+    </membership>
+    <membership>
       <list>list8</list>
+      <ts>2020-11-22</ts>
       <important>false</important>
-      <ts>2019-11-12</ts>
     </membership>
     <membership>
-      <list>list9</list>
-      <important>false</important>
-      <ts>2020-11-19</ts>
+      <list>list11</list>
+      <ts>2020-06-24</ts>
+      <important>true</important>
     </membership>
     <membership>
       <list>list4</list>
-      <important>true</important>
-      <ts>2019-09-26</ts>
-    </membership>
-    <membership>
-      <list>list4</list>
-      <important>true</important>
-      <ts>2019-12-26</ts>
-    </membership>
-    <membership>
-      <list>list5</list>
+      <ts>2022-01-16</ts>
       <important>false</important>
-      <ts>2021-03-09</ts>
     </membership>
   </memberships>
 </person>

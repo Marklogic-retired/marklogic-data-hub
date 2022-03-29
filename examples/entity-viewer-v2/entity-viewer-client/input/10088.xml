@@ -3,192 +3,172 @@
   <personId>10088</personId>
   <nameGroup>
     <givenname>
-      <value>Haily</value>
+      <value>Lynnett</value>
     </givenname>
     <surname>
-      <value>Layton</value>
+      <value>Vlies</value>
     </surname>
     <fullname>
-      <classification>S</classification>
+      <classification>C</classification>
       <restricted>false</restricted>
-      <value>Layton Haily</value>
+      <value>Vlies Lynnett</value>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2010-03-06T18:43:56Z</ts>
+        <name>Chicago Tribune</name>
+        <ts>2015-04-02T04:26:47Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>cstapleford0@ovh.net</value>
+      <value>kwhitford0@comsenz.com</value>
       <classification>U</classification>
       <restricted>false</restricted>
     </email>
+    <email>
+      <value>tgavigan1@techcrunch.com</value>
+      <classification>S</classification>
+      <restricted>false</restricted>
+    </email>
   </emails>
-  <phone>912-232-1094</phone>
+  <phone>593-115-3381</phone>
   <ssn>
-    <value>727-38-6070</value>
+    <value>513-33-3423</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
+      <uploadedBy>zbruff0</uploadedBy>
+      <uploadedOn>2018-01-15T06:30:47Z</uploadedOn>
       <source>
-        <name>USA Today</name>
-        <ts>2020-09-06T00:30:50Z</ts>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2020-01-02T06:16:03Z</ts>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
-      <source>
-        <name>Wall Street Journal</name>
-        <ts>2020-10-28T17:26:31Z</ts>
+        <name>Los Angeles Times</name>
+        <ts>2011-02-16T21:47:39Z</ts>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>25040 Continental Alley</street>
-      <city>Trenton</city>
-      <state>NJ</state>
-      <postal>08603</postal>
-      <country>United States</country>
-      <latitude>40.2805</latitude>
-      <longitude>-74.712</longitude>
-    </address>
-    <address>
-      <street>4 Maple Terrace</street>
-      <city>Brooklyn</city>
+      <street>23504 Cordelia Place</street>
+      <city>Syracuse</city>
       <state>NY</state>
-      <postal>11241</postal>
+      <postal>13205</postal>
       <country>United States</country>
-      <latitude>40.6451</latitude>
-      <longitude>-73.945</longitude>
+      <latitude>43.0123</latitude>
+      <longitude>-76.1452</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>United States</country>
-      <name>Houghton College</name>
-      <city>San Francisco</city>
-      <state>CA</state>
-      <postal>94110</postal>
-      <latitude>37.7485824</latitude>
-      <longitude>-122.4184108</longitude>
+      <country>Mexico</country>
+      <name>Universidad Insurgentes Plantel León</name>
+      <city>20 de Noviembre</city>
+      <state>VER</state>
+      <postal>93828</postal>
+      <latitude>19.4449916</latitude>
+      <longitude>-99.1082647</longitude>
+    </school>
+    <school>
+      <country>Mexico</country>
+      <name>Universidad La Salle</name>
+      <city>Vicente Guerrero</city>
+      <state>PUE</state>
+      <postal>75212</postal>
+      <latitude>32.4865436</latitude>
+      <longitude>-116.8822919</longitude>
     </school>
   </schools>
-  <status>Inactive</status>
-  <sources>
-    <source>
-      <name>Los Angeles Times</name>
-      <ts>2019-11-10T15:14:47Z</ts>
-    </source>
-  </sources>
+  <status>Active</status>
   <sources>
     <source>
       <name>USA Today</name>
-      <ts>2011-11-24T12:03:09Z</ts>
+      <ts>2016-08-15T07:02:56Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>Washington Post</name>
-      <ts>2017-06-01T07:35:17Z</ts>
+      <name>Los Angeles Times</name>
+      <ts>2020-03-26T16:04:48Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10096</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Dell Casa Rora</fullname>
-      <city>Sparks</city>
-      <state>NV</state>
+      <id>10073</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
+      <fullname>Pierrepoint Terrel</fullname>
+      <city>Valley Forge</city>
+      <state>PA</state>
     </relation>
     <relation>
-      <id>10022</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Talby Noella</fullname>
-      <city>Jacksonville</city>
-      <state>FL</state>
-    </relation>
-    <relation>
-      <id>10075</id>
+      <id>10008</id>
       <predicate>livesWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
-      <fullname>Desson Sonny</fullname>
-      <city>Lake Charles</city>
-      <state>LA</state>
+      <fullname>Shreve Osborne</fullname>
+      <city>Jeffersonville</city>
+      <state>IN</state>
     </relation>
     <relation>
-      <id>10025</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
-      <fullname>Rosell Dasie</fullname>
-      <city>Burbank</city>
-      <state>CA</state>
+      <id>10024</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Cristofano Vivien</fullname>
+      <city>Charleston</city>
+      <state>WV</state>
     </relation>
     <relation>
-      <id>10063</id>
+      <id>10005</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
-      <fullname>Insley Hodge</fullname>
-      <city>Greenville</city>
-      <state>SC</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Somerled Kyle</fullname>
+      <city>Decatur</city>
+      <state>GA</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-14T04:30:52Z</ts>
-    <user>hlayton2f</user>
+    <ts>2022-01-26T05:32:48Z</ts>
+    <user>lvlies2f</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-25T10:08:03Z</ts>
-    <user>hlayton2f</user>
+    <ts>2022-02-09T18:16:20Z</ts>
+    <user>lvlies2f</user>
   </lastUpdated>
   <socials>
     <social>
-      <site>twitter</site>
-      <address>http://aol.com/congue/etiam/justo/etiam/pretium/iaculis.html</address>
+      <site>linkedin</site>
+      <address>https://cdbaby.com/posuere/felis/sed/lacus/morbi/sem.aspx</address>
+      <handle>ishafier0</handle>
     </social>
   </socials>
   <memberships>
     <membership>
       <list>list5</list>
+      <ts>2021-04-05</ts>
       <important>false</important>
-      <ts>2021-02-09</ts>
     </membership>
     <membership>
-      <list>list6</list>
-      <important>true</important>
-      <ts>2021-06-24</ts>
+      <list>list2</list>
+      <ts>2020-10-27</ts>
+      <important>false</important>
     </membership>
     <membership>
-      <list>list8</list>
+      <list>list2</list>
+      <ts>2021-06-11</ts>
       <important>true</important>
-      <ts>2020-08-25</ts>
     </membership>
     <membership>
       <list>list4</list>
-      <important>true</important>
-      <ts>2020-11-16</ts>
-    </membership>
-    <membership>
-      <list>list7</list>
-      <important>true</important>
-      <ts>2020-08-25</ts>
-    </membership>
-    <membership>
-      <list>list7</list>
+      <ts>2020-07-01</ts>
       <important>false</important>
-      <ts>2020-06-27</ts>
+    </membership>
+    <membership>
+      <list>list12</list>
+      <ts>2020-12-23</ts>
+      <important>true</important>
+    </membership>
+    <membership>
+      <list>list12</list>
+      <ts>2021-06-03</ts>
+      <important>false</important>
     </membership>
   </memberships>
 </person>

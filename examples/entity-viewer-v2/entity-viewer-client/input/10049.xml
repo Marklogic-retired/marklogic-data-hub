@@ -3,140 +3,115 @@
   <personId>10049</personId>
   <nameGroup>
     <givenname>
-      <value>Daryn</value>
+      <value>Barn</value>
     </givenname>
     <surname>
-      <value>Crosi</value>
+      <value>Wollaston</value>
     </surname>
     <fullname>
-      <classification>C</classification>
+      <classification>U</classification>
       <restricted>true</restricted>
-      <value>Crosi Daryn</value>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2014-05-27T05:44:14Z</ts>
-      </source>
+      <value>Wollaston Barn</value>
       <source>
         <name>USA Today</name>
-        <ts>2017-10-25T06:49:39Z</ts>
+        <ts>2021-07-09T00:52:31Z</ts>
+      </source>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2018-10-18T05:28:14Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>cdillon0@canalblog.com</value>
-      <classification>U</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>bjedrasik1@amazon.com</value>
-      <classification>U</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>pvongladbach2@chron.com</value>
-      <classification>C</classification>
+      <value>gtheurer0@joomla.org</value>
+      <classification>S</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>124-522-9483</phone>
+  <phone>792-745-1556</phone>
   <ssn>
-    <value>650-57-4568</value>
+    <value>513-10-6533</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+      <uploadedBy>docaherny0</uploadedBy>
+      <uploadedOn>2010-02-15T09:13:36Z</uploadedOn>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2019-07-31T23:32:42Z</ts>
+        <name>USA Today</name>
+        <ts>2017-09-07T16:12:33Z</ts>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>1 Weeping Birch Terrace</street>
-      <city>Tacoma</city>
-      <state>WA</state>
-      <postal>98411</postal>
+      <street>92190 4th Terrace</street>
+      <city>Cambridge</city>
+      <state>MA</state>
+      <postal>02142</postal>
       <country>United States</country>
-      <latitude>47.0662</latitude>
-      <longitude>-122.1132</longitude>
-    </address>
-    <address>
-      <street>5391 Portage Place</street>
-      <city>Decatur</city>
-      <state>GA</state>
-      <postal>30089</postal>
-      <country>United States</country>
-      <latitude>33.7749</latitude>
-      <longitude>-84.3046</longitude>
+      <latitude>42.362</latitude>
+      <longitude>-71.083</longitude>
     </address>
   </addresses>
   <schools>
     <school>
       <country>United States</country>
-      <name>California College of Arts and Crafts</name>
-      <city>Alexandria</city>
-      <state>VA</state>
-      <postal>22313</postal>
-      <latitude>38.8</latitude>
-      <longitude>-77.05</longitude>
-    </school>
-    <school>
-      <country>Canada</country>
-      <name>University College of Cape Breton</name>
-      <city>Windsor</city>
-      <state>QC</state>
-      <postal>J1S</postal>
-      <latitude>45.5787215</latitude>
-      <longitude>-72.001055</longitude>
+      <name>Methodist College</name>
+      <city>Newport Beach</city>
+      <state>CA</state>
+      <postal>92662</postal>
+      <latitude>33.6061462</latitude>
+      <longitude>-117.8912117</longitude>
     </school>
   </schools>
   <status>Active</status>
   <sources>
     <source>
-      <name>Chicago Tribune</name>
-      <ts>2012-02-03T17:45:39Z</ts>
+      <name>New York Times</name>
+      <ts>2011-08-30T05:03:06Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Los Angeles Times</name>
+      <ts>2017-03-08T10:15:25Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10017</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
-      <fullname>Cogdon Chev</fullname>
-      <city>Miami</city>
-      <state>FL</state>
+      <id>10016</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Proback Jeno</fullname>
+      <city>Roanoke</city>
+      <state>VA</state>
     </relation>
     <relation>
-      <id>10030</id>
-      <predicate>relatedTo</predicate>
+      <id>10064</id>
+      <predicate>worksWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
-      <fullname>Bend Chiarra</fullname>
-      <city>Clearwater</city>
-      <state>FL</state>
+      <fullname>De Banke Vassily</fullname>
+      <city>Sacramento</city>
+      <state>CA</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-10T04:34:15Z</ts>
-    <user>dcrosi1c</user>
+    <ts>2022-02-17T17:17:00Z</ts>
+    <user>bwollaston1c</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-11T08:31:59Z</ts>
-    <user>dcrosi1c</user>
+    <ts>2022-01-26T14:37:26Z</ts>
+    <user>bwollaston1c</user>
   </lastUpdated>
-  <socials/>
-  <memberships>
-    <membership>
-      <list>list5</list>
-      <important>true</important>
-      <ts>2021-06-25</ts>
-    </membership>
-    <membership>
-      <list>list9</list>
-      <important>true</important>
-      <ts>2019-10-02</ts>
-    </membership>
-  </memberships>
+  <socials>
+    <social>
+      <site>facebook</site>
+      <address>http://go.com/aliquam/sit/amet/diam/in.html</address>
+      <handle>vellin0</handle>
+    </social>
+  </socials>
+  <memberships/>
 </person>

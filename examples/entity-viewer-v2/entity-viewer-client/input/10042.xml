@@ -3,164 +3,214 @@
   <personId>10042</personId>
   <nameGroup>
     <givenname>
-      <value>Charlene</value>
+      <value>Karol</value>
     </givenname>
     <surname>
-      <value>Chastenet</value>
+      <value>Ashard</value>
     </surname>
     <fullname>
-      <classification>S</classification>
-      <restricted>false</restricted>
-      <value>Chastenet Charlene</value>
+      <classification>C</classification>
+      <restricted>true</restricted>
+      <value>Ashard Karol</value>
       <source>
         <name>USA Today</name>
-        <ts>2020-12-23T00:20:22Z</ts>
+        <ts>2020-06-23T13:07:44Z</ts>
       </source>
       <source>
-        <name>USA Today</name>
-        <ts>2010-01-13T16:52:54Z</ts>
-      </source>
-      <source>
-        <name>Wall Street Journal</name>
-        <ts>2016-08-20T15:48:24Z</ts>
+        <name>Chicago Tribune</name>
+        <ts>2010-12-26T19:17:36Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>mnewband0@woothemes.com</value>
+      <value>mbottomer0@google.de</value>
+      <classification>U</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>rhutchason1@flavors.me</value>
       <classification>S</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>etorricella1@accuweather.com</value>
-      <classification>U</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>cayto2@time.com</value>
-      <classification>U</classification>
+      <value>wcrenshaw2@theguardian.com</value>
+      <classification>C</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>166-766-8757</phone>
+  <phone>962-774-1972</phone>
   <ssn>
-    <value>663-23-8030</value>
+    <value>251-74-1503</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+      <uploadedBy/>
+      <uploadedOn>2020-06-11T16:19:38Z</uploadedOn>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2019-08-08T12:43:44Z</ts>
+        <name>USA Today</name>
+        <ts>2012-08-28T11:48:44Z</ts>
       </source>
     </image>
     <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
+      <uploadedBy>gbrenneke1</uploadedBy>
+      <uploadedOn>2015-10-12T07:26:08Z</uploadedOn>
       <source>
-        <name>USA Today</name>
-        <ts>2012-05-26T18:44:19Z</ts>
+        <name>Washington Post</name>
+        <ts>2010-06-28T12:56:29Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
+      <uploadedBy/>
+      <uploadedOn>2011-07-02T06:16:48Z</uploadedOn>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2021-02-06T13:12:46Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <uploadedBy>aolpin3</uploadedBy>
+      <uploadedOn>2010-07-27T11:10:24Z</uploadedOn>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2020-12-14T15:26:51Z</ts>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>0093 Harbort Court</street>
-      <city>Carol Stream</city>
-      <state>IL</state>
-      <postal>60158</postal>
+      <street>00068 Graedel Parkway</street>
+      <city>Shawnee Mission</city>
+      <state>KS</state>
+      <postal>66205</postal>
       <country>United States</country>
-      <latitude>41.9166</latitude>
-      <longitude>-88.1208</longitude>
+      <latitude>39.0312</latitude>
+      <longitude>-94.6308</longitude>
     </address>
     <address>
-      <street>86782 Onsgard Place</street>
-      <city>Chicago</city>
-      <state>IL</state>
-      <postal>60609</postal>
+      <street>87 La Follette Court</street>
+      <city>Danbury</city>
+      <state>CT</state>
+      <postal>06816</postal>
       <country>United States</country>
-      <latitude>41.8097</latitude>
-      <longitude>-87.6533</longitude>
+      <latitude>41.3089</latitude>
+      <longitude>-73.3637</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Canada</country>
-      <name>College of New Caledonia</name>
-      <city>Waterloo</city>
-      <state>QC</state>
-      <postal>V9J</postal>
-      <latitude>45.35008</latitude>
-      <longitude>-72.51582</longitude>
+      <country>Mexico</country>
+      <name>Universidad Obrera de Mexico</name>
+      <city>Vista Hermosa</city>
+      <state>GRO</state>
+      <postal>39130</postal>
+      <latitude>17.7855637</latitude>
+      <longitude>-99.9792312</longitude>
     </school>
     <school>
       <country>Mexico</country>
-      <name>Instituto Tecnologico de Durango</name>
-      <city>Santa Elena</city>
-      <state>COA</state>
-      <postal>30807</postal>
-      <latitude>20.3278427</latitude>
-      <longitude>-89.6440716</longitude>
+      <name>Universidad Autónoma Metropolitana - Xochimilco</name>
+      <city>La Esperanza</city>
+      <state>MIC</state>
+      <postal>58337</postal>
+      <latitude>27.5800122</latitude>
+      <longitude>-109.9297789</longitude>
     </school>
   </schools>
-  <status>Active</status>
+  <status>Inactive</status>
   <sources>
     <source>
-      <name>Los Angeles Times</name>
-      <ts>2019-10-16T01:10:13Z</ts>
+      <name>Chicago Tribune</name>
+      <ts>2016-05-28T12:54:37Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Washington Post</name>
+      <ts>2021-09-12T10:12:40Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Washington Post</name>
+      <ts>2012-03-13T19:04:27Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10071</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
-      <fullname>Bolton Kettie</fullname>
-      <city>Des Moines</city>
-      <state>IA</state>
-    </relation>
-    <relation>
-      <id>10034</id>
+      <id>10100</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
-      <fullname>Cabrara Kesley</fullname>
-      <city>Woburn</city>
-      <state>MA</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Martensen Annalee</fullname>
+      <city>Greensboro</city>
+      <state>NC</state>
     </relation>
     <relation>
-      <id>10064</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Blurton Faydra</fullname>
-      <city>Beaumont</city>
-      <state>TX</state>
+      <id>10081</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Dearden Keen</fullname>
+      <city>Dayton</city>
+      <state>OH</state>
+    </relation>
+    <relation>
+      <id>10092</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
+      <fullname>Mettetal Claresta</fullname>
+      <city>San Diego</city>
+      <state>CA</state>
+    </relation>
+    <relation>
+      <id>10057</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
+      <fullname>Giraudou Patrica</fullname>
+      <city>Carson City</city>
+      <state>NV</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-22T00:30:41Z</ts>
-    <user>cchastenet15</user>
+    <ts>2022-01-22T06:54:48Z</ts>
+    <user>kashard15</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-01T05:44:27Z</ts>
-    <user>cchastenet15</user>
+    <ts>2022-02-24T16:36:21Z</ts>
+    <user>kashard15</user>
   </lastUpdated>
   <socials>
-    <social>
-      <site>facebook</site>
-      <address>http://pen.io/hac/habitasse/platea/dictumst/etiam.png</address>
-    </social>
+    <social/>
   </socials>
   <memberships>
     <membership>
-      <list>list3</list>
+      <list>list7</list>
+      <ts>2021-07-07</ts>
       <important>true</important>
-      <ts>2019-05-10</ts>
     </membership>
     <membership>
-      <list>list5</list>
+      <list>list3</list>
+      <ts>2021-04-14</ts>
+      <important>true</important>
+    </membership>
+    <membership>
+      <list>list9</list>
+      <ts>2020-10-09</ts>
+      <important>true</important>
+    </membership>
+    <membership>
+      <list>list3</list>
+      <ts>2021-05-02</ts>
       <important>false</important>
-      <ts>2020-04-16</ts>
+    </membership>
+    <membership>
+      <list>list4</list>
+      <ts>2021-05-12</ts>
+      <important>false</important>
     </membership>
   </memberships>
 </person>

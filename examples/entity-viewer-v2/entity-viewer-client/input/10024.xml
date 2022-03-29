@@ -3,181 +3,159 @@
   <personId>10024</personId>
   <nameGroup>
     <givenname>
-      <value>Joyan</value>
+      <value>Vivien</value>
     </givenname>
     <surname>
-      <value>Simenel</value>
+      <value>Cristofano</value>
     </surname>
     <fullname>
       <classification>C</classification>
-      <restricted>false</restricted>
-      <value>Simenel Joyan</value>
+      <restricted>true</restricted>
+      <value>Cristofano Vivien</value>
       <source>
         <name>Washington Post</name>
-        <ts>2021-12-16T04:40:54Z</ts>
+        <ts>2017-07-23T02:56:54Z</ts>
       </source>
       <source>
         <name>Los Angeles Times</name>
-        <ts>2015-12-19T01:30:37Z</ts>
-      </source>
-      <source>
-        <name>USA Today</name>
-        <ts>2017-07-13T04:25:48Z</ts>
+        <ts>2017-09-01T00:46:12Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>jgreensitt0@boston.com</value>
+      <value>droberto0@acquirethisname.com</value>
+      <classification>C</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>mdibner1@infoseek.co.jp</value>
       <classification>S</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>278-332-4594</phone>
+  <phone>795-368-6521</phone>
   <ssn>
-    <value>500-78-4501</value>
+    <value>389-33-6412</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
+      <uploadedBy/>
+      <uploadedOn>2010-09-29T17:34:05Z</uploadedOn>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2010-01-11T18:12:29Z</ts>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
-      <source>
-        <name>Los Angeles Times</name>
-        <ts>2015-04-11T22:33:58Z</ts>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
-      <source>
-        <name>USA Today</name>
-        <ts>2020-04-11T19:03:46Z</ts>
+        <name>Washington Post</name>
+        <ts>2013-06-21T00:29:30Z</ts>
       </source>
     </image>
     <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
+      <uploadedBy>sfronks1</uploadedBy>
+      <uploadedOn>2014-04-11T23:27:54Z</uploadedOn>
       <source>
         <name>Wall Street Journal</name>
-        <ts>2017-07-15T12:32:28Z</ts>
+        <ts>2014-07-20T13:32:15Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
+      <uploadedBy>jsacco2</uploadedBy>
+      <uploadedOn>2012-05-09T02:21:34Z</uploadedOn>
+      <source>
+        <name>USA Today</name>
+        <ts>2016-09-07T16:21:32Z</ts>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>323 Lerdahl Avenue</street>
-      <city>El Paso</city>
-      <state>TX</state>
-      <postal>88569</postal>
+      <street>3 Bartelt Circle</street>
+      <city>Charleston</city>
+      <state>WV</state>
+      <postal>25305</postal>
       <country>United States</country>
-      <latitude>31.6948</latitude>
-      <longitude>-106.3</longitude>
-    </address>
-    <address>
-      <street>5681 Division Point</street>
-      <city>San Jose</city>
-      <state>CA</state>
-      <postal>95155</postal>
-      <country>United States</country>
-      <latitude>37.31</latitude>
-      <longitude>-121.9011</longitude>
+      <latitude>38.3358</latitude>
+      <longitude>-81.6123</longitude>
     </address>
   </addresses>
   <schools>
     <school>
       <country>Mexico</country>
-      <name>Universidad Autonoma  de Durango</name>
-      <city>Benito Juarez</city>
+      <name>Universidad Autónoma de la Ciudad de México</name>
+      <city>Emiliano Zapata</city>
       <state>VER</state>
-      <postal>95422</postal>
-      <latitude>19.4102526</latitude>
-      <longitude>-99.0073673</longitude>
+      <postal>96818</postal>
+      <latitude>18.8478608</latitude>
+      <longitude>-99.1843676</longitude>
     </school>
     <school>
-      <country>United States</country>
-      <name>Virginia College</name>
-      <city>Schenectady</city>
-      <state>NY</state>
-      <postal>12305</postal>
-      <latitude>42.8129576</latitude>
-      <longitude>-73.9447994</longitude>
+      <country>Mexico</country>
+      <name>Universidad de San Miguel</name>
+      <city>San Lorenzo</city>
+      <state>MEX</state>
+      <postal>56190</postal>
+      <latitude>19.5056005</latitude>
+      <longitude>-98.882461</longitude>
     </school>
   </schools>
-  <status>Active</status>
+  <status>Inactive</status>
   <sources>
     <source>
-      <name>USA Today</name>
-      <ts>2018-04-27T06:38:48Z</ts>
+      <name>Wall Street Journal</name>
+      <ts>2019-12-29T18:38:20Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10045</id>
+      <id>10035</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
-      <fullname>Hindhaugh Thatcher</fullname>
-      <city>Littleton</city>
-      <state>CO</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
+      <fullname>Gajownik Madelaine</fullname>
+      <city>Fort Worth</city>
+      <state>TX</state>
     </relation>
     <relation>
-      <id>10089</id>
+      <id>10095</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Durnford Neal</fullname>
-      <city>New Haven</city>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Verzey Vonni</fullname>
+      <city>Albuquerque</city>
+      <state>NM</state>
+    </relation>
+    <relation>
+      <id>10093</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Dunkley Daren</fullname>
+      <city>Bridgeport</city>
       <state>CT</state>
     </relation>
     <relation>
-      <id>10098</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
-      <fullname>McLachlan Hermon</fullname>
-      <city>Seattle</city>
-      <state>WA</state>
-    </relation>
-    <relation>
-      <id>10040</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Serjeant Vivyanne</fullname>
-      <city>Chattanooga</city>
-      <state>TN</state>
+      <id>10047</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Moffat John</fullname>
+      <city>El Paso</city>
+      <state>TX</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-07T17:30:20Z</ts>
-    <user>jsimeneln</user>
+    <ts>2022-01-06T09:11:27Z</ts>
+    <user>vcristofanon</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-08T12:42:26Z</ts>
-    <user>jsimeneln</user>
+    <ts>2022-01-30T03:41:38Z</ts>
+    <user>vcristofanon</user>
   </lastUpdated>
   <socials>
-    <social>
-      <site>twitter</site>
-      <address>https://mayoclinic.com/turpis/elementum.aspx</address>
-    </social>
+    <social/>
   </socials>
   <memberships>
     <membership>
-      <list>list11</list>
-      <important>false</important>
-      <ts>2019-05-11</ts>
-    </membership>
-    <membership>
-      <list>list10</list>
+      <list>list8</list>
+      <ts>2020-04-11</ts>
       <important>true</important>
-      <ts>2021-05-13</ts>
-    </membership>
-    <membership>
-      <list>list12</list>
-      <important>true</important>
-      <ts>2020-12-12</ts>
     </membership>
   </memberships>
 </person>

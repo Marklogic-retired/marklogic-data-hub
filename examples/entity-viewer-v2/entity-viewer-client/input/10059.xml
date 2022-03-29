@@ -3,142 +3,175 @@
   <personId>10059</personId>
   <nameGroup>
     <givenname>
-      <value>Jermayne</value>
+      <value>Wright</value>
     </givenname>
     <surname>
-      <value>Bedson</value>
+      <value>Sinnatt</value>
     </surname>
     <fullname>
-      <classification>S</classification>
-      <restricted>false</restricted>
-      <value>Bedson Jermayne</value>
+      <classification>U</classification>
+      <restricted>true</restricted>
+      <value>Sinnatt Wright</value>
       <source>
         <name>Los Angeles Times</name>
-        <ts>2019-12-09T09:50:14Z</ts>
+        <ts>2021-07-18T11:44:39Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>mdacombe0@ibm.com</value>
-      <classification>C</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>eschwaiger1@yahoo.co.jp</value>
+      <value>bwalkington0@berkeley.edu</value>
       <classification>S</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>609-596-2079</phone>
+  <phone>656-337-1563</phone>
   <ssn>
-    <value>747-43-7640</value>
+    <value>587-90-6732</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
+      <uploadedBy>ijamieson0</uploadedBy>
+      <uploadedOn>2019-10-29T21:54:17Z</uploadedOn>
       <source>
         <name>Wall Street Journal</name>
-        <ts>2015-06-13T23:20:04Z</ts>
+        <ts>2020-09-30T11:18:56Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
+      <uploadedBy>driccard1</uploadedBy>
+      <uploadedOn>2020-04-27T14:45:14Z</uploadedOn>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2013-01-29T05:39:24Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+      <uploadedBy>khrishchenko2</uploadedBy>
+      <uploadedOn>2013-05-05T00:18:26Z</uploadedOn>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2014-02-28T20:28:23Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
+      <uploadedBy>hmembry3</uploadedBy>
+      <uploadedOn>2020-05-28T05:15:08Z</uploadedOn>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2016-03-14T02:49:44Z</ts>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>77290 Thompson Drive</street>
-      <city>Saint Paul</city>
-      <state>MN</state>
-      <postal>55166</postal>
+      <street>9 Sheridan Point</street>
+      <city>Pittsburgh</city>
+      <state>PA</state>
+      <postal>15205</postal>
       <country>United States</country>
-      <latitude>45.0059</latitude>
-      <longitude>-93.1059</longitude>
+      <latitude>40.4322</latitude>
+      <longitude>-80.1021</longitude>
+    </address>
+    <address>
+      <street>12848 Hooker Alley</street>
+      <city>Prescott</city>
+      <state>AZ</state>
+      <postal>86305</postal>
+      <country>United States</country>
+      <latitude>34.8185</latitude>
+      <longitude>-112.9584</longitude>
+    </address>
+    <address>
+      <street>8 Fair Oaks Alley</street>
+      <city>Charleston</city>
+      <state>WV</state>
+      <postal>25362</postal>
+      <country>United States</country>
+      <latitude>38.2968</latitude>
+      <longitude>-81.5547</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>United States</country>
-      <name>Palmer College of Chiropractic West</name>
-      <city>Dallas</city>
-      <state>TX</state>
-      <postal>75310</postal>
-      <latitude>44.934021</latitude>
-      <longitude>-123.3072848</longitude>
+      <country>Canada</country>
+      <name>Université de Montréal</name>
+      <city>Les Coteaux</city>
+      <state>QC</state>
+      <postal>J7X</postal>
+      <latitude>45.2645197</latitude>
+      <longitude>-74.2176156</longitude>
     </school>
   </schools>
   <status>Inactive</status>
   <sources>
     <source>
-      <name>New York Times</name>
-      <ts>2021-06-30T07:05:01Z</ts>
+      <name>Los Angeles Times</name>
+      <ts>2018-12-29T21:50:28Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>Washington Post</name>
-      <ts>2013-08-04T22:58:53Z</ts>
+      <name>USA Today</name>
+      <ts>2013-07-04T23:18:03Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10069</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Crips Ollie</fullname>
-      <city>Lexington</city>
-      <state>KY</state>
+      <id>10043</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Montgomery Gwenneth</fullname>
+      <city>San Francisco</city>
+      <state>CA</state>
     </relation>
     <relation>
-      <id>10086</id>
+      <id>10076</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
-      <fullname>Gowthrop Pansy</fullname>
-      <city>Dayton</city>
-      <state>OH</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
+      <fullname>Traite Harman</fullname>
+      <city>Reno</city>
+      <state>NV</state>
+    </relation>
+    <relation>
+      <id>10098</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Perfitt Cullan</fullname>
+      <city>Norwalk</city>
+      <state>CT</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-18T14:03:15Z</ts>
-    <user>jbedson1m</user>
+    <ts>2022-01-20T01:22:46Z</ts>
+    <user>wsinnatt1m</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-08T04:17:15Z</ts>
-    <user>jbedson1m</user>
+    <ts>2022-01-06T04:54:39Z</ts>
+    <user>wsinnatt1m</user>
   </lastUpdated>
   <socials>
     <social>
-      <site>twitter</site>
-      <address>https://dmoz.org/sit/amet/erat/nulla/tempus/vivamus/in.aspx</address>
-    </social>
-    <social>
       <site>linkedin</site>
-      <address>http://printfriendly.com/viverra/dapibus/nulla/suscipit/ligula/in.jsp</address>
+      <address>https://google.pl/tellus/semper.xml</address>
+      <handle>vwhalebelly0</handle>
     </social>
     <social>
-      <site>twitter</site>
-      <address>http://globo.com/hac/habitasse/platea/dictumst.json</address>
+      <site>facebook</site>
+      <address>http://tinypic.com/justo/in.jsp</address>
+      <handle>vpelcheur1</handle>
     </social>
   </socials>
   <memberships>
     <membership>
-      <list>list11</list>
-      <important>false</important>
-      <ts>2019-02-26</ts>
-    </membership>
-    <membership>
-      <list>list1</list>
+      <list>list9</list>
+      <ts>2021-06-11</ts>
       <important>true</important>
-      <ts>2020-04-22</ts>
-    </membership>
-    <membership>
-      <list>list3</list>
-      <important>true</important>
-      <ts>2021-03-25</ts>
-    </membership>
-    <membership>
-      <list>list5</list>
-      <important>true</important>
-      <ts>2019-10-02</ts>
     </membership>
   </memberships>
 </person>

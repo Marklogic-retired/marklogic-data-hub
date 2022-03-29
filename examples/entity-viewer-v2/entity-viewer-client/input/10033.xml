@@ -3,165 +3,157 @@
   <personId>10033</personId>
   <nameGroup>
     <givenname>
-      <value>Constanta</value>
+      <value>Trina</value>
     </givenname>
     <surname>
-      <value>Liddington</value>
+      <value>Hablet</value>
     </surname>
     <fullname>
-      <classification>S</classification>
+      <classification>U</classification>
       <restricted>false</restricted>
-      <value>Liddington Constanta</value>
+      <value>Hablet Trina</value>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2020-05-14T13:12:05Z</ts>
+        <name>USA Today</name>
+        <ts>2021-06-18T00:12:14Z</ts>
+      </source>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2013-10-19T16:00:02Z</ts>
+      </source>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2010-02-01T13:12:58Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>lrixon0@rambler.ru</value>
-      <classification>U</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>dgilligan1@cnn.com</value>
+      <value>uwestell0@tinypic.com</value>
       <classification>S</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>108-626-8235</phone>
+  <phone>787-731-6917</phone>
   <ssn>
-    <value>188-90-1681</value>
+    <value>608-23-1175</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+      <uploadedBy/>
+      <uploadedOn>2020-09-06T22:55:13Z</uploadedOn>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2015-04-18T16:50:10Z</ts>
+        <name>USA Today</name>
+        <ts>2018-10-25T04:57:55Z</ts>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+      <uploadedBy>aalbers1</uploadedBy>
+      <uploadedOn>2018-04-11T08:17:37Z</uploadedOn>
       <source>
-        <name>USA Today</name>
-        <ts>2010-07-27T13:12:52Z</ts>
+        <name>New York Times</name>
+        <ts>2017-12-15T10:17:40Z</ts>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>2 Towne Street</street>
-      <city>Des Moines</city>
-      <state>IA</state>
-      <postal>50335</postal>
+      <street>962 Hovde Way</street>
+      <city>Denver</city>
+      <state>CO</state>
+      <postal>80291</postal>
       <country>United States</country>
-      <latitude>41.6727</latitude>
-      <longitude>-93.5722</longitude>
+      <latitude>39.7439</latitude>
+      <longitude>-104.9876</longitude>
     </address>
     <address>
-      <street>9497 Sommers Lane</street>
-      <city>Fort Worth</city>
-      <state>TX</state>
-      <postal>76115</postal>
+      <street>16051 Heffernan Hill</street>
+      <city>San Mateo</city>
+      <state>CA</state>
+      <postal>94405</postal>
       <country>United States</country>
-      <latitude>32.6796</latitude>
-      <longitude>-97.3336</longitude>
+      <latitude>37.3811</latitude>
+      <longitude>-122.3348</longitude>
+    </address>
+    <address>
+      <street>75691 Northview Hill</street>
+      <city>Dayton</city>
+      <state>OH</state>
+      <postal>45426</postal>
+      <country>United States</country>
+      <latitude>39.7982</latitude>
+      <longitude>-84.3211</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Canada</country>
-      <name>Langara College</name>
-      <city>L'Île-Perrot</city>
-      <state>QC</state>
-      <postal>H9X</postal>
-      <latitude>45.4235609</latitude>
-      <longitude>-73.9319061</longitude>
+      <country>United States</country>
+      <name>Bates College</name>
+      <city>Durham</city>
+      <state>NC</state>
+      <postal>27705</postal>
+      <latitude>36.025609</latitude>
+      <longitude>-78.9853813</longitude>
     </school>
   </schools>
-  <status>Active</status>
+  <status>Inactive</status>
   <sources>
     <source>
-      <name>Washington Post</name>
-      <ts>2013-07-11T12:00:09Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>Los Angeles Times</name>
-      <ts>2017-11-02T13:24:47Z</ts>
+      <name>Wall Street Journal</name>
+      <ts>2015-11-23T15:58:23Z</ts>
     </source>
   </sources>
   <sources>
     <source>
       <name>Wall Street Journal</name>
-      <ts>2018-08-22T19:17:41Z</ts>
+      <ts>2012-01-25T07:39:39Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10054</id>
+      <id>10053</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Chessell Skye</fullname>
-      <city>Chicago</city>
-      <state>IL</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Arrell Allys</fullname>
+      <city>Detroit</city>
+      <state>MI</state>
     </relation>
     <relation>
-      <id>10077</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
-      <fullname>Alforde Dougie</fullname>
-      <city>Abilene</city>
-      <state>TX</state>
-    </relation>
-    <relation>
-      <id>10078</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
-      <fullname>McNish Guy</fullname>
-      <city>New Orleans</city>
-      <state>LA</state>
-    </relation>
-    <relation>
-      <id>10027</id>
+      <id>10056</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Kelby Karleen</fullname>
-      <city>Hialeah</city>
-      <state>FL</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Kynston Karlene</fullname>
+      <city>Shreveport</city>
+      <state>LA</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-03T07:25:54Z</ts>
-    <user>cliddingtonw</user>
+    <ts>2022-02-20T16:28:56Z</ts>
+    <user>thabletw</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-11T11:54:45Z</ts>
-    <user>cliddingtonw</user>
+    <ts>2022-01-29T20:56:27Z</ts>
+    <user>thabletw</user>
   </lastUpdated>
   <socials>
     <social>
       <site>twitter</site>
-      <address>http://e-recht24.de/eget.png</address>
+      <address>http://newsvine.com/nunc/donec/quis/orci/eget.jsp</address>
+      <handle>cswale0</handle>
     </social>
     <social>
-      <site>facebook</site>
-      <address>https://e-recht24.de/turpis/integer/aliquet/massa/id.json</address>
-    </social>
-    <social>
-      <site>twitter</site>
-      <address>https://pagesperso-orange.fr/sem/duis.xml</address>
+      <site>linkedin</site>
+      <address>https://blogger.com/phasellus/id/sapien/in/sapien.html</address>
+      <handle>cknell1</handle>
     </social>
   </socials>
   <memberships>
     <membership>
-      <list>list9</list>
-      <important>true</important>
-      <ts>2019-07-30</ts>
+      <list>list3</list>
+      <ts>2020-12-20</ts>
+      <important>false</important>
     </membership>
   </memberships>
 </person>

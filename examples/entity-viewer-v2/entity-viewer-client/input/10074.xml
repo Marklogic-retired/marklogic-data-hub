@@ -3,194 +3,160 @@
   <personId>10074</personId>
   <nameGroup>
     <givenname>
-      <value>Willie</value>
+      <value>Nadine</value>
     </givenname>
     <surname>
-      <value>Ties</value>
+      <value>Kondratovich</value>
     </surname>
     <fullname>
       <classification>S</classification>
       <restricted>false</restricted>
-      <value>Ties Willie</value>
+      <value>Kondratovich Nadine</value>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2020-08-24T16:11:57Z</ts>
+        <name>USA Today</name>
+        <ts>2016-01-02T17:03:49Z</ts>
       </source>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2010-11-10T15:47:18Z</ts>
+        <name>Los Angeles Times</name>
+        <ts>2020-02-14T04:21:32Z</ts>
+      </source>
+      <source>
+        <name>Washington Post</name>
+        <ts>2014-03-22T07:57:58Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>jbridgman0@wordpress.org</value>
+      <value>awakefield0@ebay.co.uk</value>
       <classification>U</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>mlaviste1@webnode.com</value>
-      <classification>U</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>sspurling2@pbs.org</value>
+      <value>dtamas1@is.gd</value>
       <classification>U</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>538-875-7608</phone>
+  <phone>926-240-4851</phone>
   <ssn>
-    <value>859-91-5653</value>
+    <value>699-70-0497</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
+      <uploadedBy>fcrowdson0</uploadedBy>
+      <uploadedOn>2010-09-26T05:55:14Z</uploadedOn>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2015-09-04T13:26:54Z</ts>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
-      <source>
-        <name>New York Times</name>
-        <ts>2016-04-20T17:33:54Z</ts>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
-      <source>
-        <name>Wall Street Journal</name>
-        <ts>2013-06-20T04:32:02Z</ts>
+        <name>Chicago Tribune</name>
+        <ts>2017-03-06T09:03:49Z</ts>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>921 Forster Plaza</street>
-      <city>Springfield</city>
-      <state>IL</state>
-      <postal>62718</postal>
+      <street>20 Division Court</street>
+      <city>Kansas City</city>
+      <state>MO</state>
+      <postal>64130</postal>
       <country>United States</country>
-      <latitude>39.778</latitude>
-      <longitude>-89.6466</longitude>
+      <latitude>39.0351</latitude>
+      <longitude>-94.5467</longitude>
     </address>
     <address>
-      <street>3124 Burning Wood Circle</street>
-      <city>Nashville</city>
-      <state>TN</state>
-      <postal>37235</postal>
+      <street>78427 Melrose Point</street>
+      <city>West Palm Beach</city>
+      <state>FL</state>
+      <postal>33421</postal>
       <country>United States</country>
-      <latitude>36.1866</latitude>
-      <longitude>-86.7852</longitude>
+      <latitude>26.6459</latitude>
+      <longitude>-80.4303</longitude>
     </address>
     <address>
-      <street>93 Holmberg Avenue</street>
-      <city>Sioux Falls</city>
-      <state>SD</state>
-      <postal>57188</postal>
+      <street>2634 Shelley Road</street>
+      <city>Orlando</city>
+      <state>FL</state>
+      <postal>32830</postal>
       <country>United States</country>
-      <latitude>43.6746</latitude>
-      <longitude>-96.7913</longitude>
+      <latitude>28.3822</latitude>
+      <longitude>-81.569</longitude>
     </address>
   </addresses>
   <schools>
     <school>
       <country>Mexico</country>
-      <name>Universidad México Americana del Norte</name>
-      <city>San Antonio</city>
-      <state>SLP</state>
-      <postal>78436</postal>
-      <latitude>19.4805668</latitude>
-      <longitude>-99.2058279</longitude>
+      <name>Universidad de Quintana Roo</name>
+      <city>Lazaro Cardenas</city>
+      <state>OAX</state>
+      <postal>69800</postal>
+      <latitude>17.9567646</latitude>
+      <longitude>-102.1943485</longitude>
     </school>
   </schools>
-  <status>Inactive</status>
-  <sources>
-    <source>
-      <name>Wall Street Journal</name>
-      <ts>2015-10-14T07:25:23Z</ts>
-    </source>
-  </sources>
+  <status>Active</status>
   <sources>
     <source>
       <name>Los Angeles Times</name>
-      <ts>2016-09-21T20:50:05Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>New York Times</name>
-      <ts>2018-10-02T20:43:59Z</ts>
+      <ts>2015-04-03T11:36:13Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10046</id>
+      <id>10069</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Slee Lidia</fullname>
-      <city>Omaha</city>
-      <state>NE</state>
-    </relation>
-    <relation>
-      <id>10015</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Fretson Lief</fullname>
-      <city>Idaho Falls</city>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Curgenven Wallie</fullname>
+      <city>Boise</city>
       <state>ID</state>
     </relation>
     <relation>
-      <id>10013</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Bend Mychal</fullname>
-      <city>Oakland</city>
+      <id>10046</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
+      <fullname>Demogeot Nerty</fullname>
+      <city>Trenton</city>
+      <state>NJ</state>
+    </relation>
+    <relation>
+      <id>10041</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
+      <fullname>Tompkiss Carine</fullname>
+      <city>Los Angeles</city>
       <state>CA</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-20T07:49:43Z</ts>
-    <user>wties21</user>
+    <ts>2022-01-25T02:55:03Z</ts>
+    <user>nkondratovich21</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-21T19:07:33Z</ts>
-    <user>wties21</user>
+    <ts>2022-01-26T09:49:10Z</ts>
+    <user>nkondratovich21</user>
   </lastUpdated>
-  <socials/>
+  <socials>
+    <social>
+      <site>facebook</site>
+      <address>https://nhs.uk/erat.xml</address>
+      <handle>imulrean0</handle>
+    </social>
+    <social>
+      <site>linkedin</site>
+      <address>http://economist.com/maecenas.jsp</address>
+      <handle>eslyford1</handle>
+    </social>
+    <social>
+      <site>facebook</site>
+      <address>https://techcrunch.com/vitae/quam.aspx</address>
+      <handle>lreedman2</handle>
+    </social>
+  </socials>
   <memberships>
     <membership>
       <list>list7</list>
+      <ts>2020-08-26</ts>
       <important>true</important>
-      <ts>2020-05-12</ts>
-    </membership>
-    <membership>
-      <list>list3</list>
-      <important>true</important>
-      <ts>2021-12-09</ts>
-    </membership>
-    <membership>
-      <list>list8</list>
-      <important>false</important>
-      <ts>2021-02-27</ts>
-    </membership>
-    <membership>
-      <list>list4</list>
-      <important>false</important>
-      <ts>2021-09-04</ts>
-    </membership>
-    <membership>
-      <list>list12</list>
-      <important>false</important>
-      <ts>2020-06-04</ts>
-    </membership>
-    <membership>
-      <list>list10</list>
-      <important>true</important>
-      <ts>2020-12-14</ts>
     </membership>
   </memberships>
 </person>

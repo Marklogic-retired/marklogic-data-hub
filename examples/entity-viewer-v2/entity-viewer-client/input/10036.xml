@@ -3,190 +3,156 @@
   <personId>10036</personId>
   <nameGroup>
     <givenname>
-      <value>Devonne</value>
+      <value>Rafi</value>
     </givenname>
     <surname>
-      <value>Coleyshaw</value>
+      <value>Ravens</value>
     </surname>
     <fullname>
       <classification>S</classification>
-      <restricted>false</restricted>
-      <value>Coleyshaw Devonne</value>
-      <source>
-        <name>Washington Post</name>
-        <ts>2020-11-11T16:56:00Z</ts>
-      </source>
+      <restricted>true</restricted>
+      <value>Ravens Rafi</value>
       <source>
         <name>USA Today</name>
-        <ts>2020-05-27T10:39:55Z</ts>
+        <ts>2013-04-03T20:05:23Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>amccully0@skype.com</value>
-      <classification>U</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>adennitts1@shareasale.com</value>
-      <classification>U</classification>
+      <value>ccastelletto0@sciencedaily.com</value>
+      <classification>C</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>342-151-1072</phone>
+  <phone>456-563-2002</phone>
   <ssn>
-    <value>831-03-5005</value>
+    <value>643-41-9807</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2010-01-22T11:24:23Z</ts>
-      </source>
-    </image>
-    <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
+      <uploadedBy>anotton0</uploadedBy>
+      <uploadedOn>2015-11-12T02:56:19Z</uploadedOn>
       <source>
-        <name>New York Times</name>
-        <ts>2016-05-27T17:33:13Z</ts>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
-      <source>
-        <name>Wall Street Journal</name>
-        <ts>2019-07-11T16:17:14Z</ts>
+        <name>Los Angeles Times</name>
+        <ts>2021-06-03T13:53:03Z</ts>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>1070 2nd Court</street>
-      <city>Atlanta</city>
-      <state>GA</state>
-      <postal>31132</postal>
+      <street>25 Algoma Terrace</street>
+      <city>Ocala</city>
+      <state>FL</state>
+      <postal>34479</postal>
       <country>United States</country>
-      <latitude>33.7488</latitude>
-      <longitude>-84.3883</longitude>
+      <latitude>29.2541</latitude>
+      <longitude>-82.1095</longitude>
     </address>
     <address>
-      <street>50300 Rowland Way</street>
-      <city>Laredo</city>
-      <state>TX</state>
-      <postal>78044</postal>
+      <street>1 Dottie Plaza</street>
+      <city>Memphis</city>
+      <state>TN</state>
+      <postal>38119</postal>
       <country>United States</country>
-      <latitude>27.3637</latitude>
-      <longitude>-99.4819</longitude>
-    </address>
-    <address>
-      <street>01088 Grasskamp Road</street>
-      <city>South Bend</city>
-      <state>IN</state>
-      <postal>46614</postal>
-      <country>United States</country>
-      <latitude>41.6255</latitude>
-      <longitude>-86.2433</longitude>
+      <latitude>35.0821</latitude>
+      <longitude>-89.8501</longitude>
     </address>
   </addresses>
   <schools>
     <school>
       <country>United States</country>
-      <name>Indiana University - East</name>
-      <city>Corpus Christi</city>
-      <state>TX</state>
-      <postal>78405</postal>
-      <latitude>27.7772091</latitude>
-      <longitude>-97.4435441</longitude>
+      <name>Southwestern Adventist University</name>
+      <city>Richmond</city>
+      <state>VA</state>
+      <postal>23277</postal>
+      <latitude>37.9414132</latitude>
+      <longitude>-77.3472943</longitude>
+    </school>
+    <school>
+      <country>Canada</country>
+      <name>Luther College</name>
+      <city>Stonewall</city>
+      <state>MB</state>
+      <postal>H9J</postal>
+      <latitude>50.13441</latitude>
+      <longitude>-97.32676</longitude>
     </school>
   </schools>
   <status>Inactive</status>
   <sources>
     <source>
-      <name>USA Today</name>
-      <ts>2021-12-24T02:59:53Z</ts>
+      <name>Chicago Tribune</name>
+      <ts>2017-06-18T13:43:55Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>Chicago Tribune</name>
-      <ts>2012-02-24T20:37:39Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>Chicago Tribune</name>
-      <ts>2010-05-01T01:54:15Z</ts>
+      <name>Los Angeles Times</name>
+      <ts>2016-02-29T16:32:56Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10001</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Cisco Felicdad</fullname>
-      <city>Washington</city>
-      <state>DC</state>
+      <id>10040</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
+      <fullname>Dayley Vivi</fullname>
+      <city>Omaha</city>
+      <state>NE</state>
     </relation>
     <relation>
-      <id>10062</id>
+      <id>10059</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
-      <fullname>Welbeck Morna</fullname>
-      <city>San Diego</city>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
+      <fullname>Sinnatt Wright</fullname>
+      <city>Pittsburgh</city>
+      <state>PA</state>
+    </relation>
+    <relation>
+      <id>10079</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Feltoe Currey</fullname>
+      <city>Chula Vista</city>
       <state>CA</state>
     </relation>
     <relation>
-      <id>10023</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Nardoni Ruddie</fullname>
-      <city>Gainesville</city>
-      <state>FL</state>
-    </relation>
-    <relation>
-      <id>10066</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
-      <fullname>Lobley Emmy</fullname>
-      <city>Brooklyn</city>
-      <state>NY</state>
-    </relation>
-    <relation>
-      <id>10007</id>
+      <id>10078</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Bellino Timothy</fullname>
-      <city>Dallas</city>
-      <state>TX</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
+      <fullname>Phebey Irma</fullname>
+      <city>Spokane</city>
+      <state>WA</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-02T16:37:50Z</ts>
-    <user>dcoleyshawz</user>
+    <ts>2022-01-01T10:25:22Z</ts>
+    <user>rravensz</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-22T13:49:12Z</ts>
-    <user>dcoleyshawz</user>
+    <ts>2022-02-03T08:15:38Z</ts>
+    <user>rravensz</user>
   </lastUpdated>
-  <socials/>
+  <socials>
+    <social>
+      <site>facebook</site>
+      <address>https://blogger.com/tincidunt/lacus/at/velit.png</address>
+      <handle>mkorting0</handle>
+    </social>
+    <social>
+      <site>twitter</site>
+      <address>http://qq.com/pretium/nisl/ut/volutpat.json</address>
+      <handle>jchidley1</handle>
+    </social>
+  </socials>
   <memberships>
     <membership>
-      <list>list8</list>
+      <list>list5</list>
+      <ts>2020-11-12</ts>
       <important>true</important>
-      <ts>2019-08-07</ts>
-    </membership>
-    <membership>
-      <list>list9</list>
-      <important>false</important>
-      <ts>2021-08-07</ts>
-    </membership>
-    <membership>
-      <list>list6</list>
-      <important>false</important>
-      <ts>2020-02-02</ts>
     </membership>
   </memberships>
 </person>

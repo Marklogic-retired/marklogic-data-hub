@@ -3,165 +3,180 @@
   <personId>10068</personId>
   <nameGroup>
     <givenname>
-      <value>Beverlee</value>
+      <value>Paolo</value>
     </givenname>
     <surname>
-      <value>Orchart</value>
+      <value>Tafani</value>
     </surname>
     <fullname>
-      <classification>U</classification>
-      <restricted>false</restricted>
-      <value>Orchart Beverlee</value>
-      <source>
-        <name>Los Angeles Times</name>
-        <ts>2013-08-23T04:09:36Z</ts>
-      </source>
+      <classification>S</classification>
+      <restricted>true</restricted>
+      <value>Tafani Paolo</value>
       <source>
         <name>New York Times</name>
-        <ts>2016-04-04T21:05:57Z</ts>
+        <ts>2021-02-26T04:22:01Z</ts>
       </source>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2016-08-23T13:58:25Z</ts>
+        <name>Chicago Tribune</name>
+        <ts>2012-05-31T12:29:57Z</ts>
+      </source>
+      <source>
+        <name>Washington Post</name>
+        <ts>2020-02-14T02:48:36Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>ebloyes0@flickr.com</value>
-      <classification>C</classification>
+      <value>rrideout0@amazon.com</value>
+      <classification>U</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>ybudden1@shinystat.com</value>
-      <classification>C</classification>
+      <value>dolifard1@devhub.com</value>
+      <classification>U</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>ddurtnell2@shareasale.com</value>
-      <classification>S</classification>
+      <value>htaylorson2@sfgate.com</value>
+      <classification>C</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>671-829-2604</phone>
+  <phone>469-120-2437</phone>
   <ssn>
-    <value>797-90-0197</value>
+    <value>200-38-4016</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
-      <source>
-        <name>New York Times</name>
-        <ts>2020-05-15T14:42:25Z</ts>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
-      <source>
-        <name>Wall Street Journal</name>
-        <ts>2015-06-18T21:00:00Z</ts>
-      </source>
-    </image>
-    <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+      <uploadedBy>bvaisey0</uploadedBy>
+      <uploadedOn>2015-01-29T14:37:09Z</uploadedOn>
       <source>
         <name>Los Angeles Times</name>
-        <ts>2016-07-12T01:43:11Z</ts>
+        <ts>2020-11-28T07:07:09Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
+      <uploadedBy>dtendahl1</uploadedBy>
+      <uploadedOn>2019-09-30T07:12:23Z</uploadedOn>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2014-09-03T10:28:36Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
+      <uploadedBy>flathleiffure2</uploadedBy>
+      <uploadedOn>2017-11-11T21:27:19Z</uploadedOn>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2019-07-11T03:08:45Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
+      <uploadedBy>esaffon3</uploadedBy>
+      <uploadedOn>2016-07-20T08:47:07Z</uploadedOn>
+      <source>
+        <name>USA Today</name>
+        <ts>2015-06-22T12:43:27Z</ts>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>89 Huxley Lane</street>
-      <city>Charleston</city>
-      <state>WV</state>
-      <postal>25313</postal>
+      <street>0 Hanson Junction</street>
+      <city>Amarillo</city>
+      <state>TX</state>
+      <postal>79171</postal>
       <country>United States</country>
-      <latitude>38.4142</latitude>
-      <longitude>-81.7582</longitude>
+      <latitude>35.4015</latitude>
+      <longitude>-101.8951</longitude>
+    </address>
+    <address>
+      <street>6893 Tomscot Center</street>
+      <city>Garden Grove</city>
+      <state>CA</state>
+      <postal>92645</postal>
+      <country>United States</country>
+      <latitude>33.783</latitude>
+      <longitude>-118.0256</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>United States</country>
-      <name>Truman College</name>
-      <city>Cincinnati</city>
-      <state>OH</state>
-      <postal>45264</postal>
-      <latitude>39.14</latitude>
-      <longitude>-84.54</longitude>
+      <country>Canada</country>
+      <name>Emily Carr Institute of Art + Design</name>
+      <city>Stony Plain</city>
+      <state>AB</state>
+      <postal>T7Z</postal>
+      <latitude>53.5279314</latitude>
+      <longitude>-114.001928</longitude>
     </school>
     <school>
-      <country>United Kingdom</country>
-      <name>Institute of Advanced Legal Studies, University of London</name>
-      <city>Sutton</city>
-      <state>ENG</state>
-      <postal>RH5</postal>
-      <latitude>51.3614279</latitude>
-      <longitude>-0.193961</longitude>
+      <country>United States</country>
+      <name>Rutgers, The State University of New Jersey</name>
+      <city>Portland</city>
+      <state>OR</state>
+      <postal>97255</postal>
+      <latitude>45.5155832</latitude>
+      <longitude>-122.6788535</longitude>
     </school>
   </schools>
   <status>Active</status>
   <sources>
     <source>
-      <name>USA Today</name>
-      <ts>2017-01-05T17:58:20Z</ts>
+      <name>New York Times</name>
+      <ts>2015-11-22T02:56:10Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10072</id>
+      <id>10095</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Verzey Vonni</fullname>
+      <city>Albuquerque</city>
+      <state>NM</state>
+    </relation>
+    <relation>
+      <id>10095</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Cauley Ola</fullname>
-      <city>Louisville</city>
-      <state>KY</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Verzey Vonni</fullname>
+      <city>Albuquerque</city>
+      <state>NM</state>
     </relation>
     <relation>
-      <id>10001</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Cisco Felicdad</fullname>
-      <city>Washington</city>
-      <state>DC</state>
+      <id>10098</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Perfitt Cullan</fullname>
+      <city>Norwalk</city>
+      <state>CT</state>
     </relation>
     <relation>
-      <id>10029</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Freed Mikael</fullname>
-      <city>Decatur</city>
-      <state>IL</state>
-    </relation>
-    <relation>
-      <id>10041</id>
+      <id>10049</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Friedlos Dallas</fullname>
-      <city>Long Beach</city>
-      <state>CA</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Wollaston Barn</fullname>
+      <city>Cambridge</city>
+      <state>MA</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-01T18:48:54Z</ts>
-    <user>borchart1v</user>
+    <ts>2022-01-16T03:46:58Z</ts>
+    <user>ptafani1v</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-11T16:59:04Z</ts>
-    <user>borchart1v</user>
+    <ts>2022-01-20T20:58:30Z</ts>
+    <user>ptafani1v</user>
   </lastUpdated>
   <socials>
-    <social>
-      <site>facebook</site>
-      <address>https://opensource.org/ut/nunc.json</address>
-    </social>
+    <social/>
   </socials>
-  <memberships>
-    <membership>
-      <list>list11</list>
-      <important>false</important>
-      <ts>2021-09-29</ts>
-    </membership>
-  </memberships>
+  <memberships/>
 </person>

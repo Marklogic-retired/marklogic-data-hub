@@ -3,136 +3,174 @@
   <personId>10019</personId>
   <nameGroup>
     <givenname>
-      <value>Thatch</value>
+      <value>Aimil</value>
     </givenname>
     <surname>
-      <value>Spaldin</value>
+      <value>Cotgrove</value>
     </surname>
     <fullname>
-      <classification>S</classification>
-      <restricted>true</restricted>
-      <value>Spaldin Thatch</value>
+      <classification>C</classification>
+      <restricted>false</restricted>
+      <value>Cotgrove Aimil</value>
       <source>
-        <name>USA Today</name>
-        <ts>2016-07-23T21:09:22Z</ts>
+        <name>Washington Post</name>
+        <ts>2010-08-10T09:37:46Z</ts>
       </source>
       <source>
-        <name>New York Times</name>
-        <ts>2017-09-09T22:41:31Z</ts>
+        <name>Washington Post</name>
+        <ts>2018-12-25T07:15:41Z</ts>
+      </source>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2017-08-06T21:24:57Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>dwheeldon0@people.com.cn</value>
+      <value>dbattey0@opera.com</value>
       <classification>U</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>450-371-9583</phone>
+  <phone>898-808-9913</phone>
   <ssn>
-    <value>881-37-9197</value>
+    <value>627-58-3956</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <uploadedBy>sbryning0</uploadedBy>
+      <uploadedOn>2018-03-08T11:51:05Z</uploadedOn>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2012-04-05T20:11:23Z</ts>
+        <name>New York Times</name>
+        <ts>2013-08-22T12:31:21Z</ts>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
+      <uploadedBy>trhelton1</uploadedBy>
+      <uploadedOn>2012-03-26T12:11:12Z</uploadedOn>
       <source>
         <name>Wall Street Journal</name>
-        <ts>2019-12-07T07:29:54Z</ts>
+        <ts>2010-06-07T01:31:13Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+      <uploadedBy>jfaldo2</uploadedBy>
+      <uploadedOn>2014-10-22T04:14:01Z</uploadedOn>
+      <source>
+        <name>USA Today</name>
+        <ts>2010-08-22T13:48:08Z</ts>
       </source>
     </image>
     <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
+      <uploadedBy>rsoars3</uploadedBy>
+      <uploadedOn>2019-08-27T14:53:26Z</uploadedOn>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2012-10-07T16:42:04Z</ts>
+        <name>USA Today</name>
+        <ts>2014-10-10T14:35:54Z</ts>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>3179 1st Hill</street>
-      <city>Kansas City</city>
-      <state>MO</state>
-      <postal>64109</postal>
+      <street>5932 John Wall Court</street>
+      <city>El Paso</city>
+      <state>TX</state>
+      <postal>79977</postal>
       <country>United States</country>
-      <latitude>39.0663</latitude>
-      <longitude>-94.5674</longitude>
+      <latitude>31.6948</latitude>
+      <longitude>-106.3</longitude>
+    </address>
+    <address>
+      <street>1 Coolidge Terrace</street>
+      <city>Shawnee Mission</city>
+      <state>KS</state>
+      <postal>66220</postal>
+      <country>United States</country>
+      <latitude>38.9613</latitude>
+      <longitude>-94.8222</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>United States</country>
-      <name>Alaska Bible College</name>
-      <city>Chicago</city>
-      <state>IL</state>
-      <postal>60686</postal>
-      <latitude>41.8499561</latitude>
-      <longitude>-87.650042</longitude>
+      <country>Mexico</country>
+      <name>Universidad Autónoma del Estado de México</name>
+      <city>San Luis</city>
+      <state>CHP</state>
+      <postal>27400</postal>
+      <latitude>22.1564699</latitude>
+      <longitude>-100.9855409</longitude>
     </school>
     <school>
-      <country>United States</country>
-      <name>Kendall College of Art and Design</name>
-      <city>Cincinnati</city>
-      <state>OH</state>
-      <postal>45999</postal>
-      <latitude>39.07</latitude>
-      <longitude>-84.53</longitude>
+      <country>Canada</country>
+      <name>University of Moncton, Shippagan</name>
+      <city>Bowen Island</city>
+      <state>BC</state>
+      <postal>V7W</postal>
+      <latitude>49.3637828</latitude>
+      <longitude>-123.2679395</longitude>
     </school>
   </schools>
-  <status>Inactive</status>
+  <status>Active</status>
   <sources>
     <source>
       <name>Wall Street Journal</name>
-      <ts>2014-11-26T04:18:35Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>Wall Street Journal</name>
-      <ts>2019-12-15T15:20:35Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>Wall Street Journal</name>
-      <ts>2011-06-27T22:32:15Z</ts>
+      <ts>2018-05-28T03:44:57Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10046</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Slee Lidia</fullname>
-      <city>Omaha</city>
-      <state>NE</state>
+      <id>10009</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
+      <fullname>Gremane Violante</fullname>
+      <city>El Paso</city>
+      <state>TX</state>
     </relation>
     <relation>
-      <id>10002</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
-      <fullname>Delgadillo Archie</fullname>
-      <city>San Antonio</city>
-      <state>TX</state>
+      <id>10090</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
+      <fullname>Riccelli Early</fullname>
+      <city>Tulsa</city>
+      <state>OK</state>
+    </relation>
+    <relation>
+      <id>10064</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
+      <fullname>De Banke Vassily</fullname>
+      <city>Sacramento</city>
+      <state>CA</state>
+    </relation>
+    <relation>
+      <id>10065</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Fibbit Rafaela</fullname>
+      <city>Hampton</city>
+      <state>VA</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-16T10:17:17Z</ts>
-    <user>tspaldini</user>
+    <ts>2022-02-15T21:29:43Z</ts>
+    <user>acotgrovei</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-28T10:34:59Z</ts>
-    <user>tspaldini</user>
+    <ts>2022-02-14T04:36:58Z</ts>
+    <user>acotgrovei</user>
   </lastUpdated>
-  <socials/>
+  <socials>
+    <social>
+      <site>facebook</site>
+      <address>http://geocities.jp/ipsum/dolor/sit/amet/consectetuer/adipiscing.html</address>
+      <handle/>
+    </social>
+  </socials>
   <memberships/>
 </person>

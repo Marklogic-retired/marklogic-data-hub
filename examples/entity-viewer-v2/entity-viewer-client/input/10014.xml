@@ -3,137 +3,195 @@
   <personId>10014</personId>
   <nameGroup>
     <givenname>
-      <value>Lissa</value>
+      <value>Freddy</value>
     </givenname>
     <surname>
-      <value>Blunderfield</value>
+      <value>Halford</value>
     </surname>
     <fullname>
-      <classification>S</classification>
-      <restricted>true</restricted>
-      <value>Blunderfield Lissa</value>
+      <classification>C</classification>
+      <restricted>false</restricted>
+      <value>Halford Freddy</value>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2016-11-05T17:00:26Z</ts>
+        <name>Los Angeles Times</name>
+        <ts>2019-06-23T16:48:28Z</ts>
       </source>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2011-07-09T08:53:30Z</ts>
+        <name>Los Angeles Times</name>
+        <ts>2018-09-18T16:07:57Z</ts>
+      </source>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2019-12-01T19:36:34Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>pcowin0@gnu.org</value>
-      <classification>S</classification>
+      <value>dgaliford0@facebook.com</value>
+      <classification>C</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>caleksankov1@delicious.com</value>
+      <value>tstenbridge1@hatena.ne.jp</value>
       <classification>C</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>911-531-0679</phone>
+  <phone>755-582-4667</phone>
   <ssn>
-    <value>403-34-9815</value>
+    <value>875-08-1999</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
+      <uploadedBy>tronci0</uploadedBy>
+      <uploadedOn>2011-08-29T21:49:44Z</uploadedOn>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2010-01-23T19:27:18Z</ts>
+        <name>USA Today</name>
+        <ts>2021-10-01T20:03:34Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+      <uploadedBy>mseaking1</uploadedBy>
+      <uploadedOn>2011-10-23T09:54:38Z</uploadedOn>
+      <source>
+        <name>Washington Post</name>
+        <ts>2012-02-03T12:37:41Z</ts>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>1093 Monterey Junction</street>
-      <city>Crawfordsville</city>
-      <state>IN</state>
-      <postal>47937</postal>
+      <street>4226 Algoma Plaza</street>
+      <city>Billings</city>
+      <state>MT</state>
+      <postal>59112</postal>
       <country>United States</country>
-      <latitude>40.04</latitude>
-      <longitude>-86.8936</longitude>
+      <latitude>45.9783</latitude>
+      <longitude>-108.1945</longitude>
+    </address>
+    <address>
+      <street>57728 Monica Court</street>
+      <city>Salt Lake City</city>
+      <state>UT</state>
+      <postal>84115</postal>
+      <country>United States</country>
+      <latitude>40.7145</latitude>
+      <longitude>-111.8931</longitude>
+    </address>
+    <address>
+      <street>99 Thierer Drive</street>
+      <city>San Diego</city>
+      <state>CA</state>
+      <postal>92176</postal>
+      <country>United States</country>
+      <latitude>33.0169</latitude>
+      <longitude>-116.846</longitude>
     </address>
   </addresses>
   <schools>
     <school>
+      <country>United States</country>
+      <name>State University of New York School of Engineering and Applied Sciences</name>
+      <city>Murfreesboro</city>
+      <state>TN</state>
+      <postal>37131</postal>
+      <latitude>35.8559647</latitude>
+      <longitude>-86.3944828</longitude>
+    </school>
+    <school>
       <country>Mexico</country>
-      <name>Benemerita Universidad Autónoma de Puebla</name>
-      <city>Buenos Aires</city>
-      <state>VER</state>
-      <postal>93380</postal>
-      <latitude>19.4052965</latitude>
-      <longitude>-99.1504583</longitude>
+      <name>Universidad Santa Fe</name>
+      <city>Tierra Blanca</city>
+      <state>GRO</state>
+      <postal>40678</postal>
+      <latitude>18.4458276</latitude>
+      <longitude>-96.3598367</longitude>
     </school>
   </schools>
-  <status>Active</status>
+  <status>Inactive</status>
   <sources>
     <source>
-      <name>New York Times</name>
-      <ts>2016-10-10T10:29:25Z</ts>
+      <name>Los Angeles Times</name>
+      <ts>2019-03-26T06:03:35Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Washington Post</name>
+      <ts>2011-08-04T18:35:34Z</ts>
     </source>
   </sources>
   <sources>
     <source>
       <name>USA Today</name>
-      <ts>2010-03-14T01:57:35Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>New York Times</name>
-      <ts>2019-12-15T12:48:54Z</ts>
+      <ts>2017-01-29T14:59:54Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10006</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Illston Merissa</fullname>
-      <city>Mesa</city>
-      <state>AZ</state>
-    </relation>
-    <relation>
-      <id>10062</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
-      <fullname>Welbeck Morna</fullname>
-      <city>San Diego</city>
-      <state>CA</state>
-    </relation>
-    <relation>
-      <id>10011</id>
+      <id>10091</id>
       <predicate>livesWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
-      <fullname>Brisley Cirilo</fullname>
-      <city>Miami</city>
-      <state>FL</state>
+      <fullname>Abbot Kimmie</fullname>
+      <city>Fort Worth</city>
+      <state>TX</state>
+    </relation>
+    <relation>
+      <id>10100</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Martensen Annalee</fullname>
+      <city>Greensboro</city>
+      <state>NC</state>
+    </relation>
+    <relation>
+      <id>10032</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
+      <fullname>Crehan Coretta</fullname>
+      <city>Albany</city>
+      <state>NY</state>
+    </relation>
+    <relation>
+      <id>10057</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
+      <fullname>Giraudou Patrica</fullname>
+      <city>Carson City</city>
+      <state>NV</state>
+    </relation>
+    <relation>
+      <id>10089</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
+      <fullname>Lehenmann Caron</fullname>
+      <city>Providence</city>
+      <state>RI</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-24T14:53:33Z</ts>
-    <user>lblunderfieldd</user>
+    <ts>2022-01-21T23:06:30Z</ts>
+    <user>fhalfordd</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-24T22:30:50Z</ts>
-    <user>lblunderfieldd</user>
+    <ts>2022-02-15T15:24:22Z</ts>
+    <user>fhalfordd</user>
   </lastUpdated>
   <socials>
     <social>
+      <site>linkedin</site>
+      <address>http://imgur.com/bibendum.png</address>
+      <handle/>
+    </social>
+    <social>
       <site>twitter</site>
-      <address>https://nationalgeographic.com/mollis.xml</address>
+      <address>http://microsoft.com/nam/ultrices/libero/non/mattis.aspx</address>
+      <handle>apetters1</handle>
     </social>
   </socials>
-  <memberships>
-    <membership>
-      <list>list1</list>
-      <important>false</important>
-      <ts>2019-07-08</ts>
-    </membership>
-  </memberships>
+  <memberships/>
 </person>

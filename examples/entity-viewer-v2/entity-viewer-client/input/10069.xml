@@ -3,205 +3,162 @@
   <personId>10069</personId>
   <nameGroup>
     <givenname>
-      <value>Ollie</value>
+      <value>Wallie</value>
     </givenname>
     <surname>
-      <value>Crips</value>
+      <value>Curgenven</value>
     </surname>
     <fullname>
-      <classification>C</classification>
+      <classification>S</classification>
       <restricted>false</restricted>
-      <value>Crips Ollie</value>
+      <value>Curgenven Wallie</value>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2011-07-31T08:19:18Z</ts>
+        <name>New York Times</name>
+        <ts>2010-09-14T00:34:06Z</ts>
+      </source>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2019-05-23T06:58:59Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>nniccolls0@who.int</value>
-      <classification>S</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>bcreffield1@google.cn</value>
-      <classification>C</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>bcurnock2@nyu.edu</value>
+      <value>jpittam0@senate.gov</value>
       <classification>U</classification>
       <restricted>false</restricted>
     </email>
+    <email>
+      <value>ccrossfield1@domainmarket.com</value>
+      <classification>C</classification>
+      <restricted>false</restricted>
+    </email>
   </emails>
-  <phone>784-830-1060</phone>
+  <phone>106-564-8339</phone>
   <ssn>
-    <value>656-31-3023</value>
+    <value>619-24-3426</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+      <uploadedBy>kborrowman0</uploadedBy>
+      <uploadedOn>2014-04-20T01:10:58Z</uploadedOn>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2010-08-03T00:31:59Z</ts>
+        <name>Washington Post</name>
+        <ts>2014-12-02T03:25:10Z</ts>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>78 Armistice Center</street>
-      <city>Lexington</city>
-      <state>KY</state>
-      <postal>40510</postal>
+      <street>010 4th Place</street>
+      <city>Boise</city>
+      <state>ID</state>
+      <postal>83722</postal>
       <country>United States</country>
-      <latitude>38.0702</latitude>
-      <longitude>-84.591</longitude>
+      <latitude>43.4599</latitude>
+      <longitude>-116.244</longitude>
     </address>
     <address>
-      <street>769 Hazelcrest Parkway</street>
-      <city>Iowa City</city>
-      <state>IA</state>
-      <postal>52245</postal>
+      <street>54 Grim Crossing</street>
+      <city>Mobile</city>
+      <state>AL</state>
+      <postal>36628</postal>
       <country>United States</country>
-      <latitude>41.6649</latitude>
-      <longitude>-91.5151</longitude>
-    </address>
-    <address>
-      <street>32431 Lyons Hill</street>
-      <city>Tyler</city>
-      <state>TX</state>
-      <postal>75705</postal>
-      <country>United States</country>
-      <latitude>32.3766</latitude>
-      <longitude>-95.1252</longitude>
+      <latitude>30.6589</latitude>
+      <longitude>-88.178</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Mexico</country>
-      <name>Universidad Autónoma de Baja California Sur</name>
-      <city>Amado Nervo</city>
-      <state>NAY</state>
-      <postal>63455</postal>
-      <latitude>19.368252</latitude>
-      <longitude>-99.296058</longitude>
+      <country>United States</country>
+      <name>University of Louisiana at Monroe</name>
+      <city>Seattle</city>
+      <state>WA</state>
+      <postal>98140</postal>
+      <latitude>47.6025001</latitude>
+      <longitude>-122.3385759</longitude>
     </school>
     <school>
-      <country>Mexico</country>
-      <name>Universidad Pedagógica Nacional</name>
-      <city>Emiliano Zapata</city>
-      <state>JAL</state>
-      <postal>48892</postal>
-      <latitude>19.4614133</latitude>
-      <longitude>-99.1186381</longitude>
+      <country>Canada</country>
+      <name>Université du Québec à Chicoutimi</name>
+      <city>Acton Vale</city>
+      <state>QC</state>
+      <postal>G0E</postal>
+      <latitude>45.65007</latitude>
+      <longitude>-72.56582</longitude>
     </school>
   </schools>
   <status>Inactive</status>
   <sources>
     <source>
-      <name>Wall Street Journal</name>
-      <ts>2011-05-13T18:01:59Z</ts>
+      <name>Chicago Tribune</name>
+      <ts>2015-05-28T21:26:11Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Chicago Tribune</name>
+      <ts>2018-05-11T23:35:02Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10012</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Wingeat Bone</fullname>
-      <city>Miami</city>
-      <state>FL</state>
-    </relation>
-    <relation>
-      <id>10052</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
-      <fullname>Tacey Orland</fullname>
-      <city>Oklahoma City</city>
-      <state>OK</state>
-    </relation>
-    <relation>
-      <id>10035</id>
+      <id>10067</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
-      <fullname>Bresnahan Vinny</fullname>
-      <city>Stockton</city>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Gownge Roberto</fullname>
+      <city>Sacramento</city>
       <state>CA</state>
     </relation>
     <relation>
-      <id>10053</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Andrichuk Sibley</fullname>
-      <city>Charlotte</city>
-      <state>NC</state>
+      <id>10067</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Gownge Roberto</fullname>
+      <city>Sacramento</city>
+      <state>CA</state>
     </relation>
     <relation>
-      <id>10076</id>
+      <id>10028</id>
       <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Edwardson Nikolia</fullname>
+      <city>New Bedford</city>
+      <state>MA</state>
+    </relation>
+    <relation>
+      <id>10027</id>
+      <predicate>relatedTo</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Denziloe Shirleen</fullname>
-      <city>Charleston</city>
-      <state>SC</state>
+      <fullname>Wurz Alfonso</fullname>
+      <city>Brockton</city>
+      <state>MA</state>
+    </relation>
+    <relation>
+      <id>10023</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
+      <fullname>Reidshaw Ajay</fullname>
+      <city>Albuquerque</city>
+      <state>NM</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-19T12:20:29Z</ts>
-    <user>ocrips1w</user>
+    <ts>2022-02-01T00:24:38Z</ts>
+    <user>wcurgenven1w</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-20T17:06:51Z</ts>
-    <user>ocrips1w</user>
+    <ts>2022-01-19T21:30:16Z</ts>
+    <user>wcurgenven1w</user>
   </lastUpdated>
   <socials>
     <social>
-      <site>linkedin</site>
-      <handle>@cripsollie</handle>
-      <address>http://indiegogo.com/vel/nulla/eget/eros/elementum/pellentesque/quisque.js</address>
-    </social>
-    <social>
       <site>twitter</site>
-      <handle>@ollie</handle>
-      <address>https://people.com.cn/luctus/ultricies/eu.xml</address>
-    </social>
-    <social>
-      <site>twitter</site>
-      <handle>@crips</handle>
-      <address>http://deliciousdays.com/metus/sapien/ut/nunc/vestibulum/ante.js</address>
+      <address>http://ed.gov/ridiculus/mus/etiam/vel/augue.json</address>
+      <handle>oseeney0</handle>
     </social>
   </socials>
-  <memberships>
-    <membership>
-      <list>list12</list>
-      <important>true</important>
-      <ts>2021-02-16</ts>
-    </membership>
-    <membership>
-      <list>list7</list>
-      <important>true</important>
-      <ts>2021-06-05</ts>
-    </membership>
-    <membership>
-      <list>list3</list>
-      <important>true</important>
-      <ts>2021-02-10</ts>
-    </membership>
-    <membership>
-      <list>list10</list>
-      <important>false</important>
-      <ts>2021-05-05</ts>
-    </membership>
-    <membership>
-      <list>list2</list>
-      <important>false</important>
-      <ts>2022-01-10</ts>
-    </membership>
-    <membership>
-      <list>list10</list>
-      <important>true</important>
-      <ts>2020-08-16</ts>
-    </membership>
-  </memberships>
+  <memberships/>
 </person>

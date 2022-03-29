@@ -3,151 +3,177 @@
   <personId>10065</personId>
   <nameGroup>
     <givenname>
-      <value>Denney</value>
+      <value>Rafaela</value>
     </givenname>
     <surname>
-      <value>Bamling</value>
+      <value>Fibbit</value>
     </surname>
     <fullname>
-      <classification>S</classification>
+      <classification>U</classification>
       <restricted>true</restricted>
-      <value>Bamling Denney</value>
+      <value>Fibbit Rafaela</value>
       <source>
-        <name>Washington Post</name>
-        <ts>2012-01-03T15:14:41Z</ts>
+        <name>Los Angeles Times</name>
+        <ts>2016-05-15T12:51:02Z</ts>
+      </source>
+      <source>
+        <name>USA Today</name>
+        <ts>2014-06-21T04:29:27Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>peddie0@youtube.com</value>
+      <value>sschurig0@bbb.org</value>
+      <classification>S</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>aackroyd1@ning.com</value>
       <classification>S</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>801-367-8175</phone>
+  <phone>505-872-0488</phone>
   <ssn>
-    <value>383-06-3595</value>
+    <value>726-06-5767</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
+      <uploadedBy>bmapstone0</uploadedBy>
+      <uploadedOn>2016-12-08T20:57:55Z</uploadedOn>
       <source>
-        <name>USA Today</name>
-        <ts>2019-03-10T00:39:21Z</ts>
+        <name>Wall Street Journal</name>
+        <ts>2017-06-12T11:45:28Z</ts>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
+      <uploadedBy>ndow1</uploadedBy>
+      <uploadedOn>2020-08-01T09:57:35Z</uploadedOn>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2021-09-12T05:21:45Z</ts>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>8 Fairfield Place</street>
-      <city>El Paso</city>
-      <state>TX</state>
-      <postal>79923</postal>
+      <street>8298 Evergreen Drive</street>
+      <city>Hampton</city>
+      <state>VA</state>
+      <postal>23668</postal>
       <country>United States</country>
-      <latitude>31.6948</latitude>
-      <longitude>-106.3</longitude>
-    </address>
-    <address>
-      <street>25 Moland Center</street>
-      <city>Dallas</city>
-      <state>TX</state>
-      <postal>75231</postal>
-      <country>United States</country>
-      <latitude>32.8756</latitude>
-      <longitude>-96.7495</longitude>
-    </address>
-    <address>
-      <street>9221 Warner Road</street>
-      <city>Dallas</city>
-      <state>TX</state>
-      <postal>75277</postal>
-      <country>United States</country>
-      <latitude>32.7673</latitude>
-      <longitude>-96.7776</longitude>
+      <latitude>37.0206</latitude>
+      <longitude>-76.3377</longitude>
     </address>
   </addresses>
   <schools>
     <school>
+      <country>United States</country>
+      <name>University of South Carolina - Union</name>
+      <city>Huntington Beach</city>
+      <state>CA</state>
+      <postal>92648</postal>
+      <latitude>33.6781963</latitude>
+      <longitude>-118.0127534</longitude>
+    </school>
+    <school>
       <country>Mexico</country>
-      <name>Universidad Mexicana</name>
-      <city>El Alamo</city>
-      <state>SON</state>
-      <postal>83448</postal>
-      <latitude>20.9064323</latitude>
-      <longitude>-97.6738023</longitude>
+      <name>Universidad de Guanajuato, Campus León</name>
+      <city>Los Pinos</city>
+      <state>TAM</state>
+      <postal>87140</postal>
+      <latitude>19.3387759</latitude>
+      <longitude>-99.1497466</longitude>
     </school>
   </schools>
   <status>Active</status>
   <sources>
     <source>
-      <name>Wall Street Journal</name>
-      <ts>2019-08-14T00:07:07Z</ts>
+      <name>Los Angeles Times</name>
+      <ts>2010-05-11T05:38:45Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>USA Today</name>
-      <ts>2015-03-29T01:31:49Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>Washington Post</name>
-      <ts>2010-06-13T21:14:49Z</ts>
+      <name>Chicago Tribune</name>
+      <ts>2018-05-02T07:59:59Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10085</id>
+      <id>10098</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Perfitt Cullan</fullname>
+      <city>Norwalk</city>
+      <state>CT</state>
+    </relation>
+    <relation>
+      <id>10099</id>
       <predicate>livesWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Jellings Trudy</fullname>
-      <city>Tulsa</city>
-      <state>OK</state>
+      <fullname>Chrispin Martina</fullname>
+      <city>Jersey City</city>
+      <state>NJ</state>
     </relation>
     <relation>
-      <id>10021</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
-      <fullname>Quilligan Priscella</fullname>
-      <city>Houston</city>
-      <state>TX</state>
-    </relation>
-    <relation>
-      <id>10048</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
-      <fullname>Nickerson Charmain</fullname>
-      <city>Richmond</city>
-      <state>VA</state>
+      <id>10069</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Curgenven Wallie</fullname>
+      <city>Boise</city>
+      <state>ID</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-08T13:52:48Z</ts>
-    <user>dbamling1s</user>
+    <ts>2022-01-24T07:35:54Z</ts>
+    <user>rfibbit1s</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-07T18:06:44Z</ts>
-    <user>dbamling1s</user>
+    <ts>2022-01-26T16:00:50Z</ts>
+    <user>rfibbit1s</user>
   </lastUpdated>
   <socials>
     <social>
       <site>facebook</site>
-      <address>https://last.fm/venenatis/turpis/enim.js</address>
+      <address>http://fda.gov/penatibus/et/magnis/dis.js</address>
+      <handle>mrogerot0</handle>
+    </social>
+    <social>
+      <site>facebook</site>
+      <address>http://apache.org/ut/erat.jsp</address>
+      <handle>rprangnell1</handle>
     </social>
   </socials>
   <memberships>
     <membership>
-      <list>list11</list>
-      <important>false</important>
-      <ts>2019-02-16</ts>
+      <list>list2</list>
+      <ts>2020-11-11</ts>
+      <important>true</important>
     </membership>
     <membership>
-      <list>list9</list>
+      <list>list5</list>
+      <ts>2020-09-20</ts>
       <important>false</important>
-      <ts>2019-01-21</ts>
+    </membership>
+    <membership>
+      <list>list12</list>
+      <ts>2021-07-22</ts>
+      <important>false</important>
+    </membership>
+    <membership>
+      <list>list8</list>
+      <ts>2020-05-23</ts>
+      <important>true</important>
+    </membership>
+    <membership>
+      <list>list10</list>
+      <ts>2020-07-13</ts>
+      <important>true</important>
     </membership>
   </memberships>
 </person>
