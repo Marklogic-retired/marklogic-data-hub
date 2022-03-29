@@ -125,10 +125,17 @@ describe("Entity Modeling: Graph View", () => {
   });
   it("Delete an entity from graph view and publish the changes", {defaultCommandTimeout: 120000}, () => {
     entityTypeTable.viewEntityInGraphView("Patients");
+    modelPage.scrollPageBottom();
+    cy.log("**Verify description tooltip appears on hover**");
+    graphVis.getPositionsOfNodes().then((nodePositions: any) => {
+      let patientCoordinates: any = nodePositions["Patients"];
+      graphVis.getGraphVisCanvas().click(patientCoordinates.x, patientCoordinates.y);
+      cy.findByText("An entity for patients").should("exist");
+    });
     cy.waitForAsyncRequest();
     cy.wait(1500);
 
-    graphViewSidePanel.getDeleteIcon("Patients").click();
+    graphViewSidePanel.getDeleteIcon("Patients").scrollIntoView().click({force: true});
     confirmationModal.getYesButton(ConfirmationType.DeleteEntity);
     confirmationModal.getDeleteEntityText().should("not.exist");
     cy.waitForAsyncRequest();
