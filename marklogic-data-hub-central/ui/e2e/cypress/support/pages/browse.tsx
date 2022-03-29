@@ -615,7 +615,7 @@ class BrowsePage {
   }
 
   selectQuery(query: string) {
-    this.getSaveQueriesDropdownInput().click({force: true});
+    this.getSaveQueriesDropdownInput().scrollIntoView().click({force: true});
     this.getQueryOption(query).click({force: true});
     this.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();

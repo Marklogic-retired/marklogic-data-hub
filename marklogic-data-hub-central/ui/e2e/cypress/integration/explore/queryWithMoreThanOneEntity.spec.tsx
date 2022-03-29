@@ -83,7 +83,7 @@ describe("manage queries with more than one entity", () => {
     entitiesSidebar.getBaseEntityOption(BaseEntityTypes.CUSTOMER).should("not.exist");
     entitiesSidebar.getBaseEntityOption(BaseEntityTypes.PERSON).should("not.exist");
 
-    browsePage.getSaveQueriesDropdown().should("be.visible");
+    browsePage.getSaveQueriesDropdown().should("exist");
     browsePage.selectQuery(query.name);
 
     cy.log("**Select created query and check that the entities are present in the dropdown**");

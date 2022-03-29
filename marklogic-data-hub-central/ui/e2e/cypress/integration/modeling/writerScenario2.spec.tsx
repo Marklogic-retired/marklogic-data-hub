@@ -13,7 +13,6 @@ import {Application} from "../../support/application.config";
 import {ConfirmationType} from "../../support/types/modeling-types";
 import LoginPage from "../../support/pages/login";
 import "cypress-wait-until";
-import graphVis from "../../support/components/model/graph-vis";
 
 describe("Entity Modeling: Writer Role", () => {
   //Scenarios: can create entity, can create a structured type, duplicate structured type name check, add properties to structure type, add structure type as property, delete structured type, and delete entity, can add new properties to existing Entities, revert all entities, add multiple entities, add properties, delete properties, save all entities, delete an entity with relationship warning
@@ -262,14 +261,6 @@ describe("Entity Modeling: Writer Role", () => {
     confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn);
     cy.waitForAsyncRequest();
     propertyTable.getProperty("OrderedBy").should("not.exist");
-    entityTypeTable.viewEntityInGraphView("User3");
-    graphVis.getGraphVisCanvas().scrollIntoView();
-    //To verify tooltip over particular node
-    graphVis.getPositionsOfNodes().then((nodePositions: any) => {
-      let customerCoordinates: any = nodePositions["User3"];
-      graphVis.getGraphVisCanvas().click(customerCoordinates.x, customerCoordinates.y);
-      cy.findByText("An entity for User").should("exist");
-    });
 
     //Save Changes
     cy.publishEntityModel();
@@ -279,7 +270,6 @@ describe("Entity Modeling: Writer Role", () => {
     // entityTypeTable.getEntity("User3").should("not.exist");
 
     // "Delete entity", {defaultCommandTimeout: 120000}, () => {
-    modelPage.selectView("table");
     entityTypeTable.getDeleteEntityIcon("User3").click();
     confirmationModal.getDeleteEntityText().should("be.visible");
     confirmationModal.getYesButton(ConfirmationType.DeleteEntity);
