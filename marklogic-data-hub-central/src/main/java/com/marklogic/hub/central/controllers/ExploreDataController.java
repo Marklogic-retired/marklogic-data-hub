@@ -1,5 +1,6 @@
 package com.marklogic.hub.central.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -27,6 +28,14 @@ public class ExploreDataController extends BaseController {
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<JsonNode> search(@RequestBody JsonNode searchQuery, @RequestHeader(name="userid") String userid) {
+        ((ObjectNode) searchQuery).put("userid", userid);
+        return ResponseEntity.ok(newExploreDataService().searchAndTransform(searchQuery));
+    }
+
+    @RequestMapping(method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<JsonNode> searchByStringQuery(@RequestParam String query, @RequestHeader(name="userid") String userid) throws JsonProcessingException {
+        JsonNode searchQuery = objectMapper.readTree(query);
         ((ObjectNode) searchQuery).put("userid", userid);
         return ResponseEntity.ok(newExploreDataService().searchAndTransform(searchQuery));
     }
