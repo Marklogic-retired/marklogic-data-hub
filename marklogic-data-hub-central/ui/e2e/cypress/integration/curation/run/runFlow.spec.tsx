@@ -8,17 +8,24 @@ import LoginPage from "../../../support/pages/login";
 let flowName = "testPersonXML";
 
 describe("Run Tile tests", () => {
+
   before(() => {
     cy.visit("/");
     cy.contains(Application.title);
-
-    cy.log("**Logging into the app as a developer**");
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer").withRequest();
+    LoginPage.postLogin();
     //Saving Local Storage to preserve session
     cy.saveLocalStorage();
+  });
 
-    LoginPage.postLogin();
-    cy.waitForAsyncRequest();
+  beforeEach(() => {
+    //Restoring Local Storage to Preserve Session
+    cy.restoreLocalStorage();
+
+    cy.visit("/");
+    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    cy.waitUntil(() => runPage.getFlowName("personJSON").should("be.visible"));
+
   });
   beforeEach(() => {
     //Restoring Local Storage to Preserve Session

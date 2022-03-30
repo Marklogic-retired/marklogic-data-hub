@@ -24,7 +24,6 @@ describe("Custom Ingestion", () => {
         cy.loginAsTestUserWithRoles(users[0]).withRequest();
         LoginPage.postLogin();
         toolbar.getLoadToolbarIcon().click();
-        cy.intercept("/api/jobs/**").as("getJobs");
         loadPage.stepName(stepName).should("be.visible");
 
         cy.log("**-------- Before mouse hover card -------------**");
@@ -40,7 +39,6 @@ describe("Custom Ingestion", () => {
         cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer", "hub-central-load-writer").withRequest();
         LoginPage.postLogin();
         toolbar.getLoadToolbarIcon().click();
-        cy.intercept("/api/jobs/**").as("getJobs");
         loadPage.stepName(stepName).should("be.visible");
 
         cy.log("**-------- Before mouse hover card -------------**");
