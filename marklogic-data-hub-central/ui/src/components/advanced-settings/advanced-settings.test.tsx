@@ -202,8 +202,11 @@ describe("Advanced step settings", () => {
   });
 
   test("Verify edit advanced settings for Merging", async () => {
-    const {queryByText, getByLabelText, getByTestId, getByText, getAllByText} = render(
-      <AdvancedSettings {...data.advancedMerging} />
+    // remove batch size to test default merge batch size
+    const advancedMerging = data.advancedMerging;
+    delete advancedMerging.stepData.batchSize;
+    const {queryByText, getByLabelText, getByTestId, getByText, getAllByText, queryByPlaceholderText} = render(
+      <AdvancedSettings {...advancedMerging} />
     );
 
     expect(getByText("Source Database:")).toBeInTheDocument();
@@ -258,6 +261,7 @@ describe("Advanced step settings", () => {
     expect(getByText("Target Permissions:")).toBeInTheDocument();
 
     expect(getByText("Batch Size:")).toBeInTheDocument();
+    expect(queryByPlaceholderText("Please enter batch size")).toHaveValue("1");
 
     expect(getByText("Provenance Granularity:")).toBeInTheDocument();
     expect(getByText("Fine-grained")).toBeInTheDocument();

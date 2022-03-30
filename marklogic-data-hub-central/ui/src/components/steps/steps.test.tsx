@@ -392,7 +392,7 @@ describe("Steps settings component", () => {
     expect(getByText("Provenance Granularity:")).toBeInTheDocument();
     expect(getByText("Off")).toBeInTheDocument();
     expect(getByText("Batch Size:")).toBeInTheDocument();
-    expect(getByPlaceholderText("Please enter batch size")).toHaveValue(StepsConfig.defaultBatchSize.toString());
+    expect(getByPlaceholderText("Please enter batch size")).toHaveValue(StepsConfig.defaultMergeBatchSize.toString());
     // Open text areas that are closed by default
     fireEvent.click(getByText("Interceptors"));
     expect(getByLabelText("interceptors-textarea")).toBeEmpty();
