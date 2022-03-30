@@ -16,16 +16,12 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-load-writer", "hub-central-flow-writer").withRequest();
     LoginPage.postLogin();
-    cy.waitForAsyncRequest();
+    //Saving Local Storage to preserve session
+    cy.saveLocalStorage();
   });
   beforeEach(() => {
-    cy.loginAsTestUserWithRoles("hub-central-load-writer", "hub-central-flow-writer").withRequest();
-    cy.waitForAsyncRequest();
-    cy.intercept("/api/jobs/**").as("getJobs");
-  });
-  afterEach(() => {
-    cy.resetTestUser();
-    cy.waitForAsyncRequest();
+    //Restoring Local Storage to Preserve Session
+    cy.restoreLocalStorage();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();

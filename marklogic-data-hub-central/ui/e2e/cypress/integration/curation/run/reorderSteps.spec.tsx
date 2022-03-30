@@ -5,15 +5,22 @@ import loadPage from "../../../support/pages/load";
 import LoginPage from "../../../support/pages/login";
 
 describe("Run Tile tests", () => {
-
-  beforeEach(() => {
+  before(() => {
     cy.visit("/");
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-flow-writer").withRequest();
     LoginPage.postLogin();
+    //Saving Local Storage to preserve session
+    cy.saveLocalStorage();
+  });
+  beforeEach(() => {
+    //Restoring Local Storage to Preserve Session
+    cy.restoreLocalStorage();
+
+    cy.visit("/");
+    cy.contains(Application.title);
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     cy.waitUntil(() => runPage.getFlowName("personJSON").should("be.visible"));
-    cy.intercept("/api/jobs/**").as("getJobs");
   });
 
   after(() => {

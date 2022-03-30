@@ -21,7 +21,6 @@ describe("Custom Ingestion", () => {
     cy.waitForAsyncRequest();
   });
   it("verify that custom ingestion step shows up and can be run", {defaultCommandTimeout: 120000}, () => {
-    cy.intercept("/api/jobs/**").as("getJobs");
     const flowName = "testCustomFlow";
     const loadStep = "ingestion-step";
     // create load step
