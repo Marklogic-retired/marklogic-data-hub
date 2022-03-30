@@ -15,6 +15,7 @@
 
     th {
         border-bottom: none;
+        white-space: nowrap;
     }
 
     td {
@@ -22,7 +23,7 @@
     }
 
     th.query, td.query {
-        width: 90%;
+        width: 95%;
     }
 
     td.query {
@@ -44,12 +45,12 @@
 
     th.icon, td.icon {
         text-align: center;
-        width: 80px;
     }
 
     td.icon {
         span.icon {
             cursor: pointer;
+            padding: 0 44px;
         }
     }
 }
