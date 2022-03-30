@@ -100,7 +100,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   const [sourceRecordScopeTouched, setSourceRecordScopeTouched] = useState(false);
   const [sourceRecordScopeToggled, setSourceRecordScopeToggled] = useState(false);
 
-  const defaultBatchSize = StepsConfig.defaultBatchSize;
+  const defaultBatchSize = stepType === "merging" ? StepsConfig.defaultMergeBatchSize : StepsConfig.defaultBatchSize;
   const [batchSize, setBatchSize] = useState(defaultBatchSize);
   const [batchSizeTouched, setBatchSizeTouched] = useState(false);
 

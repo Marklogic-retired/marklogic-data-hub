@@ -11,6 +11,7 @@ const defaultProvGran = "off";
 const defaultValidateEntity = "doNotValidate";
 const defaultSourceRecordScope = "instanceOnly";
 const defaultBatchSize = 100;
+const defaultMergeBatchSize = 1;
 const defaultSelectedSource = "collections";
 const defaultFieldSeparator = ",";
 const toggleSourceRecordScopeMessage = "Changes to the source record scope affect existing mapping expressions. Adjust existing mapping expressions to reflect the new paths to your source fields.";
@@ -30,6 +31,7 @@ export default {
     defaultProvGran,
     defaultValidateEntity,
     defaultBatchSize,
+    defaultMergeBatchSize,
     defaultSelectedSource,
     defaultFieldSeparator,
     defaultPrimaryUri,
