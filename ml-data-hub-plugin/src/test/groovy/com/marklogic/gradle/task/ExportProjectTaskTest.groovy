@@ -17,16 +17,21 @@
 
 package com.marklogic.gradle.task
 
+import com.marklogic.hub.HubConfig
+
 class ExportProjectTaskTest extends BaseTest {
 
     def setupSpec() {
         createGradleFiles()
+        runTask('hubInit')
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
+        runTask('hubDeployUserArtifacts')
     }
 
     def "export a hub project"() {
 
         when: "we begin"
-            File exportFile = new File(testProjectDir, "build"+File.separator+"datahub-project.zip")
+            File exportFile = hubConfig().getHubProject().projectDir.resolve("build").resolve("datahub-project.zip").toFile()
 
         then:
             exportFile.exists() == false;
@@ -34,12 +39,11 @@ class ExportProjectTaskTest extends BaseTest {
         when:
         def result
         try {
-            result = runTask('hubInit','hubExportProject')
+            result = runTask('hubExportProject')
         }
         catch (Exception e) {
             e.printStackTrace()
         }
-
         then:
             exportFile.exists() == true;
 
