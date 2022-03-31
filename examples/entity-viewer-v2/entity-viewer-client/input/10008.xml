@@ -3,148 +3,179 @@
   <personId>10008</personId>
   <nameGroup>
     <givenname>
-      <value>Rocky</value>
+      <value>Vere</value>
     </givenname>
     <surname>
-      <value>Wimmers</value>
+      <value>Norvel</value>
     </surname>
     <fullname>
-      <classification>S</classification>
-      <restricted>true</restricted>
-      <value>Wimmers Rocky</value>
+      <classification>C</classification>
+      <restricted>false</restricted>
+      <value>Norvel Vere</value>
       <source>
-        <name>USA Today</name>
-        <ts>2012-02-01T04:44:40Z</ts>
+        <name>Wall Street Journal</name>
+        <ts>2014-01-11T08:40:04Z</ts>
+      </source>
+      <source>
+        <name>Washington Post</name>
+        <ts>2019-10-28T02:48:39Z</ts>
+      </source>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2019-12-22T23:26:03Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>kgaskin0@chronoengine.com</value>
-      <classification>C</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>nnewiss1@hao123.com</value>
-      <classification>U</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>aspain2@hatena.ne.jp</value>
-      <classification>U</classification>
+      <value>dkenen0@who.int</value>
+      <classification>S</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>982-166-5353</phone>
+  <phone>727-259-2945</phone>
   <ssn>
-    <value>533-19-8624</value>
+    <value>766-39-3775</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
       <source>
-        <name>New York Times</name>
-        <ts>2011-03-09T19:48:49Z</ts>
+        <name>Washington Post</name>
+        <ts>2010-03-19T19:12:16Z</ts>
+        <uploadedBy>tganforthe0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>971 Karstens Alley</street>
-      <city>Seattle</city>
-      <state>WA</state>
-      <postal>98166</postal>
+      <street>5 Judy Parkway</street>
+      <city>Mobile</city>
+      <state>AL</state>
+      <postal>36610</postal>
       <country>United States</country>
-      <latitude>47.4511</latitude>
-      <longitude>-122.353</longitude>
+      <latitude>30.7309</latitude>
+      <longitude>-88.0789</longitude>
+    </address>
+    <address>
+      <street>297 Drewry Lane</street>
+      <city>Aurora</city>
+      <state>CO</state>
+      <postal>80045</postal>
+      <country>United States</country>
+      <latitude>39.7467</latitude>
+      <longitude>-104.8384</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Canada</country>
-      <name>Redeemer College</name>
-      <city>London</city>
-      <state>ON</state>
-      <postal>N6C</postal>
-      <latitude>42.9598744</latitude>
-      <longitude>-81.2353612</longitude>
+      <country>United States</country>
+      <name>University of Texas Health Science Center at San Antonio</name>
+      <city>Tallahassee</city>
+      <state>FL</state>
+      <postal>32304</postal>
+      <latitude>30.4649282</latitude>
+      <longitude>-84.3857442</longitude>
+    </school>
+    <school>
+      <country>Mexico</country>
+      <name>Universidad Pedagógica Veracruzana</name>
+      <city>Arroyo Seco</city>
+      <state>GRO</state>
+      <postal>41821</postal>
+      <latitude>21.5471976</latitude>
+      <longitude>-99.6878432</longitude>
     </school>
   </schools>
   <status>Inactive</status>
   <sources>
     <source>
-      <name>Chicago Tribune</name>
-      <ts>2015-03-30T10:27:14Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>Washington Post</name>
-      <ts>2014-05-13T04:00:43Z</ts>
+      <name>Los Angeles Times</name>
+      <ts>2019-01-14T17:35:18Z</ts>
     </source>
   </sources>
   <sources>
     <source>
       <name>USA Today</name>
-      <ts>2015-07-26T21:56:18Z</ts>
+      <ts>2014-07-03T00:48:54Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>New York Times</name>
+      <ts>2010-12-09T23:02:38Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10062</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
-      <fullname>Welbeck Morna</fullname>
-      <city>San Diego</city>
-      <state>CA</state>
+      <id>10003</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
+      <fullname>Edger Piper</fullname>
+      <city>Prescott</city>
+      <state>AZ</state>
     </relation>
     <relation>
-      <id>10044</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Doak Rosana</fullname>
+      <id>10064</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Ingarfill Suzy</fullname>
       <city>Portland</city>
       <state>OR</state>
     </relation>
-    <relation>
-      <id>10097</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Padly Klemens</fullname>
-      <city>Miami</city>
-      <state>FL</state>
-    </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-16T12:01:44Z</ts>
-    <user>rwimmers7</user>
+    <ts>2022-01-23T06:05:14Z</ts>
+    <user>vnorvel7</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-19T02:59:27Z</ts>
-    <user>rwimmers7</user>
+    <ts>2022-02-09T20:45:03Z</ts>
+    <user>vnorvel7</user>
   </lastUpdated>
-  <socials>
-    <social>
-      <site>twitter</site>
-      <address>https://vkontakte.ru/natoque/penatibus/et/magnis.jsp</address>
-    </social>
-  </socials>
+  <socials/>
   <memberships>
     <membership>
-      <list>list5</list>
-      <important>false</important>
-      <ts>2021-09-04</ts>
+      <list>list1</list>
+      <important>true</important>
+      <ts>2022-01-12</ts>
     </membership>
     <membership>
-      <list>list10</list>
+      <list>list8</list>
       <important>false</important>
-      <ts>2021-09-04</ts>
+      <ts>2021-06-12</ts>
     </membership>
     <membership>
-      <list>list4</list>
+      <list>list6</list>
+      <important>true</important>
+      <ts>2021-07-11</ts>
+    </membership>
+    <membership>
+      <list>list2</list>
+      <important>true</important>
+      <ts>2021-06-29</ts>
+    </membership>
+    <membership>
+      <list>list6</list>
       <important>false</important>
-      <ts>2021-07-29</ts>
+      <ts>2021-08-26</ts>
     </membership>
   </memberships>
+  <links>
+    <link>
+      <label>Quick View</label>
+      <url>http://github.io</url>
+      <icon>fa-eye</icon>
+    </link>
+    <link>
+      <label>Nomination History</label>
+      <url>https://gmpg.org</url>
+      <icon>fa-medal</icon>
+    </link>
+    <link>
+      <label>Comments</label>
+      <url>https://woothemes.com</url>
+      <icon>fa-comments</icon>
+    </link>
+  </links>
 </person>

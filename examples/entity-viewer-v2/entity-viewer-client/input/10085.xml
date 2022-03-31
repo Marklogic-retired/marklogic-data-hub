@@ -3,139 +3,210 @@
   <personId>10085</personId>
   <nameGroup>
     <givenname>
-      <value>Trudy</value>
+      <value>Urbanus</value>
     </givenname>
     <surname>
-      <value>Jellings</value>
+      <value>Rabbage</value>
     </surname>
     <fullname>
-      <classification>U</classification>
+      <classification>C</classification>
       <restricted>true</restricted>
-      <value>Jellings Trudy</value>
+      <value>Rabbage Urbanus</value>
       <source>
         <name>New York Times</name>
-        <ts>2013-02-09T02:11:37Z</ts>
+        <ts>2017-04-09T19:09:33Z</ts>
+      </source>
+      <source>
+        <name>USA Today</name>
+        <ts>2020-06-30T00:53:57Z</ts>
+      </source>
+      <source>
+        <name>USA Today</name>
+        <ts>2016-12-12T14:31:41Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>rcato0@pbs.org</value>
-      <classification>C</classification>
+      <value>kdoyley0@senate.gov</value>
+      <classification>S</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>267-497-4510</phone>
+  <phone>549-450-4106</phone>
   <ssn>
-    <value>417-89-3440</value>
+    <value>110-68-9811</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
+      <source>
+        <name>New York Times</name>
+        <ts>2016-09-20T02:06:35Z</ts>
+        <uploadedBy>btiner0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
+      <source>
+        <name>New York Times</name>
+        <ts>2013-10-15T12:30:40Z</ts>
+        <uploadedBy>asuermeiers0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
       <source>
         <name>Chicago Tribune</name>
-        <ts>2021-12-25T19:21:08Z</ts>
+        <ts>2012-05-24T14:46:26Z</ts>
+        <uploadedBy>tmullins0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>4 Arizona Pass</street>
-      <city>Tulsa</city>
-      <state>OK</state>
-      <postal>74133</postal>
+      <street>5462 Mifflin Avenue</street>
+      <city>Olympia</city>
+      <state>WA</state>
+      <postal>98516</postal>
       <country>United States</country>
-      <latitude>36.0467</latitude>
-      <longitude>-95.8841</longitude>
+      <latitude>47.1126</latitude>
+      <longitude>-122.7794</longitude>
     </address>
     <address>
-      <street>086 Clarendon Avenue</street>
-      <city>Cincinnati</city>
-      <state>OH</state>
-      <postal>45264</postal>
+      <street>78432 Boyd Lane</street>
+      <city>Washington</city>
+      <state>DC</state>
+      <postal>20546</postal>
       <country>United States</country>
-      <latitude>39.1668</latitude>
-      <longitude>-84.5382</longitude>
+      <latitude>38.891</latitude>
+      <longitude>-77.0211</longitude>
     </address>
     <address>
-      <street>508 Loomis Point</street>
-      <city>Baton Rouge</city>
-      <state>LA</state>
-      <postal>70836</postal>
+      <street>9 Knutson Road</street>
+      <city>Shawnee Mission</city>
+      <state>KS</state>
+      <postal>66215</postal>
       <country>United States</country>
-      <latitude>30.392</latitude>
-      <longitude>-91.0892</longitude>
+      <latitude>38.949</latitude>
+      <longitude>-94.7405</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Mexico</country>
-      <name>Centro de Estudios Universitarios Monterrey</name>
-      <city>San Agustin</city>
-      <state>GUA</state>
-      <postal>36800</postal>
-      <latitude>25.6502709</latitude>
-      <longitude>-100.3428618</longitude>
+      <country>United States</country>
+      <name>Southwest University</name>
+      <city>Lakeland</city>
+      <state>FL</state>
+      <postal>33811</postal>
+      <latitude>27.9852231</latitude>
+      <longitude>-82.008014</longitude>
+    </school>
+    <school>
+      <country>United States</country>
+      <name>New England School of Law</name>
+      <city>Lexington</city>
+      <state>KY</state>
+      <postal>40510</postal>
+      <latitude>38.0765476</latitude>
+      <longitude>-84.5955732</longitude>
     </school>
   </schools>
   <status>Inactive</status>
   <sources>
     <source>
       <name>New York Times</name>
-      <ts>2013-12-24T04:12:57Z</ts>
+      <ts>2013-03-17T02:44:00Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Chicago Tribune</name>
+      <ts>2012-06-23T17:36:28Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Wall Street Journal</name>
+      <ts>2012-07-01T23:37:18Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10089</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Durnford Neal</fullname>
-      <city>New Haven</city>
-      <state>CT</state>
-    </relation>
-    <relation>
-      <id>10040</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Serjeant Vivyanne</fullname>
-      <city>Chattanooga</city>
-      <state>TN</state>
-    </relation>
-    <relation>
-      <id>10050</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Hinkley Jojo</fullname>
-      <city>Richmond</city>
-      <state>VA</state>
-    </relation>
-    <relation>
-      <id>10071</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
-      <fullname>Bolton Kettie</fullname>
-      <city>Des Moines</city>
-      <state>IA</state>
-    </relation>
-    <relation>
-      <id>10080</id>
+      <id>10036</id>
       <predicate>worksWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Bartod Janene</fullname>
-      <city>Albany</city>
-      <state>NY</state>
+      <fullname>Bony Brendin</fullname>
+      <city>Kansas City</city>
+      <state>MO</state>
+    </relation>
+    <relation>
+      <id>10087</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
+      <fullname>Linfitt Caprice</fullname>
+      <city>Trenton</city>
+      <state>NJ</state>
+    </relation>
+    <relation>
+      <id>10045</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
+      <fullname>Serjeant Correna</fullname>
+      <city>Cincinnati</city>
+      <state>OH</state>
+    </relation>
+    <relation>
+      <id>10084</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
+      <fullname>Gilvear Orren</fullname>
+      <city>Billings</city>
+      <state>MT</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-23T14:38:10Z</ts>
-    <user>tjellings2c</user>
+    <ts>2022-01-30T04:37:20Z</ts>
+    <user>urabbage2c</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-24T10:26:30Z</ts>
-    <user>tjellings2c</user>
+    <ts>2022-01-31T00:52:28Z</ts>
+    <user>urabbage2c</user>
   </lastUpdated>
-  <socials/>
+  <socials>
+    <social>
+      <site>facebook</site>
+      <handle/>
+      <address>https://elpais.com/dictumst/maecenas/ut/massa/quis/augue.json</address>
+    </social>
+    <social>
+      <site>linkedin</site>
+      <handle>ddraper1</handle>
+      <address>http://springer.com/neque/duis/bibendum/morbi/non.html</address>
+    </social>
+    <social>
+      <site>linkedin</site>
+      <handle>mkerford2</handle>
+      <address>http://sfgate.com/lobortis/sapien.xml</address>
+    </social>
+  </socials>
   <memberships/>
+  <links>
+    <link>
+      <label>Quick View</label>
+      <url>https://theatlantic.com</url>
+      <icon>fa-eye</icon>
+    </link>
+    <link>
+      <label>Nomination History</label>
+      <url>http://illinois.edu</url>
+      <icon>fa-medal</icon>
+    </link>
+    <link>
+      <label>Comments</label>
+      <url>http://ocn.ne.jp</url>
+      <icon>fa-comments</icon>
+    </link>
+  </links>
 </person>

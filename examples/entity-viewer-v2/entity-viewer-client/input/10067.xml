@@ -3,165 +3,163 @@
   <personId>10067</personId>
   <nameGroup>
     <givenname>
-      <value>Halimeda</value>
+      <value>Tomkin</value>
     </givenname>
     <surname>
-      <value>Mertin</value>
+      <value>Demcak</value>
     </surname>
     <fullname>
       <classification>U</classification>
-      <restricted>true</restricted>
-      <value>Mertin Halimeda</value>
+      <restricted>false</restricted>
+      <value>Demcak Tomkin</value>
       <source>
-        <name>USA Today</name>
-        <ts>2020-03-26T23:10:19Z</ts>
-      </source>
-      <source>
-        <name>New York Times</name>
-        <ts>2019-02-26T21:41:06Z</ts>
+        <name>Los Angeles Times</name>
+        <ts>2011-05-18T07:10:15Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>sdudney0@hud.gov</value>
+      <value>pvockings0@ocn.ne.jp</value>
+      <classification>S</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>mcrake1@bigcartel.com</value>
+      <classification>S</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>lfirby2@nih.gov</value>
       <classification>S</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>223-489-9597</phone>
+  <phone>811-811-0334</phone>
   <ssn>
-    <value>622-98-4327</value>
+    <value>331-54-1912</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+      <source>
+        <name>New York Times</name>
+        <ts>2019-09-30T12:54:42Z</ts>
+        <uploadedBy>dritmeier0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
       <source>
         <name>Wall Street Journal</name>
-        <ts>2020-06-01T02:36:45Z</ts>
+        <ts>2019-03-19T04:04:22Z</ts>
+        <uploadedBy>psatterley0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2018-12-10T07:58:38Z</ts>
+        <uploadedBy/>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>865 La Follette Junction</street>
-      <city>Philadelphia</city>
-      <state>PA</state>
-      <postal>19141</postal>
+      <street>98 Badeau Plaza</street>
+      <city>Terre Haute</city>
+      <state>IN</state>
+      <postal>47812</postal>
       <country>United States</country>
-      <latitude>40.0365</latitude>
-      <longitude>-75.1451</longitude>
+      <latitude>39.4336</latitude>
+      <longitude>-87.4101</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Canada</country>
-      <name>Humber College</name>
-      <city>New-Richmond</city>
-      <state>QC</state>
-      <postal>J7R</postal>
-      <latitude>48.16059</latitude>
-      <longitude>-65.85823</longitude>
-    </school>
-    <school>
       <country>United States</country>
-      <name>Concordia College, Selma</name>
-      <city>Tuscaloosa</city>
-      <state>AL</state>
-      <postal>35487</postal>
-      <latitude>33.207199</latitude>
-      <longitude>-87.5482025</longitude>
+      <name>Hawaii Pacific University</name>
+      <city>Evansville</city>
+      <state>IN</state>
+      <postal>47737</postal>
+      <latitude>37.97</latitude>
+      <longitude>-87.5699999</longitude>
     </school>
   </schools>
   <status>Active</status>
   <sources>
     <source>
-      <name>Chicago Tribune</name>
-      <ts>2012-07-27T04:29:11Z</ts>
+      <name>Wall Street Journal</name>
+      <ts>2018-02-10T14:04:23Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10088</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
-      <fullname>Layton Haily</fullname>
-      <city>Trenton</city>
-      <state>NJ</state>
-    </relation>
-    <relation>
-      <id>10082</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
-      <fullname>Else Viola</fullname>
-      <city>Charlotte</city>
-      <state>NC</state>
-    </relation>
-    <relation>
-      <id>10025</id>
+      <id>10049</id>
       <predicate>worksWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
-      <fullname>Rosell Dasie</fullname>
-      <city>Burbank</city>
-      <state>CA</state>
+      <fullname>Mansbridge Raddy</fullname>
+      <city>Wilmington</city>
+      <state>DE</state>
     </relation>
     <relation>
-      <id>10061</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
-      <fullname>Igoe Christos</fullname>
-      <city>El Paso</city>
-      <state>TX</state>
-    </relation>
-    <relation>
-      <id>10069</id>
+      <id>10036</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Crips Ollie</fullname>
-      <city>Lexington</city>
-      <state>KY</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
+      <fullname>Bony Brendin</fullname>
+      <city>Kansas City</city>
+      <state>MO</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-20T13:22:13Z</ts>
-    <user>hmertin1u</user>
+    <ts>2022-02-10T16:36:46Z</ts>
+    <user>tdemcak1u</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-25T13:00:07Z</ts>
-    <user>hmertin1u</user>
+    <ts>2022-02-24T00:16:18Z</ts>
+    <user>tdemcak1u</user>
   </lastUpdated>
   <socials>
     <social>
-      <site>twitter</site>
-      <address>https://ft.com/vitae/ipsum/aliquam/non/mauris/morbi.jsp</address>
+      <site>facebook</site>
+      <handle>tbottinelli0</handle>
+      <address>http://goodreads.com/eleifend/donec/ut/dolor/morbi/vel.json</address>
     </social>
   </socials>
   <memberships>
     <membership>
-      <list>list9</list>
+      <list>list1</list>
       <important>true</important>
-      <ts>2021-06-03</ts>
-    </membership>
-    <membership>
-      <list>list9</list>
-      <important>false</important>
-      <ts>2022-02-02</ts>
+      <ts>2021-01-11</ts>
     </membership>
     <membership>
       <list>list3</list>
+      <important>true</important>
+      <ts>2021-10-23</ts>
+    </membership>
+    <membership>
+      <list>list12</list>
       <important>false</important>
-      <ts>2021-02-24</ts>
-    </membership>
-    <membership>
-      <list>list7</list>
-      <important>true</important>
-      <ts>2019-06-02</ts>
-    </membership>
-    <membership>
-      <list>list4</list>
-      <important>true</important>
-      <ts>2019-04-16</ts>
+      <ts>2021-04-09</ts>
     </membership>
   </memberships>
+  <links>
+    <link>
+      <label>Quick View</label>
+      <url>http://odnoklassniki.ru</url>
+      <icon>fa-eye</icon>
+    </link>
+    <link>
+      <label>Nomination History</label>
+      <url>https://vinaora.com</url>
+      <icon>fa-medal</icon>
+    </link>
+    <link>
+      <label>Comments</label>
+      <url>http://bigcartel.com</url>
+      <icon>fa-comments</icon>
+    </link>
+  </links>
 </person>

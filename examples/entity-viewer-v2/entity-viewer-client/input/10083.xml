@@ -3,153 +3,196 @@
   <personId>10083</personId>
   <nameGroup>
     <givenname>
-      <value>Elizabeth</value>
+      <value>Victoir</value>
     </givenname>
     <surname>
-      <value>Scriven</value>
+      <value>Roddick</value>
     </surname>
     <fullname>
-      <classification>C</classification>
-      <restricted>false</restricted>
-      <value>Scriven Elizabeth</value>
+      <classification>S</classification>
+      <restricted>true</restricted>
+      <value>Roddick Victoir</value>
       <source>
-        <name>Washington Post</name>
-        <ts>2014-07-08T03:04:22Z</ts>
-      </source>
-      <source>
-        <name>New York Times</name>
-        <ts>2013-06-11T13:13:57Z</ts>
+        <name>Chicago Tribune</name>
+        <ts>2020-08-16T13:54:23Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>kmattioli0@dell.com</value>
-      <classification>S</classification>
+      <value>gbonnette0@answers.com</value>
+      <classification>C</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>dtills1@desdev.cn</value>
-      <classification>U</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>mcarnock2@columbia.edu</value>
+      <value>bricht1@mediafire.com</value>
       <classification>C</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>424-147-1655</phone>
+  <phone>187-885-7188</phone>
   <ssn>
-    <value>887-69-6325</value>
+    <value>439-37-4047</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
-      <source>
-        <name>Wall Street Journal</name>
-        <ts>2018-11-06T06:28:50Z</ts>
-      </source>
-    </image>
-    <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
       <source>
-        <name>USA Today</name>
-        <ts>2020-01-05T05:11:01Z</ts>
+        <name>Wall Street Journal</name>
+        <ts>2013-10-24T00:31:18Z</ts>
+        <uploadedBy>jccomini0</uploadedBy>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2012-10-18T16:18:49Z</ts>
+        <name>New York Times</name>
+        <ts>2014-08-09T02:05:49Z</ts>
+        <uploadedBy>gmaltman0</uploadedBy>
       </source>
     </image>
     <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2018-02-04T15:03:53Z</ts>
+        <name>USA Today</name>
+        <ts>2015-11-17T06:31:24Z</ts>
+        <uploadedBy/>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>9 Petterle Lane</street>
-      <city>Washington</city>
-      <state>DC</state>
-      <postal>20540</postal>
+      <street>0 Schurz Plaza</street>
+      <city>Bakersfield</city>
+      <state>CA</state>
+      <postal>93305</postal>
       <country>United States</country>
-      <latitude>38.8874</latitude>
-      <longitude>-77.0047</longitude>
+      <latitude>35.3855</latitude>
+      <longitude>-118.986</longitude>
+    </address>
+    <address>
+      <street>968 Schmedeman Road</street>
+      <city>Billings</city>
+      <state>MT</state>
+      <postal>59105</postal>
+      <country>United States</country>
+      <latitude>45.9497</latitude>
+      <longitude>-108.599</longitude>
+    </address>
+    <address>
+      <street>8997 Bashford Road</street>
+      <city>Jacksonville</city>
+      <state>FL</state>
+      <postal>32236</postal>
+      <country>United States</country>
+      <latitude>30.3449</latitude>
+      <longitude>-81.6831</longitude>
     </address>
   </addresses>
   <schools>
     <school>
+      <country>Canada</country>
+      <name>Dominican College of Philosophy and Theology</name>
+      <city>Saint-Jérôme</city>
+      <state>QC</state>
+      <postal>J7Z</postal>
+      <latitude>45.7738831</latitude>
+      <longitude>-73.9771044</longitude>
+    </school>
+    <school>
       <country>United States</country>
-      <name>California State University, Los Angeles</name>
-      <city>Phoenix</city>
-      <state>AZ</state>
-      <postal>85010</postal>
-      <latitude>33.4658131</latitude>
-      <longitude>-112.0244867</longitude>
+      <name>Moody Bible Institute</name>
+      <city>Mobile</city>
+      <state>AL</state>
+      <postal>36641</postal>
+      <latitude>30.69</latitude>
+      <longitude>-88.06</longitude>
     </school>
   </schools>
   <status>Inactive</status>
   <sources>
     <source>
       <name>Los Angeles Times</name>
-      <ts>2018-08-03T23:51:15Z</ts>
+      <ts>2021-02-13T07:51:36Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Los Angeles Times</name>
+      <ts>2014-07-15T09:39:53Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Wall Street Journal</name>
+      <ts>2015-02-07T05:38:43Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10071</id>
+      <id>10009</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
-      <fullname>Bolton Kettie</fullname>
-      <city>Des Moines</city>
-      <state>IA</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
+      <fullname>Gulliver Gail</fullname>
+      <city>Austin</city>
+      <state>TX</state>
     </relation>
     <relation>
-      <id>10086</id>
+      <id>10029</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
-      <fullname>Gowthrop Pansy</fullname>
-      <city>Dayton</city>
-      <state>OH</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Hengoed Edee</fullname>
+      <city>Gary</city>
+      <state>IN</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-26T10:40:53Z</ts>
-    <user>escriven2a</user>
+    <ts>2022-01-14T12:19:41Z</ts>
+    <user>vroddick2a</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-15T02:27:11Z</ts>
-    <user>escriven2a</user>
+    <ts>2022-02-20T04:31:05Z</ts>
+    <user>vroddick2a</user>
   </lastUpdated>
-  <socials>
-    <social>
-      <site>twitter</site>
-      <address>https://google.co.uk/maecenas.html</address>
-    </social>
-  </socials>
+  <socials/>
   <memberships>
     <membership>
-      <list>list12</list>
+      <list>list2</list>
       <important>true</important>
-      <ts>2021-09-20</ts>
-    </membership>
-    <membership>
-      <list>list6</list>
-      <important>false</important>
-      <ts>2020-11-03</ts>
+      <ts>2021-11-06</ts>
     </membership>
     <membership>
       <list>list4</list>
       <important>false</important>
-      <ts>2020-08-16</ts>
+      <ts>2021-11-22</ts>
+    </membership>
+    <membership>
+      <list>list5</list>
+      <important>false</important>
+      <ts>2021-12-17</ts>
+    </membership>
+    <membership>
+      <list>list7</list>
+      <important>true</important>
+      <ts>2021-09-25</ts>
     </membership>
   </memberships>
+  <links>
+    <link>
+      <label>Quick View</label>
+      <url>https://hibu.com</url>
+      <icon>fa-eye</icon>
+    </link>
+    <link>
+      <label>Nomination History</label>
+      <url>http://odnoklassniki.ru</url>
+      <icon>fa-medal</icon>
+    </link>
+    <link>
+      <label>Comments</label>
+      <url>http://typepad.com</url>
+      <icon>fa-comments</icon>
+    </link>
+  </links>
 </person>

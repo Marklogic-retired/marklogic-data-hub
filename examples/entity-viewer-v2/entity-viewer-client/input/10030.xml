@@ -3,183 +3,203 @@
   <personId>10030</personId>
   <nameGroup>
     <givenname>
-      <value>Chiarra</value>
+      <value>Jarad</value>
     </givenname>
     <surname>
-      <value>Bend</value>
+      <value>Bonsul</value>
     </surname>
     <fullname>
-      <classification>U</classification>
+      <classification>S</classification>
       <restricted>true</restricted>
-      <value>Bend Chiarra</value>
+      <value>Bonsul Jarad</value>
       <source>
-        <name>Washington Post</name>
-        <ts>2013-01-18T12:52:55Z</ts>
+        <name>Wall Street Journal</name>
+        <ts>2011-02-16T07:07:05Z</ts>
       </source>
       <source>
         <name>Washington Post</name>
-        <ts>2015-11-11T12:52:04Z</ts>
+        <ts>2014-09-29T02:40:04Z</ts>
       </source>
       <source>
-        <name>New York Times</name>
-        <ts>2012-09-23T13:12:35Z</ts>
+        <name>Wall Street Journal</name>
+        <ts>2015-07-24T10:38:17Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>gcunio0@ucoz.com</value>
-      <classification>S</classification>
+      <value>tberdale0@si.edu</value>
+      <classification>C</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>gpearcehouse1@linkedin.com</value>
-      <classification>S</classification>
+      <value>whampshaw1@amazon.co.uk</value>
+      <classification>C</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>floveitt2@bizjournals.com</value>
+      <value>abinns2@telegraph.co.uk</value>
       <classification>C</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>425-747-4039</phone>
+  <phone>939-756-0219</phone>
   <ssn>
-    <value>133-24-4629</value>
+    <value>585-04-5127</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
-      <source>
-        <name>Los Angeles Times</name>
-        <ts>2016-02-04T23:16:51Z</ts>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
-      <source>
-        <name>Los Angeles Times</name>
-        <ts>2015-06-22T21:49:44Z</ts>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
       <source>
         <name>USA Today</name>
-        <ts>2011-03-06T17:42:11Z</ts>
+        <ts>2018-08-29T08:36:33Z</ts>
+        <uploadedBy>sohern0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
+      <source>
+        <name>Washington Post</name>
+        <ts>2014-01-26T23:28:24Z</ts>
+        <uploadedBy>gmathers0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>401 Bluestem Trail</street>
-      <city>Clearwater</city>
-      <state>FL</state>
-      <postal>33758</postal>
+      <street>4 Brickson Park Center</street>
+      <city>Amarillo</city>
+      <state>TX</state>
+      <postal>79118</postal>
       <country>United States</country>
-      <latitude>27.8918</latitude>
-      <longitude>-82.7248</longitude>
+      <latitude>35.0763</latitude>
+      <longitude>-101.8349</longitude>
     </address>
     <address>
-      <street>27149 Pearson Crossing</street>
-      <city>Richmond</city>
-      <state>VA</state>
-      <postal>23272</postal>
+      <street>216 Chive Terrace</street>
+      <city>Lincoln</city>
+      <state>NE</state>
+      <postal>68531</postal>
       <country>United States</country>
-      <latitude>37.5242</latitude>
-      <longitude>-77.4932</longitude>
-    </address>
-    <address>
-      <street>27261 Mariners Cove Center</street>
-      <city>Wichita</city>
-      <state>KS</state>
-      <postal>67260</postal>
-      <country>United States</country>
-      <latitude>37.7194</latitude>
-      <longitude>-97.2936</longitude>
+      <latitude>40.9008</latitude>
+      <longitude>-96.7201</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>United States</country>
-      <name>Anderson College</name>
-      <city>New York City</city>
-      <state>NY</state>
-      <postal>10184</postal>
-      <latitude>30.1921004</latitude>
-      <longitude>-81.6975206</longitude>
+      <country>Mexico</country>
+      <name>Instituto Tecnológico Autonómo de México</name>
+      <city>Emiliano Zapata</city>
+      <state>VER</state>
+      <postal>91560</postal>
+      <latitude>18.8478608</latitude>
+      <longitude>-99.1843676</longitude>
     </school>
     <school>
       <country>Canada</country>
-      <name>First Nations University of Canada</name>
-      <city>Blackfalds</city>
-      <state>AB</state>
-      <postal>J5K</postal>
-      <latitude>52.38342</latitude>
-      <longitude>-113.7853</longitude>
+      <name>DeVry Institute of Technology</name>
+      <city>Selkirk</city>
+      <state>MB</state>
+      <postal>R1A</postal>
+      <latitude>50.1369112</latitude>
+      <longitude>-96.8791564</longitude>
     </school>
   </schools>
   <status>Inactive</status>
   <sources>
     <source>
-      <name>Chicago Tribune</name>
-      <ts>2019-04-02T17:15:32Z</ts>
+      <name>New York Times</name>
+      <ts>2020-06-22T12:07:40Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Los Angeles Times</name>
+      <ts>2013-10-16T11:55:12Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Wall Street Journal</name>
+      <ts>2011-06-26T05:57:37Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10052</id>
+      <id>10026</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
-      <fullname>Tacey Orland</fullname>
-      <city>Oklahoma City</city>
-      <state>OK</state>
-    </relation>
-    <relation>
-      <id>10098</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
-      <fullname>McLachlan Hermon</fullname>
-      <city>Seattle</city>
-      <state>WA</state>
-    </relation>
-    <relation>
-      <id>10040</id>
-      <predicate>relatedTo</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Serjeant Vivyanne</fullname>
-      <city>Chattanooga</city>
-      <state>TN</state>
+      <fullname>Stodhart Kerstin</fullname>
+      <city>Gatesville</city>
+      <state>TX</state>
     </relation>
     <relation>
-      <id>10072</id>
+      <id>10044</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Cauley Ola</fullname>
-      <city>Louisville</city>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>MacKimmie Halsey</fullname>
+      <city>Lexington</city>
       <state>KY</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-10T03:19:20Z</ts>
-    <user>cbendt</user>
+    <ts>2022-02-24T07:43:49Z</ts>
+    <user>jbonsult</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-18T00:29:25Z</ts>
-    <user>cbendt</user>
+    <ts>2022-01-28T02:03:54Z</ts>
+    <user>jbonsult</user>
   </lastUpdated>
   <socials>
     <social>
       <site>twitter</site>
-      <address>http://utexas.edu/ultrices/posuere.json</address>
+      <handle>edavidovsky0</handle>
+      <address>http://devhub.com/suspendisse/potenti/cras/in/purus/eu.aspx</address>
     </social>
   </socials>
   <memberships>
     <membership>
+      <list>list5</list>
+      <important>true</important>
+      <ts>2021-10-24</ts>
+    </membership>
+    <membership>
+      <list>list5</list>
+      <important>true</important>
+      <ts>2021-07-06</ts>
+    </membership>
+    <membership>
       <list>list12</list>
+      <important>true</important>
+      <ts>2021-04-06</ts>
+    </membership>
+    <membership>
+      <list>list12</list>
+      <important>true</important>
+      <ts>2021-07-15</ts>
+    </membership>
+    <membership>
+      <list>list8</list>
       <important>false</important>
-      <ts>2022-02-08</ts>
+      <ts>2021-02-24</ts>
     </membership>
   </memberships>
+  <links>
+    <link>
+      <label>Quick View</label>
+      <url>https://si.edu</url>
+      <icon>fa-eye</icon>
+    </link>
+    <link>
+      <label>Nomination History</label>
+      <url>http://cbsnews.com</url>
+      <icon>fa-medal</icon>
+    </link>
+    <link>
+      <label>Comments</label>
+      <url>http://github.io</url>
+      <icon>fa-comments</icon>
+    </link>
+  </links>
 </person>

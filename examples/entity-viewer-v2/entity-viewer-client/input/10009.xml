@@ -3,171 +3,146 @@
   <personId>10009</personId>
   <nameGroup>
     <givenname>
-      <value>Linoel</value>
+      <value>Gail</value>
     </givenname>
     <surname>
-      <value>Jeger</value>
+      <value>Gulliver</value>
     </surname>
     <fullname>
       <classification>C</classification>
-      <restricted>false</restricted>
-      <value>Jeger Linoel</value>
+      <restricted>true</restricted>
+      <value>Gulliver Gail</value>
       <source>
-        <name>New York Times</name>
-        <ts>2010-12-27T05:23:23Z</ts>
+        <name>Los Angeles Times</name>
+        <ts>2018-08-14T08:19:16Z</ts>
       </source>
       <source>
         <name>Chicago Tribune</name>
-        <ts>2019-08-12T00:42:18Z</ts>
-      </source>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2012-03-08T20:54:00Z</ts>
+        <ts>2019-12-01T21:10:20Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>llanyon0@liveinternet.ru</value>
+      <value>skrollman0@elpais.com</value>
       <classification>S</classification>
       <restricted>false</restricted>
     </email>
+    <email>
+      <value>rrasp1@wikipedia.org</value>
+      <classification>U</classification>
+      <restricted>false</restricted>
+    </email>
   </emails>
-  <phone>892-205-6401</phone>
+  <phone>428-358-4417</phone>
   <ssn>
-    <value>661-35-1639</value>
+    <value>607-59-0436</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
       <source>
         <name>Washington Post</name>
-        <ts>2019-08-27T00:37:42Z</ts>
+        <ts>2014-02-14T05:58:02Z</ts>
+        <uploadedBy>cstorry0</uploadedBy>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
-      <source>
-        <name>Washington Post</name>
-        <ts>2017-11-29T23:45:17Z</ts>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
       <source>
         <name>Los Angeles Times</name>
-        <ts>2017-10-29T12:52:05Z</ts>
+        <ts>2015-07-31T01:38:55Z</ts>
+        <uploadedBy>vdelmage0</uploadedBy>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2020-02-14T07:03:08Z</ts>
+        <name>Wall Street Journal</name>
+        <ts>2021-08-05T20:46:06Z</ts>
+        <uploadedBy>mshea0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>5 Anthes Crossing</street>
-      <city>Montgomery</city>
-      <state>AL</state>
-      <postal>36114</postal>
-      <country>United States</country>
-      <latitude>32.404</latitude>
-      <longitude>-86.2539</longitude>
-    </address>
-    <address>
-      <street>63501 Veith Avenue</street>
-      <city>Houston</city>
+      <street>3948 Magdeline Park</street>
+      <city>Austin</city>
       <state>TX</state>
-      <postal>77218</postal>
+      <postal>78783</postal>
       <country>United States</country>
-      <latitude>29.834</latitude>
-      <longitude>-95.4342</longitude>
+      <latitude>30.3264</latitude>
+      <longitude>-97.7713</longitude>
     </address>
   </addresses>
   <schools>
     <school>
       <country>United States</country>
-      <name>University of Louisville</name>
-      <city>Kansas City</city>
-      <state>KS</state>
-      <postal>66105</postal>
-      <latitude>39.0860093</latitude>
-      <longitude>-94.6321217</longitude>
+      <name>University of Florida</name>
+      <city>Zephyrhills</city>
+      <state>FL</state>
+      <postal>33543</postal>
+      <latitude>28.2107548</latitude>
+      <longitude>-82.2909146</longitude>
     </school>
   </schools>
   <status>Inactive</status>
   <sources>
     <source>
-      <name>USA Today</name>
-      <ts>2014-04-09T23:28:48Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>Los Angeles Times</name>
-      <ts>2018-01-27T04:20:50Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>Washington Post</name>
-      <ts>2021-12-09T07:24:14Z</ts>
+      <name>Wall Street Journal</name>
+      <ts>2017-12-06T15:12:14Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10001</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Cisco Felicdad</fullname>
-      <city>Washington</city>
-      <state>DC</state>
-    </relation>
-    <relation>
-      <id>10064</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Blurton Faydra</fullname>
-      <city>Beaumont</city>
+      <id>10070</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Breitler Cacilie</fullname>
+      <city>San Antonio</city>
       <state>TX</state>
     </relation>
     <relation>
-      <id>10055</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
-      <fullname>Elvins Daisi</fullname>
-      <city>El Paso</city>
-      <state>TX</state>
+      <id>10045</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
+      <fullname>Serjeant Correna</fullname>
+      <city>Cincinnati</city>
+      <state>OH</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-01T09:06:35Z</ts>
-    <user>ljeger8</user>
+    <ts>2022-02-10T12:20:28Z</ts>
+    <user>ggulliver8</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-28T02:54:02Z</ts>
-    <user>ljeger8</user>
+    <ts>2022-02-11T03:45:22Z</ts>
+    <user>ggulliver8</user>
   </lastUpdated>
   <socials/>
   <memberships>
     <membership>
-      <list>list2</list>
-      <important>true</important>
-      <ts>2020-09-07</ts>
-    </membership>
-    <membership>
-      <list>list9</list>
+      <list>list5</list>
       <important>false</important>
-      <ts>2020-07-11</ts>
-    </membership>
-    <membership>
-      <list>list1</list>
-      <important>false</important>
-      <ts>2022-02-09</ts>
+      <ts>2021-07-31</ts>
     </membership>
   </memberships>
+  <links>
+    <link>
+      <label>Quick View</label>
+      <url>http://indiegogo.com</url>
+      <icon>fa-eye</icon>
+    </link>
+    <link>
+      <label>Nomination History</label>
+      <url>http://reuters.com</url>
+      <icon>fa-medal</icon>
+    </link>
+    <link>
+      <label>Comments</label>
+      <url>https://cnet.com</url>
+      <icon>fa-comments</icon>
+    </link>
+  </links>
 </person>

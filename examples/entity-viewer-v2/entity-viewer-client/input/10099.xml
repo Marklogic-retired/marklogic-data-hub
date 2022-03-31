@@ -3,189 +3,170 @@
   <personId>10099</personId>
   <nameGroup>
     <givenname>
-      <value>Toinette</value>
+      <value>Kyle</value>
     </givenname>
     <surname>
-      <value>Pestricke</value>
+      <value>Wiltsher</value>
     </surname>
     <fullname>
-      <classification>S</classification>
+      <classification>U</classification>
       <restricted>true</restricted>
-      <value>Pestricke Toinette</value>
-      <source>
-        <name>Wall Street Journal</name>
-        <ts>2014-04-27T18:52:54Z</ts>
-      </source>
+      <value>Wiltsher Kyle</value>
       <source>
         <name>New York Times</name>
-        <ts>2019-10-30T03:37:42Z</ts>
+        <ts>2020-12-20T16:40:10Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>kantley0@sitemeter.com</value>
-      <classification>S</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>tphear1@bloglovin.com</value>
-      <classification>C</classification>
+      <value>abrook0@symantec.com</value>
+      <classification>U</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>220-706-4387</phone>
+  <phone>792-967-1133</phone>
   <ssn>
-    <value>404-84-4827</value>
+    <value>366-13-5462</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
-      <source>
-        <name>USA Today</name>
-        <ts>2016-03-07T13:29:48Z</ts>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
-      <source>
-        <name>Wall Street Journal</name>
-        <ts>2011-09-29T03:31:14Z</ts>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
       <source>
         <name>Chicago Tribune</name>
-        <ts>2015-11-03T03:41:23Z</ts>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2015-09-13T08:05:18Z</ts>
+        <ts>2021-04-13T04:06:27Z</ts>
+        <uploadedBy>chammerberg0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>0229 Vernon Hill</street>
-      <city>Savannah</city>
-      <state>GA</state>
-      <postal>31422</postal>
+      <street>84 Morrow Park</street>
+      <city>New Orleans</city>
+      <state>LA</state>
+      <postal>70149</postal>
       <country>United States</country>
-      <latitude>31.9714</latitude>
-      <longitude>-81.0716</longitude>
+      <latitude>30.033</latitude>
+      <longitude>-89.8826</longitude>
     </address>
   </addresses>
   <schools>
     <school>
       <country>United States</country>
-      <name>Wheeling Jesuit University</name>
-      <city>Baltimore</city>
-      <state>MD</state>
-      <postal>21275</postal>
-      <latitude>39.29</latitude>
-      <longitude>-76.61</longitude>
-    </school>
-    <school>
-      <country>Canada</country>
-      <name>Canadian College of Business &amp; Computers</name>
-      <city>Nipawin</city>
-      <state>SK</state>
-      <postal>V9B</postal>
-      <latitude>53.36678</latitude>
-      <longitude>-104.00092</longitude>
+      <name>The Scripps Research Institute</name>
+      <city>Tucson</city>
+      <state>AZ</state>
+      <postal>85732</postal>
+      <latitude>32.229334</latitude>
+      <longitude>-110.8772009</longitude>
     </school>
   </schools>
   <status>Active</status>
   <sources>
     <source>
       <name>Washington Post</name>
-      <ts>2014-11-30T11:15:53Z</ts>
+      <ts>2012-04-16T11:35:26Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>Los Angeles Times</name>
-      <ts>2019-03-11T06:29:36Z</ts>
+      <name>New York Times</name>
+      <ts>2014-01-03T18:19:34Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Washington Post</name>
+      <ts>2021-08-06T22:31:52Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10071</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
-      <fullname>Bolton Kettie</fullname>
-      <city>Des Moines</city>
-      <state>IA</state>
-    </relation>
-    <relation>
-      <id>10097</id>
+      <id>10062</id>
       <predicate>worksWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Padly Klemens</fullname>
-      <city>Miami</city>
-      <state>FL</state>
+      <fullname>Raison Ivy</fullname>
+      <city>Charlotte</city>
+      <state>NC</state>
     </relation>
     <relation>
-      <id>10085</id>
+      <id>10093</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
+      <fullname>Winnett Grata</fullname>
+      <city>Pittsburgh</city>
+      <state>PA</state>
+    </relation>
+    <relation>
+      <id>10043</id>
       <predicate>livesWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Jellings Trudy</fullname>
-      <city>Tulsa</city>
-      <state>OK</state>
+      <fullname>Tumpane Ellette</fullname>
+      <city>Shawnee Mission</city>
+      <state>KS</state>
+    </relation>
+    <relation>
+      <id>10032</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Hazlewood Winthrop</fullname>
+      <city>Montgomery</city>
+      <state>AL</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-01T11:16:11Z</ts>
-    <user>tpestricke2q</user>
+    <ts>2022-01-21T16:23:51Z</ts>
+    <user>kwiltsher2q</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-30T02:45:20Z</ts>
-    <user>tpestricke2q</user>
+    <ts>2022-02-17T00:20:18Z</ts>
+    <user>kwiltsher2q</user>
   </lastUpdated>
   <socials>
     <social>
       <site>linkedin</site>
-      <address>https://chron.com/morbi/porttitor/lorem.html</address>
+      <handle>carmsby0</handle>
+      <address>https://soundcloud.com/sem/sed/sagittis/nam/congue/risus/semper.jsp</address>
     </social>
     <social>
-      <site>facebook</site>
-      <address>http://usnews.com/sit/amet/sem/fusce/consequat/nulla.json</address>
-    </social>
-    <social>
-      <site>linkedin</site>
-      <address>https://nyu.edu/est/risus/auctor/sed/tristique/in.jsp</address>
+      <site>twitter</site>
+      <handle>mtrebbett1</handle>
+      <address>http://topsy.com/suspendisse/potenti/in/eleifend/quam/a.html</address>
     </social>
   </socials>
   <memberships>
     <membership>
-      <list>list8</list>
+      <list>list1</list>
       <important>false</important>
-      <ts>2021-08-26</ts>
+      <ts>2022-01-25</ts>
     </membership>
     <membership>
-      <list>list3</list>
-      <important>true</important>
-      <ts>2019-10-18</ts>
-    </membership>
-    <membership>
-      <list>list2</list>
-      <important>true</important>
-      <ts>2021-08-22</ts>
-    </membership>
-    <membership>
-      <list>list12</list>
+      <list>list1</list>
       <important>false</important>
-      <ts>2020-06-16</ts>
+      <ts>2021-04-20</ts>
     </membership>
     <membership>
-      <list>list12</list>
+      <list>list11</list>
       <important>true</important>
-      <ts>2021-10-20</ts>
+      <ts>2021-06-11</ts>
     </membership>
   </memberships>
+  <links>
+    <link>
+      <label>Quick View</label>
+      <url>https://berkeley.edu</url>
+      <icon>fa-eye</icon>
+    </link>
+    <link>
+      <label>Nomination History</label>
+      <url>https://fotki.com</url>
+      <icon>fa-medal</icon>
+    </link>
+    <link>
+      <label>Comments</label>
+      <url>https://prweb.com</url>
+      <icon>fa-comments</icon>
+    </link>
+  </links>
 </person>

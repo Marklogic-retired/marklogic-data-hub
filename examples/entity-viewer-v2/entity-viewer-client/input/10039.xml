@@ -3,158 +3,191 @@
   <personId>10039</personId>
   <nameGroup>
     <givenname>
-      <value>Syman</value>
+      <value>Fleurette</value>
     </givenname>
     <surname>
-      <value>Adamo</value>
+      <value>Jell</value>
     </surname>
     <fullname>
       <classification>U</classification>
       <restricted>true</restricted>
-      <value>Adamo Syman</value>
+      <value>Jell Fleurette</value>
       <source>
         <name>Washington Post</name>
-        <ts>2013-02-27T22:47:23Z</ts>
-      </source>
-      <source>
-        <name>USA Today</name>
-        <ts>2012-03-09T00:33:57Z</ts>
+        <ts>2012-10-09T00:36:32Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>nstrainge0@goodreads.com</value>
-      <classification>C</classification>
+      <value>abigmore0@cmu.edu</value>
+      <classification>U</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>hglasson1@whitehouse.gov</value>
-      <classification>S</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>fmonnelly2@intel.com</value>
+      <value>oeslinger1@amazon.de</value>
       <classification>S</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>614-613-7742</phone>
+  <phone>168-454-9247</phone>
   <ssn>
-    <value>280-11-5498</value>
+    <value>146-91-6112</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
       <source>
         <name>Chicago Tribune</name>
-        <ts>2011-08-28T00:57:58Z</ts>
+        <ts>2017-05-02T12:24:10Z</ts>
+        <uploadedBy>jschout0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+      <source>
+        <name>New York Times</name>
+        <ts>2019-07-24T22:19:45Z</ts>
+        <uploadedBy>mbourthoumieux0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>43575 Messerschmidt Alley</street>
-      <city>New York City</city>
-      <state>NY</state>
-      <postal>10090</postal>
+      <street>404 Westerfield Plaza</street>
+      <city>Pensacola</city>
+      <state>FL</state>
+      <postal>32505</postal>
       <country>United States</country>
-      <latitude>40.7808</latitude>
-      <longitude>-73.9772</longitude>
+      <latitude>30.4481</latitude>
+      <longitude>-87.2589</longitude>
+    </address>
+    <address>
+      <street>5 Jana Park</street>
+      <city>Houston</city>
+      <state>TX</state>
+      <postal>77025</postal>
+      <country>United States</country>
+      <latitude>29.6889</latitude>
+      <longitude>-95.4341</longitude>
+    </address>
+    <address>
+      <street>24 Manitowish Drive</street>
+      <city>Gulfport</city>
+      <state>MS</state>
+      <postal>39505</postal>
+      <country>United States</country>
+      <latitude>30.4158</latitude>
+      <longitude>-89.0684</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>United States</country>
-      <name>VanderCook College of Music</name>
-      <city>Richmond</city>
-      <state>VA</state>
-      <postal>23289</postal>
-      <latitude>37.54</latitude>
-      <longitude>-77.45</longitude>
+      <country>Mexico</country>
+      <name>Universidad La Salle Cuernavaca</name>
+      <city>El Calvario</city>
+      <state>OAX</state>
+      <postal>68213</postal>
+      <latitude>19.6031486</latitude>
+      <longitude>-99.0550357</longitude>
     </school>
   </schools>
-  <status>Active</status>
+  <status>Inactive</status>
   <sources>
     <source>
-      <name>Chicago Tribune</name>
-      <ts>2012-09-11T17:33:36Z</ts>
+      <name>Wall Street Journal</name>
+      <ts>2021-06-14T12:13:38Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10057</id>
+      <id>10059</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Stedson Elfie</fullname>
-      <city>Evansville</city>
-      <state>IN</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Wey Sara-ann</fullname>
+      <city>Woburn</city>
+      <state>MA</state>
     </relation>
     <relation>
-      <id>10054</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Chessell Skye</fullname>
-      <city>Chicago</city>
-      <state>IL</state>
+      <id>10083</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
+      <fullname>Roddick Victoir</fullname>
+      <city>Bakersfield</city>
+      <state>CA</state>
     </relation>
     <relation>
       <id>10026</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
-      <fullname>Beament Patrice</fullname>
-      <city>Birmingham</city>
-      <state>AL</state>
-    </relation>
-    <relation>
-      <id>10027</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Kelby Karleen</fullname>
-      <city>Hialeah</city>
-      <state>FL</state>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
+      <fullname>Stodhart Kerstin</fullname>
+      <city>Gatesville</city>
+      <state>TX</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-26T13:38:38Z</ts>
-    <user>sadamo12</user>
+    <ts>2022-02-10T09:17:58Z</ts>
+    <user>fjell12</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-12T16:00:40Z</ts>
-    <user>sadamo12</user>
+    <ts>2022-02-10T13:47:57Z</ts>
+    <user>fjell12</user>
   </lastUpdated>
-  <socials/>
+  <socials>
+    <social>
+      <site>twitter</site>
+      <handle>fbrodley0</handle>
+      <address>http://angelfire.com/ac/enim/in/tempor/turpis/nec/euismod.png</address>
+    </social>
+    <social>
+      <site>facebook</site>
+      <handle>bfruen1</handle>
+      <address>https://mashable.com/nunc/vestibulum/ante.aspx</address>
+    </social>
+    <social>
+      <site>facebook</site>
+      <handle>loselton2</handle>
+      <address>http://macromedia.com/eros/vestibulum/ac.jsp</address>
+    </social>
+  </socials>
   <memberships>
     <membership>
-      <list>list2</list>
+      <list>list5</list>
       <important>true</important>
-      <ts>2019-08-14</ts>
-    </membership>
-    <membership>
-      <list>list7</list>
-      <important>true</important>
-      <ts>2019-09-03</ts>
-    </membership>
-    <membership>
-      <list>list3</list>
-      <important>false</important>
-      <ts>2019-03-18</ts>
-    </membership>
-    <membership>
-      <list>list3</list>
-      <important>false</important>
-      <ts>2022-02-04</ts>
+      <ts>2021-07-12</ts>
     </membership>
     <membership>
       <list>list6</list>
       <important>true</important>
-      <ts>2019-03-01</ts>
+      <ts>2021-12-07</ts>
     </membership>
     <membership>
-      <list>list9</list>
+      <list>list4</list>
       <important>false</important>
-      <ts>2020-08-29</ts>
+      <ts>2021-10-30</ts>
+    </membership>
+    <membership>
+      <list>list5</list>
+      <important>true</important>
+      <ts>2021-08-11</ts>
     </membership>
   </memberships>
+  <links>
+    <link>
+      <label>Quick View</label>
+      <url>https://xinhuanet.com</url>
+      <icon>fa-eye</icon>
+    </link>
+    <link>
+      <label>Nomination History</label>
+      <url>http://umich.edu</url>
+      <icon>fa-medal</icon>
+    </link>
+    <link>
+      <label>Comments</label>
+      <url>https://census.gov</url>
+      <icon>fa-comments</icon>
+    </link>
+  </links>
 </person>

@@ -3,172 +3,176 @@
   <personId>10056</personId>
   <nameGroup>
     <givenname>
-      <value>Conni</value>
+      <value>Milly</value>
     </givenname>
     <surname>
-      <value>Thamelt</value>
+      <value>Aikman</value>
     </surname>
     <fullname>
-      <classification>S</classification>
-      <restricted>false</restricted>
-      <value>Thamelt Conni</value>
+      <classification>U</classification>
+      <restricted>true</restricted>
+      <value>Aikman Milly</value>
       <source>
         <name>Los Angeles Times</name>
-        <ts>2021-03-20T12:51:31Z</ts>
+        <ts>2010-10-26T11:48:22Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>sklaaassen0@acquirethisname.com</value>
-      <classification>U</classification>
+      <value>gkier0@usnews.com</value>
+      <classification>C</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>ucheetam1@deviantart.com</value>
+      <value>anickoll1@google.co.jp</value>
       <classification>S</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>rdivill2@soundcloud.com</value>
-      <classification>U</classification>
+      <value>mcristofolo2@163.com</value>
+      <classification>S</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>935-531-3857</phone>
+  <phone>131-853-8877</phone>
   <ssn>
-    <value>622-28-4176</value>
+    <value>489-11-5253</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
-      <source>
-        <name>Wall Street Journal</name>
-        <ts>2016-10-14T06:10:51Z</ts>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
       <source>
         <name>Los Angeles Times</name>
-        <ts>2021-06-24T18:50:33Z</ts>
+        <ts>2021-03-10T14:45:30Z</ts>
+        <uploadedBy/>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>7041 Sutteridge Way</street>
-      <city>Memphis</city>
-      <state>TN</state>
-      <postal>38188</postal>
+      <street>9520 Mifflin Junction</street>
+      <city>Pittsburgh</city>
+      <state>PA</state>
+      <postal>15286</postal>
       <country>United States</country>
-      <latitude>35.2017</latitude>
-      <longitude>-89.9715</longitude>
-    </address>
-    <address>
-      <street>9 Prentice Drive</street>
-      <city>Santa Monica</city>
-      <state>CA</state>
-      <postal>90405</postal>
-      <country>United States</country>
-      <latitude>34.01</latitude>
-      <longitude>-118.4717</longitude>
-    </address>
-    <address>
-      <street>7 Cherokee Terrace</street>
-      <city>Naples</city>
-      <state>FL</state>
-      <postal>33963</postal>
-      <country>United States</country>
-      <latitude>26.2626</latitude>
-      <longitude>-81.8071</longitude>
+      <latitude>40.4344</latitude>
+      <longitude>-80.0248</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>United States</country>
-      <name>Troy University</name>
-      <city>Lawrenceville</city>
-      <state>GA</state>
-      <postal>30045</postal>
-      <latitude>33.9255183</latitude>
-      <longitude>-83.9214896</longitude>
+      <country>Canada</country>
+      <name>Mount Saint Vincent University</name>
+      <city>Cochrane</city>
+      <state>AB</state>
+      <postal>T4C</postal>
+      <latitude>51.1909883</latitude>
+      <longitude>-114.4678603</longitude>
+    </school>
+    <school>
+      <country>Canada</country>
+      <name>Centennial College</name>
+      <city>Cabano</city>
+      <state>QC</state>
+      <postal>T9H</postal>
+      <latitude>47.68065</latitude>
+      <longitude>-68.8781</longitude>
     </school>
   </schools>
-  <status>Inactive</status>
+  <status>Active</status>
   <sources>
     <source>
-      <name>Los Angeles Times</name>
-      <ts>2012-10-10T06:06:31Z</ts>
+      <name>Washington Post</name>
+      <ts>2011-01-31T00:08:56Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>USA Today</name>
+      <ts>2012-10-16T02:37:49Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10084</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Dommerque Meggie</fullname>
-      <city>Round Rock</city>
-      <state>TX</state>
+      <id>10078</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
+      <fullname>Parsley Ronda</fullname>
+      <city>Fresno</city>
+      <state>CA</state>
     </relation>
     <relation>
-      <id>10089</id>
+      <id>10016</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Durnford Neal</fullname>
-      <city>New Haven</city>
-      <state>CT</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
+      <fullname>Handford Stanley</fullname>
+      <city>Milwaukee</city>
+      <state>WI</state>
     </relation>
     <relation>
-      <id>10076</id>
+      <id>10038</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Learmonth Florette</fullname>
+      <city>New York City</city>
+      <state>NY</state>
+    </relation>
+    <relation>
+      <id>10067</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Demcak Tomkin</fullname>
+      <city>Terre Haute</city>
+      <state>IN</state>
+    </relation>
+    <relation>
+      <id>10021</id>
       <predicate>livesWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Denziloe Shirleen</fullname>
-      <city>Charleston</city>
-      <state>SC</state>
-    </relation>
-    <relation>
-      <id>10085</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Jellings Trudy</fullname>
-      <city>Tulsa</city>
-      <state>OK</state>
-    </relation>
-    <relation>
-      <id>10085</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Jellings Trudy</fullname>
-      <city>Tulsa</city>
-      <state>OK</state>
+      <fullname>Heineke Shanna</fullname>
+      <city>Shreveport</city>
+      <state>LA</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-10T20:09:48Z</ts>
-    <user>cthamelt1j</user>
+    <ts>2022-01-14T20:32:27Z</ts>
+    <user>maikman1j</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-04T08:07:47Z</ts>
-    <user>cthamelt1j</user>
+    <ts>2022-02-26T12:47:55Z</ts>
+    <user>maikman1j</user>
   </lastUpdated>
-  <socials/>
+  <socials>
+    <social>
+      <site>linkedin</site>
+      <handle>pperutto0</handle>
+      <address>https://aboutads.info/in/purus/eu/magna/vulputate/luctus/cum.png</address>
+    </social>
+  </socials>
   <memberships>
     <membership>
-      <list>list7</list>
+      <list>list12</list>
       <important>true</important>
-      <ts>2021-09-03</ts>
-    </membership>
-    <membership>
-      <list>list11</list>
-      <important>false</important>
-      <ts>2019-06-14</ts>
-    </membership>
-    <membership>
-      <list>list7</list>
-      <important>true</important>
-      <ts>2020-10-18</ts>
+      <ts>2022-02-27</ts>
     </membership>
   </memberships>
+  <links>
+    <link>
+      <label>Quick View</label>
+      <url>http://si.edu</url>
+      <icon>fa-eye</icon>
+    </link>
+    <link>
+      <label>Nomination History</label>
+      <url>https://uol.com.br</url>
+      <icon>fa-medal</icon>
+    </link>
+    <link>
+      <label>Comments</label>
+      <url>http://yellowpages.com</url>
+      <icon>fa-comments</icon>
+    </link>
+  </links>
 </person>

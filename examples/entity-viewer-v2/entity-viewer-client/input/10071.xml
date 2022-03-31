@@ -3,169 +3,173 @@
   <personId>10071</personId>
   <nameGroup>
     <givenname>
-      <value>Kettie</value>
+      <value>Zane</value>
     </givenname>
     <surname>
-      <value>Bolton</value>
+      <value>Dionis</value>
     </surname>
     <fullname>
-      <classification>U</classification>
+      <classification>S</classification>
       <restricted>true</restricted>
-      <value>Bolton Kettie</value>
+      <value>Dionis Zane</value>
       <source>
         <name>Wall Street Journal</name>
-        <ts>2013-08-09T09:09:42Z</ts>
+        <ts>2016-03-08T06:22:39Z</ts>
       </source>
       <source>
-        <name>USA Today</name>
-        <ts>2020-04-10T15:53:40Z</ts>
+        <name>Chicago Tribune</name>
+        <ts>2011-04-22T08:44:46Z</ts>
       </source>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2012-11-08T15:06:42Z</ts>
+        <name>Chicago Tribune</name>
+        <ts>2012-05-29T10:26:20Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>kbrade0@webs.com</value>
+      <value>aposer0@digg.com</value>
       <classification>S</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>341-139-1107</phone>
+  <phone>267-635-9850</phone>
   <ssn>
-    <value>714-87-5572</value>
+    <value>146-22-2836</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
       <source>
         <name>Wall Street Journal</name>
-        <ts>2016-04-16T00:34:55Z</ts>
+        <ts>2021-05-29T15:47:47Z</ts>
+        <uploadedBy>bdoore0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2011-06-10T19:33:28Z</ts>
+        <uploadedBy>mpassman0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>5174 Kennedy Lane</street>
-      <city>Des Moines</city>
-      <state>IA</state>
-      <postal>50369</postal>
+      <street>919 Farmco Road</street>
+      <city>Raleigh</city>
+      <state>NC</state>
+      <postal>27658</postal>
       <country>United States</country>
-      <latitude>41.6727</latitude>
-      <longitude>-93.5722</longitude>
-    </address>
-    <address>
-      <street>096 Ilene Place</street>
-      <city>Colorado Springs</city>
-      <state>CO</state>
-      <postal>80915</postal>
-      <country>United States</country>
-      <latitude>38.8558</latitude>
-      <longitude>-104.7134</longitude>
+      <latitude>35.7977</latitude>
+      <longitude>-78.6253</longitude>
     </address>
   </addresses>
   <schools>
     <school>
       <country>United States</country>
-      <name>University of New England</name>
-      <city>Colorado Springs</city>
-      <state>CO</state>
-      <postal>80905</postal>
-      <latitude>38.8163486</latitude>
-      <longitude>-104.8512993</longitude>
+      <name>Southwestern Christian University</name>
+      <city>Katy</city>
+      <state>TX</state>
+      <postal>77493</postal>
+      <latitude>29.7857853</latitude>
+      <longitude>-95.8243956</longitude>
     </school>
   </schools>
   <status>Active</status>
   <sources>
     <source>
-      <name>Chicago Tribune</name>
-      <ts>2010-01-26T22:47:37Z</ts>
+      <name>Los Angeles Times</name>
+      <ts>2010-08-21T06:46:13Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Los Angeles Times</name>
+      <ts>2016-04-08T01:26:43Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Wall Street Journal</name>
+      <ts>2020-12-09T23:04:34Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10089</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Durnford Neal</fullname>
-      <city>New Haven</city>
-      <state>CT</state>
-    </relation>
-    <relation>
-      <id>10076</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Denziloe Shirleen</fullname>
-      <city>Charleston</city>
-      <state>SC</state>
-    </relation>
-    <relation>
-      <id>10061</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
-      <fullname>Igoe Christos</fullname>
-      <city>El Paso</city>
-      <state>TX</state>
-    </relation>
-    <relation>
-      <id>10092</id>
-      <predicate>relatedTo</predicate>
+      <id>10062</id>
+      <predicate>livesWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Hackly Raeann</fullname>
-      <city>Saint Louis</city>
-      <state>MO</state>
-    </relation>
-    <relation>
-      <id>10082</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
-      <fullname>Else Viola</fullname>
+      <fullname>Raison Ivy</fullname>
       <city>Charlotte</city>
       <state>NC</state>
     </relation>
+    <relation>
+      <id>10029</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Hengoed Edee</fullname>
+      <city>Gary</city>
+      <state>IN</state>
+    </relation>
+    <relation>
+      <id>10052</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
+      <fullname>Janos Lucienne</fullname>
+      <city>Corpus Christi</city>
+      <state>TX</state>
+    </relation>
+    <relation>
+      <id>10033</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Anselmi Brittany</fullname>
+      <city>Cedar Rapids</city>
+      <state>IA</state>
+    </relation>
+    <relation>
+      <id>10044</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>MacKimmie Halsey</fullname>
+      <city>Lexington</city>
+      <state>KY</state>
+    </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-17T21:41:23Z</ts>
-    <user>kbolton1y</user>
+    <ts>2022-02-27T21:36:47Z</ts>
+    <user>zdionis1y</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-06T04:06:27Z</ts>
-    <user>kbolton1y</user>
+    <ts>2022-01-19T14:18:45Z</ts>
+    <user>zdionis1y</user>
   </lastUpdated>
-  <socials>
-    <social>
-      <site>linkedin</site>
-      <address>http://cdbaby.com/eros.json</address>
-    </social>
-  </socials>
+  <socials/>
   <memberships>
     <membership>
-      <list>list1</list>
-      <important>false</important>
-      <ts>2020-12-20</ts>
-    </membership>
-    <membership>
-      <list>list8</list>
+      <list>list7</list>
       <important>true</important>
-      <ts>2021-04-13</ts>
-    </membership>
-    <membership>
-      <list>list12</list>
-      <important>false</important>
-      <ts>2021-07-11</ts>
-    </membership>
-    <membership>
-      <list>list9</list>
-      <important>true</important>
-      <ts>2019-01-24</ts>
-    </membership>
-    <membership>
-      <list>list8</list>
-      <important>true</important>
-      <ts>2019-05-06</ts>
+      <ts>2021-04-25</ts>
     </membership>
   </memberships>
+  <links>
+    <link>
+      <label>Quick View</label>
+      <url>http://wix.com</url>
+      <icon>fa-eye</icon>
+    </link>
+    <link>
+      <label>Nomination History</label>
+      <url>http://wp.com</url>
+      <icon>fa-medal</icon>
+    </link>
+    <link>
+      <label>Comments</label>
+      <url>https://cafepress.com</url>
+      <icon>fa-comments</icon>
+    </link>
+  </links>
 </person>

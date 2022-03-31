@@ -3,145 +3,178 @@
   <personId>10094</personId>
   <nameGroup>
     <givenname>
-      <value>Barrie</value>
+      <value>Siward</value>
     </givenname>
     <surname>
-      <value>Lindenblatt</value>
+      <value>Dulling</value>
     </surname>
     <fullname>
-      <classification>S</classification>
+      <classification>U</classification>
       <restricted>false</restricted>
-      <value>Lindenblatt Barrie</value>
+      <value>Dulling Siward</value>
       <source>
-        <name>New York Times</name>
-        <ts>2016-11-25T01:01:23Z</ts>
-      </source>
-      <source>
-        <name>New York Times</name>
-        <ts>2016-04-08T05:24:15Z</ts>
-      </source>
-      <source>
-        <name>Los Angeles Times</name>
-        <ts>2018-11-16T11:15:31Z</ts>
+        <name>Wall Street Journal</name>
+        <ts>2013-04-15T10:14:51Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>bpavia0@ebay.co.uk</value>
+      <value>rkopje0@latimes.com</value>
       <classification>C</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>dlakes1@amazon.co.uk</value>
-      <classification>S</classification>
+      <value>ngallienne1@furl.net</value>
+      <classification>C</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>880-225-8866</phone>
+  <phone>689-902-3558</phone>
   <ssn>
-    <value>349-09-8251</value>
+    <value>587-86-2835</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
       <source>
-        <name>Washington Post</name>
-        <ts>2016-12-29T22:05:19Z</ts>
+        <name>Chicago Tribune</name>
+        <ts>2010-06-27T10:51:12Z</ts>
+        <uploadedBy>nfloch0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>7 Clemons Road</street>
-      <city>Trenton</city>
-      <state>NJ</state>
-      <postal>08638</postal>
+      <street>673 Northview Plaza</street>
+      <city>Hartford</city>
+      <state>CT</state>
+      <postal>06160</postal>
       <country>United States</country>
-      <latitude>40.251</latitude>
-      <longitude>-74.7627</longitude>
+      <latitude>41.7665</latitude>
+      <longitude>-72.6933</longitude>
+    </address>
+    <address>
+      <street>25 Hollow Ridge Road</street>
+      <city>Syracuse</city>
+      <state>NY</state>
+      <postal>13210</postal>
+      <country>United States</country>
+      <latitude>43.0354</latitude>
+      <longitude>-76.1282</longitude>
     </address>
   </addresses>
   <schools>
     <school>
+      <country>Mexico</country>
+      <name>Universidad Anáhuac</name>
+      <city>Santa Fe</city>
+      <state>NLE</state>
+      <postal>64540</postal>
+      <latitude>25.692148</latitude>
+      <longitude>-100.2638682</longitude>
+    </school>
+    <school>
       <country>United States</country>
-      <name>Mary Baldwin College</name>
-      <city>El Paso</city>
-      <state>TX</state>
-      <postal>88514</postal>
-      <latitude>31.77</latitude>
-      <longitude>-106.43</longitude>
+      <name>Gannon University</name>
+      <city>Norfolk</city>
+      <state>VA</state>
+      <postal>23504</postal>
+      <latitude>36.8537392</latitude>
+      <longitude>-76.2652909</longitude>
     </school>
   </schools>
   <status>Active</status>
   <sources>
     <source>
-      <name>Los Angeles Times</name>
-      <ts>2011-06-21T05:51:22Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>Washington Post</name>
-      <ts>2019-04-19T07:55:38Z</ts>
+      <name>Wall Street Journal</name>
+      <ts>2017-08-21T11:56:44Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10010</id>
+      <id>10003</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Heinemann Terrence</fullname>
-      <city>New York City</city>
-      <state>NY</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
+      <fullname>Edger Piper</fullname>
+      <city>Prescott</city>
+      <state>AZ</state>
     </relation>
     <relation>
-      <id>10050</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Hinkley Jojo</fullname>
-      <city>Richmond</city>
-      <state>VA</state>
-    </relation>
-    <relation>
-      <id>10044</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Doak Rosana</fullname>
-      <city>Portland</city>
-      <state>OR</state>
-    </relation>
-    <relation>
-      <id>10068</id>
+      <id>10027</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Orchart Beverlee</fullname>
-      <city>Charleston</city>
-      <state>WV</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Nockells Sela</fullname>
+      <city>Delray Beach</city>
+      <state>FL</state>
     </relation>
     <relation>
-      <id>10038</id>
-      <predicate>livesWith</predicate>
+      <id>10074</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Klimontovich Willetta</fullname>
+      <city>Lansing</city>
+      <state>MI</state>
+    </relation>
+    <relation>
+      <id>10063</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Laurie Orville</fullname>
+      <city>Washington</city>
+      <state>DC</state>
+    </relation>
+    <relation>
+      <id>10057</id>
+      <predicate>worksWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Helliwell Pat</fullname>
-      <city>Milwaukee</city>
-      <state>WI</state>
+      <fullname>Sondland Inigo</fullname>
+      <city>Washington</city>
+      <state>DC</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-22T03:31:19Z</ts>
-    <user>blindenblatt2l</user>
+    <ts>2022-01-16T21:26:19Z</ts>
+    <user>sdulling2l</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-25T23:02:08Z</ts>
-    <user>blindenblatt2l</user>
+    <ts>2022-02-02T14:05:18Z</ts>
+    <user>sdulling2l</user>
   </lastUpdated>
   <socials>
     <social>
-      <site>facebook</site>
-      <address>http://forbes.com/rutrum/neque.jpg</address>
+      <site>linkedin</site>
+      <handle>ethowless0</handle>
+      <address>https://dot.gov/eleifend/quam/a/odio.json</address>
+    </social>
+    <social>
+      <site>twitter</site>
+      <handle>gagastina1</handle>
+      <address>http://delicious.com/maecenas/rhoncus/aliquam/lacus.js</address>
+    </social>
+    <social>
+      <site>linkedin</site>
+      <handle>jcarine2</handle>
+      <address>http://buzzfeed.com/parturient/montes/nascetur/ridiculus/mus.aspx</address>
     </social>
   </socials>
   <memberships/>
+  <links>
+    <link>
+      <label>Quick View</label>
+      <url>http://answers.com</url>
+      <icon>fa-eye</icon>
+    </link>
+    <link>
+      <label>Nomination History</label>
+      <url>http://wisc.edu</url>
+      <icon>fa-medal</icon>
+    </link>
+    <link>
+      <label>Comments</label>
+      <url>https://ted.com</url>
+      <icon>fa-comments</icon>
+    </link>
+  </links>
 </person>

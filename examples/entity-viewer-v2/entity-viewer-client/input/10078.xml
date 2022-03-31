@@ -3,173 +3,196 @@
   <personId>10078</personId>
   <nameGroup>
     <givenname>
-      <value>Guy</value>
+      <value>Ronda</value>
     </givenname>
     <surname>
-      <value>McNish</value>
+      <value>Parsley</value>
     </surname>
     <fullname>
       <classification>U</classification>
       <restricted>true</restricted>
-      <value>McNish Guy</value>
+      <value>Parsley Ronda</value>
       <source>
-        <name>New York Times</name>
-        <ts>2020-02-20T17:09:49Z</ts>
+        <name>Washington Post</name>
+        <ts>2018-09-05T11:46:02Z</ts>
       </source>
       <source>
-        <name>USA Today</name>
-        <ts>2013-09-14T17:21:05Z</ts>
+        <name>Los Angeles Times</name>
+        <ts>2010-12-04T23:42:37Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>jcavilla0@jalbum.net</value>
+      <value>jbottomer0@google.com.br</value>
       <classification>C</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>agutman1@paypal.com</value>
-      <classification>C</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>btarrant2@nyu.edu</value>
-      <classification>U</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>937-234-0966</phone>
+  <phone>108-799-4499</phone>
   <ssn>
-    <value>674-80-1457</value>
+    <value>462-01-7781</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
       <source>
-        <name>USA Today</name>
-        <ts>2011-02-27T17:33:49Z</ts>
+        <name>Los Angeles Times</name>
+        <ts>2015-02-01T19:11:41Z</ts>
+        <uploadedBy/>
       </source>
     </image>
     <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
       <source>
+        <name>USA Today</name>
+        <ts>2010-07-13T23:39:31Z</ts>
+        <uploadedBy>bhughes0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
+      <source>
         <name>Chicago Tribune</name>
-        <ts>2021-09-17T15:11:04Z</ts>
+        <ts>2014-09-20T12:03:30Z</ts>
+        <uploadedBy>elobbe0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2011-08-06T20:13:32Z</ts>
+        <uploadedBy>pbrennon0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>0 Jay Hill</street>
-      <city>New Orleans</city>
-      <state>LA</state>
-      <postal>70174</postal>
+      <street>9 Upham Avenue</street>
+      <city>Fresno</city>
+      <state>CA</state>
+      <postal>93773</postal>
       <country>United States</country>
-      <latitude>30.033</latitude>
-      <longitude>-89.8826</longitude>
+      <latitude>36.7464</latitude>
+      <longitude>-119.6397</longitude>
+    </address>
+    <address>
+      <street>98051 Butterfield Terrace</street>
+      <city>San Jose</city>
+      <state>CA</state>
+      <postal>95160</postal>
+      <country>United States</country>
+      <latitude>37.2187</latitude>
+      <longitude>-121.8601</longitude>
+    </address>
+    <address>
+      <street>16292 John Wall Road</street>
+      <city>New York City</city>
+      <state>NY</state>
+      <postal>10039</postal>
+      <country>United States</country>
+      <latitude>40.8265</latitude>
+      <longitude>-73.9383</longitude>
     </address>
   </addresses>
   <schools>
     <school>
       <country>United States</country>
-      <name>Chatham College</name>
-      <city>Durham</city>
-      <state>NC</state>
-      <postal>27705</postal>
-      <latitude>36.025609</latitude>
-      <longitude>-78.9853813</longitude>
+      <name>The Cooper Union for the Advancement of Science and Art</name>
+      <city>Columbus</city>
+      <state>OH</state>
+      <postal>43268</postal>
+      <latitude>39.96</latitude>
+      <longitude>-83</longitude>
     </school>
     <school>
-      <country>United States</country>
-      <name>Weill Medical College of Cornell University</name>
-      <city>Baltimore</city>
-      <state>MD</state>
-      <postal>21216</postal>
-      <latitude>39.3096984</latitude>
-      <longitude>-76.6701475</longitude>
+      <country>Mexico</country>
+      <name>Universidad Autónoma Metropolitana</name>
+      <city>Santa Maria</city>
+      <state>YUC</state>
+      <postal>97714</postal>
+      <latitude>25.5822549</latitude>
+      <longitude>-100.9086492</longitude>
     </school>
   </schools>
   <status>Inactive</status>
   <sources>
     <source>
-      <name>Washington Post</name>
-      <ts>2019-12-12T13:59:22Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>Chicago Tribune</name>
-      <ts>2011-06-22T22:33:33Z</ts>
+      <name>New York Times</name>
+      <ts>2013-01-07T02:16:01Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10073</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>England Timmi</fullname>
-      <city>Valley Forge</city>
-      <state>PA</state>
-    </relation>
-    <relation>
-      <id>10014</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Blunderfield Lissa</fullname>
-      <city>Crawfordsville</city>
+      <id>10022</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
+      <fullname>Girault Kaiser</fullname>
+      <city>Indianapolis</city>
       <state>IN</state>
     </relation>
     <relation>
-      <id>10067</id>
+      <id>10084</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
-      <fullname>Mertin Halimeda</fullname>
-      <city>Philadelphia</city>
-      <state>PA</state>
-    </relation>
-    <relation>
-      <id>10003</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
-      <fullname>Dymoke Maryellen</fullname>
-      <city>Fairbanks</city>
-      <state>AK</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
+      <fullname>Gilvear Orren</fullname>
+      <city>Billings</city>
+      <state>MT</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-13T09:36:58Z</ts>
-    <user>gmcnish25</user>
+    <ts>2022-01-06T16:44:23Z</ts>
+    <user>rparsley25</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-21T16:38:51Z</ts>
-    <user>gmcnish25</user>
+    <ts>2022-01-05T09:19:36Z</ts>
+    <user>rparsley25</user>
   </lastUpdated>
-  <socials>
-    <social>
-      <site>twitter</site>
-      <address>http://seesaa.net/vel/ipsum.json</address>
-    </social>
-    <social>
-      <site>linkedin</site>
-      <address>https://hexun.com/amet/justo/morbi/ut/odio/cras/mi.png</address>
-    </social>
-    <social>
-      <site>twitter</site>
-      <address>http://ning.com/accumsan/felis/ut/at/dolor/quis/odio.js</address>
-    </social>
-  </socials>
+  <socials/>
   <memberships>
     <membership>
-      <list>list11</list>
-      <important>true</important>
-      <ts>2020-12-08</ts>
+      <list>list4</list>
+      <important>false</important>
+      <ts>2021-04-02</ts>
+    </membership>
+    <membership>
+      <list>list4</list>
+      <important>false</important>
+      <ts>2021-02-16</ts>
     </membership>
     <membership>
       <list>list9</list>
       <important>false</important>
-      <ts>2020-07-14</ts>
+      <ts>2021-06-08</ts>
+    </membership>
+    <membership>
+      <list>list12</list>
+      <important>false</important>
+      <ts>2021-01-28</ts>
+    </membership>
+    <membership>
+      <list>list1</list>
+      <important>false</important>
+      <ts>2021-07-15</ts>
     </membership>
   </memberships>
+  <links>
+    <link>
+      <label>Quick View</label>
+      <url>http://amazonaws.com</url>
+      <icon>fa-eye</icon>
+    </link>
+    <link>
+      <label>Nomination History</label>
+      <url>https://newyorker.com</url>
+      <icon>fa-medal</icon>
+    </link>
+    <link>
+      <label>Comments</label>
+      <url>https://scientificamerican.com</url>
+      <icon>fa-comments</icon>
+    </link>
+  </links>
 </person>

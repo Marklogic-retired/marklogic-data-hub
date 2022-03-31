@@ -3,184 +3,169 @@
   <personId>10037</personId>
   <nameGroup>
     <givenname>
-      <value>Genia</value>
+      <value>Somerset</value>
     </givenname>
     <surname>
-      <value>Cobbe</value>
+      <value>Vasilevich</value>
     </surname>
     <fullname>
-      <classification>C</classification>
+      <classification>S</classification>
       <restricted>true</restricted>
-      <value>Cobbe Genia</value>
+      <value>Vasilevich Somerset</value>
       <source>
-        <name>USA Today</name>
-        <ts>2017-02-20T12:49:10Z</ts>
+        <name>Chicago Tribune</name>
+        <ts>2013-10-31T21:33:09Z</ts>
       </source>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2013-08-22T19:20:37Z</ts>
+        <name>New York Times</name>
+        <ts>2015-12-19T17:19:46Z</ts>
       </source>
       <source>
-        <name>USA Today</name>
-        <ts>2011-07-09T17:51:25Z</ts>
+        <name>Wall Street Journal</name>
+        <ts>2014-02-27T03:52:36Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>mperrinchief0@csmonitor.com</value>
-      <classification>S</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>aclarson1@deviantart.com</value>
-      <classification>S</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>mwylder2@alibaba.com</value>
+      <value>jrymill0@opensource.org</value>
       <classification>C</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>153-859-3457</phone>
+  <phone>502-265-0583</phone>
   <ssn>
-    <value>704-60-9513</value>
+    <value>218-78-4821</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2016-07-12T07:51:18Z</ts>
+        <name>Chicago Tribune</name>
+        <ts>2011-05-05T16:30:00Z</ts>
+        <uploadedBy>mpickering0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <source>
+        <name>New York Times</name>
+        <ts>2012-10-31T10:19:41Z</ts>
+        <uploadedBy>kgrundey0</uploadedBy>
       </source>
     </image>
     <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2021-11-23T21:18:29Z</ts>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
-      <source>
-        <name>USA Today</name>
-        <ts>2020-06-21T20:24:29Z</ts>
+        <name>New York Times</name>
+        <ts>2014-06-23T23:47:11Z</ts>
+        <uploadedBy/>
       </source>
     </image>
     <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2019-05-20T19:35:38Z</ts>
+        <name>Washington Post</name>
+        <ts>2015-03-05T06:05:38Z</ts>
+        <uploadedBy>lkitchenside0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>27743 Sauthoff Park</street>
-      <city>Crawfordsville</city>
-      <state>IN</state>
-      <postal>47937</postal>
+      <street>70 Division Avenue</street>
+      <city>Miami</city>
+      <state>FL</state>
+      <postal>33111</postal>
       <country>United States</country>
-      <latitude>40.04</latitude>
-      <longitude>-86.8936</longitude>
+      <latitude>25.5584</latitude>
+      <longitude>-80.4582</longitude>
     </address>
   </addresses>
   <schools>
     <school>
       <country>United Kingdom</country>
-      <name>Institute of Commonwealth Studies, University of London</name>
-      <city>Belfast</city>
-      <state>NIR</state>
-      <postal>BT2</postal>
-      <latitude>54.5940619</latitude>
-      <longitude>-5.9308088</longitude>
-    </school>
-    <school>
-      <country>United States</country>
-      <name>Salisbury State University</name>
-      <city>Cleveland</city>
-      <state>OH</state>
-      <postal>44185</postal>
-      <latitude>42.3662435</latitude>
-      <longitude>-83.3270994</longitude>
+      <name>London School of Economics and Political Science, University of London</name>
+      <city>Church End</city>
+      <state>ENG</state>
+      <postal>N3</postal>
+      <latitude>51.598282</latitude>
+      <longitude>-0.198414</longitude>
     </school>
   </schools>
-  <status>Active</status>
+  <status>Inactive</status>
   <sources>
     <source>
-      <name>New York Times</name>
-      <ts>2015-07-18T00:15:14Z</ts>
+      <name>USA Today</name>
+      <ts>2011-07-19T16:51:13Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10017</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
-      <fullname>Cogdon Chev</fullname>
-      <city>Miami</city>
-      <state>FL</state>
-    </relation>
-    <relation>
-      <id>10050</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Hinkley Jojo</fullname>
-      <city>Richmond</city>
-      <state>VA</state>
-    </relation>
-    <relation>
-      <id>10021</id>
+      <id>10076</id>
       <predicate>worksWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
-      <fullname>Quilligan Priscella</fullname>
-      <city>Houston</city>
-      <state>TX</state>
+      <fullname>Sobtka Terrill</fullname>
+      <city>Troy</city>
+      <state>MI</state>
+    </relation>
+    <relation>
+      <id>10095</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Wearing Tana</fullname>
+      <city>San Bernardino</city>
+      <state>CA</state>
+    </relation>
+    <relation>
+      <id>10042</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
+      <fullname>Di Batista Eustacia</fullname>
+      <city>Little Rock</city>
+      <state>AR</state>
+    </relation>
+    <relation>
+      <id>10073</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Henniger Clarey</fullname>
+      <city>Cincinnati</city>
+      <state>OH</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-23T02:57:48Z</ts>
-    <user>gcobbe10</user>
+    <ts>2022-01-25T05:57:19Z</ts>
+    <user>svasilevich10</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-02T03:51:36Z</ts>
-    <user>gcobbe10</user>
+    <ts>2022-01-16T19:02:07Z</ts>
+    <user>svasilevich10</user>
   </lastUpdated>
   <socials/>
   <memberships>
     <membership>
-      <list>list12</list>
-      <important>false</important>
-      <ts>2021-02-07</ts>
-    </membership>
-    <membership>
       <list>list4</list>
-      <important>false</important>
-      <ts>2022-02-09</ts>
-    </membership>
-    <membership>
-      <list>list9</list>
-      <important>false</important>
-      <ts>2022-02-01</ts>
-    </membership>
-    <membership>
-      <list>list10</list>
-      <important>false</important>
-      <ts>2020-07-22</ts>
-    </membership>
-    <membership>
-      <list>list5</list>
-      <important>false</important>
-      <ts>2021-12-14</ts>
-    </membership>
-    <membership>
-      <list>list12</list>
-      <important>false</important>
-      <ts>2019-12-05</ts>
+      <important>true</important>
+      <ts>2021-01-03</ts>
     </membership>
   </memberships>
+  <links>
+    <link>
+      <label>Quick View</label>
+      <url>http://digg.com</url>
+      <icon>fa-eye</icon>
+    </link>
+    <link>
+      <label>Nomination History</label>
+      <url>http://cdbaby.com</url>
+      <icon>fa-medal</icon>
+    </link>
+    <link>
+      <label>Comments</label>
+      <url>https://blogspot.com</url>
+      <icon>fa-comments</icon>
+    </link>
+  </links>
 </person>

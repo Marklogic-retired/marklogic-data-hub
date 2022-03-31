@@ -3,183 +3,211 @@
   <personId>10073</personId>
   <nameGroup>
     <givenname>
-      <value>Timmi</value>
+      <value>Clarey</value>
     </givenname>
     <surname>
-      <value>England</value>
+      <value>Henniger</value>
     </surname>
     <fullname>
       <classification>C</classification>
       <restricted>true</restricted>
-      <value>England Timmi</value>
+      <value>Henniger Clarey</value>
       <source>
         <name>Los Angeles Times</name>
-        <ts>2020-09-11T10:37:21Z</ts>
+        <ts>2012-03-06T20:50:54Z</ts>
       </source>
       <source>
         <name>New York Times</name>
-        <ts>2018-05-11T08:47:13Z</ts>
-      </source>
-      <source>
-        <name>Wall Street Journal</name>
-        <ts>2010-01-09T23:19:20Z</ts>
+        <ts>2020-07-06T01:07:04Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>lhairyes0@ft.com</value>
-      <classification>C</classification>
+      <value>mhayball0@icq.com</value>
+      <classification>U</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>pcastellaccio1@themeforest.net</value>
-      <classification>C</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>cferminger2@zdnet.com</value>
+      <value>aiceton1@stanford.edu</value>
       <classification>U</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>388-933-9267</phone>
+  <phone>992-962-2283</phone>
   <ssn>
-    <value>826-37-6575</value>
+    <value>147-30-6681</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2010-10-27T20:25:41Z</ts>
+        <name>USA Today</name>
+        <ts>2017-04-09T05:49:21Z</ts>
+        <uploadedBy>kscholtz0</uploadedBy>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
       <source>
         <name>New York Times</name>
-        <ts>2014-03-28T08:31:21Z</ts>
+        <ts>2017-01-23T06:14:45Z</ts>
+        <uploadedBy>bainsby0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2012-04-11T04:58:34Z</ts>
+        <uploadedBy>kgrewer0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
+      <source>
+        <name>USA Today</name>
+        <ts>2020-12-23T13:48:54Z</ts>
+        <uploadedBy>braynham0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>69 Redwing Road</street>
-      <city>Valley Forge</city>
-      <state>PA</state>
-      <postal>19495</postal>
+      <street>95 Waxwing Court</street>
+      <city>Cincinnati</city>
+      <state>OH</state>
+      <postal>45203</postal>
       <country>United States</country>
-      <latitude>39.9832</latitude>
-      <longitude>-75.7481</longitude>
+      <latitude>39.1075</latitude>
+      <longitude>-84.5257</longitude>
     </address>
     <address>
-      <street>832 Crest Line Trail</street>
-      <city>Washington</city>
-      <state>DC</state>
-      <postal>20337</postal>
+      <street>50 Pond Lane</street>
+      <city>New York City</city>
+      <state>NY</state>
+      <postal>10150</postal>
       <country>United States</country>
-      <latitude>38.8933</latitude>
-      <longitude>-77.0146</longitude>
+      <latitude>40.7808</latitude>
+      <longitude>-73.9772</longitude>
     </address>
     <address>
-      <street>26577 Katie Center</street>
-      <city>Norfolk</city>
-      <state>VA</state>
-      <postal>23520</postal>
+      <street>86693 Sommers Center</street>
+      <city>Fullerton</city>
+      <state>CA</state>
+      <postal>92640</postal>
       <country>United States</country>
-      <latitude>36.9312</latitude>
-      <longitude>-76.2397</longitude>
+      <latitude>33.7862</latitude>
+      <longitude>-117.9309</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>United States</country>
-      <name>Rose-Hulman Institute of Technology</name>
-      <city>Shreveport</city>
-      <state>LA</state>
-      <postal>71137</postal>
-      <latitude>32.59</latitude>
-      <longitude>-93.85</longitude>
-    </school>
-    <school>
-      <country>United States</country>
-      <name>Dana College</name>
-      <city>Lancaster</city>
-      <state>CA</state>
-      <postal>93584</postal>
-      <latitude>34.7</latitude>
-      <longitude>-118.14</longitude>
+      <country>Canada</country>
+      <name>Assumption University</name>
+      <city>Revelstoke</city>
+      <state>BC</state>
+      <postal>H9K</postal>
+      <latitude>50.98317</latitude>
+      <longitude>-118.2023</longitude>
     </school>
   </schools>
-  <status>Inactive</status>
+  <status>Active</status>
   <sources>
     <source>
-      <name>USA Today</name>
-      <ts>2011-04-20T18:09:46Z</ts>
+      <name>Washington Post</name>
+      <ts>2021-11-07T03:14:46Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Los Angeles Times</name>
+      <ts>2018-07-20T10:18:17Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Chicago Tribune</name>
+      <ts>2011-06-23T05:36:55Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10097</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Padly Klemens</fullname>
-      <city>Miami</city>
-      <state>FL</state>
+      <id>10074</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Klimontovich Willetta</fullname>
+      <city>Lansing</city>
+      <state>MI</state>
     </relation>
     <relation>
-      <id>10010</id>
+      <id>10061</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
+      <fullname>Westcarr Janetta</fullname>
+      <city>Albany</city>
+      <state>GA</state>
+    </relation>
+    <relation>
+      <id>10045</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Heinemann Terrence</fullname>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
+      <fullname>Serjeant Correna</fullname>
+      <city>Cincinnati</city>
+      <state>OH</state>
+    </relation>
+    <relation>
+      <id>10038</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Learmonth Florette</fullname>
       <city>New York City</city>
       <state>NY</state>
     </relation>
-    <relation>
-      <id>10053</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Andrichuk Sibley</fullname>
-      <city>Charlotte</city>
-      <state>NC</state>
-    </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-13T08:01:23Z</ts>
-    <user>tengland20</user>
+    <ts>2022-02-08T17:30:27Z</ts>
+    <user>chenniger20</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-02T02:59:12Z</ts>
-    <user>tengland20</user>
+    <ts>2022-01-17T05:23:08Z</ts>
+    <user>chenniger20</user>
   </lastUpdated>
-  <socials/>
+  <socials>
+    <social>
+      <site>twitter</site>
+      <handle>opalatini0</handle>
+      <address>https://typepad.com/vel.html</address>
+    </social>
+  </socials>
   <memberships>
-    <membership>
-      <list>list12</list>
-      <important>false</important>
-      <ts>2020-09-15</ts>
-    </membership>
-    <membership>
-      <list>list12</list>
-      <important>true</important>
-      <ts>2020-12-30</ts>
-    </membership>
-    <membership>
-      <list>list7</list>
-      <important>false</important>
-      <ts>2020-07-19</ts>
-    </membership>
-    <membership>
-      <list>list2</list>
-      <important>true</important>
-      <ts>2019-01-13</ts>
-    </membership>
     <membership>
       <list>list8</list>
       <important>false</important>
-      <ts>2020-09-17</ts>
+      <ts>2022-01-09</ts>
+    </membership>
+    <membership>
+      <list>list1</list>
+      <important>true</important>
+      <ts>2021-12-08</ts>
     </membership>
   </memberships>
+  <links>
+    <link>
+      <label>Quick View</label>
+      <url>http://networkadvertising.org</url>
+      <icon>fa-eye</icon>
+    </link>
+    <link>
+      <label>Nomination History</label>
+      <url>https://163.com</url>
+      <icon>fa-medal</icon>
+    </link>
+    <link>
+      <label>Comments</label>
+      <url>http://geocities.jp</url>
+      <icon>fa-comments</icon>
+    </link>
+  </links>
 </person>

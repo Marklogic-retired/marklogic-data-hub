@@ -3,167 +3,169 @@
   <personId>10051</personId>
   <nameGroup>
     <givenname>
-      <value>Margaux</value>
+      <value>Frederich</value>
     </givenname>
     <surname>
-      <value>Jermy</value>
+      <value>Biswell</value>
     </surname>
     <fullname>
-      <classification>S</classification>
-      <restricted>true</restricted>
-      <value>Jermy Margaux</value>
+      <classification>C</classification>
+      <restricted>false</restricted>
+      <value>Biswell Frederich</value>
       <source>
-        <name>Washington Post</name>
-        <ts>2020-09-04T11:35:56Z</ts>
+        <name>USA Today</name>
+        <ts>2011-08-19T07:52:08Z</ts>
       </source>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2013-12-20T10:55:18Z</ts>
-      </source>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2019-01-03T16:29:14Z</ts>
+        <name>New York Times</name>
+        <ts>2011-02-03T05:05:15Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>ncheccuzzi0@sciencedirect.com</value>
-      <classification>S</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>egodart1@deliciousdays.com</value>
+      <value>ekershaw0@squarespace.com</value>
       <classification>U</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>567-654-0277</phone>
+  <phone>483-164-6142</phone>
   <ssn>
-    <value>416-51-3042</value>
+    <value>421-36-1560</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2015-08-04T03:34:58Z</ts>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
-      <source>
-        <name>Los Angeles Times</name>
-        <ts>2010-05-08T14:39:10Z</ts>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
-      <source>
-        <name>Washington Post</name>
-        <ts>2015-12-29T20:21:49Z</ts>
+        <name>New York Times</name>
+        <ts>2011-05-18T19:18:29Z</ts>
+        <uploadedBy>mfranschini0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>048 Sheridan Alley</street>
-      <city>Fort Worth</city>
-      <state>TX</state>
-      <postal>76134</postal>
+      <street>39 Logan Hill</street>
+      <city>Buffalo</city>
+      <state>NY</state>
+      <postal>14220</postal>
       <country>United States</country>
-      <latitude>32.6469</latitude>
-      <longitude>-97.3325</longitude>
+      <latitude>42.8441</latitude>
+      <longitude>-78.8182</longitude>
+    </address>
+    <address>
+      <street>062 Sugar Drive</street>
+      <city>San Francisco</city>
+      <state>CA</state>
+      <postal>94159</postal>
+      <country>United States</country>
+      <latitude>37.7848</latitude>
+      <longitude>-122.7278</longitude>
+    </address>
+    <address>
+      <street>43 Dottie Court</street>
+      <city>Stamford</city>
+      <state>CT</state>
+      <postal>06922</postal>
+      <country>United States</country>
+      <latitude>41.0516</latitude>
+      <longitude>-73.5143</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Canada</country>
-      <name>University College of Saint-Boniface</name>
-      <city>Merritt</city>
-      <state>BC</state>
-      <postal>V1K</postal>
-      <latitude>50.1113079</latitude>
-      <longitude>-120.7862222</longitude>
+      <country>United States</country>
+      <name>Midwestern State University</name>
+      <city>Indianapolis</city>
+      <state>IN</state>
+      <postal>46295</postal>
+      <latitude>39.67</latitude>
+      <longitude>-86.19</longitude>
+    </school>
+    <school>
+      <country>United States</country>
+      <name>National College of Naturopathic Medicine</name>
+      <city>Fresno</city>
+      <state>CA</state>
+      <postal>93762</postal>
+      <latitude>29.4743666</latitude>
+      <longitude>-98.5165167</longitude>
     </school>
   </schools>
-  <status>Inactive</status>
+  <status>Active</status>
   <sources>
     <source>
-      <name>Los Angeles Times</name>
-      <ts>2018-06-27T13:52:55Z</ts>
+      <name>Wall Street Journal</name>
+      <ts>2018-04-02T00:13:40Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>USA Today</name>
-      <ts>2017-11-02T18:40:28Z</ts>
+      <name>Washington Post</name>
+      <ts>2011-12-04T02:21:03Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10093</id>
+      <id>10032</id>
       <predicate>livesWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
-      <fullname>Friberg Sabra</fullname>
-      <city>San Diego</city>
-      <state>CA</state>
+      <fullname>Hazlewood Winthrop</fullname>
+      <city>Montgomery</city>
+      <state>AL</state>
     </relation>
     <relation>
-      <id>10056</id>
+      <id>10088</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Thamelt Conni</fullname>
-      <city>Memphis</city>
-      <state>TN</state>
-    </relation>
-    <relation>
-      <id>10038</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Helliwell Pat</fullname>
-      <city>Milwaukee</city>
-      <state>WI</state>
-    </relation>
-    <relation>
-      <id>10044</id>
-      <predicate>relatedTo</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Doak Rosana</fullname>
-      <city>Portland</city>
-      <state>OR</state>
+      <fullname>Warcop Twila</fullname>
+      <city>Charleston</city>
+      <state>WV</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-13T02:10:55Z</ts>
-    <user>mjermy1e</user>
+    <ts>2022-02-27T00:42:35Z</ts>
+    <user>fbiswell1e</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-15T16:37:13Z</ts>
-    <user>mjermy1e</user>
+    <ts>2022-02-23T21:03:08Z</ts>
+    <user>fbiswell1e</user>
   </lastUpdated>
-  <socials/>
+  <socials>
+    <social>
+      <site>twitter</site>
+      <handle>lpengilly0</handle>
+      <address>http://lulu.com/nulla/facilisi/cras/non/velit.jsp</address>
+    </social>
+  </socials>
   <memberships>
     <membership>
-      <list>list6</list>
-      <important>true</important>
-      <ts>2019-03-20</ts>
-    </membership>
-    <membership>
-      <list>list1</list>
-      <important>true</important>
-      <ts>2022-01-22</ts>
-    </membership>
-    <membership>
-      <list>list11</list>
+      <list>list2</list>
       <important>false</important>
-      <ts>2021-07-04</ts>
+      <ts>2021-09-06</ts>
     </membership>
     <membership>
-      <list>list3</list>
+      <list>list12</list>
       <important>true</important>
-      <ts>2020-09-26</ts>
+      <ts>2021-02-26</ts>
     </membership>
   </memberships>
+  <links>
+    <link>
+      <label>Quick View</label>
+      <url>https://amazon.de</url>
+      <icon>fa-eye</icon>
+    </link>
+    <link>
+      <label>Nomination History</label>
+      <url>https://fotki.com</url>
+      <icon>fa-medal</icon>
+    </link>
+    <link>
+      <label>Comments</label>
+      <url>https://seattletimes.com</url>
+      <icon>fa-comments</icon>
+    </link>
+  </links>
 </person>
