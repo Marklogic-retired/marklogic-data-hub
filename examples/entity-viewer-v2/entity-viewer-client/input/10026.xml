@@ -3,185 +3,171 @@
   <personId>10026</personId>
   <nameGroup>
     <givenname>
-      <value>Patrice</value>
+      <value>Kerstin</value>
     </givenname>
     <surname>
-      <value>Beament</value>
+      <value>Stodhart</value>
     </surname>
     <fullname>
-      <classification>U</classification>
-      <restricted>false</restricted>
-      <value>Beament Patrice</value>
+      <classification>C</classification>
+      <restricted>true</restricted>
+      <value>Stodhart Kerstin</value>
       <source>
-        <name>New York Times</name>
-        <ts>2017-04-04T04:23:09Z</ts>
+        <name>Los Angeles Times</name>
+        <ts>2015-11-23T11:48:45Z</ts>
       </source>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2012-05-20T10:57:01Z</ts>
+        <name>Chicago Tribune</name>
+        <ts>2014-02-12T15:44:36Z</ts>
+      </source>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2011-12-29T09:30:59Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>kmereweather0@ameblo.jp</value>
+      <value>zburfitt0@nifty.com</value>
       <classification>S</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>opetriello1@youtu.be</value>
+      <value>chitter1@nba.com</value>
       <classification>S</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>mfavey2@example.com</value>
-      <classification>C</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>960-655-8971</phone>
+  <phone>172-758-1086</phone>
   <ssn>
-    <value>549-52-4342</value>
+    <value>699-30-8830</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
       <source>
-        <name>Washington Post</name>
-        <ts>2013-12-02T07:53:53Z</ts>
+        <name>New York Times</name>
+        <ts>2014-10-25T22:41:25Z</ts>
+        <uploadedBy>lwhiley0</uploadedBy>
       </source>
     </image>
     <image>
-      <title>Diane-Burley-MarkLogic-2015.jpg</title>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2013-07-02T00:11:53Z</ts>
-        <uploadedBy>Allan Jhonson</uploadedBy>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
-      <source>
-        <name>Washington Post</name>
-        <ts>2010-01-25T01:05:18Z</ts>
+        <name>Los Angeles Times</name>
+        <ts>2013-08-03T17:35:07Z</ts>
+        <uploadedBy>ashoobridge0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>80646 Oriole Alley</street>
-      <city>Birmingham</city>
-      <state>AL</state>
-      <postal>35231</postal>
+      <street>04698 Sage Circle</street>
+      <city>Gatesville</city>
+      <state>TX</state>
+      <postal>76598</postal>
       <country>United States</country>
-      <latitude>33.5446</latitude>
-      <longitude>-86.9292</longitude>
-    </address>
-    <address>
-      <street>88421 Westend Plaza</street>
-      <city>Newark</city>
-      <state>DE</state>
-      <postal>19725</postal>
-      <country>United States</country>
-      <latitude>39.5645</latitude>
-      <longitude>-75.597</longitude>
+      <latitude>31.3902</latitude>
+      <longitude>-97.7993</longitude>
     </address>
   </addresses>
   <schools>
     <school>
       <country>Canada</country>
-      <name>St. Clair College</name>
-      <city>Manning</city>
-      <state>AB</state>
-      <postal>V3A</postal>
-      <latitude>56.91683</latitude>
-      <longitude>-117.61945</longitude>
+      <name>University of Alberta</name>
+      <city>Coquitlam</city>
+      <state>BC</state>
+      <postal>V3B</postal>
+      <latitude>49.2815819</latitude>
+      <longitude>-122.7535881</longitude>
+    </school>
+    <school>
+      <country>United States</country>
+      <name>Capitol College</name>
+      <city>Las Vegas</city>
+      <state>NV</state>
+      <postal>89110</postal>
+      <latitude>36.1678611</latitude>
+      <longitude>-115.0406679</longitude>
     </school>
   </schools>
-  <status>Inactive</status>
+  <status>Active</status>
   <sources>
     <source>
-      <name>Wall Street Journal</name>
-      <ts>2010-10-31T14:51:56Z</ts>
+      <name>Washington Post</name>
+      <ts>2016-07-27T13:08:00Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>USA Today</name>
-      <ts>2021-09-06T18:21:49Z</ts>
+      <name>Washington Post</name>
+      <ts>2013-02-19T08:49:20Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Los Angeles Times</name>
+      <ts>2014-05-19T05:58:40Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10080</id>
+      <id>10040</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Bartod Janene</fullname>
-      <city>Albany</city>
-      <state>NY</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
+      <fullname>Jameson Karel</fullname>
+      <city>Saint Paul</city>
+      <state>MN</state>
     </relation>
     <relation>
-      <id>10092</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Hackly Raeann</fullname>
-      <city>Saint Louis</city>
-      <state>MO</state>
+      <id>10093</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
+      <fullname>Winnett Grata</fullname>
+      <city>Pittsburgh</city>
+      <state>PA</state>
     </relation>
     <relation>
-      <id>10054</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Chessell Skye</fullname>
-      <city>Chicago</city>
-      <state>IL</state>
+      <id>10012</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
+      <fullname>Paulou Morley</fullname>
+      <city>Largo</city>
+      <state>FL</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-17T16:17:45Z</ts>
-    <user>pbeamentp</user>
+    <ts>2022-02-19T06:54:29Z</ts>
+    <user>kstodhartp</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-04T18:13:13Z</ts>
-    <user>pbeamentp</user>
+    <ts>2022-01-09T15:36:11Z</ts>
+    <user>kstodhartp</user>
   </lastUpdated>
-  <socials>
-    <social>
-      <site>linkedin</site>
-      <address>https://amazon.co.jp/quam/sollicitudin.js</address>
-    </social>
-    <social>
-      <site>twitter</site>
-      <address>https://eventbrite.com/turpis/a/pede/posuere/nonummy/integer.jsp</address>
-    </social>
-  </socials>
+  <socials/>
   <memberships>
     <membership>
-      <list>list12</list>
+      <list>list8</list>
       <important>false</important>
-      <ts>2020-06-02</ts>
-    </membership>
-    <membership>
-      <list>list2</list>
-      <important>false</important>
-      <ts>2022-01-14</ts>
-    </membership>
-    <membership>
-      <list>list3</list>
-      <important>false</important>
-      <ts>2021-04-15</ts>
-    </membership>
-    <membership>
-      <list>list3</list>
-      <important>true</important>
-      <ts>2019-05-01</ts>
-    </membership>
-    <membership>
-      <list>list6</list>
-      <important>false</important>
-      <ts>2019-12-13</ts>
+      <ts>2021-06-01</ts>
     </membership>
   </memberships>
+  <links>
+    <link>
+      <label>Quick View</label>
+      <url>http://cam.ac.uk</url>
+      <icon>fa-eye</icon>
+    </link>
+    <link>
+      <label>Nomination History</label>
+      <url>https://hexun.com</url>
+      <icon>fa-medal</icon>
+    </link>
+    <link>
+      <label>Comments</label>
+      <url>http://macromedia.com</url>
+      <icon>fa-comments</icon>
+    </link>
+  </links>
 </person>

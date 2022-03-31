@@ -3,167 +3,197 @@
   <personId>10027</personId>
   <nameGroup>
     <givenname>
-      <value>Karleen</value>
+      <value>Sela</value>
     </givenname>
     <surname>
-      <value>Kelby</value>
+      <value>Nockells</value>
     </surname>
     <fullname>
-      <classification>C</classification>
+      <classification>U</classification>
       <restricted>false</restricted>
-      <value>Kelby Karleen</value>
-      <source>
-        <name>New York Times</name>
-        <ts>2017-03-23T04:19:09Z</ts>
-      </source>
+      <value>Nockells Sela</value>
       <source>
         <name>Los Angeles Times</name>
-        <ts>2015-07-13T02:14:57Z</ts>
+        <ts>2015-03-10T04:08:31Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>abuckenhill0@statcounter.com</value>
+      <value>crodda0@loc.gov</value>
       <classification>C</classification>
       <restricted>false</restricted>
     </email>
+    <email>
+      <value>gjenken1@example.com</value>
+      <classification>U</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>rgreenhill2@army.mil</value>
+      <classification>S</classification>
+      <restricted>false</restricted>
+    </email>
   </emails>
-  <phone>317-750-7257</phone>
+  <phone>732-507-7073</phone>
   <ssn>
-    <value>434-95-2363</value>
+    <value>890-91-8464</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+      <source>
+        <name>USA Today</name>
+        <ts>2019-04-11T06:54:55Z</ts>
+        <uploadedBy>nvanderstraaten0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
       <source>
         <name>Wall Street Journal</name>
-        <ts>2017-02-11T19:12:48Z</ts>
+        <ts>2021-06-30T08:39:38Z</ts>
+        <uploadedBy>psnawdon0</uploadedBy>
       </source>
     </image>
     <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
       <source>
-        <name>New York Times</name>
-        <ts>2017-03-14T04:45:11Z</ts>
+        <name>USA Today</name>
+        <ts>2020-03-27T18:54:01Z</ts>
+        <uploadedBy>jbard0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>53488 Bunting Center</street>
-      <city>Hialeah</city>
+      <street>367 Brown Way</street>
+      <city>Delray Beach</city>
       <state>FL</state>
-      <postal>33018</postal>
+      <postal>33448</postal>
       <country>United States</country>
-      <latitude>25.9098</latitude>
-      <longitude>-80.3889</longitude>
+      <latitude>26.6459</latitude>
+      <longitude>-80.4303</longitude>
     </address>
     <address>
-      <street>0787 Truax Avenue</street>
-      <city>Saint Louis</city>
-      <state>MO</state>
-      <postal>63158</postal>
+      <street>41 Hansons Street</street>
+      <city>San Jose</city>
+      <state>CA</state>
+      <postal>95108</postal>
       <country>United States</country>
-      <latitude>38.6531</latitude>
-      <longitude>-90.2435</longitude>
+      <latitude>37.3378</latitude>
+      <longitude>-121.8908</longitude>
     </address>
     <address>
-      <street>401 Shasta Lane</street>
-      <city>Greensboro</city>
-      <state>NC</state>
-      <postal>27499</postal>
+      <street>8 Birchwood Parkway</street>
+      <city>Des Moines</city>
+      <state>IA</state>
+      <postal>50330</postal>
       <country>United States</country>
-      <latitude>36.0807</latitude>
-      <longitude>-80.0244</longitude>
+      <latitude>41.6727</latitude>
+      <longitude>-93.5722</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Canada</country>
-      <name>University of Ottawa</name>
-      <city>Saint-Sauveur</city>
-      <state>QC</state>
-      <postal>J0R</postal>
-      <latitude>45.8940717</latitude>
-      <longitude>-74.157934</longitude>
+      <country>United States</country>
+      <name>Bryan College</name>
+      <city>San Rafael</city>
+      <state>CA</state>
+      <postal>94913</postal>
+      <latitude>38.02</latitude>
+      <longitude>-122.55</longitude>
     </school>
   </schools>
   <status>Inactive</status>
   <sources>
     <source>
       <name>Wall Street Journal</name>
-      <ts>2019-02-24T23:08:31Z</ts>
+      <ts>2011-03-10T00:03:14Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>Washington Post</name>
-      <ts>2011-02-23T16:18:30Z</ts>
+      <name>USA Today</name>
+      <ts>2016-06-10T13:38:36Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10049</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Crosi Daryn</fullname>
-      <city>Tacoma</city>
-      <state>WA</state>
-    </relation>
-    <relation>
-      <id>10042</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Chastenet Charlene</fullname>
-      <city>Carol Stream</city>
-      <state>IL</state>
-    </relation>
-    <relation>
-      <id>10096</id>
+      <id>10074</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Dell Casa Rora</fullname>
-      <city>Sparks</city>
-      <state>NV</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Klimontovich Willetta</fullname>
+      <city>Lansing</city>
+      <state>MI</state>
     </relation>
     <relation>
       <id>10004</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
-      <fullname>Anmore Penelope</fullname>
-      <city>Syracuse</city>
-      <state>NY</state>
-    </relation>
-    <relation>
-      <id>10046</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Slee Lidia</fullname>
-      <city>Omaha</city>
-      <state>NE</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
+      <fullname>Morando Susie</fullname>
+      <city>Boulder</city>
+      <state>CO</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-24T09:19:12Z</ts>
-    <user>kkelbyq</user>
+    <ts>2022-01-08T17:17:41Z</ts>
+    <user>snockellsq</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-14T12:19:18Z</ts>
-    <user>kkelbyq</user>
+    <ts>2022-02-24T03:17:27Z</ts>
+    <user>snockellsq</user>
   </lastUpdated>
-  <socials/>
+  <socials>
+    <social>
+      <site>facebook</site>
+      <handle>cglasner0</handle>
+      <address>http://techcrunch.com/lacus.js</address>
+    </social>
+    <social>
+      <site>linkedin</site>
+      <handle>ufeldhammer1</handle>
+      <address>https://unicef.org/est/risus.jsp</address>
+    </social>
+  </socials>
   <memberships>
     <membership>
-      <list>list11</list>
-      <important>false</important>
-      <ts>2020-03-22</ts>
+      <list>list12</list>
+      <important>true</important>
+      <ts>2021-07-21</ts>
     </membership>
     <membership>
-      <list>list3</list>
+      <list>list7</list>
       <important>false</important>
-      <ts>2021-07-05</ts>
+      <ts>2021-10-25</ts>
+    </membership>
+    <membership>
+      <list>list8</list>
+      <important>false</important>
+      <ts>2022-02-14</ts>
+    </membership>
+    <membership>
+      <list>list7</list>
+      <important>false</important>
+      <ts>2022-01-18</ts>
     </membership>
   </memberships>
+  <links>
+    <link>
+      <label>Quick View</label>
+      <url>https://lycos.com</url>
+      <icon>fa-eye</icon>
+    </link>
+    <link>
+      <label>Nomination History</label>
+      <url>http://prweb.com</url>
+      <icon>fa-medal</icon>
+    </link>
+    <link>
+      <label>Comments</label>
+      <url>http://pbs.org</url>
+      <icon>fa-comments</icon>
+    </link>
+  </links>
 </person>

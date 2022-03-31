@@ -3,187 +3,176 @@
   <personId>10064</personId>
   <nameGroup>
     <givenname>
-      <value>Faydra</value>
+      <value>Suzy</value>
     </givenname>
     <surname>
-      <value>Blurton</value>
+      <value>Ingarfill</value>
     </surname>
     <fullname>
-      <classification>U</classification>
+      <classification>C</classification>
       <restricted>true</restricted>
-      <value>Blurton Faydra</value>
+      <value>Ingarfill Suzy</value>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2019-06-13T09:43:39Z</ts>
+        <name>Washington Post</name>
+        <ts>2010-01-02T16:39:49Z</ts>
       </source>
       <source>
-        <name>USA Today</name>
-        <ts>2019-01-07T12:45:46Z</ts>
-      </source>
-      <source>
-        <name>Wall Street Journal</name>
-        <ts>2011-02-01T09:09:26Z</ts>
+        <name>Chicago Tribune</name>
+        <ts>2013-09-22T17:38:32Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>lblakey0@tamu.edu</value>
-      <classification>C</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>emccracken1@deliciousdays.com</value>
+      <value>cboyall0@uol.com.br</value>
       <classification>S</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>nleroux2@examiner.com</value>
+      <value>lthonger1@businesswire.com</value>
       <classification>C</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>192-163-6737</phone>
+  <phone>589-936-2902</phone>
   <ssn>
-    <value>466-05-3503</value>
+    <value>441-29-6253</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2010-05-07T04:58:51Z</ts>
+        <name>Chicago Tribune</name>
+        <ts>2017-01-06T08:03:14Z</ts>
+        <uploadedBy/>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+      <source>
+        <name>New York Times</name>
+        <ts>2018-07-30T23:57:09Z</ts>
+        <uploadedBy>kwillatt0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>24995 Truax Lane</street>
-      <city>Beaumont</city>
-      <state>TX</state>
-      <postal>77713</postal>
+      <street>27 Lake View Center</street>
+      <city>Portland</city>
+      <state>OR</state>
+      <postal>97286</postal>
       <country>United States</country>
-      <latitude>30.085</latitude>
-      <longitude>-94.2607</longitude>
-    </address>
-    <address>
-      <street>6 Vidon Court</street>
-      <city>Savannah</city>
-      <state>GA</state>
-      <postal>31416</postal>
-      <country>United States</country>
-      <latitude>32.0053</latitude>
-      <longitude>-81.0477</longitude>
-    </address>
-    <address>
-      <street>5781 Jackson Pass</street>
-      <city>Gainesville</city>
-      <state>FL</state>
-      <postal>32610</postal>
-      <country>United States</country>
-      <latitude>29.6813</latitude>
-      <longitude>-82.3539</longitude>
+      <latitude>45.5806</latitude>
+      <longitude>-122.3748</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Mexico</country>
-      <name>Universidad Latina</name>
-      <city>20 de Noviembre</city>
-      <state>VER</state>
-      <postal>93828</postal>
-      <latitude>19.4449916</latitude>
-      <longitude>-99.1082647</longitude>
+      <country>Canada</country>
+      <name>Humber College</name>
+      <city>Montréal</city>
+      <state>QC</state>
+      <postal>H5B</postal>
+      <latitude>45.5080397</latitude>
+      <longitude>-73.564543</longitude>
     </school>
     <school>
       <country>United States</country>
-      <name>Roosevelt University</name>
-      <city>Schaumburg</city>
-      <state>IL</state>
-      <postal>60193</postal>
-      <latitude>42.0130165</latitude>
-      <longitude>-88.099845</longitude>
+      <name>Bard College</name>
+      <city>Las Vegas</city>
+      <state>NV</state>
+      <postal>89193</postal>
+      <latitude>36.09</latitude>
+      <longitude>-115.15</longitude>
     </school>
   </schools>
   <status>Inactive</status>
   <sources>
     <source>
-      <name>Chicago Tribune</name>
-      <ts>2013-06-09T23:05:14Z</ts>
+      <name>Wall Street Journal</name>
+      <ts>2011-12-28T23:58:36Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>Chicago Tribune</name>
-      <ts>2021-03-15T09:28:52Z</ts>
+      <name>USA Today</name>
+      <ts>2017-01-26T01:28:57Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10014</id>
+      <id>10029</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Blunderfield Lissa</fullname>
-      <city>Crawfordsville</city>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Hengoed Edee</fullname>
+      <city>Gary</city>
       <state>IN</state>
     </relation>
     <relation>
-      <id>10034</id>
+      <id>10036</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
-      <fullname>Cabrara Kesley</fullname>
-      <city>Woburn</city>
-      <state>MA</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
+      <fullname>Bony Brendin</fullname>
+      <city>Kansas City</city>
+      <state>MO</state>
     </relation>
     <relation>
-      <id>10023</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Nardoni Ruddie</fullname>
-      <city>Gainesville</city>
-      <state>FL</state>
+      <id>10055</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Gallehawk Martin</fullname>
+      <city>Salt Lake City</city>
+      <state>UT</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-19T06:49:01Z</ts>
-    <user>fblurton1r</user>
+    <ts>2022-01-24T23:17:32Z</ts>
+    <user>singarfill1r</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-05T23:56:48Z</ts>
-    <user>fblurton1r</user>
+    <ts>2022-02-11T08:48:08Z</ts>
+    <user>singarfill1r</user>
   </lastUpdated>
-  <socials>
-    <social>
-      <site>facebook</site>
-      <address>http://msn.com/quam/sollicitudin/vitae.jpg</address>
-    </social>
-  </socials>
+  <socials/>
   <memberships>
     <membership>
       <list>list1</list>
       <important>true</important>
-      <ts>2020-02-02</ts>
+      <ts>2021-02-17</ts>
     </membership>
     <membership>
-      <list>list9</list>
-      <important>true</important>
-      <ts>2019-08-18</ts>
+      <list>list8</list>
+      <important>false</important>
+      <ts>2021-08-17</ts>
     </membership>
     <membership>
-      <list>list2</list>
-      <important>true</important>
-      <ts>2021-04-17</ts>
+      <list>list8</list>
+      <important>false</important>
+      <ts>2022-01-18</ts>
     </membership>
     <membership>
-      <list>list9</list>
+      <list>list1</list>
       <important>true</important>
-      <ts>2021-08-04</ts>
-    </membership>
-    <membership>
-      <list>list4</list>
-      <important>true</important>
-      <ts>2019-09-07</ts>
+      <ts>2021-09-25</ts>
     </membership>
   </memberships>
+  <links>
+    <link>
+      <label>Quick View</label>
+      <url>https://gnu.org</url>
+      <icon>fa-eye</icon>
+    </link>
+    <link>
+      <label>Nomination History</label>
+      <url>https://furl.net</url>
+      <icon>fa-medal</icon>
+    </link>
+    <link>
+      <label>Comments</label>
+      <url>https://pagesperso-orange.fr</url>
+      <icon>fa-comments</icon>
+    </link>
+  </links>
 </person>

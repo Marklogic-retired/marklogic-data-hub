@@ -3,179 +3,206 @@
   <personId>10015</personId>
   <nameGroup>
     <givenname>
-      <value>Lief</value>
+      <value>Drud</value>
     </givenname>
     <surname>
-      <value>Fretson</value>
+      <value>Gaytor</value>
     </surname>
     <fullname>
-      <classification>C</classification>
+      <classification>S</classification>
       <restricted>false</restricted>
-      <value>Fretson Lief</value>
+      <value>Gaytor Drud</value>
       <source>
-        <name>Washington Post</name>
-        <ts>2021-05-22T15:18:46Z</ts>
+        <name>Wall Street Journal</name>
+        <ts>2014-04-04T18:10:17Z</ts>
+      </source>
+      <source>
+        <name>USA Today</name>
+        <ts>2012-07-01T13:20:40Z</ts>
+      </source>
+      <source>
+        <name>New York Times</name>
+        <ts>2021-12-08T02:41:47Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>dwooldridge0@google.nl</value>
-      <classification>S</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>ccastagna1@deviantart.com</value>
-      <classification>C</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>scastilljo2@delicious.com</value>
+      <value>jbrokenbrow0@dyndns.org</value>
       <classification>U</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>239-782-8151</phone>
+  <phone>226-819-5430</phone>
   <ssn>
-    <value>616-70-9579</value>
+    <value>521-94-5580</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
       <source>
         <name>New York Times</name>
-        <ts>2010-10-17T06:26:00Z</ts>
+        <ts>2016-07-11T18:07:42Z</ts>
+        <uploadedBy>mhansley0</uploadedBy>
       </source>
     </image>
     <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
       <source>
         <name>New York Times</name>
-        <ts>2020-09-18T01:40:50Z</ts>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2014-12-23T11:18:23Z</ts>
+        <ts>2021-04-20T09:39:55Z</ts>
+        <uploadedBy>nfumagalli0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>972 Surrey Street</street>
-      <city>Idaho Falls</city>
-      <state>ID</state>
-      <postal>83405</postal>
+      <street>728 Scott Drive</street>
+      <city>Saint Petersburg</city>
+      <state>FL</state>
+      <postal>33705</postal>
       <country>United States</country>
-      <latitude>43.3233</latitude>
-      <longitude>-111.7822</longitude>
-    </address>
-    <address>
-      <street>64 Autumn Leaf Pass</street>
-      <city>Toledo</city>
-      <state>OH</state>
-      <postal>43615</postal>
-      <country>United States</country>
-      <latitude>41.6492</latitude>
-      <longitude>-83.6706</longitude>
-    </address>
-    <address>
-      <street>25073 Drewry Alley</street>
-      <city>San Diego</city>
-      <state>CA</state>
-      <postal>92127</postal>
-      <country>United States</country>
-      <latitude>33.0279</latitude>
-      <longitude>-117.0856</longitude>
+      <latitude>27.7391</latitude>
+      <longitude>-82.6435</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>United Kingdom</country>
-      <name>London School of Economics and Political Science, University of London</name>
-      <city>Tullich</city>
-      <state>SCT</state>
-      <postal>AB55</postal>
-      <latitude>57.4694803</latitude>
-      <longitude>-3.1269422</longitude>
+      <country>Mexico</country>
+      <name>Instituto Tecnológico y de Estudios Superiores de Occidente</name>
+      <city>Ejidal</city>
+      <state>DUR</state>
+      <postal>35069</postal>
+      <latitude>23.9891132</latitude>
+      <longitude>-104.6751805</longitude>
+    </school>
+    <school>
+      <country>United States</country>
+      <name>Babson College</name>
+      <city>New Haven</city>
+      <state>CT</state>
+      <postal>06520</postal>
+      <latitude>41.3065186</latitude>
+      <longitude>-72.9310714</longitude>
     </school>
   </schools>
-  <status>Active</status>
+  <status>Inactive</status>
   <sources>
     <source>
-      <name>New York Times</name>
-      <ts>2019-08-04T23:12:46Z</ts>
+      <name>Washington Post</name>
+      <ts>2020-04-19T02:11:43Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10059</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
-      <fullname>Bedson Jermayne</fullname>
-      <city>Saint Paul</city>
-      <state>MN</state>
-    </relation>
-    <relation>
-      <id>10025</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
-      <fullname>Rosell Dasie</fullname>
-      <city>Burbank</city>
-      <state>CA</state>
+      <id>10013</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
+      <fullname>Mc Cahey Craggy</fullname>
+      <city>Knoxville</city>
+      <state>TN</state>
     </relation>
     <relation>
       <id>10026</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
-      <fullname>Beament Patrice</fullname>
-      <city>Birmingham</city>
-      <state>AL</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
+      <fullname>Stodhart Kerstin</fullname>
+      <city>Gatesville</city>
+      <state>TX</state>
     </relation>
     <relation>
-      <id>10056</id>
+      <id>10041</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Thamelt Conni</fullname>
-      <city>Memphis</city>
-      <state>TN</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
+      <fullname>Slimm Brandtr</fullname>
+      <city>Springfield</city>
+      <state>VA</state>
     </relation>
     <relation>
-      <id>10023</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Nardoni Ruddie</fullname>
-      <city>Gainesville</city>
-      <state>FL</state>
+      <id>10079</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Prater Hakim</fullname>
+      <city>Escondido</city>
+      <state>CA</state>
+    </relation>
+    <relation>
+      <id>10092</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Rist Joby</fullname>
+      <city>Mobile</city>
+      <state>AL</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-29T11:32:56Z</ts>
-    <user>lfretsone</user>
+    <ts>2022-01-05T18:05:01Z</ts>
+    <user>dgaytore</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-20T07:44:47Z</ts>
-    <user>lfretsone</user>
+    <ts>2022-02-18T16:03:44Z</ts>
+    <user>dgaytore</user>
   </lastUpdated>
-  <socials/>
+  <socials>
+    <social>
+      <site>linkedin</site>
+      <handle>rcaps0</handle>
+      <address>http://blogtalkradio.com/at/vulputate/vitae/nisl.json</address>
+    </social>
+    <social>
+      <site>twitter</site>
+      <handle>hodevey1</handle>
+      <address>http://prlog.org/euismod/scelerisque/quam/turpis/adipiscing/lorem/vitae.png</address>
+    </social>
+  </socials>
   <memberships>
     <membership>
-      <list>list8</list>
+      <list>list6</list>
       <important>true</important>
-      <ts>2021-12-09</ts>
+      <ts>2022-02-08</ts>
     </membership>
     <membership>
-      <list>list5</list>
+      <list>list12</list>
       <important>true</important>
-      <ts>2019-02-26</ts>
+      <ts>2021-04-16</ts>
+    </membership>
+    <membership>
+      <list>list2</list>
+      <important>true</important>
+      <ts>2021-09-10</ts>
     </membership>
     <membership>
       <list>list3</list>
+      <important>true</important>
+      <ts>2021-06-11</ts>
+    </membership>
+    <membership>
+      <list>list1</list>
       <important>false</important>
-      <ts>2019-10-04</ts>
+      <ts>2021-10-16</ts>
+    </membership>
+    <membership>
+      <list>list6</list>
+      <important>true</important>
+      <ts>2021-12-08</ts>
     </membership>
   </memberships>
+  <links>
+    <link>
+      <label>Quick View</label>
+      <url>http://i2i.jp</url>
+      <icon>fa-eye</icon>
+    </link>
+    <link>
+      <label>Nomination History</label>
+      <url>http://twitter.com</url>
+      <icon>fa-medal</icon>
+    </link>
+    <link>
+      <label>Comments</label>
+      <url>https://slideshare.net</url>
+      <icon>fa-comments</icon>
+    </link>
+  </links>
 </person>

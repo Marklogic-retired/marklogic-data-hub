@@ -3,160 +3,199 @@
   <personId>10048</personId>
   <nameGroup>
     <givenname>
-      <value>Charmain</value>
+      <value>Bing</value>
     </givenname>
     <surname>
-      <value>Nickerson</value>
+      <value>Coit</value>
     </surname>
     <fullname>
-      <classification>S</classification>
+      <classification>U</classification>
       <restricted>true</restricted>
-      <value>Nickerson Charmain</value>
-      <source>
-        <name>Wall Street Journal</name>
-        <ts>2012-05-25T00:05:55Z</ts>
-      </source>
-      <source>
-        <name>Washington Post</name>
-        <ts>2017-03-20T14:35:01Z</ts>
-      </source>
+      <value>Coit Bing</value>
       <source>
         <name>New York Times</name>
-        <ts>2013-09-04T04:13:42Z</ts>
+        <ts>2014-07-24T12:23:27Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>dpaladini0@acquirethisname.com</value>
-      <classification>C</classification>
+      <value>cedginton0@livejournal.com</value>
+      <classification>S</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>adobing1@netvibes.com</value>
+      <classification>U</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>463-511-0497</phone>
+  <phone>439-468-7421</phone>
   <ssn>
-    <value>887-63-9798</value>
+    <value>577-87-8032</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
       <source>
-        <name>Washington Post</name>
-        <ts>2016-12-25T10:00:08Z</ts>
+        <name>Los Angeles Times</name>
+        <ts>2010-03-08T07:31:22Z</ts>
+        <uploadedBy>sarnaut0</uploadedBy>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
       <source>
-        <name>USA Today</name>
-        <ts>2015-09-25T04:24:18Z</ts>
+        <name>Los Angeles Times</name>
+        <ts>2019-07-21T04:17:46Z</ts>
+        <uploadedBy/>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
       <source>
-        <name>Washington Post</name>
-        <ts>2021-04-13T15:19:46Z</ts>
+        <name>Chicago Tribune</name>
+        <ts>2021-03-23T22:28:55Z</ts>
+        <uploadedBy>aduchart0</uploadedBy>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
       <source>
-        <name>Washington Post</name>
-        <ts>2012-01-28T03:05:22Z</ts>
+        <name>Chicago Tribune</name>
+        <ts>2012-11-05T17:09:20Z</ts>
+        <uploadedBy>vdovinson0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>87 Eastlawn Avenue</street>
-      <city>Richmond</city>
-      <state>VA</state>
-      <postal>23293</postal>
+      <street>8 Brentwood Street</street>
+      <city>Charlotte</city>
+      <state>NC</state>
+      <postal>28299</postal>
       <country>United States</country>
-      <latitude>37.5242</latitude>
-      <longitude>-77.4932</longitude>
-    </address>
-    <address>
-      <street>9 Sommers Way</street>
-      <city>Pasadena</city>
-      <state>CA</state>
-      <postal>91125</postal>
-      <country>United States</country>
-      <latitude>33.7866</latitude>
-      <longitude>-118.2987</longitude>
+      <latitude>35.26</latitude>
+      <longitude>-80.8042</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Mexico</country>
-      <name>Universidad de Celaya</name>
-      <city>San Lorenzo</city>
-      <state>MEX</state>
-      <postal>56190</postal>
-      <latitude>19.5056005</latitude>
-      <longitude>-98.882461</longitude>
+      <country>United States</country>
+      <name>California Institute of the Arts</name>
+      <city>Phoenix</city>
+      <state>AZ</state>
+      <postal>85010</postal>
+      <latitude>33.4658131</latitude>
+      <longitude>-112.0244867</longitude>
     </school>
     <school>
       <country>United States</country>
-      <name>Trinity University</name>
-      <city>Denver</city>
-      <state>CO</state>
-      <postal>80217</postal>
-      <latitude>39.790486</latitude>
-      <longitude>-104.9000469</longitude>
+      <name>Humboldt State University</name>
+      <city>Vancouver</city>
+      <state>WA</state>
+      <postal>98664</postal>
+      <latitude>45.616422</latitude>
+      <longitude>-122.5804528</longitude>
     </school>
   </schools>
   <status>Active</status>
   <sources>
     <source>
+      <name>New York Times</name>
+      <ts>2010-02-23T13:07:08Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
       <name>USA Today</name>
-      <ts>2010-11-06T16:02:43Z</ts>
+      <ts>2021-11-02T13:50:33Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>USA Today</name>
+      <ts>2020-06-26T18:26:48Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10098</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
-      <fullname>McLachlan Hermon</fullname>
-      <city>Seattle</city>
-      <state>WA</state>
+      <id>10009</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
+      <fullname>Gulliver Gail</fullname>
+      <city>Austin</city>
+      <state>TX</state>
     </relation>
     <relation>
-      <id>10015</id>
+      <id>10057</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
+      <fullname>Sondland Inigo</fullname>
+      <city>Washington</city>
+      <state>DC</state>
+    </relation>
+    <relation>
+      <id>10093</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Fretson Lief</fullname>
-      <city>Idaho Falls</city>
-      <state>ID</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
+      <fullname>Winnett Grata</fullname>
+      <city>Pittsburgh</city>
+      <state>PA</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-18T23:52:34Z</ts>
-    <user>cnickerson1b</user>
+    <ts>2022-02-21T03:42:44Z</ts>
+    <user>bcoit1b</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-05T05:55:41Z</ts>
-    <user>cnickerson1b</user>
+    <ts>2022-02-17T19:20:33Z</ts>
+    <user>bcoit1b</user>
   </lastUpdated>
   <socials/>
   <memberships>
     <membership>
-      <list>list2</list>
+      <list>list9</list>
       <important>false</important>
-      <ts>2019-08-04</ts>
+      <ts>2021-06-10</ts>
     </membership>
     <membership>
-      <list>list6</list>
-      <important>false</important>
-      <ts>2019-02-21</ts>
+      <list>list11</list>
+      <important>true</important>
+      <ts>2021-07-15</ts>
     </membership>
     <membership>
       <list>list10</list>
+      <important>true</important>
+      <ts>2021-11-13</ts>
+    </membership>
+    <membership>
+      <list>list11</list>
       <important>false</important>
-      <ts>2020-12-26</ts>
+      <ts>2021-11-28</ts>
+    </membership>
+    <membership>
+      <list>list10</list>
+      <important>true</important>
+      <ts>2022-02-16</ts>
     </membership>
   </memberships>
+  <links>
+    <link>
+      <label>Quick View</label>
+      <url>http://jiathis.com</url>
+      <icon>fa-eye</icon>
+    </link>
+    <link>
+      <label>Nomination History</label>
+      <url>https://mit.edu</url>
+      <icon>fa-medal</icon>
+    </link>
+    <link>
+      <label>Comments</label>
+      <url>http://xinhuanet.com</url>
+      <icon>fa-comments</icon>
+    </link>
+  </links>
 </person>

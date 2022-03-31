@@ -3,194 +3,178 @@
   <personId>10046</personId>
   <nameGroup>
     <givenname>
-      <value>Lidia</value>
+      <value>Goddart</value>
     </givenname>
     <surname>
-      <value>Slee</value>
+      <value>Varren</value>
     </surname>
     <fullname>
       <classification>C</classification>
-      <restricted>false</restricted>
-      <value>Slee Lidia</value>
+      <restricted>true</restricted>
+      <value>Varren Goddart</value>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2020-10-11T11:30:41Z</ts>
-      </source>
-      <source>
-        <name>Los Angeles Times</name>
-        <ts>2019-07-01T07:20:50Z</ts>
-      </source>
-      <source>
-        <name>USA Today</name>
-        <ts>2017-07-14T00:21:15Z</ts>
+        <name>Chicago Tribune</name>
+        <ts>2014-09-06T18:04:32Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>mreade0@twitter.com</value>
-      <classification>C</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>ahowgate1@purevolume.com</value>
-      <classification>U</classification>
+      <value>jrodgier0@loc.gov</value>
+      <classification>S</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>987-367-5139</phone>
+  <phone>247-419-7882</phone>
   <ssn>
-    <value>527-89-3011</value>
+    <value>856-38-2763</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2020-07-22T21:06:41Z</ts>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
-      <source>
-        <name>Washington Post</name>
-        <ts>2020-01-26T19:19:18Z</ts>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2016-08-15T04:14:01Z</ts>
+        <name>New York Times</name>
+        <ts>2011-12-08T07:09:10Z</ts>
+        <uploadedBy>gcrocker0</uploadedBy>
       </source>
     </image>
     <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
       <source>
+        <name>New York Times</name>
+        <ts>2012-11-17T02:37:28Z</ts>
+        <uploadedBy>dpettiward0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2013-08-16T08:23:05Z</ts>
+        <uploadedBy>ldennistoun0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+      <source>
         <name>Chicago Tribune</name>
-        <ts>2014-11-21T19:13:47Z</ts>
+        <ts>2012-08-18T03:35:43Z</ts>
+        <uploadedBy>stellett0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>886 American Point</street>
-      <city>Omaha</city>
-      <state>NE</state>
-      <postal>68164</postal>
+      <street>28 Farwell Avenue</street>
+      <city>Richmond</city>
+      <state>VA</state>
+      <postal>23228</postal>
       <country>United States</country>
-      <latitude>41.2955</latitude>
-      <longitude>-96.1008</longitude>
+      <latitude>37.625</latitude>
+      <longitude>-77.4959</longitude>
+    </address>
+    <address>
+      <street>475 Killdeer Lane</street>
+      <city>Houston</city>
+      <state>TX</state>
+      <postal>77045</postal>
+      <country>United States</country>
+      <latitude>29.6297</latitude>
+      <longitude>-95.4382</longitude>
     </address>
   </addresses>
   <schools>
     <school>
       <country>Canada</country>
-      <name>Ontario College of Art and Design</name>
-      <city>Saint-Rémi</city>
-      <state>QC</state>
-      <postal>K1G</postal>
-      <latitude>45.26678</latitude>
-      <longitude>-73.61588</longitude>
-    </school>
-    <school>
-      <country>United States</country>
-      <name>Simpson College Iowa</name>
-      <city>Huntington</city>
-      <state>WV</state>
-      <postal>25705</postal>
-      <latitude>38.409359</latitude>
-      <longitude>-82.3614632</longitude>
+      <name>St. Francis Xavier University</name>
+      <city>Sarnia</city>
+      <state>ON</state>
+      <postal>N7V</postal>
+      <latitude>42.9946912</latitude>
+      <longitude>-82.394</longitude>
     </school>
   </schools>
   <status>Active</status>
   <sources>
     <source>
-      <name>Chicago Tribune</name>
-      <ts>2012-06-23T01:18:04Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>Los Angeles Times</name>
-      <ts>2014-10-09T11:42:29Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
       <name>Washington Post</name>
-      <ts>2011-12-07T21:24:48Z</ts>
+      <ts>2019-12-29T01:51:09Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>New York Times</name>
+      <ts>2019-02-10T15:25:27Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10022</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Talby Noella</fullname>
-      <city>Jacksonville</city>
-      <state>FL</state>
-    </relation>
-    <relation>
-      <id>10057</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Stedson Elfie</fullname>
-      <city>Evansville</city>
-      <state>IN</state>
-    </relation>
-    <relation>
-      <id>10093</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
-      <fullname>Friberg Sabra</fullname>
-      <city>San Diego</city>
-      <state>CA</state>
-    </relation>
-    <relation>
-      <id>10031</id>
+      <id>10058</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
-      <fullname>Warmisham Augustin</fullname>
-      <city>Washington</city>
-      <state>DC</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
+      <fullname>Blees Glennie</fullname>
+      <city>Atlanta</city>
+      <state>GA</state>
+    </relation>
+    <relation>
+      <id>10038</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Learmonth Florette</fullname>
+      <city>New York City</city>
+      <state>NY</state>
+    </relation>
+    <relation>
+      <id>10083</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
+      <fullname>Roddick Victoir</fullname>
+      <city>Bakersfield</city>
+      <state>CA</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-03T02:15:38Z</ts>
-    <user>lslee19</user>
+    <ts>2022-01-10T12:01:26Z</ts>
+    <user>gvarren19</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-07T10:21:12Z</ts>
-    <user>lslee19</user>
+    <ts>2022-01-09T03:22:21Z</ts>
+    <user>gvarren19</user>
   </lastUpdated>
-  <socials/>
-  <memberships>
-    <membership>
-      <list>list12</list>
-      <important>false</important>
-      <ts>2021-02-01</ts>
-    </membership>
-    <membership>
-      <list>list11</list>
-      <important>true</important>
-      <ts>2021-04-26</ts>
-    </membership>
-    <membership>
-      <list>list12</list>
-      <important>false</important>
-      <ts>2019-05-29</ts>
-    </membership>
-    <membership>
-      <list>list5</list>
-      <important>false</important>
-      <ts>2020-05-22</ts>
-    </membership>
-    <membership>
-      <list>list7</list>
-      <important>false</important>
-      <ts>2019-08-06</ts>
-    </membership>
-  </memberships>
+  <socials>
+    <social>
+      <site>linkedin</site>
+      <handle>gelphinstone0</handle>
+      <address>http://dell.com/vulputate/luctus/cum/sociis.jpg</address>
+    </social>
+    <social>
+      <site>facebook</site>
+      <handle>mcostock1</handle>
+      <address>http://prweb.com/congue.html</address>
+    </social>
+    <social>
+      <site>facebook</site>
+      <handle>dmcavinchey2</handle>
+      <address>http://dailymail.co.uk/nisl/duis.html</address>
+    </social>
+  </socials>
+  <memberships/>
+  <links>
+    <link>
+      <label>Quick View</label>
+      <url>https://yellowbook.com</url>
+      <icon>fa-eye</icon>
+    </link>
+    <link>
+      <label>Nomination History</label>
+      <url>https://webs.com</url>
+      <icon>fa-medal</icon>
+    </link>
+    <link>
+      <label>Comments</label>
+      <url>https://weibo.com</url>
+      <icon>fa-comments</icon>
+    </link>
+  </links>
 </person>

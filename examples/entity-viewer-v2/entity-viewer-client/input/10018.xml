@@ -3,173 +3,244 @@
   <personId>10018</personId>
   <nameGroup>
     <givenname>
-      <value>Clio</value>
+      <value>Roxanna</value>
     </givenname>
     <surname>
-      <value>Greenroad</value>
+      <value>Gulvin</value>
     </surname>
     <fullname>
       <classification>S</classification>
-      <restricted>false</restricted>
-      <value>Greenroad Clio</value>
+      <restricted>true</restricted>
+      <value>Gulvin Roxanna</value>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2012-05-18T14:38:54Z</ts>
+      </source>
       <source>
         <name>Washington Post</name>
-        <ts>2019-03-02T18:36:17Z</ts>
+        <ts>2013-04-03T08:00:54Z</ts>
       </source>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2014-09-18T18:51:54Z</ts>
-      </source>
-      <source>
-        <name>New York Times</name>
-        <ts>2010-03-10T08:52:23Z</ts>
+        <name>Washington Post</name>
+        <ts>2013-10-04T23:43:32Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>gilyunin0@stumbleupon.com</value>
-      <classification>U</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>ehedaux1@technorati.com</value>
-      <classification>C</classification>
+      <value>dpaal0@nba.com</value>
+      <classification>S</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>942-533-6198</phone>
+  <phone>762-270-0723</phone>
   <ssn>
-    <value>639-96-7158</value>
+    <value>452-12-2405</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
       <source>
         <name>Chicago Tribune</name>
-        <ts>2010-02-12T16:36:37Z</ts>
+        <ts>2015-12-20T17:55:08Z</ts>
+        <uploadedBy>ygwinnel0</uploadedBy>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2010-10-22T18:07:05Z</ts>
+        <uploadedBy>nkoch0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
       <source>
         <name>USA Today</name>
-        <ts>2016-02-07T16:33:48Z</ts>
+        <ts>2010-12-09T06:53:55Z</ts>
+        <uploadedBy>fstrong0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2011-06-08T02:53:13Z</ts>
+        <uploadedBy>jcockshtt0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>517 Coleman Lane</street>
-      <city>Boston</city>
-      <state>MA</state>
-      <postal>02298</postal>
+      <street>79 Steensland Lane</street>
+      <city>Ventura</city>
+      <state>CA</state>
+      <postal>93005</postal>
       <country>United States</country>
-      <latitude>42.3823</latitude>
-      <longitude>-71.0323</longitude>
+      <latitude>34.0324</latitude>
+      <longitude>-119.1343</longitude>
+    </address>
+    <address>
+      <street>96 Calypso Circle</street>
+      <city>San Diego</city>
+      <state>CA</state>
+      <postal>92105</postal>
+      <country>United States</country>
+      <latitude>32.7423</latitude>
+      <longitude>-117.0947</longitude>
+    </address>
+    <address>
+      <street>9951 Darwin Trail</street>
+      <city>Port Charlotte</city>
+      <state>FL</state>
+      <postal>33954</postal>
+      <country>United States</country>
+      <latitude>27.0228</latitude>
+      <longitude>-82.1108</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>United States</country>
-      <name>Abilene Christian University</name>
-      <city>Kissimmee</city>
-      <state>FL</state>
-      <postal>34745</postal>
-      <latitude>28.322781</latitude>
-      <longitude>-81.3912772</longitude>
+      <country>United Kingdom</country>
+      <name>University of Kent at Canterbury</name>
+      <city>Edinburgh</city>
+      <state>SCT</state>
+      <postal>EH9</postal>
+      <latitude>55.9309486</latitude>
+      <longitude>-3.1859102</longitude>
     </school>
     <school>
-      <country>United States</country>
-      <name>Carnegie Mellon University</name>
-      <city>Orange</city>
-      <state>CA</state>
-      <postal>92668</postal>
-      <latitude>32.4237461</latitude>
-      <longitude>-104.2655282</longitude>
+      <country>Mexico</country>
+      <name>Universidad Autónoma de San Luis Potosí</name>
+      <city>Buenavista</city>
+      <state>SIN</state>
+      <postal>81806</postal>
+      <latitude>19.4458447</latitude>
+      <longitude>-99.1497664</longitude>
     </school>
   </schools>
-  <status>Active</status>
-  <sources>
-    <source>
-      <name>Wall Street Journal</name>
-      <ts>2017-11-11T04:49:14Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>New York Times</name>
-      <ts>2015-08-26T06:43:07Z</ts>
-    </source>
-  </sources>
+  <status>Inactive</status>
   <sources>
     <source>
       <name>Los Angeles Times</name>
-      <ts>2020-09-09T02:44:48Z</ts>
+      <ts>2012-12-15T15:00:05Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Chicago Tribune</name>
+      <ts>2014-05-02T07:51:18Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Wall Street Journal</name>
+      <ts>2011-04-10T08:21:29Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10083</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
-      <fullname>Scriven Elizabeth</fullname>
+      <id>10097</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
+      <fullname>Winsley Mala</fullname>
+      <city>Duluth</city>
+      <state>MN</state>
+    </relation>
+    <relation>
+      <id>10057</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
+      <fullname>Sondland Inigo</fullname>
       <city>Washington</city>
       <state>DC</state>
     </relation>
     <relation>
-      <id>10061</id>
+      <id>10039</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
-      <fullname>Igoe Christos</fullname>
-      <city>El Paso</city>
-      <state>TX</state>
-    </relation>
-    <relation>
-      <id>10090</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Youthead Rufe</fullname>
-      <city>Carlsbad</city>
-      <state>CA</state>
-    </relation>
-    <relation>
-      <id>10015</id>
-      <predicate>relatedTo</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Fretson Lief</fullname>
-      <city>Idaho Falls</city>
-      <state>ID</state>
+      <fullname>Jell Fleurette</fullname>
+      <city>Pensacola</city>
+      <state>FL</state>
     </relation>
     <relation>
-      <id>10009</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Jeger Linoel</fullname>
-      <city>Montgomery</city>
-      <state>AL</state>
+      <id>10054</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Lynch Milicent</fullname>
+      <city>Tucson</city>
+      <state>AZ</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-13T11:05:44Z</ts>
-    <user>cgreenroadh</user>
+    <ts>2022-02-20T07:01:21Z</ts>
+    <user>rgulvinh</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-06T10:57:59Z</ts>
-    <user>cgreenroadh</user>
+    <ts>2022-01-17T11:37:22Z</ts>
+    <user>rgulvinh</user>
   </lastUpdated>
-  <socials/>
+  <socials>
+    <social>
+      <site>linkedin</site>
+      <handle>lclorley0</handle>
+      <address>http://skyrock.com/nulla/neque/libero/convallis.png</address>
+    </social>
+    <social>
+      <site>twitter</site>
+      <handle>ptoderini1</handle>
+      <address>https://opensource.org/nibh/in/quis.jsp</address>
+    </social>
+  </socials>
   <memberships>
     <membership>
-      <list>list11</list>
-      <important>false</important>
-      <ts>2019-01-11</ts>
+      <list>list9</list>
+      <important>true</important>
+      <ts>2021-07-25</ts>
     </membership>
     <membership>
-      <list>list8</list>
+      <list>list6</list>
       <important>true</important>
-      <ts>2019-10-01</ts>
+      <ts>2021-06-09</ts>
+    </membership>
+    <membership>
+      <list>list10</list>
+      <important>false</important>
+      <ts>2021-11-16</ts>
+    </membership>
+    <membership>
+      <list>list5</list>
+      <important>true</important>
+      <ts>2022-01-22</ts>
+    </membership>
+    <membership>
+      <list>list1</list>
+      <important>true</important>
+      <ts>2021-10-24</ts>
+    </membership>
+    <membership>
+      <list>list1</list>
+      <important>false</important>
+      <ts>2021-04-25</ts>
     </membership>
   </memberships>
+  <links>
+    <link>
+      <label>Quick View</label>
+      <url>http://amazon.co.jp</url>
+      <icon>fa-eye</icon>
+    </link>
+    <link>
+      <label>Nomination History</label>
+      <url>https://amazon.de</url>
+      <icon>fa-medal</icon>
+    </link>
+    <link>
+      <label>Comments</label>
+      <url>http://4shared.com</url>
+      <icon>fa-comments</icon>
+    </link>
+  </links>
 </person>

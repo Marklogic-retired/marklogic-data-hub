@@ -3,142 +3,223 @@
   <personId>10059</personId>
   <nameGroup>
     <givenname>
-      <value>Jermayne</value>
+      <value>Sara-ann</value>
     </givenname>
     <surname>
-      <value>Bedson</value>
+      <value>Wey</value>
     </surname>
     <fullname>
-      <classification>S</classification>
-      <restricted>false</restricted>
-      <value>Bedson Jermayne</value>
+      <classification>C</classification>
+      <restricted>true</restricted>
+      <value>Wey Sara-ann</value>
       <source>
         <name>Los Angeles Times</name>
-        <ts>2019-12-09T09:50:14Z</ts>
+        <ts>2016-02-09T22:42:13Z</ts>
+      </source>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2013-08-04T21:58:57Z</ts>
+      </source>
+      <source>
+        <name>Washington Post</name>
+        <ts>2016-08-26T17:48:59Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>mdacombe0@ibm.com</value>
-      <classification>C</classification>
+      <value>iselliman0@dedecms.com</value>
+      <classification>S</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>eschwaiger1@yahoo.co.jp</value>
+      <value>mcammell1@about.com</value>
       <classification>S</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>609-596-2079</phone>
+  <phone>923-684-1206</phone>
   <ssn>
-    <value>747-43-7640</value>
+    <value>865-35-8168</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+      <source>
+        <name>USA Today</name>
+        <ts>2020-03-10T02:40:13Z</ts>
+        <uploadedBy>alindblom0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
       <source>
         <name>Wall Street Journal</name>
-        <ts>2015-06-13T23:20:04Z</ts>
+        <ts>2018-08-15T13:54:47Z</ts>
+        <uploadedBy>tplant0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
+      <source>
+        <name>Washington Post</name>
+        <ts>2015-01-24T18:19:14Z</ts>
+        <uploadedBy>ipenketh0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>77290 Thompson Drive</street>
-      <city>Saint Paul</city>
-      <state>MN</state>
-      <postal>55166</postal>
+      <street>7955 Walton Hill</street>
+      <city>Woburn</city>
+      <state>MA</state>
+      <postal>01813</postal>
       <country>United States</country>
-      <latitude>45.0059</latitude>
-      <longitude>-93.1059</longitude>
+      <latitude>42.4464</latitude>
+      <longitude>-71.4594</longitude>
     </address>
   </addresses>
   <schools>
     <school>
       <country>United States</country>
-      <name>Palmer College of Chiropractic West</name>
-      <city>Dallas</city>
-      <state>TX</state>
-      <postal>75310</postal>
-      <latitude>44.934021</latitude>
-      <longitude>-123.3072848</longitude>
+      <name>University of Tennessee - Knoxville</name>
+      <city>Jeffersonville</city>
+      <state>IN</state>
+      <postal>47134</postal>
+      <latitude>38.34</latitude>
+      <longitude>-85.7</longitude>
+    </school>
+    <school>
+      <country>Mexico</country>
+      <name>Universidad Juárez Autónoma de Tabasco</name>
+      <city>Las Flores</city>
+      <state>TAM</state>
+      <postal>87395</postal>
+      <latitude>22.2479136</latitude>
+      <longitude>-97.8755614</longitude>
     </school>
   </schools>
   <status>Inactive</status>
   <sources>
     <source>
-      <name>New York Times</name>
-      <ts>2021-06-30T07:05:01Z</ts>
+      <name>Washington Post</name>
+      <ts>2014-08-30T09:13:33Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>Washington Post</name>
-      <ts>2013-08-04T22:58:53Z</ts>
+      <name>Wall Street Journal</name>
+      <ts>2012-01-17T02:49:20Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Los Angeles Times</name>
+      <ts>2017-09-26T09:07:14Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10069</id>
+      <id>10003</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Crips Ollie</fullname>
-      <city>Lexington</city>
-      <state>KY</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
+      <fullname>Edger Piper</fullname>
+      <city>Prescott</city>
+      <state>AZ</state>
     </relation>
     <relation>
-      <id>10086</id>
+      <id>10034</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
+      <fullname>Klaves Wynn</fullname>
+      <city>Worcester</city>
+      <state>MA</state>
+    </relation>
+    <relation>
+      <id>10056</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
-      <fullname>Gowthrop Pansy</fullname>
-      <city>Dayton</city>
-      <state>OH</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Aikman Milly</fullname>
+      <city>Pittsburgh</city>
+      <state>PA</state>
+    </relation>
+    <relation>
+      <id>10056</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Aikman Milly</fullname>
+      <city>Pittsburgh</city>
+      <state>PA</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-18T14:03:15Z</ts>
-    <user>jbedson1m</user>
+    <ts>2022-02-23T11:43:54Z</ts>
+    <user>swey1m</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-08T04:17:15Z</ts>
-    <user>jbedson1m</user>
+    <ts>2022-01-26T01:40:47Z</ts>
+    <user>swey1m</user>
   </lastUpdated>
   <socials>
     <social>
-      <site>twitter</site>
-      <address>https://dmoz.org/sit/amet/erat/nulla/tempus/vivamus/in.aspx</address>
+      <site>facebook</site>
+      <handle>qyouens0</handle>
+      <address>http://tmall.com/nullam/porttitor.js</address>
     </social>
     <social>
-      <site>linkedin</site>
-      <address>http://printfriendly.com/viverra/dapibus/nulla/suscipit/ligula/in.jsp</address>
-    </social>
-    <social>
-      <site>twitter</site>
-      <address>http://globo.com/hac/habitasse/platea/dictumst.json</address>
+      <site>facebook</site>
+      <handle>cgarratt1</handle>
+      <address>http://mapquest.com/venenatis/tristique/fusce/congue.xml</address>
     </social>
   </socials>
   <memberships>
     <membership>
-      <list>list11</list>
-      <important>false</important>
-      <ts>2019-02-26</ts>
-    </membership>
-    <membership>
-      <list>list1</list>
+      <list>list3</list>
       <important>true</important>
-      <ts>2020-04-22</ts>
+      <ts>2021-01-26</ts>
     </membership>
     <membership>
       <list>list3</list>
       <important>true</important>
-      <ts>2021-03-25</ts>
+      <ts>2021-05-18</ts>
     </membership>
     <membership>
-      <list>list5</list>
+      <list>list7</list>
       <important>true</important>
-      <ts>2019-10-02</ts>
+      <ts>2021-03-20</ts>
+    </membership>
+    <membership>
+      <list>list3</list>
+      <important>false</important>
+      <ts>2021-12-11</ts>
+    </membership>
+    <membership>
+      <list>list11</list>
+      <important>true</important>
+      <ts>2021-05-20</ts>
+    </membership>
+    <membership>
+      <list>list7</list>
+      <important>true</important>
+      <ts>2022-02-18</ts>
     </membership>
   </memberships>
+  <links>
+    <link>
+      <label>Quick View</label>
+      <url>http://opensource.org</url>
+      <icon>fa-eye</icon>
+    </link>
+    <link>
+      <label>Nomination History</label>
+      <url>https://hp.com</url>
+      <icon>fa-medal</icon>
+    </link>
+    <link>
+      <label>Comments</label>
+      <url>https://uiuc.edu</url>
+      <icon>fa-comments</icon>
+    </link>
+  </links>
 </person>

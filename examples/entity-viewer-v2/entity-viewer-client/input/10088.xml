@@ -3,192 +3,193 @@
   <personId>10088</personId>
   <nameGroup>
     <givenname>
-      <value>Haily</value>
+      <value>Twila</value>
     </givenname>
     <surname>
-      <value>Layton</value>
+      <value>Warcop</value>
     </surname>
     <fullname>
-      <classification>S</classification>
-      <restricted>false</restricted>
-      <value>Layton Haily</value>
+      <classification>U</classification>
+      <restricted>true</restricted>
+      <value>Warcop Twila</value>
+      <source>
+        <name>USA Today</name>
+        <ts>2017-11-03T07:16:46Z</ts>
+      </source>
       <source>
         <name>Los Angeles Times</name>
-        <ts>2010-03-06T18:43:56Z</ts>
+        <ts>2018-03-16T10:45:56Z</ts>
+      </source>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2016-09-09T09:26:00Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>cstapleford0@ovh.net</value>
+      <value>hgirdler0@lulu.com</value>
+      <classification>U</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>hbooton1@google.pl</value>
       <classification>U</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>912-232-1094</phone>
+  <phone>331-466-3843</phone>
   <ssn>
-    <value>727-38-6070</value>
+    <value>389-34-1238</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
-      <source>
-        <name>USA Today</name>
-        <ts>2020-09-06T00:30:50Z</ts>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2020-01-02T06:16:03Z</ts>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
       <source>
         <name>Wall Street Journal</name>
-        <ts>2020-10-28T17:26:31Z</ts>
+        <ts>2013-10-08T01:03:18Z</ts>
+        <uploadedBy>fboag0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
+      <source>
+        <name>USA Today</name>
+        <ts>2020-05-13T22:29:47Z</ts>
+        <uploadedBy>jsenton0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>25040 Continental Alley</street>
-      <city>Trenton</city>
-      <state>NJ</state>
-      <postal>08603</postal>
+      <street>049 Blaine Point</street>
+      <city>Charleston</city>
+      <state>WV</state>
+      <postal>25321</postal>
       <country>United States</country>
-      <latitude>40.2805</latitude>
-      <longitude>-74.712</longitude>
-    </address>
-    <address>
-      <street>4 Maple Terrace</street>
-      <city>Brooklyn</city>
-      <state>NY</state>
-      <postal>11241</postal>
-      <country>United States</country>
-      <latitude>40.6451</latitude>
-      <longitude>-73.945</longitude>
+      <latitude>38.2968</latitude>
+      <longitude>-81.5547</longitude>
     </address>
   </addresses>
   <schools>
     <school>
       <country>United States</country>
-      <name>Houghton College</name>
-      <city>San Francisco</city>
-      <state>CA</state>
-      <postal>94110</postal>
-      <latitude>37.7485824</latitude>
-      <longitude>-122.4184108</longitude>
+      <name>California College San Diego</name>
+      <city>Nashville</city>
+      <state>TN</state>
+      <postal>37205</postal>
+      <latitude>36.1030036</latitude>
+      <longitude>-86.8722146</longitude>
     </school>
   </schools>
   <status>Inactive</status>
   <sources>
     <source>
-      <name>Los Angeles Times</name>
-      <ts>2019-11-10T15:14:47Z</ts>
+      <name>Chicago Tribune</name>
+      <ts>2011-09-21T02:15:29Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>USA Today</name>
-      <ts>2011-11-24T12:03:09Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>Washington Post</name>
-      <ts>2017-06-01T07:35:17Z</ts>
+      <name>Chicago Tribune</name>
+      <ts>2016-01-15T06:17:33Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10096</id>
-      <predicate>worksWith</predicate>
+      <id>10042</id>
+      <predicate>relatedTo</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Dell Casa Rora</fullname>
-      <city>Sparks</city>
-      <state>NV</state>
-    </relation>
-    <relation>
-      <id>10022</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Talby Noella</fullname>
-      <city>Jacksonville</city>
-      <state>FL</state>
+      <fullname>Di Batista Eustacia</fullname>
+      <city>Little Rock</city>
+      <state>AR</state>
     </relation>
     <relation>
       <id>10075</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
-      <fullname>Desson Sonny</fullname>
-      <city>Lake Charles</city>
-      <state>LA</state>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
+      <fullname>Search Nye</fullname>
+      <city>Las Vegas</city>
+      <state>NV</state>
     </relation>
     <relation>
-      <id>10025</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
-      <fullname>Rosell Dasie</fullname>
-      <city>Burbank</city>
-      <state>CA</state>
+      <id>10081</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Feldhuhn Rodge</fullname>
+      <city>Houston</city>
+      <state>TX</state>
     </relation>
     <relation>
-      <id>10063</id>
+      <id>10035</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
-      <fullname>Insley Hodge</fullname>
-      <city>Greenville</city>
-      <state>SC</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
+      <fullname>Napolione Jake</fullname>
+      <city>Green Bay</city>
+      <state>WI</state>
+    </relation>
+    <relation>
+      <id>10017</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
+      <fullname>Symones Marybeth</fullname>
+      <city>Norcross</city>
+      <state>GA</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-14T04:30:52Z</ts>
-    <user>hlayton2f</user>
+    <ts>2022-01-03T22:06:26Z</ts>
+    <user>twarcop2f</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-25T10:08:03Z</ts>
-    <user>hlayton2f</user>
+    <ts>2022-01-10T20:18:50Z</ts>
+    <user>twarcop2f</user>
   </lastUpdated>
   <socials>
     <social>
       <site>twitter</site>
-      <address>http://aol.com/congue/etiam/justo/etiam/pretium/iaculis.html</address>
+      <handle>kceeley0</handle>
+      <address>https://yandex.ru/odio/elementum/eu/interdum/eu/tincidunt/in.json</address>
     </social>
   </socials>
   <memberships>
     <membership>
-      <list>list5</list>
-      <important>false</important>
-      <ts>2021-02-09</ts>
+      <list>list7</list>
+      <important>true</important>
+      <ts>2021-08-28</ts>
     </membership>
     <membership>
-      <list>list6</list>
+      <list>list2</list>
       <important>true</important>
-      <ts>2021-06-24</ts>
+      <ts>2021-04-07</ts>
+    </membership>
+    <membership>
+      <list>list7</list>
+      <important>true</important>
+      <ts>2021-08-14</ts>
     </membership>
     <membership>
       <list>list8</list>
-      <important>true</important>
-      <ts>2020-08-25</ts>
-    </membership>
-    <membership>
-      <list>list4</list>
-      <important>true</important>
-      <ts>2020-11-16</ts>
-    </membership>
-    <membership>
-      <list>list7</list>
-      <important>true</important>
-      <ts>2020-08-25</ts>
-    </membership>
-    <membership>
-      <list>list7</list>
       <important>false</important>
-      <ts>2020-06-27</ts>
+      <ts>2021-08-24</ts>
     </membership>
   </memberships>
+  <links>
+    <link>
+      <label>Quick View</label>
+      <url>https://archive.org</url>
+      <icon>fa-eye</icon>
+    </link>
+    <link>
+      <label>Nomination History</label>
+      <url>http://mayoclinic.com</url>
+      <icon>fa-medal</icon>
+    </link>
+    <link>
+      <label>Comments</label>
+      <url>http://cargocollective.com</url>
+      <icon>fa-comments</icon>
+    </link>
+  </links>
 </person>

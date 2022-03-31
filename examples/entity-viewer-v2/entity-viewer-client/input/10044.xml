@@ -3,166 +3,189 @@
   <personId>10044</personId>
   <nameGroup>
     <givenname>
-      <value>Rosana</value>
+      <value>Halsey</value>
     </givenname>
     <surname>
-      <value>Doak</value>
+      <value>MacKimmie</value>
     </surname>
     <fullname>
       <classification>C</classification>
       <restricted>true</restricted>
-      <value>Doak Rosana</value>
+      <value>MacKimmie Halsey</value>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2011-04-03T17:06:20Z</ts>
+        <name>New York Times</name>
+        <ts>2014-01-08T14:07:52Z</ts>
       </source>
       <source>
         <name>Washington Post</name>
-        <ts>2018-07-18T17:35:07Z</ts>
+        <ts>2018-01-23T19:08:05Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>rvick0@indiatimes.com</value>
+      <value>sivons0@dmoz.org</value>
       <classification>U</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>951-985-4169</phone>
+  <phone>883-488-9572</phone>
   <ssn>
-    <value>793-17-3827</value>
+    <value>151-63-7983</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2012-07-27T02:18:32Z</ts>
-      </source>
-    </image>
-    <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
       <source>
-        <name>Washington Post</name>
-        <ts>2018-10-15T08:11:27Z</ts>
+        <name>Los Angeles Times</name>
+        <ts>2017-01-23T13:20:47Z</ts>
+        <uploadedBy/>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2017-11-05T11:51:53Z</ts>
+        <name>Chicago Tribune</name>
+        <ts>2014-10-27T16:53:25Z</ts>
+        <uploadedBy>adunbobin0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>43027 Carey Pass</street>
-      <city>Portland</city>
-      <state>OR</state>
-      <postal>97271</postal>
+      <street>48564 Norway Maple Alley</street>
+      <city>Lexington</city>
+      <state>KY</state>
+      <postal>40586</postal>
       <country>United States</country>
-      <latitude>45.5806</latitude>
-      <longitude>-122.3748</longitude>
+      <latitude>38.0283</latitude>
+      <longitude>-84.4715</longitude>
     </address>
     <address>
-      <street>846 Fulton Place</street>
-      <city>Lansing</city>
-      <state>MI</state>
-      <postal>48919</postal>
+      <street>26 Crowley Circle</street>
+      <city>Oakland</city>
+      <state>CA</state>
+      <postal>94611</postal>
       <country>United States</country>
-      <latitude>42.7286</latitude>
-      <longitude>-84.5517</longitude>
+      <latitude>37.8471</latitude>
+      <longitude>-122.2223</longitude>
+    </address>
+    <address>
+      <street>08 Towne Circle</street>
+      <city>Indianapolis</city>
+      <state>IN</state>
+      <postal>46266</postal>
+      <country>United States</country>
+      <latitude>39.7795</latitude>
+      <longitude>-86.1328</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>United States</country>
-      <name>Pennsylvania Academy of the Fine Arts</name>
-      <city>Wichita</city>
-      <state>KS</state>
-      <postal>67236</postal>
-      <latitude>37.8010824</latitude>
-      <longitude>-97.3317391</longitude>
+      <country>Mexico</country>
+      <name>Universidad Autónoma de Baja California</name>
+      <city>La Loma</city>
+      <state>MIC</state>
+      <postal>61663</postal>
+      <latitude>19.6786236</latitude>
+      <longitude>-101.1808488</longitude>
     </school>
     <school>
-      <country>United States</country>
-      <name>Scholl College of Podiatric Medicine</name>
-      <city>Albany</city>
-      <state>GA</state>
-      <postal>31704</postal>
-      <latitude>31.5547633</latitude>
-      <longitude>-84.06035</longitude>
+      <country>Mexico</country>
+      <name>Universidad Iberoamericana</name>
+      <city>Magdaleno Aguilar</city>
+      <state>TAM</state>
+      <postal>89355</postal>
+      <latitude>22.3140531</latitude>
+      <longitude>-97.8850861</longitude>
     </school>
   </schools>
   <status>Inactive</status>
   <sources>
     <source>
-      <name>USA Today</name>
-      <ts>2012-06-26T15:26:25Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
       <name>Los Angeles Times</name>
-      <ts>2015-12-08T18:31:52Z</ts>
+      <ts>2020-11-28T18:54:21Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10100</id>
+      <id>10070</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Breitler Cacilie</fullname>
+      <city>San Antonio</city>
+      <state>TX</state>
+    </relation>
+    <relation>
+      <id>10076</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Swendell Gradey</fullname>
-      <city>Charleston</city>
-      <state>SC</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Sobtka Terrill</fullname>
+      <city>Troy</city>
+      <state>MI</state>
     </relation>
     <relation>
-      <id>10087</id>
-      <predicate>worksWith</predicate>
+      <id>10040</id>
+      <predicate>livesWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
-      <fullname>Beidebeke Halette</fullname>
-      <city>Toledo</city>
-      <state>OH</state>
+      <fullname>Jameson Karel</fullname>
+      <city>Saint Paul</city>
+      <state>MN</state>
     </relation>
     <relation>
-      <id>10012</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Wingeat Bone</fullname>
-      <city>Miami</city>
-      <state>FL</state>
+      <id>10086</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
+      <fullname>Gwinn Philippine</fullname>
+      <city>Wichita</city>
+      <state>KS</state>
+    </relation>
+    <relation>
+      <id>10011</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
+      <fullname>Whaley Franz</fullname>
+      <city>Silver Spring</city>
+      <state>MD</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-21T20:42:34Z</ts>
-    <user>rdoak17</user>
+    <ts>2022-02-13T02:36:18Z</ts>
+    <user>hmackimmie17</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-16T03:40:01Z</ts>
-    <user>rdoak17</user>
+    <ts>2022-02-22T14:58:09Z</ts>
+    <user>hmackimmie17</user>
   </lastUpdated>
-  <socials>
-    <social>
-      <site>facebook</site>
-      <address>http://icio.us/nulla/tellus.jpg</address>
-    </social>
-    <social>
-      <site>linkedin</site>
-      <address>https://networkadvertising.org/convallis/tortor/risus.jsp</address>
-    </social>
-    <social>
-      <site>linkedin</site>
-      <address>https://google.ca/at.jpg</address>
-    </social>
-  </socials>
+  <socials/>
   <memberships>
     <membership>
-      <list>list7</list>
-      <important>false</important>
-      <ts>2020-02-06</ts>
+      <list>list2</list>
+      <important>true</important>
+      <ts>2021-06-28</ts>
+    </membership>
+    <membership>
+      <list>list12</list>
+      <important>true</important>
+      <ts>2021-09-21</ts>
     </membership>
   </memberships>
+  <links>
+    <link>
+      <label>Quick View</label>
+      <url>https://slashdot.org</url>
+      <icon>fa-eye</icon>
+    </link>
+    <link>
+      <label>Nomination History</label>
+      <url>http://oaic.gov.au</url>
+      <icon>fa-medal</icon>
+    </link>
+    <link>
+      <label>Comments</label>
+      <url>http://google.ca</url>
+      <icon>fa-comments</icon>
+    </link>
+  </links>
 </person>

@@ -3,165 +3,199 @@
   <personId>10033</personId>
   <nameGroup>
     <givenname>
-      <value>Constanta</value>
+      <value>Brittany</value>
     </givenname>
     <surname>
-      <value>Liddington</value>
+      <value>Anselmi</value>
     </surname>
     <fullname>
-      <classification>S</classification>
-      <restricted>false</restricted>
-      <value>Liddington Constanta</value>
+      <classification>C</classification>
+      <restricted>true</restricted>
+      <value>Anselmi Brittany</value>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2020-05-14T13:12:05Z</ts>
+        <name>Los Angeles Times</name>
+        <ts>2020-08-01T00:15:42Z</ts>
+      </source>
+      <source>
+        <name>USA Today</name>
+        <ts>2020-12-14T13:59:29Z</ts>
+      </source>
+      <source>
+        <name>USA Today</name>
+        <ts>2014-05-19T17:07:54Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>lrixon0@rambler.ru</value>
-      <classification>U</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>dgilligan1@cnn.com</value>
-      <classification>S</classification>
+      <value>rdawtre0@examiner.com</value>
+      <classification>C</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>108-626-8235</phone>
+  <phone>978-469-3850</phone>
   <ssn>
-    <value>188-90-1681</value>
+    <value>617-71-9120</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2015-04-18T16:50:10Z</ts>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
-      <source>
-        <name>USA Today</name>
-        <ts>2010-07-27T13:12:52Z</ts>
+        <name>Los Angeles Times</name>
+        <ts>2016-04-08T13:06:28Z</ts>
+        <uploadedBy>snoir0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>2 Towne Street</street>
-      <city>Des Moines</city>
+      <street>6 Lyons Street</street>
+      <city>Cedar Rapids</city>
       <state>IA</state>
-      <postal>50335</postal>
+      <postal>52410</postal>
       <country>United States</country>
-      <latitude>41.6727</latitude>
-      <longitude>-93.5722</longitude>
+      <latitude>42.0794</latitude>
+      <longitude>-91.5992</longitude>
     </address>
     <address>
-      <street>9497 Sommers Lane</street>
-      <city>Fort Worth</city>
-      <state>TX</state>
-      <postal>76115</postal>
+      <street>65909 Union Place</street>
+      <city>Lexington</city>
+      <state>KY</state>
+      <postal>40596</postal>
       <country>United States</country>
-      <latitude>32.6796</latitude>
-      <longitude>-97.3336</longitude>
+      <latitude>38.0283</latitude>
+      <longitude>-84.4715</longitude>
+    </address>
+    <address>
+      <street>85 Kropf Alley</street>
+      <city>Katy</city>
+      <state>TX</state>
+      <postal>77493</postal>
+      <country>United States</country>
+      <latitude>29.8678</latitude>
+      <longitude>-95.8298</longitude>
     </address>
   </addresses>
   <schools>
     <school>
+      <country>United States</country>
+      <name>Columbia Southern University</name>
+      <city>Nashville</city>
+      <state>TN</state>
+      <postal>37240</postal>
+      <latitude>36.1457192</latitude>
+      <longitude>-86.8066559</longitude>
+    </school>
+    <school>
       <country>Canada</country>
-      <name>Langara College</name>
-      <city>L'Île-Perrot</city>
+      <name>Nova Scotia Agricultural College</name>
+      <city>Richmond</city>
       <state>QC</state>
-      <postal>H9X</postal>
-      <latitude>45.4235609</latitude>
-      <longitude>-73.9319061</longitude>
+      <postal>V6Z</postal>
+      <latitude>49.2725714</latitude>
+      <longitude>-123.1207968</longitude>
     </school>
   </schools>
-  <status>Active</status>
+  <status>Inactive</status>
   <sources>
     <source>
       <name>Washington Post</name>
-      <ts>2013-07-11T12:00:09Z</ts>
+      <ts>2020-04-21T23:16:55Z</ts>
     </source>
   </sources>
   <sources>
     <source>
       <name>Los Angeles Times</name>
-      <ts>2017-11-02T13:24:47Z</ts>
+      <ts>2019-06-14T21:43:14Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>Wall Street Journal</name>
-      <ts>2018-08-22T19:17:41Z</ts>
+      <name>Los Angeles Times</name>
+      <ts>2013-06-27T20:56:36Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10054</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Chessell Skye</fullname>
-      <city>Chicago</city>
-      <state>IL</state>
-    </relation>
-    <relation>
-      <id>10077</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
-      <fullname>Alforde Dougie</fullname>
-      <city>Abilene</city>
-      <state>TX</state>
-    </relation>
-    <relation>
-      <id>10078</id>
+      <id>10016</id>
       <predicate>livesWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
-      <fullname>McNish Guy</fullname>
-      <city>New Orleans</city>
-      <state>LA</state>
+      <fullname>Handford Stanley</fullname>
+      <city>Milwaukee</city>
+      <state>WI</state>
     </relation>
     <relation>
-      <id>10027</id>
+      <id>10094</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Dulling Siward</fullname>
+      <city>Hartford</city>
+      <state>CT</state>
+    </relation>
+    <relation>
+      <id>10073</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Kelby Karleen</fullname>
-      <city>Hialeah</city>
-      <state>FL</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Henniger Clarey</fullname>
+      <city>Cincinnati</city>
+      <state>OH</state>
+    </relation>
+    <relation>
+      <id>10087</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
+      <fullname>Linfitt Caprice</fullname>
+      <city>Trenton</city>
+      <state>NJ</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-03T07:25:54Z</ts>
-    <user>cliddingtonw</user>
+    <ts>2022-01-19T00:52:43Z</ts>
+    <user>banselmiw</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-11T11:54:45Z</ts>
-    <user>cliddingtonw</user>
+    <ts>2022-01-19T22:36:16Z</ts>
+    <user>banselmiw</user>
   </lastUpdated>
-  <socials>
-    <social>
-      <site>twitter</site>
-      <address>http://e-recht24.de/eget.png</address>
-    </social>
-    <social>
-      <site>facebook</site>
-      <address>https://e-recht24.de/turpis/integer/aliquet/massa/id.json</address>
-    </social>
-    <social>
-      <site>twitter</site>
-      <address>https://pagesperso-orange.fr/sem/duis.xml</address>
-    </social>
-  </socials>
+  <socials/>
   <memberships>
+    <membership>
+      <list>list3</list>
+      <important>false</important>
+      <ts>2021-06-09</ts>
+    </membership>
+    <membership>
+      <list>list11</list>
+      <important>true</important>
+      <ts>2021-04-17</ts>
+    </membership>
     <membership>
       <list>list9</list>
       <important>true</important>
-      <ts>2019-07-30</ts>
+      <ts>2021-08-29</ts>
+    </membership>
+    <membership>
+      <list>list10</list>
+      <important>false</important>
+      <ts>2021-05-18</ts>
     </membership>
   </memberships>
+  <links>
+    <link>
+      <label>Quick View</label>
+      <url>https://buzzfeed.com</url>
+      <icon>fa-eye</icon>
+    </link>
+    <link>
+      <label>Nomination History</label>
+      <url>http://odnoklassniki.ru</url>
+      <icon>fa-medal</icon>
+    </link>
+    <link>
+      <label>Comments</label>
+      <url>https://vimeo.com</url>
+      <icon>fa-comments</icon>
+    </link>
+  </links>
 </person>
