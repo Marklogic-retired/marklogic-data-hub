@@ -18,10 +18,13 @@ package com.marklogic.hub.central.controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.marklogic.hub.dataservices.FlowService;
+import com.marklogic.hub.dataservices.JobService;
+import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowInputs;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
+import com.marklogic.hub.flow.impl.JobStatus;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +37,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 @Controller
@@ -118,6 +124,30 @@ public class FlowController extends BaseController {
         return ResponseEntity.ok(runStepsInAFlow(flowName, uploadedFiles, stepNumbers));
     }
 
+
+    @RequestMapping(value = "/stopJob/{jobId}", method = RequestMethod.POST)
+    @ResponseBody
+    @ApiOperation(value = "Cancel a running job with the given ID", response = JobController.Job.class)
+    public ResponseEntity<Void> cancelJob(@PathVariable String jobId) {
+        return stopJobID(jobId);
+
+    }
+
+    private ResponseEntity stopJobID(String jobId) {
+        String currentUser = this.getHubClient().getUsername();
+        JsonNode jobsJson = JobService.on(getHubClient().getJobsClient()).getJobWithDetails(jobId);
+        String userWhoStartedTheJob = jobsJson.path("job").path("user").asText();
+        //get FlowRunner from a map by jobID
+        if(userWhoStartedTheJob.equalsIgnoreCase(currentUser)){
+            FlowRunner flowRunner = FlowUtil.getInstance().flowMap.get(jobId);
+            flowRunner.stopJob(jobId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }else{
+            //Throws a FORBIDDEN response, because the user should be the same
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+    }
+
     private RunFlowResponse runStepsInAFlow(String flowName, MultipartFile[] uploadedFiles, String ... stepNumbers) {
         FlowInputs inputs;
         if(stepNumbers == null || stepNumbers.length == 0){
@@ -146,9 +176,20 @@ public class FlowController extends BaseController {
         }
         FlowRunner flowRunner = newFlowRunner();
         RunFlowResponse runFlowResponse = flowRunner.runFlow(inputs);
+
+
+        flowRunner.onStatusChanged((jobId, step, jobStatus, percentComplete, successfulEvents, failedEvents, message) ->{if(!jobStatus.equals(JobStatus.STARTED) && !jobStatus.equals(JobStatus.RUNNING)){
+            FlowUtil.getInstance().flowMap.remove(runFlowResponse.getJobId());
+        }});
+
+
+        //we persist our instance in a map with jobId as key
+        FlowUtil.getInstance().flowMap.put(runFlowResponse.getJobId(),flowRunner);
+
         if(flowRunnerConsumer != null){
             flowRunnerConsumer.accept(flowRunner);
         }
+
         return runFlowResponse;
     }
 
@@ -216,6 +257,19 @@ public class FlowController extends BaseController {
         public AddStepInfo(String stepName, String stepDefinitionType) {
             this.stepName = stepName;
             this.stepDefinitionType = stepDefinitionType;
+        }
+    }
+
+    public static class FlowUtil {
+        private static FlowUtil instance = null;
+        private Map<String, FlowRunner> flowMap = new HashMap<>();
+
+        public static FlowUtil getInstance()
+        {
+            if (instance == null)
+                instance = new FlowUtil();
+
+            return instance;
         }
     }
 }
