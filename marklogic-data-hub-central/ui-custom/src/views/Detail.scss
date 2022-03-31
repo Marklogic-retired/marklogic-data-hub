@@ -37,9 +37,15 @@
                     padding: 2px 10px;
                 }
                 .expand {
+                    button {
+                        width: 130px;
+                        text-align: right;
+                    }
                     margin-right: 12px;
                     .label {
                         display: inline-block;
+                        width: 92px;
+                        text-align: center;
                         padding-right: 6px;
                     }
                     .icon {
