@@ -40,10 +40,28 @@ describe("Focus Defocus clusters", () => {
       let customerCoordinates: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
       const canvas = graphExplore.getGraphVisCanvas();
       //Click on node to open side panel
-      canvas.click(customerCoordinates.x, customerCoordinates.y, {force: true});
-      canvas.click(customerCoordinates.x, customerCoordinates.y, {force: true});
-    });
 
+      canvas.click(customerCoordinates.x, customerCoordinates.y, {force: true});
+      canvas.click(customerCoordinates.x, customerCoordinates.y, {force: true});
+
+    });
+    /**
+     * Opening the side panel does not work for Firefox at first attempt
+     */
+    if (Cypress.isBrowser("firefox")) {
+      cy.log("**Picking up customer node again for Firefox since it**");
+      graphExplore.focusNode(ExploreGraphNodes.CUSTOMER_102);
+      graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
+        let customerCoordinates: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
+        const canvas = graphExplore.getGraphVisCanvas();
+
+        //Click on node to open side panel
+        canvas.trigger("mouseover", customerCoordinates.x, customerCoordinates.y, {force: true});
+        canvas.click(customerCoordinates.x, customerCoordinates.y, {force: true});
+
+
+      });
+    }
     cy.log("**View customer record type information**");
     graphExplore.getRecordTab().click();
     graphExplore.getJsonRecordData().should("be.visible");
