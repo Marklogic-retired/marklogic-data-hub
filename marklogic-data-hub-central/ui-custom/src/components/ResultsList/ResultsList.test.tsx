@@ -93,29 +93,43 @@ const searchContextValue = {
     entityType: "",
     facetStrings: [],
     searchResults: searchResults,
+    start: 0,
+    pageLength: 10,
     returned: 0,
     total: 0,
     recentSearches: [],
     loading: false,
+    pageNumber: 1,
     handleSearch: jest.fn(),
     handleFacetString: jest.fn(),
+    handlePagination: () => { },
     handleSaved: jest.fn(),
-    handleGetSearchLocal: jest.fn()
+    handleGetSearchLocal: jest.fn(),
+    setPageNumber: () => { }
 };
 
 const searchResultsEmpty = {};
 
 const searchContextValueEmpty = Object.assign({}, searchContextValue, {searchResults: searchResultsEmpty});
 
+const EXPANDIDS = {
+    membership: true,
+    info: true,
+    relationships: true,
+    imageGallery: true
+}
+
 const detailContextValue = {
     detail: {},
     recentRecords: [],
     loading: false,
+    expandIds: EXPANDIDS,
     handleGetDetail: jest.fn(),
     handleGetRecent: jest.fn(),
     handleGetRecentLocal: jest.fn(),
     handleSaveRecent: jest.fn(),
-    handleSaveRecentLocal: jest.fn()
+    handleSaveRecentLocal: jest.fn(),
+    handleExpandIds: jest.fn()
 };
 
 describe("ResultsList component", () => {

@@ -44,15 +44,24 @@ const detail = {
 	]
 };
 
+const EXPANDIDS = {
+    membership: true,
+    info: true,
+    relationships: true,
+    imageGallery: true
+}
+
 const detailContextValue = {
     detail: detail,
     recentRecords: [],
     loading: false,
+    expandIds: EXPANDIDS,
     handleGetDetail: jest.fn(),
     handleGetRecent: jest.fn(),
     handleGetRecentLocal: jest.fn(),
     handleSaveRecent: jest.fn(),
-    handleSaveRecentLocal: jest.fn()
+    handleSaveRecentLocal: jest.fn(),
+    handleExpandIds: jest.fn()
 };
 
 
