@@ -1,7 +1,7 @@
 import React, {useState, useContext} from 'react';
 import {useNavigate, useLocation} from "react-router-dom";
 import {UserContext} from "../store/UserContext";
-import {getRecent, saveRecent, getRecords} from "../api/api";
+import {getRecent, saveRecent, getRecords, getDetail} from "../api/api";
 import _ from "lodash";
 
 interface ExpandIdsInterface {
@@ -75,17 +75,6 @@ const DetailProvider: React.FC = ({children}) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [expandIds, setExpandIds] = useState<ExpandIdsInterface>(EXPANDIDS);
 
-  // TODO remove when URI-based detail view is definite
-  const buildQuery = (id): QueryInterface => {
-    let query = {
-      "searchText": "",
-      "entityTypeIds": [userContext.config.api.detailType] as any,
-      "selectedFacets": {}
-    }
-    query["selectedFacets"][userContext.config.api.detailConstraint] = [id];
-    return query;
-  };
-
   const handleExpandIds = (idsObject) => {
     setExpandIds(idsObject)
   }
@@ -94,11 +83,11 @@ const DetailProvider: React.FC = ({children}) => {
     console.log("handleGetDetail", uri);
     setDetailUri(uri);
     setLoading(true);
-    let sr = getRecords(userContext.config.api.recordsEndpoint, [uri], userContext.userid);
+    let sr = getDetail(userContext.config.api.detailEndpoint, uri, userContext.userid);
     sr.then(result => {
       setDetail(result?.data[0]);
-      if (location.pathname !== "/detail/" + encodeURIComponent(uri)) {
-        navigate("/detail/" + encodeURIComponent(uri)); // Detail click from another view
+      if (location.pathname !== "/detail?recordId=" + uri) {
+        navigate("/detail?recordId=" + uri); // Detail click from another view
       }
       setLoading(false);
     }).catch(error => {

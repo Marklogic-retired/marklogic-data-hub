@@ -28,7 +28,7 @@ const App: React.FC<Props> = (props) => {
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/search" element={<Search />} />
-              <Route path="/detail/:id" element={<Detail />} />
+              <Route path="/detail" element={<Detail />} />
             </Routes>
           </main>
         </DetailProvider>

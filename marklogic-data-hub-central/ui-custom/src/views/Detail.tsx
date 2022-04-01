@@ -1,5 +1,5 @@
 import React, {useContext, useState, useEffect} from "react";
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {UserContext} from "../store/UserContext";
 import {DetailContext} from "../store/DetailContext";
 import Loading from "../components/Loading/Loading";
@@ -53,12 +53,12 @@ const Detail: React.FC<Props> = (props) => {
   const detailContext = useContext(DetailContext);
   const {expandIds, handleExpandIds} = detailContext;
 
+  const [searchParams, setSearchParams] = useSearchParams();
   const [config, setConfig] = useState<any>(null);
   const [favorite, setFavorite] = useState<any>(false);
   const [expand, setExpand] = useState<any>(true);
 
-  let {id} = useParams();
-
+  let id = searchParams.get('recordId')
 
   const handleExpandClick = () => {
     if (expand) {

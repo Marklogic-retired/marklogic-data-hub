@@ -19,6 +19,25 @@ export const getSearchResults = async (endpoint, query, userid) => {
   }
 };
 
+export const getSearchResultsByGet = async (query, userid) => { 
+  let config = {
+    headers: {
+      userid: userid ? userid : null
+    }
+  }
+  let queryStr = encodeURI(JSON.stringify(query));
+  try {
+    const response = await axios.get("/api/explore?query=" + queryStr, config);
+    if (response && response.status === 200) {
+      console.log("api getSearchResultsByGet", response);
+      return response;
+    }
+  } catch (error) {
+    let message = error;
+    console.error("Error: getSearchResultsByGet", message);
+  }
+};
+
 // export const getSummary = async (opts) => { // TODO
 export const getSummary = (opts) => {
   // return await axios.get(`/api/summary`); // TODO
@@ -26,14 +45,14 @@ export const getSummary = (opts) => {
   return summary;
 };
 
-export const getDetail = async (endpoint, query, userid) => {
+export const getDetail = async (endpoint, recordId, userid) => {
   let config = {
     headers: {
       userid: userid ? userid : null
     }
   }
   try {
-    const response = await axios.post(endpoint, query, config);
+    const response = await axios.get(endpoint + "?recordId=" + recordId, config);
     if (response && response.status === 200) {
       return response;
     }

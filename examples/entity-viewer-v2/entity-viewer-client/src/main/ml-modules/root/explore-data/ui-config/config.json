@@ -1,7 +1,7 @@
 {
   "api": {
     "searchResultsEndpoint": "/api/explore",
-    "detailEndpoint": "/api/explore",
+    "detailEndpoint": "/api/explore/getRecord",
     "detailType": "person",
     "detailConstraint": "personId",
     "recordsEndpoint": "/api/explore/getRecords",
