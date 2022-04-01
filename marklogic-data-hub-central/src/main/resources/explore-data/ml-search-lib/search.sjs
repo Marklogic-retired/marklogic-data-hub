@@ -34,7 +34,18 @@ class Search {
     let facets = searchParams.selectedFacets;
     let keys = Object.keys(facets);
     let constraintArr = [];
-    keys.forEach(key => constraintArr.push(facets[key].map(value => key+':' + '"' + value + '"').join(" OR ")))
+    keys.forEach(key => {
+
+      if(xdmp.castableAs("http://www.w3.org/2001/XMLSchema", "date", facets[key][0])) {
+        facets[key][0] = xdmp.parseDateTime("[Y0001]-[M01]-[D01]", facets[key][0]);
+        facets[key][1] = xdmp.parseDateTime("[Y0001]-[M01]-[D01]", facets[key][1]);
+        constraintArr.push(key + ' GE ' + '"' + facets[key][0] + '"' + ' AND ' + key + ' LE ' + '"' + facets[key][1] + '"');
+      } else if(xdmp.castableAs("http://www.w3.org/2001/XMLSchema", "dateTime", facets[key][0])) {
+        constraintArr.push(key + ' GE ' + '"' + facets[key][0] + '"' + ' AND ' + key + ' LE ' + '"' + facets[key][1] + '"');
+      } else {
+        constraintArr.push(facets[key].map(value => key+':' + '"' + value + '"').join(" OR "))
+      }
+    });
     const facetConstraint = constraintArr.map(constraint => "(" + constraint + ")").join(" AND ");
 
     let searchConstraint = [];
