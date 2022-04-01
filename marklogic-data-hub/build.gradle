@@ -3,7 +3,7 @@ plugins {
     id 'java-library'
     id 'java-test-fixtures'
     id 'maven-publish'
-    id 'com.marklogic.ml-gradle' version '4.3.2'
+    id 'com.marklogic.ml-gradle' version '4.3.3'
     id "com.github.node-gradle.node" version "2.2.4"
     id 'com.marklogic.ml-development-tools' version '5.5.0'
 
@@ -61,7 +61,7 @@ dependencies {
     testImplementation files("src/testFixtures/resources")
 
     testImplementation "org.junit.jupiter:junit-jupiter:5.7.2"
-    testImplementation "org.springframework:spring-test:5.3.9"
+    testImplementation "org.springframework:spring-test:5.3.18"
 
     // For managing a pool of HubConfigImpl objects
     testFixturesApi "org.apache.commons:commons-pool2:2.10.0"
