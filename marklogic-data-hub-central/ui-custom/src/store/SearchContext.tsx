@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useContext} from 'react';
 import {useNavigate, useLocation} from "react-router-dom";
 import {UserContext} from "../store/UserContext";
-import {getSearchResults} from "../api/api";
+import {getSearchResults, getSearchResultsByGet} from "../api/api";
 import _ from "lodash";
 
 interface SearchContextInterface {
@@ -119,8 +119,10 @@ const SearchProvider: React.FC = ({children}) => {
         navigate("/search"); // Handle search submit from another view
       }
       let newQuery = buildQuery(start, pageLength, qtext, facetStrings, entityType);
-      let sr = getSearchResults(userContext.config.api.searchResultsEndpoint, newQuery, userContext.userid);
+      //let sr = getSearchResults(userContext.config.api.searchResultsEndpoint, newQuery, userContext.userid);
+      let sr = getSearchResultsByGet(newQuery, userContext.userid);
       sr.then(result => {
+        console.log("getSearchResultsByGet", result?.data);
         setSearchResults(result?.data.searchResults.response);
         setReturned(result?.data.searchResults.response.total);
         // TODO need total records in database in result

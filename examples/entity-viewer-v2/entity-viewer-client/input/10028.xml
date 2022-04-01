@@ -165,7 +165,23 @@
       <address>http://ucsd.edu/nullam.html</address>
     </social>
   </socials>
-  <memberships/>
+  <memberships>
+    <membership>
+      <list>list11</list>
+      <important>true</important>
+      <ts>2021-08-21</ts>
+    </membership>
+    <membership>
+      <list>list2</list>
+      <important>false</important>
+      <ts>2021-06-23</ts>
+    </membership>
+    <membership>
+      <list>list7</list>
+      <important>false</important>
+      <ts>2022-01-18</ts>
+    </membership>
+  </memberships>
   <links>
     <link>
       <label>Quick View</label>
