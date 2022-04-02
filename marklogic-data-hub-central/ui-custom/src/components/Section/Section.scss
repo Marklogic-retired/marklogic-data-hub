@@ -2,8 +2,8 @@
     margin-top: 16px;
     border: solid 1px #ddd;
     border-radius: 4px;
-    display: inline-block;
     header {
+        display: flex;
         height: 40px;
         padding: 7px 16px;
         background-color: #f1f1f1;
@@ -17,6 +17,8 @@
         overflow: scroll;
     }
     .collapse-container {
+        flex-grow: 0;
+        margin-left: 10px;
         .collapse-button {
             background: #fff;
             border: 1px solid #ccc;
@@ -35,5 +37,8 @@
                 border-bottom-right-radius: 4px;
             }
         }
+    }
+   .title {
+        flex-grow: 1
     }
 }

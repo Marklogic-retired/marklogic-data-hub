@@ -1,6 +1,7 @@
 import React from "react";
 import "./Section.scss";
 import {ChevronDoubleDown, ChevronDoubleUp} from 'react-bootstrap-icons'
+import RecentClear from "../RecentClear/RecentClear";
 
 type Props = {
   title: string;
@@ -63,7 +64,8 @@ const Section: React.FC<Props> = (props) => {
   return (
     <div className="section" style={divStyle}>
       <header style={headerStyle}>
-        <span>{props.title}</span>
+        <span className="title">{props.title}</span>
+        {props.title === "Recently Visited" && <RecentClear title="Clear"></RecentClear>}
         {props.collapsible && <div className="collapse-container">
           <a className="collapse-button" onClick={handleCollapse}><ChevronDoubleUp /></a>
           <a className="collapse-button" onClick={handleExpand}><ChevronDoubleDown /></a>

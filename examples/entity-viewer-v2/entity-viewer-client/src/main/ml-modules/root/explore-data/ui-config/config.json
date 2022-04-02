@@ -124,6 +124,8 @@
     "recentRecords": {
       "component": "RecentRecords",
       "config": {
+        "maxEntries": 100,
+        "maxTime": 1440,
         "thumbnail": {
           "component": "Image",
           "config": {

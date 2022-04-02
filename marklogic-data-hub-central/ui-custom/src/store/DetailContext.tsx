@@ -28,6 +28,8 @@ interface DetailContextInterface {
   handleSaveRecent: any;
   handleSaveRecentLocal: any;
   handleExpandIds: (idsObject: ExpandIdsInterface) => void;
+  handleDeleteAllRecent: any;
+  hasSavedRecords: any;
 }
 interface QueryInterface {
   searchText: string;
@@ -45,7 +47,9 @@ const defaultState = {
   handleGetRecentLocal: () => { },
   handleSaveRecent: () => { },
   handleSaveRecentLocal: () => { },
-  handleExpandIds: (idsObject = EXPANDIDS) => { }
+  handleExpandIds: (idsObject = EXPANDIDS) => { },
+  handleDeleteAllRecent: () => {},
+  hasSavedRecords: () => {}
 };
 
 
@@ -138,6 +142,9 @@ const DetailProvider: React.FC = ({children}) => {
         console.error(error);
       })
     }
+    else {
+      setRecentRecords([]);
+    }
   };
 
   const handleSaveRecent = () => {
@@ -150,7 +157,7 @@ const DetailProvider: React.FC = ({children}) => {
     })
   };
 
-  const handleSaveRecentLocal = () => {
+  const handleSaveRecentLocal = async () => {
     // Save to local storage
     let json = localStorage.getItem("recent");
     let dt = new Date().toISOString();
@@ -162,15 +169,54 @@ const DetailProvider: React.FC = ({children}) => {
       localStorage.setItem("recent", JSON.stringify(newObj));
     } else {
       newObj = JSON.parse(json);
+      let obj;
       if (newObj && newObj[userContext.userid]) {
+        obj = newObj[userContext.userid];
         newObj[userContext.userid][detailUri] = dt;
       } else {
         newObj[userContext.userid] = {};
         newObj[userContext.userid][detailUri] = dt;
       }
       localStorage.setItem("recent", JSON.stringify(newObj));
+      //To handle deletion of records in local storage when over certain count and time limit
+      if(obj) {
+        await handleDeleteRecentByMaxEntries(obj);
+        await handleDeleteRecentByMaxTime(obj);
+        localStorage.setItem("recent", JSON.stringify(newObj));
+      }
     }
   };
+
+  const handleDeleteRecentByMaxEntries = (obj) => {
+    let maxEntries = userContext.config.dashboard.recentRecords.config.maxEntries;
+    if (Object.keys(obj).length > maxEntries)
+      delete obj[Object.keys(obj)[0]];
+  }
+
+  const handleDeleteRecentByMaxTime = (obj) => {
+    let maxTimes = userContext.config.dashboard.recentRecords.config.maxTime;
+    let curr = new Date();
+    for(let i=0;i<Object.keys(obj).length;i++) {
+      let itemStorageTime = new Date(obj[Object.keys(obj)[i]]);
+      let diffMilliSeconds = curr.getTime() - itemStorageTime.getTime();
+      let diffMinutes = diffMilliSeconds/60000;
+      if(diffMinutes > maxTimes) {
+        delete obj[Object.keys(obj)[i]];
+        i--;
+      }
+    }
+  }
+
+  const handleDeleteAllRecent = () => {
+    localStorage.removeItem("recent");
+    handleGetRecentLocal();
+  }
+
+  const hasSavedRecords = () => {
+    let json = localStorage.getItem("recent");
+    let obj = json ? JSON.parse(json) : null;
+    return obj && obj[userContext.userid] && Object.keys(obj[userContext.userid]).length > 0;
+  }
 
   return (
     <DetailContext.Provider
@@ -184,7 +230,9 @@ const DetailProvider: React.FC = ({children}) => {
         handleGetRecentLocal,
         handleSaveRecent,
         handleSaveRecentLocal,
-        handleExpandIds
+        handleExpandIds,
+        handleDeleteAllRecent,
+        hasSavedRecords
       }}
     >
       {children}
