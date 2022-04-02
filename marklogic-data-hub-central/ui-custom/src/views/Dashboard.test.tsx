@@ -1,6 +1,7 @@
 import Dashboard from "./Dashboard";
 import {render, act} from "@testing-library/react";
 import { UserContext } from "../store/UserContext";
+import userEvent from "@testing-library/user-event";
 
 const config = {
     "dashboard": {
@@ -93,7 +94,7 @@ const userContextValueEmptyConfig = {...userContextValue, config: {}};
 describe("Dashboard view", () => {
 
     test("Renders configured content with non-empty config", async () => {
-        let getByText;
+        let getByText, getByTestId;
         await act(async () => {
             const renderResults = render(
                 <UserContext.Provider value={userContextValue}>
@@ -101,9 +102,17 @@ describe("Dashboard view", () => {
                 </UserContext.Provider>
             );
             getByText = renderResults.getByText;
+            getByTestId = renderResults.getByTestId;
         });
         expect(getByText("Recent Searches")).toBeInTheDocument();
         expect(getByText("Recently Visited")).toBeInTheDocument();
+        //To test clear button over recently visited record section
+        expect(getByTestId("clearButton")).toBeInTheDocument();
+        userEvent.click(getByTestId("clearButton"));
+        //To test that confirmation modal opens on clicking clear button
+        expect(getByTestId("resetConfirmationModal")).toBeInTheDocument();
+        expect(getByTestId("noButton")).toBeInTheDocument();
+        expect(getByTestId("yesButton")).toBeInTheDocument();
     });
 
     test("Renders loading content with empty config", async () => {
