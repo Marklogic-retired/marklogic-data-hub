@@ -33,7 +33,7 @@ describe("Run Tile tests", () => {
 
     const flowName = "testPerson";
     //Verify create flow and add all user-defined steps to flow via Run tile
-    runPage.createFlowButton().click();
+    runPage.createFlowButton().click({force: true});
     runPage.newFlowModal().should("be.visible");
     runPage.setFlowName(flowName);
     loadPage.confirmationOptions("Save").click();

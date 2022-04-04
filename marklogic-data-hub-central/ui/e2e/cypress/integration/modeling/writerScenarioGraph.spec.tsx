@@ -28,8 +28,6 @@ describe("Entity Modeling: Graph View", () => {
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-mapping-writer", "hub-central-saved-query-user").withRequest();
     LoginPage.postLogin();
 
-    //Setup hubCentral config for testing
-    cy.setupHubCentralConfig();
 
     //Saving Local Storage to preserve session
     cy.saveLocalStorage();
@@ -38,6 +36,9 @@ describe("Entity Modeling: Graph View", () => {
   beforeEach(() => {
     //Restoring Local Storage to Preserve Session
     cy.restoreLocalStorage();
+
+    //Setup hubCentral config for testing
+    cy.setupHubCentralConfig();
   });
 
   after(() => {
@@ -264,7 +265,7 @@ describe("Entity Modeling: Graph View", () => {
   it("can edit graph edit mode and add edge relationships (with foreign key scenario) via drag/drop", () => {
     entityTypeTable.viewEntityInGraphView("Person");
     modelPage.closeSidePanel();
-    cy.wait(2000);
+    cy.wait(6000);
     cy.waitForAsyncRequest();
     graphView.getAddButton().click();
     cy.waitUntil(() => graphView.addNewRelationship().should("be.visible"));

@@ -263,7 +263,6 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getProperty("OrderedBy").should("not.exist");
 
     //Save Changes
-    cy.publishEntityModel();
     // TODO These break since we do not delete entity until publishing now. To fix with UI changes.
     // confirmationModal.getDeleteEntityText().should("exist");
     // confirmationModal.getDeleteEntityText().should("not.exist");
