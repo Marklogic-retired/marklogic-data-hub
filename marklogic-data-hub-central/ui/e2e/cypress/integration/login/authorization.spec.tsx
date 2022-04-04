@@ -16,11 +16,6 @@ describe("login", () => {
     cy.waitForAsyncRequest();
   });
 
-  afterEach(() => {
-    cy.logout();
-    cy.waitForAsyncRequest();
-  });
-
   after(() => {
     //resetting the test user back to only have 'hub-central-user' role
     cy.resetTestUser();
