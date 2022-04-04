@@ -39,7 +39,7 @@
     position: absolute;
     top: 8px;
     margin-left: 8px;
-    color: #7F86B5;
+    color: $primary;
     cursor: pointer;
     &:hover {
       color: var(--hoverColor);
@@ -180,11 +180,25 @@
       cursor: pointer;
     }
 
+    .runningIcon {
+      display: inline-block;
+      color: $primary;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
     .unSuccessfulRun {
       display: inline-block;
       color: $danger;
       font-size: 20px;
       cursor: pointer;
+    }
+
+    .flowStatusIcon {
+      display: inline-block;
+      color: $primary;
+      font-size: 20px;
+      cursor: pointer;      
     }
 
     .stepResponse {

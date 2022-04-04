@@ -158,7 +158,7 @@ describe("Mapping", () => {
     loadPage.confirmationOptions("Save").click();
     runPage.addStep("relationFlow");
     runPage.addStepToFlow("mapRelation");
-    runPage.verifyStepInFlow("Map", "mapRelation", "relationFlow");
+    runPage.verifyStepInFlow("Mapping", "mapRelation", "relationFlow");
     runPage.runStep("mapRelation", "relationFlow");
     runPage.verifyStepRunResult("mapRelation", "success");
     cy.waitForAsyncRequest();

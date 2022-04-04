@@ -1,6 +1,6 @@
 import React from "react";
 import axiosMock from "axios";
-import {render, waitForElement, act, cleanup} from "@testing-library/react";
+import {render, waitForElement, act, cleanup, wait} from "@testing-library/react";
 import mocks from "../../api/__mocks__/mocks.data";
 import JobResponse from "./job-response";
 import {BrowserRouter as Router} from "react-router-dom";
@@ -82,9 +82,9 @@ describe("Job response modal", () => {
 
   test("Verify failed job response information displays", async () => {
     mocks.runXMLAPI(axiosMock);
-    let getByText, queryByText;
+    let getByText, queryByText, getByTestId;
     act(() => {
-      ({getByText, queryByText} = render(
+      ({getByText, queryByText, getByTestId} = render(
         <Router>
           <CurationContext.Provider value={curationContextMock}>
             <JobResponse
@@ -104,15 +104,22 @@ describe("Job response modal", () => {
     expect(getByText(tsExpected)).toBeInTheDocument(); // "2020-04-04 01:17"
     expect(getByText("0s 702ms")).toBeInTheDocument();
 
-    // check that expected steps are listed
-    expect(getByText("failedIngest")).toBeInTheDocument();
-    expect(getByText("Mapping1")).toBeInTheDocument();
-    expect(getByText("match-customer")).toBeInTheDocument();
-    expect(getByText("merge-customer")).toBeInTheDocument();
-    expect(getByText("master-customer")).toBeInTheDocument();
+    expect(getByTestId("stepType-header")).toBeInTheDocument();
+    // check that expected steps and step types are listed
+    await wait(()  => {
+      expect(getByText("failedIngest")).toBeInTheDocument();
+      expect(getByTestId("failedIngest-loading-type")).toBeInTheDocument();
+      expect(getByText("Mapping1")).toBeInTheDocument();
+      expect(getByTestId("Mapping1-mapping-type")).toBeInTheDocument();
+      expect(getByText("match-customer")).toBeInTheDocument();
+      expect(getByTestId("match-customer-matching-type")).toBeInTheDocument();
+      expect(getByText("merge-customer")).toBeInTheDocument();
+      expect(getByTestId("merge-customer-merging-type")).toBeInTheDocument();
+      expect(getByText("master-customer")).toBeInTheDocument();
+      expect(getByTestId("master-customer-mastering-type")).toBeInTheDocument();
 
-    expect(queryByText("Explore Loaded Data")).not.toBeInTheDocument();
-    expect(queryByText("Explore Curated Data")).not.toBeInTheDocument();
-
+      expect(queryByText("Explore Loaded Data")).not.toBeInTheDocument();
+      expect(queryByText("Explore Curated Data")).not.toBeInTheDocument();
+    });
   });
 });

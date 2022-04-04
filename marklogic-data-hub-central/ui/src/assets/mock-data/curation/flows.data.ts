@@ -129,6 +129,7 @@ const jobRespFailed = {
       "1": {
         "flowName": "testFlow",
         "stepName": "failedIngest",
+        "success": false,
         "stepDefinitionName": "default-ingestion",
         "stepDefinitionType": "ingestion",
         "stepOutput": stepFailed
@@ -138,6 +139,7 @@ const jobRespFailed = {
         "stepName": "Mapping1",
         "stepDefinitionName": "entity-services-mapping",
         "stepDefinitionType": "mapping",
+        "success": false,
         "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
         "stepOutput": stepFailed
       },
@@ -146,6 +148,7 @@ const jobRespFailed = {
         "stepName": "match-customer",
         "stepDefinitionName": "default-matching",
         "stepDefinitionType": "matching",
+        "success": false,
         "stepOutput": stepFailed
       },
       "5": {
@@ -153,6 +156,7 @@ const jobRespFailed = {
         "stepName": "merge-customer",
         "stepDefinitionName": "default-merging",
         "stepDefinitionType": "merging",
+        "success": false,
         "stepOutput": stepFailed
       },
       "6": {
@@ -160,6 +164,7 @@ const jobRespFailed = {
         "stepName": "master-customer",
         "stepDefinitionName": "default-mastering",
         "stepDefinitionType": "mastering",
+        "success": false,
         "stepOutput": stepFailed
       }
     },
@@ -540,30 +545,35 @@ const jobRespSuccess = {
         "flowName": "testFlow",
         "stepName": "Mapping1",
         "stepDefinitionName": "entity-services-mapping",
+        "success": "true",
         "stepDefinitionType": "mapping",
         "targetEntityType": "http://example.org/Customer-0.0.1/Customer"
       },
       "4": {
         "flowName": "testFlow",
         "stepName": "match-customer",
+        "success": "true",
         "stepDefinitionName": "default-matching",
         "stepDefinitionType": "matching",
       },
       "5": {
         "flowName": "testFlow",
         "stepName": "merge-customer",
+        "success": "true",
         "stepDefinitionName": "default-merging",
         "stepDefinitionType": "merging",
       },
       "6": {
         "flowName": "testFlow",
         "stepName": "master-customer",
+        "success": "true",
         "stepDefinitionName": "default-mastering",
         "stepDefinitionType": "mastering",
       },
       "7": {
         "flowName": "testFlow",
         "stepName": "Ingestion1",
+        "success": "true",
         "stepDefinitionName": "default-ingestion",
         "stepDefinitionType": "ingestion",
         "targetEntityType": "http://example.org/Customer-0.0.1/Customer",

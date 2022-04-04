@@ -467,7 +467,7 @@ const RunToolTips = {
   addStep: 'Add a step to a flow.',
 
   /* Values made into links */
-  flowName: 'Click to view or edit this flow.',
+  flowName: 'Display the status of the most recent flow',
 
   /* Icons for flows */
   deleteFlow: 'Delete this flow.',
