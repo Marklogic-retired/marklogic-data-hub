@@ -29,14 +29,14 @@ class MonitorPage {
     cy.get(`[data-testid=${facetType}-facet] input`).eq(index).check();
     cy.findByTestId("facet-apply-button").click({force: true});
     cy.get(`[data-testid=${facetType}-facet] input`).eq(index).then(($btn) => {
-      let facet = $btn.val();
-      cy.get("#selected-facets [data-cy=\"clear-" + facet + "\"]").should("exist");
-      cy.get(".hc-table_row").then(($row) => {
+      let facet = $btn.next("label").text();
+      cy.get("#selected-facets [data-cy=\"clear-" + $btn.val() + "\"]").should("exist");
+      cy.get(".rowExpandedDetail").then(($row) => {
         for (let i = 0; i < $row.length; i++) {
-          cy.get(".hc-table_row").eq(i).should("contain.text", facet);
+          cy.get(".rowExpandedDetail > div").eq(2).should("contain.text", facet.charAt(0).toUpperCase() + facet.slice(1));
         }
       });
-      cy.findByTestId(`clear-${facet}`).trigger("mouseover").dblclick({force: true});
+      cy.findByTestId(`clear-${$btn.val()}`).trigger("mouseover").dblclick({force: true});
     });
   }
   validateAppliedFacet(facetType: string, index: number) {
