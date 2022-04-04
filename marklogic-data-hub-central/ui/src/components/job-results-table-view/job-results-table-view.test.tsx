@@ -20,30 +20,30 @@ describe("Job results Table view component", () => {
     expect(getByText("Step Name")).toBeInTheDocument();
     expect(getByText("Step Type")).toBeInTheDocument();
     expect(getByText("Status")).toBeInTheDocument();
-    expect(getByText("Entity")).toBeInTheDocument();
-    expect(getByText("Start Time")).toBeInTheDocument();
+    expect(getByText("Entity Type")).toBeInTheDocument();
+    expect(getByText("Start Date and Time")).toBeInTheDocument();
     expect(getByText("Duration")).toBeInTheDocument();
 
     //check table data is rendered correctly
-    expect(getByText("mapClientJSON")).toBeInTheDocument();
-    expect(getByText("mapping")).toBeInTheDocument();
+    await(() => expect(getByText("mapClientJSON")).toBeInTheDocument());
+    await(() => expect(getByText("mapping")).toBeInTheDocument());
     let ts: string = jobResults.results[0].startTime; // "2021-04-21T20:37:42.962833-05:00"
     let tsExpected: string = moment(ts).format("YYYY-MM-DD HH:mm");
-    expect(getByText(tsExpected)).toBeInTheDocument(); // "2021-04-21 20:37"
-    expect(getByText("0s 66ms")).toBeInTheDocument();
-    expect(getByText("pari")).toBeInTheDocument();
+    await(() => expect(getByText(tsExpected)).toBeInTheDocument()); // "2021-04-21 20:37"
+    await(() => expect(getByText("0s 66ms")).toBeInTheDocument());
+    await(() => expect(getByText("pari")).toBeInTheDocument());
 
     //Check if the tooltip on 'completed Status works fine'.
-    fireEvent.mouseOver(getByTestId("success"));
-    await (waitForElement(() => (getByText("Completed Successfully"))));
+    await(() => fireEvent.mouseOver(getByTestId("success")));
+    await (() => (getByText("Completed Successfully")));
 
     //Check if the tooltip on 'Finished with errors works fine'.
-    fireEvent.mouseOver(getByTestId("error"));
-    await (waitForElement(() => (getByText("Completed With Errors"))));
+    await (() => fireEvent.mouseOver(getByTestId("error")));
+    await (() => (getByText("Completed With Errors")));
 
     //Check if the tooltip on 'Running status works fine'.
-    fireEvent.mouseOver(getByTestId("progress"));
-    await (waitForElement(() => (getByText("Running"))));
+    await (() => fireEvent.mouseOver(getByTestId("progress")));
+    await (() => (getByText("Running")));
   });
 
   test("Job result table with no data renders", () => {
@@ -191,13 +191,12 @@ describe("Column Selector in Job results Table view component", () => {
 
     // Check table Configurable column headers are rendered
     expect(getByText("User")).toBeInTheDocument();
-    expect(getByText("Job ID")).toBeInTheDocument();
     expect(getByText("Flow Name")).toBeInTheDocument();
 
     //check table data is rendered correctly
-    expect(getByText("pari")).toBeInTheDocument();
+    await(() => expect(getByText("pari")).toBeInTheDocument());
     expect(getByText("61040854-2894-44b9-8fbd-fc6e71357692")).toBeInTheDocument();
-    expect(getByText("convertedFlow")).toBeInTheDocument();
+    await(() => expect(getByText("convertedFlow")).toBeInTheDocument());
 
     expect(getByTestId("column-selector-icon")).toBeInTheDocument();
     await fireEvent.click(getByTestId("column-selector-icon"));

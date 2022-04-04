@@ -1,14 +1,174 @@
-.ant-menu-vertical{
-    border-right: 0px #ffffff;
+@import "../../theme/HCVariables.scss";
+
+$sizeStepName: 340px !important;
+$sizeStepType: 140px !important;
+$sizeStatus: 100px !important;
+$sizeEntityType: 150px !important;
+$sizeStartDate: 180px !important;
+$sizeDuration: 150px !important;
+$sizeDocuments: 170px !important;
+$sizeDocumentsDiv: 160px !important;
+$sizeUser: 150px !important;
+$sizeUserDiv: 140px !important;
+$sizeFlowNameDiv: 280px !important;
+$sizeFlowName: 290px !important;
+
+.ant-menu-vertical {
+  border-right: 0px $white;
 }
 
+.job-results-table table thead {
+  border-bottom: 0px;
+}
 
 .job-results-table table thead tr th:hover {
-    background-color: #e8e8e8 !important;
+  background-color: $border-table-row !important;
 }
 
-.job-results-table th:nth-child(2):hover, .job-results-table th:nth-child(3):hover, .job-results-table th:nth-child(5):hover, .job-results-table th:nth-child(6):hover {
-    background-color: #e0e0e0 !important;
-    cursor: pointer;
+.job-results-table tr {
+  background-color: $bg-nested-table !important;
 }
 
+.job-results-table .hc-table_row {
+  color: $info;
+  font-weight: 600;
+}
+
+.job-results-table .hc-table_row td:nth-child(2):hover {
+  cursor: pointer;
+}
+
+.elipsis {
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis;
+}
+.stepNameDiv {
+  width: $sizeStepName;
+  min-width: $sizeStepName;
+  @extend .elipsis;
+}
+
+.stepType {
+  width: $sizeStepType;
+  min-width: $sizeStepType;
+  @extend .elipsis;
+}
+
+.stepStatus {
+  width: $sizeStatus;
+  min-width: $sizeStatus;
+  padding-left: 30px !important;
+  @extend .elipsis;
+}
+
+.stepEntityType {
+  width: $sizeEntityType;
+  min-width: $sizeEntityType;
+  @extend .elipsis;
+}
+
+.stepStartDate {
+  width: $sizeStartDate;
+  min-width: $sizeStartDate;
+  @extend .elipsis;
+}
+
+.stepDuration {
+  width: $sizeDuration;
+  min-width: $sizeDuration;
+  @extend .elipsis;
+}
+
+.stepDocuments {
+  width: $sizeDocuments;
+  min-width: $sizeDocuments;
+  text-align: center;
+  @extend .elipsis;
+}
+
+.stepUser {
+  width: $sizeUser;
+  min-width: $sizeUser;
+  @extend .elipsis;
+}
+
+.stepDocumentsAux {
+  width: $sizeDocumentsDiv;
+  min-width: $sizeDocumentsDiv;
+  text-align: center;
+  @extend .elipsis;
+}
+
+.stepUserAux {
+  width: $sizeUserDiv;
+  min-width: $sizeUserDiv;
+  @extend .elipsis;
+}
+
+.stepFlowName {
+  width: $sizeFlowNameDiv;
+  min-width: $sizeFlowNameDiv;
+  @extend .elipsis;
+}
+
+.job-results-table th:nth-child(2) {
+  width: $sizeStepName;
+  min-width: $sizeStepName;
+}
+
+.job-results-table th:nth-child(3) {
+  width: $sizeStepType;
+  min-width: $sizeStepType;
+}
+
+.job-results-table th:nth-child(4) {
+  width: $sizeStatus;
+  min-width: $sizeStatus;
+}
+
+.job-results-table th:nth-child(5) {
+  width: $sizeEntityType;
+  min-width: $sizeEntityType;
+}
+
+.job-results-table th:nth-child(6) {
+  width: $sizeStartDate;
+  min-width: $sizeStartDate;
+}
+
+.job-results-table th:nth-child(7) {
+  width: $sizeDuration;
+  min-width: $sizeDuration;
+}
+
+
+.job-results-table th:nth-child(8) {
+  width: $sizeDocuments;
+  min-width: $sizeDocuments;
+}
+  
+.job-results-table th:nth-child(9) {
+    width: $sizeUser;
+    min-width: $sizeUser;
+}
+
+.job-results-table th:nth-child(10) {
+  min-width: $sizeFlowName;
+  max-width: $sizeFlowName;
+}
+
+.handleFlowName th:nth-child(9) {
+  min-width: $sizeFlowName;
+  max-width: $sizeFlowName;
+}
+.handleUser th:nth-child(8) {
+  width: $sizeDocuments;
+  min-width: $sizeDocuments;
+}
+
+.rowExpandedDetail {
+  height: 54px;
+  line-height: 54px;
+  border: 1px solid $border-table-row;
+}
