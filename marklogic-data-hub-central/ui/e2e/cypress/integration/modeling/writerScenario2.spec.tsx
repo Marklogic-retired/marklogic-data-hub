@@ -266,6 +266,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getProperty("OrderedBy").should("not.exist");
     entityTypeTable.viewEntityInGraphView("User3");
     //To verify tooltip over particular node
+    modelPage.scrollPageBottom();
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
       let customerCoordinates: any = nodePositions["User3"];
       graphVis.getGraphVisCanvas().click(customerCoordinates.x, customerCoordinates.y);

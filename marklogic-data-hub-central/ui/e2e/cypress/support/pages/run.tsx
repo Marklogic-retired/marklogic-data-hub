@@ -15,6 +15,10 @@ class RunPage {
     return cy.findByText(flowName);
   }
 
+  getFlowStatusSuccess(flowName: string) {
+    return cy.get(`[aria-label=${flowName}-completed]`);
+  }
+
   isFlowNotVisible(flowName: string) {
     return cy.get(`#${flowName}`).should("not.exist");
   }

@@ -453,31 +453,6 @@ describe("Verify step display", () => {
     let dateExpected: string = moment(ts).format("M/D/YYYY");
     let timeExpected: string = moment(ts).format("H:mm:ss A");
     expect(await (waitForElement(() => getByText("Step last ran with errors on " + dateExpected + ", " + timeExpected)))).toBeInTheDocument(); // "Step last ran with errors on 4/4/2020, 1:17:45 AM"
-
-    fireEvent.click(notification);
-    /* The modal appearing when you click on the notification is not done yet, waiting for DHFPROD-7254
-    // New Modal with Error message, uri and details is opened
-    expect(await (waitForElement(() => getByText((content, node) => {
-      return getSubElements(content, node, "The mapping step Mapping1 completed with errors");
-    })))).toBeInTheDocument();
-    expect(getAllByLabelText("icon: exclamation-circle").length).toEqual(2);
-    expect(document.querySelector("#error-list")).toHaveTextContent("Out of 3 batches, 1 succeeded and 2 failed. The error messages are listed below");
-    expect(getAllByText("Message:")[0]).toBeInTheDocument();
-    expect(getAllByText("Details:")[0]).toBeInTheDocument();
-    expect(getAllByText("URI:")[0]).toBeInTheDocument();
-
-    // Error 2 is present
-    expect(getByText("Error 2")).toBeInTheDocument();
-    expect(await (waitForElement(() => getByText("Error 2")))).toBeInTheDocument();
-
-    // Navigate to Explore tile
-    let exploreButton = await (waitForElement(() => getByText("Explore Curated Data")));
-    fireEvent.click(exploreButton);
-    await wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith({ "pathname": "/tiles/explore" });
-    });
-  */
-
   });
 
 });
@@ -907,11 +882,10 @@ describe("Verify Add Step function", () => {
     let steps = data.flows.data[0].steps;
     let runButton = await getByLabelText(`runStep-${steps[1].stepName}`);
     fireEvent.click(runButton);
-    expect(await (waitForElement(() => getAllByText("Running...")[0]))).toBeInTheDocument();
     // Check the response modal opens after run
     expect(await (waitForElement(() => getByLabelText("jobResponse")))).toBeInTheDocument();
     // Check the step run was successful
-    expect(await (waitForElement(() => getByTestId(`${steps[1].stepName}-failure`)))).toBeInTheDocument();// Why is it failing?
+    expect(await (waitForElement(() => getByTestId(`${steps[1].stepName}-success`)))).toBeInTheDocument();
 
     fireEvent.click(getByLabelText(`${data.flows.data[0].name}-close`));
 

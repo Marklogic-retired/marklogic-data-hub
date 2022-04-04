@@ -195,6 +195,7 @@ describe("Entity Modeling: Graph View", () => {
     graphView.addNewRelationship().click();
     graphView.verifyEditInfoMessage().should("exist");
     cy.wait(1000);
+    modelPage.scrollPageBottom();
 
     //verify create relationship via clicking a node in edit mode
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
@@ -258,7 +259,7 @@ describe("Entity Modeling: Graph View", () => {
 
     entityTypeTable.viewEntityInGraphView("Person");
     modelPage.closeSidePanel();
-    cy.wait(2000);
+    cy.wait(5000);
     cy.waitForAsyncRequest();
     graphView.getAddButton().click();
     cy.waitUntil(() => graphView.addNewRelationship().should("be.visible"));

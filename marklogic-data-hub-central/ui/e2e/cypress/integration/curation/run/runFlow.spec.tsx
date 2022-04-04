@@ -39,24 +39,24 @@ describe("Run Tile tests", () => {
     loadPage.confirmationOptions("Save").click();
     runPage.addStep(flowName);
     runPage.addStepToFlow("loadPersonXML");
-    runPage.verifyStepInFlow("Load", "loadPersonXML", flowName);
+    runPage.verifyStepInFlow("Loading", "loadPersonXML", flowName);
     runPage.addStep(flowName);
     runPage.addStepToFlow("mapPersonXML");
-    runPage.verifyStepInFlow("Map", "mapPersonXML", flowName);
+    runPage.verifyStepInFlow("Mapping", "mapPersonXML", flowName);
     runPage.addStep(flowName);
     runPage.addStepToFlow("match-xml-person");
-    runPage.verifyStepInFlow("Match", "match-xml-person", flowName);
+    runPage.verifyStepInFlow("Matching", "match-xml-person", flowName);
     runPage.addStep(flowName);
     runPage.addStepToFlow("merge-xml-person");
-    runPage.verifyStepInFlow("Merge", "merge-xml-person", flowName);
+    runPage.verifyStepInFlow("Merging", "merge-xml-person", flowName);
     runPage.addStep(flowName);
     runPage.addStepToFlow("ingest-orders");
-    runPage.verifyStepInFlow("Load", "ingest-orders", flowName);
+    runPage.verifyStepInFlow("Loading", "ingest-orders", flowName);
     runPage.addStep(flowName);
 
     cy.log("**Add Master Step**");
     runPage.addStepToFlow("master-person");
-    runPage.verifyStepInFlow("Master", "master-person", flowName);
+    runPage.verifyStepInFlow("Mastering", "master-person", flowName);
     runPage.addStep(flowName);
     runPage.addStepToFlow("generate-dictionary");
     //Verify scrolling, last step should still be visible in the flow panel

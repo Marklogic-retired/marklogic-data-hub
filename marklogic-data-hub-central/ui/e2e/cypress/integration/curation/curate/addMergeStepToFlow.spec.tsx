@@ -81,7 +81,7 @@ describe("Add Merge step to a flow", () => {
     loadPage.confirmationOptions("Save").click();
     cy.wait(500);
     cy.waitForAsyncRequest();
-    cy.verifyStepAddedToFlow("Merge", mergeStep, flowName1);
+    cy.verifyStepAddedToFlow("Merging", mergeStep, flowName1);
     cy.waitForAsyncRequest();
     runPage.runStep(mergeStep, flowName1);
 
@@ -103,7 +103,7 @@ describe("Add Merge step to a flow", () => {
     curatePage.addStepToFlowConfirmationMessage();
     curatePage.confirmAddStepToFlow(mergeStep, flowName1);
     cy.waitForAsyncRequest();
-    cy.verifyStepAddedToFlow("Merge", mergeStep, flowName1);
+    cy.verifyStepAddedToFlow("Merging", mergeStep, flowName1);
     cy.waitForAsyncRequest();
     runPage.runStep(mergeStep, flowName1);
 
@@ -128,7 +128,7 @@ describe("Add Merge step to a flow", () => {
     runPage.getFlowName(flowName2).should("be.visible");
     runPage.addStep(flowName2);
     runPage.addStepToFlow(mergeStep);
-    cy.verifyStepAddedToFlow("Merge", mergeStep, flowName2);
+    cy.verifyStepAddedToFlow("Merging", mergeStep, flowName2);
     runPage.runStep(mergeStep, flowName2);
 
     runPage.verifyStepRunResult(mergeStep, "success");
@@ -148,10 +148,10 @@ describe("Add Merge step to a flow", () => {
     curatePage.runStepSelectFlowConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName2);
     cy.waitForAsyncRequest();
-    runPage.getFlowName(flowName2).should("be.visible");
+    runPage.getFlowStatusSuccess(flowName2).should("be.visible");
     runPage.verifyStepRunResult(mergeStep, "success");
     runPage.closeFlowStatusModal(flowName2);
-    cy.verifyStepAddedToFlow("Merge", mergeStep, flowName2);
+    cy.verifyStepAddedToFlow("Merging", mergeStep, flowName2);
   });
   it("Navigating to merge tab", () => {
     toolbar.getCurateToolbarIcon().should("be.visible").click();
@@ -164,11 +164,11 @@ describe("Add Merge step to a flow", () => {
     curatePage.runStepExistsOneFlowConfirmation().should("be.visible");
     curatePage.confirmContinueRun();
     cy.waitForAsyncRequest();
-    runPage.getFlowName(flowName2).should("be.visible");
+    runPage.getFlowStatusSuccess(flowName2).should("be.visible");
 
     runPage.verifyStepRunResult(mergeStep, "success");
     runPage.closeFlowStatusModal(flowName2);
-    cy.verifyStepAddedToFlow("Merge", mergeStep, flowName2);
+    cy.verifyStepAddedToFlow("Merging", mergeStep, flowName2);
   });
   it("Navigating to merge tab", () => {
     toolbar.getCurateToolbarIcon().should("be.visible").click();
@@ -182,7 +182,7 @@ describe("Add Merge step to a flow", () => {
     curatePage.addStepToFlowConfirmationMessage();
     curatePage.confirmAddStepToFlow(mergeStep, flowName1);
     cy.waitForAsyncRequest();
-    cy.verifyStepAddedToFlow("Merge", mergeStep, flowName1);
+    cy.verifyStepAddedToFlow("Merging", mergeStep, flowName1);
   });
   it("Navigating to merge tab", () => {
     toolbar.getCurateToolbarIcon().should("be.visible").click();
@@ -195,10 +195,10 @@ describe("Add Merge step to a flow", () => {
     curatePage.runStepExistsMultFlowsConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName1);
     cy.waitForAsyncRequest();
-    runPage.getFlowName(flowName1).should("be.visible");
+    runPage.getFlowStatusSuccess(flowName1).should("be.visible");
 
     runPage.verifyStepRunResult(mergeStep, "success");
     runPage.closeFlowStatusModal(flowName1);
-    cy.verifyStepAddedToFlow("Merge", mergeStep, flowName1);
+    cy.verifyStepAddedToFlow("Merging", mergeStep, flowName1);
   });
 });

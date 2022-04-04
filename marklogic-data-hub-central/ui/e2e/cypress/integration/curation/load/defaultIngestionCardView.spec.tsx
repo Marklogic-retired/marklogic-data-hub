@@ -125,7 +125,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     loadPage.confirmationOptions("Save").click();
     cy.wait(500);
     cy.waitForAsyncRequest();
-    cy.verifyStepAddedToFlow("Load", stepName, flowName);
+    cy.verifyStepAddedToFlow("Loading", stepName, flowName);
   });
   it("Delete the step and Navigate back to load step", () => {
     runPage.deleteStep(stepName, flowName).click();
@@ -139,7 +139,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     loadPage.runStepSelectFlowConfirmation().should("be.visible");
     loadPage.selectFlowToRunIn(flowName);
     cy.waitForAsyncRequest();
-    cy.verifyStepAddedToFlow("Load", stepName, flowName);
+    cy.verifyStepAddedToFlow("Loading", stepName, flowName);
     //Upload file to start running, test with invalid input
     cy.uploadFile("input/test-1");
     runPage.verifyStepRunResult(stepName, "failure");
@@ -194,7 +194,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     loadPage.runStepExistsOneFlowConfirmation().should("be.visible");
     loadPage.confirmContinueRun();
     cy.waitForAsyncRequest();
-    cy.verifyStepAddedToFlow("Load", stepName, flowName1);
+    cy.verifyStepAddedToFlow("Loading", stepName, flowName1);
     cy.uploadFile("input/test-1.json");
     runPage.verifyStepRunResult(stepName, "success");
     runPage.closeFlowStatusModal(flowName1);
@@ -209,7 +209,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     runPage.setFlowDescription(`${flowName2} description`);
     loadPage.confirmationOptions("Save").click();
     cy.waitForAsyncRequest();
-    cy.verifyStepAddedToFlow("Load", stepName, flowName2);
+    cy.verifyStepAddedToFlow("Loading", stepName, flowName2);
     //Verify Run Load step where step exists in multiple flows, choose one to automatically run in
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     cy.waitUntil(() => loadPage.addNewButton("card").should("be.visible"));
@@ -217,7 +217,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     loadPage.runStepExistsMultFlowsConfirmation().should("be.visible");
     loadPage.selectFlowToRunIn(flowName1);
     cy.waitForAsyncRequest();
-    cy.verifyStepAddedToFlow("Load", stepName, flowName1);
+    cy.verifyStepAddedToFlow("Loading", stepName, flowName1);
     cy.uploadFile("input/test-1.json");
 
     runPage.verifyStepRunResult(stepName, "success");
@@ -244,7 +244,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     loadPage.addStepToFlowConfirmationMessage().should("be.visible");
     loadPage.confirmationOptions("Yes").click();
     cy.waitForAsyncRequest();
-    cy.verifyStepAddedToFlow("Load", stepName, flowName1);
+    cy.verifyStepAddedToFlow("Loading", stepName, flowName1);
     //Run the flow with TEXT input
     runPage.runLastStepInAFlow(stepName);
     cy.uploadFile("input/test-1.txt");

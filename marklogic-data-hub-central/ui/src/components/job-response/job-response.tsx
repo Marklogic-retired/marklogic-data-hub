@@ -11,7 +11,7 @@ import {UserContext} from "@util/user-context";
 //import {useHistory} from "react-router-dom";
 import Spinner from "react-bootstrap/Spinner";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faSync} from "@fortawesome/free-solid-svg-icons";
+import {faClock, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import "./job-response.scss";
 import {CheckCircleFill, ExclamationCircleFill} from "react-bootstrap-icons";
 
@@ -107,18 +107,34 @@ const JobResponse: React.FC<Props> = (props) => {
       key: "steps",
       dataField: "stepName",
       width: "25%",
-      headerFormatter: (column) => <strong>Steps</strong>,
+      headerFormatter: (column) => <strong>Step Name</strong>,
       formatter: (stepName, response) => {
         if (response.success) {
           return <div data-testid={`${stepName}-success`} id={`${stepName}-success`} className={styles.stepResponse}>
             <CheckCircleFill type="check-circle" className={styles.successfulRun} /> <strong className={styles.stepName}>{stepName}</strong>
           </div>;
-        } else {
+        } else if (response.hasOwnProperty("success") && !response.success) {
           return <div data-testid={`${stepName}-failure`} id={`${stepName}-failure`} className={styles.stepResponse}>
             <ExclamationCircleFill aria-label="icon: exclamation-circle" className={styles.unsuccessfulRun} /><strong className={styles.stepName}>{stepName}</strong>
           </div>;
+        } else {
+          return <span data-testid={`step-running`} id={`step-running`} className={styles.stepRunningIcon}>
+            <i><FontAwesomeIcon aria-label="icon: clock-circle" icon={faClock} className={styles.runningIcon} size="lg" data-testid={`${response.status}-icon`} /></i>
+          </span>;
         }
-
+      }
+    },
+    {
+      text: "Step Type",
+      key: "stepType",
+      dataField: "stepType",
+      width: "25%",
+      headerFormatter: (column) => <strong data-testid={`stepType-header`}>Step Type</strong>,
+      formatter: (stepName, response) => {
+        let stepType = response.stepDefinitionType === "ingestion" ? "loading" : response.stepDefinitionType;
+        return (<div data-testid={`${response.stepName}-${stepType}-type`} id={`${response.stepName}-${stepType}-type`} className={styles.stepResponse}>
+          {stepType}
+        </div>);
       }
     },
     {
@@ -137,7 +153,7 @@ const JobResponse: React.FC<Props> = (props) => {
           }
         } else {
           return (<div className={styles.stepResponse} key={"running-" + stepName}><strong className={styles.stepName}>{stepName || response.status}</strong> <span className={styles.running}>
-            <Spinner className="spinner-border-sm" animation="border" data-testid="spinner" variant="primary" /> <span className={styles.runningLabel}>Running...</span>
+            <Spinner className="spinner-border-sm" animation="border" data-testid="spinner" variant="primary" />
           </span></div>);
         }
       }
@@ -147,7 +163,7 @@ const JobResponse: React.FC<Props> = (props) => {
       key: "action",
       dataField: "successfulEvents",
       width: "25%",
-      headerFormatter: (column) => <span className={styles.actionHeader}><strong>Action</strong><HCTooltip text={RunToolTips.exploreStepData} id="explore-data" placement="top"><ExclamationCircleFill data-icon="exclamation-circle" aria-label="icon: exclamation-circle" className={styles.infoIcon} /></HCTooltip></span>,
+      headerFormatter: (column) => <span className={styles.actionHeader}><strong>Action</strong><HCTooltip text={RunToolTips.exploreStepData} id="explore-data" placement="top"><FontAwesomeIcon icon={faInfoCircle} size="1x" aria-label="icon: info-circle" className={styles.infoIcon}/></HCTooltip></span>,
       formatter: (stepName, response) => {
         const stepIsFinished = response.stepEndTime && response.stepEndTime !== "N/A";
         if (stepIsFinished) {
@@ -226,7 +242,13 @@ const JobResponse: React.FC<Props> = (props) => {
     id="job-response-modal"
   >
     <Modal.Header className={"bb-none"} aria-label="job-response-modal-header">
-      {isRunning(jobResponse) ? <span className={`fs-5 ${styles.title}`} aria-label={`${jobResponse.flow}-running`}>The flow <strong>{jobResponse.flow}</strong> is running <a onClick={() => retrieveJobDoc()}><FontAwesomeIcon icon={faSync} data-testid={"job-response-refresh"} /></a></span> : <span className={`fs-5 ${styles.title}`} aria-label={`${jobResponse.flow}-completed`}>The flow <strong>{jobResponse.flow}</strong> completed</span>}
+      {isRunning(jobResponse) ?
+        <span className={`fs-5 ${styles.title}`} aria-label={`${jobResponse.flow}-running`}>
+            The flow <strong>{jobResponse.flow}</strong> is running
+          {/* TO BE REPLACED WITH STOP RUNNING ICON <a onClick={() => retrieveJobDoc()}><FontAwesomeIcon icon={faSync} data-testid={"job-response-refresh"} /></a> */}
+        </span>
+        :
+        <span className={`fs-5 ${styles.title}`} aria-label={`${jobResponse.flow}-completed`}>The flow <strong>{jobResponse.flow}</strong> completed</span>}
       <button type="button" className="btn-close" aria-label={`${jobResponse.flow}-close`} data-testid={`${jobResponse.flow}-close`} onClick={() => props.setOpenJobResponse(false)}></button>
     </Modal.Header>
     <Modal.Body>

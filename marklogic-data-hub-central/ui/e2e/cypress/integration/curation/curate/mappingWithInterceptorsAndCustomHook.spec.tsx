@@ -93,7 +93,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     loadPage.confirmationOptions("Save").click();
     cy.wait(500);
     cy.waitForAsyncRequest();
-    cy.verifyStepAddedToFlow("Load", loadStep, flowName);
+    cy.verifyStepAddedToFlow("Loading", loadStep, flowName);
     //Run the ingest with JSON
     cy.waitForAsyncRequest();
     runPage.runStep(loadStep, flowName);

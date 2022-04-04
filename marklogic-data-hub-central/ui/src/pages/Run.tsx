@@ -439,6 +439,9 @@ const Run = (props) => {
               setRunEnded({flowId: flowId, stepId: stepNumber});
             });
         }, pollConfig.interval);
+        setOpenJobResponse(true);
+        setIsLoading(false);
+        setJobId(jobId);
       }
     } catch (error) {
       console.error("Error running step", error);
