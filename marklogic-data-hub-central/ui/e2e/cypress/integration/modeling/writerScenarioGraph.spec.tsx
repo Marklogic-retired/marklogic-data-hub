@@ -265,14 +265,15 @@ describe("Entity Modeling: Graph View", () => {
   it("can edit graph edit mode and add edge relationships (with foreign key scenario) via drag/drop", () => {
     entityTypeTable.viewEntityInGraphView("Person");
     modelPage.closeSidePanel();
-    cy.wait(6000);
-    cy.waitForAsyncRequest();
+    cy.wait(4000);
     graphView.getAddButton().click();
-    cy.waitUntil(() => graphView.addNewRelationship().should("be.visible"));
-    graphView.addNewRelationship().click({force: true});
-    cy.waitUntil(() => graphView.verifyEditInfoMessage().should("exist"));
+    graphView.addNewRelationship().should("be.visible").click({force: true});
+    graphView.verifyEditInfoMessage().should("exist");
 
     modelPage.scrollPageBottom();
+
+    // the graph needs to stabilize before we interact with it
+    cy.wait(5000);
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
       let PersonCoordinates: any = nodePositions["Person"];
       let ClientCoordinates: any = nodePositions["Client"];

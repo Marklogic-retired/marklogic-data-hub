@@ -16,8 +16,7 @@ class BaseEntitySidebar {
   }
 
   removeLastSelectedBaseEntity() {
-    cy.get(`[class="css-xb97g8"]`).should("be.visible");
-    return cy.get(`[class="css-xb97g8"]`).last().click();
+    return cy.get(`[class="css-xb97g8"]`).last().scrollIntoView().should("be.visible").click();
   }
 
   getBaseEntityToolTip() {
@@ -106,7 +105,7 @@ class BaseEntitySidebar {
   }
 
   verifyCollapsedRelatedEntityPanel() {
-    return cy.get(`[class="after-indicator sidebar_disabledTitleCheckbox__PJkN4 accordion-button collapsed"]`);
+    return cy.get(`[class^="after-indicator sidebar_disabledTitleCheckbox"][class$="accordion-button collapsed"]`);
   }
 
   toggleRelatedEntityPanel() {
