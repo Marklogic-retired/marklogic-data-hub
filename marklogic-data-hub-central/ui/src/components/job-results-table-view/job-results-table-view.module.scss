@@ -1,3 +1,5 @@
+@import "../../theme/HCVariables.scss";
+
 .tabular{
 }
 
@@ -13,6 +15,7 @@
 .fixedPopup {
     margin-top: 2px;
     margin-bottom: 3px;
+    display: inline-flex;
 }
 
 .columnIcon {
@@ -20,6 +23,11 @@
     &:hover{
         color: var(--hoverColor);
     }
+}
+
+.spanColumnIcon {
+    padding-top: 2px;
+    margin-left: 5px;
 }
 
 .DropdownMenuItem {
@@ -31,7 +39,7 @@
     margin-bottom: 4px;
     padding: 0 16px;
     &:hover{
-        background-color: #E9F7FE;
+        background-color: $background-hover;
     }
 }
 
@@ -50,3 +58,8 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     border: 0px !important;
 }
+
+.job-results-table th:nth-child(2) {
+    width: 320px !important;
+    max-width: 320px !important;
+  }

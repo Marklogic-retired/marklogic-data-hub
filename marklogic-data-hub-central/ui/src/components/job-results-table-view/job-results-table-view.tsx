@@ -1,8 +1,8 @@
-import React, {useContext, useState} from "react";
+import React, {useContext, useState, useEffect} from "react";
 import styles from "./job-results-table-view.module.scss";
-import {dateConverter, renderDuration} from "@util/date-conversion";
+import {dateConverter} from "../../util/date-conversion";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faColumns} from "@fortawesome/free-solid-svg-icons";
+import {faBan, faColumns} from "@fortawesome/free-solid-svg-icons";
 import "./job-results-table-view.scss";
 import {MonitorContext} from "@util/monitor-context";
 import JobResponse from "../job-response/job-response";
@@ -11,11 +11,14 @@ import {HCButton, HCCheckbox, HCDivider, HCTooltip, HCTable} from "@components/c
 import Popover from "react-bootstrap/Popover";
 import {OverlayTrigger} from "react-bootstrap";
 import {themeColors} from "@config/themes.config";
+import ExpandCollapse from "../../../src/components/expand-collapse/expand-collapse";
 
 const JobResultsTableView = (props) => {
   const [popoverVisibility, setPopoverVisibility] = useState<boolean>(false);
   const [jobId, setJobId] = useState<string>("");
   const [openJobResponse, setOpenJobResponse] = useState<boolean>(false);
+  const [arraybyDistinctJobId, setArraybyDistinctJobId] = useState<any>([]);
+  //const [expandedRowKeys, setExpandedRowKeys] = useState<any[]>([]);
 
   const handleOpenJobResponse = (jobId) => {
     setJobId(jobId);
@@ -27,100 +30,94 @@ const JobResultsTableView = (props) => {
     setJobId("");
   };
 
+  const flowName = "Flow Name";
+  const user = "User";
+
   const {
     setMonitorSortOrder
   } = useContext(MonitorContext);
   let sorting = true;
   const columnOptionsLabel = {
-    user: "User",
-    flowName: "Flow Name",
+    user: user,
+    flowName: flowName,
+  };
+
+  const emptyValue = () => {
+    return <></>;
   };
 
   const MANDATORY_HEADERS = [
     {
-      text: "Job ID",
+      text: "Step Name",
       dataField: "jobId",
       visible: true,
-      width: 200,
+      //width: 320,
       sort: false,
       formatter: (jobId) => {
-        return <><a onClick={() => handleOpenJobResponse(jobId)}>{jobId}</a></>;
+        return <>
+          <HCTooltip text="Click the JOB ID to see the details" id="Click JOB ID to see the details" placement="right">
+            <a onClick={() => handleOpenJobResponse(jobId)}>{jobId}</a>
+          </HCTooltip>
+        </>;
       }
     },
-    {
-      text: "Step Name",
-      dataField: "stepName",
-      visible: true,
-      width: 200,
-      sort: true,
-    },
+    // {
+    //   text: "Step Name",
+    //   dataField: "stepName",
+    //   visible: true,
+    //   width: 200,
+    //   sort: true,
+    // },
     {
       text: "Step Type",
       dataField: "stepDefinitionType",
       visible: true,
-      width: 150,
-      sort: true
+      //width: 140,
+      sort: false,
+      formatter: emptyValue,
+      //onSort: (field, order) => {}
     },
     {
       text: "Status",
       dataField: "jobStatus",
       visible: true,
-      width: 100,
+      //width: 100,
       sort: false,
       align: "center",
-      formatter: (status) => {
-        if (status === "running" || /^running/.test(status)) {
-          return <>
-            <HCTooltip text="Running" id="running-tooltip" placement="bottom">
-              <ClockFill data-testid= "progress" style={{color: themeColors.info}}/>
-            </HCTooltip>
-          </>;
-
-        } else if (status === "finished") {
-          return <>
-            <HCTooltip text="Completed Successfully" id="complete-success-tooltip" placement="bottom">
-              <CheckCircleFill data-testid= "success" style={{color: themeColors.success}}/>
-            </HCTooltip>
-          </>;
-        } else {
-          return <>
-            <HCTooltip text="Completed With Errors" id="complete-errors-tooltip" placement="bottom">
-              <XCircleFill data-testid= "error" style={{color: "#B32424"}}/>
-            </HCTooltip>
-          </>;
-        }
-      }
+      formatter: emptyValue,
     },
     {
-      text: "Entity",
+      text: "Entity Type",
       dataField: "entityName",
       visible: true,
-      width: 100,
-      sort: true
+      //width: 100,
+      sort: false,
+      formatter: emptyValue,
     },
     {
-      text: "Start Time",
+      text: "Start Date and Time",
       dataField: "startTime",
       visible: true,
-      width: 150,
-      sort: true,
-      formatter: ((startTime:string) => dateConverter(startTime))
+      //width: 150,
+      sort: false,
+      formatter: emptyValue,
     },
     {
       text: "Duration",
       dataField: "duration",
       visible: true,
       sort: false,
-      width: 100,
-      formatter: ((duration:string) => renderDuration(duration))
+      //width: 100,
+      formatter: emptyValue,
     },
     {
-      text: "Records Written",
+      text: "Documents Written",
       dataField: "successfulItemCount",
       visible: true,
-      width: 150,
+      //width: 150,
       sort: false,
       align: "right",
+      formatter: emptyValue,
     }
   ];
 
@@ -129,26 +126,77 @@ const JobResultsTableView = (props) => {
       text: "User",
       dataField: "user",
       visible: true,
-      width: 150,
-      sort: false
+      //width: 150,
+      sort: false,
+      formatter: emptyValue,
     },
     {
       text: "Flow Name",
       dataField: "flowName",
       visible: true,
-      width: 150,
-      sort: false
+      //width: 150,
+      sort: false,
+      formatter: emptyValue,
     }
   ];
 
-  const DEFAULT_JOB_RESULTS_HEADER = [...MANDATORY_HEADERS, ...CONFIGURABLE_HEADERS];
-  const allColumnHeaders = DEFAULT_JOB_RESULTS_HEADER.map(item => (item.sort ?{...item, sorter: (a, b, sortOrder) => {
-    if (sorting === true) {
-      setMonitorSortOrder(item.dataField, sortOrder);
-      sorting = false;
+  const StepDefinitionTypeTitles = {
+    "INGESTION": "Loading",
+    "ingestion": "Loading",
+    "MAPPING": "Mapping",
+    "mapping": "Mapping",
+    "MASTERING": "Mastering",
+    "mastering": "Mastering",
+    "MATCHING": "Matching",
+    "matching": "Matching",
+    "MERGING": "Merging",
+    "merging": "Merging",
+    "CUSTOM": "Custom",
+    "custom": "Custom"
+  };
+
+  const statusIcon = (status) => {
+    if (status === "running" || /^running/.test(status)) {
+      return <>
+        <HCTooltip text="Running" id="running-tooltip" placement="bottom">
+          <ClockFill data-testid="progress" style={{color: "#5B69AF"}} />
+        </HCTooltip>
+      </>;
+    } else if (status === "finished") {
+      return <>
+        <HCTooltip text="Completed Successfully" id="complete-success-tooltip" placement="bottom">
+          <CheckCircleFill data-testid="success" style={{color: "#389E0D"}} />
+        </HCTooltip>
+      </>;
+    } else if (status === "canceled") {
+      return <>
+        <HCTooltip text="Canceled" id="canceled-tooltip" placement="bottom">
+          <i><FontAwesomeIcon
+            icon={faBan}
+            size="sm"
+            data-testid={`canceled`}
+            style={{color: "#b32424"}}
+          /></i>
+        </HCTooltip>
+      </>;
+    } else {
+      return <>
+        <HCTooltip text="Completed With Errors" id="complete-errors-tooltip" placement="bottom">
+          <XCircleFill data-testid="error" style={{color: "#B32424"}} />
+        </HCTooltip>
+      </>;
     }
-    return a-b; // DHFPROD-7711 MLTable -> Table
-  }}: {...item}));
+  };
+  const DEFAULT_JOB_RESULTS_HEADER = [...MANDATORY_HEADERS, ...CONFIGURABLE_HEADERS];
+  const allColumnHeaders = DEFAULT_JOB_RESULTS_HEADER.map(item => (item.sort ? {
+    ...item, sorter: (a, b, sortOrder) => {
+      if (sorting === true) {
+        setMonitorSortOrder(item.dataField, sortOrder);
+        sorting = false;
+      }
+      return a - b; // DHFPROD-7711 MLTable -> Table
+    }
+  } : {...item}));
 
   const [currentColumnHeaders, setCurrentColumnHeaders] = useState(allColumnHeaders);
   const [checkedAttributes, setCheckedAttributes] = useState({
@@ -168,13 +216,13 @@ const JobResultsTableView = (props) => {
 
   const onApply = () => {
     const checkedColumns = CONFIGURABLE_HEADERS.filter(columnHeader => checkedAttributes[columnHeader.dataField]);
-    const filteredColumns =  [...MANDATORY_HEADERS, ...checkedColumns];
+    const filteredColumns = [...MANDATORY_HEADERS, ...checkedColumns];
     setCurrentColumnHeaders(filteredColumns);
     setPreviousCheckedAttributes({...checkedAttributes});
     setPopoverVisibility(false);
   };
 
-  const handleColOptionsChecked =  (e) => {
+  const handleColOptionsChecked = (e) => {
     let obj = checkedAttributes;
     obj[e.target.value] = e.target.checked;
     setCheckedAttributes({...obj});
@@ -193,7 +241,7 @@ const JobResultsTableView = (props) => {
                   value={attribute}
                   label={columnOptionsLabel[attribute]}
                   checked={checkedAttributes[attribute]}
-                  dataTestId={`columnOptionsCheckBox-${attribute}`}/>
+                  dataTestId={`columnOptionsCheckBox-${attribute}`} />
               </div>
             ))}
           </div>
@@ -212,16 +260,57 @@ const JobResultsTableView = (props) => {
     </Popover>
   );
 
+  useEffect(() => {
+    let arraybyDistinctJobId = props.data.filter((value, index, self) =>
+      index === self.findIndex((valueAux) => (
+        valueAux.jobId === value.jobId && valueAux.testCustomFlow === value.testCustomFlow
+      ))
+    );
+    setExpandCollapseIdRowsOriginal(arraybyDistinctJobId.map(job => job.jobId));
+    setArraybyDistinctJobId(arraybyDistinctJobId);
+  }, [props.data]);
+
+  const [expandCollapseIdRows, setExpandCollapseIdRows] = useState<any[]>([]);
+  const [expandCollapseIdRowsOriginal, setExpandCollapseIdRowsOriginal] = useState<any[]>([]);
+  const toggleSourceTable = (expandedToggle) => {
+
+    if (expandedToggle === "expand") {
+      setExpandCollapseIdRows(expandCollapseIdRowsOriginal);
+    } else {
+      setExpandCollapseIdRows([]);
+    }
+  };
+
+  const toggleRowExpanded = (expanded, record) => {
+    let newExpandedRows = [...expandCollapseIdRows];
+    if (expanded) {
+      if (newExpandedRows.indexOf(record.jobId) === -1) {
+        newExpandedRows.push(record.jobId);
+      }
+    } else {
+      newExpandedRows = newExpandedRows.filter(row => row !== record.jobId);
+    }
+    setExpandCollapseIdRows(newExpandedRows);
+  };
+
+  const handleVisibleHeader = (headerName) => {
+    return currentColumnHeaders.find(x => x.text === headerName);
+  };
+
+  const columnUser = handleVisibleHeader(user) && !handleVisibleHeader(flowName);
+  const columnFlowName = handleVisibleHeader(flowName) && !handleVisibleHeader(user);
+  const noCustomColumns = !handleVisibleHeader(flowName) && !handleVisibleHeader(user);
 
   return (
     <>
       <div className={styles.columnSelector} data-cy="column-selector">
         <div className={styles.fixedPopup}>
+          <ExpandCollapse handleSelection={(val) => toggleSourceTable(val)} currentSelection={""} />
           <OverlayTrigger placement="left-start" overlay={content} trigger="click" show={popoverVisibility}>
-            <span data-testid={"tooltip-wrapper"}>
+            <span data-testid={"tooltip-wrapper"} className={styles.spanColumnIcon}>
               <HCTooltip id="select-columns-tooltip" text="Select the columns to display." placement="top-end">
                 <i>
-                  <FontAwesomeIcon onClick={() => { setPopoverVisibility(true); }} className={styles.columnIcon} icon={faColumns} color={themeColors.info} size="lg" data-testid="column-selector-icon"/>
+                  <FontAwesomeIcon onClick={() => { setPopoverVisibility(true); }} className={styles.columnIcon} icon={faColumns} color={themeColors.info} size="2x" data-testid="column-selector-icon" />
                 </i>
               </HCTooltip>
             </span>
@@ -230,15 +319,40 @@ const JobResultsTableView = (props) => {
       </div>
       <div className={styles.tabular}>
         <HCTable
-          className="job-results-table"
+          className={`job-results-table ${columnFlowName ? "handleFlowName": "" } ${columnUser ? " handleUser": "" }`}
           data-testid="job-results-table"
-          rowKey="startTime"
-          data={props.data}
+          rowKey="jobId"
+          data={arraybyDistinctJobId}
           pagination={false}
           columns={currentColumnHeaders}
+          showExpandIndicator={true}
+          keyUtil={"jobId"}
+          onExpand={(record, expanded) => toggleRowExpanded(expanded, record)}
+          expandedRowKeys={expandCollapseIdRows}
+          expandedRowRender={(row) => {
+
+            let nestedFlowRows = props.data.filter((obj) => {
+              return obj.jobId === row.jobId && obj.testCustomFlow === row.testCustomFlow;
+            });
+
+            return nestedFlowRows.map((row) => (
+              <div className="row rowExpandedDetail" style={{margin: 0}}>
+                <div style={{width: 50}}></div>
+                <div className="stepNameDiv" id={row.jobId+"_"+row.stepName}>{row.stepName}</div>
+                <div className="stepType" id={row.jobId+"_"+row.stepName}>{StepDefinitionTypeTitles[row.stepDefinitionType]}</div>
+                <div className="stepStatus" id={row.jobId+"_"+row.stepName}>{statusIcon(row.jobStatus)}</div>
+                <div className="stepEntityType" id={row.jobId+"_"+row.stepName}>{row.entityName}</div>
+                <div className="stepStartDate" id={row.jobId+"_"+row.stepName}>{(dateConverter(row.startTime))}</div>
+                <div className="stepDuration" id={row.jobId+"_"+row.stepName}>{row.duration}</div>
+                <div className={`${noCustomColumns ? "stepDocumentsAux": "stepDocuments" }`} id={row.jobId+"_"+row.stepName}>{row.successfulItemCount}</div>
+                <div className={`${columnUser ? "stepUserAux": "stepUser" }`} id={row.jobId+"_"+row.stepName} style={{display: handleVisibleHeader(user) ? "" : "none"}}>{row.user}</div>
+                <div className="stepFlowName" id={row.jobId+"_"+row.stepName}style={{display: handleVisibleHeader(flowName) ? "" : "none"}}>{row.flowName}</div>
+              </div>
+            ), []);
+          }}
         />
       </div>
-      <JobResponse jobId={jobId} openJobResponse={openJobResponse} setOpenJobResponse={handleCloseJobResponse}/>
+      <JobResponse jobId={jobId} openJobResponse={openJobResponse} setOpenJobResponse={handleCloseJobResponse} />
     </>
   );
 };

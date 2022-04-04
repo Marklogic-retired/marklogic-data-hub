@@ -34,7 +34,7 @@ describe("Facet component", () => {
     const {getByText} = render(<MonitorFacet {...stepTypeFacetProps} />);
 
     expect(getByText(/Step Type/i)).toBeInTheDocument();
-    expect(getByText(/ingestion/i)).toBeInTheDocument();
+    expect(getByText(/loading/i)).toBeInTheDocument();
     expect(getByText(/mapping/i)).toBeInTheDocument();
   });
 
