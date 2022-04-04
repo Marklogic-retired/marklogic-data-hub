@@ -148,6 +148,7 @@ const SearchProvider: React.FC = ({children}) => {
       setEntityType(userContext.config.search.defaultEntity || "");
     }
     setPageNumber(1);
+    setStart(1);
     setNewSearch(true);
   };
 
@@ -160,6 +161,7 @@ const SearchProvider: React.FC = ({children}) => {
       setFacetStrings(newFacetStrings);
     }
     setPageNumber(1);
+    setStart(1);
     setNewSearch(true);
   };
 
