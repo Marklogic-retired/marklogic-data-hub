@@ -49,7 +49,7 @@ describe("Verify ingestion for all filetypes", () => {
     runPage.setFlowDescription(`${flowName} description`);
     loadPage.confirmationOptions("Save").click();
     cy.waitForAsyncRequest();
-    cy.verifyStepAddedToFlow("Load", stepName, flowName);
+    cy.verifyStepAddedToFlow("Loading", stepName, flowName);
     cy.waitForAsyncRequest();
     runPage.runStep(stepName, flowName);
     cy.uploadFile("input/test-1.csv");
@@ -78,7 +78,7 @@ describe("Verify ingestion for all filetypes", () => {
     runPage.setFlowDescription(`${flowName} description`);
     loadPage.confirmationOptions("Save").click();
     cy.waitForAsyncRequest();
-    cy.verifyStepAddedToFlow("Load", stepName, flowName);
+    cy.verifyStepAddedToFlow("Loading", stepName, flowName);
     cy.waitForAsyncRequest();
     runPage.runStep(stepName, flowName);
     cy.uploadFile("input/test-1.zip");
@@ -110,7 +110,7 @@ describe("Verify ingestion for all filetypes", () => {
     loadPage.confirmationOptions("Save").click();
     cy.wait(500);
     cy.waitForAsyncRequest();
-    cy.verifyStepAddedToFlow("Load", stepName, flowName);
+    cy.verifyStepAddedToFlow("Loading", stepName, flowName);
     cy.waitForAsyncRequest();
     runPage.runStep(stepName, flowName);
     cy.uploadFile("input/test-1.xml");

@@ -73,7 +73,7 @@ describe("Add Matching step to a flow", () => {
     cy.waitForAsyncRequest();
 
     cy.log("**Verify the step added to Flow**");
-    cy.verifyStepAddedToFlow("Match", matchStep, flowName1);
+    cy.verifyStepAddedToFlow("Matching", matchStep, flowName1);
 
     runPage.runStep(matchStep, flowName1);
     cy.log("**Verify Step Run Result is successful**");
@@ -101,7 +101,7 @@ describe("Add Matching step to a flow", () => {
     curatePage.confirmAddStepToFlow(matchStep, flowName1);
     cy.waitForAsyncRequest();
 
-    cy.verifyStepAddedToFlow("Match", matchStep, flowName1);
+    cy.verifyStepAddedToFlow("Matching", matchStep, flowName1);
 
     cy.waitForAsyncRequest();
     runPage.runStep(matchStep, flowName1);
@@ -135,7 +135,7 @@ describe("Add Matching step to a flow", () => {
     cy.log("add step to that new flow");
     runPage.addStep(flowName2);
     runPage.addStepToFlow(matchStep);
-    runPage.verifyStepInFlow("Match", matchStep, flowName2);
+    runPage.verifyStepInFlow("Matching", matchStep, flowName2);
     cy.wait(1000);
   });
   it("Delete the match step and Navigate back to match tab", () => {
@@ -153,10 +153,10 @@ describe("Add Matching step to a flow", () => {
     curatePage.runStepSelectFlowConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName2);
     cy.waitForAsyncRequest();
-    runPage.getFlowName(flowName2).should("be.visible");
+    runPage.getFlowStatusSuccess(flowName2).should("be.visible");
     runPage.verifyStepRunResult(matchStep, "success");
     runPage.closeFlowStatusModal(flowName2);
-    cy.verifyStepAddedToFlow("Match", matchStep, flowName2);
+    cy.verifyStepAddedToFlow("Matching", matchStep, flowName2);
   });
   it("Navigating to match tab", () => {
     toolbar.getCurateToolbarIcon().should("be.visible").click();
@@ -172,7 +172,7 @@ describe("Add Matching step to a flow", () => {
     cy.log("**Verify the step run result**");
     runPage.verifyStepRunResult(matchStep, "success");
     runPage.closeFlowStatusModal(flowName2);
-    cy.verifyStepAddedToFlow("Match", matchStep, flowName2);
+    cy.verifyStepAddedToFlow("Matching", matchStep, flowName2);
   });
   it("Navigating to match tab", () => {
     toolbar.getCurateToolbarIcon().should("be.visible").click();
@@ -186,7 +186,7 @@ describe("Add Matching step to a flow", () => {
     curatePage.addStepToFlowConfirmationMessage();
     curatePage.confirmAddStepToFlow(matchStep, flowName1);
     cy.waitForAsyncRequest();
-    cy.verifyStepAddedToFlow("Match", matchStep, flowName1);
+    cy.verifyStepAddedToFlow("Matching", matchStep, flowName1);
   });
   it("Navigating to match tab", () => {
     toolbar.getCurateToolbarIcon().should("be.visible").click();
@@ -200,10 +200,10 @@ describe("Add Matching step to a flow", () => {
     curatePage.selectFlowToRunIn(flowName1);
     cy.waitForAsyncRequest();
 
-    runPage.getFlowName(flowName1).should("be.visible");
+    runPage.getFlowStatusSuccess(flowName1).should("be.visible");
 
     runPage.verifyStepRunResult(matchStep, "success");
     runPage.closeFlowStatusModal(flowName1);
-    cy.verifyStepAddedToFlow("Match", matchStep, flowName1);
+    cy.verifyStepAddedToFlow("Matching", matchStep, flowName1);
   });
 });
