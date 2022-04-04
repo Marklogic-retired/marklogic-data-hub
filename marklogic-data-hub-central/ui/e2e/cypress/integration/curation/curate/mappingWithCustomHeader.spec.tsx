@@ -67,7 +67,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     runPage.setFlowName(flowName);
     runPage.setFlowDescription(`${flowName} description`);
     loadPage.confirmationOptions("Save").click();
-    cy.verifyStepAddedToFlow("Load", loadStep, flowName);
+    cy.verifyStepAddedToFlow("Loading", loadStep, flowName);
     //Run the ingest with JSON
     cy.waitForAsyncRequest();
     runPage.runStep(loadStep, flowName);
@@ -177,7 +177,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     cy.waitUntil(() => runPage.getFlowName(flowName).should("be.visible"));
     runPage.addStep(flowName);
     runPage.addStepToFlow(mapStep);
-    cy.verifyStepAddedToFlow("Map", mapStep, flowName2);
+    cy.verifyStepAddedToFlow("Mapping", mapStep, flowName2);
     runPage.runStep(mapStep, flowName);
     runPage.verifyStepRunResult(mapStep, "success");
     runPage.closeFlowStatusModal(flowName);
@@ -193,7 +193,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     cy.waitUntil(() => runPage.getFlowName(flowName).should("be.visible"));
     runPage.verifyStepRunResult(mapStep, "success");
     runPage.closeFlowStatusModal(flowName);
-    cy.verifyStepAddedToFlow("Map", mapStep, flowName);
+    cy.verifyStepAddedToFlow("Mapping", mapStep, flowName);
   });
   // TODO DHFPROD-7711 skip since fails in Explore for Ant Design Table component
   it("Add step to a new flow, Run Map step where step exists in multiple flows and explore data", {defaultCommandTimeout: 120000}, () => {
@@ -209,7 +209,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     loadPage.confirmationOptions("Save").click();
     cy.wait(500);
     cy.waitForAsyncRequest();
-    cy.verifyStepAddedToFlow("Map", mapStep, flowName2);
+    cy.verifyStepAddedToFlow("Mapping", mapStep, flowName2);
     //Verify Run Map step where step exists in multiple flows, choose one to automatically run in
     toolbar.getCurateToolbarIcon().click({force: true});
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
@@ -218,8 +218,8 @@ describe("Create and verify load steps, map step and flows with a custom header"
     curatePage.runStepExistsMultFlowsConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName);
     cy.waitForAsyncRequest();
-    cy.verifyStepAddedToFlow("Map", mapStep, flowName);
-    cy.waitUntil(() => runPage.getFlowName(flowName).should("be.visible"));
+    cy.verifyStepAddedToFlow("Mapping", mapStep, flowName);
+    runPage.getFlowStatusSuccess(flowName).should("be.visible");
     runPage.verifyStepRunResult(mapStep, "success");
     runPage.closeFlowStatusModal(flowName);
     /* Commented until DHFPROD-7477 is done

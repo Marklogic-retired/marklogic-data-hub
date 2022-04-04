@@ -1,6 +1,6 @@
 import React, {useState, CSSProperties, useEffect, useContext, createRef} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCheckCircle} from "@fortawesome/free-solid-svg-icons";
+import {faCheckCircle, faClock, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt, faArrowAltCircleRight, faArrowAltCircleLeft} from "@fortawesome/free-regular-svg-icons";
 import NewFlowDialog from "./new-flow-dialog/new-flow-dialog";
 import axios from "axios";
@@ -9,11 +9,12 @@ import {Link, useLocation} from "react-router-dom";
 import sourceFormatOptions from "@config/formats.config";
 import {RunToolTips, SecurityTooltips, PopoverRunSteps} from "@config/tooltips.config";
 import {AuthoritiesContext} from "@util/authorities";
-import {getViewSettings, setViewSettings, UserContext} from "@util/user-context";
+import {dynamicSortDates} from "@util/conversionFunctions";
+import {getViewSettings, setViewSettings} from "@util/user-context";
 import styles from "./flows.module.scss";
 import "./flows.scss";
 import {ExclamationCircleFill, PlayCircleFill, X, ChevronDown, GearFill} from "react-bootstrap-icons";
-import {Accordion, Card, Dropdown, Spinner, Modal, ButtonGroup} from "react-bootstrap";
+import {Accordion, Card, Dropdown, Modal, ButtonGroup} from "react-bootstrap";
 import {HCButton, HCCard, HCTooltip, HCCheckbox} from "@components/common";
 import {themeColors} from "@config/themes.config";
 import * as _ from "lodash";
@@ -49,16 +50,16 @@ interface Props {
 }
 
 const StepDefinitionTypeTitles = {
-  "INGESTION": "Load",
-  "ingestion": "Load",
-  "MAPPING": "Map",
-  "mapping": "Map",
-  "MASTERING": "Master",
-  "mastering": "Master",
-  "MATCHING": "Match",
-  "matching": "Match",
-  "MERGING": "Merge",
-  "merging": "Merge",
+  "INGESTION": "Loading",
+  "ingestion": "Loading",
+  "MAPPING": "Mapping",
+  "mapping": "Mapping",
+  "MASTERING": "Mastering",
+  "mastering": "Mastering",
+  "MATCHING": "Matching",
+  "matching": "Matching",
+  "MERGING": "Merging",
+  "merging": "Merging",
   "CUSTOM": "Custom",
   "custom": "Custom"
 };
@@ -68,7 +69,6 @@ const Flows: React.FC<Props> = (props) => {
   const openFlows = storage?.run?.openFlows;
   const hasDefaultKey = JSON.stringify(props.newStepToFlowOptions?.flowsDefaultKey) !== JSON.stringify(["-1"]);
 
-  const {handleError} = useContext(UserContext);
   const [newFlow, setNewFlow] = useState(false);
   const [addedFlowName, setAddedFlowName] = useState("");
   const [title, setTitle] = useState("");
@@ -698,7 +698,7 @@ const Flows: React.FC<Props> = (props) => {
         }
       </Dropdown.Toggle>
       <Dropdown.Menu>
-        <Dropdown.Header className="py-0 px-2 fs-6">Load</Dropdown.Header>
+        <Dropdown.Header className="py-0 px-2 fs-6">Loading</Dropdown.Header>
         {props.steps && props.steps["ingestionSteps"] && props.steps["ingestionSteps"].length > 0 ? props.steps["ingestionSteps"].map((elem, index) => (
           <Dropdown.Item key={index} aria-label={`${elem.name}-to-flow`}>
             <div
@@ -707,7 +707,7 @@ const Flows: React.FC<Props> = (props) => {
           </Dropdown.Item>
         )) : null}
 
-        <Dropdown.Header className="py-0 px-2 fs-6">Map</Dropdown.Header>
+        <Dropdown.Header className="py-0 px-2 fs-6">Mapping</Dropdown.Header>
         {props.steps && props.steps["mappingSteps"] && props.steps["mappingSteps"].length > 0 ? props.steps["mappingSteps"].map((elem, index) => (
           <Dropdown.Item key={index} aria-label={`${elem.name}-to-flow`}>
             <div
@@ -716,7 +716,7 @@ const Flows: React.FC<Props> = (props) => {
           </Dropdown.Item>
         )) : null}
 
-        <Dropdown.Header className="py-0 px-2 fs-6">Match</Dropdown.Header>
+        <Dropdown.Header className="py-0 px-2 fs-6">Matching</Dropdown.Header>
         {props.steps && props.steps["matchingSteps"] && props.steps["matchingSteps"].length > 0 ? props.steps["matchingSteps"].map((elem, index) => (
           <Dropdown.Item key={index} aria-label={`${elem.name}-to-flow`}>
             <div
@@ -725,7 +725,7 @@ const Flows: React.FC<Props> = (props) => {
           </Dropdown.Item>
         )) : null}
 
-        <Dropdown.Header className="py-0 px-2 fs-6">Merge</Dropdown.Header>
+        <Dropdown.Header className="py-0 px-2 fs-6">Merging</Dropdown.Header>
         {props.steps && props.steps["mergingSteps"] && props.steps["mergingSteps"].length > 0 ? props.steps["mergingSteps"].map((elem, index) => (
           <Dropdown.Item key={index} aria-label={`${elem.name}-to-flow`}>
             <div
@@ -734,7 +734,7 @@ const Flows: React.FC<Props> = (props) => {
           </Dropdown.Item>
         )) : null}
 
-        <Dropdown.Header className="py-0 px-2 fs-6">Master</Dropdown.Header>
+        <Dropdown.Header className="py-0 px-2 fs-6">Mastering</Dropdown.Header>
         {props.steps && props.steps["masteringSteps"] && props.steps["masteringSteps"].length > 0 ? props.steps["masteringSteps"].map((elem, index) => (
           <Dropdown.Item key={index} aria-label={`${elem.name}-to-flow`}>
             <div
@@ -816,13 +816,31 @@ const Flows: React.FC<Props> = (props) => {
   );
 
   const flowHeader = (name, index) => (
-    <span><HCTooltip text={props.canWriteFlow ? RunToolTips.flowEdit : RunToolTips.flowDetails} id="open-edit-tooltip" placement="bottom">
-      <span className={styles.flowName} onClick={(e) => OpenEditFlowDialog(e, index)}>
-        {name}
-      </span>
-    </HCTooltip>
+    <span id={"flow-header-" + name} className={styles.flowHeader}>
+      <HCTooltip text={props.canWriteFlow ? RunToolTips.flowEdit : RunToolTips.flowDetails} id="open-edit-tooltip" placement="bottom">
+        <span className={styles.flowName} onClick={(e) => OpenEditFlowDialog(e, index)}>
+          {name}
+        </span>
+      </HCTooltip>
+      {latestJobData && latestJobData[name] && latestJobData[name].find(step => step.jobId) ?
+        <HCTooltip text={RunToolTips.flowName} placement="bottom" id="">
+          <span onClick={(e) => OpenFlowJobStatus(e, index, name)} className={styles.infoIcon} data-testid={`${name}-flow-status`}>
+            <FontAwesomeIcon icon={faInfoCircle} size="1x" aria-label="icon: info-circle" className={styles.flowStatusIcon}/>
+          </span>
+        </HCTooltip>
+        : ""
+      }
     </span>
   );
+  const OpenFlowJobStatus = (e, index, name) => {
+    e.stopPropagation();
+    e.preventDefault();
+    //parse for latest job to display
+    let completedJobsWithDates = latestJobData[name].filter(step => step.hasOwnProperty("jobId")).map((step, i) => ({jobId: step.jobId, date: step.stepEndTime}));
+    let sortedJobs = completedJobsWithDates.sort(dynamicSortDates("date"));
+    props.setJobId(sortedJobs[0].jobId);
+    props.setOpenJobResponse(true);
+  };
 
   const OpenEditFlowDialog = (e, index) => {
     e.stopPropagation();
@@ -880,29 +898,25 @@ const Flows: React.FC<Props> = (props) => {
     setShowLinks(name);
   }
 
-  const showStepRunResponse = async (step) => {
-    try {
-      let response = await axios.get("/api/jobs/" + step.jobId);
-      if (response.status === 200) {
-        props.showStepRunResponse(step.jobId);
-      }
-    } catch (error) {
-      handleError(error);
-    }
-  };
-
-  const lastRunResponse = (step) => {
+  const lastRunResponse = (step, flowName, stepNumber) => {
     let stepEndTime, tooltipText;
     if (step.stepEndTime) {
       stepEndTime = new Date(step.stepEndTime).toLocaleString();
     }
-    if (!step.lastRunStatus) {
-      return;
+    // if (!step.lastRunStatus) {
+    if (isRunning(flowName, stepNumber)) {
+      return (
+        <HCTooltip text={tooltipText} id="running-tooltip" placement="bottom">
+          <span>
+            <i><FontAwesomeIcon aria-label="icon: clock-circle" icon={faClock} className={styles.runningIcon} size="lg" data-testid={`running-${step.stepName}`} /></i>
+          </span>
+        </HCTooltip>
+      );
     } else if (step.lastRunStatus === "completed step " + step.stepNumber) {
       tooltipText = "Step last ran successfully on " + stepEndTime;
       return (
         <HCTooltip text={tooltipText} id="success-tooltip" placement="bottom">
-          <span onClick={(e) => showStepRunResponse(step)}>
+          <span>
             <i><FontAwesomeIcon aria-label="icon: check-circle" icon={faCheckCircle} className={styles.successfulRun} size="lg" data-testid={`check-circle-${step.stepName}`} /></i>
           </span>
         </HCTooltip>
@@ -911,7 +925,7 @@ const Flows: React.FC<Props> = (props) => {
     } else if (step.lastRunStatus === "completed with errors step " + step.stepNumber) {
       tooltipText = "Step last ran with errors on " + stepEndTime;
       return (
-        <span onClick={(e) => showStepRunResponse(step)}>
+        <span>
           <HCTooltip text={tooltipText} id="complete-with-errors-tooltip" placement="bottom">
             <ExclamationCircleFill aria-label="icon: exclamation-circle" className={styles.unSuccessfulRun} />
           </HCTooltip>
@@ -920,7 +934,7 @@ const Flows: React.FC<Props> = (props) => {
     } else {
       tooltipText = "Step last failed on " + stepEndTime;
       return (
-        <span onClick={(e) => showStepRunResponse(step)}>
+        <span>
           <HCTooltip text={tooltipText} id="step-last-failed-tooltip" placement="bottom">
             <ExclamationCircleFill data-icon="exclamation-circle" aria-label="icon: exclamation-circle" className={styles.unSuccessfulRun} />
           </HCTooltip>
@@ -1040,7 +1054,7 @@ const Flows: React.FC<Props> = (props) => {
                   <div className={styles.reorderRight}>
                     <div className={styles.stepResponse}>
                       {latestJobData && latestJobData[flowName] && latestJobData[flowName][index]
-                        ? lastRunResponse(latestJobData[flowName][index])
+                        ? lastRunResponse(latestJobData[flowName][index], flowName, stepNumber)
                         : ""
                       }
                     </div>
@@ -1079,7 +1093,7 @@ const Flows: React.FC<Props> = (props) => {
                           }}
                         >
                           <HCTooltip text={RunToolTips.ingestionStep} id="run-ingestion-tooltip" placement="bottom">
-                            <PlayCircleFill aria-label="icon: play-circle" color={themeColors.defaults.questionCircle} size={20} />
+                            <PlayCircleFill aria-label="icon: play-circle" color={themeColors.primary} size={20} />
                           </HCTooltip>
                         </div>
                       </div>
@@ -1094,7 +1108,7 @@ const Flows: React.FC<Props> = (props) => {
                         data-testid={"runStep-" + stepNumber}
                       >
                         <HCTooltip text={RunToolTips.otherSteps} id="run-tooltip" placement="bottom">
-                          <PlayCircleFill aria-label="icon: play-circle" color={themeColors.defaults.questionCircle} size={20} />
+                          <PlayCircleFill aria-label="icon: play-circle" color={themeColors.primary} size={20} />
                         </HCTooltip>
                       </div>
                     :
@@ -1110,12 +1124,12 @@ const Flows: React.FC<Props> = (props) => {
                   {props.canWriteFlow ?
                     <HCTooltip text={RunToolTips.removeStep} id="delete-step-tooltip" placement="bottom">
                       <div className={styles.delete} aria-label={`deleteStep-${step.stepName}`} onClick={() => handleStepDelete(flowName, step)}>
-                        <X aria-label="icon: close" color={themeColors.defaults.questionCircle} size={27} />
+                        <X aria-label="icon: close" color={themeColors.primary} size={27} />
                       </div>
                     </HCTooltip> :
                     <HCTooltip text={RunToolTips.removeStep} id="delete-step-tooltip" placement="bottom">
                       <div className={styles.disabledDelete} aria-label={`deleteStepDisabled-${step.stepName}`} onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}>
-                        <X aria-label="icon: close" color={themeColors.defaults.questionCircle} size={27} />
+                        <X aria-label="icon: close" color={themeColors.primary} size={27} />
                       </div>
                     </HCTooltip>
                   }
@@ -1150,10 +1164,6 @@ const Flows: React.FC<Props> = (props) => {
               </div>
               <div className={styles.uploadError}>
                 {showUploadError && flowName === runningFlow && stepNumber === runningStep.stepNumber ? props.uploadError : ""}
-              </div>
-              <div className={styles.running} style={{display: isRunning(flowName, stepNumber) ? "block" : "none"}}>
-                <div><Spinner animation="border" data-testid="spinner" variant="primary" /></div>
-                <div className={styles.runningLabel}>Running...</div>
               </div>
             </HCCard>
           </div>

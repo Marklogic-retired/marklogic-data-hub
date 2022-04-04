@@ -28,6 +28,18 @@ const convertDateFromISO = (InputDate) => {
 
 };
 
+function dynamicSortDates(dateProperty) {
+  let sortOrder = 1;
+  if (dateProperty[0] === "-") {
+    sortOrder = -1;
+    dateProperty = dateProperty.substr(1);
+  }
+  return function (a, b) {
+    let result = (a[dateProperty] > b[dateProperty]) ? -1 : (a[dateProperty] < b[dateProperty]) ? 1 : 0;
+    return result * sortOrder;
+  };
+}
+
 const sortStepsByUpdated = (stepData) => {
   let sortedData = stepData.sort((step1, step2) => {
     if (step1.lastUpdated > step2.lastUpdated) {
@@ -87,6 +99,7 @@ const formatCardUri = (str) => {
 
 export {
   convertDateFromISO,
+  dynamicSortDates,
   getInitialChars,
   getLastChars,
   formatCardUri,

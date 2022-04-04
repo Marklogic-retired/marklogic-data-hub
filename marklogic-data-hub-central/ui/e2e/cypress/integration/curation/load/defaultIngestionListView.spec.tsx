@@ -146,7 +146,7 @@ describe("Validate CRUD functionality from list view", () => {
     loadPage.runStepSelectFlowConfirmation().should("be.visible");
     loadPage.selectFlowToRunIn(flowName);
     cy.waitForAsyncRequest();
-    cy.verifyStepAddedToFlow("Load", stepName, flowName);
+    cy.verifyStepAddedToFlow("Loading", stepName, flowName);
     //Upload file to start running, test with invalid input
     cy.uploadFile("input/test-1.json");
 
@@ -181,7 +181,7 @@ describe("Validate CRUD functionality from list view", () => {
     // add step to that new flow
     runPage.addStep(flowName);
     runPage.addStepToFlow(stepName);
-    runPage.verifyStepInFlow("Load", stepName, flowName);
+    runPage.verifyStepInFlow("Loading", stepName, flowName);
     cy.wait(500);
   });
 
@@ -192,7 +192,7 @@ describe("Validate CRUD functionality from list view", () => {
     loadPage.runStepExistsOneFlowConfirmation().should("be.visible");
     loadPage.confirmContinueRun();
     cy.waitForAsyncRequest();
-    cy.verifyStepAddedToFlow("Load", stepName, flowName);
+    cy.verifyStepAddedToFlow("Loading", stepName, flowName);
     cy.uploadFile("input/test-1.json");
     runPage.verifyStepRunResult(stepName, "success");
     runPage.closeFlowStatusModal(flowName);
@@ -207,7 +207,7 @@ describe("Validate CRUD functionality from list view", () => {
     runPage.setFlowDescription(`${flowName2} description`);
     loadPage.confirmationOptions("Save").click();
     cy.waitForAsyncRequest();
-    cy.verifyStepAddedToFlow("Load", stepName, flowName2);
+    cy.verifyStepAddedToFlow("Loading", stepName, flowName2);
     //Verify Run Load step where step exists in multiple flows, choose one to automatically run in
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     loadPage.loadView("table").click();
@@ -215,7 +215,7 @@ describe("Validate CRUD functionality from list view", () => {
     loadPage.runStepExistsMultFlowsConfirmation().should("be.visible");
     loadPage.selectFlowToRunIn(flowName);
     cy.waitForAsyncRequest();
-    cy.verifyStepAddedToFlow("Load", stepName, flowName);
+    cy.verifyStepAddedToFlow("Loading", stepName, flowName);
     cy.uploadFile("input/test-1.json");
 
     runPage.verifyStepRunResult(stepName, "success");

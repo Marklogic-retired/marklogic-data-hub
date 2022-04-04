@@ -40,7 +40,7 @@ describe("Monitor Tile", () => {
     loadPage.confirmationOptions("Save").click();
     runPage.addStep(flowName);
     runPage.addStepToFlow("mapPersonJSON");
-    runPage.verifyStepInFlow("Map", "mapPersonJSON", flowName);
+    runPage.verifyStepInFlow("Mapping", "mapPersonJSON", flowName);
     runPage.runStep("mapPersonJSON", flowName);
     runPage.verifyStepRunResult("mapPersonJSON", "success");
     runPage.closeFlowStatusModal(flowName);

@@ -44,7 +44,7 @@
 
   .infoIcon {
     margin-left: 8px;
-    color: #7F86B5;
+    color: $primary;
     cursor: pointer;
     &:hover {
       color: var(--hoverColor);
@@ -95,6 +95,10 @@
     padding-right: 15px;
     text-align: left;
   }
+
+.stepRunningIcon {
+    color: $primary;
+}
 
 .errorStepResponse {
     width: 100%;
