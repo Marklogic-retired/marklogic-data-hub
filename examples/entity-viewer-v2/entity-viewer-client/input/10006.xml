@@ -169,17 +169,17 @@
     <link>
       <label>Quick View</label>
       <url>http://mysql.com</url>
-      <icon>fa-eye</icon>
+      <icon>faEye</icon>
     </link>
     <link>
       <label>Nomination History</label>
       <url>https://mediafire.com</url>
-      <icon>fa-medal</icon>
+      <icon>faMedal</icon>
     </link>
     <link>
       <label>Comments</label>
       <url>https://posterous.com</url>
-      <icon>fa-comments</icon>
+      <icon>faComments</icon>
     </link>
   </links>
 </person>

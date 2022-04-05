@@ -209,17 +209,17 @@
     <link>
       <label>Quick View</label>
       <url>http://opensource.org</url>
-      <icon>fa-eye</icon>
+      <icon>faEye</icon>
     </link>
     <link>
       <label>Nomination History</label>
       <url>https://hp.com</url>
-      <icon>fa-medal</icon>
+      <icon>faMedal</icon>
     </link>
     <link>
       <label>Comments</label>
       <url>https://uiuc.edu</url>
-      <icon>fa-comments</icon>
+      <icon>faComments</icon>
     </link>
   </links>
 </person>

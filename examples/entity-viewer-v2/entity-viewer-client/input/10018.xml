@@ -230,17 +230,17 @@
     <link>
       <label>Quick View</label>
       <url>http://amazon.co.jp</url>
-      <icon>fa-eye</icon>
+      <icon>faEye</icon>
     </link>
     <link>
       <label>Nomination History</label>
       <url>https://amazon.de</url>
-      <icon>fa-medal</icon>
+      <icon>faMedal</icon>
     </link>
     <link>
       <label>Comments</label>
       <url>http://4shared.com</url>
-      <icon>fa-comments</icon>
+      <icon>faComments</icon>
     </link>
   </links>
 </person>

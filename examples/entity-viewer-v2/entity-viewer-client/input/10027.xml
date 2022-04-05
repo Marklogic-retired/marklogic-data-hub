@@ -183,17 +183,17 @@
     <link>
       <label>Quick View</label>
       <url>https://lycos.com</url>
-      <icon>fa-eye</icon>
+      <icon>faEye</icon>
     </link>
     <link>
       <label>Nomination History</label>
       <url>http://prweb.com</url>
-      <icon>fa-medal</icon>
+      <icon>faMedal</icon>
     </link>
     <link>
       <label>Comments</label>
       <url>http://pbs.org</url>
-      <icon>fa-comments</icon>
+      <icon>faComments</icon>
     </link>
   </links>
 </person>

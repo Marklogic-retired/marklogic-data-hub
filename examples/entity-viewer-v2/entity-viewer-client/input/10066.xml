@@ -141,17 +141,17 @@
     <link>
       <label>Quick View</label>
       <url>https://example.com</url>
-      <icon>fa-eye</icon>
+      <icon>faEye</icon>
     </link>
     <link>
       <label>Nomination History</label>
       <url>http://pen.io</url>
-      <icon>fa-medal</icon>
+      <icon>faMedal</icon>
     </link>
     <link>
       <label>Comments</label>
       <url>https://163.com</url>
-      <icon>fa-comments</icon>
+      <icon>faComments</icon>
     </link>
   </links>
 </person>

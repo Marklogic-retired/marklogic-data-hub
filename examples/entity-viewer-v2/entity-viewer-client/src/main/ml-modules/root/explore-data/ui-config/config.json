@@ -592,7 +592,7 @@
             "social": {
               "arrayPath": "person.socials.social",
               "site": "site",
-              "handle":"handle",
+              "handle": "handle",
               "url": "address"
             },
             "sites": {
@@ -730,6 +730,19 @@
           ]
         },
         "download": true
+      }
+    },
+    "linkList": {
+      "component": "LinkList",
+      "config": {
+        "id": "linkList",
+        "title": "Record Actions",
+        "arrayPath": "person.links.link",
+        "link": {
+          "icon": "icon",
+          "label": "label",
+          "url": "url"
+        }
       }
     }
   }

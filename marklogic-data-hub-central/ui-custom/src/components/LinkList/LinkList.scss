@@ -1,0 +1,59 @@
+.LinkList {
+    position: fixed;
+    left: 0;
+    top: 160px;
+    z-index: 9;
+    .LinkList-container {
+        display: flex;
+        position: relative;
+        .LinkList-data {
+            background: #fafafa;
+            border: 1px solid #eeeeee;
+            box-sizing: border-box;
+            box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+            border-radius: 0px 0px 4px 0px;
+            max-height: 661px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 0 20px 0 20px;
+            min-width: 370px;
+            .LinkList-item {
+                border-bottom: 1px solid rgba(26, 204, 168, 0.5);
+                display: flex;
+                gap: 10px;
+                padding: 15px 6px;
+                text-decoration: none;
+                color: #333333;
+                cursor: pointer;
+                .LinkList-item-label {
+                    flex: 1;
+                    color: #5B69AF;;
+                }
+                &:last-child {
+                    border-bottom: none;
+                }
+            }
+        }
+        .LinkList-button {
+            background-color: #1acca8;
+            padding: 10px 4px 10px 3px;
+            color: #fff;
+            min-height: 175px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            cursor: pointer;
+            box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+            border-radius: 0px 4px 4px 0px;
+            .LinkList-button-label {
+                writing-mode: vertical-lr;
+                font-size: 14px;
+                font-weight: 700;
+                letter-spacing: 2px;
+                white-space: nowrap;
+            }
+        }
+    }
+}
