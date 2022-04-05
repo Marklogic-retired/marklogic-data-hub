@@ -20,6 +20,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faStar} from "@fortawesome/free-solid-svg-icons";
 import "./Detail.scss";
 import _ from "lodash";
+import LinkList from "../components/LinkList/LinkList";
 
 type Props = {};
 
@@ -33,7 +34,8 @@ const COMPONENTS = {
   SocialMedia: SocialMedia,
   ImageGallery: ImageGallery,
   ImageGalleryMulti: ImageGalleryMulti,
-  Membership: Membership
+  Membership: Membership,
+  LinkList: LinkList
 };
 
 const Detail: React.FC<Props> = (props) => {
@@ -168,6 +170,11 @@ const Detail: React.FC<Props> = (props) => {
             : null}
 
           <div className="container-fluid">
+
+            {React.createElement(
+              COMPONENTS.LinkList,
+              {config: config?.detail?.linkList.config, data: detailContext.detail}, null
+            )}
 
             {config?.detail?.membership && <div className="row">
               <div className="col-12">
