@@ -6,7 +6,12 @@ function baselineQueryInterceptorB(baselineQuery) {
   return cts.andQuery(cts.andQueryQueries(baselineQuery).toArray().concat([cts.collectionQuery("InterceptorB")]));
 }
 
+function filterQueryInterceptor(filterQuery, docNode) {
+  return cts.andQuery([filterQuery, cts.collectionQuery(fn.string(docNode.xpath("filterCollection")))]);
+}
+
 module.exports = {
   baselineQueryInterceptorA,
-  baselineQueryInterceptorB
+  baselineQueryInterceptorB,
+  filterQueryInterceptor
 }
