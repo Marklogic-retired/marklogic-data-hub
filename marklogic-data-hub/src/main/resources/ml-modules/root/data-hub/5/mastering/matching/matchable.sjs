@@ -1,5 +1,34 @@
 'use strict';
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
+const blocks = require("/com.marklogic.smart-mastering/matcher-impl/blocks-impl.xqy");
+const cachedInterceptorModules = {};
+
+function retrieveInterceptorFunction(interceptorObj, interceptorType) {
+  let interceptorModule = cachedInterceptorModules[interceptorObj.path];
+  if (!interceptorModule) {
+    try {
+      interceptorModule = require(interceptorObj.path);
+      cachedInterceptorModules[interceptorObj.path] = interceptorModule;
+    } catch (e) {
+      httpUtils.throwBadRequest(`Module defined by ${interceptorType} not found: ${interceptorObj.path}`);
+    }
+  }
+  const interceptorFunction = interceptorModule[interceptorObj.function];
+  if (!interceptorFunction) {
+    httpUtils.throwBadRequest(`Function defined by ${interceptorType} not exported by module: ${interceptorObj.function}#${interceptorObj.path}`);
+  }
+  return interceptorFunction;
+}
+
+function applyInterceptors(interceptorType, accumulated, interceptors, ...additionalArguments) {
+  if (!interceptors || interceptors.length === 0) {
+    return accumulated;
+  } else {
+    const interceptorObj = interceptors.shift();
+    const interceptorFunction = retrieveInterceptorFunction(interceptorObj, interceptorType);
+    return applyInterceptors(interceptorType, interceptorFunction(accumulated, ...additionalArguments), interceptors, ...additionalArguments);
+  }
+}
 
 /*
  * A class that encapsulates the configurable portions of teh matching process.
@@ -32,23 +61,7 @@ class Matchable {
       } else {
         firstBaseline = null;
       }
-      let finalQuery = firstBaseline;
-      if (this.matchStep.baselineQueryInterceptors) {
-        this.matchStep.baselineQueryInterceptors.forEach((interceptorObj) => {
-          let interceptorModule;
-          try {
-            interceptorModule = require(interceptorObj.path);
-          } catch(e) {
-            httpUtils.throwBadRequest( `Module defined by Baseline Query Interceptor not found: ${interceptorObj.path}`);
-          }
-          const interceptorFunction = interceptorModule[interceptorObj.function];
-          if (!interceptorFunction) {
-            httpUtils.throwBadRequest( `Function defined by Baseline Query Interceptor not exported by module: ${interceptorObj.function}#${interceptorObj.path}`);
-          }
-          finalQuery = interceptorFunction(finalQuery);
-        });
-      }
-      this._baselineQuery = finalQuery;
+      this._baselineQuery = applyInterceptors("Baseline Query Interceptor", firstBaseline, this.matchStep.baselineQueryInterceptors);
     }
     return this._baselineQuery;
   }
@@ -78,7 +91,22 @@ class Matchable {
    * @since 5.8.0
    */
   filterQuery(documentNode) {
-    // TODO DHFPROD-8591
+    let filterQuery, notDocumentQuery, stepFilterQuery;
+    let excludeDocuments = Sequence.from([xdmp.nodeUri(documentNode), blocks.getBlocks(fn.baseUri(documentNode)).xpath("text()")]);
+    if (fn.exists(excludeDocuments)) {
+      notDocumentQuery = cts.documentQuery(excludeDocuments.toArray());
+    }
+    if (this.matchStep.filterQuery) {
+      stepFilterQuery = cts.query(this.matchStep.filterQuery);
+    }
+    if (stepFilterQuery && notDocumentQuery) {
+      filterQuery = cts.andNotQuery(stepFilterQuery, notDocumentQuery);
+    } else if (notDocumentQuery) {
+      filterQuery = cts.notQuery(notDocumentQuery);
+    } else if (stepFilterQuery) {
+      filterQuery = stepFilterQuery;
+    }
+    return applyInterceptors("Filter Query Interceptor", filterQuery, this.matchStep.filterQueryInterceptors, documentNode);
   }
 
   /*

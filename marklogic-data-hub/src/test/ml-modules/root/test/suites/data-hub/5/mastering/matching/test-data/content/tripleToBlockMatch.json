@@ -1,0 +1,11 @@
+{
+    "triples": [
+        {
+            "triple": {
+                "subject": "/content/docA.json",
+                "predicate": "http://marklogic.com/smart-mastering/match-block",
+                "object": "/content/docB.json"
+            }
+        }
+    ]
+}
