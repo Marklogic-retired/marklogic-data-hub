@@ -144,14 +144,6 @@
       <city>Pittsburgh</city>
       <state>PA</state>
     </relation>
-    <relation>
-      <id>10056</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
-      <fullname>Aikman Milly</fullname>
-      <city>Pittsburgh</city>
-      <state>PA</state>
-    </relation>
   </relations>
   <createdOn>
     <ts>2022-02-23T11:43:54Z</ts>
