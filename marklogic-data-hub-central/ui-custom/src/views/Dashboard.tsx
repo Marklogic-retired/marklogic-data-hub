@@ -11,6 +11,7 @@ import Section from "../components/Section/Section";
 import Loading from "../components/Loading/Loading";
 import {getSummary} from "../api/api";
 import "./Dashboard.scss";
+import RecentClear from "../components/RecentClear/RecentClear"
 
 type Props = {};
 
@@ -103,7 +104,9 @@ const Dashboard: React.FC<Props> = (props) => {
                   <div>
                     <div className="divider">- or -</div>
                     <div style={{marginTop: "15px"}}>
-                      <h4>Recent Searches</h4>
+                      <h4>Recent Searches
+                      <RecentClear title="recent search" type="recentSearches"></RecentClear>
+                      </h4>
                       {config?.dashboard?.recentSearches &&
                         React.createElement(
                           COMPONENTS[config.dashboard.recentSearches.component],

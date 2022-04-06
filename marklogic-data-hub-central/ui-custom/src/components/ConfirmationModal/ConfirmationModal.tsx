@@ -2,7 +2,7 @@ import React from "react";
 import {Modal} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
-import "./confirmation-modal.scss";
+import "./ConfirmationModal.scss";
 
 type Props = {
   isVisible: boolean;
@@ -10,6 +10,7 @@ type Props = {
   confirmAction: () => void;
   bodyContent: string;
   headerContent: string;
+  title: string;
 };
 
 const ConfirmationModal: React.FC<Props> = (props) => {
@@ -26,7 +27,7 @@ const ConfirmationModal: React.FC<Props> = (props) => {
   return (
     <Modal
       show={props.isVisible}
-      data-testid="resetConfirmationModal"
+      data-testid={props.title + "-resetConfirmationModal"}
       className="confirmation-modal"
     >
       {props.headerContent.length !== 0 &&<Modal.Header>props.headerContent</Modal.Header>}

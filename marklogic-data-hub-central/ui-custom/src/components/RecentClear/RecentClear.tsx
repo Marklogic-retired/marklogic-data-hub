@@ -1,10 +1,12 @@
 import React, {useContext, useState} from "react";
 import "./RecentClear.scss";
-import ConfirmationModal from "../confirmation-modal/confirmation-modal";
+import ConfirmationModal from "../ConfirmationModal/ConfirmationModal";
 import { DetailContext } from "../../store/DetailContext";
+import { SearchContext } from "../../store/SearchContext";
 
 type Props = {
     title?: string;
+    type?: string;
 };
 
 /**
@@ -20,28 +22,36 @@ type Props = {
 
 const RecentClear: React.FC<Props> = (props) => {
     const detailContext = useContext(DetailContext);
+    const searchContext = useContext(SearchContext);
     const [showModal, setShowModal] = useState(false);
-    const confirmationModalBody = "Clear recently visited record history for the current user?"
+    const confirmationModalBody = `Clear ${props.title} history for the current user?`
+    const title = props?.title === undefined ? "" : props.title;
 
     const showModalHandler = () => {
       setShowModal(true);
     }
 
     const HandleDeleteRecords = async () => {
-      await detailContext.handleDeleteAllRecent();
-      setShowModal(false);
+      if(props.type === "recentRecords") {
+          await detailContext.handleDeleteAllRecent();
+          setShowModal(false);
+      }
+      else {
+          await searchContext.handleDeleteAllRecent();
+          setShowModal(false);
+      }
     }
 
     return (
-        <span className="recent-clear">
-         <button className="clear-button" data-testid="clearButton" onClick={showModalHandler} disabled={!detailContext.hasSavedRecords()}>{props.title}</button>
+        <span className={props.type === "recentRecords" ? "recent-clear-records" : "recent-clear-searches"}>
+         <button className="clear-button" data-testid={props.type + "-clearButton"} onClick={showModalHandler} disabled={props.type === "recentRecords" ? !detailContext.hasSavedRecords() : !searchContext.hasSavedRecords()}>Clear</button>
             <ConfirmationModal
                 isVisible={showModal}
                 toggleModal={setShowModal}
                 confirmAction={HandleDeleteRecords}
                 bodyContent={confirmationModalBody}
                 headerContent = {""}
-                data-testid="resetConfirmationModal"
+                title = {title}
             />
         </span>
 );

@@ -22,6 +22,8 @@ interface SearchContextInterface {
   handleSaved: any;
   handleGetSearchLocal: any;
   setPageNumber: (value: number) => void;
+  handleDeleteAllRecent: any;
+  hasSavedRecords: any;
 }
 interface QueryInterface {
   searchText: string;
@@ -47,6 +49,8 @@ const defaultState = {
   handleSaved: () => { },
   handleGetSearchLocal: () => { },
   setPageNumber: () => { },
+  handleDeleteAllRecent: () => { },
+  hasSavedRecords: () => { }
 };
 
 /**
@@ -204,6 +208,9 @@ const SearchProvider: React.FC = ({children}) => {
       setRecentSearches(sortedQueries);
       setLoading(false);
     }
+    else {
+      setRecentSearches([]);
+    }
   };
 
   const buildSavedSearch = (qtext, facetStrings) => {
@@ -214,7 +221,7 @@ const SearchProvider: React.FC = ({children}) => {
     return JSON.stringify(obj);
   }
 
-  const handleSaveSearchLocal = () => {
+  const handleSaveSearchLocal = async () => {
     // Save to local storage
     let json = localStorage.getItem("search");
     let dt = new Date().toISOString();
@@ -227,15 +234,54 @@ const SearchProvider: React.FC = ({children}) => {
       localStorage.setItem("search", JSON.stringify(newObj));
     } else {
       newObj = JSON.parse(json);
+      let obj;
       if (newObj && newObj[userContext.userid]) {
+        obj = newObj[userContext.userid];
         newObj[userContext.userid][key] = dt;
       } else {
         newObj[userContext.userid] = {};
         newObj[userContext.userid][key] = dt;
       }
       localStorage.setItem("search", JSON.stringify(newObj));
+      //To handle deletion of searches in local storage when over certain count and time limit
+      if(obj) {
+        await handleDeleteRecentByMaxEntries(obj);
+        await handleDeleteRecentByMaxTime(obj);
+        localStorage.setItem("search", JSON.stringify(newObj));
+      }
     }
   };
+
+  const handleDeleteRecentByMaxEntries = (obj) => {
+    let maxEntries = userContext.config.dashboard.recentSearches.config.maxEntries;
+    if (Object.keys(obj).length > maxEntries)
+      delete obj[Object.keys(obj)[0]];
+  }
+
+  const handleDeleteRecentByMaxTime = (obj) => {
+    let maxTimes = userContext.config.dashboard.recentSearches.config.maxTime;
+    let curr = new Date();
+    for(let i=0;i<Object.keys(obj).length;i++) {
+      let itemStorageTime = new Date(obj[Object.keys(obj)[i]]);
+      let diffMilliSeconds = curr.getTime() - itemStorageTime.getTime();
+      let diffMinutes = diffMilliSeconds/60000;
+      if(diffMinutes > maxTimes) {
+        delete obj[Object.keys(obj)[i]];
+        i--;
+      }
+    }
+  }
+
+  const handleDeleteAllRecent = () => {
+    localStorage.removeItem("search");
+    handleGetSearchLocal();
+  }
+
+  const hasSavedRecords = () => {
+    let json = localStorage.getItem("search");
+    let obj = json ? JSON.parse(json) : null;
+    return obj && obj[userContext.userid] && Object.keys(obj[userContext.userid]).length > 0;
+  }
 
   return (
     <SearchContext.Provider
@@ -256,7 +302,9 @@ const SearchProvider: React.FC = ({children}) => {
         handleFacetString,
         handlePagination,
         handleSaved,
-        handleGetSearchLocal
+        handleGetSearchLocal,
+        handleDeleteAllRecent,
+        hasSavedRecords
       }}
     >
       {children}

@@ -1,4 +1,4 @@
-.recent-clear {
+.recent-clear-records {
   display: flex;
   .clear-button {
     flex-grow: 1;
@@ -7,5 +7,17 @@
     background-color: white;
     border: ridge;
     padding: 0px 20px 0px 20px;
+    height: 26px;
+  }
+}
+
+.recent-clear-searches {
+  .clear-button {
+    background-color: white;
+    font-size: 16px;
+    border: ridge;
+    padding: 0px 20px 0px 20px;
+    float: right;
+    height: 26px;
   }
 }
