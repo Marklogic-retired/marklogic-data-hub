@@ -65,7 +65,7 @@ const Section: React.FC<Props> = (props) => {
     <div className="section" style={divStyle}>
       <header style={headerStyle}>
         <span className="title">{props.title}</span>
-        {props.title === "Recently Visited" && <RecentClear title="Clear"></RecentClear>}
+        {props.title === "Recently Visited" && <RecentClear title="recently visited record" type="recentRecords"></RecentClear>}
         {props.collapsible && <div className="collapse-container">
           <a className="collapse-button" onClick={handleCollapse}><ChevronDoubleUp /></a>
           <a className="collapse-button" onClick={handleExpand}><ChevronDoubleDown /></a>

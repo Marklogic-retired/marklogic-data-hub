@@ -2,6 +2,7 @@ import Dashboard from "./Dashboard";
 import {render, act} from "@testing-library/react";
 import { UserContext } from "../store/UserContext";
 import userEvent from "@testing-library/user-event";
+import ConfirmationModal from "../components/ConfirmationModal/ConfirmationModal";
 
 const config = {
     "dashboard": {
@@ -94,7 +95,9 @@ const userContextValueEmptyConfig = {...userContextValue, config: {}};
 describe("Dashboard view", () => {
 
     test("Renders configured content with non-empty config", async () => {
-        let getByText, getByTestId;
+        let getByText, getByTestId, rerender;
+        const toggleModal = jest.fn();
+        const confirmAction = jest.fn();
         await act(async () => {
             const renderResults = render(
                 <UserContext.Provider value={userContextValue}>
@@ -103,14 +106,27 @@ describe("Dashboard view", () => {
             );
             getByText = renderResults.getByText;
             getByTestId = renderResults.getByTestId;
+            rerender = renderResults.rerender;
         });
         expect(getByText("Recent Searches")).toBeInTheDocument();
+        //To test clear button over recently search record section
+        expect(getByTestId("recentSearches-clearButton")).toBeInTheDocument();
+        userEvent.click(getByTestId("recentSearches-clearButton"));
+
         expect(getByText("Recently Visited")).toBeInTheDocument();
         //To test clear button over recently visited record section
-        expect(getByTestId("clearButton")).toBeInTheDocument();
-        userEvent.click(getByTestId("clearButton"));
+        expect(getByTestId("recentRecords-clearButton")).toBeInTheDocument();
+        userEvent.click(getByTestId("recentRecords-clearButton"));
+        rerender(<ConfirmationModal
+            isVisible={true}
+            bodyContent={"Test"}
+            headerContent={""}
+            toggleModal={toggleModal}
+            confirmAction={confirmAction}
+            title={"record"}
+        />);
         //To test that confirmation modal opens on clicking clear button
-        expect(getByTestId("resetConfirmationModal")).toBeInTheDocument();
+        expect(getByTestId("record-resetConfirmationModal")).toBeInTheDocument();
         expect(getByTestId("noButton")).toBeInTheDocument();
         expect(getByTestId("yesButton")).toBeInTheDocument();
     });

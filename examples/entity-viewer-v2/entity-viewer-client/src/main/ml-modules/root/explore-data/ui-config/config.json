@@ -91,6 +91,8 @@
     "recentSearches": {
       "component": "RecentSearches",
       "config": {
+        "maxEntries": 100,
+        "maxTime": 1440,
         "cols": [
           {
             "title": "Search Criteria",
