@@ -34,7 +34,41 @@ class Search {
     let facets = searchParams.selectedFacets;
     let keys = Object.keys(facets);
     let constraintArr = [];
-    keys.forEach(key => constraintArr.push(facets[key].map(value => key+':' + '"' + value + '"').join(" OR ")))
+    keys.forEach(key => {
+      if(Array.isArray(facets[key])) {
+        if(xdmp.castableAs("http://www.w3.org/2001/XMLSchema", "date", facets[key][0])) {
+          facets[key] = facets[key].map(date => xdmp.parseDateTime("[Y0001]-[M01]-[D01]", date))
+        }
+        constraintArr.push(facets[key].map(value => key+':' + '"' + value + '"').join(" OR "));
+      } else {
+        let minVal = facets[key]["min"];
+        let maxVal = facets[key]["max"];
+        let minValConstraint = "";
+        let maxValConstraint = "";
+
+        if(minVal && xdmp.castableAs("http://www.w3.org/2001/XMLSchema", "date", minVal)) {
+          minVal = xdmp.parseDateTime("[Y0001]-[M01]-[D01]", minVal);
+        }
+        if(maxVal && xdmp.castableAs("http://www.w3.org/2001/XMLSchema", "date", maxVal)) {
+          maxVal = xdmp.parseDateTime("[Y0001]-[M01]-[D01]", maxVal);
+        }
+
+        if(minVal) {
+          minValConstraint = key + ' GE ' + '"' + minVal + '"';
+        }
+        if(maxVal) {
+          maxValConstraint = key + ' LE ' + '"' + maxVal + '"';
+        }
+
+        if(minValConstraint && maxValConstraint) {
+          constraintArr.push(minValConstraint.concat(' AND ').concat(maxValConstraint));
+        } else if(minValConstraint && !maxValConstraint) {
+          constraintArr.push(minValConstraint);
+        } else {
+          constraintArr.push(maxValConstraint);
+        }
+      }
+    });
     const facetConstraint = constraintArr.map(constraint => "(" + constraint + ")").join(" AND ");
 
     let searchConstraint = [];
@@ -51,9 +85,11 @@ class Search {
 
     let searchResponse = searchImpl.getSearchResults(searchConstraint, entityTypeIds[0], start, pageLength).toObject();
     let results = searchResponse["response"]["result"];
-    for(let result of results) {
-      let jsonObject = result["extracted"][entityTypeIds[0]];
-      this.fixArrayIssue(jsonObject);
+    if(results) {
+      results.forEach(result => {
+        let jsonObject = result["extracted"][entityTypeIds[0]];
+        this.fixArrayIssue(jsonObject);
+      })
     }
     return searchResponse;
   }
