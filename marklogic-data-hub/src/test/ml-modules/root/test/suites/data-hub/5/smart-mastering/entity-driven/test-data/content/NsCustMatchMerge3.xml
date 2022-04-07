@@ -17,6 +17,7 @@
             <exCustomer:customerId>105</exCustomer:customerId>
             <exCustomer:name>Hollan Welles</exCustomer:name>
             <exCustomer:birthDate>1985-01-01</exCustomer:birthDate>
+            <exCustomer:active>false</exCustomer:active>
             <exCustomer:shipping datatype="array">
                 <exAddress:Address xmlns:exAddress="http://example.org/address">
                     <exAddress:street>Hanover Place</exAddress:street>
