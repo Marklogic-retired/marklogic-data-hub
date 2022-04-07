@@ -33,6 +33,12 @@
           "collation": "http://marklogic.com/collation/codepoint",
           "range-value-positions": false,
           "invalid-values": "reject"
+        },
+        {
+          "scalar-type": "dateTime",
+          "path-expression": "/person/createdOn/ts",
+          "range-value-positions": false,
+          "invalid-values": "reject"
         }
       ]
 }
