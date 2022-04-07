@@ -1457,9 +1457,10 @@ declare function merge-impl:generate-path-templates($path-properties as map:map*
             (: JSON specific leaf nodes can't be added directly added to XSLT :)
             default return
               let $data-value := fn:data($values)
-              where $data-value
+              let $data-type := xdmp:type($data-value)
+              where $data-type = xs:QName("xs:boolean") or fn:number($data-type) = 0 or $data-value
               return (
-                <xsl:attribute name="xsi:type">{xdmp:type($data-value)}</xsl:attribute>,
+                <xsl:attribute name="xsi:type">{$data-type}</xsl:attribute>,
                 $data-value
               )
         }

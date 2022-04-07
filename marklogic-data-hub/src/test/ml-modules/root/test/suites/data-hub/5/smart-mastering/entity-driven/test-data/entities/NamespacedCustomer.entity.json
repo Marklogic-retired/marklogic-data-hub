@@ -20,6 +20,9 @@
           "datatype": "string",
           "collation": "http://marklogic.com/collation/codepoint"
         },
+        "active": {
+          "datatype": "boolean"
+        },
         "nicknames": {
           "datatype": "array",
           "description": "Example of a multi-value property of simple values",
