@@ -20,6 +20,7 @@
         "customerId": 105,
         "name": "Holland Wells",
         "birthDate": "1986-01-01",
+        "active": false,
         "shipping": [
           {
             "Address": {

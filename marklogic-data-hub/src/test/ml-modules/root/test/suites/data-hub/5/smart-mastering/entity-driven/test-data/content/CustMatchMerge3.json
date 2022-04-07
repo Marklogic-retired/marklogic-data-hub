@@ -20,6 +20,7 @@
         "customerId": 105,
         "name": "Hollan Welles",
         "birthDate": "1985-01-01",
+        "active": false,
         "shipping": [
           {
             "Address": {
