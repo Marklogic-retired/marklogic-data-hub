@@ -127,6 +127,9 @@ describe("Entity Modeling: Graph View", () => {
   it("Delete an entity from graph view and publish the changes", {defaultCommandTimeout: 120000}, () => {
     entityTypeTable.viewEntityInGraphView("Patients");
     modelPage.scrollPageBottom();
+
+    // the graph needs to stabilize before we interact with it
+    cy.wait(3000);
     cy.log("**Verify description tooltip appears on hover**");
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
       let patientCoordinates: any = nodePositions["Patients"];
@@ -308,6 +311,9 @@ describe("Entity Modeling: Graph View", () => {
     graphView.addNewRelationship().click();
     graphView.verifyEditInfoMessage().should("exist");
     modelPage.scrollPageBottom();
+
+    // the graph needs to stabilize before we interact with it
+    cy.wait(5000);
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
       let PersonCoordinates: any = nodePositions["Person"];
       let ClientCoordinates: any = nodePositions["Client"];

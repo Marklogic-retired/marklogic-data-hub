@@ -112,6 +112,7 @@ describe("login", () => {
 
     loadPage.loadView("table").click();
     tiles.waitForTableToLoad();
+
     loadPage.addToFlowDisabled(stepName).should("exist");
     loadPage.stepName(stepName).click();
     loadPage.saveButton().should("be.disabled");

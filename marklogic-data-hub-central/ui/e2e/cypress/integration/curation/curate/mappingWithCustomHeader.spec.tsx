@@ -191,7 +191,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     curatePage.runStepExistsOneFlowConfirmation().should("be.visible");
     curatePage.confirmContinueRun();
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => runPage.getFlowName(flowName).should("be.visible"));
+    cy.waitUntil(() => runPage.getFlowName(flowName).first().should("be.visible"));
     runPage.verifyStepRunResult(mapStep, "success");
     runPage.closeFlowStatusModal(flowName);
     cy.verifyStepAddedToFlow("Mapping", mapStep, flowName);

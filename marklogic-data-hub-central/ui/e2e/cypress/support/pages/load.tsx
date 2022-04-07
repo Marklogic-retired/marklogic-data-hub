@@ -109,8 +109,8 @@ class LoadPage {
   confirmContinueRun() {
     cy.findByLabelText("continue-confirm").click();
   }
-  pagination() {
-
+  clickPaginationItem(index: number) {
+    return cy.get(`[title="${index}"]`).scrollIntoView().click();
   }
 
   /**

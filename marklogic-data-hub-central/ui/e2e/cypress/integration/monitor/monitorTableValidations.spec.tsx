@@ -34,11 +34,11 @@ describe("Monitor Tile", () => {
   });
 
   it("apply facet search and verify docs", () => {
-    cy.get("[id^=expandBtn]").click({force: true});
     monitorPage.validateAppliedFacetTableRows("step-type", 1);
   });
 
   it("apply facet search and clear individual grey facet", () => {
+    monitorPage.getExpandAllTableRows().scrollIntoView().click({force: true});
     monitorPage.validateClearGreyFacet("step-type", 0);
   });
 
