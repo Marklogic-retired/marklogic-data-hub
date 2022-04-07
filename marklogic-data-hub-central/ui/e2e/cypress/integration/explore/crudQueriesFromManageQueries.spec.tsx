@@ -162,7 +162,7 @@ describe("manage queries modal scenarios, developer role", () => {
     entitiesSidebar.selectBaseEntityOption("Person");
     entitiesSidebar.getBaseEntityOption("Person").should("be.visible");
     entitiesSidebar.openBaseEntityFacets("Person");
-    browsePage.getShowMoreLink("fname").click();
+    browsePage.getShowMoreLink("fname").should("be.visible").click();
     browsePage.getFacetItemCheckbox("fname", "Alice").click();
     browsePage.getSelectedFacets().should("exist");
     browsePage.getFacetApplyButton().click();
@@ -212,6 +212,7 @@ describe("manage queries modal scenarios, developer role", () => {
     entitiesSidebar.selectBaseEntityOption("Person");
     entitiesSidebar.getBaseEntityOption("Person").should("be.visible");
     entitiesSidebar.openBaseEntityFacets("Person");
+    browsePage.getShowMoreLink("fname").should("be.visible").click();
     browsePage.getFacetItemCheckbox("fname", "Alice").click();
     browsePage.getSelectedFacets().should("exist");
     browsePage.getFacetApplyButton().click();
@@ -257,6 +258,7 @@ describe("manage queries modal scenarios, developer role", () => {
     entitiesSidebar.getBaseEntityOption("Person").should("be.visible");
     //create a query
     entitiesSidebar.openBaseEntityFacets("Person");
+    browsePage.getShowMoreLink("fname").should("be.visible").click();
     browsePage.getFacetItemCheckbox("fname", "Alice").click();
     browsePage.getSelectedFacets().should("exist");
     browsePage.getFacetApplyButton().click();
