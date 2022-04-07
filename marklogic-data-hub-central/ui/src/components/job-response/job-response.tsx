@@ -11,7 +11,7 @@ import {getMappingArtifactByStepName} from "../../api/mapping";
 import {useHistory} from "react-router-dom";
 import Spinner from "react-bootstrap/Spinner";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faClock} from "@fortawesome/free-solid-svg-icons";
+import {faClock, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import "./job-response.scss";
 import {CheckCircleFill, ExclamationCircleFill} from "react-bootstrap-icons";
 
@@ -24,7 +24,7 @@ type Props = {
 const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, openJobResponse}) => {
   const [jobResponse, setJobResponse] = useState<any>({});
   //const [lastSuccessfulStep, setLastSuccessfulStep] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [timeoutId, setTimeoutId] = useState<any>();
   const {handleError} = useContext(UserContext);
   const {setLatestDatabase, setLatestJobFacet} = useContext(SearchContext);
   const history: any = useHistory();
@@ -37,7 +37,7 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, openJobRespons
 
   const retrieveJobDoc = async () => {
     try {
-      setIsLoading(true);
+      clearTimeout(timeoutId);
       let response = await axios.get("/api/jobs/" + jobId);
       if (response.status === 200) {
         setJobResponse(response.data);
@@ -49,13 +49,11 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, openJobRespons
         if (isRunning(response.data)) {
           const duration = durationFromDateTime(response.data.timeStarted);
           setJobResponse(Object.assign({}, response.data, {duration}));
-          retrieveJobDoc();
+          setTimeoutId(setTimeout(() => { retrieveJobDoc(); }, 3000));
         }
       }
     } catch (error) {
       handleError(error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -164,7 +162,7 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, openJobRespons
       key: "action",
       dataField: "successfulEvents",
       width: "25%",
-      headerFormatter: (column) => <span className={styles.actionHeader}><strong>Action</strong><HCTooltip text={RunToolTips.exploreStepData} id="explore-data" placement="top"><ExclamationCircleFill data-icon="exclamation-circle" aria-label="icon: exclamation-circle" className={styles.infoIcon} /></HCTooltip></span>,
+      headerFormatter: (column) => <span className={styles.actionHeader}><strong>Action</strong><HCTooltip text={RunToolTips.exploreStepData} id="explore-data" placement="top"><FontAwesomeIcon icon={faInfoCircle} size="1x" aria-label="icon: info-circle" className={styles.infoIcon}/></HCTooltip></span>,
       formatter: (successfulEvents, response) => {
         const {targetEntityType, targetDatabase, stepDefinitionType, stepName, stepEndTime} = response;
         const stepIsFinished = stepEndTime && stepEndTime !== "N/A";
@@ -254,7 +252,7 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, openJobRespons
     <Modal.Header className={"bb-none"} aria-label="job-response-modal-header">
       {isRunning(jobResponse) ?
         <span className={`fs-5 ${styles.title}`} aria-label={`${jobResponse.flow}-running`}>
-            The flow <strong>{jobResponse.flow}</strong> is running
+          The flow <strong>{jobResponse.flow}</strong> is running
           {/* TO BE REPLACED WITH STOP RUNNING ICON <a onClick={() => retrieveJobDoc()}><FontAwesomeIcon icon={faSync} data-testid={"job-response-refresh"} /></a> */}
         </span>
         :
@@ -262,7 +260,7 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, openJobRespons
       <button type="button" className="btn-close" aria-label={`${jobResponse.flow}-close`} data-testid={`${jobResponse.flow}-close`} onClick={() => setOpenJobResponse(false)}></button>
     </Modal.Header>
     <Modal.Body>
-      <div aria-label="jobResponse" id="jobResponse" style={isLoading ? {display: "none"} : {}} className={styles.jobResponseContainer} >
+      <div aria-label="jobResponse" id="jobResponse" className={styles.jobResponseContainer} >
         <div>
           <div className={styles.descriptionContainer}>
             <div key={"jobId"}><span className={styles.descriptionLabel}>Job ID:</span><strong>{jobId}</strong></div>
