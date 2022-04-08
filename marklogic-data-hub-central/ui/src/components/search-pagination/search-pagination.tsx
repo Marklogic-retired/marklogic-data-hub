@@ -61,22 +61,17 @@ const SearchPagination: React.FC<Props> = (props) => {
     }
   };
 
-  let isPageNumberOutOfRange;
-
   const renderPages = [...new Array(totalPage)].map((_, index) => {
     const {pageNumber: currentPage} = props;
     const pageNumber = index + 1;
-    const isPageNumberFirst = pageNumber === 1;
-    const isPageNumberLast = pageNumber === totalPage;
-    const isCurrentPageWithinTwoPageNumbers =
-      Math.abs(pageNumber - currentPage) <= 2;
+    const isFirstPageActive = currentPage === 1;
+    const isSecondPageActive = currentPage === 2;
+    const isLastPageActive = currentPage === totalPage;
+    const isSecondLastPageActive = currentPage === (totalPage - 1);
+    const rangeLimit = isFirstPageActive || isLastPageActive ? 4 : (isSecondPageActive || isSecondLastPageActive ? 3 : 2);
+    const isCurrentPageWithinRangeLimit = Math.abs(pageNumber - currentPage) <= rangeLimit;
 
-    if (
-      isPageNumberFirst ||
-      isPageNumberLast ||
-      isCurrentPageWithinTwoPageNumbers
-    ) {
-      isPageNumberOutOfRange = false;
+    if (isCurrentPageWithinRangeLimit) {
       return (
         <Pagination.Item
           key={pageNumber}
@@ -87,11 +82,6 @@ const SearchPagination: React.FC<Props> = (props) => {
           {pageNumber}
         </Pagination.Item>
       );
-    }
-
-    if (!isPageNumberOutOfRange) {
-      isPageNumberOutOfRange = true;
-      return <Pagination.Ellipsis key={pageNumber} className="muted" />;
     }
 
     return null;
