@@ -317,7 +317,19 @@
             "fontStyle": "normal"
           }
         },
-        "status": { "path": "extracted.person.status" }
+        "status": { "path": "extracted.person.status" },
+        "resultActions": {
+          "component": "ResultActions",
+          "config": {
+            "id": "resultActions",
+            "arrayPath": "person.actions.action",
+            "action": {
+              "icon": "icon",
+              "color": "color",
+              "url": "url"
+            }
+          }
+        }
       }
     }
   },

@@ -1,0 +1,9 @@
+.ResultActions-item {
+    font-size: 12px;
+    ~ .ResultActions-item {
+        padding-left: 10px;
+    }
+    svg {
+        width: 12px;
+    }
+}
