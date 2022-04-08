@@ -7,10 +7,10 @@ import List from "../List/List";
 import Value from "../Value/Value";
 import {SearchContext} from "../../store/SearchContext";
 import {DetailContext} from "../../store/DetailContext";
-import {GearFill, CodeSlash, ArrowRepeat} from "react-bootstrap-icons";
 import "./ResultsList.scss";
 import {getValByConfig} from "../../util/util";
 import Pagination from "../Pagination/Pagination";
+import ResultActions from "../ResultActions/ResultActions";
 
 type Props = {
   config?: any;
@@ -20,7 +20,8 @@ const COMPONENTS = {
   Address: Address,
   DateTime: DateTime,
   Image: Image,
-  Value: Value
+  Value: Value,
+  ResultActions: ResultActions
 }
 
 /**
@@ -146,9 +147,10 @@ const ResultsList: React.FC<Props> = (props) => {
                 <div className="status">
                   <Value data={results} config={props.config.status} getFirst={true} />
                 </div> : null}
-              <GearFill color="#5d6aaa" size={16} />
-              <CodeSlash color="#5d6aaa" size={16} />
-              <ArrowRepeat color="#5d6aaa" size={16} />
+              {React.createElement(
+                COMPONENTS[props.config.resultActions.component],
+                {config: props.config?.resultActions.config, data: results?.extracted}, null
+              )}
             </div>
           </div>
         </div>

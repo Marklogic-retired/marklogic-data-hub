@@ -202,4 +202,18 @@
       <icon>faComments</icon>
     </link>
   </links>
+<actions>
+  <action>
+    <url>http://oaic.gov.au</url>
+    <icon>faCog</icon>
+  </action>
+  <action>
+    <url>https://multiply.com</url>
+    <icon>faCode</icon>
+  </action>
+  <action>
+    <url>http://addthis.com</url>
+    <icon>faSync</icon>
+  </action>
+</actions>
 </person>
