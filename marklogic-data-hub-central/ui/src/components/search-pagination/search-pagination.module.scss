@@ -11,6 +11,9 @@
     gap: 4px;
 }
 .paginationWrapper {
+    li[class="page-item"] {
+        margin-top: 2px;
+    }
     li[class="page-item active"] {
         border: none;
         margin-left: 0 !important;
@@ -21,6 +24,7 @@
             color: $primary;
             border-radius: 4px;
             padding: 1px 7px;
+            @extend li[class="page-item"];
         }
     }
     a[class="page-link"],
@@ -28,7 +32,7 @@
         margin-left: 0 !important;
         border: none;
         background: #fff;
-        padding: 2px 8px;
+        padding: 2px 8px 0px 8px;
         &:focus,
         &:hover {
             border: none;
