@@ -147,10 +147,12 @@ const ResultsList: React.FC<Props> = (props) => {
                 <div className="status">
                   <Value data={results} config={props.config.status} getFirst={true} />
                 </div> : null}
-              {React.createElement(
-                COMPONENTS[props.config.resultActions.component],
-                {config: props.config?.resultActions.config, data: results?.extracted}, null
-              )}
+              {props.config.resultActions?.component ?
+                React.createElement(
+                  COMPONENTS[props.config.resultActions.component],
+                  {config: props.config?.resultActions.config, data: results?.extracted}, null
+                )
+              : null}
             </div>
           </div>
         </div>
