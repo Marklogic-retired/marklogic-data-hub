@@ -8,6 +8,7 @@ import "./ResultActions.scss"
 type Props = {
   data?: any;
   config?: any;
+  className?: string;
   style?: React.CSSProperties
 };
 
@@ -45,9 +46,14 @@ const ResultActions: React.FC<Props> = (props) => {
       let colorValue: any = _.get(action, color, null);
       let urlValue: any = _.get(action, url, null);
       let iconElement = FaDictionary[iconValue];
+
+      let iconClassName: any = props.className ? props.className : props.config?.className ? props.config.className : "";
+      let iconStyle: any = props.style ? props.style : props.config?.style ? props.config.style : {};
+      iconStyle = {...iconStyle, color: colorValue ? colorValue : '#5d6aaa'};
+
       return (
         <a href={urlValue ? urlValue : "#"} target="_blank" className="ResultActions-item" key={index} data-testid={`action-item-${index}`}>
-          <span style={{color: colorValue ? colorValue : '#5d6aaa'}}><FontAwesomeIcon icon={iconElement} /></span>
+          <span className={iconClassName} style={iconStyle}><FontAwesomeIcon icon={iconElement} /></span>
         </a>
       )
     })

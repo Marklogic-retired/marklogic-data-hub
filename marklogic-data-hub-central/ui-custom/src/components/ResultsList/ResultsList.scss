@@ -66,14 +66,16 @@
             display: flex;
             flex-flow: column wrap;
             justify-content: space-between;
-            width: 245px;
+            max-width: 260px;
             height: 80px;
             padding: 0 10px 0 20px;
             font-size: 15px;
             .icons {
+                align-self: flex-end;
+                white-space: nowrap;
                 .status {
                     display: inline-block;
-                    width: 105px;
+                    width: 100px;
                     font-weight: bold;
                 }
                 svg {
