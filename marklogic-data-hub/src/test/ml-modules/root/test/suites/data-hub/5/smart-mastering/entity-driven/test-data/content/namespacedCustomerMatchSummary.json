@@ -9,7 +9,8 @@
         "action": "merge",
         "uris": [
           "/content/NsCustMatchMerge1.xml",
-          "/content/NsCustMatchMerge2.xml"
+          "/content/NsCustMatchMerge2.xml",
+          "/content/NsCustMatchMerge3.xml"
         ]
       },
       "NsCustMergedTimestamp": {

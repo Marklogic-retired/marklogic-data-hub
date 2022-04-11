@@ -2,7 +2,7 @@
 <envelope xmlns="http://marklogic.com/entity-services">
     <headers>
         <sources xmlns="">
-            <name>source 2</name>
+            <name>source 3</name>
         </sources>
         <createdOn xmlns="">2021-12-31T05:27:43.360675Z</createdOn>
         <createdBy xmlns="">admin</createdBy>
@@ -48,7 +48,7 @@
                 <exAddress:Address xmlns:exAddress="http://example.org/address">
                     <exAddress:street>Sunnyside Avenue</exAddress:street>
                     <exAddress:city>Brutus</exAddress:city>
-                    <exAddress:state>Wisconsin</exAddress:state>
+                    <exAddress:state>WI</exAddress:state>
                     <exAddress:zip>
                         <exZip:Zip xmlns:exZip="http://example.org/zip">
                             <exZip:fiveDigit>30706</exZip:fiveDigit>
