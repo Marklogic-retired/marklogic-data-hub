@@ -24,6 +24,11 @@
       "privilege-name": "unprotected-uri",
       "action": "http://marklogic.com/xdmp/privileges/unprotected-uri",
       "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:value",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-value",
+      "kind": "execute"
     }
   ]
 }
