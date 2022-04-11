@@ -82,11 +82,12 @@ class Search {
       searchConstraint.push(facetConstraint)
     }
     searchConstraint = searchConstraint.join(" AND ");
-
-    let searchResponse = searchImpl.getSearchResults(searchConstraint, entityTypeIds[0], start, pageLength).toObject();
+    const xpath = "$result/search:result/search:extracted/*[" + entityTypeIds.map(val => "name()='".concat(val).concat("'")).join(" or ") + "]//*/name(.)";
+    let searchResponse = searchImpl.getSearchResults(searchConstraint, xpath, start, pageLength).toObject();
     let results = searchResponse["response"]["result"];
     if(results) {
       results.forEach(result => {
+        result["entityType"] = Object.keys(result["extracted"])[1];
         entityTypeIds.forEach(entityTypeId => {
           let jsonObject = result["extracted"][entityTypeId];
           if(jsonObject) {
