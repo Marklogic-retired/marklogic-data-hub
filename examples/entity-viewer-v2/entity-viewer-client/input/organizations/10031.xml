@@ -1,0 +1,61 @@
+<organization>
+	<organizationId>10031</organizationId>
+	<names>
+		<name>
+			<value>Kuvalis, Durgan and Dach</value>
+			<classification>C</classification>
+			<restricted>false</restricted>
+			<source>
+				<name>New York Times</name>
+				<ts>2022-02-18T08:16:00Z</ts>
+			</source>
+		</name>
+	</names>
+	<types>
+		<type>Employer</type>
+	</types>
+	<country>China</country>
+	<areas>
+		<area>APAC</area>
+	</areas>
+	<images>
+		<image>
+			<url>/images/organizations/office.jpg</url>
+			<source>New York Times</source>
+		</image>
+		<image>
+			<url>/images/organizations/office.jpg</url>
+			<source>Chicago Tribune</source>
+		</image>
+		<image>
+			<url>/images/organizations/church.jpg</url>
+			<source>USA Today</source>
+		</image>
+		<image>
+			<url>/images/organizations/capitol.jpg</url>
+			<source>USA Today</source>
+		</image>
+	</images>
+	<sources>
+		<source>
+			<name>USA Today</name>
+			<ts>2020-06-18T07:38:53Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>Chicago Tribune</name>
+			<ts>2019-07-21T17:28:00Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>New York Times</name>
+			<ts>2014-08-15T19:36:00Z</ts>
+		</source>
+	</sources>
+	<createdOn>
+		<ts>2022-01-23T09:33:06Z</ts>
+		<user>jzambonu</user>
+	</createdOn>
+</organization>

@@ -1,0 +1,49 @@
+<organization>
+	<organizationId>10022</organizationId>
+	<names>
+		<name>
+			<value>Reinger-Rempel</value>
+			<classification>U</classification>
+			<restricted>true</restricted>
+			<source>
+				<name>Los Angeles Times</name>
+				<ts>2021-07-12T12:32:38Z</ts>
+			</source>
+		</name>
+	</names>
+	<types>
+		<type>Employer</type>
+	</types>
+	<country>China</country>
+	<areas>
+		<area>APAC</area>
+	</areas>
+	<images>
+		<image>
+			<url>/images/organizations/port.jpg</url>
+			<source>USA Today</source>
+		</image>
+	</images>
+	<sources>
+		<source>
+			<name>USA Today</name>
+			<ts>2012-12-23T18:17:23Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>USA Today</name>
+			<ts>2020-07-30T10:32:56Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>New York Times</name>
+			<ts>2013-03-27T03:23:36Z</ts>
+		</source>
+	</sources>
+	<createdOn>
+		<ts>2022-02-02T02:32:14Z</ts>
+		<user>ghuburnl</user>
+	</createdOn>
+</organization>

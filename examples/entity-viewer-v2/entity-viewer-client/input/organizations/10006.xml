@@ -1,0 +1,57 @@
+<organization>
+	<organizationId>10006</organizationId>
+	<names>
+		<name>
+			<value>Hand-Altenwerth</value>
+			<classification>C</classification>
+			<restricted>false</restricted>
+			<source>
+				<name>Wall Street Journal</name>
+				<ts>2021-08-19T06:23:00Z</ts>
+			</source>
+		</name>
+	</names>
+	<types>
+		<type>Employer</type>
+	</types>
+	<country>Nicaragua</country>
+	<areas>
+		<area>World Wide</area>
+	</areas>
+	<images>
+		<image>
+			<url>/images/organizations/port.jpg</url>
+			<source>New York Times</source>
+		</image>
+		<image>
+			<url>/images/organizations/office.jpg</url>
+			<source>Chicago Tribune</source>
+		</image>
+		<image>
+			<url>/images/organizations/office.jpg</url>
+			<source>Chicago Tribune</source>
+		</image>
+	</images>
+	<sources>
+		<source>
+			<name>New York Times</name>
+			<ts>2017-03-15T00:01:49Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>New York Times</name>
+			<ts>2017-05-03T17:18:33Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>New York Times</name>
+			<ts>2014-12-09T07:31:58Z</ts>
+		</source>
+	</sources>
+	<createdOn>
+		<ts>2022-02-19T10:25:07Z</ts>
+		<user>gbasford5</user>
+	</createdOn>
+</organization>

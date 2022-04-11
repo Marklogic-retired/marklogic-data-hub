@@ -24,6 +24,14 @@
             "namespace-uri": null,
             "range-value-positions": false,
             "scalar-type": "string"
+        },
+        {
+            "collation": "http://marklogic.com/collation/codepoint",
+            "invalid-values": "reject",
+            "localname": "area",
+            "namespace-uri": null,
+            "range-value-positions": false,
+            "scalar-type": "string"
         }
     ],
     "range-path-index": [

@@ -1,0 +1,51 @@
+<organization>
+	<organizationId>10002</organizationId>
+	<names>
+		<name>
+			<value>Littel-Nolan</value>
+			<classification>C</classification>
+			<restricted>false</restricted>
+			<source>
+				<name>Chicago Tribune</name>
+				<ts>2021-09-30T21:58:50Z</ts>
+			</source>
+		</name>
+	</names>
+	<types>
+		<type>Non-Governmental Organization</type>
+	</types>
+	<country>China</country>
+	<areas>
+		<area>APAC</area>
+	</areas>
+	<images>
+		<image>
+			<url>/images/organizations/factory.jpg</url>
+			<source>New York Times</source>
+		</image>
+		<image>
+			<url>/images/organizations/church.jpg</url>
+			<source>Chicago Tribune</source>
+		</image>
+		<image>
+			<url>/images/organizations/church.jpg</url>
+			<source>Chicago Tribune</source>
+		</image>
+	</images>
+	<sources>
+		<source>
+			<name>Chicago Tribune</name>
+			<ts>2018-03-11T09:47:36Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>Los Angeles Times</name>
+			<ts>2016-09-25T20:46:20Z</ts>
+		</source>
+	</sources>
+	<createdOn>
+		<ts>2022-02-02T22:34:22Z</ts>
+		<user>hhaggard1</user>
+	</createdOn>
+</organization>

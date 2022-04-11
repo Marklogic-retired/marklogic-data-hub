@@ -1,0 +1,43 @@
+<organization>
+	<organizationId>10010</organizationId>
+	<names>
+		<name>
+			<value>Marvin, Baumbach and Ortiz</value>
+			<classification>U</classification>
+			<restricted>false</restricted>
+			<source>
+				<name>USA Today</name>
+				<ts>2021-02-06T05:12:02Z</ts>
+			</source>
+		</name>
+	</names>
+	<types>
+		<type>Social Club</type>
+	</types>
+	<country>Portugal</country>
+	<areas>
+		<area>APAC</area>
+	</areas>
+	<images>
+		<image>
+			<url>/images/organizations/port.jpg</url>
+			<source>Los Angeles Times</source>
+		</image>
+	</images>
+	<sources>
+		<source>
+			<name>Chicago Tribune</name>
+			<ts>2019-09-28T18:37:54Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>New York Times</name>
+			<ts>2017-01-05T07:26:14Z</ts>
+		</source>
+	</sources>
+	<createdOn>
+		<ts>2022-01-28T17:01:58Z</ts>
+		<user>ctrim9</user>
+	</createdOn>
+</organization>

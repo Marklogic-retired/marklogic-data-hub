@@ -1,0 +1,45 @@
+<organization>
+	<organizationId>10027</organizationId>
+	<names>
+		<name>
+			<value>Maggio-Kreiger</value>
+			<classification>U</classification>
+			<restricted>true</restricted>
+			<source>
+				<name>Los Angeles Times</name>
+				<ts>2021-09-06T12:14:37Z</ts>
+			</source>
+		</name>
+	</names>
+	<types>
+		<type>Social Club</type>
+	</types>
+	<country>Portugal</country>
+	<areas>
+		<area>Europe</area>
+	</areas>
+	<images>
+		<image>
+			<url>/images/organizations/factory.jpg</url>
+			<source>New York Times</source>
+		</image>
+		<image>
+			<url>/images/organizations/capitol.jpg</url>
+			<source>Los Angeles Times</source>
+		</image>
+		<image>
+			<url>/images/organizations/factory.jpg</url>
+			<source>New York Times</source>
+		</image>
+	</images>
+	<sources>
+		<source>
+			<name>Wall Street Journal</name>
+			<ts>2013-02-18T09:49:55Z</ts>
+		</source>
+	</sources>
+	<createdOn>
+		<ts>2022-01-28T21:36:55Z</ts>
+		<user>nmariaudq</user>
+	</createdOn>
+</organization>

@@ -1,0 +1,47 @@
+<organization>
+	<organizationId>10009</organizationId>
+	<names>
+		<name>
+			<value>Hartmann-Vandervort</value>
+			<classification>U</classification>
+			<restricted>false</restricted>
+			<source>
+				<name>Wall Street Journal</name>
+				<ts>2021-06-22T16:07:29Z</ts>
+			</source>
+		</name>
+	</names>
+	<types>
+		<type>Governmental Organization</type>
+	</types>
+	<country>Colombia</country>
+	<areas>
+		<area>Europe</area>
+	</areas>
+	<images>
+		<image>
+			<url>/images/organizations/port.jpg</url>
+			<source>Wall Street Journal</source>
+		</image>
+		<image>
+			<url>/images/organizations/church.jpg</url>
+			<source>Los Angeles Times</source>
+		</image>
+	</images>
+	<sources>
+		<source>
+			<name>New York Times</name>
+			<ts>2013-09-16T20:05:35Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>New York Times</name>
+			<ts>2018-03-04T17:22:21Z</ts>
+		</source>
+	</sources>
+	<createdOn>
+		<ts>2022-02-22T19:17:41Z</ts>
+		<user>ynorthgraves8</user>
+	</createdOn>
+</organization>

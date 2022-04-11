@@ -1,0 +1,49 @@
+<organization>
+	<organizationId>10021</organizationId>
+	<names>
+		<name>
+			<value>Gusikowski LLC</value>
+			<classification>C</classification>
+			<restricted>true</restricted>
+			<source>
+				<name>Washington Post</name>
+				<ts>2021-10-27T03:42:25Z</ts>
+			</source>
+		</name>
+	</names>
+	<types>
+		<type>Governmental Organization</type>
+	</types>
+	<country>Philippines</country>
+	<areas>
+		<area>NA</area>
+	</areas>
+	<images>
+		<image>
+			<url>/images/organizations/church.jpg</url>
+			<source>Los Angeles Times</source>
+		</image>
+		<image>
+			<url>/images/organizations/office.jpg</url>
+			<source>Chicago Tribune</source>
+		</image>
+		<image>
+			<url>/images/organizations/church.jpg</url>
+			<source>USA Today</source>
+		</image>
+		<image>
+			<url>/images/organizations/church.jpg</url>
+			<source>USA Today</source>
+		</image>
+	</images>
+	<sources>
+		<source>
+			<name>Wall Street Journal</name>
+			<ts>2017-08-24T16:14:54Z</ts>
+		</source>
+	</sources>
+	<createdOn>
+		<ts>2022-01-31T01:53:11Z</ts>
+		<user>dwallworthk</user>
+	</createdOn>
+</organization>

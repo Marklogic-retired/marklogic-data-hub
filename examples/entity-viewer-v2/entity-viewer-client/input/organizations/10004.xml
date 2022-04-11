@@ -1,0 +1,55 @@
+<organization>
+	<organizationId>10004</organizationId>
+	<names>
+		<name>
+			<value>Reichel LLC</value>
+			<classification>S</classification>
+			<restricted>true</restricted>
+			<source>
+				<name>USA Today</name>
+				<ts>2021-11-03T07:16:57Z</ts>
+			</source>
+		</name>
+	</names>
+	<types>
+		<type>Employer</type>
+	</types>
+	<country>Russia</country>
+	<areas>
+		<area>APAC</area>
+	</areas>
+	<images>
+		<image>
+			<url>/images/organizations/church.jpg</url>
+			<source>Chicago Tribune</source>
+		</image>
+		<image>
+			<url>/images/organizations/factory.jpg</url>
+			<source>New York Times</source>
+		</image>
+		<image>
+			<url>/images/organizations/factory.jpg</url>
+			<source>Washington Post</source>
+		</image>
+		<image>
+			<url>/images/organizations/church.jpg</url>
+			<source>Chicago Tribune</source>
+		</image>
+	</images>
+	<sources>
+		<source>
+			<name>Chicago Tribune</name>
+			<ts>2013-11-19T14:09:14Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>USA Today</name>
+			<ts>2021-11-01T03:21:15Z</ts>
+		</source>
+	</sources>
+	<createdOn>
+		<ts>2022-02-12T14:50:12Z</ts>
+		<user>sbridgwater3</user>
+	</createdOn>
+</organization>

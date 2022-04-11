@@ -1,0 +1,37 @@
+<organization>
+	<organizationId>10018</organizationId>
+	<names>
+		<name>
+			<value>Predovic-Brown</value>
+			<classification>U</classification>
+			<restricted>false</restricted>
+			<source>
+				<name>New York Times</name>
+				<ts>2020-12-11T06:26:59Z</ts>
+			</source>
+		</name>
+	</names>
+	<types>
+		<type>Non-Governmental Organization</type>
+	</types>
+	<country>Namibia</country>
+	<areas>
+		<area>NA</area>
+	</areas>
+	<images>
+		<image>
+			<url>/images/organizations/port.jpg</url>
+			<source>Washington Post</source>
+		</image>
+	</images>
+	<sources>
+		<source>
+			<name>USA Today</name>
+			<ts>2010-07-24T04:58:43Z</ts>
+		</source>
+	</sources>
+	<createdOn>
+		<ts>2022-02-17T22:52:13Z</ts>
+		<user>azanollih</user>
+	</createdOn>
+</organization>

@@ -1,0 +1,49 @@
+<organization>
+	<organizationId>10003</organizationId>
+	<names>
+		<name>
+			<value>Bayer, Zemlak and Stoltenberg</value>
+			<classification>C</classification>
+			<restricted>false</restricted>
+			<source>
+				<name>New York Times</name>
+				<ts>2020-07-29T01:52:47Z</ts>
+			</source>
+		</name>
+	</names>
+	<types>
+		<type>Non-Governmental Organization</type>
+	</types>
+	<country>Tunisia</country>
+	<areas>
+		<area>World Wide</area>
+	</areas>
+	<images>
+		<image>
+			<url>/images/organizations/office.jpg</url>
+			<source>Washington Post</source>
+		</image>
+		<image>
+			<url>/images/organizations/port.jpg</url>
+			<source>USA Today</source>
+		</image>
+		<image>
+			<url>/images/organizations/office.jpg</url>
+			<source>Washington Post</source>
+		</image>
+		<image>
+			<url>/images/organizations/office.jpg</url>
+			<source>New York Times</source>
+		</image>
+	</images>
+	<sources>
+		<source>
+			<name>Los Angeles Times</name>
+			<ts>2011-10-01T11:42:55Z</ts>
+		</source>
+	</sources>
+	<createdOn>
+		<ts>2022-02-13T23:02:01Z</ts>
+		<user>vmacrury2</user>
+	</createdOn>
+</organization>

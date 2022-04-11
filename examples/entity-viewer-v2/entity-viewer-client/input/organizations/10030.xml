@@ -1,0 +1,49 @@
+<organization>
+	<organizationId>10030</organizationId>
+	<names>
+		<name>
+			<value>O'Hara-Halvorson</value>
+			<classification>S</classification>
+			<restricted>false</restricted>
+			<source>
+				<name>Los Angeles Times</name>
+				<ts>2021-10-14T02:08:13Z</ts>
+			</source>
+		</name>
+	</names>
+	<types>
+		<type>Employer</type>
+	</types>
+	<country>United States</country>
+	<areas>
+		<area>World Wide</area>
+	</areas>
+	<images>
+		<image>
+			<url>/images/organizations/church.jpg</url>
+			<source>Wall Street Journal</source>
+		</image>
+		<image>
+			<url>/images/organizations/capitol.jpg</url>
+			<source>Washington Post</source>
+		</image>
+		<image>
+			<url>/images/organizations/factory.jpg</url>
+			<source>USA Today</source>
+		</image>
+		<image>
+			<url>/images/organizations/factory.jpg</url>
+			<source>Washington Post</source>
+		</image>
+	</images>
+	<sources>
+		<source>
+			<name>Chicago Tribune</name>
+			<ts>2012-05-07T12:16:43Z</ts>
+		</source>
+	</sources>
+	<createdOn>
+		<ts>2022-01-08T17:38:22Z</ts>
+		<user>mglencrosst</user>
+	</createdOn>
+</organization>
