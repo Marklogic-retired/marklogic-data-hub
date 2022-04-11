@@ -1,0 +1,53 @@
+<organization>
+	<organizationId>10026</organizationId>
+	<names>
+		<name>
+			<value>Steuber-Runolfsson</value>
+			<classification>C</classification>
+			<restricted>true</restricted>
+			<source>
+				<name>New York Times</name>
+				<ts>2020-06-19T15:30:25Z</ts>
+			</source>
+		</name>
+	</names>
+	<types>
+		<type>Social Club</type>
+	</types>
+	<country>Russia</country>
+	<areas>
+		<area>NA</area>
+	</areas>
+	<images>
+		<image>
+			<url>/images/organizations/factory.jpg</url>
+			<source>Wall Street Journal</source>
+		</image>
+		<image>
+			<url>/images/organizations/office.jpg</url>
+			<source>USA Today</source>
+		</image>
+	</images>
+	<sources>
+		<source>
+			<name>Wall Street Journal</name>
+			<ts>2010-08-23T09:30:30Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>Wall Street Journal</name>
+			<ts>2019-06-07T15:22:51Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>USA Today</name>
+			<ts>2013-07-26T08:02:47Z</ts>
+		</source>
+	</sources>
+	<createdOn>
+		<ts>2022-02-16T13:21:05Z</ts>
+		<user>fpovahp</user>
+	</createdOn>
+</organization>

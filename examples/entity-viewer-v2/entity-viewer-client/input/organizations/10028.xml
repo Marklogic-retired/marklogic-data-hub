@@ -1,0 +1,49 @@
+<organization>
+	<organizationId>10028</organizationId>
+	<names>
+		<name>
+			<value>Wuckert and Sons</value>
+			<classification>S</classification>
+			<restricted>true</restricted>
+			<source>
+				<name>Wall Street Journal</name>
+				<ts>2022-03-29T11:20:32Z</ts>
+			</source>
+		</name>
+	</names>
+	<types>
+		<type>Non-Governmental Organization</type>
+	</types>
+	<country>China</country>
+	<areas>
+		<area>World Wide</area>
+	</areas>
+	<images>
+		<image>
+			<url>/images/organizations/office.jpg</url>
+			<source>Washington Post</source>
+		</image>
+	</images>
+	<sources>
+		<source>
+			<name>Los Angeles Times</name>
+			<ts>2013-06-26T22:05:10Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>USA Today</name>
+			<ts>2016-07-29T22:05:22Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>Wall Street Journal</name>
+			<ts>2018-09-19T12:39:42Z</ts>
+		</source>
+	</sources>
+	<createdOn>
+		<ts>2022-02-16T04:46:17Z</ts>
+		<user>bmacadier</user>
+	</createdOn>
+</organization>

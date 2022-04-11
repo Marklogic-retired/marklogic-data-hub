@@ -31,14 +31,31 @@ task importPersonsViaMlcp(type: com.marklogic.gradle.task.MlcpTask) {
     username = "admin"
     password = "admin"
     output_collections = "person"
-    input_file_path = "input"
+    input_file_path = "input/persons"
     input_file_type = "documents"
     output_collections = "person"
     output_permissions = "rest-reader,read,rest-reader,update"
-    output_uri_replace = ".*input,'/record'"
+    output_uri_replace = ".*input/persons,'/person'"
     mode = "local"
 }
 
-mlDeploy.finalizedBy importPersonsViaMlcp
+task importOrganizationsViaMlcp(type: com.marklogic.gradle.task.MlcpTask) {
+    description = "Load organization docs"
+    classpath = configurations.mlcp
+    command = "IMPORT"
+    port = 8099
+    host = "localhost"
+    username = "admin"
+    password = "admin"
+    output_collections = "organization"
+    input_file_path = "input/organizations"
+    input_file_type = "documents"
+    output_collections = "organization"
+    output_permissions = "rest-reader,read,rest-reader,update"
+    output_uri_replace = ".*input/organizations,'/organization'"
+    mode = "local"
+}
+
+mlDeploy.finalizedBy importPersonsViaMlcp, importOrganizationsViaMlcp
 
 

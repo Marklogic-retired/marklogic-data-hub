@@ -1,0 +1,53 @@
+<organization>
+	<organizationId>10032</organizationId>
+	<names>
+		<name>
+			<value>Reilly, Christiansen and Brekke</value>
+			<classification>U</classification>
+			<restricted>false</restricted>
+			<source>
+				<name>Los Angeles Times</name>
+				<ts>2020-08-03T09:13:03Z</ts>
+			</source>
+		</name>
+	</names>
+	<types>
+		<type>Governmental Organization</type>
+	</types>
+	<country>Russia</country>
+	<areas>
+		<area>NA</area>
+	</areas>
+	<images>
+		<image>
+			<url>/images/organizations/church.jpg</url>
+			<source>Chicago Tribune</source>
+		</image>
+		<image>
+			<url>/images/organizations/factory.jpg</url>
+			<source>Los Angeles Times</source>
+		</image>
+	</images>
+	<sources>
+		<source>
+			<name>Los Angeles Times</name>
+			<ts>2020-02-02T18:35:35Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>New York Times</name>
+			<ts>2015-02-05T00:19:17Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>USA Today</name>
+			<ts>2010-01-08T13:23:24Z</ts>
+		</source>
+	</sources>
+	<createdOn>
+		<ts>2022-02-20T04:11:37Z</ts>
+		<user>ngramerv</user>
+	</createdOn>
+</organization>

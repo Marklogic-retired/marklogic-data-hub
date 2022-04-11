@@ -1,0 +1,49 @@
+<organization>
+	<organizationId>10023</organizationId>
+	<names>
+		<name>
+			<value>Schumm-Roob</value>
+			<classification>S</classification>
+			<restricted>false</restricted>
+			<source>
+				<name>Los Angeles Times</name>
+				<ts>2020-10-30T13:29:26Z</ts>
+			</source>
+		</name>
+	</names>
+	<types>
+		<type>Governmental Organization</type>
+	</types>
+	<country>Indonesia</country>
+	<areas>
+		<area>APAC</area>
+	</areas>
+	<images>
+		<image>
+			<url>/images/organizations/church.jpg</url>
+			<source>Los Angeles Times</source>
+		</image>
+	</images>
+	<sources>
+		<source>
+			<name>Chicago Tribune</name>
+			<ts>2013-05-12T20:13:01Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>Los Angeles Times</name>
+			<ts>2017-05-13T16:24:52Z</ts>
+		</source>
+	</sources>
+	<sources>
+		<source>
+			<name>Chicago Tribune</name>
+			<ts>2021-01-05T19:46:27Z</ts>
+		</source>
+	</sources>
+	<createdOn>
+		<ts>2022-02-08T18:09:08Z</ts>
+		<user>lgoldbergm</user>
+	</createdOn>
+</organization>

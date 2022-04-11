@@ -1,0 +1,42 @@
+<organization>
+	<organizationId>10040</organizationId>
+	<names>
+		<name>
+			<value>Towne, Emard and Brakus</value>
+			<classification>U</classification>
+			<restricted>true</restricted>
+			<source>
+				<name>Wall Street Journal</name>
+				<ts>2021-07-12T06:29:11Z</ts>
+			</source>
+		</name>
+	</names>
+	<types>
+		<type>Employer</type>
+	</types>
+	<country>Kosovo</country>
+	<areas>
+		<area>Europe</area>
+	</areas>
+	<images>
+		<image>
+			<url>/images/organizations/capitol.jpg</url>
+			<source>Washington Post</source>
+		</image>
+		<image>
+			<url>/images/organizations/church.jpg</url>
+			<source>New York Times</source>
+		</image>
+	</images>
+	<sources>
+		<source>
+			<name>Los Angeles Times</name>
+			<ts>2016-01-26T14:22:47Z</ts>
+		</source>
+	</sources>
+	<createdOn>
+		<ts>2022-02-16T19:42:20Z</ts>
+		<user>ehrus13</user>
+	</createdOn>
+</organization>
+/organizations>

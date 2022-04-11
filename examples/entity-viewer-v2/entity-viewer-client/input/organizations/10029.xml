@@ -1,0 +1,49 @@
+<organization>
+	<organizationId>10029</organizationId>
+	<names>
+		<name>
+			<value>Weimann Inc</value>
+			<classification>U</classification>
+			<restricted>false</restricted>
+			<source>
+				<name>Los Angeles Times</name>
+				<ts>2020-09-03T07:43:42Z</ts>
+			</source>
+		</name>
+	</names>
+	<types>
+		<type>Social Club</type>
+	</types>
+	<country>Indonesia</country>
+	<areas>
+		<area>APAC</area>
+	</areas>
+	<images>
+		<image>
+			<url>/images/organizations/office.jpg</url>
+			<source>New York Times</source>
+		</image>
+		<image>
+			<url>/images/organizations/factory.jpg</url>
+			<source>Los Angeles Times</source>
+		</image>
+		<image>
+			<url>/images/organizations/office.jpg</url>
+			<source>Chicago Tribune</source>
+		</image>
+		<image>
+			<url>/images/organizations/port.jpg</url>
+			<source>Chicago Tribune</source>
+		</image>
+	</images>
+	<sources>
+		<source>
+			<name>Washington Post</name>
+			<ts>2016-01-05T02:36:59Z</ts>
+		</source>
+	</sources>
+	<createdOn>
+		<ts>2022-02-22T21:10:03Z</ts>
+		<user>ablackmores</user>
+	</createdOn>
+</organization>

@@ -1,0 +1,45 @@
+<organization>
+	<organizationId>10033</organizationId>
+	<names>
+		<name>
+			<value>Wisoky-Maggio</value>
+			<classification>C</classification>
+			<restricted>true</restricted>
+			<source>
+				<name>USA Today</name>
+				<ts>2021-02-08T01:38:21Z</ts>
+			</source>
+		</name>
+	</names>
+	<types>
+		<type>Employer</type>
+	</types>
+	<country>Cyprus</country>
+	<areas>
+		<area>APAC</area>
+	</areas>
+	<images>
+		<image>
+			<url>/images/organizations/capitol.jpg</url>
+			<source>Chicago Tribune</source>
+		</image>
+		<image>
+			<url>/images/organizations/factory.jpg</url>
+			<source>Washington Post</source>
+		</image>
+		<image>
+			<url>/images/organizations/office.jpg</url>
+			<source>USA Today</source>
+		</image>
+	</images>
+	<sources>
+		<source>
+			<name>Washington Post</name>
+			<ts>2014-08-27T23:51:55Z</ts>
+		</source>
+	</sources>
+	<createdOn>
+		<ts>2022-01-05T04:24:51Z</ts>
+		<user>hdacombew</user>
+	</createdOn>
+</organization>

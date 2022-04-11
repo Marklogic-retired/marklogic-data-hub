@@ -41,7 +41,7 @@
     "items": [
       {
         "label": "All Entities",
-        "value": ["person", "place", "thing"]
+        "value": ["person", "organization", "thing"]
       },
       {
         "label": "Person",
@@ -49,8 +49,8 @@
         "default": true
       },
       {
-        "label": "Place",
-        "value": "place"
+        "label": "Organization",
+        "value": "organization"
       },
       {
         "label": "Thing",
@@ -231,6 +231,11 @@
             "type": "category",
             "name": "country",
             "tooltip": "Filter by country."
+          },
+          {
+            "type": "category",
+            "name": "area",
+            "tooltip": "Filter by area."
           }
         ]
       }

@@ -1,0 +1,41 @@
+<organization>
+	<organizationId>10012</organizationId>
+	<names>
+		<name>
+			<value>Schmidt-Metz</value>
+			<classification>S</classification>
+			<restricted>true</restricted>
+			<source>
+				<name>Washington Post</name>
+				<ts>2021-07-29T10:14:27Z</ts>
+			</source>
+		</name>
+	</names>
+	<types>
+		<type>Non-Governmental Organization</type>
+	</types>
+	<country>Serbia</country>
+	<areas>
+		<area>NA</area>
+	</areas>
+	<images>
+		<image>
+			<url>/images/organizations/church.jpg</url>
+			<source>Washington Post</source>
+		</image>
+		<image>
+			<url>/images/organizations/factory.jpg</url>
+			<source>USA Today</source>
+		</image>
+	</images>
+	<sources>
+		<source>
+			<name>Washington Post</name>
+			<ts>2021-05-15T15:25:16Z</ts>
+		</source>
+	</sources>
+	<createdOn>
+		<ts>2022-01-27T02:56:02Z</ts>
+		<user>cfugeb</user>
+	</createdOn>
+</organization>

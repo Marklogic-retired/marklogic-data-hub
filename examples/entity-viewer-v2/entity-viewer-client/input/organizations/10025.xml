@@ -1,0 +1,49 @@
+<organization>
+	<organizationId>10025</organizationId>
+	<names>
+		<name>
+			<value>Swift Inc</value>
+			<classification>C</classification>
+			<restricted>true</restricted>
+			<source>
+				<name>Wall Street Journal</name>
+				<ts>2021-10-05T14:12:12Z</ts>
+			</source>
+		</name>
+	</names>
+	<types>
+		<type>Governmental Organization</type>
+	</types>
+	<country>Canada</country>
+	<areas>
+		<area>NA</area>
+	</areas>
+	<images>
+		<image>
+			<url>/images/organizations/factory.jpg</url>
+			<source>Los Angeles Times</source>
+		</image>
+		<image>
+			<url>/images/organizations/church.jpg</url>
+			<source>Los Angeles Times</source>
+		</image>
+		<image>
+			<url>/images/organizations/port.jpg</url>
+			<source>Chicago Tribune</source>
+		</image>
+		<image>
+			<url>/images/organizations/port.jpg</url>
+			<source>Wall Street Journal</source>
+		</image>
+	</images>
+	<sources>
+		<source>
+			<name>Chicago Tribune</name>
+			<ts>2011-09-11T22:45:57Z</ts>
+		</source>
+	</sources>
+	<createdOn>
+		<ts>2022-01-28T02:09:57Z</ts>
+		<user>lvogeleino</user>
+	</createdOn>
+</organization>
