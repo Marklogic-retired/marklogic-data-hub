@@ -6,6 +6,8 @@ import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import {InfoCircleFill, ChevronDoubleRight, ChevronDoubleLeft} from "react-bootstrap-icons";
 import "./Facets.scss";
+import "bootstrap-daterangepicker/daterangepicker.css";
+import DateRangeFacet from "../DateRangeFacet/DateRangeFacet";
 
 type Props = {
     config?: any;
@@ -168,12 +170,17 @@ const Facets: React.FC<Props> = (props) => {
     return (facetObj && facetObj["facet-value"]) ? facetObj["facet-value"].length : 0;
   }
 
+  const getDateRangeFacet =  (facet) => <div>
+    <DateRangeFacet data={{facet : facet, items: props.config.items}}></DateRangeFacet>
+  </div>;
+
   return (
     <div className="facets">
       {/* Show each facet */}
       {props.config.items && searchContext.searchResults && props.config.items.map((f, index) => {
-        return ( 
-        <div className="facet" key={"facet-" + index}>
+          return (
+          f.type === "dateRange" ? <div className="facet" key={f?.name}>{getDateRangeFacet(f)}</div>
+          :<div className="facet" key={"facet-" + index}>
           <div className="title">
             {f.name}
             {f.tooltip &&

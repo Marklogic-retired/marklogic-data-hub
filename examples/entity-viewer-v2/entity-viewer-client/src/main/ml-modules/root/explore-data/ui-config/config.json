@@ -218,6 +218,16 @@
         "displayLong": 5,
         "items": [
           {
+            "type": "dateRange",
+            "name": "created",
+            "tooltip": "Filter by date created."
+          },
+          {
+            "type": "dateRange",
+            "name": "updated",
+            "tooltip": "Filter by date updated."
+          },
+          {
             "type": "category",
             "name": "sources",
             "tooltip": "Filter by source."
@@ -297,7 +307,12 @@
             "className": "email"
           },
           {
-            "path": "extracted.person.ssn.value"
+            "component": "DateTime",
+            "config": {
+              "path": "extracted.person.lastUpdated.ts",
+              "prefix": "Updated: ",
+              "format": "MMMM dd, yyyy"
+            }
           }
         ],
         "categories": {

@@ -18,6 +18,7 @@ interface SearchContextInterface {
   pageNumber: number;
   handleSearch: any;
   handleFacetString: any;
+  handleFacetDateRange: any;
   handlePagination: any;
   handleSaved: any;
   handleGetSearchLocal: any;
@@ -45,6 +46,7 @@ const defaultState = {
   pageNumber: 1,
   handleSearch: () => { },
   handleFacetString: () => { },
+  handleFacetDateRange: () => { },
   handlePagination: () => { },
   handleSaved: () => { },
   handleGetSearchLocal: () => { },
@@ -65,7 +67,8 @@ const defaultState = {
  * @prop {number} returned - Number of records returned in search results.
  * @prop {number} total - Total number of records available.
  * @prop {HandleSearch} handleSearch - Callback to execute a search via query text (TODO document interface). 
- * @prop {HandleFacetString} handleFacetString - Callback to execute a search via facet selection (TODO document interface). 
+ * @prop {HandleFacetString} handleFacetString - Callback to execute a search via facet selection (TODO document interface).
+ * @prop {HandleFacetDateRange} handleFacetDateRange - Callback to execute a search via facet selection for date range widgets(TODO document interface).
  * @prop {HandleSaved} handleSaved - Callback to execute a search via selection of a saved query (TODO document interface). 
  * @example
  * TBD
@@ -123,7 +126,20 @@ const SearchProvider: React.FC = ({children}) => {
         navigate("/search"); // Handle search submit from another view
       }
       let newQuery = buildQuery(start, pageLength, qtext, facetStrings, entityType);
-      //let sr = getSearchResults(userContext.config.api.searchResultsEndpoint, newQuery, userContext.userid);
+      let facetItems = userContext.config.search.facets.config.items;
+
+      for(let item in facetItems) {
+        let facetName = facetItems[item].name;
+        if(facetItems[item].type === "dateRange" && newQuery.selectedFacets[facetName]) {
+          newQuery.selectedFacets[facetName][0] =  newQuery.selectedFacets[facetName][0].replace(/ ~ /g,",");
+          let data = newQuery.selectedFacets[facetName][0].split(",");
+          let dataObj = {
+            min : data[0],
+            max : data[1]
+          }
+          newQuery.selectedFacets[facetName] = dataObj;
+        }
+      }
       let sr = getSearchResultsByGet(newQuery, userContext.userid);
       sr.then(result => {
         console.log("getSearchResultsByGet", result?.data);
@@ -162,6 +178,21 @@ const SearchProvider: React.FC = ({children}) => {
       setFacetStrings(prevState => [...prevState, newFacetString]);
     } else {
       let newFacetStrings = facetStrings.filter(f => (f !== (name + ":" + value)));
+      setFacetStrings(newFacetStrings);
+    }
+    setPageNumber(1);
+    setStart(1);
+    setNewSearch(true);
+  };
+
+  const handleFacetDateRange = async (name, value, selected) => {
+    if (selected) {
+      let newFacetString = name + ":" + value;
+      let newFacet = facetStrings.filter(f => (f.split(":")[0] !== (name)));
+      setFacetStrings(newFacet);
+      setFacetStrings(prevState => [...prevState, newFacetString]);
+    } else {
+      let newFacetStrings = facetStrings.filter(f => (f.split(":")[0] !== (name)));
       setFacetStrings(newFacetStrings);
     }
     setPageNumber(1);
@@ -300,6 +331,7 @@ const SearchProvider: React.FC = ({children}) => {
         setPageNumber,
         handleSearch,
         handleFacetString,
+        handleFacetDateRange,
         handlePagination,
         handleSaved,
         handleGetSearchLocal,

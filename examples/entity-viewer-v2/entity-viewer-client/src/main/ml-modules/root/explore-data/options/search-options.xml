@@ -24,9 +24,14 @@
         <search:facet-option>descending</search:facet-option>
     </search:range>
   </search:constraint>
-  <search:constraint name="createdOn">
+  <search:constraint name="created">
     <search:range type="xs:dateTime" facet="false">
         <search:path-index xmlns:es="http://www.w3.org/2000/xmlns/">/person/createdOn/ts</search:path-index>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="updated">
+    <search:range type="xs:dateTime" facet="false">
+        <search:path-index xmlns:es="http://www.w3.org/2000/xmlns/">/person/lastUpdated/ts</search:path-index>
     </search:range>
   </search:constraint>
   <search:constraint name="status">

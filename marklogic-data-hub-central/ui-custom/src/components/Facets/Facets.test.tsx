@@ -10,6 +10,7 @@ const configMultipleOver = {
     displayShort: 2,
     displayLong: 3,
     items: [
+        {type: "dateRange", name: "created On"},
         { type: "category", name: "a" },
         { type: "category", name: "b" },
         { type: "category", name: "c" }
@@ -114,7 +115,7 @@ const searchContextValueEmpty = {
 describe("Facets component", () => {
 
     test("Verify facets render with clickable values when over threshold", () => {
-        const {getByText, queryByText, getByTestId} = render(
+        const {getByText, queryByText, getByTestId, getByPlaceholderText, queryByTestId} = render(
             <SearchContext.Provider value={searchContextValue}>
                 <Facets config={configMultipleOver} />
             </SearchContext.Provider>
@@ -140,6 +141,17 @@ describe("Facets component", () => {
         userEvent.click(getByTestId("less-b"));
         expect(queryByText("B3")).not.toBeInTheDocument();
         expect(getByTestId("more-b")).toBeInTheDocument();
+        // To test Created on widget contents
+        expect(getByTestId("created On")).toBeInTheDocument();
+        expect(getByTestId("info-created On")).toBeInTheDocument();
+        //To check info icon is present and tooltip is displayed properly on hover
+        userEvent.hover(getByTestId("info-created On"));
+        expect(getByTestId("createdOnTooltip")).toBeInTheDocument();
+        expect(getByPlaceholderText("Start date ~ End date")).toBeInTheDocument();
+        //Calender icon should be visible initially
+        expect(getByTestId("calenderIcon")).toBeInTheDocument();
+        //Reset icon should not be visible initially
+        expect(queryByTestId("datetime-picker-reset")).not.toBeInTheDocument();
     });
 
     test("Verify facets render with values when under threshold", () => {
