@@ -157,7 +157,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     runPage.deleteFlow(flowName).click();
     runPage.deleteFlowConfirmationMessage(flowName).should("be.visible");
     loadPage.confirmationOptions("Yes").click();
-    runPage.getFlowName(flowName).should("not.exist");
+    runPage.getFlowName(flowName).first().should("not.exist");
     //Verify Run Map step in a new Flow
     toolbar.getCurateToolbarIcon().click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
@@ -175,7 +175,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     loadPage.confirmationOptions("Save").click();
     cy.wait(500);
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => runPage.getFlowName(flowName).should("be.visible"));
+    cy.waitUntil(() => runPage.getFlowName(flowName).first().should("be.visible"));
     runPage.addStep(flowName);
     runPage.addStepToFlow(mapStep);
     cy.verifyStepAddedToFlow("Mapping", mapStep, flowName2);
@@ -191,7 +191,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     curatePage.runStepExistsOneFlowConfirmation().should("be.visible");
     curatePage.confirmContinueRun();
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => runPage.getFlowName(flowName).first().should("be.visible"));
+    runPage.getFlowName(flowName).first().should("be.visible");
     runPage.verifyStepRunResult(mapStep, "success");
     runPage.closeFlowStatusModal(flowName);
     cy.verifyStepAddedToFlow("Mapping", mapStep, flowName);

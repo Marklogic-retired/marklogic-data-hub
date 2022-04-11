@@ -83,7 +83,7 @@ class RunPage {
   }
 
   runStep(stepName: string, flowName: string) {
-    cy.waitUntil(() => cy.get(`#${flowName}`).find(`[aria-label=runStep-${stepName}]`)).first().click({force: true});
+    cy.waitUntil(() => cy.get(`#${flowName}`).find(`[aria-label="runStep-${stepName}"]`)).first().click({force: true});
     cy.waitForAsyncRequest();
   }
 
