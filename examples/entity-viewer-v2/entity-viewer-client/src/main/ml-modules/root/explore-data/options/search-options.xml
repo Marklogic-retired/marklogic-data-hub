@@ -62,8 +62,8 @@ Change to 'filtered' to exclude false-positives in certain searches
 Modify document extraction to change results returned
 -->
   <search:extract-document-data selected="include">
-    <search:extract-path xmlns:es="http://marklogic.com/entity-services" xmlns:oex="http://example.org/">//(person)
-    </search:extract-path>
+    <search:extract-path xmlns:oex="http://example.org/">//(person)</search:extract-path>
+    <search:extract-path xmlns:oex="http://example.org/">//(organization)</search:extract-path>
   </search:extract-document-data>
   <!--
 Change or remove this additional-query to broaden search beyond entity instance documents

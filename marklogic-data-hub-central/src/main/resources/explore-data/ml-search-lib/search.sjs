@@ -87,8 +87,12 @@ class Search {
     let results = searchResponse["response"]["result"];
     if(results) {
       results.forEach(result => {
-        let jsonObject = result["extracted"][entityTypeIds[0]];
-        this.fixArrayIssue(jsonObject);
+        entityTypeIds.forEach(entityTypeId => {
+          let jsonObject = result["extracted"][entityTypeId];
+          if(jsonObject) {
+            this.fixArrayIssue(jsonObject);
+          }
+        })
       })
     }
     return searchResponse;
