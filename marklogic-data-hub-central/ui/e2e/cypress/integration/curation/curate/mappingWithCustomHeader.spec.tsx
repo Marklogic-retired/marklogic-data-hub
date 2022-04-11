@@ -157,7 +157,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     runPage.deleteFlow(flowName).click();
     runPage.deleteFlowConfirmationMessage(flowName).should("be.visible");
     loadPage.confirmationOptions("Yes").click();
-    runPage.getFlowName(flowName).first().should("not.exist");
+    cy.get("body").should("not.contain", flowName);
     //Verify Run Map step in a new Flow
     toolbar.getCurateToolbarIcon().click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));

@@ -88,7 +88,7 @@ describe("login", () => {
   });
 
   it("should only enable Load and Explorer tile for hub-central-load-reader", () => {
-    let stepName = "loadCustomersJSON";
+    let stepName = "loadPersonJSON";
     let flowName= "personJSON";
     cy.loginAsTestUserWithRoles("hub-central-load-reader").withUI()
       .url().should("include", "/tiles");

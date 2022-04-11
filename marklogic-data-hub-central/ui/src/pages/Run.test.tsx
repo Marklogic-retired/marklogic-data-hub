@@ -175,7 +175,7 @@ describe("Verify load step failures in a flow", () => {
     // Error 2 is present
     expect(await (waitForElement(() => getByTestId(`failedIngest-error-2`)))).toBeInTheDocument();
     fireEvent.click(getByLabelText(`${data.flows.data[0].name}-close`));
-    expect(await (waitForElement(() => getByLabelText("jobResponse")))).not.toBeInTheDocument();
+    expect(await (waitForElement(() => getByLabelText(`${data.flows.data[0].name}-close`)))).not.toBeInTheDocument();
   });
 
   test("Verify errors when flow with Load step fails with jobStatus failed", async () => {
@@ -206,7 +206,7 @@ describe("Verify load step failures in a flow", () => {
     expect(getAllByTestId("error-message")[0]).toHaveTextContent("Local message: failed to apply resource at documents");
 
     fireEvent.click(getByLabelText(`${data.flows.data[0].name}-close`));
-    expect(await (waitForElement(() => getByLabelText("jobResponse")))).not.toBeInTheDocument();
+    expect(await (waitForElement(() => getByLabelText(`${data.flows.data[0].name}-close`)))).not.toBeInTheDocument();
 
   });
 
@@ -377,7 +377,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     expect(getAllByTestId("error-message")[0]).toHaveTextContent("Local message: failed to apply resource at documents");
 
     fireEvent.click(getByLabelText(`${data.flows.data[0].name}-close`));
-    expect(await (waitForElement(() => getByLabelText("jobResponse")))).not.toBeInTheDocument();
+    expect(await (waitForElement(() => getByLabelText(`${data.flows.data[0].name}-close`)))).not.toBeInTheDocument();
 
 
     //Matching step failed error
@@ -391,7 +391,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     expect(getAllByTestId("error-message")[0]).toHaveTextContent("Local message: failed to apply resource at documents");
 
     fireEvent.click(getByLabelText(`${data.flows.data[0].name}-close`));
-    expect(await (waitForElement(() => getByLabelText("jobResponse")))).not.toBeInTheDocument();
+    expect(await (waitForElement(() => getByLabelText(`${data.flows.data[0].name}-close`)))).not.toBeInTheDocument();
 
 
 
@@ -406,7 +406,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     expect(getAllByTestId("error-message")[0]).toHaveTextContent("Local message: failed to apply resource at documents");
 
     fireEvent.click(getByLabelText(`${data.flows.data[0].name}-close`));
-    expect(await (waitForElement(() => getByLabelText("jobResponse")))).not.toBeInTheDocument();
+    expect(await (waitForElement(() => getByLabelText(`${data.flows.data[0].name}-close`)))).not.toBeInTheDocument();
 
 
     //Mastering step failed error
@@ -420,9 +420,6 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     expect(getAllByTestId("error-message")[0]).toHaveTextContent("Local message: failed to apply resource at documents");
 
     fireEvent.click(getByLabelText(`${data.flows.data[0].name}-close`));
-    expect(await (waitForElement(() => getByLabelText("jobResponse")))).not.toBeInTheDocument();
-
-
   });
 
   test("Verify errors when a flow with mapping/match/merge/mastering step fails with jobStatus finished_with_errors", async () => {
@@ -448,7 +445,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     // Error 2 is present
     expect(await (waitForElement(() => getByTestId(`${steps[1].stepName}-error-2`)))).toBeInTheDocument();
     fireEvent.click(getByLabelText(`${data.flows.data[0].name}-close`));
-    expect(await (waitForElement(() => getByLabelText("jobResponse")))).not.toBeInTheDocument();
+    expect(await (waitForElement(() => getByLabelText(`${data.flows.data[0].name}-close`)))).not.toBeInTheDocument();
 
     //Matching step error
     fireEvent.click(await getByLabelText(`runStep-${steps[3].stepName}`));
@@ -465,7 +462,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     expect(await (waitForElement(() => getByTestId(`${steps[3].stepName}-error-2`)))).toBeInTheDocument();
     //debug();
     fireEvent.click(getByLabelText(`${data.flows.data[0].name}-close`));
-    expect(await (waitForElement(() => getByLabelText("jobResponse")))).not.toBeInTheDocument();
+    expect(await (waitForElement(() => getByLabelText(`${data.flows.data[0].name}-close`)))).not.toBeInTheDocument();
 
     //Merging step error
     fireEvent.click(await getByLabelText(`runStep-${steps[4].stepName}`));
@@ -482,7 +479,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     expect(await (waitForElement(() => getByTestId(`${steps[4].stepName}-error-2`)))).toBeInTheDocument();
 
     fireEvent.click(getByLabelText(`${data.flows.data[0].name}-close`));
-    expect(await (waitForElement(() => getByLabelText("jobResponse")))).not.toBeInTheDocument();
+    expect(await (waitForElement(() => getByLabelText(`${data.flows.data[0].name}-close`)))).not.toBeInTheDocument();
 
     // Mastering step error
     fireEvent.click(await getByLabelText(`runStep-${steps[5].stepName}`));
@@ -499,9 +496,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     expect(await (waitForElement(() => getByTestId(`${steps[5].stepName}-error-2`)))).toBeInTheDocument();
 
     fireEvent.click(getByLabelText(`${data.flows.data[0].name}-close`));
-    expect(await (waitForElement(() => getByLabelText("jobResponse")))).not.toBeInTheDocument();
-
-  }, 10000);
+  }, 15000);
 
   test("Check if explore curated data is clicked and exists in history", async () => {
     mocks.runErrorsAPI(axiosMock);
