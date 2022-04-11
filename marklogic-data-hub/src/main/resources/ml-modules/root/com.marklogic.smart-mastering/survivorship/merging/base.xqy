@@ -1906,12 +1906,13 @@ declare function merge-impl:build-final-properties(
   let $namespaces-map := $compiled-merge-options => map:get("namespaces")
   let $merge-options-ref := $compiled-merge-options => map:get("mergeOptionsRef")
   let $merge-rules-info := $compiled-merge-options => map:get("mergeRulesInfo")
+  let $is-hub-central-format := $compiled-merge-options => map:get("isHubCentralFormat")
   let $top-level-properties := $instances/*
   let $top-level-qnames := fn:distinct-values($top-level-properties ! fn:node-name(.))
   let $explicit-merges :=
     for $merge-rule-info in $merge-rules-info[fn:not(map:contains(., "path") and fn:matches(map:get(., "path"), "^/[\w]*:?envelope/[\w]*:?headers/"))]
     where fn:exists(map:get($merge-rule-info,"path")) or map:get($merge-rule-info, "propertyQName") = $top-level-qnames
-    return merge-impl:get-merge-values($merge-rule-info, $content-objects, $namespaces-map, $sources-by-document-uri, $merge-options-ref)
+    return merge-impl:get-merge-values($merge-rule-info, $content-objects, $namespaces-map, $sources-by-document-uri, $merge-options-ref, $is-hub-central-format)
   let $implicit-merges :=
     if (fn:empty($entity-definition)) then
       let $default-merge-rule-info := $compiled-merge-options => map:get("defaultMergeRuleInfo")
@@ -1928,7 +1929,8 @@ declare function merge-impl:build-final-properties(
             $content-objects,
             $namespaces-map,
             $sources-by-document-uri,
-            $merge-options-ref
+            $merge-options-ref,
+            $is-hub-central-format
           )
     else ()
   return (
@@ -1953,14 +1955,14 @@ declare function merge-impl:get-merge-values(
   $content-objects,
   $namespaces-map as map:map,
   $sources-by-document-uri as map:map,
-  $merge-options-ref as xs:string
+  $merge-options-ref as xs:string,
+  $is-hub-central-format as xs:boolean
 ) as map:map* {
   let $property-name := $merge-rule-info => map:get("propertyName")
   let $path := $merge-rule-info => map:get("path")
   let $algorithm := $merge-rule-info => map:get("mergeAlgorithm")
   let $is-javascript := util-impl:function-is-javascript($algorithm)
   let $merge-rule := $merge-rule-info => map:get("mergeRule")
-  let $is-hub-central-format := fn:exists($merge-rule/(entityPropertyPath|documentXPath))
   let $merge-rule := util-impl:convert-node-for-function($merge-rule, $is-hub-central-format, $is-javascript, merge-impl:propertyspec-to-json#1, merge-impl:propertyspec-to-xml(?, xs:QName("merging:merge")))
   let $algorithm-name := $merge-rule-info => map:get("mergeAlgorithmName")
   let $algorithm-info :=

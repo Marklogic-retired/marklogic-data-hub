@@ -449,7 +449,8 @@ declare function merge-impl:propertyspec-to-xml($merging-objects as item()*, $ty
       fn:distinct-values(
         $normalized-merging-objects//array-node() !
           xs:QName("merging:"||fn:lower-case(fn:replace(fn:string(fn:node-name(.)), "([a-z])([A-Z])", "$1-$2")))
-      )
+      (: Exclude merging:sources so retain weight attributes in legacy format  :)
+      )[fn:not(. = xs:QName("merging:sources"))]
   let $all-xml :=
     for $merging-object in $normalized-merging-objects
     return

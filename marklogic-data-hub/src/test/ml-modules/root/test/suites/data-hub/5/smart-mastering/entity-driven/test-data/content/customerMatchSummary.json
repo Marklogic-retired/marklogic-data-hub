@@ -9,7 +9,8 @@
         "action": "merge",
         "uris": [
           "/content/CustMatchMerge1.json",
-          "/content/CustMatchMerge2.json"
+          "/content/CustMatchMerge2.json",
+          "/content/CustMatchMerge3.json"
         ]
       },
       "CustMergedTimestamp": {

@@ -55,6 +55,29 @@
           }
         ]
       }
+    },{
+      "strategyName": "Default Strategy",
+      "maxSources": 1,
+      "maxValues": 1,
+      "priorityOrder": {
+        "lengthWeight": 0,
+        "timeWeight": 9,
+        "sources": [
+          {
+            "sourceName": "source 3",
+            "weight": 12
+          },
+          {
+            "sourceName": "source 1",
+            "weight": 8
+          },
+          {
+            "sourceName": "source 2",
+            "weight": 6
+          }
+        ]
+      },
+      "default": true
     }
   ],
   "mergeRules": [
