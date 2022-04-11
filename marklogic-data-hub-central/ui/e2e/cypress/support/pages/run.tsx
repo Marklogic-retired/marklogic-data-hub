@@ -12,7 +12,7 @@ class RunPage {
   }
 
   getFlowName(flowName: string) {
-    return cy.findByText(flowName);
+    return cy.findAllByText(flowName);
   }
 
   getFlowStatusSuccess(flowName: string) {
