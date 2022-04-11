@@ -82,7 +82,7 @@ declare function merging:standard(
     if (fn:exists($max-sources)) then
       fn:subsequence(
         for $source in $distinct-sources
-        let $source-score := fn:number(fn:head(($source-priority[(@name|name|sourceName) = $source/name]/(@weight|*:weight), 0)))
+        let $source-score := fn:number(fn:head(($source-priority[(@name|name|sourceName|source-name) = $source/name]/(@weight|*:weight), 0)))
         let $source-dateTime := fn:max($source/dateTime[. ne ""] ! xs:dateTime(.))
         let $time-score := $source-dateTime ! map:get($scores-by-dateTime, fn:string(.))
         let $whole-score := fn:string-join((if ($time-score > $source-score) then ($time-score, $source-score) else ($source-score, $time-score)) ! fn:string(.), " ")
