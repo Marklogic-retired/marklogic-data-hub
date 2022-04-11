@@ -23,7 +23,8 @@ describe("Run Tile tests", () => {
     cy.restoreLocalStorage();
 
     cy.visit("/");
-    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    cy.wait(1000);
+    toolbar.getRunToolbarIcon().should("be.visible").click();
     cy.waitUntil(() => runPage.getFlowName("personJSON").should("be.visible"));
   });
   beforeEach(() => {

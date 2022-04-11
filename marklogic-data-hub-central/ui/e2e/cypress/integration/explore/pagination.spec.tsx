@@ -25,7 +25,7 @@ describe("Validate scenarios for pagination in the explore page table", () => {
     cy.log("**Go to Explore page and select the table view option**");
     cy.visit("/tiles/explore");
     cy.wait(4000);
-    browsePage.getTableView().click();
+    browsePage.getTableView().should("be.visible").click();
     table.mainTable.should("be.visible");
     table.getTableRows().should("not.be.empty");
 

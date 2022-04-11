@@ -334,7 +334,7 @@ class BrowsePage {
   }
 
   getTableView() {
-    return cy.get("[data-cy=table-view]");
+    return cy.get("#tableView");
   }
 
   getGraphView() {
