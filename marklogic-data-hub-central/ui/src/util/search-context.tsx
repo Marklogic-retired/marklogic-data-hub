@@ -96,6 +96,7 @@ interface ISearchContextInterface {
   setSavedNode: (node: any) => void;
   setSearchOptions: (searchOptions: SearchContextInterface) => void;
   entityInstanceId: string | undefined;
+  setDatabaseAndDatasource: (option: any) => void;
 }
 
 export const SearchContext = React.createContext<ISearchContextInterface>({
@@ -146,6 +147,7 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setGraphViewOptions: () => { },
   setDatasource: () => { },
   setSearchOptions: () => { },
+  setDatabaseAndDatasource: () => { },
 });
 
 const SearchProvider: React.FC<{ children: any }> = ({children}) => {
@@ -662,6 +664,28 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     });
   };
 
+  const setDatabaseAndDatasource = (option: any) => {
+    let {database, datasource} = option;
+
+    let nextEntityType = "All Data";
+    if (datasource === "entities") {
+      nextEntityType = "All Entities";
+    }
+    setSearchOptions({
+      ...searchOptions,
+      start: 1,
+      query: "",
+      pageNumber: 1,
+      pageLength: 20,
+      pageSize: 20,
+      selectedFacets: {},
+      selectedQuery: "select a query",
+      database,
+      datasource,
+      nextEntityType
+    });
+  };
+
   const setEntityTypeIds = (entityTypeIds: string[]) => {
     const NEWOPTIONS = {
       ...searchOptions,
@@ -724,7 +748,8 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       setGraphViewOptions,
       setDatasource,
       setEntityTypeIds,
-      setSearchOptions
+      setSearchOptions,
+      setDatabaseAndDatasource
     }}>
       {children}
     </SearchContext.Provider>
