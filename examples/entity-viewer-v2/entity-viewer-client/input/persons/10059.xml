@@ -3,229 +3,217 @@
   <personId>10059</personId>
   <nameGroup>
     <givenname>
-      <value>Sara-ann</value>
+      <value>Clemmy</value>
     </givenname>
     <surname>
-      <value>Wey</value>
+      <value>Laverock</value>
     </surname>
     <fullname>
-      <classification>C</classification>
-      <restricted>true</restricted>
-      <value>Wey Sara-ann</value>
-      <source>
-        <name>Los Angeles Times</name>
-        <ts>2016-02-09T22:42:13Z</ts>
-      </source>
-      <source>
-        <name>Los Angeles Times</name>
-        <ts>2013-08-04T21:58:57Z</ts>
-      </source>
+      <classification>U</classification>
+      <restricted>false</restricted>
+      <value>Laverock Clemmy</value>
       <source>
         <name>Washington Post</name>
-        <ts>2016-08-26T17:48:59Z</ts>
+        <ts>2015-09-30T08:23:56Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>iselliman0@dedecms.com</value>
+      <value>vjosephi0@wix.com</value>
       <classification>S</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>mcammell1@about.com</value>
-      <classification>S</classification>
+      <value>msall1@vistaprint.com</value>
+      <classification>U</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>lsinderland2@shinystat.com</value>
+      <classification>C</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>923-684-1206</phone>
+  <phone>666-438-4054</phone>
   <ssn>
-    <value>865-35-8168</value>
+    <value>126-69-3597</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
       <source>
-        <name>USA Today</name>
-        <ts>2020-03-10T02:40:13Z</ts>
-        <uploadedBy>alindblom0</uploadedBy>
+        <name>New York Times</name>
+        <ts>2017-05-22T11:21:22Z</ts>
+        <uploadedBy>agowanson0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
+      <source>
+        <name>New York Times</name>
+        <ts>2021-09-27T22:17:41Z</ts>
+        <uploadedBy>tgai0</uploadedBy>
       </source>
     </image>
     <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2018-08-15T13:54:47Z</ts>
-        <uploadedBy>tplant0</uploadedBy>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
-      <source>
-        <name>Washington Post</name>
-        <ts>2015-01-24T18:19:14Z</ts>
-        <uploadedBy>ipenketh0</uploadedBy>
+        <name>Los Angeles Times</name>
+        <ts>2010-06-11T14:59:06Z</ts>
+        <uploadedBy>plovick0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>7955 Walton Hill</street>
-      <city>Woburn</city>
-      <state>MA</state>
-      <postal>01813</postal>
+      <street>925 Prentice Alley</street>
+      <city>Bakersfield</city>
+      <state>CA</state>
+      <postal>93399</postal>
       <country>United States</country>
-      <latitude>42.4464</latitude>
-      <longitude>-71.4594</longitude>
+      <latitude>35.4369</latitude>
+      <longitude>-119.0679</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>United States</country>
-      <name>University of Tennessee - Knoxville</name>
-      <city>Jeffersonville</city>
-      <state>IN</state>
-      <postal>47134</postal>
-      <latitude>38.34</latitude>
-      <longitude>-85.7</longitude>
-    </school>
-    <school>
-      <country>Mexico</country>
-      <name>Universidad Juárez Autónoma de Tabasco</name>
-      <city>Las Flores</city>
-      <state>TAM</state>
-      <postal>87395</postal>
-      <latitude>22.2479136</latitude>
-      <longitude>-97.8755614</longitude>
+      <country>Canada</country>
+      <name>Centennial College</name>
+      <city>Daveluyville</city>
+      <state>QC</state>
+      <postal>R3P</postal>
+      <latitude>46.20006</latitude>
+      <longitude>-72.13239</longitude>
+      <source>
+        <name>USA Today</name>
+        <ts>2020-01-24T12:41:07Z</ts>
+      </source>
+      <source>
+        <name>New York Times</name>
+        <ts>2012-03-23T21:07:31Z</ts>
+      </source>
     </school>
   </schools>
   <status>Inactive</status>
   <sources>
     <source>
       <name>Washington Post</name>
-      <ts>2014-08-30T09:13:33Z</ts>
+      <ts>2016-02-13T03:50:36Z</ts>
     </source>
   </sources>
   <sources>
     <source>
       <name>Wall Street Journal</name>
-      <ts>2012-01-17T02:49:20Z</ts>
+      <ts>2020-04-23T21:53:07Z</ts>
     </source>
   </sources>
   <sources>
     <source>
       <name>Los Angeles Times</name>
-      <ts>2017-09-26T09:07:14Z</ts>
+      <ts>2010-09-21T04:03:17Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10003</id>
-      <predicate>livesWith</predicate>
+      <id>/person/10065.xml</id>
+      <predicate>worksWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Edger Piper</fullname>
-      <city>Prescott</city>
-      <state>AZ</state>
+      <fullname>Garrish Goldi</fullname>
+      <city>Topeka</city>
+      <state>KS</state>
     </relation>
     <relation>
-      <id>10034</id>
+      <id>/person/10100.xml</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
-      <fullname>Klaves Wynn</fullname>
-      <city>Worcester</city>
-      <state>MA</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
+      <fullname>Athow Gris</fullname>
+      <city>San Antonio</city>
+      <state>TX</state>
     </relation>
     <relation>
-      <id>10056</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
-      <fullname>Aikman Milly</fullname>
-      <city>Pittsburgh</city>
-      <state>PA</state>
+      <id>/person/10047.xml</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Rable Nefen</fullname>
+      <city>Nashville</city>
+      <state>TN</state>
+    </relation>
+    <relation>
+      <id>/person/10094.xml</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
+      <fullname>Ughelli Britta</fullname>
+      <city>Los Angeles</city>
+      <state>CA</state>
+    </relation>
+    <relation>
+      <id>/person/10065.xml</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
+      <fullname>Garrish Goldi</fullname>
+      <city>Topeka</city>
+      <state>KS</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-23T11:43:54Z</ts>
-    <user>swey1m</user>
+    <ts>2022-01-09T22:32:35Z</ts>
+    <user>claverock1m</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-26T01:40:47Z</ts>
-    <user>swey1m</user>
+    <ts>2022-02-05T21:35:08Z</ts>
+    <user>claverock1m</user>
   </lastUpdated>
   <socials>
     <social>
-      <site>facebook</site>
-      <handle>qyouens0</handle>
-      <address>http://tmall.com/nullam/porttitor.js</address>
+      <site>linkedin</site>
+      <handle>cclemendot0</handle>
+      <address>https://acquirethisname.com/orci/luctus/et/ultrices/posuere/cubilia.html</address>
     </social>
     <social>
-      <site>facebook</site>
-      <handle>cgarratt1</handle>
-      <address>http://mapquest.com/venenatis/tristique/fusce/congue.xml</address>
+      <site>twitter</site>
+      <handle>alinzee1</handle>
+      <address>https://phpbb.com/lobortis/sapien/sapien/non/mi/integer/ac.aspx</address>
+    </social>
+    <social>
+      <site>linkedin</site>
+      <handle>bollerhad2</handle>
+      <address>http://nifty.com/tellus/in/sagittis.aspx</address>
     </social>
   </socials>
   <memberships>
     <membership>
-      <list>list3</list>
-      <important>true</important>
-      <ts>2021-01-26</ts>
-    </membership>
-    <membership>
-      <list>list3</list>
-      <important>true</important>
-      <ts>2021-05-18</ts>
-    </membership>
-    <membership>
-      <list>list7</list>
-      <important>true</important>
-      <ts>2021-03-20</ts>
-    </membership>
-    <membership>
-      <list>list3</list>
+      <list>list2</list>
       <important>false</important>
-      <ts>2021-12-11</ts>
+      <ts>2022-01-02</ts>
     </membership>
     <membership>
-      <list>list11</list>
+      <list>list1</list>
       <important>true</important>
-      <ts>2021-05-20</ts>
+      <ts>2022-01-24</ts>
     </membership>
     <membership>
-      <list>list7</list>
-      <important>true</important>
-      <ts>2022-02-18</ts>
+      <list>list2</list>
+      <important>false</important>
+      <ts>2022-02-03</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>http://opensource.org</url>
-      <icon>faEye</icon>
+      <url>http://scribd.com</url>
+      <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>https://hp.com</url>
-      <icon>faMedal</icon>
+      <url>https://pcworld.com</url>
+      <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>https://uiuc.edu</url>
-      <icon>faComments</icon>
+      <url>http://yandex.ru</url>
+      <icon>fa-comments</icon>
     </link>
   </links>
-  <actions>
-    <action>
-      <url>http://oaic.gov.au</url>
-      <icon>faCog</icon>
-    </action>
-    <action>
-      <url>https://multiply.com</url>
-      <icon>faCode</icon>
-    </action>
-    <action>
-      <url>http://addthis.com</url>
-      <icon>faSync</icon>
-    </action>
-  </actions>
 </person>

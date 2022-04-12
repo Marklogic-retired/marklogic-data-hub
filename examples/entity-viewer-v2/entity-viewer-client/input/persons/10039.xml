@@ -3,205 +3,204 @@
   <personId>10039</personId>
   <nameGroup>
     <givenname>
-      <value>Fleurette</value>
+      <value>Guthry</value>
     </givenname>
     <surname>
-      <value>Jell</value>
+      <value>Thomen</value>
     </surname>
     <fullname>
       <classification>U</classification>
       <restricted>true</restricted>
-      <value>Jell Fleurette</value>
+      <value>Thomen Guthry</value>
       <source>
-        <name>Washington Post</name>
-        <ts>2012-10-09T00:36:32Z</ts>
+        <name>Wall Street Journal</name>
+        <ts>2010-10-31T16:16:45Z</ts>
+      </source>
+      <source>
+        <name>New York Times</name>
+        <ts>2016-03-02T14:29:38Z</ts>
+      </source>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2018-11-14T16:19:05Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>abigmore0@cmu.edu</value>
-      <classification>U</classification>
+      <value>dhatch0@thetimes.co.uk</value>
+      <classification>S</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>oeslinger1@amazon.de</value>
+      <value>lreddyhoff1@facebook.com</value>
       <classification>S</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>168-454-9247</phone>
+  <phone>208-155-4610</phone>
   <ssn>
-    <value>146-91-6112</value>
+    <value>496-72-9326</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2017-05-02T12:24:10Z</ts>
-        <uploadedBy>jschout0</uploadedBy>
+        <name>New York Times</name>
+        <ts>2015-01-25T18:00:37Z</ts>
+        <uploadedBy>ahandrahan0</uploadedBy>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
       <source>
-        <name>New York Times</name>
-        <ts>2019-07-24T22:19:45Z</ts>
-        <uploadedBy>mbourthoumieux0</uploadedBy>
+        <name>Wall Street Journal</name>
+        <ts>2014-12-03T07:25:03Z</ts>
+        <uploadedBy>jdron0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <source>
+        <name>USA Today</name>
+        <ts>2012-04-14T07:46:57Z</ts>
+        <uploadedBy/>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>404 Westerfield Plaza</street>
-      <city>Pensacola</city>
-      <state>FL</state>
-      <postal>32505</postal>
+      <street>1 Schurz Junction</street>
+      <city>Warren</city>
+      <state>MI</state>
+      <postal>48092</postal>
       <country>United States</country>
-      <latitude>30.4481</latitude>
-      <longitude>-87.2589</longitude>
+      <latitude>42.5125</latitude>
+      <longitude>-83.0643</longitude>
     </address>
     <address>
-      <street>5 Jana Park</street>
-      <city>Houston</city>
-      <state>TX</state>
-      <postal>77025</postal>
+      <street>8 Manufacturers Park</street>
+      <city>North Las Vegas</city>
+      <state>NV</state>
+      <postal>89087</postal>
       <country>United States</country>
-      <latitude>29.6889</latitude>
-      <longitude>-95.4341</longitude>
+      <latitude>36.2204</latitude>
+      <longitude>-115.1458</longitude>
     </address>
     <address>
-      <street>24 Manitowish Drive</street>
-      <city>Gulfport</city>
-      <state>MS</state>
-      <postal>39505</postal>
+      <street>3 Forest Street</street>
+      <city>Baton Rouge</city>
+      <state>LA</state>
+      <postal>70836</postal>
       <country>United States</country>
-      <latitude>30.4158</latitude>
-      <longitude>-89.0684</longitude>
+      <latitude>30.392</latitude>
+      <longitude>-91.0892</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Mexico</country>
-      <name>Universidad La Salle Cuernavaca</name>
-      <city>El Calvario</city>
-      <state>OAX</state>
-      <postal>68213</postal>
-      <latitude>19.6031486</latitude>
-      <longitude>-99.0550357</longitude>
+      <country>United States</country>
+      <name>Pacific Lutheran University</name>
+      <city>Birmingham</city>
+      <state>AL</state>
+      <postal>35244</postal>
+      <latitude>33.3639393</latitude>
+      <longitude>-86.8119917</longitude>
+      <source>
+        <name>USA Today</name>
+        <ts>2015-01-06T07:33:05Z</ts>
+      </source>
+      <source>
+        <name>New York Times</name>
+        <ts>2010-04-13T17:58:00Z</ts>
+      </source>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2011-02-12T18:32:46Z</ts>
+      </source>
     </school>
   </schools>
-  <status>Inactive</status>
+  <status>Active</status>
   <sources>
     <source>
-      <name>Wall Street Journal</name>
-      <ts>2021-06-14T12:13:38Z</ts>
+      <name>New York Times</name>
+      <ts>2017-04-14T13:36:32Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10059</id>
+      <id>/person/10034.xml</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
-      <fullname>Wey Sara-ann</fullname>
-      <city>Woburn</city>
-      <state>MA</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
+      <fullname>Moneypenny Myrwyn</fullname>
+      <city>Racine</city>
+      <state>WI</state>
     </relation>
     <relation>
-      <id>10083</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
-      <fullname>Roddick Victoir</fullname>
-      <city>Bakersfield</city>
-      <state>CA</state>
+      <id>/person/10065.xml</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
+      <fullname>Garrish Goldi</fullname>
+      <city>Topeka</city>
+      <state>KS</state>
     </relation>
     <relation>
-      <id>10026</id>
+      <id>/person/10043.xml</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Stodhart Kerstin</fullname>
-      <city>Gatesville</city>
-      <state>TX</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
+      <fullname>Girhard Lucia</fullname>
+      <city>Akron</city>
+      <state>OH</state>
+    </relation>
+    <relation>
+      <id>/person/10049.xml</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Holyland Clemmy</fullname>
+      <city>Tacoma</city>
+      <state>WA</state>
+    </relation>
+    <relation>
+      <id>/person/10050.xml</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
+      <fullname>De Giovanni Dillie</fullname>
+      <city>Atlanta</city>
+      <state>GA</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-10T09:17:58Z</ts>
-    <user>fjell12</user>
+    <ts>2022-01-14T12:37:37Z</ts>
+    <user>gthomen12</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-10T13:47:57Z</ts>
-    <user>fjell12</user>
+    <ts>2022-02-12T08:01:03Z</ts>
+    <user>gthomen12</user>
   </lastUpdated>
-  <socials>
-    <social>
-      <site>twitter</site>
-      <handle>fbrodley0</handle>
-      <address>http://angelfire.com/ac/enim/in/tempor/turpis/nec/euismod.png</address>
-    </social>
-    <social>
-      <site>facebook</site>
-      <handle>bfruen1</handle>
-      <address>https://mashable.com/nunc/vestibulum/ante.aspx</address>
-    </social>
-    <social>
-      <site>facebook</site>
-      <handle>loselton2</handle>
-      <address>http://macromedia.com/eros/vestibulum/ac.jsp</address>
-    </social>
-  </socials>
+  <socials/>
   <memberships>
     <membership>
-      <list>list5</list>
-      <important>true</important>
-      <ts>2021-07-12</ts>
-    </membership>
-    <membership>
-      <list>list6</list>
-      <important>true</important>
-      <ts>2021-12-07</ts>
-    </membership>
-    <membership>
-      <list>list4</list>
+      <list>list12</list>
       <important>false</important>
-      <ts>2021-10-30</ts>
-    </membership>
-    <membership>
-      <list>list5</list>
-      <important>true</important>
-      <ts>2021-08-11</ts>
+      <ts>2022-01-12</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>https://xinhuanet.com</url>
-      <icon>faEye</icon>
+      <url>https://forbes.com</url>
+      <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>http://umich.edu</url>
-      <icon>faMedal</icon>
+      <url>http://columbia.edu</url>
+      <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>https://census.gov</url>
-      <icon>faComments</icon>
+      <url>http://slashdot.org</url>
+      <icon>fa-comments</icon>
     </link>
   </links>
-<actions>
-  <action>
-    <url>http://oaic.gov.au</url>
-    <icon>faCog</icon>
-  </action>
-  <action>
-    <url>https://multiply.com</url>
-    <icon>faCode</icon>
-  </action>
-  <action>
-    <url>http://addthis.com</url>
-    <icon>faSync</icon>
-  </action>
-</actions>
 </person>

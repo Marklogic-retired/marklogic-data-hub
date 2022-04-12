@@ -3,185 +3,206 @@
   <personId>10026</personId>
   <nameGroup>
     <givenname>
-      <value>Kerstin</value>
+      <value>Jennilee</value>
     </givenname>
     <surname>
-      <value>Stodhart</value>
+      <value>Schanke</value>
     </surname>
     <fullname>
-      <classification>C</classification>
-      <restricted>true</restricted>
-      <value>Stodhart Kerstin</value>
+      <classification>U</classification>
+      <restricted>false</restricted>
+      <value>Schanke Jennilee</value>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2015-11-23T11:48:45Z</ts>
+        <name>Wall Street Journal</name>
+        <ts>2012-10-20T20:42:15Z</ts>
       </source>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2014-02-12T15:44:36Z</ts>
-      </source>
-      <source>
-        <name>Los Angeles Times</name>
-        <ts>2011-12-29T09:30:59Z</ts>
+        <name>USA Today</name>
+        <ts>2020-07-18T16:15:46Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>zburfitt0@nifty.com</value>
+      <value>cgriston0@sakura.ne.jp</value>
       <classification>S</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>chitter1@nba.com</value>
+      <value>kfyrth1@businessinsider.com</value>
       <classification>S</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>172-758-1086</phone>
+  <phone>825-420-7828</phone>
   <ssn>
-    <value>699-30-8830</value>
+    <value>753-83-4716</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
       <source>
-        <name>New York Times</name>
-        <ts>2014-10-25T22:41:25Z</ts>
-        <uploadedBy>lwhiley0</uploadedBy>
+        <name>Los Angeles Times</name>
+        <ts>2020-11-29T06:45:45Z</ts>
+        <uploadedBy>cferro0</uploadedBy>
       </source>
     </image>
     <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
       <source>
         <name>Los Angeles Times</name>
-        <ts>2013-08-03T17:35:07Z</ts>
-        <uploadedBy>ashoobridge0</uploadedBy>
+        <ts>2011-10-30T03:17:30Z</ts>
+        <uploadedBy>lteresse0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>04698 Sage Circle</street>
-      <city>Gatesville</city>
+      <street>89 Maywood Crossing</street>
+      <city>Austin</city>
       <state>TX</state>
-      <postal>76598</postal>
+      <postal>78769</postal>
       <country>United States</country>
-      <latitude>31.3902</latitude>
-      <longitude>-97.7993</longitude>
+      <latitude>30.3264</latitude>
+      <longitude>-97.7713</longitude>
+    </address>
+    <address>
+      <street>442 Schmedeman Terrace</street>
+      <city>Reading</city>
+      <state>PA</state>
+      <postal>19605</postal>
+      <country>United States</country>
+      <latitude>40.3886</latitude>
+      <longitude>-75.9328</longitude>
+    </address>
+    <address>
+      <street>0506 Forest Alley</street>
+      <city>Columbus</city>
+      <state>OH</state>
+      <postal>43210</postal>
+      <country>United States</country>
+      <latitude>40.0028</latitude>
+      <longitude>-83.0164</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Canada</country>
-      <name>University of Alberta</name>
-      <city>Coquitlam</city>
-      <state>BC</state>
-      <postal>V3B</postal>
-      <latitude>49.2815819</latitude>
-      <longitude>-122.7535881</longitude>
-    </school>
-    <school>
       <country>United States</country>
-      <name>Capitol College</name>
-      <city>Las Vegas</city>
-      <state>NV</state>
-      <postal>89110</postal>
-      <latitude>36.1678611</latitude>
-      <longitude>-115.0406679</longitude>
+      <name>Baltimore Hebrew University</name>
+      <city>Tampa</city>
+      <state>FL</state>
+      <postal>33680</postal>
+      <latitude>27.9961123</latitude>
+      <longitude>-82.4290869</longitude>
+      <source>
+        <name>USA Today</name>
+        <ts>2019-11-13T00:03:35Z</ts>
+      </source>
+      <source>
+        <name>New York Times</name>
+        <ts>2013-09-02T06:42:53Z</ts>
+      </source>
     </school>
   </schools>
   <status>Active</status>
   <sources>
     <source>
       <name>Washington Post</name>
-      <ts>2016-07-27T13:08:00Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>Washington Post</name>
-      <ts>2013-02-19T08:49:20Z</ts>
+      <ts>2020-09-06T05:40:05Z</ts>
     </source>
   </sources>
   <sources>
     <source>
       <name>Los Angeles Times</name>
-      <ts>2014-05-19T05:58:40Z</ts>
+      <ts>2018-10-04T22:43:08Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10040</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
-      <fullname>Jameson Karel</fullname>
-      <city>Saint Paul</city>
-      <state>MN</state>
+      <id>/person/10070.xml</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
+      <fullname>Longhurst Noella</fullname>
+      <city>Baltimore</city>
+      <state>MD</state>
     </relation>
     <relation>
-      <id>10093</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
-      <fullname>Winnett Grata</fullname>
-      <city>Pittsburgh</city>
-      <state>PA</state>
-    </relation>
-    <relation>
-      <id>10012</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
-      <fullname>Paulou Morley</fullname>
-      <city>Largo</city>
-      <state>FL</state>
+      <id>/person/10016.xml</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Clutten Linzy</fullname>
+      <city>Springfield</city>
+      <state>IL</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-19T06:54:29Z</ts>
-    <user>kstodhartp</user>
+    <ts>2022-01-07T07:19:36Z</ts>
+    <user>jschankep</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-09T15:36:11Z</ts>
-    <user>kstodhartp</user>
+    <ts>2022-01-03T20:13:07Z</ts>
+    <user>jschankep</user>
   </lastUpdated>
-  <socials/>
+  <socials>
+    <social>
+      <site>twitter</site>
+      <handle>opoynter0</handle>
+      <address>https://prweb.com/odio/justo/sollicitudin.html</address>
+    </social>
+    <social>
+      <site>linkedin</site>
+      <handle>gyakubov1</handle>
+      <address>http://usa.gov/felis/donec/semper/sapien/a/libero/nam.jpg</address>
+    </social>
+  </socials>
   <memberships>
     <membership>
-      <list>list8</list>
+      <list>list3</list>
       <important>false</important>
-      <ts>2021-06-01</ts>
+      <ts>2022-01-18</ts>
+    </membership>
+    <membership>
+      <list>list4</list>
+      <important>false</important>
+      <ts>2022-01-03</ts>
+    </membership>
+    <membership>
+      <list>list3</list>
+      <important>false</important>
+      <ts>2022-01-23</ts>
+    </membership>
+    <membership>
+      <list>list2</list>
+      <important>false</important>
+      <ts>2022-02-13</ts>
+    </membership>
+    <membership>
+      <list>list2</list>
+      <important>false</important>
+      <ts>2022-01-17</ts>
+    </membership>
+    <membership>
+      <list>list1</list>
+      <important>false</important>
+      <ts>2022-02-26</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>http://cam.ac.uk</url>
-      <icon>faEye</icon>
+      <url>http://cdc.gov</url>
+      <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>https://hexun.com</url>
-      <icon>faMedal</icon>
+      <url>https://reference.com</url>
+      <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>http://macromedia.com</url>
-      <icon>faComments</icon>
+      <url>http://marriott.com</url>
+      <icon>fa-comments</icon>
     </link>
   </links>
-<actions>
-  <action>
-    <url>http://oaic.gov.au</url>
-    <icon>faCog</icon>
-  </action>
-  <action>
-    <url>https://multiply.com</url>
-    <icon>faCode</icon>
-  </action>
-  <action>
-    <url>http://addthis.com</url>
-    <icon>faSync</icon>
-  </action>
-</actions>
 </person>

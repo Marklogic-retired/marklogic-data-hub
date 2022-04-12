@@ -3,206 +3,222 @@
   <personId>10100</personId>
   <nameGroup>
     <givenname>
-      <value>Diandra</value>
+      <value>Gris</value>
     </givenname>
     <surname>
-      <value>Elwel</value>
+      <value>Athow</value>
     </surname>
     <fullname>
-      <classification>C</classification>
-      <restricted>true</restricted>
-      <value>Elwel Diandra</value>
+      <classification>U</classification>
+      <restricted>false</restricted>
+      <value>Athow Gris</value>
       <source>
-        <name>New York Times</name>
-        <ts>2021-05-09T07:53:05Z</ts>
+        <name>Los Angeles Times</name>
+        <ts>2011-03-30T16:50:00Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>bmcgillivray0@chron.com</value>
+      <value>mgosker0@ifeng.com</value>
       <classification>S</classification>
       <restricted>false</restricted>
     </email>
+    <email>
+      <value>cgrubb1@businesswire.com</value>
+      <classification>U</classification>
+      <restricted>false</restricted>
+    </email>
   </emails>
-  <phone>953-742-5430</phone>
+  <phone>246-640-4139</phone>
   <ssn>
-    <value>489-36-2316</value>
+    <value>528-75-7586</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
       <source>
-        <name>New York Times</name>
-        <ts>2017-02-24T11:32:55Z</ts>
-        <uploadedBy>jolech0</uploadedBy>
+        <name>Chicago Tribune</name>
+        <ts>2013-03-05T12:02:55Z</ts>
+        <uploadedBy>awiltshaw0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2010-03-17T04:23:45Z</ts>
+        <uploadedBy>gfewkes0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>933 Hanson Way</street>
-      <city>Springfield</city>
-      <state>MO</state>
-      <postal>65810</postal>
+      <street>62761 Westridge Place</street>
+      <city>San Antonio</city>
+      <state>TX</state>
+      <postal>78225</postal>
       <country>United States</country>
-      <latitude>37.1136</latitude>
-      <longitude>-93.2896</longitude>
+      <latitude>29.3875</latitude>
+      <longitude>-98.5245</longitude>
     </address>
     <address>
-      <street>06300 Sheridan Street</street>
-      <city>Washington</city>
-      <state>DC</state>
-      <postal>20599</postal>
+      <street>12 Superior Terrace</street>
+      <city>Las Vegas</city>
+      <state>NV</state>
+      <postal>89166</postal>
       <country>United States</country>
-      <latitude>38.8933</latitude>
-      <longitude>-77.0146</longitude>
+      <latitude>36.3265</latitude>
+      <longitude>-115.3398</longitude>
     </address>
     <address>
-      <street>118 Eggendart Road</street>
-      <city>Memphis</city>
-      <state>TN</state>
-      <postal>38143</postal>
+      <street>130 Marquette Street</street>
+      <city>Harrisburg</city>
+      <state>PA</state>
+      <postal>17140</postal>
       <country>United States</country>
-      <latitude>35.2017</latitude>
-      <longitude>-89.9715</longitude>
+      <latitude>40.3086</latitude>
+      <longitude>-76.8464</longitude>
     </address>
   </addresses>
   <schools>
     <school>
+      <country>Mexico</country>
+      <name>Escuela Nacional de Estudios Superiores Unidad León</name>
+      <city>Santa Cruz</city>
+      <state>OAX</state>
+      <postal>70762</postal>
+      <latitude>19.6938888</latitude>
+      <longitude>-99.2591666</longitude>
+      <source>
+        <name>USA Today</name>
+        <ts>2012-08-10T09:08:00Z</ts>
+      </source>
+      <source>
+        <name>New York Times</name>
+        <ts>2010-03-09T12:57:45Z</ts>
+      </source>
+    </school>
+    <school>
       <country>Canada</country>
-      <name>College of New Caledonia</name>
-      <city>Maniwaki</city>
-      <state>QC</state>
-      <postal>J9E</postal>
-      <latitude>46.3799618</latitude>
-      <longitude>-75.9685597</longitude>
+      <name>University of Ontario Institute of Technology</name>
+      <city>Calgary</city>
+      <state>AB</state>
+      <postal>T3S</postal>
+      <latitude>50.9359639</latitude>
+      <longitude>-113.8998131</longitude>
+      <source>
+        <name>USA Today</name>
+        <ts>2017-09-15T13:39:45Z</ts>
+      </source>
+      <source>
+        <name>New York Times</name>
+        <ts>2015-01-11T05:26:57Z</ts>
+      </source>
     </school>
   </schools>
   <status>Inactive</status>
   <sources>
     <source>
       <name>Wall Street Journal</name>
-      <ts>2010-04-23T23:59:01Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>New York Times</name>
-      <ts>2017-10-24T02:02:14Z</ts>
+      <ts>2015-06-03T11:54:54Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10017</id>
+      <id>/person/10026.xml</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Symones Marybeth</fullname>
-      <city>Norcross</city>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
+      <fullname>Schanke Jennilee</fullname>
+      <city>Austin</city>
+      <state>TX</state>
+    </relation>
+    <relation>
+      <id>/person/10075.xml</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
+      <fullname>Lawfull Viviana</fullname>
+      <city>Oceanside</city>
+      <state>CA</state>
+    </relation>
+    <relation>
+      <id>/person/10060.xml</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Moralas Trixy</fullname>
+      <city>Atlanta</city>
       <state>GA</state>
     </relation>
     <relation>
-      <id>10065</id>
+      <id>/person/10023.xml</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
-      <fullname>Thebe Loise</fullname>
-      <city>Jamaica</city>
-      <state>NY</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
+      <fullname>Iowarch Demetrius</fullname>
+      <city>Pittsburgh</city>
+      <state>PA</state>
     </relation>
     <relation>
-      <id>10044</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
-      <fullname>MacKimmie Halsey</fullname>
-      <city>Lexington</city>
-      <state>KY</state>
-    </relation>
-    <relation>
-      <id>10010</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
-      <fullname>Grinaway Melvin</fullname>
-      <city>Corona</city>
+      <id>/person/10014.xml</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
+      <fullname>Stalf Nari</fullname>
+      <city>Bakersfield</city>
       <state>CA</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-17T14:41:04Z</ts>
-    <user>delwel2r</user>
+    <ts>2022-02-09T14:10:49Z</ts>
+    <user>gathow2r</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-22T16:37:22Z</ts>
-    <user>delwel2r</user>
+    <ts>2022-01-03T13:41:17Z</ts>
+    <user>gathow2r</user>
   </lastUpdated>
   <socials>
     <social>
-      <site>linkedin</site>
-      <handle>wfaraker0</handle>
-      <address>http://psu.edu/elit/sodales/scelerisque/mauris/sit/amet.json</address>
-    </social>
-    <social>
-      <site>linkedin</site>
-      <handle>sfere1</handle>
-      <address>https://wix.com/sapien/a/libero.json</address>
-    </social>
-    <social>
       <site>facebook</site>
-      <handle>dwarrender2</handle>
-      <address>http://sakura.ne.jp/ut/rhoncus/aliquet/pulvinar.xml</address>
+      <handle>jhellin0</handle>
+      <address>http://livejournal.com/sem/duis/aliquam/convallis/nunc.html</address>
+    </social>
+    <social>
+      <site>linkedin</site>
+      <handle>rdalgetty1</handle>
+      <address>http://cyberchimps.com/erat/quisque/erat/eros/viverra.aspx</address>
+    </social>
+    <social>
+      <site>linkedin</site>
+      <handle>wgatlin2</handle>
+      <address>https://ifeng.com/neque/duis/bibendum/morbi/non/quam/nec.xml</address>
     </social>
   </socials>
   <memberships>
     <membership>
-      <list>list2</list>
-      <important>true</important>
-      <ts>2021-08-07</ts>
-    </membership>
-    <membership>
       <list>list8</list>
+      <important>false</important>
+      <ts>2022-01-03</ts>
+    </membership>
+    <membership>
+      <list>list5</list>
       <important>true</important>
-      <ts>2021-11-14</ts>
-    </membership>
-    <membership>
-      <list>list2</list>
-      <important>false</important>
-      <ts>2021-01-23</ts>
-    </membership>
-    <membership>
-      <list>list9</list>
-      <important>false</important>
-      <ts>2021-07-08</ts>
+      <ts>2022-01-26</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>http://latimes.com</url>
-      <icon>faEye</icon>
+      <url>https://cyberchimps.com</url>
+      <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>https://yellowbook.com</url>
-      <icon>faMedal</icon>
+      <url>https://wired.com</url>
+      <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>http://technorati.com</url>
-      <icon>faComments</icon>
+      <url>https://360.cn</url>
+      <icon>fa-comments</icon>
     </link>
   </links>
-<actions>
-  <action>
-    <url>http://oaic.gov.au</url>
-    <icon>faCog</icon>
-  </action>
-  <action>
-    <url>https://multiply.com</url>
-    <icon>faCode</icon>
-  </action>
-  <action>
-    <url>http://addthis.com</url>
-    <icon>faSync</icon>
-  </action>
-</actions>
 </person>
