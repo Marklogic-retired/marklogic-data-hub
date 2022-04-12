@@ -110,12 +110,15 @@ class Search {
   getDocument(uri) {
     let result = searchImpl.transformXmlToJsonFromDocUri(uri).toObject();
     this.fixArrayIssue(result);
+    result["entityType"] = Object.keys(result)[0];
     result["uri"] = uri;
     return result;
   }
 
   getEntityModels() {
-
+    let entityModels = {}
+    entityModels["entityTypeNames"] = ["person", "organization"];
+    return entityModels;
   }
 
   getEntityModel(modelName) {
