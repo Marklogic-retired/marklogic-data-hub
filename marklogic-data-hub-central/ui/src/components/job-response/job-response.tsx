@@ -14,14 +14,16 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faClock, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import "./job-response.scss";
 import {CheckCircleFill, ExclamationCircleFill} from "react-bootstrap-icons";
+import {Flow} from "../../types/run-types";
 
 type Props = {
   openJobResponse: boolean;
   setOpenJobResponse: (boolean) => void;
   jobId: string;
+  flow?: Flow;
 }
 
-const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, openJobResponse}) => {
+const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, openJobResponse, flow}) => {
   const [jobResponse, setJobResponse] = useState<any>({});
   //const [lastSuccessfulStep, setLastSuccessfulStep] = useState<any>(null);
   const [timeoutId, setTimeoutId] = useState<any>();
@@ -55,6 +57,10 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, openJobRespons
     } catch (error) {
       handleError(error);
     }
+  };
+
+  const isStepRunning = (step) => {
+    return !step.stepEndTime && step.stepStartTime;
   };
 
   const isRunning = (jobResponse) => {
@@ -104,7 +110,6 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, openJobRespons
       text: "Steps",
       key: "steps",
       dataField: "stepName",
-      width: "25%",
       headerFormatter: (column) => <strong>Step Name</strong>,
       formatter: (stepName, response) => {
         if (response.success) {
@@ -112,13 +117,18 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, openJobRespons
             <CheckCircleFill type="check-circle" className={styles.successfulRun} /> <strong className={styles.stepName}>{stepName}</strong>
           </div>;
         } else if (response.hasOwnProperty("success") && !response.success) {
-          return <div data-testid={`${stepName}-failure`} id={`${stepName}-failure`} className={styles.stepResponse}>
+          return (<div data-testid={`${stepName}-failure`} id={`${stepName}-failure`} className={styles.stepResponse}>
             <ExclamationCircleFill aria-label="icon: exclamation-circle" className={styles.unsuccessfulRun} /><strong className={styles.stepName}>{stepName}</strong>
-          </div>;
-        } else {
-          return <span data-testid={`step-running`} id={`step-running`} className={styles.stepRunningIcon}>
+          </div>);
+        } else if (isStepRunning(response)) {
+          return (<div data-testid={`step-running`} id={`step-running`} className={styles.stepRunningIcon}>
             <i><FontAwesomeIcon aria-label="icon: clock-circle" icon={faClock} className={styles.runningIcon} size="lg" data-testid={`${response.status}-icon`} /></i>
-          </span>;
+            <strong>{stepName}</strong>
+          </div>);
+        } else {
+          return (<div data-testid={`${stepName}-step`} id={`${stepName}-step`} className={styles.stepResponse}>
+            <strong className={styles.stepName}>{stepName}</strong>
+          </div>);
         }
       }
     },
@@ -126,12 +136,11 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, openJobRespons
       text: "Step Type",
       key: "stepType",
       dataField: "stepType",
-      width: "25%",
       headerFormatter: (column) => <strong data-testid={`stepType-header`}>Step Type</strong>,
       formatter: (stepName, response) => {
         let stepType = response.stepDefinitionType === "ingestion" ? "loading" : response.stepDefinitionType;
         return (<div data-testid={`${response.stepName}-${stepType}-type`} id={`${response.stepName}-${stepType}-type`} className={styles.stepResponse}>
-          {stepType}
+          {stepType?.toLowerCase()}
         </div>);
       }
     },
@@ -139,7 +148,6 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, openJobRespons
       text: "Documents Written",
       key: "succesfulEvents",
       dataField: "successfulEvents",
-      width: "25%",
       headerFormatter: (column) => <strong>Documents Written</strong>,
       formatter: (successfulEvents, response) => {
         const {stepName, success} = response;
@@ -150,10 +158,15 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, openJobRespons
               {successfulEvents}
             </span>);
           }
-        } else {
-          return (<div className={styles.stepResponse} key={"running-" + stepName}><strong className={styles.stepName}>{stepName || response.status}</strong> <span className={styles.running}>
-            <Spinner className="spinner-border-sm" animation="border" data-testid="spinner" variant="primary" />
-          </span></div>);
+        } else if (isStepRunning(response)) {
+          return (
+            <div className={styles.stepResponse} key={"running-" + stepName}>
+              <strong className={styles.stepName}>running step</strong>
+              <span className={styles.running}>
+                <Spinner className="spinner-border-sm" animation="border" data-testid="spinner" variant="primary" />
+              </span>
+            </div>
+          );
         }
       }
     },
@@ -161,7 +174,6 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, openJobRespons
       text: "Action",
       key: "action",
       dataField: "successfulEvents",
-      width: "25%",
       headerFormatter: (column) => <span className={styles.actionHeader}><strong>Action</strong><HCTooltip text={RunToolTips.exploreStepData} id="explore-data" placement="top"><FontAwesomeIcon icon={faInfoCircle} size="1x" aria-label="icon: info-circle" className={styles.infoIcon}/></HCTooltip></span>,
       formatter: (successfulEvents, response) => {
         const {targetEntityType, targetDatabase, stepDefinitionType, stepName, stepEndTime} = response;
@@ -213,14 +225,29 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, openJobRespons
     </Accordion></div>) : null;
   };
 
+  const composeData = (responsesArray) => {
+    let data: any[] = [];
+    if (flow===undefined || !flow.steps || flow.steps.length === 0) return responsesArray;
+    for (let step of flow.steps) {
+      const result = responsesArray.find(response => (response.stepName === step.stepName || response.status.includes(`running step ${step.stepNumber}`)));
+      if (result === undefined) {
+        data.push(step);
+      } else {
+        data.push(result);
+      }
+    }
+    return data;
+  };
+
   const responses = (jobResponse) => {
     if (jobResponse && jobResponse.stepResponses) {
       const responsesArray = Object.values(jobResponse.stepResponses);
+      const data = composeData(responsesArray);
       return (<HCTable
         data-testid="job-response-table"
         rowKey={"key"}
         className={styles.responseTable}
-        data={responsesArray}
+        data={data}
         columns={responseColumns}
         expandedRowRender={(response) => expandedRowRender(response)}
         pagination={false}

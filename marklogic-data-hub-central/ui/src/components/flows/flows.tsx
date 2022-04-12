@@ -17,6 +17,7 @@ import {ExclamationCircleFill, PlayCircleFill, X, ChevronDown, GearFill} from "r
 import {Accordion, Card, Dropdown, Modal, ButtonGroup} from "react-bootstrap";
 import {HCButton, HCCard, HCTooltip, HCCheckbox} from "@components/common";
 import {themeColors} from "@config/themes.config";
+import {Flow} from "../../types/run-types";
 import * as _ from "lodash";
 
 enum ReorderFlowOrderDirection {
@@ -36,7 +37,7 @@ interface Props {
   canReadFlow: boolean;
   canWriteFlow: boolean;
   hasOperatorRole: boolean;
-  running: any;
+  flowRunning: Flow;
   uploadError: string;
   newStepToFlowOptions: any;
   addStepToFlow: any;
@@ -44,7 +45,6 @@ interface Props {
   runEnded: any;
   onReorderFlow: (flowIndex: number, newSteps: Array<any>) => void
   setJobId: any;
-  showStepRunResponse: any;
   setOpenJobResponse: React.Dispatch<React.SetStateAction<boolean>>;
   isStepRunning?: boolean
 }
@@ -76,12 +76,11 @@ const Flows: React.FC<Props> = ({
   canReadFlow,
   canWriteFlow,
   hasOperatorRole,
-  running,
+  flowRunning,
   uploadError,
   newStepToFlowOptions,
   addStepToFlow,
   flowsDefaultActiveKey,
-  showStepRunResponse,
   runEnded,
   onReorderFlow,
   setJobId,
@@ -913,7 +912,7 @@ const Flows: React.FC<Props> = ({
   };
 
   const isRunning = (flowId, stepId) => {
-    let result = running.find(r => (r.flowId === flowId && r.stepId === stepId));
+    let result = flowRunning.steps?.find(r => (flowRunning.name === flowId && r.stepId === stepId));
     return result !== undefined;
   };
 
@@ -1181,7 +1180,7 @@ const Flows: React.FC<Props> = ({
           <Accordion.Item eventKey={i}>
             <Card>
               <Card.Header className={"p-0 pe-3 d-flex bg-white"}>
-                <Accordion.Button onClick={() => handlePanelInteraction(i)}>{flowHeader(flowName, i)}</Accordion.Button>
+                <Accordion.Button data-testid={`accordion-${flowName}`} onClick={() => handlePanelInteraction(i)}>{flowHeader(flowName, i)}</Accordion.Button>
                 {panelActions(flowName, i)}
               </Card.Header>
               <Accordion.Body className={styles.panelContent} ref={flowPanels[flowName]}>

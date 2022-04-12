@@ -125,14 +125,23 @@ const jobRespFailed = {
     "lastCompletedStep": "1",
     "timeStarted": "2020-04-04T01:17:44.918282-07:00",
     "timeEnded": "2020-04-04T01:17:45.012137-07:00",
+    "duration": "PT0.702S",
     "stepResponses": {
       "1": {
         "flowName": "testFlow",
         "stepName": "failedIngest",
         "success": false,
+        "status": "failed step 1",
+        "fullOutput": null,
+        "failedBatches": 1,
+        "failedEvents": 1,
+        "successfulBatches": 0,
+        "successfulEvents": 0,
         "stepDefinitionName": "default-ingestion",
         "stepDefinitionType": "ingestion",
-        "stepOutput": stepFailed
+        "stepOutput": stepFailed,
+        "stepStartTime": "2020-04-04T01:17:44.936121-07:00",
+        "stepEndTime": "2020-04-04T01:17:45.012137-07:00"
       },
       "2": {
         "flowName": "testFlow",
@@ -140,8 +149,16 @@ const jobRespFailed = {
         "stepDefinitionName": "entity-services-mapping",
         "stepDefinitionType": "mapping",
         "success": false,
+        "status": "failed step 2",
+        "fullOutput": null,
+        "failedBatches": 1,
+        "failedEvents": 1,
+        "successfulBatches": 0,
+        "successfulEvents": 0,
         "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
-        "stepOutput": stepFailed
+        "stepOutput": stepFailed,
+        "stepStartTime": "2020-04-04T01:17:44.936121-07:00",
+        "stepEndTime": "2020-04-04T01:17:45.012137-07:00"
       },
       "4": {
         "flowName": "testFlow",
@@ -149,7 +166,15 @@ const jobRespFailed = {
         "stepDefinitionName": "default-matching",
         "stepDefinitionType": "matching",
         "success": false,
-        "stepOutput": stepFailed
+        "status": "failed step 3",
+        "fullOutput": null,
+        "failedBatches": 1,
+        "failedEvents": 1,
+        "successfulBatches": 0,
+        "successfulEvents": 0,
+        "stepOutput": stepFailed,
+        "stepStartTime": "2020-04-04T01:17:44.936121-07:00",
+        "stepEndTime": "2020-04-04T01:17:45.012137-07:00"
       },
       "5": {
         "flowName": "testFlow",
@@ -157,7 +182,15 @@ const jobRespFailed = {
         "stepDefinitionName": "default-merging",
         "stepDefinitionType": "merging",
         "success": false,
-        "stepOutput": stepFailed
+        "status": "failed step 4",
+        "fullOutput": null,
+        "failedBatches": 1,
+        "failedEvents": 1,
+        "successfulBatches": 0,
+        "successfulEvents": 0,
+        "stepOutput": stepFailed,
+        "stepStartTime": "2020-04-04T01:17:44.936121-07:00",
+        "stepEndTime": "2020-04-04T01:17:45.012137-07:00"
       },
       "6": {
         "flowName": "testFlow",
@@ -165,7 +198,15 @@ const jobRespFailed = {
         "stepDefinitionName": "default-mastering",
         "stepDefinitionType": "mastering",
         "success": false,
-        "stepOutput": stepFailed
+        "status": "failed step 5",
+        "fullOutput": null,
+        "failedBatches": 1,
+        "failedEvents": 1,
+        "successfulBatches": 0,
+        "successfulEvents": 0,
+        "stepOutput": stepFailed,
+        "stepStartTime": "2020-04-04T01:17:44.936121-07:00",
+        "stepEndTime": "2020-04-04T01:17:45.012137-07:00"
       }
     },
     "jobStatus": "failed"

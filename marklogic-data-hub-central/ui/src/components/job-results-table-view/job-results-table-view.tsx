@@ -13,7 +13,7 @@ import {OverlayTrigger} from "react-bootstrap";
 import {themeColors} from "@config/themes.config";
 import ExpandCollapse from "../../../src/components/expand-collapse/expand-collapse";
 
-const JobResultsTableView = (props) => {
+const JobResultsTableView = ({data}) => {
   const [popoverVisibility, setPopoverVisibility] = useState<boolean>(false);
   const [jobId, setJobId] = useState<string>("");
   const [openJobResponse, setOpenJobResponse] = useState<boolean>(false);
@@ -261,14 +261,14 @@ const JobResultsTableView = (props) => {
   );
 
   useEffect(() => {
-    let arraybyDistinctJobId = props.data.filter((value, index, self) =>
+    let arraybyDistinctJobId = data.filter((value, index, self) =>
       index === self.findIndex((valueAux) => (
         valueAux.jobId === value.jobId && valueAux.testCustomFlow === value.testCustomFlow
       ))
     );
     setExpandCollapseIdRowsOriginal(arraybyDistinctJobId.map(job => job.jobId));
     setArraybyDistinctJobId(arraybyDistinctJobId);
-  }, [props.data]);
+  }, [data]);
 
   const [expandCollapseIdRows, setExpandCollapseIdRows] = useState<any[]>([]);
   const [expandCollapseIdRowsOriginal, setExpandCollapseIdRowsOriginal] = useState<any[]>([]);
@@ -331,7 +331,7 @@ const JobResultsTableView = (props) => {
           expandedRowKeys={expandCollapseIdRows}
           expandedRowRender={(row) => {
 
-            let nestedFlowRows = props.data.filter((obj) => {
+            let nestedFlowRows = data.filter((obj) => {
               return obj.jobId === row.jobId && obj.testCustomFlow === row.testCustomFlow;
             });
 
@@ -352,7 +352,7 @@ const JobResultsTableView = (props) => {
           }}
         />
       </div>
-      <JobResponse jobId={jobId} openJobResponse={openJobResponse} setOpenJobResponse={handleCloseJobResponse} />
+      <JobResponse jobId={jobId} openJobResponse={openJobResponse} setOpenJobResponse={handleCloseJobResponse} flow={undefined} />
     </>
   );
 };
