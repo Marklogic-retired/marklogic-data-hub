@@ -23,6 +23,7 @@ const versions = {
   hubVersion: config.HUBVERSION,
   stagingDbName: config.STAGINGDATABASE,
   finalDbName: config.FINALDATABASE,
+  jobsDbName: config.JOBDATABASE,
   markLogicVersion: xdmp.version(),
   clusterName: xdmp.clusterName()
 };

@@ -3,6 +3,7 @@
 const invalidJSONMessage = "Invalid JSON";
 const stagingDb = "data-hub-STAGING";
 const finalDb = "data-hub-FINAL";
+const jobsDb = "data-hub-JOBS";
 const defaultTargetPerms = "data-hub-common,read,data-hub-common,update";
 const validCapabilities = ["read", "update", "insert", "execute"];
 const defaultSourceFormat = "json";
@@ -23,6 +24,7 @@ export default {
     invalidJSONMessage,
     stagingDb,
     finalDb,
+    jobsDb,
     defaultTargetPerms,
     validCapabilities,
     defaultSourceRecordScope,
