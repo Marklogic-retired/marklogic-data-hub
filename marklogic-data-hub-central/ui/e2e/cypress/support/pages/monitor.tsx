@@ -26,17 +26,23 @@ class MonitorPage {
     return cy.findByText(pageSizeOption);
   }
   validateAppliedFacetTableRows(facetType: string, index: number) {
+    // filter by facet
     cy.get(`[data-testid=${facetType}-facet] input`).eq(index).check();
     cy.findByTestId("facet-apply-button").click({force: true});
     cy.get(`[data-testid=${facetType}-facet] input`).eq(index).then(($btn) => {
       let facet = $btn.next("label").text();
       cy.get("#selected-facets [data-cy=\"clear-" + $btn.val() + "\"]").should("exist");
-      cy.get(".rowExpandedDetail").then(($row) => {
-        for (let i = 0; i < $row.length; i++) {
-          cy.get(".rowExpandedDetail > div").eq(2).should("contain.text", facet.charAt(0).toUpperCase() + facet.slice(1));
-        }
+      // Click expand all table rows to validate info inside
+      this.getExpandAllTableRows().scrollIntoView().click().then(() => {
+        cy.get(".rowExpandedDetail").then(($row) => {
+          for (let i = 0; i < $row.length; i++) {
+            //validate row expanded info
+            cy.get(".rowExpandedDetail > div").eq(2).should("contain.text", facet.charAt(0).toUpperCase() + facet.slice(1));
+          }
+        });
+        cy.findByTestId(`clear-${$btn.val()}`).scrollIntoView().trigger("mouseover").dblclick({force: true});
       });
-      cy.findByTestId(`clear-${$btn.val()}`).trigger("mouseover").dblclick({force: true});
+
     });
   }
   validateAppliedFacet(facetType: string, index: number) {
@@ -155,6 +161,9 @@ class MonitorPage {
 
   getUnapliedCustomButtonFacet(value: string) {
     cy.get(`[data-testid="clear-grey-${value}"]`);
+  }
+  getExpandAllTableRows() {
+    return cy.get("#expandIcon path");
   }
 }
 const monitorPage = new MonitorPage();

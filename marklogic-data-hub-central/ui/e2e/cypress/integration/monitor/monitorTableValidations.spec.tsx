@@ -34,7 +34,6 @@ describe("Monitor Tile", () => {
   });
 
   it("apply facet search and verify docs", () => {
-    cy.get("[id^=expandBtn]").click({force: true});
     monitorPage.validateAppliedFacetTableRows("step-type", 1);
   });
 

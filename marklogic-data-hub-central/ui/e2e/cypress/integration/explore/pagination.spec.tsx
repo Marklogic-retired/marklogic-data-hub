@@ -100,7 +100,7 @@ describe("Validate scenarios for pagination in the explore page table", () => {
     //Select All Entities
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("All Entities");
-    entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
+    entitiesSidebar.getBaseEntityOption("All Entities").scrollIntoView().should("be.visible");
     table.getTableRows().should("not.be.empty");
 
     cy.log("**Validate that when going back to 'All Entities' the active page it's now the first one again**");
