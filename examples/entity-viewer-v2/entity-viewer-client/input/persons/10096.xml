@@ -3,214 +3,166 @@
   <personId>10096</personId>
   <nameGroup>
     <givenname>
-      <value>Eva</value>
+      <value>Katherine</value>
     </givenname>
     <surname>
-      <value>Chipp</value>
+      <value>Staddart</value>
     </surname>
     <fullname>
-      <classification>C</classification>
+      <classification>U</classification>
       <restricted>true</restricted>
-      <value>Chipp Eva</value>
+      <value>Staddart Katherine</value>
       <source>
-        <name>New York Times</name>
-        <ts>2019-08-15T06:11:38Z</ts>
+        <name>USA Today</name>
+        <ts>2021-12-24T15:22:28Z</ts>
       </source>
       <source>
-        <name>Washington Post</name>
-        <ts>2018-05-21T01:35:45Z</ts>
-      </source>
-      <source>
-        <name>Wall Street Journal</name>
-        <ts>2010-11-04T16:37:46Z</ts>
+        <name>USA Today</name>
+        <ts>2016-08-08T08:25:04Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>jrousby0@dailymail.co.uk</value>
-      <classification>S</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>frodliff1@sciencedaily.com</value>
+      <value>ehourston0@ted.com</value>
       <classification>U</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>drossborough2@flavors.me</value>
-      <classification>S</classification>
+      <value>aaymerich1@ibm.com</value>
+      <classification>U</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>189-223-0526</phone>
+  <phone>325-318-0221</phone>
   <ssn>
-    <value>507-93-1621</value>
+    <value>607-80-5285</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2017-06-11T22:29:17Z</ts>
-        <uploadedBy>aschuler0</uploadedBy>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
-      <source>
-        <name>Washington Post</name>
-        <ts>2015-06-23T00:54:47Z</ts>
-        <uploadedBy>djagg0</uploadedBy>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
       <source>
         <name>Los Angeles Times</name>
-        <ts>2021-02-25T20:42:38Z</ts>
-        <uploadedBy>ctoal0</uploadedBy>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
-      <source>
-        <name>Los Angeles Times</name>
-        <ts>2011-05-29T18:33:19Z</ts>
-        <uploadedBy>mtute0</uploadedBy>
+        <ts>2019-04-24T01:55:03Z</ts>
+        <uploadedBy>cforker0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>11 Atwood Hill</street>
-      <city>Akron</city>
-      <state>OH</state>
-      <postal>44321</postal>
+      <street>216 Kim Trail</street>
+      <city>Reno</city>
+      <state>NV</state>
+      <postal>89550</postal>
       <country>United States</country>
-      <latitude>41.1002</latitude>
-      <longitude>-81.6443</longitude>
+      <latitude>39.5387</latitude>
+      <longitude>-119.8225</longitude>
+    </address>
+    <address>
+      <street>2 Sutherland Way</street>
+      <city>New York City</city>
+      <state>NY</state>
+      <postal>10203</postal>
+      <country>United States</country>
+      <latitude>40.7808</latitude>
+      <longitude>-73.9772</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>United States</country>
-      <name>La Salle University</name>
-      <city>Dallas</city>
-      <state>TX</state>
-      <postal>75372</postal>
-      <latitude>32.8172446</latitude>
-      <longitude>-96.7712123</longitude>
-    </school>
-    <school>
-      <country>Canada</country>
-      <name>North Island College</name>
-      <city>Gananoque</city>
-      <state>ON</state>
-      <postal>K7G</postal>
-      <latitude>44.3287491</latitude>
-      <longitude>-76.1635651</longitude>
+      <country>Mexico</country>
+      <name>Universidad la Concordia</name>
+      <city>Guanajuato</city>
+      <state>GUA</state>
+      <postal>36780</postal>
+      <latitude>20.5593774</latitude>
+      <longitude>-101.2049226</longitude>
+      <source>
+        <name>USA Today</name>
+        <ts>2012-01-30T14:37:10Z</ts>
+      </source>
+      <source>
+        <name>New York Times</name>
+        <ts>2021-05-26T10:58:34Z</ts>
+      </source>
     </school>
   </schools>
-  <status>Inactive</status>
+  <status>Active</status>
   <sources>
     <source>
-      <name>Wall Street Journal</name>
-      <ts>2015-08-26T19:51:05Z</ts>
+      <name>New York Times</name>
+      <ts>2011-06-27T04:15:29Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>Los Angeles Times</name>
-      <ts>2015-07-08T04:03:59Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>Chicago Tribune</name>
-      <ts>2021-08-13T04:31:34Z</ts>
+      <name>New York Times</name>
+      <ts>2013-02-23T18:04:43Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10030</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Bonsul Jarad</fullname>
-      <city>Amarillo</city>
-      <state>TX</state>
-    </relation>
-    <relation>
-      <id>10074</id>
+      <id>/person/10024.xml</id>
       <predicate>relatedTo</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
-      <fullname>Klimontovich Willetta</fullname>
-      <city>Lansing</city>
-      <state>MI</state>
-    </relation>
-    <relation>
-      <id>10089</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
-      <fullname>Klulisek Jacobo</fullname>
-      <city>San Francisco</city>
+      <fullname>Eglinton Melvin</fullname>
+      <city>Long Beach</city>
       <state>CA</state>
     </relation>
     <relation>
-      <id>10078</id>
-      <predicate>worksWith</predicate>
+      <id>/person/10022.xml</id>
+      <predicate>livesWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
-      <fullname>Parsley Ronda</fullname>
-      <city>Fresno</city>
-      <state>CA</state>
+      <fullname>Borless Jeanine</fullname>
+      <city>Rochester</city>
+      <state>NY</state>
+    </relation>
+    <relation>
+      <id>/person/10004.xml</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
+      <fullname>Norville Joell</fullname>
+      <city>Boise</city>
+      <state>ID</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-27T10:18:00Z</ts>
-    <user>echipp2n</user>
+    <ts>2022-01-21T11:11:00Z</ts>
+    <user>kstaddart2n</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-02T03:16:45Z</ts>
-    <user>echipp2n</user>
+    <ts>2022-01-15T18:35:43Z</ts>
+    <user>kstaddart2n</user>
   </lastUpdated>
   <socials>
     <social>
-      <site>linkedin</site>
-      <handle>mkibel0</handle>
-      <address>http://ft.com/bibendum/imperdiet/nullam/orci.xml</address>
+      <site>facebook</site>
+      <handle>bfrearson0</handle>
+      <address>https://tamu.edu/sapien/quis/libero/nullam/sit/amet.jpg</address>
+    </social>
+    <social>
+      <site>twitter</site>
+      <handle>devers1</handle>
+      <address>http://jugem.jp/ut/nulla.xml</address>
     </social>
   </socials>
   <memberships/>
   <links>
     <link>
       <label>Quick View</label>
-      <url>https://rambler.ru</url>
-      <icon>faEye</icon>
+      <url>http://accuweather.com</url>
+      <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>http://huffingtonpost.com</url>
-      <icon>faMedal</icon>
+      <url>https://delicious.com</url>
+      <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>https://com.com</url>
-      <icon>faComments</icon>
+      <url>http://google.cn</url>
+      <icon>fa-comments</icon>
     </link>
   </links>
-<actions>
-  <action>
-    <url>http://oaic.gov.au</url>
-    <icon>faCog</icon>
-  </action>
-  <action>
-    <url>https://multiply.com</url>
-    <icon>faCode</icon>
-  </action>
-  <action>
-    <url>http://addthis.com</url>
-    <icon>faSync</icon>
-  </action>
-</actions>
 </person>

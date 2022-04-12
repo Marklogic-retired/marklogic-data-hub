@@ -3,212 +3,232 @@
   <personId>10014</personId>
   <nameGroup>
     <givenname>
-      <value>Ermentrude</value>
+      <value>Nari</value>
     </givenname>
     <surname>
-      <value>Cadle</value>
+      <value>Stalf</value>
     </surname>
     <fullname>
       <classification>C</classification>
-      <restricted>true</restricted>
-      <value>Cadle Ermentrude</value>
+      <restricted>false</restricted>
+      <value>Stalf Nari</value>
+      <source>
+        <name>USA Today</name>
+        <ts>2015-11-29T17:55:47Z</ts>
+      </source>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2012-10-17T22:49:33Z</ts>
+      </source>
       <source>
         <name>Los Angeles Times</name>
-        <ts>2020-03-19T03:51:25Z</ts>
+        <ts>2013-04-03T18:18:06Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>yadamkiewicz0@scientificamerican.com</value>
-      <classification>S</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>skilmary1@nytimes.com</value>
-      <classification>U</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>ctwittey2@fema.gov</value>
-      <classification>U</classification>
+      <value>ekillwick0@irs.gov</value>
+      <classification>C</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>983-866-2276</phone>
+  <phone>175-452-9754</phone>
   <ssn>
-    <value>747-10-2754</value>
+    <value>830-96-9058</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
-      <source>
-        <name>Wall Street Journal</name>
-        <ts>2011-06-22T11:08:45Z</ts>
-        <uploadedBy>hhowels0</uploadedBy>
-      </source>
-    </image>
-    <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
       <source>
-        <name>Washington Post</name>
-        <ts>2019-01-15T22:53:20Z</ts>
-        <uploadedBy>rwabersich0</uploadedBy>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
-      <source>
-        <name>Wall Street Journal</name>
-        <ts>2013-12-03T13:18:50Z</ts>
-        <uploadedBy>vblackborne0</uploadedBy>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
-      <source>
-        <name>New York Times</name>
-        <ts>2012-02-20T00:38:37Z</ts>
-        <uploadedBy>cjouhan0</uploadedBy>
+        <name>Los Angeles Times</name>
+        <ts>2013-05-13T02:29:05Z</ts>
+        <uploadedBy>kquantrell0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>7 Mandrake Plaza</street>
-      <city>Memphis</city>
-      <state>TN</state>
-      <postal>38104</postal>
+      <street>0 Glacier Hill Terrace</street>
+      <city>Bakersfield</city>
+      <state>CA</state>
+      <postal>93381</postal>
       <country>United States</country>
-      <latitude>35.1334</latitude>
-      <longitude>-90.0046</longitude>
+      <latitude>35.2944</latitude>
+      <longitude>-118.9052</longitude>
+    </address>
+    <address>
+      <street>7 Knutson Circle</street>
+      <city>Carlsbad</city>
+      <state>CA</state>
+      <postal>92013</postal>
+      <country>United States</country>
+      <latitude>33.0169</latitude>
+      <longitude>-116.846</longitude>
+    </address>
+    <address>
+      <street>278 Dottie Lane</street>
+      <city>Carlsbad</city>
+      <state>CA</state>
+      <postal>92013</postal>
+      <country>United States</country>
+      <latitude>33.0169</latitude>
+      <longitude>-116.846</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>United States</country>
-      <name>Mercer University</name>
-      <city>Hicksville</city>
-      <state>NY</state>
-      <postal>11854</postal>
-      <latitude>40.77</latitude>
-      <longitude>-73.53</longitude>
+      <country>Canada</country>
+      <name>Université du Québec en Outaouais</name>
+      <city>Sarnia</city>
+      <state>ON</state>
+      <postal>N7V</postal>
+      <latitude>42.9946912</latitude>
+      <longitude>-82.394</longitude>
+      <source>
+        <name>USA Today</name>
+        <ts>2021-10-05T08:14:30Z</ts>
+      </source>
     </school>
     <school>
-      <country>Mexico</country>
-      <name>Centro Universitario Ixtlahuaca</name>
-      <city>Santa Rita</city>
-      <state>GUA</state>
-      <postal>36350</postal>
-      <latitude>21.0130648</latitude>
-      <longitude>-101.8542461</longitude>
+      <country>United States</country>
+      <name>Moody Bible Institute</name>
+      <city>Simi Valley</city>
+      <state>CA</state>
+      <postal>93094</postal>
+      <latitude>34.28</latitude>
+      <longitude>-118.7</longitude>
+      <source>
+        <name>USA Today</name>
+        <ts>2010-06-23T16:26:56Z</ts>
+      </source>
+      <source>
+        <name>New York Times</name>
+        <ts>2016-08-21T00:05:27Z</ts>
+      </source>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2021-06-28T18:33:33Z</ts>
+      </source>
     </school>
   </schools>
-  <status>Inactive</status>
+  <status>Active</status>
   <sources>
     <source>
-      <name>New York Times</name>
-      <ts>2021-11-29T04:34:20Z</ts>
+      <name>USA Today</name>
+      <ts>2017-01-02T06:30:41Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10070</id>
+      <id>/person/10073.xml</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
-      <fullname>Breitler Cacilie</fullname>
-      <city>San Antonio</city>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
+      <fullname>Watford Kort</fullname>
+      <city>Houston</city>
       <state>TX</state>
     </relation>
     <relation>
-      <id>10009</id>
+      <id>/person/10063.xml</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Hebble Donall</fullname>
+      <city>Minneapolis</city>
+      <state>MN</state>
+    </relation>
+    <relation>
+      <id>/person/10082.xml</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
+      <fullname>Yegorev Trish</fullname>
+      <city>West Palm Beach</city>
+      <state>FL</state>
+    </relation>
+    <relation>
+      <id>/person/10026.xml</id>
       <predicate>relatedTo</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Gulliver Gail</fullname>
+      <fullname>Schanke Jennilee</fullname>
       <city>Austin</city>
       <state>TX</state>
     </relation>
     <relation>
-      <id>10021</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Heineke Shanna</fullname>
-      <city>Shreveport</city>
-      <state>LA</state>
+      <id>/person/10055.xml</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
+      <fullname>Jenkyn Dale</fullname>
+      <city>Montgomery</city>
+      <state>AL</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-12T03:35:17Z</ts>
-    <user>ecadled</user>
+    <ts>2022-01-20T20:03:49Z</ts>
+    <user>nstalfd</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-18T03:14:03Z</ts>
-    <user>ecadled</user>
+    <ts>2022-01-04T06:07:37Z</ts>
+    <user>nstalfd</user>
   </lastUpdated>
   <socials>
     <social>
-      <site>facebook</site>
-      <handle>lmcquilkin0</handle>
-      <address>https://blogtalkradio.com/diam/vitae/quam/suspendisse/potenti.jsp</address>
+      <site>twitter</site>
+      <handle>plawlor0</handle>
+      <address>https://cmu.edu/vel/augue/vestibulum/ante/ipsum.png</address>
     </social>
     <social>
       <site>twitter</site>
-      <handle>rwoodburn1</handle>
-      <address>https://smh.com.au/elementum/nullam/varius.xml</address>
+      <handle>rblofeld1</handle>
+      <address>http://vkontakte.ru/lobortis/est.json</address>
     </social>
     <social>
-      <site>facebook</site>
-      <handle>jmccrainor2</handle>
-      <address>http://gnu.org/sed/augue/aliquam.xml</address>
+      <site>twitter</site>
+      <handle>jsweatland2</handle>
+      <address>http://wunderground.com/primis/in/faucibus/orci/luctus.jpg</address>
     </social>
   </socials>
   <memberships>
     <membership>
-      <list>list9</list>
+      <list>list7</list>
       <important>true</important>
-      <ts>2022-01-08</ts>
+      <ts>2022-02-13</ts>
     </membership>
     <membership>
-      <list>list10</list>
+      <list>list8</list>
       <important>false</important>
-      <ts>2021-11-02</ts>
+      <ts>2022-02-21</ts>
+    </membership>
+    <membership>
+      <list>list8</list>
+      <important>true</important>
+      <ts>2022-01-31</ts>
     </membership>
     <membership>
       <list>list3</list>
       <important>true</important>
-      <ts>2022-01-19</ts>
+      <ts>2022-02-22</ts>
+    </membership>
+    <membership>
+      <list>list4</list>
+      <important>true</important>
+      <ts>2022-02-01</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>http://youku.com</url>
-      <icon>faEye</icon>
+      <url>https://ucsd.edu</url>
+      <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>http://blinklist.com</url>
-      <icon>faMedal</icon>
+      <url>http://ycombinator.com</url>
+      <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>https://comsenz.com</url>
-      <icon>faComments</icon>
+      <url>https://accuweather.com</url>
+      <icon>fa-comments</icon>
     </link>
   </links>
-<actions>
-  <action>
-    <url>http://oaic.gov.au</url>
-    <icon>faCog</icon>
-  </action>
-  <action>
-    <url>https://multiply.com</url>
-    <icon>faCode</icon>
-  </action>
-  <action>
-    <url>http://addthis.com</url>
-    <icon>faSync</icon>
-  </action>
-</actions>
 </person>

@@ -3,213 +3,191 @@
   <personId>10033</personId>
   <nameGroup>
     <givenname>
-      <value>Brittany</value>
+      <value>Dion</value>
     </givenname>
     <surname>
-      <value>Anselmi</value>
+      <value>Godsil</value>
     </surname>
     <fullname>
       <classification>C</classification>
       <restricted>true</restricted>
-      <value>Anselmi Brittany</value>
+      <value>Godsil Dion</value>
       <source>
         <name>Los Angeles Times</name>
-        <ts>2020-08-01T00:15:42Z</ts>
+        <ts>2016-06-28T21:20:25Z</ts>
       </source>
       <source>
-        <name>USA Today</name>
-        <ts>2020-12-14T13:59:29Z</ts>
-      </source>
-      <source>
-        <name>USA Today</name>
-        <ts>2014-05-19T17:07:54Z</ts>
+        <name>New York Times</name>
+        <ts>2018-07-26T12:59:12Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>rdawtre0@examiner.com</value>
+      <value>jbeaudry0@mozilla.org</value>
       <classification>C</classification>
       <restricted>false</restricted>
     </email>
+    <email>
+      <value>tslingsby1@clickbank.net</value>
+      <classification>U</classification>
+      <restricted>false</restricted>
+    </email>
   </emails>
-  <phone>978-469-3850</phone>
+  <phone>785-114-0010</phone>
   <ssn>
-    <value>617-71-9120</value>
+    <value>149-47-8821</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2016-04-08T13:06:28Z</ts>
-        <uploadedBy>snoir0</uploadedBy>
+        <name>Wall Street Journal</name>
+        <ts>2018-04-04T06:37:19Z</ts>
+        <uploadedBy>kocullen0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2017-08-27T15:17:33Z</ts>
+        <uploadedBy/>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+      <source>
+        <name>New York Times</name>
+        <ts>2021-10-25T08:53:20Z</ts>
+        <uploadedBy>frainford0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+      <source>
+        <name>New York Times</name>
+        <ts>2011-11-21T16:19:48Z</ts>
+        <uploadedBy>blapree0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>6 Lyons Street</street>
-      <city>Cedar Rapids</city>
-      <state>IA</state>
-      <postal>52410</postal>
+      <street>822 Manufacturers Street</street>
+      <city>Evansville</city>
+      <state>IN</state>
+      <postal>47732</postal>
       <country>United States</country>
-      <latitude>42.0794</latitude>
-      <longitude>-91.5992</longitude>
+      <latitude>37.9971</latitude>
+      <longitude>-87.575</longitude>
     </address>
     <address>
-      <street>65909 Union Place</street>
-      <city>Lexington</city>
-      <state>KY</state>
-      <postal>40596</postal>
+      <street>14 Roth Point</street>
+      <city>Wichita</city>
+      <state>KS</state>
+      <postal>67215</postal>
       <country>United States</country>
-      <latitude>38.0283</latitude>
-      <longitude>-84.4715</longitude>
-    </address>
-    <address>
-      <street>85 Kropf Alley</street>
-      <city>Katy</city>
-      <state>TX</state>
-      <postal>77493</postal>
-      <country>United States</country>
-      <latitude>29.8678</latitude>
-      <longitude>-95.8298</longitude>
+      <latitude>37.6333</latitude>
+      <longitude>-97.425</longitude>
     </address>
   </addresses>
   <schools>
     <school>
       <country>United States</country>
-      <name>Columbia Southern University</name>
-      <city>Nashville</city>
-      <state>TN</state>
-      <postal>37240</postal>
-      <latitude>36.1457192</latitude>
-      <longitude>-86.8066559</longitude>
-    </school>
-    <school>
-      <country>Canada</country>
-      <name>Nova Scotia Agricultural College</name>
-      <city>Richmond</city>
-      <state>QC</state>
-      <postal>V6Z</postal>
-      <latitude>49.2725714</latitude>
-      <longitude>-123.1207968</longitude>
+      <name>Virginia Commonwealth University</name>
+      <city>Iowa City</city>
+      <state>IA</state>
+      <postal>52245</postal>
+      <latitude>41.6613587</latitude>
+      <longitude>-91.4918235</longitude>
+      <source>
+        <name>USA Today</name>
+        <ts>2020-04-07T02:22:25Z</ts>
+      </source>
+      <source>
+        <name>New York Times</name>
+        <ts>2012-02-12T20:53:45Z</ts>
+      </source>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2015-07-23T14:21:40Z</ts>
+      </source>
     </school>
   </schools>
-  <status>Inactive</status>
+  <status>Active</status>
   <sources>
     <source>
-      <name>Washington Post</name>
-      <ts>2020-04-21T23:16:55Z</ts>
+      <name>Chicago Tribune</name>
+      <ts>2016-01-26T05:09:21Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>Los Angeles Times</name>
-      <ts>2019-06-14T21:43:14Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>Los Angeles Times</name>
-      <ts>2013-06-27T20:56:36Z</ts>
+      <name>USA Today</name>
+      <ts>2016-11-24T10:56:43Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10016</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
-      <fullname>Handford Stanley</fullname>
-      <city>Milwaukee</city>
-      <state>WI</state>
-    </relation>
-    <relation>
-      <id>10094</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
-      <fullname>Dulling Siward</fullname>
-      <city>Hartford</city>
-      <state>CT</state>
-    </relation>
-    <relation>
-      <id>10073</id>
+      <id>/person/10010.xml</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
-      <fullname>Henniger Clarey</fullname>
-      <city>Cincinnati</city>
-      <state>OH</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Crighton Banky</fullname>
+      <city>Atlanta</city>
+      <state>GA</state>
     </relation>
     <relation>
-      <id>10087</id>
+      <id>/person/10003.xml</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
-      <fullname>Linfitt Caprice</fullname>
-      <city>Trenton</city>
-      <state>NJ</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
+      <fullname>Cousin Diane</fullname>
+      <city>Colorado Springs</city>
+      <state>CO</state>
+    </relation>
+    <relation>
+      <id>/person/10038.xml</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
+      <fullname>Stooders Merlina</fullname>
+      <city>Colorado Springs</city>
+      <state>CO</state>
+    </relation>
+    <relation>
+      <id>/person/10023.xml</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
+      <fullname>Iowarch Demetrius</fullname>
+      <city>Pittsburgh</city>
+      <state>PA</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-19T00:52:43Z</ts>
-    <user>banselmiw</user>
+    <ts>2022-02-24T01:34:34Z</ts>
+    <user>dgodsilw</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-19T22:36:16Z</ts>
-    <user>banselmiw</user>
+    <ts>2022-01-31T00:03:22Z</ts>
+    <user>dgodsilw</user>
   </lastUpdated>
   <socials/>
-  <memberships>
-    <membership>
-      <list>list3</list>
-      <important>false</important>
-      <ts>2021-06-09</ts>
-    </membership>
-    <membership>
-      <list>list11</list>
-      <important>true</important>
-      <ts>2021-04-17</ts>
-    </membership>
-    <membership>
-      <list>list9</list>
-      <important>true</important>
-      <ts>2021-08-29</ts>
-    </membership>
-    <membership>
-      <list>list10</list>
-      <important>false</important>
-      <ts>2021-05-18</ts>
-    </membership>
-  </memberships>
+  <memberships/>
   <links>
     <link>
       <label>Quick View</label>
-      <url>https://buzzfeed.com</url>
-      <icon>faEye</icon>
+      <url>http://telegraph.co.uk</url>
+      <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>http://odnoklassniki.ru</url>
-      <icon>faMedal</icon>
+      <url>https://tiny.cc</url>
+      <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>https://vimeo.com</url>
-      <icon>faComments</icon>
+      <url>https://statcounter.com</url>
+      <icon>fa-comments</icon>
     </link>
   </links>
-<actions>
-  <action>
-    <url>http://oaic.gov.au</url>
-    <icon>faCog</icon>
-  </action>
-  <action>
-    <url>https://multiply.com</url>
-    <icon>faCode</icon>
-  </action>
-  <action>
-    <url>http://addthis.com</url>
-    <icon>faSync</icon>
-  </action>
-</actions>
 </person>

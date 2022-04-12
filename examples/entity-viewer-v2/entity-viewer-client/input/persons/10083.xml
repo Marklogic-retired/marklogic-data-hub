@@ -3,210 +3,203 @@
   <personId>10083</personId>
   <nameGroup>
     <givenname>
-      <value>Victoir</value>
+      <value>Cam</value>
     </givenname>
     <surname>
-      <value>Roddick</value>
+      <value>Emmanueli</value>
     </surname>
     <fullname>
-      <classification>S</classification>
+      <classification>U</classification>
       <restricted>true</restricted>
-      <value>Roddick Victoir</value>
+      <value>Emmanueli Cam</value>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2020-08-16T13:54:23Z</ts>
+        <name>USA Today</name>
+        <ts>2020-05-05T18:20:49Z</ts>
+      </source>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2017-01-08T07:49:32Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>gbonnette0@answers.com</value>
-      <classification>C</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>bricht1@mediafire.com</value>
+      <value>dgoade0@redcross.org</value>
       <classification>C</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>187-885-7188</phone>
+  <phone>829-106-7812</phone>
   <ssn>
-    <value>439-37-4047</value>
+    <value>691-82-3222</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2013-10-24T00:31:18Z</ts>
-        <uploadedBy>jccomini0</uploadedBy>
+        <name>Los Angeles Times</name>
+        <ts>2018-04-29T08:22:53Z</ts>
+        <uploadedBy>mburg0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+      <source>
+        <name>New York Times</name>
+        <ts>2021-12-20T03:32:05Z</ts>
+        <uploadedBy>ssenten0</uploadedBy>
       </source>
     </image>
     <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
       <source>
-        <name>New York Times</name>
-        <ts>2014-08-09T02:05:49Z</ts>
-        <uploadedBy>gmaltman0</uploadedBy>
+        <name>Chicago Tribune</name>
+        <ts>2012-12-20T02:49:25Z</ts>
+        <uploadedBy>dcoulton0</uploadedBy>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
       <source>
         <name>USA Today</name>
-        <ts>2015-11-17T06:31:24Z</ts>
-        <uploadedBy/>
+        <ts>2016-06-15T11:55:06Z</ts>
+        <uploadedBy>rmcminn0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>0 Schurz Plaza</street>
-      <city>Bakersfield</city>
-      <state>CA</state>
-      <postal>93305</postal>
+      <street>57589 Banding Park</street>
+      <city>Portland</city>
+      <state>OR</state>
+      <postal>97240</postal>
       <country>United States</country>
-      <latitude>35.3855</latitude>
-      <longitude>-118.986</longitude>
+      <latitude>45.5806</latitude>
+      <longitude>-122.3748</longitude>
     </address>
     <address>
-      <street>968 Schmedeman Road</street>
-      <city>Billings</city>
-      <state>MT</state>
-      <postal>59105</postal>
+      <street>7091 Reinke Crossing</street>
+      <city>Brooklyn</city>
+      <state>NY</state>
+      <postal>11210</postal>
       <country>United States</country>
-      <latitude>45.9497</latitude>
-      <longitude>-108.599</longitude>
+      <latitude>40.6281</latitude>
+      <longitude>-73.9467</longitude>
     </address>
     <address>
-      <street>8997 Bashford Road</street>
-      <city>Jacksonville</city>
-      <state>FL</state>
-      <postal>32236</postal>
+      <street>912 Carey Way</street>
+      <city>Pueblo</city>
+      <state>CO</state>
+      <postal>81010</postal>
       <country>United States</country>
-      <latitude>30.3449</latitude>
-      <longitude>-81.6831</longitude>
+      <latitude>38.1286</latitude>
+      <longitude>-104.5523</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Canada</country>
-      <name>Dominican College of Philosophy and Theology</name>
-      <city>Saint-Jérôme</city>
-      <state>QC</state>
-      <postal>J7Z</postal>
-      <latitude>45.7738831</latitude>
-      <longitude>-73.9771044</longitude>
-    </school>
-    <school>
       <country>United States</country>
-      <name>Moody Bible Institute</name>
-      <city>Mobile</city>
-      <state>AL</state>
-      <postal>36641</postal>
-      <latitude>30.69</latitude>
-      <longitude>-88.06</longitude>
+      <name>St. Peter's College</name>
+      <city>Boston</city>
+      <state>MA</state>
+      <postal>02216</postal>
+      <latitude>35.9014983</latitude>
+      <longitude>-81.1381216</longitude>
+      <source>
+        <name>USA Today</name>
+        <ts>2019-03-12T00:51:16Z</ts>
+      </source>
     </school>
   </schools>
   <status>Inactive</status>
   <sources>
     <source>
-      <name>Los Angeles Times</name>
-      <ts>2021-02-13T07:51:36Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>Los Angeles Times</name>
-      <ts>2014-07-15T09:39:53Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>Wall Street Journal</name>
-      <ts>2015-02-07T05:38:43Z</ts>
+      <name>Washington Post</name>
+      <ts>2018-09-02T11:52:36Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10009</id>
+      <id>/person/10042.xml</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Gulliver Gail</fullname>
-      <city>Austin</city>
-      <state>TX</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
+      <fullname>Devericks Marylou</fullname>
+      <city>Port Saint Lucie</city>
+      <state>FL</state>
     </relation>
     <relation>
-      <id>10029</id>
+      <id>/person/10006.xml</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
-      <fullname>Hengoed Edee</fullname>
-      <city>Gary</city>
-      <state>IN</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
+      <fullname>Ferrand Spike</fullname>
+      <city>Oklahoma City</city>
+      <state>OK</state>
+    </relation>
+    <relation>
+      <id>/person/10052.xml</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
+      <fullname>Baake Tom</fullname>
+      <city>Saint Louis</city>
+      <state>MO</state>
+    </relation>
+    <relation>
+      <id>/person/10069.xml</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
+      <fullname>Mac Giolla Pheadair Sibylle</fullname>
+      <city>Rockford</city>
+      <state>IL</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-14T12:19:41Z</ts>
-    <user>vroddick2a</user>
+    <ts>2022-02-25T15:08:24Z</ts>
+    <user>cemmanueli2a</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-20T04:31:05Z</ts>
-    <user>vroddick2a</user>
+    <ts>2022-02-02T18:46:20Z</ts>
+    <user>cemmanueli2a</user>
   </lastUpdated>
-  <socials/>
+  <socials>
+    <social>
+      <site>linkedin</site>
+      <handle>mantoons0</handle>
+      <address>http://netscape.com/justo/lacinia.json</address>
+    </social>
+  </socials>
   <memberships>
     <membership>
-      <list>list2</list>
+      <list>list10</list>
       <important>true</important>
-      <ts>2021-11-06</ts>
+      <ts>2022-02-10</ts>
     </membership>
     <membership>
       <list>list4</list>
       <important>false</important>
-      <ts>2021-11-22</ts>
+      <ts>2022-02-26</ts>
     </membership>
     <membership>
-      <list>list5</list>
+      <list>list10</list>
       <important>false</important>
-      <ts>2021-12-17</ts>
-    </membership>
-    <membership>
-      <list>list7</list>
-      <important>true</important>
-      <ts>2021-09-25</ts>
+      <ts>2022-01-14</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>https://hibu.com</url>
-      <icon>faEye</icon>
+      <url>http://princeton.edu</url>
+      <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>http://odnoklassniki.ru</url>
-      <icon>faMedal</icon>
+      <url>http://surveymonkey.com</url>
+      <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>http://typepad.com</url>
-      <icon>faComments</icon>
+      <url>https://csmonitor.com</url>
+      <icon>fa-comments</icon>
     </link>
   </links>
-<actions>
-  <action>
-    <url>http://oaic.gov.au</url>
-    <icon>faCog</icon>
-  </action>
-  <action>
-    <url>https://multiply.com</url>
-    <icon>faCode</icon>
-  </action>
-  <action>
-    <url>http://addthis.com</url>
-    <icon>faSync</icon>
-  </action>
-</actions>
 </person>
