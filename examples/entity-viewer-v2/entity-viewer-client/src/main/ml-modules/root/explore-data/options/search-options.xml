@@ -33,7 +33,7 @@
     <search:range collation="http://marklogic.com/collation/codepoint" facet="true" type="xs:string">
       <search:element name="status" ns="" xmlns:es="http://marklogic.com/entity-services"/>
       <search:facet-option>limit=25</search:facet-option>
-    </search:range>:q!
+    </search:range>
   </search:constraint>
   <search:constraint name="country">
     <search:range collation="http://marklogic.com/collation/codepoint" facet="true" type="xs:string">
@@ -47,6 +47,18 @@
       <search:facet-option>limit=25</search:facet-option>
     </search:range>
   </search:constraint>
+  <search:operator name="sort">
+    <search:state name="person_createdOn_ascending">
+      <search:sort-order type="xs:dateTime" direction="ascending">
+        <search:path-index xmlns:oex="http://www.w3.org/2000/xmlns/">/person/createdOn/ts</search:path-index>
+      </search:sort-order>
+    </search:state>
+    <search:state name="person_createdOn_descending">
+      <search:sort-order type="xs:dateTime" direction="descending">
+        <search:path-index xmlns:oex="http://www.w3.org/2000/xmlns/">/person/createdOn/ts</search:path-index>
+      </search:sort-order>
+    </search:state>
+  </search:operator>
   <!--
 Uncomment to return no results for a blank search, rather than the default of all results
  <search:term
