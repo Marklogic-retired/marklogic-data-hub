@@ -3,195 +3,244 @@
   <personId>10038</personId>
   <nameGroup>
     <givenname>
-      <value>Florette</value>
+      <value>Merlina</value>
     </givenname>
     <surname>
-      <value>Learmonth</value>
+      <value>Stooders</value>
     </surname>
     <fullname>
-      <classification>U</classification>
-      <restricted>true</restricted>
-      <value>Learmonth Florette</value>
+      <classification>C</classification>
+      <restricted>false</restricted>
+      <value>Stooders Merlina</value>
       <source>
-        <name>New York Times</name>
-        <ts>2011-07-06T22:41:00Z</ts>
-      </source>
-      <source>
-        <name>USA Today</name>
-        <ts>2019-02-17T17:36:14Z</ts>
+        <name>Los Angeles Times</name>
+        <ts>2014-03-14T14:56:02Z</ts>
       </source>
       <source>
         <name>Washington Post</name>
-        <ts>2012-09-24T07:21:10Z</ts>
+        <ts>2018-12-11T22:10:05Z</ts>
+      </source>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2014-02-08T02:28:12Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>lkarel0@sina.com.cn</value>
+      <value>echallis0@howstuffworks.com</value>
       <classification>U</classification>
       <restricted>false</restricted>
     </email>
-    <email>
-      <value>mwardall1@columbia.edu</value>
-      <classification>S</classification>
-      <restricted>false</restricted>
-    </email>
   </emails>
-  <phone>330-485-5922</phone>
+  <phone>287-751-4645</phone>
   <ssn>
-    <value>276-55-8409</value>
+    <value>512-83-4559</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
-      <source>
-        <name>New York Times</name>
-        <ts>2014-09-04T17:58:10Z</ts>
-        <uploadedBy/>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
       <source>
         <name>Chicago Tribune</name>
-        <ts>2012-06-28T09:04:38Z</ts>
-        <uploadedBy>jpembridge0</uploadedBy>
+        <ts>2020-08-14T21:43:53Z</ts>
+        <uploadedBy>asheircliffe0</uploadedBy>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2021-02-24T00:48:36Z</ts>
-        <uploadedBy/>
+        <name>Los Angeles Times</name>
+        <ts>2011-10-20T10:31:14Z</ts>
+        <uploadedBy>mtraylen0</uploadedBy>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
       <source>
-        <name>New York Times</name>
-        <ts>2021-09-04T06:44:05Z</ts>
-        <uploadedBy>gbrisker0</uploadedBy>
+        <name>Wall Street Journal</name>
+        <ts>2012-12-15T07:18:10Z</ts>
+        <uploadedBy>ssams0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>10 Lerdahl Junction</street>
-      <city>New York City</city>
-      <state>NY</state>
-      <postal>10120</postal>
+      <street>26052 Everett Crossing</street>
+      <city>Colorado Springs</city>
+      <state>CO</state>
+      <postal>80925</postal>
       <country>United States</country>
-      <latitude>40.7506</latitude>
-      <longitude>-73.9894</longitude>
+      <latitude>38.7378</latitude>
+      <longitude>-104.6459</longitude>
+    </address>
+    <address>
+      <street>83 Crownhardt Street</street>
+      <city>Clearwater</city>
+      <state>FL</state>
+      <postal>33763</postal>
+      <country>United States</country>
+      <latitude>28.0173</latitude>
+      <longitude>-82.7461</longitude>
+    </address>
+    <address>
+      <street>2128 Artisan Circle</street>
+      <city>Winston Salem</city>
+      <state>NC</state>
+      <postal>27150</postal>
+      <country>United States</country>
+      <latitude>36.0275</latitude>
+      <longitude>-80.2073</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Canada</country>
-      <name>Trinity Western University</name>
-      <city>Spirit River</city>
-      <state>AB</state>
-      <postal>V2G</postal>
-      <latitude>55.78327</latitude>
-      <longitude>-118.83607</longitude>
+      <country>United States</country>
+      <name>University of Texas Health Center at Tyler</name>
+      <city>Akron</city>
+      <state>OH</state>
+      <postal>44321</postal>
+      <latitude>41.0875099</latitude>
+      <longitude>-81.6363869</longitude>
+      <source>
+        <name>USA Today</name>
+        <ts>2012-06-10T07:05:22Z</ts>
+      </source>
+    </school>
+    <school>
+      <country>United States</country>
+      <name>The Scripps Research Institute</name>
+      <city>Indianapolis</city>
+      <state>IN</state>
+      <postal>46254</postal>
+      <latitude>39.8494377</latitude>
+      <longitude>-86.2666463</longitude>
+      <source>
+        <name>USA Today</name>
+        <ts>2017-05-20T15:39:53Z</ts>
+      </source>
+      <source>
+        <name>New York Times</name>
+        <ts>2019-09-06T07:29:26Z</ts>
+      </source>
     </school>
   </schools>
-  <status>Inactive</status>
+  <status>Active</status>
   <sources>
     <source>
-      <name>Los Angeles Times</name>
-      <ts>2012-10-14T09:11:18Z</ts>
+      <name>New York Times</name>
+      <ts>2015-12-31T20:31:32Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10074</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
-      <fullname>Klimontovich Willetta</fullname>
-      <city>Lansing</city>
-      <state>MI</state>
-    </relation>
-    <relation>
-      <id>10042</id>
+      <id>/person/10019.xml</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Di Batista Eustacia</fullname>
-      <city>Little Rock</city>
-      <state>AR</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
+      <fullname>Crim Howey</fullname>
+      <city>Trenton</city>
+      <state>NJ</state>
     </relation>
     <relation>
-      <id>10007</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Tunnick Mariellen</fullname>
-      <city>Sacramento</city>
+      <id>/person/10014.xml</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
+      <fullname>Stalf Nari</fullname>
+      <city>Bakersfield</city>
       <state>CA</state>
+    </relation>
+    <relation>
+      <id>/person/10046.xml</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
+      <fullname>Howcroft Hestia</fullname>
+      <city>Scottsdale</city>
+      <state>AZ</state>
+    </relation>
+    <relation>
+      <id>/person/10015.xml</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
+      <fullname>Bough Netti</fullname>
+      <city>Bradenton</city>
+      <state>FL</state>
+    </relation>
+    <relation>
+      <id>/person/10098.xml</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
+      <fullname>Gennings Feliks</fullname>
+      <city>Lubbock</city>
+      <state>TX</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-04T14:17:32Z</ts>
-    <user>flearmonth11</user>
+    <ts>2022-02-04T05:06:50Z</ts>
+    <user>mstooders11</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-27T15:06:01Z</ts>
-    <user>flearmonth11</user>
+    <ts>2022-02-23T09:45:27Z</ts>
+    <user>mstooders11</user>
   </lastUpdated>
-  <socials/>
+  <socials>
+    <social>
+      <site>facebook</site>
+      <handle>rtames0</handle>
+      <address>https://barnesandnoble.com/tortor/sollicitudin/mi/sit/amet/lobortis/sapien.jpg</address>
+    </social>
+    <social>
+      <site>facebook</site>
+      <handle>rdockrell1</handle>
+      <address>http://domainmarket.com/mi/integer.xml</address>
+    </social>
+  </socials>
   <memberships>
     <membership>
-      <list>list5</list>
-      <important>true</important>
-      <ts>2021-03-11</ts>
-    </membership>
-    <membership>
-      <list>list9</list>
-      <important>true</important>
-      <ts>2021-02-21</ts>
-    </membership>
-    <membership>
-      <list>list11</list>
+      <list>list6</list>
       <important>false</important>
-      <ts>2021-04-11</ts>
+      <ts>2022-02-13</ts>
+    </membership>
+    <membership>
+      <list>list8</list>
+      <important>true</important>
+      <ts>2022-02-13</ts>
+    </membership>
+    <membership>
+      <list>list5</list>
+      <important>false</important>
+      <ts>2022-01-16</ts>
+    </membership>
+    <membership>
+      <list>list2</list>
+      <important>true</important>
+      <ts>2022-01-05</ts>
     </membership>
     <membership>
       <list>list5</list>
       <important>true</important>
-      <ts>2021-05-02</ts>
+      <ts>2022-02-09</ts>
+    </membership>
+    <membership>
+      <list>list10</list>
+      <important>false</important>
+      <ts>2022-01-23</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>https://wunderground.com</url>
-      <icon>faEye</icon>
+      <url>http://arizona.edu</url>
+      <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>https://indiegogo.com</url>
-      <icon>faMedal</icon>
+      <url>http://admin.ch</url>
+      <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>http://de.vu</url>
-      <icon>faComments</icon>
+      <url>http://biglobe.ne.jp</url>
+      <icon>fa-comments</icon>
     </link>
   </links>
-<actions>
-  <action>
-    <url>http://oaic.gov.au</url>
-    <icon>faCog</icon>
-  </action>
-  <action>
-    <url>https://multiply.com</url>
-    <icon>faCode</icon>
-  </action>
-  <action>
-    <url>http://addthis.com</url>
-    <icon>faSync</icon>
-  </action>
-</actions>
 </person>

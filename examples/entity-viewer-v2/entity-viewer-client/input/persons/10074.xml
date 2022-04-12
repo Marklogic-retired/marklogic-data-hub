@@ -3,205 +3,220 @@
   <personId>10074</personId>
   <nameGroup>
     <givenname>
-      <value>Willetta</value>
+      <value>Conroy</value>
     </givenname>
     <surname>
-      <value>Klimontovich</value>
+      <value>Sterman</value>
     </surname>
     <fullname>
       <classification>S</classification>
-      <restricted>false</restricted>
-      <value>Klimontovich Willetta</value>
+      <restricted>true</restricted>
+      <value>Sterman Conroy</value>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2014-10-09T20:52:58Z</ts>
+        <name>New York Times</name>
+        <ts>2012-04-21T10:59:19Z</ts>
       </source>
       <source>
         <name>Wall Street Journal</name>
-        <ts>2015-07-21T10:41:08Z</ts>
-      </source>
-      <source>
-        <name>Wall Street Journal</name>
-        <ts>2017-05-17T20:07:36Z</ts>
+        <ts>2020-12-01T19:11:55Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>bboards0@wunderground.com</value>
-      <classification>C</classification>
+      <value>mpoley0@boston.com</value>
+      <classification>U</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>afellon1@freewebs.com</value>
+      <classification>U</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>273-741-1111</phone>
+  <phone>494-554-9570</phone>
   <ssn>
-    <value>441-77-9030</value>
+    <value>566-63-8617</value>
     <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2011-12-20T14:50:55Z</ts>
-        <uploadedBy>kbehrendsen0</uploadedBy>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
-      <source>
-        <name>New York Times</name>
-        <ts>2017-08-22T17:29:06Z</ts>
-        <uploadedBy>fleyre0</uploadedBy>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
-      <source>
-        <name>New York Times</name>
-        <ts>2019-12-23T14:17:46Z</ts>
-        <uploadedBy>bcapell0</uploadedBy>
+        <name>USA Today</name>
+        <ts>2017-07-12T14:23:33Z</ts>
+        <uploadedBy>fdescoffier0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>16 Westerfield Alley</street>
-      <city>Lansing</city>
-      <state>MI</state>
-      <postal>48912</postal>
+      <street>059 Kipling Road</street>
+      <city>Memphis</city>
+      <state>TN</state>
+      <postal>38181</postal>
       <country>United States</country>
-      <latitude>42.7371</latitude>
-      <longitude>-84.5244</longitude>
+      <latitude>35.2017</latitude>
+      <longitude>-89.9715</longitude>
     </address>
     <address>
-      <street>62976 Sherman Crossing</street>
-      <city>Miami</city>
-      <state>FL</state>
-      <postal>33185</postal>
+      <street>521 Buena Vista Center</street>
+      <city>Humble</city>
+      <state>TX</state>
+      <postal>77346</postal>
       <country>United States</country>
-      <latitude>25.7274</latitude>
-      <longitude>-80.4497</longitude>
+      <latitude>30.0042</latitude>
+      <longitude>-95.1728</longitude>
     </address>
     <address>
-      <street>34943 Mayer Lane</street>
-      <city>Dayton</city>
-      <state>OH</state>
-      <postal>45454</postal>
+      <street>39 Norway Maple Lane</street>
+      <city>Woburn</city>
+      <state>MA</state>
+      <postal>01813</postal>
       <country>United States</country>
-      <latitude>39.7505</latitude>
-      <longitude>-84.2686</longitude>
+      <latitude>42.4464</latitude>
+      <longitude>-71.4594</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Canada</country>
-      <name>King's University College</name>
-      <city>Bancroft</city>
-      <state>ON</state>
-      <postal>S4X</postal>
-      <latitude>45.05752</latitude>
-      <longitude>-77.85702</longitude>
+      <country>United States</country>
+      <name>Troy University, Dothan</name>
+      <city>Nashville</city>
+      <state>TN</state>
+      <postal>37240</postal>
+      <latitude>36.1457192</latitude>
+      <longitude>-86.8066559</longitude>
+      <source>
+        <name>USA Today</name>
+        <ts>2017-04-09T13:44:07Z</ts>
+      </source>
+      <source>
+        <name>New York Times</name>
+        <ts>2016-01-18T00:21:22Z</ts>
+      </source>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2016-01-17T14:33:11Z</ts>
+      </source>
+    </school>
+    <school>
+      <country>Mexico</country>
+      <name>Universidad Xicotepetl</name>
+      <city>Independencia</city>
+      <state>DUR</state>
+      <postal>35156</postal>
+      <latitude>19.3803931</latitude>
+      <longitude>-99.1476908</longitude>
+      <source>
+        <name>USA Today</name>
+        <ts>2012-02-23T02:59:55Z</ts>
+      </source>
     </school>
   </schools>
-  <status>Active</status>
+  <status>Inactive</status>
   <sources>
     <source>
-      <name>Wall Street Journal</name>
-      <ts>2013-10-28T16:05:57Z</ts>
+      <name>Chicago Tribune</name>
+      <ts>2019-07-14T16:46:28Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>Washington Post</name>
-      <ts>2018-11-01T05:31:46Z</ts>
+      <name>Los Angeles Times</name>
+      <ts>2018-03-11T21:51:49Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>Wall Street Journal</name>
-      <ts>2013-08-23T16:05:34Z</ts>
+      <name>Los Angeles Times</name>
+      <ts>2018-07-24T04:04:39Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>10013</id>
+      <id>/person/10059.xml</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
+      <fullname>Laverock Clemmy</fullname>
+      <city>Bakersfield</city>
+      <state>CA</state>
+    </relation>
+    <relation>
+      <id>/person/10008.xml</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Thiolier Lonnard</fullname>
+      <city>New York City</city>
+      <state>NY</state>
+    </relation>
+    <relation>
+      <id>/person/10038.xml</id>
       <predicate>worksWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
-      <fullname>Mc Cahey Craggy</fullname>
-      <city>Knoxville</city>
-      <state>TN</state>
+      <fullname>Stooders Merlina</fullname>
+      <city>Colorado Springs</city>
+      <state>CO</state>
     </relation>
     <relation>
-      <id>10058</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Blees Glennie</fullname>
-      <city>Atlanta</city>
-      <state>GA</state>
-    </relation>
-    <relation>
-      <id>10076</id>
+      <id>/person/10077.xml</id>
       <predicate>relatedTo</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
-      <fullname>Sobtka Terrill</fullname>
-      <city>Troy</city>
-      <state>MI</state>
+      <fullname>Crossfeld Humfried</fullname>
+      <city>Portland</city>
+      <state>OR</state>
     </relation>
     <relation>
-      <id>10002</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
-      <fullname>Manketell Tan</fullname>
-      <city>Durham</city>
-      <state>NC</state>
+      <id>/person/10003.xml</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
+      <fullname>Cousin Diane</fullname>
+      <city>Colorado Springs</city>
+      <state>CO</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-08T06:55:04Z</ts>
-    <user>wklimontovich21</user>
+    <ts>2022-02-26T21:28:54Z</ts>
+    <user>csterman21</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-06T15:30:02Z</ts>
-    <user>wklimontovich21</user>
+    <ts>2022-02-13T22:02:20Z</ts>
+    <user>csterman21</user>
   </lastUpdated>
-  <socials/>
+  <socials>
+    <social>
+      <site>linkedin</site>
+      <handle>kfielder0</handle>
+      <address>https://t-online.de/morbi.html</address>
+    </social>
+  </socials>
   <memberships>
     <membership>
-      <list>list10</list>
-      <important>false</important>
-      <ts>2021-12-29</ts>
+      <list>list4</list>
+      <important>true</important>
+      <ts>2022-01-14</ts>
+    </membership>
+    <membership>
+      <list>list11</list>
+      <important>true</important>
+      <ts>2022-01-05</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>http://dailymail.co.uk</url>
-      <icon>faEye</icon>
+      <url>http://cnbc.com</url>
+      <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>http://live.com</url>
-      <icon>faMedal</icon>
+      <url>https://dropbox.com</url>
+      <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>https://dropbox.com</url>
-      <icon>faComments</icon>
+      <url>https://nba.com</url>
+      <icon>fa-comments</icon>
     </link>
   </links>
-<actions>
-  <action>
-    <url>http://oaic.gov.au</url>
-    <icon>faCog</icon>
-  </action>
-  <action>
-    <url>https://multiply.com</url>
-    <icon>faCode</icon>
-  </action>
-  <action>
-    <url>http://addthis.com</url>
-    <icon>faSync</icon>
-  </action>
-</actions>
 </person>
