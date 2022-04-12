@@ -69,10 +69,6 @@ describe("Job response modal", () => {
     expect(getByText("Duration:")).toBeInTheDocument();
 
     expect(getByText("e4590649-8c4b-419c-b6a1-473069186592")).toBeInTheDocument();
-    expect(getByText("2020-04-24 14:05")).toBeInTheDocument();
-    expect(getByText("0s 702ms")).toBeInTheDocument();
-
-
     // check that
     await (waitForElement(() => (getByText("testFlow"))));
     let ts: string = curateData.jobRespSuccess.data.timeEnded; // "2020-04-24T14:05:01.019819-07:00"
@@ -81,8 +77,8 @@ describe("Job response modal", () => {
     expect(getByText("0s 702ms")).toBeInTheDocument();
 
     // check that expected steps are listed
-    expect(getAllByText("Mapping1")[0]).toBeInTheDocument();
     expect(getAllByText("match-customer")[0]).toBeInTheDocument();
+    expect(getAllByText("Mapping1")[0]).toBeInTheDocument();
     expect(getAllByText("merge-customer")[0]).toBeInTheDocument();
     expect(getAllByText("master-customer")[0]).toBeInTheDocument();
     expect(getAllByText("Ingestion1")[0]).toBeInTheDocument();
