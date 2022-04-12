@@ -4,7 +4,7 @@ import {BrowserRouter as Router} from "react-router-dom";
 import JobResultsTableView from "./job-results-table-view";
 import {jobResults} from "../../assets/mock-data/monitor/job-results";
 import {validateTableRow} from "../../util/test-utils";
-import moment from "moment";
+import dayjs from "dayjs";
 
 
 describe("Job results Table view component", () => {
@@ -28,7 +28,7 @@ describe("Job results Table view component", () => {
     await(() => expect(getByText("mapClientJSON")).toBeInTheDocument());
     await(() => expect(getByText("mapping")).toBeInTheDocument());
     let ts: string = jobResults.results[0].startTime; // "2021-04-21T20:37:42.962833-05:00"
-    let tsExpected: string = moment(ts).format("YYYY-MM-DD HH:mm");
+    let tsExpected: string = dayjs(ts).format("YYYY-MM-DD HH:mm");
     await(() => expect(getByText(tsExpected)).toBeInTheDocument()); // "2021-04-21 20:37"
     await(() => expect(getByText("0s 66ms")).toBeInTheDocument());
     await(() => expect(getByText("pari")).toBeInTheDocument());

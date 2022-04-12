@@ -20,7 +20,7 @@ import CustomPageHeader from "../../page-header/page-header";
 import {clearSessionStorageOnRefresh, getViewSettings, setViewSettings} from "@util/user-context";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {HCButton, HCTable, HCTooltip} from "@components/common";
-import moment from "moment";
+import dayjs from "dayjs";
 import TimelineVisDefault from "../../matching/matching-step-detail/timeline-vis-default/timeline-vis-default";
 import {themeColors} from "@config/themes.config";
 
@@ -90,7 +90,7 @@ const strategyOptions:any = {
       let time;
       if (date >= 0 && date <= 100) {
         time = date.format("SSS");
-        return moment.duration(time).asMilliseconds();
+        return dayjs.duration(time).asMilliseconds();
       } else {
         return "";
       }
