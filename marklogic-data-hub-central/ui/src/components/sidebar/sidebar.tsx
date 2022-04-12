@@ -18,7 +18,7 @@ import BaseEntitiesFacet from "../base-entities-facet/base-entities-facet";
 import RelatedEntitiesFacet from "../related-entities-facet/related-entities-facet";
 import {ExploreGraphViewToolTips} from "@config/tooltips.config";
 import {HCDivider} from "@components/common";
-import {graphSearchQuery, getEntities} from "@api/queries";
+import {graphSearchQuery, getEntities, searchResultsQuery} from "@api/queries";
 
 const tooltips = tooltipsConfig.browseDocuments;
 const {exploreSidebar} = tooltipsConfig;
@@ -59,7 +59,8 @@ const Sidebar: React.FC<Props> = (props) => {
     setSidebarQuery,
     setDatasource,
     setQueryGreyedOptions,
-    setRelatedEntityTypeIds
+    setRelatedEntityTypeIds,
+    setDatabaseAndDatasource
   } = useContext(SearchContext);
   const {
     user,
@@ -293,16 +294,23 @@ const Sidebar: React.FC<Props> = (props) => {
   useEffect(() => {
     getEntities().then((res) => {
         entitiesArrayRef.current! = ([...entityFromJSON(res.data).map(entity => entity.info.title)]);
-        checkGraphData("final").then((countEntityFinalCount) => {
+        checkDataInDatabase("final").then((countEntityFinalCount) => {
           //By Default entities datasource and final database is selected
           if (countEntityFinalCount === 0) {
-            checkGraphData("staging").then((countEntityStagingCount) => {
+            checkDataInDatabase("staging").then((countEntityStagingCount) => {
               if (countEntityStagingCount > 0) {
                 //Setting the staging database if there is no data in final database
                 props.setDatabasePreferences("staging");
               } else {
-                //Setting the All Data datasource with final database at end
-                setDatasourcePreferences("all-data");
+                //Setting the All Data datasource with staging database at end
+                checkDataInDatabase("final", "all-data").then((countAllDataFinalCount) => {
+                  if (countAllDataFinalCount === 0) {
+                    //Setting the staging database if there is no data in final database
+                    setDatabaseAndDatasource({database: "staging", datasource: "all-data"});
+                  } else {
+                    setDatasourcePreferences("all-data");
+                  }
+                });
               }
             });
           }
@@ -313,7 +321,7 @@ const Sidebar: React.FC<Props> = (props) => {
       });
   }, []);
 
-  const checkGraphData = async (database) => {
+  const checkDataInDatabase = async (database: string, allData?: string) => {
     try {
       let payload = {
         "database": database,
@@ -321,14 +329,24 @@ const Sidebar: React.FC<Props> = (props) => {
           "query": {
             "searchText": "",
             "entityTypeIds": entitiesArrayRef.current!,
-            "selectedFacets": searchOptions.selectedFacets,
-            "relatedEntityTypeIds": searchOptions.relatedEntityTypeIds
+            "selectedFacets": searchOptions.selectedFacets
           },
           "start": 0,
           "pageLength": 1,
         }
       };
-      const response = await graphSearchQuery(payload);
+
+      let response;
+      if (allData) {
+        payload.data.query["entityTypeIds"] = [];
+        payload.data.query["hideHubArtifacts"] = true;
+
+        response = await searchResultsQuery(payload);
+      } else {
+        payload.data.query["relatedEntityTypeIds"] = searchOptions.relatedEntityTypeIds;
+
+        response = await graphSearchQuery(payload);
+      }
       if (componentIsMounted.current && response.data) {
         return response.data.total;
       }
