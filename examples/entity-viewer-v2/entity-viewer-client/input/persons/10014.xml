@@ -50,7 +50,7 @@
   </images>
   <addresses>
     <address>
-      <street>0 Glacier Hill Terrace</street>
+      <street>0 Glacier Hill Terrace</street><classification>M</classification>
       <city>Bakersfield</city>
       <state>CA</state>
       <postal>93381</postal>
@@ -59,7 +59,7 @@
       <longitude>-118.9052</longitude>
     </address>
     <address>
-      <street>7 Knutson Circle</street>
+      <street>7 Knutson Circle</street><classification>M</classification>
       <city>Carlsbad</city>
       <state>CA</state>
       <postal>92013</postal>
@@ -68,7 +68,7 @@
       <longitude>-116.846</longitude>
     </address>
     <address>
-      <street>278 Dottie Lane</street>
+      <street>278 Dottie Lane</street><classification>M</classification>
       <city>Carlsbad</city>
       <state>CA</state>
       <postal>92013</postal>

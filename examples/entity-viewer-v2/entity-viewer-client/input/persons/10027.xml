@@ -58,7 +58,7 @@
   </images>
   <addresses>
     <address>
-      <street>10 Center Terrace</street>
+      <street>10 Center Terrace</street><classification>M</classification>
       <city>Columbus</city>
       <state>GA</state>
       <postal>31998</postal>
@@ -67,7 +67,7 @@
       <longitude>-84.8741</longitude>
     </address>
     <address>
-      <street>35 Alpine Center</street>
+      <street>35 Alpine Center</street><classification>M</classification>
       <city>Waco</city>
       <state>TX</state>
       <postal>76796</postal>
@@ -76,7 +76,7 @@
       <longitude>-97.0823</longitude>
     </address>
     <address>
-      <street>1079 Redwing Place</street>
+      <street>1079 Redwing Place</street><classification>M</classification>
       <city>Washington</city>
       <state>DC</state>
       <postal>20414</postal>

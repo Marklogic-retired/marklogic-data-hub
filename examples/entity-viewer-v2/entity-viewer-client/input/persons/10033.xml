@@ -75,7 +75,7 @@
   </images>
   <addresses>
     <address>
-      <street>822 Manufacturers Street</street>
+      <street>822 Manufacturers Street</street><classification>M</classification>
       <city>Evansville</city>
       <state>IN</state>
       <postal>47732</postal>
@@ -84,7 +84,7 @@
       <longitude>-87.575</longitude>
     </address>
     <address>
-      <street>14 Roth Point</street>
+      <street>14 Roth Point</street><classification>M</classification>
       <city>Wichita</city>
       <state>KS</state>
       <postal>67215</postal>

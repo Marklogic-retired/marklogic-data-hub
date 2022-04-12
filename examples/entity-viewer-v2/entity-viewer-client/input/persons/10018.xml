@@ -72,7 +72,7 @@
   </images>
   <addresses>
     <address>
-      <street>09 Pleasure Street</street>
+      <street>09 Pleasure Street</street><classification>M</classification>
       <city>Columbia</city>
       <state>SC</state>
       <postal>29240</postal>
@@ -81,7 +81,7 @@
       <longitude>-80.9708</longitude>
     </address>
     <address>
-      <street>3 Menomonie Point</street>
+      <street>3 Menomonie Point</street><classification>M</classification>
       <city>Joliet</city>
       <state>IL</state>
       <postal>60435</postal>
@@ -90,7 +90,7 @@
       <longitude>-88.1299</longitude>
     </address>
     <address>
-      <street>85 Eastlawn Point</street>
+      <street>85 Eastlawn Point</street><classification>M</classification>
       <city>New York City</city>
       <state>NY</state>
       <postal>10131</postal>

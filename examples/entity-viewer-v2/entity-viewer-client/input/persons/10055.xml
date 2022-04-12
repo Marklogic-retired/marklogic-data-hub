@@ -63,7 +63,7 @@
   </images>
   <addresses>
     <address>
-      <street>504 Springs Pass</street>
+      <street>504 Springs Pass</street><classification>M</classification>
       <city>Montgomery</city>
       <state>AL</state>
       <postal>36104</postal>
@@ -72,7 +72,7 @@
       <longitude>-86.3081</longitude>
     </address>
     <address>
-      <street>892 Hudson Alley</street>
+      <street>892 Hudson Alley</street><classification>M</classification>
       <city>Baltimore</city>
       <state>MD</state>
       <postal>21203</postal>
@@ -81,7 +81,7 @@
       <longitude>-76.6205</longitude>
     </address>
     <address>
-      <street>66602 Mifflin Place</street>
+      <street>66602 Mifflin Place</street><classification>M</classification>
       <city>Spokane</city>
       <state>WA</state>
       <postal>99220</postal>

@@ -74,7 +74,7 @@
   </images>
   <addresses>
     <address>
-      <street>38728 Brentwood Pass</street>
+      <street>38728 Brentwood Pass</street><classification>M</classification>
       <city>Racine</city>
       <state>WI</state>
       <postal>53405</postal>
@@ -83,7 +83,7 @@
       <longitude>-87.8233</longitude>
     </address>
     <address>
-      <street>6 Waubesa Center</street>
+      <street>6 Waubesa Center</street><classification>M</classification>
       <city>Omaha</city>
       <state>NE</state>
       <postal>68144</postal>
@@ -92,7 +92,7 @@
       <longitude>-96.1188</longitude>
     </address>
     <address>
-      <street>866 Aberg Court</street>
+      <street>866 Aberg Court</street><classification>M</classification>
       <city>Oklahoma City</city>
       <state>OK</state>
       <postal>73157</postal>

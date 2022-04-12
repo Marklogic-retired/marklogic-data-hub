@@ -71,7 +71,7 @@
   </images>
   <addresses>
     <address>
-      <street>7 Corscot Road</street>
+      <street>7 Corscot Road</street><classification>M</classification>
       <city>Baltimore</city>
       <state>MD</state>
       <postal>21216</postal>
@@ -80,7 +80,7 @@
       <longitude>-76.6699</longitude>
     </address>
     <address>
-      <street>8812 Dexter Alley</street>
+      <street>8812 Dexter Alley</street><classification>M</classification>
       <city>Austin</city>
       <state>TX</state>
       <postal>78783</postal>
@@ -89,7 +89,7 @@
       <longitude>-97.7713</longitude>
     </address>
     <address>
-      <street>2759 Stang Terrace</street>
+      <street>2759 Stang Terrace</street><classification>M</classification>
       <city>Portland</city>
       <state>OR</state>
       <postal>97255</postal>

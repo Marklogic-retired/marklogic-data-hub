@@ -80,7 +80,7 @@
   </images>
   <addresses>
     <address>
-      <street>6 Elmside Trail</street>
+      <street>6 Elmside Trail</street><classification>M</classification>
       <city>Washington</city>
       <state>DC</state>
       <postal>20370</postal>

@@ -80,7 +80,7 @@
   </images>
   <addresses>
     <address>
-      <street>8 Melby Street</street>
+      <street>8 Melby Street</street><classification>M</classification>
       <city>Omaha</city>
       <state>NE</state>
       <postal>68124</postal>
@@ -89,7 +89,7 @@
       <longitude>-96.0495</longitude>
     </address>
     <address>
-      <street>06089 Twin Pines Parkway</street>
+      <street>06089 Twin Pines Parkway</street><classification>M</classification>
       <city>Washington</city>
       <state>DC</state>
       <postal>20051</postal>

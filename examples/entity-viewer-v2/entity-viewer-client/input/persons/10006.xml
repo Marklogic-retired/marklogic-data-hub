@@ -72,6 +72,7 @@
   </images>
   <addresses>
     <address>
+      <classification>M</classification>
       <street>36 Roth Point</street>
       <city>Oklahoma City</city>
       <state>OK</state>
@@ -81,6 +82,7 @@
       <longitude>-97.4075</longitude>
     </address>
     <address>
+      <classification>M</classification>
       <street>2 Autumn Leaf Plaza</street>
       <city>Atlanta</city>
       <state>GA</state>
@@ -90,6 +92,7 @@
       <longitude>-84.3883</longitude>
     </address>
     <address>
+      <classification>M</classification>
       <street>45 Schmedeman Terrace</street>
       <city>Atlanta</city>
       <state>GA</state>

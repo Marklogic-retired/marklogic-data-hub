@@ -72,7 +72,7 @@
   </images>
   <addresses>
     <address>
-      <street>1 Farwell Junction</street>
+      <street>1 Farwell Junction</street><classification>M</classification>
       <city>Rockford</city>
       <state>IL</state>
       <postal>61110</postal>
@@ -81,7 +81,7 @@
       <longitude>-89.1705</longitude>
     </address>
     <address>
-      <street>620 Fairfield Trail</street>
+      <street>620 Fairfield Trail</street><classification>M</classification>
       <city>Louisville</city>
       <state>KY</state>
       <postal>40293</postal>

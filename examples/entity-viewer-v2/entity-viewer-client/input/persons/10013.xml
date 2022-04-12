@@ -55,7 +55,7 @@
   </images>
   <addresses>
     <address>
-      <street>43538 Lawn Place</street>
+      <street>43538 Lawn Place</street><classification>M</classification>
       <city>Albany</city>
       <state>NY</state>
       <postal>12232</postal>
@@ -64,7 +64,7 @@
       <longitude>-73.9708</longitude>
     </address>
     <address>
-      <street>7746 Prairie Rose Drive</street>
+      <street>7746 Prairie Rose Drive</street><classification>M</classification>
       <city>Winston Salem</city>
       <state>NC</state>
       <postal>27150</postal>

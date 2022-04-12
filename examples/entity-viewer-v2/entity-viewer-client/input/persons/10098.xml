@@ -70,7 +70,7 @@
   </images>
   <addresses>
     <address>
-      <street>8 Weeping Birch Center</street>
+      <street>8 Weeping Birch Center</street><classification>M</classification>
       <city>Lubbock</city>
       <state>TX</state>
       <postal>79491</postal>
@@ -79,7 +79,7 @@
       <longitude>-101.8213</longitude>
     </address>
     <address>
-      <street>938 Hoffman Plaza</street>
+      <street>938 Hoffman Plaza</street><classification>M</classification>
       <city>Oakland</city>
       <state>CA</state>
       <postal>94627</postal>

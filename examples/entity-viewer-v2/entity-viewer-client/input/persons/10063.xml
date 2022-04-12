@@ -76,7 +76,7 @@
   </images>
   <addresses>
     <address>
-      <street>49511 Fallview Way</street>
+      <street>49511 Fallview Way</street><classification>M</classification>
       <city>Minneapolis</city>
       <state>MN</state>
       <postal>55428</postal>
@@ -85,7 +85,7 @@
       <longitude>-93.3811</longitude>
     </address>
     <address>
-      <street>8191 Meadow Valley Street</street>
+      <street>8191 Meadow Valley Street</street><classification>M</classification>
       <city>Shawnee Mission</city>
       <state>KS</state>
       <postal>66225</postal>
@@ -94,7 +94,7 @@
       <longitude>-94.832</longitude>
     </address>
     <address>
-      <street>7050 Mifflin Plaza</street>
+      <street>7050 Mifflin Plaza</street><classification>M</classification>
       <city>Denver</city>
       <state>CO</state>
       <postal>80291</postal>

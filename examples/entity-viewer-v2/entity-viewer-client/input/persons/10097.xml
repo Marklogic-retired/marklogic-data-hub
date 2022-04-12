@@ -51,7 +51,7 @@
   </images>
   <addresses>
     <address>
-      <street>75 Hanson Lane</street>
+      <street>75 Hanson Lane</street><classification>M</classification>
       <city>Maple Plain</city>
       <state>MN</state>
       <postal>55572</postal>

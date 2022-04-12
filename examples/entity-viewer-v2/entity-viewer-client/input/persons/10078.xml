@@ -79,7 +79,7 @@
   </images>
   <addresses>
     <address>
-      <street>17 Crest Line Court</street>
+      <street>17 Crest Line Court</street><classification>M</classification>
       <city>Bethesda</city>
       <state>MD</state>
       <postal>20892</postal>
@@ -88,7 +88,7 @@
       <longitude>-77.1034</longitude>
     </address>
     <address>
-      <street>74016 Packers Avenue</street>
+      <street>74016 Packers Avenue</street><classification>M</classification>
       <city>Roanoke</city>
       <state>VA</state>
       <postal>24029</postal>
@@ -97,7 +97,7 @@
       <longitude>-79.9579</longitude>
     </address>
     <address>
-      <street>1929 Homewood Parkway</street>
+      <street>1929 Homewood Parkway</street><classification>M</classification>
       <city>Columbus</city>
       <state>GA</state>
       <postal>31904</postal>

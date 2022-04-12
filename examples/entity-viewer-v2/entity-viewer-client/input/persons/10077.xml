@@ -68,7 +68,7 @@
   </images>
   <addresses>
     <address>
-      <street>2 Vidon Crossing</street>
+      <street>2 Vidon Crossing</street><classification>M</classification>
       <city>Portland</city>
       <state>OR</state>
       <postal>97216</postal>
@@ -77,7 +77,7 @@
       <longitude>-122.5569</longitude>
     </address>
     <address>
-      <street>17544 Manley Point</street>
+      <street>17544 Manley Point</street><classification>M</classification>
       <city>Fort Lauderdale</city>
       <state>FL</state>
       <postal>33305</postal>
@@ -86,7 +86,7 @@
       <longitude>-80.1229</longitude>
     </address>
     <address>
-      <street>00 Truax Pass</street>
+      <street>00 Truax Pass</street><classification>M</classification>
       <city>Ann Arbor</city>
       <state>MI</state>
       <postal>48107</postal>

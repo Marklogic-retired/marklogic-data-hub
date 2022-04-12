@@ -46,7 +46,7 @@
   </images>
   <addresses>
     <address>
-      <street>487 Jenifer Way</street>
+      <street>487 Jenifer Way</street><classification>M</classification>
       <city>Milwaukee</city>
       <state>WI</state>
       <postal>53215</postal>

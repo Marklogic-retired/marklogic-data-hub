@@ -6,6 +6,8 @@ import Table from "react-bootstrap/Table";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
 import "./MetadataValue.scss";
+import {getValByConfig} from "../../util/util";
+import _ from "lodash";
 
 type Props = {
   config?: any;
@@ -14,7 +16,7 @@ type Props = {
 };
 
 // TODO using mock data temporarily
-const data = [
+const mockData = [
     {
         name: "New York Times",
         timestamp: "2021-11-19T01:35:35.296391-08:00"
@@ -38,6 +40,10 @@ const data = [
  */
 const MetadataValue: React.FC<Props> = (props) => {
 
+    const value = getValByConfig(props.data, props.config);
+    let popoverData = props?.config?.popover ? _.get(props.data, props?.config?.popover?.dataPath, []):[];
+    popoverData = _.isNil(popoverData) ? null : (Array.isArray(popoverData) ? popoverData : [popoverData]);
+
     const displayValue = (data, config) => {
         if (config.type === "datetime") {
             return <DateTime config={config} data={data} />;
@@ -52,7 +58,7 @@ const MetadataValue: React.FC<Props> = (props) => {
             <Popover id="popover-basic">
                 <Popover.Header>{props.config.popover.title}</Popover.Header>
                 <Popover.Body>
-                    <Table size="sm"><tbody>{data.map((d, i) => {return (
+                    <Table size="sm"><tbody>{popoverData.map((d, i) => {return (
                         <tr key={"row-" + i}>
                             {props.config.popover.cols.map((col, i2) => { return (
                                 <td key={"col-" + i2} className={col.type}>{displayValue(d, col)}</td>
@@ -66,28 +72,35 @@ const MetadataValue: React.FC<Props> = (props) => {
         }
     };
 
-    const getMetadata = () => { return (
-        <div 
-            className={props.config.popover ? "hasPopover" : ""} 
-            style={{backgroundColor: props.config.color ? props.config.color : "lightgray"}}
-        >
-            {props.config.value}
-        </div>
-    )};
+    const getMetadata = () => { 
+        if(!value) return
+        return (
+            <div 
+                className={props.config.popover ? "hasPopover" : ""} 
+                style={{backgroundColor: props.config.color ? props.config.color : "lightgray"}}
+            >
+                {value}
+            </div>
+        )
+    };
 
     const getOverlay = () => { return (
         <OverlayTrigger 
             trigger="click" 
-            placement={props.config.placement ? props.config.placement : "right"} 
+            placement={props?.config?.popover?.placement ? props.config.popover.placement : "right"} 
             overlay={getPopover()}
         >
-            {getMetadata()}
+            <div className="hasPopover"
+                style={{backgroundColor: props.config.color ? props.config.color : "lightgray"}}
+            >
+                {popoverData.length}
+            </div>
         </OverlayTrigger>
     )};
 
     return (
         <span className="MetadataValue">
-            { props.config.popover ? getOverlay() : getMetadata() }
+            { props.config.popover && popoverData.length > 0 ? getOverlay() : getMetadata() }
         </span>
     );
 };

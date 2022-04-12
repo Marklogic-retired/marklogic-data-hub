@@ -67,7 +67,7 @@
   </images>
   <addresses>
     <address>
-      <street>87 Havey Drive</street>
+      <street>87 Havey Drive</street><classification>M</classification>
       <city>Tulsa</city>
       <state>OK</state>
       <postal>74149</postal>

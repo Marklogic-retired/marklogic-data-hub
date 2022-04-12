@@ -71,7 +71,7 @@
   </images>
   <addresses>
     <address>
-      <street>7 Morningstar Lane</street>
+      <street>7 Morningstar Lane</street><classification>M</classification>
       <city>Louisville</city>
       <state>KY</state>
       <postal>40225</postal>
@@ -80,7 +80,7 @@
       <longitude>-85.6768</longitude>
     </address>
     <address>
-      <street>0967 Mccormick Court</street>
+      <street>0967 Mccormick Court</street><classification>M</classification>
       <city>Albany</city>
       <state>NY</state>
       <postal>12262</postal>

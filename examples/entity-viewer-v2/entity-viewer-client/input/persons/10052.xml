@@ -62,7 +62,7 @@
   </images>
   <addresses>
     <address>
-      <street>64027 Quincy Drive</street>
+      <street>64027 Quincy Drive</street><classification>M</classification>
       <city>Saint Louis</city>
       <state>MO</state>
       <postal>63143</postal>
@@ -71,7 +71,7 @@
       <longitude>-90.3225</longitude>
     </address>
     <address>
-      <street>3 Golf Junction</street>
+      <street>3 Golf Junction</street><classification>M</classification>
       <city>Seattle</city>
       <state>WA</state>
       <postal>98140</postal>

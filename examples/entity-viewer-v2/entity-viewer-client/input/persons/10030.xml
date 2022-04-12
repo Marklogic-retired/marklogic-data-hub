@@ -72,7 +72,7 @@
   </images>
   <addresses>
     <address>
-      <street>362 Barnett Pass</street>
+      <street>362 Barnett Pass</street><classification>M</classification>
       <city>Topeka</city>
       <state>KS</state>
       <postal>66629</postal>
@@ -81,7 +81,7 @@
       <longitude>-95.7697</longitude>
     </address>
     <address>
-      <street>0781 Debra Pass</street>
+      <street>0781 Debra Pass</street><classification>M</classification>
       <city>Los Angeles</city>
       <state>CA</state>
       <postal>90020</postal>

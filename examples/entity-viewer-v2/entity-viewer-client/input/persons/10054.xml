@@ -62,7 +62,7 @@
   </images>
   <addresses>
     <address>
-      <street>136 Goodland Park</street>
+      <street>136 Goodland Park</street><classification>M</classification>
       <city>Columbus</city>
       <state>OH</state>
       <postal>43284</postal>

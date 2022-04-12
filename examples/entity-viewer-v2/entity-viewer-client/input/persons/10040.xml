@@ -66,7 +66,7 @@
   </images>
   <addresses>
     <address>
-      <street>59451 7th Way</street>
+      <street>59451 7th Way</street><classification>M</classification>
       <city>Shreveport</city>
       <state>LA</state>
       <postal>71161</postal>
@@ -75,7 +75,7 @@
       <longitude>-93.7526</longitude>
     </address>
     <address>
-      <street>8935 Annamark Terrace</street>
+      <street>8935 Annamark Terrace</street><classification>M</classification>
       <city>Toledo</city>
       <state>OH</state>
       <postal>43615</postal>
@@ -84,7 +84,7 @@
       <longitude>-83.6706</longitude>
     </address>
     <address>
-      <street>37 Dennis Junction</street>
+      <street>37 Dennis Junction</street><classification>M</classification>
       <city>Columbus</city>
       <state>OH</state>
       <postal>43240</postal>

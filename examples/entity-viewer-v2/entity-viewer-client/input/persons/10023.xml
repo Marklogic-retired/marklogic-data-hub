@@ -67,7 +67,7 @@
   </images>
   <addresses>
     <address>
-      <street>112 Aberg Point</street>
+      <street>112 Aberg Point</street><classification>M</classification>
       <city>Pittsburgh</city>
       <state>PA</state>
       <postal>15279</postal>
@@ -76,7 +76,7 @@
       <longitude>-80.0248</longitude>
     </address>
     <address>
-      <street>5 Susan Drive</street>
+      <street>5 Susan Drive</street><classification>M</classification>
       <city>Round Rock</city>
       <state>TX</state>
       <postal>78682</postal>
@@ -85,7 +85,7 @@
       <longitude>-97.6026</longitude>
     </address>
     <address>
-      <street>24263 Sunfield Road</street>
+      <street>24263 Sunfield Road</street><classification>M</classification>
       <city>Kansas City</city>
       <state>MO</state>
       <postal>64125</postal>

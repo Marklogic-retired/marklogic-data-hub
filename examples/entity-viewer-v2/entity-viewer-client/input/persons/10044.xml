@@ -79,7 +79,7 @@
   </images>
   <addresses>
     <address>
-      <street>45 Evergreen Pass</street>
+      <street>45 Evergreen Pass</street><classification>M</classification>
       <city>Chattanooga</city>
       <state>TN</state>
       <postal>37416</postal>
@@ -88,7 +88,7 @@
       <longitude>-85.1757</longitude>
     </address>
     <address>
-      <street>8 Schiller Street</street>
+      <street>8 Schiller Street</street><classification>M</classification>
       <city>Muskegon</city>
       <state>MI</state>
       <postal>49444</postal>
@@ -97,7 +97,7 @@
       <longitude>-86.1989</longitude>
     </address>
     <address>
-      <street>9 Thompson Lane</street>
+      <street>9 Thompson Lane</street><classification>M</classification>
       <city>Lafayette</city>
       <state>LA</state>
       <postal>70593</postal>

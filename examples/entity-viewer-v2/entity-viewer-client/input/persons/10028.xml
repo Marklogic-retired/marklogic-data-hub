@@ -60,7 +60,7 @@
   </images>
   <addresses>
     <address>
-      <street>194 Main Alley</street>
+      <street>194 Main Alley</street><classification>M</classification>
       <city>Kansas City</city>
       <state>MO</state>
       <postal>64142</postal>
@@ -69,7 +69,7 @@
       <longitude>-94.3567</longitude>
     </address>
     <address>
-      <street>4 Warrior Road</street>
+      <street>4 Warrior Road</street><classification>M</classification>
       <city>Atlanta</city>
       <state>GA</state>
       <postal>30336</postal>

@@ -51,7 +51,7 @@
   </images>
   <addresses>
     <address>
-      <street>25605 Norway Maple Plaza</street>
+      <street>25605 Norway Maple Plaza</street><classification>M</classification>
       <city>Jacksonville</city>
       <state>FL</state>
       <postal>32225</postal>
@@ -60,7 +60,7 @@
       <longitude>-81.5061</longitude>
     </address>
     <address>
-      <street>29 Walton Crossing</street>
+      <street>29 Walton Crossing</street><classification>M</classification>
       <city>El Paso</city>
       <state>TX</state>
       <postal>79955</postal>
@@ -69,7 +69,7 @@
       <longitude>-106.3</longitude>
     </address>
     <address>
-      <street>9939 Mandrake Drive</street>
+      <street>9939 Mandrake Drive</street><classification>M</classification>
       <city>Madison</city>
       <state>WI</state>
       <postal>53705</postal>

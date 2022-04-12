@@ -68,7 +68,7 @@
   </images>
   <addresses>
     <address>
-      <street>12 Maple Parkway</street>
+      <street>12 Maple Parkway</street><classification>M</classification>
       <city>Pittsburgh</city>
       <state>PA</state>
       <postal>15286</postal>
@@ -77,7 +77,7 @@
       <longitude>-80.0248</longitude>
     </address>
     <address>
-      <street>63 Service Circle</street>
+      <street>63 Service Circle</street><classification>M</classification>
       <city>Pittsburgh</city>
       <state>PA</state>
       <postal>15261</postal>

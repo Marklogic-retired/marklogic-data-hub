@@ -76,7 +76,7 @@
   </images>
   <addresses>
     <address>
-      <street>11120 Stuart Trail</street>
+      <street>11120 Stuart Trail</street><classification>M</classification>
       <city>Des Moines</city>
       <state>IA</state>
       <postal>50330</postal>
@@ -85,7 +85,7 @@
       <longitude>-93.5722</longitude>
     </address>
     <address>
-      <street>761 Luster Drive</street>
+      <street>761 Luster Drive</street><classification>M</classification>
       <city>Monroe</city>
       <state>LA</state>
       <postal>71208</postal>
@@ -94,7 +94,7 @@
       <longitude>-92.0756</longitude>
     </address>
     <address>
-      <street>5262 Warbler Junction</street>
+      <street>5262 Warbler Junction</street><classification>M</classification>
       <city>Minneapolis</city>
       <state>MN</state>
       <postal>55407</postal>

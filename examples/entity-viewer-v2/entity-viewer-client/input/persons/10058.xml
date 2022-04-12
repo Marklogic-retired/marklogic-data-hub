@@ -74,7 +74,7 @@
   </images>
   <addresses>
     <address>
-      <street>71228 Eagle Crest Road</street>
+      <street>71228 Eagle Crest Road</street><classification>M</classification>
       <city>San Rafael</city>
       <state>CA</state>
       <postal>94913</postal>
@@ -83,7 +83,7 @@
       <longitude>-122.741</longitude>
     </address>
     <address>
-      <street>2 Lien Lane</street>
+      <street>2 Lien Lane</street><classification>M</classification>
       <city>Bradenton</city>
       <state>FL</state>
       <postal>34210</postal>

@@ -59,7 +59,7 @@
   </images>
   <addresses>
     <address>
-      <street>89 Maywood Crossing</street>
+      <street>89 Maywood Crossing</street><classification>M</classification>
       <city>Austin</city>
       <state>TX</state>
       <postal>78769</postal>
@@ -68,7 +68,7 @@
       <longitude>-97.7713</longitude>
     </address>
     <address>
-      <street>442 Schmedeman Terrace</street>
+      <street>442 Schmedeman Terrace</street><classification>M</classification>
       <city>Reading</city>
       <state>PA</state>
       <postal>19605</postal>
@@ -77,7 +77,7 @@
       <longitude>-75.9328</longitude>
     </address>
     <address>
-      <street>0506 Forest Alley</street>
+      <street>0506 Forest Alley</street><classification>M</classification>
       <city>Columbus</city>
       <state>OH</state>
       <postal>43210</postal>

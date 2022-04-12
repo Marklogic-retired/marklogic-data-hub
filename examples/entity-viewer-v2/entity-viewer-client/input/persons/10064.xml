@@ -55,7 +55,7 @@
   </images>
   <addresses>
     <address>
-      <street>35 Mcbride Drive</street>
+      <street>35 Mcbride Drive</street><classification>M</classification>
       <city>Washington</city>
       <state>DC</state>
       <postal>20041</postal>

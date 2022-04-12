@@ -50,7 +50,7 @@
   </images>
   <addresses>
     <address>
-      <street>0 Dryden Plaza</street>
+      <street>0 Dryden Plaza</street><classification>M</classification>
       <city>Los Angeles</city>
       <state>CA</state>
       <postal>90189</postal>

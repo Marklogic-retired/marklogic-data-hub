@@ -55,7 +55,7 @@
   </images>
   <addresses>
     <address>
-      <street>29 Lawn Way</street>
+      <street>29 Lawn Way</street><classification>M</classification>
       <city>Atlanta</city>
       <state>GA</state>
       <postal>30351</postal>

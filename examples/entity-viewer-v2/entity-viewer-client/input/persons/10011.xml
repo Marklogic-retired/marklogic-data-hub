@@ -79,7 +79,7 @@
   </images>
   <addresses>
     <address>
-      <street>4921 Marquette Crossing</street>
+      <street>4921 Marquette Crossing</street><classification>M</classification>
       <city>Washington</city>
       <state>DC</state>
       <postal>20503</postal>
@@ -88,7 +88,7 @@
       <longitude>-77.0431</longitude>
     </address>
     <address>
-      <street>2982 Troy Park</street>
+      <street>2982 Troy Park</street><classification>M</classification>
       <city>Orange</city>
       <state>CA</state>
       <postal>92668</postal>

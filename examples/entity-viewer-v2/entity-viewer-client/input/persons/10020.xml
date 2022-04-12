@@ -71,7 +71,7 @@
   </images>
   <addresses>
     <address>
-      <street>907 Cody Court</street>
+      <street>907 Cody Court</street><classification>M</classification>
       <city>Pittsburgh</city>
       <state>PA</state>
       <postal>15255</postal>
@@ -80,7 +80,7 @@
       <longitude>-80.0248</longitude>
     </address>
     <address>
-      <street>3662 Kenwood Way</street>
+      <street>3662 Kenwood Way</street><classification>M</classification>
       <city>Denton</city>
       <state>TX</state>
       <postal>76210</postal>
@@ -89,7 +89,7 @@
       <longitude>-97.0727</longitude>
     </address>
     <address>
-      <street>0 Longview Parkway</street>
+      <street>0 Longview Parkway</street><classification>M</classification>
       <city>Lexington</city>
       <state>KY</state>
       <postal>40505</postal>

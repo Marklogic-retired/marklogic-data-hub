@@ -51,7 +51,7 @@
   </images>
   <addresses>
     <address>
-      <street>6 Annamark Center</street>
+      <street>6 Annamark Center</street><classification>M</classification>
       <city>Denver</city>
       <state>CO</state>
       <postal>80235</postal>

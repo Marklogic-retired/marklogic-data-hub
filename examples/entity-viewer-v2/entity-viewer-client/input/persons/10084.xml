@@ -54,7 +54,7 @@
   </images>
   <addresses>
     <address>
-      <street>8 Mifflin Avenue</street>
+      <street>8 Mifflin Avenue</street><classification>M</classification>
       <city>Boston</city>
       <state>MA</state>
       <postal>02208</postal>
@@ -63,7 +63,7 @@
       <longitude>-70.9196</longitude>
     </address>
     <address>
-      <street>71353 Transport Terrace</street>
+      <street>71353 Transport Terrace</street><classification>M</classification>
       <city>Lansing</city>
       <state>MI</state>
       <postal>48919</postal>
@@ -72,7 +72,7 @@
       <longitude>-84.5517</longitude>
     </address>
     <address>
-      <street>865 Knutson Hill</street>
+      <street>865 Knutson Hill</street><classification>M</classification>
       <city>Hartford</city>
       <state>CT</state>
       <postal>06160</postal>

@@ -47,7 +47,7 @@
   </images>
   <addresses>
     <address>
-      <street>3 Larry Pass</street>
+      <street>3 Larry Pass</street><classification>M</classification>
       <city>Harrisburg</city>
       <state>PA</state>
       <postal>17110</postal>
@@ -56,7 +56,7 @@
       <longitude>-76.8862</longitude>
     </address>
     <address>
-      <street>75 Norway Maple Way</street>
+      <street>75 Norway Maple Way</street><classification>M</classification>
       <city>Scottsdale</city>
       <state>AZ</state>
       <postal>85255</postal>
@@ -65,7 +65,7 @@
       <longitude>-111.8892</longitude>
     </address>
     <address>
-      <street>79171 Independence Way</street>
+      <street>79171 Independence Way</street><classification>M</classification>
       <city>Harrisburg</city>
       <state>PA</state>
       <postal>17110</postal>

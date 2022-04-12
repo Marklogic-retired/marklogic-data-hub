@@ -68,7 +68,7 @@
   </images>
   <addresses>
     <address>
-      <street>925 Prentice Alley</street>
+      <street>925 Prentice Alley</street><classification>M</classification>
       <city>Bakersfield</city>
       <state>CA</state>
       <postal>93399</postal>

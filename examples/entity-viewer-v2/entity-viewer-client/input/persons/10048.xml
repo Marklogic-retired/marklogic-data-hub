@@ -60,7 +60,7 @@
   </images>
   <addresses>
     <address>
-      <street>3 Scofield Road</street>
+      <street>3 Scofield Road</street><classification>M</classification>
       <city>Sacramento</city>
       <state>CA</state>
       <postal>95865</postal>
@@ -69,7 +69,7 @@
       <longitude>-121.3978</longitude>
     </address>
     <address>
-      <street>3897 Bellgrove Center</street>
+      <street>3897 Bellgrove Center</street><classification>M</classification>
       <city>Omaha</city>
       <state>NE</state>
       <postal>68134</postal>

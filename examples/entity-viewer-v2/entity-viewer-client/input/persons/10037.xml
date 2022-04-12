@@ -68,7 +68,7 @@
   </images>
   <addresses>
     <address>
-      <street>86 Heffernan Road</street>
+      <street>86 Heffernan Road</street><classification>M</classification>
       <city>New York City</city>
       <state>NY</state>
       <postal>10110</postal>
@@ -77,7 +77,7 @@
       <longitude>-73.9808</longitude>
     </address>
     <address>
-      <street>262 David Pass</street>
+      <street>262 David Pass</street><classification>M</classification>
       <city>Philadelphia</city>
       <state>PA</state>
       <postal>19141</postal>

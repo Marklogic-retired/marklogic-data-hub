@@ -42,7 +42,7 @@
   </images>
   <addresses>
     <address>
-      <street>68 Blue Bill Park Trail</street>
+      <street>68 Blue Bill Park Trail</street><classification>M</classification>
       <city>Minneapolis</city>
       <state>MN</state>
       <postal>55446</postal>

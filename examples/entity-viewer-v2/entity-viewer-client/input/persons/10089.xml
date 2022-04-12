@@ -76,7 +76,7 @@
   </images>
   <addresses>
     <address>
-      <street>48 Loeprich Avenue</street>
+      <street>48 Loeprich Avenue</street><classification>M</classification>
       <city>Saint Paul</city>
       <state>MN</state>
       <postal>55108</postal>

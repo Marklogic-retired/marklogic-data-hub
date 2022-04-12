@@ -71,7 +71,7 @@
   </images>
   <addresses>
     <address>
-      <street>85572 Lakewood Gardens Center</street>
+      <street>85572 Lakewood Gardens Center</street><classification>M</classification>
       <city>Springfield</city>
       <state>MA</state>
       <postal>01129</postal>
@@ -80,7 +80,7 @@
       <longitude>-72.4876</longitude>
     </address>
     <address>
-      <street>9 Roxbury Drive</street>
+      <street>9 Roxbury Drive</street><classification>M</classification>
       <city>Palatine</city>
       <state>IL</state>
       <postal>60078</postal>
@@ -89,7 +89,7 @@
       <longitude>-87.6873</longitude>
     </address>
     <address>
-      <street>7 Manufacturers Avenue</street>
+      <street>7 Manufacturers Avenue</street><classification>M</classification>
       <city>Houston</city>
       <state>TX</state>
       <postal>77085</postal>

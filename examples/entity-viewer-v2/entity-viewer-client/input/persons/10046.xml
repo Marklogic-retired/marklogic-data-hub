@@ -63,7 +63,7 @@
   </images>
   <addresses>
     <address>
-      <street>3662 Stoughton Point</street>
+      <street>3662 Stoughton Point</street><classification>M</classification>
       <city>Scottsdale</city>
       <state>AZ</state>
       <postal>85255</postal>
@@ -72,7 +72,7 @@
       <longitude>-111.8892</longitude>
     </address>
     <address>
-      <street>1 Red Cloud Pass</street>
+      <street>1 Red Cloud Pass</street><classification>M</classification>
       <city>Portland</city>
       <state>OR</state>
       <postal>97240</postal>

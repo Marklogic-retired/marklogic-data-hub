@@ -71,7 +71,7 @@
   </images>
   <addresses>
     <address>
-      <street>1 Schurz Junction</street>
+      <street>1 Schurz Junction</street><classification>M</classification>
       <city>Warren</city>
       <state>MI</state>
       <postal>48092</postal>
@@ -80,7 +80,7 @@
       <longitude>-83.0643</longitude>
     </address>
     <address>
-      <street>8 Manufacturers Park</street>
+      <street>8 Manufacturers Park</street><classification>M</classification>
       <city>North Las Vegas</city>
       <state>NV</state>
       <postal>89087</postal>
@@ -89,7 +89,7 @@
       <longitude>-115.1458</longitude>
     </address>
     <address>
-      <street>3 Forest Street</street>
+      <street>3 Forest Street</street><classification>M</classification>
       <city>Baton Rouge</city>
       <state>LA</state>
       <postal>70836</postal>

@@ -52,7 +52,7 @@
   </images>
   <addresses>
     <address>
-      <street>4350 Warner Plaza</street>
+      <street>4350 Warner Plaza</street><classification>M</classification>
       <city>Trenton</city>
       <state>NJ</state>
       <postal>08603</postal>
@@ -61,7 +61,7 @@
       <longitude>-74.712</longitude>
     </address>
     <address>
-      <street>7 Bunting Lane</street>
+      <street>7 Bunting Lane</street><classification>M</classification>
       <city>New Orleans</city>
       <state>LA</state>
       <postal>70116</postal>

@@ -64,7 +64,7 @@
   </images>
   <addresses>
     <address>
-      <street>17764 Maple Crossing</street>
+      <street>17764 Maple Crossing</street><classification>M</classification>
       <city>Rochester</city>
       <state>NY</state>
       <postal>14683</postal>
@@ -73,7 +73,7 @@
       <longitude>-77.6843</longitude>
     </address>
     <address>
-      <street>256 Toban Pass</street>
+      <street>256 Toban Pass</street><classification>M</classification>
       <city>Washington</city>
       <state>DC</state>
       <postal>20557</postal>
@@ -82,7 +82,7 @@
       <longitude>-77.0047</longitude>
     </address>
     <address>
-      <street>04317 Jenifer Junction</street>
+      <street>04317 Jenifer Junction</street><classification>M</classification>
       <city>Harrisburg</city>
       <state>PA</state>
       <postal>17105</postal>

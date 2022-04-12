@@ -50,7 +50,7 @@
   </images>
   <addresses>
     <address>
-      <street>71791 Buell Park</street>
+      <street>71791 Buell Park</street><classification>M</classification>
       <city>East Saint Louis</city>
       <state>IL</state>
       <postal>62205</postal>
@@ -59,7 +59,7 @@
       <longitude>-90.1275</longitude>
     </address>
     <address>
-      <street>36566 Westerfield Pass</street>
+      <street>36566 Westerfield Pass</street><classification>M</classification>
       <city>New York City</city>
       <state>NY</state>
       <postal>10110</postal>
@@ -68,7 +68,7 @@
       <longitude>-73.9808</longitude>
     </address>
     <address>
-      <street>5065 Pearson Crossing</street>
+      <street>5065 Pearson Crossing</street><classification>M</classification>
       <city>Boise</city>
       <state>ID</state>
       <postal>83727</postal>
