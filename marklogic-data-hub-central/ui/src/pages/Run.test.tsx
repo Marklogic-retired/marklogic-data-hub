@@ -182,7 +182,8 @@ describe("Verify load step failures in a flow", () => {
   test("Verify errors when flow with Load step fails with jobStatus failed", async () => {
     mocks.runFailedAPI(axiosMock);
     axiosMock.post["mockImplementationOnce"](jest.fn(() => Promise.resolve(data.response)));
-    const {getByLabelText, getByTestId, getAllByTestId} = await render(<MemoryRouter><AuthoritiesContext.Provider value={mockDevRolesService}><Run /></AuthoritiesContext.Provider></MemoryRouter>);
+    let result = await render(<MemoryRouter><AuthoritiesContext.Provider value={mockDevRolesService}><Run /></AuthoritiesContext.Provider></MemoryRouter>);
+    const {getByLabelText, getByTestId, getAllByTestId} = result;
 
     // Click disclosure icon
     fireEvent.click(document.querySelector(".accordion-button"));
@@ -360,18 +361,19 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
   test("Verify errors when flow with mapping/matching/merging/mastering step fails with jobStatus failed", async () => {
     mocks.runFailedAPI(axiosMock);
     axiosMock.post["mockImplementation"](jest.fn(() => Promise.resolve(data.response)));
-    const {getByLabelText, getByTestId, getAllByTestId} = await render(<MemoryRouter><AuthoritiesContext.Provider value={mockDevRolesService}><Run /></AuthoritiesContext.Provider></MemoryRouter>);
+    const result = await render(<MemoryRouter><AuthoritiesContext.Provider value={mockDevRolesService}><Run /></AuthoritiesContext.Provider></MemoryRouter>);
+    const {getByLabelText, getByTestId, getAllByTestId} = result;
 
     let steps = data.flows.data[0].steps;
 
     // Click disclosure icon
-    fireEvent.click(document.querySelector(".accordion-button"));
+    fireEvent.click(getByTestId(`accordion-${data.flows.data[0].name}`));
 
     //Mapping step failed error
-    fireEvent.click(getByLabelText(`runStep-${steps[1].stepName}`));
 
+    fireEvent.click(getByLabelText(`runStep-${steps[1].stepName}`));
     await wait(() => {
-      expect(getByLabelText("jobResponse")).toBeInTheDocument();
+      expect(getByTestId("job-response-modal")).toBeInTheDocument();
       expect(getByTestId(`${steps[1].stepName}-failure`)).toBeInTheDocument();
       fireEvent.click(getByTestId(`${steps[1].stepName}-failure`));
       fireEvent.click(getByTestId(`${steps[1].stepName}-error-1`));
