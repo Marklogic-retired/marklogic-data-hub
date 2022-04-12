@@ -3,6 +3,7 @@ import {render, cleanup, fireEvent, waitForElement, wait} from "@testing-library
 import SystemInfo from "./system-info";
 import {AuthoritiesContext, AuthoritiesService} from "../../util/authorities";
 import {BrowserRouter as Router} from "react-router-dom";
+import {ClearDataMessages} from "@config/messages.config";
 import data from "../../assets/mock-data/system-info.data";
 import axiosMock from "axios";
 import mocks from "../../api/__mocks__/mocks.data";
@@ -115,13 +116,13 @@ describe("Update data load settings component", () => {
     let clearBtn = getByTestId("clearUserData");
     fireEvent.click(clearBtn);
 
-    expect(getByText(`Are you sure you want to clear all user data? This action will reset your instance to a state similar to a newly created DHS instance with your project artifacts.`));
+    expect(getByLabelText("clear-all-data-confirm")).toBeInTheDocument();
     let confirm = getByLabelText("Yes");
     fireEvent.click(confirm);
     expect(axiosMock.post).toBeCalledWith("/api/environment/clearUserData", {});
 
     expect(await(waitForElement(() => getByText((content, node) => {
-      return getSubElements(content, node, "Clear All User Data completed successfully");
+      return getSubElements(content, node, "All user data was cleared successfully");
     })))).toBeInTheDocument();
   });
 
@@ -154,19 +155,31 @@ describe("Update data load settings component", () => {
       expect(getByTestId("targetBasedOnOptions-None")).toBeInTheDocument();
       expect(getByTestId("clearUserData")).toBeEnabled();
 
+      // verify tooltips
+      fireEvent.mouseOver(getByLabelText("database-select-info"));
+      expect(getByText(ClearDataMessages.databaseSelectionTooltip)).toBeInTheDocument();
+
+      fireEvent.mouseOver(getByLabelText("based-on-info"));
+      expect(getByText(ClearDataMessages.basedOnTooltip)).toBeInTheDocument();
+
       fireEvent.keyDown(getByLabelText("targetBasedOn-select"), {key: "ArrowDown"});
       expect(getByText("Collection")).toBeInTheDocument();
       fireEvent.click(getByText("Collection"));
       const collectionsInput = getByPlaceholderText("Search collections");
       expect(collectionsInput).toBeInTheDocument();
 
-      expect(getByTestId("clearUserData")).not.toBeEnabled();
+      expect(getByTestId("clearUserData")).toBeEnabled();
+      fireEvent.click(getByTestId("clearUserData"));
+      expect(getByLabelText("collection-empty-error")).toBeInTheDocument();
+
       fireEvent.keyDown(getByLabelText("targetBasedOn-select"), {key: "ArrowDown"});
       expect(getByText("Entity")).toBeInTheDocument();
       fireEvent.click(getByText("Entity"));
       const entitiesInput = getByPlaceholderText("Search entities");
       expect(entitiesInput).toBeInTheDocument();
-      expect(getByTestId("clearUserData")).not.toBeEnabled();
+      expect(getByTestId("clearUserData")).toBeEnabled();
+      fireEvent.click(getByTestId("clearUserData"));
+      expect(getByLabelText("entities-empty-error")).toBeInTheDocument();
 
       userEvent.type(entitiesInput, "cust");
       expect(getByLabelText("Customer")).toBeInTheDocument();
@@ -176,7 +189,7 @@ describe("Update data load settings component", () => {
       expect(clearBtn).toBeEnabled();
       fireEvent.click(clearBtn);
 
-      //TODO DHFPROD-8576 to add the validation to get the new modal texts.
+      expect(getByLabelText("clear-entity-subset-confirm")).toBeInTheDocument();
 
       let confirm = getByLabelText("Yes");
       fireEvent.click(confirm);
@@ -184,7 +197,7 @@ describe("Update data load settings component", () => {
         {targetCollection: "Customer", targetDatabase: "data-hub-STAGING"});
 
       expect(getByText((content, node) => {
-        return getSubElements(content, node, "Clear All User Data completed successfully");
+        return getSubElements(content, node, "A subset of user data was cleared successfully");
       })).toBeInTheDocument();
     });
 

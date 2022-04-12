@@ -19,8 +19,9 @@ public class VersionInfo {
     private String clusterName;
     private String stagingDbName;
     private String finalDbName;
+    private String jobsDbName;
 
-    public VersionInfo(String hubVersion, String markLogicVersion, String stagingDbName, String finalDbName) {
+    public VersionInfo(String hubVersion, String markLogicVersion, String stagingDbName, String finalDbName, String jobsDbName) {
     }
 
     public static VersionInfo newVersionInfo(HubClient hubClient) {
@@ -30,17 +31,19 @@ public class VersionInfo {
             json.get("markLogicVersion").asText(),
             json.get("clusterName").asText(),
             json.get("stagingDbName").asText(),
-            json.get("finalDbName").asText()
+            json.get("finalDbName").asText(),
+            json.get("jobsDbName").asText()
         );
     }
 
     private VersionInfo(String hubVersion, String markLogicVersion, String clusterName,
-                        String stagingDbName, String finalDbName) {
+                        String stagingDbName, String finalDbName, String jobsDbName) {
         this.hubVersion = hubVersion;
         this.markLogicVersion = markLogicVersion;
         this.clusterName = clusterName;
         this.stagingDbName = stagingDbName;
         this.finalDbName = finalDbName;
+        this.jobsDbName = jobsDbName;
     }
 
     public String getHubVersion() {
@@ -58,6 +61,8 @@ public class VersionInfo {
     public String getStagingDbName() { return stagingDbName; }
 
     public String getFinalDbName() { return finalDbName; }
+
+    public String getJobsDbName() { return jobsDbName; }
 
     /**
      * @return the version of the build containing this class
