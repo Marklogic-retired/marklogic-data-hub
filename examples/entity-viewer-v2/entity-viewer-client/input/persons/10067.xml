@@ -60,7 +60,7 @@
   </images>
   <addresses>
     <address>
-      <street>44 Park Meadow Plaza</street>
+      <street>44 Park Meadow Plaza</street><classification>M</classification>
       <city>Savannah</city>
       <state>GA</state>
       <postal>31410</postal>

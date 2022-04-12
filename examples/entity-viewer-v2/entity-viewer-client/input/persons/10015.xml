@@ -67,7 +67,7 @@
   </images>
   <addresses>
     <address>
-      <street>878 American Ash Avenue</street>
+      <street>878 American Ash Avenue</street><classification>M</classification>
       <city>Bradenton</city>
       <state>FL</state>
       <postal>34282</postal>
@@ -76,7 +76,7 @@
       <longitude>-82.4387</longitude>
     </address>
     <address>
-      <street>89 Bunting Lane</street>
+      <street>89 Bunting Lane</street><classification>M</classification>
       <city>Tucson</city>
       <state>AZ</state>
       <postal>85710</postal>

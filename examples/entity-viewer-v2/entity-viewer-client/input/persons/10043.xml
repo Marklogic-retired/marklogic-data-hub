@@ -79,7 +79,7 @@
   </images>
   <addresses>
     <address>
-      <street>6 Union Terrace</street>
+      <street>6 Union Terrace</street><classification>M</classification>
       <city>Akron</city>
       <state>OH</state>
       <postal>44315</postal>
@@ -88,7 +88,7 @@
       <longitude>-81.4632</longitude>
     </address>
     <address>
-      <street>4187 Westend Place</street>
+      <street>4187 Westend Place</street><classification>M</classification>
       <city>Bronx</city>
       <state>NY</state>
       <postal>10474</postal>
@@ -97,7 +97,7 @@
       <longitude>-73.8841</longitude>
     </address>
     <address>
-      <street>359 Truax Point</street>
+      <street>359 Truax Point</street><classification>M</classification>
       <city>Salt Lake City</city>
       <state>UT</state>
       <postal>84170</postal>

@@ -127,6 +127,14 @@ const DataTableMultiValue: React.FC<Props> = (props) => {
                 {data.map((d, i) => {
                 return (
                     <tr key={"row-" + i} className={data.length === 1 ? "singular" : ""}>
+                        {_.isArray(props.config.metadata) && props.config.metadata.map((meta, i2) => {
+                            if (meta?.placement !== 'before') return 
+                            return (
+                                <td key={"metadata-" + (i2 + props.config.cols.length)} className="metadata">
+                                    <MetadataValue config={meta} data={d} />
+                                </td>
+                            );
+                        })}
                         {_.isArray(props.config.cols) && props.config.cols.map((col, i) => {
                             return (
                                 <td key={"data-" + i} className="value" style={{width: col.width}}>
@@ -135,9 +143,10 @@ const DataTableMultiValue: React.FC<Props> = (props) => {
                             );
                         })}
                         {_.isArray(props.config.metadata) && props.config.metadata.map((meta, i2) => {
+                            if (meta?.placement === 'before') return 
                             return (
                                 <td key={"metadata-" + (i2 + props.config.cols.length)} className="metadata">
-                                    <MetadataValue config={meta} />
+                                    <MetadataValue config={meta} data={d}/>
                                 </td>
                             );
                         })}

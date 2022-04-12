@@ -42,7 +42,7 @@
   </images>
   <addresses>
     <address>
-      <street>8 Goodland Park</street>
+      <street>8 Goodland Park</street><classification>M</classification>
       <city>Memphis</city>
       <state>TN</state>
       <postal>38150</postal>

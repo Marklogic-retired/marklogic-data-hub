@@ -52,7 +52,7 @@
   </images>
   <addresses>
     <address>
-      <street>05 Montana Circle</street>
+      <street>05 Montana Circle</street><classification>M</classification>
       <city>Atlanta</city>
       <state>GA</state>
       <postal>30392</postal>
@@ -61,7 +61,7 @@
       <longitude>-84.474</longitude>
     </address>
     <address>
-      <street>12 Jackson Plaza</street>
+      <street>12 Jackson Plaza</street><classification>M</classification>
       <city>Phoenix</city>
       <state>AZ</state>
       <postal>85030</postal>

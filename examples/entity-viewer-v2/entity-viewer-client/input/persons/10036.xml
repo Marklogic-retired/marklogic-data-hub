@@ -56,7 +56,7 @@
   </images>
   <addresses>
     <address>
-      <street>17050 Florence Pass</street>
+      <street>17050 Florence Pass</street><classification>M</classification>
       <city>Great Neck</city>
       <state>NY</state>
       <postal>11024</postal>

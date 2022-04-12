@@ -50,7 +50,7 @@
   </images>
   <addresses>
     <address>
-      <street>0893 Calypso Alley</street>
+      <street>0893 Calypso Alley</street><classification>M</classification>
       <city>Ann Arbor</city>
       <state>MI</state>
       <postal>48107</postal>

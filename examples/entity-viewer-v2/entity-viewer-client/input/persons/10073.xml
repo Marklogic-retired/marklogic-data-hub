@@ -60,7 +60,7 @@
   </images>
   <addresses>
     <address>
-      <street>53441 Quincy Trail</street>
+      <street>53441 Quincy Trail</street><classification>M</classification>
       <city>Houston</city>
       <state>TX</state>
       <postal>77260</postal>
@@ -69,7 +69,7 @@
       <longitude>-95.3867</longitude>
     </address>
     <address>
-      <street>13737 Karstens Point</street>
+      <street>13737 Karstens Point</street><classification>M</classification>
       <city>New York City</city>
       <state>NY</state>
       <postal>10249</postal>

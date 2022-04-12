@@ -75,7 +75,7 @@
   </images>
   <addresses>
     <address>
-      <street>50 Gerald Place</street>
+      <street>50 Gerald Place</street><classification>M</classification>
       <city>Louisville</city>
       <state>KY</state>
       <postal>40293</postal>

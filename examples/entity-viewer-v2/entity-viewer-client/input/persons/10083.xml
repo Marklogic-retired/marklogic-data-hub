@@ -70,7 +70,7 @@
   </images>
   <addresses>
     <address>
-      <street>57589 Banding Park</street>
+      <street>57589 Banding Park</street><classification>M</classification>
       <city>Portland</city>
       <state>OR</state>
       <postal>97240</postal>
@@ -79,7 +79,7 @@
       <longitude>-122.3748</longitude>
     </address>
     <address>
-      <street>7091 Reinke Crossing</street>
+      <street>7091 Reinke Crossing</street><classification>M</classification>
       <city>Brooklyn</city>
       <state>NY</state>
       <postal>11210</postal>
@@ -88,7 +88,7 @@
       <longitude>-73.9467</longitude>
     </address>
     <address>
-      <street>912 Carey Way</street>
+      <street>912 Carey Way</street><classification>M</classification>
       <city>Pueblo</city>
       <state>CO</state>
       <postal>81010</postal>

@@ -46,7 +46,7 @@
   </images>
   <addresses>
     <address>
-      <street>66101 Schlimgen Place</street>
+      <street>66101 Schlimgen Place</street><classification>M</classification>
       <city>Atlanta</city>
       <state>GA</state>
       <postal>30356</postal>
@@ -55,7 +55,7 @@
       <longitude>-84.0746</longitude>
     </address>
     <address>
-      <street>04515 Dennis Pass</street>
+      <street>04515 Dennis Pass</street><classification>M</classification>
       <city>Saint Cloud</city>
       <state>MN</state>
       <postal>56398</postal>

@@ -62,7 +62,7 @@
   </images>
   <addresses>
     <address>
-      <street>78 Swallow Terrace</street>
+      <street>78 Swallow Terrace</street><classification>M</classification>
       <city>Nashville</city>
       <state>TN</state>
       <postal>37205</postal>
@@ -71,7 +71,7 @@
       <longitude>-86.869</longitude>
     </address>
     <address>
-      <street>228 Basil Parkway</street>
+      <street>228 Basil Parkway</street><classification>M</classification>
       <city>Saint Petersburg</city>
       <state>FL</state>
       <postal>33715</postal>
@@ -80,7 +80,7 @@
       <longitude>-82.7119</longitude>
     </address>
     <address>
-      <street>50 High Crossing Way</street>
+      <street>50 High Crossing Way</street><classification>M</classification>
       <city>Norfolk</city>
       <state>VA</state>
       <postal>23509</postal>

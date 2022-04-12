@@ -63,6 +63,7 @@
   </images>
   <addresses>
     <address>
+      <classification>M</classification>
       <street>522 Fuller Terrace</street>
       <city>Rochester</city>
       <state>NY</state>
@@ -72,6 +73,7 @@
       <longitude>-77.6481</longitude>
     </address>
     <address>
+      <classification>M</classification>
       <street>005 Maple Road</street>
       <city>Washington</city>
       <state>DC</state>
@@ -111,15 +113,13 @@
         <name>USA Today</name>
         <ts>2019-02-26T16:48:55Z</ts>
       </source>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2021-07-28T17:38:18Z</ts>
+      </source>
     </school>
   </schools>
   <status>Inactive</status>
-  <sources>
-    <source>
-      <name>Los Angeles Times</name>
-      <ts>2021-07-28T17:38:18Z</ts>
-    </source>
-  </sources>
   <relations>
     <relation>
       <id>/person/10037.xml</id>

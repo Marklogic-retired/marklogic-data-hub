@@ -71,7 +71,7 @@
   </images>
   <addresses>
     <address>
-      <street>35229 Erie Way</street>
+      <street>35229 Erie Way</street><classification>M</classification>
       <city>West Palm Beach</city>
       <state>FL</state>
       <postal>33416</postal>

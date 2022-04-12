@@ -50,7 +50,7 @@
   </images>
   <addresses>
     <address>
-      <street>7021 Kedzie Parkway</street>
+      <street>7021 Kedzie Parkway</street><classification>M</classification>
       <city>Albuquerque</city>
       <state>NM</state>
       <postal>87105</postal>
@@ -59,7 +59,7 @@
       <longitude>-106.6893</longitude>
     </address>
     <address>
-      <street>4113 Spohn Circle</street>
+      <street>4113 Spohn Circle</street><classification>M</classification>
       <city>Bethesda</city>
       <state>MD</state>
       <postal>20892</postal>

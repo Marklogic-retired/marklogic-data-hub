@@ -390,21 +390,22 @@
           "config": {
             "id": "name",
             "title": "Name",
-            "path": "person.nameGroup.fullname.value",
+            "path": "person.nameGroup.fullname",
+            "value": "value",
             "width": "400px",
             "metadata": [
               {
                 "type": "block",
                 "color": "#96bde4",
-                "value": "B"
+                "path": "classification",
+                "placement": "after"
               },
               {
                 "type": "block",
                 "color": "#5d6aaa",
-                "value": "3",
                 "popover": {
                   "title": "Sources",
-                  "dataPath": "person.sources",
+                  "dataPath": "source",
                   "placement": "right",
                   "cols": [
                     {
@@ -420,7 +421,7 @@
                       }
                     },
                     {
-                      "path": "timestamp",
+                      "path": "ts",
                       "type": "datetime",
                       "format": "yyyy-MM-dd"
                     }
@@ -435,19 +436,18 @@
           "config": {
             "id": "phone",
             "title": "Phone Number",
-            "path": "person.phone",
+            "path": "person",
+            "value": "phone",
             "icon": "phone",
             "width": "400px",
             "metadata": [
               {
                 "type": "block",
-                "color": "#96bde4",
-                "value": "B"
+                "color": "#96bde4"
               },
               {
                 "type": "block",
-                "color": "#5d6aaa",
-                "value": "4"
+                "color": "#5d6aaa"
               }
             ]
           }
@@ -458,19 +458,15 @@
             "id": "email",
             "title": "Email",
             "arrayPath": "person.emails.email",
-            "path": "value",
+            "value": "value",
             "icon": "email",
             "width": "400px",
             "metadata": [
               {
                 "type": "block",
                 "color": "#96bde4",
-                "value": "B"
-              },
-              {
-                "type": "block",
-                "color": "#5d6aaa",
-                "value": "4"
+                "path": "classification",
+                "placement": "after"
               }
             ]
           }
@@ -480,18 +476,17 @@
           "config": {
             "id": "ssn",
             "title": "SSN",
-            "path": "person.ssn.value",
+            "path": "person.ssn",
+            "value": "value",
             "width": "400px",
             "metadata": [
               {
                 "type": "block",
-                "color": "#e67485",
-                "value": "R"
+                "color": "#e67485"
               },
               {
                 "type": "block",
-                "color": "#5d6aaa",
-                "value": "4"
+                "color": "#5d6aaa"
               }
             ]
           }
@@ -534,12 +529,8 @@
               {
                 "type": "block",
                 "color": "#96bde4",
-                "value": "B"
-              },
-              {
-                "type": "block",
-                "color": "#5d6aaa",
-                "value": "4"
+                "path": "classification",
+                "placement": "after"
               }
             ]
           }
@@ -571,16 +562,11 @@
             "metadata": [
               {
                 "type": "block",
-                "color": "#96bde4",
-                "value": "B"
-              },
-              {
-                "type": "block",
                 "color": "#5d6aaa",
-                "value": "3",
+                "placement": "before",
                 "popover": {
                   "title": "Sources",
-                  "dataPath": "person.sources",
+                  "dataPath": "source",
                   "placement": "right",
                   "cols": [
                     {
@@ -596,7 +582,7 @@
                       }
                     },
                     {
-                      "path": "timestamp",
+                      "path": "ts",
                       "type": "datetime",
                       "format": "yyyy-MM-dd"
                     }

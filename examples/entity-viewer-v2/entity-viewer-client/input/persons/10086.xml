@@ -54,7 +54,7 @@
   </images>
   <addresses>
     <address>
-      <street>88294 Bultman Road</street>
+      <street>88294 Bultman Road</street><classification>M</classification>
       <city>Cleveland</city>
       <state>OH</state>
       <postal>44185</postal>
@@ -63,7 +63,7 @@
       <longitude>-81.6728</longitude>
     </address>
     <address>
-      <street>8013 Beilfuss Lane</street>
+      <street>8013 Beilfuss Lane</street><classification>M</classification>
       <city>Melbourne</city>
       <state>FL</state>
       <postal>32941</postal>
@@ -72,7 +72,7 @@
       <longitude>-80.5235</longitude>
     </address>
     <address>
-      <street>76182 Old Gate Center</street>
+      <street>76182 Old Gate Center</street><classification>M</classification>
       <city>Spokane</city>
       <state>WA</state>
       <postal>99252</postal>

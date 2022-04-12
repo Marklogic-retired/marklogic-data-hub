@@ -54,7 +54,7 @@
   </images>
   <addresses>
     <address>
-      <street>97 Dwight Road</street>
+      <street>97 Dwight Road</street><classification>M</classification>
       <city>Charlotte</city>
       <state>NC</state>
       <postal>28242</postal>
@@ -63,7 +63,7 @@
       <longitude>-80.8042</longitude>
     </address>
     <address>
-      <street>55 Crowley Circle</street>
+      <street>55 Crowley Circle</street><classification>M</classification>
       <city>Washington</city>
       <state>DC</state>
       <postal>20220</postal>
@@ -72,7 +72,7 @@
       <longitude>-77.0146</longitude>
     </address>
     <address>
-      <street>34219 Oneill Parkway</street>
+      <street>34219 Oneill Parkway</street><classification>M</classification>
       <city>Portsmouth</city>
       <state>NH</state>
       <postal>00214</postal>

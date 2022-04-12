@@ -58,7 +58,7 @@
   </images>
   <addresses>
     <address>
-      <street>9 Parkside Point</street>
+      <street>9 Parkside Point</street><classification>M</classification>
       <city>Daytona Beach</city>
       <state>FL</state>
       <postal>32118</postal>
@@ -67,7 +67,7 @@
       <longitude>-81.0095</longitude>
     </address>
     <address>
-      <street>22 Village Green Place</street>
+      <street>22 Village Green Place</street><classification>M</classification>
       <city>Gadsden</city>
       <state>AL</state>
       <postal>35905</postal>
@@ -76,7 +76,7 @@
       <longitude>-85.9576</longitude>
     </address>
     <address>
-      <street>4 Commercial Place</street>
+      <street>4 Commercial Place</street><classification>M</classification>
       <city>Riverside</city>
       <state>CA</state>
       <postal>92519</postal>

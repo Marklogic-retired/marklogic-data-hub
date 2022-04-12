@@ -75,7 +75,7 @@
   </images>
   <addresses>
     <address>
-      <street>02989 Calypso Terrace</street>
+      <street>02989 Calypso Terrace</street><classification>M</classification>
       <city>Portland</city>
       <state>OR</state>
       <postal>97255</postal>
@@ -84,7 +84,7 @@
       <longitude>-122.3748</longitude>
     </address>
     <address>
-      <street>2 Springview Terrace</street>
+      <street>2 Springview Terrace</street><classification>M</classification>
       <city>Philadelphia</city>
       <state>PA</state>
       <postal>19109</postal>

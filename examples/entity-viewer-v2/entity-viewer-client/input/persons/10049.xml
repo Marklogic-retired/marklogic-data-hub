@@ -70,7 +70,7 @@
   </images>
   <addresses>
     <address>
-      <street>55037 Magdeline Circle</street>
+      <street>55037 Magdeline Circle</street><classification>M</classification>
       <city>Tacoma</city>
       <state>WA</state>
       <postal>98424</postal>

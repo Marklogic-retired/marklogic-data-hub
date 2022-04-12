@@ -62,7 +62,7 @@
   </images>
   <addresses>
     <address>
-      <street>7577 Dexter Circle</street>
+      <street>7577 Dexter Circle</street><classification>M</classification>
       <city>Brooksville</city>
       <state>FL</state>
       <postal>34605</postal>
@@ -71,7 +71,7 @@
       <longitude>-82.4226</longitude>
     </address>
     <address>
-      <street>0 West Drive</street>
+      <street>0 West Drive</street><classification>M</classification>
       <city>Lake Worth</city>
       <state>FL</state>
       <postal>33467</postal>

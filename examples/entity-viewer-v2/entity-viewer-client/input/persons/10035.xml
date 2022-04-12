@@ -67,7 +67,7 @@
   </images>
   <addresses>
     <address>
-      <street>4830 Clarendon Parkway</street>
+      <street>4830 Clarendon Parkway</street><classification>M</classification>
       <city>Durham</city>
       <state>NC</state>
       <postal>27717</postal>
@@ -76,7 +76,7 @@
       <longitude>-78.8577</longitude>
     </address>
     <address>
-      <street>3 Lakewood Gardens Lane</street>
+      <street>3 Lakewood Gardens Lane</street><classification>M</classification>
       <city>Midland</city>
       <state>TX</state>
       <postal>79710</postal>
@@ -85,7 +85,7 @@
       <longitude>-102.0317</longitude>
     </address>
     <address>
-      <street>14 Barby Pass</street>
+      <street>14 Barby Pass</street><classification>M</classification>
       <city>Austin</city>
       <state>TX</state>
       <postal>78732</postal>

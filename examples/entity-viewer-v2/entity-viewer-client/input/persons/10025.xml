@@ -56,7 +56,7 @@
   </images>
   <addresses>
     <address>
-      <street>1752 Harbort Terrace</street>
+      <street>1752 Harbort Terrace</street><classification>M</classification>
       <city>Prescott</city>
       <state>AZ</state>
       <postal>86305</postal>
@@ -65,7 +65,7 @@
       <longitude>-112.9584</longitude>
     </address>
     <address>
-      <street>93766 Garrison Avenue</street>
+      <street>93766 Garrison Avenue</street><classification>M</classification>
       <city>Vancouver</city>
       <state>WA</state>
       <postal>98664</postal>
@@ -74,7 +74,7 @@
       <longitude>-122.5767</longitude>
     </address>
     <address>
-      <street>3 Northview Street</street>
+      <street>3 Northview Street</street><classification>M</classification>
       <city>Punta Gorda</city>
       <state>FL</state>
       <postal>33982</postal>

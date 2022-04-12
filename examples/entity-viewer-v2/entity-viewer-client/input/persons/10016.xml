@@ -79,7 +79,7 @@
   </images>
   <addresses>
     <address>
-      <street>185 Buhler Park</street>
+      <street>185 Buhler Park</street><classification>M</classification>
       <city>Springfield</city>
       <state>IL</state>
       <postal>62776</postal>
@@ -88,7 +88,7 @@
       <longitude>-89.606</longitude>
     </address>
     <address>
-      <street>057 Forest Dale Center</street>
+      <street>057 Forest Dale Center</street><classification>M</classification>
       <city>Reston</city>
       <state>VA</state>
       <postal>20195</postal>
@@ -97,7 +97,7 @@
       <longitude>-77.2888</longitude>
     </address>
     <address>
-      <street>90260 Rieder Junction</street>
+      <street>90260 Rieder Junction</street><classification>M</classification>
       <city>Gainesville</city>
       <state>FL</state>
       <postal>32627</postal>

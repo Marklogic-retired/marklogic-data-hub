@@ -68,7 +68,7 @@
   </images>
   <addresses>
     <address>
-      <street>3619 Center Plaza</street>
+      <street>3619 Center Plaza</street><classification>M</classification>
       <city>Houston</city>
       <state>TX</state>
       <postal>77240</postal>

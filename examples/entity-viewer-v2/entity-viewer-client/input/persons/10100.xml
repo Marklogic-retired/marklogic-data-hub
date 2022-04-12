@@ -55,7 +55,7 @@
   </images>
   <addresses>
     <address>
-      <street>62761 Westridge Place</street>
+      <street>62761 Westridge Place</street><classification>M</classification>
       <city>San Antonio</city>
       <state>TX</state>
       <postal>78225</postal>
@@ -64,7 +64,7 @@
       <longitude>-98.5245</longitude>
     </address>
     <address>
-      <street>12 Superior Terrace</street>
+      <street>12 Superior Terrace</street><classification>M</classification>
       <city>Las Vegas</city>
       <state>NV</state>
       <postal>89166</postal>
@@ -73,7 +73,7 @@
       <longitude>-115.3398</longitude>
     </address>
     <address>
-      <street>130 Marquette Street</street>
+      <street>130 Marquette Street</street><classification>M</classification>
       <city>Harrisburg</city>
       <state>PA</state>
       <postal>17140</postal>

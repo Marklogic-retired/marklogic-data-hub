@@ -75,7 +75,7 @@
   </images>
   <addresses>
     <address>
-      <street>4879 Milwaukee Plaza</street>
+      <street>4879 Milwaukee Plaza</street><classification>M</classification>
       <city>Carol Stream</city>
       <state>IL</state>
       <postal>60351</postal>
@@ -84,7 +84,7 @@
       <longitude>-88.1208</longitude>
     </address>
     <address>
-      <street>9034 Sachs Terrace</street>
+      <street>9034 Sachs Terrace</street><classification>M</classification>
       <city>Denver</city>
       <state>CO</state>
       <postal>80299</postal>

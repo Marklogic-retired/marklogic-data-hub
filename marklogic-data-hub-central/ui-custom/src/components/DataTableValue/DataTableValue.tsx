@@ -94,21 +94,31 @@ const DataTableValue: React.FC<Props> = (props) => {
             <Table id={props.config.id} size="sm" style={tableStyle} className={hideClass} data-testid={"table-"+ props.config.id}>
                 <tbody>
                     {data.map((d, i) => {
+                        const value = d[props?.config?.value] ? d[props.config.value] : ''
                         return (
                             <tr key={"row-" + i} className={data.length === 1 ? "singular" : ""}>
+                                {_.isArray(props.config.metadata) && props.config.metadata.map((meta, i2) => {
+                                    if (meta?.placement !== 'before') return 
+                                    return (
+                                        <td key={"metadata-" + i2} className="metadata">
+                                            <MetadataValue config={meta} data={d} />
+                                        </td>
+                                    );
+                                })}
                                 {props.config.icon &&
                                 <td key={"icon-" + i} className="icon">
                                     {i === 0 ? getIcon(props.config.icon) : null}
                                 </td>}
                                 <td key={"data-" + i} className="value">
-                                    <Value style={props.config.style}>{d}</Value>
-                                </td>
+                                    <Value style={props.config.style}>{value}</Value>
+                                </td>                                
                                 {_.isArray(props.config.metadata) && props.config.metadata.map((meta, i2) => {
-                                return (
-                                    <td key={"metadata-" + i2} className="metadata">
-                                        <MetadataValue config={meta} />
-                                    </td>
-                                );
+                                    if (meta?.placement === 'before') return 
+                                    return (
+                                        <td key={"metadata-" + i2} className="metadata">
+                                            <MetadataValue config={meta} data={d}/>
+                                        </td>
+                                    );
                                 })}
                             </tr>
                         );

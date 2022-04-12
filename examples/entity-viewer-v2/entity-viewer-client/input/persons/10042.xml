@@ -63,7 +63,7 @@
   </images>
   <addresses>
     <address>
-      <street>8 Sutteridge Way</street>
+      <street>8 Sutteridge Way</street><classification>M</classification>
       <city>Port Saint Lucie</city>
       <state>FL</state>
       <postal>34985</postal>
@@ -72,7 +72,7 @@
       <longitude>-80.409</longitude>
     </address>
     <address>
-      <street>45793 Laurel Court</street>
+      <street>45793 Laurel Court</street><classification>M</classification>
       <city>Lafayette</city>
       <state>LA</state>
       <postal>70593</postal>
@@ -81,7 +81,7 @@
       <longitude>-92.0951</longitude>
     </address>
     <address>
-      <street>61 Birchwood Park</street>
+      <street>61 Birchwood Park</street><classification>M</classification>
       <city>Springfield</city>
       <state>MA</state>
       <postal>01152</postal>

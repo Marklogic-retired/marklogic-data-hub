@@ -74,6 +74,7 @@
   </images>
   <addresses>
     <address>
+      <classification>M</classification>
       <street>68294 Bowman Plaza</street>
       <city>Colorado Springs</city>
       <state>CO</state>
@@ -83,6 +84,7 @@
       <longitude>-104.562</longitude>
     </address>
     <address>
+      <classification>M</classification>
       <street>730 Hallows Place</street>
       <city>Evansville</city>
       <state>IN</state>
@@ -92,6 +94,7 @@
       <longitude>-87.575</longitude>
     </address>
     <address>
+      <classification>M</classification>
       <street>4586 Clarendon Road</street>
       <city>Fargo</city>
       <state>ND</state>

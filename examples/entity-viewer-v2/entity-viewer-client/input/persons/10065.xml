@@ -66,7 +66,7 @@
   </images>
   <addresses>
     <address>
-      <street>128 Thierer Court</street>
+      <street>128 Thierer Court</street><classification>M</classification>
       <city>Topeka</city>
       <state>KS</state>
       <postal>66699</postal>
@@ -75,7 +75,7 @@
       <longitude>-95.7697</longitude>
     </address>
     <address>
-      <street>02880 Lake View Drive</street>
+      <street>02880 Lake View Drive</street><classification>M</classification>
       <city>Seattle</city>
       <state>WA</state>
       <postal>98127</postal>
@@ -84,7 +84,7 @@
       <longitude>-122.3308</longitude>
     </address>
     <address>
-      <street>421 Hoepker Hill</street>
+      <street>421 Hoepker Hill</street><classification>M</classification>
       <city>Memphis</city>
       <state>TN</state>
       <postal>38168</postal>

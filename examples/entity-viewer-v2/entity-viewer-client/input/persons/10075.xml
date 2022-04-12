@@ -75,7 +75,7 @@
   </images>
   <addresses>
     <address>
-      <street>3 Bunker Hill Lane</street>
+      <street>3 Bunker Hill Lane</street><classification>M</classification>
       <city>Oceanside</city>
       <state>CA</state>
       <postal>92056</postal>
@@ -84,7 +84,7 @@
       <longitude>-117.2831</longitude>
     </address>
     <address>
-      <street>788 Village Plaza</street>
+      <street>788 Village Plaza</street><classification>M</classification>
       <city>Seattle</city>
       <state>WA</state>
       <postal>98185</postal>

@@ -55,6 +55,7 @@
   </images>
   <addresses>
     <address>
+      <classification>M</classification>
       <street>929 Heath Terrace</street>
       <city>San Bernardino</city>
       <state>CA</state>
@@ -64,6 +65,7 @@
       <longitude>-115.9671</longitude>
     </address>
     <address>
+      <classification>M</classification>
       <street>129 Dawn Court</street>
       <city>Des Moines</city>
       <state>IA</state>

@@ -51,7 +51,7 @@
   </images>
   <addresses>
     <address>
-      <street>216 Kim Trail</street>
+      <street>216 Kim Trail</street><classification>M</classification>
       <city>Reno</city>
       <state>NV</state>
       <postal>89550</postal>
@@ -60,7 +60,7 @@
       <longitude>-119.8225</longitude>
     </address>
     <address>
-      <street>2 Sutherland Way</street>
+      <street>2 Sutherland Way</street><classification>M</classification>
       <city>New York City</city>
       <state>NY</state>
       <postal>10203</postal>

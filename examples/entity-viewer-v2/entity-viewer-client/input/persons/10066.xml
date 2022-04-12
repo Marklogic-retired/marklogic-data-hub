@@ -66,7 +66,7 @@
   </images>
   <addresses>
     <address>
-      <street>0117 Sachtjen Pass</street>
+      <street>0117 Sachtjen Pass</street><classification>M</classification>
       <city>Sioux Falls</city>
       <state>SD</state>
       <postal>57188</postal>

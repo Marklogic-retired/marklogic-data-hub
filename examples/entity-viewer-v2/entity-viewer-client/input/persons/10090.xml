@@ -68,7 +68,7 @@
   </images>
   <addresses>
     <address>
-      <street>28963 Sloan Street</street>
+      <street>28963 Sloan Street</street><classification>M</classification>
       <city>Jacksonville</city>
       <state>FL</state>
       <postal>32255</postal>

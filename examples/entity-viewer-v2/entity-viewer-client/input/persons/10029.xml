@@ -46,7 +46,7 @@
   </images>
   <addresses>
     <address>
-      <street>62 Waubesa Way</street>
+      <street>62 Waubesa Way</street><classification>M</classification>
       <city>New Orleans</city>
       <state>LA</state>
       <postal>70124</postal>

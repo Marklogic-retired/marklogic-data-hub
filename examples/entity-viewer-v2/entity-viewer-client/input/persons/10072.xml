@@ -52,7 +52,7 @@
   </images>
   <addresses>
     <address>
-      <street>96583 Lillian Pass</street>
+      <street>96583 Lillian Pass</street><classification>M</classification>
       <city>Montgomery</city>
       <state>AL</state>
       <postal>36134</postal>
@@ -61,7 +61,7 @@
       <longitude>-86.2085</longitude>
     </address>
     <address>
-      <street>557 Rieder Alley</street>
+      <street>557 Rieder Alley</street><classification>M</classification>
       <city>Brooklyn</city>
       <state>NY</state>
       <postal>11247</postal>

@@ -51,7 +51,7 @@
   </images>
   <addresses>
     <address>
-      <street>059 Kipling Road</street>
+      <street>059 Kipling Road</street><classification>M</classification>
       <city>Memphis</city>
       <state>TN</state>
       <postal>38181</postal>
@@ -60,7 +60,7 @@
       <longitude>-89.9715</longitude>
     </address>
     <address>
-      <street>521 Buena Vista Center</street>
+      <street>521 Buena Vista Center</street><classification>M</classification>
       <city>Humble</city>
       <state>TX</state>
       <postal>77346</postal>
@@ -69,7 +69,7 @@
       <longitude>-95.1728</longitude>
     </address>
     <address>
-      <street>39 Norway Maple Lane</street>
+      <street>39 Norway Maple Lane</street><classification>M</classification>
       <city>Woburn</city>
       <state>MA</state>
       <postal>01813</postal>

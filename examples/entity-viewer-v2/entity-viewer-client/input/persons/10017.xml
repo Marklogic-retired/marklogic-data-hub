@@ -51,7 +51,7 @@
   </images>
   <addresses>
     <address>
-      <street>76 Commercial Terrace</street>
+      <street>76 Commercial Terrace</street><classification>M</classification>
       <city>Madison</city>
       <state>WI</state>
       <postal>53705</postal>
@@ -60,7 +60,7 @@
       <longitude>-89.4528</longitude>
     </address>
     <address>
-      <street>81 Nancy Plaza</street>
+      <street>81 Nancy Plaza</street><classification>M</classification>
       <city>Pittsburgh</city>
       <state>PA</state>
       <postal>15261</postal>
@@ -69,7 +69,7 @@
       <longitude>-80.0248</longitude>
     </address>
     <address>
-      <street>22452 Mcguire Plaza</street>
+      <street>22452 Mcguire Plaza</street><classification>M</classification>
       <city>Seattle</city>
       <state>WA</state>
       <postal>98158</postal>

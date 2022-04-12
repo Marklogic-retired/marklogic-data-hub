@@ -76,7 +76,7 @@
   </images>
   <addresses>
     <address>
-      <street>6529 Mallard Drive</street>
+      <street>6529 Mallard Drive</street><classification>M</classification>
       <city>Houston</city>
       <state>TX</state>
       <postal>77065</postal>
