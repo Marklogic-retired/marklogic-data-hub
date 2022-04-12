@@ -1,7 +1,14 @@
+@import "../../theme/HCVariables.scss";
+
+
 .systemModal {
-    top: 4.5em;
+    top: 1.5em;
     left: -2em;
-    min-width: 87%;
+    min-width: 93%;
+}
+
+.systemModalBody {
+    height: 750px;
 }
 
 .systemContainer {
@@ -47,7 +54,7 @@
   }
 
   .cards {
-    padding-top: 80px;
+    padding-top: 50px;
     padding-bottom: 80px;
     margin: auto;
     min-width: 700px;
@@ -55,7 +62,7 @@
     .download, .clearAll {
       display: block;
       min-width: 320px;
-      width: 100%;
+      width: 103%;
       padding: 1px;
       border-color: #44499C;
     }
@@ -78,12 +85,13 @@
       }
 
       .subSetSelection {
-        width: 40%;
+        width: 35%;
         flex: 0 0 auto;
       }
 
       .searchIcon {
         position: absolute;
+        margin-right: 5px;
         right: 15px;
         top: 9px;
         font-size: 16px;
@@ -92,6 +100,7 @@
     }
 
     .buttonContainer {
+      margin-top: 25px;
       width: 100%;
       text-align: center;
       button {
@@ -102,6 +111,7 @@
     }
 
     .disabledButtonContainer {
+      margin-top: 25px;
       width: 100%;
       text-align: center;
       button {
@@ -111,6 +121,23 @@
     }
 
   }
+
+.subsetSelect { 
+    margin-right: 7px;
+    margin-left: -10px;
+}
+
+.subsetInputSelect { 
+  width: 99%;
+  margin-left: -10px;
+}
+
+.infoIcon {
+    margin-right: -5px;
+    margin-top: 8px;
+    color: $span-hover;
+}
+
 .spinRunning {
     position: absolute;
     padding-top: 120px;
@@ -135,8 +162,13 @@
 }
 }
 
+.errorMessageEmpty {
+  color: $danger;
+  margin-left: 2px;
+}
+
 .confirmationModal {
-  min-width: 40%;
+  min-width: 48%;
   top: 5.1em;
   z-index: 1040;
 }

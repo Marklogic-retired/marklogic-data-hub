@@ -6,9 +6,10 @@ import {AuthoritiesContext} from "@util/authorities";
 import Axios from "axios";
 import Spinner from "react-bootstrap/Spinner";
 import {SecurityTooltips} from "@config/tooltips.config";
-import {SystemInfoMessages} from "@config/messages.config";
+import {SystemInfoMessages, ClearDataMessages} from "@config/messages.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExclamationTriangle, faCopy} from "@fortawesome/free-solid-svg-icons";
+import {QuestionCircleFill} from "react-bootstrap-icons";
 import {Modal, Row, Col, FormLabel, Form} from "react-bootstrap";
 import {HCAlert, HCButton, HCCard, HCTooltip} from "@components/common";
 import Select, {components as SelectComponents} from "react-select";
@@ -32,10 +33,14 @@ const SystemInfo = (props) => {
   const [message, setMessage] = useState({show: false});
   const [isLoading, setIsLoading] = useState(false);
   const [clearDataVisible, setClearDataVisible] = useState(false);
+
   const [copySuccess, setCopySuccess] = useState(""); // eslint-disable-line @typescript-eslint/no-unused-vars
 
   const stagingDbName = getEnvironment().stagingDb ? getEnvironment().stagingDb : StepsConfig.stagingDb;
   const finalDbName = getEnvironment().finalDb ? getEnvironment().finalDb : StepsConfig.finalDb;
+  const jobsDbName = getEnvironment().jobsDb ? getEnvironment().jobsDb : StepsConfig.jobsDb;
+  const [emptyError, setEmptyError] = useState<boolean>(false);
+  const [clearClicked, setClearClicked] = useState<boolean>(false);
   const databaseOptions = [stagingDbName, finalDbName];
   const [targetDatabase, setTargetDatabase] = useState<string>(stagingDbName);
   const basedOnOptions = ["None", "Collection", "Entity"];
@@ -47,8 +52,6 @@ const SystemInfo = (props) => {
   const [entitySelected, setEntitySelected] = useState<string>("");
   const [entitiesOptions, setEntitiesOptions] = useState<string[]>([]);
   const [allEntityNames, setAllEntityNames] = useState<string[]>([]);
-
-  const [clearBtnAvailable, setClearBtnAvailable] = useState<boolean>(true);
 
   useEffect(() => {
     if (!user.authenticated && props.systemInfoVisible) {
@@ -85,7 +88,7 @@ const SystemInfo = (props) => {
   const handleSelectedDeleteOpt = (event) => {
     setSelectedDeleteOpt(event.target.value);
     setTargetBasedOn("None");
-    setClearBtnAvailable(true);
+    setEmptyError(false);
     setCollectionSelected("");
     setEntitySelected("");
   };
@@ -97,11 +100,12 @@ const SystemInfo = (props) => {
   const handleTargetBasedOn = (selectedItem) => {
     setTargetBasedOn(selectedItem.value);
     setCollectionSelected("");
+    setClearClicked(false);
     setEntitySelected("");
     if (selectedItem.value === "None") {
-      setClearBtnAvailable(true);
+      setEmptyError(false);
     } else {
-      setClearBtnAvailable(false);
+      setEmptyError(true);
     }
   };
 
@@ -110,10 +114,10 @@ const SystemInfo = (props) => {
     if (selected) {
       setCollectionSelected(selectedItem[0]);
       if (collectionOptions.includes(selectedItem[0])) {
-        setClearBtnAvailable(true);
+        setEmptyError(false);
       }
     } else {
-      setClearBtnAvailable(false);
+      setEmptyError(true);
     }
   };
 
@@ -122,10 +126,10 @@ const SystemInfo = (props) => {
     if (selected) {
       setEntitySelected(selectedItem[0]);
       if (entitiesOptions.includes(selectedItem[0])) {
-        setClearBtnAvailable(true);
+        setEmptyError(false);
       }
     } else {
-      setClearBtnAvailable(false);
+      setEmptyError(true);
     }
   };
 
@@ -219,7 +223,10 @@ const SystemInfo = (props) => {
   };
 
   const handleClearData = () => {
-    setClearDataVisible(true);
+    if (!emptyError) {
+      setClearDataVisible(true);
+    }
+    setClearClicked(true);
   };
 
   const handleCollectionSearch = async (value: any) => {
@@ -239,11 +246,11 @@ const SystemInfo = (props) => {
         if (response.status === 200) {
           setCollectionOptions(response.data);
           if (collectionOptions.includes(value)) {
-            setClearBtnAvailable(true);
+            setEmptyError(false);
             setCollectionSelected(value);
           } else {
             setCollectionSelected("");
-            setClearBtnAvailable(false);
+            setEmptyError(true);
           }
         }
       } catch (error) {
@@ -261,10 +268,10 @@ const SystemInfo = (props) => {
     setEntitiesOptions(entitiesSelected);
     if (entitiesSelected.includes(value)) {
       setEntitySelected(value);
-      setClearBtnAvailable(true);
+      setEmptyError(false);
     } else {
       setEntitySelected("");
-      setClearBtnAvailable(false);
+      setEmptyError(true);
     }
   };
 
@@ -276,7 +283,11 @@ const SystemInfo = (props) => {
             <FontAwesomeIcon icon={faExclamationTriangle} size="lg" style={{color: "rgb(188, 129, 29)"}}></FontAwesomeIcon>
           </div>
           <div style={{fontSize: "16px", padding: "20px 20px 20px 20px"}}>
-            Are you sure you want to clear all user data? This action will reset your instance to a state similar to a newly created DHS instance with your project artifacts.
+            {selectedDeleteOpt !== "deleteAll" ?
+              ClearDataMessages.clearSubsetConfirmation(targetDatabase, targetBasedOn, collectionSelected, entitySelected)
+              :
+              ClearDataMessages.clearAllConfirmation([...databaseOptions, jobsDbName])
+            }
           </div>
         </div>
       </Modal.Body>
@@ -312,11 +323,11 @@ const SystemInfo = (props) => {
       backdrop="static"
       className={clearDataVisible ? styles.disabledMain : ""}
     >
-      <Modal.Body >
+      <Modal.Body className={styles.systemModalBody} >
         <Modal.Header closeButton className={"bb-none"}></Modal.Header>
         <div className={styles.systemContainer}>
           <div data-testid="alertTrue" className={styles.alertPosition} style={message.show ? {display: "block"} : {display: "none"}}>
-            <HCAlert variant="success" showIcon>{<span><b>Clear All User Data </b>completed successfully</span>}</HCAlert>
+            <HCAlert variant="success" showIcon>{selectedDeleteOpt !== "deleteAll" ? <span>A subset of user data was cleared successfully</span> : <span>All user data was cleared successfully</span>}</HCAlert>
           </div>
 
           <div className={styles.serviceName}>
@@ -419,6 +430,7 @@ const SystemInfo = (props) => {
                             id="targetDatabase-select"
                             inputId="targetDatabase"
                             tabIndex={0}
+                            className={styles.subsetSelect}
                             components={{MenuList: props => MenuList("targetDatabase", props)}}
                             placeholder="Please select a database"
                             value={targetDbOptions.find(oItem => oItem.value === targetDatabase)}
@@ -436,6 +448,9 @@ const SystemInfo = (props) => {
                               );
                             }}
                           />
+                          <HCTooltip text={ClearDataMessages.databaseSelectionTooltip} placement="bottom" id="">
+                            <QuestionCircleFill aria-label={"database-select-info"} className={styles.infoIcon} size={13} />
+                          </HCTooltip>
                         </Col>
                       </Row>
                       <Row className={"mb-2"}>
@@ -449,6 +464,7 @@ const SystemInfo = (props) => {
                             id="targetBasedOn-select"
                             inputId="targetBasedOn"
                             tabIndex={0}
+                            className={styles.subsetSelect}
                             components={{MenuList: props => MenuList("targetBasedOn", props)}}
                             placeholder="None"
                             value={targetBasedOnOptions.find(oItem => oItem.value === targetBasedOn)}
@@ -466,6 +482,9 @@ const SystemInfo = (props) => {
                               );
                             }}
                           />
+                          <HCTooltip text={ClearDataMessages.basedOnTooltip} placement="bottom" id="">
+                            <QuestionCircleFill aria-label={"based-on-info"} className={styles.infoIcon} size={13} />
+                          </HCTooltip>
                         </Col>
                       </Row>
                       <Row>
@@ -474,30 +493,33 @@ const SystemInfo = (props) => {
                         <Col className={"d-flex ps-1"}>
                           {targetBasedOn === "Collection" ? <div className={"position-relative w-100"}>
                             <Typeahead
-                              id="collectionInput"
+                              id="collection-input"
                               options={collectionOptions}
+                              className={styles.subsetInputSelect}
                               aria-label="collection-input"
                               placeholder={"Search collections"}
                               value={collectionSelected}
                               onInputChange={handleCollectionSearch}
                               onChange={handleCollectionChange}
-                              style={{width: "100%"}}
                               minLength={3}
                             ></Typeahead>
-                            <Search className={styles.searchIcon} /></div> :
-                            targetBasedOn === "Entity" ? <div className={"position-relative w-100"}>
-                              <Typeahead
-                                id="entitiesInput"
-                                options={entitiesOptions}
-                                aria-label="entities-input"
-                                placeholder={"Search entities"}
-                                value={entitySelected}
-                                onInputChange={handleEntitiesSearch}
-                                onChange={handleEntitiesChange}
-                                style={{width: "100%"}}
-                                minLength={3}
-                              ></Typeahead>
-                              <Search className={styles.searchIcon} /></div> : ""}
+                            <span aria-label={"collection-empty-error"} className={styles.errorMessageEmpty}>{emptyError && clearClicked ? ClearDataMessages.emptyCollectionError : null}</span>
+                            <Search className={styles.searchIcon} /></div>
+                            : ""}
+                          {targetBasedOn === "Entity" ? <div className={"position-relative w-100"}>
+                            <Typeahead
+                              id="entities-input"
+                              options={entitiesOptions}
+                              className={styles.subsetInputSelect}
+                              aria-label="entities-input"
+                              placeholder={"Search entities"}
+                              value={entitySelected}
+                              onInputChange={handleEntitiesSearch}
+                              onChange={handleEntitiesChange}
+                              minLength={3}
+                            ></Typeahead>
+                            <span aria-label={"entities-empty-error"} className={styles.errorMessageEmpty}>{emptyError && clearClicked ? ClearDataMessages.emptyEntityError : null}</span>
+                            <Search className={styles.searchIcon} /></div> : ""}
                         </Col>
                       </Row>
                     </div>
@@ -507,7 +529,7 @@ const SystemInfo = (props) => {
                         aria-label="Clear"
                         data-testid="clearUserData"
                         onClick={handleClearData}
-                        disabled={!authorityService.canClearUserData() || !clearBtnAvailable}
+                        disabled={!authorityService.canClearUserData()}
                       >Clear</HCButton>
                     </div>
                   </HCCard>
