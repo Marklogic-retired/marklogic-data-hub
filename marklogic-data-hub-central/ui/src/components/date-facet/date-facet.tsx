@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext} from "react";
 import {SearchContext} from "@util/search-context";
 import styles from "./date-facet.module.scss";
-import moment from "moment";
+import dayjs from "dayjs";
 import {HCTooltip, HCDateTimePicker} from "@components/common";
 
 interface Props {
@@ -26,7 +26,7 @@ const DateFacet: React.FC<Props> = (props) => {
 
     if (dateArray.length && dateArray[0] && startDate.isValid()) {
       props.onChange(props.datatype, props.constraint, dateArray, isNested);
-      (dateArray[0] && dateArray[1]) && setDatePickerValue([moment(dateArray[0].format("YYYY-MM-DD")), moment(dateArray[1].format("YYYY-MM-DD"))]);
+      (dateArray[0] && dateArray[1]) && setDatePickerValue([dayjs(dateArray[0].format("YYYY-MM-DD")), dayjs(dateArray[1].format("YYYY-MM-DD"))]);
     } else {
       props.onChange(props.datatype, props.constraint, !dateArray[0] || !dateArray[0].isValid() ? [] : dateArray, isNested);
     }
@@ -36,13 +36,13 @@ const DateFacet: React.FC<Props> = (props) => {
     if (Object.entries(searchOptions.selectedFacets).length !== 0 && searchOptions.selectedFacets.hasOwnProperty(props.constraint)) {
       for (let facet in searchOptions.selectedFacets) {
         if (facet === props.constraint) {
-          setDatePickerValue([moment(searchOptions.selectedFacets[facet].rangeValues.lowerBound), moment(searchOptions.selectedFacets[facet].rangeValues.upperBound)]);
+          setDatePickerValue([dayjs(searchOptions.selectedFacets[facet].rangeValues.lowerBound), dayjs(searchOptions.selectedFacets[facet].rangeValues.upperBound)]);
         }
       }
     } else if (Object.entries(greyedOptions.selectedFacets).length !== 0 && greyedOptions.selectedFacets.hasOwnProperty(props.constraint)) {
       for (let facet in greyedOptions.selectedFacets) {
         if (facet === props.constraint) {
-          setDatePickerValue([moment(greyedOptions.selectedFacets[facet].rangeValues.lowerBound), moment(greyedOptions.selectedFacets[facet].rangeValues.upperBound)]);
+          setDatePickerValue([dayjs(greyedOptions.selectedFacets[facet].rangeValues.lowerBound), dayjs(greyedOptions.selectedFacets[facet].rangeValues.upperBound)]);
         }
       }
     } else {

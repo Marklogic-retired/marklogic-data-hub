@@ -18,7 +18,8 @@ import {getViewSettings, setViewSettings, clearSessionStorageOnRefresh} from "@u
 import ExpandCollapse from "../../../expand-collapse/expand-collapse";
 import ExpandableTableView from "../expandable-table-view/expandable-table-view";
 import CompareValuesModal from "../compare-values-modal/compare-values-modal";
-import moment from "moment";
+import dayjs from "dayjs";
+import duration from "dayjs/plugin/duration";
 import TimelineVis from "./timeline-vis/timeline-vis";
 import TimelineVisDefault from "./timeline-vis-default/timeline-vis-default";
 import {QuestionCircleFill} from "react-bootstrap-icons";
@@ -27,6 +28,8 @@ import {DropdownButton, Dropdown} from "react-bootstrap";
 import {HCButton, HCCard, HCInput, HCTooltip, HCTable} from "@components/common";
 import "./matching-step-detail.scss";
 import {themeColors} from "@config/themes.config";
+
+dayjs.extend(duration);
 
 const DEFAULT_MATCHING_STEP: MatchingStep = {
   name: "",
@@ -558,8 +561,8 @@ const MatchingStepDetail: React.FC = () => {
       minorLabels: function (date, scale, step) {
         let time;
         if (date >= 0 && date <= 100) {
-          time = date.format("SSS");
-          return moment.duration(time).asMilliseconds();
+          time = parseInt(date.format("SSS"));
+          return dayjs.duration(time).asMilliseconds();
         } else {
           return "";
         }
@@ -620,8 +623,8 @@ const MatchingStepDetail: React.FC = () => {
       minorLabels: function (date, scale, step) {
         let time;
         if (date >= 0 && date <= 100) {
-          time = date.format("SSS");
-          return moment.duration(time).asMilliseconds();
+          time = parseInt(date.format("SSS"));
+          return dayjs.duration(time).asMilliseconds();
         } else {
           return "";
         }

@@ -74,7 +74,8 @@
     "use-dynamic-refs": "^1.0.0",
     "vis": "^4.21.0-EOL",
     "vis-timeline": "7.3.6",
-    "xml-formatter": "^2.4.0"
+    "xml-formatter": "^2.4.0",
+    "dayjs": "^1.11.0"
   },
   "scripts": {
     "start": "react-app-rewired start",
@@ -91,7 +92,8 @@
     "nan": "2.14.1",
     "string_decoder": "1.2.0",
     "ansi-regex": "^5.0.1",
-    "node-gyp": "8.4.1"
+    "node-gyp": "8.4.1",
+    "moment": "^2.29.2"
   },
   "jest": {
     "snapshotSerializers": [

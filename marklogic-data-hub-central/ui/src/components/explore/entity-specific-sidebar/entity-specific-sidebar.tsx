@@ -3,9 +3,7 @@ import styles from "./entity-specific-sidebar.module.scss";
 import Facet from "@components/facet/facet";
 import DateFacet from "@components/date-facet/date-facet";
 import DateTimeFacet from "@components/date-time-facet/date-time-facet";
-// import {HCInput} from "@components/common";
-// import {faSearch} from "@fortawesome/free-solid-svg-icons";
-import moment from "moment";
+import dayjs from "dayjs";
 import {SearchContext} from "@util/search-context";
 import DynamicIcons from "@components/common/dynamic-icons/dynamic-icons";
 import {ExploreGraphViewToolTips} from "@config/tooltips.config";
@@ -135,7 +133,7 @@ const EntitySpecificSidebar: React.FC<Props> = (props) => {
   const onDateFacetChange = (datatype, facet, value, isNested) => {
     let updateFacets = {...allSelectedFacets};
     if (value.length > 1 && value[0]) {
-      updateFacets = {...updateFacets, [facet]: {dataType: datatype, rangeValues: {lowerBound: moment(value[0]).format("YYYY-MM-DD"), upperBound: moment(value[1]).format("YYYY-MM-DD")}}};
+      updateFacets = {...updateFacets, [facet]: {dataType: datatype, rangeValues: {lowerBound: dayjs(value[0]).format("YYYY-MM-DD"), upperBound: dayjs(value[1]).format("YYYY-MM-DD")}}};
       setAllGreyedOptions(updateFacets);
       setAllSelectedFacets(updateFacets);
     } else if (value.length === 0) {
@@ -153,7 +151,7 @@ const EntitySpecificSidebar: React.FC<Props> = (props) => {
   const onDateTimeFacetChange = (datatype, facet, value, isNested) => {
     let updateFacets = {...allSelectedFacets};
     if (value.length > 1) {
-      updateFacets = {...updateFacets, [facet]: {dataType: datatype, rangeValues: {lowerBound: moment(value[0]).format("YYYY-MM-DDTHH:mm:ss"), upperBound: moment(value[1]).format("YYYY-MM-DDTHH:mm:ss")}}};
+      updateFacets = {...updateFacets, [facet]: {dataType: datatype, rangeValues: {lowerBound: dayjs(value[0]).format("YYYY-MM-DDTHH:mm:ss"), upperBound: dayjs(value[1]).format("YYYY-MM-DDTHH:mm:ss")}}};
       setAllGreyedOptions(updateFacets);
       setAllSelectedFacets(updateFacets);
     } else if (value.length === 0) {

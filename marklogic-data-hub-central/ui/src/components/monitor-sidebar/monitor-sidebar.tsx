@@ -6,7 +6,7 @@ import {MonitorContext} from "@util/monitor-context";
 import Select from "react-select";
 import reactSelectThemeConfig from "@config/react-select-theme.config";
 import styles from "../facet/facet.module.scss";
-import moment from "moment";
+import dayjs from "dayjs";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import {HCDateTimePicker, HCTooltip} from "@components/common";
@@ -35,20 +35,20 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
   const dateRangeOptions = ["Today", "This Week", "This Month", "Custom"];
   const timeFormat = "YYYY-MM-DDTHH:mm:ssZ";
   const dateFormat = "YYYY-MM-DD";
-  let initialDatePickerValue = monitorOptions.selectedFacets["startTime"] ? [moment(monitorOptions.selectedFacets["startTime"][0]), moment(monitorOptions.selectedFacets["startTime"][1])] : [null, null];
+  let initialDatePickerValue = monitorOptions.selectedFacets["startTime"] ? [dayjs(monitorOptions.selectedFacets["startTime"][0]), dayjs(monitorOptions.selectedFacets["startTime"][1])] : [null, null];
   const [datePickerValue, setDatePickerValue] = useState<any[]>(initialDatePickerValue);
 
   const timeWindow = (selectedDateRangeValue) => {
     let date = "";
     if (selectedDateRangeValue === "This Week") {
-      const startOfWeek = moment().startOf("week").format("MMM DD");
-      const endOfWeek = moment().format("MMM DD");
+      const startOfWeek = dayjs().startOf("week").format("MMM DD");
+      const endOfWeek = dayjs().format("MMM DD");
       date = "(" + startOfWeek + " - " + endOfWeek + ")";
     }
 
     if (selectedDateRangeValue === "This Month") {
-      const startOfMonth = moment().startOf("month").format("MMM DD");
-      const endOfMonth = moment().format("MMM DD");
+      const startOfMonth = dayjs().startOf("month").format("MMM DD");
+      const endOfMonth = dayjs().format("MMM DD");
       date = "(" + startOfMonth + " - " + endOfMonth + ")";
     }
 
@@ -64,13 +64,13 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
 
     let startDate, endDate;
     if (option.value === "Today") {
-      startDate = moment().startOf("day").format(timeFormat).toString();
+      startDate = dayjs().startOf("day").format(timeFormat).toString();
     } else if (option.value === "This Week") {
-      startDate = moment().startOf("week").format(timeFormat).toString();
+      startDate = dayjs().startOf("week").format(timeFormat).toString();
     } else if (option.value === "This Month") {
-      startDate = moment().startOf("month").format(timeFormat).toString();
+      startDate = dayjs().startOf("month").format(timeFormat).toString();
     }
-    endDate = moment().endOf("day").format(timeFormat).toString();
+    endDate = dayjs().endOf("day").format(timeFormat).toString();
 
     updateFacets = {
       ...updateFacets, startTime: [startDate, endDate, option.value]
@@ -83,9 +83,9 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
     let updateFacets = {...allSelectedFacets};
     if (dateStart && dateEnd && dateStart.isValid() && dateEnd.isValid()) {
       updateFacets = {
-        ...updateFacets, startTime: [moment(dateStart).format(timeFormat), moment(dateEnd).endOf("day").format(timeFormat), "Custom"]
+        ...updateFacets, startTime: [dayjs(dateStart).format(timeFormat), dayjs(dateEnd).endOf("day").format(timeFormat), "Custom"]
       };
-      setDatePickerValue([moment(dateStart), moment(dateEnd)]);
+      setDatePickerValue([dayjs(dateStart), dayjs(dateEnd)]);
     } else {
       delete updateFacets.startTime;
       setDatePickerValue([null, null]);
@@ -112,7 +112,7 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
             if (dateRangeValue === "Custom") {
               let facetValue = "Custom";
               if (datePickerValue[0] && datePickerValue[1]) {
-                facetValue = moment(datePickerValue[0]).format(dateFormat).concat(" ~ ").concat(moment(datePickerValue[1]).format(dateFormat));
+                facetValue = dayjs(datePickerValue[0]).format(dateFormat).concat(" ~ ").concat(dayjs(datePickerValue[1]).format(dateFormat));
               }
               selectedFacets.push({constraint, "facet": facetValue, displayName});
             } else {
@@ -148,7 +148,7 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
           if (dateRangeValue === "Custom") {
             let facetValue = "Custom";
             if (datePickerValue[0] && datePickerValue[1]) {
-              facetValue = moment(datePickerValue[0]).format(dateFormat).concat(" ~ ").concat(moment(datePickerValue[1]).format(dateFormat));
+              facetValue = dayjs(datePickerValue[0]).format(dateFormat).concat(" ~ ").concat(dayjs(datePickerValue[1]).format(dateFormat));
             }
             checkedFacets.push({constraint, "facet": facetValue, displayName});
           } else {
