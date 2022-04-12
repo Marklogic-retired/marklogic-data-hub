@@ -26,7 +26,7 @@ class Search {
     const searchText = searchParams.searchText;
     const start = searchParams.start ? searchParams.start : 1
     const pageLength = searchParams.pageLength ? searchParams.pageLength : 10
-
+    const sortCriteria = searchParams.sort;
     let entityTypeIds = searchParams.entityTypeIds;
     let collections = entityTypeIds.map(i => 'Collection:' + i);
     const collectionConstraint = "(" + collections.join(" OR ") + ")";
@@ -81,6 +81,11 @@ class Search {
     if(facetConstraint != "" || facetConstraint) {
       searchConstraint.push(facetConstraint)
     }
+
+    if(sortCriteria) {
+      searchConstraint.push("sort:" + sortCriteria.entityType + "_" + sortCriteria.property + "_" + sortCriteria.order);
+    }
+
     searchConstraint = searchConstraint.join(" AND ");
     const xpath = "$result/search:result/search:extracted/*[" + entityTypeIds.map(val => "name()='".concat(val).concat("'")).join(" or ") + "]//*/name(.)";
     let searchResponse = searchImpl.getSearchResults(searchConstraint, xpath, start, pageLength).toObject();
