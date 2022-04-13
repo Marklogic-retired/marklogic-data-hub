@@ -3,206 +3,203 @@
   <personId>10029</personId>
   <nameGroup>
     <givenname>
-      <value>Ondrea</value>
+      <value>Nickolai</value>
     </givenname>
     <surname>
-      <value>Renner</value>
+      <value>Quinnell</value>
     </surname>
     <fullname>
-      <classification>C</classification>
+      <classification>S</classification>
       <restricted>true</restricted>
-      <value>Renner Ondrea</value>
+      <value>Quinnell Nickolai</value>
       <source>
         <name>New York Times</name>
-        <ts>2018-01-21T15:58:04Z</ts>
+        <ts>2020-06-13T13:14:48Z</ts>
       </source>
       <source>
         <name>Wall Street Journal</name>
-        <ts>2020-02-19T10:17:20Z</ts>
+        <ts>2018-12-07T14:27:09Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>aalenshev0@omniture.com</value>
-      <classification>U</classification>
+      <value>plydster0@elpais.com</value>
+      <classification>C</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>abasilone1@mail.ru</value>
+      <classification>S</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>lmarples2@github.com</value>
+      <classification>S</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>549-456-8869</phone>
+  <phone>179-707-3412</phone>
   <ssn>
-    <value>523-75-9957</value>
-    <restricted>true</restricted>
+    <value>717-05-7038</value>
+    <classification>(S)</classification>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2016-06-15T21:05:43Z</ts>
+        <uploadedBy>handreasen0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
       <source>
         <name>USA Today</name>
-        <ts>2010-03-19T07:15:21Z</ts>
-        <uploadedBy>kboreham0</uploadedBy>
+        <ts>2020-09-07T14:30:24Z</ts>
+        <uploadedBy>gducker0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2019-03-10T14:04:19Z</ts>
+        <uploadedBy>bfalconertaylor0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>62 Waubesa Way</street><classification>M</classification>
-      <city>New Orleans</city>
-      <state>LA</state>
-      <postal>70124</postal>
+      <street>3 Kropf Park</street>
+      <city>Raleigh</city>
+      <state>NC</state>
+      <postal>27658</postal>
       <country>United States</country>
-      <latitude>30.0071</latitude>
-      <longitude>-90.1094</longitude>
+      <latitude>35.7977</latitude>
+      <longitude>-78.6253</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Mexico</country>
-      <name>Instituto Tecnológico de Celaya</name>
-      <city>Loma Alta</city>
-      <state>TAM</state>
-      <postal>87605</postal>
-      <latitude>24.8550705</latitude>
-      <longitude>-98.1386351</longitude>
+      <country>United States</country>
+      <name>Marygrove College</name>
+      <city>North Little Rock</city>
+      <state>AR</state>
+      <postal>72118</postal>
+      <latitude>34.8511873</latitude>
+      <longitude>-92.3320235</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2011-02-27T18:25:32Z</ts>
+        <ts>2015-08-28T07:46:44Z</ts>
       </source>
       <source>
         <name>New York Times</name>
-        <ts>2017-04-27T06:00:51Z</ts>
-      </source>
-    </school>
-    <school>
-      <country>United States</country>
-      <name>St. Mary College</name>
-      <city>Erie</city>
-      <state>PA</state>
-      <postal>16565</postal>
-      <latitude>42.0722039</latitude>
-      <longitude>-80.0964415</longitude>
-      <source>
-        <name>USA Today</name>
-        <ts>2010-04-19T00:13:08Z</ts>
+        <ts>2020-05-02T18:42:48Z</ts>
       </source>
     </school>
   </schools>
   <status>Inactive</status>
   <sources>
     <source>
-      <name>Washington Post</name>
-      <ts>2021-09-04T03:08:23Z</ts>
+      <name>Wall Street Journal</name>
+      <ts>2017-11-06T23:52:14Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>Wall Street Journal</name>
-      <ts>2020-09-22T06:32:14Z</ts>
+      <name>New York Times</name>
+      <ts>2018-12-19T11:18:41Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10095.xml</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Humphrys Padriac</fullname>
-      <city>Louisville</city>
-      <state>KY</state>
-    </relation>
-    <relation>
-      <id>/person/10012.xml</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Anfusso Concettina</fullname>
-      <city>Portland</city>
-      <state>OR</state>
-    </relation>
-    <relation>
-      <id>/person/10015.xml</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
-      <fullname>Bough Netti</fullname>
-      <city>Bradenton</city>
+      <id>/person/10024.xml</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Giovanni Aurea</fullname>
+      <city>Pensacola</city>
       <state>FL</state>
     </relation>
     <relation>
-      <id>/person/10030.xml</id>
+      <id>/person/10048.xml</id>
       <predicate>worksWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>McCart Kai</fullname>
-      <city>Topeka</city>
-      <state>KS</state>
+      <fullname>Cudiff Jerrilyn</fullname>
+      <city>Hartford</city>
+      <state>CT</state>
     </relation>
     <relation>
-      <id>/person/10099.xml</id>
-      <predicate>livesWith</predicate>
+      <id>/person/10036.xml</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
+      <fullname>Bysh Ewan</fullname>
+      <city>Washington</city>
+      <state>DC</state>
+    </relation>
+    <relation>
+      <id>/person/10071.xml</id>
+      <predicate>worksWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Tinghill Sherrie</fullname>
-      <city>Houston</city>
-      <state>TX</state>
+      <fullname>de Najera Darsie</fullname>
+      <city>Cleveland</city>
+      <state>OH</state>
+    </relation>
+    <relation>
+      <id>/person/10017.xml</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
+      <fullname>Stanett Vittoria</fullname>
+      <city>Nashville</city>
+      <state>TN</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-24T13:08:42Z</ts>
-    <user>orenners</user>
+    <ts>2022-01-24T08:42:49Z</ts>
+    <user>nquinnells</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-01T04:32:32Z</ts>
-    <user>orenners</user>
+    <ts>2022-01-02T20:19:49Z</ts>
+    <user>nquinnells</user>
   </lastUpdated>
-  <socials>
-    <social>
-      <site>linkedin</site>
-      <handle>bleblanc0</handle>
-      <address>https://ucsd.edu/eleifend/pede/libero/quis.xml</address>
-    </social>
-    <social>
-      <site>linkedin</site>
-      <handle>aarderne1</handle>
-      <address>http://taobao.com/nulla/ut/erat/id/mauris.json</address>
-    </social>
-  </socials>
+  <socials/>
   <memberships>
     <membership>
-      <list>list4</list>
+      <list>list10</list>
       <important>false</important>
-      <ts>2022-01-28</ts>
+      <ts>2022-01-08</ts>
     </membership>
     <membership>
-      <list>list5</list>
+      <list>list12</list>
       <important>true</important>
-      <ts>2022-02-03</ts>
+      <ts>2022-01-27</ts>
     </membership>
     <membership>
-      <list>list7</list>
+      <list>list3</list>
+      <important>true</important>
+      <ts>2022-02-27</ts>
+    </membership>
+    <membership>
+      <list>list12</list>
       <important>false</important>
-      <ts>2022-01-11</ts>
-    </membership>
-    <membership>
-      <list>list7</list>
-      <important>true</important>
-      <ts>2022-01-02</ts>
-    </membership>
-    <membership>
-      <list>list5</list>
-      <important>true</important>
-      <ts>2022-02-11</ts>
+      <ts>2022-02-10</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>http://clickbank.net</url>
+      <url>http://phpbb.com</url>
       <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>https://trellian.com</url>
+      <url>http://ustream.tv</url>
       <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>https://addthis.com</url>
+      <url>https://walmart.com</url>
       <icon>fa-comments</icon>
     </link>
   </links>

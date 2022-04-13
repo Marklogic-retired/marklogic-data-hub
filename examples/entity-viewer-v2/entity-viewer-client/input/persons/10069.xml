@@ -3,189 +3,198 @@
   <personId>10069</personId>
   <nameGroup>
     <givenname>
-      <value>Sibylle</value>
+      <value>Marcellina</value>
     </givenname>
     <surname>
-      <value>Mac Giolla Pheadair</value>
+      <value>Addlestone</value>
     </surname>
     <fullname>
-      <classification>C</classification>
-      <restricted>true</restricted>
-      <value>Mac Giolla Pheadair Sibylle</value>
+      <classification>S</classification>
+      <restricted>false</restricted>
+      <value>Addlestone Marcellina</value>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2012-07-28T14:28:54Z</ts>
+        <name>Washington Post</name>
+        <ts>2018-05-02T07:56:46Z</ts>
       </source>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2018-12-25T03:00:52Z</ts>
+        <name>Wall Street Journal</name>
+        <ts>2013-06-17T15:57:33Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>abelk0@acquirethisname.com</value>
+      <value>nmonnoyer0@yandex.ru</value>
       <classification>S</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>eczajkowski1@furl.net</value>
+      <value>chilbourne1@wordpress.org</value>
       <classification>S</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>apetters2@guardian.co.uk</value>
-      <classification>C</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>517-399-9559</phone>
+  <phone>301-926-6534</phone>
   <ssn>
-    <value>843-80-1527</value>
-    <restricted>true</restricted>
+    <value>303-43-6511</value>
+    <classification>(S)</classification>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2021-01-08T14:27:38Z</ts>
-        <uploadedBy>jkillgus0</uploadedBy>
+        <name>Wall Street Journal</name>
+        <ts>2014-06-10T11:23:45Z</ts>
+        <uploadedBy>fsallowaye0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
+      <source>
+        <name>New York Times</name>
+        <ts>2015-06-05T04:38:28Z</ts>
+        <uploadedBy>skettow0</uploadedBy>
       </source>
     </image>
     <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
       <source>
         <name>Washington Post</name>
-        <ts>2016-12-16T13:22:29Z</ts>
-        <uploadedBy>amollnar0</uploadedBy>
+        <ts>2018-12-08T11:15:01Z</ts>
+        <uploadedBy>abeagin0</uploadedBy>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2021-12-15T12:43:16Z</ts>
-        <uploadedBy/>
+        <name>Los Angeles Times</name>
+        <ts>2014-07-22T02:44:56Z</ts>
+        <uploadedBy>aphippin0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>1 Farwell Junction</street><classification>M</classification>
-      <city>Rockford</city>
-      <state>IL</state>
-      <postal>61110</postal>
+      <street>38731 Erie Lane</street>
+      <city>Milwaukee</city>
+      <state>WI</state>
+      <postal>53285</postal>
       <country>United States</country>
-      <latitude>42.3254</latitude>
-      <longitude>-89.1705</longitude>
+      <latitude>43.0174</latitude>
+      <longitude>-87.5697</longitude>
     </address>
     <address>
-      <street>620 Fairfield Trail</street><classification>M</classification>
-      <city>Louisville</city>
-      <state>KY</state>
-      <postal>40293</postal>
+      <street>06136 Butterfield Court</street>
+      <city>Berkeley</city>
+      <state>CA</state>
+      <postal>94712</postal>
       <country>United States</country>
-      <latitude>38.189</latitude>
-      <longitude>-85.6768</longitude>
+      <latitude>37.6802</latitude>
+      <longitude>-121.9215</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>United States</country>
-      <name>University of Great Falls</name>
-      <city>Toledo</city>
-      <state>OH</state>
-      <postal>43615</postal>
-      <latitude>41.6560291</latitude>
-      <longitude>-83.666758</longitude>
+      <country>United Kingdom</country>
+      <name>University of Central Lancashire</name>
+      <city>Milton</city>
+      <state>SCT</state>
+      <postal>AB56</postal>
+      <latitude>57.6727414</latitude>
+      <longitude>-2.955445</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2012-03-06T20:54:07Z</ts>
-      </source>
-      <source>
-        <name>New York Times</name>
-        <ts>2015-08-19T20:39:03Z</ts>
+        <ts>2012-04-28T07:49:10Z</ts>
       </source>
     </school>
   </schools>
-  <status>Active</status>
+  <status>Inactive</status>
   <sources>
     <source>
-      <name>Washington Post</name>
-      <ts>2014-03-09T16:46:17Z</ts>
+      <name>Wall Street Journal</name>
+      <ts>2011-09-28T03:42:27Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>Los Angeles Times</name>
-      <ts>2021-07-21T22:04:57Z</ts>
+      <name>New York Times</name>
+      <ts>2014-06-16T17:32:22Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10019.xml</id>
+      <id>/person/10056.xml</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
-      <fullname>Crim Howey</fullname>
-      <city>Trenton</city>
-      <state>NJ</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
+      <fullname>Waiton Brnaba</fullname>
+      <city>Oxnard</city>
+      <state>CA</state>
     </relation>
     <relation>
-      <id>/person/10076.xml</id>
-      <predicate>relatedTo</predicate>
+      <id>/person/10043.xml</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
+      <fullname>Maggiori Kennith</fullname>
+      <city>Gainesville</city>
+      <state>FL</state>
+    </relation>
+    <relation>
+      <id>/person/10046.xml</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
+      <fullname>Lougheid Melloney</fullname>
+      <city>Little Rock</city>
+      <state>AR</state>
+    </relation>
+    <relation>
+      <id>/person/10022.xml</id>
+      <predicate>livesWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
-      <fullname>Kleynermans Ethelyn</fullname>
-      <city>Albuquerque</city>
-      <state>NM</state>
+      <fullname>Chaplin Spike</fullname>
+      <city>Virginia Beach</city>
+      <state>VA</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-06T22:25:00Z</ts>
-    <user>smacgiollapheadair1w</user>
+    <ts>2022-01-07T01:46:58Z</ts>
+    <user>maddlestone1w</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-03T23:11:51Z</ts>
-    <user>smacgiollapheadair1w</user>
+    <ts>2022-01-20T23:41:16Z</ts>
+    <user>maddlestone1w</user>
   </lastUpdated>
-  <socials>
-    <social>
-      <site>twitter</site>
-      <handle>mbank0</handle>
-      <address>https://vimeo.com/mi/pede.xml</address>
-    </social>
-  </socials>
+  <socials/>
   <memberships>
     <membership>
-      <list>list1</list>
-      <important>false</important>
-      <ts>2022-01-02</ts>
-    </membership>
-    <membership>
-      <list>list8</list>
-      <important>false</important>
-      <ts>2022-01-18</ts>
-    </membership>
-    <membership>
-      <list>list2</list>
+      <list>list3</list>
       <important>true</important>
-      <ts>2022-01-15</ts>
+      <ts>2022-02-06</ts>
+    </membership>
+    <membership>
+      <list>list4</list>
+      <important>false</important>
+      <ts>2022-01-29</ts>
+    </membership>
+    <membership>
+      <list>list3</list>
+      <important>true</important>
+      <ts>2022-01-29</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>https://jiathis.com</url>
+      <url>https://nifty.com</url>
       <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>http://trellian.com</url>
+      <url>https://wisc.edu</url>
       <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>https://reuters.com</url>
+      <url>https://gnu.org</url>
       <icon>fa-comments</icon>
     </link>
   </links>

@@ -3,194 +3,181 @@
   <personId>10097</personId>
   <nameGroup>
     <givenname>
-      <value>Raffaello</value>
+      <value>Deck</value>
     </givenname>
     <surname>
-      <value>Bafford</value>
+      <value>Bras</value>
     </surname>
     <fullname>
-      <classification>U</classification>
+      <classification>S</classification>
       <restricted>true</restricted>
-      <value>Bafford Raffaello</value>
+      <value>Bras Deck</value>
       <source>
-        <name>Washington Post</name>
-        <ts>2015-07-06T22:38:41Z</ts>
-      </source>
-      <source>
-        <name>Wall Street Journal</name>
-        <ts>2016-09-26T00:16:33Z</ts>
+        <name>USA Today</name>
+        <ts>2019-01-11T10:32:21Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>hromayn0@jimdo.com</value>
-      <classification>U</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>dlightbowne1@vimeo.com</value>
-      <classification>U</classification>
+      <value>pcradick0@ebay.com</value>
+      <classification>C</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>487-934-6516</phone>
+  <phone>204-775-2746</phone>
   <ssn>
-    <value>867-03-0564</value>
-    <restricted>true</restricted>
+    <value>501-72-6944</value>
+    <classification>(S)</classification>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
       <source>
-        <name>Washington Post</name>
-        <ts>2014-03-20T04:47:25Z</ts>
-        <uploadedBy>ksiward0</uploadedBy>
+        <name>New York Times</name>
+        <ts>2017-09-18T16:10:29Z</ts>
+        <uploadedBy>gwormald0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>75 Hanson Lane</street><classification>M</classification>
-      <city>Maple Plain</city>
-      <state>MN</state>
-      <postal>55572</postal>
+      <street>0549 6th Street</street>
+      <city>Olympia</city>
+      <state>WA</state>
+      <postal>98506</postal>
       <country>United States</country>
-      <latitude>45.0159</latitude>
-      <longitude>-93.4719</longitude>
+      <latitude>47.1042</latitude>
+      <longitude>-122.87</longitude>
+    </address>
+    <address>
+      <street>19406 Steensland Park</street>
+      <city>Richmond</city>
+      <state>VA</state>
+      <postal>23293</postal>
+      <country>United States</country>
+      <latitude>37.5242</latitude>
+      <longitude>-77.4932</longitude>
+    </address>
+    <address>
+      <street>38058 Dovetail Alley</street>
+      <city>Knoxville</city>
+      <state>TN</state>
+      <postal>37919</postal>
+      <country>United States</country>
+      <latitude>35.9244</latitude>
+      <longitude>-84.0015</longitude>
     </address>
   </addresses>
   <schools>
     <school>
       <country>Mexico</country>
-      <name>Universidad del Valle de Puebla</name>
-      <city>Buenos Aires</city>
-      <state>SON</state>
-      <postal>83344</postal>
-      <latitude>19.4052965</latitude>
-      <longitude>-99.1504583</longitude>
+      <name>Universidad del Norte</name>
+      <city>Independencia</city>
+      <state>COA</state>
+      <postal>30815</postal>
+      <latitude>32.5124846</latitude>
+      <longitude>-116.8557985</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2017-11-05T17:42:23Z</ts>
-      </source>
-      <source>
-        <name>New York Times</name>
-        <ts>2019-06-29T12:30:16Z</ts>
-      </source>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2015-01-01T22:35:42Z</ts>
+        <ts>2019-03-08T21:35:51Z</ts>
       </source>
     </school>
   </schools>
-  <status>Active</status>
+  <status>Inactive</status>
   <sources>
     <source>
-      <name>Los Angeles Times</name>
-      <ts>2010-11-18T22:07:03Z</ts>
+      <name>USA Today</name>
+      <ts>2019-12-04T14:09:12Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>Washington Post</name>
-      <ts>2017-11-17T19:30:28Z</ts>
+      <name>Wall Street Journal</name>
+      <ts>2010-09-01T18:53:50Z</ts>
     </source>
   </sources>
   <sources>
     <source>
       <name>USA Today</name>
-      <ts>2014-02-09T08:54:53Z</ts>
+      <ts>2012-04-26T07:06:42Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10026.xml</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Schanke Jennilee</fullname>
-      <city>Austin</city>
-      <state>TX</state>
-    </relation>
-    <relation>
-      <id>/person/10094.xml</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Ughelli Britta</fullname>
-      <city>Los Angeles</city>
-      <state>CA</state>
-    </relation>
-    <relation>
-      <id>/person/10028.xml</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
-      <fullname>Leppo Zonnya</fullname>
-      <city>Kansas City</city>
-      <state>MO</state>
-    </relation>
-    <relation>
       <id>/person/10079.xml</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
+      <fullname>Kennerley Normie</fullname>
+      <city>Memphis</city>
+      <state>TN</state>
+    </relation>
+    <relation>
+      <id>/person/10045.xml</id>
       <predicate>relatedTo</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
-      <fullname>Degenhardt Dixie</fullname>
-      <city>Washington</city>
-      <state>DC</state>
+      <fullname>Domel Felike</fullname>
+      <city>Terre Haute</city>
+      <state>IN</state>
+    </relation>
+    <relation>
+      <id>/person/10041.xml</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Gerrelts Carmine</fullname>
+      <city>Birmingham</city>
+      <state>AL</state>
+    </relation>
+    <relation>
+      <id>/person/10088.xml</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Hengoed Toni</fullname>
+      <city>Las Vegas</city>
+      <state>NV</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-09T23:19:55Z</ts>
-    <user>rbafford2o</user>
+    <ts>2022-02-03T19:21:26Z</ts>
+    <user>dbras2o</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-03T06:57:25Z</ts>
-    <user>rbafford2o</user>
+    <ts>2022-01-10T16:59:16Z</ts>
+    <user>dbras2o</user>
   </lastUpdated>
-  <socials/>
+  <socials>
+    <social>
+      <site>facebook</site>
+      <handle>tancliff0</handle>
+      <address>http://imageshack.us/ultrices.png</address>
+    </social>
+  </socials>
   <memberships>
     <membership>
-      <list>list3</list>
-      <important>true</important>
-      <ts>2022-02-19</ts>
-    </membership>
-    <membership>
-      <list>list9</list>
-      <important>true</important>
-      <ts>2022-01-04</ts>
+      <list>list11</list>
+      <important>false</important>
+      <ts>2022-01-31</ts>
     </membership>
     <membership>
       <list>list1</list>
-      <important>false</important>
-      <ts>2022-01-03</ts>
-    </membership>
-    <membership>
-      <list>list4</list>
-      <important>false</important>
-      <ts>2022-01-16</ts>
-    </membership>
-    <membership>
-      <list>list5</list>
       <important>true</important>
-      <ts>2022-01-16</ts>
-    </membership>
-    <membership>
-      <list>list9</list>
-      <important>false</important>
-      <ts>2022-01-20</ts>
+      <ts>2022-02-09</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>https://issuu.com</url>
+      <url>http://360.cn</url>
       <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>http://instagram.com</url>
+      <url>http://unesco.org</url>
       <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>http://slate.com</url>
+      <url>https://intel.com</url>
       <icon>fa-comments</icon>
     </link>
   </links>

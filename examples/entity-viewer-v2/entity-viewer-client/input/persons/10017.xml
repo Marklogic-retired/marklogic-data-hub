@@ -3,202 +3,203 @@
   <personId>10017</personId>
   <nameGroup>
     <givenname>
-      <value>Darlleen</value>
+      <value>Vittoria</value>
     </givenname>
     <surname>
-      <value>Denning</value>
+      <value>Stanett</value>
     </surname>
     <fullname>
-      <classification>S</classification>
+      <classification>C</classification>
       <restricted>false</restricted>
-      <value>Denning Darlleen</value>
+      <value>Stanett Vittoria</value>
       <source>
         <name>Washington Post</name>
-        <ts>2010-11-29T01:20:39Z</ts>
+        <ts>2015-11-06T13:16:08Z</ts>
       </source>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2018-03-12T19:57:21Z</ts>
+        <name>USA Today</name>
+        <ts>2018-12-20T02:13:24Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>ccurtayne0@irs.gov</value>
-      <classification>U</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>cmanvelle1@skyrock.com</value>
+      <value>rtaillant0@businessweek.com</value>
       <classification>S</classification>
       <restricted>false</restricted>
     </email>
+    <email>
+      <value>aalthorpe1@va.gov</value>
+      <classification>U</classification>
+      <restricted>false</restricted>
+    </email>
   </emails>
-  <phone>967-702-7446</phone>
+  <phone>152-956-3332</phone>
   <ssn>
-    <value>566-54-6864</value>
-    <restricted>true</restricted>
+    <value>176-17-5215</value>
+    <classification>(S)</classification>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
       <source>
-        <name>New York Times</name>
-        <ts>2021-03-18T14:00:15Z</ts>
-        <uploadedBy>mharwell0</uploadedBy>
+        <name>Washington Post</name>
+        <ts>2015-01-15T01:56:30Z</ts>
+        <uploadedBy>tleason0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>76 Commercial Terrace</street><classification>M</classification>
-      <city>Madison</city>
-      <state>WI</state>
-      <postal>53705</postal>
+      <street>95 Orin Place</street>
+      <city>Nashville</city>
+      <state>TN</state>
+      <postal>37235</postal>
       <country>United States</country>
-      <latitude>43.073</latitude>
-      <longitude>-89.4528</longitude>
-    </address>
-    <address>
-      <street>81 Nancy Plaza</street><classification>M</classification>
-      <city>Pittsburgh</city>
-      <state>PA</state>
-      <postal>15261</postal>
-      <country>United States</country>
-      <latitude>40.4344</latitude>
-      <longitude>-80.0248</longitude>
-    </address>
-    <address>
-      <street>22452 Mcguire Plaza</street><classification>M</classification>
-      <city>Seattle</city>
-      <state>WA</state>
-      <postal>98158</postal>
-      <country>United States</country>
-      <latitude>47.4497</latitude>
-      <longitude>-122.3076</longitude>
+      <latitude>36.1866</latitude>
+      <longitude>-86.7852</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Canada</country>
-      <name>St. Paul University</name>
-      <city>Sussex</city>
-      <state>NB</state>
-      <postal>E4E</postal>
-      <latitude>45.7236192</latitude>
-      <longitude>-65.5108761</longitude>
+      <country>United States</country>
+      <name>Southern New Hampshire University</name>
+      <city>Port Saint Lucie</city>
+      <state>FL</state>
+      <postal>34985</postal>
+      <latitude>27.27476</latitude>
+      <longitude>-80.31823</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2018-02-13T23:25:13Z</ts>
+        <ts>2016-03-18T02:42:19Z</ts>
+      </source>
+      <source>
+        <name>New York Times</name>
+        <ts>2012-05-07T02:18:42Z</ts>
+      </source>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2019-05-30T18:06:36Z</ts>
+      </source>
+    </school>
+    <school>
+      <country>United States</country>
+      <name>Lincoln University Pennsylvania</name>
+      <city>Kansas City</city>
+      <state>MO</state>
+      <postal>64187</postal>
+      <latitude>39.1</latitude>
+      <longitude>-94.58</longitude>
+      <source>
+        <name>USA Today</name>
+        <ts>2014-07-17T23:10:12Z</ts>
       </source>
     </school>
   </schools>
-  <status>Inactive</status>
+  <status>Active</status>
   <sources>
     <source>
-      <name>USA Today</name>
-      <ts>2013-05-28T08:51:51Z</ts>
+      <name>Washington Post</name>
+      <ts>2011-07-12T15:01:37Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>USA Today</name>
-      <ts>2016-11-01T20:54:11Z</ts>
+      <name>Washington Post</name>
+      <ts>2017-01-18T22:06:53Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Chicago Tribune</name>
+      <ts>2011-11-08T03:25:14Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10017.xml</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
-      <fullname>Denning Darlleen</fullname>
-      <city>Madison</city>
-      <state>WI</state>
-    </relation>
-    <relation>
-      <id>/person/10015.xml</id>
+      <id>/person/10071.xml</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
-      <fullname>Bough Netti</fullname>
-      <city>Bradenton</city>
-      <state>FL</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
+      <fullname>de Najera Darsie</fullname>
+      <city>Cleveland</city>
+      <state>OH</state>
     </relation>
     <relation>
-      <id>/person/10034.xml</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
-      <fullname>Moneypenny Myrwyn</fullname>
-      <city>Racine</city>
-      <state>WI</state>
-    </relation>
-    <relation>
-      <id>/person/10001.xml</id>
+      <id>/person/10030.xml</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
-      <fullname>Wayon Elliott</fullname>
-      <city>Rochester</city>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
+      <fullname>Theodore Anabelle</fullname>
+      <city>Odessa</city>
+      <state>TX</state>
+    </relation>
+    <relation>
+      <id>/person/10009.xml</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Lothlorien Ellery</fullname>
+      <city>Jamaica</city>
       <state>NY</state>
     </relation>
     <relation>
-      <id>/person/10039.xml</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
-      <fullname>Thomen Guthry</fullname>
-      <city>Warren</city>
-      <state>MI</state>
+      <id>/person/10055.xml</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Jandourek Dexter</fullname>
+      <city>Albuquerque</city>
+      <state>NM</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-18T08:03:40Z</ts>
-    <user>ddenningg</user>
+    <ts>2022-02-23T04:29:19Z</ts>
+    <user>vstanettg</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-01T20:03:33Z</ts>
-    <user>ddenningg</user>
+    <ts>2022-01-28T20:27:13Z</ts>
+    <user>vstanettg</user>
   </lastUpdated>
   <socials>
     <social>
-      <site>twitter</site>
-      <handle>pcroughan0</handle>
-      <address>http://nymag.com/sed/vestibulum.js</address>
-    </social>
-    <social>
-      <site>twitter</site>
-      <handle>ftottem1</handle>
-      <address>http://cargocollective.com/diam/cras/pellentesque/volutpat.html</address>
-    </social>
-    <social>
       <site>linkedin</site>
-      <handle>mheggman2</handle>
-      <address>https://time.com/dignissim/vestibulum.png</address>
+      <handle>dcondict0</handle>
+      <address>http://opera.com/elit/proin/interdum/mauris/non/ligula.js</address>
+    </social>
+    <social>
+      <site>twitter</site>
+      <handle>llampel1</handle>
+      <address>http://microsoft.com/rutrum.png</address>
+    </social>
+    <social>
+      <site>facebook</site>
+      <handle>cwakeman2</handle>
+      <address>https://technorati.com/mus/etiam/vel/augue/vestibulum/rutrum/rutrum.jpg</address>
     </social>
   </socials>
   <memberships>
     <membership>
-      <list>list3</list>
-      <important>false</important>
-      <ts>2022-01-22</ts>
+      <list>list5</list>
+      <important>true</important>
+      <ts>2022-01-01</ts>
     </membership>
     <membership>
-      <list>list11</list>
-      <important>false</important>
-      <ts>2022-01-30</ts>
+      <list>list3</list>
+      <important>true</important>
+      <ts>2022-02-25</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>https://senate.gov</url>
+      <url>http://diigo.com</url>
       <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>https://paypal.com</url>
+      <url>http://baidu.com</url>
       <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>https://storify.com</url>
+      <url>https://harvard.edu</url>
       <icon>fa-comments</icon>
     </link>
   </links>

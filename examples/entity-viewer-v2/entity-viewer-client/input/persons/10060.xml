@@ -3,227 +3,251 @@
   <personId>10060</personId>
   <nameGroup>
     <givenname>
-      <value>Trixy</value>
+      <value>Becky</value>
     </givenname>
     <surname>
-      <value>Moralas</value>
+      <value>Copper</value>
     </surname>
     <fullname>
-      <classification>U</classification>
-      <restricted>false</restricted>
-      <value>Moralas Trixy</value>
+      <classification>C</classification>
+      <restricted>true</restricted>
+      <value>Copper Becky</value>
       <source>
-        <name>Washington Post</name>
-        <ts>2013-09-07T10:23:58Z</ts>
-      </source>
-      <source>
-        <name>USA Today</name>
-        <ts>2013-05-17T20:52:13Z</ts>
+        <name>Wall Street Journal</name>
+        <ts>2015-05-10T11:07:46Z</ts>
       </source>
       <source>
         <name>New York Times</name>
-        <ts>2016-02-23T15:38:29Z</ts>
+        <ts>2011-05-07T18:49:23Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>klettley0@yahoo.com</value>
-      <classification>C</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>bfildery1@devhub.com</value>
+      <value>hmacteggart0@google.fr</value>
       <classification>U</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>awillmont2@yahoo.co.jp</value>
-      <classification>S</classification>
+      <value>lcawthera1@example.com</value>
+      <classification>U</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>979-250-1811</phone>
+  <phone>870-358-8980</phone>
   <ssn>
-    <value>377-87-5424</value>
-    <restricted>true</restricted>
+    <value>121-73-8913</value>
+    <classification>(S)</classification>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
       <source>
-        <name>Washington Post</name>
-        <ts>2010-02-24T17:53:47Z</ts>
-        <uploadedBy>rmurkin0</uploadedBy>
+        <name>Wall Street Journal</name>
+        <ts>2011-10-23T17:24:39Z</ts>
+        <uploadedBy>khamilton0</uploadedBy>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
       <source>
-        <name>New York Times</name>
-        <ts>2010-02-08T10:12:01Z</ts>
-        <uploadedBy>bondricek0</uploadedBy>
+        <name>Chicago Tribune</name>
+        <ts>2013-01-07T23:47:09Z</ts>
+        <uploadedBy>ldrane0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
+      <source>
+        <name>Washington Post</name>
+        <ts>2015-02-06T21:35:51Z</ts>
+        <uploadedBy>bshearwood0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2020-05-23T04:48:42Z</ts>
+        <uploadedBy>vmcnickle0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>00 Iowa Circle</street><classification>M</classification>
-      <city>Atlanta</city>
-      <state>GA</state>
-      <postal>31106</postal>
+      <street>6 Derek Way</street>
+      <city>New Haven</city>
+      <state>CT</state>
+      <postal>06538</postal>
       <country>United States</country>
-      <latitude>33.8444</latitude>
-      <longitude>-84.474</longitude>
+      <latitude>41.3657</latitude>
+      <longitude>-72.9275</longitude>
     </address>
     <address>
-      <street>19110 Nobel Park</street><classification>M</classification>
-      <city>Pasadena</city>
-      <state>CA</state>
-      <postal>91131</postal>
+      <street>53 Hauk Street</street>
+      <city>Honolulu</city>
+      <state>HI</state>
+      <postal>96810</postal>
       <country>United States</country>
-      <latitude>33.7866</latitude>
-      <longitude>-118.2987</longitude>
+      <latitude>21.3062</latitude>
+      <longitude>-157.8585</longitude>
     </address>
     <address>
-      <street>02 Hoffman Circle</street><classification>M</classification>
-      <city>Houston</city>
-      <state>TX</state>
-      <postal>77045</postal>
+      <street>30 Eagle Crest Parkway</street>
+      <city>Montgomery</city>
+      <state>AL</state>
+      <postal>36109</postal>
       <country>United States</country>
-      <latitude>29.6297</latitude>
-      <longitude>-95.4382</longitude>
+      <latitude>32.3834</latitude>
+      <longitude>-86.2434</longitude>
     </address>
   </addresses>
   <schools>
     <school>
       <country>Mexico</country>
-      <name>Universidad México Internacional</name>
-      <city>El Paraiso</city>
-      <state>GRO</state>
-      <postal>40050</postal>
-      <latitude>20.2019487</latitude>
-      <longitude>-87.4337425</longitude>
+      <name>Universidad Insurgentes Plantel León</name>
+      <city>Antonio Toledo Corro</city>
+      <state>SIN</state>
+      <postal>82153</postal>
+      <latitude>23.2321219</latitude>
+      <longitude>-106.4140053</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2016-04-05T22:41:46Z</ts>
+        <ts>2013-07-23T03:15:21Z</ts>
       </source>
       <source>
         <name>New York Times</name>
-        <ts>2011-06-17T16:52:24Z</ts>
+        <ts>2011-11-15T05:00:43Z</ts>
+      </source>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2010-10-12T01:02:27Z</ts>
       </source>
     </school>
     <school>
-      <country>Canada</country>
-      <name>MacEwan University</name>
-      <city>Chase</city>
-      <state>BC</state>
-      <postal>H4R</postal>
-      <latitude>50.8137495</latitude>
-      <longitude>-119.6934422</longitude>
+      <country>United States</country>
+      <name>Belmont University</name>
+      <city>Washington</city>
+      <state>DC</state>
+      <postal>20022</postal>
+      <latitude>38.9187037</latitude>
+      <longitude>-76.9611991</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2016-02-16T19:56:19Z</ts>
+        <ts>2011-11-01T01:15:18Z</ts>
+      </source>
+      <source>
+        <name>New York Times</name>
+        <ts>2015-08-09T06:31:51Z</ts>
+      </source>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2017-05-22T16:58:49Z</ts>
       </source>
     </school>
   </schools>
-  <status>Inactive</status>
+  <status>Active</status>
   <sources>
     <source>
-      <name>Wall Street Journal</name>
-      <ts>2012-09-25T15:59:21Z</ts>
+      <name>New York Times</name>
+      <ts>2020-04-23T11:54:03Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>Wall Street Journal</name>
-      <ts>2015-03-14T02:20:13Z</ts>
+      <name>USA Today</name>
+      <ts>2016-03-19T20:30:01Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10056.xml</id>
+      <id>/person/10059.xml</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
-      <fullname>Huriche Jerry</fullname>
-      <city>Springfield</city>
-      <state>MA</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Arran Dasya</fullname>
+      <city>Oklahoma City</city>
+      <state>OK</state>
     </relation>
     <relation>
-      <id>/person/10023.xml</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Iowarch Demetrius</fullname>
-      <city>Pittsburgh</city>
+      <id>/person/10032.xml</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
+      <fullname>Giraldon Tedi</fullname>
+      <city>Erie</city>
       <state>PA</state>
     </relation>
     <relation>
-      <id>/person/10046.xml</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Howcroft Hestia</fullname>
-      <city>Scottsdale</city>
-      <state>AZ</state>
+      <id>/person/10040.xml</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
+      <fullname>Izen Edlin</fullname>
+      <city>Fort Myers</city>
+      <state>FL</state>
     </relation>
     <relation>
-      <id>/person/10014.xml</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Stalf Nari</fullname>
-      <city>Bakersfield</city>
-      <state>CA</state>
+      <id>/person/10021.xml</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
+      <fullname>Sendley Rogerio</fullname>
+      <city>Peoria</city>
+      <state>IL</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-22T22:42:21Z</ts>
-    <user>tmoralas1n</user>
+    <ts>2022-01-26T20:49:12Z</ts>
+    <user>bcopper1n</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-27T02:27:26Z</ts>
-    <user>tmoralas1n</user>
+    <ts>2022-02-27T20:14:25Z</ts>
+    <user>bcopper1n</user>
   </lastUpdated>
   <socials/>
   <memberships>
     <membership>
-      <list>list6</list>
+      <list>list5</list>
       <important>false</important>
-      <ts>2022-01-15</ts>
-    </membership>
-    <membership>
-      <list>list6</list>
-      <important>true</important>
-      <ts>2022-01-16</ts>
-    </membership>
-    <membership>
-      <list>list4</list>
-      <important>true</important>
-      <ts>2022-02-06</ts>
+      <ts>2022-01-10</ts>
     </membership>
     <membership>
       <list>list3</list>
       <important>true</important>
-      <ts>2022-01-27</ts>
+      <ts>2022-02-17</ts>
+    </membership>
+    <membership>
+      <list>list3</list>
+      <important>true</important>
+      <ts>2022-01-29</ts>
+    </membership>
+    <membership>
+      <list>list11</list>
+      <important>true</important>
+      <ts>2022-01-13</ts>
     </membership>
     <membership>
       <list>list7</list>
-      <important>true</important>
-      <ts>2022-01-01</ts>
+      <important>false</important>
+      <ts>2022-02-10</ts>
+    </membership>
+    <membership>
+      <list>list11</list>
+      <important>false</important>
+      <ts>2022-02-06</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>https://nsw.gov.au</url>
+      <url>https://so-net.ne.jp</url>
       <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>http://yahoo.co.jp</url>
+      <url>http://bluehost.com</url>
       <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>http://nsw.gov.au</url>
+      <url>https://over-blog.com</url>
       <icon>fa-comments</icon>
     </link>
   </links>

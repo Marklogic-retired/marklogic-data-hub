@@ -3,243 +3,220 @@
   <personId>10038</personId>
   <nameGroup>
     <givenname>
-      <value>Merlina</value>
+      <value>Ezra</value>
     </givenname>
     <surname>
-      <value>Stooders</value>
+      <value>Springett</value>
     </surname>
     <fullname>
-      <classification>C</classification>
+      <classification>S</classification>
       <restricted>false</restricted>
-      <value>Stooders Merlina</value>
+      <value>Springett Ezra</value>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2014-03-14T14:56:02Z</ts>
+        <name>New York Times</name>
+        <ts>2011-03-14T03:01:58Z</ts>
       </source>
       <source>
-        <name>Washington Post</name>
-        <ts>2018-12-11T22:10:05Z</ts>
-      </source>
-      <source>
-        <name>Los Angeles Times</name>
-        <ts>2014-02-08T02:28:12Z</ts>
+        <name>USA Today</name>
+        <ts>2010-07-06T19:30:36Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>echallis0@howstuffworks.com</value>
+      <value>gagronski0@creativecommons.org</value>
+      <classification>U</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>shartford1@accuweather.com</value>
       <classification>U</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>287-751-4645</phone>
+  <phone>809-945-7062</phone>
   <ssn>
-    <value>512-83-4559</value>
-    <restricted>true</restricted>
+    <value>188-89-2904</value>
+    <classification>(S)</classification>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2020-08-14T21:43:53Z</ts>
-        <uploadedBy>asheircliffe0</uploadedBy>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
       <source>
         <name>Los Angeles Times</name>
-        <ts>2011-10-20T10:31:14Z</ts>
-        <uploadedBy>mtraylen0</uploadedBy>
+        <ts>2018-06-17T07:12:07Z</ts>
+        <uploadedBy>rcantu0</uploadedBy>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
+      <source>
+        <name>Washington Post</name>
+        <ts>2011-10-22T04:35:50Z</ts>
+        <uploadedBy>sbrood0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
       <source>
         <name>Wall Street Journal</name>
-        <ts>2012-12-15T07:18:10Z</ts>
-        <uploadedBy>ssams0</uploadedBy>
+        <ts>2021-03-01T02:26:38Z</ts>
+        <uploadedBy>ycritcher0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2018-07-07T21:19:29Z</ts>
+        <uploadedBy>ttedman0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>26052 Everett Crossing</street><classification>M</classification>
-      <city>Colorado Springs</city>
-      <state>CO</state>
-      <postal>80925</postal>
+      <street>25 1st Point</street>
+      <city>Shawnee Mission</city>
+      <state>KS</state>
+      <postal>66286</postal>
       <country>United States</country>
-      <latitude>38.7378</latitude>
-      <longitude>-104.6459</longitude>
-    </address>
-    <address>
-      <street>83 Crownhardt Street</street><classification>M</classification>
-      <city>Clearwater</city>
-      <state>FL</state>
-      <postal>33763</postal>
-      <country>United States</country>
-      <latitude>28.0173</latitude>
-      <longitude>-82.7461</longitude>
-    </address>
-    <address>
-      <street>2128 Artisan Circle</street><classification>M</classification>
-      <city>Winston Salem</city>
-      <state>NC</state>
-      <postal>27150</postal>
-      <country>United States</country>
-      <latitude>36.0275</latitude>
-      <longitude>-80.2073</longitude>
+      <latitude>38.8999</latitude>
+      <longitude>-94.832</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>United States</country>
-      <name>University of Texas Health Center at Tyler</name>
-      <city>Akron</city>
-      <state>OH</state>
-      <postal>44321</postal>
-      <latitude>41.0875099</latitude>
-      <longitude>-81.6363869</longitude>
+      <country>Mexico</country>
+      <name>Universidad Autónoma de Aguascalientes</name>
+      <city>Las Palmas</city>
+      <state>NLE</state>
+      <postal>67710</postal>
+      <latitude>24.8735859</latitude>
+      <longitude>-99.5758769</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2012-06-10T07:05:22Z</ts>
+        <ts>2011-04-12T01:11:47Z</ts>
+      </source>
+      <source>
+        <name>New York Times</name>
+        <ts>2018-11-30T00:31:06Z</ts>
+      </source>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2011-02-24T15:16:15Z</ts>
       </source>
     </school>
     <school>
       <country>United States</country>
-      <name>The Scripps Research Institute</name>
-      <city>Indianapolis</city>
-      <state>IN</state>
-      <postal>46254</postal>
-      <latitude>39.8494377</latitude>
-      <longitude>-86.2666463</longitude>
+      <name>North Park University</name>
+      <city>Monticello</city>
+      <state>MN</state>
+      <postal>55590</postal>
+      <latitude>45.31</latitude>
+      <longitude>-93.79</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2017-05-20T15:39:53Z</ts>
+        <ts>2020-08-31T23:52:30Z</ts>
       </source>
       <source>
         <name>New York Times</name>
-        <ts>2019-09-06T07:29:26Z</ts>
+        <ts>2013-12-27T15:11:58Z</ts>
+      </source>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2019-06-18T17:32:41Z</ts>
       </source>
     </school>
   </schools>
   <status>Active</status>
   <sources>
     <source>
-      <name>New York Times</name>
-      <ts>2015-12-31T20:31:32Z</ts>
+      <name>Wall Street Journal</name>
+      <ts>2019-08-10T03:59:25Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10019.xml</id>
+      <id>/person/10082.xml</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
-      <fullname>Crim Howey</fullname>
-      <city>Trenton</city>
-      <state>NJ</state>
-    </relation>
-    <relation>
-      <id>/person/10014.xml</id>
-      <predicate>worksWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Stalf Nari</fullname>
-      <city>Bakersfield</city>
-      <state>CA</state>
+      <fullname>Gerard Ruddie</fullname>
+      <city>Bloomington</city>
+      <state>IN</state>
     </relation>
     <relation>
-      <id>/person/10046.xml</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Howcroft Hestia</fullname>
-      <city>Scottsdale</city>
-      <state>AZ</state>
-    </relation>
-    <relation>
-      <id>/person/10015.xml</id>
+      <id>/person/10051.xml</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
-      <fullname>Bough Netti</fullname>
-      <city>Bradenton</city>
-      <state>FL</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
+      <fullname>Stobbart Kareem</fullname>
+      <city>Mobile</city>
+      <state>AL</state>
     </relation>
     <relation>
-      <id>/person/10098.xml</id>
+      <id>/person/10029.xml</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
-      <fullname>Gennings Feliks</fullname>
-      <city>Lubbock</city>
-      <state>TX</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Quinnell Nickolai</fullname>
+      <city>Raleigh</city>
+      <state>NC</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-04T05:06:50Z</ts>
-    <user>mstooders11</user>
+    <ts>2022-01-05T13:35:41Z</ts>
+    <user>espringett11</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-23T09:45:27Z</ts>
-    <user>mstooders11</user>
+    <ts>2022-01-05T01:20:20Z</ts>
+    <user>espringett11</user>
   </lastUpdated>
   <socials>
     <social>
       <site>facebook</site>
-      <handle>rtames0</handle>
-      <address>https://barnesandnoble.com/tortor/sollicitudin/mi/sit/amet/lobortis/sapien.jpg</address>
+      <handle>mrodge0</handle>
+      <address>http://ftc.gov/justo/sollicitudin/ut.html</address>
     </social>
     <social>
       <site>facebook</site>
-      <handle>rdockrell1</handle>
-      <address>http://domainmarket.com/mi/integer.xml</address>
+      <handle/>
+      <address>https://bravesites.com/tristique/est/et/tempus/semper/est/quam.jpg</address>
     </social>
   </socials>
   <memberships>
     <membership>
+      <list>list7</list>
+      <important>true</important>
+      <ts>2022-01-23</ts>
+    </membership>
+    <membership>
       <list>list6</list>
       <important>false</important>
-      <ts>2022-02-13</ts>
-    </membership>
-    <membership>
-      <list>list8</list>
-      <important>true</important>
-      <ts>2022-02-13</ts>
-    </membership>
-    <membership>
-      <list>list5</list>
-      <important>false</important>
-      <ts>2022-01-16</ts>
-    </membership>
-    <membership>
-      <list>list2</list>
-      <important>true</important>
-      <ts>2022-01-05</ts>
-    </membership>
-    <membership>
-      <list>list5</list>
-      <important>true</important>
-      <ts>2022-02-09</ts>
+      <ts>2022-02-20</ts>
     </membership>
     <membership>
       <list>list10</list>
-      <important>false</important>
-      <ts>2022-01-23</ts>
+      <important>true</important>
+      <ts>2022-02-24</ts>
+    </membership>
+    <membership>
+      <list>list9</list>
+      <important>true</important>
+      <ts>2022-01-28</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>http://arizona.edu</url>
+      <url>https://sina.com.cn</url>
       <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>http://admin.ch</url>
+      <url>http://wikispaces.com</url>
       <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>http://biglobe.ne.jp</url>
+      <url>https://facebook.com</url>
       <icon>fa-comments</icon>
     </link>
   </links>

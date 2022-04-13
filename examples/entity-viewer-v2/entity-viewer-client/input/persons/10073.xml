@@ -3,222 +3,197 @@
   <personId>10073</personId>
   <nameGroup>
     <givenname>
-      <value>Kort</value>
+      <value>Dare</value>
     </givenname>
     <surname>
-      <value>Watford</value>
+      <value>Wellsman</value>
     </surname>
     <fullname>
-      <classification>S</classification>
+      <classification>U</classification>
       <restricted>false</restricted>
-      <value>Watford Kort</value>
+      <value>Wellsman Dare</value>
       <source>
-        <name>USA Today</name>
-        <ts>2021-09-09T10:26:05Z</ts>
+        <name>Los Angeles Times</name>
+        <ts>2016-11-25T04:57:56Z</ts>
+      </source>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2015-03-09T14:57:54Z</ts>
+      </source>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2019-12-05T07:53:04Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>rlaughlan0@nbcnews.com</value>
+      <value>athornley0@google.pl</value>
       <classification>C</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>ssent1@biblegateway.com</value>
-      <classification>S</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>estrathern2@nationalgeographic.com</value>
+      <value>evokins1@theglobeandmail.com</value>
       <classification>C</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>917-103-1103</phone>
+  <phone>337-356-9062</phone>
   <ssn>
-    <value>120-36-0637</value>
-    <restricted>true</restricted>
+    <value>775-38-9764</value>
+    <classification>(S)</classification>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
       <source>
         <name>Washington Post</name>
-        <ts>2021-08-11T06:35:18Z</ts>
-        <uploadedBy/>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
-      <source>
-        <name>Los Angeles Times</name>
-        <ts>2017-06-20T08:11:13Z</ts>
+        <ts>2012-01-01T05:57:55Z</ts>
         <uploadedBy/>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>53441 Quincy Trail</street><classification>M</classification>
-      <city>Houston</city>
-      <state>TX</state>
-      <postal>77260</postal>
+      <street>57822 Macpherson Terrace</street>
+      <city>Boynton Beach</city>
+      <state>FL</state>
+      <postal>33436</postal>
       <country>United States</country>
-      <latitude>29.7687</latitude>
-      <longitude>-95.3867</longitude>
-    </address>
-    <address>
-      <street>13737 Karstens Point</street><classification>M</classification>
-      <city>New York City</city>
-      <state>NY</state>
-      <postal>10249</postal>
-      <country>United States</country>
-      <latitude>40.7808</latitude>
-      <longitude>-73.9772</longitude>
+      <latitude>26.5354</latitude>
+      <longitude>-80.1124</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Mexico</country>
-      <name>Universidad Iberoamericana</name>
-      <city>San Antonio</city>
-      <state>GRO</state>
-      <postal>39260</postal>
-      <latitude>19.3851705</latitude>
-      <longitude>-99.1837453</longitude>
+      <country>United Kingdom</country>
+      <name>Royal College of Music, University of London</name>
+      <city>Burnside</city>
+      <state>SCT</state>
+      <postal>EH52</postal>
+      <latitude>55.9206837</latitude>
+      <longitude>-3.5420426</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2017-05-30T06:34:23Z</ts>
+        <ts>2012-05-18T05:39:47Z</ts>
       </source>
       <source>
         <name>New York Times</name>
-        <ts>2021-11-27T10:08:27Z</ts>
+        <ts>2014-07-05T01:26:17Z</ts>
+      </source>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2010-03-04T11:35:37Z</ts>
       </source>
     </school>
     <school>
       <country>United States</country>
-      <name>University of Oklahoma</name>
-      <city>San Diego</city>
+      <name>Indiana State University</name>
+      <city>Fresno</city>
       <state>CA</state>
-      <postal>92153</postal>
-      <latitude>32.5746598</latitude>
-      <longitude>-117.0697958</longitude>
+      <postal>93715</postal>
+      <latitude>36.7299999</latitude>
+      <longitude>-119.78</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2016-11-12T13:09:45Z</ts>
+        <ts>2019-06-22T17:15:45Z</ts>
       </source>
       <source>
         <name>New York Times</name>
-        <ts>2017-12-19T01:37:13Z</ts>
+        <ts>2010-01-31T04:13:13Z</ts>
       </source>
     </school>
   </schools>
-  <status>Inactive</status>
+  <status>Active</status>
   <sources>
     <source>
-      <name>Wall Street Journal</name>
-      <ts>2010-12-18T17:40:25Z</ts>
+      <name>Chicago Tribune</name>
+      <ts>2015-06-26T12:48:59Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>New York Times</name>
+      <ts>2021-02-16T22:40:07Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10033.xml</id>
+      <id>/person/10005.xml</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
-      <fullname>Godsil Dion</fullname>
-      <city>Evansville</city>
-      <state>IN</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
+      <fullname>Bollini Grant</fullname>
+      <city>Lynchburg</city>
+      <state>VA</state>
     </relation>
     <relation>
-      <id>/person/10050.xml</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>De Giovanni Dillie</fullname>
-      <city>Atlanta</city>
-      <state>GA</state>
-    </relation>
-    <relation>
-      <id>/person/10070.xml</id>
+      <id>/person/10083.xml</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Longhurst Noella</fullname>
-      <city>Baltimore</city>
-      <state>MD</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Batrim Stormi</fullname>
+      <city>Salt Lake City</city>
+      <state>UT</state>
     </relation>
     <relation>
-      <id>/person/10099.xml</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Tinghill Sherrie</fullname>
-      <city>Houston</city>
-      <state>TX</state>
-    </relation>
-    <relation>
-      <id>/person/10059.xml</id>
+      <id>/person/10019.xml</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Laverock Clemmy</fullname>
-      <city>Bakersfield</city>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Dewis Marje</fullname>
+      <city>San Diego</city>
       <state>CA</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-19T16:03:12Z</ts>
-    <user>kwatford20</user>
+    <ts>2022-02-11T09:54:02Z</ts>
+    <user>dwellsman20</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-16T08:17:48Z</ts>
-    <user>kwatford20</user>
+    <ts>2022-02-17T04:13:12Z</ts>
+    <user>dwellsman20</user>
   </lastUpdated>
   <socials>
     <social>
       <site>linkedin</site>
-      <handle>sarmall0</handle>
-      <address>https://xrea.com/nec/euismod/scelerisque.xml</address>
-    </social>
-    <social>
-      <site>facebook</site>
-      <handle>bcoulton1</handle>
-      <address>https://springer.com/orci/eget/orci.json</address>
+      <handle>atommasetti0</handle>
+      <address>https://geocities.com/posuere/cubilia/curae/duis/faucibus.json</address>
     </social>
     <social>
       <site>linkedin</site>
-      <handle/>
-      <address>https://blogtalkradio.com/lacinia/sapien/quis/libero/nullam.aspx</address>
+      <handle>gbullier1</handle>
+      <address>https://tumblr.com/accumsan/tortor/quis/turpis/sed/ante/vivamus.js</address>
+    </social>
+    <social>
+      <site>linkedin</site>
+      <handle>gpinchback2</handle>
+      <address>http://360.cn/risus/semper/porta/volutpat.jsp</address>
     </social>
   </socials>
   <memberships>
     <membership>
-      <list>list10</list>
+      <list>list3</list>
       <important>true</important>
-      <ts>2022-02-16</ts>
+      <ts>2022-01-09</ts>
     </membership>
     <membership>
-      <list>list4</list>
+      <list>list12</list>
       <important>true</important>
-      <ts>2022-02-05</ts>
-    </membership>
-    <membership>
-      <list>list2</list>
-      <important>true</important>
-      <ts>2022-02-09</ts>
+      <ts>2022-02-07</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>https://artisteer.com</url>
+      <url>https://liveinternet.ru</url>
       <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>http://earthlink.net</url>
+      <url>https://soup.io</url>
       <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>http://oracle.com</url>
+      <url>http://blogspot.com</url>
       <icon>fa-comments</icon>
     </link>
   </links>

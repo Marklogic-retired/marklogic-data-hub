@@ -3,205 +3,181 @@
   <personId>10026</personId>
   <nameGroup>
     <givenname>
-      <value>Jennilee</value>
+      <value>Ernesto</value>
     </givenname>
     <surname>
-      <value>Schanke</value>
+      <value>De Blasi</value>
     </surname>
     <fullname>
       <classification>U</classification>
-      <restricted>false</restricted>
-      <value>Schanke Jennilee</value>
+      <restricted>true</restricted>
+      <value>De Blasi Ernesto</value>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2012-10-20T20:42:15Z</ts>
-      </source>
-      <source>
-        <name>USA Today</name>
-        <ts>2020-07-18T16:15:46Z</ts>
+        <name>Chicago Tribune</name>
+        <ts>2016-06-18T17:04:12Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>cgriston0@sakura.ne.jp</value>
-      <classification>S</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>kfyrth1@businessinsider.com</value>
+      <value>dauton0@dyndns.org</value>
       <classification>S</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>825-420-7828</phone>
+  <phone>832-186-7297</phone>
   <ssn>
-    <value>753-83-4716</value>
-    <restricted>true</restricted>
+    <value>664-60-6623</value>
+    <classification>(S)</classification>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2020-11-29T06:45:45Z</ts>
-        <uploadedBy>cferro0</uploadedBy>
+        <name>New York Times</name>
+        <ts>2021-03-04T14:22:44Z</ts>
+        <uploadedBy>glaffan0</uploadedBy>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2011-10-30T03:17:30Z</ts>
-        <uploadedBy>lteresse0</uploadedBy>
+        <name>Chicago Tribune</name>
+        <ts>2016-02-03T02:38:26Z</ts>
+        <uploadedBy>jaffleck0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2013-03-26T02:12:27Z</ts>
+        <uploadedBy>dvick0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2012-01-28T14:39:35Z</ts>
+        <uploadedBy>vleport0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>89 Maywood Crossing</street><classification>M</classification>
-      <city>Austin</city>
+      <street>2463 Huxley Avenue</street>
+      <city>Greensboro</city>
+      <state>NC</state>
+      <postal>27455</postal>
+      <country>United States</country>
+      <latitude>36.1824</latitude>
+      <longitude>-79.806</longitude>
+    </address>
+    <address>
+      <street>9 Amoth Drive</street>
+      <city>Waco</city>
       <state>TX</state>
-      <postal>78769</postal>
+      <postal>76705</postal>
       <country>United States</country>
-      <latitude>30.3264</latitude>
-      <longitude>-97.7713</longitude>
+      <latitude>31.6403</latitude>
+      <longitude>-97.0963</longitude>
     </address>
     <address>
-      <street>442 Schmedeman Terrace</street><classification>M</classification>
-      <city>Reading</city>
-      <state>PA</state>
-      <postal>19605</postal>
+      <street>6606 Comanche Alley</street>
+      <city>Roanoke</city>
+      <state>VA</state>
+      <postal>24040</postal>
       <country>United States</country>
-      <latitude>40.3886</latitude>
-      <longitude>-75.9328</longitude>
-    </address>
-    <address>
-      <street>0506 Forest Alley</street><classification>M</classification>
-      <city>Columbus</city>
-      <state>OH</state>
-      <postal>43210</postal>
-      <country>United States</country>
-      <latitude>40.0028</latitude>
-      <longitude>-83.0164</longitude>
+      <latitude>37.2742</latitude>
+      <longitude>-79.9579</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>United States</country>
-      <name>Baltimore Hebrew University</name>
-      <city>Tampa</city>
-      <state>FL</state>
-      <postal>33680</postal>
-      <latitude>27.9961123</latitude>
-      <longitude>-82.4290869</longitude>
+      <country>Canada</country>
+      <name>Université du Québec en Abitibi-Témiscamingue</name>
+      <city>Torbay</city>
+      <state>NL</state>
+      <postal>A1K</postal>
+      <latitude>47.6593594</latitude>
+      <longitude>-52.7383086</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2019-11-13T00:03:35Z</ts>
+        <ts>2016-05-18T16:00:05Z</ts>
       </source>
       <source>
         <name>New York Times</name>
-        <ts>2013-09-02T06:42:53Z</ts>
+        <ts>2016-02-01T00:20:18Z</ts>
       </source>
     </school>
   </schools>
-  <status>Active</status>
+  <status>Inactive</status>
   <sources>
     <source>
-      <name>Washington Post</name>
-      <ts>2020-09-06T05:40:05Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>Los Angeles Times</name>
-      <ts>2018-10-04T22:43:08Z</ts>
+      <name>USA Today</name>
+      <ts>2016-07-16T22:13:13Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10070.xml</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Longhurst Noella</fullname>
-      <city>Baltimore</city>
-      <state>MD</state>
+      <id>/person/10066.xml</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Matusovsky Melloney</fullname>
+      <city>Atlanta</city>
+      <state>GA</state>
     </relation>
     <relation>
-      <id>/person/10016.xml</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
-      <fullname>Clutten Linzy</fullname>
-      <city>Springfield</city>
-      <state>IL</state>
+      <id>/person/10028.xml</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Georghiou Roda</fullname>
+      <city>New Haven</city>
+      <state>CT</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-07T07:19:36Z</ts>
-    <user>jschankep</user>
+    <ts>2022-02-11T13:28:26Z</ts>
+    <user>edeblasip</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-03T20:13:07Z</ts>
-    <user>jschankep</user>
+    <ts>2022-01-11T23:19:32Z</ts>
+    <user>edeblasip</user>
   </lastUpdated>
   <socials>
     <social>
-      <site>twitter</site>
-      <handle>opoynter0</handle>
-      <address>https://prweb.com/odio/justo/sollicitudin.html</address>
+      <site>facebook</site>
+      <handle>idarby0</handle>
+      <address>https://t-online.de/arcu/sed/augue/aliquam/erat/volutpat.jpg</address>
     </social>
     <social>
       <site>linkedin</site>
-      <handle>gyakubov1</handle>
-      <address>http://usa.gov/felis/donec/semper/sapien/a/libero/nam.jpg</address>
+      <handle>xeastment1</handle>
+      <address>https://nasa.gov/mauris/non/ligula.js</address>
     </social>
   </socials>
   <memberships>
     <membership>
-      <list>list3</list>
-      <important>false</important>
-      <ts>2022-01-18</ts>
-    </membership>
-    <membership>
-      <list>list4</list>
-      <important>false</important>
-      <ts>2022-01-03</ts>
-    </membership>
-    <membership>
-      <list>list3</list>
-      <important>false</important>
-      <ts>2022-01-23</ts>
-    </membership>
-    <membership>
-      <list>list2</list>
-      <important>false</important>
-      <ts>2022-02-13</ts>
-    </membership>
-    <membership>
-      <list>list2</list>
-      <important>false</important>
-      <ts>2022-01-17</ts>
-    </membership>
-    <membership>
-      <list>list1</list>
-      <important>false</important>
-      <ts>2022-02-26</ts>
+      <list>list8</list>
+      <important>true</important>
+      <ts>2022-02-18</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>http://cdc.gov</url>
+      <url>http://stanford.edu</url>
       <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>https://reference.com</url>
+      <url>http://1und1.de</url>
       <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>http://marriott.com</url>
+      <url>http://blogs.com</url>
       <icon>fa-comments</icon>
     </link>
   </links>
