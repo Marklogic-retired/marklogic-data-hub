@@ -3,200 +3,212 @@
   <personId>10014</personId>
   <nameGroup>
     <givenname>
-      <value>Wainwright</value>
+      <value>Ermentrude</value>
     </givenname>
     <surname>
-      <value>Farnorth</value>
+      <value>Cadle</value>
     </surname>
     <fullname>
       <classification>C</classification>
-      <restricted>false</restricted>
-      <value>Farnorth Wainwright</value>
+      <restricted>true</restricted>
+      <value>Cadle Ermentrude</value>
       <source>
         <name>Los Angeles Times</name>
-        <ts>2012-04-01T22:33:15Z</ts>
-      </source>
-      <source>
-        <name>Wall Street Journal</name>
-        <ts>2014-08-13T23:52:39Z</ts>
+        <ts>2020-03-19T03:51:25Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>arubens0@craigslist.org</value>
-      <classification>C</classification>
+      <value>yadamkiewicz0@scientificamerican.com</value>
+      <classification>S</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>skilmary1@nytimes.com</value>
+      <classification>U</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>ctwittey2@fema.gov</value>
+      <classification>U</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>927-317-9616</phone>
+  <phone>983-866-2276</phone>
   <ssn>
-    <value>414-86-0713</value>
-    <classification>(S)</classification>
+    <value>747-10-2754</value>
+    <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2019-11-07T11:21:22Z</ts>
-        <uploadedBy>gcolgrave0</uploadedBy>
+        <name>Wall Street Journal</name>
+        <ts>2011-06-22T11:08:45Z</ts>
+        <uploadedBy>hhowels0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <source>
+        <name>Washington Post</name>
+        <ts>2019-01-15T22:53:20Z</ts>
+        <uploadedBy>rwabersich0</uploadedBy>
       </source>
     </image>
     <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
       <source>
-        <name>Washington Post</name>
-        <ts>2016-09-26T07:16:09Z</ts>
-        <uploadedBy>atwinn0</uploadedBy>
+        <name>Wall Street Journal</name>
+        <ts>2013-12-03T13:18:50Z</ts>
+        <uploadedBy>vblackborne0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
+      <source>
+        <name>New York Times</name>
+        <ts>2012-02-20T00:38:37Z</ts>
+        <uploadedBy>cjouhan0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>826 Meadow Vale Park</street>
+      <street>7 Mandrake Plaza</street>
       <city>Memphis</city>
       <state>TN</state>
-      <postal>38136</postal>
+      <postal>38104</postal>
       <country>United States</country>
-      <latitude>35.2017</latitude>
-      <longitude>-89.9715</longitude>
+      <latitude>35.1334</latitude>
+      <longitude>-90.0046</longitude>
     </address>
   </addresses>
   <schools>
     <school>
       <country>United States</country>
-      <name>Mid-America Nazarene University</name>
-      <city>Allentown</city>
-      <state>PA</state>
-      <postal>18105</postal>
-      <latitude>40.6</latitude>
-      <longitude>-75.47</longitude>
-      <source>
-        <name>USA Today</name>
-        <ts>2016-07-19T15:28:34Z</ts>
-      </source>
-      <source>
-        <name>New York Times</name>
-        <ts>2011-04-21T15:24:45Z</ts>
-      </source>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2015-02-02T08:42:04Z</ts>
-      </source>
+      <name>Mercer University</name>
+      <city>Hicksville</city>
+      <state>NY</state>
+      <postal>11854</postal>
+      <latitude>40.77</latitude>
+      <longitude>-73.53</longitude>
+    </school>
+    <school>
+      <country>Mexico</country>
+      <name>Centro Universitario Ixtlahuaca</name>
+      <city>Santa Rita</city>
+      <state>GUA</state>
+      <postal>36350</postal>
+      <latitude>21.0130648</latitude>
+      <longitude>-101.8542461</longitude>
     </school>
   </schools>
-  <status>Active</status>
+  <status>Inactive</status>
   <sources>
     <source>
-      <name>USA Today</name>
-      <ts>2013-06-28T02:07:44Z</ts>
+      <name>New York Times</name>
+      <ts>2021-11-29T04:34:20Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10016.xml</id>
+      <id>/person/10070.xml</id>
       <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Breitler Cacilie</fullname>
+      <city>San Antonio</city>
+      <state>TX</state>
+    </relation>
+    <relation>
+      <id>/person/10009.xml</id>
+      <predicate>relatedTo</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Ifill Braden</fullname>
-      <city>Toledo</city>
-      <state>OH</state>
+      <fullname>Gulliver Gail</fullname>
+      <city>Austin</city>
+      <state>TX</state>
     </relation>
     <relation>
-      <id>/person/10085.xml</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
-      <fullname>Guidetti Rahal</fullname>
-      <city>Sacramento</city>
-      <state>CA</state>
-    </relation>
-    <relation>
-      <id>/person/10073.xml</id>
+      <id>/person/10021.xml</id>
       <predicate>relatedTo</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Pude Doretta</fullname>
-      <city>Baton Rouge</city>
+      <fullname>Heineke Shanna</fullname>
+      <city>Shreveport</city>
       <state>LA</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-27T20:53:49Z</ts>
-    <user>wfarnorthd</user>
+    <ts>2022-01-12T03:35:17Z</ts>
+    <user>ecadled</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-26T04:01:25Z</ts>
-    <user>wfarnorthd</user>
+    <ts>2022-02-18T03:14:03Z</ts>
+    <user>ecadled</user>
   </lastUpdated>
   <socials>
     <social>
       <site>facebook</site>
-      <handle>eballing0</handle>
-      <address>https://google.com/sapien/placerat/ante/nulla/justo/aliquam.aspx</address>
+      <handle>lmcquilkin0</handle>
+      <address>https://blogtalkradio.com/diam/vitae/quam/suspendisse/potenti.jsp</address>
     </social>
     <social>
-      <site>linkedin</site>
-      <handle>oedmons1</handle>
-      <address>https://guardian.co.uk/metus/arcu/adipiscing.xml</address>
+      <site>twitter</site>
+      <handle>rwoodburn1</handle>
+      <address>https://smh.com.au/elementum/nullam/varius.xml</address>
+    </social>
+    <social>
+      <site>facebook</site>
+      <handle>jmccrainor2</handle>
+      <address>http://gnu.org/sed/augue/aliquam.xml</address>
     </social>
   </socials>
-  <memberships/>
+  <memberships>
+    <membership>
+      <list>list9</list>
+      <important>true</important>
+      <ts>2022-01-08</ts>
+    </membership>
+    <membership>
+      <list>list10</list>
+      <important>false</important>
+      <ts>2021-11-02</ts>
+    </membership>
+    <membership>
+      <list>list3</list>
+      <important>true</important>
+      <ts>2022-01-19</ts>
+    </membership>
+  </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>http://hud.gov</url>
-      <icon>fa-eye</icon>
+      <url>http://youku.com</url>
+      <icon>faEye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>http://indiegogo.com</url>
-      <icon>fa-medal</icon>
+      <url>http://blinklist.com</url>
+      <icon>faMedal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>https://latimes.com</url>
-      <icon>fa-comments</icon>
+      <url>https://comsenz.com</url>
+      <icon>faComments</icon>
     </link>
   </links>
-  <activities>
-    <activity>
-      <predicate>transferredTo</predicate>
-      <place>Kare</place>
-      <source>
-        <name>USA Today</name>
-        <ts>2016-01-27T10:59:49Z</ts>
-        <createdBy>Theodora Christophersen</createdBy>
-        <approvedBy>Virgie Strangward</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>transferredTo</predicate>
-      <place>Buzzster</place>
-      <source>
-        <name>New York Times</name>
-        <ts>2017-09-16T11:29:49Z</ts>
-        <createdBy>Letitia Petrik</createdBy>
-        <approvedBy>Art Whanstall</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>movedTo</predicate>
-      <place>Mycat</place>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2015-08-04T09:05:28Z</ts>
-        <createdBy>Casie Hoolaghan</createdBy>
-        <approvedBy>Leela Balmer</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>transferredTo</predicate>
-      <place>Yabox</place>
-      <source>
-        <name>Los Angeles Times</name>
-        <ts>2021-04-15T15:03:13Z</ts>
-        <createdBy>Wendeline Poznanski</createdBy>
-        <approvedBy>Winnifred Frowd</approvedBy>
-      </source>
-    </activity>
-  </activities>
+<actions>
+  <action>
+    <url>http://oaic.gov.au</url>
+    <icon>faCog</icon>
+  </action>
+  <action>
+    <url>https://multiply.com</url>
+    <icon>faCode</icon>
+  </action>
+  <action>
+    <url>http://addthis.com</url>
+    <icon>faSync</icon>
+  </action>
+</actions>
 </person>

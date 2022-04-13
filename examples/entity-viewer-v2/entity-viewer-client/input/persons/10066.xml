@@ -3,282 +3,169 @@
   <personId>10066</personId>
   <nameGroup>
     <givenname>
-      <value>Tootsie</value>
+      <value>Emmet</value>
     </givenname>
     <surname>
-      <value>Parlott</value>
+      <value>Karleman</value>
     </surname>
     <fullname>
-      <classification>U</classification>
-      <restricted>true</restricted>
-      <value>Parlott Tootsie</value>
+      <classification>C</classification>
+      <restricted>false</restricted>
+      <value>Karleman Emmet</value>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2019-11-21T01:58:38Z</ts>
+        <name>USA Today</name>
+        <ts>2016-10-17T06:33:35Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>bwillingam0@cdbaby.com</value>
-      <classification>C</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>gmarcu1@house.gov</value>
-      <classification>U</classification>
+      <value>aluxmoore0@networksolutions.com</value>
+      <classification>S</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>978-933-6961</phone>
+  <phone>675-291-9176</phone>
   <ssn>
-    <value>651-07-9963</value>
-    <classification>(S)</classification>
+    <value>245-17-1365</value>
+    <restricted>true</restricted>
   </ssn>
   <images>
     <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2011-04-08T00:46:50Z</ts>
-        <uploadedBy>ohasslocher0</uploadedBy>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
-      <source>
-        <name>New York Times</name>
-        <ts>2013-03-02T17:50:18Z</ts>
-        <uploadedBy>ceyckel0</uploadedBy>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
-      <source>
-        <name>Wall Street Journal</name>
-        <ts>2014-09-04T07:32:14Z</ts>
-        <uploadedBy>lbudnk0</uploadedBy>
+        <name>Los Angeles Times</name>
+        <ts>2014-08-08T10:21:56Z</ts>
+        <uploadedBy>radney0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>5614 Caliangt Crossing</street>
-      <city>Chicago</city>
-      <state>IL</state>
-      <postal>60614</postal>
+      <street>4 Heffernan Terrace</street>
+      <city>Reston</city>
+      <state>VA</state>
+      <postal>22096</postal>
       <country>United States</country>
-      <latitude>41.9229</latitude>
-      <longitude>-87.6483</longitude>
+      <latitude>38.8318</latitude>
+      <longitude>-77.2888</longitude>
+    </address>
+    <address>
+      <street>356 Reinke Court</street>
+      <city>New Orleans</city>
+      <state>LA</state>
+      <postal>70179</postal>
+      <country>United States</country>
+      <latitude>30.033</latitude>
+      <longitude>-89.8826</longitude>
+    </address>
+    <address>
+      <street>0326 Hooker Terrace</street>
+      <city>Brooklyn</city>
+      <state>NY</state>
+      <postal>11210</postal>
+      <country>United States</country>
+      <latitude>40.6281</latitude>
+      <longitude>-73.9467</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Canada</country>
-      <name>Algonquin College</name>
-      <city>Saint-Eustache</city>
-      <state>QC</state>
-      <postal>J7R</postal>
-      <latitude>45.559393</latitude>
-      <longitude>-73.907613</longitude>
-      <source>
-        <name>USA Today</name>
-        <ts>2011-02-19T10:36:05Z</ts>
-      </source>
-      <source>
-        <name>New York Times</name>
-        <ts>2015-07-25T11:56:01Z</ts>
-      </source>
-    </school>
-    <school>
       <country>United States</country>
-      <name>North Park University</name>
-      <city>Columbus</city>
-      <state>OH</state>
-      <postal>43240</postal>
-      <latitude>40.1420033</latitude>
-      <longitude>-82.9770371</longitude>
-      <source>
-        <name>USA Today</name>
-        <ts>2020-10-31T17:55:26Z</ts>
-      </source>
+      <name>Southwestern Christian University</name>
+      <city>Peoria</city>
+      <state>IL</state>
+      <postal>61635</postal>
+      <latitude>40.7</latitude>
+      <longitude>-89.52</longitude>
     </school>
   </schools>
   <status>Active</status>
   <sources>
     <source>
-      <name>New York Times</name>
-      <ts>2010-09-10T11:46:27Z</ts>
+      <name>USA Today</name>
+      <ts>2016-01-08T10:40:53Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10093.xml</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Patridge Salomi</fullname>
-      <city>Vero Beach</city>
-      <state>FL</state>
-    </relation>
-    <relation>
-      <id>/person/10046.xml</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Webb-Bowen Michal</fullname>
-      <city>Toledo</city>
-      <state>OH</state>
-    </relation>
-    <relation>
-      <id>/person/10055.xml</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Floodgate Reynolds</fullname>
-      <city>Indianapolis</city>
-      <state>IN</state>
-    </relation>
-    <relation>
-      <id>/person/10027.xml</id>
+      <id>/person/10052.xml</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Paolini Maximo</fullname>
-      <city>El Paso</city>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
+      <fullname>Janos Lucienne</fullname>
+      <city>Corpus Christi</city>
       <state>TX</state>
+    </relation>
+    <relation>
+      <id>/person/10062.xml</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
+      <fullname>Raison Ivy</fullname>
+      <city>Charlotte</city>
+      <state>NC</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-01T12:06:59Z</ts>
-    <user>tparlott1t</user>
+    <ts>2022-01-09T13:55:17Z</ts>
+    <user>ekarleman1t</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-23T15:44:03Z</ts>
-    <user>tparlott1t</user>
+    <ts>2022-01-08T09:05:24Z</ts>
+    <user>ekarleman1t</user>
   </lastUpdated>
   <socials>
     <social>
-      <site>facebook</site>
-      <handle>ezumbusch0</handle>
-      <address>http://ebay.co.uk/imperdiet.js</address>
+      <site>twitter</site>
+      <handle>lrandalston0</handle>
+      <address>https://meetup.com/sit.aspx</address>
+    </social>
+    <social>
+      <site>linkedin</site>
+      <handle>spitt1</handle>
+      <address>https://fc2.com/odio/in/hac/habitasse.html</address>
+    </social>
+    <social>
+      <site>linkedin</site>
+      <handle>cdoe2</handle>
+      <address>http://amazon.de/lorem/quisque.html</address>
     </social>
   </socials>
   <memberships>
     <membership>
-      <list>list10</list>
-      <important>false</important>
-      <ts>2022-02-14</ts>
-    </membership>
-    <membership>
-      <list>list12</list>
-      <important>false</important>
-      <ts>2022-01-20</ts>
-    </membership>
-    <membership>
       <list>list8</list>
       <important>false</important>
-      <ts>2022-02-25</ts>
-    </membership>
-    <membership>
-      <list>list2</list>
-      <important>true</important>
-      <ts>2022-02-23</ts>
-    </membership>
-    <membership>
-      <list>list6</list>
-      <important>false</important>
-      <ts>2022-01-11</ts>
-    </membership>
-    <membership>
-      <list>list10</list>
-      <important>false</important>
-      <ts>2022-02-23</ts>
+      <ts>2022-02-19</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>http://sciencedaily.com</url>
-      <icon>fa-eye</icon>
+      <url>https://example.com</url>
+      <icon>faEye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>http://cmu.edu</url>
-      <icon>fa-medal</icon>
+      <url>http://pen.io</url>
+      <icon>faMedal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>https://google.it</url>
-      <icon>fa-comments</icon>
+      <url>https://163.com</url>
+      <icon>faComments</icon>
     </link>
   </links>
-  <activities>
-    <activity>
-      <predicate>startedAt</predicate>
-      <place>Meejo</place>
-      <source>
-        <name>USA Today</name>
-        <ts>2016-07-04T00:23:12Z</ts>
-        <createdBy>Oona Brownrigg</createdBy>
-        <approvedBy>Natassia Smither</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>transferredTo</predicate>
-      <place>Jaxnation</place>
-      <source>
-        <name>New York Times</name>
-        <ts>2016-01-17T20:45:38Z</ts>
-        <createdBy>Beltran Gold</createdBy>
-        <approvedBy>Uri Meriel</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>endedAt</predicate>
-      <place>Tazz</place>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2011-11-19T22:52:24Z</ts>
-        <createdBy>Linette Kennett</createdBy>
-        <approvedBy>Artemis Wiggins</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>movedTo</predicate>
-      <place>Oyonder</place>
-      <source>
-        <name>Los Angeles Times</name>
-        <ts>2010-05-16T21:28:40Z</ts>
-        <createdBy>Raddie Corner</createdBy>
-        <approvedBy>Melba Cahillane</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>startedAt</predicate>
-      <place>Ooba</place>
-      <source>
-        <name>Wall Street Journal</name>
-        <ts>2013-09-21T17:30:33Z</ts>
-        <createdBy>Cornell Golledge</createdBy>
-        <approvedBy>Rea Coldbreath</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>startedAt</predicate>
-      <place>Dynabox</place>
-      <source>
-        <name>Washington Post</name>
-        <ts>2011-08-08T09:31:59Z</ts>
-        <createdBy>Christian Lapsley</createdBy>
-        <approvedBy>Abram Rawsthorn</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>transferredTo</predicate>
-      <place>Realfire</place>
-      <source>
-        <name>USA Today</name>
-        <ts>2013-01-20T19:02:54Z</ts>
-        <createdBy>Lissy Orford</createdBy>
-        <approvedBy>Remy Hamlington</approvedBy>
-      </source>
-    </activity>
-  </activities>
+<actions>
+  <action>
+    <url>http://oaic.gov.au</url>
+    <icon>faCog</icon>
+  </action>
+  <action>
+    <url>https://multiply.com</url>
+    <icon>faCode</icon>
+  </action>
+  <action>
+    <url>http://addthis.com</url>
+    <icon>faSync</icon>
+  </action>
+</actions>
 </person>

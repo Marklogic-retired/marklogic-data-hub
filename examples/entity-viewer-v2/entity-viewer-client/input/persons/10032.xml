@@ -3,221 +3,154 @@
   <personId>10032</personId>
   <nameGroup>
     <givenname>
-      <value>Padget</value>
+      <value>Winthrop</value>
     </givenname>
     <surname>
-      <value>Godbehere</value>
+      <value>Hazlewood</value>
     </surname>
     <fullname>
       <classification>C</classification>
       <restricted>false</restricted>
-      <value>Godbehere Padget</value>
+      <value>Hazlewood Winthrop</value>
       <source>
         <name>Washington Post</name>
-        <ts>2010-04-02T19:05:03Z</ts>
+        <ts>2010-04-28T17:57:00Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>ivairow0@taobao.com</value>
+      <value>dcolloby0@bing.com</value>
+      <classification>C</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>dryley1@newsvine.com</value>
+      <classification>U</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>awhetnell2@engadget.com</value>
       <classification>U</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>183-121-5334</phone>
+  <phone>326-206-6983</phone>
   <ssn>
-    <value>396-12-4206</value>
-    <classification>(S)</classification>
+    <value>278-03-6434</value>
+    <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
       <source>
-        <name>New York Times</name>
-        <ts>2019-04-05T20:16:54Z</ts>
-        <uploadedBy>tmacsweeney0</uploadedBy>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
-      <source>
-        <name>Los Angeles Times</name>
-        <ts>2010-07-29T04:59:06Z</ts>
-        <uploadedBy>gcatto0</uploadedBy>
+        <name>Washington Post</name>
+        <ts>2010-08-20T00:26:17Z</ts>
+        <uploadedBy>bfrance0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>85966 Logan Pass</street>
-      <city>Atlanta</city>
-      <state>GA</state>
-      <postal>30380</postal>
+      <street>5840 Bluejay Trail</street>
+      <city>Montgomery</city>
+      <state>AL</state>
+      <postal>36177</postal>
       <country>United States</country>
-      <latitude>33.8444</latitude>
-      <longitude>-84.474</longitude>
-    </address>
-    <address>
-      <street>12845 Surrey Point</street>
-      <city>Gulfport</city>
-      <state>MS</state>
-      <postal>39505</postal>
-      <country>United States</country>
-      <latitude>30.4158</latitude>
-      <longitude>-89.0684</longitude>
+      <latitude>32.2334</latitude>
+      <longitude>-86.2085</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Mexico</country>
-      <name>Universidad Mexicana del Noreste</name>
-      <city>San Antonio</city>
-      <state>GUA</state>
-      <postal>37853</postal>
-      <latitude>19.3851705</latitude>
-      <longitude>-99.1837453</longitude>
-      <source>
-        <name>USA Today</name>
-        <ts>2021-06-03T13:58:55Z</ts>
-      </source>
+      <country>Canada</country>
+      <name>Nova Scotia Agricultural College</name>
+      <city>Moose Jaw</city>
+      <state>SK</state>
+      <postal>S6J</postal>
+      <latitude>50.4163784</latitude>
+      <longitude>-105.5361463</longitude>
     </school>
     <school>
-      <country>United States</country>
-      <name>University of Mary</name>
-      <city>Bakersfield</city>
-      <state>CA</state>
-      <postal>93311</postal>
-      <latitude>35.1268513</latitude>
-      <longitude>-119.1855785</longitude>
-      <source>
-        <name>USA Today</name>
-        <ts>2015-08-18T04:15:50Z</ts>
-      </source>
+      <country>Canada</country>
+      <name>Trent University</name>
+      <city>White City</city>
+      <state>SK</state>
+      <postal>P0W</postal>
+      <latitude>50.444953</latitude>
+      <longitude>-104.3624353</longitude>
     </school>
   </schools>
   <status>Active</status>
   <sources>
     <source>
-      <name>USA Today</name>
-      <ts>2016-12-31T09:18:17Z</ts>
+      <name>Los Angeles Times</name>
+      <ts>2012-09-03T23:28:11Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Chicago Tribune</name>
+      <ts>2012-08-15T11:47:55Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10005.xml</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
-      <fullname>Sammars Shelley</fullname>
-      <city>Fort Lauderdale</city>
-      <state>FL</state>
-    </relation>
-    <relation>
-      <id>/person/10092.xml</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Brigham Pennie</fullname>
-      <city>San Antonio</city>
-      <state>TX</state>
-    </relation>
-    <relation>
-      <id>/person/10027.xml</id>
+      <id>/person/10056.xml</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Paolini Maximo</fullname>
-      <city>El Paso</city>
-      <state>TX</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Aikman Milly</fullname>
+      <city>Pittsburgh</city>
+      <state>PA</state>
+    </relation>
+    <relation>
+      <id>/person/10089.xml</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
+      <fullname>Klulisek Jacobo</fullname>
+      <city>San Francisco</city>
+      <state>CA</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-02T19:06:44Z</ts>
-    <user>pgodbeherev</user>
+    <ts>2022-02-14T21:25:38Z</ts>
+    <user>whazlewoodv</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-16T09:21:39Z</ts>
-    <user>pgodbeherev</user>
+    <ts>2022-01-02T20:01:07Z</ts>
+    <user>whazlewoodv</user>
   </lastUpdated>
-  <socials>
-    <social>
-      <site>twitter</site>
-      <handle>cpropper0</handle>
-      <address>https://hubpages.com/aliquet/ultrices/erat/tortor/sollicitudin/mi/sit.xml</address>
-    </social>
-    <social>
-      <site>facebook</site>
-      <handle>jgairdner1</handle>
-      <address>https://ocn.ne.jp/dapibus/augue/vel/accumsan/tellus/nisi/eu.js</address>
-    </social>
-  </socials>
-  <memberships>
-    <membership>
-      <list>list2</list>
-      <important>false</important>
-      <ts>2022-01-23</ts>
-    </membership>
-    <membership>
-      <list>list11</list>
-      <important>false</important>
-      <ts>2022-01-07</ts>
-    </membership>
-  </memberships>
+  <socials/>
+  <memberships/>
   <links>
     <link>
       <label>Quick View</label>
-      <url>http://reuters.com</url>
-      <icon>fa-eye</icon>
+      <url>https://boston.com</url>
+      <icon>faEye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>http://about.com</url>
-      <icon>fa-medal</icon>
+      <url>http://shutterfly.com</url>
+      <icon>faMedal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>https://netvibes.com</url>
-      <icon>fa-comments</icon>
+      <url>http://auda.org.au</url>
+      <icon>faComments</icon>
     </link>
   </links>
-  <activities>
-    <activity>
-      <predicate>startedAt</predicate>
-      <place>Aimbo</place>
-      <source>
-        <name>USA Today</name>
-        <ts>2011-09-15T07:20:00Z</ts>
-        <createdBy>Cheston Osan</createdBy>
-        <approvedBy>Des Crossingham</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>transferredTo</predicate>
-      <place>Jabbercube</place>
-      <source>
-        <name>New York Times</name>
-        <ts>2018-09-26T16:35:48Z</ts>
-        <createdBy>Thomasina Hankinson</createdBy>
-        <approvedBy>Lewie Westrip</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>movedTo</predicate>
-      <place>Realbuzz</place>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2020-01-01T08:38:44Z</ts>
-        <createdBy>Kessia Benyan</createdBy>
-        <approvedBy>Christel Gainseford</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>transferredTo</predicate>
-      <place>Roombo</place>
-      <source>
-        <name>Los Angeles Times</name>
-        <ts>2016-04-23T21:00:33Z</ts>
-        <createdBy>Albina McReedy</createdBy>
-        <approvedBy>Gelya Prendergrass</approvedBy>
-      </source>
-    </activity>
-  </activities>
+<actions>
+  <action>
+    <url>http://oaic.gov.au</url>
+    <icon>faCog</icon>
+  </action>
+  <action>
+    <url>https://multiply.com</url>
+    <icon>faCode</icon>
+  </action>
+  <action>
+    <url>http://addthis.com</url>
+    <icon>faSync</icon>
+  </action>
+</actions>
 </person>

@@ -3,246 +3,207 @@
   <personId>10088</personId>
   <nameGroup>
     <givenname>
-      <value>Cammi</value>
+      <value>Twila</value>
     </givenname>
     <surname>
-      <value>Scothron</value>
+      <value>Warcop</value>
     </surname>
     <fullname>
-      <classification>S</classification>
+      <classification>U</classification>
       <restricted>true</restricted>
-      <value>Scothron Cammi</value>
+      <value>Warcop Twila</value>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2021-09-26T11:45:49Z</ts>
+        <name>USA Today</name>
+        <ts>2017-11-03T07:16:46Z</ts>
+      </source>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2018-03-16T10:45:56Z</ts>
+      </source>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2016-09-09T09:26:00Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>pschild0@t.co</value>
-      <classification>S</classification>
+      <value>hgirdler0@lulu.com</value>
+      <classification>U</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>crighy1@netscape.com</value>
+      <value>hbooton1@google.pl</value>
       <classification>U</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>624-736-3565</phone>
+  <phone>331-466-3843</phone>
   <ssn>
-    <value>496-71-6771</value>
-    <classification>(S)</classification>
+    <value>389-34-1238</value>
+    <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
       <source>
-        <name>New York Times</name>
-        <ts>2011-09-29T13:32:48Z</ts>
-        <uploadedBy>skuhwald0</uploadedBy>
+        <name>Wall Street Journal</name>
+        <ts>2013-10-08T01:03:18Z</ts>
+        <uploadedBy>fboag0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
+      <source>
+        <name>USA Today</name>
+        <ts>2020-05-13T22:29:47Z</ts>
+        <uploadedBy>jsenton0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>91 Larry Pass</street>
-      <city>San Jose</city>
-      <state>CA</state>
-      <postal>95194</postal>
+      <street>049 Blaine Point</street>
+      <city>Charleston</city>
+      <state>WV</state>
+      <postal>25321</postal>
       <country>United States</country>
-      <latitude>37.3894</latitude>
-      <longitude>-121.8868</longitude>
-    </address>
-    <address>
-      <street>87 Randy Place</street>
-      <city>New York City</city>
-      <state>NY</state>
-      <postal>10292</postal>
-      <country>United States</country>
-      <latitude>40.7808</latitude>
-      <longitude>-73.9772</longitude>
-    </address>
-    <address>
-      <street>1381 Warner Trail</street>
-      <city>New York City</city>
-      <state>NY</state>
-      <postal>10060</postal>
-      <country>United States</country>
-      <latitude>40.7808</latitude>
-      <longitude>-73.9772</longitude>
+      <latitude>38.2968</latitude>
+      <longitude>-81.5547</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>United Kingdom</country>
-      <name>University of Lancaster</name>
-      <city>Newbiggin</city>
-      <state>ENG</state>
-      <postal>NE46</postal>
-      <latitude>54.9418362</latitude>
-      <longitude>-2.0871107</longitude>
-      <source>
-        <name>USA Today</name>
-        <ts>2013-08-20T01:42:32Z</ts>
-      </source>
-    </school>
-    <school>
       <country>United States</country>
-      <name>Francis Marion University</name>
-      <city>Philadelphia</city>
-      <state>PA</state>
-      <postal>19151</postal>
-      <latitude>39.9759847</latitude>
-      <longitude>-75.2537397</longitude>
-      <source>
-        <name>USA Today</name>
-        <ts>2014-11-10T20:14:22Z</ts>
-      </source>
-      <source>
-        <name>New York Times</name>
-        <ts>2017-09-07T20:22:32Z</ts>
-      </source>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2020-09-28T05:28:11Z</ts>
-      </source>
+      <name>California College San Diego</name>
+      <city>Nashville</city>
+      <state>TN</state>
+      <postal>37205</postal>
+      <latitude>36.1030036</latitude>
+      <longitude>-86.8722146</longitude>
     </school>
   </schools>
-  <status>Active</status>
+  <status>Inactive</status>
   <sources>
     <source>
-      <name>New York Times</name>
-      <ts>2012-03-07T13:17:38Z</ts>
+      <name>Chicago Tribune</name>
+      <ts>2011-09-21T02:15:29Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Chicago Tribune</name>
+      <ts>2016-01-15T06:17:33Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10020.xml</id>
+      <id>/person/10042.xml</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
+      <fullname>Di Batista Eustacia</fullname>
+      <city>Little Rock</city>
+      <state>AR</state>
+    </relation>
+    <relation>
+      <id>/person/10075.xml</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
+      <fullname>Search Nye</fullname>
+      <city>Las Vegas</city>
+      <state>NV</state>
+    </relation>
+    <relation>
+      <id>/person/10081.xml</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
-      <fullname>Drysdale Kania</fullname>
-      <city>Lubbock</city>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Feldhuhn Rodge</fullname>
+      <city>Houston</city>
       <state>TX</state>
     </relation>
     <relation>
-      <id>/person/10085.xml</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
-      <fullname>Guidetti Rahal</fullname>
-      <city>Sacramento</city>
-      <state>CA</state>
-    </relation>
-    <relation>
-      <id>/person/10039.xml</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
-      <fullname>Balsdone Crista</fullname>
-      <city>New York City</city>
-      <state>NY</state>
-    </relation>
-    <relation>
-      <id>/person/10073.xml</id>
+      <id>/person/10035.xml</id>
       <predicate>livesWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Pude Doretta</fullname>
-      <city>Baton Rouge</city>
-      <state>LA</state>
+      <fullname>Napolione Jake</fullname>
+      <city>Green Bay</city>
+      <state>WI</state>
     </relation>
     <relation>
-      <id>/person/10009.xml</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
-      <fullname>Pringour Codie</fullname>
-      <city>Schenectady</city>
-      <state>NY</state>
+      <id>/person/10017.xml</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
+      <fullname>Symones Marybeth</fullname>
+      <city>Norcross</city>
+      <state>GA</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-10T21:06:04Z</ts>
-    <user>cscothron2f</user>
+    <ts>2022-01-03T22:06:26Z</ts>
+    <user>twarcop2f</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-27T04:36:33Z</ts>
-    <user>cscothron2f</user>
+    <ts>2022-01-10T20:18:50Z</ts>
+    <user>twarcop2f</user>
   </lastUpdated>
   <socials>
     <social>
-      <site>facebook</site>
-      <handle/>
-      <address>http://imgur.com/ante.aspx</address>
-    </social>
-    <social>
-      <site>linkedin</site>
-      <handle/>
-      <address>https://tiny.cc/mauris/vulputate/elementum/nullam/varius/nulla/facilisi.json</address>
+      <site>twitter</site>
+      <handle>kceeley0</handle>
+      <address>https://yandex.ru/odio/elementum/eu/interdum/eu/tincidunt/in.json</address>
     </social>
   </socials>
   <memberships>
     <membership>
-      <list>list5</list>
+      <list>list7</list>
       <important>true</important>
-      <ts>2022-02-27</ts>
+      <ts>2021-08-28</ts>
+    </membership>
+    <membership>
+      <list>list2</list>
+      <important>true</important>
+      <ts>2021-04-07</ts>
+    </membership>
+    <membership>
+      <list>list7</list>
+      <important>true</important>
+      <ts>2021-08-14</ts>
+    </membership>
+    <membership>
+      <list>list8</list>
+      <important>false</important>
+      <ts>2021-08-24</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>http://myspace.com</url>
-      <icon>fa-eye</icon>
+      <url>https://archive.org</url>
+      <icon>faEye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>http://booking.com</url>
-      <icon>fa-medal</icon>
+      <url>http://mayoclinic.com</url>
+      <icon>faMedal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>http://cbslocal.com</url>
-      <icon>fa-comments</icon>
+      <url>http://cargocollective.com</url>
+      <icon>faComments</icon>
     </link>
   </links>
-  <activities>
-    <activity>
-      <predicate>transferredTo</predicate>
-      <place>Ntags</place>
-      <source>
-        <name>USA Today</name>
-        <ts>2021-08-28T16:39:41Z</ts>
-        <createdBy>Drugi Trippett</createdBy>
-        <approvedBy>Leonanie Giraudou</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>transferredTo</predicate>
-      <place>Tagopia</place>
-      <source>
-        <name>New York Times</name>
-        <ts>2013-11-14T04:38:13Z</ts>
-        <createdBy>Karlan Simmance</createdBy>
-        <approvedBy>Ema McCrae</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>transferredTo</predicate>
-      <place>Dynabox</place>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2015-06-19T09:03:01Z</ts>
-        <createdBy>Blythe Fynan</createdBy>
-        <approvedBy>Lea Hanscom</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>endedAt</predicate>
-      <place>Quinu</place>
-      <source>
-        <name>Los Angeles Times</name>
-        <ts>2013-04-04T13:55:01Z</ts>
-        <createdBy>Normand Gresty</createdBy>
-        <approvedBy>Donn Delwater</approvedBy>
-      </source>
-    </activity>
-  </activities>
+<actions>
+  <action>
+    <url>http://oaic.gov.au</url>
+    <icon>faCog</icon>
+  </action>
+  <action>
+    <url>https://multiply.com</url>
+    <icon>faCode</icon>
+  </action>
+  <action>
+    <url>http://addthis.com</url>
+    <icon>faSync</icon>
+  </action>
+</actions>
 </person>

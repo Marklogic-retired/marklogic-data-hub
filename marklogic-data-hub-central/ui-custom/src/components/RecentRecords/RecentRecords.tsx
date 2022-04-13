@@ -85,26 +85,26 @@ const RecentRecords: React.FC<Props> = (props) => {
             {recent.alert ? <ExclamationTriangleFill color="#d48b32" size={16} /> : null}
           </div> */}
           <div className="thumbnail"> 
-            {props.config.thumbnail ? 
-              <Image data={recent} config={props.config.thumbnail.config} />
+            {props.config.entities[detailContext.detail.entityType].thumbnail ? 
+              <Image data={recent} config={props.config.entities[recent.entityType].thumbnail.config} />
             : null}
           </div>
           <div className="text">
             <div className="title" onClick={handleNameClick}>
-              <Value data={recent} config={props.config.title} getFirst={true} />
+              <Value data={recent} config={props.config.entities[recent.entityType].title} getFirst={true} />
             </div>
             <div className="subtitle">
-              {props.config.items ? 
-                <List data={recent} config={props.config.items} />
+              {props.config.entities[detailContext.detail.entityType].items ? 
+                <List data={recent} config={props.config.entities[recent.entityType].items} />
               : null}
             </div>
-            {props.config.categories ? 
+            {props.config.entities[detailContext.detail.entityType].categories ? 
             <div className="categories">
-              {getValByConfig(recent, props.config.categories)!.map((s, index2) => {
+              {getValByConfig(recent, props.config.entities[recent.entityType].categories)!.map((s, index2) => {
                 return (
                   <Chiclet 
                     key={"category-" + index2} 
-                    config={props.config.categories}
+                    config={props.config.entities[recent.entityType].categories}
                   >{s}</Chiclet>
                 )
               })}

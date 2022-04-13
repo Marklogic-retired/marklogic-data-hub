@@ -96,7 +96,7 @@ const ImageGalleryMulti: React.FC<Props> = (props) => {
       let value: any = path ? _.get(selectedImage, path, null) : null;
       if (!value) return null;
       return (
-        <div className="metadata-row">
+        <div className="metadata-row" key={"meta-" + index}>
           <span className="metadata-label">{label}</span>
           <span className="metadata-value">
             {React.createElement(

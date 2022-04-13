@@ -109,48 +109,49 @@ const ResultsList: React.FC<Props> = (props) => {
 
   const getResults = () => {
     let results = searchContext.searchResults.result.map((results, index) => {
+      const configEntityType = props.config.entities[results.entityType];
       return (
         <div key={"result-" + index} className="result">
           <div className="thumbnail">
-            {props.config.thumbnail ?
-              <Image data={results} config={props.config.thumbnail.config} />
+            {configEntityType.thumbnail ?
+              <Image data={results} config={configEntityType.thumbnail.config} />
               : null}
           </div>
           <div className="details">
             <div className="title" onClick={handleNameClick}>
-              <Value data={results} config={props.config.title} getFirst={true} />
+              <Value data={results} config={configEntityType.title} getFirst={true} />
             </div>
             <div className="subtitle">
-              {props.config.items ?
-                <List data={results} config={props.config.items} />
+              {configEntityType.items ?
+                <List data={results} config={configEntityType.items} />
                 : null}
             </div>
-            {props.config.categories ?
+            {configEntityType.categories ?
               <div className="categories">
-                {getValByConfig(results, props.config.categories)!.map((s, index2) => {
+                {getValByConfig(results, configEntityType.categories)!.map((s, index2) => {
                   return (
                     <Chiclet
                       key={"category-" + index2}
-                      config={props.config.categories}
+                      config={configEntityType.categories}
                     >{s}</Chiclet>
                   )
                 })}
               </div> : null}
           </div>
           <div className="actions">
-            {props.config.timestamp ?
+            {configEntityType.timestamp ?
               <div className="timestamp">
-                <DateTime config={props.config.timestamp} data={results} style={props.config.timestamp.style} />
+                <DateTime config={configEntityType.timestamp} data={results} style={configEntityType.timestamp.style} />
               </div> : null}
             <div className="icons">
-              {props.config.status ?
+              {configEntityType.status ?
                 <div className="status">
-                  <Value data={results} config={props.config.status} getFirst={true} />
+                  <Value data={results} config={configEntityType.status} getFirst={true} />
                 </div> : null}
-              {props.config.resultActions?.component ?
+              {configEntityType.resultActions?.component ?
                 React.createElement(
-                  COMPONENTS[props.config.resultActions.component],
-                  {config: props.config?.resultActions.config, data: results?.extracted}, null
+                  COMPONENTS[configEntityType.resultActions.component],
+                  {config: configEntityType?.resultActions.config, data: results?.extracted}, null
                 )
               : null}
             </div>

@@ -3,222 +3,211 @@
   <personId>10089</personId>
   <nameGroup>
     <givenname>
-      <value>Karalee</value>
+      <value>Jacobo</value>
     </givenname>
     <surname>
-      <value>Portugal</value>
+      <value>Klulisek</value>
     </surname>
     <fullname>
-      <classification>S</classification>
+      <classification>U</classification>
       <restricted>true</restricted>
-      <value>Portugal Karalee</value>
+      <value>Klulisek Jacobo</value>
       <source>
         <name>New York Times</name>
-        <ts>2016-10-18T12:42:13Z</ts>
+        <ts>2010-12-01T06:13:53Z</ts>
+      </source>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2017-09-17T11:03:57Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>ddalyell0@ucoz.com</value>
+      <value>owhitemarsh0@imdb.com</value>
       <classification>S</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>hradmore1@desdev.cn</value>
+      <value>gdunne1@xinhuanet.com</value>
       <classification>C</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>296-510-8841</phone>
+  <phone>778-255-0215</phone>
   <ssn>
-    <value>652-02-1871</value>
-    <classification>(S)</classification>
+    <value>424-95-5092</value>
+    <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
       <source>
-        <name>USA Today</name>
-        <ts>2021-07-21T21:04:24Z</ts>
-        <uploadedBy>vmclorinan0</uploadedBy>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
-      <source>
-        <name>Los Angeles Times</name>
-        <ts>2015-08-07T01:44:40Z</ts>
+        <name>Chicago Tribune</name>
+        <ts>2021-10-16T23:38:32Z</ts>
         <uploadedBy/>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2015-08-24T10:39:35Z</ts>
-        <uploadedBy>kbrumwell0</uploadedBy>
+        <name>Washington Post</name>
+        <ts>2013-09-06T03:46:42Z</ts>
+        <uploadedBy>pcourage0</uploadedBy>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
       <source>
-        <name>USA Today</name>
-        <ts>2017-02-13T13:22:56Z</ts>
-        <uploadedBy>sgeharke0</uploadedBy>
+        <name>Chicago Tribune</name>
+        <ts>2012-05-31T10:53:53Z</ts>
+        <uploadedBy>ggomery0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>2 Declaration Road</street>
-      <city>Sacramento</city>
+      <street>988 Lake View Park</street>
+      <city>San Francisco</city>
       <state>CA</state>
-      <postal>95852</postal>
+      <postal>94169</postal>
       <country>United States</country>
-      <latitude>38.6026</latitude>
-      <longitude>-121.4475</longitude>
+      <latitude>37.7848</latitude>
+      <longitude>-122.7278</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Canada</country>
-      <name>Lakehead University</name>
-      <city>Saint-Raymond</city>
-      <state>QC</state>
-      <postal>G3L</postal>
-      <latitude>46.8922184</latitude>
-      <longitude>-71.8291245</longitude>
-      <source>
-        <name>USA Today</name>
-        <ts>2021-03-30T09:43:54Z</ts>
-      </source>
-      <source>
-        <name>New York Times</name>
-        <ts>2016-07-03T03:26:30Z</ts>
-      </source>
+      <country>Mexico</country>
+      <name>Instituto Tecnologico de Minatitlan</name>
+      <city>Benito Juarez</city>
+      <state>VER</state>
+      <postal>96720</postal>
+      <latitude>22.2016816</latitude>
+      <longitude>-97.8367954</longitude>
     </school>
   </schools>
-  <status>Active</status>
+  <status>Inactive</status>
   <sources>
     <source>
       <name>Wall Street Journal</name>
-      <ts>2015-11-06T16:49:24Z</ts>
+      <ts>2018-05-09T11:23:18Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Chicago Tribune</name>
+      <ts>2021-10-09T00:55:51Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>New York Times</name>
+      <ts>2012-10-23T19:19:12Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10060.xml</id>
+      <id>/person/10051.xml</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Biswell Frederich</fullname>
+      <city>Buffalo</city>
+      <state>NY</state>
+    </relation>
+    <relation>
+      <id>/person/10003.xml</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
+      <fullname>Edger Piper</fullname>
+      <city>Prescott</city>
+      <state>AZ</state>
+    </relation>
+    <relation>
+      <id>/person/10047.xml</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Dunnett Trula</fullname>
-      <city>Miami</city>
-      <state>FL</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
+      <fullname>Forty Jervis</fullname>
+      <city>Dallas</city>
+      <state>TX</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-15T04:18:03Z</ts>
-    <user>kportugal2g</user>
+    <ts>2022-01-14T05:01:11Z</ts>
+    <user>jklulisek2g</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-12T05:13:25Z</ts>
-    <user>kportugal2g</user>
+    <ts>2022-02-06T12:57:15Z</ts>
+    <user>jklulisek2g</user>
   </lastUpdated>
   <socials>
     <social>
+      <site>facebook</site>
+      <handle/>
+      <address>https://diigo.com/ut/tellus/nulla/ut/erat/id/mauris.xml</address>
+    </social>
+    <social>
       <site>twitter</site>
-      <handle>llambshine0</handle>
-      <address>https://illinois.edu/ligula/nec/sem/duis/aliquam/convallis/nunc.js</address>
+      <handle>shabercham1</handle>
+      <address>http://samsung.com/blandit/mi/in/porttitor.aspx</address>
+    </social>
+    <social>
+      <site>twitter</site>
+      <handle>mcoslett2</handle>
+      <address>https://symantec.com/sed/nisl/nunc/rhoncus/dui/vel/sem.aspx</address>
     </social>
   </socials>
-  <memberships/>
+  <memberships>
+    <membership>
+      <list>list5</list>
+      <important>false</important>
+      <ts>2022-01-13</ts>
+    </membership>
+    <membership>
+      <list>list2</list>
+      <important>false</important>
+      <ts>2021-07-16</ts>
+    </membership>
+    <membership>
+      <list>list5</list>
+      <important>true</important>
+      <ts>2021-12-07</ts>
+    </membership>
+    <membership>
+      <list>list10</list>
+      <important>false</important>
+      <ts>2021-07-19</ts>
+    </membership>
+  </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>http://xing.com</url>
-      <icon>fa-eye</icon>
+      <url>https://economist.com</url>
+      <icon>faEye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>http://indiatimes.com</url>
-      <icon>fa-medal</icon>
+      <url>http://elegantthemes.com</url>
+      <icon>faMedal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>https://bluehost.com</url>
-      <icon>fa-comments</icon>
+      <url>http://howstuffworks.com</url>
+      <icon>faComments</icon>
     </link>
   </links>
-  <activities>
-    <activity>
-      <predicate>startedAt</predicate>
-      <place>Mynte</place>
-      <source>
-        <name>USA Today</name>
-        <ts>2019-06-06T09:34:38Z</ts>
-        <createdBy>Beatrisa Chessill</createdBy>
-        <approvedBy>Sigismond Fenich</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>transferredTo</predicate>
-      <place>Topicware</place>
-      <source>
-        <name>New York Times</name>
-        <ts>2015-09-18T02:03:55Z</ts>
-        <createdBy>Arden Beresford</createdBy>
-        <approvedBy>Kerwin Leydon</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>endedAt</predicate>
-      <place>Oozz</place>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2012-07-12T04:06:27Z</ts>
-        <createdBy>Arman Shimman</createdBy>
-        <approvedBy>Jedidiah Peinke</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>transferredTo</predicate>
-      <place>Geba</place>
-      <source>
-        <name>Los Angeles Times</name>
-        <ts>2010-01-27T12:01:04Z</ts>
-        <createdBy>Dasie Dudgeon</createdBy>
-        <approvedBy>Tate Hartwell</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>startedAt</predicate>
-      <place>Bluejam</place>
-      <source>
-        <name>Wall Street Journal</name>
-        <ts>2016-04-16T21:23:13Z</ts>
-        <createdBy>Krissy Commucci</createdBy>
-        <approvedBy>Chantal Shaxby</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>endedAt</predicate>
-      <place>Cogibox</place>
-      <source>
-        <name>Washington Post</name>
-        <ts>2013-12-23T14:03:02Z</ts>
-        <createdBy>Sergei Newlove</createdBy>
-        <approvedBy>Weider Quantrell</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>movedTo</predicate>
-      <place>Roodel</place>
-      <source>
-        <name>USA Today</name>
-        <ts>2016-02-11T22:44:18Z</ts>
-        <createdBy>Emmett Brazur</createdBy>
-        <approvedBy>Tonye Tampion</approvedBy>
-      </source>
-    </activity>
-  </activities>
+<actions>
+  <action>
+    <url>http://oaic.gov.au</url>
+    <icon>faCog</icon>
+  </action>
+  <action>
+    <url>https://multiply.com</url>
+    <icon>faCode</icon>
+  </action>
+  <action>
+    <url>http://addthis.com</url>
+    <icon>faSync</icon>
+  </action>
+</actions>
 </person>

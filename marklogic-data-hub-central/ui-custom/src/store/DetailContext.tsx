@@ -177,19 +177,19 @@ const DetailProvider: React.FC = ({children}) => {
   };
 
   const handleDeleteRecentByMaxEntries = (obj) => {
-    let maxEntries = userContext.config.dashboard.recentRecords.config.maxEntries;
+    let maxEntries = userContext.config.dashboard.recentRecords.maxEntries;
     if (Object.keys(obj).length > maxEntries)
       delete obj[Object.keys(obj)[0]];
   }
 
   const handleDeleteRecentByMaxTime = (obj) => {
-    let maxTimes = userContext.config.dashboard.recentRecords.config.maxTime;
+    let maxTime = userContext.config.dashboard.recentRecords.maxTime;
     let curr = new Date();
     for(let i=0;i<Object.keys(obj).length;i++) {
       let itemStorageTime = new Date(obj[Object.keys(obj)[i]]);
       let diffMilliSeconds = curr.getTime() - itemStorageTime.getTime();
       let diffMinutes = diffMilliSeconds/60000;
-      if(diffMinutes > maxTimes) {
+      if(diffMinutes > maxTime) {
         delete obj[Object.keys(obj)[i]];
         i--;
       }

@@ -3,218 +3,190 @@
   <personId>10064</personId>
   <nameGroup>
     <givenname>
-      <value>Elita</value>
+      <value>Suzy</value>
     </givenname>
     <surname>
-      <value>Wasteney</value>
+      <value>Ingarfill</value>
     </surname>
     <fullname>
       <classification>C</classification>
-      <restricted>false</restricted>
-      <value>Wasteney Elita</value>
+      <restricted>true</restricted>
+      <value>Ingarfill Suzy</value>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2010-02-07T01:42:05Z</ts>
+        <name>Washington Post</name>
+        <ts>2010-01-02T16:39:49Z</ts>
+      </source>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2013-09-22T17:38:32Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>thodjetts0@ning.com</value>
-      <classification>U</classification>
+      <value>cboyall0@uol.com.br</value>
+      <classification>S</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>nsteggles1@4shared.com</value>
+      <value>lthonger1@businesswire.com</value>
       <classification>C</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>447-708-9230</phone>
+  <phone>589-936-2902</phone>
   <ssn>
-    <value>197-20-5789</value>
-    <classification>(S)</classification>
+    <value>441-29-6253</value>
+    <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
       <source>
-        <name>USA Today</name>
-        <ts>2011-11-04T16:51:51Z</ts>
-        <uploadedBy>mburkert0</uploadedBy>
+        <name>Chicago Tribune</name>
+        <ts>2017-01-06T08:03:14Z</ts>
+        <uploadedBy/>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2013-07-09T15:15:57Z</ts>
-        <uploadedBy>fguerrier0</uploadedBy>
+        <name>New York Times</name>
+        <ts>2018-07-30T23:57:09Z</ts>
+        <uploadedBy>kwillatt0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>3817 Cherokee Drive</street>
-      <city>Lexington</city>
-      <state>KY</state>
-      <postal>40591</postal>
+      <street>27 Lake View Center</street>
+      <city>Portland</city>
+      <state>OR</state>
+      <postal>97286</postal>
       <country>United States</country>
-      <latitude>38.0283</latitude>
-      <longitude>-84.4715</longitude>
-    </address>
-    <address>
-      <street>5 Dapin Avenue</street>
-      <city>Sacramento</city>
-      <state>CA</state>
-      <postal>94273</postal>
-      <country>United States</country>
-      <latitude>38.3774</latitude>
-      <longitude>-121.4444</longitude>
+      <latitude>45.5806</latitude>
+      <longitude>-122.3748</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>United States</country>
-      <name>Teachers College, Columbia University</name>
-      <city>Greeley</city>
-      <state>CO</state>
-      <postal>80638</postal>
-      <latitude>40.42</latitude>
-      <longitude>-104.7099999</longitude>
-      <source>
-        <name>USA Today</name>
-        <ts>2010-08-15T21:06:59Z</ts>
-      </source>
+      <country>Canada</country>
+      <name>Humber College</name>
+      <city>Montréal</city>
+      <state>QC</state>
+      <postal>H5B</postal>
+      <latitude>45.5080397</latitude>
+      <longitude>-73.564543</longitude>
     </school>
     <school>
-      <country>Canada</country>
-      <name>Lakehead University</name>
-      <city>Sussex</city>
-      <state>NB</state>
-      <postal>E4E</postal>
-      <latitude>45.7236192</latitude>
-      <longitude>-65.5108761</longitude>
-      <source>
-        <name>USA Today</name>
-        <ts>2017-09-20T09:56:19Z</ts>
-      </source>
+      <country>United States</country>
+      <name>Bard College</name>
+      <city>Las Vegas</city>
+      <state>NV</state>
+      <postal>89193</postal>
+      <latitude>36.09</latitude>
+      <longitude>-115.15</longitude>
     </school>
   </schools>
   <status>Inactive</status>
   <sources>
     <source>
+      <name>Wall Street Journal</name>
+      <ts>2011-12-28T23:58:36Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
       <name>USA Today</name>
-      <ts>2010-09-26T03:32:48Z</ts>
+      <ts>2017-01-26T01:28:57Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10064.xml</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Wasteney Elita</fullname>
-      <city>Lexington</city>
-      <state>KY</state>
+      <id>/person/10029.xml</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Hengoed Edee</fullname>
+      <city>Gary</city>
+      <state>IN</state>
     </relation>
     <relation>
-      <id>/person/10090.xml</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Durtnell Hilary</fullname>
-      <city>Pasadena</city>
-      <state>CA</state>
+      <id>/person/10036.xml</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
+      <fullname>Bony Brendin</fullname>
+      <city>Kansas City</city>
+      <state>MO</state>
+    </relation>
+    <relation>
+      <id>/person/10055.xml</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Gallehawk Martin</fullname>
+      <city>Salt Lake City</city>
+      <state>UT</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-08T05:45:30Z</ts>
-    <user>ewasteney1r</user>
+    <ts>2022-01-24T23:17:32Z</ts>
+    <user>singarfill1r</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-11T01:29:02Z</ts>
-    <user>ewasteney1r</user>
+    <ts>2022-02-11T08:48:08Z</ts>
+    <user>singarfill1r</user>
   </lastUpdated>
-  <socials>
-    <social>
-      <site>linkedin</site>
-      <handle/>
-      <address>https://whitehouse.gov/tortor/sollicitudin/mi/sit.jpg</address>
-    </social>
-    <social>
-      <site>twitter</site>
-      <handle>mhurich1</handle>
-      <address>http://bloomberg.com/auctor/sed/tristique.jpg</address>
-    </social>
-  </socials>
+  <socials/>
   <memberships>
     <membership>
-      <list>list11</list>
-      <important>false</important>
-      <ts>2022-01-19</ts>
-    </membership>
-    <membership>
-      <list>list12</list>
-      <important>false</important>
-      <ts>2022-02-17</ts>
-    </membership>
-    <membership>
-      <list>list9</list>
-      <important>false</important>
-      <ts>2022-01-29</ts>
-    </membership>
-    <membership>
-      <list>list5</list>
+      <list>list1</list>
       <important>true</important>
-      <ts>2022-01-10</ts>
+      <ts>2021-02-17</ts>
+    </membership>
+    <membership>
+      <list>list8</list>
+      <important>false</important>
+      <ts>2021-08-17</ts>
+    </membership>
+    <membership>
+      <list>list8</list>
+      <important>false</important>
+      <ts>2022-01-18</ts>
+    </membership>
+    <membership>
+      <list>list1</list>
+      <important>true</important>
+      <ts>2021-09-25</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>https://marriott.com</url>
-      <icon>fa-eye</icon>
+      <url>https://gnu.org</url>
+      <icon>faEye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>http://desdev.cn</url>
-      <icon>fa-medal</icon>
+      <url>https://furl.net</url>
+      <icon>faMedal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>http://unc.edu</url>
-      <icon>fa-comments</icon>
+      <url>https://pagesperso-orange.fr</url>
+      <icon>faComments</icon>
     </link>
   </links>
-  <activities>
-    <activity>
-      <predicate>startedAt</predicate>
-      <place>Voomm</place>
-      <source>
-        <name>USA Today</name>
-        <ts>2020-06-07T04:42:44Z</ts>
-        <createdBy>Brant Stilldale</createdBy>
-        <approvedBy>Dru McGillicuddy</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>endedAt</predicate>
-      <place>Thoughtbridge</place>
-      <source>
-        <name>New York Times</name>
-        <ts>2022-01-31T08:16:20Z</ts>
-        <createdBy>Kattie Lytlle</createdBy>
-        <approvedBy>Melonie Scrowby</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>transferredTo</predicate>
-      <place>Photolist</place>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2012-04-12T15:26:45Z</ts>
-        <createdBy>Kori Ciotto</createdBy>
-        <approvedBy>Madge Pickavance</approvedBy>
-      </source>
-    </activity>
-  </activities>
+<actions>
+  <action>
+    <url>http://oaic.gov.au</url>
+    <icon>faCog</icon>
+  </action>
+  <action>
+    <url>https://multiply.com</url>
+    <icon>faCode</icon>
+  </action>
+  <action>
+    <url>http://addthis.com</url>
+    <icon>faSync</icon>
+  </action>
+</actions>
 </person>
