@@ -3,218 +3,192 @@
   <personId>10094</personId>
   <nameGroup>
     <givenname>
-      <value>Tori</value>
+      <value>Siward</value>
     </givenname>
     <surname>
-      <value>Nuzzti</value>
+      <value>Dulling</value>
     </surname>
     <fullname>
       <classification>U</classification>
-      <restricted>true</restricted>
-      <value>Nuzzti Tori</value>
+      <restricted>false</restricted>
+      <value>Dulling Siward</value>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2012-12-12T07:08:16Z</ts>
+        <name>Wall Street Journal</name>
+        <ts>2013-04-15T10:14:51Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>fcollimore0@fotki.com</value>
-      <classification>S</classification>
+      <value>rkopje0@latimes.com</value>
+      <classification>C</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>ngallienne1@furl.net</value>
+      <classification>C</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>115-339-1792</phone>
+  <phone>689-902-3558</phone>
   <ssn>
-    <value>399-12-8657</value>
-    <classification>(S)</classification>
+    <value>587-86-2835</value>
+    <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2020-11-16T13:05:06Z</ts>
-        <uploadedBy/>
+        <name>Chicago Tribune</name>
+        <ts>2010-06-27T10:51:12Z</ts>
+        <uploadedBy>nfloch0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>2 Becker Point</street>
-      <city>Canton</city>
-      <state>OH</state>
-      <postal>44705</postal>
+      <street>673 Northview Plaza</street>
+      <city>Hartford</city>
+      <state>CT</state>
+      <postal>06160</postal>
       <country>United States</country>
-      <latitude>40.8259</latitude>
-      <longitude>-81.3399</longitude>
+      <latitude>41.7665</latitude>
+      <longitude>-72.6933</longitude>
     </address>
     <address>
-      <street>4 Old Gate Place</street>
-      <city>Grand Junction</city>
-      <state>CO</state>
-      <postal>81505</postal>
+      <street>25 Hollow Ridge Road</street>
+      <city>Syracuse</city>
+      <state>NY</state>
+      <postal>13210</postal>
       <country>United States</country>
-      <latitude>39.1071</latitude>
-      <longitude>-108.5968</longitude>
-    </address>
-    <address>
-      <street>7288 Union Road</street>
-      <city>North Hollywood</city>
-      <state>CA</state>
-      <postal>91606</postal>
-      <country>United States</country>
-      <latitude>34.1872</latitude>
-      <longitude>-118.3865</longitude>
+      <latitude>43.0354</latitude>
+      <longitude>-76.1282</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Canada</country>
-      <name>Université du Québec à Trois-Rivières</name>
-      <city>Amherstburg</city>
-      <state>ON</state>
-      <postal>N9V</postal>
-      <latitude>42.103278</latitude>
-      <longitude>-83.1059154</longitude>
-      <source>
-        <name>USA Today</name>
-        <ts>2012-09-27T23:49:20Z</ts>
-      </source>
+      <country>Mexico</country>
+      <name>Universidad Anáhuac</name>
+      <city>Santa Fe</city>
+      <state>NLE</state>
+      <postal>64540</postal>
+      <latitude>25.692148</latitude>
+      <longitude>-100.2638682</longitude>
     </school>
     <school>
       <country>United States</country>
-      <name>Ohio Northern University</name>
-      <city>Burbank</city>
-      <state>CA</state>
-      <postal>91505</postal>
-      <latitude>34.1615135</latitude>
-      <longitude>-118.3403506</longitude>
-      <source>
-        <name>USA Today</name>
-        <ts>2015-08-05T16:05:47Z</ts>
-      </source>
+      <name>Gannon University</name>
+      <city>Norfolk</city>
+      <state>VA</state>
+      <postal>23504</postal>
+      <latitude>36.8537392</latitude>
+      <longitude>-76.2652909</longitude>
     </school>
   </schools>
-  <status>Inactive</status>
-  <sources>
-    <source>
-      <name>Los Angeles Times</name>
-      <ts>2014-12-26T10:09:29Z</ts>
-    </source>
-  </sources>
+  <status>Active</status>
   <sources>
     <source>
       <name>Wall Street Journal</name>
-      <ts>2018-12-18T18:48:27Z</ts>
+      <ts>2017-08-21T11:56:44Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
+      <id>/person/10003.xml</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
+      <fullname>Edger Piper</fullname>
+      <city>Prescott</city>
+      <state>AZ</state>
+    </relation>
+    <relation>
+      <id>/person/10027.xml</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Nockells Sela</fullname>
+      <city>Delray Beach</city>
+      <state>FL</state>
+    </relation>
+    <relation>
       <id>/person/10074.xml</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
-      <fullname>Edie Whitaker</fullname>
-      <city>Houston</city>
-      <state>TX</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Klimontovich Willetta</fullname>
+      <city>Lansing</city>
+      <state>MI</state>
     </relation>
     <relation>
-      <id>/person/10031.xml</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
-      <fullname>Sevier Katherina</fullname>
-      <city>El Paso</city>
-      <state>TX</state>
-    </relation>
-    <relation>
-      <id>/person/10066.xml</id>
+      <id>/person/10063.xml</id>
       <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Laurie Orville</fullname>
+      <city>Washington</city>
+      <state>DC</state>
+    </relation>
+    <relation>
+      <id>/person/10057.xml</id>
+      <predicate>worksWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Parlott Tootsie</fullname>
-      <city>Chicago</city>
-      <state>IL</state>
+      <fullname>Sondland Inigo</fullname>
+      <city>Washington</city>
+      <state>DC</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-28T12:56:54Z</ts>
-    <user>tnuzzti2l</user>
+    <ts>2022-01-16T21:26:19Z</ts>
+    <user>sdulling2l</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-20T16:02:04Z</ts>
-    <user>tnuzzti2l</user>
+    <ts>2022-02-02T14:05:18Z</ts>
+    <user>sdulling2l</user>
   </lastUpdated>
   <socials>
     <social>
+      <site>linkedin</site>
+      <handle>ethowless0</handle>
+      <address>https://dot.gov/eleifend/quam/a/odio.json</address>
+    </social>
+    <social>
       <site>twitter</site>
-      <handle>bpuddifer0</handle>
-      <address>https://people.com.cn/vestibulum/velit/id/pretium/iaculis.json</address>
+      <handle>gagastina1</handle>
+      <address>http://delicious.com/maecenas/rhoncus/aliquam/lacus.js</address>
+    </social>
+    <social>
+      <site>linkedin</site>
+      <handle>jcarine2</handle>
+      <address>http://buzzfeed.com/parturient/montes/nascetur/ridiculus/mus.aspx</address>
     </social>
   </socials>
-  <memberships>
-    <membership>
-      <list>list7</list>
-      <important>false</important>
-      <ts>2022-02-18</ts>
-    </membership>
-    <membership>
-      <list>list5</list>
-      <important>true</important>
-      <ts>2022-01-25</ts>
-    </membership>
-    <membership>
-      <list>list4</list>
-      <important>false</important>
-      <ts>2022-02-09</ts>
-    </membership>
-  </memberships>
+  <memberships/>
   <links>
     <link>
       <label>Quick View</label>
-      <url>http://t-online.de</url>
-      <icon>fa-eye</icon>
+      <url>http://answers.com</url>
+      <icon>faEye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>http://nifty.com</url>
-      <icon>fa-medal</icon>
+      <url>http://wisc.edu</url>
+      <icon>faMedal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>https://cisco.com</url>
-      <icon>fa-comments</icon>
+      <url>https://ted.com</url>
+      <icon>faComments</icon>
     </link>
   </links>
-  <activities>
-    <activity>
-      <predicate>endedAt</predicate>
-      <place>Flashset</place>
-      <source>
-        <name>USA Today</name>
-        <ts>2015-01-05T14:38:44Z</ts>
-        <createdBy>Wayland Chadburn</createdBy>
-        <approvedBy>Sunny Tristram</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>transferredTo</predicate>
-      <place>Myworks</place>
-      <source>
-        <name>New York Times</name>
-        <ts>2019-07-03T03:01:50Z</ts>
-        <createdBy>Marchelle Capeloff</createdBy>
-        <approvedBy>Leonid Castro</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>movedTo</predicate>
-      <place>Skiba</place>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2015-08-09T04:03:50Z</ts>
-        <createdBy>Beauregard McCree</createdBy>
-        <approvedBy>Jobey Spurnier</approvedBy>
-      </source>
-    </activity>
-  </activities>
+<actions>
+  <action>
+    <url>http://oaic.gov.au</url>
+    <icon>faCog</icon>
+  </action>
+  <action>
+    <url>https://multiply.com</url>
+    <icon>faCode</icon>
+  </action>
+  <action>
+    <url>http://addthis.com</url>
+    <icon>faSync</icon>
+  </action>
+</actions>
 </person>

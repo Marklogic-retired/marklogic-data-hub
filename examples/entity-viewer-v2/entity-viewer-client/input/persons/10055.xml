@@ -3,242 +3,189 @@
   <personId>10055</personId>
   <nameGroup>
     <givenname>
-      <value>Reynolds</value>
+      <value>Martin</value>
     </givenname>
     <surname>
-      <value>Floodgate</value>
+      <value>Gallehawk</value>
     </surname>
     <fullname>
-      <classification>S</classification>
+      <classification>U</classification>
       <restricted>true</restricted>
-      <value>Floodgate Reynolds</value>
-      <source>
-        <name>Los Angeles Times</name>
-        <ts>2020-12-25T07:55:21Z</ts>
-      </source>
+      <value>Gallehawk Martin</value>
       <source>
         <name>USA Today</name>
-        <ts>2015-06-03T22:21:24Z</ts>
-      </source>
-      <source>
-        <name>Los Angeles Times</name>
-        <ts>2018-10-15T19:41:56Z</ts>
+        <ts>2010-12-09T14:40:23Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>rnormandale0@scribd.com</value>
-      <classification>C</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>sdutt1@twitter.com</value>
+      <value>blambole0@cnbc.com</value>
       <classification>S</classification>
       <restricted>false</restricted>
     </email>
-    <email>
-      <value>dbartoloma2@tinyurl.com</value>
-      <classification>C</classification>
-      <restricted>false</restricted>
-    </email>
   </emails>
-  <phone>961-488-3677</phone>
+  <phone>748-467-2265</phone>
   <ssn>
-    <value>696-52-7049</value>
-    <classification>(S)</classification>
+    <value>686-87-7200</value>
+    <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
       <source>
-        <name>USA Today</name>
-        <ts>2017-04-09T20:40:51Z</ts>
-        <uploadedBy/>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2017-08-15T22:42:14Z</ts>
-        <uploadedBy>pmelley0</uploadedBy>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
-      <source>
-        <name>Wall Street Journal</name>
-        <ts>2014-08-24T11:23:09Z</ts>
-        <uploadedBy>mtumasian0</uploadedBy>
+        <name>New York Times</name>
+        <ts>2021-12-02T23:52:33Z</ts>
+        <uploadedBy>smacgraith0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>399 Hooker Place</street>
-      <city>Indianapolis</city>
-      <state>IN</state>
-      <postal>46221</postal>
+      <street>4629 Armistice Crossing</street>
+      <city>Salt Lake City</city>
+      <state>UT</state>
+      <postal>84120</postal>
       <country>United States</country>
-      <latitude>39.7509</latitude>
-      <longitude>-86.1924</longitude>
+      <latitude>40.695</latitude>
+      <longitude>-112.0001</longitude>
+    </address>
+    <address>
+      <street>234 Jenifer Point</street>
+      <city>Philadelphia</city>
+      <state>PA</state>
+      <postal>19196</postal>
+      <country>United States</country>
+      <latitude>40.0018</latitude>
+      <longitude>-75.1179</longitude>
     </address>
   </addresses>
   <schools>
     <school>
       <country>United States</country>
-      <name>College of St. Benedict and St. John's University</name>
-      <city>Fort Worth</city>
+      <name>Divine Word College</name>
+      <city>Beaumont</city>
       <state>TX</state>
-      <postal>76198</postal>
-      <latitude>32.7299999</latitude>
-      <longitude>-97.3199999</longitude>
-      <source>
-        <name>USA Today</name>
-        <ts>2020-05-04T23:14:33Z</ts>
-      </source>
+      <postal>77713</postal>
+      <latitude>30.0435239</latitude>
+      <longitude>-94.2743628</longitude>
+    </school>
+    <school>
+      <country>Canada</country>
+      <name>Simon Fraser University</name>
+      <city>Longueuil</city>
+      <state>QC</state>
+      <postal>J4W</postal>
+      <latitude>45.4693392</latitude>
+      <longitude>-73.4848038</longitude>
     </school>
   </schools>
   <status>Active</status>
   <sources>
     <source>
+      <name>Los Angeles Times</name>
+      <ts>2016-11-24T14:47:53Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
       <name>Washington Post</name>
-      <ts>2019-10-08T15:46:08Z</ts>
+      <ts>2012-08-10T19:53:18Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>USA Today</name>
+      <ts>2013-08-05T00:52:00Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10029.xml</id>
+      <id>/person/10075.xml</id>
       <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
+      <fullname>Search Nye</fullname>
+      <city>Las Vegas</city>
+      <state>NV</state>
+    </relation>
+    <relation>
+      <id>/person/10086.xml</id>
+      <predicate>relatedTo</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Mawford Salomi</fullname>
-      <city>Washington</city>
-      <state>DC</state>
+      <fullname>Gwinn Philippine</fullname>
+      <city>Wichita</city>
+      <state>KS</state>
+    </relation>
+    <relation>
+      <id>/person/10031.xml</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Taudevin Betti</fullname>
+      <city>Sacramento</city>
+      <state>CA</state>
     </relation>
     <relation>
       <id>/person/10068.xml</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Adaway Addie</fullname>
-      <city>Kansas City</city>
-      <state>MO</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Mundie Natalya</fullname>
+      <city>Savannah</city>
+      <state>GA</state>
     </relation>
     <relation>
-      <id>/person/10098.xml</id>
+      <id>/person/10003.xml</id>
       <predicate>worksWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Jessett Gusta</fullname>
-      <city>Virginia Beach</city>
-      <state>VA</state>
-    </relation>
-    <relation>
-      <id>/person/10082.xml</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
-      <fullname>Clues Donal</fullname>
-      <city>Portland</city>
-      <state>OR</state>
+      <fullname>Edger Piper</fullname>
+      <city>Prescott</city>
+      <state>AZ</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-16T20:10:24Z</ts>
-    <user>rfloodgate1i</user>
+    <ts>2022-02-11T15:01:26Z</ts>
+    <user>mgallehawk1i</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-07T05:32:21Z</ts>
-    <user>rfloodgate1i</user>
+    <ts>2022-01-03T16:36:43Z</ts>
+    <user>mgallehawk1i</user>
   </lastUpdated>
-  <socials/>
-  <memberships>
-    <membership>
-      <list>list12</list>
-      <important>false</important>
-      <ts>2022-02-20</ts>
-    </membership>
-    <membership>
-      <list>list1</list>
-      <important>false</important>
-      <ts>2022-01-27</ts>
-    </membership>
-    <membership>
-      <list>list6</list>
-      <important>true</important>
-      <ts>2022-02-27</ts>
-    </membership>
-    <membership>
-      <list>list3</list>
-      <important>true</important>
-      <ts>2022-01-13</ts>
-    </membership>
-  </memberships>
+  <socials>
+    <social>
+      <site>linkedin</site>
+      <handle>gvlahos0</handle>
+      <address>http://deviantart.com/elementum/in/hac/habitasse/platea/dictumst/morbi.xml</address>
+    </social>
+  </socials>
+  <memberships/>
   <links>
     <link>
       <label>Quick View</label>
-      <url>http://sohu.com</url>
-      <icon>fa-eye</icon>
+      <url>http://cnn.com</url>
+      <icon>faEye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>https://deviantart.com</url>
-      <icon>fa-medal</icon>
+      <url>https://guardian.co.uk</url>
+      <icon>faMedal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>http://ovh.net</url>
-      <icon>fa-comments</icon>
+      <url>https://ask.com</url>
+      <icon>faComments</icon>
     </link>
   </links>
-  <activities>
-    <activity>
-      <predicate>movedTo</predicate>
-      <place>Roodel</place>
-      <source>
-        <name>USA Today</name>
-        <ts>2016-09-30T01:01:16Z</ts>
-        <createdBy>Natty Kringe</createdBy>
-        <approvedBy>Hastings Greenly</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>endedAt</predicate>
-      <place>Gigashots</place>
-      <source>
-        <name>New York Times</name>
-        <ts>2013-02-09T03:49:23Z</ts>
-        <createdBy>Emmi Targetter</createdBy>
-        <approvedBy>Ernest Goricke</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>endedAt</predicate>
-      <place>Devcast</place>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2014-05-08T06:12:53Z</ts>
-        <createdBy>Colene Dinnis</createdBy>
-        <approvedBy>Scottie Bottini</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>movedTo</predicate>
-      <place>Ainyx</place>
-      <source>
-        <name>Los Angeles Times</name>
-        <ts>2013-03-18T22:06:01Z</ts>
-        <createdBy>Tiffani Ruscoe</createdBy>
-        <approvedBy>Albina Heaker</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>movedTo</predicate>
-      <place>LiveZ</place>
-      <source>
-        <name>Wall Street Journal</name>
-        <ts>2014-11-17T20:50:00Z</ts>
-        <createdBy>Lelah Crome</createdBy>
-        <approvedBy>Shurwood Tieraney</approvedBy>
-      </source>
-    </activity>
-  </activities>
+<actions>
+  <action>
+    <url>http://oaic.gov.au</url>
+    <icon>faCog</icon>
+  </action>
+  <action>
+    <url>https://multiply.com</url>
+    <icon>faCode</icon>
+  </action>
+  <action>
+    <url>http://addthis.com</url>
+    <icon>faSync</icon>
+  </action>
+</actions>
 </person>

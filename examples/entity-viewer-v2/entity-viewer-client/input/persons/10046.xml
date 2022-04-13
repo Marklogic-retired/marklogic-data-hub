@@ -3,241 +3,192 @@
   <personId>10046</personId>
   <nameGroup>
     <givenname>
-      <value>Michal</value>
+      <value>Goddart</value>
     </givenname>
     <surname>
-      <value>Webb-Bowen</value>
+      <value>Varren</value>
     </surname>
     <fullname>
       <classification>C</classification>
-      <restricted>false</restricted>
-      <value>Webb-Bowen Michal</value>
+      <restricted>true</restricted>
+      <value>Varren Goddart</value>
       <source>
         <name>Chicago Tribune</name>
-        <ts>2012-03-12T22:16:41Z</ts>
+        <ts>2014-09-06T18:04:32Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>moshirine0@ebay.com</value>
-      <classification>S</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>tdillistone1@marriott.com</value>
-      <classification>U</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>obenfield2@parallels.com</value>
+      <value>jrodgier0@loc.gov</value>
       <classification>S</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>325-543-9221</phone>
+  <phone>247-419-7882</phone>
   <ssn>
-    <value>371-92-1635</value>
-    <classification>(S)</classification>
+    <value>856-38-2763</value>
+    <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
       <source>
-        <name>Washington Post</name>
-        <ts>2010-02-25T12:17:13Z</ts>
-        <uploadedBy>jlieb0</uploadedBy>
+        <name>New York Times</name>
+        <ts>2011-12-08T07:09:10Z</ts>
+        <uploadedBy>gcrocker0</uploadedBy>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
+      <source>
+        <name>New York Times</name>
+        <ts>2012-11-17T02:37:28Z</ts>
+        <uploadedBy>dpettiward0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
       <source>
         <name>Los Angeles Times</name>
-        <ts>2015-04-25T22:26:42Z</ts>
-        <uploadedBy>jmacfadyen0</uploadedBy>
+        <ts>2013-08-16T08:23:05Z</ts>
+        <uploadedBy>ldennistoun0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2012-08-18T03:35:43Z</ts>
+        <uploadedBy>stellett0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>2 Butterfield Plaza</street>
-      <city>Toledo</city>
-      <state>OH</state>
-      <postal>43635</postal>
+      <street>28 Farwell Avenue</street>
+      <city>Richmond</city>
+      <state>VA</state>
+      <postal>23228</postal>
       <country>United States</country>
-      <latitude>41.6868</latitude>
-      <longitude>-83.4394</longitude>
+      <latitude>37.625</latitude>
+      <longitude>-77.4959</longitude>
+    </address>
+    <address>
+      <street>475 Killdeer Lane</street>
+      <city>Houston</city>
+      <state>TX</state>
+      <postal>77045</postal>
+      <country>United States</country>
+      <latitude>29.6297</latitude>
+      <longitude>-95.4382</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>United States</country>
-      <name>Kentucky Christian College</name>
-      <city>New York City</city>
-      <state>NY</state>
-      <postal>10175</postal>
-      <latitude>40.7544003</latitude>
-      <longitude>-73.9801334</longitude>
-      <source>
-        <name>USA Today</name>
-        <ts>2014-11-29T08:16:35Z</ts>
-      </source>
-      <source>
-        <name>New York Times</name>
-        <ts>2019-08-02T08:04:36Z</ts>
-      </source>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2015-06-20T05:23:57Z</ts>
-      </source>
-    </school>
-    <school>
-      <country>United States</country>
-      <name>Plymouth State College</name>
-      <city>Chesapeake</city>
-      <state>VA</state>
-      <postal>23324</postal>
-      <latitude>36.8022774</latitude>
-      <longitude>-76.2768755</longitude>
-      <source>
-        <name>USA Today</name>
-        <ts>2017-09-29T09:01:44Z</ts>
-      </source>
-      <source>
-        <name>New York Times</name>
-        <ts>2013-08-19T20:47:50Z</ts>
-      </source>
+      <country>Canada</country>
+      <name>St. Francis Xavier University</name>
+      <city>Sarnia</city>
+      <state>ON</state>
+      <postal>N7V</postal>
+      <latitude>42.9946912</latitude>
+      <longitude>-82.394</longitude>
     </school>
   </schools>
-  <status>Inactive</status>
+  <status>Active</status>
   <sources>
     <source>
-      <name>USA Today</name>
-      <ts>2019-02-17T19:21:55Z</ts>
+      <name>Washington Post</name>
+      <ts>2019-12-29T01:51:09Z</ts>
     </source>
   </sources>
   <sources>
     <source>
       <name>New York Times</name>
-      <ts>2018-06-17T13:03:01Z</ts>
+      <ts>2019-02-10T15:25:27Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10002.xml</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Surgison Gianna</fullname>
-      <city>Greensboro</city>
-      <state>NC</state>
-    </relation>
-    <relation>
-      <id>/person/10069.xml</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
-      <fullname>Drewes Gale</fullname>
-      <city>Boston</city>
-      <state>MA</state>
-    </relation>
-    <relation>
-      <id>/person/10004.xml</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Castella Lorenza</fullname>
-      <city>Saint Louis</city>
-      <state>MO</state>
-    </relation>
-    <relation>
       <id>/person/10058.xml</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
-      <fullname>Buzek Ruperto</fullname>
-      <city>Birmingham</city>
-      <state>AL</state>
-    </relation>
-    <relation>
-      <id>/person/10086.xml</id>
       <predicate>worksWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Ditt Tally</fullname>
-      <city>White Plains</city>
+      <fullname>Blees Glennie</fullname>
+      <city>Atlanta</city>
+      <state>GA</state>
+    </relation>
+    <relation>
+      <id>/person/10038.xml</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Learmonth Florette</fullname>
+      <city>New York City</city>
       <state>NY</state>
+    </relation>
+    <relation>
+      <id>/person/10083.xml</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
+      <fullname>Roddick Victoir</fullname>
+      <city>Bakersfield</city>
+      <state>CA</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-16T10:55:35Z</ts>
-    <user>mwebbbowen19</user>
+    <ts>2022-01-10T12:01:26Z</ts>
+    <user>gvarren19</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-15T09:35:46Z</ts>
-    <user>mwebbbowen19</user>
+    <ts>2022-01-09T03:22:21Z</ts>
+    <user>gvarren19</user>
   </lastUpdated>
   <socials>
     <social>
-      <site>twitter</site>
-      <handle>vwyne0</handle>
-      <address>http://marketwatch.com/porttitor/lacus/at/turpis/donec.png</address>
+      <site>linkedin</site>
+      <handle>gelphinstone0</handle>
+      <address>http://dell.com/vulputate/luctus/cum/sociis.jpg</address>
     </social>
     <social>
-      <site>linkedin</site>
-      <handle>dskittrall1</handle>
-      <address>https://scribd.com/tristique/fusce/congue/diam/id/ornare/imperdiet.json</address>
+      <site>facebook</site>
+      <handle>mcostock1</handle>
+      <address>http://prweb.com/congue.html</address>
+    </social>
+    <social>
+      <site>facebook</site>
+      <handle>dmcavinchey2</handle>
+      <address>http://dailymail.co.uk/nisl/duis.html</address>
     </social>
   </socials>
-  <memberships>
-    <membership>
-      <list>list1</list>
-      <important>false</important>
-      <ts>2022-02-17</ts>
-    </membership>
-  </memberships>
+  <memberships/>
   <links>
     <link>
       <label>Quick View</label>
-      <url>https://oakley.com</url>
-      <icon>fa-eye</icon>
+      <url>https://yellowbook.com</url>
+      <icon>faEye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>http://shop-pro.jp</url>
-      <icon>fa-medal</icon>
+      <url>https://webs.com</url>
+      <icon>faMedal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>https://geocities.jp</url>
-      <icon>fa-comments</icon>
+      <url>https://weibo.com</url>
+      <icon>faComments</icon>
     </link>
   </links>
-  <activities>
-    <activity>
-      <predicate>transferredTo</predicate>
-      <place>Meevee</place>
-      <source>
-        <name>USA Today</name>
-        <ts>2014-04-05T03:47:42Z</ts>
-        <createdBy>Penny Bance</createdBy>
-        <approvedBy>Tilda Vedmore</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>transferredTo</predicate>
-      <place>Blogtags</place>
-      <source>
-        <name>New York Times</name>
-        <ts>2020-10-10T01:49:23Z</ts>
-        <createdBy>Dario Galbreath</createdBy>
-        <approvedBy>Harvey Pattenden</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>startedAt</predicate>
-      <place>Izio</place>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2011-01-26T09:57:18Z</ts>
-        <createdBy>Parry Rivard</createdBy>
-        <approvedBy>Morlee De Cristofalo</approvedBy>
-      </source>
-    </activity>
-  </activities>
+<actions>
+  <action>
+    <url>http://oaic.gov.au</url>
+    <icon>faCog</icon>
+  </action>
+  <action>
+    <url>https://multiply.com</url>
+    <icon>faCode</icon>
+  </action>
+  <action>
+    <url>http://addthis.com</url>
+    <icon>faSync</icon>
+  </action>
+</actions>
 </person>

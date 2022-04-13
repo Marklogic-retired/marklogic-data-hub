@@ -3,270 +3,215 @@
   <personId>10010</personId>
   <nameGroup>
     <givenname>
-      <value>Humfrey</value>
+      <value>Melvin</value>
     </givenname>
     <surname>
-      <value>McCorkindale</value>
+      <value>Grinaway</value>
     </surname>
     <fullname>
-      <classification>U</classification>
+      <classification>S</classification>
       <restricted>false</restricted>
-      <value>McCorkindale Humfrey</value>
+      <value>Grinaway Melvin</value>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2013-12-29T16:29:23Z</ts>
+      </source>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2021-11-21T21:44:47Z</ts>
+      </source>
       <source>
         <name>New York Times</name>
-        <ts>2014-07-28T11:52:52Z</ts>
+        <ts>2020-12-09T13:58:27Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>askunes0@creativecommons.org</value>
-      <classification>U</classification>
+      <value>gtoupe0@intel.com</value>
+      <classification>S</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>865-320-8850</phone>
+  <phone>506-635-8367</phone>
   <ssn>
-    <value>810-04-1925</value>
-    <classification>(S)</classification>
+    <value>811-60-2930</value>
+    <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
-      <source>
-        <name>Wall Street Journal</name>
-        <ts>2015-03-25T08:54:39Z</ts>
-        <uploadedBy>jfrankish0</uploadedBy>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
       <source>
         <name>New York Times</name>
-        <ts>2012-11-13T08:51:33Z</ts>
-        <uploadedBy>lcaren0</uploadedBy>
+        <ts>2019-08-22T11:56:22Z</ts>
+        <uploadedBy/>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
       <source>
-        <name>New York Times</name>
-        <ts>2010-11-01T23:08:53Z</ts>
-        <uploadedBy>lkevis0</uploadedBy>
+        <name>Chicago Tribune</name>
+        <ts>2020-05-01T02:04:13Z</ts>
+        <uploadedBy>lstapleton0</uploadedBy>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
       <source>
         <name>Los Angeles Times</name>
-        <ts>2010-05-13T19:35:21Z</ts>
-        <uploadedBy>jferminger0</uploadedBy>
+        <ts>2018-02-02T22:08:14Z</ts>
+        <uploadedBy>sorme0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>1338 Service Court</street>
-      <city>Columbia</city>
-      <state>SC</state>
-      <postal>29203</postal>
+      <street>2642 Melby Point</street>
+      <city>Corona</city>
+      <state>CA</state>
+      <postal>92878</postal>
       <country>United States</country>
-      <latitude>34.0635</latitude>
-      <longitude>-81.0265</longitude>
+      <latitude>33.7529</latitude>
+      <longitude>-116.0556</longitude>
     </address>
     <address>
-      <street>96 Carioca Terrace</street>
-      <city>Tampa</city>
-      <state>FL</state>
-      <postal>33620</postal>
+      <street>750 Green Trail</street>
+      <city>Decatur</city>
+      <state>IL</state>
+      <postal>62525</postal>
       <country>United States</country>
-      <latitude>28.06</latitude>
-      <longitude>-82.4079</longitude>
+      <latitude>39.854</latitude>
+      <longitude>-88.9815</longitude>
+    </address>
+    <address>
+      <street>169 Corben Pass</street>
+      <city>Manassas</city>
+      <state>VA</state>
+      <postal>22111</postal>
+      <country>United States</country>
+      <latitude>38.7202</latitude>
+      <longitude>-77.4391</longitude>
     </address>
   </addresses>
   <schools>
     <school>
       <country>Mexico</country>
-      <name>Instituto de Estudios Superiores de la Sierra</name>
-      <city>El Mirador</city>
+      <name>Universidad de Montemorelos</name>
+      <city>Primero de Mayo</city>
       <state>VER</state>
-      <postal>93429</postal>
-      <latitude>20.452352</latitude>
-      <longitude>-97.3141928</longitude>
-      <source>
-        <name>USA Today</name>
-        <ts>2010-05-25T12:09:07Z</ts>
-      </source>
+      <postal>95193</postal>
+      <latitude>19.1753648</latitude>
+      <longitude>-96.1427574</longitude>
+    </school>
+    <school>
+      <country>United States</country>
+      <name>Texas College of Osteopathic Medicine</name>
+      <city>Indianapolis</city>
+      <state>IN</state>
+      <postal>46278</postal>
+      <latitude>39.8911731</latitude>
+      <longitude>-86.2869507</longitude>
     </school>
   </schools>
-  <status>Inactive</status>
+  <status>Active</status>
   <sources>
     <source>
-      <name>New York Times</name>
-      <ts>2021-06-11T05:26:33Z</ts>
+      <name>Chicago Tribune</name>
+      <ts>2016-11-07T11:28:36Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Washington Post</name>
+      <ts>2017-09-07T00:55:15Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10095.xml</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Jean Briant</fullname>
-      <city>Lincoln</city>
-      <state>NE</state>
-    </relation>
-    <relation>
-      <id>/person/10077.xml</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
-      <fullname>Sancho Veda</fullname>
-      <city>Spokane</city>
-      <state>WA</state>
-    </relation>
-    <relation>
-      <id>/person/10047.xml</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Treacy Reggie</fullname>
-      <city>Raleigh</city>
-      <state>NC</state>
-    </relation>
-    <relation>
-      <id>/person/10006.xml</id>
+      <id>/person/10029.xml</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Whyke Nettle</fullname>
-      <city>Tacoma</city>
-      <state>WA</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Hengoed Edee</fullname>
+      <city>Gary</city>
+      <state>IN</state>
     </relation>
     <relation>
-      <id>/person/10057.xml</id>
+      <id>/person/10025.xml</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Blamphin Jamison</fullname>
-      <city>Hampton</city>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
+      <fullname>Innwood Silva</fullname>
+      <city>Roanoke</city>
       <state>VA</state>
+    </relation>
+    <relation>
+      <id>/person/10056.xml</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Aikman Milly</fullname>
+      <city>Pittsburgh</city>
+      <state>PA</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-08T05:45:07Z</ts>
-    <user>hmccorkindale9</user>
+    <ts>2022-01-23T18:31:31Z</ts>
+    <user>mgrinaway9</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-03T14:33:09Z</ts>
-    <user>hmccorkindale9</user>
+    <ts>2022-02-10T10:10:39Z</ts>
+    <user>mgrinaway9</user>
   </lastUpdated>
-  <socials>
-    <social>
-      <site>linkedin</site>
-      <handle>lletixier0</handle>
-      <address>http://elpais.com/ut/suscipit/a/feugiat/et.xml</address>
-    </social>
-  </socials>
+  <socials/>
   <memberships>
-    <membership>
-      <list>list9</list>
-      <important>false</important>
-      <ts>2022-01-19</ts>
-    </membership>
-    <membership>
-      <list>list10</list>
-      <important>false</important>
-      <ts>2022-01-28</ts>
-    </membership>
     <membership>
       <list>list12</list>
       <important>false</important>
-      <ts>2022-01-15</ts>
+      <ts>2021-02-15</ts>
+    </membership>
+    <membership>
+      <list>list12</list>
+      <important>true</important>
+      <ts>2021-07-22</ts>
+    </membership>
+    <membership>
+      <list>list11</list>
+      <important>false</important>
+      <ts>2022-01-16</ts>
+    </membership>
+    <membership>
+      <list>list6</list>
+      <important>false</important>
+      <ts>2021-07-22</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>http://illinois.edu</url>
-      <icon>fa-eye</icon>
+      <url>https://home.pl</url>
+      <icon>faEye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>https://dmoz.org</url>
-      <icon>fa-medal</icon>
+      <url>http://gmpg.org</url>
+      <icon>faMedal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>http://youtu.be</url>
-      <icon>fa-comments</icon>
+      <url>https://google.de</url>
+      <icon>faComments</icon>
     </link>
   </links>
-  <activities>
-    <activity>
-      <predicate>endedAt</predicate>
-      <place>Twiyo</place>
-      <source>
-        <name>USA Today</name>
-        <ts>2012-05-10T19:51:28Z</ts>
-        <createdBy>Lamont Hagart</createdBy>
-        <approvedBy>Iona Winward</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>startedAt</predicate>
-      <place>Skivee</place>
-      <source>
-        <name>New York Times</name>
-        <ts>2011-04-22T08:18:40Z</ts>
-        <createdBy>Robbin Henric</createdBy>
-        <approvedBy>Hewet Anfrey</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>endedAt</predicate>
-      <place>Meemm</place>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2016-04-20T04:28:19Z</ts>
-        <createdBy>Mason Arrol</createdBy>
-        <approvedBy>Margarette Duff</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>startedAt</predicate>
-      <place>Zoomzone</place>
-      <source>
-        <name>Los Angeles Times</name>
-        <ts>2011-07-06T16:18:13Z</ts>
-        <createdBy>Isadore Ferrieroi</createdBy>
-        <approvedBy>Mayor de Savery</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>movedTo</predicate>
-      <place>Topicstorm</place>
-      <source>
-        <name>Wall Street Journal</name>
-        <ts>2016-01-16T00:25:17Z</ts>
-        <createdBy>Julia Mendenhall</createdBy>
-        <approvedBy>Frannie Northing</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>startedAt</predicate>
-      <place>Edgepulse</place>
-      <source>
-        <name>Washington Post</name>
-        <ts>2019-11-07T06:33:59Z</ts>
-        <createdBy>Esma Milborn</createdBy>
-        <approvedBy>Melisse Colquitt</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>endedAt</predicate>
-      <place>Twitternation</place>
-      <source>
-        <name>USA Today</name>
-        <ts>2013-11-07T08:18:58Z</ts>
-        <createdBy>Hunter Plackstone</createdBy>
-        <approvedBy>Carina Beale</approvedBy>
-      </source>
-    </activity>
-  </activities>
+<actions>
+  <action>
+    <url>http://oaic.gov.au</url>
+    <icon>faCog</icon>
+  </action>
+  <action>
+    <url>https://multiply.com</url>
+    <icon>faCode</icon>
+  </action>
+  <action>
+    <url>http://addthis.com</url>
+    <icon>faSync</icon>
+  </action>
+</actions>
 </person>

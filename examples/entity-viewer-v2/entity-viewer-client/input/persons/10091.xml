@@ -3,243 +3,175 @@
   <personId>10091</personId>
   <nameGroup>
     <givenname>
-      <value>Gizela</value>
+      <value>Rafa</value>
     </givenname>
     <surname>
-      <value>Kopp</value>
+      <value>Furzer</value>
     </surname>
     <fullname>
-      <classification>S</classification>
-      <restricted>false</restricted>
-      <value>Kopp Gizela</value>
-      <source>
-        <name>Washington Post</name>
-        <ts>2013-04-18T07:10:52Z</ts>
-      </source>
+      <classification>U</classification>
+      <restricted>true</restricted>
+      <value>Furzer Rafa</value>
       <source>
         <name>Chicago Tribune</name>
-        <ts>2018-01-14T03:07:47Z</ts>
+        <ts>2016-02-05T06:16:25Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>edever0@prweb.com</value>
+      <value>fbiasioli0@joomla.org</value>
+      <classification>U</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>bbutlin1@businessweek.com</value>
       <classification>S</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>stookill1@cornell.edu</value>
-      <classification>C</classification>
+      <value>cpol2@stumbleupon.com</value>
+      <classification>U</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>813-463-3184</phone>
+  <phone>731-951-4527</phone>
   <ssn>
-    <value>114-13-7191</value>
-    <classification>(S)</classification>
+    <value>185-50-1123</value>
+    <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
       <source>
-        <name>New York Times</name>
-        <ts>2012-01-21T15:42:45Z</ts>
-        <uploadedBy>bvanichkin0</uploadedBy>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
-      <source>
-        <name>Wall Street Journal</name>
-        <ts>2014-01-15T16:37:51Z</ts>
-        <uploadedBy>waloshikin0</uploadedBy>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
-      <source>
-        <name>Los Angeles Times</name>
-        <ts>2015-04-01T17:02:39Z</ts>
-        <uploadedBy>rbotton0</uploadedBy>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2019-10-08T15:15:38Z</ts>
-        <uploadedBy/>
+        <name>Washington Post</name>
+        <ts>2019-07-05T03:58:59Z</ts>
+        <uploadedBy>ymitchener0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>30194 Jay Place</street>
-      <city>Evansville</city>
-      <state>IN</state>
-      <postal>47705</postal>
-      <country>United States</country>
-      <latitude>37.9971</latitude>
-      <longitude>-87.575</longitude>
-    </address>
-    <address>
-      <street>2573 Bultman Junction</street>
-      <city>El Paso</city>
-      <state>TX</state>
-      <postal>79994</postal>
-      <country>United States</country>
-      <latitude>31.6948</latitude>
-      <longitude>-106.3</longitude>
-    </address>
-    <address>
-      <street>077 Mifflin Avenue</street>
-      <city>Los Angeles</city>
+      <street>6336 Carberry Lane</street>
+      <city>Chula Vista</city>
       <state>CA</state>
-      <postal>90025</postal>
+      <postal>91913</postal>
       <country>United States</country>
-      <latitude>34.0447</latitude>
-      <longitude>-118.4487</longitude>
+      <latitude>32.6513</latitude>
+      <longitude>-116.9852</longitude>
+    </address>
+    <address>
+      <street>63 Northport Hill</street>
+      <city>Terre Haute</city>
+      <state>IN</state>
+      <postal>47805</postal>
+      <country>United States</country>
+      <latitude>39.5327</latitude>
+      <longitude>-87.3255</longitude>
+    </address>
+    <address>
+      <street>2753 Northridge Trail</street>
+      <city>Denver</city>
+      <state>CO</state>
+      <postal>80249</postal>
+      <country>United States</country>
+      <latitude>39.7783</latitude>
+      <longitude>-104.7556</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Mexico</country>
-      <name>Universidad Pedagógica Nacional</name>
-      <city>Benito Juarez</city>
-      <state>GRO</state>
-      <postal>41800</postal>
-      <latitude>19.4102526</latitude>
-      <longitude>-99.0073673</longitude>
-      <source>
-        <name>USA Today</name>
-        <ts>2013-03-16T04:24:09Z</ts>
-      </source>
-      <source>
-        <name>New York Times</name>
-        <ts>2018-05-31T06:14:31Z</ts>
-      </source>
+      <country>United States</country>
+      <name>Minot State University</name>
+      <city>Odessa</city>
+      <state>TX</state>
+      <postal>79764</postal>
+      <latitude>31.8840886</latitude>
+      <longitude>-102.4953899</longitude>
     </school>
   </schools>
   <status>Active</status>
   <sources>
     <source>
-      <name>USA Today</name>
-      <ts>2015-06-09T09:00:10Z</ts>
+      <name>Los Angeles Times</name>
+      <ts>2021-04-13T09:55:50Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Los Angeles Times</name>
+      <ts>2021-12-26T11:04:02Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Wall Street Journal</name>
+      <ts>2021-10-29T18:13:50Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10084.xml</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
-      <fullname>Luesley Nikki</fullname>
-      <city>Jackson</city>
-      <state>MS</state>
-    </relation>
-    <relation>
-      <id>/person/10036.xml</id>
-      <predicate>livesWith</predicate>
+      <id>/person/10001.xml</id>
+      <predicate>relatedTo</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Margeram Kingsly</fullname>
-      <city>Topeka</city>
-      <state>KS</state>
+      <fullname>Tubritt Brigit</fullname>
+      <city>Saginaw</city>
+      <state>MI</state>
     </relation>
     <relation>
-      <id>/person/10059.xml</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
-      <fullname>Benfell Sonnie</fullname>
-      <city>Stamford</city>
-      <state>CT</state>
-    </relation>
-    <relation>
-      <id>/person/10011.xml</id>
+      <id>/person/10090.xml</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Orpen Birgitta</fullname>
-      <city>Corpus Christi</city>
-      <state>TX</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
+      <fullname>Tomkin Horton</fullname>
+      <city>Fort Lauderdale</city>
+      <state>FL</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-04T05:13:26Z</ts>
-    <user>gkopp2i</user>
+    <ts>2022-02-12T02:19:52Z</ts>
+    <user>rfurzer2i</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-13T10:28:46Z</ts>
-    <user>gkopp2i</user>
+    <ts>2022-01-05T18:09:49Z</ts>
+    <user>rfurzer2i</user>
   </lastUpdated>
   <socials/>
   <memberships>
     <membership>
-      <list>list9</list>
+      <list>list2</list>
       <important>true</important>
-      <ts>2022-02-20</ts>
-    </membership>
-    <membership>
-      <list>list3</list>
-      <important>true</important>
-      <ts>2022-01-15</ts>
-    </membership>
-    <membership>
-      <list>list11</list>
-      <important>true</important>
-      <ts>2022-01-17</ts>
-    </membership>
-    <membership>
-      <list>list8</list>
-      <important>true</important>
-      <ts>2022-02-03</ts>
+      <ts>2021-10-13</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>https://vkontakte.ru</url>
-      <icon>fa-eye</icon>
+      <url>http://redcross.org</url>
+      <icon>faEye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>https://imgur.com</url>
-      <icon>fa-medal</icon>
+      <url>http://oracle.com</url>
+      <icon>faMedal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>http://instagram.com</url>
-      <icon>fa-comments</icon>
+      <url>http://soup.io</url>
+      <icon>faComments</icon>
     </link>
   </links>
-  <activities>
-    <activity>
-      <predicate>endedAt</predicate>
-      <place>Gevee</place>
-      <source>
-        <name>USA Today</name>
-        <ts>2015-03-29T23:34:29Z</ts>
-        <createdBy>Tomlin Huckle</createdBy>
-        <approvedBy>Fred Kupper</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>transferredTo</predicate>
-      <place>Twiyo</place>
-      <source>
-        <name>New York Times</name>
-        <ts>2020-09-05T09:00:48Z</ts>
-        <createdBy>Ardisj Tamburi</createdBy>
-        <approvedBy>Madeline Alelsandrowicz</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>transferredTo</predicate>
-      <place>Wikizz</place>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2021-01-24T01:18:50Z</ts>
-        <createdBy>Kele Romanelli</createdBy>
-        <approvedBy>Eartha Syratt</approvedBy>
-      </source>
-    </activity>
-  </activities>
+<actions>
+  <action>
+    <url>http://oaic.gov.au</url>
+    <icon>faCog</icon>
+  </action>
+  <action>
+    <url>https://multiply.com</url>
+    <icon>faCode</icon>
+  </action>
+  <action>
+    <url>http://addthis.com</url>
+    <icon>faSync</icon>
+  </action>
+</actions>
 </person>

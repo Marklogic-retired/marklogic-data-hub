@@ -43,6 +43,13 @@
             "invalid-values": "reject"
         },
         {
+            "scalar-type": "string",
+            "path-expression": "/organization/sources/source/name",
+            "collation": "http://marklogic.com/collation/codepoint",
+            "range-value-positions": false,
+            "invalid-values": "reject"
+        },
+        {
             "scalar-type": "dateTime",
             "path-expression": "/person/createdOn/ts",
             "range-value-positions": false,
@@ -50,7 +57,7 @@
         },
         {
             "scalar-type": "dateTime",
-            "path-expression": "/person/lastUpdated/ts",
+            "path-expression": "/organization/createdOn/ts",
             "range-value-positions": false,
             "invalid-values": "reject"
         }

@@ -3,256 +3,172 @@
   <personId>10093</personId>
   <nameGroup>
     <givenname>
-      <value>Salomi</value>
+      <value>Grata</value>
     </givenname>
     <surname>
-      <value>Patridge</value>
+      <value>Winnett</value>
     </surname>
     <fullname>
-      <classification>U</classification>
+      <classification>S</classification>
       <restricted>false</restricted>
-      <value>Patridge Salomi</value>
+      <value>Winnett Grata</value>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2020-12-01T02:58:36Z</ts>
+        <name>Wall Street Journal</name>
+        <ts>2013-09-06T00:29:55Z</ts>
+      </source>
+      <source>
+        <name>Washington Post</name>
+        <ts>2021-07-20T10:48:35Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>kpicker0@biblegateway.com</value>
+      <value>mmaciver0@google.ru</value>
       <classification>C</classification>
       <restricted>false</restricted>
     </email>
-    <email>
-      <value>kromaynes1@irs.gov</value>
-      <classification>S</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>idaintry2@usda.gov</value>
-      <classification>U</classification>
-      <restricted>false</restricted>
-    </email>
   </emails>
-  <phone>761-722-4260</phone>
+  <phone>243-968-9814</phone>
   <ssn>
-    <value>804-13-9048</value>
-    <classification>(S)</classification>
+    <value>266-10-8598</value>
+    <restricted>true</restricted>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
       <source>
-        <name>Washington Post</name>
-        <ts>2013-11-08T16:03:24Z</ts>
-        <uploadedBy>aafonso0</uploadedBy>
+        <name>Los Angeles Times</name>
+        <ts>2012-01-06T18:00:35Z</ts>
+        <uploadedBy>pcompson0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2019-09-04T02:06:52Z</ts>
+        <uploadedBy>mkinghorne0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>7127 Myrtle Way</street>
-      <city>Vero Beach</city>
-      <state>FL</state>
-      <postal>32969</postal>
+      <street>132 Eggendart Hill</street>
+      <city>Pittsburgh</city>
+      <state>PA</state>
+      <postal>15255</postal>
       <country>United States</country>
-      <latitude>27.709</latitude>
-      <longitude>-80.5726</longitude>
+      <latitude>40.4344</latitude>
+      <longitude>-80.0248</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Canada</country>
-      <name>Institut National de la Recherche Scientifique, Université du Québec</name>
-      <city>Okanagan</city>
-      <state>BC</state>
-      <postal>T0P</postal>
-      <latitude>49.8531509</latitude>
-      <longitude>-119.611543</longitude>
-      <source>
-        <name>USA Today</name>
-        <ts>2011-07-15T09:09:16Z</ts>
-      </source>
-      <source>
-        <name>New York Times</name>
-        <ts>2018-11-12T10:06:37Z</ts>
-      </source>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2010-12-23T03:19:39Z</ts>
-      </source>
+      <country>United States</country>
+      <name>Roger Williams University</name>
+      <city>Springfield</city>
+      <state>MA</state>
+      <postal>01114</postal>
+      <latitude>42.1072582</latitude>
+      <longitude>-72.5815752</longitude>
+    </school>
+    <school>
+      <country>United Kingdom</country>
+      <name>University of Lincoln</name>
+      <city>Craigavon</city>
+      <state>NIR</state>
+      <postal>BT66</postal>
+      <latitude>54.4429264</latitude>
+      <longitude>-6.4175653</longitude>
     </school>
   </schools>
   <status>Inactive</status>
   <sources>
     <source>
-      <name>Chicago Tribune</name>
-      <ts>2014-03-03T20:26:31Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>New York Times</name>
-      <ts>2013-05-01T07:18:42Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>Washington Post</name>
-      <ts>2011-01-04T13:37:28Z</ts>
+      <name>USA Today</name>
+      <ts>2014-09-27T01:56:30Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10018.xml</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
-      <fullname>Nottingam Madel</fullname>
-      <city>Las Cruces</city>
-      <state>NM</state>
-    </relation>
-    <relation>
-      <id>/person/10064.xml</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Wasteney Elita</fullname>
-      <city>Lexington</city>
-      <state>KY</state>
-    </relation>
-    <relation>
-      <id>/person/10093.xml</id>
+      <id>/person/10024.xml</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Patridge Salomi</fullname>
-      <city>Vero Beach</city>
-      <state>FL</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Woollam Bondon</fullname>
+      <city>Newark</city>
+      <state>NJ</state>
+    </relation>
+    <relation>
+      <id>/person/10078.xml</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
+      <fullname>Parsley Ronda</fullname>
+      <city>Fresno</city>
+      <state>CA</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-26T21:40:13Z</ts>
-    <user>spatridge2k</user>
+    <ts>2022-01-21T12:01:34Z</ts>
+    <user>gwinnett2k</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-26T23:22:06Z</ts>
-    <user>spatridge2k</user>
+    <ts>2022-01-07T11:13:56Z</ts>
+    <user>gwinnett2k</user>
   </lastUpdated>
   <socials>
     <social>
-      <site>twitter</site>
-      <handle>nrein0</handle>
-      <address>https://irs.gov/congue/etiam/justo/etiam/pretium/iaculis/justo.json</address>
-    </social>
-    <social>
-      <site>twitter</site>
-      <handle>pfavela1</handle>
-      <address>http://shutterfly.com/augue/a/suscipit.jsp</address>
-    </social>
-    <social>
       <site>linkedin</site>
-      <handle/>
-      <address>https://wix.com/nam/tristique/tortor/eu.jsp</address>
+      <handle>bpionter0</handle>
+      <address>https://weather.com/auctor/gravida/sem/praesent/id/massa.js</address>
+    </social>
+    <social>
+      <site>twitter</site>
+      <handle>hhazley1</handle>
+      <address>http://dmoz.org/ridiculus/mus/etiam/vel/augue/vestibulum/rutrum.xml</address>
     </social>
   </socials>
   <memberships>
     <membership>
-      <list>list4</list>
-      <important>false</important>
-      <ts>2022-01-16</ts>
+      <list>list5</list>
+      <important>true</important>
+      <ts>2021-09-01</ts>
     </membership>
     <membership>
-      <list>list4</list>
+      <list>list9</list>
       <important>true</important>
-      <ts>2022-02-07</ts>
+      <ts>2021-09-16</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>https://intel.com</url>
-      <icon>fa-eye</icon>
+      <url>http://linkedin.com</url>
+      <icon>faEye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>https://de.vu</url>
-      <icon>fa-medal</icon>
+      <url>http://samsung.com</url>
+      <icon>faMedal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>http://dion.ne.jp</url>
-      <icon>fa-comments</icon>
+      <url>https://skype.com</url>
+      <icon>faComments</icon>
     </link>
   </links>
-  <activities>
-    <activity>
-      <predicate>endedAt</predicate>
-      <place>Jamia</place>
-      <source>
-        <name>USA Today</name>
-        <ts>2017-07-28T12:07:13Z</ts>
-        <createdBy>Randal Cazin</createdBy>
-        <approvedBy>Flo Aylmore</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>endedAt</predicate>
-      <place>Devpoint</place>
-      <source>
-        <name>New York Times</name>
-        <ts>2015-04-20T17:18:36Z</ts>
-        <createdBy>Dalis Klimke</createdBy>
-        <approvedBy>Leonerd Roxby</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>startedAt</predicate>
-      <place>Feedfish</place>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2011-09-18T14:18:48Z</ts>
-        <createdBy>Hildagard Locks</createdBy>
-        <approvedBy>Xever Stedell</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>endedAt</predicate>
-      <place>Yakidoo</place>
-      <source>
-        <name>Los Angeles Times</name>
-        <ts>2018-08-14T15:23:06Z</ts>
-        <createdBy>Tildy Giacomuzzo</createdBy>
-        <approvedBy>Garvin Isles</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>movedTo</predicate>
-      <place>Dabfeed</place>
-      <source>
-        <name>Wall Street Journal</name>
-        <ts>2016-08-02T01:17:50Z</ts>
-        <createdBy>Corny Bilham</createdBy>
-        <approvedBy>Ester Pennycord</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>movedTo</predicate>
-      <place>Lazzy</place>
-      <source>
-        <name>Washington Post</name>
-        <ts>2020-03-01T07:59:09Z</ts>
-        <createdBy>Cherilyn Lock</createdBy>
-        <approvedBy>Gregg Schenfisch</approvedBy>
-      </source>
-    </activity>
-    <activity>
-      <predicate>transferredTo</predicate>
-      <place>Kayveo</place>
-      <source>
-        <name>USA Today</name>
-        <ts>2013-06-15T11:10:43Z</ts>
-        <createdBy>Nonie Snowball</createdBy>
-        <approvedBy>Fenelia Harback</approvedBy>
-      </source>
-    </activity>
-  </activities>
+<actions>
+  <action>
+    <url>http://oaic.gov.au</url>
+    <icon>faCog</icon>
+  </action>
+  <action>
+    <url>https://multiply.com</url>
+    <icon>faCode</icon>
+  </action>
+  <action>
+    <url>http://addthis.com</url>
+    <icon>faSync</icon>
+  </action>
+</actions>
 </person>

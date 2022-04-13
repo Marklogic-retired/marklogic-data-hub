@@ -15,12 +15,12 @@ import SocialMedia from "../components/SocialMedia/SocialMedia";
 import Membership from "../components/Membership/Membership";
 import ImageGallery from "../components/ImageGallery/ImageGallery";
 import ImageGalleryMulti from "../components/ImageGalleryMulti/ImageGalleryMulti";
+import LinkList from "../components/LinkList/LinkList";
 import {ArrowLeft, ChevronDoubleDown, ChevronDoubleUp} from "react-bootstrap-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faStar} from "@fortawesome/free-solid-svg-icons";
 import "./Detail.scss";
 import _ from "lodash";
-import LinkList from "../components/LinkList/LinkList";
 
 type Props = {};
 
@@ -61,6 +61,7 @@ const Detail: React.FC<Props> = (props) => {
   const [expand, setExpand] = useState<any>(true);
 
   let id = searchParams.get('recordId')
+  const entityType = detailContext.detail.entityType;
 
   const handleExpandClick = () => {
     if (expand) {
@@ -84,6 +85,7 @@ const Detail: React.FC<Props> = (props) => {
   };
 
   useEffect(() => {
+    console.log("useEffect id", id);
     setConfig(userContext.config);
     // If config is loaded and id is present but detail context is
     // empty, load detail context so content is displayed
@@ -136,7 +138,7 @@ const Detail: React.FC<Props> = (props) => {
     );
   };
 
-  let getPersonalItems = (items) => {
+  let getRecordItems = (items) => {
     const personaItems = items.map((it, index) => {
       if (it.component) {
         return (
@@ -165,18 +167,20 @@ const Detail: React.FC<Props> = (props) => {
 
         <div>
 
-          {config?.detail?.heading ?
-            getHeading(config.detail.heading)
+          {config?.detail?.entities[entityType]?.heading ?
+            getHeading(config.detail.entities[entityType].heading)
             : null}
 
           <div className="container-fluid">
 
-            {React.createElement(
-              COMPONENTS.LinkList,
-              {config: config?.detail?.linkList.config, data: detailContext.detail}, null
-            )}
+            {config?.detail?.entities[entityType]?.linkList?.config && <div>
+              {React.createElement(
+                COMPONENTS.LinkList,
+                {config: config?.detail?.entities[entityType]?.linkList.config, data: detailContext.detail}, null
+              )}
+            </div>}
 
-            {config?.detail?.membership && <div className="row">
+            {config?.detail?.entities[entityType]?.membership && <div className="row">
               <div className="col-12">
                 <Section title="Membership" config={{
                   "headerStyle": {
@@ -191,8 +195,8 @@ const Detail: React.FC<Props> = (props) => {
                   onExpand={() => {handleExpandIdsClick('membership', true)}}
                   onCollapse={() => {handleExpandIdsClick('membership', false)}}>
                   {React.createElement(
-                    COMPONENTS[config.detail.membership.component],
-                    {config: config.detail.membership.config, data: detailContext.detail}, null
+                    COMPONENTS[config?.detail?.entities[entityType]?.membership.component],
+                    {config: config?.detail?.entities[entityType]?.membership.config, data: detailContext.detail}, null
                   )}
                 </Section>
               </div>
@@ -201,20 +205,20 @@ const Detail: React.FC<Props> = (props) => {
             <div className="row">
               <div className="col-lg-7">
 
-                {config?.detail?.info &&
-                  <Section title={config?.detail?.info.title}
+                {config?.detail?.entities[entityType]?.info &&
+                  <Section title={config?.detail?.entities[entityType]?.info.title}
                     collapsible={true}
                     expand={expandIds.info}
                     onExpand={() => {handleExpandIdsClick('info', true)}}
                     onCollapse={() => {handleExpandIdsClick('info', false)}} >
-                    {getPersonalItems(config?.detail?.info?.items)}
+                    {getRecordItems(config?.detail?.entities[entityType]?.info?.items)}
                   </Section>
                 }
 
               </div>
               <div className="col-lg-5">
 
-                {config?.detail?.relationships &&
+                {config?.detail?.entities[entityType]?.relationships &&
                   <Section
                     title="Relationships"
                     collapsible={true}
@@ -227,14 +231,14 @@ const Detail: React.FC<Props> = (props) => {
                     }}>
                     <div className="relationships">
                       {React.createElement(
-                        COMPONENTS[config.detail.relationships.component],
-                        {config: config?.detail?.relationships.config, data: detailContext.detail}, null
+                        COMPONENTS[config?.detail?.entities[entityType]?.relationships.component],
+                        {config: config?.detail?.entities[entityType]?.relationships.config, data: detailContext.detail}, null
                       )}
                     </div>
                   </Section>
                 }
 
-                {config?.detail?.imageGallery &&
+                {config?.detail?.entities[entityType]?.imageGallery &&
                   <Section title="Image Gallery"
                     collapsible={true}
                     expand={expandIds.imageGallery}
@@ -242,8 +246,8 @@ const Detail: React.FC<Props> = (props) => {
                     onCollapse={() => {handleExpandIdsClick('imageGallery', false)}}
                   >
                     {React.createElement(
-                      COMPONENTS[config.detail.imageGallery.component],
-                      {config: config?.detail?.imageGallery?.config, data: detailContext.detail}, null
+                      COMPONENTS[config?.detail?.entities[entityType]?.imageGallery.component],
+                      {config: config?.detail?.entities[entityType]?.imageGallery.config, data: detailContext.detail}, null
                     )}
                   </Section>
                 }
