@@ -50,6 +50,9 @@
         td:nth-last-child(3), td:nth-last-child(2), td:nth-last-child(1) {
             width: 1%;
         }
+        td.metadata {
+            width: 22px;
+        }
         td.metadata div {
             font-size: 12px;
             text-align: center;

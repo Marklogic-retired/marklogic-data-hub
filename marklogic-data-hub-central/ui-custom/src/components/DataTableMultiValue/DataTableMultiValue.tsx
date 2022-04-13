@@ -110,12 +110,19 @@ const DataTableMultiValue: React.FC<Props> = (props) => {
             <Table id={props.config.id} size="sm" style={tableStyle} className={hideClass} data-testid={"table-"+ props.config.id}>
             <thead>
                 <tr>
+                    {_.isArray(props.config.metadata) && props.config.metadata.map((col, i2) => {
+                        if (col?.placement !== 'before') return 
+                        return (
+                            <th key={"head-" + (i2 + props.config.cols.length)}></th>
+                        );
+                    })}
                     {_.isArray(props.config.cols) && props.config.cols.map((col, i) => {
                         return (
                             <th key={"head-" + i} style={{width: col.width}}>{col.title}</th>
                         );
                     })}
                     {_.isArray(props.config.metadata) && props.config.metadata.map((col, i2) => {
+                        if (col?.placement === 'before') return 
                         return (
                             <th key={"head-" + (i2 + props.config.cols.length)}></th>
                         );

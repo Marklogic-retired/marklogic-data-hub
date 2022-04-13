@@ -564,7 +564,7 @@
               {
                 "type": "block",
                 "color": "#5d6aaa",
-                "placement": "before",
+                "placement": "after",
                 "popover": {
                   "title": "Sources",
                   "dataPath": "source",
