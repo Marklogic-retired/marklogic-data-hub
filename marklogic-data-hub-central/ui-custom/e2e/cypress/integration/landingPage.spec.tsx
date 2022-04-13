@@ -6,7 +6,7 @@ describe("Visit Entity Viewer Landing page", () => {
     cy.visit("/");
     cy.title().should("eq", "Entity Viewer");
     landingPage.dashboard().should("be.visible");
-    cy.waitUntil(() => landingPage.whatsNewChart().should("be.visible",{timeout:5000}));
+    landingPage.whatsNewChart().should("be.visible",{timeout:5000});
   });
   it("Validate the Header Menus", () => {
     landingPage.menuOptions().eq(0).should("be.visible");

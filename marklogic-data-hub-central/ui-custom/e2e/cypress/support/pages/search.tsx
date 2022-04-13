@@ -9,7 +9,34 @@ class SearchPage {
   menuEntityDropdown() {
     return cy.get(".sticky-top").find("#searchBoxDropdown");
   }
-
+  searchButton() {
+    return cy.findByTestId("submit");
+  }
+  resultsList() {
+    return cy.get(".resultsList");
+  }
+  resultTitle() {
+    return cy.get(".details .title span");
+  }
+  resultAddress() {
+    return cy.get(".Address");
+  }
+  resultPhone() {
+    return cy.get(".phone");
+  }
+  resultEmail() {
+    return cy.get(".email");
+  }
+  getFacet(facet: number, facetVal: number) {
+    return cy.get(".facet").eq(facet).find("label").eq(facetVal);
+  }
+  resultCategories() {
+    return cy.get(".categories");
+  }
+  resultStatus() {
+    return cy.get(".status");
+  }
+  
 }
 
 const searchPage = new SearchPage();
