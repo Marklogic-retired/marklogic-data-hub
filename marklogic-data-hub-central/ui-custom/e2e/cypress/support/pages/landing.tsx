@@ -4,10 +4,10 @@ class LandingPage {
     return cy.get(".dashboard");
   }
   entityViewerTitle() {
-    return cy.get(".title > a");
+    return cy.get(".title a");
   }
   menuOptions() {
-    return cy.get(".Menus_menu__1OerK > a");
+    return cy.get(".Menus_menu__1OerK a");
   }
   subMenu() {
     return cy.get("#nav-dropdown");
@@ -16,10 +16,13 @@ class LandingPage {
     return cy.get(".dropdown-item").eq(0);
   }
   subMenuSearch() {
-    return cy.get(".dropdown-item > span");
+    return cy.get(".dropdown-item span");
   }
   whatsNewChart() {
     return cy.get(".chart");
+  }
+  searchBox() {
+    return cy.get(".section").findByTestId("searchBox");
   }
 
 }
