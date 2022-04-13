@@ -12,7 +12,7 @@ import _ from "lodash";
 type Props = {
   config?: any;
   data?: any;
-  styles?: any;
+  style?: any;
 };
 
 // TODO using mock data temporarily
@@ -43,6 +43,9 @@ const MetadataValue: React.FC<Props> = (props) => {
     const value = getValByConfig(props.data, props.config);
     let popoverData = props?.config?.popover ? _.get(props.data, props?.config?.popover?.dataPath, []):[];
     popoverData = _.isNil(popoverData) ? null : (Array.isArray(popoverData) ? popoverData : [popoverData]);
+
+    let metadataStyle: any = props.style ? props.style : props.config?.style ? props.config.style : {};
+    metadataStyle = {...metadataStyle, backgroundColor: props.config.color ? props.config.color : "lightgray"};
 
     const displayValue = (data, config) => {
         if (config.type === "datetime") {
@@ -77,7 +80,7 @@ const MetadataValue: React.FC<Props> = (props) => {
         return (
             <div 
                 className={props.config.popover ? "hasPopover" : ""} 
-                style={{backgroundColor: props.config.color ? props.config.color : "lightgray"}}
+                style={metadataStyle}
             >
                 {value}
             </div>
@@ -91,7 +94,7 @@ const MetadataValue: React.FC<Props> = (props) => {
             overlay={getPopover()}
         >
             <div className="hasPopover"
-                style={{backgroundColor: props.config.color ? props.config.color : "lightgray"}}
+                style={metadataStyle}
             >
                 {popoverData.length}
             </div>

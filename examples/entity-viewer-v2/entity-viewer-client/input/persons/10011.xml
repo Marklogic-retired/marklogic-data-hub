@@ -3,203 +3,191 @@
   <personId>10011</personId>
   <nameGroup>
     <givenname>
-      <value>Lettie</value>
+      <value>Griff</value>
     </givenname>
     <surname>
-      <value>Byatt</value>
+      <value>Canet</value>
     </surname>
     <fullname>
       <classification>S</classification>
-      <restricted>false</restricted>
-      <value>Byatt Lettie</value>
+      <restricted>true</restricted>
+      <value>Canet Griff</value>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2010-11-05T13:17:02Z</ts>
-      </source>
-      <source>
-        <name>New York Times</name>
-        <ts>2018-02-17T09:19:06Z</ts>
-      </source>
-      <source>
-        <name>USA Today</name>
-        <ts>2013-09-04T09:18:12Z</ts>
+        <name>Wall Street Journal</name>
+        <ts>2017-02-17T02:28:40Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>tdavet0@google.ca</value>
-      <classification>S</classification>
+      <value>ddelahunt0@wikispaces.com</value>
+      <classification>U</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>mderrington1@bloomberg.com</value>
-      <classification>C</classification>
+      <value>jeusden1@quantcast.com</value>
+      <classification>U</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>123-988-7255</phone>
+  <phone>880-738-9856</phone>
   <ssn>
-    <value>198-68-1179</value>
-    <restricted>true</restricted>
+    <value>434-90-9738</value>
+    <classification>(S)</classification>
   </ssn>
   <images>
     <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
       <source>
-        <name>New York Times</name>
-        <ts>2013-11-10T06:31:18Z</ts>
-        <uploadedBy>ajacobson0</uploadedBy>
+        <name>Chicago Tribune</name>
+        <ts>2013-11-17T10:15:42Z</ts>
+        <uploadedBy>acampelli0</uploadedBy>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
       <source>
         <name>USA Today</name>
-        <ts>2017-11-09T19:06:28Z</ts>
-        <uploadedBy>dmcritchie0</uploadedBy>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
-      <source>
-        <name>New York Times</name>
-        <ts>2018-03-03T20:23:13Z</ts>
-        <uploadedBy>achristophle0</uploadedBy>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
-      <source>
-        <name>USA Today</name>
-        <ts>2011-05-11T09:04:54Z</ts>
-        <uploadedBy>ggloster0</uploadedBy>
+        <ts>2014-01-10T02:18:43Z</ts>
+        <uploadedBy/>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>4921 Marquette Crossing</street><classification>M</classification>
-      <city>Washington</city>
-      <state>DC</state>
-      <postal>20503</postal>
+      <street>5535 Elgar Junction</street>
+      <city>San Antonio</city>
+      <state>TX</state>
+      <postal>78255</postal>
       <country>United States</country>
-      <latitude>38.9007</latitude>
-      <longitude>-77.0431</longitude>
+      <latitude>29.6701</latitude>
+      <longitude>-98.6873</longitude>
     </address>
     <address>
-      <street>2982 Troy Park</street><classification>M</classification>
-      <city>Orange</city>
-      <state>CA</state>
-      <postal>92668</postal>
+      <street>3 Dottie Pass</street>
+      <city>Cambridge</city>
+      <state>MA</state>
+      <postal>02142</postal>
       <country>United States</country>
-      <latitude>33.7867</latitude>
-      <longitude>-117.8742</longitude>
+      <latitude>42.362</latitude>
+      <longitude>-71.083</longitude>
+    </address>
+    <address>
+      <street>57345 Granby Point</street>
+      <city>Bellevue</city>
+      <state>WA</state>
+      <postal>98008</postal>
+      <country>United States</country>
+      <latitude>47.6115</latitude>
+      <longitude>-122.1162</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Canada</country>
-      <name>Ryerson Polytechnic University</name>
-      <city>Normandin</city>
-      <state>QC</state>
-      <postal>G0H</postal>
-      <latitude>48.83328</latitude>
-      <longitude>-72.53209</longitude>
+      <country>Mexico</country>
+      <name>Universidad de las Américas</name>
+      <city>Rancho Viejo</city>
+      <state>GRO</state>
+      <postal>39965</postal>
+      <latitude>19.5615596</latitude>
+      <longitude>-99.3090985</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2011-02-19T16:54:15Z</ts>
+        <ts>2017-04-16T14:21:59Z</ts>
       </source>
       <source>
         <name>New York Times</name>
-        <ts>2012-01-17T08:14:40Z</ts>
-      </source>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2013-09-17T08:36:59Z</ts>
+        <ts>2013-02-16T12:57:31Z</ts>
       </source>
     </school>
   </schools>
   <status>Inactive</status>
   <sources>
     <source>
-      <name>Los Angeles Times</name>
-      <ts>2013-12-17T01:42:41Z</ts>
+      <name>USA Today</name>
+      <ts>2011-12-27T02:30:14Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>Washington Post</name>
-      <ts>2017-06-04T04:38:05Z</ts>
+      <name>New York Times</name>
+      <ts>2019-07-18T07:16:36Z</ts>
     </source>
   </sources>
   <sources>
     <source>
       <name>Wall Street Journal</name>
-      <ts>2014-12-01T02:51:55Z</ts>
+      <ts>2014-11-13T21:38:55Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10088.xml</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
-      <fullname>Olivia Bebe</fullname>
-      <city>Brooksville</city>
-      <state>FL</state>
-    </relation>
-    <relation>
-      <id>/person/10054.xml</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
-      <fullname>Haggerston Will</fullname>
-      <city>Columbus</city>
-      <state>OH</state>
-    </relation>
-    <relation>
-      <id>/person/10084.xml</id>
+      <id>/person/10082.xml</id>
       <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
+      <fullname>Gerard Ruddie</fullname>
+      <city>Bloomington</city>
+      <state>IN</state>
+    </relation>
+    <relation>
+      <id>/person/10025.xml</id>
+      <predicate>livesWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
-      <fullname>Frizzell Dmitri</fullname>
-      <city>Boston</city>
-      <state>MA</state>
+      <fullname>Dabbs Veronike</fullname>
+      <city>Albuquerque</city>
+      <state>NM</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-15T21:35:00Z</ts>
-    <user>lbyatta</user>
+    <ts>2022-02-18T00:08:45Z</ts>
+    <user>gcaneta</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-20T12:31:32Z</ts>
-    <user>lbyatta</user>
+    <ts>2022-01-29T13:43:57Z</ts>
+    <user>gcaneta</user>
   </lastUpdated>
   <socials/>
   <memberships>
     <membership>
-      <list>list12</list>
-      <important>true</important>
-      <ts>2022-01-07</ts>
-    </membership>
-    <membership>
       <list>list4</list>
       <important>true</important>
-      <ts>2022-02-06</ts>
+      <ts>2022-02-13</ts>
+    </membership>
+    <membership>
+      <list>list9</list>
+      <important>false</important>
+      <ts>2022-02-17</ts>
+    </membership>
+    <membership>
+      <list>list1</list>
+      <important>false</important>
+      <ts>2022-02-15</ts>
+    </membership>
+    <membership>
+      <list>list12</list>
+      <important>true</important>
+      <ts>2022-02-01</ts>
+    </membership>
+    <membership>
+      <list>list3</list>
+      <important>true</important>
+      <ts>2022-02-10</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>http://netscape.com</url>
+      <url>https://utexas.edu</url>
       <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>http://skyrock.com</url>
+      <url>https://drupal.org</url>
       <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>https://photobucket.com</url>
+      <url>https://last.fm</url>
       <icon>fa-comments</icon>
     </link>
   </links>

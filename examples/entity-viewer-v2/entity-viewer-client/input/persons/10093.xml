@@ -3,168 +3,219 @@
   <personId>10093</personId>
   <nameGroup>
     <givenname>
-      <value>Darrel</value>
+      <value>Rance</value>
     </givenname>
     <surname>
-      <value>Cecil</value>
+      <value>Cessford</value>
     </surname>
     <fullname>
-      <classification>U</classification>
-      <restricted>false</restricted>
-      <value>Cecil Darrel</value>
+      <classification>C</classification>
+      <restricted>true</restricted>
+      <value>Cessford Rance</value>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2010-06-10T17:40:33Z</ts>
+        <name>New York Times</name>
+        <ts>2017-07-27T16:11:41Z</ts>
       </source>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2018-07-16T22:31:26Z</ts>
+        <name>New York Times</name>
+        <ts>2016-07-01T19:55:24Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>mskerm0@technorati.com</value>
-      <classification>U</classification>
+      <value>scopelli0@opensource.org</value>
+      <classification>C</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>irowlatt1@taobao.com</value>
+      <value>gcotes1@washingtonpost.com</value>
+      <classification>S</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>gvernau2@irs.gov</value>
       <classification>U</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>115-880-4824</phone>
+  <phone>528-676-9469</phone>
   <ssn>
-    <value>813-24-7835</value>
-    <restricted>true</restricted>
+    <value>885-21-8042</value>
+    <classification>(S)</classification>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2012-10-10T15:45:46Z</ts>
-        <uploadedBy/>
+        <name>Washington Post</name>
+        <ts>2017-01-13T01:18:28Z</ts>
+        <uploadedBy>bwoolner0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>6 Annamark Center</street><classification>M</classification>
-      <city>Denver</city>
-      <state>CO</state>
-      <postal>80235</postal>
+      <street>45 Acker Court</street>
+      <city>Bronx</city>
+      <state>NY</state>
+      <postal>10454</postal>
       <country>United States</country>
-      <latitude>39.6472</latitude>
-      <longitude>-105.0795</longitude>
+      <latitude>40.8085</latitude>
+      <longitude>-73.9198</longitude>
+    </address>
+    <address>
+      <street>74528 Summer Ridge Parkway</street>
+      <city>Providence</city>
+      <state>RI</state>
+      <postal>02905</postal>
+      <country>United States</country>
+      <latitude>41.7845</latitude>
+      <longitude>-71.3959</longitude>
+    </address>
+    <address>
+      <street>044 Lakeland Park</street>
+      <city>Erie</city>
+      <state>PA</state>
+      <postal>16534</postal>
+      <country>United States</country>
+      <latitude>42.1827</latitude>
+      <longitude>-80.0649</longitude>
     </address>
   </addresses>
   <schools>
     <school>
       <country>United States</country>
-      <name>Charter Oak State College</name>
-      <city>Saint Louis</city>
-      <state>MO</state>
-      <postal>63180</postal>
-      <latitude>38.6289203</latitude>
-      <longitude>-90.2051538</longitude>
+      <name>St. Thomas Aquinas College</name>
+      <city>Lawrenceville</city>
+      <state>GA</state>
+      <postal>30245</postal>
+      <latitude>40.4770427</latitude>
+      <longitude>-79.9571907</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2021-07-14T03:33:17Z</ts>
+        <ts>2017-03-02T00:10:28Z</ts>
       </source>
       <source>
         <name>New York Times</name>
-        <ts>2012-12-12T03:16:21Z</ts>
+        <ts>2014-06-04T16:11:11Z</ts>
       </source>
       <source>
         <name>Chicago Tribune</name>
-        <ts>2010-08-15T04:40:54Z</ts>
+        <ts>2014-07-09T18:50:23Z</ts>
       </source>
     </school>
     <school>
       <country>Canada</country>
-      <name>Acadia University</name>
-      <city>Ladysmith</city>
-      <state>BC</state>
-      <postal>V9G</postal>
-      <latitude>48.99534</latitude>
-      <longitude>-123.8161</longitude>
+      <name>Royal Military College of Canada</name>
+      <city>Roberval</city>
+      <state>QC</state>
+      <postal>G8H</postal>
+      <latitude>48.5051169</latitude>
+      <longitude>-72.2292881</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2020-07-17T16:16:25Z</ts>
+        <ts>2020-10-12T10:05:16Z</ts>
       </source>
     </school>
   </schools>
-  <status>Inactive</status>
+  <status>Active</status>
   <sources>
     <source>
-      <name>Chicago Tribune</name>
-      <ts>2017-10-10T10:00:07Z</ts>
+      <name>Los Angeles Times</name>
+      <ts>2011-10-14T07:14:10Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>Wall Street Journal</name>
-      <ts>2013-10-06T01:29:06Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>New York Times</name>
-      <ts>2014-02-17T09:13:33Z</ts>
+      <name>USA Today</name>
+      <ts>2011-07-17T13:13:07Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10048.xml</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
-      <fullname>Skunes Itch</fullname>
-      <city>Sacramento</city>
-      <state>CA</state>
+      <id>/person/10076.xml</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
+      <fullname>Mynard Dotti</fullname>
+      <city>Ocala</city>
+      <state>FL</state>
     </relation>
     <relation>
-      <id>/person/10014.xml</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Stalf Nari</fullname>
-      <city>Bakersfield</city>
-      <state>CA</state>
-    </relation>
-    <relation>
-      <id>/person/10040.xml</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Putten Janine</fullname>
-      <city>Shreveport</city>
-      <state>LA</state>
+      <id>/person/10029.xml</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Quinnell Nickolai</fullname>
+      <city>Raleigh</city>
+      <state>NC</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-27T11:18:23Z</ts>
-    <user>dcecil2k</user>
+    <ts>2022-02-09T02:12:47Z</ts>
+    <user>rcessford2k</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-10T14:33:21Z</ts>
-    <user>dcecil2k</user>
+    <ts>2022-02-14T02:00:34Z</ts>
+    <user>rcessford2k</user>
   </lastUpdated>
-  <socials/>
-  <memberships/>
+  <socials>
+    <social>
+      <site>twitter</site>
+      <handle>cmcarley0</handle>
+      <address>http://instagram.com/duis/ac/nibh/fusce.xml</address>
+    </social>
+    <social>
+      <site>facebook</site>
+      <handle>gbatram1</handle>
+      <address>http://simplemachines.org/vestibulum/sagittis/sapien/cum/sociis/natoque/penatibus.jsp</address>
+    </social>
+  </socials>
+  <memberships>
+    <membership>
+      <list>list2</list>
+      <important>true</important>
+      <ts>2022-01-07</ts>
+    </membership>
+    <membership>
+      <list>list9</list>
+      <important>true</important>
+      <ts>2022-01-23</ts>
+    </membership>
+    <membership>
+      <list>list8</list>
+      <important>true</important>
+      <ts>2022-02-23</ts>
+    </membership>
+    <membership>
+      <list>list8</list>
+      <important>true</important>
+      <ts>2022-02-11</ts>
+    </membership>
+    <membership>
+      <list>list11</list>
+      <important>true</important>
+      <ts>2022-02-23</ts>
+    </membership>
+    <membership>
+      <list>list6</list>
+      <important>true</important>
+      <ts>2022-01-28</ts>
+    </membership>
+  </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>http://nifty.com</url>
+      <url>https://cargocollective.com</url>
       <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>http://ucla.edu</url>
+      <url>https://unblog.fr</url>
       <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>http://zdnet.com</url>
+      <url>https://japanpost.jp</url>
       <icon>fa-comments</icon>
     </link>
   </links>

@@ -3,180 +3,206 @@
   <personId>10085</personId>
   <nameGroup>
     <givenname>
-      <value>Bill</value>
+      <value>Eada</value>
     </givenname>
     <surname>
-      <value>Blanchflower</value>
+      <value>Wilman</value>
     </surname>
     <fullname>
-      <classification>U</classification>
+      <classification>S</classification>
       <restricted>false</restricted>
-      <value>Blanchflower Bill</value>
+      <value>Wilman Eada</value>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2013-04-04T09:41:41Z</ts>
+      </source>
       <source>
         <name>Los Angeles Times</name>
-        <ts>2021-05-11T06:56:22Z</ts>
+        <ts>2021-07-18T08:25:36Z</ts>
+      </source>
+      <source>
+        <name>USA Today</name>
+        <ts>2011-06-03T16:54:44Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>lguyton0@photobucket.com</value>
-      <classification>U</classification>
+      <value>adunkinson0@time.com</value>
+      <classification>S</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>cphillott1@zimbio.com</value>
-      <classification>U</classification>
+      <value>ofilipczynski1@google.nl</value>
+      <classification>S</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>229-169-9618</phone>
+  <phone>872-827-1008</phone>
   <ssn>
-    <value>822-61-2050</value>
-    <restricted>true</restricted>
+    <value>621-58-8056</value>
+    <classification>(S)</classification>
   </ssn>
   <images>
     <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2016-07-17T23:35:21Z</ts>
+        <uploadedBy>vlindback0</uploadedBy>
+      </source>
+    </image>
+    <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
       <source>
+        <name>Los Angeles Times</name>
+        <ts>2013-11-17T22:51:36Z</ts>
+        <uploadedBy>bditchburn0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
+      <source>
         <name>Chicago Tribune</name>
-        <ts>2015-03-27T02:40:26Z</ts>
-        <uploadedBy>rjensen0</uploadedBy>
+        <ts>2012-06-30T01:45:45Z</ts>
+        <uploadedBy>khoston0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>3 Larry Pass</street><classification>M</classification>
-      <city>Harrisburg</city>
-      <state>PA</state>
-      <postal>17110</postal>
+      <street>22049 Hovde Place</street>
+      <city>Shawnee Mission</city>
+      <state>KS</state>
+      <postal>66225</postal>
       <country>United States</country>
-      <latitude>40.303</latitude>
-      <longitude>-76.8862</longitude>
+      <latitude>38.8999</latitude>
+      <longitude>-94.832</longitude>
     </address>
     <address>
-      <street>75 Norway Maple Way</street><classification>M</classification>
-      <city>Scottsdale</city>
-      <state>AZ</state>
-      <postal>85255</postal>
+      <street>63 Comanche Pass</street>
+      <city>Fresno</city>
+      <state>CA</state>
+      <postal>93740</postal>
       <country>United States</country>
-      <latitude>33.6968</latitude>
-      <longitude>-111.8892</longitude>
+      <latitude>36.7464</latitude>
+      <longitude>-119.6397</longitude>
     </address>
     <address>
-      <street>79171 Independence Way</street><classification>M</classification>
-      <city>Harrisburg</city>
+      <street>024 Ruskin Street</street>
+      <city>Philadelphia</city>
       <state>PA</state>
-      <postal>17110</postal>
+      <postal>19191</postal>
       <country>United States</country>
-      <latitude>40.303</latitude>
-      <longitude>-76.8862</longitude>
+      <latitude>40.0018</latitude>
+      <longitude>-75.1179</longitude>
     </address>
   </addresses>
   <schools>
     <school>
       <country>Canada</country>
-      <name>University of Western Ontario</name>
-      <city>Lloydminster</city>
+      <name>University of Québec</name>
+      <city>Macklin</city>
       <state>SK</state>
-      <postal>S9V</postal>
-      <latitude>53.2771781</latitude>
-      <longitude>-109.9850454</longitude>
+      <postal>B0K</postal>
+      <latitude>52.33344</latitude>
+      <longitude>-109.93484</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2017-05-14T12:11:35Z</ts>
-      </source>
-      <source>
-        <name>New York Times</name>
-        <ts>2010-08-31T19:03:37Z</ts>
+        <ts>2018-09-25T22:26:50Z</ts>
       </source>
     </school>
     <school>
-      <country>United States</country>
-      <name>University of Rhode Island</name>
-      <city>Washington</city>
-      <state>DC</state>
-      <postal>20057</postal>
-      <latitude>38.9079399</latitude>
-      <longitude>-77.0717165</longitude>
+      <country>Mexico</country>
+      <name>Universidad México Americana del Norte</name>
+      <city>Belisario Dominguez</city>
+      <state>COA</state>
+      <postal>30509</postal>
+      <latitude>19.4621825</latitude>
+      <longitude>-99.110685</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2018-02-25T16:23:39Z</ts>
+        <ts>2015-02-14T06:59:18Z</ts>
+      </source>
+      <source>
+        <name>New York Times</name>
+        <ts>2021-09-12T06:56:00Z</ts>
       </source>
     </school>
   </schools>
-  <status>Active</status>
+  <status>Inactive</status>
   <sources>
     <source>
-      <name>New York Times</name>
-      <ts>2019-07-08T00:20:50Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>New York Times</name>
-      <ts>2016-07-05T21:47:08Z</ts>
+      <name>USA Today</name>
+      <ts>2020-06-04T01:11:03Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10079.xml</id>
+      <id>/person/10034.xml</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
-      <fullname>Degenhardt Dixie</fullname>
-      <city>Washington</city>
-      <state>DC</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Zupone Kristoffer</fullname>
+      <city>Allentown</city>
+      <state>PA</state>
     </relation>
     <relation>
-      <id>/person/10045.xml</id>
+      <id>/person/10028.xml</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Georghiou Roda</fullname>
+      <city>New Haven</city>
+      <state>CT</state>
+    </relation>
+    <relation>
+      <id>/person/10060.xml</id>
       <predicate>relatedTo</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Barriball Pebrook</fullname>
-      <city>Houston</city>
-      <state>TX</state>
-    </relation>
-    <relation>
-      <id>/person/10041.xml</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
-      <fullname>Recher Kizzie</fullname>
-      <city>Jacksonville</city>
-      <state>FL</state>
-    </relation>
-    <relation>
-      <id>/person/10015.xml</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
-      <fullname>Bough Netti</fullname>
-      <city>Bradenton</city>
-      <state>FL</state>
+      <fullname>Copper Becky</fullname>
+      <city>New Haven</city>
+      <state>CT</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-22T17:22:32Z</ts>
-    <user>bblanchflower2c</user>
+    <ts>2022-01-01T13:38:22Z</ts>
+    <user>ewilman2c</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-18T11:32:39Z</ts>
-    <user>bblanchflower2c</user>
+    <ts>2022-02-07T00:28:26Z</ts>
+    <user>ewilman2c</user>
   </lastUpdated>
-  <socials/>
+  <socials>
+    <social>
+      <site>linkedin</site>
+      <handle/>
+      <address>https://cmu.edu/nulla/nunc/purus/phasellus/in/felis.jsp</address>
+    </social>
+    <social>
+      <site>twitter</site>
+      <handle>csweatland1</handle>
+      <address>http://nymag.com/dui/luctus/rutrum/nulla/tellus/in/sagittis.jsp</address>
+    </social>
+    <social>
+      <site>facebook</site>
+      <handle>ashrieve2</handle>
+      <address>http://webs.com/curae/nulla/dapibus/dolor.aspx</address>
+    </social>
+  </socials>
   <memberships/>
   <links>
     <link>
       <label>Quick View</label>
-      <url>https://edublogs.org</url>
+      <url>https://flickr.com</url>
       <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>http://chronoengine.com</url>
+      <url>http://joomla.org</url>
       <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>https://infoseek.co.jp</url>
+      <url>http://cyberchimps.com</url>
       <icon>fa-comments</icon>
     </link>
   </links>

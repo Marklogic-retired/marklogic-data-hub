@@ -3,116 +3,109 @@
   <personId>10033</personId>
   <nameGroup>
     <givenname>
-      <value>Dion</value>
+      <value>Rafferty</value>
     </givenname>
     <surname>
-      <value>Godsil</value>
+      <value>Rydings</value>
     </surname>
     <fullname>
-      <classification>C</classification>
-      <restricted>true</restricted>
-      <value>Godsil Dion</value>
+      <classification>U</classification>
+      <restricted>false</restricted>
+      <value>Rydings Rafferty</value>
       <source>
         <name>Los Angeles Times</name>
-        <ts>2016-06-28T21:20:25Z</ts>
+        <ts>2013-08-11T16:12:31Z</ts>
       </source>
       <source>
         <name>New York Times</name>
-        <ts>2018-07-26T12:59:12Z</ts>
+        <ts>2011-10-22T21:38:45Z</ts>
+      </source>
+      <source>
+        <name>USA Today</name>
+        <ts>2012-07-27T07:46:16Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>jbeaudry0@mozilla.org</value>
-      <classification>C</classification>
+      <value>lhanaby0@netlog.com</value>
+      <classification>U</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>tslingsby1@clickbank.net</value>
+      <value>oshinn1@posterous.com</value>
+      <classification>U</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>lstreater2@booking.com</value>
       <classification>U</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>785-114-0010</phone>
+  <phone>629-546-9934</phone>
   <ssn>
-    <value>149-47-8821</value>
-    <restricted>true</restricted>
+    <value>119-23-9037</value>
+    <classification>(S)</classification>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2018-04-04T06:37:19Z</ts>
-        <uploadedBy>kocullen0</uploadedBy>
+        <name>Chicago Tribune</name>
+        <ts>2020-04-29T16:50:37Z</ts>
+        <uploadedBy>jsterricks0</uploadedBy>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2017-08-27T15:17:33Z</ts>
-        <uploadedBy/>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
-      <source>
-        <name>New York Times</name>
-        <ts>2021-10-25T08:53:20Z</ts>
-        <uploadedBy>frainford0</uploadedBy>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
-      <source>
-        <name>New York Times</name>
-        <ts>2011-11-21T16:19:48Z</ts>
-        <uploadedBy>blapree0</uploadedBy>
+        <name>Chicago Tribune</name>
+        <ts>2010-10-11T01:15:18Z</ts>
+        <uploadedBy>edwerryhouse0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>822 Manufacturers Street</street><classification>M</classification>
-      <city>Evansville</city>
-      <state>IN</state>
-      <postal>47732</postal>
+      <street>264 Lakewood Gardens Junction</street>
+      <city>Kansas City</city>
+      <state>MO</state>
+      <postal>64190</postal>
       <country>United States</country>
-      <latitude>37.9971</latitude>
-      <longitude>-87.575</longitude>
+      <latitude>39.3432</latitude>
+      <longitude>-94.8516</longitude>
     </address>
     <address>
-      <street>14 Roth Point</street><classification>M</classification>
-      <city>Wichita</city>
-      <state>KS</state>
-      <postal>67215</postal>
+      <street>4 Stuart Lane</street>
+      <city>Kansas City</city>
+      <state>MO</state>
+      <postal>64199</postal>
       <country>United States</country>
-      <latitude>37.6333</latitude>
-      <longitude>-97.425</longitude>
+      <latitude>39.035</latitude>
+      <longitude>-94.3567</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>United States</country>
-      <name>Virginia Commonwealth University</name>
-      <city>Iowa City</city>
-      <state>IA</state>
-      <postal>52245</postal>
-      <latitude>41.6613587</latitude>
-      <longitude>-91.4918235</longitude>
+      <country>United Kingdom</country>
+      <name>Stratford College London</name>
+      <city>Walton</city>
+      <state>ENG</state>
+      <postal>CV35</postal>
+      <latitude>52.177639</latitude>
+      <longitude>-1.585418</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2020-04-07T02:22:25Z</ts>
+        <ts>2013-06-19T21:10:07Z</ts>
       </source>
       <source>
         <name>New York Times</name>
-        <ts>2012-02-12T20:53:45Z</ts>
+        <ts>2019-02-27T19:32:01Z</ts>
       </source>
       <source>
         <name>Chicago Tribune</name>
-        <ts>2015-07-23T14:21:40Z</ts>
+        <ts>2012-01-21T21:08:36Z</ts>
       </source>
     </school>
   </schools>
@@ -120,73 +113,101 @@
   <sources>
     <source>
       <name>Chicago Tribune</name>
-      <ts>2016-01-26T05:09:21Z</ts>
+      <ts>2019-01-18T16:47:19Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>USA Today</name>
-      <ts>2016-11-24T10:56:43Z</ts>
+      <name>New York Times</name>
+      <ts>2014-06-07T19:39:22Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Wall Street Journal</name>
+      <ts>2011-03-26T23:41:04Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10010.xml</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Crighton Banky</fullname>
-      <city>Atlanta</city>
-      <state>GA</state>
-    </relation>
-    <relation>
-      <id>/person/10003.xml</id>
+      <id>/person/10033.xml</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Cousin Diane</fullname>
-      <city>Colorado Springs</city>
-      <state>CO</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
+      <fullname>Rydings Rafferty</fullname>
+      <city>Kansas City</city>
+      <state>MO</state>
     </relation>
     <relation>
-      <id>/person/10038.xml</id>
+      <id>/person/10040.xml</id>
       <predicate>worksWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
-      <fullname>Stooders Merlina</fullname>
-      <city>Colorado Springs</city>
-      <state>CO</state>
+      <fullname>Izen Edlin</fullname>
+      <city>Fort Myers</city>
+      <state>FL</state>
     </relation>
     <relation>
-      <id>/person/10023.xml</id>
-      <predicate>worksWith</predicate>
+      <id>/person/10045.xml</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
+      <fullname>Domel Felike</fullname>
+      <city>Terre Haute</city>
+      <state>IN</state>
+    </relation>
+    <relation>
+      <id>/person/10046.xml</id>
+      <predicate>relatedTo</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Iowarch Demetrius</fullname>
-      <city>Pittsburgh</city>
-      <state>PA</state>
+      <fullname>Lougheid Melloney</fullname>
+      <city>Little Rock</city>
+      <state>AR</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-24T01:34:34Z</ts>
-    <user>dgodsilw</user>
+    <ts>2022-02-17T19:36:03Z</ts>
+    <user>rrydingsw</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-31T00:03:22Z</ts>
-    <user>dgodsilw</user>
+    <ts>2022-02-21T17:16:32Z</ts>
+    <user>rrydingsw</user>
   </lastUpdated>
-  <socials/>
-  <memberships/>
+  <socials>
+    <social>
+      <site>facebook</site>
+      <handle>mbolam0</handle>
+      <address>http://sogou.com/sit/amet/sem/fusce/consequat/nulla/nisl.js</address>
+    </social>
+  </socials>
+  <memberships>
+    <membership>
+      <list>list3</list>
+      <important>true</important>
+      <ts>2022-01-30</ts>
+    </membership>
+    <membership>
+      <list>list10</list>
+      <important>true</important>
+      <ts>2022-02-06</ts>
+    </membership>
+    <membership>
+      <list>list11</list>
+      <important>true</important>
+      <ts>2022-01-15</ts>
+    </membership>
+  </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>http://telegraph.co.uk</url>
+      <url>https://ucla.edu</url>
       <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>https://tiny.cc</url>
+      <url>http://chron.com</url>
       <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>https://statcounter.com</url>
+      <url>http://angelfire.com</url>
       <icon>fa-comments</icon>
     </link>
   </links>

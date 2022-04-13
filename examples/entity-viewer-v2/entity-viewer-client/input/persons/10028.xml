@@ -3,214 +3,143 @@
   <personId>10028</personId>
   <nameGroup>
     <givenname>
-      <value>Zonnya</value>
+      <value>Roda</value>
     </givenname>
     <surname>
-      <value>Leppo</value>
+      <value>Georghiou</value>
     </surname>
     <fullname>
-      <classification>C</classification>
-      <restricted>false</restricted>
-      <value>Leppo Zonnya</value>
-      <source>
-        <name>Wall Street Journal</name>
-        <ts>2018-04-30T22:30:58Z</ts>
-      </source>
+      <classification>U</classification>
+      <restricted>true</restricted>
+      <value>Georghiou Roda</value>
       <source>
         <name>USA Today</name>
-        <ts>2013-08-28T15:09:53Z</ts>
-      </source>
-      <source>
-        <name>New York Times</name>
-        <ts>2014-08-26T14:58:55Z</ts>
+        <ts>2010-10-27T12:50:22Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>nstoffersen0@theatlantic.com</value>
-      <classification>C</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>sfulford1@1und1.de</value>
+      <value>gwalstow0@mit.edu</value>
       <classification>U</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>dpachta2@craigslist.org</value>
-      <classification>S</classification>
+      <value>mdymoke1@1und1.de</value>
+      <classification>C</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>abeckhurst2@home.pl</value>
+      <classification>C</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>394-366-2631</phone>
+  <phone>835-886-2368</phone>
   <ssn>
-    <value>750-74-7265</value>
-    <restricted>true</restricted>
+    <value>709-66-3205</value>
+    <classification>(S)</classification>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
       <source>
-        <name>New York Times</name>
-        <ts>2010-03-16T16:22:52Z</ts>
-        <uploadedBy>bluciani0</uploadedBy>
+        <name>Wall Street Journal</name>
+        <ts>2012-09-08T11:40:02Z</ts>
+        <uploadedBy>jcolthurst0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>194 Main Alley</street><classification>M</classification>
-      <city>Kansas City</city>
-      <state>MO</state>
-      <postal>64142</postal>
+      <street>33 Fallview Terrace</street>
+      <city>New Haven</city>
+      <state>CT</state>
+      <postal>06520</postal>
       <country>United States</country>
-      <latitude>39.035</latitude>
-      <longitude>-94.3567</longitude>
-    </address>
-    <address>
-      <street>4 Warrior Road</street><classification>M</classification>
-      <city>Atlanta</city>
-      <state>GA</state>
-      <postal>30336</postal>
-      <country>United States</country>
-      <latitude>33.7406</latitude>
-      <longitude>-84.5545</longitude>
+      <latitude>41.3657</latitude>
+      <longitude>-72.9275</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Mexico</country>
-      <name>Universidad del Centro de México</name>
-      <city>Plan de Ayala</city>
-      <state>COA</state>
-      <postal>29601</postal>
-      <latitude>16.7726174</latitude>
-      <longitude>-93.1905192</longitude>
+      <country>United States</country>
+      <name>University of Texas M.D. Anderson Cancer Center</name>
+      <city>Carson City</city>
+      <state>NV</state>
+      <postal>89714</postal>
+      <latitude>39.1645065</latitude>
+      <longitude>-119.7634857</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2019-03-19T02:51:07Z</ts>
+        <ts>2015-04-20T05:05:29Z</ts>
       </source>
       <source>
         <name>New York Times</name>
-        <ts>2018-11-22T10:12:32Z</ts>
-      </source>
-    </school>
-    <school>
-      <country>Mexico</country>
-      <name>Universidad Autónoma de Tamaulipas</name>
-      <city>Lindavista</city>
-      <state>GUA</state>
-      <postal>37800</postal>
-      <latitude>21.1494763</latitude>
-      <longitude>-100.956682</longitude>
-      <source>
-        <name>USA Today</name>
-        <ts>2014-12-15T00:44:43Z</ts>
-      </source>
-      <source>
-        <name>New York Times</name>
-        <ts>2017-08-17T02:44:21Z</ts>
+        <ts>2014-09-06T01:28:23Z</ts>
       </source>
     </school>
   </schools>
   <status>Inactive</status>
   <sources>
     <source>
-      <name>New York Times</name>
-      <ts>2011-11-14T03:23:23Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>New York Times</name>
-      <ts>2012-07-21T15:18:42Z</ts>
+      <name>Chicago Tribune</name>
+      <ts>2013-06-01T10:55:51Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10042.xml</id>
+      <id>/person/10087.xml</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
-      <fullname>Devericks Marylou</fullname>
-      <city>Port Saint Lucie</city>
-      <state>FL</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Plowright Terence</fullname>
+      <city>Greensboro</city>
+      <state>NC</state>
     </relation>
     <relation>
-      <id>/person/10058.xml</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Apperley Paddy</fullname>
-      <city>San Rafael</city>
-      <state>CA</state>
-    </relation>
-    <relation>
-      <id>/person/10089.xml</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
-      <fullname>McGeneay Merla</fullname>
-      <city>Saint Paul</city>
-      <state>MN</state>
-    </relation>
-    <relation>
-      <id>/person/10033.xml</id>
+      <id>/person/10031.xml</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
-      <fullname>Godsil Dion</fullname>
-      <city>Evansville</city>
-      <state>IN</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Christophersen Kacy</fullname>
+      <city>Corona</city>
+      <state>CA</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-10T09:28:59Z</ts>
-    <user>zleppor</user>
+    <ts>2022-02-02T18:03:09Z</ts>
+    <user>rgeorghiour</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-09T22:41:29Z</ts>
-    <user>zleppor</user>
+    <ts>2022-02-17T10:58:06Z</ts>
+    <user>rgeorghiour</user>
   </lastUpdated>
   <socials/>
   <memberships>
     <membership>
-      <list>list6</list>
+      <list>list11</list>
       <important>false</important>
-      <ts>2022-02-26</ts>
+      <ts>2022-02-25</ts>
     </membership>
     <membership>
       <list>list9</list>
-      <important>true</important>
-      <ts>2022-01-29</ts>
-    </membership>
-    <membership>
-      <list>list8</list>
-      <important>true</important>
-      <ts>2022-02-22</ts>
-    </membership>
-    <membership>
-      <list>list3</list>
       <important>false</important>
-      <ts>2022-01-26</ts>
-    </membership>
-    <membership>
-      <list>list3</list>
-      <important>false</important>
-      <ts>2022-01-30</ts>
+      <ts>2022-01-18</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>http://guardian.co.uk</url>
+      <url>https://goo.gl</url>
       <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>http://tripadvisor.com</url>
+      <url>http://theatlantic.com</url>
       <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>http://census.gov</url>
+      <url>https://google.de</url>
       <icon>fa-comments</icon>
     </link>
   </links>

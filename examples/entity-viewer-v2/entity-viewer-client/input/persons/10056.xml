@@ -3,222 +3,198 @@
   <personId>10056</personId>
   <nameGroup>
     <givenname>
-      <value>Jerry</value>
+      <value>Brnaba</value>
     </givenname>
     <surname>
-      <value>Huriche</value>
+      <value>Waiton</value>
     </surname>
     <fullname>
       <classification>U</classification>
       <restricted>false</restricted>
-      <value>Huriche Jerry</value>
+      <value>Waiton Brnaba</value>
       <source>
-        <name>Washington Post</name>
-        <ts>2020-03-27T01:48:58Z</ts>
-      </source>
-      <source>
-        <name>Wall Street Journal</name>
-        <ts>2019-01-05T01:22:27Z</ts>
+        <name>New York Times</name>
+        <ts>2020-11-06T09:14:38Z</ts>
       </source>
       <source>
         <name>Chicago Tribune</name>
-        <ts>2018-08-10T01:03:09Z</ts>
+        <ts>2020-07-15T11:35:51Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>wcambridge0@cbsnews.com</value>
+      <value>eapps0@umich.edu</value>
       <classification>C</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>strowle1@skype.com</value>
-      <classification>S</classification>
+      <value>wreynoldson1@hp.com</value>
+      <classification>U</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>653-637-8444</phone>
+  <phone>620-230-9243</phone>
   <ssn>
-    <value>315-85-4013</value>
-    <restricted>true</restricted>
+    <value>791-99-5459</value>
+    <classification>(S)</classification>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
       <source>
-        <name>USA Today</name>
-        <ts>2020-10-11T12:28:00Z</ts>
-        <uploadedBy>dcockle0</uploadedBy>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2021-06-06T22:04:08Z</ts>
-        <uploadedBy>wwannell0</uploadedBy>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
-      <source>
-        <name>USA Today</name>
-        <ts>2015-03-24T01:33:49Z</ts>
-        <uploadedBy>jpenlington0</uploadedBy>
+        <name>Washington Post</name>
+        <ts>2020-12-26T03:35:58Z</ts>
+        <uploadedBy/>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>85572 Lakewood Gardens Center</street><classification>M</classification>
-      <city>Springfield</city>
-      <state>MA</state>
-      <postal>01129</postal>
+      <street>49 Straubel Center</street>
+      <city>Oxnard</city>
+      <state>CA</state>
+      <postal>93034</postal>
       <country>United States</country>
-      <latitude>42.1223</latitude>
-      <longitude>-72.4876</longitude>
+      <latitude>34.0324</latitude>
+      <longitude>-119.1343</longitude>
     </address>
     <address>
-      <street>9 Roxbury Drive</street><classification>M</classification>
-      <city>Palatine</city>
-      <state>IL</state>
-      <postal>60078</postal>
-      <country>United States</country>
-      <latitude>41.8119</latitude>
-      <longitude>-87.6873</longitude>
-    </address>
-    <address>
-      <street>7 Manufacturers Avenue</street><classification>M</classification>
-      <city>Houston</city>
+      <street>59 Mcguire Plaza</street>
+      <city>San Antonio</city>
       <state>TX</state>
-      <postal>77085</postal>
+      <postal>78225</postal>
       <country>United States</country>
-      <latitude>29.6218</latitude>
-      <longitude>-95.4819</longitude>
+      <latitude>29.3875</latitude>
+      <longitude>-98.5245</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Mexico</country>
-      <name>Universidad Autónoma de Baja California</name>
-      <city>Cuauhtemoc</city>
-      <state>MOR</state>
-      <postal>62767</postal>
-      <latitude>18.8086564</latitude>
-      <longitude>-99.2037508</longitude>
+      <country>United States</country>
+      <name>Shepherd College</name>
+      <city>Los Angeles</city>
+      <state>CA</state>
+      <postal>90010</postal>
+      <latitude>34.0625448</latitude>
+      <longitude>-118.3089341</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2017-09-14T18:55:31Z</ts>
+        <ts>2019-02-11T10:22:41Z</ts>
+      </source>
+    </school>
+    <school>
+      <country>United States</country>
+      <name>Merrimack College</name>
+      <city>Knoxville</city>
+      <state>TN</state>
+      <postal>37995</postal>
+      <latitude>35.95</latitude>
+      <longitude>-84.02</longitude>
+      <source>
+        <name>USA Today</name>
+        <ts>2013-01-29T03:50:43Z</ts>
+      </source>
+      <source>
+        <name>New York Times</name>
+        <ts>2021-02-21T06:19:16Z</ts>
       </source>
     </school>
   </schools>
   <status>Active</status>
   <sources>
     <source>
-      <name>Chicago Tribune</name>
-      <ts>2019-09-23T09:02:22Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>USA Today</name>
-      <ts>2014-10-09T22:02:02Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>Wall Street Journal</name>
-      <ts>2010-11-11T16:10:37Z</ts>
+      <name>Los Angeles Times</name>
+      <ts>2020-01-24T21:47:45Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10002.xml</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
-      <fullname>Dewi Danie</fullname>
-      <city>Washington</city>
-      <state>DC</state>
+      <id>/person/10034.xml</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Zupone Kristoffer</fullname>
+      <city>Allentown</city>
+      <state>PA</state>
     </relation>
     <relation>
-      <id>/person/10013.xml</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
-      <fullname>Gilkison Mikael</fullname>
-      <city>Albany</city>
+      <id>/person/10089.xml</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Lindsley Stinky</fullname>
+      <city>New York City</city>
       <state>NY</state>
     </relation>
     <relation>
-      <id>/person/10025.xml</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Tapping Donn</fullname>
-      <city>Prescott</city>
-      <state>AZ</state>
+      <id>/person/10031.xml</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Christophersen Kacy</fullname>
+      <city>Corona</city>
+      <state>CA</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-18T03:29:01Z</ts>
-    <user>jhuriche1j</user>
+    <ts>2022-02-03T21:13:59Z</ts>
+    <user>bwaiton1j</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-27T05:31:31Z</ts>
-    <user>jhuriche1j</user>
+    <ts>2022-02-25T21:55:47Z</ts>
+    <user>bwaiton1j</user>
   </lastUpdated>
   <socials>
     <social>
       <site>linkedin</site>
-      <handle>ldyers0</handle>
-      <address>https://usda.gov/in/felis.json</address>
-    </social>
-    <social>
-      <site>twitter</site>
-      <handle>nleguey1</handle>
-      <address>https://usa.gov/hendrerit.xml</address>
+      <handle>wgounot0</handle>
+      <address>https://friendfeed.com/lorem/ipsum/dolor/sit/amet/consectetuer/adipiscing.png</address>
     </social>
   </socials>
   <memberships>
     <membership>
+      <list>list6</list>
+      <important>true</important>
+      <ts>2022-01-03</ts>
+    </membership>
+    <membership>
       <list>list10</list>
       <important>false</important>
-      <ts>2022-02-07</ts>
-    </membership>
-    <membership>
-      <list>list1</list>
-      <important>true</important>
-      <ts>2022-01-10</ts>
-    </membership>
-    <membership>
-      <list>list2</list>
-      <important>false</important>
-      <ts>2022-01-08</ts>
-    </membership>
-    <membership>
-      <list>list1</list>
-      <important>true</important>
       <ts>2022-01-26</ts>
     </membership>
     <membership>
-      <list>list10</list>
+      <list>list3</list>
+      <important>true</important>
+      <ts>2022-02-05</ts>
+    </membership>
+    <membership>
+      <list>list1</list>
+      <important>true</important>
+      <ts>2022-02-05</ts>
+    </membership>
+    <membership>
+      <list>list4</list>
       <important>false</important>
-      <ts>2022-01-06</ts>
+      <ts>2022-02-14</ts>
+    </membership>
+    <membership>
+      <list>list2</list>
+      <important>true</important>
+      <ts>2022-02-27</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>https://ezinearticles.com</url>
+      <url>http://ebay.com</url>
       <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>https://furl.net</url>
+      <url>http://list-manage.com</url>
       <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>http://pinterest.com</url>
+      <url>https://umich.edu</url>
       <icon>fa-comments</icon>
     </link>
   </links>

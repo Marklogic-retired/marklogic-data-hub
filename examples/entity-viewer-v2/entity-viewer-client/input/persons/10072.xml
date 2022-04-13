@@ -3,93 +3,109 @@
   <personId>10072</personId>
   <nameGroup>
     <givenname>
-      <value>Candace</value>
+      <value>Vonny</value>
     </givenname>
     <surname>
-      <value>Mellonby</value>
+      <value>Chipchase</value>
     </surname>
     <fullname>
-      <classification>S</classification>
-      <restricted>false</restricted>
-      <value>Mellonby Candace</value>
+      <classification>C</classification>
+      <restricted>true</restricted>
+      <value>Chipchase Vonny</value>
+      <source>
+        <name>New York Times</name>
+        <ts>2020-10-04T10:14:29Z</ts>
+      </source>
       <source>
         <name>Los Angeles Times</name>
-        <ts>2013-02-01T11:02:17Z</ts>
+        <ts>2014-03-07T03:43:03Z</ts>
+      </source>
+      <source>
+        <name>New York Times</name>
+        <ts>2010-04-30T09:01:32Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>scoomes0@bigcartel.com</value>
-      <classification>S</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>jditt1@g.co</value>
-      <classification>C</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>dpassfield2@chronoengine.com</value>
-      <classification>S</classification>
+      <value>sedinborough0@ft.com</value>
+      <classification>U</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>284-922-3132</phone>
+  <phone>714-489-2069</phone>
   <ssn>
-    <value>410-28-2004</value>
-    <restricted>true</restricted>
+    <value>888-76-6797</value>
+    <classification>(S)</classification>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2016-01-16T21:53:56Z</ts>
-        <uploadedBy>lbucher0</uploadedBy>
+        <name>USA Today</name>
+        <ts>2013-07-05T02:52:59Z</ts>
+        <uploadedBy/>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>96583 Lillian Pass</street><classification>M</classification>
-      <city>Montgomery</city>
-      <state>AL</state>
-      <postal>36134</postal>
+      <street>856 Forster Hill</street>
+      <city>Evansville</city>
+      <state>IN</state>
+      <postal>47719</postal>
       <country>United States</country>
-      <latitude>32.2334</latitude>
-      <longitude>-86.2085</longitude>
+      <latitude>37.9971</latitude>
+      <longitude>-87.575</longitude>
     </address>
     <address>
-      <street>557 Rieder Alley</street><classification>M</classification>
-      <city>Brooklyn</city>
-      <state>NY</state>
-      <postal>11247</postal>
+      <street>93 Farragut Terrace</street>
+      <city>Tulsa</city>
+      <state>OK</state>
+      <postal>74116</postal>
       <country>United States</country>
-      <latitude>40.6451</latitude>
-      <longitude>-73.945</longitude>
+      <latitude>36.175</latitude>
+      <longitude>-95.8477</longitude>
+    </address>
+    <address>
+      <street>13483 Westridge Avenue</street>
+      <city>Dallas</city>
+      <state>TX</state>
+      <postal>75265</postal>
+      <country>United States</country>
+      <latitude>32.7673</latitude>
+      <longitude>-96.7776</longitude>
     </address>
   </addresses>
   <schools>
     <school>
       <country>United States</country>
-      <name>Milwaukee Institute of Art and Design</name>
-      <city>Washington</city>
-      <state>DC</state>
-      <postal>20036</postal>
-      <latitude>38.9080786</latitude>
-      <longitude>-77.0406147</longitude>
+      <name>Texas College of Osteopathic Medicine</name>
+      <city>Indianapolis</city>
+      <state>IN</state>
+      <postal>46278</postal>
+      <latitude>39.8911731</latitude>
+      <longitude>-86.2869507</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2011-12-30T23:31:24Z</ts>
+        <ts>2020-02-25T14:27:09Z</ts>
       </source>
       <source>
         <name>New York Times</name>
-        <ts>2012-05-31T17:40:21Z</ts>
+        <ts>2020-08-02T14:34:25Z</ts>
       </source>
+    </school>
+    <school>
+      <country>Canada</country>
+      <name>University College of Cape Breton</name>
+      <city>Morinville</city>
+      <state>AB</state>
+      <postal>T8R</postal>
+      <latitude>53.7925065</latitude>
+      <longitude>-113.6463436</longitude>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2013-09-19T14:48:17Z</ts>
+        <name>USA Today</name>
+        <ts>2014-08-19T16:41:39Z</ts>
       </source>
     </school>
   </schools>
@@ -97,110 +113,80 @@
   <sources>
     <source>
       <name>Chicago Tribune</name>
-      <ts>2014-11-30T06:26:15Z</ts>
+      <ts>2016-03-07T23:43:42Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>New York Times</name>
-      <ts>2018-06-15T09:05:39Z</ts>
+      <name>Los Angeles Times</name>
+      <ts>2018-07-10T06:14:31Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>USA Today</name>
+      <ts>2010-10-25T02:36:44Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10082.xml</id>
+      <id>/person/10054.xml</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Yegorev Trish</fullname>
-      <city>West Palm Beach</city>
-      <state>FL</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
+      <fullname>Habbijam Katti</fullname>
+      <city>Pittsburgh</city>
+      <state>PA</state>
     </relation>
     <relation>
-      <id>/person/10031.xml</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Tuison Hildagard</fullname>
-      <city>Atlanta</city>
-      <state>GA</state>
-    </relation>
-    <relation>
-      <id>/person/10049.xml</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Holyland Clemmy</fullname>
-      <city>Tacoma</city>
-      <state>WA</state>
-    </relation>
-    <relation>
-      <id>/person/10078.xml</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
-      <fullname>Cutmere Florry</fullname>
-      <city>Bethesda</city>
-      <state>MD</state>
+      <id>/person/10015.xml</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Lyne Deloria</fullname>
+      <city>Wilmington</city>
+      <state>DE</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-06T19:04:02Z</ts>
-    <user>cmellonby1z</user>
+    <ts>2022-01-02T05:55:39Z</ts>
+    <user>vchipchase1z</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-08T02:59:44Z</ts>
-    <user>cmellonby1z</user>
+    <ts>2022-01-19T22:03:55Z</ts>
+    <user>vchipchase1z</user>
   </lastUpdated>
   <socials>
     <social>
-      <site>linkedin</site>
-      <handle/>
-      <address>https://china.com.cn/quam.jpg</address>
+      <site>twitter</site>
+      <handle>bhulatt0</handle>
+      <address>http://msn.com/rutrum/nulla.jsp</address>
+    </social>
+    <social>
+      <site>facebook</site>
+      <handle>emackison1</handle>
+      <address>https://nhs.uk/morbi/odio/odio/elementum.json</address>
     </social>
   </socials>
   <memberships>
     <membership>
-      <list>list12</list>
-      <important>true</important>
-      <ts>2022-01-05</ts>
-    </membership>
-    <membership>
-      <list>list10</list>
+      <list>list11</list>
       <important>false</important>
-      <ts>2022-02-23</ts>
-    </membership>
-    <membership>
-      <list>list9</list>
-      <important>true</important>
-      <ts>2022-01-21</ts>
-    </membership>
-    <membership>
-      <list>list9</list>
-      <important>false</important>
-      <ts>2022-02-05</ts>
-    </membership>
-    <membership>
-      <list>list6</list>
-      <important>true</important>
-      <ts>2022-02-27</ts>
-    </membership>
-    <membership>
-      <list>list5</list>
-      <important>false</important>
-      <ts>2022-02-14</ts>
+      <ts>2022-01-14</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>http://dmoz.org</url>
+      <url>http://goodreads.com</url>
       <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>http://theatlantic.com</url>
+      <url>https://google.com.br</url>
       <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>https://phoca.cz</url>
+      <url>http://go.com</url>
       <icon>fa-comments</icon>
     </link>
   </links>

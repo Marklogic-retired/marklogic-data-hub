@@ -3,231 +3,213 @@
   <personId>10014</personId>
   <nameGroup>
     <givenname>
-      <value>Nari</value>
+      <value>Zebulon</value>
     </givenname>
     <surname>
-      <value>Stalf</value>
+      <value>Mars</value>
     </surname>
     <fullname>
-      <classification>C</classification>
+      <classification>U</classification>
       <restricted>false</restricted>
-      <value>Stalf Nari</value>
+      <value>Mars Zebulon</value>
       <source>
-        <name>USA Today</name>
-        <ts>2015-11-29T17:55:47Z</ts>
+        <name>Wall Street Journal</name>
+        <ts>2020-07-21T23:29:45Z</ts>
       </source>
       <source>
         <name>Chicago Tribune</name>
-        <ts>2012-10-17T22:49:33Z</ts>
+        <ts>2012-05-13T20:02:49Z</ts>
       </source>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2013-04-03T18:18:06Z</ts>
+        <name>Washington Post</name>
+        <ts>2021-12-09T17:00:11Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>ekillwick0@irs.gov</value>
-      <classification>C</classification>
+      <value>ajendas0@whitehouse.gov</value>
+      <classification>U</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>175-452-9754</phone>
+  <phone>117-752-3021</phone>
   <ssn>
-    <value>830-96-9058</value>
-    <restricted>true</restricted>
+    <value>779-88-6595</value>
+    <classification>(S)</classification>
   </ssn>
   <images>
     <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
       <source>
         <name>Los Angeles Times</name>
-        <ts>2013-05-13T02:29:05Z</ts>
-        <uploadedBy>kquantrell0</uploadedBy>
+        <ts>2014-03-03T14:01:10Z</ts>
+        <uploadedBy>mdulin0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>0 Glacier Hill Terrace</street><classification>M</classification>
-      <city>Bakersfield</city>
-      <state>CA</state>
-      <postal>93381</postal>
+      <street>51913 Raven Parkway</street>
+      <city>Milwaukee</city>
+      <state>WI</state>
+      <postal>53215</postal>
       <country>United States</country>
-      <latitude>35.2944</latitude>
-      <longitude>-118.9052</longitude>
+      <latitude>43.006</latitude>
+      <longitude>-87.9429</longitude>
     </address>
     <address>
-      <street>7 Knutson Circle</street><classification>M</classification>
-      <city>Carlsbad</city>
-      <state>CA</state>
-      <postal>92013</postal>
+      <street>03 Mayfield Place</street>
+      <city>Louisville</city>
+      <state>KY</state>
+      <postal>40293</postal>
       <country>United States</country>
-      <latitude>33.0169</latitude>
-      <longitude>-116.846</longitude>
-    </address>
-    <address>
-      <street>278 Dottie Lane</street><classification>M</classification>
-      <city>Carlsbad</city>
-      <state>CA</state>
-      <postal>92013</postal>
-      <country>United States</country>
-      <latitude>33.0169</latitude>
-      <longitude>-116.846</longitude>
+      <latitude>38.189</latitude>
+      <longitude>-85.6768</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Canada</country>
-      <name>Université du Québec en Outaouais</name>
-      <city>Sarnia</city>
-      <state>ON</state>
-      <postal>N7V</postal>
-      <latitude>42.9946912</latitude>
-      <longitude>-82.394</longitude>
+      <country>United States</country>
+      <name>Roanoke Bible College</name>
+      <city>Birmingham</city>
+      <state>AL</state>
+      <postal>35263</postal>
+      <latitude>33.7098769</latitude>
+      <longitude>-117.7431372</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2021-10-05T08:14:30Z</ts>
+        <ts>2016-11-03T08:26:53Z</ts>
       </source>
     </school>
     <school>
-      <country>United States</country>
-      <name>Moody Bible Institute</name>
-      <city>Simi Valley</city>
-      <state>CA</state>
-      <postal>93094</postal>
-      <latitude>34.28</latitude>
-      <longitude>-118.7</longitude>
+      <country>Canada</country>
+      <name>Northern Alberta Institute of Technology</name>
+      <city>Claresholm</city>
+      <state>AB</state>
+      <postal>V2T</postal>
+      <latitude>50.03332</latitude>
+      <longitude>-113.58524</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2010-06-23T16:26:56Z</ts>
+        <ts>2014-04-10T04:03:50Z</ts>
       </source>
       <source>
         <name>New York Times</name>
-        <ts>2016-08-21T00:05:27Z</ts>
+        <ts>2012-11-26T09:57:44Z</ts>
       </source>
       <source>
         <name>Chicago Tribune</name>
-        <ts>2021-06-28T18:33:33Z</ts>
+        <ts>2016-10-05T12:23:16Z</ts>
       </source>
     </school>
   </schools>
   <status>Active</status>
   <sources>
     <source>
+      <name>Los Angeles Times</name>
+      <ts>2020-08-12T14:58:41Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
       <name>USA Today</name>
-      <ts>2017-01-02T06:30:41Z</ts>
+      <ts>2021-08-25T20:08:23Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Washington Post</name>
+      <ts>2019-01-16T04:02:08Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10073.xml</id>
+      <id>/person/10066.xml</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Matusovsky Melloney</fullname>
+      <city>Atlanta</city>
+      <state>GA</state>
+    </relation>
+    <relation>
+      <id>/person/10003.xml</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
-      <fullname>Watford Kort</fullname>
-      <city>Houston</city>
-      <state>TX</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Mandry Lula</fullname>
+      <city>Syracuse</city>
+      <state>NY</state>
+    </relation>
+    <relation>
+      <id>/person/10036.xml</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
+      <fullname>Bysh Ewan</fullname>
+      <city>Washington</city>
+      <state>DC</state>
+    </relation>
+    <relation>
+      <id>/person/10009.xml</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Lothlorien Ellery</fullname>
+      <city>Jamaica</city>
+      <state>NY</state>
     </relation>
     <relation>
       <id>/person/10063.xml</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
-      <fullname>Hebble Donall</fullname>
-      <city>Minneapolis</city>
-      <state>MN</state>
-    </relation>
-    <relation>
-      <id>/person/10082.xml</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Yegorev Trish</fullname>
-      <city>West Palm Beach</city>
-      <state>FL</state>
-    </relation>
-    <relation>
-      <id>/person/10026.xml</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Schanke Jennilee</fullname>
-      <city>Austin</city>
-      <state>TX</state>
-    </relation>
-    <relation>
-      <id>/person/10055.xml</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Jenkyn Dale</fullname>
-      <city>Montgomery</city>
-      <state>AL</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Vanderplas Issy</fullname>
+      <city>Stamford</city>
+      <state>CT</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-20T20:03:49Z</ts>
-    <user>nstalfd</user>
+    <ts>2022-02-15T00:58:18Z</ts>
+    <user>zmarsd</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-04T06:07:37Z</ts>
-    <user>nstalfd</user>
+    <ts>2022-01-07T07:42:15Z</ts>
+    <user>zmarsd</user>
   </lastUpdated>
-  <socials>
-    <social>
-      <site>twitter</site>
-      <handle>plawlor0</handle>
-      <address>https://cmu.edu/vel/augue/vestibulum/ante/ipsum.png</address>
-    </social>
-    <social>
-      <site>twitter</site>
-      <handle>rblofeld1</handle>
-      <address>http://vkontakte.ru/lobortis/est.json</address>
-    </social>
-    <social>
-      <site>twitter</site>
-      <handle>jsweatland2</handle>
-      <address>http://wunderground.com/primis/in/faucibus/orci/luctus.jpg</address>
-    </social>
-  </socials>
+  <socials/>
   <memberships>
-    <membership>
-      <list>list7</list>
-      <important>true</important>
-      <ts>2022-02-13</ts>
-    </membership>
     <membership>
       <list>list8</list>
       <important>false</important>
-      <ts>2022-02-21</ts>
+      <ts>2022-01-20</ts>
     </membership>
     <membership>
-      <list>list8</list>
+      <list>list12</list>
+      <important>true</important>
+      <ts>2022-02-26</ts>
+    </membership>
+    <membership>
+      <list>list5</list>
+      <important>true</important>
+      <ts>2022-01-02</ts>
+    </membership>
+    <membership>
+      <list>list12</list>
       <important>true</important>
       <ts>2022-01-31</ts>
-    </membership>
-    <membership>
-      <list>list3</list>
-      <important>true</important>
-      <ts>2022-02-22</ts>
-    </membership>
-    <membership>
-      <list>list4</list>
-      <important>true</important>
-      <ts>2022-02-01</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>https://ucsd.edu</url>
+      <url>https://imdb.com</url>
       <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>http://ycombinator.com</url>
+      <url>http://eventbrite.com</url>
       <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>https://accuweather.com</url>
+      <url>http://meetup.com</url>
       <icon>fa-comments</icon>
     </link>
   </links>
