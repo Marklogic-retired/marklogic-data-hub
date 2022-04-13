@@ -3,217 +3,183 @@
   <personId>10054</personId>
   <nameGroup>
     <givenname>
-      <value>Will</value>
+      <value>Katti</value>
     </givenname>
     <surname>
-      <value>Haggerston</value>
+      <value>Habbijam</value>
     </surname>
     <fullname>
-      <classification>U</classification>
-      <restricted>false</restricted>
-      <value>Haggerston Will</value>
+      <classification>S</classification>
+      <restricted>true</restricted>
+      <value>Habbijam Katti</value>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2011-04-30T04:39:10Z</ts>
-      </source>
-      <source>
-        <name>Wall Street Journal</name>
-        <ts>2020-10-07T02:55:49Z</ts>
+        <name>Los Angeles Times</name>
+        <ts>2017-12-11T15:11:17Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>kpetruk0@discuz.net</value>
+      <value>cstainbridge0@ihg.com</value>
+      <classification>C</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>inavarre1@addthis.com</value>
       <classification>S</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>431-964-4416</phone>
+  <phone>393-468-1672</phone>
   <ssn>
-    <value>806-23-4442</value>
-    <restricted>true</restricted>
+    <value>238-21-8647</value>
+    <classification>(S)</classification>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
       <source>
-        <name>Washington Post</name>
-        <ts>2010-11-07T22:40:52Z</ts>
-        <uploadedBy>jcreamer0</uploadedBy>
+        <name>Los Angeles Times</name>
+        <ts>2021-05-26T06:02:35Z</ts>
+        <uploadedBy>awaliszewski0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+      <source>
+        <name>New York Times</name>
+        <ts>2011-05-15T15:42:38Z</ts>
+        <uploadedBy>rcapaldo0</uploadedBy>
       </source>
     </image>
     <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
       <source>
-        <name>USA Today</name>
-        <ts>2013-11-07T22:34:49Z</ts>
-        <uploadedBy>whartness0</uploadedBy>
+        <name>Wall Street Journal</name>
+        <ts>2020-04-22T01:33:40Z</ts>
+        <uploadedBy>plevings0</uploadedBy>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
       <source>
-        <name>USA Today</name>
-        <ts>2015-02-20T05:16:19Z</ts>
-        <uploadedBy>fputtock0</uploadedBy>
+        <name>New York Times</name>
+        <ts>2014-08-07T06:58:39Z</ts>
+        <uploadedBy>dwaywell0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>136 Goodland Park</street><classification>M</classification>
-      <city>Columbus</city>
-      <state>OH</state>
-      <postal>43284</postal>
+      <street>25130 Anhalt Place</street>
+      <city>Pittsburgh</city>
+      <state>PA</state>
+      <postal>15274</postal>
       <country>United States</country>
-      <latitude>39.969</latitude>
-      <longitude>-83.0114</longitude>
+      <latitude>40.4344</latitude>
+      <longitude>-80.0248</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Mexico</country>
-      <name>Universidad de Colima</name>
-      <city>Zaragoza</city>
-      <state>COA</state>
-      <postal>30800</postal>
-      <latitude>28.4943597</latitude>
-      <longitude>-100.9185477</longitude>
+      <country>United States</country>
+      <name>Clarkson University</name>
+      <city>Newark</city>
+      <state>NJ</state>
+      <postal>07104</postal>
+      <latitude>40.7758541</latitude>
+      <longitude>-74.1650991</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2013-10-06T11:17:41Z</ts>
-      </source>
-      <source>
-        <name>New York Times</name>
-        <ts>2020-08-18T03:13:56Z</ts>
-      </source>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2021-03-04T04:55:33Z</ts>
-      </source>
-    </school>
-    <school>
-      <country>Canada</country>
-      <name>Mount Allison University</name>
-      <city>Carleton Place</city>
-      <state>ON</state>
-      <postal>K7C</postal>
-      <latitude>45.129308</latitude>
-      <longitude>-76.1423766</longitude>
-      <source>
-        <name>USA Today</name>
-        <ts>2011-11-21T02:55:38Z</ts>
-      </source>
-      <source>
-        <name>New York Times</name>
-        <ts>2011-04-12T19:07:37Z</ts>
-      </source>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2013-07-23T08:15:44Z</ts>
+        <ts>2019-05-04T13:44:22Z</ts>
       </source>
     </school>
   </schools>
-  <status>Inactive</status>
+  <status>Active</status>
   <sources>
     <source>
       <name>Washington Post</name>
-      <ts>2016-05-28T20:35:02Z</ts>
+      <ts>2010-02-22T03:08:06Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>Washington Post</name>
-      <ts>2015-10-27T04:03:11Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>USA Today</name>
-      <ts>2019-01-16T04:23:07Z</ts>
+      <name>Los Angeles Times</name>
+      <ts>2021-09-10T07:41:20Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10017.xml</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
-      <fullname>Denning Darlleen</fullname>
-      <city>Madison</city>
-      <state>WI</state>
-    </relation>
-    <relation>
-      <id>/person/10080.xml</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>McPhilemy Bernadine</fullname>
-      <city>Tulsa</city>
-      <state>OK</state>
-    </relation>
-    <relation>
-      <id>/person/10056.xml</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
-      <fullname>Huriche Jerry</fullname>
-      <city>Springfield</city>
-      <state>MA</state>
-    </relation>
-    <relation>
-      <id>/person/10076.xml</id>
+      <id>/person/10058.xml</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
-      <fullname>Kleynermans Ethelyn</fullname>
-      <city>Albuquerque</city>
-      <state>NM</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
+      <fullname>Helstrom Lyman</fullname>
+      <city>Saint Paul</city>
+      <state>MN</state>
+    </relation>
+    <relation>
+      <id>/person/10040.xml</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
+      <fullname>Izen Edlin</fullname>
+      <city>Fort Myers</city>
+      <state>FL</state>
+    </relation>
+    <relation>
+      <id>/person/10019.xml</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Dewis Marje</fullname>
+      <city>San Diego</city>
+      <state>CA</state>
+    </relation>
+    <relation>
+      <id>/person/10082.xml</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
+      <fullname>Gerard Ruddie</fullname>
+      <city>Bloomington</city>
+      <state>IN</state>
+    </relation>
+    <relation>
+      <id>/person/10008.xml</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Sivorn Vilhelmina</fullname>
+      <city>Houston</city>
+      <state>TX</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-23T13:01:32Z</ts>
-    <user>whaggerston1h</user>
+    <ts>2022-01-28T19:28:28Z</ts>
+    <user>khabbijam1h</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-31T11:16:33Z</ts>
-    <user>whaggerston1h</user>
+    <ts>2022-02-07T09:22:09Z</ts>
+    <user>khabbijam1h</user>
   </lastUpdated>
   <socials>
     <social>
-      <site>twitter</site>
-      <handle>gwhichelow0</handle>
-      <address>http://statcounter.com/dapibus/at/diam/nam.jsp</address>
-    </social>
-    <social>
       <site>facebook</site>
-      <handle>swhile1</handle>
-      <address>http://shareasale.com/accumsan/felis/ut/at/dolor/quis/odio.js</address>
-    </social>
-    <social>
-      <site>facebook</site>
-      <handle>rpolgreen2</handle>
-      <address>https://sourceforge.net/a/pede/posuere/nonummy/integer/non/velit.xml</address>
+      <handle/>
+      <address>http://wisc.edu/amet/lobortis/sapien/sapien/non/mi.xml</address>
     </social>
   </socials>
-  <memberships>
-    <membership>
-      <list>list6</list>
-      <important>false</important>
-      <ts>2022-01-14</ts>
-    </membership>
-  </memberships>
+  <memberships/>
   <links>
     <link>
       <label>Quick View</label>
-      <url>http://vistaprint.com</url>
+      <url>http://123-reg.co.uk</url>
       <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>http://dagondesign.com</url>
+      <url>http://stumbleupon.com</url>
       <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>http://nps.gov</url>
+      <url>https://smh.com.au</url>
       <icon>fa-comments</icon>
     </link>
   </links>

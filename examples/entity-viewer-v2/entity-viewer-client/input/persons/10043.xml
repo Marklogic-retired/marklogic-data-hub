@@ -3,222 +3,194 @@
   <personId>10043</personId>
   <nameGroup>
     <givenname>
-      <value>Lucia</value>
+      <value>Kennith</value>
     </givenname>
     <surname>
-      <value>Girhard</value>
+      <value>Maggiori</value>
     </surname>
     <fullname>
-      <classification>C</classification>
+      <classification>S</classification>
       <restricted>false</restricted>
-      <value>Girhard Lucia</value>
+      <value>Maggiori Kennith</value>
       <source>
-        <name>USA Today</name>
-        <ts>2010-05-28T21:36:15Z</ts>
-      </source>
-      <source>
-        <name>USA Today</name>
-        <ts>2010-12-16T05:20:41Z</ts>
-      </source>
-      <source>
-        <name>Los Angeles Times</name>
-        <ts>2013-04-08T14:09:00Z</ts>
+        <name>New York Times</name>
+        <ts>2020-01-08T19:18:42Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>cdudin0@alibaba.com</value>
+      <value>rkipling0@vkontakte.ru</value>
+      <classification>C</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>ksprackling1@businesswire.com</value>
       <classification>U</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>wpegram1@sitemeter.com</value>
+      <value>ealliban2@csmonitor.com</value>
       <classification>S</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>416-211-8799</phone>
+  <phone>851-318-6829</phone>
   <ssn>
-    <value>580-49-7165</value>
-    <restricted>true</restricted>
+    <value>604-92-6700</value>
+    <classification>(S)</classification>
   </ssn>
   <images>
     <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2011-08-01T07:20:37Z</ts>
-        <uploadedBy>jmaberley0</uploadedBy>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2013-11-01T01:03:48Z</ts>
-        <uploadedBy>phallahan0</uploadedBy>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2015-05-14T10:21:05Z</ts>
-        <uploadedBy>mdewdney0</uploadedBy>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
-      <source>
-        <name>Washington Post</name>
-        <ts>2013-09-06T02:24:08Z</ts>
-        <uploadedBy>mchurm0</uploadedBy>
+        <name>New York Times</name>
+        <ts>2016-12-14T23:01:38Z</ts>
+        <uploadedBy/>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>6 Union Terrace</street><classification>M</classification>
-      <city>Akron</city>
-      <state>OH</state>
-      <postal>44315</postal>
+      <street>42579 Carioca Terrace</street>
+      <city>Gainesville</city>
+      <state>FL</state>
+      <postal>32610</postal>
       <country>United States</country>
-      <latitude>41.028</latitude>
-      <longitude>-81.4632</longitude>
+      <latitude>29.6813</latitude>
+      <longitude>-82.3539</longitude>
     </address>
     <address>
-      <street>4187 Westend Place</street><classification>M</classification>
-      <city>Bronx</city>
-      <state>NY</state>
-      <postal>10474</postal>
+      <street>8 Mccormick Drive</street>
+      <city>Omaha</city>
+      <state>NE</state>
+      <postal>68105</postal>
       <country>United States</country>
-      <latitude>40.8139</latitude>
-      <longitude>-73.8841</longitude>
+      <latitude>41.2435</latitude>
+      <longitude>-95.9629</longitude>
     </address>
     <address>
-      <street>359 Truax Point</street><classification>M</classification>
-      <city>Salt Lake City</city>
-      <state>UT</state>
-      <postal>84170</postal>
+      <street>13 Dexter Drive</street>
+      <city>Green Bay</city>
+      <state>WI</state>
+      <postal>54313</postal>
       <country>United States</country>
-      <latitude>40.6681</latitude>
-      <longitude>-111.9083</longitude>
+      <latitude>44.5463</latitude>
+      <longitude>-88.1021</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>United Kingdom</country>
-      <name>Open University</name>
-      <city>Wootton</city>
-      <state>ENG</state>
-      <postal>NN4</postal>
-      <latitude>52.2063851</latitude>
-      <longitude>-0.9009942</longitude>
+      <country>Mexico</country>
+      <name>Universidad Autónoma de Nayarit</name>
+      <city>Independencia</city>
+      <state>COA</state>
+      <postal>30815</postal>
+      <latitude>32.5124846</latitude>
+      <longitude>-116.8557985</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2013-05-14T01:07:53Z</ts>
+        <ts>2017-01-12T12:46:58Z</ts>
+      </source>
+    </school>
+    <school>
+      <country>United States</country>
+      <name>Boston University</name>
+      <city>Atlanta</city>
+      <state>GA</state>
+      <postal>31119</postal>
+      <latitude>33.8524536</latitude>
+      <longitude>-84.3679295</longitude>
+      <source>
+        <name>USA Today</name>
+        <ts>2011-12-19T23:10:36Z</ts>
       </source>
       <source>
         <name>New York Times</name>
-        <ts>2019-01-09T18:00:50Z</ts>
-      </source>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2011-11-18T05:27:37Z</ts>
+        <ts>2016-09-14T23:22:08Z</ts>
       </source>
     </school>
   </schools>
   <status>Inactive</status>
   <sources>
     <source>
-      <name>Washington Post</name>
-      <ts>2018-11-19T09:35:33Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>New York Times</name>
-      <ts>2011-05-03T10:08:37Z</ts>
+      <name>Wall Street Journal</name>
+      <ts>2012-08-19T10:11:51Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10039.xml</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
-      <fullname>Thomen Guthry</fullname>
-      <city>Warren</city>
-      <state>MI</state>
-    </relation>
-    <relation>
-      <id>/person/10064.xml</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
-      <fullname>Sabattier Garwood</fullname>
-      <city>Washington</city>
-      <state>DC</state>
-    </relation>
-    <relation>
-      <id>/person/10053.xml</id>
+      <id>/person/10081.xml</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Eversley Sanford</fullname>
-      <city>Omaha</city>
-      <state>NE</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Presland Huntlee</fullname>
+      <city>Schenectady</city>
+      <state>NY</state>
+    </relation>
+    <relation>
+      <id>/person/10066.xml</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Matusovsky Melloney</fullname>
+      <city>Atlanta</city>
+      <state>GA</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-08T01:45:30Z</ts>
-    <user>lgirhard16</user>
+    <ts>2022-02-08T05:16:16Z</ts>
+    <user>kmaggiori16</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-15T12:01:05Z</ts>
-    <user>lgirhard16</user>
+    <ts>2022-01-29T12:52:06Z</ts>
+    <user>kmaggiori16</user>
   </lastUpdated>
-  <socials>
-    <social>
-      <site>linkedin</site>
-      <handle>derley0</handle>
-      <address>https://whitehouse.gov/eleifend/pede.png</address>
-    </social>
-  </socials>
+  <socials/>
   <memberships>
     <membership>
-      <list>list6</list>
+      <list>list8</list>
+      <important>true</important>
+      <ts>2022-01-27</ts>
+    </membership>
+    <membership>
+      <list>list12</list>
       <important>false</important>
       <ts>2022-01-16</ts>
     </membership>
     <membership>
-      <list>list11</list>
-      <important>false</important>
-      <ts>2022-01-13</ts>
-    </membership>
-    <membership>
-      <list>list1</list>
-      <important>false</important>
-      <ts>2022-01-05</ts>
-    </membership>
-    <membership>
-      <list>list1</list>
+      <list>list9</list>
       <important>true</important>
-      <ts>2022-02-20</ts>
+      <ts>2022-02-19</ts>
+    </membership>
+    <membership>
+      <list>list7</list>
+      <important>false</important>
+      <ts>2022-02-09</ts>
+    </membership>
+    <membership>
+      <list>list10</list>
+      <important>true</important>
+      <ts>2022-02-14</ts>
+    </membership>
+    <membership>
+      <list>list7</list>
+      <important>true</important>
+      <ts>2022-02-24</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>http://arstechnica.com</url>
+      <url>https://shinystat.com</url>
       <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>http://paginegialle.it</url>
+      <url>http://japanpost.jp</url>
       <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>http://sakura.ne.jp</url>
+      <url>http://canalblog.com</url>
       <icon>fa-comments</icon>
     </link>
   </links>

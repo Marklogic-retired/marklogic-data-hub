@@ -3,235 +3,195 @@
   <personId>10081</personId>
   <nameGroup>
     <givenname>
-      <value>Grenville</value>
+      <value>Huntlee</value>
     </givenname>
     <surname>
-      <value>Brucker</value>
+      <value>Presland</value>
     </surname>
     <fullname>
       <classification>S</classification>
-      <restricted>true</restricted>
-      <value>Brucker Grenville</value>
+      <restricted>false</restricted>
+      <value>Presland Huntlee</value>
       <source>
         <name>USA Today</name>
-        <ts>2017-03-03T05:15:23Z</ts>
+        <ts>2014-11-01T13:12:46Z</ts>
       </source>
       <source>
-        <name>New York Times</name>
-        <ts>2018-04-24T00:31:48Z</ts>
+        <name>Wall Street Journal</name>
+        <ts>2012-07-09T02:28:18Z</ts>
+      </source>
+      <source>
+        <name>Washington Post</name>
+        <ts>2021-05-22T21:27:48Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>mrobbert0@ca.gov</value>
+      <value>tkleuer0@hatena.ne.jp</value>
+      <classification>U</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>afells1@pcworld.com</value>
       <classification>U</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>217-248-7502</phone>
+  <phone>688-303-9479</phone>
   <ssn>
-    <value>731-61-0685</value>
-    <restricted>true</restricted>
+    <value>250-17-9261</value>
+    <classification>(S)</classification>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2016-04-30T17:12:14Z</ts>
-        <uploadedBy>ghargate0</uploadedBy>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
-      <source>
-        <name>Los Angeles Times</name>
-        <ts>2020-02-02T11:04:07Z</ts>
-        <uploadedBy>tcolquete0</uploadedBy>
+        <name>Wall Street Journal</name>
+        <ts>2019-03-03T06:33:03Z</ts>
+        <uploadedBy>adowthwaite0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>97 Dwight Road</street><classification>M</classification>
-      <city>Charlotte</city>
-      <state>NC</state>
-      <postal>28242</postal>
+      <street>3 Garrison Circle</street>
+      <city>Schenectady</city>
+      <state>NY</state>
+      <postal>12325</postal>
       <country>United States</country>
-      <latitude>35.26</latitude>
-      <longitude>-80.8042</longitude>
-    </address>
-    <address>
-      <street>55 Crowley Circle</street><classification>M</classification>
-      <city>Washington</city>
-      <state>DC</state>
-      <postal>20220</postal>
-      <country>United States</country>
-      <latitude>38.8933</latitude>
-      <longitude>-77.0146</longitude>
-    </address>
-    <address>
-      <street>34219 Oneill Parkway</street><classification>M</classification>
-      <city>Portsmouth</city>
-      <state>NH</state>
-      <postal>00214</postal>
-      <country>United States</country>
-      <latitude>43.0059</latitude>
-      <longitude>-71.0132</longitude>
+      <latitude>42.8333</latitude>
+      <longitude>-74.058</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>United States</country>
-      <name>College of DuPage</name>
-      <city>Kansas City</city>
-      <state>MO</state>
-      <postal>64187</postal>
-      <latitude>39.1</latitude>
-      <longitude>-94.58</longitude>
+      <country>Canada</country>
+      <name>Bishop's University</name>
+      <city>Sundre</city>
+      <state>AB</state>
+      <postal>L9H</postal>
+      <latitude>51.8001</latitude>
+      <longitude>-114.63532</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2011-10-15T14:18:34Z</ts>
+        <ts>2015-04-08T12:58:49Z</ts>
       </source>
       <source>
         <name>New York Times</name>
-        <ts>2012-05-06T11:48:52Z</ts>
+        <ts>2020-07-26T00:19:23Z</ts>
       </source>
     </school>
     <school>
-      <country>United Kingdom</country>
-      <name>Roehampton University of Surrey</name>
-      <city>Newbiggin</city>
-      <state>ENG</state>
-      <postal>NE46</postal>
-      <latitude>54.9418362</latitude>
-      <longitude>-2.0871107</longitude>
+      <country>United States</country>
+      <name>Western State University College of Law</name>
+      <city>New Haven</city>
+      <state>CT</state>
+      <postal>06520</postal>
+      <latitude>41.3065186</latitude>
+      <longitude>-72.9310714</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2017-01-01T05:07:14Z</ts>
-      </source>
-      <source>
-        <name>New York Times</name>
-        <ts>2016-06-02T12:30:19Z</ts>
-      </source>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2018-04-11T03:14:03Z</ts>
+        <ts>2017-10-17T20:38:29Z</ts>
       </source>
     </school>
   </schools>
-  <status>Inactive</status>
-  <sources>
-    <source>
-      <name>New York Times</name>
-      <ts>2010-08-23T01:55:55Z</ts>
-    </source>
-  </sources>
+  <status>Active</status>
   <sources>
     <source>
       <name>Chicago Tribune</name>
-      <ts>2010-04-08T11:17:08Z</ts>
+      <ts>2021-07-10T23:58:27Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>Wall Street Journal</name>
-      <ts>2020-12-30T02:25:53Z</ts>
+      <name>Los Angeles Times</name>
+      <ts>2021-08-31T08:37:16Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Washington Post</name>
+      <ts>2015-02-01T19:22:04Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10098.xml</id>
+      <id>/person/10073.xml</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
+      <fullname>Wellsman Dare</fullname>
+      <city>Boynton Beach</city>
+      <state>FL</state>
+    </relation>
+    <relation>
+      <id>/person/10068.xml</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
-      <fullname>Gennings Feliks</fullname>
-      <city>Lubbock</city>
-      <state>TX</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Lockton Harriett</fullname>
+      <city>Phoenix</city>
+      <state>AZ</state>
     </relation>
     <relation>
-      <id>/person/10010.xml</id>
-      <predicate>livesWith</predicate>
+      <id>/person/10016.xml</id>
+      <predicate>worksWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Crighton Banky</fullname>
-      <city>Atlanta</city>
-      <state>GA</state>
-    </relation>
-    <relation>
-      <id>/person/10017.xml</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
-      <fullname>Denning Darlleen</fullname>
-      <city>Madison</city>
-      <state>WI</state>
+      <fullname>Claussen Ronalda</fullname>
+      <city>Richmond</city>
+      <state>VA</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-10T14:48:41Z</ts>
-    <user>gbrucker28</user>
+    <ts>2022-02-15T07:48:54Z</ts>
+    <user>hpresland28</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-02T16:20:54Z</ts>
-    <user>gbrucker28</user>
+    <ts>2022-02-23T12:10:58Z</ts>
+    <user>hpresland28</user>
   </lastUpdated>
   <socials>
     <social>
-      <site>facebook</site>
-      <handle>bmenilove0</handle>
-      <address>https://paypal.com/ligula/sit/amet/eleifend/pede.js</address>
+      <site>twitter</site>
+      <handle>kheatley0</handle>
+      <address>http://over-blog.com/leo/rhoncus/sed.js</address>
     </social>
     <social>
-      <site>linkedin</site>
-      <handle>lfusedale1</handle>
-      <address>https://who.int/ut/volutpat.xml</address>
+      <site>twitter</site>
+      <handle>fbasten1</handle>
+      <address>https://japanpost.jp/sagittis.jpg</address>
     </social>
   </socials>
   <memberships>
     <membership>
-      <list>list4</list>
-      <important>true</important>
-      <ts>2022-01-04</ts>
-    </membership>
-    <membership>
-      <list>list1</list>
-      <important>false</important>
-      <ts>2022-01-14</ts>
-    </membership>
-    <membership>
-      <list>list6</list>
-      <important>false</important>
-      <ts>2022-01-28</ts>
-    </membership>
-    <membership>
-      <list>list10</list>
+      <list>list9</list>
       <important>false</important>
       <ts>2022-01-19</ts>
     </membership>
     <membership>
-      <list>list8</list>
-      <important>false</important>
-      <ts>2022-01-17</ts>
-    </membership>
-    <membership>
       <list>list9</list>
       <important>true</important>
-      <ts>2022-02-23</ts>
+      <ts>2022-01-19</ts>
+    </membership>
+    <membership>
+      <list>list10</list>
+      <important>false</important>
+      <ts>2022-01-01</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>http://infoseek.co.jp</url>
+      <url>https://discovery.com</url>
       <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>https://microsoft.com</url>
+      <url>https://apple.com</url>
       <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>http://virginia.edu</url>
+      <url>http://wiley.com</url>
       <icon>fa-comments</icon>
     </link>
   </links>

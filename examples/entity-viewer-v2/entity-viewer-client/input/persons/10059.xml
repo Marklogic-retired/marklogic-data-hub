@@ -3,216 +3,182 @@
   <personId>10059</personId>
   <nameGroup>
     <givenname>
-      <value>Clemmy</value>
+      <value>Dasya</value>
     </givenname>
     <surname>
-      <value>Laverock</value>
+      <value>Arran</value>
     </surname>
     <fullname>
       <classification>U</classification>
       <restricted>false</restricted>
-      <value>Laverock Clemmy</value>
+      <value>Arran Dasya</value>
       <source>
-        <name>Washington Post</name>
-        <ts>2015-09-30T08:23:56Z</ts>
+        <name>Chicago Tribune</name>
+        <ts>2014-11-26T15:50:02Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>vjosephi0@wix.com</value>
-      <classification>S</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>msall1@vistaprint.com</value>
+      <value>rbedrosian0@accuweather.com</value>
       <classification>U</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>lsinderland2@shinystat.com</value>
-      <classification>C</classification>
+      <value>xrosindill1@mit.edu</value>
+      <classification>U</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>666-438-4054</phone>
+  <phone>234-469-9371</phone>
   <ssn>
-    <value>126-69-3597</value>
-    <restricted>true</restricted>
+    <value>649-20-5908</value>
+    <classification>(S)</classification>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
       <source>
-        <name>New York Times</name>
-        <ts>2017-05-22T11:21:22Z</ts>
-        <uploadedBy>agowanson0</uploadedBy>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
-      <source>
-        <name>New York Times</name>
-        <ts>2021-09-27T22:17:41Z</ts>
-        <uploadedBy>tgai0</uploadedBy>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
-      <source>
-        <name>Los Angeles Times</name>
-        <ts>2010-06-11T14:59:06Z</ts>
-        <uploadedBy>plovick0</uploadedBy>
+        <name>Wall Street Journal</name>
+        <ts>2015-02-23T15:00:12Z</ts>
+        <uploadedBy>ecomino0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>925 Prentice Alley</street><classification>M</classification>
-      <city>Bakersfield</city>
-      <state>CA</state>
-      <postal>93399</postal>
+      <street>62 Southridge Court</street>
+      <city>Oklahoma City</city>
+      <state>OK</state>
+      <postal>73104</postal>
       <country>United States</country>
-      <latitude>35.4369</latitude>
-      <longitude>-119.0679</longitude>
+      <latitude>35.4794</latitude>
+      <longitude>-97.5017</longitude>
     </address>
   </addresses>
   <schools>
     <school>
       <country>Canada</country>
-      <name>Centennial College</name>
-      <city>Daveluyville</city>
-      <state>QC</state>
-      <postal>R3P</postal>
-      <latitude>46.20006</latitude>
-      <longitude>-72.13239</longitude>
+      <name>University of Alberta</name>
+      <city>London</city>
+      <state>ON</state>
+      <postal>N6C</postal>
+      <latitude>42.9598744</latitude>
+      <longitude>-81.2353612</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2020-01-24T12:41:07Z</ts>
+        <ts>2018-02-25T16:41:09Z</ts>
       </source>
       <source>
         <name>New York Times</name>
-        <ts>2012-03-23T21:07:31Z</ts>
+        <ts>2017-03-02T20:55:01Z</ts>
+      </source>
+    </school>
+    <school>
+      <country>Canada</country>
+      <name>St. Clair College</name>
+      <city>Kingsey Falls</city>
+      <state>QC</state>
+      <postal>T8H</postal>
+      <latitude>45.85007</latitude>
+      <longitude>-72.0658</longitude>
+      <source>
+        <name>USA Today</name>
+        <ts>2019-08-06T23:56:08Z</ts>
       </source>
     </school>
   </schools>
   <status>Inactive</status>
   <sources>
     <source>
-      <name>Washington Post</name>
-      <ts>2016-02-13T03:50:36Z</ts>
+      <name>Los Angeles Times</name>
+      <ts>2021-09-23T06:10:12Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Chicago Tribune</name>
+      <ts>2011-01-30T00:42:46Z</ts>
     </source>
   </sources>
   <sources>
     <source>
       <name>Wall Street Journal</name>
-      <ts>2020-04-23T21:53:07Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>Los Angeles Times</name>
-      <ts>2010-09-21T04:03:17Z</ts>
+      <ts>2014-01-21T00:40:38Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10065.xml</id>
+      <id>/person/10011.xml</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Garrish Goldi</fullname>
-      <city>Topeka</city>
-      <state>KS</state>
-    </relation>
-    <relation>
-      <id>/person/10100.xml</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Athow Gris</fullname>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Canet Griff</fullname>
       <city>San Antonio</city>
       <state>TX</state>
     </relation>
     <relation>
-      <id>/person/10047.xml</id>
+      <id>/person/10028.xml</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
-      <fullname>Rable Nefen</fullname>
-      <city>Nashville</city>
-      <state>TN</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Georghiou Roda</fullname>
+      <city>New Haven</city>
+      <state>CT</state>
     </relation>
     <relation>
-      <id>/person/10094.xml</id>
-      <predicate>worksWith</predicate>
+      <id>/person/10057.xml</id>
+      <predicate>livesWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Ughelli Britta</fullname>
-      <city>Los Angeles</city>
-      <state>CA</state>
+      <fullname>Craigheid Jewell</fullname>
+      <city>Racine</city>
+      <state>WI</state>
     </relation>
     <relation>
-      <id>/person/10065.xml</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Garrish Goldi</fullname>
-      <city>Topeka</city>
-      <state>KS</state>
+      <id>/person/10064.xml</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Cusworth Teriann</fullname>
+      <city>Newport News</city>
+      <state>VA</state>
+    </relation>
+    <relation>
+      <id>/person/10067.xml</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
+      <fullname>Gabe Philly</fullname>
+      <city>El Paso</city>
+      <state>TX</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-09T22:32:35Z</ts>
-    <user>claverock1m</user>
+    <ts>2022-02-11T00:54:46Z</ts>
+    <user>darran1m</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-05T21:35:08Z</ts>
-    <user>claverock1m</user>
+    <ts>2022-02-04T19:21:40Z</ts>
+    <user>darran1m</user>
   </lastUpdated>
-  <socials>
-    <social>
-      <site>linkedin</site>
-      <handle>cclemendot0</handle>
-      <address>https://acquirethisname.com/orci/luctus/et/ultrices/posuere/cubilia.html</address>
-    </social>
-    <social>
-      <site>twitter</site>
-      <handle>alinzee1</handle>
-      <address>https://phpbb.com/lobortis/sapien/sapien/non/mi/integer/ac.aspx</address>
-    </social>
-    <social>
-      <site>linkedin</site>
-      <handle>bollerhad2</handle>
-      <address>http://nifty.com/tellus/in/sagittis.aspx</address>
-    </social>
-  </socials>
+  <socials/>
   <memberships>
     <membership>
       <list>list2</list>
-      <important>false</important>
-      <ts>2022-01-02</ts>
-    </membership>
-    <membership>
-      <list>list1</list>
       <important>true</important>
-      <ts>2022-01-24</ts>
-    </membership>
-    <membership>
-      <list>list2</list>
-      <important>false</important>
-      <ts>2022-02-03</ts>
+      <ts>2022-02-17</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>http://scribd.com</url>
+      <url>http://epa.gov</url>
       <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>https://pcworld.com</url>
+      <url>http://technorati.com</url>
       <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>http://yandex.ru</url>
+      <url>https://miitbeian.gov.cn</url>
       <icon>fa-comments</icon>
     </link>
   </links>

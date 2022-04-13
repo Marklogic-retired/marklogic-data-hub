@@ -3,165 +3,182 @@
   <personId>10096</personId>
   <nameGroup>
     <givenname>
-      <value>Katherine</value>
+      <value>Dina</value>
     </givenname>
     <surname>
-      <value>Staddart</value>
+      <value>Stoltz</value>
     </surname>
     <fullname>
-      <classification>U</classification>
-      <restricted>true</restricted>
-      <value>Staddart Katherine</value>
+      <classification>C</classification>
+      <restricted>false</restricted>
+      <value>Stoltz Dina</value>
       <source>
-        <name>USA Today</name>
-        <ts>2021-12-24T15:22:28Z</ts>
+        <name>New York Times</name>
+        <ts>2013-10-07T17:36:45Z</ts>
+      </source>
+      <source>
+        <name>New York Times</name>
+        <ts>2012-03-10T13:48:25Z</ts>
       </source>
       <source>
         <name>USA Today</name>
-        <ts>2016-08-08T08:25:04Z</ts>
+        <ts>2016-06-27T15:15:59Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>ehourston0@ted.com</value>
-      <classification>U</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>aaymerich1@ibm.com</value>
-      <classification>U</classification>
+      <value>mdugall0@discovery.com</value>
+      <classification>C</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>325-318-0221</phone>
+  <phone>291-484-0519</phone>
   <ssn>
-    <value>607-80-5285</value>
-    <restricted>true</restricted>
+    <value>682-87-6786</value>
+    <classification>(S)</classification>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2019-04-24T01:55:03Z</ts>
-        <uploadedBy>cforker0</uploadedBy>
+        <name>Wall Street Journal</name>
+        <ts>2018-11-23T03:22:39Z</ts>
+        <uploadedBy>wbubbings0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>216 Kim Trail</street><classification>M</classification>
-      <city>Reno</city>
-      <state>NV</state>
-      <postal>89550</postal>
-      <country>United States</country>
-      <latitude>39.5387</latitude>
-      <longitude>-119.8225</longitude>
-    </address>
-    <address>
-      <street>2 Sutherland Way</street><classification>M</classification>
+      <street>26 Debra Parkway</street>
       <city>New York City</city>
       <state>NY</state>
-      <postal>10203</postal>
+      <postal>10024</postal>
       <country>United States</country>
-      <latitude>40.7808</latitude>
-      <longitude>-73.9772</longitude>
+      <latitude>40.7864</latitude>
+      <longitude>-73.9764</longitude>
+    </address>
+    <address>
+      <street>1 7th Trail</street>
+      <city>Pittsburgh</city>
+      <state>PA</state>
+      <postal>15266</postal>
+      <country>United States</country>
+      <latitude>40.4344</latitude>
+      <longitude>-80.0248</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Mexico</country>
-      <name>Universidad la Concordia</name>
-      <city>Guanajuato</city>
-      <state>GUA</state>
-      <postal>36780</postal>
-      <latitude>20.5593774</latitude>
-      <longitude>-101.2049226</longitude>
+      <country>United States</country>
+      <name>University of Evansville</name>
+      <city>Migrate</city>
+      <state>KY</state>
+      <postal>41905</postal>
+      <latitude>38.3237571</latitude>
+      <longitude>-108.1821561</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2012-01-30T14:37:10Z</ts>
+        <ts>2015-10-18T05:22:57Z</ts>
       </source>
       <source>
         <name>New York Times</name>
-        <ts>2021-05-26T10:58:34Z</ts>
+        <ts>2021-11-18T09:01:42Z</ts>
+      </source>
+    </school>
+    <school>
+      <country>United States</country>
+      <name>Coppin State College</name>
+      <city>Tampa</city>
+      <state>FL</state>
+      <postal>33615</postal>
+      <latitude>28.0003221</latitude>
+      <longitude>-82.5889012</longitude>
+      <source>
+        <name>USA Today</name>
+        <ts>2017-09-16T03:07:04Z</ts>
       </source>
     </school>
   </schools>
-  <status>Active</status>
+  <status>Inactive</status>
   <sources>
     <source>
-      <name>New York Times</name>
-      <ts>2011-06-27T04:15:29Z</ts>
+      <name>Washington Post</name>
+      <ts>2018-12-05T09:50:37Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>New York Times</name>
-      <ts>2013-02-23T18:04:43Z</ts>
+      <name>Los Angeles Times</name>
+      <ts>2020-02-24T06:06:07Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10024.xml</id>
+      <id>/person/10071.xml</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
-      <fullname>Eglinton Melvin</fullname>
-      <city>Long Beach</city>
-      <state>CA</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
+      <fullname>de Najera Darsie</fullname>
+      <city>Cleveland</city>
+      <state>OH</state>
     </relation>
     <relation>
-      <id>/person/10022.xml</id>
+      <id>/person/10052.xml</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
+      <fullname>Cattlemull Sanders</fullname>
+      <city>Hattiesburg</city>
+      <state>MS</state>
+    </relation>
+    <relation>
+      <id>/person/10045.xml</id>
       <predicate>livesWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
-      <fullname>Borless Jeanine</fullname>
-      <city>Rochester</city>
-      <state>NY</state>
-    </relation>
-    <relation>
-      <id>/person/10004.xml</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
-      <fullname>Norville Joell</fullname>
-      <city>Boise</city>
-      <state>ID</state>
+      <fullname>Domel Felike</fullname>
+      <city>Terre Haute</city>
+      <state>IN</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-21T11:11:00Z</ts>
-    <user>kstaddart2n</user>
+    <ts>2022-02-12T14:57:22Z</ts>
+    <user>dstoltz2n</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-15T18:35:43Z</ts>
-    <user>kstaddart2n</user>
+    <ts>2022-02-26T07:27:46Z</ts>
+    <user>dstoltz2n</user>
   </lastUpdated>
-  <socials>
-    <social>
-      <site>facebook</site>
-      <handle>bfrearson0</handle>
-      <address>https://tamu.edu/sapien/quis/libero/nullam/sit/amet.jpg</address>
-    </social>
-    <social>
-      <site>twitter</site>
-      <handle>devers1</handle>
-      <address>http://jugem.jp/ut/nulla.xml</address>
-    </social>
-  </socials>
-  <memberships/>
+  <socials/>
+  <memberships>
+    <membership>
+      <list>list8</list>
+      <important>false</important>
+      <ts>2022-01-27</ts>
+    </membership>
+    <membership>
+      <list>list5</list>
+      <important>true</important>
+      <ts>2022-01-15</ts>
+    </membership>
+    <membership>
+      <list>list10</list>
+      <important>true</important>
+      <ts>2022-02-18</ts>
+    </membership>
+  </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>http://accuweather.com</url>
+      <url>http://google.com.au</url>
       <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>https://delicious.com</url>
+      <url>http://apple.com</url>
       <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>http://google.cn</url>
+      <url>http://jiathis.com</url>
       <icon>fa-comments</icon>
     </link>
   </links>

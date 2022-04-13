@@ -3,169 +3,238 @@
   <personId>10055</personId>
   <nameGroup>
     <givenname>
-      <value>Dale</value>
+      <value>Dexter</value>
     </givenname>
     <surname>
-      <value>Jenkyn</value>
+      <value>Jandourek</value>
     </surname>
     <fullname>
       <classification>U</classification>
       <restricted>false</restricted>
-      <value>Jenkyn Dale</value>
+      <value>Jandourek Dexter</value>
       <source>
-        <name>Washington Post</name>
-        <ts>2014-10-12T18:23:54Z</ts>
+        <name>USA Today</name>
+        <ts>2019-04-07T09:27:06Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>dudall0@theatlantic.com</value>
+      <value>rtruelove0@4shared.com</value>
       <classification>U</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>dcluff1@google.co.jp</value>
-      <classification>C</classification>
+      <value>phymans1@bravesites.com</value>
+      <classification>U</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>vhuskinson2@bigcartel.com</value>
+      <classification>U</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>714-516-1439</phone>
+  <phone>137-499-1724</phone>
   <ssn>
-    <value>272-02-3467</value>
-    <restricted>true</restricted>
+    <value>648-95-2591</value>
+    <classification>(S)</classification>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
       <source>
-        <name>Washington Post</name>
-        <ts>2017-09-29T16:05:13Z</ts>
-        <uploadedBy>nclute0</uploadedBy>
+        <name>USA Today</name>
+        <ts>2019-03-11T12:34:14Z</ts>
+        <uploadedBy>bpane0</uploadedBy>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
       <source>
         <name>Los Angeles Times</name>
-        <ts>2021-02-10T20:24:20Z</ts>
-        <uploadedBy>dvanlint0</uploadedBy>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2018-04-23T03:55:37Z</ts>
-        <uploadedBy>emidgley0</uploadedBy>
+        <ts>2019-06-05T02:26:46Z</ts>
+        <uploadedBy>hbeaconsall0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>504 Springs Pass</street><classification>M</classification>
-      <city>Montgomery</city>
-      <state>AL</state>
-      <postal>36104</postal>
+      <street>9 Monument Point</street>
+      <city>Albuquerque</city>
+      <state>NM</state>
+      <postal>87121</postal>
       <country>United States</country>
-      <latitude>32.373</latitude>
-      <longitude>-86.3081</longitude>
+      <latitude>35.0512</latitude>
+      <longitude>-106.7269</longitude>
     </address>
     <address>
-      <street>892 Hudson Alley</street><classification>M</classification>
-      <city>Baltimore</city>
-      <state>MD</state>
-      <postal>21203</postal>
+      <street>06 Summit Avenue</street>
+      <city>El Paso</city>
+      <state>TX</state>
+      <postal>88546</postal>
       <country>United States</country>
-      <latitude>39.2847</latitude>
-      <longitude>-76.6205</longitude>
-    </address>
-    <address>
-      <street>66602 Mifflin Place</street><classification>M</classification>
-      <city>Spokane</city>
-      <state>WA</state>
-      <postal>99220</postal>
-      <country>United States</country>
-      <latitude>47.6536</latitude>
-      <longitude>-117.4317</longitude>
+      <latitude>31.6948</latitude>
+      <longitude>-106.3</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Canada</country>
-      <name>Royal Military College of Canada</name>
-      <city>Sydney Mines</city>
-      <state>NS</state>
-      <postal>B1V</postal>
-      <latitude>46.2475531</latitude>
-      <longitude>-60.2362743</longitude>
+      <country>United States</country>
+      <name>Xavier University of Louisiana</name>
+      <city>Chattanooga</city>
+      <state>TN</state>
+      <postal>37410</postal>
+      <latitude>35.0010118</latitude>
+      <longitude>-85.3162066</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2021-02-06T21:05:23Z</ts>
+        <ts>2016-04-27T03:51:59Z</ts>
+      </source>
+      <source>
+        <name>New York Times</name>
+        <ts>2015-10-03T09:10:45Z</ts>
+      </source>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2010-01-02T05:15:19Z</ts>
+      </source>
+    </school>
+    <school>
+      <country>Canada</country>
+      <name>Yukon College</name>
+      <city>Morris</city>
+      <state>MB</state>
+      <postal>H8P</postal>
+      <latitude>49.35499</latitude>
+      <longitude>-97.36567</longitude>
+      <source>
+        <name>USA Today</name>
+        <ts>2021-09-07T22:24:46Z</ts>
       </source>
     </school>
   </schools>
   <status>Inactive</status>
   <sources>
     <source>
-      <name>Washington Post</name>
-      <ts>2013-11-17T09:04:35Z</ts>
+      <name>Chicago Tribune</name>
+      <ts>2018-12-25T19:25:06Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>Chicago Tribune</name>
-      <ts>2012-09-03T17:40:53Z</ts>
+      <name>New York Times</name>
+      <ts>2014-07-20T23:48:50Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10058.xml</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Apperley Paddy</fullname>
-      <city>San Rafael</city>
-      <state>CA</state>
+      <id>/person/10088.xml</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Hengoed Toni</fullname>
+      <city>Las Vegas</city>
+      <state>NV</state>
     </relation>
     <relation>
-      <id>/person/10024.xml</id>
+      <id>/person/10017.xml</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
-      <fullname>Eglinton Melvin</fullname>
-      <city>Long Beach</city>
-      <state>CA</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
+      <fullname>Stanett Vittoria</fullname>
+      <city>Nashville</city>
+      <state>TN</state>
+    </relation>
+    <relation>
+      <id>/person/10063.xml</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Vanderplas Issy</fullname>
+      <city>Stamford</city>
+      <state>CT</state>
+    </relation>
+    <relation>
+      <id>/person/10054.xml</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
+      <fullname>Habbijam Katti</fullname>
+      <city>Pittsburgh</city>
+      <state>PA</state>
+    </relation>
+    <relation>
+      <id>/person/10048.xml</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
+      <fullname>Cudiff Jerrilyn</fullname>
+      <city>Hartford</city>
+      <state>CT</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-25T08:12:32Z</ts>
-    <user>djenkyn1i</user>
+    <ts>2022-01-27T20:44:52Z</ts>
+    <user>djandourek1i</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-10T08:34:18Z</ts>
-    <user>djenkyn1i</user>
+    <ts>2022-02-06T21:53:04Z</ts>
+    <user>djandourek1i</user>
   </lastUpdated>
   <socials>
     <social>
       <site>linkedin</site>
-      <handle>ldanovich0</handle>
-      <address>http://pinterest.com/potenti/nullam/porttitor/lacus.xml</address>
+      <handle>kbliben0</handle>
+      <address>http://bigcartel.com/praesent/blandit/lacinia.jsp</address>
+    </social>
+    <social>
+      <site>facebook</site>
+      <handle>wgamet1</handle>
+      <address>http://squidoo.com/lorem/integer/tincidunt/ante/vel.xml</address>
     </social>
   </socials>
-  <memberships/>
+  <memberships>
+    <membership>
+      <list>list3</list>
+      <important>true</important>
+      <ts>2022-02-27</ts>
+    </membership>
+    <membership>
+      <list>list7</list>
+      <important>false</important>
+      <ts>2022-01-14</ts>
+    </membership>
+    <membership>
+      <list>list3</list>
+      <important>true</important>
+      <ts>2022-01-09</ts>
+    </membership>
+    <membership>
+      <list>list12</list>
+      <important>true</important>
+      <ts>2022-01-01</ts>
+    </membership>
+    <membership>
+      <list>list6</list>
+      <important>true</important>
+      <ts>2022-01-12</ts>
+    </membership>
+    <membership>
+      <list>list8</list>
+      <important>true</important>
+      <ts>2022-02-11</ts>
+    </membership>
+  </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>http://delicious.com</url>
+      <url>http://google.es</url>
       <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>http://wikispaces.com</url>
+      <url>https://tumblr.com</url>
       <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>http://jiathis.com</url>
+      <url>http://facebook.com</url>
       <icon>fa-comments</icon>
     </link>
   </links>

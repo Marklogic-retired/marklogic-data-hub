@@ -3,200 +3,200 @@
   <personId>10040</personId>
   <nameGroup>
     <givenname>
-      <value>Janine</value>
+      <value>Edlin</value>
     </givenname>
     <surname>
-      <value>Putten</value>
+      <value>Izen</value>
     </surname>
     <fullname>
-      <classification>U</classification>
+      <classification>S</classification>
       <restricted>true</restricted>
-      <value>Putten Janine</value>
+      <value>Izen Edlin</value>
       <source>
-        <name>Washington Post</name>
-        <ts>2013-11-08T12:27:06Z</ts>
+        <name>Wall Street Journal</name>
+        <ts>2021-06-09T15:31:40Z</ts>
+      </source>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2019-07-30T15:04:49Z</ts>
+      </source>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2011-03-02T23:23:11Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>rdavydkov0@baidu.com</value>
+      <value>ameaney0@bluehost.com</value>
+      <classification>C</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>mnadin1@lycos.com</value>
+      <classification>C</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>pbantham2@over-blog.com</value>
       <classification>U</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>227-157-4601</phone>
+  <phone>111-177-0292</phone>
   <ssn>
-    <value>101-71-2566</value>
-    <restricted>true</restricted>
+    <value>617-64-4432</value>
+    <classification>(S)</classification>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
-      <source>
-        <name>New York Times</name>
-        <ts>2013-08-17T16:07:49Z</ts>
-        <uploadedBy>lbradnam0</uploadedBy>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
-      <source>
-        <name>USA Today</name>
-        <ts>2020-01-06T23:48:12Z</ts>
-        <uploadedBy>nkorda0</uploadedBy>
-      </source>
-    </image>
-    <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
       <source>
-        <name>New York Times</name>
-        <ts>2012-09-30T02:14:22Z</ts>
-        <uploadedBy>cgrzegorzewicz0</uploadedBy>
+        <name>USA Today</name>
+        <ts>2011-08-07T15:00:20Z</ts>
+        <uploadedBy>emiell0</uploadedBy>
       </source>
     </image>
     <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
       <source>
-        <name>USA Today</name>
-        <ts>2016-07-07T12:29:29Z</ts>
-        <uploadedBy>lhiddersley0</uploadedBy>
+        <name>New York Times</name>
+        <ts>2019-06-30T19:17:01Z</ts>
+        <uploadedBy>rcoarser0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2020-12-30T23:40:15Z</ts>
+        <uploadedBy>ssivorn0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>59451 7th Way</street><classification>M</classification>
-      <city>Shreveport</city>
-      <state>LA</state>
-      <postal>71161</postal>
+      <street>996 Springview Trail</street>
+      <city>Fort Myers</city>
+      <state>FL</state>
+      <postal>33906</postal>
       <country>United States</country>
-      <latitude>32.6076</latitude>
-      <longitude>-93.7526</longitude>
+      <latitude>26.5529</latitude>
+      <longitude>-81.9486</longitude>
     </address>
     <address>
-      <street>8935 Annamark Terrace</street><classification>M</classification>
-      <city>Toledo</city>
-      <state>OH</state>
-      <postal>43615</postal>
+      <street>5 Fallview Court</street>
+      <city>Saint Petersburg</city>
+      <state>FL</state>
+      <postal>33742</postal>
       <country>United States</country>
-      <latitude>41.6492</latitude>
-      <longitude>-83.6706</longitude>
-    </address>
-    <address>
-      <street>37 Dennis Junction</street><classification>M</classification>
-      <city>Columbus</city>
-      <state>OH</state>
-      <postal>43240</postal>
-      <country>United States</country>
-      <latitude>40.1454</latitude>
-      <longitude>-82.9817</longitude>
+      <latitude>27.8918</latitude>
+      <longitude>-82.7248</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Canada</country>
-      <name>British Columbia Institute of Technology</name>
-      <city>Osoyoos</city>
-      <state>BC</state>
-      <postal>N9V</postal>
-      <latitude>49.03306</latitude>
-      <longitude>-119.45237</longitude>
+      <country>Mexico</country>
+      <name>El Colegio de México</name>
+      <city>Las Palmas</city>
+      <state>NLE</state>
+      <postal>67710</postal>
+      <latitude>24.8735859</latitude>
+      <longitude>-99.5758769</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2011-12-25T20:58:51Z</ts>
+        <ts>2011-04-15T02:57:34Z</ts>
       </source>
       <source>
         <name>New York Times</name>
-        <ts>2017-08-21T09:40:02Z</ts>
+        <ts>2021-09-14T18:57:00Z</ts>
       </source>
     </school>
   </schools>
-  <status>Inactive</status>
-  <sources>
-    <source>
-      <name>Wall Street Journal</name>
-      <ts>2017-11-29T23:59:00Z</ts>
-    </source>
-  </sources>
+  <status>Active</status>
   <sources>
     <source>
       <name>New York Times</name>
-      <ts>2016-06-18T18:38:45Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>USA Today</name>
-      <ts>2021-12-15T10:10:47Z</ts>
+      <ts>2019-12-30T01:50:27Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10048.xml</id>
+      <id>/person/10027.xml</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
-      <fullname>Skunes Itch</fullname>
-      <city>Sacramento</city>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
+      <fullname>Burness Major</fullname>
+      <city>Miami</city>
+      <state>FL</state>
+    </relation>
+    <relation>
+      <id>/person/10012.xml</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
+      <fullname>Scoffham Koenraad</fullname>
+      <city>Fresno</city>
       <state>CA</state>
     </relation>
     <relation>
-      <id>/person/10036.xml</id>
-      <predicate>worksWith</predicate>
+      <id>/person/10089.xml</id>
+      <predicate>relatedTo</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Wield Randall</fullname>
-      <city>Great Neck</city>
+      <fullname>Lindsley Stinky</fullname>
+      <city>New York City</city>
       <state>NY</state>
     </relation>
     <relation>
-      <id>/person/10011.xml</id>
+      <id>/person/10046.xml</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
+      <fullname>Lougheid Melloney</fullname>
+      <city>Little Rock</city>
+      <state>AR</state>
+    </relation>
+    <relation>
+      <id>/person/10039.xml</id>
       <predicate>livesWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
-      <fullname>Byatt Lettie</fullname>
-      <city>Washington</city>
-      <state>DC</state>
-    </relation>
-    <relation>
-      <id>/person/10049.xml</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Holyland Clemmy</fullname>
-      <city>Tacoma</city>
-      <state>WA</state>
-    </relation>
-    <relation>
-      <id>/person/10066.xml</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Pyffe Lonnie</fullname>
-      <city>Sioux Falls</city>
-      <state>SD</state>
+      <fullname>Prestie Hazel</fullname>
+      <city>Anderson</city>
+      <state>SC</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-19T11:02:03Z</ts>
-    <user>jputten13</user>
+    <ts>2022-01-07T21:41:01Z</ts>
+    <user>eizen13</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-31T08:54:02Z</ts>
-    <user>jputten13</user>
+    <ts>2022-01-08T02:37:06Z</ts>
+    <user>eizen13</user>
   </lastUpdated>
   <socials/>
-  <memberships/>
+  <memberships>
+    <membership>
+      <list>list3</list>
+      <important>false</important>
+      <ts>2022-02-03</ts>
+    </membership>
+    <membership>
+      <list>list6</list>
+      <important>false</important>
+      <ts>2022-02-17</ts>
+    </membership>
+  </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>https://plala.or.jp</url>
+      <url>http://noaa.gov</url>
       <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>http://naver.com</url>
+      <url>https://sun.com</url>
       <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>https://elpais.com</url>
+      <url>https://mac.com</url>
       <icon>fa-comments</icon>
     </link>
   </links>

@@ -482,11 +482,12 @@
             "metadata": [
               {
                 "type": "block",
-                "color": "#e67485"
-              },
-              {
-                "type": "block",
-                "color": "#5d6aaa"
+                "color": "#f4364c",
+                "path": "classification",
+                "placement": "before",
+                "style": {
+                  "width": "20px"
+                }
               }
             ]
           }
@@ -666,9 +667,7 @@
         "relations": {
           "arrayPath": "person.relations.relation",
           "id": {
-            "path": "id",
-            "prepend": "/record/",
-            "append": ".xml"
+            "path": "id"
           },
           "predicate": {
             "path": "predicate"
