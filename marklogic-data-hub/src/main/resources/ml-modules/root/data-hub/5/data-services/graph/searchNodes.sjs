@@ -71,6 +71,7 @@ start = start || 0;
 pageLength = pageLength || 1000;
 let hashmapPredicate = new Map();
 let qrySearch;
+const hubCentralConfig = cts.doc("/config/hubCentral.json")
 
 if(structuredQuery !== undefined && structuredQuery.toString().length > 0) {
   structuredQuery = fn.head(xdmp.unquote(structuredQuery)).root;
@@ -125,10 +126,36 @@ let edges = [];
 
 result.map(item => {
 
+  let resultPropertiesOnHover = [];
   let subjectLabel = item.subjectLabel;
+  let newLabel = "";
   if (item.subjectLabel !== undefined && item.subjectLabel.toString().length === 0) {
     let subjectArr = item.subjectIRI.toString().split("/");
     subjectLabel = subjectArr[subjectArr.length - 1];
+    newLabel = subjectArr[subjectArr.length - 1];
+    let entityType = subjectArr[subjectArr.length - 2];
+    //get configuration values from Hub Central Config
+    let configurationLabel = getLabelFromHubConfigByEntityType(entityType);
+    let configPropertiesOnHover = getPropertiesOnHoverFromHubConfigByEntityType(entityType);
+
+    //check if we have in central config new label loaded
+    if(configurationLabel.toString().length > 0){
+      //getting the value of the configuration property
+      newLabel =getValueFromProperty(configurationLabel,item.docURI,entityType);
+    }else{
+      newLabel = subjectLabel;
+    }
+    //check if we have in central config properties on hover loaded
+    if(configPropertiesOnHover.toString().length > 0){
+      //check in the document the value of the configuration property
+      for (var i = 0; i < configPropertiesOnHover.length; i++) {
+        let entityPropertyName = configPropertiesOnHover[i];
+        //create an Property on hover object
+        var objPropertyOnHover = new Object();
+        objPropertyOnHover[entityPropertyName] = getValueFromProperty(entityPropertyName,item.docURI,entityType);
+        resultPropertiesOnHover.push(objPropertyOnHover);
+      }
+    }
   }
 
   const group = item.subjectIRI.toString().substring(0, item.subjectIRI.toString().length - subjectLabel.length - 1);
@@ -136,17 +163,19 @@ result.map(item => {
   if (!nodes[item.subjectIRI]) {
     nodeOrigin.id = item.subjectIRI;
     nodeOrigin.docUri = item.docURI;
-    nodeOrigin.label = subjectLabel;
+    nodeOrigin.label = newLabel;
     nodeOrigin.additionalProperties = null;
     nodeOrigin.group = group;
     nodeOrigin.isConcept = false;
     nodeOrigin.hasRelationships = false;
     nodeOrigin.count = 1;
+    nodeOrigin.propertiesOnHover=resultPropertiesOnHover;
     nodes[item.subjectIRI] = nodeOrigin;
   } else {
     nodeOrigin = nodes[item.subjectIRI];
-    nodeOrigin.label = subjectLabel || nodeOrigin.label;
+    nodeOrigin.label = newLabel;
     nodeOrigin.group = group;
+    nodeOrigin.propertiesOnHover=resultPropertiesOnHover;
     nodeOrigin.additionalProperties = null;
     nodes[item.subjectIRI] = nodeOrigin;
   }
@@ -164,7 +193,7 @@ result.map(item => {
     let objectGroup = objectIRI.substring(0, objectIRI.length - objectIRIArr[objectIRIArr.length - 1].length - 1);
     let hasRelationships = false;
     if(item.nodeCount == 1 && !queryObj.entityTypeIds.includes(objectIRIArr[objectIRIArr.length - 2])){
-        hasRelationships = graphUtils.relatedObjHasRelationships(objectId, hashmapPredicate);
+      hasRelationships = graphUtils.relatedObjHasRelationships(objectId, hashmapPredicate);
     }
     //Override if count is more than 1. We will have a node with badge.
     let edge = {};
@@ -190,7 +219,8 @@ result.map(item => {
       if (item.nodeCount === 1) {
         objectNode.docUri = objectUri;
       }
-      objectNode.label = objectLabel;
+      objectNode.label = newLabel;
+      objectNode.propertiesOnHover=resultPropertiesOnHover.toString();
       objectNode.group = objectGroup;
       objectNode.isConcept = false;
       objectNode.count = item.nodeCount;
@@ -199,15 +229,15 @@ result.map(item => {
     }
   }
   else if (item.predicateIRI !== undefined && item.predicateIRI.toString().length > 0){
-      let edge = {};
-      let predicateArr = item.predicateIRI.toString().split("/");
-      let edgeLabel = predicateArr[predicateArr.length - 1];
-      edge.id = "edge-" + item.subjectIRI + "-" + item.predicateIRI + "-" + item.objectIRI;
-      edge.predicate = item.predicateIRI;
-      edge.label = edgeLabel;
-      edge.from = item.subjectIRI.toString();
-      edge.to = item.objectIRI;
-      edges.push(edge);
+    let edge = {};
+    let predicateArr = item.predicateIRI.toString().split("/");
+    let edgeLabel = predicateArr[predicateArr.length - 1];
+    edge.id = "edge-" + item.subjectIRI + "-" + item.predicateIRI + "-" + item.objectIRI;
+    edge.predicate = item.predicateIRI;
+    edge.label = edgeLabel;
+    edge.from = item.subjectIRI.toString();
+    edge.to = item.objectIRI;
+    edges.push(edge);
   }
 })
 
@@ -230,5 +260,30 @@ const response = {
   'nodes': nodesValues,
   'edges': edges
 };
+
+function getLabelFromHubConfigByEntityType(entityType) {
+
+  if(hubCentralConfig != null && fn.exists(hubCentralConfig.xpath("/modeling/entities/" + entityType))){
+    return hubCentralConfig.xpath("/modeling/entities/" + entityType + "/label");
+  }
+  return "";
+}
+
+function getPropertiesOnHoverFromHubConfigByEntityType(entityType) {
+  if(hubCentralConfig != null && fn.exists(hubCentralConfig.xpath("/modeling/entities/" + entityType+"/propertiesOnHover"))){
+    const obj = JSON.parse(hubCentralConfig);
+    return obj.modeling.entities[entityType].propertiesOnHover;
+  }
+  return "";
+}
+
+function getValueFromProperty(propertyName, docUri,entityType) {
+  const doc = cts.doc(docUri);
+  if(fn.exists(doc.xpath(".//*:envelope/*:instance/*:"+entityType+"/*:"+propertyName))){
+    return fn.data(doc.xpath(".//*:envelope/*:instance/*:"+entityType+"/*:"+propertyName));
+  }
+  return "";
+}
+
 
 response;
