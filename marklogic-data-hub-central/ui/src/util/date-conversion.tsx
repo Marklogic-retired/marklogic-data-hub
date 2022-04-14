@@ -1,26 +1,29 @@
-import moment from "moment";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 import {parse} from "iso8601-duration";
 import React from "react";
 
+dayjs.extend(relativeTime);
+
 export const dateConverter = (date:string) => {
-  return moment(date).format("YYYY-MM-DD HH:mm");
+  return dayjs(date).format("YYYY-MM-DD HH:mm");
 };
 
 export const relativeTimeConverter = (date:string) => {
-  return moment(date).fromNow();
+  return dayjs(date).fromNow();
 };
 
 export const durationFromDateTime = (date:string) => {
-  let currentTime = moment().toDate();
-  return moment.duration(currentTime.getTime() - moment(date).toDate().getTime(), "milliseconds").toISOString();
+  let currentTime = dayjs().toDate();
+  return dayjs.duration(currentTime.getTime() - dayjs(date).toDate().getTime(), "milliseconds").toISOString();
 };
 
 export const queryDateConverter = (date:string) => {
-  return moment(date).format("DD-MMM-YY HH:mm");
+  return dayjs(date).format("DD-MMM-YY HH:mm");
 };
 
 export const CardViewDateConverter = (date:string) => {
-  return moment(date).format("YYYY-MMMM-DD");
+  return dayjs(date).format("YYYY-MMMM-DD");
 };
 
 export const renderDuration = (duration) => {

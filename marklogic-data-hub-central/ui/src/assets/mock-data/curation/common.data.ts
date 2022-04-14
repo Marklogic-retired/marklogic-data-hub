@@ -1,6 +1,6 @@
 // Test data
 
-import moment from "moment";
+import dayjs from "dayjs";
 
 const flows = [
   {
@@ -2003,7 +2003,7 @@ const loadTableColumns: any = [
     key: "lastUpdated",
     sort: true,
     defaultSortOrder: "desc",
-    sortFunc: (a: any, b: any, order: string) => order === "asc" ? moment(a).unix() - moment(b).unix() : moment(b).unix() - moment(a).unix(),
+    sortFunc: (a: any, b: any, order: string) => order === "asc" ? dayjs(a).unix() - dayjs(b).unix() : dayjs(b).unix() - dayjs(a).unix(),
   },
   {
     text: "Action",

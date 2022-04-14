@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext, useRef} from "react";
 import axios from "axios";
-import moment from "moment";
+import dayjs from "dayjs";
 import {RouteComponentProps, withRouter} from "react-router-dom";
 import {UserContext} from "@util/user-context";
 import styles from "./Detail.module.scss";
@@ -222,7 +222,7 @@ const Detail: React.FC<Props> = ({history, location}) => {
     historyData.forEach((dataObject, index) => {
       const tableObj = {};
       tableObj["key"] = index;
-      tableObj["updatedTime"] = dataObject.updatedTime ? moment(dataObject.updatedTime).format("yyyy-MM-DD hh:mm") : "none";
+      tableObj["updatedTime"] = dataObject.updatedTime ? dayjs(dataObject.updatedTime).format("yyyy-MM-DD hh:mm") : "none";
       tableObj["flow"] = dataObject.flow ? dataObject.flow : "none";
       tableObj["step"] = dataObject.step ? dataObject.step : "none";
       tableObj["user"] = dataObject.user ? dataObject.user : "none";

@@ -10,7 +10,7 @@ import {MergingStep, defaultPriorityOption} from "../../../../types/curation-typ
 import {updateMergingArtifact} from "@api/merging";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {ConfirmYesNo, HCInput, HCButton, HCTooltip} from "@components/common";
-import moment from "moment";
+import dayjs from "dayjs";
 import TimelineVis from "../../matching/matching-step-detail/timeline-vis/timeline-vis";
 import TimelineVisDefault from "../../matching/matching-step-detail/timeline-vis-default/timeline-vis-default";
 import MergeDeleteModal from "../merge-delete-modal/merge-delete-modal";
@@ -206,7 +206,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
         let time;
         if (date >= 0 && date <= 100) {
           time = date.format("SSS");
-          return moment.duration(time).asMilliseconds();
+          return dayjs.duration(time).asMilliseconds();
         } else {
           return "";
         }

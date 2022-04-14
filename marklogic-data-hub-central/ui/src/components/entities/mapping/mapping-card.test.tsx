@@ -8,7 +8,7 @@ import {act} from "react-dom/test-utils";
 import {AuthoritiesService, AuthoritiesContext} from "../../../util/authorities";
 import mocks from "../../../api/__mocks__/mocks.data";
 import {SecurityTooltips} from "../../../config/tooltips.config";
-import moment from "moment";
+import dayjs from "dayjs";
 
 jest.mock("axios");
 
@@ -245,11 +245,11 @@ describe("Mapping Card component", () => {
     expect(getByText("Add New")).toBeInTheDocument();
     expect(getByText("Mapping1")).toBeInTheDocument();
     let ts: string = mapping[0].lastUpdated; // "2020-04-24T13:21:00.169198-07:00"
-    let tsExpected: string = moment(ts).format("MM/DD/YYYY h:mmA");
+    let tsExpected: string = dayjs(ts).format("MM/DD/YYYY h:mmA");
     expect(getByText("Last Updated: " + tsExpected)).toBeInTheDocument(); // "Last Updated: 04/24/2020 1:21PM"
     expect(getByText("Mapping2")).toBeInTheDocument();
     let ts2: string = mapping[1].lastUpdated; // "2020-10-01T02:38:00.169198-07:00"
-    let tsExpected2: string = moment(ts2).format("MM/DD/YYYY h:mmA");
+    let tsExpected2: string = dayjs(ts2).format("MM/DD/YYYY h:mmA");
     expect(getByText("Last Updated: " + tsExpected2)).toBeInTheDocument(); // "Last Updated: 10/01/2020 2:38AM"
 
     // Hover for options
@@ -389,7 +389,7 @@ describe("Mapping Card component", () => {
     //Check if the card is rendered properly
     expect(getByText("Add New")).toBeInTheDocument();
     let ts: string = mapping[0].lastUpdated; // "2020-04-24T13:21:00.169198-07:00"
-    let tsExpected: string = moment(ts).format("MM/DD/YYYY h:mmA");
+    let tsExpected: string = dayjs(ts).format("MM/DD/YYYY h:mmA");
     expect(getByText("Last Updated: " + tsExpected)).toBeInTheDocument(); // "Last Updated: 04/24/2020 1:21PM"
 
     fireEvent.mouseOver(getByText("Mapping1")); // Hover over the Map Card to get more options

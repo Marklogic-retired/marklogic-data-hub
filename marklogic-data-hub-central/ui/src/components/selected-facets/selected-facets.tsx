@@ -1,7 +1,7 @@
 import React, {useContext, useEffect} from "react";
 import {SearchContext} from "@util/search-context";
 import styles from "./selected-facets.module.scss";
-import moment from "moment";
+import dayjs from "dayjs";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheckSquare, faWindowClose} from "@fortawesome/free-solid-svg-icons";
 import {XLg} from "react-bootstrap-icons";
@@ -85,8 +85,8 @@ const SelectedFacets: React.FC<Props> = (props) => {
         if (facetName === "createdOnRange") {
           let dateValues: any = [];
           if (item.facet.rangeValues.lowerBound && item.facet.rangeValues.upperBound) {
-            const startDate = moment(item.facet.rangeValues.lowerBound).format("YYYY-MM-DD");
-            const endDate = moment(item.facet.rangeValues.upperBound).format("YYYY-MM-DD");
+            const startDate = dayjs(item.facet.rangeValues.lowerBound).format("YYYY-MM-DD");
+            const endDate = dayjs(item.facet.rangeValues.upperBound).format("YYYY-MM-DD");
             dateValues.push(startDate, endDate);
           } else {
             dateValues.push(item.facet.stringValues[0]);
@@ -106,7 +106,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
             </HCButton>
           );
         } else if (item.rangeValues) {
-          if (moment(item.rangeValues.lowerBound).isValid() && moment(item.rangeValues.upperBound).isValid()) {
+          if (dayjs(item.rangeValues.lowerBound).isValid() && dayjs(item.rangeValues.upperBound).isValid()) {
             let dateValues: any = [];
             dateValues.push(item.rangeValues.lowerBound, item.rangeValues.upperBound);
             return (
@@ -160,8 +160,8 @@ const SelectedFacets: React.FC<Props> = (props) => {
         if (item.constraint === "createdOnRange") {
           let dateValues: any = [];
           if (item.facet.rangeValues.lowerBound && item.facet.rangeValues.upperBound) {
-            const startDate = moment(item.facet.rangeValues.lowerBound).format("YYYY-MM-DD");
-            const endDate = moment(item.facet.rangeValues.upperBound).format("YYYY-MM-DD");
+            const startDate = dayjs(item.facet.rangeValues.lowerBound).format("YYYY-MM-DD");
+            const endDate = dayjs(item.facet.rangeValues.upperBound).format("YYYY-MM-DD");
             dateValues.push(startDate, endDate);
           } else {
             dateValues.push(item.facet.stringValues[0]);
@@ -181,7 +181,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
             </HCButton>
           );
         } else if (item.rangeValues) {
-          if (moment(item.rangeValues.lowerBound).isValid() && moment(item.rangeValues.upperBound).isValid()) {
+          if (dayjs(item.rangeValues.lowerBound).isValid() && dayjs(item.rangeValues.upperBound).isValid()) {
             let dateValues: any = [];
             dateValues.push(item.rangeValues.lowerBound, item.rangeValues.upperBound);
             return ((unCheckRest(item.constraint, item.facet, item.rangeValues)) &&
