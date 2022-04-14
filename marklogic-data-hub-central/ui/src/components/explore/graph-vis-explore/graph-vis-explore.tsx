@@ -736,46 +736,47 @@ const GraphVisExplore: React.FC<Props> = (props) => {
 
   const handleMenuClick = async (event) => {
     setContextMenuVisible(false);
-    let id = event.target.id;
-    if (id === "viewRecordsInTableView") {
-      if (network) {
+    if (network) {
+      switch (event.target.id) {
+      case "viewRecordsInTableView":
         handleTableViewRecords();
-      }
-    } else if (id === "focusOnCluster") {
-      if (network) {
+        break;
+      case "focusOnCluster":
         handleClusterFocus();
-      }
-    }  else if (id === "defocus") {
-      if (network) {
+        break;
+      case "defocus":
         handleDefocusCluster();
-      }
-    } else if (id === "showRelated") {
-      if (network) {
+        break;
+      case "showRelated": {
         let payloadData = {expandAll: true};
         handleLeafNodeExpansion(payloadData);
         setUserPreferences();
+        break;
       }
-    } else if (id === "expand3SampleRecords") {
-      if (network) {
+      case "expand3SampleRecords": {
         let payloadData = {expandAll: false};
         handleGroupNodeExpand(payloadData);
         setUserPreferences();
+        break;
       }
-    } else if (id === "expandAllRecords") {
-      if (network) {
+      case "expandAllRecords": {
         let payloadData = {expandAll: true};
         handleGroupNodeExpand(payloadData);
         setUserPreferences();
+        break;
       }
-    } else if (id === "collapseRecords") {
-      if (network) {
+      case "collapseRecords":
         handleCollapse();
         setUserPreferences();
-      }
-    } else if (id === "collapseLeafNode") {
-      if (network) {
+        break;
+      case "collapseLeafNode":
         handleLeafNodeCollapse();
         setUserPreferences();
+        break;
+      case "centerNode": {
+        await network.focus(clickedNode["nodeId"]);
+        break;
+      }
       }
     }
   };
@@ -819,56 +820,59 @@ const GraphVisExplore: React.FC<Props> = (props) => {
 
   const menu = () => {
     let entityType = "";
-    if (nodeIdExists()) {
-      if (groupNodes && groupNodes[clickedNode["nodeId"]]) {
-        entityType = groupNodes[clickedNode["nodeId"]].group.split("/").pop();
-      } else {
-        entityType = clickedNode && clickedNode["entityName"] ?  clickedNode["entityName"] : "";
-      }
+    if (!nodeIdExists()) {
+      return null;
+    }
+    if (groupNodes && groupNodes[clickedNode["nodeId"]]) {
+      entityType = groupNodes[clickedNode["nodeId"]].group.split("/").pop();
+    } else {
+      entityType = clickedNode && clickedNode["entityName"] ?  clickedNode["entityName"] : "";
     }
     return (
       <div id="contextMenu" onClick={handleMenuClick} className={styles.contextMenu} style={{left: menuPosition.x, top: menuPosition.y}}>
-        { nodeIdExists() && isGroupNode() &&
-            <div id="viewRecordsInTableView" key="1" className={styles.contextMenuItem}>
+        {isGroupNode() &&
+          <div id="viewRecordsInTableView" key="1" className={styles.contextMenuItem}>
             Open related {entityType} records in a table
-            </div>
+          </div>
         }
-        {
-          nodeIdExists() && isLeafNode() && !isExpandedLeaf() &&
+        {isLeafNode() && !isExpandedLeaf() &&
           <div id="showRelated" key="2" className={styles.contextMenuItem}>
             Show related
           </div>
         }
-        {nodeIdExists() && isGroupNode() && !isExpandedChildNode() && clickedNode["count"] > 3 &&
+        {isGroupNode() && !isExpandedChildNode() && clickedNode["count"] > 3 &&
           <div id="expand3SampleRecords" key="3" className={styles.contextMenuItem}>
             Expand 3 {entityType} records from this group
           </div>
         }
-        {nodeIdExists() && isGroupNode() &&
+        {isGroupNode() &&
           <div id="expandAllRecords" key="4" className={styles.contextMenuItem}>
             Expand all {entityType} records in this group
           </div>
         }
-        {nodeIdExists() && isExpandedChildNode() &&
+        {isExpandedChildNode() &&
           <div id="collapseRecords" key="5" className={styles.contextMenuItem}>
             Collapse all {entityType} records into a group
           </div>
         }
-        {nodeIdExists() && isExpandedLeaf() &&
+        {isExpandedLeaf() &&
           <div id="collapseLeafNode" key="6" className={styles.contextMenuItem}>
             Collapse related
           </div>
         }
-        { nodeIdExists() && !isClusterFocused() &&
-            <div id="focusOnCluster" key="7" className={styles.contextMenuItem}>
+        {!isClusterFocused() &&
+          <div id="focusOnCluster" key="7" className={styles.contextMenuItem}>
             Show only records in this cluster
-            </div>
+          </div>
         }
-        { nodeIdExists() && isClusterFocused() &&
-            <div id="defocus" key="8" className={styles.contextMenuItem}>
+        {isClusterFocused() &&
+          <div id="defocus" key="8" className={styles.contextMenuItem}>
             Show all records returned from the query
-            </div>
+          </div>
         }
+        <div id="centerNode" key="9" className={styles.contextMenuItem}>
+          Center this record
+        </div>
       </div>
     );
   };

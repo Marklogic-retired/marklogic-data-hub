@@ -43,6 +43,10 @@ class GraphExplore {
     })));
   }
 
+  getCenterNodeOption() {
+    return cy.get("[id=\"centerNode\"");
+  }
+
   getExpandAll() {
     return cy.get("#expandIcon");
   }
