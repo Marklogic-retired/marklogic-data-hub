@@ -15,7 +15,7 @@ import {updateMergingArtifact, getMergingRulesWarnings} from "@api/merging";
 import {addSliderOptions, parsePriorityOrder, handleDeleteSliderOptions} from "@util/priority-order-conversion";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {ConfirmYesNo, HCInput, HCAlert, HCButton, HCTooltip} from "@components/common";
-import moment from "moment";
+import dayjs from "dayjs";
 import TimelineVis from "../../matching/matching-step-detail/timeline-vis/timeline-vis";
 import TimelineVisDefault from "../../matching/matching-step-detail/timeline-vis-default/timeline-vis-default";
 import MergeDeleteModal from "../merge-delete-modal/merge-delete-modal";
@@ -265,7 +265,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
         let time;
         if (date >= 0 && date <= 100) {
           time = date.format("SSS");
-          return moment.duration(time).asMilliseconds();
+          return dayjs.duration(time).asMilliseconds();
         } else {
           return "";
         }

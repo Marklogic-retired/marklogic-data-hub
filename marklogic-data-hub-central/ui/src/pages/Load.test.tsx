@@ -8,7 +8,7 @@ import Load from "./Load";
 import {MemoryRouter} from "react-router-dom";
 import tiles from "../config/tiles.config";
 import {getViewSettings} from "../util/user-context";
-import moment from "moment";
+import dayjs from "dayjs";
 import loadData from "../assets/mock-data/curation/ingestion.data";
 
 jest.mock("axios");
@@ -208,7 +208,7 @@ describe("Load component", () => {
     expect(getByText("Test JSON.")).toBeInTheDocument();
     expect(getAllByText("json").length > 0);
     let ts: string = loadData.loads.data[0].lastUpdated; // "2000-01-01T12:00:00.000000-00:00"
-    let tsExpected: string = moment(ts).format("MM/DD/YYYY H:mmA");
+    let tsExpected: string = dayjs(ts).format("MM/DD/YYYY H:mmA");
     expect(getByText(tsExpected)).toBeInTheDocument(); // "01/01/2000 4:00AM"
     expect(getByLabelText("icon: delete")).toBeInTheDocument();
 
@@ -217,7 +217,7 @@ describe("Load component", () => {
     expect(getByText("testLoad")).toBeInTheDocument();
     expect(getByText("JSON")).toBeInTheDocument();
     let ts2: string = loadData.loads.data[0].lastUpdated; // "2000-01-01T12:00:00.000000-00:00"
-    let tsExpected2: string = moment(ts2).format("MM/DD/YYYY H:mmA");
+    let tsExpected2: string = dayjs(ts2).format("MM/DD/YYYY H:mmA");
     expect(getByText("Last Updated: " + tsExpected2)).toBeInTheDocument(); // "Last Updated: 01/01/2000 4:00AM"
     expect(getByTestId("testLoad-edit")).toBeInTheDocument();
     expect(getByLabelText("icon: delete")).toBeInTheDocument();

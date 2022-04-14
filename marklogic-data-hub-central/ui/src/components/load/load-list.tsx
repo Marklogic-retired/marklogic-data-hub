@@ -7,7 +7,7 @@ import Select, {components as SelectComponents} from "react-select";
 import reactSelectThemeConfig from "@config/react-select-theme.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
-import moment from "moment";
+import dayjs from "dayjs";
 import {convertDateFromISO} from "@util/conversionFunctions";
 import Steps from "../steps/steps";
 import {AdvLoadTooltips, SecurityTooltips} from "@config/tooltips.config";
@@ -488,7 +488,7 @@ const LoadList: React.FC<Props> = (props) => {
       formatter: (text) => (
         <div>{convertDateFromISO(text)}</div>
       ),
-      sortFunc: (a: any, b: any, order: string) => order === "asc" ? moment(a).unix() - moment(b).unix() : moment(b).unix() - moment(a).unix(),
+      sortFunc: (a: any, b: any, order: string) => order === "asc" ? dayjs(a).unix() - dayjs(b).unix() : dayjs(b).unix() - dayjs(a).unix(),
     },
     {
       text: "Action",

@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext, useRef} from "react";
-import moment from "moment";
+import dayjs from "dayjs";
 import Select from "react-select";
 import {Accordion, FormCheck} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -522,14 +522,14 @@ const Sidebar: React.FC<Props> = (props) => {
   const timeWindow = (selectedDateRangeValue) => {
     let date = "";
     if (selectedDateRangeValue === "This Week") {
-      const startOfWeek = moment().startOf("week").format("MMM DD");
-      const endOfWeek = moment().format("MMM DD");
+      const startOfWeek = dayjs().startOf("week").format("MMM DD");
+      const endOfWeek = dayjs().format("MMM DD");
       date = "(" + startOfWeek + " - " + endOfWeek + ")";
     }
 
     if (selectedDateRangeValue === "This Month") {
-      const startOfMonth = moment().startOf("month").format("MMM DD");
-      const endOfMonth = moment().format("MMM DD");
+      const startOfMonth = dayjs().startOf("month").format("MMM DD");
+      const endOfMonth = dayjs().format("MMM DD");
       date = "(" + startOfMonth + " - " + endOfMonth + ")";
     }
 
@@ -546,11 +546,11 @@ const Sidebar: React.FC<Props> = (props) => {
         {
           dataType: "date",
           stringValues: ["Custom", (-1 * new Date().getTimezoneOffset())],
-          rangeValues: {lowerBound: moment(dateArray[0]).format(), upperBound: moment(dateArray[1]).format()}
+          rangeValues: {lowerBound: dayjs(dateArray[0]).format(), upperBound: dayjs(dateArray[1]).format()}
         }
       };
 
-      setDatePickerValue([moment(dateArray[0]), moment(dateArray[1])]);
+      setDatePickerValue([dayjs(dateArray[0]), dayjs(dateArray[1])]);
     } else {
       delete updateFacets.createdOnRange;
       setDatePickerValue([null, null]);

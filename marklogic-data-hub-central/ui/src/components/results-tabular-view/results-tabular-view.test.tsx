@@ -4,7 +4,7 @@ import {entitySearch, entityPropertyDefinitions, selectedPropertyDefinitions, en
 import ResultsTabularView from "./results-tabular-view";
 import {BrowserRouter as Router} from "react-router-dom";
 import {validateTableRow} from "../../util/test-utils";
-import moment from "moment";
+import dayjs from "dayjs";
 import {SearchContext} from "../../util/search-context";
 
 describe("Results Table view component", () => {
@@ -162,7 +162,7 @@ describe("Results Table view component", () => {
     expect(getByTestId("Customer-101")).toBeInTheDocument();
     expect(getByTestId("json-101")).toBeInTheDocument();
     let ts: string = entitySearchAllEntities.results[0].createdOn; // "2020-06-21T23:44:46.225063-07:00"
-    let tsExpected: string = moment(ts).format("YYYY-MM-DD HH:mm");
+    let tsExpected: string = dayjs(ts).format("YYYY-MM-DD HH:mm");
     expect(getByText(tsExpected)).toBeInTheDocument(); // "2020-06-21 23:44"
     expect(getByTestId("101-detailOnSeparatePage")).toBeInTheDocument();
     expect(getByTestId("101-sourceOnSeparatePage")).toBeInTheDocument();

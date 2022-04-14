@@ -1,5 +1,5 @@
 import React from "react";
-import moment from "moment";
+import dayjs from "dayjs";
 import DateRangePicker from "react-bootstrap-daterangepicker";
 import {Options, DateOrString} from "daterangepicker";
 import "bootstrap-daterangepicker/daterangepicker.css";
@@ -34,7 +34,7 @@ function formatValue(input, {format, time}: { format?: string, time?: boolean}) 
 
   let dateFormat = format || (time ? "YYYY-MM-DD HH:mm:ss" : "YYYY-MM-DD");
 
-  return input.map(dateValue => moment(dateValue).format(dateFormat)).join(" ~ ");
+  return input.map(dateValue => dayjs(dateValue).format(dateFormat)).join(" ~ ");
 }
 
 function HCDateTimePicker({time, name, className, value, format, placeholder = ["Start date", "End date"], onChange, onOk, bindChange,  ...props}: HCDateTimePickerProps) {

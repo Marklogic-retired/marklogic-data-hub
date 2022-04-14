@@ -6,7 +6,7 @@ import JobResponse from "./job-response";
 import {BrowserRouter as Router} from "react-router-dom";
 import {CurationContext} from "../../util/curation-context";
 import {curationContextMock} from "../../assets/mock-data/curation/curation-context-mock";
-import moment from "moment";
+import dayjs from "dayjs";
 import curateData from "../../assets/mock-data/curation/flows.data";
 
 jest.mock("axios");
@@ -76,7 +76,7 @@ describe("Job response modal", () => {
     // check that
     await (waitForElement(() => (getByText("testFlow"))));
     let ts: string = curateData.jobRespSuccess.data.timeEnded; // "2020-04-24T14:05:01.019819-07:00"
-    let tsExpected: string = moment(ts).format("YYYY-MM-DD HH:mm");
+    let tsExpected: string = dayjs(ts).format("YYYY-MM-DD HH:mm");
     expect(getByText(tsExpected)).toBeInTheDocument(); // "2020-04-24 14:05"
     expect(getByText("0s 702ms")).toBeInTheDocument();
 
@@ -127,7 +127,7 @@ describe("Job response modal", () => {
     // check that
     await (waitForElement(() => (getByText("testFlow"))));
     let ts: string = curateData.jobRespFailedWithError.data.stepResponses["1"].stepEndTime; // "2020-04-04T01:17:45.012137-07:00"
-    let tsExpected: string = moment(ts).format("YYYY-MM-DD HH:mm");
+    let tsExpected: string = dayjs(ts).format("YYYY-MM-DD HH:mm");
     expect(getByText(tsExpected)).toBeInTheDocument(); // "2020-04-04 01:17"
     expect(getByText("0s 702ms")).toBeInTheDocument();
 
