@@ -3,231 +3,224 @@
   <personId>10090</personId>
   <nameGroup>
     <givenname>
-      <value>Mandie</value>
+      <value>Hilary</value>
     </givenname>
     <surname>
-      <value>Bawle</value>
+      <value>Durtnell</value>
     </surname>
     <fullname>
-      <classification>U</classification>
-      <restricted>false</restricted>
-      <value>Bawle Mandie</value>
+      <classification>C</classification>
+      <restricted>true</restricted>
+      <value>Durtnell Hilary</value>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2012-04-28T11:10:44Z</ts>
+        <name>Los Angeles Times</name>
+        <ts>2012-06-13T19:32:20Z</ts>
       </source>
       <source>
-        <name>Washington Post</name>
-        <ts>2017-02-05T09:16:05Z</ts>
+        <name>Chicago Tribune</name>
+        <ts>2017-08-21T13:00:34Z</ts>
       </source>
       <source>
-        <name>Washington Post</name>
-        <ts>2014-09-12T11:03:02Z</ts>
+        <name>New York Times</name>
+        <ts>2013-01-23T02:09:50Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>ssawley0@soundcloud.com</value>
+      <value>bseamer0@discuz.net</value>
+      <classification>U</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>cbattyll1@cnet.com</value>
       <classification>C</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>475-669-2332</phone>
+  <phone>672-219-4828</phone>
   <ssn>
-    <value>849-49-5145</value>
+    <value>422-36-9266</value>
     <classification>(S)</classification>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2014-07-06T18:32:30Z</ts>
-        <uploadedBy>anorthall0</uploadedBy>
+        <name>Wall Street Journal</name>
+        <ts>2016-12-27T21:18:18Z</ts>
+        <uploadedBy>hlaugharne0</uploadedBy>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2012-06-07T22:31:52Z</ts>
-        <uploadedBy>gchagg0</uploadedBy>
+        <name>USA Today</name>
+        <ts>2021-08-04T20:40:58Z</ts>
+        <uploadedBy>emcmackin0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
+      <source>
+        <name>Washington Post</name>
+        <ts>2020-08-01T03:22:31Z</ts>
+        <uploadedBy/>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2011-07-29T03:44:45Z</ts>
+        <uploadedBy>atayler0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>77261 Moland Parkway</street>
-      <city>Sioux Falls</city>
-      <state>SD</state>
-      <postal>57193</postal>
+      <street>46779 Blackbird Street</street>
+      <city>Pasadena</city>
+      <state>CA</state>
+      <postal>91125</postal>
       <country>United States</country>
-      <latitude>43.6746</latitude>
-      <longitude>-96.7913</longitude>
-    </address>
-    <address>
-      <street>740 Bluestem Lane</street>
-      <city>Charleston</city>
-      <state>WV</state>
-      <postal>25305</postal>
-      <country>United States</country>
-      <latitude>38.3358</latitude>
-      <longitude>-81.6123</longitude>
-    </address>
-    <address>
-      <street>1521 Tennyson Crossing</street>
-      <city>Toledo</city>
-      <state>OH</state>
-      <postal>43666</postal>
-      <country>United States</country>
-      <latitude>41.6782</latitude>
-      <longitude>-83.4972</longitude>
+      <latitude>33.7866</latitude>
+      <longitude>-118.2987</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Canada</country>
-      <name>Sauder School of Business</name>
-      <city>Middleton</city>
-      <state>NS</state>
-      <postal>K9V</postal>
-      <latitude>44.95015</latitude>
-      <longitude>-65.0655</longitude>
+      <country>United States</country>
+      <name>Lambuth University</name>
+      <city>Harrisburg</city>
+      <state>PA</state>
+      <postal>17126</postal>
+      <latitude>40.2617721</latitude>
+      <longitude>-76.8798693</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2018-03-09T23:21:56Z</ts>
-      </source>
-      <source>
-        <name>New York Times</name>
-        <ts>2020-10-29T15:42:21Z</ts>
-      </source>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2012-08-26T02:32:50Z</ts>
-      </source>
-    </school>
-    <school>
-      <country>Canada</country>
-      <name>Carleton University</name>
-      <city>Vulcan</city>
-      <state>AB</state>
-      <postal>V6M</postal>
-      <latitude>50.40008</latitude>
-      <longitude>-113.25189</longitude>
-      <source>
-        <name>USA Today</name>
-        <ts>2013-10-29T12:18:30Z</ts>
+        <ts>2015-04-07T16:16:01Z</ts>
       </source>
     </school>
   </schools>
-  <status>Inactive</status>
+  <status>Active</status>
   <sources>
     <source>
-      <name>Chicago Tribune</name>
-      <ts>2021-02-04T09:19:10Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>Chicago Tribune</name>
-      <ts>2012-03-11T11:50:36Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>Wall Street Journal</name>
-      <ts>2011-11-04T01:21:56Z</ts>
+      <name>Washington Post</name>
+      <ts>2012-07-25T13:37:23Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10086.xml</id>
+      <id>/person/10027.xml</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
-      <fullname>Silverston Wylie</fullname>
-      <city>San Francisco</city>
-      <state>CA</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
+      <fullname>Paolini Maximo</fullname>
+      <city>El Paso</city>
+      <state>TX</state>
     </relation>
     <relation>
-      <id>/person/10016.xml</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Claussen Ronalda</fullname>
-      <city>Richmond</city>
-      <state>VA</state>
-    </relation>
-    <relation>
-      <id>/person/10038.xml</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Springett Ezra</fullname>
-      <city>Shawnee Mission</city>
-      <state>KS</state>
+      <id>/person/10094.xml</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
+      <fullname>Nuzzti Tori</fullname>
+      <city>Canton</city>
+      <state>OH</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-17T02:27:47Z</ts>
-    <user>mbawle2h</user>
+    <ts>2022-01-06T22:03:29Z</ts>
+    <user>hdurtnell2h</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-19T09:06:39Z</ts>
-    <user>mbawle2h</user>
+    <ts>2022-01-19T14:59:44Z</ts>
+    <user>hdurtnell2h</user>
   </lastUpdated>
-  <socials>
-    <social>
-      <site>linkedin</site>
-      <handle>gmartinolli0</handle>
-      <address>https://umn.edu/massa/quis/augue/luctus/tincidunt/nulla.xml</address>
-    </social>
-    <social>
-      <site>facebook</site>
-      <handle>elaffin1</handle>
-      <address>https://google.nl/at/ipsum/ac/tellus/semper.json</address>
-    </social>
-  </socials>
+  <socials/>
   <memberships>
     <membership>
-      <list>list2</list>
-      <important>true</important>
-      <ts>2022-01-09</ts>
-    </membership>
-    <membership>
-      <list>list2</list>
+      <list>list12</list>
       <important>false</important>
-      <ts>2022-01-12</ts>
+      <ts>2022-02-05</ts>
     </membership>
     <membership>
       <list>list4</list>
       <important>true</important>
-      <ts>2022-01-30</ts>
+      <ts>2022-01-11</ts>
     </membership>
     <membership>
-      <list>list10</list>
-      <important>false</important>
-      <ts>2022-01-19</ts>
-    </membership>
-    <membership>
-      <list>list6</list>
-      <important>false</important>
-      <ts>2022-02-19</ts>
+      <list>list4</list>
+      <important>true</important>
+      <ts>2022-01-23</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>https://slashdot.org</url>
+      <url>https://xing.com</url>
       <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>https://salon.com</url>
+      <url>http://weather.com</url>
       <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>https://hibu.com</url>
+      <url>http://nba.com</url>
       <icon>fa-comments</icon>
     </link>
   </links>
+  <activities>
+    <activity>
+      <predicate>startedAt</predicate>
+      <place>Chatterpoint</place>
+      <source>
+        <name>USA Today</name>
+        <ts>2016-01-07T04:53:48Z</ts>
+        <createdBy>Marvin Papen</createdBy>
+        <approvedBy>Katie Happel</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>transferredTo</predicate>
+      <place>Oyonder</place>
+      <source>
+        <name>New York Times</name>
+        <ts>2018-12-04T08:52:53Z</ts>
+        <createdBy>Boy Sawney</createdBy>
+        <approvedBy>Gerrilee Izakson</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>movedTo</predicate>
+      <place>Eire</place>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2017-10-23T23:09:29Z</ts>
+        <createdBy>Madelaine Tydeman</createdBy>
+        <approvedBy>Geri Patillo</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>transferredTo</predicate>
+      <place>Demimbu</place>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2014-03-22T03:58:17Z</ts>
+        <createdBy>Bev Kierans</createdBy>
+        <approvedBy>Forester Bramham</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>startedAt</predicate>
+      <place>Kwimbee</place>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2022-01-30T20:29:57Z</ts>
+        <createdBy>Maitilde Eilhart</createdBy>
+        <approvedBy>Alyss Mathewes</approvedBy>
+      </source>
+    </activity>
+  </activities>
 </person>

@@ -3,214 +3,275 @@
   <personId>10036</personId>
   <nameGroup>
     <givenname>
-      <value>Ewan</value>
+      <value>Kingsly</value>
     </givenname>
     <surname>
-      <value>Bysh</value>
+      <value>Margeram</value>
     </surname>
     <fullname>
       <classification>C</classification>
       <restricted>true</restricted>
-      <value>Bysh Ewan</value>
+      <value>Margeram Kingsly</value>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2014-04-06T12:35:12Z</ts>
+        <name>Los Angeles Times</name>
+        <ts>2018-12-30T11:07:54Z</ts>
+      </source>
+      <source>
+        <name>USA Today</name>
+        <ts>2012-05-14T18:41:46Z</ts>
       </source>
       <source>
         <name>Wall Street Journal</name>
-        <ts>2012-07-20T22:16:44Z</ts>
+        <ts>2016-05-27T00:05:38Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>mdilawey0@dailymail.co.uk</value>
-      <classification>U</classification>
+      <value>ocooper0@virginia.edu</value>
+      <classification>C</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>nstark1@rediff.com</value>
-      <classification>U</classification>
+      <value>frabjohns1@ebay.com</value>
+      <classification>C</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>gmitcheson2@typepad.com</value>
-      <classification>S</classification>
+      <value>wbenmore2@myspace.com</value>
+      <classification>U</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>662-924-0375</phone>
+  <phone>339-642-5506</phone>
   <ssn>
-    <value>569-12-8435</value>
+    <value>316-18-9027</value>
     <classification>(S)</classification>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
       <source>
-        <name>USA Today</name>
-        <ts>2016-04-30T04:30:19Z</ts>
-        <uploadedBy>sdobell0</uploadedBy>
+        <name>New York Times</name>
+        <ts>2020-04-24T23:41:32Z</ts>
+        <uploadedBy>agulliford0</uploadedBy>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
       <source>
-        <name>USA Today</name>
-        <ts>2017-08-13T15:37:09Z</ts>
-        <uploadedBy>sgreason0</uploadedBy>
+        <name>Chicago Tribune</name>
+        <ts>2017-02-07T07:23:16Z</ts>
+        <uploadedBy>ojacobi0</uploadedBy>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2018-01-05T12:17:03Z</ts>
-        <uploadedBy>rhenrichs0</uploadedBy>
+        <name>Washington Post</name>
+        <ts>2021-03-15T06:55:59Z</ts>
+        <uploadedBy>gboraston0</uploadedBy>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2010-06-30T11:57:27Z</ts>
-        <uploadedBy>isieghart0</uploadedBy>
+        <name>New York Times</name>
+        <ts>2020-02-09T16:26:09Z</ts>
+        <uploadedBy/>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>04768 Orin Hill</street>
-      <city>Washington</city>
-      <state>DC</state>
-      <postal>20540</postal>
+      <street>38 Leroy Road</street>
+      <city>Topeka</city>
+      <state>KS</state>
+      <postal>66606</postal>
       <country>United States</country>
-      <latitude>38.8874</latitude>
-      <longitude>-77.0047</longitude>
+      <latitude>39.0583</latitude>
+      <longitude>-95.7095</longitude>
     </address>
     <address>
-      <street>31 Lukken Center</street>
-      <city>Raleigh</city>
-      <state>NC</state>
-      <postal>27690</postal>
+      <street>6 Oneill Junction</street>
+      <city>Sarasota</city>
+      <state>FL</state>
+      <postal>34238</postal>
       <country>United States</country>
-      <latitude>35.7977</latitude>
-      <longitude>-78.6253</longitude>
+      <latitude>27.2427</latitude>
+      <longitude>-82.4751</longitude>
     </address>
     <address>
-      <street>68468 Twin Pines Road</street>
-      <city>Austin</city>
-      <state>TX</state>
-      <postal>78764</postal>
+      <street>5 Scott Parkway</street>
+      <city>Jackson</city>
+      <state>MS</state>
+      <postal>39210</postal>
       <country>United States</country>
-      <latitude>30.4455</latitude>
-      <longitude>-97.6595</longitude>
+      <latitude>32.3218</latitude>
+      <longitude>-90.1771</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Mexico</country>
-      <name>Universidad Cuauhtémoc</name>
-      <city>San Jose</city>
-      <state>OAX</state>
-      <postal>69570</postal>
-      <latitude>25.8007724</latitude>
-      <longitude>-100.4277766</longitude>
+      <country>United Kingdom</country>
+      <name>Trinity College of Music</name>
+      <city>Glasgow</city>
+      <state>SCT</state>
+      <postal>G4</postal>
+      <latitude>55.8709949</latitude>
+      <longitude>-4.2494388</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2012-03-12T09:46:38Z</ts>
+        <ts>2019-05-09T20:12:12Z</ts>
       </source>
       <source>
         <name>New York Times</name>
-        <ts>2011-05-26T00:41:13Z</ts>
+        <ts>2015-04-05T00:46:14Z</ts>
+      </source>
+    </school>
+    <school>
+      <country>United Kingdom</country>
+      <name>University of Westminster</name>
+      <city>Belfast</city>
+      <state>NIR</state>
+      <postal>BT2</postal>
+      <latitude>54.5940619</latitude>
+      <longitude>-5.9308088</longitude>
+      <source>
+        <name>USA Today</name>
+        <ts>2018-06-13T08:49:17Z</ts>
+      </source>
+      <source>
+        <name>New York Times</name>
+        <ts>2021-08-10T15:20:48Z</ts>
       </source>
       <source>
         <name>Chicago Tribune</name>
-        <ts>2017-10-27T08:45:02Z</ts>
+        <ts>2015-04-18T08:33:18Z</ts>
       </source>
     </school>
   </schools>
   <status>Inactive</status>
   <sources>
     <source>
-      <name>Los Angeles Times</name>
-      <ts>2021-08-22T05:56:37Z</ts>
+      <name>USA Today</name>
+      <ts>2018-09-27T10:51:59Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>Los Angeles Times</name>
-      <ts>2021-02-13T10:12:06Z</ts>
+      <name>Chicago Tribune</name>
+      <ts>2018-04-21T22:16:22Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Wall Street Journal</name>
+      <ts>2020-08-20T10:18:09Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10077.xml</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Piwall Bambie</fullname>
-      <city>Odessa</city>
-      <state>TX</state>
+      <id>/person/10038.xml</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
+      <fullname>Indgs Timmie</fullname>
+      <city>Colorado Springs</city>
+      <state>CO</state>
     </relation>
     <relation>
       <id>/person/10032.xml</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Giraldon Tedi</fullname>
-      <city>Erie</city>
-      <state>PA</state>
-    </relation>
-    <relation>
-      <id>/person/10081.xml</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
-      <fullname>Presland Huntlee</fullname>
-      <city>Schenectady</city>
-      <state>NY</state>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
+      <fullname>Godbehere Padget</fullname>
+      <city>Atlanta</city>
+      <state>GA</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-06T06:32:48Z</ts>
-    <user>ebyshz</user>
+    <ts>2022-02-18T03:18:52Z</ts>
+    <user>kmargeramz</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-15T10:43:42Z</ts>
-    <user>ebyshz</user>
+    <ts>2022-02-06T17:01:35Z</ts>
+    <user>kmargeramz</user>
   </lastUpdated>
   <socials>
     <social>
       <site>linkedin</site>
-      <handle>pdadd0</handle>
-      <address>http://amazon.co.uk/parturient/montes/nascetur/ridiculus/mus.jsp</address>
+      <handle>vohartigan0</handle>
+      <address>https://timesonline.co.uk/non/velit.html</address>
     </social>
     <social>
       <site>facebook</site>
-      <handle>ckimbling1</handle>
-      <address>http://alibaba.com/montes/nascetur/ridiculus/mus/etiam/vel/augue.jsp</address>
+      <handle>bdalesio1</handle>
+      <address>https://cam.ac.uk/duis/aliquam/convallis/nunc/proin.js</address>
     </social>
   </socials>
   <memberships>
     <membership>
-      <list>list11</list>
+      <list>list5</list>
+      <important>false</important>
+      <ts>2022-02-08</ts>
+    </membership>
+    <membership>
+      <list>list3</list>
+      <important>false</important>
+      <ts>2022-02-27</ts>
+    </membership>
+    <membership>
+      <list>list10</list>
       <important>true</important>
-      <ts>2022-02-06</ts>
+      <ts>2022-02-04</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>http://imageshack.us</url>
+      <url>https://cnet.com</url>
       <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>https://cyberchimps.com</url>
+      <url>https://pen.io</url>
       <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>https://paginegialle.it</url>
+      <url>https://ehow.com</url>
       <icon>fa-comments</icon>
     </link>
   </links>
+  <activities>
+    <activity>
+      <predicate>startedAt</predicate>
+      <place>Vinder</place>
+      <source>
+        <name>USA Today</name>
+        <ts>2012-05-01T17:42:04Z</ts>
+        <createdBy>Rozanne Dimond</createdBy>
+        <approvedBy>Eustacia Gilluley</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>startedAt</predicate>
+      <place>Jetwire</place>
+      <source>
+        <name>New York Times</name>
+        <ts>2020-11-05T05:14:37Z</ts>
+        <createdBy>Leone Rhyme</createdBy>
+        <approvedBy>Hazlett Goodbairn</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>transferredTo</predicate>
+      <place>Dabfeed</place>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2013-09-01T00:35:28Z</ts>
+        <createdBy>Joe Gunderson</createdBy>
+        <approvedBy>Cathee Parlott</approvedBy>
+      </source>
+    </activity>
+  </activities>
 </person>

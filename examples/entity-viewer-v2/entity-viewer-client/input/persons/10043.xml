@@ -3,195 +3,222 @@
   <personId>10043</personId>
   <nameGroup>
     <givenname>
-      <value>Kennith</value>
+      <value>Adelina</value>
     </givenname>
     <surname>
-      <value>Maggiori</value>
+      <value>Stote</value>
     </surname>
     <fullname>
       <classification>S</classification>
       <restricted>false</restricted>
-      <value>Maggiori Kennith</value>
+      <value>Stote Adelina</value>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2010-12-27T02:40:36Z</ts>
+      </source>
       <source>
         <name>New York Times</name>
-        <ts>2020-01-08T19:18:42Z</ts>
+        <ts>2020-03-23T23:50:31Z</ts>
+      </source>
+      <source>
+        <name>Washington Post</name>
+        <ts>2014-05-09T13:00:20Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>rkipling0@vkontakte.ru</value>
-      <classification>C</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>ksprackling1@businesswire.com</value>
-      <classification>U</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>ealliban2@csmonitor.com</value>
+      <value>gdeluze0@blog.com</value>
       <classification>S</classification>
       <restricted>false</restricted>
     </email>
+    <email>
+      <value>psalvador1@marriott.com</value>
+      <classification>C</classification>
+      <restricted>false</restricted>
+    </email>
   </emails>
-  <phone>851-318-6829</phone>
+  <phone>198-813-8925</phone>
   <ssn>
-    <value>604-92-6700</value>
+    <value>209-88-5134</value>
     <classification>(S)</classification>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
       <source>
-        <name>New York Times</name>
-        <ts>2016-12-14T23:01:38Z</ts>
-        <uploadedBy/>
+        <name>Wall Street Journal</name>
+        <ts>2020-12-03T20:41:41Z</ts>
+        <uploadedBy>cdinneen0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>42579 Carioca Terrace</street>
-      <city>Gainesville</city>
-      <state>FL</state>
-      <postal>32610</postal>
+      <street>67064 Redwing Drive</street>
+      <city>Jackson</city>
+      <state>TN</state>
+      <postal>38308</postal>
       <country>United States</country>
-      <latitude>29.6813</latitude>
-      <longitude>-82.3539</longitude>
+      <latitude>35.6124</latitude>
+      <longitude>-88.8412</longitude>
     </address>
     <address>
-      <street>8 Mccormick Drive</street>
-      <city>Omaha</city>
-      <state>NE</state>
-      <postal>68105</postal>
+      <street>37486 Commercial Pass</street>
+      <city>Yakima</city>
+      <state>WA</state>
+      <postal>98907</postal>
       <country>United States</country>
-      <latitude>41.2435</latitude>
-      <longitude>-95.9629</longitude>
-    </address>
-    <address>
-      <street>13 Dexter Drive</street>
-      <city>Green Bay</city>
-      <state>WI</state>
-      <postal>54313</postal>
-      <country>United States</country>
-      <latitude>44.5463</latitude>
-      <longitude>-88.1021</longitude>
+      <latitude>46.6288</latitude>
+      <longitude>-120.574</longitude>
     </address>
   </addresses>
   <schools>
     <school>
       <country>Mexico</country>
-      <name>Universidad Autónoma de Nayarit</name>
-      <city>Independencia</city>
-      <state>COA</state>
-      <postal>30815</postal>
-      <latitude>32.5124846</latitude>
-      <longitude>-116.8557985</longitude>
+      <name>Universidad del Mayab</name>
+      <city>Loma Bonita</city>
+      <state>MEX</state>
+      <postal>52740</postal>
+      <latitude>18.1096868</latitude>
+      <longitude>-95.8803869</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2017-01-12T12:46:58Z</ts>
-      </source>
-    </school>
-    <school>
-      <country>United States</country>
-      <name>Boston University</name>
-      <city>Atlanta</city>
-      <state>GA</state>
-      <postal>31119</postal>
-      <latitude>33.8524536</latitude>
-      <longitude>-84.3679295</longitude>
-      <source>
-        <name>USA Today</name>
-        <ts>2011-12-19T23:10:36Z</ts>
+        <ts>2016-02-16T01:22:40Z</ts>
       </source>
       <source>
         <name>New York Times</name>
-        <ts>2016-09-14T23:22:08Z</ts>
+        <ts>2011-11-15T02:00:30Z</ts>
+      </source>
+    </school>
+    <school>
+      <country>United Kingdom</country>
+      <name>University of Nottingham</name>
+      <city>Thorpe</city>
+      <state>ENG</state>
+      <postal>BD23</postal>
+      <latitude>54.0521127</latitude>
+      <longitude>-1.9847194</longitude>
+      <source>
+        <name>USA Today</name>
+        <ts>2011-05-01T07:14:25Z</ts>
+      </source>
+      <source>
+        <name>New York Times</name>
+        <ts>2011-01-24T12:51:31Z</ts>
       </source>
     </school>
   </schools>
-  <status>Inactive</status>
+  <status>Active</status>
   <sources>
     <source>
-      <name>Wall Street Journal</name>
-      <ts>2012-08-19T10:11:51Z</ts>
+      <name>Los Angeles Times</name>
+      <ts>2018-07-05T02:48:45Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10081.xml</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
-      <fullname>Presland Huntlee</fullname>
-      <city>Schenectady</city>
-      <state>NY</state>
-    </relation>
-    <relation>
-      <id>/person/10066.xml</id>
+      <id>/person/10012.xml</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
-      <fullname>Matusovsky Melloney</fullname>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
+      <fullname>Elders Jorie</fullname>
       <city>Atlanta</city>
       <state>GA</state>
     </relation>
+    <relation>
+      <id>/person/10043.xml</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Stote Adelina</fullname>
+      <city>Jackson</city>
+      <state>TN</state>
+    </relation>
+    <relation>
+      <id>/person/10077.xml</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
+      <fullname>Sancho Veda</fullname>
+      <city>Spokane</city>
+      <state>WA</state>
+    </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-08T05:16:16Z</ts>
-    <user>kmaggiori16</user>
+    <ts>2022-01-24T18:36:08Z</ts>
+    <user>astote16</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-29T12:52:06Z</ts>
-    <user>kmaggiori16</user>
+    <ts>2022-01-24T14:48:17Z</ts>
+    <user>astote16</user>
   </lastUpdated>
   <socials/>
-  <memberships>
-    <membership>
-      <list>list8</list>
-      <important>true</important>
-      <ts>2022-01-27</ts>
-    </membership>
-    <membership>
-      <list>list12</list>
-      <important>false</important>
-      <ts>2022-01-16</ts>
-    </membership>
-    <membership>
-      <list>list9</list>
-      <important>true</important>
-      <ts>2022-02-19</ts>
-    </membership>
-    <membership>
-      <list>list7</list>
-      <important>false</important>
-      <ts>2022-02-09</ts>
-    </membership>
-    <membership>
-      <list>list10</list>
-      <important>true</important>
-      <ts>2022-02-14</ts>
-    </membership>
-    <membership>
-      <list>list7</list>
-      <important>true</important>
-      <ts>2022-02-24</ts>
-    </membership>
-  </memberships>
+  <memberships/>
   <links>
     <link>
       <label>Quick View</label>
-      <url>https://shinystat.com</url>
+      <url>http://adobe.com</url>
       <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>http://japanpost.jp</url>
+      <url>https://weather.com</url>
       <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>http://canalblog.com</url>
+      <url>http://jigsy.com</url>
       <icon>fa-comments</icon>
     </link>
   </links>
+  <activities>
+    <activity>
+      <predicate>movedTo</predicate>
+      <place>Yodo</place>
+      <source>
+        <name>USA Today</name>
+        <ts>2010-02-19T18:45:29Z</ts>
+        <createdBy>Tally Korfmann</createdBy>
+        <approvedBy>Maris Leile</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>endedAt</predicate>
+      <place>Eazzy</place>
+      <source>
+        <name>New York Times</name>
+        <ts>2011-04-01T16:10:48Z</ts>
+        <createdBy>Aeriela Baldazzi</createdBy>
+        <approvedBy>Cass Gainsbury</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>transferredTo</predicate>
+      <place>Digitube</place>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2012-09-23T21:05:53Z</ts>
+        <createdBy>Consolata Avieson</createdBy>
+        <approvedBy>Crystal Goudy</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>endedAt</predicate>
+      <place>Jayo</place>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2010-06-26T07:50:27Z</ts>
+        <createdBy>Shena Guard</createdBy>
+        <approvedBy>Angele Tressler</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>endedAt</predicate>
+      <place>Jabbertype</place>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2012-08-01T12:11:21Z</ts>
+        <createdBy>Beatrix Simonassi</createdBy>
+        <approvedBy>Desmond Joontjes</approvedBy>
+      </source>
+    </activity>
+  </activities>
 </person>
