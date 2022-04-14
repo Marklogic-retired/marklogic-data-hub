@@ -3,184 +3,263 @@
   <personId>10048</personId>
   <nameGroup>
     <givenname>
-      <value>Jerrilyn</value>
+      <value>Ches</value>
     </givenname>
     <surname>
-      <value>Cudiff</value>
+      <value>Stollmeier</value>
     </surname>
     <fullname>
-      <classification>U</classification>
-      <restricted>true</restricted>
-      <value>Cudiff Jerrilyn</value>
-      <source>
-        <name>New York Times</name>
-        <ts>2017-03-27T12:24:40Z</ts>
-      </source>
+      <classification>C</classification>
+      <restricted>false</restricted>
+      <value>Stollmeier Ches</value>
       <source>
         <name>Chicago Tribune</name>
-        <ts>2019-09-03T05:19:21Z</ts>
-      </source>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2016-12-01T12:05:40Z</ts>
+        <ts>2014-01-24T15:47:33Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>eredsull0@delicious.com</value>
-      <classification>C</classification>
+      <value>itiernan0@wp.com</value>
+      <classification>S</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>fodowgaine1@surveymonkey.com</value>
+      <classification>U</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>jsherington2@bloomberg.com</value>
+      <classification>U</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>756-209-9729</phone>
+  <phone>346-910-0111</phone>
   <ssn>
-    <value>185-63-4980</value>
+    <value>626-53-0454</value>
     <classification>(S)</classification>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2016-02-18T21:56:23Z</ts>
+        <uploadedBy>mberrigan0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2015-07-10T01:34:11Z</ts>
+        <uploadedBy>wridley0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
       <source>
         <name>USA Today</name>
-        <ts>2021-03-25T09:25:52Z</ts>
-        <uploadedBy>mlarderot0</uploadedBy>
+        <ts>2021-01-29T19:47:08Z</ts>
+        <uploadedBy/>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>68 Moulton Crossing</street>
-      <city>Hartford</city>
-      <state>CT</state>
-      <postal>06120</postal>
+      <street>85 Randy Circle</street>
+      <city>Fort Worth</city>
+      <state>TX</state>
+      <postal>76115</postal>
       <country>United States</country>
-      <latitude>41.786</latitude>
-      <longitude>-72.6758</longitude>
+      <latitude>32.6796</latitude>
+      <longitude>-97.3336</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Mexico</country>
-      <name>Universidad Autónoma de Baja California Sur</name>
-      <city>San Miguel</city>
-      <state>MEX</state>
-      <postal>51700</postal>
-      <latitude>19.3579802</latitude>
-      <longitude>-99.0806088</longitude>
+      <country>United States</country>
+      <name>Central Bible College</name>
+      <city>Topeka</city>
+      <state>KS</state>
+      <postal>66622</postal>
+      <latitude>39.026091</latitude>
+      <longitude>-95.7226884</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2019-03-16T07:48:31Z</ts>
+        <ts>2016-05-02T00:51:14Z</ts>
       </source>
     </school>
     <school>
       <country>United States</country>
-      <name>St. Peter's College</name>
-      <city>Syracuse</city>
+      <name>University of Colorado at Colorado Springs</name>
+      <city>Great Neck</city>
       <state>NY</state>
-      <postal>13205</postal>
-      <latitude>42.9979838</latitude>
-      <longitude>-76.1377935</longitude>
+      <postal>11024</postal>
+      <latitude>40.8143687</latitude>
+      <longitude>-73.7419017</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2015-01-01T19:57:00Z</ts>
+        <ts>2021-09-27T02:52:07Z</ts>
       </source>
       <source>
         <name>New York Times</name>
-        <ts>2013-07-07T17:12:53Z</ts>
-      </source>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2014-09-03T02:18:46Z</ts>
+        <ts>2013-08-06T16:03:36Z</ts>
       </source>
     </school>
   </schools>
-  <status>Active</status>
+  <status>Inactive</status>
   <sources>
     <source>
-      <name>Los Angeles Times</name>
-      <ts>2020-11-08T15:27:28Z</ts>
+      <name>Washington Post</name>
+      <ts>2017-04-05T16:29:12Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>USA Today</name>
+      <ts>2021-03-18T03:08:17Z</ts>
     </source>
   </sources>
   <sources>
     <source>
       <name>New York Times</name>
-      <ts>2017-12-11T21:12:16Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>New York Times</name>
-      <ts>2021-03-26T05:02:48Z</ts>
+      <ts>2019-12-21T13:21:42Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10072.xml</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
-      <fullname>Chipchase Vonny</fullname>
-      <city>Evansville</city>
-      <state>IN</state>
-    </relation>
-    <relation>
-      <id>/person/10076.xml</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Mynard Dotti</fullname>
-      <city>Ocala</city>
-      <state>FL</state>
-    </relation>
-    <relation>
-      <id>/person/10052.xml</id>
+      <id>/person/10019.xml</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
-      <fullname>Cattlemull Sanders</fullname>
-      <city>Hattiesburg</city>
-      <state>MS</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>MacNeish Ely</fullname>
+      <city>Hartford</city>
+      <state>CT</state>
+    </relation>
+    <relation>
+      <id>/person/10062.xml</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
+      <fullname>Gamon Jaymee</fullname>
+      <city>El Paso</city>
+      <state>TX</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-14T08:23:40Z</ts>
-    <user>jcudiff1b</user>
+    <ts>2022-01-15T15:36:30Z</ts>
+    <user>cstollmeier1b</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-06T17:23:28Z</ts>
-    <user>jcudiff1b</user>
+    <ts>2022-01-05T04:26:26Z</ts>
+    <user>cstollmeier1b</user>
   </lastUpdated>
-  <socials/>
+  <socials>
+    <social>
+      <site>twitter</site>
+      <handle>thousiaux0</handle>
+      <address>http://drupal.org/maecenas/ut/massa.html</address>
+    </social>
+    <social>
+      <site>twitter</site>
+      <handle>kdampier1</handle>
+      <address>https://exblog.jp/quis/orci.aspx</address>
+    </social>
+  </socials>
   <memberships>
     <membership>
-      <list>list10</list>
+      <list>list8</list>
       <important>false</important>
-      <ts>2022-01-24</ts>
+      <ts>2022-02-12</ts>
     </membership>
     <membership>
-      <list>list12</list>
-      <important>true</important>
-      <ts>2022-01-08</ts>
+      <list>list4</list>
+      <important>false</important>
+      <ts>2022-01-01</ts>
     </membership>
     <membership>
-      <list>list11</list>
+      <list>list10</list>
       <important>true</important>
-      <ts>2022-02-10</ts>
+      <ts>2022-01-07</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>http://jimdo.com</url>
+      <url>http://unesco.org</url>
       <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>http://cyberchimps.com</url>
+      <url>http://nih.gov</url>
       <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>https://histats.com</url>
+      <url>https://deliciousdays.com</url>
       <icon>fa-comments</icon>
     </link>
   </links>
+  <activities>
+    <activity>
+      <predicate>transferredTo</predicate>
+      <place>Dynabox</place>
+      <source>
+        <name>USA Today</name>
+        <ts>2017-04-27T15:25:52Z</ts>
+        <createdBy>Meggi Crook</createdBy>
+        <approvedBy>Gabbie Twinborne</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>movedTo</predicate>
+      <place>Shufflester</place>
+      <source>
+        <name>New York Times</name>
+        <ts>2015-07-24T16:10:05Z</ts>
+        <createdBy>Adriane Moorerud</createdBy>
+        <approvedBy>Sara-ann Kingcote</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>transferredTo</predicate>
+      <place>Brightdog</place>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2017-12-07T16:57:53Z</ts>
+        <createdBy>Wilmar Outibridge</createdBy>
+        <approvedBy>Nefen Joncic</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>startedAt</predicate>
+      <place>Lazzy</place>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2012-12-06T12:00:51Z</ts>
+        <createdBy>Sandro Tribbeck</createdBy>
+        <approvedBy>Margaretha Perkis</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>movedTo</predicate>
+      <place>JumpXS</place>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2016-04-12T11:55:49Z</ts>
+        <createdBy>Giustina Zeplin</createdBy>
+        <approvedBy>Sonny Semeradova</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>transferredTo</predicate>
+      <place>Avamba</place>
+      <source>
+        <name>Washington Post</name>
+        <ts>2013-11-12T10:17:20Z</ts>
+        <createdBy>Olag Duchesne</createdBy>
+        <approvedBy>Frank Blenkinsopp</approvedBy>
+      </source>
+    </activity>
+  </activities>
 </person>

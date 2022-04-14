@@ -3,218 +3,279 @@
   <personId>10019</personId>
   <nameGroup>
     <givenname>
-      <value>Marje</value>
+      <value>Ely</value>
     </givenname>
     <surname>
-      <value>Dewis</value>
+      <value>MacNeish</value>
     </surname>
     <fullname>
-      <classification>C</classification>
+      <classification>U</classification>
       <restricted>true</restricted>
-      <value>Dewis Marje</value>
+      <value>MacNeish Ely</value>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2017-06-17T11:44:26Z</ts>
+        <name>Washington Post</name>
+        <ts>2010-05-05T09:53:47Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>gmay0@jimdo.com</value>
-      <classification>S</classification>
+      <value>ccastlake0@nydailynews.com</value>
+      <classification>C</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>tvinten1@wired.com</value>
+      <classification>C</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>mcarwithen2@hc360.com</value>
+      <classification>U</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>556-163-3508</phone>
+  <phone>374-176-3025</phone>
   <ssn>
-    <value>522-21-2117</value>
+    <value>683-54-5186</value>
     <classification>(S)</classification>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
-      <source>
-        <name>Washington Post</name>
-        <ts>2016-07-11T12:09:27Z</ts>
-        <uploadedBy>vtonner0</uploadedBy>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
-      <source>
-        <name>Los Angeles Times</name>
-        <ts>2012-07-05T11:26:27Z</ts>
-        <uploadedBy>ttourne0</uploadedBy>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
-      <source>
-        <name>New York Times</name>
-        <ts>2019-10-22T05:38:43Z</ts>
-        <uploadedBy>ahasling0</uploadedBy>
-      </source>
-    </image>
-    <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2015-10-08T08:05:13Z</ts>
-        <uploadedBy/>
+        <name>Wall Street Journal</name>
+        <ts>2012-08-09T18:12:37Z</ts>
+        <uploadedBy>askarin0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>00 Almo Avenue</street>
-      <city>San Diego</city>
-      <state>CA</state>
-      <postal>92196</postal>
+      <street>27 Fairview Terrace</street>
+      <city>Hartford</city>
+      <state>CT</state>
+      <postal>06183</postal>
       <country>United States</country>
-      <latitude>33.0169</latitude>
-      <longitude>-116.846</longitude>
+      <latitude>41.7638</latitude>
+      <longitude>-72.673</longitude>
+    </address>
+    <address>
+      <street>63 Sunbrook Pass</street>
+      <city>El Paso</city>
+      <state>TX</state>
+      <postal>88589</postal>
+      <country>United States</country>
+      <latitude>31.6948</latitude>
+      <longitude>-106.3</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Canada</country>
-      <name>Queen's University</name>
-      <city>White City</city>
-      <state>SK</state>
-      <postal>P0W</postal>
-      <latitude>50.444953</latitude>
-      <longitude>-104.3624353</longitude>
+      <country>Mexico</country>
+      <name>Universidad Lasallista Benavente</name>
+      <city>Los Angeles</city>
+      <state>SIN</state>
+      <postal>81426</postal>
+      <latitude>25.4765601</latitude>
+      <longitude>-108.0887656</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2012-09-19T05:20:41Z</ts>
+        <ts>2019-08-12T11:36:42Z</ts>
       </source>
       <source>
         <name>New York Times</name>
-        <ts>2015-01-23T17:04:02Z</ts>
+        <ts>2016-10-10T07:50:03Z</ts>
       </source>
       <source>
         <name>Chicago Tribune</name>
-        <ts>2014-10-25T09:33:52Z</ts>
+        <ts>2020-09-27T19:36:00Z</ts>
       </source>
     </school>
     <school>
-      <country>United Kingdom</country>
-      <name>Sotheby´s Institute of Art - London</name>
-      <city>Carlton</city>
-      <state>ENG</state>
-      <postal>DL8</postal>
-      <latitude>54.256793</latitude>
-      <longitude>-1.90546</longitude>
+      <country>Mexico</country>
+      <name>Escuela Nacional de Estudios Superiores Unidad León</name>
+      <city>Lazaro Cardenas</city>
+      <state>MIC</state>
+      <postal>61150</postal>
+      <latitude>17.9567646</latitude>
+      <longitude>-102.1943485</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2011-07-22T21:37:28Z</ts>
-      </source>
-      <source>
-        <name>New York Times</name>
-        <ts>2010-01-05T23:19:26Z</ts>
-      </source>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2015-01-14T09:03:44Z</ts>
+        <ts>2011-07-06T07:15:17Z</ts>
       </source>
     </school>
   </schools>
-  <status>Inactive</status>
+  <status>Active</status>
   <sources>
     <source>
-      <name>Los Angeles Times</name>
-      <ts>2021-06-16T17:38:26Z</ts>
+      <name>Wall Street Journal</name>
+      <ts>2021-11-15T19:11:14Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10099.xml</id>
-      <predicate>relatedTo</predicate>
+      <id>/person/10064.xml</id>
+      <predicate>worksWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Lantoph Collie</fullname>
-      <city>Pittsburgh</city>
-      <state>PA</state>
+      <fullname>Wasteney Elita</fullname>
+      <city>Lexington</city>
+      <state>KY</state>
     </relation>
     <relation>
-      <id>/person/10085.xml</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Wilman Eada</fullname>
-      <city>Shawnee Mission</city>
-      <state>KS</state>
-    </relation>
-    <relation>
-      <id>/person/10055.xml</id>
+      <id>/person/10076.xml</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Jandourek Dexter</fullname>
-      <city>Albuquerque</city>
-      <state>NM</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Walasik Reynold</fullname>
+      <city>Miami</city>
+      <state>FL</state>
     </relation>
     <relation>
-      <id>/person/10100.xml</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Benner Caye</fullname>
-      <city>Charlotte</city>
-      <state>NC</state>
+      <id>/person/10078.xml</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Jonah Alyce</fullname>
+      <city>San Antonio</city>
+      <state>TX</state>
     </relation>
     <relation>
-      <id>/person/10055.xml</id>
+      <id>/person/10045.xml</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Jandourek Dexter</fullname>
-      <city>Albuquerque</city>
-      <state>NM</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
+      <fullname>Bartzen Daisie</fullname>
+      <city>Lafayette</city>
+      <state>LA</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-07T14:20:06Z</ts>
-    <user>mdewisi</user>
+    <ts>2022-02-20T18:13:36Z</ts>
+    <user>emacneishi</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-24T20:30:26Z</ts>
-    <user>mdewisi</user>
+    <ts>2022-01-31T15:31:08Z</ts>
+    <user>emacneishi</user>
   </lastUpdated>
   <socials>
     <social>
+      <site>facebook</site>
+      <handle>dblumson0</handle>
+      <address>https://comcast.net/sagittis/sapien/cum/sociis/natoque/penatibus.aspx</address>
+    </social>
+    <social>
       <site>linkedin</site>
-      <handle>kstaite0</handle>
-      <address>http://chron.com/lectus.js</address>
+      <handle>nmeale1</handle>
+      <address>https://cnn.com/pede/posuere/nonummy/integer/non.png</address>
     </social>
   </socials>
   <memberships>
     <membership>
-      <list>list4</list>
+      <list>list10</list>
+      <important>true</important>
+      <ts>2022-02-14</ts>
+    </membership>
+    <membership>
+      <list>list8</list>
+      <important>true</important>
+      <ts>2022-01-30</ts>
+    </membership>
+    <membership>
+      <list>list7</list>
       <important>false</important>
-      <ts>2022-02-21</ts>
+      <ts>2022-01-04</ts>
     </membership>
     <membership>
-      <list>list1</list>
-      <important>true</important>
-      <ts>2022-01-28</ts>
-    </membership>
-    <membership>
-      <list>list5</list>
-      <important>true</important>
-      <ts>2022-02-20</ts>
+      <list>list3</list>
+      <important>false</important>
+      <ts>2022-01-29</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>https://alexa.com</url>
+      <url>http://vkontakte.ru</url>
       <icon>fa-eye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>https://artisteer.com</url>
+      <url>https://yale.edu</url>
       <icon>fa-medal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>http://shutterfly.com</url>
+      <url>http://123-reg.co.uk</url>
       <icon>fa-comments</icon>
     </link>
   </links>
+  <activities>
+    <activity>
+      <predicate>movedTo</predicate>
+      <place>Babbleopia</place>
+      <source>
+        <name>USA Today</name>
+        <ts>2012-01-16T02:06:53Z</ts>
+        <createdBy>Aigneis Kyles</createdBy>
+        <approvedBy>Siffre Haygreen</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>startedAt</predicate>
+      <place>Thoughtbridge</place>
+      <source>
+        <name>New York Times</name>
+        <ts>2018-11-07T04:44:39Z</ts>
+        <createdBy>Selestina Storry</createdBy>
+        <approvedBy>Stacy Mahady</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>transferredTo</predicate>
+      <place>Edgeify</place>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2020-09-17T02:43:08Z</ts>
+        <createdBy>Marilin Malkie</createdBy>
+        <approvedBy>Ad Weatherall</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>startedAt</predicate>
+      <place>Riffpedia</place>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2010-12-15T15:07:37Z</ts>
+        <createdBy>Winslow Selkirk</createdBy>
+        <approvedBy>Pebrook Cristofari</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>endedAt</predicate>
+      <place>Skipstorm</place>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2015-08-22T06:01:50Z</ts>
+        <createdBy>Rufe Washtell</createdBy>
+        <approvedBy>Antonia Lesper</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>movedTo</predicate>
+      <place>Ozu</place>
+      <source>
+        <name>Washington Post</name>
+        <ts>2018-01-26T05:55:32Z</ts>
+        <createdBy>Laryssa Piggens</createdBy>
+        <approvedBy>Ellissa Bresland</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>transferredTo</predicate>
+      <place>Trudoo</place>
+      <source>
+        <name>USA Today</name>
+        <ts>2020-07-22T16:42:43Z</ts>
+        <createdBy>Verile Portress</createdBy>
+        <approvedBy>Carla Brand</approvedBy>
+      </source>
+    </activity>
+  </activities>
 </person>
