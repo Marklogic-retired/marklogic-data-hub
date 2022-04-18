@@ -480,8 +480,8 @@ const RunToolTips = {
 
   /* Check load step in popover */
   loadStepRunFlow: 'Only one Loading step can be included in a flow',
-  selectAStep: 'At least one step must be selected to start the run.',
-
+  selectAStep: 'You cannot run a flow. Select at least one step to run a flow.',
+  runEmptyFlow: 'There are no steps in the flow. You must add steps to the flow.',
   flowEdit: 'Edit Flow',
   flowDetails: 'Flow Details',
   moveLeft: 'Move left'
