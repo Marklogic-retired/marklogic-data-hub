@@ -40,6 +40,10 @@ class ConfigurableSearch extends Search {
   getEntityModel(modelName) {
     return super.getEntityModel(modelName);
   }
+
+  getRecordCount(entityModelNames) {
+    return super.getRecordCount(entityModelNames);
+  }
 }
 
 module.exports = ConfigurableSearch;

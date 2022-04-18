@@ -100,6 +100,7 @@ class Search {
           }
         })
       })
+      results["recordCount"] = this.getRecordCount(entityTypeIds);
     }
     return searchResponse;
   }
@@ -128,6 +129,15 @@ class Search {
 
   getEntityModel(modelName) {
 
+  }
+
+  getRecordCount(entityModelNames) {
+    const recordCount = {};
+    entityModelNames.forEach(entityModelName =>
+      recordCount[entityModelName] = fn.count(cts.uris("", null, cts.collectionQuery(entityModelName)))
+    );
+    recordCount["total"] = Object.values(recordCount).reduce((a, b) => a + b);
+    return recordCount;
   }
 
   fixArrayIssue(jsonObject) {
