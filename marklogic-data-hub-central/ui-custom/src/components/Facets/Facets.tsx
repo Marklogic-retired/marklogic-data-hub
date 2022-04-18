@@ -170,60 +170,60 @@ const Facets: React.FC<Props> = (props) => {
     return (facetObj && facetObj["facet-value"]) ? facetObj["facet-value"].length : 0;
   }
 
-  const getDateRangeFacet =  (facet) => <div>
-    <DateRangeFacet data={{facet : facet, items: props.config.items}}></DateRangeFacet>
-  </div>;
-
   return (
     <div className="facets">
       {/* Show each facet */}
       {props.config.items && searchContext.searchResults && props.config.items.map((f, index) => {
           return (
-          f.type === "dateRange" ? <div className="facet" key={f?.name}>{getDateRangeFacet(f)}</div>
-          :<div className="facet" key={"facet-" + index}>
-          <div className="title">
-            {f.name}
-            {f.tooltip &&
-              <OverlayTrigger
-                key={f.name}
-                placement="right"
-                overlay={<Tooltip>{f.tooltip}</Tooltip>}
-              >
-                <InfoCircleFill 
-                  data-testid={"info-" + f.name}
-                  color="#5d6aaa" 
-                  size={21}
-                  className="facetInfo" 
-                />
-              </OverlayTrigger>
-            }
-          </div>
-          <div className="facetValues">
-            {/* Show each facet value (and count) */}
-            {searchContext.searchResults?.facet && searchContext.searchResults.facet?.length > 0 ?
-            <Table size="sm" style={{padding: 0, margin: 0}}>
-                {displayFacetValues(getFacetObj(f.name, searchContext.searchResults.facet), f.disabled, moreLess[f.name])}
-            </Table> : null }
-            {(getNumValues(f.name, searchContext.searchResults.facet) > moreThreshold) ? moreLess[f.name] ? 
-              <div className="moreLess" data-testid={"more-" + f.name} onClick={handleMoreLess(f.name)}>
-                {getNumValues(f.name, searchContext.searchResults.facet) - moreThreshold} more
-                <ChevronDoubleRight 
-                  data-testid="doubleRight"
-                  color="#5d6aaa" 
-                  size={11}
-                  className="doubleRight" 
-                /></div> :
-              <div className="moreLess" data-testid={"less-" + f.name} onClick={handleMoreLess(f.name)}>
-                <ChevronDoubleLeft 
-                  data-testid="doubleLeft"
-                  color="#5d6aaa" 
-                  size={11}
-                  className="doubleLeft" 
-                />less</div> : null
-            }
-          </div>
-      </div> ) 
-    })}
+          f.type === "dateRange" ? 
+            <div className="facet" key={f?.name}>
+              <DateRangeFacet config={f}></DateRangeFacet>
+            </div>
+          :
+            <div className="facet" key={"facet-" + index}>
+              <div className="title">
+                {f.name}
+                {f.tooltip &&
+                  <OverlayTrigger
+                    key={f.name}
+                    placement="right"
+                    overlay={<Tooltip>{f.tooltip}</Tooltip>}
+                  >
+                    <InfoCircleFill 
+                      data-testid={"info-" + f.name}
+                      color="#5d6aaa" 
+                      size={21}
+                      className="facetInfo" 
+                    />
+                  </OverlayTrigger>
+                }
+              </div>
+              <div className="facetValues">
+                {/* Show each facet value (and count) */}
+                {searchContext.searchResults?.facet && searchContext.searchResults.facet?.length > 0 ?
+                <Table size="sm" style={{padding: 0, margin: 0}}>
+                    {displayFacetValues(getFacetObj(f.name, searchContext.searchResults.facet), f.disabled, moreLess[f.name])}
+                </Table> : null }
+                {(getNumValues(f.name, searchContext.searchResults.facet) > moreThreshold) ? moreLess[f.name] ? 
+                  <div className="moreLess" data-testid={"more-" + f.name} onClick={handleMoreLess(f.name)}>
+                    {getNumValues(f.name, searchContext.searchResults.facet) - moreThreshold} more
+                    <ChevronDoubleRight 
+                      data-testid="doubleRight"
+                      color="#5d6aaa" 
+                      size={11}
+                      className="doubleRight" 
+                    /></div> :
+                  <div className="moreLess" data-testid={"less-" + f.name} onClick={handleMoreLess(f.name)}>
+                    <ChevronDoubleLeft 
+                      data-testid="doubleLeft"
+                      color="#5d6aaa" 
+                      size={11}
+                      className="doubleLeft" 
+                    />less</div> : null
+                }
+              </div>
+            </div> ) 
+      })}
     </div> 
   );
 };

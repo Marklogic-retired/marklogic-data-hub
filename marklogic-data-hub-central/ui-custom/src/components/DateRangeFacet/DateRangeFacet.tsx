@@ -9,21 +9,10 @@ import DateRangePicker from "react-bootstrap-daterangepicker";
 import "bootstrap-daterangepicker/daterangepicker.css";
 
 type Props = {
-  data?: any;
+  config?: any;
 };
 
 const DateRangeFacet: React.FC<Props> = (props) => {
-
-  useEffect(() => {
-    //To display date dateRange values
-    for(let item in searchContext.facetStrings) {
-      let arr = searchContext.facetStrings[item].split(":")
-      if(arr[0] === props.data.facet.name) {
-        let dates = arr[1].split(" ~ ")
-        setDatePickerValue([dates[0], dates[1]]);
-      }
-    }
-  },[]);
 
   const ref = React.useRef<any>();
   const searchContext = useContext(SearchContext);
@@ -33,6 +22,17 @@ const DateRangeFacet: React.FC<Props> = (props) => {
   };
   const [showClear, updateShowClear] = React.useState(false);
   const [datePickerValue, setDatePickerValue] = useState<any[]>([null, null]);
+
+  useEffect(() => {
+    //To display date dateRange values
+    for(let item in searchContext.facetStrings) {
+      let arr = searchContext.facetStrings[item].split(":")
+      if (arr[0] === props.config.name) {
+        let dates = arr[1].split(" ~ ")
+        setDatePickerValue([dates[0], dates[1]]);
+      }
+    }
+  },[]);
 
   function onShow(event, picker) {
     const applyButton = document.querySelector(".applyBtn");
@@ -111,15 +111,15 @@ const DateRangeFacet: React.FC<Props> = (props) => {
     }
   };
 
-  return (<div><div className="title" data-testid={props.data.facet?.name}>
-    {props.data.facet?.name}
+  return (<div><div className="title" data-testid={props.config?.name}>
+    {props.config?.name}
     <OverlayTrigger
-        key={props.data.facet?.name}
+        key={props.config?.name}
         placement="right"
-        overlay={<Tooltip data-testid="createdOnTooltip">{props.data.facet?.tooltip}</Tooltip>}
+        overlay={<Tooltip data-testid="createdOnTooltip">{props.config?.tooltip}</Tooltip>}
     >
       <InfoCircleFill
-          data-testid={"info-" + props.data.facet?.name}
+          data-testid={"info-" + props.config?.name}
           color="#5d6aaa"
           size={21}
           className="facetInfo"
@@ -127,13 +127,13 @@ const DateRangeFacet: React.FC<Props> = (props) => {
     </OverlayTrigger>
   </div>
     <span className="dateRangeFacet">
-      <DateRangePicker initialSettings={initialSettings} {...{onShow, ref}} onCallback={onChange(props.data.facet)}>
+      <DateRangePicker initialSettings={initialSettings} {...{onShow, ref}} onCallback={onChange(props.config)}>
         <div onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} className="pickerContainer">
           <input type="text" readOnly className="input"
              placeholder={formatPlaceHolder(["Start date", "End date"])}
-             value={formatValue(datePickerValue, props.data.facet)}/>
+             value={formatValue(datePickerValue, props.config)}/>
              {!showClear ? <Calendar4 className="calendarIcon" data-testid="calenderIcon"/> :
-             <XLg className="clearIcon" data-testid="datetime-picker-reset" onClick={resetValue(props.data.facet)}/>}
+             <XLg className="clearIcon" data-testid="datetime-picker-reset" onClick={resetValue(props.config)}/>}
         </div>
       </DateRangePicker>
     </span>
