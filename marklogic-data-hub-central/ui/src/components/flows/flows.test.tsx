@@ -8,7 +8,7 @@ const history = createMemoryHistory();
 import axiosMock from "axios";
 import data from "../../assets/mock-data/curation/flows.data";
 import Flows from "./flows";
-import {SecurityTooltips} from "../../config/tooltips.config";
+import {SecurityTooltips, RunToolTips} from "../../config/tooltips.config";
 import {getViewSettings} from "../../util/user-context";
 
 jest.mock("axios");
@@ -20,9 +20,10 @@ describe("Flows component", () => {
     steps: data.steps.data,
     deleteFlow: () => null,
     createFlow: () => null,
-    updateFlow: () => null,
+    updateFlow: jest.fn(),
     deleteStep: () => null,
     runStep: () => null,
+    runFlowSteps: () => null,
     running: [],
     uploadError: "",
     newStepToFlowOptions: () => null,
@@ -31,6 +32,9 @@ describe("Flows component", () => {
     showStepRunResponse: () => null,
     runEnded: {},
     onReorderFlow: () => null,
+    setJobId: () => null,
+    setOpenJobResponse: () => null,
+    isStepRunning: false
   };
   const flowName = data.flows.data[0].name;
   const flowStepName = data.flows.data[0].steps[1].stepName;
@@ -65,9 +69,15 @@ describe("Flows component", () => {
     }];
     const {getByText} = render(
       <Router history={history}>
-        <Flows {...data.flowProps} flows={allKindsOfIngestInAFlow} />
+        <Flows {...flowsProps}
+          flows={allKindsOfIngestInAFlow}
+          canReadFlow={true}
+          canWriteFlow={true}
+          hasOperatorRole={true}
+        />
       </Router>);
-    userEvent.click(document.querySelector(".accordion-button"));
+    let flowButton = document.querySelector(".accordion-button")!;
+    userEvent.click(flowButton);
     ["CSV", "BIN", "TXT", "JSON", "XML"].forEach(format => {
       expect(getByText(format)).toBeInTheDocument();
       expect(getByText(format)).toHaveStyle("height: 35px; width: 35px; line-height: 35px; text-align: center;");
@@ -75,7 +85,7 @@ describe("Flows component", () => {
   });
 
   it("user with flow read, write, and operator privileges can view, edit, and run", async () => {
-    const {getByText, getByLabelText} = render(
+    const {getByText, getByLabelText, getAllByText} = render(
       <Router history={history}><Flows
         {...flowsProps}
         canReadFlow={true}
@@ -84,7 +94,7 @@ describe("Flows component", () => {
       /></Router>
     );
 
-    let flowButton = document.querySelector(".accordion-button");
+    let flowButton = document.querySelector(".accordion-button")!;
     expect(getByText(flowName)).toBeInTheDocument();
     expect(getByLabelText("create-flow")).toBeInTheDocument();
     expect(getByLabelText("deleteFlow-"+flowName)).toBeInTheDocument();
@@ -101,14 +111,14 @@ describe("Flows component", () => {
     expect(getByLabelText("deleteStep-"+flowStepName)).toBeInTheDocument();
 
     // Open Add Step
-    let addStep = getByText("Add Step");
+    let addStep = getAllByText("Add Step")[0];
     fireEvent.click(addStep);
     expect(getByText(addStepName)).toBeInTheDocument();
 
   });
 
   it("user without flow write privileges cannot edit", async () => {
-    const {getByText, getByLabelText, queryByLabelText} = render(
+    const {getByText, getByLabelText, queryByLabelText, getAllByText} = render(
       <Router history={history}><Flows
         {...flowsProps}
         canReadFlow={true}
@@ -117,7 +127,7 @@ describe("Flows component", () => {
       /></Router>
     );
 
-    let flowButton = document.querySelector(".accordion-button");
+    let flowButton = document.querySelector(".accordion-button")!;
     expect(getByText(flowName)).toBeInTheDocument();
     expect(getByLabelText("create-flow-disabled")).toBeInTheDocument();
     expect(getByLabelText("deleteFlowDisabled-"+flowName)).toBeInTheDocument();
@@ -125,9 +135,9 @@ describe("Flows component", () => {
     // test delete, create flow, add step buttons display correct tooltip when disabled
     fireEvent.mouseOver(getByLabelText("deleteFlowDisabled-"+flowName));
     expect(getByText("Delete Flow: " + SecurityTooltips.missingPermission)).toBeInTheDocument();
-    fireEvent.mouseOver(getByText("Add Step"));
+    fireEvent.mouseOver(getAllByText("Add Step")[0]);
     expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument();
-    fireEvent.mouseOut(getByText("Add Step"));
+    fireEvent.mouseOut(getAllByText("Add Step")[0]);
     fireEvent.mouseOver(getByLabelText("create-flow-disabled"));
     wait(() => expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument());
 
@@ -138,14 +148,14 @@ describe("Flows component", () => {
     expect(getByLabelText("deleteStepDisabled-"+flowStepName)).toBeInTheDocument();
 
     // Open Add Step
-    let addStep = getByText("Add Step");
+    let addStep = getAllByText("Add Step")[0];
     fireEvent.click(addStep);
     expect(queryByLabelText(addStepName)).not.toBeInTheDocument();
 
   });
 
   it("user without flow write or operator privileges cannot edit or run", () => {
-    const {getByText, getByLabelText, queryByLabelText} = render(
+    const {getByText, getByLabelText, queryByLabelText, getAllByText} = render(
       <Router history={history}><Flows
         {...flowsProps}
         canReadFlow={true}
@@ -154,7 +164,7 @@ describe("Flows component", () => {
       /></Router>
     );
 
-    let flowButton = document.querySelector(".accordion-button");
+    let flowButton = document.querySelector(".accordion-button")!;
     expect(getByText(flowName)).toBeInTheDocument();
     expect(getByLabelText("create-flow-disabled")).toBeInTheDocument();
     expect(getByLabelText("deleteFlowDisabled-"+flowName)).toBeInTheDocument();
@@ -166,7 +176,7 @@ describe("Flows component", () => {
     expect(getByLabelText("deleteStepDisabled-"+flowStepName)).toBeInTheDocument();
 
     // Open Add Step
-    let addStep = getByText("Add Step");
+    let addStep = getAllByText("Add Step")[0];
     fireEvent.click(addStep);
     expect(queryByLabelText(addStepName)).not.toBeInTheDocument();
 
@@ -216,6 +226,33 @@ describe("Flows component", () => {
 
   });
 
+  it("verify conditionally disabled run flow buttons", async () => {
+    const {getByText, getByLabelText, getByTestId} = render(
+      <Router history={history}><Flows
+        {...flowsProps}
+        canReadFlow={true}
+        canWriteFlow={true}
+        hasOperatorRole={true}
+      /></Router>
+    );
+
+    //verify both runFlow and settings button disabled when flow is empty
+    expect(getByTestId("runFlow-emptyFlow")).toBeDisabled();
+    expect(getByLabelText("stepSettings-emptyFlow").parentElement).toBeDisabled();
+    fireEvent.mouseOver(getByTestId("runFlow-emptyFlow"));
+    wait(() => expect(getByText(RunToolTips.runEmptyFlow)).toBeInTheDocument());
+
+    //verify only runFlow button is disabled when steps exist but none selected
+    fireEvent.click(getByLabelText("stepSettings-testFlow"));
+    wait(() => expect(getByText("Deselect All")).toBeInTheDocument());
+    fireEvent.click(getByText("Deselect All"));
+
+    expect(getByTestId("runFlow-emptyFlow")).toBeDisabled();
+    expect(getByLabelText("stepSettings-emptyFlow")).not.toBeDisabled();
+    fireEvent.mouseOver(getByTestId("runFlow-testFlow"));
+    wait(() => expect(getByText(RunToolTips.selectAStep)).toBeInTheDocument());
+  });
+
   it("links for steps lead to correct path", async () => {
     const {getByLabelText} = render(
       <Router history={history}><Flows
@@ -227,8 +264,8 @@ describe("Flows component", () => {
     );
 
     let i : number;
-
-    userEvent.click(document.querySelector(".accordion-button"));
+    let flowButton = document.querySelector(".accordion-button")!;
+    userEvent.click(flowButton);
     for (i = 1; i < data.flows.data[0].steps.length + 1; ++i) {
       const pathname = `http://localhost/tiles/${data.flows.data[0].steps[i-1]["stepDefinitionType"] === "ingestion" ? "load": "curate"}`;
       expect(getByLabelText(`${flowName}-${i}-cardlink`).firstChild.href).toBe(pathname);
@@ -247,7 +284,7 @@ describe("Flows component", () => {
       /></Router>
     );
 
-    let flowButton = document.querySelector(".accordion-button");
+    let flowButton = document.querySelector(".accordion-button")!;
     fireEvent.click(flowButton);
     expect(getByText(flowStepName)).toBeInTheDocument();
 
@@ -277,7 +314,7 @@ describe("Flows component", () => {
       /></Router>
     );
 
-    let flowButton = document.querySelector(".accordion-button");
+    let flowButton = document.querySelector(".accordion-button")!;
     fireEvent.click(flowButton);
     expect(getByText(flowStepName)).toBeInTheDocument();
     expect(queryByLabelText("rightArrow-"+flowStepName)).not.toBeInTheDocument();
@@ -293,7 +330,7 @@ describe("Flows component", () => {
         hasOperatorRole={true}
       /></Router>
     );
-    let flowButton = document.querySelector(".accordion-button");
+    let flowButton = document.querySelector(".accordion-button")!;
     fireEvent.click(flowButton);
 
     const rightArrowButton = getByLabelText("rightArrow-"+flowStepName);

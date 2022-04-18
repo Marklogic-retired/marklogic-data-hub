@@ -74,12 +74,13 @@ describe("Tiles View component tests for Developer user", () => {
     tools.forEach(async (tool, i) => {
       expect(getByLabelText("tool-" + tool)).toBeInTheDocument();
       fireEvent.click(getByLabelText("tool-" + tool));
-      await wait(() => expect(getByLabelText("icon-" + tool)).toBeInTheDocument());
-      await wait(() => expect(getByLabelText("close")).toBeInTheDocument());
+      await wait(() => {
+        expect(getByLabelText("icon-" + tool)).toBeInTheDocument();
+        expect(getByLabelText("close")).toBeInTheDocument();
+      });
       fireEvent.click(getByLabelText("close"));
       expect(getByLabelText("overview")).toBeInTheDocument();
     });
-
   });
 
   test("Verify Curate tile displays from toolbar", async () => {

@@ -539,8 +539,12 @@ const flows = {
         "targetEntityType": "http://example.org/Customer-0.0.1/Customer"
       },
     ]
-  }]
-  ,
+  },
+  {
+    "name": "emptyFlow",
+    "description": "",
+    "steps": []
+  }],
   "status": 200
 };
 
