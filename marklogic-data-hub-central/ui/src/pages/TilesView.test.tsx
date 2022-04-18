@@ -2,7 +2,7 @@ import React from "react";
 import {Router} from "react-router";
 import {createMemoryHistory} from "history";
 const history = createMemoryHistory();
-import {render, fireEvent, waitForElement, cleanup, wait} from "@testing-library/react";
+import {render, fireEvent, cleanup, wait} from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import TilesView from "./TilesView";
 import {AuthoritiesContext, AuthoritiesService} from "../util/authorities";
@@ -74,12 +74,13 @@ describe("Tiles View component tests for Developer user", () => {
     tools.forEach(async (tool, i) => {
       expect(getByLabelText("tool-" + tool)).toBeInTheDocument();
       fireEvent.click(getByLabelText("tool-" + tool));
-      expect(await(waitForElement(() => getByLabelText("icon-" + tool)))).toBeInTheDocument();
-      expect(await(waitForElement(() => getByLabelText("close")))).toBeInTheDocument();
+      await wait(() => {
+        expect(getByLabelText("icon-" + tool)).toBeInTheDocument();
+        expect(getByLabelText("close")).toBeInTheDocument();
+      });
       fireEvent.click(getByLabelText("close"));
       expect(getByLabelText("overview")).toBeInTheDocument();
     });
-
   });
 
   test("Verify Curate tile displays from toolbar", async () => {

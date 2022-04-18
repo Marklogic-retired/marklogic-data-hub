@@ -102,6 +102,7 @@ const Flows: React.FC<Props> = ({
   const [flowName, setFlowName] = useState("");
   const [stepName, setStepName] = useState("");
   const [stepType, setStepType] = useState("");
+  const [singleIngest, setSingleIngest] = useState(false);
   const [stepNumber, setStepNumber] = useState("");
   const [runningStep, setRunningStep] = useState<any>({});
   const [runningFlow, setRunningFlow] = useState<any>("");
@@ -127,7 +128,7 @@ const Flows: React.FC<Props> = ({
   const [flowsDeepCopy, setFlowsDeepCopy] = useState<any>([]);
   //const [runFlowClicked, setRunFlowClicked] = useState(false);
   const [checkAll, setCheckAll] = useState(true);
-  const [showTooltip, setShowTooltip] = useState(false);
+  const [currentTooltip, setCurrentTooltip] = useState("");
   const location = useLocation();
 
   // maintain a list of panel refs
@@ -474,7 +475,6 @@ const Flows: React.FC<Props> = ({
   );
 
   const onCheckboxChange = (event, checkedValues?, stepNumber?, stepDefinitionType?, flowNames?, stepId?, sourceFormat?, fromCheckAll?) => {
-
     let checkAllAux;
     if (event !== "default" && fromCheckAll) {
       checkAllAux = checkAll ? false : true;
@@ -594,6 +594,10 @@ const Flows: React.FC<Props> = ({
     if (obj) { return true; } else { return false; }
   };
 
+  const isFlowEmpty = (flowName) => {
+    return flowsDeepCopy.filter((flow) => flow.name === flowName)[0]?.steps?.length < 1;
+  };
+
   const controlDisabled = (step, flowName) => {
     let disabledCheck = false;
 
@@ -673,7 +677,6 @@ const Flows: React.FC<Props> = ({
   };
 
   const handleRunFlow = async (index, name) => {
-    //setRunFlowClicked(true);
     const setKey = async () => {
       await setActiveKeys(`${index}`);
     };
@@ -684,6 +687,7 @@ const Flows: React.FC<Props> = ({
       if (step.stepDefinitionType.toLowerCase() === "ingestion" && step.flowName === name) {
         flag = true;
         setRunningStep(step);
+        setSingleIngest(false);
         await setKey();
         await openFilePicker();
       }
@@ -787,30 +791,32 @@ const Flows: React.FC<Props> = ({
         event.preventDefault();
       }}
     >
-      <HCTooltip show={!controlStepSelected(name) && showTooltip} text={RunToolTips.selectAStep} placement="top" id={`tooltip`}>
-
-        <span id="stepsDropdown" className={styles.hoverColor}
-          onMouseLeave={(e) => setShowTooltip(false)} onMouseEnter={(e) => setShowTooltip(!controlStepSelected(name))}>
-          <Dropdown as={ButtonGroup}>
-            <HCButton
-              variant="transparent"
-              className={styles.runFlow}
-              key={`stepsDropdownButton-${name}`}
-              data-testid={`runFlow-${name}`}
-              id={`runFlow-${name}`}
-              size="sm"
-              onClick={() => handleRunFlow(i, name)}
-              disabled={!controlStepSelected(name)}
-            ><><PlayCircleFill className={styles.runIcon} /> Run Flow</></HCButton>
-            <Dropdown.Toggle split variant="transparent" className={styles.runIconToggle}>
-              <GearFill className={styles.runIcon} role="step-settings button" aria-label={`stepSettings-${name}`} /></Dropdown.Toggle>
-            <Dropdown.Menu className={styles.dropdownMenu}>
-              {flowMenu(name)}
-            </Dropdown.Menu>
-          </Dropdown>
-        </span>
-      </HCTooltip>
-
+      <span id="stepsDropdown" className={styles.hoverColor} onMouseLeave={(e) => { setCurrentTooltip(""); }}>
+        <Dropdown as={ButtonGroup}>
+          <HCTooltip show={currentTooltip === name} text={isFlowEmpty(name) ? RunToolTips.runEmptyFlow : !controlStepSelected(name) ? RunToolTips.selectAStep : ""} placement="top" id={`run-flow-tooltip`}>
+            <span onMouseEnter={(e) => { !controlStepSelected(name) || isFlowEmpty(name) ? setCurrentTooltip(name) : void 0; }} onMouseLeave={(e) => { !isFlowEmpty(name) ? setCurrentTooltip("") : void 0; }} id={`${name}`}>
+              <HCButton
+                variant="transparent"
+                className={styles.runFlow}
+                key={`stepsDropdownButton-${name}`}
+                data-testid={`runFlow-${name}`}
+                id={`runFlow-${name}`}
+                size="sm"
+                onClick={() => handleRunFlow(i, name)}
+                disabled={!controlStepSelected(name) || flowsDeepCopy.filter((flow) => flow.name === name)[0]?.steps?.length < 1}
+              >
+                <><PlayCircleFill className={styles.runIcon} /> Run Flow </>
+              </HCButton>
+            </span>
+          </HCTooltip>
+          <Dropdown.Toggle split variant="transparent" className={styles.runIconToggle} disabled={isFlowEmpty(name) ? true : false}>
+            <GearFill className={styles.runIcon} role="step-settings button" aria-label={`stepSettings-${name}`} />
+          </Dropdown.Toggle>
+          <Dropdown.Menu className={styles.dropdownMenu}>
+            {flowMenu(name)}
+          </Dropdown.Menu>
+        </Dropdown>
+      </span>
       {stepMenu(name, i)}
       <span className={styles.deleteFlow}>
         {canWriteFlow ?
@@ -886,29 +892,30 @@ const Flows: React.FC<Props> = ({
         formData.append("files", file);
       });
 
-      // if (!runFlowClicked) {
-      //   await runStep(runningFlow, runningStep, formData)
-      //     .then(resp => {
-      //       setShowUploadError(true);
-      //       setFileList([]);
-      //     });
-      // } else {
-      let stepNumbers = [{}];
+      if (singleIngest) {
+        await runStep(runningFlow, runningStep, formData)
+          .then(resp => {
+            setShowUploadError(true);
+            setFileList([]);
+          });
+      } else {
+        let stepNumbers = [{}];
 
-      stepNumbers = selectedStepDetails.filter(function (obj) {
-        return obj.flowName === runningFlow && obj.isChecked === true;
-      });
-
-      await runFlowSteps(runningFlow, stepNumbers, formData)
-        .then(resp => {
-          setShowUploadError(true);
-          setFileList([]);
-          // setSelectedStepOptions({});
-          // setSelectedStepDetails([{stepName: "", stepNumber: -1, stepDefinitionType: "", isChecked: false}]);
-          // setArrayLoadChecksSteps([{flowName: "", stepNumber: -1}]);
-          //setRunFlowClicked(false);
+        stepNumbers = selectedStepDetails.filter(function (obj) {
+          return obj.flowName === runningFlow && obj.isChecked === true;
         });
-      //}
+
+        await runFlowSteps(runningFlow, stepNumbers, formData)
+          .then(resp => {
+            setShowUploadError(true);
+            setFileList([]);
+            // setSelectedStepOptions({});
+            // setSelectedStepDetails([{stepName: "", stepNumber: -1, stepDefinitionType: "", isChecked: false}]);
+            // setArrayLoadChecksSteps([{flowName: "", stepNumber: -1}]);
+            //setRunFlowClicked(false);
+          });
+        //}
+      }
     }
   };
 
@@ -1094,6 +1101,7 @@ const Flows: React.FC<Props> = ({
                           data-testid={"runStep-" + stepNumber}
                           onClick={() => {
                             setShowUploadError(false);
+                            setSingleIngest(true);
                             setRunningStep(step);
                             setRunningFlow(flowName);
                             openFilePicker();

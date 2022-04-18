@@ -74,7 +74,7 @@ describe("Verify links back to step details", () => {
 
     // Click expand icon
     await act(() => {
-      fireEvent.click(document.querySelector(".accordion-button"));
+      fireEvent.click(document.querySelector(".accordion-button")!);
     });
     const implementedStepTypes = ["ingestion", "mapping", "custom"];
     steps.forEach((step) => {
@@ -110,7 +110,7 @@ describe("Verify links back to step details", () => {
     let steps = data.flows.data[0].steps;
     // Click expand icon
     await act(() => {
-      fireEvent.click(document.querySelector(".accordion-button"));
+      fireEvent.click(document.querySelector(".accordion-button")!);
     });
     const implementedStepTypes = ["ingestion", "mapping", "custom"];
     steps.forEach((step) => {
@@ -143,7 +143,7 @@ describe("Verify load step failures in a flow", () => {
       value={mockDevRolesService}><Run /></AuthoritiesContext.Provider></MemoryRouter>);
 
     // Click disclosure icon
-    fireEvent.click(document.querySelector(".accordion-button"));
+    fireEvent.click(document.querySelector(".accordion-button")!);
     let runButton = await getByLabelText("runStep-failedIngest");
     fireEvent.mouseOver(getAllByLabelText("icon: play-circle")[1]); //temporarily fixing for DHFPROD-7820, change back to 1 eventually
     await (() => getByText(RunToolTips.ingestionStep));
@@ -186,7 +186,7 @@ describe("Verify load step failures in a flow", () => {
     const {getByLabelText, getByTestId, getAllByTestId} = result;
 
     // Click disclosure icon
-    fireEvent.click(document.querySelector(".accordion-button"));
+    fireEvent.click(document.querySelector(".accordion-button")!);
 
     let upload;
     upload = document.querySelector("#fileUpload");
@@ -421,7 +421,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
 
     let steps = data.flows.data[0].steps;
     // Click disclosure icon
-    fireEvent.click(document.querySelector(".accordion-button"));
+    fireEvent.click(document.querySelector(".accordion-button")!);
 
     //Mapping step error
     fireEvent.click(getByLabelText(`runStep-${steps[1].stepName}`));
@@ -503,7 +503,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
 
     let steps = data.flows.data[0].steps;
     // Click disclosure icon
-    fireEvent.click(document.querySelector(".accordion-button"));
+    fireEvent.click(document.querySelector(".accordion-button")!);
     //Mapping step error
     fireEvent.click(await getByLabelText(`runStep-${steps[1].stepName}`));
 
@@ -533,16 +533,16 @@ describe("Verify Add Step function", () => {
 
   test("Verify a user with developer privileges can add a step to a flow", async () => {
     mocks.runAddStepAPI(axiosMock);
-    const {getByText, getByLabelText} = await render(<MemoryRouter>
+    const {getByText, getByLabelText, getAllByText} = await render(<MemoryRouter>
       <AuthoritiesContext.Provider value={mockDevRolesService}><Run /></AuthoritiesContext.Provider>
     </MemoryRouter>);
 
     // Click disclosure icon
-    fireEvent.click(document.querySelector(".accordion-button"));
+    fireEvent.click(document.querySelector(".accordion-button")!);
     expect(getByText(data.flows.data[0].steps[1].stepName)).toBeInTheDocument();
 
     // Click to open Add Step menu and click a step
-    let addStep = getByText("Add Step");
+    let addStep = getAllByText("Add Step")[0];
     fireEvent.click(addStep);
     let step = getByText(data.steps.data["ingestionSteps"][0].name);
     fireEvent.click(step);
@@ -562,17 +562,17 @@ describe("Verify Add Step function", () => {
 
   test("Verify a user with operator privileges cannot add a step to a flow", async () => {
     mocks.runAddStepAPI(axiosMock);
-    const {getByText, getByLabelText, queryByText} = await render(<MemoryRouter>
+    const {getByText, getByLabelText, queryByText, getAllByText} = await render(<MemoryRouter>
       <AuthoritiesContext.Provider value={mockOpRolesService}><Run /></AuthoritiesContext.Provider>
     </MemoryRouter>);
 
     // Click disclosure icon
-    fireEvent.click(document.querySelector(".accordion-button"));
+    fireEvent.click(document.querySelector(".accordion-button")!);
     expect(getByText(data.flows.data[0].steps[1].stepName)).toBeInTheDocument();
 
     // Click Add Step menu
     expect(getByLabelText("addStep-testFlow")).toBeInTheDocument();
-    fireEvent.click(getByText("Add Step"));
+    fireEvent.click(getAllByText("Add Step")[0]);
     expect(queryByText(data.steps.data["ingestionSteps"][0].name)).not.toBeInTheDocument();
 
   });
@@ -594,23 +594,24 @@ describe("Verify Add Step function", () => {
     expect(axiosMock.post).toHaveBeenNthCalledWith(1, "/api/flows", {name: newFlowValues.name, description: newFlowValues.description});
 
     // Click to open Add Step menu and click a step
-    expect(await waitForElement(() => getByText("Add Step"))).toBeInTheDocument();
-    let addStep = getByText("Add Step");
-    fireEvent.click(addStep);
-    let step = getByText(data.steps.data["ingestionSteps"][0].name);
-    fireEvent.click(step);
+    await wait(() => {
+      let addStep = getAllByText("Add Step")[0];
+      fireEvent.click(addStep);
+      let step = getByText(data.steps.data["ingestionSteps"][0].name);
+      fireEvent.click(step);
 
-    // Click to confirm the add in the dialog
-    expect(getByText((content, node) => {
-      return getSubElements(content, node, `Are you sure you want to add step ${data.steps.data["ingestionSteps"][0].name} to flow ${data.flows.data[0].name}?`);
-    })).toBeInTheDocument();
+      // Click to confirm the add in the dialog
+      expect(getByText((content, node) => {
+        return getSubElements(content, node, `Are you sure you want to add step ${data.steps.data["ingestionSteps"][0].name} to flow ${data.flows.data[0].name}?`);
+      })).toBeInTheDocument();
 
-    let confirm = getByLabelText("Yes");
-    fireEvent.click(confirm);
-    expect(axiosMock.post).toHaveBeenNthCalledWith(2, `/api/flows/${data.flows.data[0].name}/steps`, {"stepDefinitionType": "ingestion", "stepName": data.steps.data["ingestionSteps"][0].name});
+      let confirm = getByLabelText("Yes");
+      fireEvent.click(confirm);
+      expect(axiosMock.post).toHaveBeenNthCalledWith(2, `/api/flows/${data.flows.data[0].name}/steps`, {"stepDefinitionType": "ingestion", "stepName": data.steps.data["ingestionSteps"][0].name});
 
-    // Panel is open
-    expect(getByText(data.flows.data[0].steps[1].stepName)).toBeInTheDocument();
+      // Panel is open
+      expect(getByText(data.flows.data[0].steps[1].stepName)).toBeInTheDocument();
+    });
 
     //Run a step
     let steps = data.flows.data[0].steps;
