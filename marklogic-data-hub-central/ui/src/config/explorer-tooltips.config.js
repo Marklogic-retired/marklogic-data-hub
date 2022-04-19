@@ -1,3 +1,6 @@
+
+import React from "react";
+
 const tooltipsConfig = {
   viewEntities: {
     entities:
@@ -34,10 +37,10 @@ const tooltipsConfig = {
     disabledEntityTypeDisplaySettingsOption: "There are no entities."
   },
   entityTypeDisplaySettings: {
-    color: "Select a color to associate it with the entity type throughout your project.",
-    icon: "Select an icon to associate it with nodes for the entity type throughout your project.",
-    entityLabel: "The entity label is the value from the property selected that will display on an instance of the associated entity type",
-    propertiesOnHover: "Properties on Hover appear in a tooltip when hovering over an instance of the associated entity type. This can be multiple values."
+    color: "Select a color to associate it with the entity throughout your project.",
+    icon: "Select an icon to associate it with the entity throughout your project.",
+    entityLabel: "The record label is the value of the selected property. The record label will display on each record related to the entity.",
+    propertiesOnHover: "Properties on Hover are the values of the selected properties. Properties on Hover display in a tooltip when hovering on a record. You can choose multiple properties. If properties are not selected, the value of the identifier will display on hover. If neither properties nor an identifier are selected, the URI will display on hover."
   }
 };
 

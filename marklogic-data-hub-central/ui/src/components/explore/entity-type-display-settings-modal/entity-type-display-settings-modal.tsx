@@ -65,7 +65,7 @@ const EntityTypeDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal
 
   const renderOptions = (entityType) => {
     let entityTypeDef:any = entityDefinitionsArray.find(entity => entity.name === entityType);
-    const options:any = entityTypeDef?.properties?.map(item => ({value: item?.name, label: item?.name}));
+    const options:any = entityTypeDef?.properties?.filter(property => property.ref === "").map(item => ({value: item?.name, label: item?.name}));
     return options;
   };
 
@@ -171,7 +171,7 @@ const EntityTypeDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal
       }
     },
     {
-      text: getHeaderLabel("Entity Label", entityTypeDisplaySettings.entityLabel),
+      text: getHeaderLabel("Record Label", entityTypeDisplaySettings.entityLabel),
       width: "25%",
       formatter: (text, row) => {
         return (
@@ -180,6 +180,7 @@ const EntityTypeDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal
             inputId={`${row.entityType}-entityLabel-select`}
             components={{MenuList: props => MenuList(`${row.entityType}-entityLabel`, props)}}
             defaultValue={row.label ? {label: row.label, value: row.label} : null}
+            value={row.label ? {label: row.label, value: row.label} : null}
             options={renderOptions(row.entityType)}
             onChange={(e) => onColumnValueChange(row, e, TableColumns.EntityLabel)}
             classNamePrefix="select"
@@ -253,7 +254,7 @@ const EntityTypeDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal
     >
       <Modal.Header className={"bb-none align-items-start"}>
         <span className={"fs-4"}>
-          Entity Type Display Settings
+          Entity Display Settings
         </span>
         <button type="button" className="btn-close" aria-label="Close" id={"close-settings-modal"} onClick={() => closeModal()}></button>
       </Modal.Header>

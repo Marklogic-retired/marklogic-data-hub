@@ -28,6 +28,14 @@ class EntityTypeDisplaySettingsModal {
     return cy.get(`[id="${entityType}-icon-picker"]`).find("input");
   }
 
+  getEntityLabelDropdown(entityType: string) {
+    return cy.get(`[id="${entityType}-entityLabel-select-wrapper"]`).scrollIntoView();
+  }
+
+  getEntityLabelDropdownOption(entityType: string, option: string) {
+    return cy.get(`[aria-label="${entityType}-labelOption-${option}"]`).scrollIntoView();
+  }
+
   getModalCloseButton() {
     return cy.get(`[id="close-settings-modal"]`);
   }

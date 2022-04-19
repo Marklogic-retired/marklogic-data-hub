@@ -3,6 +3,10 @@ class GraphExploreSidePanel {
     return cy.get("[data-testid=\"graphSidePanel\"]");
   }
 
+  getSidePanelHeading() {
+    return cy.get("[data-testid=\"entityHeading\"]");
+  }
+
   getInstanceViewIcon() {
     return cy.get("[data-cy=instance]");
   }

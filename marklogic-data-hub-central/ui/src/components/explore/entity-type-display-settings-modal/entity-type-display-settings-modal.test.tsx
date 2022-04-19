@@ -8,6 +8,7 @@ import {entityDefinitionsArray, hubCentralConfig} from "../../../assets/mock-dat
 import {HubCentralConfigContext} from "@util/hubCentralConfig-context";
 
 const entityType = "Customer";
+const entityTypeProperty = "name";
 const entityTypeColor = "#FFF0A3";
 
 const defaultContextOptions = {
@@ -65,11 +66,10 @@ describe("Entity type display settings modal", () => {
     fireEvent.input(document.querySelector(`[aria-label=${entityType}-icon-picker] input`), {target: {value: "android"}});
     //the options are svg elements and the click event don't work on it
 
-    // ToDo: For use in the task DHFPROD-7938
-    // fireEvent.keyDown(getByLabelText(`${entityType}-label-select-dropdown`), {key: "ArrowDown"});
-    // userEvent.click(getByLabelText(`${entityType}-labelOption-${entityTypeProperty}`));
-    // expect(document.querySelector(`#${entityType}-entityProperties-select-MenuList`)).not.toBeInTheDocument();
-    // expect(queryByLabelText(`${entityType}-labelOption-${entityTypeProperty}`)).toBeInTheDocument();
+    fireEvent.keyDown(getByLabelText(`${entityType}-label-select-dropdown`), {key: "ArrowDown"});
+    userEvent.click(getByLabelText(`${entityType}-labelOption-${entityTypeProperty}`));
+    expect(document.querySelector(`#${entityType}-entityProperties-select-MenuList`)).not.toBeInTheDocument();
+    expect(queryByLabelText(`${entityType}-labelOption-${entityTypeProperty}`)).toBeInTheDocument();
 
     userEvent.click(getByText("Save"));
     expect(defaultContextOptions.updateHubCentralConfigOnServer).toHaveBeenCalledTimes(1);

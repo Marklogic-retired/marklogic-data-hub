@@ -2,13 +2,27 @@ import {Application} from "../../support/application.config";
 import {toolbar} from "../../support/components/common";
 import specificSidebar from "../../support/components/explore/specific-sidebar";
 import entityTypeDisplaySettingsModal from "../../support/components/explore/entity-type-display-settings-modal";
+import graphExploreSidePanel from "../../support/components/explore/graph-explore-side-panel";
 import browsePage from "../../support/pages/browse";
 import LoginPage from "../../support/pages/login";
 import {BaseEntityTypes} from "../../support/types/base-entity-types";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
+import graphExplore from "../../support/pages/graphExplore";
+import {ExploreGraphNodes} from "../../support/types/explore-graph-nodes";
 
+const defaultSelectText = "Select...";
 const defaultEntityTypeData = {
   name: BaseEntityTypes.CUSTOMER,
+  properties: {
+    name: "name",
+    email: "email",
+    nicknames: "nicknames"
+  },
+  propertiesValues: {
+    id: 102,
+    name: "Adams Cole",
+    email: "adamscole@nutralab.com",
+  },
   icon: "FaShapes",
   color: {
     HEX: "#EEEFF1",
@@ -17,6 +31,7 @@ const defaultEntityTypeData = {
 // We must have the same color in rgb and hex because the browser to apply the background changes it to rgb even if the value is passed in hex
 // "#FFF0A3" == "rgb(255, 240, 163)"
 const newEntityTypeData = {
+  label: "name",
   icon: "FaAndroid",
   color: {
     HEX: "#FFF0A3",
@@ -27,6 +42,7 @@ const newEntityTypeData = {
 // We must have the same color in rgb and hex because the browser to apply the background changes it to rgb even if the value is passed in hex
 // "#FFD0AE" == "rgb(255, 208, 174)"
 const newEntityTypeData2 = {
+  label: "email",
   icon: "FaAngular",
   color: {
     HEX: "#FFD0AE",
@@ -83,6 +99,12 @@ describe("Entity Type Settings Modal", () => {
     entityTypeDisplaySettingsModal.getEntityTypeIconMenu(defaultEntityTypeData.name).find("svg").last().click();
     entityTypeDisplaySettingsModal.getEntityTypeIconButtonWrapper(defaultEntityTypeData.name).should("have.attr", "data-icon", newEntityTypeData.icon);
 
+    cy.log("**Verify no label are selected, select new one and check the selection**");
+    entityTypeDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("have.text", defaultSelectText);
+    entityTypeDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).click();
+    entityTypeDisplaySettingsModal.getEntityLabelDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.name).click();
+    entityTypeDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.name);
+
     cy.log("**Cancel the edition and verify that the modal close**");
     entityTypeDisplaySettingsModal.getModalCancelButton().click();
     entityTypeDisplaySettingsModal.getModalBody().should("not.exist");
@@ -94,6 +116,7 @@ describe("Entity Type Settings Modal", () => {
       expect(Cypress._.toLower(color)).equal(Cypress._.toLower(defaultEntityTypeData.color.HEX));
     });
     entityTypeDisplaySettingsModal.getEntityTypeIconButtonWrapper(defaultEntityTypeData.name).should("have.attr", "data-icon", defaultEntityTypeData.icon);
+    entityTypeDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("have.text", defaultSelectText);
 
     cy.log("**Close the modal**");
     entityTypeDisplaySettingsModal.getModalCloseButton().click();
@@ -122,6 +145,11 @@ describe("Entity Type Settings Modal", () => {
     entityTypeDisplaySettingsModal.getEntityTypeIconMenu(defaultEntityTypeData.name).find("svg").last().click();
     entityTypeDisplaySettingsModal.getEntityTypeIconButtonWrapper(defaultEntityTypeData.name).should("have.attr", "data-icon", newEntityTypeData.icon);
 
+    cy.log("**Select label and check the selection**");
+    entityTypeDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).click();
+    entityTypeDisplaySettingsModal.getEntityLabelDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.name).click();
+    entityTypeDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.name);
+
     cy.log("**Save the changes**");
     entityTypeDisplaySettingsModal.getModalSaveButton().click();
     entityTypeDisplaySettingsModal.getModalBody().should("not.exist");
@@ -131,6 +159,7 @@ describe("Entity Type Settings Modal", () => {
     entityTypeDisplaySettingsModal.getModalBody().should("be.visible");
     entityTypeDisplaySettingsModal.getEntityTypeColorButton(defaultEntityTypeData.name).should("have.attr", "data-color", Cypress._.toLower(newEntityTypeData.color.HEX));
     entityTypeDisplaySettingsModal.getEntityTypeIconButtonWrapper(defaultEntityTypeData.name).should("have.attr", "data-icon", newEntityTypeData.icon);
+    entityTypeDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.name);
 
     cy.log("**Close the modal**");
     entityTypeDisplaySettingsModal.getModalCloseButton().click();
@@ -144,6 +173,25 @@ describe("Entity Type Settings Modal", () => {
     entitiesSidebar.getBaseEntity(defaultEntityTypeData.name).should("have.attr", "data-icon").then(icon => {
       expect(Cypress._.toLower(icon)).equal(Cypress._.toLower(newEntityTypeData.icon));
     });
+
+    cy.log("**Click on customer node and verify that label in side bar**");
+    graphExplore.stopStabilization();
+    graphExplore.focusNode(ExploreGraphNodes.CUSTOMER_102);
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
+      let customer_102_nodePosition: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
+      graphExplore.getGraphVisCanvas().trigger("mouseover", customer_102_nodePosition.x, customer_102_nodePosition.y);
+    });
+    cy.wait(500);
+
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
+      let customer_102_nodePosition: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
+      cy.wait(150);
+      graphExplore.getGraphVisCanvas().click(customer_102_nodePosition.x, customer_102_nodePosition.y, {force: true});
+      graphExplore.getGraphVisCanvas().click(customer_102_nodePosition.x, customer_102_nodePosition.y, {force: true});
+    });
+
+    graphExploreSidePanel.getSidePanel().scrollIntoView().should("be.visible");
+    graphExploreSidePanel.getSidePanelHeading().should("contain.text", defaultEntityTypeData.propertiesValues.name);
   });
 
   it("Verify settings modal with a selected entity type in the sidebar", () => {
@@ -181,6 +229,8 @@ describe("Entity Type Settings Modal", () => {
     entityTypeDisplaySettingsModal.getEntityTypeIconSearchInput(defaultEntityTypeData.name).type(newEntityTypeData2.icon);
     entityTypeDisplaySettingsModal.getEntityTypeIconMenu(defaultEntityTypeData.name).find("svg").last().click();
     entityTypeDisplaySettingsModal.getEntityTypeIconButtonWrapper(defaultEntityTypeData.name).should("have.attr", "data-icon", newEntityTypeData2.icon);
+    entityTypeDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).click();
+    entityTypeDisplaySettingsModal.getEntityLabelDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.email).click();
 
     cy.log("**Save the changes**");
     entityTypeDisplaySettingsModal.getModalSaveButton().click();
@@ -191,6 +241,7 @@ describe("Entity Type Settings Modal", () => {
     entityTypeDisplaySettingsModal.getModalBody().should("be.visible");
     entityTypeDisplaySettingsModal.getEntityTypeColorButton(defaultEntityTypeData.name).should("have.attr", "data-color", Cypress._.toLower(newEntityTypeData2.color.HEX));
     entityTypeDisplaySettingsModal.getEntityTypeIconButtonWrapper(defaultEntityTypeData.name).should("have.attr", "data-icon", newEntityTypeData2.icon);
+    entityTypeDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.email);
 
     cy.log("**Close the modal**");
     entityTypeDisplaySettingsModal.getModalCloseButton().click();
@@ -218,5 +269,24 @@ describe("Entity Type Settings Modal", () => {
     entitiesSidebar.getBaseEntity(defaultEntityTypeData.name).and("have.attr", "data-icon").then(icon => {
       expect(Cypress._.toLower(icon)).equal(Cypress._.toLower(newEntityTypeData2.icon));
     });
+
+    cy.log("**Click on customer node and verify that label in side bar**");
+    graphExplore.stopStabilization();
+    graphExplore.focusNode(ExploreGraphNodes.CUSTOMER_102);
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
+      let customer_102_nodePosition: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
+      graphExplore.getGraphVisCanvas().trigger("mouseover", customer_102_nodePosition.x, customer_102_nodePosition.y);
+    });
+    cy.wait(500);
+
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
+      let customer_102_nodePosition: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
+      cy.wait(150);
+      graphExplore.getGraphVisCanvas().click(customer_102_nodePosition.x, customer_102_nodePosition.y, {force: true});
+      graphExplore.getGraphVisCanvas().click(customer_102_nodePosition.x, customer_102_nodePosition.y, {force: true});
+    });
+
+    graphExploreSidePanel.getSidePanel().scrollIntoView().should("be.visible");
+    graphExploreSidePanel.getSidePanelHeading().should("contain.text", defaultEntityTypeData.propertiesValues.email);
   });
 });
