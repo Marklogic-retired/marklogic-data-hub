@@ -118,6 +118,15 @@ export const entityParser = (data: any) => {
         properties: properties,
         relatedEntities: relatedEntities,
       };
+    } else {
+      parsedEntity = {
+        name: entity.info.title,
+        info: entity.info,
+        primaryKey: "",
+        properties: [],
+        relatedEntities: [],
+        isDefinitionInvalid: true
+      };
     }
 
     return parsedEntity;

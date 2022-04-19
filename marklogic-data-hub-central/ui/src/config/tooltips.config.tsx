@@ -518,7 +518,9 @@ const ExploreGraphViewToolTips = {
   entityToolTip: <>Click to filter results by property values.</>,
   entityToolTipDisabled: function (entityName) {
     return <span aria-label="disabled-entity-tooltip">The graph is already displaying all <strong>{entityName}</strong> records. To enable this selection, remove the <strong>{entityName}</strong> entity from the Base Entities section.</span>
-  }
+  },
+  invalidDefinition: <>Unable to display facets because the definition cannot be found for this entity type. To learn more, see <a href="https://docs.marklogic.com/datahub/refs/troubleshooting.html" target="_blank">Troubleshooting</a> in the documentation.</>,
+  invalidDefinitionToolTip: <>You cannot choose this entity type because the definition cannot be found for this entity type. To learn more, see Troubleshooting in the documentation.</>,
 };
 
 const ExplorePlaceholders = {
