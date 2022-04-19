@@ -20,6 +20,7 @@ import {themeColors} from "@config/themes.config";
 import {Flow} from "../../types/run-types";
 import * as _ from "lodash";
 
+import {updateUserPreferences, getUserPreferences} from "../../../src/services//user-preferences";
 
 enum ReorderFlowOrderDirection {
   LEFT = "left",
@@ -178,6 +179,14 @@ const Flows: React.FC<Props> = ({
           })
         ));
       }
+
+      //Getting local storage in the load of the page if it exists
+      if (getUserPreferencesLS() && getUserPreferencesLS()?.loadSelectedStepsUser) {
+        if (Object.keys(getUserPreferencesLS().selectedStepsDataUser?.selectedStepOptions).length !== 0) {
+          getLocalStorageDataUser();
+        }
+      }
+      saveLocalStoragePreferences(true);
     }
   }, [flows]);
 
@@ -511,6 +520,7 @@ const Flows: React.FC<Props> = ({
           if (obj.flowName === flowNames) obj.checked = false;
         });
         setArrayLoadChecksSteps(arrayLoadChecksStepsAux);
+
       } else {
         {
           flows.map((flow) => (
@@ -533,7 +543,15 @@ const Flows: React.FC<Props> = ({
 
       let obj = selectedStepDetails;
       if (data.isChecked) {
-        obj.push(data);
+        let checkDuplicateObject = selectedStepDetails?.find(function (obj) {
+          if (
+            obj.stepId === data.stepId
+            && obj.flowName === data.flowName
+            && obj.stepNumber === data.stepNumber
+            && obj.isChecked === data.isChecked
+          ) return true;
+        });
+        !checkDuplicateObject && obj.push(data);
       } else {
         for (let i = 0; i < obj.length; i++) {
           if (obj[i].stepName === checkedValues) {
@@ -552,6 +570,80 @@ const Flows: React.FC<Props> = ({
       if (originRender) event.stopPropagation();
     }
   };
+
+  const getLocalStorageDataUser = () => {
+
+    if (getUserPreferencesLS()) {
+      if (getUserPreferencesLS()?.selectedStepsDataUser?.selectedStepOptions) {
+        setSelectedStepOptions(getUserPreferencesLS().selectedStepsDataUser.selectedStepOptions);
+      }
+      if (getUserPreferencesLS()?.selectedStepsDataUser?.arrayLoadChecksSteps) {
+        setArrayLoadChecksSteps(getUserPreferencesLS().selectedStepsDataUser.arrayLoadChecksSteps);
+      }
+      if (getUserPreferencesLS()?.selectedStepsDataUser?.selectedStepDetails) {
+        setSelectedStepDetails(getUserPreferencesLS().selectedStepsDataUser.selectedStepDetails);
+      }
+    }
+  };
+
+  const tryParseJson = (userPreferences) => {
+    try {
+      return JSON.parse(userPreferences);
+    } catch (e) {
+      return false;
+    }
+  };
+
+  const getUserPreferencesLS = () => {
+    let userPreferences, oldOptions;
+    const sessionUser = localStorage.getItem("dataHubUser");
+
+    if (sessionUser) {
+      userPreferences = getUserPreferences(sessionUser);
+      if (userPreferences) {
+        oldOptions = tryParseJson(userPreferences);
+
+        //if (Object.keys(oldOptions.selectedStepsDataUser?.selectedStepOptions).length === 0) return false
+      } else { return false; }
+    }
+
+    return oldOptions;
+  };
+
+  const saveLocalStoragePreferences = (value: boolean, saveSelectedStepsDataUser?: boolean) => {
+
+    const sessionUser = localStorage.getItem("dataHubUser");
+    if (getUserPreferencesLS()) {
+      let oldOptions = getUserPreferencesLS();
+      let newOptions = {
+        ...oldOptions,
+        loadSelectedStepsUser: value,
+      };
+
+      if (saveSelectedStepsDataUser) {
+        let newSelectedStepsDataUser = {
+          selectedStepOptions: selectedStepOptions,
+          arrayLoadChecksSteps: arrayLoadChecksSteps,
+          selectedStepDetails: selectedStepDetails
+        };
+
+        newOptions = {
+          ...oldOptions,
+          loadSelectedStepsUser: value,
+          selectedStepsDataUser: newSelectedStepsDataUser,
+        };
+      }
+      updateUserPreferences(sessionUser ?? "", newOptions);
+    }
+  };
+
+  useEffect(() => {
+    //When Refreshing or leaving the page, save the flag to get the local storage
+    return () => {
+      saveLocalStoragePreferences(true);
+    };
+  }, []);
+
 
   let flagOneLoadSelected = true, flowNameCheckAux = "";
   const handleArrayLoadChecksSteps = (flowNameCheck, stepName, stepNumber, origin?) => {
@@ -684,7 +776,7 @@ const Flows: React.FC<Props> = ({
     let flag = false;
 
     await selectedStepDetails.map(async step => {
-      if (step.stepDefinitionType.toLowerCase() === "ingestion" && step.flowName === name) {
+      if (step.stepDefinitionType.toLowerCase() === "ingestion" && step.flowName === name && step.isChecked) {
         flag = true;
         setRunningStep(step);
         setSingleIngest(false);
@@ -700,7 +792,7 @@ const Flows: React.FC<Props> = ({
     if (!flag) {
       let stepNumbers = [{}];
       stepNumbers = selectedStepDetails.filter(function (obj) {
-        return obj.flowName === name && obj.checked === true;
+        return obj.flowName === name && obj.isChecked === true;
       });
 
       await runFlowSteps(name, stepNumbers)
@@ -710,6 +802,7 @@ const Flows: React.FC<Props> = ({
           // setArrayLoadChecksSteps([{flowName: "", stepNumber: -1}]);
         });
     }
+    saveLocalStoragePreferences(false, true);
   };
 
   const stepMenu = (flowName, i) => (
@@ -854,7 +947,7 @@ const Flows: React.FC<Props> = ({
       {latestJobData && latestJobData[name] && latestJobData[name].find(step => step.jobId) ?
         <HCTooltip text={RunToolTips.flowName} placement="bottom" id="">
           <span onClick={(e) => OpenFlowJobStatus(e, index, name)} className={styles.infoIcon} data-testid={`${name}-flow-status`}>
-            <FontAwesomeIcon icon={faInfoCircle} size="1x" aria-label="icon: info-circle" className={styles.flowStatusIcon}/>
+            <FontAwesomeIcon icon={faInfoCircle} size="1x" aria-label="icon: info-circle" className={styles.flowStatusIcon} />
           </span>
         </HCTooltip>
         : ""
@@ -1006,7 +1099,6 @@ const Flows: React.FC<Props> = ({
     onReorderFlow(flowNum, reorderedList);
     updateFlow(flowName, flowDesc, steps);
   };
-
 
   const getFlowWithJobInfo = async (flowNum) => {
     let currentFlow = flows[flowNum];
