@@ -58,7 +58,8 @@ function HCDateTimePicker({time, name, className, value, format, placeholder = [
     event.stopPropagation();
 
     if (ref.current) {
-      ref.current.setStartDate(null);ref.current.setEndDate(null);
+      ref.current.setStartDate(undefined);
+      ref.current.setEndDate(undefined);
     }
 
     if (onChange) {
