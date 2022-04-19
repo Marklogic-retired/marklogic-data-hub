@@ -26,7 +26,7 @@ describe("Run Tile tests", () => {
     runPage.getFlowName("personJSON").should("be.visible");
   });
   after(() => {
-  // Skipped since it tests functionality on DHFPROD-7187 (run selected flows)
+    // Skipped since it tests functionality on DHFPROD-7187 (run selected flows)
     // cy.deleteRecordsInFinal("master-xml-person", "mapPersonXML");
     // cy.deleteFlows(flowName);
     cy.resetTestUser();
@@ -147,13 +147,73 @@ describe("Run Tile tests", () => {
     cy.contains("123 Wilson St").scrollIntoView().should("be.visible");
     cy.contains("123 Wilson Rd").should("be.visible");
   });
+
+  it("Execute certain steps in a flow and control that it is being saved to local storage for a user ", () => {
+    cy.logout();
+    cy.loginAsTestUserWithRoles("hub-central-flow-writer").withRequest();
+
+    cy.log("**loginAsTestUserWithRoles**");
+    LoginPage.postLogin();
+    cy.saveLocalStorage();
+
+    cy.log("**postLogin**");
+    toolbar.getRunToolbarIcon().click();
+    runPage.openStepsSelectDropdown("testPersonXML");
+
+    cy.log("**Change selected steps**");
+    runPage.clickStepInsidePopover("#loadPersonXML");
+    runPage.clickStepInsidePopover("#mapPersonXML");
+    runPage.clickStepInsidePopover("#match-xml-person");
+
+    cy.log("**Run Flow with selected steps**");
+    runPage.runFlow(flowName);
+    cy.wait(3000);
+    cy.waitForAsyncRequest();
+
+    cy.log("**Checking the modal**");
+    runPage.closeFlowStatusModal(flowName);
+
+    cy.log("**Change page and return to check the same steps previously selected**");
+    toolbar.getCurateToolbarIcon().click();
+    toolbar.getRunToolbarIcon().click();
+    runPage.openStepsSelectDropdown("testPersonXML");
+    runPage.controlUncheckedStep("#loadPersonXML");
+    runPage.controlUncheckedStep("#mapPersonXML");
+    runPage.controlUncheckedStep("#match-xml-person");
+    runPage.openStepsSelectDropdown("testPersonXML");
+
+    cy.log("**Reload page and check the same steps previously selected**");
+    cy.reload();
+    runPage.openStepsSelectDropdown("testPersonXML");
+    runPage.controlUncheckedStep("#loadPersonXML");
+    runPage.controlUncheckedStep("#mapPersonXML");
+    runPage.controlUncheckedStep("#match-xml-person");
+  });
+
+  it("Login with other user and check other step options are checked in a flow", () => {
+    cy.logout();
+    cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer").withRequest();
+    LoginPage.postLogin();
+    cy.saveLocalStorage();
+
+    cy.log("**Go to Run Page**");
+    toolbar.getRunToolbarIcon().click();
+
+    cy.log("**Check others steps for this user are selected**");
+    runPage.openStepsSelectDropdown("testPersonXML");
+    runPage.controlCheckedStep("#loadPersonXML");
+    runPage.controlCheckedStep("#mapPersonXML");
+    runPage.controlCheckedStep("#match-xml-person");
+  });
+
   it("show all entity instances in Explorer after running mapping with related entities", () => {
+
     const flowName = "CurateCustomerWithRelatedEntitiesJSON";
     const stepName = "mapCustomersWithRelatedEntitiesJSON";
 
     cy.log("**Navigate to run tile and check visibility of the personJSON flow**");
-    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
-    cy.waitUntil(() => runPage.getFlowName("personJSON").should("be.visible"));
+    toolbar.getRunToolbarIcon().click();
+    runPage.getFlowName("personJSON").should("be.visible");
     cy.intercept("/api/jobs/**").as("getJobs");
 
     cy.log(`**Expand flow: ${flowName}**`);
@@ -178,6 +238,7 @@ describe("Run Tile tests", () => {
     browsePage.getTotalDocuments().should("eq", 2);
     browsePage.getSelectedFacet("createdByJob").should("exist");
   });
+
   it("Explore results after run two map steps being the second one with related entities", () => {
     const firstFlowName = "personJSON";
     const firstStepName = "mapPersonJSON";

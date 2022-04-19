@@ -9,7 +9,9 @@ interface UserPreferences {
   // pageRoute: string,
   resultTableColumns: any[],
   selectedQuery: string,
-  sidebarQuery: string
+  sidebarQuery: string,
+  loadSelectedStepsUser: boolean,
+  selectedStepsDataUser: any
 }
 
 export const defaultUserPreferences = {
@@ -25,10 +27,18 @@ export const defaultUserPreferences = {
   resultTableColumns: [],
   selectedQuery: "select a query",
   sidebarQuery: "Select a saved query",
-  baseEntities: []
+  baseEntities: [],
+
+  loadSelectedStepsUser: true,
+  selectedStepsDataUser: {
+    selectedStepOptions: {},
+    arrayLoadChecksSteps: [{flowName: "", stepNumber: -1}],
+    selectedStepDetails: [{stepName: "", stepNumber: -1, stepDefinitionType: "", isChecked: false}]
+  }
 };
 
 export const createUserPreferences = (username: string) => {
+
   const newUserPreference: UserPreferences = defaultUserPreferences;
   localStorage.setItem(`dataHubExplorerUserPreferences-${username}`, JSON.stringify(newUserPreference));
   return;

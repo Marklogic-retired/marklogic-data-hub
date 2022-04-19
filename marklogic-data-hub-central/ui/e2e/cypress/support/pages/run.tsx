@@ -143,7 +143,7 @@ class RunPage {
     });
   }
 
-  runFlow(flowName :string) {
+  runFlow(flowName: string) {
     cy.get(`#runFlow-${flowName}`).click({force: true});
   }
 
@@ -153,6 +153,18 @@ class RunPage {
 
   verifyDisabledRunButton(stepName: string) {
     cy.findByTestId(`runFlow-${stepName}`).should("be.disabled");
+  }
+
+  clickStepInsidePopover(idStep: string) {
+    cy.get(idStep).click();
+  }
+
+  controlUncheckedStep(idStep: string) {
+    cy.get(idStep).should("not.be.checked");
+  }
+
+  controlCheckedStep(idStep: string) {
+    cy.get(idStep).should("be.checked");
   }
 }
 
