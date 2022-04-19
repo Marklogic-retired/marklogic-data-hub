@@ -142,14 +142,14 @@ const Tiles: React.FC<Props> = (props) => {
       <HCTooltip aria-label="" text={savedQueries && !savedQueries.length ? exploreSettingsTooltips.disabledManageQueryOption : ""} id="manage-queries-option-tooltip" placement="top">
         <div>
           <Dropdown.Item eventKey="manageQueries" disabled={savedQueries && !savedQueries.length}>
-            <span aria-label={"manageQueries"}>Manage Queries</span>
+            <span aria-label={"manageQueries"}>Manage saved queries</span>
           </Dropdown.Item>
         </div>
       </HCTooltip>
       <HCTooltip aria-label="" text={entityDefinitionsArray && !entityDefinitionsArray.length ? exploreSettingsTooltips.disabledEntityTypeDisplaySettingsOption : ""} id="entityTypeDisplaySettings-option-tooltip" placement="top">
         <div>
           <Dropdown.Item eventKey="entityTypeDisplaySettings" disabled={entityDefinitionsArray && !entityDefinitionsArray.length}>
-            <span aria-label={"entityTypeDisplaySettings"}>Entity Type Display Settings</span>
+            <span aria-label={"entityTypeDisplaySettings"}>Entity display settings</span>
           </Dropdown.Item>
         </div>
       </HCTooltip>
