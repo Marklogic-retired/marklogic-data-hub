@@ -20,7 +20,7 @@ interface Props {
 
 const EntitySpecificSidebar: React.FC<Props> = (props) => {
   const {
-    entitySelected: {name, icon},
+    entitySelected: {name, icon, isDefinitionInvalid},
     entityFacets,
     updateSpecificFacets,
     checkFacetRender,
@@ -292,114 +292,115 @@ const EntitySpecificSidebar: React.FC<Props> = (props) => {
           value={entitySpecificSearch ? entitySpecificSearch : " "} /> */}
       </div>
       <div>
-        {entityFacets.length
-          ? entityFacets.map((facet, index) => {
-            let datatype = "";
-            let step;
-            switch (facet.type) {
-            case "xs:string": {
-              return Object.entries(facet).length !== 0 && facet.facetValues.length > 0 && (
-                <Facet
-                  name={facet.propertyPath}
-                  constraint={facet.facetName}
-                  facetValues={facet.facetValues}
-                  key={facet.facetName}
-                  tooltip=""
-                  facetType={facet.type}
-                  facetCategory="entity"
-                  referenceType={facet.referenceType}
-                  entityTypeId={facet.entityTypeId}
-                  propertyPath={facet.propertyPath}
-                  updateSelectedFacets={updateSelectedFacets}
-                  addFacetValues={addFacetValues}
-                />
-              );
-            }
-            case "xs:date": {
-              datatype = "date";
-              return Object.entries(facet).length !== 0 && (
-                <DateFacet
-                  constraint={facet.facetName}
-                  name={facet.propertyPath}
-                  datatype={datatype}
-                  key={facet.facetName}
-                  propertyPath={facet.propertyPath}
-                  onChange={onDateFacetChange}
-                />
-              );
-            }
-            case "xs:dateTime": {
-              datatype = "dateTime";
-              return Object.entries(facet).length !== 0 && (
-                <DateTimeFacet
-                  constraint={facet.facetName}
-                  name={facet.propertyPath}
-                  datatype={datatype}
-                  key={facet.facetName}
-                  propertyPath={facet.propertyPath}
-                  onChange={onDateTimeFacetChange}
-                />
-              );
-            }
-            case "xs:int": {
-              datatype = "int";
-              step = 1;
-              break;
-            }
-            case "xs:integer": {
-              datatype = "integer";
-              step = 1;
-              break;
-            }
-            case "xs:short": {
-              datatype = "short";
-              step = 1;
-              break;
-            }
-            case "xs:long": {
-              datatype = "long";
-              step = 1;
-              break;
-            }
-            case "xs:decimal": {
-              datatype = "decimal";
-              step = 0.1;
-              break;
-            }
-            case "xs:double": {
-              datatype = "double";
-              step = 0.1;
-              break;
-            }
-            case "xs:float": {
-              datatype = "float";
-              step = 0.1;
-              break;
-            }
-            //add date type cases
-
-            default:
-              break;
-            }
-            if (step && facet.facetValues.length) {
-              return (
-                <div key={index}>
-                  <NumericFacet
-                    constraint={facet.facetName}
+        {isDefinitionInvalid ? <div aria-label={`invalidDefinition-${name}`}>{ExploreGraphViewToolTips.invalidDefinition}</div>
+          : entityFacets.length
+            ? entityFacets.map((facet, index) => {
+              let datatype = "";
+              let step;
+              switch (facet.type) {
+              case "xs:string": {
+                return Object.entries(facet).length !== 0 && facet.facetValues.length > 0 && (
+                  <Facet
                     name={facet.propertyPath}
-                    step={step}
+                    constraint={facet.facetName}
+                    facetValues={facet.facetValues}
+                    key={facet.facetName}
+                    tooltip=""
+                    facetType={facet.type}
+                    facetCategory="entity"
                     referenceType={facet.referenceType}
                     entityTypeId={facet.entityTypeId}
                     propertyPath={facet.propertyPath}
+                    updateSelectedFacets={updateSelectedFacets}
+                    addFacetValues={addFacetValues}
+                  />
+                );
+              }
+              case "xs:date": {
+                datatype = "date";
+                return Object.entries(facet).length !== 0 && (
+                  <DateFacet
+                    constraint={facet.facetName}
+                    name={facet.propertyPath}
                     datatype={datatype}
                     key={facet.facetName}
-                    onChange={onNumberFacetChange}
+                    propertyPath={facet.propertyPath}
+                    onChange={onDateFacetChange}
                   />
-                </div>
-              );
-            }
-          })
-          : <div aria-label={`no-facets-${name}`}>{ExploreGraphViewToolTips.noFacetToolTip}</div>}
+                );
+              }
+              case "xs:dateTime": {
+                datatype = "dateTime";
+                return Object.entries(facet).length !== 0 && (
+                  <DateTimeFacet
+                    constraint={facet.facetName}
+                    name={facet.propertyPath}
+                    datatype={datatype}
+                    key={facet.facetName}
+                    propertyPath={facet.propertyPath}
+                    onChange={onDateTimeFacetChange}
+                  />
+                );
+              }
+              case "xs:int": {
+                datatype = "int";
+                step = 1;
+                break;
+              }
+              case "xs:integer": {
+                datatype = "integer";
+                step = 1;
+                break;
+              }
+              case "xs:short": {
+                datatype = "short";
+                step = 1;
+                break;
+              }
+              case "xs:long": {
+                datatype = "long";
+                step = 1;
+                break;
+              }
+              case "xs:decimal": {
+                datatype = "decimal";
+                step = 0.1;
+                break;
+              }
+              case "xs:double": {
+                datatype = "double";
+                step = 0.1;
+                break;
+              }
+              case "xs:float": {
+                datatype = "float";
+                step = 0.1;
+                break;
+              }
+              //add date type cases
+
+              default:
+                break;
+              }
+              if (step && facet.facetValues.length) {
+                return (
+                  <div key={index}>
+                    <NumericFacet
+                      constraint={facet.facetName}
+                      name={facet.propertyPath}
+                      step={step}
+                      referenceType={facet.referenceType}
+                      entityTypeId={facet.entityTypeId}
+                      propertyPath={facet.propertyPath}
+                      datatype={datatype}
+                      key={facet.facetName}
+                      onChange={onNumberFacetChange}
+                    />
+                  </div>
+                );
+              }
+            })
+            : <div aria-label={isDefinitionInvalid ? `invalidDefinition-${name}` : `no-facets-${name}`}>{isDefinitionInvalid ? ExploreGraphViewToolTips.invalidDefinition : ExploreGraphViewToolTips.noFacetToolTip}</div>}
       </div>
     </div>
   );

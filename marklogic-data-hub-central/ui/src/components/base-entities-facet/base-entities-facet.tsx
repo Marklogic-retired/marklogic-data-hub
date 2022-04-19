@@ -35,6 +35,7 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
   const [entityNames, setEntityNames] = useState<string[]>(searchOptions.entityTypeIds.length === 0 ? ["All Entities"] : entitiesSorting(searchOptions.entityTypeIds));
   const [displayList, setDisplayList] = useState<any[]>(baseEntitiesSorting(currentBaseEntities));
   const [showMore, setShowMore] = useState<boolean>(false);
+  const [invalidEntities] = useState({});
 
   useEffect(() => {
     const isAllEntities = searchOptions.entityTypeIds.length === 0 || searchOptions.entityTypeIds.length === allBaseEntities.length;
@@ -54,7 +55,13 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
     setDisplayList(baseEntitiesSorting(currentBaseEntities));
   }, [currentBaseEntities]);
 
-  const childrenOptions = baseEntitiesSorting(allBaseEntities).map(element => ({value: element.name, label: element.name, isDisabled: false})).filter(obj => obj.value && obj.label);
+  const childrenOptions = baseEntitiesSorting(allBaseEntities).map(element => {
+    let isDefinitionInvalid = !!element.isDefinitionInvalid;
+    if (isDefinitionInvalid) {
+      invalidEntities[element.name] = element.name;
+    }
+    return {value: element.name, label: element.name, isDisabled: isDefinitionInvalid};
+  }).filter(obj => obj.value && obj.label);
   childrenOptions.unshift({
     value: "-",
     label: "-",
@@ -151,9 +158,11 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
             return <HCDivider className={"m-0"} />;
           }
           return (
-            <span aria-label={`base-option-${value}`}>
-              {label}
-            </span>
+            <HCTooltip text={invalidEntities[value] ? ExploreGraphViewToolTips.invalidDefinitionToolTip : ""} placement="top" id="baseEntityOptionsToolTip" key={value}>
+              <span aria-label={`base-option-${value}`}>
+                {label}
+              </span>
+            </HCTooltip>
           );
         }}
         styles={{
@@ -173,9 +182,14 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
         }}
       />
       <div aria-label="base-entities-selection">
-        {displayList.map(({name, color, filter, amount, icon}) => {
+        {displayList.map(({name, color, filter, amount, icon, isDefinitionInvalid}) => {
           let finalIcon = icon ? icon : defaultIcon;
           let finalColor = color ? color : themeColors.defaults.entityColor;
+          let entitySpecificPanelInfo = {
+            name, color: finalColor,
+            icon: finalIcon,
+            isDefinitionInvalid: !!isDefinitionInvalid
+          };
           if (name) {
             return (
               <HCTooltip text={ExploreGraphViewToolTips.entityToolTip} placement="top" id="baseEntityToolTip" key={name}>
@@ -186,7 +200,7 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
                   data-color={finalColor}
                   style={{backgroundColor: finalColor, borderStyle: "solid", borderWidth: "1px", borderColor: "#d9d9d9", borderRadius: "4px"}}
                   className={styles.entityItem}
-                  onClick={() => setEntitySpecificPanel({name, color: finalColor, icon: finalIcon})}
+                  onClick={() => setEntitySpecificPanel(entitySpecificPanelInfo)}
                 >
                   <span className={styles.entityIcon}>
                     <DynamicIcons name={finalIcon}/>
