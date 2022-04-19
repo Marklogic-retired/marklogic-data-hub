@@ -389,7 +389,7 @@ const Browse: React.FC<Props> = ({location}) => {
     return () => {
       setGraphSearchData({});
     };
-  }, [viewOptions.graphView, searchOptions.entityTypeIds, searchOptions.relatedEntityTypeIds, searchOptions.database, searchOptions.datasource, searchOptions.query, searchOptions.selectedFacets, user.error.type, hideDataHubArtifacts]);
+  }, [viewOptions.graphView, searchOptions.entityTypeIds, searchOptions.relatedEntityTypeIds, searchOptions.database, searchOptions.datasource, searchOptions.query, searchOptions.selectedFacets, user.error.type, hideDataHubArtifacts, hubCentralConfig]);
 
   useEffect(() => {
     let state: any = location.state;

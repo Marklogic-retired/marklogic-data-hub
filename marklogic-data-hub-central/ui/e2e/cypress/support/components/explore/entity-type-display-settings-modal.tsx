@@ -40,6 +40,14 @@ class EntityTypeDisplaySettingsModal {
     return cy.get(`[aria-label="${entityType}-labelOption-${option}"]`).first().scrollIntoView();
   }
 
+  getPropertiesOnHoverDropdown(entityType: string) {
+    return cy.get(`[id="${entityType}-entityProperties-select-wrapper"]`).scrollIntoView();
+  }
+
+  getPropertiesOnHoverDropdownOption(entityType: string, option: string) {
+    return cy.get(`[aria-label="${entityType}-propertiesOption-${option}"]`).first().scrollIntoView();
+  }
+
   getModalCloseButton() {
     return cy.get(`[id="close-settings-modal"]`);
   }

@@ -16,7 +16,8 @@ const defaultEntityTypeData = {
   properties: {
     name: "name",
     email: "email",
-    nicknames: "nicknames"
+    nicknames: "nicknames",
+    shipping: "shipping"
   },
   propertiesValues: {
     id: 102,
@@ -27,6 +28,11 @@ const defaultEntityTypeData = {
   color: {
     HEX: "#EEEFF1",
   }
+};
+const propertiesOnHoverData = {
+  name: "Name: Adams Cole",
+  email: "Email: adamscole@nutralab.com",
+  shipping: "Shipping:"
 };
 // We must have the same color in rgb and hex because the browser to apply the background changes it to rgb even if the value is passed in hex
 // "#FFF0A3" == "rgb(255, 240, 163)"
@@ -105,6 +111,18 @@ describe("Entity Type Settings Modal", () => {
     entityTypeDisplaySettingsModal.getEntityLabelDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.name).click();
     entityTypeDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.name);
 
+    cy.log("**Verify no propertiesOnHover are selected, select new one and check the selection**");
+    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("have.text", defaultSelectText);
+    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
+    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.name).click();
+    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
+    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.email).click();
+    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
+    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.shipping).click();
+    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.name);
+    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.email);
+    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.shipping);
+
     cy.log("**Cancel the edition and verify that the modal close**");
     entityTypeDisplaySettingsModal.getModalCancelButton().click();
     entityTypeDisplaySettingsModal.getModalBody().should("not.exist");
@@ -117,6 +135,7 @@ describe("Entity Type Settings Modal", () => {
     });
     entityTypeDisplaySettingsModal.getEntityTypeIconButtonWrapper(defaultEntityTypeData.name).should("have.attr", "data-icon", defaultEntityTypeData.icon);
     entityTypeDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("have.text", defaultSelectText);
+    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("have.text", defaultSelectText);
 
     cy.log("**Close the modal**");
     entityTypeDisplaySettingsModal.getModalCloseButton().click();
@@ -159,6 +178,17 @@ describe("Entity Type Settings Modal", () => {
     entityTypeDisplaySettingsModal.getEntityLabelDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.name).click();
     entityTypeDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.name);
 
+    cy.log("**Select propertiesOnHover and check the selection**");
+    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
+    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.name).click();
+    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
+    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.email).click();
+    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
+    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.shipping).click();
+    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.name);
+    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.email);
+    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.shipping);
+
     cy.log("**Clear filter and check table rows");
     entityTypeDisplaySettingsModal.getIconSearch().click({force: true});
     entityTypeDisplaySettingsModal.getSearchInput().should("have.value", defaultEntityTypeData.name);
@@ -180,6 +210,9 @@ describe("Entity Type Settings Modal", () => {
     entityTypeDisplaySettingsModal.getEntityTypeColorButton(defaultEntityTypeData.name).should("have.attr", "data-color", Cypress._.toLower(newEntityTypeData.color.HEX));
     entityTypeDisplaySettingsModal.getEntityTypeIconButtonWrapper(defaultEntityTypeData.name).should("have.attr", "data-icon", newEntityTypeData.icon);
     entityTypeDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.name);
+    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.name);
+    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.email);
+    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.shipping);
 
     cy.log("**Close the modal**");
     entityTypeDisplaySettingsModal.getModalCloseButton().click();
@@ -208,6 +241,10 @@ describe("Entity Type Settings Modal", () => {
       cy.wait(150);
       graphExplore.getGraphVisCanvas().click(customer_102_nodePosition.x, customer_102_nodePosition.y, {force: true});
       graphExplore.getGraphVisCanvas().click(customer_102_nodePosition.x, customer_102_nodePosition.y, {force: true});
+
+      cy.findByText(propertiesOnHoverData.name).should("exist");
+      cy.findByText(propertiesOnHoverData.email).should("exist");
+      cy.findByText(propertiesOnHoverData.shipping).should("exist");
     });
 
     graphExploreSidePanel.getSidePanel().scrollIntoView().should("be.visible");
