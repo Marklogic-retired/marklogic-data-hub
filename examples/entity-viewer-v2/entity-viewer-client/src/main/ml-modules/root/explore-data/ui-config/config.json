@@ -204,7 +204,7 @@
           "all": "#cccccc",
           "filters": "#1ACCA8"
         },
-        "totalRecords": 100
+        "totalPath": "searchResults.recordCount.total"
       }
     },
 
