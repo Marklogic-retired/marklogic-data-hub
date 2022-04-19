@@ -145,8 +145,7 @@ const SearchProvider: React.FC = ({children}) => {
         console.log("getSearchResultsByGet", result?.data);
         setSearchResults(result?.data.searchResults.response);
         setReturned(result?.data.searchResults.response.total);
-        // TODO need total records in database in result
-        setTotal(userContext.config.search.meter.config.totalRecords);
+        setTotal(_.get(result?.data, userContext.config.search.meter.config.totalPath, null) || 0);
         handleSaveSearchLocal();
         handleGetSearchLocal();
         setNewSearch(false);

@@ -100,8 +100,8 @@ class Search {
           }
         })
       })
-      results["recordCount"] = this.getRecordCount(entityTypeIds);
     }
+    searchResponse["recordCount"] = this.getRecordCount(entityTypeIds);
     return searchResponse;
   }
 

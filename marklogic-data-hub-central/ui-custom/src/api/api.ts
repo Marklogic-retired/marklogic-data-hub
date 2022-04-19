@@ -29,7 +29,6 @@ export const getSearchResultsByGet = async (query, userid) => {
   try {
     const response = await axios.get("/api/explore?query=" + queryStr, config);
     if (response && response.status === 200) {
-      console.log("api getSearchResultsByGet", response);
       return response;
     }
   } catch (error) {
