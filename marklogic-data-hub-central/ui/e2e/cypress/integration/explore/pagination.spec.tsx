@@ -19,13 +19,10 @@ describe("Validate scenarios for pagination in the explore page table", () => {
     cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
 
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
-
     cy.log("**Go to Explore page and select the table view option**");
     cy.visit("/tiles/explore");
-    cy.wait(4000);
-    browsePage.getTableView().should("be.visible").click();
+    cy.wait(2000);
+    browsePage.getTableView().click();
     table.mainTable.should("be.visible");
     table.getTableRows().should("not.be.empty");
 
@@ -40,13 +37,13 @@ describe("Validate scenarios for pagination in the explore page table", () => {
       );
     });
 
+    //Saving Local Storage to preserve session
+    cy.saveLocalStorage();
+
   });
   beforeEach(() => {
     //Restoring Local Storage to Preserve Session
     cy.restoreLocalStorage();
-  });
-  after(() => {
-    cy.resetTestUser();
   });
 
   it("Change page number and verify the updated result", () => {
