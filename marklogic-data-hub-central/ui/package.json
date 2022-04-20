@@ -21,6 +21,7 @@
     "bootstrap": "^5.0.2",
     "bootstrap-daterangepicker": "^3.1.0",
     "crypto-js": "^4.0.0",
+    "dayjs": "^1.11.0",
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.15.1",
     "enzyme-to-json": "^3.4.3",
@@ -49,7 +50,6 @@
     "react-dom": "^16.12.0",
     "react-drag-listview": "^0.1.6",
     "react-dropzone": "^11.2.0",
-    "react-fa-icon-picker": "^1.0.3",
     "react-graph-vis": "^1.0.7",
     "react-highlight-words": "^0.16.0",
     "react-html-parser": "^2.0.2",
@@ -74,8 +74,7 @@
     "use-dynamic-refs": "^1.0.0",
     "vis": "^4.21.0-EOL",
     "vis-timeline": "7.3.6",
-    "xml-formatter": "^2.4.0",
-    "dayjs": "^1.11.0"
+    "xml-formatter": "^2.4.0"
   },
   "scripts": {
     "start": "react-app-rewired start",

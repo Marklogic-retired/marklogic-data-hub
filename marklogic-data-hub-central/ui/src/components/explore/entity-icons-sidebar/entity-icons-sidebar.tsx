@@ -1,8 +1,7 @@
 import React from "react";
 import styles from "./entity-icons-sidebar.module.scss";
 import {ChevronDoubleRight} from "react-bootstrap-icons";
-import {HCTooltip} from "@components/common";
-import DynamicIcons from "@components/common/dynamic-icons/dynamic-icons";
+import {HCTooltip, DynamicIcons} from "@components/common";
 import {defaultIcon} from "@config/explore.config";
 import tooltipsConfig from "@config/explorer-tooltips.config";
 

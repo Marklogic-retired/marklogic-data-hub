@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 import {Row, Col, Form, FormLabel, Tab, Tabs} from "react-bootstrap";
 import {QuestionCircleFill, XLg} from "react-bootstrap-icons";
-import {EntityTypeColorPicker, HCTooltip, HCInput} from "@components/common";
+import {EntityTypeColorPicker, HCTooltip, HCInput, HCIconPicker} from "@components/common";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styles from "./side-panel.module.scss";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
@@ -12,7 +12,6 @@ import {primaryEntityTypes, updateModelInfo} from "@api/modeling";
 import {UserContext} from "@util/user-context";
 import {EntityModified} from "../../../../types/modeling-types";
 import {defaultHubCentralConfig} from "@config/modeling.config";
-import {IconPicker} from "react-fa-icon-picker";
 import {themeColors} from "@config/themes.config";
 import {defaultIcon} from "@config/explore.config";
 
@@ -353,7 +352,9 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
           <FormLabel column lg={3} style={{marginTop: "11px"}}>{"Icon:"}</FormLabel>
           <Col className={"d-flex align-items-center"}>
             <div className={styles.iconContainer}>
-              <div data-testid={`${modelingOptions.selectedEntity}-icon-selector`} aria-label={`${modelingOptions.selectedEntity}-${iconSelected}-icon`}><IconPicker value={iconSelected} onChange={(value) => handleIconChange(value)}/></div>
+              <div data-testid={`${modelingOptions.selectedEntity}-icon-selector`} aria-label={`${modelingOptions.selectedEntity}-${iconSelected}-icon`}>
+                <HCIconPicker identifier={modelingOptions.selectedEntity} value={iconSelected} onChange={(value) => handleIconChange(value)}/>
+              </div>
               <div className={"d-flex align-items-center"}>
                 <HCTooltip id="icon-selector" text={<span>Select an icon to associate it with the <b>{modelingOptions.selectedEntity}</b> entity throughout your project.</span>} placement="right">
                   <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.iconPickerTooltip} />

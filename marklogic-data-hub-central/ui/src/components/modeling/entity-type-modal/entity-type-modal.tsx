@@ -6,8 +6,7 @@ import {ModelingTooltips, ErrorTooltips} from "@config/tooltips.config";
 import {createEntityType, updateModelInfo} from "@api/modeling";
 import {defaultHubCentralConfig} from "@config/modeling.config";
 import {QuestionCircleFill} from "react-bootstrap-icons";
-import {EntityTypeColorPicker, HCButton, HCInput, HCTooltip} from "@components/common";
-import {IconPicker} from "react-fa-icon-picker";
+import {EntityTypeColorPicker, HCButton, HCInput, HCTooltip, HCIconPicker} from "@components/common";
 import {themeColors} from "@config/themes.config";
 import {defaultIcon} from "@config/explore.config";
 
@@ -379,7 +378,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
           <FormLabel column lg={3} style={{marginTop: "11px"}}>{"Icon:"}</FormLabel>
           <Col className={"d-flex align-items-center"}>
             <div className={styles.iconContainer} data-testid={`${name}-icon-selector`} aria-label={`${name}-${iconSelected}-icon`}>
-              <IconPicker value={iconSelected} onChange={(value) => handleIconChange(value)} />
+              <HCIconPicker identifier={name} value={iconSelected} onChange={(value) => handleIconChange(value)} />
             </div>
             <div className={"p-2 ps-3 d-flex align-items-center"}>
               <HCTooltip id="icon-selector" text={<span>Select an icon to associate it with the <b>{name}</b> entity throughout your project.</span>} placement="right">
