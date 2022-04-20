@@ -6,9 +6,8 @@ import {SearchContext} from "@util/search-context";
 import styles from "./base-entities-facet.module.scss";
 import {ChevronDoubleRight} from "react-bootstrap-icons";
 import {baseEntitiesSorting, entitiesSorting} from "@util/entities-sorting";
-import {HCDivider, HCTooltip} from "@components/common";
+import {HCDivider, HCTooltip, DynamicIcons} from "@components/common";
 import {defaultPaginationOptions, defaultIcon, exploreSidebar} from "@config/explore.config";
-import DynamicIcons from "@components/common/dynamic-icons/dynamic-icons";
 import {ExploreGraphViewToolTips} from "@config/tooltips.config";
 import {themeColors} from "@config/themes.config";
 

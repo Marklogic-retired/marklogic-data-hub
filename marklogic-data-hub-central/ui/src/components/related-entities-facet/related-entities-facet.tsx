@@ -4,10 +4,9 @@ import {ChevronDoubleRight} from "react-bootstrap-icons";
 import HCCheckbox from "../common/hc-checkbox/hc-checkbox";
 import {entitiesSorting} from "@util/entities-sorting";
 import {defaultIcon, exploreSidebar} from "@config/explore.config";
-import DynamicIcons from "@components/common/dynamic-icons/dynamic-icons";
 import {SearchContext} from "@util/search-context";
 import {ExploreGraphViewToolTips} from "@config/tooltips.config";
-import {HCTooltip} from "@components/common";
+import {HCTooltip, DynamicIcons} from "@components/common";
 import {deepCopy} from "@util/data-conversion";
 import {themeColors} from "@config/themes.config";
 

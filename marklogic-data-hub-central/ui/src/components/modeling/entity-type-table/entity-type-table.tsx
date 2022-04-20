@@ -4,7 +4,6 @@ import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {faProjectDiagram} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styles from "./entity-type-table.module.scss";
-import DynamicIcons from "../../common/dynamic-icons/dynamic-icons";
 import PropertyTable from "../property-table/property-table";
 import ConfirmationModal from "../../confirmation-modal/confirmation-modal";
 import {entityReferences, deleteEntity} from "@api/modeling";
@@ -15,7 +14,7 @@ import {ModelingContext} from "@util/modeling-context";
 import {queryDateConverter, relativeTimeConverter} from "@util/date-conversion";
 import {numberConverter} from "@util/number-conversion";
 import {ModelingTooltips, SecurityTooltips} from "@config/tooltips.config";
-import {HCTooltip, HCTable} from "@components/common";
+import {HCTooltip, HCTable, DynamicIcons} from "@components/common";
 import {themeColors} from "@config/themes.config";
 import {defaultIcon} from "@config/explore.config";
 

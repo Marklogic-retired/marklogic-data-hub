@@ -21,10 +21,9 @@ import {
   EntityModified
 } from "../../../../types/modeling-types";
 import {ChevronDown, QuestionCircleFill} from "react-bootstrap-icons";
-import {HCButton, HCInput, HCTooltip, HCCard} from "@components/common";
+import {HCButton, HCInput, HCTooltip, HCCard, DynamicIcons} from "@components/common";
 import {themeColors} from "@config/themes.config";
 import {defaultIcon} from "@config/explore.config";
-import DynamicIcons from "@components/common/dynamic-icons/dynamic-icons";
 
 type Props = {
   openRelationshipModal: boolean;
