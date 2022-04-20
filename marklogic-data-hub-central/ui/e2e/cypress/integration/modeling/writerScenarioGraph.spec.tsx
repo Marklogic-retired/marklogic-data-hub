@@ -129,7 +129,7 @@ describe("Entity Modeling: Graph View", () => {
     modelPage.scrollPageBottom();
 
     // the graph needs to stabilize before we interact with it
-    cy.wait(3000);
+    cy.wait(6000);
     cy.log("**Verify description tooltip appears on hover**");
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
       let patientCoordinates: any = nodePositions["Patients"];
