@@ -33,7 +33,7 @@ class MonitorPage {
       let facet = $btn.next("label").text();
       cy.get("#selected-facets [data-cy=\"clear-" + $btn.val() + "\"]").should("exist");
       // Click expand all table rows to validate info inside
-      this.getExpandAllTableRows().scrollIntoView().click().then(() => {
+      this.getExpandAllTableRows().scrollIntoView().click({force: true}).then(() => {
         cy.get(".rowExpandedDetail").then(($row) => {
           for (let i = 0; i < $row.length; i++) {
             //validate row expanded info
