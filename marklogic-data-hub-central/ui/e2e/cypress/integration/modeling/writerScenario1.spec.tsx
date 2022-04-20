@@ -50,7 +50,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     entityTypeModal.newEntityDescription("An entity for buyers");
     entityTypeModal.newEntityVersion("3.0.0");
     modelPage.openIconSelector("Buyer");
-    modelPage.selectNthIcon(3);
+    modelPage.selectIcon("Buyer", "FaAccessibleIcon");
     modelPage.toggleColorSelector();
     modelPage.selectColorFromPicker("#D5D3DD").click();
     modelPage.toggleColorSelector();

@@ -129,7 +129,7 @@ describe("Entity Modeling: Reader Role", () => {
 
     modelPage.toggleColorSelector();
     modelPage.openIconSelector("Customer");
-    modelPage.selectNthIcon(3);
+    modelPage.selectIcon("Customer", "FaAccessibleIcon");
     modelPage.getIconSelected("Customer", "FaAccessibleIcon").should("exist");
 
     graphViewSidePanel.closeSidePanel();
