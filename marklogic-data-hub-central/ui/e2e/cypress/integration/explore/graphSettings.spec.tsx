@@ -52,14 +52,15 @@ describe("Entity Type Settings Modal", () => {
 
   beforeEach(() => {
     //Restoring Local Storage to Preserve Session
-    Cypress.Cookies.preserveOnce("HubCentralSession");
     cy.restoreLocalStorage();
+    cy.visit("/");
+    cy.log("**Go to Explore section**");
+    toolbar.getExploreToolbarIcon().click({force: true});
   });
 
   it("Open settings modal, check default values, select new ones cancel and check that the defaults values are keep", () => {
-    cy.log("**Go to Explore section**");
-    toolbar.getExploreToolbarIcon().click();
-
+    browsePage.waitForSpinnerToDisappear();
+    cy.wait(1000);
     cy.log("**Select Graph view and open explore settings modal**");
     browsePage.clickGraphView();
     browsePage.waitForSpinnerToDisappear();
@@ -100,10 +101,8 @@ describe("Entity Type Settings Modal", () => {
   });
 
   it("Open settings modal, select new values and save the changes", () => {
-    cy.visit("/");
-    cy.log("**Go to Explore section**");
-    toolbar.getExploreToolbarIcon().click();
-
+    browsePage.waitForSpinnerToDisappear();
+    cy.wait(1000);
     cy.log("**Select Graph view and open explore settings modal**");
     browsePage.clickGraphView();
     browsePage.waitForSpinnerToDisappear();
@@ -148,10 +147,8 @@ describe("Entity Type Settings Modal", () => {
   });
 
   it("Verify settings modal with a selected entity type in the sidebar", () => {
-    cy.visit("/");
-    cy.log("**Go to Explore section**");
-    toolbar.getExploreToolbarIcon().click();
-
+    browsePage.waitForSpinnerToDisappear();
+    cy.wait(1000);
     cy.log("**Select Graph view**");
     browsePage.clickGraphView();
     browsePage.waitForSpinnerToDisappear();
