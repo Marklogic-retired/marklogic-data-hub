@@ -33,6 +33,7 @@ describe("Center node on graph", () => {
     graphExplore.getGraphVisCanvas().should("be.visible");
     cy.wait(5000);
 
+    graphExplore.focusNode(ExploreGraphNodes.CUSTOMER_102);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
       let customer_102_nodePosition: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
       graphExplore.getGraphVisCanvas().trigger("mouseover", customer_102_nodePosition.x, customer_102_nodePosition.y);
