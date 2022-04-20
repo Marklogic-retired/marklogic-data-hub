@@ -2,14 +2,13 @@ import React, {useState, useEffect, useContext} from "react";
 import {Alert, Modal} from "react-bootstrap";
 import Select, {components as SelectComponents} from "react-select";
 import styles from "./entity-type-display-settings-modal.module.scss";
-import {EntityTypeColorPicker, HCTable, HCButton, HCTooltip} from "@components/common";
+import {EntityTypeColorPicker, HCTable, HCButton, HCTooltip, HCIconPicker} from "@components/common";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import tooltipsConfig from "@config/explorer-tooltips.config";
 import {themeColors} from "@config/themes.config";
 import {defaultIcon} from "@config/explore.config";
 import {UserContext} from "@util/user-context";
 import {HubCentralConfigContext} from "@util/hubCentralConfig-context";
-import {IconPicker} from "react-fa-icon-picker";
 import * as _ from "lodash";
 
 type Props = {
@@ -167,7 +166,7 @@ const EntityTypeDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal
       headerAlign: "center",
       formatter: (text, row) => {
         return (<div className={"m-auto d-inline-block"} aria-label={`${row.entityType}-icon-picker`} id={`${row.entityType}-icon-picker`} data-icon={row.icon}>
-          <IconPicker value={row.icon} onChange={value => onColumnValueChange(row, value, TableColumns.Icon)}/>
+          <HCIconPicker value={row.icon} onChange={value => onColumnValueChange(row, value, TableColumns.Icon)}/>
         </div>);
       }
     },

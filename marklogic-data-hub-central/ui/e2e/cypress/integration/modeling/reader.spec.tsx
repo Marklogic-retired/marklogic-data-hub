@@ -40,7 +40,7 @@ describe("Entity Modeling: Reader Role", () => {
 
     cy.visit("/");
     toolbar.getModelToolbarIcon().click();
-    cy.waitForAsyncRequest();
+    cy.wait(2000);
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
 
@@ -144,7 +144,7 @@ describe("Entity Modeling: Reader Role", () => {
 
     modelPage.toggleColorSelector("Customer");
     modelPage.openIconSelector("Customer");
-    modelPage.selectNthIcon(3);
+    modelPage.selectIcon("Customer", "FaAccessibleIcon");
     modelPage.getIconSelected("Customer", "FaAccessibleIcon").should("exist");
 
     graphViewSidePanel.closeSidePanel();

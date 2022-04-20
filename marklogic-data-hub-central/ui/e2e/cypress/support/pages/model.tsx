@@ -54,8 +54,8 @@ class ModelPage {
     return cy.get(`[data-testid="${entityName}-icon-selector"]`).click();
   }
 
-  selectNthIcon(order: number) {
-    return cy.get(`.sc-gsDKAQ > :nth-child(${order}) > svg > path`).click();
+  selectIcon(entitType: string, icon: string) {
+    return cy.get(`[data-testid="${entitType}-${icon}-icon-option"]`).click();
   }
 
   getIconSelected(entityName:string, iconName: string) {
