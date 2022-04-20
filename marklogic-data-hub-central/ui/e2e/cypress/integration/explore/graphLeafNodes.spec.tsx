@@ -83,7 +83,8 @@ describe("Leaf Nodes", () => {
       // Right click and expand 3 records of the node
       canvas.rightclick(orderCoordinates.x, orderCoordinates.y, {force: true});
       graphExplore.stopStabilization();
-
+      //On windows it takes longer for the graph to get stabilized
+      cy.wait(2000);
       graphExplore.clickCollapseLeafNode();
       graphExplore.stopStabilization();
 
