@@ -90,8 +90,8 @@
 
     "recentSearches": {
       "component": "RecentSearches",
-      "maxEntries": 2,
-      "maxTime": 1,
+      "maxEntries": 100,
+      "maxTime": 1440,
       "config": {
         "cols": [
           {
@@ -125,8 +125,8 @@
 
     "recentRecords": {
       "component": "RecentRecords",
-      "maxEntries": 2,
-      "maxTime": 1,
+      "maxEntries": 100,
+      "maxTime": 1440,
       "config": {
         "entities": {
           "person": {

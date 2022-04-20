@@ -60,7 +60,7 @@ const Detail: React.FC<Props> = (props) => {
   const [favorite, setFavorite] = useState<any>(false);
   const [expand, setExpand] = useState<any>(true);
 
-  let id = searchParams.get('recordId')
+  const id = searchParams.get('recordId');
   const entityType = detailContext.detail.entityType;
 
   const handleExpandClick = () => {
@@ -85,7 +85,6 @@ const Detail: React.FC<Props> = (props) => {
   };
 
   useEffect(() => {
-    console.log("useEffect id", id);
     setConfig(userContext.config);
     // If config is loaded and id is present but detail context is
     // empty, load detail context so content is displayed
