@@ -19,6 +19,7 @@
     "@testing-library/cypress": "^8.0.2",
     "cypress": "^9.5.3",
     "cypress-fail-fast": "^3.4.1",
+    "cypress-localstorage-commands": "^1.7.0",
     "cypress-wait-until": "^1.7.2"
   }
 }
