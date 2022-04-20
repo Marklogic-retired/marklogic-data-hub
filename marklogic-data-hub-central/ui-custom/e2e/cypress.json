@@ -4,7 +4,7 @@
     "viewportWidth": 1680,
     "viewportHeight": 1050,
     "numTestsKeptInMemory": 1,
-    "defaultCommandTimeout": 12000,
+    "defaultCommandTimeout": 15000,
     "ignoreTestFiles": [],
     "reporter": "junit",
     "reporterOptions": {
