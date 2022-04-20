@@ -78,12 +78,12 @@ describe("Validate scenarios for pagination in the explore page table", () => {
     //Select Order
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Order");
-    entitiesSidebar.getBaseEntityOption("Order").should("be.visible");
+    entitiesSidebar.getBaseEntityOption("Order").scrollIntoView().should("be.visible");
     table.getTableRows().should("not.be.empty");
     //Select BabyRegistry so that we have more than 10 records
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("BabyRegistry");
-    entitiesSidebar.getBaseEntityOption("BabyRegistry").should("be.visible");
+    entitiesSidebar.getBaseEntityOption("BabyRegistry").scrollIntoView().should("be.visible");
     browsePage.waitForSpinnerToDisappear();
     table.getTableRows().should("not.be.empty");
 
@@ -100,7 +100,7 @@ describe("Validate scenarios for pagination in the explore page table", () => {
     //Select All Entities
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("All Entities");
-    entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
+    entitiesSidebar.getBaseEntityOption("All Entities").scrollIntoView().should("be.visible");
     table.getTableRows().should("not.be.empty");
 
     cy.log("**Validate that when going back to 'All Entities' the active page it's now the first one again**");

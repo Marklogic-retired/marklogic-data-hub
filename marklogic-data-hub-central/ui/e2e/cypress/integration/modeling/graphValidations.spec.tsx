@@ -92,6 +92,8 @@ describe("Graph Validations", () => {
   it("can center on entity type in graph view", {defaultCommandTimeout: 120000}, () => {
     modelPage.selectView("project-diagram");
     cy.wait(500);
+
+    modelPage.scrollPageBottom();
     graphVis.getPositionsOfNodes("Person").then((nodePositions: any) => {
       let personCoordinates: any = nodePositions["Person"];
       graphVis.getGraphVisCanvas().trigger("mouseover", personCoordinates.x, personCoordinates.y);
