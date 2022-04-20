@@ -6,6 +6,7 @@ import FormControl from "react-bootstrap/FormControl";
 import { SearchContext } from "../../store/SearchContext";
 import { Search } from "react-bootstrap-icons";
 import "./SearchBox.scss";
+import _ from "lodash";
 
 type Props = {
     config?: any;
@@ -71,7 +72,11 @@ const SearchBox: React.FC<Props> = (props) => {
   }, [searchContext.qtext]);
 
   useEffect(() => {
-    let found = items.find(item => item.value === searchContext.entityType);
+    // String menu selections are stored in context as arrays so check both
+    let found = items.find(item => 
+      _.isEqual(item.value, searchContext.entityType)  || 
+      _.isEqual([item.value], searchContext.entityType)
+    );
     if (found && found.label) {
       setSelected(found.label);
     } else {

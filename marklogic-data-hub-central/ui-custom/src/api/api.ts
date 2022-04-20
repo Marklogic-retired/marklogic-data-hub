@@ -19,13 +19,12 @@ export const getSearchResults = async (endpoint, query, userid) => {
   }
 };
 
-export const getSearchResultsByGet = async (query, userid) => { 
+export const getSearchResultsByGet = async (queryStr, userid) => { 
   let config = {
     headers: {
       userid: userid ? userid : null
     }
   }
-  let queryStr = encodeURI(JSON.stringify(query));
   try {
     const response = await axios.get("/api/explore?query=" + queryStr, config);
     if (response && response.status === 200) {

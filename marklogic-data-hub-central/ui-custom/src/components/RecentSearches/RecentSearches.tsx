@@ -39,25 +39,34 @@ const RecentSearches: React.FC<Props> = (props) => {
 
   const searchContext = useContext(SearchContext);
 
-  const handleQueryClick = (opts) => () => {
-    console.log("handleQueryClick", opts);
-    searchContext.handleSaved(opts);
+  const handleQueryClick = (queryObj) => () => {
+    searchContext.handleQueryFromParam(queryObj);
   };
 
   const handleShareClick = (query) => () => {
-    console.log("handleShareClick", query);
-    // TODO build URL based on configured hostname, port, etc.
-    let str = "http://localhost:8080/explore/search?query=" + encodeURIComponent(JSON.stringify(query));
+    let str = window.location.origin + "/search?query=" + encodeURIComponent(JSON.stringify(query));
     if (navigator && navigator.clipboard && navigator.clipboard.writeText) { return navigator.clipboard.writeText(str); }
     return Promise.reject("Clipboard not available.");
   };
 
   const formatQuery = (query) => {
-    let qtextFmt = <span className={query.qtext ? "qtext" : "qtext empty"}>{query.qtext} </span>;
-    let facetsFmt = query.facetStrings.map((f, i) => {
-      return <span key={"facet-" + i} className="facet">{f} </span>; // space at the end to help wrapping
+    let entityTypeArr = _.isArray(query.entityTypeIds) ? query.entityTypeIds : [query.entityTypeIds];
+    let entityFmt = <span className="entity">[{entityTypeArr.join(", ")}] </span>; // space at the end to help wrapping
+    let qtextFmt = <span className={query.searchText ? "qtext" : "qtext empty"}>{query.searchText} </span>;
+    let facetsFmt = Object.entries(query.selectedFacets).map((f: any, i) => {
+      if (f[1].min) {
+        return <span key={"facet-" + i} className="facet">{f[0]}:{f[1].min} ~ {f[1].max} </span>;
+      } else {
+        if (_.isArray(f[1])) {
+          return f[1].map((v: any, i) => {
+            return <span key={"facet-" + i} className="facet">{f[0]}:{v} </span>;
+          })
+        } else {
+          return <span key={"facet-" + i} className="facet">{f[0]}:{f[1]} </span>;
+        }
+      }
     });
-    return <span className="query" onClick={handleQueryClick(query)}>{qtextFmt}{facetsFmt}</span>;
+    return <span className="query" onClick={handleQueryClick(query)}>{entityFmt}{qtextFmt}{facetsFmt}</span>;
   };
 
   function display(cfg, row) {

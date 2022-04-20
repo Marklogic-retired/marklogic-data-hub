@@ -1,4 +1,5 @@
 import React, {useState, useContext, useEffect} from "react";
+import {useSearchParams} from "react-router-dom";
 import {UserContext} from "../store/UserContext";
 import {SearchContext} from "../store/SearchContext";
 import Loading from "../components/Loading/Loading";
@@ -23,16 +24,31 @@ const Search: React.FC<Props> = (props) => {
   const userContext = useContext(UserContext);
   const searchContext = useContext(SearchContext);
 
+  const [searchParams, setSearchParams] = useSearchParams();
   const [config, setConfig] = useState<any>(null);
+  const [checkQuery, setCheckQuery] = useState<boolean>(false);
+
+  const queryFromParam = searchParams.get('query');
 
   useEffect(() => {
     setConfig(userContext.config);
-    // If config is loaded but searchResults context is empty, 
-    // load searchResults context so content is displayed
-    if (userContext.config.search && _.isEmpty(searchContext.searchResults)) {
-      searchContext.handleSearch();
+    if (!_.isEmpty(userContext.config)) {
+      // After config is loaded, check loading query from URL param
+      setCheckQuery(true);
     }
   }, [userContext.config]);
+
+  useEffect(() => {
+    if (checkQuery) {
+      if (queryFromParam) {
+        if (searchContext.queryString === "") {
+          // New page load so search with query from URL param
+          searchContext.handleQueryFromParam(JSON.parse(decodeURI(queryFromParam)));
+        }
+      }
+      setCheckQuery(false);
+    }
+  }, [checkQuery]);
 
   return (
     <div className="search">

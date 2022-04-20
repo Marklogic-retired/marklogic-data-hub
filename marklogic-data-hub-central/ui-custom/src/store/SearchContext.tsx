@@ -15,12 +15,13 @@ interface SearchContextInterface {
   total: number;
   recentSearches: any;
   loading: boolean;
+  queryString: string;
   pageNumber: number;
   handleSearch: any;
   handleFacetString: any;
   handleFacetDateRange: any;
   handlePagination: any;
-  handleSaved: any;
+  handleQueryFromParam: any;
   handleGetSearchLocal: any;
   setPageNumber: (value: number) => void;
   handleDeleteAllRecent: any;
@@ -43,12 +44,13 @@ const defaultState = {
   total: 0,
   recentSearches: [],
   loading: false,
+  queryString: "",
   pageNumber: 1,
   handleSearch: () => { },
   handleFacetString: () => { },
   handleFacetDateRange: () => { },
   handlePagination: () => { },
-  handleSaved: () => { },
+  handleQueryFromParam: () => { },
   handleGetSearchLocal: () => { },
   setPageNumber: () => { },
   handleDeleteAllRecent: () => { },
@@ -96,6 +98,16 @@ const SearchProvider: React.FC = ({children}) => {
   const [newSearch, setNewSearch] = useState<boolean>(false);
   const [recentSearches, setRecentSearches] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [queryString, setQueryString] = useState<string>("");
+
+  const getFacetType = (facetValue) => {
+    const regexDateRange = /^\d{4}-\d{2}-\d{2} ~ \d{4}-\d{2}-\d{2}$/
+    if (regexDateRange.test(facetValue)) {
+      return "dateRange";
+    } else {
+      return "category";
+    }
+  }
 
   const buildQuery = (_start, _pageLength, _qtext, _facetStrings, _entityType): QueryInterface => {
     let query = {
@@ -107,11 +119,20 @@ const SearchProvider: React.FC = ({children}) => {
     };
     if (facetStrings && facetStrings.length > 0) {
       facetStrings.forEach(fs => {
-        let parts = fs.split(":");
-        if (query.selectedFacets[parts[0]]) {
-          query.selectedFacets[parts[0]].push(parts[1]);
-        } else {
-          query.selectedFacets[parts[0]] = [parts[1]];
+        const parts = fs.split(":");
+        if (getFacetType(parts[1]) === "category") {
+          if (query.selectedFacets[parts[0]]) {
+            query.selectedFacets[parts[0]].push(parts[1]);
+          } else {
+            query.selectedFacets[parts[0]] = [parts[1]];
+          }
+        } else if (getFacetType(parts[1]) === "dateRange") {
+          let range = parts[1].replace(/ ~ /g,",").split(",");
+          let rangeObj = {
+            min : range[0],
+            max : range[1]
+          }
+          query.selectedFacets[parts[0]] = rangeObj;
         }
       });
     }
@@ -122,25 +143,13 @@ const SearchProvider: React.FC = ({children}) => {
     if (newSearch) {
       setNewSearch(false);
       setLoading(true);
-      if (location.pathname !== "/search") {
-        navigate("/search"); // Handle search submit from another view
-      }
       let newQuery = buildQuery(start, pageLength, qtext, facetStrings, entityType);
-      let facetItems = userContext.config.search.facets.config.items;
-
-      for(let item in facetItems) {
-        let facetName = facetItems[item].name;
-        if(facetItems[item].type === "dateRange" && newQuery.selectedFacets[facetName]) {
-          newQuery.selectedFacets[facetName][0] =  newQuery.selectedFacets[facetName][0].replace(/ ~ /g,",");
-          let data = newQuery.selectedFacets[facetName][0].split(",");
-          let dataObj = {
-            min : data[0],
-            max : data[1]
-          }
-          newQuery.selectedFacets[facetName] = dataObj;
-        }
+      let newQueryStr = encodeURI(JSON.stringify(newQuery));
+      setQueryString(newQueryStr);
+      let sr = getSearchResultsByGet(newQueryStr, userContext.userid);
+      if (location.pathname !== "/search?query=" + newQueryStr) {
+        navigate("/search?query=" + newQueryStr); // Handle search submit from another view
       }
-      let sr = getSearchResultsByGet(newQuery, userContext.userid);
       sr.then(result => {
         console.log("getSearchResultsByGet", result?.data);
         setSearchResults(result?.data.searchResults.response);
@@ -212,11 +221,28 @@ const SearchProvider: React.FC = ({children}) => {
     setNewSearch(true);
   };
 
-  const handleSaved = (opts) => {
-    setQtext(opts.qtext);
-    setFacetStrings(opts.facetStrings);
-    if (location.pathname !== "/search") {
-      navigate("/search"); // Handle search submit from another view
+  const handleQueryFromParam = (queryParsed) => {
+    if (queryParsed.searchText) {
+      setQtext(queryParsed.searchText);
+    }
+    if (queryParsed.entityTypeIds !== "") {
+      setEntityType(queryParsed.entityTypeIds);
+    } else {
+      // If entityType hasn't been set, use search.defaultEntity if available
+      setEntityType(userContext.config.search.defaultEntity || "");
+    }
+    if (queryParsed.selectedFacets) {
+      let newFacetStrings: string[] = [];
+      for (const k of Object.keys(queryParsed.selectedFacets)) {
+        if (queryParsed.selectedFacets[k].min && queryParsed.selectedFacets[k].max) {
+          newFacetStrings.push(k + ":" + queryParsed.selectedFacets[k].min + " ~ " + queryParsed.selectedFacets[k].max);
+        } else {
+          for (const v of queryParsed.selectedFacets[k]){
+            newFacetStrings.push(k + ":" + v);
+          }
+        }
+      }
+      setFacetStrings(newFacetStrings);
     }
     setNewSearch(true);
   };
@@ -230,7 +256,7 @@ const SearchProvider: React.FC = ({children}) => {
       sortedObj = _.fromPairs(_.sortBy(_.toPairs(obj[userContext.userid]), 1).reverse());
       sortedQueries = Object.keys(sortedObj);
       sortedQueries = sortedQueries.map(q => {
-        return JSON.parse(q);
+        return JSON.parse(decodeURI(q));
       })
     }
     if (sortedQueries.length > 0) {
@@ -243,21 +269,14 @@ const SearchProvider: React.FC = ({children}) => {
     }
   };
 
-  const buildSavedSearch = (qtext, facetStrings) => {
-    const obj = {
-      qtext: qtext,
-      facetStrings: facetStrings
-    }
-    return JSON.stringify(obj);
-  }
-
   const handleSaveSearchLocal = async () => {
     // Save to local storage
     let json = localStorage.getItem("search");
     let dt = new Date().toISOString();
     let newObj = {};
     if (!qtext && facetStrings.length === 0) return;
-    let key = buildSavedSearch(qtext, facetStrings);
+    let newQuery = buildQuery(startInit, pageLengthInit, qtext, facetStrings, entityType);
+    let key = encodeURI(JSON.stringify(newQuery));
     if (!json) {
       newObj[userContext.userid] = {};
       newObj[userContext.userid][key] = dt;
@@ -273,7 +292,7 @@ const SearchProvider: React.FC = ({children}) => {
         newObj[userContext.userid][key] = dt;
       }
       localStorage.setItem("search", JSON.stringify(newObj));
-      //To handle deletion of searches in local storage when over certain count and time limit
+      // Handle deletion of searches in local storage when over configured count and time limit
       if(obj) {
         await handleDeleteRecentByMaxEntries(obj);
         await handleDeleteRecentByMaxTime(obj);
@@ -326,13 +345,14 @@ const SearchProvider: React.FC = ({children}) => {
         total,
         recentSearches,
         loading,
+        queryString,
         pageNumber,
         setPageNumber,
         handleSearch,
         handleFacetString,
         handleFacetDateRange,
         handlePagination,
-        handleSaved,
+        handleQueryFromParam,
         handleGetSearchLocal,
         handleDeleteAllRecent,
         hasSavedRecords
