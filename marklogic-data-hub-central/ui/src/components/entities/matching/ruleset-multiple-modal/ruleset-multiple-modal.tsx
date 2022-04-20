@@ -549,10 +549,12 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     }
   };
 
-  const onMatchTypeSelect = (propertyPath: string, option: any) => {
+  const onMatchTypeSelect = (rowIndex: number, propertyPath: string, option: any) => {
     setMatchTypeErrorMessages({...matchTypeErrorMessages, [propertyPath]: ""});
     setIsMatchTypeTouched(true);
     setMatchTypes({...matchTypes, [propertyPath]: option.value});
+    // touch row to force table to update
+    multipleRulesetsData[rowIndex] = {...multipleRulesetsData[rowIndex], matchType: option.value};
     if (!selectedRowKeys.includes(propertyPath)) {
       let selectedKeys = [...selectedRowKeys, propertyPath];
       setSelectedRowKeys(selectedKeys);
@@ -719,7 +721,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
             ariaLabel={`${propertyPath}-thesaurus-uri-input`}
             placeholder="Enter thesaurus URI"
             style={inputUriStyle(propertyPath, "thesaurus-uri-input", hasParent)}
-            value={thesaurusValues[propertyPath]}
+            value={thesaurusValues[propertyPath] || ""}
             onChange={(e) => handleInputChange(e, propertyPath)}
             onBlur={(e) => handleInputChange(e, propertyPath)}
           />
@@ -733,7 +735,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
           ariaLabel={`${propertyPath}-filter-input`}
           placeholder="Enter a node in the thesaurus to use as a filter"
           className={ hasParent ? styles.filterInputChild: styles.filterInput}
-          value={filterValues[propertyPath]}
+          value={filterValues[propertyPath] || ""}
           onChange={(e) => handleInputChange(e, propertyPath)}
           onBlur={(e) => handleInputChange(e, propertyPath)}
         />
@@ -753,7 +755,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
             ariaLabel={`${propertyPath}-dictionary-uri-input`}
             placeholder="Enter dictionary URI"
             style={inputUriStyle(propertyPath, "dictionary-uri-input", hasParent)}
-            value={dictionaryValues[propertyPath]}
+            value={dictionaryValues[propertyPath] || ""}
             onChange={(e) => handleInputChange(e, propertyPath)}
             onBlur={(e) => handleInputChange(e, propertyPath)}
           />
@@ -768,7 +770,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
             ariaLabel={`${propertyPath}-distance-threshold-input`}
             placeholder="Enter distance threshold"
             style={inputUriStyle(propertyPath, "distance-threshold-input", hasParent)}
-            value={distanceThresholdValues[propertyPath]}
+            value={distanceThresholdValues[propertyPath] || ""}
             onChange={(e) => handleInputChange(e, propertyPath)}
             onBlur={(e) => handleInputChange(e, propertyPath)}
           />
@@ -788,7 +790,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
             ariaLabel={`${propertyPath}-uri-input`}
             placeholder="Enter URI"
             style={inputUriStyle(propertyPath, "uri-input", hasParent)}
-            value={uriValues[propertyPath]}
+            value={uriValues[propertyPath] || ""}
             onChange={(e) => handleInputChange(e, propertyPath)}
             onBlur={(e) => handleInputChange(e, propertyPath)}
           />
@@ -803,7 +805,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
             ariaLabel={`${propertyPath}-function-input`}
             placeholder="Enter a function"
             style={inputUriStyle(propertyPath, "function-input", hasParent)}
-            value={functionValues[propertyPath]}
+            value={functionValues[propertyPath] || ""}
             onChange={(e) => handleInputChange(e, propertyPath)}
             onBlur={(e) => handleInputChange(e, propertyPath)}
           />
@@ -817,7 +819,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
           ariaLabel={`${propertyPath}-namespace-input`}
           placeholder="Enter a namespace"
           className={hasParent ? styles.functionInputChild:styles.functionInput}
-          value={namespaceValues[propertyPath]}
+          value={namespaceValues[propertyPath] || ""}
           onChange={(e) => handleInputChange(e, propertyPath)}
           onBlur={(e) => handleInputChange(e, propertyPath)}
         />
@@ -900,6 +902,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       text: "Match Type",
       width: "15%",
       dataField: "matchType",
+      isDummyField: true,
       headerFormatter: () => <span data-testid="matchTypeTitle">Match Type</span>,
       style: (cell, row) => {
         if (row.hasChildren) {
@@ -910,15 +913,15 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       attrs: {
         key: "matchTypeTitle"
       },
-      formatter: (text, row, extraData) => {
+      formatter: (text, row, rowIndex, extraData) => {
         return !row.hasOwnProperty("children") ? <div className={styles.typeContainer}>
           <HCSelect
             id={`${row.propertyPath}-select-wrapper`}
             inputId={`${row.propertyPath}-select`}
             components={{MenuList: props => MenuList(`${row.propertyPath}`, props)}}
-            onChange={(e) => onMatchTypeSelect(row.propertyPath, e)}
+            onChange={(e) => onMatchTypeSelect(rowIndex, row.propertyPath, e)}
             options={renderMatchOptions}
-            matchTypesProp={matchTypes}
+            matchTypesProp={extraData.matchTypes}
             row={row}
             changeTagKey={changeSelect}
             formatOptionLabel={({value, label}) => {
@@ -945,23 +948,29 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
           {checkFieldInErrors(row.propertyPath, "match-type-input") ? <div id="errorInMatchType" data-testid={row.propertyPath + "-match-type-err"} style={validationErrorStyle("match-type-input")}>{!matchTypes[row.propertyPath] ? "A match type is required" : ""}</div> : ""}
         </div> : null;
       },
-      formatExtraData: {selectedRowKeys, matchTypeErrorMessages, thesaurusErrorMessages, dictionaryErrorMessages, distanceThresholdErrorMessages, uriErrorMessages, functionErrorMessages}
+      formatExtraData: {selectedRowKeys, matchTypes, matchTypeErrorMessages, thesaurusErrorMessages, dictionaryErrorMessages, distanceThresholdErrorMessages, uriErrorMessages, functionErrorMessages}
     },
     {
       text: "Match Type Details",
       width: "58%",
       dataField: "matchTypeDetails",
+      isDummyField: true,
       headerFormatter: () => <span data-testid="matchTypeDetailsTitle">Match Type Details</span>,
       attrs: {
         key: "matchTypeDetails"
       },
-      formatter: (text, row, extraData) => {
-        switch (matchTypes[row.propertyPath]) {
-        case "synonym": return renderSynonymOptions(row.propertyPath, row.hasParent);
-        case "doubleMetaphone": return renderDoubleMetaphoneOptions(row.propertyPath, row.hasParent);
-        case "custom": return renderCustomOptions(row.propertyPath, row.hasParent);
-        default:
-          break;
+      formatter: (text, row, rowKey, extraData) => {
+        if (selectedRowKeys.includes(row.propertyPath)) {
+          switch (extraData.matchTypes[row.propertyPath]) {
+          case "synonym":
+            return renderSynonymOptions(row.propertyPath, row.hasParent);
+          case "doubleMetaphone":
+            return renderDoubleMetaphoneOptions(row.propertyPath, row.hasParent);
+          case "custom":
+            return renderCustomOptions(row.propertyPath, row.hasParent);
+          default:
+            return <span />;
+          }
         }
       },
       style: (cell, row) => {
