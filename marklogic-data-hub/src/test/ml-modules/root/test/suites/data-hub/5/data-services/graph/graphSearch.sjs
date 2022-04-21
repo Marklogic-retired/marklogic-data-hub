@@ -16,9 +16,9 @@ const productQuery = {
 const resultsTest1 = searchNodes(productQuery);
 
 let assertions = [
-  test.assertEqual(6, resultsTest1.total),
-  test.assertEqual(6, resultsTest1.nodes.length, xdmp.toJsonString(resultsTest1)),
-  test.assertEqual(0, resultsTest1.edges.length)
+  test.assertEqual(7, resultsTest1.total),
+  test.assertEqual(7, resultsTest1.nodes.length, xdmp.toJsonString(resultsTest1)),
+  test.assertEqual(1, resultsTest1.edges.length)
 ];
 
 const babyRegistryQuery = {
@@ -41,9 +41,9 @@ const multipleQuery = {
 const resultsTest3 = searchNodes(multipleQuery);
 
 assertions.concat([
-  test.assertEqual(7, resultsTest3.total),
-  test.assertEqual(7, resultsTest3.nodes.length, xdmp.toJsonString(resultsTest3)),
-  test.assertEqual(6, resultsTest3.edges.length),
+  test.assertEqual(8, resultsTest3.total),
+  test.assertEqual(8, resultsTest3.nodes.length, xdmp.toJsonString(resultsTest3)),
+  test.assertEqual(7, resultsTest3.edges.length),
   test.assertFalse(resultsTest3.nodes[0].hasRelationships),
   test.assertFalse(resultsTest3.nodes[1].hasRelationships),
   test.assertFalse(resultsTest3.nodes[2].hasRelationships)
@@ -108,13 +108,13 @@ const searchTextQuery = {
 const resultsTestSearchBy = searchNodes(searchTextQuery);
 
 assertions.concat([
-  test.assertEqual(6, resultsTestSearchBy.total),
-  test.assertEqual(6, resultsTestSearchBy.nodes.length),
-  test.assertEqual(0, resultsTestSearchBy.edges.length),
+  test.assertEqual(1, resultsTestSearchBy.total),
+  test.assertEqual(2, resultsTestSearchBy.nodes.length),
+  test.assertEqual(1, resultsTestSearchBy.edges.length),
 ]);
 
 resultsTestSearchBy.nodes.forEach(node => {
-  test.assertEqual(node.group, "http://example.org/Product-1.0.0/Product");
+  test.assertTrue((node.group.toString().includes("Product") || node.group.toString().includes("Sneakers")));
   test.assertFalse(node.hasRelationships)
 })
 
