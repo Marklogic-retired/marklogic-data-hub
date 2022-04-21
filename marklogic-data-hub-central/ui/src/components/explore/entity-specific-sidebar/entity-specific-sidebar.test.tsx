@@ -105,4 +105,18 @@ describe("Entity Specific Sidebar component", () => {
 
     expect(getByLabelText("specif-search-field")).toBeInTheDocument();
   });
+
+  it("Invalid entity definition", () => {
+    let entitySelected = {...CUSTOMER.entity, isDefinitionInvalid: true};
+    const {getByLabelText} =  render(
+      <EntitySpecificSidebar
+        entitySelected={entitySelected}
+        entityFacets={CUSTOMER.entityFacets}
+        checkFacetRender={jest.fn()}
+        facetRender={jest.fn()}
+        updateSpecificFacets={false}
+      />
+    );
+    expect(getByLabelText("invalidDefinition-Customer")).toBeInTheDocument();
+  });
 });
