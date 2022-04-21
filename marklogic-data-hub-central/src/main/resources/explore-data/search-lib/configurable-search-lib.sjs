@@ -44,6 +44,10 @@ class ConfigurableSearch extends Search {
   getRecordCount(entityModelNames) {
     return super.getRecordCount(entityModelNames);
   }
+
+  getMetrics(metricTypes) {
+    return super.getMetrics(metricTypes);
+  }
 }
 
 module.exports = ConfigurableSearch;

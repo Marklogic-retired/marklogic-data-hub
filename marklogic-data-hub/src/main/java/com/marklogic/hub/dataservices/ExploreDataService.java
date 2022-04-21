@@ -54,6 +54,7 @@ public interface ExploreDataService {
             private BaseProxy.DBFunctionRequest req_getRecords;
             private BaseProxy.DBFunctionRequest req_getRecentlyVisitedRecords;
             private BaseProxy.DBFunctionRequest req_saveRecentlyVisitedRecord;
+            private BaseProxy.DBFunctionRequest req_getMetrics;
 
             private ExploreDataServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
@@ -73,6 +74,8 @@ public interface ExploreDataService {
                     "getRecentlyVisitedRecords.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_saveRecentlyVisitedRecord = this.baseProxy.request(
                     "saveRecentlyVisitedRecord.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                this.req_getMetrics = this.baseProxy.request(
+                    "getMetrics.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
             }
 
             @Override
@@ -172,6 +175,21 @@ public interface ExploreDataService {
                           BaseProxy.documentParam("recentlyVisitedRecord", false, BaseProxy.JsonDocumentType.fromJsonNode(recentlyVisitedRecord))
                           ).responseNone();
             }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode getMetrics(com.fasterxml.jackson.databind.JsonNode metricTypes) {
+                return getMetrics(
+                    this.req_getMetrics.on(this.dbClient), metricTypes
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode getMetrics(BaseProxy.DBFunctionRequest request, com.fasterxml.jackson.databind.JsonNode metricTypes) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.documentParam("metricTypes", false, BaseProxy.JsonDocumentType.fromJsonNode(metricTypes))
+                          ).responseSingle(false, Format.JSON)
+                );
+            }
         }
 
         return new ExploreDataServiceImpl(db, serviceDeclaration);
@@ -232,5 +250,13 @@ public interface ExploreDataService {
    * 
    */
     void saveRecentlyVisitedRecord(com.fasterxml.jackson.databind.JsonNode recentlyVisitedRecord);
+
+  /**
+   * Invokes the getMetrics operation on the database server
+   *
+   * @param metricTypes	provides input
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode getMetrics(com.fasterxml.jackson.databind.JsonNode metricTypes);
 
 }

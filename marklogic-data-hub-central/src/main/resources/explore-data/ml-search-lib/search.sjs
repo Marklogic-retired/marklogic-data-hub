@@ -140,6 +140,15 @@ class Search {
     return recordCount;
   }
 
+  getMetrics(metricTypes) {
+    const metrics = {};
+    metricTypes.forEach(metricType => {
+        metrics[metricType["type"]] = Math.floor(Math.random() * (100000 - 1000 + 1)) + 1000;
+      }
+    );
+    return metrics;
+  }
+
   fixArrayIssue(jsonObject) {
     const keys = Object.keys(jsonObject);
     for(let key of keys) {

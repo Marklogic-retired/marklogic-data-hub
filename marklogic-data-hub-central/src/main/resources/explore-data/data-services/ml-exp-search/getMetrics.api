@@ -1,0 +1,15 @@
+{
+  "functionName": "getMetrics",
+  "params": [
+    {
+      "name": "metricTypes",
+      "datatype": "jsonDocument",
+      "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+    }
+  ],
+  "return": {
+    "datatype": "jsonDocument",
+    "$javaClass": "com.fasterxml.jackson.databind.JsonNode",
+    "description": "returns metrics based on the widget types"
+  }
+}

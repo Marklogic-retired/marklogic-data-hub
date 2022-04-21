@@ -60,6 +60,12 @@ public class ExploreDataController extends BaseController {
         return new ResponseEntity<>(newExploreDataService().getEntityModels(), HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/metrics", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<JsonNode> getMetrics(@RequestBody JsonNode metricTypes) {
+        return new ResponseEntity<>(newExploreDataService().getMetrics(metricTypes), HttpStatus.OK);
+    }
+
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     @ResponseBody
     public String getUserInfo() {
