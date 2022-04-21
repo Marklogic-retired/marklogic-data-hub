@@ -1,6 +1,8 @@
 package com.marklogic.hub.flow;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.flow.connected.HubFlowRunnerResource;
@@ -84,6 +86,17 @@ public class RunCustomStepTest extends AbstractHubCoreTest {
     }
 
     @Test
+    void processJsonViaHubFlowRunnerWithoutValue() {
+        replaceCustomStepModuleWithTemplate();
+        writeStagingJsonDoc("/customer2.json", "{\"name\": \"Jane\"}");
+        HubFlowRunnerResource.Input input = new HubFlowRunnerResource.Input("simpleCustomStepFlow");
+        ArrayNode contentArray = input.getRootNode().putArray("content");
+        ObjectNode content = contentArray.addObject();
+        content.put("uri", "/customer2.json");
+        new HubFlowRunnerResource(getHubClient().getStagingClient()).runFlow(input);
+        verifyJsonCustomer("/customer2.json");
+    }
+    @Test
     void processXmlViaHubFlowRunner() {
         String input = format("<input><flowName>%s</flowName>", "simpleCustomStepFlow");
         input += "<content><uri>/customer1.xml</uri><value><content><name>Jane</name></content></value></content>";
@@ -96,6 +109,17 @@ public class RunCustomStepTest extends AbstractHubCoreTest {
         verifyXmlCustomer();
     }
 
+    @Test
+    void processXmlViaHubFlowRunnerWithoutValue() {
+        writeStagingXmlDoc("/customer2.xml", "<content><name>Jane</name></content>");
+        String input = format("<input><flowName>%s</flowName>", "simpleCustomStepFlow");
+        input += "<content><uri>/customer2.xml</uri></content>";
+        input += "</input>";
+
+        replaceCustomStepModuleWithTemplateModifiedForXml();
+        new HubFlowRunnerResource(getHubClient().getStagingClient()).runFlowWithXmlInput(input);
+        verifyXmlCustomer("/customer2.xml");
+    }
     private void replaceCustomStepModuleWithTemplate() {
         String content = readStringFromClasspath("scaffolding/custom-module/sjs/main-custom.sjs");
         getHubClient().getModulesClient().newTextDocumentManager().write(CUSTOM_STEP_MODULE_PATH,
@@ -124,17 +148,24 @@ public class RunCustomStepTest extends AbstractHubCoreTest {
     }
 
     private void verifyJsonCustomer() {
-        JsonNode customer = getFinalDoc("/customer1.json");
-        assertEquals("Jane", customer.get("envelope").get("instance").get("name").asText(),
-            "The default custom step should wrap the input document in an envelope. But since no entity is defined, " +
-                "the data is directly under instance");
+        verifyJsonCustomer("/customer1.json");
+    }
+
+    private void verifyJsonCustomer(String uri) {
+        JsonNode customer = getFinalDoc(uri);
+        assertEquals("Jane", customer.path("envelope").path("instance").path("name").asText(),
+                "The default custom step should wrap the input document in an envelope. But since no entity is defined, " +
+                        "the data is directly under instance");
     }
 
     private void verifyXmlCustomer() {
-        Fragment customer = getFinalXmlDoc("/customer1.xml");
-        assertEquals("Jane", customer.getElementValue("/es:envelope/es:instance/content/name"));
+        verifyXmlCustomer("/customer1.xml");
     }
 
+    private void verifyXmlCustomer(String uri) {
+        Fragment customer = getFinalXmlDoc(uri);
+        assertEquals("Jane", customer.getElementValue("/es:envelope/es:instance/content/name"));
+    }
     /**
      * This captures the custom step template as defined in DHF 5.4.2 (and also 5.4.0 / 5.4.1). We want to have a test
      * for this so we know it still compiles and works without throwing an error.
