@@ -1,6 +1,6 @@
 import React, {useState, CSSProperties, useEffect, useContext, createRef} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCheckCircle, faClock, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
+import {faCheckCircle, faClock, faInfoCircle, faStopCircle} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt, faArrowAltCircleRight, faArrowAltCircleLeft} from "@fortawesome/free-regular-svg-icons";
 import NewFlowDialog from "./new-flow-dialog/new-flow-dialog";
 import axios from "axios";
@@ -26,7 +26,7 @@ enum ReorderFlowOrderDirection {
   RIGHT = "right"
 }
 
-interface Props {
+export interface Props {
   flows: any;
   steps: any;
   deleteFlow: any;
@@ -34,6 +34,7 @@ interface Props {
   updateFlow: (name: any, description: any, steps: any) => Promise<void>;
   deleteStep: any;
   runStep: any;
+  stopRun: () => Promise<void>;
   runFlowSteps: any;
   canReadFlow: boolean;
   canWriteFlow: boolean;
@@ -47,7 +48,8 @@ interface Props {
   onReorderFlow: (flowIndex: number, newSteps: Array<any>) => void
   setJobId: any;
   setOpenJobResponse: React.Dispatch<React.SetStateAction<boolean>>;
-  isStepRunning?: boolean
+  isStepRunning: boolean;
+  canUserStopFlow: boolean;
 }
 
 const StepDefinitionTypeTitles = {
@@ -72,6 +74,7 @@ const Flows: React.FC<Props> = ({
   createFlow,
   updateFlow,
   deleteStep,
+  stopRun,
   runStep,
   runFlowSteps,
   canReadFlow,
@@ -86,11 +89,13 @@ const Flows: React.FC<Props> = ({
   onReorderFlow,
   setJobId,
   setOpenJobResponse,
-  isStepRunning
+  isStepRunning,
+  canUserStopFlow,
 }) => {
   const storage = getViewSettings();
   const openFlows = storage?.run?.openFlows;
   const hasDefaultKey = JSON.stringify(newStepToFlowOptions?.flowsDefaultKey) !== JSON.stringify(["-1"]);
+
 
   const [newFlow, setNewFlow] = useState(false);
   const [addedFlowName, setAddedFlowName] = useState("");
@@ -102,7 +107,6 @@ const Flows: React.FC<Props> = ({
   const [flowName, setFlowName] = useState("");
   const [stepName, setStepName] = useState("");
   const [stepType, setStepType] = useState("");
-  const [singleIngest, setSingleIngest] = useState(false);
   const [stepNumber, setStepNumber] = useState("");
   const [runningStep, setRunningStep] = useState<any>({});
   const [runningFlow, setRunningFlow] = useState<any>("");
@@ -117,6 +121,7 @@ const Flows: React.FC<Props> = ({
   const [showLinks, setShowLinks] = useState("");
   const [startRun, setStartRun] = useState(false);
   const [latestJobData, setLatestJobData] = useState<any>({});
+  const [singleIngest, setSingleIngest] = useState(false);
   const [createAdd, setCreateAdd] = useState(true);
   const [addFlowDirty, setAddFlowDirty] = useState({});
   const [addExternalFlowDirty, setExternalAddFlowDirty] = useState(true);
@@ -169,7 +174,7 @@ const Flows: React.FC<Props> = ({
       }
     }
 
-    if (flows) {
+    if (flows!== undefined ||flows !== null) {
       {
         setFlowsDeepCopy(_.cloneDeep(flows));
         flows.map((flow) => (
@@ -259,7 +264,6 @@ const Flows: React.FC<Props> = ({
       }
     }
   }, [steps]);
-
 
   // Get the latest job info after a step (in a flow) run
   useEffect(() => {
@@ -401,8 +405,6 @@ const Flows: React.FC<Props> = ({
     customRequest();
   }, [fileList]);
 
-
-
   const deleteConfirmation = (
     <Modal
       show={dialogVisible}
@@ -475,6 +477,7 @@ const Flows: React.FC<Props> = ({
   );
 
   const onCheckboxChange = (event, checkedValues?, stepNumber?, stepDefinitionType?, flowNames?, stepId?, sourceFormat?, fromCheckAll?) => {
+
     let checkAllAux;
     if (event !== "default" && fromCheckAll) {
       checkAllAux = checkAll ? false : true;
@@ -677,6 +680,7 @@ const Flows: React.FC<Props> = ({
   };
 
   const handleRunFlow = async (index, name) => {
+    //setRunFlowClicked(true);
     const setKey = async () => {
       await setActiveKeys(`${index}`);
     };
@@ -700,9 +704,8 @@ const Flows: React.FC<Props> = ({
     if (!flag) {
       let stepNumbers = [{}];
       stepNumbers = selectedStepDetails.filter(function (obj) {
-        return obj.flowName === name && obj.checked === true;
+        return obj.flowName === name && obj.isChecked === true;
       });
-
       await runFlowSteps(name, stepNumbers)
         .then(() => {
           // setSelectedStepOptions({});
@@ -782,6 +785,11 @@ const Flows: React.FC<Props> = ({
     </Dropdown>
   );
 
+  const showStopButton = (flowName: string): boolean => {
+    if (!flowRunning) return false;
+    return (isStepRunning && flowRunning.name === flowName);
+  };
+
   const panelActions = (name, i) => (
     <div
       className={styles.panelActionsContainer}
@@ -791,6 +799,23 @@ const Flows: React.FC<Props> = ({
         event.preventDefault();
       }}
     >
+      {showStopButton(name) && (<HCTooltip text={canUserStopFlow ? RunToolTips.stopRun : RunToolTips.stopRunMissingPermission} id="stop-run" placement="top">
+        <span>
+          <HCButton
+            variant="outline-light"
+            className={styles.stopFlow}
+            key={`stepsDropdownButton-${name}`}
+            data-testid={`stopFlow-${name}`}
+            id={`stopFlow-${name}`}
+            size="sm"
+            onClick={() => { stopRun(); }}
+            disabled={!canUserStopFlow}
+          >
+            <FontAwesomeIcon icon={faStopCircle} size="1x" aria-label="icon: info-circle" className={canUserStopFlow ? styles.stopIcon : styles.stopIconDisabled} />
+            Stop Flow
+          </HCButton>
+        </span>
+      </HCTooltip>)}
       <span id="stepsDropdown" className={styles.hoverColor} onMouseLeave={(e) => { setCurrentTooltip(""); }}>
         <Dropdown as={ButtonGroup}>
           <HCTooltip show={currentTooltip === name} text={isFlowEmpty(name) ? RunToolTips.runEmptyFlow : !controlStepSelected(name) ? RunToolTips.selectAStep : ""} placement="top" id={`run-flow-tooltip`}>
@@ -854,7 +879,7 @@ const Flows: React.FC<Props> = ({
       {latestJobData && latestJobData[name] && latestJobData[name].find(step => step.jobId) ?
         <HCTooltip text={RunToolTips.flowName} placement="bottom" id="">
           <span onClick={(e) => OpenFlowJobStatus(e, index, name)} className={styles.infoIcon} data-testid={`${name}-flow-status`}>
-            <FontAwesomeIcon icon={faInfoCircle} size="1x" aria-label="icon: info-circle" className={styles.flowStatusIcon}/>
+            <FontAwesomeIcon icon={faInfoCircle} size="1x" aria-label="icon: info-circle" className={styles.flowStatusIcon} />
           </span>
         </HCTooltip>
         : ""
@@ -909,12 +934,11 @@ const Flows: React.FC<Props> = ({
           .then(resp => {
             setShowUploadError(true);
             setFileList([]);
-            // setSelectedStepOptions({});
-            // setSelectedStepDetails([{stepName: "", stepNumber: -1, stepDefinitionType: "", isChecked: false}]);
-            // setArrayLoadChecksSteps([{flowName: "", stepNumber: -1}]);
-            //setRunFlowClicked(false);
+          // setSelectedStepOptions({});
+          // setSelectedStepDetails([{stepName: "", stepNumber: -1, stepDefinitionType: "", isChecked: false}]);
+          // setArrayLoadChecksSteps([{flowName: "", stepNumber: -1}]);
+          //setRunFlowClicked(false);
           });
-        //}
       }
     }
   };

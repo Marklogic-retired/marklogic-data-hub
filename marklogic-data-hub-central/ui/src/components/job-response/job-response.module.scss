@@ -77,6 +77,20 @@
     flex-direction: row;
   }
 
+  
+  .stopIcon {
+    color: $danger;
+    font-size: 20px;
+    margin-left: 8px;
+    cursor: pointer;
+  }
+  
+  .stopIconDisabled {
+    color: $danger-disabled;
+    font-size: 20px;
+    margin-left: 8px;
+    cursor: pointer;
+  }
 .headerRow {
     display: flex;
     flex-direction: row;
@@ -191,4 +205,8 @@
 
 .stepType {
   text-transform: capitalize;
+}
+
+.canceled {
+  font-style: italic;
 }

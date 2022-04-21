@@ -35,6 +35,7 @@ const Run = (props) => {
   const [uploadError, setUploadError] = useState("");
   const [openJobResponse, setOpenJobResponse] = useState<boolean>(false);
   const [jobId, setJobId] = useState<string>("");
+  const [userCanStopFlow, setUserCanStopFlow] = useState<boolean>(false);
   // For role-based privileges
   const authorityService = useContext(AuthoritiesContext);
   const canReadFlow = authorityService.canReadFlow();
@@ -195,6 +196,7 @@ const Run = (props) => {
     let checkStatus = (resolve, reject) => {
       let promise = fn();
       promise.then(function (response) {
+
         if (!response.data) {
           throw new Error("Empty response body received");
         }
@@ -287,6 +289,7 @@ const Run = (props) => {
     const stepNumber = stepDetails.stepNumber;
     getFlowRunning(flowName, [stepNumber]);
     setOpenJobResponse(true);
+    setIsStepRunning(true);
     let response;
     try {
       setUploadError("");
@@ -303,7 +306,8 @@ const Run = (props) => {
         let jobId = response.data.jobId;
         await setTimeout(function () {
           poll(function () {
-            return axios.get("/api/jobs/" + jobId);
+            const res = axios.get("/api/jobs/" + jobId);
+            return res;
           }, pollConfig.interval)
             .then(function (response: any) {
               setRunEnded({flowId: flowName, stepId: stepNumber});
@@ -320,6 +324,7 @@ const Run = (props) => {
     } catch (error) {
       console.error("Error running step", error);
       setRunEnded({flowId: flowName, stepId: stepNumber});
+      setIsStepRunning(false);
       if (error.response && error.response.data && (error.response.data.message.includes("The total size of all files in a single upload must be 100MB or less.") || error.response.data.message.includes("Uploading files to server failed"))) {
         setUploadError(error.response.data.message);
       }
@@ -338,6 +343,17 @@ const Run = (props) => {
     } catch (error) {
       console.error("Error deleting step", error);
       setIsLoading(false);
+    }
+  };
+
+  const stopRun = async () => {
+    try {
+      let response = await axios.post("/api/flows/stopJob/" + jobId);
+      if (response.status === 200) {
+        setIsStepRunning(false);
+      }
+    } catch (error) {
+      console.error("Error stopping step", error);
     }
   };
 
@@ -364,6 +380,7 @@ const Run = (props) => {
                 createFlow={createFlow}
                 updateFlow={updateFlow}
                 runStep={runStep}
+                stopRun={stopRun}
                 runFlowSteps={runFlowSteps}
                 deleteStep={deleteStep}
                 canReadFlow={canReadFlow}
@@ -379,12 +396,14 @@ const Run = (props) => {
                 setJobId={setJobId}
                 setOpenJobResponse={setOpenJobResponse}
                 isStepRunning={isStepRunning}
+                canUserStopFlow={userCanStopFlow}
               />]
             :
             <p>{MissingPagePermission}</p>
         }
       </div>
-      <JobResponse jobId={jobId} openJobResponse={openJobResponse} setOpenJobResponse={setOpenJobResponse} flow={flowRunning} />
+      <JobResponse setUserCanStopFlow={setUserCanStopFlow}
+        setIsStepRunning={setIsStepRunning} stopRun={stopRun}jobId={jobId} openJobResponse={openJobResponse} setOpenJobResponse={setOpenJobResponse} flow={flowRunning}/>
     </div>
   );
 };
