@@ -1,6 +1,6 @@
 import React, {useState, CSSProperties, useEffect, useContext, createRef} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCheckCircle, faClock, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
+import {faCheckCircle, faClock, faInfoCircle, faStopCircle} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt, faArrowAltCircleRight, faArrowAltCircleLeft} from "@fortawesome/free-regular-svg-icons";
 import NewFlowDialog from "./new-flow-dialog/new-flow-dialog";
 import axios from "axios";
@@ -9,8 +9,8 @@ import {Link, useLocation} from "react-router-dom";
 import sourceFormatOptions from "@config/formats.config";
 import {RunToolTips, SecurityTooltips, PopoverRunSteps} from "@config/tooltips.config";
 import {AuthoritiesContext} from "@util/authorities";
-import {dynamicSortDates} from "@util/conversionFunctions";
 import {getViewSettings, setViewSettings} from "@util/user-context";
+import {dynamicSortDates} from "@util/conversionFunctions";
 import styles from "./flows.module.scss";
 import "./flows.scss";
 import {ExclamationCircleFill, PlayCircleFill, X, ChevronDown, GearFill} from "react-bootstrap-icons";
@@ -26,7 +26,7 @@ enum ReorderFlowOrderDirection {
   RIGHT = "right"
 }
 
-interface Props {
+export interface Props {
   flows: any;
   steps: any;
   deleteFlow: any;
@@ -34,6 +34,7 @@ interface Props {
   updateFlow: (name: any, description: any, steps: any) => Promise<void>;
   deleteStep: any;
   runStep: any;
+  stopRun: () => Promise<void>;
   runFlowSteps: any;
   canReadFlow: boolean;
   canWriteFlow: boolean;
@@ -47,7 +48,8 @@ interface Props {
   onReorderFlow: (flowIndex: number, newSteps: Array<any>) => void
   setJobId: any;
   setOpenJobResponse: React.Dispatch<React.SetStateAction<boolean>>;
-  isStepRunning?: boolean
+  isStepRunning: boolean;
+  canUserStopFlow: boolean;
 }
 
 const StepDefinitionTypeTitles = {
@@ -72,6 +74,7 @@ const Flows: React.FC<Props> = ({
   createFlow,
   updateFlow,
   deleteStep,
+  stopRun,
   runStep,
   runFlowSteps,
   canReadFlow,
@@ -86,11 +89,13 @@ const Flows: React.FC<Props> = ({
   onReorderFlow,
   setJobId,
   setOpenJobResponse,
-  isStepRunning
+  isStepRunning,
+  canUserStopFlow,
 }) => {
   const storage = getViewSettings();
   const openFlows = storage?.run?.openFlows;
   const hasDefaultKey = JSON.stringify(newStepToFlowOptions?.flowsDefaultKey) !== JSON.stringify(["-1"]);
+
 
   const [newFlow, setNewFlow] = useState(false);
   const [addedFlowName, setAddedFlowName] = useState("");
@@ -102,7 +107,6 @@ const Flows: React.FC<Props> = ({
   const [flowName, setFlowName] = useState("");
   const [stepName, setStepName] = useState("");
   const [stepType, setStepType] = useState("");
-  const [singleIngest, setSingleIngest] = useState(false);
   const [stepNumber, setStepNumber] = useState("");
   const [runningStep, setRunningStep] = useState<any>({});
   const [runningFlow, setRunningFlow] = useState<any>("");
@@ -117,6 +121,7 @@ const Flows: React.FC<Props> = ({
   const [showLinks, setShowLinks] = useState("");
   const [startRun, setStartRun] = useState(false);
   const [latestJobData, setLatestJobData] = useState<any>({});
+  const [singleIngest, setSingleIngest] = useState(false);
   const [createAdd, setCreateAdd] = useState(true);
   const [addFlowDirty, setAddFlowDirty] = useState({});
   const [addExternalFlowDirty, setExternalAddFlowDirty] = useState(true);
@@ -124,8 +129,8 @@ const Flows: React.FC<Props> = ({
   const [selectedStepOptions, setSelectedStepOptions] = useState<any>({}); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [currentFlowName, setCurrentFlowName] = useState(""); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [arrayLoadChecksSteps, setArrayLoadChecksSteps] = useState<any>([{flowName: "", stepNumber: -1}]);
-  const [flowsDeepCopy, setFlowsDeepCopy] = useState<any>([]);
   const [selectedStepDetails, setSelectedStepDetails] = useState<any>([{stepName: "", stepNumber: -1, stepDefinitionType: "", isChecked: false}]);
+  const [flowsDeepCopy, setFlowsDeepCopy] = useState<any>([]);
   //const [runFlowClicked, setRunFlowClicked] = useState(false);
   const [checkAll, setCheckAll] = useState(true);
   const [currentTooltip, setCurrentTooltip] = useState("");
@@ -169,7 +174,7 @@ const Flows: React.FC<Props> = ({
       }
     }
 
-    if (flows) {
+    if (flows!== undefined ||flows !== null) {
       {
         setFlowsDeepCopy(_.cloneDeep(flows));
         flows.map((flow) => (
@@ -267,7 +272,6 @@ const Flows: React.FC<Props> = ({
       }
     }
   }, [steps]);
-
 
   // Get the latest job info after a step (in a flow) run
   useEffect(() => {
@@ -409,8 +413,6 @@ const Flows: React.FC<Props> = ({
     customRequest();
   }, [fileList]);
 
-
-
   const deleteConfirmation = (
     <Modal
       show={dialogVisible}
@@ -483,6 +485,7 @@ const Flows: React.FC<Props> = ({
   );
 
   const onCheckboxChange = (event, checkedValues?, stepNumber?, stepDefinitionType?, flowNames?, stepId?, sourceFormat?, fromCheckAll?) => {
+
     let checkAllAux;
     if (event !== "default" && fromCheckAll) {
       checkAllAux = checkAll ? false : true;
@@ -766,6 +769,7 @@ const Flows: React.FC<Props> = ({
   };
 
   const handleRunFlow = async (index, name) => {
+    //setRunFlowClicked(true);
     const setKey = async () => {
       await setActiveKeys(`${index}`);
     };
@@ -791,7 +795,6 @@ const Flows: React.FC<Props> = ({
       stepNumbers = selectedStepDetails.filter(function (obj) {
         return obj.flowName === name && obj.isChecked === true;
       });
-
       await runFlowSteps(name, stepNumbers)
         .then(() => {
           // setSelectedStepOptions({});
@@ -815,7 +818,7 @@ const Flows: React.FC<Props> = ({
         }
       </Dropdown.Toggle>
       <Dropdown.Menu>
-        <Dropdown.Header className="py-0 px-2 fs-6">Load</Dropdown.Header>
+        <Dropdown.Header className="py-0 px-2 fs-6">Loading</Dropdown.Header>
         {steps && steps["ingestionSteps"] && steps["ingestionSteps"].length > 0 ? steps["ingestionSteps"].map((elem, index) => (
           <Dropdown.Item key={index} aria-label={`${elem.name}-to-flow`}>
             <div
@@ -824,7 +827,7 @@ const Flows: React.FC<Props> = ({
           </Dropdown.Item>
         )) : null}
 
-        <Dropdown.Header className="py-0 px-2 fs-6">Map</Dropdown.Header>
+        <Dropdown.Header className="py-0 px-2 fs-6">Mapping</Dropdown.Header>
         {steps && steps["mappingSteps"] && steps["mappingSteps"].length > 0 ? steps["mappingSteps"].map((elem, index) => (
           <Dropdown.Item key={index} aria-label={`${elem.name}-to-flow`}>
             <div
@@ -833,7 +836,7 @@ const Flows: React.FC<Props> = ({
           </Dropdown.Item>
         )) : null}
 
-        <Dropdown.Header className="py-0 px-2 fs-6">Match</Dropdown.Header>
+        <Dropdown.Header className="py-0 px-2 fs-6">Matching</Dropdown.Header>
         {steps && steps["matchingSteps"] && steps["matchingSteps"].length > 0 ? steps["matchingSteps"].map((elem, index) => (
           <Dropdown.Item key={index} aria-label={`${elem.name}-to-flow`}>
             <div
@@ -842,7 +845,7 @@ const Flows: React.FC<Props> = ({
           </Dropdown.Item>
         )) : null}
 
-        <Dropdown.Header className="py-0 px-2 fs-6">Merge</Dropdown.Header>
+        <Dropdown.Header className="py-0 px-2 fs-6">Merging</Dropdown.Header>
         {steps && steps["mergingSteps"] && steps["mergingSteps"].length > 0 ? steps["mergingSteps"].map((elem, index) => (
           <Dropdown.Item key={index} aria-label={`${elem.name}-to-flow`}>
             <div
@@ -851,7 +854,7 @@ const Flows: React.FC<Props> = ({
           </Dropdown.Item>
         )) : null}
 
-        <Dropdown.Header className="py-0 px-2 fs-6">Master</Dropdown.Header>
+        <Dropdown.Header className="py-0 px-2 fs-6">Mastering</Dropdown.Header>
         {steps && steps["masteringSteps"] && steps["masteringSteps"].length > 0 ? steps["masteringSteps"].map((elem, index) => (
           <Dropdown.Item key={index} aria-label={`${elem.name}-to-flow`}>
             <div
@@ -872,6 +875,11 @@ const Flows: React.FC<Props> = ({
     </Dropdown>
   );
 
+  const showStopButton = (flowName: string): boolean => {
+    if (!flowRunning) return false;
+    return (isStepRunning && flowRunning.name === flowName);
+  };
+
   const panelActions = (name, i) => (
     <div
       className={styles.panelActionsContainer}
@@ -881,6 +889,23 @@ const Flows: React.FC<Props> = ({
         event.preventDefault();
       }}
     >
+      {showStopButton(name) && (<HCTooltip text={canUserStopFlow ? RunToolTips.stopRun : RunToolTips.stopRunMissingPermission} id="stop-run" placement="top">
+        <span>
+          <HCButton
+            variant="outline-light"
+            className={styles.stopFlow}
+            key={`stepsDropdownButton-${name}`}
+            data-testid={`stopFlow-${name}`}
+            id={`stopFlow-${name}`}
+            size="sm"
+            onClick={() => { stopRun(); }}
+            disabled={!canUserStopFlow}
+          >
+            <FontAwesomeIcon icon={faStopCircle} size="1x" aria-label="icon: info-circle" className={canUserStopFlow ? styles.stopIcon : styles.stopIconDisabled} />
+            Stop Flow
+          </HCButton>
+        </span>
+      </HCTooltip>)}
       <span id="stepsDropdown" className={styles.hoverColor} onMouseLeave={(e) => { setCurrentTooltip(""); }}>
         <Dropdown as={ButtonGroup}>
           <HCTooltip show={currentTooltip === name} text={isFlowEmpty(name) ? RunToolTips.runEmptyFlow : !controlStepSelected(name) ? RunToolTips.selectAStep : ""} placement="top" id={`run-flow-tooltip`}>
@@ -999,12 +1024,11 @@ const Flows: React.FC<Props> = ({
           .then(resp => {
             setShowUploadError(true);
             setFileList([]);
-            // setSelectedStepOptions({});
-            // setSelectedStepDetails([{stepName: "", stepNumber: -1, stepDefinitionType: "", isChecked: false}]);
-            // setArrayLoadChecksSteps([{flowName: "", stepNumber: -1}]);
-            //setRunFlowClicked(false);
+          // setSelectedStepOptions({});
+          // setSelectedStepDetails([{stepName: "", stepNumber: -1, stepDefinitionType: "", isChecked: false}]);
+          // setArrayLoadChecksSteps([{flowName: "", stepNumber: -1}]);
+          //setRunFlowClicked(false);
           });
-        //}
       }
     }
   };
@@ -1198,7 +1222,7 @@ const Flows: React.FC<Props> = ({
                           }}
                         >
                           <HCTooltip text={RunToolTips.ingestionStep} id="run-ingestion-tooltip" placement="bottom">
-                            <PlayCircleFill aria-label="icon: play-circle" color={themeColors.primary} size={20} />
+                            <PlayCircleFill aria-label="icon: play-circle" color={themeColors.defaults.questionCircle} size={20} />
                           </HCTooltip>
                         </div>
                       </div>
@@ -1213,7 +1237,7 @@ const Flows: React.FC<Props> = ({
                         data-testid={"runStep-" + stepNumber}
                       >
                         <HCTooltip text={RunToolTips.otherSteps} id="run-tooltip" placement="bottom">
-                          <PlayCircleFill aria-label="icon: play-circle" color={themeColors.primary} size={20} />
+                          <PlayCircleFill aria-label="icon: play-circle" color={themeColors.defaults.questionCircle} size={20} />
                         </HCTooltip>
                       </div>
                     :

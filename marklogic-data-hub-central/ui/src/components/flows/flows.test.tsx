@@ -7,7 +7,7 @@ import {createMemoryHistory} from "history";
 const history = createMemoryHistory();
 import axiosMock from "axios";
 import data from "../../assets/mock-data/curation/flows.data";
-import Flows from "./flows";
+import Flows, {Props} from "./flows";
 import {SecurityTooltips, RunToolTips} from "../../config/tooltips.config";
 import {getViewSettings} from "../../util/user-context";
 
@@ -15,7 +15,7 @@ jest.mock("axios");
 
 describe("Flows component", () => {
 
-  let flowsProps = {
+  let flowsProps: Props = {
     flows: data.flows.data,
     steps: data.steps.data,
     deleteFlow: () => null,
@@ -24,17 +24,21 @@ describe("Flows component", () => {
     deleteStep: () => null,
     runStep: () => null,
     runFlowSteps: () => null,
-    running: [],
+    flowRunning: {name: "", steps: []},
     uploadError: "",
     newStepToFlowOptions: () => null,
     addStepToFlow: () => null,
     flowsDefaultActiveKey: [],
-    showStepRunResponse: () => null,
     runEnded: {},
     onReorderFlow: () => null,
     setJobId: () => null,
     setOpenJobResponse: () => null,
-    isStepRunning: false
+    isStepRunning: false,
+    stopRun: jest.fn(),
+    canReadFlow: true,
+    canWriteFlow: true,
+    canUserStopFlow: true,
+    hasOperatorRole: true,
   };
   const flowName = data.flows.data[0].name;
   const flowStepName = data.flows.data[0].steps[1].stepName;
@@ -71,9 +75,6 @@ describe("Flows component", () => {
       <Router history={history}>
         <Flows {...flowsProps}
           flows={allKindsOfIngestInAFlow}
-          canReadFlow={true}
-          canWriteFlow={true}
-          hasOperatorRole={true}
         />
       </Router>);
     let flowButton = document.querySelector(".accordion-button")!;
@@ -88,9 +89,6 @@ describe("Flows component", () => {
     const {getByText, getByLabelText, getAllByText} = render(
       <Router history={history}><Flows
         {...flowsProps}
-        canReadFlow={true}
-        canWriteFlow={true}
-        hasOperatorRole={true}
       /></Router>
     );
 
@@ -121,9 +119,7 @@ describe("Flows component", () => {
     const {getByText, getByLabelText, queryByLabelText, getAllByText} = render(
       <Router history={history}><Flows
         {...flowsProps}
-        canReadFlow={true}
         canWriteFlow={false}
-        hasOperatorRole={true}
       /></Router>
     );
 
@@ -202,9 +198,6 @@ describe("Flows component", () => {
     const {getByText, getByLabelText} = render(
       <Router history={history}><Flows
         {...flowsProps}
-        canReadFlow={true}
-        canWriteFlow={true}
-        hasOperatorRole={true}
       /></Router>
     );
 
@@ -230,9 +223,6 @@ describe("Flows component", () => {
     const {getByText, getByLabelText, getByTestId} = render(
       <Router history={history}><Flows
         {...flowsProps}
-        canReadFlow={true}
-        canWriteFlow={true}
-        hasOperatorRole={true}
       /></Router>
     );
 
@@ -257,9 +247,6 @@ describe("Flows component", () => {
     const {getByLabelText} = render(
       <Router history={history}><Flows
         {...flowsProps}
-        canReadFlow={true}
-        canWriteFlow={true}
-        hasOperatorRole={true}
       /></Router>
     );
 
@@ -268,7 +255,7 @@ describe("Flows component", () => {
     userEvent.click(flowButton);
     for (i = 1; i < data.flows.data[0].steps.length + 1; ++i) {
       const pathname = `http://localhost/tiles/${data.flows.data[0].steps[i-1]["stepDefinitionType"] === "ingestion" ? "load": "curate"}`;
-      expect(getByLabelText(`${flowName}-${i}-cardlink`).firstChild.href).toBe(pathname);
+      expect(getByLabelText(`${flowName}-${i}-cardlink`).firstChild?.href).toBe(pathname);
     }
 
   });
@@ -278,9 +265,6 @@ describe("Flows component", () => {
     const {getByText, getByLabelText, queryByLabelText} = render(
       <Router history={history}><Flows
         {...flowsProps}
-        canReadFlow={true}
-        canWriteFlow={true}
-        hasOperatorRole={true}
       /></Router>
     );
 
@@ -308,9 +292,7 @@ describe("Flows component", () => {
     const {getByText, queryByLabelText} = render(
       <Router history={history}><Flows
         {...flowsProps}
-        canReadFlow={true}
         canWriteFlow={false}
-        hasOperatorRole={true}
       /></Router>
     );
 
@@ -325,9 +307,6 @@ describe("Flows component", () => {
     const {getByLabelText} = render(
       <Router history={history}><Flows
         {...flowsProps}
-        canReadFlow={true}
-        canWriteFlow={true}
-        hasOperatorRole={true}
       /></Router>
     );
     let flowButton = document.querySelector(".accordion-button")!;
