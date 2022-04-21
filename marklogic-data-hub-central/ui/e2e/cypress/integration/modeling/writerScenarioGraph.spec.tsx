@@ -363,6 +363,7 @@ describe("Entity Modeling: Graph View", () => {
 
     //return to Model tile and publish
     toolbar.getModelToolbarIcon().click();
+    cy.wait(1000);
     cy.publishEntityModel();
 
     //verify relationship is visible in mapping

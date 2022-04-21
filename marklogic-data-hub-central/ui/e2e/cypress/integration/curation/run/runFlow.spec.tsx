@@ -21,15 +21,9 @@ describe("Run Tile tests", () => {
   beforeEach(() => {
     //Restoring Local Storage to Preserve Session
     cy.restoreLocalStorage();
-
     cy.visit("/");
-    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
-    cy.waitUntil(() => runPage.getFlowName("personJSON").should("be.visible"));
-  });
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    Cypress.Cookies.preserveOnce("HubCentralSession");
-    cy.restoreLocalStorage();
+    toolbar.getRunToolbarIcon().should("be.visible").click();
+    runPage.getFlowName("personJSON").should("be.visible");
   });
   after(() => {
   // Skipped since it tests functionality on DHFPROD-7187 (run selected flows)
