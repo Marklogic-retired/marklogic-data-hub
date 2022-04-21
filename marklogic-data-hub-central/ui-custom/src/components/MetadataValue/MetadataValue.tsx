@@ -15,28 +15,44 @@ type Props = {
   style?: any;
 };
 
-// TODO using mock data temporarily
-const mockData = [
-    {
-        name: "New York Times",
-        timestamp: "2021-11-19T01:35:35.296391-08:00"
-    },
-    {
-        name: "Los Angeles Times",
-        timestamp: "2021-12-21T11:29:44.296391-08:00"
-    },
-    {
-        name: "USA Today",
-        timestamp: "2022-01-05T18:20:03.296391-08:00"
-    }
-];
-
 /**
  * Component for showing metadata in the form of square icons.
  *
  * @component
  * @example
- * TBD
+ * {
+ *  "metadata": [
+        {
+        "type": "block",
+        "color": "#5d6aaa",
+        "placement": "after",
+        "popover": {
+            "title": "Sources",
+            "dataPath": "source",
+            "placement": "right",
+            "cols": [
+            {
+                "path": "name",
+                "type": "chiclet",
+                "colors": {
+                "New York Times": "#d5e1de",
+                "USA Today": "#ebe1fa",
+                "Los Angeles Times": "#cae4ea",
+                "Wall Street Journal": "#fae9d3",
+                "Washington Post": "#fae3df",
+                "Chicago Tribune": "#f0f6d9"
+                }
+            },
+            {
+                "path": "ts",
+                "type": "datetime",
+                "format": "yyyy-MM-dd"
+            }
+            ]
+        }
+        }
+    ]
+ * }
  */
 const MetadataValue: React.FC<Props> = (props) => {
 
