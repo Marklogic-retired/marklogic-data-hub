@@ -145,4 +145,43 @@ describe("Job response modal", () => {
       expect(queryByText("Explore Curated Data")).not.toBeInTheDocument();
     });
   });
+
+  test("Verify stop run button when step is running", async () => {
+    mocks.runAPI(axiosMock);
+    let getByText;
+    let getByLabelText;
+    const stopRun = jest.fn();
+    act(() => {
+      ({getByText, getByLabelText} = render(
+        <Router>
+          <CurationContext.Provider value={curationContextMock}>
+            <JobResponse
+              jobId={"8c69c502-e682-46ce-a0f4-6506ab527ab8"}
+              openJobResponse={true}
+              setOpenJobResponse={() => { }}
+              stopRun={stopRun}
+            />
+          </CurationContext.Provider>
+        </Router>
+      ));
+    });
+
+
+    expect(await (waitForElement(() => getByText((content, node) => {
+      return getSubElements(content, node, "The flow testFlow is running");
+    })))).toBeInTheDocument();
+
+    expect(getByText("Job ID:")).toBeInTheDocument();
+    expect(getByText("Start Time:")).toBeInTheDocument();
+    expect(getByText("Duration:")).toBeInTheDocument();
+
+    expect(getByText("8c69c502-e682-46ce-a0f4-6506ab527ab8")).toBeInTheDocument();
+    // check that
+    await (waitForElement(() => (getByText("testFlow"))));
+    const stopButton = getByLabelText("icon: stop-circle");
+    expect(stopButton).toBeInTheDocument();
+    fireEvent.click(stopButton);
+    expect(stopRun).toBeCalled();
+
+  });
 });

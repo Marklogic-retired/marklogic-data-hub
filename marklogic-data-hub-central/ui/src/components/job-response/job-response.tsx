@@ -2,7 +2,8 @@ import React, {useState, useEffect, useContext} from "react";
 import {HCButton, HCTable, HCTooltip} from "@components/common";
 import {Modal, Accordion} from "react-bootstrap";
 import {RunToolTips} from "@config/tooltips.config";
-import {SearchContext} from "../../util/search-context";
+import {SearchContext} from "@util/search-context";
+import {canStopFlow, isFlowRunning} from "@util/run-utils";
 import {dateConverter, renderDuration, durationFromDateTime} from "@util/date-conversion";
 import styles from "./job-response.module.scss";
 import axios from "axios";
@@ -11,7 +12,7 @@ import {getMappingArtifactByStepName} from "../../api/mapping";
 import {useHistory} from "react-router-dom";
 import Spinner from "react-bootstrap/Spinner";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faClock, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
+import {faClock, faInfoCircle, faStopCircle} from "@fortawesome/free-solid-svg-icons";
 import "./job-response.scss";
 import {CheckCircleFill, ExclamationCircleFill} from "react-bootstrap-icons";
 import {Flow} from "../../types/run-types";
@@ -21,9 +22,11 @@ type Props = {
   setOpenJobResponse: (boolean) => void;
   jobId: string;
   flow?: Flow;
+  stopRun?: () => Promise<void>;
+  setIsStepRunning?: any;
+  setUserCanStopFlow?: any;
 }
-
-const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, openJobResponse, flow}) => {
+const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStopFlow, openJobResponse, stopRun, setIsStepRunning, flow}) => {
   const [jobResponse, setJobResponse] = useState<any>({});
   //const [lastSuccessfulStep, setLastSuccessfulStep] = useState<any>(null);
   const [timeoutId, setTimeoutId] = useState<any>();
@@ -43,15 +46,20 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, openJobRespons
       let response = await axios.get("/api/jobs/" + jobId);
       if (response.status === 200) {
         setJobResponse(response.data);
+        const _canStopFlow = canStopFlow(response.data);
+        setUserCanStopFlow && setUserCanStopFlow(_canStopFlow);
         /*  const successfulSteps = response.data.stepResponses ? Object.values(response.data.stepResponses).filter((stepResponse: any) => {
           return stepResponse.success;
          }) : []; */
         //const successfulStep = successfulSteps[successfulSteps.length - 1];
         //setLastSuccessfulStep(successfulStep);
-        if (isRunning(response.data)) {
+        if (isFlowRunning(response.data)) {
           const duration = durationFromDateTime(response.data.timeStarted);
           setJobResponse(Object.assign({}, response.data, {duration}));
+          setIsStepRunning(true);
           setTimeoutId(setTimeout(() => { retrieveJobDoc(); }, 3000));
+        } else {
+          setIsStepRunning(false);
         }
       }
     } catch (error) {
@@ -61,10 +69,6 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, openJobRespons
 
   const isStepRunning = (step) => {
     return !step.stepEndTime && step.stepStartTime;
-  };
-
-  const isRunning = (jobResponse) => {
-    return !jobResponse.timeEnded || jobResponse === "N/A";
   };
 
   function getErrorDetails(e) {
@@ -105,6 +109,17 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, openJobRespons
     </span>
   );
 
+  const isStepCanceled= (response) => {
+    // this step was canceled
+    if (response.status?.includes("canceled")) return true;
+    // the job was canceled and the step response is not on the responses because it didn't get to run
+    if (jobResponse.status === "canceled" && !jobResponse.stepResponses[response.stepNumber]) return true;
+    // a step was canceled and current step number is bigger than the canceled step or is not on the responses
+    const responsesKeys = Object.keys(jobResponse.stepResponses);
+    return responsesKeys.some(key => (jobResponse.stepResponses[key].status.includes("canceled") && parseInt(key) < parseInt(response.stepNumber)));
+
+  };
+
   const responseColumns = [
     {
       text: "Steps",
@@ -130,7 +145,8 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, openJobRespons
             <strong className={styles.stepName}>{stepName}</strong>
           </div>);
         }
-      }
+      },
+      formatExtraData: {jobResponse}
     },
     {
       text: "Step Type",
@@ -139,20 +155,24 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, openJobRespons
       headerFormatter: (column) => <strong data-testid={`stepType-header`}>Step Type</strong>,
       formatter: (stepName, response) => {
         let stepType = response.stepDefinitionType === "ingestion" ? "loading" : response.stepDefinitionType;
-        return (<div data-testid={`${response.stepName}-${stepType}-type`} id={`${response.stepName}-${stepType}-type`} className={styles.stepResponse}>
-          {stepType[0].toUpperCase() + stepType.substring(1)}
+        return (<div data-testid={`${response.stepName}-${stepType}-type`} id={`${response.stepName}-${stepType}-type`} className={styles.stepType}>
+          {stepType?.toLowerCase()}
         </div>);
-      }
+      },
     },
     {
       text: "Documents Written",
-      key: "succesfulEvents",
+      key: "successfulEvents",
       dataField: "successfulEvents",
       headerFormatter: (column) => <strong>Documents Written</strong>,
       formatter: (successfulEvents, response) => {
         const {stepName, success} = response;
         const stepIsFinished = response.stepEndTime && response.stepEndTime !== "N/A";
-        if (stepIsFinished) {
+        if (isStepCanceled(response)) {
+          return (<span className={styles.canceled}>
+            Canceled
+          </span>);
+        } else if (stepIsFinished) {
           if (success) {
             return (<span className={styles.documentsWritten}>
               {successfulEvents}
@@ -168,7 +188,8 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, openJobRespons
             </div>
           );
         }
-      }
+      },
+      formatExtraData: {jobResponse}
     },
     {
       text: "Action",
@@ -178,7 +199,7 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, openJobRespons
       formatter: (successfulEvents, response) => {
         const {targetEntityType, targetDatabase, stepDefinitionType, stepName, stepEndTime} = response;
         const stepIsFinished = stepEndTime && stepEndTime !== "N/A";
-        const isButtonDisabled = stepDefinitionType === "matching" || stepDefinitionType === "custom" || successfulEvents === 0;
+        const isButtonDisabled = stepDefinitionType === "matching" || stepDefinitionType === "custom" || successfulEvents === 0 || isStepCanceled(response);
         if (stepIsFinished) {
           let entityName;
           if (targetEntityType) {
@@ -196,8 +217,9 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, openJobRespons
             </HCTooltip>
           );
         }
-      }
-    }
+      },
+      formatExtraData: {jobResponse}
+    },
   ];
 
   const expandedRowRender = (response) => {
@@ -277,9 +299,14 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, openJobRespons
     id="job-response-modal"
   >
     <Modal.Header className={"bb-none"} aria-label="job-response-modal-header">
-      {isRunning(jobResponse) ?
+      {isFlowRunning(jobResponse) && stopRun ?
         <span className={`fs-5 ${styles.title}`} aria-label={`${jobResponse.flow}-running`}>
           The flow <strong>{jobResponse.flow}</strong> is running
+          <HCTooltip text={canStopFlow(jobResponse) ? RunToolTips.stopRun : RunToolTips.stopRunMissingPermission} id="stop-run" placement="bottom">
+            <span onClick={() => { stopRun(); }}>
+              <FontAwesomeIcon icon={faStopCircle} size="1x" aria-label="icon: stop-circle" className={canStopFlow(jobResponse) ? styles.stopIcon : styles.stopIconDisabled} />
+            </span>
+          </HCTooltip>
           {/* TO BE REPLACED WITH STOP RUNNING ICON <a onClick={() => retrieveJobDoc()}><FontAwesomeIcon icon={faSync} data-testid={"job-response-refresh"} /></a> */}
         </span>
         :

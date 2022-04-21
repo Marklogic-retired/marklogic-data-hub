@@ -324,6 +324,31 @@
     margin-right: -3px;
 }
 
+
+.stopIcon {
+  color: $danger;
+  font-size: 20px;
+  cursor: pointer;
+  margin-right: 4px;
+}
+
+.stopIconDisabled {
+  color: $danger-disabled;
+  font-size: 20px;
+  cursor: pointer;
+  margin-right: 4px;
+}
+
+.stopFlow {
+  display: flex !important;
+  width: 110px;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 4px !important;
+}
+
+
 .dropdownMenu {
   padding-top: 15px !important;
   padding-bottom: 15px !important;

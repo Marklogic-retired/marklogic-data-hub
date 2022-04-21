@@ -177,12 +177,6 @@ public class FlowController extends BaseController {
         FlowRunner flowRunner = newFlowRunner();
         RunFlowResponse runFlowResponse = flowRunner.runFlow(inputs);
 
-
-        flowRunner.onStatusChanged((jobId, step, jobStatus, percentComplete, successfulEvents, failedEvents, message) ->{if(!jobStatus.equals(JobStatus.STARTED) && !jobStatus.equals(JobStatus.RUNNING)){
-            FlowUtil.getInstance().flowMap.remove(runFlowResponse.getJobId());
-        }});
-
-
         //we persist our instance in a map with jobId as key
         FlowUtil.getInstance().flowMap.put(runFlowResponse.getJobId(),flowRunner);
 

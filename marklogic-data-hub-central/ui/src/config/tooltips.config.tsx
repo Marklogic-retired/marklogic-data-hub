@@ -4,8 +4,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faKey, faLayerGroup} from "@fortawesome/free-solid-svg-icons";
 import styles from "../components/tiles/tiles.module.scss";
 import "./tooltips.config.scss";
-import {Tooltip} from "react-bootstrap";
-import {themeColors} from "./themes.config";
+import { themeColors } from "./themes.config";
 
 /* --- MODELING --- */
 
@@ -484,7 +483,9 @@ const RunToolTips = {
   runEmptyFlow: 'There are no steps in the flow. You must add steps to the flow.',
   flowEdit: 'Edit Flow',
   flowDetails: 'Flow Details',
-  moveLeft: 'Move left'
+  moveLeft: 'Move left',
+  stopRun: 'Cancel the flow to stop it from running.',
+  stopRunMissingPermission: 'You cannot cancel the flow. Only the user who started the flow can cancel it.'
 };
 
 const PopoverRunSteps = {
