@@ -214,7 +214,8 @@ const jobRespFailed = {
   "status": 200
 };
 
-const loads = {"data":
+const loads = {
+  "data":
     [{
       "name": "failedIngest",
       "description": "",
@@ -224,7 +225,7 @@ const loads = {"data":
       "inputFilePath": "/xml-test/data-sets/failedIngest",
       "lastUpdated": "2020-04-02T23:08:28.287065-07:00"
     }],
-"status": 200
+  "status": 200
 };
 
 const primaryEntityTypes = {
@@ -314,133 +315,138 @@ const primaryEntityTypes = {
   "status": 200
 };
 
-const mappings = {"data":
-[{
-  "entityType": "Customer",
-  "entityTypeId": "Customer",
-  "artifacts": [
-    {
-      "name": "Mapping1",
-      "targetEntityType": "Customer",
-      "description": "",
-      "selectedSource": "collection",
-      "sourceQuery": "cts.collectionQuery(['default-ingestion'])",
-      "properties": {
-        "customerId": {
-          "sourcedFrom": "PIN"
+const mappings = {
+  "data":
+    [{
+      "entityType": "Customer",
+      "entityTypeId": "Customer",
+      "artifacts": [
+        {
+          "name": "Mapping1",
+          "targetEntityType": "Customer",
+          "description": "",
+          "selectedSource": "collection",
+          "sourceQuery": "cts.collectionQuery(['default-ingestion'])",
+          "properties": {
+            "customerId": {
+              "sourcedFrom": "PIN"
+            }
+          },
+          "provenanceGranularityLevel": "coarse",
+          "batchSize": 50,
+          "permissions": "data-hub-common,read,data-hub-common,update",
+          "sourceDatabase": "data-hub-STAGING",
+          "targetDatabase": "data-hub-FINAL",
+          "collections": ["Mapping1", "Customer"],
+          "additionalCollections": ["customerCollection"],
+          "validateEntity": false,
+          "lastUpdated": "2020-04-24T13:21:00.169198-07:00"
         }
-      },
-      "provenanceGranularityLevel": "coarse",
-      "batchSize": 50,
-      "permissions": "data-hub-common,read,data-hub-common,update",
-      "sourceDatabase": "data-hub-STAGING",
-      "targetDatabase": "data-hub-FINAL",
-      "collections": ["Mapping1", "Customer"],
-      "additionalCollections": ["customerCollection"],
-      "validateEntity": false,
-      "lastUpdated": "2020-04-24T13:21:00.169198-07:00"
-    }
-  ]
-},
-{
-  "entityType": "Customer",
-  "entityTypeId": "Customer",
-  "artifacts": [
-    {
-      "name": "Mapping2",
-      "targetEntityType": "Customer",
-      "description": "",
-      "selectedSource": "collection",
-      "sourceQuery": "cts.collectionQuery(['default-ingestion'])",
-      "properties": {
-        "customerId": {
-          "sourcedFrom": "PIN"
-        }
-      },
-      "provenanceGranularityLevel": "coarse",
-      "batchSize": 50,
-      "permissions": "data-hub-common,read,data-hub-common,update",
-      "sourceDatabase": "data-hub-STAGING",
-      "targetDatabase": "data-hub-FINAL",
-      "collections": ["Mapping2", "Customer"],
-      "additionalCollections": ["customerCollection"],
-      "validateEntity": false,
-      "lastUpdated": "2020-10-01T02:38:00.169198-07:00"
-    }
-  ]
-},
-{
-  "entityType": "Customer",
-  "entityTypeId": "Customer",
-  "artifacts": [
-    {
-      "name": "Mapping3",
-      "targetEntityType": "Customer",
-      "description": "",
-      "selectedSource": "collection",
-      "sourceQuery": "cts.collectionQuery(['default-ingestion'])",
-      "properties": {
-        "customerId": {
-          "sourcedFrom": "PIN"
-        }
-      },
-      "provenanceGranularityLevel": "coarse",
-      "batchSize": 50,
-      "permissions": "data-hub-common,read,data-hub-common,update",
-      "sourceDatabase": "data-hub-STAGING",
-      "targetDatabase": "data-hub-FINAL",
-      "collections": ["Mapping3", "Customer"],
-      "additionalCollections": ["customerCollection"],
-      "validateEntity": false,
-      "lastUpdated": "2020-01-12T13:21:00.169198-07:00"
-    }
-  ]},
-{
-  "entityType": "Person",
-  "entityTypeId": "Person",
-  "artifacts": [
-    {
-      "name": "Mapping4",
-      "targetEntityType": "Person",
-      "description": "",
-      "selectedSource": "collection",
-      "sourceQuery": "cts.collectionQuery(['default-ingestion'])",
-      "properties": {
-        "customerId": {
-          "sourcedFrom": "PIN"
-        }
-      },
-      "provenanceGranularityLevel": "coarse",
-      "batchSize": 50,
-      "permissions": "data-hub-common,read,data-hub-common,update",
-      "sourceDatabase": "data-hub-STAGING",
-      "targetDatabase": "data-hub-FINAL",
-      "collections": ["Mapping4", "Person"],
-      "additionalCollections": ["personCollection"],
-      "validateEntity": false,
-      "lastUpdated": "2020-01-12T13:21:00.169198-07:00"
-    }
-  ]}
-],
-"status": 200
-};
-
-const mappingSettings = {"data":
-    {
-      "provenanceGranularityLevel": "coarse",
-      "batchSize": 50,
-      "permissions": "data-hub-common,read,data-hub-common,update",
-      "sourceDatabase": "data-hub-STAGING",
-      "targetDatabase": "data-hub-FINAL",
-      "collections": ["Mapping1", "Customer"],
-      "additionalCollections": ["customerCollection"],
-      "validateEntity": false,
-      "lastUpdated": "2020-05-27T12:19:02.446622-07:00"
+      ]
     },
-"status": 200
+    {
+      "entityType": "Customer",
+      "entityTypeId": "Customer",
+      "artifacts": [
+        {
+          "name": "Mapping2",
+          "targetEntityType": "Customer",
+          "description": "",
+          "selectedSource": "collection",
+          "sourceQuery": "cts.collectionQuery(['default-ingestion'])",
+          "properties": {
+            "customerId": {
+              "sourcedFrom": "PIN"
+            }
+          },
+          "provenanceGranularityLevel": "coarse",
+          "batchSize": 50,
+          "permissions": "data-hub-common,read,data-hub-common,update",
+          "sourceDatabase": "data-hub-STAGING",
+          "targetDatabase": "data-hub-FINAL",
+          "collections": ["Mapping2", "Customer"],
+          "additionalCollections": ["customerCollection"],
+          "validateEntity": false,
+          "lastUpdated": "2020-10-01T02:38:00.169198-07:00"
+        }
+      ]
+    },
+    {
+      "entityType": "Customer",
+      "entityTypeId": "Customer",
+      "artifacts": [
+        {
+          "name": "Mapping3",
+          "targetEntityType": "Customer",
+          "description": "",
+          "selectedSource": "collection",
+          "sourceQuery": "cts.collectionQuery(['default-ingestion'])",
+          "properties": {
+            "customerId": {
+              "sourcedFrom": "PIN"
+            }
+          },
+          "provenanceGranularityLevel": "coarse",
+          "batchSize": 50,
+          "permissions": "data-hub-common,read,data-hub-common,update",
+          "sourceDatabase": "data-hub-STAGING",
+          "targetDatabase": "data-hub-FINAL",
+          "collections": ["Mapping3", "Customer"],
+          "additionalCollections": ["customerCollection"],
+          "validateEntity": false,
+          "lastUpdated": "2020-01-12T13:21:00.169198-07:00"
+        }
+      ]
+    },
+    {
+      "entityType": "Person",
+      "entityTypeId": "Person",
+      "artifacts": [
+        {
+          "name": "Mapping4",
+          "targetEntityType": "Person",
+          "description": "",
+          "selectedSource": "collection",
+          "sourceQuery": "cts.collectionQuery(['default-ingestion'])",
+          "properties": {
+            "customerId": {
+              "sourcedFrom": "PIN"
+            }
+          },
+          "provenanceGranularityLevel": "coarse",
+          "batchSize": 50,
+          "permissions": "data-hub-common,read,data-hub-common,update",
+          "sourceDatabase": "data-hub-STAGING",
+          "targetDatabase": "data-hub-FINAL",
+          "collections": ["Mapping4", "Person"],
+          "additionalCollections": ["personCollection"],
+          "validateEntity": false,
+          "lastUpdated": "2020-01-12T13:21:00.169198-07:00"
+        }
+      ]
+    }
+    ],
+  "status": 200
 };
 
-const matchings = {"data":
+const mappingSettings = {
+  "data":
+  {
+    "provenanceGranularityLevel": "coarse",
+    "batchSize": 50,
+    "permissions": "data-hub-common,read,data-hub-common,update",
+    "sourceDatabase": "data-hub-STAGING",
+    "targetDatabase": "data-hub-FINAL",
+    "collections": ["Mapping1", "Customer"],
+    "additionalCollections": ["customerCollection"],
+    "validateEntity": false,
+    "lastUpdated": "2020-05-27T12:19:02.446622-07:00"
+  },
+  "status": 200
+};
+
+const matchings = {
+  "data":
     [{
       "entityType": "Customer",
       "entityTypeId": "Customer",
@@ -455,7 +461,7 @@ const matchings = {"data":
         }
       ]
     }],
-"status": 200
+  "status": 200
 };
 
 const entityTypes = [
@@ -511,10 +517,10 @@ const flows = {
         "stepNumber": "3",
       },
       {
-        "stepNumber":	"4",
+        "stepNumber": "4",
         "stepId": "match-customer-matching",
         "stepName": "match-customer",
-        "stepDefinitionType":	"matching",
+        "stepDefinitionType": "matching",
         "targetEntityType": "http://example.org/Customer-0.0.1/Customer"
       },
       {
@@ -587,16 +593,21 @@ const jobRespSuccess = {
     "duration": "PT0.702S",
     "stepResponses": {
       "2": {
+        "stepNumber": "2",
         "flowName": "testFlow",
+        "status": "completed step 2",
         "stepName": "Mapping1",
         "stepDefinitionName": "entity-services-mapping",
         "success": "true",
         "stepDefinitionType": "mapping",
         "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+        "stepStartTime": "2020-04-24T14:04:01.019819-07:00",
         "stepEndTime": "2020-04-24T14:05:01.019819-07:00",
       },
       "4": {
+        "stepNumber": "4",
         "flowName": "testFlow",
+        "status": "completed step 4",
         "stepName": "match-customer",
         "success": "true",
         "stepDefinitionName": "default-matching",
@@ -604,7 +615,9 @@ const jobRespSuccess = {
         "stepEndTime": "2020-04-24T14:05:01.019819-07:00",
       },
       "5": {
+        "stepNumber": "5",
         "flowName": "testFlow",
+        "status": "completed step 5",
         "stepName": "merge-customer",
         "success": "true",
         "stepDefinitionName": "default-merging",
@@ -612,7 +625,9 @@ const jobRespSuccess = {
         "stepEndTime": "2020-04-24T14:05:01.019819-07:00",
       },
       "6": {
+        "stepNumber": "6",
         "flowName": "testFlow",
+        "status": "completed step 6",
         "stepName": "master-customer",
         "success": "true",
         "stepDefinitionName": "default-mastering",
@@ -620,6 +635,8 @@ const jobRespSuccess = {
         "stepEndTime": "2020-04-24T14:05:01.019819-07:00",
       },
       "7": {
+        "stepNumber": "7",
+        "status": "completed step 7",
         "flowName": "testFlow",
         "stepName": "Ingestion1",
         "success": "true",
@@ -631,6 +648,76 @@ const jobRespSuccess = {
       }
     },
     "jobStatus": "finished"
+  },
+  "status": 200
+};
+
+const jobRespRunning = {
+  "data": {
+    "jobId": "8c69c502-e682-46ce-a0f4-6506ab527ab8",
+    "flow": "testFlow",
+    "user": "dh-dev",
+    "lastAttemptedStep": "4",
+    "lastCompletedStep": "3",
+    "jobStatus": "running step 4",
+    "timeStarted": "2022-04-22T15:48:12.3871971-03:00",
+    "stepResponses": {
+      "1": {
+        "flowName": "personJSON",
+        "stepName": "loadPersonJSON",
+        "stepDefinitionName": "default-ingestion",
+        "stepDefinitionType": "ingestion",
+        "targetDatabase": "staging",
+        "status": "completed step 1",
+        "totalEvents": "1",
+        "successfulEvents": "1",
+        "failedEvents": "0",
+        "successfulBatches": "1",
+        "failedBatches": "0",
+        "success": "true",
+        "stepStartTime": "2022-04-22T15:48:13.0313569-03:00",
+        "stepEndTime": "2022-04-22T15:48:16.4952339-03:00",
+      },
+      "2": {
+        "flowName": "personJSON",
+        "stepName": "mapPersonJSON",
+        "stepDefinitionName": "entity-services-mapping",
+        "stepDefinitionType": "mapping",
+        "targetEntityType": "http://example.org/Person-0.0.1/Person",
+        "targetDatabase": "final",
+        "status": "completed step 2",
+        "totalEvents": "15",
+        "successfulEvents": "15",
+        "failedEvents": "0",
+        "successfulBatches": "1",
+        "failedBatches": "0",
+        "success": "true",
+        "stepStartTime": "2022-04-22T15:48:16.522496-03:00",
+        "stepEndTime": "2022-04-22T15:48:18.2212434-03:00"
+      },
+      "3": {
+        "flowName": "personJSON",
+        "stepName": "generate-dictionary",
+        "stepDefinitionName": "generate-dictionary",
+        "stepDefinitionType": "custom",
+        "targetEntityType": "",
+        "targetDatabase": "final",
+        "status": "completed step 3",
+        "totalEvents": "1",
+        "successfulEvents": "0",
+        "failedEvents": "0",
+        "successfulBatches": "1",
+        "failedBatches": "0",
+        "success": "true",
+        "stepStartTime": "2022-04-22T15:48:18.7746736-03:00",
+        "stepEndTime": "2022-04-22T15:48:18.9670222-03:00"
+      },
+      "4": {
+        "stepStartTime": "2022-04-22T15:48:18.9964507-03:00",
+        "status": "running step 4"
+      }
+    },
+    "flowOrStepsUpdatedSinceRun": "false"
   },
   "status": 200
 };
@@ -683,7 +770,8 @@ const flowsXMLLatestJob = {
   "status": 200
 };
 
-const loadsXML = {"data":
+const loadsXML = {
+  "data":
     [{
       "name": "loadXML",
       "description": "",
@@ -693,31 +781,35 @@ const loadsXML = {"data":
       "inputFilePath": "/xml-test/data-sets/failedIngest",
       "lastUpdated": "2020-04-02T23:08:28.287065-07:00"
     }],
-"status": 200
+  "status": 200
 };
 
-const loadSettings = {"data":
-    {
-      "provenanceGranularityLevel": "coarse",
-      "permissions": "data-hub-operator,read,data-hub-operator,update",
-      "targetFormat": "json",
-      "targetDatabase": "data-hub-STAGING",
-      "collections": [
-        "testLoad"
-      ],
-      "additionalCollections": [],
-      "lastUpdated": "2020-05-27T12:19:02.446622-07:00"
-    },
-"status": 200
+const loadSettings = {
+  "data":
+  {
+    "provenanceGranularityLevel": "coarse",
+    "permissions": "data-hub-operator,read,data-hub-operator,update",
+    "targetFormat": "json",
+    "targetDatabase": "data-hub-STAGING",
+    "collections": [
+      "testLoad"
+    ],
+    "additionalCollections": [],
+    "lastUpdated": "2020-05-27T12:19:02.446622-07:00"
+  },
+  "status": 200
 };
 
-const customSteps = {"data": {"stepsWithEntity": [{
-  "entityType": "Customer",
-  "entityTypeId": "http://example.org/Customer-0.0.1/Customer",
-  "artifacts": [{...commonData.customData[0]}]
-}],
-"stepsWithoutEntity": [{...commonData.customData[1]}]},
-"status": 200
+const customSteps = {
+  "data": {
+    "stepsWithEntity": [{
+      "entityType": "Customer",
+      "entityTypeId": "http://example.org/Customer-0.0.1/Customer",
+      "artifacts": [{...commonData.customData[0]}]
+    }],
+    "stepsWithoutEntity": [{...commonData.customData[1]}]
+  },
+  "status": 200
 };
 
 const newStepToFlowOptions = {
@@ -768,6 +860,7 @@ const data = {
   jobRespFailedWithError: jobRespFailedWithError,
   jobRespFailed: jobRespFailed,
   jobRespSuccess: jobRespSuccess,
+  jobRespRunning: jobRespRunning,
   flowsXML: flowsXML,
   flowsXMLLatestJob: flowsXMLLatestJob,
   loadsXML: loadsXML,
