@@ -22,7 +22,7 @@ const jobs = require("/data-hub/5/impl/jobs.sjs");
 /**
  * Encapsulates a Job object and provides convenience operations for updating the object and persisting it
  * to the jobs database.
- * 
+ *
  * Note that nothing is written to the database unless either "create" or "update"
  * is invoked.
  */
@@ -52,14 +52,16 @@ class Job {
     return this.data;
   }
 
-  startStep(stepNumber) {
+  startStep(stepNumber, stepDetails) {
     const stepStatus = "running step " + stepNumber;
     hubUtils.hubTrace(consts.TRACE_FLOW, `Starting step '${stepNumber}' of job '${this.data.job.jobId}'; setting job status to '${stepStatus}'`);
     this.data.job.lastAttemptedStep = stepNumber;
     this.data.job.jobStatus = stepStatus;
     this.data.job.stepResponses[stepNumber] = {
       stepStartTime: fn.currentDateTime().add(xdmp.elapsedTime()),
-      status: stepStatus
+      status: stepStatus,
+      stepName: stepDetails ? stepDetails["name"] : undefined,
+      stepDefinitionType: stepDetails ? stepDetails["stepDefinitionType"] : undefined
     };
     return this;
   }
@@ -99,11 +101,11 @@ class Job {
   }
 
   /**
-   * 
-   * @param jobStatus 
-   * @param timeEnded 
-   * @param flowErrors {array} optional array of flow-level errors; as of 5.5, will only exist for connected steps 
-   * @returns 
+   *
+   * @param jobStatus
+   * @param timeEnded
+   * @param flowErrors {array} optional array of flow-level errors; as of 5.5, will only exist for connected steps
+   * @returns
    */
   finishJob(jobStatus, timeEnded, flowErrors) {
     hubUtils.hubTrace(consts.TRACE_FLOW, `Setting status of job '${this.data.job.jobId}' to '${jobStatus}'`);

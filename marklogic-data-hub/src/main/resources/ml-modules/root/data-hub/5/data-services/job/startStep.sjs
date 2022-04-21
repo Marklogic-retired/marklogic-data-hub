@@ -29,12 +29,7 @@ var stepNumber;
 var flowName;
 var runTimeOptions;
 
-function updateProvenance(flowName, stepNumber, jobId, runTimeOptions) {
-  const stepDetails = fn.head(hubUtils.invokeFunction(function () {
-    const fullFlow = coreLib.getFullFlow(flowName, stepNumber);
-    return fullFlow["steps"][stepNumber];
-  }, config.STAGINGDATABASE));
-
+function updateProvenance(stepDetails, jobId, runTimeOptions) {
   const latestProvenance = stepDetails["options"]["latestProvenance"] || runTimeOptions["latestProvenance"];
   if(!latestProvenance) {
     return;
@@ -66,7 +61,11 @@ function updateProvenance(flowName, stepNumber, jobId, runTimeOptions) {
   }
 }
 
+const stepDetails = fn.head(hubUtils.invokeFunction(function () {
+  const fullFlow = coreLib.getFullFlow(flowName, stepNumber);
+  return fullFlow["steps"][stepNumber];
+}, config.STAGINGDATABASE));
 
-const job = Job.getRequiredJob(jobId).startStep(stepNumber).update();
-updateProvenance(flowName, stepNumber, jobId, runTimeOptions)
+const job = Job.getRequiredJob(jobId).startStep(stepNumber, stepDetails).update();
+updateProvenance(stepDetails, jobId, runTimeOptions);
 job
