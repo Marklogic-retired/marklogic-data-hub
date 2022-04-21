@@ -41,6 +41,13 @@ function processJsonInput(input) {
     stepNumbers = [stepNumbers];
   }
 
+  if (input.content && input.content.length) {
+    input.content.forEach((item) => {
+      if (!item.value && item.uri) {
+        item.value = cts.doc(item.uri);
+      }
+    });
+  }
   return flowApi.runFlowOnContent(input.flowName, input.content, jobId, input.options, stepNumbers);
 }
 
@@ -89,7 +96,10 @@ function buildContentArray(xmlInput) {
   const contentArray = [];
   for (var content of xmlInput.xpath("/input/content")) {
     const uri = fn.head(content.xpath("uri/text()")).toString();
-    const value = fn.head(content.xpath("value/node()"));
+    let value = fn.head(content.xpath("value/node()"));
+    if (fn.empty(value)) {
+      value = cts.doc(uri);
+    }
     contentArray.push({uri, value});
   }
   return contentArray;
