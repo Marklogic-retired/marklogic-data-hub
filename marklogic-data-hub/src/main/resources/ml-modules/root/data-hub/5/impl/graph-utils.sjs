@@ -38,7 +38,17 @@ function getOrderedLabelPredicates() {
   ];
 }
 
-function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, ctsQueryCustom, limit) {
+function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predicateConceptList, ctsQueryCustom, limit) {
+  const subjectPlanConcept = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+                 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                 SELECT ?subjectIRI ?predicateIRI ?objectIRI (?objectIRI AS ?objectConcept) ?docURI WHERE {
+                        ?subjectIRI rdf:type @entityTypeIRIs;
+                        ?predicateIRI  ?objectIRI;
+                        rdfs:isDefinedBy ?docURI.
+                        FILTER EXISTS {
+                        ?subjectIRI @predicateConceptList ?objectIRI.
+                        }
+                        }`).where(ctsQuery);
   const subjectPlan = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                  SELECT ?subjectIRI ?subjectLabel ?docURI WHERE {
@@ -89,8 +99,8 @@ function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, ctsQue
                   }`).where(ctsQuery);
     fullPlan = fullPlan.union(subjectPlan.joinLeftOuter(otherEntityIRIs, joinOn).limit(limit));
   }
-
-  return fullPlan.result(null, {entityTypeIRIs, entityTypeOrConceptIRI: relatedEntityTypeIRIs.concat(getRdfConceptTypes()), labelIRI: getOrderedLabelPredicates()}).toArray();
+  fullPlan = fullPlan.union(subjectPlanConcept);
+  return fullPlan.result(null, {entityTypeIRIs, predicateConceptList, entityTypeOrConceptIRI: relatedEntityTypeIRIs.concat(getRdfConceptTypes()), labelIRI: getOrderedLabelPredicates()}).toArray();
 }
 
 function getEntityNodes(entityTypeIRI, predicateIRI, relatedTypeIRIs, limit) {
@@ -164,6 +174,19 @@ SELECT (COUNT(DISTINCT(?subjectIRI)) AS ?total)  WHERE {
   return totalCountEntityBaseEntities.result(null,{entityTypeIRIs});
 }
 
+function getConceptCounting(entityTypeIRIs, predicateConceptList, ctsQueryCustom) {
+  const totalConcepts = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+                 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                 SELECT (COUNT(DISTINCT(?objectIRI)) AS ?total) WHERE {
+                        ?subjectIRI rdf:type @entityTypeIRIs;
+                        ?predicateIRI  ?objectIRI;
+                        FILTER EXISTS {
+                        ?subjectIRI @predicateConceptList ?objectIRI.
+                        }
+                        }`).where(ctsQueryCustom);
+  return totalConcepts.result(null,{entityTypeIRIs,predicateConceptList});
+}
+
 function relatedObjHasRelationships(objectIRI, predicatesMap) {
   let hasRelationships = false;
   const objectIRIArr = objectIRI.split("/");
@@ -183,5 +206,6 @@ module.exports = {
   getEntityNodesBySubject,
   getEntityTypeIRIsCounting,
   getRelatedEntitiesCounting,
+  getConceptCounting,
   relatedObjHasRelationships
 }

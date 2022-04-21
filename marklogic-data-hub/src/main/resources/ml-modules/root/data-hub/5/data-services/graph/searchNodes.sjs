@@ -67,6 +67,7 @@ let relatedEntityTypeIds = queryObj.relatedEntityTypeIds;
 let allEntityTypeIRIs = [];
 let entityTypeIRIs = [];
 let allRelatedPredicateList = [];
+let predicateConceptList = [];
 start = start || 0;
 pageLength = pageLength || 1000;
 let hashmapPredicate = new Map();
@@ -88,13 +89,14 @@ fn.collection(entityLib.getModelCollection()).toArray().forEach(model => {
 
   if(relatedEntityTypeIds && relatedEntityTypeIds.includes(entityName)) {
     allEntityTypeIRIs.push(sem.iri(entityNameIri));
-
     const predicateList = entityLib.getPredicatesByModel(model);
     if(predicateList.length >= 1){
       hashmapPredicate.set(entityName, predicateList);
     }
   }
   if (queryObj.entityTypeIds.includes(entityName)) {
+    //get predicate from concepts
+    predicateConceptList = predicateConceptList.concat(entityLib.getConceptPredicatesByModel(model));
     if(relatedEntityTypeIds != null){
       const predicateListBaseEntities = entityLib.getPredicatesByModelAndBaseEntities(model,relatedEntityTypeIds);
       allRelatedPredicateList = allRelatedPredicateList.concat(predicateListBaseEntities);
@@ -102,6 +104,7 @@ fn.collection(entityLib.getModelCollection()).toArray().forEach(model => {
     entityTypeIRIs.push(sem.iri(entityNameIri));
   }
 });
+
 
 let ctsQuery = cts.trueQuery();
 if(queryObj.searchText !== undefined && queryObj.searchText.toString().length > 0) {
@@ -119,7 +122,7 @@ if(queryObj.searchText !== undefined && queryObj.searchText.toString().length > 
 
 const relatedEntityTypeIRIs = allEntityTypeIRIs.filter((e1) => !entityTypeIRIs.some((e2) => fn.string(e1) === fn.string(e2)));
 
-const result = graphUtils.getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, ctsQuery, pageLength);
+const result = graphUtils.getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predicateConceptList, ctsQuery, pageLength);
 
 let nodes = [];
 let edges = [];
@@ -160,7 +163,7 @@ result.map(item => {
 
   const group = item.subjectIRI.toString().substring(0, item.subjectIRI.toString().length - subjectLabel.length - 1);
   let nodeOrigin = {};
-  if (!nodes[item.subjectIRI]) {
+  if (!nodes[item.subjectIRI] && (item.objectConcept.toString().length == 0)) {
     nodeOrigin.id = item.subjectIRI;
     nodeOrigin.docUri = item.docURI;
     nodeOrigin.label = newLabel;
@@ -171,13 +174,20 @@ result.map(item => {
     nodeOrigin.count = 1;
     nodeOrigin.propertiesOnHover=resultPropertiesOnHover;
     nodes[item.subjectIRI] = nodeOrigin;
-  } else {
-    nodeOrigin = nodes[item.subjectIRI];
-    nodeOrigin.label = newLabel;
-    nodeOrigin.group = group;
-    nodeOrigin.propertiesOnHover=resultPropertiesOnHover;
-    nodeOrigin.additionalProperties = null;
-    nodes[item.subjectIRI] = nodeOrigin;
+  }else{
+    if((item.objectConcept !== undefined && item.objectConcept.toString().length > 0 && !nodes[item.objectConcept]) ){
+      let objectConceptArr = item.objectConcept.toString().split("/");
+      let conceptLabel = objectConceptArr[objectConceptArr.length - 1];
+      nodeOrigin.id = item.objectConcept;
+      nodeOrigin.docUri = item.docURI;
+      nodeOrigin.label = conceptLabel;
+      nodeOrigin.additionalProperties = null;
+      nodeOrigin.group = conceptLabel;
+      nodeOrigin.isConcept = true;
+      nodeOrigin.hasRelationships = false;
+      nodeOrigin.count = 1;
+      nodes[item.objectConcept] = nodeOrigin;
+    }
   }
 
   if (item.nodeCount && item.nodeCount >= 1) {
@@ -249,6 +259,12 @@ if (relatedEntityTypeIRIs.length) {
   let totalRelatedEntities = graphUtils.getRelatedEntitiesCounting(allRelatedPredicateList, ctsQuery);
   let totalRelated = fn.head(totalRelatedEntities).total;
   totalCount += totalRelated;
+}
+if (predicateConceptList.length) {
+  //get total Concepts
+  let totalConcepts = graphUtils.getConceptCounting(entityTypeIRIs, predicateConceptList, ctsQuery);
+  let totalConcept = fn.head(totalConcepts).total;
+  totalCount += totalConcept;
 }
 
 const totalEstimate = totalCount;

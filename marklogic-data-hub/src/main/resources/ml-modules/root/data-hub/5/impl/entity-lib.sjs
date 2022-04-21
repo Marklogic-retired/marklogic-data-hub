@@ -595,6 +595,25 @@ function getPredicatesByModel(model) {
   return predicateList;
 }
 
+function getConceptPredicatesByModel(model) {
+  const conceptPredicateList = [];
+  const entityName = model.info.title;
+  if(model.definitions[entityName] !== undefined && model.definitions[entityName].toString().length > 0) {
+    let relatedConcepts = [];
+    relatedConcepts = model.definitions[entityName].relatedConcepts;
+    if(relatedConcepts !== undefined && relatedConcepts.toString().length > 0) {
+      for(let relatedConcept in relatedConcepts){
+        let entityRelatedConcept = relatedConcepts[relatedConcept];
+        if(entityRelatedConcept["predicate"] != null){
+          conceptPredicateList.push(sem.iri(entityRelatedConcept["predicate"]));
+        }
+      }
+    }
+  }
+  return conceptPredicateList;
+}
+
+
 function getPredicatesByModelAndBaseEntities(model,relatedEntityTypeIds) {
   const predicateList = [];
   const entityName = model.info.title;
@@ -647,6 +666,7 @@ module.exports = {
   getEntityTypeId,
   getEntityTypeIdParts,
   getPredicatesByModel,
+  getConceptPredicatesByModel,
   getPredicatesByModelAndBaseEntities,
   getLatestJobData,
   getModelCollection,
