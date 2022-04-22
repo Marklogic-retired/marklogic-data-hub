@@ -471,9 +471,9 @@ const EntityTiles = (props) => {
               </Card.Header>
               <Accordion.Body>
                 <Tabs defaultActiveKey={`map`} onSelect={(eventKey) => updateView(index, eventKey, entityType)} className={styles.entityTabs}>
-                  {canReadMapping ? <Tab id={`${entityType}-Map`} data-testid={`${entityType}-Map`} eventKey={`map`} key={`map-${entityType}`}  title="Map" tabClassName={`curateTab`}/>: null}
-                  {props.canReadMatchMerge ? <Tab  id={`${entityType}-Match`} data-testid={`${entityType}-Match`} eventKey="match" key={`match-${entityType}`}  title="Match" tabClassName={`curateTab`}/>: null}
-                  {props.canReadMatchMerge ? <Tab id={`${entityType}-Merge`} data-testid={`${entityType}-Merge`} eventKey="merge" key={`merge-${entityType}`}   title="Merge" tabClassName={`curateTab`}/>: null}
+                  {canReadMapping ? <Tab id={`${entityType}-Map`} data-testid={`${entityType}-Map`} eventKey={`map`} key={`map-${entityType}`}  title="Mapping" tabClassName={`curateTab`}/>: null}
+                  {props.canReadMatchMerge ? <Tab  id={`${entityType}-Match`} data-testid={`${entityType}-Match`} eventKey="match" key={`match-${entityType}`}  title="Matching" tabClassName={`curateTab`}/>: null}
+                  {props.canReadMatchMerge ? <Tab id={`${entityType}-Merge`} data-testid={`${entityType}-Merge`} eventKey="merge" key={`merge-${entityType}`}   title="Merging" tabClassName={`curateTab`}/>: null}
                   {props.canReadCustom ? <Tab id={`${entityType}-Custom`} data-testid={`${entityType}-Custom`} eventKey="custom" key={`custom-${entityType}`}   title="Custom" tabClassName={`curateTab`}/>: null}
                 </Tabs>
                 {outputCards(index, entityType, mappingArtifacts.find((artifact) => artifact.entityTypeId ===  entityModels[entityType].entityTypeId), matchingArtifacts.find((artifact) => artifact.entityTypeId === entityModels[entityType].entityTypeId), mergingArtifacts.find((artifact) => artifact.entityTypeId === entityModels[entityType].entityTypeId), customArtifactsWithEntity.find((artifact) => artifact.entityTypeId === entityModels[entityType].entityTypeId))}

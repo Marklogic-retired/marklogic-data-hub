@@ -155,7 +155,7 @@ const Tiles: React.FC<Props> = (props) => {
           </>)}
         </div>
         <div className={styles.controls}>
-          {showControl("menu") ? (
+          {showControl("menu") && viewId !== "monitor" ? (
             savedQueries.length ? ( // only display if there are saved queries
               <>
                 <div>

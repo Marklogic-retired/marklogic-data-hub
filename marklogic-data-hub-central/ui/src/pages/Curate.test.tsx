@@ -45,9 +45,9 @@ describe("Curate component", () => {
     expect(axiosMock.get).toBeCalledWith("/api/steps/mapping");
     fireEvent.click(getByText("Customer"));
     //Mapping tab should show. Match/Merge should not
-    expect(getByText("Map")).toBeInTheDocument();
-    expect(queryByText("Match")).not.toBeInTheDocument();
-    expect(queryByText("Merge")).not.toBeInTheDocument();
+    expect(getByText("Mapping")).toBeInTheDocument();
+    expect(queryByText("Matching")).not.toBeInTheDocument();
+    expect(queryByText("Merging")).not.toBeInTheDocument();
 
     expect(getByText("Mapping3")).toBeInTheDocument();
 
@@ -79,9 +79,9 @@ describe("Curate component", () => {
     expect(axiosMock.get).toBeCalledWith("/api/steps/mapping");
     fireEvent.click(getByText("Customer"));
     //Mapping tab should show. Match/Merge should not
-    expect(getByText("Map")).toBeInTheDocument();
-    expect(queryByText("Match")).not.toBeInTheDocument();
-    expect(queryByText("Merge")).not.toBeInTheDocument();
+    expect(getByText("Mapping")).toBeInTheDocument();
+    expect(queryByText("Matching")).not.toBeInTheDocument();
+    expect(queryByText("Merging")).not.toBeInTheDocument();
 
     expect(getByText("Mapping1")).toBeInTheDocument();
 
