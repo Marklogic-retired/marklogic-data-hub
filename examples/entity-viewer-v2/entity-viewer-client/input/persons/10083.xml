@@ -3,210 +3,291 @@
   <personId>10083</personId>
   <nameGroup>
     <givenname>
-      <value>Victoir</value>
+      <value>Brandy</value>
     </givenname>
     <surname>
-      <value>Roddick</value>
+      <value>Blaney</value>
     </surname>
     <fullname>
-      <classification>S</classification>
+      <classification>U</classification>
       <restricted>true</restricted>
-      <value>Roddick Victoir</value>
+      <value>Blaney Brandy</value>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2020-08-16T13:54:23Z</ts>
+        <name>USA Today</name>
+        <ts>2011-06-12T13:02:35Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>gbonnette0@answers.com</value>
-      <classification>C</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>bricht1@mediafire.com</value>
-      <classification>C</classification>
+      <value>bwitcombe0@hp.com</value>
+      <classification>U</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>187-885-7188</phone>
+  <phone>330-415-2661</phone>
   <ssn>
-    <value>439-37-4047</value>
-    <restricted>true</restricted>
+    <value>638-97-4784</value>
+    <classification>(S)</classification>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
       <source>
         <name>Wall Street Journal</name>
-        <ts>2013-10-24T00:31:18Z</ts>
-        <uploadedBy>jccomini0</uploadedBy>
+        <ts>2012-09-27T08:55:00Z</ts>
+        <uploadedBy>wgeorghiou0</uploadedBy>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
       <source>
-        <name>New York Times</name>
-        <ts>2014-08-09T02:05:49Z</ts>
-        <uploadedBy>gmaltman0</uploadedBy>
+        <name>Los Angeles Times</name>
+        <ts>2012-09-10T07:44:50Z</ts>
+        <uploadedBy>fludewig0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
+      <source>
+        <name>USA Today</name>
+        <ts>2016-03-08T12:10:51Z</ts>
+        <uploadedBy>kantognoni0</uploadedBy>
       </source>
     </image>
     <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
       <source>
-        <name>USA Today</name>
-        <ts>2015-11-17T06:31:24Z</ts>
-        <uploadedBy/>
+        <name>Chicago Tribune</name>
+        <ts>2019-08-20T23:15:47Z</ts>
+        <uploadedBy>mprandini0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>0 Schurz Plaza</street>
-      <city>Bakersfield</city>
-      <state>CA</state>
-      <postal>93305</postal>
+      <street>0540 Old Gate Circle</street>
+      <city>Washington</city>
+      <state>DC</state>
+      <postal>20051</postal>
       <country>United States</country>
-      <latitude>35.3855</latitude>
-      <longitude>-118.986</longitude>
+      <latitude>38.8933</latitude>
+      <longitude>-77.0146</longitude>
     </address>
     <address>
-      <street>968 Schmedeman Road</street>
-      <city>Billings</city>
-      <state>MT</state>
-      <postal>59105</postal>
+      <street>5 Hagan Point</street>
+      <city>Memphis</city>
+      <state>TN</state>
+      <postal>38168</postal>
       <country>United States</country>
-      <latitude>45.9497</latitude>
-      <longitude>-108.599</longitude>
+      <latitude>35.2017</latitude>
+      <longitude>-89.9715</longitude>
     </address>
     <address>
-      <street>8997 Bashford Road</street>
-      <city>Jacksonville</city>
-      <state>FL</state>
-      <postal>32236</postal>
+      <street>53 Nelson Center</street>
+      <city>Columbia</city>
+      <state>SC</state>
+      <postal>29203</postal>
       <country>United States</country>
-      <latitude>30.3449</latitude>
-      <longitude>-81.6831</longitude>
+      <latitude>34.0635</latitude>
+      <longitude>-81.0265</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Canada</country>
-      <name>Dominican College of Philosophy and Theology</name>
-      <city>Saint-Jérôme</city>
-      <state>QC</state>
-      <postal>J7Z</postal>
-      <latitude>45.7738831</latitude>
-      <longitude>-73.9771044</longitude>
+      <country>United States</country>
+      <name>Tufts University</name>
+      <city>Las Vegas</city>
+      <state>NV</state>
+      <postal>89105</postal>
+      <latitude>35.99</latitude>
+      <longitude>-115.09</longitude>
+      <source>
+        <name>USA Today</name>
+        <ts>2014-05-25T14:57:08Z</ts>
+      </source>
+      <source>
+        <name>New York Times</name>
+        <ts>2014-01-05T04:14:39Z</ts>
+      </source>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2018-03-31T06:11:34Z</ts>
+      </source>
     </school>
     <school>
       <country>United States</country>
-      <name>Moody Bible Institute</name>
-      <city>Mobile</city>
-      <state>AL</state>
-      <postal>36641</postal>
-      <latitude>30.69</latitude>
-      <longitude>-88.06</longitude>
+      <name>The Naropa Institute</name>
+      <city>Orlando</city>
+      <state>FL</state>
+      <postal>32825</postal>
+      <latitude>28.5417016</latitude>
+      <longitude>-81.2408689</longitude>
+      <source>
+        <name>USA Today</name>
+        <ts>2012-02-02T13:31:21Z</ts>
+      </source>
+      <source>
+        <name>New York Times</name>
+        <ts>2019-03-14T12:23:35Z</ts>
+      </source>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2018-12-27T06:16:28Z</ts>
+      </source>
     </school>
   </schools>
-  <status>Inactive</status>
+  <status>Active</status>
   <sources>
     <source>
-      <name>Los Angeles Times</name>
-      <ts>2021-02-13T07:51:36Z</ts>
+      <name>USA Today</name>
+      <ts>2012-02-02T01:22:27Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>Los Angeles Times</name>
-      <ts>2014-07-15T09:39:53Z</ts>
+      <name>USA Today</name>
+      <ts>2012-02-02T16:25:34Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>Wall Street Journal</name>
-      <ts>2015-02-07T05:38:43Z</ts>
+      <name>New York Times</name>
+      <ts>2011-06-16T06:52:15Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10009.xml</id>
-      <predicate>livesWith</predicate>
+      <id>/person/10026.xml</id>
+      <predicate>worksWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Gulliver Gail</fullname>
-      <city>Austin</city>
-      <state>TX</state>
+      <fullname>Vaughton Aluin</fullname>
+      <city>Chicago</city>
+      <state>IL</state>
     </relation>
     <relation>
-      <id>/person/10029.xml</id>
+      <id>/person/10050.xml</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
+      <fullname>Cucinotta Paige</fullname>
+      <city>Montgomery</city>
+      <state>AL</state>
+    </relation>
+    <relation>
+      <id>/person/10046.xml</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
+      <fullname>McCuish Dasya</fullname>
+      <city>Hialeah</city>
+      <state>FL</state>
+    </relation>
+    <relation>
+      <id>/person/10056.xml</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
-      <fullname>Hengoed Edee</fullname>
-      <city>Gary</city>
-      <state>IN</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
+      <fullname>Littlemore Joline</fullname>
+      <city>Houston</city>
+      <state>TX</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-14T12:19:41Z</ts>
-    <user>vroddick2a</user>
+    <ts>2022-01-08T10:55:19Z</ts>
+    <user>bblaney2a</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-20T04:31:05Z</ts>
-    <user>vroddick2a</user>
+    <ts>2022-01-09T05:56:39Z</ts>
+    <user>bblaney2a</user>
   </lastUpdated>
   <socials/>
   <memberships>
     <membership>
+      <list>list6</list>
+      <important>true</important>
+      <ts>2022-02-25</ts>
+    </membership>
+    <membership>
+      <list>list12</list>
+      <important>true</important>
+      <ts>2022-02-08</ts>
+    </membership>
+    <membership>
       <list>list2</list>
       <important>true</important>
-      <ts>2021-11-06</ts>
+      <ts>2022-02-15</ts>
     </membership>
     <membership>
-      <list>list4</list>
+      <list>list12</list>
       <important>false</important>
-      <ts>2021-11-22</ts>
-    </membership>
-    <membership>
-      <list>list5</list>
-      <important>false</important>
-      <ts>2021-12-17</ts>
-    </membership>
-    <membership>
-      <list>list7</list>
-      <important>true</important>
-      <ts>2021-09-25</ts>
+      <ts>2022-02-14</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>https://hibu.com</url>
+      <url>https://amazon.co.uk</url>
       <icon>faEye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>http://odnoklassniki.ru</url>
+      <url>https://newsvine.com</url>
       <icon>faMedal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>http://typepad.com</url>
+      <url>http://cnn.com</url>
       <icon>faComments</icon>
     </link>
   </links>
-<actions>
-  <action>
-    <url>http://oaic.gov.au</url>
-    <icon>faCog</icon>
-  </action>
-  <action>
-    <url>https://multiply.com</url>
-    <icon>faCode</icon>
-  </action>
-  <action>
-    <url>http://addthis.com</url>
-    <icon>faSync</icon>
-  </action>
-</actions>
+  <activities>
+    <activity>
+      <predicate>startedAt</predicate>
+      <place>Babbleopia</place>
+      <source>
+        <name>USA Today</name>
+        <ts>2010-04-27T17:45:52Z</ts>
+        <createdBy>Moss Porrett</createdBy>
+        <approvedBy>Shelby Sterre</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>transferredTo</predicate>
+      <place>Gabvine</place>
+      <source>
+        <name>New York Times</name>
+        <ts>2013-07-27T13:40:59Z</ts>
+        <createdBy>Dominick Hector</createdBy>
+        <approvedBy>Emelita Strand</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>transferredTo</predicate>
+      <place>Fivebridge</place>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2018-11-24T19:51:01Z</ts>
+        <createdBy>Cordell Dominico</createdBy>
+        <approvedBy>Adora Francesco</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>startedAt</predicate>
+      <place>Jabbertype</place>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2016-12-15T17:35:44Z</ts>
+        <createdBy>Anet Sabater</createdBy>
+        <approvedBy>Eldin Munnery</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>movedTo</predicate>
+      <place>Divavu</place>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2015-08-09T18:29:24Z</ts>
+        <createdBy>Ludovico Murdoch</createdBy>
+        <approvedBy>Neils Menham</approvedBy>
+      </source>
+    </activity>
+  </activities>
 </person>

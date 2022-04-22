@@ -3,174 +3,226 @@
   <personId>10062</personId>
   <nameGroup>
     <givenname>
-      <value>Ivy</value>
+      <value>Teirtza</value>
     </givenname>
     <surname>
-      <value>Raison</value>
+      <value>Oldknowe</value>
     </surname>
     <fullname>
-      <classification>U</classification>
-      <restricted>false</restricted>
-      <value>Raison Ivy</value>
+      <classification>C</classification>
+      <restricted>true</restricted>
+      <value>Oldknowe Teirtza</value>
       <source>
         <name>Los Angeles Times</name>
-        <ts>2010-07-23T18:40:17Z</ts>
-      </source>
-      <source>
-        <name>Chicago Tribune</name>
-        <ts>2015-11-30T19:36:37Z</ts>
+        <ts>2011-07-20T11:06:49Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>oponcet0@harvard.edu</value>
-      <classification>S</classification>
+      <value>previtt0@google.nl</value>
+      <classification>C</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>850-704-8435</phone>
+  <phone>463-859-2579</phone>
   <ssn>
-    <value>618-20-1014</value>
-    <restricted>true</restricted>
+    <value>737-45-9781</value>
+    <classification>(S)</classification>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
-      <source>
-        <name>New York Times</name>
-        <ts>2016-10-02T18:46:50Z</ts>
-        <uploadedBy>jraiker0</uploadedBy>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
-      <source>
-        <name>New York Times</name>
-        <ts>2020-05-30T20:23:53Z</ts>
-        <uploadedBy>sbarks0</uploadedBy>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
       <source>
         <name>Washington Post</name>
-        <ts>2017-01-04T20:56:02Z</ts>
-        <uploadedBy>lgaler0</uploadedBy>
+        <ts>2014-12-23T06:30:32Z</ts>
+        <uploadedBy>awhittleton0</uploadedBy>
       </source>
     </image>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
       <source>
-        <name>New York Times</name>
-        <ts>2016-12-27T18:29:38Z</ts>
-        <uploadedBy>dsharple0</uploadedBy>
+        <name>Chicago Tribune</name>
+        <ts>2021-06-06T08:49:19Z</ts>
+        <uploadedBy>fcornau0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2014-06-11T15:18:54Z</ts>
+        <uploadedBy>bheadon0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>140 Katie Junction</street>
-      <city>Charlotte</city>
-      <state>NC</state>
-      <postal>28242</postal>
+      <street>148 Evergreen Alley</street>
+      <city>Seattle</city>
+      <state>WA</state>
+      <postal>98127</postal>
       <country>United States</country>
-      <latitude>35.26</latitude>
-      <longitude>-80.8042</longitude>
+      <latitude>47.6063</latitude>
+      <longitude>-122.3308</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>United States</country>
-      <name>St. Francis College, Brooklyn Heights</name>
-      <city>Harrisburg</city>
-      <state>PA</state>
-      <postal>17121</postal>
-      <latitude>40.2684396</latitude>
-      <longitude>-76.8832658</longitude>
+      <country>Canada</country>
+      <name>University of Toronto, Mississauga</name>
+      <city>Watrous</city>
+      <state>SK</state>
+      <postal>L9T</postal>
+      <latitude>51.66677</latitude>
+      <longitude>-105.46788</longitude>
+      <source>
+        <name>USA Today</name>
+        <ts>2014-01-14T16:19:30Z</ts>
+      </source>
+      <source>
+        <name>New York Times</name>
+        <ts>2017-04-17T14:08:54Z</ts>
+      </source>
     </school>
     <school>
-      <country>United States</country>
-      <name>Concordia University, Irvine</name>
-      <city>El Paso</city>
-      <state>TX</state>
-      <postal>88514</postal>
-      <latitude>31.77</latitude>
-      <longitude>-106.43</longitude>
+      <country>United Kingdom</country>
+      <name>University of Cambridge</name>
+      <city>London</city>
+      <state>ENG</state>
+      <postal>WC1B</postal>
+      <latitude>51.5195403</latitude>
+      <longitude>-0.1255489</longitude>
+      <source>
+        <name>USA Today</name>
+        <ts>2013-09-26T22:54:06Z</ts>
+      </source>
     </school>
   </schools>
   <status>Inactive</status>
   <sources>
     <source>
-      <name>New York Times</name>
-      <ts>2018-04-02T15:41:05Z</ts>
+      <name>Washington Post</name>
+      <ts>2020-11-19T19:52:57Z</ts>
+    </source>
+  </sources>
+  <sources>
+    <source>
+      <name>Wall Street Journal</name>
+      <ts>2018-09-18T00:32:31Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10046.xml</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Varren Goddart</fullname>
-      <city>Richmond</city>
-      <state>VA</state>
-    </relation>
-    <relation>
-      <id>/person/10010.xml</id>
+      <id>/person/10007.xml</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
-      <fullname>Grinaway Melvin</fullname>
-      <city>Corona</city>
-      <state>CA</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Rossin Linette</fullname>
+      <city>Honolulu</city>
+      <state>HI</state>
     </relation>
     <relation>
-      <id>/person/10069.xml</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Tapping Olav</fullname>
-      <city>Lynchburg</city>
-      <state>VA</state>
+      <id>/person/10034.xml</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
+      <fullname>Casillis My</fullname>
+      <city>Grand Rapids</city>
+      <state>MI</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-21T03:43:34Z</ts>
-    <user>iraison1p</user>
+    <ts>2022-01-27T10:46:38Z</ts>
+    <user>toldknowe1p</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-05T20:09:15Z</ts>
-    <user>iraison1p</user>
+    <ts>2022-01-24T16:32:57Z</ts>
+    <user>toldknowe1p</user>
   </lastUpdated>
-  <socials/>
+  <socials>
+    <social>
+      <site>linkedin</site>
+      <handle>rmcskeagan0</handle>
+      <address>http://quantcast.com/ut.jsp</address>
+    </social>
+    <social>
+      <site>twitter</site>
+      <handle/>
+      <address>http://epa.gov/proin/risus/praesent/lectus/vestibulum/quam.jpg</address>
+    </social>
+    <social>
+      <site>linkedin</site>
+      <handle>hjurgensen2</handle>
+      <address>http://google.ru/luctus/et/ultrices.html</address>
+    </social>
+  </socials>
   <memberships/>
   <links>
     <link>
       <label>Quick View</label>
-      <url>http://cdbaby.com</url>
+      <url>https://bizjournals.com</url>
       <icon>faEye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>https://last.fm</url>
+      <url>https://dedecms.com</url>
       <icon>faMedal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>http://themeforest.net</url>
+      <url>https://furl.net</url>
       <icon>faComments</icon>
     </link>
   </links>
-<actions>
-  <action>
-    <url>http://oaic.gov.au</url>
-    <icon>faCog</icon>
-  </action>
-  <action>
-    <url>https://multiply.com</url>
-    <icon>faCode</icon>
-  </action>
-  <action>
-    <url>http://addthis.com</url>
-    <icon>faSync</icon>
-  </action>
-</actions>
+  <activities>
+    <activity>
+      <predicate>transferredTo</predicate>
+      <place>Ainyx</place>
+      <source>
+        <name>USA Today</name>
+        <ts>2016-05-17T08:04:21Z</ts>
+        <createdBy>Nana Bickersteth</createdBy>
+        <approvedBy>Cash Saurat</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>movedTo</predicate>
+      <place>Feedbug</place>
+      <source>
+        <name>New York Times</name>
+        <ts>2015-03-30T01:27:06Z</ts>
+        <createdBy>Ardra Wrixon</createdBy>
+        <approvedBy>Britta Tremblay</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>movedTo</predicate>
+      <place>Feednation</place>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2011-09-02T05:07:48Z</ts>
+        <createdBy>Alphard Eymer</createdBy>
+        <approvedBy>Bertram Gosnall</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>transferredTo</predicate>
+      <place>Wordify</place>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2012-01-16T00:56:31Z</ts>
+        <createdBy>Audra Bartosik</createdBy>
+        <approvedBy>Quinn Brandi</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>transferredTo</predicate>
+      <place>Linklinks</place>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2018-05-17T16:43:57Z</ts>
+        <createdBy>Costanza Stockford</createdBy>
+        <approvedBy>Kingston Brandino</approvedBy>
+      </source>
+    </activity>
+  </activities>
 </person>

@@ -1,0 +1,66 @@
+.timeline {
+  .title {
+    font-size: 20px;
+  }
+  .popover-row {
+    width: 360px;
+    font-size: 14px;
+    .popover-label, .popover-value {
+      display: inline-block;
+    }
+    .popover-label {
+      width: 120px;
+      padding-right: 4px!important;
+    }
+  }
+  .vis-group {
+    height: 3vh;
+  }
+  .vis-tooltip {
+    background-color: white !important;
+    padding: 10px !important;
+    border: 1px solid rgba(0,0,0,.2) !important;
+  }
+  .vis-item {
+    background-color: mediumslateblue !important;
+    color: #f0f0f0 !important;
+    opacity: 0.8 !important;
+    cursor: pointer;
+  }
+
+  .vis-item .vis-item-content {
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  .vis-item.vis-box {
+    border-style: none !important;
+    border-radius: 8px !important;
+  }
+
+  .vis-item.vis-dot {
+    background-color: #5B69AF;
+    border-color: #5B69Af;
+  }
+
+  .vis-timeline.vis-bottom {
+    visibility: visible !important;
+  }
+
+  .itemValue {
+    display: inline-block;
+    background-color: white;
+    border-color: #5B69AF;
+    width: 22px;
+    height: 18px;
+    border-radius: 12px;
+    position: relative;
+    color: black;
+    font-size: 12px;
+    font-weight: bold;
+    margin-left: 11px;
+  }
+}

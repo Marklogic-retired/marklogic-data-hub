@@ -3,229 +3,261 @@
   <personId>10069</personId>
   <nameGroup>
     <givenname>
-      <value>Olav</value>
+      <value>Eudora</value>
     </givenname>
     <surname>
-      <value>Tapping</value>
+      <value>Waymont</value>
     </surname>
     <fullname>
-      <classification>U</classification>
-      <restricted>false</restricted>
-      <value>Tapping Olav</value>
+      <classification>C</classification>
+      <restricted>true</restricted>
+      <value>Waymont Eudora</value>
       <source>
-        <name>Washington Post</name>
-        <ts>2011-02-08T21:33:34Z</ts>
-      </source>
-      <source>
-        <name>Los Angeles Times</name>
-        <ts>2016-12-12T17:35:04Z</ts>
-      </source>
-      <source>
-        <name>Wall Street Journal</name>
-        <ts>2018-09-16T20:29:55Z</ts>
+        <name>Chicago Tribune</name>
+        <ts>2011-10-06T03:16:28Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>daskham0@si.edu</value>
-      <classification>C</classification>
+      <value>jhartup0@npr.org</value>
+      <classification>U</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>keburah1@miitbeian.gov.cn</value>
-      <classification>S</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>coshields2@noaa.gov</value>
+      <value>wteaz1@w3.org</value>
       <classification>C</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>770-467-4396</phone>
+  <phone>951-561-0392</phone>
   <ssn>
-    <value>140-41-6637</value>
-    <restricted>true</restricted>
+    <value>158-36-9158</value>
+    <classification>(S)</classification>
   </ssn>
   <images>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2016-07-31T12:45:13Z</ts>
+        <uploadedBy>agallear0</uploadedBy>
+      </source>
+    </image>
+    <image>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</url>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2017-03-19T21:21:47Z</ts>
+        <uploadedBy>dyushachkov0</uploadedBy>
+      </source>
+    </image>
     <image>
       <url>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</url>
       <source>
         <name>Los Angeles Times</name>
-        <ts>2015-03-30T15:53:07Z</ts>
-        <uploadedBy/>
-      </source>
-    </image>
-    <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</url>
-      <source>
-        <name>Wall Street Journal</name>
-        <ts>2013-02-08T01:17:37Z</ts>
-        <uploadedBy/>
+        <ts>2020-06-28T17:38:27Z</ts>
+        <uploadedBy>cbradnam0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>16404 Anhalt Point</street>
-      <city>Lynchburg</city>
-      <state>VA</state>
-      <postal>24515</postal>
+      <street>585 Birchwood Hill</street>
+      <city>Fresno</city>
+      <state>CA</state>
+      <postal>93786</postal>
       <country>United States</country>
-      <latitude>37.4009</latitude>
-      <longitude>-79.1785</longitude>
+      <latitude>36.7464</latitude>
+      <longitude>-119.6397</longitude>
     </address>
     <address>
-      <street>9128 Gina Hill</street>
-      <city>Springfield</city>
-      <state>MO</state>
-      <postal>65810</postal>
+      <street>3341 Florence Drive</street>
+      <city>Loretto</city>
+      <state>MN</state>
+      <postal>55598</postal>
       <country>United States</country>
-      <latitude>37.1136</latitude>
-      <longitude>-93.2896</longitude>
+      <latitude>45.0159</latitude>
+      <longitude>-93.4719</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>United States</country>
-      <name>Miles College</name>
-      <city>Louisville</city>
-      <state>KY</state>
-      <postal>40280</postal>
-      <latitude>38.2473</latitude>
-      <longitude>-85.68525</longitude>
+      <country>United Kingdom</country>
+      <name>Napier University</name>
+      <city>Manchester</city>
+      <state>ENG</state>
+      <postal>M14</postal>
+      <latitude>53.4508777</latitude>
+      <longitude>-2.2294364</longitude>
+      <source>
+        <name>USA Today</name>
+        <ts>2021-07-30T23:27:52Z</ts>
+      </source>
+      <source>
+        <name>New York Times</name>
+        <ts>2017-01-09T20:23:50Z</ts>
+      </source>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2015-07-05T12:22:03Z</ts>
+      </source>
     </school>
   </schools>
   <status>Inactive</status>
   <sources>
     <source>
-      <name>Washington Post</name>
-      <ts>2015-08-20T04:25:13Z</ts>
+      <name>USA Today</name>
+      <ts>2014-07-12T09:06:06Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>New York Times</name>
-      <ts>2016-03-01T11:42:01Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>New York Times</name>
-      <ts>2014-03-23T20:55:36Z</ts>
+      <name>USA Today</name>
+      <ts>2018-02-20T08:37:38Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10046.xml</id>
+      <id>/person/10054.xml</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
+      <fullname>Alders Maryl</fullname>
+      <city>Flushing</city>
+      <state>NY</state>
+    </relation>
+    <relation>
+      <id>/person/10071.xml</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Roaf Tripp</fullname>
+      <city>Oklahoma City</city>
+      <state>OK</state>
+    </relation>
+    <relation>
+      <id>/person/10023.xml</id>
       <predicate>relatedTo</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Varren Goddart</fullname>
-      <city>Richmond</city>
-      <state>VA</state>
+      <fullname>Chater Carmelina</fullname>
+      <city>Augusta</city>
+      <state>GA</state>
     </relation>
     <relation>
-      <id>/person/10042.xml</id>
+      <id>/person/10027.xml</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Di Batista Eustacia</fullname>
-      <city>Little Rock</city>
-      <state>AR</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Kornyshev Andie</fullname>
+      <city>Charleston</city>
+      <state>WV</state>
     </relation>
     <relation>
-      <id>/person/10091.xml</id>
+      <id>/person/10011.xml</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
-      <fullname>Furzer Rafa</fullname>
-      <city>Chula Vista</city>
-      <state>CA</state>
-    </relation>
-    <relation>
-      <id>/person/10090.xml</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
-      <fullname>Tomkin Horton</fullname>
-      <city>Fort Lauderdale</city>
-      <state>FL</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Langstrath Skell</fullname>
+      <city>Houston</city>
+      <state>TX</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-02T18:14:27Z</ts>
-    <user>otapping1w</user>
+    <ts>2022-02-14T11:41:00Z</ts>
+    <user>ewaymont1w</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-22T15:27:12Z</ts>
-    <user>otapping1w</user>
+    <ts>2022-01-24T02:31:09Z</ts>
+    <user>ewaymont1w</user>
   </lastUpdated>
   <socials>
     <social>
-      <site>linkedin</site>
-      <handle>aaulds0</handle>
-      <address>https://europa.eu/montes.jsp</address>
+      <site>twitter</site>
+      <handle>kallworthy0</handle>
+      <address>https://hhs.gov/accumsan.xml</address>
     </social>
     <social>
-      <site>linkedin</site>
-      <handle>ggasnell1</handle>
-      <address>http://webs.com/nascetur/ridiculus.js</address>
+      <site>facebook</site>
+      <handle>dgreatland1</handle>
+      <address>http://studiopress.com/in/faucibus/orci.jpg</address>
     </social>
   </socials>
   <memberships>
     <membership>
+      <list>list6</list>
+      <important>true</important>
+      <ts>2022-02-12</ts>
+    </membership>
+    <membership>
       <list>list7</list>
       <important>true</important>
-      <ts>2021-11-29</ts>
+      <ts>2022-02-21</ts>
     </membership>
     <membership>
-      <list>list12</list>
+      <list>list4</list>
       <important>true</important>
-      <ts>2021-11-25</ts>
+      <ts>2022-01-02</ts>
     </membership>
     <membership>
-      <list>list3</list>
-      <important>false</important>
-      <ts>2021-06-03</ts>
-    </membership>
-    <membership>
-      <list>list8</list>
+      <list>list6</list>
       <important>true</important>
-      <ts>2021-12-11</ts>
-    </membership>
-    <membership>
-      <list>list3</list>
-      <important>false</important>
-      <ts>2021-09-22</ts>
+      <ts>2022-01-04</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>https://about.me</url>
+      <url>http://java.com</url>
       <icon>faEye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>https://1und1.de</url>
+      <url>https://nbcnews.com</url>
       <icon>faMedal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>https://chron.com</url>
+      <url>https://angelfire.com</url>
       <icon>faComments</icon>
     </link>
   </links>
-<actions>
-  <action>
-    <url>http://oaic.gov.au</url>
-    <icon>faCog</icon>
-  </action>
-  <action>
-    <url>https://multiply.com</url>
-    <icon>faCode</icon>
-  </action>
-  <action>
-    <url>http://addthis.com</url>
-    <icon>faSync</icon>
-  </action>
-</actions>
+  <activities>
+    <activity>
+      <predicate>movedTo</predicate>
+      <place>Leenti</place>
+      <source>
+        <name>USA Today</name>
+        <ts>2020-06-26T04:53:26Z</ts>
+        <createdBy>Samuele Haysman</createdBy>
+        <approvedBy>Ellynn Meriet</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>startedAt</predicate>
+      <place>Twitterlist</place>
+      <source>
+        <name>New York Times</name>
+        <ts>2019-07-12T19:25:41Z</ts>
+        <createdBy>Salvatore Levison</createdBy>
+        <approvedBy>Brandea Brislane</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>movedTo</predicate>
+      <place>Photospace</place>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2014-05-09T09:45:51Z</ts>
+        <createdBy>Andy Skeeles</createdBy>
+        <approvedBy>Roscoe Rettie</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>transferredTo</predicate>
+      <place>Eazzy</place>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2014-04-10T14:54:36Z</ts>
+        <createdBy>Barbra Ciciari</createdBy>
+        <approvedBy>Tory Basini-Gazzi</approvedBy>
+      </source>
+    </activity>
+  </activities>
 </person>
