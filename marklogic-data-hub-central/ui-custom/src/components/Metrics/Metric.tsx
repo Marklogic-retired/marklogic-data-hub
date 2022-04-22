@@ -10,17 +10,16 @@ type Props = {
 
 const Metric: React.FC<Props> = (props) => {
 
-  function display(res, key) {
-    let val = getValByPath(res, key);
-    return _.isNumber(val) ? val.toLocaleString() : val;
-  }
+  let val = _.get(props.data, props.config.path, null);
+  let valFmt = _.isNumber(val) ? val.toLocaleString() : val;
 
   return (
     <div className="metric" style={{borderColor: props.config.color}}>
-      <div className="value">{display(props.data, props.config.path)}</div>
+      <div className="value">{valFmt}</div>
       <div className="title">{props.config.title}</div>
     </div>
   );
+
 };
 
 export default Metric;

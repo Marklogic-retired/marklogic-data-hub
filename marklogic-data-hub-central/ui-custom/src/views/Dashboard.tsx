@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
 import { DetailContext } from "../store/DetailContext";
+import { MetricsContext } from "../store/MetricsContext";
 import { SearchContext } from "../store/SearchContext";
 import { UserContext } from "../store/UserContext";
 import Metrics from "../components/Metrics/Metrics";
@@ -22,32 +23,16 @@ const COMPONENTS = {
   WhatsNew: WhatsNew,
 };
 
-// TODO pull data from endpoint
-const whatsNewData = [
-  {
-    label: "New",
-    value: 15567000,
-    color: "#3CDBC0"
-  },
-  {
-    label: "Changed",
-    value: 6040000,
-    color: "#09ABDE"
-  },
-  {
-    label: "Submitted",
-    value: 4777000,
-    color: "#09EFEF"
-  }
-];
-
 const Dashboard: React.FC<Props> = (props) => {
 
   const detailContext = useContext(DetailContext);
+  const metricsContext = useContext(MetricsContext);
   const searchContext = useContext(SearchContext);
   const userContext = useContext(UserContext);
 
   const [config, setConfig] = useState<any>(null);
+  const [metrics, setMetrics] = useState<any>([]);
+  const [whatsNew, setWhatsNew] = useState<any>([]);
   const [recentSearches, setRecentSearches] = useState<any>([]);
   const [recentRecords, setRecentRecords] = useState<any>({});
   const [summary, setSummary] = useState<any>({});
@@ -65,7 +50,13 @@ const Dashboard: React.FC<Props> = (props) => {
 
   useEffect(() => {
     setConfig(userContext.config);
+    userContext.config?.dashboard?.metrics && metricsContext.handleGetMetrics();
+    userContext.config?.dashboard?.whatsNew && metricsContext.handleGetWhatsNew();
   }, [userContext.config]);
+
+  useEffect(() => {
+    setMetrics(metricsContext.metrics);
+  }, [metricsContext.metrics]);
 
   useEffect(() => {
     setRecentSearches(searchContext.recentSearches);
@@ -74,6 +65,10 @@ const Dashboard: React.FC<Props> = (props) => {
   useEffect(() => {
     setRecentRecords(detailContext.recentRecords);
   }, [detailContext.recentRecords]);
+
+  useEffect(() => {
+    setWhatsNew(metricsContext.whatsNew);
+  }, [metricsContext.whatsNew]);
 
   return (
     <div className="dashboard">
@@ -87,7 +82,7 @@ const Dashboard: React.FC<Props> = (props) => {
             {config?.dashboard?.metrics &&
               React.createElement(
                 COMPONENTS[config.dashboard.metrics.component],
-                { data: summary.metrics, config: config.dashboard.metrics.config }, null
+                { data: metrics, config: config.dashboard.metrics.config }, null
             )}
 
         </div>
@@ -130,12 +125,12 @@ const Dashboard: React.FC<Props> = (props) => {
                 {config?.dashboard?.whatsNew &&
                   React.createElement(
                     COMPONENTS[config.dashboard.whatsNew.component],
-                    { data: whatsNewData, config: config.dashboard.whatsNew.config }, null
+                    { data: whatsNew, config: config.dashboard.whatsNew.config }, null
                 )}
               </Section>
             }
 
-            {config?.dashboard?.recentRecords && !detailContext.loading ? 
+            {config?.dashboard?.recentRecords ? !detailContext.loading ? 
               <Section title="Recently Visited" config={{
                 "mainStyle": {
                   "maxHeight": "500px"
@@ -147,7 +142,7 @@ const Dashboard: React.FC<Props> = (props) => {
                       { data: recentRecords, config: config.dashboard.recentRecords.config }, null
                   )}
               </Section>
-            : <Loading />}
+            : <Loading /> : null}
 
           </div>
 

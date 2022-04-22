@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { MetricsContext } from "../../store/MetricsContext";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Table from "react-bootstrap/Table";
@@ -25,11 +26,28 @@ type Props = {
  */
 const WhatsNew: React.FC<Props> = (props) => {
 
-  const [selected, setSelected] = useState<any>("This Week");
+  const metricsContext = useContext(MetricsContext);
+
+  let selectedInit: string = "";
+
+  let menuItems: any = [];
+  if (props.config && props.config.menu && props.config.menu.length > 0) {
+    menuItems = props.config.menu;
+    let found = menuItems.find(item => item.default === true);
+    selectedInit = found ? found.label : menuItems[0].label;
+  }
+
+  const [selected, setSelected] = useState<any>(selectedInit);
+
+  // Get menu value (1440) for a selected menu label ("Last Week")
+  const getMenuVal = sel => {
+    let found = menuItems.find(item => item.label === sel);
+    return found ? found.period : "";
+  }
 
   const handleSelect = (e) => {
-    console.log(e);
     setSelected(e);
+    metricsContext.handleGetWhatsNew(getMenuVal(e));
   };
 
   const options = {
@@ -107,25 +125,28 @@ const WhatsNew: React.FC<Props> = (props) => {
     ]
   };
 
-  // Set options.series.data to create gauge parts
-  let adjustment = 0;
-  let total = _.sum(_.map(props.data, "value"))
-  options.series[0]["data"] = [];
-  // Reversing puts first one at bottom, then clockwise
-  props.data.slice().reverse().forEach((d, i) => {
-    let normalized = 100 * (d.value/total);
-    let chartVal = 100 - adjustment;
-    adjustment = adjustment + normalized;
-    options.series[0]["data"].push({
-            color: d.color,
-            radius: "100%",
-            innerRadius: "65%",
-            y: chartVal
-    });
-  })
+  if (!_.isEmpty(props.data)) {
+    // Set options.series.data to create gauge parts
+    let adjustment = 0;
+    let total = _.sum(Object.values(props.data))
+    options.series[0]["data"] = [];
+    // Reversing puts first one at bottom, then clockwise
+    props.config.items.reverse().forEach((item, i) => {
+      let val = _.get(props.data, item.path, null);
+      let normalized = 100 * (val/total);
+      let chartVal = 100 - adjustment;
+      adjustment = adjustment + normalized;
+      options.series[0]["data"].push({
+              color: item.color,
+              radius: "100%",
+              innerRadius: "65%",
+              y: chartVal
+      });
+    })
+  }
 
   return (
-    <div className="new">
+    <div className="whatsNew">
       
         <div className="chart" style={{zIndex: 1}}>
           <HighchartsReact
@@ -143,7 +164,7 @@ const WhatsNew: React.FC<Props> = (props) => {
               id="whatsNewDropdown"
               onSelect={handleSelect}
             >
-              {props.config.items.map((n, i) => {
+              {props.config.menu.map((n, i) => {
                 return <Dropdown.Item key={"item-" + i} eventKey={n.label}>{n.label}</Dropdown.Item>
               })}
             </DropdownButton>
@@ -152,11 +173,11 @@ const WhatsNew: React.FC<Props> = (props) => {
           <div className="legend">
             <Table>
               <tbody>
-                {props.data.map((d, i) => {
+                {props.config.items.map((item, i) => {
                   return <tr key={"row-" + i}>
-                    <td className="bar"><div style={{"backgroundColor": d.color}}></div></td>
-                    <td className="label">{d.label}</td>
-                    <td className="value">{d.value.toLocaleString()}</td>
+                    <td className="bar"><div style={{"backgroundColor": item.color}}></div></td>
+                    <td className="label">{item.label}</td>
+                    <td className="value">{parseInt(_.get(props.data, item.path, null)).toLocaleString()}</td>
                   </tr>
                 })}
               </tbody>
