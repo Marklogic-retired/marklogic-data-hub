@@ -478,7 +478,7 @@ const RunToolTips = {
   exploreStepData: 'The Explore Data feature only shows what documents were written by this step. The content by those ducments may or be not be overwritten by another subsequently by another step or process.',
 
   /* Check load step in popover */
-  loadStepRunFlow: 'Only one Loading step can be included in a flow',
+  loadStepRunFlow: 'Only one Loading step can be included in a flow.',
   selectAStep: 'You cannot run a flow. Select at least one step to run a flow.',
   runEmptyFlow: 'There are no steps in the flow. You must add steps to the flow.',
   flowEdit: 'Edit Flow',
