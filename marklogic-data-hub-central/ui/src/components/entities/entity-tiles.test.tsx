@@ -62,7 +62,7 @@ describe("Entity Tiles component", () => {
     });
     //await fireEvent.click(getByText('Customer'));
     // Check for Mapping tab
-    expect(queryAllByText("Map")).toHaveLength(0);
+    expect(queryAllByText("Mapping")).toHaveLength(0);
   });
 
   test("Map tab does appear with readMapping authority", async () => {
@@ -97,9 +97,9 @@ describe("Entity Tiles component", () => {
     expect(queryAllByText("No Entity Type")).toHaveLength(0);
     await fireEvent.click(getByText("Customer"));
     // Check for Mapping tab
-    expect(getByText("Map")).toBeInTheDocument();
+    expect(getByText("Mapping")).toBeInTheDocument();
     // Check for Matching tab
-    expect(queryAllByText("Match")).toHaveLength(0);
+    expect(queryAllByText("Matching")).toHaveLength(0);
     expect(queryAllByText("Custom")).toHaveLength(0);
   });
 
@@ -141,11 +141,11 @@ describe("Entity Tiles component", () => {
 
     await fireEvent.click(customerPanel);
     // Check for Mapping tab
-    expect(getByText("Map")).toBeInTheDocument();
+    expect(getByText("Mapping")).toBeInTheDocument();
     await fireEvent.click(getByText("Custom"));
     expect(getByLabelText("customEntityTitle")).toBeInTheDocument();
     // Check for Matching tab
-    expect(queryAllByText("Match")).toHaveLength(0);
+    expect(queryAllByText("Matching")).toHaveLength(0);
     await fireEvent.click(customerPanel);
 
     await fireEvent.click(NoEntityTypePanel);
