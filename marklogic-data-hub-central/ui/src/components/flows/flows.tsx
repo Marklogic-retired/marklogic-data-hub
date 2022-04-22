@@ -725,6 +725,11 @@ const Flows: React.FC<Props> = ({
     return titleTypeStep;
   };
 
+  const countLetters = (stepName) => {
+    let letterCount = stepName?.replace(/\s+/g, "").length;
+    return letterCount > 35;
+  };
+
   const flowMenu = (flowName) => {
     return (
       <>
@@ -748,13 +753,17 @@ const Flows: React.FC<Props> = ({
               <div className={styles.titleTypeStep}>{handleTitleSteps(step.stepDefinitionType)}</div>
               <div id={index} className={styles.divItem}>
                 <HCTooltip text={step.stepDefinitionType.toLowerCase() === "ingestion" ? controlDisabled(step, flowName) ? RunToolTips.loadStepRunFlow : "" : ""} placement="left" id={`tooltip`}>
-                  <div>
+                  <div className="divCheckBoxStep">
                     <HCCheckbox
+                      tooltip={step.stepName}
+                      placementTooltip={"top"}
+                      label={countLetters(step.stepName) ? step.stepName : undefined}
                       id={step.stepName}
                       value={step.stepName}
                       handleClick={(event) => onCheckboxChange(event, step.stepName, step.stepNumber, step.stepDefinitionType, flowName, step.stepId, step.sourceFormat)}
                       checked={selectedStepOptions[flowName + "_" + step.stepName + "_" + step.stepNumber] ? true : false}
                       disabled={step.stepDefinitionType.toLowerCase() === "ingestion" ? controlDisabled(step, flowName) : false}
+                      removeMargin={true}
                     >{step.stepName}
                     </HCCheckbox></div></HCTooltip>
               </div>
