@@ -258,7 +258,7 @@ describe("Property Modal Component", () => {
 
     userEvent.type(getByLabelText("input-name"), "123-name");
     userEvent.click(getByText("Add"));
-    expect(getByText(ModelingTooltips.nameRegex)).toBeInTheDocument();
+    expect(getByText(ModelingTooltips.nameEntityProperty)).toBeInTheDocument();
     userEvent.clear(getByLabelText("input-name"));
 
     userEvent.type(getByLabelText("input-name"), "name2");

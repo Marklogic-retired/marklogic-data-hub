@@ -140,7 +140,7 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, openJobRespons
       formatter: (stepName, response) => {
         let stepType = response.stepDefinitionType === "ingestion" ? "loading" : response.stepDefinitionType;
         return (<div data-testid={`${response.stepName}-${stepType}-type`} id={`${response.stepName}-${stepType}-type`} className={styles.stepResponse}>
-          {stepType?.toLowerCase()}
+          {stepType[0].toUpperCase() + stepType.substring(1)}
         </div>);
       }
     },

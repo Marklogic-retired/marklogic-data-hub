@@ -379,7 +379,7 @@ const PropertyModal: React.FC<Props> = (props) => {
   const onSubmit = (event) => {
     event.preventDefault();
     if (!NAME_REGEX.test(name)) {
-      setErrorMessage(ModelingTooltips.nameRegex);
+      setErrorMessage(ModelingTooltips.nameEntityProperty);
     } else {
       if (props.editPropertyOptions.isEdit) {
         let editEntityPropertyNamesArray = entityPropertyNamesArray.filter(propertyName => propertyName !== props.editPropertyOptions.name);
@@ -902,7 +902,7 @@ const PropertyModal: React.FC<Props> = (props) => {
         )}
 
         <Row className={"mb-3"}>
-          <FormLabel column lg={3}>{"Name:"}</FormLabel>
+          <FormLabel column lg={3}>{"Name:"}<span className={styles.asterisk}>*</span></FormLabel>
           <Col>
             <Row>
               <Col className={errorMessage ? "d-flex has-error" : "d-flex"}>

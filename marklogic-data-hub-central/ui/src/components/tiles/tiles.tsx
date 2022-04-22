@@ -203,7 +203,7 @@ const Tiles: React.FC<Props> = (props) => {
           </>)}
         </div>
         <div className={styles.controls}>
-          {showControl("menu") ? (
+          {showControl("menu") && viewId !== "monitor" ? (
             <>
               <div>
                 {exploreSettingsMenu}
