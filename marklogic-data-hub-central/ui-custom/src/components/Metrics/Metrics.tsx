@@ -4,8 +4,8 @@ import "./Metrics.scss";
 import _ from "lodash";
 
 type Props = {
-  data: any;
-  config: any
+  data?: any;
+  config?: any
 };
 
 /**
@@ -30,11 +30,9 @@ const Metrics: React.FC<Props> = (props) => {
 
   return (
     <div className="metrics">
-      {_.isArray(props.config.items) && props.config.items.map((m, i) => {
-        return (
+      {_.isArray(props.config.items) && props.config.items.map((m, i) =>
           <Metric key={"metric-" + i} data={props.data} config={m} />
-        );
-      })}
+      )}
     </div>
   );
 };

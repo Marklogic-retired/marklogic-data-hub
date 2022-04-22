@@ -6,7 +6,9 @@
     "detailConstraint": "personId",
     "recordsEndpoint": "/api/explore/getRecords",
     "recentEndpoint": "/api/explore/recentlyVisited",
-    "recentStorage": "local"
+    "recentStorage": "local",
+    "metricsEndpoint": "/api/explore/metrics",
+    "whatsNewEndpoint": "/api/explore/metrics"
   },
 
   "header": {
@@ -66,22 +68,30 @@
         "items": [
           {
             "title": "New entities this week",
-            "path": "entities.value",
+            "type": "entities",
+            "path": "entities",
+            "period": 10080,
             "color": "#70d8c1"
           },
           {
             "title": "Sources added this week",
-            "path": "sources.value",
+            "type": "sources",
+            "path": "sources",
+            "period": 10080,
             "color": "#f5d881"
           },
           {
             "title": "Tasks created today",
-            "path": "tasks.value",
+            "type": "tasks",
+            "path": "tasks",
+            "period": 1440,
             "color": "#ffbd8e"
           },
           {
             "title": "Activities unassigned",
-            "path": "activities.value",
+            "type": "activities",
+            "path": "activities",
+            "period": 0,
             "color": "#ff984e"
           }
         ]
@@ -111,13 +121,37 @@
       "config": {
         "items": [
           {
-            "label": "Today"
+            "label": "New",
+            "type": "new",
+            "path": "new",
+            "color": "#3CDBC0"
           },
           {
-            "label": "This Week"
+            "label": "Changed",
+            "type": "changed",
+            "path": "changed",
+            "color": "#09ABDE"
           },
           {
-            "label": "This Month"
+            "label": "Submitted",
+            "type": "submitted",
+            "path": "submitted",
+            "color": "#09EFEF"
+          }
+        ],
+        "menu": [
+          {
+            "label": "Today",
+            "period": 1440
+          },
+          {
+            "label": "This Week",
+            "period": 10080,
+            "default": true
+          },
+          {
+            "label": "This Month",
+            "period": 43200
           }
         ]
       }

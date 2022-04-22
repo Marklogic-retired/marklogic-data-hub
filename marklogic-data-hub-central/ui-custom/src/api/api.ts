@@ -151,7 +151,7 @@ export const saveRecent = async (endpoint, uri, userid) => {
     }
   } catch (error) {
     let message = error;
-    console.error("Error: getConfig", message);
+    console.error("Error: saveRecent", message);
   }
 };
 
@@ -168,7 +168,7 @@ export const getRecent = async (endpoint, userid) => {
     }
   } catch (error) {
     let message = error;
-    console.error("Error: getConfig", message);
+    console.error("Error: getRecent", message);
   }
 };
 
@@ -188,6 +188,24 @@ export const getRecords = async (endpoint, uris, userid) => {
     }
   } catch (error) {
     let message = error;
-    console.error("Error: getConfig", message);
+    console.error("Error: getRecords", message);
+  }
+};
+
+export const getMetrics = async (endpoint, opts, userid) => { 
+  let config = {
+    headers: {
+      userid: userid ? userid : null
+    }
+  }
+  let body = opts;
+  try {
+    const response = await axios.post(endpoint, body, config);
+    if (response && response.status === 200) {
+      return response;
+    }
+  } catch (error) {
+    let message = error;
+    console.error("Error: getWhatsNew", message);
   }
 };

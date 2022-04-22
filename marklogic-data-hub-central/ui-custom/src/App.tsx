@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { UserContext } from "./store/UserContext";
+import MetricsProvider from "./store/MetricsContext";
 import SearchProvider from "./store/SearchContext";
 import DetailProvider from "./store/DetailContext";
 import Dashboard from "./views/Dashboard";
@@ -21,18 +22,20 @@ const App: React.FC<Props> = (props) => {
 
   return (
     <Router>
-      <SearchProvider>
-        <DetailProvider>
-          <Header />
-          <main>
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/search" element={<Search />} />
-              <Route path="/detail" element={<Detail />} />
-            </Routes>
-          </main>
-        </DetailProvider>
-      </SearchProvider>
+      <MetricsProvider>
+        <SearchProvider>
+          <DetailProvider>
+            <Header />
+            <main>
+              <Routes>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/search" element={<Search />} />
+                <Route path="/detail" element={<Detail />} />
+              </Routes>
+            </main>
+          </DetailProvider>
+        </SearchProvider>
+      </MetricsProvider>
     </Router>
   );
 
