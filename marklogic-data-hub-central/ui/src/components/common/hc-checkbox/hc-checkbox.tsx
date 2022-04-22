@@ -14,11 +14,12 @@ interface Props {
   disabled?: boolean;
   cursorDisabled?: boolean;
   placementTooltip?: any;
+  removeMargin?: boolean;
 }
 
 const HCCheckbox: React.FC<Props> = (props) => {
-  const {id, tooltip, handleClick, value, label, checked, dataTestId, ariaLabel, children, disabled, cursorDisabled, placementTooltip} = props;
-  const checkLabel = <FormCheck.Label style={{"marginLeft": 5, "color": "#333333"}}>{label}</FormCheck.Label>;
+  const {id, tooltip, handleClick, value, label, checked, dataTestId, ariaLabel, children, disabled, cursorDisabled, placementTooltip, removeMargin} = props;
+  const checkLabel = <FormCheck.Label style={{"marginLeft": removeMargin ? 0 : 5, "color": "#333333"}}>{label}</FormCheck.Label>;
 
   const getLabel = () => {
     if (tooltip) {

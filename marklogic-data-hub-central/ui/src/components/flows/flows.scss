@@ -13,14 +13,18 @@
     border: 1px solid #e0e0e0;
     border-radius: 4px;
     background-color: transparent;
-    &:hover{
+
+    &:hover {
         border: 1px solid $primary;
     }
-    &:active, &:focus{
+
+    &:active,
+    &:focus {
         border: 1px solid $primary;
         color: $info;
     }
-    button:hover{
+
+    button:hover {
         color: $info;
     }
 }
@@ -50,4 +54,15 @@
             overflow-y: auto;
         }
     }
+}
+
+.divCheckBoxStep label {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block !important;
+}
+
+.divCheckBoxStep input {
+    margin-right: 6px;
 }
