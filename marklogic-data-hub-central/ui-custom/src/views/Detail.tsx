@@ -4,6 +4,7 @@ import {UserContext} from "../store/UserContext";
 import {DetailContext} from "../store/DetailContext";
 import Loading from "../components/Loading/Loading";
 import Occupations from "../components/Occupations/Occupations";
+import Timeline from "../components/Timeline/Timeline";
 import Relationships from "../components/Relationships/Relationships";
 import DataTableValue from "../components/DataTableValue/DataTableValue";
 import DataTableMultiValue from "../components/DataTableMultiValue/DataTableMultiValue";
@@ -35,7 +36,8 @@ const COMPONENTS = {
   ImageGallery: ImageGallery,
   ImageGalleryMulti: ImageGalleryMulti,
   Membership: Membership,
-  LinkList: LinkList
+  LinkList: LinkList,
+  Timeline: Timeline
 };
 
 const Detail: React.FC<Props> = (props) => {
@@ -70,7 +72,8 @@ const Detail: React.FC<Props> = (props) => {
           membership: false,
           info: false,
           relationships: false,
-          imageGallery: false
+          imageGallery: false,
+          timeline: false
         }
       );
     } else {
@@ -78,7 +81,8 @@ const Detail: React.FC<Props> = (props) => {
         membership: true,
         info: true,
         relationships: true,
-        imageGallery: true
+        imageGallery: true,
+        timeline: true
       });
     }
     setExpand(!expand);
@@ -253,7 +257,22 @@ const Detail: React.FC<Props> = (props) => {
 
               </div>
             </div>
-
+              {config?.detail?.timeline && <div className="row">
+                  <div className="col-12">
+                      <Section
+                          title="Timeline"
+                          data-test="timelineSection"
+                          collapsible={true}
+                          expand={expandIds.timeline}
+                          onExpand={() => {handleExpandIdsClick('timeline', true)}}
+                          onCollapse={() => {handleExpandIdsClick('timeline', false)}}>
+                          {React.createElement(
+                              COMPONENTS[config.detail.timeline.component],
+                              {config: config.detail.timeline.config, data: detailContext.detail}, null
+                          )}
+                      </Section>
+                  </div>
+              </div>}
           </div>
 
         </div>

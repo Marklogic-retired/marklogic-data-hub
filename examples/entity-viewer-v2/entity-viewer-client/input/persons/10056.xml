@@ -3,190 +3,221 @@
   <personId>10056</personId>
   <nameGroup>
     <givenname>
-      <value>Milly</value>
+      <value>Joline</value>
     </givenname>
     <surname>
-      <value>Aikman</value>
+      <value>Littlemore</value>
     </surname>
     <fullname>
       <classification>U</classification>
       <restricted>true</restricted>
-      <value>Aikman Milly</value>
+      <value>Littlemore Joline</value>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2018-05-20T19:04:42Z</ts>
+      </source>
+      <source>
+        <name>USA Today</name>
+        <ts>2013-08-13T04:09:11Z</ts>
+      </source>
       <source>
         <name>Los Angeles Times</name>
-        <ts>2010-10-26T11:48:22Z</ts>
+        <ts>2020-04-30T03:12:36Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>gkier0@usnews.com</value>
+      <value>ihaskins0@bbc.co.uk</value>
       <classification>C</classification>
       <restricted>false</restricted>
     </email>
-    <email>
-      <value>anickoll1@google.co.jp</value>
-      <classification>S</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>mcristofolo2@163.com</value>
-      <classification>S</classification>
-      <restricted>false</restricted>
-    </email>
   </emails>
-  <phone>131-853-8877</phone>
+  <phone>576-765-5882</phone>
   <ssn>
-    <value>489-11-5253</value>
-    <restricted>true</restricted>
+    <value>196-10-8252</value>
+    <classification>(S)</classification>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</url>
       <source>
-        <name>Los Angeles Times</name>
-        <ts>2021-03-10T14:45:30Z</ts>
-        <uploadedBy/>
+        <name>USA Today</name>
+        <ts>2020-03-13T11:00:45Z</ts>
+        <uploadedBy>benterlein0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>9520 Mifflin Junction</street>
-      <city>Pittsburgh</city>
-      <state>PA</state>
-      <postal>15286</postal>
+      <street>35 Pierstorff Crossing</street>
+      <city>Houston</city>
+      <state>TX</state>
+      <postal>77299</postal>
       <country>United States</country>
-      <latitude>40.4344</latitude>
-      <longitude>-80.0248</longitude>
+      <latitude>29.834</latitude>
+      <longitude>-95.4342</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Canada</country>
-      <name>Mount Saint Vincent University</name>
-      <city>Cochrane</city>
-      <state>AB</state>
-      <postal>T4C</postal>
-      <latitude>51.1909883</latitude>
-      <longitude>-114.4678603</longitude>
+      <country>United States</country>
+      <name>Chicago State University</name>
+      <city>Erie</city>
+      <state>PA</state>
+      <postal>16534</postal>
+      <latitude>42.1214396</latitude>
+      <longitude>-80.0852698</longitude>
+      <source>
+        <name>USA Today</name>
+        <ts>2019-06-05T00:32:04Z</ts>
+      </source>
+      <source>
+        <name>New York Times</name>
+        <ts>2021-11-24T12:03:37Z</ts>
+      </source>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2017-07-14T05:55:38Z</ts>
+      </source>
     </school>
     <school>
-      <country>Canada</country>
-      <name>Centennial College</name>
-      <city>Cabano</city>
-      <state>QC</state>
-      <postal>T9H</postal>
-      <latitude>47.68065</latitude>
-      <longitude>-68.8781</longitude>
+      <country>United States</country>
+      <name>College of Idaho</name>
+      <city>Jackson</city>
+      <state>MS</state>
+      <postal>39282</postal>
+      <latitude>32.2539326</latitude>
+      <longitude>-90.2481337</longitude>
+      <source>
+        <name>USA Today</name>
+        <ts>2012-04-24T16:45:23Z</ts>
+      </source>
+      <source>
+        <name>New York Times</name>
+        <ts>2021-04-17T14:28:41Z</ts>
+      </source>
     </school>
   </schools>
   <status>Active</status>
   <sources>
     <source>
       <name>Washington Post</name>
-      <ts>2011-01-31T00:08:56Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>USA Today</name>
-      <ts>2012-10-16T02:37:49Z</ts>
+      <ts>2020-09-27T23:01:05Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10078.xml</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
-      <fullname>Parsley Ronda</fullname>
-      <city>Fresno</city>
-      <state>CA</state>
-    </relation>
-    <relation>
-      <id>/person/10016.xml</id>
+      <id>/person/10002.xml</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
-      <fullname>Handford Stanley</fullname>
-      <city>Milwaukee</city>
-      <state>WI</state>
-    </relation>
-    <relation>
-      <id>/person/10038.xml</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
-      <fullname>Learmonth Florette</fullname>
-      <city>New York City</city>
-      <state>NY</state>
-    </relation>
-    <relation>
-      <id>/person/10067.xml</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
-      <fullname>Demcak Tomkin</fullname>
-      <city>Terre Haute</city>
-      <state>IN</state>
-    </relation>
-    <relation>
-      <id>/person/10021.xml</id>
-      <predicate>livesWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Heineke Shanna</fullname>
-      <city>Shreveport</city>
-      <state>LA</state>
+      <fullname>Shore Barny</fullname>
+      <city>Pittsburgh</city>
+      <state>PA</state>
+    </relation>
+    <relation>
+      <id>/person/10088.xml</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
+      <fullname>Deluca Lane</fullname>
+      <city>Nashville</city>
+      <state>TN</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-14T20:32:27Z</ts>
-    <user>maikman1j</user>
+    <ts>2022-02-09T20:43:30Z</ts>
+    <user>jlittlemore1j</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-26T12:47:55Z</ts>
-    <user>maikman1j</user>
+    <ts>2022-01-06T17:14:56Z</ts>
+    <user>jlittlemore1j</user>
   </lastUpdated>
   <socials>
     <social>
       <site>linkedin</site>
-      <handle>pperutto0</handle>
-      <address>https://aboutads.info/in/purus/eu/magna/vulputate/luctus/cum.png</address>
+      <handle>mhairs0</handle>
+      <address>https://tripod.com/interdum/eu/tincidunt/in/leo.js</address>
+    </social>
+    <social>
+      <site>facebook</site>
+      <handle>drourke1</handle>
+      <address>https://imgur.com/tortor/id/nulla.json</address>
     </social>
   </socials>
   <memberships>
     <membership>
-      <list>list12</list>
+      <list>list8</list>
+      <important>false</important>
+      <ts>2022-01-22</ts>
+    </membership>
+    <membership>
+      <list>list1</list>
       <important>true</important>
-      <ts>2022-02-27</ts>
+      <ts>2022-02-14</ts>
+    </membership>
+    <membership>
+      <list>list4</list>
+      <important>false</important>
+      <ts>2022-02-02</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>http://si.edu</url>
+      <url>http://about.com</url>
       <icon>faEye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>https://uol.com.br</url>
+      <url>http://icio.us</url>
       <icon>faMedal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>http://yellowpages.com</url>
+      <url>http://blogspot.com</url>
       <icon>faComments</icon>
     </link>
   </links>
-<actions>
-  <action>
-    <url>http://oaic.gov.au</url>
-    <icon>faCog</icon>
-  </action>
-  <action>
-    <url>https://multiply.com</url>
-    <icon>faCode</icon>
-  </action>
-  <action>
-    <url>http://addthis.com</url>
-    <icon>faSync</icon>
-  </action>
-</actions>
+  <activities>
+    <activity>
+      <predicate>endedAt</predicate>
+      <place>Livefish</place>
+      <source>
+        <name>USA Today</name>
+        <ts>2013-02-02T18:16:11Z</ts>
+        <createdBy>Garrett Ernshaw</createdBy>
+        <approvedBy>Fulvia Fleetham</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>endedAt</predicate>
+      <place>Oloo</place>
+      <source>
+        <name>New York Times</name>
+        <ts>2021-09-05T06:14:26Z</ts>
+        <createdBy>Clari Tomaszek</createdBy>
+        <approvedBy>Harris Nibloe</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>endedAt</predicate>
+      <place>Edgeclub</place>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2019-03-17T12:03:52Z</ts>
+        <createdBy>Lynn Budleigh</createdBy>
+        <approvedBy>Niven Lysaght</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>endedAt</predicate>
+      <place>Gigabox</place>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2010-09-04T22:11:37Z</ts>
+        <createdBy>Anitra Stichall</createdBy>
+        <approvedBy>Blakeley Haysey</approvedBy>
+      </source>
+    </activity>
+  </activities>
 </person>

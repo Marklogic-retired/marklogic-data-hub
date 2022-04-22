@@ -8,6 +8,7 @@ type Props = {
   data?: any;
   style?: any;
   className?: any;
+  type?: string;
 };
 
 /**
@@ -44,7 +45,7 @@ const DateTime: React.FC<Props> = (props) => {
 
     return (
         <span className={dateTimeClassName ? dateTimeClassName : "DateTime"} style={dateTimeStyle}>
-            {formattedDateTime}
+            {props.type === "timelineTooltip" ? <strong>&emsp;{formattedDateTime}</strong> : formattedDateTime}
         </span>
     );
 };

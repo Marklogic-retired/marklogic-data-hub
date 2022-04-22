@@ -3,175 +3,234 @@
   <personId>10091</personId>
   <nameGroup>
     <givenname>
-      <value>Rafa</value>
+      <value>Michelle</value>
     </givenname>
     <surname>
-      <value>Furzer</value>
+      <value>Upjohn</value>
     </surname>
     <fullname>
-      <classification>U</classification>
+      <classification>S</classification>
       <restricted>true</restricted>
-      <value>Furzer Rafa</value>
+      <value>Upjohn Michelle</value>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2016-02-05T06:16:25Z</ts>
+        <name>New York Times</name>
+        <ts>2016-11-21T10:13:46Z</ts>
+      </source>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2011-12-16T00:22:45Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>fbiasioli0@joomla.org</value>
-      <classification>U</classification>
-      <restricted>false</restricted>
-    </email>
-    <email>
-      <value>bbutlin1@businessweek.com</value>
+      <value>jcockcroft0@usnews.com</value>
       <classification>S</classification>
       <restricted>false</restricted>
     </email>
-    <email>
-      <value>cpol2@stumbleupon.com</value>
-      <classification>U</classification>
-      <restricted>false</restricted>
-    </email>
   </emails>
-  <phone>731-951-4527</phone>
+  <phone>256-581-7331</phone>
   <ssn>
-    <value>185-50-1123</value>
-    <restricted>true</restricted>
+    <value>305-23-0799</value>
+    <classification>(S)</classification>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
       <source>
-        <name>Washington Post</name>
-        <ts>2019-07-05T03:58:59Z</ts>
-        <uploadedBy>ymitchener0</uploadedBy>
+        <name>Chicago Tribune</name>
+        <ts>2013-09-05T23:27:22Z</ts>
+        <uploadedBy>twethered0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>6336 Carberry Lane</street>
-      <city>Chula Vista</city>
-      <state>CA</state>
-      <postal>91913</postal>
+      <street>06 Evergreen Avenue</street>
+      <city>Hartford</city>
+      <state>CT</state>
+      <postal>06145</postal>
       <country>United States</country>
-      <latitude>32.6513</latitude>
-      <longitude>-116.9852</longitude>
+      <latitude>41.7918</latitude>
+      <longitude>-72.7188</longitude>
     </address>
     <address>
-      <street>63 Northport Hill</street>
-      <city>Terre Haute</city>
-      <state>IN</state>
-      <postal>47805</postal>
+      <street>717 Comanche Court</street>
+      <city>Austin</city>
+      <state>TX</state>
+      <postal>78726</postal>
       <country>United States</country>
-      <latitude>39.5327</latitude>
-      <longitude>-87.3255</longitude>
-    </address>
-    <address>
-      <street>2753 Northridge Trail</street>
-      <city>Denver</city>
-      <state>CO</state>
-      <postal>80249</postal>
-      <country>United States</country>
-      <latitude>39.7783</latitude>
-      <longitude>-104.7556</longitude>
+      <latitude>30.43</latitude>
+      <longitude>-97.8326</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>United States</country>
-      <name>Minot State University</name>
-      <city>Odessa</city>
-      <state>TX</state>
-      <postal>79764</postal>
-      <latitude>31.8840886</latitude>
-      <longitude>-102.4953899</longitude>
+      <country>Canada</country>
+      <name>Selkirk College</name>
+      <city>Pembroke</city>
+      <state>ON</state>
+      <postal>K8B</postal>
+      <latitude>45.805566</latitude>
+      <longitude>-77.0941047</longitude>
+      <source>
+        <name>USA Today</name>
+        <ts>2018-02-09T00:41:27Z</ts>
+      </source>
+      <source>
+        <name>New York Times</name>
+        <ts>2021-10-15T05:23:46Z</ts>
+      </source>
+    </school>
+    <school>
+      <country>Canada</country>
+      <name>Ontario College of Art and Design</name>
+      <city>Peterborough</city>
+      <state>ON</state>
+      <postal>K9H</postal>
+      <latitude>44.330811</latitude>
+      <longitude>-78.3216329</longitude>
+      <source>
+        <name>USA Today</name>
+        <ts>2013-01-31T20:21:46Z</ts>
+      </source>
+      <source>
+        <name>New York Times</name>
+        <ts>2017-11-18T23:21:51Z</ts>
+      </source>
     </school>
   </schools>
-  <status>Active</status>
+  <status>Inactive</status>
   <sources>
     <source>
-      <name>Los Angeles Times</name>
-      <ts>2021-04-13T09:55:50Z</ts>
+      <name>Washington Post</name>
+      <ts>2018-07-01T00:54:41Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>Los Angeles Times</name>
-      <ts>2021-12-26T11:04:02Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>Wall Street Journal</name>
-      <ts>2021-10-29T18:13:50Z</ts>
+      <name>Chicago Tribune</name>
+      <ts>2011-02-20T13:19:12Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10001.xml</id>
+      <id>/person/10053.xml</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Tubritt Brigit</fullname>
-      <city>Saginaw</city>
-      <state>MI</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
+      <fullname>Garthshore Giavani</fullname>
+      <city>Cincinnati</city>
+      <state>OH</state>
     </relation>
     <relation>
-      <id>/person/10090.xml</id>
+      <id>/person/10027.xml</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
-      <fullname>Tomkin Horton</fullname>
-      <city>Fort Lauderdale</city>
-      <state>FL</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Kornyshev Andie</fullname>
+      <city>Charleston</city>
+      <state>WV</state>
+    </relation>
+    <relation>
+      <id>/person/10015.xml</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Starkey Thorpe</fullname>
+      <city>Minneapolis</city>
+      <state>MN</state>
+    </relation>
+    <relation>
+      <id>/person/10058.xml</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Ofer Alidia</fullname>
+      <city>Pueblo</city>
+      <state>CO</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-12T02:19:52Z</ts>
-    <user>rfurzer2i</user>
+    <ts>2022-01-30T18:50:52Z</ts>
+    <user>mupjohn2i</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-05T18:09:49Z</ts>
-    <user>rfurzer2i</user>
+    <ts>2022-02-08T18:26:32Z</ts>
+    <user>mupjohn2i</user>
   </lastUpdated>
-  <socials/>
+  <socials>
+    <social>
+      <site>twitter</site>
+      <handle>cbauduin0</handle>
+      <address>http://indiegogo.com/magna/at/nunc.jpg</address>
+    </social>
+    <social>
+      <site>facebook</site>
+      <handle>emateu1</handle>
+      <address>http://pen.io/ligula/nec/sem/duis/aliquam/convallis.jsp</address>
+    </social>
+  </socials>
   <memberships>
     <membership>
-      <list>list2</list>
-      <important>true</important>
-      <ts>2021-10-13</ts>
+      <list>list8</list>
+      <important>false</important>
+      <ts>2022-02-07</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>http://redcross.org</url>
+      <url>http://livejournal.com</url>
       <icon>faEye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>http://oracle.com</url>
+      <url>https://1688.com</url>
       <icon>faMedal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>http://soup.io</url>
+      <url>http://telegraph.co.uk</url>
       <icon>faComments</icon>
     </link>
   </links>
-<actions>
-  <action>
-    <url>http://oaic.gov.au</url>
-    <icon>faCog</icon>
-  </action>
-  <action>
-    <url>https://multiply.com</url>
-    <icon>faCode</icon>
-  </action>
-  <action>
-    <url>http://addthis.com</url>
-    <icon>faSync</icon>
-  </action>
-</actions>
+  <activities>
+    <activity>
+      <predicate>startedAt</predicate>
+      <place>Tagchat</place>
+      <source>
+        <name>USA Today</name>
+        <ts>2012-03-22T17:49:00Z</ts>
+        <createdBy>Christophorus Lemanu</createdBy>
+        <approvedBy>Cosimo Olech</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>movedTo</predicate>
+      <place>Flashpoint</place>
+      <source>
+        <name>New York Times</name>
+        <ts>2011-02-01T06:49:16Z</ts>
+        <createdBy>Mignon Kocher</createdBy>
+        <approvedBy>Tori Swett</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>movedTo</predicate>
+      <place>Browseblab</place>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2016-12-25T18:43:56Z</ts>
+        <createdBy>Margit Serrell</createdBy>
+        <approvedBy>Mile Rahlof</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>movedTo</predicate>
+      <place>Photolist</place>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2015-11-30T18:50:26Z</ts>
+        <createdBy>Ellen Pimblott</createdBy>
+        <approvedBy>Kathi Popple</approvedBy>
+      </source>
+    </activity>
+  </activities>
 </person>

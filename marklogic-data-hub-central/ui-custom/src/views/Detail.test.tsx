@@ -56,7 +56,8 @@ const EXPANDIDS = {
     membership: true,
     info: true,
     relationships: true,
-    imageGallery: true
+    imageGallery: true,
+    timeline: true
 }
 
 const detailContextValue = {

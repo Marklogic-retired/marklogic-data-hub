@@ -3,193 +3,212 @@
   <personId>10008</personId>
   <nameGroup>
     <givenname>
-      <value>Vere</value>
+      <value>Morganne</value>
     </givenname>
     <surname>
-      <value>Norvel</value>
+      <value>Helder</value>
     </surname>
     <fullname>
       <classification>C</classification>
-      <restricted>false</restricted>
-      <value>Norvel Vere</value>
+      <restricted>true</restricted>
+      <value>Helder Morganne</value>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2014-01-11T08:40:04Z</ts>
-      </source>
-      <source>
-        <name>Washington Post</name>
-        <ts>2019-10-28T02:48:39Z</ts>
-      </source>
-      <source>
-        <name>Los Angeles Times</name>
-        <ts>2019-12-22T23:26:03Z</ts>
+        <name>Chicago Tribune</name>
+        <ts>2020-10-16T00:35:56Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>dkenen0@who.int</value>
-      <classification>S</classification>
+      <value>agimber0@blogs.com</value>
+      <classification>C</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>cjeffress1@163.com</value>
+      <classification>C</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>727-259-2945</phone>
+  <phone>457-875-6133</phone>
   <ssn>
-    <value>766-39-3775</value>
-    <restricted>true</restricted>
+    <value>721-89-5116</value>
+    <classification>(S)</classification>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</url>
       <source>
         <name>Washington Post</name>
-        <ts>2010-03-19T19:12:16Z</ts>
-        <uploadedBy>tganforthe0</uploadedBy>
+        <ts>2016-08-04T22:45:17Z</ts>
+        <uploadedBy>wgounot0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>5 Judy Parkway</street>
-      <city>Mobile</city>
-      <state>AL</state>
-      <postal>36610</postal>
+      <street>42 Hauk Way</street>
+      <city>Lincoln</city>
+      <state>NE</state>
+      <postal>68510</postal>
       <country>United States</country>
-      <latitude>30.7309</latitude>
-      <longitude>-88.0789</longitude>
-    </address>
-    <address>
-      <street>297 Drewry Lane</street>
-      <city>Aurora</city>
-      <state>CO</state>
-      <postal>80045</postal>
-      <country>United States</country>
-      <latitude>39.7467</latitude>
-      <longitude>-104.8384</longitude>
+      <latitude>40.8063</latitude>
+      <longitude>-96.6545</longitude>
     </address>
   </addresses>
   <schools>
     <school>
       <country>United States</country>
-      <name>University of Texas Health Science Center at San Antonio</name>
-      <city>Tallahassee</city>
-      <state>FL</state>
-      <postal>32304</postal>
-      <latitude>30.4649282</latitude>
-      <longitude>-84.3857442</longitude>
-    </school>
-    <school>
-      <country>Mexico</country>
-      <name>Universidad Pedagógica Veracruzana</name>
-      <city>Arroyo Seco</city>
-      <state>GRO</state>
-      <postal>41821</postal>
-      <latitude>21.5471976</latitude>
-      <longitude>-99.6878432</longitude>
+      <name>Houston Baptist University</name>
+      <city>Charlotte</city>
+      <state>NC</state>
+      <postal>28299</postal>
+      <latitude>35.2188655</latitude>
+      <longitude>-80.8108888</longitude>
+      <source>
+        <name>USA Today</name>
+        <ts>2011-10-05T18:08:05Z</ts>
+      </source>
+      <source>
+        <name>New York Times</name>
+        <ts>2016-05-01T04:40:10Z</ts>
+      </source>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2018-05-13T22:31:49Z</ts>
+      </source>
     </school>
   </schools>
-  <status>Inactive</status>
-  <sources>
-    <source>
-      <name>Los Angeles Times</name>
-      <ts>2019-01-14T17:35:18Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>USA Today</name>
-      <ts>2014-07-03T00:48:54Z</ts>
-    </source>
-  </sources>
+  <status>Active</status>
   <sources>
     <source>
       <name>New York Times</name>
-      <ts>2010-12-09T23:02:38Z</ts>
+      <ts>2012-07-08T05:05:10Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10003.xml</id>
+      <id>/person/10065.xml</id>
       <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Edger Piper</fullname>
-      <city>Prescott</city>
-      <state>AZ</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Hansen Griz</fullname>
+      <city>Corona</city>
+      <state>CA</state>
     </relation>
     <relation>
-      <id>/person/10064.xml</id>
+      <id>/person/10092.xml</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
-      <fullname>Ingarfill Suzy</fullname>
-      <city>Portland</city>
-      <state>OR</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
+      <fullname>Matschek Flint</fullname>
+      <city>Fort Collins</city>
+      <state>CO</state>
+    </relation>
+    <relation>
+      <id>/person/10009.xml</id>
+      <predicate>livesWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Joderli Engracia</fullname>
+      <city>Birmingham</city>
+      <state>AL</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-01-23T06:05:14Z</ts>
-    <user>vnorvel7</user>
+    <ts>2022-01-05T09:27:54Z</ts>
+    <user>mhelder7</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-02-09T20:45:03Z</ts>
-    <user>vnorvel7</user>
+    <ts>2022-01-11T22:32:40Z</ts>
+    <user>mhelder7</user>
   </lastUpdated>
   <socials/>
-  <memberships>
-    <membership>
-      <list>list1</list>
-      <important>true</important>
-      <ts>2022-01-12</ts>
-    </membership>
-    <membership>
-      <list>list8</list>
-      <important>false</important>
-      <ts>2021-06-12</ts>
-    </membership>
-    <membership>
-      <list>list6</list>
-      <important>true</important>
-      <ts>2021-07-11</ts>
-    </membership>
-    <membership>
-      <list>list2</list>
-      <important>true</important>
-      <ts>2021-06-29</ts>
-    </membership>
-    <membership>
-      <list>list6</list>
-      <important>false</important>
-      <ts>2021-08-26</ts>
-    </membership>
-  </memberships>
+  <memberships/>
   <links>
     <link>
       <label>Quick View</label>
-      <url>http://github.io</url>
+      <url>http://wikimedia.org</url>
       <icon>faEye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>https://gmpg.org</url>
+      <url>https://dmoz.org</url>
       <icon>faMedal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>https://woothemes.com</url>
+      <url>https://ovh.net</url>
       <icon>faComments</icon>
     </link>
   </links>
-<actions>
-  <action>
-    <url>http://oaic.gov.au</url>
-    <icon>faCog</icon>
-  </action>
-  <action>
-    <url>https://multiply.com</url>
-    <icon>faCode</icon>
-  </action>
-  <action>
-    <url>http://addthis.com</url>
-    <icon>faSync</icon>
-  </action>
-</actions>
+  <activities>
+    <activity>
+      <predicate>startedAt</predicate>
+      <place>Zoovu</place>
+      <source>
+        <name>USA Today</name>
+        <ts>2012-06-21T08:09:44Z</ts>
+        <createdBy>Rosana Tetlow</createdBy>
+        <approvedBy>Ulrick Delaney</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>endedAt</predicate>
+      <place>Thoughtworks</place>
+      <source>
+        <name>New York Times</name>
+        <ts>2020-09-18T11:00:02Z</ts>
+        <createdBy>Madelene McGougan</createdBy>
+        <approvedBy>Pattie Gavey</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>endedAt</predicate>
+      <place>Oyoba</place>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2014-01-09T22:55:20Z</ts>
+        <createdBy>Quentin Nice</createdBy>
+        <approvedBy>Silvanus Verduin</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>endedAt</predicate>
+      <place>Yambee</place>
+      <source>
+        <name>Los Angeles Times</name>
+        <ts>2019-10-06T19:10:26Z</ts>
+        <createdBy>Augusta Tithacott</createdBy>
+        <approvedBy>Corliss Baldam</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>movedTo</predicate>
+      <place>Tagcat</place>
+      <source>
+        <name>Wall Street Journal</name>
+        <ts>2020-09-02T16:39:58Z</ts>
+        <createdBy>Mort Keemer</createdBy>
+        <approvedBy>Mada Pilgram</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>endedAt</predicate>
+      <place>Ntags</place>
+      <source>
+        <name>Washington Post</name>
+        <ts>2017-07-31T03:50:20Z</ts>
+        <createdBy>Maggee Juster</createdBy>
+        <approvedBy>Cathe Eynald</approvedBy>
+      </source>
+    </activity>
+    <activity>
+      <predicate>movedTo</predicate>
+      <place>Linkbuzz</place>
+      <source>
+        <name>USA Today</name>
+        <ts>2017-01-10T00:04:38Z</ts>
+        <createdBy>Creighton Tait</createdBy>
+        <approvedBy>Stern Ferreres</approvedBy>
+      </source>
+    </activity>
+  </activities>
 </person>

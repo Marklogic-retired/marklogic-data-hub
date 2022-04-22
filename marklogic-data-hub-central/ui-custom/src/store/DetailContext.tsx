@@ -9,13 +9,15 @@ interface ExpandIdsInterface {
   info: boolean;
   relationships: boolean;
   imageGallery: boolean;
+  timeline: boolean;
 }
 
 const EXPANDIDS = {
   membership: true,
   info: true,
   relationships: true,
-  imageGallery: true
+  imageGallery: true,
+  timeline: true
 }
 interface DetailContextInterface {
   detail: any;
