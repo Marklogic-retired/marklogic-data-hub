@@ -119,10 +119,10 @@ const MonitorFacet: React.FC<Props> = (props) => {
           id={"facet" + index}
           handleClick={(e) => handleClick(e)}
           value={facet.value}
-          label={facet?.value.toLowerCase() === "ingestion" ? "loading": facet.value}
+          label={facet?.value.toLowerCase() === "ingestion" ? "Loading": stringConverter(props.displayName) === "step-type" ? facet.value[0].toUpperCase() + facet.value.substring(1) : facet.value}
           checked={checked.includes(facet.value)}
           dataTestId={`${stringConverter(props.displayName)}-${facet.value}-checkbox`}
-          tooltip={facet?.value.toLowerCase() === "ingestion" ? "loading": facet.value}
+          tooltip={facet?.value.toLowerCase() === "ingestion" ? "Loading": facet.value[0].toUpperCase() + facet.value.substring(1)}
         />
       </div>
     );
