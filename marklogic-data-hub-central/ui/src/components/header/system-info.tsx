@@ -405,7 +405,7 @@ const SystemInfo = (props) => {
                           <span className={selectedDeleteOpt !== "deleteAll" ? styles.optionDisabled : ""}>{SystemInfoMessages.clearAllUserData}</span>
                         </Col>
                       </Row>
-                      <div className={styles.title}>Delete Subset of User Data</div>
+                      <div className={styles.title}>Clear Subset of User Data</div>
                       <Row className={"mb-2"}>
                         <Col xs lg="1">
                           <Form.Check

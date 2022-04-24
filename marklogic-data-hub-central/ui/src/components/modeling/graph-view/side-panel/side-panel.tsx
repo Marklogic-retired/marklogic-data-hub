@@ -314,26 +314,6 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
           </Col>
         </Row>
         <Row className={"mb-3"}>
-          <FormLabel column lg={3} style={{marginTop: "10px"}}>{"Version:"}</FormLabel>
-          <Col className={"d-flex align-items-center"}>
-            <HCInput
-              id="version"
-              data-testid="version"
-              placeholder="0.0.1"
-              disabled={props.canReadEntityModel && !props.canWriteEntityModel}
-              value={selectedEntityVersion}
-              onChange={handlePropertyChange}
-              onBlur={onSubmit}
-              style={{width: "50px", verticalAlign: "text-bottom"}}
-            />
-            <div className={"d-flex align-items-center"}>
-              <HCTooltip id="colo-selector" text={<span>Select a color to associate it with the <b>{modelingOptions.selectedEntity}</b> entity throughout your project.</span>} placement="right">
-                <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.colorsIcon} />
-              </HCTooltip>
-            </div>
-          </Col>
-        </Row>
-        <Row className={"mb-3"}>
           <FormLabel column lg={3} style={{marginTop: "10px"}}>{"Color:"}</FormLabel>
           <Col className={"d-flex align-items-center"}>
             <div className={styles.colorContainer}>
@@ -358,6 +338,28 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
               <div className={"d-flex align-items-center"}>
                 <HCTooltip id="icon-selector" text={<span>Select an icon to associate it with the <b>{modelingOptions.selectedEntity}</b> entity throughout your project.</span>} placement="right">
                   <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.iconPickerTooltip} />
+                </HCTooltip>
+              </div>
+            </div>
+          </Col>
+        </Row>
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3} style={{marginTop: "20px"}}>{"Version:"}</FormLabel>
+          <Col className={"d-flex align-items-center"}>
+            <div className={styles.versionContainer}>
+              <HCInput
+                id="version"
+                data-testid="version"
+                placeholder="0.0.1"
+                disabled={props.canReadEntityModel && !props.canWriteEntityModel}
+                value={selectedEntityVersion}
+                onChange={handlePropertyChange}
+                onBlur={onSubmit}
+                style={{width: "50px", verticalAlign: "text-bottom"}}
+              />
+              <div className={"d-flex align-items-center"}>
+                <HCTooltip id="colo-selector" text={ModelingTooltips.versionField} placement="right">
+                  <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.colorsIcon} />
                 </HCTooltip>
               </div>
             </div>

@@ -146,7 +146,7 @@ describe("Job response modal", () => {
     });
   });
 
-  test("Verify stop run button when step is running", async () => {
+  test.skip("Verify stop run button when step is running", async () => {
     mocks.runAPI(axiosMock);
     let getByText;
     let getByLabelText;

@@ -129,7 +129,7 @@ function computeFacets(whereClause) {
 
 function buildFacetQueries(whereClause) {
   const tableName = "Job.StepResponse";
-  const facetableColumns = ["Job.StepResponse.stepDefinitionType", "Job.StepResponse.jobStatus",
+  const facetableColumns = ["Job.StepResponse.stepDefinitionType",
     "Job.StepResponse.stepName", "Job.StepResponse.flowName"];
   const queries = {};
 

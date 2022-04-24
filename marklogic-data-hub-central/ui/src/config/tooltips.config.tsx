@@ -466,16 +466,19 @@ const RunToolTips = {
   addStep: 'Add a step to a flow.',
 
   /* Values made into links */
-  flowName: 'Display the status of the most recent flow',
+  flowName: 'Display the status of the most recent flow.',
 
   /* Icons for flows */
   deleteFlow: 'Delete this flow.',
 
   /* Icons in step cards */
   ingestionStep: 'Run this step to select and ingest files, up to a total of 100MB.',
-  otherSteps: 'Run this step.',
+  otherSteps: 'Run the flow with this step only.',
   removeStep: 'Remove this step from the flow.',
   exploreStepData: 'The Explore Data feature only shows what documents were written by this step. The content by those ducments may or be not be overwritten by another subsequently by another step or process.',
+
+  /* Icon in Load/Map Cards */
+  runStep: 'Run a flow with this step only.',
 
   /* Check load step in popover */
   loadStepRunFlow: 'Only one Loading step can be included in a flow',
@@ -485,7 +488,29 @@ const RunToolTips = {
   flowDetails: 'Flow Details',
   moveLeft: 'Move left',
   stopRun: 'Cancel the flow to stop it from running.',
-  stopRunMissingPermission: 'You cannot cancel the flow. Only the user who started the flow can cancel it.'
+  stopRunMissingPermission: 'You cannot cancel the flow. Only the user who started the flow can cancel it.',
+
+  /* Explore Data */
+  exploreButtonEnabled: function() {
+    return <span>You will be redirected to the <strong>Explore</strong> screen in the same browser tab.</span>
+  },
+
+  exploreButtonDisabled: "You can explore documents for each Loading, Mapping, and Merging step that wrote documents to the database.",
+
+  /* Step run results in footer */
+  stepRunning: "Step is running...",
+  stepCompleted: function(endTime) {
+    return <span>Step completed successfully on {endTime}</span>
+  },
+  stepCompletedWithErrors: function(endTime) {
+    return <span>Step completed with errors on {endTime}</span>
+  },
+  stepFailed: function(endTime) {
+    return <span>Step failed on {endTime}</span>
+  },
+  stepCanceled: function(endTime) {
+    return <span>Step was canceled on {endTime}</span>
+  }
 };
 
 const PopoverRunSteps = {
