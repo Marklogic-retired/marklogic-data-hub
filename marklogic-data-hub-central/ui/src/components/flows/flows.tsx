@@ -1,6 +1,6 @@
 import React, {useState, CSSProperties, useEffect, useContext, createRef} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCheckCircle, faClock, faInfoCircle, faStopCircle} from "@fortawesome/free-solid-svg-icons";
+import {faCheckCircle, faClock, faInfoCircle, faStopCircle, faBan} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt, faArrowAltCircleRight, faArrowAltCircleLeft} from "@fortawesome/free-regular-svg-icons";
 import NewFlowDialog from "./new-flow-dialog/new-flow-dialog";
 import axios from "axios";
@@ -13,7 +13,7 @@ import {getViewSettings, setViewSettings} from "@util/user-context";
 import {dynamicSortDates} from "@util/conversionFunctions";
 import styles from "./flows.module.scss";
 import "./flows.scss";
-import {ExclamationCircleFill, PlayCircleFill, X, ChevronDown, GearFill} from "react-bootstrap-icons";
+import {ExclamationCircleFill, PlayCircleFill, X, ChevronDown, GearFill, XCircleFill} from "react-bootstrap-icons";
 import {Accordion, Card, Dropdown, Modal, ButtonGroup} from "react-bootstrap";
 import {HCButton, HCCard, HCTooltip, HCCheckbox} from "@components/common";
 import {themeColors} from "@config/themes.config";
@@ -1050,24 +1050,41 @@ const Flows: React.FC<Props> = ({
   const handleMouseOver = (e, name) => {
     setShowLinks(name);
   };
-  const lastRunResponse = (step) => {
-    let stepEndTime, tooltipText;
+  const lastRunResponse = (step, flow) => {
+    let stepEndTime;
     if (step.stepEndTime) {
       stepEndTime = new Date(step.stepEndTime).toLocaleString();
     }
-    // if (!step.lastRunStatus) {
+
+    let canceled = latestJobData[flow]?.some(function (stepObj) {
+      return stepObj.lastRunStatus?.includes("canceled");
+    });
+
+    if (!step.lastRunStatus && !canceled) {
+      return null;
+    }
+
     if (isRunning(flowName, stepNumber)) {
       return (
-        <HCTooltip text={tooltipText} id="running-tooltip" placement="bottom">
+        <HCTooltip text={RunToolTips.stepRunning} id="running-tooltip" placement="bottom">
           <span>
             <i><FontAwesomeIcon aria-label="icon: clock-circle" icon={faClock} className={styles.runningIcon} size="lg" data-testid={`running-${step.stepName}`} /></i>
           </span>
         </HCTooltip>
       );
-    } else if (step.lastRunStatus === "completed step " + step.stepNumber) {
-      tooltipText = "Step last ran successfully on " + stepEndTime;
+    } else if (step.lastRunStatus?.includes("canceled") || (!step.lastRunStatus && canceled)) {
       return (
-        <HCTooltip text={tooltipText} id="success-tooltip" placement="bottom">
+        <span>
+          <HCTooltip text={RunToolTips.stepCanceled(stepEndTime)} id="canceled-tooltip" placement="bottom">
+            <span>
+              <i><FontAwesomeIcon icon={faBan} aria-label="icon: canceled-circle" className={styles.canceledRun} /></i>
+            </span>
+          </HCTooltip>
+        </span>
+      );
+    } else if (step.lastRunStatus === "completed step " + step.stepNumber) {
+      return (
+        <HCTooltip text={RunToolTips.stepCompleted(stepEndTime)} id="success-tooltip" placement="bottom">
           <span>
             <i><FontAwesomeIcon aria-label="icon: check-circle" icon={faCheckCircle} className={styles.successfulRun} size="lg" data-testid={`check-circle-${step.stepName}`} /></i>
           </span>
@@ -1075,20 +1092,18 @@ const Flows: React.FC<Props> = ({
       );
 
     } else if (step.lastRunStatus === "completed with errors step " + step.stepNumber) {
-      tooltipText = "Step last ran with errors on " + stepEndTime;
       return (
         <span>
-          <HCTooltip text={tooltipText} id="complete-with-errors-tooltip" placement="bottom">
+          <HCTooltip text={RunToolTips.stepCompletedWithErrors(stepEndTime)} id="complete-with-errors-tooltip" placement="bottom">
             <ExclamationCircleFill aria-label="icon: exclamation-circle" className={styles.unSuccessfulRun} />
           </HCTooltip>
         </span>
       );
     } else {
-      tooltipText = "Step last failed on " + stepEndTime;
       return (
         <span>
-          <HCTooltip text={tooltipText} id="step-last-failed-tooltip" placement="bottom">
-            <ExclamationCircleFill data-icon="exclamation-circle" aria-label="icon: exclamation-circle" className={styles.unSuccessfulRun} />
+          <HCTooltip text={RunToolTips.stepFailed(stepEndTime)} id="step-last-failed-tooltip" placement="bottom">
+            <XCircleFill data-icon="failed-circle" aria-label="icon: failed-circle" className={styles.unSuccessfulRun} />
           </HCTooltip>
         </span>
       );
@@ -1191,7 +1206,7 @@ const Flows: React.FC<Props> = ({
                   <div className={styles.reorderRight}>
                     <div className={styles.stepResponse}>
                       {latestJobData && latestJobData[flowName] && latestJobData[flowName][index]
-                        ? lastRunResponse(latestJobData[flowName][index])
+                        ? lastRunResponse(latestJobData[flowName][index], flowName)
                         : ""
                       }
                     </div>

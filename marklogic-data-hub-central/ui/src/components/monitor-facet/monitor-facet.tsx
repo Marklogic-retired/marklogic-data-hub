@@ -112,6 +112,29 @@ const MonitorFacet: React.FC<Props> = (props) => {
     } else { setCheckedOptions(monitorOptions); }
   }, [monitorGreyedOptions]);
 
+  const checkFacetLabel = (value) => {
+    // facet?.value.toLowerCase() === "ingestion" ? "Loading": stringConverter(props.displayName) === "step-type" ? facet.value[0].toUpperCase() + facet.value.substring(1) : facet.value.incluedes("completed") && !facet.value.includes("error") ? "Completed Successfully" : facet.value.includes("errors") ? "Completed With Errors" : facet.value.includes("canceled") ? "Canceled" facet.value
+
+    if (value.toLowerCase() === "ingestion") {
+      return "Loading";
+    } else if (stringConverter(props.displayName) === "step-type") {
+      return value[0].toUpperCase() + value.substring(1);
+    } else if (stringConverter(props.displayName) === "status") {
+      if (value.includes("completed") && (!value.includes("error"))) {
+        return "Completed Successfully";
+      } else if (value.includes("errors")) {
+        return "Completed with Errors";
+      } else if (value.includes("canceled")) {
+        return "Canceled";
+      } else if (value.includes("failed")) {
+        return "Failed";
+      }
+    } else {
+      return value;
+    }
+  };
+
+
   const checkBoxRender =  checkedFacets.slice(0, showFacets).map((facet, index) => {
     return (
       <div key={"facet" + index} className={styles.checkContainer}>
@@ -119,7 +142,7 @@ const MonitorFacet: React.FC<Props> = (props) => {
           id={"facet" + index}
           handleClick={(e) => handleClick(e)}
           value={facet.value}
-          label={facet?.value.toLowerCase() === "ingestion" ? "Loading": stringConverter(props.displayName) === "step-type" ? facet.value[0].toUpperCase() + facet.value.substring(1) : facet.value}
+          label={facet ? checkFacetLabel(facet.value) : ""}
           checked={checked.includes(facet.value)}
           dataTestId={`${stringConverter(props.displayName)}-${facet.value}-checkbox`}
           tooltip={facet?.value.toLowerCase() === "ingestion" ? "Loading": facet.value[0].toUpperCase() + facet.value.substring(1)}

@@ -12,9 +12,9 @@ import {getMappingArtifactByStepName} from "../../api/mapping";
 import {useHistory} from "react-router-dom";
 import Spinner from "react-bootstrap/Spinner";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faClock, faInfoCircle, faStopCircle} from "@fortawesome/free-solid-svg-icons";
+import {faClock, faInfoCircle, faStopCircle, faBan} from "@fortawesome/free-solid-svg-icons";
 import "./job-response.scss";
-import {CheckCircleFill, ExclamationCircleFill} from "react-bootstrap-icons";
+import {CheckCircleFill, XCircleFill, ExclamationCircleFill} from "react-bootstrap-icons";
 import {Flow} from "../../types/run-types";
 
 type Props = {
@@ -131,9 +131,22 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStop
           return <div data-testid={`${stepName}-success`} id={`${stepName}-success`} className={styles.stepResponse}>
             <CheckCircleFill type="check-circle" className={styles.successfulRun} /> <strong className={styles.stepName}>{stepName}</strong>
           </div>;
+        } else if (isStepCanceled(response)) {
+          return (<div data-testid={`${stepName}-canceled`} id={`${stepName}-canceled`} className={styles.stepResponse}>
+            <i><FontAwesomeIcon aria-label="icon: canceled-circle" icon={faBan} className={styles.unsuccessfulRun} size="lg" data-testid={`${response.status}-icon`} /></i>
+            <strong>{stepName}</strong>
+          </div>);
         } else if (response.hasOwnProperty("success") && !response.success) {
           return (<div data-testid={`${stepName}-failure`} id={`${stepName}-failure`} className={styles.stepResponse}>
             <ExclamationCircleFill aria-label="icon: exclamation-circle" className={styles.unsuccessfulRun} /><strong className={styles.stepName}>{stepName}</strong>
+          </div>);
+        } else if (response.hasOwnProperty("success") && !response.success && response.hasOwnProperty("status") && response.status.includes("failed")) {
+          return (<div data-testid={`${stepName}-failure`} id={`${stepName}-failure`} className={styles.stepResponse}>
+            <XCircleFill aria-label="icon: failed-circle" className={styles.unsuccessfulRun} /><strong className={styles.stepName}>{stepName}</strong>
+          </div>);
+        } else if (response.hasOwnProperty("success") && !response.success) {
+          return (<div data-testid={`${stepName}-failure`} id={`${stepName}-failure`} className={styles.stepResponse}>
+            <ExclamationCircleFill aria-label="icon: failed-circle" className={styles.unsuccessfulRun} /><strong className={styles.stepName}>{stepName}</strong>
           </div>);
         } else if (isStepRunning(response)) {
           return (<div data-testid={`step-running`} id={`step-running`} className={styles.stepRunningIcon}>
@@ -155,8 +168,8 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStop
       headerFormatter: (column) => <strong data-testid={`stepType-header`}>Step Type</strong>,
       formatter: (stepName, response) => {
         let stepType = response.stepDefinitionType === "ingestion" ? "loading" : response.stepDefinitionType;
-        return (<div data-testid={`${response.stepName}-${stepType}-type`} id={`${response.stepName}-${stepType}-type`} className={styles.stepType}>
-          {stepType?.toLowerCase()}
+        return (<div data-testid={`${response.stepName}-${stepType}-type`} id={`${response.stepName}-${stepType}-type`} className={styles.stepResponse}>
+          {stepType[0].toUpperCase() + stepType.substring(1).toLowerCase()}
         </div>);
       },
     },
@@ -207,7 +220,7 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStop
             entityName = splitTargetEntity[splitTargetEntity.length - 1];
           }
           return (
-            <HCTooltip placement="top" id={`${stepName}-explore-button`} text={isButtonDisabled ? "You can explore documents for each Loading, Mapping, and Merging step that wrote documents to the database." : "You will be redirected to the Explore screen in the same browser tab."}>
+            <HCTooltip placement="top" id={`${stepName}-explore-button`} text={isButtonDisabled ? RunToolTips.exploreButtonDisabled : RunToolTips.exploreButtonEnabled()}>
               <span>
                 <HCButton data-testid={`${stepName}-explorer-link`} size="sm" disabled={isButtonDisabled} onClick={() => { goToExplorer(entityName, targetDatabase, jobId, stepDefinitionType, stepName); }} className={styles.exploreCuratedData}>
                   <span className={styles.exploreActionIcon}></span>
