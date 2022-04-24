@@ -7,7 +7,7 @@ const monitorPropertiesConfig = [
     tooltip: "",
   },
   {
-    facetName: "jobStatus",
+    facetName: "stepStatus",
     displayName: "Status",
     tooltip: "Status of a step that has run.",
   },
