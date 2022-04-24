@@ -6,7 +6,7 @@ import {faBan, faColumns} from "@fortawesome/free-solid-svg-icons";
 import "./job-results-table-view.scss";
 import {MonitorContext} from "@util/monitor-context";
 import JobResponse from "../job-response/job-response";
-import {CheckCircleFill, ClockFill, XCircleFill} from "react-bootstrap-icons";
+import {CheckCircleFill, ClockFill, XCircleFill, ExclamationCircleFill} from "react-bootstrap-icons";
 import {HCButton, HCCheckbox, HCDivider, HCTooltip, HCTable} from "@components/common";
 import Popover from "react-bootstrap/Popover";
 import {OverlayTrigger} from "react-bootstrap";
@@ -156,19 +156,19 @@ const JobResultsTableView = ({data}) => {
   };
 
   const statusIcon = (status) => {
-    if (status === "running" || /^running/.test(status)) {
+    if (status && status === "running" || /^running/.test(status)) {
       return <>
         <HCTooltip text="Running" id="running-tooltip" placement="bottom">
-          <ClockFill data-testid="progress" style={{color: "#5B69AF"}} />
+          <ClockFill data-testid="progress" className={styles.runningStatus}/>
         </HCTooltip>
       </>;
-    } else if (status === "finished") {
+    } else if (status?.includes("completed")) {
       return <>
         <HCTooltip text="Completed Successfully" id="complete-success-tooltip" placement="bottom">
-          <CheckCircleFill data-testid="success" style={{color: "#389E0D"}} />
+          <CheckCircleFill data-testid="success" className={styles.successStatus}/>
         </HCTooltip>
       </>;
-    } else if (status === "canceled") {
+    } else if (status?.includes("canceled")) {
       return <>
         <HCTooltip text="Canceled" id="canceled-tooltip" placement="bottom">
           <i><FontAwesomeIcon
@@ -179,10 +179,16 @@ const JobResultsTableView = ({data}) => {
           /></i>
         </HCTooltip>
       </>;
+    } else if (status?.includes("failed") && !status?.includes("errors")) {
+      return <>
+        <HCTooltip text="Failed" id="failed-tooltip" placement="bottom">
+          <XCircleFill data-testid="failed" className={styles.errorStatus}/>
+        </HCTooltip>
+      </>;
     } else {
       return <>
         <HCTooltip text="Completed With Errors" id="complete-errors-tooltip" placement="bottom">
-          <XCircleFill data-testid="error" style={{color: "#B32424"}} />
+          <ExclamationCircleFill data-testid="completed-with-errors" className={styles.errorStatus}/>
         </HCTooltip>
       </>;
     }
@@ -340,7 +346,7 @@ const JobResultsTableView = ({data}) => {
                 <div style={{width: 50}}></div>
                 <div className="stepNameDiv" id={row.jobId+"_"+row.stepName}>{row.stepName}</div>
                 <div className="stepType" id={row.jobId+"_"+row.stepName}>{StepDefinitionTypeTitles[row.stepDefinitionType]}</div>
-                <div className="stepStatus" id={row.jobId+"_"+row.stepName}>{statusIcon(row.jobStatus)}</div>
+                <div className="stepStatus" id={row.jobId+"_"+row.stepName}>{statusIcon(row.stepStatus)}</div>
                 <div className="stepEntityType" id={row.jobId+"_"+row.stepName}>{row.entityName}</div>
                 <div className="stepStartDate" id={row.jobId+"_"+row.stepName}>{(dateConverter(row.startTime))}</div>
                 <div className="stepDuration" id={row.jobId+"_"+row.stepName}>{row.duration}</div>
