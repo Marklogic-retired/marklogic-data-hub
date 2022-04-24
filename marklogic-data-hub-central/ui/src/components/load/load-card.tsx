@@ -10,7 +10,7 @@ import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import sourceFormatOptions from "@config/formats.config";
 import {convertDateFromISO} from "@util/conversionFunctions";
 import Steps from "../steps/steps";
-import {AdvLoadTooltips, SecurityTooltips} from "@config/tooltips.config";
+import {AdvLoadTooltips, SecurityTooltips, RunToolTips} from "@config/tooltips.config";
 import {PlayCircleFill, PlusCircleFill} from "react-bootstrap-icons";
 import {HCButton, HCCard, HCDivider, HCTooltip} from "@components/common";
 
@@ -259,7 +259,7 @@ const LoadCard: React.FC<Props> = (props) => {
       <Modal.Body className={"text-center pt-0 pb-4"}>
         <div aria-label="add-step-confirmation" className={"mb-4"} style={{fontSize: "16px"}}>
           {isStepInFlow(loadArtifactName, flowName) ?
-            <p aria-label="step-in-flow">The step <strong>{loadArtifactName}</strong> is already in the flow <strong>{flowName}</strong>. Would you like to add another instance?</p> :
+            <p aria-label="step-in-flow">The step <strong>{loadArtifactName}</strong> is already in the flow <strong>{flowName}</strong>. Would you like to add another instance of the step?</p> :
             <p aria-label="step-not-in-flow">Are you sure you want to add the step <strong>{loadArtifactName}</strong> to the flow <strong>{flowName}</strong>?</p>
           }
         </div>
@@ -418,7 +418,7 @@ const LoadCard: React.FC<Props> = (props) => {
                     </i>
                   </HCTooltip>,
                   props.canReadWrite ?
-                    <HCTooltip text="Run" id="run-tooltip" placement="bottom">
+                    <HCTooltip text={RunToolTips.runStep} id="run-tooltip" placement="bottom">
                       <i aria-label="icon: run">
                         <PlayCircleFill data-testid={elem.name+"-run"} size={20} onClick={() => handleStepRun(elem.name)}/>
                       </i>

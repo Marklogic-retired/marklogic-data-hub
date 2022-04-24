@@ -6,7 +6,7 @@ import reactSelectThemeConfig from "@config/react-select-theme.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from "@util/conversionFunctions";
-import {AdvMapTooltips, SecurityTooltips} from "@config/tooltips.config";
+import {AdvMapTooltips, SecurityTooltips, RunToolTips} from "@config/tooltips.config";
 import {Link, useHistory} from "react-router-dom";
 import {StepType} from "../../../types/curation-types";
 import {faCog, faPencilAlt} from "@fortawesome/free-solid-svg-icons";
@@ -269,7 +269,7 @@ const MappingCard: React.FC<Props> = (props) => {
       <Modal.Body className={"pt-0 pb-4"}>
         <div aria-label="add-step-confirmation" style={{fontSize: "16px"}}>
           {isStepInFlow(mappingArtifactName, flowName) ?
-            <p aria-label="step-in-flow">The step <strong>{mappingArtifactName}</strong> is already in the flow <strong>{flowName}</strong>. Would you like to add another instance?</p> :
+            <p aria-label="step-in-flow">The step <strong>{mappingArtifactName}</strong> is already in the flow <strong>{flowName}</strong>. Would you like to add another instance of the step?</p> :
             <p aria-label="step-not-in-flow">Are you sure you want to add the step <strong>{mappingArtifactName}</strong> to the flow <strong>{flowName}</strong>?</p>
           }
         </div>
@@ -425,7 +425,7 @@ const MappingCard: React.FC<Props> = (props) => {
                     actions={[
                       <HCTooltip id="details-tooltip" text={"Step Details"} placement="bottom"><i className={styles.stepDetails}><FontAwesomeIcon icon={faPencilAlt} onClick={() => openMapStepDetails(elem.name, index)} data-testid={`${elem.name}-stepDetails`} /></i></HCTooltip>,
                       <HCTooltip id="settings-tooltip" text={"Step Settings"} placement="bottom"><i className={styles.editIcon} role="edit-mapping button" key="last"><FontAwesomeIcon icon={faCog} data-testid={elem.name + "-edit"} onClick={() => OpenStepSettings(index)} /></i></HCTooltip>,
-                      props.canReadWrite ? <HCTooltip id="run-tooltip" text={"Run"} placement="bottom"><i aria-label="icon:run"><PlayCircleFill className={styles.runIcon} data-testid={elem.name + "-run"} onClick={() => handleStepRun(elem.name)} /></i></HCTooltip> : <HCTooltip id="run-disabled-tooltip" text={"Run: " + SecurityTooltips.missingPermission} placement="bottom" className={styles.tooltipOverlay}><i aria-label="icon: run"><PlayCircleFill className={styles.disabledRunIcon} role="disabled-run-mapping button" data-testid={elem.name + "-disabled-run"} onClick={(event) => event.preventDefault()}/></i></HCTooltip>,
+                      props.canReadWrite ? <HCTooltip id="run-tooltip" text={RunToolTips.runStep} placement="bottom"><i aria-label="icon:run"><PlayCircleFill className={styles.runIcon} data-testid={elem.name + "-run"} onClick={() => handleStepRun(elem.name)} /></i></HCTooltip> : <HCTooltip id="run-disabled-tooltip" text={"Run: " + SecurityTooltips.missingPermission} placement="bottom" className={styles.tooltipOverlay}><i aria-label="icon: run"><PlayCircleFill className={styles.disabledRunIcon} role="disabled-run-mapping button" data-testid={elem.name + "-disabled-run"} onClick={(event) => event.preventDefault()}/></i></HCTooltip>,
                       props.canReadWrite ? <HCTooltip id="delete-tooltip" text={"Delete"} placement="bottom"><i key="last" role="delete-mapping button" data-testid={elem.name + "-delete"} onClick={() => handleCardDelete(elem.name)}><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg" /></i></HCTooltip> : <HCTooltip id="delete-disabled-tooltip" text={"Delete: " + SecurityTooltips.missingPermission} placement="bottom" className={styles.tooltipOverlay}><i role="disabled-delete-mapping button" data-testid={elem.name + "-disabled-delete"} onClick={(event) => event.preventDefault()}><FontAwesomeIcon icon={faTrashAlt} className={styles.disabledIcon} size="lg" /></i></HCTooltip>,
                     ]}
                     className={styles.cardStyle}

@@ -10,7 +10,7 @@ import styles from "./matching-card.module.scss";
 import ConfirmationModal from "../../confirmation-modal/confirmation-modal";
 import {CurationContext} from "@util/curation-context";
 import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from "@util/conversionFunctions";
-import {AdvMapTooltips, SecurityTooltips} from "@config/tooltips.config";
+import {AdvMapTooltips, SecurityTooltips, RunToolTips} from "@config/tooltips.config";
 import {ConfirmationType} from "../../../types/common-types";
 import {MatchingStep, StepType} from "../../../types/curation-types";
 import {getViewSettings, setViewSettings} from "@util/user-context";
@@ -237,7 +237,7 @@ const MatchingCard: React.FC<Props> = (props) => {
       <Modal.Body className={"pt-0 pb-4 px-4"}>
         <div aria-label="add-step-confirmation" style={{fontSize: "16px"}}>
           { isStepInFlow(matchingArtifactName, flowName) ?
-            <p aria-label="step-in-flow">The step <strong>{matchingArtifactName}</strong> is already in the flow <strong>{flowName}</strong>. Would you like to add another instance?</p> :
+            <p aria-label="step-in-flow">The step <strong>{matchingArtifactName}</strong> is already in the flow <strong>{flowName}</strong>. Would you like to add another instance of the step?</p> :
             <p aria-label="step-not-in-flow">Are you sure you want to add the step <strong>{matchingArtifactName}</strong> to the flow <strong>{flowName}</strong>?</p>
           }
         </div>
@@ -363,7 +363,7 @@ const MatchingCard: React.FC<Props> = (props) => {
       </HCTooltip>,
 
       props.canWriteMatchMerge ? (
-        <HCTooltip id="run-tooltip" text={"Run"} placement="bottom">
+        <HCTooltip id="run-tooltip" text={RunToolTips.runStep} placement="bottom">
           <i aria-label="icon: run">
             <PlayCircleFill className={styles.runIcon} data-testid={step.name+"-run"} onClick={() => handleStepRun(step.name)}/>
           </i>

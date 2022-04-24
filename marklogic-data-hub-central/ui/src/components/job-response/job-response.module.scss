@@ -52,8 +52,7 @@
   }
 
   .running {
-        padding-top: 25px;
-        padding-left: 15px;
+    margin-left: 10px;
         background-color: rgba(255, 255, 255, 0.6);
         .runningLabel {
             margin-top: 5px;
@@ -110,8 +109,9 @@
     text-align: left;
   }
 
-.stepRunningIcon {
+.runningIcon {
     color: $primary;
+    margin-right: 6px;
 }
 
 .errorStepResponse {

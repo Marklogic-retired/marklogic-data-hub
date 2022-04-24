@@ -25,6 +25,18 @@
     }
 }
 
+.successStatus {
+  color: $success;
+}
+
+.errorStatus {
+  color: $danger;
+}
+
+.runningStatus {
+  color: $primary;
+}
+
 .spanColumnIcon {
     padding-top: 2px;
     margin-left: 5px;
