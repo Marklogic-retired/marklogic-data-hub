@@ -315,6 +315,11 @@
       "component": "ResultsList",
       "config": {
         "pageLengths": [3, 5, 10, 20],
+        "sort":{
+          "label": "Created On",
+          "sortBy": "createdOn",
+          "order": "descending"
+        },
         "entities": {
           "person": {
             "thumbnail": {

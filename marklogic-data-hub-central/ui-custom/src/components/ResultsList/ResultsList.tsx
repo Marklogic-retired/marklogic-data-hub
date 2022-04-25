@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext} from "react";
 import Address from "../Address/Address";
 import Chiclet from "../Chiclet/Chiclet";
 import DateTime from "../DateTime/DateTime";
@@ -11,6 +11,7 @@ import "./ResultsList.scss";
 import {getValByConfig} from "../../util/util";
 import Pagination from "../Pagination/Pagination";
 import ResultActions from "../ResultActions/ResultActions";
+import {CaretDownFill, CaretUpFill} from "react-bootstrap-icons";
 
 type Props = {
   config?: any;
@@ -22,7 +23,7 @@ const COMPONENTS = {
   Image: Image,
   Value: Value,
   ResultActions: ResultActions
-}
+};
 
 /**
  * Component for showing search results in list format.
@@ -30,12 +31,12 @@ const COMPONENTS = {
  *
  * @component
  * @prop {object} config  Configuration object.
- * @prop {string} config.id  Path to ID. Passed as identifier to Detail view. 
+ * @prop {string} config.id  Path to ID. Passed as identifier to Detail view.
  * @prop {object} config.thumbnail  Thumbnail configuration object.
  * @prop {string} config.thumbnail.src  Path to thumbnail source URL.
  * @prop {string} config.thumbnail.width  Thumbnail width (as CSS width value).
  * @prop {string} config.thumbnail.height  Thumbnail height (as CSS width value).
- * @prop {string} config.title  Path to title associated with record. Clicking title in UI takes you to the 
+ * @prop {string} config.title  Path to title associated with record. Clicking title in UI takes you to the
  * Detail view for that result.
  * @prop {object[]} config.items  Array of item configuration objects. Item can be value-based or component-based.
  * @prop {string} config.items.value  Path to value-based item.
@@ -51,7 +52,7 @@ const COMPONENTS = {
  * @prop {string} config.status  Path to status associated with record.
  * @example
  * // Configuration
- * const searchResultsConfig = { 
+ * const searchResultsConfig = {
  *   id: "extracted.person.id",
  *   thumbnail: {
  *       src: "extracted.person.image",
@@ -62,7 +63,7 @@ const COMPONENTS = {
  *   items: [
  *       // Component-based item example
  *       {
- *          component: "Address", 
+ *          component: "Address",
  *          config: {
  *            city: "extracted.person.address.city",
  *            state: "extracted.person.address.state"
@@ -93,8 +94,18 @@ const ResultsList: React.FC<Props> = (props) => {
 
   const pageLengths = props?.config?.pageLengths ? props?.config?.pageLengths : [10, 20, 80, 100];
 
-  const {returned, start, pageNumber, pageLength} = searchContext;
+  const {returned, sortOrder, pageNumber, pageLength, handleSort} = searchContext;
 
+
+  const handleSortClick = (e) => {
+    if (sortOrder === "ascending") {
+      handleSort(props.config?.sort.sortBy, "descending");
+    } else if (sortOrder === "descending") {
+      handleSort(props.config?.sort.sortBy, "");
+    } else {
+      handleSort(props.config?.sort.sortBy, "ascending");
+    }
+  };
   const handleNameClick = (e) => {
     detailContext.handleGetDetail(e.target.id);
   };
@@ -102,10 +113,26 @@ const ResultsList: React.FC<Props> = (props) => {
   const handleChangePage = (page: number) => {
     const startValue = page === 1 ? page : ((page - 1) * pageLength) + 1;
     searchContext.handlePagination(page, startValue, pageLength);
-  }
+  };
   const handleChangesetPageLength = (length: number) => {
     searchContext.handlePagination(1, 1, length);
-  }
+  };
+
+  const getSort = () => {
+    return (
+      <div className="sortContainer">
+        <div className="thumbnailClean"></div>
+        <div className="detailClean"></div>
+        <div className="sortElements" onClick={handleSortClick}>
+          <span className="sortName">{props?.config?.sort?.label}</span>
+          <span className="sortIcons">
+            <CaretUpFill color={sortOrder === "ascending" ? "#394494" : "#ccc"} />
+            <CaretDownFill color={sortOrder === "descending" ? "#394494" : "#ccc"} />
+          </span>
+        </div>
+      </div>
+    );
+  };
 
   const getResults = () => {
     let results = searchContext.searchResults.result.map((results, index) => {
@@ -134,7 +161,7 @@ const ResultsList: React.FC<Props> = (props) => {
                       key={"category-" + index2}
                       config={configEntityType.categories}
                     >{s}</Chiclet>
-                  )
+                  );
                 })}
               </div> : null}
           </div>
@@ -153,7 +180,7 @@ const ResultsList: React.FC<Props> = (props) => {
                   COMPONENTS[configEntityType.resultActions.component],
                   {config: configEntityType?.resultActions.config, data: results?.extracted}, null
                 )
-              : null}
+                : null}
             </div>
           </div>
         </div>
@@ -167,6 +194,7 @@ const ResultsList: React.FC<Props> = (props) => {
       {(searchContext.searchResults?.result?.length) > 0 ? (
         <div>
           <Pagination pageNumber={pageNumber} pageLength={pageLength} setPageNumber={handleChangePage} total={returned} pageLengths={pageLengths} setPageLength={handleChangesetPageLength} />
+          {props?.config?.sort && Object.keys(props.config.sort).length !== 0 && getSort()}
           {getResults()}
           <div className="pt-4">
             <Pagination pageNumber={pageNumber} pageLength={pageLength} setPageNumber={handleChangePage} total={returned} pageLengths={pageLengths} setPageLength={handleChangesetPageLength} />

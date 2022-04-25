@@ -1,4 +1,43 @@
 .resultsList {
+    .sortContainer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 5px;
+        padding-bottom: 5px;
+        border-bottom: solid 1px #ccc;
+        .thumbnailClean {
+            width: 70px;
+        }
+        .detailClean {
+            width: 93%;
+        }
+        .sortElements {
+            max-width: 260px;
+            display: flex;
+            grid-gap: 5px;
+            gap: 5px;
+            align-items: center;
+            min-width: 200px;
+            padding-left: 20px;
+            cursor: pointer;
+            .sortName {
+                font-size: 16px;
+                color: #394494;
+                font-weight: 700;
+                white-space: nowrap;
+            }
+            .sortIcons {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                svg {
+                    width: 10px;
+                    height: 10px;
+                }
+            }
+        }
+    }
     .result:hover {
         background-color: #ebf9f6;
     }
@@ -90,5 +129,4 @@
 }
 .result:nth-of-type(1) {
     border-top: solid 1px #ccc;
-} 
-
+}
