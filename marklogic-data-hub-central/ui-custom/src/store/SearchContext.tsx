@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useContext} from 'react';
+import React, {useEffect, useState, useContext} from "react";
 import {useNavigate, useLocation} from "react-router-dom";
 import {UserContext} from "../store/UserContext";
 import {getSearchResults, getSearchResultsByGet} from "../api/api";
@@ -17,6 +17,7 @@ interface SearchContextInterface {
   loading: boolean;
   queryString: string;
   pageNumber: number;
+  sortOrder: string,
   handleSearch: any;
   handleFacetString: any;
   handleFacetDateRange: any;
@@ -26,6 +27,7 @@ interface SearchContextInterface {
   setPageNumber: (value: number) => void;
   handleDeleteAllRecent: any;
   hasSavedRecords: any;
+  handleSort: any;
 }
 interface QueryInterface {
   searchText: string;
@@ -46,6 +48,7 @@ const defaultState = {
   loading: false,
   queryString: "",
   pageNumber: 1,
+  sortOrder: "",
   handleSearch: () => { },
   handleFacetString: () => { },
   handleFacetDateRange: () => { },
@@ -54,11 +57,12 @@ const defaultState = {
   handleGetSearchLocal: () => { },
   setPageNumber: () => { },
   handleDeleteAllRecent: () => { },
-  hasSavedRecords: () => { }
+  hasSavedRecords: () => { },
+  handleSort: () => { },
 };
 
 /**
- * Component for storing state of search query and search results. 
+ * Component for storing state of search query and search results.
  * Also provides methods for executing searches.
  * Made available to components that perform searches or display search results.
  *
@@ -68,10 +72,10 @@ const defaultState = {
  * @prop {object} searchResults - Search results object.
  * @prop {number} returned - Number of records returned in search results.
  * @prop {number} total - Total number of records available.
- * @prop {HandleSearch} handleSearch - Callback to execute a search via query text (TODO document interface). 
+ * @prop {HandleSearch} handleSearch - Callback to execute a search via query text (TODO document interface).
  * @prop {HandleFacetString} handleFacetString - Callback to execute a search via facet selection (TODO document interface).
  * @prop {HandleFacetDateRange} handleFacetDateRange - Callback to execute a search via facet selection for date range widgets(TODO document interface).
- * @prop {HandleSaved} handleSaved - Callback to execute a search via selection of a saved query (TODO document interface). 
+ * @prop {HandleSaved} handleSaved - Callback to execute a search via selection of a saved query (TODO document interface).
  * @example
  * TBD
  */
@@ -99,15 +103,17 @@ const SearchProvider: React.FC = ({children}) => {
   const [recentSearches, setRecentSearches] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [queryString, setQueryString] = useState<string>("");
+  const [sortOrder, setSortOrder] = useState("");
+  const [sortBy, setSortBy] = useState("");
 
   const getFacetType = (facetValue) => {
-    const regexDateRange = /^\d{4}-\d{2}-\d{2} ~ \d{4}-\d{2}-\d{2}$/
+    const regexDateRange = /^\d{4}-\d{2}-\d{2} ~ \d{4}-\d{2}-\d{2}$/;
     if (regexDateRange.test(facetValue)) {
       return "dateRange";
     } else {
       return "category";
     }
-  }
+  };
 
   const buildQuery = (_start, _pageLength, _qtext, _facetStrings, _entityType): QueryInterface => {
     let query = {
@@ -115,8 +121,16 @@ const SearchProvider: React.FC = ({children}) => {
       pageLength: _pageLength,
       searchText: _qtext,
       entityTypeIds: Array.isArray(_entityType) ? _entityType : [_entityType],
-      selectedFacets: {}
+      selectedFacets: {},
+      sort: {},
     };
+    if (sortBy) {
+      query.sort = {
+        entityType: _entityType,
+        property: sortBy,
+        order: sortOrder
+      };
+    }
     if (facetStrings && facetStrings.length > 0) {
       facetStrings.forEach(fs => {
         const parts = fs.split(":");
@@ -127,16 +141,21 @@ const SearchProvider: React.FC = ({children}) => {
             query.selectedFacets[parts[0]] = [parts[1]];
           }
         } else if (getFacetType(parts[1]) === "dateRange") {
-          let range = parts[1].replace(/ ~ /g,",").split(",");
+          let range = parts[1].replace(/ ~ /g, ",").split(",");
           let rangeObj = {
-            min : range[0],
-            max : range[1]
-          }
+            min: range[0],
+            max: range[1]
+          };
           query.selectedFacets[parts[0]] = rangeObj;
         }
       });
     }
     return query;
+  };
+  const handleSort = (sortBy, sortOrder) => {
+    setSortOrder(sortOrder);
+    setSortBy(sortBy);
+    setNewSearch(true);
   };
 
   useEffect(() => {
@@ -161,7 +180,7 @@ const SearchProvider: React.FC = ({children}) => {
         setLoading(false);
       }).catch(error => {
         console.error(error);
-      })
+      });
     }
   }, [newSearch]);
 
@@ -237,7 +256,7 @@ const SearchProvider: React.FC = ({children}) => {
         if (queryParsed.selectedFacets[k].min && queryParsed.selectedFacets[k].max) {
           newFacetStrings.push(k + ":" + queryParsed.selectedFacets[k].min + " ~ " + queryParsed.selectedFacets[k].max);
         } else {
-          for (const v of queryParsed.selectedFacets[k]){
+          for (const v of queryParsed.selectedFacets[k]) {
             newFacetStrings.push(k + ":" + v);
           }
         }
@@ -257,14 +276,13 @@ const SearchProvider: React.FC = ({children}) => {
       sortedQueries = Object.keys(sortedObj);
       sortedQueries = sortedQueries.map(q => {
         return JSON.parse(decodeURI(q));
-      })
+      });
     }
     if (sortedQueries.length > 0) {
       setLoading(true);
       setRecentSearches(sortedQueries);
       setLoading(false);
-    }
-    else {
+    } else {
       setRecentSearches([]);
     }
   };
@@ -293,7 +311,7 @@ const SearchProvider: React.FC = ({children}) => {
       }
       localStorage.setItem("search", JSON.stringify(newObj));
       // Handle deletion of searches in local storage when over configured count and time limit
-      if(obj) {
+      if (obj) {
         await handleDeleteRecentByMaxEntries(obj);
         await handleDeleteRecentByMaxTime(obj);
         localStorage.setItem("search", JSON.stringify(newObj));
@@ -303,34 +321,33 @@ const SearchProvider: React.FC = ({children}) => {
 
   const handleDeleteRecentByMaxEntries = (obj) => {
     let maxEntries = userContext.config.dashboard.recentSearches.maxEntries;
-    if (Object.keys(obj).length > maxEntries)
-      delete obj[Object.keys(obj)[0]];
-  }
+    if (Object.keys(obj).length > maxEntries) { delete obj[Object.keys(obj)[0]]; }
+  };
 
   const handleDeleteRecentByMaxTime = (obj) => {
     let maxTime = userContext.config.dashboard.recentSearches.maxTime;
     let curr = new Date();
-    for(let i=0;i<Object.keys(obj).length;i++) {
+    for (let i=0;i<Object.keys(obj).length;i++) {
       let itemStorageTime = new Date(obj[Object.keys(obj)[i]]);
       let diffMilliSeconds = curr.getTime() - itemStorageTime.getTime();
       let diffMinutes = diffMilliSeconds/60000;
-      if(diffMinutes > maxTime) {
+      if (diffMinutes > maxTime) {
         delete obj[Object.keys(obj)[i]];
         i--;
       }
     }
-  }
+  };
 
   const handleDeleteAllRecent = () => {
     localStorage.removeItem("search");
     handleGetSearchLocal();
-  }
+  };
 
   const hasSavedRecords = () => {
     let json = localStorage.getItem("search");
     let obj = json ? JSON.parse(json) : null;
     return obj && obj[userContext.userid] && Object.keys(obj[userContext.userid]).length > 0;
-  }
+  };
 
   return (
     <SearchContext.Provider
@@ -347,6 +364,7 @@ const SearchProvider: React.FC = ({children}) => {
         loading,
         queryString,
         pageNumber,
+        sortOrder,
         setPageNumber,
         handleSearch,
         handleFacetString,
@@ -355,7 +373,8 @@ const SearchProvider: React.FC = ({children}) => {
         handleQueryFromParam,
         handleGetSearchLocal,
         handleDeleteAllRecent,
-        hasSavedRecords
+        hasSavedRecords,
+        handleSort,
       }}
     >
       {children}
