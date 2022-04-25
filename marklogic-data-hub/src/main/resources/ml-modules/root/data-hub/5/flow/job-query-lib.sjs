@@ -41,6 +41,7 @@ function findStepResponses(query) {
   const jobsDataQuery = 'select Job.StepResponse.stepName as stepName,' +
       'Job.StepResponse.stepDefinitionType as stepDefinitionType,' +
       'Job.StepResponse.jobStatus as jobStatus,' +
+      'Job.StepResponse.stepStatus as stepStatus,' +
       'Job.StepResponse.entityName as entityName,' +
       'Job.StepResponse.stepStartTime as startTime,' +
       'Job.StepResponse.stepEndTime - Job.StepResponse.stepStartTime as duration,' +
