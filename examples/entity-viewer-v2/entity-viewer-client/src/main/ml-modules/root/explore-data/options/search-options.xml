@@ -67,6 +67,16 @@
         <search:path-index xmlns:oex="http://www.w3.org/2000/xmlns/">/person/createdOn/ts</search:path-index>
       </search:sort-order>
     </search:state>
+    <search:state name="organization_createdOn_ascending">
+      <search:sort-order type="xs:dateTime" direction="ascending">
+        <search:path-index xmlns:oex="http://www.w3.org/2000/xmlns/">/organization/createdOn/ts</search:path-index>
+      </search:sort-order>
+    </search:state>
+    <search:state name="organization_createdOn_descending">
+      <search:sort-order type="xs:dateTime" direction="descending">
+        <search:path-index xmlns:oex="http://www.w3.org/2000/xmlns/">/organization/createdOn/ts</search:path-index>
+      </search:sort-order>
+    </search:state>
   </search:operator>
   <!--
 Uncomment to return no results for a blank search, rather than the default of all results

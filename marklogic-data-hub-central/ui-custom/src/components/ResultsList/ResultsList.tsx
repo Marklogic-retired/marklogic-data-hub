@@ -12,6 +12,7 @@ import {getValByConfig} from "../../util/util";
 import Pagination from "../Pagination/Pagination";
 import ResultActions from "../ResultActions/ResultActions";
 import {CaretDownFill, CaretUpFill} from "react-bootstrap-icons";
+import _ from "lodash";
 
 type Props = {
   config?: any;
@@ -123,13 +124,15 @@ const ResultsList: React.FC<Props> = (props) => {
       <div className="sortContainer">
         <div className="thumbnailClean"></div>
         <div className="detailClean"></div>
-        <div className="sortElements" onClick={handleSortClick}>
-          <span className="sortName">{props?.config?.sort?.label}</span>
-          <span className="sortIcons">
-            <CaretUpFill color={sortOrder === "ascending" ? "#394494" : "#ccc"} />
-            <CaretDownFill color={sortOrder === "descending" ? "#394494" : "#ccc"} />
-          </span>
-        </div>
+        {_.includes(props.config.sort.entities, searchContext.entityType) ?
+          <div className="sortElements" onClick={handleSortClick}>
+            <span className="sortName">{props?.config?.sort?.label}</span>
+            <span className="sortIcons">
+              <CaretUpFill color={sortOrder === "ascending" ? "#394494" : "#ccc"} />
+              <CaretDownFill color={sortOrder === "descending" ? "#394494" : "#ccc"} />
+            </span>
+          </div>
+        : null}
       </div>
     );
   };
