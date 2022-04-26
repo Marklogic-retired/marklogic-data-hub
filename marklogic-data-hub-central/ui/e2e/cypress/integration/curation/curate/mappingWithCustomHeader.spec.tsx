@@ -252,7 +252,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     runPage.explorerLink(mapStep).click();
 
     browsePage.getFirstTableViewInstanceIcon().should("be.visible").click({force: true});
-    detailPage.getSourceView().click();
+    detailPage.getSourceView().should("be.visible").click({force: true});
 
     // attachment is present in detailed view of document
     detailPage.attachmentPresent().should("exist");
