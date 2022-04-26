@@ -73,11 +73,6 @@ function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predic
         }
         GROUP BY ?subjectIRI ?predicateIRI ?predicateLabel
       }
-      {
-            OPTIONAL {
-              ?firstObjectIRI @labelIRI ?firstObjectLabel.
-            }
-      }
       }
   `);
   let joinOn = op.on(op.col("subjectIRI"),op.col("subjectIRI"));
