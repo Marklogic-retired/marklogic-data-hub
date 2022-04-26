@@ -98,8 +98,7 @@ describe("Validate CRUD functionality from list view", () => {
     loadPage.confirmationOptions("No").click();
     cy.waitUntil(() => loadPage.saveSettings(stepName)).click({force: true});
     cy.waitForAsyncRequest();
-    loadPage.stepName(stepName).should("be.visible");
-    loadPage.stepName(stepName).click();
+    loadPage.stepName(stepName).should("be.visible").click({force: true});
     loadPage.stepDescriptionInput().clear().type("UPDATE2");
     loadPage.switchEditAdvanced().click();
     cy.waitUntil(() => loadPage.saveSettings(stepName)).click({force: true});
