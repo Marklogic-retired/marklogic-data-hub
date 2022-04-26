@@ -135,38 +135,28 @@ result.map(item => {
   if (item.subjectLabel !== undefined && item.subjectLabel.toString().length === 0) {
     let subjectArr = item.subjectIRI.toString().split("/");
     subjectLabel = subjectArr[subjectArr.length - 1];
-    newLabel = subjectArr[subjectArr.length - 1];
     let entityType = subjectArr[subjectArr.length - 2];
     //get configuration values from Hub Central Config
     let configurationLabel = getLabelFromHubConfigByEntityType(entityType);
     let configPropertiesOnHover = getPropertiesOnHoverFromHubConfigByEntityType(entityType);
-
     //check if we have in central config new label loaded
     if(configurationLabel.toString().length > 0){
       //getting the value of the configuration property
       newLabel =getValueFromProperty(configurationLabel,item.docURI,entityType);
-    }else{
-      newLabel = subjectLabel;
     }
     //check if we have in central config properties on hover loaded
-    if(configPropertiesOnHover.toString().length > 0){
-      //check in the document the value of the configuration property
-      for (var i = 0; i < configPropertiesOnHover.length; i++) {
-        let entityPropertyName = configPropertiesOnHover[i];
-        //create an Property on hover object
-        var objPropertyOnHover = new Object();
-        objPropertyOnHover[entityPropertyName] = getValueFromProperty(entityPropertyName,item.docURI,entityType);
-        resultPropertiesOnHover.push(objPropertyOnHover);
-      }
-    }
+    resultPropertiesOnHover = getValuesPropertiesOnHover(item.docURI,entityType);
   }
-
   const group = item.subjectIRI.toString().substring(0, item.subjectIRI.toString().length - subjectLabel.length - 1);
   let nodeOrigin = {};
   if (!nodes[item.subjectIRI] && (item.objectConcept.toString().length == 0)) {
     nodeOrigin.id = item.subjectIRI;
     nodeOrigin.docUri = item.docURI;
-    nodeOrigin.label = newLabel;
+    if (newLabel.toString().length === 0) {
+      nodeOrigin.label = subjectLabel;
+    }else{
+      nodeOrigin.label = newLabel;
+    }
     nodeOrigin.additionalProperties = null;
     nodeOrigin.group = group;
     nodeOrigin.isConcept = false;
@@ -193,11 +183,11 @@ result.map(item => {
   if (item.nodeCount && item.nodeCount >= 1) {
     let objectIRI = item.firstObjectIRI.toString();
     let objectIRIArr = objectIRI.split("/");
-    let objectLabel = "";
+    //Commented on story 8119
+    /*let objectLabel = "";
     if (item.firstObjectLabel !== undefined &&  item.firstObjectLabel.toString().length === 0) {
       objectLabel = objectIRIArr[objectIRIArr.length - 1];
-    }
-
+    }*/
     let objectId = item.firstObjectIRI.toString();
     let objectUri = item.firstDocURI.toString();
     let objectGroup = objectIRI.substring(0, objectIRI.length - objectIRIArr[objectIRIArr.length - 1].length - 1);
@@ -209,7 +199,8 @@ result.map(item => {
     let edge = {};
     if (item.nodeCount > 1) {
       let entityType = objectIRIArr[objectIRIArr.length - 2];
-      objectLabel =  entityType;
+      //Commented on story 8119
+      //objectLabel =  entityType;
       objectUri = null;
       objectId = item.subjectIRI.toString() + "-" + objectIRIArr[objectIRIArr.length - 2];
       edge.id = "edge-" + item.subjectIRI + "-" + item.predicateIRI + "-" + entityType;
@@ -229,8 +220,20 @@ result.map(item => {
       if (item.nodeCount === 1) {
         objectNode.docUri = objectUri;
       }
-      objectNode.label = newLabel;
-      objectNode.propertiesOnHover=resultPropertiesOnHover.toString();
+      let newLabelNode = "";
+      let configurationLabel = getLabelFromHubConfigByEntityType(objectIRIArr[objectIRIArr.length - 2]);
+      if(configurationLabel.toString().length > 0){
+        //getting the value of the configuration property
+        newLabelNode =getValueFromProperty(configurationLabel,objectUri,objectIRIArr[objectIRIArr.length - 2]);
+      }
+
+      if (newLabelNode.toString().length === 0) {
+        objectNode.label = objectIRIArr[objectIRIArr.length - 1];
+      }else{
+        objectNode.label = newLabelNode;
+      }
+      resultPropertiesOnHover = getValuesPropertiesOnHover(objectUri,objectIRIArr[objectIRIArr.length - 2]);
+      objectNode.propertiesOnHover=resultPropertiesOnHover;
       objectNode.group = objectGroup;
       objectNode.isConcept = false;
       objectNode.count = item.nodeCount;
@@ -299,6 +302,26 @@ function getValueFromProperty(propertyName, docUri,entityType) {
     return fn.data(doc.xpath(".//*:envelope/*:instance/*:"+entityType+"/*:"+propertyName));
   }
   return "";
+}
+
+function getValuesPropertiesOnHover(docUri,entityType) {
+  let resultPropertiesOnHover = [];
+  let configPropertiesOnHover = getPropertiesOnHoverFromHubConfigByEntityType(entityType);
+  console.log("configPropertiesOnHover:" + configPropertiesOnHover.toString());
+  console.log("configPropertiesOnHover.lenght:" + configPropertiesOnHover.toString().length);
+  if(configPropertiesOnHover.toString().length > 0){
+    //check in the document the value of the configuration property
+    for (var i = 0; i < configPropertiesOnHover.length; i++) {
+      let entityPropertyName = configPropertiesOnHover[i];
+      console.log("entityPropertyName:" + entityPropertyName);
+      //create an Property on hover object
+      var objPropertyOnHover = new Object();
+      objPropertyOnHover[entityPropertyName] = getValueFromProperty(entityPropertyName,docUri,entityType);
+      console.log("objPropertyOnHover[entityPropertyName]:" + objPropertyOnHover[entityPropertyName]);
+      resultPropertiesOnHover.push(objPropertyOnHover);
+    }
+  }
+  return resultPropertiesOnHover;
 }
 
 
