@@ -184,6 +184,10 @@ describe("Run Tile tests", () => {
 
     cy.log("**Reload page and check the same steps previously selected**");
     cy.reload();
+    //On firefox it gets stucked and then tries too fast all at once.
+    //Adding this wait so it has two seconds to stabilize after reloading the page
+    //Similar to re-rendering issues
+    cy.wait(2000);
     runPage.openStepsSelectDropdown("testPersonXML");
     runPage.controlUncheckedStep("#loadPersonXML");
     runPage.controlUncheckedStep("#mapPersonXML");
