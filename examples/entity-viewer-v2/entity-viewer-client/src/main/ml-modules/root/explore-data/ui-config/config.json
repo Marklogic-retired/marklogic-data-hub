@@ -316,6 +316,7 @@
       "config": {
         "pageLengths": [3, 5, 10, 20],
         "sort":{
+          "entities": ["person", "organization"],
           "label": "Created On",
           "sortBy": "createdOn",
           "order": "descending"
