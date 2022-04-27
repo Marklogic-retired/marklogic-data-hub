@@ -92,7 +92,8 @@
     "string_decoder": "1.2.0",
     "ansi-regex": "^5.0.1",
     "node-gyp": "8.4.1",
-    "moment": "^2.29.2"
+    "moment": "^2.29.2",
+    "minimist": "^1.2.6"
   },
   "jest": {
     "snapshotSerializers": [
@@ -166,6 +167,7 @@
     "string_decoder": "1.2.0",
     "ansi-regex": "^5.0.1",
     "immer": "^9.0.7",
-    "node-gyp": "8.4.1"
+    "node-gyp": "8.4.1",
+    "minimist": "^1.2.6"
   }
 }
