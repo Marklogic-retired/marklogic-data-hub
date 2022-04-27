@@ -48,7 +48,7 @@ dependencies {
     // on the Data Hub library
     compile 'com.marklogic:marklogic-data-hub:4.1.0'
     compile 'com.marklogic:marklogic-xcc:9.0.7'
-    mlcp "com.marklogic:mlcp:10.0.8.2"
+    mlcp "com.marklogic:mlcp:10.0.9"
     mlcp files("lib")
 }
 
