@@ -48,6 +48,7 @@ const MergingCard: React.FC<Props> = (props) => {
   const [tooltipVisible, setTooltipVisible] = useState(false);
 
   const [addToFlowVisible, setAddToFlowVisible] = useState(false);
+  const [addExistingStepDialogVisible, setAddExistingStepDialogVisible] = useState(false);
   const [mergingArtifactName, setMergingArtifactName] = useState("");
   const [flowName, setFlowName] = useState("");
 
@@ -142,7 +143,11 @@ const MergingCard: React.FC<Props> = (props) => {
   const handleStepAdd = (mergingName, flowName) => {
     setMergingArtifactName(mergingName);
     setFlowName(flowName);
-    setAddToFlowVisible(true);
+    if (isStepInFlow(mergingName, flowName)) {
+      setAddExistingStepDialogVisible(true);
+    } else {
+      setAddToFlowVisible(true);
+    }
   };
 
   const handleStepRun = (mergingName) => {
@@ -188,6 +193,10 @@ const MergingCard: React.FC<Props> = (props) => {
     });
   };
 
+  const onConfirmOk = () => {
+    setAddExistingStepDialogVisible(false);
+  };
+
   const onAddOk = async (lName, fName) => {
     await props.addStepToFlow(lName, fName, "merging");
     setAddToFlowVisible(false);
@@ -204,6 +213,7 @@ const MergingCard: React.FC<Props> = (props) => {
 
   const onAddCancel = () => {
     setAddToFlowVisible(false);
+    setAddExistingStepDialogVisible(false);
     setRunNoFlowsDialogVisible(false);
     setRunOneFlowDialogVisible(false);
     setRunMultFlowsDialogVisible(false);
@@ -233,7 +243,7 @@ const MergingCard: React.FC<Props> = (props) => {
       <Modal.Header className={"bb-none"}>
         <button type="button" className="btn-close" aria-label="Close" onClick={onAddCancel}></button>
       </Modal.Header>
-      <Modal.Body className={"pt-0 pb-4 px-4"}>
+      <Modal.Body className={"pt-0 pb-4 px-4 text-center"}>
         <div aria-label="add-step-confirmation" style={{fontSize: "16px"}}>
           { isStepInFlow(mergingArtifactName, flowName) ?
             <p aria-label="step-in-flow">The step <strong>{mergingArtifactName}</strong> is already in the flow <strong>{flowName}</strong>. Would you like to add another instance of the step?</p> :
@@ -251,6 +261,30 @@ const MergingCard: React.FC<Props> = (props) => {
       </Modal.Body>
     </Modal>
   );
+
+
+  const addExistingStepConfirmation = (
+    <Modal
+      show={addExistingStepDialogVisible}
+    >
+      <Modal.Header className={"bb-none"}>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onAddCancel}></button>
+      </Modal.Header>
+      <Modal.Body className={"text-center pt-0 pb-4"}>
+        <div className={`mb-4`} style={{fontSize: "16px"}}>
+          {
+            <p aria-label="step-in-flow">The step <strong>{mergingArtifactName}</strong> is already in the flow <strong>{flowName}</strong>.</p>
+          }
+        </div>
+        <div>
+          <HCButton variant="primary" aria-label={"Ok"} type="submit" className={"me-2"} onClick={onConfirmOk}>
+            OK
+          </HCButton>
+        </div>
+      </Modal.Body>
+    </Modal>
+  );
+
 
   const runNoFlowsConfirmation = (
     <Modal
@@ -516,6 +550,7 @@ const MergingCard: React.FC<Props> = (props) => {
         targetEntityName={props.entityModel.entityName}
       />
       {renderAddConfirmation}
+      {addExistingStepConfirmation}
       {runNoFlowsConfirmation}
       {runOneFlowConfirmation}
       {runMultFlowsConfirmation}

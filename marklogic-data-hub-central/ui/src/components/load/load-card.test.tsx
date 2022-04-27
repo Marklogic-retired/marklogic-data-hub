@@ -137,7 +137,7 @@ describe("Load Card component", () => {
 
     //Dialog appears, click 'Yes' button
     expect(getByLabelText("step-in-flow")).toBeInTheDocument();
-    fireEvent.click(getByTestId("testLoadXML-to-FlowStepExist-Confirm"));
+    fireEvent.click(getByTestId("testLoadXML-to-FlowStepExist-Exists-Confirm"));
   });
 
   test("Load Card - Run step in an existing flow where step DOES exist", async () => {
