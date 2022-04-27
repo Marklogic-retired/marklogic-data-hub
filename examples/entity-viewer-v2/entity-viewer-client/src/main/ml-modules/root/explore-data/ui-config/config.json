@@ -349,6 +349,10 @@
       "component": "ResultsList",
       "config": {
         "pageLengths": [3, 5, 10, 20],
+        "defaultIcon" : {
+          "type": "faCircle",
+          "color": "lightgrey"
+        },
         "sort":{
           "entities": ["person", "organization"],
           "label": "Created On",
@@ -357,6 +361,10 @@
         },
         "entities": {
           "person": {
+            "icon": {
+              "type": "faUser",
+              "color": "#8C85DE"
+            },
             "thumbnail": {
               "component": "Image",
               "config": {
@@ -444,6 +452,10 @@
             }
           },
           "organization": {
+            "icon": {
+              "type": "faIndustry",
+              "color": "#fdbcc6"
+            },
             "thumbnail": {
               "component": "Image",
               "config": {

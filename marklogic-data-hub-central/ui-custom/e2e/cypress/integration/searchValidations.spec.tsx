@@ -48,6 +48,7 @@ describe("Search Validations ", () => {
     searchPage.getFacetLabel(4, 0).then(countriesVal => {
       searchCountries = countriesVal.text();
     });
+    searchPage.getIcon(0).should("be.visible");
   });
   it("Search values at header ", () => {
     searchPage.menuSearchBox().clear().type(searchPerson).type("{enter}");

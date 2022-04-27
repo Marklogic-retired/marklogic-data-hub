@@ -70,6 +70,9 @@ class SearchPage {
   getMore() {
     return cy.get(".moreLess");
   }
+  getIcon(index: number) {
+    return cy.findByTestId(`entity-icon-${index}`);
+  }
 }
 
 const searchPage = new SearchPage();
