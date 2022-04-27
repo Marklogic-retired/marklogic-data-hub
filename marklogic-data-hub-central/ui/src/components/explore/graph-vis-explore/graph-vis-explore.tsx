@@ -7,7 +7,7 @@ import {SearchContext} from "@util/search-context";
 import {HubCentralConfigContext} from "@util/hubCentralConfig-context";
 import {renderToStaticMarkup} from "react-dom/server";
 import * as FontIcon from "react-icons/fa";
-import {defaultIcon, graphViewConfig} from "@config/explore.config";
+import {defaultIcon, defaultConceptIcon, graphViewConfig} from "@config/explore.config";
 import tooltipsConfig from "@config/explorer-tooltips.config";
 import {updateUserPreferences, getUserPreferences} from "../../../services/user-preferences";
 import {UserContext} from "@util/user-context";
@@ -263,8 +263,9 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     nodes = entityInstNodes?.map((e) => {
       let entityType = e.group.split("/").pop();
       let entity = hubCentralConfig?.modeling?.entities[entityType];
-      let iconName = entity?.icon || defaultIcon;
-      let nodeColor = entity?.color || themeColors.defaults.entityColor;
+      let iconName = entity?.icon || (e.isConcept ? defaultConceptIcon : defaultIcon);
+      let defaultThemeColor = !e.isConcept ? themeColors.defaults.entityColor : themeColors.defaults.conceptColor;
+      let nodeColor = entity?.color || defaultThemeColor;
       let nodeId = e.id;
       if (e.count > 1) {
         if (!nodeObj.hasOwnProperty(nodeId)) {
@@ -298,20 +299,26 @@ const GraphVisExplore: React.FC<Props> = (props) => {
             let rad = e.count > 10 ? (radiusByCount >= 84 ? maxRadius : radiusByCount) : r;
             const radius = displayLabel ? rad * 1.5 : rad;
             const imagePositionY = displayLabel ? y - 25 : y - 15;
+            let backgroundColor = !e.isConcept ? (!hover ? color : themeColors.defaults.entityColor) : (!hover ? color : themeColors.defaults.conceptColor);
             ctx.beginPath();
             ctx.arc(x, y, radius, 0, 2 * Math.PI);
-            ctx.fillStyle = !hover ? color : themeColors.defaults.entityColor;
+            ctx.fillStyle = backgroundColor;
             ctx.fill();
             ctx.lineWidth = 0.01;
+            if (e.isConcept && !selected) {
+              ctx.strokeStyle = themeColors["text-color-secondary"];
+              ctx.lineWidth = 2;
+            }
             if (selected) {
               ctx.strokeStyle = themeColors.info;
               ctx.lineWidth = 4;
             }
             ctx.stroke();
+            let defaultColor = !e.isConcept ? "Black" : themeColors["text-color-secondary"];
             if (displayLabel) {
               let customLabel = e.count >= 2 ? entityType : nodeLabel;
               ctx.font = "14px Helvetica Neue";
-              ctx.fillStyle = "Black";
+              ctx.fillStyle = defaultColor;
               ctx.textAlign = "center";
               ctx.textBaseline = "middle";
               ctx.fillText(customLabel, x, y + 10);
@@ -320,12 +327,16 @@ const GraphVisExplore: React.FC<Props> = (props) => {
               let img = new Image();   // Create new img element
               img.src = `data:image/svg+xml,${encodeURIComponent(renderToStaticMarkup(createElement(FontIcon[iconName])))}`;
               //Drawing the image on canvas
+              ctx.fillStyle = defaultColor;
               ctx.drawImage(img, x - 12, imagePositionY, 24, 24);
             } else if (scale > 0.6) {
               let img = new Image();   // Create new img element
               img.src = `data:image/svg+xml,${encodeURIComponent(renderToStaticMarkup(createElement(FontIcon[iconName])))}`;
               //Drawing the image on canvas
+              ctx.fillStyle = defaultColor;
+
               ctx.drawImage(img, x - 12, imagePositionY, 24, 24);
+
               let customLabel = e.count >= 2 ? entityType : nodeLabel;
               ctx.fillText(customLabel, x, y + 10);
             }
