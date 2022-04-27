@@ -12,7 +12,14 @@ let countryCount="";
 
 describe("Widget Validations ", () => {
   beforeEach(() => {
-    cy.intercept("/api/explore**").as("getSearch");
+    cy.restoreLocalStorage();
+    cy.intercept({
+      method: "GET",
+      url: "/api/explore**",
+    }).as("getSearch");
+  });
+  afterEach(() => {
+    cy.saveLocalStorage();
   });
   it("Visit Entity Viewer Application ", () => {
     cy.visit("/");
@@ -55,7 +62,7 @@ describe("Widget Validations ", () => {
   it("Validate Source Widget ", () => {
     searchPage.getFacetMeter("meter-sources", source1).should("have.attr", "style").and("contain", "background-color: rgb(223, 223, 223)");
     searchPage.clickFacet("sources", source1);
-    cy.wait("@getSearch");
+    cy.wait("@getSearch").its("response.statusCode").should("equal", 200);
     searchPage.resultsList().should("be.visible");
     searchPage.getFacetMeter("meter-sources", source1).should("have.attr", "style").and("contain", "background-color: rgb(26, 204, 168)");
     searchPage.summaryMeterVal().invoke("text").should("eq", sourceCount);
@@ -65,13 +72,13 @@ describe("Widget Validations ", () => {
       expect(item.text()).to.contain(source1);
     });
     searchPage.clickFacet("sources", source1);
-    cy.wait("@getSearch");
+    cy.wait("@getSearch").its("response.statusCode").should("equal", 200);
     searchPage.resultsList().should("be.visible");
   });
   it("Validate Status Widget ", () => {
     searchPage.getFacetMeter("meter-status", status).should("have.attr", "style").and("contain", "background-color: rgb(223, 223, 223)");
     searchPage.clickFacet("status", status);
-    cy.wait("@getSearch");
+    cy.wait("@getSearch").its("response.statusCode").should("equal", 200);
     searchPage.resultsList().should("be.visible");
     searchPage.getFacetMeter("meter-status", status).should("have.attr", "style").and("contain", "background-color: rgb(26, 204, 168)");
     searchPage.summaryMeterVal().invoke("text").should("eq", statusCount);
@@ -81,14 +88,14 @@ describe("Widget Validations ", () => {
       expect(item).to.contain.text(status);
     });
     searchPage.clickFacet("status", status);
-    cy.wait("@getSearch");
+    cy.wait("@getSearch").its("response.statusCode").should("equal", 200);
     searchPage.resultsList().should("be.visible");
   });
   it("Validate Contries Widget ", () => {
     searchPage.selectPageSizeOption("3 / page");
     searchPage.getFacetMeter("meter-country", country).should("have.attr", "style").and("contain", "background-color: rgb(223, 223, 223)");
     searchPage.clickFacet("country", country);
-    cy.wait("@getSearch");
+    cy.wait("@getSearch").its("response.statusCode").should("equal", 200);
     searchPage.resultsList().should("be.visible");
     searchPage.getFacetMeter("meter-country", country).should("have.attr", "style").and("contain", "background-color: rgb(26, 204, 168)");
     searchPage.summaryMeterVal().invoke("text").should("eq", countryCount);
@@ -101,17 +108,17 @@ describe("Widget Validations ", () => {
       searchPage.resultsList().should("be.visible");
     });
     searchPage.clickFacet("country", country);
-    cy.wait("@getSearch");
+    cy.wait("@getSearch").its("response.statusCode").should("equal", 200);
     searchPage.resultsList().should("be.visible");
     searchPage.getBadge().should("not.exist");
   });
   it("Validate Multiple Source Widget ", () => {
     searchPage.selectPageSizeOption("10 / page");
     searchPage.clickFacet("sources", source1);
-    cy.wait("@getSearch");
+    cy.wait("@getSearch").its("response.statusCode").should("equal", 200);
     searchPage.resultsList().should("be.visible");
     searchPage.clickFacet("sources", source2);
-    cy.wait("@getSearch");
+    cy.wait("@getSearch").its("response.statusCode").should("equal", 200);
     searchPage.resultsList().should("be.visible");
     searchPage.getFacetMeter("meter-sources", source1).should("have.attr", "style").and("contain", "background-color: rgb(26, 204, 168)");
     searchPage.getFacetMeter("meter-sources", source2).should("have.attr", "style").and("contain", "background-color: rgb(26, 204, 168)");
@@ -127,7 +134,7 @@ describe("Widget Validations ", () => {
       }
     });
     searchPage.removeFacet("sources", source1);
-    cy.wait("@getSearch");
+    cy.wait("@getSearch").its("response.statusCode").should("equal", 200);
     searchPage.resultsList().should("be.visible");
     searchPage.getBadge().invoke("text").should("contain", source2);
     searchPage.getAllCategories().eq(0).invoke("text").should("contain", source2, {timeout: 10000});
@@ -135,7 +142,7 @@ describe("Widget Validations ", () => {
       expect(item.text()).to.contain(source2);
     });
     searchPage.removeFacet("sources", source2);
-    cy.wait("@getSearch");
+    cy.wait("@getSearch").its("response.statusCode").should("equal", 200);
     searchPage.resultsList().should("be.visible");
     searchPage.getBadge().should("not.exist");
   });
