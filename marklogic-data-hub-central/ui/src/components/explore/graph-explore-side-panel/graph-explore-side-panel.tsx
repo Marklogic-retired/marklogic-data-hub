@@ -9,7 +9,7 @@ import {SearchContext} from "@util/search-context";
 import styles from "./graph-explore-side-panel.module.scss";
 import {xmlParser, xmlDecoder, xmlFormatter, jsonFormatter} from "@util/record-parser";
 import TableView from "@components/table-view/table-view";
-import {HCTooltip} from "@components/common";
+import {HCTable, HCTooltip} from "@components/common";
 
 type Props = {
     onCloseSidePanel:() => void;
@@ -27,7 +27,7 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
     savedNode
   } = useContext(SearchContext);
   const  {database, entityTypeIds, selectedFacets, query, sortOrder} = searchOptions;
-  const {entityName, group, primaryKey, sources, entityInstance, label} = savedNode;
+  const {entityName, group, primaryKey, sources, entityInstance, label, isConcept} = savedNode;
   const docUri = savedNode["docURI"] || savedNode["docUri"] || savedNode["uri"];
   const [currentTab, setCurrentTab] = useState(DEFAULT_TAB);
   const [details, setDetails] = useState<any>(null);
@@ -132,6 +132,52 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
     graphView,
   };
 
+  /* TODO: Remove hardcoded data when backend work is completed as part of DHFPROD-8851 */
+  const conceptInfoData = [
+    {
+      entityType: "Product",
+      relatedInstances: "1"
+    }
+  ];
+
+  const conceptInfoColumns = [
+    {
+      text: "Related Instances",
+      title: "Related Instances",
+      dataField: "relatedInstances",
+      key: "relatedInstances",
+      width: "40%",
+      formatter: (value) => {
+        return <span>{value}</span>;
+      }
+    },
+    {
+      text: "Entity Type",
+      title: "Entity Type",
+      dataField: "entityType",
+      key: "entityType",
+      formatter: (value) => {
+        return <span>{value}</span>;
+      },
+      width: "60%",
+    }
+  ];
+
+  const conceptInstanceInfo = (
+    <div className={styles.conceptInfoContainer}>
+      <HCTable columns={conceptInfoColumns}
+        className={styles.conceptInfoTable}
+        data={conceptInfoData}
+        nestedParams={{headerColumns: conceptInfoColumns, iconCellList: [], state: []}}
+        childrenIndent={true}
+        data-cy="document-table"
+        rowKey="entityType"
+        showHeader={true}
+        baseIndent={20}
+      />
+    </div>
+  );
+
   return (
     <div data-testid="graphSidePanel" className={styles.sidePanel}>
       <div>
@@ -151,23 +197,26 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
           </i>
         </span>
       </div>
-      <div>
-        {docUri && <span className={styles.selectedNodeUri} data-testid="uriLabel" aria-label={docUri}>URI: {docUri}</span>}
-      </div>
-      <Tabs defaultActiveKey={DEFAULT_TAB} activeKey={currentTab} onSelect={handleTabChange} className={styles.tabsContainer}>
-        <Tab
-          eventKey="instance"
-          aria-label="instanceTabInSidePanel"
-          id="instanceTabInSidePanel"
-          title={INSTANCE_TITLE}
-          className={styles.instanceTabContainer}/>
-        <Tab
-          eventKey="record"
-          aria-label="recordTabInSidePanel"
-          id="recordTabInSidePanel"
-          title={RECORD_TITLE}/>
-      </Tabs>
-      {displayPanelContent()}
+      {
+        !isConcept ? <><div>
+          {docUri && <span className={styles.selectedNodeUri} data-testid="uriLabel" aria-label={docUri}>URI: {docUri}</span>}
+        </div>
+        <Tabs defaultActiveKey={DEFAULT_TAB} activeKey={currentTab} onSelect={handleTabChange} className={styles.tabsContainer}>
+          <Tab
+            eventKey="instance"
+            aria-label="instanceTabInSidePanel"
+            id="instanceTabInSidePanel"
+            title={INSTANCE_TITLE}
+            className={styles.instanceTabContainer}/>
+          <Tab
+            eventKey="record"
+            aria-label="recordTabInSidePanel"
+            id="recordTabInSidePanel"
+            title={RECORD_TITLE}/>
+        </Tabs>
+        {displayPanelContent()}</> :
+          conceptInstanceInfo
+      }
     </div>
   );
 };

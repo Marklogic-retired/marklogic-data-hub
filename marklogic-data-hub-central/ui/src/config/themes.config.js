@@ -46,10 +46,12 @@ const themeColors = {
     "danger": "#b32424",
     "light": "#cccc",
     "dark": "#343a40",
+    "text-color-secondary": "#777777",
 
     "defaults": {
         "entityColor": "#eeeff1",
-        "questionCircle": "#7f86b5"
+        "questionCircle": "#7f86b5",
+        "conceptColor": "#FFFFFF"
     }
 }
 
