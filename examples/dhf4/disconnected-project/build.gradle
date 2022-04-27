@@ -46,7 +46,7 @@ dependencies {
     compile 'com.marklogic:marklogic-xcc:9.0.7'
 
     //sample mlcp dependency. Remove if not required
-	mlcp "com.marklogic:mlcp:10.0.8.2"
+	mlcp "com.marklogic:mlcp:10.0.9"
 	/**
 	 * mlcp uses Log4j for logging, and if Log4j can't find a configuration file, it will complain and you'll
 	 * get none of mlcp's usually-useful logging. It is recommended then that your Gradle configuration for
