@@ -310,7 +310,7 @@ describe("Mapping Card component", () => {
 
     // Dialog appears, click 'Yes'
     expect(getByLabelText("step-in-flow")).toBeInTheDocument();
-    fireEvent.click(getByTestId("Mapping1-to-testFlow-Confirm"));
+    fireEvent.click(getByTestId("Mapping1-to-testFlow-Exists-Confirm"));
 
     //Check if the /tiles/run/add route has been called
     wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add"); });
@@ -464,8 +464,8 @@ describe("Mapping Card component", () => {
     expect(getByTestId(`${mappingStepName}-toExistingFlow`)).toBeInTheDocument();
     fireEvent.keyDown(getByLabelText(`${mappingStepName}-flowsList`), {key: "ArrowDown"});
     fireEvent.click(getByText(data.flows.data[0].name));
-    fireEvent.click(getByText("Yes"));
-    expect(mockAddStepToFlow).toBeCalledTimes(1);
+    fireEvent.click(getByText("OK"));
+    expect(mockAddStepToFlow).toBeCalledTimes(0);
 
     // adding to new flow
     const mappingStep = getAllByText(mappingStepName);

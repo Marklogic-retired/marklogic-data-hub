@@ -278,7 +278,7 @@ describe("Load data component", () => {
 
     //Dialog appears, click 'Yes' button
     expect(getByLabelText("step-in-flow")).toBeInTheDocument();
-    fireEvent.click(getByLabelText("Yes"));
+    fireEvent.click(getByLabelText("Ok"));
 
   });
 

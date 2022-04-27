@@ -46,6 +46,7 @@ const LoadList: React.FC<Props> = (props) => {
   const [sortedInfo, setSortedInfo] = useState(storedSortOrder ? storedSortOrder : {});
   const [dialogVisible, setDialogVisible] = useState(false);
   const [addDialogVisible, setAddDialogVisible] = useState(false);
+  const [addExistingStepDialogVisible, setAddExistingStepDialogVisible] = useState(false);
   const [runNoFlowsDialogVisible, setRunNoFlowsDialogVisible] = useState(false);
   const [runOneFlowDialogVisible, setRunOneFlowDialogVisible] = useState(false);
   const [runMultFlowsDialogVisible, setRunMultFlowsDialogVisible] = useState(false);
@@ -118,6 +119,7 @@ const LoadList: React.FC<Props> = (props) => {
     setRunNoFlowsDialogVisible(false);
     setRunOneFlowDialogVisible(false);
     setRunMultFlowsDialogVisible(false);
+    setAddExistingStepDialogVisible(false);
     setSelected({}); // reset menus on cancel
   };
 
@@ -150,7 +152,11 @@ const LoadList: React.FC<Props> = (props) => {
   const handleStepAdd = (loadName, flowName) => {
     setLoadArtifactName(loadName);
     setFlowName(flowName);
-    setAddDialogVisible(true);
+    if (isStepInFlow(loadName, flowName)) {
+      setAddExistingStepDialogVisible(true);
+    } else {
+      setAddDialogVisible(true);
+    }
   };
 
   const handleStepRun = (loadName) => {
@@ -210,6 +216,10 @@ const LoadList: React.FC<Props> = (props) => {
     });
   };
 
+  const onConfirmOk = () => {
+    setAddExistingStepDialogVisible(false);
+  };
+
   const addConfirmation = (
     <Modal
       show={addDialogVisible}
@@ -219,10 +229,7 @@ const LoadList: React.FC<Props> = (props) => {
       </Modal.Header>
       <Modal.Body className={"pt-0 pb-4 text-center"}>
         <div aria-label="add-step-confirmation" className={"mb-4"} style={{fontSize: "16px"}}>
-          {isStepInFlow(loadArtifactName, flowName) ?
-            <p aria-label="step-in-flow">The step <strong>{loadArtifactName}</strong> is already in the flow <strong>{flowName}</strong>. Would you like to add another instance?</p> :
-            <p aria-label="step-not-in-flow">Are you sure you want to add the step <strong>{loadArtifactName}</strong> to the flow <strong>{flowName}</strong>?</p>
-          }
+          <p aria-label="step-not-in-flow">Are you sure you want to add the step <strong>{loadArtifactName}</strong> to the flow <strong>{flowName}</strong>?</p>
         </div>
         <div>
           <HCButton variant="outline-light" aria-label={"No"} className={"me-2"} onClick={onCancel}>
@@ -230,6 +237,28 @@ const LoadList: React.FC<Props> = (props) => {
           </HCButton>
           <HCButton aria-label={"Yes"} data-testid={`${loadArtifactName}-to-${flowName}-Confirm`} variant="primary" type="submit" onClick={() => onAddOk(loadArtifactName, flowName)}>
             Yes
+          </HCButton>
+        </div>
+      </Modal.Body>
+    </Modal>
+  );
+
+  const addExistingStepConfirmation = (
+    <Modal
+      show={addExistingStepDialogVisible}
+    >
+      <Modal.Header className={"bb-none"}>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+      </Modal.Header>
+      <Modal.Body className={"text-center pt-0 pb-4"}>
+        <div className={`mb-4`} style={{fontSize: "16px"}}>
+          {
+            <p aria-label="step-in-flow">The step <strong>{loadArtifactName}</strong> is already in the flow <strong>{flowName}.</strong></p>
+          }
+        </div>
+        <div>
+          <HCButton variant="primary" aria-label={"Ok"} type="submit" className={"me-2"} onClick={onConfirmOk}>
+            OK
           </HCButton>
         </div>
       </Modal.Body>
@@ -557,6 +586,7 @@ const LoadList: React.FC<Props> = (props) => {
         />}
       {deleteConfirmation}
       {addConfirmation}
+      {addExistingStepConfirmation}
       {runNoFlowsConfirmation}
       {runOneFlowConfirmation}
       {runMultFlowsConfirmation}
