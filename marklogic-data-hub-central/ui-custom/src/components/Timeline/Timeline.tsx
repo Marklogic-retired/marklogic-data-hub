@@ -35,7 +35,7 @@ const Timeline: React.FC<Props> = (props) => {
 
     let timelineData : any[]=[];
 
-    const getItems = (type) => (d) => {
+    const getItems = (d) => {
         let result = [];
         result = props.config.popover.items.map((item, index) => {
             if (!item) return null;
@@ -44,11 +44,11 @@ const Timeline: React.FC<Props> = (props) => {
                 {(item.component) ?
                     <span key={"item-" + index} className="popover-value">
                         {React.createElement(COMPONENTS[item.component],
-                            { config: item.config, data: d, style: item.style, type: type}, null
+                            { config: item.config, data: d, style: item.style}, null
                         )}
                     </span> :
                     <span><span key={"item-" + index} className="popover-value">
-                        <Value data={d} config={item} getFirst={true} type={type}/>
+                        <Value data={d} config={item} getFirst={true}/>
                     </span></span>
                 }
             </div>)
@@ -80,7 +80,7 @@ const Timeline: React.FC<Props> = (props) => {
         obj.start = _.get(activity, props.config.popover.items[1].config.path, null)
         obj.id = _.get(activity, props.config.marker.path, null) + id;
         obj.title = ReactDOMServer.renderToString(
-            <span>{getItems("timelineTooltip")(data[id])}</span>)
+            <span>{getItems(data[id])}</span>)
         timelineData.push(obj);
     })
 
