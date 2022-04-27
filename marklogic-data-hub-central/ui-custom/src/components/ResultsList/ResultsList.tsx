@@ -11,6 +11,8 @@ import "./ResultsList.scss";
 import {getValByConfig} from "../../util/util";
 import Pagination from "../Pagination/Pagination";
 import ResultActions from "../ResultActions/ResultActions";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import * as FaDictionary  from '@fortawesome/free-solid-svg-icons'
 import {CaretDownFill, CaretUpFill} from "react-bootstrap-icons";
 import _ from "lodash";
 
@@ -140,8 +142,11 @@ const ResultsList: React.FC<Props> = (props) => {
   const getResults = () => {
     let results = searchContext.searchResults.result.map((results, index) => {
       const configEntityType = props.config.entities[results.entityType];
+      let defaultIcon = props.config.defaultIcon
+      let iconElement = configEntityType.icon ? FaDictionary[configEntityType.icon.type] : FaDictionary[defaultIcon.type];
       return (
         <div key={"result-" + index} className="result">
+          {<span className="entityIcon" data-testid={"entity-icon-" + index}><FontAwesomeIcon icon={iconElement} color={configEntityType.icon ? configEntityType.icon.color : defaultIcon.color}/></span>}
           <div className="thumbnail">
             {configEntityType.thumbnail ?
               <Image data={results} config={configEntityType.thumbnail.config} />
