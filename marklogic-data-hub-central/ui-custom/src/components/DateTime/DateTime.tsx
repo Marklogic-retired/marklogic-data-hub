@@ -8,7 +8,6 @@ type Props = {
   data?: any;
   style?: any;
   className?: any;
-  type?: string;
 };
 
 /**

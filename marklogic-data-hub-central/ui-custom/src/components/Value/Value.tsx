@@ -9,7 +9,6 @@ type Props = {
   style?: any;
   title?: any;
   getFirst?: boolean;
-  type?:string;
 };
 
 /**
