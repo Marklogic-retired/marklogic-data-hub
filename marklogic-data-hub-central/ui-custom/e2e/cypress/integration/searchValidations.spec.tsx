@@ -12,7 +12,10 @@ let searchCountries="";
 describe("Search Validations ", () => {
   beforeEach(() => {
     cy.restoreLocalStorage();
-    cy.intercept("/api/explore**").as("getSearch");
+    cy.intercept({
+      method: "GET",
+      url: "/api/explore**",
+    }).as("getSearch");
   });
   afterEach(() => {
     cy.saveLocalStorage();
@@ -48,37 +51,37 @@ describe("Search Validations ", () => {
   });
   it("Search values at header ", () => {
     searchPage.menuSearchBox().clear().type(searchPerson).type("{enter}");
-    cy.wait("@getSearch");
+    cy.wait("@getSearch").its("response.statusCode").should("equal", 200);
     searchPage.resultTitle().eq(0).then(nameVal => {
       expect(nameVal.text()).to.equal(searchPerson);
     });
     searchPage.menuSearchBox().clear().type(searchAddress).type("{enter}");
-    cy.wait("@getSearch");
+    cy.wait("@getSearch").its("response.statusCode").should("equal", 200);
     searchPage.resultAddress().eq(0).then(addressVal => {
       expect(addressVal.text()).to.equal(searchAddress);
     });
     searchPage.menuSearchBox().clear().type(searchPhone).type("{enter}");
-    cy.wait("@getSearch");
+    cy.wait("@getSearch").its("response.statusCode").should("equal", 200);
     searchPage.resultPhone().eq(0).then(phoneVal => {
       expect(phoneVal.text()).to.equal(searchPhone);
     });
     searchPage.menuSearchBox().clear().type(searchEmail).type("{enter}");
-    cy.wait("@getSearch");
+    cy.wait("@getSearch").its("response.statusCode").should("equal", 200);
     searchPage.resultEmail().eq(0).then(emailVal => {
       expect(emailVal.text()).to.equal(searchEmail);
     });
     searchPage.menuSearchBox().clear().type(searchSources).type("{enter}");
-    cy.wait("@getSearch");
+    cy.wait("@getSearch").its("response.statusCode").should("equal", 200);
     searchPage.resultCategories().eq(0).then(sourceVal => {
       expect(sourceVal.text()).to.contain(searchSources);
     });
     searchPage.menuSearchBox().clear().type(searchStatus).type("{enter}");
-    cy.wait("@getSearch");
+    cy.wait("@getSearch").its("response.statusCode").should("equal", 200);
     searchPage.resultStatus().eq(0).then(statusVal => {
       expect(statusVal.text()).to.equal(searchStatus);
     });
     searchPage.menuSearchBox().clear().type(searchCountries).type("{enter}");
-    cy.wait("@getSearch");
+    cy.wait("@getSearch").its("response.statusCode").should("equal", 200);
     searchPage.resultTitle().eq(0).click({force: true});
     cy.contains(searchCountries).should("be.visible");
   });
@@ -86,7 +89,7 @@ describe("Search Validations ", () => {
     landingPage.entityViewerTitle().click();
     landingPage.dashboard().should("be.visible");
     landingPage.searchBox().clear().type(searchPerson.split(" ")[0]).type("{enter}");
-    cy.wait("@getSearch");
+    cy.wait("@getSearch").its("response.statusCode").should("equal", 200);
     searchPage.resultTitle().eq(0).then(nameVal => {
       expect(nameVal.text()).to.equal(searchPerson);
     });
@@ -94,42 +97,42 @@ describe("Search Validations ", () => {
     landingPage.entityViewerTitle().click();
     landingPage.dashboard().should("be.visible");
     landingPage.searchBox().clear().type(searchAddress.split(",")[0]).type("{enter}");
-    cy.wait("@getSearch");
+    cy.wait("@getSearch").its("response.statusCode").should("equal", 200);
     searchPage.resultAddress().eq(0).then(addressVal => {
       expect(addressVal.text()).to.equal(searchAddress);
     });
     landingPage.entityViewerTitle().click();
     landingPage.dashboard().should("be.visible");
     landingPage.searchBox().clear().type(searchPhone.split("-")[2]).type("{enter}");
-    cy.wait("@getSearch");
+    cy.wait("@getSearch").its("response.statusCode").should("equal", 200);
     searchPage.resultPhone().eq(0).then(phoneVal => {
       expect(phoneVal.text()).to.equal(searchPhone);
     });
     landingPage.entityViewerTitle().click();
     landingPage.dashboard().should("be.visible");
     landingPage.searchBox().clear().type(searchEmail.split("@")[0]).type("{enter}");
-    cy.wait("@getSearch");
+    cy.wait("@getSearch").its("response.statusCode").should("equal", 200);
     searchPage.resultEmail().eq(0).then(emailVal => {
       expect(emailVal.text()).to.equal(searchEmail);
     });
     landingPage.entityViewerTitle().click();
     landingPage.dashboard().should("be.visible");
     landingPage.searchBox().clear().type(searchSources).type("{enter}");
-    cy.wait("@getSearch");
+    cy.wait("@getSearch").its("response.statusCode").should("equal", 200);
     searchPage.resultCategories().eq(0).then(sourceVal => {
       expect(sourceVal.text()).to.contain(searchSources);
     });
     landingPage.entityViewerTitle().click();
     landingPage.dashboard().should("be.visible");
     landingPage.searchBox().clear().type(searchStatus).type("{enter}");
-    cy.wait("@getSearch");
+    cy.wait("@getSearch").its("response.statusCode").should("equal", 200);
     searchPage.resultStatus().eq(0).then(statusVal => {
       expect(statusVal.text()).to.equal(searchStatus);
     });
     landingPage.entityViewerTitle().click();
     landingPage.dashboard().should("be.visible");
     landingPage.searchBox().clear().type(searchCountries).type("{enter}");
-    cy.wait("@getSearch");
+    cy.wait("@getSearch").its("response.statusCode").should("equal", 200);
     searchPage.resultTitle().eq(0).click({force: true});
     cy.contains(searchCountries).should("be.visible");
   });
