@@ -38,6 +38,7 @@ const MappingCard: React.FC<Props> = (props) => {
   const [mapData, setMapData] = useState({});
   const [dialogVisible, setDialogVisible] = useState(false);
   const [addDialogVisible, setAddDialogVisible] = useState(false);
+  const [addExistingStepDialogVisible, setAddExistingStepDialogVisible] = useState(false);
   const [runNoFlowsDialogVisible, setRunNoFlowsDialogVisible] = useState(false);
   const [runOneFlowDialogVisible, setRunOneFlowDialogVisible] = useState(false);
   const [runMultFlowsDialogVisible, setRunMultFlowsDialogVisible] = useState(false);
@@ -97,6 +98,7 @@ const MappingCard: React.FC<Props> = (props) => {
   const onCancel = () => {
     setDialogVisible(false);
     setAddDialogVisible(false);
+    setAddExistingStepDialogVisible(false);
     setRunNoFlowsDialogVisible(false);
     setRunOneFlowDialogVisible(false);
     setRunMultFlowsDialogVisible(false);
@@ -196,7 +198,11 @@ const MappingCard: React.FC<Props> = (props) => {
   const handleStepAdd = (mappingName, flowName) => {
     setMappingArtifactName(mappingName);
     setFlowName(flowName);
-    setAddDialogVisible(true);
+    if (isStepInFlow(mappingName, flowName)) {
+      setAddExistingStepDialogVisible(true);
+    } else {
+      setAddDialogVisible(true);
+    }
   };
 
   const handleStepRun = (mappingName) => {
@@ -243,6 +249,9 @@ const MappingCard: React.FC<Props> = (props) => {
     });
   };
 
+  const onConfirmOk = () => {
+    setAddExistingStepDialogVisible(false);
+  };
 
   const onAddOk = async (lName, fName) => {
     await props.addStepToFlow(lName, fName, "mapping");
@@ -266,10 +275,9 @@ const MappingCard: React.FC<Props> = (props) => {
       <Modal.Header className={"bb-none"}>
         <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
       </Modal.Header>
-      <Modal.Body className={"pt-0 pb-4"}>
+      <Modal.Body className={"pt-0 pb-4 text-center"}>
         <div aria-label="add-step-confirmation" style={{fontSize: "16px"}}>
-          {isStepInFlow(mappingArtifactName, flowName) ?
-            <p aria-label="step-in-flow">The step <strong>{mappingArtifactName}</strong> is already in the flow <strong>{flowName}</strong>. Would you like to add another instance of the step?</p> :
+          {
             <p aria-label="step-not-in-flow">Are you sure you want to add the step <strong>{mappingArtifactName}</strong> to the flow <strong>{flowName}</strong>?</p>
           }
         </div>
@@ -284,6 +292,29 @@ const MappingCard: React.FC<Props> = (props) => {
       </Modal.Body>
     </Modal>
   );
+
+  const addExistingStepConfirmation = (
+    <Modal
+      show={addExistingStepDialogVisible}
+    >
+      <Modal.Header className={"bb-none"}>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+      </Modal.Header>
+      <Modal.Body className={"text-center pt-0 pb-4"}>
+        <div className={`mb-4`} style={{fontSize: "16px"}}>
+          {
+            <p aria-label="step-in-flow">The step <strong>{mappingArtifactName}</strong> is already in the flow <strong>{flowName}</strong>.</p>
+          }
+        </div>
+        <div>
+          <HCButton variant="primary" data-testid={`${mappingArtifactName}-to-${flowName}-Exists-Confirm`} aria-label={"Ok"} type="submit" className={"me-2"} onClick={onConfirmOk}>
+            OK
+          </HCButton>
+        </div>
+      </Modal.Body>
+    </Modal>
+  );
+
 
   const runNoFlowsConfirmation = (
     <Modal
@@ -499,6 +530,7 @@ const MappingCard: React.FC<Props> = (props) => {
       </Row>
       {deleteConfirmation}
       {addConfirmation}
+      {addExistingStepConfirmation}
       {runNoFlowsConfirmation}
       {runOneFlowConfirmation}
       {runMultFlowsConfirmation}
