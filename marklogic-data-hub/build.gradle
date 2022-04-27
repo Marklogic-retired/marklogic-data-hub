@@ -73,10 +73,7 @@ dependencies {
     testImplementation 'org.easymock:easymock:3.4'
     testImplementation 'org.slf4j:log4j-over-slf4j:1.7.31'
 
-    // How MLCP handles errors in a transform changed between 10.0.4.2 and 10.0.5, such that these errors do not result
-    // in records counting as "failures". This seems like a bug with MLCP. For now, 10.0.4.2 is still used for testing
-    // as RunConnectedStepsWithMlcpTest expects transform errors to be counted as failures.
-    testImplementation("com.marklogic:mlcp:10.0.4.2") {
+    testImplementation("com.marklogic:mlcp:10.0.9") {
       exclude group: 'org.apache.avro', module: 'avro-tools'
       exclude group: 'org.apache.commons', module: 'commons-csv'
     }

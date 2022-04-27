@@ -10,7 +10,7 @@ buildscript {
         if (project.hasProperty("testing")) {
             classpath "com.marklogic:ml-data-hub:5.7-SNAPSHOT"
         } else {
-            classpath "com.marklogic:ml-data-hub:5.5.0"
+            classpath "com.marklogic:ml-data-hub:5.7.1"
         }
     }
 }
@@ -28,7 +28,7 @@ configurations {
 }
 
 dependencies {
-    mlcp "com.marklogic:mlcp:10.0.8.2"
+    mlcp "com.marklogic:mlcp:10.0.9"
     mlcp files("lib")
 }
 
