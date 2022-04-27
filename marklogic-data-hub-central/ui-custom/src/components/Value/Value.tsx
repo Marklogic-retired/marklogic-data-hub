@@ -46,9 +46,7 @@ const Value: React.FC<Props> = (props) => {
             className={valueClassName} 
             style={valueStyle}
             title={valueTitle}
-        >
-            {props?.type === "timelineTooltip" ? <strong>&emsp;{val}</strong> : val}
-        </span>
+        >{val}</span>
     );
 };
 
