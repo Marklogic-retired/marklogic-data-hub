@@ -33,6 +33,7 @@ const LoadCard: React.FC<Props> = (props) => {
   const [stepData, setStepData] = useState({});
   const [dialogVisible, setDialogVisible] = useState(false);
   const [addDialogVisible, setAddDialogVisible] = useState(false);
+  const [addExistingStepDialogVisible, setAddExistingStepDialogVisible] = useState(false);
   const [runNoFlowsDialogVisible, setRunNoFlowsDialogVisible] = useState(false);
   const [runOneFlowDialogVisible, setRunOneFlowDialogVisible] = useState(false);
   const [runMultFlowsDialogVisible, setRunMultFlowsDialogVisible] = useState(false);
@@ -157,7 +158,11 @@ const LoadCard: React.FC<Props> = (props) => {
   const handleStepAdd = (loadName, flowName) => {
     setLoadArtifactName(loadName);
     setFlowName(flowName);
-    setAddDialogVisible(true);
+    if (isStepInFlow(loadName, flowName)) {
+      setAddExistingStepDialogVisible(true);
+    } else {
+      setAddDialogVisible(true);
+    }
   };
 
   const handleStepRun = (loadName) => {
@@ -217,12 +222,17 @@ const LoadCard: React.FC<Props> = (props) => {
     });
   };
 
+  const onConfirmOk = () => {
+    setAddExistingStepDialogVisible(false);
+  };
+
   const onCancel = () => {
     setDialogVisible(false);
     setAddDialogVisible(false);
     setRunNoFlowsDialogVisible(false);
     setRunOneFlowDialogVisible(false);
     setRunMultFlowsDialogVisible(false);
+    setAddExistingStepDialogVisible(false);
     setSelected({}); // reset menus on cancel
   };
 
@@ -269,6 +279,28 @@ const LoadCard: React.FC<Props> = (props) => {
           </HCButton>
           <HCButton aria-label={"Yes"} data-testid={`${loadArtifactName}-to-${flowName}-Confirm`} variant="primary" type="submit" onClick={() => onAddOk(loadArtifactName, flowName)}>
             Yes
+          </HCButton>
+        </div>
+      </Modal.Body>
+    </Modal>
+  );
+
+  const addExistingStepConfirmation = (
+    <Modal
+      show={addExistingStepDialogVisible}
+    >
+      <Modal.Header className={"bb-none"}>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+      </Modal.Header>
+      <Modal.Body className={"text-center pt-0 pb-4"}>
+        <div className={`mb-4`} style={{fontSize: "16px"}}>
+          {
+            <p aria-label="step-in-flow">The step <b>{loadArtifactName}</b> is already in the flow <b>{flowName}</b>.</p>
+          }
+        </div>
+        <div>
+          <HCButton variant="primary" data-testid={`${loadArtifactName}-to-${flowName}-Exists-Confirm`} aria-label={"Ok"} type="submit" className={"me-2"} onClick={onConfirmOk}>
+            OK
           </HCButton>
         </div>
       </Modal.Body>
@@ -497,6 +529,7 @@ const LoadCard: React.FC<Props> = (props) => {
       </Row>
       {deleteConfirmation}
       {addConfirmation}
+      {addExistingStepConfirmation}
       {runNoFlowsConfirmation}
       {runOneFlowConfirmation}
       {runMultFlowsConfirmation}

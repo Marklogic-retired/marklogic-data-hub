@@ -44,6 +44,7 @@ const MatchingCard: React.FC<Props> = (props) => {
 
   const [editStepArtifact, setEditStepArtifact] = useState({});
   const [addToFlowVisible, setAddToFlowVisible] = useState(false);
+  const [addExistingStepDialogVisible, setAddExistingStepDialogVisible] = useState(false);
   const [matchingArtifactName, setMatchingArtifactName] = useState("");
   const [flowName, setFlowName] = useState("");
 
@@ -126,7 +127,11 @@ const MatchingCard: React.FC<Props> = (props) => {
   const handleStepAdd = (matchingName, flowName) => {
     setMatchingArtifactName(matchingName);
     setFlowName(flowName);
-    setAddToFlowVisible(true);
+    if (isStepInFlow(matchingName, flowName)) {
+      setAddExistingStepDialogVisible(true);
+    } else {
+      setAddToFlowVisible(true);
+    }
   };
 
   const handleStepRun = (matchingName) => {
@@ -186,6 +191,10 @@ const MatchingCard: React.FC<Props> = (props) => {
     });
   };
 
+  const onConfirmOk = () => {
+    setAddExistingStepDialogVisible(false);
+  };
+
   const onAddCancel = () => {
     setAddToFlowVisible(false);
     setRunNoFlowsDialogVisible(false);
@@ -234,7 +243,7 @@ const MatchingCard: React.FC<Props> = (props) => {
       <Modal.Header className={"bb-none"}>
         <button type="button" className="btn-close" aria-label="Close" onClick={onAddCancel}></button>
       </Modal.Header>
-      <Modal.Body className={"pt-0 pb-4 px-4"}>
+      <Modal.Body className={"pt-0 pb-4 text-center"}>
         <div aria-label="add-step-confirmation" style={{fontSize: "16px"}}>
           { isStepInFlow(matchingArtifactName, flowName) ?
             <p aria-label="step-in-flow">The step <strong>{matchingArtifactName}</strong> is already in the flow <strong>{flowName}</strong>. Would you like to add another instance of the step?</p> :
@@ -247,6 +256,28 @@ const MatchingCard: React.FC<Props> = (props) => {
           </HCButton>
           <HCButton aria-label={"Yes"} data-testid={`${matchingArtifactName}-to-${flowName}-Confirm`} variant="primary" type="submit" onClick={() => onAddOk(matchingArtifactName, flowName)}>
             {"Yes"}
+          </HCButton>
+        </div>
+      </Modal.Body>
+    </Modal>
+  );
+
+  const addExistingStepConfirmation = (
+    <Modal
+      show={addExistingStepDialogVisible}
+    >
+      <Modal.Header className={"bb-none"}>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onAddCancel}></button>
+      </Modal.Header>
+      <Modal.Body className={"text-center pt-0 pb-4"}>
+        <div className={`mb-4`} style={{fontSize: "16px"}}>
+          {
+            <p aria-label="step-in-flow">The step <strong>{matchingArtifactName}</strong> is already in the flow <strong>{flowName}</strong>.</p>
+          }
+        </div>
+        <div>
+          <HCButton variant="primary" aria-label={"Ok"} type="submit" className={"me-2"} onClick={onConfirmOk}>
+            OK
           </HCButton>
         </div>
       </Modal.Body>
@@ -517,6 +548,7 @@ const MatchingCard: React.FC<Props> = (props) => {
         targetEntityName={props.entityModel.entityName}
       />
       {renderAddConfirmation}
+      {addExistingStepConfirmation}
       {runNoFlowsConfirmation}
       {runOneFlowConfirmation}
       {runMultFlowsConfirmation}
