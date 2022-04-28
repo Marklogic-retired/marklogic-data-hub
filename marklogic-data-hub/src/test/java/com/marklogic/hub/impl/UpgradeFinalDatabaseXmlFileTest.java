@@ -63,6 +63,8 @@ public class UpgradeFinalDatabaseXmlFileTest extends TestObject {
         assertNotNull(props.getElements(FinalDatabaseXmlFileUpgrader.SOURCE_TYPE_FIELD_PATH).get(0));
         assertNotNull(props.getElements(FinalDatabaseXmlFileUpgrader.SOURCE_NAME_INDEX_PATH).get(0));
         assertNotNull(props.getElements(FinalDatabaseXmlFileUpgrader.SOURCE_TYPE_INDEX_PATH).get(0));
+        assertNotNull(props.getElements(FinalDatabaseXmlFileUpgrader.DATA_HUB_RAN_STEP_FIELD_PATH).get(0));
+        assertNotNull(props.getElements(FinalDatabaseXmlFileUpgrader.DATA_HUB_RAN_STEP_INDEX_PATH).get(0));
 
         assertTrue(props.getElements(FinalDatabaseXmlFileUpgrader.OLD_ACTION_DETAILS_INDEX_PATH).isEmpty(),
             "5.4.0 replaces this index with a different index, so it should have been removed");
