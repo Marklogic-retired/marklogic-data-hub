@@ -157,6 +157,8 @@ const runAPI = (axiosMock) => {
       return Promise.resolve(curateData.jobRespSuccess);
     case "/api/jobs/8c69c502-e682-46ce-a0f4-6506ab527ab8":
       return Promise.resolve(curateData.jobRespRunning);
+    case "/api/jobs/666f23f6-7fc7-492e-980f-8b2ba21a4b94":
+      return Promise.resolve(curateData.jobRespCanceled);
     default:
       return Promise.reject(new Error("not found"));
     }
