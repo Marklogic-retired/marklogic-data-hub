@@ -69,7 +69,7 @@ describe("Group Nodes", () => {
 
     });
     // Wait needed for the graph to get stabilized
-    cy.wait(3000);
+    cy.wait(7000);
     cy.log("**Validating the record's IDs that have been expanded in the side panel**");
 
     cy.log("**Click Product node '50' to open side panel and validate productID**");

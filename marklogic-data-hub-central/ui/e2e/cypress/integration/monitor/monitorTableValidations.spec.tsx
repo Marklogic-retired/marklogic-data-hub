@@ -30,7 +30,7 @@ describe("Monitor Tile", () => {
     monitorPage.getTableRows().should("not.be.empty");
     monitorPage.scrollMonitorToPageSelect();
     monitorPage.getPaginationPageSizeOptions().scrollIntoView().select("10 / page", {force: true});
-    monitorPage.getTableRows().should("have.length", 10);
+    monitorPage.getTableRows().should("have.length.at.most", 10);
   });
 
   it("apply facet search and verify docs", () => {

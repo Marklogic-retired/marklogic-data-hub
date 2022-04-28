@@ -26,7 +26,6 @@ describe("Check visibility of dropdown with search in mapping step details table
   });
   afterEach(() => {
     cy.resetTestUser();
-    cy.waitForAsyncRequest();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();
