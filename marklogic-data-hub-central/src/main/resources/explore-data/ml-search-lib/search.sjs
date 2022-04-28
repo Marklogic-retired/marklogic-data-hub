@@ -15,7 +15,7 @@
  */
 'use strict';
 const searchImpl = require("/explore-data/ml-search-lib/search-impl.xqy");
-const json = require('/MarkLogic/json/json.xqy');
+const parser = require('/explore-data/third-party/fast-xml-parser/parser.js');
 
 class Search {
   constructor() {
@@ -87,19 +87,15 @@ class Search {
     }
 
     searchConstraint = searchConstraint.join(" AND ");
-    const xpath = "$result/search:result/search:extracted/*[" + entityTypeIds.map(val => "name()='".concat(val).concat("'")).join(" or ") + "]//*/name(.)";
-    let searchResponse = searchImpl.getSearchResults(searchConstraint, xpath, start, pageLength).toObject();
+    let searchResponse = searchImpl.getSearchResults(searchConstraint, start, pageLength);
+    if(searchResponse instanceof XMLNode) {
+      searchResponse = this.transformXmlToJson(searchResponse);
+    }
     let results = searchResponse["response"]["result"];
     if(results) {
       results.forEach(result => {
         result["entityType"] = Object.keys(result["extracted"])[1];
-        entityTypeIds.forEach(entityTypeId => {
-          let jsonObject = result["extracted"][entityTypeId];
-          if(jsonObject) {
-            this.fixArrayIssue(jsonObject);
-          }
-        })
-      })
+      });
     }
     searchResponse["recordCount"] = this.getRecordCount(entityTypeIds);
     return searchResponse;
@@ -114,8 +110,10 @@ class Search {
   }
 
   getDocument(uri) {
-    let result = searchImpl.transformXmlToJsonFromDocUri(uri).toObject();
-    this.fixArrayIssue(result);
+    let result = cts.doc(uri);
+    if(result instanceof XMLDocument) {
+      result = this.transformXmlToJson(result);
+    }
     result["entityType"] = Object.keys(result)[0];
     result["uri"] = uri;
     return result;
@@ -149,23 +147,24 @@ class Search {
     return metrics;
   }
 
-  fixArrayIssue(jsonObject) {
-    const keys = Object.keys(jsonObject);
-    for(let key of keys) {
-      if(Array.isArray(jsonObject[key])) {
-        if(jsonObject[key].length == 1) {
-          jsonObject[key] = jsonObject[key][0];
-        }
-
-        if(Array.isArray(jsonObject[key])) {
-          for(var obj of jsonObject[key]) {
-            this.fixArrayIssue(obj)
-          }
-        } else {
-          this.fixArrayIssue(jsonObject[key]);
-        }
-      }
-    }
+  transformXmlToJson(xmlNode) {
+    const options = {
+      attributeNamePrefix: "",
+      attrNodeName: false, //default is 'false'
+      textNodeName: "#text",
+      ignoreAttributes: false,
+      ignoreNameSpace: true,
+      allowBooleanAttributes: false,
+      parseNodeValue: true,
+      parseAttributeValue: false,
+      trimValues: true,
+      cdataTagName: "__cdata", //default is 'false'
+      cdataPositionChar: "\\c",
+      localeRange: "", //To support non english character in tag/attribute values.
+      parseTrueNumberOnly: false
+    };
+    const serializeOptions = {indent: 'no'};
+    return parser.parse(xdmp.quote(xmlNode, serializeOptions), options);
   }
 }
 

@@ -21,36 +21,13 @@ module namespace expsearch = "http://marklogic.com/explorer/search";
 import module namespace search = "http://marklogic.com/appservices/search"
 at "/MarkLogic/appservices/search/search.xqy";
 
-import module namespace json="http://marklogic.com/xdmp/json"
-at "/MarkLogic/json/json.xqy";
-
-declare function expsearch:get-search-results($search-constraints as xs:string, $xpath as xs:string, $start, $page-length) {
+declare function expsearch:get-search-results($search-constraints as xs:string, $start, $page-length) {
   let $options := xdmp:eval("doc('/explore-data/options/search-options.xml')",  (),
     <options xmlns="xdmp:eval">
       <database>{xdmp:modules-database()}</database>
     </options>)
 
   let $result := search:search($search-constraints, $options/*, $start, $page-length)
-  let $custom :=
-    let $config := json:config("custom")
-    let $_ := map:put( $config, "whitespace", "ignore" )
-    let $_ := map:put( $config, "array-element-names", (xs:QName("search:result"), xs:QName("search:facet"),
-    xs:QName("search:facet-value"), xdmp:value($xpath)))
-    return $config
-
-  let $json-response := json:transform-to-json( $result , $custom )
-  return $json-response
-};
-
-declare function expsearch:transform-xml-to-json-from-doc-uri($uri) {
-  let $result := fn:doc($uri)
-  let $custom :=
-    let $config := json:config("custom")
-    let $_ := map:put( $config, "whitespace", "ignore" )
-    let $_ := map:put( $config, "array-element-names", ($result//*/name(.)))
-    return $config
-
-  let $json-response := json:transform-to-json( $result , $custom )
-  return $json-response
+  return $result
 };
 

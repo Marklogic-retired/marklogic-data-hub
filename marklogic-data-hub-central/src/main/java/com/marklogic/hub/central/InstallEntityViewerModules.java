@@ -36,7 +36,8 @@ public class InstallEntityViewerModules extends LoggingObject implements Applica
     private DocumentWriteSet modulesWriteSet;
     private String[] defaultModulesDir = {
         "explore-data/data-services/ml-exp-search/",
-        "explore-data/ml-search-lib/"
+        "explore-data/ml-search-lib/",
+        "explore-data/third-party/fast-xml-parser/"
     };
 
     private String[] configurableModulesDir = {

@@ -8,6 +8,7 @@ import {InfoCircleFill, ChevronDoubleRight, ChevronDoubleLeft} from "react-boots
 import "./Facets.scss";
 import "bootstrap-daterangepicker/daterangepicker.css";
 import DateRangeFacet from "../DateRangeFacet/DateRangeFacet";
+import _ from "lodash";
 
 type Props = {
     config?: any;
@@ -105,10 +106,11 @@ const Facets: React.FC<Props> = (props) => {
   }
 
   const displayFacetValues = (facetObj, disabled=false, moreLess) => {
-    let total = 2000000; // TODO Remove: for testing larger counts
-    let result = facetObj["facet-value"] ? 
-      facetObj["facet-value"].map((fv, index) => {
-        let value = Math.floor(Math.random() * (total + 1)); // TODO Remove: for testing larger counts
+    let result: any = null;
+    if (facetObj["facet-value"]) {
+      // facetObj["facet-value"] is an object if singular, array of objects if multiple. Force array.
+      let facetValArr = !_.isArray(facetObj["facet-value"]) ? [facetObj["facet-value"]] : facetObj["facet-value"];
+      result = facetValArr.map((fv, index) => {
         if (!(moreLess && index >= moreThreshold)) {
           return (
             <tr className="facetValue" key={"facetValue-" + index}>
@@ -155,7 +157,8 @@ const Facets: React.FC<Props> = (props) => {
             </tr>
           )
         }
-      }) : null;
+      })
+    }
     return <tbody>{result}</tbody>
   }
 

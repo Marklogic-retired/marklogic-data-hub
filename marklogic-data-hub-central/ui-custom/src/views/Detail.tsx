@@ -257,7 +257,7 @@ const Detail: React.FC<Props> = (props) => {
 
               </div>
             </div>
-              {config?.detail?.timeline && <div className="row">
+              {config?.detail?.entities[entityType]?.timeline && <div className="row">
                   <div className="col-12">
                       <Section
                           title="Timeline"
@@ -267,8 +267,8 @@ const Detail: React.FC<Props> = (props) => {
                           onExpand={() => {handleExpandIdsClick('timeline', true)}}
                           onCollapse={() => {handleExpandIdsClick('timeline', false)}}>
                           {React.createElement(
-                              COMPONENTS[config.detail.timeline.component],
-                              {config: config.detail.timeline.config, data: detailContext.detail}, null
+                              COMPONENTS[config.detail.entities[entityType].timeline.component],
+                              {config: config.detail.entities[entityType].timeline.config, data: detailContext.detail}, null
                           )}
                       </Section>
                   </div>

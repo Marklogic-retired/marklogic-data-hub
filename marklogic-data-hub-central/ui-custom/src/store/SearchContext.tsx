@@ -172,7 +172,7 @@ const SearchProvider: React.FC = ({children}) => {
       sr.then(result => {
         console.log("getSearchResultsByGet", result?.data);
         setSearchResults(result?.data.searchResults.response);
-        setReturned(result?.data.searchResults.response.total);
+        setReturned(parseInt(result?.data.searchResults.response.total));
         setTotal(_.get(result?.data, userContext.config.search.meter.config.totalPath, null) || 0);
         handleSaveSearchLocal();
         handleGetSearchLocal();
