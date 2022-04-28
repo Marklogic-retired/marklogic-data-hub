@@ -722,6 +722,37 @@ const jobRespRunning = {
   "status": 200
 };
 
+const jobRespCanceled = {
+  data: {
+    "jobId": "666f23f6-7fc7-492e-980f-8b2ba21a4b94",
+    "flow": "testFlow",
+    "user": "hc-developer",
+    "lastAttemptedStep": "3",
+    "lastCompletedStep": "2",
+    "jobStatus": "canceled",
+    "timeStarted": "2022-04-28T17:01:38.4190834-03:00",
+
+    "timeEnded": "2022-04-28T17:04:46.7620324-03:00",
+    "stepResponses": {
+      "2": {
+        "stepStartTime": "2022-04-28T17:01:40.0006799-03:00",
+        "status": "completed step 2",
+        "stepName": "generate-dictionary",
+        "stepDefinitionType": "CUSTOM",
+        "stepEndTime": "2022-04-28T17:02:40.0006799-03:00",
+      },
+      "3": {
+        "stepStartTime": "2022-04-28T17:03:40.0006799-03:00",
+        "status": "canaceled step 3",
+        "stepName": "merge-person",
+        "stepDefinitionType": "merging"
+      }
+    },
+    "flowOrStepsUpdatedSinceRun": "false",
+    "duration": "PT8.342949S"
+  }, status: 200,
+};
+
 const flowsXML = {
   "data": [{
     "name": "testFlow",
@@ -867,7 +898,8 @@ const data = {
   loadSettings: loadSettings,
   mappingSettings: mappingSettings,
   customSteps,
-  newStepToFlowOptions
+  newStepToFlowOptions,
+  jobRespCanceled,
 };
 
 export default data;
