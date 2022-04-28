@@ -168,8 +168,8 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStop
       headerFormatter: (column) => <strong data-testid={`stepType-header`}>Step Type</strong>,
       formatter: (stepName, response) => {
         let stepType = response.stepDefinitionType === "ingestion" ? "loading" : response.stepDefinitionType;
-        return (<div data-testid={`${response.stepName}-${stepType}-type`} id={`${response.stepName}-${stepType}-type`} className={styles.stepResponse}>
-          {stepType[0].toUpperCase() + stepType.substring(1).toLowerCase()}
+        return (<div data-testid={`${response.stepName}-${stepType}-type`} id={`${response.stepName}-${stepType}-type`}className={styles.stepType}>
+          {stepType?.toLowerCase()}
         </div>);
       },
     },
@@ -323,7 +323,7 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStop
           {/* TO BE REPLACED WITH STOP RUNNING ICON <a onClick={() => retrieveJobDoc()}><FontAwesomeIcon icon={faSync} data-testid={"job-response-refresh"} /></a> */}
         </span>
         :
-        <span className={`fs-5 ${styles.title}`} aria-label={`${jobResponse.flow}-completed`}>The flow <strong>{jobResponse.flow}</strong> completed</span>}
+        <span className={`fs-5 ${styles.title}`} aria-label={`${jobResponse.flow}-completed`}>The flow <strong>{jobResponse.flow}</strong> {jobResponse.jobStatus==="canceled" ? "was canceled" : "completed"}</span>}
       <button type="button" className="btn-close" aria-label={`${jobResponse.flow}-close`} data-testid={`${jobResponse.flow}-close`} onClick={() => setOpenJobResponse(false)}></button>
     </Modal.Header>
     <Modal.Body>

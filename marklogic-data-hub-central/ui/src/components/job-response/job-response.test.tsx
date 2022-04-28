@@ -146,7 +146,7 @@ describe("Job response modal", () => {
     });
   });
 
-  test.skip("Verify stop run button when step is running", async () => {
+  test("Verify stop run button when step is running", async () => {
     mocks.runAPI(axiosMock);
     let getByText;
     let getByLabelText;
@@ -183,5 +183,38 @@ describe("Job response modal", () => {
     fireEvent.click(stopButton);
     expect(stopRun).toBeCalled();
 
+  });
+
+
+  test("Verify canceled job response", async () => {
+    mocks.runAPI(axiosMock);
+    let getByText;
+    const stopRun = jest.fn();
+    act(() => {
+      ({getByText} = render(
+        <Router>
+          <CurationContext.Provider value={curationContextMock}>
+            <JobResponse
+              jobId={"666f23f6-7fc7-492e-980f-8b2ba21a4b94"}
+              openJobResponse={true}
+              setOpenJobResponse={() => { }}
+              stopRun={stopRun}
+            />
+          </CurationContext.Provider>
+        </Router>
+      ));
+    });
+
+    expect(await (waitForElement(() => getByText((content, node) => {
+      return getSubElements(content, node, "The flow testFlow was canceled");
+    })))).toBeInTheDocument();
+
+    expect(getByText("Job ID:")).toBeInTheDocument();
+    expect(getByText("Start Time:")).toBeInTheDocument();
+    expect(getByText("Duration:")).toBeInTheDocument();
+
+    expect(getByText("666f23f6-7fc7-492e-980f-8b2ba21a4b94")).toBeInTheDocument();
+    expect(getByText("merge-person")).toBeInTheDocument();
+    expect(getByText("generate-dictionary")).toBeInTheDocument();
   });
 });
