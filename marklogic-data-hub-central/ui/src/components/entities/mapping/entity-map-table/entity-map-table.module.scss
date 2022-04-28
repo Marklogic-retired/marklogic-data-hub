@@ -17,18 +17,6 @@
   padding-right: 60%;;
 }
 
-.filterIcon {
-  color: $icon-light;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.filterIconActive {
-  color: $primary;
-  font-size: 16px;
-  cursor: pointer;
-}
-
 
 .entityTopRow {
   width: 101%;
@@ -278,25 +266,6 @@
 
 .filterContainer {
   padding: 8px;
-}
-
-.searchInput {
-  min-width: 8vw;
-  display: block
-}
-.resetButton {
-  width: 90px;
-  margin-right: 8px
-}
-
-.searchSubmitButton {
-  width: 90px
-}
-
-.searchIcon {    
-  font-size: 11px;
-  margin-top: -4px;
-  margin-right: 3px;
 }
 
 .highlightStyle {

@@ -35,7 +35,7 @@
 }
 
 .editIcon:hover {
-    color: #7fade3;
+    color: $hover-link;
 }
 
 .questionCircle {
@@ -43,7 +43,7 @@
     vertical-align: top;
     margin-top: 8px;
     margin-left: 10px;
-    color: #7f86b5;
+    color: $question-circle;
 }
 
 .footer {
@@ -53,4 +53,10 @@
   .saveButton {
     margin-left: 5px;
   }
+}
+
+.highlightStyle {
+  background-color: $highlight;
+  padding: 0px;
+  line-height:normal;
 }

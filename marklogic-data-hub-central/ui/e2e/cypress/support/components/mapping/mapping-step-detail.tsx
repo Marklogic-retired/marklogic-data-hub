@@ -36,11 +36,11 @@ class MappingStepDetail {
   }
 
   resetSourceSearch() {
-    return cy.findByTestId("resetSearch-source");
+    return cy.get(`[id="resetSearch-source"]`);
   }
 
   submitSourceSearch() {
-    return cy.findByTestId("submitSearch-source");
+    return cy.get(`[id="submitSearch-source"]`);
   }
 
   expandEntity() {
@@ -52,15 +52,15 @@ class MappingStepDetail {
   }
 
   setEntitySearch(propertyName: string) {
-    cy.findByTestId("searchInput-entity").focus().type(propertyName);
+    cy.get(`[id="searchInput-entity"]`).focus().type(propertyName);
   }
 
   resetEntitySearch() {
-    return cy.findByTestId("resetSearch-entity");
+    return cy.get(`[id="resetSearch-entity"]`);
   }
 
   submitEntitySearch() {
-    return cy.findByTestId("submitSearch-entity");
+    return cy.get(`[id="submitSearch-entity"]`);
   }
 
   stepSettingsLink() {
@@ -268,15 +268,15 @@ class MappingStepDetail {
   }
 
   searchIcon(entityName: string) {
-    return cy.get(`[data-testid=filterIcon-${entityName}-entity] > path`).scrollIntoView();
+    return cy.get(`[id=filterIcon-${entityName}-entity] > path`).scrollIntoView();
   }
 
   searchName() {
-    return cy.findByTestId("searchInput-entity");
+    return cy.get(`[id="searchInput-entity"]`);
   }
 
   searchButton() {
-    return cy.findByTestId("submitSearch-entity");
+    return cy.get(`[id="submitSearch-entity"]`);
   }
 
   customerEntity() {

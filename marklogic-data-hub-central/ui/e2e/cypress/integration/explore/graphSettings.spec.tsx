@@ -134,6 +134,15 @@ describe("Entity Type Settings Modal", () => {
     browsePage.getEntityTypeDisplaySettingsButton().scrollIntoView().click({force: true});
     entityTypeDisplaySettingsModal.getModalBody().should("be.visible");
 
+    cy.log("**Check quantity of rows in the table**");
+    entityTypeDisplaySettingsModal.getTableRows().should("have.length.gt", 2);
+
+    cy.log(`**Filter ${defaultEntityTypeData.name} entity by search option**`);
+    entityTypeDisplaySettingsModal.getIconSearch().click({force: true});
+    entityTypeDisplaySettingsModal.getSearchInput().type(defaultEntityTypeData.name, {timeout: 2000});
+    entityTypeDisplaySettingsModal.getSearchSearchButton().click();
+    entityTypeDisplaySettingsModal.getTableRows().should("have.length", 1);
+
     cy.log("**Select new color and check the selection**");
     entityTypeDisplaySettingsModal.getEntityTypeColorButton(defaultEntityTypeData.name).click();
     entityTypeDisplaySettingsModal.getColorInPicket(newEntityTypeData.color.HEX).click();
@@ -149,6 +158,17 @@ describe("Entity Type Settings Modal", () => {
     entityTypeDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).click();
     entityTypeDisplaySettingsModal.getEntityLabelDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.name).click();
     entityTypeDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.name);
+
+    cy.log("**Clear filter and check table rows");
+    entityTypeDisplaySettingsModal.getIconSearch().click({force: true});
+    entityTypeDisplaySettingsModal.getSearchInput().should("have.value", defaultEntityTypeData.name);
+    entityTypeDisplaySettingsModal.getSearchResetButton().click();
+    entityTypeDisplaySettingsModal.getTableRows().should("have.length.gt", 2);
+
+    cy.log("**Open search dialog and input should be empty");
+    entityTypeDisplaySettingsModal.getIconSearch().click({force: true});
+    entityTypeDisplaySettingsModal.getSearchInput().should("have.value", "");
+    entityTypeDisplaySettingsModal.getSearchResetButton().click();
 
     cy.log("**Save the changes**");
     entityTypeDisplaySettingsModal.getModalSaveButton().click();

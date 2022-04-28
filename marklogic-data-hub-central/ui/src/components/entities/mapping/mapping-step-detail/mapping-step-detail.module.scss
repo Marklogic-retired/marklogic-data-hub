@@ -19,18 +19,6 @@
     width: fit-content;
 }
 
-.filterIcon {
-    color: $icon-light;
-    font-size: 16px;
-    cursor: pointer;
-}
-  
-.filterIconActive {
-    color: $primary;
-    font-size: 16px;
-    cursor: pointer;
-}
-
 .saveMessage{
     border: 1px solid #ff0000;
     margin-left: 60em;
@@ -97,20 +85,6 @@
 .sourceTitle{
     font-size: 16px;
     white-space: nowrap;
-}
-
-.searchInput {
-    min-width: 8vw;
-    margin-bottom: 8px;
-    display: block
-}
-.resetButton {
-    width: 90px;
-    margin-right: 8px;
-}
-
-.searchSubmitButton {
-    width: 90px
 }
 
 .highlightStyle {

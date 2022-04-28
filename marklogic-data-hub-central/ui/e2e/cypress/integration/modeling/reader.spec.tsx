@@ -142,7 +142,6 @@ describe("Entity Modeling: Reader Role", () => {
       graphViewSidePanel.getEntityTypeColor("Customer").should("have.css", "background-color", "rgb(213, 211, 221)");
     }
 
-    modelPage.toggleColorSelector("Customer");
     modelPage.openIconSelector("Customer");
     modelPage.selectIcon("Customer", "FaAccessibleIcon");
     modelPage.getIconSelected("Customer", "FaAccessibleIcon").should("exist");

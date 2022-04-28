@@ -17,3 +17,4 @@ export {default as HCSelect} from "./hc-select/hc-select";
 export {default as EntityTypeColorPicker} from "./entity-type-color-picker/entity-type-color-picker";
 export {default as HCIconPicker} from "./hc-icon-picker/hc-icon-picker";
 export {default as DynamicIcons} from "./dynamic-icons/dynamic-icons";
+export {default as HCPopoverSearch} from "./hc-popover-search/hc-popover-search";

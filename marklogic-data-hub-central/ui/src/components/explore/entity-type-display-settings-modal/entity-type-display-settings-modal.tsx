@@ -1,14 +1,16 @@
 import React, {useState, useEffect, useContext} from "react";
 import {Alert, Modal} from "react-bootstrap";
 import Select, {components as SelectComponents} from "react-select";
+import reactSelectThemeConfig from "@config/react-select-theme.config";
 import styles from "./entity-type-display-settings-modal.module.scss";
-import {EntityTypeColorPicker, HCTable, HCButton, HCTooltip, HCIconPicker} from "@components/common";
+import {EntityTypeColorPicker, HCTable, HCButton, HCTooltip, HCIconPicker, HCPopoverSearch} from "@components/common";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import tooltipsConfig from "@config/explorer-tooltips.config";
 import {themeColors} from "@config/themes.config";
 import {defaultIcon} from "@config/explore.config";
 import {UserContext} from "@util/user-context";
 import {HubCentralConfigContext} from "@util/hubCentralConfig-context";
+import Highlighter from "react-highlight-words";
 import * as _ from "lodash";
 
 type Props = {
@@ -33,7 +35,9 @@ const EntityTypeDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal
   const [entitiesData, setEntitiesData] = useState({});
   const [entitiesIndexes, setEntitiesIndexes] = useState({});
   const [exploreSettingsData, setExploreSettingsData] = useState<any[]>([]);
+  const [filteredSettingsData, setFilteredSettingsData] = useState<any[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
+  const [searchText, setSearchText] = useState("");
 
   const {hubCentralConfig, updateHubCentralConfigOnServer} = useContext(HubCentralConfigContext);
 
@@ -41,21 +45,29 @@ const EntityTypeDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal
     if (isVisible && hubCentralConfig && hubCentralConfig?.modeling?.entities) {
       let tmpEntitiesData = _.clone(hubCentralConfig?.modeling?.entities);
       let tmpEntitiesIndexes = {};
-      let settingsData:any = Object.keys(hubCentralConfig?.modeling?.entities).map((entityType, index) => {
-        tmpEntitiesIndexes[entityType] = index;
-        return {
-          entityType: entityType,
-          color: hubCentralConfig?.modeling?.entities[entityType]?.color || themeColors.defaults.entityColor,
-          icon: hubCentralConfig?.modeling?.entities[entityType]?.icon || defaultIcon,
-          label: hubCentralConfig?.modeling?.entities[entityType]?.label
-        };
-      });
+      let settingsData:any = Object.keys(hubCentralConfig?.modeling?.entities)
+        .map((entityType, index) => {
+          tmpEntitiesIndexes[entityType] = index;
+          return {
+            entityType: entityType,
+            color: hubCentralConfig?.modeling?.entities[entityType]?.color || themeColors.defaults.entityColor,
+            icon: hubCentralConfig?.modeling?.entities[entityType]?.icon || defaultIcon,
+            label: hubCentralConfig?.modeling?.entities[entityType]?.label
+          };
+        });
       setEntitiesData(tmpEntitiesData);
       setEntitiesIndexes(tmpEntitiesIndexes);
       setExploreSettingsData(settingsData);
     }
-
   }, [isVisible, hubCentralConfig]);
+
+  useEffect(() => {
+    setFilteredSettingsData(prev => {
+      return exploreSettingsData
+        .filter(entityTypeObject => entityTypeObject.entityType.toLowerCase().includes(searchText.toLowerCase()))
+        .map((entityTypeObject) => ({...entityTypeObject, searchText}));
+    });
+  }, [exploreSettingsData, searchText]);
 
   const closeModal = () => {
     toggleModal(false);
@@ -141,13 +153,32 @@ const EntityTypeDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal
     {
       text: <span className={styles.labelContainer}>
         <span className={styles.headerLabel}>Entity Type</span>
+        <span className="position-absolute end-0 me-3">
+          <HCPopoverSearch
+            inputValue={searchText}
+            onSearch={(value) => {
+              setSearchText(value);
+            }}
+            onReset={() => {
+              setSearchText("");
+            }}
+          />
+        </span>
       </span>,
       dataField: "entityType",
+      headerClassName: "position-relative",
       sort: true,
       width: "20%",
       sortFunc: columnSorter,
       formatter: (text, row) => {
-        return (<span aria-label={`${row.entityType}-entityType`}>{row.entityType}</span>);
+        return (<span aria-label={`${row.entityType}-entityType`}>
+          <Highlighter
+            highlightClassName={styles.highlightStyle}
+            searchWords={[row.searchText]}
+            autoEscape
+            textToHighlight={row.entityType}
+          />
+        </span>);
       }
     },
     {
@@ -192,6 +223,7 @@ const EntityTypeDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal
                 </span>
               );
             }}
+            styles={reactSelectThemeConfig}
           />);
       },
     },
@@ -217,6 +249,7 @@ const EntityTypeDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal
                 </span>
               );
             }}
+            styles={reactSelectThemeConfig}
           />
         );
       }
@@ -269,7 +302,7 @@ const EntityTypeDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal
             rowKey="entityType"
             className={styles.table}
             columns={exploreSettingsColumns}
-            data={exploreSettingsData}
+            data={filteredSettingsData}
           />
         </div>
         {modalFooter}

@@ -4,7 +4,7 @@ import styles from "./mapping-step-detail.module.scss";
 import "./mapping-step-detail.scss";
 import EntityMapTable from "../entity-map-table/entity-map-table";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCog, faPencilAlt, faSearch} from "@fortawesome/free-solid-svg-icons";
+import {faCog, faPencilAlt} from "@fortawesome/free-solid-svg-icons";
 import Highlighter from "react-highlight-words";
 import Spinner from "react-bootstrap/Spinner";
 import SourceNavigation from "../source-navigation/source-navigation";
@@ -25,11 +25,9 @@ import Steps from "../../../steps/steps";
 import {AdvMapTooltips, MappingStepMessages} from "@config/tooltips.config";
 import ModelingLegend from "../../../modeling/modeling-legend/modeling-legend";
 import CustomPageHeader from "../../page-header/page-header";
-import {ChevronDown, ChevronRight, Search, XLg, CheckSquare} from "react-bootstrap-icons";
+import {ChevronDown, ChevronRight, XLg, CheckSquare} from "react-bootstrap-icons";
 import {Dropdown} from "react-bootstrap";
-import {HCAlert, HCButton, HCCheckbox, HCInput, HCTooltip, HCTable} from "@components/common";
-import Popover from "react-bootstrap/Popover";
-import {OverlayTrigger} from "react-bootstrap";
+import {HCAlert, HCButton, HCCheckbox, HCInput, HCTooltip, HCTable, HCPopoverSearch} from "@components/common";
 
 const DEFAULT_MAPPING_STEP: MappingStep = {
   name: "",
@@ -86,8 +84,7 @@ const MappingStepDetail: React.FC = () => {
   const [srcPropertiesXML, setSrcPropertiesXML] = useState<any[]>([]);
   const [filteredSrcProperties, setFilteredSrcProperties] = useState<any[]>([]);
   const [filterActive, setFilterActive] = useState(false);
-  const [popoverVisibility, setPopoverVisibilty] = useState(false);
-  const [searchedKeys, setSearchedKeys] = useState<any[]>([]);
+  const [searchedKey, setSearchedKey] = useState<string>("");
   const [firstLevelKeysXML, setFirstLevelKeysXML] = useState<any[]>([]);
 
   const [mapExpTouched, setMapExpTouched] = useState(false);
@@ -850,8 +847,6 @@ const MappingStepDetail: React.FC = () => {
     });
   };
 
-  //For filter search in source table
-  let searchInput: any; // eslint-disable-line @typescript-eslint/no-unused-vars
   //For Source Table
   const [searchSourceText, setSearchSourceText] = useState("");
   const [searchedSourceColumn, setSearchedSourceColumn] = useState("");
@@ -877,8 +872,7 @@ const MappingStepDetail: React.FC = () => {
     setFilterActive(false);
     setSearchSourceText("");
     setSearchedSourceColumn("");
-    setSearchedKeys([]);
-    togglePopover();
+    setSearchedKey("");
   };
 
   const getRenderOutput = (textToSearchInto, valueToDisplay, columnName, rowNum) => {
@@ -929,8 +923,9 @@ const MappingStepDetail: React.FC = () => {
     return allKeysToExpand;
   };
 
-  const filterByName = () => {
-    let filterVal = searchedKeys[0];
+  const filterByName = (value) => {
+    setSearchedKey(value);
+    let filterVal = value;
     if (filterVal) {
       let filteredArray;
       setFilterActive(true);
@@ -954,50 +949,9 @@ const MappingStepDetail: React.FC = () => {
       } else {
         setFilteredSrcProperties(filteredArray);
       }
-      togglePopover();
     } else {
       handleSourceSearchReset();
     }
-  };
-
-  const togglePopover = () => {
-    popoverVisibility ? setPopoverVisibilty(false) : setPopoverVisibilty(true);
-  };
-
-  const renderFilter = () => {
-    return <Popover id={`popover-filter`}>
-      <Popover.Body>
-        <HCInput
-          ref={node => {
-            searchInput = node; // eslint-disable-line @typescript-eslint/no-unused-vars
-          }}
-          dataTestid={`searchInput-source`}
-          placeholder={`Search name`}
-          value={searchedKeys[0] || ""}
-          onChange={e => setSearchedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={(enter) => enter ? searchedKeys?.length > 0 ? "" : false : null}
-          className={styles.searchInput}
-        />
-        <div style={{height: 8}}></div>
-        <HCButton
-          data-testid={`resetSearch-source`}
-          variant="outline-light" size="sm"
-          className={styles.resetButton}
-          onClick={() => handleSourceSearchReset()}
-        >
-          Reset
-        </HCButton>
-        <HCButton
-          data-testid={`submitSearch-source`}
-          variant="primary"
-          onClick={() => filterByName()}
-          size="sm"
-          className={styles.searchSubmitButton}
-        >
-          <Search className={styles.searchIcon}/> Search
-        </HCButton>
-      </Popover.Body>
-    </Popover>;
   };
 
   const headerColumns = [
@@ -1007,11 +961,17 @@ const MappingStepDetail: React.FC = () => {
         <span data-testid="sourceTableKey">
           Name
         </span>
-        <OverlayTrigger placement="bottom" show={popoverVisibility} overlay={renderFilter()} trigger="click">
-          <i>
-            <FontAwesomeIcon className={filterActive || popoverVisibility ? styles.filterIconActive : styles.filterIcon} data-testid={`filterIcon-srcName`} icon={faSearch} size="lg" onClick={() => togglePopover()}/>
-          </i>
-        </OverlayTrigger>
+        <HCPopoverSearch
+          popoverId={"popover-filter"}
+          searchIconId={`filterIcon-srcName`}
+          inputId={`searchInput-source`}
+          inputPlaceholder={`Search name`}
+          inputValue={searchedKey}
+          resetButtonId={`resetSearch-source`}
+          onReset={() => handleSourceSearchReset()}
+          searchButtonId={`submitSearch-source`}
+          onSearch={(value) => filterByName(value)}
+        />
       </div>,
       dataField: "key",
       key: "rowKey",
