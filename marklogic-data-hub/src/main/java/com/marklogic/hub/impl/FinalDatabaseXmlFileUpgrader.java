@@ -18,6 +18,8 @@ class FinalDatabaseXmlFileUpgrader {
     final static String ES_PATH_NAMESPACE_PATH = "/m:database-properties/m:path-namespaces/m:path-namespace" +
         "[m:prefix = 'es' and m:namespace-uri = 'http://marklogic.com/entity-services']";
 
+    final static String DATA_HUB_RAN_STEP_FIELD_PATH = "/m:database-properties/m:fields/m:field[m:field-name = 'datahubRanBySteps']";
+    final static String DATA_HUB_RAN_STEP_INDEX_PATH = "/m:database-properties/m:range-field-indexes/m:range-field-index[m:field-name = 'datahubRanBySteps']";
     final static String SOURCE_NAME_FIELD_PATH = "/m:database-properties/m:fields/m:field[m:field-name = 'datahubSourceName']";
     final static String SOURCE_TYPE_FIELD_PATH = "/m:database-properties/m:fields/m:field[m:field-name = 'datahubSourceType']";
     final static String SOURCE_NAME_INDEX_PATH = "/m:database-properties/m:range-field-indexes/m:range-field-index[m:field-name = 'datahubSourceName']";
@@ -52,13 +54,13 @@ class FinalDatabaseXmlFileUpgrader {
             addEsPathNamespace(existingProps, officialProps);
         }
 
-        Stream.of(SOURCE_NAME_FIELD_PATH, SOURCE_TYPE_FIELD_PATH).forEach(path -> {
+        Stream.of(SOURCE_NAME_FIELD_PATH, SOURCE_TYPE_FIELD_PATH, DATA_HUB_RAN_STEP_FIELD_PATH).forEach(path -> {
             if (elementMissing(existingProps, path)) {
                 addField(existingProps, officialProps.getElements(path).get(0).detach());
             }
         });
 
-        Stream.of(SOURCE_NAME_INDEX_PATH, SOURCE_TYPE_INDEX_PATH).forEach(path -> {
+        Stream.of(SOURCE_NAME_INDEX_PATH, SOURCE_TYPE_INDEX_PATH, DATA_HUB_RAN_STEP_INDEX_PATH).forEach(path -> {
             if (elementMissing(existingProps, path)) {
                 addRangeFieldIndex(existingProps, officialProps.getElements(path).get(0).detach());
             }
