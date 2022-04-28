@@ -905,6 +905,41 @@
             "download": true
           }
         },
+        "timeline": {
+          "component": "Timeline",
+          "config": {
+            "title": "Activities",
+            "arrayPath": "person.activities.activity",
+            "marker": {
+              "path": "place"
+            },
+            "popover": {
+              "placement": "right",
+              "items": [
+                {
+                  "label": "Source",
+                  "path": "source.name"
+                },
+                {
+                  "component": "DateTime",
+                  "label": "Created on",
+                  "config": {
+                    "path": "source.ts",
+                    "format": "MMMM dd, yyyy"
+                  }
+                },
+                {
+                  "label": "Created by",
+                  "path": "source.createdBy"
+                },
+                {
+                  "label": "Approved by",
+                  "path": "source.approvedBy"
+                }
+              ]
+            }
+          }
+        },
         "linkList": {
           "component": "LinkList",
           "config": {
@@ -1066,41 +1101,6 @@
             },
             "download": true
           }
-        }
-      }
-    },
-    "timeline": {
-      "component": "Timeline",
-      "config": {
-        "title": "Activities",
-        "arrayPath": "person.activities.activity",
-        "marker": {
-          "path": "place"
-        },
-        "popover": {
-          "placement": "right",
-          "items": [
-            {
-              "label": "Source",
-              "path": "source.name"
-            },
-            {
-              "component": "DateTime",
-              "label": "Created on",
-              "config": {
-                "path": "source.ts",
-                "format": "MMMM dd, yyyy"
-              }
-            },
-            {
-              "label": "Created by",
-              "path": "source.createdBy"
-            },
-            {
-              "label": "Approved by",
-              "path": "source.approvedBy"
-            }
-          ]
         }
       }
     }
