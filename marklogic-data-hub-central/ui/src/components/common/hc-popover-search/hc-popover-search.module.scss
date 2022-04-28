@@ -1,0 +1,40 @@
+@import "../../../theme/HCVariables.scss";
+
+.popoverStyle {
+  min-width: 225px;
+}
+
+.popoverIndicator {
+  left: calc(50% - 0.5rem);
+}
+
+.searchInput {
+  min-width: 8vw;
+  display: block
+}
+.resetButton {
+  width: 90px;
+  margin-right: 8px
+}
+
+.searchSubmitButton {
+  width: 90px
+}
+
+.searchIcon {    
+  font-size: 11px;
+  margin-top: -4px;
+  margin-right: 3px;
+}
+
+.filterIcon {
+  color: $icon-light;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.filterIconActive {
+  color: $primary;
+  font-size: 16px;
+  cursor: pointer;
+}

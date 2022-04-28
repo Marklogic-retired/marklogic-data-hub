@@ -220,6 +220,10 @@ function HCTable({className, rowStyle, childrenIndent, data, keyUtil, component,
 
     column.headerClasses = styles.header;
 
+    if (column.headerClassName) {
+      column.headerClasses += ` ${column.headerClassName}`;
+    }
+
     if (props.subTableHeader) {
       column.headerClasses += ` ${styles.subTableHeader}`;
     }

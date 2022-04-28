@@ -1,5 +1,5 @@
 import React from "react";
-import {fireEvent, render, cleanup} from "@testing-library/react";
+import {fireEvent, render, cleanup, act} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
 import EntityTypeDisplaySettingsModal from "./entity-type-display-settings-modal";
@@ -67,9 +67,11 @@ describe("Entity type display settings modal", () => {
     //the options are svg elements and the click event don't work on it
 
     fireEvent.keyDown(getByLabelText(`${entityType}-label-select-dropdown`), {key: "ArrowDown"});
-    userEvent.click(getByLabelText(`${entityType}-labelOption-${entityTypeProperty}`));
+    act(() => {
+      userEvent.click(getByLabelText(`${entityType}-labelOption-${entityTypeProperty}`));
+    });
     expect(document.querySelector(`#${entityType}-entityProperties-select-MenuList`)).not.toBeInTheDocument();
-    expect(queryByLabelText(`${entityType}-labelOption-${entityTypeProperty}`)).toBeInTheDocument();
+    expect(getByLabelText(`${entityType}-labelOption-${entityTypeProperty}`)).toBeInTheDocument();
 
     userEvent.click(getByText("Save"));
     expect(defaultContextOptions.updateHubCentralConfigOnServer).toHaveBeenCalledTimes(1);

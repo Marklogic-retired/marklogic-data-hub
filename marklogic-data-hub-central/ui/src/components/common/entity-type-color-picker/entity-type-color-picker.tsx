@@ -38,13 +38,18 @@ const EntityTypeColorPicker: React.FC<Props> = ({entityType, color, handleColorC
     setIsVisible(prev => !isVisible);
   };
 
+  const handleChange = (row, event, column) => {
+    setIsEventValid(false);
+    handleColorChange(row, event, column);
+  };
+
   return <div className={"m-auto d-inline-block"}>
     <div className={`${styles.colorPickerBorder} cursor-pointer`} onClick={handleEditColorMenu} id={`${entityType}-color-button`} data-testid={`${entityType}-color-button`} aria-label={`${entityType}-color-button`} data-color={color}>
       <div data-testid={`${entityType}-color`}  style={{width: "32px", height: "30px", background: color, margin: "8px"}}>
       </div>
       {isVisible ?
         <div ref={colorRef} id={`${entityType}-color-picker-menu`} aria-label={`${entityType}-color-picker-menu`} className={styles.colorPickerContainer}>
-          <TwitterPicker colors={graphConfig.colorOptionsArray} color={color} onChangeComplete={handleColorChange}/>
+          <TwitterPicker colors={graphConfig.colorOptionsArray} color={color} onChangeComplete={handleChange}/>
         </div> : null
       }
     </div>

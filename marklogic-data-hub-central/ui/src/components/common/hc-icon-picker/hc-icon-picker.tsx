@@ -55,7 +55,7 @@ const HCIconPicker: React.FC<HCIconPickerProps> = ({identifier, value, onChange,
           {!hideSearch && (
             <input
               data-testid={`${identifier}-hc-icon-picker-input`}
-              className={styles.pickerSearchInput}
+              className={"form-control"}
               onChange={event => setSearchString(event.target.value)}
               value={searchString}
               placeholder="Search"

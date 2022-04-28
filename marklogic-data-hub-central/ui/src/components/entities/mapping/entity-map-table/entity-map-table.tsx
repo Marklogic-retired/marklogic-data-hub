@@ -6,7 +6,7 @@ import reactSelectThemeConfig from "@config/react-select-theme.config";
 import {Modal, ButtonGroup, Dropdown, Spinner, FormControl} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Highlighter from "react-highlight-words";
-import {faList, faTerminal, faSearch} from "@fortawesome/free-solid-svg-icons";
+import {faList, faTerminal} from "@fortawesome/free-solid-svg-icons";
 import EntitySettings from "../entity-settings/entity-settings";
 import {faKey, faLayerGroup} from "@fortawesome/free-solid-svg-icons";
 import arrayIcon from "../../../../assets/icon_array.png";
@@ -16,8 +16,8 @@ import {getParentKey, getKeys, deepCopy} from "@util/data-conversion";
 import {paginationMapping} from "@config/mapping.config";
 import {ModelingTooltips, MappingDetailsTooltips} from "@config/tooltips.config";
 import StepsConfig from "@config/steps.config";
-import {QuestionCircleFill, XLg, ChevronDown, ChevronRight, Search} from "react-bootstrap-icons";
-import {DropDownWithSearch, HCButton, HCInput, HCTooltip, HCTable} from "@components/common";
+import {QuestionCircleFill, XLg, ChevronDown, ChevronRight} from "react-bootstrap-icons";
+import {DropDownWithSearch, HCButton, HCTooltip, HCTable, HCPopoverSearch} from "@components/common";
 import Popover from "react-bootstrap/Popover";
 import {OverlayTrigger, Overlay} from "react-bootstrap";
 import {themeColors} from "@config/themes.config";
@@ -70,7 +70,6 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const [mapExp, setMapExp] = useState({});
   //Dummy ref node to simulate a click event
   const dummyNode = props.dummyNode;
-  let searchInput: any; // eslint-disable-line @typescript-eslint/no-unused-vars
   let tempMapExp: any = {};
   let mapExpUI: any = {};
   let tempSourceContext: any = {};
@@ -115,8 +114,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const [filterApplied, setFilterApplied] = useState(false);
   const [filteredValues, setFilteredValues] = useState<any>([]);
   const [rowExpandedKeys, setRowExpandedKeys] = useState<any>([props.entityExpandedKeys]);
-  const [popoverVisibility, setPopoverVisibilty] = useState(false);
-  const [searchedKeys, setSearchedKeys] = useState<any[]>([]);
+  const [searchedKey, setSearchedKey] = useState<string>("");
   const [filteredEntityProperties, setFilteredEntityProperties] = useState<any[]>([]);
 
   //For Dropdown menu
@@ -133,7 +131,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const [sourceIndentForDropDown, setSourceIndentForDropDown] = useState<any>([]);
   const [refPropListForDropDown, setRefPropListForDropDown] = useState<any>([]);
 
-  const [selectedRow, setSelectedRow] = useState<any>([]); // eslint-disable-line @typescript-eslint/no-unused-vars
+  const [selectedRow, setSelectedRow] = useState<any>([]);
   const [sourcePropName, setSourcePropName] = useState("");
   const [sourceValue, setSourceValue] = useState("");
   const [displaySourceMenu, setDisplaySourceMenu] = useState(false);
@@ -417,15 +415,15 @@ const EntityMapTable: React.FC<Props> = (props) => {
     if (searchEntityText) {
       props.setEntityExpandedKeys([...props.initialEntityKeys]);
     }
-    togglePopover();
-    setSearchedKeys([]);
+    setSearchedKey("");
     setSearchEntityText("");
     setSearchedEntityColumn("");
     setEntityProperties(props.entityTypeProperties);
   };
 
-  const filterByName = () => {
-    let filterVal = searchedKeys[0];
+  const filterByName = (value) => {
+    setSearchedKey(value);
+    let filterVal = value;
     if (filterVal) {
       let filteredArray;
       setFilterApplied(true);
@@ -449,14 +447,9 @@ const EntityMapTable: React.FC<Props> = (props) => {
       } else {
         setFilteredEntityProperties(filteredArray);
       }
-      togglePopover();
     } else {
       handleSearchReset();
     }
-  };
-
-  const togglePopover = () => {
-    popoverVisibility ? setPopoverVisibilty(false) : setPopoverVisibilty(true);
   };
 
 
@@ -1264,42 +1257,6 @@ const EntityMapTable: React.FC<Props> = (props) => {
     }
   };
 
-  const renderFilter = () => {
-    return <Popover id={`popover-filter`}>
-      <Popover.Body>
-        <HCInput
-          ref={node => {
-            searchInput = node; // eslint-disable-line @typescript-eslint/no-unused-vars
-          }}
-          dataTestid={`searchInput-entity`}
-          placeholder={`Search name`}
-          value={searchedKeys[0] || ""}
-          onChange={e => setSearchedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={(enter) => enter ? searchedKeys?.length > 0 ? "" : false : null}
-          className={styles.searchInput}
-        />
-        <div style={{height: 8}}></div>
-        <HCButton
-          data-testid={`resetSearch-entity`}
-          variant="outline-light" size="sm"
-          className={styles.resetButton}
-          onClick={() => handleSearchReset()}
-        >
-          Reset
-        </HCButton>
-        <HCButton
-          data-testid={`submitSearch-entity`}
-          variant="primary"
-          onClick={() => filterByName()}
-          size="sm"
-          className={styles.searchSubmitButton}
-        >
-          <Search className={styles.searchIcon}/> Search
-        </HCButton>
-      </Popover.Body>
-    </Popover>;
-  };
-
   const onOk = () => {
     props.deleteRelatedEntity(removedEntity);
     let updateSelectedEntities: any = props.relatedEntitiesSelected.filter(entity => entity["entityMappingId"] !== removedEntity["entityMappingId"]);
@@ -1349,11 +1306,17 @@ const EntityMapTable: React.FC<Props> = (props) => {
         <span data-testid="entityTableName" className={styles.nameHeaderText}>
           Name
         </span>
-        <OverlayTrigger placement="bottom" show={popoverVisibility} overlay={renderFilter()} trigger="click">
-          <i>
-            <FontAwesomeIcon className={props.filterStr.length > 0 || popoverVisibility ? styles.filterIconActive : styles.filterIcon} data-testid={`filterIcon-${props.entityTypeTitle}-entity`} icon={faSearch} size="lg" onClick={() => togglePopover()}/>
-          </i>
-        </OverlayTrigger>
+        <HCPopoverSearch
+          popoverId={"popover-filter"}
+          searchIconId={`filterIcon-${props.entityTypeTitle}-entity`}
+          inputId={`searchInput-entity`}
+          inputPlaceholder={`Search name`}
+          inputValue={searchedKey}
+          resetButtonId={`resetSearch-entity`}
+          onReset={() => handleSearchReset()}
+          searchButtonId={`submitSearch-entity`}
+          onSearch={(value) => filterByName(value)}
+        />
       </div>,
       dataField: "name",
       key: "name",

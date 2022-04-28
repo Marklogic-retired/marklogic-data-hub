@@ -4,6 +4,10 @@ class EntityTypeDisplaySettingsModal {
     return cy.get(`[id="entityTypeDisplaySettingsContainer"]`);
   }
 
+  getTableRows() {
+    return this.getModalBody().find(`[class^="hc-table_row"]`);
+  }
+
   getEntityTypeColorButton(entityType: string) {
     return cy.get(`[id="${entityType}-color-button"]`);
   }
@@ -46,6 +50,27 @@ class EntityTypeDisplaySettingsModal {
 
   getModalSaveButton() {
     return cy.get(`[id="save-entityType-settings-modal"]`);
+  }
+
+  // filter selectors
+  getIconSearch() {
+    return cy.get(`[id="hc-popover-search-search-icon"]`);
+  }
+
+  getSearchPopover() {
+    return cy.get(`[id="hc-popover-search"]`);
+  }
+
+  getSearchInput() {
+    return cy.get(`[id="hc-popover-search-input"]`);
+  }
+
+  getSearchSearchButton() {
+    return cy.get(`[id="hc-popover-search-search-button"]`);
+  }
+
+  getSearchResetButton() {
+    return cy.get(`[id="hc-popover-search-reset-button"]`);
   }
 }
 

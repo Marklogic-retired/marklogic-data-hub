@@ -23,7 +23,7 @@ describe("Entity type color picker", () => {
     expect(queryByLabelText(`${props.entityType}-color-picker-menu`)).toBeNull();
   });
 
-  test("Open color and icon picker, choose a color and save", () => {
+  test("Open color choose a color and save", () => {
     const {getByLabelText, queryByLabelText, getByTitle} = render(<EntityTypeColorPicker entityType={props.entityType} color={props.color} handleColorChange={props.handleColorChange}/>);
     expect(getByLabelText(`${props.entityType}-color-button`)).toHaveAttribute("data-color", props.color);
 
