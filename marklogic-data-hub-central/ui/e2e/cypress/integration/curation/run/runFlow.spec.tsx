@@ -22,7 +22,8 @@ describe("Run Tile tests", () => {
     //Restoring Local Storage to Preserve Session
     cy.restoreLocalStorage();
     cy.visit("/");
-    toolbar.getRunToolbarIcon().should("be.visible").click();
+    cy.wait(1000);
+    toolbar.getRunToolbarIcon().should("be.visible").click({force: true});
     runPage.getFlowName("personJSON").should("be.visible");
   });
   after(() => {
