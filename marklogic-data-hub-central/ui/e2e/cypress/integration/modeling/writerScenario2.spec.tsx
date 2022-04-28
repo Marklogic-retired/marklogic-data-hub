@@ -269,7 +269,7 @@ describe("Entity Modeling: Writer Role", () => {
     // entityTypeTable.getEntity("User3").should("not.exist");
 
     // "Delete entity", {defaultCommandTimeout: 120000}, () => {
-    entityTypeTable.getDeleteEntityIcon("User3").click();
+    entityTypeTable.getDeleteEntityIcon("User3").should("be.visible").click({force: true});
     confirmationModal.getDeleteEntityText().should("be.visible");
     confirmationModal.getYesButton(ConfirmationType.DeleteEntity);
     cy.waitForAsyncRequest();

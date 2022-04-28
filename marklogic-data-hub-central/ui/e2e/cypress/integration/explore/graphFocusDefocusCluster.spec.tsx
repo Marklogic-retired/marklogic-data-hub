@@ -42,6 +42,7 @@ describe("Focus Defocus clusters", () => {
       //Click on node to open side panel
       canvas.click(customerCoordinates.x, customerCoordinates.y, {force: true});
       canvas.click(customerCoordinates.x, customerCoordinates.y, {force: true});
+      canvas.dblclick(customerCoordinates.x, customerCoordinates.y, {force: true});
     });
 
     cy.log("**View customer record type information**");
