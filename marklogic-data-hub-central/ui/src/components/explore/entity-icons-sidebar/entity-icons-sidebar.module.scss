@@ -1,6 +1,11 @@
 @import "../../../theme/HCVariables.scss";
 
-.entityIconList, .relatedEntityIconList, .relatedEntityIconListDisabled {
+.iconsContainer {
+    max-height: 75vh;
+    overflow-y: auto;
+}
+
+.closeEntityIconsSidebar, .entityIconList, .relatedEntityIconList, .relatedEntityIconListDisabled {
     color: $secondary-gray;
     font-weight: bold;
     display: flex;
@@ -9,7 +14,7 @@
     font-size: 15px;
 }
 
-.entityIconList {
+.closeEntityIconsSidebar {
     margin-top: 12px;
 }
 

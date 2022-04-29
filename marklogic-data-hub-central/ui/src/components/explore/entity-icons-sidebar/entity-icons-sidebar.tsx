@@ -34,18 +34,21 @@ const EntityIconsSidebar: React.FC<Props> = (props) => {
 
   return (
     <>
-      <div className={styles.entityIconList} aria-label="base-entity-icons-list">
+      <div className={styles.closeEntityIconsSidebar}>
         <HCTooltip id="reference-tooltip" text="Return to the main side panel." placement="top">
           <ChevronDoubleRight aria-label="base-entity-icons-list-close" className={styles.chevronBack} onClick={closeSpecificSidebar} />
         </HCTooltip>
-        {currentBaseEntities.map(({color, icon, name}, index) => name &&
+      </div>
+      <div className={styles.iconsContainer}>
+        <div className={styles.entityIconList} aria-label="base-entity-icons-list">
+          {currentBaseEntities.map(({color, icon, name}, index) => name &&
           <div key={name} aria-label={`base-entity-icon-${name}`} style={{backgroundColor: color}} className={styles.entityIconListItem} onClick={() => handleBaseEntityClicked(index)}>
             {icon ? <DynamicIcons name={icon} /> : <DynamicIcons name={defaultIcon} />}
           </div>
-        )}
-      </div>
-      {currentRelatedEntitiesArray.length > 0 && <div className={styles.separator}></div>}
-      {currentRelatedEntitiesArray.length > 0 &&
+          )}
+        </div>
+        {currentRelatedEntitiesArray.length > 0 && <div className={styles.separator}></div>}
+        {currentRelatedEntitiesArray.length > 0 &&
         <div className={!graphView ? styles.relatedEntityIconListDisabled : styles.relatedEntityIconList} aria-label="related-entity-icons-list">
           {currentRelatedEntitiesArray.map(({color, icon, name}, index) => name &&
           <HCTooltip text={!props.graphView ? exploreSidebar.disabledRelatedEntities: ""} aria-label="disabled-related-entity-tooltip" id="disabled-related-entity-tooltip" placement="bottom">
@@ -55,7 +58,8 @@ const EntityIconsSidebar: React.FC<Props> = (props) => {
           </HCTooltip>
           )}
         </div>
-      }
+        }
+      </div>
     </>
   );
 };
