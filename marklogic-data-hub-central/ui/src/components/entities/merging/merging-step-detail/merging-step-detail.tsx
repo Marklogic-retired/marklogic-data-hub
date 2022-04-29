@@ -21,8 +21,11 @@ import {clearSessionStorageOnRefresh, getViewSettings, setViewSettings} from "@u
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {HCButton, HCTable, HCTooltip} from "@components/common";
 import dayjs from "dayjs";
+import duration from "dayjs/plugin/duration";
 import TimelineVisDefault from "../../matching/matching-step-detail/timeline-vis-default/timeline-vis-default";
 import {themeColors} from "@config/themes.config";
+
+dayjs.extend(duration);
 
 const DEFAULT_MERGING_STEP: MergingStep = {
   name: "",
@@ -89,7 +92,7 @@ const strategyOptions:any = {
     minorLabels: function (date, scale, step) {
       let time;
       if (date >= 0 && date <= 100) {
-        time = date.format("SSS");
+        time = parseInt(date.format("SSS"));
         return dayjs.duration(time).asMilliseconds();
       } else {
         return "";
