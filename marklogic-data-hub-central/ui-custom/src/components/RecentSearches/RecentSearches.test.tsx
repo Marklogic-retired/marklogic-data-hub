@@ -1,34 +1,36 @@
 import RecentSearches from "./RecentSearches";
-import { SearchContext } from "../../store/SearchContext";
-import { render } from "@testing-library/react";
-import userEvent from '@testing-library/user-event'
+import {SearchContext} from "../../store/SearchContext";
+import {render, fireEvent} from "@testing-library/react";
+import userEvent from '@testing-library/user-event';
 
 const recentSearchesConfig = {
     "cols": [
-      {
-        "title": "Search Criteria",
-        "type": "query"
-      },
-      {
-        "title": "Share",
-        "type": "icon"
-      }
+        {
+            "title": "Search Criteria",
+            "type": "query"
+        },
+        {
+            "title": "Share",
+            "type": "icon"
+        }
     ]
 };
 
 const recentSearchesConfigNoShare = {
     "cols": [
-      {
-        "title": "Search Criteria",
-        "type": "query"
-      }
+        {
+            "title": "Search Criteria",
+            "type": "query"
+        }
     ]
 };
 
 const recentSearches = [
-    {qtext: "", facetStrings: ['sources:source1', 'status:active']},
-    {qtext: "John A. Smith", facetStrings: []},
-    {qtext: "ABC", facetStrings: ['sources:source2']}
+    {
+        searchText: "", selectedFacets: {sources: ["USA Today", "Los Angeles Times"]}, facetStrings: ['sources:source1', 'status:active'], entityTypeIds: ["person"]
+    },
+    {searchText: "John A. Smith", selectedFacets: {sources: ["Washington Post"]}, facetStrings: [], entityTypeIds: ["person"]},
+    {searchText: "ABC", selectedFacets: {sources: ["Wall Street Journal"]}, facetStrings: ['sources:source2'], entityTypeIds: ["person"]}
 ];
 
 const recentSearchesEmpty = [];
@@ -45,26 +47,31 @@ const searchContextValue = {
     handleSearch: jest.fn(),
     handleFacetString: jest.fn(),
     handleSaved: jest.fn(),
-    handleGetSearchLocal: jest.fn()
+    handleGetSearchLocal: jest.fn(),
+    handleFacetDateRange: jest.fn(),
+    handlePagination: jest.fn(),
+    handleQueryFromParam: jest.fn(),
+    handleDeleteAllRecent: jest.fn(),
+    hasSavedRecords: jest.fn(),
+    handleSort: jest.fn()
 };
 
 describe("RecentSearches component", () => {
 
     test("Verify queries and share icons appear and query is clickable when recent searches are returned", () => {
-        const {getByText, queryAllByTestId} = render(
+        const {getByText, getByTestId, queryAllByTestId} = render(
             <SearchContext.Provider value={searchContextValue}>
                 <RecentSearches data={recentSearches} config={recentSearchesConfig} />
             </SearchContext.Provider>
         );
-        let query = getByText(recentSearches[1].qtext);
+        let query = getByText(recentSearches[1].searchText);
         expect(query).toBeInTheDocument();
-        expect(getByText(recentSearches[2].qtext)).toBeInTheDocument();
-        expect(getByText(recentSearches[0].facetStrings[1])).toBeInTheDocument();
-        expect(getByText(recentSearches[2].qtext)).toBeInTheDocument();
-        expect(getByText(recentSearches[2].facetStrings[0])).toBeInTheDocument();
+        expect(getByText(recentSearches[2].searchText)).toBeInTheDocument();
+        expect(getByTestId("query-row-0")).toBeInTheDocument();
+        expect(getByText(recentSearches[2].searchText)).toBeInTheDocument();
+        expect(getByTestId("query-row-1")).toBeInTheDocument();
+        expect(getByTestId("query-row-2")).toBeInTheDocument();
         expect(queryAllByTestId("share-icon")).toHaveLength(recentSearches.length);
-        userEvent.click(query);
-        expect(searchContextValue.handleSaved).toHaveBeenCalled();
     });
 
     test("Verify no share icons appear when not configured", () => {

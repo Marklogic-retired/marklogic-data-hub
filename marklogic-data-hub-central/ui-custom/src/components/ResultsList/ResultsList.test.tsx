@@ -5,52 +5,58 @@ import {render} from "@testing-library/react";
 import userEvent from '@testing-library/user-event'
 
 const resultsListConfig = {
-    thumbnail: {
-        component: "Image",
-        config: {
-            path: "extracted.person.image",
-            alt: "result thumbnail",
-            style: {
-                width: "70px",
-                height: "70px"
-            }
+    defaultIcon:{color: "lightgrey", type: "faCircle"},
+    entities: {
+        person: {
+            thumbnail: {
+                component: "Image",
+                config: {
+                    path: "extracted.person.image",
+                    alt: "result thumbnail",
+                    style: {
+                        width: "70px",
+                        height: "70px"
+                    }
+                }
+            },
+            title: {
+                path: "extracted.person.name",
+                id: "extracted.person.id"
+            },
+            items: [
+                {
+                    component: "Address",
+                    config: {
+                        city: "extracted.person.address.city",
+                        state: "extracted.person.address.state"
+                    }
+                },
+                {
+                    component: "Value",
+                    config: {
+                        path: "extracted.person.phone",
+                        className: "phone"
+                    }
+                },
+                {path: "extracted.person.ssn"}
+            ],
+            categories: {
+                path: "extracted.person.sources",
+                colors: {
+                    "source1": "#d5e1de",
+                    "source2": "#ebe1fa"
+                }
+            },
+            timestamp: {
+                path: "extracted.person.createdOn",
+                type: "datetime",
+                format: "yyyy-MM-dd",
+                prefix: "Time is "
+            },
+            status: {path: "extracted.person.status"}
         }
-    },
-    title: {
-        path: "extracted.person.name",
-        id: "extracted.person.id"
-    },
-    items: [
-        { 
-            component: "Address", 
-            config: {
-                city: "extracted.person.address.city",
-                state: "extracted.person.address.state"
-            }
-        },
-        { 
-            component: "Value",
-            config: {
-                path: "extracted.person.phone", 
-                className: "phone"
-            }
-        },
-        { path: "extracted.person.ssn"}
-    ],
-    categories: {
-        path: "extracted.person.sources",
-        colors: {
-            "source1": "#d5e1de",
-            "source2": "#ebe1fa"
-        }
-    },
-    timestamp: {
-        path: "extracted.person.createdOn",
-        type: "datetime",
-        format: "yyyy-MM-dd",
-        prefix: "Time is "
-    },
-    status: { path: "extracted.person.status" }
+    }
+   
 };
 
 const searchResults = {
@@ -71,7 +77,8 @@ const searchResults = {
                     "sources": ["source1", "source2"],
                     "createdOn": "2020-01-01T08:00:00-07:00"
                 }
-            }
+            },
+            "entityType": "person",
         },
         {
             "extracted": {
@@ -83,7 +90,8 @@ const searchResults = {
                     "sources": [],
                     "createdOn": "1999-01-01T08:00:00"
                 }
-            }
+            },
+            "entityType": "person",
         }
     ]
 };

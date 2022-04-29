@@ -565,6 +565,7 @@
           }
         },
         "info": {
+          "title":"Personal Info",
           "items": [
             {
               "component": "DataTableValue",
@@ -986,6 +987,7 @@
           }
         },
         "info": {
+          "title":"Organization Info",
           "items": [
             {
               "component": "DataTableValue",
