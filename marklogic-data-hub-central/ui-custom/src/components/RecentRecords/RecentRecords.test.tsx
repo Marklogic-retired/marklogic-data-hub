@@ -4,42 +4,50 @@ import { render } from "@testing-library/react";
 import userEvent from '@testing-library/user-event'
 
 const recentConfig = {
-    "thumbnail": {
-        "component": "Image",
-        "config": {
-            "path": "person.image",
-            "alt": "recent thumbnail",
-            "style": {
-                "width": "70px",
-                "height": "70px"
+
+    "config": {
+        "entities": {
+            "person": {
+                "thumbnail": {
+                    "component": "Image",
+                    "config": {
+                        "path": "person.image",
+                        "alt": "recent thumbnail",
+                        "style": {
+                            "width": "70px",
+                            "height": "70px"
+                        }
+                    }
+                },
+                "title": {
+                    "id": "uri",
+                    "path": "person.id"
+                },
+                "items": [
+                    {
+                        "component": "Value",
+                        "config": {
+                            "arrayPath": "person.email",
+                            "path": "value"
+                        }
+                    }
+                ],
+                "categories": {
+                    "arrayPath": "person.sources",
+                    "path": "source",
+                    "colors": {
+                        "source1": "#d5e1de",
+                        "source2": "#ebe1fa"
+                    }
+                }
             }
-        }
-    },
-    "title": { 
-        "id": "uri",
-        "path": "person.id"
-    },
-    "items": [
-        { 
-            "component": "Value",
-            "config": {
-                "arrayPath": "person.email",
-                "path": "value"
-            }
-        }
-    ],
-    "categories": {
-        "arrayPath": "person.sources",
-        "path": "source",
-        "colors": {
-            "source1": "#d5e1de",
-            "source2": "#ebe1fa"
         }
     }
 };
 
 const recent = [{
     "uri": "doc1.xml",
+    "entityType": "person",
     "person": {
         "id": "10001",
         "email": [
@@ -57,7 +65,9 @@ const recent = [{
 const recentEmpty = [];
 
 const detailContextValue = {
-    detail: {},
+    detail: {
+        entityType: "person"
+    },
     recentRecords: recent,
     loading: false,
     handleGetDetail: jest.fn(),
@@ -72,11 +82,11 @@ describe("RecentRecords component", () => {
     test("Verify list items appear and title is clickable when recently visited records returned", () => {
         const {getByText, getAllByAltText} = render(
             <DetailContext.Provider value={detailContextValue}>
-                <RecentRecords data={recent} config={recentConfig} />
+                <RecentRecords data={recent} config={recentConfig.config} />
             </DetailContext.Provider>
         );
         let title = getByText(recent[0].person.id);
-        expect(getAllByAltText(recentConfig.thumbnail.config.alt)[0]).toBeInTheDocument(); // Image
+        expect(getAllByAltText(recentConfig.config.entities.person.thumbnail.config.alt)[0]).toBeInTheDocument(); // Image
         expect(title).toBeInTheDocument(); // Title
         expect(getByText(recent[0].person.email[0].value)).toBeInTheDocument(); // Email
         expect(getByText(recent[0].person.sources[0].source)).toBeInTheDocument(); // Source

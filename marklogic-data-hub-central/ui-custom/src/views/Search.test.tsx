@@ -1,6 +1,7 @@
 import Search from "./Search";
 import {render, act} from "@testing-library/react";
 import { UserContext } from "../store/UserContext";
+import {BrowserRouter as Router} from 'react-router-dom';
 
 const config = {
     "search": {
@@ -39,38 +40,49 @@ const config = {
         "results": {
             "component": "ResultsList",
             "config": {
-                "thumbnail": {
-                "component": "Image",
-                "config": {
-                    "path": "image",
-                    "alt": "result thumbnail"
-                }
+                "pageLengths": [3, 5, 10, 20],
+                "sort": {
+                    "entities": ["person", "organization"],
+                    "label": "Created On",
+                    "sortBy": "createdOn",
+                    "order": "descending"
                 },
-                "title": {
-                "id": "uri",
-                "path": "fullname"
-                },
-                "items": [
-                {
-                    "component": "Value",
-                    "config": {
-                    "path": "phone"
+                "entities": {
+                    "person": {
+                        "thumbnail": {
+                            "component": "Image",
+                            "config": {
+                                "path": "image",
+                                "alt": "result thumbnail"
+                            }
+                        },
+                        "title": {
+                            "id": "uri",
+                            "path": "fullname"
+                        },
+                        "items": [
+                            {
+                                "component": "Value",
+                                "config": {
+                                    "path": "phone"
+                                }
+                            }
+                        ],
+                        "categories": {
+                            "arrayPath": "extracted.person.sources",
+                            "path": "source.name",
+                            "colors": {
+                                "source1": "#c00"
+                            }
+                        },
+                        "timestamp": {
+                            "path": "ts",
+                            "type": "datetime",
+                            "format": "yyyy-MM-dd"
+                        },
+                        "status": {"path": "extracted.person.status"}
                     }
-                }
-                ],
-                "categories": {
-                "arrayPath": "extracted.person.sources",
-                "path": "source.name",
-                "colors": {
-                    "source1": "#c00"
-                }
-                },
-                "timestamp": {
-                "path": "ts",
-                "type": "datetime",
-                "format": "yyyy-MM-dd"
-                },
-                "status": { "path": "extracted.person.status" }
+                }                
             }
         }
     }
@@ -94,9 +106,11 @@ describe("Search view", () => {
         let getByText;
         await act(async () => {
             const renderResults = render(
-                <UserContext.Provider value={userContextValue}>
-                    <Search />
-                </UserContext.Provider>
+                <Router>
+                    <UserContext.Provider value={userContextValue}>
+                        <Search />
+                    </UserContext.Provider>
+                </Router>
             );
             getByText = renderResults.getByText;
         });
@@ -108,9 +122,11 @@ describe("Search view", () => {
     test("Renders loading content with empty config", async () => {
         await act(async () => {
             const renderResults = render(
-                <UserContext.Provider value={userContextValueEmptyConfig}>
-                    <Search />
-                </UserContext.Provider>
+                <Router>
+                    <UserContext.Provider value={userContextValueEmptyConfig}>
+                        <Search />
+                    </UserContext.Provider>
+                </Router>
             );
         });
         expect(document.querySelector(".loading")).toBeInTheDocument();

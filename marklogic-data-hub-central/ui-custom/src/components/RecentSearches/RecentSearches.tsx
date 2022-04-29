@@ -99,7 +99,7 @@ const RecentSearches: React.FC<Props> = (props) => {
           <tbody>
             {_.isArray(props.data) && props.data.map((r, i) => {
               return (
-                <tr key={"row-" + i}>
+                <tr key={"row-" + i} data-testid={`query-row-${i}`}>
                   {_.isArray(props.config.cols) && props.config.cols.map((c, i) => {
                     return (
                       <td key={"dat-" + i} className={c.type}>{display(c, r)}</td>
