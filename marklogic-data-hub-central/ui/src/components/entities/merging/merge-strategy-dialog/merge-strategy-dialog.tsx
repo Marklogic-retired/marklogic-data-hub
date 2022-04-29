@@ -205,7 +205,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
       minorLabels: function (date, scale, step) {
         let time;
         if (date >= 0 && date <= 100) {
-          time = date.format("SSS");
+          time = parseInt(date.format("SSS"));
           return dayjs.duration(time).asMilliseconds();
         } else {
           return "";

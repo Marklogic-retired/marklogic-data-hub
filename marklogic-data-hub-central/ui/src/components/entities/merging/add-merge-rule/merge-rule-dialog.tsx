@@ -16,10 +16,13 @@ import {addSliderOptions, parsePriorityOrder, handleDeleteSliderOptions} from "@
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {ConfirmYesNo, HCInput, HCAlert, HCButton, HCTooltip} from "@components/common";
 import dayjs from "dayjs";
+import duration from "dayjs/plugin/duration";
 import TimelineVis from "../../matching/matching-step-detail/timeline-vis/timeline-vis";
 import TimelineVisDefault from "../../matching/matching-step-detail/timeline-vis-default/timeline-vis-default";
 import MergeDeleteModal from "../merge-delete-modal/merge-delete-modal";
 import {themeColors} from "@config/themes.config";
+
+dayjs.extend(duration);
 
 type Props = {
   sourceNames: string[];
@@ -264,7 +267,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
       minorLabels: function (date, scale, step) {
         let time;
         if (date >= 0 && date <= 100) {
-          time = date.format("SSS");
+          time = parseInt(date.format("SSS"));
           return dayjs.duration(time).asMilliseconds();
         } else {
           return "";
