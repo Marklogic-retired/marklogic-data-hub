@@ -69,13 +69,17 @@ const GraphVis: React.FC<Props> = (props) => {
 
   const coordinatesExist = () => {
     let coordsExist = true;
+    let newNodeCounter = 0;
     if (entitiesConfigExist(props.hubCentralConfig)) {
       let allEntityCoordinates = props.hubCentralConfig["modeling"]["entities"];
       for (const entity of props.entityTypes) {
         if (!allEntityCoordinates[entity.entityName]) {
-          coordsExist = false;
-          break;
+          //count number of new nodes, if they only added one, no need for physics to stabilize entire graph on line 184
+          newNodeCounter = newNodeCounter + 1;
         }
+      }
+      if (newNodeCounter > 2) {
+        coordsExist = false;
       }
     } else {
       coordsExist = false;
@@ -642,7 +646,7 @@ const GraphVis: React.FC<Props> = (props) => {
     physics: {
       enabled: physicsEnabled,
       barnesHut: {
-        springLength: 160,
+        springLength: 200,
         springConstant: 1,
         avoidOverlap: 1
       },
