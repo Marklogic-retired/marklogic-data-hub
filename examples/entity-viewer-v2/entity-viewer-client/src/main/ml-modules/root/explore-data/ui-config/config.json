@@ -348,7 +348,7 @@
     "results": {
       "component": "ResultsList",
       "config": {
-        "pageLengths": [3, 5, 10, 20],
+        "pageLengths": [10, 20, 40, 80],
         "defaultIcon" : {
           "type": "faCircle",
           "color": "lightgrey"
