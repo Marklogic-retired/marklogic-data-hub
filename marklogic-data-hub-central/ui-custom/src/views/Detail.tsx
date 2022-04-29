@@ -130,12 +130,12 @@ const Detail: React.FC<Props> = (props) => {
               </span>
             </button>
           </div>
-          <div className="favorite">
+          {/* <div className="favorite">
             <button onClick={handleFavoriteClick}>
               <span className="label">Mark as Important</span>
               <FontAwesomeIcon icon={faStar} style={{color: favorite ? "#FB637E" : "#777"}}></FontAwesomeIcon>
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
     );

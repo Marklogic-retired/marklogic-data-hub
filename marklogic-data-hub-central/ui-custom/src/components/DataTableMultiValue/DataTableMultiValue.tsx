@@ -157,13 +157,13 @@ const DataTableMultiValue: React.FC<Props> = (props) => {
                                 </td>
                             );
                         })}
-                        <td key={"map"}>
+                        {/* <td key={"map"}>
                             <div className="mapTrigger">
                                 <OverlayTrigger trigger="click" placement="right" overlay={popover}>
                                     <GeoAltFill color="#5d6aaa" size={19} />
                                 </OverlayTrigger>
                             </div>
-                        </td>
+                        </td> */}
                     </tr>
                 );
                 })}
