@@ -288,6 +288,8 @@ const SearchProvider: React.FC = ({children}) => {
   };
 
   const handleSaveSearchLocal = async () => {
+    // If not configured, don't execute
+    if (!userContext?.config?.dashboard?.recentSearches) return;
     // Save to local storage
     let json = localStorage.getItem("search");
     let dt = new Date().toISOString();

@@ -139,6 +139,8 @@ const DetailProvider: React.FC = ({children}) => {
   };
 
   const handleSaveRecent = () => {
+    // If not configured, don't execute
+    if (!userContext?.config?.dashboard?.recentRecords) return;
     // Save to database
     let sr = saveRecent(userContext.config.api.recentEndpoint, detailUri, userContext.userid);
     sr.then(result => {
@@ -149,6 +151,8 @@ const DetailProvider: React.FC = ({children}) => {
   };
 
   const handleSaveRecentLocal = async () => {
+    // If not configured, don't execute
+    if (!userContext?.config?.dashboard?.recentRecords) return;
     // Save to local storage
     let json = localStorage.getItem("recent");
     let dt = new Date().toISOString();
