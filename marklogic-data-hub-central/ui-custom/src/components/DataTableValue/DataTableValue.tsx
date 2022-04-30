@@ -54,7 +54,8 @@ const DataTableValue: React.FC<Props> = (props) => {
 
     let hideClass: string = hide ? "hide" : "";
     let tableStyle: any = {
-        width: (props.config && props.config.width) ? props.config.width : "auto"
+        width: (props.config && props.config.width) ? props.config.width : "auto",
+        minHeight: "32px"
     };
     
     // TODO make icon configurable from any available in library
@@ -94,7 +95,7 @@ const DataTableValue: React.FC<Props> = (props) => {
             <Table id={props.config.id} size="sm" style={tableStyle} className={hideClass} data-testid={"table-"+ props.config.id}>
                 <tbody>
                     {data.map((d, i) => {
-                        const value = d[props?.config?.value] ? d[props.config.value] : d
+                        const value = d[props?.config?.value] ? d[props.config.value] : ""
                         return (
                             <tr key={"row-" + i} className={data.length === 1 ? "singular" : ""}>
                                 {_.isArray(props.config.metadata) && props.config.metadata.map((meta, i2) => {
