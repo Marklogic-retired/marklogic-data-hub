@@ -89,6 +89,13 @@ const Detail: React.FC<Props> = (props) => {
   };
 
   useEffect(() => {
+    if (id !== detailContext?.detail?.uri) {
+      detailContext.handleGetDetail(id);
+    }
+  }, [id])
+  
+
+  useEffect(() => {
     setConfig(userContext.config);
     // If config is loaded and id is present but detail context is
     // empty, load detail context so content is displayed
