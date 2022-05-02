@@ -21,6 +21,7 @@ class ConfigurableSearch extends Search {
     super();
   }
 
+  // userid can be accessed using searchParams.userid
   getSearchResults(searchParams) {
     return super.getSearchResults(searchParams);
   }
@@ -29,11 +30,13 @@ class ConfigurableSearch extends Search {
     return super.getSnippetResults(searchResults);
   }
 
-  getDocument(uri) {
+  // userid can be accessed using userInfo
+  getDocument(uri, userInfo) {
    return super.getDocument(uri);
   }
 
-  getEntityModels() {
+  // userid can be accessed using input.userid
+  getEntityModels(input) {
     return super.getEntityModels();
   }
 
@@ -45,6 +48,7 @@ class ConfigurableSearch extends Search {
     return super.getRecordCount(entityModelNames);
   }
 
+  // userid can be accessed using metricTypes.userid
   getMetrics(metricTypes) {
     return super.getMetrics(metricTypes);
   }

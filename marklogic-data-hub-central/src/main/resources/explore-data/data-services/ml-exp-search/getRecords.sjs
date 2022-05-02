@@ -21,6 +21,6 @@ const configurableSearch = new ConfigurableSearch();
 
 const documents = [];
 const uris = recordIds["uris"];
-uris.forEach(recordId => documents.push(configurableSearch.getDocument(recordId.toString())));
+uris.forEach(recordId => documents.push(configurableSearch.getDocument(recordId.toString(), recordIds.userid)));
 
 documents;

@@ -82,7 +82,8 @@ class Search {
       searchConstraint.push(facetConstraint)
     }
 
-    if(sortCriteria) {
+    if(sortCriteria && sortCriteria.entityType && sortCriteria.property) {
+      sortCriteria.order = sortCriteria.order ? sortCriteria.order : "descending";
       searchConstraint.push("sort:" + sortCriteria.entityType + "_" + sortCriteria.property + "_" + sortCriteria.order);
     }
 
@@ -93,7 +94,16 @@ class Search {
     }
     let results = searchResponse["response"]["result"];
     if(results) {
+      if(!Array.isArray(results)) {
+        results = [results];
+      }
       results.forEach(result => {
+        if(result["extracted"]["#text"]) {
+          let extractedObj = JSON.parse(result["extracted"]["#text"])[0];
+          let entityType = Object.keys(extractedObj)[0];
+          result["extracted"][entityType] = extractedObj[entityType];
+          delete result["extracted"]["#text"];
+        }
         result["entityType"] = Object.keys(result["extracted"])[1];
       });
     }
@@ -113,6 +123,8 @@ class Search {
     let result = cts.doc(uri);
     if(result instanceof XMLDocument) {
       result = this.transformXmlToJson(result);
+    } else {
+      result = result.toObject();
     }
     result["entityType"] = Object.keys(result)[0];
     result["uri"] = uri;
@@ -140,7 +152,7 @@ class Search {
 
   getMetrics(metricTypes) {
     const metrics = {};
-    metricTypes.forEach(metricType => {
+    metricTypes["metrics"].forEach(metricType => {
         metrics[metricType["type"]] = Math.floor(Math.random() * (100000 - 1000 + 1)) + 1000;
       }
     );

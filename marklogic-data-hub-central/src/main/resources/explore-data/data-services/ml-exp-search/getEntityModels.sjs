@@ -16,5 +16,7 @@
 'use strict';
 const ConfigurableSearch = require("/explore-data/search-lib/configurable-search-lib.sjs");
 const configurableSearch = new ConfigurableSearch();
+var input;
+input = input.toObject();
 
-configurableSearch.getEntityModels();
+configurableSearch.getEntityModels(input);

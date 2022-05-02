@@ -198,7 +198,7 @@ export const getMetrics = async (endpoint, opts, userid) => {
       userid: userid ? userid : null
     }
   }
-  let body = opts;
+  let body = {metrics: opts};
   try {
     const response = await axios.post(endpoint, body, config);
     if (response && response.status === 200) {
