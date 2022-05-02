@@ -92,7 +92,7 @@ const DetailProvider: React.FC = ({children}) => {
     let sr = getDetail(userContext.config.api.detailEndpoint, uri, userContext.userid);
     sr.then(result => {
       setDetail(result?.data[0]);
-      if (location.pathname !== "/detail?recordId=" + uri) {
+      if (location.search !== "?recordId=" + uri) {
         navigate("/detail?recordId=" + uri); // Detail click from another view
       }
       setLoading(false);

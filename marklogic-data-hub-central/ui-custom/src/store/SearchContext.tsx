@@ -192,7 +192,7 @@ const SearchProvider: React.FC = ({children}) => {
       setEntityType(_entityType);
     } else {
       // If entityType hasn't been set, use search.defaultEntity if available
-      setEntityType(userContext.config.search.defaultEntity || "");
+      setEntityType(userContext?.config?.search?.defaultEntity || "");
     }
     setPageNumber(1);
     setStart(1);
