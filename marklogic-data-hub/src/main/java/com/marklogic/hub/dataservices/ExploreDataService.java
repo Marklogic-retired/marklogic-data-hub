@@ -65,7 +65,7 @@ public interface ExploreDataService {
                 this.req_searchAndTransform = this.baseProxy.request(
                     "searchAndTransform.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_getEntityModels = this.baseProxy.request(
-                    "getEntityModels.sjs", BaseProxy.ParameterValuesKind.NONE);
+                    "getEntityModels.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_getUserMetaData = this.baseProxy.request(
                     "getUserMetaData.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_getRecords = this.baseProxy.request(
@@ -107,14 +107,17 @@ public interface ExploreDataService {
             }
 
             @Override
-            public com.fasterxml.jackson.databind.JsonNode getEntityModels() {
+            public com.fasterxml.jackson.databind.JsonNode getEntityModels(com.fasterxml.jackson.databind.JsonNode input) {
                 return getEntityModels(
-                    this.req_getEntityModels.on(this.dbClient)
+                    this.req_getEntityModels.on(this.dbClient), input
                     );
             }
-            private com.fasterxml.jackson.databind.JsonNode getEntityModels(BaseProxy.DBFunctionRequest request) {
+            private com.fasterxml.jackson.databind.JsonNode getEntityModels(BaseProxy.DBFunctionRequest request, com.fasterxml.jackson.databind.JsonNode input) {
               return BaseProxy.JsonDocumentType.toJsonNode(
-                request.responseSingle(false, Format.JSON)
+                request
+                      .withParams(
+                          BaseProxy.documentParam("input", false, BaseProxy.JsonDocumentType.fromJsonNode(input))
+                          ).responseSingle(false, Format.JSON)
                 );
             }
 
@@ -214,10 +217,10 @@ public interface ExploreDataService {
   /**
    * Invokes the getEntityModels operation on the database server
    *
-   * 
+   * @param input	provides input
    * @return	as output
    */
-    com.fasterxml.jackson.databind.JsonNode getEntityModels();
+    com.fasterxml.jackson.databind.JsonNode getEntityModels(com.fasterxml.jackson.databind.JsonNode input);
 
   /**
    * Invokes the getUserMetaData operation on the database server

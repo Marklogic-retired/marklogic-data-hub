@@ -42,27 +42,32 @@ public class ExploreDataController extends BaseController {
 
     @RequestMapping(value = "/getRecords", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<JsonNode> getRecords(@RequestBody JsonNode recordIds) {
+    public ResponseEntity<JsonNode> getRecords(@RequestBody JsonNode recordIds, @RequestHeader(name="userid") String userid) {
+        ((ObjectNode) recordIds).put("userid", userid);
         return new ResponseEntity<>(newExploreDataService().getRecords(recordIds), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/getRecord", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<JsonNode> getRecord(@RequestParam String recordId) {
+    public ResponseEntity<JsonNode> getRecord(@RequestParam String recordId, @RequestHeader(name="userid") String userid) {
         ObjectNode input = objectMapper.createObjectNode();
         input.putArray("uris").add(recordId);
+        input.put("userid", userid);
         return new ResponseEntity<>(newExploreDataService().getRecords(input), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/getEntityModels", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<JsonNode> getEntityModels() {
-        return new ResponseEntity<>(newExploreDataService().getEntityModels(), HttpStatus.OK);
+    public ResponseEntity<JsonNode> getEntityModels(@RequestHeader(name="userid") String userid) {
+        ObjectNode input = objectMapper.createObjectNode();
+        input.put("userid", userid);
+        return new ResponseEntity<>(newExploreDataService().getEntityModels(input), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/metrics", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<JsonNode> getMetrics(@RequestBody JsonNode metricTypes) {
+    public ResponseEntity<JsonNode> getMetrics(@RequestBody JsonNode metricTypes, @RequestHeader(name="userid") String userid) {
+        ((ObjectNode) metricTypes).put("userid", userid);
         return new ResponseEntity<>(newExploreDataService().getMetrics(metricTypes), HttpStatus.OK);
     }
 
