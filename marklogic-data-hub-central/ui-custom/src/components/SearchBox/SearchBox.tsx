@@ -66,6 +66,7 @@ const SearchBox: React.FC<Props> = (props) => {
 
   const [selected, setSelected] = useState<any>(selectedInit);
   const [qtext, setQtext] = useState<any>(qtextInit);
+  const searchInputRef = React.createRef<HTMLInputElement>();
 
   useEffect(() => {
     setQtext(searchContext.qtext);
@@ -86,6 +87,7 @@ const SearchBox: React.FC<Props> = (props) => {
 
   const handleSelect = (e) => {
     setSelected(e);
+    searchInputRef.current!.focus();
   };
 
   // Get entity value ("person") for a selected menu label ("Person")
@@ -141,6 +143,7 @@ const SearchBox: React.FC<Props> = (props) => {
           value={qtext}
           onKeyDown={(e) => handleEnter(e) }
           onChange={handleChange}
+          ref={searchInputRef}
         />
         { !props.button && 
           <Search color="#999" size={18} className="searchIcon" data-testid="searchIcon" />
