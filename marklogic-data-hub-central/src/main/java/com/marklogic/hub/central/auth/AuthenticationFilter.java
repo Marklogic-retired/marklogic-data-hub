@@ -127,7 +127,7 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
             throw e;
         }
 
-        if(!environment.getProperty("mlContentServerPort").isEmpty()) {
+        if(environment.getProperty("mlContentServerPort") != null && !environment.getProperty("mlContentServerPort").isEmpty()) {
             hubClientProvider.getHubClient().setCustomDbClient(Integer.parseInt(environment.getProperty("mlContentServerPort")));
         }
         response.get("authorities").iterator().forEachRemaining(node -> {
