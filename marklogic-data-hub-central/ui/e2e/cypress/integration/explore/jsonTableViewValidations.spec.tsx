@@ -5,7 +5,6 @@ import detailPage from "../../support/pages/detail";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import {BaseEntityTypes} from "../../support/types/base-entity-types";
 import {Application} from "../../support/application.config";
-import {toolbar} from "../../support/components/common";
 import "cypress-wait-until";
 // import detailPageNonEntity from "../../support/pages/detail-nonEntity";
 import LoginPage from "../../support/pages/login";
@@ -20,25 +19,24 @@ describe("json scenario for table on browse documents page", () => {
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
-    cy.waitForAsyncRequest();
+    //Saving Local Storage to preserve session
+    cy.saveLocalStorage();
   });
   beforeEach(() => {
-    cy.loginAsDeveloper().withRequest();
-    cy.waitForAsyncRequest();
-    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-    browsePage.getTableView().click();
-    browsePage.waitForSpinnerToDisappear();
-    browsePage.waitForHCTableToLoad();
-  });
-  afterEach(() => {
-    cy.resetTestUser();
-    cy.waitForAsyncRequest();
+    //Restoring Local Storage to Preserve Session
+    cy.restoreLocalStorage();
   });
   after(() => {
     cy.resetTestUser();
     cy.waitForAsyncRequest();
   });
   it("select \"all entities\" and verify table default columns", () => {
+    cy.visit("/tiles/explore");
+    cy.wait(5000);
+    browsePage.getTableView().click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.waitForHCTableToLoad();
+
     entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
     browsePage.getColumnTitle(2).should("contain", "Identifier");
@@ -83,7 +81,6 @@ describe("json scenario for table on browse documents page", () => {
   });
 
   it("verify instance view of the document without pk", () => {
-    entitiesSidebar.showMoreEntities().click({force: true});
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.PERSON);
     browsePage.getFacetItemCheckbox("fname", "Alice").click();
     browsePage.getGreySelectedFacets("Alice").should("exist");
@@ -117,6 +114,7 @@ describe("json scenario for table on browse documents page", () => {
     entitiesSidebar.selectBaseEntityOption("All Entities");
     entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
     entitiesSidebar.getApplyFacetsButton().click();
+    cy.wait(1000);
     browsePage.waitForSpinnerToDisappear();
     browsePage.getTotalDocuments().should("be.equal", 1);
     browsePage.getTableViewInstanceIcon().click();
@@ -130,13 +128,15 @@ describe("json scenario for table on browse documents page", () => {
   });
 
   it("verify source view of the document", () => {
+    cy.visit("/tiles/explore");
+    cy.wait(5000);
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
-    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
+    entitiesSidebar.getBaseEntityOption("Customer").scrollIntoView().should("be.visible");
     browsePage.waitForSpinnerToDisappear();
     browsePage.getFinalDatabaseButton();
-    browsePage.getClearAllFacetsButton().click();
-    entitiesSidebar.getMainPanelSearchInput().type("Adams Cole");
+    browsePage.getClearAllFacetsButton().click({force: true});
+    entitiesSidebar.getMainPanelSearchInput().scrollIntoView().type("Adams Cole");
     entitiesSidebar.getApplyFacetsButton().click();
     browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
@@ -149,6 +149,7 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getFacetItemCheckbox("collection", "mapCustomersJSON").click({force: true});
     browsePage.getGreySelectedFacets("mapCustomersJSON").should("exist");
     browsePage.getFacetApplyButton().click();
+    browsePage.getTableView().click();
     browsePage.getTotalDocuments().should("be.equal", 2);
 
     //Refresh the browser page at Browse table view.
@@ -299,6 +300,7 @@ describe("json scenario for table on browse documents page", () => {
   });
 
   it("apply multiple facets, deselect them, apply changes, apply multiple, clear them, verify no facets checked", () => {
+    entitiesSidebar.backToMainSidebar();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
     entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
@@ -337,6 +339,7 @@ describe("json scenario for table on browse documents page", () => {
 
 
   it("Verify facets can be selected, applied and cleared using clear text", () => {
+    entitiesSidebar.backToMainSidebar();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Person");
     entitiesSidebar.getBaseEntityOption("Person").should("be.visible");
@@ -355,6 +358,7 @@ describe("json scenario for table on browse documents page", () => {
   });
 
   it("Apply facets, unchecking them should not recheck original facets", () => {
+    entitiesSidebar.backToMainSidebar();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
     entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");

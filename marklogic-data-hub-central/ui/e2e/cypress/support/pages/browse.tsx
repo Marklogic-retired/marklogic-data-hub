@@ -661,11 +661,11 @@ class BrowsePage {
   }
 
   getFinalDatabaseButton() {
-    cy.findByText("Final").click();
+    cy.findByText("Final").scrollIntoView().click({force: true});
     // cy.intercept("POST", "/api/entitySearch?database=final").as("entitySearchFinal");
     // cy.wait("@entitySearchFinal");
     //tried intercept + wait on request but didn't work. Leaving comment as reference
-    cy.wait(3000);
+    cy.wait(5000);
   }
 
   getStagingDatabaseButton() {

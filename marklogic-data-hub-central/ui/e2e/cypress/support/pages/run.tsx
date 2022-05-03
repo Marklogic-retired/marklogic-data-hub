@@ -134,7 +134,7 @@ class RunPage {
   }
 
   openStepsSelectDropdown(flowName: string) {
-    cy.findByLabelText(`stepSettings-${flowName}`).first().should("be.visible").click();
+    cy.findByLabelText(`stepSettings-${flowName}`).first().should("be.visible").click({force: true});
   }
 
   clickSuccessCircleIcon(stepName: string, flowName: string) {

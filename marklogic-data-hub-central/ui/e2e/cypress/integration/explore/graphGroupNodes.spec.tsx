@@ -74,6 +74,7 @@ describe("Group Nodes", () => {
 
     cy.log("**Click Product node '50' to open side panel and validate productID**");
     graphExplore.focusNode(ExploreGraphNodes.PRODUCT_50);
+    cy.wait(1000);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.PRODUCT_50).then((nodePositions: any) => {
       let orderCoordinates: any = nodePositions[ExploreGraphNodes.PRODUCT_50];
       const canvas = graphExplore.getGraphVisCanvas();
