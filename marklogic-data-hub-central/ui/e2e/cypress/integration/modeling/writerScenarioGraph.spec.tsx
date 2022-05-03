@@ -133,7 +133,7 @@ describe("Entity Modeling: Graph View", () => {
     cy.log("**Verify description tooltip appears on hover**");
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
       let patientCoordinates: any = nodePositions["Patients"];
-      graphVis.getGraphVisCanvas().click(patientCoordinates.x, patientCoordinates.y);
+      graphVis.getGraphVisCanvas().click(patientCoordinates.x, patientCoordinates.y, {force: true});
       cy.findByText("An entity for patients").should("exist");
     });
     cy.waitForAsyncRequest();

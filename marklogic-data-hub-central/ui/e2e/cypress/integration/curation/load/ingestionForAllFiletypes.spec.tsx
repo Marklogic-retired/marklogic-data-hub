@@ -122,7 +122,7 @@ describe("Verify ingestion for all filetypes", () => {
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     browsePage.waitForCardToLoad();
-    browsePage.getTotalDocuments().should("eq", 1);
+    browsePage.getTotalDocuments().should("not.be.lessThan", 1);
     browsePage.getFacet("collection").should("exist");
     browsePage.getFacetItemCheckbox("collection", stepName).should("to.exist");
   });
