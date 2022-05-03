@@ -38,7 +38,7 @@ describe("Leaf Nodes", () => {
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
     entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
-    cy.wait(2000);
+    cy.wait(5000);
 
     cy.log("**Clicking Show related on '101' leaf node to expand**");
     graphExplore.focusNode(ExploreGraphNodes.OFFICE_101);
@@ -76,6 +76,7 @@ describe("Leaf Nodes", () => {
 
     cy.log("**Clicking collapse all records**");
     graphExplore.focusNode(ExploreGraphNodes.OFFICE_101);
+    cy.wait(2000);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.OFFICE_101).then((nodePositions: any) => {
       let orderCoordinates: any = nodePositions[ExploreGraphNodes.OFFICE_101];
       const canvas = graphExplore.getGraphVisCanvas();
@@ -84,7 +85,7 @@ describe("Leaf Nodes", () => {
       canvas.rightclick(orderCoordinates.x, orderCoordinates.y, {force: true});
       graphExplore.stopStabilization();
       //On windows it takes longer for the graph to get stabilized
-      cy.wait(5000);
+      cy.wait(4000);
       graphExplore.clickCollapseLeafNode();
       graphExplore.stopStabilization();
 

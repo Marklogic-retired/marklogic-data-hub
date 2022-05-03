@@ -13,18 +13,15 @@ describe("login", () => {
 
   before(() => {
     cy.visit("/");
-    cy.waitForAsyncRequest();
   });
 
   afterEach(() => {
     cy.logout();
-    cy.waitForAsyncRequest();
   });
 
   after(() => {
     //resetting the test user back to only have 'hub-central-user' role
     cy.resetTestUser();
-    cy.waitForAsyncRequest();
   });
 
   it("greets with Data Hub Central title and footer links", () => {
