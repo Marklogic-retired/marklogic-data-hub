@@ -33,7 +33,7 @@ class EntityTypeDisplaySettingsModal {
   }
 
   getEntityLabelDropdownOption(entityType: string, option: string) {
-    return cy.get(`[aria-label="${entityType}-labelOption-${option}"]`).scrollIntoView();
+    return cy.get(`[aria-label="${entityType}-labelOption-${option}"]`).first().scrollIntoView();
   }
 
   getModalCloseButton() {
