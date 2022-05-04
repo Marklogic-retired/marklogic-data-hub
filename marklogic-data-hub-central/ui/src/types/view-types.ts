@@ -11,6 +11,10 @@ export type ViewSettingsType = {
     model?: {
         entityExpandedRows?: string[],
         propertyExpandedRows?: string[],
+        sortOrder?: {
+            columnKey?: string,
+            order?: string
+        },
     },
     curate?: {
         stepArtifact?: any,
