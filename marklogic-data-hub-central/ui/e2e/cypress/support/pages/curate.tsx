@@ -5,7 +5,7 @@ class CuratePage {
      * @example Customer
      */
   toggleEntityTypeId(entityTypeId: string) {
-    cy.waitUntil(() => cy.findByTestId(entityTypeId)).click();
+    cy.waitUntil(() => cy.findByTestId(entityTypeId)).should("be.visible").click();
   }
 
   getEntityTypePanel(entityTypeId: string) {
