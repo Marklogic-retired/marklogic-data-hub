@@ -1451,18 +1451,22 @@ declare function merge-impl:generate-path-templates($path-properties as map:map*
           let $values := if ($wrap-in-array) then array-node {$values} else $values
           return
             typeswitch($values)
+            case empty-sequence() return
+              ()
             (: Convert JSON nodes to the serialized JSON elements :)
             case array-node()|object-node() return
               xdmp:from-json($values)
             (: JSON specific leaf nodes can't be added directly added to XSLT :)
             default return
               let $data-value := fn:data($values)
-              let $data-type := xdmp:type($data-value)
-              where $data-type = xs:QName("xs:boolean") or fn:number($data-type) = 0 or $data-value
-              return (
-                <xsl:attribute name="xsi:type">{$data-type}</xsl:attribute>,
-                $data-value
-              )
+              where fn:exists($data-value)
+              return
+                let $data-type := xdmp:type($data-value)
+                where $data-type = xs:QName("xs:boolean") or fn:number($data-type) = 0 or $data-value
+                return (
+                  <xsl:attribute name="xsi:type">{$data-type}</xsl:attribute>,
+                  $data-value
+                )
         }
       </xsl:copy>
     </xsl:template>
