@@ -32,6 +32,8 @@ class MonitorPage {
     cy.get(`[data-testid=${facetType}-facet] input`).eq(index).then(($btn) => {
       let facet = $btn.next("label").text();
       cy.get("#selected-facets [data-cy=\"clear-" + $btn.val() + "\"]").should("exist");
+      // On firefox it gets stuck and then tries everything at once
+      cy.wait(1000);
       // Click expand all table rows to validate info inside
       this.getExpandAllTableRows().scrollIntoView().click().then(() => {
         cy.get(".rowExpandedDetail").then(($row) => {
