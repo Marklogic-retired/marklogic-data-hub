@@ -260,13 +260,13 @@ function HCTable({className, rowStyle, childrenIndent, data, keyUtil, component,
         column.onSort = (field, order) => {
           sortDelegate(field, order);
           if (props.onTableChange) {
-            props.onTableChange("order", {columnKey: field, order});
+            props.onTableChange("sort", {columnKey: field, order});
           }
         };
       } else {
         column.onSort = (field, order) => {
           if (props.onTableChange) {
-            props.onTableChange("order", {columnKey: field, order});
+            props.onTableChange("sort", {columnKey: field, order});
           }
         };
       }

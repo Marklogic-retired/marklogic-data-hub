@@ -25,7 +25,7 @@ type Props = {
   autoExpand: string;
   editEntityTypeDescription: (entityTypeName: string, entityTypeDescription: string, entityTypeNamespace: string, entityTypePrefix: string, entityTypeVersion: string, entityTypeColor: string, entityTypeIcon: string) => void;
   updateEntities: () => void;
-  updateSavedEntity: (entity: EntityModified, errorHandler: Function|undefined) => void;
+  updateSavedEntity: (entity: EntityModified, errorHandler: Function | undefined) => void;
   hubCentralConfig: any;
 }
 
@@ -43,6 +43,12 @@ const EntityTypeTable: React.FC<Props> = (props) => {
   const [confirmBoldTextArray, setConfirmBoldTextArray] = useState<string[]>([]);
   const [arrayValues, setArrayValues] = useState<string[]>([]);
   const [confirmType, setConfirmType] = useState<ConfirmationType>(ConfirmationType.DeleteEntity);
+  const [sortedCol, setSortedCol] = useState<{ columnKey?: string, order?: string }>();
+
+  useEffect(() => {
+    const sortOrder = getViewSettings().model?.sortOrder;
+    setSortedCol(sortOrder);
+  }, []);
 
   useEffect(() => {
     if (props.autoExpand) {
@@ -76,7 +82,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
           if (modifiedEntitiesMap.hasOwnProperty(entity.entityName)) {
             // modified entities doesn't update description, use description from payload
             if (entity.model.definitions[entity.entityName].hasOwnProperty("description") &&
-            entity.model.definitions[entity.entityName]["description"] !== modifiedEntitiesMap[entity.entityName][entity.entityName]["description"]) {
+              entity.model.definitions[entity.entityName]["description"] !== modifiedEntitiesMap[entity.entityName][entity.entityName]["description"]) {
               modifiedEntitiesMap[entity.entityName][entity.entityName]["description"] = entity.model.definitions[entity.entityName]["description"];
             }
             entity.model.definitions = JSON.parse(JSON.stringify(modifiedEntitiesMap[entity.entityName]));
@@ -144,6 +150,24 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     setGraphViewOptions({view: ViewType.graph, selectedEntity: entityName});
   };
 
+  const isSorted = (dataField) => {
+    return sortedCol?.columnKey === dataField;
+  };
+
+  const onSort = (type, {columnKey, order}) => {
+    if (type === "sort") {
+      const previousSettings = getViewSettings();
+      const newSortSettings = {
+        ...previousSettings,
+        model: {
+          ...previousSettings.model,
+          sortOrder: {columnKey: columnKey, order: order}
+        }
+      };
+      setViewSettings(newSortSettings);
+    }
+  };
+
   const columns = [
     {
       text: "Name",
@@ -151,6 +175,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
       className: styles.tableText,
       width: 400,
       sort: true,
+      defaultSortOrder: isSorted("entityName") ? sortedCol?.order : undefined,
       headerFormatter: (_, $, {sortElement}) => (
         <><span data-testid="entityName">Name</span>{sortElement}</>
       ),
@@ -189,6 +214,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
       className: styles.rightHeader,
       width: 100,
       sort: true,
+      defaultSortOrder: isSorted("instances") ? sortedCol?.order : undefined,
       headerFormatter: (_, $, {sortElement}) => (<><span data-testid="Instances">Instances</span>{sortElement}</>),
       formatter: text => {
         let parseText = text.split(",");
@@ -229,6 +255,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
       className: styles.tableText,
       width: 100,
       sort: true,
+      defaultSortOrder: isSorted("lastProcessed") ? sortedCol?.order : undefined,
       headerFormatter: (_, $, {sortElement}) => (<><span data-testid="lastProcessed">Last Processed</span>{sortElement}</>),
       formatter: text => {
         let parseText = text.split(",");
@@ -243,7 +270,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
                   pathname: "/tiles/explore",
                   state: {entityName: parseText[0], jobId: parseText[1]}
                 }}
-                data-testid={parseText[0]+ "-last-processed"}
+                data-testid={parseText[0] + "-last-processed"}
                 className={styles.iconHover}
               >
                 {displayDate}
@@ -289,7 +316,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         return (
           <HCTooltip placement="top" id="icon-tooltip" text={<span>This icon is associated with the <b>{entityName}</b> entity throughout your project.</span>}>
             <div style={{width: "30px", height: "32px", marginLeft: "3%", fontSize: "24px", marginTop: "-11%"}} data-testid={`${entityName}-${icon}-icon`} aria-label={`${entityName}-${icon}-icon`}>
-              <DynamicIcons name={icon}/>
+              <DynamicIcons name={icon} />
             </div>
           </HCTooltip>
         );
@@ -338,13 +365,13 @@ const EntityTypeTable: React.FC<Props> = (props) => {
   const getEntityTypeProp = (entityName: any, prop: string) => {
     const entity = allEntityTypes.find(e => e.entityName === entityName);
     if (prop === "color") {
-      return colorExistsForEntity(entityName) ? props.hubCentralConfig.modeling.entities[entityName][prop]: themeColors.defaults.entityColor;
+      return colorExistsForEntity(entityName) ? props.hubCentralConfig.modeling.entities[entityName][prop] : themeColors.defaults.entityColor;
     }
     if (prop === "icon") {
-      return iconExistsForEntity(entityName) ? props.hubCentralConfig.modeling.entities[entityName][prop]: defaultIcon;
+      return iconExistsForEntity(entityName) ? props.hubCentralConfig.modeling.entities[entityName][prop] : defaultIcon;
     }
     if (prop === "version") {
-      return versionExistsForEntity(entity) ?  entity.model.info[prop] : undefined;
+      return versionExistsForEntity(entity) ? entity.model.info[prop] : undefined;
     }
     return (entity.hasOwnProperty("model") &&
       entity.model.hasOwnProperty("definitions") &&
@@ -364,7 +391,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
   };
 
   const onExpand = (record, expanded, rowIndex) => {
-    let newExpandedRows =  [...expandedRows];
+    let newExpandedRows = [...expandedRows];
 
     if (expanded) {
       if (newExpandedRows.indexOf(record.entityName) === -1) {
@@ -419,10 +446,12 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         baseIndent={15}
         expandedRowRender={expandedRowRender}
         onExpand={onExpand}
+        onTableChange={onSort}
         expandedRowKeys={expandedRows}
         data={renderTableData}
         pagination={{defaultPageSize: 20, size: "small", hideOnSinglePage: renderTableData.length <= 20}}
         showExpandIndicator={{bordered: true}}
+        dynamicSortColumns
       />
     </>
   );

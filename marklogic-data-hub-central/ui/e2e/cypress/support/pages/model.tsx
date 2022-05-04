@@ -58,6 +58,14 @@ class ModelPage {
     return cy.get(`[data-testid="${entitType}-${icon}-icon-option"]`).click();
   }
 
+  getSortIndicator() {
+    return cy.get(`[aria-label^="Name"] [aria-label="icon: caret-up"]`);
+  }
+
+  getEntityLabelNames() {
+    return cy.get(`[class^="hc-table_tableCell"] [class^="entity-type-table_link"]`);
+  }
+
   getIconSelected(entityName:string, iconName: string) {
     return cy.get(`[aria-label="${entityName}-${iconName}-icon"]`);
   }

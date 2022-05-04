@@ -10,6 +10,8 @@ import {
 } from "../../support/components/model/index";
 
 describe("Validate persistence across Hub Central", () => {
+  let entityNamesAsc: string[]=[];
+  let entityNamesDesc: string[]=[];
   before(() => {
     cy.visit("/");
     cy.contains(Application.title);
@@ -78,6 +80,36 @@ describe("Validate persistence across Hub Central", () => {
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     cy.get("#personJSON .accordion-collapse").should("have.class", "accordion-collapse collapse show");
   });
+  it("Should sort table by entityName asc and desc", () => {
+    cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
+    modelPage.selectView("table");
+    entityTypeTable.getExpandEntityIcon("Customer");
+
+    modelPage.getSortIndicator().scrollIntoView().click();
+    modelPage.getEntityLabelNames().then(($els) => {
+      return (
+        Cypress.$.makeArray($els)
+          .map((el) => entityNamesAsc.push(el.innerText.toString()))
+      );
+    });
+
+    modelPage.getSortIndicator().scrollIntoView().click();
+    modelPage.getEntityLabelNames().then(($els) => {
+      return (
+        Cypress.$.makeArray($els)
+          .map((el) => entityNamesDesc.push(el.innerText.toString()))
+      );
+    });
+  });
+  it("Validate that the table records on shown in the UI are sorted asc", () => {
+    expect(JSON.stringify(entityNamesAsc)).equal(JSON.stringify(entityNamesAsc.sort()));
+  });
+  it("Validate that the table records on shown in the UI are sorted desc", () => {
+    expect(JSON.stringify(entityNamesDesc)).equal(JSON.stringify(entityNamesAsc.reverse()));
+  });
+
+
+
 
   // Persistence of mapping step details is disabled temporarily. DHFPROD-7466
   // it("Switch to curate tile, go to Mapping step details, and then visit another tile. When returning to curate tile, the step details view is persisted", () => {
