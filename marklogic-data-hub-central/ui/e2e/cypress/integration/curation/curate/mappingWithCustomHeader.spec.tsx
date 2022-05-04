@@ -200,8 +200,10 @@ describe("Create and verify load steps, map step and flows with a custom header"
     cy.verifyStepAddedToFlow("Mapping", mapStep, flowName);
   });
   it("Add step to a new flow, Run Map step where step exists in multiple flows and explore data", {defaultCommandTimeout: 120000}, () => {
+
     toolbar.getCurateToolbarIcon().click({force: true});
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
+    cy.wait(2000);
     curatePage.toggleEntityTypeId("Order");
     curatePage.addToNewFlow("Order", mapStep);
     cy.waitForAsyncRequest();
@@ -232,8 +234,10 @@ describe("Create and verify load steps, map step and flows with a custom header"
     detailPage.getDocumentSource().should("contain", "backup-ABC123");
     detailPage.getDocumentTimestamp().should("not.exist");
     detailPage.getSourceView().click();
-    cy.contains("accessLevel");
-    cy.contains("999ABC");
+    if (Cypress.isBrowser("!firefox")) {
+      cy.contains("accessLevel");
+      cy.contains("999ABC");
+    }
     // By default attachment is not present in detailed view of document
     detailPage.attachmentPresent().should("not.exist");
     toolbar.getCurateToolbarIcon().click();
