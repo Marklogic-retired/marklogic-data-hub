@@ -59,7 +59,7 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStop
           setIsStepRunning(true);
           setTimeoutId(setTimeout(() => { retrieveJobDoc(); }, 3000));
         } else {
-          setIsStepRunning(false);
+          if (setIsStepRunning) setIsStepRunning(false);
         }
       }
     } catch (error) {

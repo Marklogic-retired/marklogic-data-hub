@@ -19,6 +19,10 @@ class RunPage {
     return cy.get(`[aria-label=${flowName}-completed]`);
   }
 
+  getStepSuccess(stepName: string) {
+    return cy.get(`[data-testid="${stepName}-success"]`);
+  }
+
   isFlowNotVisible(flowName: string) {
     return cy.get(`#${flowName}`).should("not.exist");
   }
