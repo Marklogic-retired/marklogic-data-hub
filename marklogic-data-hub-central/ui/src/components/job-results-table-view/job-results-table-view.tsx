@@ -56,7 +56,7 @@ const JobResultsTableView = ({data}) => {
       formatter: (jobId) => {
         return <>
           <HCTooltip text="Click the JOB ID to see the details" id="Click JOB ID to see the details" placement="right">
-            <a onClick={() => handleOpenJobResponse(jobId)}>{jobId}</a>
+            <a data-testid={`jobId-link`} onClick={() => handleOpenJobResponse(jobId)}>{jobId}</a>
           </HCTooltip>
         </>;
       }
