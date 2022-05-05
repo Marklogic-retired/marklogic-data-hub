@@ -55,10 +55,21 @@ function findStepResponses(query) {
   const totalCount = op.fromSQL(totalCountQuery).result().toObject();
   const jobsDataResults = op.fromSQL(jobsDataQuery).orderBy(orderByConstraint).offset(pageLength * (start-1)).limit(pageLength).result();
 
+  let jobsDataResultsObj = jobsDataResults.toObject();
+  jobsDataResultsObj.map(obj => {
+    if (obj.hasOwnProperty("stepStatus")) {
+      if (obj["stepStatus"].includes("errors")) {
+        obj.stepStatus = "errors";
+      } else {
+        obj.stepStatus = obj.stepStatus.split(" ")[0];
+      }
+    }
+  })
+
   response["total"] = totalCount[0]["total"];
   response["start"] = start;
   response["pageLength"] = pageLength;
-  response["results"] = jobsDataResults.toObject();
+  response["results"] = jobsDataResultsObj;
   response["facets"] = computeFacets(whereClause);
 
   return response;
@@ -66,6 +77,10 @@ function findStepResponses(query) {
 
 function sanitizeSqlValue(value) {
   return "'".concat(value.replace(/'/g, "''")).concat("'");
+}
+
+function sanitizeLikeSqlValue(value) {
+  return "'%".concat(value.replace(/'/g, "''")).concat("%'");
 }
 
 function buildDateTimeSqlCondition(fieldName, beginTime, endTime) {
@@ -94,6 +109,16 @@ function buildWhereClause(selectedFacets) {
       if (dateTimeCondition) {
         whereClause = whereClause + " " + dateTimeCondition;
       }
+    } else if (facetType === "stepStatus"){
+      let inCondition = "";
+      selectedFacets[facetType].forEach((element, index) => {
+        if (index === selectedFacets[facetType].length - 1) {
+          inCondition = inCondition.concat(" (Job.StepResponse.".concat(facetType) + " LIKE " + sanitizeLikeSqlValue(element) + ")");
+        } else {
+          inCondition = inCondition.concat(" (Job.StepResponse.".concat(facetType) + " LIKE " + sanitizeLikeSqlValue(element) + ") OR");
+        }
+      })
+      whereClause = whereClause + " ( " + inCondition + ")";
     } else {
       const inCondition = selectedFacets[facetType].map(element => sanitizeSqlValue(element)).join();
       whereClause = whereClause + " " + "Job.StepResponse.".concat(facetType) + " IN (" + inCondition + ")";
@@ -113,15 +138,28 @@ function computeFacets(whereClause) {
   Object.keys(queries).forEach(column => {
     const query = queries[column];
     let results = xdmp.sql(query, ["map", "optimize=0"]).toObject();
+    const uniqueFacets = [];
     results = results.map(result => {
-      return {
-        "name": result[column] ? result[column] : undefined,
-        "value": result[column] ? result[column] : undefined
+      let colResult = "";
+      if(column.includes("stepStatus")) {
+        if (result[column].includes("errors")) {
+          colResult = "errors"
+        } else {
+          colResult = result[column].split(" ")[0]
+        }
+      } else {
+        colResult = result[column];
+      }
+      if(colResult !== "" && uniqueFacets.filter(obj => obj.name === colResult) < 1) {
+        uniqueFacets.push({
+          "name": colResult !== "" ? colResult : undefined,
+          "value": colResult !== "" ? colResult : undefined
+        })
       }
     });
     facets[column] = {
       "type": "xs:string",
-      "facetValues": results
+      "facetValues": uniqueFacets
     };
   });
   return facets;
@@ -129,7 +167,7 @@ function computeFacets(whereClause) {
 
 function buildFacetQueries(whereClause) {
   const tableName = "Job.StepResponse";
-  const facetableColumns = ["Job.StepResponse.stepDefinitionType",
+  const facetableColumns = ["Job.StepResponse.stepDefinitionType", "Job.StepResponse.stepStatus",
     "Job.StepResponse.stepName", "Job.StepResponse.flowName"];
   const queries = {};
 

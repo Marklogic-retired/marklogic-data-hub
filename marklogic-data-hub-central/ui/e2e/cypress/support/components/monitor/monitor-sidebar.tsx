@@ -19,6 +19,10 @@ class MonitorSidebar {
   getAllAvailableDaysInDateRangePicker() {
     return cy.get(".table-condensed:nth-child(1) tbody td.available");
   }
+
+  veriifyFacetCategory(facetName: string) {
+    return cy.get(`[data-testid="${facetName}-facet"]`);
+  }
 }
 const monitorSidebar = new MonitorSidebar();
 export default monitorSidebar;

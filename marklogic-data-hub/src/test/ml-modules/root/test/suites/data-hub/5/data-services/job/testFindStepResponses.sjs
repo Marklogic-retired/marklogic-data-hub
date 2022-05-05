@@ -222,6 +222,7 @@ function verifyFacetsInStepResponse() {
         "facets": {
             "stepName": ["mapping-step-json"],
             "entityName": ["Customer"],
+            "stepStatus": ["completed"],
             "stepDefinitionType": ["mapping"],
             "flowName": ["ingestion_mapping-flow"],
             "startTime": ["2019-06-25T23:11:27.510711Z", "2019-06-27T23:11:27.510711Z"]
@@ -235,14 +236,17 @@ function verifyFacetsInStepResponse() {
         test.assertEqual(4, response.pageLength),
         test.assertEqual(1, response.results.length),
         test.assertEqual("test-job1", response.results[0]["jobId"]),
+        test.assertEqual("completed", response.results[0].stepStatus),
         test.assertEqual("mapping-step-json", response.results[0].stepName),
         test.assertEqual("mapping", response.results[0].stepDefinitionType),
         test.assertEqual("Customer", response.results[0].entityName),
         test.assertEqual("ingestion_mapping-flow", response.results[0].flowName),
-        test.assertEqual(3, Object.keys(facets).length),
+        test.assertEqual(4, Object.keys(facets).length),
+        test.assertEqual(1, facets["stepStatus"]["facetValues"].length),
         test.assertEqual(1, facets["stepDefinitionType"]["facetValues"].length),
         test.assertEqual(1, facets["stepName"]["facetValues"].length),
         test.assertEqual(1, facets["flowName"]["facetValues"].length),
+        test.assertEqual("completed", facets["stepStatus"]["facetValues"][0]["name"]),
         test.assertEqual("mapping", facets["stepDefinitionType"]["facetValues"][0]["name"]),
         test.assertEqual("mapping-step-json", facets["stepName"]["facetValues"][0]["name"]),
         test.assertEqual("ingestion_mapping-flow", facets["flowName"]["facetValues"][0]["name"])
@@ -270,6 +274,7 @@ function verifyFacetsInStepResponseForNonExistentData() {
         test.assertEqual(1, response1.start),
         test.assertEqual(4, response1.pageLength),
         test.assertEqual(0, response1.results.length),
+        test.assertEqual(0, facets["stepStatus"]["facetValues"].length),
         test.assertEqual(0, facets["stepDefinitionType"]["facetValues"].length),
         test.assertEqual(0, facets["stepName"]["facetValues"].length),
         test.assertEqual(0, facets["flowName"]["facetValues"].length)
@@ -295,7 +300,7 @@ function verifyFacetsInStepResponseInDataWithSingleQuotes() {
     return [
         test.assertEqual("test-job1", response.results[0]["jobId"]),
         test.assertEqual("ingest-ste'p-ing%est-jso'n", response.results[0].stepName),
-        test.assertEqual(3, Object.keys(facets).length),
+        test.assertEqual(4, Object.keys(facets).length),
         test.assertEqual(1, facets["stepName"]["facetValues"].length),
         test.assertEqual("ingest-ste'p-ing%est-jso'n", facets["stepName"]["facetValues"][0]["name"])
     ];

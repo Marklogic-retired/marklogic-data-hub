@@ -4,6 +4,8 @@ import "cypress-wait-until";
 import {toolbar} from "../../support/components/common";
 import LoginPage from "../../support/pages/login";
 import browsePage from "../../support/pages/browse";
+import monitorSidebar from "../../support/components/monitor/monitor-sidebar";
+import runPage from "../../support/pages/run";
 
 describe("Monitor Tile", () => {
 
@@ -67,6 +69,52 @@ describe("Monitor Tile", () => {
     browsePage.getClearAllFacetsButton().click();
     browsePage.getClearAllFacetsButton().should("be.disabled");
     browsePage.getApplyFacetsButton().should("be.disabled");
+  });
+
+  it("Verify step status faceting", () => {
+    monitorSidebar.veriifyFacetCategory("status");
+    cy.log("*** verify failed status faceting ***");
+    monitorPage.validateGreyFacet("status", 1);
+    browsePage.getApplyFacetsButton().click();
+    // cy.intercept("POST", "http://localhost:8080/api/jobs/stepResponses").as("stepResponses");
+    // cy.wait('@stepResponses').should('have.property', 'response.statusCode', 200)
+    cy.wait(2000); //intercept attempt above is not working
+    monitorPage.getExpandAllTableRows().scrollIntoView().click({force: true});
+    monitorPage.verifyTableRow("cyCardView").scrollIntoView().should("be.visible");
+    monitorPage.verifyTableRow("merge-person").should("not.exist");
+    monitorPage.verifyTableRow("patientMerge").should("not.exist");
+    monitorPage.verifyTableRow("patientMap").should("not.exist");
+    monitorPage.verifyTableRow("patientMatch").should("not.exist");
+    monitorPage.verifyTableRow("loadPatient").should("not.exist");
+    monitorPage.verifyTableRow("mapPersonJSON").should("not.exist");
+    browsePage.getClearAllFacetsButton().click();
+    cy.log("*** verify success status faceting ***");
+    monitorPage.validateGreyFacet("status", 0);
+    browsePage.getApplyFacetsButton().click();
+    // cy.intercept("POST", "/api/jobs/stepResponses").as("stepResponses");
+    // cy.wait('@stepResponses').should('have.property', 'response.statusCode', 200)
+    cy.wait(2000); //intercept attempt above is not working
+    monitorPage.getExpandAllTableRows().scrollIntoView().click({force: true});
+    monitorPage.verifyTableRow("patientMerge").scrollIntoView().should("be.visible");
+    monitorPage.verifyTableRow("patientMap").should("be.visible");
+    monitorPage.verifyTableRow("patientMatch").should("be.visible");
+    monitorPage.verifyTableRow("loadPatient").should("be.visible");
+    monitorPage.verifyTableRow("mapPersonJSON").should("be.visible");
+    browsePage.getClearAllFacetsButton().click();
+  });
+
+  it("Verify job ID link opens status modal", () => {
+
+    cy.log("*** open status modal via jobs link ***");
+    monitorPage.getAllJobIdLink().first().click();
+    runPage.getFlowStatusModal().should("be.visible");
+
+    cy.log("*** verify step result content inside status modal ***");
+    runPage.getStepSuccess("mapPersonJSON").should("be.visible");
+    runPage.verifyFlowModalCompleted("testPersonJSON");
+    cy.log("*** modal can be closed ***");
+    runPage.closeFlowStatusModal("testPersonJSON");
+    runPage.getFlowStatusModal().should("not.exist");
   });
 
   //TODO: Re-test facets without using ml-tooltip-container

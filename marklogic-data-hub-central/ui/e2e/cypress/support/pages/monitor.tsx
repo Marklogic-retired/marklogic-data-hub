@@ -13,6 +13,15 @@ class MonitorPage {
   getTableRows() {
     return cy.get(".hc-table_row");
   }
+
+  verifyTableRow(stepName: string) {
+    return cy.get(`[data-testid=${stepName}-result]`);
+  }
+
+  getAllJobIdLink() {
+    return cy.findAllByTestId("jobId-link");
+  }
+
   waitForMonitorTableToLoad() {
     cy.waitUntil(() => this.getTableRows().should("have.length.gt", 0));
   }
