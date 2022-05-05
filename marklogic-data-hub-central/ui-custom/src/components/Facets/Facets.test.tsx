@@ -114,7 +114,7 @@ const searchContextValueEmpty = {
 
 describe("Facets component", () => {
 
-    test("Verify facets render with clickable values when over threshold", () => {
+    test("Verify facets render with clickable values when over threshold", async () => {
         const {getByText, queryByText, getByTestId, getByPlaceholderText, queryByTestId} = render(
             <SearchContext.Provider value={searchContextValue}>
                 <Facets config={configMultipleOver} />
@@ -146,7 +146,9 @@ describe("Facets component", () => {
         expect(getByTestId("info-created On")).toBeInTheDocument();
         //To check info icon is present and tooltip is displayed properly on hover
         userEvent.hover(getByTestId("info-created On"));
-        expect(getByTestId("createdOnTooltip")).toBeInTheDocument();
+        await waitFor(() => {
+            expect(getByTestId("createdOnTooltip")).toBeInTheDocument();
+        });
         expect(getByPlaceholderText("Start date ~ End date")).toBeInTheDocument();
         //Calender icon should be visible initially
         expect(getByTestId("calenderIcon")).toBeInTheDocument();

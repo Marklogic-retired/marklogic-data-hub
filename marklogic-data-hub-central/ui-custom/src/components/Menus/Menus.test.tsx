@@ -1,4 +1,4 @@
-import {render, fireEvent} from "@testing-library/react";
+import {render, fireEvent, waitFor} from "@testing-library/react";
 import { BrowserRouter as Router} from "react-router-dom";
 import Menus from "./Menus";
 
@@ -29,7 +29,7 @@ const config = {
 }
 
 describe("Menus component", () => {
-  it("Verify Menus is rendered", () => {
+  it("Verify Menus is rendered", async () => {
     const {getByTestId, getByText} = render(
       <Router>
         <Menus config={config.menus}/>
@@ -39,6 +39,8 @@ describe("Menus component", () => {
     expect(getByText("ML Home")).toBeInTheDocument();
     expect(getByText("Submenu")).toBeInTheDocument();
     fireEvent.click(getByText("Submenu"));
-    expect(getByText("ML Docs")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(getByText("ML Docs")).toBeInTheDocument();
+    });
   });
 })
