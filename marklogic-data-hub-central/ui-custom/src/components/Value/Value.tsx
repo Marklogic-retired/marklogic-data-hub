@@ -45,6 +45,7 @@ const Value: React.FC<Props> = (props) => {
             className={valueClassName} 
             style={valueStyle}
             title={valueTitle}
+            data-testid="valueId"
         >{val}</span>
     );
 };

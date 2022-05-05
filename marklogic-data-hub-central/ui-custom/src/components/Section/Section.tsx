@@ -62,13 +62,13 @@ const Section: React.FC<Props> = (props) => {
   }
 
   return (
-    <div className="section" style={divStyle}>
+    <div data-testid="sectionId" className="section" style={divStyle}>
       <header style={headerStyle}>
         <span className="title">{props.title}</span>
         {props.title === "Recently Visited" && <RecentClear title="recently visited record" type="recentRecords"></RecentClear>}
         {props.collapsible && <div className="collapse-container">
-          <a className="collapse-button" onClick={handleCollapse}><ChevronDoubleUp /></a>
-          <a className="collapse-button" onClick={handleExpand}><ChevronDoubleDown /></a>
+          <a data-testid="collapseButton" className="collapse-button" onClick={handleCollapse}><ChevronDoubleUp /></a>
+          <a data-testid="expandButton" className="collapse-button" onClick={handleExpand}><ChevronDoubleDown /></a>
         </div>}
       </header>
       <main className={props.collapsible ? expandClass : ""} style={mainStyle}>{props.children}</main>
