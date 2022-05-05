@@ -43,7 +43,7 @@ const DateTime: React.FC<Props> = (props) => {
     const dateTimeStyle: any = props.style ? props.style : props.config?.style ? props.config.style : {};
 
     return (
-        <span className={dateTimeClassName ? dateTimeClassName : "DateTime"} style={dateTimeStyle}>
+        <span data-testid="dateTimeContainer" className={dateTimeClassName ? dateTimeClassName : "DateTime"} style={dateTimeStyle}>
             {formattedDateTime}
         </span>
     );

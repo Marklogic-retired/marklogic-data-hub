@@ -26,13 +26,14 @@ const Image: React.FC<Props> = (props) => {
     }
 
     const imageClassName: any = props.className ? props.className : props.config?.className ? props.config.className : "";
-    const imageStyle: any = props.style ? props.style : props.config.style ? props.config.style : {};
+    const imageStyle: any = props.style ? props.style : props?.config?.style ? props?.config?.style : {};
 
     return (<img
         src={src}
         className={imageClassName ? imageClassName : "Image"}
         style={imageStyle}
-        alt={props.config.alt}
+        alt={props.config?.alt}
+        data-testid="imageId"
     />);
 };
 

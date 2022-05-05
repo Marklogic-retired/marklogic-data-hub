@@ -33,7 +33,7 @@ const Chiclet: React.FC<Props> = (props) => {
     }, chicletStyle);
 
     return (
-        <span className="Chiclet" style={chicletStyle}>
+        <span data-testid="chiclet-container" className="Chiclet" style={chicletStyle}>
             {val}
         </span>
     );

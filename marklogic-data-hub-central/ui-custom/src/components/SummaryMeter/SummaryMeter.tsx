@@ -124,7 +124,7 @@ const SummaryMeter: React.FC<Props> = (props) => {
   };
 
   return (
-    <div className={styles.meter}>
+    <div className={styles.meter} data-testid="summaryMeterId">
       <div style={{zIndex: 1}}>
         <HighchartsReact
             highcharts={Highcharts}

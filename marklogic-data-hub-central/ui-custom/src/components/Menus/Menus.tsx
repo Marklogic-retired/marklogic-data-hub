@@ -59,7 +59,7 @@ const Menus: React.FC<Props> = (props) => {
     // https://www.npmjs.com/package/rc-cascader
 
     return (
-        <div className={styles.menus}>
+        <div className={styles.menus} data-testid="menuId">
             {props.config.map((menu, index) => {
                 return (
                     <span className={styles.menu} key={"menu-" + index}>

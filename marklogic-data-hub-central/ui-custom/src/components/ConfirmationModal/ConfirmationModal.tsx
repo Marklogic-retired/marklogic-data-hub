@@ -30,7 +30,7 @@ const ConfirmationModal: React.FC<Props> = (props) => {
       data-testid={props.title + "-resetConfirmationModal"}
       className="confirmation-modal"
     >
-      {props.headerContent.length !== 0 &&<Modal.Header>props.headerContent</Modal.Header>}
+      {props.headerContent.length !== 0 &&<Modal.Header>{props.headerContent}</Modal.Header>}
       <Modal.Body>
       <div className="modalBody">
         <FontAwesomeIcon icon={faExclamationTriangle} className="alertIcon"/>
