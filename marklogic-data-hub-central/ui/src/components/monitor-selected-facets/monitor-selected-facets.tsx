@@ -69,7 +69,8 @@ export const MonitorSelectedFacets: (React.FC<Props>)  = (props) => {
     >
       { props.selectedFacets.map((item, index) => {
         let facetName = item.displayName ? item.displayName : item.constraint;
-        let displayName = item.constraint !== "startTime" ? facetName + ": " + item.facet : item.facet;
+        let facetValue = item.constraint === "stepStatus" ? item.facet[0].toUpperCase() + item.facet.substring(1) : item.facet;
+        let displayName = item.constraint !== "startTime" ? facetName + ": " + facetValue : facetValue;
         return (
           <HCButton
             size="sm"
@@ -87,7 +88,8 @@ export const MonitorSelectedFacets: (React.FC<Props>)  = (props) => {
       })}
       {props.greyFacets.map((item, index) => {
         let facetName = item.displayName ? item.displayName : item.constraint;
-        let displayName = item.constraint !== "startTime" ? facetName + ": " + item.facet : item.facet;
+        let facetValue = item.constraint === "stepStatus" ? item.facet[0].toUpperCase() + item.facet.substring(1) : item.facet;
+        let displayName = item.constraint !== "startTime" ? facetName + ": " + facetValue : facetValue;
         return (
           (unCheckRest(item.constraint, item.facet)) &&
           <HCTooltip

@@ -34,6 +34,7 @@ const JobResultsTableView = ({data}) => {
   const user = "User";
 
   const {
+    monitorOptions,
     setMonitorSortOrder
   } = useContext(MonitorContext);
   let sorting = true;
@@ -56,7 +57,7 @@ const JobResultsTableView = ({data}) => {
       formatter: (jobId) => {
         return <>
           <HCTooltip text="Click the JOB ID to see the details" id="Click JOB ID to see the details" placement="right">
-            <a onClick={() => handleOpenJobResponse(jobId)}>{jobId}</a>
+            <a data-testid={`jobId-link`} onClick={() => handleOpenJobResponse(jobId)}>{jobId}</a>
           </HCTooltip>
         </>;
       }
@@ -276,6 +277,13 @@ const JobResultsTableView = ({data}) => {
     setArraybyDistinctJobId(arraybyDistinctJobId);
   }, [data]);
 
+  useEffect(() => {
+    if (JSON.stringify(monitorOptions.selectedFacets) !== "{}") {
+      setExpandCollapseIdRows(expandCollapseIdRowsOriginal);
+    }
+  }, [monitorOptions]);
+
+
   const [expandCollapseIdRows, setExpandCollapseIdRows] = useState<any[]>([]);
   const [expandCollapseIdRowsOriginal, setExpandCollapseIdRowsOriginal] = useState<any[]>([]);
   const toggleSourceTable = (expandedToggle) => {
@@ -344,7 +352,7 @@ const JobResultsTableView = ({data}) => {
             return nestedFlowRows.map((row) => (
               <div className="row rowExpandedDetail" style={{margin: 0}}>
                 <div style={{width: 50}}></div>
-                <div className="stepNameDiv" id={row.jobId+"_"+row.stepName}>{row.stepName}</div>
+                <div className="stepNameDiv" id={row.jobId+"_"+row.stepName} data-testid={`${row.stepName}-result`}>{row.stepName}</div>
                 <div className="stepType" id={row.jobId+"_"+row.stepName}>{StepDefinitionTypeTitles[row.stepDefinitionType]}</div>
                 <div className="stepStatus" id={row.jobId+"_"+row.stepName}>{statusIcon(row.stepStatus)}</div>
                 <div className="stepEntityType" id={row.jobId+"_"+row.stepName}>{row.entityName}</div>

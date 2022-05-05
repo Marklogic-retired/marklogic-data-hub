@@ -61,6 +61,10 @@ class RunPage {
     cy.get(`#${flowName} ${this.flowBodyContainer}`).findAllByText(stepName).first().should("be.visible");
   }
 
+  getStepSuccess(stepName: string) {
+    return cy.get(`[data-testid="${stepName}-success"]`);
+  }
+
   getFlowStatusModal() {
     return cy.get("[data-testid=job-response-modal]");
   }
