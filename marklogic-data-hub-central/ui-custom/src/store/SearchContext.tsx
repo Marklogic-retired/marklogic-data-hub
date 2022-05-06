@@ -170,7 +170,10 @@ const SearchProvider: React.FC = ({children}) => {
         navigate("/search?query=" + newQueryStr); // Handle search submit from another view
       }
       sr.then(result => {
-        console.log("getSearchResultsByGet", result?.data);
+        // Ensure search response result is an array
+        if (result && !Array.isArray(result?.data?.searchResults?.response?.result)) {
+          result.data.searchResults.response.result = [result.data.searchResults.response.result];
+        }
         setSearchResults(result?.data.searchResults.response);
         setReturned(parseInt(result?.data.searchResults.response.total));
         setTotal(_.get(result?.data, userContext.config.search.meter.config.totalPath, null) || 0);
