@@ -41,7 +41,6 @@ public class InstallEntityViewerModules extends LoggingObject implements Applica
     };
 
     private String[] configurableModulesDir = {
-        "explore-data/options/",
         "explore-data/search-lib/",
         "explore-data/ui-config/"
     };

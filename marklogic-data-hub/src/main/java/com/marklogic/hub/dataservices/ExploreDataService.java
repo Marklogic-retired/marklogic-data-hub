@@ -49,6 +49,7 @@ public interface ExploreDataService {
 
             private BaseProxy.DBFunctionRequest req_saveUserMetaData;
             private BaseProxy.DBFunctionRequest req_searchAndTransform;
+            private BaseProxy.DBFunctionRequest req_getUiConfig;
             private BaseProxy.DBFunctionRequest req_getEntityModels;
             private BaseProxy.DBFunctionRequest req_getUserMetaData;
             private BaseProxy.DBFunctionRequest req_getRecords;
@@ -64,6 +65,8 @@ public interface ExploreDataService {
                     "saveUserMetaData.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_searchAndTransform = this.baseProxy.request(
                     "searchAndTransform.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                this.req_getUiConfig = this.baseProxy.request(
+                    "getUiConfig.sjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_getEntityModels = this.baseProxy.request(
                     "getEntityModels.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_getUserMetaData = this.baseProxy.request(
@@ -103,6 +106,18 @@ public interface ExploreDataService {
                       .withParams(
                           BaseProxy.documentParam("searchParams", false, BaseProxy.JsonDocumentType.fromJsonNode(searchParams))
                           ).responseSingle(false, Format.JSON)
+                );
+            }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode getUiConfig() {
+                return getUiConfig(
+                    this.req_getUiConfig.on(this.dbClient)
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode getUiConfig(BaseProxy.DBFunctionRequest request) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request.responseSingle(false, Format.JSON)
                 );
             }
 
@@ -213,6 +228,14 @@ public interface ExploreDataService {
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode searchAndTransform(com.fasterxml.jackson.databind.JsonNode searchParams);
+
+  /**
+   * Invokes the getUiConfig operation on the database server
+   *
+   * 
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode getUiConfig();
 
   /**
    * Invokes the getEntityModels operation on the database server

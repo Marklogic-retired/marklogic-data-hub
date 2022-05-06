@@ -4,9 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.document.JSONDocumentManager;
-import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.dataservices.ExploreDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -87,11 +84,7 @@ public class ExploreDataController extends BaseController {
     @RequestMapping(value = "/uiconfig", method = RequestMethod.GET)
     @ResponseBody
     public JsonNode getUIConfig() {
-        DatabaseClient client = getHubClient().getCustomDbModulesClient();
-        JSONDocumentManager docMgr = client.newJSONDocumentManager();
-        JacksonHandle handleJSON = new JacksonHandle();
-        docMgr.read("/explore-data/ui-config/config.json", handleJSON);
-        return handleJSON.get();
+        return newExploreDataService().getUiConfig();
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/recentlyVisited")
