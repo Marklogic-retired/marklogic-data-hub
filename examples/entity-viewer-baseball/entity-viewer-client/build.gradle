@@ -1,0 +1,63 @@
+plugins {
+  id "com.marklogic.ml-gradle" version "4.3.2"
+}
+
+repositories {
+	mavenCentral()
+	maven { url "https://developer.marklogic.com/maven2/" }
+    maven { url "https://nexus.marklogic.com/repository/maven-snapshots"}
+}
+
+
+configurations {
+	mlcp
+}
+
+dependencies {
+    mlcp "com.marklogic:mlcp:10.0.6.2"
+    mlcp files("lib")
+}
+
+/**
+ * Example of using MlcpTask to import data with mlcp.
+ */
+
+task importTeamsViaMlcp(type: com.marklogic.gradle.task.MlcpTask) {
+    description = "Load team docs"
+    classpath = configurations.mlcp
+    command = "IMPORT"
+    port = 8099
+    host = "localhost"
+    username = "admin"
+    password = "admin"
+    input_file_path = "input/teams_MLB.xml"
+    input_file_type = "aggregates"
+    aggregate_record_element = "team"
+    output_collections = "team"
+    output_permissions = "rest-reader,read,rest-reader,update"
+    uri_id = "id"
+    output_uri_suffix = ".xml"
+    mode = "local"
+}
+
+task importPlayersViaMlcp(type: com.marklogic.gradle.task.MlcpTask) {
+    description = "Load player docs"
+    classpath = configurations.mlcp
+    command = "IMPORT"
+    port = 8099
+    host = "localhost"
+    username = "admin"
+    password = "admin"
+    input_file_path = "input/players_2970_MLB.xml"
+    input_file_type = "aggregates"
+    aggregate_record_element = "player"
+    output_collections = "player"
+    output_permissions = "rest-reader,read,rest-reader,update"
+    uri_id = "id"
+    output_uri_suffix = ".xml"
+    mode = "local"
+}
+
+mlDeploy.finalizedBy importTeamsViaMlcp, importPlayersViaMlcp
+
+
