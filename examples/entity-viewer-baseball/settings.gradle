@@ -1,0 +1,2 @@
+rootProject.name = 'baseball-search'
+include ':entity-viewer-client'
