@@ -79,7 +79,7 @@ const Dashboard: React.FC<Props> = (props) => {
 
         <div className="row">
 
-            {config?.dashboard?.metrics &&
+            {config?.dashboard?.metrics?.component && config?.dashboard?.metrics?.config &&
               React.createElement(
                 COMPONENTS[config.dashboard.metrics.component],
                 { data: metrics, config: config.dashboard.metrics.config }, null
@@ -122,7 +122,7 @@ const Dashboard: React.FC<Props> = (props) => {
                   "minHeight": "240px"
                 }
               }}>
-                {config?.dashboard?.whatsNew &&
+                {config?.dashboard?.whatsNew?.component && config?.dashboard?.whatsNew?.config &&
                   React.createElement(
                     COMPONENTS[config.dashboard.whatsNew.component],
                     { data: whatsNew, config: config.dashboard.whatsNew.config }, null

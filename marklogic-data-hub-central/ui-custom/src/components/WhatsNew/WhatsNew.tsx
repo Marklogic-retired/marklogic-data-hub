@@ -155,36 +155,37 @@ const WhatsNew: React.FC<Props> = (props) => {
           />
         </div>
 
-        <div className="content">
+        {props.config?.items?.length > 0 && props.config?.menu?.length > 0 &&
+          <div className="content">
 
-          <div className="menu">
-            <DropdownButton
-              title={selected}
-              data-testid="whatsNewDropdown"
-              id="whatsNewDropdown"
-              onSelect={handleSelect}
-            >
-              {props.config.menu.map((n, i) => {
-                return <Dropdown.Item key={"item-" + i} eventKey={n.label}>{n.label}</Dropdown.Item>
-              })}
-            </DropdownButton>
-          </div>
-
-          <div className="legend">
-            <Table>
-              <tbody>
-                {props.config.items.map((item, i) => {
-                  return <tr key={"row-" + i}>
-                    <td className="bar"><div style={{"backgroundColor": item.color}}></div></td>
-                    <td className="label">{item.label}</td>
-                    <td className="value">{parseInt(_.get(props.data, item.path, null)).toLocaleString()}</td>
-                  </tr>
+            <div className="menu">
+              <DropdownButton
+                title={selected}
+                data-testid="whatsNewDropdown"
+                id="whatsNewDropdown"
+                onSelect={handleSelect}
+              >
+                {props.config.menu.map((n, i) => {
+                  return <Dropdown.Item key={"item-" + i} eventKey={n.label}>{n.label}</Dropdown.Item>
                 })}
-              </tbody>
-            </Table>
-          </div>
+              </DropdownButton>
+            </div>
 
-        </div>
+            <div className="legend">
+              <Table>
+                <tbody>
+                  {props.config.items.map((item, i) => {
+                    return <tr key={"row-" + i}>
+                      <td className="bar"><div style={{"backgroundColor": item.color}}></div></td>
+                      <td className="label">{item.label}</td>
+                      <td className="value">{parseInt(_.get(props.data, item.path, null)).toLocaleString()}</td>
+                    </tr>
+                  })}
+                </tbody>
+              </Table>
+            </div>
+
+          </div>}
 
     </div>
   );

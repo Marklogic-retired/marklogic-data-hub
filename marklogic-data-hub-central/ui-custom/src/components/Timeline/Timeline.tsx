@@ -30,8 +30,8 @@ const Timeline: React.FC<Props> = (props) => {
     let data: any = [];
     data = getValByConfig(props.data, props.config);
     data = _.isNil(data) ? null : (Array.isArray(data) ? data : [data]);
-    const [minDate, setMinDate] = useState(new Date(data[0].source.ts));
-    const [maxDate, setMaxDate] = useState(new Date(data[0].source.ts));
+    const [minDate, setMinDate] = useState(new Date());
+    const [maxDate, setMaxDate] = useState(new Date());
 
     let timelineData : any[]=[];
 
