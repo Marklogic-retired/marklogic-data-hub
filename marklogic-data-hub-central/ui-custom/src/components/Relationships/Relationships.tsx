@@ -26,6 +26,7 @@ const Relationships: React.FC<Props> = (props) => {
 
     const [network, setNetwork] = useState<any>(null);
     const [graph, setGraph] = useState({ nodes: [], edges: [] });
+    const [relationshipsStyle, setRelationshipsStyle] = useState({});
     const initNetworkInstance = (networkInstance) => {
         setNetwork(networkInstance);
     };
@@ -60,7 +61,7 @@ const Relationships: React.FC<Props> = (props) => {
         }
     };
     // Any option overrides from config
-    options = Object.assign(options, props.config.options);
+    options = Object.assign(options, props?.config?.options);
 
     const getPopover = (title, city, state) => {
         const popover = document.createElement("div");
@@ -96,6 +97,12 @@ const Relationships: React.FC<Props> = (props) => {
         // Set up related entities
         let relations = getValByConfig(props.data, props.config.relations);
         relations = _.isNil(relations) ? null : (Array.isArray(relations) ? relations : [relations]);
+
+        // if no relations, minimize container and return
+        if (!relations) {
+            setRelationshipsStyle({...relationshipsStyle, height: "32px"});
+            return;
+        }
 
         // Add root, related to nodes
         const nodes: any = [{ id: rootId, shape: "image", size: nodeSize, image: rootImgSrc, title: rootPopover}];
@@ -141,7 +148,7 @@ const Relationships: React.FC<Props> = (props) => {
     };
 
     return (
-        <div className="relationships">
+        <div className="relationships" style={relationshipsStyle}>
             <Graph
                 graph={graph}
                 options={options}

@@ -35,6 +35,8 @@ const MetricsProvider: React.FC = ({ children }) => {
     const [whatsNew, setWhatsNew] = useState<any>([]);
 
     const handleGetMetrics = () => {
+      // If not configured, don't execute
+      if (!(userContext?.config?.dashboard?.metrics?.config?.items?.length > 0)) return;
       const body = userContext.config.dashboard.metrics.config.items.map(item => {
         return {type: item.type, period: item.period}
       });
@@ -50,6 +52,9 @@ const MetricsProvider: React.FC = ({ children }) => {
     };
 
     const handleGetWhatsNew = (period) => {
+      // If not configured, don't execute
+      if (!(userContext?.config?.dashboard?.whatsNew?.config?.items?.length > 0) ||
+        !(userContext?.config?.dashboard?.whatsNew?.config?.menu?.length > 0)) return;
       if (!period) {
           // If period not supplied, get default period from config
           let menuItems = userContext.config.dashboard.whatsNew.config.menu;
