@@ -9,6 +9,9 @@ let status="";
 let statusCount="";
 let country="";
 let countryCount="";
+let createdDate="";
+let startVal;
+let endVal;
 
 describe("Widget Validations ", () => {
   beforeEach(() => {
@@ -58,6 +61,10 @@ describe("Widget Validations ", () => {
     searchPage.getFacetCount(4, 0).then(countVal => {
       countryCount = countVal.text();
     });
+    searchPage.createdOn().eq(0).then(dateVal => {
+      createdDate = dateVal.text().split(" ")[2];
+      cy.log(createdDate);
+    });
   });
   it("Validate Source Widget ", () => {
     searchPage.getFacetMeter("meter-sources", source1).should("have.attr", "style").and("contain", "background-color: rgb(223, 223, 223)");
@@ -92,19 +99,17 @@ describe("Widget Validations ", () => {
     searchPage.resultsList().should("be.visible");
   });
   it("Validate Contries Widget ", () => {
-    searchPage.selectPageSizeOption("3 / page");
     searchPage.getFacetMeter("meter-country", country).should("have.attr", "style").and("contain", "background-color: rgb(223, 223, 223)");
     searchPage.clickFacet("country", country);
     cy.wait("@getSearch").its("response.statusCode").should("equal", 200);
     searchPage.resultsList().should("be.visible");
     searchPage.getFacetMeter("meter-country", country).should("have.attr", "style").and("contain", "background-color: rgb(26, 204, 168)");
     searchPage.summaryMeterVal().invoke("text").should("eq", countryCount);
-    cy.contains("Showing 1-3 of " + countryCount + " results");
     searchPage.getBadge().invoke("text").should("contain", country);
     searchPage.resultTitle().each((item, i) => {
       searchPage.resultTitle().eq(i).click({force: true});
       cy.contains(country).should("be.visible");
-      recordeDetailsPage.backToSearch().click();
+      recordeDetailsPage.backToSearch().click({force:true});
       searchPage.resultsList().should("be.visible");
     });
     searchPage.clickFacet("country", country);
@@ -113,7 +118,6 @@ describe("Widget Validations ", () => {
     searchPage.getBadge().should("not.exist");
   });
   it("Validate Multiple Source Widget ", () => {
-    searchPage.selectPageSizeOption("10 / page");
     searchPage.clickFacet("sources", source1);
     cy.wait("@getSearch").its("response.statusCode").should("equal", 200);
     searchPage.resultsList().should("be.visible");
@@ -158,6 +162,57 @@ describe("Widget Validations ", () => {
         });
       } else {
         cy.log("There are no hidden facets");
+      }
+    });
+  });
+  it("Validate Created Date Widget ", () => {
+    searchPage.datePicker().eq(0).click();
+    searchPage.showCalendar().eq(0).should("be.visible");
+    searchPage.datePickerCal().eq(0).click();
+    searchPage.showCalendar().eq(0).should("not.be.visible");
+    searchPage.datePickerCal().eq(0).click();
+    let startDate = new Date(createdDate).toLocaleString("en-us", {month: "short", year: "numeric"});
+    let endDate = new Date().toLocaleString("en-us", {month: "short", year: "numeric"});
+    cy.log(startDate);
+    cy.log(endDate);
+    const reClickStartDate = () => {
+      searchPage.getMonth().eq(0).invoke("text").then(startMonth => {
+        cy.log("startMonth "+startMonth);
+        cy.log("startDate "+startDate);
+        if (startMonth === startDate) {
+          searchPage.selectStartDate().eq(0).click();
+          return;
+        }
+        searchPage.prevMonthClick();
+        reClickStartDate();
+      });
+    };
+    const reClickEndDate = () => {
+      searchPage.getMonth().eq(1).invoke("text").then(endMonth => {
+        if (endMonth === endDate) {
+          searchPage.selectEndDate().eq(0).click();
+          return;
+        }
+        searchPage.nextMonthClick();
+        reClickEndDate();
+      });
+    };
+    reClickStartDate();
+    reClickEndDate();
+    searchPage.getBadgeDate().invoke("text").then(range => {
+      cy.log("range "+range);
+      startVal = new Date(range.split(" ")[0].trim());
+      endVal = new Date(range.split(" ")[2].trim());
+    });
+    searchPage.resultsList().then(results => {
+      if (results.is(":visible")) {
+        searchPage.createdOn().each((item) => {
+          let result = new Date(item.text().split(" ")[2]);
+          expect(result).to.be.gte(startVal);
+          expect(result).to.be.lte(endVal);
+        });
+      } else {
+        cy.log("There are no records created between given dates");
       }
     });
   });

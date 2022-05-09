@@ -64,6 +64,9 @@ class SearchPage {
   getBadge() {
     return cy.get(".badge");
   }
+  getBadgeDate() {
+    return cy.get(`[class*="badge"] [class*="nameLabel"]`);
+  }
   selectPageSizeOption(pageSizeOption: string) {
     cy.get(`#pageSizeSelect`).select(pageSizeOption, {force: true});
   }
@@ -72,6 +75,45 @@ class SearchPage {
   }
   getIcon(index: number) {
     return cy.findByTestId(`entity-icon-${index}`);
+  }
+  navigateToPage(page: number) {
+    return cy.get(`#pagination-item-${page}`);
+  }
+  nextPage() {
+    return cy.contains("span[class=visually-hidden]", "Next");
+  }
+  previousPage() {
+    return cy.contains("span[class=visually-hidden]", "Previous");
+  }
+  paginationComponent() {
+    return cy.get("#pagination");
+  }
+  createdOn() {
+    return cy.get(".timestamp span.DateTime");
+  }
+  datePicker() {
+    return cy.get(".pickerContainer .input");
+  }
+  datePickerCal() {
+    return cy.get(".pickerContainer .calendarIcon");
+  }
+  showCalendar() {
+    return cy.get(`[class*="daterangepicker ltr"]`);
+  }
+  getMonth() {
+    return cy.get(".month");
+  }
+  prevMonthClick() {
+    cy.get(".prev").click();
+  }
+  nextMonthClick() {
+    cy.get(".next").click();
+  }
+  selectStartDate() {
+    return cy.get(`[class="drp-calendar left"] [class="available"]`);
+  }
+  selectEndDate() {
+    return cy.get(`[class="drp-calendar right"] [class="available"]`);
   }
 }
 
