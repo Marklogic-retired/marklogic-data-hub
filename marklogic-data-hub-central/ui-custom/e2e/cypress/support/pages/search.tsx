@@ -73,6 +73,18 @@ class SearchPage {
   getIcon(index: number) {
     return cy.findByTestId(`entity-icon-${index}`);
   }
+  navigateToPage(page: number) {
+    return cy.get(`#pagination-item-${page}`);
+  }
+  nextPage() {
+    return cy.contains("span[class=visually-hidden]", "Next");
+  }
+  previousPage() {
+    return cy.contains("span[class=visually-hidden]", "Previous");
+  }
+  paginationComponent() {
+    return cy.get("#pagination");
+  }
 }
 
 const searchPage = new SearchPage();
