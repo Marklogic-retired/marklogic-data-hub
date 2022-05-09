@@ -5,7 +5,8 @@
     margin-left: 10px;
     margin-top: 0px;
     background-color: white;
-    border: ridge;
+    border: 1px solid lightgrey;
+    border-radius: 2px;
     padding: 0px 20px 0px 20px;
     height: 26px;
   }
@@ -15,7 +16,8 @@
   .clear-button {
     background-color: white;
     font-size: 16px;
-    border: ridge;
+    border: 1px solid lightgrey;
+    border-radius: 2px;
     padding: 0px 20px 0px 20px;
     float: right;
     height: 26px;
