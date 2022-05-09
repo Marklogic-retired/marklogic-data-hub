@@ -6,10 +6,14 @@ import userEvent from '@testing-library/user-event'
 const relationshipsConfig = {
     component: "Relationships",
     config: {
+        type: "text",
         size: 30,
         root: {
             id: {
                 path: "result[0].extracted.person.id"
+            },
+            label: {
+                path: "result[0].extracted.person.fullname"
             },
             imgSrc: {
                 path: "result[0].extracted.person.image.url"
@@ -28,6 +32,7 @@ const relationshipsConfig = {
             arrayPath: "result[0].extracted.person.relations.relation",
             id: "id",
             predicate: "predicate",
+            label: "fullname",
             imgSrc: "imageSrc",
             title: "fullname",
             city: "city",

@@ -822,10 +822,14 @@
         "relationships": {
           "component": "Relationships",
           "config": {
+            "type": "text",
             "size": 30,
             "root": {
               "id": {
                 "path": "uri"
+              },
+              "label": {
+                "path": "person.nameGroup.fullname.value"
               },
               "imgSrc": {
                 "arrayPath": "person.images.image",
@@ -850,6 +854,9 @@
               },
               "predicate": {
                 "path": "predicate"
+              },
+              "label": {
+                "path": "fullname"
               },
               "imgSrc": {
                 "path": "imageSrc"
