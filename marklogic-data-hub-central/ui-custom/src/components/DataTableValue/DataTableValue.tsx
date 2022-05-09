@@ -1,10 +1,10 @@
-import React, { useState, useContext } from "react";
+import React, {useState, useContext} from "react";
 import MetadataValue from "../MetadataValue/MetadataValue";
 import Value from "../Value/Value";
 import Table from "react-bootstrap/Table";
 import "./DataTableValue.scss";
 import {ArrowBarDown, ArrowBarRight, EnvelopeFill, TelephoneFill} from "react-bootstrap-icons";
-import { getValByConfig } from "../../util/util";
+import {getValByConfig} from "../../util/util";
 import _ from "lodash";
 
 type Props = {
@@ -57,16 +57,16 @@ const DataTableValue: React.FC<Props> = (props) => {
         width: (props.config && props.config.width) ? props.config.width : "auto",
         minHeight: "32px"
     };
-    
+
     // TODO make icon configurable from any available in library
     const getIcon = (type) => {
         if (type === "phone") {
             return (<div>
-                <TelephoneFill color="#5fc9aa" size={14} data-testid={"icon-"+ type} />
+                <TelephoneFill color="#5fc9aa" size={14} data-testid={"icon-" + type} />
             </div>);
         } else if (type === "email") {
             return (<div>
-                <EnvelopeFill color="#5fc9aa" size={14} data-testid={"icon-"+ type} />
+                <EnvelopeFill color="#5fc9aa" size={14} data-testid={"icon-" + type} />
             </div>);
         }
     };
@@ -74,59 +74,65 @@ const DataTableValue: React.FC<Props> = (props) => {
     return (
         <div className="dataTableValue">
             {data && data.length > 0 &&
-            <div className="label">
-                <span className="title">{props.config.title}</span>
-                {data.length > 1 ?
-                    <span className="hide" onClick={handleHide}>
-                        {hide ? 
-                        <ArrowBarRight 
-                            data-testid="hideDown"
-                            color="#5d6aaa" 
-                            size={18} 
-                        /> : 
-                        <ArrowBarDown 
-                            data-testid="hideUp"
-                            color="#5d6aaa" 
-                            size={18} 
-                        />}
-                    </span> : null}
-            </div>}
+                <div className="label">
+                    <span className="title">{props.config.title}</span>
+                    {data.length > 1 ?
+                        <span className="hide" onClick={handleHide}>
+                            {hide ?
+                                <ArrowBarRight
+                                    data-testid="hideDown"
+                                    color="#5d6aaa"
+                                    size={18}
+                                /> :
+                                <ArrowBarDown
+                                    data-testid="hideUp"
+                                    color="#5d6aaa"
+                                    size={18}
+                                />}
+                        </span> : null}
+                </div>}
             {data && data.length > 0 &&
-            <Table id={props.config.id} size="sm" style={tableStyle} className={hideClass} data-testid={"table-"+ props.config.id}>
-                <tbody>
-                    {data.map((d, i) => {
-                        const value = (d[props?.config?.value] || d[props?.config?.value] === "") ? 
-                            d[props.config.value] : d
-                        return (
-                            <tr key={"row-" + i} className={data.length === 1 ? "singular" : ""}>
-                                {_.isArray(props.config.metadata) && props.config.metadata.map((meta, i2) => {
-                                    if (meta?.placement !== 'before') return 
-                                    return (
-                                        <td key={"metadata-" + i2} className="metadata">
-                                            <MetadataValue config={meta} data={d} />
-                                        </td>
-                                    );
-                                })}
-                                {props.config.icon &&
-                                <td key={"icon-" + i} className="icon">
-                                    {i === 0 ? getIcon(props.config.icon) : null}
-                                </td>}
-                                <td key={"data-" + i} className="value">
-                                    <Value style={props.config.style}>{value}</Value>
-                                </td>                                
-                                {_.isArray(props.config.metadata) && props.config.metadata.map((meta, i2) => {
-                                    if (meta?.placement === 'before') return 
-                                    return (
-                                        <td key={"metadata-" + i2} className="metadata">
-                                            <MetadataValue config={meta} data={d}/>
-                                        </td>
-                                    );
-                                })}
-                            </tr>
-                        );
-                    })}
-                </tbody>
-            </Table>}
+                <Table id={props.config.id} size="sm" style={tableStyle} className={hideClass} data-testid={"table-" + props.config.id}>
+                    <tbody>
+                        {data.map((d, i) => {
+                            let value;
+                            if (d[props?.config?.value]) {
+                                value = d[props.config.value];
+                            } else {
+                                if (Array.isArray(d)) {
+                                    value = d
+                                }
+                            }
+                            return (
+                                <tr key={"row-" + i} className={data.length === 1 ? "singular" : ""}>
+                                    {_.isArray(props.config.metadata) && props.config.metadata.map((meta, i2) => {
+                                        if (meta?.placement !== 'before') return
+                                        return (
+                                            <td key={"metadata-" + i2} className="metadata">
+                                                <MetadataValue config={meta} data={d} />
+                                            </td>
+                                        );
+                                    })}
+                                    {props.config.icon &&
+                                        <td key={"icon-" + i} className="icon">
+                                            {i === 0 ? getIcon(props.config.icon) : null}
+                                        </td>}
+                                    <td key={"data-" + i} className="value">
+                                        <Value style={props.config.style}>{value}</Value>
+                                    </td>
+                                    {_.isArray(props.config.metadata) && props.config.metadata.map((meta, i2) => {
+                                        if (meta?.placement === 'before') return
+                                        return (
+                                            <td key={"metadata-" + i2} className="metadata">
+                                                <MetadataValue config={meta} data={d} />
+                                            </td>
+                                        );
+                                    })}
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </Table>}
         </div>
     );
 };
