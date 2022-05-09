@@ -1,14 +1,15 @@
 import React from "react";
 import "./Value.scss";
-import { getValByPath, getValByConfig } from "../../util/util";
+import {getValByPath, getValByConfig} from "../../util/util";
 
 type Props = {
-  config?: any;
-  data?: any;
-  className?: string;
-  style?: any;
-  title?: any;
-  getFirst?: boolean;
+    config?: any;
+    data?: any;
+    className?: string;
+    style?: any;
+    title?: any;
+    getFirst?: boolean;
+    id?: string
 };
 
 /**
@@ -39,10 +40,17 @@ const Value: React.FC<Props> = (props) => {
     let valueStyle: any = props.style ? props.style : props.config?.style ? props.config.style : {};
     let valueTitle: string = val;
 
+    let id;
+    if (props.id) {
+        id = props.id
+    } else {
+        id = props.config?.id ? getValByPath(props.data, props.config.id) : null
+    }
+
     return (
-        <span 
-            id={props.config?.id ? getValByPath(props.data, props.config.id): null} 
-            className={valueClassName} 
+        <span
+            id={id}
+            className={valueClassName}
             style={valueStyle}
             title={valueTitle}
             data-testid="valueId"

@@ -1,12 +1,12 @@
-import React, { useContext } from "react";
-import { DetailContext } from "../../store/DetailContext";
+import React, {useContext} from "react";
+import {DetailContext} from "../../store/DetailContext";
 import Chiclet from "../Chiclet/Chiclet";
 import Image from "../Image/Image";
 import Value from "../Value/Value";
 import List from "../List/List";
 import "./RecentRecords.scss";
-import { getValByConfig } from "../../util/util";
-import { ExclamationTriangleFill } from "react-bootstrap-icons";
+import {getValByConfig} from "../../util/util";
+import {ExclamationTriangleFill} from "react-bootstrap-icons";
 
 type Props = {
   data: any;
@@ -30,7 +30,7 @@ type Props = {
  * @prop {object} config.items  Array of list configuration objects.
  * @prop {string} config.categories  Categories configuration object.
  * @prop {string} config.categories.colors  Dictionary of category names and HTML colors.
- * 
+ *
  * @example
  * Configuration object
  * {
@@ -45,12 +45,12 @@ type Props = {
  *          }
  *      }
  *  },
- *  "title": { 
+ *  "title": {
  *      "id": "uri",
  *      "path": "person.id"
  *  },
  *  "items": [
- *      { 
+ *      {
  *          "component": "Value",
  *          "config": {
  *              "arrayPath": "person.email",
@@ -78,37 +78,43 @@ const RecentRecords: React.FC<Props> = (props) => {
 
   const getRecent = () => {
     let res = props.data.map((recent, index) => {
+      let titleValue = getValByConfig(recent, props.config.entities[recent.entityType].title, true);
+      if (!titleValue) {
+        if (recent?.uri) {
+          titleValue = recent?.uri;
+        }
+      }
       return (
         <div key={"recent-" + index} className="result">
           {/* TODO icon for alerting
           <div className="alert">
             {recent.alert ? <ExclamationTriangleFill color="#d48b32" size={16} /> : null}
           </div> */}
-          <div className="thumbnail"> 
-            {props.config.entities[detailContext.detail.entityType].thumbnail ? 
+          <div className="thumbnail">
+            {props.config.entities[detailContext.detail.entityType].thumbnail ?
               <Image data={recent} config={props.config.entities[recent.entityType].thumbnail.config} />
-            : null}
+              : null}
           </div>
           <div className="text">
             <div className="title" onClick={handleNameClick}>
-              <Value data={recent} config={props.config.entities[recent.entityType].title} getFirst={true} />
+              <Value id={recent?.uri}>{titleValue}</Value>
             </div>
             <div className="subtitle">
-              {props.config.entities[detailContext.detail.entityType].items ? 
+              {props.config.entities[detailContext.detail.entityType].items ?
                 <List data={recent} config={props.config.entities[recent.entityType].items} />
-              : null}
+                : null}
             </div>
-            {props.config.entities[detailContext.detail.entityType].categories ? 
-            <div className="categories">
-              {getValByConfig(recent, props.config.entities[recent.entityType].categories)!.map((s, index2) => {
-                return (
-                  <Chiclet 
-                    key={"category-" + index2} 
-                    config={props.config.entities[recent.entityType].categories}
-                  >{s}</Chiclet>
-                )
-              })}
-            </div> : null}
+            {props.config.entities[detailContext.detail.entityType].categories ?
+              <div className="categories">
+                {getValByConfig(recent, props.config.entities[recent.entityType].categories)!.map((s, index2) => {
+                  return (
+                    <Chiclet
+                      key={"category-" + index2}
+                      config={props.config.entities[recent.entityType].categories}
+                    >{s}</Chiclet>
+                  );
+                })}
+              </div> : null}
           </div>
         </div>
       );
@@ -120,7 +126,7 @@ const RecentRecords: React.FC<Props> = (props) => {
     <div>
       {(props.data && props.data.length > 0) ? (
         <div className="recentRecords">{getRecent()}</div>
-      ) : 
+      ) :
         <div className="none-found">No recently visited records found.</div>
       }
     </div>

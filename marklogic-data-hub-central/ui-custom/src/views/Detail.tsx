@@ -22,6 +22,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faStar} from "@fortawesome/free-solid-svg-icons";
 import "./Detail.scss";
 import _ from "lodash";
+import {getValByConfig} from "../util/util";
 
 type Props = {};
 
@@ -62,7 +63,7 @@ const Detail: React.FC<Props> = (props) => {
   const [favorite, setFavorite] = useState<any>(false);
   const [expand, setExpand] = useState<any>(true);
 
-  const id = searchParams.get('recordId');
+  const id = searchParams.get("recordId");
   const entityType = detailContext.detail.entityType;
 
   const handleExpandClick = () => {
@@ -89,13 +90,13 @@ const Detail: React.FC<Props> = (props) => {
   };
 
   useEffect(() => {
-    if (id !== detailContext?.detail?.uri && 
+    if (id !== detailContext?.detail?.uri &&
       // Will error if config no loaded
       !_.isEmpty(userContext.config)) {
       detailContext.handleGetDetail(id);
     }
-  }, [id])
-  
+  }, [id]);
+
 
   useEffect(() => {
     setConfig(userContext.config);
@@ -116,6 +117,12 @@ const Detail: React.FC<Props> = (props) => {
   }, [detailContext.detail]);
 
   const getHeading = (configHeading) => {
+    let titleValue = getValByConfig(detailContext.detail, configHeading.title, true);
+    if (!titleValue) {
+      if (detailContext.detail?.uri) {
+        titleValue = detailContext.detail?.uri;
+      }
+    }
     return (
       <div className="heading">
         <div className="title">
@@ -123,7 +130,7 @@ const Detail: React.FC<Props> = (props) => {
             <ArrowLeft color="#394494" size={28} />
           </div>
           <div className="text">
-            <Value data={detailContext.detail} config={configHeading.title} getFirst={true} />
+            <Value id={detailContext.detail?.uri}>{titleValue}</Value>
           </div>
           {configHeading.thumbnail && <div className="thumbnail">
             <Image data={detailContext.detail} config={configHeading.thumbnail.config} />
@@ -167,9 +174,9 @@ const Detail: React.FC<Props> = (props) => {
   };
 
   const handleExpandIdsClick = (id, value) => {
-    const newExpandId = {...expandIds, [id]: value}
+    const newExpandId = {...expandIds, [id]: value};
     handleExpandIds(newExpandId);
-  }
+  };
 
   return (
 
@@ -195,17 +202,17 @@ const Detail: React.FC<Props> = (props) => {
             {config?.detail?.entities[entityType]?.membership && <div className="row">
               <div className="col-12">
                 <Section title="Membership" config={{
-                    "headerStyle": {
-                      "backgroundColor": "transparent"
-                    },
-                    "mainStyle": {
-                      "paddingTop": "6px"
-                    }
-                  }}
-                  collapsible={true}
-                  expand={expandIds.membership}
-                  onExpand={() => {handleExpandIdsClick('membership', true)}}
-                  onCollapse={() => {handleExpandIdsClick('membership', false)}}>
+                  "headerStyle": {
+                    "backgroundColor": "transparent"
+                  },
+                  "mainStyle": {
+                    "paddingTop": "6px"
+                  }
+                }}
+                collapsible={true}
+                expand={expandIds.membership}
+                onExpand={() => { handleExpandIdsClick("membership", true); }}
+                onCollapse={() => { handleExpandIdsClick("membership", false); }}>
                   {config.detail.entities[entityType]?.membership.component && config.detail.entities[entityType]?.membership.config &&
                     React.createElement(
                       COMPONENTS[config?.detail?.entities[entityType]?.membership.component],
@@ -222,8 +229,8 @@ const Detail: React.FC<Props> = (props) => {
                   <Section title={config?.detail?.entities[entityType]?.info.title}
                     collapsible={true}
                     expand={expandIds.info}
-                    onExpand={() => {handleExpandIdsClick('info', true)}}
-                    onCollapse={() => {handleExpandIdsClick('info', false)}} >
+                    onExpand={() => { handleExpandIdsClick("info", true); }}
+                    onCollapse={() => { handleExpandIdsClick("info", false); }} >
                     {getRecordItems(config?.detail?.entities[entityType]?.info?.items)}
                   </Section>
                 }
@@ -236,8 +243,8 @@ const Detail: React.FC<Props> = (props) => {
                     title="Relationships"
                     collapsible={true}
                     expand={expandIds.relationships}
-                    onExpand={() => {handleExpandIdsClick('relationships', true)}}
-                    onCollapse={() => {handleExpandIdsClick('relationships', false)}} config={{
+                    onExpand={() => { handleExpandIdsClick("relationships", true); }}
+                    onCollapse={() => { handleExpandIdsClick("relationships", false); }} config={{
                       "mainStyle": {
                         "padding": "0"
                       }
@@ -256,8 +263,8 @@ const Detail: React.FC<Props> = (props) => {
                   <Section title="Image Gallery"
                     collapsible={true}
                     expand={expandIds.imageGallery}
-                    onExpand={() => {handleExpandIdsClick('imageGallery', true)}}
-                    onCollapse={() => {handleExpandIdsClick('imageGallery', false)}}
+                    onExpand={() => { handleExpandIdsClick("imageGallery", true); }}
+                    onCollapse={() => { handleExpandIdsClick("imageGallery", false); }}
                   >
                     {config.detail.entities[entityType]?.imageGallery.component && config.detail.entities[entityType]?.imageGallery.config &&
                       React.createElement(
@@ -270,24 +277,24 @@ const Detail: React.FC<Props> = (props) => {
 
               </div>
             </div>
-              {config?.detail?.entities[entityType]?.timeline && <div className="row">
-                  <div className="col-12">
-                      <Section
-                          title="Timeline"
-                          data-test="timelineSection"
-                          collapsible={true}
-                          expand={expandIds.timeline}
-                          onExpand={() => {handleExpandIdsClick('timeline', true)}}
-                          onCollapse={() => {handleExpandIdsClick('timeline', false)}}
-                      >
-                        {config.detail.entities[entityType]?.timeline.component && config.detail.entities[entityType]?.timeline.config &&
+            {config?.detail?.entities[entityType]?.timeline && <div className="row">
+              <div className="col-12">
+                <Section
+                  title="Timeline"
+                  data-test="timelineSection"
+                  collapsible={true}
+                  expand={expandIds.timeline}
+                  onExpand={() => { handleExpandIdsClick("timeline", true); }}
+                  onCollapse={() => { handleExpandIdsClick("timeline", false); }}
+                >
+                  {config.detail.entities[entityType]?.timeline.component && config.detail.entities[entityType]?.timeline.config &&
                           React.createElement(
-                              COMPONENTS[config.detail.entities[entityType].timeline.component],
-                              {config: config.detail.entities[entityType].timeline.config, data: detailContext.detail}, null
+                            COMPONENTS[config.detail.entities[entityType].timeline.component],
+                            {config: config.detail.entities[entityType].timeline.config, data: detailContext.detail}, null
                           )}
-                      </Section>
-                  </div>
-              </div>}
+                </Section>
+              </div>
+            </div>}
           </div>
 
         </div>

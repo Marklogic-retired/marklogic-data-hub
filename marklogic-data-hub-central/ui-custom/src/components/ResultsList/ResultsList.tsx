@@ -12,9 +12,10 @@ import {getValByConfig} from "../../util/util";
 import Pagination from "../Pagination/Pagination";
 import ResultActions from "../ResultActions/ResultActions";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import * as FaDictionary  from '@fortawesome/free-solid-svg-icons'
+import * as FaDictionary from '@fortawesome/free-solid-svg-icons'
 import {CaretDownFill, CaretUpFill} from "react-bootstrap-icons";
 import _ from "lodash";
+import {title} from "process";
 
 type Props = {
   config?: any;
@@ -134,7 +135,7 @@ const ResultsList: React.FC<Props> = (props) => {
               <CaretDownFill color={sortOrder === "descending" ? "#394494" : "#ccc"} />
             </span>
           </div>
-        : null}
+          : null}
       </div>
     );
   };
@@ -144,9 +145,15 @@ const ResultsList: React.FC<Props> = (props) => {
       const configEntityType = props.config.entities[results.entityType];
       let defaultIcon = props.config.defaultIcon
       let iconElement = configEntityType.icon ? FaDictionary[configEntityType.icon.type] : FaDictionary[defaultIcon.type];
+      let titleValue = getValByConfig(results, configEntityType.title, true);
+      if (!titleValue) {
+        if (results?.uri) {
+          titleValue = results?.uri
+        }
+      }
       return (
         <div key={"result-" + index} className="result">
-          {<span className="entityIcon" data-testid={"entity-icon-" + index}><FontAwesomeIcon icon={iconElement} color={configEntityType.icon ? configEntityType.icon.color : defaultIcon.color}/></span>}
+          {<span className="entityIcon" data-testid={"entity-icon-" + index}><FontAwesomeIcon icon={iconElement} color={configEntityType.icon ? configEntityType.icon.color : defaultIcon.color} /></span>}
           <div className="thumbnail">
             {configEntityType.thumbnail ?
               <Image data={results} config={configEntityType.thumbnail.config} />
@@ -154,7 +161,7 @@ const ResultsList: React.FC<Props> = (props) => {
           </div>
           <div className="details">
             <div className="title" onClick={handleNameClick}>
-              <Value data={results} config={configEntityType.title} getFirst={true} />
+              <Value id={results?.uri}>{titleValue}</Value>
             </div>
             <div className="subtitle">
               {configEntityType.items ?
