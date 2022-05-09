@@ -49,22 +49,20 @@ function handleByPredicate(entityName, predicateIRI) {
     model = model.toObject();
     const modelName = model.info.title;
 
-  if(model.definitions[entityName] !== undefined && model.definitions[entityName].toString().length > 0) {
-    const predicateList = entityLib.getPredicatesByModel(model);
-    if(predicateList.length >= 1){
-      hashmapPredicate.set(modelName, predicateList);
-    }
-  
-    if (modelName == entityName) {
-      const entityNameIri = entityLib.getEntityTypeId(model, modelName);
-      relatedTypeIRIs.push(sem.iri(entityNameIri));
-    }
-  }
-  });
+    if(model.definitions[entityName] !== undefined && model.definitions[entityName].toString().length > 0) {
+      const predicateList = entityLib.getPredicatesByModel(model);
+      if(predicateList.length >= 1){
+        hashmapPredicate.set(modelName, predicateList);
+      }
 
+      if (modelName == entityName) {
+        const entityNameIri = entityLib.getEntityTypeId(model, modelName);
+        relatedTypeIRIs.push(sem.iri(entityNameIri));
+      }
+    }
+  });
   return graphUtils.getEntityNodes(entityTypeIRI, predicateIRI, relatedTypeIRIs, limit);
 }
-
 var nodeInfo;
 var limit;
 
@@ -121,22 +119,17 @@ let additionalNode = {};
 
 if (isByEntityType) {
   result.map(item => {
-
     const objectIRI = item.objectIRI.toString();
     let subjectArr = objectIRI.split("/");
     const objectId = subjectArr[subjectArr.length - 1];
 
-    let nodeLabel = item.objectLabel;
-    if (item.objectLabel !== undefined && item.objectLabel.toString().length === 0) {
-      nodeLabel = objectId;
-    }
     const group = objectIRI.substring(0, objectIRI.length - objectId.length - 1);
     let hasRelationships = graphUtils.relatedObjHasRelationships(objectIRI, hashmapPredicate);
 
     let nodeExpanded = {};
     nodeExpanded.id = objectIRI;
     nodeExpanded.docURI = item.docURI;
-    nodeExpanded.label = nodeLabel;
+    nodeExpanded.label = objectId;
     nodeExpanded.group = group;
     nodeExpanded.additionalProperties = null;
     nodeExpanded.isConcept = false;
@@ -172,7 +165,6 @@ if (isByEntityType) {
       additionalEdge.to = nodeToExpand;
       addedAdditionalNode = true;
     }
-
   })
   //this is an additional node with remaining count
   if(addedAdditionalNode){
@@ -188,12 +180,9 @@ if (isByEntityType) {
     let subjectArr = objectIRI.split("/");
     let objectId = subjectArr[subjectArr.length - 1];
     let nodeId = objectIRI;
-    let nodeLabel = item.firstObjectLabel;
+    let nodeLabel = objectId;
     let nodeDocUri = item.firstDocURI;
     let nodeCount = 1;
-    if (item.firstObjectLabel !== undefined && item.firstObjectLabel.toString().length === 0) {
-      nodeLabel = objectId;
-    }
 
     if(item.nodeCount && item.nodeCount > 1) {
       nodeLabel = subjectArr[subjectArr.length - 2];
@@ -208,7 +197,6 @@ if (isByEntityType) {
     if(item.nodeCount) {
       hasRelationships = graphUtils.relatedObjHasRelationships(objectIRI, hashmapPredicate);
     }
-
     let nodeExpanded = {};
     nodeExpanded.id = nodeId;
     nodeExpanded.docURI = nodeDocUri;

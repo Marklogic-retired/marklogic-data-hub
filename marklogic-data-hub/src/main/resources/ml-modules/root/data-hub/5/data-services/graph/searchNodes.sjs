@@ -307,17 +307,13 @@ function getValueFromProperty(propertyName, docUri,entityType) {
 function getValuesPropertiesOnHover(docUri,entityType) {
   let resultPropertiesOnHover = [];
   let configPropertiesOnHover = getPropertiesOnHoverFromHubConfigByEntityType(entityType);
-  console.log("configPropertiesOnHover:" + configPropertiesOnHover.toString());
-  console.log("configPropertiesOnHover.lenght:" + configPropertiesOnHover.toString().length);
   if(configPropertiesOnHover.toString().length > 0){
     //check in the document the value of the configuration property
     for (var i = 0; i < configPropertiesOnHover.length; i++) {
       let entityPropertyName = configPropertiesOnHover[i];
-      console.log("entityPropertyName:" + entityPropertyName);
       //create an Property on hover object
       var objPropertyOnHover = new Object();
       objPropertyOnHover[entityPropertyName] = getValueFromProperty(entityPropertyName,docUri,entityType);
-      console.log("objPropertyOnHover[entityPropertyName]:" + objPropertyOnHover[entityPropertyName]);
       resultPropertiesOnHover.push(objPropertyOnHover);
     }
   }
