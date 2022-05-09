@@ -114,11 +114,6 @@ function getEntityNodes(entityTypeIRI, predicateIRI, relatedTypeIRIs, limit) {
         }
         GROUP BY ?subjectIRI ?predicateIRI ?predicateLabel ?objectIRI
       }
-      {
-            OPTIONAL {
-              ?firstObjectIRI @labelIRI ?objectLabel.
-            }
-      }
       }
   `).where(op.eq(op.col('subjectIRI'), entityTypeIRI)).where(op.eq(op.col('predicateIRI'), predicateIRI)).limit(limit);
   return subjectPlan.result(null, {relatedTypeIRIs: relatedTypeIRIs.concat(getRdfConceptTypes()), labelIRI: getOrderedLabelPredicates()}).toArray();
@@ -140,11 +135,6 @@ function getEntityNodesBySubject(entityTypeIRI, relatedEntityTypeIRIs, limit) {
             }
         }
         GROUP BY ?subjectIRI ?predicateIRI ?predicateLabel
-      }
-      {
-            OPTIONAL {
-              ?firstObjectIRI @labelIRI ?firstObjectLabel.
-            }
       }
       }
   `).limit(limit);
