@@ -19,6 +19,10 @@ class RunPage {
     return cy.get(`[aria-label=${flowName}-completed]`);
   }
 
+  getStepSuccess(stepName: string) {
+    return cy.get(`[data-testid="${stepName}-success"]`);
+  }
+
   isFlowNotVisible(flowName: string) {
     return cy.get(`#${flowName}`).should("not.exist");
   }
@@ -59,10 +63,6 @@ class RunPage {
     cy.get(`#${flowName} ${this.flowBodyContainer}`).findAllByText(stepType).first().scrollIntoView().should("exist");
     cy.get(`#${flowName} ${this.flowBodyContainer}`).findAllByText(stepType).first().scrollIntoView().should("be.visible");
     cy.get(`#${flowName} ${this.flowBodyContainer}`).findAllByText(stepName).first().should("be.visible");
-  }
-
-  getStepSuccess(stepName: string) {
-    return cy.get(`[data-testid="${stepName}-success"]`);
   }
 
   getFlowStatusModal() {

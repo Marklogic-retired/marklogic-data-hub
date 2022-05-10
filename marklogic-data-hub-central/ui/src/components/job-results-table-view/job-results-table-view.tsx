@@ -18,6 +18,8 @@ const JobResultsTableView = ({data}) => {
   const [jobId, setJobId] = useState<string>("");
   const [openJobResponse, setOpenJobResponse] = useState<boolean>(false);
   const [arraybyDistinctJobId, setArraybyDistinctJobId] = useState<any>([]);
+  const [orderColumn, setOrderColumn] = useState("");
+  const [orderColumnName, setOrderColumnName] = useState("");
   //const [expandedRowKeys, setExpandedRowKeys] = useState<any[]>([]);
 
   const handleOpenJobResponse = (jobId) => {
@@ -47,19 +49,32 @@ const JobResultsTableView = ({data}) => {
     return <></>;
   };
 
+  useEffect(() => {
+    toggleSourceTable("expand");
+  }, [orderColumnName, orderColumn]);
+
+  const orderColumns = (field: string, order: string) => {
+    setOrderColumnName(field);
+    setOrderColumn(order);
+  };
+
   const MANDATORY_HEADERS = [
     {
       text: "Step Name",
       dataField: "jobId",
       visible: true,
       //width: 320,
-      sort: false,
+      sort: true,
       formatter: (jobId) => {
         return <>
           <HCTooltip text="Click the JOB ID to see the details" id="Click JOB ID to see the details" placement="right">
             <a data-testid={`jobId-link`} onClick={() => handleOpenJobResponse(jobId)}>{jobId}</a>
           </HCTooltip>
         </>;
+      },
+      sortFunc: (a, b, dataField) => {},
+      onSort: (field, order) => {
+        orderColumns(field, order);
       }
     },
     // {
@@ -74,34 +89,49 @@ const JobResultsTableView = ({data}) => {
       dataField: "stepDefinitionType",
       visible: true,
       //width: 140,
-      sort: false,
+      sort: true,
       formatter: emptyValue,
-      //onSort: (field, order) => {}
+      sortFunc: (a, b, dataField) => {},
+      onSort: (field, order) => {
+        orderColumns(field, order);
+      }
     },
     {
       text: "Status",
-      dataField: "jobStatus",
+      dataField: "stepStatus",
       visible: true,
       //width: 100,
-      sort: false,
+      sort: true,
       align: "center",
       formatter: emptyValue,
+      sortFunc: (a, b, dataField) => {},
+      onSort: (field, order) => {
+        orderColumns(field, order);
+      }
     },
     {
       text: "Entity Type",
       dataField: "entityName",
       visible: true,
       //width: 100,
-      sort: false,
+      sort: true,
       formatter: emptyValue,
+      sortFunc: (a, b, dataField) => {},
+      onSort: (field, order) => {
+        orderColumns(field, order);
+      }
     },
     {
       text: "Start Date and Time",
       dataField: "startTime",
       visible: true,
       //width: 150,
-      sort: false,
+      sort: true,
       formatter: emptyValue,
+      sortFunc: (a, b, dataField) => {},
+      onSort: (field, order) => {
+        orderColumns(field, order);
+      }
     },
     {
       text: "Duration",
@@ -160,13 +190,13 @@ const JobResultsTableView = ({data}) => {
     if (status && status === "running" || /^running/.test(status)) {
       return <>
         <HCTooltip text="Running" id="running-tooltip" placement="bottom">
-          <ClockFill data-testid="progress" className={styles.runningStatus}/>
+          <ClockFill data-testid="progress" className={styles.runningStatus} />
         </HCTooltip>
       </>;
     } else if (status?.includes("completed")) {
       return <>
         <HCTooltip text="Completed Successfully" id="complete-success-tooltip" placement="bottom">
-          <CheckCircleFill data-testid="success" className={styles.successStatus}/>
+          <CheckCircleFill data-testid="success" className={styles.successStatus} />
         </HCTooltip>
       </>;
     } else if (status?.includes("canceled")) {
@@ -183,13 +213,13 @@ const JobResultsTableView = ({data}) => {
     } else if (status?.includes("failed") && !status?.includes("errors")) {
       return <>
         <HCTooltip text="Failed" id="failed-tooltip" placement="bottom">
-          <XCircleFill data-testid="failed" className={styles.errorStatus}/>
+          <XCircleFill data-testid="failed" className={styles.errorStatus} />
         </HCTooltip>
       </>;
     } else {
       return <>
         <HCTooltip text="Completed With Errors" id="complete-errors-tooltip" placement="bottom">
-          <ExclamationCircleFill data-testid="completed-with-errors" className={styles.errorStatus}/>
+          <ExclamationCircleFill data-testid="completed-with-errors" className={styles.errorStatus} />
         </HCTooltip>
       </>;
     }
@@ -267,14 +297,30 @@ const JobResultsTableView = ({data}) => {
     </Popover>
   );
 
-  useEffect(() => {
+  const filterArraybyDistinctJobId = () => {
     let arraybyDistinctJobId = data.filter((value, index, self) =>
       index === self.findIndex((valueAux) => (
-        valueAux.jobId === value.jobId && valueAux.testCustomFlow === value.testCustomFlow
+        valueAux.jobId === value.jobId
       ))
     );
     setExpandCollapseIdRowsOriginal(arraybyDistinctJobId.map(job => job.jobId));
     setArraybyDistinctJobId(arraybyDistinctJobId);
+  };
+
+  const sortRows = (data) => {
+    if (orderColumnName === "jobId") {
+      orderColumn === "asc" && orderColumnName && data.sort((a, b) => a?.stepName?.localeCompare(b?.stepName ? b?.stepName : ""));
+      orderColumn === "desc" && orderColumnName && data.sort((a, b) => b?.stepName?.localeCompare(a?.stepName ? a?.stepName : ""));
+    } else {
+      orderColumn === "asc" && orderColumnName && data.sort((a, b) => a[orderColumnName]?.localeCompare(b[orderColumnName] ? b[orderColumnName] : ""));
+      orderColumn === "desc" && orderColumnName && data.sort((a, b) => b[orderColumnName]?.localeCompare(a[orderColumnName] ? a[orderColumnName] : ""));
+    }
+
+    return data;
+  };
+
+  useEffect(() => {
+    filterArraybyDistinctJobId();
   }, [data]);
 
   useEffect(() => {
@@ -333,7 +379,7 @@ const JobResultsTableView = ({data}) => {
       </div>
       <div className={styles.tabular}>
         <HCTable
-          className={`job-results-table ${columnFlowName ? "handleFlowName": "" } ${columnUser ? " handleUser": "" }`}
+          className={`job-results-table ${columnFlowName ? "handleFlowName" : ""} ${columnUser ? " handleUser" : ""}`}
           data-testid="job-results-table"
           rowKey="jobId"
           data={arraybyDistinctJobId}
@@ -346,15 +392,15 @@ const JobResultsTableView = ({data}) => {
           expandedRowRender={(row) => {
 
             let nestedFlowRows = data.filter((obj) => {
-              return obj.jobId === row.jobId && obj.testCustomFlow === row.testCustomFlow;
+              return obj.jobId === row.jobId;
             });
 
-            return nestedFlowRows.map((row) => (
+            return sortRows(nestedFlowRows).map((row) => (
               <div className="row rowExpandedDetail" style={{margin: 0}}>
                 <div style={{width: 50}}></div>
                 <div className="stepNameDiv" id={row.jobId+"_"+row.stepName} data-testid={`${row.stepName}-result`}>{row.stepName}</div>
                 <div className="stepType" id={row.jobId+"_"+row.stepName}>{StepDefinitionTypeTitles[row.stepDefinitionType]}</div>
-                <div className="stepStatus" id={row.jobId+"_"+row.stepName}>{statusIcon(row.stepStatus)}</div>
+                <div className="stepStatus" id={row.jobId + "_" + row.stepName} data-testid={row.stepStatus}>{statusIcon(row.stepStatus)}</div>
                 <div className="stepEntityType" id={row.jobId+"_"+row.stepName}>{row.entityName}</div>
                 <div className="stepStartDate" id={row.jobId+"_"+row.stepName}>{(dateConverter(row.startTime))}</div>
                 <div className="stepDuration" id={row.jobId+"_"+row.stepName}>{row.duration}</div>
