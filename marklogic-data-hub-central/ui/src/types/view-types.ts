@@ -9,12 +9,14 @@ export type ViewSettingsType = {
     },
 
     model?: {
+        filter?: string,
         entityExpandedRows?: string[],
         propertyExpandedRows?: string[],
         sortOrder?: {
             columnKey?: string,
             order?: string
         },
+        currentTab?: string
     },
     curate?: {
         stepArtifact?: any,
