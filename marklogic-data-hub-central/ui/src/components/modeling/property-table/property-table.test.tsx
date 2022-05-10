@@ -277,12 +277,6 @@ describe("Entity Modeling Property Table Component", () => {
       />
     );
 
-    //properties under Address and Billing structured properties should be hidden by default
-    expect(queryByText("street")).not.toBeInTheDocument();
-    expect(queryByText("state")).not.toBeInTheDocument();
-    expect(queryByText("fiveDigit")).not.toBeInTheDocument();
-    expect(queryByText("plusFour")).not.toBeInTheDocument();
-
     //verify expand all
     fireEvent.click(getByTestId("expandBtn"));
 
