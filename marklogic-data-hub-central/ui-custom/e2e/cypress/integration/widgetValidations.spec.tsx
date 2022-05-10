@@ -9,6 +9,9 @@ let status="";
 let statusCount="";
 let country="";
 let countryCount="";
+let createdDate="";
+let startVal;
+let endVal;
 
 describe("Widget Validations ", () => {
   beforeEach(() => {
@@ -57,6 +60,10 @@ describe("Widget Validations ", () => {
     });
     searchPage.getFacetCount(4, 0).then(countVal => {
       countryCount = countVal.text();
+    });
+    searchPage.createdOn().eq(0).then(dateVal => {
+      createdDate = dateVal.text().split(" ")[2];
+      cy.log(createdDate);
     });
   });
   it("Validate Source Widget ", () => {
@@ -155,6 +162,57 @@ describe("Widget Validations ", () => {
         });
       } else {
         cy.log("There are no hidden facets");
+      }
+    });
+  });
+  it("Validate Created Date Widget ", () => {
+    searchPage.datePicker().eq(0).click();
+    searchPage.showCalendar().eq(0).should("be.visible");
+    searchPage.datePickerCal().eq(0).click();
+    searchPage.showCalendar().eq(0).should("not.be.visible");
+    searchPage.datePickerCal().eq(0).click();
+    let startDate = new Date(createdDate).toLocaleString("en-us", {month: "short", year: "numeric"});
+    let endDate = new Date().toLocaleString("en-us", {month: "short", year: "numeric"});
+    cy.log(startDate);
+    cy.log(endDate);
+    const reClickStartDate = () => {
+      searchPage.getMonth().eq(0).invoke("text").then(startMonth => {
+        cy.log("startMonth "+startMonth);
+        cy.log("startDate "+startDate);
+        if (startMonth === startDate) {
+          searchPage.selectStartDate().eq(0).click();
+          return;
+        }
+        searchPage.prevMonthClick();
+        reClickStartDate();
+      });
+    };
+    const reClickEndDate = () => {
+      searchPage.getMonth().eq(1).invoke("text").then(endMonth => {
+        if (endMonth === endDate) {
+          searchPage.selectEndDate().eq(0).click();
+          return;
+        }
+        searchPage.nextMonthClick();
+        reClickEndDate();
+      });
+    };
+    reClickStartDate();
+    reClickEndDate();
+    searchPage.getBadgeDate().invoke("text").then(range => {
+      cy.log("range "+range);
+      startVal = new Date(range.split(" ")[0].trim());
+      endVal = new Date(range.split(" ")[2].trim());
+    });
+    searchPage.resultsList().then(results => {
+      if (results.is(":visible")) {
+        searchPage.createdOn().each((item) => {
+          let result = new Date(item.text().split(" ")[2]);
+          expect(result).to.be.gte(startVal);
+          expect(result).to.be.lte(endVal);
+        });
+      } else {
+        cy.log("There are no records created between given dates");
       }
     });
   });
