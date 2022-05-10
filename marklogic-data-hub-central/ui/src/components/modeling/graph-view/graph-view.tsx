@@ -67,9 +67,6 @@ const GraphView: React.FC<Props> = (props) => {
   }, [props.entityTypes]);
 
   useEffect(() => {
-  }, [modelingOptions]);
-
-  useEffect(() => {
     if (props.revertUnpublishedChanges) {
       onCloseSidePanel();
       props.setRevertUnpublishedChanges(false);

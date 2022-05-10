@@ -9,7 +9,7 @@ import {ModelingTooltips, SecurityTooltips} from "@config/tooltips.config";
 import {ModelingContext} from "@util/modeling-context";
 import PropertiesTab from "../properties-tab/properties-tab";
 import {primaryEntityTypes, updateModelInfo} from "@api/modeling";
-import {UserContext} from "@util/user-context";
+import {getViewSettings, setViewSettings, UserContext} from "@util/user-context";
 import {EntityModified} from "../../../../types/modeling-types";
 import {defaultHubCentralConfig} from "@config/modeling.config";
 import {themeColors} from "@config/themes.config";
@@ -33,8 +33,9 @@ type Props = {
 const DEFAULT_TAB = "properties";
 
 const GraphViewSidePanel: React.FC<Props> = (props) => {
+  const viewSettings = getViewSettings();
 
-  const [currentTab, setCurrentTab] = useState(DEFAULT_TAB);
+  const [currentTab, setCurrentTab] = useState(viewSettings.model?.currentTab || DEFAULT_TAB);
   const {modelingOptions, setSelectedEntity} = useContext(ModelingContext);
   const {handleError} = useContext(UserContext);
   const [selectedEntityDescription, setSelectedEntityDescription] = useState("");
@@ -51,7 +52,20 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
 
   const [selectedEntityInfo, setSelectedEntityInfo] = useState<any>({});
 
+  /*
+  useEffect(() => {
+    setCurrentTab((viewSettings.model?.currentTab || DEFAULT_TAB));
+  }, []); */
+
   const handleTabChange = (key) => {
+    const currentTabSetting = {
+      ...viewSettings,
+      model: {
+        ...viewSettings.model,
+        currentTab: key,
+      }
+    };
+    setViewSettings(currentTabSetting);
     setCurrentTab(key);
   };
 
@@ -60,7 +74,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
       const response = await primaryEntityTypes();
       if (response) {
         if (response["data"].length > 0) {
-          const entity=modelingOptions.selectedEntity;
+          const entity = modelingOptions.selectedEntity;
           const selectedEntityDetails = await response.data.find(ent => ent.entityName === modelingOptions.selectedEntity);
           if (selectedEntityDetails) {
             setSelectedEntityInfo(selectedEntityDetails);
@@ -259,7 +273,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
               dataTestid="description"
               disabled={props.canReadEntityModel && !props.canWriteEntityModel}
               placeholder="Enter description"
-              value={selectedEntityDescription ? selectedEntityDescription: " "}
+              value={selectedEntityDescription ? selectedEntityDescription : " "}
               onChange={handlePropertyChange}
               onBlur={onSubmit}
             />
@@ -308,7 +322,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
                 </HCTooltip>
               </div>
               <Col xs={12} className={styles.validationError}>
-                { errorServer ? <p className={styles.errorServer}>{errorServer}</p> : null }
+                {errorServer ? <p className={styles.errorServer}>{errorServer}</p> : null}
               </Col>
             </Row>
           </Col>
@@ -333,7 +347,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
           <Col className={"d-flex align-items-center"}>
             <div className={styles.iconContainer}>
               <div data-testid={`${modelingOptions.selectedEntity}-icon-selector`} aria-label={`${modelingOptions.selectedEntity}-${iconSelected}-icon`}>
-                <HCIconPicker identifier={modelingOptions.selectedEntity} value={iconSelected} onChange={(value) => handleIconChange(value)}/>
+                <HCIconPicker identifier={modelingOptions.selectedEntity} value={iconSelected} onChange={(value) => handleIconChange(value)} />
               </div>
               <div className={"d-flex align-items-center"}>
                 <HCTooltip id="icon-selector" text={<span>Select an icon to associate it with the <b>{modelingOptions.selectedEntity}</b> entity throughout your project.</span>} placement="right">

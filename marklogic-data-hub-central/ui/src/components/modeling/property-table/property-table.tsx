@@ -104,7 +104,7 @@ const PropertyTable: React.FC<Props> = (props) => {
   const [expandedRows, setExpandedRows] = useState<string[]>(expandedRowStorage ? expandedRowStorage : []);
   const [newRowKey, setNewRowKey] = useState("");
 
-  const [sourceExpandedKeys, setSourceExpandedKeys] = useState<any[]>([]);
+  const [sourceExpandedKeys, setSourceExpandedKeys] = useState<string[]>(expandedRowStorage ? expandedRowStorage : []);
   const [expandedSourceFlag, setExpandedSourceFlag] = useState(false);
   const [expandedNestedRows, setExpandedNestedRows] = useState<string[]>([]);
   const [parentTopProperty, setParentTopProperty] = useState<string | null>(null);
@@ -121,6 +121,15 @@ const PropertyTable: React.FC<Props> = (props) => {
     const newStorage = {...rowStorage, model: {...rowStorage.model, propertyExpandedRows: expandedRows}};
     setViewSettings(newStorage);
   }, [expandedRows]);
+
+  useEffect(() => {
+    if (sourceExpandedKeys === null) {
+      return;
+    }
+    const rowStorage = getViewSettings();
+    const newStorage = {...rowStorage, model: {...rowStorage.model, propertyExpandedRows: sourceExpandedKeys}};
+    setViewSettings(newStorage);
+  }, [sourceExpandedKeys]);
 
   useEffect(() => {
     if (newRowKey) {
@@ -486,7 +495,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     setTableData(renderTableData);
   };
 
-  const saveAndUpdateModifiedEntity = async (newDefinitions: Definition, entityModified: EntityModified, errorHandler: Function|undefined) => {
+  const saveAndUpdateModifiedEntity = async (newDefinitions: Definition, entityModified: EntityModified, errorHandler: Function | undefined) => {
     try {
       if (props.updateSavedEntity) {
         const response = await props.updateSavedEntity([entityModified], errorHandler);
@@ -500,7 +509,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     }
   };
 
-  const addStructuredTypeToDefinition = async (structuredTypeName: string, namespace: string|undefined, namespacePrefix: string|undefined, errorHandler: Function|undefined) => {
+  const addStructuredTypeToDefinition = async (structuredTypeName: string, namespace: string | undefined, namespacePrefix: string | undefined, errorHandler: Function | undefined) => {
     let newStructuredType: EntityDefinitionPayload = {
       [structuredTypeName]: {
         namespace,
@@ -1076,7 +1085,7 @@ const PropertyTable: React.FC<Props> = (props) => {
         <>
           {headerColumns.length ?
             <HCTable
-              rowKey={props.sidePanelView ? "key": "propertyName"}
+              rowKey={props.sidePanelView ? "key" : "propertyName"}
               rowClassName={(record) => {
                 let propertyName = record.hasOwnProperty("add") && record.add !== "" ? record.add.split(",").map(item => encrypt(item)).join("-") : encrypt(record.propertyName);
                 return "scroll-" + encrypt(props.entityName) + "-" + propertyName + " hc-table_row";
@@ -1094,7 +1103,7 @@ const PropertyTable: React.FC<Props> = (props) => {
               subTableHeader={!props.sidePanelView}
               nestedParams={{headerColumns, iconCellList: ["identifier", "multiple", "sortable", "delete", "add"], state: props.sidePanelView ? [sourceExpandedKeys, setSourceExpandedKeys] : [expandedNestedRows, setExpandedNestedRows]}}
               className={props.sidePanelView ? "side-panel" : ""}
-            />: null}
+            /> : null}
         </>
       }
     </div>

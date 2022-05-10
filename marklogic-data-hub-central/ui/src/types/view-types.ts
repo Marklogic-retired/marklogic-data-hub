@@ -15,6 +15,7 @@ export type ViewSettingsType = {
             columnKey?: string,
             order?: string
         },
+        currentTab?: string
     },
     curate?: {
         stepArtifact?: any,
