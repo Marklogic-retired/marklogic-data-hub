@@ -63,38 +63,42 @@ const Relationships: React.FC<Props> = (props) => {
     // Any option overrides from config
     options = Object.assign(options, props?.config?.options);
 
-    const getPopover = (title, city, state) => {
+    const getPopover = (items) => {
         const popover = document.createElement("div");
         popover.className = "popover";
-        const titleDiv = document.createElement("div");
-        titleDiv.className = "title";
-        const nameContent = document.createTextNode(title);
-        titleDiv.appendChild(nameContent);
-        const placeDiv = document.createElement("div");
-        const placeContent = document.createTextNode(city + ", " + state);
-        placeDiv.appendChild(placeContent);
-        popover.appendChild(titleDiv);
-        popover.appendChild(placeDiv);
+        items.forEach(item => {
+            const itemDiv = document.createElement("div");
+            const labelSpan = document.createElement("span");
+            labelSpan.className = "label";
+            const labelContent = document.createTextNode(item.label);
+            labelSpan.appendChild(labelContent);
+            const valueSpan = document.createElement("span");
+            valueSpan.className = "value";
+            const valueContent = document.createTextNode(item.value);
+            valueSpan.appendChild(valueContent);
+            itemDiv.appendChild(labelSpan);
+            itemDiv.appendChild(valueSpan);
+            popover.appendChild(itemDiv);
+        });
         return popover;
     }
 
     const getRootNode = (data, rootConfig, type) => {
         const rootId = getValByConfig(data, rootConfig.id);
-        const rootTitle = getValByConfig(data, rootConfig.title);
-        const rootCity = getValByConfig(data, rootConfig.city);
-        const rootState = getValByConfig(data, rootConfig.state);
-        const rootPopover = getPopover(
-            Array.isArray(rootTitle) ? rootTitle[0] : rootTitle, 
-            Array.isArray(rootCity) ? rootCity[0] : rootCity,
-            Array.isArray(rootState) ? rootState[0] : rootState
-        );
+        let rootItems: any = [];
+        rootConfig?.popover?.items.forEach(item => {
+            const label =  item.label;
+            const value =  getValByConfig(data, item, true);
+            rootItems.push({label: label, value: value});
+        })
+        const rootPopover = getPopover(rootItems);
         let rootObj: any;
         if (type === "text") {
-            let rootLabel = getValByConfig(data, rootConfig.imgSrc);
+            let rootLabel = getValByConfig(data, rootConfig.label, true);
             rootLabel = _.isNil(rootLabel) ? null : (Array.isArray(rootLabel) ? rootLabel[0] : rootLabel);
-            rootObj = { id: rootId, label: rootTitle, shape: "box", borderWidth: 0, color: "#D4DEFF", title: rootPopover};
+            rootObj = { id: rootId, label: rootLabel, shape: "box", borderWidth: 0, color: "#D4DEFF", title: rootPopover};
         } else if (type === "image") {
-            let rootImgSrc = getValByConfig(data, rootConfig.imgSrc);
+            let rootImgSrc = getValByConfig(data, rootConfig.imgSrc, true);
             rootImgSrc = _.isNil(rootImgSrc) ? null : (Array.isArray(rootImgSrc) ? rootImgSrc[0] : rootImgSrc);
             rootObj = { id: rootId, shape: "image", size: 30, image: rootImgSrc, title: rootPopover};
         }
@@ -103,30 +107,28 @@ const Relationships: React.FC<Props> = (props) => {
 
     const getRelationNode = (data, relationsConfig, type) => {
         let relObj: any;
+        let relItems: any = [];
+        relationsConfig?.popover?.items.forEach(item => {
+            const label =  item.label;
+            const value =  getValByConfig(data, item, true);
+            relItems.push({label: label, value: value});
+        })
         if (type === "text") {
             relObj = { 
                 id: getValByConfig(data, relationsConfig.id), 
-                label: getValByConfig(data, relationsConfig.title),
+                label: getValByConfig(data, relationsConfig.label, true),
                 shape: "box",
                 borderWidth: 0, 
                 color: "#D4DEFF",
-                title: getPopover(
-                    getValByConfig(data, relationsConfig.title),
-                    getValByConfig(data, relationsConfig.city),
-                    getValByConfig(data, relationsConfig.state)
-                ) 
+                title: getPopover(relItems) 
             }
         } else if (type === "image") {
             relObj = { 
                 id: getValByConfig(data, relationsConfig.id), 
-                image: getValByConfig(data, relationsConfig.imgSrc),
+                image: getValByConfig(data, relationsConfig.imgSrc, true),
                 shape: "image", 
                 size: 30, 
-                title: getPopover(
-                    getValByConfig(data, relationsConfig.title),
-                    getValByConfig(data, relationsConfig.city),
-                    getValByConfig(data, relationsConfig.state)
-                ) 
+                title: getPopover(relItems) 
             }
         }
         return relObj;

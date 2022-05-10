@@ -317,16 +317,23 @@ const detailConfig  = {
                     "arrayPath": "person.images.image",
                     "path": "url"
                   },
-                  "title": {
-                    "path": "person.nameGroup.fullname.value"
-                  },
-                  "city": {
-                    "arrayPath": "person.addresses.address",
-                    "path": "city"
-                  },
-                  "state": {
-                    "arrayPath": "person.addresses.address",
-                    "path": "state"
+                  "popover": {
+                    "items": [
+                      {
+                        "label": "Name",
+                        "path": "person.nameGroup.fullname.value"
+                      },
+                      {
+                        "label": "City",
+                        "arrayPath": "person.addresses.address",
+                        "path": "city"
+                      },
+                      {
+                        "label": "State",
+                        "arrayPath": "person.addresses.address",
+                        "path": "state"
+                      }
+                    ]
                   }
                 },
                 "relations": {
@@ -343,14 +350,21 @@ const detailConfig  = {
                   "imgSrc": {
                     "path": "imageSrc"
                   },
-                  "title": {
-                    "path": "fullname"
-                  },
-                  "city": {
-                    "path": "city"
-                  },
-                  "state": {
-                    "path": "state"
+                  "popover": {
+                    "items": [
+                      {
+                        "label": "Name",
+                        "path": "fullname"
+                      },
+                      {
+                        "label": "City",
+                        "path": "city"
+                      },
+                      {
+                        "label": "State",
+                        "path": "state"
+                      }
+                    ]
                   }
                 },
                 "options": {}
