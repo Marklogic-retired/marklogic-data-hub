@@ -181,9 +181,9 @@
         thead th:hover {
             background-color: $bg-header-table !important;
         }
-        // thead th:nth-child(2):hover, thead th:nth-child(3):hover, thead th:nth-child(5):hover, thead th:nth-child(6):hover {
-        //     background-color:$bg-header-table-hover !important;
-        // }
+        thead th:nth-child(2):hover, thead th:nth-child(3):hover, thead th:nth-child(4):hover, thead th:nth-child(5):hover, thead th:nth-child(6):hover {
+            background-color:$bg-header-table-hover !important;
+        }
     }
     thead {
         vertical-align: middle !important;
