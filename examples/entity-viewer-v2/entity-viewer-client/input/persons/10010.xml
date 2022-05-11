@@ -3,266 +3,310 @@
   <personId>10010</personId>
   <nameGroup>
     <givenname>
-      <value>Oralla</value>
+      <value>Gertruda</value>
     </givenname>
     <surname>
-      <value>Haug</value>
+      <value>Shevell</value>
     </surname>
     <fullname>
       <classification>C</classification>
       <restricted>true</restricted>
-      <value>Haug Oralla</value>
+      <value>Shevell Gertruda</value>
       <source>
-        <name>New York Times</name>
-        <ts>2019-04-26T12:05:09Z</ts>
+        <name>Wall Street Journal</name>
+        <ts>2017-08-28T08:14:58Z</ts>
       </source>
       <source>
-        <name>New York Times</name>
-        <ts>2013-06-21T08:32:27Z</ts>
-      </source>
-      <source>
-        <name>New York Times</name>
-        <ts>2014-05-01T03:25:19Z</ts>
+        <name>Washington Post</name>
+        <ts>2017-11-28T16:47:59Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>gsheffield0@google.com.au</value>
+      <value>ebrettell0@wix.com</value>
+      <classification>U</classification>
+      <restricted>false</restricted>
+    </email>
+    <email>
+      <value>iizakovitz1@hugedomains.com</value>
       <classification>C</classification>
       <restricted>false</restricted>
     </email>
     <email>
-      <value>rmilbourne1@w3.org</value>
-      <classification>S</classification>
+      <value>bmathan2@webmd.com</value>
+      <classification>U</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>493-980-6350</phone>
+  <phone>144-465-0414</phone>
   <ssn>
-    <value>729-15-2132</value>
+    <value>174-29-3941</value>
     <classification>(S)</classification>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</url>
       <source>
-        <name>New York Times</name>
-        <ts>2010-05-03T10:56:01Z</ts>
-        <uploadedBy/>
+        <name>USA Today</name>
+        <ts>2015-04-15T15:42:59Z</ts>
+        <uploadedBy>lbeswell0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>5 Straubel Avenue</street>
-      <city>Little Rock</city>
-      <state>AR</state>
-      <postal>72215</postal>
+      <street>73 Waywood Crossing</street>
+      <city>Orlando</city>
+      <state>FL</state>
+      <postal>32808</postal>
       <country>United States</country>
-      <latitude>34.7519</latitude>
-      <longitude>-92.3925</longitude>
+      <latitude>28.5803</latitude>
+      <longitude>-81.4396</longitude>
+    </address>
+    <address>
+      <street>939 Maple Wood Center</street>
+      <city>New York City</city>
+      <state>NY</state>
+      <postal>10034</postal>
+      <country>United States</country>
+      <latitude>40.8662</latitude>
+      <longitude>-73.9221</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Mexico</country>
-      <name>Benemerita Universidad Autónoma de Puebla</name>
-      <city>Guadalupe</city>
-      <state>VER</state>
-      <postal>94590</postal>
-      <latitude>18.8826771</latitude>
-      <longitude>-96.935003</longitude>
+      <country>Canada</country>
+      <name>Pacific International College</name>
+      <city>Watrous</city>
+      <state>SK</state>
+      <postal>L9T</postal>
+      <latitude>51.66677</latitude>
+      <longitude>-105.46788</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2019-02-16T01:29:26Z</ts>
+        <ts>2019-10-12T03:52:37Z</ts>
       </source>
       <source>
         <name>New York Times</name>
-        <ts>2015-02-28T17:16:27Z</ts>
+        <ts>2011-04-10T23:54:33Z</ts>
+      </source>
+    </school>
+    <school>
+      <country>United States</country>
+      <name>Sam Houston State University</name>
+      <city>Yonkers</city>
+      <state>NY</state>
+      <postal>10705</postal>
+      <latitude>40.9180569</latitude>
+      <longitude>-73.8977693</longitude>
+      <source>
+        <name>USA Today</name>
+        <ts>2011-09-14T03:35:04Z</ts>
+      </source>
+      <source>
+        <name>New York Times</name>
+        <ts>2012-02-03T04:05:37Z</ts>
+      </source>
+      <source>
+        <name>Chicago Tribune</name>
+        <ts>2012-01-02T16:37:24Z</ts>
       </source>
     </school>
   </schools>
-  <status>Inactive</status>
+  <status>Active</status>
   <sources>
     <source>
-      <name>Washington Post</name>
-      <ts>2021-03-20T09:09:16Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>New York Times</name>
-      <ts>2016-08-02T08:30:40Z</ts>
-    </source>
-  </sources>
-  <sources>
-    <source>
-      <name>New York Times</name>
-      <ts>2019-04-19T23:41:30Z</ts>
+      <name>USA Today</name>
+      <ts>2014-08-14T01:38:38Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10001.xml</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
-      <fullname>Gabey Howie</fullname>
-      <city>Washington</city>
-      <state>DC</state>
-    </relation>
-    <relation>
-      <id>/person/10091.xml</id>
+      <id>/person/10044.xml</id>
       <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Alicia-Saia-MarkLogic1.jpg</imageSrc>
-      <fullname>Upjohn Michelle</fullname>
-      <city>Hartford</city>
-      <state>CT</state>
-    </relation>
-    <relation>
-      <id>/person/10035.xml</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Tallant Mariann</fullname>
-      <city>Bakersfield</city>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
+      <fullname>Scottesmoor Giffer</fullname>
+      <city>San Francisco</city>
       <state>CA</state>
     </relation>
     <relation>
-      <id>/person/10051.xml</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</imageSrc>
-      <fullname>Hayth Bryn</fullname>
-      <city>Nashville</city>
-      <state>TN</state>
+      <id>/person/10084.xml</id>
+      <predicate>worksWith</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
+      <fullname>Jager Olivette</fullname>
+      <city>Sioux City</city>
+      <state>IA</state>
     </relation>
     <relation>
-      <id>/person/10002.xml</id>
+      <id>/person/10055.xml</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>
+      <fullname>Alekhov Tasha</fullname>
+      <city>Midland</city>
+      <state>TX</state>
+    </relation>
+    <relation>
+      <id>/person/10048.xml</id>
+      <predicate>relatedTo</predicate>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
+      <fullname>Pile Karmen</fullname>
+      <city>Omaha</city>
+      <state>NE</state>
+    </relation>
+    <relation>
+      <id>/person/10095.xml</id>
       <predicate>worksWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Shore Barny</fullname>
-      <city>Pittsburgh</city>
-      <state>PA</state>
+      <fullname>Dumini Lisle</fullname>
+      <city>Bakersfield</city>
+      <state>CA</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-07T06:34:53Z</ts>
-    <user>ohaug9</user>
+    <ts>2022-01-25T15:50:42Z</ts>
+    <user>gshevell9</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-20T08:41:31Z</ts>
-    <user>ohaug9</user>
+    <ts>2022-02-24T16:20:11Z</ts>
+    <user>gshevell9</user>
   </lastUpdated>
-  <socials>
-    <social>
-      <site>facebook</site>
-      <handle/>
-      <address>http://blogs.com/est/risus/auctor.json</address>
-    </social>
-  </socials>
+  <socials/>
   <memberships>
-    <membership>
-      <list>list5</list>
-      <important>true</important>
-      <ts>2022-02-09</ts>
-    </membership>
-    <membership>
-      <list>list11</list>
-      <important>true</important>
-      <ts>2022-01-01</ts>
-    </membership>
-    <membership>
-      <list>list12</list>
-      <important>false</important>
-      <ts>2022-02-10</ts>
-    </membership>
     <membership>
       <list>list9</list>
       <important>true</important>
+      <ts>2022-01-02</ts>
+    </membership>
+    <membership>
+      <list>list1</list>
+      <important>false</important>
+      <ts>2022-01-23</ts>
+    </membership>
+    <membership>
+      <list>list3</list>
+      <important>false</important>
       <ts>2022-02-16</ts>
     </membership>
     <membership>
-      <list>list8</list>
+      <list>list4</list>
+      <important>false</important>
+      <ts>2022-01-15</ts>
+    </membership>
+    <membership>
+      <list>list10</list>
       <important>true</important>
-      <ts>2022-02-26</ts>
+      <ts>2022-02-04</ts>
+    </membership>
+    <membership>
+      <list>list5</list>
+      <important>false</important>
+      <ts>2022-01-29</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>https://amazon.co.jp</url>
+      <url>http://dion.ne.jp</url>
       <icon>faEye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>http://kickstarter.com</url>
+      <url>http://mozilla.org</url>
       <icon>faMedal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>https://i2i.jp</url>
+      <url>https://fastcompany.com</url>
       <icon>faComments</icon>
     </link>
   </links>
   <activities>
     <activity>
       <predicate>endedAt</predicate>
-      <place>Pixoboo</place>
+      <place>Flashpoint</place>
+      <predplace>endedAt Flashpoint</predplace>
+      <ts>2014-05-17T15:57:10Z</ts>
       <source>
         <name>USA Today</name>
-        <ts>2010-07-07T02:32:26Z</ts>
-        <createdBy>Lanette Londsdale</createdBy>
-        <approvedBy>Jolie Szabo</approvedBy>
+        <ts>2022-03-17T09:50:34Z</ts>
+        <createdBy>Lane Abbie</createdBy>
+        <approvedBy>Inez Brinkler</approvedBy>
       </source>
     </activity>
     <activity>
-      <predicate>startedAt</predicate>
-      <place>Skivee</place>
+      <predicate>endedAt</predicate>
+      <place>Centimia</place>
+      <predplace>endedAt Centimia</predplace>
+      <ts>2013-04-16T05:45:30Z</ts>
       <source>
         <name>New York Times</name>
-        <ts>2015-11-15T02:30:43Z</ts>
-        <createdBy>Julita Golda</createdBy>
-        <approvedBy>Deborah Sarjeant</approvedBy>
+        <ts>2020-01-22T18:21:42Z</ts>
+        <createdBy>Mathias Frick</createdBy>
+        <approvedBy>Eartha Ricarde</approvedBy>
       </source>
     </activity>
     <activity>
       <predicate>endedAt</predicate>
-      <place>Latz</place>
+      <place>Pixope</place>
+      <predplace>endedAt Pixope</predplace>
+      <ts>2013-07-25T03:16:46Z</ts>
       <source>
         <name>Chicago Tribune</name>
-        <ts>2021-11-18T12:49:05Z</ts>
-        <createdBy>Susy Corry</createdBy>
-        <approvedBy>Frederique Masserel</approvedBy>
+        <ts>2019-12-31T00:34:07Z</ts>
+        <createdBy>Dominique Fitzsymon</createdBy>
+        <approvedBy>Juliet Dafter</approvedBy>
       </source>
     </activity>
     <activity>
       <predicate>endedAt</predicate>
-      <place>Skiba</place>
+      <place>Plambee</place>
+      <predplace>endedAt Plambee</predplace>
+      <ts>2010-06-25T08:41:34Z</ts>
       <source>
         <name>Los Angeles Times</name>
-        <ts>2019-08-09T05:41:02Z</ts>
-        <createdBy>Nickolas Succamore</createdBy>
-        <approvedBy>Kalle Dupre</approvedBy>
+        <ts>2017-05-01T21:04:49Z</ts>
+        <createdBy>Beniamino Ridhole</createdBy>
+        <approvedBy>Weylin Verman</approvedBy>
       </source>
     </activity>
     <activity>
       <predicate>movedTo</predicate>
-      <place>Livepath</place>
+      <place>Talane</place>
+      <predplace>movedTo Talane</predplace>
+      <ts>2015-02-05T22:43:58Z</ts>
       <source>
         <name>Wall Street Journal</name>
-        <ts>2014-06-20T04:08:41Z</ts>
-        <createdBy>Carmelle Filippyev</createdBy>
-        <approvedBy>Drucie Bosche</approvedBy>
+        <ts>2016-03-25T11:48:25Z</ts>
+        <createdBy>Kalindi Jeanneau</createdBy>
+        <approvedBy>Hewie Bolsover</approvedBy>
       </source>
     </activity>
     <activity>
       <predicate>endedAt</predicate>
-      <place>Oyondu</place>
+      <place>Skimia</place>
+      <predplace>endedAt Skimia</predplace>
+      <ts>2014-07-22T22:46:23Z</ts>
       <source>
         <name>Washington Post</name>
-        <ts>2018-09-16T00:36:46Z</ts>
-        <createdBy>Reba Kliement</createdBy>
-        <approvedBy>Hunt Seefus</approvedBy>
+        <ts>2019-01-11T23:47:49Z</ts>
+        <createdBy>Genia Greason</createdBy>
+        <approvedBy>Marian Mawtus</approvedBy>
       </source>
     </activity>
   </activities>
+  <actions>
+    <action>
+      <url>http://seattletimes.com</url>
+      <icon>faCog</icon>
+    </action>
+    <action>
+      <url>http://comsenz.com</url>
+      <icon>faCode</icon>
+    </action>
+    <action>
+      <url>https://buzzfeed.com</url>
+      <icon>faSync</icon>
+    </action>
+  </actions>
 </person>

@@ -3,92 +3,92 @@
   <personId>10054</personId>
   <nameGroup>
     <givenname>
-      <value>Maryl</value>
+      <value>Uri</value>
     </givenname>
     <surname>
-      <value>Alders</value>
+      <value>Capponeer</value>
     </surname>
     <fullname>
       <classification>S</classification>
       <restricted>false</restricted>
-      <value>Alders Maryl</value>
+      <value>Capponeer Uri</value>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2011-06-17T07:26:39Z</ts>
+        <name>New York Times</name>
+        <ts>2015-03-27T00:37:03Z</ts>
       </source>
       <source>
-        <name>Chicago Tribune</name>
-        <ts>2016-09-01T13:06:33Z</ts>
+        <name>New York Times</name>
+        <ts>2016-05-26T23:37:35Z</ts>
       </source>
       <source>
-        <name>Wall Street Journal</name>
-        <ts>2013-04-23T22:58:21Z</ts>
+        <name>USA Today</name>
+        <ts>2018-05-30T02:12:02Z</ts>
       </source>
     </fullname>
   </nameGroup>
   <emails>
     <email>
-      <value>mmartina0@apple.com</value>
-      <classification>U</classification>
+      <value>twhannel0@toplist.cz</value>
+      <classification>C</classification>
       <restricted>false</restricted>
     </email>
   </emails>
-  <phone>821-377-3691</phone>
+  <phone>803-271-2715</phone>
   <ssn>
-    <value>485-25-6911</value>
+    <value>172-35-0546</value>
     <classification>(S)</classification>
   </ssn>
   <images>
     <image>
-      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</url>
+      <url>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</url>
       <source>
         <name>New York Times</name>
-        <ts>2018-11-25T03:18:18Z</ts>
-        <uploadedBy>gcoverlyn0</uploadedBy>
+        <ts>2020-01-19T19:18:19Z</ts>
+        <uploadedBy>fshine0</uploadedBy>
       </source>
     </image>
   </images>
   <addresses>
     <address>
-      <street>9589 Anderson Hill</street>
-      <city>Flushing</city>
-      <state>NY</state>
-      <postal>11388</postal>
+      <street>09537 Becker Junction</street>
+      <city>Evanston</city>
+      <state>IL</state>
+      <postal>60208</postal>
       <country>United States</country>
-      <latitude>40.6514</latitude>
-      <longitude>-73.8708</longitude>
+      <latitude>42.0586</latitude>
+      <longitude>-87.6845</longitude>
     </address>
     <address>
-      <street>6416 Tennyson Trail</street>
-      <city>Sunnyvale</city>
-      <state>CA</state>
-      <postal>94089</postal>
+      <street>58467 Farwell Park</street>
+      <city>Kalamazoo</city>
+      <state>MI</state>
+      <postal>49006</postal>
       <country>United States</country>
-      <latitude>37.3983</latitude>
-      <longitude>-122.0006</longitude>
+      <latitude>42.2922</latitude>
+      <longitude>-85.633</longitude>
     </address>
     <address>
-      <street>163 Sauthoff Lane</street>
-      <city>Colorado Springs</city>
-      <state>CO</state>
-      <postal>80930</postal>
+      <street>4034 Norway Maple Parkway</street>
+      <city>Odessa</city>
+      <state>TX</state>
+      <postal>79769</postal>
       <country>United States</country>
-      <latitude>38.8289</latitude>
-      <longitude>-104.5269</longitude>
+      <latitude>31.7466</latitude>
+      <longitude>-102.567</longitude>
     </address>
   </addresses>
   <schools>
     <school>
-      <country>Mexico</country>
-      <name>Instituto Tecnológico y de Estudios Superiores de Occidente</name>
-      <city>Ojo de Agua</city>
-      <state>MEX</state>
-      <postal>51372</postal>
-      <latitude>19.6775122</latitude>
-      <longitude>-99.0329594</longitude>
+      <country>Canada</country>
+      <name>North Island College</name>
+      <city>Olds</city>
+      <state>AB</state>
+      <postal>T4H</postal>
+      <latitude>51.7920135</latitude>
+      <longitude>-114.105279</longitude>
       <source>
         <name>USA Today</name>
-        <ts>2021-12-26T11:57:22Z</ts>
+        <ts>2014-06-05T12:14:40Z</ts>
       </source>
     </school>
   </schools>
@@ -96,162 +96,155 @@
   <sources>
     <source>
       <name>Los Angeles Times</name>
-      <ts>2021-07-08T18:03:08Z</ts>
+      <ts>2015-11-03T19:11:51Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>USA Today</name>
-      <ts>2020-01-02T19:50:52Z</ts>
+      <name>New York Times</name>
+      <ts>2019-10-01T16:13:29Z</ts>
     </source>
   </sources>
   <sources>
     <source>
-      <name>Chicago Tribune</name>
-      <ts>2014-07-02T10:55:08Z</ts>
+      <name>Wall Street Journal</name>
+      <ts>2012-12-11T03:55:25Z</ts>
     </source>
   </sources>
   <relations>
     <relation>
-      <id>/person/10002.xml</id>
-      <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</imageSrc>
-      <fullname>Shore Barny</fullname>
-      <city>Pittsburgh</city>
-      <state>PA</state>
-    </relation>
-    <relation>
-      <id>/person/10056.xml</id>
+      <id>/person/10027.xml</id>
       <predicate>relatedTo</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/02/trinh-lieu-profile.jpg</imageSrc>
-      <fullname>Littlemore Joline</fullname>
-      <city>Houston</city>
-      <state>TX</state>
+      <fullname>Hembrow Yehudi</fullname>
+      <city>Toledo</city>
+      <state>OH</state>
     </relation>
     <relation>
-      <id>/person/10011.xml</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
-      <fullname>Langstrath Skell</fullname>
-      <city>Houston</city>
-      <state>TX</state>
-    </relation>
-    <relation>
-      <id>/person/10062.xml</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Oldknowe Teirtza</fullname>
-      <city>Seattle</city>
-      <state>WA</state>
-    </relation>
-    <relation>
-      <id>/person/10019.xml</id>
+      <id>/person/10013.xml</id>
       <predicate>worksWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
-      <fullname>Piris Enrica</fullname>
-      <city>York</city>
-      <state>PA</state>
+      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
+      <fullname>Goulding Gerry</fullname>
+      <city>West Palm Beach</city>
+      <state>FL</state>
     </relation>
   </relations>
   <createdOn>
-    <ts>2022-02-06T17:53:45Z</ts>
-    <user>malders1h</user>
+    <ts>2022-02-18T05:23:11Z</ts>
+    <user>ucapponeer1h</user>
   </createdOn>
   <lastUpdated>
-    <ts>2022-01-30T07:37:08Z</ts>
-    <user>malders1h</user>
+    <ts>2022-02-05T02:06:22Z</ts>
+    <user>ucapponeer1h</user>
   </lastUpdated>
   <socials>
     <social>
       <site>facebook</site>
-      <handle>estoeck0</handle>
-      <address>https://wikipedia.org/eleifend/quam/a/odio/in/hac/habitasse.json</address>
+      <handle>bbusek0</handle>
+      <address>https://dion.ne.jp/sit/amet/turpis/elementum/ligula/vehicula.html</address>
+    </social>
+    <social>
+      <site>facebook</site>
+      <handle>cgiovannazzi1</handle>
+      <address>https://huffingtonpost.com/dui/vel/sem/sed.xml</address>
+    </social>
+    <social>
+      <site>facebook</site>
+      <handle>aprisley2</handle>
+      <address>http://liveinternet.ru/est/quam.html</address>
     </social>
   </socials>
   <memberships>
     <membership>
-      <list>list5</list>
+      <list>list3</list>
       <important>true</important>
-      <ts>2022-01-22</ts>
+      <ts>2022-01-08</ts>
     </membership>
     <membership>
-      <list>list7</list>
+      <list>list12</list>
       <important>true</important>
-      <ts>2022-02-21</ts>
-    </membership>
-    <membership>
-      <list>list5</list>
-      <important>true</important>
-      <ts>2022-01-14</ts>
-    </membership>
-    <membership>
-      <list>list9</list>
-      <important>false</important>
-      <ts>2022-02-20</ts>
-    </membership>
-    <membership>
-      <list>list6</list>
-      <important>false</important>
-      <ts>2022-01-17</ts>
+      <ts>2022-02-13</ts>
     </membership>
   </memberships>
   <links>
     <link>
       <label>Quick View</label>
-      <url>https://goodreads.com</url>
+      <url>http://rakuten.co.jp</url>
       <icon>faEye</icon>
     </link>
     <link>
       <label>Nomination History</label>
-      <url>https://soundcloud.com</url>
+      <url>https://state.tx.us</url>
       <icon>faMedal</icon>
     </link>
     <link>
       <label>Comments</label>
-      <url>http://japanpost.jp</url>
+      <url>http://blogtalkradio.com</url>
       <icon>faComments</icon>
     </link>
   </links>
   <activities>
     <activity>
       <predicate>endedAt</predicate>
-      <place>Tekfly</place>
+      <place>Demivee</place>
+      <predplace>endedAt Demivee</predplace>
+      <ts>2011-02-01T05:55:45Z</ts>
       <source>
         <name>USA Today</name>
-        <ts>2018-02-06T09:37:46Z</ts>
-        <createdBy>Hugues Sink</createdBy>
-        <approvedBy>Dian Aslam</approvedBy>
+        <ts>2018-01-19T23:03:13Z</ts>
+        <createdBy>Farrel Marien</createdBy>
+        <approvedBy>Aundrea Braidman</approvedBy>
       </source>
     </activity>
     <activity>
       <predicate>startedAt</predicate>
-      <place>Babblestorm</place>
+      <place>Shufflebeat</place>
+      <predplace>startedAt Shufflebeat</predplace>
+      <ts>2013-03-13T02:28:48Z</ts>
       <source>
         <name>New York Times</name>
-        <ts>2018-05-27T22:28:59Z</ts>
-        <createdBy>Arny Karpol</createdBy>
-        <approvedBy>Benedikt Caudray</approvedBy>
+        <ts>2020-12-09T18:09:33Z</ts>
+        <createdBy>Kele Eyes</createdBy>
+        <approvedBy>Clare Tink</approvedBy>
       </source>
     </activity>
     <activity>
       <predicate>endedAt</predicate>
-      <place>Realblab</place>
+      <place>Jaxspan</place>
+      <predplace>endedAt Jaxspan</predplace>
+      <ts>2010-11-22T04:18:47Z</ts>
       <source>
         <name>Chicago Tribune</name>
-        <ts>2011-12-20T15:36:23Z</ts>
-        <createdBy>Harriett Stanislaw</createdBy>
-        <approvedBy>Phillie Petrie</approvedBy>
+        <ts>2020-03-02T16:08:00Z</ts>
+        <createdBy>Hermann Vosse</createdBy>
+        <approvedBy>Shell Oguz</approvedBy>
       </source>
     </activity>
     <activity>
       <predicate>transferredTo</predicate>
-      <place>Bluejam</place>
+      <place>Realpoint</place>
+      <predplace>transferredTo Realpoint</predplace>
+      <ts>2014-12-26T15:45:14Z</ts>
       <source>
         <name>Los Angeles Times</name>
-        <ts>2010-10-14T16:41:39Z</ts>
-        <createdBy>Kania Durand</createdBy>
-        <approvedBy>Tildie Conachy</approvedBy>
+        <ts>2017-04-15T21:36:40Z</ts>
+        <createdBy>Viv Bottell</createdBy>
+        <approvedBy>Claudetta Syson</approvedBy>
       </source>
     </activity>
   </activities>
+  <actions>
+    <action>
+      <url>https://pbs.org</url>
+      <icon>faCog</icon>
+    </action>
+    <action>
+      <url>http://geocities.jp</url>
+      <icon>faCode</icon>
+    </action>
+    <action>
+      <url>http://deliciousdays.com</url>
+      <icon>faSync</icon>
+    </action>
+  </actions>
 </person>

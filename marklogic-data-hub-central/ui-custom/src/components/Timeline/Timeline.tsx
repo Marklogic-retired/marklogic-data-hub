@@ -59,7 +59,7 @@ const Timeline: React.FC<Props> = (props) => {
     //To find min and max date range boundary for timeline
     const getMinMaxTime = (data) => {
         data?.map((activity) => {
-             let date = activity.source.ts;
+             let date = _.get(activity, props.config.marker.ts.path, null)
 
              let currItemDate = new Date(date);
              if(currItemDate < minDate) {
@@ -76,9 +76,9 @@ const Timeline: React.FC<Props> = (props) => {
 
     data?.map((activity, id) => {
         let obj={content: "", start: null, id: "", title: "", type:""};
-        obj.content = _.get(activity, props.config.marker.path, null)
-        obj.start = _.get(activity, props.config.popover.items[1].config.path, null)
-        obj.id = _.get(activity, props.config.marker.path, null) + id;
+        obj.content = _.get(activity, props.config.marker.label.path, null)
+        obj.start = _.get(activity, props.config.marker.ts.path, null)
+        obj.id = _.get(activity, props.config.marker.label.path, null) + id;
         obj.title = ReactDOMServer.renderToString(
             <span>{getItems(data[id])}</span>)
         timelineData.push(obj);
