@@ -1,0 +1,13 @@
+{
+  "functionName" : "getSemanticConceptInfo",
+  "params" : [ {
+    "name" : "semanticConceptIRI",
+    "datatype" : "string",
+    "desc" : "The IRI of the concept instance for which related entity instances info is to be returned"
+  } ],
+  "return" : {
+    "datatype" : "jsonDocument",
+    "$javaClass" : "com.fasterxml.jackson.databind.JsonNode",
+    "desc" : "The document with the IRI provided"
+  }
+}

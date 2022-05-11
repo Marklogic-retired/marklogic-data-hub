@@ -5,8 +5,12 @@ import GraphExploreSidePanel from "./graph-explore-side-panel";
 import {SearchContext} from "../../../util/search-context";
 import {BrowserRouter as Router} from "react-router-dom";
 import {defaultSearchOptions} from "../../../assets/mock-data/explore/entity-search";
+import axios from "axios";
 
-describe("Query Dropdown", () => {
+jest.mock("axios");
+const axiosMock = axios as jest.Mocked<typeof axios>;
+
+describe("Graph view side panel", () => {
 
   afterEach(cleanup);
 
@@ -43,6 +47,41 @@ describe("Query Dropdown", () => {
     expect(getByText("Value")).toBeInTheDocument();
     expect(getByLabelText("radio-button-expand")).toBeInTheDocument();
     expect(getByLabelText("radio-button-collapse")).toBeInTheDocument();
+  });
+
+  test("Render semantic concept information in the side panel", async () => {
+    let semanticConceptIRI = "http://www.example.com/Category/Sneakers";
+    let semanticConceptInfo = {
+      semanticConceptIRI: semanticConceptIRI,
+      data: [{
+        entityTypeIRI: "http://example.org/Product-1.0.0/Product",
+        total: 1
+      }]
+    };
+    const savedNodeConcept = {
+      docUri: "testURI",
+      label: "Sneakers",
+      isConcept: true,
+      id: "http://www.example.com/Category/Sneakers"
+    };
+    axiosMock.get["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200, data: semanticConceptInfo})));
+    let url = `/api/entitySearch/graph/semanticConceptInfo?semanticConceptIRI=${semanticConceptIRI}&database=final`;
+    const {getByTestId, findByLabelText, queryByLabelText} = render(
+      <SearchContext.Provider value={{searchOptions: defaultSearchOptions, savedNode: savedNodeConcept}}>
+        <Router>
+          <GraphExploreSidePanel onCloseSidePanel={() => {}} graphView={true}/>
+        </Router>
+      </SearchContext.Provider>
+    );
+    expect(getByTestId("graphSidePanel")).toBeInTheDocument();
+    const heading = await findByLabelText("Sneakers-conceptHeading");
+    expect(heading).toBeInTheDocument();
+    expect(heading.textContent).toBe("Sneakers");
+    expect(queryByLabelText("graphViewRightArrow")).not.toBeInTheDocument();
+    expect((await findByLabelText("Product-entityType")).textContent).toBe("Product");
+    expect((await findByLabelText("Product-relatedInstances")).textContent).toBe("1");
+    expect(axiosMock.get).toHaveBeenCalledWith(url);
+    expect(axiosMock.get).toHaveBeenCalledTimes(1);
   });
 
 });

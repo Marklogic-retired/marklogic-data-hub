@@ -168,6 +168,12 @@ public class EntitySearchController extends BaseController {
         return getGraphService(database).searchNodes(searchJsonNode, structuredQuery, queryOptions);
     }
 
+    @RequestMapping(value = "/graph/semanticConceptInfo", method = RequestMethod.GET)
+    @ResponseBody
+    public JsonNode getSemanticConceptInfo(@RequestParam String semanticConceptIRI, @RequestParam(defaultValue = "final") String database) {
+        return getEntitySearchService(database).getSemanticConceptInfo(semanticConceptIRI);
+    }
+
     @RequestMapping(method = RequestMethod.POST, value = "/nodeExpand")
     @ResponseBody
     @ApiOperation(value = "Response is a MarkLogic JSON search response. Please see ./specs/EntitySearchResponse.schema.json for complete information, as swagger-ui does not capture all the details",

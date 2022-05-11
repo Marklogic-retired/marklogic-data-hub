@@ -238,7 +238,7 @@ describe("Run Tile tests", () => {
     //Revalidate below with DHFPROD-8455
     // browsePage.getSelectedEntity().should("contain", "All Entities");
     cy.log("**Verify the totals results and the createdByJob facet**");
-    browsePage.getTotalDocuments().should("eq", 2);
+    browsePage.getTotalDocuments().should("eq", 6);
     browsePage.getSelectedFacet("createdByJob").should("exist");
   });
 
@@ -295,7 +295,7 @@ describe("Run Tile tests", () => {
     browsePage.waitForHCTableToLoad();
 
     cy.log("**Verify the totals results and the createdByJob facet**");
-    browsePage.getTotalDocuments().should("eq", 2);
+    browsePage.getTotalDocuments().should("eq", 6);
     browsePage.getSelectedFacet("createdByJob").should("exist");
   });
 });

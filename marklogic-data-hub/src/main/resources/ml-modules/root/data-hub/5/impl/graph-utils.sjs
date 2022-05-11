@@ -231,6 +231,18 @@ function relatedObjHasRelationships(objectIRI, predicatesMap) {
   return hasRelationships;
 }
 
+function getRelatedEntityInstancesCount(semanticConceptIRI) {
+  const relatedEntityInstancesCount = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>  
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    SELECT (COUNT(DISTINCT(?subjectIRI)) AS ?total) ?entityTypeIRI  WHERE {
+    ?subjectIRI ?p @semanticConceptIRI; 
+     rdf:type ?entityTypeIRI.
+      ?entityTypeIRI rdf:type <http://marklogic.com/entity-services#EntityType>
+    }
+    GROUP BY ?entityTypeIRI`
+  )
+  return relatedEntityInstancesCount.result(null, { semanticConceptIRI }).toObject();
+}
 
 module.exports = {
   getEntityNodesWithRelated,
@@ -240,5 +252,6 @@ module.exports = {
   getEntityTypeIRIsCounting,
   getRelatedEntitiesCounting,
   getConceptCounting,
-  relatedObjHasRelationships
+  relatedObjHasRelationships,
+  getRelatedEntityInstancesCount
 }
