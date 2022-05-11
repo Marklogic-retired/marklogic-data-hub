@@ -10,6 +10,7 @@ import styles from "./graph-explore-side-panel.module.scss";
 import {xmlParser, xmlDecoder, xmlFormatter, jsonFormatter} from "@util/record-parser";
 import TableView from "@components/table-view/table-view";
 import {HCTable, HCTooltip} from "@components/common";
+import {fetchSemanticConceptInfo} from "@api/queries";
 
 type Props = {
     onCloseSidePanel:() => void;
@@ -27,11 +28,12 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
     savedNode
   } = useContext(SearchContext);
   const  {database, entityTypeIds, selectedFacets, query, sortOrder} = searchOptions;
-  const {entityName, group, primaryKey, sources, entityInstance, label, isConcept} = savedNode;
+  const {entityName, group, primaryKey, sources, entityInstance, label, isConcept, id} = savedNode;
   const docUri = savedNode["docURI"] || savedNode["docUri"] || savedNode["uri"];
   const [currentTab, setCurrentTab] = useState(DEFAULT_TAB);
   const [details, setDetails] = useState<any>(null);
   const entityInstanceTitle = group ? group.split("/").pop() : entityName;
+  const conceptTitle = id?.split("/").pop();
   const [currentLabel, setCurrentLabel] = useState<string>("");
 
   //To view record info on graph instance view side panel
@@ -42,6 +44,8 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
   const RECORD_TITLE =  <span aria-label="recordTab">{contentType.toUpperCase()=== "XML" ? <i className={styles.xmlIcon} aria-label="xmlTypeData"><FontAwesomeIcon icon={faCode} size="sm" /></i>
     : <span className={styles.jsonIcon} aria-label="jsonTypeData"></span>}{contentType ? contentType.toUpperCase() : ""}</span>;
 
+  const [semanticConceptInfo, setSemanticConceptInfo] = useState<any []>([]);
+
   useEffect(() => {
     let uri;
     if (savedNode && !docUri && !label) { // case where exploring from table/snippet
@@ -50,17 +54,47 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
       uri = docUri;
     }
     if (uri && label !== currentLabel) {
-      setCurrentLabel(label);
-      const getNodeData = async (uri, database) => {
-        const result = await getDetails(uri, database);
-        data.current! = result.data;
-        setContentData();
-        const {entityInstanceProperties} = result.data;
-        setDetails(entityInstanceProperties);
-      };
-      getNodeData(uri, database);
+      if (isConcept) {
+        getSemanticConceptsInfo();
+      } else {
+        setCurrentLabel(label);
+        const getNodeData = async (uri, database) => {
+          try {
+            const result = await getDetails(uri, database);
+            if (result["status"] === 200) {
+              data.current! = result?.data;
+              setContentData();
+              const {entityInstanceProperties} = result.data;
+              setDetails(entityInstanceProperties);
+            }
+          } catch (err) {
+            console.error("Unable to fetch document details.", err, JSON.stringify(savedNode));
+          }
+        };
+        getNodeData(uri, database);
+      }
     }
+
   }, [details, label, currentLabel]);
+
+  const getSemanticConceptsInfo = async () => {
+    try {
+      let resp = await fetchSemanticConceptInfo(id, database);
+      if (resp.status === 200) {
+        let conceptInfo = resp.data?.data?.map((item, index) => {
+          let infoObject = {
+            "key": index,
+            "entityType": item.entityTypeIRI.split("/").pop(),
+            "relatedInstances": item.total
+          };
+          return infoObject;
+        });
+        setSemanticConceptInfo(conceptInfo);
+      }
+    } catch (err) {
+      console.error("Unable to fetch concept info", err);
+    }
+  };
 
   const handleTabChange = (key) => {
     setCurrentTab(key);
@@ -132,34 +166,29 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
     graphView,
   };
 
-  /* TODO: Remove hardcoded data when backend work is completed as part of DHFPROD-8851 */
-  const conceptInfoData = [
-    {
-      entityType: "Product",
-      relatedInstances: "1"
-    }
-  ];
-
   const conceptInfoColumns = [
     {
       text: "Related Instances",
       title: "Related Instances",
       dataField: "relatedInstances",
-      key: "relatedInstances",
+      key: "key",
       width: "40%",
-      formatter: (value) => {
-        return <span>{value}</span>;
+      sort: true,
+      formatter: (value, row) => {
+        return <span aria-label={`${row.entityType}-relatedInstances`}>{value}</span>;
       }
     },
     {
       text: "Entity Type",
       title: "Entity Type",
       dataField: "entityType",
-      key: "entityType",
-      formatter: (value) => {
-        return <span>{value}</span>;
-      },
+      key: "key",
       width: "60%",
+      sort: true,
+      sortFunc: (a: string, b: string, order: string) => order === "asc" ? a.localeCompare(b) : b.localeCompare(a),
+      formatter: (value) => {
+        return <span aria-label={`${value}-entityType`}>{value}</span>;
+      },
     }
   ];
 
@@ -167,11 +196,11 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
     <div className={styles.conceptInfoContainer}>
       <HCTable columns={conceptInfoColumns}
         className={styles.conceptInfoTable}
-        data={conceptInfoData}
+        data={semanticConceptInfo}
         nestedParams={{headerColumns: conceptInfoColumns, iconCellList: [], state: []}}
         childrenIndent={true}
         data-cy="document-table"
-        rowKey="entityType"
+        rowKey="key"
         showHeader={true}
         baseIndent={20}
       />
@@ -180,17 +209,25 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
 
   return (
     <div data-testid="graphSidePanel" className={styles.sidePanel}>
-      <div>
-        <span className={styles.selectedEntityHeading}  data-testid="entityHeading">
-          {entityInstanceTitle}
-          <ChevronRight className={styles.arrowRight}/>
-          {entityInstanceLabel}
+      <div className={styles.headingContainer}>
+        <span>
+          {
+            !isConcept  ? <span className={styles.selectedEntityHeading}  data-testid="entityHeading">
+              {entityInstanceTitle}
+              {<ChevronRight className={styles.arrowRight}/>}
+              {entityInstanceLabel}
+            </span> :
+              <div>
+                <span className={styles.selectedEntityHeading} aria-label={`${conceptTitle}-conceptHeading`}>{conceptTitle}</span>
+                <span className={styles.conceptHeadingInfo} aria-label={`${conceptTitle}-conceptHeadingInfo`}>(Semantic concept)</span>
+              </div>
+          }
+          {!isConcept && <HCTooltip text="View full details" id="processed-data-tooltip" placement="top-end">
+            <Link to={{pathname, state}} id="instance" data-cy="instance">
+              <ArrowRightSquare className={styles.arrowRightSquare} aria-label="graphViewRightArrow"/>
+            </Link>
+          </HCTooltip>}
         </span>
-        <HCTooltip text="View full details" id="processed-data-tooltip" placement="top-end">
-          <Link to={{pathname, state}} id="instance" data-cy="instance">
-            <ArrowRightSquare className={styles.arrowRightSquare} aria-label="graphViewRightArrow"/>
-          </Link>
-        </HCTooltip>
         <span>
           <i className={styles.close} aria-label="closeGraphExploreSidePanel" onClick={onCloseSidePanel}>
             <XLg />

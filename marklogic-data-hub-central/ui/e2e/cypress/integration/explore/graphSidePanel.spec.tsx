@@ -1,5 +1,6 @@
 import {Application} from "../../support/application.config";
 import {toolbar} from "../../support/components/common";
+import graphExploreSidePanel from "../../support/components/explore/graph-explore-side-panel";
 import graphExplore from "../../support/pages/graphExplore";
 import LoginPage from "../../support/pages/login";
 import {ExploreGraphNodes} from "../../support/types/explore-graph-nodes";
@@ -83,6 +84,28 @@ describe("Test '/Explore' graph right panel", () => {
     graphExplore.clickOnCollapseAll();
     children = graphExplore.getTableChildren();
     children.should("have.length", 1);
+
+    cy.log("**Close side panel**");
+    graphExploreSidePanel.closeGraphExploreSidePanel();
+
+    cy.log("**Picking up a concept node**");
+    graphExplore.focusNode(ExploreGraphNodes.CONCEPT_KETTLE);
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_KETTLE).then((nodePositions: any) => {
+      let kettleCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_KETTLE];
+      const canvas = graphExplore.getGraphVisCanvas();
+      canvas.click(kettleCoordinates.x, kettleCoordinates.y, {force: true});
+    });
+
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_KETTLE).then((nodePositions: any) => {
+      let kettleCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_KETTLE];
+      const canvas = graphExplore.getGraphVisCanvas();
+      canvas.click(kettleCoordinates.x, kettleCoordinates.y, {force: true});
+    });
+
+    cy.log("**Verify the count of related instances for the concept node**");
+    graphExploreSidePanel.getSidePanelConceptHeading("Kettle").scrollIntoView().should("be.visible");
+    graphExploreSidePanel.getSidePanelConceptHeadingInfo("Kettle").scrollIntoView().should("be.visible");
+    graphExploreSidePanel.getTableCellValueByName("1").should("contain", "Product");
   });
 });
 

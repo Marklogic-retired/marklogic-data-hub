@@ -54,6 +54,7 @@ public interface EntitySearchService {
             private BaseProxy.DBFunctionRequest req_saveSavedQuery;
             private BaseProxy.DBFunctionRequest req_getSavedQueries;
             private BaseProxy.DBFunctionRequest req_exportSearchAsCSV;
+            private BaseProxy.DBFunctionRequest req_getSemanticConceptInfo;
             private BaseProxy.DBFunctionRequest req_getRecord;
             private BaseProxy.DBFunctionRequest req_getMatchingPropertyValues;
 
@@ -73,6 +74,8 @@ public interface EntitySearchService {
                     "getSavedQueries.sjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_exportSearchAsCSV = this.baseProxy.request(
                     "exportSearchAsCSV.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
+                this.req_getSemanticConceptInfo = this.baseProxy.request(
+                    "getSemanticConceptInfo.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_getRecord = this.baseProxy.request(
                     "getRecord.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_getMatchingPropertyValues = this.baseProxy.request(
@@ -172,6 +175,21 @@ public interface EntitySearchService {
             }
 
             @Override
+            public com.fasterxml.jackson.databind.JsonNode getSemanticConceptInfo(String semanticConceptIRI) {
+                return getSemanticConceptInfo(
+                    this.req_getSemanticConceptInfo.on(this.dbClient), semanticConceptIRI
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode getSemanticConceptInfo(BaseProxy.DBFunctionRequest request, String semanticConceptIRI) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.atomicParam("semanticConceptIRI", false, BaseProxy.StringType.fromString(semanticConceptIRI))
+                          ).responseSingle(false, Format.JSON)
+                );
+            }
+
+            @Override
             public com.fasterxml.jackson.databind.JsonNode getRecord(String docUri) {
                 return getRecord(
                     this.req_getRecord.on(this.dbClient), docUri
@@ -259,6 +277,14 @@ public interface EntitySearchService {
    * @return	as output
    */
     java.io.Reader exportSearchAsCSV(String structuredQuery, String searchText, String queryOptions, String schemaName, String viewName, Long limit, com.fasterxml.jackson.databind.node.ArrayNode sortOrder, Stream<String> columns);
+
+  /**
+   * Invokes the getSemanticConceptInfo operation on the database server
+   *
+   * @param semanticConceptIRI	The IRI of the concept instance for which related entity instances info is to be returned
+   * @return	The document with the IRI provided
+   */
+    com.fasterxml.jackson.databind.JsonNode getSemanticConceptInfo(String semanticConceptIRI);
 
   /**
    * Invokes the getRecord operation on the database server

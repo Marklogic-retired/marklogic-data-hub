@@ -2,8 +2,8 @@
   "info": {
     "title": "Order",
     "version": "0.0.1",
-"baseUri": "http://marklogic.com/example/",
-"draft": false
+    "baseUri": "http://marklogic.com/example/",
+    "draft": false
   },
   "definitions": {
     "Order": {

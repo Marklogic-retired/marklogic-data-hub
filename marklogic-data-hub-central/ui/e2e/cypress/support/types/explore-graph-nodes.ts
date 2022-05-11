@@ -8,5 +8,6 @@ export enum ExploreGraphNodes {
     PRODUCT_70 = "http://example.org/Product-1.0.0/Product/70",
     PRODUCT_80 = "http://example.org/Product-1.0.0/Product/80",
     PRODUCT_90 = "http://example.org/Product-1.0.0/Product/90",
-    BABY_REGISTRY_3039 = "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/3039"
+    BABY_REGISTRY_3039 = "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/3039",
+    CONCEPT_KETTLE = "http://www.example.com/Category/Kettle"
 }

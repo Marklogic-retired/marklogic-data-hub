@@ -1,29 +1,43 @@
+@import "../../../theme/HCVariables.scss";
+
 .sidePanel {
     padding: 10px 10px;
     max-height: 63vh;
-    .selectedEntityHeading {
-        font-size: 22px;
-        color: #333333;
-        padding-right: 10px;
-        vertical-align: middle;
-    }
-    .selectedNodeUri {
-        font-size: 12px;
-        color: #333333;
-        padding-right: 10px;
-    }
 
-    .arrowRight{
-        font-size: 22px;
-        margin-top: -7px;
-    }
+    .headingContainer{
+        display: flex;
+        align-content: center;
+        justify-content:space-between;
 
-    .close {
-        position: relative;
-        float: right;
-        font-size: 20px;
-        height: 28px;
-        cursor: pointer;
+        .selectedEntityHeading {
+            font-size: 22px;
+            color: #333333;
+            padding-right: 10px;
+            vertical-align: middle;
+        }
+        .conceptHeadingInfo {
+            font-size: 18px;
+            color: $secondary-gray;
+            vertical-align: middle;
+        }
+        .selectedNodeUri {
+            font-size: 12px;
+            color: #333333;
+            padding-right: 10px;
+        }
+    
+        .arrowRight{
+            font-size: 22px;
+            margin-top: -7px;
+        }
+    
+        .close {
+            position: relative;
+            float: right;
+            font-size: 20px;
+            height: 28px;
+            cursor: pointer;
+        }
     }
 
     .tabs {

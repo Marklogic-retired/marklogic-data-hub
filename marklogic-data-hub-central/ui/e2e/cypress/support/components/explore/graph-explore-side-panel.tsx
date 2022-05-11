@@ -13,6 +13,15 @@ class GraphExploreSidePanel {
   getTableCellValueByName(text : String) {
     return cy.get(`[title="${text}"]`).next();
   }
+  closeGraphExploreSidePanel() {
+    return cy.get(`[aria-label="closeGraphExploreSidePanel"]`);
+  }
+  getSidePanelConceptHeading(conceptName: string) {
+    return cy.get(`[aria-label="${conceptName}-conceptHeading"]`);
+  }
+  getSidePanelConceptHeadingInfo(conceptName: string) {
+    return cy.get(`[aria-label="${conceptName}-conceptHeadingInfo"]`);
+  }
 }
 
 const graphExploreSidePanel = new GraphExploreSidePanel();

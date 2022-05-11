@@ -142,3 +142,7 @@ export const facetValues = async (database: string, payload: any) => {
 export const primaryEntityTypes = async () => {
   return await axios.get(`/api/models/primaryEntityTypes`);
 };
+
+export const fetchSemanticConceptInfo = async (semanticConceptIRI: string, database: string) => {
+  return await axios.get(`/api/entitySearch/graph/semanticConceptInfo?semanticConceptIRI=${semanticConceptIRI}&database=${database}`);
+};
