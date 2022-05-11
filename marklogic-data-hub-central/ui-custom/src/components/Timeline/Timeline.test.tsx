@@ -8,7 +8,12 @@ const configMultiple = {
         title: "Activities",
         arrayPath: "person.activities.activity",
         marker: {
-            path: "place"
+          label: {
+            path: "predplace"
+          },
+          ts: {
+            path: "ts"
+          }
         },
         popover: {
             placement: "right",
@@ -43,8 +48,10 @@ const detail = {
     activities: {
         activity: [
         {
-          place: "Tekfly",
-          predicate: "endedAt",
+            place: "Tekfly",
+            predicate: "endedAt",
+            predplace: "endedAt Tekfly",
+            ts: "2018-02-06T09:37:46Z",
             source : {
                 approvedBy: "Dian Aslam",
                 createdBy: "Hugues Sink",
@@ -55,6 +62,8 @@ const detail = {
         {
             place: "Babblestorm",
             predicate: "startedAt",
+            predplace: "startedAt Babblestorm",
+            ts: "2018-05-27T22:28:59Z",
               source : {
                  approvedBy: "Benedikt Caudray",
                  createdBy: "Arny Karpol",
@@ -65,6 +74,8 @@ const detail = {
         {
             place: "Realblab",
             predicate: "endedAt",
+            predplace: "endedAt Realblab",
+            ts: "2018-05-27T22:28:59Z",
             source : {
                 approvedBy: "Phillie Petrie",
                 createdBy: "Harriett Stanislaw",

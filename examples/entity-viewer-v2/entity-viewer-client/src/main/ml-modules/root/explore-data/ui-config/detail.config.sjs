@@ -425,7 +425,12 @@ const detailConfig  = {
                 "title": "Activities",
                 "arrayPath": "person.activities.activity",
                 "marker": {
-                  "path": "place"
+                  "label": {
+                    "path": "predplace"
+                  },
+                  "ts": {
+                    "path": "ts"
+                  }
                 },
                 "popover": {
                   "placement": "right",
