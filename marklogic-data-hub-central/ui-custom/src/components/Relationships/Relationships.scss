@@ -4,13 +4,15 @@
     .popover {
         background-color: white;
         color: #333;
-        padding: 4px 12px;
+        padding: 5px 12px;
         white-space: nowrap;
         font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
         font-size: 14px;
         .label {
-            font-weight: bold;
             margin-right: 8px;
+        }
+        .value {
+            font-weight: bold;
         }
     }
 }

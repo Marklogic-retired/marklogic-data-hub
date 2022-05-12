@@ -304,7 +304,7 @@ const detailConfig  = {
             "relationships": {
               "component": "Relationships",
               "config": {
-                "type": "image",
+                "type": "text",
                 "size": 30,
                 "root": {
                   "id": {
