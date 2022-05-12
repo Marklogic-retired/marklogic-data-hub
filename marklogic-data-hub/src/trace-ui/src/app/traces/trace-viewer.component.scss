@@ -18,7 +18,7 @@ app-trace-viewer {
   flex-direction: column;
 }
 
-/deep/ [layout] {
+::v-deep [layout] {
   flex: auto;
 }
 

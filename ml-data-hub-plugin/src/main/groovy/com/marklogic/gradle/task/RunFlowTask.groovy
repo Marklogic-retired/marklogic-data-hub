@@ -147,4 +147,48 @@ class RunFlowTask extends HubTask {
         println("\nOutput:")
         println runFlowResponse.toJson()
     }
+
+    String getFlowName() {
+        return flowName
+    }
+
+    Integer getBatchSize() {
+        return batchSize
+    }
+
+    Integer getThreadCount() {
+        return threadCount
+    }
+
+    String getInputFilePath() {
+        return inputFilePath
+    }
+
+    String getInputFileType() {
+        return inputFileType
+    }
+
+    String getOutputURIReplacement() {
+        return outputURIReplacement
+    }
+
+    String getSeparator() {
+        return separator
+    }
+
+    Boolean getShowOptions() {
+        return showOptions
+    }
+
+    Boolean getFailHard() {
+        return failHard
+    }
+
+    List<String> getSteps() {
+        return steps
+    }
+
+    String getJobId() {
+        return jobId
+    }
 }

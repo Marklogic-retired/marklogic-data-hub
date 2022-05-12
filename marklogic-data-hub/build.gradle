@@ -2,25 +2,17 @@ plugins {
     id 'net.saliman.properties' version '1.4.6'
     id 'java'
     id 'maven-publish'
-    id 'com.jfrog.bintray' version '1.7.2'
-    id 'com.marklogic.ml-gradle' version '3.16.2'
-    id 'com.moowork.node' version '1.1.1'
-    id 'org.springframework.boot' version '2.1.3.RELEASE'
-    id "io.spring.dependency-management" version "1.0.7.RELEASE"
-    id 'com.marklogic.ml-development-tools' version '5.3.2'
+    id 'com.marklogic.ml-gradle' version '4.3.4'
+    id "com.github.node-gradle.node" version "3.2.1"
+    id 'org.springframework.boot' version '2.6.7'
+    id 'com.marklogic.ml-development-tools' version '5.5.3'
 }
 
 mainClassName='com.marklogic.hub.ApplicationConfig'
 repositories {
-    //ToDo: Remove this once java-client-api-5.3.2 is released
-    maven {url 'http://distro.marklogic.com/nexus/repository/maven-releases/'}
-    jcenter()
-    maven { url 'http://repo.spring.io/milestone' }
+    mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
     maven { url 'https://developer.marklogic.com/maven2/' }
-
-    // Needed for marklogic-junit
-    maven { url 'https://dl.bintray.com/marklogic-community/Maven/' }
-
 }
 
 group = 'com.marklogic'
@@ -29,10 +21,8 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 
-ext.junit4Version        = '4.12'
-ext.junitVintageVersion  = '4.12.0-RC3'
-ext.junitPlatformVersion = '1.4.0'
-ext.junitJupiterVersion  = '5.4.0'
+ext.junitPlatformVersion = '1.8.2'
+ext.junitJupiterVersion  = '5.8.2'
 
 // This enables including a logging jar in the application artifacts produced by this project - the installer and the client jars
 // without that jar ending up in the library artifact.
@@ -41,77 +31,70 @@ configurations {
 }
 
 dependencies {
-    // Forcing use of 1.3.71 - which is what OkHttp 4.7.2 wants, which is what Java Client 5.3 uses - so that 1.2.x
-    // versions don't come onto the classpath
-    compile "org.jetbrains.kotlin:kotlin-stdlib:1.3.71"
-    compile "org.jetbrains.kotlin:kotlin-stdlib-common:1.3.71"
-    compile ('com.marklogic:marklogic-client-api:5.3.2'){
+    implementation ('com.marklogic:marklogic-client-api:5.5.3'){
         exclude group: 'com.fasterxml.woodstox', module: 'woodstox-core'
         // Oddly, the OkHttp 4.4.0 dependency includes version 1.2.70 and 1.3.x of these dependencies. This causes
         // class conflict errors. So they're excluded from here, and we force inclusion of 1.3.x below.
         exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib'
         exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-common'
     }
-    compile('com.marklogic:ml-app-deployer:4.1.0'){
-        exclude group: 'org.springframework', module: 'http'
+    implementation('com.marklogic:ml-app-deployer:4.3.3')
+    implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
+    implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-csv', version: '2.13.2'
+
+    implementation group: 'xerces', name: 'xercesImpl', version: '2.12.2'
+    implementation ('org.jdom:jdom2:2.0.6.1') {
+        exclude group: 'xercesc', module: 'xercesImpl'
+    }
+
+    implementation group: 'org.springframework.boot', name: 'spring-boot', version: '2.6.7'
+    implementation group: 'org.springframework.integration', name: 'spring-integration-http', version: '5.5.11'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-autoconfigure', version: '2.6.7'
+
+    implementation 'com.marklogic:mlcp-util:1.0'
+    implementation ('com.marklogic:marklogic-data-movement-components:2.4.0'){
         // prefer the version declared above
         exclude group: 'com.marklogic', module: 'marklogic-client-api'
     }
-
-    compile group: 'org.springframework.boot', name: 'spring-boot', version: '2.1.3.RELEASE'
-    compile group: 'org.springframework.integration', name: 'spring-integration-http', version: '5.1.3.RELEASE'
-    compile group: 'org.springframework.boot', name: 'spring-boot-autoconfigure', version: '2.1.3.RELEASE'
-
-    compile 'com.marklogic:mlcp-util:0.9.0'
-    compile ('com.marklogic:marklogic-data-movement-components:2.2.0'){
-        // prefer the version declared above
-        exclude group: 'com.marklogic', module: 'marklogic-client-api'
-    }
-    compile 'commons-io:commons-io:2.4'
-    compile 'org.apache.commons:commons-text:1.1'
-    datahubLogging 'ch.qos.logback:logback-classic:1.2.3'
+    implementation 'commons-io:commons-io:2.11.0'
+    implementation 'org.apache.commons:commons-text:1.9'
+    datahubLogging 'ch.qos.logback:logback-classic:1.2.11'
     // For installer program
-    compile "com.beust:jcommander:1.72"
+    implementation "com.beust:jcommander:1.82"
 
     //https://github.com/jaegertracing/jaeger-client-java/tree/master/jaeger-core
-    compile("io.jaegertracing:jaeger-core:0.35.4")
-    compile("io.jaegertracing:jaeger-thrift:0.35.4")
+    implementation("io.jaegertracing:jaeger-core:1.8.0")
+    implementation("io.jaegertracing:jaeger-thrift:1.8.0")
 
     // JUnit Jupiter API and TestEngine implementation
-    testCompile "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
-    testCompile "org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}"
-    testCompile "org.junit.platform:junit-platform-commons:${junitPlatformVersion}"
-    testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}"
+    testImplementation "org.junit.platform:junit-platform-commons:${junitPlatformVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
 
-    //testCompile "org.junit.platform:junit-platform-runner:${junitPlatformVersion}"
+    testImplementation group: 'org.springframework', name: 'spring-test', version: '5.3.19'
 
-    // Only needed to run tests in an (IntelliJ) IDE(A) that bundles an older version
-    testRuntime "org.junit.platform:junit-platform-launcher:${junitPlatformVersion}"
-
-    testCompile group: 'org.springframework', name: 'spring-test', version: '5.1.5.RELEASE'
-
-    testCompile 'xmlunit:xmlunit:1.3'
-    testCompile 'org.skyscreamer:jsonassert:1.5.0'
-    testCompile 'org.hamcrest:hamcrest-junit:2.0.0.0'
-    testCompile 'org.easymock:easymock:3.4'
-    testCompile 'ch.qos.logback:logback-classic:1.1.11'
-    testCompile 'org.slf4j:log4j-over-slf4j:1.7.13'
-    testCompile("com.marklogic:mlcp:10.0.4.2") {
+    testImplementation 'xmlunit:xmlunit:1.6'
+    testImplementation 'org.skyscreamer:jsonassert:1.5.0'
+    testImplementation 'org.hamcrest:hamcrest-junit:2.0.0.0'
+    testImplementation 'org.easymock:easymock:4.3'
+    testImplementation 'ch.qos.logback:logback-classic:1.2.11'
+    testImplementation 'org.slf4j:log4j-over-slf4j:1.7.36'
+    testImplementation("com.marklogic:mlcp:10.0.9") {
       exclude group: 'org.apache.avro', module: 'avro-tools'
       exclude group: 'org.apache.commons', module: 'commons-csv'
     }
 
     // Provides support for invoking marklogic-unit-test tests via JUnit
-    testCompile ("com.marklogic:marklogic-junit5:1.0.0"){
+    testImplementation ('com.marklogic:marklogic-junit5:1.2.0'){
         // prefer the version declared above
         exclude group: 'com.marklogic', module: 'marklogic-client-api'
     }
-    mlBundle "com.marklogic:marklogic-unit-test-modules:1.0.beta"
+    mlBundle "com.marklogic:marklogic-unit-test-modules:1.2.0"
 }
 
 import com.marklogic.mgmt.ManageClient
 import com.marklogic.mgmt.resource.hosts.HostManager
-
 
 configurations.all {
     exclude group: "org.slf4j", module: "slf4j-log4j12"
@@ -141,11 +124,6 @@ task clientJar(type: Jar) {
         exclude "META-INF/*.DSA"
         exclude "META-INF/*.RSA"
     }
-    from(configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }) {
-        exclude "META-INF/*.SF"
-        exclude "META-INF/*.DSA"
-        exclude "META-INF/*.RSA"
-    }
     exclude "spring-boot*.jar"
     exclude "*jaeger*.jar"
     with jar
@@ -154,12 +132,13 @@ build.dependsOn clientJar
 
 node {
   // Version of node to use.
-  version = '8.10.0'
-
-  // // Version of npm to use.
-  npmVersion = '6.13.1'
+  version = '14.15.5'
+  // Version of npm to use.
+  npmVersion = '6.14.17'
 
   download = true
+
+  distBaseUrl = "https://nodejs.org/dist"
 
   // Set the work directory for unpacking node
   workDir = file("${project.buildDir}/nodejs")
@@ -235,7 +214,6 @@ if (!(
         gradle.startParameter.taskNames*.toLowerCase().contains("testunit") ||
         gradle.startParameter.taskNames*.toLowerCase().contains("publishplugins") ||
         gradle.startParameter.taskNames*.toLowerCase().contains("publishtomavenlocal") ||
-        gradle.startParameter.taskNames*.toLowerCase().contains("bintrayupload") ||
         gradle.startParameter.taskNames*.toLowerCase().contains("javadoc") ||
         gradle.startParameter.taskNames*.toLowerCase().contains("bootjar") ||
         gradle.startParameter.taskNames*.toLowerCase().contains("marklogic-data-hub:bootjar") ||
@@ -326,22 +304,6 @@ publishing {
             }
             url publishUrl
         }
-    }
-}
-
-bintray {
-    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
-    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
-    publications = ['main']
-    pkg {
-        repo = 'maven'
-        name = project.name
-        userOrg = 'marklogic'
-        desc = pomCustomizations.textdescription.text()
-        licenses = ['Apache-2.0']
-        websiteUrl = pomCustomizations.url
-        vcsUrl = pomCustomizations.scm.url
-        issueTrackerUrl = 'https://github.com/marklogic/marklogic-data-hub/issues'
     }
 }
 

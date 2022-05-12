@@ -32,7 +32,7 @@ $bg-color: unquote("rgb(#{$palette-datahub-500})");
   }
 }
 
-/deep/ span.badge.mdl-badge[data-badge] {
+::v-deep span.badge.mdl-badge[data-badge] {
   float: right;
   &:after {
     top: -5px;

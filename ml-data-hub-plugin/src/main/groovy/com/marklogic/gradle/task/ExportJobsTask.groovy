@@ -20,8 +20,6 @@ package com.marklogic.gradle.task
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 
-import java.nio.file.Paths
-
 class ExportJobsTask extends HubTask {
     @Input
     public String[] jobIds
@@ -55,4 +53,7 @@ class ExportJobsTask extends HubTask {
         print jobExportResponse
     }
 
+    String[] getJobIds() {
+        return jobIds
+    }
 }

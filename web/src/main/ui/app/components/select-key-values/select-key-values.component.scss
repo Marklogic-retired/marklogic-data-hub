@@ -28,6 +28,6 @@
   padding-left:10px;
 }
 
-/deep/ .mdl-textfield__label:after {
+::v-deep .mdl-textfield__label:after {
   bottom: 12px;
 }

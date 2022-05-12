@@ -13,7 +13,7 @@ $tooltip-arrow-color:         $tooltip-bg !default;
 
 $border-radius:          .25rem !default;
 
-/deep/ tooltip-container {
+::v-deep tooltip-container {
   position: absolute;
   z-index: 9999999;
 }

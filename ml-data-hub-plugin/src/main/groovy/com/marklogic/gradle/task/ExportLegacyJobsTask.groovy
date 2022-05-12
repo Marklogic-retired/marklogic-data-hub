@@ -53,4 +53,7 @@ class ExportLegacyJobsTask extends HubTask {
         print jobExportResponse
     }
 
+    String[] getJobIds() {
+        return jobIds
+    }
 }

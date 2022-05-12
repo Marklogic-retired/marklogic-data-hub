@@ -6,7 +6,7 @@
     margin: 5px 0;
   }
 
-  /deep/ .select-list {
+  ::v-deep .select-list {
     .mdl-list__item {
       padding: 8px;
     }
@@ -16,7 +16,7 @@
     width: 100%;
   }
 
-  /deep/ mdl-textfield.custom-invalid input.mdl-textfield__input {
+  ::v-deep mdl-textfield.custom-invalid input.mdl-textfield__input {
     border-bottom: 1px solid #a94442;
   }
 
@@ -26,6 +26,6 @@
   }
 }
 
-/deep/ .mdl-textfield__label:after {
+::v-deep .mdl-textfield__label:after {
   bottom: 12px;
 }

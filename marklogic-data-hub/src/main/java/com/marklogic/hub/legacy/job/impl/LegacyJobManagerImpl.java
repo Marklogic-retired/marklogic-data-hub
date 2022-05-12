@@ -21,7 +21,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.Transaction;
-import com.marklogic.client.datamovement.*;
+import com.marklogic.client.datamovement.DataMovementManager;
+import com.marklogic.client.datamovement.ExportListener;
+import com.marklogic.client.datamovement.JobReport;
+import com.marklogic.client.datamovement.JobTicket;
+import com.marklogic.client.datamovement.QueryBatcher;
+import com.marklogic.client.datamovement.WriteBatcher;
 import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.ext.datamovement.consumer.WriteToZipConsumer;
@@ -32,7 +37,6 @@ import com.marklogic.client.io.Format;
 import com.marklogic.client.io.JacksonDatabindHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.QueryManager;
-import com.marklogic.client.query.StringQueryDefinition;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.client.util.RequestParameters;
@@ -115,8 +119,7 @@ public class LegacyJobManagerImpl implements LegacyJobManager {
         QueryManager qm = jobClient.newQueryManager();
 
         // Build a query that will match everything
-        StringQueryDefinition emptyQuery = qm.newStringDefinition();
-        emptyQuery.setCriteria("");
+        StructuredQueryDefinition emptyQuery = qm.newStructuredQueryBuilder().and();
 
         // Get the job(s) document(s)
         StructuredQueryBuilder sqb = qm.newStructuredQueryBuilder();
@@ -130,6 +133,7 @@ public class LegacyJobManagerImpl implements LegacyJobManager {
             batcher = dmm.newQueryBatcher(sqb.value(sqb.jsonProperty("jobId"), jobIds));
         }
         batcher.onUrisReady(new ExportListener().onDocumentReady(zipConsumer));
+        batcher.withThreadCount(Math.max(Runtime.getRuntime().availableProcessors() - 2, 2));
         JobTicket jobTicket = dmm.startJob(batcher);
 
         batcher.awaitCompletion();
@@ -151,6 +155,7 @@ public class LegacyJobManagerImpl implements LegacyJobManager {
                 batcher = dmm.newQueryBatcher(sqb.value(sqb.element(new QName("jobId")), jobIds));
             }
             batcher.onUrisReady(new ExportListener().onDocumentReady(zipConsumer));
+            batcher.withThreadCount(Math.max(Runtime.getRuntime().availableProcessors() - 2, 2));
             jobTicket = dmm.startJob(batcher);
 
             batcher.awaitCompletion();
@@ -180,7 +185,8 @@ public class LegacyJobManagerImpl implements LegacyJobManager {
             WriteBatcher writer = dmm
                 .newWriteBatcher()
                 .withJobName("Load jobs")
-                .withBatchSize(50);
+                .withBatchSize(50)
+                .withThreadCount(Math.max(Runtime.getRuntime().availableProcessors() - 2, 2));
             JobTicket ticket = dmm.startJob(writer);
 
             // Add each Job entry to the writer; set aside the Trace entries.
@@ -212,7 +218,8 @@ public class LegacyJobManagerImpl implements LegacyJobManager {
                 dmm = this.jobClient.newDataMovementManager();
                 writer = dmm
                     .newWriteBatcher()
-                    .withJobName("Load traces");
+                    .withJobName("Load traces")
+                    .withThreadCount(Math.max(Runtime.getRuntime().availableProcessors() - 2, 2));
                 ticket = dmm.startJob(writer);
 
                 DocumentMetadataHandle traceMetadata = new DocumentMetadataHandle().withCollections("trace");

@@ -46,7 +46,7 @@ h1.mat-dialog-title {
 }
 
 div.key-value-group {
-  /deep/ div.mat-form-field-infix {
+  ::v-deep div.mat-form-field-infix {
     width: 170px !important;
   }
   input {
@@ -54,14 +54,14 @@ div.key-value-group {
   }
 }
 
-/deep/ .mat-tooltip {
+::v-deep .mat-tooltip {
   white-space: pre-line !important;
   position: relative;
   left: 427px;
   top: -8px;
 }
 
-/deep/ .mat-tooltip.options-tooltip {
+::v-deep .mat-tooltip.options-tooltip {
   white-space: pre-line !important;
   position: relative;
   left: 427px;

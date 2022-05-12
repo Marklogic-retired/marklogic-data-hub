@@ -40,7 +40,7 @@ $highlight-color: unquote("rgb(#{$palette-datahub-A100})");
     color: red;
   }
 
-  /deep/ .mdl-list__item {
+  ::v-deep .mdl-list__item {
     min-height: 32px;
     padding: 12px;
 

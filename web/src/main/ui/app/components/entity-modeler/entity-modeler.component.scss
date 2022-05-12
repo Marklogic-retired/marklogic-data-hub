@@ -180,40 +180,40 @@ svg {
     line-height: 20px;
   }
 
-  /deep/ .mdl-textfield {
+  ::v-deep .mdl-textfield {
     padding: 18px 0 5px 0px;
     width: 100%;
   }
 
-  /deep/ .mdl-textfield--floating-label.is-focused .mdl-textfield__label,
-  /deep/ .mdl-textfield--floating-label.is-dirty .mdl-textfield__label,
-  /deep/ .mdl-textfield--floating-label.has-placeholder .mdl-textfield__label {
+  ::v-deep .mdl-textfield--floating-label.is-focused .mdl-textfield__label,
+  ::v-deep .mdl-textfield--floating-label.is-dirty .mdl-textfield__label,
+  ::v-deep .mdl-textfield--floating-label.has-placeholder .mdl-textfield__label {
     font-size: 10px;
     top: 0px;
   }
 
-  /deep/ .mdl-textfield__label {
+  ::v-deep .mdl-textfield__label {
     font-size: 14px;
     top: 18px;
   }
 
-  /deep/ .mdl-textfield__input {
+  ::v-deep .mdl-textfield__input {
     font-size: 14px;
     padding: 2px 0;
     top: 18px;
   }
 
-  /deep/ .mdl-textfield__label:after {
+  ::v-deep .mdl-textfield__label:after {
     bottom: 5px;
   }
 
-  /deep/ .mdl-list__item {
+  ::v-deep .mdl-list__item {
     font-size: 14px;
     padding: 4px;
     min-height: 32px;
   }
 
-  /deep/ mdl-select .mdl-textfield {
+  ::v-deep mdl-select .mdl-textfield {
     padding: 5px 0;
   }
 
@@ -267,7 +267,7 @@ svg {
   }
 }
 
-/deep/ .mdl-textfield__label:after {
+::v-deep .mdl-textfield__label:after {
   bottom: 12px;
 }
 

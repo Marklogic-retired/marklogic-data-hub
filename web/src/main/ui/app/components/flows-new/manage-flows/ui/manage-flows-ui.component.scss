@@ -16,7 +16,7 @@ button {
 /* HEADER ROW HEIGHT */
 .flows-table .mat-header-row {
   min-height: 48px !important;
-  /deep/ button.mat-sort-header-button {
+  ::v-deep button.mat-sort-header-button {
     outline: none !important;
   }
 }
@@ -31,7 +31,7 @@ button {
 }
 
 /* PAGINATOR ROW HEIGHT */
-/deep/ .mat-paginator-container {
+::v-deep .mat-paginator-container {
   min-height: 48px !important;
   .mat-paginator-page-size-select {
     margin: 2px 4px -4px 4px !important;
@@ -223,32 +223,32 @@ button {
 .spinner-container {
   margin-left: 8px;
 }
-/deep/ #flow-last-job-finished-sort-btn.mat-header-cell,
-/deep/ .mat-cell.flow-last-job-finished {
+::v-deep #flow-last-job-finished-sort-btn.mat-header-cell,
+::v-deep .mat-cell.flow-last-job-finished {
   padding-left: 30px;
 }
 
-/deep/ #flow-jobs-sort-btn.mat-header-cell,
-/deep/ #flow-docs-committed-sort-btn.mat-header-cell,
-/deep/ #flow-docs-failed-sort-btn.mat-header-cell {
+::v-deep #flow-jobs-sort-btn.mat-header-cell,
+::v-deep #flow-docs-committed-sort-btn.mat-header-cell,
+::v-deep #flow-docs-failed-sort-btn.mat-header-cell {
   display: flex !important;
   justify-content: flex-end !important;
 }
 
-/deep/ .mat-cell.flow-jobs,
-/deep/ .mat-cell.flow-docs-committed,
-/deep/ .mat-cell.flow-docs-failed {
+::v-deep .mat-cell.flow-jobs,
+::v-deep .mat-cell.flow-docs-committed,
+::v-deep .mat-cell.flow-docs-failed {
   display:flex !important;
   justify-content:flex-end !important;
   padding-right: 20px;
 }
 
-/deep/ .mat-column-actions.mat-header-cell {
+::v-deep .mat-column-actions.mat-header-cell {
   display: flex !important;
   justify-content: center !important;
 }
 
-/deep/ .mat-cell.mat-column-actions {
+::v-deep .mat-cell.mat-column-actions {
   display:flex !important;
   justify-content: center !important;
   padding-right: 24px;

@@ -25,7 +25,7 @@
 }
 
 /* PAGINATOR ROW HEIGHT */
-/deep/ .mat-paginator-container {
+::v-deep .mat-paginator-container {
   min-height: 48px !important;
   .mat-paginator-page-size-select {
     margin: 2px 4px -4px 4px !important;
@@ -60,19 +60,19 @@ a:hover {
   text-decoration: none;
 }
 
-/deep/ .mat-column-weight div.mat-form-field-wrapper {
+::v-deep .mat-column-weight div.mat-form-field-wrapper {
   position: absolute;
   top: -25px;
   width: 40px;
 }
 
-/deep/ .mat-column-other div.mat-form-field-wrapper {
+::v-deep .mat-column-other div.mat-form-field-wrapper {
   position: absolute;
   top: -30px;
   width: 40px;
 }
 
-/deep/ .mat-cell a.weight-value {
+::v-deep .mat-cell a.weight-value {
   cursor: pointer!important;
 }
 
@@ -243,22 +243,22 @@ button {
    text-transform: capitalize;
 }
 
-/deep/ .mat-dialog-title {
+::v-deep .mat-dialog-title {
   margin: -6px 0 20px !important;
   font-size: 24px;
 }
-/deep/ .mat-dialog-actions {
+::v-deep .mat-dialog-actions {
   padding: 12px 0 !important;
   margin-bottom: -20px !important;
   justify-content: flex-end;
 }
 
-/deep/ .mat-dialog-content {
+::v-deep .mat-dialog-content {
   background: #fff !important;
   padding: 10px 24px 20px 24px !important;
 }
 
-/deep/ .mat-button {
+::v-deep .mat-button {
   outline: none !important;
   color: white !important;
   background-color: #2a4356 !important;

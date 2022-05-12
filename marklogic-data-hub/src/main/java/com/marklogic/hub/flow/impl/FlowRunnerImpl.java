@@ -5,7 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.flow.*;
+import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.FlowInputs;
+import com.marklogic.hub.flow.FlowRunner;
+import com.marklogic.hub.flow.FlowStatusListener;
+import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.job.JobDocManager;
 import com.marklogic.hub.job.JobStatus;
@@ -22,8 +26,25 @@ import org.springframework.stereotype.Component;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Queue;
+import java.util.UUID;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -40,10 +61,10 @@ public class FlowRunnerImpl implements FlowRunner{
     @Autowired
     private StepRunnerFactory stepRunnerFactory;
 
-    private AtomicBoolean isRunning = new AtomicBoolean(false);
-    private AtomicBoolean isJobCancelled = new AtomicBoolean(false);
-    private AtomicBoolean isJobSuccess = new AtomicBoolean(true);
-    private AtomicBoolean jobStoppedOnError = new AtomicBoolean(false);
+    private final AtomicBoolean isRunning = new AtomicBoolean(false);
+    private final AtomicBoolean isJobCancelled = new AtomicBoolean(false);
+    private final AtomicBoolean isJobSuccess = new AtomicBoolean(true);
+    private final AtomicBoolean jobStoppedOnError = new AtomicBoolean(false);
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private String runningJobId;
@@ -53,11 +74,11 @@ public class FlowRunnerImpl implements FlowRunner{
     private StepRunner stepRunner;
 
     private final Map<String, Queue<String>> stepsMap = new ConcurrentHashMap<>();
-    private Map<String, Flow> flowMap = new ConcurrentHashMap<>();
-    private Map<String, RunFlowResponse> flowResp = new ConcurrentHashMap<>();
-    private Queue<String> jobQueue = new ConcurrentLinkedQueue<>();
+    private final Map<String, Flow> flowMap = new ConcurrentHashMap<>();
+    private final Map<String, RunFlowResponse> flowResp = new ConcurrentHashMap<>();
+    private final Queue<String> jobQueue = new ConcurrentLinkedQueue<>();
 
-    private List<FlowStatusListener> flowStatusListeners = new ArrayList<>();
+    private final List<FlowStatusListener> flowStatusListeners = new ArrayList<>();
 
     private ThreadPoolExecutor threadPool;
     private JobDocManager jobDocManager;
@@ -256,8 +277,8 @@ public class FlowRunnerImpl implements FlowRunner{
     }
 
     private class FlowRunnerTask implements Runnable {
-        private String jobId;
-        private Flow flow;
+        private final String jobId;
+        private final Flow flow;
         private Queue<String> stepQueue;
 
         public Queue<String> getStepQueue() {
@@ -463,7 +484,7 @@ public class FlowRunnerImpl implements FlowRunner{
                 flowMap.remove(jobId);
                 flowResp.remove(runningJobId);
                 if (!jobQueue.isEmpty()) {
-                    initializeFlow((String) jobQueue.peek());
+                    initializeFlow(jobQueue.peek());
                 } else {
                     isRunning.set(false);
                     threadPool.shutdownNow();
@@ -515,7 +536,7 @@ public class FlowRunnerImpl implements FlowRunner{
                 if(((FlowRunnerTask)r).getStepQueue().isEmpty() || runningFlow.isStopOnError()) {
                     jobQueue.remove();
                     if (!jobQueue.isEmpty()) {
-                        initializeFlow((String) jobQueue.peek());
+                        initializeFlow(jobQueue.peek());
                     } else {
                         isRunning.set(false);
                         threadPool.shutdownNow();

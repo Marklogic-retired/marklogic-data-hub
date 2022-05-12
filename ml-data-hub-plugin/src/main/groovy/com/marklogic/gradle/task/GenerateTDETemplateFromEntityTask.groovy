@@ -36,4 +36,8 @@ class GenerateTDETemplateFromEntityTask extends HubTask {
         cmd.execute(getCommandContext())
     }
 
+    String getEntityNames() {
+        return entityNames
+    }
+
 }

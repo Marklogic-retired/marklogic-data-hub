@@ -201,7 +201,7 @@ $header-height: 48px;
   position: relative;
 }
 
-/deep/ .fa-bug {
+::v-deep .fa-bug {
   color: $error;
   -webkit-animation: dancing-bug 1s linear infinite alternate; /* Safari 4+ */
   -moz-animation:    dancing-bug 1s linear infinite alternate; /* Fx 5+ */
@@ -256,7 +256,7 @@ pre.error-msg {
   margin-top: 0px;
 }
 
-/deep/ .footer {
+::v-deep .footer {
   border-top: 1px solid #ccc;
   background-color: rgb(125, 163, 192);
   position: absolute;
@@ -310,11 +310,11 @@ li.flow.mdl-list__item div ul li {
   }
 }
 
-/deep/ .error-line {
+::v-deep .error-line {
   background-color: $lighterror;
 }
 
-/deep/ .error-tooltip {
+::v-deep .error-tooltip {
   border: 1px solid $error;
   border-radius: 3px;
   color: #444;
@@ -338,7 +338,7 @@ li.flow.mdl-list__item div ul li {
   -ms-transition: opacity 1s;
 }
 
-/deep/ .buglines {
+::v-deep .buglines {
   width: 1.5em;
 }
 
@@ -357,18 +357,18 @@ li.flow.mdl-list__item div ul li {
   margin-right: 10px;
 }
 
-/deep/ .mdl-tabs,
-/deep/ .mdl-tabs__panel,
-/deep/ mdl-tab-panel-content {
+::v-deep .mdl-tabs,
+::v-deep .mdl-tabs__panel,
+::v-deep mdl-tab-panel-content {
   height: 100%;
 }
 
-/deep/ .mdl-tabs__tab {
+::v-deep .mdl-tabs__tab {
   padding: 0 12px;
   white-space: nowrap;
 }
 
-/deep/ mdl-tab-panel-title {
+::v-deep mdl-tab-panel-title {
   .fa {
     margin-right: 5px;
   }

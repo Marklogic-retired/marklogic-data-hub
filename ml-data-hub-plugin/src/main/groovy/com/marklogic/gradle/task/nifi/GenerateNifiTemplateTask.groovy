@@ -46,4 +46,13 @@ class GenerateNifiTemplateTask extends HubTask {
             "\nNote that if you have an ingestion step, you should run that set of processors first before starting the processors " +
             "for the steps that follow it. This ensures that the ingestion completes before the following steps start."
     }
+
+    String getFlowUri() {
+        return flowUri
+    }
+
+    String getTemplatePath() {
+        return templatePath
+    }
+
 }

@@ -113,20 +113,20 @@ mat-form-field {
 }
 
 
-/deep/ mdl-button.mdl-button.mdl-button--raised.mdl-button--primary.error-button {
+::v-deep mdl-button.mdl-button.mdl-button--raised.mdl-button--primary.error-button {
   background-color: $error;
 }
 
-/deep/ .mdl-textfield__label:after {
+::v-deep .mdl-textfield__label:after {
   bottom: 12px;
 }
 
 /* Fix bug showing double tooltip arrows */
-/deep/ .tooltip .arrow::before {
+::v-deep .tooltip .arrow::before {
   visibility: hidden;
 }
 
 /* Widen tooltip container for long phrases */
-/deep/ .tooltip .tooltip-inner {
+::v-deep .tooltip .tooltip-inner {
   max-width: 250px;
 }

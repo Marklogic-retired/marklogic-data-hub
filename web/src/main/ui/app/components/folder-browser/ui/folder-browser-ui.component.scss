@@ -18,7 +18,7 @@ $folder-color: unquote("rgb(#{$palette-datahub-50})");
   width: 100%;
 }
 
-/deep/ .mdl-textfield__label:after {
+::v-deep .mdl-textfield__label:after {
   bottom: 12px;
 }
 

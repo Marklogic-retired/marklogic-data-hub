@@ -20,7 +20,6 @@ import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.flow.impl.FlowImpl;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
@@ -36,7 +35,6 @@ import com.marklogic.hub.web.exception.NotFoundException;
 import com.marklogic.hub.web.model.FlowStepModel;
 import com.marklogic.hub.web.model.StepModel;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +43,11 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class FlowManagerService {
@@ -216,9 +218,6 @@ public class FlowManagerService {
             if (!stepId.equals(step.getName() + "-" + step.getStepDefinitionType())) {
                 throw new BadRequestException("Changing step name or step type not supported.");
             }
-        }
-        if(!EnumUtils.isValidEnumIgnoreCase(StepDefinition.StepDefinitionType.class, step.getStepDefinitionType().toString())) {
-            throw new BadRequestException("Invalid Step Type");
         }
 
         step = upsertStepDefinition(stepModel, step);

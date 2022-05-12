@@ -13,7 +13,7 @@ mdl-button {
   }
 }
 
-/deep/ mdl-progress {
+::v-deep mdl-progress {
 
   &.mdl-progress > .progressbar {
     background-color: unquote("rgb(#{$palette-datahub-900})");

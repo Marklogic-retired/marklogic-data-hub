@@ -18,16 +18,16 @@ h1.mat-dialog-title {
   justify-content: flex-end;
 }
 
-/deep/ #run-flow-dialog .mat-checkbox-checked.mat-accent .mat-checkbox-background,
-/deep/ #run-flow-dialog .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
+::v-deep #run-flow-dialog .mat-checkbox-checked.mat-accent .mat-checkbox-background,
+::v-deep #run-flow-dialog .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
   background-color: #6d8ba5 !important;
 }
 
-/deep/ #run-flow-dialog .mat-divider {
+::v-deep #run-flow-dialog .mat-divider {
   margin-bottom: 10px;
 }
 
-/deep/ #run-flow-dialog .mat-checkbox-layout > .mat-checkbox-label {
+::v-deep #run-flow-dialog .mat-checkbox-layout > .mat-checkbox-label {
   width: 500px;
   overflow: hidden;
   text-overflow: ellipsis;

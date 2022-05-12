@@ -4,8 +4,8 @@
   flex-direction: column;
 }
 
-/deep/ [gm-col] + gm-divider,
-/deep/ [gm-col] + [gm-divider] {
+::v-deep [gm-col] + gm-divider,
+::v-deep [gm-col] + [gm-divider] {
   display: flex;
   width: 1px;
   cursor: col-resize;
@@ -22,8 +22,8 @@
   }
 }
 
-/deep/ [gm-row] + gm-divider,
-/deep/ [gm-row] + [gm-divider] {
+::v-deep [gm-row] + gm-divider,
+::v-deep [gm-row] + [gm-divider] {
   display: flex;
   height: 1px;
   cursor: row-resize;
@@ -42,7 +42,7 @@
 
 }
 
-/deep/ [gm-row], [gm-col] {
+::v-deep [gm-row], [gm-col] {
   box-sizing: border-box;
   display: -webkit-box;
   display: -webkit-flex;
@@ -51,11 +51,11 @@
   display: flex;
 }
 
-/deep/ [gm-col] {
+::v-deep [gm-col] {
   flex-direction: column;
 }
 
-/deep/ [gm-row] {
+::v-deep [gm-row] {
   flex-direction: row;
 }
 
@@ -64,7 +64,7 @@
   @for $i from 0 through 20 {
     $value : #{($i * 5) / 100};
 
-    /deep/ .#{$flexName}-#{$i * 5} {
+    ::v-deep .#{$flexName}-#{$i * 5} {
       flex-grow: #{$value};
     }
   }

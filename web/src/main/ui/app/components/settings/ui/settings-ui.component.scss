@@ -62,7 +62,7 @@ button {
   }
 }
 
-/deep/ .mdl-progress {
+::v-deep .mdl-progress {
   width: 90%;
   margin: 0pt auto;
 }

@@ -86,13 +86,13 @@ span.copy-uri {
 }
 
 .database-chooser {
-  /deep/ mdl-checkbox {
+  ::v-deep mdl-checkbox {
     display: inline-block;
     width: inherit;
     margin-left: 20px;
   }
 
-  /deep/ mdl-select {
+  ::v-deep mdl-select {
     display: inline-block;
   }
 }

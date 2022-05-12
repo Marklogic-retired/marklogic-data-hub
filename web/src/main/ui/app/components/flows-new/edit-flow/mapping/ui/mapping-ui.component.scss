@@ -266,7 +266,7 @@ div.target-entity-title {
 }
 
 /* Widen tooltip container for long phrases */
-/deep/ .tooltip .tooltip-inner {
+::v-deep .tooltip .tooltip-inner {
   max-width: 350px;
 }
 

@@ -36,6 +36,37 @@ import org.gradle.api.tasks.TaskExecutionException
 
 class RunLegacyFlowTask extends HubTask {
 
+    String getEntityName() {
+        return entityName
+    }
+
+    String getFlowName() {
+        return flowName
+    }
+
+    Integer getBatchSize() {
+        return batchSize
+    }
+
+    Integer getThreadCount() {
+        return threadCount
+    }
+
+    String getSourceDB() {
+        return sourceDB
+    }
+
+    String getDestDB() {
+        return destDB
+    }
+
+    Boolean getShowOptions() {
+        return showOptions
+    }
+
+    Boolean getFailHard() {
+        return failHard
+    }
     @Input
     public String entityName
 

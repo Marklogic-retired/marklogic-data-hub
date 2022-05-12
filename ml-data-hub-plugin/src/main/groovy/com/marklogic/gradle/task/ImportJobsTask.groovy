@@ -41,4 +41,8 @@ class ImportJobsTask extends HubTask {
         jobManager.importJobs(importPath)
     }
 
+    String getFilename() {
+        return filename
+    }
+
 }

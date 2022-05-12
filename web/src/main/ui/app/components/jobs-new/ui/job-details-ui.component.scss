@@ -73,7 +73,7 @@ button {
 /* HEADER ROW HEIGHT */
 .job-details-table .mat-header-row {
   min-height: 48px !important;
-  /deep/ button.mat-sort-header-button {
+  ::v-deep button.mat-sort-header-button {
     outline: none !important;
   }
 }
@@ -88,7 +88,7 @@ button {
 }
 
 /* PAGINATOR ROW HEIGHT */
-/deep/ .mat-paginator-container {
+::v-deep .mat-paginator-container {
   min-height: 48px !important;
   .mat-paginator-page-size-select {
     margin: 2px 4px -4px 4px !important;
@@ -282,19 +282,19 @@ button {
    text-transform: capitalize;
 }
 
-/deep/ #step-committed-sort-btn.mat-header-cell,
-/deep/ #step-errors-sort-btn.mat-header-cell {
+::v-deep #step-committed-sort-btn.mat-header-cell,
+::v-deep #step-errors-sort-btn.mat-header-cell {
   display: flex !important;
   justify-content: flex-end !important;
 }
 
-/deep/ .mat-cell.step-committed {
+::v-deep .mat-cell.step-committed {
   display:flex !important;
   justify-content:flex-end !important;
   padding-right: 18px;
 }
 
-/deep/ .mat-cell.step-errors {
+::v-deep .mat-cell.step-errors {
   display:flex !important;
   justify-content:flex-end !important;
   padding-right: 42px;

@@ -1,6 +1,6 @@
 buildscript {
   repositories {
-    maven {url 'http://developer.marklogic.com/maven2/'}
+    maven {url 'https://developer.marklogic.com/maven2/'}
   }
 }
 
@@ -23,8 +23,8 @@ plugins {
 }
 
 repositories {
-    jcenter()
-    maven {url 'http://developer.marklogic.com/maven2/'}
+    mavenCentral()
+    maven {url 'https://developer.marklogic.com/maven2/'}
 }
 
 dependencies {

@@ -2,23 +2,23 @@ button {
   outline: none;
 }
 
-/deep/ h1.mat-dialog-title {
+::v-deep h1.mat-dialog-title {
   margin-top: -12px !important;
   margin-left: -4px !important;
   margin-bottom: 11px !important;
 }
 
-/deep/ .mat-dialog-content {
+::v-deep .mat-dialog-content {
   background: #f3f3f3 !important;
   padding: 20px !important;
 }
 
-/deep/ .mat-dialog-actions {
+::v-deep .mat-dialog-actions {
   margin-right: -4px !important;
   justify-content: flex-end !important;
 }
 
-/deep/ .mat-tooltip {
+::v-deep .mat-tooltip {
   white-space: pre-line !important;
   position: relative;
   left: 450px;

@@ -468,11 +468,11 @@ h4.entity-header {
       min-width: 20px;
     }
 
-    /deep/ .container {
+    ::v-deep .container {
       margin: 0px;
     }
 
-    /deep/ .mdl-button {
+    ::v-deep .mdl-button {
       text-transform: none;
     }
   }

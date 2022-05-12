@@ -16,7 +16,7 @@ $label-color: unquote("rgb(#{$palette-datahub-900})");
 
 $red-color: unquote("rgb(#{$palette-datahub-red})");
 
-/deep/ md-list {
+::v-deep md-list {
   padding-top: 0px;
 }
 
@@ -38,7 +38,7 @@ a {
   }
 }
 
-h1, h3, h4, :host /deep/ button[mdl-button], a[mdl-button] {
+h1, h3, h4, :host ::v-deep button[mdl-button], a[mdl-button] {
   color: white;
   max-width: 100%;
 }
@@ -113,11 +113,11 @@ h3 {
     width: 100%;
     overflow: hidden;
 
-    /deep/ .folder-browser {
+    ::v-deep .folder-browser {
       border: 1px solid $ml-blue;
     }
 
-    /deep/ input {
+    ::v-deep input {
       color: black;
     }
   }
@@ -235,7 +235,7 @@ $easingFunc: ease-in-out;
   }
 }
 
-/deep/ md-progress-circle {
+::v-deep md-progress-circle {
   path {
     stroke: white;
   }
@@ -269,31 +269,31 @@ form {
 }
 
 #InitIfNeededTab, #LoginTab {
-  /deep/ .mdl-textfield--floating-label.is-focused .mdl-textfield__label,
-  /deep/ .mdl-textfield--floating-label.is-dirty .mdl-textfield__label,
-  /deep/ .mdl-textfield--floating-label.has-placeholder .mdl-textfield__label,
-  /deep/ .mdl-textfield--floating-label.is-invalid .mdl-textfield__label {
+  ::v-deep .mdl-textfield--floating-label.is-focused .mdl-textfield__label,
+  ::v-deep .mdl-textfield--floating-label.is-dirty .mdl-textfield__label,
+  ::v-deep .mdl-textfield--floating-label.has-placeholder .mdl-textfield__label,
+  ::v-deep .mdl-textfield--floating-label.is-invalid .mdl-textfield__label {
     color: white;
   }
 
-  /deep/ .mdl-textfield__label:after {
+  ::v-deep .mdl-textfield__label:after {
     background-color: white;
   }
 
-  /deep/ .mdl-textfield__input,
-  /deep/ .mdl-textfield.is-invalid .mdl-textfield__input,
-  /deep/ .mdl-textfield.is-invalid .mdl-textfield__input,
-  /deep/ .mdl-textfield.is-invalid .mdl-textfield__label:after,
-  /deep/ .mdl-textfield__label:after {
+  ::v-deep .mdl-textfield__input,
+  ::v-deep .mdl-textfield.is-invalid .mdl-textfield__input,
+  ::v-deep .mdl-textfield.is-invalid .mdl-textfield__input,
+  ::v-deep .mdl-textfield.is-invalid .mdl-textfield__label:after,
+  ::v-deep .mdl-textfield__label:after {
     color: white;
     border-bottom: 1px solid rgba(255,255,255, 0.12);
   }
 
-  /deep/ .mdl-textfield.is-invalid .mdl-textfield__label:after {
+  ::v-deep .mdl-textfield.is-invalid .mdl-textfield__label:after {
     background-color: initial;
   }
 
-  /deep/ .mdl-spinner--single-color .mdl-spinner__layer {
+  ::v-deep .mdl-spinner--single-color .mdl-spinner__layer {
     border-color: white;
   }
 }
@@ -361,15 +361,15 @@ form {
 .auth {
   color: white;
 
-  /deep/ .mdl-radio__outer-circle {
+  ::v-deep .mdl-radio__outer-circle {
     border: 2px solid white;
   }
 
-  /deep/ .mdl-radio.is-checked .mdl-radio__outer-circle {
+  ::v-deep .mdl-radio.is-checked .mdl-radio__outer-circle {
     border: 2px solid #ccc;
   }
 
-  /deep/ .mdl-radio__inner-circle {
+  ::v-deep .mdl-radio__inner-circle {
     background: white;
   }
 }
@@ -404,6 +404,6 @@ mdl-list.precheck-list {
   }
 }
 
-/deep/ .mdl-textfield__label:after {
+::v-deep .mdl-textfield__label:after {
   bottom: 12px;
 }

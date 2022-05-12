@@ -35,7 +35,7 @@ require('codemirror/addon/selection/mark-selection');
       display: block;
     }
 
-    /deep/ .CodeMirror {
+    ::v-deep .CodeMirror {
       height: auto;
     }
   `]

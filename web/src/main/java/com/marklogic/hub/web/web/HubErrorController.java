@@ -17,9 +17,9 @@ package com.marklogic.hub.web.web;
 
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController;
+import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 
@@ -35,15 +35,17 @@ public class HubErrorController extends BasicErrorController {
     }
 
     public ResponseEntity<Map<String, Object>> error(HttpServletRequest request) {
-        Map<String, Object> body = getErrorAttributes(request,
-            isIncludeStackTrace(request, MediaType.ALL));
+        ErrorAttributeOptions errorAttributes = ErrorAttributeOptions.of(ErrorAttributeOptions.Include.MESSAGE, ErrorAttributeOptions.Include.BINDING_ERRORS);
+
+        Map<String, Object> body = getErrorAttributes(request, errorAttributes);
         HttpStatus status = getStatus(request);
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("code", body.get("status"));
         map.put("message", body.get("message"));
         map.put("timestamp", body.get("timestamp"));
 
-        return new ResponseEntity<Map<String, Object>>(map, status);
+        return new ResponseEntity<>(map, status);
     }
+
 
 }

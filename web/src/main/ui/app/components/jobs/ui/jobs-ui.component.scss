@@ -98,6 +98,6 @@ input[type="search"] {
 }
 
 /* Fix bug showing double tooltip arrows */
-/deep/ .tooltip .arrow::before {
+::v-deep .tooltip .arrow::before {
   visibility: hidden;
 }

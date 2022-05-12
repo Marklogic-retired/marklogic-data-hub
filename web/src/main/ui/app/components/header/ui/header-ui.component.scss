@@ -41,7 +41,7 @@ header.mdl-layout__header {
   padding: 0 40px 0 20px;
 }
 
-/deep/ .mdl-menu__container {
+::v-deep .mdl-menu__container {
   overflow: hidden;
 }
 

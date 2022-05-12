@@ -17,11 +17,11 @@ div.label {
   font-weight: normal;
 }
 
-/deep/ .delimited-text-separator-field {
+::v-deep .delimited-text-separator-field {
   padding: 8px 0 !important;
 }
 
-/deep/ .mat-tooltip {
+::v-deep .mat-tooltip {
   white-space: pre-line !important;
   position: relative;
   left: 418px;
@@ -29,32 +29,32 @@ div.label {
   max-width: 259px !important;
 }
 
-/deep/ .mat-tooltip.source-path-tooltip {
+::v-deep .mat-tooltip.source-path-tooltip {
   left: 320px !important;
 }
 
-/deep/ .mat-tooltip.source-file-type-tooltip,
-/deep/ .mat-tooltip.delimited-text-separator-field-tooltip,
-/deep/ .mat-tooltip.target-file-type-tooltip {
+::v-deep .mat-tooltip.source-file-type-tooltip,
+::v-deep .mat-tooltip.delimited-text-separator-field-tooltip,
+::v-deep .mat-tooltip.target-file-type-tooltip {
   left: 300px !important;
 }
 
-/deep/ .mat-form-field.source-file-type,
-/deep/ .mat-form-field.target-file-type {
+::v-deep .mat-form-field.source-file-type,
+::v-deep .mat-form-field.target-file-type {
   width: 200px !important;
 }
 
-/deep/ .mat-form-field.delimited-text-separator-field {
+::v-deep .mat-form-field.delimited-text-separator-field {
   width: 184px !important;
 }
 
-/deep/ .mat-form-field.delimited-text-separator-other-field {
+::v-deep .mat-form-field.delimited-text-separator-other-field {
   width: 80px !important;
   padding: 5px 10px;
 }
 
-/deep/ .mat-form-field.target-permissions-field,
-/deep/ .mat-form-field.target-uri-replace-field {
+::v-deep .mat-form-field.target-permissions-field,
+::v-deep .mat-form-field.target-uri-replace-field {
   width: 600px !important;
 }
 
