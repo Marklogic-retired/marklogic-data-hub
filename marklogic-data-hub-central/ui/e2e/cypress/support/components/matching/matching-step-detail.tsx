@@ -91,6 +91,26 @@ class MatchingStepDetail {
   getTableHeader() {
     return cy.get(".react-bootstrap-table #subTable thead");
   }
+
+  getExpandBtn() {
+    return cy.get(`[data-testid="expandBtn"]`);
+  }
+
+  getMoreLinks() {
+    return cy.findAllByText("more");
+  }
+
+  getAllDataURIRadio() {
+    return cy.findByLabelText("inputUriRadio");
+  }
+
+  verifyURIAdded(name: string) {
+    return cy.findByText(name).scrollIntoView().should("be.visible");
+  }
+
+  getBackButton() {
+    return cy.get("[aria-label=\"Back\"]");
+  }
 }
 
 const matchingStepDetail = new MatchingStepDetail();

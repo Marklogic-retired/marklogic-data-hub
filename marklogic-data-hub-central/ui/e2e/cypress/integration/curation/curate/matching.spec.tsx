@@ -160,7 +160,7 @@ describe("Matching", () => {
     rulesetSingleModal.saveButton().click();
     cy.waitForAsyncRequest();
     cy.waitUntil(() => cy.contains("customerId - Exact").should("have.length.gt", 0));
-    multiSlider.getRulesetHandleNameAndType("customerId", "Exact").should("be.visible");
+    multiSlider.getRulesetHandleNameAndType("customerId", "Exact").should("exist");
     //multiSlider.getHandleName("customerId").should("be.visible");
   });
   xit("When we work on the spike story to update multi-slider componenens using cypress", () => {
@@ -168,8 +168,8 @@ describe("Matching", () => {
     cy.findByTestId("ruleSet-slider-ticks").find(`div[style*="left: 19.1919%;"]`).trigger("mousemove", {force: true});
     multiSlider.getHandleName("customerId").trigger("mouseup", {force: true});
     //Verify the possible match combinations
-    matchingStepDetail.getPossibleMatchCombinationHeading("testing").trigger("mousemove").should("be.visible");
-    matchingStepDetail.getPossibleMatchCombinationRuleset("testing", "customerId - Exact").should("be.visible");
+    matchingStepDetail.getPossibleMatchCombinationHeading("testing").trigger("mousemove").should("exist");
+    matchingStepDetail.getPossibleMatchCombinationRuleset("testing", "customerId - Exact").should("exist");
   });
   it("Add another ruleset", () => {
     matchingStepDetail.addNewRuleset();
@@ -179,7 +179,7 @@ describe("Matching", () => {
     rulesetSingleModal.saveButton().click();
     cy.waitForAsyncRequest();
     cy.waitUntil(() => cy.contains("email - Exact").should("have.length.gt", 0));
-    multiSlider.getRulesetHandleNameAndType("email", "Exact").should("be.visible");
+    multiSlider.getRulesetHandleNameAndType("email", "Exact").should("exist");
     //multiSlider.getHandleName("email").should("be.visible");
   });
   xit("When we work on the spike story to update multi-slider componenens using cypress", () => {

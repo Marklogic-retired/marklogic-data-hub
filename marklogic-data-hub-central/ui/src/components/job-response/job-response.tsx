@@ -136,10 +136,6 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStop
             <i><FontAwesomeIcon aria-label="icon: canceled-circle" icon={faBan} className={styles.unsuccessfulRun} size="lg" data-testid={`${response.status}-icon`} /></i>
             <strong>{stepName}</strong>
           </div>);
-        } else if (response.hasOwnProperty("success") && !response.success) {
-          return (<div data-testid={`${stepName}-failure`} id={`${stepName}-failure`} className={styles.stepResponse}>
-            <ExclamationCircleFill aria-label="icon: exclamation-circle" className={styles.unsuccessfulRun} /><strong className={styles.stepName}>{stepName}</strong>
-          </div>);
         } else if (response.hasOwnProperty("success") && !response.success && response.hasOwnProperty("status") && response.status.includes("failed")) {
           return (<div data-testid={`${stepName}-failure`} id={`${stepName}-failure`} className={styles.stepResponse}>
             <XCircleFill aria-label="icon: failed-circle" className={styles.unsuccessfulRun} /><strong className={styles.stepName}>{stepName}</strong>

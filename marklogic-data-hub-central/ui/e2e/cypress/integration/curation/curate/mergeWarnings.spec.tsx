@@ -138,12 +138,6 @@ describe("Validate Merge warnings", () => {
     mergeRuleModal.alertMessage().should("have.text", "Warning: The current merge settings might produce merged documents that are inconsistent with the entity type\nIn the entity type Person, the property or properties DateOfBirth, ZipCode, id, SSN, lname, desc, fname allows only a single value.\nIn every merge rule for the property DateOfBirth, ZipCode, id, SSN, lname, desc, fname set Max Values or Max Sources to 1.");
     mergeRuleModal.alertDescription().should("have.text", "Please set max values for property to 1 on merge to avoid an invalid entity instance.");*/
     mergeRuleModal.cancelButton().click();
-    toolbar.getCurateToolbarIcon().click();
-    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
-    curatePage.toggleEntityTypeId("Person");
-    curatePage.selectMergeTab("Person");
-    curatePage.openStepDetails(mergeStep1);
-    cy.contains(mergeStep1);
   });
   it("Click on merge Strategy and validate warnings", () => {
     cy.findAllByText("retain-single-value").eq(0).click();
