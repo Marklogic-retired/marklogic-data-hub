@@ -27,9 +27,14 @@
   }
   .vis-item {
     background-color: #D4DEFF !important;
-    color: #000 !important;
+    color: #111 !important;
     opacity: 0.8 !important;
     cursor: pointer;
+  }
+  .vis-item.vis-box {
+    height: 28px;
+    padding-left: 3px;
+    padding-right: 3px;
   }
 
   .vis-item .vis-item-content {
@@ -38,11 +43,17 @@
     z-index: 1;
     white-space: nowrap;
     cursor: pointer;
+    font-size: 14px;
+    line-height: 18px;
+  }
+
+  .vis-item.vis-dot, .vis-item.vis-line {
+    border-color: #5fc9aa !important;
   }
 
   .vis-item.vis-box {
     border-style: none !important;
-    border-radius: 8px !important;
+    border-radius: 4px !important;
   }
 
   .vis-item.vis-dot {

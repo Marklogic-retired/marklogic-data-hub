@@ -44,6 +44,20 @@ const Relationships: React.FC<Props> = (props) => {
         edges: {
             color: "#5fc9aa"
         },
+        nodes: {
+            margin: {
+                top: 9,
+                right: 9,
+                bottom: 7,
+                left: 8
+            },
+            font: {
+                color: "#333"
+            },
+            shapeProperties: {
+                borderRadius: 4
+            }
+        },
         physics: {
             enabled: true,
             barnesHut: {
