@@ -20,6 +20,7 @@
       "Office": {
         "officeId": 1,
         "name": "office name",
+        "category": "Sneakers",
         "nicknames": [
           "of1"
         ],

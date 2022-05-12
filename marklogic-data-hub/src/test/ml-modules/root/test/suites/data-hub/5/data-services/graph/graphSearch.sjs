@@ -102,15 +102,15 @@ resultsTest5.nodes.forEach(node => {
 
 const searchTextQuery = {
   "searchText": "Infant Newborn Toddler",
-  "entityTypeIds": [ "Product", "Office" ],
+  "entityTypeIds": [ "Product" ]
 };
 
 const resultsTestSearchBy = searchNodes(searchTextQuery);
 
 assertions.concat([
   test.assertEqual(1, resultsTestSearchBy.total),
-  test.assertEqual(2, resultsTestSearchBy.nodes.length),
-  test.assertEqual(1, resultsTestSearchBy.edges.length),
+  test.assertEqual(1, resultsTestSearchBy.nodes.length),
+  test.assertEqual(0, resultsTestSearchBy.edges.length),
 ]);
 
 resultsTestSearchBy.nodes.forEach(node => {

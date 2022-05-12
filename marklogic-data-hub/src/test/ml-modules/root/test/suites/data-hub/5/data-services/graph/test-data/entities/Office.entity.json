@@ -5,115 +5,86 @@
 "baseUri": "http://example.org/",
 "draft": false
   },
-  "definitions": {
-    "Office": {
-      "required": [
-        "name"
-      ],
-      "pii": [
-        "pin"
-      ],
-      "primaryKey": "officeId",
-      "properties": {
-        "officeId": {
-          "datatype": "integer",
-          "sortable": true
+    "definitions": {
+        "Office": {
+          "required": [
+            "name"
+          ],
+          "pii": [
+            "pin"
+          ],
+          "primaryKey": "officeId",
+          "properties": {
+            "officeId": {
+              "datatype": "integer",
+              "sortable": true
+            },
+            "name": {
+              "datatype": "string",
+              "description": "This has a case-insensitive collation for the match queries that use range indexes",
+              "collation": "http://marklogic.com/collation//S2",
+              "facetable": true,
+              "sortable": true
+            },
+            "category": {
+              "datatype": "string",
+              "collation": "http://marklogic.com/collation/codepoint"
+            },
+            "email": {
+              "datatype": "string",
+              "description": "This has a case-insensitive collation for the match queries that use range indexes",
+              "collation": "http://marklogic.com/collation//S2",
+              "facetable": true
+            },
+            "pin": {
+              "datatype": "integer",
+              "facetable": true,
+              "sortable": true
+            },
+            "nicknames": {
+              "datatype": "array",
+              "description": "Example of a multi-value property of simple values",
+              "items": {
+                "datatype": "string"
+              }
+            },
+            "shipping": {
+              "datatype": "array",
+              "description": "Example of a multi-value property of structured values",
+              "items": {
+                "$ref": "#/definitions/Address"
+              }
+            },
+            "billing": {
+              "description": "Example of a single-value structured property",
+              "$ref": "#/definitions/Address"
+            },
+            "birthDate": {
+              "datatype": "date",
+              "facetable": true
+            },
+            "status": {
+              "datatype": "string"
+            },
+            "officeSince": {
+              "datatype": "date"
+            },
+            "orders": {
+              "datatype": "array",
+              "description": "Example of a relationship to another entity type",
+              "items": {
+                "$ref": "http://example.org/Order-0.0.1/Order"
+              }
+            }
+
         },
-        "name": {
-          "datatype": "string",
-          "description": "This has a case-insensitive collation for the match queries that use range indexes",
-          "collation": "http://marklogic.com/collation//S2",
-          "facetable": true,
-          "sortable": true
-        },
-        "email": {
-          "datatype": "string",
-          "description": "This has a case-insensitive collation for the match queries that use range indexes",
-          "collation": "http://marklogic.com/collation//S2",
-          "facetable": true
-        },
-        "pin": {
-          "datatype": "integer",
-          "facetable": true,
-          "sortable": true
-        },
-        "nicknames": {
-          "datatype": "array",
-          "description": "Example of a multi-value property of simple values",
-          "items": {
-            "datatype": "string"
-          }
-        },
-        "shipping": {
-          "datatype": "array",
-          "description": "Example of a multi-value property of structured values",
-          "items": {
-            "$ref": "#/definitions/Address"
-          }
-        },
-        "billing": {
-          "description": "Example of a single-value structured property",
-          "$ref": "#/definitions/Address"
-        },
-        "birthDate": {
-          "datatype": "date",
-          "facetable": true
-        },
-        "status": {
-          "datatype": "string"
-        },
-        "officeSince": {
-          "datatype": "date"
-        },
-        "orders": {
-          "datatype": "array",
-          "description": "Example of a relationship to another entity type",
-          "items": {
-            "$ref": "http://example.org/Order-0.0.1/Order"
-          }
-        }
-    },
-"description": ""
-},
-    "Address": {
-      "required": [ ],
-      "pii": [ ],
-      "elementRangeIndex": [ ],
-      "rangeIndex": [ ],
-      "wordLexicon": [ ],
-      "properties": {
-        "street": {
-          "datatype": "array",
-          "items": {
-            "datatype": "string",
-            "collation": "http://marklogic.com/collation/codepoint"
-          }
-        },
-        "city": {
-          "datatype": "string",
-          "collation": "http://marklogic.com/collation/codepoint"
-        },
-        "state": {
-          "datatype": "string",
-          "collation": "http://marklogic.com/collation/codepoint"
-        },
-        "zip": {
-          "$ref": "#/definitions/Zip"
-        }
-      }
-    },
-    "Zip": {
-      "required": [ ],
-      "properties": {
-        "fiveDigit": {
-          "datatype": "string",
-          "collation": "http://marklogic.com/collation/codepoint"
-        },
-        "plusFour": {
-          "datatype": "string",
-          "collation": "http://marklogic.com/collation/codepoint"
-        }
-      }
+          "relatedConcepts": [
+            {
+              "context": "category",
+              "predicate": "isCategory",
+              "conceptExpression": "sem:iri(\"http://www.example.com/Category/\" || fn:replace(fn:string(.),'\\s+', ''))"
+            }
+          ]
     }
-}
+  }
 }
