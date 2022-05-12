@@ -19,12 +19,20 @@ const configMultiple = {
             placement: "right",
             items: [
                 {
+                    component: "DateTime",
+                    label: "Activity date",
+                    config: {
+                        path: "ts",
+                        format: "MMMM dd, yyyy"
+                    }
+                },
+                {
                     label: "Source",
                     path: "source.name"
                 },
                 {
                     component: "DateTime",
-                    label: "Created on",
+                    label: "Source date",
                     config: {
                         path: "source.ts",
                         format: "MMMM dd, yyyy"
