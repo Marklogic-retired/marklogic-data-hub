@@ -63,6 +63,22 @@ function handleByPredicate(entityName, predicateIRI) {
   });
   return graphUtils.getEntityNodes(entityTypeIRI, predicateIRI, relatedTypeIRIs, limit);
 }
+
+function handleByConceptObjectAndParentEntity(parentEntityName, objectConceptIRI) {
+  let EntityTypeIRIsWithoutParent = [];
+  let predicateConceptList = [];
+  fn.collection(entityLib.getModelCollection()).toArray().forEach(model => {
+    model = model.toObject();
+    const modelName = model.info.title;
+      if (modelName != parentEntityName) {
+        const entityNameIri = entityLib.getEntityTypeId(model, modelName);
+        EntityTypeIRIsWithoutParent.push(sem.iri(entityNameIri));
+        predicateConceptList = predicateConceptList.concat(entityLib.getConceptPredicatesByModel(model));
+      }
+  });
+  return graphUtils.getEntityNodesExpandingConcept(EntityTypeIRIsWithoutParent, objectConceptIRI, limit);
+}
+
 var nodeInfo;
 var limit;
 
@@ -74,6 +90,10 @@ limit = limit || 100;
 let queryObj = JSON.parse(nodeInfo);
 const nodeToExpand = queryObj.parentIRI;
 
+let isConcept = false;
+if(queryObj.isConcept != null && queryObj.isConcept === true){
+  isConcept = true;
+}
 let isByEntityType = false;
 var hashmapPredicate = new Map();
 
@@ -87,45 +107,50 @@ const entityIdSplit = entityId.split("-");
 let result;
 let totalEstimate = 0;
 
-if(entityIdSplit.length == 1) {
-  //has relationship option
-  const entityType = entityIRIArr[entityIRIArr.length - 2];
-  result = handleBySubjectIRI(entityType, nodeToExpand);
-  totalEstimate = fn.count(cts.triples(sem.iri(nodeToExpand), hashmapPredicate.get(entityType), null));
-} else if(entityIdSplit.length == 2) {
-  //by predicate option
-  let entityTypeName = entityIdSplit[1];
-  let predicateIRI = null;
-  if(queryObj.predicateFilter !== undefined && queryObj.predicateFilter.length > 0) {
-    predicateIRI = sem.iri(queryObj.predicateFilter);
+if(!isConcept){
+  if(entityIdSplit.length == 1) {
+    //has relationship option
+    const entityType = entityIRIArr[entityIRIArr.length - 2];
+    result = handleBySubjectIRI(entityType, nodeToExpand);
+    totalEstimate = fn.count(cts.triples(sem.iri(nodeToExpand), hashmapPredicate.get(entityType), null));
+  } else if(entityIdSplit.length == 2) {
+    //by predicate option
+    let entityTypeName = entityIdSplit[1];
+    let predicateIRI = null;
+    if(queryObj.predicateFilter !== undefined && queryObj.predicateFilter.length > 0) {
+      predicateIRI = sem.iri(queryObj.predicateFilter);
+    }
+    isByEntityType = true;
+    const rootNode = sem.iri(nodeToExpand.substring(0, nodeToExpand.length - entityTypeName.length - 1));
+    totalEstimate = fn.count(cts.triples(rootNode, predicateIRI, null));
+    //as the total is only one more than limit, we dont create an a additional node with remaining count, we show a real node DHFPROD-8377
+    let limitNumberPlusOne= Number(limit);
+    limitNumberPlusOne ++;
+    if(limitNumberPlusOne === totalEstimate){
+      limit = limitNumberPlusOne;
+    }
+    result = handleByPredicate(entityTypeName, predicateIRI);
   }
-  isByEntityType = true;
-  const rootNode = sem.iri(nodeToExpand.substring(0, nodeToExpand.length - entityTypeName.length - 1));
-  totalEstimate = fn.count(cts.triples(rootNode, predicateIRI, null));
-  //as the total is only one more than limit, we dont create an a additional node with remaining count, we show a real node DHFPROD-8377
-  let limitNumberPlusOne= Number(limit);
-  limitNumberPlusOne ++;
-  if(limitNumberPlusOne === totalEstimate){
-    limit = limitNumberPlusOne;
-  }
-  result = handleByPredicate(entityTypeName, predicateIRI);
-}
+}else{
+   //is concept
+  const parentEntityType = entityIRIArr[entityIRIArr.length - 2];
+  let objectConcept = sem.iri(queryObj.objectConcept);
+  totalEstimate = 1;
+  result = handleByConceptObjectAndParentEntity(parentEntityType,objectConcept);
 
+}
 let nodes = [];
 let edges = [];
 let addedAdditionalNode = false;
 let additionalEdge = {};
 let additionalNode = {};
 
-if (isByEntityType) {
+if (isConcept) {
   result.map(item => {
-    const objectIRI = item.objectIRI.toString();
+    const objectIRI = item.subjectIRI.toString();
     let subjectArr = objectIRI.split("/");
     const objectId = subjectArr[subjectArr.length - 1];
-
     const group = objectIRI.substring(0, objectIRI.length - objectId.length - 1);
-    let hasRelationships = graphUtils.relatedObjHasRelationships(objectIRI, hashmapPredicate);
-
     let nodeExpanded = {};
     nodeExpanded.id = objectIRI;
     nodeExpanded.docURI = item.docURI;
@@ -133,94 +158,124 @@ if (isByEntityType) {
     nodeExpanded.group = group;
     nodeExpanded.additionalProperties = null;
     nodeExpanded.isConcept = false;
-    nodeExpanded.hasRelationships = hasRelationships;
+    nodeExpanded.hasRelationships = false;
     nodeExpanded.count = 1;
     nodes.push(nodeExpanded);
-    let predicateArr = item.predicateIRI.toString().split("/");
-    let edgeLabel = predicateArr[predicateArr.length - 1];
+    let edgeLabel = item.predicateIRI;
 
     let edge = {};
-    edge.id = "edge-" + item.subjectIRI + "-" + item.predicateIRI + "-" + objectIRI;
-    edge.predicate = item.predicateIRI;
+    edge.id = "edge-" + item.subjectIRI + "-" + item.predicateIRI + "-" + item.objectConcept;
+    edge.predicate = group+"/"+ item.predicateIRI;
     edge.label = edgeLabel;
     edge.from = item.subjectIRI;
-    edge.to = objectIRI;
+    edge.to = item.objectConcept;
     edges.push(edge);
-
-    if(limit < totalEstimate && !addedAdditionalNode){
-      //creating additional node
-      additionalNode.id = nodeToExpand;
-      additionalNode.docURI = null;
-      additionalNode.label = entityIdSplit[1];
-      additionalNode.group = group;
-      additionalNode.additionalProperties = null;
-      additionalNode.isConcept = false;
-      additionalNode.hasRelationships = false;
-      additionalNode.count = totalEstimate - limit;
-      //creating additional edge
-      additionalEdge.id = "edge-" + item.subjectIRI + "-" + item.predicateIRI + "-" + nodeToExpand;
-      additionalEdge.predicate = item.predicateIRI;
-      additionalEdge.label = edgeLabel;
-      additionalEdge.from = item.subjectIRI;
-      additionalEdge.to = nodeToExpand;
-      addedAdditionalNode = true;
-    }
   })
-  //this is an additional node with remaining count
-  if(addedAdditionalNode){
-    //adding the node that we loaded before
-    nodes.push(additionalNode);
-    //adding the edge that we loaded before
-    edges.push(additionalEdge);
+}else{
+  if (isByEntityType) {
+    result.map(item => {
+      const objectIRI = item.objectIRI.toString();
+      let subjectArr = objectIRI.split("/");
+      const objectId = subjectArr[subjectArr.length - 1];
+
+      const group = objectIRI.substring(0, objectIRI.length - objectId.length - 1);
+      let hasRelationships = graphUtils.relatedObjHasRelationships(objectIRI, hashmapPredicate);
+
+      let nodeExpanded = {};
+      nodeExpanded.id = objectIRI;
+      nodeExpanded.docURI = item.docURI;
+      nodeExpanded.label = objectId;
+      nodeExpanded.group = group;
+      nodeExpanded.additionalProperties = null;
+      nodeExpanded.isConcept = false;
+      nodeExpanded.hasRelationships = hasRelationships;
+      nodeExpanded.count = 1;
+      nodes.push(nodeExpanded);
+      let predicateArr = item.predicateIRI.toString().split("/");
+      let edgeLabel = predicateArr[predicateArr.length - 1];
+
+      let edge = {};
+      edge.id = "edge-" + item.subjectIRI + "-" + item.predicateIRI + "-" + objectIRI;
+      edge.predicate = item.predicateIRI;
+      edge.label = edgeLabel;
+      edge.from = item.subjectIRI;
+      edge.to = objectIRI;
+      edges.push(edge);
+
+      if(limit < totalEstimate && !addedAdditionalNode){
+        //creating additional node
+        additionalNode.id = nodeToExpand;
+        additionalNode.docURI = null;
+        additionalNode.label = entityIdSplit[1];
+        additionalNode.group = group;
+        additionalNode.additionalProperties = null;
+        additionalNode.isConcept = false;
+        additionalNode.hasRelationships = false;
+        additionalNode.count = totalEstimate - limit;
+        //creating additional edge
+        additionalEdge.id = "edge-" + item.subjectIRI + "-" + item.predicateIRI + "-" + nodeToExpand;
+        additionalEdge.predicate = item.predicateIRI;
+        additionalEdge.label = edgeLabel;
+        additionalEdge.from = item.subjectIRI;
+        additionalEdge.to = nodeToExpand;
+        addedAdditionalNode = true;
+      }
+    })
+    //this is an additional node with remaining count
+    if(addedAdditionalNode){
+      //adding the node that we loaded before
+      nodes.push(additionalNode);
+      //adding the edge that we loaded before
+      edges.push(additionalEdge);
+    }
+
+  } else {
+    result.map(item => {
+      const objectIRI = item.firstObjectIRI.toString();
+      let subjectArr = objectIRI.split("/");
+      let objectId = subjectArr[subjectArr.length - 1];
+      let nodeId = objectIRI;
+      let nodeLabel = objectId;
+      let nodeDocUri = item.firstDocURI;
+      let nodeCount = 1;
+
+      if(item.nodeCount && item.nodeCount > 1) {
+        nodeLabel = subjectArr[subjectArr.length - 2];
+        nodeId = nodeToExpand + "-" + subjectArr[subjectArr.length - 2];
+        nodeCount = item.nodeCount;
+        nodeDocUri = null;
+      }
+
+      const group = objectIRI.substring(0, objectIRI.length - objectId.length - 1);
+
+      let hasRelationships = false;
+      if(item.nodeCount) {
+        hasRelationships = graphUtils.relatedObjHasRelationships(objectIRI, hashmapPredicate);
+      }
+      let nodeExpanded = {};
+      nodeExpanded.id = nodeId;
+      nodeExpanded.docURI = nodeDocUri;
+      nodeExpanded.label = nodeLabel;
+      nodeExpanded.group = group;
+      nodeExpanded.additionalProperties = null;
+      nodeExpanded.isConcept = false;
+      nodeExpanded.hasRelationships = hasRelationships;
+      nodeExpanded.count = nodeCount;
+      nodes.push(nodeExpanded);
+
+      let predicateArr = item.predicateIRI.toString().split("/");
+      let edgeLabel = predicateArr[predicateArr.length - 1];
+
+      let edge = {};
+      edge.id = "edge-" + nodeToExpand + "-" + item.predicateIRI + "-" + objectIRI;
+      edge.predicate = item.predicateIRI;
+      edge.label = edgeLabel;
+      edge.from = nodeToExpand;
+      edge.to = nodeId;
+      edges.push(edge);
+    });
   }
-
-} else {
-  result.map(item => {
-    const objectIRI = item.firstObjectIRI.toString();
-    let subjectArr = objectIRI.split("/");
-    let objectId = subjectArr[subjectArr.length - 1];
-    let nodeId = objectIRI;
-    let nodeLabel = objectId;
-    let nodeDocUri = item.firstDocURI;
-    let nodeCount = 1;
-
-    if(item.nodeCount && item.nodeCount > 1) {
-      nodeLabel = subjectArr[subjectArr.length - 2];
-      nodeId = nodeToExpand + "-" + subjectArr[subjectArr.length - 2];
-      nodeCount = item.nodeCount;
-      nodeDocUri = null;
-    }
-
-    const group = objectIRI.substring(0, objectIRI.length - objectId.length - 1);
-
-    let hasRelationships = false;
-    if(item.nodeCount) {
-      hasRelationships = graphUtils.relatedObjHasRelationships(objectIRI, hashmapPredicate);
-    }
-    let nodeExpanded = {};
-    nodeExpanded.id = nodeId;
-    nodeExpanded.docURI = nodeDocUri;
-    nodeExpanded.label = nodeLabel;
-    nodeExpanded.group = group;
-    nodeExpanded.additionalProperties = null;
-    nodeExpanded.isConcept = false;
-    nodeExpanded.hasRelationships = hasRelationships;
-    nodeExpanded.count = nodeCount;
-    nodes.push(nodeExpanded);
-
-    let predicateArr = item.predicateIRI.toString().split("/");
-    let edgeLabel = predicateArr[predicateArr.length - 1];
-
-    let edge = {};
-    edge.id = "edge-" + nodeToExpand + "-" + item.predicateIRI + "-" + objectIRI;
-    edge.predicate = item.predicateIRI;
-    edge.label = edgeLabel;
-    edge.from = nodeToExpand;
-    edge.to = nodeId;
-    edges.push(edge);
-  });
 }
-
 
 const response = {
   'total': totalEstimate,
