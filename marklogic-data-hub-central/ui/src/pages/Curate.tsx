@@ -47,9 +47,9 @@ const Curate: React.FC = () => {
       const stepDefinitionType = storedCurateArtifact["stepDefinitionType"];
       if (stepDefinitionType === "mapping") {
         history.push({pathname: "/tiles/curate/map"});
-      } else if (stepDefinitionType === "matching") {
+      } else if (stepDefinitionType === "MATCHING" || stepDefinitionType === "matching") {
         history.push({pathname: "/tiles/curate/match"});
-      } else if (stepDefinitionType === "merging") {
+      } else if (stepDefinitionType === "MERGING") {
         history.push({pathname: "/tiles/curate/merge"});
       }
     }

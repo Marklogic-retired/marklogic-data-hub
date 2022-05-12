@@ -11,6 +11,8 @@ import {
   entityTypeTable,
   graphViewSidePanel
 } from "../../support/components/model/index";
+import multiSlider from "../../support/components/common/multi-slider";
+import {matchingStepDetail} from "../../support/components/matching";
 
 describe("Validate persistence across Hub Central", () => {
   let entityNamesAsc: string[] = [];
@@ -176,17 +178,53 @@ describe("Validate persistence across Hub Central", () => {
   //   cy.findByTestId("arrow-left").click();
   // });
 
-  it.skip("Switch to curate tile, go to Matching step details, and then visit another tile. When returning to curate tile, the step details view is persisted", () => {
+  it("Switch to curate tile, go to Matching step details, and then visit another tile. When returning to curate tile, the step details view is persisted", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Person").should("be.visible"));
     curatePage.toggleEntityTypeId("Person");
     curatePage.selectMatchTab("Person");
     curatePage.openStepDetails("match-person");
-    cy.contains("The Matching step defines the criteria for comparing documents, as well as the actions to take based on the degree of similarity, which is measured as weights.");
+    cy.contains("The Matching step defines the criteria for determining whether the values from entities match, and the action to take based on how close of a match they are.");
+    matchingStepDetail.getExpandBtn().click();
+
+    cy.log("*** Change state of more/less links ***");
+
+    matchingStepDetail.getMoreLinks().first().click({force: true});
+    cy.contains("If only some of the values in the entities must match, then move the threshold lower.");
+    matchingStepDetail.getMoreLinks().first().click({force: true});
+    cy.contains("If you want it to have only some influence, then move the ruleset lower.");
+
+    cy.log("*** Change state of timeline toggles ***");
+    multiSlider.enableEdit("threshold");
+    multiSlider.enableEdit("ruleset");
+
+    cy.log("*** Add URI's and test response ***");
+    matchingStepDetail.getAllDataURIRadio().scrollIntoView().click({force: true});
+    matchingStepDetail.getUriInputField().type("/test/Uri1");
+    matchingStepDetail.getAddUriIcon().click();
+    matchingStepDetail.getUriInputField().clear().type("/test/Uri2");
+    matchingStepDetail.getAddUriIcon().click();
+    matchingStepDetail.verifyURIAdded("/test/Uri1");
+    matchingStepDetail.verifyURIAdded("/test/Uri2");
+    matchingStepDetail.getTestMatchUriButton();
+    cy.findByLabelText("noMatchedDataView").should("have.length.gt", 0);
+
+    cy.log("*** Return to Curate Tab and verify all states changed above are persisted");
+
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
-    cy.contains("The Matching step defines the criteria for comparing documents, as well as the actions to take based on the degree of similarity, which is measured as weights.");
-    cy.findByTestId("arrow-left").click();
+    cy.contains("The Matching step defines the criteria for determining whether the values from entities match, and the action to take based on how close of a match they are.");
+    cy.contains("If only some of the values in the entities must match, then move the threshold lower.");
+    cy.contains("If you want it to have only some influence, then move the ruleset lower.");
+    multiSlider.sliderIsActive("threshold");
+    multiSlider.sliderIsActive("ruleset");
+
+    matchingStepDetail.getAllDataURIRadio().should("be.checked");
+    matchingStepDetail.verifyURIAdded("/test/Uri1");
+    matchingStepDetail.verifyURIAdded("/test/Uri2");
+    cy.findByLabelText("noMatchedDataView").should("have.length.gt", 0);
+
+    matchingStepDetail.getBackButton().scrollIntoView().click();
   });
 
   it.skip("Switch to curate tile, go to Merging step details, and then visit another tile. When returning to curate tile, the step details view is persisted", () => {

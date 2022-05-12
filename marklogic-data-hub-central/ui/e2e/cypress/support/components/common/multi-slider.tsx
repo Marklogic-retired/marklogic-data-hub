@@ -87,6 +87,10 @@ class MultiSlider {
   enableEdit(name: string) {
     cy.get(`[aria-label="${name}-scale-switch"]`).click({force: true});
   }
+
+  sliderIsActive(name: string) {
+    return cy.get(`[aria-label="${name}-scale-switch"]`).should("be.checked");
+  }
 }
 
 const multiSlider = new MultiSlider();

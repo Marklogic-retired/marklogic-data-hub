@@ -139,7 +139,7 @@ const MonitorFacet: React.FC<Props> = (props) => {
     return (
       <div key={"facet" + index} className={styles.checkContainer}>
         <HCCheckbox
-          id={"facet" + index}
+          id={"facet-" + facet.name + "-" + index}
           handleClick={(e) => handleClick(e)}
           value={facet.value}
           label={facet ? checkFacetLabel(facet.value) : ""}

@@ -23,6 +23,22 @@ export type ViewSettingsType = {
         modelDefinition?: any,
         entityType?: string
     },
+    match?: {
+        rulesetExpanded?: boolean,
+        editRulesetTimeline?: boolean,
+        rulesetTextExpanded?: boolean,
+        editThresholdTimeline?: boolean,
+        thresholdTextExpanded?: boolean,
+        testRadioSelection?: number,
+        previewMatchedDataActivity?: {},
+        previewMatchedDataValue?: number,
+        rulesetData?: [],
+        uriTestClicked?: boolean,
+        uriTableData1?: any [],
+        uriTableData2?: any [],
+        inputUriState?: boolean,
+        inputUri2State?: boolean
+    },
     run?: {
         openFlows?: string[],
     },
