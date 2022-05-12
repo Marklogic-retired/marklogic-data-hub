@@ -13,11 +13,12 @@ class EntityModel {
             .map((definitionName) => {
                 return `#/definitions/${definitionName}`;
             });
-        const definitionsArray = Object.values(this.definitions);
+        const definitionsArray = Object.keys(this.definitions).map((key) => this.definitions[key]);
         this.topLevelDefinitionName = localReferences
             .filter((localReference) => {
                 return !definitionsArray.some((definition) => {
-                    return Object.values(definition.properties)
+                    return Object.keys(definition.properties)
+                        .map((key) => definition.properties[key])
                         .some((property) => {
                             const ref = property["$ref"] || (property.items && property.items["$ref"]);
                             return ref === localReference;
