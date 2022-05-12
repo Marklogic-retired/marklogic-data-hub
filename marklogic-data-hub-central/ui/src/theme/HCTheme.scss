@@ -97,6 +97,10 @@
 .cursor-pointer {
     cursor: pointer;
 }
+.cursor-not-allowed {
+    pointer-events: auto! important;
+    cursor: not-allowed! important;
+}
 .dropdown-toggle::after {
     display: none !important;
 }

@@ -179,9 +179,9 @@ const ColumnSelector: React.FC<Props> = (props) => {
     <OverlayTrigger placement="left-start" show={props.popoverVisibility} overlay={content} trigger="click">
       <div className={styles.fixedPopup}>
         <HCTooltip id="select-columns-tooltip" text="Select the columns to display." placement="top-end">
-          <i>
+          <span>
             <FontAwesomeIcon onClick={() => props.setPopoverVisibility(true)} className={styles.columnIcon} icon={faColumns} size="lg" data-testid="column-selector-tooltip"/>
-          </i>
+          </span>
         </HCTooltip>
       </div>
     </OverlayTrigger>

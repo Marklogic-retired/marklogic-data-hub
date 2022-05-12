@@ -14,6 +14,7 @@ import DiscardChangesModal from "./saving/discard-changes/discard-changes-modal"
 import {QueryOptions} from "../../types/query-types";
 import {HCButton, HCTooltip} from "@components/common";
 import {themeColors} from "@config/themes.config";
+import tooltipsConfig from "@config/explorer-tooltips.config";
 
 interface Props {
   queries: any[];
@@ -69,6 +70,8 @@ const Query: React.FC<Props> = (props) => {
 
   const [existingQueryYesClicked, toggleExistingQueryYesClicked] = useState(false); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [resetYesClicked, toggleResetYesClicked] = useState(false);
+
+  const {exploreSidebarQueries} = tooltipsConfig;
 
   const saveNewQuery = async (queryName, queryDescription, facets) => {
     let query = {
@@ -417,6 +420,8 @@ const Query: React.FC<Props> = (props) => {
 
   }, [searchOptions, props.greyFacets, isSaveQueryChanged()]);
 
+  const isEnabledSaveButton = () => props.isSavedQueryUser && (props.selectedFacets.length > 0 || searchOptions.query || props.isColumnSelectorTouched || searchOptions.sortOrder.length > 0) && searchOptions.selectedQuery === "select a query";
+
   return (
     <>
       <div>
@@ -443,78 +448,91 @@ const Query: React.FC<Props> = (props) => {
             </div>
 
             <div className={styles.iconBar}>
-              {(props.selectedFacets.length > 0 || searchOptions.query
-                || props.isColumnSelectorTouched || searchOptions.sortOrder.length > 0) &&
-                showSaveNewIcon && searchOptions.selectedQuery === "select a query" &&
-                <div>
-                  <HCTooltip text={props.isSavedQueryUser ? "Save the current query" : "Save Query: Contact your security administrator to get the roles and permissions to access this functionality"} id="save-current-query-tooltip" placement="top">
-                    <span className="p-1"><FontAwesomeIcon
-                      icon={faSave}
-                      onClick={props.isSavedQueryUser ? () => setOpenSaveModal(true) : () => setOpenSaveModal(false)}
-                      className={props.isSavedQueryUser ? styles.enabledSaveIcon : styles.disabledSaveIcon}
-                      data-testid="save-modal"
-                      size="lg"
-                      style={{width: "15px", color: themeColors.info, cursor: "pointer"}}
-                    /></span>
+              <div>
+                {showSaveNewIcon &&
+                  <HCTooltip
+                    text={
+                      props.isSavedQueryUser ? (((props.selectedFacets.length > 0 || searchOptions.query || props.isColumnSelectorTouched || searchOptions.sortOrder.length > 0) && searchOptions.selectedQuery === "select a query") ?
+                        exploreSidebarQueries.saveNewQuery :
+                        exploreSidebarQueries.disabledSaveButton
+                      ) :
+                        exploreSidebarQueries.saveWithoutPermisions
+                    }
+                    id="save-current-query-tooltip"
+                    placement="top"
+                  >
+                    <span className="p-1">
+                      <FontAwesomeIcon
+                        icon={faSave}
+                        onClick={isEnabledSaveButton() ? () => setOpenSaveModal(true) : () => setOpenSaveModal(false)}
+                        className={isEnabledSaveButton() ? styles.enabledSaveIcon : styles.disabledSaveIcon}
+                        data-testid="save-modal"
+                        size="lg"
+                      />
+                    </span>
                   </HCTooltip>
-                  <div id={"savedQueries"}>
-                    {openSaveModal &&
-                      <SaveQueryModal
-                        setSaveModalVisibility={() => setOpenSaveModal(false)}
-                        setSaveNewIconVisibility={(visibility) => toggleSaveNewIcon(visibility)}
-                        saveNewQuery={saveNewQuery}
-                        greyFacets={props.greyFacets}
-                        toggleApply={(clicked) => props.toggleApply(clicked)}
-                        toggleApplyClicked={(clicked) => props.toggleApplyClicked(clicked)}
-                        currentQueryName={currentQueryName}
-                        setCurrentQueryName={setCurrentQueryName}
-                        currentQueryDescription={currentQueryDescription}
-                        setCurrentQueryDescription={setCurrentQueryDescription}
-                        resetYesClicked={resetYesClicked}
-                        setColumnSelectorTouched={props.setColumnSelectorTouched}
-                        existingQueryYesClicked={existingQueryYesClicked}
-                      />}
-                  </div>
-                </div>}
+                }
+                <div id={"savedQueries"}>
+                  {openSaveModal &&
+                    <SaveQueryModal
+                      setSaveModalVisibility={() => setOpenSaveModal(false)}
+                      setSaveNewIconVisibility={(visibility) => toggleSaveNewIcon(visibility)}
+                      saveNewQuery={saveNewQuery}
+                      greyFacets={props.greyFacets}
+                      toggleApply={(clicked) => props.toggleApply(clicked)}
+                      toggleApplyClicked={(clicked) => props.toggleApplyClicked(clicked)}
+                      currentQueryName={currentQueryName}
+                      setCurrentQueryName={setCurrentQueryName}
+                      currentQueryDescription={currentQueryDescription}
+                      setCurrentQueryDescription={setCurrentQueryDescription}
+                      resetYesClicked={resetYesClicked}
+                      setColumnSelectorTouched={props.setColumnSelectorTouched}
+                      existingQueryYesClicked={existingQueryYesClicked}
+                    />}
+                </div>
+              </div>
 
-              {props.isSavedQueryUser && showSaveChangesIcon && props.queries.length > 0 &&
-                <div>
-                  <HCTooltip text="Save changes" id="save-changes-tooltip" placement="top">
-                    <span className="p-1"><FontAwesomeIcon
-                      icon={faSave}
-                      className={styles.iconHover}
-                      title="save-changes"
-                      onClick={() => setOpenSaveChangesModal(true)}
-                      data-testid="save-changes-modal"
-                      size="lg"
-                      style={{width: "15px", color: themeColors.info, cursor: "pointer"}}
-                    /></span>
+              <div>
+                {props.isSavedQueryUser && showSaveChangesIcon && props.queries.length > 0 &&
+                  <HCTooltip text={exploreSidebarQueries.saveChanges} id="save-changes-tooltip" placement="top">
+                    <span className="p-1">
+                      <FontAwesomeIcon
+                        icon={faSave}
+                        className={styles.iconHover}
+                        title="save-changes"
+                        onClick={() => setOpenSaveChangesModal(true)}
+                        data-testid="save-changes-modal"
+                        size="lg"
+                        style={{width: "15px", color: themeColors.info, cursor: "pointer"}}
+                      />
+                    </span>
                   </HCTooltip>
-                  <div id={"saveChangedQueries"}>
-                    {openSaveChangesModal &&
-                      <SaveChangesModal
-                        entityDefArray={props.entityDefArray}
-                        setSaveChangesModalVisibility={() => setOpenSaveChangesModal(false)}
-                        setSaveNewIconVisibility={(visibility) => toggleSaveNewIcon(visibility)}
-                        greyFacets={props.greyFacets}
-                        toggleApply={(clicked) => props.toggleApply(clicked)}
-                        toggleApplyClicked={(clicked) => props.toggleApplyClicked(clicked)}
-                        currentQuery={currentQuery}
-                        currentQueryName={currentQueryName}
-                        setCurrentQueryDescription={(description) => setCurrentQueryDescription(description)}
-                        setCurrentQueryName={(name) => setCurrentQueryName(name)}
-                        nextQueryName={nextQueryName}
-                        savedQueryList={props.queries}
-                        setCurrentQueryOnEntityChange={setCurrentQueryOnEntityChange}
-                        getSaveQueryWithId={(key) => getSaveQueryWithId(key)}
-                        isSaveQueryChanged={isSaveQueryChanged}
-                        entityQueryUpdate={entityQueryUpdate}
-                        toggleEntityQueryUpdate={() => toggleEntityQueryUpdate(false)}
-                        resetYesClicked={resetYesClicked}
-                        setColumnSelectorTouched={props.setColumnSelectorTouched}
-                      />}
-                  </div>
-                </div>}
+                }
+                <div id={"saveChangedQueries"}>
+                  {openSaveChangesModal &&
+                    <SaveChangesModal
+                      entityDefArray={props.entityDefArray}
+                      setSaveChangesModalVisibility={() => setOpenSaveChangesModal(false)}
+                      setSaveNewIconVisibility={(visibility) => toggleSaveNewIcon(visibility)}
+                      greyFacets={props.greyFacets}
+                      toggleApply={(clicked) => props.toggleApply(clicked)}
+                      toggleApplyClicked={(clicked) => props.toggleApplyClicked(clicked)}
+                      currentQuery={currentQuery}
+                      currentQueryName={currentQueryName}
+                      setCurrentQueryDescription={(description) => setCurrentQueryDescription(description)}
+                      setCurrentQueryName={(name) => setCurrentQueryName(name)}
+                      nextQueryName={nextQueryName}
+                      savedQueryList={props.queries}
+                      setCurrentQueryOnEntityChange={setCurrentQueryOnEntityChange}
+                      getSaveQueryWithId={(key) => getSaveQueryWithId(key)}
+                      isSaveQueryChanged={isSaveQueryChanged}
+                      entityQueryUpdate={entityQueryUpdate}
+                      toggleEntityQueryUpdate={() => toggleEntityQueryUpdate(false)}
+                      resetYesClicked={resetYesClicked}
+                      setColumnSelectorTouched={props.setColumnSelectorTouched}
+                    />}
+                </div>
+              </div>
               {searchOptions.selectedQuery !== "select a query" &&
                 <div>{ellipsisMenu}</div>
               }
