@@ -39,8 +39,8 @@ describe("Focus Defocus clusters", () => {
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
       let customerCoordinates: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
       const canvas = graphExplore.getGraphVisCanvas();
-      //Click on node to open side panel
-      canvas.click(customerCoordinates.x, customerCoordinates.y, {force: true});
+      //Hover and click on node to open side panel
+      canvas.trigger("mouseover").click(customerCoordinates.x, customerCoordinates.y, {force: true});
       canvas.click(customerCoordinates.x, customerCoordinates.y, {force: true});
       canvas.dblclick(customerCoordinates.x, customerCoordinates.y, {force: true});
     });

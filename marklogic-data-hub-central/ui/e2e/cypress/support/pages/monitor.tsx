@@ -13,15 +13,6 @@ class MonitorPage {
   getTableRows() {
     return cy.get(".hc-table_row");
   }
-
-  verifyTableRow(stepName: string) {
-    return cy.get(`[data-testid=${stepName}-result]`);
-  }
-
-  getAllJobIdLink() {
-    return cy.findAllByTestId("jobId-link");
-  }
-
   waitForMonitorTableToLoad() {
     cy.waitUntil(() => this.getTableRows().should("have.length.gt", 0));
   }
@@ -41,8 +32,6 @@ class MonitorPage {
     cy.get(`[data-testid=${facetType}-facet] input`).eq(index).then(($btn) => {
       let facet = $btn.next("label").text();
       cy.get("#selected-facets [data-cy=\"clear-" + $btn.val() + "\"]").should("exist");
-      // On firefox it gets stuck and then tries everything at once
-      cy.wait(1000);
       // Click expand all table rows to validate info inside
       this.getExpandAllTableRows().scrollIntoView().click().then(() => {
         cy.get(".rowExpandedDetail").then(($row) => {

@@ -76,7 +76,7 @@ describe("Entity Type Settings Modal", () => {
 
   it("Open settings modal, check default values, select new ones cancel and check that the defaults values are keep", () => {
     browsePage.waitForSpinnerToDisappear();
-    cy.wait(3000);
+    cy.wait(5000);
     cy.log("**Select Graph view and open explore settings modal**");
     browsePage.clickGraphView();
     browsePage.waitForSpinnerToDisappear();
