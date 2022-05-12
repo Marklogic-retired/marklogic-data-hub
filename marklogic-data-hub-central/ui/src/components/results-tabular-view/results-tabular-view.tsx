@@ -5,10 +5,13 @@ import styles from "./results-tabular-view.module.scss";
 import ColumnSelector from "@components/column-selector/column-selector";
 import {SearchContext} from "@util/search-context";
 import {Link} from "react-router-dom";
-import {faCode, faProjectDiagram, faThList} from "@fortawesome/free-solid-svg-icons";
+import {faCode, faProjectDiagram, faThList, IconDefinition} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {dateConverter} from "@util/date-conversion";
 import {HCTooltip, HCTable} from "@components/common";
+import {faFileExport, faColumns} from "@fortawesome/free-solid-svg-icons";
+import {themeColors} from "@config/themes.config";
+import tooltipsConfig from "@config/explorer-tooltips.config";
 
 /* eslint-disable */
 interface Props {
@@ -571,18 +574,43 @@ const ResultsTabularView = (props) => {
     );
   };
 
+  type TDisabledIcon = {
+    tooltipId: string,
+    tooltipText: string,
+    icon: IconDefinition,
+    iconTestId: string
+  };
+
+  const DisabledIcon = ({tooltipId, tooltipText, icon, iconTestId}: TDisabledIcon) =>
+    <HCTooltip text={tooltipText} id={tooltipId} placement="top-end">
+      <span>
+        <FontAwesomeIcon className={`cursor-not-allowed ${styles.iconDisabled}`} color={themeColors.light} icon={icon} size="lg" data-testid={iconTestId} />
+      </span>
+    </HCTooltip>;
+
   return (
     <>
-      {!props.groupNodeTableView ? <div className={styles.icon}>
-        {searchOptions.entityTypeIds?.length === 1 ? <>
+      {!props.groupNodeTableView &&
+        <div className={styles.icon}>
           <div className={styles.queryExport} data-cy="query-export">
-            {canExportQuery && <QueryExport hasStructured={props.hasStructured} columns={props.columns} selectedPropertyDefinitions={props.selectedPropertyDefinitions} />}
+            {canExportQuery ?
+              <>
+                {searchOptions.entityTypeIds?.length === 1 ?
+                  <QueryExport hasStructured={props.hasStructured} columns={props.columns} selectedPropertyDefinitions={props.selectedPropertyDefinitions} /> :
+                  <DisabledIcon tooltipId="export-results-tooltip" tooltipText={tooltipsConfig.tabularView.queryExportDisabled} icon={faFileExport} iconTestId="query-export-disabled" />
+                }
+              </> :
+              <DisabledIcon tooltipId="export-results-tooltip" tooltipText={tooltipsConfig.tabularView.queryExportUnautorized} icon={faFileExport} iconTestId="query-export-unautorized" />
+            }
           </div>
           <div className={styles.columnSelector} data-cy="column-selector">
-            <ColumnSelector popoverVisibility={popoverVisibility} setPopoverVisibility={setPopoverVisibility} entityPropertyDefinitions={props.entityPropertyDefinitions} selectedPropertyDefinitions={props.selectedPropertyDefinitions} setColumnSelectorTouched={props.setColumnSelectorTouched} columns={props.columns} primaryKey={primaryKey} />
+            {searchOptions.entityTypeIds?.length === 1 ?
+              <ColumnSelector popoverVisibility={popoverVisibility} setPopoverVisibility={setPopoverVisibility} entityPropertyDefinitions={props.entityPropertyDefinitions} selectedPropertyDefinitions={props.selectedPropertyDefinitions} setColumnSelectorTouched={props.setColumnSelectorTouched} columns={props.columns} primaryKey={primaryKey} /> :
+              <DisabledIcon tooltipId="select-columns-tooltip" tooltipText={tooltipsConfig.tabularView.columnSelectorDisabled} icon={faColumns} iconTestId="column-selector-tooltip-disabled" />
+            }
           </div>
-        </> : ""}
-      </div> : ""}
+        </div>
+      }
       <div className={styles.tabular}>
         {tableHeaders.length > 0 && <HCTable
           data-testid="result-table"

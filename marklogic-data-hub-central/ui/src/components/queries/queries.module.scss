@@ -3,13 +3,13 @@
 .description {
     margin-left: 10px;
     font-size: 12px;
-    color: #777777;
+    color: $secondary-gray;
 }
 
 .longDescription {
     margin-left: 10px;
     font-size: 12px;
-    color: #777777;
+    color: $secondary-gray;
     text-overflow: ellipsis;
 }
 
@@ -21,13 +21,11 @@
     color: grey;
     opacity: 0.5;
     cursor: not-allowed;
-    margin-bottom: 9px;
 }
 
 .enabledSaveIcon {
     cursor: pointer;
     color: $info;
-    margin-bottom: 9px;
 }
 
 .queryBar {
@@ -68,7 +66,7 @@
     padding: 0 10px !important;
 }
 .queryIconsEllipsis {
-    color: #777777;
+    color: $secondary-gray;
 }
 .queryMenuItemIcon {
     margin-right: 10px;
