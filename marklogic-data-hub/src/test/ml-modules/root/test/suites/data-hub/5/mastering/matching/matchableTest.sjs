@@ -141,8 +141,60 @@ function testMatchRulesetDefinitions() {
   }
 }
 
+function testBuildActionDetails() {
+  const docA = cts.doc("/content/docA.json");
+  const matchStep = {
+    targetEntityType: "http://example.org/Customer-0.0.1/Customer",
+    thresholds: [
+      {
+        thresholdName: "mergeThreshold",
+        action: "merge",
+        score: 80
+      },
+      {
+        thresholdName: "notifyThreshold",
+        action: "notify",
+        score: 60
+      },
+      {
+        thresholdName: "notifyThreshold",
+        action: "custom",
+        score: 40
+      }
+    ]
+  };
+  const matchable = new Matchable(matchStep, {});
+  const thresholdDefinitions = matchable.thresholdDefinitions();
+  const assertions = [
+    test.assertEqual(matchStep.thresholds.length, thresholdDefinitions.length, "Count of threshold definitions should match count of objects in the step.")
+  ];
+  for (let i = 0; i < matchStep.thresholds.length; i++) {
+    assertions.push(test.assertEqual(matchStep.thresholds[i].thresholdName, thresholdDefinitions[i].name(), "Name should be set for ThresholdDefinition"));
+    assertions.push(test.assertEqual(matchStep.thresholds[i].score, thresholdDefinitions[i].score(), "Score should be set for ThresholdDefinition"));
+    assertions.push(test.assertEqual(matchStep.thresholds[i].action, thresholdDefinitions[i].action(), "Action should be set for ThresholdDefinition"));
+    assertions.push(test.assertEqualJson(matchStep.thresholds[i], thresholdDefinitions[i].raw(), "Raw value should be set for ThresholdDefinition"));
+    const actionDetails = matchable.buildActionDetails([{uri: "/content/docA.json", value: docA}], thresholdDefinitions[i]);
+    const actionUri = Object.keys(actionDetails)[0];
+    let expectedPrefix;
+    switch (thresholdDefinitions[i].action()) {
+      case "merge":
+        expectedPrefix = "/com.marklogic.smart-mastering/merged/";
+        break;
+      case "notify":
+        expectedPrefix = "/com.marklogic.smart-mastering/matcher/notifications/";
+        break;
+      default:
+        expectedPrefix = "/content/";
+    }
+    assertions.push(test.assertTrue(actionUri.startsWith(expectedPrefix), `action URI should have correct prefix: '${expectedPrefix}' is ${actionUri}`));
+    const actionBody = actionDetails[actionUri];
+    assertions.push(test.assertEqual(1, actionBody.actions ? actionBody.actions[0].uris.length:  actionBody.uris.length, "Action details should have 1 uri "));
+  }
+}
+
 []
   .concat(testMatchableClass())
   .concat(testBaselineQuery())
   .concat(testFilterQuery())
-  .concat(testMatchRulesetDefinitions());
+  .concat(testMatchRulesetDefinitions())
+  .concat(testBuildActionDetails());
