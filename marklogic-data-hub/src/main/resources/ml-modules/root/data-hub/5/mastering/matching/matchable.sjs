@@ -87,7 +87,12 @@ class Matchable {
    * @since 5.8.0
    */
   thresholdDefinitions() {
-    // TODO DHFPROD-8592
+    if (!this._thresholdDefinitions) {
+      this._thresholdDefinitions = this.matchStep.thresholds.map((thresholdObj) => {
+        return new ThresholdDefinition(thresholdObj, this);
+      });
+    }
+    return this._thresholdDefinitions;
   }
 
   /*
@@ -131,12 +136,40 @@ class Matchable {
    * Returns a JSON Object with details to pass onto the merge step for use in taking action.
    * @param {[]ContentObject} matchingDocumentSet
    * @param {ThresholdDefinition} thresholdBucket
-   * @param {[]MatchRulesetDefinition} matchingRulesets
    * @return {}
    * @since 5.8.0
    */
-  buildActionDetails(matchingDocumentSet, thresholdBucket, matchRulesets) {
-    // TODO DHFPROD-8610
+  buildActionDetails(matchingDocumentSet, thresholdBucket) {
+    const action = thresholdBucket.action();
+    const actionUri = thresholdBucket.generateActionURI(matchingDocumentSet);
+    const threshold = thresholdBucket.name();
+    const uris = matchingDocumentSet.map((contentObj) => contentObj.uris);
+    let actionBody;
+    // TODO: when we refactor merging code we can likely clean up the awkward "function", "at" property names and remove the namespace property
+    if (action === "custom") {
+      actionBody = {
+        action: "customActions",
+        actions: [
+          {
+            threshold,
+            uris,
+            "function": thresholdBucket.actionModuleFunction(),
+            "at": thresholdBucket.actionModulePath(),
+            "namespace": thresholdBucket.actionModuleNamespace(),
+            matchResults: matchingDocumentSet
+          }
+        ]
+      };
+    } else {
+      actionBody = {
+        action,
+        threshold,
+        uris
+      };
+    }
+    return {
+      [actionUri]: actionBody
+    };
   }
 
   /*
@@ -242,10 +275,73 @@ class MatchRulesetDefinition {
     return fn.number(this.matchRuleset.weight);
   }
 
-
-
   raw() {
     return this.matchRuleset;
+  }
+}
+
+class ThresholdDefinition {
+  constructor(threshold, matchable) {
+    this.threshold = threshold;
+    this.matchable = matchable;
+  }
+
+  name() {
+    return this.threshold.thresholdName;
+  }
+
+  score() {
+    return this.threshold.score;
+  }
+
+  minimumMatchCombinations() {
+    // TODO: DHFPROD-8592
+    return [];
+  }
+
+  action() {
+    return this.threshold.action;
+  }
+
+  generateMD5Key(documentSet, salt) {
+    const values = documentSet.map((contentObj) => contentObj.uri);
+    if (salt) {
+      values.unshift(salt);
+    }
+    return xdmp.md5(values.join("##"));
+  }
+
+  generateActionURI(matchingDocumentSet) {
+    const action = this.action();
+    const firstUri = matchingDocumentSet[0].uri;
+    let key;
+    switch (action) {
+      case "merge":
+        key = this.generateMD5Key(matchingDocumentSet);
+        const format = firstUri.substr(firstUri.lastIndexOf(".") + 1);
+        return `/com.marklogic.smart-mastering/merged/${key}.${format}`;
+      case "notify":
+        key = this.generateMD5Key(matchingDocumentSet, this.name());
+        return `/com.marklogic.smart-mastering/matcher/notifications/${key}.xml`;
+      default:
+        return firstUri;
+    }
+  }
+
+  raw() {
+    return this.threshold;
+  }
+
+  actionModuleFunction() {
+    return this.threshold.actionModuleFunction;
+  }
+
+  actionModulePath() {
+    return this.threshold.actionModulePath;
+  }
+
+  actionModuleNamespace() {
+    return this.threshold.actionModuleNamespace;
   }
 }
 
