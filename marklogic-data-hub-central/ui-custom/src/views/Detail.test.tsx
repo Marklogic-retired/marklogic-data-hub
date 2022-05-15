@@ -70,7 +70,9 @@ const detailContextValue = {
     handleGetRecentLocal: jest.fn(),
     handleSaveRecent: jest.fn(),
     handleSaveRecentLocal: jest.fn(),
-    handleExpandIds: jest.fn()
+    handleExpandIds: jest.fn(),
+    handleDeleteAllRecent: jest.fn(), 
+    hasSavedRecords: jest.fn()
 };
 
 

@@ -171,7 +171,8 @@ const SearchProvider: React.FC = ({children}) => {
       }
       sr.then(result => {
         // Ensure search response result is an array
-        if (result && !Array.isArray(result?.data?.searchResults?.response?.result)) {
+        if (result && result?.data?.searchResults?.response?.result && 
+          !Array.isArray(result?.data?.searchResults?.response?.result)) {
           result.data.searchResults.response.result = [result.data.searchResults.response.result];
         }
         setSearchResults(result?.data.searchResults.response);
