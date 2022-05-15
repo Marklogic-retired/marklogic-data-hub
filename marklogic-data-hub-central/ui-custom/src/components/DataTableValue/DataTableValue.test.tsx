@@ -72,7 +72,7 @@ const configArrayPathSingular = {
         id: "name",
         title: "Name",
         arrayPath: "person.nameGroup.fullname",
-        path: "value",
+        value: "value",
         metadata: [
             {
                 type: "block",
@@ -346,9 +346,27 @@ const detail = {
     "uri": "/person/10021.xml"
 };
 
+const EXPANDIDS = {
+    membership: true,
+    info: true,
+    relationships: true,
+    imageGallery: true,
+    timeline: true
+}
+
 const detailContextValue = {
     detail: detail,
-    handleDetail: jest.fn()
+    recentRecords: [],
+    loading: false,
+    expandIds: EXPANDIDS,
+    handleGetDetail: jest.fn(),
+    handleGetRecent: jest.fn(),
+    handleGetRecentLocal: jest.fn(),
+    handleSaveRecent: jest.fn(),
+    handleSaveRecentLocal: jest.fn(),
+    handleExpandIds: jest.fn(),
+    handleDeleteAllRecent: jest.fn(), 
+    hasSavedRecords: jest.fn()
 };
 
 describe("DataTableValue component", () => {

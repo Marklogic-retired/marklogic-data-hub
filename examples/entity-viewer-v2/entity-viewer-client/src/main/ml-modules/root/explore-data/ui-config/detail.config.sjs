@@ -98,8 +98,7 @@ const detailConfig  = {
                   "config": {
                     "id": "phone",
                     "title": "Phone Number",
-                    "path": "person",
-                    "value": "phone",
+                    "arrayPath": "person.phone",
                     "icon": "phone",
                     "width": "400px",
                     "metadata": [
