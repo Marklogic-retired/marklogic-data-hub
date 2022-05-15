@@ -99,7 +99,7 @@ const DataTableValue: React.FC<Props> = (props) => {
                             if (d[props?.config?.value]) {
                                 value = d[props.config.value];
                             } else {
-                                if (Array.isArray(d)) {
+                                if (Array.isArray(d) || !_.isObject(d)) {
                                     value = d
                                 }
                             }
