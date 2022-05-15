@@ -20,8 +20,8 @@ const resultsListConfig = {
                 }
             },
             title: {
-                path: "extracted.person.name",
-                id: "extracted.person.id"
+                id: "uri",
+                path: "extracted.person.name"
             },
             items: [
                 {
@@ -79,6 +79,7 @@ const searchResults = {
                 }
             },
             "entityType": "person",
+            "uri": "/person/101.xml"
         },
         {
             "extracted": {
@@ -92,6 +93,7 @@ const searchResults = {
                 }
             },
             "entityType": "person",
+            "uri": "/person/102.xml"
         }
     ]
 };
@@ -107,13 +109,20 @@ const searchContextValue = {
     total: 0,
     recentSearches: [],
     loading: false,
+    queryString: "",
     pageNumber: 1,
+    sortOrder: "",
     handleSearch: jest.fn(),
     handleFacetString: jest.fn(),
+    handleFacetDateRange: jest.fn(),
     handlePagination: () => { },
+    handleQueryFromParam: jest.fn(),
     handleSaved: jest.fn(),
     handleGetSearchLocal: jest.fn(),
-    setPageNumber: () => { }
+    setPageNumber: () => { },
+    handleDeleteAllRecent: jest.fn(),
+    hasSavedRecords: jest.fn(),
+    handleSort: jest.fn()
 };
 
 const searchResultsEmpty = {};
@@ -124,7 +133,8 @@ const EXPANDIDS = {
     membership: true,
     info: true,
     relationships: true,
-    imageGallery: true
+    imageGallery: true,
+    timeline: true
 }
 
 const detailContextValue = {
@@ -137,13 +147,15 @@ const detailContextValue = {
     handleGetRecentLocal: jest.fn(),
     handleSaveRecent: jest.fn(),
     handleSaveRecentLocal: jest.fn(),
-    handleExpandIds: jest.fn()
+    handleExpandIds: jest.fn(),
+    handleDeleteAllRecent: jest.fn(), 
+    hasSavedRecords: jest.fn()
 };
 
 describe("ResultsList component", () => {
 
     test("Verify list items appear and titles are clickable when results returned", () => {
-        const {getByText, getAllByAltText} = render(
+        const {getByText, getAllByAltText, debug} = render(
             <SearchContext.Provider value={searchContextValue}>
                 <DetailContext.Provider value={detailContextValue}>
                     <ResultsList config={resultsListConfig} />
@@ -158,10 +170,11 @@ describe("ResultsList component", () => {
         expect(getByText("123-45-6789")).toBeInTheDocument(); // Subtitle 
         expect(getByText("active")).toBeInTheDocument(); // Status
         expect(getByText("Time is 2020-01-01")).toBeInTheDocument(); // Timestamp
+        debug();
         userEvent.click(title);
-        expect(detailContextValue.handleGetDetail).toHaveBeenCalledWith("101");
+        expect(detailContextValue.handleGetDetail).toHaveBeenCalledWith(searchResults.result[0].uri);
         userEvent.click(getByText("Jane Doe"));
-        expect(detailContextValue.handleGetDetail).toHaveBeenCalledWith("102");
+        expect(detailContextValue.handleGetDetail).toHaveBeenCalledWith(searchResults.result[1].uri);
     });
 
     test("Verify messaging appears when no results returned", () => {
