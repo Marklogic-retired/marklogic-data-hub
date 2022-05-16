@@ -30,8 +30,6 @@ const Timeline: React.FC<Props> = (props) => {
     let data: any = [];
     data = getValByConfig(props.data, props.config);
     data = _.isNil(data) ? null : (Array.isArray(data) ? data : [data]);
-    const [minDate, setMinDate] = useState(new Date());
-    const [maxDate, setMaxDate] = useState(new Date());
 
     let timelineData : any[]=[];
 
@@ -56,24 +54,6 @@ const Timeline: React.FC<Props> = (props) => {
         return result;
     }
 
-    //To find min and max date range boundary for timeline
-    const getMinMaxTime = (data) => {
-        data?.map((activity) => {
-             let date = _.get(activity, props.config.marker.ts.path, null)
-
-             let currItemDate = new Date(date);
-             if(currItemDate < minDate) {
-                 setMinDate(currItemDate);
-             }
-             else if(currItemDate > maxDate) {
-                 setMaxDate(currItemDate);
-             }
-        })
-        let boundaryRange = (maxDate.getTime() - minDate.getTime())/(1000 * 3600 * 24 * 30);
-        minDate.setMonth(minDate.getMonth() - boundaryRange/20);
-        maxDate.setMonth(maxDate.getMonth() + boundaryRange/20);
-    }
-
     data?.map((activity, id) => {
         let obj={content: "", start: null, id: "", title: "", type:""};
         obj.content = _.get(activity, props.config.marker.label.path, null)
@@ -84,7 +64,21 @@ const Timeline: React.FC<Props> = (props) => {
         timelineData.push(obj);
     })
 
-    getMinMaxTime(data);
+    let minDate = new Date(), maxDate = new Date, currItemDate;
+    data?.map((activity) => {
+        let date = _.get(activity, props.config.marker.ts.path, null);
+
+        currItemDate = new Date(date);
+        if(currItemDate < minDate) {
+            minDate = currItemDate;
+        }
+        else if(currItemDate > maxDate) {
+            maxDate = currItemDate;
+        }
+    })
+    let boundaryRange = (maxDate.getTime() - minDate.getTime())/(1000 * 3600 * 24 * 30);
+    minDate.setMonth(minDate.getMonth() - boundaryRange/20);
+    maxDate.setMonth(maxDate.getMonth() + boundaryRange/20);
 
     const timelineOptions:any = {
         start: new Date(minDate),
