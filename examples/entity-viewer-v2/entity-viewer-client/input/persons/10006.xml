@@ -128,14 +128,6 @@
       <state>OK</state>
     </relation>
     <relation>
-      <id>/person/10075.xml</id>
-      <predicate>relatedTo</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
-      <fullname>Winskill Babette</fullname>
-      <city>Ogden</city>
-      <state>UT</state>
-    </relation>
-    <relation>
       <id>/person/10018.xml</id>
       <predicate>worksWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>

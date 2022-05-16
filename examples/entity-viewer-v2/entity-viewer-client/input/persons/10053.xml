@@ -116,14 +116,6 @@
       <state>MT</state>
     </relation>
     <relation>
-      <id>/person/10077.xml</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/02/1612313387205.jpeg</imageSrc>
-      <fullname>Oliff Trudy</fullname>
-      <city>Helena</city>
-      <state>MT</state>
-    </relation>
-    <relation>
       <id>/person/10026.xml</id>
       <predicate>worksWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Diane-Burley-MarkLogic-2015.jpg</imageSrc>
