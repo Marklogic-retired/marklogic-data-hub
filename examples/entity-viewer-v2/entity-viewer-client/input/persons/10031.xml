@@ -148,14 +148,6 @@
       <state>GA</state>
     </relation>
     <relation>
-      <id>/person/10003.xml</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/headshot_square_286x286.jpg</imageSrc>
-      <fullname>Dayment Leesa</fullname>
-      <city>Macon</city>
-      <state>GA</state>
-    </relation>
-    <relation>
       <id>/person/10089.xml</id>
       <predicate>livesWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2018/01/Michael-Malgeri-MarkLogic.jpg</imageSrc>

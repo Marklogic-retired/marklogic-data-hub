@@ -149,14 +149,6 @@
       <city>Brockton</city>
       <state>MA</state>
     </relation>
-    <relation>
-      <id>/person/10005.xml</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
-      <fullname>Alywen Oswald</fullname>
-      <city>Aurora</city>
-      <state>IL</state>
-    </relation>
   </relations>
   <createdOn>
     <ts>2022-01-03T11:06:11Z</ts>

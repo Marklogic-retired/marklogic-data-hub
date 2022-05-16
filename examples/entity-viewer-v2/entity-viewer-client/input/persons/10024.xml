@@ -141,14 +141,6 @@
       <state>PA</state>
     </relation>
     <relation>
-      <id>/person/10017.xml</id>
-      <predicate>livesWith</predicate>
-      <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2021/05/IS-headshot.jpeg</imageSrc>
-      <fullname>Copper Adiana</fullname>
-      <city>Wilkes Barre</city>
-      <state>PA</state>
-    </relation>
-    <relation>
       <id>/person/10090.xml</id>
       <predicate>worksWith</predicate>
       <imageSrc>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</imageSrc>
