@@ -48,6 +48,26 @@ describe("Validate persistence across Hub Central", () => {
     cy.get("[aria-label=\"icon: caret-up\"]").should("have.attr", "class").and("match", /hc-table_activeCaret/);
   });
 
+  it("Go to curate tile, and validate that the accordion and tabs are kept when switching between pages", () => {
+    toolbar.getCurateToolbarIcon().click();
+    curatePage.getAccordionButton(0).click();
+    curatePage.getAccordionButton(1).click();
+    curatePage.getAccordionButtonTab(0, 1).click();
+    curatePage.getAccordionButtonTab(1, 2).click();
+    cy.log("**Before switch page**");
+    toolbar.getLoadToolbarIcon().click();
+    toolbar.getCurateToolbarIcon().click();
+    cy.log("**After come back to curate tile**");
+    curatePage.getAccordionButton(0).should("have.attr", "aria-expanded");
+    curatePage.getAccordionButton(1).should("have.attr", "aria-expanded");
+    curatePage.getAccordionButtonTab(0, 1).should("have.attr", "aria-selected");
+    curatePage.getAccordionButtonTab(1, 2).should("have.attr", "aria-selected");
+    curatePage.getAccordionButtonTab(0, 0).click();
+    curatePage.getAccordionButtonTab(0, 0).click();
+    curatePage.getAccordionButton(0).click();
+    curatePage.getAccordionButton(1).click();
+  });
+
   it("Go to model tile, expand entity and property tables, and then visit another tile. When returning to the model tile, the expanded rows are persisted.", () => {
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     cy.log("Table view");
@@ -137,6 +157,7 @@ describe("Validate persistence across Hub Central", () => {
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     cy.get("#personJSON .accordion-collapse").should("have.class", "accordion-collapse collapse show");
   });
+
   it("Should sort table by entityName asc and desc", () => {
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     modelPage.selectView("table");
@@ -158,9 +179,11 @@ describe("Validate persistence across Hub Central", () => {
       );
     });
   });
+
   it("Validate that the table records on shown in the UI are sorted asc", () => {
     expect(JSON.stringify(entityNamesAsc)).equal(JSON.stringify(entityNamesAsc.sort()));
   });
+
   it("Validate that the table records on shown in the UI are sorted desc", () => {
     expect(JSON.stringify(entityNamesDesc)).equal(JSON.stringify(entityNamesAsc.reverse()));
   });
@@ -227,16 +250,16 @@ describe("Validate persistence across Hub Central", () => {
     matchingStepDetail.getBackButton().scrollIntoView().click();
   });
 
-  it.skip("Switch to curate tile, go to Merging step details, and then visit another tile. When returning to curate tile, the step details view is persisted", () => {
-    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
-    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
-    curatePage.toggleEntityTypeId("Person");
-    curatePage.selectMergeTab("Person");
-    curatePage.openStepDetails("merge-person");
-    cy.contains("The Merging step defines how to combine documents that the Matching step identified as similar.");
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
-    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
-    cy.contains("The Merging step defines how to combine documents that the Matching step identified as similar.");
-    cy.findByTestId("arrow-left").click();
-  });
+  // it.skip("Switch to curate tile, go to Merging step details, and then visit another tile. When returning to curate tile, the step details view is persisted", () => {
+  //   cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
+  //   cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
+  //   curatePage.toggleEntityTypeId("Person");
+  //   curatePage.selectMergeTab("Person");
+  //   curatePage.openStepDetails("merge-person");
+  //   cy.contains("The Merging step defines how to combine documents that the Matching step identified as similar.");
+  //   cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
+  //   cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
+  //   cy.contains("The Merging step defines how to combine documents that the Matching step identified as similar.");
+  //   cy.findByTestId("arrow-left").click();
+  // });
 });

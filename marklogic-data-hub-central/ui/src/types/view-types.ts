@@ -39,6 +39,10 @@ export type ViewSettingsType = {
         inputUriState?: boolean,
         inputUri2State?: boolean
     },
+    curateTile?: {
+        activeAccordeon?: string[],
+        activeTabs?: string[],
+    },
     run?: {
         openFlows?: string[],
     },
