@@ -66,6 +66,7 @@ bootWar {
 bootRun.doFirst {
     environment "mlHost", mlHost
     environment "spring.profiles.active", springProfiles
+    environment "requireExampleModules", requireExampleModules
 }
 
 dependencies {
