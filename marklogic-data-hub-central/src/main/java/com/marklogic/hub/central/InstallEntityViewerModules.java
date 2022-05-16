@@ -45,15 +45,29 @@ public class InstallEntityViewerModules extends LoggingObject implements Applica
         "explore-data/ui-config/"
     };
 
+    private String[] exampleModulesDir = {
+        "explore-data/examples/ml-search-lib/",
+        "explore-data/examples/options/"
+    };
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        String host = environment.getProperty("mlHost");
-        String username = environment.getProperty("mlUsername");
-        String password = environment.getProperty("mlPassword");
-        String modulesDatabase = environment.getProperty("mlContentModulesDatabase");
-        int serverPort = Integer.parseInt(environment.getProperty("mlContentServerPort"));
-        hubClientConfig = new HubClientConfig(host, username, password);
-        loadModules(hubClientConfig, modulesDatabase, serverPort);
+        if(environment.getProperty("mlHost") != null &&
+            environment.getProperty("mlUsername") != null &&
+            environment.getProperty("mlContentModulesDatabase") != null &&
+            environment.getProperty("mlContentServerPort") != null) {
+
+            String host = environment.getProperty("mlHost");
+            String username = environment.getProperty("mlUsername");
+            String password = environment.getProperty("mlPassword");
+            String modulesDatabase = environment.getProperty("mlContentModulesDatabase");
+            int serverPort = Integer.parseInt(environment.getProperty("mlContentServerPort"));
+            hubClientConfig = new HubClientConfig(host, username, password);
+            loadModules(hubClientConfig, modulesDatabase, serverPort);
+            if(Boolean.parseBoolean(environment.getProperty("requireExampleModules"))) {
+                loadExampleModules(hubClientConfig, modulesDatabase, serverPort);
+            }
+        }
     }
 
     public void loadModules(HubClientConfig hubConfig, String dbName, int serverPort) {
@@ -71,8 +85,23 @@ public class InstallEntityViewerModules extends LoggingObject implements Applica
             logger.info(String.format("Adding modules from %s directory to load into %s database", classpathDirectory, dbName));
             addModulesToWriteSet(classpathDirectory, true);
         }
+
         modulesDocMgr.write(modulesWriteSet);
         logger.info("Loading Modules complete");
+    }
+
+    public void loadExampleModules(HubClientConfig hubConfig, String dbName, int serverPort) {
+        logger.info("Loading Example Modules");
+        modulesClient = hubConfig.newDatabaseClient(dbName, serverPort);
+        modulesDocMgr = modulesClient.newDocumentManager();
+        modulesWriteSet = modulesDocMgr.newWriteSet();
+
+        for(String classpathDirectory: exampleModulesDir) {
+            logger.info(String.format("Adding modules from %s directory to load into %s database", classpathDirectory, dbName));
+            addModulesToWriteSet(classpathDirectory, false);
+        }
+        modulesDocMgr.write(modulesWriteSet);
+        logger.info("Loading Example Modules complete");
     }
 
     private void addModulesToWriteSet(String classPathDirectory, boolean isConfigurableModulesDir) {
@@ -84,6 +113,7 @@ public class InstallEntityViewerModules extends LoggingObject implements Applica
                 if(r.exists() && r.contentLength() > 0) {
                     StringHandle handle = new StringHandle(IOUtils.toString(r.getInputStream()));
                     String modulePath = "/".concat(classPathDirectory).concat(r.getFilename());
+                    modulePath = modulePath.replace("/examples","");
                     String uri = modulePath.startsWith("/") ? modulePath : "/".concat(modulePath);
                     if(isConfigurableModulesDir && modulesDocMgr.exists(uri) != null) {
                         logger.info(String.format("File %s already exists. Not overriding the file", uri));
