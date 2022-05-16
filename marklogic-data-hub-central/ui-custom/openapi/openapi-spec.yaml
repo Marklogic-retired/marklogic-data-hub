@@ -1,0 +1,978 @@
+openapi: 3.0.0
+info:
+  description: "This is a YAML file for API specifications."
+  version: "1.0.0"
+  title: "Entity Viewer API Documentation"
+paths:
+  /api/explore/login:
+    get:
+      tags:
+      - "Authentication"
+      summary: "Performs certificate-based authentication and returns a userid token."
+      responses:
+        "200":
+          description: "Successfully received unique id from server."
+        "400":
+          description: "Error while authenticating user."           
+    post:
+      tags:
+      - "Authentication"
+      summary: "Authenticates user with the application server and returns an authorities array."
+      parameters:
+      - name: "userid"
+        in: "header"
+        required: true
+        schema:
+         type: string
+      - name: "metrics" 
+        in: "query"
+        required: true
+        schema:
+          $ref: "#/components/schemas/credentials"
+      responses:
+        "200":
+          description: "Response Ok" 
+          content:
+           application/json:
+            schema:
+             $ref: "#/components/schemas/authorities" 
+  /api/explore/proxyAddress:
+    get:
+      tags:
+      - "Authentication"
+      summary: "Returns the login address where certificate-based authentication is performed."
+      responses:
+        "200":
+          description: "Successfully received proxy address from server."
+        "400":
+          description: "Error while fetching proxy address."              
+  /api/explore/getRecord{recordId}:
+    get:
+      tags:
+      - "Detail"
+      summary: "Returns information for a single record based on a record ID."
+      parameters:
+      - name: "userid"
+        in: "header"
+        required: true
+        schema:
+         type: string
+      - name: "recordId"
+        in: "path"
+        description: "ID of record"
+        required: true
+        schema:
+         type: string
+      responses:
+        "405":
+          description: "Invalid input"
+        "200":
+          description: "Response Ok"  
+          content:
+           application/json:              
+            schema: 
+             $ref: "#/components/schemas/recordDetail"               
+  /api/explore/getRecords:
+    post:
+      tags:
+      - "Detail"
+      summary: "Returns information for one or more records based on a list of record IDs."
+      operationId: "postRecordsUris"
+      parameters:
+      - name: "userid"
+        in: "header"
+        required: true
+        schema:
+         type: string
+      - name: "uris" 
+        in: "query"
+        required: true
+        schema:
+          $ref: "#/components/schemas/recordUris"
+      responses:
+        "200":
+          description: "Response Ok"      
+          content:
+           application/json: 
+            schema: 
+             $ref: "#/components/schemas/recordDetail"               
+  /api/explore/uiconfig:
+    get:
+      tags:
+      - "Configuration"
+      summary: "Returns configuration information for the application UI, including all of the views and widgets."
+      parameters:
+      - name: "userid"
+        in: "header"
+        required: true
+        schema:
+         type: string
+      responses:
+        "200":
+          description: "Successfully received data from server."
+          content:
+           application/json:          
+            schema:
+             $ref: "#/components/schemas/uiconfig"
+        "400":
+          description: "Error while fetching configuration."   
+  /api/explore/recentlyVisited:
+    get:
+      tags: 
+      - "Dashboard"
+      summary: "Returns information for recently visited records."
+      parameters:
+      - name: "userid"
+        in: "header"
+        required: true
+        schema:
+         type: string
+      - name: "userid"
+        in: "query"
+        description: "ID of user"
+        required: true
+        schema:
+         type: string
+      responses:
+        "200":
+          description: "Response Ok"
+          content:
+           application/json:             
+            schema:
+             $ref: "#/components/schemas/recentlyVisited" 
+  /api/explore/getEntityModels:
+    get:
+      tags: 
+      - "Dashboard"
+      summary: "Returns the entity names for the application."
+      parameters:
+      - name: "userid"
+        in: "header"
+        required: true
+        schema:
+         type: string
+      responses:
+        "200":
+          description: "Response Ok"
+          content:
+           application/json:             
+            schema:
+             $ref: "#/components/schemas/entityTypeModels"               
+  /api/explore/metrics:
+    post:
+      tags:
+      - "Dashboard"
+      summary: "Returns one or more metric values for specified periods of time."
+      parameters:
+      - name: "userid"
+        in: "header"
+        required: true
+        schema:
+         type: "string"
+      - name: "metrics" 
+        in: "query"
+        required: true
+        schema:
+          $ref: "#/components/schemas/metricsQuery"
+      responses:
+        "200":
+          description: "Response Ok" 
+          content:
+           application/json:           
+            schema: 
+             $ref: "#/components/schemas/metrics"    
+  /api/explore:
+    get:
+      tags:
+      - "Search"
+      summary: "Returns the search results for a query."
+      parameters:
+      - name: "userid"
+        in: "header"
+        required: true
+        schema:
+         type: string
+      - name: "query" 
+        in: "query"
+        required: false
+        schema:
+          $ref: "#/components/schemas/exploreQuery"
+      responses:
+        "200":
+          description: "Successfully fetched all the info."
+          content:
+           application/json:              
+            schema: 
+             $ref: "#/components/schemas/searchResults"           
+        "400":
+          description: "Error while fetching data."     
+components:
+  schemas:
+   credentials:
+    type: object
+    properties:
+      username:
+        type: string
+      password:
+        type: string
+   authorities:
+    type: array
+    items:
+      type: string 
+   item:
+    type: object
+    properties:
+      color:
+        type: string 
+      path:
+        type: string 
+      period:
+        type: number 
+      title:
+        type: string             
+      type:
+        type: string         
+   items:
+    type: "array"
+    items:
+      properties:
+       items:
+        $ref: "#/components/schemas/item"         
+   metricUiconfig:
+    type: object
+    properties:
+      component: 
+       type: string
+      config:
+       $ref: "#/components/schemas/items"   
+      maxEntries: 
+       type: number
+      maxTime: 
+       type: number      
+   entity:
+    type: object
+    properties:
+      categories:
+        type: object
+      items:
+        type: object
+      thumbnail:
+        type: object
+      title:
+        type: object       
+   recentRecordConfig:
+    type: object
+    properties:
+     entities:
+      type: object
+      properties:
+       entityName:
+        $ref: "#/components/schemas/entity"       
+   recentSearchConfig:
+    type: array
+    items:
+      properties:
+        cols:
+         $ref: "#/components/schemas/col" 
+   col:
+    type: object
+    properties:
+     title:
+      type: string
+     type:
+      type: string           
+   menu:
+    type: object
+    properties:
+      default:
+        type: boolean 
+      label:
+        type: string 
+      period:
+        type: number 
+   menuItems:
+    type: "array"
+    items:
+      properties:
+       items:
+        $ref: "#/components/schemas/menu"        
+   uiconfig:
+    type: object
+    properties:
+      api:
+        type: string 
+      dashboard:
+       type: object
+       properties:
+        metrics:
+         $ref: "#/components/schemas/metricUiconfig"   
+      recentRecords:
+       type: object
+       properties:
+        component:
+         type: string
+        config:
+          $ref: "#/components/schemas/recentRecords"       
+        maxEntries:
+         type: number
+        maxTime:
+         type: number   
+      recentSearches:
+       type: object
+       properties:
+        component:
+         type: string      
+        config:
+         $ref: "#/components/schemas/recentSearches"       
+        maxEntries:
+         type: number
+        maxTime:
+         type: number   
+      whatsNew:
+       type: object
+       properties:
+        component:
+         type: string      
+        config:
+         type: object
+         properties: 
+          item:
+           $ref: "#/components/schemas/items"  
+          menu:
+           $ref: "#/components/schemas/menuItems" 
+        detail: 
+         type: object
+         properties:
+           entityName:
+            $ref: "#/components/schemas/entityDetails"
+           imageGallery:
+            type: object
+            properties:
+             component:
+              type: string
+             config:
+              type: object
+           info:
+            type: object
+            properties:
+             component:
+              type: string
+             config:
+              type: object
+             linkedList:
+              type: object
+              properties:
+               component:
+                type: string
+               config:
+                type: object 
+             relationships:
+              type: object
+              properties:
+               component:
+                type: string
+               config:
+                type: object                 
+             timeline:
+              type: object
+              properties:
+               component:
+                type: string
+               config:
+                type: object  
+             header:
+               type: object
+               properties:
+                 menus:
+                   $ref: "#/components/schemas/headerMenu"      
+                 subtitle:
+                  type: string
+                 title:
+                  type: string   
+        search:
+          type: object
+          properties:
+           defaultEntity:
+            type: string
+           facets:
+            type: object
+            properties:
+             component:
+              type: string
+             config:
+              type: object  
+           meter:
+            type: object
+            properties:
+             component:
+              type: string
+             config:
+              type: object
+           results:
+            type: object
+            properties:
+             component:
+              type: string
+             config:
+              type: object  
+           selectedFacets:
+            type: object
+            properties:
+             component:
+              type: string
+             config:
+              type: object     
+        searchbox:
+         type: array
+         items:
+          properties:
+           items:
+            $ref: "#/components/schemas/searchBarItems"                   
+   recentRecords:
+     type: object
+     properties:
+      component:
+       type: string      
+      config:
+       $ref: "#/components/schemas/recentRecordConfig"         
+      maxEntries:
+       type: number
+      maxTime:
+       type: number   
+   recentSearches:
+     type: object
+     properties:
+       component:
+        type: string      
+       config:
+        $ref: "#/components/schemas/recentSearchConfig"       
+       maxEntries:
+        type: number
+       maxTime:
+        type: number           
+   exploreQuery:
+    type: "object"
+    properties:
+      start:
+        type: "integer"
+        format: "int64"
+      pageLength:
+        type: "integer"
+        format: "int64"     
+      searchText:
+        type: "string"
+      entityTypeIds:
+        type: "array"
+        items:
+          type: "string"
+      selectedFacets:
+       type: "object"
+       properties:
+        status:  
+         type: "array"
+         items:
+          type: "string"
+        dateTime:  
+         type: "array"
+         items:
+          type: "string"
+        country:  
+         type: "array"
+         items:
+          type: "string"        
+      sort:
+        type: "object"  
+        properties:
+         entityType:  
+          type: "string"
+         property:  
+          type: "string"
+         order:  
+          type: "string"           
+   recordCount:
+    type: object
+    properties:
+      organization:
+        type: integer
+      person:
+        type: integer
+      thing:
+        type: integer
+      total:
+        type: integer         
+   relation:
+    type: object
+    properties:
+      city:
+       type: "string"
+      fullname:
+       type: "string"           
+      id:
+       type: "string"       
+      image:
+       type: "string"
+      predicate:
+       type: "string"           
+      state:
+       type: "string"           
+   searchResult:
+    type: object
+    properties:
+      recordCount:
+       $ref: "#/components/schemas/recordCount" 
+      response:
+       $ref: "#/components/schemas/response"         
+   searchResults:
+      type: object
+      properties:
+       searchResult:
+          $ref: "#/components/schemas/searchResult"    
+   activity:
+    type: object
+    properties:
+      place:
+        type: string
+      predicate:
+        type: string
+      source:
+        $ref: "#/components/schemas/source"
+   entityTypeModels:
+    type: object
+    properties:
+      entityTypeNames:
+       type: array
+       items:
+         properties:
+          entityName:
+           type: string          
+   source:
+    type: object
+    properties:
+      name:
+        type: string
+      createdBy:
+        type: string
+      approvedBy:
+        type: string
+      ts:
+        type: string        
+   recordDetailsData:
+    type: object
+    properties:
+      activities:
+        type: "array"
+        items:
+          properties:
+           activity:
+            $ref: "#/components/schemas/activity"   
+      addresses:
+        type: "array"
+        items:
+          properties:
+           address:
+            $ref: "#/components/schemas/address"  
+      createdOn:
+       $ref: "#/components/schemas/createdOn"  
+      emails:
+        type: "array"
+        items:
+          properties:
+           email:
+            $ref: "#/components/schemas/email"
+      images:
+        type: "array"
+        items:
+          properties:
+           image:
+            $ref: "#/components/schemas/image"  
+      lastUpdated:
+        type: "object"
+        properties:
+         ts:
+           type: "string"
+         value:   
+           type: "string"        
+      links:
+        type: "array"
+        items:
+          properties:
+           link:
+            $ref: "#/components/schemas/link"       
+      memberships:
+        type: "array"
+        items:
+          properties:
+           membership:
+            $ref: "#/components/schemas/membership"       
+      nameGroup:
+       type: object
+       properties:
+        fullname:
+          $ref: "#/components/schemas/fullname"   
+        givenname:
+          $ref: "#/components/schemas/givenname"      
+        surname:
+          $ref: "#/components/schemas/surname"          
+      personid:
+       type: "string"
+      phone:
+       type: "string"
+      relations:
+        type: "array"
+        items:
+          properties:
+           relation:
+            $ref: "#/components/schemas/relation"      
+      schools:
+        type: "array"
+        items:
+          properties:
+           school:
+            $ref: "#/components/schemas/school" 
+      socials:
+        type: "array"
+        items:
+          properties:
+           social:
+            $ref: "#/components/schemas/social"
+      sources:
+        type: "array"
+        items:
+          properties:
+           source:
+            $ref: "#/components/schemas/source"     
+      ssn:
+        type: object
+        properties:
+          value:
+            type: "string"
+          classification:   
+            type: "string"     
+          status:
+            type: "string"
+          uri:
+            type: "string"    
+   recentlyVisited:
+    type: array
+    items:
+     properties:
+      entityName:
+       type: object
+       properties:
+        entityId:
+          type: string
+        nameGroup:
+         type: object
+         properties:
+          fullname:
+           $ref: "#/components/schemas/fullname"   
+          givenname:
+           $ref: "#/components/schemas/givenname"      
+          surname:
+           $ref: "#/components/schemas/surname"  
+        phone:
+         type: string
+        ssn:
+         type: object
+         properties:
+          value:
+            type: "string"
+          classification:   
+            type: "string"     
+          status:
+            type: "string"
+          uri:
+            type: "string" 
+        createdOn:
+          $ref: "#/components/schemas/createdOn"       
+        lastUpdated :
+          $ref: "#/components/schemas/createdOn"
+        entityType:
+         type: string
+        uri: 
+         type: string
+   recordDetail:
+    type: object
+    properties:
+      entityType:
+       type: string
+      entityName:
+       $ref: "#/components/schemas/recordDetailsData"   
+      uri:
+       type: string         
+   recordUris:
+    type: "array"
+    items:
+     properties:
+      uris:    
+       type: "string"   
+   metricsQuery:
+    type: object
+    properties:
+     metrics:
+      type: array
+      items:
+       properties:
+        type:
+         type: string
+        period:
+         type: number
+   metrics:
+    type: object
+    properties:
+      activities:
+        type: integer
+      entities:
+        type: integer
+      source:
+        type: integer
+      tasks:
+        type: integer      
+   collectionQuery:
+    type: object
+    properties:  
+      uri:
+        type: string   
+   orQuery:
+     $ref: "#/components/schemas/collectionQuery"    
+   andQuery:
+     $ref: "#/components/schemas/orQuery"        
+   query:
+    $ref: "#/components/schemas/andQuery"    
+   extracted:
+    type: object
+    properties:
+      kind:
+        type: string
+      entity:
+        $ref: "#/components/schemas/recordDetailsData"       
+   match:
+    type: object
+    properties:  
+     id:
+      type: string
+     _value:
+      type: string
+   snippet:
+    $ref: "#/components/schemas/match"    
+   index: 
+    type: object
+    properties:
+      confidence:
+        type: integer
+      entityType:
+        type: string        
+      extracted:
+        $ref: "#/components/schemas/extracted" 
+      fitness:
+        type: integer
+      index:
+        type: integer
+      path:
+        type: string            
+      score:
+        type: integer   
+      snippet:
+        $ref: "#/components/schemas/snippet"  
+      uri:
+        type: string  
+   result:
+    type: "array"
+    items:
+      properties:
+        index:
+          $ref: "#/components/schemas/index"   
+   warning:
+    type: object
+    properties:  
+      id:
+        type: "string"
+      _value:
+        type: "string"   
+   response:
+    type: object
+    properties:
+      facets:
+        type: "array"
+        items:
+          properties:
+           facet:
+            $ref: "#/components/schemas/relation"   
+      metrics:
+       $ref: "#/components/schemas/metrics"   
+      page-length:
+       type: integer       
+      qtext:
+       type: string
+      query:
+       $ref: "#/components/schemas/query" 
+      result:
+       $ref: "#/components/schemas/result" 
+      selected:
+       type: string       
+      snippet-format:
+       type: string
+      start:
+       type: integer       
+      total:
+       type: integer 
+      warning:
+       $ref: "#/components/schemas/warning"   
+   address: 
+    type: object
+    properties:
+      city:
+        type: "string"
+      country:
+        type: "string"
+      latitude:
+        type: "string"
+      longitude:
+        type: "string"
+      postal:
+        type: "string"
+      state:
+        type: "string" 
+      street:
+        type: "string"    
+   createdOn:
+    type: object
+    properties:
+      ts:
+        type: "string"
+      user:
+        type: "string"  
+   email:
+    type: object
+    properties:
+      classification:
+        type: "string"
+      restricted:
+        type: "string"           
+      value:
+        type: "string"     
+   link:
+    type: object
+    properties:
+      icon:
+        type: "string"
+      label:
+        type: "string"           
+      url:
+        type: "string"   
+   membership:
+    type: object
+    properties:
+      important:
+       type: "string"
+      list:
+       type: "string"           
+      ts:
+       type: "string"   
+   fullname:
+    type: object
+    properties:
+      classification:
+        type: "string"
+      value:
+        type: "string"
+      restricted:
+        type: "string"        
+      source:
+        type: array
+        items:
+         $ref: "#/components/schemas/source"      
+   surname:
+    type: object
+    properties:
+      value:
+        type: "string"    
+   givenname:
+    type: object
+    properties:
+      value:
+        type: "string"      
+   school:
+    type: object
+    properties:
+      city:
+        type: "string"
+      country:
+        type: "string"
+      latitude:
+        type: "string"    
+      longitude:
+        type: "string"
+      name:
+        type: "string"
+      postal:
+        type: "string"      
+      state:
+        type: "string"    
+      source:
+        $ref: "#/components/schemas/source"    
+   social:
+    type: object
+    properties:
+      address:
+        type: "string"
+      handle:
+        type: "string"
+      site:
+        type: "string"     
+   image:
+    type: object
+    properties:
+      url:
+        type: "string"
+      source:
+        $ref: "#/components/schemas/source"     
+   entityDetails:
+    type: object
+    properties:
+     heading:
+      type: object
+      properties:
+       id:
+        type: string
+       thumbnail:
+        type: object
+       title:
+        type: object    
+   headerMenu:
+    type: object
+    properties:
+     label:
+      type: string  
+     to:
+      type: string 
+     url:
+      type: string  
+     submenu:
+      type: object 
+      properties:
+       label:
+        type: string      
+       to:
+        type: string
+       url:
+        type: string  
+   searchBarItems:
+    type: object
+    properties:
+     default:
+      type: boolean
+     label:
+      type: string
+     value:
+      type: array
+      items:
+       type: string    
+  
+  
+  
+  
+  
+         
+      
+      
