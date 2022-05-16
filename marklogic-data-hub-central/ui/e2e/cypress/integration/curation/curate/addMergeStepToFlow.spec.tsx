@@ -89,7 +89,7 @@ describe("Add Merge step to a flow", () => {
     cy.waitForAsyncRequest();
     toolbar.getCurateToolbarIcon().should("be.visible").click();
     curatePage.getEntityTypePanel("Customer").should("be.visible");
-    curatePage.toggleEntityTypeId("Customer");
+    //curatePage.toggleEntityTypeId("Customer");
     curatePage.selectMergeTab("Customer");
   });
   it("Add the Merge step to an existing flow and Run the step(existing)", {defaultCommandTimeout: 120000}, () => {
@@ -135,7 +135,6 @@ describe("Add Merge step to a flow", () => {
     cy.waitForAsyncRequest();
     toolbar.getCurateToolbarIcon().should("be.visible").click();
     curatePage.getEntityTypePanel("Customer").should("be.visible");
-    curatePage.toggleEntityTypeId("Customer");
     curatePage.selectMergeTab("Customer");
   });
   it("Add the Merge step to an existing flow from card run button and should automatically run", {defaultCommandTimeout: 120000}, () => {
@@ -151,7 +150,6 @@ describe("Add Merge step to a flow", () => {
   it("Navigating to merge tab", () => {
     toolbar.getCurateToolbarIcon().should("be.visible").click();
     curatePage.getEntityTypePanel("Customer").should("be.visible");
-    curatePage.toggleEntityTypeId("Customer");
     curatePage.selectMergeTab("Customer");
   });
   it("Run the Merge step from card run button and should automatically run in the flow where step exists", {defaultCommandTimeout: 120000}, () => {
@@ -168,7 +166,6 @@ describe("Add Merge step to a flow", () => {
   it("Navigating to merge tab", () => {
     toolbar.getCurateToolbarIcon().should("be.visible").click();
     curatePage.getEntityTypePanel("Customer").should("be.visible");
-    curatePage.toggleEntityTypeId("Customer");
     curatePage.selectMergeTab("Customer");
   });
   it("Add the merge step to a second flow and verify it was added", () => {
@@ -182,7 +179,6 @@ describe("Add Merge step to a flow", () => {
   it("Navigating to merge tab", () => {
     toolbar.getCurateToolbarIcon().should("be.visible").click();
     curatePage.getEntityTypePanel("Customer").should("be.visible");
-    curatePage.toggleEntityTypeId("Customer");
     curatePage.selectMergeTab("Customer");
   });
   it("Run the Merge step from card run button and should display all flows where step exists, choose one to automatically run in", {defaultCommandTimeout: 120000}, () => {
