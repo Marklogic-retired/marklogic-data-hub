@@ -129,8 +129,13 @@ class Matchable {
    * @return double
    * @since 5.8.0
    */
-  scoreDocument(contentObjectA, contentObjectB, matchingRulesets) {
-    // TODO DHFPROD-8609
+  scoreDocument(contentObjectA, contentObjectB) {
+    const matchingRulesetDefinitions = this.matchRulesetDefinitions();
+    let defaultScore = 0;
+    for (const matchRuleset of matchingRulesetDefinitions) {
+      defaultScore += matchRuleset.score(contentObjectA, contentObjectB);
+    }
+    return applyInterceptors("Score Document Interceptor", defaultScore, this.matchStep.scoreDocumentInterceptors, contentObjectA, contentObjectB, matchingRulesetDefinitions);
   }
   /*
    * Returns a JSON Object with details to pass onto the merge step for use in taking action.
@@ -181,8 +186,8 @@ class Matchable {
    * @since 5.8.0
    */
   propertyQuery(propertyPath, values) {
-    const indexes = this._model.propertyIndexes(propertyPath);
-    if (indexes.length) {
+    const indexes = this.model().propertyIndexes(propertyPath);
+    if (indexes && indexes.length) {
       const scalarType = cts.referenceScalarType(indexes[0]);
       const collation = (scalarType === "string") ? cts.referenceCollation(indexes[0]): null;
       let typedValues = [];
@@ -196,7 +201,7 @@ class Matchable {
       }
       return cts.rangeQuery(indexes, typedValues)
     } else {
-      const propertyDefinition = this._model.propertyDefinition(propertyPath);
+      const propertyDefinition = this.model().propertyDefinition(propertyPath);
       const localname = propertyDefinition.localname;
       return cts.orQuery([
         cts.jsonPropertyValueQuery(localname, values),
@@ -225,11 +230,13 @@ class MatchRulesetDefinition {
 
   _matchFunction(matchRule, model) {
     if (!matchRule._matchFunction) {
-      let matchFunction;
+      let passMatchRule = matchRule;
+      let passMatchStep = this.matchable.matchStep;
       let convertToNode = false;
+      let matchFunction;
       switch (matchRule.matchType) {
         case "exact":
-          matchFunction = (values) => model.propertyQuery(matchRule.entityPropertyPath, values);
+          matchFunction = (values) => this.matchable.propertyQuery(matchRule.entityPropertyPath, values);
           convertToNode = true;
           break;
         case "doubleMetaphone":
@@ -248,11 +255,20 @@ class MatchRulesetDefinition {
           httpUtils.throwBadRequest(`Undefined match type "${matchRule.matchType}" provided.`);
       }
       if (convertToNode) {
-        matchFunction = (values, matchRule, matchStep) => matchFunction(values, new NodeBuilder().addNode(matchRule).toNode(), new NodeBuilder().addNode(matchStep).toNode());
+        passMatchRule = new NodeBuilder().addNode(passMatchRule).toNode();
+        passMatchStep = new NodeBuilder().addNode(passMatchStep).toNode();
       }
-      matchRule._matchFunction = matchFunction;
+      matchRule._matchFunction = (values) => matchFunction(values, passMatchRule, passMatchStep);
     }
     return matchRule._matchFunction;
+  }
+
+  score(contentObjectA, contentObjectB) {
+    const query = this.buildCtsQuery(contentObjectA.value);
+    if (fn.exists(query) && cts.contains(contentObjectB.value, query)) {
+      return this.weight();
+    }
+    return 0;
   }
 
   buildCtsQuery(documentNode) {
@@ -262,7 +278,7 @@ class MatchRulesetDefinition {
       const valueFunction = this._valueFunction(matchRule, model);
       const matchFunction = this._matchFunction(matchRule, model);
       const values = valueFunction(documentNode);
-      const query = fn.exists(values) ? matchFunction(values, matchRule, this.matchStep): null;
+      const query = fn.exists(values) ? matchFunction(values): null;
       if (!query) {
         return null;
       }
@@ -370,11 +386,11 @@ class GenericMatchModel {
 
   propertyValues(propertyPath, documentNode) {
     const propertyDefinition = this.propertyDefinition(propertyPath);
-    return propertyPath.path ? documentNode.xpath(propertyDefinition.path, this._namespaces) : documentNode.xpath(`.//ns:${propertyDefinition.localname}`, {ns: propertyDefinition.namespace});
+    return propertyDefinition.path ? documentNode.xpath(propertyDefinition.path, this._namespaces) : documentNode.xpath(`.//ns:${propertyDefinition.localname}`, {ns: propertyDefinition.namespace});
   }
 
   propertyIndexes(propertyPath) {
-    if (!this._indexesByPath.hasOwnProperty(propertyPath)) {
+    if (!this._indexesByPath[propertyPath]) {
       const pathIndexes = [];
       const propertyDefinition = this._propertyDefinitionMap[propertyPath];
       if (propertyDefinition.indexReferences && propertyDefinition.indexReferences.length) {

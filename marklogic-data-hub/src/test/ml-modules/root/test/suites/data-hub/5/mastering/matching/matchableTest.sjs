@@ -192,9 +192,55 @@ function testBuildActionDetails() {
   }
 }
 
+function testScoreDocument() {
+  const docA = cts.doc("/content/docA.json");
+  const matchStep = {
+    targetEntityType: "http://example.org/Customer-0.0.1/Customer",
+    dataFormat: "json",
+    matchRulesets: [
+      {
+        weight: 10,
+        name: "name - exact",
+        matchRules: [{ entityPropertyPath: "name", matchType: "exact"}]
+      },
+      {
+        weight: 5,
+        name: "name - synonym",
+        matchRules: [{ entityPropertyPath: "name", matchType: "synonym",
+          options: {
+            thesaurusURI: "/content/nicknames.xml"
+          }
+        }]
+      },
+      {
+        weight: 5,
+        name: "name - double metaphone",
+        matchRules: [{ entityPropertyPath: "name", matchType: "doubleMetaphone",
+          options: {
+            dictionaryURI: "/content/first-names.xml",
+            distanceThreshold: 100
+          }
+        }]
+      }
+    ]
+  };
+  const matchable = new Matchable(matchStep, {});
+  const score = matchable.scoreDocument({uri: "doc1.json", value: docA },{uri: "doc2.json", value: docA });
+  const assertions = [
+    test.assertEqual(15, score, "score should come back as 15 (exact:10 + doubleMetaphone:5).")
+  ];
+  const scoreInterceptorMatchable = new Matchable(Object.assign({scoreDocumentInterceptors:  [
+      { path: "/test/suites/data-hub/5/mastering/matching/test-data/matchableInterceptors.sjs", function: "scoreDocumentInterceptor" }
+    ]}, matchStep), {});
+  const interceptorScore = scoreInterceptorMatchable.scoreDocument({uri: "doc1.json", value: docA },{uri: "doc2.json", value: docA });
+  assertions.push(test.assertEqual(10, interceptorScore, "interceptorScore should come back as 10. max(exact:10, doubleMetaphone:5)"))
+  return assertions;
+}
+
 []
   .concat(testMatchableClass())
   .concat(testBaselineQuery())
   .concat(testFilterQuery())
   .concat(testMatchRulesetDefinitions())
-  .concat(testBuildActionDetails());
+  .concat(testBuildActionDetails())
+  .concat(testScoreDocument());

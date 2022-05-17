@@ -38,6 +38,50 @@ class EntityModel {
         this._primaryEntityTypeIRI = `${this.entityModelIRI}/${this.topLevelDefinitionName}`;
     }
 
+    _populatePropertyInformation() {
+        this._propertyPathsToXPaths = {};
+        this._indexes = {};
+        this._propertyDefinitions = {};
+        const recursiveXPathFunction = (definition, definitionName, visitedDefinitions, accumulatedPropertyPath = [], accumulatedXPath = []) => {
+            const nsPrefix = definition.namespacePrefix ? `${definition.namespacePrefix}:`:"";
+            for (const property of Object.keys(definition.properties)) {
+                const propertyDefinition = definition.properties[property];
+                const propertyXPath = `${nsPrefix}${definitionName}/${nsPrefix}${property}`;
+                const accXPath = accumulatedXPath.concat([propertyXPath]);
+                const accPropPath = accumulatedPropertyPath.concat([property]);
+                const fullXPath = `/(es:envelope|envelope)/(es:instance|instance)/${accXPath.join("/")}`;
+                const fullPropPath = accPropPath.join(".");
+                this._propertyDefinitions[fullPropPath] = { namespace: nsPrefix, localname: property };
+                if (propertyDefinition.sortable || propertyDefinition.facetable) {
+                    try {
+                        const scalarType = propertyDefinition.datatype === "array" ? propertyDefinition.items.datatype: propertyDefinition.items.datatype;
+                        const collation = scalarType === "string" ? propertyDefinition.collation || fn.defaultCollation() : null;
+                        this._indexes[fullPropPath] = [ cts.reference({
+                            "pathReference": {
+                                "pathExpression": `/(es:envelope|envelope)/(es:instance|instance)/${accumulatedXPath.concat([propertyXPath]).join("/")}`,
+                                scalarType,
+                                collation
+                            }
+                        }) ]
+                    } catch (e) {
+                        xdmp.log(`Couldn't use index for property '${property}' Reason: ${xdmp.toJsonString(e)}`);
+                    }
+                }
+                this._propertyPathsToXPaths[fullPropPath] = fullXPath;
+                const ref = propertyDefinition.items ? propertyDefinition.items["$ref"] : propertyDefinition["$ref"];
+                if (ref && ref.startsWith(localDefinitionPrefix)) {
+                    const definitionName = ref.substring(localDefinitionPrefix.length);
+                    if (!visitedDefinitions.includes(definitionName)) {
+                        visitedDefinitions.push(definitionName);
+                        recursiveXPathFunction(this.definitions[definitionName], definitionName, visitedDefinitions, accPropPath, accXPath);
+                    }
+                }
+            }
+        };
+        recursiveXPathFunction(this.topLevelDefinition, this.topLevelDefinitionName, [this.topLevelDefinitionName]);
+
+    }
+
     extractInstanceProperties(instance, propertyPath) {
         let propertyXPath = this.propertyPathXPath(propertyPath);
         return instance.xpath(propertyXPath, this.namespaces);
@@ -57,28 +101,7 @@ class EntityModel {
 
     propertyPathXPath(propertyPath) {
         if (!this._propertyPathsToXPaths) {
-            this._propertyPathsToXPaths = {};
-            const recursiveXPathFunction = (definition, definitionName, visitedDefinitions, accumulatedPropertyPath = [], accumulatedXPath = []) => {
-                const nsPrefix = definition.namespacePrefix ? `${definition.namespacePrefix}:`:"";
-                for (const property of Object.keys(definition.properties)) {
-                    const propertyDefinition = definition.properties[property];
-                    const propertyXPath = `${nsPrefix}${definitionName}/${nsPrefix}${property}`;
-                    const accXPath = accumulatedXPath.concat([propertyXPath]);
-                    const accPropPath = accumulatedPropertyPath.concat([property]);
-                    const fullXPath = `/(es:envelope|envelope)/(es:instance|instance)/${accXPath.join("/")}`;
-                    const fullPropPath = accPropPath.join(".");
-                    this._propertyPathsToXPaths[fullPropPath] = fullXPath;
-                    const ref = propertyDefinition.items ? propertyDefinition.items["$ref"] : propertyDefinition["$ref"];
-                    if (ref && ref.startsWith(localDefinitionPrefix)) {
-                        const definitionName = ref.substring(localDefinitionPrefix.length);
-                        if (!visitedDefinitions.includes(definitionName)) {
-                            visitedDefinitions.push(definitionName);
-                            recursiveXPathFunction(this.definitions[definitionName], definitionName, visitedDefinitions, accPropPath, accXPath);
-                        }
-                    }
-                }
-            };
-            recursiveXPathFunction(this.topLevelDefinition, this.topLevelDefinitionName, [this.topLevelDefinitionName]);
+            this._populatePropertyInformation();
         }
         return this._propertyPathsToXPaths[propertyPath];
     }
@@ -89,53 +112,24 @@ class EntityModel {
 
     indexes() {
         if (!this._indexes) {
-            this._indexes = {};
-            const recursiveIndexesFunction = (definition, definitionName, visitedDefinitions, accumulatedPropertyPath = [], accumulatedXPath = []) => {
-                const nsPrefix = definition.namespacePrefix ? `${definition.namespacePrefix}:`:"";
-                for (const property of Object.keys(definition.properties)) {
-                    const propertyDefinition = definition.properties[property];
-                    const propertyXPath = `${nsPrefix}${definitionName}/${nsPrefix}${property}`
-                    if (propertyDefinition.sortable || propertyDefinition.facetable) {
-                        try {
-                            const scalarType = propertyDefinition.datatype === "array" ? propertyDefinition.items.datatype: propertyDefinition.items.datatype;
-                            const collation = scalarType === "string" ? propertyDefinition.collation || fn.defaultCollation() : null;
-                            this._indexes[property] = [ cts.reference({
-                                "pathReference": {
-                                    "pathExpression": `/(es:envelope|envelope)/(es:instance|instance)/${accumulatedXPath.concat([propertyXPath]).join("/")}`,
-                                    scalarType,
-                                    collation
-                                }
-                            }) ]
-                        } catch (e) {
-                            xdmp.log(`Couldn't use index for property '${property}' Reason: ${xdmp.toJsonString(e)}`);
-                        }
-                    }
-                    const ref = propertyDefinition.items ? propertyDefinition.items["$ref"] : propertyDefinition["$ref"];
-                    if (ref && ref.startsWith(localDefinitionPrefix)) {
-                        const definitionName = ref.substring(localDefinitionPrefix.length);
-                        if (!visitedDefinitions.includes(definitionName)) {
-                            visitedDefinitions.push(definitionName);
-                            const accPropPath = accumulatedPropertyPath.concat([property]);
-                            const accXPath = accumulatedXPath.concat([propertyXPath]);
-                            recursiveIndexesFunction(this.definitions[definitionName], definitionName, visitedDefinitions, accPropPath, accXPath);
-                        }
-                    }
-                }
-            };
-            recursiveIndexesFunction(this.topLevelDefinition, this.topLevelDefinitionName, [this.topLevelDefinitionName]);
+            this._populatePropertyInformation();
         }
         return this._indexes;
     }
 
     propertyDefinition(propertyPath) {
+        if (!this._propertyDefinitions) {
+            this._populatePropertyInformation();
+        }
+        const propertyDefinition = this._propertyDefinitions[propertyPath];
         const path = this.propertyPathXPath(propertyPath);
         const indexReferences = this.propertyIndexes(propertyPath);
-        return path ? { path, indexReferences } : { localname: propertyPath, namespace: "" };
+        return path ? Object.assign({ path, indexReferences }, propertyDefinition) : propertyDefinition;
     }
 
     propertyValues(propertyPath, documentNode) {
         const propertyDefinition = this.propertyDefinition(propertyPath);
-        return propertyPath.path ? documentNode.xpath(propertyDefinition.path, this._namespaces) : documentNode.xpath(`.//${propertyDefinition.namespace ? "ns:": ""}${propertyDefinition.localname}`, {ns: propertyDefinition.namespace});
+        return propertyDefinition.path ? documentNode.root.xpath(propertyDefinition.path, this._namespaces) : documentNode.xpath(`.//${propertyDefinition.namespace ? "ns:": ""}${propertyDefinition.localname}`, {ns: propertyDefinition.namespace});
     }
 
     propertyIndexes(propertyPath) {
