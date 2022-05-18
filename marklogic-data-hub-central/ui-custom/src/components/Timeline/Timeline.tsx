@@ -80,37 +80,19 @@ const Timeline: React.FC<Props> = (props) => {
     minDate.setMonth(minDate.getMonth() - boundaryRange/20);
     maxDate.setMonth(maxDate.getMonth() + boundaryRange/20);
 
-    const timelineOptions:any = {
-        start: new Date(minDate),
-        end: new Date(maxDate),
-        width: "100%",
+    let timelineOptions: any = {
         minHeight: "25vh",
-        itemsAlwaysDraggable: {
-            item: false,
-            range: true
-        },
-        selectable: false,
-        moveable: true,
-        timeAxis: {
-            scale: "month",
-            step: 4
-        },
-        format: {
-            minorLabels: function (date) {
-                let month, year;
-                month = date.format("MMM");
-                // year = date.format("YYYY");
-                // if(year === "2020")
-                return month;
-                // else return "";
-            },
-        },
-        maxMinorChars: 4,
+        maxMinorChars: 6,
         tooltip: {
             followMouse: true,
             overflowMethod: "cap",
         },
+        zoomFriction: 10,
+        zoomMax: 2153600000000,
+        zoomMin: 600000000,
     };
+    // Any option overrides from config
+    timelineOptions = Object.assign(timelineOptions, props?.config?.options);
 
     const renderActivityTimeline = () => {
         return <div data-testid={"activity-info-timeline"}>

@@ -366,7 +366,7 @@ const detailConfig  = {
                     ]
                   }
                 },
-                "options": {}
+                "options": {} // override vis.js network options
               }
             },
             "imageGallery": {
@@ -463,7 +463,8 @@ const detailConfig  = {
                       "path": "source.approvedBy"
                     }
                   ]
-                }
+                },
+                options: {} // override vis.js timeline options
               }
             },
             "linkList": {
