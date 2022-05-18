@@ -43,6 +43,17 @@ export type ViewSettingsType = {
         activeAccordeon?: string[],
         activeTabs?: string[],
     },
+    merge?: {
+        strategyExpandedRows?: string[],
+        strategySortOrder?: {
+          columnKey?: string,
+          order?: string
+        }
+        ruleSortOrder?: {
+            columnKey?: string,
+            order?: string
+        }
+    },
     run?: {
         openFlows?: string[],
     },

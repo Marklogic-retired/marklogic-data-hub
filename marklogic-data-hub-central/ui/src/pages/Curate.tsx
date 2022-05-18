@@ -49,7 +49,7 @@ const Curate: React.FC = () => {
         history.push({pathname: "/tiles/curate/map"});
       } else if (stepDefinitionType === "MATCHING" || stepDefinitionType === "matching") {
         history.push({pathname: "/tiles/curate/match"});
-      } else if (stepDefinitionType === "MERGING") {
+      } else if (stepDefinitionType === "MERGING" || stepDefinitionType === "merging") {
         history.push({pathname: "/tiles/curate/merge"});
       }
     }

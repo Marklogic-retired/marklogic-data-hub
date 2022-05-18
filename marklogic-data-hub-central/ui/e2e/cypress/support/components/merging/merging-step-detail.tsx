@@ -32,7 +32,21 @@ class MergingStepDetail {
     return cy.findByLabelText("delete-merge-rule-text");
   }
 
+  verifyRowExpanded() {
+    return cy.findByText("Priority Order");
+  }
 
+  getSortIndicator(colName: string) {
+    return cy.get(`[aria-label^="${colName}"] [aria-label="icon: caret-up"]`);
+  }
+
+  getSortAscIcon() {
+    return cy.get(`[aria-label="icon: caret-up"]`);
+  }
+
+  getSortDescIcon() {
+    return cy.get(`[aria-label="icon: caret-down"]`);
+  }
 }
 
 const mergingStepDetail = new MergingStepDetail();

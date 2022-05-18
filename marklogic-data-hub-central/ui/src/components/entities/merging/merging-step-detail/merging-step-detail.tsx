@@ -110,6 +110,8 @@ const strategyOptions:any = {
 
 const MergingStepDetail: React.FC = () => {
   const storage = getViewSettings();
+  const expandedRowStorage = storage?.merge?.strategyExpandedRows;
+
 
   // Prevents an infinite loop issue with sessionStorage due to user refreshing in step detail page.
   clearSessionStorageOnRefresh();
@@ -126,9 +128,21 @@ const MergingStepDetail: React.FC = () => {
   const [currentMergeObj, setCurrentMergeObj] = useState<any>({});
   const [deleteModalVisibility, setDeleteModalVisibility] = useState(false);
   const [sourceNames, setSourceNames] = useState<string[]>([]);
+  const [expandedRows, setExpandedRows] = useState<string[]>(expandedRowStorage ? expandedRowStorage : []);
   const mergeStrategiesData: any = [];
   const mergeRulesData: any = [];
+  const [sortedRuleCol, setSortedRuleCol] = useState<{ columnKey?: string, order?: string }>();
+  const [sortedStrategyCol, setSortedStrategyCol] = useState<{ columnKey?: string, order?: string }>();
   let commonStrategyNames: any = [];
+
+  useEffect(() => {
+    if (storage.merge?.ruleSortOrder) {
+      setSortedRuleCol(storage.merge?.ruleSortOrder);
+    }
+    if (storage.merge?.strategySortOrder) {
+      setSortedStrategyCol(storage.merge?.strategySortOrder);
+    }
+  }, []);
 
   useEffect(() => {
     if (Object.keys(curationOptions.activeStep.stepArtifact).length !== 0) {
@@ -139,6 +153,11 @@ const MergingStepDetail: React.FC = () => {
       history.push("/tiles/curate");
     }
   }, [JSON.stringify(curationOptions.activeStep.stepArtifact)]);
+
+  useEffect(() => {
+    let newViewSettings = getViewSettings();
+    setViewSettings({...newViewSettings, merge: {...newViewSettings.merge, strategyExpandedRows: expandedRows}});
+  }, [expandedRows]);
 
   const retrieveCalculatedMergingActivity = async (mergingStepArtifact: MergingStep) => {
     if (mergingStepArtifact && mergingStepArtifact.name) {
@@ -166,7 +185,43 @@ const MergingStepDetail: React.FC = () => {
     toggleIsEditRule(true);
   };
 
-  const columnSorter = (a: any, b: any, order: string) => order === "asc" ? a.localeCompare(b) : b.localeCompare(a);
+  const columnSorter = (a: any, b: any, order: string) => order === "asc" ? a.toString().localeCompare(b) : b.toString().localeCompare(a);
+
+  const onExpand = (record, expanded, rowIndex) => {
+    let newExpandedRows = [...expandedRows];
+
+    if (expanded) {
+      if (newExpandedRows.indexOf(record.strategyName) === -1) {
+        newExpandedRows.push(record.strategyName);
+      }
+    } else {
+      newExpandedRows = newExpandedRows.filter(row => row !== record.strategyName);
+    }
+    setExpandedRows(newExpandedRows);
+  };
+
+
+  const isRuleSorted = (dataField) => {
+    return sortedRuleCol?.columnKey === dataField;
+  };
+
+  const isStrategySorted = (dataField) => {
+    return sortedStrategyCol?.columnKey === dataField;
+  };
+
+  const onSortStrategy = (type, {columnKey, order}) => {
+    let newViewSettings = getViewSettings();
+    if (type === "sort") {
+      setViewSettings({...newViewSettings, merge: {...newViewSettings.merge, strategySortOrder: {columnKey: columnKey, order: order}}});
+    }
+  };
+
+  const onSortRules = (type, {columnKey, order}) => {
+    let newViewSettings = getViewSettings();
+    if (type === "sort") {
+      setViewSettings({...newViewSettings, merge: {...newViewSettings.merge, ruleSortOrder: {columnKey: columnKey, order: order}}});
+    }
+  };
 
   const mergeStrategyColumns: any = [
     {
@@ -175,6 +230,7 @@ const MergingStepDetail: React.FC = () => {
       key: "strategyName",
       sort: true,
       width: 200,
+      defaultSortOrder: isStrategySorted("strategyName") ? sortedStrategyCol?.order : undefined,
       className: styles.strategyNameColumn,
       sortFunc: columnSorter,
       formatter: text => {
@@ -192,6 +248,7 @@ const MergingStepDetail: React.FC = () => {
       key: "maxValues",
       sort: true,
       width: 200,
+      defaultSortOrder: isStrategySorted("maxValues") ? sortedStrategyCol?.order : undefined,
       sortFunc: columnSorter,
     },
     {
@@ -200,6 +257,7 @@ const MergingStepDetail: React.FC = () => {
       key: "maxSources",
       sort: true,
       width: 200,
+      defaultSortOrder: isStrategySorted("maxSources") ? sortedStrategyCol?.order : undefined,
       sortFunc: columnSorter,
     },
     {
@@ -208,6 +266,7 @@ const MergingStepDetail: React.FC = () => {
       key: "default",
       sort: true,
       width: 200,
+      defaultSortOrder: isStrategySorted("default") ? sortedStrategyCol?.order : undefined,
       sortFunc: columnSorter,
     },
     {
@@ -228,6 +287,7 @@ const MergingStepDetail: React.FC = () => {
       key: "property",
       sort: true,
       width: 200,
+      defaultSortOrder: isRuleSorted("property") ? sortedRuleCol?.order : undefined,
       sortFunc: columnSorter,
       formatter: text => {
         let mergeRuleLabel = text?.split(" > ").join(".");
@@ -243,6 +303,7 @@ const MergingStepDetail: React.FC = () => {
       text: "Merge Type",
       dataField: "mergeType",
       key: "mergeType",
+      defaultSortOrder: isRuleSorted("mergeType") ? sortedRuleCol?.order : undefined,
       sort: true,
       width: 200,
       sortFunc: columnSorter,
@@ -253,6 +314,7 @@ const MergingStepDetail: React.FC = () => {
       key: "strategy",
       sort: true,
       width: 200,
+      defaultSortOrder: isRuleSorted("strategy") ? sortedRuleCol?.order : undefined,
       sortFunc: columnSorter,
     },
     {
@@ -416,7 +478,7 @@ const MergingStepDetail: React.FC = () => {
         title={mergingStep.name}
         handleOnBack={() => {
           history.push("/tiles/curate");
-          setViewSettings({...storage, curate: {}});
+          setViewSettings({...storage, curate: {}, merge: {}});
         }}
       />
       <p className={styles.headerDescription}>{MergingStepIntros.main}</p>
@@ -449,10 +511,14 @@ const MergingStepDetail: React.FC = () => {
               columns={mergeStrategyColumns}
               data={mergeStrategiesData}
               expandedRowRender={expandedRowRender}
+              expandedRowKeys={expandedRows}
+              onExpand={onExpand}
+              onTableChange={onSortStrategy}
               pagination={{hideOnSinglePage: mergeStrategiesData.length <= 10}}
               showExpandIndicator={true}
               expandedContainerClassName="mergeStrategySliders"
               keyUtil="key"
+              dynamicSortColumns
             />
           </div>
         </div>
@@ -480,6 +546,8 @@ const MergingStepDetail: React.FC = () => {
             subTableHeader={true}
             keyUtil="key"
             baseIndent={0}
+            onTableChange={onSortRules}
+            dynamicSortColumns
           />
         </div>
         <MergeStrategyDialog

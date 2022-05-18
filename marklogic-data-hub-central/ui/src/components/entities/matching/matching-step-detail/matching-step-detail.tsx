@@ -174,6 +174,7 @@ const MatchingStepDetail: React.FC = () => {
       thresholdTextExpanded: moreThresholdText,
       testRadioSelection: value,
       previewMatchedDataValue: previewMatchedData,
+      previewMatchedDataActivity: previewMatchedActivity,
       uriTestClicked: uriTestMatchClicked,
       rulesetData: rulesetDataList,
       inputUriState: inputUriDisabled,
@@ -212,8 +213,8 @@ const MatchingStepDetail: React.FC = () => {
       rulesetDataList.shift();
     };
     let previewMatchActivity = await previewMatchingActivity(testMatchData);
-    setPreviewMatchedData(previewMatchActivity.actionPreview.length);
     if (previewMatchActivity) {
+      setPreviewMatchedData(previewMatchActivity.actionPreview.length);
       await test();
       setPreviewMatchedActivity(previewMatchActivity);
       setRulesetDataList(rulesetDataList);
