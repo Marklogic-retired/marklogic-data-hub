@@ -13,6 +13,8 @@ import {
 } from "../../support/components/model/index";
 import multiSlider from "../../support/components/common/multi-slider";
 import {matchingStepDetail} from "../../support/components/matching";
+import mergingStepDetail from "../../support/components/merging/merging-step-detail";
+import tables from "../../support/components/common/tables";
 
 describe("Validate persistence across Hub Central", () => {
   let entityNamesAsc: string[] = [];
@@ -250,16 +252,30 @@ describe("Validate persistence across Hub Central", () => {
     matchingStepDetail.getBackButton().scrollIntoView().click();
   });
 
-  // it.skip("Switch to curate tile, go to Merging step details, and then visit another tile. When returning to curate tile, the step details view is persisted", () => {
-  //   cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
-  //   cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
-  //   curatePage.toggleEntityTypeId("Person");
-  //   curatePage.selectMergeTab("Person");
-  //   curatePage.openStepDetails("merge-person");
-  //   cy.contains("The Merging step defines how to combine documents that the Matching step identified as similar.");
-  //   cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
-  //   cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
-  //   cy.contains("The Merging step defines how to combine documents that the Matching step identified as similar.");
-  //   cy.findByTestId("arrow-left").click();
-  // });
+  it("Switch to curate tile, go to Merging step details, and then visit another tile. When returning to curate tile, the step details view is persisted", () => {
+    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
+    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
+    curatePage.toggleEntityTypeId("Person");
+    curatePage.selectMergeTab("Person");
+    curatePage.openStepDetails("merge-person");
+    cy.log("*** Change state of table sorting and strategy expansion ***");
+    tables.expandRow("retain-single-value");
+    cy.contains("A merge strategy defines how to combine the property values of candidate entities, but the merge strategy is not active until assigned to a merge rule. A merge strategy can be assigned to multiple merge rules.");
+
+    mergingStepDetail.getSortIndicator("Strategy Name").scrollIntoView().click();
+    mergingStepDetail.getSortAscIcon().first().should("have.class", "hc-table_activeCaret__2ugNC");
+    mergingStepDetail.getSortIndicator("Strategy").last().scrollIntoView().click();
+    mergingStepDetail.getSortIndicator("Strategy").last().scrollIntoView().click();
+    mergingStepDetail.getSortDescIcon().last().should("have.class", "hc-table_activeCaret__2ugNC");
+
+
+    cy.log("*** Return to Curate Tab and verify all states changed above are persisted");
+    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
+    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
+    cy.contains("A merge strategy defines how to combine the property values of candidate entities, but the merge strategy is not active until assigned to a merge rule. A merge strategy can be assigned to multiple merge rules.");
+    mergingStepDetail.verifyRowExpanded();
+    mergingStepDetail.getSortAscIcon().first().should("have.class", "hc-table_activeCaret__2ugNC");
+    mergingStepDetail.getSortDescIcon().last().should("have.class", "hc-table_activeCaret__2ugNC");
+    cy.findByTestId("arrow-left").click();
+  });
 });
