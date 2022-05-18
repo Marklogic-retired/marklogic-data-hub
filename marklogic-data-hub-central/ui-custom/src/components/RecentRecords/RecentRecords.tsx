@@ -91,7 +91,7 @@ const RecentRecords: React.FC<Props> = (props) => {
             {recent.alert ? <ExclamationTriangleFill color="#d48b32" size={16} /> : null}
           </div> */}
           <div className="thumbnail">
-            {props.config.entities[detailContext.detail.entityType].thumbnail ?
+            {props.config.entities[recent.entityType].thumbnail ?
               <Image data={recent} config={props.config.entities[recent.entityType].thumbnail.config} />
               : null}
           </div>
@@ -100,11 +100,11 @@ const RecentRecords: React.FC<Props> = (props) => {
               <Value id={recent?.uri}>{titleValue}</Value>
             </div>
             <div className="subtitle">
-              {props.config.entities[detailContext.detail.entityType].items ?
+              {props.config.entities[recent.entityType].items ?
                 <List data={recent} config={props.config.entities[recent.entityType].items} />
                 : null}
             </div>
-            {props.config.entities[detailContext.detail.entityType].categories ?
+            {props.config.entities[recent.entityType].categories ?
               <div className="categories">
                 {getValByConfig(recent, props.config.entities[recent.entityType].categories)!.map((s, index2) => {
                   return (
