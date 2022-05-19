@@ -124,9 +124,15 @@ if(queryObj.searchText !== undefined && queryObj.searchText.toString().length > 
   }
 }
 
+let conceptFacetList = [];
+if(queryObj.conceptsFilterTypeIds != null){
+  queryObj.conceptsFilterTypeIds.map(item => {
+    conceptFacetList.push(sem.iri(item));
+  })
+}
 const relatedEntityTypeIRIs = allEntityTypeIRIs.filter((e1) => !entityTypeIRIs.some((e2) => fn.string(e1) === fn.string(e2)));
 
-const result = graphUtils.getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predicateConceptList, entitiesDifferentsFromBaseAndRelated, ctsQuery, pageLength);
+const result = graphUtils.getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predicateConceptList, entitiesDifferentsFromBaseAndRelated, conceptFacetList, ctsQuery, pageLength);
 
 let nodes = [];
 let edges = [];

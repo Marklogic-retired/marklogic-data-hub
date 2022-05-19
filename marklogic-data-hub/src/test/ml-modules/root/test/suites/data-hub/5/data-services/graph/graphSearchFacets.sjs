@@ -27,9 +27,9 @@ const productQuery = {
 const resultsTest = searchNodes(productQuery);
 
 let assertions = [
-  test.assertEqual(7, resultsTest.total),
-  test.assertEqual(7, resultsTest.nodes.length),
-  test.assertEqual(1, resultsTest.edges.length),
+  test.assertEqual(8, resultsTest.total),
+  test.assertEqual(8, resultsTest.nodes.length),
+  test.assertEqual(3, resultsTest.edges.length),
   test.assertFalse(resultsTest.nodes[0].hasRelationships),
 ];
 
