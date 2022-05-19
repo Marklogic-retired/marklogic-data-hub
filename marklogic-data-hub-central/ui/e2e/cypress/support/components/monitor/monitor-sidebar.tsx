@@ -20,7 +20,7 @@ class MonitorSidebar {
     return cy.get(".table-condensed:nth-child(1) tbody td.available");
   }
 
-  veriifyFacetCategory(facetName: string) {
+  verifyFacetCategory(facetName: string) {
     return cy.get(`[data-testid="${facetName}-facet"]`);
   }
 }
