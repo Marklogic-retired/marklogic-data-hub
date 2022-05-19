@@ -56,6 +56,17 @@ task importOrganizationsViaMlcp(type: com.marklogic.gradle.task.MlcpTask) {
     mode = "local"
 }
 
+task extractZip(type: Copy) {
+    description = "Extract input.zip as part of deployment so that sample data is available for ingestion."
+    from zipTree('input.zip')
+    def destDir = System.getProperty("user.dir")
+    destinationDir = file(destDir)
+    doLast {
+        println("Input directory is extracted to: " + destDir + "/input")
+    }
+}
+
+mlDeploy.dependsOn extractZip
 mlDeploy.finalizedBy importPersonsViaMlcp, importOrganizationsViaMlcp
 
 
