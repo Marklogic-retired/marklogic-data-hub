@@ -5,20 +5,16 @@ const searchboxConfig  = {
         items: [
             {
                 label: "All Entities",
-                value: ["person", "organization", "thing"],
+                value: ["ENTITY1"],
                 default: true
             },
             {
-                label: "Person",
-                value: "person"
+                label: "ENTITYTITLE1",
+                value: "ENTITY1"
             },
             {
-                label: "Organization",
-                value: "organization"
-            },
-            {
-                label: "Thing",
-                value: "thing"
+                label: "ENTITYTITLE2",
+                value: "ENTITY2"
             }
         ]
     }
