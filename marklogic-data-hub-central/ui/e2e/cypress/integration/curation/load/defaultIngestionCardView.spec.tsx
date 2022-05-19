@@ -177,6 +177,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     runPage.addStep(flowName1);
     cy.wait(1000);
     runPage.addStepToFlow(stepName);
+    cy.wait(1000);
     runPage.runStep(stepName, flowName1);
     cy.uploadFile("input/test-1.json");
     cy.waitForAsyncRequest();
