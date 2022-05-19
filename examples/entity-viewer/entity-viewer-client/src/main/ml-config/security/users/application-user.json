@@ -1,8 +1,0 @@
-{
-	"user-name": "application-user",
-	"description": "Example of the minimum set of roles needed to invoke a Data Service",
-	"password": "password",
-	"role": [
-		"application-user-role"
-	]
-}
