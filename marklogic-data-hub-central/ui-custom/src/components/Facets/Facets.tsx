@@ -1,5 +1,5 @@
-import React, { useContext, useState } from "react";
-import { SearchContext } from "../../store/SearchContext";
+import React, {useContext, useState} from "react";
+import {SearchContext} from "../../store/SearchContext";
 import Form from "react-bootstrap/Form";
 import Table from "react-bootstrap/Table";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
@@ -22,7 +22,7 @@ type Props = {
  * @prop {object[]} config Configuration object for all facets.
  * @prop {string} config.selected  Color of selected facet bar (as HTML color).
  * @prop {string} config.selected  Color of unselected facet bar (as HTML color).
- * @prop {number} config.displayThreshold  Threshold value cotrolling the maximum number of facet 
+ * @prop {number} config.displayThreshold  Threshold value cotrolling the maximum number of facet
  * values displayed without a more/less link.
  * @prop {number} config.displayShort Mximum number of facet values displayed without a more/less
  * link when the number of facets is at or below the `config.displayThreshold` value.
@@ -63,7 +63,7 @@ const Facets: React.FC<Props> = (props) => {
   let moreLessInit: any = {};
   const moreLessDefault: boolean = true;
   if (props.config.items) {
-    props.config.items.forEach(f => {moreLessInit[f.name] = moreLessDefault;});
+    props.config.items.forEach(f => { moreLessInit[f.name] = moreLessDefault; });
   }
 
   const [moreLess, setMoreLess] = useState<any>(moreLessInit);
@@ -86,10 +86,10 @@ const Facets: React.FC<Props> = (props) => {
   const handleMoreLess = (value) => () => {
     setMoreLess(prevState => {
       let newState = Object.assign({}, prevState);
-      newState[value] = !prevState[value];              
+      newState[value] = !prevState[value];
       return newState;
-    })
-  }
+    });
+  };
 
   // Only show/hide if label overflows (has ellipsis)
   const handleTooltip = (id) => () => {
@@ -100,10 +100,10 @@ const Facets: React.FC<Props> = (props) => {
         tooltipCopy[id] = !tooltipShow[id]; // toggle show/hide
       } else {
         tooltipCopy[id] = false; // never show
-      }           
+      }
       return tooltipCopy;
-    })
-  }
+    });
+  };
 
   const displayFacetValues = (facetObj, disabled=false, moreLess) => {
     let result: any = null;
@@ -115,38 +115,38 @@ const Facets: React.FC<Props> = (props) => {
           return (
             <tr className="facetValue" key={"facetValue-" + index}>
               <td className="label">
-                  <Form.Check 
-                    id={facetObj.name + ":" + fv.name}
-                    type={"checkbox"}
-                    checked={searchContext.facetStrings && searchContext.facetStrings.includes(facetObj.name + ":" + fv.name)}
-                    disabled={disabled ? disabled : false}
-                    data-testid={facetObj.name + ":" + fv.name}
-                    title={fv.name}
-                    className="shadow-none"
-                    onChange={handleSelect}
-                  />
-                  <OverlayTrigger
-                    overlay={<Tooltip>{fv.name}</Tooltip>}
-                    onToggle={handleTooltip("tooltip-" + facetObj.name + ":" + fv.name)}
-                    show={tooltipShow["tooltip-" + facetObj.name + ":" + fv.name]}
-                    placement="right"
-                  >
-                    <label
-                      id={"tooltip-" + facetObj.name + ":" + fv.name}
-                      htmlFor={facetObj.name + ":" + fv.name}
-                      className="form-check-label"
-                    >{fv.name}</label>
-                  </OverlayTrigger>
+                <Form.Check
+                  id={facetObj.name + ":" + fv.name}
+                  type={"checkbox"}
+                  checked={searchContext.facetStrings && searchContext.facetStrings.includes(facetObj.name + ":" + fv.name)}
+                  disabled={disabled ? disabled : false}
+                  data-testid={facetObj.name + ":" + fv.name}
+                  title={fv.name}
+                  className="shadow-none"
+                  onChange={handleSelect}
+                />
+                <OverlayTrigger
+                  overlay={<Tooltip>{fv.name}</Tooltip>}
+                  onToggle={handleTooltip("tooltip-" + facetObj.name + ":" + fv.name)}
+                  show={tooltipShow["tooltip-" + facetObj.name + ":" + fv.name]}
+                  placement="right"
+                >
+                  <label
+                    id={"tooltip-" + facetObj.name + ":" + fv.name}
+                    htmlFor={facetObj.name + ":" + fv.name}
+                    className="form-check-label"
+                  >{fv.name}</label>
+                </OverlayTrigger>
               </td>
               <td className="meter">
                 <div className="total">
-                  <div 
+                  <div
                     className="count"
                     data-testid={"meter-" + facetObj.name + ":" + fv.name}
                     style={{
                       width: (fv.count*100/searchContext.total).toString().concat("%"),
                       // width: (value*100/total).toString().concat("%"), // TODO Remove: for testing larger counts
-                      backgroundColor: (searchContext.facetStrings && searchContext.facetStrings.includes(facetObj.name + ":" + fv.name)) ? 
+                      backgroundColor: (searchContext.facetStrings && searchContext.facetStrings.includes(facetObj.name + ":" + fv.name)) ?
                         props.config.selected : props.config.unselected
                     }}
                   ></div>
@@ -155,34 +155,34 @@ const Facets: React.FC<Props> = (props) => {
               <td className="count">{(fv.count).toLocaleString()}</td>
               {/* <td className="count">{(value).toLocaleString()}</td> */}
             </tr>
-          )
+          );
         }
-      })
+      });
     }
-    return <tbody>{result}</tbody>
-  }
+    return <tbody>{result}</tbody>;
+  };
 
   // Get object for a facet based on facet name
   const getFacetObj = (facetName, facetObjs) => {
     return facetObjs ? facetObjs.find(obj => obj.name === facetName) : null;
-  }
+  };
 
   // Get number of facet values for a facet based on facet name
   const getNumValues = (facetName, facetObjs) => {
     let facetObj = getFacetObj(facetName, facetObjs);
     return (facetObj && facetObj["facet-value"]) ? facetObj["facet-value"].length : 0;
-  }
+  };
 
   return (
     <div className="facets">
       {/* Show each facet */}
       {props.config.items && searchContext.searchResults && props.config.items.map((f, index) => {
-          return (
-          f.type === "dateRange" ? 
+        return (
+          f.type === "dateRange" ?
             <div className="facet" key={f?.name}>
               <DateRangeFacet config={f}></DateRangeFacet>
             </div>
-          :
+            :
             <div className="facet" key={"facet-" + index}>
               <div className="title">
                 {f.name}
@@ -192,11 +192,11 @@ const Facets: React.FC<Props> = (props) => {
                     placement="right"
                     overlay={<Tooltip>{f.tooltip}</Tooltip>}
                   >
-                    <InfoCircleFill 
+                    <InfoCircleFill
                       data-testid={"info-" + f.name}
-                      color="#5d6aaa" 
+                      color="#5d6aaa"
                       size={21}
-                      className="facetInfo" 
+                      className="facetInfo"
                     />
                   </OverlayTrigger>
                 }
@@ -204,30 +204,30 @@ const Facets: React.FC<Props> = (props) => {
               <div className="facetValues">
                 {/* Show each facet value (and count) */}
                 {searchContext.searchResults?.facet && searchContext.searchResults.facet?.length > 0 ?
-                <Table size="sm" style={{padding: 0, margin: 0}}>
-                    {displayFacetValues(getFacetObj(f.name, searchContext.searchResults.facet), f.disabled, moreLess[f.name])}
-                </Table> : null }
-                {(getNumValues(f.name, searchContext.searchResults.facet) > moreThreshold) ? moreLess[f.name] ? 
+                  <Table size="sm" style={{padding: 0, margin: 0}}>
+                    {getFacetObj(f.name, searchContext.searchResults.facet) && displayFacetValues(getFacetObj(f.name, searchContext.searchResults.facet), f.disabled, moreLess[f.name])}
+                  </Table> : null }
+                {(getNumValues(f.name, searchContext.searchResults.facet) > moreThreshold) ? moreLess[f.name] ?
                   <div className="moreLess" data-testid={"more-" + f.name} onClick={handleMoreLess(f.name)}>
                     {getNumValues(f.name, searchContext.searchResults.facet) - moreThreshold} more
-                    <ChevronDoubleRight 
+                    <ChevronDoubleRight
                       data-testid="doubleRight"
-                      color="#5d6aaa" 
+                      color="#5d6aaa"
                       size={11}
-                      className="doubleRight" 
+                      className="doubleRight"
                     /></div> :
                   <div className="moreLess" data-testid={"less-" + f.name} onClick={handleMoreLess(f.name)}>
-                    <ChevronDoubleLeft 
+                    <ChevronDoubleLeft
                       data-testid="doubleLeft"
-                      color="#5d6aaa" 
+                      color="#5d6aaa"
                       size={11}
-                      className="doubleLeft" 
+                      className="doubleLeft"
                     />less</div> : null
                 }
               </div>
-            </div> ) 
+            </div>);
       })}
-    </div> 
+    </div>
   );
 };
 
