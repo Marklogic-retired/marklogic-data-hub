@@ -16,9 +16,9 @@ const productQuery = {
 const resultsTest1 = searchNodes(productQuery);
 
 let assertions = [
-  test.assertEqual(7, resultsTest1.total),
-  test.assertEqual(7, resultsTest1.nodes.length, xdmp.toJsonString(resultsTest1)),
-  test.assertEqual(1, resultsTest1.edges.length)
+  test.assertEqual(8, resultsTest1.total),
+  test.assertEqual(8, resultsTest1.nodes.length, xdmp.toJsonString(resultsTest1)),
+  test.assertEqual(3, resultsTest1.edges.length)
 ];
 
 const babyRegistryQuery = {
@@ -41,9 +41,9 @@ const multipleQuery = {
 const resultsTest3 = searchNodes(multipleQuery);
 
 assertions.concat([
-  test.assertEqual(8, resultsTest3.total),
-  test.assertEqual(8, resultsTest3.nodes.length, xdmp.toJsonString(resultsTest3)),
-  test.assertEqual(7, resultsTest3.edges.length),
+  test.assertEqual(9, resultsTest3.total),
+  test.assertEqual(9, resultsTest3.nodes.length, xdmp.toJsonString(resultsTest3)),
+  test.assertEqual(9, resultsTest3.edges.length),
   test.assertFalse(resultsTest3.nodes[0].hasRelationships),
   test.assertFalse(resultsTest3.nodes[1].hasRelationships),
   test.assertFalse(resultsTest3.nodes[2].hasRelationships)
@@ -108,14 +108,57 @@ const searchTextQuery = {
 const resultsTestSearchBy = searchNodes(searchTextQuery);
 
 assertions.concat([
-  test.assertEqual(1, resultsTestSearchBy.total),
-  test.assertEqual(1, resultsTestSearchBy.nodes.length),
-  test.assertEqual(0, resultsTestSearchBy.edges.length),
+  test.assertEqual(2, resultsTestSearchBy.total),
+  test.assertEqual(2, resultsTestSearchBy.nodes.length),
+  test.assertEqual(1, resultsTestSearchBy.edges.length),
 ]);
 
 resultsTestSearchBy.nodes.forEach(node => {
-  test.assertTrue((node.group.toString().includes("Product") || node.group.toString().includes("Sneakers")));
+  test.assertTrue((node.group.toString().includes("Product") || node.group.toString().includes("BasketballShoes")));
   test.assertFalse(node.hasRelationships)
 })
+
+const conceptFilterQuery = {
+  "searchText": "",
+  "entityTypeIds": [ "Product" ],
+  "conceptsFilterTypeIds": [ "http://www.example.com/Category/Sneakers" ]
+};
+
+const resultsConceptFilter = searchNodes(conceptFilterQuery);
+
+assertions.concat([
+  test.assertEqual(8, resultsConceptFilter.total),
+  test.assertEqual(7, resultsConceptFilter.nodes.length, xdmp.toJsonString(conceptFilterQuery)),
+  test.assertEqual(1, resultsConceptFilter.edges.length),
+]);
+
+const conceptFilterQuery2 = {
+  "searchText": "",
+  "entityTypeIds": [ "Product" ],
+  "conceptsFilterTypeIds": [ "http://www.example.com/Category/BasketballShoes" ]
+};
+
+const resultsConceptFilter2 = searchNodes(conceptFilterQuery2);
+
+assertions.concat([
+  test.assertEqual(8, resultsConceptFilter2.total),
+  test.assertEqual(7, resultsConceptFilter2.nodes.length, xdmp.toJsonString(conceptFilterQuery2)),
+  test.assertEqual(2, resultsConceptFilter2.edges.length),
+]);
+
+const conceptFilterQuery3 = {
+  "searchText": "",
+  "entityTypeIds": [ "Product" ],
+  "conceptsFilterTypeIds": [ "http://www.example.com/Category/Sneakers","http://www.example.com/Category/BasketballShoes" ]
+};
+
+const resultsConceptFilter3 = searchNodes(conceptFilterQuery3);
+
+assertions.concat([
+  test.assertEqual(8, resultsConceptFilter3.total),
+  test.assertEqual(8, resultsConceptFilter3.nodes.length, xdmp.toJsonString(conceptFilterQuery3)),
+  test.assertEqual(3, resultsConceptFilter3.edges.length),
+]);
+
 
 assertions;

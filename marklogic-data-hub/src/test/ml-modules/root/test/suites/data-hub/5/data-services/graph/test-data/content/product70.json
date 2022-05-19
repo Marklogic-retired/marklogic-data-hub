@@ -19,7 +19,8 @@
       },
       "Product": {
         "productId": 70,
-        "productName": "name 70"
+        "productName": "name 70",
+        "category": "Basketball Shoes"
       }
     }
   }

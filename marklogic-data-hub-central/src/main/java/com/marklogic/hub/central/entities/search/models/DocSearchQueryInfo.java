@@ -36,6 +36,7 @@ public class DocSearchQueryInfo {
     // This cannot easily be changed in the DHF 5.x timeframe due to saved queries using this name.
     private List<String> entityTypeIds;
     private List<String> relatedEntityTypeIds;
+    private List<String> conceptsFilterTypeIds;
 
     private Map<String, FacetData> selectedFacets;
 
@@ -46,6 +47,7 @@ public class DocSearchQueryInfo {
         this.searchText = "";
         this.entityTypeIds = new ArrayList<>();
         this.relatedEntityTypeIds = new ArrayList<>();
+        this.conceptsFilterTypeIds = new ArrayList<>();
         this.selectedFacets = new HashMap<>();
         this.relatedDocument = null;
     }
@@ -131,6 +133,14 @@ public class DocSearchQueryInfo {
 
     public void setRelatedEntityTypeIds(List<String> relatedEntityTypeIds) {
         this.relatedEntityTypeIds = relatedEntityTypeIds;
+    }
+
+    public List<String> getConceptsFilterTypeIds() {
+        return conceptsFilterTypeIds;
+    }
+
+    public void setConceptsFilterTypeIds(List<String> conceptsFilterTypeIds) {
+        this.conceptsFilterTypeIds = conceptsFilterTypeIds;
     }
 
     public Map<String, FacetData> getSelectedFacets() {
