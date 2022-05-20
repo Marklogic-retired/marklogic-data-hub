@@ -3,6 +3,70 @@
   <search:constraint name="Collection">
     <search:collection/>
   </search:constraint>
+  <search:constraint name="school">
+    <search:range collation="http://marklogic.com/collation/codepoint" facet="true" type="xs:string">
+      <search:element name="school" ns="" xmlns:es="http://marklogic.com/entity-services"/>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="bats">
+    <search:range collation="http://marklogic.com/collation/codepoint" facet="true" type="xs:string">
+      <search:element name="bats" ns="" xmlns:es="http://marklogic.com/entity-services"/>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="throws">
+    <search:range collation="http://marklogic.com/collation/codepoint" facet="true" type="xs:string">
+      <search:element name="throws" ns="" xmlns:es="http://marklogic.com/entity-services"/>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="country">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+        <search:path-index
+            xmlns:es="http://www.w3.org/2000/xmlns/">/player/location/country
+        </search:path-index>
+        <search:path-index
+            xmlns:es="http://www.w3.org/2000/xmlns/">/team/location/country
+        </search:path-index>
+        <search:facet-option>limit=25</search:facet-option>
+        <search:facet-option>frequency-order</search:facet-option>
+        <search:facet-option>descending</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="state">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+        <search:path-index
+            xmlns:es="http://www.w3.org/2000/xmlns/">/player/location/state
+        </search:path-index>
+        <search:path-index
+            xmlns:es="http://www.w3.org/2000/xmlns/">/team/location/state
+        </search:path-index>
+        <search:facet-option>limit=100</search:facet-option>
+        <search:facet-option>frequency-order</search:facet-option>
+        <search:facet-option>descending</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="position">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+        <search:path-index
+            xmlns:es="http://www.w3.org/2000/xmlns/">/player/season-details/position/name[not(@type='short')]
+        </search:path-index>
+        <search:facet-option>limit=25</search:facet-option>
+        <search:facet-option>frequency-order</search:facet-option>
+        <search:facet-option>descending</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="field">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+        <search:path-index
+            xmlns:es="http://www.w3.org/2000/xmlns/">/team/season-details/venue/season-details/field-type/name
+        </search:path-index>
+        <search:facet-option>limit=25</search:facet-option>
+        <search:facet-option>frequency-order</search:facet-option>
+        <search:facet-option>descending</search:facet-option>
+    </search:range>
+  </search:constraint>
   <!-- <search:constraint name="created">
     <search:range type="xs:dateTime" facet="false">
         <search:path-index xmlns:es="http://www.w3.org/2000/xmlns/">/record/createdOn</search:path-index>
@@ -14,18 +78,18 @@
       <search:facet-option>limit=25</search:facet-option>
     </search:range>
   </search:constraint> -->
-  <!-- <search:operator name="sort">
-    <search:state name="record_createdOn_ascending">
-      <search:sort-order type="xs:dateTime" direction="ascending">
-        <search:path-index xmlns:oex="http://www.w3.org/2000/xmlns/">/record/createdOn/ts</search:path-index>
+  <search:operator name="sort">
+    <search:state name="player_birthdate_ascending">
+      <search:sort-order type="xs:date" direction="ascending">
+        <search:path-index xmlns:oex="http://www.w3.org/2000/xmlns/">/player/birthdate</search:path-index>
       </search:sort-order>
     </search:state>
-    <search:state name="record_createdOn_descending">
-      <search:sort-order type="xs:dateTime" direction="descending">
-        <search:path-index xmlns:oex="http://www.w3.org/2000/xmlns/">/record/createdOn/ts</search:path-index>
+    <search:state name="player_birthdate_descending">
+      <search:sort-order type="xs:date" direction="descending">
+        <search:path-index xmlns:oex="http://www.w3.org/2000/xmlns/">/player/birthdate</search:path-index>
       </search:sort-order>
     </search:state>
-  </search:operator> -->
+  </search:operator>
   <!--
 Uncomment to return no results for a blank search, rather than the default of all results
  <search:term

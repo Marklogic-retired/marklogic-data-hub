@@ -36,9 +36,9 @@ const Address: React.FC<Props> = (props) => {
     const postal2: any = getValByPath(addressData, props.config.postal2, true) || null;
     const country: any = getValByPath(addressData, props.config.country, true) || null;
 
-    const addrFormatted: string = display(street1, "", (street2 || city) ? ", " : "") +
-                          display(street2, "", city ? ", " : "") +
-                          display(city, "", state ? ", " : "") +
+    const addrFormatted: string = display(street1, "", (street2 || city) ? ", " : " ") +
+                          display(street2, "", city ? ", " : " ") +
+                          display(city, "", (state || country) ? ", " : " ") +
                           display(state, "", " ") +
                           display(postal1, "", postal2 ? "" : " ") +
                           display(postal2, "-", " ") +

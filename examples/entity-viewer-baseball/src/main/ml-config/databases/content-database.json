@@ -1,5 +1,79 @@
 {
     "database-name": "%%DATABASE%%",
-    "range-element-index": [],
-    "range-path-index": []
+    "range-element-index": [
+      {
+        "collation": "http://marklogic.com/collation/codepoint",
+        "invalid-values": "reject",
+        "localname": "school",
+        "namespace-uri": null,
+        "range-value-positions": false,
+        "scalar-type": "string"
+      },
+      {
+        "collation": "http://marklogic.com/collation/codepoint",
+        "invalid-values": "reject",
+        "localname": "bats",
+        "namespace-uri": null,
+        "range-value-positions": false,
+        "scalar-type": "string"
+      },
+      {
+        "collation": "http://marklogic.com/collation/codepoint",
+        "invalid-values": "reject",
+        "localname": "throws",
+        "namespace-uri": null,
+        "range-value-positions": false,
+        "scalar-type": "string"
+      }
+    ],
+    "range-path-index": [
+        {
+            "scalar-type": "string",
+            "path-expression": "/player/location/state",
+            "collation": "http://marklogic.com/collation/codepoint",
+            "range-value-positions": false,
+            "invalid-values": "reject"
+        },
+        {
+            "scalar-type": "string",
+            "path-expression": "/team/location/state",
+            "collation": "http://marklogic.com/collation/codepoint",
+            "range-value-positions": false,
+            "invalid-values": "reject"
+        },
+        {
+            "scalar-type": "string",
+            "path-expression": "/player/location/country",
+            "collation": "http://marklogic.com/collation/codepoint",
+            "range-value-positions": false,
+            "invalid-values": "reject"
+        },
+        {
+            "scalar-type": "string",
+            "path-expression": "/team/location/country",
+            "collation": "http://marklogic.com/collation/codepoint",
+            "range-value-positions": false,
+            "invalid-values": "reject"
+        },
+        {
+            "scalar-type": "string",
+            "path-expression": "/player/season-details/position/name[not(@type='short')]",
+            "collation": "http://marklogic.com/collation/codepoint",
+            "range-value-positions": false,
+            "invalid-values": "reject"
+        },
+        {
+            "scalar-type": "string",
+            "path-expression": "/team/season-details/venue/season-details/field-type/name",
+            "collation": "http://marklogic.com/collation/codepoint",
+            "range-value-positions": false,
+            "invalid-values": "reject"
+        },
+        {
+            "scalar-type": "date",
+            "path-expression": "/player/birthdate",
+            "range-value-positions": false,
+            "invalid-values": "reject"
+        }
+    ]
 }
