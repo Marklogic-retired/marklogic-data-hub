@@ -257,7 +257,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
   };
 
   const displayPanelContent = () => {
-    return currentTab === "entityType" ? <div>
+    return currentTab === "entityType" ? <div id="entityType-tab-content">
       <Form className={"container-fluid"}>
         <Row className={"mb-3"}>
           <FormLabel column lg={3}>{"Name:"}</FormLabel>

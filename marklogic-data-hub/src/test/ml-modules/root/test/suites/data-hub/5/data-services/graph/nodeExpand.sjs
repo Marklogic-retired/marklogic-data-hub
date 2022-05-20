@@ -48,4 +48,17 @@ assertions.concat([
   test.assertEqual(5, resultsTest3.edges.length)
 ]);
 
+const expandConceptQuery = {
+  "isConcept":true,
+  "parentIRI": "http://example.org/Office-0.0.1/Office/1",
+  "objectConcept": "http://www.example.com/Category/Sneakers"
+};
+const restultConceptExpand = nodeExpandWithLimit4(expandConceptQuery);
+
+assertions.concat([
+  test.assertEqual(1, restultConceptExpand.total),
+  test.assertEqual(1, restultConceptExpand.nodes.length, xdmp.toJsonString(restultConceptExpand)),
+  test.assertEqual(1, restultConceptExpand.edges.length)
+]);
+
 assertions;

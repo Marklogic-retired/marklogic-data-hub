@@ -16,8 +16,9 @@ import {getExportPreview} from "../../../query-export/export-preview/export-prev
 import {QueryOptions} from "../../../../types/query-types";
 import {useHistory, useLocation} from "react-router-dom";
 import HCButton from "../../../common/hc-button/hc-button";
-import {HCTable} from "@components/common";
+import {HCTable, HCTooltip} from "@components/common";
 import {themeColors} from "@config/themes.config";
+import tooltipsConfig from "@config/explorer-tooltips.config";
 
 const QueryModal = (props) => {
   const {
@@ -219,7 +220,11 @@ const QueryModal = (props) => {
           <span aria-label="exportIcon">
             {row.canExport
               ? <FontAwesomeIcon icon={faFileExport} color={themeColors.info} size="lg" className={styles.manageQueryIconsHover} onClick={() => displayExportModal(row.key)} />
-              : <FontAwesomeIcon icon={faFileExport} color={themeColors.light} size="lg" />
+              : <HCTooltip text={tooltipsConfig.manageQueries.disabledExport} id={"export-query-disabled-tooltip"} placement="top">
+                <span>
+                  <FontAwesomeIcon icon={faFileExport} color={themeColors.light} className={"cursor-not-allowed"} size="lg" />
+                </span>
+              </HCTooltip>
             }
           </span>
         </span>

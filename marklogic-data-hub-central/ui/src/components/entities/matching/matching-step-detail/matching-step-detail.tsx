@@ -56,6 +56,20 @@ const DEFAULT_MATCHING_STEP: MatchingStep = {
 
 const MatchingStepDetail: React.FC = () => {
   const storage = getViewSettings();
+  const expandedRulesetStorage = storage.match?.rulesetExpanded? storage.match.rulesetExpanded : false;
+  const rulesetToggleStorage = storage.match?.editRulesetTimeline? storage.match.editRulesetTimeline : false;
+  const thresholdToggleStorage = storage.match?.editThresholdTimeline? storage.match.editThresholdTimeline : false;
+  const rulesetTextStorage = storage.match?.rulesetTextExpanded ? storage.match.rulesetTextExpanded : false;
+  const thresholdTextStorage = storage.match?.thresholdTextExpanded ? storage.match.thresholdTextExpanded : false;
+  const testRadioStorage = storage.match?.testRadioSelection ? storage.match.testRadioSelection : 1;
+  const rulesetDataStorage = storage.match?.rulesetData ? storage.match.rulesetData : [{rulesetName: "", actionPreviewData: [{name: "", action: "", uris: ["", ""]}], score: 0}];
+  const previewDataStorage = storage.match?.previewMatchedDataActivity ? storage.match.previewMatchedDataActivity : {sampleSize: 100, uris: [], actionPreview: []};
+  const previewDataValueStorage = storage.match?.previewMatchedDataValue == 0 ? storage.match.previewMatchedDataValue : -1;  // eslint-disable-line
+  const uriTestStorage = storage.match?.uriTestClicked ? storage.match.uriTestClicked : false;
+  const uriData1Storage = storage.match?.uriTableData1 ? storage.match.uriTableData1 : [];
+  const uriData2Storage = storage.match?.uriTableData2 ? storage.match.uriTableData2 : [];
+  const inputUriDisabledStorage = storage.match?.hasOwnProperty("inputUriState") ? storage.match?.inputUriState : false;
+  const inputUriDisabled2Storage = storage.match?.hasOwnProperty("inputUri2State") ? storage.match?.inputUri2State  : true;
 
   // Prevents an infinite loop issue with sessionStorage due to user refreshing in step detail page.
   clearSessionStorageOnRefresh();
@@ -67,30 +81,30 @@ const MatchingStepDetail: React.FC = () => {
   const [editRuleset, setEditRuleset] = useState({});
   const [showThresholdModal, toggleShowThresholdModal] = useState(false);
   const [showRulesetSingleModal, toggleShowRulesetSingleModal] = useState(false);
-  const [moreThresholdText, toggleMoreThresholdText] = useState(true);
-  const [moreRulesetText, toggleMoreRulesetText] = useState(true);
+  const [moreThresholdText, toggleMoreThresholdText] = useState(thresholdTextStorage);
+  const [moreRulesetText, toggleMoreRulesetText] = useState(rulesetTextStorage);
   const [matchingActivity, setMatchingActivity] = useState<any>({scale: {}, thresholdActions: []});
-  const [value, setValue] = React.useState(1);
-  const [UriTableData, setUriTableData] = useState<any[]>([]);
-  const [UriTableData2, setUriTableData2] = useState<any[]>([]);
+  const [value, setValue] = React.useState(testRadioStorage);
+  const [UriTableData, setUriTableData] = useState(uriData1Storage);
+  const [UriTableData2, setUriTableData2] = useState(uriData2Storage);
   const [uriContent, setUriContent] = useState("");
   const [uriContent2, setUriContent2] = useState("");
-  const [inputUriDisabled, setInputUriDisabled] = useState(false);
-  const [inputUriDisabled2, setInputUriDisabled2] = useState(true);
+  const [inputUriDisabled, setInputUriDisabled] = useState(inputUriDisabledStorage);
+  const [inputUriDisabled2, setInputUriDisabled2] = useState(inputUriDisabled2Storage);
   const [testMatchTab] = useState("matched");
   const [duplicateUriWarning, setDuplicateUriWarning] = useState(false);
   const [duplicateUriWarning2, setDuplicateUriWarning2] = useState(false);
   const [singleUriWarning, setSingleUriWarning] = useState(false);
   const [singleUriWarning2, setSingleUriWarning2] = useState(false);
-  const [uriTestMatchClicked, setUriTestMatchClicked] = useState(false);
+  const [uriTestMatchClicked, setUriTestMatchClicked] = useState(uriTestStorage);
   const [allDataSelected, setAllDataSelected] = useState(false);
   const [testUrisOnlySelected, setTestUrisOnlySelected] = useState(true);
   const [testUrisAllDataSelected, setTestUrisAllDataSelected] = useState(false);
   const [testMatchedData, setTestMatchedData] = useState<any>({stepName: "", sampleSize: 100, uris: []});
-  const [previewMatchedActivity, setPreviewMatchedActivity] = useState<any>({sampleSize: 100, uris: [], actionPreview: []});
+  const [previewMatchedActivity, setPreviewMatchedActivity] = useState<any>(previewDataStorage);
   const [showRulesetMultipleModal, toggleShowRulesetMultipleModal] = useState(false);
 
-  const [rulesetDataList, setRulesetDataList] = useState<any>([{rulesetName: "", actionPreviewData: [{name: "", action: "", uris: ["", ""]}], score: 0}]);
+  const [rulesetDataList, setRulesetDataList] = useState<any>(rulesetDataStorage);
   const [activeMatchedRuleset, setActiveMatchedRuleset] = useState<string[]>([]);
   const [activeMatchedUri, setActiveMatchedUri] = useState<string[]>([]);
   const [allRulesetNames] = useState<string[]>([]);
@@ -99,16 +113,16 @@ const MatchingStepDetail: React.FC = () => {
   const [entityProperties, setEntityProperties] = useState<any>();
   const [urisCompared, setUrisCompared] = useState<string[]>([]);
   const [uris, setUris] = useState<string[]>([]);
-  const [previewMatchedData, setPreviewMatchedData] = useState(-1);
-  const [expandRuleset, setExpandRuleset] = useState(false);
+  const [previewMatchedData, setPreviewMatchedData] = useState(previewDataValueStorage);
+  const [expandRuleset, setExpandRuleset] = useState(expandedRulesetStorage);
   const [colourElementAdded, setColourElementAdded] = useState(false);
   const [colourElementAdded2, setColourElementAdded2] = useState(false);
 
   //To handle timeline display
   const [rulesetItems, setRulesetItems] = useState<any[]>([]);
   const [thresholdItems, setThresholdItems] = useState<any[]>([]);
-  const [displayRulesetTimeline, toggleDisplayRulesetTimeline] = useState(false);
-  const [displayThresholdTimeline, toggleDisplayThresholdTimeline] = useState(false);
+  const [displayRulesetTimeline, toggleDisplayRulesetTimeline] = useState(rulesetToggleStorage);
+  const [displayThresholdTimeline, toggleDisplayThresholdTimeline] = useState(thresholdToggleStorage);
   const refMatchingRuleset = useRef<any[]>();
 
   useEffect(() => {
@@ -122,7 +136,6 @@ const MatchingStepDetail: React.FC = () => {
           value: item.name + ":" + item.weight.toString()
         }));
         setRulesetItems(rulesetItems);
-        toggleMoreRulesetText(false);
         if (matchingStepArtifact.matchRulesets.length === 0) { toggleMoreRulesetText(true); }
       }
       if (matchingStepArtifact.thresholds) {
@@ -132,7 +145,6 @@ const MatchingStepDetail: React.FC = () => {
           value: item.thresholdName + " - " + item.action + ":" + item.score.toString(),
         }));
         setThresholdItems(thresholdItems);
-        toggleMoreThresholdText(false);
         if (matchingStepArtifact.thresholds.length === 0) { toggleMoreThresholdText(true); }
       }
       setMatchingStep(matchingStepArtifact);
@@ -152,6 +164,24 @@ const MatchingStepDetail: React.FC = () => {
 
   useEffect(() => { setColourElementAdded(false); }, [uriContent]);
   useEffect(() => { setColourElementAdded2(false); }, [uriContent2]);
+
+  useEffect(() => {
+    setViewSettings({...storage, match: {...storage.match,
+      rulesetExpanded: expandRuleset,
+      editRulesetTimeline: displayRulesetTimeline,
+      editThresholdTimeline: displayThresholdTimeline,
+      rulesetTextExpanded: moreRulesetText,
+      thresholdTextExpanded: moreThresholdText,
+      testRadioSelection: value,
+      previewMatchedDataValue: previewMatchedData,
+      previewMatchedDataActivity: previewMatchedActivity,
+      uriTestClicked: uriTestMatchClicked,
+      rulesetData: rulesetDataList,
+      inputUriState: inputUriDisabled,
+      inputUri2State: inputUriDisabled2,
+      uriTableData1: UriTableData,
+      uriTableData2: UriTableData2}});
+  }, [expandRuleset, displayRulesetTimeline, displayThresholdTimeline, moreRulesetText, moreThresholdText, value, previewMatchedActivity, uriTestMatchClicked, rulesetDataList, inputUriDisabled, inputUriDisabled2, previewMatchedData, UriTableData, UriTableData2]);
 
   const handleMatchingActivity = async (matchStepName) => {
     let matchActivity = await calculateMatchingActivity(matchStepName);
@@ -183,8 +213,8 @@ const MatchingStepDetail: React.FC = () => {
       rulesetDataList.shift();
     };
     let previewMatchActivity = await previewMatchingActivity(testMatchData);
-    setPreviewMatchedData(previewMatchActivity.actionPreview.length);
     if (previewMatchActivity) {
+      setPreviewMatchedData(previewMatchActivity.actionPreview.length);
       await test();
       setPreviewMatchedActivity(previewMatchActivity);
       setRulesetDataList(rulesetDataList);
@@ -722,7 +752,7 @@ const MatchingStepDetail: React.FC = () => {
         title={matchingStep.name}
         handleOnBack={() => {
           history.push("/tiles/curate");
-          setViewSettings({...storage, curate: {}});
+          setViewSettings({...storage, curate: {}, match: {}});
         }}
       />
       <p className={styles.headerDescription}>{MatchingStepDetailText.description}</p>
@@ -731,7 +761,7 @@ const MatchingStepDetail: React.FC = () => {
 
         <div className={expandRuleset ? styles.matchCombinationsExpandedContainer : styles.matchCombinationsCollapsedContainer}>
           <div aria-label="matchCombinationsHeading" className={styles.matchCombinationsHeading}>Possible Combinations of Matched Rulesets</div>
-          <span className={styles.expandCollapseRulesIcon}><ExpandCollapse handleSelection={(id) => handleExpandCollapseRulesIcon(id)} currentSelection={"collapse"} aria-label="expandCollapseRulesetIcon" /></span>
+          <span className={styles.expandCollapseRulesIcon}><ExpandCollapse handleSelection={(id) => handleExpandCollapseRulesIcon(id)} currentSelection={expandRuleset ? "expand" : "collapse"} aria-label="expandCollapseRulesetIcon" /></span>
           {matchingActivity?.thresholdActions && matchingActivity?.thresholdActions.length ?
             <Row>
               {matchingActivity?.thresholdActions?.map((combinationsObject, i, combArr) => {
@@ -789,7 +819,7 @@ const MatchingStepDetail: React.FC = () => {
               >Add</HCButton>
             </div>
           </div>
-          <div className={styles.switchToggleContainer}><span className={styles.editingLabel}><b>Edit Thresholds</b></span><FormCheck type="switch" aria-label="threshold-scale-switch" onChange={({target}) => toggleDisplayThresholdTimeline(target.checked)} defaultChecked={false} className={styles.switchToggle}></FormCheck>
+          <div className={styles.switchToggleContainer}><span className={styles.editingLabel}><b>Edit Thresholds</b></span><FormCheck type="switch" aria-label="threshold-scale-switch" onChange={({target}) => toggleDisplayThresholdTimeline(target.checked)} defaultChecked={displayThresholdTimeline} className={styles.switchToggle}></FormCheck>
             <span>
               <HCTooltip text={MatchingStepTooltips.thresholdScale} id="threshold-scale-tooltip" placement="right">
                 <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.scaleTooltip} data-testid={"info-tooltip-threshold"} />
@@ -826,7 +856,7 @@ const MatchingStepDetail: React.FC = () => {
               {addButton}
             </div>
           </div>
-          <div className={styles.switchToggleContainer}><span className={styles.editingLabel}><b>Edit Rulesets</b></span><FormCheck type="switch" aria-label="ruleset-scale-switch" onChange={({target}) => toggleDisplayRulesetTimeline(target.checked)} defaultChecked={false} className={styles.switchToggle}></FormCheck>
+          <div className={styles.switchToggleContainer}><span className={styles.editingLabel}><b>Edit Rulesets</b></span><FormCheck type="switch" aria-label="ruleset-scale-switch" onChange={({target}) => toggleDisplayRulesetTimeline(target.checked)} defaultChecked={displayRulesetTimeline} className={styles.switchToggle}></FormCheck>
             <span>
               <HCTooltip text={MatchingStepTooltips.rulesetScale} id="ruleset-scale-tooltip" placement="right">
                 <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={`${styles.scaleTooltip} ps-0`} data-testid={`info-tooltip-ruleset`} />
@@ -848,7 +878,7 @@ const MatchingStepDetail: React.FC = () => {
                 id={"test-uris"}
                 name={"test-review-matched-entities"}
                 type={"radio"}
-                defaultChecked={value === 1 ? true : false}
+                defaultChecked={value == 1 ? true : false}  // eslint-disable-line
                 onChange={(e) => {
                   handleUriInputSelected(e);
                   onTestMatchRadioChange(e);
@@ -898,7 +928,7 @@ const MatchingStepDetail: React.FC = () => {
               id={"test-uris-all-data"}
               name={"test-review-matched-entities"}
               type={"radio"}
-              defaultChecked={value === 2 ? true : false}
+              defaultChecked={value == 2 ? true : false}  // eslint-disable-line
               onChange={(e) => {
                 handleUriInputSelected2(e);
                 onTestMatchRadioChange(e);
@@ -947,7 +977,7 @@ const MatchingStepDetail: React.FC = () => {
               id={"all-data"}
               name={"test-review-matched-entities"}
               type={"radio"}
-              defaultChecked={value === 3 ? true : false}
+              defaultChecked={value == 3 ? true : false}  // eslint-disable-line
               onChange={(e) => {
                 handleAllDataRadioClick(e);
                 onTestMatchRadioChange(e);
@@ -976,7 +1006,7 @@ const MatchingStepDetail: React.FC = () => {
         {/*    <Menu.Item key="notMatched">Not Matched</Menu.Item>*/}
         {/*  </Menu>*/}
         {/*</div>*/}
-        {previewMatchedData === 0 && <div className={styles.noMatchedDataView} aria-label="noMatchedDataView"><span>No matches found. You can try: </span><br />
+        {(previewMatchedData === 0) && <div className={styles.noMatchedDataView} aria-label="noMatchedDataView"><span>No matches found. You can try: </span><br />
           <div className={styles.noMatchedDataContent}>
             <span> Selecting a different test case</span><br />
             <span> Changing or adding more URIs</span><br />

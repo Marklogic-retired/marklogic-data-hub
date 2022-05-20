@@ -254,6 +254,34 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     return expandedNodeData.hasOwnProperty(expandId);
   };
 
+  const createTitleWithPropertiesOnHover = propertiesOnHover => {
+    const container = document.createElement("div");
+    const paddingElementes = document.createElement("div");
+    const topSpan = document.createElement("div");
+    const bottomSpan = document.createElement("div");
+    propertiesOnHover.forEach(property => {
+      Object.keys(property).forEach(propertyName => {
+        const propertySpan = document.createElement("span");
+        if (typeof property[propertyName] === "string") {
+          propertySpan.innerHTML = `${_.capitalize(propertyName)}: ${property[propertyName]}`;
+          topSpan.appendChild(propertySpan);
+          topSpan.appendChild(document.createElement("br"));
+        } else {
+          propertySpan.innerHTML = `${_.capitalize(propertyName)}:`;
+          const pre = document.createElement("pre");
+          pre.innerText = JSON.stringify(property[propertyName], undefined, 2);
+          paddingElementes.appendChild(propertySpan);
+          paddingElementes.appendChild(pre);
+        }
+      });
+    });
+    bottomSpan.innerText = tooltipsConfig.graphVis.singleNodeNoLabel;
+    container.appendChild(topSpan);
+    container.appendChild(paddingElementes);
+    container.appendChild(bottomSpan);
+    return container;
+  };
+
   const getNodes = (nodesToExpand?: any) => {
     let nodes;
     let nodeObj = groupNodes;
@@ -267,6 +295,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       let defaultThemeColor = !e.isConcept ? themeColors.defaults.entityColor : themeColors.defaults.conceptColor;
       let nodeColor = entity?.color || defaultThemeColor;
       let nodeId = e.id;
+      let nodeTitle: string | HTMLElement = tooltipsConfig.graphVis.singleNodeNoLabel;
       if (e.count > 1) {
         if (!nodeObj.hasOwnProperty(nodeId)) {
           nodeObj[nodeId] = e;
@@ -279,10 +308,18 @@ const GraphVisExplore: React.FC<Props> = (props) => {
           leafNodesObj[nodeId] = e;
         }
       }
+      // get node title
+      if (e.count > 1) {
+        nodeTitle = tooltipsConfig.graphVis.groupNode(entityType);
+      } else if (e.propertiesOnHover?.length) {
+        nodeTitle = createTitleWithPropertiesOnHover(e.propertiesOnHover);
+      } else if (e.label.length > 0) {
+        nodeTitle = tooltipsConfig.graphVis.singleNode(e.label);
+      }
       return {
         id: nodeId,
         shape: "custom",
-        title: e.count > 1 ? tooltipsConfig.graphVis.groupNode(entityType) : e.label.length > 0 ? tooltipsConfig.graphVis.singleNode(e.label): tooltipsConfig.graphVis.singleNodeNoLabel,
+        title: nodeTitle,
         label: nodeLabel,
         color: nodeColor,
         ctxRenderer: ({ctx, x, y, state: {selected, hover}, style, label}) => {

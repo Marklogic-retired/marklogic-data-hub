@@ -9,5 +9,8 @@ class Tables {
   getActiveTablePage() {
     return cy.get("li.page-item.active");
   }
+  expandRow(rowName: string) {
+    return cy.get(`[data-testid="${rowName}-expand-icon"]`).click();
+  }
 }
 export default new Tables();

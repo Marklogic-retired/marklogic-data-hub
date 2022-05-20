@@ -362,7 +362,6 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getHubPropertiesExpanded();
     browsePage.getFacetItemCheckbox("collection", "Person").click({force: true});
     browsePage.getFacetApplyButton().click();
-    browsePage.getSaveModalIcon().should("not.exist");
   });
   // Reset query confirmation
   it("Show Reset query button, open reset confirmation", () => {

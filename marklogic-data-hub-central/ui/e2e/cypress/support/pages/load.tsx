@@ -312,6 +312,7 @@ class LoadPage {
   missingPermissionTooltip(stepName: string) {
     return cy.get(`#${stepName}missing-permission-tooltip`);
   }
+
 }
 
 const loadPage = new LoadPage();

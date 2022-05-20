@@ -18,6 +18,10 @@ class MonitorPage {
     return cy.get(`[data-testid=${stepName}-result]`);
   }
 
+  getTableNestedRows() {
+    return cy.get(".rowExpandedDetail");
+  }
+
   getAllJobIdLink() {
     return cy.findAllByTestId("jobId-link");
   }
@@ -176,6 +180,34 @@ class MonitorPage {
   getExpandAllTableRows() {
     return cy.get("#expandIcon path");
   }
+
+  getCollapseAllTableRows() {
+    return cy.get("#collapseIcon path");
+  }
+
+  getOrderColumnMonitorTable(column: string, order?: string) {
+    return cy.get(`[aria-label="${column} ${order ? "sort " + order : "sortable"}"]`);
+  }
+
+  getEntityLabelNames() {
+    return cy.get(`.rowExpandedDetail > div`);
+  }
+
+  searchBiggerRowIndex(array: any) {
+    let countRow: number = 0;
+    let countRowAux: number = 0;
+    let indexAux: number = 0;
+
+    array.forEach((element: any, index: any) => {
+      countRowAux = Cypress.$(".reset-expansion-style:eq(" + index + ") .stepType").length;
+      if (countRowAux > countRow) {
+        countRow = countRowAux;
+        indexAux = index;
+      }
+    });
+    return indexAux;
+  }
+
 }
 const monitorPage = new MonitorPage();
 export default monitorPage;

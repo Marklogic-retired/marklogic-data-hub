@@ -22,7 +22,20 @@ const tooltipsConfig = {
       "Related entity filters only filter on their respective entity type and will not affect base entity results.",
     disabledRelatedEntities: "Related entities are only available in the Graph View"
   },
-
+  exploreSidebarQueries: {
+    saveNewQuery: "Save the current query",
+    saveChanges: "Save changes",
+    disabledSaveButton: "You cannot save a query because you have not created one. To save a query, start a query by selecting an option below and clicking 'Search'.",
+    saveWithoutPermisions: "Save Query: Contact your security administrator to get the roles and permissions to access this functionality"
+  },
+  manageQueries: {
+    disabledExport: "You cannot export your data because there are no results that match your query. Please try another query."
+  },
+  tabularView: {
+    queryExportDisabled: "You cannot export your data because you have not selected a base entity. Use the drop-down menu to select a specific base entity.",
+    queryExportUnautorized: "Export query: Contact your security administrator to get the roles and permissions to access this functionality",
+    columnSelectorDisabled: "You cannot choose columns to show because you have more than one base entity selected. Use the drop-down menu to select a specific base entity.",
+  },
   graphVis: {
     groupNode: (entityType) => (`Group of ${entityType} records
     Click to expand 3 sample records in this group.
@@ -33,7 +46,7 @@ const tooltipsConfig = {
   },
   exploreSettings: {
     exploreSettingsMenuIcon: "Explore Settings",
-    disabledManageQueryOption: "There are no saved queries.",
+    disabledManageQueryOption: "You cannot manage your queries until you save them. To manage your queries, save them using the 'Save Query' icon.",
     disabledEntityTypeDisplaySettingsOption: "There are no entities."
   },
   entityTypeDisplaySettings: {

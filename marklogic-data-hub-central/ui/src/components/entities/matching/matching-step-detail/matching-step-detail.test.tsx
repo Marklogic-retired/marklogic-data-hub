@@ -96,7 +96,6 @@ describe("Matching Step Detail view component", () => {
 
     //Verify test match related fields are rendered properly
     expect(getByLabelText("testMatch")).toBeInTheDocument();
-    expect(getAllByPlaceholderText("Enter URI or Paste URIs")[0]).toBeEnabled();
     expect(getAllByPlaceholderText("Enter URI or Paste URIs")[1]).toBeDisabled();
 
     userEvent.click(getByLabelText("inputUriRadio"));

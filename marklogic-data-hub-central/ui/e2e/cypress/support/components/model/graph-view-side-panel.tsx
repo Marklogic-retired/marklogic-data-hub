@@ -18,6 +18,10 @@ class GraphViewSidePanel {
   getEntityTypeTab() {
     return cy.get(`[data-rr-ui-event-key="entityType"]`);
   }
+
+  getEntityTypeTabContent() {
+    return cy.get(`[id="entityType-tab-content"`);
+  }
   getEntityTypeName(entityName: string) {
     return cy.findByTestId(`${entityName}`);
   }

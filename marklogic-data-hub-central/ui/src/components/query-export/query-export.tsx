@@ -68,7 +68,7 @@ const QueryExport = (props) => {
     <div>
       <ExportQueryModal hasStructured={hasStructured} getPreview={getPreview} tableColumns={tableColumns} tableData={tableData} exportModalVisibility={exportModalVisibility} setExportModalVisibility={setExportModalVisibility} columns={props.columns} />
       <HCTooltip text="Export results with the displayed columns to CSV." id="export-results-tooltip" placement="top-end">
-        <i><FontAwesomeIcon className={styles.fileExportIcon} icon={faFileExport} size="lg" onClick={displayModal} data-testid="query-export" /></i>
+        <span><FontAwesomeIcon className={styles.fileExportIcon} icon={faFileExport} size="lg" onClick={displayModal} data-testid="query-export" /></span>
       </HCTooltip>
     </div>
   );

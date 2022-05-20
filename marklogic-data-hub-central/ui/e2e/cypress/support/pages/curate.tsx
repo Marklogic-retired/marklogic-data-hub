@@ -246,6 +246,14 @@ class CuratePage {
     // and go back to data-row-key
     return cy.get(`[data-coll-event=${collection}] [class^="advanced-target-collections_preWrap"]`);
   }
+
+  getAccordionButton(index:number) {
+    return cy.get(".accordion-button:eq(" + index + ")");
+  }
+
+  getAccordionButtonTab(index:number, indexTab:number) {
+    return cy.get(".accordion-collapse:eq(" + index + ") .curateTab:eq(" + indexTab + ")");
+  }
 }
 
 const curatePage = new CuratePage();

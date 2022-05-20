@@ -87,7 +87,12 @@ class Matchable {
    * @since 5.8.0
    */
   thresholdDefinitions() {
-    // TODO DHFPROD-8592
+    if (!this._thresholdDefinitions) {
+      this._thresholdDefinitions = this.matchStep.thresholds.map((thresholdObj) => {
+        return new ThresholdDefinition(thresholdObj, this);
+      });
+    }
+    return this._thresholdDefinitions;
   }
 
   /*
@@ -124,19 +129,52 @@ class Matchable {
    * @return double
    * @since 5.8.0
    */
-  scoreDocument(contentObjectA, contentObjectB, matchingRulesets) {
-    // TODO DHFPROD-8609
+  scoreDocument(contentObjectA, contentObjectB) {
+    const matchingRulesetDefinitions = this.matchRulesetDefinitions();
+    let defaultScore = 0;
+    for (const matchRuleset of matchingRulesetDefinitions) {
+      defaultScore += matchRuleset.score(contentObjectA, contentObjectB);
+    }
+    return applyInterceptors("Score Document Interceptor", defaultScore, this.matchStep.scoreDocumentInterceptors, contentObjectA, contentObjectB, matchingRulesetDefinitions);
   }
   /*
    * Returns a JSON Object with details to pass onto the merge step for use in taking action.
    * @param {[]ContentObject} matchingDocumentSet
    * @param {ThresholdDefinition} thresholdBucket
-   * @param {[]MatchRulesetDefinition} matchingRulesets
    * @return {}
    * @since 5.8.0
    */
-  buildActionDetails(matchingDocumentSet, thresholdBucket, matchRulesets) {
-    // TODO DHFPROD-8610
+  buildActionDetails(matchingDocumentSet, thresholdBucket) {
+    const action = thresholdBucket.action();
+    const actionUri = thresholdBucket.generateActionURI(matchingDocumentSet);
+    const threshold = thresholdBucket.name();
+    const uris = matchingDocumentSet.map((contentObj) => contentObj.uris);
+    let actionBody;
+    // TODO: when we refactor merging code we can likely clean up the awkward "function", "at" property names and remove the namespace property
+    if (action === "custom") {
+      actionBody = {
+        action: "customActions",
+        actions: [
+          {
+            threshold,
+            uris,
+            "function": thresholdBucket.actionModuleFunction(),
+            "at": thresholdBucket.actionModulePath(),
+            "namespace": thresholdBucket.actionModuleNamespace(),
+            matchResults: matchingDocumentSet
+          }
+        ]
+      };
+    } else {
+      actionBody = {
+        action,
+        threshold,
+        uris
+      };
+    }
+    return {
+      [actionUri]: actionBody
+    };
   }
 
   /*
@@ -148,8 +186,8 @@ class Matchable {
    * @since 5.8.0
    */
   propertyQuery(propertyPath, values) {
-    const indexes = this._model.propertyIndexes(propertyPath);
-    if (indexes.length) {
+    const indexes = this.model().propertyIndexes(propertyPath);
+    if (indexes && indexes.length) {
       const scalarType = cts.referenceScalarType(indexes[0]);
       const collation = (scalarType === "string") ? cts.referenceCollation(indexes[0]): null;
       let typedValues = [];
@@ -163,7 +201,7 @@ class Matchable {
       }
       return cts.rangeQuery(indexes, typedValues)
     } else {
-      const propertyDefinition = this._model.propertyDefinition(propertyPath);
+      const propertyDefinition = this.model().propertyDefinition(propertyPath);
       const localname = propertyDefinition.localname;
       return cts.orQuery([
         cts.jsonPropertyValueQuery(localname, values),
@@ -192,11 +230,13 @@ class MatchRulesetDefinition {
 
   _matchFunction(matchRule, model) {
     if (!matchRule._matchFunction) {
-      let matchFunction;
+      let passMatchRule = matchRule;
+      let passMatchStep = this.matchable.matchStep;
       let convertToNode = false;
+      let matchFunction;
       switch (matchRule.matchType) {
         case "exact":
-          matchFunction = (values) => model.propertyQuery(matchRule.entityPropertyPath, values);
+          matchFunction = (values) => this.matchable.propertyQuery(matchRule.entityPropertyPath, values);
           convertToNode = true;
           break;
         case "doubleMetaphone":
@@ -215,11 +255,20 @@ class MatchRulesetDefinition {
           httpUtils.throwBadRequest(`Undefined match type "${matchRule.matchType}" provided.`);
       }
       if (convertToNode) {
-        matchFunction = (values, matchRule, matchStep) => matchFunction(values, new NodeBuilder().addNode(matchRule).toNode(), new NodeBuilder().addNode(matchStep).toNode());
+        passMatchRule = new NodeBuilder().addNode(passMatchRule).toNode();
+        passMatchStep = new NodeBuilder().addNode(passMatchStep).toNode();
       }
-      matchRule._matchFunction = matchFunction;
+      matchRule._matchFunction = (values) => matchFunction(values, passMatchRule, passMatchStep);
     }
     return matchRule._matchFunction;
+  }
+
+  score(contentObjectA, contentObjectB) {
+    const query = this.buildCtsQuery(contentObjectA.value);
+    if (fn.exists(query) && cts.contains(contentObjectB.value, query)) {
+      return this.weight();
+    }
+    return 0;
   }
 
   buildCtsQuery(documentNode) {
@@ -229,7 +278,7 @@ class MatchRulesetDefinition {
       const valueFunction = this._valueFunction(matchRule, model);
       const matchFunction = this._matchFunction(matchRule, model);
       const values = valueFunction(documentNode);
-      const query = fn.exists(values) ? matchFunction(values, matchRule, this.matchStep): null;
+      const query = fn.exists(values) ? matchFunction(values): null;
       if (!query) {
         return null;
       }
@@ -242,10 +291,73 @@ class MatchRulesetDefinition {
     return fn.number(this.matchRuleset.weight);
   }
 
-
-
   raw() {
     return this.matchRuleset;
+  }
+}
+
+class ThresholdDefinition {
+  constructor(threshold, matchable) {
+    this.threshold = threshold;
+    this.matchable = matchable;
+  }
+
+  name() {
+    return this.threshold.thresholdName;
+  }
+
+  score() {
+    return this.threshold.score;
+  }
+
+  minimumMatchCombinations() {
+    // TODO: DHFPROD-8592
+    return [];
+  }
+
+  action() {
+    return this.threshold.action;
+  }
+
+  generateMD5Key(documentSet, salt) {
+    const values = documentSet.map((contentObj) => contentObj.uri);
+    if (salt) {
+      values.unshift(salt);
+    }
+    return xdmp.md5(values.join("##"));
+  }
+
+  generateActionURI(matchingDocumentSet) {
+    const action = this.action();
+    const firstUri = matchingDocumentSet[0].uri;
+    let key;
+    switch (action) {
+      case "merge":
+        key = this.generateMD5Key(matchingDocumentSet);
+        const format = firstUri.substr(firstUri.lastIndexOf(".") + 1);
+        return `/com.marklogic.smart-mastering/merged/${key}.${format}`;
+      case "notify":
+        key = this.generateMD5Key(matchingDocumentSet, this.name());
+        return `/com.marklogic.smart-mastering/matcher/notifications/${key}.xml`;
+      default:
+        return firstUri;
+    }
+  }
+
+  raw() {
+    return this.threshold;
+  }
+
+  actionModuleFunction() {
+    return this.threshold.actionModuleFunction;
+  }
+
+  actionModulePath() {
+    return this.threshold.actionModulePath;
+  }
+
+  actionModuleNamespace() {
+    return this.threshold.actionModuleNamespace;
   }
 }
 
@@ -274,11 +386,11 @@ class GenericMatchModel {
 
   propertyValues(propertyPath, documentNode) {
     const propertyDefinition = this.propertyDefinition(propertyPath);
-    return propertyPath.path ? documentNode.xpath(propertyDefinition.path, this._namespaces) : documentNode.xpath(`.//ns:${propertyDefinition.localname}`, {ns: propertyDefinition.namespace});
+    return propertyDefinition.path ? documentNode.xpath(propertyDefinition.path, this._namespaces) : documentNode.xpath(`.//ns:${propertyDefinition.localname}`, {ns: propertyDefinition.namespace});
   }
 
   propertyIndexes(propertyPath) {
-    if (!this._indexesByPath.hasOwnProperty(propertyPath)) {
+    if (!this._indexesByPath[propertyPath]) {
       const pathIndexes = [];
       const propertyDefinition = this._propertyDefinitionMap[propertyPath];
       if (propertyDefinition.indexReferences && propertyDefinition.indexReferences.length) {

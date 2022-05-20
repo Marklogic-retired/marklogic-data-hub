@@ -383,7 +383,7 @@ describe("Entity Modeling: Graph View", () => {
     toolbar.getCurateToolbarIcon().click();
     confirmationModal.getNavigationWarnText().should("not.exist");
     cy.waitUntil(() => curatePage.getEntityTypePanel("Person").should("be.visible"));
-    curatePage.toggleEntityTypeId("Person");
+    //curatePage.toggleEntityTypeId("Person");
     curatePage.openStepDetails("mapPersonJSON");
     cy.waitUntil(() => curatePage.dataPresent().should("be.visible"));
 

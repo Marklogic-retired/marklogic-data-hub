@@ -93,7 +93,6 @@ describe("Create and verify load steps, map step and flows with a custom header"
     mappingStepDetail.goBackToCurateHomePage();
   });
   it("Edit Map step", () => {
-    curatePage.toggleEntityTypeId("Order");
     // Open step settings and switch to Advanced tab
     cy.waitUntil(() => curatePage.editStep(mapStep).click({force: true}));
     curatePage.switchEditAdvanced().click();
@@ -121,7 +120,6 @@ describe("Create and verify load steps, map step and flows with a custom header"
     mappingStepDetail.goBackToCurateHomePage();
   });
   it("Add Map step to new flow and Run", {defaultCommandTimeout: 120000}, () => {
-    curatePage.toggleEntityTypeId("Order");
     //Cancel add to new flow
     curatePage.addToNewFlow("Order", mapStep);
     cy.findByText("New Flow").should("be.visible");
@@ -129,7 +127,6 @@ describe("Create and verify load steps, map step and flows with a custom header"
     //should route user back to curate page
     //mappingStepDetail.goBackToCurateHomePage();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Order").should("be.visible"));
-    //curatePage.toggleEntityTypeId("Order");
     curatePage.openExistingFlowDropdownAndTooltip("Order", mapStep);
     curatePage.getExistingFlowFromDropdown(mapStep, flowName).click();
     curatePage.addStepToFlowConfirmationMessage();
@@ -145,7 +142,6 @@ describe("Create and verify load steps, map step and flows with a custom header"
     //Verify Run Map step in an existing Flow
     toolbar.getCurateToolbarIcon().click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
-    curatePage.toggleEntityTypeId("Order");
     curatePage.runStepInCardView(mapStep).click();
     curatePage.runStepSelectFlowConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName);
@@ -161,7 +157,6 @@ describe("Create and verify load steps, map step and flows with a custom header"
     //Verify Run Map step in a new Flow
     toolbar.getCurateToolbarIcon().click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
-    curatePage.toggleEntityTypeId("Order");
     curatePage.runStepInCardView(mapStep).click();
     //Just deleted flow should not be visible on flows list
     cy.findByText(flowName).should("not.exist");
@@ -186,7 +181,6 @@ describe("Create and verify load steps, map step and flows with a custom header"
   it("Verify Run Map step in flow where step exists, should run automatically", {defaultCommandTimeout: 120000}, () => {
     toolbar.getCurateToolbarIcon().click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
-    curatePage.toggleEntityTypeId("Order");
     curatePage.runStepInCardView(mapStep).click();
     curatePage.runStepExistsOneFlowConfirmation().should("be.visible");
     curatePage.confirmContinueRun();
@@ -199,7 +193,6 @@ describe("Create and verify load steps, map step and flows with a custom header"
   it("Add step to a new flow, Run Map step where step exists in multiple flows and explore data", {defaultCommandTimeout: 120000}, () => {
     toolbar.getCurateToolbarIcon().click({force: true});
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
-    curatePage.toggleEntityTypeId("Order");
     curatePage.addToNewFlow("Order", mapStep);
     cy.waitForAsyncRequest();
     cy.findByText("New Flow").should("be.visible");
@@ -213,7 +206,6 @@ describe("Create and verify load steps, map step and flows with a custom header"
     //Verify Run Map step where step exists in multiple flows, choose one to automatically run in
     toolbar.getCurateToolbarIcon().click({force: true});
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
-    curatePage.toggleEntityTypeId("Order");
     curatePage.runStepInCardView(mapStep).click();
     curatePage.runStepExistsMultFlowsConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName);
@@ -235,7 +227,6 @@ describe("Create and verify load steps, map step and flows with a custom header"
     // By default attachment is not present in detailed view of document
     detailPage.attachmentPresent().should("not.exist");
     toolbar.getCurateToolbarIcon().click();
-    curatePage.toggleEntityTypeId("Order");
     // Open step settings and switch to Advanced tab
     cy.waitUntil(() => curatePage.editStep(mapStep).click({force: true}));
     curatePage.switchEditAdvanced().click();

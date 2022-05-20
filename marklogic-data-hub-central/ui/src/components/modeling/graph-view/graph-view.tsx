@@ -16,6 +16,7 @@ import {Typeahead} from "react-bootstrap-typeahead";
 import "react-bootstrap-typeahead/css/Typeahead.css";
 import {themeColors} from "@config/themes.config";
 import {defaultIcon} from "@config/explore.config";
+import {getViewSettings, setViewSettings} from "@util/user-context";
 
 type Props = {
   entityTypes: any;
@@ -39,10 +40,11 @@ type Props = {
 };
 
 const GraphView: React.FC<Props> = (props) => {
+  const settings = getViewSettings();
 
   const {modelingOptions, setSelectedEntity} = useContext(ModelingContext);
   const [filterMenuSuggestions, setFilterMenuSuggestions] = useState(["a"]);
-  const [entityFiltered, setEntityFiltered] = useState("");
+  const [entityFiltered, setEntityFiltered] = useState<string>(settings.model?.filter || "");
   const [isEntityFiltered, setIsEntityFiltered] = useState(false);
   const [graphEditMode, setGraphEditMode] = useState(false);
   const [coordsChanged, setCoordsChanged] = useState(false);
@@ -82,6 +84,14 @@ const GraphView: React.FC<Props> = (props) => {
     setEntityFiltered("");
     setIsEntityFiltered(false);
     let value = values ? values[0]?.label ? values[0].label : "" : "";
+    const newFilter = {
+      ...settings,
+      model: {
+        ...settings.model,
+        filter: value,
+      }
+    };
+    setViewSettings(newFilter);
     setEntityFiltered(value);
     handleFilterSelect(value);
   };

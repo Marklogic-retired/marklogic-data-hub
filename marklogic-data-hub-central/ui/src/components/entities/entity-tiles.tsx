@@ -15,6 +15,7 @@ import {CurationContext} from "@util/curation-context";
 import {HCButton} from "@components/common";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTimesCircle} from "@fortawesome/free-solid-svg-icons";
+import {getViewSettings, setViewSettings} from "@util/user-context";
 
 const EntityTiles = (props) => {
   const {setActiveStepWarning, setValidateMatchCalled, setValidateMergeCalled} = useContext(CurationContext);
@@ -30,10 +31,11 @@ const EntityTiles = (props) => {
   const [customArtifactsWithoutEntity, setCustomArtifactsWithoutEntity] = useState<any[]>([]);
   const {canReadMapping, canWriteMapping} = props;
   //For accordian within entity tiles
-  const [requiresNoEntityTypeTile, setRequiresNoEntityTypeTile]  = useState(false);
+  const [requiresNoEntityTypeTile, setRequiresNoEntityTypeTile] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [openStep, setOpenStep] = useState({});
-
+  const tabsToStorage = getViewSettings();
+  const dataHubViewSettings: any = getViewSettings()?.curateTile;
   interface ModalError {
     isVisible: boolean,
     message: string | JSX.Element
@@ -44,12 +46,28 @@ const EntityTiles = (props) => {
     message: ""
   });
 
+  const updateSelection = () => {
+    if (dataHubViewSettings) {
+      setViewData(dataHubViewSettings?.activeTabs);
+      setActiveEntityTypes(dataHubViewSettings?.activeAccordeon ? dataHubViewSettings?.activeAccordeon : []);
+    }
+  };
+
   useEffect(() => {
     getMappingArtifacts();
     getMatchingArtifacts();
     getMergingArtifacts();
     getCustomArtifacts();
   }, [isLoading]);
+
+  useEffect(() => {
+    updateSelection();
+  }, []);
+
+  useEffect(() => {
+    const newStorage = {...tabsToStorage, curateTile: {...tabsToStorage.curateTile, activeAccordeon: activeEntityTypes, activeTabs: viewData}};
+    setViewSettings(newStorage);
+  }, [activeEntityTypes, viewData]);
 
   useEffect(() => {
     let view;
@@ -76,15 +94,19 @@ const EntityTiles = (props) => {
       }
     }
 
-    let tempView: string[] = [];
-    Object.keys(props.entityModels).sort().forEach(ent => {
-      tempView.push(view + ent);
-    });
-    setViewData([...tempView]);
+    if (dataHubViewSettings && dataHubViewSettings?.activeTabs?.length) {
+      setViewData(dataHubViewSettings?.activeTabs);
+    } else {
+      let tempView: string[] = [];
+      Object.keys(props.entityModels).sort().forEach(ent => {
+        tempView.push(view + ent);
+      });
+      setViewData([...tempView]);
+    }
   }, [props, location]);
 
   const updateView = (index, artifactType, entityType) => {
-    let tempView : string[] ;
+    let tempView: string[];
     tempView = viewData;
     tempView[index] = artifactType + "-" + entityType;
     setViewData([...tempView]);
@@ -326,7 +348,7 @@ const EntityTiles = (props) => {
     }
   };
 
-  const getCustomArtifactProps = async (name : String) => {
+  const getCustomArtifactProps = async (name: String) => {
     try {
       if (props.canReadCustom) {
         let response = await axios.get("/api/steps/custom/" + name);
@@ -366,7 +388,7 @@ const EntityTiles = (props) => {
     let output;
     if (viewData[index] === "map-" + entityType) {
       output = (titleNoDefinition(entityType)) ? <div className={styles.NoMatchDefTitle} aria-label={"mappingNoTitleDisplay"}>{MappingStepMessages.titleNoDefinition}</div>
-        :<div className={styles.cardView}>
+        : <div className={styles.cardView}>
           <MappingCard data={mappingCardData ? sortStepsByUpdated(mappingCardData.artifacts) : []}
             flows={props.flows}
             entityTypeTitle={entityType}
@@ -386,7 +408,7 @@ const EntityTiles = (props) => {
       output = (titleNoDefinition(entityType)) ? <div className={styles.NoMatchDefTitle} aria-label={"matchingNoTitleDisplay"}>{MappingStepMessages.titleNoDefinition}</div>
         : <div className={styles.cardView}>
           <MatchingCard
-            matchingStepsArray={ matchingCardData ? sortStepsByUpdated(matchingCardData.artifacts) : []}
+            matchingStepsArray={matchingCardData ? sortStepsByUpdated(matchingCardData.artifacts) : []}
             flows={props.flows}
             entityName={entityType}
             deleteMatchingArtifact={deleteMatchingArtifact}
@@ -405,7 +427,7 @@ const EntityTiles = (props) => {
       output = (titleNoDefinition(entityType)) ? <div className={styles.NoMatchDefTitle} aria-label={"mergingNoTitleDisplay"}>{MappingStepMessages.titleNoDefinition}</div>
         : <div className={styles.cardView}>
           <MergingCard
-            mergingStepsArray={ mergingCardData ? sortStepsByUpdated(mergingCardData.artifacts) : []}
+            mergingStepsArray={mergingCardData ? sortStepsByUpdated(mergingCardData.artifacts) : []}
             flows={props.flows}
             entityName={entityType}
             entityModel={props.entityModels[entityType]}
@@ -423,21 +445,21 @@ const EntityTiles = (props) => {
       output = (titleNoDefinition(entityType)) ? <div className={styles.NoMatchDefTitle} aria-label={"customNoTitleDisplay"}>{MappingStepMessages.titleNoDefinition}</div>
         : <div className={styles.cardView}>
           <div className={styles.customEntityTitle} aria-label={"customEntityTitle"}>You can create Custom steps either manually or using Gradle, then deploy them. Deployed Custom steps appear here. Hub Central only allows running Custom steps, not editing or deleting them.</div>
-          <CustomCard data={ customCardData ? sortStepsByUpdated(customCardData.artifacts) : []}
+          <CustomCard data={customCardData ? sortStepsByUpdated(customCardData.artifacts) : []}
             flows={props.flows}
             entityTypeTitle={entityType}
             entityModel={props.entityModels[entityType]}
             getArtifactProps={getCustomArtifactProps}
             updateCustomArtifact={updateCustomArtifact}
             canReadOnly={props.canReadCustom}
-            canReadWrite = {props.canWriteCustom}
+            canReadWrite={props.canWriteCustom}
             addStepToFlow={props.addStepToFlow}
             addStepToNew={props.addStepToNew}
             canWriteFlow={props.canWriteFlow}
           />
         </div>;
     } else {
-      output = <div><br/>This functionality implemented yet.</div>;
+      output = <div><br />This functionality implemented yet.</div>;
     }
     return output;
   };
@@ -451,9 +473,21 @@ const EntityTiles = (props) => {
     setOpenStep("");
   };
 
+  const checkDefaultActiveKey = (index) => {
+    let returnValue = "map";
+    if (dataHubViewSettings && dataHubViewSettings?.activeTabs?.length) {
+      //Check session storage tabs
+      let strAux = dataHubViewSettings.activeTabs[index]?.substring(0, 3);
+      if (strAux === "mat") returnValue = "match";
+      else if (strAux === "mer") returnValue = "merge";
+      else if (strAux === "cus") returnValue = "custom";
+    }
+    return returnValue;
+  };
+
   return (
     <div id="entityTilesContainer" className={styles.entityTilesContainer}>
-      { Object.keys(props.entityModels).sort().map((entityType, index) => (
+      {Object.keys(props.entityModels).sort().map((entityType, index) => (
         <Accordion
           id={entityType}
           flush
@@ -470,13 +504,13 @@ const EntityTiles = (props) => {
                 </Accordion.Button>
               </Card.Header>
               <Accordion.Body>
-                <Tabs defaultActiveKey={`map`} onSelect={(eventKey) => updateView(index, eventKey, entityType)} className={styles.entityTabs}>
-                  {canReadMapping ? <Tab id={`${entityType}-Map`} data-testid={`${entityType}-Map`} eventKey={`map`} key={`map-${entityType}`}  title="Mapping" tabClassName={`curateTab`}/>: null}
-                  {props.canReadMatchMerge ? <Tab  id={`${entityType}-Match`} data-testid={`${entityType}-Match`} eventKey="match" key={`match-${entityType}`}  title="Matching" tabClassName={`curateTab`}/>: null}
-                  {props.canReadMatchMerge ? <Tab id={`${entityType}-Merge`} data-testid={`${entityType}-Merge`} eventKey="merge" key={`merge-${entityType}`}   title="Merging" tabClassName={`curateTab`}/>: null}
-                  {props.canReadCustom ? <Tab id={`${entityType}-Custom`} data-testid={`${entityType}-Custom`} eventKey="custom" key={`custom-${entityType}`}   title="Custom" tabClassName={`curateTab`}/>: null}
+                <Tabs defaultActiveKey={checkDefaultActiveKey(index)} onSelect={(eventKey) => updateView(index, eventKey, entityType)} className={styles.entityTabs}>
+                  {canReadMapping ? <Tab id={`${entityType}-Map`} data-testid={`${entityType}-Map`} eventKey={`map`} key={`map-${entityType}`} title="Mapping" tabClassName={`curateTab`} /> : null}
+                  {props.canReadMatchMerge ? <Tab id={`${entityType}-Match`} data-testid={`${entityType}-Match`} eventKey="match" key={`match-${entityType}`} title="Matching" tabClassName={`curateTab`} /> : null}
+                  {props.canReadMatchMerge ? <Tab id={`${entityType}-Merge`} data-testid={`${entityType}-Merge`} eventKey="merge" key={`merge-${entityType}`} title="Merging" tabClassName={`curateTab`} /> : null}
+                  {props.canReadCustom ? <Tab id={`${entityType}-Custom`} data-testid={`${entityType}-Custom`} eventKey="custom" key={`custom-${entityType}`} title="Custom" tabClassName={`curateTab`} /> : null}
                 </Tabs>
-                {outputCards(index, entityType, mappingArtifacts.find((artifact) => artifact.entityTypeId ===  entityModels[entityType].entityTypeId), matchingArtifacts.find((artifact) => artifact.entityTypeId === entityModels[entityType].entityTypeId), mergingArtifacts.find((artifact) => artifact.entityTypeId === entityModels[entityType].entityTypeId), customArtifactsWithEntity.find((artifact) => artifact.entityTypeId === entityModels[entityType].entityTypeId))}
+                {outputCards(index, entityType, mappingArtifacts.find((artifact) => artifact.entityTypeId === entityModels[entityType].entityTypeId), matchingArtifacts.find((artifact) => artifact.entityTypeId === entityModels[entityType].entityTypeId), mergingArtifacts.find((artifact) => artifact.entityTypeId === entityModels[entityType].entityTypeId), customArtifactsWithEntity.find((artifact) => artifact.entityTypeId === entityModels[entityType].entityTypeId))}
               </Accordion.Body>
             </Card>
           </Accordion.Item>
@@ -511,13 +545,13 @@ const EntityTiles = (props) => {
                     entityModel={/** props.entityModels[entityType] */""}
                     updateCustomArtifact={updateCustomArtifact}
                     canReadOnly={props.canReadCustom}
-                    canReadWrite = {props.canWriteCustom}
+                    canReadWrite={props.canWriteCustom}
                     canWriteFlow={props.canWriteFlow}
                     addStepToFlow={props.addStepToFlow}
                     addStepToNew={props.addStepToNew}
                     getArtifactProps={getCustomArtifactProps}
                   />
-                </div>: null}
+                </div> : null}
               </Accordion.Body>
             </Card>
           </Accordion.Item>

@@ -6,10 +6,16 @@
 
 @import "../../theme/HCVariables.scss";
 
-.queryExport {
+.queryExport, .columnSelector{
     margin-right: 5px;
     margin-top: 8px;
     height: 10px;
+}
+
+.iconDisabled {
+  font-size: 21px;
+  margin-left: 8px;
+  margin-top: 2px;
 }
 
 .iconHover:hover {
@@ -21,12 +27,6 @@
     display: grid;
     overflow: hidden;
     overflow-x: scroll;
-}
-
-.columnSelector {
-    margin-right: 1px;
-    margin-top: 5px;
-    height: 10px;
 }
 
 .icon {

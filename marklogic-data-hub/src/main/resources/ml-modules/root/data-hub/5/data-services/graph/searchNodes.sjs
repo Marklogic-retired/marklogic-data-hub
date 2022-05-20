@@ -66,6 +66,7 @@ let queryObj = JSON.parse(query);
 let relatedEntityTypeIds = queryObj.relatedEntityTypeIds;
 let allEntityTypeIRIs = [];
 let entityTypeIRIs = [];
+let entitiesDifferentsFromBaseAndRelated = [];
 let allRelatedPredicateList = [];
 let predicateConceptList = [];
 start = start || 0;
@@ -103,6 +104,9 @@ fn.collection(entityLib.getModelCollection()).toArray().forEach(model => {
     }
     entityTypeIRIs.push(sem.iri(entityNameIri));
   }
+  if(!queryObj.entityTypeIds.includes(entityName) && !(relatedEntityTypeIds && relatedEntityTypeIds.includes(entityName))){
+    entitiesDifferentsFromBaseAndRelated.push(sem.iri(entityNameIri));
+  }
 });
 
 
@@ -122,7 +126,7 @@ if(queryObj.searchText !== undefined && queryObj.searchText.toString().length > 
 
 const relatedEntityTypeIRIs = allEntityTypeIRIs.filter((e1) => !entityTypeIRIs.some((e2) => fn.string(e1) === fn.string(e2)));
 
-const result = graphUtils.getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predicateConceptList, ctsQuery, pageLength);
+const result = graphUtils.getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predicateConceptList, entitiesDifferentsFromBaseAndRelated, ctsQuery, pageLength);
 
 let nodes = [];
 let edges = [];
@@ -174,7 +178,13 @@ result.map(item => {
       nodeOrigin.additionalProperties = null;
       nodeOrigin.group = conceptLabel;
       nodeOrigin.isConcept = true;
-      nodeOrigin.hasRelationships = false;
+      let hastRelationShip = false
+      if(item.countRelationsWithOtherEntity !== undefined && item.countRelationsWithOtherEntity !== null){
+        if(item.countRelationsWithOtherEntity == 1){
+          hastRelationShip = true;
+        }
+      }
+      nodeOrigin.hasRelationships = hastRelationShip;
       nodeOrigin.count = 1;
       nodes[item.objectConcept] = nodeOrigin;
     }
@@ -183,11 +193,6 @@ result.map(item => {
   if (item.nodeCount && item.nodeCount >= 1) {
     let objectIRI = item.firstObjectIRI.toString();
     let objectIRIArr = objectIRI.split("/");
-    //Commented on story 8119
-    /*let objectLabel = "";
-    if (item.firstObjectLabel !== undefined &&  item.firstObjectLabel.toString().length === 0) {
-      objectLabel = objectIRIArr[objectIRIArr.length - 1];
-    }*/
     let objectId = item.firstObjectIRI.toString();
     let objectUri = item.firstDocURI.toString();
     let objectGroup = objectIRI.substring(0, objectIRI.length - objectIRIArr[objectIRIArr.length - 1].length - 1);
@@ -199,8 +204,6 @@ result.map(item => {
     let edge = {};
     if (item.nodeCount > 1) {
       let entityType = objectIRIArr[objectIRIArr.length - 2];
-      //Commented on story 8119
-      //objectLabel =  entityType;
       objectUri = null;
       objectId = item.subjectIRI.toString() + "-" + objectIRIArr[objectIRIArr.length - 2];
       edge.id = "edge-" + item.subjectIRI + "-" + item.predicateIRI + "-" + entityType;
@@ -272,6 +275,7 @@ if (predicateConceptList.length) {
 
 const totalEstimate = totalCount;
 const nodesValues = hubUtils.getObjectValues(nodes)
+
 const response = {
   'total': totalEstimate,
   'start': start,
