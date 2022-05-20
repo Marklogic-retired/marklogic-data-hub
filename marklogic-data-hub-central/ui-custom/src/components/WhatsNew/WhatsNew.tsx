@@ -45,6 +45,11 @@ const WhatsNew: React.FC<Props> = (props) => {
     return found ? found.period : "";
   }
 
+  const formatNumber = (data, path) => {
+        let  result = _.get(data, path, null);
+        return result ? parseInt(result).toLocaleString() : null;
+  }
+
   const handleSelect = (e) => {
     setSelected(e);
     metricsContext.handleGetWhatsNew(getMenuVal(e));
@@ -178,7 +183,7 @@ const WhatsNew: React.FC<Props> = (props) => {
                     return <tr key={"row-" + i}>
                       <td className="bar"><div style={{"backgroundColor": item.color}}></div></td>
                       <td className="label">{item.label}</td>
-                      <td className="value">{parseInt(_.get(props.data, item.path, null)).toLocaleString()}</td>
+                      <td className="value">{formatNumber(props.data, item.path)}</td>
                     </tr>
                   })}
                 </tbody>
