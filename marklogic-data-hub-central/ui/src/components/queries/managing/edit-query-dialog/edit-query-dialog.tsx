@@ -85,7 +85,6 @@ const EditQueryDialog = (props) => {
         handleError(error);
       }
     }
-    props.getQueries();
   };
 
   return (

@@ -63,7 +63,6 @@ const Query: React.FC<Props> = (props) => {
   const [nextQueryName, setNextQueryName] = useState("");
   const [currentQueryDescription, setCurrentQueryDescription] = useState("");
   const [entityQueryUpdate, toggleEntityQueryUpdate] = useState(false);
-  const [resetQueryIcon, setResetQueryIcon] = useState(true); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [showResetQueryNewConfirmation, toggleResetQueryNewConfirmation] = useState(false);
   const [showResetQueryEditedConfirmation, toggleResetQueryEditedConfirmation] = useState(false);
   const [deleteModalVisibility, setDeleteModalVisibility] = useState(false);
@@ -428,23 +427,21 @@ const Query: React.FC<Props> = (props) => {
         {props.cardView === false && <div>
           <div className={styles.queryBar}>
             <div className={styles.saveDropdown}>
-              {props.queries.length > 0 &&
-                <SaveQueriesDropdown
-                  savedQueryList={props.queries}
-                  setSaveNewIconVisibility={(visibility) => toggleSaveNewIcon(visibility)}
-                  greyFacets={props.greyFacets}
-                  toggleApply={(clicked) => props.toggleApply(clicked)}
-                  currentQueryName={currentQueryName}
-                  setCurrentQueryName={setCurrentQueryName}
-                  currentQuery={currentQuery}
-                  setSaveChangesIconVisibility={(visibility) => toggleSaveChangesIcon(visibility)}
-                  setDiscardChangesIconVisibility={(visibility) => toggleDiscardIcon(visibility)}
-                  setSaveChangesModal={(visiblity) => setOpenSaveChangesModal(visiblity)}
-                  setNextQueryName={(nextQueryName) => setNextQueryName(nextQueryName)}
-                  getSaveQueryWithId={getSaveQueryWithId}
-                  isSaveQueryChanged={isSaveQueryChanged}
-                />
-              }
+              <SaveQueriesDropdown
+                savedQueryList={props.queries}
+                setSaveNewIconVisibility={(visibility) => toggleSaveNewIcon(visibility)}
+                greyFacets={props.greyFacets}
+                toggleApply={(clicked) => props.toggleApply(clicked)}
+                currentQueryName={currentQueryName}
+                setCurrentQueryName={setCurrentQueryName}
+                currentQuery={currentQuery}
+                setSaveChangesIconVisibility={(visibility) => toggleSaveChangesIcon(visibility)}
+                setDiscardChangesIconVisibility={(visibility) => toggleDiscardIcon(visibility)}
+                setSaveChangesModal={(visiblity) => setOpenSaveChangesModal(visiblity)}
+                setNextQueryName={(nextQueryName) => setNextQueryName(nextQueryName)}
+                getSaveQueryWithId={getSaveQueryWithId}
+                isSaveQueryChanged={isSaveQueryChanged}
+              />
             </div>
 
             <div className={styles.iconBar}>
@@ -593,43 +590,42 @@ const Query: React.FC<Props> = (props) => {
               }</span>
             </HCTooltip>
           </div>
-          {resetQueryIcon && props.isSavedQueryUser && props.queries.length > 0 &&
-            <div>
-              <span id="reset-changes" className={styles.clearQueryLink} onClick={() => resetIconClicked()}>
-                <i><FontAwesomeIcon
+          <div>
+            <span id="reset-changes" className={styles.clearQueryLink} onClick={() => resetIconClicked()}>
+              <span>
+                <FontAwesomeIcon
                   className={styles.iconHover}
                   icon={faWindowClose}
                   title={"reset-changes"}
                   size="lg"
                   style={{width: "18px", color: themeColors.info, cursor: "pointer"}}
-                /></i>
-                <span className="text-info ps-2" aria-label="clear-query">Clear query</span>
+                />
               </span>
-              <Modal
-                show={showResetQueryEditedConfirmation || showResetQueryNewConfirmation}
-              >
-                <Modal.Header className={"bb-none"}>
-                  <button type="button" className="btn-close" aria-label="Close" onClick={onResetCancel}></button>
-                </Modal.Header>
-                <Modal.Body className={"pt-0 px-4"}>
-                  {showResetQueryEditedConfirmation &&
-                    <div><p>Your unsaved changes in the query <strong>{searchOptions.selectedQuery}</strong> will be lost.</p>
-                      <p>Would you like to save the changes before switching to another query?</p>
-                    </div>}
-                  {showResetQueryNewConfirmation && (<p>Would you like to save your search before resetting?</p>)}
-                  <div className={"d-flex justify-content-center mt-4 mb-2"}>
-                    <HCButton variant="outline-light" key="back" id="reset-confirmation-no-button" className={"me-2"} onClick={() => onNoResetClick()}>
-                      No
-                    </HCButton>
-                    <HCButton key="submit" id="reset-confirmation-yes-button" variant="primary" onClick={() => onResetOk()}>
-                      Yes
-                    </HCButton>
-                  </div>
-                </Modal.Body>
-              </Modal>
-            </div>
-          }
-
+              <span className="text-info ps-2" aria-label="clear-query">Clear query</span>
+            </span>
+            <Modal
+              show={showResetQueryEditedConfirmation || showResetQueryNewConfirmation}
+            >
+              <Modal.Header className={"bb-none"}>
+                <button type="button" className="btn-close" aria-label="Close" onClick={onResetCancel}></button>
+              </Modal.Header>
+              <Modal.Body className={"pt-0 px-4"}>
+                {showResetQueryEditedConfirmation &&
+                  <div><p>Your unsaved changes in the query <strong>{searchOptions.selectedQuery}</strong> will be lost.</p>
+                    <p>Would you like to save the changes before switching to another query?</p>
+                  </div>}
+                {showResetQueryNewConfirmation && (<p>Would you like to save your search before resetting?</p>)}
+                <div className={"d-flex justify-content-center mt-4 mb-2"}>
+                  <HCButton variant="outline-light" key="back" id="reset-confirmation-no-button" className={"me-2"} onClick={() => onNoResetClick()}>
+                    No
+                  </HCButton>
+                  <HCButton key="submit" id="reset-confirmation-yes-button" variant="primary" onClick={() => onResetOk()}>
+                    Yes
+                  </HCButton>
+                </div>
+              </Modal.Body>
+            </Modal>
+          </div>
         </div>}
       </div>
     </>

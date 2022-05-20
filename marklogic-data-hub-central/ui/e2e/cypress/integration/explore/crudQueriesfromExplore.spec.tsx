@@ -32,6 +32,27 @@ describe("save/manage queries scenarios, developer role", () => {
     cy.deleteSavedQueries();
     cy.waitForAsyncRequest();
   });
+  it("Clear query should work without any saved query", () => {
+    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    browsePage.clickTableView();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.waitForHCTableToLoad();
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Customer");
+    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
+    entitiesSidebar.openBaseEntityFacets("Customer");
+    browsePage.getFacetItemCheckbox("name", "Adams Cole").click();
+    browsePage.getSelectedFacets().should("exist");
+    browsePage.getGreySelectedFacets("Adams Cole").should("exist");
+    browsePage.getFacetApplyButton().click();
+    browsePage.clickColumnTitle(2);
+    browsePage.waitForSpinnerToDisappear();
+    entitiesSidebar.backToMainSidebar();
+
+    entitiesSidebar.clearQuery();
+    entitiesSidebar.getBaseEntityDropdown().should("have.text", "All Entities");
+    browsePage.getGreySelectedFacets("Adams Cole").should("not.exist");
+  });
   it("Apply facet search,open save modal, save new query", () => {
     toolbar.getExploreToolbarIcon().should("be.visible").click();
     browsePage.clickTableView();

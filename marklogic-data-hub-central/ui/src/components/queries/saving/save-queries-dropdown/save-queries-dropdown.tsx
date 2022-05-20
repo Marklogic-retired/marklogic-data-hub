@@ -22,7 +22,6 @@ interface Props {
 
 }
 
-
 const SaveQueriesDropdown: React.FC<Props> = (props) => {
 
   const {
@@ -96,6 +95,7 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
         value={searchOptions.selectedQuery === placeholder ? null : options.find(oItem => oItem.value === searchOptions.selectedQuery)}
         onChange={checkCurrentQueryChange}
         isSearchable={false}
+        noOptionsMessage={() => "There are no saved queries"}
         aria-label="dropdownList"
         options={options}
         styles={{...reactSelectThemeConfig,
