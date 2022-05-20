@@ -140,15 +140,34 @@ const ResultsList: React.FC<Props> = (props) => {
     );
   };
 
+  // Display URI and snippet (if available) if result entity not recognized
+  const getResultNoEntity = (results, index) => {
+    let titleValue = results?.uri ? results?.uri : "No record URI";
+    let matchValue = results?.snippet?.match["#text"] ? results?.snippet?.match["#text"] : "";
+    return (
+        <div key={"result-" + index} className="result">
+            <div className="details">
+                <div className="title no-entity"><Value>{titleValue}</Value></div>
+                <div className="subtitle no-entity">
+                    <div className="match"><Value id={"match-" + index}>{matchValue}</Value></div>
+                </div>
+            </div>
+        </div>
+    )
+  }
+
   const getResults = () => {
     let results = searchContext.searchResults.result.map((results, index) => {
-      const configEntityType = props.config.entities[results.entityType];
+      const configEntityType = results.entityType && props.config.entities[results.entityType];
+      if (!configEntityType) {
+          return getResultNoEntity(results, index);
+      }
       let defaultIcon = props.config.defaultIcon
-      let iconElement = configEntityType.icon ? FaDictionary[configEntityType.icon.type] : FaDictionary[defaultIcon.type];
+      let iconElement = (configEntityType && configEntityType.icon) ? FaDictionary[configEntityType.icon.type] : FaDictionary[defaultIcon.type];
       let titleValue = getValByConfig(results, configEntityType.title, true);
       if (!titleValue) {
         if (results?.uri) {
-          titleValue = results?.uri
+          titleValue = results?.uri;
         }
       }
       return (

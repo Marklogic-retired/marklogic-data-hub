@@ -79,6 +79,13 @@
                     display: inline-block;
                 }
             }
+            div.title.no-entity {
+                color: #333333;
+                cursor: auto;
+            }
+            div.subtitle.no-entity {
+                padding: 5px 0 16px 0;
+            }
             .phone {
                 width: 120px;
                 font-weight: bold;

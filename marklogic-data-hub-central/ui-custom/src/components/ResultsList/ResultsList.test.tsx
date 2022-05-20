@@ -98,6 +98,39 @@ const searchResults = {
     ]
 };
 
+const searchResultsNoEntity = {
+    "result": [
+        {
+            "extracted": {
+                "person": {
+                    "id": "101",
+                    "name": "John Doe",
+                }
+            },
+            "entityType": "unknown",
+            "uri": "/person/101.xml",
+            "snippet": {"match": {
+                "#text": "Match text 101",
+                "path": "fn:doc(&quot;/101.xml&quot;)/unknown"
+            }}
+        },
+        {
+            "extracted": {
+                "person": {
+                    "id": "102",
+                    "name": "Jane Doe",
+                }
+            },
+            "entityType": "unknown",
+            "uri": "/person/102.xml",
+            "snippet": {"match": {
+                "#text": "Match text 102",
+                "path": "fn:doc(&quot;/102.xml&quot;)/unknown"
+            }}
+        }
+    ]
+};
+
 const searchContextValue = {
     qtext: "",
     entityType: "",
@@ -128,6 +161,8 @@ const searchContextValue = {
 const searchResultsEmpty = {};
 
 const searchContextValueEmpty = Object.assign({}, searchContextValue, {searchResults: searchResultsEmpty});
+
+const searchContextNoEntity = Object.assign({}, searchContextValue, {searchResults: searchResultsNoEntity});
 
 const EXPANDIDS = {
     membership: true,
@@ -186,6 +221,18 @@ describe("ResultsList component", () => {
             </SearchContext.Provider>
         );
         expect(getByText("No results")).toBeInTheDocument();
+    });
+
+    test("Verify URI and snippet appears when entity unknown", () => {
+        const {getByText} = render(
+            <SearchContext.Provider value={searchContextNoEntity}>
+                <DetailContext.Provider value={detailContextValue}>
+                    <ResultsList config={resultsListConfig} />
+                </DetailContext.Provider>
+            </SearchContext.Provider>
+        );
+        expect(getByText(searchResultsNoEntity.result[0].uri)).toBeInTheDocument();
+        expect(getByText(searchResultsNoEntity.result[0].snippet.match["#text"])).toBeInTheDocument();
     });
 
 });

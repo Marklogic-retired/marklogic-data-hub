@@ -15,25 +15,42 @@
  */
 'use strict';
 const parser = require('/explore-data/third-party/fast-xml-parser/parser.js');
+const searchImpl = require("/explore-data/ml-search-lib/search-impl.xqy");
 
 class Search {
   constructor() {
 
   }
 
+  // This function has minimal search capability to return all the data from content database with only collection facets
   getSearchResults(searchParams) {
-    return {
-      "response": {
-        "snippet-format": "snippet",
-        "total": "0",
-        "start": "1",
-        "page-length": "10",
-        "facet": []
-      },
-      "recordCount": {
-        "total": 0
-      }
+    const searchText = searchParams.searchText;
+    const start = searchParams.start ? searchParams.start : 1
+    const pageLength = searchParams.pageLength ? searchParams.pageLength : 10
+
+    let searchResponse = searchImpl.getSearchResults(searchText, start, pageLength);
+    if(searchResponse instanceof XMLNode) {
+      searchResponse = this.transformXmlToJson(searchResponse);
     }
+    let results = searchResponse["response"]["result"];
+    if(results) {
+      if(!Array.isArray(results)) {
+        results = [results];
+      }
+      results.forEach(result => {
+        if(result["extracted"]) {
+          if(result["extracted"]["#text"]) {
+            let extractedObj = JSON.parse(result["extracted"]["#text"])[0];
+            let entityType = Object.keys(extractedObj)[0];
+            result["extracted"][entityType] = extractedObj[entityType];
+            delete result["extracted"]["#text"];
+          }
+          result["entityType"] = Object.keys(result["extracted"])[1];
+        }
+      });
+    }
+    searchResponse["recordCount"] = {"total": searchResponse["response"]["total"]};
+    return searchResponse;
   }
 
   getSnippetResults(searchResults) {
