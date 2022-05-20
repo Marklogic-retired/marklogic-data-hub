@@ -164,7 +164,7 @@ const Facets: React.FC<Props> = (props) => {
 
   // Get object for a facet based on facet name
   const getFacetObj = (facetName, facetObjs) => {
-    return facetObjs ? facetObjs.find(obj => obj.name === facetName) : null;
+    return facetObjs && Array.isArray(facetObjs) ? facetObjs.find(obj => obj.name === facetName) : null;
   };
 
   // Get number of facet values for a facet based on facet name

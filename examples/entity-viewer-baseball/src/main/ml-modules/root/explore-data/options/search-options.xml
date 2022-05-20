@@ -3,6 +3,44 @@
   <search:constraint name="Collection">
     <search:collection/>
   </search:constraint>
+  <search:constraint name="school">
+    <search:range collation="http://marklogic.com/collation/codepoint" facet="true" type="xs:string">
+      <search:element name="school" ns="" xmlns:es="http://marklogic.com/entity-services"/>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="bats">
+    <search:range collation="http://marklogic.com/collation/codepoint" facet="true" type="xs:string">
+      <search:element name="bats" ns="" xmlns:es="http://marklogic.com/entity-services"/>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="throws">
+    <search:range collation="http://marklogic.com/collation/codepoint" facet="true" type="xs:string">
+      <search:element name="throws" ns="" xmlns:es="http://marklogic.com/entity-services"/>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="country">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+        <search:path-index
+            xmlns:es="http://www.w3.org/2000/xmlns/">/player/location/country
+        </search:path-index>
+        <search:facet-option>limit=25</search:facet-option>
+        <search:facet-option>frequency-order</search:facet-option>
+        <search:facet-option>descending</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="state">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+        <search:path-index
+            xmlns:es="http://www.w3.org/2000/xmlns/">/player/location/state
+        </search:path-index>
+        <search:facet-option>limit=25</search:facet-option>
+        <search:facet-option>frequency-order</search:facet-option>
+        <search:facet-option>descending</search:facet-option>
+    </search:range>
+  </search:constraint>
   <!-- <search:constraint name="created">
     <search:range type="xs:dateTime" facet="false">
         <search:path-index xmlns:es="http://www.w3.org/2000/xmlns/">/record/createdOn</search:path-index>
