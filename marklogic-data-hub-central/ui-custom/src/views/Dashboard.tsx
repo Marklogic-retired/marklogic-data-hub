@@ -10,7 +10,6 @@ import RecentRecords from "../components/RecentRecords/RecentRecords";
 import WhatsNew from "../components/WhatsNew/WhatsNew";
 import Section from "../components/Section/Section";
 import Loading from "../components/Loading/Loading";
-import {getSummary} from "../api/api";
 import "./Dashboard.scss";
 import RecentClear from "../components/RecentClear/RecentClear"
 
@@ -35,11 +34,9 @@ const Dashboard: React.FC<Props> = (props) => {
   const [whatsNew, setWhatsNew] = useState<any>([]);
   const [recentSearches, setRecentSearches] = useState<any>([]);
   const [recentRecords, setRecentRecords] = useState<any>({});
-  const [summary, setSummary] = useState<any>({});
 
   useEffect(() => {
     searchContext.handleGetSearchLocal();
-    setSummary(getSummary({}));
     if (userContext.config.api && 
       userContext.config.api.recentStorage === "database") {
       detailContext.handleGetRecent();

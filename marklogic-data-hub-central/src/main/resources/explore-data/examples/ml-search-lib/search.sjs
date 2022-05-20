@@ -23,9 +23,108 @@ class Search {
   }
 
   getSearchResults(searchParams) {
-    const searchText = searchParams.searchText;
     const start = searchParams.start ? searchParams.start : 1
     const pageLength = searchParams.pageLength ? searchParams.pageLength : 10
+    const searchConstraint = this.buildSearchQuery(searchParams);
+    const entityTypeIds = searchParams.entityTypeIds;
+
+    let searchResponse = searchImpl.getSearchResults(searchConstraint, start, pageLength);
+    if(searchResponse instanceof XMLNode) {
+      searchResponse = this.transformXmlToJson(searchResponse);
+    }
+    let results = searchResponse["response"]["result"];
+    if(results) {
+      if(!Array.isArray(results)) {
+        results = [results];
+      }
+      results.forEach(result => {
+        if(result["extracted"]) {
+          if(result["extracted"]["#text"]) {
+            let extractedObj = JSON.parse(result["extracted"]["#text"])[0];
+            let entityType = Object.keys(extractedObj)[0];
+            result["extracted"][entityType] = extractedObj[entityType];
+            delete result["extracted"]["#text"];
+          }
+          result["entityType"] = Object.keys(result["extracted"])[1];
+        }
+      });
+    }
+    searchResponse["recordCount"] = entityTypeIds.length == 0 ? {"total": searchResponse["response"]["total"]} : this.getRecordCount(entityTypeIds);
+    return searchResponse;
+  }
+
+  getSnippetResults(searchResults) {
+
+  }
+
+  getPrimaryKeyForAResult() {
+
+  }
+
+  getDocument(uri) {
+    let result = cts.doc(uri);
+    if(result instanceof XMLDocument) {
+      result = this.transformXmlToJson(result);
+    } else {
+      result = result.toObject();
+    }
+    result["entityType"] = Object.keys(result)[0];
+    result["uri"] = uri;
+    return result;
+  }
+
+  getEntityModels() {
+    let entityModels = {}
+    entityModels["entityTypeNames"] = ["person", "organization"];
+    return entityModels;
+  }
+
+  getEntityModel(modelName) {
+
+  }
+
+  getRecordCount(entityModelNames) {
+    const recordCount = {};
+    entityModelNames.forEach(entityModelName =>
+      recordCount[entityModelName] = fn.count(cts.uris("", null, cts.collectionQuery(entityModelName)))
+    );
+    if(Object.keys(recordCount).length > 0) {
+      recordCount["total"] = Object.values(recordCount).reduce((a, b) => a + b);
+    }
+    return recordCount;
+  }
+
+  getMetrics(metricTypes) {
+    const metrics = {};
+    metricTypes["metrics"].forEach(metricType => {
+        metrics[metricType["type"]] = Math.floor(Math.random() * (100000 - 1000 + 1)) + 1000;
+      }
+    );
+    return metrics;
+  }
+
+  transformXmlToJson(xmlNode) {
+    const options = {
+      attributeNamePrefix: "",
+      attrNodeName: false, //default is 'false'
+      textNodeName: "#text",
+      ignoreAttributes: false,
+      ignoreNameSpace: true,
+      allowBooleanAttributes: false,
+      parseNodeValue: true,
+      parseAttributeValue: false,
+      trimValues: true,
+      cdataTagName: "__cdata", //default is 'false'
+      cdataPositionChar: "\\c",
+      localeRange: "", //To support non english character in tag/attribute values.
+      parseTrueNumberOnly: false
+    };
+    const serializeOptions = {indent: 'no'};
+    return parser.parse(xdmp.quote(xmlNode, serializeOptions), options);
+  }
+
+  buildSearchQuery(searchParams) {
+    const searchText = searchParams.searchText;
     const sortCriteria = searchParams.sort;
     let entityTypeIds = searchParams.entityTypeIds;
     let collections = entityTypeIds.map(i => 'Collection:' + i);
@@ -88,95 +187,7 @@ class Search {
     }
 
     searchConstraint = searchConstraint.join(" AND ");
-    let searchResponse = searchImpl.getSearchResults(searchConstraint, start, pageLength);
-    if(searchResponse instanceof XMLNode) {
-      searchResponse = this.transformXmlToJson(searchResponse);
-    }
-    let results = searchResponse["response"]["result"];
-    if(results) {
-      if(!Array.isArray(results)) {
-        results = [results];
-      }
-      results.forEach(result => {
-        if(result["extracted"]["#text"]) {
-          let extractedObj = JSON.parse(result["extracted"]["#text"])[0];
-          let entityType = Object.keys(extractedObj)[0];
-          result["extracted"][entityType] = extractedObj[entityType];
-          delete result["extracted"]["#text"];
-        }
-        result["entityType"] = Object.keys(result["extracted"])[1];
-      });
-    }
-    searchResponse["recordCount"] = this.getRecordCount(entityTypeIds);
-    return searchResponse;
-  }
-
-  getSnippetResults(searchResults) {
-
-  }
-
-  getPrimaryKeyForAResult() {
-
-  }
-
-  getDocument(uri) {
-    let result = cts.doc(uri);
-    if(result instanceof XMLDocument) {
-      result = this.transformXmlToJson(result);
-    } else {
-      result = result.toObject();
-    }
-    result["entityType"] = Object.keys(result)[0];
-    result["uri"] = uri;
-    return result;
-  }
-
-  getEntityModels() {
-    let entityModels = {}
-    entityModels["entityTypeNames"] = ["person", "organization"];
-    return entityModels;
-  }
-
-  getEntityModel(modelName) {
-
-  }
-
-  getRecordCount(entityModelNames) {
-    const recordCount = {};
-    entityModelNames.forEach(entityModelName =>
-      recordCount[entityModelName] = fn.count(cts.uris("", null, cts.collectionQuery(entityModelName)))
-    );
-    recordCount["total"] = Object.values(recordCount).reduce((a, b) => a + b);
-    return recordCount;
-  }
-
-  getMetrics(metricTypes) {
-    const metrics = {};
-    metricTypes["metrics"].forEach(metricType => {
-        metrics[metricType["type"]] = Math.floor(Math.random() * (100000 - 1000 + 1)) + 1000;
-      }
-    );
-    return metrics;
-  }
-
-  transformXmlToJson(xmlNode) {
-    const options = {
-      attributeNamePrefix: "",
-      attrNodeName: false, //default is 'false'
-      textNodeName: "#text",
-      ignoreAttributes: false,
-      ignoreNameSpace: true,
-      allowBooleanAttributes: false,
-      parseNodeValue: true,
-      parseAttributeValue: false,
-      trimValues: true,
-      cdataTagName: "__cdata", //default is 'false'
-      cdataPositionChar: "\\c",
-      localeRange: "", //To support non english character in tag/attribute values.
-      parseTrueNumberOnly: false
-    };
-    const serializeOptions = {indent: 'no'};
-    return parser.parse(xdmp.quote(xmlNode, serializeOptions), options);
+    return searchConstraint;
   }
 }
 

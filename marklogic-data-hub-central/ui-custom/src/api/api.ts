@@ -1,5 +1,4 @@
 import axios from "axios";
-import {summary} from "../mocks/summary";
 import _ from "lodash";
 
 export const getSearchResults = async (endpoint, query, userid) => { 
@@ -34,13 +33,6 @@ export const getSearchResultsByGet = async (queryStr, userid) => {
     let message = error;
     console.error("Error: getSearchResultsByGet", message);
   }
-};
-
-// export const getSummary = async (opts) => { // TODO
-export const getSummary = (opts) => {
-  // return await axios.get(`/api/summary`); // TODO
-  //console.log("getSummary", opts, summary);
-  return summary;
 };
 
 export const getDetail = async (endpoint, recordId, userid) => {
