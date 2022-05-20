@@ -14,32 +14,22 @@ describe("User without hub-central-saved-query-user role should not see saved qu
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-user").withRequest();
     LoginPage.postLogin();
-    cy.waitForAsyncRequest();
+    //Saving Local Storage to preserve session
+    cy.saveLocalStorage();
   });
   beforeEach(() => {
-    cy.loginAsTestUserWithRoles("hub-central-user").withRequest();
-    cy.waitForAsyncRequest();
-  });
-  afterEach(() => {
-    cy.resetTestUser();
-    cy.waitForAsyncRequest();
-  });
-  after(() => {
-    cy.resetTestUser();
-    cy.waitForAsyncRequest();
-  });
-  it("verifies saved queries drop down does not exist", () => {
-    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-    browsePage.getSaveQueriesDropdown().should("not.exist");
+    //Restoring Local Storage to Preserve Session
+    cy.restoreLocalStorage();
   });
   it("verifies user without hub-central-saved-query-user role can explore data", () => {
-    browsePage.getSaveQueriesDropdown().should("not.exist");
+    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    browsePage.getSaveQueriesDropdown().should("exist");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
     entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
   });
   it("verifies user without hub-central-saved-query-user can not save query", () => {
-    browsePage.getSaveQueriesDropdown().should("not.exist");
+    browsePage.getSaveQueriesDropdown().should("exist");
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
     browsePage.getFacetItemCheckbox("name", "Adams Cole").click();
     browsePage.getSelectedFacets().should("exist");

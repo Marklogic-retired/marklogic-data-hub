@@ -17,6 +17,18 @@ describe("Queries Component", () => {
     />);
     expect(queryByTitle("save-query")).not.toBeInTheDocument();
   });
+  test("Verify clear query button exist", () => {
+    const {getByLabelText} = render(<Query
+      cardView={false}
+      queries={getQueriesResponse}
+      setQueries={jest.fn()}
+      isSavedQueryUser={false}
+      selectedFacets={[]}
+      greyFacets={[]}
+      setColumnSelectorTouched={jest.fn()}
+    />);
+    expect(getByLabelText("clear-query")).toBeInTheDocument();
+  });
 
   test("Verify edit query button does not exist", () => {
     const {queryByTitle} = render(<Query

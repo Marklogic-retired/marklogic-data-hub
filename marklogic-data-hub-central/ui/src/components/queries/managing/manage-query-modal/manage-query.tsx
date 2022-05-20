@@ -67,8 +67,7 @@ const QueryModal = (props) => {
   const editQuery = async (query) => {
     const response = await axios.put(`/api/entitySearch/savedQueries`, query);
     if (response.data) {
-      setQueries(response.data);
-      setSavedQueries(response.data);
+      getQueries();
       return {code: response.status};
     }
   };
