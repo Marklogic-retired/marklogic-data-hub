@@ -431,7 +431,7 @@ describe("Entity Modeling: Graph View", () => {
     confirmationModal.deleteRelationship();
     cy.waitUntil(() => cy.findByLabelText("confirm-deletePropertyStepWarn-yes").click());
     // To verify that property is not visible
-    cy.wait(150);
+    cy.wait(3000); //graph needs to stabilize before canvas click
     graphVis.getPositionsOfNodes("Person").then((nodePositions: any) => {
       let personCoordinates: any = nodePositions["Person"];
       cy.waitUntil(() => graphVis.getGraphVisCanvas().click(personCoordinates.x, personCoordinates.y));
