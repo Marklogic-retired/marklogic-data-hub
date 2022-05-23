@@ -54,11 +54,11 @@ class Search {
   }
 
   getSnippetResults(searchResults) {
-
+    return {};
   }
 
   getPrimaryKeyForAResult() {
-
+    return {};
   }
 
   getDocument(uri) {
@@ -80,7 +80,7 @@ class Search {
   }
 
   getEntityModel(modelName) {
-
+    return {};
   }
 
   getRecordCount(entityModelNames) {

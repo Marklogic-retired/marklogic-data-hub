@@ -63,9 +63,6 @@ exports.getValue = function(v) {
   }
 };
 
-// const fakeCall = function(a) {return a;};
-// const fakeCallNoReturn = function() {};
-
 exports.buildOptions = function(options, defaultOptions, props) {
   var newOptions = {};
   if (!options) {
