@@ -16,8 +16,8 @@ const App: React.FC<Props> = (props) => {
 
   const userContext = useContext(UserContext);
 
-  if (!userContext.proxy) {
-    userContext.handleGetProxy();
+  if (!userContext.loginAddress) {
+    userContext.handleGetLoginAddress();
   }
 
   return (

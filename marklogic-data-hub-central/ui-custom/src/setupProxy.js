@@ -2,7 +2,7 @@ const { createProxyMiddleware } = require("http-proxy-middleware");
 const request = require('request');
 
 module.exports = function(app) {
-    app.get('/api/explore/login', (req, res) => {
+    app.get('/proxied', (req, res) => {
         // For dynamic proxying, get URI from header
         const { headers } = req;
         const uri = headers['x-forward'];

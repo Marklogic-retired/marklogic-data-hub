@@ -106,7 +106,6 @@ const DetailProvider: React.FC = ({children}) => {
     // Get from database
     let sr = getRecent(userContext.config.api.recentEndpoint, userContext.userid);
     sr.then(result => {
-      console.log("recent", result?.data);
       setRecentRecords(result?.data);
       setLoading(false);
     }).catch(error => {

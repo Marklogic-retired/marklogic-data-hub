@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { getProxy, getUserid, login, getConfig } from "../api/api";
+import { getLoginAddress, getUserid, login, getConfig } from "../api/api";
 interface UserContextInterface {
     userid: string;
-    proxy: string;
+    loginAddress: string;
     config: any;
-    handleGetProxy: any;
+    handleGetLoginAddress: any;
     handleGetUserid: any;
     handleLogin: any;
     handleGetConfig: any;
@@ -12,9 +12,9 @@ interface UserContextInterface {
   
 const defaultState = {
     userid: "",
-    proxy: "",
+    loginAddress: "",
     config: {},
-    handleGetProxy: () => {},
+    handleGetLoginAddress: () => {},
     handleGetUserid: () => {},
     handleLogin: () => {},
     handleGetConfig: () => {}
@@ -33,16 +33,16 @@ export const UserContext = React.createContext<UserContextInterface>(defaultStat
 
 const UserProvider: React.FC = ({ children }) => {
 
-  const [proxy, setProxy] = useState<string>("");
+  const [loginAddress, setLoginAddress] = useState<string>("");
   const [userid, setUserid] = useState<string>("");
   const [authorities, setAuthorites] = useState<any>(null);
   const [config, setConfig] = useState<any>({});
 
-  const handleGetProxy = () => {
-    let sr = getProxy();
+  const handleGetLoginAddress = () => {
+    let sr = getLoginAddress();
     sr.then(result => {
         if (result && result.data) {
-            setProxy(result.data);
+            setLoginAddress(result.data);
         }
     }).catch(error => {
         console.error(error);
@@ -50,13 +50,13 @@ const UserProvider: React.FC = ({ children }) => {
   };
 
   useEffect(() => {
-    if (proxy) {
+    if (loginAddress) {
       handleGetUserid();
     }
-  }, [proxy]);
+  }, [loginAddress]);
 
   const handleGetUserid = () => {
-    let sr = getUserid(proxy);
+    let sr = getUserid(loginAddress);
     sr.then(result => {
         if (result && result.data) {
             setUserid(result.data);
@@ -104,9 +104,9 @@ const UserProvider: React.FC = ({ children }) => {
     <UserContext.Provider
       value={{
         userid,
-        proxy,
+        loginAddress,
         config,
-        handleGetProxy,
+        handleGetLoginAddress,
         handleGetUserid,
         handleLogin,
         handleGetConfig

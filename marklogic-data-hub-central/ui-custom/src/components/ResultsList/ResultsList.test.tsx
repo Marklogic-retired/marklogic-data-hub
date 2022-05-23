@@ -190,7 +190,7 @@ const detailContextValue = {
 describe("ResultsList component", () => {
 
     test("Verify list items appear and titles are clickable when results returned", () => {
-        const {getByText, getAllByAltText, debug} = render(
+        const {getByText, getAllByAltText} = render(
             <SearchContext.Provider value={searchContextValue}>
                 <DetailContext.Provider value={detailContextValue}>
                     <ResultsList config={resultsListConfig} />
@@ -205,7 +205,6 @@ describe("ResultsList component", () => {
         expect(getByText("123-45-6789")).toBeInTheDocument(); // Subtitle 
         expect(getByText("active")).toBeInTheDocument(); // Status
         expect(getByText("Time is 2020-01-01")).toBeInTheDocument(); // Timestamp
-        debug();
         userEvent.click(title);
         expect(detailContextValue.handleGetDetail).toHaveBeenCalledWith(searchResults.result[0].uri);
         userEvent.click(getByText("Jane Doe"));
