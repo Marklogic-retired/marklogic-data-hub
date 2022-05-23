@@ -1,14 +1,15 @@
 @import "../../src/theme/HCVariables.scss";
 
 .spacer {
-    padding-top: 20px;
+    padding: 15px 0 10px;
   }
   .errorContainer {
     border: 1px solid $danger;
     border-radius: 4px;
-    padding: 20px;
+    padding: 15px;
+    min-height: 100px;
     max-height: 350px;
-    overflow-y: auto;
+    overflow-y: scroll;
   }
   .superiorMiddleContainer {
     padding-bottom: 40px;
@@ -19,6 +20,7 @@
   }
   .buttonCopyCol {
     text-align: right;
+    padding-top: 20px;
   }
   
   .backOperationFailed {
@@ -28,6 +30,11 @@
   }
   .backOperationFailed:hover {
     color: $trash-icon-hover;
+  }
+
+  .contactSupport {
+    padding-top: 10px;
+    font-size: 17px;
   }
   .contactLink {
     color: $link;
