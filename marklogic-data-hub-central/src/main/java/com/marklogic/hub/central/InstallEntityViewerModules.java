@@ -77,16 +77,14 @@ public class InstallEntityViewerModules extends LoggingObject implements Applica
         modulesWriteSet = modulesDocMgr.newWriteSet();
 
         for(String classpathDirectory: defaultModulesDir) {
-            logger.info(String.format("Adding modules from %s directory to load into %s database", classpathDirectory, dbName));
-            addModulesToWriteSet(classpathDirectory, false);
+            logger.info(String.format("Loading modules from %s directory to load into %s database", classpathDirectory, dbName));
+            loadModulesIntoDatabase(classpathDirectory, false);
         }
 
         for(String classpathDirectory: configurableModulesDir) {
-            logger.info(String.format("Adding modules from %s directory to load into %s database", classpathDirectory, dbName));
-            addModulesToWriteSet(classpathDirectory, true);
+            logger.info(String.format("Loading modules from %s directory to load into %s database", classpathDirectory, dbName));
+            loadModulesIntoDatabase(classpathDirectory, true);
         }
-
-        modulesDocMgr.write(modulesWriteSet);
         logger.info("Loading Modules complete");
     }
 
@@ -98,18 +96,18 @@ public class InstallEntityViewerModules extends LoggingObject implements Applica
 
         for(String classpathDirectory: exampleModulesDir) {
             logger.info(String.format("Adding modules from %s directory to load into %s database", classpathDirectory, dbName));
-            addModulesToWriteSet(classpathDirectory, false);
+            loadModulesIntoDatabase(classpathDirectory, false);
         }
-        modulesDocMgr.write(modulesWriteSet);
         logger.info("Loading Example Modules complete");
     }
 
-    private void addModulesToWriteSet(String classPathDirectory, boolean isConfigurableModulesDir) {
+    private void loadModulesIntoDatabase(String classPathDirectory, boolean isConfigurableModulesDir) {
         ClassLoader cl = this.getClass().getClassLoader();
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(cl);
         try {
             Resource resources[] = resolver.getResources("classpath:".concat(classPathDirectory).concat("*.*"));
             for(Resource r: resources) {
+                modulesWriteSet.clear();
                 if(r.exists() && r.contentLength() > 0) {
                     StringHandle handle = new StringHandle(IOUtils.toString(r.getInputStream()));
                     String modulePath = "/".concat(classPathDirectory).concat(r.getFilename());
@@ -119,9 +117,10 @@ public class InstallEntityViewerModules extends LoggingObject implements Applica
                         logger.info(String.format("File %s already exists. Not overriding the file", uri));
                         continue;
                     }
-                    logger.info(String.format("Adding module %s", uri));
                     DocumentWriteOperation op = new DocumentWriteOperationImpl(DocumentWriteOperation.OperationType.DOCUMENT_WRITE, uri, buildMetadata(), handle);
                     modulesWriteSet.add(op);
+                    modulesDocMgr.write(modulesWriteSet);
+                    logger.info(String.format("File %s loaded", uri));
                 }
             }
         } catch (IOException e) {

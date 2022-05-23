@@ -59,11 +59,12 @@ function Parser(options) {
     this.tagEndChar = '>\n';
     this.newLine = '\n';
   } else {
-    this.indentate = function() {
-      return '';
-    };
-    this.tagEndChar = '>';
+    this.indentate = emptyIndentate("");
     this.newLine = '';
+  }
+
+  function emptyIndentate(someval) {
+    return someval;
   }
 
   if (this.options.supressEmptyNode) {
