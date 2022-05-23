@@ -5,7 +5,7 @@
 - Note: do not change the below
 ```
 
--  ##### Owner:
+- ##### Owner:
 
 - [ ] JIRA_ID included in all the commit messages
 - [ ] PR title is in the format JIRA_ID:Title
@@ -13,6 +13,7 @@
 - [ ] Squashed all commits into a single commit
 - [ ] Code passes ESLint tests
 - [ ] Added Tests
+- [ ] Ran cypress tests on firefox locally
   
 
 - ##### Reviewer:
