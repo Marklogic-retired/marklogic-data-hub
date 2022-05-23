@@ -58,7 +58,7 @@ const getRandomInt = (min, max) => {
   return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
 }
 
-export const getProxy = async () => { 
+export const getLoginAddress = async () => { 
   try {
     const response = await axios.get("/api/explore/proxyAddress");
     if (response && response.status === 200) {
@@ -66,20 +66,26 @@ export const getProxy = async () => {
     }
   } catch (error) {
     let message = error;
-    console.error("Error: getProxy", message);
+    console.error("Error: getLoginAddress", message);
   }
 };
 
-export const getUserid = async (proxy) => { 
+export const getUserid = async (loginAddress) => { 
   // setupProxy.js script will dynamically proxy to x-forward value
   let config = {
     headers: {
-      'x-forward': proxy
+      'x-forward': loginAddress
     }
   }
   try {
-    // URL string here just needs to match what is in setupProxy.js
-    const response = await axios.get("/api/explore/login", config);
+    let response;
+    if (process.env.NODE_ENV === "development") {
+        // Development: URL string here needs to match what is in setupProxy.js
+        response = await axios.get("/proxied", config);
+    } else {
+        // Production: CORS will need to be enabled on the loginAddress server 
+        response = await axios.get(loginAddress);
+    }
     if (response && response.status === 200) {
       return response;
     }

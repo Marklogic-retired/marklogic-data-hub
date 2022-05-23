@@ -74,7 +74,7 @@ describe("SearchBox component", () => {
     });
 
     test("Verify submit button appears when configured and is clickable", () => {
-        const {getByTestId, queryByTestId, debug} = render(
+        const {getByTestId, queryByTestId} = render(
             <SearchContext.Provider value={searchContextValue}>
                 <SearchBox button="vertical" />
             </SearchContext.Provider>
