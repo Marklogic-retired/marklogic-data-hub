@@ -7,7 +7,7 @@ class SearchPage {
     return cy.get(".sticky-top").findByTestId("searchBox");
   }
   menuEntityDropdown() {
-    return cy.get(".sticky-top").find("#searchBoxDropdown");
+    return cy.get("main #searchBoxDropdown");
   }
   searchButton() {
     return cy.findByTestId("submit");
@@ -114,6 +114,12 @@ class SearchPage {
   }
   selectEndDate() {
     return cy.get(`[class="drp-calendar right"] [class="available"]`);
+  }
+  selectEntity(entity: string) {
+    return cy.contains("main .dropdown-item", entity);
+  }
+  sortIcon() {
+    return cy.get(".sortIcons svg");
   }
 }
 

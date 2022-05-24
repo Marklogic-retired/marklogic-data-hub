@@ -109,7 +109,7 @@ describe("Widget Validations ", () => {
     searchPage.resultTitle().each((item, i) => {
       searchPage.resultTitle().eq(i).click({force: true});
       cy.contains(country).should("be.visible");
-      recordeDetailsPage.backToSearch().click({force:true});
+      recordeDetailsPage.backToSearch().click({force: true});
       searchPage.resultsList().should("be.visible");
     });
     searchPage.clickFacet("country", country);
