@@ -22,7 +22,7 @@ describe("Recent Searches Validations ", () => {
     landingPage.recentSearchesClear().should("be.disabled");
     landingPage.noRecentSearches().should("be.visible");
   });
-  it("Click on serach button for navigating to search page and get search values", () => {
+  it("Click on search button for navigating to search page and get search values", () => {
     searchPage.searchButton().click();
     searchPage.resultsList().should("be.visible");
     searchPage.resultTitle().eq(0).then(nameVal => {
