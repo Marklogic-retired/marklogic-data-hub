@@ -48,6 +48,10 @@ class EntityTypeDisplaySettingsModal {
     return cy.get(`[aria-label="${entityType}-propertiesOption-${option}"]`).first().scrollIntoView();
   }
 
+  getPropertiesOnHoverDropdownCloseOption(entityType: string, option: string) {
+    return cy.get(`[aria-label="${entityType}-propertiesOption-${option}"]`).first().parent().parent().scrollIntoView().find(`[aria-label^="Remove"]`);
+  }
+
   getModalCloseButton() {
     return cy.get(`[id="close-settings-modal"]`);
   }

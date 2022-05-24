@@ -14,6 +14,8 @@ import {EntityModified} from "../../../../types/modeling-types";
 import {defaultHubCentralConfig} from "@config/modeling.config";
 import {themeColors} from "@config/themes.config";
 import {defaultIcon} from "@config/explore.config";
+import Select, {components as SelectComponents} from "react-select";
+import reactSelectThemeConfig from "@config/react-select-theme.config";
 
 type Props = {
   entityTypes: any;
@@ -42,6 +44,8 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
   const [selectedEntityNamespace, setSelectedEntityNamespace] = useState("");
   const [selectedEntityNamespacePrefix, setSelectedEntityNamespacePrefix] = useState("");
   const [selectedEntityVersion, setSelectedEntityVersion] = useState("");
+  const [selectedEntityLabel, setSelectedEntityLabel] = useState<string>("");
+  const [selectedEntityPropOnHover, setSelectedEntityPropOnHover] = useState<string[]>();
   const [versionTouched, setVersionTouched] = useState(false);
   const [descriptionTouched, setisDescriptionTouched] = useState(false);
   const [namespaceTouched, setisNamespaceTouched] = useState(false);
@@ -82,6 +86,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
               setSelectedEntityVersion(selectedEntityDetails.model.info.version);
             }
             initializeEntityColorIcon();
+            initializeEntityDisplayProps();
           } else {
             // Entity type not found, may have been deleted, unset
             setSelectedEntity(undefined);
@@ -107,6 +112,16 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
       setIconSelected(entIcon);
     } else {
       setIconSelected(defaultIcon);
+    }
+  };
+
+  const initializeEntityDisplayProps = () => {
+    if (modelingOptions.selectedEntity && props.hubCentralConfig.modeling) {
+      const entityData = props.hubCentralConfig.modeling?.entities[modelingOptions.selectedEntity];
+      if (entityData) {
+        setSelectedEntityLabel(entityData.label || "");
+        setSelectedEntityPropOnHover(entityData.propertiesOnHover || []);
+      }
     }
   };
 
@@ -209,14 +224,35 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
     }
   }, [modelingOptions.selectedEntity]);
 
-  const handleColorChange = async (color, event) => {
+  const handleColorChange = color => {
     setColorSelected(color.hex);
     props.setNodeNeedRedraw(true);
+    updateHubCentralConfig({color: color.hex});
+  };
+
+  const handleIconChange = iconSelected => {
+    setIconSelected(iconSelected);
+    props.setNodeNeedRedraw(true);
+    updateHubCentralConfig({icon: iconSelected});
+  };
+
+  const handleLabelChange = (e) => {
+    setSelectedEntityLabel(e.value || "");
+    updateHubCentralConfig({label: e.value || ""});
+  };
+
+  const handlePropertiesOnHoverChange = (e) => {
+    const propertiesOnHover = e.map(option => option.value);
+    setSelectedEntityPropOnHover(propertiesOnHover);
+    updateHubCentralConfig({propertiesOnHover});
+  };
+
+  const updateHubCentralConfig = propToUpdate => {
     try {
       if (modelingOptions.selectedEntity !== undefined) {
-        let colorPayload = defaultHubCentralConfig;
-        colorPayload.modeling.entities[modelingOptions.selectedEntity] = {color: color.hex};
-        props.updateHubCentralConfig(colorPayload);
+        let hubCentralPayload = defaultHubCentralConfig;
+        hubCentralPayload.modeling.entities[modelingOptions.selectedEntity] = propToUpdate;
+        props.updateHubCentralConfig(hubCentralPayload);
         setErrorServer("");
       }
     } catch (error) {
@@ -230,25 +266,23 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
     }
   };
 
-  const handleIconChange = async (iconSelected) => {
-    setIconSelected(iconSelected);
-    props.setNodeNeedRedraw(true);
-    try {
-      if (modelingOptions.selectedEntity !== undefined) {
-        let iconPayload = defaultHubCentralConfig;
-        iconPayload.modeling.entities[modelingOptions.selectedEntity] = {icon: iconSelected};
-        props.updateHubCentralConfig(iconPayload);
-        setErrorServer("");
-      }
-    } catch (error) {
-      if (error.response.status === 400) {
-        if (error.response.data.hasOwnProperty("message")) {
-          setErrorServer(error["response"]["data"]["message"]);
-        }
-      } else {
-        handleError(error);
+  const MenuList  = (selector, props) => (
+    <div id={`${selector}-select-MenuList`}>
+      <SelectComponents.MenuList {...props} />
+    </div>
+  );
+
+  const getOptions = () => {
+    if (modelingOptions.selectedEntity !== undefined) {
+      const definitions = props.entityTypes.find(e => e.entityName === modelingOptions.selectedEntity)?.model.definitions;
+      if (definitions && definitions[modelingOptions.selectedEntity]) {
+        return Object.keys(definitions[modelingOptions.selectedEntity]?.properties).map(property => ({
+          value: property,
+          label: property
+        }));
       }
     }
+    return [];
   };
 
   const displayPanelContent = () => {
@@ -322,37 +356,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
             </Row>
           </Col>
         </Row>
-        <Row className={"mb-3"}>
-          <FormLabel column lg={3} style={{marginTop: "10px"}}>{"Color:"}</FormLabel>
-          <Col className={"d-flex align-items-center"}>
-            <div className={styles.colorContainer}>
-              {modelingOptions.selectedEntity &&
-                <EntityTypeColorPicker color={colorSelected} entityType={modelingOptions.selectedEntity} handleColorChange={handleColorChange} />
-              }
-              <div className={"d-flex align-items-center"}>
-                <HCTooltip id="colo-selector" text={<span>Select a color to associate it with the <b>{modelingOptions.selectedEntity}</b> entity throughout your project.</span>} placement="right">
-                  <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.colorsIcon} />
-                </HCTooltip>
-              </div>
-            </div>
-          </Col>
-        </Row>
         <Row>
-          <FormLabel column lg={3} style={{marginTop: "11px"}}>{"Icon:"}</FormLabel>
-          <Col className={"d-flex align-items-center"}>
-            <div className={styles.iconContainer}>
-              <div data-testid={`${modelingOptions.selectedEntity}-icon-selector`} aria-label={`${modelingOptions.selectedEntity}-${iconSelected}-icon`}>
-                <HCIconPicker identifier={modelingOptions.selectedEntity} value={iconSelected} onChange={(value) => handleIconChange(value)} />
-              </div>
-              <div className={"d-flex align-items-center"}>
-                <HCTooltip id="icon-selector" text={<span>Select an icon to associate it with the <b>{modelingOptions.selectedEntity}</b> entity throughout your project.</span>} placement="right">
-                  <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.iconPickerTooltip} />
-                </HCTooltip>
-              </div>
-            </div>
-          </Col>
-        </Row>
-        <Row className={"mb-3"}>
           <FormLabel column lg={3} style={{marginTop: "20px"}}>{"Version:"}</FormLabel>
           <Col className={"d-flex align-items-center"}>
             <div className={styles.versionContainer}>
@@ -371,6 +375,101 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
                   <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.colorsIcon} />
                 </HCTooltip>
               </div>
+            </div>
+          </Col>
+        </Row>
+        {/* Display settings section  */}
+        <Row className={"mb-3 mt-4"}>
+          <Col className={"d-flex align-items-center"}>
+            <h3 className={styles.displaySettings}>{"Display Settings"}</h3>
+          </Col>
+        </Row>
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3} style={{marginTop: "10px"}}>{"Color:"}</FormLabel>
+          <Col className={"d-flex align-items-center"}>
+            <div className={styles.colorContainer}>
+              {modelingOptions.selectedEntity &&
+                <EntityTypeColorPicker color={colorSelected} entityType={modelingOptions.selectedEntity} handleColorChange={handleColorChange} />
+              }
+              <div className={"d-flex align-items-center"}>
+                <HCTooltip id="colo-selector" text={ModelingTooltips.colorField(modelingOptions.selectedEntity)} placement="right">
+                  <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.colorsIcon} />
+                </HCTooltip>
+              </div>
+            </div>
+          </Col>
+        </Row>
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3} style={{marginTop: "11px"}}>{"Icon:"}</FormLabel>
+          <Col className={"d-flex align-items-center"}>
+            <div className={styles.iconContainer}>
+              <div data-testid={`${modelingOptions.selectedEntity}-icon-selector`} aria-label={`${modelingOptions.selectedEntity}-${iconSelected}-icon`}>
+                <HCIconPicker identifier={modelingOptions.selectedEntity} value={iconSelected} onChange={(value) => handleIconChange(value)} />
+              </div>
+              <div className={"d-flex align-items-center"}>
+                <HCTooltip id="icon-selector" text={ModelingTooltips.iconField(modelingOptions.selectedEntity)} placement="right">
+                  <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.iconPickerTooltip} />
+                </HCTooltip>
+              </div>
+            </div>
+          </Col>
+        </Row>
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3}>{"Record Label:"}</FormLabel>
+          <Col className={"d-flex"}>
+            <Select
+              id={`${modelingOptions.selectedEntity}-entityLabel-select-wrapper`}
+              inputId={`${modelingOptions.selectedEntity}-entityLabel-select`}
+              components={{MenuList: props => MenuList(`${modelingOptions.selectedEntity}-entityLabel`, props)}}
+              defaultValue={selectedEntityLabel ? {label: selectedEntityLabel, value: selectedEntityLabel} : null}
+              value={selectedEntityLabel ? {label: selectedEntityLabel, value: selectedEntityLabel} : null}
+              options={getOptions()}
+              onChange={handleLabelChange}
+              classNamePrefix="select"
+              aria-label={`${modelingOptions.selectedEntity}-label-select-dropdown`}
+              formatOptionLabel={({value, label}) => {
+                return (
+                  <span data-testid={`${modelingOptions.selectedEntity}-labelOption-${value}`} aria-label={`${modelingOptions.selectedEntity}-labelOption-${value}`}>
+                    {label}
+                  </span>
+                );
+              }}
+              styles={reactSelectThemeConfig}
+            />
+            <div className={"p-2 d-flex align-items-center"}>
+              <HCTooltip text={ModelingTooltips.labelField(modelingOptions.selectedEntity)} id="entityLabel-tooltip" placement="top-end">
+                <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.icon} data-testid="entityLabelTooltip" />
+              </HCTooltip>
+            </div>
+          </Col>
+        </Row>
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3}>{"Properties on Hover:"}</FormLabel>
+          <Col className={"d-flex"}>
+            <Select
+              id={`${modelingOptions.selectedEntity}-entityProperties-select-wrapper`}
+              inputId={`${modelingOptions.selectedEntity}-entityProperties-select`}
+              components={{MenuList: props => MenuList(`${modelingOptions.selectedEntity}-entityProperties`, props)}}
+              defaultValue={selectedEntityPropOnHover?.map(property => ({label: property, value: property}))}
+              value={selectedEntityPropOnHover?.map(property => ({label: property, value: property}))}
+              options={getOptions()}
+              isMulti
+              onChange={handlePropertiesOnHoverChange}
+              classNamePrefix="select"
+              aria-label={`${modelingOptions.selectedEntity}-entityProperties-select-dropdown`}
+              formatOptionLabel={({value, label}) => {
+                return (
+                  <span data-testid={`${modelingOptions.selectedEntity}-propertiesOption-${value}`} aria-label={`${modelingOptions.selectedEntity}-propertiesOption-${value}`}>
+                    {label}
+                  </span>
+                );
+              }}
+              styles={reactSelectThemeConfig}
+            />
+            <div className={"p-2 d-flex align-items-center"}>
+              <HCTooltip text={ModelingTooltips.propertiesOnHoverField} id="propertiesOnHover-tooltip" placement="top-end">
+                <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.icon} data-testid="propertiesOnHoverTooltip" />
+              </HCTooltip>
             </div>
           </Col>
         </Row>

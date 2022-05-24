@@ -25,6 +25,18 @@ class HomePage {
   getExploreTile() {
     return cy.get("div[aria-label=\"tool-explore\"]");
   }
+
+  getModelCard() {
+    return cy.get(`[aria-label="model-card"]`);
+  }
+
+  getExploreCard() {
+    return cy.get(`[aria-label="explore-card"]`);
+  }
+
+  getTileCloseButton() {
+    return cy.get(`[aria-label="tile-header"]`).find(`svg[aria-label="close"]`);
+  }
 }
 
 const homePage = new HomePage();

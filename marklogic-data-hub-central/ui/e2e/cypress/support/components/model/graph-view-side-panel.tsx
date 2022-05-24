@@ -67,6 +67,22 @@ class GraphViewSidePanel {
   getIconTooltip(property: string, tooltip: string) {
     return cy.get(`#tooltip-${property}`, {timeout: 5000}).find("div.tooltip-inner").contains(`${tooltip}`).should("exist");
   }
+
+  getEntityLabelDropdown(entityType: string) {
+    return cy.get(`[id="${entityType}-entityLabel-select-wrapper"]`).scrollIntoView();
+  }
+
+  getEntityLabelDropdownOption(entityType: string, option: string) {
+    return cy.get(`[aria-label="${entityType}-labelOption-${option}"]`).first().scrollIntoView();
+  }
+
+  getPropertiesOnHoverDropdown(entityType: string) {
+    return cy.get(`[id="${entityType}-entityProperties-select-wrapper"]`).scrollIntoView();
+  }
+
+  getPropertiesOnHoverDropdownOption(entityType: string, option: string) {
+    return cy.get(`[aria-label="${entityType}-propertiesOption-${option}"]`).first().scrollIntoView();
+  }
 }
 
 const graphViewSidePanel = new GraphViewSidePanel();

@@ -30,9 +30,9 @@ const defaultEntityTypeData = {
   }
 };
 const propertiesOnHoverData = {
-  name: "Name: Adams Cole",
-  email: "Email: adamscole@nutralab.com",
-  shipping: "Shipping:"
+  name: "name: Adams Cole",
+  email: "email: adamscole@nutralab.com",
+  shipping: "shipping:"
 };
 // We must have the same color in rgb and hex because the browser to apply the background changes it to rgb even if the value is passed in hex
 // "#FFF0A3" == "rgb(255, 240, 163)"
