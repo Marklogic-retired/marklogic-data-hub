@@ -262,12 +262,12 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     propertiesOnHover.forEach(property => {
       Object.keys(property).forEach(propertyName => {
         const propertySpan = document.createElement("span");
-        if (typeof property[propertyName] === "string") {
-          propertySpan.innerHTML = `${_.capitalize(propertyName)}: ${property[propertyName]}`;
+        if (typeof property[propertyName] === "string" || typeof property[propertyName] === "number") {
+          propertySpan.innerHTML = `${propertyName}: ${property[propertyName]}`;
           topSpan.appendChild(propertySpan);
           topSpan.appendChild(document.createElement("br"));
         } else {
-          propertySpan.innerHTML = `${_.capitalize(propertyName)}:`;
+          propertySpan.innerHTML = `${propertyName}:`;
           const pre = document.createElement("pre");
           pre.innerText = JSON.stringify(property[propertyName], undefined, 2);
           paddingElementes.appendChild(propertySpan);

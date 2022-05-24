@@ -166,6 +166,7 @@ const Tiles: React.FC<Props> = (props) => {
     return (
       <div
         className={styles.paneHeader}
+        aria-label={"tile-header"}
         style={{backgroundColor: options["bgColor"], borderBottomColor: options["border"]}}
       >
         <div className={styles.title}>
