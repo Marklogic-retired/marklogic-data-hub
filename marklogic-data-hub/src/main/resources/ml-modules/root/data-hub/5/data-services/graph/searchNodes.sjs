@@ -314,6 +314,14 @@ function getValueFromProperty(propertyName, docUri,entityType) {
   return "";
 }
 
+function getValueFromPropertyPath(path, docUri,entityType,propertyPath) {
+  const doc = cts.doc(docUri);
+  if(fn.exists(doc.xpath(".//*:envelope/*:instance/*:"+entityType+"/*:"+propertyPath))){
+    return fn.data(doc.xpath(".//*:envelope/*:instance/*:"+entityType+"/*:"+propertyPath));
+  }
+  return "";
+}
+
 function getValuesPropertiesOnHover(docUri,entityType) {
   let resultPropertiesOnHover = [];
   let configPropertiesOnHover = getPropertiesOnHoverFromHubConfigByEntityType(entityType);
@@ -321,10 +329,17 @@ function getValuesPropertiesOnHover(docUri,entityType) {
     //check in the document the value of the configuration property
     for (var i = 0; i < configPropertiesOnHover.length; i++) {
       let entityPropertyName = configPropertiesOnHover[i];
-      //create an Property on hover object
-      var objPropertyOnHover = new Object();
-      objPropertyOnHover[entityPropertyName] = getValueFromProperty(entityPropertyName,docUri,entityType);
-      resultPropertiesOnHover.push(objPropertyOnHover);
+      if(!entityPropertyName.includes(".")){
+        //create an Property on hover object
+        var objPropertyOnHover = new Object();
+        objPropertyOnHover[entityPropertyName] = getValueFromProperty(entityPropertyName,docUri,entityType);
+        resultPropertiesOnHover.push(objPropertyOnHover);
+      }else{
+        let propertyPath = entityPropertyName.split(".").join("/*:");
+        var objPropertyOnHover = new Object();
+        objPropertyOnHover[entityPropertyName] = getValueFromPropertyPath(entityPropertyName,docUri,entityType, propertyPath);
+        resultPropertiesOnHover.push(objPropertyOnHover);
+      }
     }
   }
   return resultPropertiesOnHover;
