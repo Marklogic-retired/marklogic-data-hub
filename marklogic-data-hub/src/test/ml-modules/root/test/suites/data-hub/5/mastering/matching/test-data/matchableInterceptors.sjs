@@ -21,9 +21,29 @@ function scoreDocumentInterceptor(defaultScore, contentObjectA, contentObjectB, 
   return score;
 }
 
+function customMatchStringInterceptor() {
+  //return any atomic value
+  return 2;
+}
+
+function customMatchSequenceInterceptor() {
+  //return any sequence
+  let seq = Sequence.from([-1,"abc",3]);
+  return seq;
+}
+
+function customMatchArrayInterceptor() {
+  //return any array
+  let arr = [-1,"abc",3];
+  return arr;
+}
+
 module.exports = {
   baselineQueryInterceptorA,
   baselineQueryInterceptorB,
   filterQueryInterceptor,
-  scoreDocumentInterceptor
+  scoreDocumentInterceptor,
+  customMatchStringInterceptor,
+  customMatchSequenceInterceptor,
+  customMatchArrayInterceptor
 }

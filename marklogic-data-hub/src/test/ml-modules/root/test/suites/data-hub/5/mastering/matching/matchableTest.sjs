@@ -126,7 +126,29 @@ function testMatchRulesetDefinitions() {
             distanceThreshold: 100
           }
         }]
-      }
+      },
+      {
+        name: "name - custom",
+        matchRules: [{
+            entityPropertyPath: "name",
+            matchType: "custom",
+            algorithmModulePath: "/test/suites/data-hub/5/mastering/matching/test-data/matchableInterceptors.sjs",
+            algorithmFunction: "customMatchStringInterceptor"
+        },
+        {
+          entityPropertyPath: "name",
+          matchType: "custom",
+          algorithmModulePath: "/test/suites/data-hub/5/mastering/matching/test-data/matchableInterceptors.sjs",
+          algorithmFunction: "customMatchSequenceInterceptor"
+        },
+        {
+          entityPropertyPath: "name",
+          matchType: "custom",
+          algorithmModulePath: "/test/suites/data-hub/5/mastering/matching/test-data/matchableInterceptors.sjs",
+          algorithmFunction: "customMatchArrayInterceptor"
+        }
+        ]
+      },
     ]
   };
   const matchable = new Matchable(matchStep, {});
@@ -138,6 +160,10 @@ function testMatchRulesetDefinitions() {
     assertions.push(test.assertEqual(matchStep.matchRulesets[i].name, matchRulesetDefinitions[i].name(), "Name should be set for MatchRulesetDefinition"));
     assertions.push(test.assertEqualJson(matchStep.matchRulesets[i], matchRulesetDefinitions[i].raw(), "Raw value should be set for MatchRulesetDefinition"));
     matchRulesetDefinitions[i].buildCtsQuery(docA);
+    if(matchStep.matchRulesets[i].name === "name - custom") {
+      let isQuery = matchRulesetDefinitions[i].buildCtsQuery(docA) instanceof cts.query;
+      assertions.push(test.assertEqual(isQuery, true, "Cts query is created for matched rule when custom match function returns atomic value"));
+    }
   }
 }
 

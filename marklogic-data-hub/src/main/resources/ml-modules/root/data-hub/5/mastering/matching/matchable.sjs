@@ -284,7 +284,12 @@ class MatchRulesetDefinition {
       if (!query) {
         return null;
       }
-      queries.push(query);
+      else if(query instanceof cts.query) {
+        queries.push(query);
+      }
+      else {
+        queries.push(this.matchable.propertyQuery(matchRule.entityPropertyPath, query.toString()));
+      }
     }
     return queries.length > 1 ? cts.andQuery(queries): queries[0];
   }
