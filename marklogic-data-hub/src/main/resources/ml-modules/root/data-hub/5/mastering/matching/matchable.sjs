@@ -76,7 +76,9 @@ class Matchable {
    */
   matchRulesetDefinitions() {
     if (!this._matchRulesetDefinitions) {
-      this._matchRulesetDefinitions = (this.matchStep.matchRulesets || []).map((ruleset) => new MatchRulesetDefinition(ruleset, this));
+      this._matchRulesetDefinitions = (this.matchStep.matchRulesets || [])
+        .map((ruleset) => new MatchRulesetDefinition(ruleset, this))
+        .sort((a, b) => b.weight() - a.weight());
     }
     return this._matchRulesetDefinitions;
   }
@@ -90,7 +92,7 @@ class Matchable {
     if (!this._thresholdDefinitions) {
       this._thresholdDefinitions = this.matchStep.thresholds.map((thresholdObj) => {
         return new ThresholdDefinition(thresholdObj, this);
-      });
+      }).sort((a, b) => a.score() - b.score());
     }
     return this._thresholdDefinitions;
   }
@@ -302,19 +304,83 @@ class ThresholdDefinition {
     this.matchable = matchable;
   }
 
+  /*
+   * Returns a string that is the threshold's name.
+   * @return {string}
+   * @since 5.8.0
+   */
   name() {
     return this.threshold.thresholdName;
   }
 
+  /*
+   * Returns a number that is the threshold's score.
+   * @return {number}
+   * @since 5.8.0
+   */
   score() {
     return this.threshold.score;
   }
 
-  minimumMatchCombinations() {
-    // TODO: DHFPROD-8592
-    return [];
+  // this is a helper function to find combinations of rulesets that match a threshold
+  _otherCombinations(remainingRulesets = []) {
+    let combinations = [];
+    for (let i = 0; i < remainingRulesets.length; i++) {
+      const ruleset = remainingRulesets[i];
+      let combinationsStartingWith = [ruleset];
+      let combinedWeight = ruleset.weight();
+      const followingRulesets = remainingRulesets.slice(i + 1);
+      for (const followingRuleset of followingRulesets) {
+        combinedWeight = combinedWeight + followingRuleset.weight();
+        combinationsStartingWith.push(followingRuleset);
+        if (combinedWeight >= this.score()) {
+          // add the combination to the list because the score is matched.
+          combinations.push(combinationsStartingWith);
+          // undo the last weight to so we can see if later rulesets will also push us to the threshold
+          combinationsStartingWith = [...combinationsStartingWith];
+          combinationsStartingWith.pop();
+          combinedWeight = combinedWeight - followingRuleset.weight();
+        }
+      }
+    }
+    return combinations;
   }
 
+  /*
+   * Returns an array of arrays with each sub-array being a minimum combination of rulesets needed to meet this threshold.
+   * @return {[][]MatchRulesetDefinition}
+   * @since 5.8.0
+   */
+  minimumMatchCombinations() {
+    if (!this._minimumMatchCombinations) {
+      const score = this.score();
+      const matchingRulesetDefinitions = this.matchable.matchRulesetDefinitions();
+      if (score === 0) {
+        this._minimumMatchCombinations = matchingRulesetDefinitions;
+      } else {
+        const rulesetsGreaterOrEqualToScore = [];
+        const rulesetsLessThanScore = [];
+        for (const rulesetDef of matchingRulesetDefinitions) {
+          // if weight is not specified, we assume the rule is important and custom scoring after retrieval will take place.
+          if (rulesetDef.weight() === undefined || rulesetDef.weight() >= score) {
+            rulesetsGreaterOrEqualToScore.push(rulesetDef);
+          } else {
+            rulesetsLessThanScore.push(rulesetDef);
+          }
+        }
+        this._minimumMatchCombinations = rulesetsGreaterOrEqualToScore.map((rulesetDef) => [rulesetDef]);
+        const lessCombinations = this._otherCombinations(rulesetsLessThanScore);
+        this._minimumMatchCombinations = this._minimumMatchCombinations.concat(lessCombinations);
+      }
+    }
+    return this._minimumMatchCombinations;
+  }
+
+  /*
+   * Returns a string that indicates the threshold's action.
+   * @return {string}
+   * @since 5.8.0
+   */
   action() {
     return this.threshold.action;
   }
