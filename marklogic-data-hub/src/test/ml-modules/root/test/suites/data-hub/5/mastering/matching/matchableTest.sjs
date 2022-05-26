@@ -147,9 +147,9 @@ function testBuildActionDetails() {
     targetEntityType: "http://example.org/Customer-0.0.1/Customer",
     thresholds: [
       {
-        thresholdName: "mergeThreshold",
-        action: "merge",
-        score: 80
+        thresholdName: "customThreshold",
+        action: "custom",
+        score: 40
       },
       {
         thresholdName: "notifyThreshold",
@@ -157,9 +157,9 @@ function testBuildActionDetails() {
         score: 60
       },
       {
-        thresholdName: "notifyThreshold",
-        action: "custom",
-        score: 40
+        thresholdName: "mergeThreshold",
+        action: "merge",
+        score: 80
       }
     ]
   };
@@ -190,6 +190,51 @@ function testBuildActionDetails() {
     const actionBody = actionDetails[actionUri];
     assertions.push(test.assertEqual(1, actionBody.actions ? actionBody.actions[0].uris.length:  actionBody.uris.length, "Action details should have 1 uri "));
   }
+}
+
+function testThresholds() {
+  const matchStep = {
+    targetEntityType: "http://example.org/Customer-0.0.1/Customer",
+    matchRulesets: [
+      { name: "givenName", weight: 12 },
+      { name: "surName", weight: 8 },
+      { name: "id", weight: 5 },
+      { name: "postal", weight: 3 },
+      { name: "state", weight: 1 }
+    ],
+    thresholds: [
+      {
+        thresholdName: "customThreshold",
+        action: "custom",
+        score: 10
+      },
+      {
+        thresholdName: "notifyThreshold",
+        action: "notify",
+        score: 12
+      },
+      {
+        thresholdName: "mergeThreshold",
+        action: "merge",
+        score: 15
+      }
+    ]
+  };
+  const matchable = new Matchable(matchStep, {});
+  const thresholdDefinitions = matchable.thresholdDefinitions();
+  const assertions = [
+    test.assertEqual(matchStep.thresholds.length, thresholdDefinitions.length, "Count of threshold definitions should match count of objects in the step.")
+  ];
+  const expectedCombinationPerThreshold = [[["givenName"], ["surName","id"], ["surName","postal"]], [["givenName"], ["surName","id"]], [["givenName","surName"], ["givenName","id"], ["givenName","postal"],["surName","id","postal"]]];
+  for (let i = 0; i < matchStep.thresholds.length; i++) {
+    const thresholdDefinition = thresholdDefinitions[i];
+    const minimumMatchCombinations = thresholdDefinition.minimumMatchCombinations();
+    const minimumMatchCombinationsJSON = minimumMatchCombinations.map((matchCombination) => matchCombination.map((matchRuleset) => matchRuleset.raw ? matchRuleset.raw().name:"unknown"));
+    const expectedMinimumCombinations = expectedCombinationPerThreshold[i];
+    const message = `Ruleset combinations for threshold should be correct. Threshold: ${thresholdDefinition.name()}. Expected: ${JSON.stringify(expectedMinimumCombinations, null, 2)}. Got: ${JSON.stringify(minimumMatchCombinationsJSON, null, 2)}`;
+    assertions.push(test.assertEqualJson(expectedMinimumCombinations, minimumMatchCombinationsJSON, message));
+  }
+  return assertions;
 }
 
 function testScoreDocument() {
@@ -243,4 +288,5 @@ function testScoreDocument() {
   .concat(testFilterQuery())
   .concat(testMatchRulesetDefinitions())
   .concat(testBuildActionDetails())
+  .concat(testThresholds())
   .concat(testScoreDocument());
