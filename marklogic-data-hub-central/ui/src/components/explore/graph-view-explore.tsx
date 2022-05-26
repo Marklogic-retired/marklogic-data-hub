@@ -9,6 +9,9 @@ import {SearchContext} from "@util/search-context";
 import {ModelingTooltips} from "@config/tooltips.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faFileExport} from "@fortawesome/free-solid-svg-icons";
+import {QuestionCircleFill} from "react-bootstrap-icons";
+import {themeColors} from "@config/themes.config";
+import tooltipsConfig from "@config/explorer-tooltips.config";
 
 
 type Props = {
@@ -17,11 +20,14 @@ type Props = {
   setGraphPageInfo: (pageInfo: any) => void;
 };
 
+const {graphViewTooltips} = tooltipsConfig;
+
 const GraphViewExplore: React.FC<Props> = (props) => {
   const {entityTypeInstances, graphView, setGraphPageInfo} = props;
 
   const [viewRelationshipLabels, toggleRelationShipLabels] = useState(true);
   const [exportPngButtonClicked, setExportPngButtonClicked] = useState(false);
+  const [viewConcepts, toggleConcepts] = useState(true);
 
   const {
     savedNode,
@@ -67,10 +73,14 @@ const GraphViewExplore: React.FC<Props> = (props) => {
     toggleRelationShipLabels(e.target.checked);
   };
 
-  const HCSwitch = <FormCheck
+  const handleConceptsView = (e) => {
+    toggleConcepts(e.target.checked);
+    onCloseSidePanel();
+  };
+
+  const relationshipLabelsSwitch = <div className={styles.switchContainer}><FormCheck
     id="relationship-label"
     type="switch"
-    style={{display: "flex", alignItems: "center", gap: "6px"}}
   >
     <HCCheckbox
       id="relationship-label-id"
@@ -80,17 +90,41 @@ const GraphViewExplore: React.FC<Props> = (props) => {
       handleClick={(e) => handleRelationshipLabelView(e)}
       data-testid="viewRelationshipLabels"
     />
+  </FormCheck>
+  <HCTooltip id="relationship-label" text={graphViewTooltips.relationshipLabel} placement="top">
+    <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.infoIcon} />
+  </HCTooltip>
+  </div>;
 
-  </FormCheck>;
+  const conceptsSwitch = <div className={styles.switchContainer}><FormCheck
+    id="toggle-concepts"
+    type="switch"
+  >
+    <HCCheckbox
+      id="concepts-switch"
+      label="Concepts"
+      value={viewConcepts}
+      checked={viewConcepts}
+      handleClick={(e) => handleConceptsView(e)}
+    />
+  </FormCheck>
+  <HCTooltip id="concept" text={graphViewTooltips.concept} placement="top">
+    <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.infoIcon} />
+  </HCTooltip>
+  </div>
+  ;
 
-  const relationshipsToggle = <span>{HCSwitch}</span>;
+  const graphSwitches = <div className={styles.graphSwitches}>
+    <span>{relationshipLabelsSwitch}</span>
+    <span>{conceptsSwitch}</span>
+  </div>;
 
   const graphViewExploreMainPanel = (
     !Object.keys(entityTypeInstances).length
       ? <span></span>
       : (<div className={styles.graphViewExploreContainer}>
         <div className={styles.graphHeader}>
-          {relationshipsToggle}
+          {graphSwitches}
           {headerButtons}
         </div>
         <div className={styles.borderBelowHeader}></div>
@@ -102,6 +136,7 @@ const GraphViewExplore: React.FC<Props> = (props) => {
             exportPngButtonClicked = {exportPngButtonClicked}
             setExportPngButtonClicked = {setExportPngButtonClicked}
             setGraphPageInfo = {setGraphPageInfo}
+            viewConcepts={viewConcepts}
           />
         </div>
       </div>

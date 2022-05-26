@@ -219,7 +219,7 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
             </span> :
               <div>
                 <span className={styles.selectedEntityHeading} aria-label={`${conceptTitle}-conceptHeading`}>{conceptTitle}</span>
-                <span className={styles.conceptHeadingInfo} aria-label={`${conceptTitle}-conceptHeadingInfo`}>(Semantic concept)</span>
+                <span className={styles.conceptHeadingInfo} aria-label={`${conceptTitle}-conceptHeadingInfo`}>(Concept)</span>
               </div>
           }
           {!isConcept && <HCTooltip text="View full details" id="processed-data-tooltip" placement="top-end">
