@@ -87,25 +87,6 @@ describe("Test '/Explore' graph right panel", () => {
 
     cy.log("**Close side panel**");
     graphExploreSidePanel.closeGraphExploreSidePanel();
-
-    cy.log("**Picking up a concept node**");
-    graphExplore.focusNode(ExploreGraphNodes.CONCEPT_KETTLE);
-    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_KETTLE).then((nodePositions: any) => {
-      let kettleCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_KETTLE];
-      const canvas = graphExplore.getGraphVisCanvas();
-      canvas.click(kettleCoordinates.x, kettleCoordinates.y, {force: true});
-    });
-
-    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_KETTLE).then((nodePositions: any) => {
-      let kettleCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_KETTLE];
-      const canvas = graphExplore.getGraphVisCanvas();
-      canvas.click(kettleCoordinates.x, kettleCoordinates.y, {force: true});
-    });
-
-    cy.log("**Verify the count of related instances for the concept node**");
-    graphExploreSidePanel.getSidePanelConceptHeading("Kettle").scrollIntoView().should("be.visible");
-    graphExploreSidePanel.getSidePanelConceptHeadingInfo("Kettle").scrollIntoView().should("be.visible");
-    graphExploreSidePanel.getTableCellValueByName("1").should("contain", "Product");
   });
 });
 

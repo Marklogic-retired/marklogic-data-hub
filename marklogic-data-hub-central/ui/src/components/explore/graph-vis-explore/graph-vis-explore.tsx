@@ -14,6 +14,7 @@ import {UserContext} from "@util/user-context";
 import {expandGroupNode} from "@api/queries";
 import TableViewGroupNodes from "../table-view-group-nodes/table-view-group-nodes";
 import {themeColors} from "@config/themes.config";
+import {nodeType} from "types/explore-types";
 
 type Props = {
   entityTypeInstances: any;
@@ -22,6 +23,7 @@ type Props = {
   exportPngButtonClicked: boolean;
   setExportPngButtonClicked: any;
   setGraphPageInfo: (pageInfo: any) => void;
+  viewConcepts: boolean;
 };
 
 const GraphVisExplore: React.FC<Props> = (props) => {
@@ -31,7 +33,8 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     viewRelationshipLabels,
     exportPngButtonClicked,
     setExportPngButtonClicked,
-    setGraphPageInfo
+    setGraphPageInfo,
+    viewConcepts
   } = props;
   const [expandedNodeData, setExpandedNodeData] = useState({});
   let graphData = {nodes: [], edges: []};
@@ -127,7 +130,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       setGraphDataLoaded(false);
     };
 
-  }, [entityTypeInstances, viewRelationshipLabels, hubCentralConfig]);
+  }, [entityTypeInstances, viewRelationshipLabels, hubCentralConfig, viewConcepts]);
 
   useEffect(() => {
     if (network && graphView) {
@@ -283,12 +286,17 @@ const GraphVisExplore: React.FC<Props> = (props) => {
   };
 
   const getNodes = (nodesToExpand?: any) => {
-    let nodes;
+    let nodes: Array<nodeType> = [];
     let nodeObj = groupNodes;
     let leafNodesObj = leafNodes;
     let entityInstNodes = entityTypeInstances?.nodes?.slice();
     entityInstNodes = !nodesToExpand ? entityInstNodes : nodesToExpand;
-    nodes = entityInstNodes?.map((e) => {
+    entityInstNodes.forEach((e) => {
+      if (!viewConcepts) {
+        if (e.isConcept) {
+          return;
+        }
+      }
       let entityType = e.group.split("/").pop();
       let entity = hubCentralConfig?.modeling?.entities[entityType];
       let iconName = entity?.icon || (e.isConcept ? defaultConceptIcon : defaultIcon);
@@ -316,7 +324,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       } else if (e.label.length > 0) {
         nodeTitle = tooltipsConfig.graphVis.singleNode(e.label);
       }
-      return {
+      nodes.push({
         id: nodeId,
         shape: "custom",
         title: nodeTitle,
@@ -419,7 +427,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
             nodeDimensions: {width: 2.5 * r, height: 2.5 * r},
           };
         }
-      };
+      });
     });
     setGroupNodes(nodeObj);
     setLeafNodes(leafNodesObj);
@@ -908,7 +916,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         }
         {isClusterFocused() &&
           <div id="defocus" key="8" className={styles.contextMenuItem}>
-            Show all records returned from the query
+            Show all records
           </div>
         }
         <div id="centerNode" key="9" className={styles.contextMenuItem}>

@@ -36,6 +36,10 @@ const tooltipsConfig = {
     queryExportUnautorized: "Export query: Contact your security administrator to get the roles and permissions to access this functionality",
     columnSelectorDisabled: "You cannot choose columns to show because you have more than one base entity selected. Use the drop-down menu to select a specific base entity.",
   },
+  graphViewTooltips: {
+    relationshipLabel: "A relationship name identifies a relationship between two two entity types. To add or edit relationship names, go to the Model screen.",
+    concept: "A semantic concept is simply an abstract subject within a vocabulary or an ontology."
+  },
   graphVis: {
     groupNode: (entityType) => (`Group of ${entityType} records
     Click to expand 3 sample records in this group.

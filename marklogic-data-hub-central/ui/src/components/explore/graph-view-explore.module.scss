@@ -23,7 +23,21 @@
               color: var(--hoverColor);
             }
           }
-      }
+        }
+        .graphSwitches {
+          display: flex;
+          gap: 1.5rem;
+          
+          .switchContainer {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+
+            .infoIcon {
+              color: black;
+            }
+          }
+        }
     }
 
     .borderBelowHeader {
