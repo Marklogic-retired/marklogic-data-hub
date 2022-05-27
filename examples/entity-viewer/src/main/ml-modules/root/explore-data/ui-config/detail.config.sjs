@@ -28,6 +28,12 @@ const detailConfig  = {
                     "arrayPath": "person.memberships.membership",
                     "dateFormat": "yyyy-MM-dd",
                     "iconSize": 30,
+                    "status": {
+                       "path": "important"
+                    },
+                    "ts": {
+                       "path": "ts"
+                    },
                     "lists": [
                         "list1",
                         "list2",
