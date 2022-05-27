@@ -140,5 +140,14 @@ class BaseEntitySidebar {
   getDisabledRelatedEntityTooltip() {
     return cy.get(`[aria-label="disabled-related-entity-tooltip"]`);
   }
+
+  //facet indicators and filter
+  getEntityFacetFilterQuantity(entityName: string) {
+    return cy.get(`[aria-label="base-entities-${entityName}-filter"]`);
+  }
+
+  getEntityFacetAmountBar(entityName: string) {
+    return cy.get(`[aria-label="base-entities-${entityName}-amountbar"]`);
+  }
 }
 export default new BaseEntitySidebar();

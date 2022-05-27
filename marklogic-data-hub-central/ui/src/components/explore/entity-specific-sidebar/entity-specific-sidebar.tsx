@@ -40,6 +40,7 @@ const EntitySpecificSidebar: React.FC<Props> = (props) => {
   } = useContext(SearchContext);
 
   const [allSelectedFacets, setAllSelectedFacets] = useState<any>(searchOptions.selectedFacets);
+  const [maxQuantityOnFacets, setMaxQuantityOnFacets] = useState<number>(0);
   // const [entitySpecificSearch, setEntitySpecificSearch] = useState<string>("");
 
   let integers = exploreSidebar.entitySpecificSidebar.integers;
@@ -84,6 +85,16 @@ const EntitySpecificSidebar: React.FC<Props> = (props) => {
       }
     }
   }, [searchOptions.selectedFacets, updateSpecificFacets]);
+
+  useEffect(() => {
+    if (entityFacets.length > 0) {
+      let max: number = 0;
+      entityFacets.forEach(facet => {
+        max = (facet && facet.hasOwnProperty("facetValues")) ? facet.facetValues.reduce((previousValue, {count}) => previousValue < count ? count : previousValue, max) : max;
+      });
+      setMaxQuantityOnFacets(max);
+    }
+  }, [entityFacets]);
 
   useEffect(() => {
     if (Object.entries(greyedOptions.selectedFacets).length !== 0) {
@@ -313,6 +324,7 @@ const EntitySpecificSidebar: React.FC<Props> = (props) => {
                     propertyPath={facet.propertyPath}
                     updateSelectedFacets={updateSelectedFacets}
                     addFacetValues={addFacetValues}
+                    maxQuantityOnFacets={maxQuantityOnFacets}
                   />
                 );
               }

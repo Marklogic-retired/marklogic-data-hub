@@ -66,6 +66,7 @@ const Browse: React.FC<Props> = ({location}) => {
   const [currentBaseEntities, setCurrentBaseEntities] = useState<any[]>([]);
   const [currentEntitiesIcons, setCurrentEntitiesIcons] = useState<any[]>([]);
   const [currentRelatedEntities, setCurrentRelatedEntities] = useState<Map<string, any>>(new Map());
+  const [entityIndicatorData, setEntityIndicatorData] = useState<any>({});
   const [entityDefArray, setEntityDefArray] = useState<any[]>([]);
   const [facets, setFacets] = useState<any>();
   const [isLoading, setIsLoading] = useState(true);
@@ -164,7 +165,7 @@ const Browse: React.FC<Props> = ({location}) => {
     setShowEntitySpecificPanel(false);
   };
 
-  const [graphSearchData, setGraphSearchData] = useState({});
+  const [graphSearchData, setGraphSearchData] = useState<any>({});
   const [graphPageInfo, setGraphPageInfo] = useState({});
 
   useEffect(() => {
@@ -398,6 +399,45 @@ const Browse: React.FC<Props> = ({location}) => {
     }
   }, []);
 
+  const getClearEnititesObject = entities => Object.keys(entities).reduce((previousValue, entityType) => ({...previousValue, [entityType]: {filter: 0, amount: 0}}), {});
+  const getMaxOnEntitiesObject = entities => Object.keys(entities).reduce((previousValue, entityType) => previousValue < entities[entityType].amount ? entities[entityType].amount : previousValue, 0);
+
+  useEffect(() => {
+    if (hubCentralConfig.modeling && Object.keys(hubCentralConfig.modeling?.entities).length > 0) {
+      const tmpEntities = getClearEnititesObject(hubCentralConfig.modeling.entities);
+      if (viewOptions.graphView && graphSearchData.nodes) {
+        graphSearchData.nodes.forEach(node => {
+          if (!node.isConcept) {
+            let tmpEntityType = node.group.split("/").pop();
+            tmpEntities[tmpEntityType].amount++;
+          }
+        });
+      } else if (data.length > 0) {
+        data.forEach(row => {
+          if (tmpEntities.hasOwnProperty(row.entityName)) {
+            tmpEntities[row.entityName].amount++;
+          }
+        });
+      }
+      if (selectedFacets.length > 0) {
+        selectedFacets.forEach(facet => {
+          const entityTypeName = facet.constraint.split(".")[0];
+          if (tmpEntities.hasOwnProperty(entityTypeName)) {
+            tmpEntities[entityTypeName].filter++;
+          }
+        });
+      }
+      setEntityIndicatorData({
+        max: getMaxOnEntitiesObject(tmpEntities),
+        entities: tmpEntities
+      });
+    } else {
+      setEntityIndicatorData({
+        max: 0,
+        entities: {}
+      });
+    }
+  }, [hubCentralConfig, viewOptions, graphSearchData.nodes, data, selectedFacets]);
 
   useEffect(() => {
     let state: any = location.state;
@@ -657,6 +697,7 @@ const Browse: React.FC<Props> = ({location}) => {
               setCurrentBaseEntities={setCurrentBaseEntities}
               currentRelatedEntities={currentRelatedEntities}
               setCurrentRelatedEntities={setCurrentRelatedEntities}
+              entityIndicatorData={entityIndicatorData}
             />
           </>
         </HCSider>

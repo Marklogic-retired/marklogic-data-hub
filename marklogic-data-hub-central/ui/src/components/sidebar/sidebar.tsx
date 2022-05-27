@@ -40,6 +40,7 @@ interface Props {
   setCurrentBaseEntities: (entity: any[]) => void;
   currentRelatedEntities: Map<string, any>;
   setCurrentRelatedEntities: (entity: Map<string, any>) => void;
+  entityIndicatorData: any
 }
 
 const PLACEHOLDER: string = "Select a saved query";
@@ -68,6 +69,7 @@ const Sidebar: React.FC<Props> = (props) => {
   } = useContext(UserContext);
   const [entityFacets, setEntityFacets] = useState<any[]>([]);
   const [hubFacets, setHubFacets] = useState<any[]>([]);
+  const [maxQuantityOnFacets, setMaxQuantityOnFacets] = useState<number>(0);
   const [allSelectedFacets, setAllSelectedFacets] = useState<any>(searchOptions.selectedFacets);
   const [datePickerValue, setDatePickerValue] = useState<any[]>([null, null]);
   const [dateRangeValue, setDateRangeValue] = useState<string>();
@@ -156,12 +158,15 @@ const Sidebar: React.FC<Props> = (props) => {
           setActiveKey(["database", "hubProperties", "baseEntities"]);
         }
       }
+      let tmpMaxQuantityOnFacets: number = 0;
       const parsedFacets = facetParser(props.facets);
       const filteredHubFacets = hubPropertiesConfig.map(hubFacet => {
         let hubFacetValues = parsedFacets.find(facet => facet.facetName === hubFacet.facetName);
+        tmpMaxQuantityOnFacets = (hubFacetValues && hubFacetValues.hasOwnProperty("facetValues")) ? hubFacetValues.facetValues.reduce((previousValue, {count}) => previousValue < count ? count : previousValue, tmpMaxQuantityOnFacets) : tmpMaxQuantityOnFacets;
         return hubFacetValues && {...hubFacet, ...hubFacetValues};
       });
 
+      setMaxQuantityOnFacets(tmpMaxQuantityOnFacets);
       setHubFacets(filteredHubFacets);
 
       let selectedHubFacets: any = [];
@@ -730,6 +735,7 @@ const Sidebar: React.FC<Props> = (props) => {
                 setCurrentBaseEntities={props.setCurrentBaseEntities}
                 setEntitySpecificPanel={props.setEntitySpecificPanel}
                 currentBaseEntities={props.currentBaseEntities}
+                entityIndicatorData={props.entityIndicatorData}
                 setActiveAccordionRelatedEntities={setActiveAccordion}
                 allBaseEntities={props.entityDefArray}
                 activeKey={activeKey}
@@ -749,7 +755,14 @@ const Sidebar: React.FC<Props> = (props) => {
                   </Accordion.Button>
                 </div>
                 <Accordion.Body>
-                  <RelatedEntitiesFacet currentRelatedEntities={props.currentRelatedEntities} setCurrentRelatedEntities={props.setCurrentRelatedEntities} onSettingCheckedList={onSettingCheckedList} setEntitySpecificPanel={props.setEntitySpecificPanel} setActiveRelatedEntities={setActiveRelatedEntities}/>
+                  <RelatedEntitiesFacet
+                    currentRelatedEntities={props.currentRelatedEntities}
+                    setCurrentRelatedEntities={props.setCurrentRelatedEntities}
+                    onSettingCheckedList={onSettingCheckedList}
+                    setEntitySpecificPanel={props.setEntitySpecificPanel}
+                    setActiveRelatedEntities={setActiveRelatedEntities}
+                    entityIndicatorData={props.entityIndicatorData}
+                  />
                 </Accordion.Body>
               </Accordion.Item>
             </Accordion>
@@ -825,6 +838,7 @@ const Sidebar: React.FC<Props> = (props) => {
                   referenceType={facet.referenceType}
                   entityTypeId={facet.entityTypeId}
                   propertyPath={facet.propertyPath}
+                  maxQuantityOnFacets={maxQuantityOnFacets}
                 />
               );
             })}

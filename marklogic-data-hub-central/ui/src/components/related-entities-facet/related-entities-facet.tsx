@@ -6,7 +6,7 @@ import {entitiesSorting} from "@util/entities-sorting";
 import {defaultIcon, exploreSidebar} from "@config/explore.config";
 import {SearchContext} from "@util/search-context";
 import {ExploreGraphViewToolTips} from "@config/tooltips.config";
-import {HCTooltip, DynamicIcons} from "@components/common";
+import {HCTooltip, DynamicIcons, HCFacetIndicator} from "@components/common";
 import {deepCopy} from "@util/data-conversion";
 import {themeColors} from "@config/themes.config";
 
@@ -19,6 +19,7 @@ interface Props {
   setCurrentRelatedEntities: (relatedEntities: Map<string, any>) => void;
   setEntitySpecificPanel: (entity: any) => void;
   setActiveRelatedEntities: (boolean) => void;
+  entityIndicatorData: any;
 }
 
 const RelatedEntitiesFacet: React.FC<Props> = (props) => {
@@ -27,7 +28,7 @@ const RelatedEntitiesFacet: React.FC<Props> = (props) => {
     searchOptions,
     setRelatedEntityTypeIds
   } = useContext(SearchContext);
-  const {currentRelatedEntities, onSettingCheckedList, setCurrentRelatedEntities, setEntitySpecificPanel} = props;
+  const {currentRelatedEntities, onSettingCheckedList, setCurrentRelatedEntities, setEntitySpecificPanel, entityIndicatorData} = props;
   const [entitiesList, setEntitiesList] = useState<any[]>([]);
   const [showMore, setShowMore] = useState<boolean>(false);
   const [options, setOptions] = useState<any[]>([]);
@@ -95,12 +96,14 @@ const RelatedEntitiesFacet: React.FC<Props> = (props) => {
     }
   };
 
+  const isNotEmptyIndicatorData = entityIndicatorData.entities && Object.keys(entityIndicatorData.entities).length > 0;
+
   return (
     <>
       <div aria-label="related-entities-list">
         {options?.map((option) => {
           if (currentRelatedEntities?.get(option)) {
-            const {color, name, filter, amount, checked, icon} = currentRelatedEntities.get(option);
+            const {color, name, filter, checked, icon} = currentRelatedEntities.get(option);
             let finalIcon = icon ? icon : defaultIcon;
             let finalColor = color ? color : themeColors.defaults.entityColor;
             return (
@@ -122,11 +125,16 @@ const RelatedEntitiesFacet: React.FC<Props> = (props) => {
                     <span className={styles.entityChevron}>
                       <ChevronDoubleRight/>
                     </span>
-                    <span className={styles.entityAmount}>
+                    <span className={styles.entityAmount} aria-label={`related-entity-${name}-filter`}>
                       {filter && SHOW_FILTER(filter)}
-                      {amount}
+                      {isNotEmptyIndicatorData && entityIndicatorData.entities[name].amount}
                     </span>
                   </HCCheckbox>
+                  {isNotEmptyIndicatorData &&
+                    <span className={styles.indicatorContainer} aria-label={`related-entity-${name}-amountbar`}>
+                      <HCFacetIndicator percentage={isNaN(entityIndicatorData.max) ? 0 : entityIndicatorData.entities[name].amount*100/entityIndicatorData.max} isActive={checked} />
+                    </span>
+                  }
                 </div>
               </HCTooltip>
             );

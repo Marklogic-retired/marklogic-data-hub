@@ -6,13 +6,14 @@ import {SearchContext} from "@util/search-context";
 import styles from "./base-entities-facet.module.scss";
 import {ChevronDoubleRight} from "react-bootstrap-icons";
 import {baseEntitiesSorting, entitiesSorting} from "@util/entities-sorting";
-import {HCDivider, HCTooltip, DynamicIcons} from "@components/common";
+import {HCDivider, HCTooltip, DynamicIcons, HCFacetIndicator} from "@components/common";
 import {defaultPaginationOptions, defaultIcon, exploreSidebar} from "@config/explore.config";
 import {ExploreGraphViewToolTips} from "@config/tooltips.config";
 import {themeColors} from "@config/themes.config";
 
 interface Props {
   currentBaseEntities: any;
+  entityIndicatorData: any;
   setCurrentBaseEntities: (entities: any[]) => void;
   allBaseEntities: any[];
   setActiveAccordionRelatedEntities: (entity: string) => void;
@@ -24,7 +25,7 @@ const {MINIMUM_ENTITIES} = exploreSidebar;
 
 const BaseEntitiesFacet: React.FC<Props> = (props) => {
 
-  const {setCurrentBaseEntities, setEntitySpecificPanel, currentBaseEntities, allBaseEntities} = props;
+  const {setCurrentBaseEntities, setEntitySpecificPanel, currentBaseEntities, allBaseEntities, entityIndicatorData} = props;
 
   const {
     searchOptions,
@@ -139,6 +140,8 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
     );
   };
 
+  const isNotEmptyIndicatorData = entityIndicatorData.entities && Object.keys(entityIndicatorData.entities).length > 0;
+
   return (
     <>
       <Select
@@ -181,7 +184,7 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
         }}
       />
       <div aria-label="base-entities-selection">
-        {displayList.map(({name, color, filter, amount, icon, isDefinitionInvalid}) => {
+        {displayList.map(({name, color, filter, icon, isDefinitionInvalid}) => {
           let finalIcon = icon ? icon : defaultIcon;
           let finalColor = color ? color : themeColors.defaults.entityColor;
           let entitySpecificPanelInfo = {
@@ -208,10 +211,17 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
                   <span className={styles.entityChevron}>
                     <ChevronDoubleRight/>
                   </span>
-                  <span className={styles.entityAmount}>
-                    {filter && showFilter(filter)}
-                    {amount}
+                  <span className={styles.entityAmount} aria-label={`base-entities-${name}-filter`}>
+                    <span className={styles.entityAmountFilter}>
+                      {isNotEmptyIndicatorData && entityIndicatorData.entities[name].filter !== 0 && showFilter(entityIndicatorData.entities[name].filter)}
+                    </span>
+                    {isNotEmptyIndicatorData && entityIndicatorData.entities[name].amount}
                   </span>
+                  {isNotEmptyIndicatorData &&
+                    <span className={styles.indicatorContainer} aria-label={`base-entities-${name}-amountbar`}>
+                      <HCFacetIndicator percentage={isNaN(entityIndicatorData.max) ? 0 : entityIndicatorData.entities[name].amount*100/entityIndicatorData.max} isActive={true} />
+                    </span>
+                  }
                 </div></HCTooltip>
             );
           }
