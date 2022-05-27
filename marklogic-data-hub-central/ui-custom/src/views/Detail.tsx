@@ -64,7 +64,7 @@ const Detail: React.FC<Props> = (props) => {
   const [expand, setExpand] = useState<any>(true);
 
   const id = searchParams.get("recordId");
-  const entityType = detailContext.detail.entityType;
+  const entityType = detailContext?.detail?.entityType;
 
   const handleExpandClick = () => {
     if (expand) {
