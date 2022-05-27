@@ -52,6 +52,11 @@ const themeColors = {
         "entityColor": "#eeeff1",
         "questionCircle": "#7f86b5",
         "conceptColor": "#FFFFFF"
+    },
+
+    "facetIndicator": {
+        active: "#1acca8",
+        inactive: "#dddddd"
     }
 }
 

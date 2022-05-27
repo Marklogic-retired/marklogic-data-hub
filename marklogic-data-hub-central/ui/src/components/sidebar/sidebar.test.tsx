@@ -6,6 +6,13 @@ import {entityFromJSON, entityParser} from "../../util/data-conversion";
 import {modelResponse} from "../../assets/mock-data/explore/model-response";
 import userEvent from "@testing-library/user-event";
 
+const entityIndicatorData = {
+  max: 10,
+  entities: {
+
+  }
+};
+
 describe("Sidebar createdOn face time window dropdown", () => {
   afterEach(() => {
     jest.clearAllMocks();
@@ -25,6 +32,7 @@ describe("Sidebar createdOn face time window dropdown", () => {
       setCurrentRelatedEntities={jest.fn()}
       currentBaseEntities={[]}
       setCurrentBaseEntities={jest.fn()}
+      entityIndicatorData={entityIndicatorData}
     />);
     expect(getByText("Select time")).toBeInTheDocument();
   });
@@ -40,6 +48,7 @@ describe("Sidebar createdOn face time window dropdown", () => {
       setCurrentRelatedEntities={jest.fn()}
       currentBaseEntities={[]}
       setCurrentBaseEntities={jest.fn()}
+      entityIndicatorData={entityIndicatorData}
     />);
     expect(getByText("Select time")).toBeInTheDocument();
     fireEvent.keyDown(getByLabelText("date-select"), {key: "ArrowDown"});
@@ -59,6 +68,7 @@ describe("Sidebar createdOn face time window dropdown", () => {
       setCurrentRelatedEntities={jest.fn()}
       currentBaseEntities={[]}
       setCurrentBaseEntities={jest.fn()}
+      entityIndicatorData={entityIndicatorData}
     />);
     expect(document.querySelector("#hub-properties .accordion-button")).toHaveAttribute("aria-expanded", "true");
     userEvent.click(getByText("Hub Properties"));
@@ -108,6 +118,7 @@ describe("Sidebar createdOn face time window dropdown", () => {
         setCurrentRelatedEntities={jest.fn()}
         currentBaseEntities={[]}
         setCurrentBaseEntities={jest.fn()}
+        entityIndicatorData={entityIndicatorData}
       />
     );
 
@@ -134,6 +145,7 @@ describe("Sidebar createdOn face time window dropdown", () => {
         setCurrentRelatedEntities={jest.fn()}
         currentBaseEntities={[]}
         setCurrentBaseEntities={jest.fn()}
+        entityIndicatorData={entityIndicatorData}
       />
     );
     expect(document.querySelector("#database .accordion-button.after-indicator")).toHaveAttribute("aria-expanded", "true");
@@ -162,6 +174,7 @@ describe("Sidebar createdOn face time window dropdown", () => {
         setCurrentRelatedEntities={jest.fn()}
         currentBaseEntities={[]}
         setCurrentBaseEntities={jest.fn()}
+        entityIndicatorData={entityIndicatorData}
       />
     );
     expect(document.querySelector("#database .accordion-button.after-indicator")).toHaveAttribute("aria-expanded", "true");
@@ -188,6 +201,7 @@ describe("Sidebar createdOn face time window dropdown", () => {
         setCurrentRelatedEntities={jest.fn()}
         currentBaseEntities={[]}
         setCurrentBaseEntities={jest.fn()}
+        entityIndicatorData={entityIndicatorData}
       />
     );
 

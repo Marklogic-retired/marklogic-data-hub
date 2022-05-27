@@ -21,7 +21,12 @@
   .entityAmount {
       float: right;
       margin-top: 2px;
-      font-size: 13px;
+      font-size: 12px;
+  }
+
+  .entityAmountFilter {
+    display: inline-block;
+    margin-right: 14px;
   }
 }
 
@@ -34,4 +39,10 @@
   &:hover{
       color: var(--hoverColor);
   }
+}
+
+.indicatorContainer {
+  position: absolute;
+  bottom: -6px;
+  right: 0;
 }

@@ -19,6 +19,7 @@ interface Props {
   referenceType: string;
   entityTypeId: any;
   propertyPath: any;
+  maxQuantityOnFacets?: number;
   updateSelectedFacets: (constraint: string, vals: string[], datatype: string, isNested: boolean, toDelete?: boolean, toDeleteAll?: boolean) => void;
   addFacetValues: (constraint: string, vals: string[], datatype: string, facetCategory: string) => void;
 }
@@ -125,6 +126,7 @@ const Facet: React.FC<Props> = (props) => {
   }
 
   const renderValues = checkedFacets.slice(0, showFacets).map((facet, index) => {
+    facet.max = props.maxQuantityOnFacets;
     return (
       <FacetName facet={facet} index={index} key={index} handleClick={handleClick} name={props.name} checked={checked} />
     );

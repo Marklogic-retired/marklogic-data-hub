@@ -5,6 +5,16 @@ import RelatedEntitiesFacet from "./related-entities-facet";
 
 const CUSTOMERS = {name: "Customers", color: "#D5D3DD", amount: 100, filter: 1};
 
+const entityIndicatorData = {
+  max: 10,
+  entities: {
+    "Customers": {
+      filter: 2,
+      amount: 5
+    }
+  }
+};
+
 describe("Related Entities Facet", () => {
 
   afterEach(cleanup);
@@ -15,7 +25,14 @@ describe("Related Entities Facet", () => {
     const setActiveRelatedEntities = () => {};
     const setEntitySpecificPanel = () => {};
     const {getByLabelText} = render(
-      <RelatedEntitiesFacet currentRelatedEntities={currentRelatedEntities} setCurrentRelatedEntities={setCurrentRelatedEntities} setActiveRelatedEntities={setActiveRelatedEntities} setEntitySpecificPanel={setEntitySpecificPanel} onSettingCheckedList={() => {}}/>
+      <RelatedEntitiesFacet
+        currentRelatedEntities={currentRelatedEntities}
+        setCurrentRelatedEntities={setCurrentRelatedEntities}
+        setActiveRelatedEntities={setActiveRelatedEntities}
+        setEntitySpecificPanel={setEntitySpecificPanel}
+        onSettingCheckedList={() => {}}
+        entityIndicatorData={entityIndicatorData}
+      />
     );
     const dropdown = getByLabelText("related-entities-list");
     expect(dropdown).toBeInTheDocument();
@@ -25,5 +42,25 @@ describe("Related Entities Facet", () => {
     //To test tooltip over related entities in explore sideView panel
     fireEvent.mouseOver(option);
     expect(getByLabelText("relatedEntityToolTip")).toBeVisible();
+  });
+
+  test("Should render filter and quantity bar", () => {
+    const currentRelatedEntities = new Map<string, any>([["Customer", CUSTOMERS]]);
+    const setCurrentRelatedEntities = () => {};
+    const setActiveRelatedEntities = () => {};
+    const setEntitySpecificPanel = () => {};
+    const {getByLabelText} = render(
+      <RelatedEntitiesFacet
+        currentRelatedEntities={currentRelatedEntities}
+        setCurrentRelatedEntities={setCurrentRelatedEntities}
+        setActiveRelatedEntities={setActiveRelatedEntities}
+        setEntitySpecificPanel={setEntitySpecificPanel}
+        onSettingCheckedList={() => {}}
+        entityIndicatorData={entityIndicatorData}
+      />
+    );
+    expect(getByLabelText("related-entity-Customers-filter")).toBeInTheDocument();
+    expect(getByLabelText("related-entity-Customers-filter")).toHaveTextContent("5");
+    expect(getByLabelText("related-entity-Customers-amountbar")).toBeInTheDocument();
   });
 });
