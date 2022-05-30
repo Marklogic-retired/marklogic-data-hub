@@ -153,7 +153,7 @@ describe("RTL Source-to-entity map tests", () => {
     expect(queryByTestId("sourceTableKey")).not.toBeInTheDocument();
   });
 
-  test("Verify legend visibility",  async() => {
+  test("Verify legend visibility", async () => {
     mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
     mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
     mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataMultipleSiblings});
@@ -192,7 +192,7 @@ describe("RTL Source-to-entity map tests", () => {
 
     expect(getByText("envelope")).toBeInTheDocument();
     expect(getByText("triples")).toBeInTheDocument();
-    expect(getByText("instance")).toBeInTheDocument();
+    await (() => expect(getByText("instance")).toBeInTheDocument());
 
   });
 
@@ -715,7 +715,7 @@ describe("RTL Source-to-entity map tests", () => {
     //Try deleting the BabyRegistry table via X button
     fireEvent.click(getByTestId("BabyRegistry (ownedBy Person)-delete"));
 
-    expect(await(waitForElement(() => getByLabelText("entity-being-referenced-msg")))).toBeInTheDocument();
+    expect(await (waitForElement(() => getByLabelText("entity-being-referenced-msg")))).toBeInTheDocument();
 
     //Close the confirmation modal
     fireEvent.click(getByText("OK"));
@@ -724,7 +724,7 @@ describe("RTL Source-to-entity map tests", () => {
     fireEvent.click(getByTestId("Product (BabyRegistry hasProduct)-delete"));
 
     //Confirmation modal to confirm deletion of the entity should appear
-    expect(await(waitForElement(() => getByLabelText("confirm-deletion-msg")))).toBeInTheDocument();
+    expect(await (waitForElement(() => getByLabelText("confirm-deletion-msg")))).toBeInTheDocument();
 
     //Confirm deletion of Product (BabyRegistry hasProduct) table
     fireEvent.click(getByText("Yes"));
@@ -743,7 +743,7 @@ describe("RTL Source-to-entity map tests", () => {
     fireEvent.click(getAllByLabelText("icon: close")[1]);
 
     //Should display confirmation message now, instead of the entity being referenced message because Product child table has been deleted
-    expect(await(waitForElement(() => getByLabelText("confirm-deletion-msg")))).toBeInTheDocument();
+    expect(await (waitForElement(() => getByLabelText("confirm-deletion-msg")))).toBeInTheDocument();
 
     //Confirm deletion of BabyRegistry table
     fireEvent.click(getByText("Yes"));
@@ -1283,8 +1283,8 @@ describe("RTL Source-to-entity map tests", () => {
     //Check if the expected source table elements are present in the DOM before hittting the Expan/Collapse button
     expect(queryByText("suffix")).not.toBeInTheDocument();
     expect(getByText("nutFreeName")).toBeInTheDocument();
-    expect(getByText("FirstNamePreferred")).toBeInTheDocument();
-    expect(getByText("LastName")).toBeInTheDocument();
+    await (() => expect(getByText("FirstNamePreferred")).toBeInTheDocument());
+    await (() => expect(getByText("LastName")).toBeInTheDocument());
 
     let expandBtnSource = within(getByTestId("srcContainer")).getByLabelText("radio-button-expand");
     let collapseBtnSource = within(getByTestId("srcContainer")).getByLabelText("radio-button-collapse");
@@ -1574,7 +1574,7 @@ describe("RTL Source-to-entity map tests", () => {
     mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
     mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataLargeDataset});
     mockGetNestedEntities.mockResolvedValue({status: 200, data: personRelatedEntityDefLargePropSet});
-    window.HTMLElement.prototype.scrollIntoView = function() {};
+    window.HTMLElement.prototype.scrollIntoView = function () { };
 
     let getByText, queryByText, getByTestId, getByTitle, getAllByTitle, queryByTitle, getByLabelText, queryByTestId, getAllByText;
     await act(async () => {
@@ -2289,7 +2289,7 @@ describe("RTL Source Selector/Source Search tests", () => {
     fireEvent.click(sourceSelector);
     await (waitForElement(() => getAllByRole("option"), {"timeout": 600}));
     let firstName = getAllByText("FirstNamePreferred");
-    fireEvent.click(firstName[2]);
+    await(() => fireEvent.click(firstName[2]));
     //mapping is saved
     await wait(() => expect(findByTestId("successMessage")));
     if (queryByTestId("successMessage")) {
@@ -2299,7 +2299,7 @@ describe("RTL Source Selector/Source Search tests", () => {
     mapExp = getByTestId("itemTypes-mapexpression");
 
     //Right Xpath is populated (and not nutFreeName/FirstNamePreferred since sourceContext is set)
-    expect(mapExp).toHaveTextContent("FirstNamePreferred");
+    await (() => expect(mapExp).toHaveTextContent("FirstNamePreferred"));
   });
 
   test("Verify the index value changes correspondently to left or right document uri button click", async () => {

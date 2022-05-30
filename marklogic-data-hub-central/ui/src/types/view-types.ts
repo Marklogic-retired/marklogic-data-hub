@@ -1,3 +1,5 @@
+import {paginationMapping} from "@config/mapping.config";
+
 export type ViewSettingsType = {
     load?: {
         page?: number,
@@ -34,8 +36,8 @@ export type ViewSettingsType = {
         previewMatchedDataValue?: number,
         rulesetData?: [],
         uriTestClicked?: boolean,
-        uriTableData1?: any [],
-        uriTableData2?: any [],
+        uriTableData1?: any[],
+        uriTableData2?: any[],
         inputUriState?: boolean,
         inputUri2State?: boolean
     },
@@ -46,8 +48,8 @@ export type ViewSettingsType = {
     merge?: {
         strategyExpandedRows?: string[],
         strategySortOrder?: {
-          columnKey?: string,
-          order?: string
+            columnKey?: string,
+            order?: string
         }
         ruleSortOrder?: {
             columnKey?: string,
@@ -56,5 +58,19 @@ export type ViewSettingsType = {
     },
     run?: {
         openFlows?: string[],
+    },
+    curateMappingSourceSide?: {
+        xmlTable?: {
+            stepArtifactName: string,
+            optionsPagesTable?: typeof paginationMapping,
+            filterTable?: string,
+            expandedTableKeys?: number[]
+        },
+        jsonTable?: {
+            stepArtifactName: string,
+            optionsPagesTable?: typeof paginationMapping,
+            filterTable?: string,
+            expandedTableKeys?: number[]
+        }
     },
 };

@@ -79,7 +79,7 @@ class MappingStepDetail {
     return cy.findByTestId(`lessLink`);
   }
 
-  relatedFilterMenu (entityName: string) {
+  relatedFilterMenu(entityName: string) {
     cy.get(`#${entityName}-entities-filter-select-wrapper`).click();
   }
 
@@ -99,7 +99,7 @@ class MappingStepDetail {
     return cy.get(`#${entityName}-entities-filter-select-wrapper [title="${relatedName}"]`).find(`[aria-label="icon: close"]`);
   }
 
-  entityTitle (title: string) {
+  entityTitle(title: string) {
     return cy.findByLabelText(`${title}-title`);
   }
 
@@ -186,31 +186,31 @@ class MappingStepDetail {
     return cy.get(`[data-testid="${entity}-${propertyName}-name"]`);
   }
 
-  validateContextInput(entityTitle: string, value:string) {
+  validateContextInput(entityTitle: string, value: string) {
     return cy.findByTestId(`${entityTitle}-Context-mapexpression`).should("have.text", value);
   }
 
-  validateURIInput(entityTitle: string, value:string) {
+  validateURIInput(entityTitle: string, value: string) {
     return cy.findByTestId(`${entityTitle}-URI-mapexpression`).should("have.text", value);
   }
 
-  validateMapValue(entityName: string, propertyName: string, value:string) {
+  validateMapValue(entityName: string, propertyName: string, value: string) {
     cy.get(`[data-testid=${entityName}-${propertyName}-value] > span`).should("have.text", value);
   }
 
-  validateMapValueP(entityName: string, propertyName: string, value:string) {
+  validateMapValueP(entityName: string, propertyName: string, value: string) {
     cy.get(`[data-testid=${entityName}-${propertyName}-value] > span > p`).should("have.text", value);
   }
 
-  validateMapValueString(entityName: string, propertyName: string, value:string) {
+  validateMapValueString(entityName: string, propertyName: string, value: string) {
     cy.get(`[data-testid="${entityName}-${propertyName}-value"] > span`).should("have.text", value);
   }
 
-  validateMapURIValue(entityName: string, value:string) {
+  validateMapURIValue(entityName: string, value: string) {
     cy.get(`[data-testid="${entityName}-URI-value"] > span`).should("have.text", value);
   }
 
-  validateMapInput(propertyName: string, value:string) {
+  validateMapInput(propertyName: string, value: string) {
     cy.findByTestId(`${propertyName}-mapexpression`).should("have.text", value);
   }
 
@@ -218,7 +218,7 @@ class MappingStepDetail {
     return cy.findByTestId(`${entityTitle}-URI-mapexpression`);
   }
 
-  getURIValue(entityTitle: string, value:string) {
+  getURIValue(entityTitle: string, value: string) {
     cy.get(`[data-testid="${entityTitle}-URI-value"]`).trigger("mouseover");
     cy.contains(value);
   }
@@ -323,6 +323,49 @@ class MappingStepDetail {
     cy.findByTestId(`${entityName}-URI-refIcon1`).trigger("mouseover");
     cy.findByText("Reference").should("be.visible");
     cy.findByTestId(`${entityName}-URI-refIcon1`).trigger("mouseout");
+  }
+
+  expandDropdownPagination() {
+    cy.get("#size-per-page").scrollIntoView().click();
+  }
+
+  selectPagination(text: string) {
+    cy.get(`[aria-label="${text}"]`).click();
+  }
+
+  selectPageSourceTable(page: string) {
+    cy.get(".pagination .page-item a").contains(page).click();
+  }
+
+  expandAllSourceTable() {
+    cy.get(`#dataPresent [data-icon="angle-double-down"]`).click();
+  }
+
+  verifyExpandedRows() {
+    cy.get("*[class^=\"hc-table_childrenIndentTableExpanded\"]").should("exist");
+  }
+
+  verifyContent(content: string) {
+    cy.contains(content);
+  }
+
+  verifyPageSourceTable(page: string) {
+    cy.get(".pagination .page-item a").contains(page).should("exist");
+  }
+
+  addFilter(text: string) {
+    cy.get("#filterIcon-srcName").click();
+    cy.get("#searchInput-source").type(text);
+    cy.get("#submitSearch-source").click();
+  }
+
+  verifyFilter() {
+    cy.get("#filterIcon-srcName").click();
+    cy.get("#searchInput-source").should("have.value", "ship");
+  }
+
+  resetFilter() {
+    cy.get("#resetSearch-source").click({force: true});
   }
 
 }

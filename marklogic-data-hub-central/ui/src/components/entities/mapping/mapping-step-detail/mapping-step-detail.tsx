@@ -153,9 +153,62 @@ const MappingStepDetail: React.FC = () => {
   const [sourceFormat, setSourceFormat] = useState("");
   const [docNotFound, setDocNotFound] = useState(false);
   const [mapData, setMapData] = useState<any>(DEFAULT_MAPPING_STEP);
-  const [getRef, setRef] =  useDynamicRefs();
+  const [getRef, setRef] = useDynamicRefs();
   const [interceptorExecuted, setInterceptorExecuted] = useState(false);
   const [interceptorExecutionError, setInterceptorExecutionError] = useState("");
+
+  const getStoredStepArtifactName = (origin?) => {
+
+    let storageAux = storage?.curateMappingSourceSide;
+    let jsonStorageAux = storageAux?.jsonTable;
+    let xmlStorageAux = storageAux?.xmlTable;
+
+    if (origin === "json") {
+      if (jsonStorageAux?.stepArtifactName) {
+        return jsonStorageAux.stepArtifactName;
+      } else { return ""; }
+    }
+    if (origin === "xml") {
+      if (xmlStorageAux?.stepArtifactName) {
+        return xmlStorageAux.stepArtifactName;
+      } else { return ""; }
+    }
+  };
+
+  const getPageAndSizeSourceTable = () => {
+
+    let storageAux = storage?.curateMappingSourceSide;
+    let xmlStorageAux = storageAux?.xmlTable;
+    let jsonStorageAux = storageAux?.jsonTable;
+    let pageNumberTable = 1, pageSizeTable = 20;
+    let arraySourceTable: number[] = [1, 20, 1, 20];
+
+    if (jsonStorageAux?.optionsPagesTable) {
+      if (getStoredStepArtifactName("json") === (curationOptions.activeStep.stepArtifact && curationOptions.activeStep.stepArtifact.name)) {
+        pageNumberTable = jsonStorageAux?.optionsPagesTable?.current;
+      }
+      pageSizeTable = jsonStorageAux?.optionsPagesTable?.pageSize;
+
+      arraySourceTable[2] = pageNumberTable ? pageNumberTable : 1;
+      arraySourceTable[3] = pageSizeTable ? pageSizeTable : 20;
+    }
+
+    if (xmlStorageAux?.optionsPagesTable) {
+      if (getStoredStepArtifactName("xml") === (curationOptions.activeStep.stepArtifact && curationOptions.activeStep.stepArtifact.name)) {
+        pageNumberTable = xmlStorageAux?.optionsPagesTable?.current;
+      }
+      pageSizeTable = xmlStorageAux?.optionsPagesTable?.pageSize;
+
+      arraySourceTable[0] = pageNumberTable ? pageNumberTable : 1;
+      arraySourceTable[1] = pageSizeTable ? pageSizeTable : 20;
+    }
+    return arraySourceTable;
+  };
+
+  const [pageNumberTableSourceSideJson, setPageNumberTableSourceSideJson] = useState(getPageAndSizeSourceTable()[2]);
+  const [pageNumberTableSourceSideXml, setPageNumberTableSourceSideXml] = useState(getPageAndSizeSourceTable()[0]);
+  const [pageSizeTableSourceSideXml, setPageSizeTableSourceSideXml] = useState(getPageAndSizeSourceTable()[1]);
+  const [pageSizeTableSourceSideJson, setPageSizeTableSourceSideJson] = useState(getPageAndSizeSourceTable()[3]);
 
   const executeScroll = (refId) => {
     const scrollToRef: any = getRef(refId);
@@ -195,6 +248,14 @@ const MappingStepDetail: React.FC = () => {
   useEffect(() => {
     setViewSettings({...storage, curate: {}});
   }, []);
+
+  useEffect(() => {
+    srcPropertiesXML.length > 0 && filterByName("");
+  }, [srcPropertiesXML]);
+
+  useEffect(() => {
+    sourceData.length > 0 && filterByName("");
+  }, [sourceData]);
 
   const handleEditIconClick = () => {
     setEditingUri(true);
@@ -240,7 +301,7 @@ const MappingStepDetail: React.FC = () => {
     try {
       const mappingStep = await getMappingArtifactByMapName(curationOptions.activeStep.stepArtifact.targetEntityType, stepName);
       if (mappingStep.interceptors) {
-        for (let i =0; i<mappingStep.interceptors.length; i++) {
+        for (let i = 0; i < mappingStep.interceptors.length; i++) {
           const interceptor = mappingStep.interceptors[i];
           if (interceptor.path && interceptor.when === "beforeMain") {
             setInterceptorExecuted(true);
@@ -281,7 +342,7 @@ const MappingStepDetail: React.FC = () => {
         }
       }
       setIsLoading(false);
-    } catch (error)  {
+    } catch (error) {
       setIsLoading(false);
       setDocNotFound(true);
       if (error.response && error.response.data.message.includes("Interceptor execution failed")) {
@@ -587,7 +648,7 @@ const MappingStepDetail: React.FC = () => {
         EntityTableKeyIndex = EntityTableKeyIndex + 1;
         if (val.$ref || val.items.$ref) {
           let ref = val.$ref ? val.$ref : val.items.$ref;
-          tgtRefs[`${entityTitle ? entityTitle + "/": ""}${parentKey}`] = ref;
+          tgtRefs[`${entityTitle ? entityTitle + "/" : ""}${parentKey}`] = ref;
         }
 
         propty = {
@@ -702,7 +763,7 @@ const MappingStepDetail: React.FC = () => {
         {!showEditURIOption ?
           <span data-testid={"uri-edit"} className={styles.notShowingEditContainer}>URI: <span className={styles.URItext}>{sourceURI}</span></span>
           :
-          <div className={styles.uriHoverContainer}><span data-testid={"uri-edit"} className={styles.showingEditContainer}>URI: <span className={styles.showingEditIcon}>{sourceURI}<i><FontAwesomeIcon icon={faPencilAlt} size="lg" onClick={handleEditIconClick} className={styles.editIcon} data-testid={"pencil-icon"}/></i></span></span></div>}
+          <div className={styles.uriHoverContainer}><span data-testid={"uri-edit"} className={styles.showingEditContainer}>URI: <span className={styles.showingEditIcon}>{sourceURI}<i><FontAwesomeIcon icon={faPencilAlt} size="lg" onClick={handleEditIconClick} className={styles.editIcon} data-testid={"pencil-icon"} /></i></span></span></div>}
       </div>
       :
       <div className={styles.inputURIContainer}>URI:
@@ -778,9 +839,10 @@ const MappingStepDetail: React.FC = () => {
         initialKeysToExpand.push(obj.rowKey);
       }
     });
-    setSourceExpandedKeys([...initialKeysToExpand]);
+    // setSourceExpandedKeys([...initialKeysToExpand]);
     setInitialSourceKeys([...initialKeysToExpand]);
     setAllSourceKeys([...getKeysToExpandFromTable(sourceData, "rowKey")]);
+    getExpandedRowsSourceTable();
   };
 
   //Set the collapse/Expand options for Entity table, when mapping opens up.
@@ -840,7 +902,7 @@ const MappingStepDetail: React.FC = () => {
       if (val.constructor.name === "Object") {
         if (val.hasOwnProperty("properties")) {
           let tempKey = parentKey ? parentKey + "/" + key : key;
-          val["targetEntityType"] = tgtEntityReferences[`${entityType ? entityType + "/": ""}${tempKey}`];
+          val["targetEntityType"] = tgtEntityReferences[`${entityType ? entityType + "/" : ""}${tempKey}`];
           getTgtEntityTypesInMap(val.properties, entityType, tempKey);
         }
       }
@@ -873,6 +935,16 @@ const MappingStepDetail: React.FC = () => {
     setSearchSourceText("");
     setSearchedSourceColumn("");
     setSearchedKey("");
+
+    let newStorage;
+    if (sourceFormat) {
+      if (sourceFormat === "xml") {
+        newStorage = {...storage, curateMappingSourceSide: {...storage.curateMappingSourceSide, xmlTable: {filterTable: ""}}};
+      } else {
+        newStorage = {...storage, curateMappingSourceSide: {...storage.curateMappingSourceSide, jsonTable: {filterTable: ""}}};
+      }
+      setViewSettings(newStorage);
+    }
   };
 
   const getRenderOutput = (textToSearchInto, valueToDisplay, columnName, rowNum) => {
@@ -923,7 +995,28 @@ const MappingStepDetail: React.FC = () => {
     return allKeysToExpand;
   };
 
+  const getStoredFilterSourceTable = (origin?) => {
+
+    let storageAux = storage?.curateMappingSourceSide;
+    let jsonStorageAux = storageAux?.jsonTable;
+    let xmlStorageAux = storageAux?.xmlTable;
+
+    if (sourceFormat === "json" || origin === "json") {
+      if (jsonStorageAux?.filterTable) {
+        return jsonStorageAux.filterTable;
+      }
+    }
+    if (sourceFormat === "xml" || origin === "xml") {
+      if (xmlStorageAux?.filterTable) {
+        return xmlStorageAux.filterTable;
+      }
+    }
+  };
+
   const filterByName = (value) => {
+
+    if (!value) if (getStoredFilterSourceTable()) value = getStoredFilterSourceTable();
+
     setSearchedKey(value);
     let filterVal = value;
     if (filterVal) {
@@ -980,7 +1073,7 @@ const MappingStepDetail: React.FC = () => {
       formatter: (text, row, index, extraData) => {
         let textToSearchInto = text?.split(":").length > 1 ? text?.split(":")[0] + ": " + text?.split(":")[1] : text;
         let valueToDisplay = sourceFormat === "xml" && row.rowKey === 1 ? <div>
-          <span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><HCTooltip text={text?.split(":")[0]+" = \""+namespaces[text?.split(":")[0]]+"\""} id="xml-source-name-tooltip" placement="top"><span className={styles.namespace}>{text?.split(":")[0]+": "}</span></HCTooltip><span>{text?.split(":")[1]}</span></span> : text}</span></div>: <span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><HCTooltip text={text?.split(":")[0]+" = \""+namespaces[text?.split(":")[0]]+"\""} id="source-name-tooltip" placement="top"><span className={styles.namespace}>{text?.split(":")[0]+": "}</span></HCTooltip><span>{text?.split(":")[1]}</span></span> : text}</span>;
+          <span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><HCTooltip text={text?.split(":")[0] + " = \"" + namespaces[text?.split(":")[0]] + "\""} id="xml-source-name-tooltip" placement="top"><span className={styles.namespace}>{text?.split(":")[0] + ": "}</span></HCTooltip><span>{text?.split(":")[1]}</span></span> : text}</span></div> : <span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><HCTooltip text={text?.split(":")[0] + " = \"" + namespaces[text?.split(":")[0]] + "\""} id="source-name-tooltip" placement="top"><span className={styles.namespace}>{text?.split(":")[0] + ": "}</span></HCTooltip><span>{text?.split(":")[1]}</span></span> : text}</span>;
         return getRenderOutput(textToSearchInto, valueToDisplay, "key", row.rowKey);
       },
       formatExtraData: {filterActive}
@@ -1016,8 +1109,8 @@ const MappingStepDetail: React.FC = () => {
             row.children ?
               <span onClick={() => toggleSourceRowExpanded(row, "", "rowKey")} className={styles.tableExpandIcon}>
                 {!extraData.sourceExpandedKeys?.includes(row.rowKey) ?
-                  <span><ChevronRight/></span>
-                  : <span><ChevronDown/></span>
+                  <span><ChevronRight /></span>
+                  : <span><ChevronDown /></span>
                 }
               </span>
               : <span className={styles.noTableExpandIcon}>{null}</span>
@@ -1026,9 +1119,9 @@ const MappingStepDetail: React.FC = () => {
           <span className={styles.sourceName}>
             {textHaveTwoDotsSeparator ?
               <span>
-                <HCTooltip text={text?.split(":")[0]+" = \""+namespaces[text?.split(":")[0]]+"\""} id={sourceFormat === "xml" && row.rowKey !== 1 ? "xml-source-name-tooltip" : "source-name-tooltip"} placement="top">
+                <HCTooltip text={text?.split(":")[0] + " = \"" + namespaces[text?.split(":")[0]] + "\""} id={sourceFormat === "xml" && row.rowKey !== 1 ? "xml-source-name-tooltip" : "source-name-tooltip"} placement="top">
                   <span className={styles.namespace}>
-                    {renderText(text?.split(":")[0]+": ", text?.split(":")[0]+": ")}
+                    {renderText(text?.split(":")[0] + ": ", text?.split(":")[0] + ": ")}
                   </span>
                 </HCTooltip>
                 <span>
@@ -1088,7 +1181,7 @@ const MappingStepDetail: React.FC = () => {
       requiresToolTip = text.length > stringLenWithoutEllipsis;
       response = <span className={getClassNames(sourceFormat, row.datatype)}>{getInitialChars(text, stringLenWithoutEllipsis, "...")}</span>;
     }
-    return requiresToolTip ?  <HCTooltip text={text} id="source-value-tooltip" placement="bottom">{response}</HCTooltip> : response;
+    return requiresToolTip ? <HCTooltip text={text} id="source-value-tooltip" placement="bottom">{response}</HCTooltip> : response;
   };
 
   // CSS properties for the alert message after saving the mapping
@@ -1327,15 +1420,15 @@ const MappingStepDetail: React.FC = () => {
   );
 
   const columnOptionsSelector =
-      <Dropdown autoClose="outside" onToggle={handleColOptMenuVisibleChange} show={colOptMenuVisible} onSelect={handleColOptMenuClick}>
-        <Dropdown.Toggle id="columnOptionsSelectorButton" className={styles.columnOptionsSelector} variant="link">
-          <>
-            <span> Column Options</span>
-            <ChevronDown className="ms-2"/>
-          </>
-        </Dropdown.Toggle>
-        {columnOptionsDropdown}
-      </Dropdown>;
+    <Dropdown autoClose="outside" onToggle={handleColOptMenuVisibleChange} show={colOptMenuVisible} onSelect={handleColOptMenuClick}>
+      <Dropdown.Toggle id="columnOptionsSelectorButton" className={styles.columnOptionsSelector} variant="link">
+        <>
+          <span> Column Options</span>
+          <ChevronDown className="ms-2" />
+        </>
+      </Dropdown.Toggle>
+      {columnOptionsDropdown}
+    </Dropdown>;
 
 
   //Collapse all-Expand All button
@@ -1436,6 +1529,85 @@ const MappingStepDetail: React.FC = () => {
     setOpenStepSettings(false);
   };
 
+  const getExpandedRowsSourceTable = () => {
+    let storageAux = storage?.curateMappingSourceSide;
+    let jsonStorageAux = storageAux?.jsonTable;
+    let xmlStorageAux = storageAux?.xmlTable;
+
+    if (jsonStorageAux?.expandedTableKeys) {
+      let expandedRowsSourceTable = jsonStorageAux?.expandedTableKeys;
+      setSourceExpandedKeys(expandedRowsSourceTable);
+    }
+
+    if (xmlStorageAux?.expandedTableKeys) {
+      let expandedRowsSourceTable = xmlStorageAux?.expandedTableKeys;
+      setSourceExpandedKeys(expandedRowsSourceTable);
+    }
+  };
+
+  const saveCurateMappingSourceSide = () => {
+    let newStorage, xmlFilter, jsonFilter;
+
+    if (!searchedKey) {
+      xmlFilter = getStoredFilterSourceTable("xml");
+      jsonFilter = getStoredFilterSourceTable("json");
+    }
+
+    newStorage = {
+      ...storage, curateMappingSourceSide: {
+        ...storage.curateMappingSourceSide,
+        xmlTable: {
+          stepArtifactName: sourceFormat === "xml" ? curationOptions.activeStep.stepArtifact && curationOptions.activeStep.stepArtifact.name : getStoredStepArtifactName("xml"),
+          optionsPagesTable: handlePaginationObject("xml"),
+          filterTable: sourceFormat === "xml" ? searchedKey ? searchedKey : xmlFilter : xmlFilter, expandedTableKeys: sourceExpandedKeys
+        },
+        jsonTable: {
+          stepArtifactName: sourceFormat === "json" ? curationOptions.activeStep.stepArtifact && curationOptions.activeStep.stepArtifact.name : getStoredStepArtifactName("json"),
+          optionsPagesTable: handlePaginationObject("json"),
+          filterTable: sourceFormat === "json" ? searchedKey ? searchedKey : jsonFilter : jsonFilter, expandedTableKeys: sourceExpandedKeys
+        }
+      }
+    };
+    setViewSettings(newStorage);
+  };
+
+  useEffect(() => {
+    saveCurateMappingSourceSide();
+  }, [searchedKey, pageNumberTableSourceSideXml, pageNumberTableSourceSideJson, pageSizeTableSourceSideXml, pageSizeTableSourceSideJson, sourceExpandedKeys]);
+
+  const handlePaginationObject = (origin) => {
+
+    const controlOriginPage = (origin: string) => {
+      if (origin === "xml") {
+        return pageNumberTableSourceSideXml;
+      } else {
+        return pageNumberTableSourceSideJson;
+      }
+    };
+
+    const controlOriginSize = (origin: string) => {
+      if (origin === "xml") {
+        return pageSizeTableSourceSideXml;
+      } else {
+        return pageSizeTableSourceSideJson;
+      }
+    };
+
+    const paginationObject = {
+      size: "small",
+      hideOnSinglePage: sourceData.length <= 20,
+      showSizeChanger: true,
+      pageSizeOptions: paginationMapping.pageSizeOptions,
+      defaultCurrent: paginationMapping.start,
+      current: controlOriginPage(origin),
+      pageSize: controlOriginSize(origin),
+      onChange: (page) => { origin === "xml" ? setPageNumberTableSourceSideXml(page) : setPageNumberTableSourceSideJson(page); },
+      onShowSizeChange: (size) => { origin === "xml" ? setPageSizeTableSourceSideXml(size) : setPageSizeTableSourceSideJson(size); }
+    };
+
+    return paginationObject;
+  };
+
   return (
     <>
       <CustomPageHeader
@@ -1457,7 +1629,7 @@ const MappingStepDetail: React.FC = () => {
             Test
           </HCButton>
         </span>
-        <div className={styles.legendContainer}><ModelingLegend/></div>
+        <div className={styles.legendContainer}><ModelingLegend /></div>
         <div className={styles.header}>
           {errorInSaving ? success() : <span className={styles.noMessage}></span>}
         </div>
@@ -1498,32 +1670,32 @@ const MappingStepDetail: React.FC = () => {
                     >
                       <span aria-label="emptyTextMessage" id="emptyTextMessage"><p>Unable to find source records using the specified collection or query.</p>
                         <p>Load some data that mapping can use as reference and/or edit the step
-                        settings to use a source collection or query that will return some results.</p>
+                          settings to use a source collection or query that will return some results.</p>
                       </span>
                     </HCAlert>
                   </div>
                   :
                   (interceptorExecuted && interceptorExecutionError !== "") ?
                     <div id="failedInterceptor">
-                      <br/><br/><br/>
+                      <br /><br /><br />
 
                       <div className={styles.sourceButtons}>
 
-                        <span className={interceptorExecuted && interceptorExecutionError !== "" ? styles.navigationButtonsError: styles.navigationButtons}>{navigationButtons}</span>
-                        <span className={styles.sourceCollapseButtons}>{interceptorExecuted && interceptorExecutionError !== "" ? "" : <ExpandCollapse handleSelection={(id) => handleSourceExpandCollapse(id)} currentSelection={""}/>}</span>
+                        <span className={interceptorExecuted && interceptorExecutionError !== "" ? styles.navigationButtonsError : styles.navigationButtons}>{navigationButtons}</span>
+                        <span className={styles.sourceCollapseButtons}>{interceptorExecuted && interceptorExecutionError !== "" ? "" : <ExpandCollapse handleSelection={(id) => handleSourceExpandCollapse(id)} currentSelection={""} />}</span>
                       </div>
-                      <br/><br/><br/>
+                      <br /><br /><br />
                       <HCAlert
                         className={styles.interceptorFailureAlert}
                         showIcon={true}
                         variant="info"
                       >
-                        <span aria-label="interceptorError">{MappingStepMessages.interceptorError}<br/><br/> <b>Error Details:</b> <br/> {interceptorExecutionError}</span>
+                        <span aria-label="interceptorError">{MappingStepMessages.interceptorError}<br /><br /> <b>Error Details:</b> <br /> {interceptorExecutionError}</span>
                       </HCAlert>
                     </div>
                     :
                     <div id="dataPresent">
-                      {!isLoading  && !emptyData  && interceptorExecuted && interceptorExecutionError === "" ?
+                      {!isLoading && !emptyData && interceptorExecuted && interceptorExecutionError === "" ?
                         <HCAlert
                           className={styles.interceptorSuccessAlert}
                           showIcon={true}
@@ -1564,12 +1736,12 @@ const MappingStepDetail: React.FC = () => {
                               />
                             </div>
                             <div id="lowerTableXML">
-                              {srcPropertiesXML.length > 0 ?
+                              {srcPropertiesXML.length > 0 ? (
                                 <HCTable
                                   rowKey={"rowKey"}
                                   columns={lowerXMLColumns}
                                   data={filterActive ? filteredSrcProperties : srcPropertiesXML}
-                                  pagination={{size: "small", hideOnSinglePage: sourceData.length <= 20, showSizeChanger: true, pageSizeOptions: paginationMapping.pageSizeOptions, defaultCurrent: paginationMapping.start, current: paginationMapping.pageNumber, pageSize: paginationMapping.pageSize}}
+                                  pagination={handlePaginationObject("xml")}
                                   onExpand={(expanded, record) => toggleSourceRowExpanded(expanded, record, "rowKey")}
                                   expandedRowKeys={[0, ...sourceExpandedKeys]}
                                   className={styles.sourceTable}
@@ -1581,7 +1753,7 @@ const MappingStepDetail: React.FC = () => {
                                   nestedParams={{headerColumns: lowerXMLColumns, iconCellList: ["Name", "Value"], state: [sourceExpandedKeys, setSourceExpandedKeys]}}
                                   keyUtil={"rowKey"}
                                   baseIndent={40}
-                                />
+                                />)
                                 : null
                               }
                             </div>
@@ -1592,7 +1764,7 @@ const MappingStepDetail: React.FC = () => {
                               rowKey={"rowKey"}
                               columns={headerColumns}
                               data={filterActive ? filteredSrcProperties : sourceData}
-                              pagination={{size: "small", hideOnSinglePage: sourceData.length <= 20, showSizeChanger: true, pageSizeOptions: paginationMapping.pageSizeOptions, defaultCurrent: paginationMapping.start, current: paginationMapping.pageNumber, pageSize: paginationMapping.pageSize}}
+                              pagination={handlePaginationObject("json")}
                               onExpand={(record, expanded) => toggleSourceRowExpanded(record, expanded, "key")}
                               expandedRowKeys={sourceExpandedKeys}
                               className={styles.sourceTable}
@@ -1608,7 +1780,7 @@ const MappingStepDetail: React.FC = () => {
                           </div>
                       }
 
-                    </div> }
+                    </div>}
             </div>
             <div
               id="entityContainer"
