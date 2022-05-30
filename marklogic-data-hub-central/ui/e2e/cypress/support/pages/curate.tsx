@@ -254,6 +254,10 @@ class CuratePage {
   getAccordionButtonTab(index:number, indexTab:number) {
     return cy.get(".accordion-collapse:eq(" + index + ") .curateTab:eq(" + indexTab + ")");
   }
+
+  goBack(id:string) {
+    cy.findByTestId(id).click();
+  }
 }
 
 const curatePage = new CuratePage();

@@ -366,6 +366,10 @@ describe("Entity Modeling: Graph View", () => {
     toolbar.getCurateToolbarIcon().click();
     confirmationModal.getNavigationWarnText().should("exist");
     confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
+
+    cy.log("**Go to curate open mapping step detail**");
+    toolbar.getCurateToolbarIcon().click();
+    //curatePage.goBack("arrow-left");
     cy.waitUntil(() => curatePage.getEntityTypePanel("Person").should("be.visible"));
     curatePage.toggleEntityTypeId("Person");
     curatePage.openStepDetails("mapPersonJSON");
@@ -379,11 +383,12 @@ describe("Entity Modeling: Graph View", () => {
     cy.wait(2500); //wait for DOM as following element becomes detached
     cy.publishEntityModel();
 
+    cy.log("**Verify relationship is visible in mapping**");
     //verify relationship is visible in mapping
-    toolbar.getCurateToolbarIcon().click();
+    //toolbar.getCurateToolbarIcon().click();
+    cy.visit("/tiles/curate");
     confirmationModal.getNavigationWarnText().should("not.exist");
-    cy.waitUntil(() => curatePage.getEntityTypePanel("Person").should("be.visible"));
-    //curatePage.toggleEntityTypeId("Person");
+    curatePage.getEntityTypePanel("Person").should("be.visible").click();
     curatePage.openStepDetails("mapPersonJSON");
     cy.waitUntil(() => curatePage.dataPresent().should("be.visible"));
 

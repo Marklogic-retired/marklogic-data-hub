@@ -125,8 +125,8 @@ describe("Create and verify load steps, map step and flows with a custom header"
     cy.findByText("New Flow").should("be.visible");
     loadPage.confirmationOptions("Cancel").click();
     //should route user back to curate page
-    //mappingStepDetail.goBackToCurateHomePage();
-    cy.waitUntil(() => curatePage.getEntityTypePanel("Order").should("be.visible"));
+    mappingStepDetail.goBackToCurateHomePage();
+    cy.waitUntil(() => curatePage.getEntityTypePanel("Order").should("be.visible").click());
     curatePage.openExistingFlowDropdownAndTooltip("Order", mapStep);
     curatePage.getExistingFlowFromDropdown(mapStep, flowName).click();
     curatePage.addStepToFlowConfirmationMessage();

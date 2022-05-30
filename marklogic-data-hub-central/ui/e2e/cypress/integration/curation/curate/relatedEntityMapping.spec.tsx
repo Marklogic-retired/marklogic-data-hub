@@ -121,13 +121,13 @@ describe("Mapping", () => {
 
   it("Switch views and return to mapping details, verify persistence of expressions", () => {
     mappingStepDetail.goBackToCurateHomePage();
-    cy.waitUntil(() => curatePage.getEntityTypePanel("Person")).should("be.visible");
-    cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
+    curatePage.getEntityTypePanel("Person").should("be.visible");
+    toolbar.getModelToolbarIcon().should("be.visible").click();
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Person")).should("be.visible");
-    curatePage.toggleEntityTypeId("Person");
+    //curatePage.toggleEntityTypeId("Person");
     curatePage.openMappingStepDetail("Person", "mapRelation");
     curatePage.verifyStepDetailsOpen("mapRelation");
     browsePage.waitForSpinnerToDisappear();
@@ -170,7 +170,7 @@ describe("Mapping", () => {
   it("Edit advanced settings for each entity", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Person")).should("be.visible");
-    curatePage.toggleEntityTypeId("Person");
+    //curatePage.toggleEntityTypeId("Person");
     curatePage.openMappingStepDetail("Person", "mapRelation");
     curatePage.verifyStepDetailsOpen("mapRelation");
     browsePage.waitForSpinnerToDisappear();
@@ -194,8 +194,9 @@ describe("Mapping", () => {
     browsePage.waitForSpinnerToDisappear();
   });
   it("Delete related entity from mapping via filter", () => {
-    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
-    cy.waitUntil(() => curatePage.getEntityTypePanel("Person")).should("be.visible");
+    toolbar.getCurateToolbarIcon().should("be.visible").click();
+    //curatePage.getEntityTypePanel("Person").should("be.visible");
+    curatePage.goBack("arrow-left");
     curatePage.toggleEntityTypeId("Person");
     curatePage.openMappingStepDetail("Person", "mapRelation");
     curatePage.verifyStepDetailsOpen("mapRelation");
@@ -223,7 +224,7 @@ describe("Mapping", () => {
   it("Reopen step and verify the deleted related entity is no longer there", () => {
     mappingStepDetail.goBackToCurateHomePage();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Person")).should("be.visible");
-    curatePage.toggleEntityTypeId("Person");
+    //curatePage.toggleEntityTypeId("Person");
     curatePage.openMappingStepDetail("Person", "mapRelation");
     curatePage.verifyStepDetailsOpen("mapRelation");
     browsePage.waitForSpinnerToDisappear();

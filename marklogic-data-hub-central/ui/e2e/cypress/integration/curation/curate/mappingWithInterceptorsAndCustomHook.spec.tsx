@@ -132,6 +132,32 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     curatePage.xpathExpression("shipRegion").should("have.value", "");
     curatePage.xpathExpression("shippedDate").should("have.value", "");
   });
+  it("Validate session storage is working for source table", () => {
+    mappingStepDetail.expandDropdownPagination();
+    mappingStepDetail.selectPagination("10 / page");
+    mappingStepDetail.selectPageSourceTable("2");
+    mappingStepDetail.expandAllSourceTable();
+    mappingStepDetail.verifyExpandedRows();
+
+    cy.log("**Go to another page and back**");
+    toolbar.getLoadToolbarIcon().click();
+    toolbar.getCurateToolbarIcon().click();
+    mappingStepDetail.verifyExpandedRows();
+    mappingStepDetail.verifyContent("10 / page");
+    mappingStepDetail.verifyPageSourceTable("2");
+    mappingStepDetail.addFilter("ship");
+
+    cy.log("**Go to another page and back**");
+    toolbar.getLoadToolbarIcon().click();
+    toolbar.getCurateToolbarIcon().click();
+    mappingStepDetail.verifyFilter();
+
+    cy.log("**Reset source table options**");
+    mappingStepDetail.resetFilter();
+    mappingStepDetail.expandDropdownPagination();
+    mappingStepDetail.selectPagination("20 / page");
+  });
+
   it("Map source to entity and Test the mappings", () => {
     mappingStepDetail.setXpathExpressionInput("orderId", "OrderID");
     mappingStepDetail.setXpathExpressionInput("address", "/");
