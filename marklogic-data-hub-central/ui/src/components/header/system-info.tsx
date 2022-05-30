@@ -1,25 +1,25 @@
-import React, {useContext, useEffect, useState} from "react";
-import styles from "./system-info.module.scss";
-import axios from "axios";
-import {UserContext} from "@util/user-context";
-import {AuthoritiesContext} from "@util/authorities";
-import Axios from "axios";
-import Spinner from "react-bootstrap/Spinner";
-import {SecurityTooltips} from "@config/tooltips.config";
-import {SystemInfoMessages, ClearDataMessages} from "@config/messages.config";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faExclamationTriangle, faCopy} from "@fortawesome/free-solid-svg-icons";
-import {QuestionCircleFill} from "react-bootstrap-icons";
-import {Modal, Row, Col, FormLabel, Form} from "react-bootstrap";
+import {ClearDataMessages, SystemInfoMessages} from "@config/messages.config";
+import {Col, Form, FormLabel, Modal, Row} from "react-bootstrap";
 import {HCAlert, HCButton, HCCard, HCTooltip} from "@components/common";
+import React, {useContext, useEffect, useState} from "react";
 import Select, {components as SelectComponents} from "react-select";
-import reactSelectThemeConfig from "@config/react-select-theme.config";
-import {getEnvironment} from "@util/environment";
-import StepsConfig from "@config/steps.config";
-import {Search} from "react-bootstrap-icons";
-import {Typeahead} from "react-bootstrap-typeahead";
+import {faCopy, faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
 import {facetValues, primaryEntityTypes} from "@api/queries";
 
+import {AuthoritiesContext} from "@util/authorities";
+import Axios from "axios";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {QuestionCircleFill} from "react-bootstrap-icons";
+import {Search} from "react-bootstrap-icons";
+import {SecurityTooltips} from "@config/tooltips.config";
+import Spinner from "react-bootstrap/Spinner";
+import StepsConfig from "@config/steps.config";
+import {Typeahead} from "react-bootstrap-typeahead";
+import {UserContext} from "@util/user-context";
+import axios from "axios";
+import {getEnvironment} from "@util/environment";
+import reactSelectThemeConfig from "@config/react-select-theme.config";
+import styles from "./system-info.module.scss";
 
 const SystemInfo = (props) => {
   const {handleError} = useContext(UserContext);
@@ -206,6 +206,7 @@ const SystemInfo = (props) => {
       let message = error.response;
       setIsLoading(false);
       console.error("Error while clearing user data, message || error", message);
+      handleError(error);
     }
   };
   const onCancel = () => {

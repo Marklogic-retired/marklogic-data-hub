@@ -2,7 +2,6 @@ import React, {useState, useContext} from "react";
 import {Row, Col, Modal, Form, FormLabel} from "react-bootstrap";
 import {SearchContext} from "@util/search-context";
 import styles from "./save-query-modal.module.scss";
-import {UserContext} from "@util/user-context";
 import {QueryOptions} from "../../../../types/query-types";
 import {HCInput, HCButton} from "@components/common";
 
@@ -34,9 +33,6 @@ const SaveQueryModal: React.FC<Props> = (props) => {
     setEntity
   } = useContext(SearchContext);
 
-  const {
-    handleError
-  } = useContext(UserContext);
 
   const [queryName, setQueryName] = useState("");
   const [queryDescription, setQueryDescription] = useState("");
@@ -103,8 +99,6 @@ const SaveQueryModal: React.FC<Props> = (props) => {
           setAllSearchFacets(selectedFacets);
           setAllGreyedOptions(greyedFacets);
         }
-      } else {
-        handleError(error);
       }
     }
   };

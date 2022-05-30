@@ -1,20 +1,21 @@
-import React, {useState, useEffect, useContext} from "react";
-import styles from "./mapping-card.module.scss";
-import {Row, Col, Modal} from "react-bootstrap";
-import Select, {components as SelectComponents} from "react-select";
-import reactSelectThemeConfig from "@config/react-select-theme.config";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
-import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from "@util/conversionFunctions";
-import {AdvMapTooltips, SecurityTooltips, RunToolTips} from "@config/tooltips.config";
+import {AdvMapTooltips, RunToolTips, SecurityTooltips} from "@config/tooltips.config";
+import {Col, Modal, Row} from "react-bootstrap";
+import {HCButton, HCCard, HCDivider, HCTooltip} from "@components/common";
 import {Link, useHistory} from "react-router-dom";
-import {StepType} from "../../../types/curation-types";
-import {faCog, faPencilAlt} from "@fortawesome/free-solid-svg-icons";
-import {CurationContext} from "@util/curation-context";
-import {getViewSettings, setViewSettings} from "@util/user-context";
-import Steps from "../../steps/steps";
 import {PlayCircleFill, PlusCircleFill} from "react-bootstrap-icons";
-import {HCCard, HCDivider, HCButton, HCTooltip} from "@components/common";
+import React, {useContext, useEffect, useState} from "react";
+import Select, {components as SelectComponents} from "react-select";
+import {convertDateFromISO, extractCollectionFromSrcQuery, getInitialChars} from "@util/conversionFunctions";
+import {faCog, faPencilAlt} from "@fortawesome/free-solid-svg-icons";
+import {getViewSettings, setViewSettings} from "@util/user-context";
+
+import {CurationContext} from "@util/curation-context";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {StepType} from "../../../types/curation-types";
+import Steps from "../../steps/steps";
+import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
+import reactSelectThemeConfig from "@config/react-select-theme.config";
+import styles from "./mapping-card.module.scss";
 
 interface Props {
   data: any;
@@ -328,7 +329,7 @@ const MappingCard: React.FC<Props> = (props) => {
       <Modal.Body className={"pb-2"}>
         <Row>
           <Col>
-            <div>{props.flows.map((flow, i) => (
+            <div>{props.flows.length > 0 && props.flows.map((flow, i) => (
               <p className={styles.stepLink} data-testid={`${flow.name}-run-step`} key={i} onClick={() => handleAddRun(flow.name)}>{flow.name}</p>
             ))}</div>
           </Col>

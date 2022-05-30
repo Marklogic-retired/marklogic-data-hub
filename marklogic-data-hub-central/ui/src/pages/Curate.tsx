@@ -1,13 +1,14 @@
-import React, {useState, useContext, useEffect} from "react";
-import styles from "./Curate.module.scss";
+import React, {useContext, useEffect, useState} from "react";
+import {UserContext, getViewSettings} from "@util/user-context";
+
 import {AuthoritiesContext} from "@util/authorities";
-import {getViewSettings, UserContext} from "@util/user-context";
-import axios from "axios";
 import EntityTiles from "@components/entities/entity-tiles";
-import tiles from "@config/tiles.config";
-import {MissingPagePermission} from "@config/messages.config";
-import {useHistory} from "react-router-dom";
 import {ErrorMessageContext} from "@util/error-message-context";
+import {MissingPagePermission} from "@config/messages.config";
+import axios from "axios";
+import styles from "./Curate.module.scss";
+import tiles from "@config/tiles.config";
+import {useHistory} from "react-router-dom";
 
 const Curate: React.FC = () => {
 
@@ -82,6 +83,7 @@ const Curate: React.FC = () => {
     } catch (error) {
       let message = error.response.data.message;
       console.error("Error getting flows", message);
+      handleError(error);
     }
   };
 

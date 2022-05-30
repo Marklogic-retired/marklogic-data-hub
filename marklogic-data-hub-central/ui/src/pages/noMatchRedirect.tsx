@@ -17,12 +17,10 @@ const NoMatchRedirect = ({history}) => {
   useEffect(() => {
     const errorText = `${user.error.title && user.error.title} ${user.error.encounteredErrors && user.error.encounteredErrors} ${user.error.message}`;
     setErrorBodyText(errorText);
-    return () => {
-      clearErrorMessage();
-    };
   }, []);
 
   const goBack = () => {
+    clearErrorMessage();
     return user.authenticated ? history.push("/tiles") : history.push("/");
   };
 

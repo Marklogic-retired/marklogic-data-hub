@@ -90,6 +90,7 @@ const Run = (props) => {
       }
     } catch (error) {
       console.error("Error getting steps", error);
+      handleError(error);
     }
   };
 
@@ -135,6 +136,7 @@ const Run = (props) => {
     } catch (error) {
       console.error("Error updating flow", error);
       setIsLoading(false);
+      handleError(error);
     }
   };
 
@@ -161,7 +163,6 @@ const Run = (props) => {
         isVisible: true,
         message: `Error adding step "${artifactName}" to flow "${flowName}".`
       });
-      handleError(error);
     }
   };
 
@@ -175,6 +176,7 @@ const Run = (props) => {
     } catch (error) {
       console.error("Error deleting flow", error);
       setIsLoading(false);
+      handleError(error);
     }
   };
 
@@ -280,6 +282,8 @@ const Run = (props) => {
       setRunEnded({flowId: flowName, stepId: steps});
       if (error.response && error.response.data && (error.response.data.message.includes("The total size of all files in a single upload must be 100MB or less.") || error.response.data.message.includes("Uploading files to server failed"))) {
         setUploadError(error.response.data.message);
+      } else {
+        handleError(error);
       }
     }
   };
@@ -327,6 +331,8 @@ const Run = (props) => {
       setIsStepRunning(false);
       if (error.response && error.response.data && (error.response.data.message.includes("The total size of all files in a single upload must be 100MB or less.") || error.response.data.message.includes("Uploading files to server failed"))) {
         setUploadError(error.response.data.message);
+      } else {
+        handleError(error);
       }
     }
   };
@@ -343,6 +349,7 @@ const Run = (props) => {
     } catch (error) {
       console.error("Error deleting step", error);
       setIsLoading(false);
+      handleError(error);
     }
   };
 
@@ -354,6 +361,7 @@ const Run = (props) => {
       }
     } catch (error) {
       console.error("Error stopping step", error);
+      handleError(error);
     }
   };
 

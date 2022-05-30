@@ -38,7 +38,7 @@ const Header:React.FC<Props> = (props) => {
         userNotAuthenticated();
       }
     } catch (error) {
-      handleError(error);
+      console.error(error);
     }
     toggleUserDropdown(false);
   };

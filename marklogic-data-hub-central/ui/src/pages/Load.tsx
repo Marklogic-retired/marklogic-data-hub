@@ -160,6 +160,7 @@ const Load: React.FC = () => {
       let message = error.response.data.message;
       console.error("Error getting flows", message);
       setFlowsLoading(false);
+      handleError(error);
     }
   };
 
