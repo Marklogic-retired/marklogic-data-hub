@@ -1,29 +1,33 @@
-import React, {useState, useEffect, useContext} from "react";
-import Axios from "axios";
-import {useHistory} from "react-router-dom";
-import styles from "./merging-step-detail.module.scss";
 import "./merging-step-detail.scss";
-import NumberIcon from "../../../number-icon/number-icon";
-import {CurationContext} from "@util/curation-context";
-import {
-  MergingStep, defaultPriorityOption
-} from "../../../../types/curation-types";
-import {MergeStrategyTooltips, MergingStepIntros, multiSliderTooltips} from "@config/tooltips.config";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
-import {faCheck} from "@fortawesome/free-solid-svg-icons";
-import MergeStrategyDialog from "../merge-strategy-dialog/merge-strategy-dialog";
-import MergeRuleDialog from "../add-merge-rule/merge-rule-dialog";
-import {Modal} from "react-bootstrap";
-import {updateMergingArtifact} from "@api/merging";
-import CustomPageHeader from "../../page-header/page-header";
-import {clearSessionStorageOnRefresh, getViewSettings, setViewSettings} from "@util/user-context";
-import {QuestionCircleFill} from "react-bootstrap-icons";
+
 import {HCButton, HCTable, HCTooltip} from "@components/common";
+import {MergeStrategyTooltips, MergingStepIntros, multiSliderTooltips} from "@config/tooltips.config";
+import {
+  MergingStep,
+  defaultPriorityOption
+} from "../../../../types/curation-types";
+import React, {useContext, useEffect, useState} from "react";
+import {clearSessionStorageOnRefresh, getViewSettings, setViewSettings} from "@util/user-context";
+
+import Axios from "axios";
+import {CurationContext} from "@util/curation-context";
+import CustomPageHeader from "../../page-header/page-header";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import MergeRuleDialog from "../add-merge-rule/merge-rule-dialog";
+import MergeStrategyDialog from "../merge-strategy-dialog/merge-strategy-dialog";
+import {Modal} from "react-bootstrap";
+import NumberIcon from "../../../number-icon/number-icon";
+import {QuestionCircleFill} from "react-bootstrap-icons";
+import TimelineVisDefault from "../../matching/matching-step-detail/timeline-vis-default/timeline-vis-default";
+import {UserContext} from "@util/user-context";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
-import TimelineVisDefault from "../../matching/matching-step-detail/timeline-vis-default/timeline-vis-default";
+import {faCheck} from "@fortawesome/free-solid-svg-icons";
+import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
+import styles from "./merging-step-detail.module.scss";
 import {themeColors} from "@config/themes.config";
+import {updateMergingArtifact} from "@api/merging";
+import {useHistory} from "react-router-dom";
 
 dayjs.extend(duration);
 
@@ -117,6 +121,7 @@ const MergingStepDetail: React.FC = () => {
   clearSessionStorageOnRefresh();
 
   const history = useHistory<any>();
+  const {handleError} = useContext(UserContext);
   const {curationOptions, updateActiveStepArtifact} = useContext(CurationContext);
   const [mergingStep, setMergingStep] = useState<MergingStep>(DEFAULT_MERGING_STEP);
   const [showCreateEditStrategyModal, toggleCreateEditStrategyModal] = useState(false);
@@ -169,6 +174,7 @@ const MergingStepDetail: React.FC = () => {
       } catch (error) {
         let message = error.response && error.response.data && error.response.data.message;
         console.error("Error while retrieving information about merge step", message || error);
+        handleError(error);
       }
     }
   };

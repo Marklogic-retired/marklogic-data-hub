@@ -1,24 +1,27 @@
-import React, {useState, useEffect, useContext} from "react";
-import {useLocation} from "react-router-dom";
-import {Row, Col, Accordion, Card, Tabs, Tab, Modal} from "react-bootstrap";
+import "./entity-tiles.scss";
+
+import {Accordion, Card, Col, Modal, Row, Tab, Tabs} from "react-bootstrap";
+import React, {useContext, useEffect, useState} from "react";
+import {UserContext, getViewSettings, setViewSettings} from "@util/user-context";
+import {createStep, deleteStep, getSteps, updateStep} from "@api/steps";
+
+import {CurationContext} from "@util/curation-context";
+import CustomCard from "./custom/custom-card";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {HCButton} from "@components/common";
+import MappingCard from "./mapping/mapping-card";
+import {MappingStepMessages} from "@config/tooltips.config";
+import MatchingCard from "./matching/matching-card";
+import MergingCard from "./merging/merging-card";
 import axios from "axios";
-import {createStep, updateStep, getSteps, deleteStep} from "@api/steps";
+import {faTimesCircle} from "@fortawesome/free-solid-svg-icons";
 import {sortStepsByUpdated} from "@util/conversionFunctions";
 import styles from "./entity-tiles.module.scss";
-import MappingCard from "./mapping/mapping-card";
-import MatchingCard from "./matching/matching-card";
-import CustomCard from "./custom/custom-card";
-import "./entity-tiles.scss";
-import MergingCard from "./merging/merging-card";
-import {MappingStepMessages} from "@config/tooltips.config";
-import {CurationContext} from "@util/curation-context";
-import {HCButton} from "@components/common";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTimesCircle} from "@fortawesome/free-solid-svg-icons";
-import {getViewSettings, setViewSettings} from "@util/user-context";
+import {useLocation} from "react-router-dom";
 
 const EntityTiles = (props) => {
   const {setActiveStepWarning, setValidateMatchCalled, setValidateMergeCalled} = useContext(CurationContext);
+  const {handleError} = useContext(UserContext);
   const entityModels = props.entityModels || {};
   const location = useLocation<any>();
   const [locationEntityType, setLocationEntityType] = useState<string[]>([]);
@@ -133,6 +136,7 @@ const EntityTiles = (props) => {
     } catch (error) {
       let message = error;
       console.error("Error while fetching the mappings!", message);
+      handleError(error);
     }
   };
 
@@ -145,6 +149,7 @@ const EntityTiles = (props) => {
     } catch (error) {
       let message = error.response.data.message;
       console.error("Error deleting mapping", message);
+      handleError(error);
     }
   };
 
@@ -183,6 +188,7 @@ const EntityTiles = (props) => {
     } catch (error) {
       let message = error;
       console.error("Error updating mapping", message);
+      handleError(error);
       return false;
     }
   };
@@ -200,6 +206,7 @@ const EntityTiles = (props) => {
     } catch (error) {
       let message = error;
       console.error("Error while fetching matching artifacts", message);
+      handleError(error);
     }
   };
 
@@ -212,6 +219,7 @@ const EntityTiles = (props) => {
     } catch (error) {
       let message = error.response.data.message;
       console.error("Error while deleting matching artifact.", message);
+      handleError(error);
     }
   };
 
@@ -255,6 +263,7 @@ const EntityTiles = (props) => {
       setValidateMatchCalled(true);
       let message = error;
       console.error("Error updating matching", message);
+      handleError(error);
       return false;
     }
   };
@@ -269,6 +278,7 @@ const EntityTiles = (props) => {
       } catch (error) {
         let message = error;
         console.error("Error while fetching matching artifacts", message);
+        handleError(error);
       }
     }
   };
@@ -282,6 +292,7 @@ const EntityTiles = (props) => {
     } catch (error) {
       let message = error.response.data.message;
       console.error("Error while deleting matching artifact.", message);
+      handleError(error);
     }
   };
 
@@ -325,7 +336,9 @@ const EntityTiles = (props) => {
       setValidateMergeCalled(true);
       let message = error;
       console.error("Error updating merging", message);
+      handleError(error);
       return false;
+
     }
   };
 
@@ -345,6 +358,7 @@ const EntityTiles = (props) => {
     } catch (error) {
       let message = error;
       console.error("Error while fetching custom artifacts", message);
+      handleError(error);
     }
   };
 
@@ -359,6 +373,7 @@ const EntityTiles = (props) => {
     } catch (error) {
       let message = error;
       console.error("Error while fetching custom artifacts", message);
+      handleError(error);
     }
   };
 
@@ -374,6 +389,7 @@ const EntityTiles = (props) => {
     } catch (error) {
       let message = error;
       console.error("Error updating custom step", message);
+      handleError(error);
       return false;
     }
   };

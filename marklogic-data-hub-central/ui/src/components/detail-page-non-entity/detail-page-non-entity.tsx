@@ -16,7 +16,7 @@ import {HCSider, HCTable} from "@components/common";
 const DetailPageNonEntity = (props) => {
   const history: any = useHistory();
   const location: any = useLocation();
-  const {user} = useContext(UserContext);
+  const {user, handleError} = useContext(UserContext);
   const [selected, setSelected] = useState(""); // eslint-disable-line @typescript-eslint/no-unused-vars
 
   useEffect(() => {
@@ -242,7 +242,7 @@ const DetailPageNonEntity = (props) => {
   const download = async () => {
     try {
       const response = await getRecord(props.uri, props.database);
-      if (response) {
+      if (response.status === 200) {
         let result = String(response.headers["content-disposition"]).split(";")[1].trim().split("=")[1];
         let filename = result.replace(/"/g, "");
         const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -253,6 +253,7 @@ const DetailPageNonEntity = (props) => {
         link.click();
       }
     } catch (err) {
+      handleError(err);
       console.error(err);
     }
   };

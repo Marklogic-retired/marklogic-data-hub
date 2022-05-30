@@ -1,25 +1,28 @@
-import React, {useState, CSSProperties, useEffect, useContext, createRef} from "react";
+import "./flows.scss";
+
+import * as _ from "lodash";
+
+import {Accordion, ButtonGroup, Card, Dropdown, Modal} from "react-bootstrap";
+import {ChevronDown, ExclamationCircleFill, GearFill, PlayCircleFill, X, XCircleFill} from "react-bootstrap-icons";
+import {HCButton, HCCard, HCCheckbox, HCTooltip} from "@components/common";
+import {Link, useLocation} from "react-router-dom";
+import {PopoverRunSteps, RunToolTips, SecurityTooltips} from "@config/tooltips.config";
+import React, {CSSProperties, createRef, useContext, useEffect, useState} from "react";
+import {getViewSettings, setViewSettings} from "@util/user-context";
+import {faArrowAltCircleLeft, faArrowAltCircleRight, faTrashAlt} from "@fortawesome/free-regular-svg-icons";
+import {faBan, faCheckCircle, faClock, faInfoCircle, faStopCircle} from "@fortawesome/free-solid-svg-icons";
+import {getUserPreferences, updateUserPreferences} from "../../../src/services//user-preferences";
+
+import {AuthoritiesContext} from "@util/authorities";
+import {Flow} from "../../types/run-types";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCheckCircle, faClock, faInfoCircle, faStopCircle, faBan} from "@fortawesome/free-solid-svg-icons";
-import {faTrashAlt, faArrowAltCircleRight, faArrowAltCircleLeft} from "@fortawesome/free-regular-svg-icons";
 import NewFlowDialog from "./new-flow-dialog/new-flow-dialog";
 import axios from "axios";
-import {useDropzone} from "react-dropzone";
-import {Link, useLocation} from "react-router-dom";
-import sourceFormatOptions from "@config/formats.config";
-import {RunToolTips, SecurityTooltips, PopoverRunSteps} from "@config/tooltips.config";
-import {AuthoritiesContext} from "@util/authorities";
-import {getViewSettings, setViewSettings} from "@util/user-context";
 import {dynamicSortDates} from "@util/conversionFunctions";
+import sourceFormatOptions from "@config/formats.config";
 import styles from "./flows.module.scss";
-import "./flows.scss";
-import {ExclamationCircleFill, PlayCircleFill, X, ChevronDown, GearFill, XCircleFill} from "react-bootstrap-icons";
-import {Accordion, Card, Dropdown, Modal, ButtonGroup} from "react-bootstrap";
-import {HCButton, HCCard, HCTooltip, HCCheckbox} from "@components/common";
 import {themeColors} from "@config/themes.config";
-import {Flow} from "../../types/run-types";
-import * as _ from "lodash";
-import {updateUserPreferences, getUserPreferences} from "../../../src/services//user-preferences";
+import {useDropzone} from "react-dropzone";
 
 enum ReorderFlowOrderDirection {
   LEFT = "left",
@@ -95,7 +98,6 @@ const Flows: React.FC<Props> = ({
   const storage = getViewSettings();
   const openFlows = storage?.run?.openFlows;
   const hasDefaultKey = JSON.stringify(newStepToFlowOptions?.flowsDefaultKey) !== JSON.stringify(["-1"]);
-
 
   const [newFlow, setNewFlow] = useState(false);
   const [addedFlowName, setAddedFlowName] = useState("");

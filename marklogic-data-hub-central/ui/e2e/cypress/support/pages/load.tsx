@@ -63,6 +63,11 @@ class LoadPage {
     return cy.findByText("Basic");
   }
 
+  getSortIndicator() {
+    return cy.get(`[aria-label^="Name"] [aria-label="icon: caret-up"]`);
+  }
+
+
   deleteStep(stepName: string) {
     return cy.findByTestId(`${stepName}-delete`);
   }

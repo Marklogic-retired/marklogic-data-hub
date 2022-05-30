@@ -88,7 +88,8 @@ describe("login", () => {
   });
 
   it("should only enable Load and Explorer tile for hub-central-load-reader", () => {
-    let stepName = "loadPersonJSON";
+
+    let stepName = "loadCustomersJSON";
     let flowName= "personJSON";
     cy.loginAsTestUserWithRoles("hub-central-load-reader").withUI()
       .url().should("include", "/tiles");
@@ -112,6 +113,7 @@ describe("login", () => {
 
     loadPage.loadView("table").click();
     tiles.waitForTableToLoad();
+    loadPage.getSortIndicator().click();
 
     loadPage.addToFlowDisabled(stepName).should("exist");
     loadPage.stepName(stepName).click();

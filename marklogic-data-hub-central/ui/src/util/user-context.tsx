@@ -1,13 +1,15 @@
-import React, {useContext, useEffect, useRef, useState} from "react";
-import {Subscription} from "rxjs";
-import axios from "axios";
-import {createUserPreferences, getUserPreferences, updateUserPreferences} from "../services/user-preferences";
 import {IUserContextInterface, UserContextInterface} from "../types/user-types";
-import {ViewSettingsType} from "../types/view-types";
+import React, {useContext, useEffect, useRef, useState} from "react";
+import {STOMPState, StompContext} from "./stomp";
+import {createUserPreferences, getUserPreferences, updateUserPreferences} from "../services/user-preferences";
+import {resetEnvironment} from "@util/environment";
+
 import {AuthoritiesContext} from "./authorities";
-import {StompContext, STOMPState} from "./stomp";
-import {resetEnvironment, setEnvironment} from "@util/environment";
 import {MAX_SESSION_TIME} from "@config/application.config";
+import {Subscription} from "rxjs";
+import {ViewSettingsType} from "../types/view-types";
+import axios from "axios";
+import {useHistory} from "react-router-dom";
 
 const defaultUserData = {
   name: "",
@@ -23,18 +25,18 @@ const defaultUserData = {
 
 let CryptoJS = require("crypto-js");
 
-export function getViewSettings (): ViewSettingsType {
+export function getViewSettings(): ViewSettingsType {
   const data: any = JSON.parse(sessionStorage.getItem("dataHubViewSettings") ?? JSON.stringify({}));
   return data;
 }
 
-export function setViewSettings (data: ViewSettingsType): void {
+export function setViewSettings(data: ViewSettingsType): void {
   sessionStorage.setItem("dataHubViewSettings", JSON.stringify(data));
 }
 
-export function clearSessionStorageOnRefresh () {
+export function clearSessionStorageOnRefresh() {
   const storage = getViewSettings();
-  window.onbeforeunload = function() {
+  window.onbeforeunload = function () {
     setViewSettings({...storage, curate: {}});
   };
 
@@ -45,28 +47,35 @@ export function clearSessionStorageOnRefresh () {
 
 export const UserContext = React.createContext<IUserContextInterface>({
   user: defaultUserData,
-  loginAuthenticated: () => {},
-  sessionAuthenticated: () => {},
-  userNotAuthenticated: () => {},
-  handleError: () => {},
-  clearErrorMessage: () => {},
-  setPageRoute: () => {},
-  setAlertMessage: () => {},
-  resetSessionTime: () => {},
+  loginAuthenticated: () => { },
+  sessionAuthenticated: () => { },
+  userNotAuthenticated: () => { },
+  handleError: () => { },
+  clearErrorMessage: () => { },
+  setPageRoute: () => { },
+  setAlertMessage: () => { },
+  resetSessionTime: () => { },
   getSessionTime: () => { return defaultUserData.maxSessionTime; }
 });
 
 const UserProvider: React.FC<{ children: any }> = ({children}) => {
   const [user, setUser] = useState<UserContextInterface>(defaultUserData);
   const [encounteredErrors, setEncounteredErrors] = useState<string[]>([]);
-  const [stompMessageSubscription, setStompMessageSubscription] = useState<Subscription|null>(null);
-  const [unsubscribeId, setUnsubscribeId] = useState<string|null>(null);
+  const [stompMessageSubscription, setStompMessageSubscription] = useState<Subscription | null>(null);
+  const [unsubscribeId, setUnsubscribeId] = useState<string | null>(null);
   const sessionUser = localStorage.getItem("dataHubUser");
   const authoritiesService = useContext(AuthoritiesContext);
   const stompService = useContext(StompContext);
   const initialTimeoutDate = new Date();
   initialTimeoutDate.setSeconds(initialTimeoutDate.getSeconds() + MAX_SESSION_TIME);
   const sessionTimeoutDate = useRef<Date>(initialTimeoutDate);
+  let history = useHistory();
+
+  useEffect(() => {
+    if (user.error.message !== "") {
+      history.push("/error");
+    }
+  }, [user.error]);
 
   const getConfigHash = (config) => {
     return CryptoJS.SHA256(`${config.method}:${config.url}:${config.data}`).toString();
@@ -154,10 +163,11 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
   };
 
   const loginAuthenticated = async (username: string, authResponse: any) => {
-    setEnvironment();
     let session = await axios("/api/environment/systemInfo");
     setSessionTimeoutDate(parseInt(session.data["sessionTimeout"]));
 
+    localStorage.setItem("serviceName", session.data.serviceName);
+    localStorage.setItem("environment", JSON.stringify(session.data)) ;
     localStorage.setItem("dataHubUser", username);
     localStorage.setItem("serviceName", session.data.serviceName);
     localStorage.setItem("hubCentralSessionToken", session.data.sessionToken);
@@ -183,7 +193,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
       });
     }
 
-    const authorities: string[] =  authResponse.authorities || [];
+    const authorities: string[] = authResponse.authorities || [];
     authoritiesService.setAuthorities(authorities);
 
     let userPreferences = getUserPreferences(username);
@@ -226,7 +236,11 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
   };
 
   const userNotAuthenticated = () => {
-    setUser({...user, name: "", authenticated: false, pageRoute: defaultUserData.pageRoute});
+    setUser({...user, name: "", authenticated: false, pageRoute: defaultUserData.pageRoute,  error: {
+      title: "",
+      message: "",
+      type: ""
+    }});
     resetSessionMonitor().then(() => {
       localStorage.setItem("dataHubUser", "");
       localStorage.setItem("serviceName", "");
@@ -242,7 +256,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
   * handleError - A consistent way to handle and present errors.
   * @param error - The error response which we will decide to handle an error
   * */
-  const handleError = (error) => {
+  const handleError = (error: any) => {
     const DEFAULT_MESSAGE = "Internal Server Error";
     let errorHash = "";
     let errorAlreadyEncountered = false;
@@ -262,11 +276,14 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
         case 401: {
           localStorage.setItem("dataHubUser", "");
           localStorage.setItem("loginResp", "");
-          setUser({...user, name: "", authenticated: false});
+          setUser({...user, name: "", authenticated: false, error: {title: "", message: "", type: ""}});
+          break;
+        }
+        case 403: {
+          console.error("HTTP ERROR", error.response);
           break;
         }
         case 400:
-        case 403:
         case 405:
         case 408:
         case 414: {
