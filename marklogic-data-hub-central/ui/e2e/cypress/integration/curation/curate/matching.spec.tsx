@@ -287,7 +287,8 @@ describe("Matching", () => {
     cy.waitUntil(() => cy.visit("/tiles"));
   });
   it("Edit test match URIs", () => {
-    toolbar.getCurateToolbarIcon().click();
+    cy.visit("/tiles/curate");
+
     curatePage.toggleEntityTypeId("Person");
     curatePage.selectMatchTab("Person");
     curatePage.openStepDetails("match-person");

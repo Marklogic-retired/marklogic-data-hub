@@ -84,7 +84,7 @@ describe("json scenario for table on browse documents page", () => {
 
   it("verify instance view of the document without pk", () => {
     cy.wait(2000);
-    entitiesSidebar.showMoreEntities();
+    entitiesSidebar.showMoreEntities().click();
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.PERSON);
     browsePage.getFacetItemCheckbox("fname", "Alice").click();
     browsePage.getGreySelectedFacets("Alice").should("exist");

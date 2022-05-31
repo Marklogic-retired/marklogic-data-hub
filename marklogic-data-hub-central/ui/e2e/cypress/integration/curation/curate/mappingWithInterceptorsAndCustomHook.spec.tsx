@@ -177,24 +177,32 @@ describe("Create and verify load steps, map step and flows with interceptors & c
   });
   it("Edit Map step", () => {
     //Go back to curate homepage
-    mappingStepDetail.goBackToCurateHomePage();
+    cy.log("**Go back to curate page**");
+    toolbar.getCurateToolbarIcon().should("be.visible").click();
     curatePage.toggleEntityTypeId("Order");
+
     // Open step details and switch to Advanced tab in step settings
+    cy.log("**Open step details and switch to Advanced tab in step settings**");
     curatePage.openStepDetails(mapStep);
     cy.waitUntil(() => curatePage.dataPresent().should("exist"));
     mappingStepDetail.testMap().click({force: true});
     mappingStepDetail.validateMapValue("Order", "orderId", "10259");
     mappingStepDetail.stepSettingsLink().click();
     curatePage.switchEditAdvanced().click();
+
     //interceptor should already be set during creation
+    cy.log("**Interceptor should already be set during creation**");
     cy.findByLabelText("interceptors-expand").trigger("mouseover").click();
     cy.get("#interceptors").should("not.be.empty");
+
     // add customHook to mapping step
+    cy.log("**Add customHook to mapping step**");
     advancedSettingsDialog.setCustomHook("curateTile/customUriHook");
     advancedSettingsDialog.saveSettings(mapStep).click();
     advancedSettingsDialog.saveSettings(mapStep).should("not.exist");
 
     //verify that step details page remains opens when step settings was opened from within the step details page
+    cy.log("**Verify that step details page remains opens when step settings was opened from within the step details page**");
     cy.waitUntil(() => curatePage.dataPresent().should("exist"));
     curatePage.verifyStepDetailsOpen(mapStep);
     cy.wait(2000);

@@ -59,18 +59,18 @@ describe("Entity display settings in model tile", () => {
     cy.log(`**Click on ${defaultEntityTypeData.name} entity to open side bar**`);
     graphVis.getPositionsOfNodes(defaultEntityTypeData.name).then((nodePositions: any) => {
       let babyRegistryCoordinates: any = nodePositions[defaultEntityTypeData.name];
-      graphVis.getGraphVisCanvas().trigger("mouseover", babyRegistryCoordinates.x, babyRegistryCoordinates.y);
+      graphVis.getGraphVisCanvas().trigger("mouseover", babyRegistryCoordinates.x, babyRegistryCoordinates.y).click(babyRegistryCoordinates.x, babyRegistryCoordinates.y);
     });
     cy.wait(500);
 
-    graphVis.getPositionsOfNodes(defaultEntityTypeData.name).then((nodePositions: any) => {
+    /**graphVis.getPositionsOfNodes(defaultEntityTypeData.name).then((nodePositions: any) => {
       let babyRegistryCoordinates: any = nodePositions[defaultEntityTypeData.name];
       cy.wait(200);
       graphVis.getGraphVisCanvas().click(babyRegistryCoordinates.x, babyRegistryCoordinates.y);
       if (Cypress.isBrowser("!firefox")) {
         graphVis.getGraphVisCanvas().click(babyRegistryCoordinates.x, babyRegistryCoordinates.y);
       }
-    });
+    });*/
 
     cy.log("**Change side bar tab to Entity Type**");
     graphViewSidePanel.getEntityTypeTab().click();
@@ -123,6 +123,18 @@ describe("Entity display settings in model tile", () => {
     });
 
     cy.log("**Check in the side bar the label of the node**");
+
+    cy.log("**Click on babyRegistry node to open the side panel**");
+    graphExplore.getGraphVisCanvas().should("exist");
+    cy.wait(1000);
+    graphExplore.stopStabilization();
+    graphExplore.focusNode(ExploreGraphNodes.BABY_REGISTRY_3039);
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.BABY_REGISTRY_3039).then((nodePositions: any) => {
+      let baby_registry_3039_nodeposition: any = nodePositions[ExploreGraphNodes.BABY_REGISTRY_3039];
+      graphExplore.getGraphVisCanvas().trigger("mouseover", baby_registry_3039_nodeposition.x, baby_registry_3039_nodeposition.y);
+      graphExplore.getGraphVisCanvas().click(baby_registry_3039_nodeposition.x, baby_registry_3039_nodeposition.y, {force: true});
+    });
+
     graphExploreSidePanel.getSidePanel().scrollIntoView().should("be.visible");
     graphExploreSidePanel.getSidePanelHeading().should("contain.text", defaultEntityTypeData.propertiesValues.ownedBy);
 

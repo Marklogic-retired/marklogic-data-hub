@@ -4,7 +4,8 @@ class ModelPage {
   * @param type - accepts `table` for table-view or `project-diagram` for graph-view
   */
   selectView(view: string) {
-    cy.get(`[data-icon="${view}"]`).first().scrollIntoView().trigger("mouseover").click({force: true});
+    cy.wait(1000);
+    cy.get(`[data-icon="${view}"]`).first().scrollIntoView().should("be.visible").trigger("mouseover").click({force: true});
     cy.wait(1000);
     cy.get("body")
       .then(($body) => {

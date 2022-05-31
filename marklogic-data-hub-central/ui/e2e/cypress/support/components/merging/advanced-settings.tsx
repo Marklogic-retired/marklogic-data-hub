@@ -8,7 +8,7 @@ class AdvancedSettings {
     cy.get(`[aria-label="additionalColl-select-${event}"]`)
       .should("exist")
       .type(value, {force: true})
-      .type("{enter}");
+      .type("{enter}", {force: true});
   }
 
   keepTargetCollection(event: string) {
