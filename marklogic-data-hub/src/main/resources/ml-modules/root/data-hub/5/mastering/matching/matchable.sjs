@@ -32,7 +32,7 @@ function applyInterceptors(interceptorType, accumulated, interceptors, ...additi
 }
 
 /*
- * A class that encapsulates the configurable portions of teh matching process.
+ * A class that encapsulates the configurable portions of the matching process.
  */
 class Matchable {
   constructor(matchStep, stepContext) {
