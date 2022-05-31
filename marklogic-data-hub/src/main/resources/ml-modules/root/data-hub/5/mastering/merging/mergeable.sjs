@@ -32,6 +32,21 @@ class Mergeable {
    * @since 5.8.0
    */
   applyDocumentContext(contentObject, actionDetails) {
+    const targetEntity = this.options.targetEntityType || this.options.targetEntityTitle;
+    switch (actionDetails.action) {
+      case "merge" :
+        contentObject.context.collections.push(`sm-${targetEntity}-merged`);
+        contentObject.context.collections.push(`sm-${targetEntity}-mastered`);
+        break;
+      case "notify":
+        contentObject.context.collections.push(`sm-${targetEntity}-notification`);
+        break;
+      case "no-action":
+        contentObject.context.collections.push(`sm-${targetEntity}-mastered`);
+        break;
+      default:
+    }
+    return contentObject;
   }
 }
 
