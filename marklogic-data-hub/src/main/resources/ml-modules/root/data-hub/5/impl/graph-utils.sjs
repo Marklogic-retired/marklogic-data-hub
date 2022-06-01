@@ -231,11 +231,27 @@ function relatedObjHasRelationships(objectIRI, predicatesMap) {
   return hasRelationships;
 }
 
+function getEntityWithConcepts(entityTypeIRIs, predicateConceptList) {
+  const subjectPlanConcept = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+                 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                 SELECT ?subjectIRI ?predicateIRI ?objectIRI (?objectIRI AS ?objectConcept) ?docURI  WHERE {
+                        ?subjectIRI rdf:type @entityTypeIRIs;
+                        ?predicateIRI  ?objectIRI;
+                        rdfs:isDefinedBy ?docURI.
+                        FILTER EXISTS {
+                        ?subjectIRI @predicateConceptList ?objectIRI.
+                        }
+                        }`);
+
+
+  return subjectPlanConcept.result(null, {entityTypeIRIs, predicateConceptList}).toArray();
+}
+
 function getRelatedEntityInstancesCount(semanticConceptIRI) {
-  const relatedEntityInstancesCount = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>  
+  const relatedEntityInstancesCount = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
     SELECT (COUNT(DISTINCT(?subjectIRI)) AS ?total) ?entityTypeIRI  WHERE {
-    ?subjectIRI ?p @semanticConceptIRI; 
+    ?subjectIRI ?p @semanticConceptIRI;
      rdf:type ?entityTypeIRI.
       ?entityTypeIRI rdf:type <http://marklogic.com/entity-services#EntityType>
     }
@@ -253,5 +269,6 @@ module.exports = {
   getRelatedEntitiesCounting,
   getConceptCounting,
   relatedObjHasRelationships,
-  getRelatedEntityInstancesCount
+  getRelatedEntityInstancesCount,
+  getEntityWithConcepts
 }

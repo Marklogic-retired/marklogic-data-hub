@@ -19,15 +19,19 @@ public interface GraphService {
 
             private BaseProxy.DBFunctionRequest req_searchNodes;
             private BaseProxy.DBFunctionRequest req_nodeExpand;
+            private BaseProxy.DBFunctionRequest req_EntitiesWithConceptsTypes;
 
             private GraphServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/graph/", servDecl);
 
+
                 this.req_searchNodes = this.baseProxy.request(
                     "searchNodes.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
                 this.req_nodeExpand = this.baseProxy.request(
                     "nodeExpand.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
+                this.req_EntitiesWithConceptsTypes = this.baseProxy.request(
+                    "entitiesWithConceptsTypes.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
 
             }
 
@@ -65,6 +69,20 @@ public interface GraphService {
                         ).responseSingle(false, Format.JSON)
                 );
             }
+
+            @Override
+            public JsonNode getEntitiesWithConceptsTypes() {
+                return getEntitiesWithConceptsTypes(
+                    this.req_EntitiesWithConceptsTypes.on(this.dbClient));
+            }
+
+            private JsonNode getEntitiesWithConceptsTypes(BaseProxy.DBFunctionRequest request) {
+                return BaseProxy.JsonDocumentType.toJsonNode(
+                    request
+                        .withParams(
+                        ).responseSingle(false, Format.JSON)
+                );
+            }
         }
 
         return new GraphServiceImpl(db, serviceDeclaration);
@@ -72,4 +90,5 @@ public interface GraphService {
 
     JsonNode searchNodes(JsonNode searchQuery, String structuredQuery, String queryOptions);
     JsonNode nodeExpand(JsonNode nodeInfo, Integer limit);
+    JsonNode getEntitiesWithConceptsTypes();
 }

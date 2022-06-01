@@ -182,6 +182,14 @@ public class EntitySearchController extends BaseController {
         return getGraphService(database).nodeExpand(searchQuery, limit);
     }
 
+    @RequestMapping(method = RequestMethod.POST, value = "/getEntitiesWithConceptsTypes")
+    @ResponseBody
+    @ApiOperation(value = "Get all entities type with theirs related concepts types",
+        response = EntitySearchResponseSchema.class)
+    public JsonNode getEntitiesWithConceptsTypes(@RequestParam(defaultValue = "final") String database) {
+        return getGraphService(database).getEntitiesWithConceptsTypes();
+    }
+
     private EntitySearchManager newEntitySearchManager(String database) {
         return new EntitySearchManager(getHubClient(), database);
     }
