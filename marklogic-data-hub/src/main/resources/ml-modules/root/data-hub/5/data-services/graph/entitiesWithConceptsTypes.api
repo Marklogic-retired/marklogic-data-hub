@@ -1,0 +1,4 @@
+{
+    "desc": "Returns all entities types with theirs related concepts type",
+    "params": []
+}
