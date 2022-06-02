@@ -29,7 +29,11 @@ const DateTime: React.FC<Props> = (props) => {
     }
 
     let formattedDateTime;
-    formattedDateTime = dt.fromISO(val).toFormat(props.config.format ? props.config.format : defaultFormat);
+    if (props.config.from) {
+        formattedDateTime = dt["from" + props.config.from](val).toFormat(props.config.format ? props.config.format : defaultFormat);
+    } else {
+        formattedDateTime = dt.fromISO(val).toFormat(props.config.format ? props.config.format : defaultFormat);
+    }
 
     if (formattedDateTime && props.config?.prefix) {
         formattedDateTime = props.config?.prefix.concat(formattedDateTime);
