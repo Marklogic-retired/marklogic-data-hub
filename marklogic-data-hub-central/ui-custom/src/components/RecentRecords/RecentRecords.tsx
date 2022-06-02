@@ -6,6 +6,7 @@ import Value from "../Value/Value";
 import List from "../List/List";
 import "./RecentRecords.scss";
 import {getValByConfig} from "../../util/util";
+import _ from "lodash";
 import {ExclamationTriangleFill} from "react-bootstrap-icons";
 
 type Props = {
@@ -76,6 +77,12 @@ const RecentRecords: React.FC<Props> = (props) => {
     detailContext.handleGetDetail(e.target.id);
   };
 
+  // Handle both singular and array cases for categories
+  const getCategories = (results, config) => {
+    let res = getValByConfig(results, config);
+    return _.isArray(res) ? res : [res];
+  }
+
   const getRecent = () => {
     let res = props.data.map((recent, index) => {
       let titleValue = getValByConfig(recent, props.config.entities[recent.entityType].title, true);
@@ -106,7 +113,7 @@ const RecentRecords: React.FC<Props> = (props) => {
             </div>
             {props.config.entities[recent.entityType].categories ?
               <div className="categories">
-                {getValByConfig(recent, props.config.entities[recent.entityType].categories)!.map((s, index2) => {
+                {getCategories(recent, props.config.entities[recent.entityType].categories)!.map((s, index2) => {
                   return (
                     <Chiclet
                       key={"category-" + index2}
