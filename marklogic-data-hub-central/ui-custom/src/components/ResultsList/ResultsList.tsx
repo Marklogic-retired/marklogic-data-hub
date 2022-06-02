@@ -15,7 +15,6 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import * as FaDictionary from '@fortawesome/free-solid-svg-icons'
 import {CaretDownFill, CaretUpFill} from "react-bootstrap-icons";
 import _ from "lodash";
-import {title} from "process";
 
 type Props = {
   config?: any;
@@ -156,6 +155,12 @@ const ResultsList: React.FC<Props> = (props) => {
     )
   }
 
+  // Handle both singular and array cases for categories
+  const getCategories = (results, config) => {
+    let res = getValByConfig(results, config);
+    return _.isArray(res) ? res : [res];
+  }
+
   const getResults = () => {
     let results = searchContext.searchResults.result.map((results, index) => {
       const configEntityType = results.entityType && props.config.entities[results.entityType];
@@ -189,7 +194,7 @@ const ResultsList: React.FC<Props> = (props) => {
             </div>
             {configEntityType.categories ?
               <div className="categories">
-                {getValByConfig(results, configEntityType.categories)!.map((s, index2) => {
+                {getCategories(results, configEntityType.categories)!.map((s, index2) => {
                   return (
                     <Chiclet
                       key={"category-" + index2}
