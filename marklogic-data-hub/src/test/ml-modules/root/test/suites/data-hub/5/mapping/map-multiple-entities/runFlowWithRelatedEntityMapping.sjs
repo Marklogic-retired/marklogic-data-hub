@@ -44,7 +44,7 @@ function runJSONMapping(){
 }
 
 function runXMLMapping(){
-  const customerUriRegex = new RegExp('^\/Customer\/[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}.xml$');
+  const customerUriRegex = new RegExp('^\/Customer\/[0-9a-z\-]*.xml$');
   const content = hubUtils.queryToContentDescriptorArray(cts.documentQuery("/content/customerInfo.xml"), {}, xdmp.databaseName(xdmp.database()));
   const sourceUrisBeforeStepRun = hubTest.getUrisInCollection("raw-content");
 
