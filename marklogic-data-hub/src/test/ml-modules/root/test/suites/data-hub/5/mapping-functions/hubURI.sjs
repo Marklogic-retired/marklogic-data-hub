@@ -2,7 +2,7 @@ const core = require('/data-hub/5/mapping-functions/core-functions.xqy');
 const coreSjs = require('/data-hub/5/mapping-functions/core.sjs');
 const test = require("/test/test-helper.xqy");
 
-const orderUriRegex = new RegExp('^\/Order\/[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}.json$');
+const orderUriRegex = new RegExp('^\/Order\/[0-9a-z\-]*.json$');
 
 const assertions = [];
 
