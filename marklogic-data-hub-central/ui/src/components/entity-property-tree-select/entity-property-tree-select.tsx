@@ -14,6 +14,8 @@ type Props = {
   value: string | undefined,
   isForMerge: boolean | undefined,
   onValueSelected: (value: string | undefined) => void;
+  multiple?: boolean;
+  identifier?: string;
 };
 
 const {TreeNode} = TreeSelect;
@@ -23,8 +25,10 @@ const DEFAULT_ENTITY_DEFINITION: Definition = {
   properties: []
 };
 
+const defaultIdentifier = "property-to-match-dropdown";
 
 const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
+  const finalIdentifier = props.identifier === defaultIdentifier ? defaultIdentifier : `${props.identifier}-${defaultIdentifier}`;
 
   const {curationOptions} = useContext(CurationContext);
   let mergeRulesData = curationOptions.activeStep.stepArtifact.mergeRules;
@@ -160,9 +164,9 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
     <>
       <TreeSelect
         showSearch={false}
-        aria-label="property-to-match-dropdown"
-        data-testId="property-to-match-dropdown"
-        id="property-to-match-dropdown"
+        aria-label={finalIdentifier}
+        data-testId={finalIdentifier}
+        id={finalIdentifier}
         className={styles.matchTypeSelect}
         placeholder="Select property"
         onChange={onChange}
@@ -176,11 +180,17 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
         inputIcon={<ChevronDown />}
         switcherIcon={handleSwitcherIcon}
         treeIcon={false}
+        multiple={props.multiple}
       >
         {renderPropertyOptions}
       </TreeSelect>
     </>
   );
+};
+
+EntityPropertyTreeSelect.defaultProps = {
+  multiple: false,
+  identifier: defaultIdentifier
 };
 
 export default EntityPropertyTreeSelect;

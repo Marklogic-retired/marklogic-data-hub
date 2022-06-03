@@ -595,6 +595,25 @@ function getPredicatesByModel(model) {
   return predicateList;
 }
 
+function getRefType(model,propertyName) {
+  let refTypeReturn = "";
+    let entityProperty = model.properties[propertyName];
+      if (entityProperty["items"] == null) {
+        refTypeReturn = entityProperty["$ref"];
+      } else {
+        if (entityProperty["items"] != null) {
+          let items = entityProperty["items"]
+          if (items["$ref"] != null){
+            refTypeReturn = items["$ref"];
+          }
+        }
+      }
+      if (refTypeReturn != null) {
+        refTypeReturn = refTypeReturn.split("/").pop();
+      }
+  return refTypeReturn;
+}
+
 function getConceptPredicatesByModel(model) {
   const conceptPredicateList = [];
   const entityName = model.info.title;
@@ -675,5 +694,6 @@ module.exports = {
   validateModelDefinitions,
   writeDraftModel,
   writeModel,
-  writeModelToDatabases
+  writeModelToDatabases,
+  getRefType
 };

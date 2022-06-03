@@ -27,4 +27,21 @@ describe("Entity Property Tree Select component", () => {
     userEvent.click(getByText("customerId"));
     expect(mockOnValueSelected.mock.calls[0][0]).toBe("customerId");
   });
+  it("should render custom aria label when pass identifier prop", () => {
+    const mockOnValueSelected = jest.fn();
+    const customIdentifier = "customIdentifier";
+
+    const {getAllByLabelText} =  render(
+      <EntityPropertyTreeSelect
+        isForMerge={false}
+        propertyDropdownOptions={entityTypeDefinition?.properties || []}
+        entityDefinitionsArray={customerEntityDefsArray}
+        value={undefined}
+        onValueSelected={mockOnValueSelected}
+        identifier={customIdentifier}
+      />
+    );
+
+    expect(getAllByLabelText(`${customIdentifier}-property-to-match-dropdown`)[0]).toBeInTheDocument();
+  });
 });

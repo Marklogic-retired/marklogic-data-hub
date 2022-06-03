@@ -11,8 +11,8 @@ const hubCentralConfig = {
         "graphY": -57,
         "propertiesOnHover": [
           "shipping",
-          "shipping.Address.city",
-          "billing.Address.city"
+          "shipping.city",
+          "billing.city"
         ]
       }
     }

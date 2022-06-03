@@ -10,12 +10,17 @@ import {ModelingContext} from "@util/modeling-context";
 import PropertiesTab from "../properties-tab/properties-tab";
 import {primaryEntityTypes, updateModelInfo} from "@api/modeling";
 import {getViewSettings, setViewSettings, UserContext} from "@util/user-context";
-import {EntityModified} from "../../../../types/modeling-types";
+import {EntityModified, Definition} from "../../../../types/modeling-types";
 import {defaultHubCentralConfig} from "@config/modeling.config";
 import {themeColors} from "@config/themes.config";
-import {defaultIcon} from "@config/explore.config";
+import {defaultIcon, defaultEntityDefinition} from "@config/explore.config";
 import Select, {components as SelectComponents} from "react-select";
 import reactSelectThemeConfig from "@config/react-select-theme.config";
+import {SearchContext} from "@util/search-context";
+import {entityFromJSON, entityParser, definitionsParser} from "@util/data-conversion";
+import {convertArrayOfEntitiesToObject} from "@util/modeling-utils";
+import EntityPropertyTreeSelect from "../../../entity-property-tree-select/entity-property-tree-select";
+import {getEntities} from "@api/queries";
 
 type Props = {
   entityTypes: any;
@@ -39,13 +44,14 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
 
   const [currentTab, setCurrentTab] = useState(viewSettings.model?.currentTab || DEFAULT_TAB);
   const {modelingOptions, setSelectedEntity} = useContext(ModelingContext);
+  const {entityDefinitionsArray, setEntityDefinitionsArray} = useContext(SearchContext);
   const {handleError} = useContext(UserContext);
   const [selectedEntityDescription, setSelectedEntityDescription] = useState("");
   const [selectedEntityNamespace, setSelectedEntityNamespace] = useState("");
   const [selectedEntityNamespacePrefix, setSelectedEntityNamespacePrefix] = useState("");
   const [selectedEntityVersion, setSelectedEntityVersion] = useState("");
   const [selectedEntityLabel, setSelectedEntityLabel] = useState<string>("");
-  const [selectedEntityPropOnHover, setSelectedEntityPropOnHover] = useState<string[]>();
+  const [selectedEntityPropOnHover, setSelectedEntityPropOnHover] = useState<any>();
   const [versionTouched, setVersionTouched] = useState(false);
   const [descriptionTouched, setisDescriptionTouched] = useState(false);
   const [namespaceTouched, setisNamespaceTouched] = useState(false);
@@ -53,6 +59,9 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
   const [errorServer, setErrorServer] = useState("");
   const [colorSelected, setColorSelected] = useState(themeColors.defaults.entityColor);
   const [iconSelected, setIconSelected] = useState<any>("");
+  const [entityModels, setEntityModels] = useState<any>({});
+  const [definitions, setDefinitions] = useState<any[]>([]);
+  const [entityTypeDefinition, setEntityTypeDefinition] = useState<Definition>();
 
   const [selectedEntityInfo, setSelectedEntityInfo] = useState<any>({});
 
@@ -85,6 +94,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
             if (entity !== undefined && selectedEntityDetails.model?.info?.version) {
               setSelectedEntityVersion(selectedEntityDetails.model.info.version);
             }
+            setEntityModels({...convertArrayOfEntitiesToObject(response.data)});
             initializeEntityColorIcon();
             initializeEntityDisplayProps();
           } else {
@@ -224,6 +234,38 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
     }
   }, [modelingOptions.selectedEntity]);
 
+  useEffect(() => {
+    let loaded = true;
+    (async () => {
+      try {
+        const modelsResponse = await getEntities();
+        const parsedModelData = entityFromJSON(modelsResponse.data);
+        const parsedEntityDef = entityParser(parsedModelData).filter(entity => entity.name && entity);
+
+        if (loaded) {
+          setEntityDefinitionsArray(parsedEntityDef);
+        }
+      } catch (error) {
+        handleError(error);
+      }
+    })();
+    return () => {
+      loaded = false;
+    };
+  }, [props.hubCentralConfig]);
+
+  useEffect(() => {
+    if (modelingOptions.selectedEntity) {
+      let tmpDefinitions: any[] = [];
+      if (entityModels[modelingOptions.selectedEntity]?.model.definitions) {
+        tmpDefinitions = definitionsParser(entityModels[modelingOptions.selectedEntity]?.model.definitions);
+        setDefinitions(tmpDefinitions);
+      }
+      let entityTypeDefinition: Definition = tmpDefinitions.find(entityDefinition => entityDefinition.name === modelingOptions.selectedEntity) || defaultEntityDefinition;
+      setEntityTypeDefinition(entityTypeDefinition);
+    }
+  }, [modelingOptions.selectedEntity, entityModels]);
+
   const handleColorChange = color => {
     setColorSelected(color.hex);
     props.setNodeNeedRedraw(true);
@@ -242,7 +284,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
   };
 
   const handlePropertiesOnHoverChange = (e) => {
-    const propertiesOnHover = e.map(option => option.value);
+    const propertiesOnHover = e.map(property => property.replaceAll(" > ", "."));
     setSelectedEntityPropOnHover(propertiesOnHover);
     updateHubCentralConfig({propertiesOnHover});
   };
@@ -272,17 +314,10 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
     </div>
   );
 
-  const getOptions = () => {
-    if (modelingOptions.selectedEntity !== undefined) {
-      const definitions = props.entityTypes.find(e => e.entityName === modelingOptions.selectedEntity)?.model.definitions;
-      if (definitions && definitions[modelingOptions.selectedEntity]) {
-        return Object.keys(definitions[modelingOptions.selectedEntity]?.properties).map(property => ({
-          value: property,
-          label: property
-        }));
-      }
-    }
-    return [];
+  const renderOptions = () => {
+    let entityTypeDef:any = entityDefinitionsArray.find(entity => entity.name === modelingOptions.selectedEntity);
+    const options:any = entityTypeDef?.properties?.filter(property => property.ref === "").map(item => ({value: item?.name, label: item?.name}));
+    return options;
   };
 
   const displayPanelContent = () => {
@@ -423,7 +458,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
               components={{MenuList: props => MenuList(`${modelingOptions.selectedEntity}-entityLabel`, props)}}
               defaultValue={selectedEntityLabel ? {label: selectedEntityLabel, value: selectedEntityLabel} : null}
               value={selectedEntityLabel ? {label: selectedEntityLabel, value: selectedEntityLabel} : null}
-              options={getOptions()}
+              options={renderOptions()}
               onChange={handleLabelChange}
               classNamePrefix="select"
               aria-label={`${modelingOptions.selectedEntity}-label-select-dropdown`}
@@ -443,36 +478,29 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
             </div>
           </Col>
         </Row>
-        <Row className={"mb-3"}>
-          <FormLabel column lg={3}>{"Properties on Hover:"}</FormLabel>
-          <Col className={"d-flex"}>
-            <Select
-              id={`${modelingOptions.selectedEntity}-entityProperties-select-wrapper`}
-              inputId={`${modelingOptions.selectedEntity}-entityProperties-select`}
-              components={{MenuList: props => MenuList(`${modelingOptions.selectedEntity}-entityProperties`, props)}}
-              defaultValue={selectedEntityPropOnHover?.map(property => ({label: property, value: property}))}
-              value={selectedEntityPropOnHover?.map(property => ({label: property, value: property}))}
-              options={getOptions()}
-              isMulti
-              onChange={handlePropertiesOnHoverChange}
-              classNamePrefix="select"
-              aria-label={`${modelingOptions.selectedEntity}-entityProperties-select-dropdown`}
-              formatOptionLabel={({value, label}) => {
-                return (
-                  <span data-testid={`${modelingOptions.selectedEntity}-propertiesOption-${value}`} aria-label={`${modelingOptions.selectedEntity}-propertiesOption-${value}`}>
-                    {label}
-                  </span>
-                );
-              }}
-              styles={reactSelectThemeConfig}
-            />
-            <div className={"p-2 d-flex align-items-center"}>
-              <HCTooltip text={ModelingTooltips.propertiesOnHoverField} id="propertiesOnHover-tooltip" placement="top-end">
-                <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.icon} data-testid="propertiesOnHoverTooltip" />
-              </HCTooltip>
-            </div>
-          </Col>
-        </Row>
+        {entityTypeDefinition?.properties &&
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>{"Properties on Hover:"}</FormLabel>
+            <Col className={"d-flex"}>
+              <div className="w-100">
+                <EntityPropertyTreeSelect
+                  isForMerge={true}
+                  propertyDropdownOptions={entityTypeDefinition?.properties}
+                  entityDefinitionsArray={definitions}
+                  value={selectedEntityPropOnHover?.length ? selectedEntityPropOnHover.map(property => property.replaceAll(".", " > ")) : undefined}
+                  onValueSelected={handlePropertiesOnHoverChange}
+                  multiple={true}
+                  identifier={modelingOptions.selectedEntity}
+                />
+              </div>
+              <div className={"p-2"}>
+                <HCTooltip text={ModelingTooltips.propertiesOnHoverField} id="propertiesOnHover-tooltip" placement="top-end">
+                  <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.icon} data-testid="propertiesOnHoverTooltip" />
+                </HCTooltip>
+              </div>
+            </Col>
+          </Row>
+        }
       </Form>
     </div>
       :
