@@ -77,11 +77,11 @@ class GraphViewSidePanel {
   }
 
   getPropertiesOnHoverDropdown(entityType: string) {
-    return cy.get(`[id="${entityType}-entityProperties-select-wrapper"]`).scrollIntoView();
+    return cy.get(`div[aria-label="${entityType}-property-to-match-dropdown"]`).scrollIntoView();
   }
 
-  getPropertiesOnHoverDropdownOption(entityType: string, option: string) {
-    return cy.get(`[aria-label="${entityType}-propertiesOption-${option}"]`).first().scrollIntoView();
+  getPropertiesOnHoverDropdownOption(option: string) {
+    return cy.get(`[aria-label="${option}-option"]`).first().scrollIntoView();
   }
 }
 

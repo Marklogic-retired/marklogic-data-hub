@@ -266,11 +266,11 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       Object.keys(property).forEach(propertyName => {
         const propertySpan = document.createElement("span");
         if (typeof property[propertyName] === "string" || typeof property[propertyName] === "number") {
-          propertySpan.innerHTML = `${propertyName}: ${property[propertyName]}`;
+          propertySpan.innerHTML = `${propertyName.replaceAll(".", " > ")}: ${property[propertyName]}`;
           topSpan.appendChild(propertySpan);
           topSpan.appendChild(document.createElement("br"));
         } else {
-          propertySpan.innerHTML = `${propertyName}:`;
+          propertySpan.innerHTML = `${propertyName.replaceAll(".", " > ")}:`;
           const pre = document.createElement("pre");
           pre.innerText = JSON.stringify(property[propertyName], undefined, 2);
           paddingElementes.appendChild(propertySpan);

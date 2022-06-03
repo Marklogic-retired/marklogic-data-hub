@@ -1,4 +1,5 @@
 import {themeColors} from "./themes.config";
+import {Definition} from "../types/modeling-types";
 
 export const exploreSidebar = {
   MINIMUM_ENTITIES: 5,
@@ -31,4 +32,9 @@ export const defaultPaginationOptions = {
   pageNumber: 1,
   pageLength: 20,
   pageSize: 20
-}
+};
+
+export const defaultEntityDefinition: Definition = {
+  name: "",
+  properties: []
+};

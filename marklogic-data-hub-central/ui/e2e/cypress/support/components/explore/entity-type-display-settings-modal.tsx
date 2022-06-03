@@ -41,15 +41,19 @@ class EntityTypeDisplaySettingsModal {
   }
 
   getPropertiesOnHoverDropdown(entityType: string) {
-    return cy.get(`[id="${entityType}-entityProperties-select-wrapper"]`).scrollIntoView();
+    return cy.get(`div[aria-label="${entityType}-property-to-match-dropdown"]`).scrollIntoView();
   }
 
-  getPropertiesOnHoverDropdownOption(entityType: string, option: string) {
-    return cy.get(`[aria-label="${entityType}-propertiesOption-${option}"]`).first().scrollIntoView();
+  getPropertiesOnHoverDropdownOption(option: string) {
+    return cy.get(`[aria-label="${option}-option"]`).first().scrollIntoView();
+  }
+
+  getPropertiesOnHoverExpandDropdownOption(option: string) {
+    return cy.get(`[aria-label="${option}-option"]`).first().scrollIntoView().find(`[aria-label="icon: caret-down"]`);
   }
 
   getPropertiesOnHoverDropdownCloseOption(entityType: string, option: string) {
-    return cy.get(`[aria-label="${entityType}-propertiesOption-${option}"]`).first().parent().parent().scrollIntoView().find(`[aria-label^="Remove"]`);
+    return this.getPropertiesOnHoverDropdown(entityType).first().find(`[title="${option}"]`).find(`[class="rc-tree-select-selection-item-remove-icon"]`);
   }
 
   getModalCloseButton() {

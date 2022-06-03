@@ -7,27 +7,22 @@ import {EntityTypeColorPicker, HCTable, HCButton, HCTooltip, HCIconPicker, HCPop
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import tooltipsConfig from "@config/explorer-tooltips.config";
 import {themeColors} from "@config/themes.config";
-import {defaultIcon} from "@config/explore.config";
+import {defaultIcon, defaultEntityDefinition} from "@config/explore.config";
 import {UserContext} from "@util/user-context";
 import {HubCentralConfigContext} from "@util/hubCentralConfig-context";
 import Highlighter from "react-highlight-words";
 import * as _ from "lodash";
-// ToDo: For use in DHFPROD-8869: Modify Explore Settings to Change hover properties (Structured properties only)
-// import EntityPropertyTreeSelect from "../../entity-property-tree-select/entity-property-tree-select";
-// import axios from "axios";
-// import {definitionsParser} from "@util/data-conversion";
-// import {Definition} from "../../../types/modeling-types";
+import EntityPropertyTreeSelect from "../../entity-property-tree-select/entity-property-tree-select";
+import {definitionsParser} from "@util/data-conversion";
+import {convertArrayOfEntitiesToObject} from "@util/modeling-utils";
+import {primaryEntityTypes} from "@api/modeling";
+import {Definition} from "../../../types/modeling-types";
 
 type Props = {
   isVisible: boolean;
   toggleModal: (reloadData: boolean) => void;
   entityDefinitionsArray: any;
 };
-// ToDo: For use in DHFPROD-8869: Modify Explore Settings to Change hover properties (Structured properties only)
-// const DEFAULT_ENTITY_DEFINITION: Definition = {
-//   name: "",
-//   properties: []
-// };
 
 enum TableColumns {
   EntityType,
@@ -47,6 +42,7 @@ const EntityTypeDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal
   const [filteredSettingsData, setFilteredSettingsData] = useState<any[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [searchText, setSearchText] = useState("");
+  const [entityModels, setEntityModels] = useState<any>({});
 
   const {hubCentralConfig, updateHubCentralConfigOnServer} = useContext(HubCentralConfigContext);
 
@@ -85,27 +81,21 @@ const EntityTypeDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal
     });
   }, [exploreSettingsData, searchText]);
 
-  // ToDo: For use in DHFPROD-8869: Modify Explore Settings to Change hover properties (Structured properties only)
-  // useEffect(() => {
-  //   getEntityModels();
-  // }, []);
-  // const [entityModels, setEntityModels] = useState<any>({});
-  // const getEntityModels = async () => {
-  //   try {
-  //     let response = await axios.get(`/api/models/primaryEntityTypes`);
-  //     if (response.status === 200) {
-  //       let models:any = {};
-  //       response.data.forEach(model => {
-  //         // model has an entityTypeId property, perhaps that should be used instead of entityName?
-  //         models[model.entityName] = model;
-  //       });
-  //       setEntityModels({...models});
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching entities", error);
-  //     handleError(error);
-  //   }
-  // };
+  useEffect(() => {
+    getEntityModels();
+  }, []);
+
+  const getEntityModels = async () => {
+    try {
+      let response = await primaryEntityTypes();
+      if (response.status === 200) {
+        setEntityModels({...convertArrayOfEntitiesToObject(response.data)});
+      }
+    } catch (error) {
+      console.error("Error fetching entities", error);
+      handleError(error);
+    }
+  };
 
   const closeModal = () => {
     toggleModal(false);
@@ -113,9 +103,9 @@ const EntityTypeDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal
 
   const columnSorter = (a: any, b: any, order: string) => order === "asc" ? a.localeCompare(b) : b.localeCompare(a);
 
-  const renderOptions = (entityType, includeStructured: boolean = false) => {
+  const renderOptions = (entityType) => {
     let entityTypeDef:any = entityDefinitionsArray.find(entity => entity.name === entityType);
-    const options:any = entityTypeDef?.properties?.filter(property => includeStructured || property.ref === "").map(item => ({value: item?.name, label: item?.name}));
+    const options:any = entityTypeDef?.properties?.filter(property => property.ref === "").map(item => ({value: item?.name, label: item?.name}));
     return options;
   };
 
@@ -132,9 +122,7 @@ const EntityTypeDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal
         entityData.label = e.value;
         break;
       case TableColumns.PropertiesOnHover:
-        entityData.propertiesOnHover = e.map(option => option.value);
-        // ToDo: For use in DHFPROD-8869: Modify Explore Settings to Change hover properties (Structured properties only)
-        // entityData.propertiesOnHover = [e];
+        entityData.propertiesOnHover = e.map(property => property.replaceAll(" > ", "."));
         break;
       }
     };
@@ -270,45 +258,24 @@ const EntityTypeDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal
       text: getHeaderLabel("Properties on Hover", entityTypeDisplaySettings.propertiesOnHover),
       width: "35%",
       formatter: (text, row) => {
+        let definitions: any[] = [];
+        if (entityModels[row.entityType]?.model.definitions) {
+          definitions = definitionsParser(entityModels[row.entityType]?.model.definitions);
+        }
+        let entityTypeDefinition: Definition = definitions.find(entityDefinition => entityDefinition.name === row.entityType) || defaultEntityDefinition;
         return (
-          <Select
-            id={`${row.entityType}-entityProperties-select-wrapper`}
-            inputId={`${row.entityType}-entityProperties-select`}
-            components={{MenuList: props => MenuList(`${row.entityType}-entityProperties`, props)}}
-            defaultValue={row.propertiesOnHover?.map(property => ({value: property, label: property}))}
-            value={row.propertiesOnHover?.map(property => ({value: property, label: property}))}
-            isMulti
-            options={renderOptions(row.entityType, true)}
-            classNamePrefix="select"
-            aria-label={`${row.entityType}-propertiesOnHover`}
-            onChange={(e) => onColumnValueChange(row, e, TableColumns.PropertiesOnHover)}
-            formatOptionLabel={({value, label}) => {
-              return (
-                <span data-testid={`${row.entityType}-propertiesOption-${value}`} aria-label={`${row.entityType}-propertiesOption-${value}`}>
-                  {label}
-                </span>
-              );
+          <EntityPropertyTreeSelect
+            isForMerge={true}
+            propertyDropdownOptions={entityTypeDefinition.properties}
+            entityDefinitionsArray={definitions}
+            value={row.propertiesOnHover?.length ? row.propertiesOnHover.map(property => property.replaceAll(".", " > ")) : undefined}
+            onValueSelected={(value) => {
+              onColumnValueChange(row, value, TableColumns.PropertiesOnHover);
             }}
-            styles={reactSelectThemeConfig}
+            multiple={true}
+            identifier={row.entityType}
           />
         );
-        // ToDo: For use in DHFPROD-8869: Modify Explore Settings to Change hover properties (Structured properties only)
-        // let definitions: any[] = [];
-        // if (entityModels[row.entityType]?.model.definitions) {
-        //   definitions = definitionsParser(entityModels[row.entityType]?.model.definitions);
-        // }
-        // let entityTypeDefinition: Definition = definitions.find(entityDefinition => entityDefinition.name === row.entityType) || DEFAULT_ENTITY_DEFINITION;
-        // return (
-        //   <EntityPropertyTreeSelect
-        //     isForMerge={true}
-        //     propertyDropdownOptions={entityTypeDefinition.properties}
-        //     entityDefinitionsArray={definitions}
-        //     value={row.propertiesOnHover?.length ? row.propertiesOnHover[0] : undefined}
-        //     onValueSelected={(value) => {
-        //       onColumnValueChange(row, value, TableColumns.PropertiesOnHover);
-        //     }}
-        //   />
-        // );
       }
     }
   ];

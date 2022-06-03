@@ -10,14 +10,19 @@ import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import graphExplore from "../../support/pages/graphExplore";
 import {ExploreGraphNodes} from "../../support/types/explore-graph-nodes";
 
-const defaultSelectText = "Select...";
+const defaultSelectLabel = "Select...";
+const defaultSelectProperty = "Select property";
 const defaultEntityTypeData = {
   name: BaseEntityTypes.CUSTOMER,
   properties: {
     name: "name",
     email: "email",
     nicknames: "nicknames",
-    shipping: "shipping"
+    shipping: "shipping",
+    shippingStreet: {
+      value: "street",
+      label: "shipping > street"
+    }
   },
   propertiesValues: {
     id: 102,
@@ -32,7 +37,7 @@ const defaultEntityTypeData = {
 const propertiesOnHoverData = {
   name: "name: Adams Cole",
   email: "email: adamscole@nutralab.com",
-  shipping: "shipping:"
+  shippingStreet: "shipping > street:"
 };
 // We must have the same color in rgb and hex because the browser to apply the background changes it to rgb even if the value is passed in hex
 // "#FFF0A3" == "rgb(255, 240, 163)"
@@ -106,22 +111,23 @@ describe("Entity Type Settings Modal", () => {
     entityTypeDisplaySettingsModal.getEntityTypeIconButtonWrapper(defaultEntityTypeData.name).should("have.attr", "data-icon", newEntityTypeData.icon);
 
     cy.log("**Verify no label are selected, select new one and check the selection**");
-    entityTypeDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("have.text", defaultSelectText);
+    entityTypeDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("have.text", defaultSelectLabel);
     entityTypeDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).click();
     entityTypeDisplaySettingsModal.getEntityLabelDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.name).click();
     entityTypeDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.name);
 
     cy.log("**Verify no propertiesOnHover are selected, select new one and check the selection**");
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("have.text", defaultSelectText);
+    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultSelectProperty);
     entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.name).click();
+    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.properties.name).click({force: true});
     entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.email).click();
+    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.properties.email).click({force: true});
     entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.shipping).click();
+    entityTypeDisplaySettingsModal.getPropertiesOnHoverExpandDropdownOption(defaultEntityTypeData.properties.shipping).click({force: true});
+    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.properties.shippingStreet.value).click({force: true});
     entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.name);
     entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.email);
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.shipping);
+    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.shippingStreet.label);
 
     cy.log("**Cancel the edition and verify that the modal close**");
     entityTypeDisplaySettingsModal.getModalCancelButton().click();
@@ -134,8 +140,8 @@ describe("Entity Type Settings Modal", () => {
       expect(Cypress._.toLower(color)).equal(Cypress._.toLower(defaultEntityTypeData.color.HEX));
     });
     entityTypeDisplaySettingsModal.getEntityTypeIconButtonWrapper(defaultEntityTypeData.name).should("have.attr", "data-icon", defaultEntityTypeData.icon);
-    entityTypeDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("have.text", defaultSelectText);
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("have.text", defaultSelectText);
+    entityTypeDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("have.text", defaultSelectLabel);
+    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultSelectProperty);
 
     cy.log("**Close the modal**");
     entityTypeDisplaySettingsModal.getModalCloseButton().click();
@@ -180,14 +186,15 @@ describe("Entity Type Settings Modal", () => {
 
     cy.log("**Select propertiesOnHover and check the selection**");
     entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.name).click();
+    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.properties.name).click({force: true});
     entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.email).click();
+    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.properties.email).click({force: true});
     entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.shipping).click();
+    entityTypeDisplaySettingsModal.getPropertiesOnHoverExpandDropdownOption(defaultEntityTypeData.properties.shipping).click({force: true});
+    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.properties.shippingStreet.value).click({force: true});
     entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.name);
     entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.email);
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.shipping);
+    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.shippingStreet.label);
 
     cy.log("**Clear filter and check table rows");
     entityTypeDisplaySettingsModal.getIconSearch().click({force: true});
@@ -212,7 +219,7 @@ describe("Entity Type Settings Modal", () => {
     entityTypeDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.name);
     entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.name);
     entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.email);
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.shipping);
+    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.shippingStreet.label);
 
     cy.log("**Close the modal**");
     entityTypeDisplaySettingsModal.getModalCloseButton().click();
@@ -244,7 +251,7 @@ describe("Entity Type Settings Modal", () => {
 
       cy.findByText(propertiesOnHoverData.name).should("exist");
       cy.findByText(propertiesOnHoverData.email).should("exist");
-      cy.findByText(propertiesOnHoverData.shipping).should("exist");
+      cy.findByText(propertiesOnHoverData.shippingStreet).should("exist");
     });
 
     graphExploreSidePanel.getSidePanel().scrollIntoView().should("be.visible");

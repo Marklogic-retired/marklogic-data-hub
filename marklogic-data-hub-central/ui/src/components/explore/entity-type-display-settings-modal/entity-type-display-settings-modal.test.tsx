@@ -23,7 +23,7 @@ describe("Entity type display settings modal", () => {
   afterEach(cleanup);
 
   test("Render entity type display settings modal", () => {
-    const {getByLabelText} = render(
+    const {getByLabelText, getAllByLabelText} = render(
       <Router>
         <HubCentralConfigContext.Provider value={defaultContextOptions}>
           <EntityTypeDisplaySettingsModal toggleModal={jest.fn()} isVisible={true} entityDefinitionsArray={entityDefinitionsArray}/>
@@ -34,7 +34,7 @@ describe("Entity type display settings modal", () => {
     expect(getByLabelText(`${entityType}-color-button`)).toBeInTheDocument();
     expect(getByLabelText(`${entityType}-icon-picker`)).toBeInTheDocument();
     expect(getByLabelText(`${entityType}-label-select-dropdown`)).toBeInTheDocument();
-    expect(getByLabelText(`${entityType}-propertiesOnHover`)).toBeInTheDocument();
+    expect(getAllByLabelText(`${entityType}-property-to-match-dropdown`)[0]).toBeInTheDocument();
   });
 
   test("Open color and icon picker, choose a color and save", () => {

@@ -14,7 +14,8 @@ import homePage from "../../support/pages/home";
 import graphExploreSidePanel from "../../support/components/explore/graph-explore-side-panel";
 import entityTypeDisplaySettingsModal from "../../support/components/explore/entity-type-display-settings-modal";
 
-const defaultSelectText = "Select...";
+const defaultSelectLabel = "Select...";
+const defaultSelectProperty = "Select property";
 const defaultEntityTypeData = {
   name: BaseEntityTypes.BABYREGISTRY,
   properties: {
@@ -77,19 +78,19 @@ describe("Entity display settings in model tile", () => {
     graphViewSidePanel.getEntityDescription().should("be.visible");
 
     cy.log("**Verify no label are selected, select new one and check the selection**");
-    graphViewSidePanel.getEntityLabelDropdown(defaultEntityTypeData.name).should("have.text", defaultSelectText);
+    graphViewSidePanel.getEntityLabelDropdown(defaultEntityTypeData.name).should("have.text", defaultSelectLabel);
     graphViewSidePanel.getEntityLabelDropdown(defaultEntityTypeData.name).click();
     graphViewSidePanel.getEntityLabelDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.ownedBy).click();
     graphViewSidePanel.getEntityLabelDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.ownedBy);
 
     cy.log("**Verify no propertiesOnHover are selected, select new one and check the selection**");
-    graphViewSidePanel.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("have.text", defaultSelectText);
+    graphViewSidePanel.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultSelectProperty);
     graphViewSidePanel.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
-    graphViewSidePanel.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.babyRegistryId).click({force: true});
+    graphViewSidePanel.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.properties.babyRegistryId).click({force: true});
     graphViewSidePanel.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
-    graphViewSidePanel.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.arrivalDate).click({force: true});
+    graphViewSidePanel.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.properties.arrivalDate).click({force: true});
     graphViewSidePanel.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
-    graphViewSidePanel.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.ownedBy).click({force: true});
+    graphViewSidePanel.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.properties.ownedBy).click({force: true});
     graphViewSidePanel.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.babyRegistryId);
     graphViewSidePanel.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.arrivalDate);
     graphViewSidePanel.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.ownedBy);
