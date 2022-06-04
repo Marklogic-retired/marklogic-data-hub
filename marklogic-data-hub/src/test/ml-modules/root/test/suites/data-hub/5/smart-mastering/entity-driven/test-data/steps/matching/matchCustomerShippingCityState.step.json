@@ -14,6 +14,7 @@
   "targetFormat": "JSON",
   "permissions": "data-hub-common,read,data-hub-common-writer,update",
   "provenanceGranularityLevel": "fine",
+  "dataFormat": "json",
   "matchRulesets": [
     {
       "name": "shippingCityState",

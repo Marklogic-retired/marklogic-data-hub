@@ -83,17 +83,8 @@
           "collections": {
             "content": []
           },
-          "scoring": {
-            "add": [],
-            "expand": [],
-            "reduce": []
-          },
-          "actions": {
-            "action": []
-          },
-          "thresholds": {
-            "threshold": []
-          },
+          "matchRulesets":  [],
+          "thresholds": [],
           "tuning": {
             "maxScan": 200
           }

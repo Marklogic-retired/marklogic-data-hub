@@ -1,7 +1,9 @@
 {
   "name": "myMatchMergeFlow",
   "options": {
-    "collections": ["myMatchMergeFlow"]
+    "collections": [
+      "myMatchMergeFlow"
+    ]
   },
   "description": "flow description",
   "steps": {
@@ -18,7 +20,9 @@
         "targetDatabase": "data-hub-STAGING",
         "sourceQuery": null,
         "outputFormat": "json",
-        "collections": ["default-ingestion"],
+        "collections": [
+          "default-ingestion"
+        ],
         "permissions": "data-hub-operator,read,data-hub-operator,update"
       }
     },
@@ -28,6 +32,7 @@
       "options": {
         "sourceDatabase": "data-hub-STAGING",
         "targetDatabase": "data-hub-FINAL",
+        "collections": ["person"],
         "permissions": "data-hub-operator,read,data-hub-operator,update"
       }
     },
@@ -36,8 +41,10 @@
       "stepDefinitionType": "MATCHING",
       "options": {
         "targetEntity": "person",
-        "sourceQuery": "cts.collectionQuery('mapping')",
-        "collections": ["myMatchingCollection"],
+        "sourceQuery": "cts.collectionQuery('person')",
+        "collections": [
+          "myMatchingCollection"
+        ],
         "permissions": "data-hub-operator,read,data-hub-operator,update",
         "provenanceGranularityLevel": "fine",
         "sourceDatabase": "data-hub-FINAL",
@@ -45,7 +52,7 @@
         "matchOptions": {
           "dataFormat": "json",
           "propertyDefs": {
-            "property": [
+            "properties": [
               {
                 "namespace": "",
                 "localname": "firstName",
@@ -68,49 +75,64 @@
               }
             ]
           },
-          "algorithms": {
-            "algorithm": []
-          },
-          "scoring": {
-            "add": [
-              {
-                "propertyName": "email",
-                "weight": "50"
-              },
-              {
-                "propertyName": "lastName",
-                "weight": "12"
-              },
-              {
-                "propertyName": "firstName",
-                "weight": "6"
-              },
-              {
-                "propertyName": "gender",
-                "weight": "3"
-              }
-            ],
-            "expand": [],
-            "reduce": []
-          },
-          "thresholds": {
-            "threshold": [
-              {
-                "above": "30",
-                "label": "Possible Match"
-              },
-              {
-                "above": "50",
-                "label": "Likely Match",
-                "action": "notify"
-              },
-              {
-                "above": "68",
-                "label": "Definitive Match",
-                "action": "merge"
-              }
-            ]
-          },
+          "matchRulesets": [
+            {
+              "name": "E-Mail",
+              "weight": 50,
+              "matchRules": [
+                {
+                  "entityPropertyPath": "email",
+                  "matchType": "exact"
+                }
+              ]
+            },
+            {
+              "name": "Last Name",
+              "weight": 12,
+              "matchRules": [
+                {
+                  "entityPropertyPath": "lastName",
+                  "matchType": "exact"
+                }
+              ]
+            },
+            {
+              "name": "First Name",
+              "weight": 6,
+              "matchRules": [
+                {
+                  "entityPropertyPath": "firstName",
+                  "matchType": "exact"
+                }
+              ]
+            },
+            {
+              "name": "Gender",
+              "weight": 3,
+              "matchRules": [
+                {
+                  "entityPropertyPath": "gender",
+                  "matchType": "exact"
+                }
+              ]
+            }
+          ],
+          "thresholds": [
+            {
+              "score": 30,
+              "thresholdName": "Possible Match"
+            },
+            {
+              "score": 50,
+              "thresholdName": "Likely Match",
+              "action": "notify"
+            },
+            {
+              "score": 68,
+              "thresholdName": "Definitive Match",
+              "action": "merge"
+            }
+          ],
           "tuning": {
             "maxScan": "200"
           }
@@ -163,12 +185,14 @@
             {
               "default": "true",
               "maxSources": "1",
-              "sourceWeights": [{
-                "source": {
-                  "name": "A",
-                  "weight": "10"
+              "sourceWeights": [
+                {
+                  "source": {
+                    "name": "A",
+                    "weight": "10"
+                  }
                 }
-              }]
+              ]
             }
           ]
         }

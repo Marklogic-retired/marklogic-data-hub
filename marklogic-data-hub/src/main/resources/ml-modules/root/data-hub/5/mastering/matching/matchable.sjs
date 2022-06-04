@@ -1,8 +1,13 @@
 'use strict';
+const consts = require("/data-hub/5/impl/consts.sjs");
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const blocks = require("/com.marklogic.smart-mastering/matcher-impl/blocks-impl.xqy");
+const {requireFunction} = require("../../impl/hub-utils.sjs");
+const getBlocks = hubUtils.requireFunction("/com.marklogic.smart-mastering/matcher-impl/blocks-impl.xqy", "getBlocks");
 const cachedInterceptorModules = {};
+const matchingDebugTraceEnabled = xdmp.traceEnabled(consts.TRACE_MATCHING_DEBUG);
+const matchingTraceEnabled = xdmp.traceEnabled(consts.TRACE_MATCHING) || matchingDebugTraceEnabled;
+const matchingTraceEvent = xdmp.traceEnabled(consts.TRACE_MATCHING) ? consts.TRACE_MATCHING : consts.TRACE_MATCHING_DEBUG;
 
 function retrieveInterceptorFunction(interceptorObj, interceptorType) {
   let interceptorModule = cachedInterceptorModules[interceptorObj.path];
@@ -36,12 +41,18 @@ function applyInterceptors(interceptorType, accumulated, interceptors, ...additi
  */
 class Matchable {
   constructor(matchStep, stepContext) {
-    this.matchStep = matchStep;
+    // update the match step if using the legacy format
+    if (matchStep.scoring) {
+      const updateMatchOptions = hubUtils.requireFunction("/data-hub/5/data-services/mastering/updateMatchOptionsLib.sjs", "updateMatchOptions");
+      this.matchStep = updateMatchOptions(matchStep);
+    } else {
+      this.matchStep = matchStep;
+    }
     this.stepContext = stepContext;
     const targetEntityType = this.matchStep.targetEntityType;
     if (targetEntityType) {
-      const entities = require("/data-hub/core/models/entities.sjs");
-      this._model = entities.getEntityModel(targetEntityType);
+      const getEntityModel = hubUtils.requireFunction("/data-hub/core/models/entities.sjs", "getEntityModel");
+      this._model = getEntityModel(targetEntityType);
     }
     if (!this._model) {
       this._model = new GenericMatchModel(this.matchStep, {collection: targetEntityType ? targetEntityType.substring(targetEntityType.lastIndexOf("/") + 1):null});
@@ -66,6 +77,9 @@ class Matchable {
     if (!this._baselineQuery) {
       const firstBaseline = this._model.instanceQuery();
       this._baselineQuery = applyInterceptors("Baseline Query Interceptor", firstBaseline, this.matchStep.baselineQueryInterceptors);
+      if (matchingTraceEnabled) {
+        xdmp.trace(matchingTraceEvent, `Initializing the baseline match query: ${xdmp.describe(this._baselineQuery, Sequence.from([]), Sequence.from([]))}`);
+      }
     }
     return this._baselineQuery;
   }
@@ -79,6 +93,9 @@ class Matchable {
       this._matchRulesetDefinitions = (this.matchStep.matchRulesets || [])
         .map((ruleset) => new MatchRulesetDefinition(ruleset, this))
         .sort((a, b) => b.weight() - a.weight());
+      if (matchingTraceEnabled) {
+        xdmp.trace(matchingTraceEvent, `Initializing the match ruleset definitions: ${xdmp.toJsonString(this._matchRulesetDefinitions.map((def) => def.raw()))}`);
+      }
     }
     return this._matchRulesetDefinitions;
   }
@@ -90,9 +107,13 @@ class Matchable {
    */
   thresholdDefinitions() {
     if (!this._thresholdDefinitions) {
-      this._thresholdDefinitions = this.matchStep.thresholds.map((thresholdObj) => {
+      const thresholds = this.matchStep.thresholds && this.matchStep.thresholds.threshold ? this.matchStep.thresholds.threshold: this.matchStep.thresholds;
+      this._thresholdDefinitions = thresholds.map((thresholdObj) => {
         return new ThresholdDefinition(thresholdObj, this);
       }).sort((a, b) => a.score() - b.score());
+      if (matchingTraceEnabled) {
+        xdmp.trace(matchingTraceEvent, `Initializing the threshold definitions: ${xdmp.toJsonString(this._thresholdDefinitions.map((def) => def.raw()))}`);
+      }
     }
     return this._thresholdDefinitions;
   }
@@ -106,7 +127,7 @@ class Matchable {
    */
   filterQuery(documentNode) {
     let filterQuery, notDocumentQuery, stepFilterQuery;
-    let excludeDocuments = Sequence.from([xdmp.nodeUri(documentNode), blocks.getBlocks(fn.baseUri(documentNode)).xpath("text()")]);
+    let excludeDocuments = Sequence.from([xdmp.nodeUri(documentNode), getBlocks(fn.baseUri(documentNode)).xpath("text()")]);
     if (fn.exists(excludeDocuments)) {
       notDocumentQuery = cts.documentQuery(excludeDocuments.toArray());
     }
@@ -119,6 +140,9 @@ class Matchable {
       filterQuery = cts.notQuery(notDocumentQuery);
     } else if (stepFilterQuery) {
       filterQuery = stepFilterQuery;
+    }
+    if (matchingTraceEnabled) {
+      xdmp.trace(matchingTraceEvent, `Base filter query set to ${xdmp.describe(filterQuery, Sequence.from([]), Sequence.from([]))} for ${xdmp.describe(documentNode, Sequence.from([]), Sequence.from([]))}`);
     }
     return applyInterceptors("Filter Query Interceptor", filterQuery, this.matchStep.filterQueryInterceptors, documentNode);
   }
@@ -135,7 +159,26 @@ class Matchable {
     const matchingRulesetDefinitions = this.matchRulesetDefinitions();
     let defaultScore = 0;
     for (const matchRuleset of matchingRulesetDefinitions) {
-      defaultScore += matchRuleset.score(contentObjectA, contentObjectB);
+      const rulesetScore = Math.max(matchRuleset.score(contentObjectA, contentObjectB), matchRuleset.score(contentObjectB, contentObjectA));
+      if (matchingDebugTraceEnabled) {
+        xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Applying rule ${matchRuleset.name()} for ${xdmp.describe(contentObjectA.value, Sequence.from([]), Sequence.from([]))} and ${xdmp.describe(contentObjectB.value, Sequence.from([]), Sequence.from([]))} with score ${rulesetScore}`);
+      }
+      if (rulesetScore !== 0) {
+        if (matchRuleset.reduce()) {
+          if (matchingDebugTraceEnabled) {
+            xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Decreasing score by ${rulesetScore} for ${xdmp.describe(contentObjectA.value, Sequence.from([]), Sequence.from([]))} and ${xdmp.describe(contentObjectB.value, Sequence.from([]), Sequence.from([]))}`);
+          }
+          defaultScore -= rulesetScore;
+        } else {
+          if (matchingDebugTraceEnabled) {
+            xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Increasing score by ${rulesetScore}  for ${xdmp.describe(contentObjectA.value, Sequence.from([]), Sequence.from([]))} and ${xdmp.describe(contentObjectB.value, Sequence.from([]), Sequence.from([]))}`);
+          }
+          defaultScore += rulesetScore;
+        }
+      }
+    }
+    if (matchingTraceEnabled) {
+      xdmp.trace(matchingTraceEvent, `Base score set to ${defaultScore} for ${xdmp.describe(contentObjectA.value, Sequence.from([]), Sequence.from([]))} and ${xdmp.describe(contentObjectB.value, Sequence.from([]), Sequence.from([]))}`);
     }
     return applyInterceptors("Score Document Interceptor", defaultScore, this.matchStep.scoreDocumentInterceptors, contentObjectA, contentObjectB, matchingRulesetDefinitions);
   }
@@ -149,8 +192,17 @@ class Matchable {
   buildActionDetails(matchingDocumentSet, thresholdBucket) {
     const action = thresholdBucket.action();
     const actionUri = thresholdBucket.generateActionURI(matchingDocumentSet);
-    const threshold = thresholdBucket.name();
-    const uris = matchingDocumentSet.map((contentObj) => contentObj.uris);
+    const thresholdName = thresholdBucket.name();
+    const uris = matchingDocumentSet
+        .map((contentObj) => {
+          if (contentObj.uri.startsWith("/com.marklogic.smart-mastering/merged/")) {
+            return fn.distinctValues(contentObj.value.xpath("/*:envelope/*:headers/*:merges/*:document-uri")).toArray();
+          }
+          return contentObj.uri;
+        })
+        .reduce((acc, cur) => acc.concat(cur), [])
+        .filter((uri, index, uris) => index === uris.indexOf(uri))
+        .sort();
     let actionBody;
     // TODO: when we refactor merging code we can likely clean up the awkward "function", "at" property names and remove the namespace property
     if (action === "custom") {
@@ -158,19 +210,20 @@ class Matchable {
         action: "customActions",
         actions: [
           {
-            threshold,
+            thresholdName,
             uris,
             "function": thresholdBucket.actionModuleFunction(),
             "at": thresholdBucket.actionModulePath(),
             "namespace": thresholdBucket.actionModuleNamespace(),
-            matchResults: matchingDocumentSet
+            matchResults: matchingDocumentSet.filter((match) => match.uri !== actionUri)
           }
         ]
       };
     } else {
       actionBody = {
         action,
-        threshold,
+        // TODO This should be consistent with thresholdName in custom actions
+        threshold: thresholdName,
         uris
       };
     }
@@ -188,8 +241,15 @@ class Matchable {
    * @since 5.8.0
    */
   propertyQuery(propertyPath, values) {
+    if (matchingTraceEnabled) {
+      xdmp.trace(matchingTraceEvent, `Property query for ${propertyPath} with values ${xdmp.describe(values, Sequence.from([]), Sequence.from([]))}`);
+    }
     const indexes = this.model().propertyIndexes(propertyPath);
-    if (indexes && indexes.length) {
+    const valuesAreQueries = values instanceof cts.query;
+    if (matchingDebugTraceEnabled) {
+      xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Property query for ${propertyPath} has query values? ${valuesAreQueries}`);
+    }
+    if (indexes && indexes.length && !valuesAreQueries) {
       const scalarType = cts.referenceScalarType(indexes[0]);
       const collation = (scalarType === "string") ? cts.referenceCollation(indexes[0]): null;
       let typedValues = [];
@@ -203,12 +263,60 @@ class Matchable {
       }
       return cts.rangeQuery(indexes, typedValues)
     } else {
-      const propertyDefinition = this.model().propertyDefinition(propertyPath);
-      const localname = propertyDefinition.localname;
-      return cts.orQuery([
-        cts.jsonPropertyValueQuery(localname, values),
-        cts.elementValueQuery(fn.QName(propertyDefinition.namespace, localname), values)
-      ]);
+      const pathParts = propertyPath.split(".").filter((path) => path);
+      const propertyDefinitions = pathParts
+        .map((propertyPart, index) => this.model().propertyDefinition(pathParts.slice(0,index + 1).join(".")));
+      const propertyQuery = this._buildQueryFromPropertyDefinitionsAndValues(propertyDefinitions, values);
+      if (matchingTraceEnabled) {
+        xdmp.trace(matchingTraceEvent, `Property query for ${propertyPath} is ${xdmp.describe(propertyQuery, Sequence.from([]), Sequence.from([]))}`);
+      }
+      return propertyQuery;
+    }
+  }
+
+  /*
+   * Returns a query given an XPath and a set of values based on the model associated with Matchable.
+   * This will likely be reused and so can be moved to a common at some point.
+   * @param {string} XPath
+   * @param {item*} values
+   * @return {cts.query}
+   * @since 5.8.0
+   */
+  xpathQuery(xpath, values, localNamespaces = {}) {
+    if (matchingTraceEnabled) {
+      xdmp.trace(matchingTraceEvent, `XPath query for ${xpath} with values ${xdmp.describe(values, Sequence.from([]), Sequence.from([]))}`);
+    }
+    const namespaces = localNamespaces;
+    const xpathSteps = xpath.split("/").filter((step) => step);
+    const propertyDefinitions = xpathSteps
+      .map((xpathStep, index) => {
+        if (xpathStep.includes(":")) {
+          const [nsPrefix, localname] = xpathStep.split(":");
+          return {
+            namespace: namespaces[nsPrefix] || "",
+            localname
+          };
+        } else {
+          return { localname: xpathStep };
+        }
+      });
+    const xpathQuery = this._buildQueryFromPropertyDefinitionsAndValues(propertyDefinitions, values);
+    if (matchingTraceEnabled) {
+      xdmp.trace(matchingTraceEvent, `XPath query for ${xpath} is ${xdmp.describe(xpathQuery, Sequence.from([]), Sequence.from([]))}`);
+    }
+    return xpathQuery;
+  }
+
+  _buildQueryFromPropertyDefinitionsAndValues(propertyDefinitions, values) {
+    const valuesAreQueries = values instanceof cts.query;
+    const lastPropertyDefinitionIndex = propertyDefinitions.length - 1;
+    const lastPropertyDefinition = propertyDefinitions[lastPropertyDefinitionIndex];
+    const parentPropertyDefinitions = propertyDefinitions.slice(0,lastPropertyDefinitionIndex).reverse();
+    const localname = lastPropertyDefinition.localname;
+    if (this.matchStep.dataFormat === "json") {
+      return parentPropertyDefinitions.reduce((acc, propertyDef) => propertyDef.localname ? cts.jsonPropertyScopeQuery(propertyDef.localname, acc) : acc, valuesAreQueries ? values : cts.jsonPropertyValueQuery(localname, values));
+    } else {
+      return parentPropertyDefinitions.reduce((acc, propertyDef) => propertyDef.localname ? cts.elementQuery(fn.QName(propertyDef.namespace, propertyDef.localname), acc) : acc, valuesAreQueries ? values : cts.elementValueQuery(fn.QName(lastPropertyDefinition.namespace, localname), hubUtils.normalizeToArray(values).map((val) => (val instanceof cts.query) ? val : fn.string(val))));
     }
   }
 }
@@ -223,9 +331,17 @@ class MatchRulesetDefinition {
     return this.matchRuleset.name;
   }
 
+  reduce() {
+    return !!this.matchRuleset.reduce;
+  }
+
   _valueFunction(matchRule, model) {
     if (!matchRule._valueFunction) {
-      matchRule._valueFunction = (documentNode) => model.propertyValues(matchRule.entityPropertyPath, documentNode);
+      if (matchRule.documentXPath) {
+        matchRule._valueFunction = (documentNode) => documentNode.xpath(matchRule.documentXPath, matchRule.namespaces);
+      } else {
+        matchRule._valueFunction = (documentNode) => model.propertyValues(matchRule.entityPropertyPath, documentNode);
+      }
     }
     return matchRule._valueFunction;
   }
@@ -236,9 +352,13 @@ class MatchRulesetDefinition {
       let passMatchStep = this.matchable.matchStep;
       let convertToNode = false;
       let matchFunction;
+      let propertyQueryFunction = (values) => this.matchable.propertyQuery(matchRule.entityPropertyPath, values);
+      if (matchRule.documentXPath) {
+        propertyQueryFunction = (values) => this.matchable.xpathQuery(matchRule.documentXPath, values, matchRule.namespaces);
+      }
       switch (matchRule.matchType) {
         case "exact":
-          matchFunction = (values) => this.matchable.propertyQuery(matchRule.entityPropertyPath, values);
+          matchFunction = propertyQueryFunction;
           convertToNode = true;
           break;
         case "doubleMetaphone":
@@ -248,6 +368,10 @@ class MatchRulesetDefinition {
         case "synonym":
           matchFunction = hubUtils.requireFunction("/com.marklogic.smart-mastering/algorithms/thesaurus.xqy", "synonym");
           convertToNode = true;
+          break;
+        case "zip":
+          matchFunction = hubUtils.requireFunction("/com.marklogic.smart-mastering/algorithms/zip.xqy", "zip");
+          convertToNode = /\.xq[yml]?$/.test(matchRule.algorithmModulePath);
           break;
         case "custom":
           matchFunction = hubUtils.requireFunction(matchRule.algorithmModulePath, matchRule.algorithmFunction);
@@ -260,22 +384,45 @@ class MatchRulesetDefinition {
         passMatchRule = new NodeBuilder().addNode(passMatchRule).toNode();
         passMatchStep = new NodeBuilder().addNode(passMatchStep).toNode();
       }
-      matchRule._matchFunction = (values) => matchFunction(values, passMatchRule, passMatchStep);
+      const groupQueries = hubUtils.requireFunction("/data-hub/5/mastering/matching/matcher.sjs", "groupQueries");
+      matchRule._matchFunction = (values) => {
+        const results = matchFunction(values, passMatchRule, passMatchStep);
+        if (!results) {
+          return null;
+        }
+        if (fn.head(results) instanceof cts.query) {
+          return groupQueries(results, cts.orQuery);
+        }
+        return propertyQueryFunction(results);
+      };
     }
     return matchRule._matchFunction;
   }
 
   score(contentObjectA, contentObjectB) {
     const query = this.buildCtsQuery(contentObjectA.value);
+    if (matchingDebugTraceEnabled) {
+      xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Scoring ${xdmp.describe(contentObjectA.value)} with ${xdmp.describe(contentObjectB.value)} using cts.query: ${xdmp.describe(query, Sequence.from([]), Sequence.from([]))}.`);
+    }
     if (fn.exists(query) && cts.contains(contentObjectB.value, query)) {
+      if (matchingDebugTraceEnabled) {
+        xdmp.trace(consts.TRACE_MATCHING_DEBUG, "Query matched!");
+      }
       return this.weight();
+    }
+    if (matchingDebugTraceEnabled) {
+      xdmp.trace(consts.TRACE_MATCHING_DEBUG, "Query didn't match!");
     }
     return 0;
   }
 
   buildCtsQuery(documentNode) {
+    if (matchingTraceEnabled) {
+      xdmp.trace(matchingTraceEvent, `Building cts.query for ${xdmp.describe(documentNode)} with match ruleset ${this.name()}`);
+    }
     const queries = [];
     const model = this.matchable.model();
+    const groupQueries = hubUtils.requireFunction("/data-hub/5/mastering/matching/matcher.sjs", "groupQueries");
     for (const matchRule of this.matchRuleset.matchRules) {
       const valueFunction = this._valueFunction(matchRule, model);
       const matchFunction = this._matchFunction(matchRule, model);
@@ -284,14 +431,17 @@ class MatchRulesetDefinition {
       if (!query) {
         return null;
       }
-      else if(query instanceof cts.query) {
-        queries.push(query);
-      }
-      else {
-        queries.push(this.matchable.propertyQuery(matchRule.entityPropertyPath, query.toString()));
-      }
+      queries.push(query);
     }
-    return queries.length > 1 ? cts.andQuery(queries): queries[0];
+    if (matchingDebugTraceEnabled) {
+      xdmp.trace(consts.TRACE_MATCHING_DEBUG, `cts.query for ${xdmp.describe(documentNode)} with match ruleset ${this.name()} before optimization is ${xdmp.describe(queries)}`);
+    }
+    const optimizeCtsQueries = hubUtils.requireFunction("/data-hub/5/mastering/matching/matcher.sjs", "optimizeCtsQueries");
+    const optimizedCtsQuery = optimizeCtsQueries(groupQueries(queries, cts.andQuery));
+    if (matchingTraceEnabled) {
+      xdmp.trace(matchingTraceEvent, `cts.query for ${xdmp.describe(documentNode)} with match ruleset ${this.name()} returned ${xdmp.describe(optimizedCtsQuery, Sequence.from([]), Sequence.from([]))}`);
+    }
+    return optimizedCtsQuery;
   }
 
   weight() {
@@ -391,7 +541,7 @@ class ThresholdDefinition {
   }
 
   generateMD5Key(documentSet, salt) {
-    const values = documentSet.map((contentObj) => contentObj.uri);
+    const values = documentSet.map((contentObj) => contentObj.uri).sort();
     if (salt) {
       values.unshift(salt);
     }
@@ -404,6 +554,10 @@ class ThresholdDefinition {
     let key;
     switch (action) {
       case "merge":
+        const currentMergeDoc = matchingDocumentSet.find((contentObj) => contentObj.uri.startsWith("/com.marklogic.smart-mastering/merged/"));
+        if (currentMergeDoc) {
+          return currentMergeDoc.uri;
+        }
         key = this.generateMD5Key(matchingDocumentSet);
         const format = firstUri.substr(firstUri.lastIndexOf(".") + 1);
         return `/com.marklogic.smart-mastering/merged/${key}.${format}`;
@@ -440,7 +594,8 @@ class GenericMatchModel {
     this._indexesByPath = {};
     this._propertyDefinitionMap = {};
     this._namespaces = this.matchStep.propertyDefs.namespaces || {};
-    for (const propertyDefinition of this.matchStep.propertyDefs.properties) {
+    const allProperties = this.matchStep.propertyDefs.property ? this.matchStep.propertyDefs.property: this.matchStep.propertyDefs.properties;
+    for (const propertyDefinition of allProperties) {
       this._propertyDefinitionMap[propertyDefinition.name] = propertyDefinition;
     }
     const defaultCollection = matchStep.collections && matchStep.collections.content ? matchStep.collections.content : "mdm-content";
@@ -457,14 +612,14 @@ class GenericMatchModel {
 
   propertyValues(propertyPath, documentNode) {
     const propertyDefinition = this.propertyDefinition(propertyPath);
-    return propertyDefinition.path ? documentNode.xpath(propertyDefinition.path, this._namespaces) : documentNode.xpath(`.//ns:${propertyDefinition.localname}`, {ns: propertyDefinition.namespace});
+    return propertyDefinition.path ? documentNode.xpath(propertyDefinition.path, this._namespaces) : documentNode.xpath(`.//${propertyDefinition.namespace ? "ns:": ""}${propertyDefinition.localname}`, {ns: propertyDefinition.namespace});
   }
 
   propertyIndexes(propertyPath) {
     if (!this._indexesByPath[propertyPath]) {
       const pathIndexes = [];
       const propertyDefinition = this._propertyDefinitionMap[propertyPath];
-      if (propertyDefinition.indexReferences && propertyDefinition.indexReferences.length) {
+      if (propertyDefinition && propertyDefinition.indexReferences && propertyDefinition.indexReferences.length) {
         for (const indexReference of  propertyDefinition.indexReferences) {
           try {
             pathIndexes.push(cts.reference(indexReference));

@@ -7,6 +7,7 @@
   "selectedSource": "collection",
   "sourceQuery": "cts.collectionQuery(['raw-content'])",
   "collections": ["matchCustomers"],
+  "dataFormat": "xml",
   "matchRulesets": [
     {
       "name": "Name",

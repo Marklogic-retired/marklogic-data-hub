@@ -54,7 +54,7 @@ function match(entityTypeName, entityProperties, options) {
 function matchXml(entityXmlString, options) {
   const content = [{
     "uri": TEST_DOC_URI,
-    "value": xdmp.unquote(entityXmlString)
+    "value": fn.head(xdmp.unquote(entityXmlString))
   }];
   return fn.head(matching.main(content, options)).value.matchSummary;
 }

@@ -13,19 +13,19 @@
         "collections" : [ ],
         "permissions" : "data-hub-common,read,data-hub-common,update",
         "matchOptions" : {
-          "scoring" : {
-            "add" : [ {
-              "propertyName" : "customer_Id",
-              "weight" : "10"
+          "matchRulesets" : [{
+            "name": "customer_Id",
+            "weight": 10,
+            "matchRules" : [ {
+              "entityPropertyPath" : "customer_Id",
+              "matchType": "exact"
             } ]
-          },
-          "thresholds" : {
-            "threshold" : [ {
-              "above" : "9",
-              "label" : "merged",
+          }],
+          "thresholds" : [ {
+              "score" : 9,
+              "thresholdName" : "merged",
               "action" : "merge"
             } ]
-          }
         },
         "sourceCollection" : "raw-content",
         "outputFormat" : "json",
