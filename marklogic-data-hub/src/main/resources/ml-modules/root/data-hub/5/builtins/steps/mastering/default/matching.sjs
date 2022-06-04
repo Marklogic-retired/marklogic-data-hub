@@ -20,6 +20,8 @@ const hubCentralRequiredOptionProperty = 'matchRulesets';
 const emptySequence = Sequence.from([]);
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+const { Matchable } = require('/data-hub/5/mastering/matching/matchable.sjs');
+const { buildMatchSummary } = require('/data-hub/5/mastering/matching/matcher.sjs');
 
 /**
  * Filters out content that has either already been processed by the running Job or are side-car documents not intended for matching against
@@ -96,13 +98,10 @@ function main(content, options, stepExecutionContext) {
   if (fn.count(filteredContent) === 0) {
     return emptySequence;
   }
-  let matchSummaryJson = mastering.buildMatchSummary(
-    filteredContent,
-    options,
-    options.filterQuery ? cts.query(options.filterQuery) : cts.trueQuery(),
-    stepExecutionContext != null ? stepExecutionContext.fineProvenanceIsEnabled() : false
+  let matchSummaryJson = buildMatchSummary(
+    new Matchable(options.matchOptions || options),
+    filteredContent
   );
-
   return buildResult(matchSummaryJson, options, collections);
 }
 

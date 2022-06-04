@@ -5,6 +5,7 @@ function updateMatchOptions(opt)
   let matchRulesets = [];
   let thresholds = [];
   let newOpt = {
+    targetEntityType: opt.targetEntityType || opt.targetEntity,
     matchRulesets: matchRulesets,
     thresholds: thresholds
   };

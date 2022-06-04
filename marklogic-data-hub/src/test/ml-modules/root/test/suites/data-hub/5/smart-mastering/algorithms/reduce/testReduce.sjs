@@ -16,7 +16,7 @@ const convertedOptions = {
     "weight": 5,
     "reduce": true,
     "matchRules": [{
-      "entityPropertyPath": ["street"],
+      "entityPropertyPath": "street",
       "matchType": "exact",
       "options": {}
     }]

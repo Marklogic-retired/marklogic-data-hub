@@ -94,5 +94,8 @@ module.exports = {
   TRACE_FLOW_DEBUG: "hub-flow-debug",
   TRACE_MAPPING: "hub-mapping",
   TRACE_ENTITY: "hub-entity",
-  TRACE_MAPPING_DEBUG: "hub-mapping-debug"
+  TRACE_ENTITY_DEBUG: "hub-entity-debug",
+  TRACE_MAPPING_DEBUG: "hub-mapping-debug",
+  TRACE_MATCHING: "hub-matching",
+  TRACE_MATCHING_DEBUG: "hub-matching-debug"
 };
