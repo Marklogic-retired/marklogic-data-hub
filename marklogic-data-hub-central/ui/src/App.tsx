@@ -23,8 +23,9 @@ import {themes, themeMap} from "@config/themes.config";
 import {getEnvironment} from "@util/environment";
 import ErrorMessageProvider from "@util/error-message-context";
 import HubCentraConfigProvider from "@util/hubCentralConfig-context";
+import ErrorBoundary from "@components/error-boundary/ErrorBoundary";
 
-interface Props extends RouteComponentProps<any> {}
+interface Props extends RouteComponentProps<any> { }
 
 const App: React.FC<Props> = ({history, location}) => {
   const {
@@ -33,16 +34,16 @@ const App: React.FC<Props> = ({history, location}) => {
   } = useContext(UserContext);
 
   const PrivateRoute = ({children, ...rest}) => (
-    <Route {...rest} render={ props => (
+    <Route {...rest} render={props => (
       user.authenticated === true ? (
         children
       ) : (
         <Redirect push={true} to={{
           pathname: "/",
           state: {from: props.location}
-        }}/>
+        }} />
       )
-    )}/>
+    )} />
   );
 
   const getPageRoute = (loc) => {
@@ -76,8 +77,8 @@ const App: React.FC<Props> = ({history, location}) => {
     // On route change...
     if (user.authenticated) {
       axios.get("/api/environment/systemInfo")
-        .then(res => {})
-      // Timeouts throw 401s and are caught here
+        .then(res => { })
+        // Timeouts throw 401s and are caught here
         .catch(err => {
           if (err.response) {
             handleError(err);
@@ -103,62 +104,64 @@ const App: React.FC<Props> = ({history, location}) => {
                 <HubCentraConfigProvider>
                   <ErrorMessageProvider>
                     <Header environment={getEnvironment()} />
-                    <ModalStatus/>
-                    <NavigationPrompt/>
+                    <ModalStatus />
+                    <NavigationPrompt />
                     <main>
-                      <div className="contentContainer">
-                        <Switch>
-                          <Route path="/" exact component={Login}/>
-                          <Route path="/noresponse" exact component={NoResponse} />
-                          <PrivateRoute path="/tiles" exact>
-                            <TilesView/>
-                          </PrivateRoute>
-                          <PrivateRoute path="/tiles/load" exact>
-                            <TilesView id="load"/>
-                          </PrivateRoute>
-                          <PrivateRoute path="/tiles/model" exact>
-                            <TilesView id="model"/>
-                          </PrivateRoute>
-                          <PrivateRoute path="/tiles/curate" exact>
-                            <TilesView id="curate"/>
-                          </PrivateRoute>
-                          <PrivateRoute path="/tiles/curate/match" exact>
-                            <TilesView id="curate"/>
-                          </PrivateRoute>
-                          <PrivateRoute path="/tiles/curate/merge" exact>
-                            <TilesView id="curate"/>
-                          </PrivateRoute>
-                          <PrivateRoute path="/tiles/curate/map" exact>
-                            <TilesView id="curate"/>
-                          </PrivateRoute>
-                          <PrivateRoute path="/tiles/run" exact>
-                            <TilesView id="run"/>
-                          </PrivateRoute>
-                          <PrivateRoute path="/tiles/run/add" exact>
-                            <TilesView id="run" routeToFlow={true} addingStepToFlow={true} startRunStep={false}/>
-                          </PrivateRoute>
-                          <PrivateRoute path="/tiles/run/add-run" exact>
-                            <TilesView id="run" routeToFlow={true} addingStepToFlow={true} startRunStep={true}/>
-                          </PrivateRoute>
-                          <PrivateRoute path="/tiles/run/run-step" exact>
-                            <TilesView id="run" routeToFlow={true} addingStepToFlow={false} startRunStep={true}/>
-                          </PrivateRoute>
-                          <PrivateRoute path="/tiles/explore" exact>
-                            <TilesView id="explore"/>
-                          </PrivateRoute>
-                          <PrivateRoute path="/tiles/explore/detail">
-                            <TilesView id="detail"/>
-                          </PrivateRoute>
-                          <PrivateRoute path="/tiles/monitor">
-                            <TilesView id="monitor"/>
-                          </PrivateRoute>
-                          <PrivateRoute path="/tiles/bootstrap">
-                            <TilesView id="bootstrap"/>
-                          </PrivateRoute>
-                          <Route component={NoMatchRedirect}/>
-                        </Switch>
-                      </div>
-                      <Footer pageTheme={pageTheme}/>
+                      <ErrorBoundary>
+                        <div className="contentContainer">
+                          <Switch>
+                            <Route path="/" exact component={Login} />
+                            <Route path="/noresponse" exact component={NoResponse} />
+                            <PrivateRoute path="/tiles" exact>
+                              <TilesView />
+                            </PrivateRoute>
+                            <PrivateRoute path="/tiles/load" exact>
+                              <TilesView id="load" />
+                            </PrivateRoute>
+                            <PrivateRoute path="/tiles/model" exact>
+                              <TilesView id="model" />
+                            </PrivateRoute>
+                            <PrivateRoute path="/tiles/curate" exact>
+                              <TilesView id="curate" />
+                            </PrivateRoute>
+                            <PrivateRoute path="/tiles/curate/match" exact>
+                              <TilesView id="curate" />
+                            </PrivateRoute>
+                            <PrivateRoute path="/tiles/curate/merge" exact>
+                              <TilesView id="curate" />
+                            </PrivateRoute>
+                            <PrivateRoute path="/tiles/curate/map" exact>
+                              <TilesView id="curate" />
+                            </PrivateRoute>
+                            <PrivateRoute path="/tiles/run" exact>
+                              <TilesView id="run" />
+                            </PrivateRoute>
+                            <PrivateRoute path="/tiles/run/add" exact>
+                              <TilesView id="run" routeToFlow={true} addingStepToFlow={true} startRunStep={false} />
+                            </PrivateRoute>
+                            <PrivateRoute path="/tiles/run/add-run" exact>
+                              <TilesView id="run" routeToFlow={true} addingStepToFlow={true} startRunStep={true} />
+                            </PrivateRoute>
+                            <PrivateRoute path="/tiles/run/run-step" exact>
+                              <TilesView id="run" routeToFlow={true} addingStepToFlow={false} startRunStep={true} />
+                            </PrivateRoute>
+                            <PrivateRoute path="/tiles/explore" exact>
+                              <TilesView id="explore" />
+                            </PrivateRoute>
+                            <PrivateRoute path="/tiles/explore/detail">
+                              <TilesView id="detail" />
+                            </PrivateRoute>
+                            <PrivateRoute path="/tiles/monitor">
+                              <TilesView id="monitor" />
+                            </PrivateRoute>
+                            <PrivateRoute path="/tiles/bootstrap">
+                              <TilesView id="bootstrap" />
+                            </PrivateRoute>
+                            <Route component={NoMatchRedirect} />
+                          </Switch>
+                        </div>
+                      </ErrorBoundary>
+                      <Footer pageTheme={pageTheme} />
                     </main>
                   </ErrorMessageProvider>
                 </HubCentraConfigProvider>
@@ -168,6 +171,7 @@ const App: React.FC<Props> = ({history, location}) => {
         </SearchProvider>
       </MonitorProvider>
     </div>
+
   );
 };
 
