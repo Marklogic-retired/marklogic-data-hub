@@ -6,16 +6,19 @@ import {HCButton} from "@components/common";
 import {UserContext} from "@util/user-context";
 import oopsIcon from "../assets/oopsIcon.png";
 import styles from "./noMatchRedirect.module.scss";
-import {withRouter} from "react-router-dom";
+import {withRouter, RouteComponentProps} from "react-router-dom";
 
-const NoMatchRedirect = ({history}) => {
 
+interface Props extends RouteComponentProps<any> { message?:string}
+
+
+const NoMatchRedirect: React.FC<Props> = ({history, ...props}) => {
   const {user, clearErrorMessage} = useContext(UserContext);
   const [copyClicked, setCopyClicked] = useState("Copy");
   const [errorBodyText, setErrorBodyText] = useState("");
 
   useEffect(() => {
-    const errorText = `${user.error.title && user.error.title} ${user.error.encounteredErrors && user.error.encounteredErrors} ${user.error.message}`;
+    const errorText = props.message ? props.message : `${user.error.title && user.error.title} ${user.error.encounteredErrors && user.error.encounteredErrors} ${user.error.message}`;
     setErrorBodyText(errorText);
   }, []);
 
@@ -31,7 +34,7 @@ const NoMatchRedirect = ({history}) => {
   };
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid" data-testid="errorScreen">
       <Row>
         <Col className="col-md-3">
           <div className={`d-flex align-items-center cursor-pointer`} style={{width: 80}} onClick={goBack}>
@@ -51,11 +54,11 @@ const NoMatchRedirect = ({history}) => {
                     <div className={styles.spacer}>
                       <strong>The operation failed because of {user.error.type ? "the following errors:" : "an unknown error."}</strong>
                     </div>
-                    {user.error.message && <>
+                    {(user.error.message || props.message)&& <>
                       <div className={styles.errorContainer}>
                         {user.error.title && <h3>{user.error.title}</h3>}
                         {user.error.encounteredErrors && user.error.encounteredErrors}
-                        {user.error.message}
+                        {props.message? props.message : user.error.message }
                       </div>
                       <div className={styles.buttonCopyCol}>
                         <HCButton data-testid={`copy-button-error`} className={styles.copyButton} onClick={copyToClipboard}>{copyClicked}</HCButton>
@@ -63,7 +66,8 @@ const NoMatchRedirect = ({history}) => {
 
                     </>}
                     <div className={styles.contactSupport}>
-                      <strong> Contact <a className={styles.contactLink} target="_blank" href="https://docs.marklogic.com/cloudservices/contact-support.html">MarkLogic Support</a>.</strong>
+                      <strong> Contact <a className={styles.contactLink} target="_blank" href="https://help.marklogic.com/
+">MarkLogic Support</a>.</strong>
                     </div>
                   </div>
                 </Col>
