@@ -38,6 +38,9 @@
     },
     "productId": {
       "sourcedFrom": "productList/productId"
+    },
+    "category": {
+      "sourcedFrom": "category"
     }
   },
   "namespaces": { },

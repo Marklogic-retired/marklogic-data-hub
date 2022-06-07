@@ -667,10 +667,12 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         let predicate = getEdgePredicate(id, network);
         let expandId = predicate ? id + "-" + predicate : id;
         nodeIdsToRemove.push(expandId);
+        if (clickedNode && clickedNode["isConcept"]) {
+          nodeIdsToRemove.push(id);
+        }
         return getExpandedNodeIdsToRemove(expandId, nodeIdsToRemove);
       });
     }
-
     return nodeIdsToRemove;
   };
 
@@ -714,6 +716,11 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         "parentIRI": clickedNode && clickedNode["nodeId"] ? clickedNode["nodeId"] : payloadData.nodeInfo["nodeId"]
       }
     };
+    if (clickedNode && clickedNode["isConcept"]) {
+      payload["data"]["isConcept"] = true;
+      payload["data"]["parentIRI"] = clickedNode["parentNode"];
+      payload["data"]["objectConcept"] = clickedNode["nodeId"];
+    }
     try {
       let response: any;
       if (!payloadData.expandAll) {
@@ -937,8 +944,9 @@ const GraphVisExplore: React.FC<Props> = (props) => {
   const getExpandedNodeObject = (nodeId) => {
     let expandedInstanceInfo = {nodeObject: {}, edgeObject: {}, currentNodeExpandId: "", parentNodeExpandId: ""};
     let parentNodes = network.getConnectedNodes(nodeId, "from");
+    let parentNodesTo = network.getConnectedNodes(nodeId, "to");
     let edgesFrom = network.getConnectedEdges(nodeId);
-    let parentNode = parentNodes[0];
+    let parentNode = !parentNodes[0] ? parentNodesTo[0] : parentNodes[0];
     let edgeIdFrom = edgesFrom[0];
     let parentNodePredicate = getEdgePredicate(parentNode, network);
     let currentNodePredicate = predicates[edgeIdFrom];
@@ -1142,6 +1150,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         nodeInfo["count"] = nodeObject && nodeObject["count"] ? nodeObject["count"]  : 1;
         nodeInfo["currentNodeExpandId"] = currentNodeExpandId;
         nodeInfo["parentNodeExpandId"] = parentNodeExpandId;
+        nodeInfo["isConcept"] = nodeObject && nodeObject["isConcept"] ? nodeObject["isConcept"] : false;
         setClickedNode(nodeInfo);
       } else {
         let nodeInfo = {

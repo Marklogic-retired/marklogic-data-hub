@@ -84,7 +84,7 @@ const GraphViewExplore: React.FC<Props> = (props) => {
   >
     <HCCheckbox
       id="relationship-label-id"
-      label="Relationship labels"
+      label="Relationship names"
       value={viewRelationshipLabels}
       checked={viewRelationshipLabels}
       handleClick={(e) => handleRelationshipLabelView(e)}
