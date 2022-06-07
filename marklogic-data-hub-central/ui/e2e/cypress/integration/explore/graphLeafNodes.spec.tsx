@@ -4,6 +4,7 @@ import graphExplore from "../../support/pages/graphExplore";
 import LoginPage from "../../support/pages/login";
 import {ExploreGraphNodes} from "../../support/types/explore-graph-nodes";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
+import graphExploreSidePanel from "../../support/components/explore/graph-explore-side-panel";
 
 describe("Leaf Nodes", () => {
   before(() => {
@@ -106,6 +107,40 @@ describe("Leaf Nodes", () => {
       graphExplore.getExpand3RecordsFromGroupNode().should("not.exist");
 
     });
-  });
 
+    cy.log("**Verify if concepts leaf can be expanded properly. Select 'Product' entity**");
+    browsePage.removeBaseEntity("Customer");
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Product");
+    entitiesSidebar.getBaseEntityOption("Product").should("be.visible");
+    cy.wait(2000);
+
+    cy.log("**Clicking Show related on 'Sneakers' leaf node to expand**");
+    graphExplore.focusNode(ExploreGraphNodes.CONCEPT_SNEAKERS);
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_SNEAKERS).then((nodePositions: any) => {
+      let sneakerCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_SNEAKERS];
+      const canvas = graphExplore.getGraphVisCanvas();
+
+      canvas.click(sneakerCoordinates.x, sneakerCoordinates.y, {force: true});
+      //Hover to bring focus
+      canvas.trigger("mouseover", sneakerCoordinates.x, sneakerCoordinates.y, {force: true});
+
+      // Right click and expand the remaining records of the node
+      canvas.rightclick(sneakerCoordinates.x, sneakerCoordinates.y, {force: true});
+      graphExplore.clickShowRelated();
+      graphExplore.stopStabilization();
+    });
+
+    cy.log("**Verify expanded node leaf node is expanded and expanded node is visible in the canvas**");
+    graphExplore.focusNode(ExploreGraphNodes.OFFICE_101);
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.OFFICE_101).then((nodePositions: any) => {
+      let officeCoordinates: any = nodePositions[ExploreGraphNodes.OFFICE_101];
+      const canvas = graphExplore.getGraphVisCanvas();
+
+      //Click on node to open side panel
+      canvas.click(officeCoordinates.x, officeCoordinates.y, {force: true});
+      canvas.click(officeCoordinates.x, officeCoordinates.y, {force: true});
+      graphExploreSidePanel.getSidePanel().should("exist");
+    });
+  });
 });
