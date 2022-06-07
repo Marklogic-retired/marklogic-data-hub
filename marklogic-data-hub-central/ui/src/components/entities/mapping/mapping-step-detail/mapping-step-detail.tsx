@@ -93,6 +93,7 @@ const MappingStepDetail: React.FC = () => {
   const [showEditURIOption, setShowEditURIOption] = useState(false);
   const [mapSaved, setMapSaved] = useState(false); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [errorInSaving, setErrorInSaving] = useState("");
+  const [keysExpandCollapseAux, setKeysExpandCollapseAux] = useState("");
 
   // For storing mapping functions
   const [mapFunctions, setMapFunctions] = useState<any>([]);
@@ -206,7 +207,6 @@ const MappingStepDetail: React.FC = () => {
     }
     return arraySourceTable;
   };
-
   const [pageNumberTableSourceSideJson, setPageNumberTableSourceSideJson] = useState(getPageAndSizeSourceTable()[2]);
   const [pageNumberTableSourceSideXml, setPageNumberTableSourceSideXml] = useState(getPageAndSizeSourceTable()[0]);
   const [pageSizeTableSourceSideXml, setPageSizeTableSourceSideXml] = useState(getPageAndSizeSourceTable()[1]);
@@ -221,8 +221,16 @@ const MappingStepDetail: React.FC = () => {
 
   let tableColors = [...mappingColors];
 
+  const getColumnOptionsPopover = () => {
+    let storageAux = storage?.curateEntityTable;
+    if (storageAux?.columnOptions) {
+      return storageAux.columnOptions;
+    } else return "";
+  };
+
   // For Column Option dropdown checkboxes
-  const [checkedEntityColumns, setCheckedEntityColumns] = useState({
+  const [checkedEntityColumnsFlag, setCheckedEntityColumnsFlag] = useState("");
+  const [checkedEntityColumns, setCheckedEntityColumns] = useState(getColumnOptionsPopover() !== "" ? getColumnOptionsPopover() :  {
     "name": true,
     "type": true,
     "key": true,
@@ -1396,11 +1404,20 @@ const MappingStepDetail: React.FC = () => {
     setColOptMenuVisible(flag);
   };
 
-
   const handleColOptionsChecked = async (e) => {
-    let obj = checkedEntityColumns;
+    let obj =getColumnOptionsPopover() !== "" ? getColumnOptionsPopover() : checkedEntityColumns;
     obj[e.target.value] = e.target.checked;
+    let newEntityStorage;
+    newEntityStorage = {
+      ...storage, curateEntityTable: {
+        ...storage.curateEntityTable,
+        //columnOptions: { ...storage?.curateEntityTable?.columnOptions, [curationOptions?.activeStep?.stepArtifact?.name] :obj},
+        columnOptions: obj,
+      }
+    };
+    setViewSettings(newEntityStorage);
     await setCheckedEntityColumns({...obj});
+    checkedEntityColumnsFlag ? checkedEntityColumnsFlag === "false" ? setCheckedEntityColumnsFlag("true"): setCheckedEntityColumnsFlag("false"):setCheckedEntityColumnsFlag("true");
   };
 
   const columnOptionsDropdown = (
@@ -1416,7 +1433,7 @@ const MappingStepDetail: React.FC = () => {
             handleClick={handleColOptionsChecked}
             value={entLabel}
             label={columnOptionsLabel[entLabel]}
-            checked={checkedEntityColumns[entLabel]}
+            checked={getColumnOptionsPopover() !== "" ? getColumnOptionsPopover()[entLabel]: checkedEntityColumns[entLabel]}
             dataTestId={`columnOptionsCheckBox-${entLabel}`}
           />
         </Dropdown.Item>
@@ -1468,6 +1485,8 @@ const MappingStepDetail: React.FC = () => {
   const handleEntityExpandCollapse = (option) => {
     let keys = getKeysToExpandFromTable(entityTypeProperties, "key", [], true);
     keys.unshift(0);
+    setKeysExpandCollapseAux(keys);
+
     if (option === "collapse") {
       setEntityExpandedKeys([]);
       setExpandedEntityFlag(false);
@@ -1562,7 +1581,8 @@ const MappingStepDetail: React.FC = () => {
     }
 
     newStorage = {
-      ...storage, curateMappingSourceSide: {
+      ...storage,
+      curateMappingSourceSide: {
         ...storage.curateMappingSourceSide,
         xmlTable: {
           stepArtifactName: sourceFormat === "xml" ? curationOptions.activeStep.stepArtifact && curationOptions.activeStep.stepArtifact.name : getStoredStepArtifactName("xml"),
@@ -1819,10 +1839,12 @@ const MappingStepDetail: React.FC = () => {
                 entityTypeTitle={curationOptions.activeStep.entityName}
                 entityModel={""}
                 checkedEntityColumns={checkedEntityColumns}
+                checkedEntityColumnsFlag={checkedEntityColumnsFlag}
                 entityTypeProperties={entityTypeProperties}
                 entityMappingId={""}
                 relatedMappings={targetRelatedMappings}
                 entityExpandedKeys={entityExpandedKeys}
+                keysExpandCollapse={keysExpandCollapseAux}
                 setEntityExpandedKeys={setEntityExpandedKeys}
                 allEntityKeys={allEntityKeys}
                 setExpandedEntityFlag={setExpandedEntityFlag}
@@ -1918,4 +1940,3 @@ const MappingStepDetail: React.FC = () => {
 };
 
 export default MappingStepDetail;
-

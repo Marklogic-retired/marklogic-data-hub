@@ -21,6 +21,7 @@ import {DropDownWithSearch, HCButton, HCTooltip, HCTable, HCPopoverSearch} from 
 import Popover from "react-bootstrap/Popover";
 import {OverlayTrigger, Overlay} from "react-bootstrap";
 import {themeColors} from "@config/themes.config";
+import {getViewSettings, setViewSettings} from "@util/user-context";
 
 interface Props {
   setScrollRef: any;
@@ -38,10 +39,12 @@ interface Props {
   entityTypeTitle: any;
   entityModel: any;
   checkedEntityColumns: any;
+  checkedEntityColumnsFlag?: string;
   entityTypeProperties: any;
   entityMappingId: any;
   relatedMappings: any;
   entityExpandedKeys: any;
+  keysExpandCollapse?: any,
   setEntityExpandedKeys: any;
   allEntityKeys: any;
   setExpandedEntityFlag: any;
@@ -67,6 +70,7 @@ interface Props {
 }
 
 const EntityMapTable: React.FC<Props> = (props) => {
+  const storage = getViewSettings();
   const [mapExp, setMapExp] = useState({});
   //Dummy ref node to simulate a click event
   const dummyNode = props.dummyNode;
@@ -145,6 +149,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
 
   const [showDocLinksPopover, setShowDocLinksPopover] = useState(false);
   const [targetDocLinksPopover, setTargetDocLinksPopover] = useState(null);
+  const [deleteFromTable, setDeleteFromTable] = useState(false);
 
   const handleShowDocPopover = (event) => {
     setShowDocPopover(!showDocPopover);
@@ -160,24 +165,45 @@ const EntityMapTable: React.FC<Props> = (props) => {
   let firstRowKeys = new Array(100).fill(0).map((_, i) => i);
   //Documentation links for using Xpath expressions
   const xPathDocLinks =
-  <Overlay
-    show={showDocLinksPopover}
-    target={targetDocLinksPopover}
-    placement="top"
-  >
-    <Popover id={`popover-emt-xpathdoclinks`} className={styles.xPathDocLinks} onMouseEnter={() => setShowDocLinksPopover(true)} onMouseLeave={() => setShowDocLinksPopover(false)}>
-      <Popover.Body>
-        <div className={styles.xpathDoc}><span id="doc">Documentation:</span>
-          <div><ul className={styles.docLinksUl}>
-            <li><a href="https://docs.marklogic.com/guide/xquery/xpath" target="_blank" rel="noopener noreferrer" className={styles.docLink}>XPath Expressions</a></li>
-            <li><a href="https://docs.marklogic.com/datahub/flows/dhf-mapping-functions.html" target="_blank" rel="noopener noreferrer" className={styles.docLink}>Mapping Functions</a></li>
-          </ul></div>
-        </div>
-      </Popover.Body></Popover>
-  </Overlay>;
+    <Overlay
+      show={showDocLinksPopover}
+      target={targetDocLinksPopover}
+      placement="top"
+    >
+      <Popover id={`popover-emt-xpathdoclinks`} className={styles.xPathDocLinks} onMouseEnter={() => setShowDocLinksPopover(true)} onMouseLeave={() => setShowDocLinksPopover(false)}>
+        <Popover.Body>
+          <div className={styles.xpathDoc}><span id="doc">Documentation:</span>
+            <div><ul className={styles.docLinksUl}>
+              <li><a href="https://docs.marklogic.com/guide/xquery/xpath" target="_blank" rel="noopener noreferrer" className={styles.docLink}>XPath Expressions</a></li>
+              <li><a href="https://docs.marklogic.com/datahub/flows/dhf-mapping-functions.html" target="_blank" rel="noopener noreferrer" className={styles.docLink}>Mapping Functions</a></li>
+            </ul></div>
+          </div>
+        </Popover.Body></Popover>
+    </Overlay>;
+
+  const getColumnOptions = () => {
+    let storageAux = storage?.curateEntityTable;
+    if (storageAux?.columnOptions) {
+      return storageAux.columnOptions;
+    } else return "";
+  };
+
+  useEffect(() => {
+    let newEntityStorage;
+    newEntityStorage = {
+      ...storage, curateEntityTable: {
+        ...storage.curateEntityTable,
+        lowerEntityColumns: lowerEntityColumns,
+        entityColumns: entityColumns,
+      }
+    };
+    setViewSettings(newEntityStorage);
+
+  }, [props.checkedEntityColumnsFlag]);
 
   const getColumnsForEntityTable: any = (type: string) => {
-    return type === "upper" ? entityColumns.map(el => props.checkedEntityColumns[el.key] ? el : "").filter(item => item) : lowerEntityColumns.map(el => props.checkedEntityColumns[el.key] ? el : "").filter(item => item);
+    return type === "upper" ? entityColumns.map(el => (getColumnOptions() !== "" ? getColumnOptions()[el.key] : props.checkedEntityColumns[el.key]) ? el : "").filter(item => item) :
+      lowerEntityColumns.map(el => (getColumnOptions() !== "" ? getColumnOptions()[el.key] : props.checkedEntityColumns[el.key]) ? el : "").filter(item => item);
   };
 
   const getValue = (object, keys) => keys.split(".").reduce((o, k) => (o || {})[k], object);
@@ -210,6 +236,19 @@ const EntityMapTable: React.FC<Props> = (props) => {
   useEffect(() => {
     setEntityProperties(props.entityTypeProperties);
     props.setAllRelatedEntitiesKeys([...props.allRelatedEntitiesKeys, ...getKeys(props.entityTypeProperties)]);
+
+    if (!getMainTableCollapsed()) {
+      if (!filterApplied) {
+        setEntityProperties(props.entityTypeProperties);
+      } else {
+        setEntityProperties(filteredValues);
+      }
+      setTableCollapsed(false);
+    } else {
+      setEntityProperties([]);
+      setTableCollapsed(true);
+    }
+
   }, [props.entityTypeProperties]);
 
   useEffect(() => {
@@ -239,12 +278,41 @@ const EntityMapTable: React.FC<Props> = (props) => {
     if (selectedOptions[0] === "default" && props.relatedEntityTypeProperties.length > 0) {
       setSelectedOptions(getDefaultEntities());
       setFilterValues(getDefaultEntities());
+      if (getSelectedOptionsDrp() !== "") handleOptionSelect("");
     }
   }, [props.relatedEntityTypeProperties]);
 
   useEffect(() => {
+    saveSessionEntityNestedTable();
     setRowExpandedKeys(props.entityExpandedKeys);
   }, [props.entityExpandedKeys]);
+
+  const getStoredFilterMainTable = () => {
+    let storageAux = storage?.curateEntityTable;
+    let propertyArray = props?.savedMappingArt?.name;
+    if (storageAux?.filterMainTable && storageAux?.filterMainTable[propertyArray]) {
+      return storageAux.filterMainTable[propertyArray];
+    }
+  };
+
+  const saveFilterMainTable = (value?) => {
+    let newEntityStorage;
+    newEntityStorage = {
+      ...storage, curateEntityTable: {
+        ...storage.curateEntityTable,
+        filterMainTable: {...storage.curateEntityTable?.filterMainTable, [props?.savedMappingArt?.name]: value ? "": searchedKey},
+      }
+    };
+    setViewSettings(newEntityStorage);
+  };
+
+  useEffect(() => {
+    saveFilterMainTable();
+  }, [searchedKey]);
+
+  useEffect(() => {
+    entityProperties.length > 0 && filterByName("");
+  }, [entityProperties]);
 
   useEffect(() => {
     if (filterValues.includes(props.labelRemoved)) {
@@ -361,7 +429,73 @@ const EntityMapTable: React.FC<Props> = (props) => {
     await setCaretPosition(e.target.selectionStart);
   };
 
+  const getCurrentPageMainTable = () => {
+    let storageAux = storage?.curateEntityTable;
+    let propertyArray = props.entityTypeTitle+"_"+props?.savedMappingArt?.name;
+    if (storageAux?.pageNumberTable && props?.entityTypeTitle && storageAux.pageNumberTable[propertyArray]) {
+      let pageNumberTableAux = storageAux.pageNumberTable[propertyArray];
+      return pageNumberTableAux;
+    }
+  };
+
+  const getCurrentSizeMainTable = () => {
+    let storageAux = storage?.curateEntityTable;
+    let propertyArray = props?.entityTypeTitle+"_"+props?.savedMappingArt?.name;
+
+    if (storageAux?.pageSizeTable && props?.entityTypeTitle && storageAux?.pageSizeTable[propertyArray]) {
+      let pageSizeTableAux = storageAux.pageSizeTable[propertyArray];
+      return pageSizeTableAux;
+    }
+  };
+
+  const saveSessionPageSizeMainTable = (page, size) => {
+    let newEntityStorage;
+    let propertyArray = props?.entityTypeTitle+"_"+props?.savedMappingArt?.name;
+    newEntityStorage = {
+      ...storage, curateEntityTable: {
+        ...storage.curateEntityTable,
+        pageNumberTable: {...storage.curateEntityTable?.pageNumberTable, [propertyArray]: page},
+        pageSizeTable: {...storage.curateEntityTable?.pageSizeTable, [propertyArray]: size},
+      }
+    };
+    setViewSettings(newEntityStorage);
+  };
+
+  useEffect(() => {
+    let newEntityStorage;
+    newEntityStorage = {
+      ...storage, curateEntityTable: {
+        ...storage.curateEntityTable,
+        mainTableCollapsed: {...storage?.curateEntityTable?.mainTableCollapsed, [props?.entityTypeTitle+"_"+props?.savedMappingArt?.name]: tableCollapsed},
+      }
+    };
+    setViewSettings(newEntityStorage);
+  }, [tableCollapsed]);
+
+  const getMainTableCollapsed = () => {
+    let storageAux = storage?.curateEntityTable;
+    let propertyArray = props?.entityTypeTitle+"_"+props?.savedMappingArt?.name;
+
+    if (storageAux?.mainTableCollapsed && storageAux?.mainTableCollapsed[propertyArray]) {
+      let mainTableCollapsed = storageAux?.mainTableCollapsed[propertyArray];
+      return mainTableCollapsed;
+    } else return "";
+  };
+
+  const saveSessionEntityNestedTable = () => {
+    let newEntityStorage;
+    newEntityStorage = {
+      ...storage, curateEntityTable: {
+        ...storage.curateEntityTable,
+        expandedTableKeys: {...storage.curateEntityTable?.expandedTableKeys, [props?.savedMappingArt?.name]: props.entityExpandedKeys},
+      }
+    };
+    setViewSettings(newEntityStorage);
+  };
+
   const toggleRowExpanded = (record, expanded, rowKey) => {
+    saveSessionEntityNestedTable();
+
     if (rowKey === "key") {
       if (!props.entityExpandedKeys.includes(record.key)) {
         props.setEntityExpandedKeys(prevState => {
@@ -392,7 +526,6 @@ const EntityMapTable: React.FC<Props> = (props) => {
   };
 
   const handleColSearch = (selectedKeys, dataIndex, entityData) => {
-
     setFilterApplied(true);
     setSearchEntityText(selectedKeys);
     setSearchedEntityColumn(dataIndex);
@@ -419,9 +552,12 @@ const EntityMapTable: React.FC<Props> = (props) => {
     setSearchEntityText("");
     setSearchedEntityColumn("");
     setEntityProperties(props.entityTypeProperties);
+    saveFilterMainTable(true);
   };
 
   const filterByName = (value) => {
+    if (!value) if (getStoredFilterMainTable()) value = getStoredFilterMainTable();
+
     setSearchedKey(value);
     let filterVal = value;
     if (filterVal) {
@@ -1102,21 +1238,69 @@ const EntityMapTable: React.FC<Props> = (props) => {
     return (entityId && entityId === entityTitle);
   }).map((entity, i) => ({value: entity.entityLabel, label: entity.entityLabel}));
 
+  const getSelectedOptionsDrp = (deleteKey?) => {
+    let storageAux = storage?.curateEntityTable;
+    let propertyArray = deleteKey ? deleteKey+"_"+props?.savedMappingArt?.name :props?.entityTypeTitle+"_"+props?.savedMappingArt?.name;
+
+    if (deleteKey && storageAux?.selectedValues && storageAux.selectedValues[propertyArray]) {
+      return storageAux.selectedValues[propertyArray];
+    } else if (storageAux?.selectedValues && props?.savedMappingArt?.name && props?.entityTypeTitle &&
+      storageAux.selectedValues[propertyArray] && storageAux.selectedValues[propertyArray].length > 0) {
+      return storageAux.selectedValues[propertyArray];
+    } else return "";
+  };
+
+  const saveSelectedOptionsDrp = (newlySelectedValues, removedEntity?, updateSelectedEntities?) => {
+    let countRelations = (removedEntity?.entityMappingId?.split(".").length - 1);
+    let mainObjectLabel;
+    let filteredArray;
+
+    if (deleteFromTable) {
+      if (countRelations === 1) {
+        mainObjectLabel = removedEntity?.entityMappingId.split(".")[0];
+      } else if (countRelations > 1) {
+        //Getting the main Entity Type from object to delete and the object father
+        let mainRelation = removedEntity?.entityLabel;
+        let mainRelationTitle = mainRelation.substring(mainRelation.indexOf("(") + 1, mainRelation.lastIndexOf(" "));
+        let mainObject = updateSelectedEntities?.find(item => item.entityType === mainRelationTitle);
+        mainObjectLabel = mainObject?.entityLabel;
+      }
+      //Get array to filter form session storage and save new data
+      let arrayToFilter = getSelectedOptionsDrp(mainObjectLabel);
+      filteredArray = arrayToFilter && arrayToFilter?.filter(item => item !== removedEntity?.entityLabel);
+    }
+    let keyArray = deleteFromTable ? mainObjectLabel+"_"+props?.savedMappingArt?.name : props?.entityTypeTitle+"_"+props?.savedMappingArt?.name;
+    let valueToSave = deleteFromTable ? filteredArray : newlySelectedValues;
+
+    let newEntityStorage;
+    newEntityStorage = {
+      ...storage, curateEntityTable: {
+        ...storage.curateEntityTable,
+        selectedValues: {...storage?.curateEntityTable?.selectedValues, [keyArray]: valueToSave},
+      }
+    };
+    setViewSettings(newEntityStorage);
+    setDeleteFromTable(false);
+  };
+
   const handleOptionSelect = (selected) => {
-    const newlySelectedValues = selected.map(option => option.value);
+    const newlySelectedValues = selected === "" && getSelectedOptionsDrp() !== "" ?
+      getSelectedOptionsDrp(): selected.map(option => option.value);
     let selectedArray: any = [];
     let entityArray = props.relatedEntityTypeProperties;
 
     //check for removed values
-    if (newlySelectedValues.length < selectedOptions.length) {
+    if (newlySelectedValues?.length < selectedOptions.length) {
       let removedItem = selectedOptions.filter(options => newlySelectedValues.indexOf(options) < 0);
       let index = entityArray.findIndex(object => object.entityLabel === removedItem[0]);
       let entityToRemove = entityArray[index];
       setRemovedEntity(entityToRemove);
-      findReferringEntities(entityToRemove.relatedEntityMappings);
+      findReferringEntities(entityToRemove?.relatedEntityMappings);
       setPendingOptions(newlySelectedValues);
       setDeleteDialogVisible(true);
-    } else if (newlySelectedValues.length !== 0) {
+      setDeleteFromTable(true);
+    } else if (newlySelectedValues?.length !== 0) {
+      saveSelectedOptionsDrp(newlySelectedValues);
       //in the properties array, push the object that has the key which matches the value of the entity name selected
       newlySelectedValues.forEach(val => {
         let index = entityArray.findIndex(object => object.entityLabel === val);
@@ -1124,13 +1308,14 @@ const EntityMapTable: React.FC<Props> = (props) => {
           selectedArray.push(entityArray[index]);
         }
       });
+
       props.setRelatedEntitiesSelected(prevState => ([...prevState, ...selectedArray]));
       setSelectedOptions(newlySelectedValues);
       setFilterValues(newlySelectedValues);
     }
   };
 
-  const MenuList  = (selector, props) => (
+  const MenuList = (selector, props) => (
     <div id={`${selector}-select-MenuList`} aria-label={"select-MenuList"}>
       <SelectComponents.MenuList {...props} />
     </div>
@@ -1167,7 +1352,8 @@ const EntityMapTable: React.FC<Props> = (props) => {
       onChange={handleOptionSelect}
       isSearchable={false}
       options={relatedEntitiesFilterOptions}
-      styles={{...reactSelectThemeConfig,
+      styles={{
+        ...reactSelectThemeConfig,
         container: (provided, state) => ({
           ...provided,
           lineHeight: "21px"
@@ -1177,7 +1363,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
           cursor: "default"
         }),
       }}
-      formatOptionLabel={(option: {value, label}) => {
+      formatOptionLabel={(option: { value, label }) => {
         return (
           <span aria-label={`${option.label}-option`} role={"option"}>
             {option.label}
@@ -1198,7 +1384,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
           {expandTableIcon}<strong>{props.entityTypeTitle}</strong>
           {props.relatedMappings &&
             <>
-              <img className={styles.arrayImage} src={DocIcon} alt={""} data-testid="relatedInfoIcon" onMouseEnter={handleShowDocPopover} onMouseLeave={() => setShowDocPopover(false)}/>
+              <img className={styles.arrayImage} src={DocIcon} alt={""} data-testid="relatedInfoIcon" onMouseEnter={handleShowDocPopover} onMouseLeave={() => setShowDocPopover(false)} />
               {relatedInfo}
             </>
           }
@@ -1223,8 +1409,9 @@ const EntityMapTable: React.FC<Props> = (props) => {
     </div>
   );
 
+
   const toggleEntityTable = () => {
-    setTableToggled(true);
+    setTableToggled(false);
     if (tableCollapsed) {
       if (!filterApplied) {
         setEntityProperties(props.entityTypeProperties);
@@ -1236,6 +1423,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
       setEntityProperties([]);
       setTableCollapsed(true);
     }
+    //saveSessionEntityNestedTable();
   };
 
   const findReferringEntities = (relatedMappings) => {
@@ -1264,16 +1452,19 @@ const EntityMapTable: React.FC<Props> = (props) => {
     setFilterValues(pendingOptions);
     setSelectedOptions(pendingOptions);
     setDeleteDialogVisible(false);
+    deleteFromTable && saveSelectedOptionsDrp("", removedEntity, updateSelectedEntities);
   };
 
   const onCancel = () => {
     setDeleteDialogVisible(false);
+    setDeleteFromTable(false);
   };
 
   const onDelete = (deletedEntity) => {
     setRemovedEntity(deletedEntity);
     findReferringEntities(deletedEntity.relatedEntityMappings);
     setDeleteDialogVisible(true);
+    setDeleteFromTable(true);
   };
 
   const deleteConfirmation = <Modal
@@ -1353,8 +1544,8 @@ const EntityMapTable: React.FC<Props> = (props) => {
                 row.children ?
                   <span onClick={() => toggleRowExpanded(row, "", "key")} className={styles.tableExpandIcon}>
                     {!extraData.rowExpandedKeys?.includes(row.key) ?
-                      <span><ChevronRight/></span>
-                      : <span><ChevronDown/></span>
+                      <span><ChevronRight /></span>
+                      : <span><ChevronDown /></span>
                     }
                   </span>
                   : <span className={styles.noTableExpandIcon}>
@@ -1391,7 +1582,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
               }
               {row.key > 100 && row.name === "URI" && !row.isProperty &&
                 <span>
-                &nbsp;<OverlayTrigger placement="right" overlay={uriHelp} rootClose trigger="click">
+                  &nbsp;<OverlayTrigger placement="right" overlay={uriHelp} rootClose trigger="click">
                     <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
                   </OverlayTrigger>
                 </span>
@@ -1480,7 +1671,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
     {
       text: "XPath Expression",
       headerFormatter: () => <span>XPath Expression
-        <img className={styles.arrayImage} src={DocIcon} alt={""} data-testid="XPathInfoIcon" onMouseEnter={handleShowDocLinksPopover} onMouseLeave={() => setShowDocLinksPopover(false)}/>
+        <img className={styles.arrayImage} src={DocIcon} alt={""} data-testid="XPathInfoIcon" onMouseEnter={handleShowDocLinksPopover} onMouseLeave={() => setShowDocLinksPopover(false)} />
         {xPathDocLinks}
       </span>,
       dataField: "key",
@@ -1615,7 +1806,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
         } else {
           let renderOutput = getRenderOutput(textToSearchInto, valueToDisplay, "name", searchedEntityColumn, searchEntityText, row.key);
           renderText =
-            <span>{props.initialEntityKeys.includes(row.key) || extraData ? row.children ? <span onClick={() => toggleRowExpanded(row, "", "key")} className={styles.tableExpandIcon}>{!extraData.rowExpandedKeys?.includes(row.key) ? <span><ChevronRight/></span> : <span><ChevronDown/></span>} </span> : <span className={styles.noTableExpandIcon}>{null}</span> : null}<span data-testid={`${props.entityTypeTitle}-${valueToDisplay}-name`}>{row.relatedEntityType ? <i>{renderOutput}</i> : renderOutput}</span>
+            <span>{props.initialEntityKeys.includes(row.key) || extraData ? row.children ? <span onClick={() => toggleRowExpanded(row, "", "key")} className={styles.tableExpandIcon}>{!extraData.rowExpandedKeys?.includes(row.key) ? <span><ChevronRight /></span> : <span><ChevronDown /></span>} </span> : <span className={styles.noTableExpandIcon}>{null}</span> : null}<span data-testid={`${props.entityTypeTitle}-${valueToDisplay}-name`}>{row.relatedEntityType ? <i>{renderOutput}</i> : renderOutput}</span>
               {row.key > 100 && row.type.includes("[ ]") &&
                 <span>
                   <HCTooltip text="Multiple" id="multiple-source-tooltip" placement="top">
@@ -1639,7 +1830,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
               }
               {row.key > 100 && row.name === "URI" && !row.isProperty &&
                 <span>
-                &nbsp;<OverlayTrigger placement="right" overlay={uriHelp} rootClose trigger="click">
+                  &nbsp;<OverlayTrigger placement="right" overlay={uriHelp} rootClose trigger="click">
                     <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
                   </OverlayTrigger>
                 </span>
@@ -1728,7 +1919,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
     {
       text: "XPath Expression",
       headerFormatter: () => <span>XPath Expression
-        <img className={styles.arrayImage} src={DocIcon} alt={""} data-testid="XPathInfoIcon" onMouseEnter={handleShowDocLinksPopover} onMouseLeave={() => setShowDocLinksPopover(false)}/>
+        <img className={styles.arrayImage} src={DocIcon} alt={""} data-testid="XPathInfoIcon" onMouseEnter={handleShowDocLinksPopover} onMouseLeave={() => setShowDocLinksPopover(false)} />
         {xPathDocLinks}
       </span>,
       dataField: "key",
@@ -1856,7 +2047,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
     }
   });
 
-  return (props.entityLoaded  ? (props.entityMappingId || !props.isRelatedEntity) ? (<div id={props.isRelatedEntity ? "entityTableContainer" : "rootTableContainer"} data-testid={props.entityTypeTitle.split(" ")[0].toLowerCase() + "-table"}>
+  return (props.entityLoaded ? (props.entityMappingId || !props.isRelatedEntity) ? (<div id={props.isRelatedEntity ? "entityTableContainer" : "rootTableContainer"} data-testid={props.entityTypeTitle.split(" ")[0].toLowerCase() + "-table"}>
     <div className={styles.tableContainer} id={entityProperties.length > 0 ? "upperTable" : "upperTableEmptyProps"} ref={props.setScrollRef(`${props.entityMappingId}-ref`)}>
       <HCTable
         pagination={false}
@@ -1874,8 +2065,17 @@ const EntityMapTable: React.FC<Props> = (props) => {
     {entityProperties.length ?
       <div className={styles.tableContainer} id="lowerTable">
         <HCTable
-          pagination={{size: "small", hideOnSinglePage: entityProperties.length <= 20, showSizeChanger: true, pageSizeOptions: paginationMapping.pageSizeOptions, defaultCurrent: paginationMapping.start, current: paginationMapping.pageNumber, pageSize: paginationMapping.pageSize,
-            onChange: (e) => { props.executeScroll(`${props.entityMappingId}-ref`); }, onShowSizeChange: (e) => { props.executeScroll(`${props.entityMappingId}-ref`); }}}
+          pagination={{
+            size: "small",
+            hideOnSinglePage: entityProperties.length <= 20,
+            showSizeChanger: true,
+            pageSizeOptions: paginationMapping.pageSizeOptions,
+            defaultCurrent: paginationMapping.start,
+            current: getCurrentPageMainTable() ? getCurrentPageMainTable() : paginationMapping.pageNumber,
+            pageSize: getCurrentSizeMainTable() ? getCurrentSizeMainTable() : paginationMapping.pageSize,
+            onChange: (e, a) => { props.executeScroll(`${props.entityMappingId}-ref`); saveSessionPageSizeMainTable(e, a); },
+            onShowSizeChange: (e, a) => { props.executeScroll(`${props.entityMappingId}-ref`); saveSessionPageSizeMainTable(a, e); },
+          }}
           className={tableCSS}
           onExpand={(expanded, record) => toggleRowExpanded(expanded, record, "key")}
           expandedRowKeys={props.entityExpandedKeys}
