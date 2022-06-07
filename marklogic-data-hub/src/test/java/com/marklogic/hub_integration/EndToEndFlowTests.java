@@ -865,6 +865,9 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
             }
         }
 
+        DatabaseKind databaseKind = databaseClient.getPort() == getHubConfig().getPort(DatabaseKind.STAGING)? DatabaseKind.STAGING: DatabaseKind.FINAL;
+        waitForRebalance(getHubClient(), databaseKind.name());
+
         if (databaseClient.getPort() == getHubConfig().getPort(DatabaseKind.STAGING) && finalCounts.stagingCount == 1) {
             String filename = "final";
             if (useEs && prefix.equals("triples-array")) {

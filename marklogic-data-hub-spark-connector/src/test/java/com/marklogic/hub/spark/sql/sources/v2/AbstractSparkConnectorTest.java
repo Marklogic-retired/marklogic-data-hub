@@ -12,6 +12,7 @@ import com.marklogic.hub.impl.HubClientImpl;
 import com.marklogic.hub.spark.sql.sources.v2.writer.HubDataSourceWriter;
 import com.marklogic.hub.spark.sql.sources.v2.writer.HubDataWriter;
 import com.marklogic.hub.test.AbstractHubClientTest;
+import com.marklogic.mgmt.ManageConfig;
 import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.catalyst.InternalRow;
 import org.apache.spark.sql.catalyst.expressions.GenericInternalRow;
@@ -95,6 +96,30 @@ public abstract class AbstractSparkConnectorTest extends AbstractHubClientTest {
         testProperties.setProperty("hubDhs", hubDhs);
         hubClient = new HubClientImpl(new HubClientConfig(testProperties));
         return hubClient;
+    }
+
+    @Override
+    protected void doRunWithHubClient(HubClient hubClient) {
+        this.hubClient = hubClient;
+        testProperties = new Properties();
+        String mlHost = "localhost";
+        String hubDhs = "false";
+        boolean isDhs = false;
+        //Can override if we want to run tests on DHS
+        if (System.getProperty("mlHost") != null) {
+            mlHost = System.getProperty("mlHost");
+        }
+        if (System.getProperty("isDhs") != null) {
+            isDhs = Boolean.parseBoolean(System.getProperty("isDhs"));
+        }
+        if (isDhs) {
+            hubDhs = "true";
+        }
+        ManageConfig manageConfig = hubClient.getManageClient().getManageConfig();
+        testProperties.setProperty("mlHost", mlHost);
+        testProperties.setProperty("mlUsername", manageConfig.getUsername());
+        testProperties.setProperty("mlPassword", manageConfig.getPassword());
+        testProperties.setProperty("hubDhs", hubDhs);
     }
 
     /**

@@ -22,9 +22,7 @@ import com.marklogic.mgmt.mapper.DefaultResourceMapper;
 import com.marklogic.mgmt.resource.databases.DatabaseManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assumptions;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ModelTest extends AbstractHubCentralTest {
     protected final static String MODEL_NAME = "Customer";
-    protected final static String MODEL_VERSION = "3.0.1"
+    protected final static String MODEL_VERSION = "3.0.1";
     protected final static String ENTITY_PROPERTY_1 = "someProperty";
     protected final static String ENTITY_PROPERTY_2 = "someOtherProperty";
     protected final static String DATABASE_PROPERTY_1 = "testRangeIndexForDHFPROD4704";
@@ -197,7 +195,7 @@ public class ModelTest extends AbstractHubCentralTest {
 
         //Remove namespace and namespacePrefix from entity model
         input.put("description", "Description updated again");
-        input.put("version", MODEL_VERSION)
+        input.put("version", MODEL_VERSION);
         input.remove("namespace");
         input.remove("namespacePrefix");
         controller.updateDraftModelInfo(MODEL_NAME, input);

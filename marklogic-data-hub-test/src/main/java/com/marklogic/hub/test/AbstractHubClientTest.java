@@ -5,29 +5,51 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.MarkLogicIOException;
 import com.marklogic.client.datamovement.DataMovementManager;
 import com.marklogic.client.datamovement.WriteBatcher;
-import com.marklogic.client.io.*;
+import com.marklogic.client.io.BytesHandle;
+import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.client.io.Format;
+import com.marklogic.client.io.JacksonHandle;
+import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.HubClient;
 import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.security.User;
 import com.marklogic.rest.util.Fragment;
-import org.w3c.dom.Document;
 
 import java.net.ConnectException;
 import java.util.Arrays;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.function.Consumer;
 
 /**
  * Abstract base class tests that only depend on a HubClient and not a HubProject.
  */
 public abstract class AbstractHubClientTest extends TestObject {
+    ConcurrentMap<String, HubClient> cachedHubClients = new ConcurrentHashMap<>();
 
+    protected HubClient hubClient;
     protected abstract HubClient getHubClient();
 
     protected abstract HubClient doRunAsUser(String username, String password);
 
+    protected abstract void doRunWithHubClient(HubClient hubClient);
+
     protected final HubClient runAsUser(String username, String password) {
+        return runAsUser(username, password, false);
+    }
+
+    protected final HubClient runAsUser(String username, String password, boolean forceNewClient) {
         long start = System.currentTimeMillis();
+        String key = (username + ":" + password);
+        if (cachedHubClients.containsKey(key) && !forceNewClient) {
+            HubClient hubClient = cachedHubClients.get(key);
+            doRunWithHubClient(hubClient);
+            logger.info("Running as user: " + username + "; cached switching time: " +
+                    (System.currentTimeMillis() - start) + "ms");
+            return hubClient;
+        }
         HubClient hubClient = doRunAsUser(username, password);
+        cachedHubClients.put(key, hubClient);
         logger.info("Running as user: " + username + "; switching time: " +
                 (System.currentTimeMillis() - start) + "ms");
 
@@ -95,7 +117,7 @@ public abstract class AbstractHubClientTest extends TestObject {
     }
 
     protected HubClient runAsTestUser() {
-        return runAsUser("test-data-hub-user", "password");
+        return runAsUser("test-data-hub-user", "password", true);
     }
 
     protected HubClient runAsTestUserWithRoles(String... roles) {
