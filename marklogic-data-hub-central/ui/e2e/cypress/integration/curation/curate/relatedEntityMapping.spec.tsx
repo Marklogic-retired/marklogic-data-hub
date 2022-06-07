@@ -143,7 +143,7 @@ describe("Mapping", () => {
 
     cy.log("**Open Person mapping step details**");
     curatePage.getEntityTypePanel("Person").should("be.visible").click();
-    curatePage.openMappingStepDetail("Person", "mapRelation");
+    curatePage.openMappingStepDetail("Person", "mapRelation");//
     curatePage.verifyStepDetailsOpen("mapRelation");
     browsePage.waitForSpinnerToDisappear();
 
@@ -156,6 +156,49 @@ describe("Mapping", () => {
     mappingStepDetail.getForeignIcon("relatedTo").should("exist");
     mappingStepDetail.goBackToCurateHomePage();
   });
+
+  it("Validate session storage is working for main table", () => {
+
+    curatePage.openMappingStepDetail("Person", "mapRelation");
+    curatePage.verifyStepDetailsOpen("mapRelation");
+    browsePage.waitForSpinnerToDisappear();
+
+    cy.log("**Set values to store in session**");
+    mappingStepDetail.expandPopoverColumns();
+    mappingStepDetail.selectColumnPopoverById("type-checkbox-id").click();
+    mappingStepDetail.relatedFilterMenu("Person");
+    mappingStepDetail.selectMapRelatedEntity("Relation (relatedTo Person)-option");
+    mappingStepDetail.entityTitle("Relation (relatedTo Person)").should("exist");
+
+    mappingStepDetail.expandSpecificDropdownPagination(1);
+    mappingStepDetail.selectPagination("5 / page");
+
+    cy.log("**Go to another page, back and check elements**");
+    toolbar.getLoadToolbarIcon().click();
+    toolbar.getCurateToolbarIcon().click();
+
+    cy.log("**Verify and reset columns, delete relation**");
+    mappingStepDetail.expandPopoverColumns();
+    mappingStepDetail.verifyCheckboxPopoverState(false);
+    mappingStepDetail.selectColumnPopoverById("type-checkbox-id").click();
+
+    cy.log("**reset pagination and delete relation**");
+    mappingStepDetail.verifyPaginationByIndex(1, "5 / page");
+    mappingStepDetail.getPaginationByIndex(1).click();
+    mappingStepDetail.selectPagination("20 / page");
+    mappingStepDetail.relatedFilterSelectionDeleteIconByTitle("Relation (relatedTo Person)").click({force: true});
+    mappingStepDetail.deleteConfirmationButtonYes().click();
+
+    cy.log("**Go to another page, back and check filter**");
+    mappingStepDetail.addFilterMainTable("cust", "Person");
+    toolbar.getLoadToolbarIcon().click();
+    toolbar.getCurateToolbarIcon().click();
+    mappingStepDetail.expandFilterMainTable("Person");
+    mappingStepDetail.verifyValueFilter("cust");
+    mappingStepDetail.resetEntitySearch().click();
+
+  });
+
   it("Create new flow, add mapping to flow, run mapping, verify results", () => {
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     runPage.createFlowButton().click();
@@ -176,8 +219,9 @@ describe("Mapping", () => {
     browsePage.waitForHCTableToLoad();
 
     // Verify Explore results
+    browsePage.removeBaseEntity("Person");
     entitiesSidebar.getSelectedEntityText().should("contain", "All Entities");
-    browsePage.getTotalDocuments().should("be.greaterThan", 21);
+    browsePage.getTotalDocuments().should("be.greaterThan", 13);
     entitiesSidebar.showMoreEntities().click({force: true});
     entitiesSidebar.openBaseEntityFacets("Relation");
     browsePage.getTotalDocuments().should("be.greaterThan", 7);
@@ -196,7 +240,10 @@ describe("Mapping", () => {
     curatePage.openMappingStepDetail("Person", "mapRelation");
     curatePage.verifyStepDetailsOpen("mapRelation");
     browsePage.waitForSpinnerToDisappear();
-    mappingStepDetail.getEntitySettings("Person").click();
+    mappingStepDetail.relatedFilterMenu("Person");
+    mappingStepDetail.selectMapRelatedEntity("Relation (relatedTo Person)-option");
+    mappingStepDetail.entityTitle("Relation (relatedTo Person)").should("exist");
+    mappingStepDetail.getEntitySettings("Person").scrollIntoView().click();
     mappingStepDetail.targetCollection().should("exist");
     mappingStepDetail.editTargetPermissions("Person", "data-hub-common,read");
     mappingStepDetail.getValidationError("Person").should("exist");
@@ -204,7 +251,7 @@ describe("Mapping", () => {
     mappingStepDetail.getValidationError("Person").should("not.have.text");
     cy.waitUntil(() => mappingStepDetail.getSaveSettings("Person")).click({force: true});
 
-    mappingStepDetail.getEntitySettings("Relation").click();
+    mappingStepDetail.getEntitySettings("Relation").scrollIntoView().click();
     mappingStepDetail.editTargetPermissions("Relation", "data-hub-common,read,data-hub-common");
     cy.waitUntil(() => mappingStepDetail.getSaveSettings("Relation")).click({force: true});
     mappingStepDetail.getValidationError("Relation").should("exist");
@@ -247,7 +294,7 @@ describe("Mapping", () => {
     mappingStepDetail.entityTitle("Person").click(); // click outside menu to close it
     // Related entity exists before deletion
     mappingStepDetail.entityTitle("Relation (relatedTo Person)").should("exist");
-    mappingStepDetail.relatedDeleteIcon("Relation (relatedTo Person)").click();
+    mappingStepDetail.relatedDeleteIcon("Relation (relatedTo Person)").scrollIntoView().click();
     mappingStepDetail.deleteConfirmationButtonYes().click({force: true});
     // Related entity does not exist after deletion
     mappingStepDetail.entityTitle("Relation (relatedTo Person)").should("not.exist");
@@ -270,6 +317,6 @@ describe("Mapping", () => {
     mappingStepDetail.entityTitle("Person").should("not.be.visible");
     mappingStepDetail.getPaginationPageSizeOptions("person").click();
     curatePage.getPageSizeOption("10 / page").click({force: true});
-    mappingStepDetail.entityTitle("Person").should("be.visible");
+    mappingStepDetail.entityTitle("Person").scrollIntoView().should("be.visible");
   });
 });

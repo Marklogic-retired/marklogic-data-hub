@@ -72,5 +72,18 @@ export type ViewSettingsType = {
             filterTable?: string,
             expandedTableKeys?: number[]
         }
+    }
+    curateEntityTable?: {
+        optionsPagesTable?: typeof paginationMapping,
+        filterMainTable?: {},
+        expandedTableKeys?: {},
+        entityProperties?: any[],
+        mainTableCollapsed?: {},
+        columnOptions?: any,
+        lowerEntityColumns?: any,
+        entityColumns?:any,
+        pageSizeTable?: {},
+        pageNumberTable?: {},
+        selectedValues?:string[],
     },
 };

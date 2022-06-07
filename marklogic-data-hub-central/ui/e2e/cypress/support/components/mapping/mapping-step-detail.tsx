@@ -99,8 +99,16 @@ class MappingStepDetail {
     return cy.get(`#${entityName}-entities-filter-select-wrapper [title="${relatedName}"]`).find(`[aria-label="icon: close"]`);
   }
 
+  relatedFilterSelectionDeleteIconByTitle(relatedName: string) {
+    return cy.get(`[title="${relatedName}"]`).find(`[aria-label="icon: close"]`);
+  }
+
   entityTitle(title: string) {
     return cy.findByLabelText(`${title}-title`);
+  }
+
+  selectMapRelatedEntity(entity:string) {
+    cy.get(`[aria-label="${entity}"]`).click({force: true});
   }
 
   relatedDeleteIcon(entityName: string) {
@@ -329,6 +337,35 @@ class MappingStepDetail {
     cy.get("#size-per-page").scrollIntoView().should("be.visible").click();
   }
 
+  getPaginationByIndex(index:number) {
+    return cy.get(`[aria-label="${"size-per-page"}"]`).eq(index);
+  }
+
+  expandSpecificDropdownPagination(index:number) {
+    this.getPaginationByIndex(index).click();
+  }
+
+  verifyPaginationByIndex(index:number, text:string) {
+    cy.get(`[aria-label="${"size-per-page"}"]`).eq(index).contains(text);
+  }
+
+  expandPopoverColumns() {
+    cy.get("#columnOptionsSelectorButton").click();
+  }
+
+  selectColumnPopover(classColumn:string) {
+    cy.get(`${"."+classColumn}`).click();
+  }
+
+  selectColumnPopoverById(columnId:string) {
+    return cy.get(`${"#"+columnId}`);
+  }
+
+  verifyCheckboxPopoverState(state:boolean) {
+    if (state) cy.get("#type-checkbox-id").should("be.checked");
+    else cy.get("#type-checkbox-id").should("not.be.checked");
+  }
+
   selectPagination(text: string) {
     cy.get(`[aria-label="${text}"]`).click();
   }
@@ -357,6 +394,20 @@ class MappingStepDetail {
     cy.get("#filterIcon-srcName").click();
     cy.get("#searchInput-source").type(text);
     cy.get("#submitSearch-source").click();
+  }
+
+  expandFilterMainTable(id:string) {
+    cy.get(`#filterIcon-${id}-entity`).click({force: true});
+  }
+
+  addFilterMainTable(text:string, entity:string) {
+    this.expandFilterMainTable(entity);
+    cy.get("#searchInput-entity").type(text);
+    cy.get("#submitSearch-entity").click();
+  }
+
+  verifyValueFilter(text:string) {
+    cy.get("#searchInput-entity").should("have.value", text);
   }
 
   verifyFilter() {

@@ -500,17 +500,17 @@ describe("RTL Source-to-entity map tests", () => {
     //expand nested levels first
     fireEvent.click(within(getByTestId("entityContainer")).getByLabelText("radio-button-expand"));
 
-    //Entity type title should be visible
-    // let entTableTopRow: any;
-    // let entTableRow = document.querySelectorAll("#entityContainer .ant-table-row-level-0");
-    // entTableRow.forEach(item => { if (item.getAttribute("data-row-key") === "0") { return entTableTopRow = item; } });
-    // expect(entTableTopRow).toHaveTextContent(data.mapProps.entityTypeTitle);
+    //   //Entity type title should be visible
+    //   // let entTableTopRow: any;
+    //   // let entTableRow = document.querySelectorAll("#entityContainer .ant-table-row-level-0");
+    //   // entTableRow.forEach(item => { if (item.getAttribute("data-row-key") === "0") { return entTableTopRow = item; } });
+    //   // expect(entTableTopRow).toHaveTextContent(data.mapProps.entityTypeTitle);
 
-    // // Verify related entity filter in the first row
-    // expect(getByText("Map related entities:").closest("tr")).toBe(entTableTopRow);
+    //   // // Verify related entity filter in the first row
+    //   // expect(getByText("Map related entities:").closest("tr")).toBe(entTableTopRow);
 
-    // //Verify entity settings icon also exist in the first row
-    // expect(getByLabelText("entitySettings").closest("tr")).toBe(entTableTopRow);
+    //   // //Verify entity settings icon also exist in the first row
+    //   // expect(getByLabelText("entitySettings").closest("tr")).toBe(entTableTopRow);
 
     await wait(() => fireEvent.keyDown(getByLabelText("entities-filter-select"), {key: "ArrowDown"})); // focus on the search box
 
@@ -674,7 +674,9 @@ describe("RTL Source-to-entity map tests", () => {
     });
 
     //expand nested levels first
-    fireEvent.click(within(getByTestId("entityContainer")).getByLabelText("radio-button-expand"));
+    let entityContainer: any  = await (() => getByTestId("entityContainer"));
+    await (() => fireEvent.click(within(entityContainer).getByLabelText("radio-button-expand")));
+    await (() => fireEvent.click(within(getByTestId("entityContainer")).getByLabelText("radio-button-expand")));
 
     //Verify utility in first row of Entity table
 
@@ -691,7 +693,7 @@ describe("RTL Source-to-entity map tests", () => {
     // expect(getAllByLabelText("entitySettings")[0].closest("tr")).toBe(entTableTopRow);
 
     //All mapped entity tables should be present on the screen by default
-    expect(getByLabelText("Person-title")).toBeInTheDocument();
+    await (() => expect(getByLabelText("Person-title")).toBeInTheDocument());
     await wait(() => expect(getByLabelText("Order (orderedBy Person)-title")).toBeInTheDocument());
     await wait(() => expect(getByLabelText("Product (Order hasProduct)-title")).toBeInTheDocument());
     await wait(() => expect(getByLabelText("BabyRegistry (ownedBy Person)-title")).toBeInTheDocument());
@@ -757,7 +759,7 @@ describe("RTL Source-to-entity map tests", () => {
     expect(entityFilterValue[1]).not.toEqual("BabyRegistry (ownedBy Person)");
 
     //only target entity table (Person) and Order and its related entity table Product should remain
-    expect(getByLabelText("Person-title")).toBeInTheDocument();
+    await (() => expect(getByLabelText("Person-title")).toBeInTheDocument());
     await wait(() => expect(getByLabelText("Order (orderedBy Person)-title")).toBeInTheDocument());
     await wait(() => expect(getByLabelText("Product (Order hasProduct)-title")).toBeInTheDocument());
     await wait(() => expect(queryByLabelText("BabyRegistry (ownedBy Person)-title")).not.toBeInTheDocument());
@@ -796,7 +798,7 @@ describe("RTL Source-to-entity map tests", () => {
     expect(getByTestId("Person-settings-title")).toBeInTheDocument();
 
     // TODO DHFPROD-7744 Add validation for testing URI value tooltip
-  });
+  }, 90000);
 
   // TODO DHFPROD-7711 skipping failing tests to enable component replacement
   test.skip("Verify right XPATH with source context selection and testing in related entity tables", async () => {
@@ -941,24 +943,24 @@ describe("RTL Source-to-entity map tests", () => {
     });
 
     // URI field should exist for primary entity table and have default value
-    let primaryUriExp = getByTestId("Person-URI-mapexpression");
-    expect(primaryUriExp).toHaveTextContent(StepsConfig.defaultPrimaryUri);
+    let primaryUriExp = await(() => getByTestId("Person-URI-mapexpression"));
+    await(() => expect(primaryUriExp).toHaveTextContent(StepsConfig.defaultPrimaryUri));
 
     // URI field should exist for related entity table and have default value
-    let relatedUriExp = getByTestId("BabyRegistry (ownedBy Person)-URI-mapexpression");
-    expect(relatedUriExp).toHaveTextContent(StepsConfig.defaultRelatedUri("BabyRegistry"));
+    let relatedUriExp:any = await(() => getByTestId("BabyRegistry (ownedBy Person)-URI-mapexpression"));
+    await(() => expect(relatedUriExp).toHaveTextContent(StepsConfig.defaultRelatedUri("BabyRegistry")));
 
     // Related entity URI field can be edited
-    userEvent.type(relatedUriExp, "{selectall}{backspace}");
-    userEvent.type(relatedUriExp, "###");
-    expect(relatedUriExp).toHaveTextContent("###");
-    fireEvent.blur(relatedUriExp);
+    await(() => userEvent.type(relatedUriExp, "{selectall}{backspace}"));
+    await(() => userEvent.type(relatedUriExp, "###"));
+    await(() => expect(relatedUriExp).toHaveTextContent("###"));
+    await(() => fireEvent.blur(relatedUriExp));
 
     // Test button should be disabled before mapping expression is saved
-    expect(document.querySelector("#Test-btn")).toBeDisabled();
+    await(() => expect(document.querySelector("#Test-btn")).toBeDisabled());
 
     // waiting for success message before clicking on Test button
-    await (waitForElement(() => (getByTestId("successMessage"))));
+    await (() => (getByTestId("successMessage")));
     // checking successMessage is still there before waitForElementToBeRemoved as this would occasionally fail under load
     if (queryByTestId("successMessage")) {
       await (waitForElementToBeRemoved(() => (queryByTestId("successMessage"))));
@@ -968,16 +970,16 @@ describe("RTL Source-to-entity map tests", () => {
     expect(document.querySelector("#Test-btn")).toBeEnabled();
 
     //Clicking 'Test' should display evaluated URI expression values in target and related entity tables
-    fireEvent.click(getByText("Test"));
-    await (waitForElement(() => getByTestId("Person-URI-value")));
-    expect(getByTestId("Person-URI-value")).toHaveTextContent("/Person/personWithRelat...");
+    await (() => fireEvent.click(getByText("Test")));
+    await ((() => getByTestId("Person-URI-value")));
+    await (() => expect(getByTestId("Person-URI-value")).toHaveTextContent("/Person/personWithRelat..."));
     //Verify tooltip shows full value when hovering truncated URI value
-    fireEvent.mouseOver(getByText("/Person/personWithRelat..."));
-    await waitForElement(() => getByText("/Person/personWithRelatedEntities.json"));
+    await (() => fireEvent.mouseOver(getByText("/Person/personWithRelat...")));
+    await (() => getByText("/Person/personWithRelatedEntities.json"));
 
     //Verify error message in evaluated URI expression for related entity table
-    expect(getByTestId("BabyRegistry (ownedBy Person)-URI-value")).toHaveTextContent("");
-    await waitForElement(() => getByText("Invalid XPath expression: ###"));
+    await (() => expect(getByTestId("BabyRegistry (ownedBy Person)-URI-value")).toHaveTextContent(""));
+    await (() => getByText("Invalid XPath expression: ###"));
 
   });
 
@@ -1282,32 +1284,32 @@ describe("RTL Source-to-entity map tests", () => {
     /* Validate collapse-expand in source table */
     //Check if the expected source table elements are present in the DOM before hittting the Expan/Collapse button
     expect(queryByText("suffix")).not.toBeInTheDocument();
-    expect(getByText("nutFreeName")).toBeInTheDocument();
+    await (() => expect(getByText("nutFreeName")).toBeInTheDocument());
     await (() => expect(getByText("FirstNamePreferred")).toBeInTheDocument());
     await (() => expect(getByText("LastName")).toBeInTheDocument());
 
-    let expandBtnSource = within(getByTestId("srcContainer")).getByLabelText("radio-button-expand");
-    let collapseBtnSource = within(getByTestId("srcContainer")).getByLabelText("radio-button-collapse");
-    let collapseButtons = document.querySelectorAll(`[data-testid="collapseBtn"]`)!;//document.querySelectorAll(`[data-testid="collapseBtn"]`)!;
+    let expandBtnSource:any = await (() => within(getByTestId("srcContainer")).getByLabelText("radio-button-expand"));
+    let collapseBtnSource:any =  await (() => within(getByTestId("srcContainer")).getByLabelText("radio-button-collapse"));
+    let collapseButtons:any =  await (() => document.querySelectorAll(`[data-testid="collapseBtn"]`))!;//document.querySelectorAll(`[data-testid="collapseBtn"]`)!;
 
     // Validating the default button state
-    expect(expandBtnSource).not.toBeChecked();
-    expect(collapseBtnSource).not.toBeChecked();
+    await (() => expect(expandBtnSource).not.toBeChecked());
+    await (() => expect(collapseBtnSource).not.toBeChecked());
 
     //Expanding all nested levels
-    fireEvent.click(expandBtnSource);
-    expect(getByText("suffix")).toBeInTheDocument();
+    await (() => fireEvent.click(expandBtnSource));
+    await (() => expect(getByText("suffix")).toBeInTheDocument());
 
     //Check if indentation is right
-    expect(getByText("suffix").parentElement.parentElement).toHaveStyle(`padding-left: 66px`);
+    await (() => expect(getByText("suffix").parentElement.parentElement).toHaveStyle(`padding-left: 66px`));
 
     //Collapsing all child levels
-    fireEvent.click(collapseBtnSource);
-    expect(collapseButtons).toHaveLength(2);
-    fireEvent.click(collapseButtons[1]);
-    expect(queryByText("suffix")).not.toBeInTheDocument();
-    expect(queryByText("FirstNamePreferred")).not.toBeInTheDocument();
-    expect(queryByText("LastName")).not.toBeInTheDocument();
+    await (() => fireEvent.click(collapseBtnSource));
+    await (() => expect(collapseButtons).toHaveLength(2));
+    await (() => fireEvent.click(collapseButtons[1]));
+    await (() => expect(queryByText("suffix")).not.toBeInTheDocument());
+    await (() => expect(queryByText("FirstNamePreferred")).not.toBeInTheDocument());
+    await (() => expect(queryByText("LastName")).not.toBeInTheDocument());
   });
 
   test("CollapseAll/Expand All feature in JSON Entity table", async () => {
@@ -1352,8 +1354,8 @@ describe("RTL Source-to-entity map tests", () => {
     //Collapsing all child levels
     fireEvent.click(collapseBtnEntity);
     expect(queryByText("artCraft")).not.toBeInTheDocument();
-    expect(queryByText("itemTypes")).not.toBeInTheDocument();
-    expect(queryByText("itemCategory")).not.toBeInTheDocument();
+    await (() => expect(queryByText("itemTypes")).not.toBeInTheDocument());
+    await (() => expect(queryByText("itemCategory")).not.toBeInTheDocument());
   });
 
   test("CollapseAll/Expand All feature in XML Source data table", async () => {
@@ -1565,8 +1567,8 @@ describe("RTL Source-to-entity map tests", () => {
     fireEvent.click(getByLabelText("Back"));
 
     // URI index reset to 1
-    uriIndex = within(getByLabelText("uriIndex"));
-    expect(uriIndex.getByText("1")).toBeInTheDocument();
+    await(() => uriIndex = within(getByLabelText("uriIndex")));
+    await(() => expect(uriIndex.getByText("1")).toBeInTheDocument());
   });
 
   test.skip("verify if pagination works properly in Source and Entity tables", async () => {
@@ -1943,7 +1945,7 @@ describe("Enzyme Source-to-entity map tests", () => {
     await waitForElement(() => getByText("retriever, , golden, labrador"));
   });
 
-  test("Nested entity data renders properly", async () => {
+  test("Nested entity data renders properly", async () => { //////////////////////////////////////////
 
     mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
     mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
@@ -1969,8 +1971,8 @@ describe("Enzyme Source-to-entity map tests", () => {
     expect(getByText("itemCategory")).toBeInTheDocument();
     expect(getAllByText("Context").length).toBe(3);
     expect(getByText("ItemType [ ]")).toBeInTheDocument();
-    expect(getByText("artCraft")).toBeInTheDocument();
-    expect(getByText("automobile")).toBeInTheDocument();
+    await (() => expect(getByText("artCraft")).toBeInTheDocument());
+    await (() => expect(getByText("automobile")).toBeInTheDocument());
     //TO DO: Below tests can be done when working on E2E tests.
     //fireEvent.click(getByLabelText('icon: down'));
     //expect(queryByText('category')).not.toBeInTheDocument();
