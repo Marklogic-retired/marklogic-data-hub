@@ -17,17 +17,17 @@ package com.marklogic.hub;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.ext.util.DefaultDocumentPermissionsParser;
 import com.marklogic.client.ext.util.DocumentPermissionsParser;
-import com.marklogic.client.io.*;
+import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.client.io.FileHandle;
+import com.marklogic.client.io.Format;
+import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.io.marker.AbstractReadHandle;
-import com.marklogic.hub.deploy.commands.LoadHubArtifactsCommand;
-import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
 import com.marklogic.hub.impl.DataHubImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.legacy.LegacyDebugging;
@@ -38,6 +38,7 @@ import com.marklogic.hub.legacy.flow.FlowType;
 import com.marklogic.hub.test.AbstractHubTest;
 import com.marklogic.hub.test.HubConfigInterceptor;
 import com.marklogic.hub.util.ComboListener;
+import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.resource.databases.DatabaseManager;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -62,7 +63,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -210,6 +210,27 @@ public class HubTestBase extends AbstractHubTest {
         hubConfig.getAppConfig().getCmaConfig().setCombineRequests(false);
 
         return getHubClient();
+    }
+
+    protected void doRunWithHubClient(HubClient hubClient) {
+        Properties props = hubConfigInterceptor.getHubConfigObjectFactory().getGradleProperties();
+        Properties newProps = new Properties();
+
+        ManageConfig manageConfig = hubClient.getManageClient().getManageConfig();
+        newProps.setProperty("mlUsername", manageConfig.getUsername());
+        newProps.setProperty("mlPassword", manageConfig.getPassword());
+        newProps.setProperty("hubDhs", props.getProperty("hubDhs") == null ? "false" : props.getProperty("hubDhs"));
+        newProps.setProperty("hubSsl", props.getProperty("hubSsl") == null ? "false" : props.getProperty("hubSsl"));
+
+        applyMlUsernameAndMlPassword(newProps);
+
+        // Re-initializes the Manage API connection
+        getHubConfig().getManageClient().setManageConfig(manageConfig);
+
+        // We don't want this enabled for tests as some tests will just run a single command, which may result in a
+        // CMA config being constructed but not saved
+        hubConfig.getAppConfig().getCmaConfig().setCombineRequests(false);
+        this.hubClient = hubClient;
     }
 
     public void deleteProjectDir() {

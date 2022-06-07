@@ -12,16 +12,15 @@ import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.impl.HubProjectImpl;
 import com.marklogic.hub.test.AbstractHubTest;
 import com.marklogic.hub.test.ReferenceModelProject;
+import com.marklogic.mgmt.ManageConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -136,6 +135,19 @@ public abstract class AbstractHubCentralTest extends AbstractHubTest {
 
         // And return this for the rest of the core test plumbing to use
         return getHubClient();
+    }
+
+    @Override
+    protected void doRunWithHubClient(HubClient hubClient) {
+        // Need to create the project directory before applying properties
+        testHubConfig.createProject(testProjectDirectory);
+        ManageConfig manageConfig = hubClient.getManageClient().getManageConfig();
+        testHubConfig.applyProperties(hubCentral.buildPropertySource(manageConfig.getUsername(), manageConfig.getPassword()));
+
+        // Update the provider with a new HubClient
+        hubClientProvider.setHubClientDelegate(testHubConfig.newHubClient());
+
+        this.hubClient = hubClient;
     }
 
     /**

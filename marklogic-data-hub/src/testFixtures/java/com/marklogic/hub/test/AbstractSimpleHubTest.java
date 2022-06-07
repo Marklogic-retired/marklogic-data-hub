@@ -4,6 +4,7 @@ import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.impl.HubProjectImpl;
+import com.marklogic.mgmt.ManageConfig;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.io.File;
@@ -48,6 +49,16 @@ public abstract class AbstractSimpleHubTest extends AbstractHubTest {
         hubConfig.applyProperties(props);
         hubClient = null;
         return getHubClient();
+    }
+
+    @Override
+    protected void doRunWithHubClient(HubClient hubClient) {
+        Properties props = new Properties();
+        ManageConfig manageConfig = hubClient.getManageClient().getManageConfig();
+        props.setProperty("mlUsername", manageConfig.getUsername());
+        props.setProperty("mlPassword", manageConfig.getPassword());
+        hubConfig.applyProperties(props);
+        this.hubClient = hubClient;
     }
 
     @Override
