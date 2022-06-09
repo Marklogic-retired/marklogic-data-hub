@@ -1,0 +1,9 @@
+{
+  "user-name": "wailin",
+  "description": "Wai Lin is a Systems Analyst",
+  "password": "%%testPassword%%",
+  "role": [
+    "hub-central-curator",
+    "hub-central-downloader"
+  ]
+}
