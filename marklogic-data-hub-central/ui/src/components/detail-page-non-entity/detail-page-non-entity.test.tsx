@@ -157,4 +157,25 @@ describe("Detail page for non-entity view component", () => {
     fireEvent.click(getByTestId("download-link"));
     expect(axiosMock).toHaveBeenCalledWith({"method": "GET", "responseType": "blob", "url": "/api/record/download?docUri=%2FloadCustomers.json&database=staging"});
   });
+
+  test("Should render the right icon when fileType is json", () => {
+    const {getByLabelText} = render(
+      <Router>
+        <DetailPageNonEntity
+          {...testData.NonEntityDocumentData}
+        />
+      </Router>
+    );
+    expect(getByLabelText("icon: filetype-json")).toBeInTheDocument();
+  });
+  test("Should render the right icon when fileType is xml", () => {
+    const {getByLabelText} = render(
+      <Router>
+        <DetailPageNonEntity
+          {...testData.NonEntityDocumentData} contentType={"xml"}
+        />
+      </Router>
+    );
+    expect(getByLabelText("icon: filetype-xml")).toBeInTheDocument();
+  });
 });
