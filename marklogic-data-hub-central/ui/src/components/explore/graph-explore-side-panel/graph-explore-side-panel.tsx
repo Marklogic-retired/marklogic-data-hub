@@ -1,4 +1,4 @@
-import {faCode, faThList} from "@fortawesome/free-solid-svg-icons";
+import {faThList} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import React, {useContext, useEffect, useState, useRef} from "react";
 import {getDetails} from "@api/record";
@@ -11,6 +11,7 @@ import {xmlParser, xmlDecoder, xmlFormatter, jsonFormatter} from "@util/record-p
 import TableView from "@components/table-view/table-view";
 import {HCTable, HCTooltip} from "@components/common";
 import {fetchSemanticConceptInfo} from "@api/queries";
+import {FileEarmarkBinary, FileEarmarkText} from "react-bootstrap-icons";
 
 type Props = {
     onCloseSidePanel:() => void;
@@ -41,10 +42,21 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
   const [contentType, setContentType] = useState<string>("");
   const [xml, setXml] = useState();
   const data = useRef<any[]>();
-  const RECORD_TITLE =  <span aria-label="recordTab">{contentType.toUpperCase()=== "XML" ? <i className={styles.xmlIcon} aria-label="xmlTypeData"><FontAwesomeIcon icon={faCode} size="sm" /></i>
-    : <span className={styles.jsonIcon} aria-label="jsonTypeData"></span>}{contentType ? contentType.toUpperCase() : ""}</span>;
-
   const [semanticConceptInfo, setSemanticConceptInfo] = useState<any []>([]);
+
+  const iconContenType = {
+    unknown: <span className={"mlcf mlcf-blank fs-2"} aria-label={"icon: filetype-unknown"} />,
+    json: <span className={"mlcf mlcf-json fs-2"} aria-label={"jsonTypeData"} />,
+    xml: <span className={"mlcf mlcf-xml fs-2"} aria-label={"xmlTypeData"} />,
+    text: <FileEarmarkText className={"d-inline-block fs-2"} aria-label={"icon: filetype-text"} />,
+    bin: <FileEarmarkBinary className={"d-inline-block fs-2"} aria-label={"icon: filetype-bin"} />,
+    csv: <span className={"mlcf mlcf-csv fs-2"} aria-label={"icon: filetype-csv"} />
+  };
+  const RECORD_TITLE =  <span aria-label="recordTab" className="d-flex align-items-center">
+    {iconContenType[contentType.toLowerCase()] || iconContenType.unknown}
+    {contentType ? contentType.toUpperCase() : ""}
+  </span>;
+
 
   useEffect(() => {
     let uri;

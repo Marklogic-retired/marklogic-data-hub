@@ -10,7 +10,7 @@ import AsyncLoader from "@components/async-loader/async-loader";
 import {Row, Col, Tabs, Tab} from "react-bootstrap";
 import {xmlParser, xmlDecoder, xmlFormatter, jsonFormatter} from "@util/record-parser";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faThList, faCode, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
+import {faThList, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import {getUserPreferences, updateUserPreferences} from "../services/user-preferences";
 import DetailPageNonEntity from "@components/detail-page-non-entity/detail-page-non-entity";
 import {SearchContext} from "@util/search-context";
@@ -18,6 +18,7 @@ import {fetchQueries} from "@api/queries";
 import {AuthoritiesContext} from "@util/authorities";
 import {ArrowLeftShort} from "react-bootstrap-icons";
 import {HCTable, HCTooltip} from "@components/common";
+import {FileEarmarkBinary, FileEarmarkText} from "react-bootstrap-icons";
 
 interface Props extends RouteComponentProps<any> { }
 
@@ -411,6 +412,15 @@ const Detail: React.FC<Props> = ({history, location}) => {
     }
   };
 
+  const iconContenType = {
+    unknown: <span className={"mlcf mlcf-blank fs-2"} aria-label={"icon: filetype-unknown"} />,
+    json: <span className={"mlcf mlcf-json fs-2"} aria-label={"icon: filetype-json"} />,
+    xml: <span className={"mlcf mlcf-xml fs-2"} aria-label={"icon: filetype-xml"} />,
+    text: <FileEarmarkText className={"d-inline-block fs-2"} aria-label={"icon: filetype-text"} />,
+    bin: <FileEarmarkBinary className={"d-inline-block fs-2"} aria-label={"icon: filetype-bin"} />,
+    csv: <span className={"mlcf mlcf-csv fs-2"} aria-label={"icon: filetype-csv"} />
+  };
+
   return (
     entityInstanceDocument === undefined ? <div style={{marginTop: "40px"}}>
       <AsyncLoader />
@@ -440,12 +450,8 @@ const Detail: React.FC<Props> = ({history, location}) => {
                   </Tab>
                   <Tab eventKey="full" id="full" data-cy="source-view" tabClassName={`${styles.tabActive} ${selected === "full" && styles.active}`}
                     title={<HCTooltip id="source-view-tooltip" placement="top" text={"Show the complete " + contentType.toUpperCase()} >
-                      <span>
-                        {contentType.toUpperCase() === "XML" ?
-                          <FontAwesomeIcon icon={faCode} size="lg" />
-                          :
-                          <span className={styles.jsonIcon}></span>
-                        }
+                      <span className="d-flex align-items-center">
+                        {iconContenType[contentType.toLowerCase()] || iconContenType.unknown}
                         <span className={styles.subMenu}>{contentType.toUpperCase()}</span>
                       </span>
                     </HCTooltip>}>

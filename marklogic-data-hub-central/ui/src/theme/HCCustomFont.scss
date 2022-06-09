@@ -1,0 +1,57 @@
+// Here are related all the posible glyph in iconmoon.ttf file
+// In this page https://fontdrop.info can be loaded the font and see the glyph and the respective unicode character
+
+@font-face {
+  font-family: "MLCustomFont";
+  src: url("../fonts/ML_IconFont.ttf") format("truetype");
+  src: url("../fonts/icomoon.ttf") format("truetype");
+}
+
+.mlcf {
+  font-family: MLCustomFont;
+  font-size: 24px;
+  position: relative;
+  font-weight: 200;
+  display: inline-block;
+  line-height: 1;
+  
+  &.mlcf-search:before {
+    content: "\e917";
+  }
+  
+  &.mlcf-db:before {
+    content: "\e92d";
+  }
+ 
+  &.mlcf-blank:before {
+    content: "\e932";
+  }
+  
+  &.mlcf-folder:before {
+    content: "\e942";
+  }
+  
+  &.mlcf-js:before {
+    content: "\e94b";
+  }
+  
+  &.mlcf-json:before {
+    content: "\e94c";
+  }
+  
+  &.mlcf-sql:before {
+    content: "\e968";
+  }
+  
+  &.mlcf-csv:before {
+    content: "\e969";
+  }
+  
+  &.mlcf-user:before {
+    content: "\e970";
+  }
+  
+  &.mlcf-xml:before {
+    content: "\e976";
+  }
+}

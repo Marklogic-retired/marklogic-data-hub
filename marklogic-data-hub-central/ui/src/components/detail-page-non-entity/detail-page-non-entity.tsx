@@ -2,15 +2,13 @@ import React, {useState, useContext, useEffect} from "react";
 import {Row, Col, Tab, Tabs} from "react-bootstrap";
 import styles from "./detail-page-non-entity.module.scss";
 import {useHistory, useLocation} from "react-router-dom";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCode} from "@fortawesome/free-solid-svg-icons";
 import {UserContext} from "@util/user-context";
 import AsyncLoader from "../async-loader/async-loader";
 import {updateUserPreferences} from "../../services/user-preferences";
 import {xmlFormatter, jsonFormatter} from "@util/record-parser";
 import {getRecord} from "@api/record";
 import {HCTooltip} from "@components/common";
-import {ArrowLeftShort, Download} from "react-bootstrap-icons";
+import {ArrowLeftShort, Download, FileEarmarkBinary, FileEarmarkText} from "react-bootstrap-icons";
 import {HCSider, HCTable} from "@components/common";
 
 const DetailPageNonEntity = (props) => {
@@ -199,19 +197,30 @@ const DetailPageNonEntity = (props) => {
     }
   };
 
+  const iconContenType = {
+    unknown: <span className={"mlcf mlcf-blank fs-2"} aria-label={"icon: filetype-unknown"} />,
+    json: <span className={"mlcf mlcf-json fs-2"} aria-label={"icon: filetype-json"} />,
+    xml: <span className={"mlcf mlcf-xml fs-2"} aria-label={"icon: filetype-xml"} />,
+    text: <FileEarmarkText className={"d-inline-block fs-2"} aria-label={"icon: filetype-text"} />,
+    bin: <FileEarmarkBinary className={"d-inline-block fs-2"} aria-label={"icon: filetype-bin"} />,
+    csv: <span className={"mlcf mlcf-csv fs-2"} aria-label={"icon: filetype-csv"} />
+  };
+
+  const tabTitle = <HCTooltip text="Show the complete record" id="complete-record-tooltip" placement="top">
+    <span>
+      <span className="d-flex align-items-center">
+        {iconContenType[props.contentType] || iconContenType.unknown}
+        <span className={styles.subMenu}>Record</span>
+      </span>
+    </span>
+  </HCTooltip>;
+
   const contentElements = props.isLoading || user.error.type === "ALERT" ? <div style={{marginTop: "40px"}}><AsyncLoader /></div> : displayRecord(props.contentType);
 
   const viewSelector = <div id="menu" className={styles.menu}>
     <Tabs onSelect={(event) => handleMenuSelect(event)} className="border-0 ms-0">
       <Tab eventKey="record" key="record" id="record" data-testid="record-view" tabClassName={`${styles.tabActive} ${selected === "record" && styles.active}`}
-        title={
-          <HCTooltip text="Show the complete record" id="complete-record-tooltip" placement="top">
-            <span>
-              <i><FontAwesomeIcon icon={faCode} size="lg" /></i>
-              <span className={styles.subMenu}>Record</span>
-            </span>
-          </HCTooltip>
-        }>
+        title={tabTitle}>
       </Tab>
     </Tabs>
   </div>;
@@ -219,14 +228,7 @@ const DetailPageNonEntity = (props) => {
   const textViewSelector = <div id="menu" className={styles.menuText}>
     <Tabs>
       <Tab eventKey="record" id="record" data-cy="source-view" tabClassName={`${styles.tabActive} ${selected === "record" && styles.active}`}
-        title={
-          <HCTooltip text="Show the complete record" id="show-complete-record-tooltip" placement="top">
-            <span>
-              <i><FontAwesomeIcon icon={faCode} size="lg" /></i>
-              <span className={styles.subMenu}>Record</span>
-            </span>
-          </HCTooltip>
-        }>
+        title={tabTitle}>
       </Tab>
     </Tabs>
   </div>;
