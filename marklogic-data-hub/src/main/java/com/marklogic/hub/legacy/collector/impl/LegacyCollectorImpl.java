@@ -146,12 +146,12 @@ public class LegacyCollectorImpl implements LegacyCollector {
 
             // Streams the response instead of loading it all in memory
             ResponseExtractor<Void> responseExtractor = response -> {
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody(), StandardCharsets.UTF_8));
-                String line;
-                while((line = bufferedReader.readLine()) != null) {
-                    results.add(line);
+                try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody(), StandardCharsets.UTF_8))) {
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        results.add(line);
+                    }
                 }
-                bufferedReader.close();
                 return null;
             };
 

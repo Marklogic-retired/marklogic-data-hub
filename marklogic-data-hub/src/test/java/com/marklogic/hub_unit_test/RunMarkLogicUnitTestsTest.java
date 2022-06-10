@@ -37,8 +37,6 @@ public class RunMarkLogicUnitTestsTest extends AbstractHubCoreTest {
             resetHubProject();
             applyDatabasePropertiesForTests(getHubConfig());
 
-            // TODO Shouldn't need to do this, since resetHubProject does it
-            resetDatabases();
             new FinishHubDeploymentCommand(getHubConfig()).execute(newCommandContext());
             runAsDataHubDeveloper();
             initialized = true;
@@ -79,9 +77,6 @@ public class RunMarkLogicUnitTestsTest extends AbstractHubCoreTest {
     public void test(TestModule testModule) {
         logger.info("Running test: " + testModule.getTest() + "; thread: " + Thread.currentThread().getName() + "; host: " + getHubConfig().getHost());
         long start = System.currentTimeMillis();
-        // This shouldn't be necessary, and it's causing each test to run a bit longer
-        // TODO See if this can be removed
-        runAsDataHubDeveloper();
         TestSuiteResult result = new TestManager(getHubConfig().newFinalClient()).run(testModule);
         logger.info("Finished test: " + testModule.getTest() + "; time: " + (System.currentTimeMillis() - start) + "ms");
 

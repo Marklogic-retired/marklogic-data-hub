@@ -120,6 +120,7 @@ public class TestAppInstaller {
             modulesClient.newServerEval().xquery("cts:uri-match('/test/**') ! xdmp:document-add-collections(., 'hub-core-module')").evalAs(String.class);
             // Preserves the modules loaded from src/test/ml-modules/root/custom-modules
             modulesClient.newServerEval().xquery("cts:uri-match('/custom-modules/**') ! xdmp:document-add-collections(., 'hub-core-module')").evalAs(String.class);
+            modulesClient.release();
             logger.info("Finished loading test modules");
         } catch (Exception ex) {
             throw new RuntimeException(ex);

@@ -191,6 +191,9 @@ public class HubTestBase extends AbstractHubTest {
 
     @Override
     protected HubClient doRunAsUser(String mlUsername, String mlPassword) {
+        if (hubClient != null && mlUsername.equals(hubClient.getUsername())) {
+            return getHubClient();
+        }
         hubClient = null;
         Properties props = hubConfigInterceptor.getHubConfigObjectFactory().getGradleProperties();
         Properties newProps = new Properties();

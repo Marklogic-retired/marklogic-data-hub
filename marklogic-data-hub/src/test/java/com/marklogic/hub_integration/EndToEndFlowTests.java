@@ -25,16 +25,25 @@ import com.marklogic.client.datamovement.JobTicket;
 import com.marklogic.client.datamovement.WriteBatcher;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.document.ServerTransform;
-import com.marklogic.client.io.*;
+import com.marklogic.client.io.DOMHandle;
+import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.client.io.FileHandle;
+import com.marklogic.client.io.Format;
+import com.marklogic.client.io.JacksonHandle;
+import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.legacy.LegacyFlowManager;
-import com.marklogic.hub.legacy.flow.*;
-import com.marklogic.hub.legacy.validate.EntitiesValidator;
 import com.marklogic.hub.impl.Scaffolding;
-import com.marklogic.hub.util.FileUtil;
+import com.marklogic.hub.legacy.LegacyFlowManager;
+import com.marklogic.hub.legacy.flow.CodeFormat;
+import com.marklogic.hub.legacy.flow.DataFormat;
+import com.marklogic.hub.legacy.flow.FlowType;
+import com.marklogic.hub.legacy.flow.LegacyFlow;
+import com.marklogic.hub.legacy.flow.LegacyFlowRunner;
+import com.marklogic.hub.legacy.validate.EntitiesValidator;
 import com.marklogic.hub.mlcp.MlcpRunner;
+import com.marklogic.hub.util.FileUtil;
 import com.marklogic.mgmt.resource.hosts.HostManager;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -54,7 +63,12 @@ import org.w3c.dom.Document;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
@@ -866,7 +880,7 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
         }
 
         DatabaseKind databaseKind = databaseClient.getPort() == getHubConfig().getPort(DatabaseKind.STAGING)? DatabaseKind.STAGING: DatabaseKind.FINAL;
-        waitForRebalance(getHubClient(), databaseKind.name());
+        waitForRebalance(getHubClient(), getHubConfig().getDbName(databaseKind));
 
         if (databaseClient.getPort() == getHubConfig().getPort(DatabaseKind.STAGING) && finalCounts.stagingCount == 1) {
             String filename = "final";
