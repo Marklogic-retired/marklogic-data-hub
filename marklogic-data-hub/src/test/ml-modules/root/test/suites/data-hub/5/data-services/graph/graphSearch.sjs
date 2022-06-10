@@ -161,4 +161,29 @@ assertions.concat([
 ]);
 
 
+const ConceptWithHasRelationship = {
+  "searchText": "",
+  "entityTypeIds": [ "Office" ]
+};
+
+const resultConceptWithHasRelationship = searchNodes(ConceptWithHasRelationship);
+
+assertions.concat([
+  test.assertEqual(2, resultConceptWithHasRelationship.total),
+  test.assertEqual(2, resultConceptWithHasRelationship.nodes.length, xdmp.toJsonString(resultConceptWithHasRelationship)),
+  test.assertEqual(1, resultConceptWithHasRelationship.edges.length),
+]);
+
+resultConceptWithHasRelationship.nodes.forEach(node => {
+  if(node.id === "http://example.org/Office-0.0.1/Office/1") {
+    assertions.push(test.assertFalse(node.hasRelationships), "Office 1 must have relationships flag in false.");
+    assertions.push(test.assertFalse(node.isConcept), "Office 1 shouldn't be a concept.");
+  }
+  else if(node.id === "http://www.example.com/Category/Sneakers") {
+    assertions.push(test.assertTrue(node.hasRelationships), "Should have relationships flag in true.");
+    assertions.push(test.assertTrue(node.isConcept), "Sneakers should be a concept.");
+  }
+})
+
+
 assertions;
