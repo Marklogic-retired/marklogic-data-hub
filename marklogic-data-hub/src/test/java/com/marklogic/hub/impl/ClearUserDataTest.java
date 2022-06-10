@@ -1,8 +1,12 @@
 package com.marklogic.hub.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
+import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.hubcentral.AllArtifactsProject;
@@ -98,6 +102,40 @@ public class ClearUserDataTest extends AbstractHubCoreTest {
         project = new AllArtifactsProject(getHubClient());
         project.writeHubCentralFilesToZipFile();
         project.verifyZipArtifacts();
+    }
+
+    @Test
+    void testHubCentralUiConfig() throws JsonProcessingException {
+        runAsAdmin();
+        int[] documentCountsBeforeInstallingConfigFile = getDatabaseCounts();
+
+        runAsDataHubDeveloper();
+        String newString = "{\"modeling\":{\"entities\":{\"Customer\":{\"graphX\":-250, \"graphY\":-82}}}}";
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode newNode = mapper.readTree(newString);
+        JacksonHandle handle = new JacksonHandle().with(newNode);
+        DocumentMetadataHandle documentMetadataHandle = new DocumentMetadataHandle()
+            .withPermission("data-hub-common", DocumentMetadataHandle.Capability.READ)
+            .withPermission("hub-central-entity-model-reader", DocumentMetadataHandle.Capability.UPDATE)
+            .withCollections("http://marklogic.com/hub-central/ui-config");
+        getHubClient().getFinalClient().newJSONDocumentManager().write("/config/hubCentral.json", documentMetadataHandle, handle);
+        getHubClient().getStagingClient().newJSONDocumentManager().write("/config/hubCentral.json", documentMetadataHandle, handle);
+
+        runAsAdmin();
+        int[] documentCountsBeforeClear = getDatabaseCounts();
+
+        runAsTestUserWithRoles("hub-central-clear-user-data");
+        new DataHubImpl(getHubClient()).clearUserData(null, null);
+
+        runAsAdmin();
+        int[] documentCountsAfterRestore = getDatabaseCounts();
+
+        assertEquals(documentCountsBeforeInstallingConfigFile[0] + 1, documentCountsAfterRestore[0]);
+        assertEquals(documentCountsBeforeInstallingConfigFile[1] + 1, documentCountsAfterRestore[1]);
+        assertEquals(documentCountsBeforeClear[0], documentCountsAfterRestore[0], "All Artifacts including " +
+            "/config/hubCentral.json exists after clearing user data in staging database");
+        assertEquals(documentCountsBeforeClear[1], documentCountsAfterRestore[1], "All Artifacts including " +
+            "/config/hubCentral.json exists after clearing user data in final database");
     }
 
     @Test

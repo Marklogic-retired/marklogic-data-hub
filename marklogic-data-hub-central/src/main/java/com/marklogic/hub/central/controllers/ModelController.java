@@ -75,8 +75,10 @@ public class ModelController extends BaseController {
         JacksonHandle handle = new JacksonHandle().with(mergeObjects(hubCentralConfigBase, hubCentralConfig));
         DocumentMetadataHandle documentMetadataHandle = new DocumentMetadataHandle()
             .withPermission("data-hub-common", DocumentMetadataHandle.Capability.READ)
-            .withPermission("hub-central-entity-model-reader", DocumentMetadataHandle.Capability.UPDATE);
+            .withPermission("hub-central-entity-model-reader", DocumentMetadataHandle.Capability.UPDATE)
+            .withCollections("http://marklogic.com/hub-central/ui-config");
         getHubClient().getFinalClient().newJSONDocumentManager().write("/config/hubCentral.json", documentMetadataHandle, handle);
+        getHubClient().getStagingClient().newJSONDocumentManager().write("/config/hubCentral.json", documentMetadataHandle, handle);
         return ResponseEntity.ok("");
     }
 
