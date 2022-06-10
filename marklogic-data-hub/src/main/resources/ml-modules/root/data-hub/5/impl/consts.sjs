@@ -19,6 +19,7 @@ const ENTITY_MODEL_COLLECTION = "http://marklogic.com/entity-services/models";
 const DRAFT_ENTITY_MODEL_COLLECTION = `${ENTITY_MODEL_COLLECTION}/draft`;
 const STEP_DEFINITION_COLLECTION = "http://marklogic.com/data-hub/step-definition";
 const STEP_COLLECTION = "http://marklogic.com/data-hub/steps";
+const ENTITY_MODEL_UI_CONFIG_COLLECTION = "http://marklogic.com/hub-central/ui-config";
 
 module.exports = {
   XQUERY: "xqy",
@@ -81,7 +82,8 @@ module.exports = {
     FLOW_COLLECTION,
     ENTITY_MODEL_COLLECTION,
     STEP_DEFINITION_COLLECTION,
-    STEP_COLLECTION
+    STEP_COLLECTION,
+    ENTITY_MODEL_UI_CONFIG_COLLECTION
   ],
 
   PROVENANCE_OFF: "off",
