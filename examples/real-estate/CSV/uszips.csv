@@ -1,0 +1,2501 @@
+Area_Id,Area_Name,County,State,State_Id,Country,ZipCode,population
+2501,Des Moines,Polk,Iowa,IA,United States,50315,36097
+2502,Huntsville,Walker,Texas,TX,United States,77320,36091
+2503,Tyler,Smith,Texas,TX,United States,75701,36089
+2504,Mira Loma,Riverside,California,CA,United States,91752,36087
+2505,San Mateo,San Mateo,California,CA,United States,94404,36086
+2506,Laurel,Howard,Maryland,MD,United States,20723,36082
+2507,Harrisburg,Dauphin,Pennsylvania,PA,United States,17112,36080
+2508,Wilmington,New Hanover,North Carolina,NC,United States,28409,36070
+2509,Denver,Denver,Colorado,CO,United States,80211,36061
+2510,Fairfield,Fairfield,Connecticut,CT,United States,06824,36058
+2511,Anaheim,Orange,California,CA,United States,92807,36057
+2512,Longmont,Boulder,Colorado,CO,United States,80503,36056
+2513,Pullman,Whitman,Washington,WA,United States,99163,36052
+2514,Glen Burnie,Anne Arundel,Maryland,MD,United States,21060,36049
+2515,Glen Allen,Henrico,Virginia,VA,United States,23060,36042
+2516,New Lenox,Will,Illinois,IL,United States,60451,36036
+2517,Minneapolis,Hennepin,Minnesota,MN,United States,55414,36017
+2518,Kokomo,Howard,Indiana,IN,United States,46902,36012
+2519,Pineville,Rapides,Louisiana,LA,United States,71360,35994
+2520,San Jose,Santa Clara,California,CA,United States,23831,35986
+2521,Chester,Chesterfield,Virginia,VA,United States,95128,35986
+2522,Searcy,White,Arkansas,AR,United States,72143,35978
+2523,Iowa City,Johnson,Iowa,IA,United States,52240,35965
+2524,Johnson City,Washington,Tennessee,TN,United States,37601,35963
+2525,Leavenworth,Leavenworth,Kansas,KS,United States,66048,35952
+2526,Watertown,Middlesex,Massachusetts,MA,United States,02472,35951
+2527,Portland,Washington,Oregon,OR,United States,97224,35949
+2528,Miami,Miami-Dade,Florida,FL,United States,33174,35938
+2529,Willoughby,Lake,Ohio,OH,United States,44094,35926
+2530,Cleveland,Cuyahoga,Ohio,OH,United States,44134,35923
+2531,Jacksonville,Duval,Florida,FL,United States,32209,35919
+2532,Valdosta,Lowndes,Georgia,GA,United States,31602,35916
+2533,Troy,Miami,Ohio,OH,United States,45373,35913
+2534,Los Angeles,Los Angeles,California,CA,United States,32780,35908
+2535,Titusville,Brevard,Florida,FL,United States,90062,35908
+2536,Trumbull,Fairfield,Connecticut,CT,United States,06611,35907
+2537,Milton,Santa Rosa,Florida,FL,United States,32571,35905
+2538,Everett,Snohomish,Washington,WA,United States,98203,35901
+2539,Conroe,Montgomery,Texas,TX,United States,77304,35893
+2540,Cleveland,Bradley,Tennessee,TN,United States,37312,35877
+2541,Ardmore,Carter,Oklahoma,OK,United States,73401,35870
+2542,Oakland Gardens,Queens,New York,NY,United States,11364,35866
+2543,Huntington Beach,Orange,California,CA,United States,92649,35856
+2544,Henrico,Henrico,Virginia,VA,United States,23228,35847
+2545,Madison,Dane,Wisconsin,WI,United States,53703,35834
+2546,Coeur D Alene,Kootenai,Idaho,ID,United States,83815,35832
+2547,Cidra,Cidra,Puerto Rico,PR,United States,00739,35801
+2548,Winchester,Clark,Kentucky,KY,United States,40391,35800
+2549,Fort Myers,Lee,Florida,FL,United States,33908,35798
+2550,Staunton,Augusta,Virginia,VA,United States,24401,35772
+2551,Natick,Middlesex,Massachusetts,MA,United States,01760,35770
+2552,Green Bay,Brown,Wisconsin,WI,United States,54311,35754
+2553,Westminster,Adams,Colorado,CO,United States,80031,35753
+2554,Reading,Berks,Pennsylvania,PA,United States,19606,35750
+2555,Homestead,Miami-Dade,Florida,FL,United States,33030,35743
+2556,Phoenix,Maricopa,Arizona,AZ,United States,85020,35742
+2557,Gastonia,Gaston,North Carolina,NC,United States,28052,35741
+2558,Portland,Multnomah,Oregon,OR,United States,97211,35738
+2559,Fairhope,Baldwin,Alabama,AL,United States,36532,35728
+2560,Camarillo,Ventura,California,CA,United States,93012,35726
+2561,Auburndale,Polk,Florida,FL,United States,33823,35712
+2562,Gastonia,Gaston,North Carolina,NC,United States,28056,35709
+2563,Flagstaff,Coconino,Arizona,AZ,United States,86004,35703
+2564,El Mirage,Maricopa,Arizona,AZ,United States,85335,35702
+2565,Saint Petersburg,Pinellas,Florida,FL,United States,33710,35695
+2566,Edwardsville,Madison,Illinois,IL,United States,62025,35691
+2567,Atlanta,DeKalb,Georgia,GA,United States,21144,35680
+2568,Severn,Anne Arundel,Maryland,MD,United States,30338,35680
+2569,Niles,Berrien,Michigan,MI,United States,49120,35679
+2570,Bel Air,Harford,Maryland,MD,United States,21014,35668
+2571,Jacksonville,Duval,Florida,FL,United States,32207,35659
+2572,Pomona,Los Angeles,California,CA,United States,91768,35634
+2573,Miamisburg,Montgomery,Ohio,OH,United States,45342,35630
+2574,Phoenix,Maricopa,Arizona,AZ,United States,85016,35627
+2575,Henrico,Henrico,Virginia,VA,United States,23229,35626
+2576,Moca,Moca,Puerto Rico,PR,United States,00676,35621
+2577,Franklin,Milwaukee,Wisconsin,WI,United States,53132,35619
+2578,Fort Wayne,Allen,Indiana,IN,United States,46835,35612
+2579,Fayetteville,Cumberland,North Carolina,NC,United States,28304,35605
+2580,Tacoma,Pierce,Washington,WA,United States,98444,35604
+2581,Colorado Springs,El Paso,Colorado,CO,United States,80911,35597
+2582,San Antonio,Bexar,Texas,TX,United States,78229,35589
+2583,Spartanburg,Spartanburg,South Carolina,SC,United States,29301,35585
+2584,Indianapolis,Marion,Indiana,IN,United States,46260,35582
+2585,West Chicago,DuPage,Illinois,IL,United States,60185,35581
+2586,Reno,Washoe,Nevada,NV,United States,89509,35558
+2587,Manchester,Hartford,Connecticut,CT,United States,06040,35553
+2588,Fayetteville,Cumberland,North Carolina,NC,United States,28311,35534
+2589,Atlanta,Fulton,Georgia,GA,United States,30311,35523
+2590,Port Orchard,Kitsap,Washington,WA,United States,98366,35523
+2591,Council Bluffs,Pottawattamie,Iowa,IA,United States,51501,35511
+2592,Philadelphia,Philadelphia,Pennsylvania,PA,United States,19115,35504
+2593,Kansas City,Jackson,Missouri,MO,United States,64133,35504
+2594,Stafford,Fort Bend,Texas,TX,United States,77477,35496
+2595,Spring,Montgomery,Texas,TX,United States,77381,35487
+2596,Oakland,Alameda,California,CA,United States,34232,35486
+2597,Sarasota,Sarasota,Florida,FL,United States,94603,35486
+2598,Clovis,Fresno,California,CA,United States,93612,35475
+2599,Bellmore,Nassau,New York,NY,United States,11710,35473
+2600,Placerville,El Dorado,California,CA,United States,95667,35452
+2601,Buena Park,Orange,California,CA,United States,90621,35448
+2602,Miami,Miami-Dade,Florida,FL,United States,33133,35445
+2603,Dearborn Heights,Wayne,Michigan,MI,United States,48127,35441
+2604,Grayslake,Lake,Illinois,IL,United States,60030,35440
+2605,Media,Delaware,Pennsylvania,PA,United States,19063,35439
+2606,Kankakee,Kankakee,Illinois,IL,United States,60901,35432
+2607,Leesburg,Loudoun,Virginia,VA,United States,20175,35429
+2608,Mount Airy,Surry,North Carolina,NC,United States,27030,35421
+2609,Seattle,King,Washington,WA,United States,98155,35420
+2610,Astoria,Queens,New York,NY,United States,11103,35419
+2611,Oconomowoc,Waukesha,Wisconsin,WI,United States,53066,35414
+2612,Bloomington,McLean,Illinois,IL,United States,61701,35411
+2613,Palm Beach Gardens,Palm Beach,Florida,FL,United States,33410,35410
+2614,Newport Beach,Orange,California,CA,United States,92660,35409
+2615,Pompano Beach,Broward,Florida,FL,United States,33073,35407
+2616,Glendale,Maricopa,Arizona,AZ,United States,85303,35403
+2617,Phoenix,Maricopa,Arizona,AZ,United States,85040,35399
+2618,Cape Coral,Lee,Florida,FL,United States,33990,35396
+2619,Charleston,Charleston,South Carolina,SC,United States,29407,35385
+2620,Oswego,Oswego,New York,NY,United States,13126,35369
+2621,Texarkana,Bowie,Texas,TX,United States,75501,35352
+2622,Rome,Floyd,Georgia,GA,United States,30161,35344
+2623,Meriden,New Haven,Connecticut,CT,United States,06450,35343
+2624,Orlando,Orange,Florida,FL,United States,32817,35332
+2625,Quakertown,Bucks,Pennsylvania,PA,United States,18951,35331
+2626,North Hollywood,Los Angeles,California,CA,United States,91601,35312
+2627,Olympia,Thurston,Washington,WA,United States,98502,35307
+2628,Grants Pass,Josephine,Oregon,OR,United States,97526,35302
+2629,Washington,District of Columbia,District of Columbia,DC,United States,20010,35297
+2630,Port Charlotte,Charlotte,Florida,FL,United States,33952,35285
+2631,Clinton Township,Macomb,Michigan,MI,United States,48035,35279
+2632,Pikesville,Baltimore,Maryland,MD,United States,21208,35273
+2633,Arnold,Jefferson,Missouri,MO,United States,63010,35270
+2634,Las Vegas,Clark,Nevada,NV,United States,89130,35263
+2635,San Antonio,Bexar,Texas,TX,United States,78217,35257
+2636,Birmingham,Jefferson,Alabama,AL,United States,35226,35256
+2637,Westerville,Delaware,Ohio,OH,United States,43082,35244
+2638,Cleveland,Cuyahoga,Ohio,OH,United States,44105,35238
+2639,Poplar Bluff,Butler,Missouri,MO,United States,63901,35218
+2640,Milwaukee,Milwaukee,Wisconsin,WI,United States,21113,35210
+2641,Odenton,Anne Arundel,Maryland,MD,United States,53214,35210
+2642,Alexandria,Alexandria,Virginia,VA,United States,22314,35208
+2643,Lufkin,Angelina,Texas,TX,United States,75904,35208
+2644,Columbia,Richland,South Carolina,SC,United States,29209,35206
+2645,Petaluma,Marin,California,CA,United States,94952,35198
+2646,Phoenix,Maricopa,Arizona,AZ,United States,85023,35196
+2647,Woodbury,Gloucester,New Jersey,NJ,United States,08096,35187
+2648,Lewiston,Nez Perce,Idaho,ID,United States,83501,35183
+2649,Marysville,Yuba,California,CA,United States,95901,35181
+2650,Orlando,Orange,Florida,FL,United States,32812,35174
+2651,Marysville,Union,Ohio,OH,United States,43040,35169
+2652,Bedford,Tarrant,Texas,TX,United States,76021,35168
+2653,Salt Lake City,Salt Lake,Utah,UT,United States,84106,35166
+2654,Jacksonville,Duval,Florida,FL,United States,32211,35160
+2655,San Antonio,Bexar,Texas,TX,United States,78242,35159
+2656,Bradenton,Manatee,Florida,FL,United States,34209,35148
+2657,Southampton,Bucks,Pennsylvania,PA,United States,18966,35147
+2658,Sacramento,Sacramento,California,CA,United States,95820,35145
+2659,Tehachapi,Kern,California,CA,United States,93561,35133
+2660,Oklahoma City,Oklahoma,Oklahoma,OK,United States,73120,35132
+2661,Chester,Delaware,Pennsylvania,PA,United States,19013,35113
+2662,Fairfax,Fairfax,Virginia,VA,United States,22031,35110
+2663,Denver,Denver,Colorado,CO,United States,80249,35104
+2664,Carrollton,Carroll,Georgia,GA,United States,30117,35097
+2665,San Francisco,San Francisco,California,CA,United States,94114,35077
+2666,Savannah,Chatham,Georgia,GA,United States,31406,35073
+2667,Reno,Washoe,Nevada,NV,United States,89523,35065
+2668,Manhattan Beach,Los Angeles,California,CA,United States,90266,35064
+2669,Winston Salem,Forsyth,North Carolina,NC,United States,27103,35057
+2670,Chicago,Cook,Illinois,IL,United States,60624,35054
+2671,Greer,Greenville,South Carolina,SC,United States,29650,35053
+2672,Shreveport,Caddo,Louisiana,LA,United States,71107,35048
+2673,Cleveland,Cuyahoga,Ohio,OH,United States,44120,35046
+2674,Muskegon,Muskegon,Michigan,MI,United States,49441,35045
+2675,Waukesha,Waukesha,Wisconsin,WI,United States,53188,35045
+2676,Lowell,Middlesex,Massachusetts,MA,United States,01852,35033
+2677,Raleigh,Wake,North Carolina,NC,United States,27609,35025
+2678,San Mateo,San Mateo,California,CA,United States,94401,35013
+2679,Houston,Harris,Texas,TX,United States,77045,35010
+2680,Lansing,Ingham,Michigan,MI,United States,48910,34989
+2681,Rapid City,Pennington,South Dakota,SD,United States,57702,34973
+2682,Bismarck,Burleigh,North Dakota,ND,United States,58503,34970
+2683,Philadelphia,Philadelphia,Pennsylvania,PA,United States,19136,34962
+2684,Charlotte,Mecklenburg,North Carolina,NC,United States,28270,34958
+2685,Covina,Los Angeles,California,CA,United States,91722,34951
+2686,Philadelphia,Philadelphia,Pennsylvania,PA,United States,19154,34946
+2687,Elkridge,Howard,Maryland,MD,United States,21075,34939
+2688,Cumberland,Providence,Rhode Island,RI,United States,02864,34936
+2689,Pleasant Hill,Contra Costa,California,CA,United States,94523,34929
+2690,San Diego,San Diego,California,CA,United States,92131,34922
+2691,Bossier City,Bossier,Louisiana,LA,United States,71112,34921
+2692,Salt Lake City,Salt Lake,Utah,UT,United States,84107,34914
+2693,Ellensburg,Kittitas,Washington,WA,United States,98926,34893
+2694,Montgomery Village,Montgomery,Maryland,MD,United States,20886,34887
+2695,Denver,Denver,Colorado,CO,United States,80205,34884
+2696,Noblesville,Hamilton,Indiana,IN,United States,46062,34883
+2697,South Lyon,Oakland,Michigan,MI,United States,48178,34882
+2698,Portland,Multnomah,Oregon,OR,United States,97217,34881
+2699,Saint Louis,St. Louis,Missouri,MO,United States,56301,34862
+2700,Saint Cloud,Stearns,Minnesota,MN,United States,63114,34862
+2701,Denver,Denver,Colorado,CO,United States,80204,34860
+2702,Vega Alta,Vega Alta,Puerto Rico,PR,United States,00692,34857
+2703,Thornton,Adams,Colorado,CO,United States,80241,34856
+2704,Temple City,Los Angeles,California,CA,United States,91780,34854
+2705,Richmond,Richmond,Virginia,VA,United States,23220,34853
+2706,Denver,Jefferson,Colorado,CO,United States,80227,34850
+2707,Lake Villa,Lake,Illinois,IL,United States,60046,34849
+2708,Victorville,San Bernardino,California,CA,United States,92394,34836
+2709,New Orleans,Orleans,Louisiana,LA,United States,70115,34831
+2710,Wappingers Falls,Dutchess,New York,NY,United States,12590,34823
+2711,Boise,Ada,Idaho,ID,United States,83706,34814
+2712,Mountain View,Santa Clara,California,CA,United States,94040,34804
+2713,Louisville,Jefferson,Kentucky,KY,United States,40245,34802
+2714,Kingston,Ulster,New York,NY,United States,12401,34800
+2715,Culpeper,Culpeper,Virginia,VA,United States,22701,34793
+2716,Adelanto,San Bernardino,California,CA,United States,92301,34791
+2717,Daphne,Baldwin,Alabama,AL,United States,36526,34788
+2718,Fort Lauderdale,Broward,Florida,FL,United States,33351,34774
+2719,New York,New York,New York,NY,United States,10010,34763
+2720,Arlington,Tarrant,Texas,TX,United States,76013,34763
+2721,Portland,Multnomah,Oregon,OR,United States,97203,34759
+2722,Seaside,Monterey,California,CA,United States,93955,34757
+2723,Winchester,Riverside,California,CA,United States,92596,34743
+2724,Dorchester,Suffolk,Massachusetts,MA,United States,02125,34725
+2725,Decatur,Macon,Illinois,IL,United States,62521,34716
+2726,Englewood,Arapahoe,Colorado,CO,United States,80112,34714
+2727,Statesville,Iredell,North Carolina,NC,United States,28677,34710
+2728,Marietta,Cobb,Georgia,GA,United States,30008,34709
+2729,Parker,Douglas,Colorado,CO,United States,80138,34692
+2730,Charlottesville,Albemarle,Virginia,VA,United States,22901,34687
+2731,Washington,District of Columbia,District of Columbia,DC,United States,20016,34686
+2732,Hendersonville,Henderson,North Carolina,NC,United States,28792,34670
+2733,Houston,Harris,Texas,TX,United States,77076,34668
+2734,Cheyenne,Laramie,Wyoming,WY,United States,82009,34666
+2735,San Clemente,San Diego,California,CA,United States,92672,34659
+2736,Dallas,Dallas,Texas,TX,United States,75214,34658
+2737,Westland,Wayne,Michigan,MI,United States,48186,34647
+2738,Springville,Utah,Utah,UT,United States,84663,34642
+2739,Northridge,Los Angeles,California,CA,United States,91325,34637
+2740,Sterling Heights,Macomb,Michigan,MI,United States,48312,34635
+2741,Royal Oak,Oakland,Michigan,MI,United States,48073,34628
+2742,Lubbock,Lubbock,Texas,TX,United States,79416,34628
+2743,Oakdale,Stanislaus,California,CA,United States,95361,34624
+2744,Wailuku,Maui,Hawaii,HI,United States,96793,34619
+2745,Tampa,Hillsborough,Florida,FL,United States,33611,34615
+2746,Millville,Cumberland,New Jersey,NJ,United States,08332,34609
+2747,Dayton,Liberty,Texas,TX,United States,77535,34603
+2748,Winona,Winona,Minnesota,MN,United States,55987,34599
+2749,Newnan,Coweta,Georgia,GA,United States,30265,34596
+2750,Salt Lake City,Salt Lake,Utah,UT,United States,84116,34588
+2751,Houston,Harris,Texas,TX,United States,77067,34582
+2752,Palm Desert,Riverside,California,CA,United States,92260,34553
+2753,Compton,Los Angeles,California,CA,United States,90222,34547
+2754,Foley,Baldwin,Alabama,AL,United States,36535,34542
+2755,Lawndale,Los Angeles,California,CA,United States,90260,34540
+2756,San Antonio,Bexar,Texas,TX,United States,78211,34539
+2757,Jackson,Madison,Tennessee,TN,United States,38301,34534
+2758,Belvidere,Boone,Illinois,IL,United States,61008,34526
+2759,Denver,Jefferson,Colorado,CO,United States,80228,34518
+2760,Evansville,Vanderburgh,Indiana,IN,United States,47714,34514
+2761,Conroe,Montgomery,Texas,TX,United States,77301,34512
+2762,Bemidji,Beltrami,Minnesota,MN,United States,56601,34505
+2763,Redondo Beach,Los Angeles,California,CA,United States,90277,34494
+2764,Baton Rouge,East Baton Rouge,Louisiana,LA,United States,70817,34491
+2765,La Verne,Los Angeles,California,CA,United States,91750,34468
+2766,Minneapolis,Anoka,Minnesota,MN,United States,55433,34461
+2767,Auburn,King,Washington,WA,United States,98001,34455
+2768,Big Spring,Howard,Texas,TX,United States,79720,34454
+2769,Morgantown,Monongalia,West Virginia,WV,United States,26508,34453
+2770,Yauco,Yauco,Puerto Rico,PR,United States,00698,34449
+2771,Moreno Valley,Riverside,California,CA,United States,92551,34441
+2772,Naples,Collier,Florida,FL,United States,34120,34431
+2773,Louisville,Jefferson,Kentucky,KY,United States,40218,34427
+2774,Riverdale,Clayton,Georgia,GA,United States,30274,34426
+2775,Eagle Mountain,Utah,Utah,UT,United States,84005,34422
+2776,Tucson,Pima,Arizona,AZ,United States,85704,34413
+2777,Lakeland,Polk,Florida,FL,United States,33801,34406
+2778,Key West,Monroe,Florida,FL,United States,33040,34401
+2779,Ephrata,Lancaster,Pennsylvania,PA,United States,17522,34400
+2780,Alexandria,Fairfax,Virginia,VA,United States,22306,34391
+2781,Milwaukee,Milwaukee,Wisconsin,WI,United States,53211,34389
+2782,Virginia Beach,Virginia Beach,Virginia,VA,United States,23453,34377
+2783,Nampa,Canyon,Idaho,ID,United States,83687,34377
+2784,Livingston,Polk,Texas,TX,United States,77351,34367
+2785,La Vergne,Rutherford,Tennessee,TN,United States,37086,34362
+2786,Morristown,Hamblen,Tennessee,TN,United States,37814,34359
+2787,Columbus,Franklin,Ohio,OH,United States,43221,34354
+2788,Overland Park,Johnson,Kansas,KS,United States,21136,34347
+2789,Louisville,Jefferson,Kentucky,KY,United States,40220,34347
+2790,Reisterstown,Baltimore,Maryland,MD,United States,66212,34347
+2791,Traverse City,Grand Traverse,Michigan,MI,United States,49686,34341
+2792,Newhall,Los Angeles,California,CA,United States,91321,34340
+2793,Pittsburgh,Allegheny,Pennsylvania,PA,United States,15235,34339
+2794,Sedalia,Pettis,Missouri,MO,United States,65301,34335
+2795,Rochester,Monroe,New York,NY,United States,14612,34316
+2796,Milwaukee,Milwaukee,Wisconsin,WI,United States,53219,34315
+2797,Merced,Merced,California,CA,United States,44601,34302
+2798,Alliance,Stark,Ohio,OH,United States,95348,34302
+2799,Prosper,Collin,Texas,TX,United States,75078,34300
+2800,Porter,Montgomery,Texas,TX,United States,77365,34286
+2801,Broomfield,Jefferson,Colorado,CO,United States,80021,34277
+2802,Independence,Jackson,Missouri,MO,United States,64055,34260
+2803,San Diego,San Diego,California,CA,United States,92103,34246
+2804,Orlando,Orange,Florida,FL,United States,32807,34239
+2805,Las Vegas,Clark,Nevada,NV,United States,89113,34229
+2806,Saginaw,Saginaw,Michigan,MI,United States,48601,34218
+2807,Randolph,Norfolk,Massachusetts,MA,United States,02368,34214
+2808,Amarillo,Potter,Texas,TX,United States,79107,34204
+2809,Bothell,King,Washington,WA,United States,98011,34201
+2810,Torrington,Litchfield,Connecticut,CT,United States,06790,34192
+2811,Prior Lake,Scott,Minnesota,MN,United States,55372,34188
+2812,New Britain,Hartford,Connecticut,CT,United States,06053,34142
+2813,Central Islip,Suffolk,New York,NY,United States,11722,34139
+2814,Eugene,Lane,Oregon,OR,United States,28803,34126
+2815,Asheville,Buncombe,North Carolina,NC,United States,97404,34126
+2816,Fresno,Fresno,California,CA,United States,93710,34123
+2817,Philadelphia,Philadelphia,Pennsylvania,PA,United States,19141,34115
+2818,Arlington,Arlington,Virginia,VA,United States,22207,34113
+2819,Cary,Wake,North Carolina,NC,United States,27511,34108
+2820,San Diego,San Diego,California,CA,United States,92123,34103
+2821,Reno,Washoe,Nevada,NV,United States,89521,34101
+2822,Waukesha,Waukesha,Wisconsin,WI,United States,53186,34092
+2823,Bloomington,Monroe,Indiana,IN,United States,47403,34090
+2824,Tucson,Pima,Arizona,AZ,United States,85741,34079
+2825,Danville,Vermilion,Illinois,IL,United States,61832,34077
+2826,Chatsworth,Murray,Georgia,GA,United States,30705,34072
+2827,Fort Walton Beach,Okaloosa,Florida,FL,United States,32547,34071
+2828,Lake Worth,Palm Beach,Florida,FL,United States,33462,34068
+2829,Grand Rapids,Kent,Michigan,MI,United States,49506,34058
+2830,York,York,South Carolina,SC,United States,29745,34052
+2831,Roslindale,Suffolk,Massachusetts,MA,United States,02131,34048
+2832,Merced,Merced,California,CA,United States,95341,34047
+2833,West Palm Beach,Palm Beach,Florida,FL,United States,33417,34044
+2834,North Ridgeville,Lorain,Ohio,OH,United States,44039,34038
+2835,Wildomar,Riverside,California,CA,United States,92595,34034
+2836,Bryan,Brazos,Texas,TX,United States,77803,34026
+2837,Fort Mill,Lancaster,South Carolina,SC,United States,29707,34022
+2838,Studio City,Los Angeles,California,CA,United States,91604,34021
+2839,Houston,Harris,Texas,TX,United States,77017,34010
+2840,Redding,Shasta,California,CA,United States,96001,34008
+2841,Atascadero,San Luis Obispo,California,CA,United States,93422,34005
+2842,Chula Vista,San Diego,California,CA,United States,91915,33991
+2843,Garden Grove,Orange,California,CA,United States,92841,33990
+2844,San Antonio,Bexar,Texas,TX,United States,78244,33988
+2845,Philadelphia,Philadelphia,Pennsylvania,PA,United States,19116,33976
+2846,Detroit,Wayne,Michigan,MI,United States,48234,33969
+2847,Grand Rapids,Kent,Michigan,MI,United States,49546,33968
+2848,Kenosha,Kenosha,Wisconsin,WI,United States,53142,33967
+2849,Rockwall,Rockwall,Texas,TX,United States,75032,33956
+2850,Odessa,Ector,Texas,TX,United States,79761,33955
+2851,Manchester,Hillsborough,New Hampshire,NH,United States,03102,33951
+2852,Baldwin,Nassau,New York,NY,United States,11510,33949
+2853,Auburn,King,Washington,WA,United States,98002,33947
+2854,Glendale Heights,DuPage,Illinois,IL,United States,60139,33946
+2855,Redding,Shasta,California,CA,United States,96002,33943
+2856,Conway,Faulkner,Arkansas,AR,United States,72032,33940
+2857,Miami,Miami-Dade,Florida,FL,United States,33130,33938
+2858,Chicago,Cook,Illinois,IL,United States,13027,33937
+2859,Baldwinsville,Onondaga,New York,NY,United States,60611,33937
+2860,Lockport,Will,Illinois,IL,United States,60441,33934
+2861,Saint Paul,Ramsey,Minnesota,MN,United States,55109,33926
+2862,Ridgecrest,Kern,California,CA,United States,93555,33925
+2863,Oklahoma City,Oklahoma,Oklahoma,OK,United States,73112,33901
+2864,Staten Island,Richmond,New York,NY,United States,10309,33896
+2865,Baltimore,Baltimore,Maryland,MD,United States,21212,33865
+2866,Austin,Travis,Texas,TX,United States,78750,33860
+2867,Niceville,Okaloosa,Florida,FL,United States,32578,33846
+2868,San Francisco,San Francisco,California,CA,United States,94115,33841
+2869,Smithtown,Suffolk,New York,NY,United States,11787,33837
+2870,Baytown,Harris,Texas,TX,United States,77520,33837
+2871,Atlanta,DeKalb,Georgia,GA,United States,30316,33832
+2872,Arcadia,Los Angeles,California,CA,United States,91007,33827
+2873,Oakland,Alameda,California,CA,United States,94621,33820
+2874,La Place,St. John the Baptist,Louisiana,LA,United States,70068,33819
+2875,Lexington,Fayette,Kentucky,KY,United States,40511,33801
+2876,Santa Paula,Ventura,California,CA,United States,93060,33799
+2877,Vancouver,Clark,Washington,WA,United States,98662,33798
+2878,Columbus,Franklin,Ohio,OH,United States,43201,33792
+2879,Glendale,Los Angeles,California,CA,United States,91206,33781
+2880,Racine,Racine,Wisconsin,WI,United States,53402,33780
+2881,Provo,Utah,Utah,UT,United States,84601,33771
+2882,Houston,Harris,Texas,TX,United States,77041,33762
+2883,Rochester,Monroe,New York,NY,United States,14621,33757
+2884,Saint Louis,St. Louis,Missouri,MO,United States,63119,33752
+2885,Terre Haute,Vigo,Indiana,IN,United States,47802,33744
+2886,Framingham,Middlesex,Massachusetts,MA,United States,01701,33742
+2887,Danville,Contra Costa,California,CA,United States,94526,33738
+2888,Daytona Beach,Volusia,Florida,FL,United States,32114,33731
+2889,Fort Worth,Tarrant,Texas,TX,United States,48642,33720
+2890,Midland,Midland,Michigan,MI,United States,76110,33720
+2891,Philadelphia,Philadelphia,Pennsylvania,PA,United States,19138,33711
+2892,Minneapolis,Hennepin,Minnesota,MN,United States,55406,33709
+2893,Derry,Rockingham,New Hampshire,NH,United States,03038,33705
+2894,San Dimas,Los Angeles,California,CA,United States,91773,33703
+2895,Palm Harbor,Pinellas,Florida,FL,United States,34683,33699
+2896,Pensacola,Escambia,Florida,FL,United States,32507,33689
+2897,Newark,Essex,New Jersey,NJ,United States,07106,33688
+2898,Bullhead City,Mohave,Arizona,AZ,United States,86442,33686
+2899,Florence,Lauderdale,Alabama,AL,United States,35630,33685
+2900,Butte,Silver Bow,Montana,MT,United States,59701,33685
+2901,Franklin,Johnson,Indiana,IN,United States,46131,33682
+2902,Macon,Bibb,Georgia,GA,United States,31210,33647
+2903,Nixa,Christian,Missouri,MO,United States,65714,33646
+2904,Franklin,Norfolk,Massachusetts,MA,United States,02038,33644
+2905,Angleton,Brazoria,Texas,TX,United States,77515,33634
+2906,Merrick,Nassau,New York,NY,United States,11566,33626
+2907,Front Royal,Warren,Virginia,VA,United States,22630,33623
+2908,Saint Louis,St. Louis,Missouri,MO,United States,63125,33619
+2909,Ames,Story,Iowa,IA,United States,50010,33616
+2910,Grand Rapids,Kent,Michigan,MI,United States,49548,33608
+2911,Detroit,Wayne,Michigan,MI,United States,37160,33606
+2912,Shelbyville,Bedford,Tennessee,TN,United States,48205,33606
+2913,Sterling Heights,Macomb,Michigan,MI,United States,48313,33600
+2914,Savannah,Chatham,Georgia,GA,United States,31404,33597
+2915,Scottsdale,Maricopa,Arizona,AZ,United States,85257,33594
+2916,Baltimore,Baltimore,Maryland,MD,United States,21230,33592
+2917,Washington,District of Columbia,District of Columbia,DC,United States,20003,33584
+2918,Winter Haven,Polk,Florida,FL,United States,33881,33577
+2919,Chicago,Cook,Illinois,IL,United States,60653,33574
+2920,Concord,Merrimack,New Hampshire,NH,United States,03301,33550
+2921,Newark,Essex,New Jersey,NJ,United States,07103,33548
+2922,Bellingham,Whatcom,Washington,WA,United States,98229,33548
+2923,Lake Stevens,Snohomish,Washington,WA,United States,98258,33545
+2924,Toms River,Ocean,New Jersey,NJ,United States,08757,33543
+2925,Chapel Hill,Orange,North Carolina,NC,United States,27514,33525
+2926,Rolla,Phelps,Missouri,MO,United States,65401,33502
+2927,Deland,Volusia,Florida,FL,United States,32720,33485
+2928,Fredericksburg,Stafford,Virginia,VA,United States,22405,33482
+2929,Pasadena,Los Angeles,California,CA,United States,06614,33481
+2930,Stratford,Fairfield,Connecticut,CT,United States,91107,33481
+2931,Burlington,Burlington,New Jersey,NJ,United States,08016,33471
+2932,Sanford,Lee,North Carolina,NC,United States,27332,33465
+2933,Indiana,Indiana,Pennsylvania,PA,United States,15701,33460
+2934,Surprise,Maricopa,Arizona,AZ,United States,85388,33455
+2935,Midvale,Salt Lake,Utah,UT,United States,84047,33454
+2936,Oklahoma City,Oklahoma,Oklahoma,OK,United States,73110,33431
+2937,Missoula,Missoula,Montana,MT,United States,59801,33427
+2938,Sierra Vista,Cochise,Arizona,AZ,United States,85635,33427
+2939,Hagerstown,Washington,Maryland,MD,United States,21742,33425
+2940,Euless,Tarrant,Texas,TX,United States,76040,33419
+2941,Elizabethton,Carter,Tennessee,TN,United States,37643,33413
+2942,Ladson,Charleston,South Carolina,SC,United States,29456,33408
+2943,Ogden,Weber,Utah,UT,United States,84405,33402
+2944,Dallas,Dallas,Texas,TX,United States,21227,33396
+2945,Halethorpe,Baltimore,Maryland,MD,United States,75238,33396
+2946,Ravenna,Portage,Ohio,OH,United States,44266,33386
+2947,Reading,Berks,Pennsylvania,PA,United States,19601,33382
+2948,Bothell,Snohomish,Washington,WA,United States,98021,33382
+2949,New Braunfels,Comal,Texas,TX,United States,78132,33368
+2950,Buffalo,Erie,New York,NY,United States,14225,33360
+2951,Banning,Riverside,California,CA,United States,92220,33360
+2952,Tallahassee,Leon,Florida,FL,United States,32309,33359
+2953,Murrells Inlet,Horry,South Carolina,SC,United States,29576,33347
+2954,Oklahoma City,Oklahoma,Oklahoma,OK,United States,73159,33345
+2955,Wilmington,New Hanover,North Carolina,NC,United States,28405,33344
+2956,Monterey Park,Los Angeles,California,CA,United States,91754,33343
+2957,Manchester Township,Ocean,New Jersey,NJ,United States,08759,33318
+2958,West Covina,Los Angeles,California,CA,United States,91791,33314
+2959,Houston,Harris,Texas,TX,United States,11735,33299
+2960,Farmingdale,Suffolk,New York,NY,United States,77096,33299
+2961,Sherwood,Pulaski,Arkansas,AR,United States,72120,33296
+2962,Sterling,Loudoun,Virginia,VA,United States,20165,33290
+2963,Arlington,Tarrant,Texas,TX,United States,76014,33289
+2964,Sacramento,Sacramento,California,CA,United States,95842,33287
+2965,San Francisco,San Francisco,California,CA,United States,94102,33264
+2966,Austin,Travis,Texas,TX,United States,78705,33262
+2967,Harrisburg,Dauphin,Pennsylvania,PA,United States,17111,33261
+2968,Portland,Clackamas,Oregon,OR,United States,97267,33250
+2969,Springfield,Sangamon,Illinois,IL,United States,62702,33243
+2970,Grand Rapids,Kent,Michigan,MI,United States,49505,33239
+2971,Ballston Spa,Saratoga,New York,NY,United States,12020,33235
+2972,Brooklyn,Anne Arundel,Maryland,MD,United States,21225,33227
+2973,Miami,Miami-Dade,Florida,FL,United States,33156,33223
+2974,Fayetteville,Washington,Arkansas,AR,United States,72703,33223
+2975,Seattle,King,Washington,WA,United States,98168,33217
+2976,Langhorne,Bucks,Pennsylvania,PA,United States,19047,33199
+2977,Sapulpa,Creek,Oklahoma,OK,United States,74066,33179
+2978,Seattle,King,Washington,WA,United States,98144,33175
+2979,Milford,Clermont,Ohio,OH,United States,45150,33169
+2980,Beachwood,Cuyahoga,Ohio,OH,United States,32503,33163
+2981,Pensacola,Escambia,Florida,FL,United States,44122,33163
+2982,Hoffman Estates,Cook,Illinois,IL,United States,60169,33162
+2983,Culver City,Los Angeles,California,CA,United States,90230,33135
+2984,Inman,Spartanburg,South Carolina,SC,United States,29349,33134
+2985,La Mesa,San Diego,California,CA,United States,91941,33126
+2986,Littleton,Arapahoe,Colorado,CO,United States,29642,33120
+2987,Easley,Anderson,South Carolina,SC,United States,80122,33120
+2988,Garden City,Finney,Kansas,KS,United States,67846,33098
+2989,El Paso,El Paso,Texas,TX,United States,79904,33084
+2990,Eastlake,Lake,Ohio,OH,United States,44095,33075
+2991,Brick,Ocean,New Jersey,NJ,United States,08723,33059
+2992,Plattsburgh,Clinton,New York,NY,United States,12901,33048
+2993,Valencia,Los Angeles,California,CA,United States,91354,33039
+2994,Immokalee,Collier,Florida,FL,United States,34142,33029
+2995,Denver,Jefferson,Colorado,CO,United States,80226,33022
+2996,Southington,Hartford,Connecticut,CT,United States,06489,33020
+2997,Winter Haven,Polk,Florida,FL,United States,33884,33008
+2998,West Bloomfield,Oakland,Michigan,MI,United States,48322,32997
+2999,North Augusta,Aiken,South Carolina,SC,United States,29841,32989
+3000,Fair Lawn,Bergen,New Jersey,NJ,United States,07410,32986
+3001,Goshen,Elkhart,Indiana,IN,United States,46526,32970
+3002,Sherman Oaks,Los Angeles,California,CA,United States,33702,32968
+3003,Saint Petersburg,Pinellas,Florida,FL,United States,91423,32968
+3004,Evansville,Vanderburgh,Indiana,IN,United States,47711,32961
+3005,Minneapolis,Hennepin,Minnesota,MN,United States,55416,32956
+3006,Billerica,Middlesex,Massachusetts,MA,United States,01821,32936
+3007,Bethlehem,Northampton,Pennsylvania,PA,United States,18015,32936
+3008,Chippewa Falls,Chippewa,Wisconsin,WI,United States,54729,32927
+3009,Pearl,Rankin,Mississippi,MS,United States,39208,32926
+3010,Slidell,St. Tammany,Louisiana,LA,United States,70461,32900
+3011,Camas,Clark,Washington,WA,United States,98607,32897
+3012,Hollywood,Broward,Florida,FL,United States,33026,32882
+3013,Yabucoa,Yabucoa,Puerto Rico,PR,United States,00767,32867
+3014,Bowling Green,Wood,Ohio,OH,United States,43402,32864
+3015,Marquette,Marquette,Michigan,MI,United States,49855,32863
+3016,Myrtle Beach,Horry,South Carolina,SC,United States,29577,32858
+3017,Lake Worth Beach,Palm Beach,Florida,FL,United States,33460,32848
+3018,Pueblo,Pueblo,Colorado,CO,United States,81007,32842
+3019,Mercedes,Hidalgo,Texas,TX,United States,78570,32841
+3020,Galesburg,Knox,Illinois,IL,United States,61401,32831
+3021,Baltimore,Baltimore,Maryland,MD,United States,21217,32830
+3022,Houston,Harris,Texas,TX,United States,77079,32826
+3023,Dallas,Dallas,Texas,TX,United States,75232,32823
+3024,Portland,Multnomah,Oregon,OR,United States,23503,32815
+3025,Norfolk,Norfolk,Virginia,VA,United States,97213,32815
+3026,Las Vegas,Clark,Nevada,NV,United States,89142,32813
+3027,Toledo,Lucas,Ohio,OH,United States,43613,32811
+3028,Columbus,Franklin,Ohio,OH,United States,43213,32807
+3029,Marietta,Cobb,Georgia,GA,United States,30068,32798
+3030,Elk Grove Village,Cook,Illinois,IL,United States,60007,32792
+3031,Ozark,Christian,Missouri,MO,United States,65721,32788
+3032,Rosedale,Queens,New York,NY,United States,11422,32786
+3033,Trabuco Canyon,Orange,California,CA,United States,92679,32784
+3034,Decatur,DeKalb,Georgia,GA,United States,30033,32782
+3035,Manchester,Hillsborough,New Hampshire,NH,United States,03104,32776
+3036,San Jose,Santa Clara,California,CA,United States,95118,32768
+3037,Sarasota,Sarasota,Florida,FL,United States,34231,32762
+3038,Louisville,Boulder,Colorado,CO,United States,80027,32755
+3039,San Diego,San Diego,California,CA,United States,92124,32754
+3040,Spokane,Spokane,Washington,WA,United States,99223,32750
+3041,Algonquin,McHenry,Illinois,IL,United States,60102,32749
+3042,Houston,Harris,Texas,TX,United States,77047,32747
+3043,Deer Park,Harris,Texas,TX,United States,77536,32745
+3044,Gilbert,Maricopa,Arizona,AZ,United States,85298,32742
+3045,Salem,Marion,Oregon,OR,United States,97306,32741
+3046,Dallas,Dallas,Texas,TX,United States,75229,32739
+3047,Carolina,Carolina,Puerto Rico,PR,United States,00983,32735
+3048,Opa Locka,Miami-Dade,Florida,FL,United States,33054,32735
+3049,Mcminnville,Warren,Tennessee,TN,United States,37110,32731
+3050,Indianapolis,Marion,Indiana,IN,United States,46235,32729
+3051,Waldorf,Charles,Maryland,MD,United States,20603,32726
+3052,Randallstown,Baltimore,Maryland,MD,United States,21133,32714
+3053,Mill Valley,Marin,California,CA,United States,94941,32707
+3054,Gilbert,Maricopa,Arizona,AZ,United States,85297,32706
+3055,Torrance,Los Angeles,California,CA,United States,90504,32703
+3056,Long Beach,Los Angeles,California,CA,United States,90807,32699
+3057,Monterey,Monterey,California,CA,United States,93940,32699
+3058,Corona,Riverside,California,CA,United States,92881,32694
+3059,Midland,Midland,Texas,TX,United States,79701,32692
+3060,Coventry,Kent,Rhode Island,RI,United States,02816,32683
+3061,Jackson,Hinds,Mississippi,MS,United States,39212,32680
+3062,West Monroe,Ouachita,Louisiana,LA,United States,71291,32670
+3063,Lancaster,Erie,New York,NY,United States,14086,32653
+3064,Gainesville,Hall,Georgia,GA,United States,30501,32652
+3065,Santa Barbara,Santa Barbara,California,CA,United States,93101,32650
+3066,Whittier,Los Angeles,California,CA,United States,90606,32631
+3067,Barstow,San Bernardino,California,CA,United States,92311,32619
+3068,West Palm Beach,Palm Beach,Florida,FL,United States,33409,32607
+3069,Ashland,Ashland,Ohio,OH,United States,44805,32600
+3070,Woodstock,McHenry,Illinois,IL,United States,60098,32599
+3071,Tracy,San Joaquin,California,CA,United States,95377,32599
+3072,Madison,Dane,Wisconsin,WI,United States,53719,32594
+3073,Evanston,Cook,Illinois,IL,United States,60202,32593
+3074,Wayne,Chester,Pennsylvania,PA,United States,19087,32592
+3075,Fort Lauderdale,Broward,Florida,FL,United States,33326,32586
+3076,Modesto,Stanislaus,California,CA,United States,95358,32583
+3077,Collinsville,Madison,Illinois,IL,United States,62234,32579
+3078,Wadsworth,Medina,Ohio,OH,United States,44281,32569
+3079,Clearwater,Pinellas,Florida,FL,United States,33756,32554
+3080,Tallahassee,Leon,Florida,FL,United States,32301,32552
+3081,Hayward,Alameda,California,CA,United States,94545,32552
+3082,Bellevue,Sarpy,Nebraska,NE,United States,68123,32542
+3083,West Des Moines,Polk,Iowa,IA,United States,50265,32539
+3084,Long Island City,Queens,New York,NY,United States,11101,32537
+3085,Hyattsville,Prince George's,Maryland,MD,United States,20782,32527
+3086,Arcadia,Los Angeles,California,CA,United States,91006,32526
+3087,Dayton,Montgomery,Ohio,OH,United States,45458,32515
+3088,Englewood,Arapahoe,Colorado,CO,United States,80111,32495
+3089,Tucson,Pima,Arizona,AZ,United States,85712,32494
+3090,Paterson,Passaic,New Jersey,NJ,United States,07501,32484
+3091,Miami,Miami-Dade,Florida,FL,United States,33173,32469
+3092,Aberdeen,Brown,South Dakota,SD,United States,57401,32468
+3093,Jacksonville,Duval,Florida,FL,United States,32277,32446
+3094,Longview,Gregg,Texas,TX,United States,75605,32438
+3095,Utica,Oneida,New York,NY,United States,13502,32437
+3096,Salem,Polk,Oregon,OR,United States,97304,32435
+3097,Redlands,San Bernardino,California,CA,United States,92373,32433
+3098,Castle Rock,Douglas,Colorado,CO,United States,80104,32427
+3099,Modesto,Stanislaus,California,CA,United States,95356,32387
+3100,Topeka,Shawnee,Kansas,KS,United States,66614,32386
+3101,Tallahassee,Leon,Florida,FL,United States,32312,32380
+3102,Grand Haven,Ottawa,Michigan,MI,United States,48640,32374
+3103,Midland,Midland,Michigan,MI,United States,49417,32374
+3104,Corozal,Corozal,Puerto Rico,PR,United States,00783,32372
+3105,Orangevale,Sacramento,California,CA,United States,95662,32363
+3106,San Diego,San Diego,California,CA,United States,92116,32361
+3107,Indio,Riverside,California,CA,United States,34667,32360
+3108,Hudson,Pasco,Florida,FL,United States,92203,32360
+3109,Conyers,Rockdale,Georgia,GA,United States,30094,32359
+3110,Puyallup,Pierce,Washington,WA,United States,42071,32349
+3111,Murray,Calloway,Kentucky,KY,United States,98375,32349
+3112,Milton,Santa Rosa,Florida,FL,United States,32570,32341
+3113,Stillwater,Payne,Oklahoma,OK,United States,74074,32339
+3114,Alexandria,Fairfax,Virginia,VA,United States,22310,32329
+3115,Elizabeth,Union,New Jersey,NJ,United States,07208,32319
+3116,Philadelphia,Philadelphia,Pennsylvania,PA,United States,19151,32306
+3117,Decatur,Morgan,Alabama,AL,United States,35601,32299
+3118,Indianapolis,Marion,Indiana,IN,United States,46241,32297
+3119,Williston,Williams,North Dakota,ND,United States,58801,32297
+3120,Albany,Dougherty,Georgia,GA,United States,31705,32290
+3121,Littleton,Douglas,Colorado,CO,United States,80129,32286
+3122,Minneapolis,Hennepin,Minnesota,MN,United States,55408,32276
+3123,Minneapolis,Hennepin,Minnesota,MN,United States,55428,32251
+3124,Springfield,Clark,Ohio,OH,United States,45503,32250
+3125,Richland,Benton,Washington,WA,United States,99352,32246
+3126,Long Beach,Los Angeles,California,CA,United States,90803,32241
+3127,Chicago,Cook,Illinois,IL,United States,60612,32240
+3128,Haltom City,Tarrant,Texas,TX,United States,48917,32191
+3129,Lansing,Eaton,Michigan,MI,United States,76117,32191
+3130,Davenport,Polk,Florida,FL,United States,33837,32185
+3131,Laurel,Prince George's,Maryland,MD,United States,20707,32184
+3132,Cape Coral,Lee,Florida,FL,United States,33909,32183
+3133,Lakewood,Pierce,Washington,WA,United States,98499,32174
+3134,Hudson,St. Croix,Wisconsin,WI,United States,54016,32171
+3135,Billings,Yellowstone,Montana,MT,United States,59105,32168
+3136,Helena,Lewis and Clark,Montana,MT,United States,59601,32165
+3137,Greenwood,Johnson,Indiana,IN,United States,46142,32162
+3138,Atlanta,Fulton,Georgia,GA,United States,30344,32155
+3139,Westlake,Cuyahoga,Ohio,OH,United States,44145,32154
+3140,New Berlin,Waukesha,Wisconsin,WI,United States,53151,32154
+3141,Eastpointe,Macomb,Michigan,MI,United States,48021,32149
+3142,Raleigh,Wake,North Carolina,NC,United States,27614,32144
+3143,Sevierville,Sevier,Tennessee,TN,United States,37876,32142
+3144,Tulsa,Tulsa,Oklahoma,OK,United States,74136,32139
+3145,Suffolk,Suffolk,Virginia,VA,United States,23435,32137
+3146,Miami,Miami-Dade,Florida,FL,United States,33180,32136
+3147,Bristow,Prince William,Virginia,VA,United States,20136,32135
+3148,Atlanta,DeKalb,Georgia,GA,United States,30341,32134
+3149,Minot,Ward,North Dakota,ND,United States,58701,32112
+3150,Fresno,Fresno,California,CA,United States,93703,32102
+3151,Woodridge,DuPage,Illinois,IL,United States,60517,32099
+3152,San Jose,Santa Clara,California,CA,United States,44512,32096
+3153,Youngstown,Mahoning,Ohio,OH,United States,95131,32096
+3154,Columbus,Muscogee,Georgia,GA,United States,31904,32087
+3155,Saint Petersburg,Pinellas,Florida,FL,United States,33713,32084
+3156,Hartsville,Darlington,South Carolina,SC,United States,29550,32083
+3157,Kennewick,Benton,Washington,WA,United States,99337,32080
+3158,Elkhart,Elkhart,Indiana,IN,United States,46516,32078
+3159,San Jacinto,Riverside,California,CA,United States,92583,32077
+3160,Channelview,Harris,Texas,TX,United States,77530,32070
+3161,Irvine,Orange,California,CA,United States,92612,32069
+3162,Pueblo,Pueblo,Colorado,CO,United States,81005,32062
+3163,Miami,Miami-Dade,Florida,FL,United States,33143,32055
+3164,Dover,Strafford,New Hampshire,NH,United States,03820,32046
+3165,Poulsbo,Kitsap,Washington,WA,United States,98370,32044
+3166,Galt,Sacramento,California,CA,United States,95632,32039
+3167,Dallas,Dallas,Texas,TX,United States,75204,32032
+3168,Killeen,Bell,Texas,TX,United States,76543,32031
+3169,New Orleans,Orleans,Louisiana,LA,United States,70126,32024
+3170,Omaha,Douglas,Nebraska,NE,United States,68116,32018
+3171,Maryville,Blount,Tennessee,TN,United States,37803,32016
+3172,Franklin,Warren,Ohio,OH,United States,45005,32011
+3173,Mchenry,McHenry,Illinois,IL,United States,60050,32000
+3174,Mountain View,Santa Clara,California,CA,United States,94043,31999
+3175,Muncie,Delaware,Indiana,IN,United States,47304,31992
+3176,Batavia,Clermont,Ohio,OH,United States,45103,31976
+3177,Pittsford,Monroe,New York,NY,United States,14534,31975
+3178,Tacoma,Pierce,Washington,WA,United States,98445,31973
+3179,Dinuba,Tulare,California,CA,United States,93618,31971
+3180,Sylvania,Lucas,Ohio,OH,United States,43560,31967
+3181,Des Moines,Polk,Iowa,IA,United States,50310,31965
+3182,Charlotte,Mecklenburg,North Carolina,NC,United States,28217,31951
+3183,Cave Creek,Maricopa,Arizona,AZ,United States,85331,31947
+3184,Garfield,Bergen,New Jersey,NJ,United States,07026,31935
+3185,Birmingham,Shelby,Alabama,AL,United States,35244,31935
+3186,Simpsonville,Greenville,South Carolina,SC,United States,29680,31913
+3187,Los Angeles,Los Angeles,California,CA,United States,90008,31900
+3188,Springfield,Fairfax,Virginia,VA,United States,22153,31897
+3189,North Richland Hills,Tarrant,Texas,TX,United States,74464,31889
+3190,Tahlequah,Cherokee,Oklahoma,OK,United States,76182,31889
+3191,Akron,Summit,Ohio,OH,United States,06811,31887
+3192,Danbury,Fairfield,Connecticut,CT,United States,44312,31887
+3193,Panama City,Bay,Florida,FL,United States,32405,31875
+3194,Bradenton,Manatee,Florida,FL,United States,34205,31871
+3195,Waco,McLennan,Texas,TX,United States,76705,31868
+3196,Phoenix,Maricopa,Arizona,AZ,United States,85050,31864
+3197,Willingboro,Burlington,New Jersey,NJ,United States,08046,31857
+3198,Decatur,DeKalb,Georgia,GA,United States,30030,31856
+3199,Austin,Travis,Texas,TX,United States,78727,31856
+3200,Roseville,Placer,California,CA,United States,95661,31851
+3201,Ossining,Westchester,New York,NY,United States,10562,31847
+3202,Southlake,Tarrant,Texas,TX,United States,76092,31837
+3203,Lake Charles,Calcasieu,Louisiana,LA,United States,70601,31831
+3204,Saint Cloud,Osceola,Florida,FL,United States,34772,31830
+3205,Savage,Scott,Minnesota,MN,United States,55378,31829
+3206,Atlanta,Fulton,Georgia,GA,United States,30342,31828
+3207,Altoona,Blair,Pennsylvania,PA,United States,16601,31825
+3208,Brockton,Plymouth,Massachusetts,MA,United States,02302,31820
+3209,Lawrence,Douglas,Kansas,KS,United States,66049,31820
+3210,Lawrence Township,Mercer,New Jersey,NJ,United States,08648,31819
+3211,Vancouver,Clark,Washington,WA,United States,98684,31805
+3212,Matthews,Union,North Carolina,NC,United States,28104,31803
+3213,Waynesboro,Augusta,Virginia,VA,United States,22980,31800
+3214,North Olmsted,Cuyahoga,Ohio,OH,United States,44070,31794
+3215,Richmond,Chesterfield,Virginia,VA,United States,23235,31778
+3216,Davison,Genesee,Michigan,MI,United States,48423,31766
+3217,Roseburg,Douglas,Oregon,OR,United States,97471,31762
+3218,O'Fallon,St. Clair,Illinois,IL,United States,62269,31755
+3219,Little Rock,Pulaski,Arkansas,AR,United States,72209,31748
+3220,Great Falls,Cascade,Montana,MT,United States,59405,31745
+3221,Quincy,Adams,Illinois,IL,United States,62301,31744
+3222,Palm Bay,Brevard,Florida,FL,United States,32909,31734
+3223,Arcadia,DeSoto,Florida,FL,United States,34266,31733
+3224,Ventura,Ventura,California,CA,United States,93001,31729
+3225,Mount Vernon,Skagit,Washington,WA,United States,98273,31725
+3226,College Park,Prince George's,Maryland,MD,United States,20740,31723
+3227,Vicksburg,Warren,Mississippi,MS,United States,39180,31720
+3228,Ukiah,Mendocino,California,CA,United States,95482,31714
+3229,Arlington,Tarrant,Texas,TX,United States,76016,31705
+3230,Germantown,Montgomery,Maryland,MD,United States,20876,31703
+3231,San Jose,Santa Clara,California,CA,United States,95117,31702
+3232,Sarasota,Manatee,Florida,FL,United States,34243,31700
+3233,Beckley,Raleigh,West Virginia,WV,United States,25801,31694
+3234,Mebane,Alamance,North Carolina,NC,United States,27302,31693
+3235,Marion,McDowell,North Carolina,NC,United States,28752,31690
+3236,Minneapolis,Hennepin,Minnesota,MN,United States,55411,31685
+3237,Abingdon,Harford,Maryland,MD,United States,21009,31683
+3238,Franklin,Williamson,Tennessee,TN,United States,37067,31681
+3239,Vancouver,Clark,Washington,WA,United States,98683,31676
+3240,Green Bay,Brown,Wisconsin,WI,United States,54302,31670
+3241,La Crescenta,Los Angeles,California,CA,United States,91214,31668
+3242,San Diego,San Diego,California,CA,United States,92107,31667
+3243,Philadelphia,Philadelphia,Pennsylvania,PA,United States,19121,31664
+3244,Honolulu,Honolulu,Hawaii,HI,United States,96826,31653
+3245,Valdosta,Lowndes,Georgia,GA,United States,31601,31652
+3246,Colorado Springs,El Paso,Colorado,CO,United States,80917,31648
+3247,Miami,Miami-Dade,Florida,FL,United States,33150,31637
+3248,East Wenatchee,Douglas,Washington,WA,United States,98802,31626
+3249,Colorado Springs,El Paso,Colorado,CO,United States,80910,31619
+3250,Glenside,Montgomery,Pennsylvania,PA,United States,19038,31615
+3251,Happy Valley,Clackamas,Oregon,OR,United States,97086,31609
+3252,Lebanon,Lebanon,Pennsylvania,PA,United States,17046,31587
+3253,Cleveland,Cuyahoga,Ohio,OH,United States,44121,31586
+3254,San Francisco,San Francisco,California,CA,United States,94103,31585
+3255,New York,New York,New York,NY,United States,10022,31574
+3256,Emeryville,Alameda,California,CA,United States,23233,31572
+3257,Henrico,Henrico,Virginia,VA,United States,94608,31572
+3258,Oak Park,Cook,Illinois,IL,United States,60302,31568
+3259,Lowell,Middlesex,Massachusetts,MA,United States,01851,31558
+3260,Macomb,Macomb,Michigan,MI,United States,48042,31558
+3261,Oakland,Alameda,California,CA,United States,94610,31553
+3262,Knoxville,Knox,Tennessee,TN,United States,37923,31548
+3263,Stafford,Stafford,Virginia,VA,United States,22556,31545
+3264,Ruston,Lincoln,Louisiana,LA,United States,71270,31545
+3265,Lafayette,Lafayette,Louisiana,LA,United States,70503,31542
+3266,Granger,St. Joseph,Indiana,IN,United States,46530,31539
+3267,Houston,Fort Bend,Texas,TX,United States,77053,31521
+3268,Rockville,Montgomery,Maryland,MD,United States,20853,31510
+3269,Charlotte,Mecklenburg,North Carolina,NC,United States,23116,31510
+3270,Mechanicsville,Hanover,Virginia,VA,United States,28211,31510
+3271,Decatur,Morgan,Alabama,AL,United States,35603,31509
+3272,Kansas City,Wyandotte,Kansas,KS,United States,66102,31503
+3273,Houma,Terrebonne,Louisiana,LA,United States,70364,31491
+3274,Sand Springs,Tulsa,Oklahoma,OK,United States,74063,31487
+3275,Milwaukee,Milwaukee,Wisconsin,WI,United States,53216,31476
+3276,Glasgow,Barren,Kentucky,KY,United States,42141,31455
+3277,Philadelphia,Philadelphia,Pennsylvania,PA,United States,19114,31448
+3278,Richmond,Contra Costa,California,CA,United States,94801,31443
+3279,Saratoga,Santa Clara,California,CA,United States,95070,31442
+3280,San Angelo,Tom Green,Texas,TX,United States,76903,31429
+3281,Conyers,Rockdale,Georgia,GA,United States,30012,31427
+3282,Fountain,El Paso,Colorado,CO,United States,80817,31426
+3283,Yakima,Yakima,Washington,WA,United States,98901,31425
+3284,Warren,Macomb,Michigan,MI,United States,48089,31411
+3285,New Castle,Lawrence,Pennsylvania,PA,United States,16101,31405
+3286,Columbus,Franklin,Ohio,OH,United States,43219,31404
+3287,Huntsville,Walker,Texas,TX,United States,77340,31404
+3288,Matawan,Middlesex,New Jersey,NJ,United States,07747,31402
+3289,Naugatuck,New Haven,Connecticut,CT,United States,06770,31396
+3290,Skokie,Cook,Illinois,IL,United States,60076,31393
+3291,Oklahoma City,Oklahoma,Oklahoma,OK,United States,73119,31392
+3292,Dracut,Middlesex,Massachusetts,MA,United States,01826,31389
+3293,Carolina,Carolina,Puerto Rico,PR,United States,00985,31388
+3294,Cape Coral,Lee,Florida,FL,United States,33904,31388
+3295,Los Angeles,Los Angeles,California,CA,United States,90028,31385
+3296,Phoenix,Maricopa,Arizona,AZ,United States,85053,31381
+3297,Mount Airy,Frederick,Maryland,MD,United States,21771,31366
+3298,Trenton,Mercer,New Jersey,NJ,United States,08610,31363
+3299,Naples,Collier,Florida,FL,United States,34119,31355
+3300,San Luis,Yuma,Arizona,AZ,United States,46239,31340
+3301,Indianapolis,Marion,Indiana,IN,United States,85349,31340
+3302,Frankfort,Will,Illinois,IL,United States,60423,31328
+3303,Ada,Pontotoc,Oklahoma,OK,United States,74820,31293
+3304,Gainesville,Hall,Georgia,GA,United States,30507,31290
+3305,Ventura,Ventura,California,CA,United States,93004,31283
+3306,Providence,Providence,Rhode Island,RI,United States,02907,31277
+3307,Omaha,Douglas,Nebraska,NE,United States,68134,31274
+3308,Ocala,Marion,Florida,FL,United States,34472,31271
+3309,Minneapolis,Anoka,Minnesota,MN,United States,55434,31267
+3310,North Andover,Essex,Massachusetts,MA,United States,01845,31262
+3311,Danville,Pittsylvania,Virginia,VA,United States,24540,31257
+3312,Garland,Dallas,Texas,TX,United States,75041,31250
+3313,San Ysidro,San Diego,California,CA,United States,92173,31248
+3314,Harker Heights,Bell,Texas,TX,United States,76548,31247
+3315,Ames,Story,Iowa,IA,United States,50014,31246
+3316,Bethlehem,Lehigh,Pennsylvania,PA,United States,18018,31240
+3317,Ashtabula,Ashtabula,Ohio,OH,United States,44004,31234
+3318,Indianapolis,Marion,Indiana,IN,United States,46201,31233
+3319,Cranberry Township,Butler,Pennsylvania,PA,United States,16066,31231
+3320,Lagrange,Troup,Georgia,GA,United States,30240,31223
+3321,Annapolis,Anne Arundel,Maryland,MD,United States,21403,31218
+3322,Ogden,Weber,Utah,UT,United States,84414,31210
+3323,Cleveland,Bradley,Tennessee,TN,United States,37323,31202
+3324,Magnolia,Montgomery,Texas,TX,United States,77355,31201
+3325,Saratoga Springs,Utah,Utah,UT,United States,84045,31199
+3326,Greenville,Greenville,South Carolina,SC,United States,29611,31180
+3327,Mishawaka,St. Joseph,Indiana,IN,United States,46544,31178
+3328,Ambler,Montgomery,Pennsylvania,PA,United States,19002,31166
+3329,Ozone Park,Queens,New York,NY,United States,11417,31156
+3330,Saint Louis,St. Louis,Missouri,MO,United States,63146,31148
+3331,Burbank,Los Angeles,California,CA,United States,27534,31139
+3332,Goldsboro,Wayne,North Carolina,NC,United States,91505,31139
+3333,Wichita,Sedgwick,Kansas,KS,United States,37072,31134
+3334,Goodlettsville,Davidson,Tennessee,TN,United States,67217,31134
+3335,Aliquippa,Beaver,Pennsylvania,PA,United States,15001,31129
+3336,Martinsville,Morgan,Indiana,IN,United States,46151,31129
+3337,Canon City,Fremont,Colorado,CO,United States,81212,31129
+3338,Greenville,Greenville,South Carolina,SC,United States,29609,31127
+3339,West Palm Beach,Palm Beach,Florida,FL,United States,33407,31124
+3340,Lebanon,Linn,Oregon,OR,United States,97355,31118
+3341,Yonkers,Westchester,New York,NY,United States,10704,31110
+3342,Rosedale,Baltimore,Maryland,MD,United States,21237,31105
+3343,Fairfax,Fairfax,Virginia,VA,United States,22032,31103
+3344,Dothan,Houston,Alabama,AL,United States,36303,31096
+3345,Sanford,Seminole,Florida,FL,United States,32773,31090
+3346,Hobart,Lake,Indiana,IN,United States,46342,31080
+3347,Sacramento,Sacramento,California,CA,United States,95834,31077
+3348,Camuy,Camuy,Puerto Rico,PR,United States,00627,31066
+3349,Erie,Weld,Colorado,CO,United States,80516,31063
+3350,Macon,Bibb,Georgia,GA,United States,31204,31055
+3351,Graham,Alamance,North Carolina,NC,United States,27253,31046
+3352,Texas City,Galveston,Texas,TX,United States,17022,31045
+3353,Elizabethtown,Lancaster,Pennsylvania,PA,United States,77590,31045
+3354,Apache Junction,Pinal,Arizona,AZ,United States,85120,31042
+3355,Valley Village,Los Angeles,California,CA,United States,91607,31039
+3356,Woodburn,Marion,Oregon,OR,United States,97071,31034
+3357,Delray Beach,Palm Beach,Florida,FL,United States,33445,31025
+3358,Canoga Park,Los Angeles,California,CA,United States,91303,31024
+3359,Spokane,Spokane,Washington,WA,United States,99207,31020
+3360,Seattle,King,Washington,WA,United States,98109,31011
+3361,Kansas City,Platte,Missouri,MO,United States,64152,31010
+3362,Red Bluff,Tehama,California,CA,United States,96080,31009
+3363,Valrico,Hillsborough,Florida,FL,United States,33596,31000
+3364,New York,New York,New York,NY,United States,10030,30996
+3365,Northridge,Los Angeles,California,CA,United States,91324,30995
+3366,Schenectady,Schenectady,New York,NY,United States,12309,30992
+3367,Fort Lauderdale,Broward,Florida,FL,United States,33325,30985
+3368,Urbandale,Polk,Iowa,IA,United States,50322,30980
+3369,Minneapolis,Hennepin,Minnesota,MN,United States,16823,30978
+3370,Bellefonte,Centre,Pennsylvania,PA,United States,55443,30978
+3371,Saint Paul,Dakota,Minnesota,MN,United States,55122,30976
+3372,Tewksbury,Middlesex,Massachusetts,MA,United States,01876,30973
+3373,San Angelo,Tom Green,Texas,TX,United States,76901,30972
+3374,East Northport,Suffolk,New York,NY,United States,11731,30951
+3375,Chicago,Cook,Illinois,IL,United States,60605,30950
+3376,Nashville,Davidson,Tennessee,TN,United States,37217,30947
+3377,Chambersburg,Franklin,Pennsylvania,PA,United States,17202,30942
+3378,Champaign,Champaign,Illinois,IL,United States,61821,30937
+3379,Alton,Madison,Illinois,IL,United States,62002,30937
+3380,Romulus,Wayne,Michigan,MI,United States,48174,30933
+3381,Colorado Springs,El Paso,Colorado,CO,United States,80923,30932
+3382,Fort Worth,Tarrant,Texas,TX,United States,76140,30930
+3383,Chevy Chase,Montgomery,Maryland,MD,United States,20815,30908
+3384,Seymour,Jackson,Indiana,IN,United States,47274,30891
+3385,Flint,Genesee,Michigan,MI,United States,48507,30884
+3386,Dallas,Dallas,Texas,TX,United States,75241,30863
+3387,Urbana,Champaign,Illinois,IL,United States,61801,30855
+3388,Tucson,Pima,Arizona,AZ,United States,85716,30850
+3389,Dawsonville,Dawson,Georgia,GA,United States,30534,30848
+3390,Royse City,Rockwall,Texas,TX,United States,75189,30842
+3391,Albany,Albany,New York,NY,United States,12203,30837
+3392,Norfolk,Norfolk,Virginia,VA,United States,23513,30836
+3393,Olympia,Thurston,Washington,WA,United States,98512,30833
+3394,Hammond,Tangipahoa,Louisiana,LA,United States,70403,30825
+3395,Lafayette,Boulder,Colorado,CO,United States,80026,30817
+3396,Stanton,Orange,California,CA,United States,90680,30807
+3397,Bakersfield,Kern,California,CA,United States,93314,30805
+3398,Monroe,Snohomish,Washington,WA,United States,98272,30801
+3399,Reedley,Fresno,California,CA,United States,93654,30798
+3400,Saint Charles,Kane,Illinois,IL,United States,60174,30796
+3401,Miami,Miami-Dade,Florida,FL,United States,33127,30795
+3402,Zionsville,Boone,Indiana,IN,United States,46077,30795
+3403,Pine Bluff,Jefferson,Arkansas,AR,United States,71603,30791
+3404,Carrollton,Denton,Texas,TX,United States,75010,30784
+3405,San Bernardino,San Bernardino,California,CA,United States,92405,30782
+3406,Snohomish,Snohomish,Washington,WA,United States,98296,30781
+3407,Brunswick,Glynn,Georgia,GA,United States,31525,30780
+3408,Lakewood,Los Angeles,California,CA,United States,90712,30773
+3409,Benton Harbor,Berrien,Michigan,MI,United States,49022,30761
+3410,Stone Mountain,DeKalb,Georgia,GA,United States,30088,30760
+3411,Canyon Country,Los Angeles,California,CA,United States,91351,30746
+3412,Muskogee,Muskogee,Oklahoma,OK,United States,74403,30742
+3413,Marshalltown,Marshall,Iowa,IA,United States,50158,30736
+3414,Natchez,Adams,Mississippi,MS,United States,39120,30733
+3415,Princeton,Mercer,West Virginia,WV,United States,24740,30721
+3416,Westwego,Jefferson,Louisiana,LA,United States,70094,30712
+3417,Piedmont,Greenville,South Carolina,SC,United States,29673,30704
+3418,Tarzana,Los Angeles,California,CA,United States,91356,30700
+3419,Port Washington,Nassau,New York,NY,United States,11050,30699
+3420,New City,Rockland,New York,NY,United States,10956,30697
+3421,East Elmhurst,Queens,New York,NY,United States,11369,30693
+3422,Springfield,Hampden,Massachusetts,MA,United States,01109,30684
+3423,Eden Prairie,Hennepin,Minnesota,MN,United States,55347,30667
+3424,Winchester,Frederick,Virginia,VA,United States,22602,30665
+3425,San Juan,San Juan,Puerto Rico,PR,United States,00921,30663
+3426,Morovis,Morovis,Puerto Rico,PR,United States,00687,30652
+3427,Jacksonville,Duval,Florida,FL,United States,32208,30648
+3428,Lakeland,Polk,Florida,FL,United States,33809,30646
+3429,Everett,Snohomish,Washington,WA,United States,98201,30645
+3430,San Clemente,Orange,California,CA,United States,92673,30634
+3431,Littleton,Arapahoe,Colorado,CO,United States,80120,30632
+3432,Portland,Cumberland,Maine,ME,United States,04103,30628
+3433,Decatur,Macon,Illinois,IL,United States,62526,30627
+3434,Wausau,Marathon,Wisconsin,WI,United States,54401,30625
+3435,Whittier,Los Angeles,California,CA,United States,90601,30623
+3436,New Britain,Hartford,Connecticut,CT,United States,06051,30618
+3437,Santa Fe,Santa Fe,New Mexico,NM,United States,87505,30615
+3438,Cumming,Forsyth,Georgia,GA,United States,30028,30609
+3439,Detroit,Wayne,Michigan,MI,United States,48209,30607
+3440,Fayetteville,Cumberland,North Carolina,NC,United States,28303,30605
+3441,Wantagh,Nassau,New York,NY,United States,11793,30601
+3442,Millsboro,Sussex,Delaware,DE,United States,19966,30601
+3443,McLean,Fairfax,Virginia,VA,United States,22101,30598
+3444,Baltimore,Baltimore,Maryland,MD,United States,21213,30596
+3445,Sandy,Salt Lake,Utah,UT,United States,84070,30595
+3446,Livonia,Wayne,Michigan,MI,United States,48152,30590
+3447,Fleming Island,Clay,Florida,FL,United States,32003,30582
+3448,Fall River,Bristol,Massachusetts,MA,United States,02720,30579
+3449,Dodge City,Ford,Kansas,KS,United States,67801,30562
+3450,Shelbyville,Shelby,Kentucky,KY,United States,40065,30561
+3451,Long Branch,Monmouth,New Jersey,NJ,United States,07740,30557
+3452,Appleton,Outagamie,Wisconsin,WI,United States,54914,30555
+3453,Harrisonburg,Rockingham,Virginia,VA,United States,22802,30534
+3454,Hialeah,Miami-Dade,Florida,FL,United States,33013,30524
+3455,West Des Moines,Dallas,Iowa,IA,United States,50266,30515
+3456,Waterloo,Black Hawk,Iowa,IA,United States,50701,30515
+3457,South Bend,St. Joseph,Indiana,IN,United States,46614,30505
+3458,San Jose,Santa Clara,California,CA,United States,95134,30499
+3459,Azle,Parker,Texas,TX,United States,76020,30487
+3460,Groton,New London,Connecticut,CT,United States,06340,30486
+3461,Beaverton,Washington,Oregon,OR,United States,33919,30485
+3462,Fort Myers,Lee,Florida,FL,United States,97008,30485
+3463,Rocky Mount,Nash,North Carolina,NC,United States,27804,30484
+3464,Saint Louis,St. Louis,Missouri,MO,United States,63128,30480
+3465,Lapeer,Lapeer,Michigan,MI,United States,48446,30473
+3466,Houston,Harris,Texas,TX,United States,77016,30462
+3467,Lady Lake,Lake,Florida,FL,United States,32159,30459
+3468,San Francisco,San Francisco,California,CA,United States,94131,30458
+3469,Selma,Fresno,California,CA,United States,93662,30453
+3470,Miami,Miami-Dade,Florida,FL,United States,33145,30450
+3471,Port Orchard,Kitsap,Washington,WA,United States,98367,30447
+3472,Tucson,Pima,Arizona,AZ,United States,85743,30443
+3473,San Francisco,San Francisco,California,CA,United States,94132,30437
+3474,Bremerton,Kitsap,Washington,WA,United States,98312,30437
+3475,Palmer,Matanuska-Susitna,Alaska,AK,United States,99645,30435
+3476,Vista,San Diego,California,CA,United States,92081,30434
+3477,Houston,Harris,Texas,TX,United States,77038,30428
+3478,Syracuse,Davis,Utah,UT,United States,84075,30427
+3479,Kenosha,Kenosha,Wisconsin,WI,United States,53140,30425
+3480,San Carlos,San Mateo,California,CA,United States,94070,30420
+3481,Wheaton,DuPage,Illinois,IL,United States,60189,30419
+3482,Cincinnati,Hamilton,Ohio,OH,United States,45215,30416
+3483,Norfolk,Madison,Nebraska,NE,United States,68701,30415
+3484,Encino,Los Angeles,California,CA,United States,61107,30412
+3485,Rockford,Winnebago,Illinois,IL,United States,91316,30412
+3486,Newark,New Castle,Delaware,DE,United States,19713,30403
+3487,Hastings,Dakota,Minnesota,MN,United States,55033,30402
+3488,Minneapolis,Anoka,Minnesota,MN,United States,15401,30401
+3489,Uniontown,Fayette,Pennsylvania,PA,United States,55432,30401
+3490,Las Vegas,Clark,Nevada,NV,United States,89156,30394
+3491,Saint Augustine,St. Johns,Florida,FL,United States,32086,30392
+3492,Hopewell,Prince George,Virginia,VA,United States,23860,30388
+3493,Hyattsville,Prince George's,Maryland,MD,United States,20784,30381
+3494,Orange,Essex,New Jersey,NJ,United States,07050,30374
+3495,Phoenix,Maricopa,Arizona,AZ,United States,85019,30369
+3496,South Lake Tahoe,El Dorado,California,CA,United States,96150,30369
+3497,Drexel Hill,Delaware,Pennsylvania,PA,United States,19026,30357
+3498,Crestview,Okaloosa,Florida,FL,United States,32539,30357
+3499,Muscatine,Muscatine,Iowa,IA,United States,52761,30353
+3500,Brainerd,Crow Wing,Minnesota,MN,United States,56401,30350
+3501,Jacksonville,Duval,Florida,FL,United States,32205,30349
+3502,Houston,Harris,Texas,TX,United States,07840,30347
+3503,Hackettstown,Warren,New Jersey,NJ,United States,77086,30347
+3504,Miami,Miami-Dade,Florida,FL,United States,33144,30343
+3505,Zeeland,Ottawa,Michigan,MI,United States,49464,30340
+3506,New York,New York,New York,NY,United States,10065,30339
+3507,Faribault,Rice,Minnesota,MN,United States,55021,30334
+3508,Fort Lauderdale,Broward,Florida,FL,United States,33334,30333
+3509,Fargo,Cass,North Dakota,ND,United States,58102,30329
+3510,Alexandria,Fairfax,Virginia,VA,United States,22312,30327
+3511,Hurst,Tarrant,Texas,TX,United States,76053,30317
+3512,West Palm Beach,Palm Beach,Florida,FL,United States,33401,30315
+3513,Springfield,Fairfax,Virginia,VA,United States,22152,30314
+3514,El Monte,Los Angeles,California,CA,United States,91731,30313
+3515,Durango,La Plata,Colorado,CO,United States,81301,30307
+3516,Chicago,Cook,Illinois,IL,United States,60607,30306
+3517,Fremont,Dodge,Nebraska,NE,United States,68025,30295
+3518,Gloucester,Essex,Massachusetts,MA,United States,01930,30291
+3519,Sun City West,Maricopa,Arizona,AZ,United States,85375,30285
+3520,La Grange,Cook,Illinois,IL,United States,60525,30274
+3521,North Fort Myers,Lee,Florida,FL,United States,33917,30270
+3522,Springfield,Robertson,Tennessee,TN,United States,37172,30261
+3523,Washington,District of Columbia,District of Columbia,DC,United States,20008,30255
+3524,Chicopee,Hampden,Massachusetts,MA,United States,01020,30249
+3525,Huntsville,Madison,Alabama,AL,United States,35810,30243
+3526,Bartow,Polk,Florida,FL,United States,33830,30242
+3527,Issaquah,King,Washington,WA,United States,98027,30240
+3528,Roswell,Chaves,New Mexico,NM,United States,88203,30234
+3529,Fayetteville,Fayette,Georgia,GA,United States,30214,30232
+3530,Reston,Fairfax,Virginia,VA,United States,20191,30224
+3531,Nashville,Davidson,Tennessee,TN,United States,37214,30217
+3532,Sacramento,Sacramento,California,CA,United States,95824,30213
+3533,Mayaguez,Mayagüez,Puerto Rico,PR,United States,00682,30212
+3534,Salisbury,Rowan,North Carolina,NC,United States,28146,30212
+3535,Minneapolis,Hennepin,Minnesota,MN,United States,55418,30209
+3536,Vallejo,Solano,California,CA,United States,94589,30206
+3537,Grand Rapids,Kent,Michigan,MI,United States,49525,30205
+3538,Little Rock,Pulaski,Arkansas,AR,United States,72204,30204
+3539,San Rafael,Marin,California,CA,United States,94903,30198
+3540,Grand Junction,Mesa,Colorado,CO,United States,81504,30192
+3541,Land O'Lakes,Pasco,Florida,FL,United States,34638,30182
+3542,Kingston,Luzerne,Pennsylvania,PA,United States,18704,30181
+3543,Baton Rouge,East Baton Rouge,Louisiana,LA,United States,70806,30180
+3544,Rosemount,Dakota,Minnesota,MN,United States,55068,30178
+3545,Miami,Miami-Dade,Florida,FL,United States,33185,30165
+3546,Rochester,Oakland,Michigan,MI,United States,48309,30165
+3547,Denver,Denver,Colorado,CO,United States,80247,30161
+3548,Burlington,Chittenden,Vermont,VT,United States,05401,30152
+3549,Zion,Lake,Illinois,IL,United States,60099,30145
+3550,Bixby,Tulsa,Oklahoma,OK,United States,74008,30144
+3551,Baltimore,Baltimore,Maryland,MD,United States,21239,30143
+3552,Gainesville,Alachua,Florida,FL,United States,32607,30139
+3553,Palm City,Martin,Florida,FL,United States,34990,30138
+3554,Milton,Santa Rosa,Florida,FL,United States,32583,30135
+3555,Fredericksburg,Spotsylvania,Virginia,VA,United States,22408,30129
+3556,Blue Springs,Jackson,Missouri,MO,United States,64015,30128
+3557,Baton Rouge,East Baton Rouge,Louisiana,LA,United States,70815,30124
+3558,Janesville,Rock,Wisconsin,WI,United States,53546,30123
+3559,Salisbury,Wicomico,Maryland,MD,United States,21801,30122
+3560,Bowie,Prince George's,Maryland,MD,United States,20721,30121
+3561,Milwaukee,Milwaukee,Wisconsin,WI,United States,53212,30115
+3562,Newington,Hartford,Connecticut,CT,United States,06111,30114
+3563,Saginaw,Saginaw,Michigan,MI,United States,48602,30109
+3564,Orlando,Orange,Florida,FL,United States,32809,30100
+3565,Amherst,Hampshire,Massachusetts,MA,United States,01002,30099
+3566,Benton,Saline,Arkansas,AR,United States,72015,30097
+3567,Alhambra,Los Angeles,California,CA,United States,91803,30093
+3568,Nashua,Hillsborough,New Hampshire,NH,United States,03060,30092
+3569,West Linn,Clackamas,Oregon,OR,United States,97068,30085
+3570,Laguna Hills,Orange,California,CA,United States,88012,30080
+3571,Las Cruces,Doña Ana,New Mexico,NM,United States,92653,30080
+3572,Dallas,Dallas,Texas,TX,United States,67203,30064
+3573,Wichita,Sedgwick,Kansas,KS,United States,75208,30064
+3574,Granbury,Hood,Texas,TX,United States,76049,30062
+3575,Livingston,Essex,New Jersey,NJ,United States,07039,30059
+3576,Roanoke,Roanoke,Virginia,VA,United States,24012,30055
+3577,San Diego,San Diego,California,CA,United States,92110,30047
+3578,Lafayette,Lafayette,Louisiana,LA,United States,70501,30044
+3579,Crosby,Harris,Texas,TX,United States,77532,30042
+3580,Chicago,Cook,Illinois,IL,United States,60636,30039
+3581,Sidney,Shelby,Ohio,OH,United States,45365,30024
+3582,Goodyear,Maricopa,Arizona,AZ,United States,85395,30013
+3583,Belleville,St. Clair,Illinois,IL,United States,62221,30009
+3584,Muskegon,Muskegon,Michigan,MI,United States,49444,30003
+3585,Madison Heights,Oakland,Michigan,MI,United States,48071,30000
+3586,Summerfield,Marion,Florida,FL,United States,34491,29998
+3587,Pueblo,Pueblo,Colorado,CO,United States,81001,29997
+3588,Reno,Washoe,Nevada,NV,United States,72601,29993
+3589,Harrison,Boone,Arkansas,AR,United States,89503,29993
+3590,North Royalton,Cuyahoga,Ohio,OH,United States,44133,29992
+3591,Toledo,Lucas,Ohio,OH,United States,43614,29983
+3592,Lynnwood,Snohomish,Washington,WA,United States,98037,29977
+3593,Los Angeles,Los Angeles,California,CA,United States,90039,29966
+3594,Hot Springs National Park,Garland,Arkansas,AR,United States,71901,29965
+3595,Orchard Park,Erie,New York,NY,United States,14127,29964
+3596,Issaquah,King,Washington,WA,United States,98029,29956
+3597,Paducah,McCracken,Kentucky,KY,United States,42001,29952
+3598,Rochester,Monroe,New York,NY,United States,14626,29941
+3599,Jonesboro,Craighead,Arkansas,AR,United States,72404,29937
+3600,Auburn,Placer,California,CA,United States,95603,29930
+3601,Longview,Gregg,Texas,TX,United States,75604,29922
+3602,Buffalo,Erie,New York,NY,United States,14226,29920
+3603,Charlotte,Mecklenburg,North Carolina,NC,United States,28278,29919
+3604,Arroyo Grande,San Luis Obispo,California,CA,United States,93420,29915
+3605,Stephenville,Erath,Texas,TX,United States,76401,29904
+3606,Norwalk,Fairfield,Connecticut,CT,United States,06854,29895
+3607,Bardstown,Nelson,Kentucky,KY,United States,40004,29892
+3608,New Caney,Montgomery,Texas,TX,United States,77357,29890
+3609,Tupelo,Lee,Mississippi,MS,United States,38801,29889
+3610,Los Angeles,Los Angeles,California,CA,United States,90041,29888
+3611,Irving,Dallas,Texas,TX,United States,75038,29886
+3612,Providence,Providence,Rhode Island,RI,United States,02904,29881
+3613,La Puente,Los Angeles,California,CA,United States,91746,29876
+3614,Lakeland,Polk,Florida,FL,United States,33803,29875
+3615,Louisville,Jefferson,Kentucky,KY,United States,40207,29871
+3616,Largo,Pinellas,Florida,FL,United States,33771,29868
+3617,Philadelphia,Philadelphia,Pennsylvania,PA,United States,19142,29864
+3618,Cherry Hill,Camden,New Jersey,NJ,United States,08003,29856
+3619,Newberg,Yamhill,Oregon,OR,United States,97132,29851
+3620,Philadelphia,Philadelphia,Pennsylvania,PA,United States,19132,29850
+3621,Helotes,Bexar,Texas,TX,United States,78023,29847
+3622,Independence,Kenton,Kentucky,KY,United States,41051,29846
+3623,Juneau,Juneau,Alaska,AK,United States,99801,29839
+3624,Brandon,Hillsborough,Florida,FL,United States,33510,29831
+3625,Portage,Kalamazoo,Michigan,MI,United States,49024,29822
+3626,Mattapan,Suffolk,Massachusetts,MA,United States,02126,29807
+3627,West Covina,Los Angeles,California,CA,United States,91792,29806
+3628,Glendale,Maricopa,Arizona,AZ,United States,85304,29801
+3629,Klamath Falls,Klamath,Oregon,OR,United States,97603,29797
+3630,Superior,Douglas,Wisconsin,WI,United States,54880,29792
+3631,Corpus Christi,Kleberg,Texas,TX,United States,78418,29789
+3632,Vancouver,Clark,Washington,WA,United States,98685,29788
+3633,Easley,Pickens,South Carolina,SC,United States,29640,29766
+3634,San Diego,San Diego,California,CA,United States,92120,29764
+3635,Fremont,Sandusky,Ohio,OH,United States,43420,29761
+3636,Louisville,Jefferson,Kentucky,KY,United States,40241,29748
+3637,Albuquerque,Bernalillo,New Mexico,NM,United States,87107,29735
+3638,Land O'Lakes,Pasco,Florida,FL,United States,34639,29728
+3639,Waterbury,New Haven,Connecticut,CT,United States,06708,29727
+3640,Memphis,Shelby,Tennessee,TN,United States,38135,29719
+3641,Brookline,Norfolk,Massachusetts,MA,United States,02446,29711
+3642,San Francisco,San Francisco,California,CA,United States,94107,29708
+3643,Beaumont,Jefferson,Texas,TX,United States,77706,29707
+3644,Bloomsburg,Columbia,Pennsylvania,PA,United States,17815,29705
+3645,East Stroudsburg,Monroe,Pennsylvania,PA,United States,18301,29694
+3646,Rahway,Union,New Jersey,NJ,United States,07065,29691
+3647,Sebastopol,Sonoma,California,CA,United States,95472,29690
+3648,Crawfordville,Wakulla,Florida,FL,United States,32327,29688
+3649,Cincinnati,Hamilton,Ohio,OH,United States,45239,29684
+3650,Broken Arrow,Tulsa,Oklahoma,OK,United States,74011,29680
+3651,Westfield,Union,New Jersey,NJ,United States,07090,29668
+3652,Jefferson City,Cole,Missouri,MO,United States,65101,29665
+3653,Corsicana,Navarro,Texas,TX,United States,75110,29665
+3654,Detroit,Wayne,Michigan,MI,United States,48210,29663
+3655,San Lorenzo,Alameda,California,CA,United States,94580,29661
+3656,Vernal,Uintah,Utah,UT,United States,84078,29654
+3657,Springfield,Sangamon,Illinois,IL,United States,62703,29644
+3658,Downers Grove,DuPage,Illinois,IL,United States,60516,29639
+3659,Knoxville,Knox,Tennessee,TN,United States,37919,29637
+3660,Alexandria,Fairfax,Virginia,VA,United States,22315,29634
+3661,Salem,Rockingham,New Hampshire,NH,United States,03079,29633
+3662,Bethesda,Montgomery,Maryland,MD,United States,20814,29632
+3663,Eagle,Ada,Idaho,ID,United States,83616,29630
+3664,Manor,Travis,Texas,TX,United States,78653,29622
+3665,North Charleston,Charleston,South Carolina,SC,United States,29405,29620
+3666,Grand Island,Hall,Nebraska,NE,United States,68801,29619
+3667,Longwood,Seminole,Florida,FL,United States,32779,29618
+3668,Ottumwa,Wapello,Iowa,IA,United States,52501,29613
+3669,Wheaton,DuPage,Illinois,IL,United States,60187,29611
+3670,Mount Vernon,Knox,Ohio,OH,United States,43050,29609
+3671,Highland Park,Lake,Illinois,IL,United States,60035,29604
+3672,Oak Park,Oakland,Michigan,MI,United States,48237,29603
+3673,Colorado Springs,El Paso,Colorado,CO,United States,80922,29598
+3674,Oakland,Alameda,California,CA,United States,94602,29593
+3675,Grosse Pointe,Wayne,Michigan,MI,United States,48236,29592
+3676,Sandy,Salt Lake,Utah,UT,United States,84094,29586
+3677,Springfield,Fairfax,Virginia,VA,United States,22150,29585
+3678,Ruskin,Hillsborough,Florida,FL,United States,33570,29576
+3679,Fairbanks,Fairbanks North Star,Alaska,AK,United States,99709,29574
+3680,Dorchester,Suffolk,Massachusetts,MA,United States,02121,29570
+3681,Oak Ridge,Anderson,Tennessee,TN,United States,37830,29569
+3682,Henderson,Clark,Nevada,NV,United States,89011,29556
+3683,Shingle Springs,El Dorado,California,CA,United States,95682,29556
+3684,Hollis,Queens,New York,NY,United States,11423,29532
+3685,Berkeley,Alameda,California,CA,United States,94704,29509
+3686,Norfolk,Norfolk,Virginia,VA,United States,23505,29508
+3687,Windsor,Sonoma,California,CA,United States,95492,29502
+3688,Portsmouth,Scioto,Ohio,OH,United States,45662,29493
+3689,Warren,Macomb,Michigan,MI,United States,48091,29483
+3690,Hickory,Catawba,North Carolina,NC,United States,28602,29467
+3691,Austin,Williamson,Texas,TX,United States,78717,29463
+3692,New Orleans,Orleans,Louisiana,LA,United States,70131,29456
+3693,Pittsburgh,Allegheny,Pennsylvania,PA,United States,15221,29451
+3694,Christiansburg,Montgomery,Virginia,VA,United States,24073,29451
+3695,Freeport,Stephenson,Illinois,IL,United States,61032,29451
+3696,Kansas City,Clay,Missouri,MO,United States,64119,29450
+3697,Denton,Denton,Texas,TX,United States,76201,29447
+3698,Norwood,Norfolk,Massachusetts,MA,United States,02062,29446
+3699,Toledo,Lucas,Ohio,OH,United States,43612,29445
+3700,Oroville,Butte,California,CA,United States,95966,29444
+3701,Warwick,Kent,Rhode Island,RI,United States,02886,29443
+3702,Niles,Cook,Illinois,IL,United States,60714,29429
+3703,Boulder,Boulder,Colorado,CO,United States,80302,29422
+3704,Kannapolis,Cabarrus,North Carolina,NC,United States,28081,29421
+3705,Bethel Park,Allegheny,Pennsylvania,PA,United States,15102,29419
+3706,Bismarck,Burleigh,North Dakota,ND,United States,58501,29419
+3707,Schenectady,Albany,New York,NY,United States,12303,29416
+3708,Tacoma,Pierce,Washington,WA,United States,98466,29401
+3709,Kingsville,Kleberg,Texas,TX,United States,78363,29400
+3710,Fort Worth,Tarrant,Texas,TX,United States,76107,29377
+3711,Valencia,Los Angeles,California,CA,United States,91355,29371
+3712,Inglewood,Los Angeles,California,CA,United States,90302,29367
+3713,East Elmhurst,Queens,New York,NY,United States,11370,29366
+3714,Villa Park,DuPage,Illinois,IL,United States,60181,29365
+3715,Peoria,Peoria,Illinois,IL,United States,61604,29362
+3716,Lake Jackson,Brazoria,Texas,TX,United States,77566,29362
+3717,Orlando,Orange,Florida,FL,United States,32832,29359
+3718,West Palm Beach,Palm Beach,Florida,FL,United States,33404,29357
+3719,Fort Lauderdale,Broward,Florida,FL,United States,33328,29355
+3720,Batavia,Kane,Illinois,IL,United States,60510,29352
+3721,Suisun City,Solano,California,CA,United States,94585,29351
+3722,Sammamish,King,Washington,WA,United States,98074,29349
+3723,Lafayette,Contra Costa,California,CA,United States,94549,29344
+3724,Tampa,Hillsborough,Florida,FL,United States,33626,29337
+3725,Omaha,Douglas,Nebraska,NE,United States,68135,29329
+3726,Cape Coral,Lee,Florida,FL,United States,33993,29328
+3727,Pompano Beach,Broward,Florida,FL,United States,33069,29321
+3728,El Dorado,Union,Arkansas,AR,United States,71730,29320
+3729,Portland,Multnomah,Oregon,OR,United States,27104,29318
+3730,Winston Salem,Forsyth,North Carolina,NC,United States,97220,29318
+3731,Johnston,Providence,Rhode Island,RI,United States,02919,29312
+3732,Denver,Adams,Colorado,CO,United States,80234,29310
+3733,Libertyville,Lake,Illinois,IL,United States,60048,29306
+3734,Burlington,Racine,Wisconsin,WI,United States,53105,29302
+3735,Vernon Rockville,Tolland,Connecticut,CT,United States,06066,29300
+3736,Houston,Harris,Texas,TX,United States,77025,29298
+3737,Mount Dora,Lake,Florida,FL,United States,32757,29295
+3738,Waltham,Middlesex,Massachusetts,MA,United States,02453,29289
+3739,Lebanon,Laclede,Missouri,MO,United States,65536,29288
+3740,Houma,Terrebonne,Louisiana,LA,United States,70360,29286
+3741,West Warwick,Kent,Rhode Island,RI,United States,02893,29283
+3742,Houston,Harris,Texas,TX,United States,77033,29267
+3743,Coram,Suffolk,New York,NY,United States,11727,29262
+3744,Birmingham,Jefferson,Alabama,AL,United States,35209,29262
+3745,New Castle,Henry,Indiana,IN,United States,47362,29260
+3746,North Las Vegas,Clark,Nevada,NV,United States,89084,29244
+3747,Argyle,Denton,Texas,TX,United States,76226,29240
+3748,Commack,Suffolk,New York,NY,United States,11725,29229
+3749,Sequim,Clallam,Washington,WA,United States,98382,29214
+3750,Plainview,Nassau,New York,NY,United States,11803,29208
+3751,Omaha,Douglas,Nebraska,NE,United States,60142,29206
+3752,Huntley,McHenry,Illinois,IL,United States,68107,29206
+3753,Milwaukee,Milwaukee,Wisconsin,WI,United States,53208,29205
+3754,Fresno,Fresno,California,CA,United States,93704,29205
+3755,Pittsburgh,Allegheny,Pennsylvania,PA,United States,15206,29197
+3756,Voorhees,Camden,New Jersey,NJ,United States,08043,29195
+3757,Winchester,Winchester,Virginia,VA,United States,22601,29192
+3758,Bourbonnais,Kankakee,Illinois,IL,United States,60914,29192
+3759,Corinth,Alcorn,Mississippi,MS,United States,38834,29190
+3760,Fort Wayne,Allen,Indiana,IN,United States,46815,29183
+3761,Bloomington,San Bernardino,California,CA,United States,92316,29176
+3762,Colorado Springs,El Paso,Colorado,CO,United States,80907,29173
+3763,Newtown,Bucks,Pennsylvania,PA,United States,17257,29164
+3764,Shippensburg,Cumberland,Pennsylvania,PA,United States,18940,29164
+3765,Miami,Miami-Dade,Florida,FL,United States,33138,29163
+3766,Boise,Ada,Idaho,ID,United States,70607,29157
+3767,Lake Charles,Cameron,Louisiana,LA,United States,83705,29157
+3768,Waynesboro,Franklin,Pennsylvania,PA,United States,17268,29153
+3769,Lufkin,Angelina,Texas,TX,United States,75901,29148
+3770,Kihei,Maui,Hawaii,HI,United States,96753,29146
+3771,Phillipsburg,Warren,New Jersey,NJ,United States,08865,29142
+3772,Cleveland,Bradley,Tennessee,TN,United States,37311,29139
+3773,Boston,Suffolk,Massachusetts,MA,United States,02115,29134
+3774,Shirley,Suffolk,New York,NY,United States,11967,29130
+3775,Southgate,Wayne,Michigan,MI,United States,48195,29129
+3776,Corbin,Whitley,Kentucky,KY,United States,40701,29128
+3777,Omaha,Douglas,Nebraska,NE,United States,68164,29124
+3778,Weatherford,Parker,Texas,TX,United States,76087,29119
+3779,Stockton,San Joaquin,California,CA,United States,95219,29117
+3780,Arlington Heights,Cook,Illinois,IL,United States,60005,29109
+3781,Las Vegas,Clark,Nevada,NV,United States,89135,29104
+3782,Owatonna,Steele,Minnesota,MN,United States,55060,29100
+3783,Norfolk,Norfolk,Virginia,VA,United States,23518,29098
+3784,Papillion,Sarpy,Nebraska,NE,United States,68046,29091
+3785,Rockford,Winnebago,Illinois,IL,United States,61108,29084
+3786,Port Orange,Volusia,Florida,FL,United States,32127,29082
+3787,Saint Louis,St. Louis,Missouri,MO,United States,63130,29080
+3788,Enid,Garfield,Oklahoma,OK,United States,73703,29077
+3789,Ponce,Ponce,Puerto Rico,PR,United States,00730,29075
+3790,Dayton,Montgomery,Ohio,OH,United States,45417,29072
+3791,New York,New York,New York,NY,United States,10014,29071
+3792,Reading,Berks,Pennsylvania,PA,United States,19604,29069
+3793,Atlanta,DeKalb,Georgia,GA,United States,30340,29069
+3794,Cheshire,New Haven,Connecticut,CT,United States,06410,29064
+3795,Fredericksburg,Fredericksburg,Virginia,VA,United States,22401,29059
+3796,Indianapolis,Marion,Indiana,IN,United States,46236,29058
+3797,Sebastian,Indian River,Florida,FL,United States,32958,29057
+3798,Philadelphia,Philadelphia,Pennsylvania,PA,United States,19119,29055
+3799,Kingman,Mohave,Arizona,AZ,United States,86409,29045
+3800,Chicago,Cook,Illinois,IL,United States,60646,29043
+3801,Cantonment,Escambia,Florida,FL,United States,32533,29024
+3802,Houston,Harris,Texas,TX,United States,60134,29022
+3803,Geneva,Kane,Illinois,IL,United States,77005,29022
+3804,Liverpool,Onondaga,New York,NY,United States,13090,29017
+3805,Sacramento,Sacramento,California,CA,United States,95829,29014
+3806,Columbus,Franklin,Ohio,OH,United States,43209,29013
+3807,Raleigh,Wake,North Carolina,NC,United States,27607,29005
+3808,Niagara Falls,Niagara,New York,NY,United States,14304,29001
+3809,Graham,Pierce,Washington,WA,United States,98338,28999
+3810,Chicago,Cook,Illinois,IL,United States,60656,28982
+3811,Bel Air,Harford,Maryland,MD,United States,13045,28975
+3812,Cortland,Cortland,New York,NY,United States,21015,28975
+3813,Minneapolis,Hennepin,Minnesota,MN,United States,55422,28967
+3814,Vail,Pima,Arizona,AZ,United States,85641,28966
+3815,Indianapolis,Marion,Indiana,IN,United States,46229,28964
+3816,Chaska,Carver,Minnesota,MN,United States,55318,28959
+3817,Castle Rock,Douglas,Colorado,CO,United States,80108,28952
+3818,Indianapolis,Marion,Indiana,IN,United States,46218,28950
+3819,Minneapolis,Anoka,Minnesota,MN,United States,55449,28947
+3820,Wyoming,Kent,Michigan,MI,United States,49509,28946
+3821,Parsippany,Morris,New Jersey,NJ,United States,07054,28943
+3822,Milford,Worcester,Massachusetts,MA,United States,01757,28936
+3823,Greenville,Greenville,South Carolina,SC,United States,29617,28936
+3824,Windsor,Weld,Colorado,CO,United States,80550,28935
+3825,Deerfield Beach,Broward,Florida,FL,United States,33442,28934
+3826,Olivehurst,Yuba,California,CA,United States,95961,28929
+3827,Pataskala,Licking,Ohio,OH,United States,43062,28914
+3828,Staten Island,Richmond,New York,NY,United States,10308,28901
+3829,Ennis,Ellis,Texas,TX,United States,75119,28901
+3830,Bedford,Cuyahoga,Ohio,OH,United States,44146,28894
+3831,El Paso,El Paso,Texas,TX,United States,79932,28893
+3832,Boston,Suffolk,Massachusetts,MA,United States,02118,28892
+3833,Lexington,Fayette,Kentucky,KY,United States,40503,28880
+3834,Derby,Sedgwick,Kansas,KS,United States,67037,28879
+3835,Lawrence,Douglas,Kansas,KS,United States,66044,28867
+3836,Chicago,Cook,Illinois,IL,United States,60631,28864
+3837,Stockton,San Joaquin,California,CA,United States,95204,28860
+3838,Fort Worth,Tarrant,Texas,TX,United States,76134,28852
+3839,Fort Wayne,Allen,Indiana,IN,United States,46825,28848
+3840,Concord,Contra Costa,California,CA,United States,94518,28846
+3841,Victoria,Victoria,Texas,TX,United States,77904,28838
+3842,Flemington,Hunterdon,New Jersey,NJ,United States,08822,28836
+3843,Castaic,Los Angeles,California,CA,United States,91384,28833
+3844,Windsor,Hartford,Connecticut,CT,United States,06095,28829
+3845,Sun City,Maricopa,Arizona,AZ,United States,85351,28824
+3846,Oklahoma City,Oklahoma,Oklahoma,OK,United States,38506,28818
+3847,Cookeville,Putnam,Tennessee,TN,United States,73162,28818
+3848,Peoria,Peoria,Illinois,IL,United States,61614,28815
+3849,Tucson,Pima,Arizona,AZ,United States,85742,28812
+3850,Jacksonville,Duval,Florida,FL,United States,32221,28809
+3851,Boise,Ada,Idaho,ID,United States,83713,28806
+3852,Rock Springs,Sweetwater,Wyoming,WY,United States,82901,28794
+3853,Minneapolis,Hennepin,Minnesota,MN,United States,55419,28792
+3854,Martinsville,Henry,Virginia,VA,United States,24112,28791
+3855,Columbus,Platte,Nebraska,NE,United States,68601,28791
+3856,Minneapolis,Anoka,Minnesota,MN,United States,55421,28784
+3857,Circle Pines,Anoka,Minnesota,MN,United States,55014,28782
+3858,Centereach,Suffolk,New York,NY,United States,11720,28773
+3859,Flower Mound,Denton,Texas,TX,United States,75022,28773
+3860,Portland,Multnomah,Oregon,OR,United States,01854,28770
+3861,Lowell,Middlesex,Massachusetts,MA,United States,97212,28770
+3862,Medford,Suffolk,New York,NY,United States,11763,28769
+3863,Central Point,Jackson,Oregon,OR,United States,97502,28769
+3864,Lakewood,Pierce,Washington,WA,United States,98498,28764
+3865,Maumee,Lucas,Ohio,OH,United States,43537,28762
+3866,Farmington,St. Francois,Missouri,MO,United States,63640,28762
+3867,Riverhead,Suffolk,New York,NY,United States,11901,28760
+3868,Los Angeles,Los Angeles,California,CA,United States,45244,28755
+3869,Cincinnati,Hamilton,Ohio,OH,United States,90061,28755
+3870,Saint Paul,Washington,Minnesota,MN,United States,55128,28752
+3871,San Luis Obispo,San Luis Obispo,California,CA,United States,93401,28751
+3872,Stoughton,Norfolk,Massachusetts,MA,United States,02072,28742
+3873,Tualatin,Washington,Oregon,OR,United States,46804,28740
+3874,Fort Wayne,Allen,Indiana,IN,United States,97062,28740
+3875,Greenwood,Greenwood,South Carolina,SC,United States,29646,28739
+3876,Glastonbury,Hartford,Connecticut,CT,United States,06033,28738
+3877,Baltimore,Baltimore,Maryland,MD,United States,21216,28733
+3878,San German,San Germán,Puerto Rico,PR,United States,00683,28710
+3879,Yorktown Heights,Westchester,New York,NY,United States,10598,28708
+3880,Seattle,King,Washington,WA,United States,98116,28705
+3881,Naples,Collier,Florida,FL,United States,34112,28702
+3882,Sandy,Salt Lake,Utah,UT,United States,84092,28699
+3883,Lewis Center,Delaware,Ohio,OH,United States,43035,28687
+3884,East Haven,New Haven,Connecticut,CT,United States,06512,28682
+3885,Lake In The Hills,McHenry,Illinois,IL,United States,60156,28681
+3886,East Orange,Essex,New Jersey,NJ,United States,07018,28680
+3887,Oceanside,Nassau,New York,NY,United States,11572,28673
+3888,Austin,Mower,Minnesota,MN,United States,55912,28658
+3889,New York,New York,New York,NY,United States,10013,28657
+3890,Overland Park,Johnson,Kansas,KS,United States,66213,28655
+3891,Atlanta,Fulton,Georgia,GA,United States,30324,28654
+3892,Clarksburg,Harrison,West Virginia,WV,United States,26301,28652
+3893,Mason City,Cerro Gordo,Iowa,IA,United States,50401,28647
+3894,Parkersburg,Wood,West Virginia,WV,United States,26101,28644
+3895,Milwaukee,Milwaukee,Wisconsin,WI,United States,53223,28640
+3896,Bayamon,Bayamón,Puerto Rico,PR,United States,00961,28638
+3897,Baltimore,Baltimore,Maryland,MD,United States,21209,28621
+3898,Tampa,Hillsborough,Florida,FL,United States,33625,28619
+3899,Riverside,Burlington,New Jersey,NJ,United States,08075,28617
+3900,Aiken,Aiken,South Carolina,SC,United States,29801,28610
+3901,Altoona,Blair,Pennsylvania,PA,United States,16602,28609
+3902,Grandville,Kent,Michigan,MI,United States,49418,28607
+3903,Atlanta,Fulton,Georgia,GA,United States,30310,28597
+3904,Las Cruces,Doña Ana,New Mexico,NM,United States,88011,28594
+3905,Kingwood,Harris,Texas,TX,United States,77345,28593
+3906,Los Angeles,Los Angeles,California,CA,United States,30741,28592
+3907,Rossville,Walker,Georgia,GA,United States,90038,28592
+3908,Cleveland,Cuyahoga,Ohio,OH,United States,44128,28588
+3909,Loxahatchee,Palm Beach,Florida,FL,United States,33470,28587
+3910,Minneapolis,Hennepin,Minnesota,MN,United States,44052,28586
+3911,Lisle,DuPage,Illinois,IL,United States,55404,28586
+3912,Lorain,Lorain,Ohio,OH,United States,60532,28586
+3913,North Platte,Lincoln,Nebraska,NE,United States,69101,28576
+3914,Belleville,St. Clair,Illinois,IL,United States,62226,28575
+3915,Harbor City,Los Angeles,California,CA,United States,90710,28566
+3916,Gettysburg,Adams,Pennsylvania,PA,United States,17325,28563
+3917,Nashua,Hillsborough,New Hampshire,NH,United States,03062,28550
+3918,Gainesville,Cooke,Texas,TX,United States,76240,28546
+3919,Tampa,Hillsborough,Florida,FL,United States,33618,28544
+3920,Cleveland,Cuyahoga,Ohio,OH,United States,23222,28542
+3921,Richmond,Henrico,Virginia,VA,United States,44129,28542
+3922,Bastrop,Bastrop,Texas,TX,United States,78602,28536
+3923,Bayside,Queens,New York,NY,United States,11361,28531
+3924,West Springfield,Hampden,Massachusetts,MA,United States,01089,28527
+3925,Brenham,Washington,Texas,TX,United States,77833,28507
+3926,Forest Park,Clayton,Georgia,GA,United States,30297,28503
+3927,Ponte Vedra Beach,St. Johns,Florida,FL,United States,32082,28503
+3928,Green Cove Springs,Clay,Florida,FL,United States,32043,28501
+3929,Pittsburgh,Allegheny,Pennsylvania,PA,United States,15236,28499
+3930,Des Plaines,Cook,Illinois,IL,United States,60018,28477
+3931,Falls Church,Fairfax,Virginia,VA,United States,22041,28476
+3932,Middletown,Butler,Ohio,OH,United States,45042,28475
+3933,Sulphur,Calcasieu,Louisiana,LA,United States,70663,28475
+3934,Utica,Macomb,Michigan,MI,United States,48317,28474
+3935,Marysville,Snohomish,Washington,WA,United States,98271,28473
+3936,Casper,Natrona,Wyoming,WY,United States,82604,28470
+3937,Palm Springs,Riverside,California,CA,United States,92262,28463
+3938,Ponchatoula,Tangipahoa,Louisiana,LA,United States,70454,28461
+3939,Emporia,Lyon,Kansas,KS,United States,66801,28450
+3940,Burbank,Cook,Illinois,IL,United States,60459,28447
+3941,Oxford,Butler,Ohio,OH,United States,45056,28443
+3942,Kuna,Ada,Idaho,ID,United States,83634,28443
+3943,Knoxville,Knox,Tennessee,TN,United States,37931,28440
+3944,Oxnard,Ventura,California,CA,United States,93035,28426
+3945,Wesley Chapel,Pasco,Florida,FL,United States,33544,28417
+3946,Westport,Fairfield,Connecticut,CT,United States,06880,28413
+3947,Cornelius,Mecklenburg,North Carolina,NC,United States,28031,28408
+3948,Honolulu,Honolulu,Hawaii,HI,United States,53217,28398
+3949,Milwaukee,Milwaukee,Wisconsin,WI,United States,96825,28398
+3950,Woodland Hills,Los Angeles,California,CA,United States,91364,28395
+3951,Wasco,Kern,California,CA,United States,93280,28394
+3952,Englewood,Bergen,New Jersey,NJ,United States,07631,28390
+3953,Nutley,Essex,New Jersey,NJ,United States,07110,28385
+3954,Del Valle,Travis,Texas,TX,United States,78617,28376
+3955,Somerville,Middlesex,Massachusetts,MA,United States,02145,28372
+3956,Mulberry,Polk,Florida,FL,United States,33860,28372
+3957,Indianapolis,Marion,Indiana,IN,United States,46205,28367
+3958,Astoria,Queens,New York,NY,United States,11102,28359
+3959,Port Saint Lucie,St. Lucie,Florida,FL,United States,34986,28354
+3960,Burlington,Des Moines,Iowa,IA,United States,52601,28354
+3961,Arlington,Tarrant,Texas,TX,United States,76018,28353
+3962,Houston,Harris,Texas,TX,United States,77091,28351
+3963,Portland,Multnomah,Oregon,OR,United States,20705,28348
+3964,Beltsville,Prince George's,Maryland,MD,United States,39466,28348
+3965,Picayune,Pearl River,Mississippi,MS,United States,97214,28348
+3966,Palatka,Putnam,Florida,FL,United States,32177,28343
+3967,Riverview,Hillsborough,Florida,FL,United States,33569,28342
+3968,Saugus,Essex,Massachusetts,MA,United States,01906,28334
+3969,Patterson,Stanislaus,California,CA,United States,95363,28333
+3970,Irvine,Orange,California,CA,United States,92604,28330
+3971,Fajardo,Fajardo,Puerto Rico,PR,United States,00738,28329
+3972,Riverdale,Cook,Illinois,IL,United States,60827,28327
+3973,Tiffin,Seneca,Ohio,OH,United States,44883,28326
+3974,Franklin,Macon,North Carolina,NC,United States,28734,28315
+3975,Flint,Genesee,Michigan,MI,United States,48506,28308
+3976,Sonora,Tuolumne,California,CA,United States,78332,28301
+3977,Alice,Jim Wells,Texas,TX,United States,95370,28301
+3978,Jenison,Ottawa,Michigan,MI,United States,49428,28299
+3979,Benicia,Solano,California,CA,United States,94510,28297
+3980,Lansing,Cook,Illinois,IL,United States,60438,28291
+3981,Amarillo,Potter,Texas,TX,United States,79106,28289
+3982,Arvada,Jefferson,Colorado,CO,United States,80005,28287
+3983,Claremore,Rogers,Oklahoma,OK,United States,74017,28285
+3984,New Smyrna Beach,Volusia,Florida,FL,United States,32168,28284
+3985,Stockton,San Joaquin,California,CA,United States,95212,28281
+3986,Cuyahoga Falls,Summit,Ohio,OH,United States,44221,28271
+3987,Daytona Beach,Volusia,Florida,FL,United States,32117,28266
+3988,Trenton,Mercer,New Jersey,NJ,United States,02132,28263
+3989,West Roxbury,Suffolk,Massachusetts,MA,United States,08611,28263
+3990,Wyoming,Kent,Michigan,MI,United States,49519,28262
+3991,Abilene,Taylor,Texas,TX,United States,79605,28259
+3992,Minneapolis,Anoka,Minnesota,MN,United States,55448,28258
+3993,Minneapolis,Hennepin,Minnesota,MN,United States,55429,28257
+3994,Providence,Providence,Rhode Island,RI,United States,02906,28254
+3995,Beeville,Bee,Texas,TX,United States,78102,28253
+3996,Kahului,Maui,Hawaii,HI,United States,96732,28240
+3997,Columbia,Lexington,South Carolina,SC,United States,29212,28234
+3998,New York,New York,New York,NY,United States,10036,28231
+3999,Newport News,Newport News,Virginia,VA,United States,23606,28222
+4000,Corpus Christi,Nueces,Texas,TX,United States,78410,28210
+4001,Montgomery,Kendall,Illinois,IL,United States,60538,28206
+4002,Beaufort,Beaufort,South Carolina,SC,United States,29906,28205
+4003,Utica,Macomb,Michigan,MI,United States,48316,28203
+4004,Jefferson,Jackson,Georgia,GA,United States,30549,28195
+4005,Utica,Macomb,Michigan,MI,United States,48315,28188
+4006,Defiance,Defiance,Ohio,OH,United States,43512,28172
+4007,Davenport,Scott,Iowa,IA,United States,52804,28169
+4008,Stevens Point,Portage,Wisconsin,WI,United States,54481,28166
+4009,Lincoln,Lancaster,Nebraska,NE,United States,68506,28161
+4010,San Jose,Santa Clara,California,CA,United States,95133,28158
+4011,Mountain Home,Baxter,Arkansas,AR,United States,72653,28157
+4012,Avon Park,Highlands,Florida,FL,United States,33825,28151
+4013,Bellevue,King,Washington,WA,United States,98007,28147
+4014,Duluth,St. Louis,Minnesota,MN,United States,55811,28146
+4015,Montgomery,Montgomery,Texas,TX,United States,77356,28144
+4016,Paducah,McCracken,Kentucky,KY,United States,42003,28141
+4017,Houston,Harris,Texas,TX,United States,77023,28122
+4018,Centreville,Fairfax,Virginia,VA,United States,20121,28120
+4019,Soddy Daisy,Hamilton,Tennessee,TN,United States,37379,28115
+4020,Powell,Knox,Tennessee,TN,United States,37849,28109
+4021,Gibsonia,Allegheny,Pennsylvania,PA,United States,15044,28105
+4022,Logansport,Cass,Indiana,IN,United States,46947,28104
+4023,Lehigh Acres,Lee,Florida,FL,United States,33971,28101
+4024,El Paso,El Paso,Texas,TX,United States,79930,28091
+4025,Salinas,Monterey,California,CA,United States,93901,28089
+4026,Barranquitas,Barranquitas,Puerto Rico,PR,United States,00794,28088
+4027,Dearborn,Wayne,Michigan,MI,United States,48124,28086
+4028,Burlington,Middlesex,Massachusetts,MA,United States,01803,28077
+4029,Dalton,Whitfield,Georgia,GA,United States,30720,28067
+4030,Palm Harbor,Pinellas,Florida,FL,United States,34684,28058
+4031,Canandaigua,Ontario,New York,NY,United States,14424,28055
+4032,Melrose,Middlesex,Massachusetts,MA,United States,02176,28054
+4033,Greensboro,Guilford,North Carolina,NC,United States,27455,28052
+4034,Clemmons,Forsyth,North Carolina,NC,United States,27012,28051
+4035,Houston,Harris,Texas,TX,United States,77018,28049
+4036,Naranjito,Naranjito,Puerto Rico,PR,United States,00719,28048
+4037,Erlanger,Kenton,Kentucky,KY,United States,41018,28047
+4038,East Chicago,Lake,Indiana,IN,United States,46312,28044
+4039,Bremerton,Kitsap,Washington,WA,United States,98311,28042
+4040,Kingsport,Sullivan,Tennessee,TN,United States,37664,28040
+4041,Uniontown,Summit,Ohio,OH,United States,44685,28029
+4042,Seattle,King,Washington,WA,United States,98107,28025
+4043,Deridder,Beauregard,Louisiana,LA,United States,70634,28024
+4044,Columbus,Franklin,Ohio,OH,United States,43220,28019
+4045,Mcalester,Pittsburg,Oklahoma,OK,United States,74501,28019
+4046,Dallas,Dallas,Texas,TX,United States,75212,28017
+4047,Spring,Montgomery,Texas,TX,United States,46176,28014
+4048,Shelbyville,Shelby,Indiana,IN,United States,77380,28014
+4049,Saint Petersburg,Pinellas,Florida,FL,United States,33705,28013
+4050,Philadelphia,Philadelphia,Pennsylvania,PA,United States,19130,28010
+4051,Seattle,King,Washington,WA,United States,98106,27997
+4052,Houston,Harris,Texas,TX,United States,77039,27987
+4053,Monroe,Ouachita,Louisiana,LA,United States,71202,27985
+4054,Downers Grove,DuPage,Illinois,IL,United States,60515,27978
+4055,Burbank,Los Angeles,California,CA,United States,91504,27975
+4056,Rochester,Oakland,Michigan,MI,United States,48306,27974
+4057,Blacklick,Franklin,Ohio,OH,United States,43004,27972
+4058,Deerfield Beach,Broward,Florida,FL,United States,33441,27963
+4059,Imperial,Jefferson,Missouri,MO,United States,63052,27943
+4060,San Antonio,Bexar,Texas,TX,United States,78212,27940
+4061,Wesley Chapel,Pasco,Florida,FL,United States,33543,27933
+4062,New Bern,Craven,North Carolina,NC,United States,28560,27928
+4063,Colorado Springs,El Paso,Colorado,CO,United States,80919,27922
+4064,West Valley City,Salt Lake,Utah,UT,United States,84128,27921
+4065,Tacoma,Pierce,Washington,WA,United States,31794,27918
+4066,Tifton,Tift,Georgia,GA,United States,98409,27918
+4067,Great Falls,Cascade,Montana,MT,United States,59404,27914
+4068,New Orleans,Jefferson,Louisiana,LA,United States,70123,27906
+4069,Coos Bay,Coos,Oregon,OR,United States,97420,27906
+4070,Lakewood,Los Angeles,California,CA,United States,90713,27905
+4071,Whitehall,Lehigh,Pennsylvania,PA,United States,18052,27896
+4072,Fort Lauderdale,Broward,Florida,FL,United States,33314,27895
+4073,Littleton,Douglas,Colorado,CO,United States,80130,27892
+4074,Phoenix,Maricopa,Arizona,AZ,United States,85014,27888
+4075,Fort Dodge,Webster,Iowa,IA,United States,50501,27881
+4076,Dallas,Collin,Texas,TX,United States,75252,27880
+4077,Doylestown,Bucks,Pennsylvania,PA,United States,18901,27875
+4078,Anderson,Anderson,South Carolina,SC,United States,29625,27875
+4079,Reno,Washoe,Nevada,NV,United States,89511,27874
+4080,Redwood City,San Mateo,California,CA,United States,94062,27871
+4081,Davenport,Scott,Iowa,IA,United States,52806,27869
+4082,Harvey,Cook,Illinois,IL,United States,60426,27863
+4083,Arlington,Middlesex,Massachusetts,MA,United States,02474,27853
+4084,Warrensburg,Johnson,Missouri,MO,United States,64093,27853
+4085,Orlando,Orange,Florida,FL,United States,32819,27849
+4086,Crowley,Tarrant,Texas,TX,United States,76036,27835
+4087,Los Angeles,Los Angeles,California,CA,United States,90017,27832
+4088,Lynchburg,Campbell,Virginia,VA,United States,24501,27828
+4089,Hartford,Hartford,Connecticut,CT,United States,06114,27823
+4090,Taylorsville,Alexander,North Carolina,NC,United States,28681,27820
+4091,Newton,Catawba,North Carolina,NC,United States,28658,27818
+4092,Jonesborough,Washington,Tennessee,TN,United States,37659,27813
+4093,Queens Village,Queens,New York,NY,United States,11429,27808
+4094,Plant City,Hillsborough,Florida,FL,United States,32563,27807
+4095,Gulf Breeze,Santa Rosa,Florida,FL,United States,33563,27807
+4096,Saint Louis,St. Louis,Missouri,MO,United States,63118,27805
+4097,Kalamazoo,Kalamazoo,Michigan,MI,United States,49006,27793
+4098,Peyton,El Paso,Colorado,CO,United States,80831,27786
+4099,Crawfordsville,Montgomery,Indiana,IN,United States,47933,27780
+4100,Pittsburgh,Allegheny,Pennsylvania,PA,United States,15227,27774
+4101,Wichita,Sedgwick,Kansas,KS,United States,67207,27774
+4102,Chicago,Cook,Illinois,IL,United States,60655,27771
+4103,Clinton,Anderson,Tennessee,TN,United States,37716,27768
+4104,Saint Paul,Dakota,Minnesota,MN,United States,55118,27767
+4105,Stroudsburg,Monroe,Pennsylvania,PA,United States,18360,27759
+4106,Milwaukee,Milwaukee,Wisconsin,WI,United States,53213,27755
+4107,Elgin,Kershaw,South Carolina,SC,United States,29045,27751
+4108,Locust Grove,Henry,Georgia,GA,United States,30248,27747
+4109,Dahlonega,Lumpkin,Georgia,GA,United States,30533,27738
+4110,Cleveland,Cuyahoga,Ohio,OH,United States,44135,27732
+4111,Los Angeles,Los Angeles,California,CA,United States,90035,27725
+4112,Cincinnati,Hamilton,Ohio,OH,United States,45230,27721
+4113,Rochester,Monroe,New York,NY,United States,14606,27711
+4114,Clayton,Johnston,North Carolina,NC,United States,27527,27711
+4115,Plainfield,Will,Illinois,IL,United States,60544,27709
+4116,Austin,Williamson,Texas,TX,United States,78729,27707
+4117,Mount Pleasant,Titus,Texas,TX,United States,75455,27700
+4118,Branford,New Haven,Connecticut,CT,United States,06405,27699
+4119,Canton,Madison,Mississippi,MS,United States,39046,27693
+4120,Lincoln,Lancaster,Nebraska,NE,United States,68502,27685
+4121,Prattville,Autauga,Alabama,AL,United States,36067,27682
+4122,Tyler,Smith,Texas,TX,United States,75702,27678
+4123,Howard Beach,Queens,New York,NY,United States,11414,27672
+4124,Austin,Travis,Texas,TX,United States,78746,27671
+4125,Garden City,Nassau,New York,NY,United States,11530,27669
+4126,Glen Cove,Nassau,New York,NY,United States,11542,27666
+4127,Schenectady,Schenectady,New York,NY,United States,12302,27665
+4128,Austin,Travis,Texas,TX,United States,78731,27664
+4129,Skokie,Cook,Illinois,IL,United States,60077,27653
+4130,Blackfoot,Bingham,Idaho,ID,United States,83221,27651
+4131,Palo Alto,Santa Clara,California,CA,United States,77071,27650
+4132,Houston,Harris,Texas,TX,United States,94306,27650
+4133,Severna Park,Anne Arundel,Maryland,MD,United States,21146,27634
+4134,Marion,Williamson,Illinois,IL,United States,62959,27630
+4135,Salt Lake City,Salt Lake,Utah,UT,United States,84115,27627
+4136,Seattle,King,Washington,WA,United States,98146,27622
+4137,North Port,Sarasota,Florida,FL,United States,34287,27620
+4138,North Attleboro,Bristol,Massachusetts,MA,United States,02760,27615
+4139,Jacksonville Beach,Duval,Florida,FL,United States,32250,27612
+4140,Bismarck,Burleigh,North Dakota,ND,United States,58504,27607
+4141,Oak Forest,Cook,Illinois,IL,United States,60452,27605
+4142,West Bend,Washington,Wisconsin,WI,United States,53095,27596
+4143,Milton,Norfolk,Massachusetts,MA,United States,02186,27590
+4144,Worcester,Worcester,Massachusetts,MA,United States,01605,27587
+4145,Vidor,Orange,Texas,TX,United States,77662,27587
+4146,Lithia Springs,Douglas,Georgia,GA,United States,28112,27580
+4147,Monroe,Union,North Carolina,NC,United States,30122,27580
+4148,Breaux Bridge,St. Martin,Louisiana,LA,United States,70517,27580
+4149,Riverdale,Clayton,Georgia,GA,United States,30296,27579
+4150,Spartanburg,Spartanburg,South Carolina,SC,United States,29303,27575
+4151,Pittsburgh,Allegheny,Pennsylvania,PA,United States,15217,27566
+4152,Ankeny,Polk,Iowa,IA,United States,50021,27566
+4153,Napa,Napa,California,CA,United States,94559,27564
+4154,North Wales,Montgomery,Pennsylvania,PA,United States,19454,27562
+4155,Venice,Los Angeles,California,CA,United States,12010,27556
+4156,Amsterdam,Montgomery,New York,NY,United States,90291,27556
+4157,Monroeville,Allegheny,Pennsylvania,PA,United States,15146,27541
+4158,Warwick,Kent,Rhode Island,RI,United States,02889,27531
+4159,Aldie,Loudoun,Virginia,VA,United States,20105,27526
+4160,Green Bay,Brown,Wisconsin,WI,United States,54304,27524
+4161,Knoxville,Knox,Tennessee,TN,United States,37921,27522
+4162,Elizabethport,Union,New Jersey,NJ,United States,07206,27520
+4163,Washington,Washington,Utah,UT,United States,84780,27518
+4164,Covina,Los Angeles,California,CA,United States,91724,27510
+4165,Santa Monica,Los Angeles,California,CA,United States,90405,27509
+4166,Oxon Hill,Prince George's,Maryland,MD,United States,20745,27503
+4167,Dublin,Laurens,Georgia,GA,United States,31021,27503
+4168,Benton,Saline,Arkansas,AR,United States,72019,27498
+4169,Lansdowne,Delaware,Pennsylvania,PA,United States,19050,27485
+4170,Moscow,Latah,Idaho,ID,United States,83843,27480
+4171,Montgomery,Montgomery,Texas,TX,United States,77316,27475
+4172,Irvine,Orange,California,CA,United States,92614,27471
+4173,Hernando,DeSoto,Mississippi,MS,United States,38632,27467
+4174,Carson,Los Angeles,California,CA,United States,43223,27458
+4175,Columbus,Franklin,Ohio,OH,United States,90746,27458
+4176,Danville,Pittsylvania,Virginia,VA,United States,24541,27452
+4177,Sumter,Sumter,South Carolina,SC,United States,29154,27443
+4178,Bridgewater,Plymouth,Massachusetts,MA,United States,02324,27441
+4179,Tarpon Springs,Pinellas,Florida,FL,United States,34689,27428
+4180,Roxbury,Suffolk,Massachusetts,MA,United States,02119,27426
+4181,Galloway,Franklin,Ohio,OH,United States,43119,27424
+4182,Branson,Taney,Missouri,MO,United States,65616,27423
+4183,Brighton,Livingston,Michigan,MI,United States,48116,27422
+4184,Monroe,Monroe,Michigan,MI,United States,48162,27414
+4185,Irvine,Orange,California,CA,United States,37055,27410
+4186,Waterford,Oakland,Michigan,MI,United States,48328,27410
+4187,Dickson,Dickson,Tennessee,TN,United States,92606,27410
+4188,New Orleans,Orleans,Louisiana,LA,United States,70117,27404
+4189,Dallas,Dallas,Texas,TX,United States,75230,27402
+4190,Shelby,Cleveland,North Carolina,NC,United States,28150,27400
+4191,Waukesha,Waukesha,Wisconsin,WI,United States,53189,27399
+4192,Beaverton,Washington,Oregon,OR,United States,97005,27393
+4193,Mays Landing,Atlantic,New Jersey,NJ,United States,08330,27385
+4194,Abilene,Jones,Texas,TX,United States,79601,27385
+4195,Bergenfield,Bergen,New Jersey,NJ,United States,07621,27375
+4196,Elizabeth,Union,New Jersey,NJ,United States,07201,27369
+4197,Pensacola,Escambia,Florida,FL,United States,32505,27369
+4198,Danvers,Essex,Massachusetts,MA,United States,01923,27367
+4199,Zachary,East Baton Rouge,Louisiana,LA,United States,70791,27365
+4200,Bowie,Prince George's,Maryland,MD,United States,20715,27360
+4201,Midland,Midland,Texas,TX,United States,79706,27354
+4202,Forest Grove,Washington,Oregon,OR,United States,97116,27349
+4203,Pittsburgh,Allegheny,Pennsylvania,PA,United States,15213,27347
+4204,Stillwater,Payne,Oklahoma,OK,United States,74075,27347
+4205,Cocoa,Brevard,Florida,FL,United States,32927,27344
+4206,Lexington,Fayette,Kentucky,KY,United States,40502,27343
+4207,Covington,Kenton,Kentucky,KY,United States,41011,27342
+4208,Tulsa,Tulsa,Oklahoma,OK,United States,74137,27341
+4209,Lodi,San Joaquin,California,CA,United States,95242,27340
+4210,Eagle River,Anchorage,Alaska,AK,United States,99577,27333
+4211,Carson City,Carson City,Nevada,NV,United States,89701,27328
+4212,Denver,Denver,Colorado,CO,United States,80207,27326
+4213,Boiling Springs,Spartanburg,South Carolina,SC,United States,29316,27315
+4214,Pembroke Pines,Broward,Florida,FL,United States,33028,27314
+4215,Trussville,Jefferson,Alabama,AL,United States,35173,27312
+4216,Medford,Burlington,New Jersey,NJ,United States,08055,27307
+4217,Belton,Cass,Missouri,MO,United States,64012,27298
+4218,Rochester,Olmsted,Minnesota,MN,United States,35611,27293
+4219,Athens,Limestone,Alabama,AL,United States,55904,27293
+4220,Horn Lake,DeSoto,Mississippi,MS,United States,38637,27290
+4221,Lexington,Fayette,Kentucky,KY,United States,40504,27287
+4222,Battle Creek,Calhoun,Michigan,MI,United States,49015,27287
+4223,Orange,Orange,Texas,TX,United States,77630,27279
+4224,Ann Arbor,Washtenaw,Michigan,MI,United States,48108,27275
+4225,Clearwater,Pinellas,Florida,FL,United States,33764,27273
+4226,Amityville,Suffolk,New York,NY,United States,11701,27264
+4227,Vancouver,Clark,Washington,WA,United States,98665,27260
+4228,Las Cruces,Doña Ana,New Mexico,NM,United States,88005,27257
+4229,Monterey Park,Los Angeles,California,CA,United States,91755,27254
+4230,Lansing,Clinton,Michigan,MI,United States,48906,27253
+4231,Gainesville,Hall,Georgia,GA,United States,30504,27242
+4232,Rockville Centre,Nassau,New York,NY,United States,11570,27240
+4233,Davis,Yolo,California,CA,United States,95618,27238
+4234,Fort Lauderdale,Broward,Florida,FL,United States,33308,27226
+4235,Milwaukee,Milwaukee,Wisconsin,WI,United States,53220,27224
+4236,Norco,Riverside,California,CA,United States,92860,27219
+4237,Knightdale,Wake,North Carolina,NC,United States,27545,27215
+4238,Delray Beach,Palm Beach,Florida,FL,United States,33484,27210
+4239,Beaver Falls,Beaver,Pennsylvania,PA,United States,15010,27205
+4240,Manchester,Coffee,Tennessee,TN,United States,37355,27203
+4241,Houston,Harris,Texas,TX,United States,45240,27200
+4242,Cincinnati,Hamilton,Ohio,OH,United States,77022,27200
+4243,Puyallup,Pierce,Washington,WA,United States,44515,27196
+4244,Youngstown,Mahoning,Ohio,OH,United States,98373,27196
+4245,Duncan,Stephens,Oklahoma,OK,United States,73533,27185
+4246,Morrow,Clayton,Georgia,GA,United States,30260,27183
+4247,Menasha,Calumet,Wisconsin,WI,United States,54952,27182
+4248,Bedford,Lawrence,Indiana,IN,United States,47421,27178
+4249,Syracuse,Onondaga,New York,NY,United States,13210,27172
+4250,Fresno,Fresno,California,CA,United States,93725,27167
+4251,Brawley,Imperial,California,CA,United States,92227,27165
+4252,Staten Island,Richmond,New York,NY,United States,10303,27164
+4253,Memphis,Shelby,Tennessee,TN,United States,38117,27162
+4254,Hilton Head Island,Beaufort,South Carolina,SC,United States,29926,27160
+4255,Hamden,New Haven,Connecticut,CT,United States,06514,27159
+4256,Pueblo,Pueblo,Colorado,CO,United States,81004,27159
+4257,Richmond Hill,Bryan,Georgia,GA,United States,31324,27155
+4258,Helena,Lewis and Clark,Montana,MT,United States,59602,27154
+4259,Farragut,Knox,Tennessee,TN,United States,37934,27152
+4260,Fort Worth,Tarrant,Texas,TX,United States,76114,27151
+4261,Basking Ridge,Somerset,New Jersey,NJ,United States,07920,27150
+4262,Dayton,Greene,Ohio,OH,United States,45431,27145
+4263,Danville,Contra Costa,California,CA,United States,94506,27143
+4264,Payson,Utah,Utah,UT,United States,84651,27142
+4265,Griffin,Spalding,Georgia,GA,United States,30224,27139
+4266,Augusta,Richmond,Georgia,GA,United States,30904,27136
+4267,Scottsdale,Maricopa,Arizona,AZ,United States,85258,27133
+4268,Albany,Linn,Oregon,OR,United States,97321,27131
+4269,Maywood,Los Angeles,California,CA,United States,90270,27127
+4270,Saint Paul,Ramsey,Minnesota,MN,United States,55126,27125
+4271,Lewes,Sussex,Delaware,DE,United States,19958,27123
+4272,Meadville,Crawford,Pennsylvania,PA,United States,16335,27120
+4273,Carlsbad,San Diego,California,CA,United States,92008,27119
+4274,Vernon Hills,Lake,Illinois,IL,United States,60061,27105
+4275,Maryville,Blount,Tennessee,TN,United States,37801,27102
+4276,Indianapolis,Marion,Indiana,IN,United States,46221,27098
+4277,Gig Harbor,Pierce,Washington,WA,United States,98335,27098
+4278,Little Falls,Passaic,New Jersey,NJ,United States,07424,27095
+4279,Waco,McLennan,Texas,TX,United States,76708,27095
+4280,New York,New York,New York,NY,United States,10039,27090
+4281,Allen Park,Wayne,Michigan,MI,United States,48101,27089
+4282,Hightstown,Mercer,New Jersey,NJ,United States,08520,27082
+4283,Kaukauna,Outagamie,Wisconsin,WI,United States,54130,27076
+4284,Dickinson,Stark,North Dakota,ND,United States,58601,27075
+4285,Pittsburgh,Allegheny,Pennsylvania,PA,United States,15212,27067
+4286,Oklahoma City,Oklahoma,Oklahoma,OK,United States,73132,27065
+4287,Tampa,Hillsborough,Florida,FL,United States,33629,27059
+4288,Kingman,Mohave,Arizona,AZ,United States,86401,27059
+4289,Nashville,Davidson,Tennessee,TN,United States,37206,27055
+4290,Satellite Beach,Brevard,Florida,FL,United States,32937,27054
+4291,New London,New London,Connecticut,CT,United States,06320,27040
+4292,Maryville,Blount,Tennessee,TN,United States,37804,27040
+4293,Elkhorn,Douglas,Nebraska,NE,United States,68022,27039
+4294,Mobile,Mobile,Alabama,AL,United States,36605,27035
+4295,Magna,Salt Lake,Utah,UT,United States,84044,27029
+4296,Norwalk,Fairfield,Connecticut,CT,United States,06851,27028
+4297,San Antonio,Bexar,Texas,TX,United States,78238,27027
+4298,Dana Point,Orange,California,CA,United States,92629,27023
+4299,Westwood,Bergen,New Jersey,NJ,United States,07675,27022
+4300,Clinton,Sampson,North Carolina,NC,United States,28328,27016
+4301,Saint Paul,Ramsey,Minnesota,MN,United States,34606,27014
+4302,Spring Hill,Hernando,Florida,FL,United States,55105,27014
+4303,Soledad,Monterey,California,CA,United States,93960,27009
+4304,Seffner,Hillsborough,Florida,FL,United States,33584,27006
+4305,Wilmette,Cook,Illinois,IL,United States,48867,27004
+4306,Owosso,Shiawassee,Michigan,MI,United States,60091,27004
+4307,Belmont,San Mateo,California,CA,United States,94002,27001
+4308,Albemarle,Stanly,North Carolina,NC,United States,28001,26998
+4309,Jacksonville,Cherokee,Texas,TX,United States,75766,26995
+4310,Zebulon,Wake,North Carolina,NC,United States,27597,26991
+4311,Saint Petersburg,Pinellas,Florida,FL,United States,30329,26980
+4312,Atlanta,DeKalb,Georgia,GA,United States,33703,26980
+4313,Largo,Pinellas,Florida,FL,United States,33770,26979
+4314,Hazleton,Luzerne,Pennsylvania,PA,United States,18201,26978
+4315,Latrobe,Westmoreland,Pennsylvania,PA,United States,15650,26975
+4316,Roanoke,Roanoke,Virginia,VA,United States,24019,26969
+4317,San Antonio,Bexar,Texas,TX,United States,78239,26966
+4318,Orlando,Orange,Florida,FL,United States,32806,26964
+4319,Henrico,Goochland,Virginia,VA,United States,23238,26962
+4320,Calabasas,Los Angeles,California,CA,United States,91302,26961
+4321,New Albany,Franklin,Ohio,OH,United States,43054,26953
+4322,Silver Spring,Montgomery,Maryland,MD,United States,04901,26951
+4323,Waterville,Kennebec,Maine,ME,United States,20903,26951
+4324,Clifton,Passaic,New Jersey,NJ,United States,07013,26942
+4325,Deerfield,Lake,Illinois,IL,United States,60015,26942
+4326,Uniondale,Nassau,New York,NY,United States,11553,26938
+4327,Clearwater,Pinellas,Florida,FL,United States,33755,26937
+4328,Wisconsin Rapids,Wood,Wisconsin,WI,United States,54494,26936
+4329,Rochester,Monroe,New York,NY,United States,14616,26935
+4330,Schenectady,Schenectady,New York,NY,United States,12306,26934
+4331,Santa Barbara,Santa Barbara,California,CA,United States,93105,26933
+4332,San Francisco,San Francisco,California,CA,United States,94133,26930
+4333,Lemon Grove,San Diego,California,CA,United States,91945,26923
+4334,Evansville,Vanderburgh,Indiana,IN,United States,47712,26921
+4335,Malvern,Chester,Pennsylvania,PA,United States,19355,26920
+4336,Columbus,Franklin,Ohio,OH,United States,43214,26917
+4337,Seattle,King,Washington,WA,United States,98119,26898
+4338,Orangeburg,Orangeburg,South Carolina,SC,United States,29115,26893
+4339,Pittsburgh,Allegheny,Pennsylvania,PA,United States,15210,26875
+4340,McLean,Fairfax,Virginia,VA,United States,22102,26875
+4341,Rocklin,Placer,California,CA,United States,95677,26872
+4342,Bridgeport,Fairfield,Connecticut,CT,United States,06604,26858
+4343,Casper,Natrona,Wyoming,WY,United States,82601,26854
+4344,Saint Paul,Washington,Minnesota,MN,United States,55129,26852
+4345,Cleveland,Cuyahoga,Ohio,OH,United States,44125,26847
+4346,Kenosha,Kenosha,Wisconsin,WI,United States,53144,26843
+4347,Texarkana,Bowie,Texas,TX,United States,75503,26843
+4348,Laurel,Prince George's,Maryland,MD,United States,20708,26842
+4349,Dallas,Dallas,Texas,TX,United States,75240,26841
+4350,Waukee,Dallas,Iowa,IA,United States,16509,26838
+4351,Erie,Erie,Pennsylvania,PA,United States,50263,26838
+4352,Pasadena,Los Angeles,California,CA,United States,91103,26837
+4353,Waldorf,Charles,Maryland,MD,United States,20602,26835
+4354,Jackson,Hinds,Mississippi,MS,United States,39209,26835
+4355,Rowlett,Dallas,Texas,TX,United States,75088,26823
+4356,Puyallup,Pierce,Washington,WA,United States,98372,26823
+4357,Tinley Park,Cook,Illinois,IL,United States,60487,26822
+4358,Saint Paul,Dakota,Minnesota,MN,United States,55123,26821
+4359,Lucedale,George,Mississippi,MS,United States,39452,26818
+4360,Camden,Camden,New Jersey,NJ,United States,08105,26807
+4361,San Antonio,Bexar,Texas,TX,United States,78214,26805
+4362,Downey,Los Angeles,California,CA,United States,90240,26801
+4363,Willowbrook,DuPage,Illinois,IL,United States,60527,26800
+4364,Conway,Horry,South Carolina,SC,United States,29527,26793
+4365,Georgetown,Georgetown,South Carolina,SC,United States,29440,26790
+4366,Macungie,Lehigh,Pennsylvania,PA,United States,18062,26788
+4367,Saint Charles,Kane,Illinois,IL,United States,60175,26775
+4368,Middletown,Monmouth,New Jersey,NJ,United States,07748,26773
+4369,Saint Louis,St. Louis,Missouri,MO,United States,63109,26768
+4370,Salt Lake City,Salt Lake,Utah,UT,United States,84104,26761
+4371,Arlington,Arlington,Virginia,VA,United States,22202,26742
+4372,Wheat Ridge,Jefferson,Colorado,CO,United States,80033,26742
+4373,Santa Rosa,Sonoma,California,CA,United States,95409,26739
+4374,Chicago,Cook,Illinois,IL,United States,60621,26736
+4375,Arlington,Tarrant,Texas,TX,United States,76012,26730
+4376,Akron,Summit,Ohio,OH,United States,44313,26729
+4377,Phoenix,Maricopa,Arizona,AZ,United States,85024,26724
+4378,Lake Oswego,Clackamas,Oregon,OR,United States,97035,26721
+4379,Clinton,Clinton,Iowa,IA,United States,52732,26717
+4380,Marietta,Washington,Ohio,OH,United States,45750,26710
+4381,Philadelphia,Philadelphia,Pennsylvania,PA,United States,19133,26705
+4382,Wakefield,Middlesex,Massachusetts,MA,United States,01880,26704
+4383,Dallas,Dallas,Texas,TX,United States,75254,26700
+4384,Colleyville,Tarrant,Texas,TX,United States,76034,26693
+4385,Reno,Washoe,Nevada,NV,United States,89512,26690
+4386,Phoenix,Maricopa,Arizona,AZ,United States,85006,26682
+4387,Ladera Ranch,Orange,California,CA,United States,92694,26679
+4388,Mahopac,Putnam,New York,NY,United States,10541,26678
+4389,Walnut Creek,Contra Costa,California,CA,United States,94598,26666
+4390,New Windsor,Orange,New York,NY,United States,12553,26665
+4391,Louisville,Jefferson,Kentucky,KY,United States,40258,26664
+4392,Bartlesville,Washington,Oklahoma,OK,United States,74006,26660
+4393,Forest,Bedford,Virginia,VA,United States,24551,26654
+4394,West Palm Beach,Palm Beach,Florida,FL,United States,33406,26653
+4395,Overland Park,Johnson,Kansas,KS,United States,66223,26639
+4396,Georgetown,Williamson,Texas,TX,United States,78633,26632
+4397,King Of Prussia,Montgomery,Pennsylvania,PA,United States,19406,26631
+4398,Champaign,Champaign,Illinois,IL,United States,61822,26629
+4399,Dyersburg,Dyer,Tennessee,TN,United States,38024,26627
+4400,Huntington,Huntington,Indiana,IN,United States,46750,26618
+4401,Tujunga,Los Angeles,California,CA,United States,91042,26617
+4402,Minneapolis,Hennepin,Minnesota,MN,United States,55446,26616
+4403,Richmond,Chesterfield,Virginia,VA,United States,23237,26609
+4404,Natchitoches,Natchitoches,Louisiana,LA,United States,71457,26607
+4405,Troy,Lincoln,Missouri,MO,United States,63379,26594
+4406,San Antonio,Bexar,Texas,TX,United States,78259,26591
+4407,Inglewood,Los Angeles,California,CA,United States,90304,26584
+4408,Warren,Macomb,Michigan,MI,United States,48092,26573
+4409,Garden City,Wayne,Michigan,MI,United States,48135,26565
+4410,Sparks,Storey,Nevada,NV,United States,89434,26564
+4411,Naples,Collier,Florida,FL,United States,34109,26562
+4412,Brookings,Brookings,South Dakota,SD,United States,57006,26561
+4413,Ferndale,Whatcom,Washington,WA,United States,98248,26552
+4414,Mandan,Morton,North Dakota,ND,United States,58554,26551
+4415,Roswell,Chaves,New Mexico,NM,United States,88201,26551
+4416,Orange,Orange,California,CA,United States,92868,26549
+4417,Floral Park,Nassau,New York,NY,United States,11001,26542
+4418,Flint,Genesee,Michigan,MI,United States,48503,26542
+4419,South Bend,St. Joseph,Indiana,IN,United States,46628,26532
+4420,Montclair,Essex,New Jersey,NJ,United States,07042,26526
+4421,Colonial Heights,Chesterfield,Virginia,VA,United States,23834,26526
+4422,Elkhart,Elkhart,Indiana,IN,United States,46517,26526
+4423,Cary,McHenry,Illinois,IL,United States,60013,26520
+4424,Duarte,Los Angeles,California,CA,United States,91010,26516
+4425,Webster,Harris,Texas,TX,United States,77598,26513
+4426,Alabaster,Shelby,Alabama,AL,United States,35007,26510
+4427,Austin,Travis,Texas,TX,United States,78754,26508
+4428,Seattle,King,Washington,WA,United States,98178,26507
+4429,Huntsville,Madison,Alabama,AL,United States,35803,26504
+4430,Anasco,Añasco,Puerto Rico,PR,United States,00610,26502
+4431,Brooklyn,Kings,New York,NY,United States,11232,26501
+4432,Boulder,Boulder,Colorado,CO,United States,80304,26501
+4433,Feasterville Trevose,Bucks,Pennsylvania,PA,United States,19053,26498
+4434,Hiram,Paulding,Georgia,GA,United States,30141,26494
+4435,Sioux City,Woodbury,Iowa,IA,United States,51106,26494
+4436,Middleton,Dane,Wisconsin,WI,United States,28086,26490
+4437,Kings Mountain,Cleveland,North Carolina,NC,United States,53562,26490
+4438,Houston,Harris,Texas,TX,United States,77061,26488
+4439,Racine,Racine,Wisconsin,WI,United States,53403,26486
+4440,Austin,Travis,Texas,TX,United States,78757,26485
+4441,Monroe,Monroe,Michigan,MI,United States,48161,26483
+4442,Fayetteville,Washington,Arkansas,AR,United States,72704,26480
+4443,Elko,Elko,Nevada,NV,United States,89801,26473
+4444,Blue Springs,Jackson,Missouri,MO,United States,64014,26468
+4445,Richmond,Henrico,Virginia,VA,United States,23227,26467
+4446,Saginaw,Saginaw,Michigan,MI,United States,48603,26464
+4447,Rockford,Winnebago,Illinois,IL,United States,61109,26462
+4448,Crofton,Anne Arundel,Maryland,MD,United States,21114,26460
+4449,Goshen,Elkhart,Indiana,IN,United States,46528,26456
+4450,Kansas City,Platte,Missouri,MO,United States,28715,26451
+4451,Candler,Buncombe,North Carolina,NC,United States,64151,26451
+4452,Racine,Racine,Wisconsin,WI,United States,53405,26450
+4453,Smyrna,Cobb,Georgia,GA,United States,30082,26442
+4454,Youngsville,Lafayette,Louisiana,LA,United States,70592,26442
+4455,Greenwood,Greenwood,South Carolina,SC,United States,29649,26440
+4456,Ponce,Ponce,Puerto Rico,PR,United States,00716,26433
+4457,Festus,Jefferson,Missouri,MO,United States,63028,26433
+4458,Delray Beach,Palm Beach,Florida,FL,United States,33446,26415
+4459,Washington,District of Columbia,District of Columbia,DC,United States,08205,26412
+4460,Absecon,Atlantic,New Jersey,NJ,United States,20007,26412
+4461,Salem,Marion,Oregon,OR,United States,97317,26408
+4462,Plainview,Hale,Texas,TX,United States,79072,26404
+4463,Paramus,Bergen,New Jersey,NJ,United States,07652,26403
+4464,Lexington,Fayette,Kentucky,KY,United States,40505,26399
+4465,Toms River,Ocean,New Jersey,NJ,United States,08755,26398
+4466,Springfield,Hampden,Massachusetts,MA,United States,01108,26397
+4467,Dayton,Montgomery,Ohio,OH,United States,45459,26397
+4468,Suitland,Prince George's,Maryland,MD,United States,20746,26396
+4469,Columbus,Franklin,Ohio,OH,United States,43085,26395
+4470,Hillsborough,Orange,North Carolina,NC,United States,27278,26393
+4471,Utuado,Utuado,Puerto Rico,PR,United States,00641,26383
+4472,Tucson,Pima,Arizona,AZ,United States,85718,26364
+4473,Chambersburg,Franklin,Pennsylvania,PA,United States,17201,26362
+4474,Mustang,Canadian,Oklahoma,OK,United States,73064,26362
+4475,San Bernardino,San Bernardino,California,CA,United States,12533,26361
+4476,Hopewell Junction,Dutchess,New York,NY,United States,92411,26361
+4477,El Paso,El Paso,Texas,TX,United States,79934,26360
+4478,Smithfield,Johnston,North Carolina,NC,United States,27577,26352
+4479,Kansas City,Wyandotte,Kansas,KS,United States,66104,26351
+4480,Gaithersburg,Montgomery,Maryland,MD,United States,20879,26343
+4481,Milwaukee,Milwaukee,Wisconsin,WI,United States,53222,26340
+4482,Akron,Summit,Ohio,OH,United States,44310,26325
+4483,Marshfield,Wood,Wisconsin,WI,United States,54449,26324
+4484,Imperial Beach,San Diego,California,CA,United States,91932,26323
+4485,Durant,Bryan,Oklahoma,OK,United States,74701,26320
+4486,Carbondale,Jackson,Illinois,IL,United States,62901,26318
+4487,Kilgore,Gregg,Texas,TX,United States,75662,26318
+4488,Merrimack,Hillsborough,New Hampshire,NH,United States,03054,26314
+4489,Livonia,Wayne,Michigan,MI,United States,48150,26311
+4490,Hartselle,Morgan,Alabama,AL,United States,35640,26308
+4491,Baton Rouge,East Baton Rouge,Louisiana,LA,United States,70809,26306
+4492,Gainesville,Alachua,Florida,FL,United States,32605,26305
+4493,Estero,Lee,Florida,FL,United States,33928,26303
+4494,Perkasie,Bucks,Pennsylvania,PA,United States,18944,26301
+4495,Sherman,Grayson,Texas,TX,United States,75092,26297
+4496,Upland,San Bernardino,California,CA,United States,91784,26296
+4497,Pompano Beach,Broward,Florida,FL,United States,33067,26294
+4498,Grass Valley,Nevada,California,CA,United States,95945,26281
+4499,Fort Myers,Lee,Florida,FL,United States,33967,26277
+4500,Sedro Woolley,Skagit,Washington,WA,United States,98284,26268
+4501,Pinellas Park,Pinellas,Florida,FL,United States,33781,26265
+4502,Fort Worth,Tarrant,Texas,TX,United States,76132,26265
+4503,Baton Rouge,East Baton Rouge,Louisiana,LA,United States,70805,26263
+4504,Brigham City,Box Elder,Utah,UT,United States,84302,26259
+4505,Bay City,Bay,Michigan,MI,United States,48708,26255
+4506,Holbrook,Suffolk,New York,NY,United States,11741,26245
+4507,Denton,Denton,Texas,TX,United States,76209,26244
+4508,Boston,Suffolk,Massachusetts,MA,United States,02215,26243
+4509,Mandeville,St. Tammany,Louisiana,LA,United States,20601,26236
+4510,Waldorf,Charles,Maryland,MD,United States,70448,26236
+4511,Fort Myers,Lee,Florida,FL,United States,33913,26232
+4512,Lexington,Fayette,Kentucky,KY,United States,40508,26226
+4513,Haverhill,Essex,Massachusetts,MA,United States,01830,26225
+4514,Mahwah,Bergen,New Jersey,NJ,United States,07430,26225
+4515,Sioux Falls,Minnehaha,South Dakota,SD,United States,57104,26217
+4516,Apache Junction,Pinal,Arizona,AZ,United States,85119,26216
+4517,Camp Lejeune,Onslow,North Carolina,NC,United States,28547,26214
+4518,Centralia,Lewis,Washington,WA,United States,98531,26212
+4519,Waterbury,New Haven,Connecticut,CT,United States,06704,26209
+4520,Cleveland,Liberty,Texas,TX,United States,77327,26206
+4521,Huntsville,Madison,Alabama,AL,United States,35811,26198
+4522,Gardena,Los Angeles,California,CA,United States,90249,26192
+4523,Lakeland,Polk,Florida,FL,United States,33805,26189
+4524,Coeur D Alene,Kootenai,Idaho,ID,United States,83814,26174
+4525,Spokane,Spokane,Washington,WA,United States,99216,26166
+4526,San Antonio,Bexar,Texas,TX,United States,78260,26164
+4527,Dover,York,Pennsylvania,PA,United States,17315,26160
+4528,Lehigh Acres,Hendry,Florida,FL,United States,33936,26157
+4529,Binghamton,Broome,New York,NY,United States,13905,26151
+4530,Green Bay,Brown,Wisconsin,WI,United States,54303,26142
+4531,Wilmington,New Castle,Delaware,DE,United States,19802,26126
+4532,Belmont,Middlesex,Massachusetts,MA,United States,02478,26123
+4533,Pooler,Chatham,Georgia,GA,United States,31322,26119
+4534,Fullerton,Orange,California,CA,United States,92835,26115
+4535,Tucson,Pima,Arizona,AZ,United States,85747,26113
+4536,Lexington Park,St. Mary's,Maryland,MD,United States,12804,26112
+4537,Queensbury,Warren,New York,NY,United States,20653,26112
+4538,Minneapolis,Hennepin,Minnesota,MN,United States,55426,26110
+4539,Marshfield,Plymouth,Massachusetts,MA,United States,02050,26109
+4540,Woodway,McLennan,Texas,TX,United States,76712,26104
+4541,Glendora,Los Angeles,California,CA,United States,91740,26099
+4542,High Point,Guilford,North Carolina,NC,United States,27262,26094
+4543,Houston,Harris,Texas,TX,United States,77020,26093
+4544,Hercules,Contra Costa,California,CA,United States,94547,26090
+4545,Ozone Park,Queens,New York,NY,United States,11416,26087
+4546,San Francisco,San Francisco,California,CA,United States,45039,26074
+4547,Maineville,Warren,Ohio,OH,United States,94123,26074
+4548,East Hartford,Hartford,Connecticut,CT,United States,06118,26073
+4549,Glendora,Los Angeles,California,CA,United States,91741,26071
+4550,Hermiston,Umatilla,Oregon,OR,United States,97838,26071
+4551,Easton,Northampton,Pennsylvania,PA,United States,18045,26070
+4552,Wethersfield,Hartford,Connecticut,CT,United States,06109,26068
+4553,Indianapolis,Marion,Indiana,IN,United States,46234,26066
+4554,Sachse,Dallas,Texas,TX,United States,75048,26062
+4555,El Sobrante,Contra Costa,California,CA,United States,94803,26062
+4556,Troy,Oakland,Michigan,MI,United States,48085,26061
+4557,Orland Park,Cook,Illinois,IL,United States,60467,26056
+4558,Albany,Albany,New York,NY,United States,12205,26039
+4559,Milwaukee,Milwaukee,Wisconsin,WI,United States,53225,26036
+4560,Minneapolis,Hennepin,Minnesota,MN,United States,42431,26035
+4561,Madisonville,Hopkins,Kentucky,KY,United States,55417,26035
+4562,Fort Pierce,St. Lucie,Florida,FL,United States,34982,26034
+4563,Columbus,Bartholomew,Indiana,IN,United States,47203,26033
+4564,Abilene,Taylor,Texas,TX,United States,79602,26033
+4565,Londonderry,Rockingham,New Hampshire,NH,United States,03053,26028
+4566,Detroit,Wayne,Michigan,MI,United States,48223,26027
+4567,Denver,Jefferson,Colorado,CO,United States,80214,26021
+4568,Agoura Hills,Los Angeles,California,CA,United States,91301,26021
+4569,Providence,Providence,Rhode Island,RI,United States,02905,26020
+4570,Flint,Genesee,Michigan,MI,United States,48504,26020
+4571,Portsmouth,Portsmouth,Virginia,VA,United States,23703,26019
+4572,Melbourne,Brevard,Florida,FL,United States,32901,26014
+4573,Fort Myers,Lee,Florida,FL,United States,33916,26013
+4574,Batesville,Independence,Arkansas,AR,United States,72501,26011
+4575,Boulder,Boulder,Colorado,CO,United States,80301,26010
+4576,Jacksonville,Morgan,Illinois,IL,United States,62650,26008
+4577,Hastings,Adams,Nebraska,NE,United States,68901,25998
+4578,King George,King George,Virginia,VA,United States,22485,25997
+4579,Seaford,Sussex,Delaware,DE,United States,19973,25991
+4580,Washington,Beaufort,North Carolina,NC,United States,27889,25991
+4581,Manassas,Prince William,Virginia,VA,United States,20112,25990
+4582,Los Angeles,Los Angeles,California,CA,United States,90064,25988
+4583,Norman,Cleveland,Oklahoma,OK,United States,73069,25986
+4584,Vienna,Fairfax,Virginia,VA,United States,22182,25985
+4585,Las Vegas,Clark,Nevada,NV,United States,89145,25982
+4586,Las Vegas,Clark,Nevada,NV,United States,89106,25978
+4587,Cleburne,Johnson,Texas,TX,United States,76033,25977
+4588,San Mateo,San Mateo,California,CA,United States,94402,25966
+4589,Sacramento,Sacramento,California,CA,United States,95815,25966
+4590,Portland,Washington,Oregon,OR,United States,97225,25965
+4591,South Windsor,Hartford,Connecticut,CT,United States,06074,25962
+4592,Nazareth,Northampton,Pennsylvania,PA,United States,18064,25955
+4593,Idaho Falls,Bonneville,Idaho,ID,United States,83402,25947
+4594,Cedar Rapids,Linn,Iowa,IA,United States,52405,25942
+4595,Honolulu,Honolulu,Hawaii,HI,United States,96815,25940
+4596,South Portland,Cumberland,Maine,ME,United States,04106,25938
+4597,Athens,Limestone,Alabama,AL,United States,35613,25936
+4598,San Antonio,Bexar,Texas,TX,United States,78222,25935
+4599,Menomonie,Dunn,Wisconsin,WI,United States,54751,25931
+4600,Lake Saint Louis,St. Charles,Missouri,MO,United States,63367,25930
+4601,El Cerrito,Contra Costa,California,CA,United States,94530,25925
+4602,Haymarket,Prince William,Virginia,VA,United States,20169,25914
+4603,Muskego,Waukesha,Wisconsin,WI,United States,53150,25913
+4604,Appleton,Outagamie,Wisconsin,WI,United States,54911,25911
+4605,Mishawaka,St. Joseph,Indiana,IN,United States,46545,25892
+4606,Seattle,King,Washington,WA,United States,92832,25887
+4607,Fullerton,Orange,California,CA,United States,98102,25887
+4608,Mokena,Will,Illinois,IL,United States,60448,25878
+4609,Las Vegas,Clark,Nevada,NV,United States,89166,25877
+4610,Monroe,Walton,Georgia,GA,United States,30655,25876
+4611,Nanuet,Rockland,New York,NY,United States,10954,25870
+4612,Norcross,Gwinnett,Georgia,GA,United States,27028,25865
+4613,Los Gatos,Santa Clara,California,CA,United States,30071,25865
+4614,Mocksville,Davie,North Carolina,NC,United States,95032,25865
+4615,Tulsa,Tulsa,Oklahoma,OK,United States,74105,25857
+4616,Atlanta,Fulton,Georgia,GA,United States,30309,25852
+4617,Pewaukee,Waukesha,Wisconsin,WI,United States,53072,25850
+4618,Blue Island,Cook,Illinois,IL,United States,60406,25849
+4619,Toledo,Lucas,Ohio,OH,United States,43605,25843
+4620,Sherman Oaks,Los Angeles,California,CA,United States,91403,25837
+4621,Honolulu,Honolulu,Hawaii,HI,United States,06776,25833
+4622,New Milford,Litchfield,Connecticut,CT,United States,96813,25833
+4623,Fort Lauderdale,Broward,Florida,FL,United States,33331,25829
+4624,Evansville,Vanderburgh,Indiana,IN,United States,47715,25827
+4625,Fall River,Bristol,Massachusetts,MA,United States,02721,25826
+4626,Fort Smith,Sebastian,Arkansas,AR,United States,72903,25824
+4627,Mercer Island,King,Washington,WA,United States,98040,25820
+4628,Millington,Shelby,Tennessee,TN,United States,38053,25816
+4629,Charlottesville,Albemarle,Virginia,VA,United States,22902,25815
+4630,Fort Myers,Lee,Florida,FL,United States,33907,25813
+4631,Novato,Marin,California,CA,United States,94947,25809
+4632,Augusta,Kennebec,Maine,ME,United States,04330,25803
+4633,Milwaukee,Milwaukee,Wisconsin,WI,United States,53210,25800
+4634,West Hills,Los Angeles,California,CA,United States,91307,25794
+4635,Maumelle,Pulaski,Arkansas,AR,United States,72113,25792
+4636,Yucca Valley,San Bernardino,California,CA,United States,92284,25791
+4637,Sherwood,Washington,Oregon,OR,United States,97140,25778
+4638,Atlanta,DeKalb,Georgia,GA,United States,30345,25777
+4639,Syosset,Nassau,New York,NY,United States,11791,25776
+4640,Houston,Harris,Texas,TX,United States,77021,25769
+4641,Winter Park,Orange,Florida,FL,United States,32789,25767
+4642,Chelmsford,Middlesex,Massachusetts,MA,United States,01824,25762
+4643,Atlanta,Fulton,Georgia,GA,United States,30314,25752
+4644,Hanahan,Berkeley,South Carolina,SC,United States,29410,25743
+4645,Chesterton,Porter,Indiana,IN,United States,46304,25738
+4646,Hopkins,Hennepin,Minnesota,MN,United States,55343,25734
+4647,Sherman,Grayson,Texas,TX,United States,75090,25732
+4648,Oxford,Oakland,Michigan,MI,United States,48371,25730
+4649,Oakland,Alameda,California,CA,United States,94607,25723
+4650,Boulder,Boulder,Colorado,CO,United States,55025,25709
+4651,Forest Lake,Anoka,Minnesota,MN,United States,80303,25709
+4652,Philadelphia,Philadelphia,Pennsylvania,PA,United States,19125,25705
+4653,Seattle,King,Washington,WA,United States,98112,25694
+4654,Lithia,Hillsborough,Florida,FL,United States,33547,25676
+4655,Fredericksburg,Stafford,Virginia,VA,United States,22406,25665
+4656,Iowa City,Johnson,Iowa,IA,United States,52245,25664
+4657,Rockingham,Richmond,North Carolina,NC,United States,28379,25663
+4658,Danville,Boyle,Kentucky,KY,United States,40422,25662
+4659,Cleveland,Cuyahoga,Ohio,OH,United States,44106,25658
+4660,Bellevue,King,Washington,WA,United States,98008,25650
+4661,Winterville,Pitt,North Carolina,NC,United States,28590,25648
+4662,Campbellsville,Taylor,Kentucky,KY,United States,42718,25645
+4663,Longwood,Seminole,Florida,FL,United States,32750,25639
+4664,Racine,Racine,Wisconsin,WI,United States,53406,25624
+4665,Talladega,Talladega,Alabama,AL,United States,35160,25622
+4666,Aguas Buenas,Aguas Buenas,Puerto Rico,PR,United States,00703,25619
+4667,Deer Park,Suffolk,New York,NY,United States,11729,25597
+4668,Allison Park,Allegheny,Pennsylvania,PA,United States,15101,25594
+4669,Toledo,Lucas,Ohio,OH,United States,43606,25582
+4670,Watertown,Codington,South Dakota,SD,United States,57201,25582
+4671,Caldwell,Essex,New Jersey,NJ,United States,07006,25578
+4672,Houston,Harris,Texas,TX,United States,27565,25568
+4673,Abilene,Taylor,Texas,TX,United States,77062,25568
+4674,Oxford,Granville,North Carolina,NC,United States,79606,25568
+4675,Corpus Christi,Nueces,Texas,TX,United States,78411,25548
+4676,Hudson,Hillsborough,New Hampshire,NH,United States,00718,25543
+4677,Naguabo,Naguabo,Puerto Rico,PR,United States,03051,25543
+4678,Smyrna,Kent,Delaware,DE,United States,19977,25536
+4679,Chehalis,Lewis,Washington,WA,United States,98532,25534
+4680,Junction City,Geary,Kansas,KS,United States,66441,25532
+4681,Palm Desert,Riverside,California,CA,United States,92211,25530
+4682,Saint Cloud,Osceola,Florida,FL,United States,34769,25524
+4683,Plainfield,Will,Illinois,IL,United States,08050,25503
+4684,Manahawkin,Ocean,New Jersey,NJ,United States,60585,25503
+4685,Dayton,Montgomery,Ohio,OH,United States,45429,25494
+4686,Warner Robins,Houston,Georgia,GA,United States,31093,25488
+4687,Salisbury,Rowan,North Carolina,NC,United States,28144,25486
+4688,Louisburg,Franklin,North Carolina,NC,United States,27549,25485
+4689,South Pasadena,Los Angeles,California,CA,United States,91030,25478
+4690,Stockton,San Joaquin,California,CA,United States,95215,25473
+4691,Somerset,Pulaski,Kentucky,KY,United States,42503,25463
+4692,Tullahoma,Coffee,Tennessee,TN,United States,37388,25462
+4693,Guaynabo,Guaynabo,Puerto Rico,PR,United States,00971,25443
+4694,Lutz,Hillsborough,Florida,FL,United States,33558,25429
+4695,Olney,Montgomery,Maryland,MD,United States,20832,25427
+4696,Whittier,Los Angeles,California,CA,United States,90602,25426
+4697,Midlothian,Cook,Illinois,IL,United States,60445,25411
+4698,Cliffside Park,Bergen,New Jersey,NJ,United States,07010,25410
+4699,Kansas City,Wyandotte,Kansas,KS,United States,66109,25402
+4700,Austin,Travis,Texas,TX,United States,78702,25393
+4701,Randolph,Morris,New Jersey,NJ,United States,07869,25391
+4702,Midlothian,Chesterfield,Virginia,VA,United States,08087,25387
+4703,Tuckerton,Ocean,New Jersey,NJ,United States,23113,25387
+4704,Auburn,Lee,Alabama,AL,United States,36832,25386
+4705,Gillette,Campbell,Wyoming,WY,United States,82718,25380
+4706,Layton,Davis,Utah,UT,United States,84040,25376
+4707,Saint Louis,St. Louis,Missouri,MO,United States,63121,25374
+4708,Evergreen,Clear Creek,Colorado,CO,United States,80439,25374
+4709,Fountain Hills,Maricopa,Arizona,AZ,United States,85268,25368
+4710,Kelso,Cowlitz,Washington,WA,United States,98626,25366
+4711,Melrose Park,Cook,Illinois,IL,United States,39056,25357
+4712,Clinton,Hinds,Mississippi,MS,United States,60160,25357
+4713,Springfield,Delaware,Pennsylvania,PA,United States,19064,25356
+4714,Newton,Sussex,New Jersey,NJ,United States,07860,25355
+4715,High Point,Guilford,North Carolina,NC,United States,27260,25351
+4716,Newport News,Newport News,Virginia,VA,United States,23601,25345
+4717,Ashland,Jackson,Oregon,OR,United States,97520,25345
+4718,Lake Elsinore,Riverside,California,CA,United States,92532,25333
+4719,Olympia,Thurston,Washington,WA,United States,98516,25332
+4720,Austin,Travis,Texas,TX,United States,78724,25328
+4721,Oklahoma City,Oklahoma,Oklahoma,OK,United States,73127,25327
+4722,Franklin Square,Nassau,New York,NY,United States,11010,25318
+4723,Atlanta,Cobb,Georgia,GA,United States,30339,25318
+4724,Atlantic Beach,Duval,Florida,FL,United States,32233,25318
+4725,Dedham,Norfolk,Massachusetts,MA,United States,02026,25316
+4726,Kansas City,Jackson,Missouri,MO,United States,64114,25314
+4727,Cartersville,Bartow,Georgia,GA,United States,30121,25309
+4728,Muncie,Delaware,Indiana,IN,United States,47302,25307
+4729,Waukegan,Lake,Illinois,IL,United States,60087,25301
+4730,Cottonwood,Yavapai,Arizona,AZ,United States,86326,25300
+4731,Erie,Erie,Pennsylvania,PA,United States,16510,25299
+4732,Albuquerque,Bernalillo,New Mexico,NM,United States,87106,25299
+4733,Hutchinson,Reno,Kansas,KS,United States,67501,25295
+4734,Seattle,King,Washington,WA,United States,98188,25292
+4735,West Plains,Howell,Missouri,MO,United States,65775,25289
+4736,Cedar City,Iron,Utah,UT,United States,84721,25286
+4737,Royersford,Montgomery,Pennsylvania,PA,United States,19468,25284
+4738,Hudson,Summit,Ohio,OH,United States,44236,25281
+4739,Alexandria,Douglas,Minnesota,MN,United States,56308,25281
+4740,Wilmington,New Castle,Delaware,DE,United States,19810,25273
+4741,Yorkville,Kendall,Illinois,IL,United States,60560,25273
+4742,Buckeye,Maricopa,Arizona,AZ,United States,85396,25272
+4743,Mesquite,Dallas,Texas,TX,United States,75181,25264
+4744,Detroit,Wayne,Michigan,MI,United States,48238,25259
+4745,Bryan,Brazos,Texas,TX,United States,77802,25257
+4746,Madison,Dane,Wisconsin,WI,United States,53705,25256
+4747,Northfield,Rice,Minnesota,MN,United States,55057,25247
+4748,Springboro,Warren,Ohio,OH,United States,45066,25245
+4749,Reading,Middlesex,Massachusetts,MA,United States,01867,25236
+4750,Aptos,Santa Cruz,California,CA,United States,95003,25230
+4751,Vero Beach,Indian River,Florida,FL,United States,32962,25229
+4752,Conyers,Rockdale,Georgia,GA,United States,30013,25218
+4753,Salt Lake City,Salt Lake,Utah,UT,United States,84109,25217
+4754,Anchorage,Anchorage,Alaska,AK,United States,99502,25215
+4755,Powhatan,Powhatan,Virginia,VA,United States,23139,25214
+4756,Abbeville,Vermilion,Louisiana,LA,United States,70510,25212
+4757,Houma,Terrebonne,Louisiana,LA,United States,70363,25210
+4758,Pasadena,Los Angeles,California,CA,United States,91106,25205
+4759,Pontiac,Oakland,Michigan,MI,United States,48340,25190
+4760,Ridgewood,Bergen,New Jersey,NJ,United States,07450,25182
+4761,New Port Richey,Pasco,Florida,FL,United States,34654,25182
+4762,Dover,Morris,New Jersey,NJ,United States,07801,25174
+4763,Lawrence,Essex,Massachusetts,MA,United States,01843,25170
+4764,West Hempstead,Nassau,New York,NY,United States,11552,25169
+4765,Wilsonville,Clackamas,Oregon,OR,United States,68803,25163
+4766,Grand Island,Hall,Nebraska,NE,United States,97070,25163
+4767,Buffalo,Wright,Minnesota,MN,United States,55313,25150
+4768,Cleveland,White,Georgia,GA,United States,30528,25149
+4769,Saint Petersburg,Pinellas,Florida,FL,United States,33707,25148
+4770,Atlanta,Fulton,Georgia,GA,United States,02346,25139
+4771,Middleboro,Plymouth,Massachusetts,MA,United States,30305,25139
+4772,Sun City Center,Hillsborough,Florida,FL,United States,33573,25132
+4773,Opelika,Lee,Alabama,AL,United States,36801,25127
+4774,Saint Paul,Ramsey,Minnesota,MN,United States,55116,25125
+4775,Sheridan,Sheridan,Wyoming,WY,United States,82801,25124
+4776,Indianapolis,Marion,Indiana,IN,United States,46268,25123
+4777,Harrisburg,Dauphin,Pennsylvania,PA,United States,17110,25122
+4778,Takoma Park,Montgomery,Maryland,MD,United States,20912,25118
+4779,Philadelphia,Philadelphia,Pennsylvania,PA,United States,19103,25113
+4780,Kannapolis,Cabarrus,North Carolina,NC,United States,28083,25109
+4781,Sulphur Springs,Hopkins,Texas,TX,United States,75482,25108
+4782,Yonkers,Westchester,New York,NY,United States,10710,25104
+4783,Somerville,Middlesex,Massachusetts,MA,United States,02143,25102
+4784,Lenexa,Johnson,Kansas,KS,United States,66215,25098
+4785,Miami,Miami-Dade,Florida,FL,United States,33166,25097
+4786,Sahuarita,Pima,Arizona,AZ,United States,85629,25097
+4787,Queens Village,Queens,New York,NY,United States,11427,25096
+4788,Vincennes,Knox,Indiana,IN,United States,47591,25091
+4789,Saint Cloud,Stearns,Minnesota,MN,United States,56303,25086
+4790,Enid,Garfield,Oklahoma,OK,United States,73701,25084
+4791,Ridgefield,Fairfield,Connecticut,CT,United States,06877,25065
+4792,Rochester,Olmsted,Minnesota,MN,United States,55902,25063
+4793,West Islip,Suffolk,New York,NY,United States,11795,25062
+4794,Athens,McMinn,Tennessee,TN,United States,37303,25062
+4795,Depew,Erie,New York,NY,United States,14043,25058
+4796,Marina,Monterey,California,CA,United States,93933,25056
+4797,Jackson,Cape Girardeau,Missouri,MO,United States,63755,25051
+4798,Peoria,Maricopa,Arizona,AZ,United States,85381,25050
+4799,Oklahoma City,Oklahoma,Oklahoma,OK,United States,73107,25049
+4800,Knoxville,Knox,Tennessee,TN,United States,37917,25048
+4801,Pasadena,Harris,Texas,TX,United States,77504,25044
+4802,Farmington,Oakland,Michigan,MI,United States,48336,25040
+4803,Sunnyside,Queens,New York,NY,United States,11104,25037
+4804,Denver,Denver,Colorado,CO,United States,80209,25032
+4805,Maplewood,Essex,New Jersey,NJ,United States,07040,25029
+4806,New York,New York,New York,NY,United States,10001,25026
+4807,Strongsville,Cuyahoga,Ohio,OH,United States,44136,25024
+4808,Cincinnati,Hamilton,Ohio,OH,United States,45248,25023
+4809,Tampa,Hillsborough,Florida,FL,United States,33607,25018
+4810,Clarkston,Oakland,Michigan,MI,United States,39350,25015
+4811,Philadelphia,Neshoba,Mississippi,MS,United States,48348,25015
+4812,Selden,Suffolk,New York,NY,United States,11784,25014
+4813,Falls Church,Fairfax,Virginia,VA,United States,22043,25012
+4814,Somerville,Middlesex,Massachusetts,MA,United States,02144,25009
+4815,Circleville,Pickaway,Ohio,OH,United States,43113,25002
+4816,Sacramento,Sacramento,California,CA,United States,95864,25001
+4817,Quebradillas,Quebradillas,Puerto Rico,PR,United States,00678,24997
+4818,Port Angeles,Clallam,Washington,WA,United States,98362,24997
+4819,Denton,Denton,Texas,TX,United States,76208,24992
+4820,Macon,Bibb,Georgia,GA,United States,31206,24983
+4821,Champlin,Hennepin,Minnesota,MN,United States,55316,24980
+4822,Riverbank,Stanislaus,California,CA,United States,95367,24976
+4823,Flushing,Genesee,Michigan,MI,United States,48433,24975
+4824,Delray Beach,Palm Beach,Florida,FL,United States,33444,24970
+4825,Yelm,Thurston,Washington,WA,United States,98597,24968
+4826,Milwaukee,Milwaukee,Wisconsin,WI,United States,53202,24967
+4827,Aberdeen,Harford,Maryland,MD,United States,21001,24959
+4828,Houston,Harris,Texas,TX,United States,77043,24957
+4829,Logan,Cache,Utah,UT,United States,48045,24949
+4830,Harrison Township,Macomb,Michigan,MI,United States,84341,24949
+4831,Sunnyside,Benton,Washington,WA,United States,98944,24949
+4832,Wyandotte,Wayne,Michigan,MI,United States,48192,24944
+4833,Austell,Cobb,Georgia,GA,United States,30168,24936
+4834,Aberdeen,Grays Harbor,Washington,WA,United States,98520,24936
+4835,Chapel Hill,Chatham,North Carolina,NC,United States,27517,24928
+4836,Burlington,Boone,Kentucky,KY,United States,41005,24926
+4837,London,Laurel,Kentucky,KY,United States,40741,24922
+4838,Caldwell,Canyon,Idaho,ID,United States,83607,24922
+4839,Piqua,Miami,Ohio,OH,United States,45356,24918
+4840,Atlanta,Fulton,Georgia,GA,United States,30306,24915
+4841,San Diego,San Diego,California,CA,United States,92119,24915
+4842,Denver,Denver,Colorado,CO,United States,80206,24913
+4843,Meridian,Lauderdale,Mississippi,MS,United States,39301,24911
+4844,Waterbury,New Haven,Connecticut,CT,United States,06705,24910
+4845,Grandview,Jackson,Missouri,MO,United States,64030,24909
+4846,Sparta,White,Tennessee,TN,United States,38583,24906
+4847,Dayton,Montgomery,Ohio,OH,United States,45420,24901
+4848,Metairie,Jefferson,Louisiana,LA,United States,70005,24897
+4849,Van Nuys,Los Angeles,California,CA,United States,91411,24893
+4850,Green Valley,Pima,Arizona,AZ,United States,85614,24890
+4851,Birmingham,Jefferson,Alabama,AL,United States,35211,24876
+4852,Berea,Madison,Kentucky,KY,United States,40403,24875
+4853,Dorchester,Suffolk,Massachusetts,MA,United States,02122,24874
+4854,Omaha,Douglas,Nebraska,NE,United States,68144,24874
+4855,Okeechobee,Glades,Florida,FL,United States,34974,24871
+4856,Sioux Falls,Lincoln,South Dakota,SD,United States,57108,24866
+4857,Woodinville,King,Washington,WA,United States,98072,24865
+4858,Louisville,Jefferson,Kentucky,KY,United States,40205,24859
+4859,Bainbridge Island,Kitsap,Washington,WA,United States,98110,24859
+4860,Columbus,Franklin,Ohio,OH,United States,43227,24857
+4861,Choctaw,Oklahoma,Oklahoma,OK,United States,73020,24852
+4862,Keene,Cheshire,New Hampshire,NH,United States,03431,24849
+4863,Little Rock,Pulaski,Arkansas,AR,United States,72223,24848
+4864,Carlsbad,San Diego,California,CA,United States,92011,24843
+4865,Arlington,Arlington,Virginia,VA,United States,22203,24841
+4866,Washington,Tazewell,Illinois,IL,United States,61571,24840
+4867,New Bedford,Bristol,Massachusetts,MA,United States,02745,24836
+4868,Oakland,Alameda,California,CA,United States,94619,24833
+4869,Allendale,Ottawa,Michigan,MI,United States,49401,24827
+4870,Fort Wayne,Allen,Indiana,IN,United States,35020,24821
+4871,Bessemer,Jefferson,Alabama,AL,United States,46806,24821
+4872,Memphis,Shelby,Tennessee,TN,United States,38119,24818
+4873,Lees Summit,Jackson,Missouri,MO,United States,64081,24814
+4874,Tucson,Pima,Arizona,AZ,United States,85750,24814
+4875,Harleysville,Montgomery,Pennsylvania,PA,United States,19438,24812
+4876,Ridgeland,Madison,Mississippi,MS,United States,39157,24811
+4877,Miami,Miami-Dade,Florida,FL,United States,33189,24802
+4878,Saint Petersburg,Pinellas,Florida,FL,United States,33712,24802
+4879,Montgomery,Montgomery,Alabama,AL,United States,36109,24802
+4880,Onalaska,La Crosse,Wisconsin,WI,United States,28390,24794
+4881,Spring Lake,Harnett,North Carolina,NC,United States,54650,24794
+4882,Greeneville,Greene,Tennessee,TN,United States,37743,24791
+4883,Salem,Columbiana,Ohio,OH,United States,44460,24785
+4884,Omaha,Douglas,Nebraska,NE,United States,68137,24782
+4885,Houston,Harris,Texas,TX,United States,77054,24780
+4886,Bloomington,Monroe,Indiana,IN,United States,28443,24778
+4887,Hampstead,Pender,North Carolina,NC,United States,47404,24778
+4888,Newark,Essex,New Jersey,NJ,United States,07108,24777
+4889,Verona,Dane,Wisconsin,WI,United States,53593,24775
+4890,Pawtucket,Providence,Rhode Island,RI,United States,02861,24764
+4891,Wilmington,New Hanover,North Carolina,NC,United States,28401,24764
+4892,Florence,Florence,South Carolina,SC,United States,29505,24763
+4893,Portland,Sumner,Tennessee,TN,United States,37148,24747
+4894,Warren,Trumbull,Ohio,OH,United States,44483,24743
+4895,New Philadelphia,Tuscarawas,Ohio,OH,United States,44663,24735
+4896,Dallas,Dallas,Texas,TX,United States,17109,24726
+4897,Harrisburg,Dauphin,Pennsylvania,PA,United States,75205,24726
+4898,Colorado Springs,El Paso,Colorado,CO,United States,80921,24725
+4899,Rochester,Monroe,New York,NY,United States,14623,24720
+4900,Cincinnati,Hamilton,Ohio,OH,United States,45236,24719
+4901,Edgewood,Harford,Maryland,MD,United States,21040,24717
+4902,Naples,Collier,Florida,FL,United States,34110,24713
+4903,Lemont,Cook,Illinois,IL,United States,60439,24697
+4904,Royal Oak,Oakland,Michigan,MI,United States,48067,24685
+4905,Gallup,McKinley,New Mexico,NM,United States,87301,24684
+4906,Midland,Midland,Texas,TX,United States,79703,24683
+4907,Denver,Denver,Colorado,CO,United States,80222,24682
+4908,Laurinburg,Scotland,North Carolina,NC,United States,28352,24677
+4909,Muncie,Delaware,Indiana,IN,United States,47303,24674
+4910,Sugar Land,Fort Bend,Texas,TX,United States,77478,24673
+4911,Dallas,Dallas,Texas,TX,United States,75253,24666
+4912,Westmont,DuPage,Illinois,IL,United States,60559,24642
+4913,Seymour,Sevier,Tennessee,TN,United States,37865,24638
+4914,Brownwood,Brown,Texas,TX,United States,76801,24636
+4915,Ocala,Marion,Florida,FL,United States,34471,24635
+4916,Eureka,Humboldt,California,CA,United States,95503,24631
+4917,Savannah,Chatham,Georgia,GA,United States,31410,24626
+4918,Conroe,Montgomery,Texas,TX,United States,10512,24619
+4919,Carmel,Putnam,New York,NY,United States,77385,24619
+4920,Jacksonville,Duval,Florida,FL,United States,32223,24615
+4921,Phoenix,Maricopa,Arizona,AZ,United States,85085,24608
+4922,Waco,McLennan,Texas,TX,United States,76710,24607
+4923,Greenbelt,Prince George's,Maryland,MD,United States,20770,24602
+4924,Crestview,Okaloosa,Florida,FL,United States,32536,24601
+4925,Travelers Rest,Greenville,South Carolina,SC,United States,29690,24595
+4926,Elgin,Bastrop,Texas,TX,United States,78621,24590
+4927,Granbury,Hood,Texas,TX,United States,76048,24586
+4928,State College,Centre,Pennsylvania,PA,United States,16803,24582
+4929,Roanoke Rapids,Halifax,North Carolina,NC,United States,27870,24571
+4930,Westford,Middlesex,Massachusetts,MA,United States,01886,24566
+4931,Greenwich,Fairfield,Connecticut,CT,United States,06830,24557
+4932,Mount Holly,Burlington,New Jersey,NJ,United States,08060,24556
+4933,Castle Rock,Douglas,Colorado,CO,United States,80109,24554
+4934,New Port Richey,Pasco,Florida,FL,United States,34652,24549
+4935,Bridgeport,Fairfield,Connecticut,CT,United States,06605,24541
+4936,Palos Verdes Peninsula,Los Angeles,California,CA,United States,90274,24541
+4937,San Gabriel,Los Angeles,California,CA,United States,91775,24517
+4938,Kansas City,Jackson,Missouri,MO,United States,64138,24516
+4939,Canton,Stark,Ohio,OH,United States,44708,24498
+4940,Pittsburg,Crawford,Kansas,KS,United States,66762,24498
+4941,Farmington,Davis,Utah,UT,United States,84025,24497
+4942,Terrell,Kaufman,Texas,TX,United States,75160,24494
+4943,Modesto,Stanislaus,California,CA,United States,95354,24481
+4944,Shawnee,Johnson,Kansas,KS,United States,66216,24477
+4945,Fallon,Churchill,Nevada,NV,United States,89406,24475
+4946,Point Pleasant Beach,Ocean,New Jersey,NJ,United States,08742,24474
+4947,Twentynine Palms,San Bernardino,California,CA,United States,92277,24464
+4948,Floresville,Wilson,Texas,TX,United States,78114,24463
+4949,Walled Lake,Oakland,Michigan,MI,United States,48390,24457
+4950,Idaho Falls,Bonneville,Idaho,ID,United States,83404,24452
+4951,Kissimmee,Osceola,Florida,FL,United States,34747,24445
+4952,Barnegat,Ocean,New Jersey,NJ,United States,08005,24444
+4953,Sammamish,King,Washington,WA,United States,98075,24435
+4954,Minneapolis,Hennepin,Minnesota,MN,United States,55412,24402
+4955,Inkster,Wayne,Michigan,MI,United States,30233,24398
+4956,Jackson,Butts,Georgia,GA,United States,48141,24398
+4957,Canby,Clackamas,Oregon,OR,United States,97013,24396
+4958,Lodi,Bergen,New Jersey,NJ,United States,07644,24389
+4959,Henderson,Clark,Nevada,NV,United States,89044,24386
+4960,Newark,Essex,New Jersey,NJ,United States,07112,24376
+4961,Carthage,Jasper,Missouri,MO,United States,64836,24375
+4962,Charlotte,Mecklenburg,North Carolina,NC,United States,28209,24373
+4963,Lynn,Essex,Massachusetts,MA,United States,01905,24369
+4964,Worcester,Worcester,Massachusetts,MA,United States,01602,24363
+4965,Santa Monica,Los Angeles,California,CA,United States,90403,24359
+4966,Berlin,Worcester,Maryland,MD,United States,21811,24356
+4967,Norfolk,Norfolk,Virginia,VA,United States,23504,24354
+4968,London,Madison,Ohio,OH,United States,43140,24352
+4969,Garden City,Ada,Idaho,ID,United States,83714,24351
+4970,Huntsville,Madison,Alabama,AL,United States,35801,24337
+4971,Salinas,Monterey,California,CA,United States,93907,24337
+4972,Clackamas,Clackamas,Oregon,OR,United States,97015,24332
+4973,Warren,Macomb,Michigan,MI,United States,48093,24331
+4974,Imperial,Imperial,California,CA,United States,92251,24321
+4975,Lake City,Columbia,Florida,FL,United States,32025,24317
+4976,West Memphis,Crittenden,Arkansas,AR,United States,72301,24311
+4977,Woodland,Yolo,California,CA,United States,95776,24311
+4978,Avon Lake,Lorain,Ohio,OH,United States,44012,24309
+4979,Leesburg,Lee,Georgia,GA,United States,31763,24307
+4980,Seal Beach,Orange,California,CA,United States,90740,24288
+4981,Las Vegas,Clark,Nevada,NV,United States,89134,24280
+4982,Kalamazoo,Kalamazoo,Michigan,MI,United States,46158,24279
+4983,Mooresville,Morgan,Indiana,IN,United States,49048,24279
+4984,Roanoke,Roanoke,Virginia,VA,United States,24017,24273
+4985,Memphis,Shelby,Tennessee,TN,United States,38106,24256
+4986,Blythewood,Richland,South Carolina,SC,United States,29016,24255
+4987,Bay City,Matagorda,Texas,TX,United States,77414,24254
+4988,Richmond,Chesterfield,Virginia,VA,United States,23236,24235
+4989,East Peoria,Tazewell,Illinois,IL,United States,61611,24235
+4990,Heber City,Wasatch,Utah,UT,United States,84032,24229
+4991,Clermont,Lake,Florida,FL,United States,34714,24227
+4992,New York,New York,New York,NY,United States,10038,24205
+4993,Caledonia,Kent,Michigan,MI,United States,49316,24193
+4994,College Point,Queens,New York,NY,United States,11356,24178
+4995,Staten Island,Richmond,New York,NY,United States,10310,24168
+4996,Erie,Erie,Pennsylvania,PA,United States,16506,24163
+4997,Meriden,New Haven,Connecticut,CT,United States,06451,24153
+4998,Cockeysville,Baltimore,Maryland,MD,United States,21030,24152
+4999,Mansfield,Bristol,Massachusetts,MA,United States,02048,24145
+5000,Germantown,Shelby,Tennessee,TN,United States,38138,24143
