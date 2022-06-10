@@ -22,6 +22,7 @@ import com.marklogic.hub.util.DiskQueue;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.apache.commons.io.IOUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -68,11 +69,12 @@ public class SourceQueryCollector {
             OkHttpClient ok = (OkHttpClient) stagingClient.getClientImplementation();
             Request request = new Request.Builder().url(uriString).get().build();
 
-            Response response = ok.newCall(request).execute();
-            if (response.isSuccessful()) {
-                return readItems(response);
-            } else {
-                throw new RuntimeException(String.format("Unable to collect items to process for flow %s and step %s; cause: %s", flow, step, response.body().string()));
+            try (Response response = ok.newCall(request).execute()) {
+                if (response.isSuccessful()) {
+                    return readItems(response);
+                } else {
+                    throw new RuntimeException(String.format("Unable to collect items to process for flow %s and step %s; cause: %s", flow, step, response.body().string()));
+                }
             }
         } catch (IOException ex) {
             throw new RuntimeException(String.format("Unexpected IO exception when collecting items to process for flow %s and step %s; cause: %s", flow, step, ex));
@@ -86,6 +88,8 @@ public class SourceQueryCollector {
             while ((line = reader.readLine()) != null) {
                 results.add(line);
             }
+        } finally {
+            IOUtils.closeQuietly(response.body());
         }
         return results;
     }

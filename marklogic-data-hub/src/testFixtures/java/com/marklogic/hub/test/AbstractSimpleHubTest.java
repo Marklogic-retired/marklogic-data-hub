@@ -47,7 +47,9 @@ public abstract class AbstractSimpleHubTest extends AbstractHubTest {
         props.setProperty("mlUsername", username);
         props.setProperty("mlPassword", password);
         hubConfig.applyProperties(props);
-        hubClient = null;
+        if (!username.equals(getHubClient().getUsername())) {
+            hubClient = null;
+        }
         return getHubClient();
     }
 

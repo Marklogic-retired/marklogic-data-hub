@@ -126,6 +126,9 @@ public abstract class AbstractHubCentralTest extends AbstractHubTest {
      */
     @Override
     protected HubClient doRunAsUser(String username, String password) {
+        if (username.equals(getHubClient().getUsername())) {
+            return getHubClient();
+        }
         // Need to create the project directory before applying properties
         testHubConfig.createProject(testProjectDirectory);
         testHubConfig.applyProperties(hubCentral.buildPropertySource(username, password));

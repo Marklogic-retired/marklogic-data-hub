@@ -47,6 +47,7 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -89,16 +90,16 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
             List<JsonNode> entities = getAllEntities();
             String options = generator.generateOptions(entities, false);
             if (options != null) {
-                FileUtils.writeStringToFile(stagingFile, options);
+                FileUtils.writeStringToFile(stagingFile, options, Charset.defaultCharset());
                 logger.info("Wrote entity-specific search options to: " + stagingFile.getAbsolutePath());
-                FileUtils.writeStringToFile(finalFile, options);
+                FileUtils.writeStringToFile(finalFile, options, Charset.defaultCharset());
                 logger.info("Wrote entity-specific search options to: " + finalFile.getAbsolutePath());
             }
             String expOptions = generator.generateOptions(entities, true);
             if (expOptions != null) {
-                FileUtils.writeStringToFile(expStagingFile, expOptions);
+                FileUtils.writeStringToFile(expStagingFile, expOptions, Charset.defaultCharset());
                 logger.info("Wrote entity-specific search options for Explorer to: " + stagingFile.getAbsolutePath());
-                FileUtils.writeStringToFile(expFinalFile, expOptions);
+                FileUtils.writeStringToFile(expFinalFile, expOptions, Charset.defaultCharset());
                 logger.info("Wrote entity-specific search options for Explorer to: " + finalFile.getAbsolutePath());
             }
             return true;
