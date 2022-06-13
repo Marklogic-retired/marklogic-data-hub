@@ -6,7 +6,8 @@ export const exploreSidebar = {
   entitySpecificSidebar: {
     integers: ["int", "integer", "short", "long"],
     decimals: ["decimal", "double", "float"]
-  }
+  },
+  defaultActiveKeys: ["database", "hubProperties", "baseEntities"]
 }
 
 export const graphViewConfig = {

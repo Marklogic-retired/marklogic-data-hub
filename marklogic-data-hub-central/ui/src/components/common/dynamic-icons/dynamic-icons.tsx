@@ -9,7 +9,7 @@ const DynamicIcons = ({name}) => {
     return <FontIcon.FaShapes />;
   }
 
-  return <IconComponent />;
+  return <IconComponent aria-label={`icon-${name}`}/>;
 };
 
 export default DynamicIcons;

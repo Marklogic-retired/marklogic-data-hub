@@ -81,7 +81,8 @@ const SelectedFacets: React.FC<Props> = (props) => {
       style={(Object.entries(searchOptions.selectedFacets).length === 0 && Object.entries(greyedOptions.selectedFacets).length === 0) ? {"visibility": "hidden"} : {"visibility": "visible"}}
     >
       {props.selectedFacets.map((item, index) => {
-        let facetName = item.displayName ? item.displayName : item.constraint;
+        let facetName = item.displayName ? item.displayName : (item.constraint === "RelatedConcepts" ? "Concept" : item.constraint);
+        let facetLabel = item.constraint === "RelatedConcepts" ? item.facet.split("/").pop() : item.facet;
         if (facetName === "createdOnRange") {
           let dateValues: any = [];
           if (item.facet.rangeValues.lowerBound && item.facet.rangeValues.upperBound) {
@@ -147,16 +148,17 @@ const SelectedFacets: React.FC<Props> = (props) => {
             className={styles.facetButton}
             key={index}
             onClick={() => clearFacet(item.constraint, item.facet)}
-            data-cy={`clear-${item.facet}`}
-            data-testid={`clear-${item.facet}`}
+            data-cy={`clear-${facetLabel}`}
+            data-testid={`clear-${facetLabel}`}
           >
-            {facetName + ": " + item.facet}
+            {facetName + ": " + facetLabel}
             <XLg className={styles.close}/>
           </HCButton>
         );
       })}
       {props.greyFacets.map((item, index) => {
-        let facetName = item.displayName ? item.displayName : item.constraint;
+        let facetName = item.displayName ? item.displayName : (item.constraint === "RelatedConcepts" ? "Concept" : item.constraint);
+        let facetLabel = item.constraint === "RelatedConcepts" ? item.facet.split("/").pop() : item.facet;
         if (item.constraint === "createdOnRange") {
           let dateValues: any = [];
           if (item.facet.rangeValues.lowerBound && item.facet.rangeValues.upperBound) {
@@ -229,10 +231,10 @@ const SelectedFacets: React.FC<Props> = (props) => {
                 className={styles.facetGreyButton}
                 key={index}
                 onClick={() => clearGreyFacet(item.constraint, item.facet)}
-                data-cy={`clear-grey-${item.facet}`}
-                data-testid={`clear-grey-${item.facet}`}
+                data-cy={`clear-grey-${facetLabel}`}
+                data-testid={`clear-grey-${facetLabel}`}
               >
-                {facetName + ": " + item.facet}
+                {facetName + ": " + facetLabel}
                 <XLg className={styles.close}/>
               </HCButton>
             </span>

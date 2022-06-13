@@ -49,15 +49,23 @@ result.map(item => {
   let subjectArr = objectIRI.split("/");
   const objectId = subjectArr[subjectArr.length - 1];
   const entityType = objectIRI.substring(0, objectIRI.length - objectId.length - 1);
+  const conceptIRI = sem.iri(item.objectConcept.toString());
+  const relatedEntitiesCountDataSet = graphUtils.getRelatedEntityInstancesCount(conceptIRI);
+  const finalObj = relatedEntitiesCountDataSet.find(el => el.entityTypeIRI.toString() === entityType);
+  const conceptInfo = {
+    conceptIRI: conceptIRI,
+    count: finalObj.total
+  };
 
   if(!hashmapEntityType.has(entityType)){
     let conceptList = [];
-    conceptList.push(item.objectConcept.toString());
+    conceptList.push(conceptInfo);
     hashmapEntityType.set(entityType,conceptList);
   }else{
+    let conceptInfoObject = hashmapEntityType.get(entityType).find((elem) => elem.conceptIRI.toString() === item.objectConcept.toString()) || {};
     //in case that different instance of the same type, has the same Concept type
-    if(!hashmapEntityType.get(entityType).includes(item.objectConcept.toString())){
-      hashmapEntityType.set(entityType,hashmapEntityType.get(entityType).concat(item.objectConcept));
+    if(!Object.keys(conceptInfoObject).length){
+      hashmapEntityType.set(entityType,hashmapEntityType.get(entityType).concat(conceptInfo));
     }
   }
 })

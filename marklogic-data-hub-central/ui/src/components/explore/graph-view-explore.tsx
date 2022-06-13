@@ -18,6 +18,7 @@ type Props = {
   entityTypeInstances: any;
   graphView: any;
   setGraphPageInfo: (pageInfo: any) => void;
+  entitiesWithRelatedConcepts: any;
 };
 
 const {graphViewTooltips} = tooltipsConfig;
@@ -114,9 +115,22 @@ const GraphViewExplore: React.FC<Props> = (props) => {
   </div>
   ;
 
+  const conceptsExist = () => {
+    let hasConcepts = false;
+    if (props.entitiesWithRelatedConcepts?.entities) {
+      for (let elem of props.entitiesWithRelatedConcepts?.entities) {
+        if (elem.relatedConcepts.length) {
+          hasConcepts = true;
+          break;
+        }
+      }
+    }
+    return hasConcepts;
+  };
+
   const graphSwitches = <div className={styles.graphSwitches}>
     <span>{relationshipLabelsSwitch}</span>
-    <span>{conceptsSwitch}</span>
+    <span className={conceptsExist() ? styles.disabledSwitch : ""}>{conceptsSwitch}</span>
   </div>;
 
   const graphViewExploreMainPanel = (

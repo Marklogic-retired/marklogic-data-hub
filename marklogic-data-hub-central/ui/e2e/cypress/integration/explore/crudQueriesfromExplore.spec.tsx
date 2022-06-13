@@ -584,7 +584,7 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getStagingDatabaseButton();
     browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.getBaseEntityOption("Person").should("be.visible");
-    browsePage.getSaveQueriesDropdown().should("be.visible");
+    browsePage.getSaveQueriesDropdown().scrollIntoView().should("be.visible");
     browsePage.getSelectedQuery().should("contain", "select a query");
     //Person entity is not available in stage database
     browsePage.getFacetItemCheckbox("lname", "Bates").should("not.exist");

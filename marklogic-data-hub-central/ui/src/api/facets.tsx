@@ -19,3 +19,7 @@ export const stringSearch = async (data) => {
     data: data
   });
 };
+
+export const getRelatedConcepts = async (database: string) => {
+  return await axios.post(`/api/entitySearch/getEntitiesWithConceptsTypes?database=${database}`);
+};

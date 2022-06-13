@@ -19,6 +19,7 @@ import RelatedEntitiesFacet from "../related-entities-facet/related-entities-fac
 import {ExploreGraphViewToolTips} from "@config/tooltips.config";
 import {HCDivider} from "@components/common";
 import {graphSearchQuery, getEntities, searchResultsQuery} from "@api/queries";
+import {exploreSidebar as exploreSidebarConfig} from "@config/explore.config";
 
 const tooltips = tooltipsConfig.browseDocuments;
 const {exploreSidebar} = tooltipsConfig;
@@ -40,7 +41,8 @@ interface Props {
   setCurrentBaseEntities: (entity: any[]) => void;
   currentRelatedEntities: Map<string, any>;
   setCurrentRelatedEntities: (entity: Map<string, any>) => void;
-  entityIndicatorData: any
+  entityIndicatorData: any;
+  entitiesWithRelatedConcepts: any;
 }
 
 const PLACEHOLDER: string = "Select a saved query";
@@ -77,13 +79,16 @@ const Sidebar: React.FC<Props> = (props) => {
   const [currentQueryName, setCurrentQueryName] = useState(PLACEHOLDER); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [activeRelatedEntities, setActiveRelatedEntities] = useState(true);
 
-
   let integers = ["int", "integer", "short", "long"];
   let decimals = ["decimal", "double", "float"];
   const dateRangeOptions = ["Today", "This Week", "This Month", "Custom"];
   const [activeKey, setActiveKey] = useState<any[]>([]);
   const [userPreferences, setUserPreferences] = useState({});
   const [checkAll, setCheckAll] = useState(true);
+
+  //Concept Facet related
+  const [relatedConceptList, setRelatedConceptsList] = useState({});
+  const [checkAllRelatedConcepts, setCheckAllRelatedConcepts] = useState(false);
 
   useEffect(() => {
     searchOptions.sidebarQuery && setCurrentQueryName(searchOptions.sidebarQuery);
@@ -144,6 +149,39 @@ const Sidebar: React.FC<Props> = (props) => {
     props.setCurrentRelatedEntities(relatedEntitiesList);
   };
 
+  const onCheckAllRelatedConcepts = ({target}) => {
+    const {checked} = target;
+    setCheckAllRelatedConcepts(checked);
+    let facets = {...allSelectedFacets};
+    let greyFacets = {...greyedOptions.selectedFacets};
+    let facetName = "RelatedConcepts";
+    if (checked) {
+      if (relatedConceptList["facetValues"].length > 0) {
+        let facetValues = relatedConceptList["facetValues"].map(facet => facet.value);
+        facets = {
+          ...facets,
+          [facetName]: {
+            dataType: "xs:string",
+            stringValues: facetValues
+          }
+        };
+        greyFacets = {
+          ...greyFacets,
+          [facetName]: {
+            dataType: "xs:string",
+            stringValues: facetValues
+          }
+        };
+      } else {
+        delete facets[facetName];
+      }
+      setAllSelectedFacets(facets);
+      setAllGreyedOptions(greyFacets);
+    } else {
+      clearConstraint("RelatedConcepts");
+    }
+  };
+
 
   const clearSelectedQuery = () => { // eslint-disable-line @typescript-eslint/no-unused-vars
     setCurrentQueryName(PLACEHOLDER);
@@ -152,10 +190,11 @@ const Sidebar: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (props.facets) {
-      setActiveKey(["database", "hubProperties", "baseEntities"]);
+      let {defaultActiveKeys} = exploreSidebarConfig;
+      setActiveKey(defaultActiveKeys);
       for (let i in hubFacets) {
         if (searchOptions.selectedFacets.hasOwnProperty(hubFacets[i] && hubFacets[i].facetName) || greyedOptions.selectedFacets.hasOwnProperty(hubFacets[i] && hubFacets[i].facetName)) {
-          setActiveKey(["database", "hubProperties", "baseEntities"]);
+          setActiveKey(defaultActiveKeys);
         }
       }
       let tmpMaxQuantityOnFacets: number = 0;
@@ -181,7 +220,7 @@ const Sidebar: React.FC<Props> = (props) => {
         initializeFacetPreferences();
       } else {
         searchOptions.entityTypeIds?.length && activeRelatedEntities && activeKey.includes("related-entities") ?
-          setActiveKey(["database", "hubProperties", "baseEntities", "related-entities"])
+          setActiveKey([...defaultActiveKeys, "related-entities"])
           : setActiveKey(["database", "hubProperties", "baseEntities"]);
       }
 
@@ -199,6 +238,31 @@ const Sidebar: React.FC<Props> = (props) => {
         }
         entityFacets = newEntityFacets ? newEntityFacets.filter(item => item !== false) : [];
         setEntityFacets(entityFacets);
+        let relatedConceptsObj = props.entitiesWithRelatedConcepts?.entitites?.find(obj => searchOptions.entityTypeIds.includes(obj.entityType.split("/").pop()));
+        if (relatedConceptsObj?.relatedConcepts && relatedConceptsObj?.relatedConcepts.length) {
+          if (activeKey.includes("related-concepts")) {
+            setActiveKey([...defaultActiveKeys, "related-concepts"]);
+          }
+          if (relatedConceptsObj.relatedConcepts.length === searchOptions.selectedFacets?.RelatedConcepts?.stringValues?.length) {
+            setCheckAllRelatedConcepts(true);
+          }
+        }
+        let conceptFacets = relatedConceptsObj?.relatedConcepts.map(concept => {
+          let facetName = concept.conceptIRI.split("/").pop();
+          return {
+            max: 1,
+            name: facetName,
+            value: concept.conceptIRI,
+            count: concept.count
+          };
+        });
+        let finalConcepts:any = {
+          facetName: "RelatedConcepts",
+          type: "concept",
+          facetValues: conceptFacets,
+          entityTypeId: searchOptions.entityTypeIds
+        };
+        setRelatedConceptsList(finalConcepts);
       }
 
       if (Object.entries(searchOptions.selectedFacets).length !== 0) {
@@ -260,7 +324,7 @@ const Sidebar: React.FC<Props> = (props) => {
           checkedFacets.push({constraint, facet: greyedOptions.selectedFacets[constraint], displayName});
         } else {
           let datatype = greyedOptions.selectedFacets[constraint].dataType;
-          if (datatype === "xs:string" || datatype === "string") {
+          if (datatype === "xs:string" || datatype === "string" || datatype === "concept") {
             greyedOptions.selectedFacets[constraint]["stringValues"].map(facet => {
               checkedFacets.push({constraint, facet, displayName});
             });
@@ -369,6 +433,7 @@ const Sidebar: React.FC<Props> = (props) => {
 
     switch (datatype) {
     case "xs:string":
+    case "concept":
     case "collection": {
       type = "xs:string";
       valueKey = "stringValues";
@@ -412,11 +477,19 @@ const Sidebar: React.FC<Props> = (props) => {
       } else if (Object.entries(greyedOptions.selectedFacets).length > 0 && greyedOptions.selectedFacets.hasOwnProperty(constraint)) {
         clearGreyFacet(constraint, vals[0]);
       }
+      if (facetName === "RelatedConcepts" && checkAllRelatedConcepts) {
+        setCheckAllRelatedConcepts(false);
+      }
     } else if (toDeleteAll) {
       clearConstraint(constraint);
     } else {
       setAllSelectedFacets(facets);
       setAllGreyedOptions(greyFacets);
+      if (facetName === "RelatedConcepts") {
+        if (facets[facetName][valueKey].length === relatedConceptList["facetValues"].length) {
+          setCheckAllRelatedConcepts(true);
+        }
+      }
     }
   };
 
@@ -582,15 +655,6 @@ const Sidebar: React.FC<Props> = (props) => {
     setAllGreyedOptions(updateFacets);
   };
 
-  // const setFacetName = (facet: string, isNested: boolean) => {
-  //   let name = facet;
-  //   if (isNested) {
-  //     let splitFacet = facet.split('.');
-  //     name = splitFacet.pop() || '';
-  //   }
-  //   return name;
-  // }
-
   const setActiveAccordion = (key) => {
     const tmpActiveKeys = [...activeKey];
     const index = tmpActiveKeys.indexOf(key);
@@ -623,7 +687,7 @@ const Sidebar: React.FC<Props> = (props) => {
 
 
   const panelTitle = (title, tooltipTitle) => {
-    let disabled = !props.graphView && tooltipTitle === ExploreGraphViewToolTips.relatedEntities;
+    let disabled = !props.graphView && (tooltipTitle === ExploreGraphViewToolTips.relatedEntities || tooltipTitle === ExploreGraphViewToolTips.relatedConcepts);
     return (
       <div className={styles.panelTitle}>
         {title}
@@ -763,6 +827,40 @@ const Sidebar: React.FC<Props> = (props) => {
                     setActiveRelatedEntities={setActiveRelatedEntities}
                     entityIndicatorData={props.entityIndicatorData}
                   />
+                </Accordion.Body>
+              </Accordion.Item>
+            </Accordion>
+          </HCTooltip>
+          <HCDivider className={"mt-0 mb-2"} style={{backgroundColor: "#ccc"}}/>
+        </div>
+        }
+        {props.entitiesWithRelatedConcepts && Object.keys(props.entitiesWithRelatedConcepts).length > 0 && relatedConceptList && relatedConceptList["facetValues"]?.length > 0 &&
+        <div className={styles.relatedEntityPanel}>
+          <HCTooltip text={!props.graphView ? exploreSidebar.disabledRelatedConcepts: ""} aria-label="disabled-related-concept-tooltip" id="disabled-related-concept-tooltip" placement="bottom">
+            <Accordion id="related-concepts" data-testid={"related-concept-panel"} className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("related-concepts") && props.graphView ? "related-concepts" : ""} defaultActiveKey={activeKey.includes("related-concepts") ? "related-concepts" : ""}>
+              <Accordion.Item eventKey="related-concepts" className={"bg-transparent"}>
+                <div className={"p-0 d-flex"}>
+                  <Accordion.Button className={!props.graphView ? `after-indicator ${styles.disabledTitleCheckbox}` : `after-indicator ${styles.titleCheckbox}`} onClick={() =>  setActiveAccordion("related-concepts")}>{
+                    panelTitle(<span><span><HCCheckbox id="related-concepts-check-all" value="check-all" disabled={!props.graphView} handleClick={onCheckAllRelatedConcepts} checked={checkAllRelatedConcepts} /></span>related concepts</span>, ExploreGraphViewToolTips.relatedConcepts)}
+                  </Accordion.Button>
+                </div>
+                <Accordion.Body>
+                  {relatedConceptList && <Facet
+                    name={"relatedConcepts"}
+                    constraint={relatedConceptList["facetName"]}
+                    facetValues={relatedConceptList["facetValues"]}
+                    key={relatedConceptList["facetName"]}
+                    tooltip={relatedConceptList["facetName"]}
+                    facetType={relatedConceptList["type"]}
+                    facetCategory="concept"
+                    updateSelectedFacets={updateSelectedFacets}
+                    addFacetValues={addFacetValues}
+                    referenceType=""
+                    entityTypeId={relatedConceptList["entityTypeId"]}
+                    propertyPath=""
+                    maxQuantityOnFacets={maxQuantityOnFacets}
+                  />
+                  }
                 </Accordion.Body>
               </Accordion.Item>
             </Accordion>

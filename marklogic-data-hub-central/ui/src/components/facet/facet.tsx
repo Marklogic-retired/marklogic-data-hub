@@ -117,18 +117,18 @@ const Facet: React.FC<Props> = (props) => {
     setShowFacets(showNumber);
   };
 
-  if (props.facetValues.length === 0 && checked.length > 0) {
+  if (props.facetValues?.length === 0 && checked.length > 0) {
     checkedFacets = checked.map(item => {
       return {name: item, count: 0, value: item};
     });
-  } else if (props.facetValues.length > 0) {
+  } else if (props.facetValues?.length > 0) {
     checkedFacets = props.facetValues;
   }
 
   const renderValues = checkedFacets.slice(0, showFacets).map((facet, index) => {
     facet.max = props.maxQuantityOnFacets;
     return (
-      <FacetName facet={facet} index={index} key={index} handleClick={handleClick} name={props.name} checked={checked} />
+      <FacetName facet={facet} index={index} key={index} handleClick={handleClick} name={props.name} checked={checked} category={props.facetCategory}/>
     );
   });
 
@@ -149,7 +149,7 @@ const Facet: React.FC<Props> = (props) => {
 
   return (
     <div className={styles.facetContainer} data-cy={stringConverter(props.name) + "-facet-block"}>
-      <div className={styles.header}>
+      {props.facetCategory !== "concept" && <div className={styles.header}>
         <div
           className={styles.name}
           data-cy={stringConverter(props.name) + "-facet"}
@@ -175,12 +175,12 @@ const Facet: React.FC<Props> = (props) => {
             {show ? <ChevronDown className={styles.toggleIcon} aria-label="icon: chevron-down"/> : <ChevronRight className={styles.toggleIcon} aria-label="icon: chevron-right"/>}
           </div>
         </div>
-      </div>
+      </div>}
       <div style={{display: (show) ? "block" : "none"}}>
         {renderValues}
         <div
           className={styles.more}
-          style={{display: (props.facetValues.length > SHOW_MINIMUM) ? "block" : "none"}}
+          style={{display: (props.facetValues?.length > SHOW_MINIMUM) ? "block" : "none"}}
           onClick={() => showMore()}
           data-cy="show-more"
           data-testid={`show-more-${stringConverter(props.name)}`}
