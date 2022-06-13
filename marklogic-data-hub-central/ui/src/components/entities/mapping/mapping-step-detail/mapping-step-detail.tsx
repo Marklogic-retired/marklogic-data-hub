@@ -106,6 +106,7 @@ const MappingStepDetail: React.FC = () => {
   const [mapResp, setMapResp] = useState({});
   const [isTestClicked, setIsTestClicked] = useState(false);
   const [savedMappingArt, setSavedMappingArt] = useState<any>(DEFAULT_MAPPING_STEP);
+  const [loading, setToggleLoading] = useState(false);
 
   // Navigate URI buttons
   const [uriIndex, setUriIndex] = useState(0);
@@ -1209,6 +1210,7 @@ const MappingStepDetail: React.FC = () => {
 
   //Logic for Test and Clear buttons
   const getMapValidationResp = async (uri) => {
+    setToggleLoading(true);
     setIsTestClicked(true);
     try {
       let resp = await getMappingValidationResp(curationOptions.activeStep.stepArtifact.name, savedMappingArt, uri, curationOptions.activeStep.stepArtifact.sourceDatabase);
@@ -1217,6 +1219,8 @@ const MappingStepDetail: React.FC = () => {
       }
     } catch (err) {
       console.error("Error while applying validation on current URI!", err);
+    } finally {
+      setToggleLoading(false);
     }
   };
 
@@ -1625,7 +1629,7 @@ const MappingStepDetail: React.FC = () => {
           <HCButton id="Clear-btn" mat-raised-button="true" variant="outline-light" disabled={emptyData} onClick={() => onClear()} className={"me-2"}>
             Clear
           </HCButton>
-          <HCButton className={styles.btn_test} id="Test-btn" mat-raised-button="true" variant="primary" disabled={emptyData || mapExpTouched} onClick={() => getMapValidationResp(sourceURI)}>
+          <HCButton className={styles.btn_test} id="Test-btn" mat-raised-button="true" variant="primary" disabled={emptyData || mapExpTouched} onClick={() => getMapValidationResp(sourceURI)} loading={loading}>
             Test
           </HCButton>
         </span>
