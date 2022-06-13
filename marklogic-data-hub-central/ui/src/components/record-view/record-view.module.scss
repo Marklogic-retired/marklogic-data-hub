@@ -23,21 +23,23 @@
 
 .cardIcons {
   float: right;
-  position: relative;
-  top: -5px;
+  position: absolute;
+  left: 68%;
+  top: -3px;
+  margin-left: 10px;
 
   .infoIcon {
     position: relative;
-    top: 4px;
+    top: 6px;
     color: #7f86b5;
-    font-size: 22px;
+    font-size: 29px;
     margin-right: 8px;
     cursor: pointer;
   }
 
   .detailLinkIcon {
     color: $info;
-    font-size: 18px;
+    font-size: 26px;
   }
 
   .detailLinkIconDisabled {
@@ -130,7 +132,7 @@
 }
 
 .arrowRightSquare{
-    font-size: 22px;
+    font-size: 26px;
     &:hover{
       color: var(--hoverColor);
     }

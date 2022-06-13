@@ -97,6 +97,7 @@ const MatchingStepDetail: React.FC = () => {
   const [singleUriWarning, setSingleUriWarning] = useState(false);
   const [singleUriWarning2, setSingleUriWarning2] = useState(false);
   const [uriTestMatchClicked, setUriTestMatchClicked] = useState(uriTestStorage);
+  const [loading, setToggleLoading] = useState(false);
   const [allDataSelected, setAllDataSelected] = useState(false);
   const [testUrisOnlySelected, setTestUrisOnlySelected] = useState(true);
   const [testUrisAllDataSelected, setTestUrisAllDataSelected] = useState(false);
@@ -214,6 +215,7 @@ const MatchingStepDetail: React.FC = () => {
     };
     let previewMatchActivity = await previewMatchingActivity(testMatchData);
     if (previewMatchActivity) {
+      setToggleLoading(false);
       setPreviewMatchedData(previewMatchActivity.actionPreview.length);
       await test();
       setPreviewMatchedActivity(previewMatchActivity);
@@ -408,6 +410,7 @@ const MatchingStepDetail: React.FC = () => {
     }
     if (UriTableData.length >= 2 || allDataSelected) {
       if (!duplicateUriWarning && !singleUriWarning) {
+        setToggleLoading(true);
         setUriTestMatchClicked(true);
         for (let i = 0; i < UriTableData.length; i++) {
           testMatchedData.uris.push(UriTableData[i].uriContent);
@@ -997,7 +1000,7 @@ const MatchingStepDetail: React.FC = () => {
             </div>
           </label>
           <div className={styles.testButton}>
-            <HCButton variant="primary" type="submit" onClick={handleTestButtonClick} aria-label="testMatchUriButton">Test</HCButton>
+            <HCButton variant="primary" type="submit" onClick={handleTestButtonClick} aria-label="testMatchUriButton" loading={loading}>Test</HCButton>
           </div>
         </div>
         {/*<div className={styles.matchedTab}>*/}
