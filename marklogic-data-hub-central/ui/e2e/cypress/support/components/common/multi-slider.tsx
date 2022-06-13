@@ -41,7 +41,7 @@ class MultiSlider {
   }
 
   deleteOptionMulti(name: string) {
-    cy.findByTestId(`ruleset ${name}`).should("be.visible").click().then(() => {
+    cy.findByTestId(`ruleset ${name}`).scrollIntoView().should("be.visible").click().then(() => {
       cy.get(`[data-icon="trash-alt"]`).click();
     });
   }

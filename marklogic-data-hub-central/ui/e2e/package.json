@@ -25,7 +25,7 @@
   },
   "devDependencies": {
     "@testing-library/cypress": "^6.0.0",
-    "cypress": "^6.6.0",
+    "cypress": "^7.7.0",
     "cypress-fail-fast": "^2.3.1",
     "cypress-file-upload": "^5.0.3",
     "cypress-plugin-tab": "^1.0.5",

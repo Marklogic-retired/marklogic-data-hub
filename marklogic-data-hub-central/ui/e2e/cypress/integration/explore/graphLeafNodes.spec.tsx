@@ -38,7 +38,7 @@ describe("Leaf Nodes", () => {
     cy.log("**Select 'Customer' entity**");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
-    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
+    entitiesSidebar.getBaseEntityOption("Customer").scrollIntoView().should("be.visible");
     cy.wait(2000);
 
     cy.log("**Clicking Show related on '101' leaf node to expand**");
@@ -97,15 +97,9 @@ describe("Leaf Nodes", () => {
     graphExplore.focusNode(ExploreGraphNodes.PRODUCT_GROUP);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.PRODUCT_GROUP).then((nodePositions: any) => {
       let orderCoordinates: any = nodePositions[ExploreGraphNodes.PRODUCT_GROUP];
-      const canvas = graphExplore.getGraphVisCanvas();
-
-      // Right click and try to expand 3 records of the node,
-      // but it should not exist because the leaf node was collapsed
-      canvas.rightclick(orderCoordinates.x, orderCoordinates.y, {force: true});
-      graphExplore.stopStabilization();
-
-      graphExplore.getExpand3RecordsFromGroupNode().should("not.exist");
-
+      //it should not exist because the leaf node was collapsed
+      cy.log("**Coordinates should not exist because it was collapsed**");
+      expect(orderCoordinates).to.be.undefined;
     });
 
     cy.log("**Verify if concepts leaf can be expanded properly. Select 'Product' entity**");
