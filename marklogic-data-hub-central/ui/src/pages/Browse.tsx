@@ -34,6 +34,7 @@ import {ViewType} from "../types/modeling-types";
 import {themeColors} from "@config/themes.config";
 import {HubCentralConfigContext} from "@util/hubCentralConfig-context";
 import {baseEntitiesSorting} from "@util/entities-sorting";
+import {getRelatedConcepts} from "@api/facets";
 
 interface Props extends RouteComponentProps<any> {
 }
@@ -99,6 +100,7 @@ const Browse: React.FC<Props> = ({location}) => {
   const [updateSpecificFacets, setUpdateSpecificFacets] = useState<boolean>(false);
   const [parsedFacets, setParsedFacets] = React.useState<any[]>([]);
   const [selectedView, setSelectedView] = useState<ViewType>(viewOptions.graphView ? ViewType.graph : (viewOptions.tableView ? ViewType.table : ViewType.snippet));
+  const [entitiesWithRelatedConcepts, setEntitiesWithRelatedConcepts] = useState({});
 
   const searchResultDependencies = [
     searchOptions.pageLength,
@@ -175,21 +177,35 @@ const Browse: React.FC<Props> = ({location}) => {
     }
   }, [parsedFacets]);
 
+  const getAllFacetsExceptConcepts = () => {
+    return Object.fromEntries(Object.entries(searchOptions.selectedFacets).filter(([key, value]) => key !== "RelatedConcepts"));
+  };
+
   const getGraphSearchResult = async (allEntities: any[]) => {
     try {
+      let conceptFilterTypeIds: any = [];
+      let filteredSelectedFacets = {};
+      if (searchOptions.selectedFacets.hasOwnProperty("RelatedConcepts")) {
+        filteredSelectedFacets = getAllFacetsExceptConcepts();
+        conceptFilterTypeIds = searchOptions.selectedFacets["RelatedConcepts"]["stringValues"];
+      }
+
       let payload = {
         "database": searchOptions.database,
         "data": {
           "query": {
             "searchText": searchOptions.query,
             "entityTypeIds": allEntities,
-            "selectedFacets": searchOptions.selectedFacets,
+            "selectedFacets": !conceptFilterTypeIds.length ? searchOptions.selectedFacets : filteredSelectedFacets,
             "relatedEntityTypeIds": searchOptions.relatedEntityTypeIds
           },
           "start": 0,
           "pageLength": 100,
         }
       };
+      if (conceptFilterTypeIds.length) {
+        payload["data"]["query"]["conceptsFilterTypeIds"] = searchOptions.selectedFacets["RelatedConcepts"]["stringValues"];
+      }
       const response = await graphSearchQuery(payload);
       if (componentIsMounted.current && response.data) {
         setGraphSearchData(response.data);
@@ -206,6 +222,10 @@ const Browse: React.FC<Props> = ({location}) => {
 
   const getSearchResults = async (allEntities: string[]) => {
     let searchText = searchOptions.query;
+    let filteredSelectedFacets = {};
+    if (searchOptions.selectedFacets.hasOwnProperty("RelatedConcepts")) {
+      filteredSelectedFacets = getAllFacetsExceptConcepts();
+    }
     try {
       handleUserPreferences();
       setIsLoading(true);
@@ -215,7 +235,7 @@ const Browse: React.FC<Props> = ({location}) => {
           query: {
             searchText,
             entityTypeIds: searchOptions.nextEntityType === "All Data" ? [] : allEntities,
-            selectedFacets: searchOptions.selectedFacets,
+            selectedFacets: searchOptions.selectedFacets.hasOwnProperty("RelatedConcepts") ? filteredSelectedFacets : searchOptions.selectedFacets,
             hideHubArtifacts: searchOptions.nextEntityType === "All Data" ? hideDataHubArtifacts : true
           },
           propertiesToDisplay: searchOptions.nextEntityType === "All Data" ? [] : searchOptions.selectedTableProperties,
@@ -302,8 +322,20 @@ const Browse: React.FC<Props> = ({location}) => {
     }
   };
 
+  const fetchConceptFacets = async () => {
+    try {
+      const response =  await getRelatedConcepts(searchOptions.database);
+      if (response.status === 200) {
+        setEntitiesWithRelatedConcepts(response.data);
+      }
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
   useEffect(() => {
     initializeUserPreferences();
+    fetchConceptFacets();
     return () => {
       componentIsMounted.current = false;
     };
@@ -698,6 +730,7 @@ const Browse: React.FC<Props> = ({location}) => {
               currentRelatedEntities={currentRelatedEntities}
               setCurrentRelatedEntities={setCurrentRelatedEntities}
               entityIndicatorData={entityIndicatorData}
+              entitiesWithRelatedConcepts={entitiesWithRelatedConcepts}
             />
           </>
         </HCSider>
@@ -772,6 +805,7 @@ const Browse: React.FC<Props> = ({location}) => {
                           entityTypeInstances={graphSearchData}
                           graphView={viewOptions.graphView}
                           setGraphPageInfo={setGraphPageInfo}
+                          entitiesWithRelatedConcepts={entitiesWithRelatedConcepts}
                         />
                       </div> :
                       (viewOptions.tableView ?

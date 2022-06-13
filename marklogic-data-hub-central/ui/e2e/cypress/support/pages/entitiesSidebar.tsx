@@ -163,5 +163,9 @@ class BaseEntitySidebar {
   getEntityFacetAmountBar(entityName: string) {
     return cy.get(`[aria-label="base-entities-${entityName}-amountbar"]`);
   }
+
+  toggleRelatedConceptsPanel() {
+    return cy.get("#related-concepts .accordion-button").click({force: true});
+  }
 }
 export default new BaseEntitySidebar();

@@ -551,6 +551,7 @@ const ExploreGraphViewToolTips = {
   },
   invalidDefinition: <>Unable to display facets because the definition cannot be found for this entity type. To learn more, see <a href="https://docs.marklogic.com/datahub/refs/troubleshooting.html" target="_blank">Troubleshooting</a> in the documentation.</>,
   invalidDefinitionToolTip: <>You cannot choose this entity type because the definition cannot be found for this entity type. To learn more, see Troubleshooting in the documentation.</>,
+  relatedConcepts: <>Related concepts are instances of concept classes related to the base entities. Select the check boxes for related concepts you want to explore. To add or edit relationships, go to the <strong>Model</strong> screen.</>
 };
 
 const ExplorePlaceholders = {
