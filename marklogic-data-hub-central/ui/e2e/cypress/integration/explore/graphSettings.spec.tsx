@@ -254,8 +254,17 @@ describe("Entity Type Settings Modal", () => {
       cy.findByText(propertiesOnHoverData.shippingStreet).should("exist");
     });
 
-    graphExploreSidePanel.getSidePanel().scrollIntoView().should("be.visible");
-    graphExploreSidePanel.getSidePanelHeading().should("contain.text", defaultEntityTypeData.propertiesValues.name);
+    cy.log("**Open graph side panel and validate data**");
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
+      let customer_102_nodePosition: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
+      cy.wait(150);
+      graphExplore.getGraphVisCanvas().trigger("mouseover", customer_102_nodePosition.x, customer_102_nodePosition.y);
+      graphExplore.getGraphVisCanvas().click(customer_102_nodePosition.x, customer_102_nodePosition.y, {force: true});
+
+      graphExploreSidePanel.getSidePanel().scrollIntoView().should("be.visible");
+      graphExploreSidePanel.getSidePanelHeading().should("contain.text", defaultEntityTypeData.propertiesValues.name);
+
+    });
   });
 
   it("Verify settings modal with a selected entity type in the sidebar", () => {
@@ -335,21 +344,24 @@ describe("Entity Type Settings Modal", () => {
     });
 
     cy.log("**Click on customer node and verify that label in side bar**");
+    cy.wait(1000);
     graphExplore.stopStabilization();
     graphExplore.focusNode(ExploreGraphNodes.CUSTOMER_102);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
       let customer_102_nodePosition: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
       graphExplore.getGraphVisCanvas().trigger("mouseover", customer_102_nodePosition.x, customer_102_nodePosition.y);
-    });
-    cy.wait(500);
+      graphExplore.getGraphVisCanvas().click(customer_102_nodePosition.x, customer_102_nodePosition.y, {force: true});
 
-    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
+    });
+    cy.wait(1000);
+
+    /* graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
       let customer_102_nodePosition: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
       cy.wait(150);
       graphExplore.getGraphVisCanvas().click(customer_102_nodePosition.x, customer_102_nodePosition.y, {force: true});
       graphExplore.getGraphVisCanvas().click(customer_102_nodePosition.x, customer_102_nodePosition.y, {force: true});
     });
-
+*/
     graphExploreSidePanel.getSidePanel().scrollIntoView().should("be.visible");
     graphExploreSidePanel.getSidePanelHeading().should("contain.text", defaultEntityTypeData.propertiesValues.email);
   });

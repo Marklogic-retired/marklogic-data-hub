@@ -26,21 +26,22 @@ describe("Test '/Explore' graph right panel", () => {
   });
 
   it("Validate that the right panel opens and display node's information", () => {
-    cy.log("**Go to Explore section?**");
+    cy.log("**Go to Explore section**");
     toolbar.getExploreToolbarIcon().click();
 
     cy.log("**Verify Graph view is default view**");
     graphExplore.getGraphVisCanvas().should("be.visible");
-    cy.wait(5000); //nodes need to stabilize first, "graphExplore.stopStabilization()" does not seem to work
+    cy.wait(7000); //nodes need to stabilize first, "graphExplore.stopStabilization()" does not seem to work
 
     cy.log("**Picking up a node**");
     graphExplore.focusNode(ExploreGraphNodes.ORDER_10258);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.ORDER_10258).then((nodePositions: any) => {
       let orderCoordinates: any = nodePositions[ExploreGraphNodes.ORDER_10258];
       const canvas = graphExplore.getGraphVisCanvas();
+      canvas.trigger("mouseover", orderCoordinates.x, orderCoordinates.y, {force: true});
       canvas.click(orderCoordinates.x, orderCoordinates.y, {force: true});
     });
-
+    cy.wait(3000);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.ORDER_10258).then((nodePositions: any) => {
       let orderCoordinates: any = nodePositions[ExploreGraphNodes.ORDER_10258];
       const canvas = graphExplore.getGraphVisCanvas();
@@ -87,6 +88,26 @@ describe("Test '/Explore' graph right panel", () => {
 
     cy.log("**Close side panel**");
     graphExploreSidePanel.closeGraphExploreSidePanel();
+
+    cy.log("**Picking up a concept node**");
+    graphExplore.focusNode(ExploreGraphNodes.CONCEPT_KETTLE);
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_KETTLE).then((nodePositions: any) => {
+      let kettleCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_KETTLE];
+      const canvas = graphExplore.getGraphVisCanvas();
+      canvas.trigger("mouseover", kettleCoordinates.x, kettleCoordinates.y);
+      canvas.click(kettleCoordinates.x, kettleCoordinates.y, {force: true});
+    });
+    cy.wait(1000);
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_KETTLE).then((nodePositions: any) => {
+      let kettleCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_KETTLE];
+      const canvas = graphExplore.getGraphVisCanvas();
+      canvas.click(kettleCoordinates.x, kettleCoordinates.y, {force: true});
+    });
+
+    cy.log("**Verify the count of related instances for the concept node**");
+    graphExploreSidePanel.getSidePanelConceptHeading("Kettle").scrollIntoView().should("be.visible");
+    graphExploreSidePanel.getSidePanelConceptHeadingInfo("Kettle").scrollIntoView().should("be.visible");
+    graphExploreSidePanel.getTableCellValueByName("1").should("contain", "Product");
   });
 });
 

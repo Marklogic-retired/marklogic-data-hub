@@ -1,6 +1,7 @@
 {
     "baseUrl": "http://localhost:8080",
     "video": true,
+    "videoCompression": 20,
     "viewportWidth": 1680,
     "viewportHeight": 1050,
     "numTestsKeptInMemory": 1,

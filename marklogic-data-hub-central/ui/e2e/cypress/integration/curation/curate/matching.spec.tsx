@@ -287,8 +287,10 @@ describe("Matching", () => {
     cy.waitUntil(() => cy.visit("/tiles"));
   });
   it("Edit test match URIs", () => {
-    toolbar.getCurateToolbarIcon().click();
-    curatePage.toggleEntityTypeId("Person");
+    cy.visit("/tiles/curate");
+
+    cy.log("**Open Person mapping steps**");
+    curatePage.getEntityTypePanel("Person").should("be.visible").click();
     curatePage.selectMatchTab("Person");
     curatePage.openStepDetails("match-person");
 
@@ -346,6 +348,7 @@ describe("Matching", () => {
     cy.findByLabelText("inputUriRadio").scrollIntoView().click();
 
     //adding new multiple property
+    cy.log("**adding new multiple property**");
     matchingStepDetail.addNewRuleset();
     matchingStepDetail.getMultiPropertyOption();
     rulesetMultipleModal.setRulesetName("testMultipleProperty");
@@ -362,6 +365,7 @@ describe("Matching", () => {
     // multiSlider.getHandleName("testMultipleProperty").trigger("mouseup", {force: true});
 
     //To test when users click on test button and no data is returned
+    cy.log("**To test when users click on test button and no data is returned**");
     cy.findByLabelText("inputUriRadio").scrollIntoView({duration: 2000});
     cy.waitUntil(() => matchingStepDetail.getUriInputField().scrollIntoView().type("/json/noDataUri"));
     matchingStepDetail.getAddUriIcon().click();
@@ -389,6 +393,7 @@ describe("Matching", () => {
     }
 
     //To test when user selects all data and click on test button
+    cy.log("**To test when user selects all data and click on test button**");
     matchingStepDetail.getAllDataRadio().click();
     matchingStepDetail.getTestMatchUriButton();
     cy.waitForAsyncRequest();
@@ -405,6 +410,7 @@ describe("Matching", () => {
     }
 
     // To test when user click on expand all icon
+    cy.log("**To test when user click on expand all icon**");
     cy.get("[class*=\"matching-step-detail_expandCollapseIcon_\"]").within(() => {
       cy.findByLabelText("expand-collapse").within(() => {
         cy.get(".switch-button-group").within(() => {
@@ -415,6 +421,7 @@ describe("Matching", () => {
     cy.findAllByLabelText("expandedTableView").should("have.length.gt", 0);
 
     // To verify content of multiple properties
+    cy.log("**To verify content of multiple properties**");
     cy.findAllByLabelText("Expand row").first().scrollIntoView().click();
     cy.waitUntil(() => cy.findAllByText("lname").should("have.length.gt", 0));
     cy.waitUntil(() => cy.findByLabelText("exact 0").should("have.length.gt", 0));
@@ -422,6 +429,7 @@ describe("Matching", () => {
     cy.waitUntil(() => cy.findByLabelText("zip 1").should("have.length.gt", 0));
 
     // To test compare values for matched Uris
+    cy.log("**To test compare values for matched Uris**");
     cy.findAllByLabelText("/json/persons/first-name-double-metaphone compareButton").first().scrollIntoView().click();
     for (let i in compareValuesData) {
       cy.findByLabelText(compareValuesData[i].propertyName).should("have.length.gt", 0);
@@ -431,12 +439,14 @@ describe("Matching", () => {
     compareValuesModal.getTableHeader().should("not.be.visible"); // Added as per DHFPROD-8322
 
     // To test highlighted matched rows
+    cy.log("**To test highlighted matched rows**");
     cy.findByTitle("fname").should("have.css", "background-color", "rgb(133, 191, 151)");
     cy.findByTitle("lname").should("have.css", "background-color", "rgb(133, 191, 151)");
     cy.findByTitle("Address").should("not.have.css", "background-color", "rgb(133, 191, 151)");
     cy.findByLabelText("Close").scrollIntoView().click();
 
     // To test expanded uri table content
+    cy.log("**To test expanded uri table content**");
     cy.waitUntil(() => cy.findByText("/json/persons/first-name-double-metaphone2.json").first().scrollIntoView().click());
     for (let i in allDataMatchedResults) {
       cy.findAllByLabelText(allDataMatchedResults[i].ruleset).should("have.length.gt", 0);
@@ -452,6 +462,7 @@ describe("Matching", () => {
     cy.waitForAsyncRequest();
 
     // To test when user click on collapse all icon
+    cy.log("**To test when user click on collapse all icon**");
     cy.findByLabelText("inputUriRadio").scrollIntoView();
     cy.get("[class*=\"matching-step-detail_expandCollapseIcon_\"]").within(() => {
       cy.findByLabelText("expand-collapse").within(() => {

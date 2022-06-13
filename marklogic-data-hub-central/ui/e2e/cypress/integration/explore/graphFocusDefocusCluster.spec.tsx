@@ -39,9 +39,8 @@ describe("Focus Defocus clusters", () => {
       let customerCoordinates: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
       const canvas = graphExplore.getGraphVisCanvas();
       //Click on node to open side panel
+      canvas.trigger("mouseover", customerCoordinates.x, customerCoordinates.y, {force: true});
       canvas.click(customerCoordinates.x, customerCoordinates.y, {force: true});
-      canvas.click(customerCoordinates.x, customerCoordinates.y, {force: true});
-      canvas.dblclick(customerCoordinates.x, customerCoordinates.y, {force: true});
     });
 
     cy.log("**View customer record type information**");

@@ -40,19 +40,14 @@ describe("Concepts", () => {
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Product");
     entitiesSidebar.getBaseEntityOption("Product").should("be.visible");
-    cy.wait(2000);
+    cy.wait(5000); // The canvas takes some more time animating
 
     cy.log("**Picking up a concept node**");
     graphExplore.focusNode(ExploreGraphNodes.CONCEPT_KETTLE);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_KETTLE).then((nodePositions: any) => {
       let kettleCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_KETTLE];
       const canvas = graphExplore.getGraphVisCanvas();
-      canvas.click(kettleCoordinates.x, kettleCoordinates.y, {force: true});
-    });
-
-    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_KETTLE).then((nodePositions: any) => {
-      let kettleCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_KETTLE];
-      const canvas = graphExplore.getGraphVisCanvas();
+      canvas.trigger("mouseover", kettleCoordinates.x, kettleCoordinates.y, {force: true});
       canvas.click(kettleCoordinates.x, kettleCoordinates.y, {force: true});
     });
 
@@ -65,24 +60,21 @@ describe("Concepts", () => {
     cy.log("**Turn OFF concepts toggle**");
     graphView.getConceptToggle().scrollIntoView().trigger("mouseover").click();
 
-    cy.wait(3000);
+    cy.wait(4000);
 
     cy.log("**Verify Kettle concept node is not visible in the canvas anymore**");
     graphExplore.focusNode(ExploreGraphNodes.CONCEPT_KETTLE);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_KETTLE).then((nodePositions: any) => {
       let kettleCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_KETTLE];
-      const canvas = graphExplore.getGraphVisCanvas();
-
-      //Click on node to open side panel
-      canvas.click(kettleCoordinates.x, kettleCoordinates.y, {force: true});
-      canvas.click(kettleCoordinates.x, kettleCoordinates.y, {force: true});
-      graphExploreSidePanel.getSidePanel().should("not.exist");
+      //it should not exist because the leaf node was collapsed
+      cy.log("**Kettle coordinates should not exist because it was collapsed**");
+      expect(kettleCoordinates).to.be.undefined;
     });
 
     cy.log("**Turn ON concepts toggle**");
     graphView.getConceptToggle().scrollIntoView().trigger("mouseover").click();
 
-    cy.wait(3000);
+    cy.wait(4000);
 
     cy.log("**Verify Kettle concept node is visible again**");
     graphExplore.focusNode(ExploreGraphNodes.CONCEPT_KETTLE);
@@ -91,7 +83,7 @@ describe("Concepts", () => {
       const canvas = graphExplore.getGraphVisCanvas();
 
       //Click on node to open side panel
-      canvas.click(kettleCoordinates.x, kettleCoordinates.y, {force: true});
+      canvas.trigger("mouseover", kettleCoordinates.x, kettleCoordinates.y, {force: true});
       canvas.click(kettleCoordinates.x, kettleCoordinates.y, {force: true});
       graphExploreSidePanel.getSidePanel().should("exist");
     });

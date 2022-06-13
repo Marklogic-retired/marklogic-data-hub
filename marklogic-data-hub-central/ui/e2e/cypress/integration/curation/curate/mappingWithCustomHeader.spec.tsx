@@ -89,12 +89,19 @@ describe("Create and verify load steps, map step and flows with a custom header"
     createEditMappingDialog.saveButton().click({force: true});
     //verify that step details automatically opens after step creation
     curatePage.verifyStepDetailsOpen(mapStep);
-    //Go back to curate homepage
-    mappingStepDetail.goBackToCurateHomePage();
+
   });
   it("Edit Map step", () => {
+    cy.restoreLocalStorage();
+    //Go back to curate homepage
+    cy.visit("/tiles/curate");
+
+    cy.log("**Open Order to see steps**");
+    curatePage.getEntityTypePanel("Order").should("be.visible").click();
+
     // Open step settings and switch to Advanced tab
-    cy.waitUntil(() => curatePage.editStep(mapStep).click({force: true}));
+    cy.log("**Open step settings and switch to Advanced tab**");
+    cy.waitUntil(() => curatePage.editStep(mapStep).click());
     curatePage.switchEditAdvanced().click();
     // add custom header
     advancedSettingsDialog.setHeaderContent("curateTile/customHeader");
@@ -116,16 +123,22 @@ describe("Create and verify load steps, map step and flows with a custom header"
     mappingStepDetail.setXpathExpressionInput("shipRegion", "ShipRegion");
     mappingStepDetail.setXpathExpressionInput("shippedDate", "ShippedDate");
 
-    //Go back to curate homepage
-    mappingStepDetail.goBackToCurateHomePage();
+
   });
   it("Add Map step to new flow and Run", {defaultCommandTimeout: 120000}, () => {
+    //Go back to curate homepage
+    cy.visit("/tiles/curate");
+
+    cy.log("**Open Order to see steps**");
+    curatePage.getEntityTypePanel("Order").should("be.visible").click({force: true});
+
     //Cancel add to new flow
+    cy.log("**Cancel add to new flow**");
     curatePage.addToNewFlow("Order", mapStep);
     cy.findByText("New Flow").should("be.visible");
     loadPage.confirmationOptions("Cancel").click();
     //should route user back to curate page
-    mappingStepDetail.goBackToCurateHomePage();
+    cy.visit("/tiles/curate");
     cy.waitUntil(() => curatePage.getEntityTypePanel("Order").should("be.visible").click());
     curatePage.openExistingFlowDropdownAndTooltip("Order", mapStep);
     curatePage.getExistingFlowFromDropdown(mapStep, flowName).click();

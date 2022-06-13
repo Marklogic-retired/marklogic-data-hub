@@ -19,7 +19,7 @@ describe("Run Tile tests", () => {
 
     cy.visit("/");
     cy.contains(Application.title);
-    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click({force: true});
     cy.waitUntil(() => runPage.getFlowName("personJSON").should("be.visible"));
   });
 

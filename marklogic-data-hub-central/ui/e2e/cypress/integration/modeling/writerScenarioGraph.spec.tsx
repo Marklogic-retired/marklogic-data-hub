@@ -369,7 +369,6 @@ describe("Entity Modeling: Graph View", () => {
 
     cy.log("**Go to curate open mapping step detail**");
     toolbar.getCurateToolbarIcon().click();
-    //curatePage.goBack("arrow-left");
     cy.waitUntil(() => curatePage.getEntityTypePanel("Person").should("be.visible"));
     curatePage.toggleEntityTypeId("Person");
     curatePage.openStepDetails("mapPersonJSON");
@@ -383,12 +382,15 @@ describe("Entity Modeling: Graph View", () => {
     cy.wait(2500); //wait for DOM as following element becomes detached
     cy.publishEntityModel();
 
-    cy.log("**Verify relationship is visible in mapping**");
+    cy.log("**Verify Person relationship is visible in mapping**");
     //verify relationship is visible in mapping
-    //toolbar.getCurateToolbarIcon().click();
+    cy.log("**Go to curate and open Person**");
     cy.visit("/tiles/curate");
     confirmationModal.getNavigationWarnText().should("not.exist");
-    curatePage.getEntityTypePanel("Person").should("be.visible").click();
+
+    //There's a re-rendering so waiting for an element or a request won't work.
+    cy.wait(1000);
+    curatePage.getEntityTypePanel("Person").should("be.visible").click({force: true});
     curatePage.openStepDetails("mapPersonJSON");
     cy.waitUntil(() => curatePage.dataPresent().should("be.visible"));
 
