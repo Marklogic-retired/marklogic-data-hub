@@ -1,3 +1,4 @@
+const common = require("/data-hub/5/mastering/common.sjs");
 'use strict';
 
 /*
@@ -46,7 +47,7 @@ class Mergeable {
         break;
       default:
     }
-    return contentObject;
+    return common.applyInterceptors("Apply Document context interceptor", contentObject, this.mergeStep.customApplyDocumentContextInterceptors, actionDetails, targetEntity);
   }
 }
 

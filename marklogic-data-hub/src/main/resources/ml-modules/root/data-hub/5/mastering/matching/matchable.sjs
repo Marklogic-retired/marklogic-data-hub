@@ -2,39 +2,11 @@
 const consts = require("/data-hub/5/impl/consts.sjs");
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const {requireFunction} = require("../../impl/hub-utils.sjs");
+const common = require("/data-hub/5/mastering/common.sjs");
 const getBlocks = hubUtils.requireFunction("/com.marklogic.smart-mastering/matcher-impl/blocks-impl.xqy", "getBlocks");
-const cachedInterceptorModules = {};
 const matchingDebugTraceEnabled = xdmp.traceEnabled(consts.TRACE_MATCHING_DEBUG);
 const matchingTraceEnabled = xdmp.traceEnabled(consts.TRACE_MATCHING) || matchingDebugTraceEnabled;
 const matchingTraceEvent = xdmp.traceEnabled(consts.TRACE_MATCHING) ? consts.TRACE_MATCHING : consts.TRACE_MATCHING_DEBUG;
-
-function retrieveInterceptorFunction(interceptorObj, interceptorType) {
-  let interceptorModule = cachedInterceptorModules[interceptorObj.path];
-  if (!interceptorModule) {
-    try {
-      interceptorModule = require(interceptorObj.path);
-      cachedInterceptorModules[interceptorObj.path] = interceptorModule;
-    } catch (e) {
-      httpUtils.throwBadRequest(`Module defined by ${interceptorType} not found: ${interceptorObj.path}`);
-    }
-  }
-  const interceptorFunction = interceptorModule[interceptorObj.function];
-  if (!interceptorFunction) {
-    httpUtils.throwBadRequest(`Function defined by ${interceptorType} not exported by module: ${interceptorObj.function}#${interceptorObj.path}`);
-  }
-  return interceptorFunction;
-}
-
-function applyInterceptors(interceptorType, accumulated, interceptors, ...additionalArguments) {
-  if (!interceptors || interceptors.length === 0) {
-    return accumulated;
-  } else {
-    const interceptorObj = interceptors.shift();
-    const interceptorFunction = retrieveInterceptorFunction(interceptorObj, interceptorType);
-    return applyInterceptors(interceptorType, interceptorFunction(accumulated, ...additionalArguments), interceptors, ...additionalArguments);
-  }
-}
 
 /*
  * A class that encapsulates the configurable portions of the matching process.
@@ -76,7 +48,7 @@ class Matchable {
   baselineQuery() {
     if (!this._baselineQuery) {
       const firstBaseline = this._model.instanceQuery();
-      this._baselineQuery = applyInterceptors("Baseline Query Interceptor", firstBaseline, this.matchStep.baselineQueryInterceptors);
+      this._baselineQuery = common.applyInterceptors("Baseline Query Interceptor", firstBaseline, this.matchStep.baselineQueryInterceptors);
       if (matchingTraceEnabled) {
         xdmp.trace(matchingTraceEvent, `Initializing the baseline match query: ${xdmp.describe(this._baselineQuery, Sequence.from([]), Sequence.from([]))}`);
       }
@@ -144,7 +116,7 @@ class Matchable {
     if (matchingTraceEnabled) {
       xdmp.trace(matchingTraceEvent, `Base filter query set to ${xdmp.describe(filterQuery, Sequence.from([]), Sequence.from([]))} for ${xdmp.describe(documentNode, Sequence.from([]), Sequence.from([]))}`);
     }
-    return applyInterceptors("Filter Query Interceptor", filterQuery, this.matchStep.filterQueryInterceptors, documentNode);
+    return common.applyInterceptors("Filter Query Interceptor", filterQuery, this.matchStep.filterQueryInterceptors, documentNode);
   }
 
   /*
@@ -180,7 +152,7 @@ class Matchable {
     if (matchingTraceEnabled) {
       xdmp.trace(matchingTraceEvent, `Base score set to ${defaultScore} for ${xdmp.describe(contentObjectA.value, Sequence.from([]), Sequence.from([]))} and ${xdmp.describe(contentObjectB.value, Sequence.from([]), Sequence.from([]))}`);
     }
-    return applyInterceptors("Score Document Interceptor", defaultScore, this.matchStep.scoreDocumentInterceptors, contentObjectA, contentObjectB, matchingRulesetDefinitions);
+    return common.applyInterceptors("Score Document Interceptor", defaultScore, this.matchStep.scoreDocumentInterceptors, contentObjectA, contentObjectB, matchingRulesetDefinitions);
   }
   /*
    * Returns a JSON Object with details to pass onto the merge step for use in taking action.
