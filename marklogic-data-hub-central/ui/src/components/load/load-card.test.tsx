@@ -1,14 +1,16 @@
-import React from "react";
-import {render, fireEvent, wait, cleanup} from "@testing-library/react";
-import {MemoryRouter} from "react-router-dom";
+import {AuthoritiesContext, AuthoritiesService} from "../../util/authorities";
+import {cleanup, fireEvent, render, wait} from "@testing-library/react";
+
 import LoadCard from "./load-card";
-import data from "../../assets/mock-data/curation/common.data";
-import ingestionData from "../../assets/mock-data/curation/ingestion.data";
-import axiosMock from "axios";
-import mocks from "../../api/__mocks__/mocks.data";
-import {AuthoritiesService, AuthoritiesContext} from "../../util/authorities";
+import {MemoryRouter} from "react-router-dom";
+import React from "react";
 import {SecurityTooltips} from "../../config/tooltips.config";
+import axiosMock from "axios";
+import data from "../../assets/mock-data/curation/common.data";
 import dayjs from "dayjs";
+import ingestionData from "../../assets/mock-data/curation/ingestion.data";
+import mocks from "../../api/__mocks__/mocks.data";
+
 jest.mock("axios");
 
 const mockHistoryPush = jest.fn();
@@ -39,6 +41,7 @@ describe("Load Card component", () => {
         <AuthoritiesContext.Provider value={authorityService}>
           <LoadCard
             {...data.loadData}
+            updateLoadArtifact={jest.fn()}
             flows={data.flowsAdd}
             canWriteFlow={true}
             addStepToFlow={jest.fn()}
@@ -87,6 +90,7 @@ describe("Load Card component", () => {
         <AuthoritiesContext.Provider value={authorityService}>
           <LoadCard
             {...data.loadData}
+            updateLoadArtifact={jest.fn()}
             flows={data.flowsAdd}
             canWriteFlow={true}
             addStepToFlow={jest.fn()}
@@ -119,6 +123,7 @@ describe("Load Card component", () => {
         <AuthoritiesContext.Provider value={authorityService}>
           <LoadCard
             {...data.loadData}
+            updateLoadArtifact={jest.fn()}
             flows={data.flowsAdd}
             canWriteFlow={true}
             addStepToFlow={jest.fn()}
@@ -150,6 +155,7 @@ describe("Load Card component", () => {
             {...data.loadData}
             flows={data.flowsAdd}
             canWriteFlow={true}
+            updateLoadArtifact={jest.fn()}
             addStepToFlow={jest.fn()}
             addStepToNew={jest.fn()} />
         </AuthoritiesContext.Provider>
@@ -178,6 +184,7 @@ describe("Load Card component", () => {
         <AuthoritiesContext.Provider value={authorityService}>
           <LoadCard
             {...data.loadData}
+            updateLoadArtifact={jest.fn()}
             flows={data.flowsAdd}
             canWriteFlow={true}
             addStepToFlow={jest.fn()}
@@ -211,6 +218,7 @@ describe("Load Card component", () => {
             {...data.loadData}
             flows={data.flows}
             canWriteFlow={true}
+            updateLoadArtifact={jest.fn()}
             addStepToFlow={jest.fn()}
             addStepToNew={jest.fn()} />
         </AuthoritiesContext.Provider>
@@ -269,6 +277,7 @@ describe("Load Card component", () => {
     const mockCreateLoadArtifact = jest.fn();
     const mockDeleteLoadArtifact = jest.fn();
     const {getByText, getAllByText, getByTestId, getByLabelText} = render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><LoadCard
+      updateLoadArtifact={jest.fn()}
       addStepToFlow={mockAddStepToFlow}
       addStepToNew={mockAddStepToNew}
       canReadOnly={authorityService.canReadLoad()}
@@ -277,7 +286,7 @@ describe("Load Card component", () => {
       createLoadArtifact={mockCreateLoadArtifact}
       data={data.loadData.data}
       deleteLoadArtifact={mockDeleteLoadArtifact}
-      flows={data.flows}/>
+      flows={data.flows} />
     </AuthoritiesContext.Provider></MemoryRouter>);
 
     const loadStepName = data.loadData.data[0].name;
@@ -302,7 +311,8 @@ describe("Load Card component", () => {
     const {getByText, queryByTestId, getByTestId, queryByText, queryByLabelText, getByLabelText} = render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><LoadCard
       {...ingestionData.loadCardProps}
       data={data.loadData.data}
-      flows={data.flows}/>
+      updateLoadArtifact={jest.fn()}
+      flows={data.flows} />
     </AuthoritiesContext.Provider></MemoryRouter>);
 
     fireEvent.mouseOver(getByText(data.loadData.data[0].name));

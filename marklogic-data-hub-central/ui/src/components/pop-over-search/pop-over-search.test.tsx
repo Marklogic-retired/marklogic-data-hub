@@ -1,12 +1,13 @@
-import React from "react";
-import {render, fireEvent, wait} from "@testing-library/react";
+import {SearchContext, defaultSearchContext} from "../../util/search-context";
+import {fireEvent, render, wait} from "@testing-library/react";
+
+import {MemoryRouter} from "react-router-dom";
 import PopOverSearch from "./pop-over-search";
+import React from "react";
 import axiosMock from "axios";
 import {stringSearchResponse} from "../../assets/mock-data/explore/facet-props";
-jest.mock("axios");
-import {MemoryRouter} from "react-router-dom";
-import {SearchContext} from "../../util/search-context";
 
+jest.mock("axios");
 
 describe("<PopOverSearch/>", () => {
   afterEach(() => {
@@ -18,8 +19,12 @@ describe("<PopOverSearch/>", () => {
     const {getByText, getByPlaceholderText, getByLabelText} = render(
       <MemoryRouter>
         <SearchContext.Provider value={{
-          searchOptions: {tileId: "explore",
-            database: "final"}
+          ...defaultSearchContext,
+          searchOptions: {
+            ...defaultSearchContext.searchOptions,
+            tileId: "explore",
+            database: "final"
+          }
         }}>
           <PopOverSearch
             referenceType={"path"}
@@ -27,9 +32,8 @@ describe("<PopOverSearch/>", () => {
             propertyPath={"name"}
             checkFacetValues={jest.fn()}
             popOvercheckedValues={[]}
-            facetValues= {[]}
+            facetValues={[]}
             facetName={""}
-            database="final"
           />);
         </SearchContext.Provider></MemoryRouter>);
 
@@ -58,7 +62,8 @@ describe("<PopOverSearch/>", () => {
     const {getByText, getByPlaceholderText, getByLabelText} = render(
       <MemoryRouter>
         <SearchContext.Provider value={{
-          searchOptions: {tileId: "monitor"}
+          ...defaultSearchContext,
+          searchOptions: {...defaultSearchContext.searchOptions, tileId: "monitor"}
         }}>
           <PopOverSearch
             referenceType={""}
@@ -66,7 +71,7 @@ describe("<PopOverSearch/>", () => {
             propertyPath={""}
             checkFacetValues={jest.fn()}
             popOvercheckedValues={[]}
-            facetValues= {[]}
+            facetValues={[]}
             facetName={"stepName"}
           />);
         </SearchContext.Provider></MemoryRouter>);

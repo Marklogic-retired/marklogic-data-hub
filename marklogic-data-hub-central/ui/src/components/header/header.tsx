@@ -1,31 +1,32 @@
-import React, {useContext, useState} from "react";
-import {RouteComponentProps, withRouter, useHistory, Link} from "react-router-dom";
-import axios from "axios";
-import {UserContext} from "@util/user-context";
-import {parseVersion} from "@util/environment";
-import logo from "./logo.svg";
-import styles from "./header.module.scss";
-import {Application} from "@config/application.config";
-import SystemInfo from "./system-info";
+import {HCButton, HCTooltip} from "@components/common";
 import {Image, Nav, NavDropdown} from "react-bootstrap";
-import {QuestionCircle} from "react-bootstrap-icons";
+import {Link, RouteComponentProps, useHistory, withRouter} from "react-router-dom";
+import React, {useContext, useState} from "react";
+
+import {Application} from "@config/application.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {QuestionCircle} from "react-bootstrap-icons";
+import SystemInfo from "./system-info";
+import {UserContext} from "@util/user-context";
+import axios from "axios";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import {faUser} from "@fortawesome/free-regular-svg-icons";
-import {HCButton, HCTooltip} from "@components/common";
+import logo from "./logo.svg";
+import {parseVersion} from "@util/environment";
+import styles from "./header.module.scss";
 
 interface Props extends RouteComponentProps<any> {
   environment: any
 }
 
-const Header:React.FC<Props> = (props) => {
+const Header: React.FC<Props> = (props) => {
   const {user, userNotAuthenticated, handleError} = useContext(UserContext);
 
   const [systemInfoVisible, setSystemInfoVisible] = useState(false);
   const [showUserDropdown, toggleUserDropdown] = useState(false);
   const history = useHistory();
 
-  const logoRef = React.createRef<HTMLAnchorElement>();
+  const logoRef = React.createRef<any>();
   const titleRef = React.createRef<HTMLDivElement>();
   const serviceNameRef = React.createRef<HTMLElement>();
   const helpLinkRef = React.createRef<HTMLAnchorElement>();
@@ -115,10 +116,10 @@ const Header:React.FC<Props> = (props) => {
   };
 
   let infoContainer = <div aria-label="info-text">
-      Data Hub Version: <strong>{props.environment.dataHubVersion}</strong><br/>
-      MarkLogic Version: <strong>{props.environment.marklogicVersion}</strong><br/>
-      Service Name: <strong>{props.environment.serviceName}</strong><br/><br/>
-      Click to see details, to download configuration files, and to clear user data.
+    Data Hub Version: <strong>{props.environment.dataHubVersion}</strong><br />
+    MarkLogic Version: <strong>{props.environment.marklogicVersion}</strong><br />
+    Service Name: <strong>{props.environment.serviceName}</strong><br /><br />
+    Click to see details, to download configuration files, and to clear user data.
   </div>;
 
   let globalIcons;
@@ -169,7 +170,7 @@ const Header:React.FC<Props> = (props) => {
         </NavDropdown>
       </Nav>;
   } else {
-    globalIcons =(
+    globalIcons = (
       <Nav id="global-icons" className={styles.iconsContainer}>
         <Nav.Item>
           <Nav.Link id="help-link" href="https://docs.marklogic.com/datahub/" target="_blank" rel="noopener noreferrer" tabIndex={1} className={styles.helpIconLink}>

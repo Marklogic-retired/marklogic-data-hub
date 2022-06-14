@@ -1,6 +1,6 @@
+import EntityIconsSidebar from "./entity-icons-sidebar";
 import React from "react";
 import {render} from "@testing-library/react";
-import EntityIconsSidebar from "./entity-icons-sidebar";
 
 const ADDRESS = {name: "Address", color: "#CEE0ED", amount: 10, filter: 2, icon: "faUser"};
 const BACK_ACCOUNT = {name: "Bank Account", color: "#FDC7D4", amount: 10, filter: 2, icon: "faPiggyBank"};
@@ -20,6 +20,7 @@ describe("Entity Icons Sidebar component", () => {
         currentBaseEntities={currentBaseEntities}
         onClose={jest.fn()}
         updateSelectedEntity={jest.fn()}
+        graphView={false}
       />
     );
 
@@ -38,6 +39,7 @@ describe("Entity Icons Sidebar component", () => {
         currentRelatedEntities={currentRelatedEntities}
         onClose={jest.fn()}
         updateSelectedEntity={jest.fn()}
+        graphView={false}
       />
     );
 

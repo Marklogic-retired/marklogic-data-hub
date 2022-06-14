@@ -1,13 +1,15 @@
-import React from "react";
-import {render} from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
-import Tiles from "./tiles";
-import {faCube} from "@fortawesome/free-solid-svg-icons";
+
+import {SearchContext, defaultSearchContext} from "../../util/search-context";
+
+import React from "react";
 import TestComponent from "../../assets/mock-data/test-component";
-import {fireEvent} from "@testing-library/react";
-import {SearchContext} from "../../util/search-context";
+import Tiles from "./tiles";
 import {entityDefinitionsArray} from "../../assets/mock-data/modeling/modeling";
+import {faCube} from "@fortawesome/free-solid-svg-icons";
+import {fireEvent} from "@testing-library/react";
 import {getQueriesResponse} from "../../assets/mock-data/explore/query";
+import {render} from "@testing-library/react";
 
 const color = "#000";
 const text = "test";
@@ -140,6 +142,7 @@ describe("Tiles component", () => {
     };
     const {getByLabelText, debug} = render(
       <SearchContext.Provider value={{
+        ...defaultSearchContext,
         savedQueries: getQueriesResponse,
         entityDefinitionsArray
       }}>

@@ -1,34 +1,17 @@
-import React from "react";
-import {render, fireEvent, waitForElement} from "@testing-library/react";
-import SearchResult from "./search-result";
-import {BrowserRouter as Router} from "react-router-dom";
+import {AuthoritiesContext, AuthoritiesService} from "../../util/authorities";
+import {SearchContext, defaultSearchContext, defaultSearchOptions} from "../../util/search-context";
 import {entityFromJSON, entityParser} from "../../util/data-conversion";
+import {fireEvent, render, waitForElement} from "@testing-library/react";
+
+import React from "react";
+import {BrowserRouter as Router} from "react-router-dom";
+import SearchResult from "./search-result";
 import {modelResponse} from "../../assets/mock-data/explore/model-response";
 import searchPayloadResults from "../../assets/mock-data/explore/search-payload-results";
-import {SearchContext} from "../../util/search-context";
-import {AuthoritiesService, AuthoritiesContext} from "../../util/authorities";
-
 
 describe("Search Result view component", () => {
   const parsedModelData = entityFromJSON(modelResponse);
   const entityDefArray = entityParser(parsedModelData);
-
-  const defaultSearchOptions = {
-    query: "",
-    entityTypeIds: [],
-    nextEntityTypes: [],
-    start: 1,
-    pageNumber: 1,
-    pageLength: 20,
-    pageSize: 20,
-    selectedFacets: {},
-    maxRowsPerPage: 100,
-    selectedQuery: "select a query",
-    manageQueryModal: false,
-    selectedTableProperties: [],
-    view: null,
-    sortOrder: []
-  };
 
   test("Source and instance tooltips render", async () => {
     const authorityService = new AuthoritiesService();
@@ -40,6 +23,7 @@ describe("Search Result view component", () => {
             entityDefArray={entityDefArray}
             item={searchPayloadResults[0]}
             tableView={false}
+            handleViewChange={jest.fn()}
           />
         </AuthoritiesContext.Provider>
       </Router>
@@ -68,12 +52,13 @@ describe("Search Result view component", () => {
 
   test("Verify expandable icon closes if page number changes", async () => {
     const {rerender, getByTestId, getByLabelText} = render(
-      <SearchContext.Provider value={{searchOptions: defaultSearchOptions}}>
+      <SearchContext.Provider value={{...defaultSearchContext}}>
         <Router>
           <SearchResult
             entityDefArray={entityDefArray}
             item={searchPayloadResults[0]}
             tableView={false}
+            handleViewChange={jest.fn()}
           />
         </Router>
       </SearchContext.Provider>
@@ -84,12 +69,13 @@ describe("Search Result view component", () => {
     expect(getByLabelText("icon: chevron-down")).toBeInTheDocument();
 
     rerender(
-      <SearchContext.Provider value={{searchOptions: {...defaultSearchOptions, pageNumber: 2}}}>
+      <SearchContext.Provider value={{...defaultSearchContext, searchOptions: {...defaultSearchOptions, pageNumber: 2}}}>
         <Router>
           <SearchResult
             entityDefArray={entityDefArray}
             item={searchPayloadResults[0]}
             tableView={false}
+            handleViewChange={jest.fn()}
           />
         </Router>
       </SearchContext.Provider>

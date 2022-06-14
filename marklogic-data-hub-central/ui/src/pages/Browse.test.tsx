@@ -1,9 +1,11 @@
-import React from "react";
-import {render, fireEvent, screen} from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
-import {MemoryRouter} from "react-router-dom";
+
+import {ISearchContextInterface, SearchContext, SearchOptionsInterface} from "../util/search-context";
+import {fireEvent, render, screen} from "@testing-library/react";
+
 import Browse from "./Browse";
-import {SearchContext} from "../util/search-context";
+import {MemoryRouter} from "react-router-dom";
+import React from "react";
 import axiosMock from "axios";
 import {exploreModelResponse} from "../../src/assets/mock-data/explore/model-response";
 
@@ -13,7 +15,7 @@ jest.mock("../api/modeling");
 
 describe("Explorer Browse page tests ", () => {
 
-  const defaultSearchOptions = {
+  const defaultSearchOptions: SearchOptionsInterface = {
     query: "",
     entityTypeIds: ["Customer"],
     relatedEntityTypeIds: [],
@@ -32,9 +34,63 @@ describe("Explorer Browse page tests ", () => {
     tileId: "explore",
     sortOrder: [],
     database: "final",
-    datasource: "entities"
+    datasource: "entities",
+    mergeUnmerge: false,
+    preselectedFacets: []
   };
 
+  const defaultProps: ISearchContextInterface = {
+    searchOptions: defaultSearchOptions,
+    greyedOptions: defaultSearchOptions,
+    setRelatedEntityTypeIds: jest.fn(),
+    setEntity: jest.fn(),
+    applySaveQuery: jest.fn(),
+    savedNode: undefined,
+    setSavedNode: jest.fn(),
+    savedQueries: [],
+    setSavedQueries: jest.fn(),
+    entityInstanceId: undefined,
+    entityDefinitionsArray: [],
+    setEntityDefinitionsArray: jest.fn(),
+    setSearchFromUserPref: jest.fn(),
+    setQuery: jest.fn(),
+    setPage: jest.fn(),
+    toggleMergeUnmerge: jest.fn(),
+    setPageLength: jest.fn(),
+    setSearchFacets: jest.fn(),
+    setEntityTypeIds: jest.fn(),
+    setNextEntity: jest.fn(),
+    setEntityClearQuery: jest.fn(),
+    setLatestJobFacet: jest.fn(),
+    clearFacet: jest.fn(),
+    clearAllFacets: jest.fn(),
+    clearAllFacetsLS: jest.fn(),
+    clearDateFacet: jest.fn(),
+    clearRangeFacet: jest.fn(),
+    clearGreyDateFacet: jest.fn(),
+    clearGreyRangeFacet: jest.fn(),
+    resetSearchOptions: jest.fn(),
+    setAllSearchFacets: jest.fn(),
+    setAllGreyedOptions: jest.fn(),
+    setQueryGreyedOptions: jest.fn(),
+    clearGreyFacet: jest.fn(),
+    clearConstraint: jest.fn(),
+    clearAllGreyFacets: jest.fn(),
+    resetGreyedOptions: jest.fn(),
+    setSelectedQuery: jest.fn(),
+    setSidebarQuery: jest.fn(),
+    setSelectedTableProperties: jest.fn(),
+    setBaseEntitiesWithProperties: jest.fn(),
+    setView: jest.fn(),
+    setPageWithEntity: jest.fn(),
+    setSortOrder: jest.fn(),
+    setDatabase: jest.fn(),
+    setLatestDatabase: jest.fn(),
+    setGraphViewOptions: jest.fn(),
+    setDatasource: jest.fn(),
+    setSearchOptions: jest.fn(),
+    setDatabaseAndDatasource: jest.fn(),
+  };
   beforeEach(() => {
     axiosMock.get["mockImplementation"]((url) => {
       switch (url) {
@@ -52,15 +108,7 @@ describe("Explorer Browse page tests ", () => {
 
   test("Verify collapsible side bar", async () => {
     const {getByLabelText} = render(<MemoryRouter>
-      <SearchContext.Provider value={{
-        searchOptions: defaultSearchOptions,
-        greyedOptions: defaultSearchOptions,
-        setRelatedEntityTypeIds: jest.fn(),
-        setEntity: jest.fn(),
-        applySaveQuery: jest.fn(),
-        savedNode: undefined,
-        setSavedNode: jest.fn()
-      }}>
+      <SearchContext.Provider value={{...defaultProps}}>
         <Browse />
       </SearchContext.Provider></MemoryRouter>);
 
@@ -73,27 +121,19 @@ describe("Explorer Browse page tests ", () => {
 
   test("Verify snippet/table view on hover css", async () => {
     const {getByLabelText} = render(<MemoryRouter>
-      <SearchContext.Provider value={{
-        searchOptions: defaultSearchOptions,
-        greyedOptions: defaultSearchOptions,
-        setRelatedEntityTypeIds: jest.fn(),
-        setEntity: jest.fn(),
-        applySaveQuery: jest.fn(),
-        savedNode: undefined,
-        setSavedNode: jest.fn()
-      }}>
+      <SearchContext.Provider value={{...defaultProps}}>
         <Browse />
       </SearchContext.Provider></MemoryRouter>);
 
-    fireEvent.click(document.querySelector("#switch-view-table"));
+    fireEvent.click(document.querySelector("#switch-view-table")!!);
     expect(document.querySelector("#switch-view-table")).toHaveProperty("checked", true);
     expect(document.querySelector("#switch-view-snippet")).toHaveProperty("checked", false);
-    fireEvent.mouseOver(document.querySelector("#switch-view-snippet"));
+    fireEvent.mouseOver(document.querySelector("#switch-view-snippet")!!);
     expect(getByLabelText("switch-view-snippet")).toHaveStyle("color: rgb(127, 134, 181");
-    fireEvent.click(document.querySelector("#switch-view-snippet"));
+    fireEvent.click(document.querySelector("#switch-view-snippet")!!);
     expect(document.querySelector("#switch-view-table")).toHaveProperty("checked", false);
     expect(document.querySelector("#switch-view-snippet")).toHaveProperty("checked", true);
-    fireEvent.mouseOver(document.querySelector("#switch-view-table"));
+    fireEvent.mouseOver(document.querySelector("#switch-view-table")!!);
     expect(document.querySelector("#switch-view-table")).toHaveStyle("color: rgb(127, 134, 181");
   });
 

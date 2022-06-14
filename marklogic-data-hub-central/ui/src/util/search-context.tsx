@@ -1,9 +1,10 @@
-import React, {useState, useEffect, useContext} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {getUserPreferences, updateUserPreferences} from "../services/user-preferences";
-import {UserContext} from "./user-context";
-import {QueryOptions} from "../types/query-types";
 
-type SearchContextInterface = {
+import {QueryOptions} from "../types/query-types";
+import {UserContext} from "./user-context";
+
+export type SearchOptionsInterface = {
   query: string,
   entityTypeIds: string[],
   baseEntities: any[], //list of entities
@@ -27,7 +28,7 @@ type SearchContextInterface = {
   preselectedFacets: string[]
 }
 
-const defaultSearchOptions = {
+export const defaultSearchOptions: SearchOptionsInterface = {
   query: "",
   entityTypeIds: [],
   baseEntities: [],
@@ -51,61 +52,7 @@ const defaultSearchOptions = {
   preselectedFacets: []
 };
 
-
-interface ISearchContextInterface {
-  searchOptions: SearchContextInterface;
-  setSearchFromUserPref: (username: string) => void;
-  setQuery: (searchString: string) => void;
-  setPage: (pageNumber: number, totalDocuments: number) => void;
-  setPageLength: (current: number, pageSize: number) => void;
-  toggleMergeUnmerge: (current: boolean) => void;
-  setSearchFacets: (constraint: string, vals: string[]) => void;
-  setEntity: () => void;
-  setEntityTypeIds: (setEntityIds: string[]) => void;
-  setNextEntity: (option: string) => void;
-  setRelatedEntityTypeIds: (option: any[]) => void;
-  setEntityClearQuery: (option: string) => void;
-  setLatestJobFacet: (vals: string, entityName: string, stepName: string, targetDatabase?: string, collectionVals?: string) => void;
-  clearFacet: (constraint: string, val: string) => void;
-  clearAllFacets: () => void;
-  clearAllFacetsLS: () => void;
-  clearDateFacet: () => void;
-  clearRangeFacet: (range: string) => void;
-  clearGreyDateFacet: () => void;
-  clearGreyRangeFacet: (range: string) => void;
-  resetSearchOptions: (tileIconClicked?: boolean) => void;
-  setAllSearchFacets: (facets: any) => void;
-  greyedOptions: SearchContextInterface;
-  setAllGreyedOptions: (facets: any) => void;
-  setQueryGreyedOptions: (searchString: string) => void;
-  clearGreyFacet: (constraint: string, val: string) => void;
-  clearConstraint: (constraint: string) => void;
-  clearAllGreyFacets: () => void;
-  resetGreyedOptions: () => void;
-  applySaveQuery: (query: QueryOptions) => void;
-  setSelectedQuery: (query: string) => void;
-  setSidebarQuery: (query: string) => void;
-  setSelectedTableProperties: (propertiesToDisplay: string[]) => void;
-  setBaseEntitiesWithProperties: (baseEntities: string[], propertiesToDisplay: string[]) => void;
-  setView: (tileId: string, viewId: JSX.Element | null) => void;
-  setPageWithEntity: (option: [], pageNumber: number, start: number, facets: any, searchString: string, sortOrder: [], targetDatabase: string) => void;
-  setSortOrder: (propertyName: string, sortOrder: any) => void;
-  savedQueries: any;
-  setSavedQueries: (queries: any) => void;
-  setDatabase: (option: string) => void;
-  setLatestDatabase: (option: string, jobId: string) => void;
-  entityDefinitionsArray: any;
-  setEntityDefinitionsArray: (entDefinitionsArray: any) => void;
-  setGraphViewOptions: (entityInstanceId: string | undefined) => void;
-  setDatasource: (option: string) => void;
-  savedNode: any,
-  setSavedNode: (node: any) => void;
-  setSearchOptions: (searchOptions: SearchContextInterface) => void;
-  entityInstanceId: string | undefined;
-  setDatabaseAndDatasource: (option: any) => void;
-}
-
-export const SearchContext = React.createContext<ISearchContextInterface>({
+export const defaultSearchContext = {
   searchOptions: defaultSearchOptions,
   greyedOptions: defaultSearchOptions,
   savedQueries: [],
@@ -156,12 +103,69 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setDatasource: () => { },
   setSearchOptions: () => { },
   setDatabaseAndDatasource: () => { },
+};
+
+
+export interface ISearchContextInterface {
+  searchOptions: SearchOptionsInterface;
+  setSearchFromUserPref: (username: string) => void;
+  setQuery: (searchString: string) => void;
+  setPage: (pageNumber: number, totalDocuments: number) => void;
+  setPageLength: (current: number, pageSize: number) => void;
+  toggleMergeUnmerge: (current: boolean) => void;
+  setSearchFacets: (constraint: string, vals: string[]) => void;
+  setEntity: () => void;
+  setEntityTypeIds: (setEntityIds: string[]) => void;
+  setNextEntity: (option: string) => void;
+  setRelatedEntityTypeIds: (option: any[]) => void;
+  setEntityClearQuery: (option: string) => void;
+  setLatestJobFacet: (vals: string, entityName: string, stepName: string, targetDatabase?: string, collectionVals?: string) => void;
+  clearFacet: (constraint: string, val: string) => void;
+  clearAllFacets: () => void;
+  clearAllFacetsLS: () => void;
+  clearDateFacet: () => void;
+  clearRangeFacet: (range: string) => void;
+  clearGreyDateFacet: () => void;
+  clearGreyRangeFacet: (range: string) => void;
+  resetSearchOptions: (tileIconClicked?: boolean) => void;
+  setAllSearchFacets: (facets: any) => void;
+  greyedOptions: SearchOptionsInterface;
+  setAllGreyedOptions: (facets: any) => void;
+  setQueryGreyedOptions: (searchString: string) => void;
+  clearGreyFacet: (constraint: string, val: string) => void;
+  clearConstraint: (constraint: string) => void;
+  clearAllGreyFacets: () => void;
+  resetGreyedOptions: () => void;
+  applySaveQuery: (query: QueryOptions) => void;
+  setSelectedQuery: (query: string) => void;
+  setSidebarQuery: (query: string) => void;
+  setSelectedTableProperties: (propertiesToDisplay: string[]) => void;
+  setBaseEntitiesWithProperties: (baseEntities: string[], propertiesToDisplay: string[]) => void;
+  setView: (tileId: string, viewId: JSX.Element | null) => void;
+  setPageWithEntity: (option: [], pageNumber: number, start: number, facets: any, searchString: string, sortOrder: [], targetDatabase: string) => void;
+  setSortOrder: (propertyName: string, sortOrder: any) => void;
+  savedQueries: any;
+  setSavedQueries: (queries: any) => void;
+  setDatabase: (option: string) => void;
+  setLatestDatabase: (option: string, jobId: string) => void;
+  entityDefinitionsArray: any;
+  setEntityDefinitionsArray: (entDefinitionsArray: any) => void;
+  setGraphViewOptions: (entityInstanceId: string | undefined) => void;
+  setDatasource: (option: string) => void;
+  savedNode: any,
+  setSavedNode: (node: any) => void;
+  setSearchOptions: (searchOptions: SearchOptionsInterface) => void;
+  entityInstanceId: string | undefined;
+  setDatabaseAndDatasource: (option: any) => void;
+}
+
+export const SearchContext = React.createContext<ISearchContextInterface>({...defaultSearchContext
 });
 
 const SearchProvider: React.FC<{ children: any }> = ({children}) => {
 
-  const [searchOptions, setSearchOptions] = useState<SearchContextInterface>(defaultSearchOptions);
-  const [greyedOptions, setGreyedOptions] = useState<SearchContextInterface>(defaultSearchOptions);
+  const [searchOptions, setSearchOptions] = useState<SearchOptionsInterface>(defaultSearchOptions);
+  const [greyedOptions, setGreyedOptions] = useState<SearchOptionsInterface>(defaultSearchOptions);
   const [savedQueries, setSavedQueries] = useState<any>([]);
   const [savedNode, setSavedNode] = useState<any>();
   const [entityInstanceId, setEntityInstanceId] = useState(undefined);

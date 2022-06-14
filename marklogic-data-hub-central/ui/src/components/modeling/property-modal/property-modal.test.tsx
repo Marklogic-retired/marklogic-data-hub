@@ -1,23 +1,23 @@
-import React from "react";
-import {render, fireEvent, screen, wait} from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import PropertyModal from "./property-modal";
 import {
-  StructuredTypeOptions,
   EditPropertyOptions,
+  PropertyOptions,
   PropertyType,
-  PropertyOptions
+  StructuredTypeOptions
 } from "../../../types/modeling-types";
-import {ConfirmationType} from "../../../types/common-types";
-
+import {customerEntityNamesArray, entityNamesArray} from "../../../assets/mock-data/modeling/modeling-context-mock";
 import {entityReferences, primaryEntityTypes} from "../../../api/modeling";
-import curateData from "../../../assets/mock-data/curation/flows.data";
-import {getSystemInfo} from "../../../api/environment";
-import {definitionsParser} from "../../../util/data-conversion";
-import {propertyTableEntities, referencePayloadEmpty, referencePayloadSteps, referencePayloadStepRelationships} from "../../../assets/mock-data/modeling/modeling";
-import {ModelingTooltips} from "../../../config/tooltips.config";
+import {fireEvent, render, screen, wait} from "@testing-library/react";
+import {propertyTableEntities, referencePayloadEmpty, referencePayloadStepRelationships, referencePayloadSteps} from "../../../assets/mock-data/modeling/modeling";
+
+import {ConfirmationType} from "../../../types/common-types";
 import {ModelingContext} from "../../../util/modeling-context";
-import {entityNamesArray, customerEntityNamesArray} from "../../../assets/mock-data/modeling/modeling-context-mock";
+import {ModelingTooltips} from "../../../config/tooltips.config";
+import PropertyModal from "./property-modal";
+import React from "react";
+import curateData from "../../../assets/mock-data/curation/flows.data";
+import {definitionsParser} from "../../../util/data-conversion";
+import {getSystemInfo} from "../../../api/environment";
+import userEvent from "@testing-library/user-event";
 
 jest.mock("../../../api/modeling");
 jest.mock("../../../api/environment");
@@ -41,7 +41,8 @@ const DEFAULT_SELECTED_PROPERTY_OPTIONS: PropertyOptions = {
   pii: "no",
   sortable: false,
   facetable: false,
-  wildcard: false
+  joinPropertyName: "",
+  joinPropertyType: "",
 };
 
 const DEFAULT_EDIT_PROPERTY_OPTIONS: EditPropertyOptions = {
@@ -521,10 +522,11 @@ describe("Property Modal Component", () => {
       type: "integer",
       identifier: "yes",
       multiple: "no",
+      joinPropertyName: "",
+      joinPropertyType: "",
       pii: "yes",
       sortable: false,
       facetable: false,
-      wildcard: true
     };
 
     const editPropertyOptions: EditPropertyOptions = {
@@ -677,11 +679,12 @@ describe("Property Modal Component", () => {
       propertyType: PropertyType.Structured,
       type: "Address",
       identifier: "no",
+      joinPropertyName: "",
+      joinPropertyType: "",
       multiple: "yes",
       pii: "no",
       sortable: false,
       facetable: false
-      //wildcard: false
     };
 
     const editPropertyOptions: EditPropertyOptions = {
@@ -761,12 +764,13 @@ describe("Property Modal Component", () => {
     const structuredPropertyOptions: PropertyOptions = {
       propertyType: PropertyType.Basic,
       type: "gMonth",
+      joinPropertyName: "",
+      joinPropertyType: "",
       identifier: "no",
       multiple: "no",
       pii: "yes",
       sortable: false,
       facetable: false
-      //wildcard: true
     };
 
     const editPropertyOptions: EditPropertyOptions = {
@@ -842,8 +846,9 @@ describe("Property Modal Component", () => {
       multiple: "no",
       pii: "yes",
       sortable: false,
-      facetable: false
-      //wildcard: true
+      facetable: false,
+      joinPropertyName: "",
+      joinPropertyType: "",
     };
 
     const editPropertyOptions: EditPropertyOptions = {
@@ -898,8 +903,9 @@ describe("Property Modal Component", () => {
       multiple: "yes",
       pii: "no",
       sortable: false,
-      facetable: false
-      //wildcard: false
+      facetable: false,
+      joinPropertyName: "",
+      joinPropertyType: "",
     };
 
     const editPropertyOptions: EditPropertyOptions = {
@@ -962,7 +968,8 @@ describe("Property Modal Component", () => {
       pii: "no",
       sortable: false,
       facetable: false,
-      wildcard: false
+      joinPropertyName: "",
+      joinPropertyType: "",
     };
 
     const editPropertyOptions: EditPropertyOptions = {

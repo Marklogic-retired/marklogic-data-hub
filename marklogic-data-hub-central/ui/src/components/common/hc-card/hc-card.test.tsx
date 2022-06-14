@@ -1,7 +1,7 @@
 import {cleanup, render} from "@testing-library/react";
-import React from "react";
-import HCCard from "./hc-card";
 
+import HCCard from "./hc-card";
+import React from "react";
 
 describe("Hub Central Card component", () => {
 
@@ -30,9 +30,7 @@ describe("Hub Central Card component", () => {
   test("should render a HCCard component with title extras", () => {
     const {getByText} = render(<HCCard
       title={"This is the title"}
-      titleExtra={[
-        <div key="extra">Extras here.</div>
-      ]}
+      titleExtra={<div key="extra">Extras here.</div>}
     >This is a card</HCCard>);
     expect(getByText("This is a card")).toBeInTheDocument();
     expect(getByText("Extras here.")).toBeInTheDocument();

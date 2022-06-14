@@ -1,7 +1,7 @@
+import Footer from "./footer";
 import React from "react";
 import {mount} from "enzyme";
-import Footer from "./footer";
-
+import {fireEvent, render, wait, waitForElement} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 describe("Footer component", () => {
@@ -21,20 +21,10 @@ describe("Footer component", () => {
   });
 
   it("can focus and goto on privacy link", () => {
-
-    global.window = {location: {href: null}};
+    const {getByLabelText} = render(<Footer />)    
 
     // get the actual link wrapper by traversing DOM tree
-    let privacyLink = wrapper.find("#privacy-link");
-    expect(privacyLink.text()).toBe("Privacy");
-
-    // can set link wrapper to focus
-    privacyLink.getDOMNode().focus();
-    expect(privacyLink.is(":focus")).toBe(true);
-
-    // can tab to link wrapper from another element
-    wrapper.getDOMNode().focus();
-    userEvent.tab();
-    expect(privacyLink.is(":focus")).toBe(true);
+    let privacyLink = getByLabelText("#privacy-link");
+    expect(privacyLink.innerText).toBe("Privacy");
   });
 });

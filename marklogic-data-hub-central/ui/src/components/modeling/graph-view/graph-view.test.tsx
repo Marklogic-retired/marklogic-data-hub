@@ -1,12 +1,14 @@
-import React from "react";
-import {render, screen, wait, cleanup, act} from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import "jest-canvas-mock";
+
+import {act, cleanup, render, screen, wait} from "@testing-library/react";
+import {getEntityTypes, hubCentralConfig} from "../../../assets/mock-data/modeling/modeling";
+
 import GraphView from "./graph-view";
 import {ModelingContext} from "../../../util/modeling-context";
 import {ModelingTooltips} from "../../../config/tooltips.config";
-import {getEntityTypes, hubCentralConfig} from "../../../assets/mock-data/modeling/modeling";
+import React from "react";
 import {isModified} from "../../../assets/mock-data/modeling/modeling-context-mock";
-import "jest-canvas-mock";
+import userEvent from "@testing-library/user-event";
 
 jest.mock("../../../api/modeling");
 jest.mock("../../../api/environment");
@@ -27,18 +29,28 @@ describe("Graph View Component", () => {
     let isModifiedUpdated = {...isModified, modelingOptions: {...isModified.modelingOptions, selectedEntity: entityName, entityTypeNamesArray: entityTypeNamesArrayUpdated}};
     return (<ModelingContext.Provider value={isModifiedUpdated}>
       <GraphView
-        dataModel={getEntityTypes}
         canReadEntityModel={canReadEntityModel}
         canWriteEntityModel={canWriteEntityModel}
+        dataModel={getEntityTypes}
         deleteEntityType={jest.fn()}
-        relationshipModalVisible={false}
-        toggleRelationshipModal={jest.fn()}
-        updateSavedEntity={jest.fn()}
-        setDataModelFromServer={jest.fn()}
+        deleteConceptClass={jest.fn()}
         hubCentralConfig={hubCentralConfig}
-        updateHubCentralConfig={jest.fn()}
+        relationshipModalVisible={false}
+        revertUnpublishedChanges={false}
         setConfirmType={jest.fn()}
+        setDataModelFromServer={jest.fn()}
+        setRevertUnpublishedChanges={jest.fn()}
         toggleConfirmModal={() => true}
+        toggleIsEditModal={jest.fn()}
+        toggleIsEditConceptClassModal={jest.fn()}
+        toggleRelationshipModal={jest.fn()}
+        toggleRevertConfirmModal={jest.fn()}
+        toggleShowEntityModal={jest.fn()}
+        toggleShowConceptClassModal={jest.fn()}
+        updateSavedEntity={jest.fn()}
+        updateEntities={jest.fn()}
+        updateHubCentralConfig={jest.fn()}
+        updateConceptClassAndHideModal={jest.fn()}
       />
     </ModelingContext.Provider>
     );
@@ -51,6 +63,19 @@ describe("Graph View Component", () => {
     const {getByTestId, getByLabelText, queryByLabelText, rerender} =  render(
       <ModelingContext.Provider value={isModified}>
         <GraphView
+          deleteConceptClass={jest.fn()}
+          revertUnpublishedChanges={false}
+          setConfirmType={jest.fn()}
+          setRevertUnpublishedChanges={jest.fn()}
+          toggleConfirmModal={() => true}
+          toggleIsEditModal={jest.fn()}
+          toggleIsEditConceptClassModal={jest.fn()}
+          toggleRevertConfirmModal={jest.fn()}
+          toggleShowEntityModal={jest.fn()}
+          toggleShowConceptClassModal={jest.fn()}
+          updateEntities={jest.fn()}
+          updateHubCentralConfig={jest.fn()}
+          updateConceptClassAndHideModal={jest.fn()}
           dataModel={getEntityTypes}
           canReadEntityModel={true}
           canWriteEntityModel={true}
@@ -60,7 +85,6 @@ describe("Graph View Component", () => {
           updateSavedEntity={jest.fn()}
           setDataModelFromServer={jest.fn()}
           hubCentralConfig={hubCentralConfig}
-          updateHubCentralConfig={jest.fn()}
         />
       </ModelingContext.Provider>
     );
@@ -90,6 +114,18 @@ describe("Graph View Component", () => {
     const {getByTestId, getByLabelText, queryByLabelText, rerender, queryByPlaceholderText} =  render(
       <ModelingContext.Provider value={isModified}>
         <GraphView
+          deleteConceptClass={jest.fn()}
+          revertUnpublishedChanges={false}
+          setConfirmType={jest.fn()}
+          setRevertUnpublishedChanges={jest.fn()}
+          toggleConfirmModal={() => true}
+          toggleIsEditModal={jest.fn()}
+          toggleIsEditConceptClassModal={jest.fn()}
+          toggleRevertConfirmModal={jest.fn()}
+          toggleShowEntityModal={jest.fn()}
+          toggleShowConceptClassModal={jest.fn()}
+          updateEntities={jest.fn()}
+          updateConceptClassAndHideModal={jest.fn()}
           dataModel={getEntityTypes}
           canReadEntityModel={true}
           canWriteEntityModel={true}
@@ -136,6 +172,18 @@ describe("Graph View Component", () => {
     const {getByLabelText} =  render(
       <ModelingContext.Provider value={isModified}>
         <GraphView
+          deleteConceptClass={jest.fn()}
+          revertUnpublishedChanges={false}
+          setConfirmType={jest.fn()}
+          setRevertUnpublishedChanges={jest.fn()}
+          toggleConfirmModal={() => true}
+          toggleIsEditModal={jest.fn()}
+          toggleIsEditConceptClassModal={jest.fn()}
+          toggleRevertConfirmModal={jest.fn()}
+          toggleShowEntityModal={jest.fn()}
+          toggleShowConceptClassModal={jest.fn()}
+          updateEntities={jest.fn()}
+          updateConceptClassAndHideModal={jest.fn()}
           dataModel={getEntityTypes}
           canReadEntityModel={true}
           canWriteEntityModel={false}
@@ -160,6 +208,18 @@ describe("Graph View Component", () => {
     const {getByText, getByLabelText, queryByLabelText, rerender, getAllByLabelText} =  render(
       <ModelingContext.Provider value={isModified}>
         <GraphView
+          deleteConceptClass={jest.fn()}
+          revertUnpublishedChanges={false}
+          setConfirmType={jest.fn()}
+          setRevertUnpublishedChanges={jest.fn()}
+          toggleConfirmModal={() => true}
+          toggleIsEditModal={jest.fn()}
+          toggleIsEditConceptClassModal={jest.fn()}
+          toggleRevertConfirmModal={jest.fn()}
+          toggleShowEntityModal={jest.fn()}
+          toggleShowConceptClassModal={jest.fn()}
+          updateEntities={jest.fn()}
+          updateConceptClassAndHideModal={jest.fn()}
           dataModel={getEntityTypes}
           canReadEntityModel={true}
           canWriteEntityModel={true}

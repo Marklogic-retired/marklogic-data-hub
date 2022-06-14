@@ -1,3 +1,4 @@
+
 import React from "react";
 import ReactDOM from "react-dom";
 import {BrowserRouter as Router} from "react-router-dom";
@@ -8,8 +9,11 @@ import * as serviceWorker from "./serviceWorker";
 
 import "./theme/HCTheme.scss";
 
+//@ts-ignore
+window.process = {};
+
 ReactDOM.render(
-  <Router basename={process.env.PUBLIC_URL}>
+  <Router basename={process?.env.PUBLIC_URL}>
     <UserProvider>
       <App />
     </UserProvider>

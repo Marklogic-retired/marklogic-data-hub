@@ -1,15 +1,23 @@
+import "@testing-library/jest-dom/extend-expect";
+
+import Flows, {Props} from "./flows";
+import {RunToolTips, SecurityTooltips} from "../../config/tooltips.config";
+import {cleanup, fireEvent, render, wait} from "@testing-library/react";
+
 import React from "react";
 import {Router} from "react-router";
-import {render, fireEvent, cleanup, wait} from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import "@testing-library/jest-dom/extend-expect";
-import {createMemoryHistory} from "history";
-const history = createMemoryHistory();
 import axiosMock from "axios";
+import {createMemoryHistory} from "history";
 import data from "../../assets/mock-data/curation/flows.data";
-import Flows, {Props} from "./flows";
-import {SecurityTooltips, RunToolTips} from "../../config/tooltips.config";
 import {getViewSettings} from "../../util/user-context";
+import userEvent from "@testing-library/user-event";
+
+const history = createMemoryHistory();
+
+
+
+
+
 
 jest.mock("axios");
 
@@ -254,6 +262,7 @@ describe("Flows component", () => {
     userEvent.click(flowButton);
     for (i = 1; i < data.flows.data[0].steps.length + 1; ++i) {
       const pathname = `http://localhost/tiles/${data.flows.data[0].steps[i-1]["stepDefinitionType"] === "ingestion" ? "load": "curate"}`;
+      // @ts-ignore
       expect(getByLabelText(`${flowName}-${i}-cardlink`).firstChild?.href).toBe(pathname);
     }
 

@@ -1,20 +1,36 @@
+import "@testing-library/jest-dom/extend-expect";
+
+import UserProvider, {UserContext} from "./util/user-context";
+import {cleanup, fireEvent, render} from "@testing-library/react";
+
+import App from "./App";
+import {AuthoritiesContext} from "./util/authorities";
 import React from "react";
 import {Router} from "react-router";
-import {createMemoryHistory} from "history";
-const history = createMemoryHistory();
-import {render, fireEvent, cleanup} from "@testing-library/react";
-import "@testing-library/jest-dom/extend-expect";
-import {AuthoritiesContext} from "./util/authorities";
+import {StompContext} from "./util/stomp";
 import authorities from "./assets/mock-data/authorities.testutils";
-import tiles from "./config/tiles.config";
-import App from "./App";
 import axiosMock from "axios";
+import {createMemoryHistory} from "history";
+import {defaultStompContext} from "./assets/mock-data/stomp-mocks";
 import mocks from "./api/__mocks__/mocks.data";
 import systemInfoData from "./assets/mock-data/system-info.data";
-import UserProvider, {UserContext} from "./util/user-context";
+import tiles from "./config/tiles.config";
 import {userAuthenticated} from "./assets/mock-data/user-context-mock";
-import {StompContext} from "./util/stomp";
-import {defaultStompContext} from "./assets/mock-data/stomp-mocks";
+
+const history = createMemoryHistory();
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 jest.mock("axios");
 
@@ -43,6 +59,7 @@ describe("App component", () => {
     fireEvent.click(getByLabelText("tool-" + firstTool));
     await expect(getByLabelText("icon-" + firstTool)).toBeInTheDocument();
     expect(queryByText("overview")).not.toBeInTheDocument();
+    // @ts-ignore
     expect(getByLabelText("logo-link").href).toContain("/tiles");
     fireEvent.mouseDown(getByLabelText("title-link"));
     expect(getByLabelText("overview")).toBeInTheDocument();

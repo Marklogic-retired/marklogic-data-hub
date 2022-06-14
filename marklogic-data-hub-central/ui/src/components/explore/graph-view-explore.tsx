@@ -162,8 +162,9 @@ const GraphViewExplore: React.FC<Props> = (props) => {
 
   const conceptsExist = () => {
     let hasConcepts = false;
-    if (props.entitiesWithRelatedConcepts?.entities) {
-      for (let elem of props.entitiesWithRelatedConcepts?.entities) {
+    if (!props.entitiesWithRelatedConcepts) return;
+    if (props.entitiesWithRelatedConcepts.entities) {
+      for (let elem of props.entitiesWithRelatedConcepts.entities) {
         if (elem.relatedConcepts.length) {
           hasConcepts = true;
           break;

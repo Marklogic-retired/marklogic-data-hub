@@ -1,21 +1,19 @@
-import React from "react";
-import {BrowserRouter as Router} from "react-router-dom";
-import {createMemoryHistory} from "history";
-const history = createMemoryHistory();
 import {render, wait, waitForElement} from "@testing-library/react";
-import axiosMock from "axios";
-import userEvent from "@testing-library/user-event";
+import {
+  userHasModalErrorHasSessionWarning,
+  userModalError,
+  userNoErrorNoSessionWarning,
+  userSessionWarning
+} from "../../assets/mock-data/user-context-mock";
 
 import ModalStatus from "./modal-status";
 import NoMatchRedirect from "../../pages/noMatchRedirect";
+import React from "react";
+import {BrowserRouter as Router} from "react-router-dom";
 import {UserContext} from "../../util/user-context";
-import {
-  userSessionWarning,
-  userModalError,
-  userNoErrorNoSessionWarning,
-  userHasModalErrorHasSessionWarning
-} from "../../assets/mock-data/user-context-mock";
+import axiosMock from "axios";
 import mocks from "../../api/__mocks__/mocks.data";
+import userEvent from "@testing-library/user-event";
 
 jest.mock("axios");
 
@@ -134,7 +132,7 @@ describe("Modal Status Component", () => {
   test("No response (middle tier crash) handled", async () => {
     mocks.noResponseAPI(axiosMock);
     const {getByText} = render(
-      <Router history={history}>
+      <Router >
         <UserContext.Provider value={userHasModalErrorHasSessionWarning}>
           <ModalStatus />
         </UserContext.Provider>

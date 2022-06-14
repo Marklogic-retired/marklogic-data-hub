@@ -1,21 +1,22 @@
-import React from "react";
-import {render, wait, screen, fireEvent} from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import {BrowserRouter as Router} from "react-router-dom";
+import "jest-canvas-mock";
 
-import Modeling from "./Modeling";
+import {fireEvent, render, screen, wait} from "@testing-library/react";
+import {isModified, isModifiedTableView, notModified, notModifiedTableView} from "../assets/mock-data/modeling/modeling-context-mock";
+import {primaryEntityTypes, publishDraftModels, updateEntityModels} from "../api/modeling";
+
 import {AuthoritiesContext} from "../util/authorities";
-import authorities from "../assets/mock-data/authorities.testutils";
+import {ConfirmationType} from "../types/common-types";
+import Modeling from "./Modeling";
 import {ModelingContext} from "../util/modeling-context";
 import {ModelingTooltips} from "../config/tooltips.config";
-import {getEntityTypes} from "../assets/mock-data/modeling/modeling";
-import {isModified, notModified, isModifiedTableView, notModifiedTableView} from "../assets/mock-data/modeling/modeling-context-mock";
-import {primaryEntityTypes, publishDraftModels, updateEntityModels} from "../api/modeling";
-import {ConfirmationType} from "../types/common-types";
-import tiles from "../config/tiles.config";
-import {getViewSettings} from "../util/user-context";
+import React from "react";
+import {BrowserRouter as Router} from "react-router-dom";
 import {act} from "react-dom/test-utils";
-import "jest-canvas-mock";
+import authorities from "../assets/mock-data/authorities.testutils";
+import {getEntityTypes} from "../assets/mock-data/modeling/modeling";
+import {getViewSettings} from "../util/user-context";
+import tiles from "../config/tiles.config";
+import userEvent from "@testing-library/user-event";
 
 jest.mock("../api/modeling");
 
@@ -296,7 +297,7 @@ describe("Graph view page", () => {
 
     await expect(mockPrimaryEntityType).toHaveBeenCalled();
 
-    expect(getByText(tiles.model.intro)).toBeInTheDocument(); // tile intro text
+    expect(getByText(tiles.model.intro!!)).toBeInTheDocument(); // tile intro text
 
     expect(getByLabelText("switch-view")).toBeInTheDocument();
     expect(document.querySelector("#switch-view-graph")).toBeChecked(); // Graph view is checked by default.
@@ -370,10 +371,10 @@ describe("Graph view page", () => {
 
     await expect(mockPrimaryEntityType).toHaveBeenCalled();
 
-    expect(getAllByText(tiles.model.intro)[0]).toBeInTheDocument(); // tile intro text
+    expect(getAllByText(tiles.model.intro!!)[0]).toBeInTheDocument(); // tile intro text
 
-    let graphViewButton = document.querySelector("#switch-view-graph");
-    let tableViewButton = document.querySelector("#switch-view-table");
+    let graphViewButton = document.querySelector("#switch-view-graph")!!;
+    let tableViewButton = document.querySelector("#switch-view-table")!!;
     let filterInput = document.querySelector((".rbt-input-main"));
     let addEntityOrRelationshipBtn = getByLabelText("add-entity-type-relationship");
     let publishToDatabaseBtn = getByLabelText("publish-to-database");

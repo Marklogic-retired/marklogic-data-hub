@@ -1,16 +1,17 @@
-import {matchingStep} from "./matching.data";
 import {customerEntityDef, customerEntityDefWithLargePropCount, personNestedEntityDef} from "./entity-definitions-mock";
-import {definitionsParser} from "../../../util/data-conversion";
-import {mergingStep} from "./merging.data";
-import {mappingStep} from "./mapping.data";
+
+import {CurationContextInterface} from "../../../types/curation-types";
 import curateData from "./flows.data";
-import MappingOptionsInterface from "../../../types/curation-types";
+import {definitionsParser} from "../../../util/data-conversion";
+import {mappingStep} from "./mapping.data";
+import {matchingStep} from "./matching.data";
+import {mergingStep} from "./merging.data";
 
 const customerEntityDefsArray = definitionsParser(customerEntityDef[0]["entityModel"].definitions);
 const customerEntityDefsArrWithLargePropCount = definitionsParser(customerEntityDefWithLargePropCount[0]["entityModel"].definitions);
 const personNestedEntityDefArray = definitionsParser(personNestedEntityDef[0]["entityModel"].definitions);
 
-export const customerMatchingStep = {
+export const customerMatchingStep: CurationContextInterface = {
   curationOptions: {
     entityDefinitionsArray: customerEntityDefsArray,
     activeStep: {
@@ -21,10 +22,26 @@ export const customerMatchingStep = {
     }
   },
   setActiveStep: jest.fn(),
-  updateActiveStepArtifact: jest.fn()
+  updateActiveStepArtifact: jest.fn(),
+  validateCalled: false,
+  validateMerge: false,
+  loadModalClicked: false,
+  setLoadModalClickedCalled: jest.fn(),
+  setValidateMatchCalled: jest.fn(),
+  setValidateMergeCalled: jest.fn(),
+  setActiveStepWarning: jest.fn(),
+  mappingOptions: {
+    openStepSettings: false,
+    openStep: {},
+    isEditing: false
+  },
+  setOpenStepSettings: jest.fn(),
+  setOpenStep: jest.fn(),
+  setIsEditing: jest.fn(),
+  setStepOpenOptions: jest.fn(),
 };
 
-export const customerMatchingStepEmpty = {
+export const customerMatchingStepEmpty: CurationContextInterface = {
   curationOptions: {
     entityDefinitionsArray: customerEntityDefsArray,
     activeStep: {
@@ -35,7 +52,23 @@ export const customerMatchingStepEmpty = {
     }
   },
   setActiveStep: jest.fn(),
-  updateActiveStepArtifact: jest.fn()
+  updateActiveStepArtifact: jest.fn(),
+  validateCalled: false,
+  validateMerge: false,
+  loadModalClicked: false,
+  setLoadModalClickedCalled: jest.fn(),
+  setValidateMatchCalled: jest.fn(),
+  setValidateMergeCalled: jest.fn(),
+  setActiveStepWarning: jest.fn(),
+  mappingOptions: {
+    openStepSettings: false,
+    openStep: {},
+    isEditing: false
+  },
+  setOpenStepSettings: jest.fn(),
+  setOpenStep: jest.fn(),
+  setIsEditing: jest.fn(),
+  setStepOpenOptions: jest.fn(),
 };
 
 export const customerMergingStep = {
@@ -51,7 +84,11 @@ export const customerMergingStep = {
   validateCalled: false,
   validateMerge: false,
   loadModalClicked: false,
-  mappingOptions: MappingOptionsInterface,
+  mappingOptions: {
+    openStepSettings: false,
+    openStep: "",
+    isEditing: false
+  },
   setLoadModalClickedCalled: jest.fn(),
   setValidateMatchCalled: jest.fn(),
   setValidateMergeCalled: jest.fn(),
@@ -75,10 +112,24 @@ export const customerMergingStepEmpty = {
     }
   },
   setActiveStep: jest.fn(),
-  updateActiveStepArtifact: jest.fn()
+  updateActiveStepArtifact: jest.fn(),
+  validateCalled: false,
+  validateMerge: false,
+  loadModalClicked: false,
+  setLoadModalClickedCalled: jest.fn(),
+  setValidateMatchCalled: jest.fn(),
+  setValidateMergeCalled: jest.fn(),
+  setActiveStepWarning: jest.fn(),
+  mappingOptions: {openStepSettings: false,
+    openStep: {},
+    isEditing: false},
+  setOpenStepSettings: jest.fn(),
+  setOpenStep: jest.fn(),
+  setIsEditing: jest.fn(),
+  setStepOpenOptions: jest.fn(),
 };
 
-export const matchThresholdArtifact = {
+export const matchThresholdArtifact: CurationContextInterface = {
   curationOptions: {
     entityDefinitionsArray: customerEntityDefsArray,
     activeStep: {
@@ -134,7 +185,23 @@ export const matchThresholdArtifact = {
     }
   },
   setActiveStep: jest.fn(),
-  updateActiveStepArtifact: jest.fn()
+  updateActiveStepArtifact: jest.fn(),
+  validateCalled: false,
+  validateMerge: false,
+  loadModalClicked: false,
+  setLoadModalClickedCalled: jest.fn(),
+  setValidateMatchCalled: jest.fn(),
+  setValidateMergeCalled: jest.fn(),
+  setActiveStepWarning: jest.fn(),
+  mappingOptions: {
+    openStepSettings: false,
+    openStep: {},
+    isEditing: false
+  },
+  setOpenStepSettings: jest.fn(),
+  setOpenStep: jest.fn(),
+  setIsEditing: jest.fn(),
+  setStepOpenOptions: jest.fn(),
 };
 
 export const customerStepWarning = {
@@ -208,7 +275,11 @@ export const customerMappingStep = {
   setOpenStepSettings: jest.fn(),
   setOpenStep: jest.fn(),
   setIsEditing: jest.fn(),
-  setStepOpenOptions: jest.fn()
+  setStepOpenOptions: jest.fn(),
+  validateCalled: false,
+  validateMerge: false,
+  loadModalClicked: false,
+  setLoadModalClickedCalled: jest.fn()
 };
 
 export const personMappingStepEmpty = {
@@ -233,17 +304,25 @@ export const personMappingStepEmpty = {
   setStepOpenOptions: jest.fn()
 };
 
-export const personMappingStepWithData = {
+export const personMappingStepWithData: CurationContextInterface = {
   curationOptions: {
     entityDefinitionsArray: personNestedEntityDefArray,
     activeStep: {
       stepArtifact: mappingStep.artifacts[0],
       entityName: mappingStep.entityType,
-      isModified: false
+      isModified: false,
+      hasWarnings: []
     }
   },
   setActiveStep: jest.fn(),
   updateActiveStepArtifact: jest.fn(),
+  validateCalled: false,
+  validateMerge: false,
+  loadModalClicked: false,
+  setLoadModalClickedCalled: jest.fn(),
+  setValidateMatchCalled: jest.fn(),
+  setValidateMergeCalled: jest.fn(),
+  setActiveStepWarning: jest.fn(),
   mappingOptions: {
     openStepSettings: false,
     openStep: {},
@@ -288,5 +367,19 @@ export const customerMatchStepWithLargePropCount = {
     }
   },
   setActiveStep: jest.fn(),
-  updateActiveStepArtifact: jest.fn()
+  updateActiveStepArtifact: jest.fn(),
+  validateCalled: false,
+  validateMerge: false,
+  loadModalClicked: false,
+  setLoadModalClickedCalled: jest.fn(),
+  setValidateMatchCalled: jest.fn(),
+  setValidateMergeCalled: jest.fn(),
+  setActiveStepWarning: jest.fn(),
+  mappingOptions: {openStepSettings: false,
+    openStep: {},
+    isEditing: false},
+  setOpenStepSettings: jest.fn(),
+  setOpenStep: jest.fn(),
+  setIsEditing: jest.fn(),
+  setStepOpenOptions: jest.fn(),
 };

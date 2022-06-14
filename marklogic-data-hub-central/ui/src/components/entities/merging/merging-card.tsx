@@ -1,23 +1,25 @@
-import React, {useState, useContext} from "react";
+import {AdvMapTooltips, RunToolTips, SecurityTooltips} from "@config/tooltips.config";
+import {Col, Modal, Row} from "react-bootstrap";
+import {HCButton, HCCard, HCDivider, HCTooltip} from "@components/common";
 import {Link, useHistory} from "react-router-dom";
-import {Row, Col, Modal} from "react-bootstrap";
-import Select, {components as SelectComponents} from "react-select";
-import reactSelectThemeConfig from "@config/react-select-theme.config";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPencilAlt, faCog} from "@fortawesome/free-solid-svg-icons";
-import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
-import styles from "./merging-card.module.scss";
-import ConfirmationModal from "../../confirmation-modal/confirmation-modal";
-import {CurationContext} from "@util/curation-context";
-import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from "@util/conversionFunctions";
-import {AdvMapTooltips, SecurityTooltips, RunToolTips} from "@config/tooltips.config";
-import {ConfirmationType} from "../../../types/common-types";
 import {MergingStep, StepType} from "../../../types/curation-types";
-import {getViewSettings, setViewSettings} from "@util/user-context";
-import Steps from "../../steps/steps";
 import {PlayCircleFill, PlusCircleFill} from "react-bootstrap-icons";
-import {HCCard, HCButton, HCDivider, HCTooltip} from "@components/common";
-interface Props {
+import React, {useContext, useState} from "react";
+import Select, {components as SelectComponents} from "react-select";
+import {convertDateFromISO, extractCollectionFromSrcQuery, getInitialChars} from "@util/conversionFunctions";
+import {faCog, faPencilAlt} from "@fortawesome/free-solid-svg-icons";
+import {getViewSettings, setViewSettings} from "@util/user-context";
+
+import ConfirmationModal from "../../confirmation-modal/confirmation-modal";
+import {ConfirmationType} from "../../../types/common-types";
+import {CurationContext} from "@util/curation-context";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import Steps from "../../steps/steps";
+import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
+import reactSelectThemeConfig from "@config/react-select-theme.config";
+import styles from "./merging-card.module.scss";
+
+export interface Props {
   mergingStepsArray: any;
   flows: any;
   entityName: any;

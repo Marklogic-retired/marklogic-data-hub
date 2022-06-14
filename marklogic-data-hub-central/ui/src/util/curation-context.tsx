@@ -1,9 +1,10 @@
-import React, {useState} from "react";
 import {
-  CurationOptionsInterface,
   CurationContextInterface,
+  CurationOptionsInterface,
   MappingOptionsInterface
 } from "../types/curation-types";
+import React, {useState} from "react";
+
 import {definitionsParser} from "./data-conversion";
 
 const DEFAULT_CURATION_OPTIONS = {

@@ -1,17 +1,19 @@
-import React from "react";
-import {render, fireEvent, waitForElement, cleanup, wait} from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
+
 import {AuthoritiesContext, AuthoritiesService} from "../util/authorities";
-import axiosMock from "axios";
-import mocks from "../api/__mocks__/mocks.data";
+import {cleanup, fireEvent, render, wait, waitForElement} from "@testing-library/react";
+
 import Curate from "./Curate";
-import {MemoryRouter} from "react-router-dom";
-import tiles from "../config/tiles.config";
-import {MissingPagePermission} from "../config/messages.config";
 import {CurationContext} from "../util/curation-context";
+import {MemoryRouter} from "react-router-dom";
+import {MissingPagePermission} from "../config/messages.config";
+import React from "react";
+import axiosMock from "axios";
 import {customerMappingStep} from "../assets/mock-data/curation/curation-context-mock";
-import userEvent from "@testing-library/user-event";
 import {getViewSettings} from "../util/user-context";
+import mocks from "../api/__mocks__/mocks.data";
+import tiles from "../config/tiles.config";
+import userEvent from "@testing-library/user-event";
 
 jest.mock("axios");
 
@@ -39,7 +41,7 @@ describe("Curate component", () => {
 
     expect(await (waitForElement(() => getByText("Customer")))).toBeInTheDocument();
 
-    expect(getByText(tiles.curate.intro)).toBeInTheDocument(); // tile intro text
+    expect(getByText(tiles.curate.intro!!)).toBeInTheDocument(); // tile intro text
 
     // Check for steps to be populated
     expect(axiosMock.get).toBeCalledWith("/api/steps/mapping");

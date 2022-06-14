@@ -1,15 +1,17 @@
-import React from "react";
-import {render, fireEvent, wait, waitForElement, act, cleanup} from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
+
 import {AuthoritiesContext, AuthoritiesService} from "../util/authorities";
-import axiosMock from "axios";
-import mocks from "../api/__mocks__/mocks.data";
+import {act, cleanup, fireEvent, render, wait, waitForElement} from "@testing-library/react";
+
 import Load from "./Load";
 import {MemoryRouter} from "react-router-dom";
-import tiles from "../config/tiles.config";
-import {getViewSettings} from "../util/user-context";
+import React from "react";
+import axiosMock from "axios";
 import dayjs from "dayjs";
+import {getViewSettings} from "../util/user-context";
 import loadData from "../assets/mock-data/curation/ingestion.data";
+import mocks from "../api/__mocks__/mocks.data";
+import tiles from "../config/tiles.config";
 
 jest.mock("axios");
 jest.setTimeout(30000);
@@ -195,7 +197,7 @@ describe("Load component", () => {
 
     expect(await(waitForElement(() => getByLabelText("switch-view-list")))).toBeInTheDocument();
 
-    expect(getByText(tiles.load.intro)).toBeInTheDocument(); // tile intro text
+    expect(getByText(tiles.load.intro!!)).toBeInTheDocument(); // tile intro text
 
     // Check for steps to be populated in default view
     expect(axiosMock.get).toBeCalledWith("/api/steps/ingestion");

@@ -1,13 +1,14 @@
-import React, {useState, useContext, useEffect} from "react";
-import {Row, Col, Modal, Form, FormLabel} from "react-bootstrap";
-import {SearchContext} from "@util/search-context";
-import styles from "../save-query-modal/save-query-modal.module.scss";
-import axios from "axios";
-import {UserContext} from "@util/user-context";
-import {QueryOptions} from "../../../../types/query-types";
-import {HCInput, HCButton} from "@components/common";
+import {Col, Form, FormLabel, Modal, Row} from "react-bootstrap";
+import {HCButton, HCInput} from "@components/common";
+import React, {useContext, useEffect, useState} from "react";
 
-interface Props {
+import {QueryOptions} from "../../../../types/query-types";
+import {SearchContext} from "@util/search-context";
+import {UserContext} from "@util/user-context";
+import axios from "axios";
+import styles from "../save-query-modal/save-query-modal.module.scss";
+
+export interface Props {
   setSaveChangesModalVisibility: () => void;
   savedQueryList: any[];
   getSaveQueryWithId: (key: {}) => void;

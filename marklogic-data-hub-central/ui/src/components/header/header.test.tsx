@@ -1,14 +1,14 @@
+import {cleanup, render, waitForElement} from "@testing-library/react";
+
+import {Application} from "../../config/application.config";
+import Header from "./header";
 import React from "react";
-import {render, cleanup, waitForElement, getByTestId} from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import {BrowserRouter as Router} from "react-router-dom";
 import {UserContext} from "../../util/user-context";
-import Header from "./header";
 import data from "../../assets/mock-data/system-info.data";
-import {userAuthenticated} from "../../assets/mock-data/user-context-mock";
-import {Application} from "../../config/application.config";
 import {fireEvent} from "@testing-library/dom";
-
+import {userAuthenticated} from "../../assets/mock-data/user-context-mock";
+import userEvent from "@testing-library/user-event";
 
 describe("Header component", () => {
 
@@ -84,7 +84,7 @@ describe("Header component", () => {
   test("verify tabbing and arrow key controls", async () => {
     let i: number;
 
-    const {getByLabelText} = render(
+    const {getByLabelText, getByTestId} = render(
       <Router>
         <UserContext.Provider value={userAuthenticated}>
           <Header environment = {{...data.environment, dataHubVersion: "5.3-SNAPSHOT"}}/>

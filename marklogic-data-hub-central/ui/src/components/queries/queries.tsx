@@ -1,21 +1,23 @@
-import React, {useState, useEffect, useContext} from "react";
 import {ButtonGroup, Dropdown, Modal} from "react-bootstrap";
-import {UserContext} from "@util/user-context";
-import {SearchContext} from "@util/search-context";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPencilAlt, faSave, faCopy, faUndo, faWindowClose, faEllipsisV, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
-import SaveQueryModal from "@components/queries/saving/save-query-modal/save-query-modal";
-import SaveQueriesDropdown, {SELECT_QUERY_PLACEHOLDER} from "@components/queries/saving/save-queries-dropdown/save-queries-dropdown";
-import {fetchQueries, creatNewQuery, fetchQueryById, removeQuery} from "@api/queries";
-import styles from "./queries.module.scss";
-import EditQueryDetails from "./saving/edit-save-query/edit-query-details";
-import SaveChangesModal from "./saving/edit-save-query/save-changes-modal";
-import DiscardChangesModal from "./saving/discard-changes/discard-changes-modal";
-import {QueryOptions} from "../../types/query-types";
 import {HCButton, HCTooltip} from "@components/common";
+import React, {useContext, useEffect, useState} from "react";
+import SaveQueriesDropdown, {SELECT_QUERY_PLACEHOLDER} from "@components/queries/saving/save-queries-dropdown/save-queries-dropdown";
+import {creatNewQuery, fetchQueries, fetchQueryById, removeQuery} from "@api/queries";
+import {faCopy, faEllipsisV, faPencilAlt, faSave, faTrashAlt, faUndo, faWindowClose} from "@fortawesome/free-solid-svg-icons";
+
+import DiscardChangesModal from "./saving/discard-changes/discard-changes-modal";
+import EditQueryDetails from "./saving/edit-save-query/edit-query-details";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {QueryOptions} from "../../types/query-types";
+import SaveChangesModal from "./saving/edit-save-query/save-changes-modal";
+import SaveQueryModal from "@components/queries/saving/save-query-modal/save-query-modal";
+import {SearchContext} from "@util/search-context";
+import {UserContext} from "@util/user-context";
+import styles from "./queries.module.scss";
 import {themeColors} from "@config/themes.config";
 import tooltipsConfig from "@config/explorer-tooltips.config";
-interface Props {
+
+export interface Props {
   queries: any[];
   isSavedQueryUser: boolean;
   columns: string[];
@@ -423,7 +425,7 @@ const Query: React.FC<Props> = (props) => {
       <FontAwesomeIcon
         className={styles.iconHover}
         icon={faWindowClose}
-        title={"reset-changes"}
+        title={isDisabled ? "reset-changes-disabled" : "reset-changes"}
         size="lg"
         style={{width: "18px", color: isDisabled ? themeColors.light : themeColors.info, cursor: "pointer"}}
       />

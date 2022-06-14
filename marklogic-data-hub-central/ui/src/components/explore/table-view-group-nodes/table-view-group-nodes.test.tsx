@@ -1,9 +1,10 @@
+import {SearchContext, defaultSearchContext, defaultSearchOptions} from "../../../util/search-context";
+import {groupNodeSearchPayload, groupNodeSearchResponse} from "../../../assets/mock-data/explore/entity-search";
+
 import React from "react";
-import {render} from "@testing-library/react";
-import axios from "axios";
 import TableViewGroupNodes from "./table-view-group-nodes";
-import {SearchContext} from "../../../util/search-context";
-import {defaultSearchOptions, groupNodeSearchPayload, groupNodeSearchResponse} from "../../../assets/mock-data/explore/entity-search";
+import axios from "axios";
+import {render} from "@testing-library/react";
 
 jest.mock("axios");
 const axiosMock = axios as jest.Mocked<typeof axios>;
@@ -35,7 +36,7 @@ describe("Table view for group nodes modal component", () => {
     };
 
     const {queryByText, getByLabelText, queryByLabelText, rerender} =  render(
-      <SearchContext.Provider value={{searchOptions: updatedSearchOptions}}>
+      <SearchContext.Provider value={{...defaultSearchContext, searchOptions: updatedSearchOptions}}>
         <TableViewGroupNodes
           {...defaultProps}
           isVisible={false}
@@ -48,7 +49,7 @@ describe("Table view for group nodes modal component", () => {
     //Validating that the exceeded threshold warning appears
     let relatedData = {...relatedToData, exceededThreshold: true};
     rerender(
-      <SearchContext.Provider value={{searchOptions: updatedSearchOptions}}>
+      <SearchContext.Provider value={{...defaultSearchContext, searchOptions: updatedSearchOptions}}>
         <TableViewGroupNodes
           {...defaultProps}
           relatedToData={relatedData}
@@ -59,7 +60,7 @@ describe("Table view for group nodes modal component", () => {
 
     //Validate other fields now (No exceed threshold warning)
     rerender(
-      <SearchContext.Provider value={{searchOptions: updatedSearchOptions}}>
+      <SearchContext.Provider value={{...defaultSearchContext, searchOptions: updatedSearchOptions}}>
         <TableViewGroupNodes
           {...defaultProps}
           relatedToData={relatedToData}

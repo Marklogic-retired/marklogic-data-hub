@@ -1,21 +1,34 @@
-import React from "react";
-import {Router} from "react-router";
-import {createMemoryHistory} from "history";
-const history = createMemoryHistory();
-import {render, fireEvent, cleanup, wait} from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
-import TilesView from "./TilesView";
+
 import {AuthoritiesContext, AuthoritiesService} from "../util/authorities";
-import axiosMock from "axios";
-import mocks from "../api/__mocks__/mocks.data";
-import authorities from "../assets/mock-data/authorities.testutils";
-import tiles from "../config/tiles.config";
-import {SearchContext} from "../util/search-context";
+import {cleanup, fireEvent, render, wait} from "@testing-library/react";
 import {
   setViewCurateFunction,
   setViewLoadFunction,
   setViewRunFunction
 } from "../assets/mock-data/explore/search-context-mock";
+
+import React from "react";
+import {Router} from "react-router";
+import {SearchContext} from "../util/search-context";
+import TilesView from "./TilesView";
+import authorities from "../assets/mock-data/authorities.testutils";
+import axiosMock from "axios";
+import {createMemoryHistory} from "history";
+import mocks from "../api/__mocks__/mocks.data";
+import tiles from "../config/tiles.config";
+
+const history = createMemoryHistory();
+
+
+
+
+
+
+
+
+
+
 
 jest.mock("axios");
 jest.setTimeout(30000);
@@ -236,7 +249,7 @@ describe("Tiles View component tests for Developer user", () => {
     expect(getByText("Save")).not.toBeDisabled();
     fireEvent.click(getByText("Cancel"));
     // test run
-    fireEvent.click(document.querySelector(".accordion-button"));
+    fireEvent.click(document.querySelector(".accordion-button")!!);
     expect(getByTestId("runStep-1")).toBeInTheDocument();
   });
 
@@ -275,7 +288,7 @@ describe("Tiles View component tests for Developer user", () => {
     fireEvent.click(getByText("Cancel"));
 
     // test run
-    fireEvent.click(document.querySelector(".accordion-button"));
+    fireEvent.click(document.querySelector(".accordion-button")!!);
     expect(getByTestId("runStepDisabled-1")).toBeInTheDocument();
     expect(getByTestId("runStepDisabled-2")).toBeInTheDocument();
     expect(getByTestId("runStepDisabled-3")).toBeInTheDocument();
@@ -301,7 +314,7 @@ describe("Tiles View component tests for Developer user", () => {
 
     await wait(() => expect(getByLabelText("icon-run")).toBeInTheDocument());
     // test run
-    fireEvent.click(document.querySelector(".accordion-button"));
+    fireEvent.click(document.querySelector(".accordion-button")!!);
     expect(getByTestId("runStep-1")).toBeInTheDocument();
     expect(getByTestId("runStep-2")).toBeInTheDocument();
     expect(getByTestId("runStep-3")).toBeInTheDocument();

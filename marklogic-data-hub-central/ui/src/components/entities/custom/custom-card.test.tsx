@@ -1,18 +1,35 @@
+import {AuthoritiesContext, AuthoritiesService} from "../../../util/authorities";
+import CustomCard, {Props} from "./custom-card";
+import {fireEvent, render, wait, waitForElement} from "@testing-library/react";
+
+import {CustomStepTooltips} from "../../../config/tooltips.config";
 import React from "react";
 import {BrowserRouter as Router} from "react-router-dom";
-import {fireEvent, render, wait, waitForElement} from "@testing-library/react";
-import CustomCard from "./custom-card";
+import {act} from "react-dom/test-utils";
 import axiosMock from "axios";
 import data from "../../../assets/mock-data/curation/flows.data";
-import {act} from "react-dom/test-utils";
-import {AuthoritiesService, AuthoritiesContext} from "../../../util/authorities";
 import mocks from "../../../api/__mocks__/mocks.data";
-import {CustomStepTooltips} from "../../../config/tooltips.config";
-
 
 jest.mock("axios");
 
 const mockHistoryPush = jest.fn();
+let flows = data.flows.data;
+
+const defaultProps: Props = {
+  data: data.customSteps.data.stepsWithEntity[0].artifacts,
+  flows: flows,
+  entityTypeTitle: "",
+  updateCustomArtifact: jest.fn(),
+  canReadOnly: true,
+  canReadWrite: true,
+  entityModel: {entityTypeId: "Customer"},
+  getArtifactProps: () => {
+    return data.customSteps.data.stepsWithEntity[0].artifacts;
+  },
+  canWriteFlow: true,
+  addStepToFlow: jest.fn(),
+  addStepToNew: jest.fn()
+};
 
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
@@ -34,13 +51,13 @@ describe("Custom Card component", () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readCustom", "writeCustom"]);
     let customData = data.customSteps.data.stepsWithEntity[0].artifacts;
+    const props = {
+      ...defaultProps
+    };
     const {getByText, queryByText, getByLabelText, getByPlaceholderText, getByTestId} = render(
       <Router><AuthoritiesContext.Provider value={authorityService}>
         <CustomCard
-          data={customData}
-          canReadOnly={true}
-          canReadWrite={true}
-          entityModel={{entityTypeId: "Customer"}}
+          {...props}
           getArtifactProps={() => { return customData[0]; }}
         />
       </AuthoritiesContext.Provider></Router>);
@@ -111,9 +128,13 @@ describe("Custom Card component", () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readCustom"]);
     let customData = data.customSteps.data.stepsWithEntity[0].artifacts;
+    const props = {
+      ...defaultProps,
+    };
     const {getByText, queryByText, getByLabelText, getByPlaceholderText, getByTestId} = render(
       <Router><AuthoritiesContext.Provider value={authorityService}>
         <CustomCard
+          {...props}
           data={customData}
           canReadOnly={true}
           canReadWrite={false}
@@ -175,14 +196,18 @@ describe("Custom Card component", () => {
   test("Custom card does not allow edit without writeCustom", async () => {
     let customData = data.customSteps.data.stepsWithEntity[0].artifacts;
     let getByRole, queryAllByRole, getByText, getByTestId;
+    const props = {
+      ...defaultProps,
+      canReadWrite: false
+    };
     await act(async () => {
       const renderResults = render(
-        <Router><CustomCard data={customData} canReadOnly={true} canReadWrite={false} entityModel={{entityTypeId: "Customer"}}/></Router>
+        <Router><CustomCard {...props}   getArtifactProps={() => { return customData[0]; }}/></Router>
       );
       getByRole = renderResults.getByRole;
       queryAllByRole = renderResults.queryAllByRole;
-      getByText=renderResults.getByText;
-      getByTestId=renderResults.getByTestId;
+      getByText = renderResults.getByText;
+      getByTestId = renderResults.getByTestId;
     });
 
     expect(getByRole("edit-custom")).toBeInTheDocument();
@@ -196,19 +221,15 @@ describe("Custom Card component", () => {
   test("Can add step to flow", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readCustom"]);
-    let customData = data.customSteps.data.stepsWithEntity[0].artifacts;
-    let flows = data.flows.data;
+    const props = {
+      ...defaultProps,
+      canReadWrite: false
+    };
+
     const {getByText, getByLabelText, getByTestId} = render(
       <Router><AuthoritiesContext.Provider value={authorityService}>
         <CustomCard
-          data={customData}
-          flows={flows}
-          canReadOnly={true}
-          canReadWrite={false}
-          canWriteFlow={true}
-          entityModel={{entityTypeId: "Customer"}}
-          addStepToFlow={() => {}}
-          getArtifactProps={() => { return customData[0]; }}
+          {...props}
         />
       </AuthoritiesContext.Provider></Router>);
 

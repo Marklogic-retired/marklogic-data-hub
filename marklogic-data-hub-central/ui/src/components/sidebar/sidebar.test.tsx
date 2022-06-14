@@ -1,11 +1,12 @@
-import React from "react";
-import {fireEvent, render} from "@testing-library/react";
-import Sidebar from "./sidebar";
-import searchPayloadFacets from "../../assets/mock-data/explore/search-payload-facets";
+import Sidebar, {Props} from "./sidebar";
 import {entityFromJSON, entityParser} from "../../util/data-conversion";
-import {modelResponse} from "../../assets/mock-data/explore/model-response";
-import userEvent from "@testing-library/user-event";
+import {fireEvent, render} from "@testing-library/react";
+
+import React from "react";
 import {getEnvironment} from "@util/environment";
+import {modelResponse} from "../../assets/mock-data/explore/model-response";
+import searchPayloadFacets from "../../assets/mock-data/explore/search-payload-facets";
+import userEvent from "@testing-library/user-event";
 
 const entityIndicatorData = {
   max: 10,
@@ -14,42 +15,46 @@ const entityIndicatorData = {
   }
 };
 
+const parsedModelData = entityFromJSON(modelResponse);
+const entityDefArray = entityParser(parsedModelData);
+
+const defaultProps: Props = {
+  facets: searchPayloadFacets,
+  selectedEntities: [],
+  entityDefArray: entityDefArray,
+  facetRender: jest.fn(),
+  checkFacetRender: jest.fn(),
+  setDatabasePreferences: jest.fn(),
+  greyFacets: [],
+  setHubArtifactsVisibilityPreferences: jest.fn(),
+  hideDataHubArtifacts: false,
+  cardView: false,
+  graphView: false,
+  setEntitySpecificPanel: jest.fn(),
+  currentBaseEntities: [],
+  setCurrentBaseEntities: jest.fn(),
+  currentRelatedEntities: new Map<string, any>(),
+  setCurrentRelatedEntities: jest.fn(),
+  entityIndicatorData: entityIndicatorData,
+  entitiesWithRelatedConcepts: []
+};
+
 describe("Sidebar createdOn face time window dropdown", () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  const parsedModelData = entityFromJSON(modelResponse);
-  const entityDefArray = entityParser(parsedModelData);
 
   test("Verify createdOn dropdown is rendered", () => {
     const {getByText} = render(<Sidebar
-      entityDefArray={entityDefArray}
-      facets={searchPayloadFacets}
-      selectedEntities={[]}
-      facetRender = {jest.fn()}
-      checkFacetRender = {jest.fn()}
-      currentRelatedEntities={new Map<string, any>()}
-      setCurrentRelatedEntities={jest.fn()}
-      currentBaseEntities={[]}
-      setCurrentBaseEntities={jest.fn()}
-      entityIndicatorData={entityIndicatorData}
+      {...defaultProps}
     />);
     expect(getByText("Select time")).toBeInTheDocument();
   });
 
   test("Verify createdOn dropdown is selected", () => {
     const {getByText, getByPlaceholderText, getByLabelText} = render(<Sidebar
-      entityDefArray={entityDefArray}
-      facets={searchPayloadFacets}
-      selectedEntities={[]}
-      facetRender = {jest.fn()}
-      checkFacetRender = {jest.fn()}
-      currentRelatedEntities={new Map<string, any>()}
-      setCurrentRelatedEntities={jest.fn()}
-      currentBaseEntities={[]}
-      setCurrentBaseEntities={jest.fn()}
-      entityIndicatorData={entityIndicatorData}
+      {...defaultProps}
     />);
     expect(getByText("Select time")).toBeInTheDocument();
     fireEvent.keyDown(getByLabelText("date-select"), {key: "ArrowDown"});
@@ -60,16 +65,7 @@ describe("Sidebar createdOn face time window dropdown", () => {
 
   test("Verify that hub properties is expanded by default", () => {
     const {getByText} = render(<Sidebar
-      entityDefArray={entityDefArray}
-      facets={searchPayloadFacets}
-      selectedEntities={[]}
-      facetRender = {jest.fn()}
-      checkFacetRender = {jest.fn()}
-      currentRelatedEntities={new Map<string, any>()}
-      setCurrentRelatedEntities={jest.fn()}
-      currentBaseEntities={[]}
-      setCurrentBaseEntities={jest.fn()}
-      entityIndicatorData={entityIndicatorData}
+      {...defaultProps}
     />);
     expect(document.querySelector("#hub-properties .accordion-button")).toHaveAttribute("aria-expanded", "true");
     userEvent.click(getByText("Hub Properties"));
@@ -109,30 +105,21 @@ describe("Sidebar createdOn face time window dropdown", () => {
   test("Verify onclick is called for final/staging buttons", () => {
     const {getByText} = render(
       <Sidebar
-        entityDefArray={entityDefArray}
-        facets={searchPayloadFacets}
+        {...defaultProps}
         selectedEntities={["Customer"]}
-        facetRender={jest.fn()}
-        checkFacetRender={jest.fn()}
-        setDatabasePreferences={jest.fn()}
-        currentRelatedEntities={new Map<string, any>()}
-        setCurrentRelatedEntities={jest.fn()}
-        currentBaseEntities={[]}
-        setCurrentBaseEntities={jest.fn()}
-        entityIndicatorData={entityIndicatorData}
       />
     );
 
     // Check Final/Staging buttons show the custom database names
 
     const getFinalDbLabel = () => {
-      let finalDbLabel =  getEnvironment().finalDb ? getEnvironment().finalDb : "Final";
+      let finalDbLabel = getEnvironment().finalDb ? getEnvironment().finalDb : "Final";
       if (finalDbLabel.toLowerCase().includes("final")) finalDbLabel = "Final";
       return finalDbLabel;
     };
 
     const getStagingDbLabel = () => {
-      let stagingDbLabel =  getEnvironment().stagingDb ? getEnvironment().stagingDb : "Staging";
+      let stagingDbLabel = getEnvironment().stagingDb ? getEnvironment().stagingDb : "Staging";
       if (stagingDbLabel.toLowerCase().includes("staging")) stagingDbLabel = "Staging";
       return stagingDbLabel;
     };
@@ -150,17 +137,7 @@ describe("Sidebar createdOn face time window dropdown", () => {
   test("Collapse/Expand carets render properly for database and hub properties", () => {
     const {getByText} = render(
       <Sidebar
-        entityDefArray={entityDefArray}
-        facets={searchPayloadFacets}
-        selectedEntities={[]}
-        facetRender={jest.fn()}
-        checkFacetRender={jest.fn()}
-        setDatabasePreferences={jest.fn()}
-        currentRelatedEntities={new Map<string, any>()}
-        setCurrentRelatedEntities={jest.fn()}
-        currentBaseEntities={[]}
-        setCurrentBaseEntities={jest.fn()}
-        entityIndicatorData={entityIndicatorData}
+        {...defaultProps}
       />
     );
     expect(document.querySelector("#database .accordion-button.after-indicator")).toHaveAttribute("aria-expanded", "true");
@@ -179,17 +156,8 @@ describe("Sidebar createdOn face time window dropdown", () => {
   test("Collapse/Expand carets render properly for database, entity and hub properties", async () => {
     const {getByText} = render(
       <Sidebar
-        entityDefArray={entityDefArray}
-        facets={searchPayloadFacets}
+        {...defaultProps}
         selectedEntities={["Customer"]}
-        facetRender={jest.fn()}
-        checkFacetRender={jest.fn()}
-        setDatabasePreferences={jest.fn()}
-        currentRelatedEntities={new Map<string, any>()}
-        setCurrentRelatedEntities={jest.fn()}
-        currentBaseEntities={[]}
-        setCurrentBaseEntities={jest.fn()}
-        entityIndicatorData={entityIndicatorData}
       />
     );
     expect(document.querySelector("#database .accordion-button.after-indicator")).toHaveAttribute("aria-expanded", "true");
@@ -203,20 +171,10 @@ describe("Sidebar createdOn face time window dropdown", () => {
   test("Verify Include Data Hub Artifacts switch is rendered properly and user is able to toggle it", () => {
     const {getByTestId} = render(
       <Sidebar
-        entityDefArray={entityDefArray}
-        facets={searchPayloadFacets}
+        {...defaultProps}
         selectedEntities={["Customer"]}
-        facetRender={jest.fn()}
-        checkFacetRender={jest.fn()}
-        setDatabasePreferences={jest.fn()}
         cardView={true}
         hideDataHubArtifacts={true}
-        setHubArtifactsVisibilityPreferences={jest.fn()}
-        currentRelatedEntities={new Map<string, any>()}
-        setCurrentRelatedEntities={jest.fn()}
-        currentBaseEntities={[]}
-        setCurrentBaseEntities={jest.fn()}
-        entityIndicatorData={entityIndicatorData}
       />
     );
 

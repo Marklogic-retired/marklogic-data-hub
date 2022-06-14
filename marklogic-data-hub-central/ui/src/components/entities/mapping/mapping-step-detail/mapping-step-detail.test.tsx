@@ -1,22 +1,23 @@
+import {AuthoritiesContext, AuthoritiesService} from "../../../../util/authorities";
+import {cleanup, fireEvent, render, wait, waitForElement, waitForElementToBeRemoved, within} from "@testing-library/react";
+import {getDoc, getUris} from "../../../../util/search-service";
+import {getMappingArtifactByMapName, getMappingFunctions, getMappingRefs, updateMappingArtifact} from "../../../../api/mapping";
+import {getMappingValidationResp, getNestedEntities} from "../../../../util/manageArtifacts-service";
+import {mappingStep, mappingStepPerson} from "../../../../assets/mock-data/curation/mapping.data";
+import {personMappingStepEmpty, personMappingStepWithData, personMappingStepWithRelatedEntityData} from "../../../../assets/mock-data/curation/curation-context-mock";
+import {personNestedEntityDef, personNestedEntityDefSameNames, personRelatedEntityDef, personRelatedEntityDefLargePropSet} from "../../../../assets/mock-data/curation/entity-definitions-mock";
+
+import {CurationContext} from "../../../../util/curation-context";
+import MappingStepDetail from "./mapping-step-detail";
 import React from "react";
 import {BrowserRouter as Router} from "react-router-dom";
-import {waitForElement, waitForElementToBeRemoved, render, wait, cleanup, fireEvent, within} from "@testing-library/react";
-import {waitFor} from "@testing-library/dom";
-import MappingStepDetail from "./mapping-step-detail";
+import SplitPane from "react-split-pane";
+import StepsConfig from "../../../../config/steps.config";
+import {act} from "react-dom/test-utils";
 import data from "../../../../assets/mock-data/curation/common.data";
 import {shallow} from "enzyme";
-import {CurationContext} from "../../../../util/curation-context";
-import {personMappingStepEmpty, personMappingStepWithData, personMappingStepWithRelatedEntityData} from "../../../../assets/mock-data/curation/curation-context-mock";
-import {updateMappingArtifact, getMappingArtifactByMapName, getMappingFunctions, getMappingRefs} from "../../../../api/mapping";
-import {mappingStep, mappingStepPerson} from "../../../../assets/mock-data/curation/mapping.data";
-import {getUris, getDoc} from "../../../../util/search-service";
-import {getMappingValidationResp, getNestedEntities} from "../../../../util/manageArtifacts-service";
-import {act} from "react-dom/test-utils";
-import {personNestedEntityDef, personNestedEntityDefSameNames, personRelatedEntityDef, personRelatedEntityDefLargePropSet} from "../../../../assets/mock-data/curation/entity-definitions-mock";
-import {AuthoritiesContext, AuthoritiesService} from "../../../../util/authorities";
-import SplitPane from "react-split-pane";
 import userEvent from "@testing-library/user-event";
-import StepsConfig from "../../../../config/steps.config";
+import {waitFor} from "@testing-library/dom";
 
 jest.mock("axios");
 jest.mock("../../../../api/mapping");
@@ -282,7 +283,8 @@ describe("RTL Source-to-entity map tests", () => {
 
     fireEvent.click(getByLabelText("filterIcon-srcName"));
     fireEvent.change(getByLabelText("searchInput-source"), {target: {value: "protein"}});
-    fireEvent.click(document.querySelector("#submitSearch-source"));
+    const submitButton =  document.querySelector("#submitSearch-source");
+    fireEvent.click(submitButton!!);
     expect(getAllByText("protein")).toHaveLength(4);
     expect(queryByText("whitespaceValue")).not.toBeInTheDocument();
   });
@@ -332,7 +334,7 @@ describe("RTL Source-to-entity map tests", () => {
     fireEvent.change(inputSearchSource, {target: {value: "first"}}); //Enter a case-insensitive value in inputSearch field
     expect(inputSearchSource).toHaveValue("first");
     let submitSearchSource = document.querySelector("#submitSearch-source");
-    fireEvent.click(submitSearchSource); //Click on Search button to apply the filter with the desired string
+    fireEvent.click(submitSearchSource!!); //Click on Search button to apply the filter with the desired string
 
     //Check if the expected values are available/not available in search result.
     expect(getAllByText("nutFreeName").length).toEqual(2);
@@ -357,7 +359,7 @@ describe("RTL Source-to-entity map tests", () => {
     //Reset the search filter on Source table
     fireEvent.click(sourcefilterIcon);
     let resetSourceSearch = document.querySelector("#resetSearch-source");
-    fireEvent.click(resetSourceSearch);
+    fireEvent.click(resetSourceSearch!!);
 
     //Check if the table goes back to the default state after resetting the filter on source table.
     expect(getByText("proteinId")).toBeInTheDocument();
@@ -390,7 +392,7 @@ describe("RTL Source-to-entity map tests", () => {
 
     fireEvent.change(inputSearchEntity, {target: {value: "craft"}}); //Enter a case-insensitive value in inputEntitySearch field
     expect(inputSearchEntity).toHaveValue("craft");
-    fireEvent.click(document.querySelector("#submitSearch-entity")); //Click on Search button to apply the filter with the desired string
+    fireEvent.click(document.querySelector("#submitSearch-entity")!!); //Click on Search button to apply the filter with the desired string
 
     //Entity type title should remain in the first row after filter is applied
     // let entTableTopRow: any;
@@ -419,7 +421,7 @@ describe("RTL Source-to-entity map tests", () => {
     fireEvent.click(entityfilterIcon);
 
     let resetEntitySearch = document.querySelector("#resetSearch-entity");
-    fireEvent.click(resetEntitySearch);
+    fireEvent.click(resetEntitySearch!!);
 
     //Check if the table goes back to the default state after resetting the filter on Entity table.
     expect(getByText("propId")).toBeInTheDocument();
@@ -451,7 +453,7 @@ describe("RTL Source-to-entity map tests", () => {
 
     fireEvent.change(inputSourceSearch, {target: {value: "organism"}}); //Enter a case-insensitive value in inputSearch field
     expect(inputSourceSearch).toHaveValue("organism");
-    fireEvent.click(document.querySelector("#submitSearch-source")); //Click on Search button to apply the filter with the desired string
+    fireEvent.click(document.querySelector("#submitSearch-source")!!); //Click on Search button to apply the filter with the desired string
 
     //Check if the expected values are available/not available in search result.
     expect(getByText(/withNuts:/)).toBeInTheDocument();
@@ -473,7 +475,7 @@ describe("RTL Source-to-entity map tests", () => {
     //Reset the search filter on Source table
     fireEvent.click(sourcefilterIcon);
     let resetSourceSearch = document.querySelector("#resetSearch-source");
-    fireEvent.click(resetSourceSearch);
+    fireEvent.click(resetSourceSearch!!);
 
     //Check if the table goes back to the default state after resetting the filter on source table.
     expect(getAllByText(/nutFree:/).length).toEqual(2);
@@ -552,7 +554,7 @@ describe("RTL Source-to-entity map tests", () => {
     let inputSearchEntity = getByLabelText("searchInput-entity");
     fireEvent.change(inputSearchEntity, {target: {value: "orderId"}});
     expect(inputSearchEntity).toHaveValue("orderId");
-    fireEvent.click(document.querySelector("#submitSearch-entity"));
+    fireEvent.click(document.querySelector("#submitSearch-entity")!!);
     expect(getByText("orderId")).toBeInTheDocument();
     expect(getByText("orderId")).toHaveStyle("background-color: yellow");
 
@@ -560,7 +562,7 @@ describe("RTL Source-to-entity map tests", () => {
     inputSearchEntity = getByLabelText("searchInput-entity");
     fireEvent.change(inputSearchEntity, {target: {value: "arrivalDate"}});
     expect(inputSearchEntity).toHaveValue("arrivalDate");
-    fireEvent.click(document.querySelector("#submitSearch-entity"));
+    fireEvent.click(document.querySelector("#submitSearch-entity")!!);
     expect(getByText("arrivalDate")).toBeInTheDocument();
     expect(getByText("arrivalDate")).toHaveStyle("background-color: yellow");
 
@@ -568,7 +570,7 @@ describe("RTL Source-to-entity map tests", () => {
     inputSearchEntity = getByLabelText("searchInput-entity");
     fireEvent.change(inputSearchEntity, {target: {value: "babyRegistryId"}});
     expect(inputSearchEntity).toHaveValue("babyRegistryId");
-    fireEvent.click(document.querySelector("#submitSearch-entity"));
+    fireEvent.click(document.querySelector("#submitSearch-entity")!!);
     expect(getByText("babyRegistryId")).toBeInTheDocument();
     expect(getByText("babyRegistryId")).toHaveStyle("background-color: yellow");
 
@@ -576,7 +578,7 @@ describe("RTL Source-to-entity map tests", () => {
     inputSearchEntity = getByLabelText("searchInput-entity");
     fireEvent.change(inputSearchEntity, {target: {value: "deliveredTo"}});
     expect(inputSearchEntity).toHaveValue("deliveredTo");
-    fireEvent.click(document.querySelector("#submitSearch-entity"));
+    fireEvent.click(document.querySelector("#submitSearch-entity")!!);
     expect(getByText("deliveredTo")).toBeInTheDocument();
     expect(getByText("deliveredTo")).toHaveStyle("background-color: yellow");
 
@@ -584,7 +586,7 @@ describe("RTL Source-to-entity map tests", () => {
     inputSearchEntity = getByLabelText("searchInput-entity");
     fireEvent.change(inputSearchEntity, {target: {value: "orderedBy"}});
     expect(inputSearchEntity).toHaveValue("orderedBy");
-    fireEvent.click(document.querySelector("#submitSearch-entity"));
+    fireEvent.click(document.querySelector("#submitSearch-entity")!!);
     expect(getByText("orderedBy")).toBeInTheDocument();
     expect(getByText("orderedBy")).toHaveStyle("background-color: yellow");
 
@@ -592,7 +594,7 @@ describe("RTL Source-to-entity map tests", () => {
     inputSearchEntity = getByLabelText("searchInput-entity");
     fireEvent.change(inputSearchEntity, {target: {value: "lineItems"}});
     expect(inputSearchEntity).toHaveValue("lineItems");
-    fireEvent.click(document.querySelector("#submitSearch-entity"));
+    fireEvent.click(document.querySelector("#submitSearch-entity")!!);
     expect(getByText("lineItems")).toBeInTheDocument();
     expect(getByText("lineItems")).toHaveStyle("background-color: yellow");
   });

@@ -1,21 +1,23 @@
-import React, {useState, useEffect, useContext} from "react";
-import {Row, Col, Form, FormControl, FormLabel} from "react-bootstrap";
+import "./create-edit-step.scss";
+import "react-bootstrap-typeahead/css/Typeahead.css";
+
+import {Col, Form, FormControl, FormLabel, Row} from "react-bootstrap";
+import {CommonStepTooltips, NewMapTooltips, NewMatchTooltips, NewMergeTooltips} from "@config/tooltips.config";
+import {HCAlert, HCButton, HCInput, HCTooltip} from "@components/common";
+import {QuestionCircleFill, Search} from "react-bootstrap-icons";
+import React, {useContext, useEffect, useState} from "react";
+
+import {CurationContext} from "@util/curation-context";
+import {Overlay} from "react-bootstrap";
+import Popover from "react-bootstrap/Popover";
+import {StepType} from "../../../types/curation-types";
+import {Typeahead} from "react-bootstrap-typeahead";
+import {UserContext} from "@util/user-context";
 import axios from "axios";
 import styles from "./create-edit-step.module.scss";
-import "./create-edit-step.scss";
-import {UserContext} from "@util/user-context";
-import {NewMapTooltips, NewMatchTooltips, NewMergeTooltips, CommonStepTooltips} from "@config/tooltips.config";
-import {StepType} from "../../../types/curation-types";
-import {CurationContext} from "@util/curation-context";
-import {QuestionCircleFill, Search} from "react-bootstrap-icons";
-import {HCInput, HCAlert, HCButton, HCTooltip} from "@components/common";
-import Popover from "react-bootstrap/Popover";
-import {Overlay} from "react-bootstrap";
-import {Typeahead} from "react-bootstrap-typeahead";
-import "react-bootstrap-typeahead/css/Typeahead.css";
 import {themeColors} from "@config/themes.config";
 
-type Props = {
+export type Props = {
   tabKey: string;
   openStepSettings: boolean;
   setOpenStepSettings: any;

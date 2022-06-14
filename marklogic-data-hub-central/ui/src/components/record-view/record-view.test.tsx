@@ -1,36 +1,18 @@
-import React from "react";
-import {render, fireEvent, waitForElement} from "@testing-library/react";
-import {entitySearch} from "../../assets/mock-data/explore/entity-search";
-import {BrowserRouter as Router} from "react-router-dom";
-import RecordCardView from "./record-view";
-import axiosMock from "axios";
+import {AuthoritiesContext, AuthoritiesService} from "../../util/authorities";
+import {SearchContext, defaultSearchContext, defaultSearchOptions} from "../../util/search-context";
+import {fireEvent, render, waitForElement} from "@testing-library/react";
+
 import {MemoryRouter} from "react-router-dom";
-import {SearchContext} from "../../util/search-context";
+import React from "react";
+import RecordCardView from "./record-view";
+import {BrowserRouter as Router} from "react-router-dom";
+import axiosMock from "axios";
+import {entitySearch} from "../../assets/mock-data/explore/entity-search";
 import testData from "../../assets/mock-data/explore/Non-entity-document-payload";
-import {AuthoritiesService, AuthoritiesContext} from "../../util/authorities";
 
 jest.mock("axios");
 
 describe("Raw data card view component", () => {
-
-  const defaultSearchOptions = {
-    query: "",
-    entityTypeIds: [],
-    nextEntityTypes: [],
-    start: 1,
-    pageNumber: 1,
-    pageLength: 20,
-    pageSize: 20,
-    selectedFacets: {},
-    maxRowsPerPage: 100,
-    selectedQuery: "select a query",
-    manageQueryModal: false,
-    selectedTableProperties: [],
-    view: null,
-    sortOrder: [],
-    database: "final",
-  };
-
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -98,6 +80,7 @@ describe("Raw data card view component", () => {
     const {getByTestId, getByText} = render(<MemoryRouter>
       <AuthoritiesContext.Provider value={authorityService}>
         <SearchContext.Provider value={{
+          ...defaultSearchContext,
           searchOptions: defaultSearchOptions,
           greyedOptions: defaultSearchOptions,
           setEntity: jest.fn(),

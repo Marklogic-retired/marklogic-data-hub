@@ -1,10 +1,11 @@
-import React from "react";
-import {render, cleanup, fireEvent} from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
+
+import {SearchContext, defaultSearchContext} from "../../../util/search-context";
+import {cleanup, fireEvent, render} from "@testing-library/react";
+
 import GraphExploreSidePanel from "./graph-explore-side-panel";
-import {SearchContext} from "../../../util/search-context";
+import React from "react";
 import {BrowserRouter as Router} from "react-router-dom";
-import {defaultSearchOptions} from "../../../assets/mock-data/explore/entity-search";
 import axios from "axios";
 
 jest.mock("axios");
@@ -17,7 +18,7 @@ describe("Graph view side panel", () => {
   const defaultSavedNode ={entityName: "Order", primaryKey: {propertyValue: "1234"}, docUri: "10260.json", sources: "", entityInstance: {}, label: "1234"};
   test("Render graph side bar", () => {
     const {getByTestId} = render(
-      <SearchContext.Provider value={{searchOptions: defaultSearchOptions, savedNode: defaultSavedNode}}>
+      <SearchContext.Provider value={{...defaultSearchContext, savedNode: defaultSavedNode}}>
         <Router>
           <GraphExploreSidePanel onCloseSidePanel={() => {}} graphView={true}/>
         </Router>
@@ -35,7 +36,7 @@ describe("Graph view side panel", () => {
 
   test("Render instance tab", () => {
     const {getByLabelText, getByText} = render(
-      <SearchContext.Provider value={{searchOptions: defaultSearchOptions, savedNode: defaultSavedNode}}>
+      <SearchContext.Provider value={{...defaultSearchContext, savedNode: defaultSavedNode}}>
         <Router>
           <GraphExploreSidePanel onCloseSidePanel={() => {}} graphView={true}/>
         </Router>
@@ -67,7 +68,7 @@ describe("Graph view side panel", () => {
     axiosMock.get["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200, data: semanticConceptInfo})));
     let url = `/api/entitySearch/graph/semanticConceptInfo?semanticConceptIRI=${semanticConceptIRI}&database=final`;
     const {getByTestId, findByLabelText, queryByLabelText} = render(
-      <SearchContext.Provider value={{searchOptions: defaultSearchOptions, savedNode: savedNodeConcept}}>
+      <SearchContext.Provider value={{...defaultSearchContext, savedNode: savedNodeConcept}}>
         <Router>
           <GraphExploreSidePanel onCloseSidePanel={() => {}} graphView={true}/>
         </Router>

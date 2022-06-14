@@ -1,14 +1,13 @@
-import React from "react";
+import MatchingCard, {Props} from "./matching-card";
 import {fireEvent, render, wait} from "@testing-library/react";
-import {BrowserRouter as Router} from "react-router-dom";
-import userEvent from "@testing-library/user-event";
 
-import MatchingCard from "./matching-card";
-
-import {matchingStep} from "../../../assets/mock-data/curation/matching.data";
-import {customerEntityDef} from "../../../assets/mock-data/curation/entity-definitions-mock";
 import {MatchingStep} from "../../../types/curation-types";
+import React from "react";
+import {BrowserRouter as Router} from "react-router-dom";
 import {SecurityTooltips} from "../../../config/tooltips.config";
+import {customerEntityDef} from "../../../assets/mock-data/curation/entity-definitions-mock";
+import {matchingStep} from "../../../assets/mock-data/curation/matching.data";
+import userEvent from "@testing-library/user-event";
 
 const mockHistoryPush = jest.fn();
 
@@ -21,12 +20,13 @@ jest.mock("react-router-dom", () => ({
 
 const matchingStepsArray: MatchingStep[] = matchingStep.artifacts;
 const entityModel = {model: customerEntityDef[0]["entityModel"].definitions};
-const defaultProps = {
+const defaultProps: Props = {
   matchingStepsArray: matchingStepsArray,
   flows: [{name: "customerJSONFlow", steps: [{stepName: "matchCustomers"}, {stepName: "matchCustomers123"}]}, {name: "customerXMLFlow", steps: [{stepName: "matchCustomers123"}]}],
   entityName: customerEntityDef[0]["entityModel"].info.title,
   deleteMatchingArtifact: jest.fn(),
   createMatchingArtifact: jest.fn(),
+  updateMatchingArtifact: jest.fn(),
   canReadMatchMerge: true,
   canWriteMatchMerge: true,
   entityModel: entityModel,

@@ -1,13 +1,12 @@
+import MergingCard, {Props} from "./merging-card";
+import {cleanup, fireEvent, render, wait} from "@testing-library/react";
+
 import React from "react";
-import {render, wait, cleanup, fireEvent} from "@testing-library/react";
 import {BrowserRouter as Router} from "react-router-dom";
-import userEvent from "@testing-library/user-event";
-
-import MergingCard from "./merging-card";
-
-import {mergingStep} from "../../../assets/mock-data/curation/merging.data";
-import {customerEntityDef} from "../../../assets/mock-data/curation/entity-definitions-mock";
 import {SecurityTooltips} from "../../../config/tooltips.config";
+import {customerEntityDef} from "../../../assets/mock-data/curation/entity-definitions-mock";
+import {mergingStep} from "../../../assets/mock-data/curation/merging.data";
+import userEvent from "@testing-library/user-event";
 
 const mergingStepsArray = mergingStep.artifacts;
 
@@ -21,12 +20,13 @@ jest.mock("react-router-dom", () => ({
 }));
 
 const entityModel = {model: customerEntityDef[0]["entityModel"].definitions};
-const defaultProps = {
+const defaultProps: Props = {
   mergingStepsArray: mergingStepsArray,
   flows: [{name: "customerJSONFlow", steps: [{stepName: "mergeCustomers"}, {stepName: "mergeCustomers123"}]}, {name: "customerXMLFlow", steps: [{stepName: "mergeCustomers123"}]}],
   entityName: customerEntityDef[0]["entityModel"].info.title,
   deleteMergingArtifact: jest.fn(),
   createMergingArtifact: jest.fn(),
+  updateMergingArtifact: jest.fn(),
   canReadMatchMerge: true,
   canWriteMatchMerge: true,
   entityModel: entityModel,

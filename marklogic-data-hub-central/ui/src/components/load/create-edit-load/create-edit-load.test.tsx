@@ -1,9 +1,11 @@
-import React from "react";
-import {render, fireEvent, waitForElement, wait} from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
-import CreateEditLoad from "./create-edit-load";
+
+import {fireEvent, render, wait, waitForElement} from "@testing-library/react";
+
 import {BrowserRouter} from "react-router-dom";
+import CreateEditLoad from "./create-edit-load";
 import {NewLoadTooltips} from "../../../config/tooltips.config";
+import React from "react";
 
 describe("New/edit load step configuration", () => {
 
@@ -11,17 +13,18 @@ describe("New/edit load step configuration", () => {
     tabKey: "1",
     isEditing: true,
     openStepSettings: true,
-    setOpenStepSettings: () => {},
-    createLoadArtifact: () => {},
+    setOpenStepSettings: jest.fn(),
+    createLoadArtifact: jest.fn(),
     stepData: {},
     canReadWrite: true,
     canReadOnly: false,
     currentTab: "1",
-    setIsValid: () => {},
-    resetTabs: () => {},
-    setHasChanged: () => {},
-    setPayload: () => {},
-    onCancel: () => {}
+    setIsValid: jest.fn(),
+    resetTabs: jest.fn(),
+    setHasChanged: jest.fn(),
+    setPayload: jest.fn(),
+    onCancel: jest.fn(),
+    updateLoadArtifact: jest.fn(),
   };
 
   test("fields non-Delimited Text render", async () => {

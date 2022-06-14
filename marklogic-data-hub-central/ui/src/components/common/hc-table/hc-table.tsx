@@ -1,11 +1,13 @@
-import React from "react";
-import BootstrapTable from "react-bootstrap-table-next";
-import paginationFactory from "react-bootstrap-table2-paginator";
-import {DropdownButton, Dropdown, FormCheck} from "react-bootstrap";
-import {CaretDownFill, CaretUpFill, ChevronDown, ChevronRight} from "react-bootstrap-icons";
-import styles from "./hc-table.module.scss";
 import "./hc-table.scss";
+
+import {CaretDownFill, CaretUpFill, ChevronDown, ChevronRight} from "react-bootstrap-icons";
+import {Dropdown, DropdownButton, FormCheck} from "react-bootstrap";
+
+import BootstrapTable from "react-bootstrap-table-next";
 import HCButton from "../hc-button/hc-button";
+import React from "react";
+import paginationFactory from "react-bootstrap-table2-paginator";
+import styles from "./hc-table.module.scss";
 
 interface Props {
   bordered?: boolean;
@@ -62,7 +64,7 @@ function HCTable({className, rowStyle, childrenIndent, data, keyUtil, component,
       </HCButton>;
     },
     expandHeaderColumnRenderer: () => "",
-    nonExpandable: !props.subTableHeader && !childrenIndent ? [] : data.filter(row => typeof props.rowKey === "string" && !row.children).map(element => typeof props.rowKey === "string" && typeof element[props.rowKey] !== undefined && element[props.rowKey]),
+    nonExpandable: !props.subTableHeader && !childrenIndent ? [] : data.filter(row => typeof props.rowKey === "string" && !row.children).map(element => typeof props.rowKey === "string" && element[props.rowKey] !== undefined && element[props.rowKey]),
   };
 
   const generateIndentList = (data, indentLevel, indentArray) => {

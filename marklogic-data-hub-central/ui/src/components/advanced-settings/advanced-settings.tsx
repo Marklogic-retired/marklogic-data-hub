@@ -1,24 +1,26 @@
-import React, {useState, useEffect, useContext} from "react";
-import Axios from "axios";
-import Select, {components as SelectComponents} from "react-select";
-import CreatableSelect from "react-select/creatable";
-import reactSelectThemeConfig from "@config/react-select-theme.config";
-import {Form, Row, Col, FormCheck, FormLabel, FormControl, OverlayTrigger, Tooltip} from "react-bootstrap";
-import styles from "./advanced-settings.module.scss";
-import {AdvancedSettingsTooltips, keyboardNavigationTooltips} from "@config/tooltips.config";
-import {AdvancedSettingsMessages} from "@config/messages.config";
-import StepsConfig from "@config/steps.config";
 import "./advanced-settings.scss";
-import AdvancedTargetCollections from "./advanced-target-collections";
-import {CurationContext} from "@util/curation-context";
+
+import {AdvancedSettingsTooltips, keyboardNavigationTooltips} from "@config/tooltips.config";
 import {ChevronDown, ChevronRight, QuestionCircleFill} from "react-bootstrap-icons";
-import {HCInput, HCAlert, HCButton, HCTooltip} from "@components/common";
-import Popover from "react-bootstrap/Popover";
+import {Col, Form, FormCheck, FormControl, FormLabel, OverlayTrigger, Row, Tooltip} from "react-bootstrap";
+import {HCAlert, HCButton, HCInput, HCTooltip} from "@components/common";
+import React, {useContext, useEffect, useState} from "react";
+import Select, {components as SelectComponents} from "react-select";
+
+import {AdvancedSettingsMessages} from "@config/messages.config";
+import AdvancedTargetCollections from "./advanced-target-collections";
+import Axios from "axios";
+import CreatableSelect from "react-select/creatable";
+import {CurationContext} from "@util/curation-context";
 import {Overlay} from "react-bootstrap";
+import Popover from "react-bootstrap/Popover";
+import StepsConfig from "@config/steps.config";
 import {getEnvironment} from "@util/environment";
+import reactSelectThemeConfig from "@config/react-select-theme.config";
+import styles from "./advanced-settings.module.scss";
 import {themeColors} from "@config/themes.config";
 
-type Props = {
+export type Props = {
   tabKey: string;
   tooltipsData: any;
   isEditing: boolean;

@@ -1,11 +1,12 @@
-import React from "react";
-import axiosMock from "axios";
-import {fireEvent, render, wait, waitForElement, act, cleanup} from "@testing-library/react";
-import AdvancedSettings from "./advanced-settings";
-import mocks from "../../api/__mocks__/mocks.data";
-import data from "../../assets/mock-data/curation/advanced-settings.data";
 import {AdvancedSettingsTooltips, SecurityTooltips} from "../../config/tooltips.config";
+import {act, cleanup, fireEvent, render, wait, waitForElement} from "@testing-library/react";
+
+import AdvancedSettings from "./advanced-settings";
+import React from "react";
 import StepsConfig from "../../config/steps.config";
+import axiosMock from "axios";
+import data from "../../assets/mock-data/curation/advanced-settings.data";
+import mocks from "../../api/__mocks__/mocks.data";
 
 jest.mock("axios");
 

@@ -1,31 +1,32 @@
-import React, {useState, useEffect, useContext, useRef} from "react";
-import dayjs from "dayjs";
-import Select from "react-select";
-import {Accordion, FormCheck, Form} from "react-bootstrap";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {Accordion, Form, FormCheck} from "react-bootstrap";
+import {HCCheckbox, HCDateTimePicker, HCInput, HCTooltip} from "@components/common";
+import React, {useContext, useEffect, useRef, useState} from "react";
+import {deepCopy, entityFromJSON, facetParser} from "@util/data-conversion";
 import {faInfoCircle, faSearch} from "@fortawesome/free-solid-svg-icons";
-import {HCDateTimePicker, HCTooltip, HCInput, HCCheckbox} from "@components/common";
-import Facet from "../facet/facet";
-import {SearchContext} from "@util/search-context";
-import {facetParser, deepCopy, entityFromJSON} from "@util/data-conversion";
-import hubPropertiesConfig from "@config/hub-properties.config";
-import tooltipsConfig from "@config/explorer-tooltips.config";
-import styles from "./sidebar.module.scss";
+import {getEntities, graphSearchQuery, searchResultsQuery} from "@api/queries";
 import {getUserPreferences, updateUserPreferences} from "../../services/user-preferences";
-import {UserContext} from "@util/user-context";
-import reactSelectThemeConfig from "@config/react-select-theme.config";
+
 import BaseEntitiesFacet from "../base-entities-facet/base-entities-facet";
-import RelatedEntitiesFacet from "../related-entities-facet/related-entities-facet";
 import {ExploreGraphViewToolTips} from "@config/tooltips.config";
+import Facet from "../facet/facet";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {HCDivider} from "@components/common";
-import {graphSearchQuery, getEntities, searchResultsQuery} from "@api/queries";
+import RelatedEntitiesFacet from "../related-entities-facet/related-entities-facet";
+import {SearchContext} from "@util/search-context";
+import Select from "react-select";
+import {UserContext} from "@util/user-context";
+import dayjs from "dayjs";
 import {exploreSidebar as exploreSidebarConfig} from "@config/explore.config";
 import {getEnvironment} from "@util/environment";
+import hubPropertiesConfig from "@config/hub-properties.config";
+import reactSelectThemeConfig from "@config/react-select-theme.config";
+import styles from "./sidebar.module.scss";
+import tooltipsConfig from "@config/explorer-tooltips.config";
 
 const tooltips = tooltipsConfig.browseDocuments;
 const {exploreSidebar} = tooltipsConfig;
 
-interface Props {
+export interface Props {
   facets: any;
   selectedEntities: string[];
   entityDefArray: any[];

@@ -1,5 +1,14 @@
+interface StepData {
+    description: string;
+    additionalCollections: any[],
+    batchSize?: number,
+    permissions: any,
+    lastUpdated: any,
+    interceptors: any,
+    customHook: any,
+}
 // Shared properties across ALL steps
-const stepData = {
+const stepData: StepData = {
   description: "",
   additionalCollections: ["addedCollection"],
   batchSize: 35,

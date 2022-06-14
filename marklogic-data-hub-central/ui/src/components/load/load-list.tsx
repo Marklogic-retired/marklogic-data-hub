@@ -1,22 +1,24 @@
-import React, {useState, useEffect, useContext} from "react";
-import {Link, useLocation, useHistory} from "react-router-dom";
-import styles from "./load-list.module.scss";
 import "./load-list.scss";
-import {Row, Col, Modal, Dropdown} from "react-bootstrap";
-import Select, {components as SelectComponents} from "react-select";
-import reactSelectThemeConfig from "@config/react-select-theme.config";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
-import dayjs from "dayjs";
-import {convertDateFromISO} from "@util/conversionFunctions";
-import Steps from "../steps/steps";
-import {AdvLoadTooltips, SecurityTooltips} from "@config/tooltips.config";
-import {LoadingContext} from "@util/loading-context";
-import {getViewSettings, setViewSettings} from "@util/user-context";
-import {PlayCircleFill, PlusCircleFill} from "react-bootstrap-icons";
-import {HCButton, HCDivider, HCTooltip, HCTable} from "@components/common";
 
-interface Props {
+import {AdvLoadTooltips, SecurityTooltips} from "@config/tooltips.config";
+import {Col, Dropdown, Modal, Row} from "react-bootstrap";
+import {HCButton, HCDivider, HCTable, HCTooltip} from "@components/common";
+import {Link, useHistory, useLocation} from "react-router-dom";
+import {PlayCircleFill, PlusCircleFill} from "react-bootstrap-icons";
+import React, {useContext, useEffect, useState} from "react";
+import Select, {components as SelectComponents} from "react-select";
+import {getViewSettings, setViewSettings} from "@util/user-context";
+
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {LoadingContext} from "@util/loading-context";
+import Steps from "../steps/steps";
+import {convertDateFromISO} from "@util/conversionFunctions";
+import dayjs from "dayjs";
+import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
+import reactSelectThemeConfig from "@config/react-select-theme.config";
+import styles from "./load-list.module.scss";
+
+export interface Props {
   data: any;
   flows: any;
   canWriteFlow: any;

@@ -1,11 +1,10 @@
+import PropertiesTab from "./properties-tab";
 import React from "react";
 import {BrowserRouter as Router} from "react-router-dom";
-import {render} from "@testing-library/react";
-import PropertiesTab from "./properties-tab";
-
 import {
   getEntityTypes,
 } from "../../../../assets/mock-data/modeling/modeling";
+import {render} from "@testing-library/react";
 
 describe("Graph Modeling Properties Tab Component", () => {
 
@@ -20,6 +19,7 @@ describe("Graph Modeling Properties Tab Component", () => {
           entityTypeData={getEntityTypes[0]}
           canWriteEntityModel={true}
           canReadEntityModel={true}
+          updateSavedEntity={jest.fn()}
         />
       </Router>);
 

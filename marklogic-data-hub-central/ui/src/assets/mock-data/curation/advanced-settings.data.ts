@@ -17,6 +17,7 @@ const advancedProps = {
   setPayload: jest.fn(),
   createStep: jest.fn(),
   onCancel: jest.fn(),
+  updateStep: jest.fn()
 };
 
 // Advanced Props

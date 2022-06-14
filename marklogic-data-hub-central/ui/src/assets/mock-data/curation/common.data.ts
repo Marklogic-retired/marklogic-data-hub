@@ -1,5 +1,6 @@
 // Test data
 
+import {Props} from "@components/load/load-list";
 import dayjs from "dayjs";
 
 const flows = [
@@ -86,7 +87,7 @@ const flowsAdd = [
   }
 ];
 
-const loadData = {
+const loadData: Props = {
   data: [
     {
       name: "testLoad",
@@ -135,6 +136,13 @@ const loadData = {
   createLoadArtifact: jest.fn(),
   canReadWrite: true,
   canReadOnly: false,
+  flows: [],
+  canWriteFlow: true,
+  updateLoadArtifact: jest.fn(),
+  addStepToFlow: jest.fn(),
+  addStepToNew: jest.fn(),
+  sortOrderInfo: jest.fn(),
+  flowsLoading: false,
 
 };
 
@@ -1963,6 +1971,13 @@ const loadDataPagination = {
   createLoadArtifact: jest.fn(),
   canReadWrite: true,
   canReadOnly: false,
+  flows: [],
+  canWriteFlow: true,
+  updateLoadArtifact: jest.fn(),
+  addStepToFlow: jest.fn(),
+  addStepToNew: jest.fn(),
+  sortOrderInfo: jest.fn(),
+  flowsLoading: false,
 
 };
 

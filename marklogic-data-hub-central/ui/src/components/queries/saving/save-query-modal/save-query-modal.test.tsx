@@ -1,5 +1,6 @@
-import React from "react";
 import {fireEvent, render} from "@testing-library/react";
+
+import React from "react";
 import SaveQueryModal from "./save-query-modal";
 
 describe("<SaveQueryModal/>", () => {
@@ -19,6 +20,9 @@ describe("<SaveQueryModal/>", () => {
       currentQueryDescription={""}
       setCurrentQueryDescription={jest.fn()}
       setSaveNewIconVisibility={jest.fn()}
+      existingQueryYesClicked={false}
+      resetYesClicked={false}
+      setColumnSelectorTouched={jest.fn()}
     />);
     queryField = getByPlaceholderText("Enter query name");
     fireEvent.change(queryField, {target: {value: "save new query"}});

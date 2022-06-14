@@ -1,16 +1,17 @@
-import React from "react";
-import {render, fireEvent, wait, within, cleanup, waitForElement} from "@testing-library/react";
+import {AuthoritiesContext, AuthoritiesService} from "../../util/authorities";
+import {cleanup, fireEvent, render, wait, waitForElement, within} from "@testing-library/react";
+
 import LoadList from "./load-list";
-import data from "../../assets/mock-data/curation/common.data";
-import axiosMock from "axios";
-import mocks from "../../api/__mocks__/mocks.data";
-import loadData from "../../assets/mock-data/curation/ingestion.data";
-import {MemoryRouter} from "react-router-dom";
-import {AuthoritiesService, AuthoritiesContext} from "../../util/authorities";
-import {validateTableRow} from "../../util/test-utils";
-import {SecurityTooltips} from "../../config/tooltips.config";
 import {LoadingContext} from "../../util/loading-context";
+import {MemoryRouter} from "react-router-dom";
+import React from "react";
+import {SecurityTooltips} from "../../config/tooltips.config";
+import axiosMock from "axios";
+import data from "../../assets/mock-data/curation/common.data";
 import dayjs from "dayjs";
+import loadData from "../../assets/mock-data/curation/ingestion.data";
+import mocks from "../../api/__mocks__/mocks.data";
+import {validateTableRow} from "../../util/test-utils";
 
 jest.mock("axios");
 
@@ -36,7 +37,7 @@ describe("Load data component", () => {
 
   test("Verify Load list view renders correctly with no data", () => {
     const {getByText} = render(<MemoryRouter><LoadList {...data.loadData} data={[]} /></MemoryRouter>);
-    const tableColumns = within(getByText("Name").closest("tr"));
+    const tableColumns = within(getByText("Name").closest("tr")!!);
 
     expect(getByText("Add New")).toBeInTheDocument();
     expect(tableColumns.getByText("Name")).toBeInTheDocument();
@@ -50,7 +51,7 @@ describe("Load data component", () => {
 
   test("Verify Load list view renders correctly with data", async () => {
     const {getByText, getByTestId} = render(<MemoryRouter><LoadList {...data.loadData} /></MemoryRouter>);
-    const dataRow = within(getByText("testLoadXML").closest("tr"));
+    const dataRow = within(getByText("testLoadXML").closest("tr")!!);
     expect(dataRow.getByText(data.loadData.data[1].name)).toBeInTheDocument();
     expect(dataRow.getByText(data.loadData.data[1].description)).toBeInTheDocument();
     expect(dataRow.getByText(data.loadData.data[1].sourceFormat)).toBeInTheDocument();
@@ -432,7 +433,7 @@ describe("Load data component", () => {
     const mockAddStepToNew = jest.fn();
     const mockCreateLoadArtifact = jest.fn();
     const mockDeleteLoadArtifact = jest.fn();
-    const {getByText, getByLabelText, getByTestId} = render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><LoadList
+    const {getByText, getByLabelText, getByTestId} = render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><LoadList {...data.loadData}
       addStepToFlow={mockAddStepToFlow}
       addStepToNew={mockAddStepToNew}
       canReadOnly={authorityService.canReadLoad()}
@@ -441,7 +442,8 @@ describe("Load data component", () => {
       createLoadArtifact={mockCreateLoadArtifact}
       data={data.loadData.data}
       deleteLoadArtifact={mockDeleteLoadArtifact}
-      flows={data.flows} />
+      flows={data.flows}
+    />
     </AuthoritiesContext.Provider></MemoryRouter>);
 
     const loadStepName = data.loadData.data[0].name;
@@ -471,7 +473,7 @@ describe("Load data component", () => {
     const mockAddStepToNew = jest.fn();
     const mockCreateLoadArtifact = jest.fn();
     const mockDeleteLoadArtifact = jest.fn();
-    const {getByText, queryByTestId, getByLabelText, getByTestId, queryByText} = render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><LoadList
+    const {getByText, queryByTestId, getByLabelText, getByTestId, queryByText} = render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><LoadList  {...data.loadData}
       addStepToFlow={mockAddStepToFlow}
       addStepToNew={mockAddStepToNew}
       canReadOnly={authorityService.canReadLoad()}
@@ -589,6 +591,7 @@ describe("Load data component", () => {
               pageSize: 10
             },
             setPageSize: jest.fn(),
+            setPage: jest.fn(),
           }}>
             <LoadList
 

@@ -1,12 +1,12 @@
-import React from "react";
-import {render, screen, fireEvent, wait, waitForElement} from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import MatchingStepDetail from "./matching-step-detail";
+import {customerMatchingStep, customerMatchingStepEmpty} from "../../../../assets/mock-data/curation/curation-context-mock";
+import {fireEvent, render, screen, wait, waitForElement} from "@testing-library/react";
 
 import {CurationContext} from "../../../../util/curation-context";
-import {customerMatchingStep, customerMatchingStepEmpty} from "../../../../assets/mock-data/curation/curation-context-mock";
+import MatchingStepDetail from "./matching-step-detail";
+import React from "react";
 import {calculateMatchingActivity} from "../../../../api/matching";
 import {matchingActivity} from "../../../../assets/mock-data/curation/matching.data";
+import userEvent from "@testing-library/user-event";
 
 jest.mock("../../../../api/matching");
 
@@ -78,17 +78,17 @@ describe("Matching Step Detail view component", () => {
     expect(queryByLabelText("ruleset-more")).toBeInTheDocument();
 
     //Enable threshold switch
-    userEvent.click(queryByLabelText("threshold-scale-switch"));
+    userEvent.click(queryByLabelText("threshold-scale-switch")!!);
     expect(queryByLabelText("threshold-scale-switch")).toBeChecked();
     expect(getByTestId("active-threshold-timeline")).toBeInTheDocument();
 
     //Enable ruleset switch
-    userEvent.click(queryByLabelText("ruleset-scale-switch"));
+    userEvent.click(queryByLabelText("ruleset-scale-switch")!!);
     expect(queryByLabelText("ruleset-scale-switch")).toBeChecked();
     expect(getByTestId("active-ruleset-timeline")).toBeInTheDocument();
 
 
-    userEvent.click(document.querySelector("#add-ruleset"));
+    userEvent.click(document.querySelector("#add-ruleset")!!);
     expect(getByLabelText("multiPropertyRulesetOption")).toBeInTheDocument();
     userEvent.click(getByLabelText("singlePropertyRulesetOption"));
 

@@ -1,36 +1,15 @@
+import {AuthoritiesContext, AuthoritiesService} from "../../util/authorities";
+import {SearchContext, defaultSearchContext, defaultSearchOptions} from "../../util/search-context";
+import {entityDefArray, entityPropertyDefinitions, entitySearch, entitySearchAllEntities, selectedPropertyDefinitions} from "../../assets/mock-data/explore/entity-search";
+import {fireEvent, render, waitForElement} from "@testing-library/react";
+
 import React from "react";
-import {render, fireEvent, waitForElement} from "@testing-library/react";
-import {entitySearch, entityPropertyDefinitions, selectedPropertyDefinitions, entityDefArray, entitySearchAllEntities} from "../../assets/mock-data/explore/entity-search";
 import ResultsTabularView from "./results-tabular-view";
 import {BrowserRouter as Router} from "react-router-dom";
-import {validateTableRow} from "../../util/test-utils";
 import dayjs from "dayjs";
-import {SearchContext} from "../../util/search-context";
-import {AuthoritiesService, AuthoritiesContext} from "../../util/authorities";
+import {validateTableRow} from "../../util/test-utils";
 
 describe("Results Table view component", () => {
-  const defaultSearchOptions = {
-    query: "",
-    entityTypeIds: [],
-    baseEntities: [],
-    relatedEntityTypeIds: [],
-    nextEntityType: "",
-    start: 1,
-    pageNumber: 1,
-    pageLength: 20,
-    pageSize: 20,
-    selectedFacets: {},
-    maxRowsPerPage: 100,
-    sidebarQuery: "Select a saved query",
-    selectedQuery: "select a query",
-    selectedTableProperties: [],
-    view: null,
-    tileId: "",
-    sortOrder: [],
-    database: "final",
-    datasource: "entities",
-  };
-
   // TODO DHFPROD-7711 skipping failing tests to enable component replacement
   test.skip("Results table with data renders", async () => {
     const {getByText, getByTestId} = render(
@@ -79,6 +58,7 @@ describe("Results Table view component", () => {
 
     const {getByText} = render(
       <SearchContext.Provider value={{
+        ...defaultSearchContext,
         searchOptions: defaultSearchOptions,
         greyedOptions: defaultSearchOptions,
         setRelatedEntityTypeIds: jest.fn(),
@@ -132,7 +112,7 @@ describe("Results Table view component", () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readMerging", "readMatching"]);
     const {getByText, getByTestId} = render(
-      <SearchContext.Provider value={{
+      <SearchContext.Provider value={{...defaultSearchContext,
         searchOptions: defaultSearchOptions,
         greyedOptions: defaultSearchOptions,
         setRelatedEntityTypeIds: jest.fn(),

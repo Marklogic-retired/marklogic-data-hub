@@ -1,17 +1,18 @@
-import React, {useContext, useEffect, useState} from "react";
-import {Modal} from "react-bootstrap";
 import "./compare-values-modal.scss";
-import styles from "./compare-values-modal.module.scss";
-import {Definition} from "../../../../types/modeling-types";
-import {CurationContext} from "@util/curation-context";
-import backgroundImage from "../../../../assets/white-for-dark-bg.png";
-import {HCTable, HCButton} from "@components/common";
+
+import {HCButton, HCTable} from "@components/common";
+import React, {useContext, useEffect, useState} from "react";
 import {faExclamationTriangle, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
+
+import {CurationContext} from "@util/curation-context";
+import {Definition} from "../../../../types/modeling-types";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {Modal} from "react-bootstrap";
 import {Overlay} from "react-bootstrap";
 import Popover from "react-bootstrap/Popover";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {SearchContext} from "@util/search-context";
-import {isArray, isObject} from "util";
+import backgroundImage from "../../../../assets/white-for-dark-bg.png";
+import styles from "./compare-values-modal.module.scss";
 
 interface Props {
   isVisible: any;
@@ -284,7 +285,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
         if (props.uriInfo !== undefined) {
           propertyValueInURI1 = property1[property.name];
           propertyValueInURI2 = property2[property.name];
-          if (propertyValueInURI1 === undefined || propertyValueInURI2 === undefined || isArray(propertyValueInURI1) || isArray(propertyValueInURI2) || isObject(propertyValueInURI1) || isObject(propertyValueInURI2)) {
+          if (propertyValueInURI1 === undefined || propertyValueInURI2 === undefined || Array.isArray(propertyValueInURI1) || Array.isArray(propertyValueInURI2) || (typeof propertyValueInURI1 === "object") || (typeof propertyValueInURI2 === "object")) {
             propertyValueInURI1 = "";
             propertyValueInURI2 = "";
           }

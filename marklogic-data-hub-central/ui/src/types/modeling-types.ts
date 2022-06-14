@@ -88,7 +88,6 @@ export interface PropertyOptions {
   pii: string,
   facetable: boolean,
   sortable: boolean
-  //wildcard: boolean
 }
 
 export enum PropertyType {
