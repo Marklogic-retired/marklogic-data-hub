@@ -1,39 +1,54 @@
 @import "../../../../theme/HCVariables.scss";
 
 @font-face {
-	font-family: 'MLCustomFont';
-	src: url('../../../../fonts/icomoon.ttf') format('truetype');
+    font-family: 'MLCustomFont';
+    src: url('../../../../fonts/icomoon.ttf') format('truetype');
 }
 
-.mapContainer{
+.mapContainer {
     height: auto;
     width: 95.6vw;
 }
 
-.header{
-    display:inline-flex;
+.header {
+    display: inline-flex;
 }
 
-.headerTitle{
+.headerTitle {
     font-size: 1.5em;
     width: fit-content;
 }
 
-.saveMessage{
+.columnIcon {
+    cursor: pointer;
+    font-size: 21px;
+    margin-left: 8px;
+    margin-top: 2px;
+    color: $secondary-gray;
+
+    &:hover {
+        color: var(--hoverColor);
+    }
+}
+
+
+.saveMessage {
     border: 1px solid #ff0000;
     margin-left: 60em;
 }
-.noMessage{
+
+.noMessage {
     padding: 16.5px 0vh;
 }
-.parentContainer{
+
+.parentContainer {
     display: flex;
     flex-direction: row;
     padding-bottom: 1vh;
     padding-right: 40px;
 }
 
-.sourceContainer{
+.sourceContainer {
     width: auto;
     height: auto;
     flex: 4;
@@ -46,32 +61,33 @@
     overflow-y: auto;
 }
 
-.sourceTable{
-      & thead > tr > th {
+.sourceTable {
+    & thead>tr>th {
         background-color: #EEEEEE;
         line-height: 2px;
-      };
-      & tbody > tr > td {
+    }
+
+    & tbody>tr>td {
         background-color: #FAFAFA;
         line-height: 2px;
     }
 }
 
-.sourceTableRows{
+.sourceTableRows {
     line-height: 1px;
 }
 
-.sourceName{
+.sourceName {
     white-space: nowrap;
 }
 
-.valueHeader{
+.valueHeader {
     padding-bottom: 6px;
 }
 
 .noTableExpandIcon {
-  padding-right: 20px;
-  margin-left: -2px;
+    padding-right: 20px;
+    margin-left: -2px;
 }
 
 .tableExpandIcon {
@@ -82,7 +98,7 @@
     margin-left: -2px;
 }
 
-.sourceTitle{
+.sourceTitle {
     font-size: 16px;
     white-space: nowrap;
 }
@@ -92,7 +108,7 @@
     padding: 0px
 }
 
-.entityContainer{
+.entityContainer {
     width: 100%;
     flex: 9;
     display: flex;
@@ -102,48 +118,51 @@
     word-break: break-all;
     height: calc(100vh - 315px);
     overflow-y: auto;
-    > .entityDetails{
+
+    >.entityDetails {
         display: inline-block;
         vertical-align: middle;
         margin-bottom: 3px;
-        > .entityTypeTitle{
+
+        >.entityTypeTitle {
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
     }
 
-    > .columnOptionsSelectorContainer {
+    >.columnOptionsSelectorContainer {
         display: flex;
         justify-content: flex-end;
         align-items: center;
         margin-bottom: 10px;
 
-        > .columnOptionsSelector{
+        >.columnOptionsSelector {
             margin: 10px 15px 0px 0px;
         }
-        > .entityCollapseButtons{
+
+        >.entityCollapseButtons {
             margin-top: 10px;
             padding-right: 15px;
         }
     }
 }
 
-.sourceButtons{
-  display: flex;
-  justify-content: end;
+.sourceButtons {
+    display: flex;
+    justify-content: end;
 }
 
-.navigationButtonsError{
-  margin-right: 50px;
+.navigationButtonsError {
+    margin-right: 50px;
 }
 
-.sourceCollapseButtons{
-padding-top: 29px;
-padding-bottom: 9px;
+.sourceCollapseButtons {
+    padding-top: 29px;
+    padding-bottom: 9px;
 }
 
-> .expandCollapseBtn {
+>.expandCollapseBtn {
     width: 102px;
     height: 32px;
 }
@@ -154,19 +173,19 @@ padding-bottom: 9px;
     max-height: 3vh;
 }
 
-.columnSelectorOverlay{
+.columnSelectorOverlay {
     border: 1px solid rgba(0, 0, 0, 0.2);
     box-sizing: border-box;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
-.dropdownHover{
-    &:hover{
+.dropdownHover {
+    &:hover {
         color: var(--hoverColor);
     }
 }
 
-.checkBoxItem{
+.checkBoxItem {
     line-height: 2vh;
     margin-top: 4px;
 }
@@ -188,13 +207,13 @@ hr {
     }
 }
 
-.mapExpression{
+.mapExpression {
     width: 100%;
     line-height: 1px;
     vertical-align: top;
 }
 
-.entityIcon:before{
+.entityIcon:before {
     content: "\e93b";
     font-family: MLCustomFont;
     color: $primary;
@@ -222,7 +241,7 @@ hr {
     margin-bottom: -32px;
     margin-top: -26px;
     position: relative;
-  }
+}
 
 .failedInterceptorContainer {
     margin-top: 140px
@@ -246,7 +265,7 @@ hr {
 }
 
 .interceptorSuccessIcon {
-    color: $info !important;
+    color: $info  !important;
     font-size: 16px !important;
     left: 11px !important;
 }
@@ -258,28 +277,33 @@ hr {
     padding-right: 1px;
     padding-left: 1px;
 }
+
 .emptyText {
     word-break: keep-all;
 }
-.testButtons{
+
+.testButtons {
     align-items: flex-end;
     float: right;
 }
-.entityDetails{
+
+.entityDetails {
     align-items: flex-start;
     float: left;
 }
+
 .sourceDataIcon:before {
-  content: "\e934";
-  font-family: MLCustomFont;
-  color: $primary;
-  font-size: 24px;
-  position: relative;
-  font-weight: 200;
-  top: 4px;
-  padding-right: 3px;
-  display: inline-block;
+    content: "\e934";
+    font-family: MLCustomFont;
+    color: $primary;
+    font-size: 24px;
+    position: relative;
+    font-weight: 200;
+    top: 4px;
+    padding-right: 3px;
+    display: inline-block;
 }
+
 .srcDetails {
     z-index: 999;
     font-size: 14px;
@@ -287,7 +311,7 @@ hr {
     margin-bottom: -50px;
 }
 
-.sourceValue{
+.sourceValue {
     margin-top: -6px;
     margin-bottom: -20px;
     white-space: pre;
@@ -296,12 +320,12 @@ hr {
     line-height: normal;
 }
 
-.namespace{
+.namespace {
     color: $info;
     cursor: pointer;
 }
 
-.toolTipForValues{
+.toolTipForValues {
     cursor: pointer;
 }
 
@@ -310,15 +334,15 @@ hr {
     color: #7F86B5;
 }
 
-.expandIcon{
+.expandIcon {
     margin-left: -16px;
-    vertical-align:middle;
+    vertical-align: middle;
     text-align: left;
     font-size: 13px;
     padding-right: 1px;
 }
 
-.inputURIContainer{
+.inputURIContainer {
     padding-top: 10px;
     margin-left: -4px;
     vertical-align: middle;
@@ -326,24 +350,26 @@ hr {
     width: 105%;
 }
 
-.uriEditing{
+.uriEditing {
     width: 265px !important;
     margin-left: 5px;
     margin-right: 2px;
 }
 
-.sourceQuery{
+.sourceQuery {
     padding-top: 4px;
 }
-.uri{
+
+.uri {
     padding: 4px 0px;
-    height : 32px;
+    height: 32px;
 }
 
-.showingEditContainer{
-  position: absolute;
+.showingEditContainer {
+    position: absolute;
 }
-.showingEditIcon{
+
+.showingEditIcon {
     padding-top: 5px;
     padding-right: 5px;
     padding-bottom: 3px;
@@ -351,14 +377,15 @@ hr {
     border: 1px solid #E9F7FE;
     color: $primary;
 }
-.notShowingEditContainer{
+
+.notShowingEditContainer {
     padding-top: 10px;
     padding-right: 2.3em;
     padding-left: 3px;
     margin-left: -3px;
 }
 
-.URItext{
+.URItext {
     margin-left: 4px;
     color: $primary;
 }
@@ -368,7 +395,7 @@ hr {
     flex-direction: row;
 }
 
-.editIcon{
+.editIcon {
     display: relative;
     justify-content: flex-end;
     font-Size: 24px;
@@ -389,7 +416,7 @@ hr {
     font-size: 16px;
 }
 
-.closeIcon{
+.closeIcon {
     background-color: #7F86B5;
     color: #ffffff;
     border-radius: 3px;
@@ -397,7 +424,7 @@ hr {
     cursor: pointer;
 }
 
-.docLinksUl{
+.docLinksUl {
     padding-left: 1vw;
 }
 
@@ -409,44 +436,47 @@ hr {
     height: 100%;
     z-index: 999;
     background-color: rgba(255, 255, 255, 0.6);
+
     .runningLabel {
         margin-top: 5px;
         color: #3b458f;
     }
 }
 
-  #browse-buttons{
+#browse-buttons {
     border: 1px solid rgba(0, 0, 0, 0.961);
-  }
+}
 
-  .stepSettingsLink {
+.stepSettingsLink {
     position: absolute;
     bottom: 93%;
     right: 30px;
     color: #44499C;
     cursor: pointer;
+
     .stepSettingsLabel {
         display: inline-block;
         margin-left: 6px;
     }
-    &:hover{
+
+    &:hover {
         color: var(--hoverColor);
     }
 }
 
 
-.clearTestIcons{
-  right: 1.2%;
-  bottom: 87%;
-  padding-right: 10px;
-  position: absolute;
+.clearTestIcons {
+    right: 1.2%;
+    bottom: 87%;
+    padding-right: 10px;
+    position: absolute;
 }
 
 .legendContainer {
-  margin-bottom: -80px;
-  padding-top: 20px;
-  padding-right: 55px;
-  left: 63%;
-  position: relative;
-  z-index: -1000;
+    margin-bottom: -80px;
+    padding-top: 20px;
+    padding-right: 55px;
+    left: 63%;
+    position: relative;
+    z-index: -1000;
 }

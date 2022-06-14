@@ -619,7 +619,7 @@ describe("RTL Source-to-entity map tests", () => {
     expect(getByText("concat(propName,'-NEW')")).toBeInTheDocument();
 
     /* Test column option selector in Entity table  */
-    let colOptSelect = getByText("Column Options");
+    let colOptSelect = getByTestId("column-selector");
     fireEvent.click(colOptSelect);
     let Name = getByTestId("columnOptionsCheckBox-name");
     let Type = getByTestId("columnOptionsCheckBox-type");

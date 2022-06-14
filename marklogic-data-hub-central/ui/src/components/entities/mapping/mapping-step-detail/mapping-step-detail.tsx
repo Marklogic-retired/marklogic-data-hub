@@ -4,7 +4,8 @@ import styles from "./mapping-step-detail.module.scss";
 import "./mapping-step-detail.scss";
 import EntityMapTable from "../entity-map-table/entity-map-table";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCog, faPencilAlt} from "@fortawesome/free-solid-svg-icons";
+
+import {faCog, faPencilAlt, faColumns} from "@fortawesome/free-solid-svg-icons";
 import Highlighter from "react-highlight-words";
 import Spinner from "react-bootstrap/Spinner";
 import SourceNavigation from "../source-navigation/source-navigation";
@@ -1423,7 +1424,11 @@ const MappingStepDetail: React.FC = () => {
     <Dropdown autoClose="outside" onToggle={handleColOptMenuVisibleChange} show={colOptMenuVisible} onSelect={handleColOptMenuClick}>
       <Dropdown.Toggle id="columnOptionsSelectorButton" className={styles.columnOptionsSelector} variant="link">
         <>
-          <span> Column Options</span>
+          <HCTooltip id="select-columns-tooltip" text="Select the columns to display." placement="top-end">
+            <span>
+              <FontAwesomeIcon className={styles.columnIcon} icon={faColumns} size="lg" data-testid="column-selector"/>
+            </span>
+          </HCTooltip>
           <ChevronDown className="ms-2" />
         </>
       </Dropdown.Toggle>
