@@ -3,6 +3,7 @@ package com.marklogic.hub.spark.sql.sources.v2.reader;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.InputStreamHandle;
+import com.marklogic.hub.MarkLogicVersion;
 import com.marklogic.hub.spark.sql.sources.v2.Options;
 import org.apache.spark.sql.catalyst.InternalRow;
 import org.apache.spark.sql.types.DataTypes;
@@ -21,7 +22,7 @@ public class ReadAllDataTypesTest extends AbstractSparkReadTest {
         loadTDE("User");
         runAsDataHubOperator();
         writeSingleUserToFinal();
-
+        MarkLogicVersion mlVersion = new MarkLogicVersion(getHubClient().getManageClient());
         Options options = newOptions().withView("User").withNumPartitions("2");
         HubDataSourceReader dataSourceReader = new HubDataSourceReader(options.toDataSourceOptions());
         List<InternalRow> rows = readRows(dataSourceReader);
@@ -67,7 +68,13 @@ public class ReadAllDataTypesTest extends AbstractSparkReadTest {
         assertEquals("P1M", row.getString(29), "yearMonthDuration");
         assertEquals("P30DT1H", row.getString(30), "dayTimeDuration");
         assertEquals("37.389965,-122.07858", row.getString(31), "point");
-        assertEquals("37.389965,-122.07858", row.getString(32), "longLatPoint");
+
+        if((mlVersion.isNightly() && mlVersion.getMajor() >= 10) || (mlVersion.getMajor() > 10)){
+            assertEquals("POINT(-122.07858 37.389965)", row.getString(32), "longLatPoint");
+        }else{
+            assertEquals("37.389965,-122.07858", row.getString(32), "longLatPoint");
+        }
+
         assertEquals("Dum spiro spero", new String(row.getBinary(33), "UTF-8"), "The Scala JacksonParser is able to " +
             "convert the value of mottoBase64 into a byte array, so we can build a String with it and assert " +
             "against the original value of that base64Binary value");
