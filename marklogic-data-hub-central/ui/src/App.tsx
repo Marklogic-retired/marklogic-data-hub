@@ -22,7 +22,7 @@ import {Application} from "@config/application.config";
 import {themes, themeMap} from "@config/themes.config";
 import {getEnvironment} from "@util/environment";
 import ErrorMessageProvider from "@util/error-message-context";
-import HubCentraConfigProvider from "@util/hubCentralConfig-context";
+import HubCentralConfigProvider from "@util/hubCentralConfig-context";
 import ErrorBoundary from "@components/error-boundary/ErrorBoundary";
 
 interface Props extends RouteComponentProps<any> { }
@@ -101,7 +101,7 @@ const App: React.FC<Props> = ({history, location}) => {
           <ModelingProvider>
             <CurationProvider>
               <LoadingProvider>
-                <HubCentraConfigProvider>
+                <HubCentralConfigProvider>
                   <ErrorMessageProvider>
                     <Header environment={getEnvironment()} />
                     <ModalStatus />
@@ -164,7 +164,7 @@ const App: React.FC<Props> = ({history, location}) => {
                       <Footer pageTheme={pageTheme} />
                     </main>
                   </ErrorMessageProvider>
-                </HubCentraConfigProvider>
+                </HubCentralConfigProvider>
               </LoadingProvider>
             </CurationProvider>
           </ModelingProvider>

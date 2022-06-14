@@ -18,7 +18,6 @@ import Popover from "react-bootstrap/Popover";
 import {Dropdown, NavDropdown, OverlayTrigger} from "react-bootstrap";
 import EntityTypeDisplaySettingsModal from "@components/explore/entity-type-display-settings-modal/entity-type-display-settings-modal";
 import tooltipsConfig from "@config/explorer-tooltips.config";
-import {HubCentralConfigContext} from "@util/hubCentralConfig-context";
 
 interface Props {
   id: string;
@@ -38,7 +37,6 @@ const Tiles: React.FC<Props> = (props) => {
   const controls = props.options.controls;
   const viewId = props.id;
   const {savedQueries, entityDefinitionsArray} = useContext(SearchContext);
-  const {getHubCentralConfigFromServer} = useContext(HubCentralConfigContext);
   const [manageQueryModal, setManageQueryModal] = useState(false);
   const [infoVisible, setInfoVisible] = useState(false);
   const [exploreSettingsModal, setExploreSettingsModal] = useState(false);
@@ -113,7 +111,6 @@ const Tiles: React.FC<Props> = (props) => {
 
   useEffect(() => {
     getEntities();
-    getHubCentralConfigFromServer();
     return () => { componentIsMounted.current = false; };
   }, []);
 
