@@ -4,6 +4,7 @@ import {getHubCentralConfig, updateHubCentralConfig, primaryEntityTypes} from "@
 import {defaultHubCentralConfig} from "@config/modeling.config";
 import {themeColors} from "@config/themes.config";
 import {defaultIcon} from "@config/explore.config";
+import {mockConceptsResponse} from "@api/concepts.data";
 
 const defaultContextOptions = {
   hubCentralConfig: {},
@@ -33,13 +34,25 @@ const HubCentralConfigProvider: React.FC<{children: any}> = ({children}) => {
           setConfig(response.data);
         } else {
           const responsePrimaryEntityTypes = await primaryEntityTypes();
+          const mockConcepts = mockConceptsResponse; //TODO: Change this line for the call to the endpoint when goes ready
           const updatedHubCentralConfig: any = defaultHubCentralConfig;
+          const defaultNodesData = {
+            color: themeColors.defaults.entityColor,
+            icon: defaultIcon
+          };
           responsePrimaryEntityTypes.data.forEach(model => {
-            updatedHubCentralConfig["modeling"]["entities"][model.entityName] = {
-              color: themeColors.defaults.entityColor,
-              icon: defaultIcon
-            };
+            updatedHubCentralConfig["modeling"]["entities"][model.entityName] = Object.assign({}, defaultNodesData);
           });
+
+          mockConcepts.entities.forEach(({relatedConcepts}) => relatedConcepts.forEach(({conceptClass, conceptId}) => {
+            const semanticConcept = conceptId.split("/").pop();
+            if (!updatedHubCentralConfig["modeling"]["concepts"][conceptClass]) {
+              updatedHubCentralConfig["modeling"]["concepts"][conceptClass] = Object.assign({semanticConcepts: {}}, defaultNodesData);
+            }
+            if (semanticConcept) {
+              updatedHubCentralConfig["modeling"]["concepts"][conceptClass].semanticConcepts[semanticConcept] = Object.assign({}, defaultNodesData);
+            }
+          }));
           setConfig(updatedHubCentralConfig);
         }
       }

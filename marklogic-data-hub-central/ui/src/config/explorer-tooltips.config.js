@@ -59,6 +59,11 @@ const tooltipsConfig = {
     icon: "Select an icon to associate it with the entity throughout your project.",
     entityLabel: "The record label is the value of the selected property. The record label will display on each record related to the entity.",
     propertiesOnHover: "Properties on Hover are the values of the selected properties. Properties on Hover display in a tooltip when hovering on a record. You can choose multiple properties. If properties are not selected, the value of the identifier will display on hover. If neither properties nor an identifier are selected, the URI will display on hover."
+  },
+  //ToDo: To change when finished the task DHFPROD-8627
+  conceptDisplaySettings: {
+    color: "Select a color to associate it with the concept throughout your project.",
+    icon: "Select an icon to associate it with the concept throughout your project."
   }
 };
 

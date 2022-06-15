@@ -2,7 +2,7 @@ import React from "react";
 import {fireEvent, render, cleanup, act} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
-import EntityTypeDisplaySettingsModal from "./entity-type-display-settings-modal";
+import DataModelDisplaySettingsModal from "./data-model-display-settings-modal";
 import {BrowserRouter as Router} from "react-router-dom";
 import {entityDefinitionsArray, hubCentralConfig} from "../../../assets/mock-data/modeling/modeling";
 import {HubCentralConfigContext} from "@util/hubCentralConfig-context";
@@ -26,7 +26,7 @@ describe("Entity type display settings modal", () => {
     const {getByLabelText, getAllByLabelText} = render(
       <Router>
         <HubCentralConfigContext.Provider value={defaultContextOptions}>
-          <EntityTypeDisplaySettingsModal toggleModal={jest.fn()} isVisible={true} entityDefinitionsArray={entityDefinitionsArray}/>
+          <DataModelDisplaySettingsModal toggleModal={jest.fn()} isVisible={true} entityDefinitionsArray={entityDefinitionsArray}/>
         </HubCentralConfigContext.Provider>
       </Router>
     );
@@ -41,7 +41,7 @@ describe("Entity type display settings modal", () => {
     const {getByLabelText, queryByLabelText, getByText, getByTitle} = render(
       <Router>
         <HubCentralConfigContext.Provider value={defaultContextOptions}>
-          <EntityTypeDisplaySettingsModal toggleModal={jest.fn()} isVisible={true} entityDefinitionsArray={entityDefinitionsArray}/>
+          <DataModelDisplaySettingsModal toggleModal={jest.fn()} isVisible={true} entityDefinitionsArray={entityDefinitionsArray}/>
         </HubCentralConfigContext.Provider>
       </Router>
     );

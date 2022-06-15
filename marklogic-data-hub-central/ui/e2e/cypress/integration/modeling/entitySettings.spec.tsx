@@ -12,7 +12,7 @@ import {ExploreGraphNodes} from "../../support/types/explore-graph-nodes";
 import browsePage from "../../support/pages/browse";
 import homePage from "../../support/pages/home";
 import graphExploreSidePanel from "../../support/components/explore/graph-explore-side-panel";
-import entityTypeDisplaySettingsModal from "../../support/components/explore/entity-type-display-settings-modal";
+import dataModelDisplaySettingsModal from "../../support/components/explore/data-model-display-settings-modal";
 
 const defaultSelectLabel = "Select...";
 const defaultSelectProperty = "Select property";
@@ -143,26 +143,26 @@ describe("Entity display settings in model tile", () => {
     cy.log("**Open Entity Display Settings modal to check the values on label and propertiesOnHover**");
     browsePage.clickExploreSettingsMenuIcon();
     browsePage.getEntityTypeDisplaySettingsButton().scrollIntoView().click({force: true});
-    entityTypeDisplaySettingsModal.getModalBody().should("be.visible");
+    dataModelDisplaySettingsModal.getModalBody().should("be.visible");
 
     cy.log("**Verify label are selected, and select new one**");
-    entityTypeDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("have.text", defaultEntityTypeData.properties.ownedBy);
-    entityTypeDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).click();
-    entityTypeDisplaySettingsModal.getEntityLabelDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.babyRegistryId).click();
-    entityTypeDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.babyRegistryId);
+    dataModelDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("have.text", defaultEntityTypeData.properties.ownedBy);
+    dataModelDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).click();
+    dataModelDisplaySettingsModal.getEntityLabelDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.babyRegistryId).click();
+    dataModelDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.babyRegistryId);
 
     cy.log("**Verify propertiesOnHover are selected**");
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.babyRegistryId);
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.arrivalDate);
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.ownedBy);
+    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.babyRegistryId);
+    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.arrivalDate);
+    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.ownedBy);
 
     cy.log("**Deselect ownedBy properties on properties on hover**");
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdownCloseOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.ownedBy).click();
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("not.contain.text", defaultEntityTypeData.properties.ownedBy);
+    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdownCloseOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.ownedBy).click();
+    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("not.contain.text", defaultEntityTypeData.properties.ownedBy);
 
     cy.log("**Save changes and close the modal**");
-    entityTypeDisplaySettingsModal.getModalSaveButton().click();
-    entityTypeDisplaySettingsModal.getModalBody().should("not.exist");
+    dataModelDisplaySettingsModal.getModalSaveButton().click();
+    dataModelDisplaySettingsModal.getModalBody().should("not.exist");
 
     cy.log("**Close explore tile and go to model**");
     homePage.getTileCloseButton().click();

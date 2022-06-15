@@ -1,4 +1,4 @@
-class EntityTypeDisplaySettingsModal {
+class DataModelDisplaySettingsModal {
 
   getModalBody() {
     return cy.get(`[id="entityTypeDisplaySettingsContainer"]`);
@@ -88,7 +88,36 @@ class EntityTypeDisplaySettingsModal {
   getSearchResetButton() {
     return cy.get(`[id="hc-popover-search-reset-button"]`);
   }
+
+  getConceptRadioButtopn() {
+    return cy.get(`[id="concepts"]`);
+  }
+
+  /** Concepts selectors   */
+  getConceptExpandRow(concept: string) {
+    return cy.get(`[data-testid="${concept}-expand-icon"]`);
+  }
+
+  getConceptColorButton(concept: string) {
+    return cy.get(`[id="${concept}-color-button"]`);
+  }
+
+  getConceptIconButtonWrapper(concept: string) {
+    return cy.get(`[id="${concept}-icon-picker"]`);
+  }
+
+  getConceptIconButton(concept: string) {
+    return cy.get(`[id="${concept}-icon-picker"] > div`);
+  }
+
+  getConceptIconSearchInput(concept: string) {
+    return cy.get(`[id="${concept}-icon-picker"]`).find("input");
+  }
+
+  getConceptIconMenu(concept: string) {
+    return cy.get(`[id="${concept}-icon-picker"] > div > div:last-child`);
+  }
 }
 
-const entityTypeDisplaySettingsModal = new EntityTypeDisplaySettingsModal();
-export default entityTypeDisplaySettingsModal;
+const dataModelDisplaySettingsModal = new DataModelDisplaySettingsModal();
+export default dataModelDisplaySettingsModal;

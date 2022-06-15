@@ -16,7 +16,7 @@ import {ArrowsAngleContract, ArrowsAngleExpand, XLg} from "react-bootstrap-icons
 import {HCTooltip} from "@components/common";
 import Popover from "react-bootstrap/Popover";
 import {Dropdown, NavDropdown, OverlayTrigger} from "react-bootstrap";
-import EntityTypeDisplaySettingsModal from "@components/explore/entity-type-display-settings-modal/entity-type-display-settings-modal";
+import DataModelDisplaySettingsModal from "@components/explore/data-model-display-settings-modal/data-model-display-settings-modal";
 import tooltipsConfig from "@config/explorer-tooltips.config";
 
 interface Props {
@@ -146,14 +146,14 @@ const Tiles: React.FC<Props> = (props) => {
       <HCTooltip aria-label="" text={entityDefinitionsArray && !entityDefinitionsArray.length ? exploreSettingsTooltips.disabledEntityTypeDisplaySettingsOption : ""} id="entityTypeDisplaySettings-option-tooltip" placement="top">
         <div>
           <Dropdown.Item eventKey="entityTypeDisplaySettings" disabled={entityDefinitionsArray && !entityDefinitionsArray.length}>
-            <span aria-label={"entityTypeDisplaySettings"}>Entity display settings</span>
+            <span aria-label={"entityTypeDisplaySettings"}>Data model display settings</span>
           </Dropdown.Item>
         </div>
       </HCTooltip>
     </NavDropdown>
   );
 
-  const entityTypeDisplaySettingsModal = <EntityTypeDisplaySettingsModal
+  const dataModelDisplaySettingsModal = <DataModelDisplaySettingsModal
     isVisible={exploreSettingsModal}
     toggleModal={setExploreSettingsModal}
     entityDefinitionsArray={entityDefinitionsArray}
@@ -238,7 +238,7 @@ const Tiles: React.FC<Props> = (props) => {
             </i>
           ) : null}
         </div>
-        {entityTypeDisplaySettingsModal}
+        {dataModelDisplaySettingsModal}
       </div>
     );
   };
