@@ -1,0 +1,44 @@
+@import "../../../theme/HCUtils.scss";
+
+.modal1400w {
+    width: 1000vw;
+}
+
+.headerLabel {
+  color: black;
+}
+
+.infoIcon {
+  margin-left: 5px;
+  margin-top: -2px;
+}
+
+.highlightStyle {
+background-color: $highlight;
+padding: 0px;
+line-height:normal;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+
+  .saveButton {
+    margin-left: 5px;
+  }
+}
+
+.conceptsTable th:nth-child(1) {
+  border-bottom-width: 0 !important;
+}
+
+.conceptsTable th:nth-child(2) {
+  border-bottom-width: 1px !important;
+}
+
+.conceptsTable th:nth-child(1),
+.conceptsTable th:nth-child(1):hover,
+.conceptsTable th:nth-child(3):hover,
+.conceptsTable th:nth-child(4):hover {
+    background-color: $background-light !important;
+}

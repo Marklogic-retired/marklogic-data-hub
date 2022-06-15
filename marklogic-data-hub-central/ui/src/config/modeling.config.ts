@@ -156,6 +156,7 @@ export const defaultModelingView = ViewType.graph;
 
 export const defaultHubCentralConfig = {
   "modeling": {
-    "entities": {}
+    "entities": {},
+    "concepts": {}
   }
 }

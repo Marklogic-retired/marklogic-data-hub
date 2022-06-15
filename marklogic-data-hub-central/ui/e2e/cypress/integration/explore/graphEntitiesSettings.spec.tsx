@@ -1,7 +1,7 @@
 import {Application} from "../../support/application.config";
 import {toolbar} from "../../support/components/common";
 import specificSidebar from "../../support/components/explore/specific-sidebar";
-import entityTypeDisplaySettingsModal from "../../support/components/explore/entity-type-display-settings-modal";
+import dataModelDisplaySettingsModal from "../../support/components/explore/data-model-display-settings-modal";
 import graphExploreSidePanel from "../../support/components/explore/graph-explore-side-panel";
 import browsePage from "../../support/pages/browse";
 import LoginPage from "../../support/pages/login";
@@ -93,59 +93,59 @@ describe("Entity Type Settings Modal", () => {
     browsePage.waitForSpinnerToDisappear();
     browsePage.clickExploreSettingsMenuIcon();
     browsePage.getEntityTypeDisplaySettingsButton().scrollIntoView().click({force: true});
-    entityTypeDisplaySettingsModal.getModalBody().should("be.visible");
+    dataModelDisplaySettingsModal.getModalBody().should("be.visible");
 
     cy.log("**Verify default color it's selected, select new one and check the selection**");
-    entityTypeDisplaySettingsModal.getEntityTypeColorButton(defaultEntityTypeData.name).should("have.attr", "data-color").then(color => {
+    dataModelDisplaySettingsModal.getEntityTypeColorButton(defaultEntityTypeData.name).should("have.attr", "data-color").then(color => {
       expect(Cypress._.toLower(color)).equal(Cypress._.toLower(defaultEntityTypeData.color.HEX));
     });
-    entityTypeDisplaySettingsModal.getEntityTypeColorButton(defaultEntityTypeData.name).click();
-    entityTypeDisplaySettingsModal.getColorInPicket(newEntityTypeData.color.HEX).click();
-    entityTypeDisplaySettingsModal.getEntityTypeColorButton(defaultEntityTypeData.name).should("have.attr", "data-color", Cypress._.toLower(newEntityTypeData.color.HEX));
+    dataModelDisplaySettingsModal.getEntityTypeColorButton(defaultEntityTypeData.name).click();
+    dataModelDisplaySettingsModal.getColorInPicket(newEntityTypeData.color.HEX).click();
+    dataModelDisplaySettingsModal.getEntityTypeColorButton(defaultEntityTypeData.name).should("have.attr", "data-color", Cypress._.toLower(newEntityTypeData.color.HEX));
 
     cy.log("**Verify default icon it's selected, select new one and check the selection**");
-    entityTypeDisplaySettingsModal.getEntityTypeIconButtonWrapper(defaultEntityTypeData.name).should("have.attr", "data-icon", defaultEntityTypeData.icon);
-    entityTypeDisplaySettingsModal.getEntityTypeIconButton(defaultEntityTypeData.name).click();
-    entityTypeDisplaySettingsModal.getEntityTypeIconSearchInput(defaultEntityTypeData.name).type(newEntityTypeData.icon);
-    entityTypeDisplaySettingsModal.getEntityTypeIconMenu(defaultEntityTypeData.name).find("svg").last().click();
-    entityTypeDisplaySettingsModal.getEntityTypeIconButtonWrapper(defaultEntityTypeData.name).should("have.attr", "data-icon", newEntityTypeData.icon);
+    dataModelDisplaySettingsModal.getEntityTypeIconButtonWrapper(defaultEntityTypeData.name).should("have.attr", "data-icon", defaultEntityTypeData.icon);
+    dataModelDisplaySettingsModal.getEntityTypeIconButton(defaultEntityTypeData.name).click();
+    dataModelDisplaySettingsModal.getEntityTypeIconSearchInput(defaultEntityTypeData.name).type(newEntityTypeData.icon);
+    dataModelDisplaySettingsModal.getEntityTypeIconMenu(defaultEntityTypeData.name).find("svg").last().click();
+    dataModelDisplaySettingsModal.getEntityTypeIconButtonWrapper(defaultEntityTypeData.name).should("have.attr", "data-icon", newEntityTypeData.icon);
 
     cy.log("**Verify no label are selected, select new one and check the selection**");
-    entityTypeDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("have.text", defaultSelectLabel);
-    entityTypeDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).click();
-    entityTypeDisplaySettingsModal.getEntityLabelDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.name).click();
-    entityTypeDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.name);
+    dataModelDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("have.text", defaultSelectLabel);
+    dataModelDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).click();
+    dataModelDisplaySettingsModal.getEntityLabelDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.name).click();
+    dataModelDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.name);
 
     cy.log("**Verify no propertiesOnHover are selected, select new one and check the selection**");
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultSelectProperty);
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.properties.name).click({force: true});
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.properties.email).click({force: true});
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverExpandDropdownOption(defaultEntityTypeData.properties.shipping).click({force: true});
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.properties.shippingStreet.value).click({force: true});
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.name);
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.email);
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.shippingStreet.label);
+    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultSelectProperty);
+    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
+    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.properties.name).click({force: true});
+    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
+    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.properties.email).click({force: true});
+    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
+    dataModelDisplaySettingsModal.getPropertiesOnHoverExpandDropdownOption(defaultEntityTypeData.properties.shipping).click({force: true});
+    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.properties.shippingStreet.value).click({force: true});
+    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.name);
+    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.email);
+    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.shippingStreet.label);
 
     cy.log("**Cancel the edition and verify that the modal close**");
-    entityTypeDisplaySettingsModal.getModalCancelButton().click();
-    entityTypeDisplaySettingsModal.getModalBody().should("not.exist");
+    dataModelDisplaySettingsModal.getModalCancelButton().click();
+    dataModelDisplaySettingsModal.getModalBody().should("not.exist");
 
     cy.log("**Reopen the settings modal and check that not was saved the data and are present the default values**");
     browsePage.getEntityTypeDisplaySettingsButton().scrollIntoView().click({force: true});
-    entityTypeDisplaySettingsModal.getModalBody().should("be.visible");
-    entityTypeDisplaySettingsModal.getEntityTypeColorButton(defaultEntityTypeData.name).should("have.attr", "data-color").then(color => {
+    dataModelDisplaySettingsModal.getModalBody().should("be.visible");
+    dataModelDisplaySettingsModal.getEntityTypeColorButton(defaultEntityTypeData.name).should("have.attr", "data-color").then(color => {
       expect(Cypress._.toLower(color)).equal(Cypress._.toLower(defaultEntityTypeData.color.HEX));
     });
-    entityTypeDisplaySettingsModal.getEntityTypeIconButtonWrapper(defaultEntityTypeData.name).should("have.attr", "data-icon", defaultEntityTypeData.icon);
-    entityTypeDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("have.text", defaultSelectLabel);
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultSelectProperty);
+    dataModelDisplaySettingsModal.getEntityTypeIconButtonWrapper(defaultEntityTypeData.name).should("have.attr", "data-icon", defaultEntityTypeData.icon);
+    dataModelDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("have.text", defaultSelectLabel);
+    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultSelectProperty);
 
     cy.log("**Close the modal**");
-    entityTypeDisplaySettingsModal.getModalCloseButton().click();
-    entityTypeDisplaySettingsModal.getModalBody().should("not.exist");
+    dataModelDisplaySettingsModal.getModalCloseButton().click();
+    dataModelDisplaySettingsModal.getModalBody().should("not.exist");
   });
 
   it("Open settings modal, select new values and save the changes", () => {
@@ -157,73 +157,73 @@ describe("Entity Type Settings Modal", () => {
     cy.wait(2000);
     browsePage.clickExploreSettingsMenuIcon();
     browsePage.getEntityTypeDisplaySettingsButton().scrollIntoView().click({force: true});
-    entityTypeDisplaySettingsModal.getModalBody().should("be.visible");
+    dataModelDisplaySettingsModal.getModalBody().should("be.visible");
 
     cy.log("**Check quantity of rows in the table**");
-    entityTypeDisplaySettingsModal.getTableRows().should("have.length.gt", 2);
+    dataModelDisplaySettingsModal.getTableRows().should("have.length.gt", 2);
 
     cy.log(`**Filter ${defaultEntityTypeData.name} entity by search option**`);
-    entityTypeDisplaySettingsModal.getIconSearch().click({force: true});
-    entityTypeDisplaySettingsModal.getSearchInput().type(defaultEntityTypeData.name, {timeout: 2000});
-    entityTypeDisplaySettingsModal.getSearchSearchButton().click();
-    entityTypeDisplaySettingsModal.getTableRows().should("have.length", 1);
+    dataModelDisplaySettingsModal.getIconSearch().click({force: true});
+    dataModelDisplaySettingsModal.getSearchInput().type(defaultEntityTypeData.name, {timeout: 2000});
+    dataModelDisplaySettingsModal.getSearchSearchButton().click();
+    dataModelDisplaySettingsModal.getTableRows().should("have.length", 1);
 
     cy.log("**Select new color and check the selection**");
-    entityTypeDisplaySettingsModal.getEntityTypeColorButton(defaultEntityTypeData.name).click();
-    entityTypeDisplaySettingsModal.getColorInPicket(newEntityTypeData.color.HEX).click();
-    entityTypeDisplaySettingsModal.getEntityTypeColorButton(defaultEntityTypeData.name).should("have.attr", "data-color", Cypress._.toLower(newEntityTypeData.color.HEX));
+    dataModelDisplaySettingsModal.getEntityTypeColorButton(defaultEntityTypeData.name).click();
+    dataModelDisplaySettingsModal.getColorInPicket(newEntityTypeData.color.HEX).click();
+    dataModelDisplaySettingsModal.getEntityTypeColorButton(defaultEntityTypeData.name).should("have.attr", "data-color", Cypress._.toLower(newEntityTypeData.color.HEX));
 
     cy.log("**Select new icon and check the selection**");
-    entityTypeDisplaySettingsModal.getEntityTypeIconButton(defaultEntityTypeData.name).click();
-    entityTypeDisplaySettingsModal.getEntityTypeIconSearchInput(defaultEntityTypeData.name).type(newEntityTypeData.icon);
-    entityTypeDisplaySettingsModal.getEntityTypeIconMenu(defaultEntityTypeData.name).find("svg").last().click();
-    entityTypeDisplaySettingsModal.getEntityTypeIconButtonWrapper(defaultEntityTypeData.name).should("have.attr", "data-icon", newEntityTypeData.icon);
+    dataModelDisplaySettingsModal.getEntityTypeIconButton(defaultEntityTypeData.name).click();
+    dataModelDisplaySettingsModal.getEntityTypeIconSearchInput(defaultEntityTypeData.name).type(newEntityTypeData.icon);
+    dataModelDisplaySettingsModal.getEntityTypeIconMenu(defaultEntityTypeData.name).find("svg").last().click();
+    dataModelDisplaySettingsModal.getEntityTypeIconButtonWrapper(defaultEntityTypeData.name).should("have.attr", "data-icon", newEntityTypeData.icon);
 
     cy.log("**Select label and check the selection**");
-    entityTypeDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).click();
-    entityTypeDisplaySettingsModal.getEntityLabelDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.name).click();
-    entityTypeDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.name);
+    dataModelDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).click();
+    dataModelDisplaySettingsModal.getEntityLabelDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.name).click();
+    dataModelDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.name);
 
     cy.log("**Select propertiesOnHover and check the selection**");
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.properties.name).click({force: true});
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.properties.email).click({force: true});
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverExpandDropdownOption(defaultEntityTypeData.properties.shipping).click({force: true});
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.properties.shippingStreet.value).click({force: true});
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.name);
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.email);
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.shippingStreet.label);
+    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
+    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.properties.name).click({force: true});
+    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
+    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.properties.email).click({force: true});
+    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
+    dataModelDisplaySettingsModal.getPropertiesOnHoverExpandDropdownOption(defaultEntityTypeData.properties.shipping).click({force: true});
+    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.properties.shippingStreet.value).click({force: true});
+    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.name);
+    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.email);
+    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.shippingStreet.label);
 
     cy.log("**Clear filter and check table rows");
-    entityTypeDisplaySettingsModal.getIconSearch().click({force: true});
-    entityTypeDisplaySettingsModal.getSearchInput().should("have.value", defaultEntityTypeData.name);
-    entityTypeDisplaySettingsModal.getSearchResetButton().click();
-    entityTypeDisplaySettingsModal.getTableRows().should("have.length.gt", 2);
+    dataModelDisplaySettingsModal.getIconSearch().click({force: true});
+    dataModelDisplaySettingsModal.getSearchInput().should("have.value", defaultEntityTypeData.name);
+    dataModelDisplaySettingsModal.getSearchResetButton().click();
+    dataModelDisplaySettingsModal.getTableRows().should("have.length.gt", 2);
 
     cy.log("**Open search dialog and input should be empty");
-    entityTypeDisplaySettingsModal.getIconSearch().click({force: true});
-    entityTypeDisplaySettingsModal.getSearchInput().should("have.value", "");
-    entityTypeDisplaySettingsModal.getSearchResetButton().click();
+    dataModelDisplaySettingsModal.getIconSearch().click({force: true});
+    dataModelDisplaySettingsModal.getSearchInput().should("have.value", "");
+    dataModelDisplaySettingsModal.getSearchResetButton().click();
 
     cy.log("**Save the changes**");
-    entityTypeDisplaySettingsModal.getModalSaveButton().click();
-    entityTypeDisplaySettingsModal.getModalBody().should("not.exist");
+    dataModelDisplaySettingsModal.getModalSaveButton().click();
+    dataModelDisplaySettingsModal.getModalBody().should("not.exist");
 
     cy.log("**Reopen the settings modal and check the new values**");
     browsePage.getEntityTypeDisplaySettingsButton().scrollIntoView().click({force: true});
-    entityTypeDisplaySettingsModal.getModalBody().should("be.visible");
-    entityTypeDisplaySettingsModal.getEntityTypeColorButton(defaultEntityTypeData.name).should("have.attr", "data-color", Cypress._.toLower(newEntityTypeData.color.HEX));
-    entityTypeDisplaySettingsModal.getEntityTypeIconButtonWrapper(defaultEntityTypeData.name).should("have.attr", "data-icon", newEntityTypeData.icon);
-    entityTypeDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.name);
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.name);
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.email);
-    entityTypeDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.shippingStreet.label);
+    dataModelDisplaySettingsModal.getModalBody().should("be.visible");
+    dataModelDisplaySettingsModal.getEntityTypeColorButton(defaultEntityTypeData.name).should("have.attr", "data-color", Cypress._.toLower(newEntityTypeData.color.HEX));
+    dataModelDisplaySettingsModal.getEntityTypeIconButtonWrapper(defaultEntityTypeData.name).should("have.attr", "data-icon", newEntityTypeData.icon);
+    dataModelDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.name);
+    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.name);
+    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.email);
+    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.shippingStreet.label);
 
     cy.log("**Close the modal**");
-    entityTypeDisplaySettingsModal.getModalCloseButton().click();
-    entityTypeDisplaySettingsModal.getModalBody().should("not.exist");
+    dataModelDisplaySettingsModal.getModalCloseButton().click();
+    dataModelDisplaySettingsModal.getModalBody().should("not.exist");
 
     cy.log("**Check in the sidebar that the entity type have the new color and icon**");
     entitiesSidebar.getBaseEntity(defaultEntityTypeData.name).should("be.visible").and("have.attr", "data-color").then(color => {
@@ -290,35 +290,35 @@ describe("Entity Type Settings Modal", () => {
     cy.log("**Open explore settings modal**");
     browsePage.clickExploreSettingsMenuIcon();
     browsePage.getEntityTypeDisplaySettingsButton().scrollIntoView().click({force: true});
-    entityTypeDisplaySettingsModal.getModalBody().should("be.visible");
+    dataModelDisplaySettingsModal.getModalBody().should("be.visible");
 
     cy.log("**Select new color and check the selection**");
-    entityTypeDisplaySettingsModal.getEntityTypeColorButton(defaultEntityTypeData.name).click();
-    entityTypeDisplaySettingsModal.getColorInPicket(newEntityTypeData2.color.HEX).click();
-    entityTypeDisplaySettingsModal.getEntityTypeColorButton(defaultEntityTypeData.name).should("have.attr", "data-color", Cypress._.toLower(newEntityTypeData2.color.HEX));
+    dataModelDisplaySettingsModal.getEntityTypeColorButton(defaultEntityTypeData.name).click();
+    dataModelDisplaySettingsModal.getColorInPicket(newEntityTypeData2.color.HEX).click();
+    dataModelDisplaySettingsModal.getEntityTypeColorButton(defaultEntityTypeData.name).should("have.attr", "data-color", Cypress._.toLower(newEntityTypeData2.color.HEX));
 
     cy.log("**Select new icon and check the selection**");
-    entityTypeDisplaySettingsModal.getEntityTypeIconButton(defaultEntityTypeData.name).click();
-    entityTypeDisplaySettingsModal.getEntityTypeIconSearchInput(defaultEntityTypeData.name).type(newEntityTypeData2.icon);
-    entityTypeDisplaySettingsModal.getEntityTypeIconMenu(defaultEntityTypeData.name).find("svg").last().click();
-    entityTypeDisplaySettingsModal.getEntityTypeIconButtonWrapper(defaultEntityTypeData.name).should("have.attr", "data-icon", newEntityTypeData2.icon);
-    entityTypeDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).click();
-    entityTypeDisplaySettingsModal.getEntityLabelDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.email).click();
+    dataModelDisplaySettingsModal.getEntityTypeIconButton(defaultEntityTypeData.name).click();
+    dataModelDisplaySettingsModal.getEntityTypeIconSearchInput(defaultEntityTypeData.name).type(newEntityTypeData2.icon);
+    dataModelDisplaySettingsModal.getEntityTypeIconMenu(defaultEntityTypeData.name).find("svg").last().click();
+    dataModelDisplaySettingsModal.getEntityTypeIconButtonWrapper(defaultEntityTypeData.name).should("have.attr", "data-icon", newEntityTypeData2.icon);
+    dataModelDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).click();
+    dataModelDisplaySettingsModal.getEntityLabelDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.email).click();
 
     cy.log("**Save the changes**");
-    entityTypeDisplaySettingsModal.getModalSaveButton().click();
-    entityTypeDisplaySettingsModal.getModalBody().should("not.exist");
+    dataModelDisplaySettingsModal.getModalSaveButton().click();
+    dataModelDisplaySettingsModal.getModalBody().should("not.exist");
 
     cy.log("**Reopen the settings modal and check the new values**");
     browsePage.getEntityTypeDisplaySettingsButton().scrollIntoView().click({force: true});
-    entityTypeDisplaySettingsModal.getModalBody().should("be.visible");
-    entityTypeDisplaySettingsModal.getEntityTypeColorButton(defaultEntityTypeData.name).should("have.attr", "data-color", Cypress._.toLower(newEntityTypeData2.color.HEX));
-    entityTypeDisplaySettingsModal.getEntityTypeIconButtonWrapper(defaultEntityTypeData.name).should("have.attr", "data-icon", newEntityTypeData2.icon);
-    entityTypeDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.email);
+    dataModelDisplaySettingsModal.getModalBody().should("be.visible");
+    dataModelDisplaySettingsModal.getEntityTypeColorButton(defaultEntityTypeData.name).should("have.attr", "data-color", Cypress._.toLower(newEntityTypeData2.color.HEX));
+    dataModelDisplaySettingsModal.getEntityTypeIconButtonWrapper(defaultEntityTypeData.name).should("have.attr", "data-icon", newEntityTypeData2.icon);
+    dataModelDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.email);
 
     cy.log("**Close the modal**");
-    entityTypeDisplaySettingsModal.getModalCloseButton().click();
-    entityTypeDisplaySettingsModal.getModalBody().should("not.exist");
+    dataModelDisplaySettingsModal.getModalCloseButton().click();
+    dataModelDisplaySettingsModal.getModalBody().should("not.exist");
 
     cy.log("**Check the changes in the specific sidebar**");
     specificSidebar.getLeftBarEntityIcon(defaultEntityTypeData.name).should("have.css", "background-color", newEntityTypeData2.color.RGB);
