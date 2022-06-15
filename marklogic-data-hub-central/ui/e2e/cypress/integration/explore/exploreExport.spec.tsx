@@ -19,7 +19,6 @@ describe("Test table export icon", () => {
 
   beforeEach(() => {
     //Restoring Local Storage to Preserve Session
-    Cypress.Cookies.preserveOnce("HubCentralSession");
     cy.restoreLocalStorage();
   });
 

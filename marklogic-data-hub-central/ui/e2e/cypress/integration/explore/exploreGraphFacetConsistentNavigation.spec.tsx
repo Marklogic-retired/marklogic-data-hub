@@ -21,7 +21,6 @@ describe("Test navigation with facets from graph side panel to details twice", (
 
   beforeEach(() => {
     //Restoring Local Storage to Preserve Session
-    Cypress.Cookies.preserveOnce("HubCentralSession");
     cy.restoreLocalStorage();
   });
 

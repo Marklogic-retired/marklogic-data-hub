@@ -326,7 +326,7 @@ class MappingStepDetail {
   }
 
   expandDropdownPagination() {
-    cy.get("#size-per-page").scrollIntoView().click();
+    cy.get("#size-per-page").scrollIntoView().should("be.visible").click();
   }
 
   selectPagination(text: string) {

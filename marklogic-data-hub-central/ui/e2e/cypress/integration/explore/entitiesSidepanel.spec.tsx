@@ -22,19 +22,15 @@ describe("Test '/Explore' left sidebar", () => {
       //Saving Local Storage to preserve session
       cy.saveLocalStorage();
     });
-
-
   });
   beforeEach(() => {
     //Restoring Local Storage to Preserve Session
-    Cypress.Cookies.preserveOnce("HubCentralSession");
     cy.restoreLocalStorage().then(() => {
       cy.log(`**Go to Explore section**`);
       cy.visit("/tiles/explore");
     });
 
   });
-
   it("Validate that the left sidebar opens up and closes correctly when un/selecting a base entity", () => {
     cy.log(`**Selecting 'Customer' base entity**`);
     cy.wait(8000);

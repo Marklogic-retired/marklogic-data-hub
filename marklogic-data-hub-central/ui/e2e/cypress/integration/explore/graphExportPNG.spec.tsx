@@ -18,7 +18,6 @@ describe("Test graph export to png", () => {
 
   beforeEach(() => {
     //Restoring Local Storage to Preserve Session
-    Cypress.Cookies.preserveOnce("HubCentralSession");
     cy.restoreLocalStorage();
   });
 
