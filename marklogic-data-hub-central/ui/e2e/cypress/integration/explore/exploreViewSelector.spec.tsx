@@ -21,7 +21,6 @@ describe("Test '/Explore' view selector", () => {
   });
   beforeEach(() => {
     //Restoring Local Storage to Preserve Session
-    Cypress.Cookies.preserveOnce("HubCentralSession");
     cy.restoreLocalStorage();
   });
   it(`Validate that the 'graph' view is shown and stored in the user preference`, () => {

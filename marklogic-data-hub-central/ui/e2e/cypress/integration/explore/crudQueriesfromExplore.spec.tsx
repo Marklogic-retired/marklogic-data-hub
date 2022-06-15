@@ -17,14 +17,12 @@ describe("save/manage queries scenarios, developer role", () => {
     cy.runStep("personJSON", "2");
     cy.waitForAsyncRequest();
     cy.deleteSavedQueries();
+    //Saving Local Storage to preserve session
+    cy.saveLocalStorage();
   });
   beforeEach(() => {
-    cy.loginAsDeveloper().withRequest();
-    cy.waitForAsyncRequest();
-  });
-  afterEach(() => {
-    cy.resetTestUser();
-    cy.waitForAsyncRequest();
+    //Restoring Local Storage to Preserve Session
+    cy.restoreLocalStorage();
   });
   after(() => {
     //clearing all the saved queries
