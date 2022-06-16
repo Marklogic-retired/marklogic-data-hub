@@ -60,6 +60,18 @@ const Facets: React.FC<Props> = (props) => {
 
   const searchContext = useContext(SearchContext);
 
+  let searchResultsFacets: any;
+  // Ensure facet and facet-value are arrays
+  if (searchContext.searchResults && searchContext.searchResults.facet) {
+    searchResultsFacets = searchContext.searchResults.facet;
+    searchResultsFacets = _.isArray(searchResultsFacets) ? searchResultsFacets :[searchResultsFacets];
+    searchResultsFacets.forEach((f, i) => {
+        if (f["facet-value"] && !_.isArray(f["facet-value"])) {
+            searchResultsFacets[i]["facet-value"] = [f["facet-value"]];
+        }
+    })
+  }
+
   let moreLessInit: any = {};
   const moreLessDefault: boolean = true;
   if (props.config.items) {
@@ -164,9 +176,7 @@ const Facets: React.FC<Props> = (props) => {
 
   // Get object for a facet based on facet name
   const getFacetObj = (facetName, facetObjs) => {
-    // Ensure value is array
-    let facetObjsArr = _.isArray(facetObjs) ? facetObjs :[facetObjs];
-    return facetObjs ? facetObjsArr.find(obj => obj.name === facetName) : null;
+    return facetObjs ? facetObjs.find(obj => obj.name === facetName) : null;
   };
 
   // Get number of facet values for a facet based on facet name
@@ -205,13 +215,13 @@ const Facets: React.FC<Props> = (props) => {
               </div>
               <div className="facetValues">
                 {/* Show each facet value (and count) */}
-                {searchContext.searchResults?.facet && searchContext.searchResults.facet?.length > 0 ?
+                {searchResultsFacets && searchResultsFacets.length > 0 ?
                   <Table size="sm" style={{padding: 0, margin: 0}}>
-                    {getFacetObj(f.name, searchContext.searchResults.facet) && displayFacetValues(getFacetObj(f.name, searchContext.searchResults.facet), f.disabled, moreLess[f.name])}
+                    {getFacetObj(f.name, searchResultsFacets) && displayFacetValues(getFacetObj(f.name, searchResultsFacets), f.disabled, moreLess[f.name])}
                   </Table> : null }
-                {(getNumValues(f.name, searchContext.searchResults.facet) > moreThreshold) ? moreLess[f.name] ?
+                {(getNumValues(f.name, searchResultsFacets) > moreThreshold) ? moreLess[f.name] ?
                   <div className="moreLess" data-testid={"more-" + f.name} onClick={handleMoreLess(f.name)}>
-                    {getNumValues(f.name, searchContext.searchResults.facet) - moreThreshold} more
+                    {getNumValues(f.name, searchResultsFacets) - moreThreshold} more
                     <ChevronDoubleRight
                       data-testid="doubleRight"
                       color="#5d6aaa"

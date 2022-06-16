@@ -26,6 +26,11 @@ const searchConfig  = {
                 items: [
                     {
                         type: "category",
+                        name: "Collection",
+                        tooltip: "Filter by collection."
+                    },
+                    {
+                        type: "category",
                         name: "CONSTRAINT1",
                         tooltip: "Filter by CONSTRAINT1."
                     }
