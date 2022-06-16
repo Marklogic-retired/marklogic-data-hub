@@ -36,6 +36,7 @@ let $schema-permissions := (
 let $entity-title := $entity-def/info/title
 let $entity-version := $entity-def/info/version
 let $tde-uri := "/tde/" || $entity-title || "-" || $entity-version || ".tdex"
+let $target-entity-type := fn:concat($entity-def/info/baseUri, $entity-title, "-", $entity-version, "/", $entity-title)
 
 return (
   (: build uber model with original info :)
@@ -44,6 +45,19 @@ return (
 
   let $schemas := es:schema-generate($uber-model)
   let $schema-collection := "ml-data-hub-xml-schema"
+
+  let $update-mapping-transform :=
+    'const stepQuery = cts.andQuery([
+     cts.collectionQuery("http://marklogic.com/data-hub/steps"),
+     cts.jsonPropertyValueQuery(["targetEntityType", "targetEntity"], [entityName, targetEntityType]),
+     cts.jsonPropertyValueQuery("stepDefinitionType", "mapping")
+    ]);
+    let mappingStepUris = cts.search(stepQuery).toArray().map(step => fn.documentUri(step));
+    for (let uri of mappingStepUris) {
+      xdmp.invoke("/data-hub/5/triggers/mapping/mappingJSONtoXML.sjs", {uri})
+    }'
+
+  let $_ := xdmp:javascript-eval($update-mapping-transform,("entityName",$entity-title,"targetEntityType",$target-entity-type))
 
   return (
     xdmp:invoke-function(
