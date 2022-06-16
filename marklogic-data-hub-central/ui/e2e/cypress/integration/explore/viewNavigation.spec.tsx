@@ -7,7 +7,6 @@ import LoginPage from "../../support/pages/login";
 describe("Navigation through all the Explore views (Table, Snippet, Graph and Details)", () => {
   before(() => {
     cy.visit("/");
-
     cy.log("**Logging into the app as a developer**");
     cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
@@ -17,7 +16,6 @@ describe("Navigation through all the Explore views (Table, Snippet, Graph and De
 
   beforeEach(() => {
     //Restoring Local Storage to Preserve Session
-    Cypress.Cookies.preserveOnce("HubCentralSession");
     cy.restoreLocalStorage();
 
     cy.log("**Navigate to Explore**");

@@ -138,7 +138,7 @@ class RunPage {
   }
 
   openStepsSelectDropdown(flowName: string) {
-    cy.findByLabelText(`stepSettings-${flowName}`).first().click();
+    cy.get(`svg[aria-label="stepSettings-${flowName}"]`).parent().click();
   }
 
   clickSuccessCircleIcon(stepName: string, flowName: string) {
