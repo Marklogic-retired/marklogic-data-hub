@@ -16,13 +16,13 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
-    cy.waitForAsyncRequest();
     cy.setupHubCentralConfig();
-    cy.waitForAsyncRequest();
+    //Saving Local Storage to preserve session
+    cy.saveLocalStorage();
   });
   beforeEach(() => {
-    cy.loginAsDeveloper().withRequest();
-    cy.waitForAsyncRequest();
+    //Restoring Local Storage to Preserve Session
+    cy.restoreLocalStorage();
   });
   afterEach(() => {
     cy.resetTestUser();

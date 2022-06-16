@@ -21,7 +21,6 @@ describe("Test '/Explore' graph right panel", () => {
 
   beforeEach(() => {
     //Restoring Local Storage to Preserve Session
-    Cypress.Cookies.preserveOnce("HubCentralSession");
     cy.restoreLocalStorage();
   });
 

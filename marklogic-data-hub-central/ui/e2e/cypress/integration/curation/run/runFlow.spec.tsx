@@ -188,8 +188,9 @@ describe("Run Tile tests", () => {
 
     cy.log("**Reload page and check the same steps previously selected**");
     cy.reload();
-    // There's a re-rendering happening right after clicking on the dropdown. Waiting for an element/request did not work.
-    cy.wait(1000);
+    // TODO - BUG: DHFPROD-9049 - There's a re-rendering happening right after clicking on the dropdown.
+    //Waiting for an element/request will not work until this is fixed.
+    cy.wait(3000);
     runPage.openStepsSelectDropdown("testPersonXML");
     runPage.controlUncheckedStep("#loadPersonXML");
     runPage.controlUncheckedStep("#mapPersonXML");

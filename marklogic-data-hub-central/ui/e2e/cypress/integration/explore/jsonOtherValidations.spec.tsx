@@ -17,19 +17,15 @@ describe("Verify numeric/date facet can be applied", () => {
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("pii-reader", "hub-central-developer").withRequest();
     LoginPage.postLogin();
-    cy.waitForAsyncRequest();
+    //Saving Local Storage to preserve session
+    cy.saveLocalStorage();
   });
   beforeEach(() => {
-    cy.loginAsTestUserWithRoles("pii-reader", "hub-central-developer").withRequest();
-    cy.waitForAsyncRequest();
-  });
-  afterEach(() => {
-    cy.resetTestUser();
-    cy.waitForAsyncRequest();
+    //Restoring Local Storage to Preserve Session
+    cy.restoreLocalStorage();
   });
   after(() => {
     cy.resetTestUser();
-    cy.waitForAsyncRequest();
   });
   it("Apply numeric facet values multiple times, clears the previous values and applies the new one", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
@@ -61,12 +57,15 @@ describe("Verify numeric/date facet can be applied", () => {
     browsePage.getDateFacetPicker().trigger("mouseover");
     cy.waitUntil(() => browsePage.getDateFacetClearIcon()).click({force: true});
     browsePage.getFacetApplyButton().should("not.exist");
-    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-    browsePage.waitForSpinnerToDisappear();
-    browsePage.waitForHCTableToLoad();
   });
   it("Verify functionality of clear and apply facet buttons", () => {
+    cy.log("**Go to explore page and click on table view**");
+    cy.visit("tiles/explore");
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getTableView().click();
+
     //verify no facets selected case.
+    cy.log("**verify no facets selected case.**");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
     browsePage.getClearAllFacetsButton().should("be.disabled");
@@ -95,7 +94,6 @@ describe("Verify numeric/date facet can be applied", () => {
     browsePage.getApplyFacetsButton().should("be.disabled");
   });
   it("Verify gray facets don't persist when switching between browse, zero state explorer and run views", {defaultCommandTimeout: 120000}, () => {
-    cy.intercept("/api/jobs/**").as("getJobs");
     cy.log("**Return to main sidebar");
     entitiesSidebar.backToMainSidebar();
 
@@ -126,7 +124,6 @@ describe("Verify numeric/date facet can be applied", () => {
     runPage.verifyStepRunResult("mapPersonJSON", "success");
     runPage.explorerLink("mapPersonJSON").click();
     browsePage.waitForSpinnerToDisappear();
-    cy.waitForAsyncRequest();
     browsePage.waitForHCTableToLoad();
     browsePage.getGreySelectedFacets("Alice").should("not.exist");
   });

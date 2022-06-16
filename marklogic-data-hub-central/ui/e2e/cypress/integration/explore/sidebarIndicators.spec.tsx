@@ -15,12 +15,9 @@ describe("Test sidebar indicators", () => {
       //Saving Local Storage to preserve session
       cy.saveLocalStorage();
     });
-
-
   });
   beforeEach(() => {
     //Restoring Local Storage to Preserve Session
-    Cypress.Cookies.preserveOnce("HubCentralSession");
     cy.restoreLocalStorage().then(() => {
       cy.log(`**Go to Explore section**`);
       cy.visit("/tiles/explore");
