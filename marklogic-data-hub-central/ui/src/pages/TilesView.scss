@@ -36,7 +36,8 @@ div.mosaic-container div.mosaic-window-toolbar {
 }
 
 div.mosaic-container div.mosaic-window-body {
-    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 div.mosaic-container-explore div.mosaic-window-body {

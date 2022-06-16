@@ -82,7 +82,8 @@
         margin-bottom: 35px;
         border-radius: 5px;
         background-color: #e5e7f0;
-        overflow: auto;
+        overflow-y: auto;
+        overflow-x: hidden;
         height: 20em;
     }
 
