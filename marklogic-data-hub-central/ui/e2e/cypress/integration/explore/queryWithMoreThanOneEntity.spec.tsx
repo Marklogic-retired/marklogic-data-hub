@@ -20,16 +20,14 @@ describe("manage queries with more than one entity", () => {
 
     cy.log("**Logging into the app as a developer**");
     cy.loginAsDeveloper().withRequest();
+    LoginPage.postLogin();
     //Saving Local Storage to preserve session
     cy.saveLocalStorage();
-
-    LoginPage.postLogin();
     cy.waitForAsyncRequest();
     cy.deleteSavedQueries();
   });
   beforeEach(() => {
     //Restoring Local Storage to Preserve Session
-    Cypress.Cookies.preserveOnce("HubCentralSession");
     cy.restoreLocalStorage();
   });
   after(() => {

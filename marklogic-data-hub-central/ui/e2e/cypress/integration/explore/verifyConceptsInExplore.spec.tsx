@@ -10,22 +10,17 @@ import graphView from "../../support/components/explore/graph-view";
 describe("Concepts", () => {
   before(() => {
     cy.visit("/");
-
     cy.log("**Logging into the app as a developer**");
     cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
     //Saving Local Storage to preserve session
     cy.saveLocalStorage();
-  });
-  before(() => {
     cy.log("**Navigate to Explore**");
     toolbar.getExploreToolbarIcon().click();
     browsePage.waitForSpinnerToDisappear();
   });
-
   beforeEach(() => {
     //Restoring Local Storage to Preserve Session
-    Cypress.Cookies.preserveOnce("HubCentralSession");
     cy.restoreLocalStorage();
   });
 

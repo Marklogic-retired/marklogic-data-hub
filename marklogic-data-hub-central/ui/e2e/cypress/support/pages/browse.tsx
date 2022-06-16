@@ -255,11 +255,11 @@ class BrowsePage {
   }
 
   getGreyRangeFacet(lowerBound: number) {
-    return cy.get("#selected-facets [data-cy=\"clear-grey-" + lowerBound + "\"]");
+    return cy.get("#selected-facets [data-cy^=\"clear-grey-" + lowerBound + "\"]");
   }
 
   getRangeFacet(lowerBound: number) {
-    return cy.get("#selected-facets [data-cy=\"clear-" + lowerBound + "\"]");
+    return cy.get("#selected-facets [data-cy^=\"clear-" + lowerBound + "\"]");
   }
 
   clickPopoverSearch(facetName: string) {
