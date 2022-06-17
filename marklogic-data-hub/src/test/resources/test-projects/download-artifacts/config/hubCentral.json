@@ -1,0 +1,26 @@
+{
+  "modeling": {
+    "entities": {
+      "BabyRegistry": {
+        "graphX": -97,
+        "graphY": 59
+      },
+      "Customer": {
+        "graphX": 177,
+        "graphY": -57
+      },
+      "NamespacedCustomer": {
+        "graphX": 0,
+        "graphY": 0
+      },
+      "Order": {
+        "graphX": -119,
+        "graphY": -205
+      },
+      "Product": {
+        "graphX": 179,
+        "graphY": 174
+      }
+    }
+  }
+}

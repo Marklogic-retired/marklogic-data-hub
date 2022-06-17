@@ -38,6 +38,7 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.dataservices.ArtifactService;
 import com.marklogic.hub.dataservices.ModelsService;
 import com.marklogic.hub.dataservices.StepService;
+import com.marklogic.hub.hubcentral.HubCentralManager;
 import com.marklogic.mgmt.resource.hosts.HostManager;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
 import org.apache.commons.io.FileUtils;
@@ -114,6 +115,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
             loadFlows(hubClient);
             loadStepDefinitions(hubClient);
             loadSteps(hubClient);
+            loadHubCentralConfig(hubClient);
             logger.info("Loaded flows, mappings, step definitions and steps, time: " + (System.currentTimeMillis() - start) + "ms");
         }
         catch (IOException e) {
@@ -311,6 +313,17 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                 final String flowName = flow.get("name").asText();
                 logger.info(format("Loading flow with name '%s'", flowName));
                 service.setArtifact("flow", flowName, flow, "");
+            }
+        }
+    }
+
+    private void loadHubCentralConfig(HubClient hubClient) {
+        final Path configPath = hubConfig.getHubProject().getHubCentralConfigPath();
+        if (configPath.toFile().exists()) {
+            for (File file : configPath.toFile().listFiles(f -> f.isFile())) {
+                JsonNode hubCentralConfig = readArtifact(file);
+                String docUri = "/config/".concat(file.getName());
+                new HubCentralManager().deployHubCentralConfig(hubClient, hubCentralConfig, docUri);
             }
         }
     }

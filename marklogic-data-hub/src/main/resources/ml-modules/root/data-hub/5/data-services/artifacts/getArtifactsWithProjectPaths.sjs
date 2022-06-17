@@ -30,6 +30,7 @@ const userArtifactQuery = cts.andNotQuery(
     // cannot be managed via HC
     consts.FLOW_COLLECTION,
     consts.ENTITY_MODEL_COLLECTION,
+    consts.ENTITY_MODEL_UI_CONFIG_COLLECTION,
     "http://marklogic.com/data-hub/steps/ingestion",
     "http://marklogic.com/data-hub/steps/mapping",
     "http://marklogic.com/data-hub/steps/matching",

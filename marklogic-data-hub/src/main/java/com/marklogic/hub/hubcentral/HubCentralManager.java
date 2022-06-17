@@ -3,12 +3,15 @@ package com.marklogic.hub.hubcentral;
 import com.fasterxml.jackson.core.util.DefaultIndenter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.core.util.Separators;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.client.ext.helper.LoggingObject;
+import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
@@ -84,6 +87,21 @@ public class HubCentralManager extends LoggingObject {
         }
     }
 
+    public void deployHubCentralConfig(HubClient hubClient, JsonNode config, String docUri) {
+        JacksonHandle handle = new JacksonHandle().with(config);
+        DocumentMetadataHandle documentMetadataHandle = new DocumentMetadataHandle()
+            .withPermission("data-hub-common", DocumentMetadataHandle.Capability.READ)
+            .withPermission("hub-central-entity-model-reader", DocumentMetadataHandle.Capability.UPDATE)
+            .withCollections("http://marklogic.com/hub-central/ui-config");
+        hubClient.getFinalClient().newJSONDocumentManager().write(docUri, documentMetadataHandle, handle);
+        hubClient.getStagingClient().newJSONDocumentManager().write(docUri, documentMetadataHandle, handle);
+    }
+
+    public void deleteHubCentralConfig(HubClient hubClient) {
+        hubClient.getFinalClient().newJSONDocumentManager().delete("/config/hubCentral.json");
+        hubClient.getStagingClient().newJSONDocumentManager().delete("/config/hubCentral.json");
+    }
+
     private void writeDhsGradlePropertiesFile(HubProjectImpl hubProject) {
         try (OutputStream outputStream = new FileOutputStream(hubProject.getProjectDir().resolve("gradle-dhs.properties").toFile())) {
             Properties properties = new Properties();
@@ -149,7 +167,8 @@ public class HubCentralManager extends LoggingObject {
     protected void deleteUserArtifacts(HubProject hubProject) {
         Stream.of(
             hubProject.getFlowsDir(),
-            hubProject.getHubEntitiesDir()
+            hubProject.getHubEntitiesDir(),
+            hubProject.getHubCentralConfigPath()
         ).forEach(path -> deleteDirectory(path.toFile()));
 
         // For 5.3.0, have to be careful with the steps path, as we only want to delete ingestion and mapping directories

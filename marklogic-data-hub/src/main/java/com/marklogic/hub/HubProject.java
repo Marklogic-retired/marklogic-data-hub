@@ -285,6 +285,8 @@ public interface HubProject {
 
     void createProject(String projectDirString);
 
+    Path getHubCentralConfigPath();
+
     /**
      * @return the directory containing steps, as defined in the 5.3.0 release
      */
