@@ -680,6 +680,11 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
     }
 
     @Override
+    public Path getHubCentralConfigPath() {
+        return this.projectDir.resolve("config");
+    }
+
+    @Override
     public Path getStepsPath() {
         return this.projectDir.resolve("steps");
     }

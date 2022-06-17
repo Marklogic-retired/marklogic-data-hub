@@ -36,7 +36,9 @@ import com.marklogic.hub.central.schemas.ModelDefinitions;
 import com.marklogic.hub.central.schemas.ModelDescriptor;
 import com.marklogic.hub.central.schemas.PrimaryEntityType;
 import com.marklogic.hub.dataservices.ModelsService;
+import com.marklogic.hub.deploy.HubDeployer;
 import com.marklogic.hub.deploy.util.ResourceUtil;
+import com.marklogic.hub.hubcentral.HubCentralManager;
 import com.marklogic.hub.util.QueryRolesetUtil;
 import com.marklogic.mgmt.ManageClient;
 import io.swagger.annotations.ApiImplicitParam;
@@ -56,6 +58,8 @@ import java.util.*;
 @RequestMapping("/api/models")
 public class ModelController extends BaseController {
     ObjectMapper objectMapper = new ObjectMapper();
+    HubCentralManager hcManager = new HubCentralManager();
+
     @RequestMapping(value = "/hubCentralConfig", method = RequestMethod.GET)
     @ResponseBody
     @ApiOperation("This retrieves the Hub Central Config for models")
@@ -72,13 +76,8 @@ public class ModelController extends BaseController {
     @Secured("ROLE_readEntityModel")
     public ResponseEntity<?> setHubCentralConfig(@RequestBody ObjectNode hubCentralConfig) {
         ObjectNode hubCentralConfigBase = getHubCentralConfigObject();
-        JacksonHandle handle = new JacksonHandle().with(mergeObjects(hubCentralConfigBase, hubCentralConfig));
-        DocumentMetadataHandle documentMetadataHandle = new DocumentMetadataHandle()
-            .withPermission("data-hub-common", DocumentMetadataHandle.Capability.READ)
-            .withPermission("hub-central-entity-model-reader", DocumentMetadataHandle.Capability.UPDATE)
-            .withCollections("http://marklogic.com/hub-central/ui-config");
-        getHubClient().getFinalClient().newJSONDocumentManager().write("/config/hubCentral.json", documentMetadataHandle, handle);
-        getHubClient().getStagingClient().newJSONDocumentManager().write("/config/hubCentral.json", documentMetadataHandle, handle);
+        String docUri = "/config/hubCentral.json";
+        hcManager.deployHubCentralConfig(getHubClient(), mergeObjects(hubCentralConfigBase, hubCentralConfig), docUri);
         return ResponseEntity.ok("");
     }
 
@@ -88,7 +87,7 @@ public class ModelController extends BaseController {
     // See setHubCentralConfig comment
     @Secured("ROLE_readEntityModel")
     public ResponseEntity<?> deleteHubCentralConfig() {
-        getHubClient().getFinalClient().newJSONDocumentManager().delete("/config/hubCentral.json");
+        hcManager.deleteHubCentralConfig(getHubClient());
         return ResponseEntity.ok("");
     }
 

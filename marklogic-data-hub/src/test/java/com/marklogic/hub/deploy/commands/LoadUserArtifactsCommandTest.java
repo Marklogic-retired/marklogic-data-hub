@@ -220,4 +220,13 @@ public class LoadUserArtifactsCommandTest extends AbstractHubCoreTest {
         assertTrue(Arrays.asList(fileNames).contains("testAnotherStep.step.json"));
         assertTrue(Arrays.asList(fileNames).contains("testStep.step.json"));
     }
+
+    @Test
+    public void validateHubCentralConfigFile() {
+        installProjectInFolder("test-projects/download-artifacts");
+        runAsDataHubDeveloper();
+        loadUserArtifactsCommand.execute(newCommandContext());
+        assertNotNull(getFinalDoc("/config/hubCentral.json"));
+        assertNotNull(getStagingDoc("/config/hubCentral.json"));
+    }
 }

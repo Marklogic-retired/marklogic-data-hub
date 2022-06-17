@@ -250,6 +250,11 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
             if (configDir.exists()) {
                 FileUtils.copyDirectory(configDir, hubProject.getUserConfigDir().toFile());
             }
+
+            File hubCentralConfigDir = new File(testProjectDir, "config");
+            if (hubCentralConfigDir.exists()) {
+                FileUtils.copyDirectory(hubCentralConfigDir, hubProject.getHubCentralConfigPath().toFile());
+            }
         } catch (IOException e) {
             throw new RuntimeException("Unable to load project files: " + e.getMessage(), e);
         }

@@ -60,6 +60,7 @@ public class ApplyDownloadedZipToProjectTest extends AbstractHubCoreTest {
         // Apply the zip and verify
         new HubCentralManager().applyHubCentralZipToProject(getHubConfig().getHubProject(), project.getHubCentralFilesZipFile());
         verifyAllArtifactsBesidesOrderEntityExist();
+        verifyHubCentralConfigExists();
         verifyEntityBasedArtifactsAreOnlyForPerson();
     }
 
@@ -84,6 +85,7 @@ public class ApplyDownloadedZipToProjectTest extends AbstractHubCoreTest {
         modelsService.publishDraftModels();
         FlowService.on(stagingClient).deleteFlow("testFlow");
         StepDefinitionService.on(stagingClient).deleteStepDefinition("testStep");
+        new HubCentralManager().deleteHubCentralConfig(getHubClient());
 
         setTestUserRoles("data-hub-developer", "hub-central-downloader");
         AllArtifactsProject project = new AllArtifactsProject(getHubClient());
@@ -190,6 +192,11 @@ public class ApplyDownloadedZipToProjectTest extends AbstractHubCoreTest {
         assertTrue(project.getStepFile(StepDefinition.StepDefinitionType.INGESTION, "validArtifact").exists());
 
         verifyCustomStepDefinitionExists();
+    }
+
+    private void verifyHubCentralConfigExists() {
+        HubProject project = getHubConfig().getHubProject();
+        assertTrue(new File(project.getHubCentralConfigPath().toFile(), "hubCentral.json").exists());
     }
 
     /**
