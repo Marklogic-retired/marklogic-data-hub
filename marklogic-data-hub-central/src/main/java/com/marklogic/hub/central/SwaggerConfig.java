@@ -1,22 +1,10 @@
 package com.marklogic.hub.central;
 
-import com.fasterxml.classmate.ResolvedType;
-import com.fasterxml.classmate.TypeResolver;
-import com.marklogic.hub.central.controllers.EntitySearchController;
-import com.marklogic.hub.central.controllers.MappingController;
-import com.marklogic.hub.central.controllers.ModelController;
-import com.marklogic.hub.central.controllers.steps.IngestionStepController;
-import com.marklogic.hub.central.controllers.steps.MappingStepController;
-import com.marklogic.hub.central.controllers.steps.MatchingStepController;
-import com.marklogic.hub.central.controllers.steps.MergingStepController;
-import com.marklogic.hub.central.schemas.*;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -25,11 +13,6 @@ import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
-
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Configures the /swagger-ui/ endpoint via springfox. For assistance with configuring Spring MVC controller
