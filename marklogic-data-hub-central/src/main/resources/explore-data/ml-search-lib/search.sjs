@@ -24,11 +24,11 @@ class Search {
 
   // This function has minimal search capability to return all the data from content database with only collection facets
   getSearchResults(searchParams) {
-    const searchText = searchParams.searchText;
     const start = searchParams.start ? searchParams.start : 1
     const pageLength = searchParams.pageLength ? searchParams.pageLength : 10
 
-    let searchResponse = searchImpl.getSearchResults(searchText, start, pageLength);
+    const searchConstraint = this.buildSearchQuery(searchParams);
+    let searchResponse = searchImpl.getSearchResults(searchConstraint, start, pageLength);
     if(searchResponse instanceof XMLNode) {
       searchResponse = this.transformXmlToJson(searchResponse);
     }
@@ -99,6 +99,68 @@ class Search {
     };
     const serializeOptions = {indent: 'no'};
     return parser.parse(xdmp.quote(xmlNode, serializeOptions), options);
+  }
+
+  buildSearchQuery(searchParams) {
+    const searchText = searchParams.searchText;
+    const sortCriteria = searchParams.sort;
+
+    let facets = searchParams.selectedFacets;
+    let keys = Object.keys(facets);
+    let constraintArr = [];
+    keys.forEach(key => {
+      if(Array.isArray(facets[key])) {
+        if(xdmp.castableAs("http://www.w3.org/2001/XMLSchema", "date", facets[key][0])) {
+          facets[key] = facets[key].map(date => xdmp.parseDateTime("[Y0001]-[M01]-[D01]", date))
+        }
+        constraintArr.push(facets[key].map(value => key+':' + '"' + value + '"').join(" OR "));
+      } else {
+        let minVal = facets[key]["min"];
+        let maxVal = facets[key]["max"];
+        let minValConstraint = "";
+        let maxValConstraint = "";
+
+        if(minVal && xdmp.castableAs("http://www.w3.org/2001/XMLSchema", "date", minVal)) {
+          minVal = xdmp.parseDateTime("[Y0001]-[M01]-[D01]", minVal);
+        }
+        if(maxVal && xdmp.castableAs("http://www.w3.org/2001/XMLSchema", "date", maxVal)) {
+          maxVal = xdmp.parseDateTime("[Y0001]-[M01]-[D01]", maxVal);
+        }
+
+        if(minVal) {
+          minValConstraint = key + ' GE ' + '"' + minVal + '"';
+        }
+        if(maxVal) {
+          maxValConstraint = key + ' LE ' + '"' + maxVal + '"';
+        }
+
+        if(minValConstraint && maxValConstraint) {
+          constraintArr.push(minValConstraint.concat(' AND ').concat(maxValConstraint));
+        } else if(minValConstraint && !maxValConstraint) {
+          constraintArr.push(minValConstraint);
+        } else {
+          constraintArr.push(maxValConstraint);
+        }
+      }
+    });
+    const facetConstraint = constraintArr.map(constraint => "(" + constraint + ")").join(" AND ");
+
+    let searchConstraint = [];
+    if(searchText != "" || searchText) {
+      searchConstraint.push(searchText)
+    }
+
+    if(facetConstraint != "" || facetConstraint) {
+      searchConstraint.push(facetConstraint)
+    }
+
+    if(sortCriteria && sortCriteria.entityType && sortCriteria.property) {
+      sortCriteria.order = sortCriteria.order ? sortCriteria.order : "descending";
+      searchConstraint.push("sort:" + sortCriteria.entityType + "_" + sortCriteria.property + "_" + sortCriteria.order);
+    }
+
+    searchConstraint = searchConstraint.join(" AND ");
+    return searchConstraint;
   }
 }
 
