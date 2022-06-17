@@ -27,7 +27,7 @@ class Matchable {
       this._model = getEntityModel(targetEntityType);
     }
     if (!this._model) {
-      this._model = new GenericMatchModel(this.matchStep, {collection: targetEntityType ? targetEntityType.substring(targetEntityType.lastIndexOf("/") + 1):null});
+      this._model = new common.GenericMatchModel(this.matchStep, {collection: targetEntityType ? targetEntityType.substring(targetEntityType.lastIndexOf("/") + 1):null});
     }
   }
 
@@ -555,54 +555,6 @@ class ThresholdDefinition {
 
   actionModuleNamespace() {
     return this.threshold.actionModuleNamespace;
-  }
-}
-
-class GenericMatchModel {
-  constructor(matchStep, options = {}) {
-    this.matchStep = matchStep;
-    this.matchStep.propertyDefs = this.matchStep.propertyDefs || {properties:[]};
-    this._propertyDefinitionMap = {};
-    this._indexesByPath = {};
-    this._propertyDefinitionMap = {};
-    this._namespaces = this.matchStep.propertyDefs.namespaces || {};
-    const allProperties = this.matchStep.propertyDefs.property ? this.matchStep.propertyDefs.property: this.matchStep.propertyDefs.properties;
-    for (const propertyDefinition of allProperties) {
-      this._propertyDefinitionMap[propertyDefinition.name] = propertyDefinition;
-    }
-    const defaultCollection = matchStep.collections && matchStep.collections.content ? matchStep.collections.content : "mdm-content";
-    this._instanceQuery = cts.collectionQuery(options.collection || defaultCollection);
-  }
-
-  instanceQuery() {
-    return this._instanceQuery;
-  }
-
-  propertyDefinition(propertyPath) {
-    return this._propertyDefinitionMap[propertyPath] || { localname: propertyPath, namespace: "" };
-  }
-
-  propertyValues(propertyPath, documentNode) {
-    const propertyDefinition = this.propertyDefinition(propertyPath);
-    return propertyDefinition.path ? documentNode.xpath(propertyDefinition.path, this._namespaces) : documentNode.xpath(`.//${propertyDefinition.namespace ? "ns:": ""}${propertyDefinition.localname}`, {ns: propertyDefinition.namespace});
-  }
-
-  propertyIndexes(propertyPath) {
-    if (!this._indexesByPath[propertyPath]) {
-      const pathIndexes = [];
-      const propertyDefinition = this._propertyDefinitionMap[propertyPath];
-      if (propertyDefinition && propertyDefinition.indexReferences && propertyDefinition.indexReferences.length) {
-        for (const indexReference of  propertyDefinition.indexReferences) {
-          try {
-            pathIndexes.push(cts.reference(indexReference));
-          } catch (e) {
-            xdmp.log(`Couldn't use index for property path '${propertyPath}' Reason: ${xdmp.toJsonString(e)}`);
-          }
-        }
-      }
-      this._indexesByPath[propertyPath] = pathIndexes;
-    }
-    return this._indexesByPath[propertyPath];
   }
 }
 
