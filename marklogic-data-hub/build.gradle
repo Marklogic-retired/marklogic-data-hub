@@ -50,6 +50,18 @@ dependencies {
     implementation 'com.marklogic:marklogic-data-movement-components:2.4.0'
 
     implementation 'commons-io:commons-io:2.11.0'
+    
+    constraints {
+        implementation('org.springframework:spring-beans:5.3.20') {
+            because 'spring-beans:5.3.7 is vulnerable to remote code execution and other critical security vulnerabilities'
+        }
+        implementation('org.springframework:spring-jcl:5.3.20') {
+            because 'spring-jcl:5.3.7 is vulnerable to remote code execution and other critical security vulnerabilities'
+        }
+        implementation('org.springframework:spring-core:5.3.20') {
+            because 'spring-core:5.3.7 is vulnerable to remote code execution and other critical security vulnerabilities'
+        }
+    }
 
     testFixturesApi(testImplementation(project(":marklogic-data-hub-test")))
     testFixturesApi "com.fasterxml.jackson.core:jackson-databind:2.11.1"
@@ -61,7 +73,7 @@ dependencies {
     testImplementation files("src/testFixtures/resources")
 
     testImplementation "org.junit.jupiter:junit-jupiter:5.7.2"
-    testImplementation "org.springframework:spring-test:5.3.18"
+    testImplementation "org.springframework:spring-test:5.3.20"
 
     // For managing a pool of HubConfigImpl objects
     testFixturesApi "org.apache.commons:commons-pool2:2.10.0"
