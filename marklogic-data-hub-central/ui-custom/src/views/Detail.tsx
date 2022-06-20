@@ -23,6 +23,7 @@ import {faStar} from "@fortawesome/free-solid-svg-icons";
 import "./Detail.scss";
 import _ from "lodash";
 import {getValByConfig} from "../util/util";
+import RecordRaw from "../components/RecordRaw/RecordRaw";
 
 type Props = {};
 
@@ -38,7 +39,8 @@ const COMPONENTS = {
   ImageGalleryMulti: ImageGalleryMulti,
   Membership: Membership,
   LinkList: LinkList,
-  Timeline: Timeline
+  Timeline: Timeline,
+  RecordRaw: RecordRaw,
 };
 
 const Detail: React.FC<Props> = (props) => {
