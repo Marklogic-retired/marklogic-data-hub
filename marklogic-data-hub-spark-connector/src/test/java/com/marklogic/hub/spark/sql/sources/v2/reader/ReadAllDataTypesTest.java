@@ -67,7 +67,7 @@ public class ReadAllDataTypesTest extends AbstractSparkReadTest {
         assertEquals("P1M", row.getString(28), "duration");
         assertEquals("P1M", row.getString(29), "yearMonthDuration");
         assertEquals("P30DT1H", row.getString(30), "dayTimeDuration");
-        assertEquals("37.389965,-122.07858", row.getString(31), "point");
+        assertTrue("POINT(-122.07858 37.389965)".equals(row.getString(31)) || "37.389965,-122.07858".equals(row.getString(31))  , "point");
         assertTrue("POINT(-122.07858 37.389965)".equals(row.getString(32)) || "37.389965,-122.07858".equals(row.getString(32))  , "longLatPoint");
 
 
