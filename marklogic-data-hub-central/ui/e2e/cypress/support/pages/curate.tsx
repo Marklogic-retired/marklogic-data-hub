@@ -258,6 +258,12 @@ class CuratePage {
   goBack(id:string) {
     cy.findByTestId(id).click();
   }
+  getFirstTableViewInstanceIcon() {
+    return cy.get("a#instance").first();
+  }
+  getPageSizeOption(pageSizeOption: string) {
+    return cy.findByText(pageSizeOption);
+  }
 }
 
 const curatePage = new CuratePage();

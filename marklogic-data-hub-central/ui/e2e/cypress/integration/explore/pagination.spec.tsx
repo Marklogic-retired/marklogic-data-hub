@@ -6,6 +6,7 @@ import "cypress-wait-until";
 import LoginPage from "../../support/pages/login";
 import table from "../../support/components/common/tables";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
+import explorePage from "../../support/pages/explore";
 
 describe("Validate scenarios for pagination in the explore page table", () => {
   let firstPageTableCells: any[] = [];
@@ -65,8 +66,8 @@ describe("Validate scenarios for pagination in the explore page table", () => {
 
     cy.log("**Change page size to 10 and validate total number of elements shown at the top it's accurate**");
     browsePage.getTotalDocuments().then(val => {
-      browsePage.scrollToBottom();
-      browsePage.getPaginationPageSizeOptions().select("10 / page", {force: true});
+      explorePage.scrollToBottom();
+      explorePage.getPaginationPageSizeOptions().select("10 / page", {force: true});
       cy.contains("Showing 1-10 of ");
       browsePage.getTotalDocuments().should("be.equal", val);
     });
@@ -87,8 +88,8 @@ describe("Validate scenarios for pagination in the explore page table", () => {
     table.getTableRows().should("not.be.empty");
 
     cy.log("**Change page size to 10**");
-    browsePage.scrollToBottom();
-    browsePage.getPaginationPageSizeOptions().select("10 / page", {force: true});
+    explorePage.scrollToBottom();
+    explorePage.getPaginationPageSizeOptions().select("10 / page", {force: true});
     table.getTableRows().should("have.length", 10);
 
     cy.log("**Go to page number 2**");

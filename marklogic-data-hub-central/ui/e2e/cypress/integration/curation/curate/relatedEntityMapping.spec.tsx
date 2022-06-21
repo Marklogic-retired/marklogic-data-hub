@@ -127,6 +127,10 @@ describe("Mapping", () => {
 
     cy.log("**Go to Model page and select table view**");
     toolbar.getModelToolbarIcon().click();
+
+    // TODO: Table view button does not work until the animation stops.
+    cy.wait(5000);
+
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
 
@@ -172,7 +176,7 @@ describe("Mapping", () => {
     browsePage.waitForHCTableToLoad();
 
     // Verify Explore results
-    browsePage.getSelectedEntity().should("contain", "All Entities");
+    entitiesSidebar.getSelectedEntityText().should("contain", "All Entities");
     browsePage.getTotalDocuments().should("be.greaterThan", 21);
     entitiesSidebar.showMoreEntities().click({force: true});
     entitiesSidebar.openBaseEntityFacets("Relation");
@@ -265,7 +269,7 @@ describe("Mapping", () => {
     cy.get("#entityContainer").scrollTo("bottom", {ensureScrollable: false});
     mappingStepDetail.entityTitle("Person").should("not.be.visible");
     mappingStepDetail.getPaginationPageSizeOptions("person").click();
-    browsePage.getPageSizeOption("10 / page").click({force: true});
+    curatePage.getPageSizeOption("10 / page").click({force: true});
     mappingStepDetail.entityTitle("Person").should("be.visible");
   });
 });

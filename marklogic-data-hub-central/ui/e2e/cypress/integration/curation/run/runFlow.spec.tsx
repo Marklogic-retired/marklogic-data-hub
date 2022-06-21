@@ -4,6 +4,7 @@ import runPage from "../../../support/pages/run";
 import loadPage from "../../../support/pages/load";
 import browsePage from "../../../support/pages/browse";
 import LoginPage from "../../../support/pages/login";
+import explorePage from "../../../support/pages/explore";
 
 let flowName = "testPersonXML";
 
@@ -232,7 +233,7 @@ describe("Run Tile tests", () => {
     cy.log("**Navigate to explorer tile using the explorer link**");
     runPage.explorerLink(stepName).click();
     browsePage.waitForSpinnerToDisappear();
-    browsePage.getTitleExplore().should("be.visible");
+    explorePage.getTitleExplore().should("be.visible");
     cy.waitForAsyncRequest();
     browsePage.getTableView().click();
     browsePage.waitForHCTableToLoad();
@@ -266,7 +267,7 @@ describe("Run Tile tests", () => {
     cy.log("**Navigate to explorer tile using the explorer link**");
     runPage.explorerLink(firstStepName).click();
     browsePage.waitForSpinnerToDisappear();
-    browsePage.getTitleExplore().should("be.visible");
+    explorePage.getTitleExplore().should("be.visible");
     cy.waitForAsyncRequest();
     browsePage.getTableView().click();
     browsePage.waitForHCTableToLoad();
@@ -291,7 +292,7 @@ describe("Run Tile tests", () => {
     cy.log("**Navigate to explorer tile using the explorer link**");
     runPage.explorerLink(secondStepName).click();
     browsePage.waitForSpinnerToDisappear();
-    browsePage.getTitleExplore().should("be.visible");
+    explorePage.getTitleExplore().should("be.visible");
     cy.waitForAsyncRequest();
     browsePage.getTableView().click();
     browsePage.waitForHCTableToLoad();

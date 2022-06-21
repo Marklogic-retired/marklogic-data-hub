@@ -2,47 +2,32 @@ import "cypress-wait-until";
 
 class BrowsePage {
 
-  getTitleExplore() {
-    return cy.get(`[aria-label="title-explore"]`);
-  }
-
-  getSelectedEntity() {
-    return cy.get("#entitiesSidebar-select-wrapper").invoke("text");
-  }
-
-  getFirstTableViewInstanceIcon() {
-    return cy.get("a#instance").first();
-  }
+  // common spinners
+  // Can be moved to a common components
   getSpinner() {
     return cy.findByTestId("spinner");
   }
 
+  // common spinners
+  // Can be moved to a common components
   waitForSpinnerToDisappear() {
     cy.waitUntil(() => this.getSpinner().should("have.length", 0));
   }
 
+  // Common table
+  // can be moved to a tableBase page object
   waitForHCTableToLoad() {
     this.getHCTableRows().should("have.length.gt", 0);
   }
 
-  noDataHCTable() {
-    return cy.get(`react-bs-table-no-data`);
-  }
-
+  // common component
   waitForCardToLoad() {
     cy.waitUntil(() => this.getCard().should("have.length.gt", 0));
   }
 
-  scrollToBottom() {
-    return cy.get(`#browseContainer`).scrollTo("bottom");
-  }
-  selectEntity(entity: string) {
-    this.waitForSpinnerToDisappear();
-    cy.get(`#entity-select-wrapper div[class=" css-1s2thzd-control"]`, {timeout: 6000}).should("be.visible").click();
-    cy.get(`#entity-select-MenuList [data-cy="entity-option-${entity}"]`).scrollIntoView().click({force: true});
-    cy.waitForAsyncRequest();
-    this.waitForSpinnerToDisappear();
-    cy.waitForAsyncRequest();
+  // common component
+  getCard() {
+    return cy.get(".card-body");
   }
 
   getTotalDocuments() {
@@ -401,9 +386,6 @@ class BrowsePage {
     return cy.get(".hc-table_row");
   }
 
-  getCard() {
-    return cy.get(".card-body");
-  }
 
   getTableViewInstanceIcon() {
     return cy.get(".hc-table_row:last-child [data-cy=instance]");
@@ -718,10 +700,6 @@ class BrowsePage {
     return cy.get("#snippetViewResult");
   }
 
-  // getSelectedFacet(facet: string) {
-  //   return cy.get('#selected-facets > button').contains(facet);
-  // }
-
   //All Data
   getAllDataSnippetByUri(uri: string) {
     return cy.findByTestId(`${uri}-snippet`);
@@ -733,14 +711,6 @@ class BrowsePage {
 
   clearSearchText() {
     cy.get("*[class^=\"hc-search_cleanIcon\"]").click();
-  }
-
-  getPaginationPageSizeOptions() {
-    return cy.get(`#pageSizeSelect`);
-  }
-
-  getPageSizeOption(pageSizeOption: string) {
-    return cy.findByText(pageSizeOption);
   }
 
   getDetailInstanceViewIcon(docUri: string) {
