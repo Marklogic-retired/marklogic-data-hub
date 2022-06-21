@@ -6,8 +6,8 @@ import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import {BaseEntityTypes} from "../../support/types/base-entity-types";
 import {toolbar} from "../../support/components/common";
 import "cypress-wait-until";
-// import detailPageNonEntity from "../../support/pages/detail-nonEntity";
 import LoginPage from "../../support/pages/login";
+import explorePage from "../../support/pages/explore";
 
 describe("Verify All Data for final/staging databases and non-entity detail page", () => {
 
@@ -124,8 +124,8 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     browsePage.getTableView().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getTotalDocuments().then(val => {
-      browsePage.scrollToBottom();
-      browsePage.getPaginationPageSizeOptions().select("10 / page", {force: true});
+      explorePage.scrollToBottom();
+      explorePage.getPaginationPageSizeOptions().select("10 / page", {force: true});
       browsePage.waitForSpinnerToDisappear();
       browsePage.clickPaginationItem(3);
       browsePage.waitForSpinnerToDisappear();

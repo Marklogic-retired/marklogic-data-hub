@@ -231,7 +231,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     browsePage.getTableView().click();
     browsePage.waitForSpinnerToDisappear();
     cy.wait(3000);
-    browsePage.getFirstTableViewInstanceIcon().should("be.visible").click({force: true});
+    curatePage.getFirstTableViewInstanceIcon().should("be.visible").click({force: true});
     detailPage.getDocumentSource().should("contain", "backup-ABC123");
     detailPage.getDocumentTimestamp().should("not.exist");
     detailPage.getSourceView().click();
@@ -253,7 +253,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     // Commented until DHFPROD-7477 is done
     runPage.explorerLink(mapStep).click();
 
-    browsePage.getFirstTableViewInstanceIcon().should("be.visible").click({force: true});
+    curatePage.getFirstTableViewInstanceIcon().should("be.visible").click({force: true});
     detailPage.getSourceView().click();
 
     // attachment is present in detailed view of document

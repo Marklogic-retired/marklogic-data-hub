@@ -22,6 +22,7 @@ import mergingStepDetail from "../../support/components/merging/merging-step-det
 import mergeStrategyModal from "../../support/components/merging/merge-strategy-modal";
 import mergeRuleModal from "../../support/components/merging/merge-rule-modal";
 import browsePage from "../../support/pages/browse";
+import entitiesSidebar from "../../support/pages/entitiesSidebar";
 
 const loadStepName = "loadPatient";
 const flowName = "patientFlow";
@@ -411,7 +412,7 @@ describe("Validate E2E Mastering Flow", () => {
   });
   it.skip("Explore other collections", () => {   //THIS FAILS UNTIL ENTITY SPECIFIC FACETS PR IS IN (DHFPROD-7950), needs to use entity specific panel facets instead entity properties panel
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-    browsePage.selectEntity("All Data");
+    entitiesSidebar.selectEntity("All Data");
     cy.waitForModalToDisappear();
     browsePage.showMoreCollection();
     cy.get("#hc-sider-content").scrollTo("bottom");

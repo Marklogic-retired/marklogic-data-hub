@@ -1,3 +1,4 @@
+import common from "../pages/browse";
 class BaseEntitySidebar {
   //Elements
   backToMainSidebar() {
@@ -17,6 +18,15 @@ class BaseEntitySidebar {
 
   removeLastSelectedBaseEntity() {
     return cy.get(`[class="css-xb97g8"]`).last().scrollIntoView().should("be.visible").click();
+  }
+
+  selectEntity(entity: string) {
+    common.waitForSpinnerToDisappear();
+    cy.get(`#entity-select-wrapper div[class=" css-1s2thzd-control"]`, {timeout: 6000}).should("be.visible").click();
+    cy.get(`#entity-select-MenuList [data-cy="entity-option-${entity}"]`).scrollIntoView().click({force: true});
+    cy.waitForAsyncRequest();
+    common.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
   }
 
   getBaseEntityToolTip() {
@@ -50,6 +60,10 @@ class BaseEntitySidebar {
 
   getBaseEntityDropdown() {
     return cy.get("#entitiesSidebar-select-wrapper");
+  }
+
+  getSelectedEntityText() {
+    return cy.get("#entitiesSidebar-select-wrapper").invoke("text");
   }
 
   openBaseEntityDropdown() {
