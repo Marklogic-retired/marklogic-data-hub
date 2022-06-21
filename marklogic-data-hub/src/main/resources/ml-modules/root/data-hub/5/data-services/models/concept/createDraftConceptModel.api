@@ -1,0 +1,24 @@
+{
+  "functionName" : "createDraftModel",
+  "desc" : "Create a new draft model, resulting in a new Concept descriptor.",
+  "params" : [ {
+    "name" : "input",
+    "datatype" : "jsonDocument",
+    "$javaClass" : "com.fasterxml.jackson.databind.JsonNode",
+    "schema" : {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "description" : {
+          "type" : "string"
+        }
+      }
+    }
+  } ],
+  "return" : {
+    "datatype" : "jsonDocument",
+    "$javaClass" : "com.fasterxml.jackson.databind.JsonNode"
+  }
+}

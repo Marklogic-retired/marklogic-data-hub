@@ -1,0 +1,36 @@
+{
+  "functionName" : "updateDraftModelInfo",
+  "desc" : "Update the description of an existing concept class. Concept name cannot yet be edited because doing so would break existing mapping and mastering configurations. Changes are saved to the concept class draft collection.",
+  "params" : [
+  {
+      "name" : "name",
+      "datatype" : "string",
+      "desc" : "The name of the model"
+  },
+  {
+     "name" : "input",
+     "datatype" : "jsonDocument",
+     "$javaClass" : "com.fasterxml.jackson.databind.JsonNode",
+     "schema" : {
+       "type" : "object",
+       "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+         "description" : {
+           "type" : "string"
+         },
+          "namespace" : {
+            "type" : "string"
+          },
+           "namespacePrefix" : {
+             "type" : "string"
+           }
+       }
+     }
+  }],
+  "return" : {
+    "datatype" : "jsonDocument",
+    "$javaClass" : "com.fasterxml.jackson.databind.JsonNode"
+  }
+}
