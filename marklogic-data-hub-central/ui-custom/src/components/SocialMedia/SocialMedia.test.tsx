@@ -135,16 +135,29 @@ const social = {
   ]
 };
 
+const EXPANDIDS = {
+    membership: true,
+    info: true,
+    relationships: true,
+    imageGallery: true,
+    timeline: true
+}
+
 const detailContextValue = {
-  detail: socials,
-  recentRecords: [],
-  loading: false,
-  handleGetDetail: jest.fn(),
-  handleGetRecent: jest.fn(),
-  handleGetRecentLocal: jest.fn(),
-  handleSaveRecent: jest.fn(),
-  handleSaveRecentLocal: jest.fn()
+    detail: socials,
+    recentRecords: [],
+    loading: false,
+    expandIds: EXPANDIDS,
+    handleGetDetail: jest.fn(),
+    handleGetRecent: jest.fn(),
+    handleGetRecentLocal: jest.fn(),
+    handleSaveRecent: jest.fn(),
+    handleSaveRecentLocal: jest.fn(),
+    handleExpandIds: jest.fn(),
+    handleDeleteAllRecent: jest.fn(), 
+    hasSavedRecords: jest.fn()
 };
+
 describe("SocialMedia component", () => {
   test("Verify social media widget renders with a property object with multiple values", () => {
     const {getByText, getByTestId} = render(

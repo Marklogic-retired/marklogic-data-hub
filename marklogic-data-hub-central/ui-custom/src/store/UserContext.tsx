@@ -41,6 +41,7 @@ const UserProvider: React.FC = ({ children }) => {
   const handleGetLoginAddress = () => {
     let sr = getLoginAddress();
     sr.then(result => {
+        console.log("handleGetLoginAddress", result);
         if (result && result.data) {
             setLoginAddress(result.data);
         }

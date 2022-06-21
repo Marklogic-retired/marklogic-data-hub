@@ -58,11 +58,28 @@ const detail = {
   }
 }
 
-const detailContextValue = {
-  detail: detail,
-  handleDetail: jest.fn()
-};
+const EXPANDIDS = {
+    membership: true,
+    info: true,
+    relationships: true,
+    imageGallery: true,
+    timeline: true
+}
 
+const detailContextValue = {
+    detail: detail,
+    recentRecords: [],
+    loading: false,
+    expandIds: EXPANDIDS,
+    handleGetDetail: jest.fn(),
+    handleGetRecent: jest.fn(),
+    handleGetRecentLocal: jest.fn(),
+    handleSaveRecent: jest.fn(),
+    handleSaveRecentLocal: jest.fn(),
+    handleExpandIds: jest.fn(),
+    handleDeleteAllRecent: jest.fn(), 
+    hasSavedRecords: jest.fn()
+};
 
 describe("Membership component", () => {
   test("Verify Membership widget renders", () => {

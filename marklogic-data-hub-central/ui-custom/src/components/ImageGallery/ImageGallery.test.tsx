@@ -1,5 +1,5 @@
 
-import {render, waitFor} from "@testing-library/react";
+import {render, waitFor, fireEvent} from "@testing-library/react";
 import {DetailContext} from "../../store/DetailContext";
 import ImageGallery from "./ImageGallery";
 
@@ -79,10 +79,29 @@ const detail = {
   }
 };
 
+const EXPANDIDS = {
+    membership: true,
+    info: true,
+    relationships: true,
+    imageGallery: true,
+    timeline: true
+}
+
 const detailContextValue = {
-  detail: detail,
-  handleDetail: jest.fn()
+    detail: detail,
+    recentRecords: [],
+    loading: false,
+    expandIds: EXPANDIDS,
+    handleGetDetail: jest.fn(),
+    handleGetRecent: jest.fn(),
+    handleGetRecentLocal: jest.fn(),
+    handleSaveRecent: jest.fn(),
+    handleSaveRecentLocal: jest.fn(),
+    handleExpandIds: jest.fn(),
+    handleDeleteAllRecent: jest.fn(), 
+    hasSavedRecords: jest.fn()
 };
+
 describe("ImageGallery component", () => {
 
   test("Verify ImageGallery widget renders correctly", () => {
