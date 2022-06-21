@@ -15,6 +15,8 @@
 */
 
 const FLOW_COLLECTION = "http://marklogic.com/data-hub/flow";
+const CONCEPT_COLLECTION = "http://marklogic.com/data-hub/concept";
+const DRAFT_CONCEPT_COLLECTION = `${CONCEPT_COLLECTION}/draft`;
 const ENTITY_MODEL_COLLECTION = "http://marklogic.com/entity-services/models";
 const DRAFT_ENTITY_MODEL_COLLECTION = `${ENTITY_MODEL_COLLECTION}/draft`;
 const STEP_DEFINITION_COLLECTION = "http://marklogic.com/data-hub/step-definition";
@@ -73,6 +75,8 @@ module.exports = {
   HUB_ARTIFACT_COLLECTION: "hub-core-artifact",
 
   FLOW_COLLECTION,
+  CONCEPT_COLLECTION,
+  DRAFT_CONCEPT_COLLECTION,
   ENTITY_MODEL_COLLECTION,
   DRAFT_ENTITY_MODEL_COLLECTION,
   STEP_DEFINITION_COLLECTION,
@@ -80,6 +84,7 @@ module.exports = {
 
   USER_ARTIFACT_COLLECTIONS: [
     FLOW_COLLECTION,
+    CONCEPT_COLLECTION,
     ENTITY_MODEL_COLLECTION,
     STEP_DEFINITION_COLLECTION,
     STEP_COLLECTION,

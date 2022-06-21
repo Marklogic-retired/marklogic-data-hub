@@ -1,0 +1,11 @@
+{
+    "functionName": "deleteDraftModel",
+    "desc": "Mark a draft concept class to be deleted",
+    "params": [
+        {
+            "name": "conceptName",
+            "datatype": "string",
+            "desc": "The name of the concept in the model"
+        }
+    ]
+}
