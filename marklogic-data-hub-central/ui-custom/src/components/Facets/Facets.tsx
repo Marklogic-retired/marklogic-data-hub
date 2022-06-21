@@ -1,17 +1,17 @@
-import React, {useContext, useState} from "react";
-import {SearchContext} from "../../store/SearchContext";
+import React, { useContext, useState } from "react";
+import { SearchContext } from "../../store/SearchContext";
 import Form from "react-bootstrap/Form";
 import Table from "react-bootstrap/Table";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
-import {InfoCircleFill, ChevronDoubleRight, ChevronDoubleLeft} from "react-bootstrap-icons";
+import { InfoCircleFill, ChevronDoubleRight, ChevronDoubleLeft } from "react-bootstrap-icons";
 import "./Facets.scss";
 import "bootstrap-daterangepicker/daterangepicker.css";
 import DateRangeFacet from "../DateRangeFacet/DateRangeFacet";
 import _ from "lodash";
 
 type Props = {
-    config?: any;
+  config?: any;
 };
 
 /**
@@ -117,7 +117,7 @@ const Facets: React.FC<Props> = (props) => {
     });
   };
 
-  const displayFacetValues = (facetObj, disabled=false, moreLess) => {
+  const displayFacetValues = (facetObj, disabled = false, moreLess) => {
     let result: any = null;
     if (facetObj["facet-value"]) {
       // facetObj["facet-value"] is an object if singular, array of objects if multiple. Force array.
@@ -126,37 +126,33 @@ const Facets: React.FC<Props> = (props) => {
         if (!(moreLess && index >= moreThreshold)) {
           return (
             <tr className="facetValue" key={"facetValue-" + index}>
-              <td className="label">
-                <Form.Check
-                  id={facetObj.name + ":" + fv.name}
-                  type={"checkbox"}
-                  checked={searchContext.facetStrings && searchContext.facetStrings.includes(facetObj.name + ":" + fv.name)}
-                  disabled={disabled ? disabled : false}
-                  data-testid={facetObj.name + ":" + fv.name}
-                  title={fv.name}
-                  className="shadow-none"
-                  onChange={handleSelect}
-                />
+              <td className="label align-middle px-0 py-0">
                 <OverlayTrigger
                   overlay={<Tooltip>{fv.name}</Tooltip>}
                   onToggle={handleTooltip("tooltip-" + facetObj.name + ":" + fv.name)}
                   show={tooltipShow["tooltip-" + facetObj.name + ":" + fv.name]}
                   placement="right"
                 >
-                  <label
-                    id={"tooltip-" + facetObj.name + ":" + fv.name}
-                    htmlFor={facetObj.name + ":" + fv.name}
-                    className="form-check-label"
-                  >{fv.name}</label>
+                  <Form.Check
+                    id={facetObj.name + ":" + fv.name}
+                    className="mb-0"
+                    type={"checkbox"}
+                    checked={searchContext.facetStrings && searchContext.facetStrings.includes(facetObj.name + ":" + fv.name)}
+                    disabled={disabled ? disabled : false}
+                    data-testid={facetObj.name + ":" + fv.name}
+                    title={fv.name}
+                    onChange={handleSelect}
+                    label={fv.name}
+                  />
                 </OverlayTrigger>
               </td>
-              <td className="meter">
+              <td className="meter align-middle px-0 py-0">
                 <div className="total">
                   <div
                     className="count"
                     data-testid={"meter-" + facetObj.name + ":" + fv.name}
                     style={{
-                      width: (fv.count*100/searchContext.total).toString().concat("%"),
+                      width: (fv.count * 100 / searchContext.total).toString().concat("%"),
                       // width: (value*100/total).toString().concat("%"), // TODO Remove: for testing larger counts
                       backgroundColor: (searchContext.facetStrings && searchContext.facetStrings.includes(facetObj.name + ":" + fv.name)) ?
                         props.config.selected : props.config.unselected
@@ -164,7 +160,7 @@ const Facets: React.FC<Props> = (props) => {
                   ></div>
                 </div>
               </td>
-              <td className="count">{(fv.count).toLocaleString()}</td>
+              <td className="count align-middle py-0 text-end">{(fv.count).toLocaleString()}</td>
               {/* <td className="count">{(value).toLocaleString()}</td> */}
             </tr>
           );
@@ -191,11 +187,11 @@ const Facets: React.FC<Props> = (props) => {
       {props.config.items && searchContext.searchResults && props.config.items.map((f, index) => {
         return (
           f.type === "dateRange" ?
-            <div className="facet" key={f?.name}>
+            <div className="facet mb-2 small" key={f?.name}>
               <DateRangeFacet config={f}></DateRangeFacet>
             </div>
             :
-            <div className="facet" key={"facet-" + index}>
+            <div className="facet mb-2 small" key={"facet-" + index}>
               <div className="title">
                 {f.name}
                 {f.tooltip &&
@@ -207,16 +203,16 @@ const Facets: React.FC<Props> = (props) => {
                     <InfoCircleFill
                       data-testid={"info-" + f.name}
                       color="#5d6aaa"
-                      size={21}
-                      className="facetInfo"
+                      size={13}
+                      className="facetInfo ms-1 mb-1"
                     />
                   </OverlayTrigger>
                 }
               </div>
-              <div className="facetValues">
+              <div className="facetValues border-bottom pb-2">
                 {/* Show each facet value (and count) */}
                 {searchResultsFacets && searchResultsFacets.length > 0 ?
-                  <Table size="sm" style={{padding: 0, margin: 0}}>
+                  <Table size="sm" borderless className="mb-0">
                     {getFacetObj(f.name, searchResultsFacets) && displayFacetValues(getFacetObj(f.name, searchResultsFacets), f.disabled, moreLess[f.name])}
                   </Table> : null }
                 {(getNumValues(f.name, searchResultsFacets) > moreThreshold) ? moreLess[f.name] ?

@@ -7,7 +7,9 @@ import DetailProvider from "./store/DetailContext";
 import Dashboard from "./views/Dashboard";
 import Detail from "./views/Detail";
 import Search from "./views/Search";
-import Header from "./views/Header";
+import Header from "./views/Header"; 
+
+
 import "./App.scss";
 
 type Props = {};

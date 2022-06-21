@@ -28,7 +28,7 @@ class LandingPage {
     return cy.findByTestId("recentSearches-clearButton");
   }
   noRecentSearches() {
-    return cy.get(".recentSearches .none-found");
+    return cy.get(".recentSearches .text-muted");
   }
   recentSearchesText() {
     return cy.get(".recentSearches span.qtext");
@@ -49,7 +49,7 @@ class LandingPage {
     return cy.findByTestId("recentRecords-clearButton");
   }
   noRecentlyVisited() {
-    return cy.get(".section").eq(2).find(".none-found");
+    return cy.get(".section").eq(2).find(".text-muted");
   }
   recentlyVisitedText() {
     return cy.get(".recentRecords .title span");

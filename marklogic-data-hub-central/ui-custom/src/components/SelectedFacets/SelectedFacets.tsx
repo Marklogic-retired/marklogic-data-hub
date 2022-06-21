@@ -58,7 +58,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
     let res = keys.map((k, index) => {
         return (
           <span key={"selected-" + index} className={styles.badge}>
-            <Badge bg="light" text="dark">
+            <Badge className="me-2" bg="light" text="dark">
               <span className={styles.facetLabel}>{k}</span>
               {fsObj[k].map((v, index2) => {
                 return (

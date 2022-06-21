@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { DetailContext } from "../store/DetailContext";
 import { MetricsContext } from "../store/MetricsContext";
 import { SearchContext } from "../store/SearchContext";
@@ -12,6 +12,9 @@ import Section from "../components/Section/Section";
 import Loading from "../components/Loading/Loading";
 import "./Dashboard.scss";
 import RecentClear from "../components/RecentClear/RecentClear"
+
+
+import { Container, Col, Row } from "react-bootstrap";
 
 type Props = {};
 
@@ -37,7 +40,7 @@ const Dashboard: React.FC<Props> = (props) => {
 
   useEffect(() => {
     searchContext.handleGetSearchLocal();
-    if (userContext.config.api && 
+    if (userContext.config.api &&
       userContext.config.api.recentStorage === "database") {
       detailContext.handleGetRecent();
     } else {
@@ -68,86 +71,61 @@ const Dashboard: React.FC<Props> = (props) => {
   }, [metricsContext.whatsNew]);
 
   return (
-    <div className="dashboard">
+    <div className="dashboard d-flex flex-row flex-column-fluid">
 
-      {config?.dashboard ?   
-
-      <div className="container-fluid">
-
-        <div className="row">
-
+      {config?.dashboard ? 
+          <Container className="mt-3"> 
             {config?.dashboard?.metrics?.component && config?.dashboard?.metrics?.config &&
               React.createElement(
                 COMPONENTS[config.dashboard.metrics.component],
                 { data: metrics, config: config.dashboard.metrics.config }, null
-            )}
-
-        </div>
-
-        <div className="row">
-
-          <div className="col-lg">
-
-            <Section title="Search">
-                <h4 style={{marginBottom: "20px"}}>New Search</h4>
-                <SearchBox config={config.searchbox} button="vertical" width="100%" />
-
-                {config?.dashboard?.recentSearches &&
-                  <div>
-                    <div className="divider">- or -</div>
-                    <div style={{marginTop: "15px"}}>
-                      <h4>Recent Searches
-                      <RecentClear title="recent search" type="recentSearches"></RecentClear>
-                      </h4>
-                      {config?.dashboard?.recentSearches &&
-                        React.createElement(
-                          COMPONENTS[config.dashboard.recentSearches.component],
-                          { data: recentSearches, config: config.dashboard.recentSearches.config }, null
-                      )}
+              )} 
+            <Row>
+              <Col md={6}>
+                <Section title="Search"> 
+                  <SearchBox config={config.searchbox} button="vertical" width="100%" />
+                  {config?.dashboard?.recentSearches &&
+                    <div>
+                      <div className="py-3 text-center fw-bold">- or -</div> 
+                        <h6 className="d-flex justify-content-between align-items-center">Recent Searches
+                          <RecentClear title="recent search" type="recentSearches"></RecentClear>
+                        </h6>
+                        {config?.dashboard?.recentSearches &&
+                          React.createElement(
+                            COMPONENTS[config.dashboard.recentSearches.component],
+                            { data: recentSearches, config: config.dashboard.recentSearches.config }, null
+                          )} 
                     </div>
-                  </div>
+                  }
+                </Section> 
+              </Col>
+              <Col md={6}>
+              {config?.dashboard?.whatsNew &&
+                  <Section title="What's New with Entities">
+                    {config?.dashboard?.whatsNew?.component && config?.dashboard?.whatsNew?.config &&
+                      React.createElement(
+                        COMPONENTS[config.dashboard.whatsNew.component],
+                        { data: whatsNew, config: config.dashboard.whatsNew.config }, null
+                      )}
+                  </Section>
                 }
-            </Section>
 
-          </div>
+                {config?.dashboard?.recentRecords ? !detailContext.loading ?
+                  <Section title="Recently Visited">
+                    {config?.dashboard?.recentRecords &&
+                      React.createElement(
+                        COMPONENTS[config.dashboard.recentRecords.component],
+                        { data: recentRecords, config: config.dashboard.recentRecords.config }, null
+                      )}
+                  </Section>
+                  : <Loading /> : null}
+              </Col>
+            </Row>
+          </Container>
 
-          <div className="col-lg">
+      
 
-            {config?.dashboard?.whatsNew &&
-              <Section title="What's New with Entities" config={{
-                "mainStyle": {
-                  "minHeight": "240px"
-                }
-              }}>
-                {config?.dashboard?.whatsNew?.component && config?.dashboard?.whatsNew?.config &&
-                  React.createElement(
-                    COMPONENTS[config.dashboard.whatsNew.component],
-                    { data: whatsNew, config: config.dashboard.whatsNew.config }, null
-                )}
-              </Section>
-            }
-
-            {config?.dashboard?.recentRecords ? !detailContext.loading ? 
-              <Section title="Recently Visited" config={{
-                "mainStyle": {
-                  "maxHeight": "500px"
-                }
-              }}>
-                  {config?.dashboard?.recentRecords &&
-                    React.createElement(
-                      COMPONENTS[config.dashboard.recentRecords.component],
-                      { data: recentRecords, config: config.dashboard.recentRecords.config }, null
-                  )}
-              </Section>
-            : <Loading /> : null}
-
-          </div>
-
-        </div>
-
-      </div>
-
-      : <Loading />}
+        : <Loading />}
 
     </div>
   );

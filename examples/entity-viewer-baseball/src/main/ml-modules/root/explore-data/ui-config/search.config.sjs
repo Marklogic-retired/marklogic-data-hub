@@ -89,8 +89,8 @@ const searchConfig = {
                 path: "url",
                 alt: "result thumbnail",
                 style: {
-                  width: "70px",
-                  height: "70px",
+                  width: "48px",
+                  height: "48px",
                 },
               },
             },

@@ -1,20 +1,22 @@
-import React, {useContext} from "react";
+import React, { useContext } from "react";
 import Address from "../Address/Address";
 import Chiclet from "../Chiclet/Chiclet";
 import DateTime from "../DateTime/DateTime";
 import Image from "../Image/Image";
 import List from "../List/List";
 import Value from "../Value/Value";
-import {SearchContext} from "../../store/SearchContext";
-import {DetailContext} from "../../store/DetailContext";
+import { SearchContext } from "../../store/SearchContext";
+import { DetailContext } from "../../store/DetailContext";
 import "./ResultsList.scss";
-import {getValByConfig} from "../../util/util";
+import { getValByConfig } from "../../util/util";
 import Pagination from "../Pagination/Pagination";
 import ResultActions from "../ResultActions/ResultActions";
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as FaDictionary from '@fortawesome/free-solid-svg-icons'
-import {CaretDownFill, CaretUpFill} from "react-bootstrap-icons";
+import { CaretDownFill, CaretUpFill } from "react-bootstrap-icons";
 import _ from "lodash";
+
+import { Table, Row, Col } from "react-bootstrap";
 
 type Props = {
   config?: any;
@@ -97,7 +99,7 @@ const ResultsList: React.FC<Props> = (props) => {
 
   const pageLengths = props?.config?.pageLengths ? props?.config?.pageLengths : [10, 20, 80, 100];
 
-  const {returned, sortOrder, pageNumber, pageLength, handleSort} = searchContext;
+  const { returned, sortOrder, pageNumber, pageLength, handleSort } = searchContext;
 
 
   const handleSortClick = (e) => {
@@ -144,14 +146,14 @@ const ResultsList: React.FC<Props> = (props) => {
     let titleValue = results?.uri ? results?.uri : "No record URI";
     let matchValue = results?.snippet?.match["#text"] ? results?.snippet?.match["#text"] : "";
     return (
-        <div key={"result-" + index} className="result">
-            <div className="details">
-                <div className="title no-entity"><Value>{titleValue}</Value></div>
-                <div className="subtitle no-entity">
-                    <div className="match"><Value id={"match-" + index}>{matchValue}</Value></div>
-                </div>
-            </div>
+      <div key={"result-" + index} className="result">
+        <div className="details">
+          <div className="title no-entity"><Value>{titleValue}</Value></div>
+          <div className="subtitle no-entity">
+            <div className="match"><Value id={"match-" + index}>{matchValue}</Value></div>
+          </div>
         </div>
+      </div>
     )
   }
 
@@ -165,7 +167,7 @@ const ResultsList: React.FC<Props> = (props) => {
     let results = searchContext.searchResults.result.map((results, index) => {
       const configEntityType = results.entityType && props.config.entities[results.entityType];
       if (!configEntityType) {
-          return getResultNoEntity(results, index);
+        return getResultNoEntity(results, index);
       }
       let defaultIcon = props.config.defaultIcon
       let iconElement = (configEntityType && configEntityType.icon) ? FaDictionary[configEntityType.icon.type] : FaDictionary[defaultIcon.type];
@@ -176,35 +178,46 @@ const ResultsList: React.FC<Props> = (props) => {
         }
       }
       return (
-        <div key={"result-" + index} className="result">
-          {<span className="entityIcon" data-testid={"entity-icon-" + index}><FontAwesomeIcon icon={iconElement} color={configEntityType.icon ? configEntityType.icon.color : defaultIcon.color} /></span>}
-          <div className="thumbnail">
-            {configEntityType.thumbnail ?
-              <Image data={results} config={configEntityType.thumbnail.config} />
-              : null}
-          </div>
-          <div className="details">
-            <div className="title" onClick={handleNameClick}>
-              <Value id={results?.uri}>{titleValue}</Value>
+        <tr key={"result-" + index} className="result">
+          <td width={20}>
+            {<div className="entityIcon" data-testid={"entity-icon-" + index}><FontAwesomeIcon icon={iconElement} color={configEntityType.icon ? configEntityType.icon.color : defaultIcon.color} /></div>}
+          </td>
+          <td width={70}>
+            <div className="thumbnail">
+              {configEntityType.thumbnail ?
+                <Image data={results} config={configEntityType.thumbnail.config} />
+                : null}
             </div>
-            <div className="subtitle">
+          </td>
+          <td className="details py-2">
+            <Row className="p-0">
+              <Col xl={6}>
+                <div className="title fw-bold" onClick={handleNameClick}>
+                  <Value id={results?.uri}>{titleValue}</Value>
+                </div>
+              </Col>
+              <Col xl={6} className="text-xl-end">
+                {configEntityType.categories ?
+                  <div className="categories">
+                    {getCategories(results, configEntityType.categories)!.map((s, index2) => {
+                      return (
+                        <Chiclet
+                          key={"category-" + index2}
+                          config={configEntityType.categories}
+                        >{s}</Chiclet>
+                      );
+                    })}
+                  </div> : null}
+              </Col>
+            </Row>
+
+            <div className="row p-0 subtitle">
               {configEntityType.items ?
                 <List data={results} config={configEntityType.items} />
                 : null}
             </div>
-            {configEntityType.categories ?
-              <div className="categories">
-                {getCategories(results, configEntityType.categories)!.map((s, index2) => {
-                  return (
-                    <Chiclet
-                      key={"category-" + index2}
-                      config={configEntityType.categories}
-                    >{s}</Chiclet>
-                  );
-                })}
-              </div> : null}
-          </div>
-          <div className="actions">
+          </td>
+          <td className="actions align-top">
             {configEntityType.timestamp ?
               <div className="timestamp">
                 <DateTime config={configEntityType.timestamp} data={results} style={configEntityType.timestamp.style} />
@@ -217,12 +230,12 @@ const ResultsList: React.FC<Props> = (props) => {
               {configEntityType.resultActions?.component ?
                 React.createElement(
                   COMPONENTS[configEntityType.resultActions.component],
-                  {config: configEntityType?.resultActions.config, data: results?.extracted}, null
+                  { config: configEntityType?.resultActions.config, data: results?.extracted }, null
                 )
                 : null}
             </div>
-          </div>
-        </div>
+          </td>
+        </tr>
       );
     });
     return results;
@@ -234,7 +247,11 @@ const ResultsList: React.FC<Props> = (props) => {
         <div>
           <Pagination pageNumber={pageNumber} pageLength={pageLength} setPageNumber={handleChangePage} total={returned} pageLengths={pageLengths} setPageLength={handleChangesetPageLength} />
           {props?.config?.sort && Object.keys(props.config.sort).length !== 0 && getSort()}
-          {getResults()}
+           
+            <Table responsive hover>
+              {getResults()}
+            </Table>
+         
           <div className="pt-4">
             <Pagination pageNumber={pageNumber} pageLength={pageLength} setPageNumber={handleChangePage} total={returned} pageLengths={pageLengths} setPageLength={handleChangesetPageLength} />
           </div>

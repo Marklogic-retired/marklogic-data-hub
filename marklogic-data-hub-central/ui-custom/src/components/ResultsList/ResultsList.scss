@@ -5,7 +5,6 @@
         gap: 5px;
         height: 30px;
         padding-bottom: 5px;
-        border-bottom: solid 1px #ccc;
         .thumbnailClean {
             width: 70px;
         }
@@ -43,34 +42,22 @@
         background-color: #ebf9f6;
     }
     .result {
-        display: flex;
-        align-items: flex-start;
-        width: 100%;
-        border-bottom: solid 1px #ccc;
-        padding: 10px 0;
-        color: #333333;
+        &:not(:first-child) {
+            border-top:1px solid #ccc;
+        }
         .entityIcon {
-            font-size: 18px;
-            margin: 19px 16px 0 8px;
+            font-size: 18px; 
         }
         .thumbnail {
             img {
-                width: 70px;
-                height: 70px;
+                width: 48px;
+                height: 48px;
                 margin-right: 20px;
                 border-radius: 4px;
             }
         }
-        .details {
-            position: relative;
-            width: 93%;
-            top: 10px;
-            div.title {
-                position: relative;
-                display: inline-block;
-                font-size: 18px;
-                font-weight: bold;
-                text-decoration: none;
+        .details {  
+            div.title { 
                 color: #394494;
                 cursor: pointer;
                 span {
@@ -82,27 +69,20 @@
             div.title.no-entity {
                 color: #333333;
                 cursor: auto;
-            }
-            div.subtitle.no-entity {
-                padding: 5px 0 16px 0;
-            }
+            } 
             .phone {
-                width: 120px;
-                font-weight: bold;
+                font-weight: 600;
             }
-            .email {
-                width: 180px;
+            .email { 
                 color: #394494;
             }
-            .categories {
-                position: absolute;
-                top: -8px;
-                right: 0;
+            .categories { 
                 > .Chiclet {
                     display: inline-block;
                     padding: 1px 6px;
                     border-radius: 4px;
-                    margin-left: 6px;
+                    margin-right: 3px;
+                    margin-bottom: 3px;
                     font-size: 14px;
                 }
             }
@@ -113,16 +93,10 @@
         .timestamp {
             white-space: nowrap;
         }
-        .actions {
-            display: flex;
-            flex-flow: column wrap;
-            justify-content: space-between;
-            max-width: 260px;
-            height: 80px;
-            padding: 0 10px 0 20px;
+        .actions {  
+            justify-content: space-between;   
             font-size: 15px;
-            .icons {
-                align-self: flex-end;
+            .icons { 
                 white-space: nowrap;
                 .status {
                     display: inline-block;
@@ -138,7 +112,4 @@
             }
         }
     }
-}
-.result:nth-of-type(1) {
-    border-top: solid 1px #ccc;
-}
+} 

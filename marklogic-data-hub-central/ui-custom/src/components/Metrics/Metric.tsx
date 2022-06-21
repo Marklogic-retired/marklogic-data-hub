@@ -14,9 +14,11 @@ const Metric: React.FC<Props> = (props) => {
   let valFmt = _.isNumber(val) ? val.toLocaleString() : val;
 
   return (
-    <div className="metric" style={{borderColor: props.config.color}}>
-      <div className="value">{valFmt}</div>
-      <div className="title">{props.config.title}</div>
+    <div className="col-md-3 mb-3">
+      <div className="metric h-100 card card-body" style={{ borderColor: props.config.color }}>
+        <div className="value fs-3">{valFmt}</div>
+        <div className="small title">{props.config.title}</div>
+      </div>
     </div>
   );
 

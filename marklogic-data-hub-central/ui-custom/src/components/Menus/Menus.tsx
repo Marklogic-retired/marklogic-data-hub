@@ -2,8 +2,8 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Nav from "react-bootstrap/Nav";
 import NavDropdown from "react-bootstrap/NavDropdown";
-import styles from "./Menus.module.scss";
-import "./Menus.scss";
+// import styles from "./Menus.module.scss";
+// import "./Menus.scss";
 
 type Props = {
     config: any;
@@ -59,15 +59,15 @@ const Menus: React.FC<Props> = (props) => {
     // https://www.npmjs.com/package/rc-cascader
 
     return (
-        <div className={styles.menus} data-testid="menuId">
+        <Nav className="col-12 col-lg-auto me-lg-auto mb-2 mb-lg-0 justify-content-center" data-testid="menuId">
             {props.config.map((menu, index) => {
                 return (
-                    <span className={styles.menu} key={"menu-" + index}>
+                    <Nav.Item  key={"menu-" + index}>
                         {menu.to ?
-                            <Link to={menu.to}>{menu.label}</Link> :
+                            <Link className="nav-link" to={menu.to}>{menu.label}</Link> :
                             menu.url ?
-                            <a href={menu.url} target="_blank" rel="noreferrer">{menu.label}</a> :
-                            <Nav activeKey="1">
+                            <a  className="nav-link" href={menu.url} target="_blank" rel="noreferrer">{menu.label}</a> :
+                             
                                 <NavDropdown title={menu.label} id="nav-dropdown">
                                 {menu.submenu?.map((sb, i) => {
                                     if (sb.url) {
@@ -84,13 +84,13 @@ const Menus: React.FC<Props> = (props) => {
                                     )
                                     }
                                 })}
-                                </NavDropdown>
-                            </Nav>
+                                </NavDropdown> 
+                            
                         }
-                    </span>
+                    </Nav.Item>
                 );
-            })}
-        </div>
+            })} 
+        </Nav>
     );
 
 };

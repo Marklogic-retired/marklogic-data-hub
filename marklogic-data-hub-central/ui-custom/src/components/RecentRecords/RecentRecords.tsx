@@ -134,7 +134,7 @@ const RecentRecords: React.FC<Props> = (props) => {
       {(props.data && props.data.length > 0) ? (
         <div className="recentRecords">{getRecent()}</div>
       ) :
-        <div className="none-found">No recently visited records found.</div>
+        <div className="text-muted">No recently visited records found.</div>
       }
     </div>
   );

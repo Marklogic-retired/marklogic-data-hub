@@ -15,7 +15,7 @@ type Props = {
 const Loading: React.FC<Props> = (props) => {
 
     return (
-        <div data-testid="loadingId" className="loading">
+        <div data-testid="loadingId" className="d-flex w-100 justify-content-center loading">
             <Spinner data-testid="spinnerId" animation="border" role="status">
             <span className="visually-hidden">Loading...</span>
             </Spinner>

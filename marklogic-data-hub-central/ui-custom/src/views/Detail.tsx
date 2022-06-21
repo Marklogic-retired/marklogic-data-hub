@@ -1,7 +1,7 @@
-import React, {useContext, useState, useEffect} from "react";
-import {useNavigate, useParams, useSearchParams} from "react-router-dom";
-import {UserContext} from "../store/UserContext";
-import {DetailContext} from "../store/DetailContext";
+import React, { useContext, useState, useEffect } from "react";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { UserContext } from "../store/UserContext";
+import { DetailContext } from "../store/DetailContext";
 import Loading from "../components/Loading/Loading";
 import Occupations from "../components/Occupations/Occupations";
 import Timeline from "../components/Timeline/Timeline";
@@ -17,12 +17,15 @@ import Membership from "../components/Membership/Membership";
 import ImageGallery from "../components/ImageGallery/ImageGallery";
 import ImageGalleryMulti from "../components/ImageGalleryMulti/ImageGalleryMulti";
 import LinkList from "../components/LinkList/LinkList";
-import {ArrowLeft, ChevronDoubleDown, ChevronDoubleUp} from "react-bootstrap-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faStar} from "@fortawesome/free-solid-svg-icons";
+import { ArrowLeft, ChevronDoubleDown, ChevronDoubleUp } from "react-bootstrap-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faStar } from "@fortawesome/free-solid-svg-icons";
+
+import { Col, Row, Container } from "react-bootstrap";
+
 import "./Detail.scss";
 import _ from "lodash";
-import {getValByConfig} from "../util/util";
+import { getValByConfig } from "../util/util";
 
 type Props = {};
 
@@ -56,7 +59,7 @@ const Detail: React.FC<Props> = (props) => {
 
   const userContext = useContext(UserContext);
   const detailContext = useContext(DetailContext);
-  const {expandIds, handleExpandIds} = detailContext;
+  const { expandIds, handleExpandIds } = detailContext;
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [config, setConfig] = useState<any>(null);
@@ -124,22 +127,22 @@ const Detail: React.FC<Props> = (props) => {
       }
     }
     return (
-      <div className="heading">
+      <div className="heading py-4">
         <div className="title">
-          <div className="icon" onClick={handleBackClick}>
+          <div className="icon me-3" onClick={handleBackClick}>
             <ArrowLeft color="#394494" size={28} />
-          </div>
+          </div> 
+          {configHeading.thumbnail && <div className="thumbnail me-3">
+            <Image data={detailContext.detail} config={configHeading.thumbnail.config} />
+          </div>}
           <div className="text">
             <Value id={detailContext.detail?.uri}>{titleValue}</Value>
           </div>
-          {configHeading.thumbnail && <div className="thumbnail">
-            <Image data={detailContext.detail} config={configHeading.thumbnail.config} />
-          </div>}
         </div>
         <div className="actions">
           <div className="expand">
-            <button onClick={handleExpandClick}>
-              <span className="label">{expand ? `Collapse All` : `Expand All`}</span>
+            <button className="btn btn-white border" onClick={handleExpandClick}>
+              <span className="label me-2">{expand ? `Collapse All` : `Expand All`}</span>
               <span className="icon">
                 {expand ? <ChevronDoubleUp color="#777" size={16} /> :
                   <ChevronDoubleDown color="#777" size={16} />}
@@ -164,7 +167,7 @@ const Detail: React.FC<Props> = (props) => {
           <div key={"item-" + index} className="item">
             {React.createElement(
               COMPONENTS[it.component],
-              {config: it.config, data: detailContext.detail}, null
+              { config: it.config, data: detailContext.detail }, null
             )}
           </div>
         );
@@ -174,55 +177,48 @@ const Detail: React.FC<Props> = (props) => {
   };
 
   const handleExpandIdsClick = (id, value) => {
-    const newExpandId = {...expandIds, [id]: value};
+    const newExpandId = { ...expandIds, [id]: value };
     handleExpandIds(newExpandId);
   };
 
   return (
 
-    <div className="detail">
+    <Container className="detail">
 
       {config?.detail && !_.isEmpty(detailContext.detail) && !detailContext.loading ? (
 
-        <div>
-
+        <>
           {config?.detail?.entities[entityType]?.heading ?
             getHeading(config.detail.entities[entityType].heading)
             : null}
-
-          <div className="container-fluid">
+          <>
 
             {config?.detail?.entities[entityType]?.linkList?.config && <div>
               {React.createElement(
                 COMPONENTS.LinkList,
-                {config: config?.detail?.entities[entityType]?.linkList.config, data: detailContext.detail}, null
+                { config: config?.detail?.entities[entityType]?.linkList.config, data: detailContext.detail }, null
               )}
             </div>}
 
-            {config?.detail?.entities[entityType]?.membership && <div className="row">
-              <div className="col-12">
-                <Section title="Membership" config={{
-                  "headerStyle": {
-                    "backgroundColor": "transparent"
-                  },
-                  "mainStyle": {
-                    "paddingTop": "6px"
-                  }
-                }}
+            {config?.detail?.entities[entityType]?.membership &&
+              <Section title="Membership" config={{
+                "headerStyle": {
+                  "backgroundColor": "transparent"
+                }
+              }}
                 collapsible={true}
                 expand={expandIds.membership}
                 onExpand={() => { handleExpandIdsClick("membership", true); }}
                 onCollapse={() => { handleExpandIdsClick("membership", false); }}>
-                  {config.detail.entities[entityType]?.membership.component && config.detail.entities[entityType]?.membership.config &&
-                    React.createElement(
-                      COMPONENTS[config?.detail?.entities[entityType]?.membership.component],
-                      {config: config?.detail?.entities[entityType]?.membership.config, data: detailContext.detail}, null
-                    )}
-                </Section>
-              </div>
-            </div>}
+                {config.detail.entities[entityType]?.membership.component && config.detail.entities[entityType]?.membership.config &&
+                  React.createElement(
+                    COMPONENTS[config?.detail?.entities[entityType]?.membership.component],
+                    { config: config?.detail?.entities[entityType]?.membership.config, data: detailContext.detail }, null
+                  )}
+              </Section>
+            }
 
-            <div className="row">
+            <Row>
               <div className="col-lg-7">
 
                 {config?.detail?.entities[entityType]?.info &&
@@ -230,7 +226,12 @@ const Detail: React.FC<Props> = (props) => {
                     collapsible={true}
                     expand={expandIds.info}
                     onExpand={() => { handleExpandIdsClick("info", true); }}
-                    onCollapse={() => { handleExpandIdsClick("info", false); }} >
+                    onCollapse={() => { handleExpandIdsClick("info", false); }} 
+                    config={{
+                      "mainStyle": {
+                        "padding": "1rem"
+                      }
+                    }}>
                     {getRecordItems(config?.detail?.entities[entityType]?.info?.items)}
                   </Section>
                 }
@@ -253,7 +254,7 @@ const Detail: React.FC<Props> = (props) => {
                       {config.detail.entities[entityType]?.relationships.component && config.detail.entities[entityType]?.relationships.config &&
                         React.createElement(
                           COMPONENTS[config?.detail?.entities[entityType]?.relationships.component],
-                          {config: config?.detail?.entities[entityType]?.relationships.config, data: detailContext.detail}, null
+                          { config: config?.detail?.entities[entityType]?.relationships.config, data: detailContext.detail }, null
                         )}
                     </div>
                   </Section>
@@ -265,43 +266,46 @@ const Detail: React.FC<Props> = (props) => {
                     expand={expandIds.imageGallery}
                     onExpand={() => { handleExpandIdsClick("imageGallery", true); }}
                     onCollapse={() => { handleExpandIdsClick("imageGallery", false); }}
+                    config={{
+                      "mainStyle": {
+                        "padding": "1rem"
+                      }
+                    }}
                   >
                     {config.detail.entities[entityType]?.imageGallery.component && config.detail.entities[entityType]?.imageGallery.config &&
                       React.createElement(
                         COMPONENTS[config?.detail?.entities[entityType]?.imageGallery.component],
-                        {config: config?.detail?.entities[entityType]?.imageGallery.config, data: detailContext.detail}, null
+                        { config: config?.detail?.entities[entityType]?.imageGallery.config, data: detailContext.detail }, null
                       )
                     }
                   </Section>
                 }
 
               </div>
-            </div>
-            {config?.detail?.entities[entityType]?.timeline && <div className="row">
-              <div className="col-12">
-                <Section
-                  title="Timeline"
-                  data-test="timelineSection"
-                  collapsible={true}
-                  expand={expandIds.timeline}
-                  onExpand={() => { handleExpandIdsClick("timeline", true); }}
-                  onCollapse={() => { handleExpandIdsClick("timeline", false); }}
-                >
-                  {config.detail.entities[entityType]?.timeline.component && config.detail.entities[entityType]?.timeline.config &&
-                          React.createElement(
-                            COMPONENTS[config.detail.entities[entityType].timeline.component],
-                            {config: config.detail.entities[entityType].timeline.config, data: detailContext.detail}, null
-                          )}
-                </Section>
-              </div>
-            </div>}
-          </div>
+            </Row>
+            {config?.detail?.entities[entityType]?.timeline &&
+              <Section
+                title="Timeline"
+                data-test="timelineSection"
+                collapsible={true}
+                expand={expandIds.timeline}
+                onExpand={() => { handleExpandIdsClick("timeline", true); }}
+                onCollapse={() => { handleExpandIdsClick("timeline", false); }}
+              >
+                {config.detail.entities[entityType]?.timeline.component && config.detail.entities[entityType]?.timeline.config &&
+                  React.createElement(
+                    COMPONENTS[config.detail.entities[entityType].timeline.component],
+                    { config: config.detail.entities[entityType].timeline.config, data: detailContext.detail }, null
+                  )}
+              </Section>
+            }
+          </>
 
-        </div>
+        </>
 
       ) : <Loading />}
 
-    </div>
+    </Container>
   );
 };
 

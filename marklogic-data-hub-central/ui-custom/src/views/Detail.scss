@@ -1,6 +1,5 @@
-.detail {
-    padding-top: 12px;
-    div {
+.detail { 
+    font-size: 14px;
         .heading {
             display: flex;
             align-items: center;
@@ -17,43 +16,16 @@
                 }
                 .thumbnail {
                     position: relative;
-                    top: -4px;
-                    width: 7%;
+                    top: -4px; 
                     img {
                         width: 60px;
-                        height: 60px;
-                        margin-left: 20px;
+                        height: 60px; 
                         border-radius: 4px;
                     }
                 }
             }
             .actions {
-                display: flex;
-                button {
-                    background-color: white;
-                    border: solid 1px #D9D9D9;
-                    border-radius: 2px;
-                    color: #333333;
-                    padding: 2px 10px;
-                }
-                .expand {
-                    button {
-                        width: 130px;
-                        text-align: right;
-                    }
-                    margin-right: 12px;
-                    .label {
-                        display: inline-block;
-                        width: 92px;
-                        text-align: center;
-                        padding-right: 6px;
-                    }
-                    .icon {
-                        position: relative;
-                        top: -2px;
-                        font-weight: bold;
-                    }
-                }
+                display: flex; 
                 .favorite {
                     margin-right: 12px;
                     .label {
@@ -63,5 +35,5 @@
                 }
             }
         }
-    }
+   
 }

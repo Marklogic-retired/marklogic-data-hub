@@ -1,11 +1,6 @@
 .dateRangeFacet {
-  padding-top: 2vh;
-  padding-bottom: 2vh;
   .pickerContainer {
-    background-color: white;
-    position: relative;
-    max-width: 265px;
-    padding-left: 5px;
+    background-color: white; 
     &:focus-visible {
       border: none;
       outline: none;
@@ -37,8 +32,7 @@
     top: 8px;
     right: 8px;
     color: blue;
-    background-color: white;
-    font-size: 12px;
+    background-color: white; 
     cursor: pointer;
     pointer-events: all;
     z-index: 10;
@@ -47,19 +41,14 @@
     position: absolute;
     top: 8px;
     right: 8px;
-    background-color: white;
-    font-size: 12px;
+    background-color: white; 
     cursor: pointer;
     pointer-events: all;
     z-index: 10;
   }
 
 }
-.daterangepicker {
-  position: fixed !important;
-  width: 330px !important;
-  padding: 0px 0px 0px 30px !important;
-
+.daterangepicker {  
   td.active,
   td.active:hover {
     background-color: #394494 !important;

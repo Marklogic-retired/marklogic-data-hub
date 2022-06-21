@@ -1,13 +1,14 @@
-import React, {useState, useContext, useEffect} from "react";
-import {useSearchParams} from "react-router-dom";
-import {UserContext} from "../store/UserContext";
-import {SearchContext} from "../store/SearchContext";
+import React, { useState, useContext, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import { UserContext } from "../store/UserContext";
+import { SearchContext } from "../store/SearchContext";
 import Loading from "../components/Loading/Loading";
 import SummaryMeter from "../components/SummaryMeter/SummaryMeter";
 import Facets from "../components/Facets/Facets";
 import SelectedFacets from "../components/SelectedFacets/SelectedFacets";
 import ResultsList from "../components/ResultsList/ResultsList";
-import "./Search.scss";
+import { Col, Row, Container } from "react-bootstrap";
+// import "./Search.scss";
 import _ from "lodash";
 
 type Props = {};
@@ -51,44 +52,43 @@ const Search: React.FC<Props> = (props) => {
   }, [checkQuery]);
 
   return (
-    <div className="search">
+    <Container fluid>
+      <Row className="search">
+        {config?.search ?
+          (<>
+            <Col md={4} lg={3} xl={2} className="sidebar sidebar-sticky">
+              {config?.search?.meter &&
+                React.createElement(
+                  COMPONENTS[config.search.meter.component],
+                  { config: config.search.meter.config }, null
+                )}
 
-      {config?.search ?
-        (<>
-          <aside>
+              {config?.search?.facets &&
+                React.createElement(
+                  COMPONENTS[config.search.facets.component],
+                  { config: config.search.facets.config }, null
+                )}
+           
+            </Col>
+            <Col md={8} lg={9} xl={10} className="offset-xl-2 offset-lg-3 offset-md-4 results p-4">
+              {config?.search?.selectedFacets &&
+                React.createElement(
+                  COMPONENTS[config.search.selectedFacets.component],
+                  { config: config.search.selectedFacets.config }, null
+                )}
 
-            {config?.search?.meter &&
-              React.createElement(
-                COMPONENTS[config.search.meter.component],
-                {config: config.search.meter.config}, null
-              )}
+              {config?.search?.results && !searchContext.loading ?
+                React.createElement(
+                  COMPONENTS[config.search.results.component],
+                  { config: config.search.results.config }, null
+                ) : <Loading />}
 
-            {config?.search?.facets &&
-              React.createElement(
-                COMPONENTS[config.search.facets.component],
-                {config: config.search.facets.config}, null
-              )}
+            </Col>
+          </>) : <Loading />
+        }
 
-          </aside>
-          <div className="results">
-
-            {config?.search?.selectedFacets &&
-              React.createElement(
-                COMPONENTS[config.search.selectedFacets.component],
-                {config: config.search.selectedFacets.config}, null
-              )}
-
-            {config?.search?.results && !searchContext.loading ?
-              React.createElement(
-                COMPONENTS[config.search.results.component],
-                {config: config.search.results.config}, null
-              ) : <Loading />}
-
-          </div>
-        </>) : <Loading />
-      }
-
-    </div>
+      </Row>
+    </Container>
   );
 };
 

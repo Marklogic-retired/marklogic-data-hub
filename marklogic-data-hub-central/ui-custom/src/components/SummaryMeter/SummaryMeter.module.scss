@@ -1,11 +1,6 @@
 .meter {
-    position: relative;
-    width: 360px; 
-    height: 176px; 
-    float: "left";
-    font-size: 15px;
-    // border: solid 1px red;
-    margin-left: 10px;
+    position: relative;  
+    // border: solid 1px red; 
 
     .labelAll, .labelFilters {
         position: absolute;
@@ -13,14 +8,15 @@
     }
 
     .labelAll {
-        left: 20px;
+        left: 10px;
         .block {
             background-color: #eee;
         }
     }
 
     .labelFilters {
-        left: 125px;
+        left: 100px;
+        width: 135px;
         .block {
             background-color: #1ACCA8;
         }
@@ -28,9 +24,10 @@
 
     .block {
         display: inline-block;
-        width: 16px;
-        height: 11px;
+        width: 12px;
+        height: 12px;
         margin: 0 5px 0 0;
+        border-radius: 4px;
     }
 
     .text {
@@ -39,17 +36,17 @@
 
     .min, .max {
         position: absolute;
-        top: 105px;
+        top: 102px;
     }
     .min {
-        left: 78px;
+        left: 55px;
     }
     .max {
-        left: 274px;
+        left: 229px;
     }
     .returned {
         position: absolute;
-        width: 100%;
+        width: 294px;
         top: 124px;
         text-align: center;
         font-weight: bold;
@@ -58,11 +55,11 @@
 
     .separator {
         height: 5px;
-        width: 320px;
+        width: 265px;
         position: absolute;
         border-bottom: solid 1px #ddd;
         top: -2px;
-        left: 18px;
+        left: 15px;
         z-index: 1000;
     }
 }

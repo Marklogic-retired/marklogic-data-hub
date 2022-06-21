@@ -1,9 +1,7 @@
 .ImageGallery {
     display: flex;
     justify-content: center;
-    .carouselContainer {
-        width: 150px;
-        height: 150px;
+    .carouselContainer { 
         img {
             width: 100%;
         }

@@ -77,7 +77,7 @@ const RecentSearches: React.FC<Props> = (props) => {
         <Tooltip {...props}>Copy to clipboard</Tooltip>
       )}>
         <span className="icon" onClick={handleShareClick(row)} data-testid="share-icon">
-          <FontAwesomeIcon size={"lg"} icon={faPaste} style={{color: "#394494"}}></FontAwesomeIcon>
+          <FontAwesomeIcon icon={faPaste} style={{color: "#394494"}}></FontAwesomeIcon>
         </span>
       </OverlayTrigger>;
     }
@@ -102,7 +102,7 @@ const RecentSearches: React.FC<Props> = (props) => {
                 <tr key={"row-" + i} data-testid={`query-row-${i}`}>
                   {_.isArray(props.config.cols) && props.config.cols.map((c, i) => {
                     return (
-                      <td key={"dat-" + i} className={c.type}>{display(c, r)}</td>
+                      <td key={"dat-" + i} className={c.type + " small"}>{display(c, r)}</td>
                     );
                   })}
                 </tr>
@@ -111,7 +111,7 @@ const RecentSearches: React.FC<Props> = (props) => {
           </tbody>
         </Table>
       ) :
-        <div className="none-found">No recent searches found.</div>
+        <div className="text-muted">No recent searches found.</div>
       }
     </div>
   );
