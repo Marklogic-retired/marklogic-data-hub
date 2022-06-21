@@ -7,25 +7,24 @@ import "./RecordRaw.scss";
  * Component for showing one or more values for a List of links.
  *
  * @component
- * @prop {object} data - Data payload.
+ * @prop {string} component Name of component used for display.
  * @prop {object} config  RecordRaw configuration object.
- * @prop {string} config.title Title of component used for display.
- * @prop {string} config.component Name of component used for display.
- * @prop {string} config.path Object path that will be displayed.
- * @prop {string} config.maxHeight Maximum container height. 
- * @prop {string} config.collapsedLevel Integer value to collapse at a particular depth
- * @prop {string} config.displayDataTypes When set to true, data type labels prefix values
- * @prop {string} config.displayObjectSize When set to true, objects and arrays are labeled with size
- * @prop {string} config.quotesOnKeys set to false to remove quotes from keys (eg. "name": vs. name:)
- * @prop {string} config.indentWidth Set the indent-width for nested objects
- * @prop {string} config.groupArraysAfterLength When an integer value is assigned, arrays will be displayed in groups by count of the value. Groups are displayed with bracket notation and can be expanded and collapsed by clicking on the brackets.
+ * @prop {string} config.title Widget label (optional).
+ * @prop {string} config.name Property name at JSON root.
+ * @prop {string} config.path Path to JSON object to be displayed.
+ * @prop {string} config.maxHeight Maximum height of container. 
+ * @prop {string} config.collapsedLevel Depth at which to collapse initially.
+ * @prop {string} config.displayDataTypes When true, display data type labels.
+ * @prop {string} config.displayObjectSize When true, display size of objects and arrays.
+ * @prop {string} config.quotesOnKeys When false, remove quotes from keys (eg. "name": vs. name:).
+ * @prop {string} config.indentWidth Indent width for nested objects.
+ * @prop {string} config.groupArraysAfterLength Size by which to group arrays. User can click to expand/collapse.
  * @example
  * {
     {
       "component": "RecordRaw",
       "config": {
-        "title":"Row data",
-        "id": "raw", 
+        "title":"Record Data",
         "path": "person",
         "maxHeight": "400px",
         "collapsedLevel": 2,

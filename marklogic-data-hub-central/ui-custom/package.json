@@ -34,6 +34,7 @@
     "react-bootstrap-icons": "^1.5.0",
     "react-dom": "^17.0.2",
     "react-graph-vis": "^1.0.7",
+    "react-json-view": "^1.21.3",
     "react-multi-carousel": "^2.8.0",
     "react-router-dom": "^6.0.2",
     "react-scripts": "4.0.3",

@@ -2,25 +2,23 @@
 import {render} from "@testing-library/react";
 import {DetailContext} from "../../store/DetailContext";
 import RecordRaw from "./RecordRaw";
-const configuration = {
-  resultActions: {
-    "component": "RecordRaw",
-    "config": {
-      "id": "raw",
-      "name": "person",
-      "title": "Record raw label",
-      "path": "person",
-      "maxHeight": "400px",
-      "enableClipboard": false,
-      "displayDataTypes": false,
-      "quotesOnKeys": false,
-      "displayObjectSize": false,
-      "collapsedLevel": 2,
-      "indentWidth": 10,
-      "groupArraysAfterLength": 3
-    }
+
+const recordRawConfig = {
+  "config": {
+    "name": "person",
+    "title": "Record raw label",
+    "path": "person",
+    "maxHeight": "400px",
+    "enableClipboard": false,
+    "displayDataTypes": false,
+    "quotesOnKeys": false,
+    "displayObjectSize": false,
+    "collapsedLevel": 2,
+    "indentWidth": 10,
+    "groupArraysAfterLength": 3
   }
 }
+
 const detail = {
   person: {
     "personId": 10054,
@@ -291,15 +289,34 @@ const detail = {
   }
 }
 
+const EXPANDIDS = {
+    membership: true,
+    info: true,
+    relationships: true,
+    imageGallery: true,
+    timeline: true
+}
+
 const detailContextValue = {
-  detail: detail
+    detail: detail,
+    recentRecords: [],
+    loading: false,
+    expandIds: EXPANDIDS,
+    handleGetDetail: jest.fn(),
+    handleGetRecent: jest.fn(),
+    handleGetRecentLocal: jest.fn(),
+    handleSaveRecent: jest.fn(),
+    handleSaveRecentLocal: jest.fn(),
+    handleExpandIds: jest.fn(),
+    handleDeleteAllRecent: jest.fn(), 
+    hasSavedRecords: jest.fn()
 };
 
 describe("RecordRaw component", () => {
-  test("Verify LinkList widget renders correctly", () => {
+  test("Verify RecordRaw widget renders correctly", () => {
     const {getByTestId, getByText} = render(
       <DetailContext.Provider value={detailContextValue}>
-        <RecordRaw config={configuration.resultActions.config} data={detail} />
+        <RecordRaw config={recordRawConfig.config} data={detail} />
       </DetailContext.Provider>
     );
     expect(getByTestId("record-raw-component")).toBeInTheDocument();
