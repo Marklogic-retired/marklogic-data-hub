@@ -155,7 +155,8 @@ describe("Entity Modeling: Graph View", () => {
     modelPage.scrollPageBottom();
     //Fetching the edge coordinates between two nodes and later performing some action on it like hover or click
     graphVis.getPositionOfEdgeBetween("Customer,BabyRegistry").then((edgePosition: any) => {
-      cy.wait(1000);
+      // Wait extended because of the delay of the animations
+      cy.wait(5000);
       cy.waitUntil(() => graphVis.getGraphVisCanvas().click(edgePosition.x, edgePosition.y, {force: true}));
     });
 

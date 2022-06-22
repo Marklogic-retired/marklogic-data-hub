@@ -1,23 +1,59 @@
 import React, {FC} from "react";
-import {faProjectDiagram, faTable, faStream} from "@fortawesome/free-solid-svg-icons";
+import {faProjectDiagram, faTable, faStream, faThLarge} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {HCTooltip} from "@components/common";
 import {ViewType} from "../../../types/modeling-types";
+import styles from "./view-switch.module.scss";
 
 interface Props {
   handleViewChange: any;
   selectedView: ViewType;
   snippetView?: boolean;
+  loadTile?: boolean;
 }
 
 
 const style = {height: "40px", fontSize: "10px"};
 const className = "d-flex justify-content-center align-items-center";
 
-const ViewSwitch: FC<Props> = ({handleViewChange, selectedView, snippetView}) => {
-
-  return (<div id="switch-view-explorer" aria-label="switch-view" >
-    <div className={"switch-button-group outline"}>
+const ViewSwitch: FC<Props> = ({handleViewChange, selectedView, snippetView, loadTile}) => {
+  return (<div id="switch-view" aria-label="switch-view" >
+    {loadTile ? (
+      <div className={"switch-button-group outline"}>
+        <span>
+          <input
+            type="radio"
+            id="switch-view-card"
+            name="switch-view-radiogroup"
+            key={ViewType.card}
+            value={"card"}
+            checked={selectedView === ViewType.card}
+            onChange={e => handleViewChange(e.target.value)}
+          />
+          <label aria-label="switch-view-card" htmlFor="switch-view-card" className={`${className} ${styles.leftButton}`} style={{height: "40px", fontSize: "22px"}}>
+            <i>{<FontAwesomeIcon icon={faThLarge} />}</i>
+          </label>
+        </span>
+        <span>
+          <input
+            type="radio"
+            id="switch-view-list"
+            name="switch-view-radiogroup"
+            key={ViewType.list}
+            value={"list"}
+            checked={selectedView === ViewType.list}
+            onChange={e => handleViewChange(e.target.value)}
+          />
+          <HCTooltip text="List View" id="list-view-tooltip" placement="top">
+            <label aria-label="switch-view-list" htmlFor="switch-view-list" className={`${className} ${styles.rightButton}`} id={"listView"} style={style}>
+              <i data-cy="table-view">
+                <FontAwesomeIcon icon={faTable} size={"2x"} />
+              </i>
+            </label>
+          </HCTooltip>
+        </span>
+      </div>
+    ) : (<div className={"switch-button-group outline"}>
       <span>
         <input
           type="radio"
@@ -29,14 +65,13 @@ const ViewSwitch: FC<Props> = ({handleViewChange, selectedView, snippetView}) =>
           onChange={e => handleViewChange(e.target.value)}
         />
         <HCTooltip text="Graph View" id="graph-view-tooltip" placement="top">
-          <label aria-label="switch-view-graph" htmlFor="switch-view-graph" className={className} id={"graphView"} style={style}>
+          <label aria-label="switch-view-graph" htmlFor="switch-view-graph" className={`${className} ${styles.leftButton}`} id={"graphView"} style={style}>
             <i data-cy="graph-view">
               <FontAwesomeIcon icon={faProjectDiagram} size={"2x"} />
             </i>
           </label>
         </HCTooltip>
       </span>
-
       <span>
         <input
           type="radio"
@@ -48,7 +83,7 @@ const ViewSwitch: FC<Props> = ({handleViewChange, selectedView, snippetView}) =>
           onChange={e => handleViewChange(e.target.value)}
         />
         <HCTooltip text="Table View" id="table-view-tooltip" placement="top">
-          <label aria-label="switch-view-table" htmlFor="switch-view-table" className={className} id={"tableView"} style={style}>
+          <label aria-label="switch-view-table" htmlFor="switch-view-table" className={`${className} ${!snippetView && styles.rightButton}`} id={"tableView"} style={style}>
             <i data-cy="table-view">
               <FontAwesomeIcon icon={faTable} size={"2x"} />
             </i>
@@ -68,14 +103,14 @@ const ViewSwitch: FC<Props> = ({handleViewChange, selectedView, snippetView}) =>
             onChange={e => handleViewChange(e.target.value)}
           />
           <HCTooltip text="Snippet View" id="snippet-view-tooltip" placement="top">
-            <label aria-label="switch-view-snippet" htmlFor="switch-view-snippet" className={className} id={"snippetView"} style={style}>
+            <label aria-label="switch-view-snippet" htmlFor="switch-view-snippet" className={`${className} ${styles.rightButton}`} id={"snippetView"} style={style}>
               <i data-cy="facet-view">
                 <FontAwesomeIcon icon={faStream} size={"2x"} />
               </i>
             </label>
           </HCTooltip>
         </span>)}
-    </div>
+    </div>)}
   </div>);
 };
 

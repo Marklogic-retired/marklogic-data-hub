@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import styles from "./expand-collapse.module.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {FormCheck} from "react-bootstrap";
 import {faAngleDoubleDown, faAngleDoubleUp} from "@fortawesome/free-solid-svg-icons";
 import {HCTooltip} from "@components/common";
 
@@ -52,8 +53,14 @@ const ExpandCollapse: React.FC<Props> = (props) => {
   return (
     <span id="expand-collapse" aria-label="expand-collapse" onKeyDown={radioKeyDownHandler}>
       <div className={"switch-button-group outline"}>
-        <span>
-          <input
+        <FormCheck
+          type="radio"
+          id={`expandBtn-${cmpRandomData}`}
+          name={`expand-collapse-radiogroup-${cmpRandomData}`}
+          defaultChecked={enabled === "expand"}
+          className={"mb-0 p-0"}
+        >
+          <FormCheck.Input
             type="radio"
             id={`expandBtn-${cmpRandomData}`}
             name={`expand-collapse-radiogroup-${cmpRandomData}`}
@@ -72,10 +79,14 @@ const ExpandCollapse: React.FC<Props> = (props) => {
               </i>
             </label>
           </HCTooltip>
-        </span>
-
-        <span>
-          <input
+        </FormCheck>
+        <FormCheck
+          id={`collapseBtn-${cmpRandomData}`}
+          name={`expand-collapse-radiogroup-${cmpRandomData}`}
+          value={"collapse"}
+          checked={enabled === "collapse"}
+        >
+          <FormCheck.Input
             type="radio"
             id={`collapseBtn-${cmpRandomData}`}
             name={`expand-collapse-radiogroup-${cmpRandomData}`}
@@ -94,7 +105,7 @@ const ExpandCollapse: React.FC<Props> = (props) => {
               </i>
             </label>
           </HCTooltip>
-        </span>
+        </FormCheck>
       </div>
     </span>
   );
