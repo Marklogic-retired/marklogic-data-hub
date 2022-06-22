@@ -111,11 +111,11 @@ class BaseEntitySidebar {
   }
 
   toggleAllDataView() {
-    return cy.get(`[aria-label="switch-datasource-all-data"]`).scrollIntoView().click();
+    return cy.get(`[aria-label="switch-datasource-all-data"] ~ label`).scrollIntoView().click();
   }
 
   toggleEntitiesView() {
-    return cy.get(`[aria-label="switch-datasource-entities"]`).click();
+    return cy.get(`[aria-label="switch-datasource-entities"] ~ label`).click();
   }
 
   verifyCollapsedRelatedEntityPanel() {

@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext} from "react";
 import styles from "./Load.module.scss";
 import {useLocation} from "react-router-dom";
-import SwitchView from "@components/load/switch-view";
+import ViewSwitch from "@components/common/switch-view/view-switch";
 import LoadList from "@components/load/load-list";
 import LoadCard from "@components/load/load-card";
 import {getViewSettings, setViewSettings, UserContext} from "@util/user-context";
@@ -13,10 +13,10 @@ import tiles from "@config/tiles.config";
 import {LoadingContext} from "@util/loading-context";
 import {MissingPagePermission} from "@config/messages.config";
 import {ErrorMessageContext} from "@util/error-message-context";
+import {ViewType} from "../types/modeling-types";
 
-export type ViewType = "card" | "list";
 
-const INITIAL_VIEW: ViewType = "card";
+const INITIAL_VIEW= ViewType.card;
 
 const Load: React.FC = () => {
 
@@ -30,7 +30,7 @@ const Load: React.FC = () => {
   const {setErrorMessageOptions} = useContext(ErrorMessageContext);
 
   const location = useLocation<any>();
-  let [view, setView] = useState(storedViewMode ? storedViewMode : INITIAL_VIEW);
+  let [view, setView] = useState<ViewType>(!storedViewMode ? INITIAL_VIEW : storedViewMode === "card" ? ViewType.card : ViewType.list);
   const [loading, setLoading] = useState(false);
   const [loadArtifacts, setLoadArtifacts] = useState<any[]>([]);
   const [flows, setFlows] = useState<any[]>([]);
@@ -209,7 +209,7 @@ const Load: React.FC = () => {
   //Setting the value of switch view output
   let output;
 
-  if (view === "card") {
+  if (view === ViewType.card) {
     output = <LoadCard
       data={sortStepsByUpdated(loadArtifacts)}
       flows={flows}
@@ -248,7 +248,7 @@ const Load: React.FC = () => {
           <div className={styles.intro}>
             <p>{tiles.load.intro}</p>
             <div className={styles.switchViewContainer}>
-              <SwitchView handleSelection={handleViewSelection} defaultView={view} />
+              <ViewSwitch handleViewChange={handleViewSelection} selectedView={view} loadTile />
             </div>
           </div>
           {output}

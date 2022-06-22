@@ -13,9 +13,11 @@ export interface ModelingContextInterface {
 }
 
 export enum ViewType {
-  "graph",
-  "table",
-  "snippet"
+  graph = "graph",
+  table = "table",
+  snippet = "snippet",
+  card = "card",
+  list = "list"
 }
 
 

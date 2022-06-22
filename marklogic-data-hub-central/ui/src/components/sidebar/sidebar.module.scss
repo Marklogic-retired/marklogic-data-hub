@@ -16,25 +16,27 @@
 }
 
 .title {
-    font-size: 15px;
-    color: #979797 !important;;
-    text-transform: uppercase;
-    font-weight: bold;
+  font-size: 15px;
+  color: #979797 !important;
+  text-transform: uppercase;
+  font-weight: bold;
 }
 
 .titleBaseEntities,
 .titleCheckbox {
-  .panelTitle{
-    div{
+  .panelTitle {
+    div {
       padding-right: 2px;
     }
   }
+
   span {
     font-size: 15px;
-    color: #979797 !important;;
+    color: #979797 !important;
     text-transform: uppercase;
     font-weight: bold;
     display: flex;
+
     input {
       padding-right: 3px;
     }
@@ -43,19 +45,22 @@
 
 .disabledTitleCheckbox {
   cursor: not-allowed !important;
+
   span {
     cursor: not-allowed !important;
     font-size: 15px;
-    color: #cecece !important;;
+    color: #cecece !important;
     text-transform: uppercase;
     font-weight: bold;
     display: flex;
+
     input {
       padding-right: 3px;
     }
   }
-  .panelTitle{
-    div{
+
+  .panelTitle {
+    div {
       padding-right: 2px;
     }
   }
@@ -64,6 +69,7 @@
 .facet {
   font-weight: bold;
 }
+
 .test {
   display: flex;
 }
@@ -71,9 +77,11 @@
 .facetContainer {
   background-color: rgb(245, 245, 245);
 }
+
 .clear {
   padding: 0 5px;
 }
+
 .clear:hover {
   text-decoration: underline;
 }
@@ -128,13 +136,32 @@
   font-size: 12px;
 }
 
-.button {
-  height: 30px;
-  width: 80px;
-  font-size: 14px;
-  text-align: center;
-  padding-left: 5px;
-  padding-right: 5px;
+.databaseSwitch {
+  label {
+    height: 30px;
+    width: 80px;
+    font-size: 14px;
+    text-align: center;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+}
+
+.datasourceSwitch {
+  label {
+    width: 110px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    span {
+      display: flex;
+
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
+  }
 }
 
 .query {
@@ -170,7 +197,8 @@
 .clearQuery {
   padding-left: 16px;
   padding-bottom: 10px;
-  color:  $info;
+  color: $info;
+
   svg {
     margin-right: 5px;
     font-size: 14px;
@@ -202,7 +230,7 @@
   font-size: 12px;
   margin-left: 6px;
   position: relative;
-  color: #cecece; 
+  color: #cecece;
 }
 
 .entitiesInfoIcon {
@@ -232,17 +260,18 @@
   height: 15px;
 }
 
-.sourceDrop { 
+.sourceDrop {
   cursor: pointer;
   width: 22px;
   height: 20px;
   padding: 0 !important;
   background-color: transparent !important;
   border: 0 !important;
+
   svg {
     margin-top: 0 !important;
   }
- }
+}
 
 .iconContainer {
   display: flex;
@@ -250,7 +279,7 @@
   margin-left: 3rem !important;
 }
 
-.menuContainer{
+.menuContainer {
   display: flex;
   flex-direction: column;
   box-shadow: 0 2px 8px rgba(12, 12, 12, 0.15);
@@ -259,8 +288,9 @@
   position: absolute;
   border-radius: 3px;
   padding: 5px 0;
-  right: 15px ;
+  right: 15px;
 }
+
 .navTabs {
   margin-left: 0;
 }

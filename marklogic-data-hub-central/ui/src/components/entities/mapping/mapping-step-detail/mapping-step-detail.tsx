@@ -1433,7 +1433,6 @@ const MappingStepDetail: React.FC = () => {
               <FontAwesomeIcon className={styles.columnIcon} icon={faColumns} size="lg" data-testid="column-selector"/>
             </span>
           </HCTooltip>
-          <ChevronDown className="ms-2" />
         </>
       </Dropdown.Toggle>
       {columnOptionsDropdown}

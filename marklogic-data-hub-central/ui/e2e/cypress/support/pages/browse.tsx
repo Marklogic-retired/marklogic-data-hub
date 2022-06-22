@@ -38,10 +38,10 @@ class BrowsePage {
   }
 
   getAllDataButton() {
-    return cy.get(`[aria-label="switch-datasource-all-data"]`);
+    return cy.get(`[aria-label="switch-datasource-all-data"] ~ label`);
   }
   getEntities() {
-    return cy.get(`[aria-label="switch-datasource-entities"]`);
+    return cy.get(`[aria-label="switch-datasource-entities"] ~ label`);
   }
 
   viewSelector(view: string) {

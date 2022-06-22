@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext, useRef} from "react";
 import dayjs from "dayjs";
 import Select from "react-select";
-import {Accordion, FormCheck} from "react-bootstrap";
+import {Accordion, FormCheck, Form} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faInfoCircle, faSearch} from "@fortawesome/free-solid-svg-icons";
 import {HCDateTimePicker, HCTooltip, HCInput, HCCheckbox} from "@components/common";
@@ -122,7 +122,7 @@ const Sidebar: React.FC<Props> = (props) => {
     }
     const values = Array.from(relatedEntitiesList.values());
     const checkedValues = values.filter(({checked}) => checked);
-    setRelatedEntityTypeIds(checkedValues.map(function(i) { return i.name; }));
+    setRelatedEntityTypeIds(checkedValues.map(function (i) { return i.name; }));
     props.setCurrentRelatedEntities(relatedEntitiesList);
   }, [props.currentBaseEntities]);
 
@@ -140,7 +140,7 @@ const Sidebar: React.FC<Props> = (props) => {
     });
     const values = Array.from(relatedEntitiesList.values());
     const checkedValues = values.filter(({checked}) => checked);
-    setRelatedEntityTypeIds(checkedValues.map(function(i) { return i.name; }));
+    setRelatedEntityTypeIds(checkedValues.map(function (i) { return i.name; }));
     props.setCurrentRelatedEntities(relatedEntitiesList);
   };
 
@@ -298,28 +298,28 @@ const Sidebar: React.FC<Props> = (props) => {
   //To handle default views for first-time user experience
   useEffect(() => {
     getEntities().then((res) => {
-        entitiesArrayRef.current! = ([...entityFromJSON(res.data).map(entity => entity.info.title)]);
-        checkDataInDatabase("final").then((countEntityFinalCount) => {
-          //By Default entities datasource and final database is selected
-          if (countEntityFinalCount === 0) {
-            checkDataInDatabase("staging").then((countEntityStagingCount) => {
-              if (countEntityStagingCount > 0) {
-                //Setting the staging database if there is no data in final database
-                props.setDatabasePreferences("staging");
-              } else {
-                //Setting the All Data datasource with staging database at end
-                checkDataInDatabase("final", "all-data").then((countAllDataFinalCount) => {
-                  if (countAllDataFinalCount === 0) {
-                    //Setting the staging database if there is no data in final database
-                    setDatabaseAndDatasource({database: "staging", datasource: "all-data"});
-                  } else {
-                    setDatasourcePreferences("all-data");
-                  }
-                });
-              }
-            });
-          }
-        });
+      entitiesArrayRef.current! = ([...entityFromJSON(res.data).map(entity => entity.info.title)]);
+      checkDataInDatabase("final").then((countEntityFinalCount) => {
+        //By Default entities datasource and final database is selected
+        if (countEntityFinalCount === 0) {
+          checkDataInDatabase("staging").then((countEntityStagingCount) => {
+            if (countEntityStagingCount > 0) {
+              //Setting the staging database if there is no data in final database
+              props.setDatabasePreferences("staging");
+            } else {
+              //Setting the All Data datasource with staging database at end
+              checkDataInDatabase("final", "all-data").then((countAllDataFinalCount) => {
+                if (countAllDataFinalCount === 0) {
+                  //Setting the staging database if there is no data in final database
+                  setDatabaseAndDatasource({database: "staging", datasource: "all-data"});
+                } else {
+                  setDatasourcePreferences("all-data");
+                }
+              });
+            }
+          });
+        }
+      });
     })
       .catch((error) => {
         handleError(error);
@@ -628,7 +628,7 @@ const Sidebar: React.FC<Props> = (props) => {
       <div className={styles.panelTitle}>
         {title}
         <HCTooltip text={disabled ? "" : tooltipTitle} id="entities-tooltip" placement="right">
-          <i><FontAwesomeIcon className={disabled? styles.disabledEntitiesInfoIcon : styles.entitiesInfoIcon} icon={faInfoCircle} size="sm" /></i>
+          <i><FontAwesomeIcon className={disabled ? styles.disabledEntitiesInfoIcon : styles.entitiesInfoIcon} icon={faInfoCircle} size="sm" /></i>
         </HCTooltip>
       </div>
     );
@@ -654,76 +654,75 @@ const Sidebar: React.FC<Props> = (props) => {
       <div className={styles.searchInput}>
         <HCInput id="graph-view-filter-input" dataCy="search-bar" dataTestid="search-bar" value={searchBox} onChange={handleSearchBox} suffix={<FontAwesomeIcon icon={faSearch} size="sm" className={styles.searchIcon} />} placeholder="Search" size="sm" />
       </div>
-      <div className={"m-3 switch-button-group"}>
-        <span>
-          <input
-            type="radio"
-            id="switch-datasource-entities"
-            name="switch-datasource"
-            value={"entities"}
-            checked={searchOptions.datasource === "entities"}
-            onChange={e => setDatasourcePreferences(e.target.value)}
-          />
-          <label aria-label="switch-datasource-entities" htmlFor="switch-datasource-entities" className={"d-flex align-items-center justify-content-center"} style={{width: "110px"}}>
+
+      <Form className={"m-3 switch-button-group"}>
+
+        <Form.Check
+          id="switch-datasource-entities"
+          name="switch-datasource"
+          type={"radio"}
+          defaultChecked={searchOptions.datasource === "entities"}
+          onChange={e => setDatasourcePreferences(e.target.value)}
+          aria-label="switch-datasource-entities"
+          label={<span>
             <span id="all-entities" className="curateIcon"></span>
             <span>Entities</span>
-          </label>
-        </span>
+          </span>}
+          value={"entities"}
+          className={`mb-0 p-0  ${styles.datasourceSwitch}`}
+        />
 
-        <span>
-          <input
-            type="radio"
-            id="switch-datasource-all-data"
-            name="switch-datasource"
-            value={"all-data"}
-            checked={searchOptions.datasource === "all-data"}
-            onChange={e => setDatasourcePreferences(e.target.value)}
-          />
-          <label aria-label="switch-datasource-all-data" htmlFor="switch-datasource-all-data" className={"d-flex align-items-center justify-content-center"} style={{width: "110px"}}>
+        <Form.Check
+          id="switch-datasource-all-data"
+          name="switch-datasource"
+          type={"radio"}
+          value={"all-data"}
+          defaultChecked={searchOptions.datasource === "all-data"}
+          onChange={e => setDatasourcePreferences(e.target.value)}
+          aria-label="switch-datasource-all-data"
+          label={<span>
             <span id="all-data" className="loadIcon"></span>
             <span>All Data</span>
-          </label>
-        </span>
-      </div>
+          </span>
+          }
+          className={`mb-0 p-0 ${styles.datasourceSwitch}`}
+        />
+      </Form>
+
       <Accordion aria-label="switch-database" id="database" className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("database") ? "database" : ""} defaultActiveKey={activeKey.includes("database") ? "database" : ""}>
         <Accordion.Item eventKey="database" className={"bg-transparent"}>
           <div className={"p-0 d-flex"}>
             <Accordion.Button className={`after-indicator ${styles.title}`} onClick={() => setActiveAccordion("database")}>Database</Accordion.Button>
           </div>
           <Accordion.Body>
-            <div className={"switch-button-group"}>
-              <span>
-                <input
-                  type="radio"
-                  id="switch-database-final"
-                  name="switch-database"
-                  value={"final"}
-                  checked={searchOptions.database === "final"}
-                  onChange={e => props.setDatabasePreferences(e.target.value)}
-                />
-                <label aria-label="switch-database-final" htmlFor="switch-database-final" className={`d-flex justify-content-center align-items-center ${styles.button}`}>
-                  <span>Final</span>
-                </label>
-              </span>
-
-              <span>
-                <input
-                  type="radio"
-                  id="switch-database-staging"
-                  name="switch-database"
-                  value={"staging"}
-                  checked={searchOptions.database === "staging"}
-                  onChange={e => props.setDatabasePreferences(e.target.value)}
-                />
-                <label aria-label="switch-database-staging" htmlFor="switch-database-staging" className={`d-flex justify-content-center align-items-center ${styles.button}`}>
-                  <span>Staging</span>
-                </label>
-              </span>
-            </div>
+            <Form className={"switch-button-group"}>
+              <Form.Check
+                id="switch-database-final"
+                name="switch-database"
+                type={"radio"}
+                value={"final"}
+                defaultChecked={searchOptions.database === "final"}
+                onChange={e => props.setDatabasePreferences(e.target.value)}
+                aria-label="switch-database-final"
+                label={"Final"}
+                className={`mb-0 p-0 ${styles.databaseSwitch}`}
+              />
+              <Form.Check
+                id="switch-database-staging"
+                name="switch-database"
+                value={"staging"}
+                type={"radio"}
+                defaultChecked={searchOptions.database === "staging"}
+                onChange={e => props.setDatabasePreferences(e.target.value)}
+                aria-label="switch-database-staging"
+                label={"Staging"}
+                className={`mb-0 p-0 ${styles.databaseSwitch}`}
+              />
+            </Form>
           </Accordion.Body>
         </Accordion.Item>
       </Accordion>
-      <HCDivider className={"mt-1 mb-2"}  style={{backgroundColor: "#ccc"}}/>
+      <HCDivider className={"mt-1 mb-2"} style={{backgroundColor: "#ccc"}} />
       {(searchOptions.datasource && searchOptions.datasource !== "all-data") && <>
         <Accordion id="baseEntities" className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("baseEntities") ? "baseEntities" : ""} defaultActiveKey={activeKey.includes("baseEntities") ? "baseEntities" : ""}>
           <Accordion.Item eventKey="baseEntities" className={"bg-transparent"}>
@@ -743,32 +742,32 @@ const Sidebar: React.FC<Props> = (props) => {
             </Accordion.Body>
           </Accordion.Item>
         </Accordion>
-        <HCDivider className={"mt-0 mb-2"}  style={{backgroundColor: "#ccc"}}/>
+        <HCDivider className={"mt-0 mb-2"} style={{backgroundColor: "#ccc"}} />
         {props.currentRelatedEntities.size > 0 &&
-        <div className={styles.relatedEntityPanel}>
-          <HCTooltip text={!props.graphView ? exploreSidebar.disabledRelatedEntities: ""} aria-label="disabled-related-entity-tooltip" id="disabled-related-entity-tooltip" placement="bottom">
-            <Accordion id="related-entities" data-testid={"related-entity-panel"} className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("related-entities") && props.graphView ? "related-entities" : ""} defaultActiveKey={activeKey.includes("related-entities") ? "related-entities" : ""}>
-              <Accordion.Item eventKey="related-entities" className={"bg-transparent"}>
-                <div className={"p-0 d-flex"}>
-                  <Accordion.Button className={!props.graphView ? `after-indicator ${styles.disabledTitleCheckbox}` : `after-indicator ${styles.titleCheckbox}`} onClick={() =>  setActiveAccordion("related-entities")}>{
-                    panelTitle(<span><span className={!activeRelatedEntities ? styles.disabledCheckbox : ""}><HCCheckbox id="check-all" value="check-all" disabled={!props.graphView} cursorDisabled={!activeRelatedEntities} handleClick={activeRelatedEntities ? onCheckAllChanges : () => { return; }} checked={checkAll} /></span>related entities</span>, ExploreGraphViewToolTips.relatedEntities)}
-                  </Accordion.Button>
-                </div>
-                <Accordion.Body>
-                  <RelatedEntitiesFacet
-                    currentRelatedEntities={props.currentRelatedEntities}
-                    setCurrentRelatedEntities={props.setCurrentRelatedEntities}
-                    onSettingCheckedList={onSettingCheckedList}
-                    setEntitySpecificPanel={props.setEntitySpecificPanel}
-                    setActiveRelatedEntities={setActiveRelatedEntities}
-                    entityIndicatorData={props.entityIndicatorData}
-                  />
-                </Accordion.Body>
-              </Accordion.Item>
-            </Accordion>
-          </HCTooltip>
-          <HCDivider className={"mt-0 mb-2"} style={{backgroundColor: "#ccc"}}/>
-        </div>
+          <div className={styles.relatedEntityPanel}>
+            <HCTooltip text={!props.graphView ? exploreSidebar.disabledRelatedEntities : ""} aria-label="disabled-related-entity-tooltip" id="disabled-related-entity-tooltip" placement="bottom">
+              <Accordion id="related-entities" data-testid={"related-entity-panel"} className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("related-entities") && props.graphView ? "related-entities" : ""} defaultActiveKey={activeKey.includes("related-entities") ? "related-entities" : ""}>
+                <Accordion.Item eventKey="related-entities" className={"bg-transparent"}>
+                  <div className={"p-0 d-flex"}>
+                    <Accordion.Button className={!props.graphView ? `after-indicator ${styles.disabledTitleCheckbox}` : `after-indicator ${styles.titleCheckbox}`} onClick={() => setActiveAccordion("related-entities")}>{
+                      panelTitle(<span><span className={!activeRelatedEntities ? styles.disabledCheckbox : ""}><HCCheckbox id="check-all" value="check-all" disabled={!props.graphView} cursorDisabled={!activeRelatedEntities} handleClick={activeRelatedEntities ? onCheckAllChanges : () => { return; }} checked={checkAll} /></span>related entities</span>, ExploreGraphViewToolTips.relatedEntities)}
+                    </Accordion.Button>
+                  </div>
+                  <Accordion.Body>
+                    <RelatedEntitiesFacet
+                      currentRelatedEntities={props.currentRelatedEntities}
+                      setCurrentRelatedEntities={props.setCurrentRelatedEntities}
+                      onSettingCheckedList={onSettingCheckedList}
+                      setEntitySpecificPanel={props.setEntitySpecificPanel}
+                      setActiveRelatedEntities={setActiveRelatedEntities}
+                      entityIndicatorData={props.entityIndicatorData}
+                    />
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </HCTooltip>
+            <HCDivider className={"mt-0 mb-2"} style={{backgroundColor: "#ccc"}} />
+          </div>
         }
       </>}
 

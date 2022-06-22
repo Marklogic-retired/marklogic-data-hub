@@ -129,6 +129,9 @@
 }
 
 .form-check-label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     cursor: pointer;
 }
 
@@ -223,11 +226,11 @@ div[role="dialog"][aria-modal="true"]:nth-last-child(5) {
         }
     }
 
-    span:first-of-type label {
+    div:first-of-type  label {
         border-radius: 4px 0 0 4px;
     }
 
-    span:last-of-type label {
+    div:last-of-type  label{
         border-radius: 0 4px 4px 0;
     }
 
