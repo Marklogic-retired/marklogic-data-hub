@@ -307,9 +307,8 @@ const detailConfig  = {
                 {
                   "component": "RecordRaw",
                   "config": {
-                    "id": "raw", 
                     "name": "person",
-                    "title": "Record Raw",
+                    "title": "Record Data",
                     "path": "person",
                     "maxHeight": "400px",
                     "enableClipboard": false,

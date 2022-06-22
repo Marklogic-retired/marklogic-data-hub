@@ -36,9 +36,28 @@ const detail = {
     }
   }
 }
+
+const EXPANDIDS = {
+    membership: true,
+    info: true,
+    relationships: true,
+    imageGallery: true,
+    timeline: true
+}
+
 const detailContextValue = {
-  detail: detail,
-  handleDetail: jest.fn()
+    detail: detail,
+    recentRecords: [],
+    loading: false,
+    expandIds: EXPANDIDS,
+    handleGetDetail: jest.fn(),
+    handleGetRecent: jest.fn(),
+    handleGetRecentLocal: jest.fn(),
+    handleSaveRecent: jest.fn(),
+    handleSaveRecentLocal: jest.fn(),
+    handleExpandIds: jest.fn(),
+    handleDeleteAllRecent: jest.fn(), 
+    hasSavedRecords: jest.fn()
 };
 
 describe("LinkList component", () => {
