@@ -312,7 +312,7 @@ declare function merge-impl:rollback-merge(
   $merged-doc-uri as xs:string
 ) as xs:string*
 {
-  merge-impl:rollback-merge($merged-doc-uri, fn:true(), fn:true())
+  merge-impl:rollback-merge($merged-doc-uri, fn:true(), fn:true(), ())
 };
 
 (:
@@ -326,12 +326,15 @@ declare function merge-impl:rollback-merge(
  : @param $block-future-merges   if true, then the future matches between documents
  :                               will be blocked; otherwise, the documents could match
  :                               on next process-match-and-merge
+ : @param $remove-uris   xs:string* of document URIs that should be removed from the merge.
+                          If an empty sequence, then the last merge transaction is rolled back.
  : @return restored URIs
  :)
 declare function merge-impl:rollback-merge(
   $merged-doc-uri as xs:string,
   $retain-rollback-info as xs:boolean,
-  $block-future-merges as xs:boolean
+  $block-future-merges as xs:boolean,
+  $remove-uris as xs:string*
 ) as xs:string*
 {
   xdmp:trace($const:TRACE-MERGE-RESULTS, "Rolling back merge of cts.doc('" || $merged-doc-uri || "')"),
@@ -345,8 +348,12 @@ declare function merge-impl:rollback-merge(
       return $auditing-doc
     )
   let $all-contributing-uris := $merge-doc-headers/*:merges/*:document-uri
-  let $last-merge-dateTime := fn:max($all-contributing-uris/(@last-merge|../last-merge) ! xs:dateTime(.))
-  let $previous-uris := if (fn:empty($last-merge-dateTime) and fn:exists($latest-auditing-receipt-for-doc)) then
+  let $last-merge-dateTime := if (fn:empty($remove-uris)) then
+      fn:max($all-contributing-uris/(@last-merge|../last-merge) ! xs:dateTime(.))
+    else ()
+  let $previous-uris := if (fn:exists($remove-uris)) then
+      $all-contributing-uris[fn:not(. = $remove-uris)] ! fn:string()
+    else if (fn:empty($last-merge-dateTime) and fn:exists($latest-auditing-receipt-for-doc)) then
       $latest-auditing-receipt-for-doc/auditing:previous-uri ! fn:string(.)
     else
       $all-contributing-uris[(@last-merge|../last-merge) = $last-merge-dateTime] ! fn:string(.)
@@ -354,16 +361,17 @@ declare function merge-impl:rollback-merge(
   let $_trace := if (xdmp:trace-enabled($const:TRACE-MERGE-RESULTS)) then
           let $doc-prefix := "cts.doc('" || $merged-doc-uri || "')"
           return (
+            xdmp:trace($const:TRACE-MERGE-RESULTS, $doc-prefix || " remove URIs: " || xdmp:to-json-string($remove-uris)),
             xdmp:trace($const:TRACE-MERGE-RESULTS, $doc-prefix || " previous URIs: " || xdmp:to-json-string($previous-uris)),
             xdmp:trace($const:TRACE-MERGE-RESULTS, $doc-prefix || " last merge dateTime: " || xdmp:to-json-string($last-merge-dateTime)),
             xdmp:trace($const:TRACE-MERGE-RESULTS, $doc-prefix || " latest auditing receipt: " || xdmp:to-json-string($latest-auditing-receipt-for-doc))
           )
         else
           ()
-  where fn:exists(($latest-auditing-receipt-for-doc,$last-merge-dateTime))
+  where fn:exists(($latest-auditing-receipt-for-doc,$last-merge-dateTime, $remove-uris))
   return (
     let $remerged-doc :=
-      if ($merge-doc-in-previous) then
+      if ($merge-doc-in-previous or (fn:exists($previous-uris) and fn:exists($remove-uris))) then
         let $merge-options-ref := $merge-doc-headers/*:merge-options/*:value ! fn:string(.)
         let $merge-options := merge-impl:options-ref-to-options-node($merge-options-ref)
         let $older-uris := $all-contributing-uris[fn:not(. = ($previous-uris,$merged-doc-uri))]

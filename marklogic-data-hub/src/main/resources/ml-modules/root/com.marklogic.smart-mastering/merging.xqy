@@ -74,7 +74,7 @@ declare function merging:rollback-merge(
   $merged-doc-uri as xs:string
 ) as xs:string*
 {
-  impl:rollback-merge($merged-doc-uri, fn:true(), fn:true())
+  impl:rollback-merge($merged-doc-uri, fn:true(), fn:true(), ())
 };
 
 (:
@@ -90,7 +90,7 @@ declare function merging:rollback-merge(
   $retain-rollback-info as xs:boolean
 ) as xs:string*
 {
-  impl:rollback-merge($merged-doc-uri, $retain-rollback-info, fn:true())
+  impl:rollback-merge($merged-doc-uri, $retain-rollback-info, fn:true(), ())
 };
 
 (:
@@ -109,7 +109,28 @@ declare function merging:rollback-merge(
   $block-future-merges as xs:boolean
 ) as xs:string*
 {
-  impl:rollback-merge($merged-doc-uri, $retain-rollback-info, $block-future-merges)
+  impl:rollback-merge($merged-doc-uri, $retain-rollback-info, $block-future-merges, ())
+};
+
+(:
+ : Unmerge a previously merged document, removing it from the searchable data set and restoring the original documents.
+ :
+ : @param $merged-doc-uri  the URI of the merged document that will be removed
+ : @param $retain-rollback-info  if fn:true(), the merged document will be archived and auditing records will be kept.
+ :                               If fn:false(), the merged document and auditing records of the merge and unmerge will
+ :                               be deleted.
+ : @param $block-future-merges   if fn:true(), future matches between the documents will be blocked.
+ :                               If fn:false(), documents that matched prior, will match again on next search
+ : @param $remove-uris   xs:string* of URIs that should be targeted for removal. If an empty sequence, then the last merge transaction is rolled back
+ :)
+declare function merging:rollback-merge(
+  $merged-doc-uri as xs:string,
+  $retain-rollback-info as xs:boolean,
+  $block-future-merges as xs:boolean,
+  $remove-uris as xs:string*
+) as xs:string*
+{
+  impl:rollback-merge($merged-doc-uri, $retain-rollback-info, $block-future-merges, $remove-uris)
 };
 
 (:~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

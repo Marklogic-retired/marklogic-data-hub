@@ -22,5 +22,7 @@ xdmp:document-add-collections("/content/customerForUnmerge1.json",("sm-Mastering
 xdmp:document-set-metadata("/content/customerForUnmerge1.json",map:entry("datahubCreatedOn", fn:current-dateTime())),
 xdmp:document-add-collections("/content/customerForUnmerge2.json",("sm-Mastering-merged")),
 xdmp:document-set-metadata("/content/customerForUnmerge2.json",map:entry("datahubCreatedOn", fn:current-dateTime())),
+xdmp:document-add-collections("/content/customerForUnmerge3.json",("sm-Mastering-merged")),
+xdmp:document-set-metadata("/content/customerForUnmerge3.json",map:entry("datahubCreatedOn", fn:current-dateTime())),
 xdmp:document-add-collections("/content/mergedCustomer.json",("sm-Mastering-merged")),
 xdmp:document-set-metadata("/content/mergedCustomer.json",map:entry("datahubCreatedOn", fn:current-dateTime()))
