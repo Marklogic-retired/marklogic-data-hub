@@ -274,7 +274,7 @@ describe("Property Modal Component", () => {
     expect(mockGetSystemInfo).toBeCalledTimes(0);
   });
 
-  test("Add a Property with a structured type, no relationship type in dropdown", async() => {
+  test("Add a Property with a structured type", async() => {
     mockGetSystemInfo.mockResolvedValueOnce({status: 200, data: {}});
 
     let entityType = propertyTableEntities.find(entity => entity.entityName === "Customer");
@@ -304,7 +304,6 @@ describe("Property Modal Component", () => {
     await(() => userEvent.click(getByText("Structured")));
     await(() => userEvent.click(getByText("Address")));
 
-    expect(screen.queryByText("Related Entity")).toBeNull();
     expect(screen.queryByLabelText("identifier-yes")).toBeNull();
 
     const multipleRadio:any = await(() => screen.getByLabelText("multiple-no"));

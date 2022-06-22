@@ -138,7 +138,30 @@ const PropertyModal: React.FC<Props> = (props) => {
   const [joinDisplayValue, setJoinDisplayValue] = useState<string | undefined>(undefined);
   const [joinProperties, setJoinProperties] = useState<any[]>([]);
 
-  const [dropdownOptions, setDropdownOptions] = useState<any[]>(DEFAULT_DROPDOWN_OPTIONS);
+  const createRelatedEntityDropdown = () => {
+    let entityTypes = modelingOptions.entityTypeNamesArray
+      .sort((a, b) => a.name?.localeCompare(b.name))
+      .map(entity => { return {label: entity.name, value: entity.name}; });
+
+    return {
+      label: "Related Entity",
+      value: "relatedEntity",
+      children: entityTypes
+    };
+  };
+
+  const createStructuredDropdown = (structuredDefinitions) => {
+    let structuredTypes = structuredDefinitions
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map(definition => { return {label: definition.name, value: definition.name}; });
+
+    return {
+      ...DEFAULT_STRUCTURED_DROPDOWN_OPTIONS,
+      children: [...DEFAULT_STRUCTURED_DROPDOWN_OPTIONS["children"], ...structuredTypes]
+    };
+  };
+
+  const [dropdownOptions, setDropdownOptions] = useState<any[]>([...DEFAULT_DROPDOWN_OPTIONS, createRelatedEntityDropdown()]);
   const [radioValues, setRadioValues] = useState<any[]>([]);
   const [showConfigurationOptions, toggleShowConfigurationOptions] = useState(false);
 
@@ -488,9 +511,8 @@ const PropertyModal: React.FC<Props> = (props) => {
     structuredDefinitions.push(newStructuredDefinitionObject);
     let structuredDropdown = createStructuredDropdown(structuredDefinitions);
 
-    if (modelingOptions.entityTypeNamesArray.length > 1 && structuredDefinitions.length > 0) {
+    if (structuredDefinitions.length > 0) {
       let relatedEntityDropdown = createRelatedEntityDropdown();
-
       setDropdownOptions([
         ...COMMON_PROPERTY_TYPES,
         DROPDOWN_PLACEHOLDER("1"),
@@ -502,17 +524,6 @@ const PropertyModal: React.FC<Props> = (props) => {
         MORE_DATE_TYPES
       ]);
       setEntityPropertyNamesArray([...entityPropertyNamesArray, name]);
-
-    } else if (modelingOptions.entityTypeNamesArray.length <= 1 && structuredDefinitions.length > 0) {
-      setDropdownOptions([
-        ...COMMON_PROPERTY_TYPES,
-        DROPDOWN_PLACEHOLDER("1"),
-        structuredDropdown,
-        DROPDOWN_PLACEHOLDER("2"),
-        MORE_STRING_TYPES,
-        MORE_NUMBER_TYPES,
-        MORE_DATE_TYPES
-      ]);
     }
     setTypeDisplayValue(["structured", name]);
     setSelectedPropertyOptions({...selectedPropertyOptions, type: name});
@@ -547,7 +558,7 @@ const PropertyModal: React.FC<Props> = (props) => {
     }
 
     if (modelingOptions.entityTypeNamesArray.length <= 1 && structuredDefinitions.length === 0) {
-      setDropdownOptions(DEFAULT_DROPDOWN_OPTIONS);
+      setDropdownOptions([...DEFAULT_DROPDOWN_OPTIONS, createRelatedEntityDropdown()]);
 
     } else if (modelingOptions.entityTypeNamesArray.length > 1 && structuredDefinitions.length === 0) {
       let relatedEntityDropdown = createRelatedEntityDropdown();
@@ -565,11 +576,13 @@ const PropertyModal: React.FC<Props> = (props) => {
 
     } else if (modelingOptions.entityTypeNamesArray.length <= 1 && structuredDefinitions.length > 0) {
       let structuredDropdown = createStructuredDropdown(structuredDefinitions);
+      let relatedEntityDropdown = createRelatedEntityDropdown();
 
       setDropdownOptions([
         ...COMMON_PROPERTY_TYPES,
         DROPDOWN_PLACEHOLDER("1"),
         structuredDropdown,
+        relatedEntityDropdown,
         DROPDOWN_PLACEHOLDER("2"),
         MORE_STRING_TYPES,
         MORE_NUMBER_TYPES,
@@ -617,29 +630,6 @@ const PropertyModal: React.FC<Props> = (props) => {
       ]);
     }
     setEntityPropertyNamesArray([...propertyNamesArray, ...entityNamesArray]);
-  };
-
-  const createRelatedEntityDropdown = () => {
-    let entityTypes = modelingOptions.entityTypeNamesArray
-      .sort((a, b) => a.name.localeCompare(b.name))
-      .map(entity => { return {label: entity.name, value: entity.name}; });
-
-    return {
-      label: "Related Entity",
-      value: "relatedEntity",
-      children: entityTypes
-    };
-  };
-
-  const createStructuredDropdown = (structuredDefinitions) => {
-    let structuredTypes = structuredDefinitions
-      .sort((a, b) => a.name.localeCompare(b.name))
-      .map(definition => { return {label: definition.name, value: definition.name}; });
-
-    return {
-      ...DEFAULT_STRUCTURED_DROPDOWN_OPTIONS,
-      children: [...DEFAULT_STRUCTURED_DROPDOWN_OPTIONS["children"], ...structuredTypes]
-    };
   };
 
   const getJoinMenuProps = (model, modelUpdated) => {
