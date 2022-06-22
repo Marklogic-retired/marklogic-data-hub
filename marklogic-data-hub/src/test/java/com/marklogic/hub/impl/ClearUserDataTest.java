@@ -124,7 +124,7 @@ public class ClearUserDataTest extends AbstractHubCoreTest {
         runAsAdmin();
         int[] documentCountsBeforeClear = getDatabaseCounts();
 
-        runAsTestUserWithRoles("hub-central-clear-user-data");
+        runAsDataHubDeveloper();
         new DataHubImpl(getHubClient()).clearUserData(null, null);
 
         runAsAdmin();
