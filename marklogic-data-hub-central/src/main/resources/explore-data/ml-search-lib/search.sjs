@@ -62,7 +62,15 @@ class Search {
   }
 
   getDocument(uri) {
-    return {}
+    let result = cts.doc(uri);
+    if(result instanceof XMLDocument) {
+      result = this.transformXmlToJson(result);
+    } else {
+      result = result.toObject();
+    }
+    result["entityType"] = Object.keys(result)[0];
+    result["uri"] = uri;
+    return result;
   }
 
   getEntityModels() {
