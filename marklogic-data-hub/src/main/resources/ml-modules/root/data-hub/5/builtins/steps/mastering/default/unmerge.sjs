@@ -6,7 +6,9 @@ function main(content, options) {
   let documentsAffected = [content];
   let restoredURIs = Sequence.from(merging.rollbackMerge(
     content.uri,
-    options.retainAuditTrail
+    options.retainAuditTrail,
+    options.blockFutureMerges,
+    Sequence.from(options.removeURIs)
   ));
   if (fn.empty(restoredURIs)) {
     let msg = `Unable to rollback '${content.uri}. Are you sure it is a merged record?'`;

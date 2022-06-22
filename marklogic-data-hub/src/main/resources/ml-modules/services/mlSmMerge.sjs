@@ -88,7 +88,9 @@ function deleteFunction(context, params) {
   // build combined options
   let sourceDatabase = options.sourceDatabase || config.FINALDATABASE;
   let mergeURIs = hubUtils.normalizeToArray(params.mergeURI);
-
+  if (params.removeURI) {
+    options.removeURIs = hubUtils.normalizeToArray(params.removeURI);
+  }
   let query = cts.documentQuery(mergeURIs);
   let content = hubUtils.queryToContentDescriptorArray(query, options, sourceDatabase);
   let results = datahub.flow.runFlow(flowName, jobId, content, options, stepNumber);
