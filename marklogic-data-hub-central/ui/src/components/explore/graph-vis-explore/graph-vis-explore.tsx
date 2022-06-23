@@ -464,13 +464,17 @@ const GraphVisExplore: React.FC<Props> = (props) => {
 
   const getEdges = (edgesToExpand?: any) => {
     let edges: any = [];
+    let addedEdges: any = [];
     let predicatesObject = predicates;
+    let smoothOpts;
     let edgesFinal: any = entityTypeInstances?.edges?.slice();
     edgesFinal = !edgesToExpand ? edgesFinal : edgesToExpand;
     edges = edgesFinal?.map((edge, i) => {
       if (!predicatesObject.hasOwnProperty(edge.id)) {
         predicatesObject[edge.id] = edge.predicate;
       }
+      smoothOpts = getSmoothOpts(edge.to, edge.from, addedEdges);
+      addedEdges.push(edge);
       return {
         ...edge,
         id: edge.id,
@@ -484,7 +488,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         font: {
           align: "top",
         },
-        smooth: getSmoothOpts(edge.to, edge.from, edges)
+        smooth: smoothOpts
       };
     });
     setPredicates(predicatesObject);
@@ -510,7 +514,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         enabled: true,
         iterations: 2000,
         updateInterval: 25,
-      }
+      },
     },
     interaction: {
       navigationButtons: true,
