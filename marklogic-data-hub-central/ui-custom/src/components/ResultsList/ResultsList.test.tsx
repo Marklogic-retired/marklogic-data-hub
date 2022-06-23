@@ -110,8 +110,10 @@ const searchResultsNoEntity = {
             "entityType": "unknown",
             "uri": "/person/101.xml",
             "snippet": {"match": {
-                "#text": "Match text 101",
-                "path": "fn:doc(&quot;/101.xml&quot;)/unknown"
+                "#text": "2010-02-02T03:23:14Z ",
+                "path": "fn:doc(&quot;/101.xml&quot;)/unknown",
+                "match-string": "2010-02-02T03:23:14Z foo bar",
+                "highlight": [ "foo", "bar" ]
             }}
         },
         {
@@ -124,8 +126,10 @@ const searchResultsNoEntity = {
             "entityType": "unknown",
             "uri": "/person/102.xml",
             "snippet": {"match": {
-                "#text": "Match text 102",
-                "path": "fn:doc(&quot;/102.xml&quot;)/unknown"
+                "#text": "2010-02-02T03:23:14Z ",
+                "path": "fn:doc(&quot;/101.xml&quot;)/unknown",
+                "match-string": "2010-02-02T03:23:14Z baz",
+                "highlight": "baz"
             }}
         }
     ]
@@ -231,7 +235,7 @@ describe("ResultsList component", () => {
             </SearchContext.Provider>
         );
         expect(getByText(searchResultsNoEntity.result[0].uri)).toBeInTheDocument();
-        expect(getByText(searchResultsNoEntity.result[0].snippet.match["#text"])).toBeInTheDocument();
+        expect(getByText("foo")).toBeInTheDocument();
     });
 
 });
