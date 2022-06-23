@@ -24,6 +24,7 @@ import "./Detail.scss";
 import _ from "lodash";
 import {getValByConfig} from "../util/util";
 import RecordRaw from "../components/RecordRaw/RecordRaw";
+import ReactJson from "react-json-view";
 
 type Props = {};
 
@@ -180,128 +181,164 @@ const Detail: React.FC<Props> = (props) => {
     handleExpandIds(newExpandId);
   };
 
+  const getDetailNoEntity = () => {
+    return (
+      <div>
+        <div className="heading">
+          <div className="title">
+            <div className="icon" onClick={handleBackClick}>
+              <ArrowLeft color="#394494" size={28} />
+            </div>
+            <div className="text">
+              <Value id={detailContext.detail?.uri}>{detailContext.detail?.uri}</Value>
+            </div>
+          </div>
+        </div>
+        <Section title="Record Data" >
+          <ReactJson
+            src={detailContext.detail}
+            name={false}
+            enableClipboard={false}
+            displayDataTypes={false}
+            quotesOnKeys={false}
+            displayObjectSize={false}
+            indentWidth={2}
+            iconStyle="triangle"
+            collapsed={2}
+            groupArraysAfterLength={3} />
+        </Section>
+      </div>
+    );
+  };
+  const getDetailEntity = () => {
+    return (
+      <div>
+
+        {config?.detail?.entities[entityType]?.heading ?
+          getHeading(config.detail.entities[entityType].heading)
+          : null}
+
+        <div className="container-fluid">
+
+          {config?.detail?.entities[entityType]?.linkList?.config && <div>
+            {React.createElement(
+              COMPONENTS.LinkList,
+              {config: config?.detail?.entities[entityType]?.linkList.config, data: detailContext.detail}, null
+            )}
+          </div>}
+
+          {config?.detail?.entities[entityType]?.membership && <div className="row">
+            <div className="col-12">
+              <Section title="Membership" config={{
+                "headerStyle": {
+                  "backgroundColor": "transparent"
+                },
+                "mainStyle": {
+                  "paddingTop": "6px"
+                }
+              }}
+                collapsible={true}
+                expand={expandIds.membership}
+                onExpand={() => {handleExpandIdsClick("membership", true);}}
+                onCollapse={() => {handleExpandIdsClick("membership", false);}}>
+                {config.detail.entities[entityType]?.membership.component && config.detail.entities[entityType]?.membership.config &&
+                  React.createElement(
+                    COMPONENTS[config?.detail?.entities[entityType]?.membership.component],
+                    {config: config?.detail?.entities[entityType]?.membership.config, data: detailContext.detail}, null
+                  )}
+              </Section>
+            </div>
+          </div>}
+
+          <div className="row">
+            <div className="col-lg-7">
+
+              {config?.detail?.entities[entityType]?.info &&
+                <Section title={config?.detail?.entities[entityType]?.info.title}
+                  collapsible={true}
+                  expand={expandIds.info}
+                  onExpand={() => {handleExpandIdsClick("info", true);}}
+                  onCollapse={() => {handleExpandIdsClick("info", false);}} >
+                  {getRecordItems(config?.detail?.entities[entityType]?.info?.items)}
+                </Section>
+              }
+
+            </div>
+            <div className="col-lg-5">
+
+              {config?.detail?.entities[entityType]?.relationships &&
+                <Section
+                  title="Relationships"
+                  collapsible={true}
+                  expand={expandIds.relationships}
+                  onExpand={() => {handleExpandIdsClick("relationships", true);}}
+                  onCollapse={() => {handleExpandIdsClick("relationships", false);}} config={{
+                    "mainStyle": {
+                      "padding": "0"
+                    }
+                  }}>
+                  <div className="relationships">
+                    {config.detail.entities[entityType]?.relationships.component && config.detail.entities[entityType]?.relationships.config &&
+                      React.createElement(
+                        COMPONENTS[config?.detail?.entities[entityType]?.relationships.component],
+                        {config: config?.detail?.entities[entityType]?.relationships.config, data: detailContext.detail}, null
+                      )}
+                  </div>
+                </Section>
+              }
+
+              {config?.detail?.entities[entityType]?.imageGallery &&
+                <Section title="Image Gallery"
+                  collapsible={true}
+                  expand={expandIds.imageGallery}
+                  onExpand={() => {handleExpandIdsClick("imageGallery", true);}}
+                  onCollapse={() => {handleExpandIdsClick("imageGallery", false);}}
+                >
+                  {config.detail.entities[entityType]?.imageGallery.component && config.detail.entities[entityType]?.imageGallery.config &&
+                    React.createElement(
+                      COMPONENTS[config?.detail?.entities[entityType]?.imageGallery.component],
+                      {config: config?.detail?.entities[entityType]?.imageGallery.config, data: detailContext.detail}, null
+                    )
+                  }
+                </Section>
+              }
+
+            </div>
+          </div>
+          {config?.detail?.entities[entityType]?.timeline && <div className="row">
+            <div className="col-12">
+              <Section
+                title="Timeline"
+                data-test="timelineSection"
+                collapsible={true}
+                expand={expandIds.timeline}
+                onExpand={() => {handleExpandIdsClick("timeline", true);}}
+                onCollapse={() => {handleExpandIdsClick("timeline", false);}}
+              >
+                {config.detail.entities[entityType]?.timeline.component && config.detail.entities[entityType]?.timeline.config &&
+                  React.createElement(
+                    COMPONENTS[config.detail.entities[entityType].timeline.component],
+                    {config: config.detail.entities[entityType].timeline.config, data: detailContext.detail}, null
+                  )}
+              </Section>
+            </div>
+          </div>}
+        </div>
+
+      </div>
+    );
+  };
+
+
   return (
 
     <div className="detail">
 
-      {config?.detail && !_.isEmpty(detailContext.detail) && !detailContext.loading ? (
-
-        <div>
-
-          {config?.detail?.entities[entityType]?.heading ?
-            getHeading(config.detail.entities[entityType].heading)
-            : null}
-
-          <div className="container-fluid">
-
-            {config?.detail?.entities[entityType]?.linkList?.config && <div>
-              {React.createElement(
-                COMPONENTS.LinkList,
-                {config: config?.detail?.entities[entityType]?.linkList.config, data: detailContext.detail}, null
-              )}
-            </div>}
-
-            {config?.detail?.entities[entityType]?.membership && <div className="row">
-              <div className="col-12">
-                <Section title="Membership" config={{
-                  "headerStyle": {
-                    "backgroundColor": "transparent"
-                  },
-                  "mainStyle": {
-                    "paddingTop": "6px"
-                  }
-                }}
-                collapsible={true}
-                expand={expandIds.membership}
-                onExpand={() => { handleExpandIdsClick("membership", true); }}
-                onCollapse={() => { handleExpandIdsClick("membership", false); }}>
-                  {config.detail.entities[entityType]?.membership.component && config.detail.entities[entityType]?.membership.config &&
-                    React.createElement(
-                      COMPONENTS[config?.detail?.entities[entityType]?.membership.component],
-                      {config: config?.detail?.entities[entityType]?.membership.config, data: detailContext.detail}, null
-                    )}
-                </Section>
-              </div>
-            </div>}
-
-            <div className="row">
-              <div className="col-lg-7">
-
-                {config?.detail?.entities[entityType]?.info &&
-                  <Section title={config?.detail?.entities[entityType]?.info.title}
-                    collapsible={true}
-                    expand={expandIds.info}
-                    onExpand={() => { handleExpandIdsClick("info", true); }}
-                    onCollapse={() => { handleExpandIdsClick("info", false); }} >
-                    {getRecordItems(config?.detail?.entities[entityType]?.info?.items)}
-                  </Section>
-                }
-
-              </div>
-              <div className="col-lg-5">
-
-                {config?.detail?.entities[entityType]?.relationships &&
-                  <Section
-                    title="Relationships"
-                    collapsible={true}
-                    expand={expandIds.relationships}
-                    onExpand={() => { handleExpandIdsClick("relationships", true); }}
-                    onCollapse={() => { handleExpandIdsClick("relationships", false); }} config={{
-                      "mainStyle": {
-                        "padding": "0"
-                      }
-                    }}>
-                    <div className="relationships">
-                      {config.detail.entities[entityType]?.relationships.component && config.detail.entities[entityType]?.relationships.config &&
-                        React.createElement(
-                          COMPONENTS[config?.detail?.entities[entityType]?.relationships.component],
-                          {config: config?.detail?.entities[entityType]?.relationships.config, data: detailContext.detail}, null
-                        )}
-                    </div>
-                  </Section>
-                }
-
-                {config?.detail?.entities[entityType]?.imageGallery &&
-                  <Section title="Image Gallery"
-                    collapsible={true}
-                    expand={expandIds.imageGallery}
-                    onExpand={() => { handleExpandIdsClick("imageGallery", true); }}
-                    onCollapse={() => { handleExpandIdsClick("imageGallery", false); }}
-                  >
-                    {config.detail.entities[entityType]?.imageGallery.component && config.detail.entities[entityType]?.imageGallery.config &&
-                      React.createElement(
-                        COMPONENTS[config?.detail?.entities[entityType]?.imageGallery.component],
-                        {config: config?.detail?.entities[entityType]?.imageGallery.config, data: detailContext.detail}, null
-                      )
-                    }
-                  </Section>
-                }
-
-              </div>
-            </div>
-            {config?.detail?.entities[entityType]?.timeline && <div className="row">
-              <div className="col-12">
-                <Section
-                  title="Timeline"
-                  data-test="timelineSection"
-                  collapsible={true}
-                  expand={expandIds.timeline}
-                  onExpand={() => { handleExpandIdsClick("timeline", true); }}
-                  onCollapse={() => { handleExpandIdsClick("timeline", false); }}
-                >
-                  {config.detail.entities[entityType]?.timeline.component && config.detail.entities[entityType]?.timeline.config &&
-                          React.createElement(
-                            COMPONENTS[config.detail.entities[entityType].timeline.component],
-                            {config: config.detail.entities[entityType].timeline.config, data: detailContext.detail}, null
-                          )}
-                </Section>
-              </div>
-            </div>}
-          </div>
-
-        </div>
-
-      ) : <Loading />}
+      {config?.detail && !_.isEmpty(detailContext.detail) && !detailContext.loading ?
+        (
+          !config?.detail?.entities[entityType] ? getDetailNoEntity() : getDetailEntity()
+        )
+        : <Loading />}
 
     </div>
   );

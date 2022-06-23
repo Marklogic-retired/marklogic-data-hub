@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import "./ResultSnippet.scss";
 import _ from "lodash";
 
@@ -29,29 +29,31 @@ const ResultSnippet: React.ComponentType<Props> = (props) => {
   let processed: any[] = [];
   matches.forEach((m, i1) => {
     let replaced = String(m["match-string"] ? m["match-string"] : "");
-    // Force to array
-    let highlights = _.isArray(m.highlight) ? m.highlight : [m.highlight];
-    highlights.forEach((h, i2) => {
-        const re = new RegExp(h, 'g')
-        replaced = replaced.replace(re, 
-            '<span data-testid="highlight-'+i1+'-'+i2+
-            '" style="background-color:'+highlight+'; font-weight:'+weight+
-            '">'+h+'</span>'
+    if (m.highlight) {
+      // Force to array
+      let highlights = _.isArray(m.highlight) ? m.highlight : [m.highlight];
+      highlights.forEach((h, i2) => {
+        const re = new RegExp(h, "g");
+        replaced = replaced.replace(re,
+          "<span data-testid=\"highlight-"+i1+"-"+i2+
+              "\" style=\"background-color:"+highlight+"; font-weight:"+weight+
+              "\">"+h+"</span>"
         );
-    })
+      });
+    }
     processed.push(replaced);
-  })  
+  });
 
   let snippetStyle: any = props.style ? props.style : config?.style ? config.style : {};
 
   return (
-    <div 
-        className="ResultSnippetContainer" 
-        data-testid="result-snippet-component" 
-        style={snippetStyle}
-        dangerouslySetInnerHTML={{__html: processed.join('<span>'+separator+'</span>')}} 
+    <div
+      className="ResultSnippetContainer"
+      data-testid="result-snippet-component"
+      style={snippetStyle}
+      dangerouslySetInnerHTML={{__html: processed.join("<span>"+separator+"</span>")}}
     />
   );
-}
+};
 
 export default ResultSnippet;
