@@ -5,6 +5,7 @@ import DateTime from "../DateTime/DateTime";
 import Image from "../Image/Image";
 import List from "../List/List";
 import Value from "../Value/Value";
+import ResultSnippet from "../ResultSnippet/ResultSnippet";
 import {SearchContext} from "../../store/SearchContext";
 import {DetailContext} from "../../store/DetailContext";
 import "./ResultsList.scss";
@@ -142,14 +143,11 @@ const ResultsList: React.FC<Props> = (props) => {
   // Display URI and snippet (if available) if result entity not recognized
   const getResultNoEntity = (results, index) => {
     let titleValue = results?.uri ? results?.uri : "No record URI";
-    let matchValue = results?.snippet?.match["#text"] ? results?.snippet?.match["#text"] : "";
     return (
         <div key={"result-" + index} className="result">
             <div className="details">
                 <div className="title no-entity"><Value>{titleValue}</Value></div>
-                <div className="subtitle no-entity">
-                    <div className="match"><Value id={"match-" + index}>{matchValue}</Value></div>
-                </div>
+                <div className="subtitle no-entity"><ResultSnippet config={{}} data={results} /></div>
             </div>
         </div>
     )

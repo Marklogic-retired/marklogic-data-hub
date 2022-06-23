@@ -4,7 +4,7 @@ import {getValByConfig} from '../../util/util';
 import "./RecordRaw.scss";
 
 /**
- * Component for showing one or more values for a List of links.
+ * Component for showing the raw JSON of a record.
  *
  * @component
  * @prop {string} component Name of component used for display.
