@@ -146,7 +146,7 @@ const ResultsList: React.FC<Props> = (props) => {
     return (
         <div key={"result-" + index} className="result">
             <div className="details">
-                <div className="title no-entity"><Value>{titleValue}</Value></div>
+          <div className="title no-entity" onClick={handleNameClick}><Value id={results?.uri}>{titleValue}</Value></div>
                 <div className="subtitle no-entity"><ResultSnippet config={{}} data={results} /></div>
             </div>
         </div>
