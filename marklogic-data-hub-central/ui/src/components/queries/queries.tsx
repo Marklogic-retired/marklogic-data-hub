@@ -5,7 +5,7 @@ import {SearchContext} from "@util/search-context";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencilAlt, faSave, faCopy, faUndo, faWindowClose, faEllipsisV, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import SaveQueryModal from "@components/queries/saving/save-query-modal/save-query-modal";
-import SaveQueriesDropdown from "@components/queries/saving/save-queries-dropdown/save-queries-dropdown";
+import SaveQueriesDropdown, {SELECT_QUERY_PLACEHOLDER} from "@components/queries/saving/save-queries-dropdown/save-queries-dropdown";
 import {fetchQueries, creatNewQuery, fetchQueryById, removeQuery} from "@api/queries";
 import styles from "./queries.module.scss";
 import EditQueryDetails from "./saving/edit-save-query/edit-query-details";
@@ -15,7 +15,6 @@ import {QueryOptions} from "../../types/query-types";
 import {HCButton, HCTooltip} from "@components/common";
 import {themeColors} from "@config/themes.config";
 import tooltipsConfig from "@config/explorer-tooltips.config";
-
 interface Props {
   queries: any[];
   isSavedQueryUser: boolean;
@@ -125,7 +124,7 @@ const Query: React.FC<Props> = (props) => {
     setDeleteModalVisibility(false);
   };
   const menu = (<div className={styles.menuContainer}>
-    {props.isSavedQueryUser && searchOptions.selectedQuery !== "select a query" && props.queries.length > 0 &&
+    {props.isSavedQueryUser && searchOptions.selectedQuery !== SELECT_QUERY_PLACEHOLDER && props.queries.length > 0 &&
       <Dropdown.Item onClick={() => setOpenEditDetail(true)}>
         <span>
           <FontAwesomeIcon icon={faPencilAlt} className={styles.queryMenuItemIcon} />
@@ -141,7 +140,7 @@ const Query: React.FC<Props> = (props) => {
         </span>
       </Dropdown.Item>
     }
-    {props.isSavedQueryUser && searchOptions.selectedQuery !== "select a query" && props.queries.length > 0 &&
+    {props.isSavedQueryUser && searchOptions.selectedQuery !== SELECT_QUERY_PLACEHOLDER && props.queries.length > 0 &&
       <Dropdown.Item onClick={() => setOpenSaveCopyModal(true)}>
         <span>
           <FontAwesomeIcon icon={faCopy} className={styles.queryMenuItemIcon} />
@@ -249,7 +248,7 @@ const Query: React.FC<Props> = (props) => {
         (JSON.stringify(currentQuery.savedQuery.sortOrder) !== JSON.stringify(searchOptions.sortOrder)) ||
         (JSON.stringify(currentQuery.savedQuery.propertiesToDisplay) !== JSON.stringify(searchOptions.selectedTableProperties)) ||
         (currentQuery.savedQuery.query.entityTypeIds.sort().join("") !== searchOptions.entityTypeIds.sort().join("")) ||
-        (props.greyFacets.length > 0) || props.isColumnSelectorTouched) && searchOptions.selectedQuery !== "select a query") {
+        (props.greyFacets.length > 0) || props.isColumnSelectorTouched) && searchOptions.selectedQuery !== SELECT_QUERY_PLACEHOLDER) {
         return true;
       }
     }
@@ -261,7 +260,7 @@ const Query: React.FC<Props> = (props) => {
       if (props.isSavedQueryUser && searchOptions.entityTypeIds.length > 0 &&
         (props.selectedFacets.length > 0 || searchOptions.query.length > 0
           || searchOptions.sortOrder.length > 0 || props.isColumnSelectorTouched)
-        && searchOptions.selectedQuery === "select a query") {
+        && searchOptions.selectedQuery === SELECT_QUERY_PLACEHOLDER) {
         return true;
       }
     }
@@ -298,13 +297,13 @@ const Query: React.FC<Props> = (props) => {
         }
       }
     }
-    if (searchOptions.selectedQuery === "select a query") {
+    if (searchOptions.selectedQuery === SELECT_QUERY_PLACEHOLDER) {
       setCurrentQueryDescription("");
     }
   }, [savedQueries]);
 
   useEffect(() => {
-    if (searchOptions.nextEntityType === "All Entities" && searchOptions.entityTypeIds.length > 1 && searchOptions.selectedQuery !== "select a query") {
+    if (searchOptions.nextEntityType === "All Entities" && searchOptions.entityTypeIds.length > 1 && searchOptions.selectedQuery !== SELECT_QUERY_PLACEHOLDER) {
       // TO CHECK IF THERE HAS BEEN A CANCEL CLICKED WHILE CHANGING ENTITY
       if (!(searchOptions.entityTypeIds.length > 1 || isSaveQueryChanged() || isNewQueryChanged())) {
         setCurrentQueryOnEntityChange();
@@ -316,7 +315,7 @@ const Query: React.FC<Props> = (props) => {
     toggleSaveNewIcon(false);
     props.setColumnSelectorTouched(false);
     setCurrentQuery({});
-    setCurrentQueryName("select a query");
+    setCurrentQueryName(SELECT_QUERY_PLACEHOLDER);
     setCurrentQueryDescription("");
   };
 
@@ -344,7 +343,7 @@ const Query: React.FC<Props> = (props) => {
       searchText: "",
       entityTypeIds: [],
       selectedFacets: {},
-      selectedQuery: "select a query",
+      selectedQuery: SELECT_QUERY_PLACEHOLDER,
       propertiesToDisplay: [],
       sortOrder: [],
       database: "final",
@@ -363,11 +362,11 @@ const Query: React.FC<Props> = (props) => {
   const resetIconClicked = () => {
     const {entityDefArray, setCurrentBaseEntities} = props;
     const resetQueryEditedConfirmation = props.isSavedQueryUser && props.queries.length > 0
-      && searchOptions.selectedQuery !== "select a query" && isSaveQueryChanged();
+      && searchOptions.selectedQuery !== SELECT_QUERY_PLACEHOLDER && isSaveQueryChanged();
     const resetQueryNewConfirmation = props.isSavedQueryUser && props.queries.length > 0 && searchOptions.entityTypeIds.length > 0 &&
       (props.selectedFacets.length > 0 || searchOptions.query.length > 0
         || searchOptions.sortOrder.length > 0)
-      && searchOptions.selectedQuery === "select a query";
+      && searchOptions.selectedQuery === SELECT_QUERY_PLACEHOLDER;
     if (resetQueryNewConfirmation) {
       toggleResetQueryNewConfirmation(true);
     } else if (resetQueryEditedConfirmation) {
@@ -377,7 +376,7 @@ const Query: React.FC<Props> = (props) => {
         searchText: "",
         entityTypeIds: [],
         selectedFacets: {},
-        selectedQuery: "select a query",
+        selectedQuery: SELECT_QUERY_PLACEHOLDER,
         propertiesToDisplay: [],
         sortOrder: [],
         database: "final",
@@ -393,7 +392,7 @@ const Query: React.FC<Props> = (props) => {
   };
 
   useEffect(() => {
-    if (Object.entries(currentQuery).length !== 0 && searchOptions.selectedQuery !== "select a query") {
+    if (Object.entries(currentQuery).length !== 0 && searchOptions.selectedQuery !== SELECT_QUERY_PLACEHOLDER) {
       setSearchOptions({
         ...searchOptions,
         selectedTableProperties: currentQuery.savedQuery.propertiesToDisplay
@@ -407,7 +406,7 @@ const Query: React.FC<Props> = (props) => {
 
 
   useEffect(() => {
-    if (isSaveQueryChanged() && searchOptions.selectedQuery !== "select a query") {
+    if (isSaveQueryChanged() && searchOptions.selectedQuery !== SELECT_QUERY_PLACEHOLDER) {
       toggleSaveChangesIcon(true);
       toggleDiscardIcon(true);
       toggleSaveNewIcon(false);
@@ -419,7 +418,26 @@ const Query: React.FC<Props> = (props) => {
 
   }, [searchOptions, props.greyFacets, isSaveQueryChanged()]);
 
-  const isEnabledSaveButton = () => props.isSavedQueryUser && (props.selectedFacets.length > 0 || searchOptions.query || props.isColumnSelectorTouched || searchOptions.sortOrder.length > 0) && searchOptions.selectedQuery === "select a query";
+  const clearQueryOption = (isDisabled: boolean = false) => <>
+    <span>
+      <FontAwesomeIcon
+        className={styles.iconHover}
+        icon={faWindowClose}
+        title={"reset-changes"}
+        size="lg"
+        style={{width: "18px", color: isDisabled ? themeColors.light : themeColors.info, cursor: "pointer"}}
+      />
+    </span>
+    <span
+      className="ps-2"
+      aria-label="clear-query"
+      style={{color: isDisabled ? themeColors.light : themeColors.info}}
+    >
+      Clear query
+    </span>
+  </>;
+
+  const isEnabledSaveButton = () => props.isSavedQueryUser && (props.selectedFacets.length > 0 || searchOptions.query || props.isColumnSelectorTouched || searchOptions.sortOrder.length > 0) && searchOptions.selectedQuery === SELECT_QUERY_PLACEHOLDER;
 
   return (
     <>
@@ -449,7 +467,7 @@ const Query: React.FC<Props> = (props) => {
                 {showSaveNewIcon &&
                   <HCTooltip
                     text={
-                      props.isSavedQueryUser ? (((props.selectedFacets.length > 0 || searchOptions.query || props.isColumnSelectorTouched || searchOptions.sortOrder.length > 0) && searchOptions.selectedQuery === "select a query") ?
+                      props.isSavedQueryUser ? (((props.selectedFacets.length > 0 || searchOptions.query || props.isColumnSelectorTouched || searchOptions.sortOrder.length > 0) && searchOptions.selectedQuery === SELECT_QUERY_PLACEHOLDER) ?
                         exploreSidebarQueries.saveNewQuery :
                         exploreSidebarQueries.disabledSaveButton
                       ) :
@@ -530,7 +548,7 @@ const Query: React.FC<Props> = (props) => {
                     />}
                 </div>
               </div>
-              {searchOptions.selectedQuery !== "select a query" &&
+              {searchOptions.selectedQuery !== SELECT_QUERY_PLACEHOLDER &&
                 <div>{ellipsisMenu}</div>
               }
               {
@@ -547,7 +565,7 @@ const Query: React.FC<Props> = (props) => {
                     />}
                 </div>}
 
-              {props.isSavedQueryUser && searchOptions.selectedQuery !== "select a query" && props.queries.length > 0 &&
+              {props.isSavedQueryUser && searchOptions.selectedQuery !== SELECT_QUERY_PLACEHOLDER && props.queries.length > 0 &&
                 <div>
                   {openEditDetail &&
                     <EditQueryDetails
@@ -560,7 +578,7 @@ const Query: React.FC<Props> = (props) => {
                     />
                   }
                 </div>}
-              {props.isSavedQueryUser && searchOptions.selectedQuery !== "select a query" && props.queries.length > 0 &&
+              {props.isSavedQueryUser && searchOptions.selectedQuery !== SELECT_QUERY_PLACEHOLDER && props.queries.length > 0 &&
                 <div>
                   {openSaveCopyModal &&
                     <SaveQueryModal
@@ -585,24 +603,25 @@ const Query: React.FC<Props> = (props) => {
             className={currentQueryDescription.length > 50 ? styles.longDescription : styles.description}>
             <HCTooltip text={currentQueryDescription} id="current-query-description-tooltip" placement="top">
               <span>{
-                searchOptions.selectedQuery === "select a query" ? "" : searchOptions.selectedQuery && searchOptions.selectedQuery !== "select a query" &&
+                searchOptions.selectedQuery === SELECT_QUERY_PLACEHOLDER ? "" : searchOptions.selectedQuery && searchOptions.selectedQuery !== SELECT_QUERY_PLACEHOLDER &&
                   currentQueryDescription.length > 50 ? currentQueryDescription.substring(0, 50).concat("...") : currentQueryDescription
               }</span>
             </HCTooltip>
           </div>
           <div>
-            <span id="reset-changes" className={styles.clearQueryLink} onClick={() => resetIconClicked()}>
-              <span>
-                <FontAwesomeIcon
-                  className={styles.iconHover}
-                  icon={faWindowClose}
-                  title={"reset-changes"}
-                  size="lg"
-                  style={{width: "18px", color: themeColors.info, cursor: "pointer"}}
-                />
+            {/*
+            //ToDo: To change this tooltip when finished the task DHFPROD-8627
+            */}
+            {searchOptions.selectedQuery === SELECT_QUERY_PLACEHOLDER
+              ? <HCTooltip text={"To enable this action you should select a query"} aria-label="clear-query-tooltip" id="clear-query-tooltip" placement="top">
+                <span id="reset-changes" className={styles.clearQueryLink}>
+                  {clearQueryOption(true)}
+                </span>
+              </HCTooltip>
+              : <span id="reset-changes" className={styles.clearQueryLink} onClick={() => resetIconClicked()}>
+                {clearQueryOption(false)}
               </span>
-              <span className="text-info ps-2" aria-label="clear-query">Clear query</span>
-            </span>
+            }
             <Modal
               show={showResetQueryEditedConfirmation || showResetQueryNewConfirmation}
             >
