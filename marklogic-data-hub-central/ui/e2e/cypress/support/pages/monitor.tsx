@@ -38,6 +38,10 @@ class MonitorPage {
   getPageSizeOption(pageSizeOption: string) {
     return cy.findByText(pageSizeOption);
   }
+  checkCurrentPage(page:number) {
+    cy.get(`#pagination-item-${page}`).first().scrollIntoView().contains(page).should("exist");
+  }
+
   validateAppliedFacetTableRows(facetType: string, index: number) {
     // filter by facet
     cy.get(`[data-testid=${facetType}-facet] input`).eq(index).check();
@@ -118,6 +122,11 @@ class MonitorPage {
     return cy.get(`th[class^="hc-table_header"]`);
   }
 
+  verifyVisibilityTableHeader(headerName:string, visible: boolean) {
+    if (visible) cy.get("thead").should("include.text", headerName);
+    else cy.get("thead").should("not.include.text", headerName);
+  }
+
   getColumnSelectorIcon() {
     return cy.get(`[data-testid="column-selector-icon"]`).scrollIntoView();
   }
@@ -183,6 +192,14 @@ class MonitorPage {
 
   getCollapseAllTableRows() {
     return cy.get("#collapseIcon path");
+  }
+
+  getRowByIndex(rowIndex:number) {
+    return cy.get("*[class^=\"hc-table_iconIndicator\"]").eq(rowIndex).scrollIntoView().should("be.visible");
+  }
+
+  checkExpandedRow() {
+    return cy.get(".reset-expansion-style").scrollIntoView().should("exist");
   }
 
   getOrderColumnMonitorTable(column: string, order?: string) {

@@ -11,8 +11,8 @@ import SidebarFooter from "@components/sidebar-footer/sidebar-footer";
 import MonitorSidebar from "@components/monitor-sidebar/monitor-sidebar";
 import MonitorSelectedFacets from "@components/monitor-selected-facets/monitor-selected-facets";
 import {MonitorContext} from "@util/monitor-context";
+import {getViewSettings} from "@util/user-context";
 import {HCSider} from "@components/common";
-
 
 const Monitor: React.FC = () => {
 
@@ -27,6 +27,8 @@ const Monitor: React.FC = () => {
   const [greyFacets, setGreyFacets] = useState<any[]>([]);
   const [showApply, toggleApply] = useState(false);
   const [applyClicked, toggleApplyClicked] = useState(false);
+  const storage = getViewSettings();
+
   const {
     handleError
   } = useContext(UserContext);
@@ -81,6 +83,22 @@ const Monitor: React.FC = () => {
     setGreyFacets(facets);
   };
 
+  const getCurrentPageTable = () => {
+    let storageAux = storage?.monitorStepsFlowsTable;
+    if (storageAux?.pageNumberTable) {
+      let pageNumberTableAux = storageAux?.pageNumberTable;
+      return pageNumberTableAux;
+    } else return 1;
+  };
+
+  const getCurrentPageSizeTable = () => {
+    let storageAux = storage?.monitorStepsFlowsTable;
+    if (storageAux?.pageSizeTable) {
+      let pageSizeTableAux = storageAux?.pageSizeTable;
+      return pageSizeTableAux;
+    } else return 20;
+  };
+
   return (
     <div className={styles.layout}>
       <HCSider placement="left" show={true} footer={<SidebarFooter />}>
@@ -104,8 +122,8 @@ const Monitor: React.FC = () => {
           <div id="top-search-pagination-bar" className={styles.monitorPagination}>
             <SearchPagination
               total={totalDocuments}
-              pageNumber={monitorOptions.pageNumber}
-              pageSize={monitorOptions.pageSize}
+              pageNumber={getCurrentPageTable() !== 1 ? getCurrentPageTable(): monitorOptions.pageNumber}
+              pageSize={getCurrentPageSizeTable() !== 20 ? getCurrentPageSizeTable(): monitorOptions.pageSize}
               pageLength={monitorOptions.pageLength}
               maxRowsPerPage={monitorOptions.maxRowsPerPage}
             >
@@ -126,8 +144,8 @@ const Monitor: React.FC = () => {
           </div>
           <SearchPagination
             total={totalDocuments}
-            pageNumber={monitorOptions.pageNumber}
-            pageSize={monitorOptions.pageSize}
+            pageNumber={getCurrentPageTable() !== 1 ? getCurrentPageTable(): monitorOptions.pageNumber}
+            pageSize={getCurrentPageSizeTable() !== 20 ? getCurrentPageSizeTable(): monitorOptions.pageSize}
             pageLength={monitorOptions.pageLength}
             maxRowsPerPage={monitorOptions.maxRowsPerPage}
           />

@@ -12,6 +12,7 @@ import Popover from "react-bootstrap/Popover";
 import {OverlayTrigger} from "react-bootstrap";
 import {themeColors} from "@config/themes.config";
 import ExpandCollapse from "../../../src/components/expand-collapse/expand-collapse";
+import {getViewSettings, setViewSettings} from "@util/user-context";
 
 const JobResultsTableView = ({data}) => {
   const [popoverVisibility, setPopoverVisibility] = useState<boolean>(false);
@@ -20,6 +21,7 @@ const JobResultsTableView = ({data}) => {
   const [arraybyDistinctJobId, setArraybyDistinctJobId] = useState<any>([]);
   const [orderColumn, setOrderColumn] = useState("");
   const [orderColumnName, setOrderColumnName] = useState("");
+  const [flagOrderManual, setFlagOrderManual] = useState(false);
   //const [expandedRowKeys, setExpandedRowKeys] = useState<any[]>([]);
 
   const handleOpenJobResponse = (jobId) => {
@@ -50,12 +52,15 @@ const JobResultsTableView = ({data}) => {
   };
 
   useEffect(() => {
-    toggleSourceTable("expand");
+    toggleSourceTable("expand", false);
   }, [orderColumnName, orderColumn]);
 
   const orderColumns = (field: string, order: string) => {
+    setFlagOrderManual(true);
+    saveExpandedTableKeys();
     setOrderColumnName(field);
     setOrderColumn(order);
+    saveColumnOrder(field, order);
   };
 
   const MANDATORY_HEADERS = [
@@ -72,7 +77,7 @@ const JobResultsTableView = ({data}) => {
           </HCTooltip>
         </>;
       },
-      sortFunc: (a, b, dataField) => {},
+      sortFunc: (a, b, dataField) => { },
       onSort: (field, order) => {
         orderColumns(field, order);
       }
@@ -91,7 +96,7 @@ const JobResultsTableView = ({data}) => {
       //width: 140,
       sort: true,
       formatter: emptyValue,
-      sortFunc: (a, b, dataField) => {},
+      sortFunc: (a, b, dataField) => { },
       onSort: (field, order) => {
         orderColumns(field, order);
       }
@@ -104,7 +109,7 @@ const JobResultsTableView = ({data}) => {
       sort: true,
       align: "center",
       formatter: emptyValue,
-      sortFunc: (a, b, dataField) => {},
+      sortFunc: (a, b, dataField) => { },
       onSort: (field, order) => {
         orderColumns(field, order);
       }
@@ -116,7 +121,7 @@ const JobResultsTableView = ({data}) => {
       //width: 100,
       sort: true,
       formatter: emptyValue,
-      sortFunc: (a, b, dataField) => {},
+      sortFunc: (a, b, dataField) => { },
       onSort: (field, order) => {
         orderColumns(field, order);
       }
@@ -128,7 +133,7 @@ const JobResultsTableView = ({data}) => {
       //width: 150,
       sort: true,
       formatter: emptyValue,
-      sortFunc: (a, b, dataField) => {},
+      sortFunc: (a, b, dataField) => { },
       onSort: (field, order) => {
         orderColumns(field, order);
       }
@@ -186,6 +191,80 @@ const JobResultsTableView = ({data}) => {
     "custom": "Custom"
   };
 
+  const saveColumnOrder = (field, order) => {
+    let newDataStorage;
+    const storage = getViewSettings();
+    newDataStorage = {
+      ...storage, monitorStepsFlowsTable: {
+        ...storage.monitorStepsFlowsTable,
+        sortColumnName: field,
+        sortColumn: order
+      }
+    };
+    setViewSettings(newDataStorage);
+  };
+
+  const saveExpandedTableKeys = () => {
+    const storage = getViewSettings();
+    let newDataStorage;
+    newDataStorage = {
+      ...storage, monitorStepsFlowsTable: {
+        ...storage.monitorStepsFlowsTable,
+        expandedTableKeys: expandCollapseIdRows,
+      }
+    };
+    setViewSettings(newDataStorage);
+  };
+
+  const saveColumnsToShow = (filteredColumns?) => {
+    const storage = getViewSettings();
+    let newDataStorage;
+    newDataStorage = {
+      ...storage, monitorStepsFlowsTable: {
+        ...storage.monitorStepsFlowsTable,
+        columnOptions: checkedAttributes,
+        filteredColumns: filteredColumns
+      }
+    };
+    setViewSettings(newDataStorage);
+  };
+
+  const getColumnOrder = () => {
+    const storage = getViewSettings();
+    let storageAux = storage?.monitorStepsFlowsTable;
+    if (storageAux?.sortColumn) {
+      let sortColumn = storageAux.sortColumn;
+      return sortColumn;
+    }
+  };
+
+  const getColumnsToShow = () => {
+    const storage = getViewSettings();
+    let storageAux = storage?.monitorStepsFlowsTable;
+    if (storageAux?.columnOptions) {
+      let columnOptions = storageAux.columnOptions;
+      return columnOptions;
+    } else return "";
+  };
+
+  const getColumnNameOrder = () => {
+    const storage = getViewSettings();
+    let storageAux = storage?.monitorStepsFlowsTable;
+    if (storageAux?.sortColumnName) {
+      let sortColumnName = storageAux.sortColumnName;
+      return sortColumnName;
+    }
+  };
+
+  const getExpandedTableKeys = () => {
+    const storage = getViewSettings();
+    let storageAux = storage?.monitorStepsFlowsTable;
+    if (storageAux?.expandedTableKeys?.length > 0) {
+      let expandedTableKeys = storageAux.expandedTableKeys;
+      return expandedTableKeys;
+    } else return [];
+  };
+
   const statusIcon = (status) => {
     if (status && status === "running" || /^running/.test(status)) {
       return <>
@@ -235,8 +314,37 @@ const JobResultsTableView = ({data}) => {
     }
   } : {...item}));
 
-  const [currentColumnHeaders, setCurrentColumnHeaders] = useState(allColumnHeaders);
-  const [checkedAttributes, setCheckedAttributes] = useState({
+  // const getColumnsToShowHeaders = () => {
+  //   const storage = getViewSettings();
+  //   let storageAux = storage?.monitorStepsFlowsTable;
+  //   if (storageAux?.filteredColumns && storageAux?.filteredColumns.length > 0) {
+  //     let filteredColumns = storageAux.filteredColumns;
+  //     return filteredColumns;
+  //   }
+  // };
+
+  const filterVisibleColumns = () => {
+    if (getColumnsToShow()) {
+      let objCheckedColumns = getColumnsToShow();
+      let allColumnHeadersAux = allColumnHeaders;
+
+      for (let i = 0; i < allColumnHeadersAux.length; i++) {
+        if (!objCheckedColumns["user"] && allColumnHeadersAux[i]?.dataField === "user") {
+          allColumnHeadersAux.splice(i, 1);
+        }
+        if (!objCheckedColumns["flowName"] && allColumnHeadersAux[i]?.dataField === "flowName") {
+          allColumnHeadersAux.splice(i, 1);
+        }
+      }
+      return allColumnHeadersAux;
+    } else {
+      return allColumnHeaders;
+    }
+  };
+
+  const [currentColumnHeaders, setCurrentColumnHeaders] = useState(filterVisibleColumns());
+  const [checkedAttributesFlag, setCheckedAttributesFlag] = useState("");
+  const [checkedAttributes, setCheckedAttributes] = useState(getColumnsToShow() !== "" ? getColumnsToShow() : {
     "user": true,
     "flowName": true
   });
@@ -257,12 +365,14 @@ const JobResultsTableView = ({data}) => {
     setCurrentColumnHeaders(filteredColumns);
     setPreviousCheckedAttributes({...checkedAttributes});
     setPopoverVisibility(false);
+    saveColumnsToShow(filteredColumns);
   };
 
   const handleColOptionsChecked = (e) => {
     let obj = checkedAttributes;
     obj[e.target.value] = e.target.checked;
     setCheckedAttributes({...obj});
+    checkedAttributesFlag ? checkedAttributesFlag === "false" ? setCheckedAttributesFlag("true") : setCheckedAttributesFlag("false") : setCheckedAttributesFlag("true");
   };
 
   const content = (
@@ -277,7 +387,7 @@ const JobResultsTableView = ({data}) => {
                   handleClick={handleColOptionsChecked}
                   value={attribute}
                   label={columnOptionsLabel[attribute]}
-                  checked={checkedAttributes[attribute]}
+                  checked={checkedAttributesFlag === "" ? getColumnsToShow() !== "" ? getColumnsToShow()[attribute] : checkedAttributes[attribute] : checkedAttributes[attribute]}
                   dataTestId={`columnOptionsCheckBox-${attribute}`} />
               </div>
             ))}
@@ -308,12 +418,26 @@ const JobResultsTableView = ({data}) => {
   };
 
   const sortRows = (data) => {
-    if (orderColumnName === "jobId") {
-      orderColumn === "asc" && orderColumnName && data.sort((a, b) => a?.stepName?.localeCompare(b?.stepName ? b?.stepName : ""));
-      orderColumn === "desc" && orderColumnName && data.sort((a, b) => b?.stepName?.localeCompare(a?.stepName ? a?.stepName : ""));
+    let columnOrderAux, columnNameOrderAux;
+    if (!flagOrderManual) {
+      columnOrderAux = getColumnOrder() ? getColumnOrder() : orderColumn;
+      columnNameOrderAux = getColumnNameOrder() ? getColumnNameOrder() : orderColumnName;
+
+      if (columnNameOrderAux === "jobId") {
+        columnOrderAux === "asc" && columnNameOrderAux && data.sort((a, b) => a?.stepName?.localeCompare(b?.stepName ? b?.stepName : ""));
+        columnOrderAux === "desc" && columnNameOrderAux && data.sort((a, b) => b?.stepName?.localeCompare(a?.stepName ? a?.stepName : ""));
+      } else {
+        columnOrderAux === "asc" && columnNameOrderAux && data.sort((a, b) => a[columnNameOrderAux]?.localeCompare(b[columnNameOrderAux] ? b[columnNameOrderAux] : ""));
+        columnOrderAux === "desc" && columnNameOrderAux && data.sort((a, b) => b[columnNameOrderAux]?.localeCompare(a[columnNameOrderAux] ? a[columnNameOrderAux] : ""));
+      }
     } else {
-      orderColumn === "asc" && orderColumnName && data.sort((a, b) => a[orderColumnName]?.localeCompare(b[orderColumnName] ? b[orderColumnName] : ""));
-      orderColumn === "desc" && orderColumnName && data.sort((a, b) => b[orderColumnName]?.localeCompare(a[orderColumnName] ? a[orderColumnName] : ""));
+      if (orderColumnName === "jobId") {
+        orderColumn === "asc" && orderColumnName && data.sort((a, b) => a?.stepName?.localeCompare(b?.stepName ? b?.stepName : ""));
+        orderColumn === "desc" && orderColumnName && data.sort((a, b) => b?.stepName?.localeCompare(a?.stepName ? a?.stepName : ""));
+      } else {
+        orderColumn === "asc" && orderColumnName && data.sort((a, b) => a[orderColumnName]?.localeCompare(b[orderColumnName] ? b[orderColumnName] : ""));
+        orderColumn === "desc" && orderColumnName && data.sort((a, b) => b[orderColumnName]?.localeCompare(a[orderColumnName] ? a[orderColumnName] : ""));
+      }
     }
 
     return data;
@@ -329,13 +453,12 @@ const JobResultsTableView = ({data}) => {
     }
   }, [monitorOptions]);
 
-
   const [expandCollapseIdRows, setExpandCollapseIdRows] = useState<any[]>([]);
   const [expandCollapseIdRowsOriginal, setExpandCollapseIdRowsOriginal] = useState<any[]>([]);
-  const toggleSourceTable = (expandedToggle) => {
-
+  const toggleSourceTable = (expandedToggle, clicked?) => {
+    clicked && saveExpandedTableKeys();
     if (expandedToggle === "expand") {
-      setExpandCollapseIdRows(expandCollapseIdRowsOriginal);
+      setExpandCollapseIdRows(flagOrderManual ? expandCollapseIdRowsOriginal : !clicked ? getExpandedTableKeys().length > 0 ? getExpandedTableKeys() : expandCollapseIdRowsOriginal : expandCollapseIdRowsOriginal);
     } else {
       setExpandCollapseIdRows([]);
     }
@@ -354,7 +477,7 @@ const JobResultsTableView = ({data}) => {
   };
 
   const handleVisibleHeader = (headerName) => {
-    return currentColumnHeaders.find(x => x.text === headerName);
+    return currentColumnHeaders?.find(x => x.text === headerName);
   };
 
   const columnUser = handleVisibleHeader(user) && !handleVisibleHeader(flowName);
@@ -365,7 +488,7 @@ const JobResultsTableView = ({data}) => {
     <>
       <div className={styles.columnSelector} data-cy="column-selector">
         <div className={styles.fixedPopup}>
-          <ExpandCollapse handleSelection={(val) => toggleSourceTable(val)} currentSelection={""} />
+          <ExpandCollapse handleSelection={(val) => toggleSourceTable(val, true)} currentSelection={""} />
           <OverlayTrigger placement="left-start" overlay={content} trigger="click" show={popoverVisibility}>
             <span data-testid={"tooltip-wrapper"} className={styles.spanColumnIcon}>
               <HCTooltip id="select-columns-tooltip" text="Select the columns to display." placement="top-end">
@@ -390,6 +513,7 @@ const JobResultsTableView = ({data}) => {
           onExpand={(record, expanded) => toggleRowExpanded(expanded, record)}
           expandedRowKeys={expandCollapseIdRows}
           expandedRowRender={(row) => {
+            saveExpandedTableKeys();
 
             let nestedFlowRows = data.filter((obj) => {
               return obj.jobId === row.jobId;
@@ -398,15 +522,15 @@ const JobResultsTableView = ({data}) => {
             return sortRows(nestedFlowRows).map((row) => (
               <div className="row rowExpandedDetail" style={{margin: 0}}>
                 <div style={{width: 50}}></div>
-                <div className="stepNameDiv" id={row.jobId+"_"+row.stepName} data-testid={`${row.stepName}-result`}>{row.stepName}</div>
-                <div className="stepType" id={row.jobId+"_"+row.stepName}>{StepDefinitionTypeTitles[row.stepDefinitionType]}</div>
+                <div className="stepNameDiv" id={row.jobId + "_" + row.stepName} data-testid={`${row.stepName}-result`}>{row.stepName}</div>
+                <div className="stepType" id={row.jobId + "_" + row.stepName}>{StepDefinitionTypeTitles[row.stepDefinitionType]}</div>
                 <div className="stepStatus" id={row.jobId + "_" + row.stepName} data-testid={row.stepStatus}>{statusIcon(row.stepStatus)}</div>
-                <div className="stepEntityType" id={row.jobId+"_"+row.stepName}>{row.entityName}</div>
-                <div className="stepStartDate" id={row.jobId+"_"+row.stepName}>{(dateConverter(row.startTime))}</div>
-                <div className="stepDuration" id={row.jobId+"_"+row.stepName}>{row.duration}</div>
-                <div className={`${noCustomColumns ? "stepDocumentsAux": "stepDocuments" }`} id={row.jobId+"_"+row.stepName}>{row.successfulItemCount}</div>
-                <div className={`${columnUser ? "stepUserAux": "stepUser" }`} id={row.jobId+"_"+row.stepName} style={{display: handleVisibleHeader(user) ? "" : "none"}}>{row.user}</div>
-                <div className="stepFlowName" id={row.jobId+"_"+row.stepName}style={{display: handleVisibleHeader(flowName) ? "" : "none"}}>{row.flowName}</div>
+                <div className="stepEntityType" id={row.jobId + "_" + row.stepName}>{row.entityName}</div>
+                <div className="stepStartDate" id={row.jobId + "_" + row.stepName}>{(dateConverter(row.startTime))}</div>
+                <div className="stepDuration" id={row.jobId + "_" + row.stepName}>{row.duration}</div>
+                <div className={`${noCustomColumns ? "stepDocumentsAux" : "stepDocuments"}`} id={row.jobId + "_" + row.stepName}>{row.successfulItemCount}</div>
+                <div className={`${columnUser ? "stepUserAux" : "stepUser"}`} id={row.jobId + "_" + row.stepName} style={{display: handleVisibleHeader(user) ? "" : "none"}}>{row.user}</div>
+                <div className="stepFlowName" id={row.jobId + "_" + row.stepName} style={{display: handleVisibleHeader(flowName) ? "" : "none"}}>{row.flowName}</div>
               </div>
             ), []);
           }}

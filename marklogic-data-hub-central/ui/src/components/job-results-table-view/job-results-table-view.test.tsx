@@ -213,8 +213,8 @@ describe("Column Selector in Job results Table view component", () => {
     await fireEvent.click(applyButton);
 
     //check table data is rendered correctly
-    expect(queryByText("pari")).not.toBeInTheDocument();
-    expect(getByText("61040854-2894-44b9-8fbd-fc6e71357692")).toBeInTheDocument();
-    expect(queryByText("convertedFlow")).not.toBeInTheDocument();
+    await(() => expect(queryByText("pari")).not.toBeInTheDocument());
+    await(() => expect(getByText("61040854-2894-44b9-8fbd-fc6e71357692")).toBeInTheDocument());
+    await(() => expect(queryByText("convertedFlow")).not.toBeInTheDocument());
   });
 });

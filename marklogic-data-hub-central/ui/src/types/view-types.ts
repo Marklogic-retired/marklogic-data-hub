@@ -86,4 +86,13 @@ export type ViewSettingsType = {
         pageNumberTable?: {},
         selectedValues?:string[],
     },
+    monitorStepsFlowsTable: {
+        expandedTableKeys: [],
+        filteredColumns?:[],
+        columnOptions?:any,
+        pageSizeTable?: number,
+        pageNumberTable?: number,
+        sortColumnName: string,
+        sortColumn: string
+        }
 };
