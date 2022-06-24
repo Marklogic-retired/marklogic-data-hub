@@ -280,6 +280,7 @@ class Matchable {
   }
 
   _buildQueryFromPropertyDefinitionsAndValues(propertyDefinitions, values) {
+    if(values instanceof Function) return values;
     const valuesAreQueries = values instanceof cts.query;
     const lastPropertyDefinitionIndex = propertyDefinitions.length - 1;
     const lastPropertyDefinition = propertyDefinitions[lastPropertyDefinitionIndex];
@@ -297,6 +298,7 @@ class MatchRulesetDefinition {
   constructor(matchRuleset, matchable) {
     this.matchRuleset = matchRuleset;
     this.matchable = matchable;
+    this._matchRuleFunctions = [];
   }
 
   name() {
@@ -373,10 +375,21 @@ class MatchRulesetDefinition {
 
   score(contentObjectA, contentObjectB) {
     const query = this.buildCtsQuery(contentObjectA.value);
+    const model = this.matchable.model();
+
+    for (const matchRule of this.matchRuleset.matchRules) {
+      const valueFunction = this._valueFunction(matchRule, model);
+      const matchFunction = this._matchFunction(matchRule, model);
+      const values = valueFunction(contentObjectA.value);
+      const query = fn.exists(values) ? matchFunction(values): null;
+      if(query instanceof Function) {
+        this._matchRuleFunctions.push(query);
+      }
+    }
     if (matchingDebugTraceEnabled) {
       xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Scoring ${xdmp.describe(contentObjectA.value)} with ${xdmp.describe(contentObjectB.value)} using cts.query: ${xdmp.describe(query, Sequence.from([]), Sequence.from([]))}.`);
     }
-    if (fn.exists(query) && cts.contains(contentObjectB.value, query)) {
+    if (fn.exists(query) && cts.contains(contentObjectB.value, query) && this._matchRuleFunctions.every((rule)=> rule(contentObjectB.value))) {
       if (matchingDebugTraceEnabled) {
         xdmp.trace(consts.TRACE_MATCHING_DEBUG, "Query matched!");
       }
@@ -403,7 +416,9 @@ class MatchRulesetDefinition {
       if (!query) {
         return null;
       }
-      queries.push(query);
+      if(query instanceof cts.query) {
+        queries.push(query);
+      }
     }
     if (matchingDebugTraceEnabled) {
       xdmp.trace(consts.TRACE_MATCHING_DEBUG, `cts.query for ${xdmp.describe(documentNode)} with match ruleset ${this.name()} before optimization is ${xdmp.describe(queries)}`);
