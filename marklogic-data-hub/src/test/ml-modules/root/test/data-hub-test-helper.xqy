@@ -11,6 +11,8 @@ import module namespace config = "http://marklogic.com/data-hub/config" at "/com
 import module namespace cvt = "http://marklogic.com/cpf/convert" at "/MarkLogic/conversion/convert.xqy";
 import module namespace test = "http://marklogic.com/test" at "/test/test-helper.xqy";
 
+declare namespace host = "http://marklogic.com/xdmp/status/host";
+
 declare variable $TYPE-TO-COLLECTION-MAP := map:new((
   map:entry("flows", "http://marklogic.com/data-hub/flow"),
   map:entry("entities", "http://marklogic.com/entity-services/models"),
@@ -373,6 +375,7 @@ declare function run-with-roles-and-privileges($roles, $privileges, $func-or-mod
 
 declare function wait-for-indexes()
 {
+  wait-for-triggers(),
   try {
     run-with-roles-and-privileges("admin", (), function() {
       wait-for-indexes(1)
@@ -389,6 +392,30 @@ declare function wait-for-indexes($count as xs:unsignedLong) {
     if ($is-indexing and $count lt 250) then
       let $_sleep := xdmp:sleep(250 * (($count idiv 100) + 1))
       return wait-for-indexes($count + 1)
+    else
+      ()
+};
+
+declare function wait-for-triggers()
+{
+  try {
+    run-with-roles-and-privileges("admin", (), function() {
+      wait-for-triggers(1)
+    }, ())
+  } catch ($e) {
+    if ($e/error:code = ("XDMP-EXTIME", "SVC-EXTIME")) then ()
+    else xdmp:rethrow()
+  }
+};
+
+declare function wait-for-triggers($count as xs:unsignedLong) {
+  let $host-statuses := xdmp:host-status(xdmp:hosts())
+  let $host-task-servers := $host-statuses/host:task-server/host:task-server-id
+  let $triggers-are-running := 0 lt fn:count($host-statuses/host:transactions/host:transaction[host:server-id = $host-task-servers])
+  return
+    if ($triggers-are-running and $count lt 250) then
+      let $_sleep := xdmp:sleep(250 * (($count idiv 100) + 1))
+      return wait-for-triggers($count + 1)
     else
       ()
 };
