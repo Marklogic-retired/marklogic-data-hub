@@ -93,6 +93,10 @@ public class EntitySearchManager {
     }
 
     public StringHandle search(SearchQuery searchQuery) {
+        return search(searchQuery, false);
+    }
+
+    public StringHandle search(SearchQuery searchQuery, boolean forExport) {
         QueryManager queryMgr = searchDatabaseClient.newQueryManager();
 
         // Setting criteria and searching
@@ -109,6 +113,7 @@ public class EntitySearchManager {
                 if (selectedEntityTypes.size() == 1) {
                     searchResultsTransform.put("entityName", selectedEntityTypes.get(0));
                 }
+                searchResultsTransform.put("forExport", Boolean.toString(forExport));
                 searchResultsTransform.put("propertiesToDisplay", searchQuery.getPropertiesToDisplay());
                 queryDefinition.setResponseTransform(searchResultsTransform);
             } else {
@@ -253,19 +258,27 @@ public class EntitySearchManager {
     public void exportRows(JsonNode queryDocument, Long limit, OutputStream out) {
         QueryManager queryMgr = searchDatabaseClient.newQueryManager();
         SearchQuery searchQuery = transformToSearchQuery(queryDocument);
-        RawStructuredQueryDefinition structuredQueryDefinition = buildQuery(queryMgr, searchQuery);
+        Reader export = null;
+        if(searchQuery.getQuery().getEntityTypeIds().size() > 1) {
+            searchQuery.setPageLength(limit != null && limit > 0 ? limit : Long.MAX_VALUE);
+            String exportData = search(searchQuery, true) == null ? "" : search(searchQuery, true).get();
+            export = new StringReader(exportData);
+        } else {
+            RawStructuredQueryDefinition structuredQueryDefinition = buildQuery(queryMgr, searchQuery);
 
-        final String structuredQuery = structuredQueryDefinition.serialize();
-        final String searchText = searchQuery.getQuery().calculateSearchCriteria();
-        final String queryOptions = getQueryOptions(QUERY_OPTIONS);
-        final String entityTypeId = getEntityTypeIdForRowExport(queryDocument);
-        final List<String> columns = getColumnNamesForRowExport(queryDocument);
-        final List<SearchQuery.SortOrder> sortOrder = searchQuery.getSortOrder().orElse(new ArrayList<>());
-        final ArrayNode sortOrderNode = sortOrderToArrayNode(sortOrder);
+            final String structuredQuery = structuredQueryDefinition.serialize();
+            final String searchText = searchQuery.getQuery().calculateSearchCriteria();
+            final String queryOptions = getQueryOptions(QUERY_OPTIONS);
+            final String entityTypeId = getEntityTypeIdForRowExport(queryDocument);
+            final List<String> columns = getColumnNamesForRowExport(queryDocument);
+            final List<SearchQuery.SortOrder> sortOrder = searchQuery.getSortOrder().orElse(new ArrayList<>());
+            final ArrayNode sortOrderNode = sortOrderToArrayNode(sortOrder);
 
-        // Exporting directly from Data Service to avoid bug https://bugtrack.marklogic.com/55338 related to namespaced path range indexes
-        Reader export = EntitySearchService.on(searchDatabaseClient)
-            .exportSearchAsCSV(structuredQuery, searchText, queryOptions, entityTypeId, entityTypeId, limit, sortOrderNode, columns.stream());
+            // Exporting directly from Data Service to avoid bug https://bugtrack.marklogic.com/55338 related to namespaced path range indexes
+            export = EntitySearchService.on(searchDatabaseClient)
+                .exportSearchAsCSV(structuredQuery, searchText, queryOptions, entityTypeId, entityTypeId, limit, sortOrderNode, columns.stream());
+        }
+
         try {
             FileCopyUtils.copy(export, new OutputStreamWriter(out));
         } catch (IOException e) {
@@ -305,8 +318,7 @@ public class EntitySearchManager {
                 .map(node -> node.get("savedQuery"))
                 .map(node -> node.get("query"))
                 .map(node -> node.get("entityTypeIds"))
-                .map(node -> node.get(0))
-                .map(JsonNode::textValue)
+                .map(node -> node.size() > 1 ? "AllEntities" : node.get(0).textValue())
                 .orElse(null);
     }
 
