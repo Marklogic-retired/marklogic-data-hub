@@ -1,0 +1,96 @@
+{
+  "lang": "zxx",
+  "path-namespace": [
+    {
+      "prefix": "es",
+      "namespace-uri": "http://marklogic.com/entity-services"
+    },
+    {
+      "prefix": "cwsh",
+      "namespace-uri": "http://carwashes.org/"
+    },
+    {
+      "prefix": "awse",
+      "namespace-uri": "http://Areawise.org/"
+    },
+    {
+      "prefix": "crvs",
+      "namespace-uri": "http://carservices.com/"
+    },
+    {
+      "prefix": "gstn",
+      "namespace-uri": "http://gasstations.org/"
+    }
+  ],
+  "range-path-index": [
+    {
+      "invalid-values": "reject",
+      "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/Bank/Rating",
+      "range-value-positions": false,
+      "scalar-type": "decimal"
+    },
+    {
+      "invalid-values": "reject",
+      "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/Annual_Climatic_Conditions/Area_ID",
+      "range-value-positions": false,
+      "scalar-type": "decimal"
+    },
+    {
+      "invalid-values": "reject",
+      "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/Air_Bnb_Listings/Name",
+      "range-value-positions": false,
+      "scalar-type": "string",
+      "collation": "http://marklogic.com/collation/codepoint"
+    },
+    {
+      "invalid-values": "reject",
+      "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/Air_Bnb_Listings/Rating",
+      "range-value-positions": false,
+      "scalar-type": "decimal"
+    },
+    {
+      "invalid-values": "reject",
+      "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/Car_Wash/Rating",
+      "range-value-positions": false,
+      "scalar-type": "decimal"
+    },
+    {
+      "invalid-values": "reject",
+      "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/Airports/Area_ID",
+      "range-value-positions": false,
+      "scalar-type": "decimal"
+    },
+    {
+      "invalid-values": "reject",
+      "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/Airports/Airport_Type",
+      "range-value-positions": false,
+      "scalar-type": "string",
+      "collation": "http://marklogic.com/collation/codepoint"
+    },
+    {
+      "invalid-values": "reject",
+      "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/Airports/Distance_Miles",
+      "range-value-positions": false,
+      "scalar-type": "decimal"
+    },
+    {
+      "invalid-values": "reject",
+      "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/Airports/Rating",
+      "range-value-positions": false,
+      "scalar-type": "decimal"
+    },
+    {
+      "invalid-values": "reject",
+      "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/Car_Services/Rating",
+      "range-value-positions": false,
+      "scalar-type": "decimal"
+    },
+    {
+      "invalid-values": "reject",
+      "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/Car_Rentals/Rating",
+      "range-value-positions": false,
+      "scalar-type": "decimal"
+    }
+  ],
+  "database-name": "data-hub-STAGING"
+}

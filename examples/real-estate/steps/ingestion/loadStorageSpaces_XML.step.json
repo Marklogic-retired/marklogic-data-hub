@@ -1,0 +1,24 @@
+{
+  "headers": { },
+  "collections": [
+    "loadStorageSpaces_XML"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "name": "loadStorageSpaces_XML",
+  "description": "Storage Spaces area wise in US",
+  "sourceFormat": "xml",
+  "targetFormat": "xml",
+  "sourceName": "Manually Created Data",
+  "sourceType": "",
+  "outputURIPrefix": "",
+  "additionalCollections": [ ],
+  "targetDatabase": "data-hub-STAGING",
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "stepDefinitionName": "default-ingestion",
+  "stepDefinitionType": "ingestion",
+  "stepId": "loadStorageSpaces_XML-ingestion",
+  "lastUpdated": "2022-06-16T10:45:47.570677-07:00"
+}

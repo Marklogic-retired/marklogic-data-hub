@@ -1,0 +1,54 @@
+{
+  "info": {
+    "title": "Hospitals",
+    "draft": false,
+    "version": "1.0.0",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "Hospitals": {
+      "properties": {
+        "Area_ID": {
+          "datatype": "integer",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Hospital_Name": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Specialization": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Open_Hours": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "HospitalsNear": {
+          "datatype": "integer",
+          "relatedEntityType": "http://example.org/USZips-1.0.0/USZips",
+          "joinPropertyName": "Area_ID"
+        },
+        "UrgentCaresNearBy": {
+          "datatype": "integer",
+          "relatedEntityType": "http://example.org/Urgent_Cares-1.0.0/Urgent_Cares",
+          "joinPropertyName": "Area_ID"
+        },
+        "PharmaciesNearBy": {
+          "datatype": "integer",
+          "relatedEntityType": "http://example.org/Pharmacy-1.0.0/Pharmacy",
+          "joinPropertyName": "Area_ID"
+        }
+      },
+      "description": "Hospitals area wise in US"
+    }
+  }
+}

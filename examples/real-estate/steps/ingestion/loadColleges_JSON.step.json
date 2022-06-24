@@ -1,0 +1,24 @@
+{
+  "headers": { },
+  "collections": [
+    "loadColleges_JSON"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "name": "loadColleges_JSON",
+  "description": "Colleges area wise in US",
+  "sourceFormat": "json",
+  "targetFormat": "json",
+  "sourceName": "Manually Created Data",
+  "sourceType": "",
+  "outputURIPrefix": "",
+  "additionalCollections": [ ],
+  "targetDatabase": "data-hub-STAGING",
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "stepDefinitionName": "default-ingestion",
+  "stepDefinitionType": "ingestion",
+  "stepId": "loadColleges_JSON-ingestion",
+  "lastUpdated": "2022-06-15T22:27:08.472525-07:00"
+}

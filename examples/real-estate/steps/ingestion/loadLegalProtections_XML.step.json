@@ -1,0 +1,24 @@
+{
+  "headers": { },
+  "collections": [
+    "loadLegalProtections_XML"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "name": "loadLegalProtections_XML",
+  "description": "Legal Protections area wise in US",
+  "sourceFormat": "xml",
+  "targetFormat": "xml",
+  "sourceName": "Manually Created Data",
+  "sourceType": "",
+  "outputURIPrefix": "",
+  "additionalCollections": [ ],
+  "targetDatabase": "data-hub-STAGING",
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "stepDefinitionName": "default-ingestion",
+  "stepDefinitionType": "ingestion",
+  "stepId": "loadLegalProtections_XML-ingestion",
+  "lastUpdated": "2022-06-16T10:03:13.47939-07:00"
+}

@@ -1,0 +1,119 @@
+{
+  "info": {
+    "title": "Lands",
+    "draft": false,
+    "version": "1.0.0",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "Lands": {
+      "properties": {
+        "Area_ID": {
+          "datatype": "integer",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Details": {
+          "$ref": "#/definitions/PropertyDetails"
+        },
+        "PropertyIn": {
+          "datatype": "integer",
+          "relatedEntityType": "http://example.org/USZips-1.0.0/USZips",
+          "joinPropertyName": "Area_ID"
+        },
+        "LocationsNear": {
+          "datatype": "integer",
+          "relatedEntityType": "http://example.org/Locations_Near-1.0.0/Locations_Near",
+          "joinPropertyName": "Area_ID"
+        }
+      },
+      "description": "Lands area wise in US"
+    },
+    "PropertyDetails": {
+      "properties": {
+        "Property_ID": {
+          "datatype": "integer",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Status": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Land_Type": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Address": {
+          "$ref": "#/definitions/PropertyAddress"
+        },
+        "Land_Details": {
+          "$ref": "#/definitions/LandDetails"
+        }
+      }
+    },
+    "PropertyAddress": {
+      "properties": {
+        "Street_Address": {
+          "$ref": "#/definitions/StreetAddress"
+        },
+        "Unit_Number": {
+          "datatype": "integer",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      }
+    },
+    "StreetAddress": {
+      "properties": {
+        "Street_Name": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Street_Number": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      }
+    },
+    "LandDetails": {
+      "properties": {
+        "Sqft_Area": {
+          "datatype": "integer",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Longitude": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Latitude": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Above_Sea_Level": {
+          "datatype": "integer",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}
