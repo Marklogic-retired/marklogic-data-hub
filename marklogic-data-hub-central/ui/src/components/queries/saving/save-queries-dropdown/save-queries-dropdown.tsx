@@ -5,6 +5,7 @@ import reactSelectThemeConfig from "@config/react-select-theme.config";
 import {SearchContext} from "@util/search-context";
 import {HCButton} from "@components/common";
 
+export const SELECT_QUERY_PLACEHOLDER = "select a query";
 interface Props {
     savedQueryList: any[];
     toggleApply: (clicked:boolean) => void;
@@ -31,7 +32,7 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
   const [switchedQueryName, setSwitchedQueryName] = useState(searchOptions.selectedQuery);
 
   useEffect(() => {
-    if (props.currentQueryName !== searchOptions.selectedQuery && props.currentQueryName === "select a query") {
+    if (props.currentQueryName !== searchOptions.selectedQuery && props.currentQueryName === SELECT_QUERY_PLACEHOLDER) {
       onItemSelect(searchOptions.selectedQuery);
     }
   }, [searchOptions.selectedQuery, props.currentQueryName]);
@@ -41,7 +42,7 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
   const options = savedQueryOptions.map(query => ({value: query, label: query}));
 
   const checkCurrentQueryChange = (selectedItem) => {
-    if (props.isSaveQueryChanged() && searchOptions.selectedQuery !== "select a query") {
+    if (props.isSaveQueryChanged() && searchOptions.selectedQuery !== SELECT_QUERY_PLACEHOLDER) {
       toggleConfirmation(true);
       setSwitchedQueryName(selectedItem.value);
     } else {
@@ -77,8 +78,6 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
     props.setNextQueryName(switchedQueryName);
   };
 
-  const placeholder = "select a query";
-
   const MenuList  = (selector, props) => (
     <div id={`${selector}-select-MenuList`}>
       <SelectComponents.MenuList {...props} />
@@ -91,8 +90,8 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
         id="dropdownList-select-wrapper"
         inputId="dropdownList"
         components={{MenuList: props => MenuList("query", props)}}
-        placeholder={placeholder}
-        value={searchOptions.selectedQuery === placeholder ? null : options.find(oItem => oItem.value === searchOptions.selectedQuery)}
+        placeholder={SELECT_QUERY_PLACEHOLDER}
+        value={searchOptions.selectedQuery === SELECT_QUERY_PLACEHOLDER ? null : options.find(oItem => oItem.value === searchOptions.selectedQuery)}
         onChange={checkCurrentQueryChange}
         isSearchable={false}
         noOptionsMessage={() => "There are no saved queries"}

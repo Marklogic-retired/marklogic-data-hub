@@ -30,27 +30,6 @@ describe("save/manage queries scenarios, developer role", () => {
     cy.deleteSavedQueries();
     cy.waitForAsyncRequest();
   });
-  it("Clear query should work without any saved query", () => {
-    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-    browsePage.clickTableView();
-    browsePage.waitForSpinnerToDisappear();
-    browsePage.waitForHCTableToLoad();
-    entitiesSidebar.openBaseEntityDropdown();
-    entitiesSidebar.selectBaseEntityOption("Customer");
-    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
-    entitiesSidebar.openBaseEntityFacets("Customer");
-    browsePage.getFacetItemCheckbox("name", "Adams Cole").click();
-    browsePage.getSelectedFacets().should("exist");
-    browsePage.getGreySelectedFacets("Adams Cole").should("exist");
-    browsePage.getFacetApplyButton().click();
-    browsePage.clickColumnTitle(2);
-    browsePage.waitForSpinnerToDisappear();
-    entitiesSidebar.backToMainSidebar();
-
-    entitiesSidebar.clearQuery();
-    entitiesSidebar.getBaseEntityDropdown().should("have.text", "All Entities");
-    browsePage.getGreySelectedFacets("Adams Cole").should("not.exist");
-  });
   it("Apply facet search,open save modal, save new query", () => {
     toolbar.getExploreToolbarIcon().should("be.visible").click();
     browsePage.clickTableView();
@@ -379,25 +358,13 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getSelectedQuery().should("contain", "select a query");
     // Should comment below line after DHFPROD-5392 is done
     browsePage.getHubPropertiesExpanded();
-    browsePage.getFacetItemCheckbox("collection", "Person").click({force: true});
-    browsePage.getFacetApplyButton().click();
   });
   // Reset query confirmation
   it("Show Reset query button, open reset confirmation", () => {
-    // Clicking on reset after selected facets are applied, saves new query and navigates to zero state
-    browsePage.getClearAllFacetsButton().click();
-    entitiesSidebar.openBaseEntityDropdown();
-    entitiesSidebar.selectBaseEntityOption("Customer");
-    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
-    entitiesSidebar.openBaseEntityFacets("Customer");
-    browsePage.getFacetItemCheckbox("name", "Adams Cole").click();
-    browsePage.getSelectedFacets().should("exist");
-    browsePage.getFacetApplyButton().click();
-    browsePage.waitForSpinnerToDisappear();
-    entitiesSidebar.backToMainSidebar();
-    entitiesSidebar.clearQuery();
+    // Check the tooltip on inactive clear query button
+    entitiesSidebar.getClearQuery().trigger("mouseover");
+    entitiesSidebar.getClearQueryTooltip().should("be.visible");
     // clicking on no doesn't create a new query and navigates to zero state
-    browsePage.getResetConfirmationNoClick();
     entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
@@ -409,9 +376,11 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.clickColumnTitle(2);
     browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.backToMainSidebar();
-    entitiesSidebar.clearQuery();
+    // entitiesSidebar.clearQuery();
+    browsePage.getSaveModalIcon().scrollIntoView().click();
+    // browsePage.waitForSpinnerToDisappear();
     //selecting yes will save the new query and navigates to zero state
-    browsePage.getResetConfirmationYesClick();
+    // browsePage.getResetConfirmationYesClick();
     browsePage.getSaveQueryName().should("be.visible");
     browsePage.getSaveQueryName().type("reset-query");
     browsePage.getSaveQueryButton().click();
