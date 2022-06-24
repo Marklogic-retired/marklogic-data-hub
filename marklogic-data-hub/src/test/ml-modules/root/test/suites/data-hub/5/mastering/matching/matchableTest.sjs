@@ -292,13 +292,42 @@ function testScoreDocument() {
             distanceThreshold: 100
           }
         }]
-      }
+      },
+      {
+        weight: 3,
+        name: "name - exact",
+        matchRules: [
+          { entityPropertyPath: "name",
+            matchType: "exact"
+          },
+          { entityPropertyPath: "name",
+            matchType: "custom",
+            algorithmModulePath: "/test/suites/data-hub/5/mastering/matching/test-data/matchableInterceptors.sjs",
+            algorithmFunction: "customLastNameInterceptor"
+          }
+        ]
+      },
+      {
+        weight: 2,
+        name: "name - exact",
+        matchRules: [
+          { entityPropertyPath: "name",
+            matchType: "exact"
+          },
+          { entityPropertyPath: "name",
+            matchType: "custom",
+            algorithmModulePath: "/test/suites/data-hub/5/mastering/matching/test-data/matchableInterceptors.sjs",
+            algorithmFunction: "customFalseLastNameInterceptor"
+          }
+        ]
+      },
     ]
   };
+
   const matchable = new Matchable(matchStep, {});
   const score = matchable.scoreDocument({uri: "doc1.json", value: docA },{uri: "doc2.json", value: docA });
   const assertions = [
-    test.assertEqual(15, score, "score should come back as 15 (exact:10 + doubleMetaphone:5).")
+    test.assertEqual(18, score, "score should come back as 18 (exact:10 + doubleMetaphone:5 + exact with custom true function:3).")
   ];
   const scoreInterceptorMatchable = new Matchable(Object.assign({scoreDocumentInterceptors:  [
       { path: "/test/suites/data-hub/5/mastering/matching/test-data/matchableInterceptors.sjs", function: "scoreDocumentInterceptor" }

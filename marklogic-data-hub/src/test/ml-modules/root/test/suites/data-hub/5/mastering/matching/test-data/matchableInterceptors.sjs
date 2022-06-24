@@ -38,6 +38,18 @@ function customMatchArrayInterceptor() {
   return arr;
 }
 
+function customLastNameInterceptor(values) {
+  return (documentB) => {
+    return cts.contains(documentB, values);
+  }
+}
+
+function customFalseLastNameInterceptor(values) {
+    return (documentB) => {
+      return !cts.contains(documentB, values);
+    }
+}
+
 module.exports = {
   baselineQueryInterceptorA,
   baselineQueryInterceptorB,
@@ -45,5 +57,7 @@ module.exports = {
   scoreDocumentInterceptor,
   customMatchStringInterceptor,
   customMatchSequenceInterceptor,
-  customMatchArrayInterceptor
+  customMatchArrayInterceptor,
+  customLastNameInterceptor,
+  customFalseLastNameInterceptor
 }
