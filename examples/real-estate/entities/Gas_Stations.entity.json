@@ -1,0 +1,53 @@
+{
+  "info": {
+    "title": "Gas_Stations",
+    "draft": false,
+    "version": "1.0.0",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "Gas_Stations": {
+      "properties": {
+        "Area_ID": {
+          "datatype": "integer",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Name": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Rating": {
+          "datatype": "decimal",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Price_Gallon": {
+          "datatype": "array",
+          "facetable": false,
+          "sortable": false,
+          "items": {
+            "datatype": "decimal",
+            "collation": "http://marklogic.com/collation/codepoint"
+          }
+        },
+        "Air_Pump": {
+          "datatype": "boolean",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "LocatedIn": {
+          "datatype": "integer",
+          "relatedEntityType": "http://example.org/USZips-1.0.0/USZips",
+          "joinPropertyName": "Area_ID"
+        }
+      },
+      "description": "Gas Stations area wise in US"
+    }
+  }
+}

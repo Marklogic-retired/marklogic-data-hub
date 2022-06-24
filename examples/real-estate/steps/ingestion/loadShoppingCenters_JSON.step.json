@@ -1,0 +1,24 @@
+{
+  "headers": { },
+  "collections": [
+    "loadShoppingCenters_JSON"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "name": "loadShoppingCenters_JSON",
+  "description": "Shopping Centers area wise in US",
+  "sourceFormat": "json",
+  "targetFormat": "json",
+  "sourceName": "Manually Created Data",
+  "sourceType": "",
+  "outputURIPrefix": "",
+  "additionalCollections": [ ],
+  "targetDatabase": "data-hub-STAGING",
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "stepDefinitionName": "default-ingestion",
+  "stepDefinitionType": "ingestion",
+  "stepId": "loadShoppingCenters_JSON-ingestion",
+  "lastUpdated": "2022-06-15T23:11:10.984865-07:00"
+}
