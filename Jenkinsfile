@@ -8,6 +8,11 @@ def prResponse="";
 def prNumber;
 def props;
 githubAPIUrl="https://api.github.com/repos/marklogic/marklogic-data-hub"
+mlFFHost=""
+cypressFFBaseUrl=""
+fFsetupcomplete=""
+fFtestcomplete=""
+
 def loadProperties() {
     node {
         checkout scm
@@ -773,6 +778,64 @@ println("Unit Tests Failed")
                       }
 }
 
+def cypressSetup(String type, String version){
+        sh 'rm -rf $WORKSPACE/xdmp/src/*'
+        copyRPM type,mlVersion
+        setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
+        copyArtifacts filter: '**/*central*.war', fingerprintArtifacts: true, flatten: true, projectName: 'Datahub_CI/develop', selector: specific('${BUILD_NUMBER}')
+        sh '''
+           cd $WORKSPACE
+           WAR_NAME=$(basename *central*.war )
+           nohup java -jar $WORKSPACE/$WAR_NAME &
+        '''
+        //wait for prem to start
+        timeout(10) {waitUntil initialRecurrencePeriod: 15000, { sh(script: 'ps aux | grep ".central.*\\.war" | grep -v grep | grep -v timeout', returnStatus: true) == 0 }}
+
+
+        sh(script:'''#!/bin/bash
+            export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;
+            export M2_LOCAL_REPO=$WORKSPACE/$M2_HOME_REPO
+            export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;
+            export PATH=$M2_LOCAL_REPO:$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH;
+            rm -rf $M2_LOCAL_REPO || true
+            mkdir -p $M2_LOCAL_REPO
+            cd $WORKSPACE/data-hub;
+            ./gradlew publishToMavenLocal -Dmaven.repo.local=$M2_LOCAL_REPO -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/
+         '''
+      )
+
+        sh(script:'''
+            #!/bin/bash
+            export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;
+            export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;
+            export M2_LOCAL_REPO=$WORKSPACE/$M2_HOME_REPO
+            export PATH=$M2_LOCAL_REPO:$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH;
+            cd $WORKSPACE/data-hub;
+            rm -rf $GRADLE_USER_HOME/caches;
+            cd marklogic-data-hub-central/ui/e2e;
+            repo="maven {url '"$M2_LOCAL_REPO"'}"
+            sed -i "/repositories {/a$repo" hc-qa-project/build.gradle
+            chmod +x setup.sh;
+            ./setup.sh dhs=false mlHost=localhost mlSecurityUsername=admin mlSecurityPassword=admin;
+           '''
+      )
+}
+def runFFTests(){
+     sleep time: 12, unit: 'MINUTES'
+    waitUntil(initialRecurrencePeriod: 120000) {
+         return fFsetupcomplete
+     }
+     env.cypressBaseUrl=cypressBaseUrl.trim()
+     env.mlHost=mlHost.trim()
+     bat  script: """
+                                 setlocal
+                                 set PATH=C:\\Program Files (x86)\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH
+                                 set CYPRESS_BASE_URL=${cypressBaseUrl};
+                                 set mlHost=${mlHost};
+                                 cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e
+     """
+     junit '**/e2e/**/*.xml'
+}
 pipeline{
 	agent none;
 	options {
@@ -862,7 +925,7 @@ pipeline{
               postStage('Stage Failed')
           }}
 		}
-        stage('cypresse2e-firefox') {
+       /* stage('cypresse2e-firefox') {
             when {
                 expression { return params.regressions }
                 beforeAgent true
@@ -876,15 +939,17 @@ pipeline{
               success {postStage('Tests Passed')}
               unstable {
               sh 'rm -rf ${STAGE_NAME} || true;mkdir -p ${STAGE_NAME}/MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/MLLogs/ || true; mkdir -p ${STAGE_NAME}/E2ELogs; cp -r data-hub/marklogic-data-hub-central/ui/e2e/cypress/videos ${STAGE_NAME}/E2ELogs/;cp -r data-hub/marklogic-data-hub-central/ui/e2e/cypress/screenshots ${STAGE_NAME}/E2ELogs/'
-              archiveArtifacts artifacts: "**/E2ELogs/**/videos/**/*,**/E2ELogs/**/screenshots/**/*,${STAGE_NAME}/MLLogs/**/*"
-                               postStage('Tests Failed')
+             */
+             // archiveArtifacts artifacts: "**/E2ELogs/**/videos/**/*,**/E2ELogs/**/screenshots/**/*,${STAGE_NAME}/MLLogs/**/*"
+                     /*          postStage('Tests Failed')
               }
               failure{
               sh 'rm -rf ${STAGE_NAME} || true;mkdir -p ${STAGE_NAME}/MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/MLLogs/ || true; mkdir -p ${STAGE_NAME}/E2ELogs; cp -r data-hub/marklogic-data-hub-central/ui/e2e/cypress/videos ${STAGE_NAME}/E2ELogs/;cp -r data-hub/marklogic-data-hub-central/ui/e2e/cypress/screenshots ${STAGE_NAME}/E2ELogs/'
-              archiveArtifacts artifacts: "**/E2ELogs/**/videos/**/*,**/E2ELogs/**/screenshots/**/*,${STAGE_NAME}/MLLogs/**/*"
-                               postStage('Stage Failed')
+             */
+            //  archiveArtifacts artifacts: "**/E2ELogs/**/videos/**/*,**/E2ELogs/**/screenshots/**/*,${STAGE_NAME}/MLLogs/**/*"
+                 /*              postStage('Stage Failed')
               }}
-        }
+        }*/
         stage('UI-tests'){
         when {
            expression {return !env.NO_UI_TESTS}
@@ -1319,6 +1384,39 @@ pipeline{
                             sh 'rm -rf ${STAGE_NAME} || true;mkdir -p ${STAGE_NAME}/MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/MLLogs/ || true; mkdir -p ${STAGE_NAME}/E2ELogs; cp -r data-hub/marklogic-data-hub-central/ui/e2e/cypress/videos ${STAGE_NAME}/E2ELogs/;cp -r data-hub/marklogic-data-hub-central/ui/e2e/cypress/screenshots ${STAGE_NAME}/E2ELogs/'
                             archiveArtifacts artifacts: "**/E2ELogs/**/videos/**/*,**/E2ELogs/**/screenshots/**/*,${STAGE_NAME}/MLLogs/**/*"
                             sendMail Email,"<h3>$STAGE_NAME Server on Linux Platform </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>",false,"$BRANCH_NAME on $STAGE_NAME Failed"
+                        }
+                    }
+                }
+                stage('10.0-9-cypress-linux-setup-win-firefox'){
+                    agent {label 'dhfLinuxAgent'}
+                    steps{
+                        script{
+                                cypressSetup('Release','10.0-9')
+                                mlFFHost=sh(returnStdout: true,script: """echo \$HOSTNAME""")
+                                cypressFFBaseUrl="http://"+mlFFHost.trim()+":8080"
+                                fFsetupcomplete=true
+                                env.fFsetupcomplete=true
+                                sleep time: 95, unit: 'MINUTES'
+                                timeout(time: 1, unit: 'HOURS') {
+                                    waitUntil(initialRecurrencePeriod: 120000) {
+                                        return fFtestcomplete
+                                    }
+                                }
+                        }
+                    }
+                }
+                stage('cypress-win-firefox'){
+                    agent {label 'w10-dhf-6'}
+                    steps{
+                        script{
+                            runFFTests()
+                        }
+                    }
+                    post{
+                        always {
+                            script{
+                                fFtestcomplete=true
+                            }
                         }
                     }
                 }
