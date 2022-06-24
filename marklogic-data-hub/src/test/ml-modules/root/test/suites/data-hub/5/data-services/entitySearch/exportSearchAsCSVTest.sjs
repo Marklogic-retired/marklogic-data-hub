@@ -67,6 +67,23 @@ function testValidAscendingPlan() {
     ];
 }
 
+function testAllEntitiesExport() {
+  const searchResultsTransform = require('/marklogic.rest.transform/hubEntitySearchTransform/assets/transform.sjs');
+  let results = [
+    {
+      "format": "json",
+      "uri": "/content/jane.json"
+    }];
+  const transformedResults = searchResultsTransform.transform({}, { forExport: 'true'}, xdmp.toJSON({ results: results}));
+  const result = JSON.parse(basicCsvParser(transformedResults));
+  return [
+    test.assertEqual(result["Identifier"], "101"),
+    test.assertEqual(result["EntityType"], "Customer"),
+    test.assertEqual(result["RecordType"], "json"),
+    test.assertEqual(result["CreatedOn"], "", "Empty since the metadata doesn't exist on the document")
+  ];
+}
+
 function testValidDescendingPlan() {
     const structuredQuery = xdmp.quote(search.parse(''));
     const searchExport = invokeExportSearchService(
@@ -126,6 +143,7 @@ hubTest.runWithRolesAndPrivileges(['hub-central-entity-exporter'], [], function(
     assertions = []
         .concat(testValidAscendingPlan())
         .concat(testValidDescendingPlan())
+        .concat(testAllEntitiesExport())
         .concat(testPlanWithBadSortOrder())
         .concat(testPlanWithSingleColumn());
 });

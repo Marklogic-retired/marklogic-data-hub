@@ -27,6 +27,19 @@ function transform(context, params, content) {
 
   const contentObject = content.toObject();
   entitySearchLib.addPropertiesToSearchResponse(entityName, contentObject, propertiesToDisplay);
+
+  if(params.forExport === "true") {
+    let exportResults = [];
+    contentObject.results.forEach(result => {
+      let currObj = {};
+      currObj["Identifier"] = result["identifier"]["propertyValue"];
+      currObj["EntityType"] = result["entityName"];
+      currObj["RecordType"] = result["format"];
+      currObj["CreatedOn"] = result["createdOn"];
+      exportResults.push(currObj);
+    });
+    return xdmp.quote(Sequence.from(exportResults), {method:'sparql-results-csv'});
+  }
   return contentObject;
 }
 
