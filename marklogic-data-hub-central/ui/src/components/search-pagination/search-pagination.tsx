@@ -3,6 +3,7 @@ import {Pagination, Form} from "react-bootstrap";
 import {SearchContext} from "@util/search-context";
 import styles from "./search-pagination.module.scss";
 import {MonitorContext} from "@util/monitor-context";
+import {getViewSettings, setViewSettings} from "@util/user-context";
 
 interface Props {
   total: number;
@@ -40,12 +41,16 @@ const SearchPagination: React.FC<Props> = (props) => {
   }, [props.maxRowsPerPage]);
 
   const onPageChange = (pageNumber) => {
-    if (pageNumber !== props.pageNumber) searchOptions.tileId === "explore" ? setPage(pageNumber, props.total) : setMonitorPage(pageNumber, props.total);
+    if (pageNumber !== props.pageNumber) {
+      if (searchOptions.tileId === "explore") setPage(pageNumber, props.total);
+      else setMonitorPage(pageNumber, props.total); saveCurrentPageSizeSession(pageNumber, "");
+    }
   };
 
   const onPageSizeChange = ({target}) => {
     const {value} = target;
-    searchOptions.tileId === "explore" ? setPageLength(props.pageNumber, +value) : setMonitorPageLength(props.pageNumber, +value);
+    if (searchOptions.tileId === "explore") setPageLength(props.pageNumber, +value);
+    else setMonitorPageLength(props.pageNumber, +value); saveCurrentPageSizeSession("", value);
   };
 
   const handleNext = () => {
@@ -58,6 +63,21 @@ const SearchPagination: React.FC<Props> = (props) => {
     const {pageNumber} = props;
     if (pageNumber - 1 >= 1) {
       onPageChange(pageNumber - 1);
+    }
+  };
+
+  const saveCurrentPageSizeSession = (page, size) => {
+    const storage = getViewSettings();
+    let newDataStorage;
+    if (searchOptions.tileId === "monitor") {
+      newDataStorage = {
+        ...storage, monitorStepsFlowsTable: {
+          ...storage.monitorStepsFlowsTable,
+          pageNumberTable: page !== "" ? page : storage?.monitorStepsFlowsTable?.pageNumberTable,
+          pageSizeTable: size !== "" ? size : storage?.monitorStepsFlowsTable?.pageSizeTable,
+        }
+      };
+      setViewSettings(newDataStorage);
     }
   };
 

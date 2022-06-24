@@ -6,6 +6,7 @@ import LoginPage from "../../support/pages/login";
 import browsePage from "../../support/pages/browse";
 import monitorSidebar from "../../support/components/monitor/monitor-sidebar";
 import runPage from "../../support/pages/run";
+import {mappingStepDetail} from "../../support/components/mapping/index";
 
 describe("Monitor Tile", () => {
 
@@ -120,9 +121,9 @@ describe("Monitor Tile", () => {
     expect(firstPageTableCellsJobId).to.deep.eq(firstPageTableCellsJobIdAux);
 
     cy.log("**check step name order ASC**");
-    firstPageTableCellsStepType.forEach(element => cy.log(element));
-    let firstStepName = firstPageTableCellsStepType[0];
-    let lastStepName = firstPageTableCellsStepType[firstPageTableCellsStepType.length - 1];
+    firstPageTableCellsStepName.forEach(element => cy.log(element));
+    let firstStepName = firstPageTableCellsStepName[0];
+    let lastStepName = firstPageTableCellsStepName[firstPageTableCellsStepName.length - 1];
     let compareStepName = firstStepName.toString().localeCompare(lastStepName.toString());
     expect(compareStepName).not.to.be.gt(0);
 
@@ -153,6 +154,60 @@ describe("Monitor Tile", () => {
     let lastDateTime = firstPageTableCellsDateTime[firstPageTableCellsDateTime.length - 1];
     let compareDateTime = firstDateTime.toString().localeCompare(lastDateTime.toString());
     expect(compareDateTime).not.to.be.gt(0);
+  });
+
+  it("Save table settings to session storage and get it back part 1", () => {
+
+    monitorPage.getCollapseAllTableRows().scrollIntoView().click({force: true});
+    monitorPage.getRowByIndex(1).click({force: true});
+    monitorPage.checkExpandedRow();
+    monitorPage.getPaginationPageSizeOptions().first().scrollIntoView().should("be.visible").select("10 / page");
+    mappingStepDetail.selectPageSourceTable("2");
+
+    cy.log("**Go to another page and back**");
+    toolbar.getLoadToolbarIcon().click();
+    toolbar.getMonitorToolbarIcon().click();
+
+    cy.log("**Checking and setting in session new data**");
+    mappingStepDetail.verifyContent("10 / page");
+    monitorPage.checkCurrentPage(2);
+    mappingStepDetail.selectPageSourceTable("1");
+    monitorPage.checkExpandedRow();
+    monitorPage.getColumnSelectorIcon().click();
+    mappingStepDetail.selectColumnPopoverById("column-user-id").click();
+    mappingStepDetail.selectColumnPopoverById("column-flowName-id").click();
+    monitorPage.getColumnSelectorApplyButton().should("be.visible").click();
+
+    cy.log("**click second column to get ASC order and get step type data**");
+    monitorPage.getOrderColumnMonitorTable("Step Type").scrollIntoView().click().then(() => {
+      cy.get(".reset-expansion-style:eq(" + monitorPage.searchBiggerRowIndex(firstPageTableCellsJobId) + ") .stepType").then(($row) => {
+        Cypress.$.makeArray($row)
+          .map((el) => firstPageTableCellsStepType.push(el.innerText.toString().replace(/\t/g, "").split("\r\n")));
+      });
+    });
+
+    cy.log("**Go to another page and back to verify data from session storage**");
+    toolbar.getLoadToolbarIcon().click();
+    toolbar.getMonitorToolbarIcon().click();
+    monitorPage.verifyVisibilityTableHeader("Load", false);
+    monitorPage.verifyVisibilityTableHeader("Flow Name", false);
+    monitorPage.getColumnSelectorIcon().click();
+    mappingStepDetail.selectColumnPopoverById("column-user-id").should("not.be.checked");
+    mappingStepDetail.selectColumnPopoverById("column-flowName-id").should("not.be.checked");
+
+    cy.log("**Reset visible columns options**");
+    mappingStepDetail.selectColumnPopoverById("column-user-id").click();
+    mappingStepDetail.selectColumnPopoverById("column-flowName-id").click();
+    monitorPage.getColumnSelectorApplyButton().should("be.visible").click();
+  });
+
+  it("Save table settings to session storage and get it back part 2", () => {
+    cy.log("**Checking sorting from session storage**");
+    firstPageTableCellsStepType.forEach(element => cy.log(element));
+    let firstStepType = firstPageTableCellsStepType[0];
+    let lastStepType = firstPageTableCellsStepType[firstPageTableCellsStepType.length - 1];
+    let compareStepType = firstStepType.toString().localeCompare(lastStepType.toString());
+    expect(compareStepType).not.to.be.gt(0);
   });
 
   it("apply facet search and verify docs", () => {
