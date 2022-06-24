@@ -1,0 +1,50 @@
+{
+  "info": {
+    "title": "Pharmacy",
+    "draft": false,
+    "version": "1.0.0",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "Pharmacy": {
+      "properties": {
+        "Area_ID": {
+          "datatype": "integer",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Pharmacy_Name": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Rating": {
+          "datatype": "decimal",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Address": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Phone_Number": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "PharmaciesIn": {
+          "datatype": "integer",
+          "relatedEntityType": "http://example.org/USZips-1.0.0/USZips",
+          "joinPropertyName": "Area_ID"
+        }
+      },
+      "description": "Pharmacies area wise in US"
+    }
+  }
+}

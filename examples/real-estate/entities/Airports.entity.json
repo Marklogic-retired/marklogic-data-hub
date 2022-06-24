@@ -1,0 +1,54 @@
+{
+  "info": {
+    "title": "Airports",
+    "draft": false,
+    "version": "1.0.0",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "Airports": {
+      "properties": {
+        "Area_ID": {
+          "datatype": "integer",
+          "facetable": false,
+          "sortable": true,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Airport_Type": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": true,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Distance_Miles": {
+          "datatype": "decimal",
+          "facetable": false,
+          "sortable": true,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Rating": {
+          "datatype": "decimal",
+          "facetable": false,
+          "sortable": true,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "HotelsIn": {
+          "datatype": "integer",
+          "relatedEntityType": "http://example.org/USZips-1.0.0/USZips",
+          "joinPropertyName": "Area_ID"
+        },
+        "CarRentalsNearBy": {
+          "datatype": "array",
+          "facetable": false,
+          "sortable": false,
+          "items": {
+            "datatype": "integer",
+            "relatedEntityType": "http://example.org/Car_Rentals-1.0.0/Car_Rentals",
+            "joinPropertyName": "Area_ID"
+          }
+        }
+      },
+      "description": "Airports area wise in US"
+    }
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "info": {
+    "title": "Local_Legal_Protections",
+    "draft": false,
+    "version": "1.0.0",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "Local_Legal_Protections": {
+      "properties": {
+        "Area_ID": {
+          "datatype": "integer",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Housing": {
+          "datatype": "boolean",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Employment": {
+          "datatype": "boolean",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Public_Accommodation": {
+          "datatype": "boolean",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "LawsOf": {
+          "datatype": "integer",
+          "relatedEntityType": "http://example.org/USZips-1.0.0/USZips",
+          "joinPropertyName": "Area_ID"
+        }
+      },
+      "description": "Local Legal Protections area wise in US",
+      "primaryKey": "Area_ID"
+    }
+  }
+}

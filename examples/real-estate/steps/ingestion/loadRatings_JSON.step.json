@@ -1,0 +1,24 @@
+{
+  "headers": { },
+  "collections": [
+    "loadRatings_JSON"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "name": "loadRatings_JSON",
+  "description": "Ratings area wise in US",
+  "sourceFormat": "json",
+  "targetFormat": "json",
+  "sourceName": "Manually Created Data",
+  "sourceType": "",
+  "outputURIPrefix": "",
+  "additionalCollections": [ ],
+  "targetDatabase": "data-hub-STAGING",
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "stepDefinitionName": "default-ingestion",
+  "stepDefinitionType": "ingestion",
+  "stepId": "loadRatings_JSON-ingestion",
+  "lastUpdated": "2022-06-15T23:06:29.960045-07:00"
+}

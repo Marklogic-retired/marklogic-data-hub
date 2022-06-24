@@ -1,0 +1,59 @@
+{
+  "info": {
+    "title": "Bank",
+    "draft": false,
+    "version": "1.0.0",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "Bank": {
+      "properties": {
+        "Area_ID": {
+          "datatype": "integer",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Name": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Rating": {
+          "datatype": "decimal",
+          "facetable": false,
+          "sortable": true,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Distance_Miles": {
+          "datatype": "integer",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Hours": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Services": {
+          "datatype": "array",
+          "facetable": false,
+          "sortable": false,
+          "items": {
+            "datatype": "string",
+            "collation": "http://marklogic.com/collation/codepoint"
+          }
+        },
+        "BanksIn": {
+          "datatype": "integer",
+          "relatedEntityType": "http://example.org/USZips-1.0.0/USZips",
+          "joinPropertyName": "Area_ID"
+        }
+      },
+      "description": "Banks area wise in US"
+    }
+  }
+}

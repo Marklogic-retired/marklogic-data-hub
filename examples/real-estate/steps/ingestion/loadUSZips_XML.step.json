@@ -1,0 +1,25 @@
+{
+  "headers": { },
+  "collections": [
+    "loadUSZips_XML"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "name": "loadUSZips_XML",
+  "description": "US Zips area wise in US",
+  "sourceFormat": "csv",
+  "separator": "\\t",
+  "targetFormat": "json",
+  "sourceName": "Manually Created Data",
+  "sourceType": "",
+  "outputURIPrefix": "",
+  "additionalCollections": [ ],
+  "targetDatabase": "data-hub-STAGING",
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "stepDefinitionName": "default-ingestion",
+  "stepDefinitionType": "ingestion",
+  "stepId": "loadUSZips_XML-ingestion",
+  "lastUpdated": "2022-06-16T11:20:25.707819-07:00"
+}

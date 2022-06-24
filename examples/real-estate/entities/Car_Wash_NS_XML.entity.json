@@ -1,0 +1,51 @@
+{
+  "info": {
+    "title": "Car_Wash_NS_XML",
+    "draft": false,
+    "version": "1.0.0",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "Car_Wash_NS_XML": {
+      "properties": {
+        "Area_ID": {
+          "datatype": "integer",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Name": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Rating": {
+          "datatype": "decimal",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Car_Wash_Type": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "GasStationsNearBy": {
+          "datatype": "integer",
+          "relatedEntityType": "http://example.org/Gas_Stations_NS_XML-1.0.0/Gas_Stations_NS_XML",
+          "joinPropertyName": "Area_ID"
+        },
+        "LocatedIn": {
+          "datatype": "integer",
+          "relatedEntityType": "http://example.org/USZips-1.0.0/USZips",
+          "joinPropertyName": "Area_ID"
+        }
+      },
+      "namespace": "http://carwashes.org/",
+      "namespacePrefix": "cwsh",
+      "description": "Car Wash area wise in US"
+    }
+  }
+}

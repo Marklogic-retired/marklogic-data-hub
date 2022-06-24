@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <search:options xml:lang="zxx" xmlns:search="http://marklogic.com/appservices/search">
   <search:constraint name="Collection">
     <search:collection/>
@@ -23,6 +22,695 @@
       <search:element ns="http://marklogic.com/entity-services" name="title"/>
     </search:value>
   </search:constraint>
+  <search:constraint name="Car_Wash_NS_XML">
+    <search:container>
+      <search:json-property>Car_Wash_NS_XML</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Car_Wash_NS_XML-xml">
+    <search:container>
+      <search:element ns="http://carwashes.org/" name="Car_Wash_NS_XML"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Factories">
+    <search:container>
+      <search:json-property>Factories</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Factories-xml">
+    <search:container>
+      <search:element ns="" name="Factories"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Restaurants">
+    <search:container>
+      <search:json-property>Restaurants</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Restaurants-xml">
+    <search:container>
+      <search:element ns="" name="Restaurants"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Emergency_Services">
+    <search:container>
+      <search:json-property>Emergency_Services</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Emergency_Services-xml">
+    <search:container>
+      <search:element ns="" name="Emergency_Services"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Emergency_Services.Distance_Miles">
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Emergency_Services/Distance_Miles</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="Environmental_Risk">
+    <search:container>
+      <search:json-property>Environmental_Risk</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Environmental_Risk-xml">
+    <search:container>
+      <search:element ns="" name="Environmental_Risk"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Area_ID">
+    <search:value>
+      <search:element ns="" name="Area_ID"/>
+    </search:value>
+  </search:constraint>
+  <search:constraint name="Locations_Near">
+    <search:container>
+      <search:json-property>Locations_Near</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Locations_Near-xml">
+    <search:container>
+      <search:element ns="" name="Locations_Near"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="LandDetails">
+    <search:container>
+      <search:json-property>LandDetails</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="LandDetails-xml">
+    <search:container>
+      <search:element ns="" name="LandDetails"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="ShopsDetails">
+    <search:container>
+      <search:json-property>ShopsDetails</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="ShopsDetails-xml">
+    <search:container>
+      <search:element ns="" name="ShopsDetails"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Bank">
+    <search:container>
+      <search:json-property>Bank</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Bank-xml">
+    <search:container>
+      <search:element ns="" name="Bank"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Bank.Rating">
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Bank/Rating</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="Dog_Parks">
+    <search:container>
+      <search:json-property>Dog_Parks</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Dog_Parks-xml">
+    <search:container>
+      <search:element ns="" name="Dog_Parks"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="PropertyInfo">
+    <search:container>
+      <search:json-property>PropertyInfo</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="PropertyInfo-xml">
+    <search:container>
+      <search:element ns="" name="PropertyInfo"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Pharmacy">
+    <search:container>
+      <search:json-property>Pharmacy</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Pharmacy-xml">
+    <search:container>
+      <search:element ns="" name="Pharmacy"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Hospitals">
+    <search:container>
+      <search:json-property>Hospitals</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Hospitals-xml">
+    <search:container>
+      <search:element ns="" name="Hospitals"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Post_Offices">
+    <search:container>
+      <search:json-property>Post_Offices</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Post_Offices-xml">
+    <search:container>
+      <search:element ns="" name="Post_Offices"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Property_Details">
+    <search:container>
+      <search:json-property>Property_Details</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Property_Details-xml">
+    <search:container>
+      <search:element ns="" name="Property_Details"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Annual_Climatic_Conditions">
+    <search:container>
+      <search:json-property>Annual_Climatic_Conditions</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Annual_Climatic_Conditions-xml">
+    <search:container>
+      <search:element ns="" name="Annual_Climatic_Conditions"/>
+    </search:container>
+  </search:constraint>
+  <!--The name of this constraint is a duplicate in the generated XML. It is within a comment so that the XML may be valid, but you may need to edit for your use case.
+ <search:constraint name="Area_ID" xmlns:search="http://marklogic.com/appservices/search">
+  <search:value>
+    <search:element ns="" name="Area_ID"/>
+  </search:value>
+</search:constraint> 
+-->
+  <search:constraint name="Annual_Climatic_Conditions.Area_ID">
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Annual_Climatic_Conditions/Area_ID</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="TenantDetails">
+    <search:container>
+      <search:json-property>TenantDetails</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="TenantDetails-xml">
+    <search:container>
+      <search:element ns="" name="TenantDetails"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Hiking_Places">
+    <search:container>
+      <search:json-property>Hiking_Places</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Hiking_Places-xml">
+    <search:container>
+      <search:element ns="" name="Hiking_Places"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Car_Services_NS_XML">
+    <search:container>
+      <search:json-property>Car_Services_NS_XML</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Car_Services_NS_XML-xml">
+    <search:container>
+      <search:element ns="http://carservices.com/" name="Car_Services_NS_XML"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Air_Bnb_Listings">
+    <search:container>
+      <search:json-property>Air_Bnb_Listings</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Air_Bnb_Listings-xml">
+    <search:container>
+      <search:element ns="" name="Air_Bnb_Listings"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Air_Bnb_Listings.Name">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Air_Bnb_Listings/Name</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="Air_Bnb_Listings.Rating">
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Air_Bnb_Listings/Rating</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="USZips">
+    <search:container>
+      <search:json-property>USZips</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="USZips-xml">
+    <search:container>
+      <search:element ns="" name="USZips"/>
+    </search:container>
+  </search:constraint>
+  <!--The name of this constraint is a duplicate in the generated XML. It is within a comment so that the XML may be valid, but you may need to edit for your use case.
+ <search:constraint name="Area_ID" xmlns:search="http://marklogic.com/appservices/search">
+  <search:value>
+    <search:element ns="" name="Area_ID"/>
+  </search:value>
+</search:constraint> 
+-->
+  <search:constraint name="StreetAddress">
+    <search:container>
+      <search:json-property>StreetAddress</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="StreetAddress-xml">
+    <search:container>
+      <search:element ns="" name="StreetAddress"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Swimming_Pools">
+    <search:container>
+      <search:json-property>Swimming_Pools</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Swimming_Pools-xml">
+    <search:container>
+      <search:element ns="" name="Swimming_Pools"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Car_Wash">
+    <search:container>
+      <search:json-property>Car_Wash</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Car_Wash-xml">
+    <search:container>
+      <search:element ns="" name="Car_Wash"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Car_Wash.Rating">
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Car_Wash/Rating</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="Hotels">
+    <search:container>
+      <search:json-property>Hotels</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Hotels-xml">
+    <search:container>
+      <search:element ns="" name="Hotels"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Colleges">
+    <search:container>
+      <search:json-property>Colleges</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Colleges-xml">
+    <search:container>
+      <search:element ns="" name="Colleges"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="PropertyDetails">
+    <search:container>
+      <search:json-property>PropertyDetails</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="PropertyDetails-xml">
+    <search:container>
+      <search:element ns="" name="PropertyDetails"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Lands">
+    <search:container>
+      <search:json-property>Lands</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Lands-xml">
+    <search:container>
+      <search:element ns="" name="Lands"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Storage_Spaces">
+    <search:container>
+      <search:json-property>Storage_Spaces</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Storage_Spaces-xml">
+    <search:container>
+      <search:element ns="" name="Storage_Spaces"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Commercial_Properties">
+    <search:container>
+      <search:json-property>Commercial_Properties</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Commercial_Properties-xml">
+    <search:container>
+      <search:element ns="" name="Commercial_Properties"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Commercial_Properties.PropertyDetails/Property_Details/Tenant_Details/TenantDetails/Lease_Ends">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Commercial_Properties/PropertyDetails/Property_Details/Tenant_Details/TenantDetails/Lease_Ends</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="Gyms">
+    <search:container>
+      <search:json-property>Gyms</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Gyms-xml">
+    <search:container>
+      <search:element ns="" name="Gyms"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Airports">
+    <search:container>
+      <search:json-property>Airports</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Airports-xml">
+    <search:container>
+      <search:element ns="" name="Airports"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Airports.Area_ID">
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Airports/Area_ID</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="Airports.Airport_Type">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Airports/Airport_Type</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="Airports.Distance_Miles">
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Airports/Distance_Miles</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="Airports.Rating">
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Airports/Rating</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="Shopping_Centers">
+    <search:container>
+      <search:json-property>Shopping_Centers</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Shopping_Centers-xml">
+    <search:container>
+      <search:element ns="" name="Shopping_Centers"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Theatres">
+    <search:container>
+      <search:json-property>Theatres</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Theatres-xml">
+    <search:container>
+      <search:element ns="" name="Theatres"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Urgent_Cares">
+    <search:container>
+      <search:json-property>Urgent_Cares</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Urgent_Cares-xml">
+    <search:container>
+      <search:element ns="" name="Urgent_Cares"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Demographics">
+    <search:container>
+      <search:json-property>Demographics</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Demographics-xml">
+    <search:container>
+      <search:element ns="" name="Demographics"/>
+    </search:container>
+  </search:constraint>
+  <!--The name of this constraint is a duplicate in the generated XML. It is within a comment so that the XML may be valid, but you may need to edit for your use case.
+ <search:constraint name="Area_ID" xmlns:search="http://marklogic.com/appservices/search">
+  <search:value>
+    <search:element ns="" name="Area_ID"/>
+  </search:value>
+</search:constraint> 
+-->
+  <search:constraint name="Car_Services">
+    <search:container>
+      <search:json-property>Car_Services</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Car_Services-xml">
+    <search:container>
+      <search:element ns="" name="Car_Services"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Car_Services.Rating">
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Car_Services/Rating</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="Military_Base">
+    <search:container>
+      <search:json-property>Military_Base</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Military_Base-xml">
+    <search:container>
+      <search:element ns="" name="Military_Base"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Public_Schools">
+    <search:container>
+      <search:json-property>Public_Schools</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Public_Schools-xml">
+    <search:container>
+      <search:element ns="" name="Public_Schools"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Gas_Stations_NS_XML">
+    <search:container>
+      <search:json-property>Gas_Stations_NS_XML</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Gas_Stations_NS_XML-xml">
+    <search:container>
+      <search:element ns="http://gasstations.org/" name="Gas_Stations_NS_XML"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Local_Legal_Protections">
+    <search:container>
+      <search:json-property>Local_Legal_Protections</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Local_Legal_Protections-xml">
+    <search:container>
+      <search:element ns="" name="Local_Legal_Protections"/>
+    </search:container>
+  </search:constraint>
+  <!--The name of this constraint is a duplicate in the generated XML. It is within a comment so that the XML may be valid, but you may need to edit for your use case.
+ <search:constraint name="Area_ID" xmlns:search="http://marklogic.com/appservices/search">
+  <search:value>
+    <search:element ns="" name="Area_ID"/>
+  </search:value>
+</search:constraint> 
+-->
+  <search:constraint name="Parks_and_Recreation">
+    <search:container>
+      <search:json-property>Parks_and_Recreation</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Parks_and_Recreation-xml">
+    <search:container>
+      <search:element ns="" name="Parks_and_Recreation"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Pollution_Quality_Index">
+    <search:container>
+      <search:json-property>Pollution_Quality_Index</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Pollution_Quality_Index-xml">
+    <search:container>
+      <search:element ns="" name="Pollution_Quality_Index"/>
+    </search:container>
+  </search:constraint>
+  <!--The name of this constraint is a duplicate in the generated XML. It is within a comment so that the XML may be valid, but you may need to edit for your use case.
+ <search:constraint name="Area_ID" xmlns:search="http://marklogic.com/appservices/search">
+  <search:value>
+    <search:element ns="" name="Area_ID"/>
+  </search:value>
+</search:constraint> 
+-->
+  <search:constraint name="PropertyAddress">
+    <search:container>
+      <search:json-property>PropertyAddress</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="PropertyAddress-xml">
+    <search:container>
+      <search:element ns="" name="PropertyAddress"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Ratings_NS_XML">
+    <search:container>
+      <search:json-property>Ratings_NS_XML</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Ratings_NS_XML-xml">
+    <search:container>
+      <search:element ns="http://Areawise.org/" name="Ratings_NS_XML"/>
+    </search:container>
+  </search:constraint>
+  <!--The name of this constraint is a duplicate in the generated XML. It is within a comment so that the XML may be valid, but you may need to edit for your use case.
+ <search:constraint name="Area_ID" xmlns:search="http://marklogic.com/appservices/search">
+  <search:value>
+    <search:element ns="" name="Area_ID"/>
+  </search:value>
+</search:constraint> 
+-->
+  <search:constraint name="Car_Rentals">
+    <search:container>
+      <search:json-property>Car_Rentals</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Car_Rentals-xml">
+    <search:container>
+      <search:element ns="" name="Car_Rentals"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Car_Rentals.Rating">
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Car_Rentals/Rating</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="Ratings">
+    <search:container>
+      <search:json-property>Ratings</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Ratings-xml">
+    <search:container>
+      <search:element ns="" name="Ratings"/>
+    </search:container>
+  </search:constraint>
+  <!--The name of this constraint is a duplicate in the generated XML. It is within a comment so that the XML may be valid, but you may need to edit for your use case.
+ <search:constraint name="Area_ID" xmlns:search="http://marklogic.com/appservices/search">
+  <search:value>
+    <search:element ns="" name="Area_ID"/>
+  </search:value>
+</search:constraint> 
+-->
+  <search:constraint name="Gas_Stations">
+    <search:container>
+      <search:json-property>Gas_Stations</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Gas_Stations-xml">
+    <search:container>
+      <search:element ns="" name="Gas_Stations"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Day_Cares">
+    <search:container>
+      <search:json-property>Day_Cares</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Day_Cares-xml">
+    <search:container>
+      <search:element ns="" name="Day_Cares"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Private_Schools">
+    <search:container>
+      <search:json-property>Private_Schools</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Private_Schools-xml">
+    <search:container>
+      <search:element ns="" name="Private_Schools"/>
+    </search:container>
+  </search:constraint>
+  <search:values name="Emergency_Services">
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Emergency_Services/Distance_Miles</search:path-index>
+    </search:range>
+  </search:values>
+  <search:values name="Bank">
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Bank/Rating</search:path-index>
+    </search:range>
+  </search:values>
+  <search:values name="Annual_Climatic_Conditions">
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Annual_Climatic_Conditions/Area_ID</search:path-index>
+    </search:range>
+  </search:values>
+  <search:tuples name="Air_Bnb_Listings">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Air_Bnb_Listings/Name</search:path-index>
+    </search:range>
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Air_Bnb_Listings/Rating</search:path-index>
+    </search:range>
+  </search:tuples>
+  <search:values name="Car_Wash">
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Car_Wash/Rating</search:path-index>
+    </search:range>
+  </search:values>
+  <search:values name="Commercial_Properties">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Commercial_Properties/PropertyDetails/Property_Details/Tenant_Details/TenantDetails/Lease_Ends</search:path-index>
+    </search:range>
+  </search:values>
+  <search:tuples name="Airports">
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Airports/Area_ID</search:path-index>
+    </search:range>
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Airports/Airport_Type</search:path-index>
+    </search:range>
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Airports/Distance_Miles</search:path-index>
+    </search:range>
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Airports/Rating</search:path-index>
+    </search:range>
+  </search:tuples>
+  <search:values name="Car_Services">
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Car_Services/Rating</search:path-index>
+    </search:range>
+  </search:values>
+  <search:values name="Car_Rentals">
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Car_Rentals/Rating</search:path-index>
+    </search:range>
+  </search:values>
   <!--Uncomment to return no results for a blank search, rather than the default of all results
  <search:term xmlns:search="http://marklogic.com/appservices/search">
   <search:empty apply="no-results"/>
@@ -35,7 +723,7 @@
   <search:search-option>unfiltered</search:search-option>
   <!--Modify document extraction to change results returned-->
   <search:extract-document-data selected="include">
-    <search:extract-path xmlns:es="http://marklogic.com/entity-services">//*:instance/()</search:extract-path>
+    <search:extract-path xmlns:es="http://marklogic.com/entity-services" xmlns:cwsh="http://carwashes.org/" xmlns:crvs="http://carservices.com/" xmlns:gstn="http://gasstations.org/" xmlns:awse="http://Areawise.org/">//*:instance/(cwsh:Car_Wash_NS_XML|Factories|Restaurants|Emergency_Services|Environmental_Risk|Locations_Near|LandDetails|ShopsDetails|Bank|Dog_Parks|PropertyInfo|Pharmacy|Hospitals|Post_Offices|Property_Details|Annual_Climatic_Conditions|TenantDetails|Hiking_Places|crvs:Car_Services_NS_XML|Air_Bnb_Listings|USZips|StreetAddress|Swimming_Pools|Car_Wash|Hotels|Colleges|PropertyDetails|Lands|Storage_Spaces|Commercial_Properties|Gyms|Airports|Shopping_Centers|Theatres|Urgent_Cares|Demographics|Car_Services|Military_Base|Public_Schools|gstn:Gas_Stations_NS_XML|Local_Legal_Protections|Parks_and_Recreation|Pollution_Quality_Index|PropertyAddress|awse:Ratings_NS_XML|Car_Rentals|Ratings|Gas_Stations|Day_Cares|Private_Schools)</search:extract-path>
   </search:extract-document-data>
   <!--Change or remove this additional-query to broaden search beyond entity instance documents-->
   <!--To return facets, change this option to 'true' and edit constraints-->

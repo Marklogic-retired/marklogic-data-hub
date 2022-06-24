@@ -1,0 +1,24 @@
+{
+  "headers": { },
+  "collections": [
+    "loadCommercialProperties_XML"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "name": "loadCommercialProperties_XML",
+  "description": "Commercial Properties area wise in US",
+  "sourceFormat": "xml",
+  "targetFormat": "xml",
+  "sourceName": "Manually Created Data",
+  "sourceType": "",
+  "outputURIPrefix": "",
+  "additionalCollections": [ ],
+  "targetDatabase": "data-hub-STAGING",
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "stepDefinitionName": "default-ingestion",
+  "stepDefinitionType": "ingestion",
+  "stepId": "loadCommercialProperties_XML-ingestion",
+  "lastUpdated": "2022-06-16T09:28:36.551241-07:00"
+}

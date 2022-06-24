@@ -1,0 +1,32 @@
+{
+  "collections": [
+    "Map_Air_Bnb_Listings",
+    "Air_Bnb_Listings"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "Map_Air_Bnb_Listings",
+  "targetEntityType": "http://example.org/Air_Bnb_Listings-1.0.0/Air_Bnb_Listings",
+  "description": "Mapping Air Bnb Listings Data to Entity Model",
+  "collection": [
+    "loadAirBnbListings_JSON"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadAirBnbListings_JSON'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "Map_Air_Bnb_Listings-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-06-23T20:59:55.243911-07:00"
+}
