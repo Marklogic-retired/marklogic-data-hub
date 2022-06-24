@@ -25,7 +25,7 @@ function callHubUriUsingSJS(entityType){
 }
 
 assertions.push(
-  test.assertTrue(orderUriRegex.test(callHubUri("Order"))),
+  test.assertTrue(orderUriRegex.test(callHubUri("Order")), "HubUri: " + callHubUri("Order") + "has different format"),
   test.assertEqual("Unable to generate URI; entity type should not be an empty string", callHubUri("").data[1]),
   test.assertEqual("Unable to generate URI; entity type should not be an empty string", callHubUri("  ").data[1]),
 
