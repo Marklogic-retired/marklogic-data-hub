@@ -49,7 +49,7 @@ class BrowsePage {
   }
 
   switchView(view: string) {
-    return cy.get(`[aria-label="switch-view-${view}"]`).should("be.visible").click({force: true, waitForAnimations: false});
+    return cy.get(`[aria-label="switch-view-${view}"]`).scrollIntoView().should("be.visible").click({force: true, waitForAnimations: false});
   }
 
   getGraphVisExploreContainer() {

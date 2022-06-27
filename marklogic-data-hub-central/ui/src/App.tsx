@@ -159,9 +159,9 @@ const App: React.FC<Props> = ({history, location}) => {
                             </PrivateRoute>
                             <Route component={NoMatchRedirect} />
                           </Switch>
+                          <Footer pageTheme={pageTheme} />
                         </div>
                       </ErrorBoundary>
-                      <Footer pageTheme={pageTheme} />
                     </main>
                   </ErrorMessageProvider>
                 </HubCentralConfigProvider>
