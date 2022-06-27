@@ -21,14 +21,33 @@ describe("Test graph export to png", () => {
     cy.restoreLocalStorage();
   });
 
-  it("Validate that the export png icon appear only in graph view and can export", () => {
+  const entity: string = "Order";
+
+  it("Validate export as CSV in the table view", () => {
     cy.log("**Go to Explore section**");
     toolbar.getExploreToolbarIcon().click();
     browsePage.getTableView().click();
+    cy.log("**Graph Export button should not exist in table view**");
     graphExplore.getExportPNGIcon().should("not.exist");
-    cy.log("**Export button should not exist in snippet and table view**");
-    browsePage.clickFacetView();
-    graphExplore.getExportPNGIcon().should("not.exist");
+    cy.log("**Export as CSV should exist under All Entities **");
+    browsePage.getDataExportIcon()
+      .scrollIntoView()
+      .should("exist")
+      .trigger("mouseover");
+    browsePage.getExportIconTooltip().should("exist");
+
+
+    cy.log("**Export button should still exist after selecting a single entity**");
+    browsePage.selectBaseEntity(entity);
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getDataExportIcon()
+      .scrollIntoView()
+      .should("exist")
+      .trigger("mouseover");
+    browsePage.getExportIconTooltip().should("exist");
+  });
+
+  it("Validate that the export png icon appear only in graph view and can export", () => {
 
     cy.log("**Select Graph view and check that the export button exist and show the tooltip**");
     browsePage.clickGraphView();
@@ -37,6 +56,9 @@ describe("Test graph export to png", () => {
       .should("exist")
       .trigger("mouseover");
     graphExplore.getExportPNGIconTooltip().should("exist");
+
+    cy.log("**Export cSV button should not exist in snippet, graph and table view**");
+    browsePage.getDataExportIcon().should("not.exist");
 
     cy.log("**Click on export button and check that file it's exported**");
 

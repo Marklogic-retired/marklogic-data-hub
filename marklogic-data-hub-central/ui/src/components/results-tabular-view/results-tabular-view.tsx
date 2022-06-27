@@ -595,10 +595,7 @@ const ResultsTabularView = (props) => {
           <div className={styles.queryExport} data-cy="query-export">
             {canExportQuery ?
               <>
-                {searchOptions.entityTypeIds?.length === 1 ?
-                  <QueryExport hasStructured={props.hasStructured} columns={props.columns} selectedPropertyDefinitions={props.selectedPropertyDefinitions} /> :
-                  <DisabledIcon tooltipId="export-results-tooltip" tooltipText={tooltipsConfig.tabularView.queryExportDisabled} icon={faFileExport} iconTestId="query-export-disabled" />
-                }
+                <QueryExport hasStructured={props.hasStructured} columns={props.columns} selectedPropertyDefinitions={props.selectedPropertyDefinitions} />
               </> :
               <DisabledIcon tooltipId="export-results-tooltip" tooltipText={tooltipsConfig.tabularView.queryExportUnautorized} icon={faFileExport} iconTestId="query-export-unautorized" />
             }
