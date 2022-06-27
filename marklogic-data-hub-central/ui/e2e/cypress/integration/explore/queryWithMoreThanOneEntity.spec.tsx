@@ -56,7 +56,7 @@ describe("manage queries with more than one entity", () => {
     cy.log("**Check that the column selector should not exist**");
     browsePage.getColumnSelectorIcon().should("not.exist");
 
-    cy.log("**Go to especific view in one entitie and apply facets**");
+    cy.log("**Go to specific view in one entity and apply facets**");
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
     browsePage.getFacetItemCheckbox("name", "Adams Cole").click();
     browsePage.getSelectedFacets().should("exist");

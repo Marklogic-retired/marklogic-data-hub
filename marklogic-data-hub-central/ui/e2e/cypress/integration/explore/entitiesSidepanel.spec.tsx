@@ -208,7 +208,7 @@ describe("Test '/Explore' left sidebar", () => {
     entitiesSidebar.toggleRelatedEntityPanel();
     entitiesSidebar.getRelatedEntity("Customer").should("be.visible");
     entitiesSidebar.getRelatedEntity("Customer").trigger("mouseover");
-    entitiesSidebar.getDisabledEntityTooltip().should("be.visible");
+    entitiesSidebar.getDisabledEntityTooltip().should("exist");
     browsePage.getClearAllFacetsButton().trigger("mouseover", {force: true});
 
     cy.log("verify related entity panel is enabled when Customer is deselected as a base entity");

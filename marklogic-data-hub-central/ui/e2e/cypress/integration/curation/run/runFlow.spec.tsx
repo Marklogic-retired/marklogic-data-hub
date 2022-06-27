@@ -234,7 +234,7 @@ describe("Run Tile tests", () => {
     cy.log("**Navigate to explorer tile using the explorer link**");
     runPage.explorerLink(stepName).click();
     browsePage.waitForSpinnerToDisappear();
-    explorePage.getTitleExplore().should("be.visible");
+    explorePage.getTitleExplore().scrollIntoView().should("be.visible");
     cy.waitForAsyncRequest();
     browsePage.getTableView().click();
     browsePage.waitForHCTableToLoad();
@@ -268,7 +268,7 @@ describe("Run Tile tests", () => {
     cy.log("**Navigate to explorer tile using the explorer link**");
     runPage.explorerLink(firstStepName).click();
     browsePage.waitForSpinnerToDisappear();
-    explorePage.getTitleExplore().should("be.visible");
+    explorePage.getTitleExplore().scrollIntoView().should("be.visible");
     cy.waitForAsyncRequest();
     browsePage.getTableView().click();
     browsePage.waitForHCTableToLoad();
@@ -293,7 +293,7 @@ describe("Run Tile tests", () => {
     cy.log("**Navigate to explorer tile using the explorer link**");
     runPage.explorerLink(secondStepName).click();
     browsePage.waitForSpinnerToDisappear();
-    explorePage.getTitleExplore().should("be.visible");
+    explorePage.getTitleExplore().scrollIntoView().should("be.visible");
     cy.waitForAsyncRequest();
     browsePage.getTableView().click();
     browsePage.waitForHCTableToLoad();

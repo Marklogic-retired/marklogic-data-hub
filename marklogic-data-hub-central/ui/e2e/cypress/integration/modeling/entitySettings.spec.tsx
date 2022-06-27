@@ -128,12 +128,12 @@ describe("Entity display settings in model tile", () => {
 
     cy.log("**Click on babyRegistry node to open the side panel**");
     graphExplore.getGraphVisCanvas().should("exist");
-    cy.wait(1000);
+    cy.wait(2000);
     graphExplore.stopStabilization();
     graphExplore.focusNode(ExploreGraphNodes.BABY_REGISTRY_3039);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.BABY_REGISTRY_3039).then((nodePositions: any) => {
       let baby_registry_3039_nodeposition: any = nodePositions[ExploreGraphNodes.BABY_REGISTRY_3039];
-      graphExplore.getGraphVisCanvas().trigger("mouseover", baby_registry_3039_nodeposition.x, baby_registry_3039_nodeposition.y);
+      graphExplore.getGraphVisCanvas().trigger("mouseover", baby_registry_3039_nodeposition.x, baby_registry_3039_nodeposition.y, {force: true});
       graphExplore.getGraphVisCanvas().click(baby_registry_3039_nodeposition.x, baby_registry_3039_nodeposition.y, {force: true});
     });
 

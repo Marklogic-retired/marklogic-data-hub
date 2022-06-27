@@ -2,7 +2,7 @@ import common from "../pages/browse";
 class BaseEntitySidebar {
   //Elements
   backToMainSidebar() {
-    cy.findByLabelText("base-entity-icons-list-close").should("be.visible").click();
+    cy.findByLabelText("base-entity-icons-list-close").scrollIntoView().should("be.visible").click({force: true});
     cy.wait(1000); //element is detached from DOM issue following this, so stall before next command
   }
   getBaseEntity(entity: string) {
