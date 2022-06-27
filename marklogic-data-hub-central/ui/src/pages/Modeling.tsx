@@ -96,12 +96,14 @@ const Modeling: React.FC = () => {
         let entityTypesArray:any = [];
         let isDraft = false;
         await response["data"].forEach(entity => {
-          if (!entity.model.info.draftDeleted) {
-            model.push(entity);
-            entityTypesArray.push({name: entity.entityName, entityTypeId: entity.entityTypeId});
-          }
-          if (entity.model.info.draft && !isDraft) {
-            isDraft = true;
+          if (entity.hasOwnProperty("entityName")) {
+            if (!entity.model.info.draftDeleted) {
+              model.push(entity);
+              entityTypesArray.push({name: entity.entityName, entityTypeId: entity.entityTypeId});
+            }
+            if (entity.model.info.draft && !isDraft) {
+              isDraft = true;
+            }
           }
         });
         setEntityTypes(model);

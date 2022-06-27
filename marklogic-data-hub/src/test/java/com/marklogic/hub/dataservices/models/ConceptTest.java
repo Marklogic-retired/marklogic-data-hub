@@ -9,6 +9,7 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.dataservices.ConceptService;
+import com.marklogic.hub.dataservices.ModelsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -22,6 +23,9 @@ public class ConceptTest extends AbstractHubCoreTest {
     private final static String EXPECTED_ORDER_MODEL_URI = "/concepts/" + ORDER_MODEL_NAME + ".draft.concept.json";
 
     private ConceptService service;
+    private ModelsService modelService;
+
+
 
     @BeforeEach
     void beforeEach() {
@@ -86,6 +90,16 @@ public class ConceptTest extends AbstractHubCoreTest {
         service.deleteDraftModel("TestNameForDelete");
         JsonNode model = getModel("TestNameForDelete", getHubClient().getFinalClient(), true);
         assertTrue(model.get("info").get("draft").asBoolean());
+    }
+
+    @Test
+     void verifyConceptsClassPrimaryEntityTypes() {
+        service.createDraftModel(newModel("newConceptName"));
+        JsonNode json = ModelsService.on(getHubClient().getFinalClient()).getPrimaryEntityTypes(Boolean.TRUE);
+        assertEquals(1, json.size(), "Expecting an array with the single newConceptName concept type in it: " + json.toPrettyString());
+        JsonNode conceptType = json.get(0);
+        assertEquals("newConceptName", conceptType.get("conceptName").asText(), "Expected concept: " + conceptType.toPrettyString());
+
     }
 
     protected JsonNode getModel(String conceptName, DatabaseClient client, boolean isDraft) {

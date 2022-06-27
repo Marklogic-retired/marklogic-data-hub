@@ -61,11 +61,11 @@ function getDraftConceptModelUri(entityName) {
   return `/concepts/${xdmp.urlEncode(entityName)}.draft.concept.json`;
 }
 
-function getDraftModelCollection() {
-  return consts.DRAFT_ENTITY_MODEL_COLLECTION;
+function getDraftConceptCollection() {
+  return consts.DRAFT_CONCEPT_COLLECTION;
 }
-function getModelCollection() {
-  return consts.ENTITY_MODEL_COLLECTION;
+function getConceptCollection() {
+  return consts.CONCEPT_COLLECTION;
 }
 
 
@@ -192,9 +192,9 @@ function deleteDraftConceptModel(conceptName) {
 module.exports = {
   findDraftModelByConceptName,
   findModelByConceptName,
-  getDraftModelCollection,
+  getDraftConceptCollection,
   getDraftConceptModelUri,
-  getModelCollection,
+  getConceptCollection,
   getConceptModelUri,
   writeDraftConceptModel,
   writeConceptModelToDatabases,
