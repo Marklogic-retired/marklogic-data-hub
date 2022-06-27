@@ -39,7 +39,8 @@ const tooltipsConfig = {
   },
   graphViewTooltips: {
     relationshipLabel: "A relationship name identifies a relationship between two two entity types. To add or edit relationship names, go to the Model screen.",
-    concept: "A semantic concept is simply an abstract subject within a vocabulary or an ontology."
+    concept: "A concept is simply an abstract subject within a vocabulary or an ontology.",
+    physicsAnimation: "Physics animation enables results to move around the screen, ensuring results do not overlap."
   },
   graphVis: {
     groupNode: (entityType) => (`Group of ${entityType} records

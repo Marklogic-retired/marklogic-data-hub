@@ -24,6 +24,7 @@ type Props = {
   setExportPngButtonClicked: any;
   setGraphPageInfo: (pageInfo: any) => void;
   viewConcepts: boolean;
+  physicsAnimation: boolean;
 };
 
 const GraphVisExplore: React.FC<Props> = (props) => {
@@ -34,7 +35,8 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     exportPngButtonClicked,
     setExportPngButtonClicked,
     setGraphPageInfo,
-    viewConcepts
+    viewConcepts,
+    physicsAnimation
   } = props;
   const [expandedNodeData, setExpandedNodeData] = useState({});
   let graphData = {nodes: [], edges: []};
@@ -500,6 +502,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     height: networkHeight,
     autoResize: true,
     physics: {
+      enabled: physicsAnimation,
       forceAtlas2Based: {
         gravitationalConstant: -26,
         centralGravity: 0.005,
