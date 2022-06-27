@@ -146,22 +146,23 @@ describe("Concepts", () => {
       canvas.click(kettleCoordinates.x, kettleCoordinates.y, {force: true});
       graphExploreSidePanel.getSidePanel().should("exist");
     });
-
-    browsePage.getFacetItemCheckbox("relatedconcepts", "Sneakers").click();
-    browsePage.getAppliedFacets("Sneakers").should("not.exist");
-    browsePage.getFacetItemCheckbox("relatedconcepts", "Sneakers").should("not.be.checked");
-    browsePage.waitForSpinnerToDisappear();
-    cy.wait(3000);
-
-    cy.log("**Verify Sneakers concept node is not visible in the canvas anymore**");
-    graphExplore.focusNode(ExploreGraphNodes.CONCEPT_SNEAKERS);
-    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_SNEAKERS).then((nodePositions: any) => {
-      let sneakersCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_SNEAKERS];
-      //it should not exist because the facet is applied only for Sneakers
-      cy.log("**Sneakers coordinates should not exist because only Kettle is selected as facet**");
-      expect(sneakersCoordinates).to.be.undefined;
-    });
   });
 
+  it("Validate that the physics animation toggle is visible and the tooltip works on it", () => {
+    //Graph view
+    cy.log("**Go to graph view**");
+    browsePage.clickGraphView();
+    graphExplore.getGraphVisCanvas().should("be.visible");
+    graphExplore.stopStabilization();
+
+    //Verify if the tooltip is visible
+    graphView.getPhysicsAnimationHelpIcon().trigger("mouseover", {force: true});
+    graphView.getPhysicsAnimationTooltip().should("be.visible");
+
+    graphView.getPhysicsAnimationToggle().should("have.value", "true");
+
+    graphView.getPhysicsAnimationToggle().scrollIntoView().trigger("mouseover").click();
+    graphView.getPhysicsAnimationToggle().should("have.value", "false");
+  });
 
 });

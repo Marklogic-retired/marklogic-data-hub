@@ -29,6 +29,7 @@ const GraphViewExplore: React.FC<Props> = (props) => {
   const [viewRelationshipLabels, toggleRelationShipLabels] = useState(true);
   const [exportPngButtonClicked, setExportPngButtonClicked] = useState(false);
   const [viewConcepts, toggleConcepts] = useState(true);
+  const [physicsAnimation, togglePhysicsAnimation] = useState(true);
 
   const {
     savedNode,
@@ -79,6 +80,10 @@ const GraphViewExplore: React.FC<Props> = (props) => {
     onCloseSidePanel();
   };
 
+  const handlePhysicsAnimation = (e) => {
+    togglePhysicsAnimation(e.target.checked);
+  };
+
   const relationshipLabelsSwitch = <div className={styles.switchContainer}><FormCheck
     id="relationship-label"
     type="switch"
@@ -112,8 +117,25 @@ const GraphViewExplore: React.FC<Props> = (props) => {
   <HCTooltip id="concept" text={graphViewTooltips.concept} placement="top">
     <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.infoIcon} />
   </HCTooltip>
-  </div>
-  ;
+  </div>;
+
+  const physicsAnimationSwitch = <div className={styles.switchContainer}><FormCheck
+    id="physics-animation"
+    type="switch"
+  >
+    <HCCheckbox
+      id="physics-animation-id"
+      label="Physics animation"
+      value={physicsAnimation}
+      checked={physicsAnimation}
+      handleClick={(e) => handlePhysicsAnimation(e)}
+      data-testid="physicsAnimation"
+    />
+  </FormCheck>
+  <HCTooltip id="physics-animation-tooltip" text={graphViewTooltips.physicsAnimation} placement="top">
+    <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.infoIcon} />
+  </HCTooltip>
+  </div>;
 
   const conceptsExist = () => {
     let hasConcepts = false;
@@ -131,6 +153,7 @@ const GraphViewExplore: React.FC<Props> = (props) => {
   const graphSwitches = <div className={styles.graphSwitches}>
     <span>{relationshipLabelsSwitch}</span>
     <span className={conceptsExist() ? styles.disabledSwitch : ""}>{conceptsSwitch}</span>
+    <span>{physicsAnimationSwitch}</span>
   </div>;
 
   const graphViewExploreMainPanel = (
@@ -151,6 +174,7 @@ const GraphViewExplore: React.FC<Props> = (props) => {
             setExportPngButtonClicked = {setExportPngButtonClicked}
             setGraphPageInfo = {setGraphPageInfo}
             viewConcepts={viewConcepts}
+            physicsAnimation={physicsAnimation}
           />
         </div>
       </div>
