@@ -10,7 +10,7 @@ import {
   propertyTable,
   relationshipModal
 } from "../../support/components/model/index";
-import {confirmationModal, toolbar} from "../../support/components/common/index";
+import {confirmationModal} from "../../support/components/common/index";
 import {Application} from "../../support/application.config";
 import LoginPage from "../../support/pages/login";
 import graphVis from "../../support/components/model/graph-vis";
@@ -22,10 +22,6 @@ describe("Entity Modeling: Reader Role", () => {
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-saved-query-user").withRequest();
     LoginPage.postLogin();
-    toolbar.getModelToolbarIcon().click();
-    cy.waitForAsyncRequest();
-    modelPage.selectView("table");
-    entityTypeTable.waitForTableToLoad();
 
     //Setup hubCentral config for testing
     cy.setupHubCentralConfig();
@@ -38,8 +34,7 @@ describe("Entity Modeling: Reader Role", () => {
     //Restoring Local Storage to Preserve Session
     cy.restoreLocalStorage();
 
-    cy.visit("/");
-    toolbar.getModelToolbarIcon().click();
+    cy.visit("/tiles/model");
     cy.wait(2000);
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
