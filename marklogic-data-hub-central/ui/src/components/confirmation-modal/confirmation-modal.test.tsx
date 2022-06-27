@@ -185,7 +185,7 @@ describe("Confirmation Modal Component", () => {
       confirmAction={confirmAction}
     />);
 
-    expect(getByText("Are you sure you want to publish your changes to the entity model?")).toBeInTheDocument();
+    expect(getByText("Are you sure you want to publish your changes to the data model?")).toBeInTheDocument();
 
     userEvent.click(getByText("No"));
     expect(toggleModal).toBeCalledTimes(1);

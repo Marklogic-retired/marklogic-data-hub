@@ -9,6 +9,7 @@ import {QuestionCircleFill} from "react-bootstrap-icons";
 import {EntityTypeColorPicker, HCButton, HCInput, HCTooltip, HCIconPicker} from "@components/common";
 import {themeColors} from "@config/themes.config";
 import {defaultIcon} from "@config/explore.config";
+import {hubCentralConfig} from "../../../types/modeling-types";
 
 type Props = {
   isVisible: boolean;
@@ -23,6 +24,7 @@ type Props = {
   toggleModal: (isVisible: boolean) => void;
   updateEntityTypesAndHideModal: (entityName: string, description: string) => void;
   updateHubCentralConfig: (hubCentralConfig: any) => void;
+  hubCentralConfig: hubCentralConfig;
 };
 
 const EntityTypeModal: React.FC<Props> = (props) => {
@@ -167,8 +169,13 @@ const EntityTypeModal: React.FC<Props> = (props) => {
   };
 
   const updateHubCentralConfig = async (entityName, color, icon) => {
-    let updatedPayload = defaultHubCentralConfig;
-    updatedPayload.modeling.entities[entityName] = {color: color, icon: icon};
+    let updatedPayload = props.hubCentralConfig || defaultHubCentralConfig;
+    if (Object.keys(updatedPayload.modeling.entities).length > 0 && updatedPayload.modeling.entities.hasOwnProperty(entityName)) {
+      updatedPayload.modeling.entities[entityName]["color"] = color;
+      updatedPayload.modeling.entities[entityName]["icon"] = icon;
+    } else {
+      updatedPayload.modeling.entities[entityName] = {color: color, icon: icon};
+    }
     props.updateHubCentralConfig(updatedPayload);
   };
 

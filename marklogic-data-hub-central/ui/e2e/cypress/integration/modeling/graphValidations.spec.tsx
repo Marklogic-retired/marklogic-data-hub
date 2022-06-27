@@ -41,7 +41,7 @@ describe("Graph Validations", () => {
     entityTypeTable.viewEntityInGraphView("Person");
     graphViewSidePanel.getEntityTypeTab().click();
     graphViewSidePanel.getEntityDescription().should("be.visible");
-    cy.publishEntityModel();
+    cy.publishDataModel();
     modelPage.getEntityModifiedAlert().should("not.exist");
     modelPage.getPublishButton().should("not.be.enabled");
 

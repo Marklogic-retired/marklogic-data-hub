@@ -485,7 +485,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
     />
     {
       entityTypesToTuples(props.entityTypes)
-        .filter(oElement => !filterEntity || oElement.value.toLowerCase().includes(filterEntity.toLowerCase()))
+        .filter(oElement => !filterEntity || (oElement.value && oElement.value.toLowerCase().includes(filterEntity.toLowerCase())))
         .map((item, index) =>
           <Dropdown.Item
             data-testid={`${item.value}-option`}

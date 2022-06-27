@@ -21,7 +21,8 @@ export enum ConfirmationType {
   DiscardChanges = "discardChanges",
   PublishAll = "publishAllEntity",
   RevertChanges = "revertEntityChanges",
-  PropertyName = "propertyName"
+  PropertyName = "propertyName",
+  DeleteConceptClass = "deleteConceptClass"
 }
 
 declare global {

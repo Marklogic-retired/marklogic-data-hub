@@ -302,8 +302,6 @@ const GraphView: React.FC<Props> = (props) => {
           hubCentralConfig={props.hubCentralConfig}
           updateHubCentralConfig={props.updateHubCentralConfig}
           getColor={getColor}
-          // splitPaneResized={splitPaneResized}
-          // setSplitPaneResized={setSplitPaneResized}
           exportPngButtonClicked = {exportPngButtonClicked}
           setExportPngButtonClicked = {setExportPngButtonClicked}
           nodeNeedRedraw={nodeNeedRedraw}
@@ -311,10 +309,6 @@ const GraphView: React.FC<Props> = (props) => {
         />
       </div>
     </div>;
-
-  // const handleSplitPaneResize = () => {
-  //   setSplitPaneResized(true);
-  // };
 
   return (
     !modelingOptions.selectedEntity ? graphViewMainPanel :
@@ -344,6 +338,7 @@ const GraphView: React.FC<Props> = (props) => {
             getColor={getColor}
             getIcon={getIcon}
             setNodeNeedRedraw={setNodeNeedRedraw}
+            deleteConceptClass={props.deleteConceptClass}
           />
         </div>
       </SplitPane>

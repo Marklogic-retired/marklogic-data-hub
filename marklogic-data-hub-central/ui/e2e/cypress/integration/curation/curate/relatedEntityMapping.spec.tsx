@@ -65,7 +65,7 @@ describe("Mapping", () => {
     cy.waitForAsyncRequest();
     cy.wait(1000);
     //Save Changes
-    cy.publishEntityModel();
+    cy.publishDataModel();
     propertyTable.getForeignIcon("relatedTo").should("exist");
   });
   it("Create new mapping in Curate", {defaultCommandTimeout: 120000}, () => {

@@ -3,6 +3,14 @@ class GraphViewSidePanel {
     return cy.findByLabelText(`${entityName}-selectedEntity`);
   }
 
+  getSelectedConceptClassHeading(conceptName: string) {
+    return cy.findByLabelText(`${conceptName}-selectedEntity`);
+  }
+
+  getSelectedConceptClassHeadingInfo(conceptName: string) {
+    return cy.findByLabelText(`${conceptName}-conceptHeadingInfo`);
+  }
+
   getDeleteIcon(entityName: string) {
     return cy.findByTestId(`${entityName}-delete`);
   }
@@ -82,6 +90,18 @@ class GraphViewSidePanel {
 
   getPropertiesOnHoverDropdownOption(option: string) {
     return cy.get(`[aria-label="${option}-option"]`).first().scrollIntoView();
+  }
+
+  getConceptClassName(conceptClassName: string) {
+    return cy.findByTestId(`${conceptClassName}`);
+  }
+
+  getConceptClassDescription() {
+    return cy.get("#description");
+  }
+
+  getConceptClassColor(conceptClassName: string) {
+    return cy.get(`[id="${conceptClassName}-color-button"] > div`);
   }
 }
 

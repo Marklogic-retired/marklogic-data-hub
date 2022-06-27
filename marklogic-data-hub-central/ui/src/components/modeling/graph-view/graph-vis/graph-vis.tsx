@@ -89,7 +89,7 @@ const GraphVis: React.FC<Props> = (props) => {
     }
     return coordsExist;
   };
-  const [physicsEnabled, setPhysicsEnabled] = useState(userPreferences?.modelingGraphOptions?.physicsEnabled);
+  const [physicsEnabled, setPhysicsEnabled] = useState(userPreferences?.modelingGraphOptions?.physicsEnabled || true);
   const [graphData, setGraphData] = useState({nodes: [], edges: []});
   let testingMode = true; // Should be used further to handle testing only in non-production environment
   const [openRelationshipModal, setOpenRelationshipModal] = useState(false);
@@ -231,7 +231,11 @@ const GraphVis: React.FC<Props> = (props) => {
   };
 
   const selectedEntityExists = () => {
-    return props.entityTypes.some(e => e.entityName === modelingOptions.selectedEntity);
+    return props.entityTypes.some(e => {
+      let isConcept = e.hasOwnProperty("conceptName");
+      let nodeName = !isConcept ? e.entityName : e.conceptName;
+      return nodeName === modelingOptions.selectedEntity;
+    });
   };
 
   const saveUnsavedCoords = async (positions) => {
@@ -368,11 +372,6 @@ const GraphVis: React.FC<Props> = (props) => {
     return num;
   };
 
-  // const iconExistsForNode = (nodeName, isConcept) => {
-  //   let nodeIcon = !isConcept ? props.hubCentralConfig?.modeling?.entities[nodeName]?.icon : props.hubCentralConfig?.modeling?.concepts[nodeName]?.icon;
-  //   return (!nodeIcon ? false : true);
-  // };
-
   const roundedRect = (ctx: any, x: number, y: number, width: number, height: number, radius: number) => {
     ctx.beginPath();
     ctx.moveTo(x, y + radius);
@@ -432,11 +431,11 @@ const GraphVis: React.FC<Props> = (props) => {
               if (selected && hover) {
                 ctx.fillStyle = graphConfig.nodeStyles.hoverColor;
                 ctx.strokeStyle = graphConfig.nodeStyles.selectColor;
-                ctx.lineWidth = 2;
+                ctx.lineWidth = isConcept ? 3 : 2;
               } else if (selected) {
                 ctx.fillStyle = props.getColor(nodeId, isConcept);
                 ctx.strokeStyle = graphConfig.nodeStyles.selectColor;
-                ctx.lineWidth = 2;
+                ctx.lineWidth = isConcept ? 3 : 2;
               } else if (hover) {
                 ctx.fillStyle = graphConfig.nodeStyles.hoverColor;
                 ctx.lineWidth = 0;

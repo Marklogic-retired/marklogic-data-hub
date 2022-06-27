@@ -34,7 +34,7 @@ const ModelingTooltips = {
   /* Icons for entity types */
   saveIcon: 'Save changes to this entity type.',
   revertIcon: 'Discard unsaved changes to this entity type.',
-  deleteIcon: 'Delete this entity type.',
+  deleteIcon: (isConceptNode?: boolean) => !isConceptNode ? 'Delete this entity type.' : 'Delete this concept class.',
   viewGraph: 'View entity in graph view.',
 
   /* Icons for entity properties */
@@ -60,8 +60,8 @@ const ModelingTooltips = {
   descriptionEntityProperty: 'A description of this entity property.',
   namespace: 'You can use a namespace to differentiate between XML elements that use the same name. If you use a namespace, you must define both a namespace URI and prefix. If your record is in JSON format, the namespace will have no effect.',
   versionField: 'Change the version number of this entity type to organize your updates',
-  colorField: (entityType) => <span>Select a color to associate it with the <b>{entityType}</b> entity throughout your project.</span>,
-  iconField: (entityType) => <span>Select an icon to associate it with the <b>{entityType}</b> entity throughout your project.</span>,
+  colorField: (entityType, isConceptNode?: boolean) => <span>Select a color to associate it with the <b>{entityType}</b> {!isConceptNode ? "entity" : "concept"} throughout your project.</span>,
+  iconField: (entityType, isConceptNode?: boolean) => <span>Select an icon to associate it with the <b>{entityType}</b> {!isConceptNode ? "entity" : "concept"} throughout your project.</span>,
   labelField: (entityType) => <span>The record label is the value of the selected property. The record label will display on each record related with the <b>{entityType}</b> entity throughout your project.</span>,
   propertiesOnHoverField: "Properties on Hover are the values of the selected properties. Properties on Hover display in a tooltip when hovering on a record. You can choose multiple properties. If properties are not selected, the value of the identifier will display on hover. If neither properties nor an identifier are selected, the URI will display on hover.",
   /* Form fields */

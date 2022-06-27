@@ -184,7 +184,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     modelPage.getEntityModifiedAlert().should("exist");
   });
   it("Save new and updated entities", {defaultCommandTimeout: 120000}, () => {
-    cy.publishEntityModel();
+    cy.publishDataModel();
     modelPage.getEntityModifiedAlert().should("not.exist");
   });
   it("Validate the entity in explore page", () => {

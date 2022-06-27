@@ -74,7 +74,7 @@ describe("Entity Modeling: Graph View", () => {
     confirmationModal.getDeleteEntityText().should("not.exist");
     cy.waitForAsyncRequest();
     graphViewSidePanel.getSelectedEntityHeading("ThisIsVeryLongNameHavingMoreThan20Characters").should("not.exist");
-    cy.publishEntityModel();
+    cy.publishDataModel();
   });
   it("Create another entity Patients and add a properties", {defaultCommandTimeout: 120000}, () => {
     modelPage.selectView("table");
@@ -117,7 +117,7 @@ describe("Entity Modeling: Graph View", () => {
     propertyTable.getFacetIcon("health").should("exist");
     propertyTable.getSortIcon("health").should("exist");
     //Save Changes
-    cy.publishEntityModel();
+    cy.publishDataModel();
 
     propertyTable.getProperty("patientId").should("not.exist");
     propertyTable.getProperty("health").should("exist");
@@ -146,7 +146,7 @@ describe("Entity Modeling: Graph View", () => {
     graphViewSidePanel.getSelectedEntityHeading("Patients").should("not.exist");
     cy.wait(150);
     //Publish the changes
-    cy.publishEntityModel();
+    cy.publishDataModel();
   });
 
   it("Edit a relationship from graph view", {defaultCommandTimeout: 120000}, () => {
@@ -384,7 +384,7 @@ describe("Entity Modeling: Graph View", () => {
     //return to Model tile and publish
     toolbar.getModelToolbarIcon().click();
     cy.wait(2500); //wait for DOM as following element becomes detached
-    cy.publishEntityModel();
+    cy.publishDataModel();
 
     cy.log("**Verify Person relationship is visible in mapping**");
     //verify relationship is visible in mapping

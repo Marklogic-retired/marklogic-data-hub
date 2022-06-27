@@ -182,10 +182,9 @@ const Modeling: React.FC = () => {
 
   const handleConceptClassDeletion = async (conceptClassName: string) => {
     try {
-      let resp = await deleteConceptClass(conceptClassName);
-      if (resp["status"] === 200) {
-        //To be updated in future stories
-      }
+      setConfirmBoldTextArray([conceptClassName]);
+      setConfirmType(ConfirmationType.DeleteConceptClass);
+      toggleConfirmModal(true);
     } catch (err) {
       console.error(err);
     }
@@ -277,6 +276,8 @@ const Modeling: React.FC = () => {
       publishDraftModelToServer();
     } else if (confirmType === ConfirmationType.DeleteEntityRelationshipOutstandingEditWarn || confirmType === ConfirmationType.DeleteEntityNoRelationshipOutstandingEditWarn || confirmType === ConfirmationType.DeleteEntity) {
       deleteEntityFromServer();
+    } else if (confirmType === ConfirmationType.DeleteConceptClass) {
+      deleteConceptClassFromServer();
     } else if (confirmType === ConfirmationType.RevertChanges) {
       clearDraftModel();
     }
@@ -335,6 +336,22 @@ const Modeling: React.FC = () => {
     }
   };
 
+  const deleteConceptClassFromServer = async () => {
+    let conceptClassName = confirmBoldTextArray.length ? confirmBoldTextArray[0] : "";
+    try {
+      const response = await deleteConceptClass(conceptClassName);
+      if (response["status"] === 200) {
+        setEntityTypesFromServer();
+      }
+    } catch (error) {
+      handleError(error);
+    } finally {
+      toggleConfirmModal(false);
+      if (modelingOptions.selectedEntity && modelingOptions.selectedEntity === conceptClassName) {
+        setSelectedEntity(undefined);
+      }
+    }
+  };
 
   const addButton = <HCButton
     variant="primary"
@@ -545,6 +562,7 @@ const Modeling: React.FC = () => {
           color={color}
           icon={icon}
           updateHubCentralConfig={publishHubCentralConfig}
+          hubCentralConfig={hubCentralConfig}
         />
         <ConceptClassModal
           isVisible={showConceptClassModal}

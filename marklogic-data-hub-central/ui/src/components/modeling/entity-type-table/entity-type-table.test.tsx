@@ -198,7 +198,7 @@ describe("EntityTypeModal Component", () => {
 
     // check if delete tooltip appears
     fireEvent.mouseOver(getByTestId("Order-trash-icon"));
-    await wait(() => expect(screen.getByText(ModelingTooltips.deleteIcon)).toBeInTheDocument());
+    await wait(() => expect(screen.getByText(ModelingTooltips.deleteIcon())).toBeInTheDocument());
 
     userEvent.click(getByTestId("Order-trash-icon"));
     expect(mockEntityReferences).toBeCalledWith("Order");
