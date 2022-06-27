@@ -19,6 +19,10 @@ class GraphView {
     return cy.findByLabelText("add-relationship");
   }
 
+  getAddConceptClassOption() {
+    return cy.findByLabelText("add-concept-class");
+  }
+
   getPublishToDatabaseButton() {
     return cy.findByLabelText("publish-to-database");
   }

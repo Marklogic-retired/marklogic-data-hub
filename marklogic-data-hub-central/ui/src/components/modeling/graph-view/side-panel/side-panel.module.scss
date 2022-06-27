@@ -8,7 +8,12 @@
         color: #333333;
         padding-right: 10px;
     }
-
+    .conceptHeadingInfo {
+        font-size: 18px;
+        color: $secondary-gray;
+        vertical-align: middle;
+        margin-bottom: 20px;
+    }
     .deleteIcon {
         color: $info;
         font-size: 24px;

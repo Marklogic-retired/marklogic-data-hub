@@ -6,6 +6,7 @@ import structuredTypeModal from "./structured-type-modal";
 import graphViewSidePanel from "./graph-view-side-panel";
 import graphView from "./graph-view";
 import relationshipModal from "./relationship-modal";
+import conceptClassModal from "./concept-class-modal";
 
 
 export {
@@ -16,5 +17,6 @@ export {
   structuredTypeModal,
   graphView,
   graphViewSidePanel,
-  relationshipModal
+  relationshipModal,
+  conceptClassModal
 };

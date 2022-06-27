@@ -71,7 +71,7 @@ describe("Graph View Component", () => {
     //Verify side panel content
 
     userEvent.hover(getByTestId("Product-delete"));
-    await wait(() => expect(screen.getByText(ModelingTooltips.deleteIcon)).toBeInTheDocument());
+    await wait(() => expect(screen.getByText(ModelingTooltips.deleteIcon())).toBeInTheDocument());
 
     expect(getByLabelText("closeGraphViewSidePanel")).toBeInTheDocument();
     expect(getByLabelText("propertiesTabInSidePanel")).toBeInTheDocument();
@@ -117,7 +117,7 @@ describe("Graph View Component", () => {
     expect(queryByPlaceholderText("Enter description"));
 
     userEvent.hover(getByTestId("Order-delete"));
-    await wait(() => expect(screen.getByText(ModelingTooltips.deleteIcon)).toBeInTheDocument());
+    await wait(() => expect(screen.getByText(ModelingTooltips.deleteIcon())).toBeInTheDocument());
 
     expect(getByLabelText("closeGraphViewSidePanel")).toBeInTheDocument();
     expect(getByLabelText("propertiesTabInSidePanel")).toBeInTheDocument();

@@ -339,7 +339,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
                   onClick={() => navigateToGraphView(text)}
                 /></span>
             </HCTooltip>
-            <HCTooltip text={props.canWriteEntityModel ? ModelingTooltips.deleteIcon : "Delete Entity: " + SecurityTooltips.missingPermission} id="trash-icon-tooltip" placement="top">
+            <HCTooltip text={props.canWriteEntityModel ? ModelingTooltips.deleteIcon() : "Delete Entity: " + SecurityTooltips.missingPermission} id="trash-icon-tooltip" placement="top">
               <span className="p-2 inline-block cursor-pointer">
                 <FontAwesomeIcon
                   data-testid={text + "-trash-icon"}

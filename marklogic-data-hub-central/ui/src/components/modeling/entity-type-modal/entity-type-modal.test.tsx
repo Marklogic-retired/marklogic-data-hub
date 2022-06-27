@@ -33,7 +33,8 @@ const defaultModalOptions = {
   description: "",
   namespace: "",
   prefix: "",
-  updateHubCentralConfig: jest.fn()
+  updateHubCentralConfig: jest.fn(),
+  hubCentralConfig: defaultHubCentralConfig
 };
 
 let hubCentralConfig = defaultHubCentralConfig;

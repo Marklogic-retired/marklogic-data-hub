@@ -87,7 +87,7 @@ const ConfirmationModal: React.FC<Props> = (props) => {
             </>
           )}
 
-          {props.type === ConfirmationType.DeleteEntity && <p aria-label="delete-text">Permanently delete <b>{props.boldTextArray[0]}</b>?</p>}
+          {(props.type === ConfirmationType.DeleteEntity || props.type === ConfirmationType.DeleteConceptClass) && <p aria-label="delete-text">Permanently delete <b>{props.boldTextArray[0]}</b>?</p>}
 
           {props.type === ConfirmationType.DeleteEntityRelationshipWarn && (
             <>
@@ -239,7 +239,7 @@ const ConfirmationModal: React.FC<Props> = (props) => {
           )}
           {(props.type === ConfirmationType.PublishAll) && (
             <>
-              <p aria-label="save-all-text">Are you sure you want to publish your changes to the entity model?</p>
+              <p aria-label="save-all-text">Are you sure you want to publish your changes to the data model?</p>
               <p className={styles.publishAllText}>{ModelingMessages.saveEntityConfirm}</p>
             </>
           )}

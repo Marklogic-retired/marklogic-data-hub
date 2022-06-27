@@ -288,7 +288,7 @@ Cypress.Commands.add("setupHubCentralConfig", () => {
   });
 });
 
-Cypress.Commands.add("publishEntityModel", () => {
+Cypress.Commands.add("publishDataModel", () => {
   modelPage.getPublishButton().scrollIntoView().should("be.visible").click();
   cy.waitForAsyncRequest();
   cy.wait(1000);
@@ -305,7 +305,7 @@ Cypress.Commands.add("publishEntityModel", () => {
   confirmationModal.getSaveAllEntityText().should("not.exist");
   modelPage.getEntityModifiedAlert().should("not.exist");
 });
-Cypress.Commands.add("publishEntityModelOnce", () => {
+Cypress.Commands.add("publishDataModelOnce", () => {
   modelPage.getPublishButton().click();
   cy.waitForAsyncRequest();
   cy.wait(1000);

@@ -1,14 +1,14 @@
 import React, {useContext, useEffect, useState} from "react";
 import {Row, Col, Form, FormLabel, Tab, Tabs} from "react-bootstrap";
 import {QuestionCircleFill, XLg} from "react-bootstrap-icons";
-import {EntityTypeColorPicker, HCTooltip, HCInput, HCIconPicker} from "@components/common";
+import {EntityTypeColorPicker, HCTooltip, HCInput, HCIconPicker, HCDivider} from "@components/common";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styles from "./side-panel.module.scss";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {ModelingTooltips, SecurityTooltips} from "@config/tooltips.config";
 import {ModelingContext} from "@util/modeling-context";
 import PropertiesTab from "../properties-tab/properties-tab";
-import {primaryEntityTypes, updateModelInfo} from "@api/modeling";
+import {primaryEntityTypes, updateConceptClass, updateModelInfo} from "@api/modeling";
 import {getViewSettings, setViewSettings, UserContext} from "@util/user-context";
 import {EntityModified, Definition} from "../../../../types/modeling-types";
 import {defaultHubCentralConfig} from "@config/modeling.config";
@@ -35,13 +35,13 @@ type Props = {
   getColor: any;
   getIcon: any;
   setNodeNeedRedraw: any;
+  deleteConceptClass:(conceptClassName) => void;
 };
 
 const DEFAULT_TAB = "properties";
 
 const GraphViewSidePanel: React.FC<Props> = (props) => {
   const viewSettings = getViewSettings();
-
   const [currentTab, setCurrentTab] = useState(viewSettings.model?.currentTab || DEFAULT_TAB);
   const {modelingOptions, setSelectedEntity} = useContext(ModelingContext);
   const {entityDefinitionsArray, setEntityDefinitionsArray} = useContext(SearchContext);
@@ -64,6 +64,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
   const [entityTypeDefinition, setEntityTypeDefinition] = useState<Definition>();
 
   const [selectedEntityInfo, setSelectedEntityInfo] = useState<any>({});
+  const [isConceptNode, setIsConceptNode] = useState(false);
 
   const handleTabChange = (key) => {
     const currentTabSetting = {
@@ -83,20 +84,35 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
       if (response) {
         if (response["data"].length > 0) {
           const entity = modelingOptions.selectedEntity;
-          const selectedEntityDetails = await response.data.find(ent => ent.entityName === modelingOptions.selectedEntity);
+          let isConceptType = false;
+          const selectedEntityDetails = await response.data.find(ent => {
+            let isConcept = ent.hasOwnProperty("conceptName");
+            let nodeName = !isConcept ? ent.entityName : ent.conceptName;
+            return nodeName === modelingOptions.selectedEntity;
+          });
+          if (selectedEntityDetails && selectedEntityDetails.hasOwnProperty("conceptName")) {
+            setIsConceptNode(true);
+            isConceptType = true;
+          }
           if (selectedEntityDetails) {
             setSelectedEntityInfo(selectedEntityDetails);
-            if (entity !== undefined && selectedEntityDetails.model?.definitions[entity]) {
-              setSelectedEntityDescription(entity !== undefined && selectedEntityDetails.model.definitions[entity].description);
-              setSelectedEntityNamespace(entity !== undefined && selectedEntityDetails.model.definitions[entity].namespace);
-              setSelectedEntityNamespacePrefix(entity !== undefined && selectedEntityDetails.model.definitions[entity].namespacePrefix);
+            if (!isConceptType) {
+              setIsConceptNode(false);
+              if (entity !== undefined && selectedEntityDetails.model?.definitions[entity]) {
+                setSelectedEntityDescription(entity !== undefined && selectedEntityDetails.model.definitions[entity].description);
+                setSelectedEntityNamespace(entity !== undefined && selectedEntityDetails.model.definitions[entity].namespace);
+                setSelectedEntityNamespacePrefix(entity !== undefined && selectedEntityDetails.model.definitions[entity].namespacePrefix);
+              }
+              if (entity !== undefined && selectedEntityDetails.model?.info?.version) {
+                setSelectedEntityVersion(selectedEntityDetails.model.info.version);
+              }
+              setEntityModels({...convertArrayOfEntitiesToObject(response.data)});
+              initializeEntityColorIcon();
+              initializeEntityDisplayProps();
+            } else {
+              setSelectedEntityDescription(entity !== undefined && selectedEntityDetails.model.info.description);
+              initializeEntityColorIcon(isConceptType);
             }
-            if (entity !== undefined && selectedEntityDetails.model?.info?.version) {
-              setSelectedEntityVersion(selectedEntityDetails.model.info.version);
-            }
-            setEntityModels({...convertArrayOfEntitiesToObject(response.data)});
-            initializeEntityColorIcon();
-            initializeEntityDisplayProps();
           } else {
             // Entity type not found, may have been deleted, unset
             setSelectedEntity(undefined);
@@ -108,10 +124,9 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
     }
   };
 
-  const initializeEntityColorIcon = () => {
-    let entColor = props.getColor(modelingOptions.selectedEntity);
-    let entIcon = props.getIcon(modelingOptions.selectedEntity);
-
+  const initializeEntityColorIcon = (isConcept: boolean = false) => {
+    let entColor = props.getColor(modelingOptions.selectedEntity, isConcept);
+    let entIcon = props.getIcon(modelingOptions.selectedEntity, isConcept);
     if (entColor) {
       setColorSelected(entColor);
     } else {
@@ -138,7 +153,9 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
   const handlePropertyChange = async (event) => {
     let entity: any = modelingOptions.selectedEntity;
     if (event.target.id === "description") {
-      if (event.target.value !== selectedEntityInfo.model.definitions[entity].description) {
+      let descriptionFromServer = !isConceptNode ? selectedEntityInfo.model.definitions[entity].description : selectedEntityInfo.model.info.description;
+
+      if (event.target.value !== descriptionFromServer) {
         setisDescriptionTouched(true);
       } else {
         setisDescriptionTouched(false);
@@ -191,7 +208,12 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
   const handlePropertyUpdate = async () => {
     try {
       if (modelingOptions.selectedEntity !== undefined) {
-        const response = await updateModelInfo(modelingOptions.selectedEntity, selectedEntityDescription, selectedEntityNamespace, selectedEntityNamespacePrefix, selectedEntityVersion);
+        let response;
+        if (!isConceptNode) {
+          response = await updateModelInfo(modelingOptions.selectedEntity, selectedEntityDescription, selectedEntityNamespace, selectedEntityNamespacePrefix, selectedEntityVersion);
+        } else {
+          response = await updateConceptClass(modelingOptions.selectedEntity, selectedEntityDescription);
+        }
         if (response["status"] === 200) {
           setErrorServer("");
           setEntityTypesFromServer(modelingOptions.selectedEntity);
@@ -230,7 +252,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
     if (modelingOptions.selectedEntity) {
       setErrorServer("");
       getEntityInfo();
-      initializeEntityColorIcon();
+      //initializeEntityColorIcon();
     }
   }, [modelingOptions.selectedEntity]);
 
@@ -241,7 +263,6 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
         const modelsResponse = await getEntities();
         const parsedModelData = entityFromJSON(modelsResponse.data);
         const parsedEntityDef = entityParser(parsedModelData).filter(entity => entity.name && entity);
-
         if (loaded) {
           setEntityDefinitionsArray(parsedEntityDef);
         }
@@ -249,13 +270,14 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
         handleError(error);
       }
     })();
+    //initializeEntityColorIcon(isConceptNode);
     return () => {
       loaded = false;
     };
   }, [props.hubCentralConfig]);
 
   useEffect(() => {
-    if (modelingOptions.selectedEntity) {
+    if (modelingOptions.selectedEntity && !isConceptNode) {
       let tmpDefinitions: any[] = [];
       if (entityModels[modelingOptions.selectedEntity]?.model.definitions) {
         tmpDefinitions = definitionsParser(entityModels[modelingOptions.selectedEntity]?.model.definitions);
@@ -333,7 +355,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
   };
 
   const displayPanelContent = () => {
-    return currentTab === "entityType" ? <div id="entityType-tab-content">
+    return currentTab === "entityType" || isConceptNode ? <div id="entityType-tab-content">
       <Form className={"container-fluid"}>
         <Row className={"mb-3"}>
           <FormLabel column lg={3}>{"Name:"}</FormLabel>
@@ -354,13 +376,13 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
               onBlur={onSubmit}
             />
             <div className={"p-2 d-flex align-items-center"}>
-              <HCTooltip text={ModelingTooltips.entityDescription} id="description-tooltip" placement="top-end">
+              <HCTooltip text={!isConceptNode ? ModelingTooltips.entityDescription : ModelingTooltips.conceptClassDescription} id="description-tooltip" placement="top-end">
                 <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.icon} data-testid="entityDescriptionTooltip" />
               </HCTooltip>
             </div>
           </Col>
         </Row>
-        <Row className={"mb-3"}>
+        {!isConceptNode && <Row className={"mb-3"}>
           <FormLabel column lg={3}>{"Namespace URI:"}</FormLabel>
           <Col>
             <Row>
@@ -402,8 +424,8 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
               </Col>
             </Row>
           </Col>
-        </Row>
-        <Row>
+        </Row>}
+        {!isConceptNode && <Row>
           <FormLabel column lg={3} style={{marginTop: "20px"}}>{"Version:"}</FormLabel>
           <Col className={"d-flex align-items-center"}>
             <div className={styles.versionContainer}>
@@ -424,7 +446,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
               </div>
             </div>
           </Col>
-        </Row>
+        </Row>}
         {/* Display settings section  */}
         <Row className={"mb-3 mt-4"}>
           <Col className={"d-flex align-items-center"}>
@@ -439,7 +461,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
                 <EntityTypeColorPicker color={colorSelected} entityType={modelingOptions.selectedEntity} handleColorChange={handleColorChange} />
               }
               <div className={"d-flex align-items-center"}>
-                <HCTooltip id="colo-selector" text={ModelingTooltips.colorField(modelingOptions.selectedEntity)} placement="right">
+                <HCTooltip id="colo-selector" text={ModelingTooltips.colorField(modelingOptions.selectedEntity, isConceptNode)} placement="right">
                   <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.colorsIcon} />
                 </HCTooltip>
               </div>
@@ -454,14 +476,14 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
                 <HCIconPicker identifier={modelingOptions.selectedEntity} value={iconSelected} onChange={(value) => handleIconChange(value)} />
               </div>
               <div className={"d-flex align-items-center"}>
-                <HCTooltip id="icon-selector" text={ModelingTooltips.iconField(modelingOptions.selectedEntity)} placement="right">
+                <HCTooltip id="icon-selector" text={ModelingTooltips.iconField(modelingOptions.selectedEntity, isConceptNode)} placement="right">
                   <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.iconPickerTooltip} />
                 </HCTooltip>
               </div>
             </div>
           </Col>
         </Row>
-        <Row className={"mb-3"}>
+        {!isConceptNode && <Row className={"mb-3"}>
           <FormLabel column lg={3}>{"Record Label:"}</FormLabel>
           <Col className={"d-flex"}>
             <Select
@@ -489,8 +511,8 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
               </HCTooltip>
             </div>
           </Col>
-        </Row>
-        {entityTypeDefinition?.properties &&
+        </Row>}
+        {!isConceptNode && entityTypeDefinition?.properties &&
           <Row className={"mb-3"}>
             <FormLabel column lg={3}>{"Properties on Hover:"}</FormLabel>
             <Col className={"d-flex"}>
@@ -527,13 +549,17 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
   return (
     <div id="sidePanel" className={styles.sidePanel}>
       <div>
-        <span className={styles.selectedEntityHeading} aria-label={`${modelingOptions.selectedEntity}-selectedEntity`}>{modelingOptions.selectedEntity}</span>
-        <span><HCTooltip text={!props.canWriteEntityModel && props.canReadEntityModel ? "Delete Entity: " + SecurityTooltips.missingPermission : ModelingTooltips.deleteIcon} id="delete-tooltip" placement="top">
+        <span className={styles.selectedEntityHeading} aria-label={`${modelingOptions.selectedEntity}-selectedEntity`}>{modelingOptions.selectedEntity} {isConceptNode && <span className={styles.conceptHeadingInfo} aria-label={`${modelingOptions.selectedEntity}-conceptHeadingInfo`}>(Concept Class)</span>}</span>
+        <span><HCTooltip text={!props.canWriteEntityModel && props.canReadEntityModel ? "Delete Entity: " + SecurityTooltips.missingPermission : ModelingTooltips.deleteIcon(isConceptNode)} id="delete-tooltip" placement="top">
           <i key="last" role="delete-entity button" data-testid={modelingOptions.selectedEntity + "-delete"} onClick={(event) => {
             if (!props.canWriteEntityModel && props.canReadEntityModel) {
               return event.preventDefault();
             } else {
-              props.deleteEntityClicked(modelingOptions.selectedEntity);
+              if (!isConceptNode) {
+                props.deleteEntityClicked(modelingOptions.selectedEntity);
+              } else {
+                props.deleteConceptClass(modelingOptions.selectedEntity);
+              }
             }
           }}>
             <FontAwesomeIcon icon={faTrashAlt} className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.deleteIconDisabled : styles.deleteIcon} size="lg" />
@@ -544,7 +570,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
           <XLg />
         </i></span>
       </div>
-      <div className={styles.tabs}>
+      {!isConceptNode && <div className={styles.tabs}>
         <Tabs defaultActiveKey={DEFAULT_TAB} activeKey={currentTab} onSelect={handleTabChange} className={styles.tabsContainer}>
           <Tab
             eventKey="properties"
@@ -560,7 +586,8 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
             tabClassName={`${styles.tab}
           ${currentTab === "entityType" && styles.active}`}></Tab>
         </Tabs>
-      </div>
+      </div>}
+      {isConceptNode && <HCDivider className={"mt-2 mb-2"} style={{backgroundColor: "#ccc"}} />}
       {displayPanelContent()}
     </div>
   );
