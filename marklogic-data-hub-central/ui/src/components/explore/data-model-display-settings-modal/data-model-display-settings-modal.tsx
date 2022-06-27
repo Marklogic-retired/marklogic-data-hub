@@ -65,7 +65,7 @@ const DataModelDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal,
             concept,
             color: hubCentralConfig?.modeling?.concepts[concept]?.color || themeColors.defaults.entityColor,
             icon: hubCentralConfig?.modeling?.concepts[concept]?.icon || defaultIcon,
-            children: Object.keys(hubCentralConfig?.modeling?.concepts[concept]?.semanticConcepts).map((semanticConcept, subIndex) => {
+            children: Object.keys(hubCentralConfig?.modeling?.concepts[concept]?.semanticConcepts || {}).map((semanticConcept, subIndex) => {
               tmpConceptIndexes[semanticConcept] = {
                 parent: concept,
                 index: subIndex

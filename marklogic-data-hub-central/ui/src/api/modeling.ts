@@ -51,3 +51,15 @@ export const getHubCentralConfig = async () => {
 export const updateHubCentralConfig = async (hubCentralConfig: any) => {
   return await axios.put(`/api/models/hubCentralConfig`, hubCentralConfig);
 };
+
+export const createConceptClass = async (conceptClassPayload: any) => {
+  return await axios.post(`/api/concepts`, conceptClassPayload);
+};
+
+export const deleteConceptClass = async (conceptName: string) => {
+  return await axios.delete(`/api/concepts/${conceptName}`);
+};
+
+export const updateConceptClass = async (conceptClassName: string, conceptClassDescription: string) => {
+  return await axios.put(`/api/concepts/${conceptClassName}/info`, {description: conceptClassDescription});
+};

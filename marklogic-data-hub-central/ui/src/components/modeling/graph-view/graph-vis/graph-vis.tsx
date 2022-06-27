@@ -10,15 +10,16 @@ import NodeSvg from "./node-svg";
 import graphConfig from "@config/graph-vis.config";
 import AddEditRelationship from "../relationship-modal/add-edit-relationship";
 import {defaultHubCentralConfig} from "@config/modeling.config";
-import {defaultIcon} from "@config/explore.config";
+import {defaultIcon, defaultConceptIcon} from "@config/explore.config";
 import {ViewType} from "../../../../types/modeling-types";
 import * as _ from "lodash";
 import {UserContext} from "@util/user-context";
 import {getUserPreferences, updateUserPreferences} from "../../../../services/user-preferences";
-import {entitiesConfigExist} from "@util/modeling-utils";
+import {entitiesConfigExist, getCategoryWithinModel, iconExistsForNode} from "@util/modeling-utils";
 import * as FontIcon from "react-icons/fa";
 import {renderToStaticMarkup} from "react-dom/server";
 import {DEFAULT_NODE_CONFIG} from "@config/modeling.config";
+import {themeColors} from "@config/themes.config";
 
 type Props = {
   entityTypes: any;
@@ -37,8 +38,6 @@ type Props = {
   hubCentralConfig: any;
   updateHubCentralConfig: (hubCentralConfig: any) => void;
   getColor: any;
-  splitPaneResized: any;
-  setSplitPaneResized: any;
   exportPngButtonClicked: boolean;
   setExportPngButtonClicked: any;
   nodeNeedRedraw: boolean;
@@ -71,9 +70,13 @@ const GraphVis: React.FC<Props> = (props) => {
     let coordsExist = true;
     let newNodeCounter = 0;
     if (entitiesConfigExist(props.hubCentralConfig)) {
-      let allEntityCoordinates = props.hubCentralConfig["modeling"]["entities"];
-      for (const entity of props.entityTypes) {
-        if (!allEntityCoordinates[entity.entityName]) {
+      let allNodeCoordinates = props.hubCentralConfig["modeling"];
+      for (const node of props.entityTypes) {
+        let isConcept = node.hasOwnProperty("conceptName");
+        let nodeName = !isConcept ? node.entityName : node.conceptName;
+        let modelCategory = getCategoryWithinModel(isConcept);
+        if (!allNodeCoordinates[modelCategory][nodeName] ||
+          (!allNodeCoordinates[modelCategory][nodeName].graphX && !allNodeCoordinates[modelCategory][nodeName].graphY)) {
           //count number of new nodes, if they only added one, no need for physics to stabilize entire graph on line 184
           newNodeCounter = newNodeCounter + 1;
         }
@@ -97,7 +100,7 @@ const GraphVis: React.FC<Props> = (props) => {
   const [newRelationship, setNewRelationship] = useState(false);
   const [escKeyPressed, setEscKeyPressed] = useState(false);
   const [coordsLoaded, setCoordsLoaded] = useState(false);
-  const [coords, setCoords] = useState<any>({});
+  const [coords, setCoords] = useState<any>(defaultHubCentralConfig);
   const [hasStabilized, setHasStabilized] = useState(false);
 
   // Get network instance on init
@@ -111,16 +114,8 @@ const GraphVis: React.FC<Props> = (props) => {
   // Load coords *once* on init
   useEffect(() => {
     if (!coordsLoaded && entitiesConfigExist(props.hubCentralConfig)) {
-      let newCoords = {};
-      let allCoordinates = props.hubCentralConfig["modeling"]["entities"];
-
-      Object.keys(allCoordinates).forEach(entity => {
-        let entityCoordinates = allCoordinates[entity];
-        if (entityCoordinates.graphX && entityCoordinates.graphY) {
-          newCoords[entity] = {graphX: entityCoordinates.graphX, graphY: entityCoordinates.graphY};
-        }
-      });
-      setCoords(newCoords);
+      let allConfig = props.hubCentralConfig;
+      setCoords(allConfig);
       setCoordsLoaded(true);
       if (network) {
         updateNetworkHeight();
@@ -207,24 +202,6 @@ const GraphVis: React.FC<Props> = (props) => {
     }
   }, [props.entityTypes, props.filteredEntityTypes.length, coordsLoaded]);
 
-  // Initialize or update graph
-  useEffect(() => {
-    setGraphData({
-      nodes: getNodes(),
-      edges: getEdges()
-    });
-  }, [props.hubCentralConfig]);
-
-  useEffect(() => {
-    if (props.splitPaneResized) {
-      setGraphData({
-        nodes: getNodes(),
-        edges: getEdges()
-      });
-      props.setSplitPaneResized(false);
-    }
-  }, [props.splitPaneResized]);
-
   const initializeScaleAndViewPosition = () => {
     if (props.hubCentralConfig?.modeling) {
       let model = props.hubCentralConfig.modeling;
@@ -239,13 +216,13 @@ const GraphVis: React.FC<Props> = (props) => {
     }
   };
 
-  const coordsExist = (entityName) => {
+  const coordsExist = (nodeName, isConcept) => {
     let result = false;
     if (entitiesConfigExist(props.hubCentralConfig)) {
-      let entities = props.hubCentralConfig["modeling"]["entities"];
-      if (entities[entityName]) {
-        if (entities[entityName].graphX &&
-          entities[entityName].graphY) {
+      let model = !isConcept ? props.hubCentralConfig["modeling"]["entities"] : props.hubCentralConfig["modeling"]["concepts"];
+      if (model[nodeName]) {
+        if (model[nodeName].graphX &&
+          model[nodeName].graphY) {
           result = true;
         }
       }
@@ -257,20 +234,27 @@ const GraphVis: React.FC<Props> = (props) => {
     return props.entityTypes.some(e => e.entityName === modelingOptions.selectedEntity);
   };
 
-  const saveUnsavedCoords = async () => {
+  const saveUnsavedCoords = async (positions) => {
     if (props.entityTypes) {
       let newCoords = {...coords};
-      let updatedHubCentralConfig: any = defaultHubCentralConfig;
       props.entityTypes.forEach(ent => {
-        if (!coordsExist(ent.entityName)) {
-          let positions = network.getPositions([ent.entityName])[ent.entityName];
-          newCoords[ent.entityName] = {graphX: positions.x, graphY: positions.y};
-          updatedHubCentralConfig["modeling"]["entities"][ent.entityName] = {graphX: positions.x, graphY: positions.y};
+        const isConcept = ent.hasOwnProperty("conceptName");
+        let nodeName = isConcept ? ent.conceptName : ent.entityName;
+        if (!coordsExist(nodeName, isConcept)) {
+          let nodePositions = positions[nodeName];
+          let modelCategory = getCategoryWithinModel(isConcept);
+          let nodeCoordObject = newCoords["modeling"][modelCategory][nodeName] || {};
+          if (!Object.keys(nodeCoordObject).length) {
+            newCoords["modeling"][modelCategory][nodeName] = {graphX: nodePositions.x, graphY: nodePositions.y};
+          } else {
+            newCoords["modeling"][modelCategory][nodeName]["graphX"] = nodePositions.x;
+            newCoords["modeling"][modelCategory][nodeName]["graphY"] = nodePositions.y;
+          }
         }
       });
       setCoords(newCoords);
-      if (props.updateHubCentralConfig && Object.keys(updatedHubCentralConfig["modeling"]["entities"]).length) {
-        await props.updateHubCentralConfig(updatedHubCentralConfig);
+      if (props.updateHubCentralConfig && (Object.keys(newCoords["modeling"]["entities"]).length > 0 || Object.keys(newCoords["modeling"]["concepts"]).length > 0)) {
+        await props.updateHubCentralConfig(newCoords);
         props.setCoordsChanged(true);
       }
     }
@@ -331,8 +315,9 @@ const GraphVis: React.FC<Props> = (props) => {
       if (selectedEntityExists()) {
         // Persist selection and coords
         network.selectNodes([modelingOptions.selectedEntity]);
-        if (entitiesConfigExist(props.hubCentralConfig)) {
-          saveUnsavedCoords();
+        if (!nodeCoordinatesExist()) {
+          let positions = network.getPositions();
+          saveUnsavedCoords(positions);
         }
       } else {
         // Entity type not found, unset in context
@@ -367,9 +352,11 @@ const GraphVis: React.FC<Props> = (props) => {
   };
 
   const getDescription = (entityName) => {
-    let entityIndex = props.entityTypes.findIndex(obj => obj.entityName === entityName);
-    return props.entityTypes[entityIndex].model.definitions[entityName] ?
-      props.entityTypes[entityIndex].model.definitions[entityName].description : "";
+    let entityIndex = props.entityTypes.findIndex(obj => (obj.entityName || obj.conceptName) === entityName);
+    return props.entityTypes[entityIndex].model.definitions ?
+      (props.entityTypes[entityIndex].model.definitions[entityName] ?
+        props.entityTypes[entityIndex].model.definitions[entityName].description : "") :
+      props.entityTypes[entityIndex].model.info.description;
   };
 
   // TODO remove when num instances is retrieved from db
@@ -381,9 +368,10 @@ const GraphVis: React.FC<Props> = (props) => {
     return num;
   };
 
-  const iconExistsForEntity = (entityName) => {
-    return (!props.hubCentralConfig?.modeling?.entities[entityName]?.icon ? false : true);
-  };
+  // const iconExistsForNode = (nodeName, isConcept) => {
+  //   let nodeIcon = !isConcept ? props.hubCentralConfig?.modeling?.entities[nodeName]?.icon : props.hubCentralConfig?.modeling?.concepts[nodeName]?.icon;
+  //   return (!nodeIcon ? false : true);
+  // };
 
   const roundedRect = (ctx: any, x: number, y: number, width: number, height: number, radius: number) => {
     ctx.beginPath();
@@ -399,30 +387,35 @@ const GraphVis: React.FC<Props> = (props) => {
     if (graphType === "shape") {
       const {boxWidth: defaultBoxWidth, boxHeight, boxPadding, boxRadius, iconWidth, iconHeight, iconRightMargin} = DEFAULT_NODE_CONFIG;
       nodes = props.entityTypes && props.entityTypes?.map((e) => {
-        const {entityName} = e;
-        const nodeId = entityName;
+        const isConcept = e.hasOwnProperty("conceptName");
+        let nodeName = !isConcept ? e.entityName : e.conceptName;
+        const nodeId = nodeName;
         const nodeSettings: any = {
           id: nodeId,
           shape: "custom"
         };
-        let entity = props.hubCentralConfig?.modeling?.entities[nodeId];
-        let boxLabel = entityName;
-        if (entityName.length > 20) {
-          nodeSettings.title = entityName;
-          boxLabel = entityName.substring(0, 20) + "...";
+        let node = !isConcept ? props.hubCentralConfig?.modeling?.entities[nodeId] : props.hubCentralConfig?.modeling?.concepts[nodeId];
+        let modelCategory = getCategoryWithinModel(isConcept);
+        let boxLabel = nodeName;
+        if (nodeName.length > 20) {
+          nodeSettings.title = nodeName;
+          boxLabel = nodeName.substring(0, 20) + "...";
         }
-        if (getDescription(entityName) && getDescription(entityName).length > 0) {
-          nodeSettings.title = entityName.length > 20 ? nodeSettings.title + "\n" + getDescription(entityName) : getDescription(entityName);
+        if (getDescription(nodeName) && getDescription(nodeName).length > 0) {
+          nodeSettings.title = nodeName.length > 20 ? nodeSettings.title + "\n" + getDescription(nodeName) : getDescription(nodeName);
         }
-        if (coords[entityName] && coords[entityName].graphX && coords[entityName].graphY) {
-          nodeSettings.x = coords[entityName].graphX;
-          nodeSettings.y = coords[entityName].graphY;
+
+        if (!!coords.modeling[modelCategory][nodeName] &&
+          !!coords.modeling[modelCategory][nodeName].graphX &&
+          !!coords.modeling[modelCategory][nodeName].graphY) {
+          nodeSettings.x = coords.modeling[modelCategory][nodeName].graphX;
+          nodeSettings.y = coords.modeling[modelCategory][nodeName].graphY;
         }
 
         return {
           ...nodeSettings,
           ctxRenderer: ({ctx, x, y, state: {selected, hover}, style, label}) => {
-            let iconName = iconExistsForEntity(nodeId) ? entity.icon : defaultIcon;
+            let iconName = iconExistsForNode(nodeId, isConcept, props.hubCentralConfig) ? node.icon : (isConcept ? defaultConceptIcon : defaultIcon);
             ctx.font = "bold 14px Arial";
             let measureText = ctx.measureText(boxLabel);
             let boxWidth = measureText.width + iconWidth + iconRightMargin + boxPadding * 2;
@@ -430,15 +423,18 @@ const GraphVis: React.FC<Props> = (props) => {
             const drawNode = () => {
 
               roundedRect(ctx, x - boxWidth/2, y - boxHeight/2, boxWidth, boxHeight, boxRadius);
-              ctx.fillStyle = props.getColor(entityName);
-              ctx.strokeStyle = entityName === modelingOptions.selectedEntity && props.entitySelected ? graphConfig.nodeStyles.selectColor : props.getColor(entityName);
-              ctx.lineWidth = entityName === modelingOptions.selectedEntity && props.entitySelected ? 2 : 0;
+              ctx.fillStyle = props.getColor(nodeName, isConcept);
+              ctx.strokeStyle = nodeName === modelingOptions.selectedEntity && props.entitySelected ? graphConfig.nodeStyles.selectColor : isConcept ? themeColors["text-color-secondary"] : props.getColor(nodeName, isConcept);
+              ctx.lineWidth = nodeName === modelingOptions.selectedEntity && props.entitySelected ? 2 : isConcept ? 2 : 0;
+              if (isConcept) {
+                ctx.setLineDash([5, 5]);
+              }
               if (selected && hover) {
                 ctx.fillStyle = graphConfig.nodeStyles.hoverColor;
                 ctx.strokeStyle = graphConfig.nodeStyles.selectColor;
                 ctx.lineWidth = 2;
               } else if (selected) {
-                ctx.fillStyle = props.getColor(nodeId);
+                ctx.fillStyle = props.getColor(nodeId, isConcept);
                 ctx.strokeStyle = graphConfig.nodeStyles.selectColor;
                 ctx.lineWidth = 2;
               } else if (hover) {
@@ -540,77 +536,79 @@ const GraphVis: React.FC<Props> = (props) => {
   const getEdges = () => {
     let edges: any = [];
     props.entityTypes.forEach((e, i) => {
-      if (!e.model.definitions[e.entityName]) {
-        return [];
-      }
+      if (e.model.definitions) {
+        if (!e.model.definitions[e.entityName]) {
+          return [];
+        }
 
-      let properties: any = Object.keys(e.model.definitions[e.entityName].properties);
-      properties.forEach((p, i) => {
-        let pObj = e.model.definitions[e.entityName].properties[p];
-        let relationshipName = p;
-        let title = !props.canWriteEntityModel && props.canReadEntityModel ? undefined : "Edit Relationship";
-        if (relationshipName.length > 20) {
-          relationshipName = relationshipName.substring(0, 20) + "...";
-          if (title !== undefined) title = p + "\n" + title;
-        }
-        //for one to one edges
-        if (pObj.relatedEntityType) {
-          let parts = pObj.relatedEntityType.split("/");
-          edges.push({
-            ...graphConfig.defaultEdgeProps,
-            from: e.entityName,
-            to: parts[parts.length - 1],
-            label: relationshipName,
-            id: e.entityName + "-" + p + "-" + parts[parts.length - 1] + "-via-" + pObj.joinPropertyName,
-            title: title,
-            arrows: {
-              to: {
-                enabled: true,
-                src: graphConfig.customEdgeSVG.oneToOne,
-                type: "image"
-              }
-            },
-            arrowStrikethrough: true,
-            color: "#666",
-            font: {
-              align: "top",
-            },
-            chosen: {
-              label: onChosen,
-              edge: onChosen,
-              node: false
-            },
-            smooth: getSmoothOpts(e.entityName, parts[parts.length - 1], edges)
-          });
-          //for one to many edges
-        } else if (pObj.items?.relatedEntityType) {
-          let parts = pObj.items.relatedEntityType.split("/");
-          edges.push({
-            ...graphConfig.defaultEdgeProps,
-            from: e.entityName,
-            to: parts[parts.length - 1],
-            label: relationshipName,
-            id: e.entityName + "-" + p + "-" + parts[parts.length - 1] + "-via-" + pObj.items.joinPropertyName,
-            title: title,
-            arrowStrikethrough: true,
-            arrows: {
-              to: {
-                enabled: true,
-                src: graphConfig.customEdgeSVG.oneToMany,
-                type: "image"
-              }
-            },
-            color: "#666",
-            font: {align: "top"},
-            chosen: {
-              label: onChosen,
-              edge: onChosen,
-              node: false
-            },
-            smooth: getSmoothOpts(e.entityName, parts[parts.length - 1], edges)
-          });
-        }
-      });
+        let properties: any = Object.keys(e.model.definitions[e.entityName].properties);
+        properties.forEach((p, i) => {
+          let pObj = e.model.definitions[e.entityName].properties[p];
+          let relationshipName = p;
+          let title = !props.canWriteEntityModel && props.canReadEntityModel ? undefined : "Edit Relationship";
+          if (relationshipName.length > 20) {
+            relationshipName = relationshipName.substring(0, 20) + "...";
+            if (title !== undefined) title = p + "\n" + title;
+          }
+          //for one to one edges
+          if (pObj.relatedEntityType) {
+            let parts = pObj.relatedEntityType.split("/");
+            edges.push({
+              ...graphConfig.defaultEdgeProps,
+              from: e.entityName,
+              to: parts[parts.length - 1],
+              label: relationshipName,
+              id: e.entityName + "-" + p + "-" + parts[parts.length - 1] + "-via-" + pObj.joinPropertyName,
+              title: title,
+              arrows: {
+                to: {
+                  enabled: true,
+                  src: graphConfig.customEdgeSVG.oneToOne,
+                  type: "image"
+                }
+              },
+              arrowStrikethrough: true,
+              color: "#666",
+              font: {
+                align: "top",
+              },
+              chosen: {
+                label: onChosen,
+                edge: onChosen,
+                node: false
+              },
+              smooth: getSmoothOpts(e.entityName, parts[parts.length - 1], edges)
+            });
+            //for one to many edges
+          } else if (pObj.items?.relatedEntityType) {
+            let parts = pObj.items.relatedEntityType.split("/");
+            edges.push({
+              ...graphConfig.defaultEdgeProps,
+              from: e.entityName,
+              to: parts[parts.length - 1],
+              label: relationshipName,
+              id: e.entityName + "-" + p + "-" + parts[parts.length - 1] + "-via-" + pObj.items.joinPropertyName,
+              title: title,
+              arrowStrikethrough: true,
+              arrows: {
+                to: {
+                  enabled: true,
+                  src: graphConfig.customEdgeSVG.oneToMany,
+                  type: "image"
+                }
+              },
+              color: "#666",
+              font: {align: "top"},
+              chosen: {
+                label: onChosen,
+                edge: onChosen,
+                node: false
+              },
+              smooth: getSmoothOpts(e.entityName, parts[parts.length - 1], edges)
+            });
+          }
+        });
+      }
     });
     return edges;
   };
@@ -639,10 +637,6 @@ const GraphVis: React.FC<Props> = (props) => {
   const options = {
     ...graphConfig.defaultOptions,
     height: networkHeight,
-    layout: {
-      //hierarchical: true
-      //randomSeed: "0.7696:1625099255200",
-    },
     physics: {
       enabled: physicsEnabled,
       barnesHut: {
@@ -733,22 +727,37 @@ const GraphVis: React.FC<Props> = (props) => {
       if (entitiesConfigExist(props.hubCentralConfig)) {
         let scale: any = await network.getScale();
         let viewPosition: any = await network.getViewPosition();
-        let updatedHubCentralConfig: any = defaultHubCentralConfig;
-        let entitiesConfig = props.hubCentralConfig["modeling"]["entities"];
-        Object.keys(entitiesConfig).forEach(entityName => {
-          if (coords[entityName]) {
-            updatedHubCentralConfig["modeling"]["entities"][entityName] = {graphX: coords[entityName].graphX, graphY: coords[entityName].graphY};
-          }
-        });
+        let updatedHubCentralConfig: any = props.hubCentralConfig || defaultHubCentralConfig;
         updatedHubCentralConfig["modeling"]["scale"] = scale;
         updatedHubCentralConfig["modeling"]["viewPosition"] = viewPosition;
-        if (props.updateHubCentralConfig && Object.keys(updatedHubCentralConfig["modeling"]["entities"]).length) {
+        if (props.updateHubCentralConfig && (Object.keys(updatedHubCentralConfig["modeling"]["entities"]).length > 0 || Object.keys(updatedHubCentralConfig["modeling"]["concepts"]).length > 0)) {
           await props.updateHubCentralConfig(updatedHubCentralConfig);
           props.setCoordsChanged(true);
         }
       }
     }
   }, 400);
+
+  const nodeCoordinatesExist = () => {
+    let coordsExist = true;
+    if (entitiesConfigExist(props.hubCentralConfig)) {
+      let allNodeCoordinates = !!props.hubCentralConfig["modeling"] && props.hubCentralConfig["modeling"];
+      for (const node of props.entityTypes) {
+        let isConcept = node.hasOwnProperty("conceptName");
+        let nodeName = !isConcept ? node.entityName : node.conceptName;
+        let modelCategory = getCategoryWithinModel(isConcept);
+        let nodeObjectExists = !!allNodeCoordinates[modelCategory][nodeName];
+        if (!nodeObjectExists ||
+          (nodeObjectExists && !allNodeCoordinates[modelCategory][nodeName].hasOwnProperty("graphX") &&
+          !allNodeCoordinates[modelCategory][nodeName].hasOwnProperty("graphY"))
+        ) {
+          coordsExist = false;
+          break;
+        }
+      }
+    }
+    return coordsExist;
+  };
 
   const events = {
     select: (event) => {
@@ -787,11 +796,25 @@ const GraphVis: React.FC<Props> = (props) => {
         let positions = network.getPositions([nodes[0]])[nodes[0]];
         if (positions && positions.x && positions.y) {
           let newCoords = {...coords};
-          newCoords[nodes[0]] = {graphX: positions.x, graphY: positions.y};
+          let isConcept = false;
+          if (props.hubCentralConfig?.modeling.hasOwnProperty("concepts")) {
+            let concepts = props.hubCentralConfig?.modeling?.concepts || {};
+            let conceptNodeObject = concepts[nodes[0]] || {};
+            if (Object.keys(concepts).length > 0 && Object.keys(conceptNodeObject).length > 0) {
+              isConcept = true;
+            }
+          }
+          let modelCategory = getCategoryWithinModel(isConcept);
+          let nodeCoordObject = newCoords["modeling"][modelCategory][nodes[0]] || {};
+          if (!Object.keys(nodeCoordObject).length) {
+            newCoords["modeling"][modelCategory][nodes[0]] = {graphX: positions.x, graphY: positions.y};
+          } else {
+            newCoords["modeling"][modelCategory][nodes[0]]["graphX"] = positions.x;
+            newCoords["modeling"][modelCategory][nodes[0]]["graphY"] = positions.y;
+          }
+
           setCoords(newCoords);
-          let coordsPayload = defaultHubCentralConfig;
-          coordsPayload.modeling.entities[nodes[0]] = {graphX: positions.x, graphY: positions.y};
-          props.updateHubCentralConfig(coordsPayload);
+          props.updateHubCentralConfig(newCoords);
         }
       }
     },
@@ -813,12 +836,12 @@ const GraphVis: React.FC<Props> = (props) => {
       // NOTE if user doesn't manipulate graph on load, stabilize event
       // fires forever. This avoids reacting to infinite events
       if (hasStabilized) return;
-      if (network && userPreferences?.modelingGraphOptions?.physicsEnabled) {
+      if (network && (userPreferences?.modelingGraphOptions?.physicsEnabled || !userPreferences?.modelingGraphOptions)) {
         let positions = network.getPositions();
         // When graph is stabilized, nodePositions no longer empty
         if (positions && Object.keys(positions).length) {
-          if (!entitiesConfigExist(props.hubCentralConfig)) {
-            saveUnsavedCoords();
+          if (!nodeCoordinatesExist()) {
+            saveUnsavedCoords(positions);
           }
           setHasStabilized(true);
           if (physicsEnabled) {

@@ -153,10 +153,11 @@ describe("Entity Modeling: Graph View", () => {
     modelPage.selectView("project-diagram");
 
     modelPage.scrollPageBottom();
+    cy.wait(6000);
     //Fetching the edge coordinates between two nodes and later performing some action on it like hover or click
     graphVis.getPositionOfEdgeBetween("Customer,BabyRegistry").then((edgePosition: any) => {
       // Wait extended because of the delay of the animations
-      cy.wait(5000);
+      cy.wait(150);
       cy.waitUntil(() => graphVis.getGraphVisCanvas().click(edgePosition.x, edgePosition.y, {force: true}));
     });
 
@@ -183,6 +184,7 @@ describe("Entity Modeling: Graph View", () => {
     modelPage.selectView("project-diagram");
 
     modelPage.scrollPageBottom();
+    cy.wait(6000);
     //reopen modal to verify previous updates
     graphVis.getPositionOfEdgeBetween("Customer,BabyRegistry").then((edgePosition: any) => {
       cy.wait(150);
@@ -269,7 +271,7 @@ describe("Entity Modeling: Graph View", () => {
   it("can edit graph edit mode and add edge relationships (with foreign key scenario) via drag/drop", () => {
     entityTypeTable.viewEntityInGraphView("Person");
     modelPage.closeSidePanel();
-    cy.wait(4000);
+    cy.wait(6000);
     graphView.getAddButton().click();
     graphView.addNewRelationship().should("be.visible").click({force: true});
     graphView.verifyEditInfoMessage().should("exist");
@@ -277,10 +279,11 @@ describe("Entity Modeling: Graph View", () => {
     modelPage.scrollPageBottom();
 
     // the graph needs to stabilize before we interact with it
-    cy.wait(5000);
+    //cy.wait(6000);
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
       let PersonCoordinates: any = nodePositions["Person"];
       let ClientCoordinates: any = nodePositions["Client"];
+      cy.wait(150);
       graphVis.getGraphVisCanvas().trigger("pointerdown", PersonCoordinates.x, PersonCoordinates.y, {button: 0, scrollBehavior: "bottom"});
       graphVis.getGraphVisCanvas().trigger("pointermove", ClientCoordinates.x, ClientCoordinates.y, {button: 0, force: true, scrollBehavior: "bottom"});
       graphVis.getGraphVisCanvas().trigger("pointerup", ClientCoordinates.x, ClientCoordinates.y, {button: 0, scrollBehavior: "bottom"});

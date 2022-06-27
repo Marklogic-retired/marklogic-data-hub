@@ -41,7 +41,9 @@ const HubCentralConfigProvider: React.FC<{children: any}> = ({children}) => {
             icon: defaultIcon
           };
           responsePrimaryEntityTypes.data.forEach(model => {
-            updatedHubCentralConfig["modeling"]["entities"][model.entityName] = Object.assign({}, defaultNodesData);
+            let isConcept = model.hasOwnProperty("conceptName");
+            let nodeName = !isConcept ?  model.entityName : model.conceptName;
+            updatedHubCentralConfig["modeling"][!isConcept ? "entities" : "concepts"][nodeName] = Object.assign({}, defaultNodesData);
           });
 
           mockConcepts.entities.forEach(({relatedConcepts}) => relatedConcepts.forEach(({conceptClass, conceptId}) => {

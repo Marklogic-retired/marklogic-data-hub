@@ -292,8 +292,20 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
   const updateHubCentralConfig = propToUpdate => {
     try {
       if (modelingOptions.selectedEntity !== undefined) {
-        let hubCentralPayload = defaultHubCentralConfig;
-        hubCentralPayload.modeling.entities[modelingOptions.selectedEntity] = propToUpdate;
+        let hubCentralPayload = props.hubCentralConfig || defaultHubCentralConfig;
+        let modelCategory = "entities";
+        if (Object.keys(hubCentralPayload.modeling.concepts).length > 0 && hubCentralPayload.modeling.concepts.hasOwnProperty(modelingOptions.selectedEntity)) {
+          modelCategory = "concepts";
+        }
+        if (propToUpdate.hasOwnProperty("color")) {
+          hubCentralPayload.modeling[modelCategory][modelingOptions.selectedEntity]["color"] = propToUpdate.color;
+        } else if (propToUpdate.hasOwnProperty("icon")) {
+          hubCentralPayload.modeling[modelCategory][modelingOptions.selectedEntity]["icon"] = propToUpdate.icon;
+        } else if (propToUpdate.hasOwnProperty("label")) {
+          hubCentralPayload.modeling[modelCategory][modelingOptions.selectedEntity]["label"] = propToUpdate.label;
+        } else if (propToUpdate.hasOwnProperty("propertiesOnHover")) {
+          hubCentralPayload.modeling[modelCategory][modelingOptions.selectedEntity]["propertiesOnHover"] = propToUpdate.propertiesOnHover;
+        }
         props.updateHubCentralConfig(hubCentralPayload);
         setErrorServer("");
       }
