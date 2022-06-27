@@ -122,6 +122,9 @@ class BrowsePage {
     return cy.get(`#${tooltip}-tooltip`);
   }
 
+  getExportIconTooltip() {
+    return cy.get(`[id="export-results-tooltip"]`);
+  }
   /**
    * facet search
    * available facets are 'collection', 'created-on', 'job-id', 'flow', 'step'

@@ -56,11 +56,12 @@ describe("Entity display settings in model tile", () => {
     cy.log("**Go to graph view in model tile**");
     homePage.getModelCard().click();
     modelPage.selectView("project-diagram");
+    cy.wait(2500);
 
     cy.log(`**Click on ${defaultEntityTypeData.name} entity to open side bar**`);
     graphVis.getPositionsOfNodes(defaultEntityTypeData.name).then((nodePositions: any) => {
       let babyRegistryCoordinates: any = nodePositions[defaultEntityTypeData.name];
-      graphVis.getGraphVisCanvas().trigger("mouseover", babyRegistryCoordinates.x, babyRegistryCoordinates.y).click(babyRegistryCoordinates.x, babyRegistryCoordinates.y);
+      graphVis.getGraphVisCanvas().trigger("mouseover", babyRegistryCoordinates.x, babyRegistryCoordinates.y, {force: true}).click(babyRegistryCoordinates.x, babyRegistryCoordinates.y, {force: true});
     });
     cy.wait(500);
 
@@ -171,13 +172,12 @@ describe("Entity display settings in model tile", () => {
     cy.log("**Go to graph view**");
     modelPage.selectView("project-diagram");
 
-    // Waiting for Graph animation
-    cy.wait(5000);
+    cy.wait(2000);
 
     cy.log(`**Click on ${defaultEntityTypeData.name} entity to open side bar**`);
     graphVis.getPositionsOfNodes(defaultEntityTypeData.name).then((nodePositions: any) => {
       let babyRegistryCoordinates: any = nodePositions[defaultEntityTypeData.name];
-      graphVis.getGraphVisCanvas().trigger("mouseover", babyRegistryCoordinates.x, babyRegistryCoordinates.y);
+      graphVis.getGraphVisCanvas().trigger("mouseover", babyRegistryCoordinates.x, babyRegistryCoordinates.y, {force: true});
     });
     cy.wait(500);
 
