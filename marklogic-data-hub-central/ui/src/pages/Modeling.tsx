@@ -9,7 +9,7 @@ import EntityTypeTable from "@components/modeling/entity-type-table/entity-type-
 import ViewSwitch from "@components/common/switch-view/view-switch";
 import styles from "./Modeling.module.scss";
 
-import {deleteEntity, entityReferences, primaryEntityTypes, publishDraftModels, clearDraftModels, updateEntityModels} from "@api/modeling";
+import {deleteEntity, entityReferences, primaryEntityTypes, publishDraftModels, clearDraftModels, updateEntityModels, createConceptClass, deleteConceptClass} from "@api/modeling";
 import {UserContext} from "@util/user-context";
 import {ModelingContext} from "@util/modeling-context";
 import {ModelingTooltips} from "@config/tooltips.config";
@@ -26,6 +26,7 @@ import {HCAlert, HCButton, HCTooltip} from "@components/common";
 import {updateUserPreferences} from "../services/user-preferences";
 import {entitiesConfigExist} from "@util/modeling-utils";
 import {HubCentralConfigContext} from "@util/hubCentralConfig-context";
+import ConceptClassModal from "@components/modeling/concept-class-modal/concept-class-modal";
 
 const Modeling: React.FC = () => {
   const {user, handleError} = useContext(UserContext);
@@ -65,6 +66,16 @@ const Modeling: React.FC = () => {
   const {hubCentralConfig, updateHubCentralConfigOnServer} = useContext(HubCentralConfigContext);
   const [revertUnpublishedChanges, setRevertUnpublishedChanges] = useState(false);
 
+  //Concept Classes
+  const [showConceptClassModal, toggleShowConceptClassModal] = useState(false);
+  const [isEditConceptClassModal, toggleIsEditConceptClassModal] = useState(false);
+  const [conceptName] = useState("");
+  const [conceptDescription] = useState("");
+  const [conceptColor] = useState("");
+  const [conceptIcon] = useState("");
+
+  //Temp entity types. Will be removed when working on concepts in the table view
+  const [entityTypesWithoutConcepts, setEntityTypesWithoutConcepts] = useState<any[]>([]);
 
   useEffect(() => {
     if (canReadEntityModel && modelingOptions.view === ViewType.table) {
@@ -95,18 +106,21 @@ const Modeling: React.FC = () => {
         let model: any = [];
         let entityTypesArray:any = [];
         let isDraft = false;
+        let tempEntitytTypesWithoutConcepts:any = [];
         await response["data"].forEach(entity => {
-          if (entity.hasOwnProperty("entityName")) {
-            if (!entity.model.info.draftDeleted) {
-              model.push(entity);
+          if (!entity.model.info.draftDeleted) {
+            model.push(entity);
+            if (entity.hasOwnProperty("entityName")) {
               entityTypesArray.push({name: entity.entityName, entityTypeId: entity.entityTypeId});
+              tempEntitytTypesWithoutConcepts.push(entity);
             }
-            if (entity.model.info.draft && !isDraft) {
-              isDraft = true;
-            }
+          }
+          if (entity.model.info.draft && !isDraft) {
+            isDraft = true;
           }
         });
         setEntityTypes(model);
+        setEntityTypesWithoutConcepts(tempEntitytTypesWithoutConcepts);
         if (response["data"].length > 0) {
           setEntityTypeNamesArray(entityTypesArray, isDraft);
         }
@@ -153,6 +167,38 @@ const Modeling: React.FC = () => {
       toggleConfirmModal(false);
     }
     return isSuccess;
+  };
+
+  const addConceptClass = async (payload: any) => {
+    try {
+      let resp = await createConceptClass(payload);
+      if (resp.status === 200) {
+        //To be updated when adding concepts in table view
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleConceptClassDeletion = async (conceptClassName: string) => {
+    try {
+      let resp = await deleteConceptClass(conceptClassName);
+      if (resp["status"] === 200) {
+        //To be updated in future stories
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const updateConceptClassAndHideModal = async (name: string, description: string) => {
+    toggleShowConceptClassModal(false);
+    await setEntityTypesFromServer().then((resp => {
+      if (!isEditModal && modelingOptions.view === ViewType.graph) {
+        let isDraft = true;
+        setSelectedEntity(name, isDraft);
+      }
+    }));
   };
 
   const publishDraftModelToServer = async () => {
@@ -372,7 +418,7 @@ const Modeling: React.FC = () => {
             )}
             <div>
               <div className={styles.header}>
-                <h1>Entity Types</h1>
+                <h1>Data Model</h1>
                 <div className={styles.buttonContainer}>
                   <ModelingLegend/>
                   <div style={{float: "right"}}>
@@ -428,7 +474,7 @@ const Modeling: React.FC = () => {
                 >{ModelingTooltips.entityEditedAlert}</HCAlert>
               </div>
             )}
-            <h1>Entity Types</h1>
+            <h1>Data Model</h1>
             <div className={styles.borderBelowHeader}></div>
             <GraphView
               canReadEntityModel={canReadEntityModel}
@@ -449,6 +495,11 @@ const Modeling: React.FC = () => {
               updateHubCentralConfig={publishHubCentralConfig}
               revertUnpublishedChanges={revertUnpublishedChanges}
               setRevertUnpublishedChanges={setRevertUnpublishedChanges}
+              toggleShowConceptClassModal={toggleShowConceptClassModal}
+              toggleIsEditConceptClassModal={toggleIsEditConceptClassModal}
+              addConceptClass={addConceptClass}
+              updateConceptClassAndHideModal={updateConceptClassAndHideModal}
+              deleteConceptClass={handleConceptClassDeletion}
             />
           </>
         }
@@ -457,7 +508,7 @@ const Modeling: React.FC = () => {
           <EntityTypeTable
             canReadEntityModel={canReadEntityModel}
             canWriteEntityModel={canWriteEntityModel}
-            allEntityTypesData={entityTypes}
+            allEntityTypesData={entityTypesWithoutConcepts}
             editEntityTypeDescription={editEntityTypeDescription}
             updateEntities={setEntityTypesFromServer}
             updateSavedEntity={saveAllEntitiesToServer}
@@ -494,6 +545,18 @@ const Modeling: React.FC = () => {
           color={color}
           icon={icon}
           updateHubCentralConfig={publishHubCentralConfig}
+        />
+        <ConceptClassModal
+          isVisible={showConceptClassModal}
+          toggleModal={toggleShowConceptClassModal}
+          updateConceptClassAndHideModal={updateConceptClassAndHideModal}
+          isEditModal={isEditConceptClassModal}
+          name={conceptName}
+          description={conceptDescription}
+          color={conceptColor}
+          icon={conceptIcon}
+          updateHubCentralConfig={publishHubCentralConfig}
+          hubCentralConfig={hubCentralConfig}
         />
       </div>
     );

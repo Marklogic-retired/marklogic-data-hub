@@ -8,7 +8,8 @@ const defaultOptions: any = {
   height: "505px",
   interaction: {
       hover: true
-  }
+  },
+  autoResize: true
 };
 
 const defaultNodeProps: any = {

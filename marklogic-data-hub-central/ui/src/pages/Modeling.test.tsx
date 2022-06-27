@@ -69,7 +69,7 @@ describe("Modeling Page", () => {
 
     expect(getByText(tiles.model.intro)).toBeInTheDocument(); // tile intro text
 
-    expect(getByText("Entity Types")).toBeInTheDocument();
+    expect(getByText("Data Model")).toBeInTheDocument();
     expect(getByLabelText("add-entity")).toBeInTheDocument();
     expect(getByText("Instances")).toBeInTheDocument();
     expect(getByText("Last Processed")).toBeInTheDocument();
@@ -117,7 +117,7 @@ describe("Modeling Page", () => {
 
     await wait(() => expect(mockPrimaryEntityType).toHaveBeenCalledTimes(2));
 
-    expect(getByText("Entity Types")).toBeInTheDocument();
+    expect(getByText("Data Model")).toBeInTheDocument();
     expect(getByText("Instances")).toBeInTheDocument();
     expect(getByText("Last Processed")).toBeInTheDocument();
 
@@ -146,7 +146,7 @@ describe("Modeling Page", () => {
     );
 
     await wait(() => expect(mockPrimaryEntityType).toHaveBeenCalledTimes(0));
-    expect(queryByText("Entity Types")).toBeNull();
+    expect(queryByText("Data Model")).toBeNull();
     expect(queryByText("Instances")).toBeNull();
     expect(queryByText("Last Processed")).toBeNull();
 
@@ -244,7 +244,7 @@ describe("Graph view page", () => {
 
     expect(getByLabelText("switch-view")).toBeInTheDocument();
     expect(document.querySelector("#switch-view-graph")).toBeChecked(); // Graph view is checked by default.
-    expect(getByText("Entity Types")).toBeInTheDocument();
+    expect(getByText("Data Model")).toBeInTheDocument();
     expect(document.querySelector((".rbt-input-main"))).toBeInTheDocument();
     userEvent.click(getByText("Add"));
     await expect(getByLabelText("add-entity-type")).toBeInTheDocument();
@@ -283,7 +283,7 @@ describe("Graph view page", () => {
 
     expect(getByLabelText("switch-view")).toBeInTheDocument();
     expect(graphViewButton).toBeChecked(); // Graph view is checked by default.
-    expect(getByText("Entity Types")).toBeInTheDocument();
+    expect(getByText("Data Model")).toBeInTheDocument();
     expect(filterInput).toBeInTheDocument();
     expect(addEntityOrRelationshipBtn).toBeInTheDocument();
     expect(publishToDatabaseBtn).toBeInTheDocument();

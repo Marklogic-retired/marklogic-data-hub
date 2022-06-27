@@ -134,6 +134,10 @@ const ModelingTooltips = {
       </span>
     )
   },
+  nameConceptClass: 'The name of this concept class. ' +
+    'Names must start with a letter and can contain letters, numbers, hyphens, and underscores.',
+  
+  conceptClassDescription: 'A description of this concept class.',
 
   /* TO BE DEPRECATED. Use ModelingTooltips.nameEntityType. */
   nameRegex: 'Names must start with a letter and can contain letters, numbers, hyphens, and underscores. Entity names cannot use the same name as an existing entity type.',
@@ -590,6 +594,9 @@ const ErrorTooltips = {
   disabledTab: 'You must correct any errors and provide all required information in the current tab before switching.',
   entityErrorServerResp: function (entityName) {
     return `An entity type is already using the name ${entityName}. An entity type cannot use the same name as an existing entity type.`
+  },
+  conceptClassErrorServerResp: function (conceptClassName) {
+    return `Concept class is already using the name ${conceptClassName}. Concept class cannot use the same name as an existing concept class.`
   }
 };
 

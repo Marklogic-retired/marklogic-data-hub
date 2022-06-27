@@ -15,8 +15,9 @@ import {HCAlert, HCButton, HCTooltip} from "@components/common";
 import {Typeahead} from "react-bootstrap-typeahead";
 import "react-bootstrap-typeahead/css/Typeahead.css";
 import {themeColors} from "@config/themes.config";
-import {defaultIcon} from "@config/explore.config";
+import {defaultConceptIcon, defaultIcon} from "@config/explore.config";
 import {getViewSettings, setViewSettings} from "@util/user-context";
+import {colorExistsForNode, iconExistsForNode, getCategoryWithinModel} from "@util/modeling-utils";
 
 type Props = {
   entityTypes: any;
@@ -37,6 +38,11 @@ type Props = {
   updateHubCentralConfig: (hubCentralConfig: any) => void;
   revertUnpublishedChanges: boolean;
   setRevertUnpublishedChanges: (flag: boolean) => void;
+  toggleShowConceptClassModal: any;
+  toggleIsEditConceptClassModal: any;
+  addConceptClass: any;
+  updateConceptClassAndHideModal: (conceptClassName: string, description: string) => void;
+  deleteConceptClass: (conceptClassName: string) => void;
 };
 
 const GraphView: React.FC<Props> = (props) => {
@@ -48,7 +54,6 @@ const GraphView: React.FC<Props> = (props) => {
   const [isEntityFiltered, setIsEntityFiltered] = useState(false);
   const [graphEditMode, setGraphEditMode] = useState(false);
   const [coordsChanged, setCoordsChanged] = useState(false);
-  const [splitPaneResized, setSplitPaneResized] = useState(false);
   const [exportPngButtonClicked, setExportPngButtonClicked] = useState(false);
   const [nodeNeedRedraw, setNodeNeedRedraw] = useState(false);
 
@@ -119,9 +124,9 @@ const GraphView: React.FC<Props> = (props) => {
     if (key === "addNewEntityType") {
       props.toggleShowEntityModal(true);
       props.toggleIsEditModal(false);
-    } else if (key === "addNewRelationship") {
-      // TODO open Add Relationship dialog
-      // console.log("addNewRelationship", event);
+    } else if (key === "addNewConceptClass") {
+      props.toggleShowConceptClassModal(true);
+      props.toggleIsEditConceptClassModal(false);
     }
   };
 
@@ -139,6 +144,9 @@ const GraphView: React.FC<Props> = (props) => {
       </Dropdown.Item>
       <Dropdown.Item eventKey="addNewRelationship" onClick={() => setGraphEditMode(true)}>
         <span aria-label={"add-relationship"}>Add new relationship</span>
+      </Dropdown.Item>
+      <Dropdown.Item eventKey="addNewConceptClass">
+        <span aria-label={"add-concept-class"}>Add new concept class</span>
       </Dropdown.Item>
     </DropdownButton>
   );
@@ -231,45 +239,41 @@ const GraphView: React.FC<Props> = (props) => {
     props.deleteEntityType(selectedEntity);
   };
 
-  const colorExistsForEntity = (entityName) => {
-    return (!props.hubCentralConfig?.modeling?.entities[entityName]?.color ? false : true);
-  };
-
-  const iconExistsForEntityName = (entityName) => {
-    return (!props.hubCentralConfig?.modeling?.entities[entityName]?.icon ? false : true);
-  };
-
-  const getColor = (entityName) => {
+  const getColor = (nodeName, isConcept: boolean = false) => {
     let color = themeColors.defaults.entityColor;
-    if (colorExistsForEntity(entityName) && filterMenuSuggestions.length > 0 && !filterMenuSuggestions.includes("a")) {
-      let entityDisplayed = filterMenuSuggestions.filter(function (obj) { return obj["entityName"] === entityName; }).length > 0;
+    let modelCategory = getCategoryWithinModel(isConcept);
+    let colorExistsOnServer = colorExistsForNode(nodeName, isConcept, props.hubCentralConfig);
+    if (colorExistsOnServer && filterMenuSuggestions.length > 0 && !filterMenuSuggestions.includes("a")) {
+      let entityDisplayed = filterMenuSuggestions.filter(function (obj) { return obj[!isConcept ? "entityName" : "conceptName"] === nodeName; }).length > 0;
       if (filterMenuSuggestions && entityDisplayed) {
-        color = props.hubCentralConfig.modeling.entities[entityName]["color"];
+        color = props.hubCentralConfig.modeling[modelCategory][nodeName]["color"];
       } else {
         color = "#F5F5F5";
       }
-    } else if (colorExistsForEntity(entityName)) {
-      color = props.hubCentralConfig.modeling.entities[entityName]["color"];
+    } else if (colorExistsOnServer) {
+      color = props.hubCentralConfig.modeling[modelCategory][nodeName]["color"];
     } else {
-      color = themeColors.defaults.entityColor;
+      color = !isConcept ? themeColors.defaults.entityColor: themeColors.defaults.conceptColor;
     }
     return color;
   };
 
-  const getIcon = (entityName) => {
-    let icon = defaultIcon;
-
-    if (iconExistsForEntityName(entityName) && filterMenuSuggestions.length > 0 && !filterMenuSuggestions.includes("a")) {
-      let entityDisplayed = filterMenuSuggestions.filter(function (obj) { return obj["entityName"] === entityName; }).length > 0;
+  const getIcon = (nodeName, isConcept: boolean = false) => {
+    let defaultNodeIcon = isConcept ? defaultConceptIcon : defaultIcon;
+    let icon = defaultNodeIcon;
+    let modelCategory = getCategoryWithinModel(isConcept);
+    let iconExistsOnServer = iconExistsForNode(nodeName, isConcept, props.hubCentralConfig);
+    if (iconExistsOnServer && filterMenuSuggestions.length > 0 && !filterMenuSuggestions.includes("a")) {
+      let entityDisplayed = filterMenuSuggestions.filter(function (obj) { return obj[!isConcept ? "entityName" : "conceptName"] === nodeName; }).length > 0;
       if (filterMenuSuggestions && entityDisplayed) {
-        icon = props.hubCentralConfig.modeling.entities[entityName]["icon"];
+        icon = props.hubCentralConfig.modeling[modelCategory][nodeName]["icon"];
       } else {
-        icon = defaultIcon;
+        icon = defaultNodeIcon;
       }
-    } else if (iconExistsForEntityName(entityName)) {
-      icon = props.hubCentralConfig.modeling.entities[entityName]["icon"];
+    } else if (iconExistsOnServer) {
+      icon = props.hubCentralConfig.modeling[modelCategory][nodeName]["icon"];
     } else {
-      icon = defaultIcon;
+      icon = defaultNodeIcon;
     }
     return icon;
   };
@@ -298,8 +302,8 @@ const GraphView: React.FC<Props> = (props) => {
           hubCentralConfig={props.hubCentralConfig}
           updateHubCentralConfig={props.updateHubCentralConfig}
           getColor={getColor}
-          splitPaneResized={splitPaneResized}
-          setSplitPaneResized={setSplitPaneResized}
+          // splitPaneResized={splitPaneResized}
+          // setSplitPaneResized={setSplitPaneResized}
           exportPngButtonClicked = {exportPngButtonClicked}
           setExportPngButtonClicked = {setExportPngButtonClicked}
           nodeNeedRedraw={nodeNeedRedraw}
@@ -308,9 +312,9 @@ const GraphView: React.FC<Props> = (props) => {
       </div>
     </div>;
 
-  const handleSplitPaneResize = () => {
-    setSplitPaneResized(true);
-  };
+  // const handleSplitPaneResize = () => {
+  //   setSplitPaneResized(true);
+  // };
 
   return (
     !modelingOptions.selectedEntity ? graphViewMainPanel :
@@ -324,7 +328,6 @@ const GraphView: React.FC<Props> = (props) => {
         split="vertical"
         primary="first"
         defaultSize="66%"
-        onDragFinished={handleSplitPaneResize}
       >
         {graphViewMainPanel}
         <div>

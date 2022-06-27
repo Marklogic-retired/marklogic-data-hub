@@ -1145,3 +1145,17 @@ export const hubCentralConfig = {
     }
   }
 };
+
+export const createConceptsResponse = {
+  "info": {
+    "name": "ShoeTypes",
+    "description": "testing"
+  }
+};
+
+export const createConceptErrorResponse = {
+  "code": 400,
+  "message": "Concept class is already using the name Testing. Concept class cannot use the same name as an existing concept class.",
+  "suggestion": "Resend the request in the correct format.",
+  "details": "Concept class is already using the name Testing. Concept class cannot use the same name as an existing Concept class."
+};
