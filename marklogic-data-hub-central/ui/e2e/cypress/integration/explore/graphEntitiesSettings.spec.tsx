@@ -9,6 +9,7 @@ import {BaseEntityTypes} from "../../support/types/base-entity-types";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import graphExplore from "../../support/pages/graphExplore";
 import {ExploreGraphNodes} from "../../support/types/explore-graph-nodes";
+import explorePage from "../../support/pages/explore";
 
 const defaultSelectLabel = "Select...";
 const defaultSelectProperty = "Select property";
@@ -91,7 +92,7 @@ describe("Entity Type Settings Modal", () => {
     cy.log("**Select Graph view and open explore settings modal**");
     browsePage.clickGraphView();
     browsePage.waitForSpinnerToDisappear();
-    browsePage.clickExploreSettingsMenuIcon();
+    explorePage.clickExploreSettingsMenuIcon();
     browsePage.getEntityTypeDisplaySettingsButton().scrollIntoView().click({force: true});
     dataModelDisplaySettingsModal.getModalBody().should("be.visible");
 
@@ -155,7 +156,7 @@ describe("Entity Type Settings Modal", () => {
     browsePage.clickGraphView();
     browsePage.waitForSpinnerToDisappear();
     cy.wait(2000);
-    browsePage.clickExploreSettingsMenuIcon();
+    explorePage.clickExploreSettingsMenuIcon();
     browsePage.getEntityTypeDisplaySettingsButton().scrollIntoView().click({force: true});
     dataModelDisplaySettingsModal.getModalBody().should("be.visible");
 
@@ -288,7 +289,7 @@ describe("Entity Type Settings Modal", () => {
     specificSidebar.getEntitySpecifTitle(defaultEntityTypeData.name).should("contain", defaultEntityTypeData.name);
 
     cy.log("**Open explore settings modal**");
-    browsePage.clickExploreSettingsMenuIcon();
+    explorePage.clickExploreSettingsMenuIcon();
     browsePage.getEntityTypeDisplaySettingsButton().scrollIntoView().click({force: true});
     dataModelDisplaySettingsModal.getModalBody().should("be.visible");
 

@@ -13,6 +13,8 @@ import browsePage from "../../support/pages/browse";
 import homePage from "../../support/pages/home";
 import graphExploreSidePanel from "../../support/components/explore/graph-explore-side-panel";
 import dataModelDisplaySettingsModal from "../../support/components/explore/data-model-display-settings-modal";
+import explorePage from "../../support/pages/explore";
+
 
 const defaultSelectLabel = "Select...";
 const defaultSelectProperty = "Select property";
@@ -142,7 +144,7 @@ describe("Entity display settings in model tile", () => {
 
 
     cy.log("**Open Entity Display Settings modal to check the values on label and propertiesOnHover**");
-    browsePage.clickExploreSettingsMenuIcon();
+    explorePage.clickExploreSettingsMenuIcon();
     browsePage.getEntityTypeDisplaySettingsButton().scrollIntoView().click({force: true});
     dataModelDisplaySettingsModal.getModalBody().should("be.visible");
 

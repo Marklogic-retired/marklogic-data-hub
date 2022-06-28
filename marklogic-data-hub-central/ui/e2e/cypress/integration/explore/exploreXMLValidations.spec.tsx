@@ -9,6 +9,7 @@ import detailPageNonEntity from "../../support/pages/detail-nonEntity";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import LoginPage from "../../support/pages/login";
 import explorePage from "../../support/pages/explore";
+import table from "../../support/components/common/tables";
 
 describe("xml scenario for snippet view on browse documents page", () => {
 
@@ -159,7 +160,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     //check table rows
     browsePage.getHCTableRows().should("have.length", 5);
     //check table columns
-    browsePage.getTableColumns().should("have.length", 6);
+    table.getTableColumns().should("have.length", 6);
     browsePage.clickClearFacetSearchSelection("mapCustomersXML");
   });
   it.skip("verify instance view of the document", () => {

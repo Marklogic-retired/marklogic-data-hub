@@ -4,6 +4,7 @@ import dataModelDisplaySettingsModal from "../../support/components/explore/data
 import browsePage from "../../support/pages/browse";
 import LoginPage from "../../support/pages/login";
 import {BaseConcepts} from "../../support/types/base-concepts";
+import explorePage from "../../support/pages/explore";
 
 const defaultConceptData = {
   name: BaseConcepts.SHOETYPE,
@@ -61,7 +62,7 @@ describe("Entity Type Settings Modal", () => {
     cy.log("**Select Graph view and open explore settings modal**");
     browsePage.clickGraphView();
     browsePage.waitForSpinnerToDisappear();
-    browsePage.clickExploreSettingsMenuIcon();
+    explorePage.clickExploreSettingsMenuIcon();
     browsePage.getEntityTypeDisplaySettingsButton().scrollIntoView().click({force: true});
     dataModelDisplaySettingsModal.getModalBody().should("be.visible");
 
@@ -136,7 +137,7 @@ describe("Entity Type Settings Modal", () => {
     cy.log("**Select Graph view and open explore settings modal**");
     browsePage.clickGraphView();
     browsePage.waitForSpinnerToDisappear();
-    browsePage.clickExploreSettingsMenuIcon();
+    explorePage.clickExploreSettingsMenuIcon();
     browsePage.getEntityTypeDisplaySettingsButton().scrollIntoView().click({force: true});
     dataModelDisplaySettingsModal.getModalBody().should("be.visible");
 

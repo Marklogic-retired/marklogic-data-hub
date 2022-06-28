@@ -8,6 +8,7 @@ import {toolbar} from "../../support/components/common/index";
 import "cypress-wait-until";
 import LoginPage from "../../support/pages/login";
 import explorePage from "../../support/pages/explore";
+import table from "../../support/components/common/tables";
 
 describe("save/manage queries scenarios, developer role", () => {
   before(() => {
@@ -35,7 +36,7 @@ describe("save/manage queries scenarios, developer role", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     cy.wait(4000);
     browsePage.databaseSwitch("staging").click();
-    browsePage.getAllDataButton().click();
+    explorePage.getAllDataButton().click();
     // Open facet's popover search
     browsePage.getPopOverLabel("Collection").click();
     // Start typing values and check them
@@ -57,7 +58,7 @@ describe("save/manage queries scenarios, developer role", () => {
   it("Apply facet search,open save modal, save new query", () => {
     toolbar.getExploreToolbarIcon().should("be.visible").click();
     browsePage.databaseSwitch("final").click();
-    browsePage.getEntities().click();
+    explorePage.getEntities().click();
     browsePage.clickTableView();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
@@ -69,7 +70,7 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getSelectedFacets().should("exist");
     browsePage.getGreySelectedFacets("Adams Cole").should("exist");
     browsePage.getFacetApplyButton().click();
-    browsePage.clickColumnTitle(2);
+    table.clickColumnTitle(2);
     browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.backToMainSidebar();
     browsePage.getSaveModalIcon().scrollIntoView().click();
@@ -206,7 +207,7 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getSaveQueryCancelButton().click();
   });
   it("Checking manage query", () => {
-    browsePage.clickExploreSettingsMenuIcon();
+    explorePage.clickExploreSettingsMenuIcon();
     browsePage.getManageQueriesModalOpened();
     queryComponent.getManageQueryModal().should("be.visible");
     queryComponent.getEditQuery().click();
@@ -269,13 +270,13 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.waitForSpinnerToDisappear();
     browsePage.getSelectedQuery().should("contain", "person-query");
     browsePage.search("Bates");
-    browsePage.clickColumnTitle(4);
+    table.clickColumnTitle(4);
     browsePage.getEllipsisButton().scrollIntoView().click();
     browsePage.getDiscardChangesIcon().click();
     browsePage.getDiscardYesButton().click();
     browsePage.getAppliedFacets("Bates").should("exist");
     browsePage.search("Bates");
-    browsePage.clickColumnTitle(4);
+    table.clickColumnTitle(4);
     browsePage.getEllipsisButton().scrollIntoView().click();
     browsePage.getDiscardChangesIcon().click();
     browsePage.getDiscardNoButton().click();
@@ -312,12 +313,12 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getSaveQueryName().type("query-2");
     browsePage.getSaveQueryButton().click();
     // Making changes to query-2 and switching to query-1
-    browsePage.clickColumnTitle(2);
+    table.clickColumnTitle(2);
     browsePage.selectQuery("query-1");
     browsePage.getQueryConfirmationNoClick().click();
     browsePage.getSelectedQuery().should("contain", "query-1");
     browsePage.getClearFacetSearchSelection("mapCustomersJSON").click();
-    browsePage.clickColumnTitle(2);
+    table.clickColumnTitle(2);
     browsePage.selectQuery("query-2");
     browsePage.getQueryConfirmationYesClick().click();
     browsePage.getEditSaveChangesButton().click();
@@ -339,7 +340,7 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getSelectedQuery().should("contain", "select a query");
     browsePage.selectQuery("new-query");
     browsePage.getFacetItemCheckbox("email", "adamscole@nutralab.com").click();
-    browsePage.clickColumnTitle(3);
+    table.clickColumnTitle(3);
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Person");
     browsePage.getEntityConfirmationYesClick().click();
@@ -399,7 +400,7 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getFacetItemCheckbox("name", "Adams Cole").click();
     browsePage.getSelectedFacets().should("exist");
     browsePage.getFacetApplyButton().click();
-    browsePage.clickColumnTitle(2);
+    table.clickColumnTitle(2);
     browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.backToMainSidebar();
     // entitiesSidebar.clearQuery();
@@ -441,7 +442,7 @@ describe("save/manage queries scenarios, developer role", () => {
     entitiesSidebar.selectBaseEntityOption("Customer");
     entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.selectQuery("reset-query");
-    browsePage.clickColumnTitle(2);
+    table.clickColumnTitle(2);
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     entitiesSidebar.clearQuery();

@@ -7,6 +7,7 @@ import "cypress-wait-until";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import LoginPage from "../../support/pages/login";
 import {BaseEntityTypes} from "../../support/types/base-entity-types";
+import table from "../../support/components/common/tables";
 
 const query = {
   name: "newQueryWithTwoEntities",
@@ -62,7 +63,7 @@ describe("manage queries with more than one entity", () => {
     browsePage.getSelectedFacets().should("exist");
     browsePage.getGreySelectedFacets("Adams Cole").should("exist");
     browsePage.getFacetApplyButton().click();
-    browsePage.clickColumnTitle(2);
+    table.clickColumnTitle(2);
     browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.backToMainSidebar();
 

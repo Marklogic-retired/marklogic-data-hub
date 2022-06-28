@@ -30,6 +30,7 @@ class BrowsePage {
     return cy.get(".card-body");
   }
 
+  // common
   getTotalDocuments() {
     this.waitForSpinnerToDisappear();
     return cy.get("[data-cy=total-documents]").then(value => {
@@ -37,87 +38,92 @@ class BrowsePage {
     });
   }
 
-  getAllDataButton() {
-    return cy.get(`[aria-label="switch-datasource-all-data"] ~ label`);
-  }
-  getEntities() {
-    return cy.get(`[aria-label="switch-datasource-entities"] ~ label`);
-  }
-
+  //common
   viewSelector(view: string) {
     return cy.get(`[aria-label="switch-view-${view}"]`);
   }
 
+  //common
   switchView(view: string) {
     return cy.get(`[aria-label="switch-view-${view}"]`).scrollIntoView().should("be.visible").click({force: true, waitForAnimations: false});
   }
 
-  getGraphVisExploreContainer() {
-    return cy.get(`#graphVisExplore`);
-  }
-  getMainTableContainer() {
-    return cy.get(`.resultTableMain`);
-  }
+  // common
   getSnippetContainer() {
     return cy.get(`#snippetViewResult`);
   }
 
+  // common
   clickPaginationItem(index: number) {
     return cy.get(`#pagination-item-${index}`).scrollIntoView().click();
   }
 
+  // common
   getSelectedPaginationNumber() {
     return cy.get(`#top-search-pagination-bar .ant-pagination-item-active a`).invoke("text");
   }
 
+  // common
   getInstanceViewIcon() {
     return cy.get("[data-cy=instance]");
   }
 
+  // common
   getSourceViewIcon() {
     return cy.get("[data-cy=source]");
   }
 
+  // common
   getDocuments() {
     return cy.get("#search-results .list-group-item");
   }
 
+  // common - Get individual document
   getDocument(index: number) {
     return cy.get(`[data-cy=document-list-item-${index}]`);
   }
 
+  // common
   getDocumentEntityName(index: number) {
     return this.getDocument(index).find("[data-cy=entity-name]").invoke("text");
   }
 
+  // common
   getDocumentPKey(index: number) {
     return this.getDocument(index).find("[data-cy=primary-key]").invoke("text");
   }
 
+  // common
   getDocumentPKeyValue(index: number) {
     return this.getDocument(index).find("[data-cy=primary-key-value]").invoke("text");
   }
 
+  // common
   getDocumentSnippet(index: number) {
     return this.getDocument(index).find("[data-cy=snippet]").invoke("text");
   }
 
+  // common
   getDocumentCreatedOn(index: number) {
     return this.getDocument(index).find("[data-cy=created-on]").invoke("text");
   }
 
+  // common
   getDocumentSources(index: number) {
     return this.getDocument(index).find("[data-cy=sources]").invoke("text");
   }
 
+  // common
   getDocumentRecordType(index: number) {
     return this.getDocument(index).find("[data-cy=record-type]").invoke("text");
   }
 
+  // common
   getDocumentById(index: number) {
     return this.getDocument(index).find("[data-cy=instance]");
   }
 
+  // common
   getTooltip(tooltip: string) {
     return cy.get(`#${tooltip}-tooltip`);
   }
@@ -134,87 +140,79 @@ class BrowsePage {
    * available facets are 'collection', 'created-on', 'job-id', 'flow', 'step'
    */
 
-  getFacetName(facet: string) {
-    return cy.get(".ml-tooltip-container").contains(facet);
-  }
-
+  // common
   getFacet(facet: string) {
     return cy.get("[data-cy=\"" + facet + "-facet\"]");
   }
 
+  // common
   getFacetItems(facet: string) {
     return cy.get("[data-cy=\"" + facet + "-facet-item\"]");
   }
 
+  // common
   getFacetItemCheckbox(facet: string, str: string) {
     return cy.findByTestId(`${facet}-${str}-checkbox`);
   }
 
-  getFacetItemCount(facet: string, str: string) {
-    return cy.get(`[data-cy="${facet}-${str}-count]`);
-  }
-
+  // common
   getClearFacetSearchSelection(facet: string) {
     return cy.get("[data-cy=\"clear-" + facet + "\"]");
   }
 
+  // common
   clickClearFacetSearchSelection(facet: string) {
     cy.findByTestId(`clear-${facet}`).scrollIntoView();
     cy.findByTestId(`clear-${facet}`).trigger("mousemove").click({force: true});
     this.waitForSpinnerToDisappear();
   }
 
+  // common
   getFacetSearchSelectionCount(facet: string) {
     return cy.get("[data-cy=\"" + facet + "-selected-count\"]").invoke("text");
   }
 
+  // common
   getClearFacetSelection(facet: string) {
     return cy.get(`[data-cy="${facet}-clear"]`);
   }
-
-  /*applyFacetSearchSelection(facet: string) {
-    return cy.get('[data-cy=' + facet + '-facet-apply-button]').click();
-  }
-  */
 
   getSelectedFacets() {
     return cy.get("[data-cy=selected-facet-block]");
   }
 
-  computeStartDateOfTheWeek() {
-    //The date calculations below is to get the start date of the week(Sun - Sat) that
-    //shows up in the date picker and as applied facet
-    let curr = new Date;
-    let first = ("0" + (curr.getDate() - curr.getDay())).slice(-2);
-    let month = ("0" + (curr.getMonth() + 1)).slice(-2);
-    return `${curr.getFullYear()}-${month}-${first}`;
-  }
-
+  // common
   getGreySelectedFacets(facet: string) {
     return cy.get("#selected-facets [data-cy=\"clear-grey-" + facet + "\"]");
   }
 
+  // common
   getAppliedFacets(facet: string) {
     return cy.get("#selected-facets [data-cy=\"clear-" + facet + "\"]");
   }
 
+  // common
   getAppliedFacetName(facet: string) {
     return cy.findByTestId(`clear-${facet}`).invoke("text");
   }
 
+  // common
   getClearGreyFacets() {
     return cy.get("[data-testid=clear-all-grey-button]");
   }
 
+  // common
   getDateFacetPicker(options?: {time?: string}) {
     const pickerTestId = options && options.time ? options.time : "facet-datetime-picker-date";
     return cy.get(`[data-testid="${pickerTestId}"]`);
   }
 
+  // common
   getSelectedFacet(facet: string) {
     return cy.get("#selected-facets > button").contains(facet);
   }
 
+  // common
   selectDateRange(options?: {time?: string}) {
     this.getDateFacetPicker(options).click();
     cy.waitUntil(() => cy.get(".drp-calendar.left > .calendar-table tr:first-child > td:first-child")).click({force: true});
@@ -225,31 +223,33 @@ class BrowsePage {
     }
   }
 
+  // common
   getDateFacetClearIcon(options?: {time?: string}) {
     const pickerTestId = options && options.time ? options.time : "facet-datetime-picker-date";
     return cy.get(`[data-testid="${pickerTestId}"] ~ svg[data-testid="datetime-picker-reset"]`);
   }
 
-  getDateFacetPickerIcon() {
-    return cy.get(".ant-calendar-picker .ant-calendar-picker-icon");
-  }
-
+  // common
   getFacetApplyButton() {
     return cy.get("svg[data-icon=\"check-square\"]");
   }
 
+  // common
   getClearAllFacetsButton() {
     return cy.get("[aria-label=clear-facets-button]", {timeout: 3000});
   }
 
+  // common
   getApplyFacetsButton() {
     return cy.get("[aria-label=apply-facets-button]", {timeout: 3000});
   }
 
+  // common
   getGreyRangeFacet(lowerBound: number) {
     return cy.get("#selected-facets [data-cy^=\"clear-grey-" + lowerBound + "\"]");
   }
 
+  // common
   getRangeFacet(lowerBound: number) {
     return cy.get("#selected-facets [data-cy^=\"clear-" + lowerBound + "\"]");
   }
@@ -287,40 +287,38 @@ class BrowsePage {
     cy.waitForAsyncRequest();
   }
 
+  // common
   changeNumericSlider(val: string) {
     cy.get("[data-testid=numeric-slider-min]").type("{selectall}").type(val);
   }
 
+  // common
   getSearchText() {
     return cy.findByPlaceholderText("Search").clear();
   }
 
+  // common
   getSearchBar() {
     return cy.findByPlaceholderText("Search");
   }
 
+  // common
   getShowMoreLink(facet: string) {
     return cy.findByTestId(`show-more-${facet}`);
   }
 
+  // common
   clickMoreLink(facetType: string) {
     cy.findByTestId(`show-more-${facetType}`).click();
   }
 
+  // common
   getHubPropertiesExpanded() {
     cy.wait(500);
     cy.get("#hub-properties .accordion-button").click({force: true});
   }
 
-  getExpandableSnippetView() {
-    return cy.get(".ant-list-items li:first-child [data-cy = expandable-icon]").click();
-  }
-
-  clearFacetSelection(facet: string) {
-    cy.get(`[data-cy="${facet}-clear"]`).click();
-    this.waitForSpinnerToDisappear();
-  }
-
+  // common
   //table, facet view
   clickFacetView() {
     this.waitForSpinnerToDisappear();
@@ -328,109 +326,93 @@ class BrowsePage {
     cy.get("[data-cy=facet-view]").click().trigger("mouseout", {force: true});
   }
 
+  // common
   getFacetView() {
     return cy.get("[data-cy=facet-view]");
   }
 
+  // common
   getTableView() {
     return cy.get("#tableView");
   }
 
+  // common
   getGraphView() {
     return cy.get("[data-cy=graph-view]");
   }
 
+  // common
   clickTableView() {
     cy.wait(1500);
     return cy.get("[data-cy=table-view]").click({force: true});
   }
+  // common
   clickSwitchToTableView() {
     return cy.get("#tableView").click();
   }
 
+  // common
   clickGraphView() {
     return this.getGraphView().click();
   }
+
+  // common
   clickSnippetView() {
     return this.getSnippetView().click();
   }
 
-  getSideBarCollapseIcon() {
-    return cy.get("#sidebar-collapse-icon");
-  }
-
+  // common
   clickOnBaseEntitiesDropdown() {
     return cy.get("#entitiesSidebar-select-wrapper").should("be.visible").click();
   }
 
+  // common
   selectBaseEntity(entity: string) {
     this.clickOnBaseEntitiesDropdown();
     cy.get(`[aria-label='base-option-${entity}']`).scrollIntoView().click();
   }
 
+  // common
   removeBaseEntity(entity: string) {
     cy.get(`[aria-label='Remove ${entity}']`).scrollIntoView().click();
   }
-
-  //table
-  getColumnTitle(index: number) {
-    return cy.get(`.table.table-bordered thead th:nth-child(${index}) .resultsTableHeaderColumn`).invoke("text");
-
-  }
-
-  clickColumnTitle(index: number) {
-    cy.wait(500);
-    return cy.get(`.table.table-bordered th:nth-child(${index}) .resultsTableHeaderColumn`).click();
-  }
-
+  // common
   getSortIndicatorAsc() {
     return cy.get(`[aria-label="icon: caret-up"]`);
   }
 
+  // common
   getSortIndicatorDesc() {
     return cy.get(`[aria-label="icon: caret-down"]`);
   }
 
-  //TODO: Refactor - is duplicated
-  getTableRows() {
-    return cy.get(".ant-table-row");
-  }
-
+  // common
   getHCTableRows() {
     return cy.get(".hc-table_row");
   }
 
-
+  // common
   getTableViewInstanceIcon() {
     return cy.get(".hc-table_row:last-child [data-cy=instance]");
   }
 
+  // common
   getTableViewSourceIcon() {
     return cy.getAttached(".hc-table_row:last-child [data-cy=source]");
   }
 
+  // common
   getExpandableTableView() {
     return cy.get(".ant-table-row:nth-child(1) .ant-table-row-expand-icon-cell").click();
   }
 
+  // common
   getExpandable() {
     return cy.get(`[class^="hc-table_iconIndicator"]`);
   }
 
-  getTableColumns() {
-    return cy.get(".resultsTableHeaderColumn");
-  }
-
   getTableCell(rowIndex: number, columnIndex: number) {
     return cy.get(`.hc-table_row:nth-child(${rowIndex}) td:nth-child(${columnIndex}) div`).invoke("text");
-  }
-
-  getTableUriCell(rowIndex: number) {
-    return cy.get(`.ant-table-row:nth-child(${rowIndex}) td:nth-child(2) div span`).invoke("text");
-  }
-
-  getTableTitle(index: number) {
-    return cy.get(`.ant-table-thead tr th:nth-child(${index}) .ant-table-column-title`);
   }
 
   getColumnSelectorIcon() {
@@ -524,58 +506,72 @@ class BrowsePage {
     return cy.get("svg[data-icon=\"copy\"]");
   }
 
+  // common
   getEditQueryDetailFormName() {
     return cy.get("#edit-query-detail-name");
   }
 
+  // common
   getEditQueryDetailDesc() {
     return cy.get("#edit-query-detail-description");
   }
 
+  // common
   getEditQueryDetailButton() {
     return cy.get("#edit-query-detail-button");
   }
 
+  // common
   getEditQueryDetailCancelButton() {
     return cy.get("#edit-query-detail-cancel-button");
   }
 
+  // common
   getRadioOptionSelected() {
     return cy.get(".modal-content [type=\"radio\"]").first().check();
   }
 
+  // common
   getEditSaveChangesButton() {
     return cy.get("#edit-save-changes-button");
   }
 
+  // common
   getEditSaveChangesCancelButton() {
     return cy.get("#edit-save-changes-cancel-button");
   }
 
+  // common
   getEditSaveChangesFormName() {
     return cy.get("#save-changes-query-name");
   }
 
+  // common
   getDiscardChangesIcon() {
     return cy.get("svg[data-icon=\"undo\"]");
   }
 
+  // common
   getDiscardYesButton() {
     return cy.get("#discard-yes-button");
   }
 
+  // common
   getDiscardNoButton() {
     return cy.get("#discard-no-button");
   }
 
+  // common
   getCloseIcon() {
     return cy.get("svg[data-icon=\"close\"]");
   }
 
+  // common
   getManageQueryCloseIcon() {
     return cy.get(".manage-modal-close-icon");
   }
 
+  // common
   getResetQueryButton() {
     return cy.get("#reset-changes");
   }
@@ -591,29 +587,28 @@ class BrowsePage {
     this.getHCTableRows().should("have.length.gt", 0);
   }
 
-  clickExploreSettingsMenuIcon() {
-    cy.wait(1000);
-    cy.get("[aria-label=explore-settingsIcon-menu]").should("exist");
-    return cy.get("[aria-label=explore-settingsIcon-menu]").click({force: true});
-  }
-
+  // common
   getManageQueriesButton() {
     return cy.get("[aria-label=manageQueries]");
   }
 
+  // common
   getEntityTypeDisplaySettingsButton() {
     return cy.get("[aria-label=entityTypeDisplaySettings]");
   }
 
+  // common
   //saved query dropdown
   getSelectedQuery() {
     return this.getSaveQueriesDropdown().invoke("text");
   }
 
+  // common
   getErrorMessage() {
     return cy.get("[class*='validationError']");
   }
 
+  // common
   selectQuery(query: string) {
     this.getSaveQueriesDropdownInput().scrollIntoView().click({force: true});
     this.getQueryOption(query).click({force: true});
@@ -621,16 +616,18 @@ class BrowsePage {
     cy.waitForAsyncRequest();
   }
 
+  // common
   getSelectedQueryDescription() {
     return cy.get("#selected-query-description").invoke("text");
   }
 
+  // common
   getQueryOption(query: string) {
     return cy.get(`#query-select-MenuList [data-cy="query-option-${query}"]`);
   }
 
   /** Switching queries confirmation buttons  */
-
+  // common
   getQueryConfirmationNoClick() {
     return cy.get("#query-confirmation-no-button");
   }
@@ -674,6 +671,9 @@ class BrowsePage {
   getSnippetViewResult() {
     return cy.get("#snippetViewResult");
   }
+  databaseSwitch(database: string) {
+    return cy.get(`[aria-label="switch-database-${database}"] ~ label`);
+  }
 
   //All Data
   getAllDataSnippetByUri(uri: string) {
@@ -701,10 +701,6 @@ class BrowsePage {
   // common element
   getTableViewCell(text:string) {
     return cy.findByText(text);
-  }
-
-  databaseSwitch(database: string) {
-    return cy.get(`[aria-label="switch-database-${database}"] ~ label`);
   }
 
 }

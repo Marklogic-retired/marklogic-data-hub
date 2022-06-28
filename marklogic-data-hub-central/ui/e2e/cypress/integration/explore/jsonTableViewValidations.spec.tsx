@@ -10,6 +10,7 @@ import "cypress-wait-until";
 // import detailPageNonEntity from "../../support/pages/detail-nonEntity";
 import LoginPage from "../../support/pages/login";
 import explorePage from "../../support/pages/explore";
+import table from "../../support/components/common/tables";
 
 describe("json scenario for table on browse documents page", () => {
 
@@ -33,6 +34,10 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
   });
+  afterEach(() => {
+    //Saving Local Storage to preserve session
+    cy.saveLocalStorage();
+  });
   after(() => {
     cy.resetTestUser();
     cy.waitForAsyncRequest();
@@ -40,10 +45,10 @@ describe("json scenario for table on browse documents page", () => {
   it("select \"all entities\" and verify table default columns", () => {
     entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
-    browsePage.getColumnTitle(2).should("contain", "Identifier");
-    browsePage.getColumnTitle(3).should("contain", "Entity Type");
-    browsePage.getColumnTitle(4).should("contain", "Record Type");
-    browsePage.getColumnTitle(5).should("contain", "Created");
+    table.getColumnTitle(2).should("contain", "Identifier");
+    table.getColumnTitle(3).should("contain", "Entity Type");
+    table.getColumnTitle(4).should("contain", "Record Type");
+    table.getColumnTitle(5).should("contain", "Created");
 
     facets.forEach(function (item) {
       browsePage.getFacet(item).should("exist");
@@ -57,7 +62,7 @@ describe("json scenario for table on browse documents page", () => {
     //check table rows
     browsePage.getHCTableRows().should("have.length", 20);
     //check table columns
-    browsePage.getTableColumns().should("have.length", 5);
+    table.getTableColumns().should("have.length", 5);
   });
 
 
@@ -69,7 +74,7 @@ describe("json scenario for table on browse documents page", () => {
     //check table rows. Validates the records were filtered
     browsePage.getHCTableRows().should("have.length.lt", 52);
     //check table columns
-    browsePage.getTableColumns().should("to.have.length.of.at.most", 9);
+    table.getTableColumns().should("to.have.length.of.at.most", 9);
   });
 
 
