@@ -778,7 +778,7 @@ println("Unit Tests Failed")
                       }
 }
 
-def cypressSetup(String type, String version){
+def cypressSetup(String type, String mlVersion){
         sh 'rm -rf $WORKSPACE/xdmp/src/*'
         copyRPM type,mlVersion
         setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
@@ -1409,7 +1409,9 @@ pipeline{
                     agent {label 'w10-dhf-6'}
                     steps{
                         script{
+                            timeout(time: 1, unit: 'HOURS'){
                             runFFTests()
+                            }
                         }
                     }
                     post{
