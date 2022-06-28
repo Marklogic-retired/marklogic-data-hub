@@ -6,6 +6,7 @@ import "cypress-wait-until";
 import {toolbar} from "../../support/components/common";
 import LoginPage from "../../support/pages/login";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
+import table from "../../support/components/common/tables";
 
 describe("Validate table and column selector in explore", () => {
   before(() => {
@@ -33,7 +34,7 @@ describe("Validate table and column selector in explore", () => {
   it("Validate the table and expandable rows", () => {
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
     browsePage.getHCTableRows().should("have.length", 20);
-    browsePage.getTableColumns().should("be.visible");
+    table.getTableColumns().should("be.visible");
     browsePage.getExpandable().should("be.visible");
   });
   it("Validate columns selector popover, draggable titles and checkable titles", () => {

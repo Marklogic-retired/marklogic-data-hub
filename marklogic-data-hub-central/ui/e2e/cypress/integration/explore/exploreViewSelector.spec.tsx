@@ -3,6 +3,9 @@ import browsePage from "../../support/pages/browse";
 import {toolbar} from "../../support/components/common";
 import LoginPage from "../../support/pages/login";
 import monitorPage from "../../support/pages/monitor";
+import explorePage from "../../support/pages/explore";
+import table from "../../support/components/common/tables";
+
 
 /**
  * NOTE: This test will involve all operations related to the views selector.
@@ -29,7 +32,7 @@ describe("Test '/Explore' view selector", () => {
 
     cy.log(`**Selecting 'Graph' view**`);
     browsePage.switchView("graph");
-    browsePage.getGraphVisExploreContainer().should("be.visible");
+    explorePage.getGraphVisExploreContainer().should("be.visible");
 
     cy.log(`**Go to Monitor section**`);
     toolbar.getMonitorToolbarIcon().click();
@@ -37,14 +40,14 @@ describe("Test '/Explore' view selector", () => {
 
     cy.log(`**Return to Explore section**`);
     toolbar.getExploreToolbarIcon().click();
-    browsePage.getGraphVisExploreContainer().should("be.visible");
+    explorePage.getGraphVisExploreContainer().should("be.visible");
 
     cy.log(`**Select 'All Data' button**`);
-    browsePage.getAllDataButton().click();
+    explorePage.getAllDataButton().click();
 
     cy.log(`**Select 'Entities' button**`);
-    browsePage.getEntities().click();
-    browsePage.getGraphVisExploreContainer().should("be.visible");
+    explorePage.getEntities().click();
+    explorePage.getGraphVisExploreContainer().should("be.visible");
   });
   it(`Validate that the 'table' view is shown and stored in the user preference`, () => {
     cy.log(`**Go to Explore section**`);
@@ -52,7 +55,7 @@ describe("Test '/Explore' view selector", () => {
 
     cy.log(`**Selecting 'Table' view**`);
     browsePage.switchView("table");
-    browsePage.getMainTableContainer().should("be.visible");
+    table.getMainTableContainer().should("be.visible");
 
     cy.log(`**Go to Monitor section**`);
     toolbar.getMonitorToolbarIcon().click();
@@ -60,14 +63,14 @@ describe("Test '/Explore' view selector", () => {
 
     cy.log(`**Return to Explore section**`);
     toolbar.getExploreToolbarIcon().click();
-    browsePage.getMainTableContainer().should("be.visible");
+    table.getMainTableContainer().should("be.visible");
 
     cy.log(`**Select 'All Data' button**`);
-    browsePage.getAllDataButton().click();
+    explorePage.getAllDataButton().click();
 
     cy.log(`**Select 'Entities' button**`);
-    browsePage.getEntities().click();
-    browsePage.getMainTableContainer().should("be.visible");
+    explorePage.getEntities().click();
+    table.getMainTableContainer().should("be.visible");
   });
   it(`Validate that the 'Snippet' view is shown and stored in the user preference`, () => {
     cy.log(`**Go to Explore section?**`);
@@ -86,10 +89,10 @@ describe("Test '/Explore' view selector", () => {
     browsePage.getSnippetContainer().should("be.visible");
 
     cy.log(`**Select 'All Data' button**`);
-    browsePage.getAllDataButton().click();
+    explorePage.getAllDataButton().click();
 
     cy.log(`**Select 'Entities' button**`);
-    browsePage.getEntities().click();
+    explorePage.getEntities().click();
     browsePage.getSnippetContainer().should("be.visible");
   });
 

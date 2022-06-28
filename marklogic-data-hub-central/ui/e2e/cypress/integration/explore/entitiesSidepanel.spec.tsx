@@ -6,6 +6,8 @@ import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import graphExplore from "../../support/pages/graphExplore";
 import {ExploreGraphNodes} from "../../support/types/explore-graph-nodes";
 import explorePage from "../../support/pages/explore";
+import table from "../../support/components/common/tables";
+
 
 /**
  * NOTE: This test will involve all operations related to the specific sidebar, for now it's quiet simple
@@ -151,9 +153,9 @@ describe("Test '/Explore' left sidebar", () => {
     browsePage.getTableView().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
-    browsePage.getColumnTitle(2).should("contain", "orderId");
-    browsePage.getColumnTitle(3).should("contain", "address");
-    browsePage.getColumnTitle(4).should("contain", "orderDetails");
+    table.getColumnTitle(2).should("contain", "orderId");
+    table.getColumnTitle(3).should("contain", "address");
+    table.getColumnTitle(4).should("contain", "orderDetails");
 
     //orderId value should be present while customerID should not
     browsePage.getTableViewCell("10248").should("have.length.gt", 0);
@@ -164,10 +166,10 @@ describe("Test '/Explore' left sidebar", () => {
     entitiesSidebar.selectBaseEntityOption("Customer");
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
-    browsePage.getColumnTitle(2).should("contain", "Identifier");
-    browsePage.getColumnTitle(3).should("contain", "Entity Type");
-    browsePage.getColumnTitle(4).should("contain", "Record Type");
-    browsePage.getColumnTitle(5).should("contain", "Created");
+    table.getColumnTitle(2).should("contain", "Identifier");
+    table.getColumnTitle(3).should("contain", "Entity Type");
+    table.getColumnTitle(4).should("contain", "Record Type");
+    table.getColumnTitle(5).should("contain", "Created");
 
     //both Order and Customer ID's should be present in table
     browsePage.getTableViewCell("10248").should("have.length.gt", 0);

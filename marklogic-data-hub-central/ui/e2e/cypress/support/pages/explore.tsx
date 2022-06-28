@@ -76,6 +76,21 @@ class ExplorePage {
     //tried intercept + wait on request but didn't work. Leaving comment as reference
     cy.wait(3000);
   }
+
+  getAllDataButton() {
+    return cy.get(`[aria-label="switch-datasource-all-data"] ~ label`);
+  }
+  getEntities() {
+    return cy.get(`[aria-label="switch-datasource-entities"] ~ label`);
+  }
+  getGraphVisExploreContainer() {
+    return cy.get(`#graphVisExplore`);
+  }
+  clickExploreSettingsMenuIcon() {
+    cy.wait(1000);
+    cy.get("[aria-label=explore-settingsIcon-menu]").should("exist");
+    return cy.get("[aria-label=explore-settingsIcon-menu]").click({force: true});
+  }
 }
 
 export default new ExplorePage();

@@ -7,6 +7,7 @@ import {BaseEntityTypes} from "../../support/types/base-entity-types";
 import {toolbar} from "../../support/components/common/index";
 import "cypress-wait-until";
 import LoginPage from "../../support/pages/login";
+import explorePage from "../../support/pages/explore";
 
 describe("User without hub-central-saved-query-user role should not see saved queries drop down on zero sate page", () => {
   before(() => {
@@ -42,7 +43,7 @@ describe("User without hub-central-saved-query-user role should not see saved qu
     browsePage.getSaveModalIcon().should("have.css", "background-color", "rgba(0, 0, 0, 0)");
   });
   it("verifies user without hub-central-saved-query-user can not manage queries", () => {
-    browsePage.clickExploreSettingsMenuIcon();
+    explorePage.clickExploreSettingsMenuIcon();
     browsePage.getManageQueriesButton().should("be.visible");
     browsePage.getManageQueriesButton().should("not.be.enabled");
   });
