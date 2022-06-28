@@ -101,6 +101,7 @@ const PopOverSearch: React.FC<Props> = (props) => {
         handleClick={(e) => onSelectCheckboxes(e)}
         checked={checkedValues.includes(value)}
         data-testid={`${value}-popover-checkbox`}
+        ariaLabel={`${value}-popover-checkbox`}
       >{value}
       </HCCheckbox>
     </div>
@@ -111,7 +112,7 @@ const PopOverSearch: React.FC<Props> = (props) => {
     <Popover id={`popover-over-search`} className={styles.popoverSearch}>
       <Popover.Body>
         <div className={styles.popover}>
-          <HCInput placeholder="Search" allowClear={true} onChange={searchOptions.tileId === "explore" ? getFacetValues : getMonitorFacetValues} data-testid={(props.facetName)+"-popover-input-field"}/>
+          <HCInput placeholder="Search" allowClear={true} onChange={searchOptions.tileId === "explore" ? getFacetValues : getMonitorFacetValues} ariaLabel={(props.facetName)+"-popover-input-field"} data-testid={(props.facetName)+"-popover-input-field"}/>
           <div className={styles.scrollOptions}>
             {renderCheckBoxGroup}
           </div>
@@ -132,7 +133,7 @@ const PopOverSearch: React.FC<Props> = (props) => {
       onToggle={handleChange}
       rootClose
       show={popOverVisibility}>
-      <div className={styles.search} data-testid={(props.facetName)+"-search-input"} aria-label={"popover-search-label"}>See all</div>
+      <div className={styles.search} data-testid={(props.facetName)+"-search-input"} aria-label={(props.facetName)+"-popover-search-label"}>See all</div>
     </OverlayTrigger>
   );
 };

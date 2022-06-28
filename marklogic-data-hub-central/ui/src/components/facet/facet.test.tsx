@@ -78,12 +78,12 @@ describe("Facet component", () => {
     const {getByLabelText, queryByLabelText, rerender} = render(<Facet {...facetProps} />);
 
     // Search link NOT shown for facets < LIMIT
-    expect(queryByLabelText("popover-search-label")).not.toBeInTheDocument();
+    expect(queryByLabelText("sales_region-popover-search-label")).not.toBeInTheDocument();
 
     rerender(<Facet {...facetProps} facetValues={facetValsNew}/>);
 
     // Search link shown for facets >= LIMIT
-    expect(getByLabelText("popover-search-label")).toBeInTheDocument();
+    expect(getByLabelText("sales_region-popover-search-label")).toBeInTheDocument();
   });
 
   it("SourceName facets renders properly", async () => {

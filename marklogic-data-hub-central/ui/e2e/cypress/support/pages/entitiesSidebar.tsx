@@ -41,6 +41,11 @@ class BaseEntitySidebar {
   getFacetCheckbox(name: string) {
     return cy.get(`input[data-testid="name-${name}-checkbox"]`);
   }
+
+
+  getCollectionCheckbox(facetName:string, name: string) {
+    return cy.get(`input[data-testid="${facetName}-${name}-checkbox"]`);
+  }
   getInputSearch() {
     return cy.get("#specif-search-input");
   }
