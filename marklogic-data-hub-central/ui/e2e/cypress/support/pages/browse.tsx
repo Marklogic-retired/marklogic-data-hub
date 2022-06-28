@@ -255,13 +255,20 @@ class BrowsePage {
   }
 
   setInputField(facetName: string, str: string) {
-    cy.findByTestId(`${facetName}-popover-input-field`).clear().type(str);
+    cy.get(`[aria-label=${facetName}-popover-input-field]`).clear().type(str);
   }
 
   getPopOverCheckbox(str: string) {
-    return cy.findByTestId(`${str}-popover-checkbox`);
+    return cy.get(`[aria-label=${str}-popover-checkbox]`);
   }
 
+  getPopOverLabel(facetName: string) {
+    return cy.get(`[aria-label=${facetName}-popover-search-label]`);
+  }
+
+  confirmPopoverFacets() {
+    cy.get(`[aria-label="icon: check-square-o"]`).click();
+  }
 
   applyDatePickerSelection(facet: string) {
     return cy.get("[data-cy=datepicker-facet-apply-button]").click();
@@ -679,6 +686,10 @@ class BrowsePage {
 
   getDatabaseButton(database: string) {
     return cy.get(`#switch-database-${database}`);
+  }
+
+  databaseSwitch(database: string) {
+    return cy.get(`[aria-label="switch-database-${database}"] ~ label`);
   }
 
   getTableViewButton() {

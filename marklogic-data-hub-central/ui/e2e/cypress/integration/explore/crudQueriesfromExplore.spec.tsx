@@ -30,8 +30,33 @@ describe("save/manage queries scenarios, developer role", () => {
     cy.deleteSavedQueries();
     cy.waitForAsyncRequest();
   });
+  it("Verifies selected popover facets are unselected with the clear selection button", () => {
+    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    cy.wait(4000);
+    browsePage.databaseSwitch("staging").click();
+    browsePage.getAllDataButton().click();
+    // Open facet's popover search
+    browsePage.getPopOverLabel("Collection").click();
+    // Start typing values and check them
+    browsePage.setInputField("Collection", "col");
+    browsePage.getPopOverCheckbox("collection1").click();
+    browsePage.getPopOverCheckbox("collection2").click();
+    browsePage.confirmPopoverFacets();
+
+    entitiesSidebar.getCollectionCheckbox("collection", "collection1").should("be.checked");
+    entitiesSidebar.getCollectionCheckbox("collection", "collection2").should("be.checked");
+    // Clear facets
+    entitiesSidebar.getClearFacetsButton().click();
+
+    // Check checkboxes are unchecked
+    entitiesSidebar.getCollectionCheckbox("collection", "collection1").should("not.exist");
+    entitiesSidebar.getCollectionCheckbox("collection", "collection2").should("not.exist");
+
+  });
   it("Apply facet search,open save modal, save new query", () => {
     toolbar.getExploreToolbarIcon().should("be.visible").click();
+    browsePage.databaseSwitch("final").click();
+    browsePage.getEntities().click();
     browsePage.clickTableView();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();

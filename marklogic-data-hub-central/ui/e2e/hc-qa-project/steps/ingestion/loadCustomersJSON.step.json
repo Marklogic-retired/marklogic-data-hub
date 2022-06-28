@@ -9,7 +9,15 @@
     "createdBy": "currentUser"
   },
   "collections": [
-    "loadCustomersJSON"
+    "loadCustomersJSON",
+    "collection1",
+    "collection2",
+    "collection3",
+    "collection4",
+    "collection5",
+    "collection6",
+    "collection7",
+    "collection8"
   ],
   "permissions": "data-hub-common,read,data-hub-common,update",
   "batchSize": 100,
