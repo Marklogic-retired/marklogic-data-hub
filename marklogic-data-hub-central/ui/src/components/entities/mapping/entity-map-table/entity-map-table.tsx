@@ -1888,6 +1888,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
           keyUtil={"key"}
           showHeader={false}
           nestedParams={{headerColumns: entityColumns, iconCellList: ["Name", "Type", "XPath Expression", "Value"], state: [props.entityExpandedKeys, props.setEntityExpandedKeys]}}
+          component={"entity-map-table"}
         />
       </div>
       : null

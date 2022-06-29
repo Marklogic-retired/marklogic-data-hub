@@ -345,7 +345,7 @@ const renderRow = ({row, rowIndex, parentRowIndex, keyUtil, component, indentLis
   const selected = selectRow && selectRow.selected;
 
   let expandKey = keyUtil === "rowKey" ? row.rowKey : row.key;
-  let expandIcon = row.children ? <span style={{marginRight: "10px"}} onClick={() => { isExpanded(expandKey); }}>{expandedNestedRows.includes(expandKey) ? <ChevronDown data-testid={`${expandKey}-expand-icon`} /> : <ChevronRight data-testid={`${expandKey}-expand-icon`} />}</span> : null;
+  let expandIcon = row.children && component !== "entity-map-table" ? <span style={{marginRight: "10px"}} onClick={() => { isExpanded(expandKey); }}>{expandedNestedRows.includes(expandKey) ? <ChevronDown data-testid={`${expandKey}-expand-icon`} /> : <ChevronRight data-testid={`${expandKey}-expand-icon`} />}</span> : null;
   let indentation = 0;
   if (indentList[expandKey]) {
     indentation = indentList[expandKey];
