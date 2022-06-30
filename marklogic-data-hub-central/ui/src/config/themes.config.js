@@ -51,7 +51,8 @@ const themeColors = {
     "defaults": {
         "entityColor": "#eeeff1",
         "questionCircle": "#7f86b5",
-        "conceptColor": "#FFFFFF"
+        "conceptColor": "#FFFFFF",
+        "hoverColor": "#e8f6fd"
     },
 
     "facetIndicator": {

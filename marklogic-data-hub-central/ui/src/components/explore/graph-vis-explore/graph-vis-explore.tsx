@@ -344,7 +344,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
             let rad = e.count > 10 ? (radiusByCount >= 84 ? maxRadius : radiusByCount) : r;
             const radius = displayLabel ? rad * 1.5 : rad;
             const imagePositionY = displayLabel ? y - 25 : y - 15;
-            let backgroundColor = !e.isConcept ? (!hover ? color : themeColors.defaults.entityColor) : (!hover ? color : themeColors.defaults.conceptColor);
+            let backgroundColor = hover ? themeColors.defaults.hoverColor : color;
             ctx.beginPath();
             ctx.arc(x, y, radius, 0, 2 * Math.PI);
             ctx.fillStyle = backgroundColor;
@@ -422,6 +422,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
             ctx.stroke();
             ctx.fillStyle = graphViewConfig.groupNodeBadgeColor;
           };
+
           return {
             drawNode,
             nodeDimensions: {width: 2.5 * r, height: 2.5 * r},
@@ -484,7 +485,11 @@ const GraphVisExplore: React.FC<Props> = (props) => {
             enabled: false,
           }
         },
-        color: "#666",
+        color: {
+          color: "#666",
+          highlight: themeColors.defaults.hoverColor,
+          hover: themeColors.defaults.hoverColor,
+        },
         font: {
           align: "top",
         },
