@@ -825,14 +825,15 @@ def runFFTests(){
     waitUntil(initialRecurrencePeriod: 120000) {
          return fFsetupcomplete
      }
-     env.cypressBaseUrl=cypressBaseUrl.trim()
-     env.mlHost=mlHost.trim()
+     env.cypressFFBaseUrl=cypressFFBaseUrl.trim()
+     env.mlFFHost=mlFFHost.trim()
      bat  script: """
                                  setlocal
                                  set PATH=C:\\Program Files (x86)\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH
-                                 set CYPRESS_BASE_URL=${cypressBaseUrl};
-                                 set mlHost=${mlHost};
+                                 set CYPRESS_BASE_URL=${cypressFFBaseUrl};
+                                 set mlHost=${mlFFHost};
                                  cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e
+                                 npm run cy:run-firefox-headed -- --config baseUrl=${cypressFFBaseUrl} --env mlHost=${mlFFHost}
      """
      junit '**/e2e/**/*.xml'
 }
