@@ -26,7 +26,7 @@ const config = {
                 "displayLong": 5,
                 "items": [
                     {
-                        "type": "category",
+                        "type": "string",
                         "name": "sources",
                         "tooltip": "Filter by source."
                     }

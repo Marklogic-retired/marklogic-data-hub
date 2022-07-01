@@ -24,32 +24,32 @@ const searchConfig = {
         displayLong: 5,
         items: [
           {
-            type: "category",
+            type: "string",
             name: "country",
             tooltip: "Filter by country.",
           },
           {
-            type: "category",
+            type: "string",
             name: "state",
             tooltip: "Filter by state.",
           },
           {
-            type: "category",
+            type: "string",
             name: "position",
             tooltip: "Filter by position.",
           },
           {
-            type: "category",
+            type: "string",
             name: "throws",
             tooltip: "Filter by throws.",
           },
           {
-            type: "category",
+            type: "string",
             name: "bats",
             tooltip: "Filter by bats.",
           },
           {
-            type: "category",
+            type: "string",
             name: "field",
             tooltip: "Filter by field.",
           }
