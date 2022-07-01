@@ -1,55 +1,56 @@
 const hent = require("/data-hub/5/impl/hub-entities.xqy");
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs")
 const test = require("/test/test-helper.xqy");
 
-function generateTdeWithRelatedEntityType() {
-    const input =
-        [{
-          "info": {
-            "title": "Order",
-            "version": "0.0.1",
-            "baseUri": "http://marklogic.com/example/"
-          },
-          "definitions": {
-            "Order": {
-              "primaryKey": "orderId",
-              "properties": {
-                "orderId": {
-                  "datatype": "integer"
-                },
-                "orderDateTime": {
-                  "datatype": "dateTime"
-                },
-                "orderedBy": {
-                  "datatype": "integer",
-                  "relatedEntityType": "http://example.org/Customer-0.0.1/Customer",
-                  "joinPropertyName": "customerId"
-                },
-                "deliveredTo": {
-                  "datatype": "integer"
-                },
-                "lineItems": {
-                  "datatype": "array",
-                  "items": {
-                    "$ref": "#/definitions/LineItem"
-                  }
-                }
-              }
-            },
-            "LineItem": {
-              "properties": {
-                "quantity": {
-                  "datatype": "integer"
-                },
-                "includes": {
-                  "datatype": "integer",
-                  "relatedEntityType": "http://example.org/Product-1.0.0/Product",
-                  "joinPropertyName": "productId"
-                }
-              }
-            }
+const orderModel = {
+  "info": {
+    "title": "Order",
+    "version": "0.0.1",
+    "baseUri": "http://marklogic.com/example/"
+  },
+  "definitions": {
+    "Order": {
+      "primaryKey": "orderId",
+      "properties": {
+        "orderId": {
+          "datatype": "integer"
+        },
+        "orderDateTime": {
+          "datatype": "dateTime"
+        },
+        "orderedBy": {
+          "datatype": "integer",
+          "relatedEntityType": "http://example.org/Customer-0.0.1/Customer",
+          "joinPropertyName": "customerId"
+        },
+        "deliveredTo": {
+          "datatype": "integer"
+        },
+        "lineItems": {
+          "datatype": "array",
+          "items": {
+            "$ref": "#/definitions/LineItem"
           }
         }
-        ];
+      }
+    },
+    "LineItem": {
+      "properties": {
+        "quantity": {
+          "datatype": "integer"
+        },
+        "includes": {
+          "datatype": "integer",
+          "relatedEntityType": "http://example.org/Product-1.0.0/Product",
+          "joinPropertyName": "productId"
+        }
+      }
+    }
+  }
+};
+
+function generateTdeWithRelatedEntityType() {
+    const input = [ orderModel ];
 
     const tde = hent.dumpTde(input);
     const orderTemplate = fn.head(tde.xpath('.//*:templates/*:template[*:context = ".//Order[node()]"]'));
@@ -74,5 +75,42 @@ function generateTdeWithRelatedEntityType() {
   }
   return assertions;
 }
+
+function generateTdeReferencedByRelatedEntityType() {
+  xdmp.invokeFunction(() => {
+    xdmp.documentInsert("/entities/Order.entity.json", orderModel, { collections: ["http://marklogic.com/entity-services/models"]});
+  }, { update: "true"});
+  const input =
+    [{
+      "info": {
+        "title": "Product",
+        "version": "1.0.0",
+        "baseUri": "http://example.org/"
+      },
+      "definitions": {
+        "Product": {
+          // no primary key to test scenario where entity
+          "properties": {
+            "productId": {
+              "datatype": "integer"
+            }
+          }
+        }
+      }
+    }
+    ];
+
+  const tde = fn.head(hubUtils.invokeFunction(() => hent.dumpTde(input)));
+  const productIdTemplate = fn.head(tde.xpath('.//*:templates/*:template[*:context = "./productId"]'));
+  const assertions = [
+    test.assertTrue(fn.exists(productIdTemplate), `Product ID template should exist. Full template: ${xdmp.describe(tde, Sequence.from([]), Sequence.from([]))}`)
+  ];
+  assertions.push(
+    test.assertEqual(2, fn.count(productIdTemplate.xpath("*:triples/*:triple")), `has to exists 2 rows of triples. ProductId template: ${xdmp.describe(productIdTemplate, Sequence.from([]), Sequence.from([]))}`)
+  );
+  return assertions;
+}
+
 []
-    .concat(generateTdeWithRelatedEntityType());
+  .concat(generateTdeWithRelatedEntityType())
+  .concat(generateTdeReferencedByRelatedEntityType());
