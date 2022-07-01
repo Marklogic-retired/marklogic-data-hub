@@ -32,27 +32,6 @@ describe("Toolbar component", () => {
 
   });
 
-  it("verify rendering of disabled tile icons", () => {
-    let disabledTiles = ["load", "model", "curate", "run", "explore", "monitor"];
-    const {getByLabelText} = render(<Router history={history}><Toolbar tiles={tiles} enabled={[]}/></Router>);
-    expect(getByLabelText("toolbar")).toBeInTheDocument();
-
-    disabledTiles.forEach((tile, i) => {
-      expect(getByLabelText("tool-" + tile)).toHaveStyle("color: grey; opacity: 0.5; cursor: not-allowed;");
-    });
-  });
-
-  it("verify rendering of enabled tile icons", () => {
-    let enabledTiles = ["load", "model", "curate", "run", "explore"];
-    const {getByLabelText} = render(<Router history={history}><Toolbar tiles={tiles} enabled={enabledTiles}/></Router>);
-    expect(getByLabelText("toolbar")).toBeInTheDocument();
-
-    enabledTiles.forEach((tile, i) => {
-      expect(getByLabelText("tool-" + tile)).not.toHaveStyle("color: grey; opacity: 0.5; cursor: not-allowed;");
-      expect(getByLabelText("tool-" + tile)).toHaveStyle("cursor: pointer;");
-    });
-  });
-
   it("verify tile icon selection using tab", () => {
     let i: number;
     let enabledTiles = ["load", "model", "curate", "run", "explore"];

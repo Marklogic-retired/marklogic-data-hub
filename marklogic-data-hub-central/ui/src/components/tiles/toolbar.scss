@@ -1,3 +1,5 @@
+@import "../../theme/HCVariables.scss";
+
 @font-face {
     font-family: 'MLCustomFont';
     src: url('../../fonts/ML_IconFont.ttf') format('truetype');
@@ -9,6 +11,8 @@
     justify-content: center;
     align-items: center;
     flex-direction: row;
+    color: $explore-icon;
+    cursor: pointer;
     content: "\68";
     font-family: MLCustomFont;
     font-size: 24px;
@@ -35,6 +39,8 @@
     align-items: center;
     flex-direction: row;
     content: "\e94e";
+    color: $load-icon;
+    cursor: pointer;
     font-family: MLCustomFont;
     font-size: 24px;
     position: relative;
@@ -57,6 +63,8 @@
 
 .modelIcon:before {
     display: flex;
+    color: $model-icon;
+    cursor: pointer;
     justify-content: center;
     align-items: center;
     flex-direction: row;
@@ -86,6 +94,8 @@
     align-items: center;
     flex-direction: row;
     content: "\e955";
+    color: $curate-icon;
+    cursor: pointer;
     font-family: MLCustomFont;
     font-size: 24px;
     position: relative;
@@ -111,6 +121,9 @@
     align-items: center;
     flex-direction: row;
     content: "\e926";
+    
+    color: $run-icon;
+    cursor: pointer;
     font-family: MLCustomFont;
     font-size: 24px;
     position: relative;
@@ -137,6 +150,9 @@
     flex-direction: row;
     content: "\e97a";
     color: #000000;
+    
+    color: $monitor-icon;
+    cursor: pointer;
     font-family: MLCustomFont;
     font-size: 24px;
     position: relative;
@@ -154,4 +170,8 @@
     box-shadow: 0px 0px 1px 1px #7F86B5;
     background-color: #7F86B5;
     outline: none;
+}
+
+.selected:before {
+    box-shadow: 0px 0 3px 2px #7f86b5;
 }

@@ -3,6 +3,7 @@ import { faLongArrowAltRight, faCube, faCubes, faObjectUngroup, faProjectDiagram
 export type TileId =  'load' | 'model' | 'curate' | 'run' | 'explore' | 'monitor' | 'detail';
 export type IconType = 'fa' | 'custom';
 export type ControlType = 'menu' | 'newTab' | 'maximize' | 'minimize' | 'close';
+export type Tiles =  Record<TileId, TileItem>;
 
 interface TileItem {
     title: string;
@@ -17,7 +18,7 @@ interface TileItem {
     toolbar: boolean;
 }
 
-const tiles: Record<TileId, TileItem>  = {
+const tiles: Tiles = {
     load: {
         title: 'Load',
         iconType: 'custom',
