@@ -35,22 +35,22 @@ const searchConfig  = {
                     "tooltip": "Filter by date updated."
                 },
                 {
-                    "type": "category",
+                    "type": "string",
                     "name": "sources",
                     "tooltip": "Filter by source."
                 },
                 {
-                    "type": "category",
+                    "type": "string",
                     "name": "status",
                     "tooltip": "Filter by status."
                 },
                 {
-                    "type": "category",
+                    "type": "string",
                     "name": "country",
                     "tooltip": "Filter by country."
                 },
                 {
-                    "type": "category",
+                    "type": "string",
                     "name": "area",
                     "tooltip": "Filter by area."
                 }

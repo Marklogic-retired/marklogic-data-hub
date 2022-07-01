@@ -11,9 +11,9 @@ const configMultipleOver = {
     displayLong: 3,
     items: [
         {type: "dateRange", name: "created On"},
-        { type: "category", name: "a" },
-        { type: "category", name: "b" },
-        { type: "category", name: "c" }
+        { type: "string", name: "a" },
+        { type: "string", name: "b" },
+        { type: "string", name: "c" }
     ]
 };
 
@@ -23,14 +23,14 @@ const configMultipleUnder = Object.assign(
 const configMultipleTooltips = Object.assign(
     {}, configMultipleOver, {
         items: [
-            { type: "category", name: "a", tooltip: "a tip" },
-            { type: "category", name: "b" }
+            { type: "string", name: "a", tooltip: "a tip" },
+            { type: "string", name: "b" }
         ]
     });
 
 const configMultipleDisabled = Object.assign(
     {}, configMultipleOver, {
-        items: [{ type: "category", name: "a", disabled: true }]
+        items: [{ type: "string", name: "a", disabled: true }]
     });
 
 const searchResults = {

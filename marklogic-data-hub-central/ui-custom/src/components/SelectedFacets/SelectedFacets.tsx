@@ -25,13 +25,13 @@ const SelectedFacets: React.FC<Props> = (props) => {
     if (regexDateRange.test(facetValue)) {
       return "dateRange";
     } else {
-      return "category";
+      return "string";
     }
   }
 
   const handleClose = (e) => {
     let parts = e.target.id.split(":");
-    if (getFacetType(parts[1]) === "category") {
+    if (getFacetType(parts[1]) === "string") {
       searchContext.handleFacetString(parts[0], parts[1], false);
     } else if (getFacetType(parts[1]) === "dateRange") {
       searchContext.handleFacetDateRange(parts[0], parts[1], false);
