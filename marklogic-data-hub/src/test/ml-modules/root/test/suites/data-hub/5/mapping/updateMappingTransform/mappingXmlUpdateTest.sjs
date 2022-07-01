@@ -2,6 +2,7 @@
 
 const config = require("/com.marklogic.hub/config.sjs");
 const test = require("/test/test-helper.xqy");
+const hubTest = require("/test/data-hub-test-helper.xqy");
 const assertions = []
 
 xdmp.eval("declareUpdate(); " +
@@ -20,7 +21,7 @@ xdmp.eval("declareUpdate(); " +
   {"database": xdmp.database(config.STAGINGDATABASE)}
 );
 
-xdmp.sleep(1000);
+hubTest.waitForIndexes();
 
 const datatypeInXmlMapping = xdmp.eval("cts.doc('/steps/mapping/mapCustomers.step.xml').xpath('/*:mapping/*:entity/*:Customer/*:optional/*:customerId/@xsi:type')", null,
   {

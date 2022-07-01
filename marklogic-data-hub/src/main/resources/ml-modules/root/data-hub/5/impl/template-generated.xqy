@@ -312,8 +312,47 @@ declare function extraction-template-generate(
                             </tde:triple>
                             </tde:triples>
                             </tde:template>
-                      where fn:exists($related-concepts)
-                      return <tde:templates>{$related-concepts}</tde:templates>
+                      let $referenced-entities :=
+                         let $model-type-iri := model-graph-prefix($model) || "/" || $entity-type-name
+                         for $property-name in map:keys($properties)
+                         let $property-info :=map:get($properties, $property-name)
+                         let $reference-to-entity-exists := fn:not($property-name = $primary-key-name) and xdmp:exists(cts:search(
+                              fn:collection("http://marklogic.com/entity-services/models"),
+                            cts:json-property-scope-query("properties", cts:and-query((
+                                    cts:json-property-value-query("relatedEntityType", $model-type-iri),
+                                    cts:json-property-value-query("joinPropertyName", $property-name)
+                                )))
+                            ))
+                         where $reference-to-entity-exists
+                         return
+                            let $context := "./"|| $prefix-value || $property-name
+                            let $subject :=  "sem:iri(concat(""" ||$model-type-iri || "/"", fn:encode-for-uri(xs:string(.))))"
+                            return  <tde:template>
+                              <tde:context>{ $context}</tde:context>
+                              <tde:vars>
+                                <tde:var>
+                                  <tde:name>RDF</tde:name><tde:val>"http://www.w3.org/1999/02/22-rdf-syntax-ns#"</tde:val>
+                                </tde:var>
+                                <tde:var>
+                                  <tde:name>RDF_TYPE</tde:name><tde:val>sem:iri(concat($RDF, "type"))</tde:val>
+                                </tde:var>
+                                <tde:var><tde:name>related-subject-iri</tde:name><tde:val>{$subject}</tde:val></tde:var>
+                              </tde:vars>
+                              <tde:triples>
+                              <tde:triple>
+                                <tde:subject><tde:val>$related-subject-iri</tde:val></tde:subject>
+                                <tde:predicate><tde:val>$RDF_TYPE</tde:val></tde:predicate>
+                                <tde:object><tde:val>sem:iri("{$model-type-iri}")</tde:val></tde:object>
+                              </tde:triple>
+                              <tde:triple>
+                                <tde:subject><tde:val>$related-subject-iri</tde:val></tde:subject>
+                                <tde:predicate><tde:val>sem:iri("http://www.w3.org/2000/01/rdf-schema#isDefinedBy")</tde:val></tde:predicate>
+                                <tde:object><tde:val>fn:base-uri(.)</tde:val></tde:object>
+                              </tde:triple>
+                              </tde:triples>
+                              </tde:template>
+                      where fn:exists(($related-concepts,$referenced-entities))
+                      return <tde:templates>{($related-concepts,$referenced-entities)}</tde:templates>
                    }
               </tde:template>)
 

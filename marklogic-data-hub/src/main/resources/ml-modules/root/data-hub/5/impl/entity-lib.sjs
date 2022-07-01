@@ -28,6 +28,7 @@ const consts = require("/data-hub/5/impl/consts.sjs");
 const hent = require("/data-hub/5/impl/hub-entities.xqy");
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+const {getModel} = require("../builtins/steps/mapping/default/lib.sjs");
 
 /**
  * @return an array of strings, one for each EntityType
@@ -289,7 +290,7 @@ function findModelReferencesInSteps(entityName, entityTypeId) {
  * @returns {[]}
  */
 function entityModelsWithReferenceExcludingURIs(referencedEntity, excludedURIs) {
-  const entityModelQuery = cts.andNotQuery(cts.andQuery([cts.collectionQuery([getModelCollection(),getDraftModelCollection()]), cts.jsonPropertyValueQuery("$ref",referencedEntity)]), cts.documentQuery(excludedURIs));
+  const entityModelQuery = cts.andNotQuery(cts.andQuery([cts.collectionQuery([getModelCollection(),getDraftModelCollection()]), cts.jsonPropertyValueQuery(["$ref","relatedEntityType"],referencedEntity)]), cts.documentQuery(excludedURIs));
   return cts.search(entityModelQuery).toArray()
 }
 
@@ -364,7 +365,8 @@ function otherModelsWithModelReferencesRemoved(entityModelUri, entityTypeId, inM
           const properties = model.definitions[definition].properties;
           Object.keys(properties)
             .forEach(property => {
-              if (properties[property]["$ref"] === entityTypeId || (properties[property]["datatype"] === "array" && properties[property]["items"]["$ref"] === entityTypeId)) {
+              let items = properties[property]["datatype"] === "array" ? properties[property]["items"]: properties[property];
+              if (items["$ref"] === entityTypeId || items.relatedEntityType === entityTypeId) {
                 delete properties[property];
                 affectedModels.add(model);
               }
@@ -507,6 +509,17 @@ function publishDraftModels() {
       // if the draft changes aren't already picked up by reference updates, add them here.
       if (!inMemoryModelsUpdated[modelObject.info.title]) {
         inMemoryModelsUpdated[modelObject.info.title] = modelObject;
+      }
+    }
+  }
+  for (const draftModel of draftModels) {
+    for (let relatedModelRef of draftModel.xpath("/definitions/*/properties/*//relatedEntityType")) {
+      const relatedModel = findModelForEntityTypeId(fn.string(relatedModelRef));
+      if (relatedModel) {
+        const relatedModelObj = relatedModel.toObject();
+        if (!inMemoryModelsUpdated[relatedModelObj.info.title]) {
+          inMemoryModelsUpdated[relatedModelObj.info.title] = relatedModelObj;
+        }
       }
     }
   }
