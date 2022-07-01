@@ -8,6 +8,7 @@ import "cypress-wait-until";
 import detailPageNonEntity from "../../support/pages/detail-nonEntity";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import LoginPage from "../../support/pages/login";
+import explorePage from "../../support/pages/explore";
 
 describe("xml scenario for snippet view on browse documents page", () => {
 
@@ -39,7 +40,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.waitForSpinnerToDisappear();
     browsePage.getHubPropertiesExpanded();
-    browsePage.scrollSideBarTop();
+    explorePage.scrollSideBarTop();
     browsePage.getFacetItemCheckbox("collection", "mapCustomersXML").scrollIntoView().click({force: true});
     browsePage.getGreySelectedFacets("mapCustomersXML").should("exist");
     browsePage.getFacetApplyButton().click();
@@ -64,7 +65,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     entitiesSidebar.selectBaseEntityOption("All Entities");
     entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
-    browsePage.scrollSideBarTop();
+    explorePage.scrollSideBarTop();
     browsePage.getShowMoreLink("collection").scrollIntoView().click({force: true});
     browsePage.getFacetItemCheckbox("collection", "mapCustomersXML").click();
     browsePage.getSelectedFacets().should("exist");
@@ -84,7 +85,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.getShowMoreLink("collection").scrollIntoView().click({force: true});
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
     browsePage.showMoreCollection();
-    browsePage.scrollSideBarTop();
+    explorePage.scrollSideBarTop();
     browsePage.getFacetItemCheckbox("collection", "mapCustomersXML").click();
     browsePage.getGreySelectedFacets("mapCustomersXML").click();
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
@@ -97,7 +98,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
     browsePage.showMoreCollection();
     browsePage.getFacetItemCheckbox("collection", "Customer").click();
-    browsePage.scrollSideBarTop();
+    explorePage.scrollSideBarTop();
     browsePage.getFacetItemCheckbox("collection", "mapCustomersXML").click();
     browsePage.getGreySelectedFacets("Customer").should("exist");
     browsePage.getGreySelectedFacets("mapCustomersXML").should("exist");
@@ -129,7 +130,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     detailPage.getDocumentSource().should("contain", "CustomerSourceName");
     detailPage.getDocumentRecordType().should("contain", "xml");
     detailPage.getDocumentTable().should("exist");
-    browsePage.backToResults();
+    explorePage.backToResults();
 
     browsePage.getSearchText().should("be.visible");
   });
@@ -141,7 +142,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.getSourceViewIcon().click();
     detailPage.getSourceView().click();
     detailPage.getDocumentXML().should("exist");
-    browsePage.backToResults();
+    explorePage.backToResults();
     browsePage.getSearchText().should("be.visible");
   });
   it.skip("select Customer xml entity instances and verify table", () => {
@@ -149,7 +150,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     entitiesSidebar.selectBaseEntityOption("Customer");
     entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.getHubPropertiesExpanded();
-    browsePage.scrollSideBarTop();
+    explorePage.scrollSideBarTop();
     browsePage.getFacetItemCheckbox("collection", "mapCustomersXML").should("be.visible").click();
     browsePage.getGreySelectedFacets("mapCustomersXML").should("exist");
     browsePage.getFacetApplyButton().click();
@@ -172,7 +173,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     detailPage.getDocumentSource().should("contain", "CustomerSourceName");
     detailPage.getDocumentRecordType().should("contain", "xml");
     detailPage.getDocumentTable().should("exist");
-    browsePage.backToResults();
+    explorePage.backToResults();
     browsePage.getSearchText().should("be.visible");
   });
   it.skip("verify source view of the document", () => {
@@ -183,7 +184,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.getTableViewSourceIcon().click();
     detailPage.getSourceView().click();
     detailPage.getDocumentXML().should("exist");
-    browsePage.backToResults();
+    explorePage.backToResults();
     browsePage.getSearchText().should("be.visible");
     browsePage.getSearchText().clear();
   });
@@ -201,7 +202,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     detailPage.getDocumentMetadataValues().should("exist");
     detailPage.getDocumentProperties().should("not.exist");
     detailPage.getDocumentNoPropertiesMessage().should("exist");
-    browsePage.backToResults();
+    explorePage.backToResults();
     browsePage.getSearchText().should("be.visible");
     browsePage.getSearchText().clear();
   });
@@ -233,7 +234,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.waitForSpinnerToDisappear();
     detailPageNonEntity.getDocumentProperties().should("exist");
     detailPageNonEntity.getDocumentNoPropertiesMessage().should("not.exist");
-    browsePage.backToResults();
+    explorePage.backToResults();
     browsePage.getSearchText().should("be.visible");
     browsePage.getSearchText().clear();
     browsePage.search("201");

@@ -51,7 +51,7 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     browsePage.getTotalDocuments().should("be.equal", 0);
   });
   it("Switch to staging database and verify data for query parameters", () => {
-    browsePage.getStagingDatabaseButton();
+    explorePage.getStagingDatabaseButton();
     browsePage.search("Adams");
     cy.waitForAsyncRequest();
     cy.contains("Showing 1-2 of 2 results", {timeout: 10000});
@@ -59,7 +59,7 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     browsePage.getNavigationIconForDocument("/json/customers/Cust2.json").click();
     browsePage.waitForSpinnerToDisappear();
     cy.contains("CustomerSourceName", {timeout: 50000});
-    browsePage.backToResults();
+    explorePage.backToResults();
   });
   it("Select query parameters for stage database", () => {
     browsePage.search("Barbi");
@@ -70,7 +70,7 @@ describe("Verify All Data for final/staging databases and non-entity detail page
   });
 
   it("Verify if switching between All Data and specific entities works properly", () => {
-    browsePage.getFinalDatabaseButton();
+    explorePage.getFinalDatabaseButton();
     cy.waitForAsyncRequest();
     entitiesSidebar.toggleEntitiesView();
     entitiesSidebar.openBaseEntityDropdown();
@@ -84,7 +84,7 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
 
-    browsePage.getIncludeHubArtifactsSwitch().click();
+    explorePage.getIncludeHubArtifactsSwitch().click();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
 
@@ -111,7 +111,7 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     // browsePage.waitForSpinnerToDisappear();
     // cy.waitForAsyncRequest();
     // browsePage.getSelectedEntity().should("contain", "All Data");
-    // browsePage.getDatabaseButton("final").should("have.attr", "checked");
+    // explorePage.getDatabaseButton("final").should("have.attr", "checked");
   });
 
   it("Verify query parameters for final database on browse page", () => {
@@ -129,16 +129,16 @@ describe("Verify All Data for final/staging databases and non-entity detail page
       browsePage.waitForSpinnerToDisappear();
       browsePage.clickPaginationItem(3);
       browsePage.waitForSpinnerToDisappear();
-      browsePage.getStagingDatabaseButton();
+      explorePage.getStagingDatabaseButton();
       browsePage.waitForSpinnerToDisappear();
-      browsePage.getFinalDatabaseButton();
+      explorePage.getFinalDatabaseButton();
       browsePage.waitForSpinnerToDisappear();
       cy.contains("Showing 1-20 of " + val + " results", {timeout: 5000});
       browsePage.getTotalDocuments().should("be.equal", val);
     });
   });
   it("Switch to staging database and verify the number of documents for the search string is 0", () => {
-    browsePage.getStagingDatabaseButton();
+    explorePage.getStagingDatabaseButton();
     browsePage.waitForSpinnerToDisappear();
     browsePage.search("Adams");
     browsePage.waitForSpinnerToDisappear();
@@ -150,14 +150,14 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     toolbar.getExploreToolbarIcon().click();
     browsePage.getTableView().click();
     browsePage.waitForSpinnerToDisappear();
-    browsePage.getFinalDatabaseButton();
+    explorePage.getFinalDatabaseButton();
     browsePage.waitForSpinnerToDisappear();
     browsePage.search("Powers");
     browsePage.waitForSpinnerToDisappear();
     browsePage.getTotalDocuments().should("be.equal", 1);
   });
   it("Switch to staging database and verify documents deployed to staging", () => {
-    browsePage.getStagingDatabaseButton();
+    explorePage.getStagingDatabaseButton();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Client");
     entitiesSidebar.getBaseEntityOption("Client").should("be.visible");
