@@ -3,6 +3,7 @@ import browsePage from "../../support/pages/browse";
 import LoginPage from "../../support/pages/login";
 import {BaseEntityTypes} from "../../support/types/base-entity-types";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
+import explorePage from "../../support/pages/explore";
 
 describe("Test sidebar indicators", () => {
   before(() => {
@@ -36,7 +37,7 @@ describe("Test sidebar indicators", () => {
 
     cy.log("**Open specific sidebar**");
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
-    browsePage.getSearchField().should("not.exist");
+    explorePage.getSearchField().should("not.exist");
     entitiesSidebar.getEntityTitle(BaseEntityTypes.CUSTOMER).should("be.visible");
 
     cy.log("**Testing checkbox facet**");
@@ -51,7 +52,7 @@ describe("Test sidebar indicators", () => {
 
     cy.log("**Returning to main sidebar and confirming it's visible**");
     entitiesSidebar.backToMainSidebar();
-    browsePage.getSearchField().should("be.visible");
+    explorePage.getSearchField().should("be.visible");
     entitiesSidebar.getEntityTitle(BaseEntityTypes.CUSTOMER).should("not.exist");
 
     entitiesSidebar.getEntityFacetFilterQuantity(BaseEntityTypes.CUSTOMER).should("contain", "(1 filter)");

@@ -9,6 +9,7 @@ import {toolbar} from "../../support/components/common";
 import "cypress-wait-until";
 // import detailPageNonEntity from "../../support/pages/detail-nonEntity";
 import LoginPage from "../../support/pages/login";
+import explorePage from "../../support/pages/explore";
 
 describe("json scenario for table on browse documents page", () => {
 
@@ -102,7 +103,7 @@ describe("json scenario for table on browse documents page", () => {
     detailPage.clickBackButton();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
-    browsePage.getDatabaseButton("final").should("have.attr", "checked");
+    explorePage.getDatabaseButton("final").should("have.attr", "checked");
     browsePage.getClearFacetSearchSelection("Alice").should("exist");
     browsePage.getSearchBar().should("have.value", "Alice");
     browsePage.getTableView().should("have.css", "color", "rgb(57, 68, 148)");
@@ -133,7 +134,7 @@ describe("json scenario for table on browse documents page", () => {
     entitiesSidebar.selectBaseEntityOption("Customer");
     entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.waitForSpinnerToDisappear();
-    browsePage.getFinalDatabaseButton();
+    explorePage.getFinalDatabaseButton();
     browsePage.getClearAllFacetsButton().click();
     entitiesSidebar.getMainPanelSearchInput().type("Adams Cole");
     entitiesSidebar.getApplyFacetsButton().click();
@@ -190,7 +191,7 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.waitForSpinnerToDisappear();
     //Verify navigating back from detail view should persist search options
     entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
-    browsePage.getDatabaseButton("final").should("have.attr", "checked");
+    explorePage.getDatabaseButton("final").should("have.attr", "checked");
     browsePage.getClearFacetSearchSelection("mapCustomersJSON").should("exist");
     browsePage.getSearchBar().should("have.value", "Adams Cole");
     browsePage.getTableView().should("have.css", "color", "rgb(57, 68, 148)");

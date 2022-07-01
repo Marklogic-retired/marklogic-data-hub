@@ -7,6 +7,7 @@ import {Application} from "../../support/application.config";
 import {toolbar} from "../../support/components/common/index";
 import "cypress-wait-until";
 import LoginPage from "../../support/pages/login";
+import explorePage from "../../support/pages/explore";
 
 describe("save/manage queries scenarios, developer role", () => {
   before(() => {
@@ -575,7 +576,7 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getFacetItemCheckbox("lname", "Bates").should("be.checked");
     //switch the database
     entitiesSidebar.backToMainSidebar();
-    browsePage.getStagingDatabaseButton();
+    explorePage.getStagingDatabaseButton();
     browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.getBaseEntityOption("Person").should("be.visible");
     browsePage.getSaveQueriesDropdown().scrollIntoView().should("be.visible");

@@ -5,6 +5,8 @@ import LoginPage from "../../support/pages/login";
 import browsePage from "../../support/pages/browse";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import {BaseEntityTypes} from "../../support/types/base-entity-types";
+import table from "../../support/components/common/tables";
+import explorePage from "../../support/pages/explore";
 
 describe("Monitor Tile", () => {
   before(() => {
@@ -40,22 +42,22 @@ describe("Monitor Tile", () => {
 
     cy.log("**Click on the column selector and check that the popover appears**");
     browsePage.getColumnSelectorIcon().click();
-    browsePage.getColumnSelectorPopover().should("be.visible");
+    explorePage.getColumnSelectorPopover().should("be.visible");
 
     cy.log("**Get the columns and check that are present in the table**");
-    browsePage.getColumnSelectorColumns().should("have.length.gt", 0).then($options => {
+    explorePage.getColumnSelectorColumns().should("have.length.gt", 0).then($options => {
       // convert the jQuery object into a plain array with the innerText prop
       return (
         Cypress.$.makeArray($options).map((el) => el.innerText)
       );
     }).then((options) => { // here is the array of elements
       cy.log("**Close column selector popover**");
-      browsePage.getColumnSelectorCancelButton().click();
-      browsePage.getColumnSelectorPopover().should("not.exist");
+      explorePage.getColumnSelectorCancelButton().click();
+      explorePage.getColumnSelectorPopover().should("not.exist");
 
       cy.log("**Check the existence of the columns in the table heade**");
       options.forEach(option => {
-        browsePage.getTableHeaders().contains(option).should("exist");
+        table.getTableHeaders().contains(option).should("exist");
       });
     });
 
@@ -63,28 +65,28 @@ describe("Monitor Tile", () => {
     cy.log("**Click on the column selector for second time to uncheck first column**");
     browsePage.getColumnSelectorIcon().click({force: true});
     cy.log("**Get the first column and uncheck the input**");
-    browsePage.getColumnSelectorCheckboxs().last().click().should("not.have.class", "rc-tree-checkbox-checked");
+    explorePage.getColumnSelectorCheckboxs().last().click().should("not.have.class", "rc-tree-checkbox-checked");
     cy.log("**Get the text of the unchecked column, close popover and verify that the column disappear from the table**");
-    browsePage.getColumnSelectorColumns().last().then($lastColumn => {
+    explorePage.getColumnSelectorColumns().last().then($lastColumn => {
       const lastColumnText = $lastColumn.text();
       cy.log("**Apply changes in column selector popover**");
-      browsePage.getColumnSelectorApplyButton().click();
-      browsePage.getColumnSelectorPopover().should("not.exist");
-      browsePage.getTableHeaders().contains(lastColumnText).should("not.exist");
+      explorePage.getColumnSelectorApplyButton().click();
+      explorePage.getColumnSelectorPopover().should("not.exist");
+      table.getTableHeaders().contains(lastColumnText).should("not.exist");
     });
 
     cy.log("**Check the column again and verify that it's present again in the table header**");
     cy.log("**Click on the column selector for third time to check first column**");
     browsePage.getColumnSelectorIcon().click({force: true});
     cy.log("**Get the first column and uncheck the input**");
-    browsePage.getColumnSelectorCheckboxs().last().click().should("have.class", "rc-tree-checkbox-checked");
+    explorePage.getColumnSelectorCheckboxs().last().click().should("have.class", "rc-tree-checkbox-checked");
     cy.log("**Get the text of the checked column, close popover and verify that the column appear again in the table**");
-    browsePage.getColumnSelectorColumns().last().then($lastColumn => {
+    explorePage.getColumnSelectorColumns().last().then($lastColumn => {
       const lastColumnText = $lastColumn.text();
       cy.log("**Apply changes in column selector popover**");
-      browsePage.getColumnSelectorApplyButton().click();
-      browsePage.getColumnSelectorPopover().should("not.exist");
-      browsePage.getTableHeaders().contains(lastColumnText).should("exist");
+      explorePage.getColumnSelectorApplyButton().click();
+      explorePage.getColumnSelectorPopover().should("not.exist");
+      table.getTableHeaders().contains(lastColumnText).should("exist");
     });
   });
 });

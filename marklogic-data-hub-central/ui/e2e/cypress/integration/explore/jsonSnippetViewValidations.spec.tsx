@@ -8,6 +8,7 @@ import "cypress-wait-until";
 // import detailPageNonEntity from "../../support/pages/detail-nonEntity";
 import LoginPage from "../../support/pages/login";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
+import explorePage from "../../support/pages/explore";
 
 describe.skip("json scenario for snippet on browse documents page", () => {
   let facets: string[] = ["collection", "flow"];
@@ -70,7 +71,7 @@ describe.skip("json scenario for snippet on browse documents page", () => {
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     entitiesSidebar.getSelectedEntityText().should("contain", "All Entities");
-    browsePage.getDatabaseButton("final").should("have.attr", "checked");
+    explorePage.getDatabaseButton("final").should("have.attr", "checked");
     browsePage.getSearchText().should("have.value", "10256");
     browsePage.getFacetView().should("have.css", "color", "rgb(57, 68, 148)");
   });
@@ -176,7 +177,7 @@ describe.skip("json scenario for snippet on browse documents page", () => {
     detailPage.getDocumentRecordType().should("contain", "json");
     detailPage.getDocumentTable().should("exist");
     detailPage.getDocumentEntity().should("contain", "Customer");
-    browsePage.backToResults();
+    explorePage.backToResults();
     cy.waitUntil(() => browsePage.getSearchText());
   });
   it("verify detail view of the document with encoded uri", () => {
@@ -193,7 +194,7 @@ describe.skip("json scenario for snippet on browse documents page", () => {
     detailPage.getMetadataView().should("exist");
     detailPage.getMetadataView().click();
     detailPage.getDocumentUri().should("contain", "/json/customers/Cust5.json");
-    browsePage.backToResults();
+    explorePage.backToResults();
     cy.waitUntil(() => browsePage.getSearchText());
     browsePage.getSearchText().clear();
     // });
@@ -211,7 +212,7 @@ describe.skip("json scenario for snippet on browse documents page", () => {
     detailPage.getMetadataView().should("exist");
     detailPage.getMetadataView().click();
     detailPage.getDocumentUri().should("contain", "/json/persons/last-name-dob-custom1.json");
-    browsePage.backToResults();
+    explorePage.backToResults();
     cy.waitUntil(() => browsePage.getSearchText());
     browsePage.clickFacetView();
   });

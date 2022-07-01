@@ -5,6 +5,7 @@ import {BaseEntityTypes} from "../../support/types/base-entity-types";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import graphExplore from "../../support/pages/graphExplore";
 import {ExploreGraphNodes} from "../../support/types/explore-graph-nodes";
+import explorePage from "../../support/pages/explore";
 
 /**
  * NOTE: This test will involve all operations related to the specific sidebar, for now it's quiet simple
@@ -36,7 +37,7 @@ describe("Test '/Explore' left sidebar", () => {
     cy.wait(8000);
     entitiesSidebar.showMoreEntities().click({force: true});
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
-    browsePage.getSearchField().should("not.exist");
+    explorePage.getSearchField().should("not.exist");
     entitiesSidebar.getEntityTitle(BaseEntityTypes.CUSTOMER).should("be.visible");
 
     cy.log("**Base entity icon is displayed on the entity icons list**");
@@ -44,7 +45,7 @@ describe("Test '/Explore' left sidebar", () => {
 
     cy.log("**Returning to main sidebar and confirming it's visible**");
     entitiesSidebar.backToMainSidebar();
-    browsePage.getSearchField().should("be.visible");
+    explorePage.getSearchField().should("be.visible");
     entitiesSidebar.getEntityTitle(BaseEntityTypes.CUSTOMER).should("not.exist");
   });
   /*
@@ -136,7 +137,7 @@ describe("Test '/Explore' left sidebar", () => {
     entitiesSidebar.getBaseEntityDropdown().click();
     entitiesSidebar.selectBaseEntityOption("Order");
     cy.wait(1000);
-    browsePage.getFinalDatabaseButton();
+    explorePage.getFinalDatabaseButton();
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
       let custCoordinates: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
       expect(custCoordinates).to.equal(undefined);
@@ -212,7 +213,7 @@ describe("Test '/Explore' left sidebar", () => {
     browsePage.getClearAllFacetsButton().trigger("mouseover", {force: true});
 
     cy.log("verify related entity panel is enabled when Customer is deselected as a base entity");
-    browsePage.scrollSideBarTop();
+    explorePage.scrollSideBarTop();
     entitiesSidebar.removeLastSelectedBaseEntity();
     cy.wait(500);
     entitiesSidebar.removeLastSelectedBaseEntity();
@@ -231,17 +232,17 @@ describe("Test '/Explore' left sidebar", () => {
     browsePage.waitForSpinnerToDisappear();
 
     cy.log("Verifying the results in table view");
-    browsePage.getTableViewResults("Customer-102");
-    browsePage.getTableViewResults("Customer-103");
+    browsePage.getTableViewResults("Customer-102").should("have.length.gt", 0);
+    browsePage.getTableViewResults("Customer-103").should("have.length.gt", 0);
 
     cy.log("Verifying the results in snippet view");
     browsePage.getSnippetView().click();
-    browsePage.getSnippetViewResults("Customer-102").should("be.visible");
-    browsePage.getSnippetViewResults("Customer-103").should("be.visible");
+    explorePage.getSnippetViewResults("Customer-102").should("be.visible");
+    explorePage.getSnippetViewResults("Customer-103").should("be.visible");
 
     cy.log("Switch to graph view and verify search summary is visible");
     browsePage.clickGraphView();
-    browsePage.getGraphSearchSummary().should("have.length.gt", 0);
+    explorePage.getGraphSearchSummary().should("have.length.gt", 0);
 
     cy.log("verify search filtered on top of base entity selections and Order is now gone in graph");
     graphExplore.nodeInCanvas(ExploreGraphNodes.ORDER_10258).then((nodePositions: any) => {
@@ -263,7 +264,7 @@ describe("Test '/Explore' left sidebar", () => {
       canvas.click(custCoordinates.x, custCoordinates.y, {force: true});
     });
 
-    browsePage.getDetailViewURI("/json/customers/Cust2.json").should("be.visible");
+    explorePage.getDetailViewURI("/json/customers/Cust2.json").should("be.visible");
     entitiesSidebar.clickOnApplyFacetsButton();
     browsePage.getHCTableRows().should("have.length", 0);
     entitiesSidebar.clickOnClearFacetsButton();

@@ -89,7 +89,7 @@ class CuratePage {
   }
 
   selectMatchTab(entityTypeId: string) {
-    cy.waitUntil(() => cy.get(`#${entityTypeId} [data-rr-ui-event-key="match"]`)).click();
+    cy.waitUntil(() => cy.get(`#${entityTypeId} [data-rr-ui-event-key="match"]`)).click({force: true});
   }
 
   selectCustomTab(entityTypeId: string) {

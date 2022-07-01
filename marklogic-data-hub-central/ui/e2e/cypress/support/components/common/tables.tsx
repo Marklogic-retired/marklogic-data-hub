@@ -12,5 +12,8 @@ class Tables {
   expandRow(rowName: string) {
     return cy.get(`[data-testid="${rowName}-expand-icon"]`).click();
   }
+  getTableHeaders() {
+    return cy.get(`th[class*="hc-table_header"]`);
+  }
 }
 export default new Tables();

@@ -625,90 +625,47 @@ class BrowsePage {
     return cy.get(`#query-select-MenuList [data-cy="query-option-${query}"]`);
   }
 
-  // Switching queries confirmation buttons
+  /** Switching queries confirmation buttons  */
 
   getQueryConfirmationNoClick() {
     return cy.get("#query-confirmation-no-button");
   }
 
+  // common
   getQueryConfirmationYesClick() {
     return cy.get("#query-confirmation-yes-button");
   }
 
+  // common
   getEntityConfirmationNoClick() {
     return cy.get("#entity-confirmation-no-button");
   }
 
+  // common
   getEntityConfirmationYesClick() {
     return cy.get("#entity-confirmation-yes-button");
   }
 
+  // common
   getResetConfirmationNoClick() {
     return cy.get("#reset-confirmation-no-button").click();
   }
 
+  // common
   getResetConfirmationYesClick() {
     return cy.get("#reset-confirmation-yes-button").click();
   }
 
+  // common
   getResetConfirmationYes() {
     return cy.get("#reset-confirmation-yes-button");
   }
 
-  // Zero state Explorer
-  getExploreButton() {
-    return cy.get("[data-cy=explore]");
-  }
+  /** Snippet view  */
 
-  getQuerySelector() {
-    return cy.get("#query-selector");
+  getSnippetView() {
+    return cy.get("#snippetView");
   }
-
-  getQueryByName(query: string) {
-    return cy.get(`[data-cy=query-option-${query}]`);
-  }
-
-  getFinalDatabaseButton() {
-    cy.findByText("Final").click();
-    // cy.intercept("POST", "/api/entitySearch?database=final").as("entitySearchFinal");
-    // cy.wait("@entitySearchFinal");
-    //tried intercept + wait on request but didn't work. Leaving comment as reference
-    cy.wait(3000);
-  }
-
-  getStagingDatabaseButton() {
-    cy.findByText("Staging").scrollIntoView().click();
-    // cy.intercept("POST", "**/entitySearch?*").as("entitySearchStaging");
-    // cy.wait("@entitySearchStaging");
-    //tried intercept + wait on request but didn't work. Leaving comment as reference
-    cy.wait(6000);
-  }
-
-  getDatabaseButton(database: string) {
-    return cy.get(`#switch-database-${database}`);
-  }
-
-  databaseSwitch(database: string) {
-    return cy.get(`[aria-label="switch-database-${database}"] ~ label`);
-  }
-
-  getTableViewButton() {
-    return cy.findByText("Table");
-  }
-
-  getSnippetViewButton() {
-    return cy.findByText("Snippet");
-  }
-
-  //data export modal
-  getStructuredDataWarning() {
-    return cy.findByTestId("export-warning");
-  }
-
-  getStructuredDataCancel() {
-    return cy.get(".ant-modal-footer > div > :nth-child(1)");
-  }
-
   //get snippet view result list
   getSnippetViewResult() {
     return cy.get("#snippetViewResult");
@@ -723,102 +680,29 @@ class BrowsePage {
     return cy.findByTestId(`${docUri}-detailViewIcon`);
   }
 
-  clearSearchText() {
-    cy.get("*[class^=\"hc-search_cleanIcon\"]").click();
-  }
-
   getDetailInstanceViewIcon(docUri: string) {
     return cy.findByTestId(`${docUri}-detailOnSeparatePage`);
   }
 
-  getIncludeHubArtifactsSwitch() {
-    return cy.findByTestId("toggleHubArtifacts");
-  }
-
-  getCreatedOnFacet() {
-    return cy.get("#date-select");
-  }
-
-  getSelectedOptionForCreatedOnFacet() {
-    return this.getCreatedOnFacet().invoke("text");
-  }
-
-  selectCreatedOnRangeOption(option: string) {
-    return cy.findByTestId(`date-select-option-${option}`).click();
-  }
-
+  // common element
   showMoreCollection() {
     cy.findByTestId("show-more-collection").click({force: true});
   }
 
-  backToResults() {
-    cy.get("#back-button").click({force: true});
-  }
-
-  scrollSideBarTop() {
-    return cy.get("#hc-sider-content").scrollTo("top", {ensureScrollable: false});
-  }
-
-  scrollSideBarBottom() {
-    return cy.get("#hc-sider-content").scrollTo("bottom", {ensureScrollable: false});
-  }
-
-  sliderMinimum() {
-    return cy.findByTestId("numeric-slider-min");
-  }
-
-  getSearchField() {
-    return cy.get(`#graph-view-filter-input`);
-  }
-
+  //common element
   getTableViewResults(text:string) {
-    return cy.findByTestId(text).should("have.length.gt", 0);
+    return cy.findByTestId(text);
   }
 
-
+  // common element
   getTableViewCell(text:string) {
     return cy.findByText(text);
   }
 
-  getSnippetView() {
-    return cy.get("#snippetView");
+  databaseSwitch(database: string) {
+    return cy.get(`[aria-label="switch-database-${database}"] ~ label`);
   }
 
-  getGraphSearchSummary() {
-    return cy.findByLabelText("graph-view-searchSummary");
-  }
-
-  getDetailViewURI(uri:string) {
-    return cy.findByLabelText(uri);
-  }
-
-  getSnippetViewResults(text:string) {
-    return cy.findByLabelText(text);
-  }
-
-  getColumnSelectorPopover() {
-    return cy.get(`[data-testid="column-selector-popover"]`).scrollIntoView();
-  }
-
-  getColumnSelectorColumns() {
-    return cy.get(`[aria-label="column-option"]`);
-  }
-
-  getColumnSelectorCancelButton() {
-    return cy.get(`[data-testId="cancel-column-selector"]`);
-  }
-
-  getColumnSelectorApplyButton() {
-    return cy.get(`[data-testid="apply-column-selector"]`);
-  }
-
-  getTableHeaders() {
-    return cy.get(`th[class*="hc-table_header"]`);
-  }
-
-  getColumnSelectorCheckboxs() {
-    return cy.get(`[class^="rc-tree-checkbox"]`);
-  }
 }
 
 const browsePage = new BrowsePage();
