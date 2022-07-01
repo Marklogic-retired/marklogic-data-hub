@@ -1,3 +1,4 @@
+@import "../../theme/HCVariables.scss";
 #toolbar {
     display: flex;
     justify-content: flex-start;
@@ -48,5 +49,8 @@
     }
     :hover {
         color: var(--hoverColor) !important;
+        div{
+            box-shadow: 0px 4px 4px $shadow;
+        }
     }
 }

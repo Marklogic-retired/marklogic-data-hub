@@ -159,7 +159,7 @@ const TilesView = (props) => {
         </div>) :
         <Overview enabled={enabled} environment={getEnvironment()}/>
       }
-      <Toolbar tiles={tiles} enabled={enabled}/>
+      <Toolbar tiles={tiles} enabled={enabled} activeTile={selection}/>
       <Modal
         show={errorMessageOptions.isVisible}
       >

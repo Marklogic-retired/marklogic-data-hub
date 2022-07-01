@@ -13,6 +13,7 @@ import {HCTooltip} from "@components/common";
 interface Props {
     tiles: any;
     enabled: any;
+    activeTile: string;
 }
 
 const Toolbar: React.FC<Props> = (props) => {
@@ -44,18 +45,6 @@ const Toolbar: React.FC<Props> = (props) => {
     }
   };
 
-  const getIconStyle = (id) => {
-    let disabled: CSSProperties = {
-      color: "grey",
-      opacity: "0.5",
-      cursor: "not-allowed"
-    };
-    let enabled: CSSProperties = {
-      color: tiles[id]["color"],
-      cursor: "pointer"
-    };
-    return (props.enabled && props.enabled.includes(id)) ? enabled : disabled;
-  };
 
   const linkKeyDownHandler = (event, id, index) => {
     if (event.key === "ArrowUp" && index > 0) tileRefs[index-1].current.focus();
@@ -80,7 +69,7 @@ const Toolbar: React.FC<Props> = (props) => {
     if (!props.enabled || !props.enabled.includes(id)) event.preventDefault();
   };
 
-  /**
+  /*
         structure of the toolbar:
             <wrapper>
                 <tool>
@@ -105,6 +94,20 @@ const Toolbar: React.FC<Props> = (props) => {
             navigated to using arrow keys.
     */
 
+
+  const getIconStyle = (id) => {
+    let disabled: CSSProperties = {
+      color: "grey",
+      opacity: "0.5",
+      cursor: "not-allowed"
+    };
+    let enabled: CSSProperties = {
+      color: tiles[id]["color"],
+      cursor: "pointer"
+    };
+    return (props.enabled && props.enabled.includes(id)) ? enabled : disabled;
+  };
+
   const confirmTileClick = () => {
     toggleConfirmModal(false);
     if (tileInfo) {
@@ -120,9 +123,9 @@ const Toolbar: React.FC<Props> = (props) => {
             <div className={(tiles[id]["title"] === "Explore" || tiles[id]["title"] ===  "Curate") ? styles.toolTallWrapper : styles.toolWrapper} aria-label={`tool-${id}-wrapper`} key={`tool-${id}-wrapper`} tabIndex={-1}>
               <HCTooltip text={getTooltip(id)} id={getTooltip(id)+"-tooltip"} placement="left-start" key={i}>
                 <div
-                  className={tiles[id]["icon"]}
+                  className={`toolbarIcon ${tiles[id]["icon"]} ${(props.activeTile ===id) && "selected"} ${(props.enabled && props.enabled.includes(id)) ? "enabled" : "disabled"}`}
                   aria-label={"tool-" + id}
-                  style={getIconStyle(id)}
+
                   tabIndex={-1}
                   onClick={(e) => tileOnClickHandler(id, i)}
                 >
