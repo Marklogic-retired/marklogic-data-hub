@@ -111,9 +111,6 @@
         > div {
             display: inline-block;
         }
-        .timestamp {
-            white-space: nowrap;
-        }
         .actions {
             display: flex;
             flex-flow: column wrap;
@@ -122,6 +119,12 @@
             height: 80px;
             padding: 0 10px 0 20px;
             font-size: 15px;
+            .timestamp {
+                white-space: nowrap;
+                width: 170px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
             .icons {
                 align-self: flex-end;
                 white-space: nowrap;
@@ -129,6 +132,11 @@
                     display: inline-block;
                     width: 100px;
                     font-weight: bold;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    position: relative;
+                    top: 5px;
+                    padding-right: 4px;
                 }
                 svg {
                     margin-left: 10px;
