@@ -26,7 +26,9 @@ public class EntityServicesAlignmentTest extends AbstractHubCoreTest {
 
     @BeforeEach
     public void deployTemplates() {
+        runAsAdmin();
         new FinishHubDeploymentCommand(getHubConfig()).execute(newCommandContext());
+        runAsDataHubDeveloper();
     }
 
     @Test

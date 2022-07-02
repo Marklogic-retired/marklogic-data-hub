@@ -1,6 +1,13 @@
 package com.marklogic.hub.central;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.ext.ConfiguredDatabaseClientFactory;
+import com.marklogic.client.ext.DatabaseClientConfig;
+import com.marklogic.client.ext.DefaultConfiguredDatabaseClientFactory;
+import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.client.ext.helper.LoggingObject;
+import com.marklogic.hub.dataservices.SystemService;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.mgmt.util.PropertySource;
 import org.springframework.beans.factory.InitializingBean;
@@ -9,7 +16,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
 import java.util.Properties;
 
 /**
@@ -58,7 +64,8 @@ public class HubCentral extends LoggingObject implements InitializingBean {
      * @return
      */
     protected PropertySource buildPropertySource(String username, String password) {
-        Properties primaryProperties = new Properties();
+        DatabaseClient client = getStagingDbClient(username, password);
+        Properties primaryProperties = getHubPropertiesFromDb(client);
         primaryProperties.setProperty("mlUsername", username);
         primaryProperties.setProperty("mlPassword", password);
 
@@ -69,6 +76,39 @@ public class HubCentral extends LoggingObject implements InitializingBean {
             }
             return environment.getProperty(propertyName);
         };
+    }
+
+    private Properties getHubPropertiesFromDb(DatabaseClient client) {
+        Properties properties = new Properties();
+        try {
+            JsonNode dhConfig = SystemService.on(client).getDataHubConfig();
+            dhConfig.fieldNames().forEachRemaining(key -> properties.setProperty(key, dhConfig.get(key).textValue()));
+            logger.info("Reading the datahub config for hubcentral from the datahubConfig.json file successful");
+        } catch (Exception exception) {
+            logger.info("Could not find the datahubConfig.json file. Logging the cause for the failure");
+            logger.info(exception.getMessage());
+        }
+        return properties;
+    }
+
+    private DatabaseClient getStagingDbClient(String username, String password) {
+        ConfiguredDatabaseClientFactory configuredDatabaseClientFactory = new DefaultConfiguredDatabaseClientFactory();
+        DatabaseClientConfig config = new DatabaseClientConfig("localhost", 8010, username, password);
+        config.setSecurityContextType(SecurityContextType.valueOf("DIGEST"));
+
+        if(environment.getProperty("mlHost") != null) {
+            config.setHost(environment.getProperty("mlHost"));
+        }
+
+        if(environment.getProperty("mlStagingPort") != null) {
+            config.setPort(Integer.parseInt(environment.getProperty("mlStagingPort")));
+        }
+
+        if(environment.getProperty("mlStagingAuth") != null) {
+            config.setSecurityContextType(SecurityContextType.valueOf(environment.getProperty("mlStagingAuth").toUpperCase()));
+        }
+        // Need to work on SSL
+        return configuredDatabaseClientFactory.newDatabaseClient(config);
     }
 
     public String getHost() {

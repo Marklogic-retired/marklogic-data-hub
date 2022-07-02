@@ -15,12 +15,10 @@
  */
 'use strict';
 
-// No privilege required: For now it is only used during installation and installation requires admin privileges.
+// No privilege required: Returns Datahub configuration data that is not sensitive
+const dhConfigUri = "/data-hub/5/datahubConfig.json";
+const dhConfig = xdmp.invokeFunction(function () {
+  return cts.doc(dhConfigUri).toObject();
+}, {database: xdmp.modulesDatabase()});
 
-const jobQueryLib = require("/data-hub/5/flow/job-query-lib.sjs");
-const provLib = require('/data-hub/5/provenance/prov-lib.sjs');
-const systemLib = require('/data-hub/5/system/system-lib.sjs');
-
-jobQueryLib.installJobTemplates();
-provLib.installProvTemplates();
-systemLib.saveHubConfigInDocumentsDatabase();
+dhConfig;

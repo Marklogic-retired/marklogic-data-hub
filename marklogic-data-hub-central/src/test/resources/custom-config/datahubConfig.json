@@ -1,0 +1,16 @@
+{
+  "mlStagingDbName": "staging",
+  "mlStagingPort": "8020",
+  "mlStagingAuth": "basic",
+  "mlFinalDbName": "final",
+  "mlFinalPort": "8021",
+  "mlFinalAuth": "basic",
+  "mlJobDbName": "jobs",
+  "mlJobPort": "8023",
+  "mlJobAuth": "basic",
+  "mlModulesDbName": "modules",
+  "mlStagingTriggersDbName": "staging-TRIGGERS",
+  "mlStagingSchemasDbName": "staging-SCHEMAS",
+  "mlFinalTriggersDbName": "final-TRIGGERS",
+  "mlFinalSchemasDbName": "final-SCHEMAS"
+}
