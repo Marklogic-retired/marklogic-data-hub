@@ -65,6 +65,8 @@ bootWar {
 // To pass Gradle properties for HubCentral to Spring Boot, copy them into the JVM environment
 bootRun.doFirst {
     environment "mlHost", mlHost
+    environment "mlStagingPort", mlStagingPort
+    environment "mlStagingAuth", mlStagingAuth
     environment "spring.profiles.active", springProfiles
 }
 

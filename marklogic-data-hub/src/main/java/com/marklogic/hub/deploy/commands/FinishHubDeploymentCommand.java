@@ -2,7 +2,6 @@ package com.marklogic.hub.deploy.commands;
 
 import com.marklogic.appdeployer.command.AbstractCommand;
 import com.marklogic.appdeployer.command.CommandContext;
-import com.marklogic.appdeployer.command.SortOrderConstants;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.dataservices.SystemService;
 import com.marklogic.hub.impl.HubConfigImpl;

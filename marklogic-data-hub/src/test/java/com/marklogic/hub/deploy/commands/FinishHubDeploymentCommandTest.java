@@ -13,8 +13,10 @@ public class FinishHubDeploymentCommandTest extends AbstractHubCoreTest {
 
     @Test
     void loadDefaultTemplates() {
+        runAsAdmin();
         FinishHubDeploymentCommand command = new FinishHubDeploymentCommand(getHubConfig());
         command.execute(newCommandContext());
+        runAsDataHubDeveloper();
 
         DatabaseClient stagingSchemasDatabaseClient = getHubConfig().newStagingClient(getHubConfig().getStagingSchemasDbName());
         DatabaseClient finalSchemasDatabaseClient = getHubConfig().newStagingClient(getHubConfig().getFinalSchemasDbName());

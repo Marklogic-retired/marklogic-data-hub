@@ -1,8 +1,14 @@
 package com.marklogic.hub.central;
 
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.ext.SecurityContextType;
+import com.marklogic.client.io.BytesHandle;
+import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.client.io.Format;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.test.TestObject;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.util.PropertySource;
 import org.junit.jupiter.api.Test;
@@ -14,8 +20,9 @@ import java.io.IOException;
 import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class HubCentralTest {
+public class HubCentralTest extends TestObject {
 
     HubCentral hubCentral;
     MockEnvironment mockEnvironment;
@@ -32,6 +39,37 @@ public class HubCentralTest {
         setupEnvironment("application-aws.properties");
         verifyPropertiesForSslAndAuthenticationOnDhs();
         newHubConfigForDhs();
+    }
+
+    @Test
+    void newHubConfigWithCustomProperties() throws IOException {
+        setupEnvironment("application.properties");
+        String uri = "/data-hub/5/datahubConfig.json";
+
+        // Writing the datahub config into the modules database
+        DocumentMetadataHandle metadata = new DocumentMetadataHandle();
+        metadata.getCollections().addAll("marklogic-data-hub-config");
+        addDefaultPermissions(metadata);
+        DatabaseClient client = DatabaseClientFactory.newClient("localhost", 8010, "data-hub-MODULES",
+            new DatabaseClientFactory.DigestAuthContext("test-admin-for-data-hub-tests", "password"));
+        client.newDocumentManager().write(uri, metadata, new BytesHandle(readStringFromClasspath("/custom-config/datahubConfig.json").getBytes()).withFormat(Format.JSON));
+
+        HubConfigImpl hubConfig = hubCentral.newHubConfig("test-data-hub-developer", "password");
+        assertEquals(hubConfig.getUsername(), "test-data-hub-developer");
+        assertEquals(hubConfig.getStagingDbName(), "staging");
+        assertEquals(hubConfig.getStagingPort(), 8020);
+        assertEquals(hubConfig.getStagingAuthMethod(), "basic");
+        assertEquals(hubConfig.getFinalDbName(), "final");
+        assertEquals(hubConfig.getFinalPort(), 8021);
+        assertEquals(hubConfig.getFinalAuthMethod(), "basic");
+        assertEquals(hubConfig.getJobDbName(), "jobs");
+        assertEquals(hubConfig.getJobPort(), 8023);
+        assertEquals(hubConfig.getJobAuthMethod(), "basic");
+        assertEquals(hubConfig.getModulesDbName(), "modules");
+        assertEquals(hubConfig.getStagingTriggersDbName(), "staging-TRIGGERS");
+        assertEquals(hubConfig.getStagingSchemasDbName(), "staging-SCHEMAS");
+        assertEquals(hubConfig.getFinalTriggersDbName(), "final-TRIGGERS");
+        assertEquals(hubConfig.getFinalSchemasDbName(), "final-SCHEMAS");
     }
 
     void newDefaultHubConfig() {

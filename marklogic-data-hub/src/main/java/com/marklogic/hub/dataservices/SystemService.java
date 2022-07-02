@@ -50,6 +50,7 @@ public interface SystemService {
             private BaseProxy.DBFunctionRequest req_getVersions;
             private BaseProxy.DBFunctionRequest req_createCustomRewriters;
             private BaseProxy.DBFunctionRequest req_finishHubDeployment;
+            private BaseProxy.DBFunctionRequest req_getDataHubConfig;
 
             private SystemServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
@@ -61,6 +62,8 @@ public interface SystemService {
                     "createCustomRewriters.xqy", BaseProxy.ParameterValuesKind.NONE);
                 this.req_finishHubDeployment = this.baseProxy.request(
                     "finishHubDeployment.sjs", BaseProxy.ParameterValuesKind.NONE);
+                this.req_getDataHubConfig = this.baseProxy.request(
+                    "getDataHubConfig.sjs", BaseProxy.ParameterValuesKind.NONE);
             }
 
             @Override
@@ -94,6 +97,18 @@ public interface SystemService {
             private void finishHubDeployment(BaseProxy.DBFunctionRequest request) {
               request.responseNone();
             }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode getDataHubConfig() {
+                return getDataHubConfig(
+                    this.req_getDataHubConfig.on(this.dbClient)
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode getDataHubConfig(BaseProxy.DBFunctionRequest request) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request.responseSingle(false, Format.JSON)
+                );
+            }
         }
 
         return new SystemServiceImpl(db, serviceDeclaration);
@@ -122,5 +137,13 @@ public interface SystemService {
    * 
    */
     void finishHubDeployment();
+
+  /**
+   * Invokes the getDataHubConfig operation on the database server
+   *
+   * 
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode getDataHubConfig();
 
 }
