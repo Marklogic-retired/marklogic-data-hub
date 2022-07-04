@@ -26,7 +26,7 @@ describe("Run Tile tests", () => {
     cy.visit("/");
     cy.wait(1000);
     toolbar.getRunToolbarIcon().should("be.visible").click();
-    cy.waitUntil(() => runPage.getFlowName("personJSON").should("be.visible"));
+    runPage.getFlowName("personJSON").should("be.visible");
   });
   beforeEach(() => {
     //Restoring Local Storage to Preserve Session
@@ -253,8 +253,8 @@ describe("Run Tile tests", () => {
     const secondStepName = "mapCustomersWithRelatedEntitiesJSON";
 
     cy.log("**Navigate to run tile and check visibility of the personJSON flow**");
-    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
-    cy.waitUntil(() => runPage.getFlowName("personJSON").should("be.visible"));
+    toolbar.getRunToolbarIcon().click();
+    runPage.getFlowName("personJSON").should("be.visible");
     cy.intercept("/api/jobs/**").as("getJobs");
 
     cy.log(`**Expand flow: ${firstFlowName}**`);
@@ -278,8 +278,8 @@ describe("Run Tile tests", () => {
     browsePage.getSelectedFacet("createdByJob").should("exist");
 
     cy.log("**Navigate to run tile and check visibility of the personJSON flow**");
-    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
-    cy.waitUntil(() => runPage.getFlowName("personJSON").should("be.visible"));
+    toolbar.getRunToolbarIcon().click();
+    runPage.getFlowName("personJSON").should("be.visible");
     cy.intercept("/api/jobs/**").as("getJobs");
 
     cy.log(`**Expand flow: ${secondFlowName}**`);
