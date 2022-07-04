@@ -168,6 +168,10 @@ class LoadPage {
     return cy.findAllByLabelText(option);
   }
 
+  editLoadModal() {
+    return cy.get(`[data-testid='create-edit-load-form']`);
+  }
+
   saveButton() {
     return cy.findByTestId("create-edit-load-form").findByLabelText("Save");
   }

@@ -8,6 +8,9 @@ import loadPage from "../../support/pages/load";
 import modelPage from "../../support/pages/model";
 import runPage from "../../support/pages/run";
 import curatePage from "../../support/pages/curate";
+import {generateUniqueName} from "../../support/helper";
+import browsePage from "../../support/pages/browse";
+import table from "../../support/components/common/tables";
 
 describe("login", () => {
 
@@ -120,6 +123,93 @@ describe("login", () => {
     loadPage.saveButton().should("be.disabled");
     loadPage.cancelButton().click();
     loadPage.deleteStepDisabled(stepName).should("exist");
+  });
+
+  it("should only enable Load and Explorer tile for hub-central-load-writer", () => {
+    let stepName = generateUniqueName("loadStep");
+
+    cy.log("**Logging into the app as user with hub-central-load-writer role**");
+    cy.loginAsTestUserWithRoles("hub-central-load-writer").withRequest();
+    loginPage.postLogin();
+
+    cy.log("**Checks that the user cant navigate to Model, Curate or Run tiles**");
+    ["Model", "Curate", "Run"].forEach((tile) => {
+      toolbar.getToolBarIcon(tile).should("have.attr", {style: "cursor: not-allowed"});
+    });
+
+    cy.log("**Navigates to Load and adds a New Step**");
+    toolbar.getLoadToolbarIcon().click();
+    loadPage.addNewButton("card").should("be.visible").click();
+
+    cy.log("**Writes the step name and saves changes**");
+    loadPage.editLoadModal().should("be.visible");
+    loadPage.stepNameInput().type(stepName);
+    loadPage.saveButton().should("be.enabled").click();
+
+    cy.log("**Checks that the step is added to the list**");
+    cy.log("**Cards view**");
+    loadPage.stepName(stepName).should("be.visible");
+
+    cy.log("**Clicks on Run button**");
+    loadPage.runStep(stepName).click();
+    loadPage.runStepSelectFlowConfirmation().should("be.visible");
+    loadPage.runInNewFlow(stepName).click();
+    cy.findByLabelText("Ok").click();
+    runPage.newFlowModal().should("not.exist");
+    toolbar.getLoadToolbarIcon().click();
+
+    cy.log("**Clicks on Step Settings button**");
+    loadPage.editStepInCardView(stepName).click();
+    loadPage.editLoadModal().should("be.visible");
+    loadPage.cancelButton().click();
+
+    cy.log("**Hovers the card**");
+    loadPage.stepName(stepName).trigger("mouseover");
+    loadPage.addToNewFlow(stepName).click({force: true});
+    runPage.newFlowModal().should("not.exist");
+    loadPage.existingFlowsList(stepName).click({force: true});
+
+    cy.log("**Clicks on Delete button**");
+    loadPage.deleteStep(stepName).should("be.visible").click();
+    loadPage.deleteConfirmation("No").click();
+
+    cy.log("**Table view**");
+    loadPage.loadView("table").click();
+    tiles.waitForTableToLoad();
+    loadPage.stepName(stepName).should("be.visible");
+
+    cy.log("**Clicks hovers and clicks Run to Flow button**");
+    loadPage.addToFlowDisabled(stepName).trigger("mouseover");
+    browsePage.getPermissionsDeniedTooltip().should("have.text", "Add to Flow: Contact your security administrator for access.");
+
+    loadPage.addToFlowDisabled(stepName).should("be.visible").click();
+    loadPage.existingFlowsList(stepName).click({force: true});
+    loadPage.addToNewFlow(stepName).click({force: true});
+    runPage.newFlowModal().should("not.exist");
+    cy.findByLabelText("Ok").click();
+    toolbar.getLoadToolbarIcon().click();
+
+    cy.log("**Edits step description**");
+    loadPage.stepName(stepName).click();
+    loadPage.editLoadModal().should("be.visible");
+    loadPage.stepDescriptionInput().type("Test description");
+    loadPage.saveButton().should("be.enabled").click();
+    cy.log("**Validates new description**");
+    table.getTableRows().contains("Test description");
+
+    cy.log("**Clicks on Run button**");
+    loadPage.runStep(stepName).click();
+    loadPage.runStepSelectFlowConfirmation().should("be.visible");
+    loadPage.runInNewFlow(stepName).click();
+    cy.findByLabelText("Ok").click();
+    runPage.newFlowModal().should("not.exist");
+    toolbar.getLoadToolbarIcon().click();
+
+    cy.log("**Clicks on Delete button and deletes the step**");
+    loadPage.deleteStep(stepName).should("exist").click();
+    loadPage.deleteConfirmation("Yes").click();
+    tiles.waitForTableToLoad();
+    loadPage.stepName(stepName).should("not.exist");
   });
 
   it("should only enable Curate and Explorer tile for hub-central-mapping-reader", () => {
