@@ -125,6 +125,10 @@ class BrowsePage {
   getExportIconTooltip() {
     return cy.get(`[id="export-results-tooltip"]`);
   }
+  getPermissionsDeniedTooltip() {
+    return cy.get("#missing-permission-tooltip");
+  }
+
   /**
    * facet search
    * available facets are 'collection', 'created-on', 'job-id', 'flow', 'step'
