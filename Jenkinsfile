@@ -12,6 +12,10 @@ mlFFHost=""
 cypressFFBaseUrl=""
 fFsetupcomplete=""
 fFtestcomplete=""
+mlChHost=""
+cypressChBaseUrl=""
+chsetupcomplete=""
+chtestcomplete=""
 
 def loadProperties() {
     node {
@@ -588,38 +592,22 @@ void cypressE2EOnPremWinTests(String type,String mlVersion){
 
 }
 
-void cypressE2EOnPremWinChromeTests(String type,String mlVersion){
-
-    copyMSI type,mlVersion;
-    def pkgOutput=bat(returnStdout:true , script: '''
-	                    cd xdmp/src
-	                    for /f "delims=" %%a in ('dir /s /b *.msi') do set "name=%%~a"
-	                    echo %name%
-	                    ''').trim().split();
-    def pkgLoc=pkgOutput[pkgOutput.size()-1]
-    gitCheckout 'ml-builds','https://github.com/marklogic/MarkLogic-Builds','master'
-    def bldOutput=bat(returnStdout:true , script: '''
-        	           cd ml-builds/scripts/lib/
-        	           CD
-        	        ''').trim().split();
-    def bldPath=bldOutput[bldOutput.size()-1]
-    setupMLWinCluster bldPath,pkgLoc
-    copyArtifacts filter: '**/*central*.war', fingerprintArtifacts: true, flatten: true, projectName: '${JOB_NAME}', selector: specific('${BUILD_NUMBER}')
-
-    bat '''
-	    for /f "delims=" %%a in ('dir /s /b *.war') do set "name=%%~a"
-	    start java -jar %name%
-	'''
-
-    //wait for prem to start
-    timeout(10) {waitUntil initialRecurrencePeriod: 15000, { bat(script: 'jps | grep war', returnStatus: true) == 0 }}
-
-    bat "set PATH=C:\\Program Files (x86)\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH & cd $WORKSPACE/data-hub & gradlew.bat -g ./cache-build clean publishToMavenLocal -Dmaven.repo.local=$M2_LOCAL_REPO"
-    bat "set PATH=C:\\Program Files (x86)\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH & cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e &sed -i 's#gradlew #gradlew -Dmaven.repo.local=$M2_LOCAL_REPO -g ./cache-build #g' setup.sh &sh setup.sh dhs=false mlHost=%COMPUTERNAME% mlSecurityUsername=admin mlSecurityPassword=admin"
-    bat "set PATH=C:\\Program Files (x86)\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH & cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e & npm run cy:run-chrome 2>&1 | tee -a e2e_err.log"
-
-    junit '**/e2e/**/*.xml'
-
+void cypressE2EOnPremWinChromeTests(){
+     sleep time: 12, unit: 'MINUTES'
+    waitUntil(initialRecurrencePeriod: 120000) {
+         return chsetupcomplete
+     }
+     env.cypressChBaseUrl=cypressChBaseUrl.trim()
+     env.mlChHost=mlChHost.trim()
+     bat  script: """
+                                 setlocal
+                                 set PATH=C:\\Program Files (x86)\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH
+                                 set CYPRESS_BASE_URL=${cypressChBaseUrl};
+                                 set mlHost=${mlChHost};
+                                 cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e
+                                 npm run cy:run-chrome -- --config baseUrl=${cypressChBaseUrl} --env mlHost=${mlChHost}
+     """
+     junit '**/e2e/**/*.xml'
 }
 
 void mergePR(){
@@ -1410,8 +1398,8 @@ pipeline{
                     agent {label 'w10-dhf-6'}
                     steps{
                         script{
-                            timeout(time: 1, unit: 'HOURS'){
-                            runFFTests()
+                            timeout(time: 3, unit: 'HOURS'){
+                            catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){runFFTests()}
                             }
                         }
                     }
@@ -1420,31 +1408,30 @@ pipeline{
                             script{
                                 fFtestcomplete=true
                             }
+
+                        }
+                        unstable {
+                            sh 'rm -rf ${STAGE_NAME} || true;mkdir -p ${STAGE_NAME}/MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/MLLogs/ || true; mkdir -p ${STAGE_NAME}/E2ELogs; cp -r data-hub/marklogic-data-hub-central/ui/e2e/cypress/videos ${STAGE_NAME}/E2ELogs/;cp -r data-hub/marklogic-data-hub-central/ui/e2e/cypress/screenshots ${STAGE_NAME}/E2ELogs/'
+                            archiveArtifacts artifacts: "**/E2ELogs/**/videos/**/*,**/E2ELogs/**/screenshots/**/*,${STAGE_NAME}/MLLogs/**/*"
+                            println("$STAGE_NAME Failed")
                         }
                     }
                 }
-
-                stage('10.0-9-Win10-On-Prem'){
-                    agent { label 'Win10HCPrem'}
-                    environment{
-                        JAVA_HOME="C:\\Program Files (x86)\\OpenJDK\\jdk-8.0.262.10-hotspot"
-                        M2_LOCAL_REPO="$WORKSPACE/repository"
-                        NODE_JS="C:\\Program Files\\nodejs"
-                    }
+                stage('10.0-9-cypress-linux-setup-win-chrome'){
+                    agent {label 'dhfLinuxAgent'}
                     steps{
-                     timeout(time: 3,  unit: 'HOURS'){
-                        catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){cypressE2EOnPremWinTests("Release","10.0-9")}
-                    }}
-                    post{
-                        success {
-                            println("$STAGE_NAME Completed")
-                            sendMail Email,"<h3>$STAGE_NAME Server on Linux Platform</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>",false,"$BRANCH_NAME on $STAGE_NAME Passed"
-                        }
-                        unstable {
-                            println("$STAGE_NAME Failed")
-                            sh 'rm -rf ${STAGE_NAME} || true;mkdir -p ${STAGE_NAME}/MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/MLLogs/ || true; mkdir -p ${STAGE_NAME}/E2ELogs; cp -r data-hub/marklogic-data-hub-central/ui/e2e/cypress/videos ${STAGE_NAME}/E2ELogs/;cp -r data-hub/marklogic-data-hub-central/ui/e2e/cypress/screenshots ${STAGE_NAME}/E2ELogs/'
-                            archiveArtifacts artifacts: "**/E2ELogs/**/videos/**/*,**/E2ELogs/**/screenshots/**/*,${STAGE_NAME}/MLLogs/**/*"
-                            sendMail Email,"<h3>$STAGE_NAME Server on Linux Platform </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>",false,"$BRANCH_NAME branch $STAGE_NAME Failed"
+                        script{
+                                cypressSetup('Release','10.0-9')
+                                mlChHost=sh(returnStdout: true,script: """echo \$HOSTNAME""")
+                                cypressChBaseUrl="http://"+mlChHost.trim()+":8080"
+                                chsetupcomplete=true
+                                env.chsetupcomplete=true
+                                sleep time: 95, unit: 'MINUTES'
+                                timeout(time: 1, unit: 'HOURS') {
+                                    waitUntil(initialRecurrencePeriod: 120000) {
+                                        return chtestcomplete
+                                    }
+                                }
                         }
                     }
                 }
@@ -1472,7 +1459,7 @@ pipeline{
                 }
                 */
 
-                stage('10.0-9-Win10-On-Prem-chrome'){
+                stage('cypress-win-chrome'){
                     agent { label 'sel-w10v-90-8'}
                     environment{
                         JAVA_HOME="C:\\Program Files (x86)\\OpenJDK\\jdk-8.0.262.10-hotspot"
@@ -1482,12 +1469,13 @@ pipeline{
 
                     steps{
                      timeout(time: 3,  unit: 'HOURS'){
-                        catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){cypressE2EOnPremWinChromeTests("Release","10.0-9")}
+                        catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){cypressE2EOnPremWinChromeTests()}
                     }}
                    post{
-                        success {
-                            println("$STAGE_NAME Completed")
-                            sendMail Email,"<h3>$STAGE_NAME Server on Linux Platform</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>",false,"$BRANCH_NAME branch $STAGE_NAME Passed"
+                        always {
+                            script{
+                                                            chtestcomplete=true
+                            }
                         }
                         unstable {
                             sh 'rm -rf ${STAGE_NAME} || true;mkdir -p ${STAGE_NAME}/MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/MLLogs/ || true; mkdir -p ${STAGE_NAME}/E2ELogs; cp -r data-hub/marklogic-data-hub-central/ui/e2e/cypress/videos ${STAGE_NAME}/E2ELogs/;cp -r data-hub/marklogic-data-hub-central/ui/e2e/cypress/screenshots ${STAGE_NAME}/E2ELogs/'
