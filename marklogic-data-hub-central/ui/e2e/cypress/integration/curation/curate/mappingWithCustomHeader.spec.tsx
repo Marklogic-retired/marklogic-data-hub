@@ -31,6 +31,10 @@ describe("Create and verify load steps, map step and flows with a custom header"
     //Restoring Local Storage to Preserve Session
     cy.restoreLocalStorage();
   });
+  afterEach(() => {
+    // update local storage
+    cy.saveLocalStorage();
+  });
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.deleteSteps("ingestion", "loadOrderCustomHeader");
