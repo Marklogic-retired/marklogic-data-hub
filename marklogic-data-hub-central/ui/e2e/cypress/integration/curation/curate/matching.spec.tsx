@@ -336,11 +336,11 @@ describe("Matching", () => {
     matchingStepDetail.getTableHeader().should("not.be.visible"); // Added as per DHFPROD-8322
     cy.findByText("This URI has already been added.").should("not.exist");
     cy.findByText("The minimum of two URIs are required.").should("not.exist");
-    cy.waitUntil(() => cy.visit("/tiles"));
   });
 
 
   it("Show matched results for test match", () => {
+    cy.visit("/tiles/curate");
     toolbar.getCurateToolbarIcon().click();
     curatePage.toggleEntityTypeId("Person");
     curatePage.selectMatchTab("Person");

@@ -6,7 +6,7 @@ class BaseEntitySidebar {
     cy.wait(1000); //element is detached from DOM issue following this, so stall before next command
   }
   getBaseEntity(entity: string) {
-    return cy.get(`div[aria-label="base-entities-${entity}"]`);
+    return cy.get(`div[aria-label="base-entities-selection"] div[aria-label="base-entities-${entity}"]`);
   }
   getBaseEntityOption(entity: string) {
     return cy.get(`[aria-label="base-option-${entity}"]`);

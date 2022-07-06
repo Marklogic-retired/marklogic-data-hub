@@ -10,7 +10,6 @@ import runPage from "../../support/pages/run";
 import curatePage from "../../support/pages/curate";
 import {generateUniqueName} from "../../support/helper";
 import browsePage from "../../support/pages/browse";
-import table from "../../support/components/common/tables";
 
 describe("login", () => {
 
@@ -195,7 +194,7 @@ describe("login", () => {
     loadPage.stepDescriptionInput().type("Test description");
     loadPage.saveButton().should("be.enabled").click();
     cy.log("**Validates new description**");
-    table.getTableRows().contains("Test description");
+    cy.contains("td", "Test description").should("be.visible");
 
     cy.log("**Clicks on Run button**");
     loadPage.runStep(stepName).click();

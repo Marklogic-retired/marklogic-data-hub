@@ -29,7 +29,7 @@ describe("Verify numeric/date facet can be applied", () => {
   });
   it("Apply numeric facet values multiple times, clears the previous values and applies the new one", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-    browsePage.getTableView().click();
+    browsePage.clickTableView();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
     entitiesSidebar.openBaseEntityDropdown();
@@ -62,7 +62,7 @@ describe("Verify numeric/date facet can be applied", () => {
     cy.log("**Go to explore page and click on table view**");
     cy.visit("tiles/explore");
     browsePage.waitForSpinnerToDisappear();
-    browsePage.getTableView().click();
+    browsePage.clickTableView();
 
     //verify no facets selected case.
     cy.log("**verify no facets selected case.**");
