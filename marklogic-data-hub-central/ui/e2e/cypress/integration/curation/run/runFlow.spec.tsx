@@ -18,16 +18,6 @@ describe("Run Tile tests", () => {
     //Saving Local Storage to preserve session
     cy.saveLocalStorage();
   });
-
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
-
-    cy.visit("/");
-    cy.wait(1000);
-    toolbar.getRunToolbarIcon().should("be.visible").click();
-    runPage.getFlowName("personJSON").should("be.visible");
-  });
   beforeEach(() => {
     //Restoring Local Storage to Preserve Session
     cy.restoreLocalStorage();
@@ -40,8 +30,8 @@ describe("Run Tile tests", () => {
   });
   it("can create flow and add steps to flow, should load xml merged document and display content", {defaultCommandTimeout: 120000}, () => {
     //Verify create flow and add all user-defined steps to flow via Run tile
-    // Wait for the request to finish so the test doesn't fail. Tried with a smaller wait and had the same issue.
-    cy.wait(5000);
+    toolbar.getRunToolbarIcon().should("be.visible").click();
+    runPage.getFlowName("personJSON").should("be.visible");
     runPage.createFlowButton().should("exist").click({force: true});
     runPage.newFlowModal().should("be.visible");
     runPage.setFlowName(flowName);
@@ -74,8 +64,9 @@ describe("Run Tile tests", () => {
     cy.get("#testPersonXML").within(() => {
       cy.findByText("loadPersonXML").should("not.be.visible");
     });
+  });
 
-    //Verify selected steps in run flow dropdown are executed successfully
+  it("Verify selected steps in run flow dropdown are executed successfully ", () => {
     cy.log("**Verify selected steps executed successfully**");
     runPage.openStepsSelectDropdown(flowName);
 
@@ -99,9 +90,10 @@ describe("Run Tile tests", () => {
     cy.get("#master-person").click();
     cy.get("#generate-dictionary").click();
     cy.contains("Select at least one step to run a flow.").should("not.exist");
-
+    cy.intercept("GET", "/api/jobs/**").as("runResponse");
     runPage.runFlow(flowName);
     cy.uploadFile("input/person.xml");
+    cy.wait("@runResponse");
     cy.wait(3000);
 
     cy.log("**Checking the modal**");
@@ -110,26 +102,34 @@ describe("Run Tile tests", () => {
     runPage.verifyStepRunResult("merge-xml-person", "success");
     runPage.verifyFlowModalCompleted(flowName);
     runPage.closeFlowStatusModal(flowName);
+  });
 
-    //Verify if no step is selected in run flow dropdown; all steps are executed
+  it("Verify if no step is selected in run flow dropdown; all steps are executed ", () => {
+    cy.intercept("GET", "/api/jobs/**").as("runResponse");
     runPage.expandFlow("testCustomFlow");
     runPage.runFlow("testCustomFlow");
     cy.uploadFile("input/test-1.zip");
+    cy.wait("@runResponse");
     cy.wait(3000);
     runPage.verifyStepRunResult("mapping-step", "success");
     runPage.verifyFlowModalCompleted("testCustomFlow");
     runPage.closeFlowStatusModal("testCustomFlow");
+  });
 
-    //Run map,match and merge steps for Person entity individually using xml documents
+  it("Run map,match and merge steps for Person entity individually using xml documents ", () => {
+    cy.intercept("GET", "/api/jobs/**").as("runResponse");
     runPage.runStep("mapPersonXML", flowName);
+    cy.wait("@runResponse");
     runPage.verifyStepRunResult("mapPersonXML", "success");
     runPage.closeFlowStatusModal(flowName);
     cy.waitForAsyncRequest();
     runPage.runStep("match-xml-person", flowName);
+    cy.wait("@runResponse");
     runPage.verifyStepRunResult("match-xml-person", "success");
     runPage.closeFlowStatusModal(flowName);
     cy.waitForAsyncRequest();
     runPage.runStep("merge-xml-person", flowName);
+    cy.wait("@runResponse");
     runPage.verifyStepRunResult("merge-xml-person", "success");
     //Navigate to explorer tile using the explorer link
     runPage.explorerLink("merge-xml-person").click();
@@ -170,7 +170,9 @@ describe("Run Tile tests", () => {
     runPage.clickStepInsidePopover("#match-xml-person");
 
     cy.log("**Run Flow with selected steps**");
+    cy.intercept("GET", "/api/jobs/**").as("runResponse");
     runPage.runFlow(flowName);
+    cy.wait("@runResponse");
     cy.wait(3000);
     cy.waitForAsyncRequest();
 
@@ -221,13 +223,14 @@ describe("Run Tile tests", () => {
     cy.log("**Navigate to run tile and check visibility of the personJSON flow**");
     toolbar.getRunToolbarIcon().click();
     runPage.getFlowName("personJSON").should("be.visible");
-    cy.intercept("/api/jobs/**").as("getJobs");
+    cy.intercept("/api/jobs/**").as("runResponse");
 
     cy.log(`**Expand flow: ${flowName}**`);
     runPage.expandFlow(flowName);
 
     cy.log(`**Run mapping step (${stepName}) and verify results dialog**`);
     runPage.runStep(stepName, flowName);
+    cy.wait("@runResponse");
     runPage.verifyStepRunResult(stepName, "success");
     cy.waitForAsyncRequest();
 
@@ -255,13 +258,14 @@ describe("Run Tile tests", () => {
     cy.log("**Navigate to run tile and check visibility of the personJSON flow**");
     toolbar.getRunToolbarIcon().click();
     runPage.getFlowName("personJSON").should("be.visible");
-    cy.intercept("/api/jobs/**").as("getJobs");
+    cy.intercept("/api/jobs/**").as("runResponse");
 
     cy.log(`**Expand flow: ${firstFlowName}**`);
     runPage.expandFlow(firstFlowName);
 
     cy.log(`**Run mapping step (${firstStepName}) and verify results dialog**`);
     runPage.runStep(firstStepName, firstFlowName);
+    cy.wait("@runResponse");
     runPage.verifyStepRunResult(firstStepName, "success");
     cy.waitForAsyncRequest();
 
@@ -280,13 +284,14 @@ describe("Run Tile tests", () => {
     cy.log("**Navigate to run tile and check visibility of the personJSON flow**");
     toolbar.getRunToolbarIcon().click();
     runPage.getFlowName("personJSON").should("be.visible");
-    cy.intercept("/api/jobs/**").as("getJobs");
+    cy.intercept("/api/jobs/**").as("runResponse");
 
     cy.log(`**Expand flow: ${secondFlowName}**`);
     runPage.expandFlow(secondFlowName);
 
     cy.log(`**Run mapping step (${secondStepName}) and verify results dialog**`);
     runPage.runStep(secondStepName, secondFlowName);
+    cy.wait("@runResponse");
     runPage.verifyStepRunResult(secondStepName, "success");
     cy.waitForAsyncRequest();
 
