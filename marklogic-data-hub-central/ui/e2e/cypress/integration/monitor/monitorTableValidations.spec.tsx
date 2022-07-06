@@ -29,13 +29,6 @@ describe("Monitor Tile", () => {
     cy.waitForAsyncRequest();
   });
 
-  it("Navigate to Monitor Tile and verify pagination works", () => {
-    monitorPage.getTableRows().should("not.be.empty");
-    monitorPage.scrollMonitorToPageSelect();
-    monitorPage.getPaginationPageSizeOptions().scrollIntoView().select("10 / page", {force: true});
-    monitorPage.getTableRows().should("have.length.at.most", 10);
-  });
-
   let firstPageTableCellsJobId: any[] = [];
   let firstPageTableCellsJobIdAux: any[] = [];
   let firstPageTableCellsStepName: any[] = [];

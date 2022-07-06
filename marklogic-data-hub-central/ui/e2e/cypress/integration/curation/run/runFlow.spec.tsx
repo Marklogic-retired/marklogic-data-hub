@@ -117,6 +117,11 @@ describe("Run Tile tests", () => {
   });
 
   it("Run map,match and merge steps for Person entity individually using xml documents ", () => {
+    cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer").withRequest();
+    LoginPage.postLogin();
+    cy.visit("/");
+
+
     cy.intercept("GET", "/api/jobs/**").as("runResponse");
     runPage.runStep("mapPersonXML", flowName);
     cy.wait("@runResponse");

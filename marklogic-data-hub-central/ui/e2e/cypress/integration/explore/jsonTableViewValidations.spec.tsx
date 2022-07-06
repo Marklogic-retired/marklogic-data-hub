@@ -29,13 +29,14 @@ describe("json scenario for table on browse documents page", () => {
   beforeEach(() => {
     //Restoring Local Storage to Preserve Session
     cy.restoreLocalStorage();
-    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-    browsePage.getTableView().click();
+    cy.visit("/");
+    toolbar.getExploreToolbarIcon().should("be.visible").click();
+    browsePage.getTableView().should("be.visible").click({force: true});
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
   });
   afterEach(() => {
-    //Saving Local Storage to preserve session
+    // update local storage
     cy.saveLocalStorage();
   });
   after(() => {
@@ -71,6 +72,7 @@ describe("json scenario for table on browse documents page", () => {
     entitiesSidebar.selectBaseEntityOption("Person");
     browsePage.getHubPropertiesExpanded();
     browsePage.getTotalDocuments().should("be.greaterThan", 5);
+    cy.saveLocalStorage();
     //check table rows. Validates the records were filtered
     browsePage.getHCTableRows().should("have.length.lt", 52);
     //check table columns
@@ -88,7 +90,6 @@ describe("json scenario for table on browse documents page", () => {
 
   it("verify instance view of the document without pk", () => {
     cy.wait(2000);
-    entitiesSidebar.showMoreEntities();
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.PERSON);
     browsePage.getFacetItemCheckbox("fname", "Alice").click();
     browsePage.getGreySelectedFacets("Alice").should("exist");

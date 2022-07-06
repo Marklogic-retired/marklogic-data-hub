@@ -34,6 +34,10 @@ describe("Mapping", () => {
     //Restoring Local Storage to Preserve Session
     cy.restoreLocalStorage();
   });
+  afterEach(() => {
+    // update local storage
+    cy.saveLocalStorage();
+  });
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.deleteSteps("mapping", "mapRelation");
