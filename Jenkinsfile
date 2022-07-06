@@ -605,7 +605,7 @@ void cypressE2EOnPremWinChromeTests(){
                                  set CYPRESS_BASE_URL=${cypressChBaseUrl};
                                  set mlHost=${mlChHost};
                                  cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e
-                                 npm run cy:run-chrome -- --config baseUrl=${cypressChBaseUrl} --env mlHost=${mlChHost}
+                                 npm run cy:run-chrome -- --config baseUrl=${cypressChBaseUrl} --env mlHost=${mlChHost}  2>&1 | tee -a e2e_err.log
      """
      junit '**/e2e/**/*.xml'
 }
@@ -821,7 +821,7 @@ def runFFTests(){
                                  set CYPRESS_BASE_URL=${cypressFFBaseUrl};
                                  set mlHost=${mlFFHost};
                                  cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e
-                                 npm run cy:run-firefox-headed -- --config baseUrl=${cypressFFBaseUrl} --env mlHost=${mlFFHost}
+                                 npm run cy:run-firefox-headed -- --config baseUrl=${cypressFFBaseUrl} --env mlHost=${mlFFHost}  2>&1 | tee -a e2e_err.log
      """
      junit '**/e2e/**/*.xml'
 }
@@ -1386,7 +1386,7 @@ pipeline{
                                 fFsetupcomplete=true
                                 env.fFsetupcomplete=true
                                 sleep time: 95, unit: 'MINUTES'
-                                timeout(time: 1, unit: 'HOURS') {
+                                timeout(time: 3, unit: 'HOURS') {
                                     waitUntil(initialRecurrencePeriod: 120000) {
                                         return fFtestcomplete
                                     }
@@ -1427,7 +1427,7 @@ pipeline{
                                 chsetupcomplete=true
                                 env.chsetupcomplete=true
                                 sleep time: 95, unit: 'MINUTES'
-                                timeout(time: 1, unit: 'HOURS') {
+                                timeout(time: 3, unit: 'HOURS') {
                                     waitUntil(initialRecurrencePeriod: 120000) {
                                         return chtestcomplete
                                     }
