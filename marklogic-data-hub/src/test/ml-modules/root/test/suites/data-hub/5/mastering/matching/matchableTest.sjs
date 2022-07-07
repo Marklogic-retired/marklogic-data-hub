@@ -1,4 +1,4 @@
-const { Matchable } = require('/data-hub/5/mastering/matching/matchable.sjs');
+const { Matchable, MatchRulesetDefinition } = require('/data-hub/5/mastering/matching/matchable.sjs');
 const test = require("/test/test-helper.xqy");
 
 function testMatchableClass() {
@@ -114,7 +114,17 @@ function testMatchRulesetDefinitions() {
         name: "name - synonym",
         matchRules: [{ entityPropertyPath: "name", matchType: "synonym",
           options: {
-            thesaurusURI: "/content/nicknames.xml"
+            thesaurusURI: "/content/nicknames.xml",
+            filter: "<qualifier xmlns=\"http://marklogic.com/xdmp/thesaurus\">lastName</qualifier>"
+          }
+        }]
+      },
+      {
+        name: "name - synonym - noMatchQualifier",
+        matchRules: [{ entityPropertyPath: "name", matchType: "synonym",
+          options: {
+            thesaurusURI: "/content/nicknames.xml",
+            filter: "<qualifier xmlns=\"http://marklogic.com/xdmp/thesaurus\">firstName</qualifier>"
           }
         }]
       },
@@ -163,6 +173,16 @@ function testMatchRulesetDefinitions() {
     if(matchStep.matchRulesets[i].name === "name - custom") {
       let isQuery = matchRulesetDefinitions[i].buildCtsQuery(docA) instanceof cts.query;
       assertions.push(test.assertEqual(isQuery, true, "Cts query is created for matched rule when custom match function returns atomic value"));
+    }
+    if(matchStep.matchRulesets[i].name === "name - synonym") {
+      const matchRulesetDefinitions2 = new MatchRulesetDefinition(matchStep.matchRulesets[i],matchable);
+      let matchingTerms = matchRulesetDefinitions2.synonymMatchFunction("Robert", matchStep.matchRulesets[i].matchRules[0], matchStep);
+      assertions.push(test.assertEqual(2, matchingTerms.length), "Original term and matching synonym qualifier is returned");
+    }
+    if(matchStep.matchRulesets[i].name === "name - synonym - noMatchQualifier") {
+      const matchRulesetDefinitions2 = new MatchRulesetDefinition(matchStep.matchRulesets[i],matchable);
+      let matchingTerms = matchRulesetDefinitions2.synonymMatchFunction("Robert", matchStep.matchRulesets[i].matchRules[0], matchStep);
+      assertions.push(test.assertEqual(0, matchingTerms.length, "No matching qualifier was found"));
     }
   }
 }
@@ -327,7 +347,7 @@ function testScoreDocument() {
   const matchable = new Matchable(matchStep, {});
   const score = matchable.scoreDocument({uri: "doc1.json", value: docA },{uri: "doc2.json", value: docA });
   const assertions = [
-    test.assertEqual(18, score, "score should come back as 18 (exact:10 + doubleMetaphone:5 + exact with custom true function:3).")
+    test.assertEqual(23, score, "score should come back as 23 (exact:10 + doubleMetaphone:5 + exact with custom true function:3 + synonym:5).")
   ];
   const scoreInterceptorMatchable = new Matchable(Object.assign({scoreDocumentInterceptors:  [
       { path: "/test/suites/data-hub/5/mastering/matching/test-data/matchableInterceptors.sjs", function: "scoreDocumentInterceptor" }

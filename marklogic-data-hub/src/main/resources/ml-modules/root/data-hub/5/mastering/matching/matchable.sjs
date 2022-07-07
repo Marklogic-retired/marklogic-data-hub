@@ -7,6 +7,7 @@ const getBlocks = hubUtils.requireFunction("/com.marklogic.smart-mastering/match
 const matchingDebugTraceEnabled = xdmp.traceEnabled(consts.TRACE_MATCHING_DEBUG);
 const matchingTraceEnabled = xdmp.traceEnabled(consts.TRACE_MATCHING) || matchingDebugTraceEnabled;
 const matchingTraceEvent = xdmp.traceEnabled(consts.TRACE_MATCHING) ? consts.TRACE_MATCHING : consts.TRACE_MATCHING_DEBUG;
+const thsr = require("/MarkLogic/thesaurus.xqy");
 
 /*
  * A class that encapsulates the configurable portions of the matching process.
@@ -289,7 +290,7 @@ class Matchable {
     if (this.matchStep.dataFormat === "json") {
       return parentPropertyDefinitions.reduce((acc, propertyDef) => propertyDef.localname ? cts.jsonPropertyScopeQuery(propertyDef.localname, acc) : acc, valuesAreQueries ? values : cts.jsonPropertyValueQuery(localname, values));
     } else {
-      return parentPropertyDefinitions.reduce((acc, propertyDef) => propertyDef.localname ? cts.elementQuery(fn.QName(propertyDef.namespace, propertyDef.localname), acc) : acc, valuesAreQueries ? values : cts.elementValueQuery(fn.QName(lastPropertyDefinition.namespace, localname), hubUtils.normalizeToArray(values).map((val) => (val instanceof cts.query) ? val : fn.string(val))));
+      return parentPropertyDefinitions.reduce((acc, propertyDef) => propertyDef.localname ? cts.elementQuery(fn.QName(propertyDef.namespace, propertyDef.localname), acc) : acc, valuesAreQueries ? values : cts.elementValueQuery(fn.QName(lastPropertyDefinition.namespace, localname), hubUtils.normalizeToArray(values).map((val) => (val instanceof cts.query) ? val : fn.string(val)),"case-insensitive"),"case-insensitive");
     }
   }
 }
@@ -320,6 +321,42 @@ class MatchRulesetDefinition {
     return matchRule._valueFunction;
   }
 
+  synonymMatchFunction(value, passMatchRule) {
+    let thesaurus = passMatchRule.options.thesaurusURI;
+    let expandOptions = fn.string(value).toLowerCase();
+    let entries = thsr.queryLookup(thesaurus, cts.elementValueQuery(fn.QName("http://marklogic.com/xdmp/thesaurus", "term"), expandOptions, "case-insensitive"), "elements");
+    let options = passMatchRule.options;
+    let allEntries = [];
+    let filterNode;
+    //check if filter is present in options
+    if(fn.exists(options.filter)) {
+      filterNode = xdmp.unquote(options.filter);
+    }
+    for(const entry of entries) {
+      let meetsQualifier = false;
+      if (filterNode) {
+        for (let node of entry.xpath(".//*")) {
+          //comparing each node of entry with filerNode
+          if (fn.deepEqual(node, fn.head(filterNode).root)) {
+            meetsQualifier = true;
+            break;
+          }
+        }
+      } else {
+        meetsQualifier = true;
+      }
+      if (meetsQualifier) {
+        allEntries.push(fn.string(entry.xpath("*:term")));
+        for (let syn of entry.xpath("*:synonym")) {
+          allEntries.push(fn.string(syn.xpath("*:term")));
+        }
+      }
+    }
+    //returning unique values of all matching entries
+    return Array.from(new Set(allEntries));
+  }
+
+
   _matchFunction(matchRule, model) {
     if (!matchRule._matchFunction) {
       let passMatchRule = matchRule;
@@ -340,7 +377,7 @@ class MatchRulesetDefinition {
           convertToNode = true;
           break;
         case "synonym":
-          matchFunction = hubUtils.requireFunction("/com.marklogic.smart-mastering/algorithms/thesaurus.xqy", "synonym");
+          matchFunction = this.synonymMatchFunction;
           convertToNode = true;
           break;
         case "zip":
