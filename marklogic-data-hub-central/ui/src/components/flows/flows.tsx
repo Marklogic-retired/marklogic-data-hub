@@ -157,6 +157,7 @@ const Flows: React.FC<Props> = ({
       const panel = flowPanels[f];
       if (panel && panel.current) {
         const {scrollWidth} = panel.current;
+        panel.current.scrollIntoView();
         panel.current.scrollTo(scrollWidth * 2, 0);
       }
     };
