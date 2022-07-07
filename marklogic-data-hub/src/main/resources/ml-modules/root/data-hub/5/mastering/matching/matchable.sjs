@@ -9,6 +9,7 @@ const matchingTraceEnabled = xdmp.traceEnabled(consts.TRACE_MATCHING) || matchin
 const matchingTraceEvent = xdmp.traceEnabled(consts.TRACE_MATCHING) ? consts.TRACE_MATCHING : consts.TRACE_MATCHING_DEBUG;
 const thsr = require("/MarkLogic/thesaurus.xqy");
 const spell = require("/MarkLogic/spell.xqy");
+const {propertyDefinitionsFromXPath} = require("../common.sjs");
 
 /*
  * A class that encapsulates the configurable portions of the matching process.
@@ -260,20 +261,7 @@ class Matchable {
     if (matchingTraceEnabled) {
       xdmp.trace(matchingTraceEvent, `XPath query for ${xpath} with values ${xdmp.describe(values, Sequence.from([]), Sequence.from([]))}`);
     }
-    const namespaces = localNamespaces;
-    const xpathSteps = xpath.split("/").filter((step) => step);
-    const propertyDefinitions = xpathSteps
-      .map((xpathStep, index) => {
-        if (xpathStep.includes(":")) {
-          const [nsPrefix, localname] = xpathStep.split(":");
-          return {
-            namespace: namespaces[nsPrefix] || "",
-            localname
-          };
-        } else {
-          return { localname: xpathStep };
-        }
-      });
+    const propertyDefinitions = common.propertyDefinitionsFromXPath(xpath, localNamespaces);
     const xpathQuery = this._buildQueryFromPropertyDefinitionsAndValues(propertyDefinitions, values);
     if (matchingTraceEnabled) {
       xdmp.trace(matchingTraceEvent, `XPath query for ${xpath} is ${xdmp.describe(xpathQuery, Sequence.from([]), Sequence.from([]))}`);
@@ -291,7 +279,7 @@ class Matchable {
     if (this.matchStep.dataFormat === "json") {
       return parentPropertyDefinitions.reduce((acc, propertyDef) => propertyDef.localname ? cts.jsonPropertyScopeQuery(propertyDef.localname, acc) : acc, valuesAreQueries ? values : cts.jsonPropertyValueQuery(localname, values));
     } else {
-      return parentPropertyDefinitions.reduce((acc, propertyDef) => propertyDef.localname ? cts.elementQuery(fn.QName(propertyDef.namespace, propertyDef.localname), acc) : acc, valuesAreQueries ? values : cts.elementValueQuery(fn.QName(lastPropertyDefinition.namespace, localname), hubUtils.normalizeToArray(values).map((val) => (val instanceof cts.query) ? val : fn.string(val)),"case-insensitive"),"case-insensitive");
+      return parentPropertyDefinitions.reduce((acc, propertyDef) => propertyDef.localname ? cts.elementQuery(fn.QName(propertyDef.namespace, propertyDef.localname), acc) : acc, valuesAreQueries ? values : cts.elementValueQuery(fn.QName(lastPropertyDefinition.namespace, localname), hubUtils.normalizeToArray(values).map((val) => (val instanceof cts.query) ? val : fn.string(val)),"case-insensitive"));
     }
   }
 }

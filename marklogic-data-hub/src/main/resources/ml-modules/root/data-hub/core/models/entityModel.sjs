@@ -50,6 +50,10 @@ class EntityModel {
         this._primaryEntityTypeIRI = `${this.entityModelIRI}/${this.topLevelDefinitionName}`;
     }
 
+    topLevelProperties() {
+        return Object.keys(this.topLevelDefinition.properties);
+    }
+
     _populatePropertyInformation() {
         if (entityDebugTraceEnabled) {
             xdmp.trace(consts.TRACE_ENTITY_DEBUG, `Populating entity property information for  ${this.entityModelIRI}`);
