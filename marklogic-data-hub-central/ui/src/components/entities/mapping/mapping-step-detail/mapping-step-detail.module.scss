@@ -31,6 +31,15 @@
     }
 }
 
+.sourceValidationError {
+  margin-left: -24px;
+  color: $danger;
+}
+
+.sourceValidationErrorEdit {
+  padding-left: 12px;
+  color: $danger;
+}
 
 .saveMessage {
     border: 1px solid #ff0000;
@@ -373,7 +382,7 @@ hr {
     padding-top: 5px;
     padding-right: 5px;
     padding-bottom: 3px;
-    padding-left: 3px;
+    padding-left: 7px;
     border: 1px solid #E9F7FE;
     color: $primary;
 }
@@ -385,8 +394,28 @@ hr {
     margin-left: -3px;
 }
 
+.invalidURIText {
+  margin-left: 4px;
+  padding-top: 5px;
+  padding-right: 5px;
+  padding-bottom: 3px;
+  padding-left: 3px;
+  border: 1px solid $danger;
+  color: $primary;
+}
+
+.showingEditIconInvalid {
+  margin-left: 8px;
+  padding-top: 5px;
+  padding-right: 5px;
+  padding-bottom: 3px;
+  padding-left: 3px;
+  border: 1px solid $danger;
+  color: $primary;
+}
+
 .URItext {
-    margin-left: 4px;
+    margin-left: 8px;
     color: $primary;
 }
 

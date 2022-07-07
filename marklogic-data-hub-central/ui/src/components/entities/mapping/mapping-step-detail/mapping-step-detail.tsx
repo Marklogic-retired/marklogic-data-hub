@@ -314,6 +314,7 @@ const MappingStepDetail: React.FC = () => {
       let srcDocResp = await getDoc(stepName, uri);
 
       if (srcDocResp && srcDocResp.data && srcDocResp.status === 200) {
+        setDocNotFound(false);
         let parsedDoc: any = srcDocResp.data.data;
         if (srcDocResp.data.format === "XML") {
           setSourceFormat("xml");
@@ -763,16 +764,30 @@ const MappingStepDetail: React.FC = () => {
     {!editingURI ?
       <div onMouseOver={(e) => handleMouseOver(e)} onMouseLeave={(e) => setShowEditURIOption(false)} className={styles.uri}>
         {!showEditURIOption ?
-          <span data-testid={"uri-edit"} className={styles.notShowingEditContainer}>URI: <span className={styles.URItext}>{sourceURI}</span></span>
-          :
-          <div className={styles.uriHoverContainer}><span data-testid={"uri-edit"} className={styles.showingEditContainer}>URI: <span className={styles.showingEditIcon}>{sourceURI}<i><FontAwesomeIcon icon={faPencilAlt} size="lg" onClick={handleEditIconClick} className={styles.editIcon} data-testid={"pencil-icon"} /></i></span></span></div>}
+          (docNotFound ? <div>
+            <span data-testid={"uri-edit"} className={styles.notShowingEditContainer}>URI: <span className={styles.invalidURIText}>{sourceURI}</span></span>
+            <span className={styles.sourceValidationError}>{MappingStepMessages.invalidURIMessage}</span>
+          </div>
+            :
+            <span data-testid={"uri-edit"} className={styles.notShowingEditContainer}>URI: <span className={styles.URItext}>{sourceURI}</span></span>)
+          : (docNotFound ? <div>
+            <div className={styles.uriHoverContainer}>
+              <span data-testid={"uri-edit"} className={styles.showingEditContainer}>URI:
+                <span className={styles.showingEditIconInvalid}>{sourceURI}</span><span><HCTooltip id={"edit-uri-tooltip"} text={MappingStepMessages.editURITooltip} placement="top"><i><FontAwesomeIcon icon={faPencilAlt} size="lg" onClick={handleEditIconClick} className={styles.editIcon} data-testid={"pencil-icon"} /></i></HCTooltip></span>
+                <span className={styles.sourceValidationErrorEdit}>{MappingStepMessages.invalidURIMessage}</span>
+              </span>
+            </div>
+          </div>
+            :
+            <div className={styles.uriHoverContainer}><span data-testid={"uri-edit"} className={styles.showingEditContainer}>URI: <span className={styles.showingEditIcon}>{sourceURI}<HCTooltip id={"edit-uri-tooltip"} text={MappingStepMessages.editURITooltip} placement="top"><i><FontAwesomeIcon icon={faPencilAlt} size="lg" onClick={handleEditIconClick} className={styles.editIcon} data-testid={"pencil-icon"} /></i></HCTooltip></span></span></div>)}
       </div>
       :
       <div className={styles.inputURIContainer}>URI:
         <span><HCInput data-testid={"uri-input"} value={sourceURI} ref={ref => ref && ref.focus()} onChange={handleURIEditing} style={{display: "inline-flex", width: `${sourceURI.length * 9}px`, marginLeft: "10px"}} className={styles.uriEditing} onFocus={(e) => e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length)}></HCInput>&nbsp;
           <XLg aria-label="icon: close" className={styles.closeIcon} onClick={() => handleCloseEditOption()} />&nbsp;<CheckSquare aria-label="icon: check" className={styles.checkIcon} onClick={() => handleSubmitUri(sourceURI)} />
         </span>
-      </div>}
+      </div>
+    }
   </div> : "";
 
   // Run when mapping details is opened or returned to
