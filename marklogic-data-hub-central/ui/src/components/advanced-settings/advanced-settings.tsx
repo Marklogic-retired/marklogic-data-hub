@@ -147,6 +147,11 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   const provGranTooltipRef2 = React.createRef<HTMLDivElement>();
   const [provGranTooltipVisible2, setProvGranTooltipVisible2] = useState(false);
 
+
+  const [parametersModuleValue, setParametersModuleValue] = useState("");
+  const parametersModuleRef = React.useRef<HTMLInputElement>(null);
+  const [parametersModuleTouched, setParametersModuleTouched] = useState(false);
+
   const batchSizeRef = React.useRef<HTMLInputElement>(null);
   const batchSizeTooltipRef = React.createRef<HTMLDivElement>();
   const [batchSizeTooltipVisible, setBatchSizeToolTipVisible] = useState(false);
@@ -179,6 +184,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     setSourceRecordScopeTouched(false);
     setSourceRecordScopeToggled(false);
     setBatchSizeTouched(false);
+    setParametersModuleTouched(false);
     setHeadersTouched(false);
     setInterceptorsTouched(false);
     setCustomHookTouched(false);
@@ -274,6 +280,9 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       if (props.stepData.batchSize) {
         setBatchSize(props.stepData.batchSize);
       }
+      if (props.stepData.mappingParametersModulePath) {
+        setParametersModuleValue(props.stepData.mappingParametersModulePath);
+      }
       if (props.stepData.headers) {
         setHeaders(formatJSON(props.stepData.headers));
       }
@@ -339,6 +348,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       && !attachSourceDocumentTouched
       && !sourceRecordScopeTouched
       && !batchSizeTouched
+      && !parametersModuleTouched
       && !interceptorsTouched
       && !customHookTouched
       && !additionalSettingsTouched
@@ -374,6 +384,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       payload["validateEntity"] = validateEntity;
       payload["attachSourceDocument"] = attachSourceDocument;
       payload["sourceRecordScope"] = sourceRecordScope;
+      payload["mappingParametersModulePath"] = parametersModuleValue;
     }
     if (usesAdvancedTargetCollections) {
       payload["targetCollections"] = targetCollections;
@@ -387,12 +398,12 @@ const AdvancedSettings: React.FC<Props> = (props) => {
 
     // Parent handles saving of all tabs
     if (!props.isEditing) {
-      props.createStep(getPayload());
+      props.createStep(getPayload(), props.activityType);
     } else {
-      props.updateStep(getPayload());
+      props.updateStep(getPayload(), props.activityType);
     }
-    (stepType === "matching" || stepType === "merging") ? setIsSubmit(true) : setIsSubmit(false);
-    if (stepType !== "matching" && stepType !== "merging") {
+    (stepType === "matching" || stepType === "merging" || stepType === "mapping") ? setIsSubmit(true) : setIsSubmit(false);
+    if (stepType !== "matching" && stepType !== "merging" && stepType !== "mapping") {
       props.setOpenStepSettings(false);
       props.resetTabs();
     }
@@ -461,6 +472,11 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       }
     }
 
+    if (event.target.id === "parametersModuleInput") {
+      setParametersModuleValue(event.target.value);
+      setParametersModuleTouched(true);
+    }
+
     if (event.target.id === "interceptors") {
       setInterceptors(event.target.value);
       setInterceptorsTouched(true);
@@ -500,6 +516,11 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     if (event.target.id === "headers") {
       setHeadersValid(isValidJSON(event.target.value));
       props.setIsValid(isValidJSON(event.target.value));
+    }
+
+    if (event.target.id === "parametersModuleInput") {
+      setParametersModuleValue(event.target.value);
+      setParametersModuleTouched(true);
     }
 
     if (event.target.id === "interceptors") {
@@ -1121,6 +1142,34 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                   placement="left"
                 >
                   <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
+                </HCTooltip>
+              </div>
+            </Col>
+          </Row> : ""
+        }
+        {stepType === "mapping" ?
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>{"Parameters Module Path: "}</FormLabel>
+            <Col className={"d-flex"}>
+              <HCInput
+                id="parametersModuleInput"
+                ref={parametersModuleRef}
+                tabIndex={0}
+                onKeyDown={(e) => serviceNameKeyDownHandler(e, "parametersModule")}
+                placeholder="example: /custom-modules/mapping-params/example-mapping-params.sjs"
+                value={parametersModuleValue}
+                onChange={handleChange}
+                disabled={!canReadWrite}
+                className={styles.inputParametersModule}
+                onBlur={sendPayload}
+              />
+              <div className={"p-2 d-flex"}>
+                <HCTooltip
+                  text={tooltips.parametersModuleTooltip}
+                  id="parameters-module-tooltip"
+                  placement="left"
+                >
+                  <QuestionCircleFill data-testid="parameters-question-circle" aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
                 </HCTooltip>
               </div>
             </Col>

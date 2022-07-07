@@ -46,6 +46,7 @@ describe("Advanced step settings", () => {
     expect(getByText("Coarse-grained")).toBeInTheDocument();
 
     expect(queryByText("Entity Validation:")).not.toBeInTheDocument();
+    expect(queryByText("Parameters Module Path:")).not.toBeInTheDocument();
     expect(queryByText("Source Record Scope:")).not.toBeInTheDocument();
 
     expect(getByText("Batch Size:")).toBeInTheDocument();
@@ -113,7 +114,7 @@ describe("Advanced step settings", () => {
   test("Verify edit advanced settings for Mapping", async () => {
     const clearStepData = {...data.advancedMapping};
     clearStepData.stepData.additionalCollections = [];
-    const {getByText, getAllByText, getByLabelText} = render(
+    const {getByText, getAllByText, getByLabelText, getByPlaceholderText, getByTestId} = render(
       <AdvancedSettings {...clearStepData} />
     );
 
@@ -135,6 +136,10 @@ describe("Advanced step settings", () => {
     expect(getByText("Coarse-grained")).toBeInTheDocument();
 
     expect(getByText("Entity Validation:")).toBeInTheDocument();
+    expect(getByText("Parameters Module Path:")).toBeInTheDocument();
+    expect(getByPlaceholderText("example: /custom-modules/mapping-params/example-mapping-params.sjs")).toBeInTheDocument();
+    fireEvent.mouseOver(getByTestId("parameters-question-circle"));
+    expect((await(waitForElement(() => getByText("Custom module that defines custom mapping parameters for use in mapping expressions"))))).toBeInTheDocument();
     expect(getByText("Do not validate")).toBeInTheDocument();
 
     expect(getByText("Source Record Scope:")).toBeInTheDocument();

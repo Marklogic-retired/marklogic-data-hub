@@ -259,9 +259,9 @@ const CreateEditLoad: React.FC<Props> = (props) => {
     props.setIsValid(true);
 
     if (!props.isEditing) {
-      props.createLoadArtifact(getPayload());
+      props.createLoadArtifact(getPayload(), "loading");
     } else {
-      props.updateLoadArtifact(getPayload());
+      props.updateLoadArtifact(getPayload(), "loading");
     }
     props.setOpenStepSettings(false);
     props.resetTabs();

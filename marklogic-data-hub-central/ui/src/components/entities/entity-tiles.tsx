@@ -166,13 +166,15 @@ const EntityTiles = (props) => {
     } catch (error) {
       let message = error.response.data.message;
       console.error("Error creating mapping", message);
-      message.indexOf(mapping.name) > -1 ? setModalError({
-        isVisible: true,
-        message: <p aria-label="duplicate-step-error">Unable to create mapping step. A mapping step with the name <b>{mapping.name}</b> already exists.</p>
-      }) : setModalError({
-        isVisible: true,
-        message
-      });
+      if (message.includes("already exists")) {
+        message.indexOf(mapping.name) > -1 ? setModalError({
+          isVisible: true,
+          message: <p aria-label="duplicate-step-error">Unable to create mapping step. A mapping step with the name <b>{mapping.name}</b> already exists.</p>
+        }) : setModalError({
+          isVisible: true,
+          message
+        });
+      }
     }
   };
 
@@ -188,7 +190,6 @@ const EntityTiles = (props) => {
     } catch (error) {
       let message = error;
       console.error("Error updating mapping", message);
-      handleError(error);
       return false;
     }
   };

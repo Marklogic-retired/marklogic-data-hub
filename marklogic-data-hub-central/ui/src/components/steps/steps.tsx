@@ -5,6 +5,8 @@ import CreateEditStep from "../entities/create-edit-step/create-edit-step";
 import AdvancedSettings from "../advanced-settings/advanced-settings";
 import styles from "./steps.module.scss";
 import "./steps.scss";
+import {HCButton} from "@components/common";
+import {faTimesCircle} from "@fortawesome/free-solid-svg-icons";
 import {StepType} from "../../types/curation-types";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencilAlt} from "@fortawesome/free-solid-svg-icons";
@@ -39,6 +41,7 @@ const Steps: React.FC<Props> = (props) => {
   const [hasBasicChanged, setHasBasicChanged] = useState(false);
   const [hasAdvancedChanged, setHasAdvancedChanged] = useState(false);
   const [discardChangesVisible, setDiscardChangesVisible] = useState(false);
+  const [errorModalVisible, setErrorModalVisible] = useState(false);
 
   const [basicPayload, setBasicPayload] = useState({});
   const [advancedPayload, setAdvancedPayload] = useState({});
@@ -66,6 +69,7 @@ const Steps: React.FC<Props> = (props) => {
   };
 
   const discardOk = () => {
+    setErrorModalVisible(false);
     setDiscardChangesVisible(false);
     props.setOpenStepSettings(false);
     resetTabs();
@@ -78,12 +82,39 @@ const Steps: React.FC<Props> = (props) => {
     setDiscardChangesVisible(false);
   };
 
+  const onErrorCancel = () => {
+    setErrorModalVisible(false);
+  };
+
   const discardChanges = <ConfirmYesNo
     visible={discardChangesVisible}
     type="discardChanges"
     onYes={discardOk}
     onNo={discardCancel}
   />;
+
+  const confirmAction = () => {
+    setErrorModalVisible(false);
+  };
+
+  const errorModal = <Modal
+    show={errorModalVisible}>
+    <Modal.Header className={"bb-none"}>
+      <button type="button" className="btn-close" aria-label="Close" onClick={onErrorCancel}></button>
+    </Modal.Header>
+    <Modal.Body className={"text-center pt-0 pb-4"}>
+      <div className={"d-flex align-items-start justify-content-center"}>
+        <FontAwesomeIcon icon={faTimesCircle} className={"text-danger me-4 fs-3"} />
+        <p data-testid={"invalid-path-error"}><b>Parameter Module Path</b> not found. Please enter a valid path.</p>
+        {/* <p aria-label="error-text">Missing <b>getParamaterDefinitions</b> function. Please verify your module file. </p> */}
+      </div>
+      <div>
+        <HCButton variant="primary" aria-label={"Ok"} type="submit" className={"me-2"} onClick={confirmAction}>
+          OK
+        </HCButton>
+      </div>
+    </Modal.Body>
+  </Modal>;
 
   const resetTabs = () => {
     setCurrentTab(DEFAULT_TAB);
@@ -101,14 +132,54 @@ const Steps: React.FC<Props> = (props) => {
     else return Object.assign(newStepFlag ? {} : props.stepData, basicPayload, advancedPayload, payload, {name: name}, {targetFormat: targetFormat});
   };
 
-  const createStep = async (payload) => {
-    await props.createStep(getStepPayload(payload, true));
-    setHasBasicChanged(false);
-    setHasAdvancedChanged(false);
+  const createStep = async (payload, stepType) => {
+    if (stepType === "mapping") {
+      try {
+        const response = await props.createStep(getStepPayload(payload, true));
+        if (response.code === 200) {
+          setErrorModalVisible(false);
+          props.setOpenStepSettings(false);
+          setHasBasicChanged(false);
+          setHasAdvancedChanged(false);
+        } else {
+          setErrorModalVisible(true);
+        }
+      } catch (error) {
+        setErrorModalVisible(true);
+      }
+    } else {
+      await props.createStep(getStepPayload(payload, true));
+      setHasBasicChanged(false);
+      setHasAdvancedChanged(false);
+    }
   };
 
-  const updateStep = async (payload) => {
-    await props.updateStep(getStepPayload(payload));
+  const updateStep = async (payload, stepType) => {
+    if (stepType === "mapping") {
+      try {
+        const response = await props.updateStep(getStepPayload(payload));
+        if (response === true) {
+          setErrorModalVisible(false);
+          props.setOpenStepSettings(false);
+          setHasBasicChanged(false);
+          setHasAdvancedChanged(false);
+          resetTabs();
+        } else if (response === false) {
+          setErrorModalVisible(true);
+        } else {
+          props.setOpenStepSettings(false);
+          setHasBasicChanged(false);
+          setHasAdvancedChanged(false);
+          resetTabs();
+        }
+      } catch (error) {
+        setErrorModalVisible(true);
+      }
+    } else {
+      await props.updateStep(getStepPayload(payload));
+      setHasBasicChanged(false);
+      setHasAdvancedChanged(false);
+    }
     setHasBasicChanged(false);
     setHasAdvancedChanged(false);
   };
@@ -273,6 +344,7 @@ const Steps: React.FC<Props> = (props) => {
             <span className={styles.stepDetailsLabel}>Step Details</span>
           </div> : null }
         {discardChanges}
+        {errorModal}
       </div>
     </Modal.Body>
   </Modal>;

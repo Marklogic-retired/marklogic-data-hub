@@ -222,14 +222,11 @@ const ConfirmationModal: React.FC<Props> = (props) => {
               <p>Are you sure you want to delete the <b>{props.boldTextArray[0]}</b> property?</p>
             </>
           )}
-
-          {/* {props.type === ConfirmationType.SaveEntity && (
+          {props.type === ConfirmationType.MissingParameterFunction && (
             <>
-              <p aria-label="save-text">Are you sure you want to save changes to <b>{props.boldTextArray[0]}</b>?</p>
-              <p>{ModelingTooltips.saveEntityConfirm}</p>
+              <p aria-label="error-text">Missing <b>getParamaterDefinitions</b> function. Please verify your module file. </p>
             </>
-          )} */}
-
+          )}
           {(props.type === ConfirmationType.PublishAll) && (
             <>
               <p aria-label="save-all-text">Are you sure you want to publish your changes to the entity model?</p>

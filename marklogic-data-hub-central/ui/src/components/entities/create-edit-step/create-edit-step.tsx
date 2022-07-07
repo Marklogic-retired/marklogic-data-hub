@@ -25,8 +25,8 @@ type Props = {
   targetEntityType: string;
   canReadWrite: boolean;
   canReadOnly: boolean;
-  createStepArtifact: (stepArtifact: any) => void;
-  updateStepArtifact: (stepArtifact: any) => void;
+  createStepArtifact: (stepArtifact: any, stepType: string) => void;
+  updateStepArtifact: (stepArtifact: any, stepType: string) => void;
   currentTab: string;
   setIsValid: any;
   resetTabs: any;
@@ -225,9 +225,9 @@ const CreateEditStep: React.FC<Props> = (props) => {
 
     setIsValid(true);
     if (!props.isEditing) {
-      props.createStepArtifact(getPayload());
+      props.createStepArtifact(getPayload(), props.stepType);
     } else {
-      props.updateStepArtifact(getPayload());
+      props.updateStepArtifact(getPayload(), props.stepType);
     }
     ((props.stepType === StepType.Matching) || (props.stepType === StepType.Merging)) ? setIsSubmit(true) : setIsSubmit(false);
     if (props.stepType !== StepType.Matching && props.stepType !== StepType.Merging) {

@@ -77,13 +77,13 @@ const MappingCard: React.FC<Props> = (props) => {
   const createMappingArtifact = async (payload) => {
     // Update local form state, then save to db
     setMapData(prevState => ({...prevState, ...payload}));
-    await props.createMappingArtifact(payload);
+    return await props.createMappingArtifact(payload);
   };
 
   const updateMappingArtifact = async (payload) => {
     // Update local form state
     setMapData(prevState => ({...prevState, ...payload}));
-    await props.updateMappingArtifact(payload);
+    return await props.updateMappingArtifact(payload);
   };
 
   const handleCardDelete = (name) => {
