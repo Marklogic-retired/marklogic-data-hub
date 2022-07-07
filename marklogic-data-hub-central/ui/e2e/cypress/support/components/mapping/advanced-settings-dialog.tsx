@@ -134,6 +134,22 @@ class AdvancedSettingsDialog {
     }
   }
 
+  setParameterModulePath(modulePath: string) {
+    cy.get("#parametersModuleInput").clear().type(modulePath);
+  }
+
+  saveButton() {
+    return cy.get("#saveButton");
+  }
+
+  verifyInvalidPathError() {
+    return cy.get(`[data-testid="invalid-path-error"]`);
+  }
+
+  confirmError() {
+    return cy.findByText("OK").click();
+  }
+
   cancelSettings(stepName: string) {
     return cy.findByTestId(`${stepName}-cancel-settings`);
   }

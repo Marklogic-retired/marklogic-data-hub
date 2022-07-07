@@ -645,7 +645,7 @@ const AdvancedSettingsTooltips = {
   customModuleURI: 'The path to your custom step module.',
   batchSize: 'The maximum number of items to process in a batch.',
   customHookDeprecated: 'Custom hooks are deprecated and will be removed in a future version. Please use interceptors instead.',
-
+  parametersModuleTooltip: 'Custom module that defines custom mapping parameters for use in mapping expressions',
   /* TO BE DEPRECATED. Please use SecurityTooltips.missingPermission. */
   missingPermission: 'Contact your security administrator for access.',
 };

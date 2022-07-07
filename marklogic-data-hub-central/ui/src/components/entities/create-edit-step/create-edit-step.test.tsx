@@ -37,13 +37,13 @@ describe("Create Edit Step Dialog component", () => {
     fireEvent.click(getByText("Save"));
     expect(data.editMerging.updateStepArtifact).toBeCalledWith({
       name: "mergeCustomers",
-      targetEntityType: "Customer",
       description: "merge customer description",
       collection: "matchCustomers",
       selectedSource: "collection",
       sourceQuery: "cts.collectionQuery(['matchCustomers'])",
-      timestamp: "/envelope/headers/createdOn"
-    });
+      targetEntityType: "Customer",
+      timestamp: "/envelope/headers/createdOn",
+    }, "merging");
   });
 
   test("Verify Edit Merging dialog renders correctly for a read only user", () => {
