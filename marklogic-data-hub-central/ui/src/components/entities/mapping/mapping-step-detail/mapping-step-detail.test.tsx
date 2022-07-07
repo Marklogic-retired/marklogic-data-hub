@@ -2304,6 +2304,27 @@ describe("RTL Source Selector/Source Search tests", () => {
     await (() => expect(mapExp).toHaveTextContent("FirstNamePreferred"));
   });
 
+  test("verify invalid source URI error messaging", async () => {
+    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
+    mockGetUris.mockResolvedValue({status: 200, data: data.mapProps.docUris});
+    mockGetSourceDoc.mockImplementation(() => {
+      throw {response: {data: {message: "Could not find a document with URI: /json/customers/badURI.json"}}};
+    });
+
+    let getByTestId, getByLabelText;
+    await act(async () => {
+      const renderResults = renderWithRouterNoAuthorities(personMappingStepWithData);
+      getByTestId = renderResults.getByTestId;
+      getByLabelText = renderResults.getByLabelText;
+    });
+    await wait(() => expect(getByLabelText("invalid-uri-message")).toBeInTheDocument());
+
+    fireEvent.mouseOver(getByTestId("uri-edit"));
+    fireEvent.mouseOver(getByTestId("pencil-icon"));
+    await wait(() => expect(getByLabelText("edit-uri-tooltip")).toBeInTheDocument());
+  });
+
+
   test("Verify the index value changes correspondently to left or right document uri button click", async () => {
     mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
     mockGetUris.mockResolvedValue({status: 200, data: data.mapProps.docUris});
