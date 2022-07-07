@@ -76,7 +76,24 @@ class GenericMatchModel {
     }
 }
 
+function propertyDefinitionsFromXPath(xpath, namespaces) {
+    const xpathSteps = xpath.split("/").filter((step) => step);
+    return xpathSteps
+      .map((xpathStep, index) => {
+          if (xpathStep.includes(":")) {
+              const [nsPrefix, localname] = xpathStep.split(":");
+              return {
+                  namespace: namespaces[nsPrefix] || "",
+                  localname
+              };
+          } else {
+              return { localname: xpathStep };
+          }
+      });
+}
+
 module.exports = {
     applyInterceptors,
-    GenericMatchModel
+    GenericMatchModel,
+    propertyDefinitionsFromXPath
 }

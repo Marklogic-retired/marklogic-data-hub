@@ -81,89 +81,95 @@ function testApplyContextInterceptor() {
   ];
 }
 
-function testMergeRuleDefinitions() {
-  let mergeStep = {
-    "dataFormat": "json",
-    "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
-    "lastUpdatedLocation": {
-      "documentXPath": "/envelope/headers/createdOn"
+const mergeRuleStep = {
+  "dataFormat": "json",
+  "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+  "lastUpdatedLocation": {
+    "documentXPath": "/envelope/headers/createdOn"
+  },
+  "mergeStrategies": [
+    {
+      "strategyName": "myFavoriteNameSource",
+      "maxSources": 1,
+      "maxValues": 1,
+      "priorityOrder": {
+        "lengthWeight": 0,
+        "timeWeight": 9,
+        "sources": [
+          {
+            "sourceName": "source 1",
+            "weight": 12
+          },
+          {
+            "sourceName": "source 2",
+            "weight": 8
+          }
+        ]
+      }
     },
-    "mergeStrategies": [
-      {
-        "strategyName": "myFavoriteNameSource",
-        "maxSources": 1,
-        "maxValues": 1,
-        "priorityOrder": {
-          "lengthWeight": 0,
-          "timeWeight": 9,
-          "sources": [
-            {
-              "sourceName": "source 1",
-              "weight": 12
-            },
-            {
-              "sourceName": "source 2",
-              "weight": 8
-            }
-          ]
-        }
-      },
-      {
-        "strategyName": "myFavoriteBirthDateSource",
-        "maxSources": 1,
-        "maxValues": 1,
-        "priorityOrder": {
-          "lengthWeight": 0,
-          "timeWeight": 9,
-          "sources": [
-            {
-              "sourceName": "source 1",
-              "weight": 8
-            },
-            {
-              "sourceName": "source 2",
-              "weight": 12
-            }
-          ]
-        }
-      },{
-        "strategyName": "Default Strategy",
-        "maxSources": 1,
-        "maxValues": 1,
-        "priorityOrder": {
-          "lengthWeight": 0,
-          "timeWeight": 9,
-          "sources": [
-            {
-              "sourceName": "source 3",
-              "weight": 12
-            },
-            {
-              "sourceName": "source 1",
-              "weight": 8
-            },
-            {
-              "sourceName": "source 2",
-              "weight": 6
-            }
-          ]
-        },
-        "default": true
+    {
+      "strategyName": "myFavoriteBirthDateSource",
+      "maxSources": 1,
+      "maxValues": 1,
+      "priorityOrder": {
+        "lengthWeight": 0,
+        "timeWeight": 9,
+        "sources": [
+          {
+            "sourceName": "source 1",
+            "weight": 8
+          },
+          {
+            "sourceName": "source 2",
+            "weight": 12
+          }
+        ]
       }
-    ],
-    "mergeRules": [
-      {
-        "entityPropertyPath": "name",
-        "mergeType": "strategy",
-        "mergeStrategyName": "myFavoriteNameSource"
+    },{
+      "strategyName": "Default Strategy",
+      "maxSources": 1,
+      "maxValues": 1,
+      "priorityOrder": {
+        "lengthWeight": 0,
+        "timeWeight": 9,
+        "sources": [
+          {
+            "sourceName": "source 3",
+            "weight": 12
+          },
+          {
+            "sourceName": "source 1",
+            "weight": 8
+          },
+          {
+            "sourceName": "source 2",
+            "weight": 6
+          }
+        ]
       },
-      {
-        "entityPropertyPath": "birthDate",
-        "mergeType": "strategy",
-        "mergeStrategyName": "myFavoriteBirthDateSource"
-      }
-    ]
-  };
+      "default": true
+    }
+  ],
+  "mergeRules": [
+    {
+      "entityPropertyPath": "name",
+      "mergeType": "strategy",
+      "mergeStrategyName": "myFavoriteNameSource"
+    },
+    {
+      "entityPropertyPath": "birthDate",
+      "mergeType": "strategy",
+      "mergeStrategyName": "myFavoriteBirthDateSource"
+    }
+  ]
+};
+
+function copyStep(step) {
+  return Object.assign({}, step, {mergeRules: step.mergeRules.map(mergeRule => Object.assign({}, mergeRule))});
+}
+
+function testMergeRuleDefinitions() {
+  let mergeStep = copyStep(mergeRuleStep);
   let options = {};
   const mergeableInstance = new Mergeable(mergeStep, options);
   const mergeRuleDefinitions = mergeableInstance.mergeRuleDefinitions();
@@ -188,8 +194,59 @@ function testMergeRuleDefinitions() {
   return assertions;
 }
 
+function testBuildMergeDocumentJson() {
+  let mergeStep = copyStep(mergeRuleStep);
+  let options = {};
+  const mergeableInstance = new Mergeable(mergeStep, options);
+  const mergeContentObjects = ["/content/CustMatchMerge1.json","/content/CustMatchMerge2.json","/content/CustMatchMerge3.json"].map(uri => ({
+    uri,
+    value: cts.doc(uri)
+  }));
+  const mergedDocument = mergeableInstance.buildMergeDocument(mergeContentObjects);
+  const assertions = [];
+  const name = mergedDocument.xpath("/envelope/instance/Customer/name");
+  assertions.push(
+    test.assertEqual(1, fn.count(name), `Name should have one property. Merge document: ${xdmp.toJsonString(mergedDocument)}`),
+    test.assertEqual("Holland Wells", fn.string(name),  `Name should follow myFavoriteNameSource strategy. Merge document: ${xdmp.toJsonString(mergedDocument)}`)
+  );
+  const birthDate = mergedDocument.xpath("/envelope/instance/Customer/birthDate");
+  assertions.push(
+    test.assertEqual(1, fn.count(birthDate), `Birth date should have one property. Merge document: ${xdmp.toJsonString(mergedDocument)}`),
+    test.assertEqual("1985-01-01", fn.string(birthDate), `Birth date should follow myFavoriteBirthDateSource strategy. Merge properties: ${xdmp.toJsonString(mergedDocument)}`)
+  );
+  return assertions;
+}
+
+function testBuildMergeDocumentXml() {
+  let mergeStep = Object.assign(copyStep(mergeRuleStep), {targetEntityType: "http://example.org/NamespacedCustomer-0.0.1/NamespacedCustomer"});
+  let options = {};
+  const mergeableInstance = new Mergeable(mergeStep, options);
+  const mergeContentObjects = ["/content/NsCustMatchMerge1.xml","/content/NsCustMatchMerge2.xml","/content/NsCustMatchMerge3.xml"].map(uri => ({
+    uri,
+    value: cts.doc(uri)
+  }));
+  const mergedDocument = mergeableInstance.buildMergeDocument(mergeContentObjects);
+  const assertions = [];
+  const name = mergedDocument.xpath("/*:envelope/*:instance/*:NamespacedCustomer/*:name");
+  assertions.push(
+    test.assertEqual(1, fn.count(mergedDocument.xpath("/*:envelope/*:instance/*:NamespacedCustomer")), `Should only have 1 root entity instance. Merge document: ${xdmp.toJsonString(mergedDocument)}`)
+  );
+  assertions.push(
+    test.assertEqual(1, fn.count(name), `Name should have one property. Merge document: ${xdmp.toJsonString(mergedDocument)}`),
+    test.assertEqual("Holland Wells", fn.string(name),  `Name should follow myFavoriteNameSource strategy. Merge document: ${xdmp.toJsonString(mergedDocument)}`)
+  );
+  const birthDate = mergedDocument.xpath("/*:envelope/*:instance/*:NamespacedCustomer/*:birthDate");
+  assertions.push(
+    test.assertEqual(1, fn.count(birthDate), `Birth date should have one property. Merge document: ${xdmp.toJsonString(mergedDocument)}`),
+    test.assertEqual("1985-01-01", fn.string(birthDate), `Birth date should follow myFavoriteBirthDateSource strategy. Merge properties: ${xdmp.toJsonString(mergedDocument)}`)
+  );
+  return assertions;
+}
+
 []
   .concat(testMergeableClass())
   .concat(testApplyContext())
   .concat(testApplyContextInterceptor())
-  .concat(testMergeRuleDefinitions());
+  .concat(testMergeRuleDefinitions())
+  .concat(testBuildMergeDocumentJson())
+  .concat(testBuildMergeDocumentXml());
