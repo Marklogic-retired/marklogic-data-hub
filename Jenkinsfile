@@ -10,12 +10,12 @@ def props;
 githubAPIUrl="https://api.github.com/repos/marklogic/marklogic-data-hub"
 mlFFHost=""
 cypressFFBaseUrl=""
-fFsetupcomplete=""
-fFtestcomplete=""
+fFsetupcomplete=false
+fFtestcomplete=false
 mlChHost=""
 cypressChBaseUrl=""
-chsetupcomplete=""
-chtestcomplete=""
+chsetupcomplete=false
+chtestcomplete=false
 
 def loadProperties() {
     node {
