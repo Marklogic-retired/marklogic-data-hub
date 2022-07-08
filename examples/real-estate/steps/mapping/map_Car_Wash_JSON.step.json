@@ -1,0 +1,51 @@
+{
+  "collections": [
+    "map_Car_Wash_JSON",
+    "Car_Wash"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Car_Wash_JSON",
+  "targetEntityType": "http://example.org/Car_Wash-1.0.0/Car_Wash",
+  "description": "Mapping Car Wash Data to Entity Model",
+  "collection": [
+    "loadCarWash_JSON"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadCarWash_JSON'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Car_Wash_JSON-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-06-28T10:43:30.348099-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "Area_ID"
+    },
+    "Name": {
+      "sourcedFrom": "Name"
+    },
+    "Rating": {
+      "sourcedFrom": "Rating"
+    },
+    "Car_Wash_Type": {
+      "sourcedFrom": "node(\"Machine/Hand\")"
+    },
+    "Located_In": {
+      "sourcedFrom": "Area_ID"
+    }
+  },
+  "namespaces": { },
+  "uriExpression": "$URI"
+}

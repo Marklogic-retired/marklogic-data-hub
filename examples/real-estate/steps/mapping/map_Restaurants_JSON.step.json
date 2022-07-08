@@ -1,0 +1,51 @@
+{
+  "collections": [
+    "map_Restaurants_JSON",
+    "Restaurants"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Restaurants_JSON",
+  "targetEntityType": "http://example.org/Restaurants-1.0.0/Restaurants",
+  "description": "Mapping Restaurants Data to Entity Model",
+  "collection": [
+    "loadRestaurants_JSON"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadRestaurants_JSON'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Restaurants_JSON-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-06-29T13:05:23.533774-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "Area_ID"
+    },
+    "Restaurant_Name": {
+      "sourcedFrom": "Restaurant_Name"
+    },
+    "Cuisine": {
+      "sourcedFrom": "Cuisine"
+    },
+    "Rating": {
+      "sourcedFrom": "Rating"
+    },
+    "RestaurantsOf": {
+      "sourcedFrom": "Area_ID"
+    }
+  },
+  "namespaces": { },
+  "uriExpression": "$URI"
+}

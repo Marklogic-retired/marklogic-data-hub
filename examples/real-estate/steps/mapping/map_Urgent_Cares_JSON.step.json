@@ -1,0 +1,53 @@
+{
+  "collections": [
+    "map_Urgent_Cares_JSON",
+    "Urgent_Cares"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Urgent_Cares_JSON",
+  "targetEntityType": "http://example.org/Urgent_Cares-1.0.0/Urgent_Cares",
+  "description": "Mapping Urgent Cares Data to Entity Model",
+  "collection": [
+    "loadUrgentCares_JSON"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadUrgentCares_JSON'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Urgent_Cares_JSON-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-06-29T13:44:12.898286-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "Area_ID"
+    },
+    "Name": {
+      "sourcedFrom": "Name"
+    },
+    "Distance_Miles": {
+      "sourcedFrom": "Distance_Miles"
+    },
+    "Rating": {
+      "sourcedFrom": "Rating"
+    },
+    "Avg_WaitTime_Mins": {
+      "sourcedFrom": "Avg_WaitTime_Mins"
+    },
+    "UrgentCaresOf": {
+      "sourcedFrom": "Area_ID"
+    }
+  },
+  "namespaces": { }
+}

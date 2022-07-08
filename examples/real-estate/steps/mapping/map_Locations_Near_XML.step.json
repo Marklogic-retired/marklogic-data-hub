@@ -1,0 +1,52 @@
+{
+  "collections": [
+    "map_Locations_Near_XML",
+    "Locations_Near"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Locations_Near_XML",
+  "targetEntityType": "http://example.org/Locations_Near-1.0.0/Locations_Near",
+  "description": "Mapping Locations_Near Data to Entity Model",
+  "collection": [
+    "loadLocationsNear_XML"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadLocationsNear_XML'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Locations_Near_XML-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-06-29T12:07:19.231885-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "record/Area_ID"
+    },
+    "Location_Type": {
+      "sourcedFrom": "record/Location_Type"
+    },
+    "Distance_Miles": {
+      "sourcedFrom": "record/Distance_Miles"
+    },
+    "Rating": {
+      "sourcedFrom": "record/Rating"
+    },
+    "LocatedNear": {
+      "sourcedFrom": "record/Area_ID"
+    }
+  },
+  "namespaces": {
+    "entity-services": "http://marklogic.com/entity-services"
+  }
+}

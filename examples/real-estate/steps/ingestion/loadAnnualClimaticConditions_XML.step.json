@@ -20,5 +20,5 @@
   "stepDefinitionName": "default-ingestion",
   "stepDefinitionType": "ingestion",
   "stepId": "loadAnnualClimaticConditions_XML-ingestion",
-  "lastUpdated": "2022-06-16T09:18:31.227345-07:00"
+  "lastUpdated": "2022-07-07T11:06:46.814442-07:00"
 }

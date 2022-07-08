@@ -1,0 +1,67 @@
+{
+  "collections": [
+    "map_Air_Bnb_Listings_JSON",
+    "Air_Bnb_Listings"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Air_Bnb_Listings_JSON",
+  "targetEntityType": "http://example.org/Air_Bnb_Listings-1.0.0/Air_Bnb_Listings",
+  "description": "Mapping Air Bnb Listings Data to Entity Model",
+  "collection": [
+    "loadAirBnbListings_JSON"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadAirBnbListings_JSON'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Air_Bnb_Listings_JSON-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-07-11T10:46:14.388809-07:00",
+  "properties": {
+    "Rate_Per_Night": {
+      "sourcedFrom": "node(\"Rate/Night_$\")"
+    },
+    "Area_ID": {
+      "sourcedFrom": "Area_ID"
+    },
+    "Name": {
+      "sourcedFrom": "Name"
+    },
+    "Rating": {
+      "sourcedFrom": "Rating"
+    },
+    "LocatedIn": {
+      "sourcedFrom": "Area_ID"
+    }
+  },
+  "namespaces": { },
+  "uriExpression": "$URI",
+  "relatedEntityMappings": [
+    {
+      "relatedEntityMappingId": "Air_Bnb_Listings.LocatedIn:USZips",
+      "properties": {
+        "Area_ID": {
+          "sourcedFrom": "Area_ID"
+        }
+      },
+      "targetEntityType": "http://example.org/USZips-1.0.0/USZips",
+      "collections": [
+        "map_Air_Bnb_Listings_JSON",
+        "USZips"
+      ],
+      "permissions": "data-hub-common,read,data-hub-common,update"
+    }
+  ]
+}

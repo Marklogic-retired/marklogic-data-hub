@@ -1,0 +1,67 @@
+{
+  "collections": [
+    "map_Ratings_XML",
+    "Ratings_NS_XML"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Ratings_XML",
+  "targetEntityType": "http://example.org/Ratings_NS_XML-1.0.0/Ratings_NS_XML",
+  "description": "Mapping Ratings Data to Entity Model",
+  "collection": [
+    "loadRatings_XML"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadRatings_XML'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Ratings_XML-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-06-29T13:04:19.171953-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "record/Area_ID"
+    },
+    "Livability_Score": {
+      "sourcedFrom": "record/Livability_Score"
+    },
+    "Amenities": {
+      "sourcedFrom": "record/Amenities"
+    },
+    "Cost_of_Living": {
+      "sourcedFrom": "record/Cost_of_Living"
+    },
+    "Crime_Rate": {
+      "sourcedFrom": "record/Crime_Rate"
+    },
+    "Employment": {
+      "sourcedFrom": "record/Employment"
+    },
+    "Housing": {
+      "sourcedFrom": "record/Housing"
+    },
+    "Schools": {
+      "sourcedFrom": "record/Schools"
+    },
+    "User_Ratings": {
+      "sourcedFrom": "record/User_Ratings"
+    },
+    "RatingsOf": {
+      "sourcedFrom": "record/Area_ID"
+    }
+  },
+  "namespaces": {
+    "entity-services": "http://marklogic.com/entity-services"
+  }
+}

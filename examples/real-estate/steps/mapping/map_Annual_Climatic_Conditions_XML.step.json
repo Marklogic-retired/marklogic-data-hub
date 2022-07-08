@@ -1,0 +1,74 @@
+{
+  "collections": [
+    "map_Annual_Climatic_Conditions_XML",
+    "Annual_Climatic_Conditions"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Annual_Climatic_Conditions_XML",
+  "targetEntityType": "http://example.org/Annual_Climatic_Conditions-1.0.0/Annual_Climatic_Conditions",
+  "description": "Mapping Annual Climatic Conditions Data to Entity Model",
+  "collection": [
+    "loadAnnualClimaticConditions_XML"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadAnnualClimaticConditions_XML'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Annual_Climatic_Conditions_XML-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-06-27T16:24:15.352679-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "record/Area_ID"
+    },
+    "Humidity_Percentage": {
+      "sourcedFrom": "record/Humidity_Percent"
+    },
+    "Min_Temp_F": {
+      "sourcedFrom": "record/Min_Temp_F"
+    },
+    "Max_Temp_F": {
+      "sourcedFrom": "record/Max_Temp_F"
+    },
+    "Windiness_mph": {
+      "sourcedFrom": "record/Windiness_mph"
+    },
+    "Precip_Type": {
+      "sourcedFrom": "record/Precip_Type"
+    },
+    "ClimateOf": {
+      "sourcedFrom": "record/Area_ID"
+    }
+  },
+  "namespaces": {
+    "entity-services": "http://marklogic.com/entity-services"
+  },
+  "relatedEntityMappings": [
+    {
+      "relatedEntityMappingId": "Annual_Climatic_Conditions.ClimateOf:USZips",
+      "properties": {
+        "Area_ID": {
+          "sourcedFrom": "record/Area_ID"
+        }
+      },
+      "targetEntityType": "http://example.org/USZips-1.0.0/USZips",
+      "collections": [
+        "map_Annual_Climatic_Conditions_XML",
+        "USZips"
+      ],
+      "permissions": "data-hub-common,read,data-hub-common,update"
+    }
+  ]
+}

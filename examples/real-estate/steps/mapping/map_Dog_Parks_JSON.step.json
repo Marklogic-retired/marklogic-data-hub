@@ -1,0 +1,54 @@
+{
+  "collections": [
+    "map_Dog_Parks_JSON",
+    "Dog_Parks"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Dog_Parks_JSON",
+  "targetEntityType": "http://example.org/Dog_Parks-1.0.0/Dog_Parks",
+  "description": "Mapping Dog Parks Data to Entity Model",
+  "collection": [
+    "loadDogParks_JSON"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadDogParks_JSON'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Dog_Parks_JSON-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-06-28T14:22:41.515522-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "Area_ID"
+    },
+    "Name": {
+      "sourcedFrom": "Name"
+    },
+    "Rating": {
+      "sourcedFrom": "Rating"
+    },
+    "Distance_Miles": {
+      "sourcedFrom": "Distance_Miles"
+    },
+    "Activities": {
+      "sourcedFrom": "Activities"
+    },
+    "LocatedNear": {
+      "sourcedFrom": "Area_ID"
+    }
+  },
+  "namespaces": { },
+  "uriExpression": "$URI"
+}

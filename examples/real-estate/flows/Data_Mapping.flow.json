@@ -1,0 +1,232 @@
+{
+  "name": "Data_Mapping",
+  "steps": {
+    "1": {
+      "stepId": "map_Air_Bnb_Listings_XML-mapping"
+    },
+    "2": {
+      "stepId": "map_Airports_JSON-mapping"
+    },
+    "3": {
+      "stepId": "map_Airports_XML-mapping"
+    },
+    "4": {
+      "stepId": "map_USZips_JSON-mapping"
+    },
+    "5": {
+      "stepId": "map_Air_Bnb_Listings_JSON-mapping"
+    },
+    "6": {
+      "stepId": "map_Annual_Climatic_Conditions_JSON-mapping"
+    },
+    "7": {
+      "stepId": "map_Banks_JSON-mapping"
+    },
+    "8": {
+      "stepId": "map_Annual_Climatic_Conditions_XML-mapping"
+    },
+    "9": {
+      "stepId": "map_Banks_XML-mapping"
+    },
+    "10": {
+      "stepId": "map_Car_Rentals_XML-mapping"
+    },
+    "11": {
+      "stepId": "map_Car_Rentals_JSON-mapping"
+    },
+    "12": {
+      "stepId": "map_Car_Services_JSON-mapping"
+    },
+    "13": {
+      "stepId": "map_Car_Services_XML-mapping"
+    },
+    "14": {
+      "stepId": "map_Car_Wash_JSON-mapping"
+    },
+    "15": {
+      "stepId": "map_Car_Wash_XML-mapping"
+    },
+    "16": {
+      "stepId": "map_Colleges_XML-mapping"
+    },
+    "17": {
+      "stepId": "map_Colleges_JSON-mapping"
+    },
+    "18": {
+      "stepId": "map_Commercial_Properties_XML-mapping"
+    },
+    "19": {
+      "stepId": "map_Commercial_Properties_JSON-mapping"
+    },
+    "20": {
+      "stepId": "map_Day_Cares_XML-mapping"
+    },
+    "21": {
+      "stepId": "map_Day_Cares_JSON-mapping"
+    },
+    "22": {
+      "stepId": "map_Demographics_XML-mapping"
+    },
+    "23": {
+      "stepId": "map_Demographics_JSON-mapping"
+    },
+    "24": {
+      "stepId": "map_Dog_Parks_XML-mapping"
+    },
+    "25": {
+      "stepId": "map_Dog_Parks_JSON-mapping"
+    },
+    "26": {
+      "stepId": "map_Emergency_Services_XML-mapping"
+    },
+    "27": {
+      "stepId": "map_Emergency_Services_JSON-mapping"
+    },
+    "28": {
+      "stepId": "map_Environmental_Risk_XML-mapping"
+    },
+    "29": {
+      "stepId": "map_Environmental_Risk_JSON-mapping"
+    },
+    "30": {
+      "stepId": "map_Factories_XML-mapping"
+    },
+    "31": {
+      "stepId": "map_Factories_JSON-mapping"
+    },
+    "32": {
+      "stepId": "map_Gas_Stations_JSON-mapping"
+    },
+    "33": {
+      "stepId": "map_Gas_Stations_XML-mapping"
+    },
+    "34": {
+      "stepId": "map_Gyms_XML-mapping"
+    },
+    "35": {
+      "stepId": "map_Gyms_JSON-mapping"
+    },
+    "36": {
+      "stepId": "map_Hiking_Places_XML-mapping"
+    },
+    "37": {
+      "stepId": "map_Hiking_Places_JSON-mapping"
+    },
+    "38": {
+      "stepId": "map_Hospitals_XML-mapping"
+    },
+    "39": {
+      "stepId": "map_Hospitals_JSON-mapping"
+    },
+    "40": {
+      "stepId": "map_Hotels_XML-mapping"
+    },
+    "41": {
+      "stepId": "map_Hotels_JSON-mapping"
+    },
+    "42": {
+      "stepId": "map_Lands_XML-mapping"
+    },
+    "43": {
+      "stepId": "map_Local_Legal_Protections_XML-mapping"
+    },
+    "44": {
+      "stepId": "map_Local_Legal_Protections_JSON-mapping"
+    },
+    "45": {
+      "stepId": "map_Locations_Near_XML-mapping"
+    },
+    "46": {
+      "stepId": "map_Locations_Near_JSON-mapping"
+    },
+    "47": {
+      "stepId": "map_Military_Base_XML-mapping"
+    },
+    "48": {
+      "stepId": "map_Military_Base_JSON-mapping"
+    },
+    "49": {
+      "stepId": "map_Parks_and_Recreation_XML-mapping"
+    },
+    "50": {
+      "stepId": "map_Parks_and_Recreation_JSON-mapping"
+    },
+    "51": {
+      "stepId": "map_Pharmacy_XML-mapping"
+    },
+    "52": {
+      "stepId": "map_Pharmacy_JSON-mapping"
+    },
+    "53": {
+      "stepId": "map_Pollution_Quality_Index_XML-mapping"
+    },
+    "54": {
+      "stepId": "map_Pollution_Quality_Index_JSON-mapping"
+    },
+    "55": {
+      "stepId": "map_Post_Offices_XML-mapping"
+    },
+    "56": {
+      "stepId": "map_Post_Offices_JSON-mapping"
+    },
+    "57": {
+      "stepId": "map_Private_Schools_XML-mapping"
+    },
+    "58": {
+      "stepId": "map_Private_Schools_JSON-mapping"
+    },
+    "59": {
+      "stepId": "map_Public_Schools_XML-mapping"
+    },
+    "60": {
+      "stepId": "map_Public_Schools_JSON-mapping"
+    },
+    "61": {
+      "stepId": "map_Ratings_JSON-mapping"
+    },
+    "62": {
+      "stepId": "map_Ratings_XML-mapping"
+    },
+    "63": {
+      "stepId": "map_Restaurants_XML-mapping"
+    },
+    "64": {
+      "stepId": "map_Restaurants_JSON-mapping"
+    },
+    "65": {
+      "stepId": "map_Shopping_Centers_JSON-mapping"
+    },
+    "66": {
+      "stepId": "map_Shoping_Centers_XML-mapping"
+    },
+    "67": {
+      "stepId": "map_Storage_Spaces_JSON-mapping"
+    },
+    "68": {
+      "stepId": "map_Storage_Spaces_XML-mapping"
+    },
+    "69": {
+      "stepId": "map_Swimming_Pools_XML-mapping"
+    },
+    "70": {
+      "stepId": "map_Swimming_Pools_JSON-mapping"
+    },
+    "71": {
+      "stepId": "map_Theatres_XML-mapping"
+    },
+    "72": {
+      "stepId": "map_Theatres_JSON-mapping"
+    },
+    "73": {
+      "stepId": "map_USZips_XML-mapping"
+    },
+    "74": {
+      "stepId": "map_Urgent_Cares_XML-mapping"
+    },
+    "75": {
+      "stepId": "map_Urgent_Cares_JSON-mapping"
+    }
+  },
+  "description": "Mapping Data to Entities",
+  "lastUpdated": "2022-07-07T13:40:33.205327-07:00"
+}

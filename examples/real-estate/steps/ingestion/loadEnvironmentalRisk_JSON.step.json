@@ -20,5 +20,5 @@
   "stepDefinitionName": "default-ingestion",
   "stepDefinitionType": "ingestion",
   "stepId": "loadEnvironmentalRisk_JSON-ingestion",
-  "lastUpdated": "2022-06-15T22:38:17.514314-07:00"
+  "lastUpdated": "2022-07-07T11:06:46.859639-07:00"
 }

@@ -1,0 +1,53 @@
+{
+  "collections": [
+    "map_Post_Offices_JSON",
+    "Post_Offices"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Post_Offices_JSON",
+  "targetEntityType": "http://example.org/Post_Offices-1.0.0/Post_Offices",
+  "description": "Mapping Post Offices Data to Entity Model",
+  "collection": [
+    "loadPostOffices_JSON"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadPostOffices_JSON'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Post_Offices_JSON-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-06-29T12:50:12.454201-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "Area_ID"
+    },
+    "Name": {
+      "sourcedFrom": "Name"
+    },
+    "Rating": {
+      "sourcedFrom": "Rating"
+    },
+    "Address": {
+      "sourcedFrom": "Address"
+    },
+    "Fax": {
+      "sourcedFrom": "Fax"
+    },
+    "LocatedIn": {
+      "sourcedFrom": "Area_ID"
+    }
+  },
+  "namespaces": { }
+}

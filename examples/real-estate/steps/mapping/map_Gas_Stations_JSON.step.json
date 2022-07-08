@@ -1,0 +1,54 @@
+{
+  "collections": [
+    "map_Gas_Stations_JSON",
+    "Gas_Stations"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Gas_Stations_JSON",
+  "targetEntityType": "http://example.org/Gas_Stations-1.0.0/Gas_Stations",
+  "description": "Mapping Gas Stations Data to Entity Model",
+  "collection": [
+    "loadGasStations_JSON"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadGasStations_JSON'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Gas_Stations_JSON-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-07-06T14:59:43.20318-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "Area_ID"
+    },
+    "Name": {
+      "sourcedFrom": "Name"
+    },
+    "Rating": {
+      "sourcedFrom": "Rating"
+    },
+    "Price_Gallon": {
+      "sourcedFrom": "Price_Gallon[. castable as xs:decimal]"
+    },
+    "Air_Pump": {
+      "sourcedFrom": "Air_Pump"
+    },
+    "LocatedIn": {
+      "sourcedFrom": "Area_ID"
+    }
+  },
+  "namespaces": { },
+  "uriExpression": "$URI"
+}

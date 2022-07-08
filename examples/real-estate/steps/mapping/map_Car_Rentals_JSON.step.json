@@ -1,0 +1,52 @@
+{
+  "collections": [
+    "map_Car_Rentals_JSON",
+    "Car_Rentals"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Car_Rentals_JSON",
+  "targetEntityType": "http://example.org/Car_Rentals-1.0.0/Car_Rentals",
+  "description": "Mapping Car Rentals Data to Entity Model",
+  "collection": [
+    "loadCarRentals_JSON"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadCarRentals_JSON'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Car_Rentals_JSON-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-06-28T10:28:49.775798-07:00",
+  "uriExpression": "$URI",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "Area_ID"
+    },
+    "Name": {
+      "sourcedFrom": "Name"
+    },
+    "Rating": {
+      "sourcedFrom": "Rating"
+    },
+    "Average_Rate_Per_Day": {
+      "sourcedFrom": "node(\"Average_Rate/Day\")"
+    },
+    "CarRentalsOf": {
+      "sourcedFrom": "Area_ID"
+    }
+  },
+  "namespaces": { },
+  "relatedEntityMappings": [ ]
+}

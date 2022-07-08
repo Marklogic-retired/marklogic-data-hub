@@ -1,0 +1,57 @@
+{
+  "collections": [
+    "map_Hotels_JSON",
+    "Hotels"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Hotels_JSON",
+  "targetEntityType": "http://example.org/Hotels-1.0.0/Hotels",
+  "description": "Mapping Hotels Data to Entity Model",
+  "collection": [
+    "loadHotels_JSON"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadHotels_JSON'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Hotels_JSON-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-07-06T15:26:39.50901-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "Area_ID"
+    },
+    "Name": {
+      "sourcedFrom": "Name"
+    },
+    "Phone_Number": {
+      "sourcedFrom": "Phone_Number"
+    },
+    "Rating": {
+      "sourcedFrom": "Rating"
+    },
+    "Pool": {
+      "sourcedFrom": "Pool"
+    },
+    "Min_Rate_per_Night": {
+      "sourcedFrom": "string(concat(\"$\", format-number(node(\"Min_Rate/Night_$\"),\"#,##0.00\") ))"
+    },
+    "HotelsIn": {
+      "sourcedFrom": "Area_ID"
+    }
+  },
+  "namespaces": { },
+  "uriExpression": "$URI"
+}

@@ -1,0 +1,71 @@
+{
+  "collections": [
+    "map_Shoping_Centers_XML",
+    "Shopping_Centers"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Shoping_Centers_XML",
+  "targetEntityType": "http://example.org/Shopping_Centers-1.0.0/Shopping_Centers",
+  "description": "Mapping Shoping Centers Data to Entity Model",
+  "collection": [
+    "loadShoppingCenters_XML"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadShoppingCenters_XML'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Shoping_Centers_XML-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-07-06T16:02:35.134772-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "record/Area_ID"
+    },
+    "Shopping_Center_Name": {
+      "sourcedFrom": "record/Shopping_Center_Name"
+    },
+    "Shop": {
+      "sourcedFrom": "record/Shop",
+      "properties": {
+        "Name": {
+          "sourcedFrom": "Name"
+        },
+        "Rating": {
+          "sourcedFrom": "Rating"
+        },
+        "Lease_End_Date": {
+          "sourcedFrom": "xs:date(format-dateTime(Lease_End, \"[Y0001]-[M01]-[D01]\"))"
+        }
+      },
+      "targetEntityType": "#/definitions/ShopsDetails"
+    },
+    "Rating": {
+      "sourcedFrom": "record/Rating"
+    },
+    "Parking": {
+      "sourcedFrom": "record/Parking"
+    },
+    "Wheelchair_Accessibility": {
+      "sourcedFrom": "record/Wheelchair_Accessibility"
+    },
+    "LocatedNear": {
+      "sourcedFrom": "record/Area_ID"
+    }
+  },
+  "namespaces": {
+    "entity-services": "http://marklogic.com/entity-services"
+  },
+  "uriExpression": "$URI"
+}

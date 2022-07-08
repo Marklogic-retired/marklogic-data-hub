@@ -1,0 +1,53 @@
+{
+  "collections": [
+    "map_Pollution_Quality_Index_JSON",
+    "Pollution_Quality_Index"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Pollution_Quality_Index_JSON",
+  "targetEntityType": "http://example.org/Pollution_Quality_Index-1.0.0/Pollution_Quality_Index",
+  "description": "Mapping Pollution Quality Index Data to Entity Model",
+  "collection": [
+    "loadPollutionQuality_JSON"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadPollutionQuality_JSON'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Pollution_Quality_Index_JSON-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-06-29T12:44:59.395799-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "Area_ID"
+    },
+    "Air_Quality_Index": {
+      "sourcedFrom": "Air_Quality_Index"
+    },
+    "UV": {
+      "sourcedFrom": "UV"
+    },
+    "Pressure_in": {
+      "sourcedFrom": "Pressure_in"
+    },
+    "Noise_dB": {
+      "sourcedFrom": "Noise_dB"
+    },
+    "QualityOf": {
+      "sourcedFrom": "Area_ID"
+    }
+  },
+  "namespaces": { }
+}

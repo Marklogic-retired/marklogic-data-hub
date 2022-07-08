@@ -1,0 +1,49 @@
+{
+  "collections": [
+    "map_Demographics_XML",
+    "Demographics"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Demographics_XML",
+  "targetEntityType": "http://example.org/Demographics-1.0.0/Demographics",
+  "description": "Mapping Demographics Data to Entity Model",
+  "collection": [
+    "loadDemographics_XML"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadDemographics_XML'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Demographics_XML-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-06-28T14:19:45.638834-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "record/Area_ID"
+    },
+    "Median_Age": {
+      "sourcedFrom": "record/Median_Age"
+    },
+    "Kids_Percent": {
+      "sourcedFrom": "record/Kids_Percent"
+    },
+    "DemographicsOf": {
+      "sourcedFrom": "record/Area_ID"
+    }
+  },
+  "namespaces": {
+    "entity-services": "http://marklogic.com/entity-services"
+  }
+}

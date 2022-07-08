@@ -1,0 +1,56 @@
+{
+  "collections": [
+    "map_Swimming_Pools_JSON",
+    "Swimming_Pools"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Swimming_Pools_JSON",
+  "targetEntityType": "http://example.org/Swimming_Pools-1.0.0/Swimming_Pools",
+  "description": "Mapping Swimming Pools Data to Entity Model",
+  "collection": [
+    "loadSwimmingPools_JSON"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadSwimmingPools_JSON'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Swimming_Pools_JSON-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-06-29T13:28:16.725685-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "Area_ID"
+    },
+    "Name": {
+      "sourcedFrom": "Name"
+    },
+    "Rating": {
+      "sourcedFrom": "Rating"
+    },
+    "Hot_Tub": {
+      "sourcedFrom": "Hot_Tub"
+    },
+    "Ages": {
+      "sourcedFrom": "Ages"
+    },
+    "Depth": {
+      "sourcedFrom": "Depth"
+    },
+    "PoolsIn": {
+      "sourcedFrom": "Area_ID"
+    }
+  },
+  "namespaces": { }
+}

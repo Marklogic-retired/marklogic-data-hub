@@ -1,0 +1,52 @@
+{
+  "collections": [
+    "map_Public_Schools_XML",
+    "Public_Schools"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Public_Schools_XML",
+  "targetEntityType": "http://example.org/Public_Schools-1.0.0/Public_Schools",
+  "description": "Mapping Public Schools Data to Entity Model",
+  "collection": [
+    "loadPublicSchools_XML"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadPublicSchools_XML'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Public_Schools_XML-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-06-29T12:57:44.906596-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "record/Area_ID"
+    },
+    "School_Name": {
+      "sourcedFrom": "record/School_Name"
+    },
+    "School_Type": {
+      "sourcedFrom": "record/School_Type"
+    },
+    "Rating": {
+      "sourcedFrom": "record/Rating"
+    },
+    "PublicSchoolsIn": {
+      "sourcedFrom": "record/Area_ID"
+    }
+  },
+  "namespaces": {
+    "entity-services": "http://marklogic.com/entity-services"
+  }
+}

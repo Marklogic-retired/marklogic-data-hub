@@ -1,0 +1,53 @@
+{
+  "collections": [
+    "map_Colleges_JSON",
+    "Colleges"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Colleges_JSON",
+  "targetEntityType": "http://example.org/Colleges-1.0.0/Colleges",
+  "description": "Mapping Colleges Data to Entity Model",
+  "collection": [
+    "loadColleges_JSON"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadColleges_JSON'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Colleges_JSON-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-06-28T10:55:40.670323-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "Area_ID"
+    },
+    "College_Name": {
+      "sourcedFrom": "College_Name"
+    },
+    "Rating": {
+      "sourcedFrom": "Rating"
+    },
+    "Distance_Miles": {
+      "sourcedFrom": "Distance_Miles"
+    },
+    "Proficiency": {
+      "sourcedFrom": "Proficiency"
+    },
+    "CollegesNear": {
+      "sourcedFrom": "Area_ID"
+    }
+  },
+  "namespaces": { }
+}

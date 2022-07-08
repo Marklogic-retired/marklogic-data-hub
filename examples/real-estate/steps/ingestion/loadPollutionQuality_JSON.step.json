@@ -20,5 +20,5 @@
   "stepDefinitionName": "default-ingestion",
   "stepDefinitionType": "ingestion",
   "stepId": "loadPollutionQuality_JSON-ingestion",
-  "lastUpdated": "2022-06-15T23:00:23.872057-07:00"
+  "lastUpdated": "2022-07-07T11:06:46.349104-07:00"
 }

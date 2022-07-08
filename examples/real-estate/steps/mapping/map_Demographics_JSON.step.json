@@ -1,0 +1,47 @@
+{
+  "collections": [
+    "map_Demographics_JSON",
+    "Demographics"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Demographics_JSON",
+  "targetEntityType": "http://example.org/Demographics-1.0.0/Demographics",
+  "description": "Mapping Demographics Data to Entity Model",
+  "collection": [
+    "loadDemographics_JSON"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadDemographics_JSON'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Demographics_JSON-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-06-28T14:15:17.453871-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "Area_ID"
+    },
+    "Median_Age": {
+      "sourcedFrom": "Median_Age"
+    },
+    "Kids_Percent": {
+      "sourcedFrom": "Kids_Percent"
+    },
+    "DemographicsOf": {
+      "sourcedFrom": "Area_ID"
+    }
+  },
+  "namespaces": { }
+}

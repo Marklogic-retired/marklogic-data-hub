@@ -1,0 +1,53 @@
+{
+  "collections": [
+    "map_Emergency_Services_JSON",
+    "Emergency_Services"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Emergency_Services_JSON",
+  "targetEntityType": "http://example.org/Emergency_Services-1.0.0/Emergency_Services",
+  "description": "Mapping Emergency Services Data to Entity Model",
+  "collection": [
+    "loadEmergencyServices_JSON"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadEmergencyServices_JSON'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Emergency_Services_JSON-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-06-28T14:53:00.387912-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "Area_ID"
+    },
+    "Type": {
+      "sourcedFrom": "Type"
+    },
+    "Distance_Miles": {
+      "sourcedFrom": "Distance_Miles"
+    },
+    "Rating": {
+      "sourcedFrom": "Rating"
+    },
+    "Phone_Number": {
+      "sourcedFrom": "Phone_Number"
+    },
+    "LocatedIn": {
+      "sourcedFrom": "Area_ID"
+    }
+  },
+  "namespaces": { }
+}

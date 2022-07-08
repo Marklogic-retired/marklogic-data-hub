@@ -1,0 +1,56 @@
+{
+  "collections": [
+    "map_Factories_JSON",
+    "Factories"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Factories_JSON",
+  "targetEntityType": "http://example.org/Factories-1.0.0/Factories",
+  "description": "Mapping Day Cares Data to Entity Model",
+  "collection": [
+    "loadFactories_JSON"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadFactories_JSON'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Factories_JSON-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-06-29T10:01:39.088108-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "Area_ID"
+    },
+    "Name": {
+      "sourcedFrom": "Name"
+    },
+    "Organization_Type": {
+      "sourcedFrom": "Organization_Type"
+    },
+    "Distance": {
+      "sourcedFrom": "Distance"
+    },
+    "Located_In": {
+      "sourcedFrom": "Located_In"
+    },
+    "Speciality": {
+      "sourcedFrom": "Speciality"
+    },
+    "FactoriesNear": {
+      "sourcedFrom": "Area_ID"
+    }
+  },
+  "namespaces": { }
+}

@@ -1,0 +1,55 @@
+{
+  "collections": [
+    "map_Colleges_XML",
+    "Colleges"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Colleges_XML",
+  "targetEntityType": "http://example.org/Colleges-1.0.0/Colleges",
+  "description": "Mapping Colleges Data to Entity Model",
+  "collection": [
+    "loadColleges_XML"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadColleges_XML'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Colleges_XML-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-06-28T10:58:00.448697-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "record/Area_ID"
+    },
+    "College_Name": {
+      "sourcedFrom": "record/College_Name"
+    },
+    "Rating": {
+      "sourcedFrom": "record/Rating"
+    },
+    "Distance_Miles": {
+      "sourcedFrom": "record/Distance_Miles"
+    },
+    "Proficiency": {
+      "sourcedFrom": "record/Proficiency"
+    },
+    "CollegesNear": {
+      "sourcedFrom": "record/Area_ID"
+    }
+  },
+  "namespaces": {
+    "entity-services": "http://marklogic.com/entity-services"
+  }
+}

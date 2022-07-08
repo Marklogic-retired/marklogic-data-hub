@@ -1,0 +1,75 @@
+{
+  "collections": [
+    "map_Shopping_Centers_JSON",
+    "Shopping_Centers"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Shopping_Centers_JSON",
+  "targetEntityType": "http://example.org/Shopping_Centers-1.0.0/Shopping_Centers",
+  "description": "Mapping Shopping Centers Data to Entity Model",
+  "collection": [
+    "loadShoppingCenters_JSON"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadShoppingCenters_JSON'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Shopping_Centers_JSON-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-07-05T17:03:51.524056-07:00",
+  "properties": {
+    "Shop": {
+      "sourcedFrom": "Shop",
+      "properties": {
+        "Lease_End_Date": {
+          "sourcedFrom": "xs:date(format-dateTime(Lease_End, \"[Y0001]-[M01]-[D01]\"))"
+        },
+        "Name": {
+          "sourcedFrom": "Name"
+        },
+        "Rating": {
+          "sourcedFrom": "Rating"
+        },
+        "Lease_Ends": {
+          "sourcedFrom": "Lease_End"
+        },
+        "Lease_End_Time": {
+          "sourcedFrom": "format-dateTime(Lease_End, \"[H01]:[m01]:[s01]:[f01]\")"
+        }
+      },
+      "targetEntityType": "#/definitions/ShopsDetails"
+    },
+    "Area_ID": {
+      "sourcedFrom": "Area_ID"
+    },
+    "Shopping_Center_Name": {
+      "sourcedFrom": "Shopping_Center_Name"
+    },
+    "Rating": {
+      "sourcedFrom": "Rating"
+    },
+    "Parking": {
+      "sourcedFrom": "Parking"
+    },
+    "Wheelchair_Accessibility": {
+      "sourcedFrom": "Wheelchair_Accessibility"
+    },
+    "LocatedNear": {
+      "sourcedFrom": "Area_ID"
+    }
+  },
+  "namespaces": { },
+  "uriExpression": "$URI"
+}
