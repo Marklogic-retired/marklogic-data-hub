@@ -1,0 +1,50 @@
+{
+  "collections": [
+    "map_Military_Base_JSON",
+    "Military_Base"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Military_Base_JSON",
+  "targetEntityType": "http://example.org/Military_Base-1.0.0/Military_Base",
+  "description": "Mapping Military_Base Data to Entity Model",
+  "collection": [
+    "loadMilitaryBase_JSON"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadMilitaryBase_JSON'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Military_Base_JSON-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-06-29T12:08:19.321631-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "Area_ID"
+    },
+    "Name": {
+      "sourcedFrom": "Name"
+    },
+    "Distance": {
+      "sourcedFrom": "Distance"
+    },
+    "Located_In": {
+      "sourcedFrom": "Located_In"
+    },
+    "LocatedNear": {
+      "sourcedFrom": "Area_ID"
+    }
+  },
+  "namespaces": { }
+}

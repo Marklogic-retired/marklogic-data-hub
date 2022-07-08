@@ -1,0 +1,49 @@
+{
+  "collections": [
+    "map_Car_Services_XML",
+    "Car_Services_NS_XML"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Car_Services_XML",
+  "targetEntityType": "http://example.org/Car_Services_NS_XML-1.0.0/Car_Services_NS_XML",
+  "description": "Mapping Car Services Data to Entity Model",
+  "collection": [
+    "loadCarServices_XML"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadCarServices_XML'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Car_Services_XML-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-06-28T10:35:49.47643-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "record/Area_ID"
+    },
+    "Name": {
+      "sourcedFrom": "record/Name"
+    },
+    "Rating": {
+      "sourcedFrom": "record/Rating"
+    },
+    "LocatedIn": {
+      "sourcedFrom": "record/Area_ID"
+    }
+  },
+  "namespaces": {
+    "entity-services": "http://marklogic.com/entity-services"
+  }
+}

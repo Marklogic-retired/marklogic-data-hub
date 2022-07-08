@@ -1,0 +1,58 @@
+{
+  "collections": [
+    "map_Factories_XML",
+    "Factories"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Factories_XML",
+  "targetEntityType": "http://example.org/Factories-1.0.0/Factories",
+  "description": "Mapping Factories Data to Entity Model",
+  "collection": [
+    "loadFactories_XML"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadFactories_XML'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Factories_XML-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-06-29T11:10:44.122122-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "record/Area_ID"
+    },
+    "Name": {
+      "sourcedFrom": "record/Name"
+    },
+    "Organization_Type": {
+      "sourcedFrom": "record/Organization_Type"
+    },
+    "Distance": {
+      "sourcedFrom": "record/Distance"
+    },
+    "Located_In": {
+      "sourcedFrom": "record/Located_In"
+    },
+    "Speciality": {
+      "sourcedFrom": "record/Speciality"
+    },
+    "FactoriesNear": {
+      "sourcedFrom": "record/Area_ID"
+    }
+  },
+  "namespaces": {
+    "entity-services": "http://marklogic.com/entity-services"
+  }
+}

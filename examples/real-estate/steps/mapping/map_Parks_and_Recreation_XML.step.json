@@ -1,0 +1,56 @@
+{
+  "collections": [
+    "map_Parks_and_Recreation_XML",
+    "Parks_and_Recreation"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Parks_and_Recreation_XML",
+  "targetEntityType": "http://example.org/Parks_and_Recreation-1.0.0/Parks_and_Recreation",
+  "description": "Mapping Parks and Recreation Data to Entity Model",
+  "collection": [
+    "loadParksandRecreation_XML"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadParksandRecreation_XML'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Parks_and_Recreation_XML-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-07-06T15:44:46.247951-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "record/Area_ID"
+    },
+    "Name": {
+      "sourcedFrom": "record/Name"
+    },
+    "Amenities": {
+      "sourcedFrom": "record/Amenities"
+    },
+    "Distance_Miles": {
+      "sourcedFrom": "concat(string(record/Distance_Miles), \" Miles\")"
+    },
+    "Rating": {
+      "sourcedFrom": "record/Rating"
+    },
+    "ParksNear": {
+      "sourcedFrom": "record/Area_ID"
+    }
+  },
+  "namespaces": {
+    "entity-services": "http://marklogic.com/entity-services"
+  },
+  "uriExpression": "$URI"
+}

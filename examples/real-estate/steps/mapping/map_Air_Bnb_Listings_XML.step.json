@@ -1,6 +1,6 @@
 {
   "collections": [
-    "Map_Air_Bnb_Listings",
+    "map_Air_Bnb_Listings_XML",
     "Air_Bnb_Listings"
   ],
   "additionalCollections": [ ],
@@ -10,14 +10,14 @@
   "targetFormat": "json",
   "attachSourceDocument": false,
   "sourceRecordScope": "instanceOnly",
-  "name": "Map_Air_Bnb_Listings",
+  "name": "map_Air_Bnb_Listings_XML",
   "targetEntityType": "http://example.org/Air_Bnb_Listings-1.0.0/Air_Bnb_Listings",
   "description": "Mapping Air Bnb Listings Data to Entity Model",
   "collection": [
-    "loadAirBnbListings_JSON"
+    "loadAirBnbListings_XML"
   ],
   "selectedSource": "collection",
-  "sourceQuery": "cts.collectionQuery(['loadAirBnbListings_JSON'])",
+  "sourceQuery": "cts.collectionQuery(['loadAirBnbListings_XML'])",
   "targetDatabase": "data-hub-FINAL",
   "headers": { },
   "interceptors": [ ],
@@ -26,7 +26,27 @@
   "sourceDatabase": "data-hub-STAGING",
   "stepDefinitionName": "entity-services-mapping",
   "stepDefinitionType": "mapping",
-  "stepId": "Map_Air_Bnb_Listings-mapping",
+  "stepId": "map_Air_Bnb_Listings_XML-mapping",
   "acceptsBatch": true,
-  "lastUpdated": "2022-06-23T20:59:55.243911-07:00"
+  "lastUpdated": "2022-06-24T17:42:09.428381-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "record/Area_ID"
+    },
+    "Name": {
+      "sourcedFrom": "record/Name"
+    },
+    "Rating": {
+      "sourcedFrom": "record/Rating"
+    },
+    "Rate_Per_Night": {
+      "sourcedFrom": "record/Rate_Night"
+    },
+    "LocatedIn": {
+      "sourcedFrom": "record/Area_ID"
+    }
+  },
+  "namespaces": {
+    "entity-services": "http://marklogic.com/entity-services"
+  }
 }

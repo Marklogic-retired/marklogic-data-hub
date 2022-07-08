@@ -1,0 +1,54 @@
+{
+  "collections": [
+    "map_Parks_and_Recreation_JSON",
+    "Parks_and_Recreation"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Parks_and_Recreation_JSON",
+  "targetEntityType": "http://example.org/Parks_and_Recreation-1.0.0/Parks_and_Recreation",
+  "description": "Mapping Parks and Recreation Data to Entity Model",
+  "collection": [
+    "loadParksandRecreation_JSON"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadParksandRecreation_JSON'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Parks_and_Recreation_JSON-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-07-06T15:45:31.010143-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "Area_ID"
+    },
+    "Name": {
+      "sourcedFrom": "Name"
+    },
+    "Amenities": {
+      "sourcedFrom": "Amenities"
+    },
+    "Distance_Miles": {
+      "sourcedFrom": "concat(string(Distance_Miles), \" Miles\")"
+    },
+    "Rating": {
+      "sourcedFrom": "Rating"
+    },
+    "ParksNear": {
+      "sourcedFrom": "Area_ID"
+    }
+  },
+  "namespaces": { },
+  "uriExpression": "$URI"
+}

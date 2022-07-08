@@ -1,0 +1,61 @@
+{
+  "collections": [
+    "map_USZips_XML",
+    "USZips"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_USZips_XML",
+  "targetEntityType": "http://example.org/USZips-1.0.0/USZips",
+  "description": "Mapping USZips Data to Entity Model",
+  "collection": [
+    "loadUSZips_XML"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadUSZips_XML'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_USZips_XML-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-06-29T13:43:02.495959-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "root/Area_Id"
+    },
+    "Area_Name": {
+      "sourcedFrom": "root/Area_Name"
+    },
+    "County": {
+      "sourcedFrom": "root/County"
+    },
+    "State": {
+      "sourcedFrom": "root/State"
+    },
+    "State_Id": {
+      "sourcedFrom": "root/State_Id"
+    },
+    "Country": {
+      "sourcedFrom": "root/Country"
+    },
+    "Zip_Code": {
+      "sourcedFrom": "root/ZipCode"
+    },
+    "Population": {
+      "sourcedFrom": "root/population"
+    }
+  },
+  "namespaces": {
+    "entity-services": "http://marklogic.com/entity-services"
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "collections": [
+    "map_Public_Schools_JSON",
+    "Public_Schools"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Public_Schools_JSON",
+  "targetEntityType": "http://example.org/Public_Schools-1.0.0/Public_Schools",
+  "description": "Mapping Public Schools Data to Entity Model",
+  "collection": [
+    "loadPublicSchools_JSON"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadPublicSchools_JSON'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Public_Schools_JSON-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-06-29T12:56:39.815985-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "Area_ID"
+    },
+    "School_Name": {
+      "sourcedFrom": "School_Name"
+    },
+    "School_Type": {
+      "sourcedFrom": "School_Type"
+    },
+    "Rating": {
+      "sourcedFrom": "Rating"
+    },
+    "PublicSchoolsIn": {
+      "sourcedFrom": "Area_ID"
+    }
+  },
+  "namespaces": { }
+}

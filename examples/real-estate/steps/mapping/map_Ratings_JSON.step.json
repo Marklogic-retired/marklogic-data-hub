@@ -1,0 +1,65 @@
+{
+  "collections": [
+    "map_Ratings_JSON",
+    "Ratings"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Ratings_JSON",
+  "targetEntityType": "http://example.org/Ratings-1.0.0/Ratings",
+  "description": "Mapping Ratings Data to Entity Model",
+  "collection": [
+    "loadRatings_JSON"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadRatings_JSON'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Ratings_JSON-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-06-29T13:00:05.384453-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "Area_ID"
+    },
+    "Livability_Score": {
+      "sourcedFrom": "Livability_Score"
+    },
+    "Amenities": {
+      "sourcedFrom": "Amenities"
+    },
+    "Cost_of_Living": {
+      "sourcedFrom": "Cost_of_Living"
+    },
+    "Crime_Rate": {
+      "sourcedFrom": "Crime_Rate"
+    },
+    "Employment": {
+      "sourcedFrom": "Employment"
+    },
+    "Housing": {
+      "sourcedFrom": "Housing"
+    },
+    "Schools": {
+      "sourcedFrom": "Schools"
+    },
+    "User_Ratings": {
+      "sourcedFrom": "User_Ratings"
+    },
+    "RatingsOf": {
+      "sourcedFrom": "Area_ID"
+    }
+  },
+  "namespaces": { }
+}

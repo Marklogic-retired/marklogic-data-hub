@@ -1,0 +1,48 @@
+{
+  "collections": [
+    "map_Storage_Spaces_JSON",
+    "Storage_Spaces"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Storage_Spaces_JSON",
+  "targetEntityType": "http://example.org/Storage_Spaces-1.0.0/Storage_Spaces",
+  "description": "Mapping Storage Spaces Data to Entity Model",
+  "collection": [
+    "loadStorageSpaces_JSON"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadStorageSpaces_JSON'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Storage_Spaces_JSON-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-07-01T17:25:20.922925-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "Area_ID"
+    },
+    "Name": {
+      "sourcedFrom": "Name"
+    },
+    "Min_Rate_Month": {
+      "sourcedFrom": "concat(\"$\",node(\"Min_Rate/Month_$\"))"
+    },
+    "LocatedIn": {
+      "sourcedFrom": "Area_ID"
+    }
+  },
+  "namespaces": { },
+  "uriExpression": "$URI"
+}

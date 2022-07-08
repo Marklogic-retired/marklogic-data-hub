@@ -1,0 +1,55 @@
+{
+  "collections": [
+    "map_Car_Wash_XML",
+    "Car_Wash_NS_XML"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Car_Wash_XML",
+  "targetEntityType": "http://example.org/Car_Wash_NS_XML-1.0.0/Car_Wash_NS_XML",
+  "description": "Mapping Car Wash Data to Entity Model",
+  "collection": [
+    "loadCarWash_XML"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadCarWash_XML'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Car_Wash_XML-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-06-28T10:44:46.710025-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "record/Area_ID"
+    },
+    "Name": {
+      "sourcedFrom": "record/Name"
+    },
+    "Rating": {
+      "sourcedFrom": "record/Rating"
+    },
+    "Car_Wash_Type": {
+      "sourcedFrom": "record/Car_Wash_Type"
+    },
+    "GasStationsNearBy": {
+      "sourcedFrom": "record/Area_ID"
+    },
+    "LocatedIn": {
+      "sourcedFrom": "record/Area_ID"
+    }
+  },
+  "namespaces": {
+    "entity-services": "http://marklogic.com/entity-services"
+  }
+}

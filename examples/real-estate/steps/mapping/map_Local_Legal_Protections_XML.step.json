@@ -1,0 +1,52 @@
+{
+  "collections": [
+    "map_Local_Legal_Protections_XML",
+    "Local_Legal_Protections"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Local_Legal_Protections_XML",
+  "targetEntityType": "http://example.org/Local_Legal_Protections-1.0.0/Local_Legal_Protections",
+  "description": "Mapping Local Legal Protections Data to Entity Model",
+  "collection": [
+    "loadLegalProtections_XML"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadLegalProtections_XML'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Local_Legal_Protections_XML-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-06-29T12:05:21.265474-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "record/Area_ID"
+    },
+    "Housing": {
+      "sourcedFrom": "record/Housing"
+    },
+    "Employment": {
+      "sourcedFrom": "record/Employment"
+    },
+    "Public_Accommodation": {
+      "sourcedFrom": "record/Public_Accommodation"
+    },
+    "LawsOf": {
+      "sourcedFrom": "record/Area_ID"
+    }
+  },
+  "namespaces": {
+    "entity-services": "http://marklogic.com/entity-services"
+  }
+}

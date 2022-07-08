@@ -1,0 +1,59 @@
+{
+  "collections": [
+    "map_Hotels_XML",
+    "Hotels"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Hotels_XML",
+  "targetEntityType": "http://example.org/Hotels-1.0.0/Hotels",
+  "description": "Mapping Hotels Data to Entity Model",
+  "collection": [
+    "loadHotels_XML"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadHotels_XML'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Hotels_XML-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-07-06T15:25:40.620386-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "record/Area_ID"
+    },
+    "Name": {
+      "sourcedFrom": "record/Name"
+    },
+    "Phone_Number": {
+      "sourcedFrom": "record/Phone_Number"
+    },
+    "Rating": {
+      "sourcedFrom": "record/Rating"
+    },
+    "Pool": {
+      "sourcedFrom": "record/Pool"
+    },
+    "Min_Rate_per_Night": {
+      "sourcedFrom": "string(concat(\"$\",format-number(record/Min_Rate_Night,\"#,##0.00\")))"
+    },
+    "HotelsIn": {
+      "sourcedFrom": "record/Area_ID"
+    }
+  },
+  "namespaces": {
+    "entity-services": "http://marklogic.com/entity-services"
+  },
+  "uriExpression": "$URI"
+}

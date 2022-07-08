@@ -1,0 +1,59 @@
+{
+  "collections": [
+    "map_Swimming_Pools_XML",
+    "Swimming_Pools"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Swimming_Pools_XML",
+  "targetEntityType": "http://example.org/Swimming_Pools-1.0.0/Swimming_Pools",
+  "description": "Mapping Swimming Pools Data to Entity Model",
+  "collection": [
+    "loadSwimmingPools_XML"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadSwimmingPools_XML'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Swimming_Pools_XML-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-06-29T13:29:59.548281-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "record/Area_ID"
+    },
+    "Name": {
+      "sourcedFrom": "record/Name"
+    },
+    "Rating": {
+      "sourcedFrom": "record/Rating"
+    },
+    "Hot_Tub": {
+      "sourcedFrom": "record/Hot_Tub"
+    },
+    "Ages": {
+      "sourcedFrom": "record/Ages"
+    },
+    "Depth": {
+      "sourcedFrom": "record/Depth"
+    },
+    "PoolsIn": {
+      "sourcedFrom": "record/Area_ID"
+    }
+  },
+  "namespaces": {
+    "entity-services": "http://marklogic.com/entity-services"
+  },
+  "uriExpression": "$URI"
+}

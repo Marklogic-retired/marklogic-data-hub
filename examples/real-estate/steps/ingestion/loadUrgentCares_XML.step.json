@@ -20,5 +20,5 @@
   "stepDefinitionName": "default-ingestion",
   "stepDefinitionType": "ingestion",
   "stepId": "loadUrgentCares_XML-ingestion",
-  "lastUpdated": "2022-06-16T11:07:52.011063-07:00"
+  "lastUpdated": "2022-07-07T11:06:46.593407-07:00"
 }

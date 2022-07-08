@@ -1,0 +1,55 @@
+{
+  "collections": [
+    "map_Pharmacy_XML",
+    "Pharmacy"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Pharmacy_XML",
+  "targetEntityType": "http://example.org/Pharmacy-1.0.0/Pharmacy",
+  "description": "Mapping Pharmacy Data to Entity Model",
+  "collection": [
+    "loadPharmacies_XML"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadPharmacies_XML'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Pharmacy_XML-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-06-29T12:41:41.535889-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "record/Area_ID"
+    },
+    "Pharmacy_Name": {
+      "sourcedFrom": "record/Pharmacy_Name"
+    },
+    "Rating": {
+      "sourcedFrom": "record/Rating"
+    },
+    "Address": {
+      "sourcedFrom": "record/Address"
+    },
+    "Phone_Number": {
+      "sourcedFrom": "record/Phone_Number"
+    },
+    "PharmaciesIn": {
+      "sourcedFrom": "record/Area_ID"
+    }
+  },
+  "namespaces": {
+    "entity-services": "http://marklogic.com/entity-services"
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "collections": [
+    "map_Banks_JSON",
+    "Bank"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Banks_JSON",
+  "targetEntityType": "http://example.org/Bank-1.0.0/Bank",
+  "description": "Mapping Air Bnb Listings Data to Entity Model",
+  "collection": [
+    "loadBanks_JSON"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadBanks_JSON'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Banks_JSON-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-07-01T13:46:09.494769-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "Area_ID"
+    },
+    "Name": {
+      "sourcedFrom": "Name"
+    },
+    "Rating": {
+      "sourcedFrom": "Rating"
+    },
+    "Distance_Miles": {
+      "sourcedFrom": "concat(Distance_Miles, \" Miles\")"
+    },
+    "Hours": {
+      "sourcedFrom": "Hours"
+    },
+    "Services": {
+      "sourcedFrom": "Services"
+    },
+    "BanksIn": {
+      "sourcedFrom": "Area_ID"
+    }
+  },
+  "namespaces": { },
+  "uriExpression": "$URI",
+  "relatedEntityMappings": [
+    {
+      "relatedEntityMappingId": "Bank.BanksIn:USZips",
+      "properties": {
+        "Area_ID": {
+          "sourcedFrom": "Area_ID"
+        }
+      },
+      "targetEntityType": "http://example.org/USZips-1.0.0/USZips",
+      "collections": [
+        "map_Banks_JSON",
+        "USZips"
+      ],
+      "permissions": "data-hub-common,read,data-hub-common,update"
+    }
+  ]
+}

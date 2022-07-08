@@ -1,0 +1,86 @@
+{
+  "collections": [
+    "map_Airports_JSON",
+    "Airports"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Airports_JSON",
+  "targetEntityType": "http://example.org/Airports-1.0.0/Airports",
+  "description": "Mapping Airports Data to Entity Model",
+  "collection": [
+    "loadAirports_JSON"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadAirports_JSON'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Airports_JSON-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-06-27T11:12:03.679528-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "Area_ID"
+    },
+    "Airport_Type": {
+      "sourcedFrom": "Airport_Type"
+    },
+    "Distance_Miles": {
+      "sourcedFrom": "Distance_Miles"
+    },
+    "Rating": {
+      "sourcedFrom": "Rating"
+    },
+    "HotelsIn": {
+      "sourcedFrom": "Area_ID"
+    },
+    "CarRentalsNearBy": {
+      "sourcedFrom": "Area_ID"
+    }
+  },
+  "namespaces": { },
+  "relatedEntityMappings": [
+    {
+      "relatedEntityMappingId": "Airports.HotelsIn:USZips",
+      "properties": {
+        "Area_ID": {
+          "sourcedFrom": "Area_ID"
+        }
+      },
+      "targetEntityType": "http://example.org/USZips-1.0.0/USZips",
+      "collections": [
+        "map_Airports_JSON",
+        "USZips"
+      ],
+      "permissions": "data-hub-common,read,data-hub-common,update"
+    },
+    {
+      "relatedEntityMappingId": "Airports.HotelsIn:Airports.CarRentalsNearBy:Car_Rentals",
+      "properties": {
+        "Area_ID": {
+          "sourcedFrom": "Area_ID"
+        },
+        "CarRentalsOf": {
+          "sourcedFrom": "Area_ID"
+        }
+      },
+      "targetEntityType": "http://example.org/Car_Rentals-1.0.0/Car_Rentals",
+      "collections": [
+        "map_Airports_JSON",
+        "Car_Rentals"
+      ],
+      "permissions": "data-hub-common,read,data-hub-common,update"
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "collections": [
+    "map_Private_Schools_XML",
+    "Private_Schools"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Private_Schools_XML",
+  "targetEntityType": "http://example.org/Private_Schools-1.0.0/Private_Schools",
+  "description": "Mapping Private Schools Data to Entity Model",
+  "collection": [
+    "loadPrivateSchools_XML"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadPrivateSchools_XML'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Private_Schools_XML-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-06-29T12:55:11.032157-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "record/Area_ID"
+    },
+    "School_Name": {
+      "sourcedFrom": "record/School_Name"
+    },
+    "School_Type": {
+      "sourcedFrom": "record/School_Type"
+    },
+    "Transportation": {
+      "sourcedFrom": "record/Transportation"
+    },
+    "Fees": {
+      "sourcedFrom": "record/Fees"
+    },
+    "Rating": {
+      "sourcedFrom": "record/Rating"
+    },
+    "PrivateSchoolsIn": {
+      "sourcedFrom": "record/Area_ID"
+    }
+  },
+  "namespaces": {
+    "entity-services": "http://marklogic.com/entity-services"
+  }
+}

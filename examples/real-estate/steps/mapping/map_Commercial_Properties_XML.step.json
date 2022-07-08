@@ -1,0 +1,131 @@
+{
+  "collections": [
+    "map_Commercial_Properties_XML",
+    "Commercial_Properties"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Commercial_Properties_XML",
+  "targetEntityType": "http://example.org/Commercial_Properties-1.0.0/Commercial_Properties",
+  "description": "Mapping Commercial Properties Data to Entity Model",
+  "collection": [
+    "loadCommercialProperties_XML"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadCommercialProperties_XML'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Commercial_Properties_XML-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-07-06T14:26:33.184811-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "record/Area_ID"
+    },
+    "PropertyDetails": {
+      "sourcedFrom": "record/Property_Details",
+      "properties": {
+        "Property_ID": {
+          "sourcedFrom": "Property_ID"
+        },
+        "Complex_Name": {
+          "sourcedFrom": "Complex_Name"
+        },
+        "Property_Type": {
+          "sourcedFrom": "Property_Type"
+        },
+        "Precip_Subtype": {
+          "sourcedFrom": "Property_Subtype"
+        },
+        "Property_Subtype": {
+          "sourcedFrom": "Property_Subtype"
+        },
+        "Status": {
+          "sourcedFrom": "Status"
+        },
+        "Address": {
+          "sourcedFrom": "Address",
+          "properties": {
+            "Street_Address": {
+              "sourcedFrom": "Street_Address",
+              "properties": {
+                "Street_Name": {
+                  "sourcedFrom": "Street_Name"
+                },
+                "Street_Number": {
+                  "sourcedFrom": "Street_Number"
+                }
+              },
+              "targetEntityType": "#/definitions/StreetAddress"
+            },
+            "Unit_Number": {
+              "sourcedFrom": "record/Property_Details/Unit_Number"
+            }
+          },
+          "targetEntityType": "#/definitions/PropertyAddress"
+        },
+        "Property_Info": {
+          "sourcedFrom": "Property_Info",
+          "properties": {
+            "Building_Area": {
+              "sourcedFrom": "Building_Area"
+            },
+            "Parking_Ratio": {
+              "sourcedFrom": "Parking_Ratio"
+            },
+            "Built_In": {
+              "sourcedFrom": "Built_In"
+            },
+            "Lot_Size": {
+              "sourcedFrom": "Lot_Size"
+            },
+            "Parking_Slots": {
+              "sourcedFrom": "ceiling(Parking_Slots)"
+            }
+          },
+          "targetEntityType": "#/definitions/PropertyInfo"
+        },
+        "Tenant_Details": {
+          "sourcedFrom": "Tenant_Details",
+          "properties": {
+            "Tenant": {
+              "sourcedFrom": "Tenant"
+            },
+            "Sf_Occupied": {
+              "sourcedFrom": "Sf_Occupied"
+            },
+            "Lease_Type": {
+              "sourcedFrom": "Lease_Type"
+            },
+            "Lease_Ends": {
+              "sourcedFrom": "Lease_Ends"
+            }
+          },
+          "targetEntityType": "#/definitions/TenantDetails"
+        }
+      },
+      "targetEntityType": "#/definitions/Property_Details"
+    },
+    "PropertiesIn": {
+      "sourcedFrom": "record/Area_ID"
+    },
+    "LocationsNear": {
+      "sourcedFrom": "record/Area_ID"
+    }
+  },
+  "namespaces": {
+    "entity-services": "http://marklogic.com/entity-services"
+  },
+  "uriExpression": "$URI"
+}

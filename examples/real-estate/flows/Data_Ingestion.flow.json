@@ -231,8 +231,11 @@
     },
     "77": {
       "stepId": "Gyms-ingestion"
+    },
+    "78": {
+      "stepId": "loadMultipleProperties_JSON-ingestion"
     }
   },
   "description": "Ingesting Real Estate Data",
-  "lastUpdated": "2022-06-16T12:50:50.966959-07:00"
+  "lastUpdated": "2022-07-07T11:11:25.921974-07:00"
 }

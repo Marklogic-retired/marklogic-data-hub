@@ -1,0 +1,99 @@
+{
+  "collections": [
+    "map_Lands_JSON",
+    "Lands"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Lands_JSON",
+  "targetEntityType": "http://example.org/Lands-1.0.0/Lands",
+  "description": "Mapping Lands Data to Entity Model",
+  "collection": [
+    "loadLands_JSON"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadLands_JSON'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Lands_JSON-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-06-29T11:58:08.012623-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "Area_ID"
+    },
+    "Details": {
+      "sourcedFrom": "Details",
+      "properties": {
+        "Property_ID": {
+          "sourcedFrom": "Property_ID"
+        },
+        "Status": {
+          "sourcedFrom": "Status"
+        },
+        "Land_Type": {
+          "sourcedFrom": "Land_Type"
+        },
+        "Address": {
+          "sourcedFrom": "Address",
+          "properties": {
+            "Street_Address": {
+              "sourcedFrom": "Street_Address",
+              "properties": {
+                "Street_Name": {
+                  "sourcedFrom": "Street_Name"
+                },
+                "Street_Number": {
+                  "sourcedFrom": "Street_Number"
+                }
+              },
+              "targetEntityType": "#/definitions/StreetAddress"
+            },
+            "Unit_Number": {
+              "sourcedFrom": "Unit_Number"
+            }
+          },
+          "targetEntityType": "#/definitions/PropertyAddress"
+        },
+        "Land_Details": {
+          "sourcedFrom": "Land_Details",
+          "properties": {
+            "Sqft_Area": {
+              "sourcedFrom": "Sqft_Area"
+            },
+            "Longitude": {
+              "sourcedFrom": "Longitude"
+            },
+            "Latitude": {
+              "sourcedFrom": "Latitude"
+            },
+            "Above_Sea_Level": {
+              "sourcedFrom": "Above_Sea_Level"
+            }
+          },
+          "targetEntityType": "#/definitions/LandDetails"
+        }
+      },
+      "targetEntityType": "#/definitions/PropertyDetails"
+    },
+    "PropertyIn": {
+      "sourcedFrom": "Area_ID"
+    },
+    "LocationsNear": {
+      "sourcedFrom": "Area_ID"
+    }
+  },
+  "namespaces": { },
+  "uriExpression": "$URI"
+}

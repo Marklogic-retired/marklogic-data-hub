@@ -1,0 +1,50 @@
+{
+  "collections": [
+    "map_Hiking_Places_JSON",
+    "Hiking_Places"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Hiking_Places_JSON",
+  "targetEntityType": "http://example.org/Hiking_Places-1.0.0/Hiking_Places",
+  "description": "Mapping Hiking Places Data to Entity Model",
+  "collection": [
+    "loadHikingPlaces_JSON"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadHikingPlaces_JSON'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Hiking_Places_JSON-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-06-29T11:27:08.386228-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "Area_ID"
+    },
+    "Name": {
+      "sourcedFrom": "Name"
+    },
+    "Rating": {
+      "sourcedFrom": "Rating"
+    },
+    "Distance": {
+      "sourcedFrom": "Distance"
+    },
+    "PlacesNear": {
+      "sourcedFrom": "Area_ID"
+    }
+  },
+  "namespaces": { }
+}

@@ -1,0 +1,56 @@
+{
+  "collections": [
+    "map_Airports_XML",
+    "Airports"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Airports_XML",
+  "targetEntityType": "http://example.org/Airports-1.0.0/Airports",
+  "description": "Mapping Airports Data to Entity Model",
+  "collection": [
+    "loadAirports_XML"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadAirports_XML'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Airports_XML-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-06-24T18:43:04.329068-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "record/Area_ID"
+    },
+    "Airport_Type": {
+      "sourcedFrom": "record/Airport_Type"
+    },
+    "Distance_Miles": {
+      "sourcedFrom": "record/Distance_Miles"
+    },
+    "Rating": {
+      "sourcedFrom": "record/Rating"
+    },
+    "HotelsIn": {
+      "sourcedFrom": "record/Area_ID"
+    },
+    "CarRentalsNearBy": {
+      "sourcedFrom": "record/Area_ID"
+    }
+  },
+  "namespaces": {
+    "entity-services": "http://marklogic.com/entity-services"
+  },
+  "uriExpression": "$URI"
+}

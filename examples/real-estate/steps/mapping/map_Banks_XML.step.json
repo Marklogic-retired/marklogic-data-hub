@@ -1,0 +1,75 @@
+{
+  "collections": [
+    "map_Banks_XML",
+    "Bank"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Banks_XML",
+  "targetEntityType": "http://example.org/Bank-1.0.0/Bank",
+  "description": "Mapping Banks Data to Entity Model",
+  "collection": [
+    "loadBanks_XML"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadBanks_XML'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Banks_XML-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-07-01T13:45:13.863648-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "record/Area_ID"
+    },
+    "Name": {
+      "sourcedFrom": "record/Name"
+    },
+    "Rating": {
+      "sourcedFrom": "record/Rating"
+    },
+    "Distance_Miles": {
+      "sourcedFrom": "concat(record/Distance_Miles, \" Miles\")"
+    },
+    "Hours": {
+      "sourcedFrom": "record/Hours"
+    },
+    "Services": {
+      "sourcedFrom": "record/Services"
+    },
+    "BanksIn": {
+      "sourcedFrom": "record/Area_ID"
+    }
+  },
+  "namespaces": {
+    "entity-services": "http://marklogic.com/entity-services"
+  },
+  "relatedEntityMappings": [
+    {
+      "relatedEntityMappingId": "Bank.BanksIn:USZips",
+      "properties": {
+        "Area_ID": {
+          "sourcedFrom": "record/Area_ID"
+        }
+      },
+      "targetEntityType": "http://example.org/USZips-1.0.0/USZips",
+      "collections": [
+        "map_Banks_XML",
+        "USZips"
+      ],
+      "permissions": "data-hub-common,read,data-hub-common,update"
+    }
+  ],
+  "uriExpression": "$URI"
+}

@@ -1,0 +1,59 @@
+{
+  "collections": [
+    "map_Gyms_XML",
+    "Gyms"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Gyms_XML",
+  "targetEntityType": "http://example.org/Gyms-1.0.0/Gyms",
+  "description": "Mapping Gyms Data to Entity Model",
+  "collection": [
+    "loadGyms_XML"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadGyms_XML'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Gyms_XML-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-07-11T10:40:48.436573-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "record/Area_ID"
+    },
+    "Name": {
+      "sourcedFrom": "record/Name"
+    },
+    "Rating": {
+      "sourcedFrom": "record/Rating"
+    },
+    "Trainer_Name": {
+      "sourcedFrom": "record/Trainer_Name"
+    },
+    "Years_in_Business": {
+      "sourcedFrom": "record/Years_in_Business"
+    },
+    "Equipments": {
+      "sourcedFrom": "record/Equipments[. castable as xs:integer]"
+    },
+    "GymsIn": {
+      "sourcedFrom": "record/Area_ID"
+    }
+  },
+  "namespaces": {
+    "entity-services": "http://marklogic.com/entity-services"
+  },
+  "uriExpression": "$URI"
+}

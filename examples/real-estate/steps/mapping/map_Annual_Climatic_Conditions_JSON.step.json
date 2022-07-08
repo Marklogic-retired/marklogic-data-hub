@@ -1,0 +1,73 @@
+{
+  "collections": [
+    "map_Annual_Climatic_Conditions_JSON",
+    "Annual_Climatic_Conditions"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "map_Annual_Climatic_Conditions_JSON",
+  "targetEntityType": "http://example.org/Annual_Climatic_Conditions-1.0.0/Annual_Climatic_Conditions",
+  "description": "Mapping Air Bnb Listings Data to Entity Model",
+  "collection": [
+    "loadAnnualClimaticConditions_JSON"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadAnnualClimaticConditions_JSON'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "map_Annual_Climatic_Conditions_JSON-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-06-27T16:08:03.493015-07:00",
+  "properties": {
+    "Area_ID": {
+      "sourcedFrom": "Area_ID"
+    },
+    "Humidity_Percentage": {
+      "sourcedFrom": "node(\"Humidity_%\")"
+    },
+    "Min_Temp_F": {
+      "sourcedFrom": "Min_Temp_F"
+    },
+    "Max_Temp_F": {
+      "sourcedFrom": "Max_Temp_F"
+    },
+    "Windiness_mph": {
+      "sourcedFrom": "Windiness_mph"
+    },
+    "Precip_Type": {
+      "sourcedFrom": "Precip_Type"
+    },
+    "ClimateOf": {
+      "sourcedFrom": "Area_ID"
+    }
+  },
+  "namespaces": { },
+  "uriExpression": "$URI",
+  "relatedEntityMappings": [
+    {
+      "relatedEntityMappingId": "Annual_Climatic_Conditions.ClimateOf:USZips",
+      "properties": {
+        "Area_ID": {
+          "sourcedFrom": "Area_ID"
+        }
+      },
+      "targetEntityType": "http://example.org/USZips-1.0.0/USZips",
+      "collections": [
+        "map_Annual_Climatic_Conditions_JSON",
+        "USZips"
+      ],
+      "permissions": "data-hub-common,read,data-hub-common,update"
+    }
+  ]
+}
