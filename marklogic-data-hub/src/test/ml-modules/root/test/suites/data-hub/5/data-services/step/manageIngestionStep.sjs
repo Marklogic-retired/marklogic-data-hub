@@ -29,6 +29,11 @@ expectedStep.permissions = "data-hub-common,read,data-hub-common,update";
 expectedStep.outputURIReplacement= "abc,'def'";
 expectedStep.batchSize = 100;
 expectedStep.stepDefinitionName = "default-ingestion";
+expectedStep.headers = {
+  "sources": [{"name": stepName}],
+  "createdOn": "currentDateTime",
+  "createdBy": "currentUser"
+};
 
 hubJsTest.verifyJson(expectedStep, serviceResponse, assertions);
 hubJsTest.verifyJson(expectedStep, stepService.getStep(stepDefinitionType, stepName), assertions);
