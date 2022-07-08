@@ -51,7 +51,7 @@ function verifyJson(expectedObject, actualObject, assertions) {
     if (Array.isArray(expectedValue)) {
       assertions.push(hubTest.assertArraysEqual(expectedValue, actualObject[key]));
     } else {
-      assertions.push(test.assertEqual(expectedValue, actualObject[key]));
+      assertions.push(test.assertEqualJson(expectedValue, actualObject[key]));
     }
   });
 }

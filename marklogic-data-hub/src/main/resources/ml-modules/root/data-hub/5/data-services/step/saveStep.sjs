@@ -126,8 +126,12 @@ else {
   if (isEmptyString(stepProperties.customHook)){
     stepProperties.customHook = {};
   }
-  if (isEmptyString(stepProperties.headers)){
-    stepProperties.headers = {};
+  if (isEmptyString(stepProperties.headers) || isEmptyObject(stepProperties.headers)) {
+    stepProperties.headers = "ingestion" === stepDefinitionType ? {
+      sources: [{name: stepProperties.datahubSourceName || stepName}],
+      createdOn: "currentDateTime",
+      createdBy: "currentUser"
+    } :{};
   }
   if (isEmptyString(stepProperties.interceptors)){
     stepProperties.interceptors = [];
@@ -137,8 +141,9 @@ else {
 }
 
 function isEmptyString(property) {
-  if (property !== undefined && typeof property === 'string' && property.trim().length === 0){
-    return true;
-  }
-  return false;
+  return property !== undefined && typeof property === 'string' && property.trim().length === 0;
+}
+
+function isEmptyObject(property) {
+  return typeof stepProperties.headers === 'object' && Object.keys(stepProperties.headers).length === 0
 }
