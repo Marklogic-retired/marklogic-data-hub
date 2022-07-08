@@ -78,7 +78,7 @@ const QueryExportModal = (props) => {
               className={styles.dataWarning}
               showIcon
             >
-              {"One or more structured properties are included in this query. The data for those properties will not be included in the export file. to see what will be exported."}
+              {"One or more structured properties are included in this query. The data for those properties will not be included in the export file. Click \"Show Preview\" below to see what will be exported."}
             </HCAlert>
             <br />
           </div>}
@@ -133,12 +133,6 @@ const QueryExportModal = (props) => {
               <Accordion.Button>Show Preview</Accordion.Button>
             </div>
             <Accordion.Body>
-              <HCAlert
-                data-testid="export-data-warning"
-                variant="warning"
-                className={styles.dataWarning}
-                showIcon
-              >{"Preview may improperly render new lines in property values"}</HCAlert>
               <br />
               {props.tableColumns && props.tableData &&
                 <Table data-testid="export-preview-table" bordered>
