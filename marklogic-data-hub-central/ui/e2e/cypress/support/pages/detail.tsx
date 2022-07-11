@@ -12,6 +12,10 @@ class DetailPage {
     return cy.get(`[data-rr-ui-event-key="metadata"]`);
   }
 
+  getRelationshipsView() {
+    return cy.get(`[data-rr-ui-event-key="relationships"]`);
+  }
+
   getDocumentEntity() {
     return cy.get("[data-cy=document-title]");
   }
@@ -67,6 +71,12 @@ class DetailPage {
   getDocumentNoPropertiesMessage() {
     return cy.findByTestId("doc-no-properties-message");
   }
+  getRelatedEntitiesTitle() {
+    return cy.findByTestId("related-entities-title");
+  }
+  getRelatedConceptsTitle() {
+    return cy.findByTestId("related-concepts-title");
+  }
 
   getDocumentXML() {
     return cy.findByTestId("xml-container");
@@ -78,6 +88,14 @@ class DetailPage {
 
   attachmentPresent() {
     return cy.contains("attachments");
+  }
+
+  getExpandBtn() {
+    return cy.get(`[data-testid="expandBtn"]`);
+  }
+
+  getRelationItems() {
+    return cy.get(`[class^="Detail_entityRelationsItems"]`);
   }
 
 }

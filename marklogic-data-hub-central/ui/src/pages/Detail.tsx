@@ -7,7 +7,7 @@ import styles from "./Detail.module.scss";
 import TableView from "@components/table-view/table-view";
 import DetailHeader from "@components/detail-header/detail-header";
 import AsyncLoader from "@components/async-loader/async-loader";
-import {Row, Col, Tabs, Tab} from "react-bootstrap";
+import {Row, Col, Tabs, Tab, Accordion} from "react-bootstrap";
 import {xmlParser, xmlDecoder, xmlFormatter, jsonFormatter} from "@util/record-parser";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faThList, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
@@ -17,17 +17,25 @@ import {SearchContext} from "@util/search-context";
 import {fetchQueries} from "@api/queries";
 import {AuthoritiesContext} from "@util/authorities";
 import {ArrowLeftShort} from "react-bootstrap-icons";
-import {HCTable, HCTooltip} from "@components/common";
+import {DynamicIcons, HCDivider, HCTable, HCTooltip} from "@components/common";
 import {FileEarmarkBinary, FileEarmarkText} from "react-bootstrap-icons";
+import ExpandCollapse from "../components/expand-collapse/expand-collapse";
+import _ from "lodash";
+import {HubCentralConfigContext} from "@util/hubCentralConfig-context";
+import {entityFromJSON, entityParser} from "@util/data-conversion";
+import {themeColors} from "@config/themes.config";
+import {ReactComponent as Ontology} from "../assets/ontology.svg";
 
 interface Props extends RouteComponentProps<any> { }
 
 
 
 const Detail: React.FC<Props> = ({history, location}) => {
-  const {setSavedQueries} = useContext(SearchContext);
+  const {setSavedQueries, entityDefinitionsArray, setEntityDefinitionsArray} = useContext(SearchContext);
+  const {hubCentralConfig} = useContext(HubCentralConfigContext);
   const {user, handleError} = useContext(UserContext);
   const [parentPagePreferences, setParentPagePreferences] = useState({});
+  const accordionsKey = new Set<string>();
   const getPreferences = () => {
     let currentPref = getUserPreferences(user.name);
     if (currentPref !== null) {
@@ -43,7 +51,7 @@ const Detail: React.FC<Props> = ({history, location}) => {
   const pkValue = state && state["primaryKey"] ? state["primaryKey"] : detailPagePreferences["primaryKey"];
   const [entityInstance, setEntityInstance] = useState({});
   const [selected, setSelected] = useState("");
-  const [data, setData] = useState();
+  const [data, setData] = useState<any>();
   const [isLoading, setIsLoading] = useState(false);
   const [contentType, setContentType] = useState("");
   const [xml, setXml] = useState();
@@ -59,9 +67,14 @@ const Detail: React.FC<Props> = ({history, location}) => {
   const [recordPermissions, setRecordPermissions] = useState<any>();
   const [documentProperties, setDocumentProperties] = useState<any>();
   const [docQuality, setDocQuality] = useState<any>();
+  const [collapseEntity, setCollapseEntity] = useState(new Set<string>());
 
   const componentIsMounted = useRef(true);
   const authorityService = useContext(AuthoritiesContext);
+
+  const entityDefinition = entityDefinitionsArray?.find(entity => entity.name === data?.envelope?.instance?.info?.title);
+  const entityRelatedProperties = entityDefinition?.properties?.filter(property => property.related);
+
   let tableView = detailPagePreferences.hasOwnProperty("tableView") ? detailPagePreferences["tableView"] : true;
   let graphView = false;
   if (state) {
@@ -82,6 +95,27 @@ const Detail: React.FC<Props> = ({history, location}) => {
       handleError(error);
     }
   };
+
+  useEffect(() => {
+    let loaded = true;
+    if (!entityDefinitionsArray || entityDefinitionsArray?.length === 0) {
+      (async () => {
+        try {
+          const modelsResponse = await axios.get(`/api/models`);
+          const parsedModelData = entityFromJSON(modelsResponse.data);
+          const parsedEntityDef = entityParser(parsedModelData).filter(entity => entity.name && entity);
+          if (loaded) {
+            setEntityDefinitionsArray(parsedEntityDef);
+          }
+        } catch (error) {
+          handleError(error);
+        }
+      })();
+    }
+    return () => {
+      loaded = false;
+    };
+  }, []);
 
   useEffect(() => {
     setIsLoading(true);
@@ -421,6 +455,95 @@ const Detail: React.FC<Props> = ({history, location}) => {
     csv: <span className={"mlcf mlcf-csv fs-2"} aria-label={"icon: filetype-csv"} />
   };
 
+  const handleEntityExpandCollapse = (option) => {
+    if (option === "expand") {
+      setCollapseEntity(accordionsKey);
+      return;
+    }
+    setCollapseEntity(new Set());
+  };
+
+  const handleOnclickItem = (key: string) => {
+    const collapseEntityCopy = new Set(collapseEntity);
+    if (collapseEntityCopy.has(key)) {
+      collapseEntityCopy.delete(key);
+    } else {
+      collapseEntityCopy.add(key);
+    }
+    setCollapseEntity(collapseEntityCopy);
+  };
+
+
+  const renderEntityRelations = (entityRelatedProperty, property) => {
+    const entities = hubCentralConfig?.modeling?.entities;
+    if (!property) return <span>No data</span>;
+    const relatedEntityDefinition = entityDefinitionsArray.find(entity => entity.name === entityRelatedProperty.related);
+    const propertyValues = _.isArray(property) ? property : [property];
+    const body = propertyValues.map((value, i) => {
+      return (
+        <div key={i} className={styles.entityRelationsItems}>
+          <span className="text-info">{value}</span>
+        </div>
+      );
+    });
+    const icon = entities && relatedEntityDefinition?.name && entities[relatedEntityDefinition.name]?.icon ? entities[relatedEntityDefinition.name].icon : "FaShapes";
+    const bgColor = entities && relatedEntityDefinition.name && entities[relatedEntityDefinition.name]?.color ? entities[relatedEntityDefinition.name].color : themeColors.defaults.entityColor;
+    accordionsKey.add(relatedEntityDefinition.name);
+    const defaultActiveKey = collapseEntity.has(relatedEntityDefinition.name) ? relatedEntityDefinition.name : undefined;
+    return (
+      <div className="my-3">
+        <Accordion activeKey={defaultActiveKey} key={relatedEntityDefinition.name}>
+          <Accordion.Item eventKey={relatedEntityDefinition.name} className={styles.itemClean}>
+            <Accordion.Header className={styles.entityRelationsHeader} style={{backgroundColor: bgColor}} onClick={() => handleOnclickItem(relatedEntityDefinition.name)}>
+              <div className={styles.entityRelationsHeaderContainer}>
+                <span className={styles.entityRelationsHeaderIcon} >
+                  <DynamicIcons name={icon} />
+                </span>
+                <span>{relatedEntityDefinition.name}</span>
+              </div>
+            </Accordion.Header>
+            <Accordion.Body className="p-0 border-0">
+              {body}
+            </Accordion.Body>
+          </Accordion.Item>
+        </Accordion>
+      </div>
+    );
+  };
+
+
+  const renderRelationship = () => {
+    if (!data?.envelope?.instance?.info?.title) return (<span>No data to display</span>);
+    const sections = entityRelatedProperties?.map((entityRelatedProperty, i) => {
+      if (!data?.envelope?.instance?.info?.title || !entityRelatedProperty?.name) return <span key={i}>No data</span>;
+      const propertyValue = data?.envelope?.instance[data?.envelope?.instance?.info?.title][entityRelatedProperty?.name];
+      return renderEntityRelations(entityRelatedProperty, propertyValue);
+    });
+
+    return (<div className={styles.relationshipsContainer}>
+      <div className={styles.relationshipsEntitySection}>
+        <div className={styles.relationshipsEntityHeader}>
+          <span data-testid="related-entities-title" className={styles.relationshipsSectionTitle}>Related Entities</span>
+          <div><ExpandCollapse handleSelection={(id) => handleEntityExpandCollapse(id)} currentSelection={""} /></div>
+        </div>
+        <div className={styles.relationshipsEntityContent}>
+          {sections && sections}
+        </div>
+      </div>
+      <div className={styles.relationshipsSeparatorSection}>
+        <HCDivider type="vertical" className={styles.relationshipsSeparator} style={{backgroundColor: "#333"}} />
+      </div>
+      <div className={styles.relationshipsConceptsSection}>
+        <div className={styles.relationshipsConceptsHeader}>
+          <span data-testid="related-concepts-title" className={styles.relationshipsSectionTitle}>Related Concepts</span>
+          <div className=""></div>
+        </div>
+        <div className={styles.relationshipsConceptsContent}></div>
+      </div>
+    </div>);
+  };
+  const hasRelated = entityRelatedProperties?.find(property => data?.envelope?.instance[data?.envelope?.instance?.info?.title][property?.name]);
+  const hasRelations = entityRelatedProperties && entityRelatedProperties?.length > 0 && hasRelated;
   return (
     entityInstanceDocument === undefined ? <div style={{marginTop: "40px"}}>
       <AsyncLoader />
@@ -456,6 +579,15 @@ const Detail: React.FC<Props> = ({history, location}) => {
                       </span>
                     </HCTooltip>}>
                   </Tab>
+                  {hasRelations && <Tab eventKey="relationships" id="relationships" data-cy="relationships-view" tabClassName={`${styles.tabActive} ${selected === "relationships" && styles.active}`} title={
+                    <HCTooltip id="relationships-tooltip" placement="top" text={"Show the relationships"}>
+                      <span>
+                        <Ontology fill="currentColor" />
+                        <span className={styles.subMenu} >Relationships</span>
+                      </span>
+                    </HCTooltip>
+                  }>
+                  </Tab>}
                   <Tab eventKey="metadata" id="metadata" data-cy="metadata-view" tabClassName={`${styles.tabActive} ${selected === "metadata" && styles.active}`} title={
                     <HCTooltip id="metadata-tooltip" placement="top" text={"Show the metadata"}>
                       <span>
@@ -475,6 +607,8 @@ const Detail: React.FC<Props> = ({history, location}) => {
                   <div style={{marginTop: "40px"}}>
                     <AsyncLoader />
                   </div>;
+              } else if (selected === "relationships") {
+                block = renderRelationship();
               } else if (selected === "instance") {
                 contentType === "json" ?
                   block = (entityInstance) && <TableView document={isEntityInstance ? entityInstance : {}} contentType={contentType} location={state ? state["id"] : {}} isEntityInstance={entityInstanceDocument} />
