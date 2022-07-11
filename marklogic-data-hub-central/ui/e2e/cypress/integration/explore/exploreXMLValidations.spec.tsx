@@ -106,7 +106,62 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.getClearGreyFacets().click();
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
   });
+  it("Select grey facets, change page, back and verify retained state", () => {
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("All Entities");
+    entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
+    browsePage.getShowMoreLink("collection").scrollIntoView().click({force: true});
+    browsePage.getTotalDocuments().should("be.greaterThan", 25);
+    browsePage.showMoreCollection();
+
+    cy.log("**Select grey facets**");
+    browsePage.getFacetItemCheckbox("collection", "Customer").click();
+    browsePage.getFacetItemCheckbox("collection", "Order").click();
+    browsePage.getFacetItemCheckbox("collection", "Product").click();
+    browsePage.getFacetItemCheckbox("source-type", "OrdersSourceType").click();
+
+    cy.log("**Verify grey facets tags**");
+    browsePage.getGreySelectedFacets("Customer").should("exist");
+    browsePage.getGreySelectedFacets("Order").should("exist");
+    browsePage.getGreySelectedFacets("Product").should("exist");
+    browsePage.getGreySelectedFacets("OrdersSourceType").should("exist");
+
+    cy.log("**Select date grey facet **");
+    cy.get("#date-select").click({force: true});
+    cy.contains("This Week").click();
+
+    cy.log("**Go to another page and back**");
+    toolbar.getLoadToolbarIcon().click();
+    toolbar.getExploreToolbarIcon().click();
+    browsePage.clickTableView();
+
+    cy.log("**Verify grey facets tags exists**");
+    browsePage.getGreySelectedFacets("Customer").should("exist");
+    browsePage.getGreySelectedFacets("Order").should("exist");
+    browsePage.getGreySelectedFacets("Product").should("exist");
+    browsePage.getGreySelectedFacets("OrdersSourceType").should("exist");
+
+    cy.log("**Verify preselected facets are checked and uncheck it**");
+    browsePage.getShowMoreLink("collection").click({force: true});
+    browsePage.getFacetItemCheckbox("collection", "Customer").should("be.checked").click();
+    browsePage.getFacetItemCheckbox("collection", "Order").should("be.checked").click();
+    browsePage.getFacetItemCheckbox("collection", "Product").should("be.checked").click();
+    browsePage.getFacetItemCheckbox("source-type", "OrdersSourceType").scrollIntoView().should("be.checked").click();
+
+    cy.log("**Verify grey tags not exists**");
+    browsePage.getGreySelectedFacets("Customer").should("not.exist");
+    browsePage.getGreySelectedFacets("Order").should("not.exist");
+    browsePage.getGreySelectedFacets("Product").should("not.exist");
+    browsePage.getGreySelectedFacets("OrdersSourceType").should("not.exist");
+    browsePage.getClearGreyFacets();
+    browsePage.getGreySelectedFacets("This Week").should("not.exist");
+
+    browsePage.getClearGreyFacets().click();
+    browsePage.getTotalDocuments().should("be.greaterThan", 25);
+  });
+
   it("search for a simple text/query and verify content", () => {
+    browsePage.getSnippetView().click({force: true});
     browsePage.search("Randolph");
     browsePage.getTotalDocuments().should("be.equal", 1);
     browsePage.getDocumentEntityName(0).should("exist");
