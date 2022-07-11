@@ -132,7 +132,16 @@ function testMatchRulesetDefinitions() {
         name: "name - double metaphone",
         matchRules: [{ entityPropertyPath: "name", matchType: "doubleMetaphone",
           options: {
-            dictionaryURI: "/content/first-names.xml",
+            dictionaryURI: "/content/last-names.xml",
+            distanceThreshold: 100
+          }
+        }]
+      },
+      {
+        name: "name - double metaphone - noMatch",
+        matchRules: [{ entityPropertyPath: "name", matchType: "doubleMetaphone",
+          options: {
+            dictionaryURI: "/content/last-names.xml",
             distanceThreshold: 100
           }
         }]
@@ -175,14 +184,24 @@ function testMatchRulesetDefinitions() {
       assertions.push(test.assertEqual(isQuery, true, "Cts query is created for matched rule when custom match function returns atomic value"));
     }
     if(matchStep.matchRulesets[i].name === "name - synonym") {
-      const matchRulesetDefinitions2 = new MatchRulesetDefinition(matchStep.matchRulesets[i],matchable);
-      let matchingTerms = matchRulesetDefinitions2.synonymMatchFunction("Robert", matchStep.matchRulesets[i].matchRules[0], matchStep);
+      const matchRulesetDefinitions = new MatchRulesetDefinition(matchStep.matchRulesets[i],matchable);
+      let matchingTerms = matchRulesetDefinitions.synonymMatchFunction("Robert", matchStep.matchRulesets[i].matchRules[0], matchStep);
       assertions.push(test.assertEqual(2, matchingTerms.length), "Original term and matching synonym qualifier is returned");
     }
     if(matchStep.matchRulesets[i].name === "name - synonym - noMatchQualifier") {
-      const matchRulesetDefinitions2 = new MatchRulesetDefinition(matchStep.matchRulesets[i],matchable);
-      let matchingTerms = matchRulesetDefinitions2.synonymMatchFunction("Robert", matchStep.matchRulesets[i].matchRules[0], matchStep);
+      const matchRulesetDefinitions = new MatchRulesetDefinition(matchStep.matchRulesets[i],matchable);
+      let matchingTerms = matchRulesetDefinitions.synonymMatchFunction("Robert", matchStep.matchRulesets[i].matchRules[0], matchStep);
       assertions.push(test.assertEqual(0, matchingTerms.length, "No matching qualifier was found"));
+    }
+    if(matchStep.matchRulesets[i].name === "name - double metaphone") {
+      const matchRulesetDefinitions = new MatchRulesetDefinition(matchStep.matchRulesets[i],matchable);
+      let matchingTerms = matchRulesetDefinitions.doubleMetaphoneMatchFunction("Robert", matchStep.matchRulesets[i].matchRules[0], matchStep);
+      assertions.push(test.assertEqual(3, matchingTerms.length, "3 words are returned that have distanceThreshold less than equal to 100"));
+    }
+    if(matchStep.matchRulesets[i].name === "name - double metaphone - noMatch") {
+      const matchRulesetDefinitions = new MatchRulesetDefinition(matchStep.matchRulesets[i],matchable);
+      let matchingTerms = matchRulesetDefinitions.doubleMetaphoneMatchFunction("jhons", matchStep.matchRulesets[i].matchRules[0], matchStep);
+      assertions.push(test.assertEqual(0, matchingTerms.length, "No word is returned that have distanceThreshold less than equal to 100"));
     }
   }
 }
