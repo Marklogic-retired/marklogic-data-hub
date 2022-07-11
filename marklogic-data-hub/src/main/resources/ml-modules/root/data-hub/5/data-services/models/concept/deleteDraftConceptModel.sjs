@@ -35,10 +35,11 @@ if (!conceptModel) {
   }
 }
 
-
+/*for the moment we don't want this validation, because when we delete a concept, we delete all the references from entities,
+ but it is working, I keep it comment in case we need it in the future
 const entitiesNames = conceptLib.findConceptModelReferencesInEntities(conceptName);
 if (entitiesNames.length) {
   httpUtils.throwBadRequest(`Cannot delete the concept class '${conceptName}' because it is referenced by the following entity names: ${entitiesNames}`);
-}
+}*/
 
 conceptLib.deleteDraftConceptModel(conceptName);

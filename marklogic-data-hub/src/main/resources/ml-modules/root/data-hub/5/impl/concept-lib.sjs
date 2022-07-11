@@ -26,6 +26,7 @@ const consts = require("/data-hub/5/impl/consts.sjs");
 const hent = require("/data-hub/5/impl/hub-entities.xqy");
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
 
 function findDraftModelByConceptName(conceptName) {
   const assumedUri = "/concepts/" + conceptName + ".draft.concept.json";
@@ -50,15 +51,12 @@ function findModelByConceptName(conceptName) {
   return cts.doc(assumedUri).toObject();
 }
 
-
-
-
-function getConceptModelUri(entityName) {
-  return `/concepts/${xdmp.urlEncode(entityName)}.concept.json`;
+function getConceptModelUri(conceptName) {
+  return `/concepts/${xdmp.urlEncode(conceptName)}.concept.json`;
 }
 
-function getDraftConceptModelUri(entityName) {
-  return `/concepts/${xdmp.urlEncode(entityName)}.draft.concept.json`;
+function getDraftConceptModelUri(conceptName) {
+  return `/concepts/${xdmp.urlEncode(conceptName)}.draft.concept.json`;
 }
 
 function getDraftConceptCollection() {
@@ -67,9 +65,6 @@ function getDraftConceptCollection() {
 function getConceptCollection() {
   return consts.CONCEPT_COLLECTION;
 }
-
-
-
 
 /**
  * Handles writing a draft model to both databases. Will overwrite existing permissions/collections, which is consistent
@@ -83,7 +78,6 @@ function writeDraftModel(conceptName, model) {
   writeConceptModelToDatabases(conceptName, model, [config.STAGINGDATABASE, config.FINALDATABASE], true);
 }
 
-
 /**
  * Handles writing a draft model to both databases. Will overwrite existing permissions/collections, which is consistent
  * with how DH has been since 5.0.
@@ -95,7 +89,6 @@ function writeDraftConceptModel(conceptName, model) {
   model.info.draft = true;
   writeConceptModelToDatabases(conceptName, model, [config.STAGINGDATABASE, config.FINALDATABASE], true);
 }
-
 
 /**
  * Writes models to the given databases. Added to allow for the saveModels endpoint to only write to the database
@@ -136,12 +129,171 @@ function writeConceptModelToDatabases(conceptName, model, databases, isDraft = f
   });
 }
 
+function publishDraftConcepts() {
+  hubUtils.hubTrace(consts.TRACE_CONCEPT,`publishing in database: ${xdmp.databaseName(xdmp.database())}`);
+  const draftModels = hubUtils.invokeFunction(() => cts.search(cts.collectionQuery(consts.DRAFT_CONCEPT_COLLECTION)), xdmp.databaseName(xdmp.database()));
+  hubUtils.hubTrace(consts.TRACE_CONCEPT,`Publishing draft models: ${xdmp.toJsonString(draftModels)}`);
+  const inMemoryModelsUpdated = {};
+  const inMemoryEntityUpdated = {};
+  const urisOfModelsBeingDeleted = draftModels.toArray()
+    .map((model) => model.toObject())
+    .filter((modelObject) => modelObject.info.draftDeleted)
+    .map((modelObject) => getConceptModelUri(modelObject.info.name));
+
+  for (const draftModel of draftModels) {
+    let modelObject = draftModel.toObject();
+    modelObject.info.draft = false;
+
+    if(modelObject.info.draftDeleted) {
+      const conceptClassName = modelObject.info.name;
+      const conceptModelUri = getConceptModelUri(modelObject.info.name);
+      hubUtils.hubTrace(consts.TRACE_CONCEPT,`deleting draft model: ${conceptClassName}`);
+      deleteModel(modelObject.info.name);
+      hubUtils.hubTrace(consts.TRACE_CONCEPT,`deleted draft model: ${conceptClassName}`);
+
+      hubUtils.hubTrace(consts.TRACE_CONCEPT,`deleting draft model references: ${conceptClassName}`);
+      const entityURIsToIgnore = urisOfModelsBeingDeleted.concat([conceptModelUri]);
+
+      // update models in memory with necessary reference updates
+      otherModelsWithConceptReferencesRemoved(entityURIsToIgnore, conceptClassName, inMemoryEntityUpdated).forEach((model) => {
+        inMemoryEntityUpdated[model.info.title] = model;
+      });
+      hubUtils.hubTrace(consts.TRACE_CONCEPT,`deleted draft model references: ${modelObject.info.name}`);
+
+    } else {
+      // if the draft changes aren't already picked up by reference updates, add them here.
+      if (!inMemoryModelsUpdated[modelObject.info.name]) {
+        inMemoryModelsUpdated[modelObject.info.name] = modelObject;
+      }
+    }
+  }
+  // write all of the affected models out here
+  for (const modelName in inMemoryModelsUpdated) {
+    hubUtils.hubTrace(consts.TRACE_CONCEPT,`writing draft model: ${modelName}`);
+    writeModel(modelName, inMemoryModelsUpdated[modelName]);
+    hubUtils.hubTrace(consts.TRACE_CONCEPT,`draft model written: ${modelName}`);
+  }
+
+  for (const entityName in inMemoryEntityUpdated) {
+    hubUtils.hubTrace(consts.TRACE_CONCEPT,`writing draft model: ${entityName}`);
+    entityLib.writeModel(entityName, inMemoryEntityUpdated[entityName]);
+    hubUtils.hubTrace(consts.TRACE_CONCEPT,`draft model written: ${entityName}`);
+  }
+  const deleteDraftsOperation = () => {
+    hubUtils.hubTrace(consts.TRACE_CONCEPT,"deleting draft collection");
+    xdmp.collectionDelete(consts.DRAFT_CONCEPT_COLLECTION);
+    hubUtils.hubTrace(consts.TRACE_CONCEPT,"deleted draft collection");
+  };
+  const databaseNames = [...new Set([config.STAGINGDATABASE, config.FINALDATABASE])];
+  const currentDatabase = xdmp.database();
+  databaseNames.forEach(databaseName => {
+    const database = xdmp.database(databaseName);
+    if (database === currentDatabase) {
+      deleteDraftsOperation();
+    } else {
+      xdmp.invokeFunction(deleteDraftsOperation, {database, update: "true", commit: "auto"});
+    }
+  });
+
+  cleanupConceptsFromHubCentralConfig(getConceptNames());
+}
+
+
+function getConceptNames() {
+  return hubUtils.invokeFunction(() => cts.search(cts.collectionQuery(consts.CONCEPT_COLLECTION)), config.FINALDATABASE)
+    .toArray()
+    .map(conceptNode => conceptNode.toObject().info.name);
+}
+
+function cleanupConceptsFromHubCentralConfig(retainConceptNames) {
+  const hubCentralConfigURI = "/config/hubCentral.json";
+  const hubCentralConfig = fn.head(hubUtils.invokeFunction(() => cts.doc(hubCentralConfigURI), config.FINALDATABASE));
+  if (hubCentralConfig) {
+    const hubCentralConfigObj = hubCentralConfig.toObject();
+    if (hubCentralConfigObj.modeling && hubCentralConfigObj.modeling.concepts) {
+      let changesMade = false;
+      for (let conceptName of Object.keys(hubCentralConfigObj.modeling.concepts)) {
+        if (!retainConceptNames.includes(conceptName)) {
+          changesMade = true;
+          delete hubCentralConfigObj.modeling.concepts[conceptName];
+        }
+      }
+      if (changesMade) {
+        hubUtils.writeDocument(hubCentralConfigURI, hubCentralConfigObj, xdmp.nodePermissions(hubCentralConfig), xdmp.nodeCollections(hubCentralConfig), config.FINALDATABASE);
+      }
+    }
+  }
+}
+
+function deleteModel(conceptName) {
+  const uri = getConceptModelUri(conceptName);
+  [...new Set([config.STAGINGDATABASE, config.FINALDATABASE])].forEach(db => {
+    hubUtils.deleteDocument(uri, db);
+  });
+}
+
+/**
+ * Handles writing the model to both databases. Will overwrite existing permissions/collections, which is consistent
+ * with how DH has been since 5.0.
+ *
+ * @param conceptName
+ * @param model
+ */
+function writeModel(conceptName, model) {
+  writeConceptModelToDatabases(conceptName, model, [config.STAGINGDATABASE, config.FINALDATABASE], false);
+}
+
 function getModelPermissions() {
   let permsString = "%%mlEntityModelPermissions%%";
   permsString = permsString.indexOf("%mlEntityModelPermissions%") > -1 ?
     "data-hub-entity-model-reader,read,data-hub-entity-model-writer,update" :
     permsString;
   return hubUtils.parsePermissions(permsString);
+}
+
+/**
+ * Finds and removes the concept section in all models that refers to the supplied entityClassName in memory.
+ * This allows for multiple calls in a singe transaction for publishing.
+ *
+ * @param conceptodelUri
+ * @param conceptName
+ * @param inMemoryEntityUpdated model objects stored by conceptName to allow multiple updates in a transaction
+ */
+function otherModelsWithConceptReferencesRemoved(entityModelUri, referencedConcept, inMemoryEntityUpdated = {}) {
+  const affectedModels = new Set();
+  const entityModels = entityModelsWithConceptReferenceExcludingURIs(referencedConcept, entityModelUri);
+  entityModels.map(model => model.toObject())
+    .forEach(model => {
+      const draftUri = entityLib.getDraftModelUri(model.info.title);
+
+      if (inMemoryEntityUpdated[model.info.title]) {
+        model = inMemoryEntityUpdated[model.info.title];
+      } else if ((fn.docAvailable(draftUri))) {
+        model = cts.doc(draftUri).toObject();
+      }
+
+      Object.keys(model.definitions)
+        .forEach(definition => {
+          const refConceptModified =  model.definitions[definition].relatedConcepts.filter(item => item["conceptClass"] !== referencedConcept);
+          model.definitions[definition].relatedConcepts = refConceptModified;
+          affectedModels.add(model);
+
+        });
+    });
+
+  return [...affectedModels];
+}
+
+/**
+ * Returns the entity model names that contain a reference to the supplied conceptClass name.
+ *
+ * @param referencedConcept a concept that we want to find references to
+ * @param excludedURIs one or more URIs to exclude from the search
+ * @returns {[]}
+ */
+function entityModelsWithConceptReferenceExcludingURIs(referencedConcept, excludedURIs) {
+  const entityModelQuery = cts.andNotQuery(cts.andQuery([cts.collectionQuery([consts.ENTITY_MODEL_COLLECTION,consts.DRAFT_ENTITY_MODEL_COLLECTION]), cts.jsonPropertyValueQuery("conceptClass",referencedConcept)]), cts.documentQuery(excludedURIs));
+  return cts.search(entityModelQuery).toArray()
 }
 
 function validateConceptModelDefinitions(conceptName) {
@@ -201,5 +353,7 @@ module.exports = {
   validateConceptModelDefinitions,
   getModelPermissions,
   deleteDraftConceptModel,
-  findConceptModelReferencesInEntities
+  findConceptModelReferencesInEntities,
+  writeModel,
+  publishDraftConcepts
 };

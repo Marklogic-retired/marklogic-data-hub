@@ -12,6 +12,7 @@ import com.marklogic.hub.dataservices.ConceptService;
 import com.marklogic.hub.dataservices.ModelsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,11 +26,10 @@ public class ConceptTest extends AbstractHubCoreTest {
     private ConceptService service;
     private ModelsService modelService;
 
-
-
     @BeforeEach
     void beforeEach() {
         service = ConceptService.on(getHubClient().getFinalClient());
+        modelService = ModelsService.on(getHubClient().getFinalClient());
     }
 
     @Test
@@ -45,6 +45,18 @@ public class ConceptTest extends AbstractHubCoreTest {
         customerNode.put("description", "Modified description");
         service.updateDraftModelInfo(CUSTOMER_MODEL_NAME, customerNode);
         verifyPersistedModels("Modified description");
+
+        modelService.publishDraftModels();
+        //this document should not be on draft anymore
+        try{
+            JsonNode modelDraft = getModel(CUSTOMER_MODEL_NAME, getHubClient().getFinalClient(), true);
+        } catch (Exception ex) {
+        logger.info("Caught expected exception: " + ex.getMessage());
+        assertTrue(ex.getMessage().contains("document does not exist"));
+        }
+        //this document should exists since we publish before
+        JsonNode modelPublished = getModel(CUSTOMER_MODEL_NAME, getHubClient().getFinalClient(), false);
+        assertEquals(modelPublished.get("info").get("draft").asText(), "false");
     }
 
     /**
@@ -90,6 +102,22 @@ public class ConceptTest extends AbstractHubCoreTest {
         service.deleteDraftModel("TestNameForDelete");
         JsonNode model = getModel("TestNameForDelete", getHubClient().getFinalClient(), true);
         assertTrue(model.get("info").get("draft").asBoolean());
+
+        modelService.publishDraftModels();
+        //this document should not exists anymore
+        try{
+            JsonNode modelDraft = getModel("TestNameForDelete", getHubClient().getFinalClient(), true);
+        } catch (Exception ex) {
+            logger.info("Caught expected exception: " + ex.getMessage());
+            assertTrue(ex.getMessage().contains("document does not exist"));
+        }
+        try{
+            JsonNode modelDraft = getModel("TestNameForDelete", getHubClient().getFinalClient(), false);
+        } catch (Exception ex) {
+            logger.info("Caught expected exception: " + ex.getMessage());
+            assertTrue(ex.getMessage().contains("document does not exist"));
+        }
+        //this document should exists since we publish before
     }
 
     @Test
@@ -100,6 +128,17 @@ public class ConceptTest extends AbstractHubCoreTest {
         JsonNode conceptType = json.get(0);
         assertEquals("newConceptName", conceptType.get("conceptName").asText(), "Expected concept: " + conceptType.toPrettyString());
 
+    }
+
+    @Test
+    protected void publishDraftModels() {
+        modelService = ModelsService.on(getHubClient().getFinalClient());
+        if (isVersionCompatibleWith520Roles()) {
+            runAsDataHubDeveloper();
+        } else {
+            runAsAdmin();
+        }
+        assertDoesNotThrow(() -> modelService.publishDraftModels(), "Should publish draft with no issues.");
     }
 
     protected JsonNode getModel(String conceptName, DatabaseClient client, boolean isDraft) {

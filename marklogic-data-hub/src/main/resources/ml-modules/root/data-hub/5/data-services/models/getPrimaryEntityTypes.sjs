@@ -65,14 +65,15 @@ fn.collection(entityLib.getModelCollection()).toArray().forEach(model => {
 
 // Add in published concepts that were not added as part of drafts
 fn.collection(conceptLib.getConceptCollection()).toArray().forEach(concept => {
-  concept = model.toObject();
-  const conceptName = model.info.name;
+  concept = concept.toObject();
+  const conceptName = concept.info.name;
   const existingDraftConceptIndex = conceptResponseArr.findIndex((conceptResp) => {
     return conceptName === conceptResp.conceptName;
   });
   if (existingDraftConceptIndex < 0) {
     conceptResponseArr.push(buildConceptResponse(concept));
   }
+
 });
 
 modelResponseArr.sort(function(modelA, modelB) {

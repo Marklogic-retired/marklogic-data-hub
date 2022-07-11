@@ -20,5 +20,7 @@ declareUpdate();
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-entity-model", "execute");
 
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
+const conceptLib = require("/data-hub/5/impl/concept-lib.sjs");
 
 entityLib.publishDraftModels();
+conceptLib.publishDraftConcepts();
