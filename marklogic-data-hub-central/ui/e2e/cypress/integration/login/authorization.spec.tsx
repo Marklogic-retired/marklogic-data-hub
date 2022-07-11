@@ -125,7 +125,7 @@ describe("login", () => {
   });
 
   it("should only enable Load and Explorer tile for hub-central-load-writer", () => {
-    let stepName = generateUniqueName("loadStep");
+    let stepName = generateUniqueName("loadStep").substring(0, 20);
 
     cy.log("**Logging into the app as user with hub-central-load-writer role**");
     cy.loginAsTestUserWithRoles("hub-central-load-writer").withRequest();
