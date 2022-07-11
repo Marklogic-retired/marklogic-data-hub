@@ -260,3 +260,70 @@ button.tabActive {
     overflow-y: auto;
     overflow-x: hidden;
 }
+
+.relationshipsContainer {
+    display: flex;
+    height: 100%;
+    padding-bottom: 20px;
+    .relationshipsEntitySection {
+        flex: 1;
+        padding-top: 15px;
+    }
+    .relationshipsEntityHeader {
+        display: flex;
+        justify-content: space-between;
+        padding: 20px;
+        position: sticky;
+        top: 0px;
+        background: #fff;
+        z-index: 1;
+    }
+    .itemClean {
+        border: none;
+    }
+    .entityRelationsHeader {
+        button:nth-child(1) {
+            padding: 15px;
+        }
+    }
+    .entityRelationsHeaderContainer {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-start;
+        align-items: center;
+    }
+    .entityRelationsHeaderIcon {
+        font-size: 20px;
+        line-height: 0;
+    }
+    .entityRelationsItems {
+        border-bottom: 1px solid $border-table-row;
+        padding: 15px;
+    }
+    .relationshipsSeparatorSection {
+        padding: 0 20px;
+        div:nth-child(1) {
+            height: 100%;
+        }
+    }
+    .relationshipsSeparator {
+        height: 100%;
+        margin: 0;
+    }
+    .relationshipsConceptsSection {
+        flex: 1;
+        padding-top: 15px;
+    }
+    .relationshipsConceptsHeader {
+        display: flex;
+        justify-content: space-between;
+        padding: 20px;
+        position: sticky;
+        top: 0px;
+        background: #fff;
+        z-index: 1;
+    }
+    .relationshipsSectionTitle {
+        font-size: 18px;
+    }
+}
