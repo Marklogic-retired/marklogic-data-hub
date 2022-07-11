@@ -89,16 +89,23 @@ const Facet: React.FC<Props> = (props) => {
     props.addFacetValues(props.constraint, updatedChecked, props.facetType, props.facetCategory);
   };
 
-  const handleClick = (e) => {
-    let index = checked.indexOf(e.target.value);
-    let isNested = props.constraint === props.propertyPath ? false : true;
-    // Selection
-    if (e.target.checked && index === -1) {
-      setChecked([...checked, e.target.value]);
-      props.updateSelectedFacets(props.constraint, [...checked, e.target.value], props.facetType, isNested);
-    } else if (index !== -1) {     // Deselection
-      let remChecked = [e.target.value];
-      props.updateSelectedFacets(props.constraint, remChecked, props.facetType, isNested, true, false);
+  const handleClick = (e, constraint?, value?, facetType?) => {
+
+    if (e?.target) {
+      let index = checked.indexOf(e.target.value);
+      let isNested = props.constraint === props.propertyPath ? false : true;
+      // Selection
+      if (e.target.checked && index === -1) {
+        setChecked([...checked, e.target.value]);
+        props.updateSelectedFacets(props.constraint, [...checked, e.target.value], props.facetType, isNested);
+      } else if (index !== -1) {     // Deselection
+        let remChecked = [e.target.value];
+        props.updateSelectedFacets(props.constraint, remChecked, props.facetType, isNested, true, false);
+      }
+    } else {
+      let isNested = props.constraint === props.propertyPath ? false : true;
+      setChecked([...checked, value]);
+      props.updateSelectedFacets(constraint, [...checked, value], facetType, isNested);
     }
   };
 
@@ -128,7 +135,7 @@ const Facet: React.FC<Props> = (props) => {
   const renderValues = checkedFacets.slice(0, showFacets).map((facet, index) => {
     facet.max = props.maxQuantityOnFacets;
     return (
-      <FacetName facet={facet} index={index} key={index} handleClick={handleClick} name={props.name} checked={checked} category={props.facetCategory}/>
+      <FacetName facet={facet} index={index} key={index} handleClick={handleClick} name={props.name} checked={checked} category={props.facetCategory} />
     );
   });
 
@@ -172,7 +179,7 @@ const Facet: React.FC<Props> = (props) => {
           >Clear
           </div>
           <div className={styles.toggle} onClick={() => toggleShow(!show)} data-testid={stringConverter(props.name) + "-toggle"}>
-            {show ? <ChevronDown className={styles.toggleIcon} aria-label="icon: chevron-down"/> : <ChevronRight className={styles.toggleIcon} aria-label="icon: chevron-right"/>}
+            {show ? <ChevronDown className={styles.toggleIcon} aria-label="icon: chevron-down" /> : <ChevronRight className={styles.toggleIcon} aria-label="icon: chevron-right" />}
           </div>
         </div>
       </div>}
@@ -186,17 +193,17 @@ const Facet: React.FC<Props> = (props) => {
           data-testid={`show-more-${stringConverter(props.name)}`}
         >{(more) ? "<< less" : "more >>"}</div>
         {(props.facetType === "xs:string" || "collection") && (checkedFacets.length >= SEARCH_MINIMUM) &&
-        <div className={styles.searchValues}>
-          <PopOverSearch
-            referenceType={props.referenceType}
-            entityTypeId={props.entityTypeId}
-            propertyPath={props.propertyPath}
-            checkFacetValues={checkFacetValues}
-            popOvercheckedValues={checked}
-            facetValues={checkedFacets}
-            facetName={props.name}
-          />
-        </div>}
+          <div className={styles.searchValues}>
+            <PopOverSearch
+              referenceType={props.referenceType}
+              entityTypeId={props.entityTypeId}
+              propertyPath={props.propertyPath}
+              checkFacetValues={checkFacetValues}
+              popOvercheckedValues={checked}
+              facetValues={checkedFacets}
+              facetName={props.name}
+            />
+          </div>}
       </div>
     </div>
   );

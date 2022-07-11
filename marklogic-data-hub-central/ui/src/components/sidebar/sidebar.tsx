@@ -129,6 +129,7 @@ const Sidebar: React.FC<Props> = (props) => {
     const checkedValues = values.filter(({checked}) => checked);
     setRelatedEntityTypeIds(checkedValues.map(function (i) { return i.name; }));
     props.setCurrentRelatedEntities(relatedEntitiesList);
+    getByDefaultCheckedFacetsLS();
   }, [props.currentBaseEntities]);
 
 
@@ -256,7 +257,7 @@ const Sidebar: React.FC<Props> = (props) => {
             count: concept.count
           };
         });
-        let finalConcepts:any = {
+        let finalConcepts: any = {
           facetName: "RelatedConcepts",
           type: "concept",
           facetValues: conceptFacets,
@@ -424,7 +425,36 @@ const Sidebar: React.FC<Props> = (props) => {
     }
   };
 
+  const getByDefaultCheckedFacetsLS = () => {
+    const defaultPreferences = getUserPreferences(user.name);
+
+    if (defaultPreferences !== null) {
+      let parsedPreferences = JSON.parse(defaultPreferences);
+     parsedPreferences?.preselectedFacets && setAllGreyedOptions(parsedPreferences.preselectedFacets);
+    }
+  };
+
+  const deleteGreyFacetLS = (facetName, valueKey, val) => {
+    const defaultPreferences = getUserPreferences(user.name);
+
+    if (defaultPreferences !== null) {
+      let oldOptions = JSON.parse(defaultPreferences);
+      let greyFacetsLS = oldOptions?.preselectedFacets;
+      let newArrayLS = greyFacetsLS[facetName] ? greyFacetsLS[facetName][valueKey]?.filter(x => x !== val): false;
+
+      if (newArrayLS !== false) {
+        greyFacetsLS[facetName][valueKey] = newArrayLS;
+
+        let newOptions = {
+          ...oldOptions, preselectedFacets: greyFacetsLS
+        };
+        updateUserPreferences(user.name, newOptions);
+      }
+    }
+  };
+
   const updateSelectedFacets = (constraint: string, vals: string[], datatype: string, isNested: boolean, toDelete = false, toDeleteAll: boolean = false) => {
+
     let facets = {...allSelectedFacets};
     let greyFacets = {...greyedOptions.selectedFacets};
     let type = "";
@@ -472,10 +502,12 @@ const Sidebar: React.FC<Props> = (props) => {
       delete facets[facetName];
     }
     if (toDelete) {
+
       if (Object.entries(searchOptions.selectedFacets).length > 0 && searchOptions.selectedFacets.hasOwnProperty(constraint)) {
         clearFacet(constraint, vals[0]);
       } else if (Object.entries(greyedOptions.selectedFacets).length > 0 && greyedOptions.selectedFacets.hasOwnProperty(constraint)) {
         clearGreyFacet(constraint, vals[0]);
+        facetName !== "RelatedConcepts" && deleteGreyFacetLS(facetName, valueKey, vals[0]);
       }
       if (facetName === "RelatedConcepts" && checkAllRelatedConcepts) {
         setCheckAllRelatedConcepts(false);
@@ -490,6 +522,19 @@ const Sidebar: React.FC<Props> = (props) => {
           setCheckAllRelatedConcepts(true);
         }
       }
+      savingCheckedFacetsLS(facets);
+    }
+  };
+
+  const savingCheckedFacetsLS = (facets:any) => {
+    let userPreferences = getUserPreferences(user.name);
+    if (userPreferences) {
+      let oldOptions = JSON.parse(userPreferences);
+      let newOptions = {
+        ...oldOptions,
+        preselectedFacets: facets
+      };
+      updateUserPreferences(user.name, newOptions);
     }
   };
 
@@ -596,6 +641,17 @@ const Sidebar: React.FC<Props> = (props) => {
     setAllGreyedOptions(newAllSelectedfacets);
   };
 
+  const saveOptionSelectDateLS = (dateObject: any) => {
+    let userPreferences = getUserPreferences(user.name);
+    if (userPreferences) {
+      let oldOptions = JSON.parse(userPreferences);
+      let newOptions = {
+        ...oldOptions, preselectedFacets: {... oldOptions.preselectedFacets, createdOnRange: dateObject}
+      };
+      updateUserPreferences(user.name, newOptions);
+    }
+  };
+
   const handleOptionSelect = (option: any) => {
     setDateRangeValue(option.value);
     if (option.value === "Custom") {
@@ -603,16 +659,15 @@ const Sidebar: React.FC<Props> = (props) => {
       return;
     }
     let updateFacets = {...allSelectedFacets};
-    updateFacets = {
-      ...updateFacets, createdOnRange:
-      {
-        dataType: "date",
-        stringValues: [option.value, (-1 * new Date().getTimezoneOffset())],
-        rangeValues: {lowerBound: "", upperBound: ""}
-      }
+    let createdOnRangeVal = {
+      dataType: "date",
+      stringValues: [option.value, (-1 * new Date().getTimezoneOffset())],
+      rangeValues: {lowerBound: "", upperBound: ""}
     };
+    updateFacets = {...updateFacets, createdOnRange: createdOnRangeVal};
     setAllSelectedFacets(updateFacets);
     setAllGreyedOptions(updateFacets);
+    saveOptionSelectDateLS(createdOnRangeVal);
   };
 
   const timeWindow = (selectedDateRangeValue) => {
@@ -634,19 +689,19 @@ const Sidebar: React.FC<Props> = (props) => {
 
   const onDateChange = (startDate, endDate) => {
     const dateArray = [startDate, endDate];
-
     let updateFacets = {...allSelectedFacets};
-    if (endDate && endDate.isValid()) {
-      updateFacets = {
-        ...updateFacets, createdOnRange:
-        {
-          dataType: "date",
-          stringValues: ["Custom", (-1 * new Date().getTimezoneOffset())],
-          rangeValues: {lowerBound: dayjs(dateArray[0]).format(), upperBound: dayjs(dateArray[1]).format()}
-        }
-      };
+    let createdOnRangeAux, dateArrayAux;
 
-      setDatePickerValue([dayjs(dateArray[0]), dayjs(dateArray[1])]);
+    if (endDate && endDate.isValid()) {
+      createdOnRangeAux = {
+        dataType: "date",
+        stringValues: ["Custom", (-1 * new Date().getTimezoneOffset())],
+        rangeValues: {lowerBound: dayjs(dateArray[0]).format(), upperBound: dayjs(dateArray[1]).format()}
+      };
+      updateFacets = {...updateFacets, createdOnRange: createdOnRangeAux};
+      dateArrayAux = [dayjs(dateArray[0]), dayjs(dateArray[1])];
+      setDatePickerValue(dateArrayAux);
+      saveOptionSelectDateLS(createdOnRangeAux/*, dateArrayAux*/);
     } else {
       delete updateFacets.createdOnRange;
       setDatePickerValue([null, null]);
@@ -834,38 +889,38 @@ const Sidebar: React.FC<Props> = (props) => {
           </div>
         }
         {props.entitiesWithRelatedConcepts && Object.keys(props.entitiesWithRelatedConcepts).length > 0 && relatedConceptList && relatedConceptList["facetValues"]?.length > 0 &&
-        <div className={styles.relatedEntityPanel}>
-          <HCTooltip text={!props.graphView ? exploreSidebar.disabledRelatedConcepts: ""} aria-label="disabled-related-concept-tooltip" id="disabled-related-concept-tooltip" placement="bottom">
-            <Accordion id="related-concepts" data-testid={"related-concept-panel"} className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("related-concepts") && props.graphView ? "related-concepts" : ""} defaultActiveKey={activeKey.includes("related-concepts") ? "related-concepts" : ""}>
-              <Accordion.Item eventKey="related-concepts" className={"bg-transparent"}>
-                <div className={"p-0 d-flex"}>
-                  <Accordion.Button className={!props.graphView ? `after-indicator ${styles.disabledTitleCheckbox}` : `after-indicator ${styles.titleCheckbox}`} onClick={() =>  setActiveAccordion("related-concepts")}>{
-                    panelTitle(<span><span><HCCheckbox id="related-concepts-check-all" value="check-all" disabled={!props.graphView} handleClick={onCheckAllRelatedConcepts} checked={checkAllRelatedConcepts} /></span>related concepts</span>, ExploreGraphViewToolTips.relatedConcepts)}
-                  </Accordion.Button>
-                </div>
-                <Accordion.Body>
-                  {relatedConceptList && <Facet
-                    name={"relatedConcepts"}
-                    constraint={relatedConceptList["facetName"]}
-                    facetValues={relatedConceptList["facetValues"]}
-                    key={relatedConceptList["facetName"]}
-                    tooltip={relatedConceptList["facetName"]}
-                    facetType={relatedConceptList["type"]}
-                    facetCategory="concept"
-                    updateSelectedFacets={updateSelectedFacets}
-                    addFacetValues={addFacetValues}
-                    referenceType=""
-                    entityTypeId={relatedConceptList["entityTypeId"]}
-                    propertyPath=""
-                    maxQuantityOnFacets={maxQuantityOnFacets}
-                  />
-                  }
-                </Accordion.Body>
-              </Accordion.Item>
-            </Accordion>
-          </HCTooltip>
-          <HCDivider className={"mt-0 mb-2"} style={{backgroundColor: "#ccc"}}/>
-        </div>
+          <div className={styles.relatedEntityPanel}>
+            <HCTooltip text={!props.graphView ? exploreSidebar.disabledRelatedConcepts : ""} aria-label="disabled-related-concept-tooltip" id="disabled-related-concept-tooltip" placement="bottom">
+              <Accordion id="related-concepts" data-testid={"related-concept-panel"} className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("related-concepts") && props.graphView ? "related-concepts" : ""} defaultActiveKey={activeKey.includes("related-concepts") ? "related-concepts" : ""}>
+                <Accordion.Item eventKey="related-concepts" className={"bg-transparent"}>
+                  <div className={"p-0 d-flex"}>
+                    <Accordion.Button className={!props.graphView ? `after-indicator ${styles.disabledTitleCheckbox}` : `after-indicator ${styles.titleCheckbox}`} onClick={() => setActiveAccordion("related-concepts")}>{
+                      panelTitle(<span><span><HCCheckbox id="related-concepts-check-all" value="check-all" disabled={!props.graphView} handleClick={onCheckAllRelatedConcepts} checked={checkAllRelatedConcepts} /></span>related concepts</span>, ExploreGraphViewToolTips.relatedConcepts)}
+                    </Accordion.Button>
+                  </div>
+                  <Accordion.Body>
+                    {relatedConceptList && <Facet
+                      name={"relatedConcepts"}
+                      constraint={relatedConceptList["facetName"]}
+                      facetValues={relatedConceptList["facetValues"]}
+                      key={relatedConceptList["facetName"]}
+                      tooltip={relatedConceptList["facetName"]}
+                      facetType={relatedConceptList["type"]}
+                      facetCategory="concept"
+                      updateSelectedFacets={updateSelectedFacets}
+                      addFacetValues={addFacetValues}
+                      referenceType=""
+                      entityTypeId={relatedConceptList["entityTypeId"]}
+                      propertyPath=""
+                      maxQuantityOnFacets={maxQuantityOnFacets}
+                    />
+                    }
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </HCTooltip>
+            <HCDivider className={"mt-0 mb-2"} style={{backgroundColor: "#ccc"}} />
+          </div>
         }
       </>}
 

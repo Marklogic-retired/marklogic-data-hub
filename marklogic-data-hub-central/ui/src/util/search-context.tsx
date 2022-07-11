@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {getUserPreferences} from "../services/user-preferences";
+import {getUserPreferences, updateUserPreferences} from "../services/user-preferences";
 import {UserContext} from "./user-context";
 import {QueryOptions} from "../types/query-types";
 
@@ -22,7 +22,8 @@ type SearchContextInterface = {
   tileId: string,
   sortOrder: any,
   database: string,
-  datasource: string
+  datasource: string,
+  preselectedFacets: string[]
 }
 
 const defaultSearchOptions = {
@@ -44,7 +45,8 @@ const defaultSearchOptions = {
   tileId: "",
   sortOrder: [],
   database: "final",
-  datasource: "entities"
+  datasource: "entities",
+  preselectedFacets: []
 };
 
 
@@ -63,6 +65,7 @@ interface ISearchContextInterface {
   setLatestJobFacet: (vals: string, entityName: string, stepName: string, targetDatabase?: string, collectionVals?: string) => void;
   clearFacet: (constraint: string, val: string) => void;
   clearAllFacets: () => void;
+  clearAllFacetsLS: () => void;
   clearDateFacet: () => void;
   clearRangeFacet: (range: string) => void;
   clearGreyDateFacet: () => void;
@@ -122,6 +125,7 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setLatestJobFacet: () => { },
   clearFacet: () => { },
   clearAllFacets: () => { },
+  clearAllFacetsLS: () => { },
   clearDateFacet: () => { },
   clearRangeFacet: () => { },
   clearGreyDateFacet: () => { },
@@ -177,6 +181,7 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
         selectedQuery: values.selectedQuery,
         sidebarQuery: values.sidebarQuery,
         baseEntities: values.baseEntities,
+        preselectedFacets: values.preselectedFacets,
       });
     }
   };
@@ -376,6 +381,18 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     });
     // searchOptions.selectedFacets = {};
     clearAllGreyFacets();
+    clearAllFacetsLS();
+  };
+
+  const clearAllFacetsLS = () => {
+    const defaultPreferences = getUserPreferences(user.name);
+    if (defaultPreferences !== null) {
+      let oldOptions = JSON.parse(defaultPreferences);
+      let newOptions = {
+        ...oldOptions, preselectedFacets: undefined
+      };
+      updateUserPreferences(user.name, newOptions);
+    }
   };
 
   /*
@@ -442,6 +459,16 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     });
   };
 
+  const clearGreyDateFacetLS = () => {
+    let userPreferences = getUserPreferences(user.name);
+    if (userPreferences) {
+      let oldOptions = JSON.parse(userPreferences);
+      let newOptions = {
+        ...oldOptions, preselectedFacets: {... oldOptions.preselectedFacets, createdOnRange: undefined}
+      };
+      updateUserPreferences(user.name, newOptions);
+    }
+  };
 
   const clearGreyDateFacet = () => {
     let facets = {...greyedOptions.selectedFacets};
@@ -454,6 +481,7 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
         pageNumber: 1,
         pageLength: greyedOptions.pageSize
       });
+      clearGreyDateFacetLS();
     }
   };
 
@@ -501,9 +529,29 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       delete facets[constraint];
     }
     setGreyedOptions({...greyedOptions, selectedFacets: facets});
+    clearGreyFacetLS(constraint, val, valueKey);
   };
 
 
+  const clearGreyFacetLS = (constraint: string, val: string, valueKey: string) => {
+    const defaultPreferences = getUserPreferences(user.name);
+
+    if (defaultPreferences !== null) {
+      let oldOptions = JSON.parse(defaultPreferences);
+      let greyFacetsLS = oldOptions?.preselectedFacets;
+
+      if (greyFacetsLS[constraint][valueKey]?.length > 1) {
+        greyFacetsLS[constraint][valueKey] = greyFacetsLS[constraint][valueKey]?.filter(option => option !== val);
+      } else {
+        delete greyFacetsLS[constraint];
+      }
+
+      let newOptions = {
+        ...oldOptions, preselectedFacets: greyFacetsLS
+      };
+      updateUserPreferences(user.name, newOptions);
+    }
+  };
 
   const clearAllGreyFacets = () => {
     setGreyedOptions({
@@ -722,6 +770,7 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       setEntityClearQuery,
       clearFacet,
       clearAllFacets,
+      clearAllFacetsLS,
       setLatestJobFacet,
       clearDateFacet,
       clearRangeFacet,

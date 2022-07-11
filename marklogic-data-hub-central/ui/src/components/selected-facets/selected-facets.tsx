@@ -6,7 +6,8 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheckSquare, faWindowClose} from "@fortawesome/free-solid-svg-icons";
 import {XLg} from "react-bootstrap-icons";
 import {HCButton, HCTooltip} from "@components/common";
-
+import {getUserPreferences, updateUserPreferences} from "../../services/user-preferences";
+import {UserContext} from "@util/user-context";
 interface Props {
   selectedFacets: any[];
   greyFacets: any[];
@@ -23,6 +24,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
     clearDateFacet,
     clearRangeFacet,
     clearAllGreyFacets,
+    clearAllFacetsLS,
     clearGreyFacet,
     clearGreyDateFacet,
     clearGreyRangeFacet,
@@ -39,6 +41,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
     props.toggleApplyClicked(false);
   }, [props.greyFacets]);
 
+  const {user} = useContext(UserContext);
 
   const applyFacet = () => {
     let facets = {...greyedOptions.selectedFacets};
@@ -54,12 +57,22 @@ const SelectedFacets: React.FC<Props> = (props) => {
     clearAllGreyFacets();
     props.toggleApplyClicked(true);
     props.toggleApply(false);
+    clearAllFacetsLS();
   };
 
   const clearGreyFacets = () => {
     clearAllGreyFacets();
     props.toggleApplyClicked(true);
     props.toggleApply(false);
+
+    const defaultPreferences = getUserPreferences(user.name);
+    if (defaultPreferences !== null) {
+      let oldOptions = JSON.parse(defaultPreferences);
+      let newOptions = {
+        ...oldOptions, preselectedFacets: undefined
+      };
+      updateUserPreferences(user.name, newOptions);
+    }
   };
 
 

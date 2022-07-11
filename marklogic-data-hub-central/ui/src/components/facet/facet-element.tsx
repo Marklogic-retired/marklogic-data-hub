@@ -31,7 +31,7 @@ export const FacetName = (props) => {
       >
         <HCFacetIndicator percentage={percentage} isActive={isActive} identifier={id} />
         <span className={`${styles.facetCount} d-inline-block text-end`}>
-          {numberConverter(props.facet.count)}
+          {props?.facet?.count && numberConverter(props.facet.count)}
         </span>
       </div>
     </div>
