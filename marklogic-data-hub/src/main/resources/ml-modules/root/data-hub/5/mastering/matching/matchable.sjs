@@ -8,6 +8,7 @@ const matchingDebugTraceEnabled = xdmp.traceEnabled(consts.TRACE_MATCHING_DEBUG)
 const matchingTraceEnabled = xdmp.traceEnabled(consts.TRACE_MATCHING) || matchingDebugTraceEnabled;
 const matchingTraceEvent = xdmp.traceEnabled(consts.TRACE_MATCHING) ? consts.TRACE_MATCHING : consts.TRACE_MATCHING_DEBUG;
 const thsr = require("/MarkLogic/thesaurus.xqy");
+const spell = require("/MarkLogic/spell.xqy");
 
 /*
  * A class that encapsulates the configurable portions of the matching process.
@@ -357,6 +358,15 @@ class MatchRulesetDefinition {
   }
 
 
+  doubleMetaphoneMatchFunction(value, passMatchRule) {
+    let dictionary = passMatchRule.options.dictionaryURI;
+    let spellOption = {
+      distanceThreshold : passMatchRule.options.distanceThreshold
+    };
+    let results = spell.suggest(dictionary, fn.string(value), spellOption);
+    return Array.from(new Set(results));
+  }
+
   _matchFunction(matchRule, model) {
     if (!matchRule._matchFunction) {
       let passMatchRule = matchRule;
@@ -373,7 +383,7 @@ class MatchRulesetDefinition {
           convertToNode = true;
           break;
         case "doubleMetaphone":
-          matchFunction = hubUtils.requireFunction("/com.marklogic.smart-mastering/algorithms/double-metaphone.xqy", "doubleMetaphone");
+          matchFunction = this.doubleMetaphoneMatchFunction;
           convertToNode = true;
           break;
         case "synonym":
