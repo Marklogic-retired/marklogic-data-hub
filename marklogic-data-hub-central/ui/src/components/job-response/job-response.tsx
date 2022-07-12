@@ -18,7 +18,6 @@ import {CheckCircleFill, XCircleFill, ExclamationCircleFill} from "react-bootstr
 import {Flow} from "../../types/run-types";
 
 type Props = {
-  openJobResponse: boolean;
   setOpenJobResponse: (boolean) => void;
   jobId: string;
   flow?: Flow;
@@ -26,7 +25,7 @@ type Props = {
   setIsStepRunning?: any;
   setUserCanStopFlow?: any;
 }
-const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStopFlow, openJobResponse, stopRun, setIsStepRunning, flow}) => {
+const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStopFlow, stopRun, setIsStepRunning, flow}) => {
   const [jobResponse, setJobResponse] = useState<any>({});
   //const [lastSuccessfulStep, setLastSuccessfulStep] = useState<any>(null);
   const [timeoutId, setTimeoutId] = useState<any>();
@@ -38,7 +37,7 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStop
     if (jobId) {
       retrieveJobDoc();
     }
-  }, [openJobResponse, jobId]);
+  }, [jobId]);
 
   const retrieveJobDoc = async () => {
     try {
@@ -302,21 +301,20 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStop
   };
 
   return (<Modal
-    show={openJobResponse}
+    show={jobResponse.jobStatus !== undefined}
     size={"lg"}
     data-testid="job-response-modal"
     id="job-response-modal"
   >
     <Modal.Header className={"bb-none"} aria-label="job-response-modal-header">
-      {isFlowRunning(jobResponse) && stopRun ?
+      {isFlowRunning(jobResponse) ?
         <span className={`fs-5 ${styles.title}`} aria-label={`${jobResponse.flow}-running`}>
           The flow <strong>{jobResponse.flow}</strong> is running
-          <HCTooltip text={canStopFlow(jobResponse) ? RunToolTips.stopRun : RunToolTips.stopRunMissingPermission} id="stop-run" placement="bottom">
+          {stopRun && (<HCTooltip text={canStopFlow(jobResponse) ? RunToolTips.stopRun : RunToolTips.stopRunMissingPermission} id="stop-run" placement="bottom">
             <span onClick={() => { stopRun(); }}>
               <FontAwesomeIcon icon={faStopCircle} size="1x" aria-label="icon: stop-circle" className={canStopFlow(jobResponse) ? styles.stopIcon : styles.stopIconDisabled} />
             </span>
-          </HCTooltip>
-          {/* TO BE REPLACED WITH STOP RUNNING ICON <a onClick={() => retrieveJobDoc()}><FontAwesomeIcon icon={faSync} data-testid={"job-response-refresh"} /></a> */}
+          </HCTooltip>)}
         </span>
         :
         <span className={`fs-5 ${styles.title}`} aria-label={`${jobResponse.flow}-completed`}>The flow <strong>{jobResponse.flow}</strong> {jobResponse.jobStatus==="canceled" ? "was canceled" : "completed"}</span>}

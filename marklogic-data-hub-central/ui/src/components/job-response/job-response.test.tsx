@@ -51,7 +51,6 @@ describe("Job response modal", () => {
           <CurationContext.Provider value={curationContextMock}>
             <JobResponse
               jobId={"e4590649-8c4b-419c-b6a1-473069186592"}
-              openJobResponse={true}
               setOpenJobResponse={() => { }}
             />
           </CurationContext.Provider>
@@ -112,7 +111,6 @@ describe("Job response modal", () => {
           <CurationContext.Provider value={curationContextMock}>
             <JobResponse
               jobId={"350da405-c1e9-4fa7-8269-d9aefe3b4b9a"}
-              openJobResponse={true}
               setOpenJobResponse={() => { }}
             />
           </CurationContext.Provider>
@@ -157,7 +155,6 @@ describe("Job response modal", () => {
           <CurationContext.Provider value={curationContextMock}>
             <JobResponse
               jobId={"8c69c502-e682-46ce-a0f4-6506ab527ab8"}
-              openJobResponse={true}
               setOpenJobResponse={() => { }}
               stopRun={stopRun}
             />
@@ -196,7 +193,6 @@ describe("Job response modal", () => {
           <CurationContext.Provider value={curationContextMock}>
             <JobResponse
               jobId={"666f23f6-7fc7-492e-980f-8b2ba21a4b94"}
-              openJobResponse={true}
               setOpenJobResponse={() => { }}
               stopRun={stopRun}
             />
