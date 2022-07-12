@@ -323,7 +323,7 @@ class MatchRulesetDefinition {
 
   synonymMatchFunction(value, passMatchRule) {
     let thesaurus = passMatchRule.options.thesaurusURI;
-    let expandOptions = fn.string(value).toLowerCase();
+    let expandOptions = hubUtils.normalizeToArray(value).map((val) => fn.string(val).toLowerCase());
     let entries = thsr.queryLookup(thesaurus, cts.elementValueQuery(fn.QName("http://marklogic.com/xdmp/thesaurus", "term"), expandOptions, "case-insensitive"), "elements");
     let options = passMatchRule.options;
     let allEntries = [];
