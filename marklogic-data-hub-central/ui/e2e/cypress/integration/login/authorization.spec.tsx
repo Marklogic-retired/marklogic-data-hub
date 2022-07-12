@@ -8,6 +8,7 @@ import loadPage from "../../support/pages/load";
 import modelPage from "../../support/pages/model";
 import runPage from "../../support/pages/run";
 import curatePage from "../../support/pages/curate";
+import explorePage from "../../support/pages/explore";
 import {generateUniqueName} from "../../support/helper";
 import browsePage from "../../support/pages/browse";
 
@@ -243,12 +244,34 @@ describe("login", () => {
       toolbar.getToolBarIcon(tile).should("have.attr", {style: "cursor: not-allowed"});
     });
 
+    cy.log("**Navigates to Run tile**");
     toolbar.getRunToolbarIcon().click();
+
+    cy.log("**This user cannot create new Flows**");
     runPage.createFlowButton().should("be.disabled");
-    cy.findByText(flowName).should("be.visible");
+
+    cy.log("**Clicks on a Flow name**");
+    runPage.getFlowNameHeader(flowName).should("be.visible").click();
+
+    cy.log("**This user cant edit the Flow**");
+    runPage.editSave().should("be.disabled");
+    runPage.editCancel().click();
+
+    cy.log("**This user can run the flow**");
+    runPage.getRunFlowButton(flowName).should("be.enabled");
+
+    cy.log("**This user cant add steps nor delete the flow**");
+    runPage.getAddStepDropdown(flowName).should("be.disabled");
     runPage.deleteFlowDisabled(flowName).should("exist");
+
+    cy.log("**Toggles the flow to see the steps**");
     runPage.toggleFlowConfig(flowName);
     runPage.deleteStepDisabled(stepName).should("exist");
+
+    cy.log("**Opens Flow Status modal and clicks Explore Data button**");
+    runPage.getStatusModalButton(flowName).should("be.visible").click();
+    runPage.explorerLink(stepName).should("be.visible").click();
+    explorePage.getTitleExplore().scrollIntoView().should("be.visible");
   });
 
   it("should only enable Run and Explorer tile for hub-central-flow-writer", () => {

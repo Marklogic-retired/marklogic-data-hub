@@ -15,6 +15,10 @@ class RunPage {
     return cy.findAllByText(flowName);
   }
 
+  getFlowNameHeader(flowName: string) {
+    return cy.get(`#flow-header-${flowName}`);
+  }
+
   getFlowStatusSuccess(flowName: string) {
     return cy.get(`[aria-label=${flowName}-completed]`);
   }
@@ -55,6 +59,10 @@ class RunPage {
   addStepToFlow(stepName: string) {
     cy.findByLabelText(`${stepName}-to-flow`).scrollIntoView().click();
     cy.findByLabelText("Yes").click();
+  }
+
+  getAddStepDropdown(stepName: string) {
+    return cy.get(`[aria-label="addStep-${stepName}"]`);
   }
 
   verifyStepInFlow(stepType: string, stepName: string, flowName: string) {
@@ -147,6 +155,10 @@ class RunPage {
     });
   }
 
+  getRunFlowButton(flowName: string) {
+    return cy.get(`#runFlow-${flowName}`);
+  }
+
   runFlow(flowName: string) {
     cy.get(`#runFlow-${flowName}`).click({force: true});
   }
@@ -169,6 +181,10 @@ class RunPage {
 
   controlCheckedStep(idStep: string) {
     cy.get(idStep).should("be.checked");
+  }
+
+  getStatusModalButton(flowName: string) {
+    return cy.get(`[data-testid="${flowName}-flow-status"]`);
   }
 }
 
