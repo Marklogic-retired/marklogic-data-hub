@@ -51,7 +51,9 @@ public class HubCentral extends LoggingObject implements InitializingBean {
      */
     public HubConfigImpl newHubConfig(String username, String password) {
         HubConfigImpl hubConfig = new HubConfigImpl();
-        hubConfig.applyProperties(buildPropertySource(username, password));
+        DatabaseClient client = getStagingDbClient(username, password);
+        Properties primaryProperties = hubConfig.getHubPropertiesFromDb(client);
+        hubConfig.applyProperties(buildPropertySource(username, password, primaryProperties));
         return hubConfig;
     }
 
@@ -64,8 +66,10 @@ public class HubCentral extends LoggingObject implements InitializingBean {
      * @return
      */
     protected PropertySource buildPropertySource(String username, String password) {
-        DatabaseClient client = getStagingDbClient(username, password);
-        Properties primaryProperties = getHubPropertiesFromDb(client);
+        return buildPropertySource(username, password, new Properties());
+    }
+
+    protected PropertySource buildPropertySource(String username, String password, Properties primaryProperties) {
         primaryProperties.setProperty("mlUsername", username);
         primaryProperties.setProperty("mlPassword", password);
 
@@ -76,19 +80,6 @@ public class HubCentral extends LoggingObject implements InitializingBean {
             }
             return environment.getProperty(propertyName);
         };
-    }
-
-    private Properties getHubPropertiesFromDb(DatabaseClient client) {
-        Properties properties = new Properties();
-        try {
-            JsonNode dhConfig = SystemService.on(client).getDataHubConfig();
-            dhConfig.fieldNames().forEachRemaining(key -> properties.setProperty(key, dhConfig.get(key).textValue()));
-            logger.info("Reading the datahub config for hubcentral from the datahubConfig.json file successful");
-        } catch (Exception exception) {
-            logger.info("Could not find the datahubConfig.json file. Logging the cause for the failure");
-            logger.info(exception.getMessage());
-        }
-        return properties;
     }
 
     private DatabaseClient getStagingDbClient(String username, String password) {

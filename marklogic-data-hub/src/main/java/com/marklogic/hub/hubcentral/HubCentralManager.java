@@ -74,6 +74,8 @@ public class HubCentralManager extends LoggingObject {
             projectPath = Files.createTempDirectory("");
             hubProject.createProject(projectPath.toFile().getAbsolutePath());
             HubConfigImpl hubConfig = new HubConfigImpl(hubProject);
+            hubConfig.applyProperties(hubConfig.getHubPropertiesFromDb(hubClient.getStagingClient()));
+
             hubConfig.initHubProject();
             writeHubCentralFilesToProject(hubProject, hubClient);
             writeDhsGradlePropertiesFile(hubProject);
