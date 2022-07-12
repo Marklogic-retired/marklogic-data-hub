@@ -536,7 +536,7 @@ const JobResultsTableView = ({data}) => {
           }}
         />
       </div>
-      <JobResponse jobId={jobId} openJobResponse={openJobResponse} setOpenJobResponse={handleCloseJobResponse} flow={undefined} />
+      {openJobResponse && <JobResponse jobId={jobId} setOpenJobResponse={handleCloseJobResponse} flow={undefined} />}
     </>
   );
 };

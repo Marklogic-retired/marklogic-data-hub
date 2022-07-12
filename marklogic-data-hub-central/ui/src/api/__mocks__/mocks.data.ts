@@ -246,6 +246,8 @@ const runErrorsAPI = (axiosMock) => {
       return Promise.resolve(curateData.mappings);
     case "/api/jobs/350da405-c1e9-4fa7-8269-d9aefe3b4b9a":
       return Promise.resolve(curateData.jobRespFailedWithError);
+    case "/api/flows/testFlow/latestJobInfo":
+      return Promise.resolve({status: 200, data: {}});
     default:
       return Promise.reject(new Error("not found"));
     }
@@ -265,6 +267,8 @@ const runFailedAPI = (axiosMock) => {
       return Promise.resolve(curateData.mappings);
     case "/api/jobs/350da405-c1e9-4fa7-8269-d9aefe3b4b9a":
       return Promise.resolve(curateData.jobRespFailed);
+    case "/api/flows/testFlow/latestJobInfo":
+      return Promise.resolve({status: 200, data: {}});
     default:
       return Promise.reject(new Error("not found"));
     }

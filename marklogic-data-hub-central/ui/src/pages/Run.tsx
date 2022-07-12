@@ -251,6 +251,7 @@ const Run = (props) => {
       }
       if (response.status === 200) {
         let jobId = response.data.jobId;
+        showStepRunResponse(jobId);
         await setTimeout(function () {
           poll(async function () {
             const res = await axios.get("/api/jobs/" + jobId);
@@ -264,7 +265,7 @@ const Run = (props) => {
               }
               for (let i = 0; i < steps.length; i++) {
                 setRunEnded({flowId: flowName, stepId: steps[i].stepNumber});
-                showStepRunResponse(jobId);
+
               }
             }).catch(function(error) {
               console.error("Flow timeout", error);
@@ -273,9 +274,7 @@ const Run = (props) => {
               }
             });
         }, pollConfig.interval);
-        setOpenJobResponse(true);
         setIsLoading(false);
-        setJobId(jobId);
       }
     } catch (error) {
       console.error("Error running step", error);
@@ -308,6 +307,7 @@ const Run = (props) => {
       }
       if (response.status === 200) {
         let jobId = response.data.jobId;
+        showStepRunResponse(jobId);
         await setTimeout(function () {
           poll(function () {
             const res = axios.get("/api/jobs/" + jobId);
@@ -321,9 +321,7 @@ const Run = (props) => {
               setRunEnded({flowId: flowName, stepId: stepNumber});
             });
         }, pollConfig.interval);
-        setOpenJobResponse(true);
         setIsLoading(false);
-        setJobId(jobId);
       }
     } catch (error) {
       console.error("Error running step", error);
@@ -410,8 +408,8 @@ const Run = (props) => {
             <p>{MissingPagePermission}</p>
         }
       </div>
-      <JobResponse setUserCanStopFlow={setUserCanStopFlow}
-        setIsStepRunning={setIsStepRunning} stopRun={stopRun}jobId={jobId} openJobResponse={openJobResponse} setOpenJobResponse={setOpenJobResponse} flow={flowRunning}/>
+      {openJobResponse && <JobResponse setUserCanStopFlow={setUserCanStopFlow}
+        setIsStepRunning={setIsStepRunning} stopRun={stopRun} jobId={jobId} setOpenJobResponse={setOpenJobResponse} flow={flowRunning}/>}
     </div>
   );
 };

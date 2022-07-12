@@ -77,7 +77,6 @@ describe("Add Merge step to a flow", () => {
     cy.wait(500);
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Merging", mergeStep, flowName1);
-    cy.waitForAsyncRequest();
     runPage.runStep(mergeStep, flowName1);
 
     runPage.verifyStepRunResult(mergeStep, "success");
