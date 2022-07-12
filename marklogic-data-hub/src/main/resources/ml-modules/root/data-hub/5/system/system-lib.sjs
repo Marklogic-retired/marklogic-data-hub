@@ -27,6 +27,7 @@ function saveHubConfigInDocumentsDatabase() {
     "mlStagingCertFile": config.STAGING_CERT_FILE,
     "mlStagingCertPassword": config.STAGING_CERT_PASSWORD,
     "mlStagingExternalName": config.STAGING_EXTERNAL_NAME,
+    "mlStagingAppserverName": config.STAGING_APP_SERVER_NAME,
 
     "mlFinalDbName": config.FINALDATABASE,
     "mlFinalPort": config.FINAL_PORT,
@@ -35,6 +36,7 @@ function saveHubConfigInDocumentsDatabase() {
     "mlFinalCertFile": config.FINAL_CERT_FILE,
     "mlFinalCertPassword": config.FINAL_CERT_PASSWORD,
     "mlFinalExternalName": config.FINAL_EXTERNAL_NAME,
+    "mlFinalAppserverName": config.FINAL_APP_SERVER_NAME,
 
     "mlJobDbName": config.JOBDATABASE,
     "mlJobPort": config.JOB_PORT,
@@ -43,6 +45,7 @@ function saveHubConfigInDocumentsDatabase() {
     "mlJobCertFile": config.JOB_CERT_FILE,
     "mlJobCertPassword": config.JOB_CERT_PASSWORD,
     "mlJobExternalName": config.JOB_EXTERNAL_NAME,
+    "mlJobAppserverName": config.JOB_APP_SERVER_NAME,
 
     "mlModulesDbName": config.MODULESDATABASE,
     "mlStagingTriggersDbName": config.STAGINGTRIGGERSDATABASE,

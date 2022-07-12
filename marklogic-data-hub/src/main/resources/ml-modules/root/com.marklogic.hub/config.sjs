@@ -9,6 +9,7 @@ module.exports = {
   STAGING_EXTERNAL_NAME: "%%mlStagingExternalName%%",
   STAGINGSCHEMASDATABASE: "%%mlStagingSchemasDbName%%",
   STAGINGTRIGGERSDATABASE: "%%mlStagingTriggersDbName%%",
+  STAGING_APP_SERVER_NAME: "%%mlStagingAppserverName%%",
 
   // Final Database Properties
   FINALDATABASE: "%%mlFinalDbName%%",
@@ -20,6 +21,7 @@ module.exports = {
   FINAL_EXTERNAL_NAME: "%%mlFinalExternalName%%",
   FINALSCHEMASDATABASE: "%%mlFinalSchemasDbName%%",
   FINALTRIGGERSDATABASE: "%%mlFinalTriggersDbName%%",
+  FINAL_APP_SERVER_NAME: "%%mlFinalAppserverName%%",
 
   // Jobs Database Properties
   JOBDATABASE: "%%mlJobDbName%%",
@@ -29,6 +31,7 @@ module.exports = {
   JOB_CERT_FILE: "%%mlJobCertFile%%",
   JOB_CERT_PASSWORD: "%%mlJobCertPassword%%",
   JOB_EXTERNAL_NAME: "%%mlJobExternalName%%",
+  JOB_APP_SERVER_NAME: "%%mlJobAppserverName%%",
 
   // Modules Database Properties
   MODULESDATABASE: "%%mlModulesDbName%%",

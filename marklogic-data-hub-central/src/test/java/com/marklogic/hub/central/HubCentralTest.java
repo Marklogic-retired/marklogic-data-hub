@@ -56,20 +56,28 @@ public class HubCentralTest extends TestObject {
 
         HubConfigImpl hubConfig = hubCentral.newHubConfig("test-data-hub-developer", "password");
         assertEquals(hubConfig.getUsername(), "test-data-hub-developer");
+
         assertEquals(hubConfig.getStagingDbName(), "staging");
         assertEquals(hubConfig.getStagingPort(), 8020);
         assertEquals(hubConfig.getStagingAuthMethod(), "basic");
+        assertEquals(hubConfig.getHttpName(DatabaseKind.STAGING), "staging-app-server");
+
         assertEquals(hubConfig.getFinalDbName(), "final");
         assertEquals(hubConfig.getFinalPort(), 8021);
         assertEquals(hubConfig.getFinalAuthMethod(), "basic");
+        assertEquals(hubConfig.getHttpName(DatabaseKind.FINAL), "final-app-server");
+
         assertEquals(hubConfig.getJobDbName(), "jobs");
         assertEquals(hubConfig.getJobPort(), 8023);
         assertEquals(hubConfig.getJobAuthMethod(), "basic");
+        assertEquals(hubConfig.getHttpName(DatabaseKind.JOB), "job-app-server");
+
         assertEquals(hubConfig.getModulesDbName(), "modules");
         assertEquals(hubConfig.getStagingTriggersDbName(), "staging-TRIGGERS");
         assertEquals(hubConfig.getStagingSchemasDbName(), "staging-SCHEMAS");
         assertEquals(hubConfig.getFinalTriggersDbName(), "final-TRIGGERS");
         assertEquals(hubConfig.getFinalSchemasDbName(), "final-SCHEMAS");
+        client.newDocumentManager().delete(uri);
     }
 
     void newDefaultHubConfig() {

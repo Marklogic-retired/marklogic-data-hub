@@ -17,6 +17,7 @@ package com.marklogic.hub.impl;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.ConfigDir;
@@ -29,6 +30,7 @@ import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.HubClientConfig;
+import com.marklogic.hub.dataservices.SystemService;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.error.InvalidDBOperationError;
@@ -232,6 +234,19 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
         // as this will force the underlying RestTemplate objects to be updated
         setAdminManager(new AdminManager(this.adminConfig));
         setManageClient(new ManageClient(getManageConfig()));
+    }
+
+    public Properties getHubPropertiesFromDb(DatabaseClient client) {
+        Properties properties = new Properties();
+        try {
+            JsonNode dhConfig = SystemService.on(client).getDataHubConfig();
+            dhConfig.fieldNames().forEachRemaining(key -> properties.setProperty(key, dhConfig.get(key).textValue()));
+            logger.info("Reading the datahub config for hubcentral from the datahubConfig.json file successful");
+        } catch (Exception exception) {
+            logger.info("Could not find the datahubConfig.json file. Logging the cause for the failure");
+            logger.info(exception.getMessage());
+        }
+        return properties;
     }
 
     protected HubProject requireHubProject() {
