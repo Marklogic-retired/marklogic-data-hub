@@ -26,6 +26,10 @@ class ModelPage {
     return cy.findByLabelText("publish-to-database");
   }
 
+  getRevertButton() {
+    return cy.get("[aria-label=\"revert-changes-table-view\"]");
+  }
+
   getPublishButtonDisabledTooltip() {
     return cy.get(`[id="publish-disabled-tooltip"]`);
   }

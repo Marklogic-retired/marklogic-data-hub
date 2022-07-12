@@ -8,13 +8,16 @@ import LoginPage from "../../support/pages/login";
 import modelPage from "../../support/pages/model";
 import {ConfirmationType} from "../../support/types/modeling-types";
 import {
+  entityTypeModal,
   entityTypeTable,
-  graphViewSidePanel
+  graphViewSidePanel,
+  propertyModal
 } from "../../support/components/model/index";
 import multiSlider from "../../support/components/common/multi-slider";
 import {matchingStepDetail} from "../../support/components/matching";
 import mergingStepDetail from "../../support/components/merging/merging-step-detail";
 import tables from "../../support/components/common/tables";
+import {generateUniqueName} from "../../support/helper";
 
 describe("Validate persistence across Hub Central", () => {
   let entityNamesAsc: string[] = [];
@@ -277,5 +280,46 @@ describe("Validate persistence across Hub Central", () => {
     mergingStepDetail.getSortAscIcon().first().should("have.class", "hc-table_activeCaret__2ugNC");
     mergingStepDetail.getSortDescIcon().last().should("have.class", "hc-table_activeCaret__2ugNC");
     cy.findByTestId("arrow-left").click();
+  });
+
+  it("Validates that no unpublished data is lost when switching tiles from Model", () => {
+    const entityName = generateUniqueName("Entity-Test");
+    const propertyName = generateUniqueName("a-Test");
+
+    cy.log("**Navigates to Model and triggers table view**");
+    toolbar.getModelToolbarIcon().click();
+    modelPage.selectView("table");
+
+    cy.log("**Creates new Entity**");
+    modelPage.getAddEntityButton().click();
+    entityTypeModal.newEntityName(entityName);
+    entityTypeModal.newEntityDescription("Test Entity");
+    entityTypeModal.getAddButton().click();
+    cy.waitForAsyncRequest();
+
+    cy.log("**Add a new property to the Entity**");
+    propertyTable.getAddPropertyButton(entityName).should("be.visible").click();
+    propertyModal.newPropertyName(propertyName);
+    propertyModal.openPropertyDropdown();
+    propertyModal.getTypeFromDropdown("string").click();
+    propertyModal.getSubmitButton().click();
+    cy.waitForAsyncRequest();
+
+    cy.log("**Clicks on Load toolbar icon**");
+    toolbar.getLoadToolbarIcon().click();
+
+    cy.log("**Confirms Navigation warn**");
+    confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
+
+    cy.log("**Returns to Model**");
+    toolbar.getModelToolbarIcon().click();
+    modelPage.selectView("table");
+
+    cy.log("**Confirms that the property added is still there**");
+    propertyTable.getProperty(propertyName).should("be.visible");
+
+    cy.log("**Deletes the entity added by the test**");
+    cy.deleteEntities([entityName]);
+    cy.waitForAsyncRequest();
   });
 });
