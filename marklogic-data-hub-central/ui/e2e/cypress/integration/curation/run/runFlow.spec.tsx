@@ -141,7 +141,7 @@ describe("Run Tile tests", () => {
     //Verify detail page renders with expected content
     //Revalidate below with DHFPROD-8455
     // browsePage.getSelectedEntity().should("contain", "Person");
-    browsePage.getTotalDocuments().should("eq", 1, {timeout: 5000});
+    browsePage.getTotalDocuments().should("eq", 2, {timeout: 5000});
     browsePage.getSelectedFacet("sm-Person-merged").should("exist");
     browsePage.getSourceViewIcon().first().click();
     cy.waitForAsyncRequest();
