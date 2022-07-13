@@ -45,6 +45,6 @@ describe("Metrics component", () => {
     );
     expect(getByText(config.config.items[0].title)).toBeInTheDocument();
     expect(getByText(metrics.bar.toLocaleString())).toBeInTheDocument();
-    expect(container.getElementsByClassName("metric")[0].style.borderColor).toBe(config.config.items[0].color);
+    expect(container.getElementsByClassName("metric")[0]["style"].borderColor).toBe(config.config.items[0].color);
   })
 });

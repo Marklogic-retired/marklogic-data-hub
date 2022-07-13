@@ -8,11 +8,26 @@ const searchContextValue = {
     entityType: "",
     facetStrings: [],
     searchResults: {},
+    start: 0,
+    pageLength: 10,
     returned: 0,
     total: 0,
+    recentSearches: [],
+    loading: false,
+    queryString: "",
+    pageNumber: 1,
+    sortOrder: "",
     handleSearch: jest.fn(),
     handleFacetString: jest.fn(),
-    handleSaved: jest.fn()
+    handleFacetDateRange: jest.fn(),
+    handlePagination: () => { },
+    handleQueryFromParam: jest.fn(),
+    handleSaved: jest.fn(),
+    handleGetSearchLocal: jest.fn(),
+    setPageNumber: () => { },
+    handleDeleteAllRecent: jest.fn(),
+    hasSavedRecords: jest.fn(),
+    handleSort: jest.fn()
 };
 
 const menuConfig = { 

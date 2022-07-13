@@ -11,9 +11,9 @@ const configMultipleOver = {
     displayLong: 3,
     items: [
         {type: "dateRange", name: "created On"},
-        { type: "category", name: "a" },
-        { type: "category", name: "b" },
-        { type: "category", name: "c" }
+        { type: "string", name: "a" },
+        { type: "string", name: "b" },
+        { type: "string", name: "c" }
     ]
 };
 
@@ -23,14 +23,14 @@ const configMultipleUnder = Object.assign(
 const configMultipleTooltips = Object.assign(
     {}, configMultipleOver, {
         items: [
-            { type: "category", name: "a", tooltip: "a tip" },
-            { type: "category", name: "b" }
+            { type: "string", name: "a", tooltip: "a tip" },
+            { type: "string", name: "b" }
         ]
     });
 
 const configMultipleDisabled = Object.assign(
     {}, configMultipleOver, {
-        items: [{ type: "category", name: "a", disabled: true }]
+        items: [{ type: "string", name: "a", disabled: true }]
     });
 
 const searchResults = {
@@ -91,26 +91,35 @@ const searchContextValue = {
     entityType: "",
     facetStrings: ["c:C1"],
     searchResults: searchResults,
+    start: 0,
+    pageLength: 10,
     returned: 0,
     total: 0,
+    recentSearches: [],
+    loading: false,
+    queryString: "",
+    pageNumber: 1,
+    sortOrder: "",
     handleSearch: jest.fn(),
     handleFacetString: jest.fn(),
-    handleSaved: jest.fn()
+    handleFacetDateRange: jest.fn(),
+    handlePagination: () => { },
+    handleQueryFromParam: jest.fn(),
+    handleSaved: jest.fn(),
+    handleGetSearchLocal: jest.fn(),
+    setPageNumber: () => { },
+    handleDeleteAllRecent: jest.fn(),
+    hasSavedRecords: jest.fn(),
+    handleSort: jest.fn()
 };
 
 const searchResultsEmpty = {};
 
-const searchContextValueEmpty = {
-    qtext: "",
-    entityType: "",
-    facetStrings: [],
-    searchResults: searchResultsEmpty,
-    returned: 0,
-    total: 0,
-    handleSearch: jest.fn(),
-    handleFacetString: jest.fn(),
-    handleSaved: jest.fn()
-};
+const searchContextValueEmpty = Object.assign(
+    {}, searchContextValue, {
+        facetStrings: [],
+        searchResults: searchResultsEmpty
+    });
 
 describe("Facets component", () => {
 

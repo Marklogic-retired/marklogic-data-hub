@@ -1,0 +1,12 @@
+.RecordRawContainer {
+    display: flex;
+    align-items: flex-start;
+    padding: 8px 0 8px 0;
+    .RecordRawlabel {
+        width: 150px;
+    }
+    .RecordRawData {
+        overflow-y: auto;
+        width: 100%;
+    }
+}

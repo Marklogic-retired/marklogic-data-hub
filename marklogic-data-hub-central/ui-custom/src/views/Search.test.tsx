@@ -26,7 +26,7 @@ const config = {
                 "displayLong": 5,
                 "items": [
                     {
-                        "type": "category",
+                        "type": "string",
                         "name": "sources",
                         "tooltip": "Filter by source."
                     }
@@ -90,9 +90,9 @@ const config = {
 
 const userContextValue = {
     userid: "",
-    proxy: "",
+    loginAddress: "",
     config: config,
-    handleGetProxy: jest.fn(),
+    handleGetLoginAddress: jest.fn(),
     handleGetUserid: jest.fn(),
     handleLogin: jest.fn(),
     handleGetConfig: jest.fn()

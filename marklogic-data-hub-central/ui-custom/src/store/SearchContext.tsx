@@ -111,7 +111,7 @@ const SearchProvider: React.FC = ({children}) => {
     if (regexDateRange.test(facetValue)) {
       return "dateRange";
     } else {
-      return "category";
+      return "string";
     }
   };
 
@@ -134,7 +134,7 @@ const SearchProvider: React.FC = ({children}) => {
     if (facetStrings && facetStrings.length > 0) {
       facetStrings.forEach(fs => {
         const parts = fs.split(":");
-        if (getFacetType(parts[1]) === "category") {
+        if (getFacetType(parts[1]) === "string") {
           if (query.selectedFacets[parts[0]]) {
             query.selectedFacets[parts[0]].push(parts[1]);
           } else {

@@ -81,10 +81,12 @@ const RecentRecords: React.FC<Props> = (props) => {
   const getCategories = (results, config) => {
     let res = getValByConfig(results, config);
     return _.isArray(res) ? res : [res];
-  }
+  };
 
   const getRecent = () => {
     let res = props.data.map((recent, index) => {
+      // Don't show if no configuration for entity type
+      if (!props.config.entities[recent.entityType]) return;
       let titleValue = getValByConfig(recent, props.config.entities[recent.entityType].title, true);
       if (!titleValue) {
         if (recent?.uri) {

@@ -5,6 +5,7 @@ import DateTime from "../DateTime/DateTime";
 import Image from "../Image/Image";
 import List from "../List/List";
 import Value from "../Value/Value";
+import ResultSnippet from "../ResultSnippet/ResultSnippet";
 import { SearchContext } from "../../store/SearchContext";
 import { DetailContext } from "../../store/DetailContext";
 import "./ResultsList.scss";
@@ -148,12 +149,10 @@ const ResultsList: React.FC<Props> = (props) => {
     return (
       <div key={"result-" + index} className="result">
         <div className="details">
-          <div className="title no-entity"><Value>{titleValue}</Value></div>
-          <div className="subtitle no-entity">
-            <div className="match"><Value id={"match-" + index}>{matchValue}</Value></div>
-          </div>
+           <div className="title no-entity" onClick={handleNameClick}><Value id={results?.uri}>{titleValue}</Value></div>
+                <div className="subtitle no-entity"><ResultSnippet config={{}} data={results} /></div>
+            </div>
         </div>
-      </div>
     )
   }
 

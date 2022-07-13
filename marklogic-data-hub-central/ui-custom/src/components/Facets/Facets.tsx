@@ -29,7 +29,7 @@ type Props = {
  * @prop {number} config.displayLong Maximum number of facet values displayed without a more/less
  * link when the number of facets is above the `config.displayThreshold` value.
  * @prop {object[]} config.items Configuration objects for each facet.
- * @prop {string} config.items.type - Type of facet ("category").
+ * @prop {string} config.items.type - Type of facet ("string").
  * @prop {string} config.items.name - Name of the facet.
  * @prop {string} config.items.tooltip - Tooltip associated with the facet's information icon. If
  * no value is provided, no icon is displayed.
@@ -43,13 +43,13 @@ type Props = {
  *  displayLong: 5,
  *  items: [
  *    {
- *      type: "category",
+ *      type: "string",
  *      name: "Collection",
  *      tooltip: "Filter by entity.",
  *      disabled: true
  *    },
  *    {
- *      type: "category",
+ *      type: "string",
  *      name: "sources",
  *      tooltip: "Filter by source."
  *    }

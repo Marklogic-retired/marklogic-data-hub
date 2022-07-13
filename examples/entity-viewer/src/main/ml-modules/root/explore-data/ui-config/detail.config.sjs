@@ -303,7 +303,23 @@ const detailConfig  = {
                       }
                     }
                   }
-                }
+                },
+                {
+                  "component": "RecordRaw",
+                  "config": {
+                    "name": "person",
+                    "title": "Record Data",
+                    "path": "person",
+                    "maxHeight": "400px",
+                    "enableClipboard": false,
+                    "displayDataTypes": false,
+                    "quotesOnKeys": false,
+                    "displayObjectSize": false,
+                    "collapsedLevel": 2,
+                    "indentWidth": 10,
+                    "groupArraysAfterLength": 3,
+                  }
+                },
               ]
             },
             "relationships": {

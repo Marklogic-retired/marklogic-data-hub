@@ -27,7 +27,7 @@ declare function expsearch:get-search-results($search-constraints as xs:string, 
         <database>{xdmp:modules-database()}</database>
       </options>)
 
-    return
+    let $results :=
       if (fn:empty($options)) then
         let $options :=
         <search:options xmlns:search="http://marklogic.com/appservices/search" xml:lang="zxx">
@@ -52,5 +52,27 @@ declare function expsearch:get-search-results($search-constraints as xs:string, 
         return search:search($search-constraints, $options, $start, $page-length)
       else
         search:search($search-constraints, $options/*, $start, $page-length)
+    let $updated_results := expsearch:add-match-string($results)
+    return $updated_results
+};
+
+declare function expsearch:add-match-string($nodes as node()*) {
+  for $n in $nodes
+  return
+    typeswitch($n)
+      case element(search:match) return
+        element { fn:node-name($n) } {
+          $n/namespace::node(),
+          $n/@*,
+          element search:match-string { string-join($n) },
+          expsearch:add-match-string($n/node())
+        }
+      case element() return
+        element { fn:node-name($n) } {
+          $n/namespace::node(),
+          $n/@*,
+          expsearch:add-match-string($n/node())
+        }
+      default return $n
 };
 

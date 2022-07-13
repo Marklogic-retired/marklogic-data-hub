@@ -75,12 +75,11 @@ const detailContextValue = {
     hasSavedRecords: jest.fn()
 };
 
-
 const userContextValue = {
     userid: "",
-    proxy: "",
+    loginAddress: "",
     config: config,
-    handleGetProxy: jest.fn(),
+    handleGetLoginAddress: jest.fn(),
     handleGetUserid: jest.fn(),
     handleLogin: jest.fn(),
     handleGetConfig: jest.fn()
