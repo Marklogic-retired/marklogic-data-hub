@@ -605,7 +605,7 @@ void cypressE2EOnPremWinChromeTests(){
                                  set CYPRESS_BASE_URL=${cypressChBaseUrl};
                                  set mlHost=${mlChHost};
                                  cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e
-                                 npm run cy:run-chrome -- --config baseUrl=${cypressChBaseUrl} --env mlHost=${mlChHost}  2>&1 | tee -a e2e_err.log
+                                 npm run cy:run-chrome-headed -- --config baseUrl=${cypressChBaseUrl} --env mlHost=${mlChHost}  2>&1 | tee -a e2e_err.log || exit /b 0
      """
      junit '**/e2e/**/*.xml'
 }
@@ -821,7 +821,7 @@ def runFFTests(){
                                  set CYPRESS_BASE_URL=${cypressFFBaseUrl};
                                  set mlHost=${mlFFHost};
                                  cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e
-                                 npm run cy:run-firefox-headed -- --config baseUrl=${cypressFFBaseUrl} --env mlHost=${mlFFHost}  2>&1 | tee -a e2e_err.log
+                                 npm run cy:run-firefox-headed -- --config baseUrl=${cypressFFBaseUrl} --env mlHost=${mlFFHost}  2>&1 | tee -a e2e_err.log || exit /b 0
      """
      junit '**/e2e/**/*.xml'
 }
