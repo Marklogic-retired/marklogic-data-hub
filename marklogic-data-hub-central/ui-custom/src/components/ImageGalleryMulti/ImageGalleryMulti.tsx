@@ -1,14 +1,13 @@
 import React, {useState} from "react";
-import {getValByConfig} from "../../util/util";
-import "./ImageGalleryMulti.scss";
-
 import Carousel from "react-multi-carousel";
 import Concat from "../Concat/Concat";
 import "react-multi-carousel/lib/styles.css";
 import {Modal} from "react-bootstrap";
-import _ from "lodash";
 import DateTime from '../DateTime/DateTime';
 import Value from "../Value/Value";
+import "./ImageGalleryMulti.scss";
+import {getValByPath, getValByConfig} from "../../util/util";
+import _ from "lodash";
 
 
 type Props = {
@@ -95,7 +94,7 @@ const ImageGalleryMulti: React.FC<Props> = (props) => {
     values = items.map((item, index) => {
       if (!item) return null;
       const {component, label, path, config} = item
-      let value: any = path ? _.get(selectedImage, path, null) : null;
+      let value: any = path ? getValByPath(selectedImage, path) : null;
       if (!value) return null;
       return (
         <div className="metadata-row" key={"meta-" + index}>
@@ -114,8 +113,8 @@ const ImageGalleryMulti: React.FC<Props> = (props) => {
 
   const CenteredModal = (props) => {
     const {images: {url}, modal: {title: {component, path, config:titleConfig}}} = config;
-    let urlValue: any = _.get(selectedImage, url, null);
-    let titleValue: any = path ? _.get(selectedImage, path, null) : null;
+    let urlValue: any = (url && selectedImage) ? getValByPath(selectedImage, url) : null;
+    let titleValue: any = (path && selectedImage) ? getValByPath(selectedImage, path) : null;
     return (
       <Modal
         {...props}
@@ -156,7 +155,7 @@ const ImageGalleryMulti: React.FC<Props> = (props) => {
 
   const getItems = () => {
     const carouselItems = images?.map((item, index) => {
-      let urlValue: any = _.get(item, config?.images?.url, []);
+      let urlValue: any = getValByPath(item, config?.images?.url);
       return (
         <div key={index} style={imageStyle} data-testid={`item-${index}`}>
           <img

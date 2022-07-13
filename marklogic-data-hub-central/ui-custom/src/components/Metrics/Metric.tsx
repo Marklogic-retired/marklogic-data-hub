@@ -10,7 +10,7 @@ type Props = {
 
 const Metric: React.FC<Props> = (props) => {
 
-  let val = _.get(props.data, props.config.path, null);
+  let val = getValByPath(props.data, props.config.path, true);
   let valFmt = _.isNumber(val) ? val.toLocaleString() : val;
 
   return (

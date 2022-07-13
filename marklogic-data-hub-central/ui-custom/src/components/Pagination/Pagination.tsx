@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {Form, Pagination as PaginationBootstrap} from "react-bootstrap";
 import "./Pagination.scss";
 

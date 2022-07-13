@@ -86,8 +86,9 @@ const searchConfig  = {
                         "thumbnail": {
                             "component": "Image",
                             "config": {
-                                "arrayPath": "extracted.person.images.image",
-                                "path": "url",
+                                //"arrayPath": "extracted.person.images.image",
+                                //"path": "url",
+                                "path": "extracted.person.images..*[?(@property === 'url')]",
                                 "alt": "result thumbnail",
                                 "style": {
                                     "width": "70px",
@@ -134,13 +135,15 @@ const searchConfig  = {
                         {
                             "component": "Value",
                             "config": {
-                                "path": "extracted.person.phone",
+                                //"path": "extracted.person.phone",
+                                "path": "extracted.person.contacts..[?(@[`type`] === 'phone')].value",
                                 "className": "phone"
                             }
                         },
-                        {
-                            "arrayPath": "extracted.person.emails.email",
-                            "path": "value",
+                        { 
+                            //"arrayPath": "extracted.person.emails.email",
+                            //"path": "value",
+                            "path": "extracted.person.emails..*[?(@property === 'value')]",
                             "className": "email"
                         },
                         {
@@ -148,8 +151,11 @@ const searchConfig  = {
                         }
                         ],
                         "categories": {
-                            "arrayPath": "extracted.person.sources",
-                            "path": "source.name",
+                            //"arrayPath": "extracted.person.sources",
+                            //"path": "source.name",
+                            "path": "$.extracted.person.sources..*[?(@property === 'name')]",
+                            // Filter out all categories NOT ("New York Times" OR "Wall Street Journal")
+                            //"path": "extracted.person.sources..*[?(@property === 'name' && (@ === 'New York Times' || @ === 'Wall Street Journal'))]",
                             "colors": {
                                 "New York Times": "#d5e1de",
                                 "USA Today": "#ebe1fa",
@@ -160,8 +166,9 @@ const searchConfig  = {
                             }
                         },
                         "timestamp": {
-                            "arrayPath": "extracted.person.createdOn",
-                            "path": "ts",
+                            //"arrayPath": "extracted.person.createdOn",
+                            //"path": "ts",
+                            "path": "extracted.person.createdOn..ts",
                             "type": "datetime",
                             "format": "yyyy-MM-dd",
                             "prefix": "Created on ",
@@ -248,8 +255,11 @@ const searchConfig  = {
                         }
                         ],
                         "categories": {
-                            "arrayPath": "extracted.organization.sources",
-                            "path": "source.name",
+                            //"arrayPath": "extracted.organization.sources",
+                            //"path": "source.name",
+                            "path": "$.extracted.organization.sources..*[?(@property === 'name')]",
+                            // Filter out all categories NOT ("New York Times" OR "Wall Street Journal")
+                            // "path": "$.extracted.organization.sources..*[?(@property === 'name' && (@ === 'New York Times' || @ === 'Wall Street Journal'))]",
                             "colors": {
                                 "New York Times": "#d5e1de",
                                 "USA Today": "#ebe1fa",

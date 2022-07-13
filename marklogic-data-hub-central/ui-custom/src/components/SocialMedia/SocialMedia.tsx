@@ -3,7 +3,7 @@ import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import "./SocialMedia.scss";
 import * as IconDictionary from 'react-bootstrap-icons';
-import {getValByConfig} from '../../util/util';
+import {getValByPath, getValByConfig} from '../../util/util';
 import _ from "lodash";
 
 type Props = {
@@ -82,9 +82,9 @@ const SocialMedia: React.FC<Props> = (props) => {
     if (Object.keys(sites).length === 0 || !socials || socials.length === 0) return [];
 
     const icons = socials.reduce((acc, socialItem, index) => {
-      let siteVal: any = _.get(socialItem, site, []);
-      let handleVal: any = _.get(socialItem, handle, []);
-      let urlVal: any = _.get(socialItem, url, []);
+      let siteVal: any = getValByPath(socialItem, site, true);
+      let handleVal: any = getValByPath(socialItem, handle, true);
+      let urlVal: any = getValByPath(socialItem, url, true);
 
       if (!sites[siteVal]) return acc;
       const {title, color, icon, size = 18} = sites[siteVal];

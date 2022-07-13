@@ -1,6 +1,6 @@
 import React from 'react';
 import {GearFill, CodeSlash, ArrowRepeat} from "react-bootstrap-icons";
-import {getValByConfig} from '../../util/util';
+import {getValByPath, getValByConfig} from '../../util/util';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import * as FaDictionary from '@fortawesome/free-solid-svg-icons'
 import _ from "lodash";
@@ -42,9 +42,9 @@ const ResultActions: React.FC<Props> = (props) => {
     const links = actionsData?.map((action, index) => {
       const {action: {icon = null, color = null, url = null}} = config;
       if (!icon) return;
-      let iconValue: any = _.get(action, icon, null);
-      let colorValue: any = _.get(action, color, null);
-      let urlValue: any = _.get(action, url, null);
+      let iconValue: any = getValByPath(action, icon, true);
+      let colorValue: any = getValByPath(action, color, true);
+      let urlValue: any = getValByPath(action, url, true);
       let iconElement = FaDictionary[iconValue];
 
       let iconClassName: any = props.className ? props.className : props.config?.className ? props.config.className : "";

@@ -98,7 +98,7 @@ const Relationships: React.FC<Props> = (props) => {
     }
 
     const getRootNode = (data, rootConfig, type) => {
-        const rootId = getValByConfig(data, rootConfig.id);
+        const rootId = getValByConfig(data, rootConfig.id, true);
         let rootItems: any = [];
         rootConfig?.popover?.items.forEach(item => {
             const label =  item.label;
@@ -129,7 +129,7 @@ const Relationships: React.FC<Props> = (props) => {
         })
         if (type === "text") {
             relObj = { 
-                id: getValByConfig(data, relationsConfig.id), 
+                id: getValByConfig(data, relationsConfig.id, true), 
                 label: getValByConfig(data, relationsConfig.label, true),
                 shape: "box",
                 borderWidth: 0, 
@@ -138,7 +138,7 @@ const Relationships: React.FC<Props> = (props) => {
             }
         } else if (type === "image") {
             relObj = { 
-                id: getValByConfig(data, relationsConfig.id), 
+                id: getValByConfig(data, relationsConfig.id, true), 
                 image: getValByConfig(data, relationsConfig.imgSrc, true),
                 shape: "image", 
                 size: 30, 
@@ -150,10 +150,10 @@ const Relationships: React.FC<Props> = (props) => {
 
     useEffect(() => {
         const nodeSize = props.config.size ? props.config.size : 30;
-        const rootId = getValByConfig(props.data, props.config.root.id);
+        const rootId = getValByConfig(props.data, props.config.root.id, true);
 
         // Set up related entities
-        let relations = getValByConfig(props.data, props.config.relations);
+        let relations = getValByConfig(props.data, props.config.relations, false);
         relations = _.isNil(relations) ? null : (Array.isArray(relations) ? relations : [relations]);
 
         // if no relations, minimize container and return
@@ -173,8 +173,8 @@ const Relationships: React.FC<Props> = (props) => {
         relations.forEach(rel => {
             edges.push({ 
                 from: rootId, 
-                to: getValByConfig(rel, props.config.relations.id), 
-                label: getValByConfig(rel, props.config.relations.predicate)
+                to: getValByConfig(rel, props.config.relations.id, true), 
+                label: getValByConfig(rel, props.config.relations.predicate, true)
             });
         });
 

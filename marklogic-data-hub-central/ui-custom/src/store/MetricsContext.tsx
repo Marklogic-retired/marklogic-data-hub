@@ -10,8 +10,8 @@ interface MetricsContextInterface {
 }
   
 const defaultState = {
-    metrics: [],
-    whatsNew: [],
+    metrics: {},
+    whatsNew: {},
     handleGetMetrics: () => {},
     handleGetWhatsNew: () => {},
 };
@@ -31,8 +31,8 @@ const MetricsProvider: React.FC = ({ children }) => {
 
     const userContext = useContext(UserContext);
 
-    const [metrics, setMetrics] = useState<any>([]);
-    const [whatsNew, setWhatsNew] = useState<any>([]);
+    const [metrics, setMetrics] = useState<any>({});
+    const [whatsNew, setWhatsNew] = useState<any>({});
 
     const handleGetMetrics = () => {
       // If not configured, don't execute

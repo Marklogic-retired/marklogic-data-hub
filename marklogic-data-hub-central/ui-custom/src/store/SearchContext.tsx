@@ -2,6 +2,7 @@ import React, {useEffect, useState, useContext} from "react";
 import {useNavigate, useLocation} from "react-router-dom";
 import {UserContext} from "../store/UserContext";
 import {getSearchResults, getSearchResultsByGet} from "../api/api";
+import { getValByPath } from "../util/util";
 import _ from "lodash";
 
 interface SearchContextInterface {
@@ -177,7 +178,7 @@ const SearchProvider: React.FC = ({children}) => {
         }
         setSearchResults(result?.data.searchResults.response);
         setReturned(parseInt(result?.data.searchResults.response.total));
-        setTotal(_.get(result?.data, userContext.config.search.meter.config.totalPath, null) || 0);
+        setTotal(getValByPath(result?.data, userContext.config.search.meter.config.totalPath) || 0);
         handleSaveSearchLocal();
         handleGetSearchLocal();
         setNewSearch(false);

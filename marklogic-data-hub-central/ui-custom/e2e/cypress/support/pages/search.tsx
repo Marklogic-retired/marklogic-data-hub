@@ -1,7 +1,7 @@
 class SearchPage {
 
   summaryMeter() {
-    return cy.get(".meter");
+    return cy.get(".summaryMeter");
   }
   menuSearchBox() {
     return cy.get(".sticky-top").findByTestId("searchBox");
