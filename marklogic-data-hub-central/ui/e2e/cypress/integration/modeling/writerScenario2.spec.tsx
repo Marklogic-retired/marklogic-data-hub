@@ -77,6 +77,26 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getPiiIcon("street").should("exist");
     //propertyTable.getWildcardIcon('street').should('exist');
   });
+  it("Create a property with name 'rowId' and get confirmation modal", () => {
+    propertyTable.getAddPropertyButton("User3").should("be.visible").click();
+    propertyModal.clearPropertyName();
+    propertyModal.newPropertyName("rowId");
+    propertyModal.openPropertyDropdown();
+    propertyModal.getTypeFromDropdown("string").click();
+
+    propertyModal.getSubmitButton().click();
+    confirmationModal.getPropertyNameText().should("exist");
+
+    cy.log("Check confirmation modal reappears wen trying to submit and clicked 'no'");
+    confirmationModal.getNoButton(ConfirmationType.PropertyName).click();
+    propertyModal.getSubmitButton().click();
+    confirmationModal.getPropertyNameText().should("exist");
+
+    cy.log("Click yes and re-submit");
+    confirmationModal.getYesButton(ConfirmationType.PropertyName);
+    propertyModal.getSubmitButton().click();
+    propertyTable.getProperty("rowId").should("exist");
+  });
   it("Add structured property to structured type", () => {
     propertyTable.getAddPropertyToStructureType("Address").click();
     propertyModal.newPropertyName("zip");

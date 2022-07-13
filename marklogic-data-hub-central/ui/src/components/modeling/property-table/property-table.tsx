@@ -1060,7 +1060,7 @@ const PropertyTable: React.FC<Props> = (props) => {
           </HCTooltip>
         }
       </div>
-      <PropertyModal
+      {showPropertyModal && <PropertyModal
         entityName={props.entityName}
         entityDefinitionsArray={entityDefinitionsArray}
         isVisible={showPropertyModal}
@@ -1071,7 +1071,7 @@ const PropertyTable: React.FC<Props> = (props) => {
         addStructuredTypeToDefinition={addStructuredTypeToDefinition}
         editPropertyUpdateDefinition={editPropertyUpdateDefinition}
         deletePropertyFromDefinition={deletePropertyFromDefinition}
-      />
+      />}
       <ConfirmationModal
         isVisible={showConfirmModal}
         type={confirmType}

@@ -11,7 +11,7 @@ type Props = {
   boldTextArray: string[];
   arrayValues?: string[];
   toggleModal: (isVisible: boolean) => void;
-  confirmAction: () => void;
+  confirmAction: (e?: any) => void;
 };
 
 const ConfirmationModal: React.FC<Props> = (props) => {
@@ -46,7 +46,7 @@ const ConfirmationModal: React.FC<Props> = (props) => {
       aria-label={`confirm-${props.type}-yes`}
       variant="primary"
       loading={loading}
-      onClick={() => {
+      onClick={(e) => {
         switch (props.type) {
         // non async confirm types
         case ConfirmationType.NavigationWarn:
@@ -56,7 +56,7 @@ const ConfirmationModal: React.FC<Props> = (props) => {
           toggleLoading(true);
           break;
         }
-        props.confirmAction();
+        props.confirmAction(e);
       }}
     >Yes</HCButton>
   </div>;
@@ -81,7 +81,7 @@ const ConfirmationModal: React.FC<Props> = (props) => {
           {props.type === ConfirmationType.Identifer && (
             <>
               <p aria-label="identifier-text">Each entity type is allowed a maximum of one identifier. The current identifier is <b>{props.boldTextArray[0]}</b>.
-              Choosing a different identifier could affect custom applications and other code that uses <b>{props.boldTextArray[0]}</b> for searching.</p>
+                Choosing a different identifier could affect custom applications and other code that uses <b>{props.boldTextArray[0]}</b> for searching.</p>
 
               <p>Are you sure you want to change the identifier from <b>{props.boldTextArray[0]}</b> to <b>{props.boldTextArray[1]}</b>?</p>
             </>
@@ -98,7 +98,7 @@ const ConfirmationModal: React.FC<Props> = (props) => {
               >{"Existing entity type relationships."}</HCAlert>
 
               <p aria-label="delete-relationship-text">The <b>{props.boldTextArray[0]}</b> entity type is related to one or more entity types. Deleting <b>{props.boldTextArray[0]}</b> will cause
-              those relationships to be removed from all involved entity types.</p>
+                those relationships to be removed from all involved entity types.</p>
               <p>Are you sure you want to delete the <b>{props.boldTextArray[0]}</b> entity type?</p>
             </>
           )}
@@ -174,6 +174,16 @@ const ConfirmationModal: React.FC<Props> = (props) => {
             >Are you sure you want to delete the <b>{props.boldTextArray[0]}</b> property?</p>
           }
 
+          {props.type === ConfirmationType.PropertyName &&
+            <>
+              <p aria-label="property-name-text"
+              >Entity properties with the name <b>{props.boldTextArray[0]}</b> will not return SQL queries.
+             In SQL, <b>{props.boldTextArray[0]}</b> is a special column and therefore, queries on entities titled <b>{props.boldTextArray[0]}</b> will not return meaningful search results.
+              </p>
+              <p>Are you sure you want to keep <b>{props.boldTextArray[0]}</b> as your property name?</p>
+            </>
+          }
+
           {props.type === ConfirmationType.DeleteEntityPropertyWithForeignKeyReferences && (
             <>
               <HCAlert
@@ -207,7 +217,7 @@ const ConfirmationModal: React.FC<Props> = (props) => {
               >{"Deleting this property may affect some steps."}</HCAlert>
 
               <p aria-label="delete-property-step-text">The <b>{props.boldTextArray[1]}</b> entity type is used in one or more steps,
-              so deleting this property may require editing the steps to make sure this deletion doesn't affect those steps.</p>
+                so deleting this property may require editing the steps to make sure this deletion doesn't affect those steps.</p>
               <p
                 aria-label="toggle-steps"
                 className={styles.toggleSteps}
@@ -251,7 +261,7 @@ const ConfirmationModal: React.FC<Props> = (props) => {
               >{"Unpublished Changes"}</HCAlert>
 
               <p aria-label="navigation-warn-text">You have made changes to the properties of one or more entity types.
-              If you leave the screen without publishing your changes, they will not be available in the rest of Hub Central.
+                If you leave the screen without publishing your changes, they will not be available in the rest of Hub Central.
               </p>
 
               <p>Are you sure you want to leave the Model screen?</p>
