@@ -2,7 +2,7 @@ import React from "react";
 import "./Membership.scss";
 import {Check, X} from "react-bootstrap-icons";
 import _ from "lodash";
-import {getValByConfig} from "../../util/util";
+import {getValByPath, getValByConfig} from "../../util/util";
 import DateTime from "../DateTime/DateTime";
 
 type Props = {
@@ -57,8 +57,8 @@ const Membership: React.FC<Props> = (props) => {
     let membershipStyle: React.CSSProperties = props.style ? props.style : props.config?.style ? props.config.style : {};
     const items = config?.lists?.map((list, index) => {
       const membership = memberships?.find(el => el?.list.toLowerCase() === list.toLowerCase());
-      const tsValue = ts?.path ? _.get(membership, ts?.path, null) : null;
-      const statusValue = status?.path ? _.get(membership, status?.path, false) : false;
+      const tsValue = ts?.path ? getValByPath(membership, ts?.path) : null;
+      const statusValue = status?.path ? getValByPath(membership, status?.path) : false;
       const important = statusValue === true;
       const classes = important ? "item highlighted" : membership ? "item success" : "item";
       return (

@@ -6,7 +6,7 @@ import Table from "react-bootstrap/Table";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
 import "./MetadataValue.scss";
-import {getValByConfig} from "../../util/util";
+import {getValByPath, getValByConfig} from "../../util/util";
 import _ from "lodash";
 
 type Props = {
@@ -57,7 +57,7 @@ type Props = {
 const MetadataValue: React.FC<Props> = (props) => {
 
     const value = getValByConfig(props.data, props.config);
-    let popoverData = props?.config?.popover ? _.get(props.data, props?.config?.popover?.dataPath, []):[];
+    let popoverData = props?.config?.popover ? getValByPath(props.data, props?.config?.popover?.dataPath) : [];
     popoverData = _.isNil(popoverData) ? null : (Array.isArray(popoverData) ? popoverData : [popoverData]);
 
     let metadataStyle: any = props.style ? props.style : props.config?.style ? props.config.style : {};
@@ -119,7 +119,7 @@ const MetadataValue: React.FC<Props> = (props) => {
 
     return (
         <span className="MetadataValue">
-            { props.config.popover && popoverData.length > 0 ? getOverlay() : getMetadata() }
+            { props.config.popover && popoverData?.length > 0 ? getOverlay() : getMetadata() }
         </span>
     );
 };

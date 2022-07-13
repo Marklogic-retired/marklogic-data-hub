@@ -8,6 +8,7 @@ import highchartsMore from "highcharts/highcharts-more.js"
 import solidGauge from "highcharts/modules/solid-gauge.js";
 import HighchartsReact from 'highcharts-react-official'
 import "./WhatsNew.scss";
+import { getValByPath } from "../../util/util";
 import _ from "lodash";
 
 type Props = {
@@ -46,7 +47,7 @@ const WhatsNew: React.FC<Props> = (props) => {
   }
 
   const formatNumber = (data, path) => {
-        let  result = _.get(data, path, null);
+        let  result = getValByPath(data, path);
         return result ? parseInt(result).toLocaleString() : null;
   }
 
@@ -137,7 +138,7 @@ const WhatsNew: React.FC<Props> = (props) => {
     options.series[0]["data"] = [];
     // Reversing puts first one at bottom, then clockwise
     props.config.items.reverse().forEach((item, i) => {
-      let val = _.get(props.data, item.path, null);
+      let val = getValByPath(props.data, item.path, true);
       let normalized = 100 * (val/total);
       let chartVal = 100 - adjustment;
       adjustment = adjustment + normalized;

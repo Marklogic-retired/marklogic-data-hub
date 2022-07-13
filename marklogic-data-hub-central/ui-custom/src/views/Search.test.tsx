@@ -114,7 +114,7 @@ describe("Search view", () => {
             );
             getByText = renderResults.getByText;
         });
-        expect(document.querySelector(".meter")).toBeInTheDocument();
+        expect(document.querySelector(".summaryMeter")).toBeInTheDocument();
         expect(getByText(config.search.facets.config.items[0].name)).toBeInTheDocument();
         expect(document.querySelector(".results")).toBeInTheDocument();
     });

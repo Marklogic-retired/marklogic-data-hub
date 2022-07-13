@@ -107,8 +107,9 @@ const dashboardConfig  = {
                         "thumbnail": {
                         "component": "Image",
                         "config": {
-                            "arrayPath": "person.images.image",
-                            "path": "url",
+                            //"arrayPath": "person.images.image",
+                            //"path": "url",
+                            "path": "person.images..*[?(@property === 'url')]",
                             "alt": "recent thumbnail",
                             "style": {
                             "width": "70px",
@@ -160,8 +161,9 @@ const dashboardConfig  = {
                             }
                         },
                         {
-                            "arrayPath": "person.emails.email",
-                            "path": "value",
+                            //"arrayPath": "person.emails.email",
+                            //"path": "value",
+                            "path": "person.emails..*[?(@property === 'value')]",
                             "className": "email"
                         },
                         {
@@ -169,8 +171,11 @@ const dashboardConfig  = {
                         }
                         ],
                         "categories": {
-                        "arrayPath": "person.sources",
-                        "path": "source.name",
+                        //"arrayPath": "person.sources",
+                        //"path": "source.name",
+                        "path": "person.sources..*[?(@property === 'name')]",
+                        // Filter out all categories NOT ("New York Times" OR "Wall Street Journal")
+                        //"path": "person.sources..*[?(@property === 'name' && (@ === 'New York Times' || @ === 'Wall Street Journal'))]",
                         "colors": {
                             "New York Times": "#d5e1de",
                             "USA Today": "#ebe1fa",

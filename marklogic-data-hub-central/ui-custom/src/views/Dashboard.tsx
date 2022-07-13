@@ -30,8 +30,8 @@ const Dashboard: React.FC<Props> = (props) => {
   const userContext = useContext(UserContext);
 
   const [config, setConfig] = useState<any>(null);
-  const [metrics, setMetrics] = useState<any>([]);
-  const [whatsNew, setWhatsNew] = useState<any>([]);
+  const [metrics, setMetrics] = useState<any>({});
+  const [whatsNew, setWhatsNew] = useState<any>({});
   const [recentSearches, setRecentSearches] = useState<any>([]);
   const [recentRecords, setRecentRecords] = useState<any>({});
 

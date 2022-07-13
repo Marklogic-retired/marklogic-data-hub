@@ -1,10 +1,11 @@
 import React, {useState} from 'react';
 import {ChevronDoubleRight, ChevronDoubleLeft, EyeFill} from "react-bootstrap-icons";
-import _ from "lodash";
-import "./LinkList.scss";
-import {getValByConfig} from '../../util/util';
+import {getValByPath, getValByConfig} from '../../util/util';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import * as FaDictionary  from '@fortawesome/free-solid-svg-icons'
+import "./LinkList.scss";
+import _ from "lodash";
+
 type Props = {
   data?: any;
   config?: any;
@@ -44,9 +45,9 @@ const LinkList: React.FC<Props> = (props) => {
     linksData = _.isNil(linksData) ? null : (Array.isArray(linksData) ? linksData : [linksData]);
     const links = linksData?.map((link, index) => {
       const {link: {icon, label, url}} = config;
-      let iconValue: any = _.get(link, icon, null);
-      let labelValue: any = _.get(link, label, null);
-      let urlValue: any = _.get(link, url, null);
+      let iconValue: any = getValByPath(link, icon);
+      let labelValue: any = getValByPath(link, label);
+      let urlValue: any = getValByPath(link, url);
       let iconElement = FaDictionary[iconValue];
       return (
         <a href={urlValue ? urlValue : "#"} target="_blank" className="LinkList-item" key={index}>
