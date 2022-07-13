@@ -154,6 +154,47 @@ describe("Modeling Page", () => {
     expect(queryByLabelText("publish-to-database")).toBeNull();
     expect(queryByLabelText("entity-modified-alert")).toBeNull();
   });
+
+
+  test("Modeling: add button should be enabled if user has entity model writer role", async () => {
+    mockPrimaryEntityType.mockResolvedValueOnce({status: 200, data: getEntityTypes});
+
+    const {getByLabelText} = render(
+      <AuthoritiesContext.Provider value={mockDevRolesService}>
+        <ModelingContext.Provider value={notModifiedTableView}>
+          <Router>
+            <Modeling/>
+          </Router>
+        </ModelingContext.Provider>
+      </AuthoritiesContext.Provider>
+    );
+
+    await expect(mockPrimaryEntityType).toHaveBeenCalled();
+
+    expect(getByLabelText("add-entity")).toBeEnabled();
+  });
+
+  test("Modeling: add button should be enabled if user has entity model writer role", async () => {
+    mockPrimaryEntityType.mockResolvedValueOnce({status: 200, data: getEntityTypes});
+
+    let getByLabelText;
+    await act(async () => {
+      const renderResults = render(
+        <AuthoritiesContext.Provider value={mockOpRolesService}>
+          <ModelingContext.Provider value={notModifiedTableView}>
+            <Router>
+              <Modeling/>
+            </Router>
+          </ModelingContext.Provider>
+        </AuthoritiesContext.Provider>
+      );
+      getByLabelText = renderResults.getByLabelText;
+    });
+
+    await wait(() => expect(mockPrimaryEntityType).toHaveBeenCalledTimes(2));
+
+    expect(getByLabelText("add-entity")).toBeDisabled();
+  });
 });
 
 describe("getViewSettings", () => {
@@ -254,6 +295,48 @@ describe("Graph view page", () => {
     await expect(getByText(ModelingTooltips.publish)).toBeInTheDocument();
     userEvent.hover(getByLabelText("graph-export"));
     await expect(getByText(ModelingTooltips.exportGraph)).toBeInTheDocument();
+  });
+
+  it("Modeling: add button is disabled for model reader role", async () => {
+    mockPrimaryEntityType.mockResolvedValueOnce({status: 200, data: getEntityTypes});
+    mockUpdateEntityModels.mockResolvedValueOnce({status: 200});
+
+    const {getByLabelText} = render(
+      <AuthoritiesContext.Provider value={mockOpRolesService}>
+        <ModelingContext.Provider value={notModified}>
+          <Router>
+            <Modeling/>
+          </Router>
+        </ModelingContext.Provider>
+      </AuthoritiesContext.Provider>
+    );
+
+    await expect(mockPrimaryEntityType).toHaveBeenCalled();
+
+    let addEntityOrRelationshipBtn = getByLabelText("add-entity-type-relationship");
+
+    expect(addEntityOrRelationshipBtn.firstChild).toBeDisabled();
+  });
+
+  it("Modeling: add button is enabled for model writer role", async () => {
+    mockPrimaryEntityType.mockResolvedValueOnce({status: 200, data: getEntityTypes});
+    mockUpdateEntityModels.mockResolvedValueOnce({status: 200});
+
+    const {getByLabelText} = render(
+      <AuthoritiesContext.Provider value={mockDevRolesService}>
+        <ModelingContext.Provider value={notModified}>
+          <Router>
+            <Modeling/>
+          </Router>
+        </ModelingContext.Provider>
+      </AuthoritiesContext.Provider>
+    );
+
+    await expect(mockPrimaryEntityType).toHaveBeenCalled();
+
+    let addEntityOrRelationshipBtn = getByLabelText("add-entity-type-relationship");
+
+    expect(addEntityOrRelationshipBtn.firstChild).toBeEnabled();
   });
 
   it("can toggle between graph view and table view properly", async () => {

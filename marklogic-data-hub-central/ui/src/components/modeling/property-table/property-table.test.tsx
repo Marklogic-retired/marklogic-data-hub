@@ -61,6 +61,43 @@ describe("Entity Modeling Property Table Component", () => {
     expect(getByLabelText("NewEntity-add-property")).toBeDisabled();
   });
 
+  test("Add Property button disabled if user has model reader role", () => {
+    let entityName = "NewEntity";
+    let definitions = {NewEntity: {properties: {}}};
+    const {getByText, getByLabelText} =  render(
+      <PropertyTable
+        canReadEntityModel={true}
+        canWriteEntityModel={false}
+        entityName={entityName}
+        definitions={definitions}
+        sidePanelView={false}
+        updateSavedEntity={jest.fn()}
+      />
+    );
+
+    expect(getByText("Add Property")).toBeInTheDocument();
+    expect(getByLabelText("NewEntity-add-property")).toBeDisabled();
+  });
+
+  test("Add Property button enabled if user has model writer role", () => {
+    let entityName = "NewEntity";
+    let definitions = {NewEntity: {properties: {}}};
+    const {getByText, getByLabelText} =  render(
+      <PropertyTable
+        canReadEntityModel={true}
+        canWriteEntityModel={true}
+        entityName={entityName}
+        definitions={definitions}
+        sidePanelView={false}
+        updateSavedEntity={jest.fn()}
+      />
+    );
+
+    expect(getByText("Add Property")).toBeInTheDocument();
+    expect(getByLabelText("NewEntity-add-property")).toBeEnabled();
+  });
+
+
   test("Property Table renders in side panel view with less columns as designed", async () => {
     let entityName = propertyTableEntities[0].entityName;
     let definitions = propertyTableEntities[0].model.definitions;
