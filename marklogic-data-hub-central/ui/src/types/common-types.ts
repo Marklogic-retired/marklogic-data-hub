@@ -20,7 +20,8 @@ export enum ConfirmationType {
   AddStepToFlow = "addStepToFlow",
   DiscardChanges = "discardChanges",
   PublishAll = "publishAllEntity",
-  RevertChanges = "revertEntityChanges"
+  RevertChanges = "revertEntityChanges",
+  PropertyName = "propertyName"
 }
 
 declare global {

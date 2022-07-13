@@ -3,6 +3,10 @@ class PropertyModal {
     cy.get("#property-name").focus().type(str);
   }
 
+  getPropertyModal() {
+    return cy.get(`[aria-label="property-modal"]`);
+  }
+
   clearPropertyName() {
     cy.get("#property-name").focus().clear();
   }

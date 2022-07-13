@@ -52,6 +52,9 @@ class ConfirmationModal {
   getCloseConfirmationModelIcon() {
     return cy.findByLabelText("icon: close");
   }
+  getPropertyNameText() {
+    return cy.findByLabelText("property-name-text");
+  }
   deleteRelationship() {
     return cy.findByTestId("delete-relationship").click();
   }
