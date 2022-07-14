@@ -196,12 +196,12 @@ function testMatchRulesetDefinitions() {
     if(matchStep.matchRulesets[i].name === "name - double metaphone") {
       const matchRulesetDefinitions = new MatchRulesetDefinition(matchStep.matchRulesets[i],matchable);
       let matchingTerms = matchRulesetDefinitions.doubleMetaphoneMatchFunction("Robert", matchStep.matchRulesets[i].matchRules[0], matchStep);
-      assertions.push(test.assertEqual(3, matchingTerms.length, "3 words are returned that have distanceThreshold less than equal to 100"));
+      assertions.push(test.assertEqual(3, Sequence.from(matchingTerms).toArray().length, "3 words are returned that have distanceThreshold less than equal to 100"));
     }
     if(matchStep.matchRulesets[i].name === "name - double metaphone - noMatch") {
       const matchRulesetDefinitions = new MatchRulesetDefinition(matchStep.matchRulesets[i],matchable);
       let matchingTerms = matchRulesetDefinitions.doubleMetaphoneMatchFunction("jhons", matchStep.matchRulesets[i].matchRules[0], matchStep);
-      assertions.push(test.assertEqual(0, matchingTerms.length, "No word is returned that have distanceThreshold less than equal to 100"));
+      assertions.push(test.assertEqual(0, Sequence.from(matchingTerms).toArray().length, "No word is returned that have distanceThreshold less than equal to 100"));
     }
   }
 }

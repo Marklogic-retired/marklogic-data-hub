@@ -351,8 +351,8 @@ class MatchRulesetDefinition {
     let spellOption = {
       distanceThreshold : passMatchRule.options.distanceThreshold
     };
-    let results = spell.suggest(dictionary, fn.string(value), spellOption);
-    return Array.from(new Set(results));
+    let results = hubUtils.normalizeToArray(value).map((val) => spell.suggest(dictionary, fn.string(val), spellOption));
+    return Sequence.from(results);
   }
 
   _matchFunction(matchRule, model) {

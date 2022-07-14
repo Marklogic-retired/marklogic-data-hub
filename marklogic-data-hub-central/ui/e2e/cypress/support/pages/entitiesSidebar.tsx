@@ -95,8 +95,11 @@ class BaseEntitySidebar {
     cy.get(".drp-calendar.left > .calendar-table tr:first-child > td:first-child").click({force: true});
     cy.get(".drp-calendar.left > .calendar-table tr:last-child > td:last-child").click({force: true});
   }
-  getMainPanelSearchInput() {
-    return cy.get("#graph-view-filter-input");
+  getMainPanelSearchInput(input: string) {
+    cy.get("#graph-view-filter-input").should("be.visible").then((e) => {
+      Cypress.$(e).click();
+    });
+    cy.get("#graph-view-filter-input").type(input);
   }
 
   getApplyFacetsButton() {
@@ -145,7 +148,7 @@ class BaseEntitySidebar {
 
   //Actions
   openBaseEntityFacets(entity: string) {
-    return this.getBaseEntity(entity).click();
+    cy.get(`div[aria-label="base-entities-selection"] div[aria-label="base-entities-${entity}"]`).click();
   }
   clickFacetCheckbox(name: string) {
     return this.getFacetCheckbox(name).click();
