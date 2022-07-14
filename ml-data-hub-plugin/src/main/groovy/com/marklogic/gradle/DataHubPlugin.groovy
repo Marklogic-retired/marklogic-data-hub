@@ -239,6 +239,11 @@ class DataHubPlugin implements Plugin<Project> {
                 "-Pstep=<masteringStepNumber> – optional; The number of the mastering step with settings. Defaults to 1.\n" +
                 "-Ppreview=<true|false> – optional; if true, the merge doc is returned in the response body and not committed to the database; if false, the merged document will be saved. Defaults to false.\n" +
                 "-Poptions=<stepOptionOverrides> – optional; Any overrides to the mastering step options. Defaults to {}.")
+        project.task("hubUnmergeRecord", group: runGroup, type: UnmergeRecordTask,
+                description: "Manually unmerge documents from merged documents.\n -PmergeURI=URI1 –  the URI of the merged documents.\n" +
+                        "-PretainAuditTrail=<true|false> (default true) determines if provenance for the merge/unmerge is kept. \n" +
+                        "-PblockFutureMerges=<true|false> (default true) ensures that the documents won't be merged together in the next mastering run. \n" +
+                        "-PremoveURIs=<URI1>,...,<URIn> –  the URIs of the documents to unmerge, separated by commas.")
 
         project.task("hubFixCreatedByStep", type: FixCreatedByStepTask, group: runGroup,
             description: "Fix the value of the datahubCreatedByStep metadata key on documents where the value is a step " +
