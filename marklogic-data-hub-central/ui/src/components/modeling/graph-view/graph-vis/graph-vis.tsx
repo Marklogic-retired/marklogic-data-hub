@@ -303,10 +303,23 @@ const GraphVis: React.FC<Props> = (props) => {
 
   // Focus on the selected nodes in filter input
   useEffect(() => {
-    if (network && props.isEntitySelected) {
-      network.focus(props.entitySelected);
-    }
-  }, [network, props.isEntitySelected]);
+    let focused = true;
+    (async () => {
+      if (focused && network && props.isEntitySelected) {
+        let viewPosition: any = await network.getViewPosition();
+        await network.focus(props.entitySelected);
+        let viewPositionPayload = props.hubCentralConfig;
+        viewPositionPayload.modeling["viewPosition"] = viewPosition;
+        props.updateHubCentralConfig(viewPositionPayload);
+        if (clickedNode) {
+          setClickedNode(undefined);
+        }
+      }
+    })();
+    return () => {
+      focused = false;
+    };
+  }, [network, props.isEntitySelected, props.entitySelected]);
 
   // React to node selection from outside (e.g. new node created)
   useEffect(() => {
@@ -423,8 +436,6 @@ const GraphVis: React.FC<Props> = (props) => {
             const drawNode = () => {
 
               roundedRect(ctx, x - boxWidth/2, y - boxHeight/2, boxWidth, boxHeight, boxRadius);
-              ctx.fillStyle = props.getColor(nodeName, isConcept);
-              ctx.strokeStyle = nodeName === modelingOptions.selectedEntity && props.entitySelected ? graphConfig.nodeStyles.selectColor : isConcept ? themeColors["text-color-secondary"] : props.getColor(nodeName, isConcept);
               ctx.lineWidth = nodeName === modelingOptions.selectedEntity && props.entitySelected ? 2 : isConcept ? 2 : 0;
               if (isConcept) {
                 ctx.setLineDash([5, 5]);
@@ -439,7 +450,12 @@ const GraphVis: React.FC<Props> = (props) => {
                 ctx.lineWidth = 2;
               } else if (hover) {
                 ctx.fillStyle = graphConfig.nodeStyles.hoverColor;
-                ctx.lineWidth = 0;
+                ctx.strokeStyle = graphConfig.nodeStyles.hoverColor;
+                ctx.lineWidth = 2;
+              } else {
+                ctx.fillStyle = props.getColor(nodeName, isConcept);
+                ctx.strokeStyle = isConcept ? themeColors["text-color-secondary"] : props.getColor(nodeName, isConcept);
+                ctx.lineWidth = isConcept ? 2 : 0;
               }
               ctx.closePath();
               ctx.save();
@@ -455,8 +471,8 @@ const GraphVis: React.FC<Props> = (props) => {
               let img = new Image();   // Create new img element
               img.src = `data:image/svg+xml,${encodeURIComponent(renderToStaticMarkup(createElement(FontIcon[iconName])))}`;
               //Drawing the image on canvas
-              const iconOffsetX = x - boxWidth/2 + boxPadding;
-              const iconOffsetY = y - iconHeight/2;
+              const iconOffsetX = x - boxWidth / 2 + boxPadding;
+              const iconOffsetY = y - iconHeight / 2;
               ctx.drawImage(img, iconOffsetX, iconOffsetY, iconWidth, iconHeight);
             };
             return {
