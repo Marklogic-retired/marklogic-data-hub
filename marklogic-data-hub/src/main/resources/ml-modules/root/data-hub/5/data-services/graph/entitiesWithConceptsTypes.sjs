@@ -54,7 +54,8 @@ result.map(item => {
   const finalObj = relatedEntitiesCountDataSet.find(el => el.entityTypeIRI.toString() === entityType);
   const conceptInfo = {
     conceptIRI: conceptIRI,
-    count: finalObj.total
+    count: finalObj.total,
+    conceptClass: item.conceptClassName
   };
 
   if(!hashmapEntityType.has(entityType)){

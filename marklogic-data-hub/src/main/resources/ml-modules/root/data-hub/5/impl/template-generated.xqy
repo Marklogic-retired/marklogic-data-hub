@@ -300,11 +300,17 @@ declare function extraction-template-generate(
                           let $predicate_concept:=map:get($concept, "predicate")
                           let $context:=map:get($concept, "context")
                           let $conceptExpression:=map:get($concept, "conceptExpression")
+                          let $concept_class:=map:get($concept, "conceptClass")
                           where exists($has-related-concepts)
                           return
                             <tde:template>
                              <tde:context>{ $context}</tde:context>
                             <tde:triples>
+                            <tde:triple>
+                              <tde:subject><tde:val>sem:iri("{ $concept_class}")</tde:val></tde:subject>
+                              <tde:predicate><tde:val>$subject-iri</tde:val></tde:predicate>
+                              <tde:object><tde:val>{ $conceptExpression}</tde:val></tde:object>
+                            </tde:triple>
                             <tde:triple>
                                <tde:subject><tde:val>$subject-iri</tde:val></tde:subject>
                                <tde:predicate><tde:val>sem:iri("{ $predicate_concept}")</tde:val></tde:predicate>
