@@ -32,6 +32,8 @@ describe("Mapping", () => {
   it("Verify more/less functionality on filtering by name for structured properties", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     mappingStepDetail.customerEntity().click();
+    mappingStepDetail.getEditStepSettingsButton("mapCustomersJSON").click();
+    mappingStepDetail.getColectionInputValue().should("have.value", "loadCustomersJSON");
     curatePage.openMappingStepDetail("Customer", "mapCustomersJSON");
     browsePage.waitForSpinnerToDisappear();
     curatePage.scrollEntityContainer();

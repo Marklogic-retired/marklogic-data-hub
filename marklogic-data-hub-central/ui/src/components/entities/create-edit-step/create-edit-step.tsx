@@ -33,6 +33,7 @@ type Props = {
   setHasChanged: any;
   setPayload: any;
   onCancel: any;
+  preloadTypeahead?: string;
 }
 
 const CreateEditStep: React.FC<Props> = (props) => {
@@ -575,6 +576,7 @@ const CreateEditStep: React.FC<Props> = (props) => {
                     aria-label="collection-input"
                     placeholder={"Enter collection name"}
                     value={collections}
+                    defaultInputValue={props.isEditing ? props.preloadTypeahead : ""}
                     disabled={!props.canReadWrite}
                     onInputChange={handleSearch}
                     onChange={handleTypeaheadChange}

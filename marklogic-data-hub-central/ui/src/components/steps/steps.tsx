@@ -206,6 +206,17 @@ const Steps: React.FC<Props> = (props) => {
     stepData={props.stepData}
   />);
 
+
+  const preloadTypeahead = (editStepArtifactObject: any) => {
+    if (editStepArtifactObject.selectedSource === "collection") {
+      let srcCollection = editStepArtifactObject.sourceQuery.substring(
+        editStepArtifactObject.sourceQuery.lastIndexOf("[") + 2,
+        editStepArtifactObject.sourceQuery.lastIndexOf("]") - 1
+      );
+      return srcCollection;
+    }
+  };
+
   const createEditMapping = (<CreateEditStep
     {...createEditDefaults}
     isEditing={props.isEditing}
@@ -214,6 +225,7 @@ const Steps: React.FC<Props> = (props) => {
     targetEntityType={props.targetEntityType}
     createStepArtifact={createStep}
     updateStepArtifact={updateStep}
+    preloadTypeahead = {preloadTypeahead(props.stepData)}
   />);
 
   const createEditMatching = (<CreateEditStep

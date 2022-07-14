@@ -419,6 +419,14 @@ class MappingStepDetail {
     cy.get("#resetSearch-source").click({force: true});
   }
 
+  getEditStepSettingsButton(value:string) {
+    return cy.get(`[data-testid=${value}-edit]`);
+  }
+
+  getColectionInputValue() {
+    return cy.get(`.rbt-input-main`);
+  }
+
 }
 
 const mappingStepDetail = new MappingStepDetail();
