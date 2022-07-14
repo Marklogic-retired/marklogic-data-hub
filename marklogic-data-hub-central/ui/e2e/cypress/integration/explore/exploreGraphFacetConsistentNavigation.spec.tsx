@@ -35,7 +35,7 @@ describe("Test navigation with facets from graph side panel to details twice", (
     graphExplore.stopStabilization();
 
     cy.log("**Enter text in search field and apply facets**");
-    entitiesSidebar.getMainPanelSearchInput().type("3039");
+    entitiesSidebar.getMainPanelSearchInput("3039");
     entitiesSidebar.getApplyFacetsButton().click();
     browsePage.waitForSpinnerToDisappear();
 

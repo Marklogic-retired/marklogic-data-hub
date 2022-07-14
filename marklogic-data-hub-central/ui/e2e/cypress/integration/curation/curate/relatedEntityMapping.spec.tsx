@@ -234,13 +234,14 @@ describe("Mapping", () => {
   it("Edit advanced settings for each entity", () => {
     cy.log("**Navigate to curate page**");
     cy.visit("/tiles/curate");
+    cy.waitForAsyncRequest();
     curatePage.getEntityTypePanel("Person").should("exist");
     //There is a re-render happening sometimes at this point,
     //so waiting for a request will not work.
     //A hard wait of 1 sec may be needed here.
 
     cy.log("**Open step details for Person**");
-    curatePage.getEntityTypePanel("Person").should("be.visible").click();
+    curatePage.getEntityTypePanel("Person").should("be.visible").click({force: true});
     curatePage.openMappingStepDetail("Person", "mapRelation");
     curatePage.verifyStepDetailsOpen("mapRelation");
     browsePage.waitForSpinnerToDisappear();

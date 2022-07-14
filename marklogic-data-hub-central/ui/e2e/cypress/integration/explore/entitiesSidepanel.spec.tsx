@@ -229,7 +229,7 @@ describe("Test '/Explore' left sidebar", () => {
     cy.wait(8000);
     browsePage.getTableView().click();
     cy.log("Typing Adams in search bar and click on apply facets");
-    entitiesSidebar.getMainPanelSearchInput().type("Adams");
+    entitiesSidebar.getMainPanelSearchInput("Adams");
     entitiesSidebar.getApplyFacetsButton().click();
     browsePage.waitForSpinnerToDisappear();
 

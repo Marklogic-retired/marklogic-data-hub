@@ -29,11 +29,6 @@ describe("json scenario for table on browse documents page", () => {
   beforeEach(() => {
     //Restoring Local Storage to Preserve Session
     cy.restoreLocalStorage();
-    cy.visit("/");
-    toolbar.getExploreToolbarIcon().should("be.visible").click();
-    browsePage.getTableView().should("be.visible").click({force: true});
-    browsePage.waitForSpinnerToDisappear();
-    browsePage.waitForHCTableToLoad();
   });
   afterEach(() => {
     // update local storage
@@ -44,6 +39,10 @@ describe("json scenario for table on browse documents page", () => {
     cy.waitForAsyncRequest();
   });
   it("select \"all entities\" and verify table default columns", () => {
+    toolbar.getExploreToolbarIcon().should("be.visible").click({force: true});
+    browsePage.getTableView().should("be.visible").click({force: true});
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.waitForHCTableToLoad();
     entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
     table.getColumnTitle(2).should("contain", "Identifier");
@@ -81,7 +80,7 @@ describe("json scenario for table on browse documents page", () => {
 
 
   it("search for a simple text/query and verify content", () => {
-    entitiesSidebar.getMainPanelSearchInput().type("Alice");
+    entitiesSidebar.getMainPanelSearchInput("Alice");
     entitiesSidebar.getApplyFacetsButton().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getTotalDocuments().should("be.equal", 1);
@@ -113,18 +112,20 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getClearFacetSearchSelection("Alice").should("exist");
     browsePage.getSearchBar().should("have.value", "Alice");
     browsePage.getTableView().should("have.css", "color", "rgb(57, 68, 148)");
-
+    browsePage.getClearAllFacetsButton().click();
+    browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
+    cy.wait(3000);
   });
 
   it("verify instance view of the document with pk", () => {
-    browsePage.getClearAllFacetsButton().click();
-    entitiesSidebar.getMainPanelSearchInput().type("10248");
+    entitiesSidebar.getMainPanelSearchInput("10248");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("All Entities");
     entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
     entitiesSidebar.getApplyFacetsButton().click();
     browsePage.waitForSpinnerToDisappear();
-    browsePage.getTotalDocuments().should("be.equal", 1);
+    browsePage.getTotalDocuments().should("be.equal", 1, {timeout: 15000});
     browsePage.getTableViewInstanceIcon().click();
     detailPage.getInstanceView().should("exist");
     detailPage.getDocumentEntity().should("contain", "Order");
@@ -136,13 +137,14 @@ describe("json scenario for table on browse documents page", () => {
   });
 
   it("verify source view of the document", () => {
+    explorePage.backToResults();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
     entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.waitForSpinnerToDisappear();
     explorePage.getFinalDatabaseButton();
     browsePage.getClearAllFacetsButton().click();
-    entitiesSidebar.getMainPanelSearchInput().type("Adams Cole");
+    entitiesSidebar.getMainPanelSearchInput("Adams Cole");
     entitiesSidebar.getApplyFacetsButton().click();
     browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
@@ -286,7 +288,6 @@ describe("json scenario for table on browse documents page", () => {
     cy.log("*apply multiple facets, select and discard new facet, verify original facets checked*");
     browsePage.getClearAllFacetsButton().click();
     cy.wait(3000);
-    entitiesSidebar.toggleEntitiesView();
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
     browsePage.getShowMoreLink("name").click();
     browsePage.getFacetItemCheckbox("name", "Jacqueline Knowles").click();
@@ -305,6 +306,7 @@ describe("json scenario for table on browse documents page", () => {
   });
 
   it("apply multiple facets, deselect them, apply changes, apply multiple, clear them, verify no facets checked", () => {
+    entitiesSidebar.backToMainSidebar();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
     entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
@@ -343,6 +345,7 @@ describe("json scenario for table on browse documents page", () => {
 
 
   it("Verify facets can be selected, applied and cleared using clear text", () => {
+    entitiesSidebar.backToMainSidebar();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Person");
     entitiesSidebar.getBaseEntityOption("Person").should("be.visible");
@@ -361,6 +364,7 @@ describe("json scenario for table on browse documents page", () => {
   });
 
   it("Apply facets, unchecking them should not recheck original facets", () => {
+    entitiesSidebar.backToMainSidebar();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
     entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");

@@ -268,6 +268,7 @@ describe("Entity Modeling: Writer Role", () => {
 
     cy.log("**Reloading the page so the change appears");
     cy.reload();
+    cy.waitForAsyncRequest();
     modelPage.selectView("table");
     propertyTable.getExpandIcon("User3").scrollIntoView().click();
     propertyTable.getExpandIcon("address").scrollIntoView().click();

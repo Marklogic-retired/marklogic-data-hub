@@ -338,7 +338,6 @@ describe("Validate E2E Mastering Flow", () => {
   it("Create a new merge step ", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Patient").should("be.visible"));
-    curatePage.toggleEntityTypeId("Patient");
     curatePage.selectMergeTab("Patient");
     curatePage.addNewStep("Patient").should("be.visible").click();
     createEditStepDialog.stepNameInput().clear().type(mergeStep, {timeout: 2000});
@@ -391,7 +390,6 @@ describe("Validate E2E Mastering Flow", () => {
     mappingStepDetail.goBackToCurateHomePage();
   });
   it("Add Merge step to existing flow Run", {defaultCommandTimeout: 120000}, () => {
-    curatePage.toggleEntityTypeId("Patient");
     curatePage.selectMergeTab("Patient");
     curatePage.runStepInCardView(mergeStep).click();
     curatePage.runStepSelectFlowConfirmation().should("be.visible");
