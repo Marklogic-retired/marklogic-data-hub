@@ -228,6 +228,8 @@ const GraphView: React.FC<Props> = (props) => {
 
   const handleEntitySelection = (entityName) => {
     setSelectedEntity(entityName);
+    setEntityFiltered("");
+    setIsEntityFiltered(false);
   };
 
   const onCloseSidePanel = async () => {
