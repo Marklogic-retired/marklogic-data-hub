@@ -245,8 +245,19 @@ function getEntityWithConcepts(entityTypeIRIs, predicateConceptList) {
                         }
                         }`);
 
+  const conceptClass = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+                 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                 SELECT (?subjectIRI AS ?conceptClassName) (?predicateIRI AS ?entityID) ?objectIRI ?docURI  WHERE {
 
-  return subjectPlanConcept.result(null, {entityTypeIRIs, predicateConceptList}).toArray();
+                        ?predicateIRI rdf:type @entityTypeIRIs.
+                        ?subjectIRI ?predicateIRI ?objectIRI.
+
+                        }`);
+
+  let joinOn = op.on(op.col("subjectIRI"),op.col("entityID"));
+  let fullPlan = subjectPlanConcept.joinLeftOuter(conceptClass, joinOn);
+
+  return fullPlan.result(null, {entityTypeIRIs, predicateConceptList}).toArray();
 }
 
 function getRelatedEntityInstancesCount(semanticConceptIRI) {

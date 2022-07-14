@@ -45,7 +45,7 @@ function generateTdeWithRelatedEntityType() {
     ];
 
   assertions.push(
-    test.assertEqual(1, fn.count(contextTemplate.xpath("*:triples/*:triple")), "has to exists three rows of triple")
+    test.assertEqual(2, fn.count(contextTemplate.xpath("*:triples/*:triple")), "has to exists two triples")
   );
 
   var existsConceptTriple = false;
