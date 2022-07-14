@@ -34,6 +34,16 @@ public interface MasteringManager {
     public JsonNode unmerge(String mergeURI, Boolean retainAuditTrail, Boolean blockFutureMerges);
 
     /**
+     * Unmerges the set of uris from a merged document
+     * @param mergeURI - URI of the merged document that is being reversed
+     * @param retainAuditTrail - determines if provenance for the merge/unmerge is kept
+     * @param blockFutureMerges - ensures that the documents won't be merged together in the next mastering run, if true
+     * @param removeURIs - URIs of the merged documents that we want to unmerge
+     * @return - a JsonNode for the unmerge response
+     */
+    public JsonNode unmergeRecord(String mergeURI, Boolean retainAuditTrail, Boolean blockFutureMerges, List<String> removeURIs);
+
+    /**
      * Manually merges a set of documents
      * @param mergeURIs - URIs of the documents to merge
      * @param flowName - The name of the flow that has the mastering settings

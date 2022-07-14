@@ -158,4 +158,21 @@ class ManualMergeUnmergeTaskTest extends BaseTest{
         //3 original documents will get mastered collection
         assertEquals(3, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "sm-person-mastered"))
     }
+
+    def "Verify manual unmerge for Uris"() {
+        //Should return merged doc as response and not save in DB
+        given:
+        manualMerge()
+        String mergeURI = runInDatabase(query, HubConfig.DEFAULT_FINAL_NAME).next().getString()
+
+        when:
+        String urisToRemove = "/person-1.json"
+        def result = runTask('hubUnmergeRecord', "-PmergeURI="+mergeURI, "-PretainAuditTrail=true", "-PblockFutureMerges=true", "-PremoveURIs="+urisToRemove)
+
+        then:
+        result.task(':hubUnmergeRecord').outcome == TaskOutcome.SUCCESS
+        getDocCount(HubConfig.DEFAULT_FINAL_NAME, "sm-person-archived") == 3
+        getDocCount(HubConfig.DEFAULT_FINAL_NAME, "sm-person-mastered") == 2
+        getDocCount(HubConfig.DEFAULT_FINAL_NAME, "sm-person-merged") == 2
+    }
 }

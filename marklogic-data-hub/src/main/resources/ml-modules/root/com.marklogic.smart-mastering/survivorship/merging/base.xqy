@@ -352,12 +352,15 @@ declare function merge-impl:rollback-merge(
       fn:max($all-contributing-uris/(@last-merge|../last-merge) ! xs:dateTime(.))
     else ()
   let $previous-uris := if (fn:exists($remove-uris)) then
-      $all-contributing-uris[fn:not(. = $remove-uris)] ! fn:string()
+      if (fn:count($all-contributing-uris[fn:not(. = ($remove-uris, $merged-doc-uri))]) le 1) then
+        $all-contributing-uris
+      else
+        $remove-uris
     else if (fn:empty($last-merge-dateTime) and fn:exists($latest-auditing-receipt-for-doc)) then
       $latest-auditing-receipt-for-doc/auditing:previous-uri ! fn:string(.)
     else
       $all-contributing-uris[(@last-merge|../last-merge) = $last-merge-dateTime] ! fn:string(.)
-  let $merge-doc-in-previous := $previous-uris = $merged-doc-uri
+  let $merge-doc-in-previous := fn:count($all-contributing-uris[fn:not(. = ($merged-doc-uri,$previous-uris))]) ge 2
   let $_trace := if (xdmp:trace-enabled($const:TRACE-MERGE-RESULTS)) then
           let $doc-prefix := "cts.doc('" || $merged-doc-uri || "')"
           return (
@@ -370,8 +373,13 @@ declare function merge-impl:rollback-merge(
           ()
   where fn:exists(($latest-auditing-receipt-for-doc,$last-merge-dateTime, $remove-uris))
   return (
+    if ($retain-rollback-info) then (
+      merge-impl:archive-document($merged-doc-uri, $merge-options)
+    ) else (
+      xdmp:document-delete($merged-doc-uri)
+    ),
     let $remerged-doc :=
-      if ($merge-doc-in-previous or (fn:exists($previous-uris) and fn:exists($remove-uris))) then
+      if ($merge-doc-in-previous) then
         let $merge-options-ref := $merge-doc-headers/*:merge-options/*:value ! fn:string(.)
         let $merge-options := merge-impl:options-ref-to-options-node($merge-options-ref)
         let $older-uris := $all-contributing-uris[fn:not(. = ($previous-uris,$merged-doc-uri))]
@@ -381,13 +389,7 @@ declare function merge-impl:rollback-merge(
             $older-uris,
             $merge-options
           )
-      else (
-        if ($retain-rollback-info) then (
-          merge-impl:archive-document($merged-doc-uri, $merge-options)
-        ) else (
-          xdmp:document-delete($merged-doc-uri)
-        )
-      )
+      else ()
     let $prevent-auto-match :=
       if ($block-future-merges) then
         matcher:block-matches((
@@ -406,24 +408,13 @@ declare function merge-impl:rollback-merge(
     where fn:not($previous-doc-uri = $merged-doc-uri or merge-impl:source-of-other-merged-doc($previous-doc-uri, $merged-doc-uri))
     return (
       $previous-doc-uri,
-      xdmp:document-set-collections($previous-doc-uri, $new-collections)
-    ),
-    if ($merge-doc-in-previous) then
-      let $merge-options-ref := $merge-doc-headers/*:merge-options/*:value ! fn:string(.)
-      let $merge-options := merge-impl:options-ref-to-options-node($merge-options-ref)
-      let $older-uris := $all-contributing-uris[fn:not(. = ($previous-uris,$merged-doc-uri))]
-      where fn:exists($merge-options) and fn:exists($older-uris)
-      return
-        merge-impl:save-merge-models-by-uri(
-          $older-uris,
-          $merge-options
+      if (xdmp:trace-enabled($const:TRACE-MERGE-RESULTS)) then
+        (
+          xdmp:trace($const:TRACE-MERGE-RESULTS, $previous-doc-uri || "  new collections: " || xdmp:to-json-string($new-collections))
         )
-    else (
-      if ($retain-rollback-info) then (
-        merge-impl:archive-document($merged-doc-uri, $merge-options)
-      ) else (
-        xdmp:document-delete($merged-doc-uri)
-      )
+      else
+        (),
+      xdmp:document-set-collections($previous-doc-uri, $new-collections)
     ),
     if ($retain-rollback-info) then (
       $latest-auditing-receipt-for-doc ! auditing:audit-trace-rollback(., $merge-options)

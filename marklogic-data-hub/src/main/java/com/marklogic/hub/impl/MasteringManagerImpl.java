@@ -39,6 +39,11 @@ public class MasteringManagerImpl implements MasteringManager {
     }
 
     @Override
+    public JsonNode unmergeRecord(String mergeURI, Boolean retainAuditTrail, Boolean blockFutureMerges, List<String> removeURIs) {
+        return getMergeResource(DatabaseKind.FINAL).unmergeRecord(mergeURI, retainAuditTrail, blockFutureMerges, removeURIs);
+    }
+
+    @Override
     public JsonNode merge(List<String> mergeURIs, String flowName, String stepNumber, Boolean preview, JsonNode options) {
         return getMergeResource(DatabaseKind.FINAL).merge(mergeURIs, flowName, stepNumber, preview, options);
     }
@@ -101,6 +106,21 @@ public class MasteringManagerImpl implements MasteringManager {
             params.put("blockFutureMerges", blockFutureMerges.toString());
             params.put("targetDatabase", targetDatabase);
             params.put("sourceDatabase", targetDatabase);
+            JacksonHandle handle = new JacksonHandle();
+            resp = this.getServices().delete(params, handle).get();
+            return resp;
+        }
+
+        public JsonNode unmergeRecord(String mergeURI, Boolean retainAuditTrail, Boolean blockFutureMerges,  List<String> removeURIs) {
+            JsonNode resp;
+
+            RequestParameters params = new RequestParameters();
+            params.put("mergeURI", mergeURI);
+            params.put("retainAuditTrail", retainAuditTrail.toString());
+            params.put("blockFutureMerges", blockFutureMerges.toString());
+            params.put("targetDatabase", targetDatabase);
+            params.put("sourceDatabase", targetDatabase);
+            params.put("removeURI", removeURIs);
             JacksonHandle handle = new JacksonHandle();
             resp = this.getServices().delete(params, handle).get();
             return resp;
