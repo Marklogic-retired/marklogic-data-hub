@@ -236,7 +236,7 @@ describe("login", () => {
 
   it("should only enable Run and Explorer tile for hub-central-step-runner", () => {
     const flowName = "personJSON";
-    const stepName = "loadPersonJSON";
+    const stepName = "mapPersonJSON";
     cy.loginAsTestUserWithRoles("hub-central-step-runner").withUI()
       .url().should("include", "/tiles");
     //All tiles but Run and Explore, should show a tooltip that says contact your administrator
@@ -276,7 +276,7 @@ describe("login", () => {
 
   it("should only enable Run and Explorer tile for hub-central-flow-writer", () => {
     const flowName = "personJSON";
-    const stepName = "loadPersonJSON";
+    const stepName = "mapPersonJSON";
     cy.loginAsTestUserWithRoles("hub-central-flow-writer").withUI()
       .url().should("include", "/tiles");
     //All tiles but Run and Explore, should show a tooltip that says contact your administrator
