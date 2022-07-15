@@ -43,7 +43,7 @@ const SummaryMeter: React.FC<Props> = (props) => {
     chart: {
       type: "solidgauge",
       height: 180,
-      width: 360,
+      width: 294,
       borderWidth: 0 //  NOTE setting as string causes "Error: <rect> attribute" errors
     },
     title: null,
@@ -109,7 +109,7 @@ const SummaryMeter: React.FC<Props> = (props) => {
             borderWidth: 0,
             style: {
                 color: '#999',
-                fontSize: '14px',
+                fontSize: '12px',
             },
             formatter: function () {
                     var self: any = this;
@@ -135,16 +135,16 @@ const SummaryMeter: React.FC<Props> = (props) => {
       <div style={{zIndex: 1000}}>
         <div className={styles.labelAll}>
             <div className={styles.block} />
-            <div className={styles.text}>All results</div>
+            <div className={styles.text + ' small'}>All results</div>
         </div>
         <div className={styles.labelFilters}>
             <div className={styles.block} />
-            <div className={styles.text}>With filters applied</div>
+            <div className={styles.text + ' small'}>With filters applied</div>
         </div>
-        <div className={styles.min}>0</div>
-        <div className={styles.max}>{searchContext.total}</div>
+        <div className={styles.min + ' small'}>0</div>
+        <div className={styles.max + ' small'}>{searchContext.total}</div>
         
-        <div className={styles.returned}>
+        <div className={styles.returned + ' small'}>
             <div className={styles.separator} />
             <span>{searchContext.returned}</span>
         </div>

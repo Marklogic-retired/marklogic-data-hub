@@ -1,7 +1,7 @@
-import React, {useContext, useState, useEffect} from "react";
-import {useNavigate, useParams, useSearchParams} from "react-router-dom";
-import {UserContext} from "../store/UserContext";
-import {DetailContext} from "../store/DetailContext";
+import React, { useContext, useState, useEffect } from "react";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { UserContext } from "../store/UserContext";
+import { DetailContext } from "../store/DetailContext";
 import Loading from "../components/Loading/Loading";
 import Occupations from "../components/Occupations/Occupations";
 import Timeline from "../components/Timeline/Timeline";
@@ -17,9 +17,12 @@ import Membership from "../components/Membership/Membership";
 import ImageGallery from "../components/ImageGallery/ImageGallery";
 import ImageGalleryMulti from "../components/ImageGalleryMulti/ImageGalleryMulti";
 import LinkList from "../components/LinkList/LinkList";
-import {ArrowLeft, ChevronDoubleDown, ChevronDoubleUp} from "react-bootstrap-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faStar} from "@fortawesome/free-solid-svg-icons";
+import { ArrowLeft, ChevronDoubleDown, ChevronDoubleUp } from "react-bootstrap-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faStar } from "@fortawesome/free-solid-svg-icons";
+
+import { Col, Row, Container } from "react-bootstrap";
+
 import "./Detail.scss";
 import _ from "lodash";
 import {getValByConfig} from "../util/util";
@@ -59,7 +62,7 @@ const Detail: React.FC<Props> = (props) => {
 
   const userContext = useContext(UserContext);
   const detailContext = useContext(DetailContext);
-  const {expandIds, handleExpandIds} = detailContext;
+  const { expandIds, handleExpandIds } = detailContext;
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [config, setConfig] = useState<any>(null);
@@ -127,22 +130,22 @@ const Detail: React.FC<Props> = (props) => {
       }
     }
     return (
-      <div className="heading">
+      <div className="heading py-4">
         <div className="title">
-          <div className="icon" onClick={handleBackClick}>
+          <div className="icon me-3" onClick={handleBackClick}>
             <ArrowLeft color="#394494" size={28} />
-          </div>
+          </div> 
+          {configHeading.thumbnail && <div className="thumbnail me-3">
+            <Image data={detailContext.detail} config={configHeading.thumbnail.config} />
+          </div>}
           <div className="text">
             <Value id={detailContext.detail?.uri}>{titleValue}</Value>
           </div>
-          {configHeading.thumbnail && <div className="thumbnail">
-            <Image data={detailContext.detail} config={configHeading.thumbnail.config} />
-          </div>}
         </div>
         <div className="actions">
           <div className="expand">
-            <button onClick={handleExpandClick}>
-              <span className="label">{expand ? `Collapse All` : `Expand All`}</span>
+            <button className="btn btn-white border" onClick={handleExpandClick}>
+              <span className="label me-2">{expand ? `Collapse All` : `Expand All`}</span>
               <span className="icon">
                 {expand ? <ChevronDoubleUp color="#777" size={16} /> :
                   <ChevronDoubleDown color="#777" size={16} />}
@@ -167,7 +170,7 @@ const Detail: React.FC<Props> = (props) => {
           <div key={"item-" + index} className="item">
             {React.createElement(
               COMPONENTS[it.component],
-              {config: it.config, data: detailContext.detail}, null
+              { config: it.config, data: detailContext.detail }, null
             )}
           </div>
         );
@@ -177,13 +180,13 @@ const Detail: React.FC<Props> = (props) => {
   };
 
   const handleExpandIdsClick = (id, value) => {
-    const newExpandId = {...expandIds, [id]: value};
+    const newExpandId = { ...expandIds, [id]: value };
     handleExpandIds(newExpandId);
   };
 
   const getDetailNoEntity = () => {
     return (
-      <div>
+      <>
         <div className="heading">
           <div className="title">
             <div className="icon" onClick={handleBackClick}>
@@ -207,18 +210,16 @@ const Detail: React.FC<Props> = (props) => {
             collapsed={2}
             groupArraysAfterLength={3} />
         </Section>
-      </div>
+      </>
     );
   };
   const getDetailEntity = () => {
     return (
-      <div>
+      <Container>
 
         {config?.detail?.entities[entityType]?.heading ?
           getHeading(config.detail.entities[entityType].heading)
           : null}
-
-        <div className="container-fluid">
 
           {config?.detail?.entities[entityType]?.linkList?.config && <div>
             {React.createElement(
@@ -227,14 +228,10 @@ const Detail: React.FC<Props> = (props) => {
             )}
           </div>}
 
-          {config?.detail?.entities[entityType]?.membership && <div className="row">
-            <div className="col-12">
+          {config?.detail?.entities[entityType]?.membership &&
               <Section title="Membership" config={{
                 "headerStyle": {
                   "backgroundColor": "transparent"
-                },
-                "mainStyle": {
-                  "paddingTop": "6px"
                 }
               }}
                 collapsible={true}
@@ -246,25 +243,27 @@ const Detail: React.FC<Props> = (props) => {
                     COMPONENTS[config?.detail?.entities[entityType]?.membership.component],
                     {config: config?.detail?.entities[entityType]?.membership.config, data: detailContext.detail}, null
                   )}
-              </Section>
-            </div>
-          </div>}
-
-          <div className="row">
-            <div className="col-lg-7">
+              </Section>}
+          <Row>
+            <Col lg={7}>
 
               {config?.detail?.entities[entityType]?.info &&
                 <Section title={config?.detail?.entities[entityType]?.info.title}
                   collapsible={true}
                   expand={expandIds.info}
                   onExpand={() => {handleExpandIdsClick("info", true);}}
-                  onCollapse={() => {handleExpandIdsClick("info", false);}} >
+                  onCollapse={() => {handleExpandIdsClick("info", false);}} 
+                  config={{
+                    "mainStyle": {
+                      "padding": "1rem"
+                    }}
+                  }>
                   {getRecordItems(config?.detail?.entities[entityType]?.info?.items)}
                 </Section>
               }
 
-            </div>
-            <div className="col-lg-5">
+            </Col>
+            <Col lg={5}>
 
               {config?.detail?.entities[entityType]?.relationships &&
                 <Section
@@ -303,10 +302,9 @@ const Detail: React.FC<Props> = (props) => {
                 </Section>
               }
 
-            </div>
-          </div>
-          {config?.detail?.entities[entityType]?.timeline && <div className="row">
-            <div className="col-12">
+            </Col>
+          </Row>
+          {config?.detail?.entities[entityType]?.timeline && 
               <Section
                 title="Timeline"
                 data-test="timelineSection"
@@ -320,12 +318,8 @@ const Detail: React.FC<Props> = (props) => {
                     COMPONENTS[config.detail.entities[entityType].timeline.component],
                     {config: config.detail.entities[entityType].timeline.config, data: detailContext.detail}, null
                   )}
-              </Section>
-            </div>
-          </div>}
-        </div>
-
-      </div>
+              </Section>}
+      </Container>
     );
   };
 

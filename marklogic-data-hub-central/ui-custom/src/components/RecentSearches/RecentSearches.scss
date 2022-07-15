@@ -1,59 +1,21 @@
 .recentSearches {
-    width: 100%;
-
-    thead, tbody {
-        display: block;
-    }
-
-    tbody {
-        border-top-width: 1px !important;
-        border-top-color: #a0e2d3 !important;
-        overflow-y: scroll;
-        overflow-x: hidden;
-        max-height: 206px;
-    }
-
-    th {
-        border-bottom: none;
-        white-space: nowrap;
-    }
+  
 
     td {
         border-bottom-color: #a0e2d3 !important;
     }
-
-    th.query, td.query {
-        width: 95%;
-    }
-
+  
     td.query {
-        color: #5d6aaa;
-        span.query {
-            cursor: pointer;
-            display: inline-block;
-            span.qtext {
-                padding-right: 4px;
-            }
-            span.qtext.empty {
-                padding-right: 0;
-            }
-            span.entity {
-                padding-right: 4px;
-            }
-            span.facet {
-                padding-right: 4px;
-            }
-        }
+        color: #5d6aaa; 
     }
 
-    th.icon, td.icon {
-        text-align: center;
+    th.icon, td.icon { 
     }
 
     td.icon {
         span.icon {
             cursor: pointer;
-            padding: 0 44px;
+         
         }
     }
 }

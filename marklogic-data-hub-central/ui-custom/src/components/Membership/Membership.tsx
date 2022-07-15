@@ -31,7 +31,7 @@ type Props = {
           "path": "ts"
         },
         "lists": [
-          "list1",
+          "ist1",
           "list2",
           "list3",
           "list4",
@@ -62,7 +62,7 @@ const Membership: React.FC<Props> = (props) => {
       const important = statusValue === true;
       const classes = important ? "item highlighted" : membership ? "item success" : "item";
       return (
-        <div key={index} className={classes} style={membershipStyle}>
+        <div key={index} className={classes + ' col-sm-1'} style={membershipStyle}>
           <span className="title">{list}</span>
           <span className="icon" data-testid="icon-container">
             {membership ? <Check data-testid="success-icon" color="#97e7d7" size={iconSize} /> : <X data-testid="error-icon" color="#a2a2a2" size={iconSize} />}
@@ -75,7 +75,7 @@ const Membership: React.FC<Props> = (props) => {
     return items && items.length > 0 ? items : null;
   };
   return (
-    <div className="Membership" data-testid="membership-component">
+    <div className="Membership p-3" data-testid="membership-component">
       {
         getItems()
       }

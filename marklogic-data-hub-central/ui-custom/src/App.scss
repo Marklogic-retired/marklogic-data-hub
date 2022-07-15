@@ -1,12 +1,79 @@
+@import "~bootstrap/scss/bootstrap.scss"; 
+
 body {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Helvetica-Neue", Helvetica, Arial, sans-serif !important;
+  padding-top:74px;
 }
 
-main {
-  padding: 10px 40px 10px 65px;
-  margin: 0;
+header {
+  .nav-link {
+    color: #fff;
+    &:hover,
+    &:active,
+    &:focus{
+      color:#ccc;
+    }
+  }
+}
 
-  .none-found {
-    color: #777;
+.btn-white{
+  background-color: #fff !important;
+  border:1px solid #dee2e6!important;
+}
+ 
+/*
+ * Sidebar
+ */
+
+.sidebar { 
+  top: 0; 
+  bottom: 0; 
+  left: 0;
+  z-index: 100;  
+  /* Height of navbar */
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+}
+ 
+.sidebar-sticky {  
+  padding-top: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  /* Scrollable contents if viewport is shorter than content. */
+}
+ 
+//  Media Query
+
+
+@media (min-width: 768px) {
+  .sidebar {
+    position: fixed;
+  }
+  .sidebar-sticky { 
+    top: 74px;
+    height: calc(100vh - 74px);
+    padding-top: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    /* Scrollable contents if viewport is shorter than content. */
+  }
+   
+}
+
+@media (max-width: 992px) {
+  body{
+    padding-top: 220px;
+  }
+  .sidebar {
+    top: 220px;
+    height: calc(100vh - 220px);
+  }
+}
+
+@media (max-width: 767.98px) {
+  body{
+    padding-top: 220px;
+  }
+  .sidebar {
+    top: 5rem;
   }
 }

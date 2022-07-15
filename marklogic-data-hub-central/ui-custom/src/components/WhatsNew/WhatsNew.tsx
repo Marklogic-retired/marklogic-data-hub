@@ -1,11 +1,7 @@
 import React, { useState, useContext } from "react";
 import { MetricsContext } from "../../store/MetricsContext";
-import Dropdown from "react-bootstrap/Dropdown";
-import DropdownButton from "react-bootstrap/DropdownButton";
-import Table from "react-bootstrap/Table";
 import Highcharts from 'highcharts'
-import highchartsMore from "highcharts/highcharts-more.js"
-import solidGauge from "highcharts/modules/solid-gauge.js";
+import {Col, Row, Dropdown, DropdownButton, Table } from "react-bootstrap";
 import HighchartsReact from 'highcharts-react-official'
 import "./WhatsNew.scss";
 import _ from "lodash";
@@ -151,48 +147,50 @@ const WhatsNew: React.FC<Props> = (props) => {
   }
 
   return (
-    <div className="whatsNew">
+    <Row className="whatsNew">
       
-        <div className="chart" style={{zIndex: 1}}>
+        <Col xs={5} className="chart" style={{zIndex: 1}}>
           <HighchartsReact
               highcharts={Highcharts}
               options={options}
           />
-        </div>
+        </Col>
 
         {props.config?.items?.length > 0 && props.config?.menu?.length > 0 &&
-          <div className="content">
+          <Col xs={7} className="content">
 
-            <div className="menu">
+            <div className="menu my-3">
               <DropdownButton
                 title={selected}
+                variant="white"
+                size="sm"
                 data-testid="whatsNewDropdown"
                 id="whatsNewDropdown"
                 onSelect={handleSelect}
               >
                 {props.config.menu.map((n, i) => {
-                  return <Dropdown.Item key={"item-" + i} eventKey={n.label}>{n.label}</Dropdown.Item>
+                  return <Dropdown.Item className="small" key={"item-" + i} eventKey={n.label}>{n.label}</Dropdown.Item>
                 })}
               </DropdownButton>
             </div>
 
             <div className="legend">
-              <Table>
+              <Table borderless className="small">
                 <tbody>
                   {props.config.items.map((item, i) => {
                     return <tr key={"row-" + i}>
-                      <td className="bar"><div style={{"backgroundColor": item.color}}></div></td>
-                      <td className="label">{item.label}</td>
-                      <td className="value">{formatNumber(props.data, item.path)}</td>
+                      <td className="bar col-1 py-1 px-0"><div style={{"backgroundColor": item.color}}></div></td>
+                      <td className="label  py-1 px-0">{item.label}</td>
+                      <td className="value  py-1">{formatNumber(props.data, item.path)}</td>
                     </tr>
                   })}
                 </tbody>
               </Table>
             </div>
 
-          </div>}
+          </Col>}
 
-    </div>
+    </Row>
   );
 };
 

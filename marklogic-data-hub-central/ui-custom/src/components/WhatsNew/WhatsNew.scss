@@ -1,50 +1,23 @@
-.whatsNew {
-    font-size: 16px;
-    display: flex;
-    flex-direction: row;
-
-    .chart {
-        margin-right: 20px;
-    }
-
-    .content {
-        display: flex;
-        flex-direction: column;
-        padding: 10px;
-
-        .menu {
-            margin-bottom: 20px;
-            #whatsNewDropdown.dropdown-toggle {
-                position: relative;
-                width: 160px;
-                text-align: left;
-                background-color: #fff;
-                color: #333;
-                border: solid 1px rgb(206, 212, 218);
-            }
-            #whatsNewDropdown.dropdown-toggle::after {
-                position: absolute;
-                top: 16px;
-                right: 8px;
-                color: #333;
-            }
+.whatsNew {  
+    #whatsNewDropdown{
+        width: 90%;
+        text-align: left;
+        &::after{
+            float:right;
+            margin-top:8px;
         }
-
+        & + .dropdown-menu{
+            width: 90%;
+        }
+    }
+    .content {
         .legend {
-            table {
-                width: 320px;
-                tr {
-                    border-bottom: 0 none transparent;
-                }
-                td {
-                    padding: 4px;
-                }
-                td.bar {
-                    width: 20px;
+            table {  
+                td.bar { 
                     div {
                         position: relative;
                         top: 5px;
-                        height: 14px;
+                        height: 12px;
                         width: 18px;
                         border-radius: 4px;
                     }
@@ -57,11 +30,7 @@
                     div.submitted {
                         background-color: #09EFEF;
                     }
-                }
-                td.value{
-                    text-align: right;
-                    font-weight: bold;
-                }
+                } 
             }
         }
 

@@ -1,4 +1,4 @@
-.timeline {
+.timeline { 
   .title {
     font-size: 20px;
   }
@@ -61,8 +61,13 @@
     border-color: #5B69Af;
   }
 
-  .vis-timeline.vis-bottom {
-    visibility: visible !important;
+  .vis-timeline{
+    
+    border:none;
+    
+    & .vis-bottom {
+      visibility: visible !important;
+    }
   }
 
   .itemValue {

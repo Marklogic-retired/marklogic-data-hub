@@ -1,5 +1,5 @@
 import React from "react";
-import "./Section.scss";
+// import "./Section.scss";
 import {ChevronDoubleDown, ChevronDoubleUp} from 'react-bootstrap-icons'
 import RecentClear from "../RecentClear/RecentClear";
 
@@ -62,16 +62,16 @@ const Section: React.FC<Props> = (props) => {
   }
 
   return (
-    <div data-testid="sectionId" className="section" style={divStyle}>
-      <header style={headerStyle}>
+    <div data-testid="sectionId" className="section card mb-3" style={divStyle}>
+      <header className="card-header fw-bold d-flex justify-content-between align-items-center" style={headerStyle}>
         <span className="title">{props.title}</span>
         {props.title === "Recently Visited" && <RecentClear title="recently visited record" type="recentRecords"></RecentClear>}
         {props.collapsible && <div className="collapse-container">
-          <a data-testid="collapseButton" className="collapse-button" onClick={handleCollapse}><ChevronDoubleUp /></a>
-          <a data-testid="expandButton" className="collapse-button" onClick={handleExpand}><ChevronDoubleDown /></a>
+          <a data-testid="collapseButton" className="btn btn-sm btn-white bg-white border collapse-button me-1" onClick={handleCollapse}><ChevronDoubleUp /></a>
+          <a data-testid="expandButton" className="btn btn-sm btn-white bg-white border collapse-button" onClick={handleExpand}><ChevronDoubleDown /></a>
         </div>}
       </header>
-      <main className={props.collapsible ? expandClass : ""} style={mainStyle}>{props.children}</main>
+      <main className={props.collapsible ? expandClass : "card-body"} style={mainStyle}>{props.children}</main>
     </div>
   );
 };

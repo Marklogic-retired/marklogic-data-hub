@@ -44,7 +44,7 @@ const RecentClear: React.FC<Props> = (props) => {
 
     return (
         <span data-testid="recentClearContainer" className={props.type === "recentRecords" ? "recent-clear-records" : "recent-clear-searches"}>
-         <button className="clear-button" data-testid={props.type + "-clearButton"} onClick={showModalHandler} disabled={props.type === "recentRecords" ? !detailContext.hasSavedRecords() : !searchContext.hasSavedRecords()}>Clear</button>
+         <button className="btn btn-sm btn-white px-3 clear-button" data-testid={props.type + "-clearButton"} onClick={showModalHandler} disabled={props.type === "recentRecords" ? !detailContext.hasSavedRecords() : !searchContext.hasSavedRecords()}>Clear</button>
             <ConfirmationModal
                 isVisible={showModal}
                 toggleModal={setShowModal}
