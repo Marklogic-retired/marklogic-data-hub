@@ -1,0 +1,8 @@
+{
+  "lang": "zxx",
+  "name": "invalidModule",
+  "type": "CUSTOM",
+  "modulePath": "/custom-modules/custom.invalid/invalidModulePath.sjs",
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL"
+}
