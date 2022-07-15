@@ -1,6 +1,10 @@
 {
     "functionName": "getMappingFunctions",
-    "params": [],
+    "params": [{
+           "name": "excludeMLMappingFunctions",
+           "datatype": "boolean",
+           "nullable": true
+        }],
     "return": {
         "datatype": "jsonDocument",
         "$javaClass": "com.fasterxml.jackson.databind.JsonNode"

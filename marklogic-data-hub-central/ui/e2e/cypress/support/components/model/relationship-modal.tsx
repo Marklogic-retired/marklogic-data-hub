@@ -33,8 +33,8 @@ class RelationshipModal {
     return cy.findByTestId(`${entityName}-sourceNodeName`);
   }
 
-  verifyTargetEntity(entityName: string) {
-    return cy.findByTestId(`${entityName}-targetNodeName`);
+  verifyTargetNode(nodeName: string) {
+    return cy.findByTestId(`${nodeName}-targetNodeName`);
   }
 
   targetEntityDropdown() {
@@ -84,6 +84,39 @@ class RelationshipModal {
 
   confirmationOptions(option: string) {
     cy.findByText(option).click({force: true});
+  }
+
+  getSourcePropertySelectWrapper() {
+    return cy.get("#property-dropdown-wrapper");
+  }
+
+  verifySourcePropertyValue(propertyValue: string) {
+    return this.getSourcePropertySelectWrapper().should("have.text", propertyValue);
+  }
+
+  verifySourcePropertyPlaceholder() {
+    return this.getSourcePropertySelectWrapper().should("have.text", "Select property");
+  }
+
+  editSourceProperty(propertyName: string) {
+    this.getSourcePropertySelectWrapper().click();
+    cy.get(`#foreignKey-dropdown-MenuList [aria-label="${propertyName}-option"]`).click();
+  }
+
+  getEntityToConceptClassViewOption() {
+    return cy.get(`[id="entityToConceptClass"]`);
+  }
+
+  getEntityToEntityViewOption() {
+    return cy.get(`[id="entityToEntity"]`);
+  }
+
+  verifyExpressionPlaceholder() {
+    return cy.findByPlaceholderText("Enter the expression to create a custom concept IRI");
+  }
+
+  getDisabledRelationshipTypeTooltip() {
+    return cy.get(`[aria-label="relationshipTypeToggleDisabledInfo"]`);
   }
 }
 

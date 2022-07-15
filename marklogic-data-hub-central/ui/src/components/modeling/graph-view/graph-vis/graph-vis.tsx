@@ -20,6 +20,10 @@ import * as FontIcon from "react-icons/fa";
 import {renderToStaticMarkup} from "react-dom/server";
 import {DEFAULT_NODE_CONFIG} from "@config/modeling.config";
 import {themeColors} from "@config/themes.config";
+import {HCAlert} from "@components/common";
+import {Modal} from "react-bootstrap";
+import {ModelingMessages} from "@config/tooltips.config";
+import {getMappingFunctions} from "@api/mapping";
 
 type Props = {
   entityTypes: any;
@@ -110,6 +114,11 @@ const GraphVis: React.FC<Props> = (props) => {
   };
   const [networkHeight, setNetworkHeight] = useState(graphConfig.defaultOptions.height);
   const vis = require("vis-network/standalone/umd/vis-network"); //eslint-disable-line @typescript-eslint/no-unused-vars
+
+  const [invalidSource, setInvalidSource] = useState(false);
+
+  // For storing mapping functions
+  const [mapFunctions, setMapFunctions] = useState<any>([]);
 
   // Load coords *once* on init
   useEffect(() => {
@@ -284,6 +293,9 @@ const GraphVis: React.FC<Props> = (props) => {
     if (network && props.graphEditMode) {
       network.disableEditMode();
       props.setGraphEditMode(false);
+      if (invalidSource) {
+        setInvalidSource(false);
+      }
     }
     setEscKeyPressed(false);
   }, [escKeyPressed]);
@@ -556,11 +568,12 @@ const GraphVis: React.FC<Props> = (props) => {
           return [];
         }
 
+        let title = !props.canWriteEntityModel && props.canReadEntityModel ? undefined : "Edit Relationship";
+
         let properties: any = Object.keys(e.model.definitions[e.entityName].properties);
         properties.forEach((p, i) => {
           let pObj = e.model.definitions[e.entityName].properties[p];
           let relationshipName = p;
-          let title = !props.canWriteEntityModel && props.canReadEntityModel ? undefined : "Edit Relationship";
           if (relationshipName.length > 20) {
             relationshipName = relationshipName.substring(0, 20) + "...";
             if (title !== undefined) title = p + "\n" + title;
@@ -623,9 +636,58 @@ const GraphVis: React.FC<Props> = (props) => {
             });
           }
         });
+        if (e.model.definitions[e.entityName].hasOwnProperty("relatedConcepts")) {
+          let relatedConcepts: any = e.model.definitions[e.entityName].relatedConcepts;
+          relatedConcepts.forEach(obj => {
+            let conceptClassName = obj.conceptClass || "ShoeStyle";
+            edges.push({
+              ...graphConfig.defaultEdgeProps,
+              from: e.entityName,
+              to: conceptClassName,
+              label: obj.predicate,
+              id: e.entityName + "-" + obj.predicate + "-" + conceptClassName + "-via-" + obj.context,
+              title: title,
+              arrows: {
+                to: {
+                  enabled: true,
+                  src: graphConfig.customEdgeSVG.oneToOne,
+                  type: "image"
+                }
+              },
+              arrowStrikethrough: true,
+              color: "#666",
+              font: {
+                align: "top",
+              },
+              chosen: {
+                label: onChosen,
+                edge: onChosen,
+                node: false
+              },
+              smooth: getSmoothOpts(e.entityName, conceptClassName, edges),
+              conceptExpression: obj.conceptExpression
+            });
+          });
+        }
       }
     });
     return edges;
+  };
+
+  const isConceptNode = (nodeId) => {
+    return props.entityTypes.some(e => {
+      let isConcept = e.hasOwnProperty("conceptName");
+      let nodeName = !isConcept ? "" : e.conceptName;
+      return nodeName === nodeId;
+    });
+  };
+
+  const setMappingFunctions = async () => {
+    let excludeMLMappingFunctions = true;
+    let mappingFuncResponse = await getMappingFunctions(excludeMLMappingFunctions);
+    if (mappingFuncResponse) {
+      setMapFunctions(mappingFuncResponse.data);
+    }
   };
 
   const getRelationshipInfo = (node1, node2, event) => {
@@ -633,20 +695,30 @@ const GraphVis: React.FC<Props> = (props) => {
     let targetNodeName = node2;
     let targetNodeColor;
     let edgeInfo = event && event.edges?.length > 0 ? event.edges[0] : "";
+    let isConcept = isConceptNode(node2);
     if (node2 === "Select target entity type*") {
       targetNodeColor = "#ececec";
     } else {
-      targetNodeColor = props.getColor(targetNodeName);
+      targetNodeColor = props.getColor(targetNodeName, isConcept);
     }
-    return {
+    let relationshipInfo = {
       edgeId: edgeInfo,
       sourceNodeName: sourceNodeName,
       sourceNodeColor: props.getColor(sourceNodeName),
       targetNodeName: targetNodeName,
       targetNodeColor: targetNodeColor,
       relationshipName: edgeInfo.length > 0 ? edgeInfo.split("-")[1] : "",
-      joinPropertyName: edgeInfo.length > 0 ? edgeInfo.split("-")[4] : ""
+      joinPropertyName: edgeInfo.length > 0 ? edgeInfo.split("-")[4] : "",
+      isConcept: isConcept
     };
+    if (isConcept) {
+      let edge = network.body.data.edges.get(edgeInfo);
+      if (edge) {
+        relationshipInfo["conceptExpression"] = edge.conceptExpression;
+      }
+      setMappingFunctions();
+    }
+    return relationshipInfo;
   };
 
   const options = {
@@ -679,14 +751,20 @@ const GraphVis: React.FC<Props> = (props) => {
       },
       addEdge: function (data, callback) {
         let relationshipInfo;
-        if (data.to === data.from) {  //if node is just clicked on during add edge mode, not dragged
-          relationshipInfo = getRelationshipInfo(data.from, "Select target entity type*", "");
-        } else { //if edge is dragged
-          relationshipInfo = getRelationshipInfo(data.from, data.to, "");
+        if (isConceptNode(data.from)) {
+          setInvalidSource(true);
+        } else {
+          if (data.to === data.from) {  //if node is just clicked on during add edge mode, not dragged
+            let isConcept = isConceptNode(data.to);
+            relationshipInfo = getRelationshipInfo(data.from, !isConcept ? "Select target entity type*" : "Select a concept class*", "");
+          } else { //if edge is dragged
+            relationshipInfo = getRelationshipInfo(data.from, data.to, "");
+          }
+          setSelectedRelationship(relationshipInfo);
+          setNewRelationship(true);
+          setOpenRelationshipModal(true);
         }
-        setSelectedRelationship(relationshipInfo);
-        setNewRelationship(true);
-        setOpenRelationshipModal(true);
+
       }
     },
   };
@@ -917,6 +995,32 @@ const GraphVis: React.FC<Props> = (props) => {
     }
   };
 
+  const closeInvalidSourceAlert = () => {
+    network.disableEditMode();
+    props.setGraphEditMode(false);
+    setInvalidSource(false);
+  };
+
+  const invalidAlert = () => <Modal
+    show={invalidSource}
+    dialogClassName={styles.dialog960w}
+    centered
+  >
+    <Modal.Header className={"bb-none"}>
+      <button type="button" className="btn-close" aria-label="closeInvalidSourceTypeAlert" onClick={closeInvalidSourceAlert}></button>
+    </Modal.Header>
+    <Modal.Body>
+      <HCAlert
+        className={`${styles.alert}`}
+        variant="danger"
+        showIcon
+        key={"invalidSourceTypeError"}
+        onClose={closeInvalidSourceAlert}
+      >{"Invalid Relationship"}</HCAlert>
+      <p aria-label="invalidSourceTypeError">{ModelingMessages.invalidSourceTypeError}</p>
+    </Modal.Body>
+  </Modal>;
+
   return (
     <div id="graphVis">
       <div className={styles.graphContainer}>
@@ -928,7 +1032,8 @@ const GraphVis: React.FC<Props> = (props) => {
         />
         {contextMenuVisible && menu()}
       </div>
-      <AddEditRelationship
+      {invalidAlert()}
+      {!invalidSource && <AddEditRelationship
         openRelationshipModal={openRelationshipModal}
         setOpenRelationshipModal={setOpenRelationshipModal}
         isEditing={!newRelationship}
@@ -940,7 +1045,9 @@ const GraphVis: React.FC<Props> = (props) => {
         canReadEntityModel={props.canReadEntityModel}
         canWriteEntityModel={props.canWriteEntityModel}
         hubCentralConfig={props.hubCentralConfig}
-      />
+        getColor={props.getColor}
+        mapFunctions={mapFunctions}
+      />}
     </div>
   );
 };

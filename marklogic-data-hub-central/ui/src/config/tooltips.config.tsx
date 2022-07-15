@@ -107,11 +107,16 @@ const ModelingTooltips = {
   /* Graph view */
   exportGraph: "Export graph as PNG",
   relationshipEmpty: "Relationship name is required",
-  targetEntityEmpty: "Target entity type is required",
+  targetEntityEmpty: function (nodeType: string) {
+    return <span aria-label="targetNodeEmpty">Target {nodeType} is required</span>;
+  },
   foreignKeyInfo: "A foreign key is a property that can be used to connect two entity types in a relationship. Select a property in the target entity type to connect the source and target entity types. A foreign key cannot allow multiple values, be a structured type property, or be an unpublished property.",
+  sourcePropertyKeyInfo: "A source entity property can be used as a context in a relationship between an entity type and a concept class.Select a property in the source entity type to connect the source entity type and target concept class. A related concept property cannot allow multiple values, be a structured type property, or be an unpublished property.",
   deleteRelationshipIcon: "Delete this relationship",
-  editModeInfo: <span>To add a relationship between entity types, drag the source entity type to the target entity type. You can also click the source entity type to configure a relationship. Press <strong>Esc</strong> to exit this mode.</span>,
-  addRelationshipHeader: <span aria-label="addRelationshipHeader">Set the relationship type, relationship name, and foreign key. You are not required to specify a foreign key to save the relationship.</span>,
+  editModeInfo: <span>To add a relationship to the data model, drag the source entity type to the target entity type or a concept class. You can also click the source entity type to configure a relationship. Press <strong>Esc</strong> to exit this mode.</span>,
+  addRelationshipHeader: function (relationshipType: string) { 
+    return <span aria-label="addRelationshipHeader">{relationshipType === "entityToConceptClass" ? `Set the relationship type, source property, relationship name, and expression. You are not required to specify the expression to save the relationship.` : `Set the relationship type, relationship name, and foreign key. You are not required to specify a foreign key to save the relationship.`}</span>
+},
   duplicatePropertyError: function (relationshipName) {
     return (
       <span data-testid="property-name-error">
@@ -138,6 +143,7 @@ const ModelingTooltips = {
     'Names must start with a letter and can contain letters, numbers, hyphens, and underscores.',
   
   conceptClassDescription: 'A description of this concept class.',
+  relationshipTypeToggleDisabledInfo: <span aria-label="relationshipTypeToggleDisabledInfo">You can only edit the relationship type of an entity when adding a new relationship to the data model.</span>,
 
   /* TO BE DEPRECATED. Use ModelingTooltips.nameEntityType. */
   nameRegex: 'Names must start with a letter and can contain letters, numbers, hyphens, and underscores. Entity names cannot use the same name as an existing entity type.',
@@ -167,6 +173,7 @@ const ModelingMessages = {
   saveEntityConfirm: <span>You have unpublished changes that are only available in the <strong>Model</strong> screen. Publish changes to apply changes to the rest of your project. Publishing changes could trigger a reindex of your data.</span>,
   revertChangesConfirm: <span>You have unpublished changes that are only available in the <strong>Model</strong> screen. Reverting your changes would restore your entity model to the most recent published state.</span>,
   titleNoDefinition: <span>Unable to display properties because the definition cannot be found for this entity type. To learn more, see <a href="https://docs.marklogic.com/datahub/refs/troubleshooting.html" target="_blank">Troubleshooting</a> in the documentation.</span>,
+  invalidSourceTypeError: "Please select an entity type to define the relationship. You can only select a Concept Class as a Target in a relationship."
 };
 
 

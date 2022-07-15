@@ -14,11 +14,13 @@
 
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-mapping", "execute");
 
+var excludeMLMappingFunctions;
+
 const esMappingLib = require("/data-hub/5/builtins/steps/mapping/entity-services/lib.sjs");
 
 let mlFunctions = esMappingLib.getMarkLogicMappingFunctions();
 let xpathFunctions = esMappingLib.getXpathMappingFunctions();
-let mappingFunctions = mlFunctions.concat(xpathFunctions);
+let mappingFunctions = !excludeMLMappingFunctions ? mlFunctions.concat(xpathFunctions) : xpathFunctions;
 mappingFunctions.sort(function(funcA, funcB) {
   var nameA = String(funcA.functionName).toLowerCase();
   var nameB = String(funcB.functionName).toLowerCase();
