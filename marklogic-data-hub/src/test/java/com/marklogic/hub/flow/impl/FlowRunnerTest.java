@@ -136,6 +136,34 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
         assertFalse(stepResponse.isSuccess());
     }
 
+    @Test
+    void customStepDefinitionWithModulePathThatDoesntExist() {
+        runAsDataHubDeveloper();
+
+        // Create a couple documents to process so we can verify the counts for events
+        writeFinalJsonDoc("/customer1.json", "{}", "example");
+        writeFinalJsonDoc("/customer2.json", "{}", "example");
+
+        Map<String, Object> options = new HashMap<>();
+        options.put("collections", Arrays.asList("collector-test-output"));
+        options.put("sourceQuery", "cts.uris(null, null, cts.collectionQuery('example'))");
+        RunFlowResponse flowResponse = runFlow(new FlowInputs("invalidModuleFlow", "1").withOptions(options));
+
+        RunStepResponse stepResponse = flowResponse.getStepResponses().get("1");
+        List<String> errors = stepResponse.getStepOutput();
+        assertEquals(1, errors.size(), "Expecting an error due to the missing module");
+        assertTrue(errors.get(0).contains("Unable to access module /custom-modules/doesnt-exist-modules.sjs in /custom-modules/custom.invalid/invalidModulePath.sjs. " +
+                "Verify that this module is in your modules database and that your user account has a role that grants read and execute permission to this module"),
+            "Did not find expected message in error; error: " + errors.get(0));
+
+        assertEquals(2, stepResponse.getTotalEvents(), "Expecting 2, as there are 2 URIs matching the collection query");
+        assertEquals(0, stepResponse.getSuccessfulEvents(), "Expecting 0, since the step module doesn't exist");
+        assertEquals(2, stepResponse.getFailedEvents(), "Expecting 2, since both URIs should have failed");
+        assertEquals(0, stepResponse.getSuccessfulBatches());
+        assertEquals(1, stepResponse.getFailedBatches());
+        assertFalse(stepResponse.isSuccess());
+    }
+
     /**
      * This test demonstrates multiple ways of expressing the sourceQuery as a script that returns values.
      */

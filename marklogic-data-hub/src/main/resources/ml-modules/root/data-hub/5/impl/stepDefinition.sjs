@@ -47,7 +47,12 @@ class StepDefinition {
       stepModule = this.retrieveModuleLibrary(moduleUri);
     } catch (e) {
       if(e.stack && e.stack.includes("XDMP-MODNOTFOUND")){
-        httpUtils.throwBadRequest(`Unable to access module: ${moduleUri}. Verify that this module is in your modules database and that your user account has a role that grants read and execute permission to this module`);
+        if (e.data.join(',') == moduleUri) {
+          httpUtils.throwBadRequest(`Unable to access module: ${moduleUri}. Verify that this module is in your modules database and that your user account has a role that grants read and execute permission to this module`);
+        }
+        else {
+          httpUtils.throwBadRequest(`Unable to access module ${e.data.join(',')} in ${moduleUri}. Verify that this module is in your modules database and that your user account has a role that grants read and execute permission to this module`);
+        }
       }
       httpUtils.throwBadRequest(`Unable to run module: ${moduleUri}; cause: ${e.stack}`);
     }
