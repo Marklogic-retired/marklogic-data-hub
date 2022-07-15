@@ -29,9 +29,9 @@ public class EnvironmentControllerTest extends AbstractHubCentralTest {
         assertNotNull(actualSystemInfo);
         assertEquals(versionInfo.getHubVersion(), actualSystemInfo.dataHubVersion);
         assertEquals(versionInfo.getMarkLogicVersion(), actualSystemInfo.marklogicVersion);
-        assertEquals(versionInfo.getStagingDbName(), actualSystemInfo.stagingDbName);
-        assertEquals(versionInfo.getFinalDbName(), actualSystemInfo.finalDbName);
-        assertEquals(versionInfo.getJobsDbName(), actualSystemInfo.jobsDbName);
+        assertEquals(versionInfo.getStagingDbName(), actualSystemInfo.stagingDb);
+        assertEquals(versionInfo.getFinalDbName(), actualSystemInfo.finalDb);
+        assertEquals(versionInfo.getJobsDbName(), actualSystemInfo.jobsDb);
 
         assertEquals(versionInfo.getClusterName(), actualSystemInfo.serviceName,
             "clusterName is called 'serviceName' in the HC context to provide an abstraction over where the " +
