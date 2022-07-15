@@ -229,7 +229,7 @@ describe("Entity Modeling: Graph View", () => {
     relationshipModal.verifyCardinality("oneToOneIcon").should("be.visible");
 
     //target entity node should be placeholder and user can set relationship options
-    relationshipModal.verifyTargetEntity("Select target entity type*").should("be.visible");
+    relationshipModal.verifyTargetNode("Select target entity type*").should("be.visible");
 
     relationshipModal.targetEntityDropdown().click();
     //verify dropdown options can be searched
@@ -291,7 +291,7 @@ describe("Entity Modeling: Graph View", () => {
 
     //relationship modal should open with proper source and target nodes in place
     relationshipModal.verifySourceEntity("Person").should("be.visible");
-    relationshipModal.verifyTargetEntity("Client").should("be.visible");
+    relationshipModal.verifyTargetNode("Client").should("be.visible");
 
     //add relationship properties and save
     relationshipModal.editRelationshipName("referredBy");
@@ -329,7 +329,7 @@ describe("Entity Modeling: Graph View", () => {
 
     //relationship modal should open with proper source and target nodes in place
     relationshipModal.verifySourceEntity("Person").should("be.visible");
-    relationshipModal.verifyTargetEntity("Client").should("be.visible");
+    relationshipModal.verifyTargetNode("Client").should("be.visible");
 
     //add relationship properties and save
     relationshipModal.editRelationshipName("recommendedByUserHavingVeryLongName");

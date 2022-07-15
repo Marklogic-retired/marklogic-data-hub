@@ -1,22 +1,24 @@
 const esMappingLib = require("/data-hub/5/builtins/steps/mapping/entity-services/lib.sjs");
 const test = require("/test/test-helper.xqy");
 
-function invokeService() {
+function invokeService(excludeMLMappingFunctions = false) {
   return fn.head(xdmp.invoke(
     "/data-hub/5/data-services/mapping/getMappingFunctions.sjs",
-    {}
+    {"excludeMLMappingFunctions": excludeMLMappingFunctions}
   ));
 }
 
-const mapFuncs = invokeService();
-function getFunctionInfo(functionName){
+const mapFuncs = invokeService(false);
+function getFunctionInfo(mapFuncs, functionName){
   return mapFuncs.find(func => {
     return func.functionName == functionName
   });
 }
 
-let sumFunc = getFunctionInfo("sum");
-let currentDatetime = getFunctionInfo("current-dateTime");
+const mapFuncsWithoutMLFunctions = invokeService(true);
+
+let sumFunc = getFunctionInfo(mapFuncs,"sum");
+let currentDatetime = getFunctionInfo(mapFuncs,"current-dateTime");
 const assertions = [];
 assertions.push(
   test.assertTrue(mapFuncs.length >= 100, fn.string(mapFuncs.length)),
@@ -24,7 +26,8 @@ assertions.push(
   test.assertTrue(sumFunc["signature"].includes("sum")),
   test.assertTrue(currentDatetime != null),
   test.assertTrue(mapFuncs["fn:sum"] == null, "'fn:' has been stripped from the function name and signature"),
-  test.assertTrue(isAlphabeticallySorted())
+  test.assertTrue(isAlphabeticallySorted()),
+  test.assertTrue(mapFuncsWithoutMLFunctions.length < mapFuncs.length && mapFuncsWithoutMLFunctions.length > 80, fn.string(mapFuncsWithoutMLFunctions.length)),
 );
 
 const functionsThatDontWork = esMappingLib.getXpathFunctionsThatDoNotWorkInMappingExpressions();

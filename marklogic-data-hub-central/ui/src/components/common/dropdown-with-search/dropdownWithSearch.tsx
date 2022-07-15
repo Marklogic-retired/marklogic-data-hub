@@ -100,7 +100,7 @@ const DropDownWithSearch = (props) => {
 
   const dropdownListOptions = props.srcData.map((element, index) => {
     let value = formatDropdownText(element.value, index);
-    return {value: element.key, testId: element.value, label: value, index, struct: element.struct};
+    return {value: element.key, testId: element.value, label: value, index, struct: element.struct, isDisabled: element.isDisabled};
   });
 
   /* props.srcData requires an array of tuple instead of a flat array to handle duplicate values */

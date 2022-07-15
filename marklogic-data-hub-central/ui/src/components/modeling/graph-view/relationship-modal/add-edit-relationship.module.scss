@@ -27,15 +27,18 @@
     width: 120px;
 }
 
+.optionalContainer, .foreignKeyContainer, .expressionContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100px;
+  margin-left: 30px;
+  margin-top: -22px;
+  margin-bottom: 50px;
+  border: 1px dashed lightgrey;
+}
+
 .foreignKeyContainer {
-    display: flex;
-    flex-direction: column;
     width: 450px;
-    height: 100px;
-    margin-left: 30px;
-    margin-top: -22px;
-    margin-bottom: 50px;
-    border: 1px dashed lightgrey;
 }
 
 .foreignKeyText {
@@ -76,15 +79,29 @@
     margin-right: -14px;
     z-index: 999;
 }
+.horizontalLineBeforeName {
+  pointer-events: none;
+  width: 20px;
+  color: #333333;
+  border-top: 1px solid #333333;
+  margin-top: 41px;
+  //margin-left: -6px;
+  //margin-right: -14px;
+  z-index: 999;
+}
 
-.cardinalityButton {
+.cardinalityButton, .cardinalityButtonConcept {
   margin-top: 30px;
   min-width: 30px;
-  margin-left: -10px;
+  margin-left: -15px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   height: 24px;
   border: 1px solid rgb(217, 217, 217) !important;
   padding: 0px !important;
+}
+
+.cardinalityButtonConcept {
+  cursor: default !important;
 }
 
 .questionCircle {
@@ -240,4 +257,66 @@
     font-size: 21px;
     margin-left: 11px;
     color: #cccccc;
+}
+
+
+.expressionContainer {
+  width: 63em;
+}
+
+.optionalExpressionContainer {
+  margin: 1.5rem 0.25rem;
+  display: flex;
+  justify-content: space-around;
+}
+
+.propertyContainer {
+  display: flex;
+  flex-direction: column;
+  width: 180px;
+  margin-top: 30px;
+  height: 25px;
+}
+
+.listIcon {
+  color: $primary;
+  background: transparent;
+  border: 0 !important;
+  margin-top: 4px;
+  padding: 0 !important;
+  font-size: 21px;
+  &:hover{
+    color: var(--hoverColor);
+  }
+}
+
+.sourceDrop { 
+  padding: 0 !important;
+  border: 0 !important;
+
+  &:hover{
+    color: var(--hoverColor);
+  }
+
+}
+
+.functionIcon {
+  color: $primary;
+  font-size: 14px;
+  width: 22px;
+  height: 20px;
+  border: 1px solid $primary !important;
+  border-radius: 2px;
+  padding: 0 !important;
+  text-align: center;
+  margin-top: 4px;
+  background-color: #fff !important;
+  &:hover{
+    color: var(--hoverColor);
+  }
+}
+
+.relationshipTypeToggleDisabled {
+  opacity: 0.5;
+  cursor: not-allowed !important;
 }

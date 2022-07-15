@@ -73,6 +73,14 @@ class GraphVis {
   getCenterOnEntityTypeOption(entityName: string) {
     return cy.findByTestId(`centerOnEntityType-${entityName}`);
   }
+
+  getInvalidSourceTypeError() {
+    return cy.get(`[aria-label="invalidSourceTypeError"]`);
+  }
+
+  closeInvalidSourceTypeErrorModal() {
+    cy.get(`[aria-label="closeInvalidSourceTypeAlert"]`).click({force: true});
+  }
 }
 
 const graphVis = new GraphVis();

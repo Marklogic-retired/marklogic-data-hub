@@ -33,9 +33,14 @@ export const getMappingArtifactByMapName = async (entityTypeId, mapName) => {
   }
 };
 
-export const getMappingFunctions = async () => {
+export const getMappingFunctions = async (excludeMLMappingFunctions?: boolean) => {
+  let response;
   try {
-    let response = await axios.get(`/api/artifacts/mapping/functions`);
+    if (!excludeMLMappingFunctions) {
+      response = await axios.get(`/api/artifacts/mapping/functions`);
+    } else {
+      response = await axios.get(`/api/artifacts/mapping/functions?excludeMLMappingFunctions=${excludeMLMappingFunctions}`);
+    }
 
     if (response && response.status === 200) {
       return response;

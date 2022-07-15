@@ -4,7 +4,8 @@ import modelPage from "../../support/pages/model";
 import {
   graphViewSidePanel,
   graphView,
-  conceptClassModal
+  conceptClassModal,
+  relationshipModal
 } from "../../support/components/model/index";
 import {confirmationModal, toolbar} from "../../support/components/common/index";
 import {Application} from "../../support/application.config";
@@ -80,6 +81,135 @@ describe("Concept classes in Modeling screen", () => {
     cy.waitUntil(() => conceptClassModal.getAddButton().click());
     cy.waitUntil(() => conceptClassModal.conceptClassNameError().should("exist"));
     conceptClassModal.getCancelButton().click();
+  });
+
+  it("can edit graph edit mode and add edge relationship between entity type and concept class via drag/drop", () => {
+    cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
+    modelPage.scrollPageBottom();
+    cy.wait(6000);
+    graphView.getAddButton().click();
+    graphView.addNewRelationship().should("be.visible").click({force: true});
+    graphView.verifyEditInfoMessage().should("exist");
+
+    modelPage.scrollPageBottom();
+
+    // the graph needs to stabilize before we interact with it
+    graphVis.getPositionsOfNodes().then((nodePositions: any) => {
+      let ProductCoordinates: any = nodePositions["Product"];
+      let ShoeStyleCoordinates: any = nodePositions["ShoeStyle"];
+      cy.wait(150);
+      graphVis.getGraphVisCanvas().trigger("pointerdown", ProductCoordinates.x, ProductCoordinates.y, {button: 0, scrollBehavior: "bottom"});
+      graphVis.getGraphVisCanvas().trigger("pointermove", ShoeStyleCoordinates.x, ShoeStyleCoordinates.y, {button: 0, force: true, scrollBehavior: "bottom"});
+      graphVis.getGraphVisCanvas().trigger("pointerup", ShoeStyleCoordinates.x, ShoeStyleCoordinates.y, {button: 0, scrollBehavior: "bottom"});
+    });
+
+    //relationship modal should open with proper source and target nodes in place
+    relationshipModal.verifySourceEntity("Product").should("be.visible");
+    relationshipModal.verifyTargetNode("ShoeStyle").should("be.visible");
+
+    //add relationship properties and save
+    relationshipModal.editRelationshipName("isCategory");
+
+    //open Optional line to edit foreign key field
+    relationshipModal.toggleOptional();
+    relationshipModal.verifyVisibleOptionalBlock();
+    relationshipModal.editSourceProperty("category");
+    relationshipModal.addRelationshipSubmit();
+
+    cy.waitForAsyncRequest();
+    modelPage.selectView("project-diagram");
+
+    modelPage.scrollPageBottom();
+    cy.wait(6000);
+
+    //reopen modal to verify previous updates
+    graphVis.getPositionOfEdgeBetween("Product,ShoeStyle").then((edgePosition: any) => {
+      cy.wait(150);
+      graphVis.getGraphVisCanvas().click(edgePosition.x, edgePosition.y, {force: true});
+    });
+
+    relationshipModal.verifyRelationshipValue("isCategory");
+    relationshipModal.verifySourcePropertyValue("category");
+
+    cy.log("Verify that the relationship type toggle is disabled in the Edit mode");
+    relationshipModal.getEntityToEntityViewOption().trigger("mouseover", {force: true});
+    relationshipModal.getDisabledRelationshipTypeTooltip().should("be.visible");
+
+    relationshipModal.cancelModal();
+  });
+
+  it("can enter graph edit mode and add edge relationships via single node click", {defaultCommandTimeout: 120000}, () => {
+    modelPage.selectView("project-diagram");
+
+    modelPage.scrollPageBottom();
+    cy.wait(6000);
+
+    graphView.getAddButton().scrollIntoView().click();
+    graphView.addNewRelationship().click();
+    graphView.verifyEditInfoMessage().should("exist");
+    cy.wait(1000);
+
+    cy.log("Verify the Invalid source error when choosing Concept class as Source type");
+    graphVis.getPositionsOfNodes().then((nodePositions: any) => {
+      let shoeStyleCoordinates: any = nodePositions["ShoeStyle"];
+      graphVis.getGraphVisCanvas().trigger("mouseover", shoeStyleCoordinates.x, shoeStyleCoordinates.y);
+      cy.wait(150);
+      graphVis.getGraphVisCanvas().click(shoeStyleCoordinates.x, shoeStyleCoordinates.y, {force: true});
+    });
+    graphVis.getPositionsOfNodes().then((nodePositions: any) => {
+      let shoeStyleCoordinates: any = nodePositions["ShoeStyle"];
+      cy.wait(150);
+      graphVis.getGraphVisCanvas().click(shoeStyleCoordinates.x, shoeStyleCoordinates.y, {force: true});
+    });
+    graphVis.getInvalidSourceTypeError().should("be.visible");
+    graphVis.closeInvalidSourceTypeErrorModal();
+    graphView.verifyEditInfoMessage().should("not.exist");
+
+    cy.wait(2000);
+
+    graphView.getAddButton().scrollIntoView().click();
+    graphView.addNewRelationship().click();
+    graphView.verifyEditInfoMessage().should("exist");
+    cy.wait(1000);
+
+    //verify create relationship via clicking a node in edit mode
+    graphVis.getPositionsOfNodes().then((nodePositions: any) => {
+      let personCoordinates: any = nodePositions["Person"];
+      graphVis.getGraphVisCanvas().trigger("mouseover", personCoordinates.x, personCoordinates.y);
+      cy.wait(150);
+      graphVis.getGraphVisCanvas().click(personCoordinates.x, personCoordinates.y, {force: true});
+    });
+
+    graphVis.getPositionsOfNodes().then((nodePositions: any) => {
+      let personCoordinates: any = nodePositions["Person"];
+      cy.wait(150);
+      graphVis.getGraphVisCanvas().click(personCoordinates.x, personCoordinates.y, {force: true});
+    });
+
+    relationshipModal.getModalHeader().should("be.visible");
+    relationshipModal.verifySourceEntity("Person").should("be.visible");
+
+    //target entity node should be placeholder and user can set relationship options
+    relationshipModal.verifyTargetNode("Select target entity type*").should("be.visible");
+    relationshipModal.getEntityToConceptClassViewOption().should("not.be.checked");
+    relationshipModal.getEntityToEntityViewOption().should("be.checked");
+
+    cy.log("Change view type to entity to concept class");
+    relationshipModal.getEntityToConceptClassViewOption().click();
+    relationshipModal.verifyTargetNode("Select a concept class*").should("be.visible");
+
+    relationshipModal.targetEntityDropdown().click();
+    relationshipModal.verifyEntityOption("ShoeStyle").should("be.visible");
+    relationshipModal.selectTargetEntityOption("ShoeStyle");
+    relationshipModal.editRelationshipName("hasStyle");
+    relationshipModal.toggleOptional();
+    relationshipModal.verifyVisibleOptionalBlock();
+    relationshipModal.verifyExpressionPlaceholder().should("be.visible");
+
+    relationshipModal.addRelationshipSubmit();
+    cy.waitForAsyncRequest();
+    relationshipModal.getModalHeader().should("not.exist");
+
   });
 
   it("Delete a concept class from graph view and publish the changes", {defaultCommandTimeout: 120000}, () => {

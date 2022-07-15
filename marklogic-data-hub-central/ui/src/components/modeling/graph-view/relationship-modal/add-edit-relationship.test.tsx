@@ -27,6 +27,8 @@ describe("Add Edit Relationship component", () => {
         canReadEntityModel={true}
         canWriteEntityModel={true}
         hubCentralConfig={mockHubCentralConfig}
+        getColor={jest.fn()}
+        mapFunctions={[]}
       />
     );
 
@@ -103,6 +105,8 @@ describe("Add Edit Relationship component", () => {
         canReadEntityModel={true}
         canWriteEntityModel={true}
         hubCentralConfig={mockHubCentralConfig}
+        getColor={jest.fn()}
+        mapFunctions={[]}
       />
     );
     expect(getByText("Add a Relationship")).toBeInTheDocument();
@@ -130,7 +134,7 @@ describe("Add Edit Relationship component", () => {
     fireEvent.click(getByText("Add"));
     wait(() => expect(getByLabelText("error-circle")).toBeInTheDocument());
     fireEvent.mouseOver(getByTestId("error-circle"));
-    await wait(() => expect(getByText(ModelingTooltips.targetEntityEmpty)).toBeInTheDocument());
+    await wait(() => expect(getByLabelText("targetNodeEmpty")).toBeInTheDocument());
 
     const mockRelationshipWithTarget = {...mockAddRelationshipInfo, targetNodeName: "Customer", targetNodeColor: "#ecf7fd"};
 
@@ -146,6 +150,8 @@ describe("Add Edit Relationship component", () => {
       canReadEntityModel={true}
       canWriteEntityModel={true}
       hubCentralConfig={mockHubCentralConfig}
+      getColor={jest.fn()}
+      mapFunctions={[]}
     />
     );
     //verify duplicate property error message with relationship name same as entity name
