@@ -78,7 +78,6 @@ public abstract class AbstractHubCentralTest extends AbstractHubTest {
         testHubConfig = new HubConfigImpl(testHubProject);
         resetHubProject();
         testHubConfig.applyProperties(new Properties());
-
         // Run as the least-privileged HC user
         runAsHubCentralUser();
 
@@ -126,7 +125,7 @@ public abstract class AbstractHubCentralTest extends AbstractHubTest {
      */
     @Override
     protected HubClient doRunAsUser(String username, String password) {
-        if (username.equals(getHubClient().getUsername())) {
+        if (getHubClient() != null && username.equals(getHubClient().getUsername())) {
             return getHubClient();
         }
         // Need to create the project directory before applying properties
