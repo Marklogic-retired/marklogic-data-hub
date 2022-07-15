@@ -64,7 +64,7 @@ if(query == null) {
 
 let queryObj = JSON.parse(query);
 let relatedEntityTypeIds = queryObj.relatedEntityTypeIds;
-let allEntityTypeIRIs = [];
+let relatedEntityTypeIRIs = [];
 let entityTypeIRIs = [];
 let entitiesDifferentsFromBaseAndRelated = [];
 let allRelatedPredicateList = [];
@@ -89,7 +89,7 @@ fn.collection(entityLib.getModelCollection()).toArray().forEach(model => {
   const entityNameIri = entityLib.getEntityTypeId(model, entityName);
 
   if(relatedEntityTypeIds && relatedEntityTypeIds.includes(entityName)) {
-    allEntityTypeIRIs.push(sem.iri(entityNameIri));
+    relatedEntityTypeIRIs.push(sem.iri(entityNameIri));
     const predicateList = entityLib.getPredicatesByModel(model);
     if(predicateList.length >= 1){
       hashmapPredicate.set(entityName, predicateList);
@@ -130,7 +130,6 @@ if(queryObj.conceptsFilterTypeIds != null){
     conceptFacetList.push(sem.iri(item));
   })
 }
-const relatedEntityTypeIRIs = allEntityTypeIRIs.filter((e1) => !entityTypeIRIs.some((e2) => fn.string(e1) === fn.string(e2)));
 
 const result = graphUtils.getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predicateConceptList, entitiesDifferentsFromBaseAndRelated, conceptFacetList, ctsQuery, pageLength);
 
