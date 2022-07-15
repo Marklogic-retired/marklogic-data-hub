@@ -17,7 +17,7 @@ const EntityTypeColorPicker: React.FC<Props> = ({entityType, color, handleColorC
   const handleOuterClick = useCallback(
     e => {
       if (colorRef.current && !colorRef.current.contains(e.target)) {
-      // Clicked outside the color picker menu
+        // Clicked outside the color picker menu
         setIsVisible(prev => false);
         setIsEventValid(prev => false);
       }
@@ -27,15 +27,18 @@ const EntityTypeColorPicker: React.FC<Props> = ({entityType, color, handleColorC
     if (isEventValid) {
       document.addEventListener("click", handleOuterClick);
     }
-
     return () => {
       document.removeEventListener("click", handleOuterClick);
     };
   });
 
-  const handleEditColorMenu = () => {
-    setIsEventValid(prev => true);
-    setIsVisible(prev => !isVisible);
+  const handleEditColorMenu = (e) => {
+    if (e?.target?.tagName.toLowerCase() === "input") {
+      setIsVisible(prev => true);
+    } else {
+      setIsVisible(prev => !isVisible);
+      setIsEventValid(prev => true);
+    }
   };
 
   const handleChange = (row, event, column) => {
@@ -44,11 +47,12 @@ const EntityTypeColorPicker: React.FC<Props> = ({entityType, color, handleColorC
   };
 
   return <div className={"m-auto d-inline-block"}>
-    <div className={`${styles.colorPickerBorder} cursor-pointer`} onClick={handleEditColorMenu} id={`${entityType}-color-button`} data-testid={`${entityType}-color-button`} aria-label={`${entityType}-color-button`} data-color={color}>
-      <div data-testid={`${entityType}-color`}  style={{width: "32px", height: "30px", background: color, margin: "8px"}}>
+    <div className={`${styles.colorPickerBorder} cursor-pointer`} onClick={handleEditColorMenu} onBlur={() => setIsVisible(false)} id={`${entityType}-color-button`} data-testid={`${entityType}-color-button`} aria-label={`${entityType}-color-button`} data-color={color}>
+      <div data-testid={`${entityType}-color`} style={{width: "32px", height: "30px", background: color, margin: "8px"}}>
       </div>
       {isVisible ?
-        <div ref={colorRef} id={`${entityType}-color-picker-menu`} aria-label={`${entityType}-color-picker-menu`} className={styles.colorPickerContainer}>
+        <div ref={colorRef} id={`${entityType}-color-picker-menu`}
+          aria-label={`${entityType}-color-picker-menu`} className={styles.colorPickerContainer}>
           <TwitterPicker colors={graphConfig.colorOptionsArray} color={color} onChangeComplete={handleChange}/>
         </div> : null
       }
