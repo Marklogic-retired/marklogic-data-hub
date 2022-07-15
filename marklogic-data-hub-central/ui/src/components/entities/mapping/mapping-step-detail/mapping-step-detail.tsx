@@ -333,8 +333,8 @@ const MappingStepDetail: React.FC = () => {
         if (srcDocResp.data.namespaces) {
           Object.keys(srcDocResp.data.namespaces).forEach(key => {
             nmspaces = {...nmspaces, [key]: srcDocResp.data.namespaces[key]};
-            setNamespaces({...namespaces, [key]: srcDocResp.data.namespaces[key]});
           });
+          setNamespaces({...namespaces, ...nmspaces});
         }
         let nestedDoc: any = [];
         let docRoot = mappingStep.sourceRecordScope === "entireRecord" || !(parsedDoc.envelope && parsedDoc.envelope.instance) ? parsedDoc : parsedDoc.envelope.instance;
