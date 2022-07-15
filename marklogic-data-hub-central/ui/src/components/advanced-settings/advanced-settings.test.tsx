@@ -67,6 +67,28 @@ describe("Advanced step settings", () => {
 
   });
 
+  test("Verify Header Context functionality", async () => {
+    const clearStepData = {...data.advancedLoad};
+    clearStepData.stepData.additionalCollections = [];
+    const {getByText, getAllByLabelText, getByLabelText} = render(
+      <AdvancedSettings {...clearStepData} />
+    );
+
+    // should be present
+    expect(getByText("Header Content:")).toBeInTheDocument();
+    expect(getByText("{ \"header\": true }")).toBeInTheDocument();
+
+    // tooltip for header content, 5 is the index of the header content tooltip icon in advanced-settings
+    const tipIcons  = getAllByLabelText("icon: question-circle");
+    fireEvent.mouseOver(tipIcons[5]);
+    await waitForElement(() => getByText(AdvancedSettingsTooltips["headers"]));
+    expect(getByText(AdvancedSettingsTooltips["headers"]).innerHTML).toBe(AdvancedSettingsTooltips["headers"]);
+
+    // default value
+    expect(getByLabelText("headers-textarea")).toBeInTheDocument();
+    expect(getByLabelText("headers-textarea")).not.toBe("");
+  });
+
   /* Custom ingestion should be same as default-ingestion except "step definition name" field should be present */
   test("Verify advanced settings for Custom Load step", async () => {
     const clearStepData = {...data.advancedCustomLoad};
