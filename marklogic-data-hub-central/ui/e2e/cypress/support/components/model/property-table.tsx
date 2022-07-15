@@ -13,7 +13,9 @@ class PropertyTable {
       return parseInt(value.text().replace(",", ""));
     });
   }
-
+  getSubProperty(property: string, subProperty: string) {
+    return cy.get(`[data-testid=${property}-${subProperty}-tooltip-trigger]`);
+  }
   getEntityLastProcessed(entityName: string) {
     return cy.findByTestId(`${entityName}-last-processed`);
   }

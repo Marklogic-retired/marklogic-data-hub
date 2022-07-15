@@ -70,12 +70,10 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.getCascadedTypeFromDropdown("gDay").click();
     propertyModal.getNoRadio("multiple").click();
     propertyModal.getYesRadio("pii").click();
-    //propertyModal.clickCheckbox('wildcard');
     propertyModal.getSubmitButton().click();
     propertyTable.getProperty("address-street"); // DHFPROD-8325: added check for expanded structured property
     propertyTable.getMultipleIcon("street").should("not.exist");
     propertyTable.getPiiIcon("street").should("exist");
-    //propertyTable.getWildcardIcon('street').should('exist');
   });
   it("Create a property with name 'rowId' and get confirmation modal", () => {
     propertyTable.getAddPropertyButton("User3").should("be.visible").click();
@@ -167,7 +165,6 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getProperty("zip-fiveDigit");  // DHFPROD-8325: added check for expanded structured property
     propertyTable.getMultipleIcon("code").should("not.exist");
     propertyTable.getPiiIcon("code").should("not.exist");
-    //propertyTable.getWildcardIcon('code').should('not.exist');
   });
   it("Test for additional nesting of structured types", () => {
     cy.get(".mosaic-window > :nth-child(2)").scrollTo("bottom");
@@ -187,7 +184,6 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdownCascaderRC("integer").click();
     propertyModal.getYesRadio("pii").click();
-    //propertyModal.clickCheckbox('wildcard');
     propertyModal.getSubmitButton().click();
 
     //TODO: Re-test child expansion without using ml-table selector
@@ -197,7 +193,62 @@ describe("Entity Modeling: Writer Role", () => {
     // propertyTable.getPiiIcon("fourDigit").should("exist");
     //propertyTable.getWildcardIcon('fourDigit').should('exist');
   });
+  it("Reuse Structured type, add property to structured type and confirm it gets updated", () => {
+    cy.log("**Create a new property using an existing Structured type**");
+    propertyTable.getAddPropertyButton("User3").scrollIntoView().click();
+    propertyModal.newPropertyName("extra2");
+    propertyModal.openPropertyDropdown();
+    propertyModal.getTypeFromDropdown("Structured").click();
+
+    propertyModal.getCascadedTypeFromDropdown("Extra").click();
+    propertyModal.getSubmitButton().click();
+
+    cy.log("**Add property to 'Extra' Structured type**");
+    //validate the structure name is correct
+    propertyTable.getExpandIcon("extra2").scrollIntoView().click();
+    propertyTable.getSubProperty("extra2", "fourDigit").scrollIntoView().should("be.visible");
+
+    cy.log("**Open address sub-properties**");
+    //propertyTable.getExpandIcon("address").scrollIntoView().click();
+    // propertyTable.getExpandIcon("zip").scrollIntoView().click();
+    propertyTable.getExpandIcon("extra").scrollIntoView().click();
+
+    cy.log("**Close 'extra2' property**");
+    propertyTable.getExpandIcon("extra2").scrollIntoView().click();
+
+    cy.log("**Add property to 'Extra'**");
+    propertyTable.getSubProperty("extra", "fourDigit").scrollIntoView().should("be.visible");
+    propertyTable.getAddPropertyToStructureType("Extra").click({force: true});
+    propertyModal.newPropertyName("newExtra");
+    propertyModal.openPropertyDropdown();
+    propertyModal.getTypeFromDropdownCascaderRC("string").click();
+    propertyModal.getSubmitButton().click();
+
+    cy.log("**Close 'address' property**");
+    propertyTable.getExpandIcon("address").scrollIntoView().click();
+
+    cy.log("**Open 'extra2' and confirm it got updated with the new property**");
+    propertyTable.getExpandIcon("extra2").scrollIntoView().click();
+    propertyTable.getSubProperty("extra2", "newExtra").scrollIntoView().should("be.visible");
+
+    cy.log("**Delete 'extra2' property**");
+    propertyTable.getDeletePropertyIcon("User3", "extra2").click({force: true});
+    confirmationModal.getDeletePropertyWarnText().should("exist");
+    confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn);
+    cy.waitForAsyncRequest();
+    propertyTable.getProperty("extra2").should("not.exist");
+
+    cy.log("**Delete 'newExtra' property**");
+    propertyTable.getExpandIcon("address").scrollIntoView().click();
+    propertyTable.getDeletePropertyIcon("User3", "Extra-extra-newExtra").click({force: true});
+    confirmationModal.getDeletePropertyWarnText().should("exist");
+    confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn);
+    cy.waitForAsyncRequest();
+    propertyTable.getProperty("newExtra").should("not.exist");
+  });
+
   it("Edit Property Structured Property", () => {
+    propertyTable.getExpandIcon("address").scrollIntoView().click();
     propertyTable.editProperty("address-street");
     propertyModal.getToggleStepsButton().should("not.exist");
     propertyModal.clearPropertyName();
@@ -213,11 +264,16 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.getYesRadio("idenifier").should("not.exist");
     propertyModal.getYesRadio("multiple").click();
     propertyModal.getNoRadio("pii").click();
-    //propertyModal.clickCheckbox('wildcard');
     propertyModal.getSubmitButton().click();
+
+    cy.log("**Reloading the page so the change appears");
+    cy.reload();
+    modelPage.selectView("table");
+    propertyTable.getExpandIcon("User3").scrollIntoView().click();
+    propertyTable.getExpandIcon("address").scrollIntoView().click();
+
     propertyTable.getMultipleIcon("streetAlt").should("exist");
     propertyTable.getPiiIcon("streetAlt").should("not.exist");
-    //propertyTable.getWildcardIcon('streetAlt').should('exist');
   });
   it("Rename property and change type from structured to relationship", () => {
     propertyTable.editProperty("address-address");
@@ -231,7 +287,6 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.getYesRadio("multiple").click();
     propertyModal.getYesRadio("idenifier").should("not.exist");
     propertyModal.getYesRadio("pii").should("not.exist");
-    //propertyModal.getCheckbox('wildcard').should('not.exist');
     propertyModal.getSubmitButton().click();
     propertyTable.getMultipleIcon("alt_address").should("exist");
     propertyTable.getIdentifierIcon("alt_address").should("not.exist");
@@ -249,6 +304,7 @@ describe("Entity Modeling: Writer Role", () => {
     //propertyTable.expandStructuredTypeIcon("alt_address").click();
     //propertyTable.getProperty("alt_address-streetAlt").should("exist");
   });
+
   it("Add foreign key with type as Related Entity", () => {
     propertyTable.getAddPropertyButton("User3").scrollIntoView().click();
     propertyModal.newPropertyName("OrderedBy");
