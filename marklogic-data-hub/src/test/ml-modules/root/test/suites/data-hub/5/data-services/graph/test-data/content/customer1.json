@@ -19,6 +19,7 @@
       "Customer": {
         "customerId": 301,
         "hasOffice": 1,
+        "hasAnotherCustomer": 301,
         "name": "Cynthia Waters",
         "nicknames": [
           "Cindy",

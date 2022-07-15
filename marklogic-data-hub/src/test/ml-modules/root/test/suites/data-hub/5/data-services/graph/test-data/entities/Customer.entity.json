@@ -26,6 +26,11 @@
           "facetable": true,
           "sortable": true
         },
+        "hasAnotherCustomer": {
+          "datatype": "integer",
+          "relatedEntityType": "http://example.org/Customer-0.0.1/Customer",
+          "joinPropertyName": "customerId"
+        },
         "email": {
           "datatype": "string",
           "description": "This has a case-insensitive collation for the match queries that use range indexes",
