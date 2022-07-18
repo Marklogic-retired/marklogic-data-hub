@@ -217,7 +217,7 @@ const CommonStepTooltips = {
   options: 'Key-value pairs to pass as parameters to the custom module.',
   customModuleURI: 'The path to your custom step module.',
   radioQuery: 'A single collection that selects the source data to process in this configuration.',
-  radioCollection: <span>The CTS query that selects the source data to process in this configuration. CTS queries can be written in JavaScript or XQuery, and must return the URIs to be processed by the step. For XQuery, the query has to be passed as a string to xdmp.xqueryEval(), as shown in the example below.  Learn more: <a target="_blank" href="https://docs.marklogic.com/guide/search-dev/cts_query" style={{ color: themeColors.info }}>CTS Query.</a><br /><br />
+  radioCollection: <span aria-label="radio-collection-tooltip">The CTS query that selects the source data to process in this configuration. CTS queries can be written in JavaScript or XQuery, and must return the URIs to be processed by the step. For XQuery, the query has to be passed as a string to xdmp.xqueryEval(), as shown in the example below.  Learn more: <a target="_blank" href="https://docs.marklogic.com/guide/search-dev/cts_query" style={{ color: themeColors.info }}>CTS Query.</a><br /><br />
     The following example source queries select data from multiple collections.<br /><br />
     JavaScript:<br />
     <span style={{ fontFamily: "monospace" }}>cts.collectionQuery(['collection1', 'collection2'])</span><br /><br />
@@ -492,7 +492,7 @@ const RunToolTips = {
 
   /* Check load step in popover */
   loadStepRunFlow: 'Only one Loading step can be included in a flow.',
-  selectAStep: 'You cannot run a flow. Select at least one step to run a flow.',
+  selectAStep: 'Select at least one step to run a flow.',
   runEmptyFlow: 'There are no steps in the flow. You must add steps to the flow.',
   flowEdit: 'Edit Flow',
   flowDetails: 'Flow Details',

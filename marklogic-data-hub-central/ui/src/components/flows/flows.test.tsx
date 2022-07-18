@@ -135,7 +135,7 @@ describe("Flows component", () => {
     expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument();
     fireEvent.mouseOut(getAllByText("Add Step")[0]);
     fireEvent.mouseOver(getByLabelText("create-flow-disabled"));
-    wait(() => expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument());
+    await wait(() => expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument());
 
     // Open flow
     fireEvent.click(flowButton);
@@ -230,17 +230,16 @@ describe("Flows component", () => {
     expect(getByTestId("runFlow-emptyFlow")).toBeDisabled();
     expect(getByLabelText("stepSettings-emptyFlow").parentElement).toBeDisabled();
     fireEvent.mouseOver(getByTestId("runFlow-emptyFlow"));
-    wait(() => expect(getByText(RunToolTips.runEmptyFlow)).toBeInTheDocument());
+    await wait(() => expect(getByText(RunToolTips.runEmptyFlow)).toBeInTheDocument());
 
-    //verify only runFlow button is disabled when steps exist but none selected
+    // verify only runFlow button is disabled when steps exist but none selected
     fireEvent.click(getByLabelText("stepSettings-testFlow"));
-    wait(() => expect(getByText("Deselect All")).toBeInTheDocument());
-    fireEvent.click(getByText("Deselect All"));
+    await wait(() => expect(getByText("Deselect All")).toBeInTheDocument());
+    fireEvent.click(getByTestId("select-all-toggle"));
+    await wait(() => expect(getByText(RunToolTips.selectAStep)).toBeInTheDocument());
 
     expect(getByTestId("runFlow-emptyFlow")).toBeDisabled();
     expect(getByLabelText("stepSettings-emptyFlow")).not.toBeDisabled();
-    fireEvent.mouseOver(getByTestId("runFlow-testFlow"));
-    wait(() => expect(getByText(RunToolTips.selectAStep)).toBeInTheDocument());
   });
 
   it("links for steps lead to correct path", async () => {

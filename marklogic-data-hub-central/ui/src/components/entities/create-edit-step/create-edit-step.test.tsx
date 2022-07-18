@@ -46,7 +46,7 @@ describe("Create Edit Step Dialog component", () => {
     }, "merging");
   });
 
-  test("Verify Edit Merging dialog renders correctly for a read only user", () => {
+  test("Verify Edit Merging dialog renders correctly for a read only user", async () => {
     const {getByText, getByPlaceholderText, getByLabelText} = render(
       <CreateEditStep {...data.editMerging} canReadWrite={false} />
     );
@@ -69,7 +69,7 @@ describe("Create Edit Step Dialog component", () => {
     expect(timestamp).toBeDisabled();
 
     fireEvent.mouseOver(getByText("Save"));
-    wait(() => expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument());
+    await wait(() => expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument());
     // TODO DHFPROD-7711 skipping failing checks to enable component replacement
     // expect(getByText("Save")).toBeDisabled();
     // expect(getByText("Cancel")).toBeEnabled();
@@ -264,13 +264,13 @@ describe("Create Edit Step Dialog component", () => {
 
   });
 
-  test("Verify collection and query tooltips appear when hovered", () => {
-    const {getByText, getByTestId} = render(<CreateEditStep {...data.editMerging} />);
+  test("Verify collection and query tooltips appear when hovered", async () => {
+    const {getByText, getByTestId, getByLabelText} = render(<CreateEditStep {...data.editMerging} />);
 
     fireEvent.mouseOver(getByTestId("collectionTooltip"));
-    wait(() => expect(getByText(CommonStepTooltips.radioCollection)).toBeInTheDocument());
+    await wait(() => expect(getByLabelText("radio-collection-tooltip")).toBeInTheDocument());
 
     fireEvent.mouseOver(getByTestId("queryTooltip"));
-    wait(() => expect(getByText(CommonStepTooltips.radioQuery)).toBeInTheDocument());
+    await wait(() => expect(getByText(CommonStepTooltips.radioQuery)).toBeInTheDocument());
   });
 });

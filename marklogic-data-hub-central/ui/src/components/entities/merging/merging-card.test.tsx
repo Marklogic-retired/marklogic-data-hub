@@ -1,5 +1,5 @@
 import React from "react";
-import {render, wait, cleanup, fireEvent, screen} from "@testing-library/react";
+import {render, wait, cleanup, fireEvent} from "@testing-library/react";
 import {BrowserRouter as Router} from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 
@@ -42,7 +42,7 @@ describe("Merging cards view component", () => {
     jest.clearAllMocks();
   });
 
-  it("can render/edit merging steps with writeMatchMerge authority", () => {
+  it("can render/edit merging steps with writeMatchMerge authority", async () => {
     const deleteMergingArtifact = jest.fn(() => {});
     const {getByText, getByLabelText, getByTestId, queryAllByRole} =  render(
       <Router>
@@ -66,14 +66,14 @@ describe("Merging cards view component", () => {
 
     // check if delete tooltip appears and user is able to proceed with deletion of the step
     userEvent.hover(getByTestId("mergeCustomers-delete"));
-    wait(() => expect(getByText("Delete")).toBeInTheDocument());
+    await wait(() => expect(getByText("Delete")).toBeInTheDocument());
     userEvent.click(getByTestId("mergeCustomers-delete"));
-    wait(() => expect(getByLabelText("delete-step-text")).toBeInTheDocument());
+    await wait(() => expect(getByLabelText("delete-step-text")).toBeInTheDocument());
     userEvent.click(getByText("Yes"));
     expect(deleteMergingArtifact).toBeCalled();
   });
 
-  it("cannot edit/delete merging step without writeMatchMerge authority", () => {
+  it("cannot edit/delete merging step without writeMatchMerge authority", async () => {
     const deleteMergingArtifact = jest.fn(() => {});
     const {getByText, getByTestId, queryAllByText, queryAllByRole, queryByLabelText, getByLabelText} =  render(
       <Router>
@@ -86,10 +86,9 @@ describe("Merging cards view component", () => {
     );
 
     fireEvent.mouseOver(getByLabelText("add-new-card-disabled"));
-    wait(() => expect(getByText("Curate: "+SecurityTooltips.missingPermission)).toBeInTheDocument());
+    await wait(() => expect(getByText("Curate: "+SecurityTooltips.missingPermission)).toBeInTheDocument());
     expect(queryByLabelText("icon: plus-circle")).toBeInTheDocument();
     fireEvent.mouseOver(getByText("mergeCustomers"));
-    wait(() => expect(getByText("Curate: "+SecurityTooltips.missingPermission)).toBeInTheDocument());
     expect(getByText("mergeCustomersEmpty")).toBeInTheDocument();
 
     //Verify if the card renders fine
@@ -100,19 +99,19 @@ describe("Merging cards view component", () => {
     // check run icon is disabled
     let runIcon = getByTestId("mergeCustomers-disabled-run");
     userEvent.hover(runIcon);
-    wait(() => expect(getByText("Run: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
+    await wait(() => expect(getByText("Run: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
 
     // check if delete icon displays correct tooltip when disabled
     let disabledDeleteIcon = getByTestId("mergeCustomers-disabled-delete");
     userEvent.hover(disabledDeleteIcon);
-    wait(() => expect(getByText("Delete: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
+    await wait(() => expect(getByText("Delete: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
     userEvent.click(disabledDeleteIcon);
     expect(queryAllByText("Yes")).toHaveLength(0);
     expect(deleteMergingArtifact).not.toBeCalled();
   });
 
 
-  it("can render/edit merge steps with writeMatchMerge authority", () => {
+  it("can render/edit merge steps with writeMatchMerge authority", async () => {
     const deleteMergingArtifact = jest.fn();
     const {getByText, getByLabelText, getByTestId, queryAllByRole} =  render(
       <Router>
@@ -132,37 +131,14 @@ describe("Merging cards view component", () => {
 
     // check if delete tooltip appears and user is able to proceed with deletion of the step
     userEvent.hover(getByTestId("mergeCustomers-delete"));
-    wait(() => expect(getByText("Delete")).toBeInTheDocument());
+    await wait(() => expect(getByText("Delete")).toBeInTheDocument());
     userEvent.click(getByTestId("mergeCustomers-delete"));
-    wait(() => expect(getByLabelText("delete-step-text")).toBeInTheDocument());
+    await wait(() => expect(getByLabelText("delete-step-text")).toBeInTheDocument());
     userEvent.click(getByText("Yes"));
     expect(deleteMergingArtifact).toBeCalled();
   });
 
-  it("can add a step to a new flow", () => {
-    const {getByText, getByTestId} =  render(
-      <Router>
-        <MergingCard {...defaultProps}/>
-      </Router>
-    );
-
-    expect(getByText("mergeCustomers")).toBeInTheDocument();
-    fireEvent.mouseOver(getByTestId("Customer-mergeCustomers-step"));
-
-    wait(() => {
-      expect(getByText("Add Step to a new flow")).toBeInTheDocument();
-      userEvent.click(getByText("Add Step to a new flow"));
-    });
-    wait(() => {
-      expect(screen.getByText("NewFlow")).toBeInTheDocument();
-      userEvent.type(screen.getByPlaceholderText("Enter name"), "testFlow");
-      userEvent.click(screen.getByText("Save"));
-    });
-    // Check if the /tiles/run/add route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add"); });
-  });
-
-  it("can add/run a step in a new flow from run button", () => {
+  it("can add a step to a new flow", async () => {
     const {getByText, getByTestId, getByLabelText} =  render(
       <Router>
         <MergingCard {...defaultProps}/>
@@ -170,16 +146,27 @@ describe("Merging cards view component", () => {
     );
 
     expect(getByText("mergeCustomers")).toBeInTheDocument();
-    userEvent.click(getByTestId("mergeCustomers-run"));
-    wait(() => {
-      expect(getByLabelText("step-in-no-flows-confirmation")).toBeInTheDocument();
-      userEvent.click(getByTestId("mergeCustomers-run-toNewFlow"));
-    });
-    wait(() => {
-      expect(screen.getByText("NewFlow")).toBeInTheDocument();
-      userEvent.type(screen.getByPlaceholderText("Enter name"), "testFlow");
-      userEvent.click(screen.getByText("Save"));
-    });
+    fireEvent.mouseOver(getByLabelText("mergeCustomers-step-label"));
+
+
+    await wait(() => { expect(getByTestId("mergeCustomers-toNewFlow")).toBeInTheDocument(); });
+    fireEvent.click(getByTestId("mergeCustomers-toNewFlow"));
+
+    // Check if the /tiles/run/add route has been called
+    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add"); });
+  });
+
+  it("can add/run a step in a new flow from run button", () => {
+    const {getByTestId, getByLabelText} =  render(
+      <Router>
+        <MergingCard {...defaultProps}/>
+      </Router>
+    );
+
+    fireEvent.click(getByTestId("mergeCustomersEmpty-run"));
+    expect(getByLabelText("step-in-no-flows-confirmation")).toBeInTheDocument();
+    userEvent.click(getByTestId("mergeCustomersEmpty-run-toNewFlow"));
+
     // Check if the /tiles/run/add route has been called
     wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add"); });
   });
@@ -194,17 +181,14 @@ describe("Merging cards view component", () => {
     expect(getByText("mergeCustomersEmpty")).toBeInTheDocument();
 
     //mouseover to trigger flow menu
-    fireEvent.mouseOver(getByTestId("Customer-mergeCustomersEmpty-step"));
-    wait(() => {
-      expect(getByText("Add step to an existing flow")).toBeInTheDocument();
-      fireEvent.click(getByTestId(`mergeCustomersEmpty-flowsList`));
-      fireEvent.click(getByLabelText("customerJSONFlow-option"));
-    });
+    fireEvent.mouseOver(getByText("mergeCustomersEmpty"));
+    fireEvent.keyDown(getByLabelText("mergeCustomersEmpty-flowsList"), {key: "ArrowDown"});
+    expect(getByLabelText("customerJSONFlow-option")).toBeInTheDocument();
+    fireEvent.click(getByLabelText("customerJSONFlow-option"));
 
-    wait(() => {
-      expect(getByLabelText("step-not-in-flow")).toBeInTheDocument();
-      userEvent.click(getByTestId("mergeCustomersEmpty-to-test-Confirm"));
-    });
+    expect(getByLabelText("step-not-in-flow")).toBeInTheDocument();
+    fireEvent.click(getByTestId("mergeCustomersEmpty-to-customerJSONFlow-Confirm"));
+
     // Check if the /tiles/run/add route has been called
     wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add"); });
   });
@@ -272,8 +256,8 @@ describe("Merging cards view component", () => {
     wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
   });
 
-  it("can open step settings and navigate to merge step details", () => {
-    const {getByText, getByTestId} =  render(
+  it("can open step settings and navigate to merge step details", async () => {
+    const {getByText, getByTestId, getByLabelText} =  render(
       <Router>
         <MergingCard {...defaultProps}/>
       </Router>
@@ -282,14 +266,11 @@ describe("Merging cards view component", () => {
     expect(getByText("mergeCustomers")).toBeInTheDocument();
     //open step settings
     userEvent.click(getByTestId("mergeCustomers-edit"));
-    wait(() => {
-      expect(screen.getByText("Merging Step Settings")).toBeInTheDocument();
-      userEvent.click(screen.getByText("Cancel"));
-    });
+    await wait(() => { expect(getByText("Merging Step Settings")).toBeInTheDocument(); });
+    userEvent.click(getByLabelText("Cancel"));
+
     //open step details
-    wait(() => {
-      userEvent.click(getByTestId("mergeCustomers-stepDetails"));
-    });
+    userEvent.click(getByTestId("mergeCustomers-stepDetails"));
 
     wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/curate/merge"); });
   });

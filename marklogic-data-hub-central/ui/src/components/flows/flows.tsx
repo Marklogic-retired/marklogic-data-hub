@@ -828,6 +828,7 @@ const Flows: React.FC<Props> = ({
             id={"checkAll"}
             value={checkAll}
             checked={checkAll}
+            dataTestId={"select-all-toggle"}
             handleClick={(event) => onCheckboxChange(event, "", "", "", flowName, "", "", true)}
             label={controlStepSelected(flowName) ? "Deselect All" : "Select All"}
           >
