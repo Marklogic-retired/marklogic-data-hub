@@ -154,6 +154,7 @@ public class GetProjectAsZipTest extends AbstractHubCoreTest {
                 return;
             }
             props.load(ins);
+            logger.info("gradle.properties: " + props);
         } catch (Exception e) {
             logger.warn("Unable to load properties from zip entry: " + entry.getName() + "; cause: " + e.getMessage() +
                 "entry size: " + entry.getSize());

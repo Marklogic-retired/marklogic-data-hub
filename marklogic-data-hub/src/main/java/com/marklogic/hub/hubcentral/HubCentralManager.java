@@ -12,6 +12,7 @@ import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
@@ -74,8 +75,11 @@ public class HubCentralManager extends LoggingObject {
             projectPath = Files.createTempDirectory("");
             hubProject.createProject(projectPath.toFile().getAbsolutePath());
             HubConfigImpl hubConfig = new HubConfigImpl(hubProject);
-            hubConfig.applyProperties(hubConfig.getHubPropertiesFromDb(hubClient.getStagingClient()));
-
+            Properties dbProperties = hubConfig.getHubPropertiesFromDb(hubClient.getStagingClient());
+            hubConfig.applyProperties(dbProperties);
+            logger.info("properties from database: " + dbProperties);
+            logger.info(dbProperties.getProperty("mlFinalPort"));
+            logger.info(Integer.toString(hubConfig.getPort(DatabaseKind.FINAL)));
             hubConfig.initHubProject();
             writeHubCentralFilesToProject(hubProject, hubClient);
             writeDhsGradlePropertiesFile(hubProject);
