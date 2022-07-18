@@ -203,7 +203,7 @@ describe("Update data load settings component", () => {
 
   });
 
-  test("Verify user with incorrect permissions sees security permissions tooltip and buttons are disabled", () => {
+  test("Verify user with incorrect permissions sees security permissions tooltip and buttons are disabled", async () => {
     const authorityService = new AuthoritiesService();
     const {getByText, getByTestId} = render(<Router><AuthoritiesContext.Provider value={authorityService}>
       <SystemInfo
@@ -213,15 +213,15 @@ describe("Update data load settings component", () => {
     </AuthoritiesContext.Provider></Router>);
 
     fireEvent.mouseOver(getByTestId("downloadHubCentralFiles"));
-    wait(() => expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument());
+    await wait(() => expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument());
     expect(getByTestId("downloadHubCentralFiles")).toBeDisabled();
 
     fireEvent.mouseOver(getByTestId("downloadProjectFiles"));
-    wait(() => expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument());
+    await wait(() => expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument());
     expect(getByTestId("downloadProjectFiles")).toBeDisabled();
 
     fireEvent.mouseOver(getByTestId("clearUserData"));
-    wait(() => expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument());
+    await wait(() => expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument());
     expect(getByTestId("clearUserData")).toBeDisabled();
   });
 });

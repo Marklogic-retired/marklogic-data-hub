@@ -1,5 +1,5 @@
 import React from "react";
-import {fireEvent, render, wait, screen} from "@testing-library/react";
+import {fireEvent, render, wait} from "@testing-library/react";
 import {BrowserRouter as Router} from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 
@@ -51,7 +51,7 @@ describe("Matching cards view component", () => {
     expect(getByText("matchCustomersEmpty")).toBeInTheDocument();
   });
 
-  it("can render/edit match steps with writeMatchMerge authority", () => {
+  it("can render/edit match steps with writeMatchMerge authority", async () => {
     const deleteMatchingArtifact = jest.fn();
     const {getByText, getByLabelText, getByTestId, queryAllByRole} =  render(
       <Router>
@@ -75,14 +75,14 @@ describe("Matching cards view component", () => {
 
     // check if delete tooltip appears and user is able to proceed with deletion of the step
     userEvent.hover(getByTestId("matchCustomers-delete"));
-    wait(() => expect(getByText("Delete")).toBeInTheDocument());
+    await wait(() => expect(getByText("Delete")).toBeInTheDocument());
     userEvent.click(getByTestId("matchCustomers-delete"));
-    wait(() => expect(getByLabelText("delete-step-text")).toBeInTheDocument());
+    await wait(() => expect(getByLabelText("delete-step-text")).toBeInTheDocument());
     userEvent.click(getByText("Yes"));
     expect(deleteMatchingArtifact).toBeCalled();
   });
 
-  it("cannot edit/delete match step without writeMatchMerge authority", () => {
+  it("cannot edit/delete match step without writeMatchMerge authority", async () => {
     const deleteMatchingArtifact = jest.fn();
     const {getByText, getByTestId, queryAllByText, queryAllByRole, queryByLabelText, getByLabelText} =  render(
       <Router>
@@ -97,10 +97,8 @@ describe("Matching cards view component", () => {
     expect(queryByLabelText("icon: plus-circle")).toBeInTheDocument();
     expect(getByText("matchCustomers")).toBeInTheDocument();
     fireEvent.mouseOver(getByLabelText("add-new-card-disabled"));
-    wait(() => expect(getByText("Curate: "+SecurityTooltips.missingPermission)).toBeInTheDocument());
+    await wait(() => expect(getByText("Curate: "+SecurityTooltips.missingPermission)).toBeInTheDocument());
     expect(queryByLabelText("icon: plus-circle")).toBeInTheDocument();
-    fireEvent.mouseOver(getByText("matchCustomers"));
-    wait(() => expect(getByText("Curate: "+SecurityTooltips.missingPermission)).toBeInTheDocument());
     expect(getByText("matchCustomersEmpty")).toBeInTheDocument();
 
     //Verify if the card renders fine
@@ -111,18 +109,18 @@ describe("Matching cards view component", () => {
     // check run icon is disabled
     let runIcon = getByTestId("matchCustomers-disabled-run");
     userEvent.hover(runIcon);
-    wait(() => expect(getByText("Run: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
+    await wait(() => expect(getByText("Run: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
 
     // check if delete icon displays correct tooltip when disabled
     let disabledDeleteIcon = getByTestId("matchCustomers-disabled-delete");
     userEvent.hover(disabledDeleteIcon);
-    wait(() => expect(getByText("Delete: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
+    await wait(() => expect(getByText("Delete: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
     userEvent.click(disabledDeleteIcon);
     expect(queryAllByText("Yes")).toHaveLength(0);
     expect(deleteMatchingArtifact).not.toBeCalled();
   });
 
-  it("can render/edit match steps with writeMatchMerge authority", () => {
+  it("can render/edit match steps with writeMatchMerge authority", async () => {
     const deleteMatchingArtifact = jest.fn();
     const {getByText, getByLabelText, getByTestId, queryAllByRole} =  render(
       <Router>
@@ -144,15 +142,15 @@ describe("Matching cards view component", () => {
 
     // check if delete tooltip appears and user is able to proceed with deletion of the step
     userEvent.hover(getByTestId("matchCustomers-delete"));
-    wait(() => expect(getByText("Delete")).toBeInTheDocument());
+    await wait(() => expect(getByText("Delete")).toBeInTheDocument());
     userEvent.click(getByTestId("matchCustomers-delete"));
-    wait(() => expect(getByLabelText("delete-step-text")).toBeInTheDocument());
+    await wait(() => expect(getByLabelText("delete-step-text")).toBeInTheDocument());
     userEvent.click(getByText("Yes"));
     expect(deleteMatchingArtifact).toBeCalled();
   });
 
-  it("can add a step to a new flow", () => {
-    const {getByText, getByTestId} =  render(
+  it("can add a step to a new flow", async () => {
+    const {getByText, getByLabelText, getByTestId} =  render(
       <Router>
         <MatchingCard {...defaultProps}/>
       </Router>
@@ -160,22 +158,17 @@ describe("Matching cards view component", () => {
 
     expect(getByText("matchCustomers")).toBeInTheDocument();
     expect(getByText("matchCustomersEmpty")).toBeInTheDocument();
-    fireEvent.mouseOver(getByTestId("Customer-matchCustomers-step"));
+    fireEvent.mouseOver(getByLabelText("matchCustomers-step-label"));
+
+    await wait(() => { expect(getByTestId("matchCustomers-toNewFlow")).toBeInTheDocument(); });
+    fireEvent.click(getByTestId("matchCustomers-toNewFlow"));
 
     wait(() => {
-      expect(getByText("Add Step to a new flow")).toBeInTheDocument();
-      userEvent.click(getByText("Add Step to a new flow"));
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add");
     });
-    wait(() => {
-      expect(screen.getByText("NewFlow")).toBeInTheDocument();
-      userEvent.type(screen.getByPlaceholderText("Enter name"), "testFlow");
-      userEvent.click(screen.getByText("Save"));
-    });
-    // Check if the /tiles/run/add route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add"); });
   });
 
-  it("can add/run a step in a new flow from run button", () => {
+  it("can add/run a step in a new flow from run button", async () => {
     const {getByText, getByTestId, getByLabelText} =  render(
       <Router>
         <MatchingCard {...defaultProps}/>
@@ -185,21 +178,15 @@ describe("Matching cards view component", () => {
     expect(getByText("matchCustomers")).toBeInTheDocument();
     expect(getByText("matchCustomersEmpty")).toBeInTheDocument();
     expect(getByText("matchCustomers123")).toBeInTheDocument();
-    userEvent.click(getByTestId("matchCustomers-run"));
-    wait(() => {
-      expect(getByLabelText("step-in-no-flows-confirmation")).toBeInTheDocument();
-      userEvent.click(getByTestId("matchCustomers-run-toNewFlow"));
-    });
-    wait(() => {
-      expect(screen.getByText("NewFlow")).toBeInTheDocument();
-      userEvent.type(screen.getByPlaceholderText("Enter name"), "testFlow");
-      userEvent.click(screen.getByText("Save"));
-    });
+    fireEvent.click(getByTestId("matchCustomersEmpty-run"));
+    expect(getByLabelText("step-in-no-flows-confirmation")).toBeInTheDocument();
+    userEvent.click(getByTestId("matchCustomersEmpty-run-toNewFlow"));
+
     // Check if the /tiles/run/add route has been called
     wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add"); });
   });
 
-  it("can add a step to an existing flow", () => {
+  it("can add a step to an existing flow", async () => {
     const {getByText, getByTestId, getByLabelText} =  render(
       <Router>
         <MatchingCard {...defaultProps}/>
@@ -209,18 +196,15 @@ describe("Matching cards view component", () => {
     expect(getByText("matchCustomersEmpty")).toBeInTheDocument();
 
     //mouseover to trigger flow menu
-    fireEvent.mouseOver(getByTestId("Customer-matchCustomersEmpty-step"));
-    wait(() => {
-      expect(getByText("Add step to an existing flow")).toBeInTheDocument();
-      fireEvent.click(getByTestId(`matchCustomersEmpty-flowsList`));
-      fireEvent.click(getByLabelText("customerJSONFlow-option"));
-    });
+    fireEvent.mouseOver(getByText("matchCustomersEmpty"));
+    fireEvent.keyDown(getByLabelText("matchCustomersEmpty-flowsList"), {key: "ArrowDown"});
+    expect(getByLabelText("customerJSONFlow-option")).toBeInTheDocument();
+    fireEvent.click(getByLabelText("customerJSONFlow-option"));
 
-    wait(() => {
-      expect(getByLabelText("step-not-in-flow")).toBeInTheDocument();
-      userEvent.click(getByTestId("matchCustomers-to-test-Confirm"));
-    });
-    // Check if the /tiles/run/add route has been called
+    expect(getByLabelText("step-not-in-flow")).toBeInTheDocument();
+    fireEvent.click(getByTestId("matchCustomersEmpty-to-customerJSONFlow-Confirm"));
+
+    //Check if the /tiles/run/add route has been called
     wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add"); });
   });
 
@@ -287,8 +271,8 @@ describe("Matching cards view component", () => {
     wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
   });
 
-  it("can open step settings and navigate to match step details", () => {
-    const {getByText, getByTestId} =  render(
+  it("can open step settings and navigate to match step details", async () => {
+    const {getByText, getByTestId, getByLabelText} =  render(
       <Router>
         <MatchingCard {...defaultProps}/>
       </Router>
@@ -297,14 +281,11 @@ describe("Matching cards view component", () => {
     expect(getByText("matchCustomers")).toBeInTheDocument();
     //open step settings
     userEvent.click(getByTestId("matchCustomers-edit"));
-    wait(() => {
-      expect(screen.getByText("Matching Step Settings")).toBeInTheDocument();
-      userEvent.click(screen.getByText("Cancel"));
-    });
+    await wait(() => { expect(getByText("Matching Step Settings")).toBeInTheDocument(); });
+    userEvent.click(getByLabelText("Cancel"));
+
     //open step details
-    wait(() => {
-      userEvent.click(getByTestId("matchCustomers-stepDetails"));
-    });
+    userEvent.click(getByTestId("matchCustomers-stepDetails"));
 
     wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/curate/match"); });
   });

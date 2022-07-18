@@ -1,5 +1,5 @@
 import React from "react";
-import {render, fireEvent, wait, cleanup, screen} from "@testing-library/react";
+import {render, fireEvent, wait, cleanup} from "@testing-library/react";
 import {MemoryRouter} from "react-router-dom";
 import LoadCard from "./load-card";
 import data from "../../assets/mock-data/curation/common.data";
@@ -311,15 +311,15 @@ describe("Load Card component", () => {
 
     //test tooltip over disabled add new card
     fireEvent.mouseOver(getByTestId("disabledAddNewCard"));
-    wait(() => expect(screen.getByText("Load: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
+    await wait(() => expect(getByText("Load: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
 
     //test tooltip over disabled card
     fireEvent.mouseOver(getByText(loadStepName));
-    wait(() => expect(screen.getByText("Load: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
+    await wait(() => expect(getByText("Load: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
 
     // test delete icon displays correct tooltip when disabled
     fireEvent.mouseOver(getByTestId(loadStepName + "-disabled-delete"));
-    await wait(() => expect(screen.getByText("Delete: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
+    await wait(() => expect(getByText("Delete: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
 
     // test run icon displays correct tooltip when disabled
     fireEvent.mouseOver(getByTestId(`${loadStepName}-disabled-run`));

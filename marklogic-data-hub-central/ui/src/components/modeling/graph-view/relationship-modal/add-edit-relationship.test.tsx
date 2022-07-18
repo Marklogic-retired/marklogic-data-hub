@@ -78,7 +78,7 @@ describe("Add Edit Relationship component", () => {
     fireEvent.click(getByText("Save"));
     wait(() => expect(getByLabelText("error-circle")).toBeInTheDocument());
     fireEvent.mouseOver(getByTestId("error-circle"));
-    wait(() => expect(getByText(ModelingTooltips.relationshipEmpty)).toBeInTheDocument());
+    await wait(() => expect(getByText(ModelingTooltips.relationshipEmpty)).toBeInTheDocument());
 
     //error icon disappears
     fireEvent.change(relationshipInput, {target: {value: "usedBy"}});
@@ -130,7 +130,7 @@ describe("Add Edit Relationship component", () => {
     fireEvent.click(getByText("Add"));
     wait(() => expect(getByLabelText("error-circle")).toBeInTheDocument());
     fireEvent.mouseOver(getByTestId("error-circle"));
-    wait(() => expect(getByText(ModelingTooltips.targetEntityEmpty)).toBeInTheDocument());
+    await wait(() => expect(getByText(ModelingTooltips.targetEntityEmpty)).toBeInTheDocument());
 
     const mockRelationshipWithTarget = {...mockAddRelationshipInfo, targetNodeName: "Customer", targetNodeColor: "#ecf7fd"};
 
