@@ -1062,24 +1062,24 @@ pipeline{
 		stage('Linux Core Parallel Execution'){
         when { expression {return params.regressions} }
 		parallel{
-		stage('rh7_cluster_10.0-Nightly'){
+		stage('rh7_cluster_11.0-Nightly'){
 			agent { label 'dhfLinuxAgent'}
 			steps{
             timeout(time: 4,  unit: 'HOURS'){
-                catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhflinuxTests("10.0","Latest")}
+                catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhflinuxTests("11.0","Latest")}
             }}
 			post{
 				 always{
 				  	sh 'rm -rf $WORKSPACE/xdmp'
 				  }
                   success {
-                    println("rh7_cluster_10.0-Nightly Tests Completed")
-                    sendMail Email,'<h3>Tests Passed on Nigtly 10.0 ML Server Cluster </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-10.0-Nightly | Cluster | Passed'
+                    println("rh7_cluster_11.0-Nightly Tests Completed")
+                    sendMail Email,'<h3>Tests Passed on Nigtly 10.0 ML Server Cluster </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-11.0-Nightly | Cluster | Passed'
                     // sh './gradlew publish'
                    }
                    unstable {
-                      println("rh7_cluster_10.0-Nightly Tests Failed")
-                      sendMail Email,'<h3>Some Tests Failed on Nightly 10.0 ML Server Cluster </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-10.0-Nightly | Cluster | Failed'
+                      println("rh7_cluster_11.0-Nightly Tests Failed")
+                      sendMail Email,'<h3>Some Tests Failed on Nightly 10.0 ML Server Cluster </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-11.0-Nightly | Cluster | Failed'
                   }
                   }
 		}
@@ -1285,23 +1285,23 @@ pipeline{
                           }
                           }
         		}
-                stage('w10_SN_10.0-Nightly'){
+                stage('w10_SN_11.0-Nightly'){
         			agent { label 'dhfWinagent'}
         			steps{
                      timeout(time: 4,  unit: 'HOURS'){
-                     catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhfWinTests("10.0","Latest")}
+                     catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhfWinTests("11.0","Latest")}
         			}}
         			post{
         				always{
         				  	 bat 'RMDIR /S/Q xdmp'
         				  }
                           success {
-                            println("w12_SN_10.0-nightly Tests Completed")
-                            sendMail Email,'<h3>Tests Passed on Nigtly 10.0 ML Server on Windows Platform</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Windows W2k12 | ML-10.0-Nightly | Single Node | Passed'
+                            println("w12_SN_11.0-nightly Tests Completed")
+                            sendMail Email,'<h3>Tests Passed on Nigtly 10.0 ML Server on Windows Platform</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Windows W2k12 | ML-11.0-Nightly | Single Node | Passed'
                            }
                            unstable {
-                              println("w12_SN_10.0-nightly Tests Failed")
-                              sendMail Email,'<h3>Some Tests Failed on Nightly 10.0 ML Server on Windows Platform </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Windows W2k12 | ML-10.0-Nightly | Single Node | Failed'
+                              println("w12_SN_11.0-nightly Tests Failed")
+                              sendMail Email,'<h3>Some Tests Failed on Nightly 10.0 ML Server on Windows Platform </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Windows W2k12 | ML-11.0-Nightly | Single Node | Failed'
                           }
                           }
         		}
@@ -1353,7 +1353,7 @@ pipeline{
             when { expression {return params.regressions} }
             parallel{
 
-                stage('10.0-Nightly-linux-On-Prem'){
+                stage('11.0-Nightly-linux-On-Prem'){
                     agent { label 'dhfLinuxAgent'}
                     environment{
                         JAVA_HOME="$JAVA_HOME_DIR"
@@ -1361,7 +1361,7 @@ pipeline{
                     }
                     steps {
                      timeout(time: 3,  unit: 'HOURS'){
-                        catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE') { cypressE2EOnPremLinuxTests("Latest", "10.0") }
+                        catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE') { cypressE2EOnPremLinuxTests("Latest", "11.0") }
                     }}
                     post{
                         success {
