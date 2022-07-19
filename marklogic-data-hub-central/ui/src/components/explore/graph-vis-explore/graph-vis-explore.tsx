@@ -40,7 +40,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
   } = props;
   const [expandedNodeData, setExpandedNodeData] = useState({});
   let graphData = {nodes: [], edges: []};
-  const [menuPosition, setMenuPosition] = useState<{ x: number, y: number }>({x: 0, y: 0});
+  const [menuPosition, setMenuPosition] = useState<{x: number, y: number}>({x: 0, y: 0});
   const [physicsEnabled, setPhysicsEnabled] = useState(false);
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
   const [clickedNode, setClickedNode] = useState({});
@@ -76,7 +76,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
 
   const [openTableViewForGroupNodes, toggleTableViewForGroupNodes] = useState(false);
   const [relatedToData, setRelatedToData] = useState({});
-  const [nodesDefocussed, setNodesDefocussed] = useState<any []>([]);
+  const [nodesDefocussed, setNodesDefocussed] = useState<any[]>([]);
 
   const updateNodesData = (nodes) => {
     network.body.data.nodes.update(nodes);
@@ -161,7 +161,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
   }, [network, graphView]);
 
   useEffect(() => {
-    if (exportPngButtonClicked)  {
+    if (exportPngButtonClicked) {
       let canvas = document.getElementsByClassName("vis-network")[0]["canvas"];
       let link = document.createElement("a");
       link.href = canvas.toDataURL();
@@ -300,7 +300,15 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         }
       }
       let entityType = e.group.split("/").pop();
-      let entity = hubCentralConfig?.modeling?.entities[entityType];
+      let entity: any = {};
+      if (!e.isConcept) {
+        entity = hubCentralConfig?.modeling?.entities[entityType];
+      } else {
+        let conceptClassName = e.conceptClassName;
+        if (conceptClassName && hubCentralConfig?.modeling?.concepts[conceptClassName]?.semanticConcepts) {
+          entity = hubCentralConfig?.modeling?.concepts[conceptClassName]?.semanticConcepts[entityType];
+        }
+      }
       let iconName = entity?.icon || (e.isConcept ? defaultConceptIcon : defaultIcon);
       let defaultThemeColor = !e.isConcept ? themeColors.defaults.entityColor : themeColors.defaults.conceptColor;
       let nodeColor = entity?.color || defaultThemeColor;
@@ -390,7 +398,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
             if (e.hasRelationships && !isExpandedLeaf(nodeId)) {
               ctx.font = "14pt calibre";
               ctx.fillStyle = "#777";
-              ctx.fillText("...", x, imagePositionY+50);
+              ctx.fillText("...", x, imagePositionY + 50);
             }
             if (e.count >= 2 && displayLabel) {
               //Creating the group node badge
@@ -675,7 +683,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     if (expandedNodeData[leafNodeExpandId]) {
       let expandedGroupNodeObject = expandedNodeData[leafNodeExpandId];
       expandedGroupNodeObject.nodes.forEach(e => {
-        let id:any = e["id"];
+        let id: any = e["id"];
         let predicate = getEdgePredicate(id, network);
         let expandId = predicate ? id + "-" + predicate : id;
         nodeIdsToRemove.push(expandId);
@@ -688,11 +696,11 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     return nodeIdsToRemove;
   };
 
-  const getExpandedEdgeIdsToRemove = (leafNodeExpandId, edgeIdsToRemove:any [] = []) => {
+  const getExpandedEdgeIdsToRemove = (leafNodeExpandId, edgeIdsToRemove: any[] = []) => {
     if (expandedNodeData[leafNodeExpandId]) {
       let expandedGroupNodeObject = expandedNodeData[leafNodeExpandId];
       expandedGroupNodeObject.edges.forEach(e => {
-        let id:any = e["id"];
+        let id: any = e["id"];
         let predicate = getEdgePredicate(id, network);
         let expandId = id + "-" + predicate;
         edgeIdsToRemove.push(id);
@@ -894,7 +902,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     if (groupNodes && groupNodes[clickedNode["nodeId"]]) {
       entityType = groupNodes[clickedNode["nodeId"]].group.split("/").pop();
     } else {
-      entityType = clickedNode && clickedNode["entityName"] ?  clickedNode["entityName"] : "";
+      entityType = clickedNode && clickedNode["entityName"] ? clickedNode["entityName"] : "";
     }
     return (
       <div id="contextMenu" onClick={handleMenuClick} className={styles.contextMenu} style={{left: menuPosition.x, top: menuPosition.y}}>
@@ -989,7 +997,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         let nodeInfo = getNodeObject(nodeId, edgeObject);
         nodeInfo["entityName"] = nodeObject && nodeObject["group"] ? nodeObject["group"].split("/").pop() : "";
         nodeInfo["hasRelationships"] = nodeObject && nodeObject["hasRelationships"] ? nodeObject["hasRelationships"] : false;
-        nodeInfo["count"] = nodeObject && nodeObject["count"] ? nodeObject["count"]  : 1;
+        nodeInfo["count"] = nodeObject && nodeObject["count"] ? nodeObject["count"] : 1;
         nodeInfo["currentNodeExpandId"] = currentNodeExpandId;
         nodeInfo["parentNodeExpandId"] = parentNodeExpandId;
 
@@ -1048,7 +1056,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       let nodeInfo = getNodeObject(nodeId, edgeObject);
       nodeInfo["entityName"] = nodeObject && nodeObject["group"] ? nodeObject["group"].split("/").pop() : "";
       nodeInfo["hasRelationships"] = nodeObject && nodeObject["hasRelationships"] ? nodeObject["hasRelationships"] : false;
-      nodeInfo["count"] = nodeObject && nodeObject["count"] ? nodeObject["count"]  : 1;
+      nodeInfo["count"] = nodeObject && nodeObject["count"] ? nodeObject["count"] : 1;
       nodeInfo["currentNodeExpandId"] = currentNodeExpandId;
       nodeInfo["parentNodeExpandId"] = parentNodeExpandId;
 
@@ -1070,7 +1078,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         handleLeafNodeExpansion(payloadData);
         setUserPreferences();
       }
-    }  else {
+    } else {
       let nodeInfo = {
         nodeId: undefined,
         isGroupNode: false
@@ -1159,7 +1167,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         let nodeInfo = getNodeObject(nodeId, edgeObject);
         nodeInfo["entityName"] = nodeObject && nodeObject["group"] ? nodeObject["group"].split("/").pop() : "";
         nodeInfo["hasRelationships"] = nodeObject && nodeObject["hasRelationships"] ? nodeObject["hasRelationships"] : false;
-        nodeInfo["count"] = nodeObject && nodeObject["count"] ? nodeObject["count"]  : 1;
+        nodeInfo["count"] = nodeObject && nodeObject["count"] ? nodeObject["count"] : 1;
         nodeInfo["currentNodeExpandId"] = currentNodeExpandId;
         nodeInfo["parentNodeExpandId"] = parentNodeExpandId;
         nodeInfo["isConcept"] = nodeObject && nodeObject["isConcept"] ? nodeObject["isConcept"] : false;

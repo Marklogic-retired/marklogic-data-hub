@@ -89,7 +89,7 @@ const ConceptsDisplaySettings: React.FC<Props> = ({conceptsSettingsData, onConce
       headerAlign: "center",
       formatter: (text, row) => {
         return (<div className="text-center">
-          <EntityTypeColorPicker color={row.color} entityType={row.concept} handleColorChange={(color, event) => onConceptsColumnValueChange(row, {color, event}, ConceptsTableColumns.Color)} />
+          <EntityTypeColorPicker color={row.color} entityType={row.rowKey} handleColorChange={(color, event) => onConceptsColumnValueChange(row, {color, event}, ConceptsTableColumns.Color)} />
         </div>);
       }
     },
@@ -100,8 +100,8 @@ const ConceptsDisplaySettings: React.FC<Props> = ({conceptsSettingsData, onConce
       align: "center" as "center",
       headerAlign: "center",
       formatter: (text, row) => {
-        return (<div className={"d-flex justify-content-center align-items-center"} aria-label={`${row.concept}-icon-picker`} id={`${row.concept}-icon-picker`} data-icon={row.icon}>
-          <HCIconPicker value={row.icon} onChange={value => onConceptsColumnValueChange(row, value, ConceptsTableColumns.Icon)}/>
+        return (<div className={"d-flex justify-content-center align-items-center"} aria-label={`${row.concept}-icon-picker`} id={`${row.rowKey}-icon-picker`} data-icon={row.icon}>
+          <HCIconPicker value={row.icon} onChange={value => onConceptsColumnValueChange(row, value, ConceptsTableColumns.Icon)} />
         </div>);
       }
     }
@@ -110,7 +110,7 @@ const ConceptsDisplaySettings: React.FC<Props> = ({conceptsSettingsData, onConce
   return (
     <div className={styles.conceptsTable}>
       <HCTable
-        rowKey="concept"
+        rowKey="rowKey"
         columns={exploreSettingsColumns}
         data={filteredSettingsData}
         showExpandIndicator={{bordered: true}}
