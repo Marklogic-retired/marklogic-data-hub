@@ -601,12 +601,14 @@ void cypressE2EOnPremWinChromeTests(){
      env.mlChHost=mlChHost.trim()
      bat  script: """
                                  setlocal
+                                 set ERRORLEVEL=0
                                  set PATH=C:\\Program Files (x86)\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH
                                  set CYPRESS_BASE_URL=${cypressChBaseUrl};
                                  set mlHost=${mlChHost};
                                  cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e
-                                 npm run cy:run-chrome-headed -- --config baseUrl=${cypressChBaseUrl} --env mlHost=${mlChHost}  2>&1 | tee -a e2e_err.log || exit /b 0
+                                 npm run cy:run-chrome-headed -- --config baseUrl=${cypressChBaseUrl} --env mlHost=${mlChHost}   >> e2e_err.log
      """
+     findText(textFinders: [textFinder('npm error')])
      junit '**/e2e/**/*.xml'
 }
 
@@ -817,12 +819,14 @@ def runFFTests(){
      env.mlFFHost=mlFFHost.trim()
      bat  script: """
                                  setlocal
+                                 set ERRORLEVEL=0
                                  set PATH=C:\\Program Files (x86)\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH
                                  set CYPRESS_BASE_URL=${cypressFFBaseUrl};
                                  set mlHost=${mlFFHost};
                                  cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e
-                                 npm run cy:run-firefox-headed -- --config baseUrl=${cypressFFBaseUrl} --env mlHost=${mlFFHost}  2>&1 | tee -a e2e_err.log || exit /b 0
+                                 npm run cy:run-firefox-headed -- --config baseUrl=${cypressFFBaseUrl} --env mlHost=${mlFFHost}  >> e2e_err.log
      """
+     findText(textFinders: [textFinder('npm error')])
      junit '**/e2e/**/*.xml'
 }
 pipeline{
@@ -1398,7 +1402,7 @@ pipeline{
                     agent {label 'w10-dhf-6'}
                     steps{
                         script{
-                            timeout(time: 3, unit: 'HOURS'){
+                            timeout(time: 4, unit: 'HOURS'){
                             catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){runFFTests()}
                             }
                         }
@@ -1468,7 +1472,7 @@ pipeline{
                     }
 
                     steps{
-                     timeout(time: 3,  unit: 'HOURS'){
+                     timeout(time: 4,  unit: 'HOURS'){
                         catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){cypressE2EOnPremWinChromeTests()}
                     }}
                    post{
