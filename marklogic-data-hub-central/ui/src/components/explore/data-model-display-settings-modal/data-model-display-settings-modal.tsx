@@ -63,15 +63,17 @@ const DataModelDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal,
           tmpConceptIndexes[concept] = index;
           return {
             concept,
+            rowKey: concept,
             color: hubCentralConfig?.modeling?.concepts[concept]?.color || themeColors.defaults.entityColor,
             icon: hubCentralConfig?.modeling?.concepts[concept]?.icon || defaultIcon,
             children: Object.keys(hubCentralConfig?.modeling?.concepts[concept]?.semanticConcepts || {}).map((semanticConcept, subIndex) => {
-              tmpConceptIndexes[semanticConcept] = {
+              tmpConceptIndexes[`${concept}-${semanticConcept}`] = {
                 parent: concept,
                 index: subIndex
               };
               return {
                 concept: semanticConcept,
+                rowKey: `${concept}-${semanticConcept}`,
                 color: hubCentralConfig?.modeling?.concepts[concept].semanticConcepts[semanticConcept]?.color || themeColors.defaults.entityColor,
                 icon: hubCentralConfig?.modeling?.concepts[concept].semanticConcepts[semanticConcept]?.icon || defaultIcon,
               };
@@ -162,8 +164,8 @@ const DataModelDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal,
 
     setConceptsData(conceptsData => {
       const tmpConceptsData = _.cloneDeep(conceptsData);
-      if ((typeof conceptsIndexes[row.concept]).toString() === "object") {
-        updateValue(tmpConceptsData[conceptsIndexes[row.concept].parent].semanticConcepts[row.concept]);
+      if ((typeof conceptsIndexes[row.rowKey]).toString() === "object") {
+        updateValue(tmpConceptsData[conceptsIndexes[row.rowKey].parent].semanticConcepts[row.concept]);
       } else {
         updateValue(tmpConceptsData[row.concept]);
       }
@@ -172,7 +174,7 @@ const DataModelDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal,
 
     setConceptDisplaySettingsData(conceptDisplaySettingsData => {
       const tmpConceptDisplaySettingsData = conceptDisplaySettingsData.map(conceptData => Object.assign({}, conceptData));
-      const conceptIndex = conceptsIndexes[row.concept];
+      const conceptIndex = conceptsIndexes[row.rowKey];
       if ((typeof conceptIndex).toString() === "object") {
         updateValue(tmpConceptDisplaySettingsData[conceptsIndexes[conceptIndex.parent]].children[conceptIndex.index]);
       } else {

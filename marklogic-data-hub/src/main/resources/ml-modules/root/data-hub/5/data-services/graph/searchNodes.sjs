@@ -183,6 +183,7 @@ result.map(item => {
       nodeOrigin.additionalProperties = null;
       nodeOrigin.group = conceptLabel;
       nodeOrigin.isConcept = true;
+      nodeOrigin.conceptClassName = item.conceptClassName;
       let hastRelationShip = false
       if(item.countRelationsWithOtherEntity !== undefined && item.countRelationsWithOtherEntity !== null){
         if(item.countRelationsWithOtherEntity == 1){

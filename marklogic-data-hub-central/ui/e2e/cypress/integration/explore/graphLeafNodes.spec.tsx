@@ -108,10 +108,10 @@ describe("Leaf Nodes", () => {
     entitiesSidebar.getBaseEntityOption("Product").should("be.visible");
     cy.wait(2000);
 
-    cy.log("**Clicking Show related on 'Sneakers' leaf node to expand**");
-    graphExplore.focusNode(ExploreGraphNodes.CONCEPT_SNEAKERS);
-    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_SNEAKERS).then((nodePositions: any) => {
-      let sneakerCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_SNEAKERS];
+    cy.log("**Clicking Show related on 'Jeans' leaf node to expand**");
+    graphExplore.focusNode(ExploreGraphNodes.CONCEPT_JEANS);
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_JEANS).then((nodePositions: any) => {
+      let sneakerCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_JEANS];
       const canvas = graphExplore.getGraphVisCanvas();
 
       canvas.click(sneakerCoordinates.x, sneakerCoordinates.y, {force: true});
