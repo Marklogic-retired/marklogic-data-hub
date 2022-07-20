@@ -75,8 +75,8 @@ const CreateEditStep: React.FC<Props> = (props) => {
       );
       setCollections(srcCollection);
     }
-    if (props.stepType === StepType.Merging) {
-      setTimestamp(props.editStepArtifactObject.timestamp);
+    if (props.stepType === StepType.Merging && props.editStepArtifactObject.lastUpdatedLocation) {
+      setTimestamp(props.editStepArtifactObject.lastUpdatedLocation.documentXPath);
     }
     resetTouchedValues();
     setIsValid(true);
@@ -184,7 +184,8 @@ const CreateEditStep: React.FC<Props> = (props) => {
       };
     }
     if (props.stepType === StepType.Merging) {
-      result["timestamp"] = timestamp;
+      result.lastUpdatedLocation = result.lastUpdatedLocation || {};
+      result.lastUpdatedLocation.documentXPath = timestamp;
     }
     return result;
   };
@@ -383,8 +384,8 @@ const CreateEditStep: React.FC<Props> = (props) => {
       } else {
         setTimestampTouched(true);
         setTimestamp(event.target.value);
-        if (props.isEditing && props.editStepArtifactObject.timestamp) {
-          if (event.target.value === props.editStepArtifactObject.timestamp) {
+        if (props.isEditing && props.editStepArtifactObject.lastUpdatedDateTime && props.editStepArtifactObject.lastUpdatedDateTime.documentXPath) {
+          if (event.target.value === props.editStepArtifactObject.lastUpdatedDateTime.documentXPath) {
             setTimestampTouched(false);
           }
         }

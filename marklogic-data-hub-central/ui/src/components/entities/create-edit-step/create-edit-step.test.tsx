@@ -27,7 +27,7 @@ describe("Create Edit Step Dialog component", () => {
     fireEvent.click(getByLabelText("Query"));
     expect(getByPlaceholderText("Enter source query")).toHaveTextContent("cts.collectionQuery(['matchCustomers'])");
 
-    expect(getByPlaceholderText("Enter path to the timestamp")).toHaveValue("/envelope/headers/createdOn");
+    expect(getByPlaceholderText("Enter path to the timestamp")).toHaveValue("/es:envelope/es:headers/timestamp");
 
     expect(getByText("Save")).toBeEnabled();
     expect(getByText("Cancel")).toBeEnabled();
@@ -42,7 +42,9 @@ describe("Create Edit Step Dialog component", () => {
       selectedSource: "collection",
       sourceQuery: "cts.collectionQuery(['matchCustomers'])",
       targetEntityType: "Customer",
-      timestamp: "/envelope/headers/createdOn",
+      lastUpdatedLocation: {
+        documentXPath: "/es:envelope/es:headers/timestamp"
+      },
     }, "merging");
   });
 
@@ -65,7 +67,7 @@ describe("Create Edit Step Dialog component", () => {
     expect(getByLabelText("Query")).toBeDisabled();
     const collInput = document.querySelector((".rbt-input-main"));
     expect(collInput).toBeDisabled();
-    expect(timestamp).toHaveValue("/envelope/headers/createdOn");
+    expect(timestamp).toHaveValue("/es:envelope/es:headers/timestamp");
     expect(timestamp).toBeDisabled();
 
     fireEvent.mouseOver(getByText("Save"));

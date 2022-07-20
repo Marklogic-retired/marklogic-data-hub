@@ -129,6 +129,7 @@ else {
   if (isEmptyString(stepProperties.headers) || isEmptyObject(stepProperties.headers)) {
     stepProperties.headers = "ingestion" === stepDefinitionType ? {
       sources: [{name: stepProperties.datahubSourceName || stepName}],
+      lastLoadedDateTime: "currentDateTime",
       createdOn: "currentDateTime",
       createdBy: "currentUser"
     } :{};
