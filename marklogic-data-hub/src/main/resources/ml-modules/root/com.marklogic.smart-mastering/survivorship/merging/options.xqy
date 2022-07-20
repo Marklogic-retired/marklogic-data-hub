@@ -735,6 +735,7 @@ declare function merge-impl:compile-merge-options(
 declare function merge-impl:build-last-updated-function($merge-options as node()?) {
   let $ts-ns-path := $merge-options/(*:algorithms/(merging:std-algorithm|stdAlgorithm)|lastUpdatedLocation)
   let $ts-path := fn:string($ts-ns-path/(*:timestamp/(@path|path)|documentXPath))
+  let $ts-path := if ($ts-path eq "") then "/*:envelope/*:headers/*:createdOn" else $ts-path
   let $ts-ns-map :=
     if (fn:exists($ts-ns-path/namespaces)) then
       xdmp:from-json($ts-ns-path/namespaces)
