@@ -355,6 +355,19 @@ class MatchRulesetDefinition {
     return Array.from(new Set(results));
   }
 
+  zipMatchFunction(value, passMatchRule) {
+    let result = [value];
+    if(value.length === 5) {
+      let wildcardValue = value + "-*";
+      result.push(wildcardValue);
+    }
+    else {
+      let val = value.toString().substring(0,5);
+      result.push(val);
+    }
+    return result;
+  }
+
   _matchFunction(matchRule, model) {
     if (!matchRule._matchFunction) {
       let passMatchRule = matchRule;
@@ -379,8 +392,8 @@ class MatchRulesetDefinition {
           convertToNode = true;
           break;
         case "zip":
-          matchFunction = hubUtils.requireFunction("/com.marklogic.smart-mastering/algorithms/zip.xqy", "zip");
-          convertToNode = /\.xq[yml]?$/.test(matchRule.algorithmModulePath);
+          matchFunction = this.zipMatchFunction;
+          convertToNode = true;
           break;
         case "custom":
           matchFunction = hubUtils.requireFunction(matchRule.algorithmModulePath, matchRule.algorithmFunction);

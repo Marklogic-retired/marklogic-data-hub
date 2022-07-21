@@ -147,6 +147,14 @@ function testMatchRulesetDefinitions() {
         }]
       },
       {
+        name: "name - zip - 5digit",
+        matchRules: [{ entityPropertyPath: "name", matchType: "zip", options: {}}]
+      },
+      {
+        name: "name - zip - 9digit",
+        matchRules: [{ entityPropertyPath: "name", matchType: "zip", options: {}}]
+      },
+      {
         name: "name - custom",
         matchRules: [{
             entityPropertyPath: "name",
@@ -202,6 +210,16 @@ function testMatchRulesetDefinitions() {
       const matchRulesetDefinitions = new MatchRulesetDefinition(matchStep.matchRulesets[i],matchable);
       let matchingTerms = matchRulesetDefinitions.doubleMetaphoneMatchFunction("jhons", matchStep.matchRulesets[i].matchRules[0], matchStep);
       assertions.push(test.assertEqual(0, matchingTerms.length, "No word is returned that have distanceThreshold less than equal to 100"));
+    }
+    if(matchStep.matchRulesets[i].name === "name - zip - 5digit") {
+      const matchRulesetDefinitions = new MatchRulesetDefinition(matchStep.matchRulesets[i],matchable);
+      let matchingTerms = matchRulesetDefinitions.zipMatchFunction("95101", matchStep.matchRulesets[i].matchRules[0], matchStep)
+      assertions.push(test.assertEqual(["95101","95101-*"], matchingTerms, "Original 5 digits zip value and wildcard entry is returned"));
+    }
+    if(matchStep.matchRulesets[i].name === "name - zip - 9digit") {
+      const matchRulesetDefinitions = new MatchRulesetDefinition(matchStep.matchRulesets[i],matchable);
+      let matchingTerms = matchRulesetDefinitions.zipMatchFunction("95101-1210", matchStep.matchRulesets[i].matchRules[0], matchStep)
+      assertions.push(test.assertEqual(["95101-1210","95101"], matchingTerms, "Original 9 digits zip value and trimmed 5 digits zip is returned"));
     }
   }
 }
