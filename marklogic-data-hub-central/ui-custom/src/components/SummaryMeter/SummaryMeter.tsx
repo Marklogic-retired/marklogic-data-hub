@@ -4,7 +4,7 @@ import Highcharts from 'highcharts'
 import highchartsMore from "highcharts/highcharts-more.js"
 import solidGauge from "highcharts/modules/solid-gauge.js";
 import HighchartsReact from 'highcharts-react-official'
-import styles from "./SummaryMeter.module.scss";
+import "./SummaryMeter.scss";
 
 highchartsMore(Highcharts);
 solidGauge(Highcharts);
@@ -124,7 +124,7 @@ const SummaryMeter: React.FC<Props> = (props) => {
   };
 
   return (
-    <div className={styles.meter} data-testid="summaryMeterId">
+    <div className="meter" data-testid="summaryMeterId">
       <div style={{zIndex: 1}}>
         <HighchartsReact
             highcharts={Highcharts}
@@ -133,19 +133,19 @@ const SummaryMeter: React.FC<Props> = (props) => {
         />
       </div>
       <div style={{zIndex: 1000}}>
-        <div className={styles.labelAll}>
-            <div className={styles.block} />
-            <div className={styles.text}>All results</div>
+        <div className="labelAll">
+            <div className="block" />
+            <div className="text">All results</div>
         </div>
-        <div className={styles.labelFilters}>
-            <div className={styles.block} />
-            <div className={styles.text}>With filters applied</div>
+        <div className="labelFilters">
+            <div className="block" />
+            <div className="text">With filters applied</div>
         </div>
-        <div className={styles.min}>0</div>
-        <div className={styles.max}>{searchContext.total}</div>
+        <div className="min">0</div>
+        <div className="max">{searchContext.total}</div>
         
-        <div className={styles.returned}>
-            <div className={styles.separator} />
+        <div className="returned">
+            <div className="separator" />
             <span>{searchContext.returned}</span>
         </div>
       </div>

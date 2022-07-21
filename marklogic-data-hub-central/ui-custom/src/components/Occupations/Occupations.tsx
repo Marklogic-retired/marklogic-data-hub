@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./Occupations.module.scss";
+import "./Occupations.scss";
 
 type Props = {
   data?: any;
@@ -18,7 +18,7 @@ type Props = {
 const Occupations: React.FC<Props> = (props) => {
 
   return (
-    <div className={styles.occupations}>
+    <div className="occupations">
         Occupations content...
     </div>
   );

@@ -2,7 +2,6 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Nav from "react-bootstrap/Nav";
 import NavDropdown from "react-bootstrap/NavDropdown";
-import styles from "./Menus.module.scss";
 import "./Menus.scss";
 
 type Props = {
@@ -59,10 +58,10 @@ const Menus: React.FC<Props> = (props) => {
     // https://www.npmjs.com/package/rc-cascader
 
     return (
-        <div className={styles.menus} data-testid="menuId">
+        <div className="menus" data-testid="menuId">
             {props.config.map((menu, index) => {
                 return (
-                    <span className={styles.menu} key={"menu-" + index}>
+                    <span className="menu" key={"menu-" + index}>
                         {menu.to ?
                             <Link to={menu.to}>{menu.label}</Link> :
                             menu.url ?
