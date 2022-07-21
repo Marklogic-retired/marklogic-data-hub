@@ -77,9 +77,6 @@ public class HubCentralManager extends LoggingObject {
             HubConfigImpl hubConfig = new HubConfigImpl(hubProject);
             Properties dbProperties = hubConfig.getHubPropertiesFromDb(hubClient.getStagingClient());
             hubConfig.applyProperties(dbProperties);
-            logger.info("properties from database: " + dbProperties);
-            logger.info(dbProperties.getProperty("mlFinalPort"));
-            logger.info(Integer.toString(hubConfig.getPort(DatabaseKind.FINAL)));
             hubConfig.initHubProject();
             writeHubCentralFilesToProject(hubProject, hubClient);
             writeDhsGradlePropertiesFile(hubProject);

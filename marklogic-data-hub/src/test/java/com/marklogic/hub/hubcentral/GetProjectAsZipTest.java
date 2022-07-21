@@ -54,7 +54,7 @@ public class GetProjectAsZipTest extends AbstractHubCoreTest {
 
         // Download the project, verify the zip is correct
         runAsTestUserWithRoles("hub-central-downloader");
-
+        logger.info(getHubConfig().toString());
         writeProjectToZipFileWithRetry(getHubClient());
         verifyZipProject();
         project.verifyZipArtifacts();
