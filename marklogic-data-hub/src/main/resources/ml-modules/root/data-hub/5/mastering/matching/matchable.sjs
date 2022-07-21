@@ -355,6 +355,20 @@ class MatchRulesetDefinition {
     return Sequence.from(results);
   }
 
+  zipMatchFunction(value, passMatchRule) {
+    let node =  hubUtils.normalizeToArray(value).map((val) => fn.string(val)).toString();
+    let result = [node];
+    if(node.length === 5) {
+      let wildcardValue = node + "-*";
+      result.push(wildcardValue);
+    }
+    else {
+      let val = (node).substring(0,5);
+      result.push(val);
+    }
+    return result;
+  }
+
   _matchFunction(matchRule, model) {
     if (!matchRule._matchFunction) {
       let passMatchRule = matchRule;
@@ -379,8 +393,8 @@ class MatchRulesetDefinition {
           convertToNode = true;
           break;
         case "zip":
-          matchFunction = hubUtils.requireFunction("/com.marklogic.smart-mastering/algorithms/zip.xqy", "zip");
-          convertToNode = /\.xq[yml]?$/.test(matchRule.algorithmModulePath);
+          matchFunction = this.zipMatchFunction;
+          convertToNode = true;
           break;
         case "custom":
           matchFunction = hubUtils.requireFunction(matchRule.algorithmModulePath, matchRule.algorithmFunction);
