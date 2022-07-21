@@ -1,16 +1,21 @@
 package com.marklogic.hub.dataservices;
 
-import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.impl.BaseProxy;
+// IMPORTANT: Do not edit. This file is generated.
+
 import com.marklogic.client.io.Format;
+
+
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.io.marker.JSONWriteHandle;
+
+import com.marklogic.client.impl.BaseProxy;
 
 /**
  * Provides a set of operations on the database server
  */
 public interface ConceptService {
     /**
-     * Creates a ModelsService object for executing operations on the database server.
+     * Creates a ConceptService object for executing operations on the database server.
      *
      * The DatabaseClientFactory class can create the DatabaseClient parameter. A single
      * client object can be used for any number of requests and in multiple threads.
@@ -22,7 +27,7 @@ public interface ConceptService {
       return on(db, null);
     }
     /**
-     * Creates a ModelsService object for executing operations on the database server.
+     * Creates a ConceptService object for executing operations on the database server.
      *
      * The DatabaseClientFactory class can create the DatabaseClient parameter. A single
      * client object can be used for any number of requests and in multiple threads.
@@ -38,29 +43,70 @@ public interface ConceptService {
      * @return	an object for executing database operations
      */
     static ConceptService on(DatabaseClient db, JSONWriteHandle serviceDeclaration) {
-        final class ModelsServiceImpl implements ConceptService {
+        final class ConceptServiceImpl implements ConceptService {
             private DatabaseClient dbClient;
             private BaseProxy baseProxy;
 
-
-            private BaseProxy.DBFunctionRequest req_createDraftModel;
-            private BaseProxy.DBFunctionRequest req_deleteDraftModel;
             private BaseProxy.DBFunctionRequest req_updateDraftModelInfo;
+            private BaseProxy.DBFunctionRequest req_deleteDraftModel;
+            private BaseProxy.DBFunctionRequest req_saveConceptModels;
+            private BaseProxy.DBFunctionRequest req_createDraftModel;
 
-
-            private ModelsServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
+            private ConceptServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
-                this.baseProxy = new BaseProxy("/data-hub/5/data-services/models/concept/", servDecl);
+                this.baseProxy = new BaseProxy("/data-hub/5/data-services/concept/", servDecl);
 
-
-                this.req_createDraftModel = this.baseProxy.request(
-                    "createDraftConceptModel.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
-                this.req_deleteDraftModel = this.baseProxy.request(
-                    "deleteDraftConceptModel.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_updateDraftModelInfo = this.baseProxy.request(
                     "updateDraftConceptModelInfo.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
+                this.req_deleteDraftModel = this.baseProxy.request(
+                    "deleteDraftConceptModel.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                this.req_saveConceptModels = this.baseProxy.request(
+                    "saveConceptModels.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                this.req_createDraftModel = this.baseProxy.request(
+                    "createDraftConceptModel.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
             }
 
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode updateDraftModelInfo(String name, com.fasterxml.jackson.databind.JsonNode input) {
+                return updateDraftModelInfo(
+                    this.req_updateDraftModelInfo.on(this.dbClient), name, input
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode updateDraftModelInfo(BaseProxy.DBFunctionRequest request, String name, com.fasterxml.jackson.databind.JsonNode input) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.atomicParam("name", false, BaseProxy.StringType.fromString(name)),
+                          BaseProxy.documentParam("input", false, BaseProxy.JsonDocumentType.fromJsonNode(input))
+                          ).responseSingle(false, Format.JSON)
+                );
+            }
+
+            @Override
+            public void deleteDraftModel(String conceptName) {
+                deleteDraftModel(
+                    this.req_deleteDraftModel.on(this.dbClient), conceptName
+                    );
+            }
+            private void deleteDraftModel(BaseProxy.DBFunctionRequest request, String conceptName) {
+              request
+                      .withParams(
+                          BaseProxy.atomicParam("conceptName", false, BaseProxy.StringType.fromString(conceptName))
+                          ).responseNone();
+            }
+
+            @Override
+            public void saveConceptModels(com.fasterxml.jackson.databind.JsonNode models) {
+                saveConceptModels(
+                    this.req_saveConceptModels.on(this.dbClient), models
+                    );
+            }
+            private void saveConceptModels(BaseProxy.DBFunctionRequest request, com.fasterxml.jackson.databind.JsonNode models) {
+              request
+                      .withParams(
+                          BaseProxy.documentParam("models", false, BaseProxy.JsonDocumentType.fromJsonNode(models))
+                          ).responseNone();
+            }
 
             @Override
             public com.fasterxml.jackson.databind.JsonNode createDraftModel(com.fasterxml.jackson.databind.JsonNode input) {
@@ -76,66 +122,42 @@ public interface ConceptService {
                           ).responseSingle(false, Format.JSON)
                 );
             }
-
-            @Override
-            public void deleteDraftModel(String conceptName) {
-                deleteDraftModel(
-                    this.req_deleteDraftModel.on(this.dbClient), conceptName
-                );
-            }
-            private void deleteDraftModel(BaseProxy.DBFunctionRequest request, String conceptName) {
-                request
-                    .withParams(
-                        BaseProxy.atomicParam("conceptName", false, BaseProxy.StringType.fromString(conceptName))
-                    ).responseNone();
-            }
-
-            @Override
-            public com.fasterxml.jackson.databind.JsonNode updateDraftModelInfo(String name, com.fasterxml.jackson.databind.JsonNode input) {
-                return updateDraftModelInfo(
-                    this.req_updateDraftModelInfo.on(this.dbClient), name, input
-                );
-            }
-            private com.fasterxml.jackson.databind.JsonNode updateDraftModelInfo(BaseProxy.DBFunctionRequest request, String name, com.fasterxml.jackson.databind.JsonNode input) {
-                return BaseProxy.JsonDocumentType.toJsonNode(
-                    request
-                        .withParams(
-                            BaseProxy.atomicParam("name", false, BaseProxy.StringType.fromString(name)),
-                            BaseProxy.documentParam("input", false, BaseProxy.JsonDocumentType.fromJsonNode(input))
-                        ).responseSingle(false, Format.JSON)
-                );
-            }
-
         }
 
-        return new ModelsServiceImpl(db, serviceDeclaration);
+        return new ConceptServiceImpl(db, serviceDeclaration);
     }
 
+  /**
+   * Update the description of an existing concept class. Concept name cannot yet be edited because doing so would break existing mapping and mastering configurations. Changes are saved to the concept class draft collection.
+   *
+   * @param name	The name of the model
+   * @param input	provides input
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode updateDraftModelInfo(String name, com.fasterxml.jackson.databind.JsonNode input);
 
   /**
-   * Create a new draft model, resulting in a new concept descriptor.
+   * Mark a draft concept class to be deleted
+   *
+   * @param conceptName	The name of the concept in the model
+   * 
+   */
+    void deleteDraftModel(String conceptName);
+
+  /**
+   * Save an array of concept models
+   *
+   * @param models	The array of concept models
+   * 
+   */
+    void saveConceptModels(com.fasterxml.jackson.databind.JsonNode models);
+
+  /**
+   * Create a new draft model, resulting in a new Concept descriptor.
    *
    * @param input	provides input
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode createDraftModel(com.fasterxml.jackson.databind.JsonNode input);
 
-
-
-    /**
-     * Mark a draft concept class to be deleted
-     *
-     * @param conceptName	The name of the concept in the model
-     *
-     */
-    void deleteDraftModel(String conceptName);
-
-    /**
-     * Update the description of an existing concept class. Changes are saved to the concept class draft collection.
-     *
-     * @param name	The name of the model
-     * @param input	provides input
-     * @return	as output
-     */
-    com.fasterxml.jackson.databind.JsonNode updateDraftModelInfo(String name, com.fasterxml.jackson.databind.JsonNode input);
 }

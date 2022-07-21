@@ -36,6 +36,7 @@ import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.dataservices.ArtifactService;
+import com.marklogic.hub.dataservices.ConceptService;
 import com.marklogic.hub.dataservices.ModelsService;
 import com.marklogic.hub.dataservices.StepService;
 import com.marklogic.hub.hubcentral.HubCentralManager;
@@ -116,7 +117,8 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
             loadStepDefinitions(hubClient);
             loadSteps(hubClient);
             loadHubCentralConfig(hubClient);
-            logger.info("Loaded flows, mappings, step definitions and steps, time: " + (System.currentTimeMillis() - start) + "ms");
+            loadHubCentralConcepts(hubClient);
+            logger.info("Loaded flows, mappings, step definitions, steps, hubcentral config and concepts, time: " + (System.currentTimeMillis() - start) + "ms");
         }
         catch (IOException e) {
             throw new RuntimeException("Unable to load user artifacts, cause: " + e.getMessage(), e);
@@ -325,6 +327,21 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                 String docUri = "/config/".concat(file.getName());
                 new HubCentralManager().deployHubCentralConfig(hubClient, hubCentralConfig, docUri);
             }
+        }
+    }
+
+    private void loadHubCentralConcepts(HubClient hubClient) {
+        final Path configPath = hubConfig.getHubProject().getHubCentralConceptsPath();
+        ArrayNode conceptsArray = objectMapper.createArrayNode();
+        if (configPath.toFile().exists()) {
+            for (File file : configPath.toFile().listFiles(f -> f.isFile() && f.getName().endsWith(".concept.json"))) {
+                conceptsArray.add(readArtifact(file));
+            }
+        }
+
+        if(conceptsArray.size() > 0) {
+            ConceptService.on(hubClient.getStagingClient()).saveConceptModels(conceptsArray);
+            clearExpandedTreeCache(hubClient);
         }
     }
 

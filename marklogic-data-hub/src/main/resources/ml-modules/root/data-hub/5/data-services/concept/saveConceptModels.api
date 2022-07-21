@@ -1,0 +1,12 @@
+{
+    "functionName": "saveConceptModels",
+    "desc": "Save an array of concept models",
+    "params": [
+        {
+            "name": "models",
+            "datatype": "jsonDocument",
+            "$javaClass": "com.fasterxml.jackson.databind.JsonNode",
+            "desc": "The array of concept models"
+        }
+    ]
+}

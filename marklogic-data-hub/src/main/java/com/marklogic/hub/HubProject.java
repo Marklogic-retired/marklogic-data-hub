@@ -287,6 +287,8 @@ public interface HubProject {
 
     Path getHubCentralConfigPath();
 
+    Path getHubCentralConceptsPath();
+
     /**
      * @return the directory containing steps, as defined in the 5.3.0 release
      */

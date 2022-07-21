@@ -514,7 +514,7 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
 
     public void exportProject(OutputStream outputStream, List<String> additionalFilesTobeAdded){
         Stream<String> filesToBeAddedToZip = Stream.of("entities", "flows", "src/main", "step-definitions", "steps", "gradle",
-            "gradlew", "gradlew.bat", "build.gradle", "gradle.properties");
+            "gradlew", "gradlew.bat", "build.gradle", "gradle.properties", "concepts", "config");
         if(additionalFilesTobeAdded.isEmpty()){
             writeToStream(outputStream, filesToBeAddedToZip);
         }
@@ -682,6 +682,11 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
     @Override
     public Path getHubCentralConfigPath() {
         return this.projectDir.resolve("config");
+    }
+
+    @Override
+    public Path getHubCentralConceptsPath() {
+        return this.projectDir.resolve("concepts");
     }
 
     @Override
