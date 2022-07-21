@@ -254,9 +254,10 @@ public class DataHubImpl implements DataHub, InitializingBean {
     public boolean isServerVersionValid(String versionString) {
         try{
             MarkLogicVersion serverVersion = new MarkLogicVersion(versionString);
-            if (!(serverVersion.getMajor() == 9 || serverVersion.getMajor() == 10)) {
+            if (serverVersion.getMajor() < 9) {
                 return false;
             }
+
             if(serverVersion.isNightly()){
                 //The dates are the nightly servers on the day the least supported server versions (9.0-11, 10.0-2) were released
                 if(serverVersion.getMajor() == 9) {
@@ -272,6 +273,9 @@ public class DataHubImpl implements DataHub, InitializingBean {
                     if (date.before(minDate)) {
                         return false;
                     }
+                }
+                if(serverVersion.getMajor() == 11) {
+                    return true;
                 }
             }
             /*  Using 9.0-11 ensures mapping step always executes "entity-services-mapping" step definition. 9.0-11  server

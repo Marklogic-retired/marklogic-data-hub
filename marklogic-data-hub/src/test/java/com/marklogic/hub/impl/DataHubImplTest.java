@@ -181,6 +181,11 @@ public class DataHubImplTest extends AbstractHubCoreTest {
     }
 
     @Test
+    public void testValidateServer11Nightly() {
+        assertTrue(dh.isServerVersionValid("11.0-20220701"));
+    }
+
+    @Test
     public void testValidateServer10NightlyValid() {
         assertFalse(dh.isServerVersionValid("10.0-20180505"));
     }
