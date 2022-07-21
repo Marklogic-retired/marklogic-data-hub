@@ -67,6 +67,9 @@ public class AllArtifactsProject extends TestObject {
 
         assertEquals("Order", hubCentralFilesZipEntries.get("entities/Order.entity.json").get("info").get("title").asText());
 
+        // Verify concepts
+        assertTrue(hubCentralFilesZipEntries.containsKey("concepts/testConceptClass.concept.json"));
+
         // Verify PII stuff
         verifyEntryExists("src/main/ml-config/security/protected-paths/01_pii-protected-paths.json",
             "path-expression", "/(es:envelope|envelope)/(es:instance|instance)/Order/orderID");
@@ -88,7 +91,7 @@ public class AllArtifactsProject extends TestObject {
         dbProps = verifyEntryExists("src/main/entity-config/databases/final-database.json", "database-name",
             hubClient.getDbName(DatabaseKind.FINAL));
         assertEquals(expectedPathIndex, dbProps.get("range-path-index").get(0).get("path-expression").asText());
-        assertEquals(16, hubCentralFilesZipEntries.size(), "Expecting the following entries: " +
+        assertEquals(17, hubCentralFilesZipEntries.size(), "Expecting the following entries: " +
             "1 flow; " +
             "2 entity models; " +
             "2 mapping steps; " +
@@ -98,6 +101,7 @@ public class AllArtifactsProject extends TestObject {
             "1 query roleset file (for PII); " +
             "4 search options files; " +
             "2 database properties files; " +
+            "1 concept model file; " +
             "Note that step definitions are not included because as of 5.3.0, a user cannot create/modify/delete them " +
             "via Hub Central");
     }

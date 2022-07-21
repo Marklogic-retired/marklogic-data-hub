@@ -124,7 +124,7 @@ public class GetProjectAsZipTest extends AbstractHubCoreTest {
         ZipFile zip = new ZipFile(zipProjectFile);
 
         String[] artifactDirs = {"flows", "steps", "entities", "src/main/entity-config", "src/main/ml-config/security/protected-paths",
-            "src/main/ml-config/security/query-rolesets"};
+            "src/main/ml-config/security/query-rolesets", "concepts"};
 
         try (ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipProjectFile))) {
             ZipEntry entry = zipIn.getNextEntry();

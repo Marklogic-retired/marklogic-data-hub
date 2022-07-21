@@ -35,7 +35,9 @@ declare function parse(
         "http://marklogic.com/data-hub/mappings",
         "http://marklogic.com/data-hub/step-definition",
         "http://marklogic.com/data-hub/steps",
-        "http://marklogic.com/entity-services/models"
+        "http://marklogic.com/entity-services/models",
+        "http://marklogic.com/hub-central/ui-config",
+        "http://marklogic.com/data-hub/concept"
       )))}</x>/*
     else
       <x>{cts:true-query()}</x>/*
