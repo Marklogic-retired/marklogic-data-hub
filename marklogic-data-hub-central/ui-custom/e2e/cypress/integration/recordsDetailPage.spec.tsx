@@ -42,7 +42,7 @@ describe("Search Validations ", () => {
     recordDetailsPage.thumbNail().invoke("attr", "src").should("eq", response.images.image.url);
     let memberships = response.memberships.membership;
     for (let i=0; i< memberships.length; i++) {
-      cy.findByText(memberships[i].list).parent().should("have.class", "item success");
+      cy.findByText(memberships[i].list).parent().should("have.class", "item highlighted");
       cy.findByText(memberships[i].list).parent().findByTestId("success-icon").should("be.visible");
       cy.findByText(memberships[i].list).parent().findByTestId("dateTimeContainer").should("have.text", memberships[i].ts);
     }
@@ -100,7 +100,7 @@ describe("Search Validations ", () => {
       recordDetailsPage.socialItems().eq(i).trigger("mouseover");
       cy.findByText(socials[i].address).should("be.visible");
     }
-    recordDetailsPage.metaDataVal().eq(0).click().invoke("attr", "aria-describedby").should("exist");
+    recordDetailsPage.metaDataVal().eq(1).click().invoke("attr", "aria-describedby").should("exist");
   });
   it("Validate the expand All and collapse All ", () => {
     cy.contains("button", "Collapse All").should("be.visible").click({force: true});
