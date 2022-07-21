@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 import { SearchContext } from "../../store/SearchContext";
 import Badge from "react-bootstrap/Badge";
-import styles from "./SelectedFacets.module.scss";
 import "./SelectedFacets.scss";
 
 type Props = {
@@ -57,14 +56,14 @@ const SelectedFacets: React.FC<Props> = (props) => {
     const keys = Object.keys(fsObj);
     let res = keys.map((k, index) => {
         return (
-          <span key={"selected-" + index} className={styles.badge}>
+          <span key={"selected-" + index} className="badge">
             <Badge bg="light" text="dark">
-              <span className={styles.facetLabel}>{k}</span>
+              <span className="facetLabel">{k}</span>
               {fsObj[k].map((v, index2) => {
                 return (
-                  <span key={"selectedValue-" + index2} className={styles.name}>
-                    <span className={styles.nameLabel}>{v.value}</span>
-                    <span className={styles.close} id={k + ":" + v.value} onClick={handleClose}>X</span>
+                  <span key={"selectedValue-" + index2} className="name">
+                    <span className="nameLabel">{v.value}</span>
+                    <span className="close" id={k + ":" + v.value} onClick={handleClose}>X</span>
                   </span>
                 );
               })}
@@ -76,9 +75,9 @@ const SelectedFacets: React.FC<Props> = (props) => {
   };
 
   return (
-    <div className={styles.selected}>
+    <div className="selected">
       {(searchContext.facetStrings && searchContext.facetStrings.length) > 0 ? (
-        <span className={styles.facetStrings}>{getSelected()}</span>
+        <span className="facetStrings">{getSelected()}</span>
       ) : null
       }
     </div>
