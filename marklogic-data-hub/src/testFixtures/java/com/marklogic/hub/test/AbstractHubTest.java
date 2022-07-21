@@ -101,6 +101,13 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
         } catch (Exception ex) {
             logger.warn("Unable to clear final schemas database, but will continue: " + ex.getMessage());
         }
+        try {
+            String dataHubConfigUri = "/data-hub/5/datahubConfig.json";
+            getHubConfig().newStagingClient(getHubConfig().getDbName(DatabaseKind.MODULES)).newDocumentManager().delete(dataHubConfigUri);
+
+        } catch (Exception ex) {
+            logger.warn("Unable to clear datahubConfig.json, but will continue: " + ex.getMessage());
+        }
     }
 
     /**
