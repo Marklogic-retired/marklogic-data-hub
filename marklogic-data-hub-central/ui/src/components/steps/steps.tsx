@@ -236,6 +236,7 @@ const Steps: React.FC<Props> = (props) => {
     targetEntityType={props.targetEntityType}
     createStepArtifact={createStep}
     updateStepArtifact={updateStep}
+    preloadTypeahead = {preloadTypeahead(props.stepData)}
   />);
 
   const createEditMerging = (<CreateEditStep
@@ -246,6 +247,7 @@ const Steps: React.FC<Props> = (props) => {
     targetEntityType={props.targetEntityType}
     createStepArtifact={createStep}
     updateStepArtifact={updateStep}
+    preloadTypeahead = {preloadTypeahead(props.stepData)}
   />);
 
   const viewCustom = (<CreateEditStep

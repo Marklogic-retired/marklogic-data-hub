@@ -26,6 +26,14 @@ class CreateEditStepDialog {
     cy.get(".rbt-input-main").type(str);
   }
 
+  reviewSelectContent (str: string) {
+    return cy.get("a[id^='collList-item-']").contains(str);
+  }
+
+  getElementById(id: string) {
+    return cy.get(`#${id}`);
+  }
+
   /**
      * Set query input, depends on setSourceRadio being set to 'Query'
      * @param str
