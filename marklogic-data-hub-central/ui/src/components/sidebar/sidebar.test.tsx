@@ -5,6 +5,11 @@ import searchPayloadFacets from "../../assets/mock-data/explore/search-payload-f
 import {entityFromJSON, entityParser} from "../../util/data-conversion";
 import {modelResponse} from "../../assets/mock-data/explore/model-response";
 import userEvent from "@testing-library/user-event";
+import StepsConfig from "@config/steps.config";
+import {getEnvironment} from "@util/environment";
+
+const stagingDbName: string = getEnvironment().stagingDb ? getEnvironment().stagingDb : StepsConfig.stagingDb;
+const finalDbName: string = getEnvironment().finalDb ? getEnvironment().finalDb : StepsConfig.finalDb;
 
 const entityIndicatorData = {
   max: 10,
@@ -122,8 +127,9 @@ describe("Sidebar createdOn face time window dropdown", () => {
       />
     );
 
-    const finalDatabaseButton = getByText("Final");
-    const stagingDatabaseButton = getByText("Staging");
+    // Check Final/Staging buttons show the custon database names
+    const finalDatabaseButton = getByText(finalDbName);
+    const stagingDatabaseButton = getByText(stagingDbName);
     finalDatabaseButton.onclick = jest.fn();
     stagingDatabaseButton.onclick = jest.fn();
     fireEvent.click(finalDatabaseButton);
