@@ -11,6 +11,7 @@ import {facetParser, deepCopy, entityFromJSON} from "@util/data-conversion";
 import hubPropertiesConfig from "@config/hub-properties.config";
 import tooltipsConfig from "@config/explorer-tooltips.config";
 import styles from "./sidebar.module.scss";
+import StepsConfig from "@config/steps.config";
 import {getUserPreferences, updateUserPreferences} from "../../services/user-preferences";
 import {UserContext} from "@util/user-context";
 import reactSelectThemeConfig from "@config/react-select-theme.config";
@@ -20,6 +21,7 @@ import {ExploreGraphViewToolTips} from "@config/tooltips.config";
 import {HCDivider} from "@components/common";
 import {graphSearchQuery, getEntities, searchResultsQuery} from "@api/queries";
 import {exploreSidebar as exploreSidebarConfig} from "@config/explore.config";
+import {getEnvironment} from "@util/environment";
 
 const tooltips = tooltipsConfig.browseDocuments;
 const {exploreSidebar} = tooltipsConfig;
@@ -48,6 +50,8 @@ interface Props {
 const PLACEHOLDER: string = "Select a saved query";
 
 const Sidebar: React.FC<Props> = (props) => {
+  const stagingDbName: string = getEnvironment().stagingDb ? getEnvironment().stagingDb : StepsConfig.stagingDb;
+  const finalDbName: string = getEnvironment().finalDb ? getEnvironment().finalDb : StepsConfig.finalDb;
 
   const componentIsMounted = useRef(true);
   const entitiesArrayRef = useRef<any[]>();
@@ -430,7 +434,7 @@ const Sidebar: React.FC<Props> = (props) => {
 
     if (defaultPreferences !== null) {
       let parsedPreferences = JSON.parse(defaultPreferences);
-     parsedPreferences?.preselectedFacets && setAllGreyedOptions(parsedPreferences.preselectedFacets);
+      parsedPreferences?.preselectedFacets && setAllGreyedOptions(parsedPreferences.preselectedFacets);
     }
   };
 
@@ -440,7 +444,7 @@ const Sidebar: React.FC<Props> = (props) => {
     if (defaultPreferences !== null) {
       let oldOptions = JSON.parse(defaultPreferences);
       let greyFacetsLS = oldOptions?.preselectedFacets;
-      let newArrayLS = greyFacetsLS[facetName] ? greyFacetsLS[facetName][valueKey]?.filter(x => x !== val): false;
+      let newArrayLS = greyFacetsLS[facetName] ? greyFacetsLS[facetName][valueKey]?.filter(x => x !== val) : false;
 
       if (newArrayLS !== false) {
         greyFacetsLS[facetName][valueKey] = newArrayLS;
@@ -526,7 +530,7 @@ const Sidebar: React.FC<Props> = (props) => {
     }
   };
 
-  const savingCheckedFacetsLS = (facets:any) => {
+  const savingCheckedFacetsLS = (facets: any) => {
     let userPreferences = getUserPreferences(user.name);
     if (userPreferences) {
       let oldOptions = JSON.parse(userPreferences);
@@ -646,7 +650,7 @@ const Sidebar: React.FC<Props> = (props) => {
     if (userPreferences) {
       let oldOptions = JSON.parse(userPreferences);
       let newOptions = {
-        ...oldOptions, preselectedFacets: {... oldOptions.preselectedFacets, createdOnRange: dateObject}
+        ...oldOptions, preselectedFacets: {...oldOptions.preselectedFacets, createdOnRange: dateObject}
       };
       updateUserPreferences(user.name, newOptions);
     }
@@ -823,9 +827,12 @@ const Sidebar: React.FC<Props> = (props) => {
                 defaultChecked={searchOptions.database === "final"}
                 onChange={e => props.setDatabasePreferences(e.target.value)}
                 aria-label="switch-database-final"
-                label={"Final"}
+                label={<HCTooltip text={finalDbName} id={`${finalDbName}-tooltip`} placement="top-start">
+                  <span>{finalDbName}</span>
+                </HCTooltip>}
                 className={`mb-0 p-0 ${styles.databaseSwitch}`}
               />
+
               <Form.Check
                 id="switch-database-staging"
                 name="switch-database"
@@ -834,7 +841,9 @@ const Sidebar: React.FC<Props> = (props) => {
                 defaultChecked={searchOptions.database === "staging"}
                 onChange={e => props.setDatabasePreferences(e.target.value)}
                 aria-label="switch-database-staging"
-                label={"Staging"}
+                label={<HCTooltip text={stagingDbName} id={`${stagingDbName}-tooltip`} placement="top-start">
+                  <span>{stagingDbName}</span>
+                </HCTooltip>}
                 className={`mb-0 p-0 ${styles.databaseSwitch}`}
               />
             </Form>

@@ -63,14 +63,14 @@ class ExplorePage {
   }
 
   getStagingDatabaseButton() {
-    cy.findByText("Staging").scrollIntoView().click();
+    cy.get(`[aria-label="switch-database-staging"] ~ label`).scrollIntoView().click();
     // cy.intercept("POST", "**/entitySearch?*").as("entitySearchStaging");
     // cy.wait("@entitySearchStaging");
     //tried intercept + wait on request but didn't work. Leaving comment as reference
     cy.wait(6000);
   }
   getFinalDatabaseButton() {
-    cy.findByText("Final").click();
+    cy.get(`[aria-label="switch-database-final"] ~ label`).click();
     // cy.intercept("POST", "/api/entitySearch?database=final").as("entitySearchFinal");
     // cy.wait("@entitySearchFinal");
     //tried intercept + wait on request but didn't work. Leaving comment as reference
