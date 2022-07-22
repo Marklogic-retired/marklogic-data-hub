@@ -8,8 +8,10 @@ import mergingStepDetail from "../../../support/components/merging/merging-step-
 import mergeStrategyModal from "../../../support/components/merging/merge-strategy-modal";
 import mergeRuleModal from "../../../support/components/merging/merge-rule-modal";
 import LoginPage from "../../../support/pages/login";
+import {mappingStepDetail} from "../../../support/components/mapping/index";
 
 const mergeStep = "mergeOrderTestStep";
+const mergeStepCollection = "mergeOrderTestStepColl";
 
 describe("Merging", () => {
 
@@ -49,6 +51,29 @@ describe("Merging", () => {
     cy.waitForAsyncRequest();
     createEditStepDialog.cancelButton("merging").click();
     curatePage.verifyStepNameIsVisible(mergeStep);
+  });
+  it("Create a new match step with a collection and review the preloaded value", () => {
+    curatePage.addNewStep("Order").should("be.visible").click();
+    createEditStepDialog.stepNameInput().type(mergeStepCollection, {timeout: 2000});
+    createEditStepDialog.stepDescriptionInput().type("merge order step example for collection", {timeout: 2000});
+    createEditStepDialog.setSourceRadio("Collection");
+    cy.log("**Selecting value in select component**");
+    mappingStepDetail.getColectionInputValue().click({force: true});
+
+    cy.intercept("POST", "/api/entitySearch/facet-values?database=final").as("loadMergeSelect");
+    mappingStepDetail.getColectionInputValue().type("json");
+    cy.wait("@loadMergeSelect").its("response.statusCode").should("eq", 200).then(() => {
+      createEditStepDialog.getElementById("collList").should("exist").then(() => {
+        createEditStepDialog.reviewSelectContent("mapCustomersWithRelatedEntitiesJSON").click();
+      });
+    });
+    createEditStepDialog.saveButton("merging").click();
+    cy.waitForAsyncRequest();
+    curatePage.verifyStepNameIsVisible("mergeOrderTestStepColl");
+    cy.log("**Reviewing preloaded value**");
+    curatePage.editStep("mergeOrderTestStepColl").click();
+    mappingStepDetail.getColectionInputValue().should("have.value", "mapCustomersWithRelatedEntitiesJSON");
+    createEditStepDialog.cancelButton("merging").click();
   });
   it("Validate step name is disabled, description, timestamp path and validate discard confirmation modal is displayed on click of cancel  ", () => {
     curatePage.editStep(mergeStep).click();

@@ -9,8 +9,10 @@ import {
 import {matchingStepDetail, rulesetSingleModal, thresholdModal, rulesetMultipleModal, compareValuesModal} from "../../../support/components/matching/index";
 import curatePage from "../../../support/pages/curate";
 import LoginPage from "../../../support/pages/login";
+import {mappingStepDetail} from "../../../support/components/mapping/index";
 
 const matchStep = "matchCustTest";
+const matchStepCollection = "matchCustTestCollection";
 
 const uriMatchedResults = [{ruleName: "Match - merge", threshold: "19", matchedPairs: "6"},
   {ruleName: "Likely Match - notify", threshold: "9", matchedPairs: "5"}];
@@ -61,6 +63,28 @@ describe("Matching", () => {
     curatePage.toggleEntityTypeId("Customer");
     curatePage.selectMatchTab("Customer");
     cy.waitUntil(() => curatePage.addNewStep("Customer"));
+  });
+  it("Create a new match step with a collection and review the preloaded value", () => {
+    curatePage.addNewStep("Customer").should("be.visible").click();
+    createEditStepDialog.stepNameInput().type(matchStepCollection);
+    createEditStepDialog.stepDescriptionInput().type("match customer step example for collection", {timeout: 2000});
+    createEditStepDialog.setSourceRadio("Collection");
+    cy.log("**Selecting value in select component**");
+    mappingStepDetail.getColectionInputValue().click({force: true});
+    cy.intercept("POST", "/api/entitySearch/facet-values?database=final").as("loadSelect");
+    mappingStepDetail.getColectionInputValue().focus().type("json");
+    cy.wait("@loadSelect").its("response.statusCode").should("eq", 200).then(() => {
+      createEditStepDialog.getElementById("collList").should("exist").then(() => {
+        createEditStepDialog.reviewSelectContent("mapCustomersWithRelatedEntitiesJSON").click();
+      });
+    });
+    createEditStepDialog.saveButton("matching").click();
+    cy.waitForAsyncRequest();
+    curatePage.verifyStepNameIsVisible(matchStepCollection);
+    cy.log("**Reviewing preloaded value**");
+    mappingStepDetail.getEditStepSettingsButton("matchCustTestCollection").click();
+    mappingStepDetail.getColectionInputValue().should("have.value", "mapCustomersWithRelatedEntitiesJSON");
+    createEditStepDialog.cancelButton("matching").click();
   });
   it("Creating a new match step", () => {
     curatePage.addNewStep("Customer").should("be.visible").click();
