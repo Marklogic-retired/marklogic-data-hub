@@ -446,6 +446,7 @@ const Detail: React.FC<Props> = ({history, location}) => {
     }
   };
 
+
   const iconContenType = {
     unknown: <span className={"mlcf mlcf-blank fs-2"} aria-label={"icon: filetype-unknown"} />,
     json: <span className={"mlcf mlcf-json fs-2"} aria-label={"icon: filetype-json"} />,
@@ -476,7 +477,7 @@ const Detail: React.FC<Props> = ({history, location}) => {
 
   const renderEntityRelations = (entityRelatedProperty, property) => {
     const entities = hubCentralConfig?.modeling?.entities;
-    if (!property) return <span>No data</span>;
+    if (!property) return;
     const relatedEntityDefinition = entityDefinitionsArray.find(entity => entity.name === entityRelatedProperty.related);
     const propertyValues = _.isArray(property) ? property : [property];
     const body = propertyValues.map((value, i) => {
@@ -491,8 +492,8 @@ const Detail: React.FC<Props> = ({history, location}) => {
     accordionsKey.add(relatedEntityDefinition.name);
     const defaultActiveKey = collapseEntity.has(relatedEntityDefinition.name) ? relatedEntityDefinition.name : undefined;
     return (
-      <div className="my-3">
-        <Accordion activeKey={defaultActiveKey} key={relatedEntityDefinition.name}>
+      <div className="my-3" key={relatedEntityDefinition.name}>
+        <Accordion activeKey={defaultActiveKey}>
           <Accordion.Item eventKey={relatedEntityDefinition.name} className={styles.itemClean}>
             <Accordion.Header className={styles.entityRelationsHeader} style={{backgroundColor: bgColor}} onClick={() => handleOnclickItem(relatedEntityDefinition.name)}>
               <div className={styles.entityRelationsHeaderContainer}>
@@ -511,39 +512,61 @@ const Detail: React.FC<Props> = ({history, location}) => {
     );
   };
 
+  const renderRelatedEntities = () => {
+    const sections = entityRelatedProperties?.reduce((result, entityRelatedProperty, i) => {
+      if (!data?.envelope?.instance?.info?.title || !entityRelatedProperty?.name) return result;
+      const propertyValue = data?.envelope?.instance[data?.envelope?.instance?.info?.title][entityRelatedProperty?.name];
+      if (!entityRelatedProperty || !propertyValue) return result;
+      const entityRelations = renderEntityRelations(entityRelatedProperty, propertyValue);
+      if (entityRelations) result.push(entityRelations);
+      return result;
+    }, []);
+    return sections;
+  };
+  const renderRelatedConcepts = () => {
+    if (!entityDefinition || entityDefinition?.relatedConcepts?.length === 0) return;
+    const concepts = entityDefinition?.relatedConcepts.reduce((result, concept, index) => {
+      if (!concept || !concept.context) return result;
+      let value = (data && data?.envelope?.instance?.info?.title && data?.envelope?.instance[data?.envelope?.instance?.info?.title][concept.context]) ? data?.envelope?.instance[data?.envelope?.instance?.info?.title][concept.context] : "";
+      if (!value) return result;
+      result.push(<div className={styles.conceptItems} key={index}><span>{value}</span></div>);
+      return result;
+    }, []);
+    return concepts;
+  };
+
+  const relatedEntitiesToDisplay = renderRelatedEntities();
+  const relatedConceptsToDisplay = renderRelatedConcepts();
+  const hasRelations = relatedConceptsToDisplay?.length > 0 || relatedEntitiesToDisplay?.length > 0;
 
   const renderRelationship = () => {
-    if (!data?.envelope?.instance?.info?.title) return (<span>No data to display</span>);
-    const sections = entityRelatedProperties?.map((entityRelatedProperty, i) => {
-      if (!data?.envelope?.instance?.info?.title || !entityRelatedProperty?.name) return <span key={i}>No data</span>;
-      const propertyValue = data?.envelope?.instance[data?.envelope?.instance?.info?.title][entityRelatedProperty?.name];
-      return renderEntityRelations(entityRelatedProperty, propertyValue);
-    });
+    if (!data?.envelope?.instance?.info?.title) return;
+
 
     return (<div className={styles.relationshipsContainer}>
-      <div className={styles.relationshipsEntitySection}>
+      {relatedEntitiesToDisplay && relatedEntitiesToDisplay.length > 0 && <div className={styles.relationshipsEntitySection}>
         <div className={styles.relationshipsEntityHeader}>
           <span data-testid="related-entities-title" className={styles.relationshipsSectionTitle}>Related Entities</span>
           <div><ExpandCollapse handleSelection={(id) => handleEntityExpandCollapse(id)} currentSelection={""} /></div>
         </div>
         <div className={styles.relationshipsEntityContent}>
-          {sections && sections}
+          {relatedEntitiesToDisplay}
         </div>
-      </div>
-      <div className={styles.relationshipsSeparatorSection}>
+      </div>}
+      {(relatedEntitiesToDisplay && relatedEntitiesToDisplay.length > 0) && (relatedConceptsToDisplay && relatedConceptsToDisplay?.length > 0) && <div className={styles.relationshipsSeparatorSection}>
         <HCDivider type="vertical" className={styles.relationshipsSeparator} style={{backgroundColor: "#333"}} />
-      </div>
-      <div className={styles.relationshipsConceptsSection}>
+      </div>}
+      {relatedConceptsToDisplay && relatedConceptsToDisplay?.length > 0 && <div className={styles.relationshipsConceptsSection}>
         <div className={styles.relationshipsConceptsHeader}>
           <span data-testid="related-concepts-title" className={styles.relationshipsSectionTitle}>Related Concepts</span>
-          <div className=""></div>
         </div>
-        <div className={styles.relationshipsConceptsContent}></div>
-      </div>
-    </div>);
+        <div className={styles.relationshipsConceptsContent}>
+          {relatedConceptsToDisplay}
+        </div>
+      </div>}
+    </div >);
   };
-  const hasRelated = entityRelatedProperties?.find(property => data?.envelope?.instance[data?.envelope?.instance?.info?.title][property?.name]);
-  const hasRelations = entityRelatedProperties && entityRelatedProperties?.length > 0 && hasRelated;
+
   return (
     entityInstanceDocument === undefined ? <div style={{marginTop: "40px"}}>
       <AsyncLoader />

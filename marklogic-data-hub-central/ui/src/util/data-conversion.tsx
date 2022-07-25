@@ -117,6 +117,7 @@ export const entityParser = (data: any) => {
         primaryKey: entityDefinition.hasOwnProperty("primaryKey") ? entityDefinition["primaryKey"] : "",
         properties: properties,
         relatedEntities: relatedEntities,
+        relatedConcepts: entityDefinition.hasOwnProperty("relatedConcepts") ? entityDefinition["relatedConcepts"] : [],
       };
     } else {
       parsedEntity = {
@@ -125,6 +126,7 @@ export const entityParser = (data: any) => {
         primaryKey: "",
         properties: [],
         relatedEntities: [],
+        relatedConcepts: [],
         isDefinitionInvalid: true
       };
     }

@@ -272,7 +272,6 @@ button.tabActive {
     .relationshipsEntityHeader {
         display: flex;
         justify-content: space-between;
-        padding: 20px;
         position: sticky;
         top: 0px;
         background: #fff;
@@ -301,7 +300,7 @@ button.tabActive {
         padding: 15px;
     }
     .relationshipsSeparatorSection {
-        padding: 0 20px;
+        padding: 0 25px;
         div:nth-child(1) {
             height: 100%;
         }
@@ -317,7 +316,6 @@ button.tabActive {
     .relationshipsConceptsHeader {
         display: flex;
         justify-content: space-between;
-        padding: 20px;
         position: sticky;
         top: 0px;
         background: #fff;
@@ -325,5 +323,11 @@ button.tabActive {
     }
     .relationshipsSectionTitle {
         font-size: 18px;
+    }
+    .relationshipsConceptsContent {
+        padding-top: 15px;
+    }
+    .conceptItems {
+        padding-bottom: 5px;
     }
 }
