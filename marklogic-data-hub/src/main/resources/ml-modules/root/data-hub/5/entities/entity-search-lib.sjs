@@ -385,6 +385,7 @@ function addEntitySpecificProperties(result, entityName, entityModel, selectedPr
     result.createdBy = metadata.datahubCreatedBy;
   }
 
+  result.unmerge = fn.exists(doc.xpath("/*:envelope/*:headers/*:merges"));
   result.entityInstance = entityProperties;
   result.sources = getEntitySources(doc);
   result.entityName = entityName;

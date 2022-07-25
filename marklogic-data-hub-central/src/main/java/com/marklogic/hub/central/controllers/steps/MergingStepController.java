@@ -2,11 +2,13 @@ package com.marklogic.hub.central.controllers.steps;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.hub.MasteringManager;
 import com.marklogic.hub.central.controllers.BaseController;
 import com.marklogic.hub.central.schemas.StepSchema;
 import com.marklogic.hub.dataservices.ArtifactService;
 import com.marklogic.hub.dataservices.MasteringService;
 import com.marklogic.hub.dataservices.StepService;
+import com.marklogic.hub.impl.MasteringManagerImpl;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -90,6 +92,13 @@ public class MergingStepController extends BaseController {
     @Secured("ROLE_readMerging")
     public ResponseEntity<JsonNode> validateMergingStep(@PathVariable String stepName, @RequestParam(required = false, defaultValue = "settings") String view, @RequestParam(required = false) String entityPropertyPath) {
         return ResponseEntity.ok(MasteringService.on(getHubClient().getFinalClient()).validateMergingStep(stepName, view, entityPropertyPath));
+    }
+
+    @RequestMapping(value = "/unmerge", method = RequestMethod.PUT)
+    @Secured("ROLE_readMerging")
+    public ResponseEntity<JsonNode> unmergeDocument(@PathVariable String mergeDocumentURI, @RequestParam(required = false, defaultValue = "true") Boolean retainAuditTrail, @RequestParam(required = false, defaultValue = "true") Boolean blockFutureMerges) {
+        MasteringManager mgr = new MasteringManagerImpl(getHubClient());
+        return ResponseEntity.ok(mgr.unmerge(mergeDocumentURI, retainAuditTrail, blockFutureMerges));
     }
 
     private StepService newService() {
