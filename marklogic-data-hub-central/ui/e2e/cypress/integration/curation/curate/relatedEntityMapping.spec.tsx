@@ -127,10 +127,11 @@ describe("Mapping", () => {
     cy.log("**Go back to curate page**");
     // Visiting instead of clicking on curate button, to make sure Person step details are always closed.
     cy.visit("/tiles/curate");
+    cy.waitForAsyncRequest();
     curatePage.getEntityTypePanel("Person").should("be.visible");
 
     cy.log("**Go to Model page and select table view**");
-    toolbar.getModelToolbarIcon().click();
+    toolbar.getModelToolbarIcon().should("be.visible").click({force: true});
 
     // TODO: Table view button does not work until the animation stops.
     cy.wait(5000);

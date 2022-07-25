@@ -42,10 +42,10 @@ describe("Entity Modeling: Writer Role", () => {
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
     cy.waitUntil(() => modelPage.getAddEntityButton()).click();
-    entityTypeModal.newEntityName("User3");
+    entityTypeModal.newEntityName("AddEntity");
     entityTypeModal.newEntityDescription("An entity for User");
     entityTypeModal.getAddButton().click();
-    propertyTable.getAddPropertyButton("User3").scrollIntoView().click();
+    propertyTable.getAddPropertyButton("AddEntity").scrollIntoView().click();
     propertyModal.newPropertyName("Address");
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Structured").click();
@@ -76,7 +76,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getPiiIcon("street").should("exist");
   });
   it("Create a property with name 'rowId' and get confirmation modal", () => {
-    propertyTable.getAddPropertyButton("User3").should("be.visible").click();
+    propertyTable.getAddPropertyButton("AddEntity").should("be.visible").click();
     propertyModal.clearPropertyName();
     propertyModal.newPropertyName("rowId");
     propertyModal.openPropertyDropdown();
@@ -195,7 +195,7 @@ describe("Entity Modeling: Writer Role", () => {
   });
   it("Reuse Structured type, add property to structured type and confirm it gets updated", () => {
     cy.log("**Create a new property using an existing Structured type**");
-    propertyTable.getAddPropertyButton("User3").scrollIntoView().click();
+    propertyTable.getAddPropertyButton("AddEntity").scrollIntoView().click();
     propertyModal.newPropertyName("extra2");
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Structured").click();
@@ -225,22 +225,22 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.getSubmitButton().click();
 
     cy.log("**Close 'address' property**");
-    propertyTable.getExpandIcon("address").scrollIntoView().click();
+    propertyTable.getExpandIcon("address").scrollIntoView().click({force: true});
 
     cy.log("**Open 'extra2' and confirm it got updated with the new property**");
     propertyTable.getExpandIcon("extra2").scrollIntoView().click();
     propertyTable.getSubProperty("extra2", "newExtra").scrollIntoView().should("be.visible");
 
     cy.log("**Delete 'extra2' property**");
-    propertyTable.getDeletePropertyIcon("User3", "extra2").click({force: true});
+    propertyTable.getDeletePropertyIcon("AddEntity", "extra2").click({force: true});
     confirmationModal.getDeletePropertyWarnText().should("exist");
     confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn);
     cy.waitForAsyncRequest();
     propertyTable.getProperty("extra2").should("not.exist");
 
     cy.log("**Delete 'newExtra' property**");
-    propertyTable.getExpandIcon("address").scrollIntoView().click();
-    propertyTable.getDeletePropertyIcon("User3", "Extra-extra-newExtra").click({force: true});
+    propertyTable.getExpandIcon("address").scrollIntoView().click({force: true});
+    propertyTable.getDeletePropertyIcon("AddEntity", "Extra-extra-newExtra").click({force: true});
     confirmationModal.getDeletePropertyWarnText().should("exist");
     confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn);
     cy.waitForAsyncRequest();
@@ -248,7 +248,13 @@ describe("Entity Modeling: Writer Role", () => {
   });
 
   it("Edit Property Structured Property", () => {
+    cy.log("**Reloading the page so the change appears");
+    cy.reload();
+    cy.waitForAsyncRequest();
+    modelPage.selectView("table");
+    propertyTable.getExpandIcon("AddEntity").scrollIntoView().click();
     propertyTable.getExpandIcon("address").scrollIntoView().click();
+    propertyTable.getExpandIcon("address").scrollTo("top", {ensureScrollable: false}).scrollIntoView().click({force: true});
     propertyTable.editProperty("address-street");
     propertyModal.getToggleStepsButton().should("not.exist");
     propertyModal.clearPropertyName();
@@ -265,14 +271,6 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.getYesRadio("multiple").click();
     propertyModal.getNoRadio("pii").click();
     propertyModal.getSubmitButton().click();
-
-    cy.log("**Reloading the page so the change appears");
-    cy.reload();
-    cy.waitForAsyncRequest();
-    modelPage.selectView("table");
-    propertyTable.getExpandIcon("User3").scrollIntoView().click();
-    propertyTable.getExpandIcon("address").scrollIntoView().click();
-
     propertyTable.getMultipleIcon("streetAlt").should("exist");
     propertyTable.getPiiIcon("streetAlt").should("not.exist");
   });
@@ -307,7 +305,7 @@ describe("Entity Modeling: Writer Role", () => {
   });
 
   it("Add foreign key with type as Related Entity", () => {
-    propertyTable.getAddPropertyButton("User3").scrollIntoView().click();
+    propertyTable.getAddPropertyButton("AddEntity").scrollIntoView().click();
     propertyModal.newPropertyName("OrderedBy");
     propertyModal.getForeignKeyDropdown().should("not.exist");
     propertyModal.openPropertyDropdown();
@@ -322,18 +320,18 @@ describe("Entity Modeling: Writer Role", () => {
   it("Delete a property, a structured property and then the entity", {defaultCommandTimeout: 120000}, () => {
     //Structured Property
     //cy.get("[data-row-key*=\"address\"] [aria-label=\"Expand row\"]").click();
-    /*propertyTable.getDeleteStructuredPropertyIcon("User3", "Address", "alt_address-streetAlt").click();
+    /*propertyTable.getDeleteStructuredPropertyIcon("AddEntity", "Address", "alt_address-streetAlt").click();
     confirmationModal.getDeletePropertyWarnText().should("exist");
     confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn);
     cy.waitForAsyncRequest();
     propertyTable.getProperty("streetAlt").should("not.exist");*/
     //Property
-    propertyTable.getDeletePropertyIcon("User3", "alt_address").click({force: true});
+    propertyTable.getDeletePropertyIcon("AddEntity", "alt_address").click({force: true});
     confirmationModal.getDeletePropertyWarnText().should("exist");
     confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn);
     cy.waitForAsyncRequest();
     propertyTable.getProperty("alt_address").should("not.exist");
-    propertyTable.getDeletePropertyIcon("User3", "OrderedBy").click({force: true});
+    propertyTable.getDeletePropertyIcon("AddEntity", "OrderedBy").click({force: true});
     confirmationModal.getDeletePropertyWarnText().should("exist");
     confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn);
     cy.waitForAsyncRequest();
@@ -343,17 +341,17 @@ describe("Entity Modeling: Writer Role", () => {
     // TODO These break since we do not delete entity until publishing now. To fix with UI changes.
     // confirmationModal.getDeleteEntityText().should("exist");
     // confirmationModal.getDeleteEntityText().should("not.exist");
-    // entityTypeTable.getEntity("User3").should("not.exist");
+    // entityTypeTable.getEntity("AddEntity").should("not.exist");
 
     // "Delete entity", {defaultCommandTimeout: 120000}, () => {
-    entityTypeTable.getDeleteEntityIcon("User3").should("be.visible").click({force: true});
+    entityTypeTable.getDeleteEntityIcon("AddEntity").should("be.visible").click({force: true});
     confirmationModal.getDeleteEntityText().should("be.visible");
     confirmationModal.getYesButton(ConfirmationType.DeleteEntity);
     cy.waitForAsyncRequest();
     // TODO These break since we do not delete entity until publishing now. To fix with UI changes.
     // confirmationModal.getDeleteEntityText().should("exist");
     // confirmationModal.getDeleteEntityText().should("not.exist");
-    // entityTypeTable.getEntity("User3").should("not.exist");
+    // entityTypeTable.getEntity("AddEntity").should("not.exist");
 
     // it("Adding property to Order entity", () => {
     //   entityTypeTable.getExpandEntityIcon("Order");

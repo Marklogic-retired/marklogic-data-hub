@@ -61,9 +61,10 @@ describe("Create and Edit Mapping Steps with Parameter Module Path", () => {
     cy.restoreLocalStorage();
     //Go back to curate homepage
     cy.visit("/tiles/curate");
+    cy.waitForAsyncRequest();
 
     cy.log("**Open Order to see steps**");
-    curatePage.getEntityTypePanel("Order").should("be.visible").click();
+    curatePage.getEntityTypePanel("Order").should("be.visible").click({force: true});
 
     cy.log("**Open step settings and switch to Advanced tab**");
     cy.waitUntil(() => curatePage.editStep(mapStep).click());
