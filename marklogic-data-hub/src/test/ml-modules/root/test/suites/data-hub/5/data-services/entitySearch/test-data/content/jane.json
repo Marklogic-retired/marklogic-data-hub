@@ -1,6 +1,10 @@
 {
   "envelope": {
     "headers": {
+      "merges": [
+        { "document-uri":  "/orig/jane1.json" },
+        { "document-uri":  "/orig/jane2.json" }
+      ],
       "sources": [{
         "datahubSourceName": "testSourceForCustomer",
         "datahubSourceType": "testSourceType"

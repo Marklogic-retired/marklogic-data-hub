@@ -24,6 +24,16 @@ function selectedPropertiesTransformTest() {
   ];
 }
 
+function unmergeTransformTest() {
+  const searchResultsTransform = require('/marklogic.rest.transform/hubEntitySearchTransform/assets/transform.sjs');
+  const transformedResults = searchResultsTransform.transform({}, { entityName: 'Customer'}, xdmp.toJSON({ results: [{uri: "/content/jane.json"},{uri: "/content/jane.xml"}]}));
+  return[
+    test.assertTrue(transformedResults.results[0].unmerge, `The first result should unmerge. results[0]: ${xdmp.toJsonString(transformedResults.results[0])}`),
+    test.assertFalse(transformedResults.results[1].unmerge, `The second result shouldn't unmerge. results[1]: ${xdmp.toJsonString(transformedResults.results[0])}`)
+  ];
+}
+
 []
-    .concat(datahubSourceNameAndTypeFacetsTest())
-    .concat(selectedPropertiesTransformTest());
+  .concat(datahubSourceNameAndTypeFacetsTest())
+  .concat(selectedPropertiesTransformTest())
+  .concat(unmergeTransformTest());
