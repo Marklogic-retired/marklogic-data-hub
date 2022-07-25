@@ -114,8 +114,9 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getTableView().should("have.css", "color", "rgb(57, 68, 148)");
     browsePage.getClearAllFacetsButton().click();
     browsePage.waitForSpinnerToDisappear();
-    cy.waitForAsyncRequest();
     cy.wait(3000);
+    cy.visit("/tiles/explore");
+    cy.waitForAsyncRequest();
   });
 
   it("verify instance view of the document with pk", () => {
