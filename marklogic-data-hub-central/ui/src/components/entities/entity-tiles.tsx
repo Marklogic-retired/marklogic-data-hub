@@ -398,7 +398,7 @@ const EntityTiles = (props) => {
   // Check if entity name has no matching definition
   const titleNoDefinition = (selectedEntityName) => {
     let entityModels = props.entityModels;
-    return !entityModels[selectedEntityName].model.definitions.hasOwnProperty(selectedEntityName);
+    return selectedEntityName && !entityModels[selectedEntityName]?.model?.definitions?.hasOwnProperty(selectedEntityName);
   };
 
   const outputCards = (index, entityType, mappingCardData, matchingCardData, mergingCardData, customCardData) => {

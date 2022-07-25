@@ -63,7 +63,10 @@ const Curate: React.FC = () => {
         let models:any = {};
         response.data.forEach(model => {
           // model has an entityTypeId property, perhaps that should be used instead of entityName?
-          models[model.entityName] = model;
+          //Check if in the future we are going to use concepts here
+          if (model.entityName) {
+            models[model.entityName] = model;
+          }
         });
         setEntityModels({...models});
       }
