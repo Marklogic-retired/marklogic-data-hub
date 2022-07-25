@@ -7,7 +7,7 @@ class LandingPage {
     return cy.get(".title a");
   }
   menuOptions() {
-    return cy.get(".Menus_menu__1OerK a");
+    return cy.get(".menu a");
   }
   subMenu() {
     return cy.get("#nav-dropdown");

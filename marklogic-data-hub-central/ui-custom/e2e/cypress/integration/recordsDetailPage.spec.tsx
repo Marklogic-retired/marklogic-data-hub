@@ -5,7 +5,7 @@ import recordDetailsPage from "../support/pages/recordDetails";
 let searchPerson="";
 let response;
 
-describe("Search Validations ", () => {
+describe("Entity Viewer Record Detail page ", () => {
   beforeEach(() => {
     cy.restoreLocalStorage();
     cy.intercept({
@@ -39,18 +39,18 @@ describe("Search Validations ", () => {
   });
   it("Validate the title, thumbnail and memberships of the record", () => {
     recordDetailsPage.recordTitle().should("have.text", searchPerson);
-    recordDetailsPage.thumbNail().invoke("attr", "src").should("eq", response.images.image.url);
+    recordDetailsPage.thumbNail().invoke("attr", "src").should("eq", response.images.image[0].url);
     let memberships = response.memberships.membership;
     for (let i=0; i< memberships.length; i++) {
-      cy.findByText(memberships[i].list).parent().should("have.class", "item highlighted");
+      cy.findByText(memberships[i].list).parent().should("have.class", "item success");
       cy.findByText(memberships[i].list).parent().findByTestId("success-icon").should("be.visible");
       cy.findByText(memberships[i].list).parent().findByTestId("dateTimeContainer").should("have.text", memberships[i].ts);
     }
   });
-  it("Validate the name, phone,email, ssn of the record", () => {
+  it("Validate the name, phone, email, ssn of the record", () => {
     recordDetailsPage.recordValue("name").contains(response.nameGroup.fullname.value).should("be.visible");
     recordDetailsPage.recordValue("phone").contains(response.phone).should("be.visible");
-    recordDetailsPage.recordValue("email").contains(response.emails.email.value).should("be.visible");
+    recordDetailsPage.recordValue("email").contains(response.emails.email[0].value).should("be.visible");
     recordDetailsPage.recordValue("ssn").contains(response.ssn.value).should("be.visible");
     cy.findByText(response.ssn.classification).should("be.visible");
     let addresses = response.addresses.address;
@@ -71,7 +71,7 @@ describe("Search Validations ", () => {
   it("Validate the name, phone,email, ssn of the record", () => {
     recordDetailsPage.recordValue("name").contains(response.nameGroup.fullname.value).should("be.visible");
     recordDetailsPage.recordValue("phone").contains(response.phone).should("be.visible");
-    recordDetailsPage.recordValue("email").contains(response.emails.email.value).should("be.visible");
+    recordDetailsPage.recordValue("email").contains(response.emails.email[0].value).should("be.visible");
     recordDetailsPage.recordValue("ssn").contains(response.ssn.value).should("be.visible");
     cy.findByText(response.ssn.classification).should("be.visible");
   });

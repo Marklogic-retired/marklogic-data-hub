@@ -24,7 +24,7 @@ describe("Search Validations ", () => {
     cy.visit("/");
     landingPage.whatsNewChart().should("be.visible");
   });
-  it("Click on serach button for navigating to search page and get search values", () => {
+  it("Click on search button for navigating to search page and get search values", () => {
     searchPage.searchButton().click();
     searchPage.resultsList().should("be.visible");
     searchPage.resultTitle().eq(0).then(nameVal => {
@@ -83,8 +83,10 @@ describe("Search Validations ", () => {
     });
     searchPage.menuSearchBox().clear().type(searchCountries).type("{enter}");
     cy.wait("@getSearch").its("response.statusCode").should("equal", 200);
-    searchPage.resultTitle().eq(0).click({force: true});
-    cy.contains(searchCountries).should("be.visible");
+    // TODO country search will not necessarily appear in UI for record 
+    // (e.g., if country is in activities data)
+    // searchPage.resultTitle().eq(0).click({force: true});
+    // cy.contains(searchCountries).should("be.visible");
   });
   it("Search values from landing page ", () => {
     landingPage.entityViewerTitle().click();
@@ -134,7 +136,9 @@ describe("Search Validations ", () => {
     landingPage.dashboard().should("be.visible");
     landingPage.searchBox().clear().type(searchCountries).type("{enter}");
     cy.wait("@getSearch").its("response.statusCode").should("equal", 200);
-    searchPage.resultTitle().eq(0).click({force: true});
-    cy.contains(searchCountries).should("be.visible");
+    // TODO country search will not necessarily appear in UI for record 
+    // (e.g., if country is in activities data)
+    // searchPage.resultTitle().eq(0).click({force: true});
+    // cy.contains(searchCountries).should("be.visible");
   });
 });

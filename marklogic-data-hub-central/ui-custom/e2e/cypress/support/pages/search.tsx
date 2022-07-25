@@ -1,7 +1,7 @@
 class SearchPage {
 
   summaryMeter() {
-    return cy.get(".SummaryMeter_meter__Q7YfM");
+    return cy.get(".meter");
   }
   menuSearchBox() {
     return cy.get(".sticky-top").findByTestId("searchBox");
@@ -44,13 +44,13 @@ class SearchPage {
     return cy.findByTestId(facet+":"+facetVal);
   }
   summaryMeterMin() {
-    return cy.get(".SummaryMeter_min__kGLVa");
+    return cy.get(".min");
   }
   summaryMeterMax() {
-    return cy.get(".SummaryMeter_max__2jRYb");
+    return cy.get(".max");
   }
   summaryMeterVal() {
-    return cy.get(".SummaryMeter_returned__280i4 span");
+    return cy.get(".returned span");
   }
   getAllCategories() {
     return cy.get(".categories");
