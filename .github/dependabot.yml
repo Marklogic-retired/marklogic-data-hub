@@ -1,0 +1,43 @@
+# Example configuration file that:
+#  - Ignores lodash dependency
+#  - Disables version-updates
+
+version: 2
+updates:
+    - package-ecosystem: "npm"
+      directory: "/marklogic-data-hub-central/ui/"
+      schedule:
+          interval: "weekly" d
+          day: "friday"
+      target-branch: "develop"
+      open-pull-requests-limit: 0
+      assignees:
+          - "ngodugu-marklogic"
+    - package-ecosystem: "npm"
+    directory: "/marklogic-data-hub/src/trace-ui"
+    schedule:
+        interval: "weekly"
+        day: "friday"
+    target-branch: "develop"
+    open-pull-requests-limit: 0
+    assignees:
+        - "ngodugu-marklogic"
+    - package-ecosystem: "npm"
+    directory: "/marklogic-data-hub-central/ui/e2e"
+    schedule:
+        interval: "weekly"
+        day: "friday"
+    target-branch: "develop"
+    open-pull-requests-limit: 0
+    assignees:
+        - "ngodugu-marklogic"
+    - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+        interval: "weekly"
+        day: "friday"
+    target-branch: "develop"
+    open-pull-requests-limit: 0
+    assignees:
+        - "ngodugu-marklogic"
+
