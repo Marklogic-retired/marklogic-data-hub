@@ -24,7 +24,8 @@
         {
           "context": "category",
           "predicate": "isCategory",
-          "conceptExpression": "sem:iri(\"http://www.example.com/Category/\" || fn:replace(fn:string(.),'\\s+', ''))"
+          "conceptExpression": "sem:iri(\"http://www.example.com/Category/\" || fn:replace(fn:string(.),'\\s+', ''))",
+          "conceptClass": "ShoeType"
         }
       ]
     }
