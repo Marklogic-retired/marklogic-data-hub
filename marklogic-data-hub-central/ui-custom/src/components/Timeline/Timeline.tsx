@@ -1,5 +1,6 @@
 import React, {useState} from "react";
 import "./Timeline.scss";
+import Concat from "../Concat/Concat";
 import DateTime from "../DateTime/DateTime";
 import Value from "../Value/Value";
 import { getValByConfig } from "../../util/util";
@@ -14,6 +15,7 @@ type Props = {
 };
 
 const COMPONENTS = {
+    Concat: Concat,
     DateTime: DateTime,
     Value: Value,
 }

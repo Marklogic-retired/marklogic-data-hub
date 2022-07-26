@@ -16,7 +16,7 @@ class SearchPage {
     return cy.get(".resultsList");
   }
   resultTitle() {
-    return cy.get(".details .title span");
+    return cy.get(".details .title span span");
   }
   resultAddress() {
     return cy.get(".Address");

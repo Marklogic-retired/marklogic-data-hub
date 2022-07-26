@@ -20,8 +20,13 @@ const recentConfig = {
                     }
                 },
                 "title": {
-                    "id": "uri",
-                    "path": "person.id"
+                    "id": {
+                        "path": "uri"
+                    },
+                    "component": "Value",
+                    "config": {
+                        "path": "person.id"
+                    }
                 },
                 "items": [
                     {

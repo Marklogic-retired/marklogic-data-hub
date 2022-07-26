@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {Carousel} from 'react-bootstrap';
 import {getValByConfig} from '../../util/util';
 import "./ImageGallery.scss";
+import Concat from "../Concat/Concat";
 import DateTime from '../DateTime/DateTime';
 import {Modal} from "react-bootstrap";
 import _ from "lodash";
@@ -14,6 +15,7 @@ type Props = {
 };
 
 const COMPONENTS = {
+  Concat: Concat,
   DateTime: DateTime,
   Value: Value
 };

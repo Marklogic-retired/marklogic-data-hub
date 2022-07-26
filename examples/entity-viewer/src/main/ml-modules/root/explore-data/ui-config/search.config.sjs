@@ -96,9 +96,23 @@ const searchConfig  = {
                             }
                         },
                         "title": {
-                            "id": "uri",
-                            "arrayPath": "extracted.person.nameGroup",
-                            "path": "fullname.value"
+                            "id": {
+                                "path": "uri"
+                            },
+                            "component": "Concat",
+                            "config": {
+                                "items": [
+                                    {
+                                        "arrayPath": "extracted.person.nameGroup",
+                                        "path": "givenname.value",
+                                        "suffix": " "
+                                    },
+                                    {
+                                        "arrayPath": "extracted.person.nameGroup",
+                                        "path": "surname.value"
+                                    }
+                                ]
+                            }
                         },
                         "items": [
                         {
@@ -187,9 +201,14 @@ const searchConfig  = {
                             }
                         },
                         "title": {
-                            "id": "uri",
-                            "arrayPath": "extracted.organization.names",
-                            "path": "name.value"
+                            "id": {
+                                "path": "uri"
+                            },
+                            "component": "Value",
+                            "config": {
+                                "arrayPath": "extracted.organization.names",
+                                "path": "name.value"
+                            }
                         },
                         "items": [
                         {
@@ -208,6 +227,23 @@ const searchConfig  = {
                             "component": "Value",
                             "config": {
                             "path": "extracted.organization.areas.area"
+                            }
+                        },
+                        {
+                            "component": "Concat",
+                            "config": {
+                                "items": [
+                                    "Created by: ",
+                                    {
+                                        "path": "extracted.organization.createdOn.user"
+                                    },
+                                    {
+                                        "path": "extracted.organization.createdOn.ts",
+                                        "type": "DateTime",
+                                        "prefix": " (",
+                                        "suffix": ")",
+                                    }
+                                ]
                             }
                         }
                         ],

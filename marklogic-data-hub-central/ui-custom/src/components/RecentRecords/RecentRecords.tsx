@@ -1,6 +1,7 @@
 import React, {useContext} from "react";
 import {DetailContext} from "../../store/DetailContext";
 import Chiclet from "../Chiclet/Chiclet";
+import Concat from "../Concat/Concat";
 import Image from "../Image/Image";
 import Value from "../Value/Value";
 import List from "../List/List";
@@ -12,6 +13,11 @@ import {ExclamationTriangleFill} from "react-bootstrap-icons";
 type Props = {
   data: any;
   config: any
+};
+
+const COMPONENTS = {
+    Concat: Concat,
+    Value: Value
 };
 
 /**
@@ -73,8 +79,8 @@ const RecentRecords: React.FC<Props> = (props) => {
 
   const detailContext = useContext(DetailContext);
 
-  const handleNameClick = (e) => {
-    detailContext.handleGetDetail(e.target.id);
+  const handleTitleClick = (id) => {
+    detailContext.handleGetDetail(id);
   };
 
   // Handle both singular and array cases for categories
@@ -85,12 +91,24 @@ const RecentRecords: React.FC<Props> = (props) => {
 
   const getRecent = () => {
     let res = props.data.map((recent, index) => {
+      const configEntityType = recent.entityType && props.config.entities[recent.entityType];
       // Don't show if no configuration for entity type
       if (!props.config.entities[recent.entityType]) return;
-      let titleValue = getValByConfig(recent, props.config.entities[recent.entityType].title, true);
-      if (!titleValue) {
+      let titleValue: any, idValue: any;
+      if (configEntityType.title?.component && configEntityType.title?.config) {
+        titleValue = (<span>
+            {React.createElement(
+                COMPONENTS[configEntityType.title.component], 
+                { config: configEntityType.title.config, data: recent }, null
+            )}
+            </span>);   
+        if (configEntityType.title?.id) {
+            idValue = getValByConfig(recent, configEntityType.title.id);
+        }
+      } else {
         if (recent?.uri) {
-          titleValue = recent?.uri;
+            titleValue = recent?.uri;
+            idValue = recent?.uri;
         }
       }
       return (
@@ -100,26 +118,26 @@ const RecentRecords: React.FC<Props> = (props) => {
             {recent.alert ? <ExclamationTriangleFill color="#d48b32" size={16} /> : null}
           </div> */}
           <div className="thumbnail">
-            {props.config.entities[recent.entityType].thumbnail ?
-              <Image data={recent} config={props.config.entities[recent.entityType].thumbnail.config} />
+            {configEntityType.thumbnail ?
+              <Image data={recent} config={configEntityType.thumbnail.config} />
               : null}
           </div>
           <div className="text">
-            <div className="title" onClick={handleNameClick}>
-              <Value id={recent?.uri}>{titleValue}</Value>
+            <div className="title" onClick={e => handleTitleClick(idValue)}>
+                {titleValue}
             </div>
             <div className="subtitle">
-              {props.config.entities[recent.entityType].items ?
-                <List data={recent} config={props.config.entities[recent.entityType].items} />
+              {configEntityType.items ?
+                <List data={recent} config={configEntityType.items} />
                 : null}
             </div>
-            {props.config.entities[recent.entityType].categories ?
+            {configEntityType.categories ?
               <div className="categories">
-                {getCategories(recent, props.config.entities[recent.entityType].categories)!.map((s, index2) => {
+                {getCategories(recent, configEntityType.categories)!.map((s, index2) => {
                   return (
                     <Chiclet
                       key={"category-" + index2}
-                      config={props.config.entities[recent.entityType].categories}
+                      config={configEntityType.categories}
                     >{s}</Chiclet>
                   );
                 })}

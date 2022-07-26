@@ -1,6 +1,7 @@
 import React, {useContext} from "react";
 import Address from "../Address/Address";
 import Chiclet from "../Chiclet/Chiclet";
+import Concat from "../Concat/Concat";
 import DateTime from "../DateTime/DateTime";
 import Image from "../Image/Image";
 import List from "../List/List";
@@ -23,6 +24,7 @@ type Props = {
 
 const COMPONENTS = {
   Address: Address,
+  Concat: Concat,
   DateTime: DateTime,
   Image: Image,
   Value: Value,
@@ -110,8 +112,8 @@ const ResultsList: React.FC<Props> = (props) => {
       handleSort(props.config?.sort.sortBy, "ascending");
     }
   };
-  const handleNameClick = (e) => {
-    detailContext.handleGetDetail(e.target.id);
+  const handleTitleClick = (id) => {
+    detailContext.handleGetDetail(id);
   };
 
   const handleChangePage = (page: number) => {
@@ -146,7 +148,7 @@ const ResultsList: React.FC<Props> = (props) => {
     return (
         <div key={"result-" + index} className="result">
             <div className="details">
-          <div className="title no-entity" onClick={handleNameClick}><Value id={results?.uri}>{titleValue}</Value></div>
+          <div className="title no-entity" onClick={handleTitleClick}><Value id={results?.uri}>{titleValue}</Value></div>
                 <div className="subtitle no-entity"><ResultSnippet config={{}} data={results} /></div>
             </div>
         </div>
@@ -167,10 +169,21 @@ const ResultsList: React.FC<Props> = (props) => {
       }
       let defaultIcon = props.config.defaultIcon
       let iconElement = (configEntityType && configEntityType.icon) ? FaDictionary[configEntityType.icon.type] : FaDictionary[defaultIcon.type];
-      let titleValue = getValByConfig(results, configEntityType.title, true);
-      if (!titleValue) {
+      let titleValue: any, idValue: any;
+      if (configEntityType.title?.component && configEntityType.title?.config) {
+        titleValue = (<span>
+            {React.createElement(
+                COMPONENTS[configEntityType.title.component], 
+                { config: configEntityType.title.config, data: results }, null
+            )}
+            </span>);   
+        if (configEntityType.title?.id) {
+            idValue = getValByConfig(results, configEntityType.title.id);
+        }
+      } else {
         if (results?.uri) {
-          titleValue = results?.uri;
+            titleValue = results?.uri;
+            idValue = results?.uri;
         }
       }
       return (
@@ -182,8 +195,8 @@ const ResultsList: React.FC<Props> = (props) => {
               : null}
           </div>
           <div className="details">
-            <div className="title" onClick={handleNameClick}>
-              <Value id={results?.uri}>{titleValue}</Value>
+            <div className="title" onClick={e => handleTitleClick(idValue)}>
+                {titleValue}
             </div>
             <div className="subtitle">
               {configEntityType.items ?

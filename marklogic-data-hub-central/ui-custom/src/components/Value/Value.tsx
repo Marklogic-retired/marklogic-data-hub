@@ -48,6 +48,7 @@ const Value: React.FC<Props> = (props) => {
     }
 
     return (
+        val && 
         <span
             id={id}
             className={valueClassName}

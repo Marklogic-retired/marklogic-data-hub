@@ -4,7 +4,7 @@ class RecordDetailsPage {
     return cy.get(".title .icon svg");
   }
   recordTitle() {
-    return cy.get(".title .text span");
+    return cy.get(".title .text span span span.concat");
   }
   thumbNail() {
     return cy.get(".heading .thumbnail img");

@@ -1,5 +1,4 @@
 import React from "react";
-import "./Occupations.scss";
 
 type Props = {
   data?: any;
