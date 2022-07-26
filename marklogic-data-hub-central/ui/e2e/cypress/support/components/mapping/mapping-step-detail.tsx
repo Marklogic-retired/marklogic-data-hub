@@ -1,6 +1,6 @@
 class MappingStepDetail {
   clearMap() {
-    return cy.findByTestId("Clear-btn");
+    return cy.get("#Clear-btn");
   }
 
   testMap() {
