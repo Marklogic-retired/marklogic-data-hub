@@ -1,5 +1,6 @@
 import React from "react";
 import Address from "../Address/Address";
+import Concat from "../Concat/Concat";
 import DateTime from "../DateTime/DateTime";
 import Image from "../Image/Image";
 import Value from "../Value/Value";
@@ -12,6 +13,7 @@ type Props = {
 
 const COMPONENTS = {
     Address: Address,
+    Concat: Concat,
     DateTime: DateTime,
     Image: Image,
     Value: Value

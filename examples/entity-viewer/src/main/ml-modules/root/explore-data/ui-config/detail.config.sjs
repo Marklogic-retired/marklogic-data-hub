@@ -9,17 +9,30 @@ const detailConfig  = {
                 "thumbnail": {
                         "component": "Image",
                         "config": {
-                        "arrayPath": "person.images.image",
-                        "path": "url",
-                        "alt": "detail thumbnail",
-                        "style": {
-                            "width": "60px",
-                            "height": "60px"
-                        }
-                        }
+                            "arrayPath": "person.images.image",
+                            "path": "url",
+                            "alt": "detail thumbnail",
+                            "style": {
+                                "width": "60px",
+                                "height": "60px"
+                            }
+                    }
                 },
                 "title": {
-                    "path": "person.nameGroup.fullname.value"
+                    "component": "Concat",
+                    "config": {
+                        "items": [
+                            {
+                                "arrayPath": "person.nameGroup",
+                                "path": "givenname.value",
+                                "suffix": " "
+                            },
+                            {
+                                "arrayPath": "person.nameGroup",
+                                "path": "surname.value"
+                            }
+                        ]
+                    }
                 }
             },
             "membership": {
@@ -519,7 +532,10 @@ const detailConfig  = {
                 }
               },
               "title": {
-                "path": "organization.names.name.value"
+                    "component": "Value",
+                    "config": {
+                        "path": "organization.names.name.value"
+                    }
               }
             },
             "info": {

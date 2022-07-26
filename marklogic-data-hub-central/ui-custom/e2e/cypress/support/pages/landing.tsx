@@ -52,7 +52,7 @@ class LandingPage {
     return cy.get(".section").eq(2).find(".none-found");
   }
   recentlyVisitedText() {
-    return cy.get(".recentRecords .title span");
+    return cy.get(".recentRecords .title span span");
   }
   recentlyVisitedRows() {
     return cy.get(".recentRecords").find(".result");

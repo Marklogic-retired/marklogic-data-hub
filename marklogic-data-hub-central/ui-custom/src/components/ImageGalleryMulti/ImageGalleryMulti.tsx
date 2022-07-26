@@ -3,6 +3,7 @@ import {getValByConfig} from "../../util/util";
 import "./ImageGalleryMulti.scss";
 
 import Carousel from "react-multi-carousel";
+import Concat from "../Concat/Concat";
 import "react-multi-carousel/lib/styles.css";
 import {Modal} from "react-bootstrap";
 import _ from "lodash";
@@ -17,6 +18,7 @@ type Props = {
 };
 
 const COMPONENTS = {
+  Concat: Concat,
   DateTime: DateTime,
   Value: Value
 };

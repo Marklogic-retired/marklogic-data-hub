@@ -10,11 +10,13 @@ const config = {
     "detail": {
         "entities": {
             "person": {
-
                 "heading": {
                     "id": "result[0].extracted.person.personId",
                     "title": {
-                        "path": "result[0].extracted.person.name"
+                        "component": "Value",
+                        "config": {
+                            "path": "result[0].extracted.person.name"
+                        }
                     }
                 },
                 "info": {
@@ -104,6 +106,7 @@ describe("Detail view", () => {
             getByText = renderResults.getByText;
         });
         expect(document.querySelector(".heading")).toBeInTheDocument();
+        expect(getByText(detail.result[0].extracted.person.name[0])).toBeInTheDocument();
         expect(getByText(config.detail.entities.person.info.items[0].config.title)).toBeInTheDocument();
     });
 

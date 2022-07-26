@@ -1,4 +1,5 @@
 import _ from "lodash";
+import { DateTime as dt } from "luxon";
 
 /**
  * Extract a value from a data object based on a dot-notation path.
@@ -57,5 +58,15 @@ export const getValByPath = (data, path, getFirst=false) => {
     result = (!Array.isArray(val) && config?.prepend) ? config.prepend + result : result;
     result = (!Array.isArray(val) && config?.append) ? result + config.append : result;
 
+    return result;
+};
+
+export const getFormattedDateTime = (val, format=null, from=null) => {
+    const defaultFormat = "yyyy-MM-dd";
+    let result = val;
+    const fr = from ? from : "ISO";
+    if (!_.isNil(result)) {
+        result = dt["from" + fr](val).toFormat(format ? format : defaultFormat);
+    }
     return result;
 };

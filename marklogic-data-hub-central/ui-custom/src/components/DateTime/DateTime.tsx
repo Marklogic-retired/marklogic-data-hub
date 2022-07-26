@@ -1,7 +1,8 @@
 import React from "react";
 import "./DateTime.scss";
-import { getValByConfig } from "../../util/util";
+import { getValByConfig, getFormattedDateTime } from "../../util/util";
 import { DateTime as dt } from "luxon";
+import _ from "lodash";
 
 type Props = {
   config?: any;
@@ -28,33 +29,29 @@ const DateTime: React.FC<Props> = (props) => {
         val = getValByConfig(props.data, props.config, true)
     }
 
-    let formattedDateTime;
-    if (props.config.from) {
-        formattedDateTime = dt["from" + props.config.from](val).toFormat(props.config.format ? props.config.format : defaultFormat);
-    } else {
-        formattedDateTime = dt.fromISO(val).toFormat(props.config.format ? props.config.format : defaultFormat);
-    }
+    val = getFormattedDateTime(val, props.config.format, props.config.from);
 
-    if (formattedDateTime && props.config?.prefix) {
-        formattedDateTime = props.config?.prefix.concat(formattedDateTime);
+    // Handle prefix/suffix during display (different from prepend/append during extraction)
+    if (val && props.config?.prefix) {
+        val = props.config?.prefix.concat(val);
     }
-
-    if (formattedDateTime && props.config?.suffix) {
-        formattedDateTime = formattedDateTime.concat(props.config?.suffix);
+    if (val && props.config?.suffix) {
+        val = val.concat(props.config?.suffix);
     }
 
     const dateTimeClassName: any = props.className ? props.className : props.config?.className ? props.config.className : "";
     const dateTimeStyle: any = props.style ? props.style : props.config?.style ? props.config.style : {};
-    const dateTimeTitle: string = formattedDateTime;
+    const dateTimeTitle: string = val;
 
     return (
+        val && 
         <span 
             className={dateTimeClassName ? dateTimeClassName : "DateTime"} 
             style={dateTimeStyle}
             title={dateTimeTitle}
             data-testid="dateTimeContainer" 
         >
-            {formattedDateTime}
+            {val}
         </span>
     );
 };

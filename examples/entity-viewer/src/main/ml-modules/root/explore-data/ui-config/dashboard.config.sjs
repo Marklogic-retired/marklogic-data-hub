@@ -117,9 +117,23 @@ const dashboardConfig  = {
                         }
                         },
                         "title": {
-                        "id": "uri",
-                        "arrayPath": "person.nameGroup",
-                        "path": "fullname.value"
+                            "id": {
+                                "path": "uri"
+                            },
+                            "component": "Concat",
+                            "config": {
+                                "items": [
+                                    {
+                                        "arrayPath": "person.nameGroup",
+                                        "path": "givenname.value",
+                                        "suffix": " "
+                                    },
+                                    {
+                                        "arrayPath": "person.nameGroup",
+                                        "path": "surname.value"
+                                    }
+                                ]
+                            }
                         },
                         "items": [
                         {
@@ -181,9 +195,14 @@ const dashboardConfig  = {
                             }
                         },
                         "title": {
-                            "id": "uri",
-                            "arrayPath": "organization.names",
-                            "path": "name.value"
+                            "id": {
+                                "path": "uri"
+                            },
+                            "component": "Value",
+                            "config": {
+                                "arrayPath": "organization.names",
+                                "path": "name.value"
+                            }
                         },
                         "items": [
                         {

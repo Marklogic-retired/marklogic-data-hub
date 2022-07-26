@@ -20,8 +20,13 @@ const resultsListConfig = {
                 }
             },
             title: {
-                id: "uri",
-                path: "extracted.person.name"
+                id: {
+                    path: "uri"
+                },
+                component: "Value",
+                config: {
+                    path: "extracted.person.name"
+                }
             },
             items: [
                 {

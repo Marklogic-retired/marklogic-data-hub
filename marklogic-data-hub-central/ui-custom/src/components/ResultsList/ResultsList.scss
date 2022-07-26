@@ -73,7 +73,7 @@
                 text-decoration: none;
                 color: #394494;
                 cursor: pointer;
-                span {
+                > span {
                     overflow: hidden;
                     text-overflow: ellipsis;
                     display: inline-block;

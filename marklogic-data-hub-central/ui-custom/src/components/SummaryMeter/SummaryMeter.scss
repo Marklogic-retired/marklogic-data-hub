@@ -1,0 +1,68 @@
+.meter {
+    position: relative;
+    width: 360px; 
+    height: 176px; 
+    float: "left";
+    font-size: 15px;
+    // border: solid 1px red;
+    margin-left: 10px;
+
+    .labelAll, .labelFilters {
+        position: absolute;
+        top: 8px;
+    }
+
+    .labelAll {
+        left: 20px;
+        .block {
+            background-color: #eee;
+        }
+    }
+
+    .labelFilters {
+        left: 125px;
+        .block {
+            background-color: #1ACCA8;
+        }
+    }
+
+    .block {
+        display: inline-block;
+        width: 16px;
+        height: 11px;
+        margin: 0 5px 0 0;
+    }
+
+    .text {
+        display: inline-block;
+    }
+
+    .min, .max {
+        position: absolute;
+        top: 105px;
+    }
+    .min {
+        left: 78px;
+    }
+    .max {
+        left: 274px;
+    }
+    .returned {
+        position: absolute;
+        width: 100%;
+        top: 124px;
+        text-align: center;
+        font-weight: bold;
+        padding-top: 3px;
+    }
+
+    .separator {
+        height: 5px;
+        width: 320px;
+        position: absolute;
+        border-bottom: solid 1px #ddd;
+        top: -2px;
+        left: 18px;
+        z-index: 1000;
+    }
+}

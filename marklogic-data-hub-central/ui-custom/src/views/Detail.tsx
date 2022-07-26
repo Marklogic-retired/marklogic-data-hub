@@ -8,6 +8,7 @@ import Timeline from "../components/Timeline/Timeline";
 import Relationships from "../components/Relationships/Relationships";
 import DataTableValue from "../components/DataTableValue/DataTableValue";
 import DataTableMultiValue from "../components/DataTableMultiValue/DataTableMultiValue";
+import Concat from "../components/Concat/Concat";
 import DateTime from "../components/DateTime/DateTime";
 import Image from "../components/Image/Image";
 import Section from "../components/Section/Section";
@@ -29,6 +30,7 @@ import ReactJson from "react-json-view";
 type Props = {};
 
 const COMPONENTS = {
+  Concat: Concat,
   DataTableValue: DataTableValue,
   DataTableMultiValue: DataTableMultiValue,
   DateTime: DateTime,
@@ -120,10 +122,17 @@ const Detail: React.FC<Props> = (props) => {
   }, [detailContext.detail]);
 
   const getHeading = (configHeading) => {
-    let titleValue = getValByConfig(detailContext.detail, configHeading.title, true);
-    if (!titleValue) {
+    let titleValue: any;
+    if (configHeading.title?.component && configHeading.title?.config) {
+      titleValue = (<span>
+          {React.createElement(
+              COMPONENTS[configHeading.title.component], 
+              { config: configHeading.title.config, data: detailContext.detail }, null
+          )}
+          </span>);       
+    } else {
       if (detailContext.detail?.uri) {
-        titleValue = detailContext.detail?.uri;
+          titleValue = detailContext.detail?.uri;
       }
     }
     return (
@@ -211,23 +220,24 @@ const Detail: React.FC<Props> = (props) => {
     );
   };
   const getDetailEntity = () => {
+    const configEntityType = entityType && config.detail.entities[entityType];
     return (
       <div>
 
-        {config?.detail?.entities[entityType]?.heading ?
-          getHeading(config.detail.entities[entityType].heading)
+        {configEntityType.heading ?
+          getHeading(configEntityType.heading)
           : null}
 
         <div className="container-fluid">
 
-          {config?.detail?.entities[entityType]?.linkList?.config && <div>
+          {configEntityType.linkList?.config && <div>
             {React.createElement(
               COMPONENTS.LinkList,
-              {config: config?.detail?.entities[entityType]?.linkList.config, data: detailContext.detail}, null
+              {config: configEntityType.linkList.config, data: detailContext.detail}, null
             )}
           </div>}
 
-          {config?.detail?.entities[entityType]?.membership && <div className="row">
+          {configEntityType.membership && <div className="row">
             <div className="col-12">
               <Section title="Membership" config={{
                 "headerStyle": {
@@ -241,10 +251,10 @@ const Detail: React.FC<Props> = (props) => {
                 expand={expandIds.membership}
                 onExpand={() => {handleExpandIdsClick("membership", true);}}
                 onCollapse={() => {handleExpandIdsClick("membership", false);}}>
-                {config.detail.entities[entityType]?.membership.component && config.detail.entities[entityType]?.membership.config &&
+                {configEntityType.membership.component && configEntityType.membership.config &&
                   React.createElement(
-                    COMPONENTS[config?.detail?.entities[entityType]?.membership.component],
-                    {config: config?.detail?.entities[entityType]?.membership.config, data: detailContext.detail}, null
+                    COMPONENTS[configEntityType.membership.component],
+                    {config: configEntityType.membership.config, data: detailContext.detail}, null
                   )}
               </Section>
             </div>
@@ -253,20 +263,20 @@ const Detail: React.FC<Props> = (props) => {
           <div className="row">
             <div className="col-lg-7">
 
-              {config?.detail?.entities[entityType]?.info &&
-                <Section title={config?.detail?.entities[entityType]?.info.title}
+              {configEntityType.info &&
+                <Section title={configEntityType.info.title}
                   collapsible={true}
                   expand={expandIds.info}
                   onExpand={() => {handleExpandIdsClick("info", true);}}
                   onCollapse={() => {handleExpandIdsClick("info", false);}} >
-                  {getRecordItems(config?.detail?.entities[entityType]?.info?.items)}
+                  {getRecordItems(configEntityType.info?.items)}
                 </Section>
               }
 
             </div>
             <div className="col-lg-5">
 
-              {config?.detail?.entities[entityType]?.relationships &&
+              {configEntityType.relationships &&
                 <Section
                   title="Relationships"
                   collapsible={true}
@@ -278,26 +288,26 @@ const Detail: React.FC<Props> = (props) => {
                     }
                   }}>
                   <div className="relationships">
-                    {config.detail.entities[entityType]?.relationships.component && config.detail.entities[entityType]?.relationships.config &&
+                    {configEntityType.relationships.component && configEntityType.relationships.config &&
                       React.createElement(
-                        COMPONENTS[config?.detail?.entities[entityType]?.relationships.component],
-                        {config: config?.detail?.entities[entityType]?.relationships.config, data: detailContext.detail}, null
+                        COMPONENTS[configEntityType.relationships.component],
+                        {config: configEntityType.relationships.config, data: detailContext.detail}, null
                       )}
                   </div>
                 </Section>
               }
 
-              {config?.detail?.entities[entityType]?.imageGallery &&
+              {configEntityType.imageGallery &&
                 <Section title="Image Gallery"
                   collapsible={true}
                   expand={expandIds.imageGallery}
                   onExpand={() => {handleExpandIdsClick("imageGallery", true);}}
                   onCollapse={() => {handleExpandIdsClick("imageGallery", false);}}
                 >
-                  {config.detail.entities[entityType]?.imageGallery.component && config.detail.entities[entityType]?.imageGallery.config &&
+                  {configEntityType.imageGallery.component && configEntityType.imageGallery.config &&
                     React.createElement(
-                      COMPONENTS[config?.detail?.entities[entityType]?.imageGallery.component],
-                      {config: config?.detail?.entities[entityType]?.imageGallery.config, data: detailContext.detail}, null
+                      COMPONENTS[configEntityType.imageGallery.component],
+                      {config: configEntityType.imageGallery.config, data: detailContext.detail}, null
                     )
                   }
                 </Section>
@@ -305,7 +315,7 @@ const Detail: React.FC<Props> = (props) => {
 
             </div>
           </div>
-          {config?.detail?.entities[entityType]?.timeline && <div className="row">
+          {configEntityType.timeline && <div className="row">
             <div className="col-12">
               <Section
                 title="Timeline"
@@ -315,10 +325,10 @@ const Detail: React.FC<Props> = (props) => {
                 onExpand={() => {handleExpandIdsClick("timeline", true);}}
                 onCollapse={() => {handleExpandIdsClick("timeline", false);}}
               >
-                {config.detail.entities[entityType]?.timeline.component && config.detail.entities[entityType]?.timeline.config &&
+                {configEntityType.timeline.component && configEntityType.timeline.config &&
                   React.createElement(
-                    COMPONENTS[config.detail.entities[entityType].timeline.component],
-                    {config: config.detail.entities[entityType].timeline.config, data: detailContext.detail}, null
+                    COMPONENTS[configEntityType.timeline.component],
+                    {config: configEntityType.timeline.config, data: detailContext.detail}, null
                   )}
               </Section>
             </div>
