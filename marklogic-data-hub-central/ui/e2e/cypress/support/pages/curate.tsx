@@ -38,6 +38,15 @@ class CuratePage {
     cy.findByTestId(`${stepName}-toNewFlow`).should("be.visible", {timeout: 5000}).click({force: true});
   }
 
+  addToNewFlowDisabled(entityTypeId: string, stepName: string) {
+    this.getEntityMappingStep(entityTypeId, stepName).should("be.visible", {timeout: 5000}).trigger("mouseover", {force: true});
+    cy.findByTestId(`${stepName}-disabledToNewFlow`).should("be.visible");
+  }
+
+  getExistingFlowDropdown(stepName: string) {
+    return cy.findByTestId(`${stepName}-toExistingFlow`);
+  }
+
   openExistingFlowDropdown(entityTypeId: string, stepName: string) {
     this.getEntityMappingStep(entityTypeId, stepName).should("be.visible", {timeout: 5000}).trigger("mouseover");
     cy.get(`#${stepName}-flowsList-select-wrapper`).should("be.visible", {timeout: 5000}).scrollIntoView().click();
@@ -82,6 +91,10 @@ class CuratePage {
   verifyTabs(entityTypeId: string, mapTabShould: string, customTabShould: string) {
     cy.get(`#${entityTypeId} [data-rr-ui-event-key="map"]`).should(mapTabShould);
     cy.get(`#${entityTypeId} [data-rr-ui-event-key="custom"]`).should(customTabShould);
+  }
+
+  verifyMatchingTab(entityTypeId: string) {
+    cy.get(`#${entityTypeId} [data-rr-ui-event-key="match"]`).should("not.exist");
   }
 
   selectMergeTab(entityTypeId: string) {
@@ -179,6 +192,10 @@ class CuratePage {
 
   deleteDisabled() {
     return cy.get("[role=\"disabled-delete-mapping button\"]");
+  }
+
+  deleteConfirmation(option: string) {
+    return cy.findByLabelText(option);
   }
 
   addStepToFlowConfirmationMessage() {
