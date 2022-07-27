@@ -30,6 +30,10 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     //Restoring Local Storage to Preserve Session
     cy.restoreLocalStorage();
   });
+  afterEach(() => {
+    // Updating Local Storage
+    cy.saveLocalStorage();
+  });
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.deleteSteps("ingestion", "loadOrder");
@@ -95,7 +99,6 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     runPage.runStep(loadStep, flowName);
     cy.uploadFile("input/10259.json");
 
-
     runPage.verifyStepRunResult(loadStep, "success");
     runPage.closeFlowStatusModal(flowName);
   });
@@ -131,31 +134,6 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     curatePage.xpathExpression("discount").should("have.value", "");
     curatePage.xpathExpression("shipRegion").should("have.value", "");
     curatePage.xpathExpression("shippedDate").should("have.value", "");
-  });
-  it("Validate session storage is working for source table", () => {
-    mappingStepDetail.expandDropdownPagination();
-    mappingStepDetail.selectPagination("10 / page");
-    mappingStepDetail.selectPageSourceTable("2");
-    mappingStepDetail.expandAllSourceTable();
-    mappingStepDetail.verifyExpandedRows();
-
-    cy.log("**Go to another page and back**");
-    toolbar.getLoadToolbarIcon().click();
-    toolbar.getCurateToolbarIcon().click();
-    mappingStepDetail.verifyExpandedRows();
-    mappingStepDetail.verifyContent("10 / page");
-    mappingStepDetail.verifyPageSourceTable("2");
-    mappingStepDetail.addFilter("ship");
-
-    cy.log("**Go to another page and back**");
-    toolbar.getLoadToolbarIcon().click();
-    toolbar.getCurateToolbarIcon().click();
-    mappingStepDetail.verifyFilter();
-
-    cy.log("**Reset source table options**");
-    mappingStepDetail.resetFilter();
-    mappingStepDetail.expandDropdownPagination();
-    mappingStepDetail.selectPagination("20 / page");
   });
 
   it("Map source to entity and Test the mappings", () => {
@@ -275,7 +253,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
 
 
   it("Verify mapping step with duplicate name cannot be created", () => {
-    //curatePage.toggleEntityTypeId("Order");
+    curatePage.toggleEntityTypeId("Order");
     cy.waitUntil(() => curatePage.addNewStep("Order").click());
     createEditMappingDialog.setMappingName(mapStep);
     createEditMappingDialog.setSourceRadio("Query");

@@ -59,10 +59,10 @@ describe("Merging", () => {
     createEditStepDialog.stepDescriptionInput().type("merge order step example for collection", {timeout: 2000});
     createEditStepDialog.setSourceRadio("Collection");
     cy.log("**Selecting value in select component**");
-    mappingStepDetail.getColectionInputValue().click({force: true});
+    mappingStepDetail.getCollectionInputValue().click({force: true});
 
     cy.intercept("POST", "/api/entitySearch/facet-values?database=final").as("loadMergeSelect");
-    mappingStepDetail.getColectionInputValue().type("json");
+    mappingStepDetail.getCollectionInputValue().type("json");
     cy.wait("@loadMergeSelect").its("response.statusCode").should("eq", 200).then(() => {
       createEditStepDialog.getElementById("collList").should("exist").then(() => {
         createEditStepDialog.reviewSelectContent("mapCustomersWithRelatedEntitiesJSON").click();
@@ -73,7 +73,7 @@ describe("Merging", () => {
     curatePage.verifyStepNameIsVisible("mergeOrderTestStepColl");
     cy.log("**Reviewing preloaded value**");
     curatePage.editStep("mergeOrderTestStepColl").click();
-    mappingStepDetail.getColectionInputValue().should("have.value", "mapCustomersWithRelatedEntitiesJSON");
+    mappingStepDetail.getCollectionInputValue().should("have.value", "mapCustomersWithRelatedEntitiesJSON");
     createEditStepDialog.cancelButton("merging").click();
   });
   it("Validate step name is disabled, description, timestamp path and validate discard confirmation modal is displayed on click of cancel  ", () => {

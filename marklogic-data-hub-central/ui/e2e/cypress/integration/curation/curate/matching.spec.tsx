@@ -70,9 +70,9 @@ describe("Matching", () => {
     createEditStepDialog.stepDescriptionInput().type("match customer step example for collection", {timeout: 2000});
     createEditStepDialog.setSourceRadio("Collection");
     cy.log("**Selecting value in select component**");
-    mappingStepDetail.getColectionInputValue().click({force: true});
+    mappingStepDetail.getCollectionInputValue().click({force: true});
     cy.intercept("POST", "/api/entitySearch/facet-values?database=final").as("loadSelect");
-    mappingStepDetail.getColectionInputValue().focus().type("json");
+    mappingStepDetail.getCollectionInputValue().focus().type("json");
     cy.wait("@loadSelect").its("response.statusCode").should("eq", 200).then(() => {
       createEditStepDialog.getElementById("collList").should("exist").then(() => {
         createEditStepDialog.reviewSelectContent("mapCustomersWithRelatedEntitiesJSON").click();
@@ -83,7 +83,7 @@ describe("Matching", () => {
     curatePage.verifyStepNameIsVisible(matchStepCollection);
     cy.log("**Reviewing preloaded value**");
     mappingStepDetail.getEditStepSettingsButton("matchCustTestCollection").click();
-    mappingStepDetail.getColectionInputValue().should("have.value", "mapCustomersWithRelatedEntitiesJSON");
+    mappingStepDetail.getCollectionInputValue().should("have.value", "mapCustomersWithRelatedEntitiesJSON");
     createEditStepDialog.cancelButton("matching").click();
   });
   it("Creating a new match step and verify the counter", () => {

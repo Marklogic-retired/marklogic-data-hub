@@ -378,6 +378,9 @@ class MappingStepDetail {
     cy.get(`#dataPresent [data-icon="angle-double-down"]`).click();
   }
 
+  collapseAllSourceTable() {
+    cy.get(`#collapseIcon`).click();
+  }
   verifyExpandedRows() {
     cy.get("*[class^=\"hc-table_childrenIndentTableExpanded\"]").should("exist");
   }
@@ -423,8 +426,11 @@ class MappingStepDetail {
     return cy.get(`[data-testid=${value}-edit]`);
   }
 
-  getColectionInputValue() {
+  getCollectionInputValue() {
     return cy.get(`.rbt-input-main`);
+  }
+  getSourceDataExpandedRows() {
+    return cy.get("[class^='react-bootstrap-table mapping-step-detail_sourceTable']").find("[class^='hc-table_childrenIndentTableRow'] span[class^='mapping-step-detail_sourceName']");
   }
 
   verifyCountOfCards(idEntity:string, classLayer:string, idLayer:string, tab:string) {
