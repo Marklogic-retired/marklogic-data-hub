@@ -126,7 +126,7 @@ describe("json scenario for table on browse documents page", () => {
     entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
     entitiesSidebar.getApplyFacetsButton().click();
     browsePage.waitForSpinnerToDisappear();
-    browsePage.getTotalDocuments().should("be.equal", 1, {timeout: 15000});
+    browsePage.totalNumberDocuments("1");
     browsePage.getTableViewInstanceIcon().click();
     detailPage.getInstanceView().should("exist");
     detailPage.getDocumentEntity().should("contain", "Order");

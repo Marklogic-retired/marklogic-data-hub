@@ -38,6 +38,11 @@ class BrowsePage {
     });
   }
 
+  totalNumberDocuments(records: string) {
+    this.waitForSpinnerToDisappear();
+    cy.get(`[class*="Browse_search"] [data-cy=total-documents]`).should("have.text", records, {timeout: 30000});
+  }
+
   //common
   viewSelector(view: string) {
     return cy.get(`[aria-label="switch-view-${view}"]`);

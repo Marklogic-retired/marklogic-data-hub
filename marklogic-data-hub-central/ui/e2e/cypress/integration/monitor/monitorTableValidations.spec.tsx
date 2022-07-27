@@ -36,6 +36,12 @@ describe("Monitor Tile", () => {
   let firstPageTableCellsStatus: any[] = [];
   let firstPageTableCellsEntityType: any[] = [];
   let firstPageTableCellsDateTime: any[] = [];
+  let firstPageTableCellsStepName1: any[] = [];
+  let firstPageTableCellsStepType1: any[] = [];
+  let firstPageTableCellsStatus1: any[] = [];
+  //let firstPageTableCellsEntityType1: any[] = [];
+  let firstPageTableCellsDateTime1: any[] = [];
+  let orginalDateTimeArr: any[] = [];
 
   it("Validate column order for Step Name,	Step Type,	StatusEntity, Type Start, Date and Time part 1", () => {
 
@@ -59,7 +65,7 @@ describe("Monitor Tile", () => {
     monitorPage.getTableNestedRows().should("be.visible");
 
     cy.log("**get ASC order and entiy step name**");
-    cy.get(".reset-expansion-style:eq(" + monitorPage.searchBiggerRowIndex(firstPageTableCellsJobId) + ") .stepNameDiv").then(($row) => {
+    monitorPage.getRowData(firstPageTableCellsJobId, "stepNameDiv").then(($row) => {
       Cypress.$.makeArray($row)
         .map((el) => firstPageTableCellsStepName.push(el.innerText.toString().replace(/\t/g, "").split("\r\n")));
     });
@@ -67,7 +73,7 @@ describe("Monitor Tile", () => {
 
     cy.log("**click second column to get ASC order and get step type data**");
     monitorPage.getOrderColumnMonitorTable("Step Type").scrollIntoView().click().then(() => {
-      cy.get(".reset-expansion-style:eq(" + monitorPage.searchBiggerRowIndex(firstPageTableCellsJobId) + ") .stepType").then(($row) => {
+      monitorPage.getRowData(firstPageTableCellsJobId, "stepType").then(($row) => {
         Cypress.$.makeArray($row)
           .map((el) => firstPageTableCellsStepType.push(el.innerText.toString().replace(/\t/g, "").split("\r\n")));
       });
@@ -76,7 +82,7 @@ describe("Monitor Tile", () => {
 
     cy.log("**click third column to get ASC order and get status data**");
     monitorPage.getOrderColumnMonitorTable("Status").scrollIntoView().click().then(() => {
-      cy.get(".reset-expansion-style:eq(" + monitorPage.searchBiggerRowIndex(firstPageTableCellsJobId) + ") .stepStatus").then(($row) => {
+      monitorPage.getRowData(firstPageTableCellsJobId, "stepStatus").then(($row) => {
         Cypress.$.makeArray($row)
           .map((el) => {
             if (el) { firstPageTableCellsStatus.push(el.getAttribute("data-testid")); } else { firstPageTableCellsStatus.push(""); }
@@ -87,16 +93,26 @@ describe("Monitor Tile", () => {
 
     cy.log("**click fourth column to get ASC order and get entiy type data**");
     monitorPage.getOrderColumnMonitorTable("Entity Type").scrollIntoView().click().then(() => {
-      cy.get(".reset-expansion-style:eq(" + monitorPage.searchBiggerRowIndex(firstPageTableCellsJobId) + ") .stepEntityType").then(($row) => {
+      monitorPage.getRowData(firstPageTableCellsJobId, "stepEntityType").then(($row) => {
         Cypress.$.makeArray($row)
           .map((el) => firstPageTableCellsEntityType.push(el.innerText.toString().replace(/\t/g, "").split("\r\n")));
       });
     });
     monitorPage.getTableNestedRows().should("be.visible");
 
+    cy.log("**check step datetime order DESC by default**");
+    monitorPage.getRowData(firstPageTableCellsJobId, "stepStartDate").then(($row) => {
+      Cypress.$.makeArray($row)
+        .map((el) => orginalDateTimeArr.push(el.innerText.toString().replace(/\t/g, "").split("\r\n")));
+      let firstDateTime = orginalDateTimeArr[0];
+      let lastDateTime = orginalDateTimeArr[orginalDateTimeArr.length - 1];
+      let compareDateTime = firstDateTime.toString().localeCompare(lastDateTime.toString());
+      expect(compareDateTime).not.to.be.lt(0);
+    });
+
     cy.log("**click fifth column to get ASC order and get start date and time**");
     monitorPage.getOrderColumnMonitorTable("Start Date and Time").scrollIntoView().click().then(() => {
-      cy.get(".reset-expansion-style:eq(" + monitorPage.searchBiggerRowIndex(firstPageTableCellsJobId) + ") .stepStartDate").then(($row) => {
+      monitorPage.getRowData(firstPageTableCellsJobId, "stepStartDate").then(($row) => {
         Cypress.$.makeArray($row)
           .map((el) => firstPageTableCellsDateTime.push(el.innerText.toString().replace(/\t/g, "").split("\r\n")));
       });
@@ -105,7 +121,7 @@ describe("Monitor Tile", () => {
 
   });
 
-  it("Validate column order for Step Name,	Step Type,	StatusEntity, Type Start, Date and Time part 2", () => {
+  it("Ascending order validations Validate column order for Step Name,	Step Type,	StatusEntity, Type Start, Date and Time ", () => {
     cy.log("**order original job id array**");
     firstPageTableCellsJobId.forEach(element => cy.log(element));
 
@@ -149,6 +165,78 @@ describe("Monitor Tile", () => {
     expect(compareDateTime).not.to.be.gt(0);
   });
 
+  it("Descending order validations for column order for Step Name,	Step Type,	StatusEntity, Type Start, Date and Time ", () => {
+
+    cy.log("**check step name order DESC**");
+    monitorPage.getOrderColumnMonitorTable("Step Name").scrollIntoView().dblclick({force: true}).then(() => {
+      monitorPage.getTableNestedRows().should("be.visible");
+      monitorPage.getRowData(firstPageTableCellsJobId, "stepNameDiv").then(($row) => {
+        Cypress.$.makeArray($row)
+          .map((el) => firstPageTableCellsStepName1.push(el.innerText.toString().replace(/\t/g, "").split("\r\n")));
+        let firstStepName = firstPageTableCellsStepName1[0];
+        let lastStepName = firstPageTableCellsStepName1[firstPageTableCellsStepName1.length - 1];
+        let compareStepName = firstStepName.toString().localeCompare(lastStepName.toString());
+        expect(compareStepName).not.to.be.lt(0);
+      });
+    });
+
+    cy.log("**check step type order DESC**");
+    monitorPage.getOrderColumnMonitorTable("Step Type").scrollIntoView().dblclick({force: true}).then(() => {
+      monitorPage.getTableNestedRows().should("be.visible");
+      monitorPage.getRowData(firstPageTableCellsJobId, "stepType").then(($row) => {
+        Cypress.$.makeArray($row)
+          .map((el) => firstPageTableCellsStepType1.push(el.innerText.toString().replace(/\t/g, "").split("\r\n")));
+        let firstStepType = firstPageTableCellsStepType1[0];
+        let lastStepType = firstPageTableCellsStepType1[firstPageTableCellsStepType1.length - 1];
+        let compareStepType = firstStepType.toString().localeCompare(lastStepType.toString());
+        expect(compareStepType).not.to.be.lt(0);
+      });
+    });
+
+    cy.log("**check step status order DESC**");
+    monitorPage.getOrderColumnMonitorTable("Status").scrollIntoView().dblclick({force: true}).then(() => {
+      monitorPage.getTableNestedRows().should("be.visible");
+      monitorPage.getRowData(firstPageTableCellsJobId, "stepStatus").then(($row) => {
+        Cypress.$.makeArray($row)
+          .map((el) => {
+            if (el) { firstPageTableCellsStatus1.push(el.getAttribute("data-testid")); } else { firstPageTableCellsStatus1.push(""); }
+          });
+        let firstStatus = firstPageTableCellsStatus1[0];
+        let lastStatus = firstPageTableCellsStatus1[firstPageTableCellsStatus1.length - 1];
+        let compareStatus = firstStatus.toString().localeCompare(lastStatus.toString());
+        expect(compareStatus).not.to.be.lt(0);
+      });
+    });
+
+    //Commenting this validations due to a bug DHFPROD-9157
+    /*cy.log("**check step entity type order DESC**");
+    monitorPage.getOrderColumnMonitorTable("Entity Type").scrollIntoView().dblclick({force: true}).then(() => {
+      monitorPage.getTableNestedRows().should("be.visible");
+      monitorPage.getRowData(firstPageTableCellsJobId, "stepEntityType").then(($row) => {
+        Cypress.$.makeArray($row)
+          .map((el) =>  firstPageTableCellsEntityType1.push(el.innerText.toString().replace(/\t/g, "").split("\r\n"));
+          });
+        let firstEntityType = firstPageTableCellsEntityType1[0];
+        let lastEntityType = firstPageTableCellsEntityType1[firstPageTableCellsEntityType1.length - 1];
+        let compareEntityType = firstEntityType.toString().localeCompare(lastEntityType.toString());
+        expect(compareEntityType).not.to.be.lt(0);
+      });
+    });*/
+
+    cy.log("**check step datetime order DESC**");
+    monitorPage.getOrderColumnMonitorTable("Start Date and Time").scrollIntoView().dblclick({force: true}).then(() => {
+      monitorPage.getTableNestedRows().should("be.visible");
+      monitorPage.getRowData(firstPageTableCellsJobId, "stepStartDate").then(($row) => {
+        Cypress.$.makeArray($row)
+          .map((el) => firstPageTableCellsDateTime1.push(el.innerText.toString().replace(/\t/g, "").split("\r\n")));
+        let firstDateTime = firstPageTableCellsDateTime1[0];
+        let lastDateTime = firstPageTableCellsDateTime1[firstPageTableCellsDateTime1.length - 1];
+        let compareDateTime = firstDateTime.toString().localeCompare(lastDateTime.toString());
+        expect(compareDateTime).not.to.be.lt(0);
+      });
+    });
+  });
+
   it("Save table settings to session storage and get it back part 1", () => {
 
     monitorPage.getCollapseAllTableRows().scrollIntoView().click({force: true});
@@ -173,7 +261,7 @@ describe("Monitor Tile", () => {
 
     cy.log("**click second column to get ASC order and get step type data**");
     monitorPage.getOrderColumnMonitorTable("Step Type").scrollIntoView().click().then(() => {
-      cy.get(".reset-expansion-style:eq(" + monitorPage.searchBiggerRowIndex(firstPageTableCellsJobId) + ") .stepType").then(($row) => {
+      monitorPage.getRowData(firstPageTableCellsJobId, "stepType").then(($row) => {
         Cypress.$.makeArray($row)
           .map((el) => firstPageTableCellsStepType.push(el.innerText.toString().replace(/\t/g, "").split("\r\n")));
       });
