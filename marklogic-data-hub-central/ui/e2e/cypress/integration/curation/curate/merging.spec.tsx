@@ -40,7 +40,7 @@ describe("Merging", () => {
     curatePage.selectMergeTab("Order");
     cy.waitUntil(() => curatePage.addNewStep("Order"));
   });
-  it("Creating a new merge step ", () => {
+  it("Creating a new merge step and verify the counter", () => {
     curatePage.addNewStep("Order").should("be.visible").click();
     createEditStepDialog.stepNameInput().type(mergeStep, {timeout: 2000});
     createEditStepDialog.stepDescriptionInput().type("merge order step example", {timeout: 2000});
@@ -51,6 +51,7 @@ describe("Merging", () => {
     cy.waitForAsyncRequest();
     createEditStepDialog.cancelButton("merging").click();
     curatePage.verifyStepNameIsVisible(mergeStep);
+    mappingStepDetail.verifyCountOfCards("Order", "fa-pencil-alt", "-tab-merge", "Merging");
   });
   it("Create a new match step with a collection and review the preloaded value", () => {
     curatePage.addNewStep("Order").should("be.visible").click();

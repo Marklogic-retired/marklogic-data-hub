@@ -97,7 +97,7 @@ describe("Entity Tiles component", () => {
     expect(queryAllByText("No Entity Type")).toHaveLength(0);
     await fireEvent.click(getByText("Customer"));
     // Check for Mapping tab
-    expect(getByText("Mapping")).toBeInTheDocument();
+    expect(getByText("Mapping (1)")).toBeInTheDocument();
     // Check for Matching tab
     expect(queryAllByText("Matching")).toHaveLength(0);
     expect(queryAllByText("Custom")).toHaveLength(0);
@@ -141,9 +141,9 @@ describe("Entity Tiles component", () => {
 
     await fireEvent.click(customerPanel);
     // Check for Mapping tab
-    expect(getByText("Mapping")).toBeInTheDocument();
-    await fireEvent.click(getByText("Custom"));
-    expect(getByLabelText("customEntityTitle")).toBeInTheDocument();
+    expect(getByText("Mapping (1)")).toBeInTheDocument();
+    await(() => fireEvent.click(getByText("Custom")));
+    await(() => expect(getByLabelText("customEntityTitle")).toBeInTheDocument());
     // Check for Matching tab
     expect(queryAllByText("Matching")).toHaveLength(0);
     await fireEvent.click(customerPanel);

@@ -32,6 +32,10 @@ describe("Mapping", () => {
   it("Verify more/less functionality on filtering by name for structured properties", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     mappingStepDetail.customerEntity().click();
+    cy.log("**Checking counter mapping in tab**");
+    mappingStepDetail.verifyCountOfCards("Customer", "fa-pencil-alt", "-tab-map", "Mapping");
+
+    cy.log("**Looking step details**");
     mappingStepDetail.getEditStepSettingsButton("mapCustomersJSON").click();
     mappingStepDetail.getColectionInputValue().should("have.value", "loadCustomersJSON");
     curatePage.openMappingStepDetail("Customer", "mapCustomersJSON");

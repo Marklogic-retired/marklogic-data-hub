@@ -86,7 +86,7 @@ describe("Matching", () => {
     mappingStepDetail.getColectionInputValue().should("have.value", "mapCustomersWithRelatedEntitiesJSON");
     createEditStepDialog.cancelButton("matching").click();
   });
-  it("Creating a new match step", () => {
+  it("Creating a new match step and verify the counter", () => {
     curatePage.addNewStep("Customer").should("be.visible").click();
     createEditStepDialog.stepNameInput().type(matchStep);
     createEditStepDialog.stepDescriptionInput().type("match customer step example", {timeout: 2000});
@@ -95,7 +95,9 @@ describe("Matching", () => {
     createEditStepDialog.saveButton("matching").click();
     cy.waitForAsyncRequest();
     curatePage.verifyStepNameIsVisible(matchStep);
+    mappingStepDetail.verifyCountOfCards("Customer", "fa-pencil-alt", "-tab-match", "Matching");
   });
+
   it("Validate step name is disabled, description is as expected and validate discard confirmation modal is displayed on click of cancel", () => {
     curatePage.editStep(matchStep).click();
     createEditStepDialog.stepNameInput().should("be.disabled");

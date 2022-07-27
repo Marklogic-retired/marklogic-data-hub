@@ -5,6 +5,7 @@ import curatePage from "../../../support/pages/curate";
 import {confirmYesNo} from "../../../support/components/common/index";
 import "cypress-wait-until";
 import LoginPage from "../../../support/pages/login";
+import {mappingStepDetail} from "../../../support/components/mapping/index";
 
 const stepName = "mapping-step";
 
@@ -47,7 +48,7 @@ describe("Custom step settings: ", () => {
     curatePage.verifyStepNameIsVisible(stepName);
   });
 
-  it("Changes are kept on save", () => {
+  it("Changes are kept on save and verify counter", () => {
     curatePage.editStep(stepName).click();
     createEditStepDialog.stepNameInput().should("be.disabled");
     createEditStepDialog.stepDescriptionInput().should("be.enabled");
@@ -63,6 +64,7 @@ describe("Custom step settings: ", () => {
     createEditStepDialog.saveButton("custom").click();
     cy.waitForAsyncRequest();
     curatePage.verifyStepNameIsVisible(stepName);
+    mappingStepDetail.verifyCountOfCards("Customer", "fa-cog", "-tab-custom", "Custom");
   });
 
   it("Verify Additional Settings saves correctly", () => {
