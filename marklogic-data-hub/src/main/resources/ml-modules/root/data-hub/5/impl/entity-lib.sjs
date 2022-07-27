@@ -679,6 +679,71 @@ function getPredicatesByModelAndBaseEntities(model,relatedEntityTypeIds) {
   return predicateList;
 }
 
+function getLabelFromHubConfigByEntityType(entityType, hubCentralConfig) {
+  if(hubCentralConfig != null && fn.exists(hubCentralConfig.xpath("/modeling/entities/" + entityType))){
+    return hubCentralConfig.xpath("/modeling/entities/" + entityType + "/label");
+  }
+  return "";
+}
+
+function getValueFromProperty(propertyName, docUri,entityType) {
+  const doc = cts.doc(docUri);
+  if(fn.exists(doc.xpath(".//*:envelope/*:instance/*:"+entityType+"/*:"+propertyName))){
+    return fn.data(doc.xpath(".//*:envelope/*:instance/*:"+entityType+"/*:"+propertyName));
+  }
+  return "";
+}
+
+function getPropertiesOnHoverFromHubConfigByEntityType(entityType, hubCentralConfig) {
+  if(hubCentralConfig != null && fn.exists(hubCentralConfig.xpath("/modeling/entities/" + entityType+"/propertiesOnHover"))){
+    const obj = JSON.parse(hubCentralConfig);
+    return obj.modeling.entities[entityType].propertiesOnHover;
+  }
+  return "";
+}
+
+function getValuesPropertiesOnHover(docUri,entityType, hubCentralConfig) {
+  let resultPropertiesOnHover = [];
+  let configPropertiesOnHover = getPropertiesOnHoverFromHubConfigByEntityType(entityType, hubCentralConfig);
+  if(configPropertiesOnHover.toString().length > 0){
+    //check in the document the value of the configuration property
+    for (let i = 0; i < configPropertiesOnHover.length; i++) {
+      let entityPropertyName = configPropertiesOnHover[i];
+      if(!entityPropertyName.includes(".")){
+        //create an Property on hover object
+        let objPropertyOnHover = new Object();
+        objPropertyOnHover[entityPropertyName] = getValueFromProperty(entityPropertyName,docUri,entityType);
+        resultPropertiesOnHover.push(objPropertyOnHover);
+      }else{
+
+        let propertyVec = entityPropertyName.split(".");
+        let objPropertyOnHover = new Object();
+        const entityModel = entityLib.findEntityTypeByEntityName(entityType);
+        let newPath = "";
+        for (let j = 0; j < propertyVec.length; j++) {
+          if (j < propertyVec.length -1) {
+            newPath  += "/*:" + propertyVec[j] + "/*:" + entityLib.getRefType(entityModel,propertyVec[j]);
+          } else {
+            newPath  += "/*:" + propertyVec[j];
+          }
+
+        }
+        objPropertyOnHover[entityPropertyName] = getValueFromPropertyPath(entityPropertyName,docUri,entityType, newPath);
+        resultPropertiesOnHover.push(objPropertyOnHover);
+      }
+    }
+  }
+  return resultPropertiesOnHover;
+}
+
+function getValueFromPropertyPath(path, docUri,entityType,propertyPath) {
+  const doc = cts.doc(docUri);
+  if(fn.exists(doc.xpath(".//*:envelope/*:instance/*:"+entityType+propertyPath))){
+    return fn.data(doc.xpath(".//*:envelope/*:instance/*:"+entityType+propertyPath));
+  }
+  return "";
+}
+
 module.exports = {
   deleteDraftModel,
   findForeignKeyReferencesInOtherModels,
@@ -708,5 +773,8 @@ module.exports = {
   writeDraftModel,
   writeModel,
   writeModelToDatabases,
-  getRefType
+  getRefType,
+  getLabelFromHubConfigByEntityType,
+  getValueFromProperty,
+  getValuesPropertiesOnHover
 };

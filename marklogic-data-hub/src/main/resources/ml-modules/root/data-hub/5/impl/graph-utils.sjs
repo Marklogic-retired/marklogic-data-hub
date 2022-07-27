@@ -178,7 +178,7 @@ function getEntityNodesBySubject(entityTypeIRI, relatedEntityTypeIRIs, limit) {
       PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
       SELECT * WHERE {
       {
-        SELECT ?subjectIRI ?predicateIRI ?predicateLabel (MIN(?objectIRI) AS ?firstObjectIRI) (MIN(?docURI) AS ?firstDocURI) (COUNT(DISTINCT(?objectIRI)) AS ?nodeCount) WHERE {
+        SELECT ?subjectIRI ?docURI ?predicateIRI ?predicateLabel (MIN(?objectIRI) AS ?firstObjectIRI) (MIN(?docURI) AS ?firstDocURI) (COUNT(DISTINCT(?objectIRI)) AS ?nodeCount) WHERE {
             ?objectIRI rdf:type @entityTypeOrConceptIRI.
             @entityTypeIRI ?predicateIRI ?objectIRI;
             rdfs:isDefinedBy ?docURI.
@@ -190,7 +190,29 @@ function getEntityNodesBySubject(entityTypeIRI, relatedEntityTypeIRIs, limit) {
       }
       }
   `).limit(limit);
-  return subjectPlan.result(null, {entityTypeIRI, entityTypeOrConceptIRI: relatedEntityTypeIRIs.concat(getRdfConceptTypes()), labelIRI: getOrderedLabelPredicates()}).toArray();
+
+  const relatedPlan = op.fromSPARQL(`
+      PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+      SELECT * WHERE {
+      {
+        SELECT DISTINCT(?subjectIRI AS ?subjectNew) (?docURI AS ?docRelated)  WHERE {
+            ?subjectIRI rdf:type @entityTypeOrConceptIRI.
+            ?subjectIRI ?predicateIRI ?objectIRI;
+            rdfs:isDefinedBy ?docURI.
+            OPTIONAL {
+              ?predicateIRI @labelIRI ?predicateLabel.
+            }
+        }
+
+      }
+      }
+  `)
+
+  let joinOn = op.on(op.col("firstObjectIRI"),op.col("subjectNew"));
+  let fullPlan = subjectPlan.joinLeftOuter(relatedPlan, joinOn);
+
+  return fullPlan.result(null, {entityTypeIRI, entityTypeOrConceptIRI: relatedEntityTypeIRIs.concat(getRdfConceptTypes()), labelIRI: getOrderedLabelPredicates()}).toArray();
 }
 
 

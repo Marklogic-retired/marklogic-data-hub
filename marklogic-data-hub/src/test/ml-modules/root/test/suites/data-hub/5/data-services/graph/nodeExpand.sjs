@@ -1,4 +1,24 @@
 const test = require("/test/test-helper.xqy");
+const config = require("/com.marklogic.hub/config.sjs");
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+
+
+const hubCentralConfig = {
+  "modeling": {
+    "entities": {
+      "BabyRegistry": { x: 10, y: 15, "label":"arrivalDate","propertiesOnHover": ["ownedBy", "babyRegistryId"] },
+      "Office": { x: 12, y: 16, "label":"name"},
+      "Product": {
+        "graphX": 63,
+        "graphY": -57,
+        "label": "productName",
+        "propertiesOnHover": [
+          "productId"
+        ]
+      }
+    }
+  }
+};
 
 function invoke(module, args) {
   return fn.head(xdmp.invoke("/data-hub/5/data-services/graph/" + module, args));
@@ -8,6 +28,7 @@ function nodeExpand(queryOptions) {
   return invoke("nodeExpand.sjs", {nodeInfo: JSON.stringify(queryOptions), start: 0, limit: 20});
 }
 function nodeExpandWithLimit4(queryOptions) {
+  hubUtils.writeDocument("/config/hubCentral.json", hubCentralConfig, [xdmp.permission("data-hub-common", "read"),xdmp.permission("data-hub-common-writer", "update")], [], config.FINALDATABASE);
   return invoke("nodeExpand.sjs", {nodeInfo: JSON.stringify(queryOptions), start: 0, limit: 4});
 }
 
@@ -58,7 +79,24 @@ const restultConceptExpand = nodeExpandWithLimit4(expandConceptQuery);
 assertions.concat([
   test.assertEqual(1, restultConceptExpand.total),
   test.assertEqual(1, restultConceptExpand.nodes.length, xdmp.toJsonString(restultConceptExpand)),
-  test.assertEqual(1, restultConceptExpand.edges.length)
+  test.assertEqual(1, restultConceptExpand.edges.length),
+  test.assertEqual("ProductName60", restultConceptExpand.nodes[0].label)
+
+]);
+
+const expandConceptQueryProduct = {
+  "isConcept":true,
+  "parentIRI": "http://example.org/Product-1.0.0/Product/60",
+  "objectConcept": "http://www.example.com/Category/Sneakers"
+};
+const resultConceptQueryProduct = nodeExpandWithLimit4(expandConceptQueryProduct);
+
+assertions.concat([
+  test.assertEqual(1, resultConceptQueryProduct.total),
+  test.assertEqual(1, resultConceptQueryProduct.nodes.length, xdmp.toJsonString(resultConceptQueryProduct)),
+  test.assertEqual(1, resultConceptQueryProduct.edges.length),
+  test.assertEqual("office name", resultConceptQueryProduct.nodes[0].label)
+
 ]);
 
 assertions;
