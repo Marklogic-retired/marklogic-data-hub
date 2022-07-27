@@ -22,6 +22,7 @@ const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
 const sem = require("/MarkLogic/semantics.xqy");
 const graphUtils = require("/data-hub/5/impl/graph-utils.sjs");
+const hubCentralConfig = cts.doc("/config/hubCentral.json")
 
 function handleBySubjectIRI(entityName, subjectIRI) {
   let relatedTypeIRIs = [];
@@ -151,10 +152,16 @@ if (isConcept) {
     let subjectArr = objectIRI.split("/");
     const objectId = subjectArr[subjectArr.length - 1];
     const group = objectIRI.substring(0, objectIRI.length - objectId.length - 1);
+    let entityType =   subjectArr[subjectArr.length - 2];
+    let newLabel = getCustomLabel(entityType,  item.docURI);
     let nodeExpanded = {};
     nodeExpanded.id = objectIRI;
     nodeExpanded.docURI = item.docURI;
-    nodeExpanded.label = objectId;
+    if (newLabel.toString().length === 0) {
+      nodeExpanded.label = objectId;
+    }else{
+      nodeExpanded.label = newLabel;
+    }
     nodeExpanded.group = group;
     nodeExpanded.additionalProperties = null;
     nodeExpanded.isConcept = false;
@@ -177,15 +184,20 @@ if (isConcept) {
       const objectIRI = item.objectIRI.toString();
       let subjectArr = objectIRI.split("/");
       const objectId = subjectArr[subjectArr.length - 1];
-
+      let entityType =   subjectArr[subjectArr.length - 2];
+      let customLabel = getCustomLabel(entityType,  item.docURI);
+      if (customLabel.toString().length === 0) {
+        customLabel = objectId;
+      }
+      let resultPropertiesOnHover = entityLib.getValuesPropertiesOnHover(item.docURI,entityType,hubCentralConfig);
       const group = objectIRI.substring(0, objectIRI.length - objectId.length - 1);
       let hasRelationships = graphUtils.relatedObjHasRelationships(objectIRI, hashmapPredicate);
-
       let nodeExpanded = {};
       nodeExpanded.id = objectIRI;
-      nodeExpanded.docURI = item.docURI;
-      nodeExpanded.label = objectId;
+      nodeExpanded.label = customLabel;
+      nodeExpanded.propertiesOnHover = resultPropertiesOnHover;
       nodeExpanded.group = group;
+      nodeExpanded.docURI = item.docURI;
       nodeExpanded.additionalProperties = null;
       nodeExpanded.isConcept = false;
       nodeExpanded.hasRelationships = hasRelationships;
@@ -238,7 +250,7 @@ if (isConcept) {
       let nodeLabel = objectId;
       let nodeDocUri = item.firstDocURI;
       let nodeCount = 1;
-
+      let entityType =   subjectArr[subjectArr.length - 2];
       if(item.nodeCount && item.nodeCount > 1) {
         nodeLabel = subjectArr[subjectArr.length - 2];
         nodeId = nodeToExpand + "-" + subjectArr[subjectArr.length - 2];
@@ -252,10 +264,18 @@ if (isConcept) {
       if(item.nodeCount) {
         hasRelationships = graphUtils.relatedObjHasRelationships(objectIRI, hashmapPredicate);
       }
+
+      let customLabel = getCustomLabel(entityType,  item.docRelated);
+      if (customLabel.toString().length !== 0) {
+        nodeLabel = customLabel;
+      }
+
+      let resultPropertiesOnHover = entityLib.getValuesPropertiesOnHover(item.docRelated,entityType,hubCentralConfig);
       let nodeExpanded = {};
       nodeExpanded.id = nodeId;
-      nodeExpanded.docURI = nodeDocUri;
       nodeExpanded.label = nodeLabel;
+      nodeExpanded.docURI = nodeDocUri;
+      nodeExpanded.propertiesOnHover=resultPropertiesOnHover;
       nodeExpanded.group = group;
       nodeExpanded.additionalProperties = null;
       nodeExpanded.isConcept = false;
@@ -275,6 +295,16 @@ if (isConcept) {
       edges.push(edge);
     });
   }
+}
+
+function getCustomLabel(entityType, docUri) {
+  let customLabel = "";
+  let configurationLabel = entityLib.getLabelFromHubConfigByEntityType(entityType, hubCentralConfig);
+  if (configurationLabel.toString().length > 0) {
+    //getting the value of the configuration property
+    customLabel = entityLib.getValueFromProperty(configurationLabel, docUri, entityType);
+  }
+  return customLabel;
 }
 
 const response = {

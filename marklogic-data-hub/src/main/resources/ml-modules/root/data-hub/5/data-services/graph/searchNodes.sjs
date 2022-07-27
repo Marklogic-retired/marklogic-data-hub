@@ -154,7 +154,7 @@ result.map(item => {
       newLabel =getValueFromProperty(configurationLabel,item.docURI,entityType);
     }
     //check if we have in central config properties on hover loaded
-    resultPropertiesOnHover = getValuesPropertiesOnHover(item.docURI,entityType);
+    resultPropertiesOnHover = entityLib.getValuesPropertiesOnHover(item.docURI,entityType,hubCentralConfig);
   }
   const group = item.subjectIRI.toString().substring(0, item.subjectIRI.toString().length - subjectLabel.length - 1);
   let nodeOrigin = {};
@@ -210,7 +210,6 @@ result.map(item => {
     let edge = {};
     if (item.nodeCount > 1) {
       let entityType = objectIRIArr[objectIRIArr.length - 2];
-      objectUri = null;
       objectId = item.subjectIRI.toString() + "-" + objectIRIArr[objectIRIArr.length - 2];
       edge.id = "edge-" + item.subjectIRI + "-" + item.predicateIRI + "-" + entityType;
     } else {
@@ -241,7 +240,7 @@ result.map(item => {
       }else{
         objectNode.label = newLabelNode;
       }
-      resultPropertiesOnHover = getValuesPropertiesOnHover(objectUri,objectIRIArr[objectIRIArr.length - 2]);
+      resultPropertiesOnHover = entityLib.getValuesPropertiesOnHover(item.docURI,objectIRIArr[objectIRIArr.length - 2],hubCentralConfig);
       objectNode.propertiesOnHover=resultPropertiesOnHover;
       objectNode.group = objectGroup;
       objectNode.isConcept = false;
@@ -314,47 +313,9 @@ function getValueFromProperty(propertyName, docUri,entityType) {
   return "";
 }
 
-function getValueFromPropertyPath(path, docUri,entityType,propertyPath) {
-  const doc = cts.doc(docUri);
-  if(fn.exists(doc.xpath(".//*:envelope/*:instance/*:"+entityType+propertyPath))){
-    return fn.data(doc.xpath(".//*:envelope/*:instance/*:"+entityType+propertyPath));
-  }
-  return "";
-}
 
-function getValuesPropertiesOnHover(docUri,entityType) {
-  let resultPropertiesOnHover = [];
-  let configPropertiesOnHover = getPropertiesOnHoverFromHubConfigByEntityType(entityType);
-  if(configPropertiesOnHover.toString().length > 0){
-    //check in the document the value of the configuration property
-    for (let i = 0; i < configPropertiesOnHover.length; i++) {
-      let entityPropertyName = configPropertiesOnHover[i];
-      if(!entityPropertyName.includes(".")){
-        //create an Property on hover object
-        let objPropertyOnHover = new Object();
-        objPropertyOnHover[entityPropertyName] = getValueFromProperty(entityPropertyName,docUri,entityType);
-        resultPropertiesOnHover.push(objPropertyOnHover);
-      }else{
 
-        let propertyVec = entityPropertyName.split(".");
-        let objPropertyOnHover = new Object();
-        const entityModel = entityLib.findEntityTypeByEntityName(entityType);
-        let newPath = "";
-        for (let j = 0; j < propertyVec.length; j++) {
-             if (j < propertyVec.length -1) {
-                  newPath  += "/*:" + propertyVec[j] + "/*:" + entityLib.getRefType(entityModel,propertyVec[j]);
-             } else {
-               newPath  += "/*:" + propertyVec[j];
-             }
 
-          }
-        objPropertyOnHover[entityPropertyName] = getValueFromPropertyPath(entityPropertyName,docUri,entityType, newPath);
-        resultPropertiesOnHover.push(objPropertyOnHover);
-      }
-    }
-  }
-  return resultPropertiesOnHover;
-}
 
 
 response;
