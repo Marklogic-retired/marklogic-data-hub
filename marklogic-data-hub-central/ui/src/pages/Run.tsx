@@ -291,7 +291,6 @@ const Run = (props) => {
   const runStep = async (flowName, stepDetails, formData) => {
     const stepNumber = stepDetails.stepNumber;
     getFlowRunning(flowName, [stepNumber]);
-    setOpenJobResponse(true);
     setIsStepRunning(true);
     let response;
     try {
@@ -315,7 +314,6 @@ const Run = (props) => {
           }, pollConfig.interval)
             .then(function (response: any) {
               setRunEnded({flowId: flowName, stepId: stepNumber});
-              showStepRunResponse(jobId);
             }).catch(function (error) {
               console.error("Flow timeout", error);
               setRunEnded({flowId: flowName, stepId: stepNumber});
