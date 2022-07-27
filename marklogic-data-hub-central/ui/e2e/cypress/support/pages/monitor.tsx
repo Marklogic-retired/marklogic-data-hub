@@ -210,6 +210,10 @@ class MonitorPage {
     return cy.get(`.rowExpandedDetail > div`);
   }
 
+  getRowData(JobId, value: string) {
+    return cy.get(`.reset-expansion-style:eq(" `+ this.searchBiggerRowIndex(JobId) + `") .${value}`);
+  }
+
   searchBiggerRowIndex(array: any) {
     let countRow: number = 0;
     let countRowAux: number = 0;
