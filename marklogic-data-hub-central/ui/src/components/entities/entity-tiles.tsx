@@ -502,6 +502,24 @@ const EntityTiles = (props) => {
     return returnValue;
   };
 
+  const mappingArtifactsAux = (entityType: string, returnCount: boolean) => {
+    let artifacts = mappingArtifacts.find((artifact) => artifact.entityTypeId === entityModels[entityType].entityTypeId);
+    if (returnCount) { return artifacts?.artifacts ? artifacts.artifacts.length : 0; } else { return artifacts; }
+  };
+  const matchingArtifactsAux = (entityType: string, returnCount: boolean) => {
+    let artifacts = matchingArtifacts.find((artifact) => artifact.entityTypeId === entityModels[entityType].entityTypeId);
+    if (returnCount) { return artifacts?.artifacts ? artifacts.artifacts.length : 0; } else { return artifacts; }
+  };
+
+  const mergingArtifactsAux = (entityType: string, returnCount: boolean) => {
+    let artifacts = mergingArtifacts.find((artifact) => artifact.entityTypeId === entityModels[entityType].entityTypeId);
+    if (returnCount) { return artifacts?.artifacts ? artifacts.artifacts.length : 0; } else { return artifacts; }
+  };
+  const customArtifactsAux = (entityType: string, returnCount: boolean) => {
+    let artifacts =customArtifactsWithEntity.find((artifact) => artifact.entityTypeId === entityModels[entityType].entityTypeId);
+    if (returnCount) { return artifacts?.artifacts ? artifacts.artifacts.length : 0; } else { return artifacts; }
+  };
+
   return (
     <div id="entityTilesContainer" className={styles.entityTilesContainer}>
       {Object.keys(props.entityModels).sort().map((entityType, index) => (
@@ -522,12 +540,12 @@ const EntityTiles = (props) => {
               </Card.Header>
               <Accordion.Body>
                 <Tabs defaultActiveKey={checkDefaultActiveKey(index)} onSelect={(eventKey) => updateView(index, eventKey, entityType)} className={styles.entityTabs}>
-                  {canReadMapping ? <Tab id={`${entityType}-Map`} data-testid={`${entityType}-Map`} eventKey={`map`} key={`map-${entityType}`} title="Mapping" tabClassName={`curateTab`} /> : null}
-                  {props.canReadMatchMerge ? <Tab id={`${entityType}-Match`} data-testid={`${entityType}-Match`} eventKey="match" key={`match-${entityType}`} title="Matching" tabClassName={`curateTab`} /> : null}
-                  {props.canReadMatchMerge ? <Tab id={`${entityType}-Merge`} data-testid={`${entityType}-Merge`} eventKey="merge" key={`merge-${entityType}`} title="Merging" tabClassName={`curateTab`} /> : null}
-                  {props.canReadCustom ? <Tab id={`${entityType}-Custom`} data-testid={`${entityType}-Custom`} eventKey="custom" key={`custom-${entityType}`} title="Custom" tabClassName={`curateTab`} /> : null}
+                  {canReadMapping ? <Tab id={`${entityType}-Map`} data-testid={`${entityType}-Map`} eventKey={`map`} key={`map-${entityType}`} title={`Mapping (${mappingArtifactsAux(entityType, true)})`} tabClassName={`curateTab`} /> : null}
+                  {props.canReadMatchMerge ? <Tab id={`${entityType}-Match`} data-testid={`${entityType}-Match`} eventKey="match" key={`match-${entityType}`} title={`Matching (${matchingArtifactsAux(entityType, true)})`} tabClassName={`curateTab`} /> : null}
+                  {props.canReadMatchMerge ? <Tab id={`${entityType}-Merge`} data-testid={`${entityType}-Merge`} eventKey="merge" key={`merge-${entityType}`} title={`Merging (${mergingArtifactsAux(entityType, true)})`} tabClassName={`curateTab`} /> : null}
+                  {props.canReadCustom ? <Tab id={`${entityType}-Custom`} data-testid={`${entityType}-Custom`} eventKey="custom" key={`custom-${entityType}`} title={`Custom (${customArtifactsAux(entityType, true)})`} tabClassName={`curateTab`} /> : null}
                 </Tabs>
-                {outputCards(index, entityType, mappingArtifacts.find((artifact) => artifact.entityTypeId === entityModels[entityType].entityTypeId), matchingArtifacts.find((artifact) => artifact.entityTypeId === entityModels[entityType].entityTypeId), mergingArtifacts.find((artifact) => artifact.entityTypeId === entityModels[entityType].entityTypeId), customArtifactsWithEntity.find((artifact) => artifact.entityTypeId === entityModels[entityType].entityTypeId))}
+                {outputCards(index, entityType, mappingArtifactsAux(entityType, false), matchingArtifactsAux(entityType, false), mergingArtifactsAux(entityType, false), customArtifactsAux(entityType, false))}
               </Accordion.Body>
             </Card>
           </Accordion.Item>

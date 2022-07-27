@@ -427,6 +427,14 @@ class MappingStepDetail {
     return cy.get(`.rbt-input-main`);
   }
 
+  verifyCountOfCards(idEntity:string, classLayer:string, idLayer:string, tab:string) {
+    let countOfCards = 0;
+    cy.get(`#${idEntity} .${classLayer}`).then($elements => {
+      countOfCards = $elements.length;
+    }).then(() => {
+      cy.get(`#${idEntity} [id$=${idLayer}]`).should("have.text", `${tab} (${countOfCards})`);
+    });
+  }
 }
 
 const mappingStepDetail = new MappingStepDetail();
