@@ -2,20 +2,20 @@
   "lang": "zxx",
   "path-namespace": [
     {
-      "prefix": "es",
-      "namespace-uri": "http://marklogic.com/entity-services"
-    },
-    {
       "prefix": "cwsh",
       "namespace-uri": "http://carwashes.org/"
     },
     {
-      "prefix": "awse",
-      "namespace-uri": "http://Areawise.org/"
-    },
-    {
       "prefix": "crvs",
       "namespace-uri": "http://carservices.com/"
+    },
+    {
+      "prefix": "es",
+      "namespace-uri": "http://marklogic.com/entity-services"
+    },
+    {
+      "prefix": "awse",
+      "namespace-uri": "http://Areawise.org/"
     },
     {
       "prefix": "gstn",
@@ -25,7 +25,46 @@
   "range-path-index": [
     {
       "invalid-values": "reject",
+      "path-expression": "/es:envelope/es:instance/cwsh:Car_Wash_NS_XML/cwsh:Name",
+      "range-value-positions": false,
+      "scalar-type": "string",
+      "collation": "http://marklogic.com/collation/codepoint"
+    },
+    {
+      "invalid-values": "reject",
+      "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/Factories/Area_ID",
+      "range-value-positions": false,
+      "scalar-type": "decimal"
+    },
+    {
+      "invalid-values": "reject",
+      "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/Factories/Name",
+      "range-value-positions": false,
+      "scalar-type": "string",
+      "collation": "http://marklogic.com/collation/codepoint"
+    },
+    {
+      "invalid-values": "reject",
+      "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/Restaurants/Restaurant_Name",
+      "range-value-positions": false,
+      "scalar-type": "string",
+      "collation": "http://marklogic.com/collation/codepoint"
+    },
+    {
+      "invalid-values": "reject",
+      "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/Emergency_Services/Area_ID",
+      "range-value-positions": false,
+      "scalar-type": "decimal"
+    },
+    {
+      "invalid-values": "reject",
       "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/Emergency_Services/Distance_Miles",
+      "range-value-positions": false,
+      "scalar-type": "decimal"
+    },
+    {
+      "invalid-values": "reject",
+      "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/Environmental_Risk/Area_ID",
       "range-value-positions": false,
       "scalar-type": "decimal"
     },
@@ -43,6 +82,13 @@
     },
     {
       "invalid-values": "reject",
+      "path-expression": "/es:envelope/es:instance/crvs:Car_Services_NS_XML/crvs:Name",
+      "range-value-positions": false,
+      "scalar-type": "string",
+      "collation": "http://marklogic.com/collation/codepoint"
+    },
+    {
+      "invalid-values": "reject",
       "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/Air_Bnb_Listings/Name",
       "range-value-positions": false,
       "scalar-type": "string",
@@ -56,7 +102,33 @@
     },
     {
       "invalid-values": "reject",
+      "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/Car_Wash/Name",
+      "range-value-positions": false,
+      "scalar-type": "string",
+      "collation": "http://marklogic.com/collation/codepoint"
+    },
+    {
+      "invalid-values": "reject",
       "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/Car_Wash/Rating",
+      "range-value-positions": false,
+      "scalar-type": "decimal"
+    },
+    {
+      "invalid-values": "reject",
+      "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/Colleges/Area_ID",
+      "range-value-positions": false,
+      "scalar-type": "decimal"
+    },
+    {
+      "invalid-values": "reject",
+      "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/Colleges/College_Name",
+      "range-value-positions": false,
+      "scalar-type": "string",
+      "collation": "http://marklogic.com/collation/codepoint"
+    },
+    {
+      "invalid-values": "reject",
+      "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/Commercial_Properties/Area_ID",
       "range-value-positions": false,
       "scalar-type": "decimal"
     },
@@ -66,6 +138,19 @@
       "range-value-positions": false,
       "scalar-type": "string",
       "collation": "http://marklogic.com/collation/"
+    },
+    {
+      "invalid-values": "reject",
+      "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/Gyms/Area_ID",
+      "range-value-positions": false,
+      "scalar-type": "decimal"
+    },
+    {
+      "invalid-values": "reject",
+      "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/Gyms/Name",
+      "range-value-positions": false,
+      "scalar-type": "string",
+      "collation": "http://marklogic.com/collation/codepoint"
     },
     {
       "invalid-values": "reject",
@@ -94,15 +179,54 @@
     },
     {
       "invalid-values": "reject",
+      "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/Demographics/Area_ID",
+      "range-value-positions": false,
+      "scalar-type": "decimal"
+    },
+    {
+      "invalid-values": "reject",
+      "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/Car_Services/Area_ID",
+      "range-value-positions": false,
+      "scalar-type": "decimal"
+    },
+    {
+      "invalid-values": "reject",
+      "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/Car_Services/Name",
+      "range-value-positions": false,
+      "scalar-type": "string",
+      "collation": "http://marklogic.com/collation/codepoint"
+    },
+    {
+      "invalid-values": "reject",
       "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/Car_Services/Rating",
       "range-value-positions": false,
       "scalar-type": "decimal"
     },
     {
       "invalid-values": "reject",
+      "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/Car_Rentals/Name",
+      "range-value-positions": false,
+      "scalar-type": "string",
+      "collation": "http://marklogic.com/collation/codepoint"
+    },
+    {
+      "invalid-values": "reject",
       "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/Car_Rentals/Rating",
       "range-value-positions": false,
       "scalar-type": "decimal"
+    },
+    {
+      "invalid-values": "reject",
+      "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/Gas_Stations/Area_ID",
+      "range-value-positions": false,
+      "scalar-type": "decimal"
+    },
+    {
+      "invalid-values": "reject",
+      "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/Day_Cares/Name",
+      "range-value-positions": false,
+      "scalar-type": "string",
+      "collation": "http://marklogic.com/collation/codepoint"
     }
   ],
   "database-name": "data-hub-STAGING"

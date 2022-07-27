@@ -1,0 +1,23 @@
+{
+  "collections": [
+    "generate-dictionary",
+    ""
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "provenanceGranularityLevel": "off",
+  "name": "generate-dictionary",
+  "description": "",
+  "stepDefinitionName": "generate-dictionary",
+  "stepDefinitionType": "custom",
+  "additionalCollections": [ ],
+  "sourceQuery": "cts.documentQuery('/flows/Generate_Dictonaries.flow.json')",
+  "sourceCollection": "",
+  "targetFormat": "json",
+  "targetEntityType": "",
+  "stepId": "generate-dictionary-custom",
+  "selectedSource": "query",
+  "lastUpdated": "2022-07-24T17:12:54.540172-07:00"
+}

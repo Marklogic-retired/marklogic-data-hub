@@ -1,0 +1,57 @@
+{
+  "batchSize": 1,
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "targetEntityType": "Gyms",
+  "sourceQuery": "cts.collectionQuery(['match_Gyms'])",
+  "provenanceGranularityLevel": "off",
+  "collections": [
+    "merge_Gyms"
+  ],
+  "targetFormat": "json",
+  "mergeRules": [
+    {
+      "entityPropertyPath": "Area_ID",
+      "mergeType": "property-specific",
+      "maxSources": "All",
+      "maxValues": "All",
+      "priorityOrder": {
+        "sources": [ ],
+        "timeWeight": 0
+      }
+    }
+  ],
+  "mergeStrategies": [ ],
+  "targetCollections": {
+    "onMerge": {
+      "add": [ ]
+    },
+    "onNoMatch": {
+      "add": [ ]
+    },
+    "onArchive": {
+      "add": [ ]
+    },
+    "onNotification": {
+      "add": [ ]
+    }
+  },
+  "name": "merge_Gyms",
+  "description": "",
+  "collection": [
+    "match_Gyms"
+  ],
+  "selectedSource": "query",
+  "timestamp": "",
+  "additionalCollections": [ ],
+  "headers": { },
+  "interceptors": [ ],
+  "customHook": { },
+  "stepDefinitionName": "default-merging",
+  "stepDefinitionType": "merging",
+  "stepId": "merge_Gyms-merging",
+  "acceptsBatch": false,
+  "stepUpdate": false,
+  "lastUpdated": "2022-07-20T22:01:47.009276-07:00"
+}

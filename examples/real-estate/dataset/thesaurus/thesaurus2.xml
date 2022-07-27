@@ -1,0 +1,239 @@
+<thesaurus xmlns="http://marklogic.com/xdmp/thesaurus">
+  <!--
+  Each entry is lower-cased, as the thesaurus.xqy algorithm lower-cases a value before doing a thesaurus lookup.
+  -->
+  <entry>
+    <term>Masedon Day Care</term>
+    <synonym>
+      <term>Covolini Day Care</term>
+    </synonym>
+  </entry>
+  <entry>
+    <term>Halahan Day Care</term>
+    <synonym>
+      <term>Brosoli Day Care</term>
+    </synonym>
+  </entry>
+  <entry>
+    <term>Bellas Day Care</term>
+    <synonym>
+      <term>Dillway Day Care</term>
+    </synonym>
+  </entry>
+  <entry>
+    <term>Antrum Day Care</term>
+    <synonym>
+      <term>Posselow Day Care</term>
+    </synonym>
+  </entry>
+  <entry>
+    <term>Bonafant Day Care</term>
+    <synonym>
+      <term>Vandrill Day Care</term>
+    </synonym>
+    <synonym>
+      <term>Oneil Day Care</term>
+    </synonym>
+    <synonym>
+      <term>Meriott Day Caree</term>
+    </synonym>
+    <synonym>
+      <term>Whife Day Care</term>
+    </synonym>
+  </entry>
+  <entry>
+    <term>Iverson Day Care</term>
+    <synonym>
+      <term>Osmar Day Care</term>
+    </synonym>
+    <synonym>
+      <term>Andrewartha Day Care</term>
+    </synonym>
+  </entry>
+  <entry>
+    <term>Charlin Day Care</term>
+    <synonym>
+      <term>Drain Day Care</term>
+    </synonym>
+    <synonym>
+      <term>Herley Day Care</term>
+    </synonym>
+  </entry>
+  <entry>
+    <term>Seakin Day Care</term>
+    <synonym>
+      <term>Antcliffe Day Care</term>
+    </synonym>
+  </entry>
+  <entry>
+    <term>Stryde Day Care</term>
+    <synonym>
+      <term>Bolus Day Care</term>
+    </synonym>
+  </entry>
+  <entry>
+    <term>Maciejewski Day Care</term>
+    <synonym>
+      <term>Curtin Day Care</term>
+    </synonym>
+    <synonym>
+      <term>Yeardley Day Care</term>
+    </synonym>
+  </entry>
+  <entry>
+    <term>Poluzzi Day Care</term>
+    <synonym>
+      <term>Fechnie Day Care</term>
+    </synonym>
+  </entry>
+  <entry>
+    <term>Service Day Care</term>
+    <synonym>
+      <term>Belk Day Care</term>
+    </synonym>
+  </entry>
+  <entry>
+    <term>Guenther Day Care</term>
+    <synonym>
+      <term>McElmurray Day Care</term>
+    </synonym>
+  </entry>
+  <entry>
+    <term>Webborn Day Care</term>
+    <synonym>
+      <term>Gatch Day Care</term>
+    </synonym>
+  </entry>
+  <entry>
+    <term>Brewin Day Care</term>
+    <synonym>
+      <term>Port Day Care</term>
+    </synonym>
+  </entry>
+  <entry>
+    <term>Otter Home</term>
+    <synonym>
+      <term>Suerz Home</term>
+    </synonym>
+  </entry>
+  <entry>
+    <term>Masedon Day Care</term>
+    <synonym>
+      <term>Covolini Day Care</term>
+    </synonym>
+  </entry>
+  <entry>
+    <term>Ronci Home</term>
+    <synonym>
+      <term>Whitwham Home</term>
+    </synonym>
+  </entry>
+  <entry>
+    <term>Smewin Home</term>
+    <synonym>
+      <term>Brazer Home</term>
+    </synonym>
+  </entry>
+  <entry>
+    <term>Crew Home</term>
+    <synonym>
+      <term>Spurden Home</term>
+    </synonym>
+  </entry>
+  <entry>
+    <term>Muddiman Home</term>
+    <synonym>
+      <term>Moorey Home</term>
+    </synonym>
+  </entry>
+  <entry>
+    <term>MacGiffin Home</term>
+    <synonym>
+      <term>Surr Home</term>
+    </synonym>
+  </entry>
+  <entry>
+    <term>Pilch Home</term>
+    <synonym>
+      <term>Klawi Home</term>
+    </synonym>
+  </entry>
+  <entry>
+    <term>Tellenbroker Home</term>
+    <synonym>
+      <term>Cordet Home</term>
+    </synonym>
+  </entry>
+  <entry>
+    <term>Eilhermann Home</term>
+    <synonym>
+      <term>Downse Home</term>
+    </synonym>
+  </entry>
+  <entry>
+    <term>Keizman Home</term>
+    <synonym>
+      <term>Tredwell Home</term>
+    </synonym>
+    <synonym>
+      <term>Clunan Home</term>
+    </synonym>
+    <synonym>
+      <term>Sindle Home</term>
+    </synonym>
+  </entry>
+  <entry>
+    <term>Patnelli Home</term>
+    <synonym>
+      <term>Severns Home</term>
+    </synonym>
+  </entry>
+  <entry>
+    <term>Beagin Home</term>
+    <synonym>
+      <term>Champley Home</term>
+    </synonym>
+  </entry>
+  <entry>
+    <term>Le Pine Home</term>
+    <synonym>
+      <term>Gethins Home</term>
+    </synonym>
+  </entry>
+  <entry>
+    <term>Pickavant Home</term>
+    <synonym>
+      <term>Hagart Home</term>
+    </synonym>
+  </entry>
+  <entry>
+    <term>Burmaster Home</term>
+    <synonym>
+      <term>Jodrelle Home</term>
+    </synonym>
+    <synonym>
+      <term>Batstone Home</term>
+    </synonym>
+    <synonym>
+      <term>Groll Home</term>
+    </synonym>
+  </entry>
+  <entry>
+    <term>Fried Home</term>
+    <synonym>
+      <term>Luscott Home</term>
+    </synonym>
+  </entry>
+  <entry>
+    <term>Dodgshun Home</term>
+    <synonym>
+      <term>Sandever Home</term>
+    </synonym>
+  </entry>
+  <entry>
+    <term>Tiffany Home</term>
+    <synonym>
+      <term>Sandever Home</term>
+    </synonym>
+  </entry>
+</thesaurus>

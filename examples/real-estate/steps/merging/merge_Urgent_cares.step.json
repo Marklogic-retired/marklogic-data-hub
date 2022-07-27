@@ -1,0 +1,44 @@
+{
+  "batchSize": 1,
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "targetEntityType": "Urgent_Cares",
+  "sourceQuery": "cts.collectionQuery(['match_Urgent_Cares'])",
+  "provenanceGranularityLevel": "off",
+  "collections": [
+    "merge_Urgent_cares"
+  ],
+  "targetFormat": "json",
+  "mergeRules": [
+    {
+      "entityPropertyPath": "Area_ID",
+      "mergeType": "property-specific",
+      "maxSources": "All",
+      "maxValues": "All",
+      "priorityOrder": {
+        "sources": [ ],
+        "timeWeight": 0
+      }
+    }
+  ],
+  "mergeStrategies": [ ],
+  "targetCollections": null,
+  "name": "merge_Urgent_cares",
+  "description": "",
+  "collection": [
+    "match_Urgent_Cares"
+  ],
+  "selectedSource": "collection",
+  "timestamp": "",
+  "additionalCollections": [ ],
+  "headers": { },
+  "interceptors": [ ],
+  "customHook": { },
+  "stepDefinitionName": "default-merging",
+  "stepDefinitionType": "merging",
+  "stepId": "merge_Urgent_cares-merging",
+  "acceptsBatch": false,
+  "stepUpdate": false,
+  "lastUpdated": "2022-07-20T21:25:59.022608-07:00"
+}

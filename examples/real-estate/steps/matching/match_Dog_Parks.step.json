@@ -1,0 +1,50 @@
+{
+  "batchSize": 100,
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "targetEntityType": "Dog_Parks",
+  "sourceQuery": "cts.collectionQuery(['Dog_Parks'])",
+  "collections": [
+    "match_Dog_Parks"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "targetFormat": "json",
+  "matchRulesets": [
+    {
+      "name": "Area_ID - Exact",
+      "weight": 5,
+      "reduce": false,
+      "matchRules": [
+        {
+          "entityPropertyPath": "Area_ID",
+          "matchType": "exact",
+          "options": { }
+        }
+      ]
+    }
+  ],
+  "thresholds": [
+    {
+      "thresholdName": "Dog Parks in Area",
+      "action": "merge",
+      "score": 5
+    }
+  ],
+  "name": "match_Dog_Parks",
+  "description": "",
+  "collection": [
+    "Dog_Parks"
+  ],
+  "selectedSource": "collection",
+  "additionalCollections": [ ],
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "stepDefinitionName": "default-matching",
+  "stepDefinitionType": "matching",
+  "stepId": "match_Dog_Parks-matching",
+  "acceptsBatch": true,
+  "stepUpdate": false,
+  "lastUpdated": "2022-07-24T17:12:47.92188-07:00"
+}

@@ -1,0 +1,115 @@
+{
+  "name": "Data_Matching",
+  "steps": {
+    "1": {
+      "stepId": "match_Air_Bnb_Listings-matching"
+    },
+    "2": {
+      "stepId": "match_Airports-matching"
+    },
+    "3": {
+      "stepId": "match_Commercial_properties-matching"
+    },
+    "4": {
+      "stepId": "match_Colleges-matching"
+    },
+    "5": {
+      "stepId": "match_Banks-matching"
+    },
+    "6": {
+      "stepId": "match_Car_Rentals-matching"
+    },
+    "7": {
+      "stepId": "match_Car_Services_JSON-matching"
+    },
+    "8": {
+      "stepId": "match_Car_Services_XML-matching"
+    },
+    "9": {
+      "stepId": "match_Car_Wash_JSON-matching"
+    },
+    "10": {
+      "stepId": "match_Car_Wash_XML-matching"
+    },
+    "11": {
+      "stepId": "match_Day_Cares-matching"
+    },
+    "12": {
+      "stepId": "match_Dog_Parks-matching"
+    },
+    "13": {
+      "stepId": "match_Emergency_Services-matching"
+    },
+    "14": {
+      "stepId": "match_Factories-matching"
+    },
+    "15": {
+      "stepId": "match_Gas_Stations-matching"
+    },
+    "16": {
+      "stepId": "match_Gas_Stations_XML-matching"
+    },
+    "17": {
+      "stepId": "match_Gyms-matching"
+    },
+    "18": {
+      "stepId": "match_Hotels-matching"
+    },
+    "19": {
+      "stepId": "match_Hiking_Places-matching"
+    },
+    "20": {
+      "stepId": "match_Hospitals-matching"
+    },
+    "21": {
+      "stepId": "match_lands-matching"
+    },
+    "22": {
+      "stepId": "match_Locations_Near-matching"
+    },
+    "23": {
+      "stepId": "match_Military_Base-matching"
+    },
+    "24": {
+      "stepId": "match_Parks_and_Recreation-matching"
+    },
+    "25": {
+      "stepId": "match_Pharmacy-matching"
+    },
+    "26": {
+      "stepId": "match_Post_Offices-matching"
+    },
+    "27": {
+      "stepId": "match_Private_Schools-matching"
+    },
+    "28": {
+      "stepId": "match_Public_Schools-matching"
+    },
+    "29": {
+      "stepId": "match_Restaurants-matching"
+    },
+    "30": {
+      "stepId": "match_Shopping_Centers-matching"
+    },
+    "31": {
+      "stepId": "match_Storage_Spaces-matching"
+    },
+    "32": {
+      "stepId": "match_Swimming_Pools-matching"
+    },
+    "33": {
+      "stepId": "match_Theatres-matching"
+    },
+    "34": {
+      "stepId": "match_USZips-matching"
+    },
+    "35": {
+      "stepId": "match_Urgent_Cares-matching"
+    },
+    "36": {
+      "stepId": "match_Day_Care_Synonym-matching"
+    }
+  },
+  "description": "Matching Real Estate Data",
+  "lastUpdated": "2022-07-25T11:37:01.720097-07:00"
+}

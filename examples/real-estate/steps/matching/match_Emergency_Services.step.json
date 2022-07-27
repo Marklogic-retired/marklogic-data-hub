@@ -1,0 +1,73 @@
+{
+  "batchSize": 100,
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "targetEntityType": "Emergency_Services",
+  "sourceQuery": "cts.collectionQuery(['Emergency_Services'])",
+  "collections": [
+    "match_Emergency_Services"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "targetFormat": "json",
+  "matchRulesets": [
+    {
+      "name": "Area_ID - Exact",
+      "weight": 5,
+      "reduce": false,
+      "matchRules": [
+        {
+          "entityPropertyPath": "Area_ID",
+          "matchType": "exact",
+          "options": { }
+        }
+      ]
+    },
+    {
+      "name": "ID-Type",
+      "weight": 10,
+      "reduce": false,
+      "matchRules": [
+        {
+          "entityPropertyPath": "Area_ID",
+          "matchType": "exact",
+          "options": { }
+        },
+        {
+          "entityPropertyPath": "Type",
+          "matchType": "exact",
+          "options": { }
+        }
+      ],
+      "rulesetType": "multiple"
+    }
+  ],
+  "thresholds": [
+    {
+      "thresholdName": "Emergency Services in Area",
+      "action": "merge",
+      "score": 5
+    },
+    {
+      "thresholdName": "Similar Emergency Services in Area",
+      "action": "notify",
+      "score": 10
+    }
+  ],
+  "name": "match_Emergency_Services",
+  "description": "",
+  "collection": [
+    "Emergency_Services"
+  ],
+  "selectedSource": "collection",
+  "additionalCollections": [ ],
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "stepDefinitionName": "default-matching",
+  "stepDefinitionType": "matching",
+  "stepId": "match_Emergency_Services-matching",
+  "acceptsBatch": true,
+  "stepUpdate": false,
+  "lastUpdated": "2022-07-24T17:12:47.866786-07:00"
+}

@@ -1,0 +1,44 @@
+{
+  "batchSize": 1,
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "targetEntityType": "Car_Wash",
+  "sourceQuery": "cts.collectionQuery(['match_Car_Wash_JSON'])",
+  "provenanceGranularityLevel": "off",
+  "collections": [
+    "merge_Car_Wash_JSON"
+  ],
+  "targetFormat": "json",
+  "mergeRules": [
+    {
+      "entityPropertyPath": "Area_ID",
+      "mergeType": "property-specific",
+      "maxSources": "All",
+      "maxValues": "All",
+      "priorityOrder": {
+        "sources": [ ],
+        "timeWeight": 0
+      }
+    }
+  ],
+  "mergeStrategies": [ ],
+  "targetCollections": null,
+  "name": "merge_Car_Wash_JSON",
+  "description": "",
+  "collection": [
+    "match_Car_Wash_JSON"
+  ],
+  "selectedSource": "collection",
+  "timestamp": "",
+  "additionalCollections": [ ],
+  "headers": { },
+  "interceptors": [ ],
+  "customHook": { },
+  "stepDefinitionName": "default-merging",
+  "stepDefinitionType": "merging",
+  "stepId": "merge_Car_Wash_JSON-merging",
+  "acceptsBatch": false,
+  "stepUpdate": false,
+  "lastUpdated": "2022-07-26T14:09:33.513454-07:00"
+}

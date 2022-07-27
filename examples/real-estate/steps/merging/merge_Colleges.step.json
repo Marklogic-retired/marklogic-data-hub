@@ -1,0 +1,68 @@
+{
+  "batchSize": 1,
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "targetEntityType": "Colleges",
+  "sourceQuery": "cts.collectionQuery(['match_Colleges'])",
+  "provenanceGranularityLevel": "off",
+  "collections": [
+    "merge_Colleges"
+  ],
+  "targetFormat": "json",
+  "mergeRules": [
+    {
+      "entityPropertyPath": "Area_ID",
+      "mergeType": "strategy",
+      "mergeStrategyName": "Max_Ten_Colleges_In_Area"
+    }
+  ],
+  "mergeStrategies": [
+    {
+      "strategyName": "Max_Ten_Colleges_In_Area",
+      "maxSources": "1",
+      "maxValues": "10",
+      "priorityOrder": {
+        "sources": [
+          {
+            "sourceName": "Manually Created Data",
+            "weight": 20
+          }
+        ],
+        "timeWeight": 0
+      },
+      "default": false
+    }
+  ],
+  "targetCollections": {
+    "onMerge": {
+      "add": [ ]
+    },
+    "onNoMatch": {
+      "add": [ ]
+    },
+    "onArchive": {
+      "add": [ ]
+    },
+    "onNotification": {
+      "add": [ ]
+    }
+  },
+  "name": "merge_Colleges",
+  "description": "",
+  "collection": [
+    "match_Colleges"
+  ],
+  "selectedSource": "collection",
+  "timestamp": "",
+  "additionalCollections": [ ],
+  "headers": { },
+  "interceptors": [ ],
+  "customHook": { },
+  "stepDefinitionName": "default-merging",
+  "stepDefinitionType": "merging",
+  "stepId": "merge_Colleges-merging",
+  "acceptsBatch": false,
+  "stepUpdate": false,
+  "lastUpdated": "2022-07-26T13:59:10.861174-07:00"
+}

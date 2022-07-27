@@ -1,0 +1,44 @@
+{
+  "batchSize": 1,
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "targetEntityType": "Hospitals",
+  "sourceQuery": "cts.collectionQuery(['match_Hospitals'])",
+  "provenanceGranularityLevel": "off",
+  "collections": [
+    "merge_Hospitals"
+  ],
+  "targetFormat": "json",
+  "mergeRules": [
+    {
+      "entityPropertyPath": "Area_ID",
+      "mergeType": "property-specific",
+      "maxSources": "All",
+      "maxValues": "All",
+      "priorityOrder": {
+        "sources": [ ],
+        "timeWeight": 0
+      }
+    }
+  ],
+  "mergeStrategies": [ ],
+  "targetCollections": null,
+  "name": "merge_Hospitals",
+  "description": "",
+  "collection": [
+    "match_Hospitals"
+  ],
+  "selectedSource": "collection",
+  "timestamp": "",
+  "additionalCollections": [ ],
+  "headers": { },
+  "interceptors": [ ],
+  "customHook": { },
+  "stepDefinitionName": "default-merging",
+  "stepDefinitionType": "merging",
+  "stepId": "merge_Hospitals-merging",
+  "acceptsBatch": false,
+  "stepUpdate": false,
+  "lastUpdated": "2022-07-20T21:58:23.290174-07:00"
+}

@@ -1,0 +1,44 @@
+{
+  "batchSize": 1,
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "targetEntityType": "Dog_Parks",
+  "sourceQuery": "cts.collectionQuery(['match_Dog_Parks'])",
+  "provenanceGranularityLevel": "off",
+  "collections": [
+    "merge_Dog_Parks"
+  ],
+  "targetFormat": "json",
+  "mergeRules": [
+    {
+      "entityPropertyPath": "Area_ID",
+      "mergeType": "property-specific",
+      "maxSources": "All",
+      "maxValues": "All",
+      "priorityOrder": {
+        "sources": [ ],
+        "timeWeight": 0
+      }
+    }
+  ],
+  "mergeStrategies": [ ],
+  "targetCollections": null,
+  "name": "merge_Dog_Parks",
+  "description": "",
+  "collection": [
+    "match_Dog_Parks"
+  ],
+  "selectedSource": "collection",
+  "timestamp": "",
+  "additionalCollections": [ ],
+  "headers": { },
+  "interceptors": [ ],
+  "customHook": { },
+  "stepDefinitionName": "default-merging",
+  "stepDefinitionType": "merging",
+  "stepId": "merge_Dog_Parks-merging",
+  "acceptsBatch": false,
+  "stepUpdate": false,
+  "lastUpdated": "2022-07-20T22:06:46.795985-07:00"
+}

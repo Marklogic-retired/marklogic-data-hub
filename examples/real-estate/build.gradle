@@ -14,3 +14,33 @@ plugins {
     id "java"
 }
 apply plugin: "com.marklogic.ml-data-hub"
+
+repositories {
+    mavenCentral()
+    maven { url "https://developer.marklogic.com/maven2/" }
+}
+
+configurations {
+    mlcp
+}
+
+dependencies {
+    mlcp "com.marklogic:mlcp:10.0.8.2"
+    mlcp files("lib")
+}
+
+
+task loadThesaurus(type: com.marklogic.gradle.task.MlcpTask) {
+    classpath = configurations.mlcp
+    username = project.findProperty("mlUsername")
+    password = project.findProperty("mlPassword")
+    command = "IMPORT"
+    database = "data-hub-FINAL"
+    input_file_path = "dataset/thesaurus"
+    output_collections = "http://marklogic.com/xdmp/thesaurus,http://marklogic.com/xdmp/documents"
+    output_permissions = "data-hub-common,read,data-hub-common,update"
+    output_uri_replace = ".*dataset,''"
+}
+
+mlPostDeploy.dependsOn loadThesaurus
+
