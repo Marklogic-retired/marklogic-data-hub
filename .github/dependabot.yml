@@ -7,7 +7,7 @@ updates:
     - package-ecosystem: "npm"
       directory: "/marklogic-data-hub-central/ui/"
       schedule:
-          interval: "weekly" d
+          interval: "weekly"
           day: "friday"
       target-branch: "develop"
       open-pull-requests-limit: 0
