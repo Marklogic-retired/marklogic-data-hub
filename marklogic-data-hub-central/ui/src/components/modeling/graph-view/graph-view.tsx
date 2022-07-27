@@ -67,7 +67,7 @@ const GraphView: React.FC<Props> = (props) => {
   useEffect(() => {
     if (props.entityTypes) {
       props.entityTypes.map((element) => {
-        element.label = element.entityName;
+        element.label = element.hasOwnProperty("conceptName") ? element.conceptName : element.entityName;
       });
     }
     setFilterMenuSuggestions(props.entityTypes);
