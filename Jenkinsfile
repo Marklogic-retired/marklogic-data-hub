@@ -1464,7 +1464,7 @@ pipeline{
                 */
 
                 stage('cypress-win-chrome'){
-                    agent { label 'sel-w10v-90-8'}
+                    agent { label 'w10-dhf-5'}
                     environment{
                         JAVA_HOME="C:\\Program Files (x86)\\OpenJDK\\jdk-8.0.262.10-hotspot"
                         M2_LOCAL_REPO="$WORKSPACE/repository"
