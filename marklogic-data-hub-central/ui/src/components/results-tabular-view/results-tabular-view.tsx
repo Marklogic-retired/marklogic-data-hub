@@ -5,11 +5,11 @@ import styles from "./results-tabular-view.module.scss";
 import ColumnSelector from "@components/column-selector/column-selector";
 import {SearchContext} from "@util/search-context";
 import {Link} from "react-router-dom";
-import {faCode, faProjectDiagram, faThList, IconDefinition} from "@fortawesome/free-solid-svg-icons";
+import {faCode, faProjectDiagram, faThList, IconDefinition, faFileExport, faColumns} from "@fortawesome/free-solid-svg-icons";
+import {TbArrowsSplit} from "react-icons/tb";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {dateConverter} from "@util/date-conversion";
 import {HCTooltip, HCTable} from "@components/common";
-import {faFileExport, faColumns} from "@fortawesome/free-solid-svg-icons";
 import {themeColors} from "@config/themes.config";
 import tooltipsConfig from "@config/explorer-tooltips.config";
 
@@ -368,6 +368,21 @@ const ResultsTabularView = (props) => {
               size="sm" data-testid={`${primaryKeyValue}-graphOnSeparatePage`} onClick={() => navigateToGraphView(item)} /></i>
           </HCTooltip>
         </div>
+        {
+          item.unmerge ?
+            <div className={styles.unMergeIcon}>
+              <HCTooltip text={"Unmerge Documents"} id="unmerge-icon-tooltip" placement="top-end">
+                <i><TbArrowsSplit className={styles.unMergeIcon} data-testid={`${primaryKeyValue}-unmergeIcon`} aria-label={`${primaryKeyValue}-unmerge-icon`}/></i>
+              </HCTooltip>
+            </div>
+            : null
+            // <div className={styles.mergeIcon}>
+            //   <HCTooltip text={"Merge Documents"} id="merge-icon" placement="top-end">
+            //     <i><TbArrowsJoin className={styles.unMerge}/></i>
+            //   </HCTooltip>
+            // </div>
+
+        }
       </div> : "";
     if (props.selectedEntities?.length > 1 && item.hasOwnProperty("entityName")) {
       let itemIdentifier = item.identifier?.propertyValue;

@@ -703,6 +703,10 @@ class BrowsePage {
     return cy.findByText(text);
   }
 
+  // unmerge icon
+  getUnmergeIcon(primaryKeyValue: string) {
+    return cy.get(`[aria-label="${primaryKeyValue}-unmerge-icon"`);
+  }
 }
 
 const browsePage = new BrowsePage();

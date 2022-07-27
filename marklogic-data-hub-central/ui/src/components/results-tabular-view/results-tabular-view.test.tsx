@@ -72,6 +72,9 @@ describe("Results Table view component", () => {
     //Check if the tooltip on 'source on separate page' icon works fine.
     fireEvent.mouseOver(getByTestId("101-sourceOnSeparatePage"));
     await(waitForElement(() => (getByText("Show the complete JSON"))));
+
+    fireEvent.mouseOver(getByTestId("101-unmergeIcon"));
+    await(waitForElement(() => (getByText("Unmerge Documents"))));
   });
 
   test("Result table with no data renders", async () => {
