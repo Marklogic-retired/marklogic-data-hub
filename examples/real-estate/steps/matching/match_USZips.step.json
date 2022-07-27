@@ -1,0 +1,68 @@
+{
+  "batchSize": 100,
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "targetEntityType": "USZips",
+  "sourceQuery": "cts.collectionQuery(['USZips'])",
+  "collections": [
+    "match_USZips"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "targetFormat": "json",
+  "matchRulesets": [
+    {
+      "name": "Area_ID - Exact",
+      "weight": 5,
+      "reduce": false,
+      "matchRules": [
+        {
+          "entityPropertyPath": "Area_ID",
+          "matchType": "exact",
+          "options": { }
+        }
+      ]
+    },
+    {
+      "name": "Zip",
+      "weight": 10,
+      "reduce": false,
+      "matchRules": [
+        {
+          "entityPropertyPath": "Zip_Code",
+          "matchType": "zip",
+          "options": { }
+        }
+      ],
+      "rulesetType": "multiple"
+    }
+  ],
+  "thresholds": [
+    {
+      "thresholdName": "USZips",
+      "action": "merge",
+      "score": 5
+    },
+    {
+      "thresholdName": "Zip",
+      "action": "notify",
+      "score": 10
+    }
+  ],
+  "name": "match_USZips",
+  "description": "",
+  "collection": [
+    "USZips"
+  ],
+  "selectedSource": "collection",
+  "additionalCollections": [ ],
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "stepDefinitionName": "default-matching",
+  "stepDefinitionType": "matching",
+  "stepId": "match_USZips-matching",
+  "acceptsBatch": true,
+  "stepUpdate": false,
+  "lastUpdated": "2022-07-25T16:10:03.879235-07:00"
+}

@@ -1,0 +1,50 @@
+{
+  "batchSize": 100,
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "targetEntityType": "Restaurants",
+  "sourceQuery": "cts.collectionQuery(['Restaurants'])",
+  "collections": [
+    "match_Restaurants"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "targetFormat": "json",
+  "matchRulesets": [
+    {
+      "name": "Area_ID - Exact",
+      "weight": 5,
+      "reduce": false,
+      "matchRules": [
+        {
+          "entityPropertyPath": "Area_ID",
+          "matchType": "exact",
+          "options": { }
+        }
+      ]
+    }
+  ],
+  "thresholds": [
+    {
+      "thresholdName": "Restaurants in Area",
+      "action": "merge",
+      "score": 5
+    }
+  ],
+  "name": "match_Restaurants",
+  "description": "",
+  "collection": [
+    "Restaurants"
+  ],
+  "selectedSource": "collection",
+  "additionalCollections": [ ],
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "stepDefinitionName": "default-matching",
+  "stepDefinitionType": "matching",
+  "stepId": "match_Restaurants-matching",
+  "acceptsBatch": true,
+  "stepUpdate": false,
+  "lastUpdated": "2022-07-24T17:12:47.218533-07:00"
+}

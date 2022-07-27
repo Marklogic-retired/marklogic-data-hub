@@ -16,7 +16,7 @@
         },
         "Restaurant_Name": {
           "datatype": "string",
-          "facetable": false,
+          "facetable": true,
           "sortable": false,
           "collation": "http://marklogic.com/collation/codepoint"
         },

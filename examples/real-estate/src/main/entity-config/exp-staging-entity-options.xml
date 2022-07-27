@@ -74,14 +74,14 @@
     </search:custom>
   </search:constraint>
   <search:operator name="sort">
-    <search:state name="Air_Bnb_Listings_NameAscending">
-      <search:sort-order type="xs:string" direction="ascending">
-	<search:path-index xmlns:es="http://marklogic.com/entity-services" xmlns:cwsh="http://carwashes.org/" xmlns:awse="http://Areawise.org/" xmlns:crvs="http://carservices.com/" xmlns:gstn="http://gasstations.org/">/(es:envelope|envelope)/(es:instance|instance)/Air_Bnb_Listings/Name</search:path-index>
+    <search:state name="Airports_Area_IDAscending">
+      <search:sort-order type="xs:decimal" direction="ascending">
+	<search:path-index xmlns:es="http://marklogic.com/entity-services" xmlns:cwsh="http://carwashes.org/" xmlns:awse="http://Areawise.org/" xmlns:crvs="http://carservices.com/" xmlns:gstn="http://gasstations.org/">/(es:envelope|envelope)/(es:instance|instance)/Airports/Area_ID</search:path-index>
       </search:sort-order>
     </search:state>
-    <search:state name="Air_Bnb_Listings_NameDescending">
-      <search:sort-order type="xs:string" direction="descending">
-	<search:path-index xmlns:es="http://marklogic.com/entity-services" xmlns:cwsh="http://carwashes.org/" xmlns:awse="http://Areawise.org/" xmlns:crvs="http://carservices.com/" xmlns:gstn="http://gasstations.org/">/(es:envelope|envelope)/(es:instance|instance)/Air_Bnb_Listings/Name</search:path-index>
+    <search:state name="Airports_Area_IDDescending">
+      <search:sort-order type="xs:decimal" direction="descending">
+	<search:path-index xmlns:es="http://marklogic.com/entity-services" xmlns:cwsh="http://carwashes.org/" xmlns:awse="http://Areawise.org/" xmlns:crvs="http://carservices.com/" xmlns:gstn="http://gasstations.org/">/(es:envelope|envelope)/(es:instance|instance)/Airports/Area_ID</search:path-index>
       </search:sort-order>
     </search:state>
     <search:state name="Bank_RatingAscending">
@@ -94,34 +94,14 @@
 	<search:path-index xmlns:es="http://marklogic.com/entity-services" xmlns:cwsh="http://carwashes.org/" xmlns:awse="http://Areawise.org/" xmlns:crvs="http://carservices.com/" xmlns:gstn="http://gasstations.org/">/(es:envelope|envelope)/(es:instance|instance)/Bank/Rating</search:path-index>
       </search:sort-order>
     </search:state>
-    <search:state name="Car_Rentals_RatingAscending">
+    <search:state name="Car_Services_RatingAscending">
       <search:sort-order type="xs:decimal" direction="ascending">
-	<search:path-index xmlns:es="http://marklogic.com/entity-services" xmlns:cwsh="http://carwashes.org/" xmlns:awse="http://Areawise.org/" xmlns:crvs="http://carservices.com/" xmlns:gstn="http://gasstations.org/">/(es:envelope|envelope)/(es:instance|instance)/Car_Rentals/Rating</search:path-index>
+	<search:path-index xmlns:es="http://marklogic.com/entity-services" xmlns:cwsh="http://carwashes.org/" xmlns:awse="http://Areawise.org/" xmlns:crvs="http://carservices.com/" xmlns:gstn="http://gasstations.org/">/(es:envelope|envelope)/(es:instance|instance)/Car_Services/Rating</search:path-index>
       </search:sort-order>
     </search:state>
-    <search:state name="Car_Rentals_RatingDescending">
+    <search:state name="Car_Services_RatingDescending">
       <search:sort-order type="xs:decimal" direction="descending">
-	<search:path-index xmlns:es="http://marklogic.com/entity-services" xmlns:cwsh="http://carwashes.org/" xmlns:awse="http://Areawise.org/" xmlns:crvs="http://carservices.com/" xmlns:gstn="http://gasstations.org/">/(es:envelope|envelope)/(es:instance|instance)/Car_Rentals/Rating</search:path-index>
-      </search:sort-order>
-    </search:state>
-    <search:state name="Airports_Area_IDAscending">
-      <search:sort-order type="xs:decimal" direction="ascending">
-	<search:path-index xmlns:es="http://marklogic.com/entity-services" xmlns:cwsh="http://carwashes.org/" xmlns:awse="http://Areawise.org/" xmlns:crvs="http://carservices.com/" xmlns:gstn="http://gasstations.org/">/(es:envelope|envelope)/(es:instance|instance)/Airports/Area_ID</search:path-index>
-      </search:sort-order>
-    </search:state>
-    <search:state name="Airports_Area_IDDescending">
-      <search:sort-order type="xs:decimal" direction="descending">
-	<search:path-index xmlns:es="http://marklogic.com/entity-services" xmlns:cwsh="http://carwashes.org/" xmlns:awse="http://Areawise.org/" xmlns:crvs="http://carservices.com/" xmlns:gstn="http://gasstations.org/">/(es:envelope|envelope)/(es:instance|instance)/Airports/Area_ID</search:path-index>
-      </search:sort-order>
-    </search:state>
-    <search:state name="Car_Wash_RatingAscending">
-      <search:sort-order type="xs:decimal" direction="ascending">
-	<search:path-index xmlns:es="http://marklogic.com/entity-services" xmlns:cwsh="http://carwashes.org/" xmlns:awse="http://Areawise.org/" xmlns:crvs="http://carservices.com/" xmlns:gstn="http://gasstations.org/">/(es:envelope|envelope)/(es:instance|instance)/Car_Wash/Rating</search:path-index>
-      </search:sort-order>
-    </search:state>
-    <search:state name="Car_Wash_RatingDescending">
-      <search:sort-order type="xs:decimal" direction="descending">
-	<search:path-index xmlns:es="http://marklogic.com/entity-services" xmlns:cwsh="http://carwashes.org/" xmlns:awse="http://Areawise.org/" xmlns:crvs="http://carservices.com/" xmlns:gstn="http://gasstations.org/">/(es:envelope|envelope)/(es:instance|instance)/Car_Wash/Rating</search:path-index>
+	<search:path-index xmlns:es="http://marklogic.com/entity-services" xmlns:cwsh="http://carwashes.org/" xmlns:awse="http://Areawise.org/" xmlns:crvs="http://carservices.com/" xmlns:gstn="http://gasstations.org/">/(es:envelope|envelope)/(es:instance|instance)/Car_Services/Rating</search:path-index>
       </search:sort-order>
     </search:state>
     <search:state name="Air_Bnb_Listings_RatingAscending">
@@ -144,6 +124,26 @@
 	<search:path-index xmlns:es="http://marklogic.com/entity-services" xmlns:cwsh="http://carwashes.org/" xmlns:awse="http://Areawise.org/" xmlns:crvs="http://carservices.com/" xmlns:gstn="http://gasstations.org/">/(es:envelope|envelope)/(es:instance|instance)/Airports/Airport_Type</search:path-index>
       </search:sort-order>
     </search:state>
+    <search:state name="Demographics_Area_IDAscending">
+      <search:sort-order type="xs:decimal" direction="ascending">
+	<search:path-index xmlns:es="http://marklogic.com/entity-services" xmlns:cwsh="http://carwashes.org/" xmlns:awse="http://Areawise.org/" xmlns:crvs="http://carservices.com/" xmlns:gstn="http://gasstations.org/">/(es:envelope|envelope)/(es:instance|instance)/Demographics/Area_ID</search:path-index>
+      </search:sort-order>
+    </search:state>
+    <search:state name="Demographics_Area_IDDescending">
+      <search:sort-order type="xs:decimal" direction="descending">
+	<search:path-index xmlns:es="http://marklogic.com/entity-services" xmlns:cwsh="http://carwashes.org/" xmlns:awse="http://Areawise.org/" xmlns:crvs="http://carservices.com/" xmlns:gstn="http://gasstations.org/">/(es:envelope|envelope)/(es:instance|instance)/Demographics/Area_ID</search:path-index>
+      </search:sort-order>
+    </search:state>
+    <search:state name="Car_Rentals_RatingAscending">
+      <search:sort-order type="xs:decimal" direction="ascending">
+	<search:path-index xmlns:es="http://marklogic.com/entity-services" xmlns:cwsh="http://carwashes.org/" xmlns:awse="http://Areawise.org/" xmlns:crvs="http://carservices.com/" xmlns:gstn="http://gasstations.org/">/(es:envelope|envelope)/(es:instance|instance)/Car_Rentals/Rating</search:path-index>
+      </search:sort-order>
+    </search:state>
+    <search:state name="Car_Rentals_RatingDescending">
+      <search:sort-order type="xs:decimal" direction="descending">
+	<search:path-index xmlns:es="http://marklogic.com/entity-services" xmlns:cwsh="http://carwashes.org/" xmlns:awse="http://Areawise.org/" xmlns:crvs="http://carservices.com/" xmlns:gstn="http://gasstations.org/">/(es:envelope|envelope)/(es:instance|instance)/Car_Rentals/Rating</search:path-index>
+      </search:sort-order>
+    </search:state>
     <search:state name="Airports_Distance_MilesAscending">
       <search:sort-order type="xs:decimal" direction="ascending">
 	<search:path-index xmlns:es="http://marklogic.com/entity-services" xmlns:cwsh="http://carwashes.org/" xmlns:awse="http://Areawise.org/" xmlns:crvs="http://carservices.com/" xmlns:gstn="http://gasstations.org/">/(es:envelope|envelope)/(es:instance|instance)/Airports/Distance_Miles</search:path-index>
@@ -152,6 +152,26 @@
     <search:state name="Airports_Distance_MilesDescending">
       <search:sort-order type="xs:decimal" direction="descending">
 	<search:path-index xmlns:es="http://marklogic.com/entity-services" xmlns:cwsh="http://carwashes.org/" xmlns:awse="http://Areawise.org/" xmlns:crvs="http://carservices.com/" xmlns:gstn="http://gasstations.org/">/(es:envelope|envelope)/(es:instance|instance)/Airports/Distance_Miles</search:path-index>
+      </search:sort-order>
+    </search:state>
+    <search:state name="Car_Wash_RatingAscending">
+      <search:sort-order type="xs:decimal" direction="ascending">
+	<search:path-index xmlns:es="http://marklogic.com/entity-services" xmlns:cwsh="http://carwashes.org/" xmlns:awse="http://Areawise.org/" xmlns:crvs="http://carservices.com/" xmlns:gstn="http://gasstations.org/">/(es:envelope|envelope)/(es:instance|instance)/Car_Wash/Rating</search:path-index>
+      </search:sort-order>
+    </search:state>
+    <search:state name="Car_Wash_RatingDescending">
+      <search:sort-order type="xs:decimal" direction="descending">
+	<search:path-index xmlns:es="http://marklogic.com/entity-services" xmlns:cwsh="http://carwashes.org/" xmlns:awse="http://Areawise.org/" xmlns:crvs="http://carservices.com/" xmlns:gstn="http://gasstations.org/">/(es:envelope|envelope)/(es:instance|instance)/Car_Wash/Rating</search:path-index>
+      </search:sort-order>
+    </search:state>
+    <search:state name="Environmental_Risk_Area_IDAscending">
+      <search:sort-order type="xs:decimal" direction="ascending">
+	<search:path-index xmlns:es="http://marklogic.com/entity-services" xmlns:cwsh="http://carwashes.org/" xmlns:awse="http://Areawise.org/" xmlns:crvs="http://carservices.com/" xmlns:gstn="http://gasstations.org/">/(es:envelope|envelope)/(es:instance|instance)/Environmental_Risk/Area_ID</search:path-index>
+      </search:sort-order>
+    </search:state>
+    <search:state name="Environmental_Risk_Area_IDDescending">
+      <search:sort-order type="xs:decimal" direction="descending">
+	<search:path-index xmlns:es="http://marklogic.com/entity-services" xmlns:cwsh="http://carwashes.org/" xmlns:awse="http://Areawise.org/" xmlns:crvs="http://carservices.com/" xmlns:gstn="http://gasstations.org/">/(es:envelope|envelope)/(es:instance|instance)/Environmental_Risk/Area_ID</search:path-index>
       </search:sort-order>
     </search:state>
     <search:state name="Airports_RatingAscending">
@@ -174,14 +194,14 @@
 	<search:path-index xmlns:es="http://marklogic.com/entity-services" xmlns:cwsh="http://carwashes.org/" xmlns:awse="http://Areawise.org/" xmlns:crvs="http://carservices.com/" xmlns:gstn="http://gasstations.org/">/(es:envelope|envelope)/(es:instance|instance)/Annual_Climatic_Conditions/Area_ID</search:path-index>
       </search:sort-order>
     </search:state>
-    <search:state name="Car_Services_RatingAscending">
-      <search:sort-order type="xs:decimal" direction="ascending">
-	<search:path-index xmlns:es="http://marklogic.com/entity-services" xmlns:cwsh="http://carwashes.org/" xmlns:awse="http://Areawise.org/" xmlns:crvs="http://carservices.com/" xmlns:gstn="http://gasstations.org/">/(es:envelope|envelope)/(es:instance|instance)/Car_Services/Rating</search:path-index>
+    <search:state name="Air_Bnb_Listings_NameAscending">
+      <search:sort-order type="xs:string" direction="ascending">
+	<search:path-index xmlns:es="http://marklogic.com/entity-services" xmlns:cwsh="http://carwashes.org/" xmlns:awse="http://Areawise.org/" xmlns:crvs="http://carservices.com/" xmlns:gstn="http://gasstations.org/">/(es:envelope|envelope)/(es:instance|instance)/Air_Bnb_Listings/Name</search:path-index>
       </search:sort-order>
     </search:state>
-    <search:state name="Car_Services_RatingDescending">
-      <search:sort-order type="xs:decimal" direction="descending">
-	<search:path-index xmlns:es="http://marklogic.com/entity-services" xmlns:cwsh="http://carwashes.org/" xmlns:awse="http://Areawise.org/" xmlns:crvs="http://carservices.com/" xmlns:gstn="http://gasstations.org/">/(es:envelope|envelope)/(es:instance|instance)/Car_Services/Rating</search:path-index>
+    <search:state name="Air_Bnb_Listings_NameDescending">
+      <search:sort-order type="xs:string" direction="descending">
+	<search:path-index xmlns:es="http://marklogic.com/entity-services" xmlns:cwsh="http://carwashes.org/" xmlns:awse="http://Areawise.org/" xmlns:crvs="http://carservices.com/" xmlns:gstn="http://gasstations.org/">/(es:envelope|envelope)/(es:instance|instance)/Air_Bnb_Listings/Name</search:path-index>
       </search:sort-order>
     </search:state>
   </search:operator>
@@ -189,6 +209,46 @@
     <search:value>
       <search:element ns="http://marklogic.com/entity-services" name="title"/>
     </search:value>
+  </search:constraint>
+  <search:constraint name="Car_Wash_NS_XML.Name">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services" xmlns:cwsh="http://carwashes.org/">/es:envelope/es:instance/cwsh:Car_Wash_NS_XML/cwsh:Name</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>frequency-order</search:facet-option>
+      <search:facet-option>descending</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="Factories.Area_ID">
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Factories/Area_ID</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>frequency-order</search:facet-option>
+      <search:facet-option>descending</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="Factories.Name">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Factories/Name</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>frequency-order</search:facet-option>
+      <search:facet-option>descending</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="Restaurants.Restaurant_Name">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Restaurants/Restaurant_Name</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>frequency-order</search:facet-option>
+      <search:facet-option>descending</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="Emergency_Services.Area_ID">
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Emergency_Services/Area_ID</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>frequency-order</search:facet-option>
+      <search:facet-option>descending</search:facet-option>
+    </search:range>
   </search:constraint>
   <search:constraint name="Emergency_Services.Distance_Miles">
     <search:range type="xs:decimal" facet="true">
@@ -202,6 +262,14 @@
     <search:value>
       <search:element ns="" name="Area_ID"/>
     </search:value>
+  </search:constraint>
+  <search:constraint name="Environmental_Risk.Area_ID">
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Environmental_Risk/Area_ID</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>frequency-order</search:facet-option>
+      <search:facet-option>descending</search:facet-option>
+    </search:range>
   </search:constraint>
   <search:constraint name="Bank.Rating">
     <search:range type="xs:decimal" facet="false">
@@ -219,8 +287,16 @@
 </search:constraint> 
 -->
   <search:constraint name="Annual_Climatic_Conditions.Area_ID">
-    <search:range type="xs:decimal" facet="false">
+    <search:range type="xs:decimal" facet="true">
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Annual_Climatic_Conditions/Area_ID</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>frequency-order</search:facet-option>
+      <search:facet-option>descending</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="Car_Services_NS_XML.Name">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services" xmlns:crvs="http://carservices.com/">/es:envelope/es:instance/crvs:Car_Services_NS_XML/crvs:Name</search:path-index>
       <search:facet-option>limit=25</search:facet-option>
       <search:facet-option>frequency-order</search:facet-option>
       <search:facet-option>descending</search:facet-option>
@@ -249,9 +325,41 @@
   </search:value>
 </search:constraint> 
 -->
+  <search:constraint name="Car_Wash.Name">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Car_Wash/Name</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>frequency-order</search:facet-option>
+      <search:facet-option>descending</search:facet-option>
+    </search:range>
+  </search:constraint>
   <search:constraint name="Car_Wash.Rating">
     <search:range type="xs:decimal" facet="false">
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Car_Wash/Rating</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>frequency-order</search:facet-option>
+      <search:facet-option>descending</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="Colleges.Area_ID">
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Colleges/Area_ID</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>frequency-order</search:facet-option>
+      <search:facet-option>descending</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="Colleges.College_Name">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Colleges/College_Name</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>frequency-order</search:facet-option>
+      <search:facet-option>descending</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="Commercial_Properties.Area_ID">
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Commercial_Properties/Area_ID</search:path-index>
       <search:facet-option>limit=25</search:facet-option>
       <search:facet-option>frequency-order</search:facet-option>
       <search:facet-option>descending</search:facet-option>
@@ -265,8 +373,24 @@
       <search:facet-option>descending</search:facet-option>
     </search:range>
   </search:constraint>
+  <search:constraint name="Gyms.Area_ID">
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Gyms/Area_ID</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>frequency-order</search:facet-option>
+      <search:facet-option>descending</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="Gyms.Name">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Gyms/Name</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>frequency-order</search:facet-option>
+      <search:facet-option>descending</search:facet-option>
+    </search:range>
+  </search:constraint>
   <search:constraint name="Airports.Area_ID">
-    <search:range type="xs:decimal" facet="false">
+    <search:range type="xs:decimal" facet="true">
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Airports/Area_ID</search:path-index>
       <search:facet-option>limit=25</search:facet-option>
       <search:facet-option>frequency-order</search:facet-option>
@@ -304,6 +428,30 @@
   </search:value>
 </search:constraint> 
 -->
+  <search:constraint name="Demographics.Area_ID">
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Demographics/Area_ID</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>frequency-order</search:facet-option>
+      <search:facet-option>descending</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="Car_Services.Area_ID">
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Car_Services/Area_ID</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>frequency-order</search:facet-option>
+      <search:facet-option>descending</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="Car_Services.Name">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Car_Services/Name</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>frequency-order</search:facet-option>
+      <search:facet-option>descending</search:facet-option>
+    </search:range>
+  </search:constraint>
   <search:constraint name="Car_Services.Rating">
     <search:range type="xs:decimal" facet="false">
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Car_Services/Rating</search:path-index>
@@ -333,6 +481,14 @@
   </search:value>
 </search:constraint> 
 -->
+  <search:constraint name="Car_Rentals.Name">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Car_Rentals/Name</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>frequency-order</search:facet-option>
+      <search:facet-option>descending</search:facet-option>
+    </search:range>
+  </search:constraint>
   <search:constraint name="Car_Rentals.Rating">
     <search:range type="xs:decimal" facet="false">
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Car_Rentals/Rating</search:path-index>
@@ -348,9 +504,51 @@
   </search:value>
 </search:constraint> 
 -->
-  <search:values name="Emergency_Services">
+  <search:constraint name="Gas_Stations.Area_ID">
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Gas_Stations/Area_ID</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>frequency-order</search:facet-option>
+      <search:facet-option>descending</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="Day_Cares.Name">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Day_Cares/Name</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>frequency-order</search:facet-option>
+      <search:facet-option>descending</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:values name="Car_Wash_NS_XML">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services" xmlns:cwsh="http://carwashes.org/">/es:envelope/es:instance/cwsh:Car_Wash_NS_XML/cwsh:Name</search:path-index>
+    </search:range>
+  </search:values>
+  <search:tuples name="Factories">
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Factories/Area_ID</search:path-index>
+    </search:range>
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Factories/Name</search:path-index>
+    </search:range>
+  </search:tuples>
+  <search:values name="Restaurants">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Restaurants/Restaurant_Name</search:path-index>
+    </search:range>
+  </search:values>
+  <search:tuples name="Emergency_Services">
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Emergency_Services/Area_ID</search:path-index>
+    </search:range>
     <search:range type="xs:decimal" facet="true">
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Emergency_Services/Distance_Miles</search:path-index>
+    </search:range>
+  </search:tuples>
+  <search:values name="Environmental_Risk">
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Environmental_Risk/Area_ID</search:path-index>
     </search:range>
   </search:values>
   <search:values name="Bank">
@@ -363,6 +561,11 @@
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Annual_Climatic_Conditions/Area_ID</search:path-index>
     </search:range>
   </search:values>
+  <search:values name="Car_Services_NS_XML">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services" xmlns:crvs="http://carservices.com/">/es:envelope/es:instance/crvs:Car_Services_NS_XML/crvs:Name</search:path-index>
+    </search:range>
+  </search:values>
   <search:tuples name="Air_Bnb_Listings">
     <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Air_Bnb_Listings/Name</search:path-index>
@@ -371,16 +574,38 @@
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Air_Bnb_Listings/Rating</search:path-index>
     </search:range>
   </search:tuples>
-  <search:values name="Car_Wash">
+  <search:tuples name="Car_Wash">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Car_Wash/Name</search:path-index>
+    </search:range>
     <search:range type="xs:decimal" facet="true">
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Car_Wash/Rating</search:path-index>
     </search:range>
-  </search:values>
-  <search:values name="Commercial_Properties">
+  </search:tuples>
+  <search:tuples name="Colleges">
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Colleges/Area_ID</search:path-index>
+    </search:range>
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Colleges/College_Name</search:path-index>
+    </search:range>
+  </search:tuples>
+  <search:tuples name="Commercial_Properties">
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Commercial_Properties/Area_ID</search:path-index>
+    </search:range>
     <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/">
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Commercial_Properties/PropertyDetails/Property_Details/Tenant_Details/TenantDetails/Lease_Ends</search:path-index>
     </search:range>
-  </search:values>
+  </search:tuples>
+  <search:tuples name="Gyms">
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Gyms/Area_ID</search:path-index>
+    </search:range>
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Gyms/Name</search:path-index>
+    </search:range>
+  </search:tuples>
   <search:tuples name="Airports">
     <search:range type="xs:decimal" facet="true">
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Airports/Area_ID</search:path-index>
@@ -395,14 +620,38 @@
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Airports/Rating</search:path-index>
     </search:range>
   </search:tuples>
-  <search:values name="Car_Services">
+  <search:values name="Demographics">
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Demographics/Area_ID</search:path-index>
+    </search:range>
+  </search:values>
+  <search:tuples name="Car_Services">
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Car_Services/Area_ID</search:path-index>
+    </search:range>
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Car_Services/Name</search:path-index>
+    </search:range>
     <search:range type="xs:decimal" facet="true">
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Car_Services/Rating</search:path-index>
     </search:range>
-  </search:values>
-  <search:values name="Car_Rentals">
+  </search:tuples>
+  <search:tuples name="Car_Rentals">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Car_Rentals/Name</search:path-index>
+    </search:range>
     <search:range type="xs:decimal" facet="true">
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Car_Rentals/Rating</search:path-index>
+    </search:range>
+  </search:tuples>
+  <search:values name="Gas_Stations">
+    <search:range type="xs:decimal" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Gas_Stations/Area_ID</search:path-index>
+    </search:range>
+  </search:values>
+  <search:values name="Day_Cares">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Day_Cares/Name</search:path-index>
     </search:range>
   </search:values>
   <!--Uncomment to return no results for a blank search, rather than the default of all results

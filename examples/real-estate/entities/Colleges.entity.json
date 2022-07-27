@@ -10,13 +10,13 @@
       "properties": {
         "Area_ID": {
           "datatype": "integer",
-          "facetable": false,
+          "facetable": true,
           "sortable": false,
           "collation": "http://marklogic.com/collation/codepoint"
         },
         "College_Name": {
           "datatype": "string",
-          "facetable": false,
+          "facetable": true,
           "sortable": false,
           "collation": "http://marklogic.com/collation/codepoint"
         },

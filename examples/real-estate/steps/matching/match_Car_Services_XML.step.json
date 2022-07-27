@@ -1,0 +1,73 @@
+{
+  "batchSize": 100,
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "targetEntityType": "Car_Services_NS_XML",
+  "sourceQuery": "cts.collectionQuery(['map_Car_Services_XML'])",
+  "collections": [
+    "match_Car_Services_XML"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "targetFormat": "json",
+  "matchRulesets": [
+    {
+      "name": "Area_ID - Exact",
+      "weight": 10,
+      "reduce": false,
+      "matchRules": [
+        {
+          "entityPropertyPath": "Area_ID",
+          "matchType": "exact",
+          "options": { }
+        }
+      ]
+    },
+    {
+      "name": "Name-ID",
+      "weight": 5,
+      "reduce": true,
+      "matchRules": [
+        {
+          "entityPropertyPath": "Area_ID",
+          "matchType": "exact",
+          "options": { }
+        },
+        {
+          "entityPropertyPath": "Name",
+          "matchType": "exact",
+          "options": { }
+        }
+      ],
+      "rulesetType": "multiple"
+    }
+  ],
+  "thresholds": [
+    {
+      "thresholdName": "Car Services in Area",
+      "action": "merge",
+      "score": 10
+    },
+    {
+      "thresholdName": "Name-ID",
+      "action": "notify",
+      "score": 5
+    }
+  ],
+  "name": "match_Car_Services_XML",
+  "description": "",
+  "collection": [
+    "map_Car_Services_XML"
+  ],
+  "selectedSource": "collection",
+  "additionalCollections": [ ],
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "stepDefinitionName": "default-matching",
+  "stepDefinitionType": "matching",
+  "stepId": "match_Car_Services_XML-matching",
+  "acceptsBatch": true,
+  "stepUpdate": false,
+  "lastUpdated": "2022-07-25T16:41:47.664601-07:00"
+}

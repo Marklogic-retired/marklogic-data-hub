@@ -1,0 +1,50 @@
+{
+  "batchSize": 1,
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "targetEntityType": "Commercial_Properties",
+  "sourceQuery": "cts.collectionQuery(['match_Commercial_properties'])",
+  "provenanceGranularityLevel": "off",
+  "collections": [
+    "merge_Commercial_Properties"
+  ],
+  "targetFormat": "json",
+  "mergeRules": [
+    {
+      "entityPropertyPath": "Area_ID",
+      "mergeType": "strategy",
+      "mergeStrategyName": "Default"
+    }
+  ],
+  "mergeStrategies": [
+    {
+      "strategyName": "Default",
+      "maxSources": "All",
+      "maxValues": "All",
+      "priorityOrder": {
+        "sources": [ ],
+        "timeWeight": 0
+      },
+      "default": true
+    }
+  ],
+  "targetCollections": null,
+  "name": "merge_Commercial_Properties",
+  "description": "",
+  "collection": [
+    "match_Commercial_properties"
+  ],
+  "selectedSource": "collection",
+  "timestamp": "",
+  "additionalCollections": [ ],
+  "headers": { },
+  "interceptors": [ ],
+  "customHook": { },
+  "stepDefinitionName": "default-merging",
+  "stepDefinitionType": "merging",
+  "stepId": "merge_Commercial_Properties-merging",
+  "acceptsBatch": false,
+  "stepUpdate": false,
+  "lastUpdated": "2022-07-21T21:23:47.783485-07:00"
+}

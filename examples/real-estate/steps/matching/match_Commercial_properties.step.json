@@ -1,0 +1,68 @@
+{
+  "batchSize": 100,
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "targetEntityType": "Commercial_Properties",
+  "sourceQuery": "cts.collectionQuery(['Commercial_Properties'])",
+  "collections": [
+    "match_Commercial_properties"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "targetFormat": "json",
+  "matchRulesets": [
+    {
+      "name": "Area_ID - Exact",
+      "weight": 5,
+      "reduce": false,
+      "matchRules": [
+        {
+          "entityPropertyPath": "Area_ID",
+          "matchType": "exact",
+          "options": { }
+        }
+      ]
+    },
+    {
+      "name": "ID-Name",
+      "weight": 5,
+      "reduce": false,
+      "matchRules": [
+        {
+          "entityPropertyPath": "Area_ID",
+          "matchType": "exact",
+          "options": { }
+        },
+        {
+          "entityPropertyPath": "PropertyDetails.Complex_Name",
+          "matchType": "exact",
+          "options": { }
+        }
+      ],
+      "rulesetType": "multiple"
+    }
+  ],
+  "thresholds": [
+    {
+      "thresholdName": "Commercial Properties in Area",
+      "action": "merge",
+      "score": 5
+    }
+  ],
+  "name": "match_Commercial_properties",
+  "description": "",
+  "collection": [
+    "Commercial_Properties"
+  ],
+  "selectedSource": "collection",
+  "additionalCollections": [ ],
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "stepDefinitionName": "default-matching",
+  "stepDefinitionType": "matching",
+  "stepId": "match_Commercial_properties-matching",
+  "acceptsBatch": true,
+  "stepUpdate": false,
+  "lastUpdated": "2022-07-24T17:12:47.550354-07:00"
+}

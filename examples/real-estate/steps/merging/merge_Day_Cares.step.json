@@ -1,0 +1,57 @@
+{
+  "batchSize": 1,
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "targetEntityType": "Day_Cares",
+  "sourceQuery": "cts.collectionQuery(['match_Day_Care_Synonym'])",
+  "provenanceGranularityLevel": "off",
+  "collections": [
+    "merge_Day_Cares"
+  ],
+  "targetFormat": "json",
+  "mergeRules": [
+    {
+      "entityPropertyPath": "Area_ID",
+      "mergeType": "property-specific",
+      "maxSources": "All",
+      "maxValues": "All",
+      "priorityOrder": {
+        "sources": [ ],
+        "timeWeight": 0
+      }
+    }
+  ],
+  "mergeStrategies": [ ],
+  "targetCollections": {
+    "onMerge": {
+      "add": [ ]
+    },
+    "onNoMatch": {
+      "add": [ ]
+    },
+    "onArchive": {
+      "add": [ ]
+    },
+    "onNotification": {
+      "add": [ ]
+    }
+  },
+  "name": "merge_Day_Cares",
+  "description": "",
+  "collection": [
+    "match_Day_Care_Synonym"
+  ],
+  "selectedSource": "collection",
+  "timestamp": "",
+  "additionalCollections": [ ],
+  "headers": { },
+  "interceptors": [ ],
+  "customHook": { },
+  "stepDefinitionName": "default-merging",
+  "stepDefinitionType": "merging",
+  "stepId": "merge_Day_Cares-merging",
+  "acceptsBatch": false,
+  "stepUpdate": false,
+  "lastUpdated": "2022-07-25T11:37:44.212435-07:00"
+}

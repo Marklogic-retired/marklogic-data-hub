@@ -1,0 +1,48 @@
+{
+  "name": "Data_Merging",
+  "steps": {
+    "1": {
+      "stepId": "merge_Restaurants-merging"
+    },
+    "2": {
+      "stepId": "merge_Urgent_cares-merging"
+    },
+    "3": {
+      "stepId": "merge_USZips-merging"
+    },
+    "4": {
+      "stepId": "merge_Theatres-merging"
+    },
+    "5": {
+      "stepId": "merge_Hiking_Places-merging"
+    },
+    "6": {
+      "stepId": "merge_Day_Cares-merging"
+    },
+    "7": {
+      "stepId": "merge_Car_Rentals-merging"
+    },
+    "8": {
+      "stepId": "merge_Air_Bnb_Listings-merging"
+    },
+    "9": {
+      "stepId": "merge_Colleges-merging"
+    },
+    "10": {
+      "stepId": "merge_Car_Wash_XML-merging"
+    },
+    "11": {
+      "stepId": "merge_Banks-merging"
+    },
+    "12": {
+      "stepId": "merge_Car_Services_JSON-merging"
+    },
+    "13": {
+      "stepId": "merge_Car_Services_XML-merging"
+    },
+    "14": {
+      "stepId": "merge_Car_Wash_JSON-merging"
+    }
+  },
+  "lastUpdated": "2022-07-26T14:31:14.760305-07:00"
+}

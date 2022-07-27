@@ -1,0 +1,50 @@
+{
+  "batchSize": 100,
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "targetEntityType": "Military_Base",
+  "sourceQuery": "cts.collectionQuery(['Military_Base'])",
+  "collections": [
+    "match_Military_Base"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "targetFormat": "json",
+  "matchRulesets": [
+    {
+      "name": "Area_ID - Exact",
+      "weight": 5,
+      "reduce": false,
+      "matchRules": [
+        {
+          "entityPropertyPath": "Area_ID",
+          "matchType": "exact",
+          "options": { }
+        }
+      ]
+    }
+  ],
+  "thresholds": [
+    {
+      "thresholdName": "Military Base in Area",
+      "action": "merge",
+      "score": 5
+    }
+  ],
+  "name": "match_Military_Base",
+  "description": "",
+  "collection": [
+    "Military_Base"
+  ],
+  "selectedSource": "collection",
+  "additionalCollections": [ ],
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "stepDefinitionName": "default-matching",
+  "stepDefinitionType": "matching",
+  "stepId": "match_Military_Base-matching",
+  "acceptsBatch": true,
+  "stepUpdate": false,
+  "lastUpdated": "2022-07-24T17:12:47.738224-07:00"
+}

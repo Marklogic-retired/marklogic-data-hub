@@ -10,7 +10,7 @@
       "properties": {
         "Area_ID": {
           "datatype": "integer",
-          "facetable": false,
+          "facetable": true,
           "sortable": true,
           "collation": "http://marklogic.com/collation/codepoint"
         },

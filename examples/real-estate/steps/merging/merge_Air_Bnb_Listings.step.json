@@ -1,0 +1,57 @@
+{
+  "batchSize": 1,
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "targetEntityType": "Air_Bnb_Listings",
+  "sourceQuery": "cts.collectionQuery(['match_Air_Bnb_Listings'])",
+  "provenanceGranularityLevel": "off",
+  "collections": [
+    "merge_Air_Bnb_Listings"
+  ],
+  "targetFormat": "json",
+  "mergeRules": [
+    {
+      "entityPropertyPath": "Name",
+      "mergeType": "property-specific",
+      "maxSources": "All",
+      "maxValues": "All",
+      "priorityOrder": {
+        "sources": [ ],
+        "timeWeight": 15
+      }
+    }
+  ],
+  "mergeStrategies": [ ],
+  "targetCollections": {
+    "onMerge": {
+      "add": [ ]
+    },
+    "onNoMatch": {
+      "add": [ ]
+    },
+    "onArchive": {
+      "add": [ ]
+    },
+    "onNotification": {
+      "add": [ ]
+    }
+  },
+  "name": "merge_Air_Bnb_Listings",
+  "description": "",
+  "collection": [
+    "match_Air_Bnb_Listings"
+  ],
+  "selectedSource": "collection",
+  "timestamp": "",
+  "additionalCollections": [ ],
+  "headers": { },
+  "interceptors": [ ],
+  "customHook": { },
+  "stepDefinitionName": "default-merging",
+  "stepDefinitionType": "merging",
+  "stepId": "merge_Air_Bnb_Listings-merging",
+  "acceptsBatch": false,
+  "stepUpdate": false,
+  "lastUpdated": "2022-07-25T17:11:32.12982-07:00"
+}

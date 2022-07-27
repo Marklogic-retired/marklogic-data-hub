@@ -1,0 +1,73 @@
+{
+  "batchSize": 100,
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "targetEntityType": "Bank",
+  "sourceQuery": "cts.collectionQuery(['Bank'])",
+  "collections": [
+    "match_Banks"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "targetFormat": "json",
+  "matchRulesets": [
+    {
+      "name": "Area_ID - Exact",
+      "weight": 10,
+      "reduce": false,
+      "matchRules": [
+        {
+          "entityPropertyPath": "Area_ID",
+          "matchType": "exact",
+          "options": { }
+        }
+      ]
+    },
+    {
+      "name": "ID-Name",
+      "weight": 5,
+      "reduce": false,
+      "matchRules": [
+        {
+          "entityPropertyPath": "Area_ID",
+          "matchType": "exact",
+          "options": { }
+        },
+        {
+          "entityPropertyPath": "Name",
+          "matchType": "exact",
+          "options": { }
+        }
+      ],
+      "rulesetType": "multiple"
+    }
+  ],
+  "thresholds": [
+    {
+      "thresholdName": "Banks in Area",
+      "action": "merge",
+      "score": 10
+    },
+    {
+      "thresholdName": "Bank Names",
+      "action": "notify",
+      "score": 5
+    }
+  ],
+  "name": "match_Banks",
+  "description": "",
+  "collection": [
+    "Bank"
+  ],
+  "selectedSource": "collection",
+  "additionalCollections": [ ],
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "stepDefinitionName": "default-matching",
+  "stepDefinitionType": "matching",
+  "stepId": "match_Banks-matching",
+  "acceptsBatch": true,
+  "stepUpdate": false,
+  "lastUpdated": "2022-07-24T17:12:47.274823-07:00"
+}
