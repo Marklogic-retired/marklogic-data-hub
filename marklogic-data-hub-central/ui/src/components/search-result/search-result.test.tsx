@@ -42,6 +42,7 @@ describe("Search Result view component", () => {
     expect(getByTestId("source-icon")).toBeInTheDocument();
     expect(getByTestId("instance-icon")).toBeInTheDocument();
     expect(getByTestId("entity-name")).toBeInTheDocument();
+    expect(getByTestId("unmerge-icon")).toBeInTheDocument();
     expect(getByTestId("primary-key")).toBeInTheDocument();
     expect(getByTestId("created-on")).toBeInTheDocument();
     expect(getByTestId("record-type")).toBeInTheDocument();
@@ -55,6 +56,9 @@ describe("Search Result view component", () => {
 
     fireEvent.mouseOver(getByTestId("graph-icon"));
     await (waitForElement(() => (getByText("View entity in graph view"))));
+
+    fireEvent.mouseOver(getByTestId("unmerge-icon"));
+    await (waitForElement(() => (getByText("Unmerge Documents"))));
   });
 
   test("Verify expandable icon closes if page number changes", async () => {

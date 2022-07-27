@@ -58,6 +58,18 @@
 	align-items: center;
 }
 
+.unMergeIcon {
+  color: #44499c;
+  font-size: 22px;
+  margin-top: -3px;
+  margin-left: 2px;
+}
+
+.unMergeIcon:hover {
+  color: var(--hoverColor);
+  cursor: pointer;
+}
+
 .redirectIcons {
     display: flex;
 }

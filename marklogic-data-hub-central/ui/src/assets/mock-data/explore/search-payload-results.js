@@ -9,6 +9,7 @@ const searchPayloadResults = [
     "href": "/v1/documents?uri=%2FUsers%2Fban%2FDocuments%2FProjects%2Fdhf-files%2Fstore-data%2Fcustomers%2F715d4384-b51c-4cd7-b897-579be97e25f3.json",
     "mimetype": "application/json",
     "format": "json",
+    "unmerge": true,
     "matches": [
       {
         "path": "fn:doc(\"/Users/ban/Documents/Projects/dhf-files/store-data/customers/715d4384-b51c-4cd7-b897-579be97e25f3.json\")/object-node()",

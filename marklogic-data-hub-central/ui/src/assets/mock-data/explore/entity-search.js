@@ -22,6 +22,7 @@ export const entitySearch = {
       "href": "/v1/documents?uri=%2FCustomer%2FCust1.json",
       "mimetype": "application/json",
       "format": "json",
+      "unmerge": true,
       "matches": [
         {
           "path": "fn:doc(\"/Customer/Cust1.json\")/object-node()",

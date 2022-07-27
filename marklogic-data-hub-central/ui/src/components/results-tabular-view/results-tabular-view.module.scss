@@ -45,6 +45,18 @@
     padding: 0px 8px;
 }
 
+.unMergeIcon {
+    color: #44499c;
+    font-size: 19px;
+    margin-top: -4px;
+    margin-left: 2px;
+}
+
+.unMergeIcon:hover {
+  color: var(--hoverColor);
+  cursor: pointer;
+}
+
 .jsonIcon:before {
     content: "\e94c";
     font-family: MLCustomFont;
