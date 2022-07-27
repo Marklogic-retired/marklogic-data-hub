@@ -16,7 +16,7 @@ describe("Mapping validations for session storage and table filtering", () => {
     cy.visit("/");
     cy.contains(Application.title);
     cy.log("**Logging into the app as a developer**");
-    cy.loginAsTestUserWithRoles("hub-central-mapping-writer").withRequest();
+    cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
     //Saving Local Storage to preserve session
     cy.saveLocalStorage();
@@ -58,8 +58,8 @@ describe("Mapping validations for session storage and table filtering", () => {
     mappingStepDetail.expandAllSourceTable();
     mappingStepDetail.verifyExpandedRows();
     //Saving amount of expanded rows
-    mappingStepDetail.getSourceDataExpandedRows().then((elems) => expandedRowsCount = elems.length);
-    mappingStepDetail.getSourceDataExpandedRows().then(($els) => {
+    mappingStepDetail.getSourceDataExpandedChildRows().then((elems) => expandedRowsCount = elems.length);
+    mappingStepDetail.getSourceDataExpandedChildRows().then(($els) => {
       return (
         Cypress.$.makeArray($els)
           .map((el) => expandedRows.push(el.innerText.toString().replace(/\t/g, "").split("\r\n")))
@@ -86,7 +86,7 @@ describe("Mapping validations for session storage and table filtering", () => {
     cy.log("**Expand all and validate number of shown rows**");
     mappingStepDetail.expandAllSourceTable();
     mappingStepDetail.verifyExpandedRows();
-    mappingStepDetail.getSourceDataExpandedRows().should("have.length", expandedRowsCount);
+    mappingStepDetail.getSourceDataExpandedChildRows().should("have.length", expandedRowsCount);
 
     cy.log("**Move to another page, come back and confirm the rows are still expanded**");
     mappingStepDetail.selectPageSourceTable("2");
@@ -95,12 +95,12 @@ describe("Mapping validations for session storage and table filtering", () => {
     // Go back and validate length
     mappingStepDetail.selectPageSourceTable("1");
     mappingStepDetail.verifyExpandedRows();
-    mappingStepDetail.getSourceDataExpandedRows().should("have.length", expandedRowsCount);
+    mappingStepDetail.getSourceDataExpandedChildRows().should("have.length", expandedRowsCount);
 
     cy.log("**Collapse All**");
     mappingStepDetail.collapseAllSourceTable();
     mappingStepDetail.verifyExpandedRows();
-    mappingStepDetail.getSourceDataExpandedRows().should("have.length", 0);
+    mappingStepDetail.getSourceDataExpandedChildRows().should("have.length", 0);
 
     cy.log("**Move to the next page, come back and confirm the rows are still collapsed**");
     mappingStepDetail.selectPageSourceTable("2");
@@ -109,6 +109,33 @@ describe("Mapping validations for session storage and table filtering", () => {
     // Go back and validate length
     mappingStepDetail.selectPageSourceTable("1");
     mappingStepDetail.verifyExpandedRows();
-    mappingStepDetail.getSourceDataExpandedRows().should("have.length", 0);
+    mappingStepDetail.getSourceDataExpandedChildRows().should("have.length", 0);
   });
+  it("Validate Data Source Filter persists when navigating between pages", () => {
+    toolbar.getCurateToolbarIcon().click();
+    browsePage.waitForSpinnerToDisappear();
+    mappingStepDetail.expandAllSourceTable();
+    mappingStepDetail.getSourceDataExpandedRows().should("be.visible");
+
+    cy.log("**Set pagination to '1'**");
+    mappingStepDetail.expandDropdownPagination();
+    mappingStepDetail.selectPagination("1 / page");
+
+    cy.log("**Set filter on Source Data for 'Name'**");
+    mappingStepDetail.addFilter("Name");
+
+    cy.log("**Verify expanded rows contain the filter**");
+    mappingStepDetail.getHighlightedWordInSourceData().each(($el) => {
+      let text = $el.text().toLowerCase();
+      expect(text).to.contain("name");
+    });
+
+    cy.log("**Move to the next page and come back**");
+    mappingStepDetail.selectPageSourceTable("2");
+    mappingStepDetail.getHighlightedWordInSourceData().each(($el) => {
+      let text = $el.text().toLowerCase();
+      expect(text).to.contain("name");
+    });
+  });
+
 });

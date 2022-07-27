@@ -334,7 +334,7 @@ class MappingStepDetail {
   }
 
   expandDropdownPagination() {
-    cy.get("#size-per-page").scrollIntoView().should("be.visible").click();
+    cy.get("#size-per-page").scrollIntoView().should("be.visible").click({force: true});
   }
 
   getPaginationByIndex(index:number) {
@@ -367,7 +367,7 @@ class MappingStepDetail {
   }
 
   selectPagination(text: string) {
-    cy.get(`[aria-label="${text}"]`).click();
+    cy.get(`[class="dropdown-menu show dropdown-menu-end"] span[aria-label="${text}"]`).click();
   }
 
   selectPageSourceTable(page: string) {
@@ -429,8 +429,11 @@ class MappingStepDetail {
   getCollectionInputValue() {
     return cy.get(`.rbt-input-main`);
   }
-  getSourceDataExpandedRows() {
-    return cy.get("[class^='react-bootstrap-table mapping-step-detail_sourceTable']").find("[class^='hc-table_childrenIndentTableRow'] span[class^='mapping-step-detail_sourceName']");
+  getSourceTable() {
+    return cy.get("[class^='react-bootstrap-table mapping-step-detail_sourceTable']");
+  }
+  getSourceDataExpandedChildRows() {
+    return this.getSourceTable().find("[class^='hc-table_childrenIndentTableRow'] span[class^='mapping-step-detail_sourceName']");
   }
 
   verifyCountOfCards(idEntity:string, classLayer:string, idLayer:string, tab:string) {
@@ -440,6 +443,14 @@ class MappingStepDetail {
     }).then(() => {
       cy.get(`#${idEntity} [id$=${idLayer}]`).should("have.text", `${tab} (${countOfCards})`);
     });
+  }
+  getHighlightedWordInSourceData() {
+    return cy.get("[class^='mapping-step-detail_highlightStyle']");
+  }
+
+  getSourceDataExpandedRows() {
+    //TODO arreglar selector
+    return this.getSourceTable().find("[class^='mapping-step-detail_sourceName']");
   }
 }
 
