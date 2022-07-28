@@ -1,9 +1,17 @@
 package com.marklogic.hub.central.controllers.model;
 
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.document.GenericDocumentManager;
+import com.marklogic.hub.DatabaseKind;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.test.context.support.WithMockUser;
 
+import java.util.function.Consumer;
+import java.util.stream.Stream;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PublishModelsTest extends ModelTest {
     String entityCollection = "http://marklogic.com/entity-services/models";
@@ -46,4 +54,33 @@ public class PublishModelsTest extends ModelTest {
         assertEquals(0, getStagingDocCount(draftEntityCollection), "There should be no entities in draft for staging database");
         assertEquals(0, getFinalDocCount(draftEntityCollection), "There should be no entities in draft for final database");
     }
+
+    @Test
+    @WithMockUser(roles = {"writeEntityModel"})
+    void testUpdateModelVersion() {
+        runAsTestUserWithRoles("hub-central-entity-model-writer");
+        createModel();
+        publishDraftModels();
+        verifySchemaHasCorrectTDEVersion("3.0.1");
+        updateModelVersion();
+        publishDraftModels();
+        assertEquals(1, getFinalDocCount(entityCollection), "There should be no entities published");
+        assertEquals(0, getFinalDocCount(draftEntityCollection), "There should be no entities in draft after publishing");
+        verifySchemaHasCorrectTDEVersion("3.1.0");
+    }
+
+    private void verifySchemaHasCorrectTDEVersion(String version) {
+        assertSchemasAndTDE(Assertions::assertNotNull, version);
+    }
+
+    private void assertSchemasAndTDE(Consumer<Object> assertion, String version) {
+        DatabaseClient finalSchemaClient = getHubConfig().newFinalClient(getHubConfig().getDbName(DatabaseKind.FINAL_SCHEMAS));
+        Stream.of(finalSchemaClient).forEach(databaseClient -> {
+            GenericDocumentManager documentManager = databaseClient.newDocumentManager();
+            assertion.accept(documentManager.exists("/entities/Customer.entity.schema.json"));
+            assertion.accept(documentManager.exists("/entities/Customer.entity.xsd"));
+            assertion.accept(documentManager.exists("/tde/Customer-" + version + ".tdex"));
+        });
+    }
+
 }
