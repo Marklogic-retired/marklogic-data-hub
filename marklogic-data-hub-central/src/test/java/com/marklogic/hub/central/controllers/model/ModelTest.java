@@ -34,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ModelTest extends AbstractHubCentralTest {
     protected final static String MODEL_NAME = "Customer";
     protected final static String MODEL_VERSION = "3.0.1";
+    protected final static String MODEL_VERSION_2 = "3.1.0";
     protected final static String ENTITY_PROPERTY_1 = "someProperty";
     protected final static String ENTITY_PROPERTY_2 = "someOtherProperty";
     protected final static String DATABASE_PROPERTY_1 = "testRangeIndexForDHFPROD4704";
@@ -106,6 +107,20 @@ public class ModelTest extends AbstractHubCentralTest {
         assertEquals(1, customerType.get("entityInstanceCount").asInt(),
                 "Should have a count of one because there's one document in the 'Customer' collection");
 
+    }
+
+    protected void updateModelVersion() {
+        ArrayNode existingEntityTypes = (ArrayNode) controller.getPrimaryEntityTypes(Boolean.TRUE).getBody();
+        assertEquals(1, existingEntityTypes.size(), "Entity must already exist to be updated");
+
+        ObjectNode input = objectMapper.createObjectNode();
+        input.put("name", MODEL_NAME);
+        input.put("version", MODEL_VERSION_2);
+        controller.updateDraftModelInfo(MODEL_NAME, input);
+        JsonNode model = getModel(getHubClient().getFinalClient(), true);
+        assertEquals(MODEL_NAME, model.get("info").get("title").asText());
+        assertEquals(MODEL_VERSION_2, model.get("info").get("version").asText());
+        assertTrue(model.get("info").get("draft").asBoolean());
     }
 
     protected ObjectNode createGraphConfig(){
