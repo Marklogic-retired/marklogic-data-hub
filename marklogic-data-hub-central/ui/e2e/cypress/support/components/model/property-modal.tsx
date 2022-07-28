@@ -35,6 +35,10 @@ class PropertyModal {
     return cy.get(`ul > li`).last().get(`[title="${type}"]`).should("be.visible");
   }
 
+  getDisabledTypeFromDropdown() {
+    return cy.get(".rc-cascader-menu-item-disabled");
+  }
+
   getYesRadio(radioValue: string) {
     return cy.findByLabelText(`${radioValue}-yes`);
   }

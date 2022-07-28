@@ -1,21 +1,24 @@
+import "rc-cascader/assets/index.less";
 import React, {useState, useEffect, useContext} from "react";
 import {Row, Col, Modal, Form, FormLabel, FormCheck} from "react-bootstrap";
 import Select, {components as SelectComponents} from "react-select";
+import {QuestionCircleFill} from "react-bootstrap-icons";
+import Cascader from "rc-cascader";
 import reactSelectThemeConfig from "@config/react-select-theme.config";
-import {faTrashAlt} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import styles from "./property-modal.module.scss";
-import StructuredTypeModal from "../structured-type-modal/structured-type-modal";
-import ConfirmationModal from "../../confirmation-modal/confirmation-modal";
+import {themeColors} from "@config/themes.config";
+import {ModelingTooltips} from "@config/tooltips.config";
 import {UserContext} from "@util/user-context";
 import {ModelingContext} from "@util/modeling-context";
 import {entityReferences, primaryEntityTypes} from "@api/modeling";
-import {ModelingTooltips} from "@config/tooltips.config";
 import {getSystemInfo} from "@api/environment";
-import Cascader from "rc-cascader";
-import "rc-cascader/assets/index.less";
+import {faTrashAlt} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {HCAlert, HCButton, HCTooltip, HCInput} from "@components/common";
+import StructuredTypeModal from "../structured-type-modal/structured-type-modal";
+import ConfirmationModal from "../../confirmation-modal/confirmation-modal";
 import {EditPropertyOptions, PropertyOptions, PropertyType, StructuredTypeOptions} from "../../../types/modeling-types";
 import {ConfirmationType} from "../../../types/common-types";
+import styles from "./property-modal.module.scss";
 
 import {
   COMMON_PROPERTY_TYPES,
@@ -24,10 +27,6 @@ import {
   MORE_NUMBER_TYPES,
   MORE_STRING_TYPES
 } from "@config/modeling.config";
-import {QuestionCircleFill} from "react-bootstrap-icons";
-import {HCAlert, HCButton, HCTooltip, HCInput} from "@components/common";
-import {themeColors} from "@config/themes.config";
-
 type Props = {
   entityName: any;
   entityDefinitionsArray: any[];
@@ -153,7 +152,21 @@ const PropertyModal: React.FC<Props> = (props) => {
   const createStructuredDropdown = (structuredDefinitions) => {
     let structuredTypes = structuredDefinitions
       .sort((a, b) => a.name.localeCompare(b.name))
-      .map(definition => { return {label: definition.name, value: definition.name}; });
+      .map(definition => {
+        const isSameStructuredType = (structuredTypeLabel===definition.name);
+        return {
+          label: isSameStructuredType ? (
+            <HCTooltip
+              text={ModelingTooltips.structuredTypeProperty}
+              id="structured-type-tooltip"
+              placement="right-end"
+              className={styles.tooltip}>
+              <span>{definition.name}</span>
+            </HCTooltip>) : definition.name,
+          value: definition.name,
+          disabled: isSameStructuredType
+        };
+      });
 
     return {
       ...DEFAULT_STRUCTURED_DROPDOWN_OPTIONS,
@@ -287,6 +300,10 @@ const PropertyModal: React.FC<Props> = (props) => {
       }
     }
   }, [props.isVisible]);
+
+  useEffect(() => {
+    if (props.isVisible) updateTypeDropdown();
+  }, [structuredTypeLabel]);
 
   const getEntityReferences = async () => {
     try {
@@ -953,7 +970,7 @@ const PropertyModal: React.FC<Props> = (props) => {
                   value={typeDisplayValue}
                   onChange={onPropertyTypeChange}
                   className={placeHolderColor && placeHolderOrEditValue ? styles.placeholderColor : styles.input}
-                  style={{"width": "520px"}}
+                  style={{"width": "520px", "zIndex": 9000}}
                   defaultValue={placeHolderOrEditValue ? ["Select the property type"] : editDisplayValue()}
                   allowClear={true}
                 />

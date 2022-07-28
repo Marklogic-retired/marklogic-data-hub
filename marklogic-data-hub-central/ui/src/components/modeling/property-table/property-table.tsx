@@ -385,15 +385,14 @@ const PropertyTable: React.FC<Props> = (props) => {
       headerAttrs: {
         "aria-label": "add-header",
       },
-      formatter: (text, _, index) => {
-        let textParse = text && text.split(",");
-        let structuredTypeName = Array.isArray(textParse) ? textParse[textParse.length - 1] : text;
+      formatter: (text, record, index) => {
+        const propertyName = record.propertyName;
 
         const addIcon = props.canWriteEntityModel ? (
-          <HCTooltip text={ModelingTooltips.addStructuredProperty} id={`add-struct-${structuredTypeName}-tooltip`} placement="top-end">
+          <HCTooltip text={ModelingTooltips.addStructuredProperty} id={`add-struct-${propertyName}-tooltip`} placement="top-end">
             <span className="p-2 inline-block cursor-pointer">
               <FontAwesomeIcon
-                data-testid={"add-struct-" + structuredTypeName}
+                data-testid={"add-struct-" + propertyName}
                 className={styles.addIcon}
                 icon={faPlusSquare}
                 onClick={() => {
@@ -417,7 +416,7 @@ const PropertyTable: React.FC<Props> = (props) => {
           <HCTooltip text={ModelingTooltips.addStructuredProperty + " " + ModelingTooltips.noWriteAccess} id="disabled-add-struct-tooltip" placement="top-end">
             <i>
               <FontAwesomeIcon
-                data-testid={"add-struct-" + structuredTypeName} className={styles.addIconReadOnly}
+                data-testid={"add-struct-" + propertyName} className={styles.addIconReadOnly}
                 icon={faPlusSquare}
               />
             </i>

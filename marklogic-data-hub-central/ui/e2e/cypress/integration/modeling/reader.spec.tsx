@@ -83,7 +83,7 @@ describe("Entity Modeling: Reader Role", () => {
     propertyTable.getDeletePropertyIcon("Customer", "pin").click({force: true});
     confirmationModal.getDeletePropertyStepWarnText().should("not.exist");
 
-    propertyTable.getAddPropertyToStructureType("Address").click({force: true});
+    propertyTable.getAddPropertyToStructureType("shipping").click({force: true});
     propertyModal.getStructuredTypeName().should("not.exist");
 
     //TODO: re-test without using mltable-expand
