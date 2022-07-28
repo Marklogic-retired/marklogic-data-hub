@@ -209,7 +209,7 @@ describe("Entity Modeling Property Table Component", () => {
   test("Property Table renders with structured and external datatypes to verify that the tooltips show up", async () => {
     let entityName = propertyTableEntities[2].entityName;
     let definitions = propertyTableEntities[2].model.definitions;
-    const {getByText, getByTestId, getAllByTestId} =  render(
+    const {getByText, getByTestId} =  render(
       <PropertyTable
         canReadEntityModel={true}
         canWriteEntityModel={true}
@@ -223,7 +223,7 @@ describe("Entity Modeling Property Table Component", () => {
     fireEvent.mouseOver(getByTestId("shipping-shipping-tooltip-trigger"));
     await wait(() => expect(getByText(ModelingTooltips.entityPropertyName)).toBeInTheDocument());
 
-    fireEvent.mouseOver(getAllByTestId("add-struct-Address")[0]);
+    fireEvent.mouseOver(getByTestId("add-struct-shipping"));
     await wait(() => expect(getByText(ModelingTooltips.addStructuredProperty)).toBeInTheDocument());
 
     fireEvent.mouseOver(getByTestId("delete-Customer-shipping"));
@@ -248,7 +248,8 @@ describe("Entity Modeling Property Table Component", () => {
     expect(getByLabelText("Customer-add-property")).toBeDisabled();
     expect(getByTestId("identifier-customerId")).toBeInTheDocument();
     expect(getAllByTestId("multiple-icon-orders")[0]).toBeInTheDocument();
-    expect(getAllByTestId("add-struct-Address")).toHaveLength(2);
+    expect(getByTestId("add-struct-shipping")).toBeInTheDocument();
+    expect(getByTestId("add-struct-billing")).toBeInTheDocument();
     expect(queryByTestId("customerId-customerId-span")).toBeNull();
 
     expect(getAllByLabelText("Property-name")[0]).toBeInTheDocument();
@@ -264,7 +265,7 @@ describe("Entity Modeling Property Table Component", () => {
     const shippingExpandIcon = getByTestId("shipping-expand-icon");
     userEvent.click(shippingExpandIcon);
 
-    expect(getByTestId("add-struct-Zip")).toBeInTheDocument();
+    expect(getByTestId("add-struct-zip")).toBeInTheDocument();
     expect(getAllByText(/zip/i)).toHaveLength(2);
     expect(getAllByText("street")).toHaveLength(1);
     expect(getAllByText("state")).toHaveLength(1);
@@ -272,7 +273,7 @@ describe("Entity Modeling Property Table Component", () => {
     // add property and add struct property display correct tooltip when disabled
     fireEvent.mouseOver((getByText("Add Property")));
     await (() => expect(screen.getByText(ModelingTooltips.addProperty + " " + ModelingTooltips.noWriteAccess)).toBeInTheDocument());
-    fireEvent.mouseOver((getByTestId("add-struct-Zip")));
+    fireEvent.mouseOver((getByTestId("add-struct-zip")));
     await (() => expect(screen.getByText(ModelingTooltips.addStructuredProperty + " " + ModelingTooltips.noWriteAccess)).toBeInTheDocument());
 
     // Table expansion for zip property -> Zip structure type
@@ -286,7 +287,7 @@ describe("Entity Modeling Property Table Component", () => {
     const billingExpandIcon = getByTestId("billing-expand-icon");
     userEvent.click(billingExpandIcon);
 
-    expect(getAllByTestId("add-struct-Zip")).toHaveLength(2);
+    expect(getAllByTestId("add-struct-zip")).toHaveLength(2);
     expect(getAllByText(/zip/i)).toHaveLength(4);
     expect(getAllByText("street")).toHaveLength(2);
     expect(getAllByText("state")).toHaveLength(2);
@@ -479,7 +480,7 @@ describe("Entity Modeling Property Table Component", () => {
 
     let entityName = propertyTableEntities[2].entityName;
     let definitions = propertyTableEntities[2].model.definitions;
-    const {getByTestId, getAllByTestId, getByText, getAllByText, getByLabelText} =  render(
+    const {getByTestId, getByText, getAllByText, getByLabelText} =  render(
       <ModelingContext.Provider value={entityNamesArray}>
         <PropertyTable
           canReadEntityModel={true}
@@ -494,12 +495,13 @@ describe("Entity Modeling Property Table Component", () => {
 
     expect(getByTestId("identifier-customerId")).toBeInTheDocument();
     expect(getByTestId("multiple-orders")).toBeInTheDocument();
-    expect(getAllByTestId("add-struct-Address")).toHaveLength(2);
+    expect(getByTestId("add-struct-shipping")).toBeInTheDocument();
+    expect(getByTestId("add-struct-billing")).toBeInTheDocument();
 
     // add property and add struct property display correct tooltip when enabled
     fireEvent.mouseOver((getByText("Add Property")));
     await waitFor(() => expect(screen.getByText(ModelingTooltips.addProperty)).toBeInTheDocument());
-    fireEvent.mouseOver((getAllByTestId("add-struct-Address")[0]));
+    fireEvent.mouseOver(getByTestId("add-struct-shipping"));
     await waitFor(() => expect(screen.getByText(ModelingTooltips.addStructuredProperty)).toBeInTheDocument());
 
     userEvent.click(getByTestId("nicknames-span"));

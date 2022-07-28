@@ -66,6 +66,7 @@ const ModelingTooltips = {
   propertiesOnHoverField: "Properties on Hover are the values of the selected properties. Properties on Hover display in a tooltip when hovering on a record. You can choose multiple properties. If properties are not selected, the value of the identifier will display on hover. If neither properties nor an identifier are selected, the URI will display on hover.",
   /* Form fields */
   joinProperty: 'Structured type properties, arrays, and unsaved properties cannot be used as join properties.',
+  structuredTypeProperty: "Error: You cannot add a structured property into the same structured property type. To add a structured property into another one, they must be different types.",
 
   /* Foreign key relationship tooltip in mapping tile*/
   foreignKeyMapping: function (relatedEntityName, joinPropertyName, sourceEntityName, propertyName) {

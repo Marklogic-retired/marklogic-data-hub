@@ -61,7 +61,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getMultipleIcon("address").should("exist");
   });
   it("Add basic property to structured type", () => {
-    propertyTable.getAddPropertyToStructureType("Address").should("be.visible").click();
+    propertyTable.getAddPropertyToStructureType("address").should("be.visible").click();
     propertyModal.getStructuredTypeName().should("have.text", "Address");
     propertyModal.clearPropertyName();
     propertyModal.newPropertyName("street");
@@ -96,7 +96,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getProperty("rowId").should("exist");
   });
   it("Add structured property to structured type", () => {
-    propertyTable.getAddPropertyToStructureType("Address").click();
+    propertyTable.getAddPropertyToStructureType("address").click();
     propertyModal.newPropertyName("zip");
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Structured").click();
@@ -130,8 +130,16 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getPiiIcon("zip").should("not.exist");
     //propertyTable.getWildcardIcon('zip').should('not.exist');
   });
+  it("Add a Structured sub-property inside one of the same type (the option is disabled)", () => {
+    propertyTable.getAddPropertyToStructureType("address").click();
+    propertyModal.openPropertyDropdown();
+    propertyModal.getTypeFromDropdown("Structured").click();
+    propertyModal.getDisabledTypeFromDropdown().should("exist");
+    propertyModal.getCancelButton();
+
+  });
   it("Add related property to structured type and test foreign key selection", () => {
-    propertyTable.getAddPropertyToStructureType("Address").click();
+    propertyTable.getAddPropertyToStructureType("address").click();
     propertyModal.newPropertyName("OrderedBy");
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Related Entity").click();
@@ -154,7 +162,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.verifyForeignKeyIcon("OrderedBy").should("not.exist");
   });
   it("Add properties to nested structured type", () => {
-    propertyTable.getAddPropertyToStructureType("Zip").click();
+    propertyTable.getAddPropertyToStructureType("zip").click();
     propertyModal.getStructuredTypeName().should("have.text", "Address.Zip");
     propertyModal.newPropertyName("fiveDigit");
     propertyModal.openPropertyDropdown();
@@ -168,7 +176,7 @@ describe("Entity Modeling: Writer Role", () => {
   });
   it("Test for additional nesting of structured types", () => {
     cy.get(".mosaic-window > :nth-child(2)").scrollTo("bottom");
-    propertyTable.getAddPropertyToStructureType("Zip").click({force: true});
+    propertyTable.getAddPropertyToStructureType("zip").click({force: true});
     propertyModal.newPropertyName("extra");
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Structured").click();
@@ -179,7 +187,7 @@ describe("Entity Modeling: Writer Role", () => {
     cy.waitForAsyncRequest();
     cy.waitUntil(() => cy.get(".mosaic-window > :nth-child(2)").scrollTo("bottom"));
     propertyTable.getProperty("extra-extra");
-    propertyTable.getAddPropertyToStructureType("Extra").scrollIntoView().click();
+    propertyTable.getAddPropertyToStructureType("extra").scrollIntoView().click();
     propertyModal.newPropertyName("fourDigit");
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdownCascaderRC("integer").click();
@@ -193,6 +201,8 @@ describe("Entity Modeling: Writer Role", () => {
     // propertyTable.getPiiIcon("fourDigit").should("exist");
     //propertyTable.getWildcardIcon('fourDigit').should('exist');
   });
+
+
   it("Reuse Structured type, add property to structured type and confirm it gets updated", () => {
     cy.log("**Create a new property using an existing Structured type**");
     propertyTable.getAddPropertyButton("AddEntity").scrollIntoView().click();
@@ -218,7 +228,7 @@ describe("Entity Modeling: Writer Role", () => {
 
     cy.log("**Add property to 'Extra'**");
     propertyTable.getSubProperty("extra", "fourDigit").scrollIntoView().should("be.visible");
-    propertyTable.getAddPropertyToStructureType("Extra").click({force: true});
+    propertyTable.getAddPropertyToStructureType("extra").click({force: true});
     propertyModal.newPropertyName("newExtra");
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdownCascaderRC("string").click();
