@@ -89,7 +89,7 @@ describe("Raw data card view component", () => {
     expect(getAllByText("none")).toHaveLength(4);
   });
 
-  test("Verify file download on Raw data card ", async () => {
+  test("Verify file download and merge on Raw data card ", async () => {
     axiosMock.get["mockImplementationOnce"](jest.fn(() => Promise.resolve(testData.allDataRecordDownloadResponse)));
 
     const {getByTestId, getByText} = render(<MemoryRouter>
@@ -103,6 +103,10 @@ describe("Raw data card view component", () => {
           data={entitySearch.results}
         />
       </SearchContext.Provider></MemoryRouter>);
+
+    //verify merge icon tooltip
+    fireEvent.mouseOver(getByTestId("merge-icon"));
+    await(waitForElement(() => (getByText("Merge Documents"))));
 
     //verify download icon
     expect(getByTestId("/Customer/Cust1.json-download-icon")).toBeInTheDocument();

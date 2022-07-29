@@ -6,7 +6,7 @@ import ColumnSelector from "@components/column-selector/column-selector";
 import {SearchContext} from "@util/search-context";
 import {Link} from "react-router-dom";
 import {faCode, faProjectDiagram, faThList, IconDefinition, faFileExport, faColumns} from "@fortawesome/free-solid-svg-icons";
-import {TbArrowsSplit} from "react-icons/tb";
+import {RiSplitCellsHorizontal} from "react-icons/ri";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {dateConverter} from "@util/date-conversion";
 import {HCTooltip, HCTable} from "@components/common";
@@ -372,16 +372,10 @@ const ResultsTabularView = (props) => {
           item.unmerge ?
             <div className={styles.unMergeIcon}>
               <HCTooltip text={"Unmerge Documents"} id="unmerge-icon-tooltip" placement="top-end">
-                <i><TbArrowsSplit className={styles.unMergeIcon} data-testid={`${primaryKeyValue}-unmergeIcon`} aria-label={`${primaryKeyValue}-unmerge-icon`}/></i>
+                <i><RiSplitCellsHorizontal className={styles.unMergeIcon} data-testid={`unmergeIcon`} aria-label={`unmerge-icon`}/></i>
               </HCTooltip>
             </div>
             : null
-            // <div className={styles.mergeIcon}>
-            //   <HCTooltip text={"Merge Documents"} id="merge-icon" placement="top-end">
-            //     <i><TbArrowsJoin className={styles.unMerge}/></i>
-            //   </HCTooltip>
-            // </div>
-
         }
       </div> : "";
     if (props.selectedEntities?.length > 1 && item.hasOwnProperty("entityName")) {

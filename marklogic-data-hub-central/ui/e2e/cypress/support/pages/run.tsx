@@ -6,6 +6,10 @@ class RunPage {
     return cy.findByText("Create Flow").closest("button");
   }
 
+  toggleExpandFlow(flowName: string) {
+    return cy.get(`[data-testid="accordion-${flowName}"]`).click();
+  }
+
   toggleFlowConfig(flowName: string) {
     cy.waitUntil(() => cy.findByText(flowName).closest("div")).click();
     cy.waitUntil(() => cy.contains("Map"));
@@ -152,6 +156,12 @@ class RunPage {
   clickSuccessCircleIcon(stepName: string, flowName: string) {
     cy.get(`#${flowName}`).within(() => {
       cy.findByTestId(`check-circle-${stepName}`).scrollIntoView().click();
+    });
+  }
+
+  getDocumentsWritten(stepName: string) {
+    return cy.get(`[aria-label=${stepName}-documents-written]`).then(value => {
+      return parseInt(value.first().text().replace(/,/, ""));
     });
   }
 

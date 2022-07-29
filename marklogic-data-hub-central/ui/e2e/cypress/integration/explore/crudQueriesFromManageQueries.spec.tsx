@@ -238,7 +238,7 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.waitForSpinnerToDisappear();
 
     //check table rows
-    browsePage.getHCTableRows().should("have.length", 1);
+    browsePage.getHCTableRows().should("have.length", 2);
     //check table columns
     table.getTableColumns().should("have.length", 9);
     //Check query facet is applied

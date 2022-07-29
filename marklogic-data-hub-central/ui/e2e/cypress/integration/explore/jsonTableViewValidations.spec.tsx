@@ -83,8 +83,8 @@ describe("json scenario for table on browse documents page", () => {
     entitiesSidebar.getMainPanelSearchInput("Alice");
     entitiesSidebar.getApplyFacetsButton().click();
     browsePage.waitForSpinnerToDisappear();
-    browsePage.getTotalDocuments().should("be.equal", 1);
-    browsePage.getHCTableRows().should("have.length", 1);
+    browsePage.getTotalDocuments().should("be.equal", 2);
+    browsePage.getHCTableRows().should("have.length", 2);
   });
 
   it("verify instance view of the document without pk", () => {
@@ -93,8 +93,8 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getFacetItemCheckbox("fname", "Alice").click();
     browsePage.getGreySelectedFacets("Alice").should("exist");
     browsePage.getFacetApplyButton().click();
-    browsePage.getTotalDocuments().should("be.equal", 1);
-    browsePage.getTableViewInstanceIcon().click();
+    browsePage.getTotalDocuments().should("be.equal", 2);
+    browsePage.getFirstTableViewInstanceIcon().click();
     detailPage.getInstanceView().should("exist");
     detailPage.getDocumentEntity().should("contain", "Person");
     detailPage.getDocumentTimestamp().should("exist");

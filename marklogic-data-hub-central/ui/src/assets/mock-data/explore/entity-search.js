@@ -770,6 +770,30 @@ export const entitySearch = {
         }
       ],
     },
+    {
+      "index": 9,
+      "uri": "/com.marklogic.smart-mastering/matcher/notifications/613ba6185e0d3a08d6dbfdb01edbe8d3.xml",
+      "documentSize": {value: 509, units: "B"},
+      "primaryKey": {
+      },
+      "path": "fn:doc(\"/Customer/Cust8.json\")",
+      "score": 0,
+      "confidence": 0,
+      "fitness": 0,
+      "href": "/v1/documents?uri=%2Fcom.marklogic.smart-mastering%2Fmatcher%2Fnotifications%2F613ba6185e0d3a08d6dbfdb01edbe8d3.xml",
+      "mimetype": "text/plain",
+      "format": "xml",
+      "matches": [
+        {
+          "path": "fn:doc(\"/com.marklogic.smart-mastering/matcher/notifications/613ba6185e0d3a08d6dbfdb01edbe8d3.xml\")/*:notification",
+          mimetype: "application/xml",
+          "match-text": [
+            "2022-07-26T10:32:21.565445-07:00 hc-developer unread Likely Match /json/persons/last-name-address-reduce1.json /json/persons/last-name-address-reduce2.json"
+          ]
+        }
+      ],
+      "notifiedDoc": true
+    }
   ],
   "facets": {
     "Collection": {
@@ -1372,6 +1396,7 @@ export const entitySearchAllEntities = {
       "score": 0,
       "confidence": 0,
       "fitness": 0,
+      "unmerge": true,
       "href": "/v1/documents?uri=%2FCustomer%2FCust1.json",
       "mimetype": "application/json",
       "format": "json",

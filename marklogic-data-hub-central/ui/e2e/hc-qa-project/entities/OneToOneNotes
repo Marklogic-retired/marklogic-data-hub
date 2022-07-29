@@ -1,0 +1,9 @@
+9/21/20 3:31 PM 
+	• Started on E2E tests
+	• Update best practices based on repeated test failures bcs of test issues.
+	• Code Reviews of E2E :
+		○ Best practices being followed
+		○ Test coverage 
+		○ Should run on DHS
+		○ Update best practices to run tests on windows before creating PR.
+	

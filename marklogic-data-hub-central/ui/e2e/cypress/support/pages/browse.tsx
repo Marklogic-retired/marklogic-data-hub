@@ -392,6 +392,11 @@ class BrowsePage {
   }
 
   // common
+  getFirstTableViewInstanceIcon() {
+    return cy.get(".hc-table_row:first-child [data-cy=instance]");
+  }
+
+  // common
   getTableViewInstanceIcon() {
     return cy.get(".hc-table_row:last-child [data-cy=instance]");
   }
@@ -704,8 +709,13 @@ class BrowsePage {
   }
 
   // unmerge icon
-  getUnmergeIcon(primaryKeyValue: string) {
-    return cy.get(`[aria-label="${primaryKeyValue}-unmerge-icon"`);
+  getUnmergeIcon() {
+    return cy.get(`[aria-label="unmerge-icon"]`);
+  }
+
+  //merge icon
+  getMergeIcon() {
+    return cy.get(`[data-testid="merge-icon"]`);
   }
 }
 

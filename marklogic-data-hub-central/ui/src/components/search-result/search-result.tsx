@@ -6,7 +6,7 @@ import {dateConverter} from "@util/date-conversion";
 import ExpandableTableView from "../expandable-table-view/expandable-table-view";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faThList, faCode, faProjectDiagram} from "@fortawesome/free-solid-svg-icons";
-import {TbArrowsSplit} from "react-icons/tb";
+import {RiSplitCellsHorizontal} from "react-icons/ri";
 import {SearchContext} from "@util/search-context";
 import {ChevronDown, ChevronRight} from "react-bootstrap-icons";
 import {HCTooltip} from "@components/common";
@@ -142,7 +142,7 @@ const SearchResult: React.FC<Props> = (props) => {
             props.item.unmerge ?
               <div className={styles.unMergeIcon}>
                 <HCTooltip text={"Unmerge Documents"} id="unmerge-icon-tooltip" placement="top-end">
-                  <i><TbArrowsSplit data-testid="unmerge-icon" className={styles.unMergeIcon} aria-label={`${primaryKeyValue}-unmerge-icon`}/></i>
+                  <i><RiSplitCellsHorizontal className={styles.unMergeIcon} data-testid={`unmerge-icon`} aria-label={`unmerge-icon`}/></i>
                 </HCTooltip>
               </div>
               : null

@@ -177,12 +177,12 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStop
         const {stepName, success} = response;
         const stepIsFinished = response.stepEndTime && response.stepEndTime !== "N/A";
         if (isStepCanceled(response)) {
-          return (<span className={styles.canceled}>
+          return (<span className={styles.canceled} aria-label={`${stepName}-documents-written`}>
             Canceled
           </span>);
         } else if (stepIsFinished) {
           if (success) {
-            return (<span className={styles.documentsWritten}>
+            return (<span className={styles.documentsWritten} aria-label={`${stepName}-documents-written`}>
               {successfulEvents}
             </span>);
           }

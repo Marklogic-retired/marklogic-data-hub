@@ -122,13 +122,33 @@
   color: #777;
 }
 
+.mergeIconDiv {
+  cursor: pointer;
+  font-size: 24px;
+  display: flex;
+  justify-content: flex-end;
+  position: absolute;
+  bottom: -2px;
+  right: 28px;
+}
+
+.mergeIcon:hover {
+  color: var(--hoverColor);
+  cursor: pointer;
+}
+
 .downloadIcon {
-  font-size: 12px;
+  cursor: pointer;
   display: flex;
   justify-content: flex-end;
   position: absolute;
   bottom: 4px;
   right: 4px;
+}
+
+.downloadIcon:hover {
+  color: var(--hoverColor);
+  cursor: pointer;
 }
 
 .arrowRightSquare{
