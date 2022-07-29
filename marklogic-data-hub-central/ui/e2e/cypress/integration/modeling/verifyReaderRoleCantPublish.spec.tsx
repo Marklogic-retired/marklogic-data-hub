@@ -38,7 +38,8 @@ describe("Entity Modeling: Graph View", () => {
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click({force: true});
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
-    modelPage.getAddEntityButton().should("exist").click();
+    cy.waitUntil(() => modelPage.getAddButton()).click();
+    modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});
     entityTypeModal.newEntityName(entityName);
     entityTypeModal.newEntityDescription("entity description");
     entityTypeModal.getAddButton().click();

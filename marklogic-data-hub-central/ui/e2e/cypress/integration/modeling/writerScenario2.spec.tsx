@@ -41,7 +41,8 @@ describe("Entity Modeling: Writer Role", () => {
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click({force: true});
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
-    cy.waitUntil(() => modelPage.getAddEntityButton()).click();
+    cy.waitUntil(() => modelPage.getAddButton()).click();
+    modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});
     entityTypeModal.newEntityName("AddEntity");
     entityTypeModal.newEntityDescription("An entity for User");
     entityTypeModal.getAddButton().click();
@@ -264,7 +265,7 @@ describe("Entity Modeling: Writer Role", () => {
     // TODO: graph re-renders after reloading the page. Bug: DHFPROD-9174
     cy.wait(1000);
     modelPage.selectView("table");
-    propertyTable.getExpandIcon("AddEntity").scrollIntoView().click();
+    propertyTable.getExpandIcon("AddEntity-Entity Type").scrollIntoView().click();
     propertyTable.getExpandIcon("address").scrollIntoView().click();
     propertyTable.getExpandIcon("address").scrollTo("top", {ensureScrollable: false}).scrollIntoView().click({force: true});
     propertyTable.editProperty("address-street");
@@ -398,7 +399,8 @@ describe("Entity Modeling: Writer Role", () => {
     // });
 
     // "Create Concept entity and add a property"
-    modelPage.getAddEntityButton().should("exist").click();
+    cy.waitUntil(() => modelPage.getAddButton()).click();
+    modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});
     entityTypeModal.newEntityName("Concept");
     entityTypeModal.newEntityDescription("A concept entity");
     entityTypeModal.getAddButton().click();

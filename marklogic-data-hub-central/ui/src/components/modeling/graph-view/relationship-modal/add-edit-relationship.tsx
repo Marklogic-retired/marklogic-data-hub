@@ -33,7 +33,7 @@ type Props = {
   setOpenRelationshipModal: (boolean) => (void);
   isEditing: boolean;
   relationshipInfo: any;
-  entityTypes: any;
+  dataModel: any;
   relationshipModalVisible: any;
   toggleRelationshipModal: any;
   updateSavedEntity: any;
@@ -94,7 +94,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
   const dummyNode: any = useRef();
 
   const initRelationship = (sourceEntityIdx) => {
-    let sourceEntityDetails = props.entityTypes[sourceEntityIdx];
+    let sourceEntityDetails = props.dataModel[sourceEntityIdx];
     if (props.relationshipInfo.relationshipName !== "") {
       setRelationshipName(props.relationshipInfo.relationshipName);
       setErrorMessage("");
@@ -125,11 +125,11 @@ const AddEditRelationship: React.FC<Props> = (props) => {
   };
 
   useEffect(() => {
-    if (props.entityTypes.length > 0 && JSON.stringify(props.relationshipInfo) !== "{}") {
+    if (props.dataModel.length > 0 && JSON.stringify(props.relationshipInfo) !== "{}") {
       let isConcept = props.relationshipInfo.isConcept;
       setVisibleSettings(!isConcept ? eVisibleSettings.EntityToEntity : eVisibleSettings.EntityToConceptClass);
-      let targetEntityIdx = props.entityTypes.findIndex(obj => isConcept ? obj.conceptName === props.relationshipInfo.targetNodeName : obj.entityName === props.relationshipInfo.targetNodeName);
-      let sourceEntityIdx = props.entityTypes.findIndex(obj => obj.entityName === props.relationshipInfo.sourceNodeName);
+      let targetEntityIdx = props.dataModel.findIndex(obj => isConcept ? obj.conceptName === props.relationshipInfo.targetNodeName : obj.entityName === props.relationshipInfo.targetNodeName);
+      let sourceEntityIdx = props.dataModel.findIndex(obj => obj.entityName === props.relationshipInfo.sourceNodeName);
 
       initRelationship(sourceEntityIdx);
       if (!isConcept) {
@@ -150,11 +150,11 @@ const AddEditRelationship: React.FC<Props> = (props) => {
         }
       }
     }
-  }, [props.entityTypes, props.relationshipInfo]);
+  }, [props.dataModel, props.relationshipInfo]);
 
   useEffect(() => {
     if (visibleSettings === eVisibleSettings.EntityToConceptClass) {
-      let sourceEntityIdx = props.entityTypes.findIndex(obj => obj.entityName === props.relationshipInfo.sourceNodeName);
+      let sourceEntityIdx = props.dataModel.findIndex(obj => obj.entityName === props.relationshipInfo.sourceNodeName);
       createJoinMenu(sourceEntityIdx);
     }
   }, [visibleSettings]);
@@ -168,8 +168,8 @@ const AddEditRelationship: React.FC<Props> = (props) => {
   }, [props.relationshipModalVisible]);
 
   const getPropertyType = (joinPropName, targetNodeName) => {
-    let targetEntityIdx = props.entityTypes.findIndex(obj => obj.entityName === targetNodeName);
-    let targetEntityDetails = props.entityTypes[targetEntityIdx];
+    let targetEntityIdx = props.dataModel.findIndex(obj => obj.entityName === targetNodeName);
+    let targetEntityDetails = props.dataModel[targetEntityIdx];
     if (joinPropName && joinPropName !== "") {
       return targetEntityDetails.model.definitions[targetNodeName].properties[joinPropName].datatype;
     } else {
@@ -183,7 +183,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
     let sortable = propertyOptions.sortable;
 
     if (propertyOptions.propertyType === PropertyType.RelatedEntity && !multiple) {
-      let externalEntity = props.entityTypes.find(entity => entity.entityName === propertyOptions.type);
+      let externalEntity = props.dataModel.find(entity => entity.entityName === propertyOptions.type);
       if (propertyOptions.joinPropertyType === "") {
         return {
           datatype: "string",
@@ -199,7 +199,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
       }
 
     } else if (propertyOptions.propertyType === PropertyType.RelatedEntity && multiple) {
-      let externalEntity = props.entityTypes.find(entity => entity.entityName === propertyOptions.type);
+      let externalEntity = props.dataModel.find(entity => entity.entityName === propertyOptions.type);
       if (propertyOptions.joinPropertyType === "") {
         return {
           datatype: "array",
@@ -262,7 +262,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
   const editPropertyUpdateDefinition = async (entityIdx: number, definitionName: string, propertyName: string, editPropertyOptions) => {
     let parseName = definitionName.split(",");
     let parseDefinitionName = parseName[parseName.length - 1];
-    let updatedDefinitions = {...props.entityTypes[entityIdx].model.definitions};
+    let updatedDefinitions = {...props.dataModel[entityIdx].model.definitions};
     let entityTypeDefinition = updatedDefinitions[parseDefinitionName];
     let newProperty = createPropertyDefinitionPayload(editPropertyOptions.propertyOptions);
 
@@ -338,7 +338,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
   const editRelatedConceptUpdateEntityType = async (entityIdx: number, definitionName: string, editRelatedConceptOptions) => {
     let parseName = definitionName.split(",");
     let parseDefinitionName = parseName[parseName.length - 1];
-    let updatedDefinitions = {...props.entityTypes[entityIdx].model.definitions};
+    let updatedDefinitions = {...props.dataModel[entityIdx].model.definitions};
     let entityTypeDefinition = updatedDefinitions[parseDefinitionName];
     let conceptClassName = editRelatedConceptOptions.conceptClass;
     if (entityTypeDefinition.hasOwnProperty("relatedConcepts")) {
@@ -384,8 +384,8 @@ const AddEditRelationship: React.FC<Props> = (props) => {
   const onSubmit = () => {
     setSubmitClicked(true);
     if (errorMessage === "" && !emptyTargetEntity) {
-      let sourceEntityIdx = props.entityTypes.findIndex(obj => obj.entityName === props.relationshipInfo.sourceNodeName);
-      let sourceProperties = props.entityTypes[sourceEntityIdx].model.definitions[props.relationshipInfo.sourceNodeName].properties;
+      let sourceEntityIdx = props.dataModel.findIndex(obj => obj.entityName === props.relationshipInfo.sourceNodeName);
+      let sourceProperties = props.dataModel[sourceEntityIdx].model.definitions[props.relationshipInfo.sourceNodeName].properties;
       let propertyNamesArray = props.isEditing ? Object.keys(sourceProperties).filter(propertyName => propertyName !== props.relationshipInfo.relationshipName) : Object.keys(sourceProperties);
       let joinPropertyVal = joinPropertyValue === "None" ? "" : joinPropertyValue;
       if (propertyNamesArray.includes(relationshipName) || props.relationshipInfo.sourceNodeName === relationshipName) {
@@ -418,7 +418,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
             entityModified = editPropertyUpdateDefinition(sourceEntityIdx, props.relationshipInfo.sourceNodeName, props.relationshipInfo.relationshipName, newEditPropertyOptions);
           } else {
             let newRelatedConceptPayload = {
-              conceptClass: props.relationshipInfo.targetNodeName,
+              conceptClass: targetEntityName,
               conceptExpression: relationshipExpression,
               context: sourcePropertyValue,
               predicate: relationshipName
@@ -438,7 +438,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
 
   const createJoinMenu = (entityIdx) => {
     let targetEntityDetails, entityUpdated, modelUpdated, menuProps, model;
-    targetEntityDetails = props.entityTypes[entityIdx];
+    targetEntityDetails = props.dataModel[entityIdx];
     let isConceptClassJoinView = visibleSettings === eVisibleSettings.EntityToConceptClass;
     model = isConceptClassJoinView ? targetEntityDetails.model.definitions[props.relationshipInfo.sourceNodeName] : targetEntityDetails.model.definitions[props.relationshipInfo.targetNodeName];
     entityUpdated = modelingOptions.modifiedEntitiesArray.find(ent => ent.entityName === props.relationshipInfo.targetNodeName);
@@ -544,8 +544,8 @@ const AddEditRelationship: React.FC<Props> = (props) => {
     let isConcept = visibleSettings === eVisibleSettings.EntityToConceptClass;
     let nodeName = !isConcept ? "entityName" : "conceptName";
     if (!isConcept) {
-      entityIdx = props.entityTypes.findIndex(entity => entity[nodeName] === entityName);
-      model = props.entityTypes[entityIdx].model.definitions[entityName];
+      entityIdx = props.dataModel.findIndex(entity => entity[nodeName] === entityName);
+      model = props.dataModel[entityIdx].model.definitions[entityName];
       menuProps = getJoinMenuProps(model, "");
       menuProps.unshift({value: "None", label: "None", type: "string"});
       if (menuProps) {
@@ -588,7 +588,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
       suffix={<FontAwesomeIcon icon={faSearch} className={styles.searchIcon}/>}
     />
     {
-      entityTypesToTuples(props.entityTypes)
+      entityTypesToTuples(props.dataModel)
         .filter(oElement => !filterEntity || (oElement.value && oElement.value.toLowerCase().includes(filterEntity.toLowerCase())))
         .map((item, index) =>
           <Dropdown.Item
@@ -692,10 +692,10 @@ const AddEditRelationship: React.FC<Props> = (props) => {
     let sourceEntityName = props.relationshipInfo.sourceNodeName;
     let entityTypeDefinition;
     let updatedDefinitions;
-    for (let i = 0; i < props.entityTypes.length; i++) {
-      if (props.entityTypes[i].entityName === sourceEntityName) {
-        updatedDefinitions = {...props.entityTypes[i].model};
-        entityTypeDefinition = props.entityTypes[i].model.definitions[sourceEntityName];
+    for (let i = 0; i < props.dataModel.length; i++) {
+      if (props.dataModel[i].entityName === sourceEntityName) {
+        updatedDefinitions = {...props.dataModel[i].model};
+        entityTypeDefinition = props.dataModel[i].model.definitions[sourceEntityName];
       }
     }
     if (visibleSettings === eVisibleSettings.EntityToEntity) {

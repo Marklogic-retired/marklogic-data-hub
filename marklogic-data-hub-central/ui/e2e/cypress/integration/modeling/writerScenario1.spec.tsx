@@ -41,7 +41,8 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
-    cy.waitUntil(() => modelPage.getAddEntityButton()).click();
+    cy.waitUntil(() => modelPage.getAddButton()).click();
+    modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});
     entityTypeModal.newEntityName("Person");
     entityTypeModal.getAddButton().click();
     cy.waitUntil(() => entityTypeModal.entityNameError().should("exist"));

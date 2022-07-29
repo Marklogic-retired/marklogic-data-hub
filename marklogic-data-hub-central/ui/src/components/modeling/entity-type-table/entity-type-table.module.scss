@@ -80,3 +80,22 @@ table table {
 .iconHover:hover{
   color: var(--hoverColor) !important;
 }
+
+.expandButtonIndicator { 
+  width: 17px;
+  height: 17px;
+  text-align: center !important;
+  line-height: 13px !important;
+  padding: 1px !important;
+  border: none !important;
+  border-radius: 0 !important;
+  margin-right: 8px;
+  
+  &:focus, &:focus-visible {
+      box-shadow: none !important;
+  }
+}
+
+.iconIndicator {
+  font-size: 12px;
+}

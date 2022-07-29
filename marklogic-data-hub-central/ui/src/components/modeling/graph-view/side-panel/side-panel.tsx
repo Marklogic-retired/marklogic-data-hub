@@ -23,7 +23,7 @@ import EntityPropertyTreeSelect from "../../../entity-property-tree-select/entit
 import {getEntities} from "@api/queries";
 
 type Props = {
-  entityTypes: any;
+  dataModel: any;
   onCloseSidePanel: () => void;
   deleteEntityClicked: (selectedEntity) => void;
   canWriteEntityModel: any;
@@ -539,7 +539,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
     </div>
       :
       <PropertiesTab
-        entityTypeData={props.entityTypes.find(e => e.entityName === modelingOptions.selectedEntity)}
+        entityTypeData={props.dataModel.find(e => e.entityName === modelingOptions.selectedEntity)}
         canWriteEntityModel={props.canWriteEntityModel}
         canReadEntityModel={props.canReadEntityModel}
         updateSavedEntity={props.updateSavedEntity}

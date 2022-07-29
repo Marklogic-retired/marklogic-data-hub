@@ -49,6 +49,8 @@ describe("EntityTypeModal Component", () => {
           updateEntities={jest.fn()}
           updateSavedEntity={jest.fn()}
           hubCentralConfig={{}}
+          editConceptClassDescription={jest.fn()}
+          deleteConceptClass={jest.fn()}
         />
       </Router>);
 
@@ -72,6 +74,8 @@ describe("EntityTypeModal Component", () => {
           updateEntities={jest.fn()}
           updateSavedEntity={jest.fn()}
           hubCentralConfig={hubCentralConfig}
+          editConceptClassDescription={jest.fn()}
+          deleteConceptClass={jest.fn()}
         />
       </Router>);
 
@@ -166,6 +170,8 @@ describe("EntityTypeModal Component", () => {
           updateEntities={jest.fn()}
           updateSavedEntity={jest.fn()}
           hubCentralConfig={hubCentralConfig}
+          editConceptClassDescription={jest.fn()}
+          deleteConceptClass={jest.fn()}
         />
       </Router>);
 
@@ -193,6 +199,8 @@ describe("EntityTypeModal Component", () => {
           updateEntities={updateMock}
           updateSavedEntity={jest.fn()}
           hubCentralConfig={hubCentralConfig}
+          editConceptClassDescription={jest.fn()}
+          deleteConceptClass={jest.fn()}
         />
       </Router>);
 
@@ -264,6 +272,8 @@ describe("EntityTypeModal Component", () => {
           updateEntities={updateMock}
           updateSavedEntity={jest.fn()}
           hubCentralConfig={hubCentralConfig}
+          editConceptClassDescription={jest.fn()}
+          deleteConceptClass={jest.fn()}
         />
       </Router>);
 
@@ -296,6 +306,8 @@ describe("EntityTypeModal Component", () => {
           updateEntities={updateMock}
           updateSavedEntity={jest.fn()}
           hubCentralConfig={hubCentralConfig}
+          editConceptClassDescription={jest.fn()}
+          deleteConceptClass={jest.fn()}
         />
       </Router>);
 
@@ -345,6 +357,8 @@ describe("EntityTypeModal Component", () => {
             updateEntities={jest.fn()}
             updateSavedEntity={jest.fn()}
             hubCentralConfig={hubCentralConfig}
+            editConceptClassDescription={jest.fn()}
+            deleteConceptClass={jest.fn()}
           />
         </Router>
       </ModelingContext.Provider>
@@ -373,6 +387,8 @@ describe("EntityTypeModal Component", () => {
           updateEntities={jest.fn()}
           updateSavedEntity={jest.fn()}
           hubCentralConfig={hubCentralConfig}
+          editConceptClassDescription={jest.fn()}
+          deleteConceptClass={jest.fn()}
         />
       </Router>);
 
@@ -397,6 +413,8 @@ describe("EntityTypeModal Component", () => {
             updateEntities={updateMock}
             updateSavedEntity={jest.fn()}
             hubCentralConfig={hubCentralConfig}
+            editConceptClassDescription={jest.fn()}
+            deleteConceptClass={jest.fn()}
           />
         </Router>
       </ModelingContext.Provider>
@@ -404,7 +422,8 @@ describe("EntityTypeModal Component", () => {
 
     // check if graph view icon tooltip appears
     fireEvent.mouseOver(getByTestId("Order-graphView-icon"));
-    await wait(() => expect(screen.getByText(ModelingTooltips.viewGraph)).toBeInTheDocument());
+    let isConceptClass = false;
+    await wait(() => expect(screen.getByText(ModelingTooltips.viewGraph(isConceptClass))).toBeInTheDocument());
 
     userEvent.click(getByTestId("Order-graphView-icon"));
     expect(isModified.setGraphViewOptions).toBeCalledWith({view: ViewType.graph, selectedEntity: "Order"});

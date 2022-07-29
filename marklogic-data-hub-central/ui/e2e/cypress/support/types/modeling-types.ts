@@ -16,5 +16,6 @@ export enum ConfirmationType {
   PublishAll = "publishAllEntity",
   RevertChanges = "revertEntityChanges",
   PropertyName = "propertyName",
-  DeleteConceptClass = "deleteConceptClass"
+  DeleteConceptClass = "deleteConceptClass",
+  DeleteConceptClassWithRelatedEntityTypes = "deleteConceptClassWithRelatedEntityTypes"
 }

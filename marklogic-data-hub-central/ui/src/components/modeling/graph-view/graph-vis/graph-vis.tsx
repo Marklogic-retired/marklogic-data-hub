@@ -26,7 +26,7 @@ import {ModelingMessages} from "@config/tooltips.config";
 import {getMappingFunctions} from "@api/mapping";
 
 type Props = {
-  entityTypes: any;
+  dataModel: any;
   handleEntitySelection: any;
   filteredEntityTypes: any;
   entitySelected: any;
@@ -75,7 +75,7 @@ const GraphVis: React.FC<Props> = (props) => {
     let newNodeCounter = 0;
     if (entitiesConfigExist(props.hubCentralConfig)) {
       let allNodeCoordinates = props.hubCentralConfig["modeling"];
-      for (const node of props.entityTypes) {
+      for (const node of props.dataModel) {
         let isConcept = node.hasOwnProperty("conceptName");
         let nodeName = !isConcept ? node.entityName : node.conceptName;
         let modelCategory = getCategoryWithinModel(isConcept);
@@ -178,7 +178,7 @@ const GraphVis: React.FC<Props> = (props) => {
 
   // Initialize or update graph
   useEffect(() => {
-    if (props.entityTypes) {
+    if (props.dataModel) {
       if (coordinatesExist()) {
         if (physicsEnabled) {
           setPhysicsEnabled(false);
@@ -209,7 +209,7 @@ const GraphVis: React.FC<Props> = (props) => {
         setContextMenuVisible(false);
       };
     }
-  }, [props.entityTypes, props.filteredEntityTypes.length, coordsLoaded]);
+  }, [props.dataModel, props.filteredEntityTypes.length, coordsLoaded]);
 
   const initializeScaleAndViewPosition = () => {
     if (props.hubCentralConfig?.modeling) {
@@ -240,7 +240,7 @@ const GraphVis: React.FC<Props> = (props) => {
   };
 
   const selectedEntityExists = () => {
-    return props.entityTypes.some(e => {
+    return props.dataModel.some(e => {
       let isConcept = e.hasOwnProperty("conceptName");
       let nodeName = !isConcept ? e.entityName : e.conceptName;
       return nodeName === modelingOptions.selectedEntity;
@@ -248,9 +248,9 @@ const GraphVis: React.FC<Props> = (props) => {
   };
 
   const saveUnsavedCoords = async (positions) => {
-    if (props.entityTypes) {
+    if (props.dataModel) {
       let newCoords = {...coords};
-      props.entityTypes.forEach(ent => {
+      props.dataModel.forEach(ent => {
         const isConcept = ent.hasOwnProperty("conceptName");
         let nodeName = isConcept ? ent.conceptName : ent.entityName;
         if (!coordsExist(nodeName, isConcept)) {
@@ -381,11 +381,11 @@ const GraphVis: React.FC<Props> = (props) => {
   };
 
   const getDescription = (entityName) => {
-    let entityIndex = props.entityTypes.findIndex(obj => (obj.entityName || obj.conceptName) === entityName);
-    return props.entityTypes[entityIndex].model.definitions ?
-      (props.entityTypes[entityIndex].model.definitions[entityName] ?
-        props.entityTypes[entityIndex].model.definitions[entityName].description : "") :
-      props.entityTypes[entityIndex].model.info.description;
+    let entityIndex = props.dataModel.findIndex(obj => (obj.entityName || obj.conceptName) === entityName);
+    return props.dataModel[entityIndex].model.definitions ?
+      (props.dataModel[entityIndex].model.definitions[entityName] ?
+        props.dataModel[entityIndex].model.definitions[entityName].description : "") :
+      props.dataModel[entityIndex].model.info.description;
   };
 
   // TODO remove when num instances is retrieved from db
@@ -410,7 +410,7 @@ const GraphVis: React.FC<Props> = (props) => {
     let nodes;
     if (graphType === "shape") {
       const {boxWidth: defaultBoxWidth, boxHeight, boxPadding, boxRadius, iconWidth, iconHeight, iconRightMargin} = DEFAULT_NODE_CONFIG;
-      nodes = props.entityTypes && props.entityTypes?.map((e) => {
+      nodes = props.dataModel && props.dataModel?.map((e) => {
         const isConcept = e.hasOwnProperty("conceptName");
         let nodeName = !isConcept ? e.entityName : e.conceptName;
         const nodeId = nodeName;
@@ -494,7 +494,7 @@ const GraphVis: React.FC<Props> = (props) => {
         };
       });
     } else if (graphType === "image") { // TODO for custom SVG node, not currently used
-      nodes = props.entityTypes && props.entityTypes?.map((e) => {
+      nodes = props.dataModel && props.dataModel?.map((e) => {
         const node = new NodeSvg(e.entityName, props.getColor(e.entityName), getNumInstances(e.entityName), getIcon(e.entityName));
         let tempTitle;
         if (getDescription(e.entityName) && getDescription(e.entityName).length) {
@@ -562,7 +562,7 @@ const GraphVis: React.FC<Props> = (props) => {
 
   const getEdges = () => {
     let edges: any = [];
-    props.entityTypes.forEach((e, i) => {
+    props.dataModel.forEach((e, i) => {
       if (e.model.definitions) {
         if (!e.model.definitions[e.entityName]) {
           return [];
@@ -675,7 +675,7 @@ const GraphVis: React.FC<Props> = (props) => {
   };
 
   const isConceptNode = (nodeId) => {
-    return props.entityTypes.some(e => {
+    return props.dataModel.some(e => {
       let isConcept = e.hasOwnProperty("conceptName");
       let nodeName = !isConcept ? "" : e.conceptName;
       return nodeName === nodeId;
@@ -835,7 +835,7 @@ const GraphVis: React.FC<Props> = (props) => {
     let coordsExist = true;
     if (entitiesConfigExist(props.hubCentralConfig)) {
       let allNodeCoordinates = !!props.hubCentralConfig["modeling"] && props.hubCentralConfig["modeling"];
-      for (const node of props.entityTypes) {
+      for (const node of props.dataModel) {
         let isConcept = node.hasOwnProperty("conceptName");
         let nodeName = !isConcept ? node.entityName : node.conceptName;
         let modelCategory = getCategoryWithinModel(isConcept);
@@ -1038,7 +1038,7 @@ const GraphVis: React.FC<Props> = (props) => {
         setOpenRelationshipModal={setOpenRelationshipModal}
         isEditing={!newRelationship}
         relationshipInfo={selectedRelationship}
-        entityTypes={props.entityTypes}
+        dataModel={props.dataModel}
         updateSavedEntity={props.updateSavedEntity}
         relationshipModalVisible={props.relationshipModalVisible}
         toggleRelationshipModal={props.toggleRelationshipModal}

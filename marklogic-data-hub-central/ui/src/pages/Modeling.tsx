@@ -9,7 +9,7 @@ import EntityTypeTable from "@components/modeling/entity-type-table/entity-type-
 import ViewSwitch from "@components/common/switch-view/view-switch";
 import styles from "./Modeling.module.scss";
 
-import {deleteEntity, entityReferences, primaryEntityTypes, publishDraftModels, clearDraftModels, updateEntityModels, createConceptClass, deleteConceptClass} from "@api/modeling";
+import {deleteEntity, entityReferences, primaryEntityTypes, publishDraftModels, clearDraftModels, updateEntityModels, deleteConceptClass, conceptClassReferences} from "@api/modeling";
 import {UserContext} from "@util/user-context";
 import {ModelingContext} from "@util/modeling-context";
 import {ModelingTooltips} from "@config/tooltips.config";
@@ -27,11 +27,13 @@ import {updateUserPreferences} from "../services/user-preferences";
 import {entitiesConfigExist} from "@util/modeling-utils";
 import {HubCentralConfigContext} from "@util/hubCentralConfig-context";
 import ConceptClassModal from "@components/modeling/concept-class-modal/concept-class-modal";
+import {Dropdown, DropdownButton} from "react-bootstrap";
+import {ChevronDown} from "react-bootstrap-icons";
 
 const Modeling: React.FC = () => {
   const {user, handleError} = useContext(UserContext);
   const {modelingOptions, setEntityTypeNamesArray, clearEntityModified, setView, setSelectedEntity} = useContext(ModelingContext);
-  const [entityTypes, setEntityTypes] = useState<any[]>([]);
+  const [dataModel, setDataModel] = useState<any[]>([]);
   const [showEntityModal, toggleShowEntityModal] = useState(false);
   const [isEditModal, toggleIsEditModal] = useState(false);
   const [name, setName] = useState("");
@@ -69,23 +71,20 @@ const Modeling: React.FC = () => {
   //Concept Classes
   const [showConceptClassModal, toggleShowConceptClassModal] = useState(false);
   const [isEditConceptClassModal, toggleIsEditConceptClassModal] = useState(false);
-  const [conceptName] = useState("");
-  const [conceptDescription] = useState("");
-  const [conceptColor] = useState("");
-  const [conceptIcon] = useState("");
-
-  //Temp entity types. Will be removed when working on concepts in the table view
-  const [entityTypesWithoutConcepts, setEntityTypesWithoutConcepts] = useState<any[]>([]);
+  const [conceptClassName, setConceptClassName] = useState("");
+  const [conceptClassDescription, setConceptClassDescription] = useState("");
+  const [conceptClassColor, setConceptClassColor] = useState("");
+  const [conceptClassIcon, setConceptClassIcon] = useState("");
 
   useEffect(() => {
     if (canReadEntityModel && modelingOptions.view === ViewType.table) {
-      setEntityTypesFromServer();
+      setDataModelFromServer();
     }
   }, [modelingOptions.view]);
 
   useEffect(() => {
     if (canReadEntityModel) {
-      setEntityTypesFromServer();
+      setDataModelFromServer();
       updateUserPreferencesFromConfig();
     }
   }, []);
@@ -99,28 +98,25 @@ const Modeling: React.FC = () => {
     setWidth(window.innerWidth);
   };
 
-  const setEntityTypesFromServer = async () => {
+  const setDataModelFromServer = async () => {
     try {
       const response = await primaryEntityTypes();
       if (response) {
         let model: any = [];
         let entityTypesArray:any = [];
         let isDraft = false;
-        let tempEntitytTypesWithoutConcepts:any = [];
         await response["data"].forEach(entity => {
           if (!entity.model.info.draftDeleted) {
             model.push(entity);
             if (entity.hasOwnProperty("entityName")) {
               entityTypesArray.push({name: entity.entityName, entityTypeId: entity.entityTypeId});
-              tempEntitytTypesWithoutConcepts.push(entity);
             }
           }
           if (entity.model.info.draft && !isDraft) {
             isDraft = true;
           }
         });
-        setEntityTypes(model);
-        setEntityTypesWithoutConcepts(tempEntitytTypesWithoutConcepts);
+        setDataModel(model);
         if (response["data"].length > 0) {
           setEntityTypeNamesArray(entityTypesArray, isDraft);
         }
@@ -153,7 +149,7 @@ const Modeling: React.FC = () => {
         response = await updateEntityModels(modelingOptions.modifiedEntitiesArray);
       }
       if (response["status"] === 200) {
-        await setEntityTypesFromServer();
+        await setDataModelFromServer();
       }
     } catch (error) {
       isSuccess = false;
@@ -169,30 +165,9 @@ const Modeling: React.FC = () => {
     return isSuccess;
   };
 
-  const addConceptClass = async (payload: any) => {
-    try {
-      let resp = await createConceptClass(payload);
-      if (resp.status === 200) {
-        //To be updated when adding concepts in table view
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const handleConceptClassDeletion = async (conceptClassName: string) => {
-    try {
-      setConfirmBoldTextArray([conceptClassName]);
-      setConfirmType(ConfirmationType.DeleteConceptClass);
-      toggleConfirmModal(true);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   const updateConceptClassAndHideModal = async (name: string, description: string) => {
     toggleShowConceptClassModal(false);
-    await setEntityTypesFromServer().then((resp => {
+    await setDataModelFromServer().then((resp => {
       if (!isEditModal && modelingOptions.view === ViewType.graph) {
         let isDraft = true;
         setSelectedEntity(name, isDraft);
@@ -204,7 +179,7 @@ const Modeling: React.FC = () => {
     try {
       let response = await publishDraftModels();
       if (response["status"] === 200) {
-        await setEntityTypesFromServer();
+        await setDataModelFromServer();
       }
     } catch (error) {
       handleError(error);
@@ -219,7 +194,7 @@ const Modeling: React.FC = () => {
     try {
       let response = await clearDraftModels();
       if (response["status"] === 200) {
-        await setEntityTypesFromServer();
+        await setDataModelFromServer();
       }
     } catch (error) {
       handleError(error);
@@ -246,10 +221,10 @@ const Modeling: React.FC = () => {
 
   const updateEntityTypesAndHideModal = async (entityName: string, description: string) => {
     if (!isEditModal) {
-      setAutoExpand(entityName);
+      setAutoExpand(entityName+"-Entity Type");
     }
     toggleShowEntityModal(false);
-    await setEntityTypesFromServer().then((resp => {
+    await setDataModelFromServer().then((resp => {
       if (!isEditModal && modelingOptions.view === ViewType.graph) {
         let isDraft = true;
         setSelectedEntity(entityName, isDraft);
@@ -268,6 +243,17 @@ const Modeling: React.FC = () => {
       setVersion(entityTypeVersion);
       setColor(entityTypeColor);
       setIcon(entityTypeIcon);
+    }
+  };
+
+  const editConceptClassDescription = (conceptClassName: string, conceptClassDescription: string, conceptClassColor: string, conceptClassIcon: string) => {
+    if (canWriteEntityModel) {
+      toggleIsEditConceptClassModal(true);
+      toggleShowConceptClassModal(true);
+      setConceptClassName(conceptClassName);
+      setConceptClassDescription(conceptClassDescription);
+      setConceptClassColor(conceptClassColor);
+      setConceptClassIcon(conceptClassIcon);
     }
   };
 
@@ -324,7 +310,7 @@ const Modeling: React.FC = () => {
     try {
       const response = await deleteEntity(entityName);
       if (response["status"] === 200) {
-        setEntityTypesFromServer();
+        setDataModelFromServer();
       }
     } catch (error) {
       handleError(error);
@@ -336,12 +322,32 @@ const Modeling: React.FC = () => {
     }
   };
 
+  const getConceptClassReferences = async (conceptClassName: string) => {
+    try {
+      const response = await conceptClassReferences(conceptClassName);
+      if (response["status"] === 200) {
+        let newConfirmType = ConfirmationType.DeleteConceptClass;
+
+        if (response["data"]["entityNamesWithRelatedConcept"].length > 0) {
+          newConfirmType = ConfirmationType.DeleteConceptClassWithRelatedEntityTypes;
+          setArrayValues(response["data"]["entityNamesWithRelatedConcept"]);
+        }
+
+        setConfirmBoldTextArray([conceptClassName]);
+        setConfirmType(newConfirmType);
+        toggleConfirmModal(true);
+      }
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
   const deleteConceptClassFromServer = async () => {
     let conceptClassName = confirmBoldTextArray.length ? confirmBoldTextArray[0] : "";
     try {
       const response = await deleteConceptClass(conceptClassName);
       if (response["status"] === 200) {
-        setEntityTypesFromServer();
+        setDataModelFromServer();
       }
     } catch (error) {
       handleError(error);
@@ -353,17 +359,36 @@ const Modeling: React.FC = () => {
     }
   };
 
-  const addButton = <HCButton
-    variant="primary"
-    size="sm"
-    aria-label="add-entity"
-    onClick={() => {
+  const handleAddMenu = (key) => {
+    if (key === "addNewEntityType") {
       toggleIsEditModal(false);
       toggleShowEntityModal(true);
-    }}
-    disabled={!canWriteEntityModel}
-    className={!canWriteEntityModel ? styles.disabledPointerEvents : undefined}
-  >Add</HCButton>;
+    } else if (key === "addNewConceptClass") {
+      toggleIsEditConceptClassModal(false);
+      toggleShowConceptClassModal(true);
+    }
+  };
+
+  const addButton =
+  <span className={styles.publishButtonParent}>
+    <span className={`${styles.publishButtonContainer} ${!canWriteEntityModel ? styles.addButton : undefined}`}>
+      <DropdownButton
+        aria-label="add-entity-type-concept-class"
+        align="end"
+        size="sm"
+        title={<span>Add<ChevronDown className="ms-2" /></span>}
+        onSelect={handleAddMenu}
+        className={!canWriteEntityModel ? styles.disabledPointerEvents : undefined}
+        disabled={!canWriteEntityModel}>
+        <Dropdown.Item eventKey="addNewEntityType">
+          <span aria-label={"add-entity-type"}>Add new entity type</span>
+        </Dropdown.Item>
+        <Dropdown.Item eventKey="addNewConceptClass">
+          <span aria-label={"add-concept-class"}>Add new concept class</span>
+        </Dropdown.Item>
+      </DropdownButton>
+    </span>
+  </span>;
 
   const publishIconStyle: CSSProperties = {
     width: "15px",
@@ -440,13 +465,11 @@ const Modeling: React.FC = () => {
                   <ModelingLegend/>
                   <div style={{float: "right"}}>
                     {canWriteEntityModel ?
-                      <HCTooltip id="add-entity-tooltip" placement="top" text={ModelingTooltips.addNewEntity}>
-                        <span>{addButton}</span>
-                      </HCTooltip>
+                      <span>{addButton}</span>
                       :
                       <HCTooltip
                         id="add-entity-disabled-tooltip"
-                        text={ModelingTooltips.addNewEntity + " " + ModelingTooltips.noWriteAccess}
+                        text={ModelingTooltips.noWriteAccess}
                         placement="top" className={styles.tooltipOverlay}>
                         <span className={styles.disabledCursor}>{addButton}</span>
                       </HCTooltip>
@@ -496,15 +519,15 @@ const Modeling: React.FC = () => {
             <GraphView
               canReadEntityModel={canReadEntityModel}
               canWriteEntityModel={canWriteEntityModel}
-              entityTypes={entityTypes}
+              dataModel={dataModel}
               deleteEntityType={getEntityReferences}
               updateSavedEntity={saveAllEntitiesToServer}
-              updateEntities={setEntityTypesFromServer}
+              updateEntities={setDataModelFromServer}
               relationshipModalVisible={showRelationshipModal}
               toggleRelationshipModal={toggleRelationshipModal}
               toggleShowEntityModal={toggleShowEntityModal}
               toggleIsEditModal={toggleIsEditModal}
-              setEntityTypesFromServer={setEntityTypesFromServer}
+              setDataModelFromServer={setDataModelFromServer}
               toggleConfirmModal={toggleConfirmModal}
               toggleRevertConfirmModal = {toggleRevertConfirmModal}
               setConfirmType={setConfirmType}
@@ -514,9 +537,8 @@ const Modeling: React.FC = () => {
               setRevertUnpublishedChanges={setRevertUnpublishedChanges}
               toggleShowConceptClassModal={toggleShowConceptClassModal}
               toggleIsEditConceptClassModal={toggleIsEditConceptClassModal}
-              addConceptClass={addConceptClass}
               updateConceptClassAndHideModal={updateConceptClassAndHideModal}
-              deleteConceptClass={handleConceptClassDeletion}
+              deleteConceptClass={getConceptClassReferences}
             />
           </>
         }
@@ -525,12 +547,14 @@ const Modeling: React.FC = () => {
           <EntityTypeTable
             canReadEntityModel={canReadEntityModel}
             canWriteEntityModel={canWriteEntityModel}
-            allEntityTypesData={entityTypesWithoutConcepts}
+            allEntityTypesData={dataModel}
             editEntityTypeDescription={editEntityTypeDescription}
-            updateEntities={setEntityTypesFromServer}
+            updateEntities={setDataModelFromServer}
             updateSavedEntity={saveAllEntitiesToServer}
             autoExpand={autoExpand}
             hubCentralConfig={hubCentralConfig}
+            editConceptClassDescription={editConceptClassDescription}
+            deleteConceptClass={getConceptClassReferences}
           />
         </div> : ""}
         <ConfirmationModal
@@ -569,10 +593,10 @@ const Modeling: React.FC = () => {
           toggleModal={toggleShowConceptClassModal}
           updateConceptClassAndHideModal={updateConceptClassAndHideModal}
           isEditModal={isEditConceptClassModal}
-          name={conceptName}
-          description={conceptDescription}
-          color={conceptColor}
-          icon={conceptIcon}
+          name={conceptClassName}
+          description={conceptClassDescription}
+          color={conceptClassColor}
+          icon={conceptClassIcon}
           updateHubCentralConfig={publishHubCentralConfig}
           hubCentralConfig={hubCentralConfig}
         />

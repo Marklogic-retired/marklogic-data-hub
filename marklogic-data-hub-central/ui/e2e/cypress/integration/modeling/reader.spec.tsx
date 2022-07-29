@@ -64,7 +64,7 @@ describe("Entity Modeling: Reader Role", () => {
     // cy.url().should('include', '/tiles/model');
     // tiles.getModelTile().should('exist');
 
-    modelPage.getAddEntityButton().click({force: true});
+    modelPage.getAddButton().should("be.disabled");
     entityTypeModal.getAddButton().should("not.exist");
 
     modelPage.getPublishButton().click({force: true});

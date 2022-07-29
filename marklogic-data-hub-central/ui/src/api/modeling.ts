@@ -63,3 +63,7 @@ export const deleteConceptClass = async (conceptName: string) => {
 export const updateConceptClass = async (conceptClassName: string, conceptClassDescription: string) => {
   return await axios.put(`/api/concepts/${conceptClassName}/info`, {description: conceptClassDescription});
 };
+
+export const conceptClassReferences = async (conceptClassName: string) => {
+  return await axios.get(`/api/concepts/${conceptClassName}/references`);
+};

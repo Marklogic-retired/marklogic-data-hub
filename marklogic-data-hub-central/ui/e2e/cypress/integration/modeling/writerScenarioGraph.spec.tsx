@@ -50,7 +50,8 @@ describe("Entity Modeling: Graph View", () => {
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click({force: true});
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
-    modelPage.getAddEntityButton().should("exist").click();
+    cy.waitUntil(() => modelPage.getAddButton()).click();
+    modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});
     entityTypeModal.newEntityName("ThisIsVeryLongNameHavingMoreThan20Characters");
     entityTypeModal.newEntityDescription("entity description");
     cy.waitUntil(() => entityTypeModal.getAddButton().click());
@@ -78,7 +79,8 @@ describe("Entity Modeling: Graph View", () => {
   });
   it("Create another entity Patients and add a properties", {defaultCommandTimeout: 120000}, () => {
     modelPage.selectView("table");
-    modelPage.getAddEntityButton().should("exist").click();
+    cy.waitUntil(() => modelPage.getAddButton()).click();
+    modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});
     entityTypeModal.newEntityName("Patients");
     entityTypeModal.newEntityDescription("An entity for patients");
     entityTypeModal.getAddButton().click();

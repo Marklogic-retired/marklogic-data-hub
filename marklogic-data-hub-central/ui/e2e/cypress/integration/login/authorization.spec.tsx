@@ -88,7 +88,7 @@ describe("login", () => {
     cy.wait(2000);
     tiles.getModelTile().should("exist");
     modelPage.selectView("table");
-    modelPage.getAddEntityButton().should("be.disabled");
+    modelPage.getAddButton().should("be.disabled");
   });
 
   it("should only enable Load and Explorer tile for hub-central-load-reader", () => {
