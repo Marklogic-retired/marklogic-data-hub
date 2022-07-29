@@ -38,7 +38,7 @@ describe("Mapping", () => {
     cy.log("**Navigates to Curate and opens EntityTypeId name**");
     toolbar.getCurateToolbarIcon().click();
     curatePage.toggleEntityTypeId(entityTypeId);
-    curatePage.verifyMatchingTab(entityTypeId);
+    curatePage.verifyMatchingTab(entityTypeId, "not.exist");
 
     cy.log("**Adds a new step**");
     curatePage.verifyTabs(entityTypeId, "be.visible", "not.exist");

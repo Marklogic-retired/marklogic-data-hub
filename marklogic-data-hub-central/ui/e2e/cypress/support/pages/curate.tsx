@@ -93,8 +93,8 @@ class CuratePage {
     cy.get(`#${entityTypeId} [data-rr-ui-event-key="custom"]`).should(customTabShould);
   }
 
-  verifyMatchingTab(entityTypeId: string) {
-    cy.get(`#${entityTypeId} [data-rr-ui-event-key="match"]`).should("not.exist");
+  verifyMatchingTab(entityTypeId: string, matchingTabShould: string) {
+    cy.get(`#${entityTypeId} [data-rr-ui-event-key="match"]`).should(matchingTabShould);
   }
 
   selectMergeTab(entityTypeId: string) {
