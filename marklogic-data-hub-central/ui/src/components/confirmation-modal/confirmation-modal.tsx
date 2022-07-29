@@ -287,10 +287,34 @@ const ConfirmationModal: React.FC<Props> = (props) => {
           {props.type === ConfirmationType.DiscardChanges &&
             <p aria-label="discard-changes-text">Discard Changes?</p>
           }
+
+          {props.type === ConfirmationType.DeleteConceptClassWithRelatedEntityTypes && (
+            <>
+              <HCAlert
+                className={`mt-2 ${styles.alert}`}
+                showIcon
+                variant="warning"
+              >{"Concept class appears to be related to 1 or more entity types."}</HCAlert>
+
+              <p aria-label="delete-concept-class-related-entities-text">Edit the concept relationship of these entity types before deleting <b>{props.boldTextArray[0]}</b>.</p>
+              <p
+                aria-label="toggle-entities"
+                className={styles.toggleSteps}
+                onClick={() => toggleEntities(!showEntities)}
+              >{showEntities ? "Hide Entities in concept relationship..." : "Show Entities in concept relationship..."}</p>
+
+              {showEntities && (
+                <ul className={styles.stepList} data-testid="conceptClassWithRelatedEntityTypes">
+                  {renderArrayValues}
+                </ul>
+              )}
+            </>
+          )}
         </div>
         {(props.type === ConfirmationType.DeleteEntityStepWarn
           || props.type === ConfirmationType.DeleteEntityWithForeignKeyReferences
-          || props.type === ConfirmationType.DeleteEntityPropertyWithForeignKeyReferences) ? modalFooterClose : modalFooter}
+          || props.type === ConfirmationType.DeleteEntityPropertyWithForeignKeyReferences
+          || props.type === ConfirmationType.DeleteConceptClassWithRelatedEntityTypes) ? modalFooterClose : modalFooter}
       </Modal.Body>
     </Modal>
   );

@@ -18,7 +18,7 @@ class EntityTypeTable {
   }
 
   getExpandEntityIcon(entityName: string) {
-    cy.get(`[data-testid="${entityName}-expand-icon"]`).click();
+    cy.get(`[data-testid="${entityName}-Entity Type-expand-icon"]`).click();
   }
 
   sortByEntityName() {
@@ -51,6 +51,14 @@ class EntityTypeTable {
   }
   goToNextTablePage() {
     return cy.get("[title='Next Page']").scrollIntoView().click();
+  }
+
+  getConceptClass(conceptName: string) {
+    return cy.findByTestId(`${conceptName}-span`);
+  }
+
+  getDeleteConceptClassIcon(conceptName: string) {
+    return cy.findByTestId(`${conceptName}-trash-icon`);
   }
 }
 

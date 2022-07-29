@@ -3,7 +3,7 @@ import {Row, Col, Modal, Form, FormLabel} from "react-bootstrap";
 import styles from "./concept-class-modal.module.scss";
 import {UserContext} from "@util/user-context";
 import {ModelingTooltips, ErrorTooltips} from "@config/tooltips.config";
-import {createConceptClass} from "@api/modeling";
+import {createConceptClass, updateConceptClass} from "@api/modeling";
 import {defaultHubCentralConfig} from "@config/modeling.config";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {EntityTypeColorPicker, HCButton, HCInput, HCTooltip, HCIconPicker} from "@components/common";
@@ -107,7 +107,10 @@ const ConceptClassModal: React.FC<Props> = (props) => {
 
   const updateConceptDescription = async (name: string, description: string) => {
     try {
-      updateConceptClassAndHideModal(name, description);
+      const response = await updateConceptClass(name, description);
+      if (response["status"] === 200) {
+        updateConceptClassAndHideModal(name, description);
+      }
     } catch (error) {
       if (error.response.status === 400) {
         if (error.response.data.hasOwnProperty("message")) {
@@ -162,10 +165,10 @@ const ConceptClassModal: React.FC<Props> = (props) => {
   const handleSubmit = async () => {
     try {
       if (conceptClassEdited()) {
-        await updateConceptDescription(name, description);
+        await updateConceptDescription(conceptName, conceptDescription);
       }
       if (colorTouched || iconTouched) {
-        await setHubCentralConfig(name, colorSelected, iconSelected);
+        await setHubCentralConfig(conceptName, colorSelected, iconSelected);
       }
     } catch (error) {
       if (error.response.status === 400) {

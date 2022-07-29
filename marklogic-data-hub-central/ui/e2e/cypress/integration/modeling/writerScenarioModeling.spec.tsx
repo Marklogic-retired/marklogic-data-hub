@@ -41,7 +41,8 @@ describe("Entity Modeling: Graph View", () => {
     cy.log("**Creating new entity student in table view**");
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
-    modelPage.getAddEntityButton().should("exist").click();
+    cy.waitUntil(() => modelPage.getAddButton()).click();
+    modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});
     entityTypeModal.newEntityName("Student");
     entityTypeModal.newEntityDescription("Student entity description");
     cy.waitUntil(() => entityTypeModal.getAddButton().click());
@@ -53,7 +54,8 @@ describe("Entity Modeling: Graph View", () => {
     entityTypeTable.getEntity("Student").should("not.exist");
 
     cy.log("**Creating new entity Employee in graph view**");
-    modelPage.getAddEntityButton().should("exist").click();
+    cy.waitUntil(() => modelPage.getAddButton()).click();
+    modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});
     entityTypeModal.newEntityName("Employee");
     entityTypeModal.newEntityDescription("Employee entity description");
     cy.waitUntil(() => entityTypeModal.getAddButton().click());

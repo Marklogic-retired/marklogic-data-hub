@@ -70,22 +70,35 @@ describe("Modeling Page", () => {
     expect(getByText(tiles.model.intro)).toBeInTheDocument(); // tile intro text
 
     expect(getByText("Data Model")).toBeInTheDocument();
-    expect(getByLabelText("add-entity")).toBeInTheDocument();
+    expect(getByText("Entity Type/Concept Class")).toBeInTheDocument();
     expect(getByText("Instances")).toBeInTheDocument();
     expect(getByText("Last Processed")).toBeInTheDocument();
     expect(getByLabelText("entity-modified-alert")).toBeInTheDocument();
 
     // test add, publish icons display correct tooltip when enabled
-    fireEvent.mouseOver(getByText("Add"));
-    await wait(() => expect(getByText(ModelingTooltips.addNewEntity)).toBeInTheDocument());
+    let addDropdownButton: any = getByText("Add");
+    fireEvent.click(addDropdownButton);
+    await wait(() => expect(getByLabelText("add-entity-type")).toBeInTheDocument());
+    await wait(() => expect(getByLabelText("add-concept-class")).toBeInTheDocument());
     fireEvent.mouseOver(getByLabelText("publish-to-database"));
     await wait(() => expect(getByText(ModelingTooltips.publish)).toBeInTheDocument());
 
     userEvent.click(screen.getByTestId("AnotherModel-span"));
     expect(screen.getByText("Edit Entity Type")).toBeInTheDocument();
 
-    userEvent.click(getByText("Add"));
+    userEvent.click(addDropdownButton);
+    let addEntityOption = getByLabelText("add-entity-type");
+    await wait(() => expect(addEntityOption).toBeInTheDocument());
+    userEvent.click(addEntityOption);
+
     expect(getByText(/Add Entity Type/i)).toBeInTheDocument();
+
+    userEvent.click(addDropdownButton);
+    let addConceptClassOption = getByLabelText("add-concept-class");
+    await wait(() => expect(addConceptClassOption).toBeInTheDocument());
+    userEvent.click(addConceptClassOption);
+
+    expect(getByText(/Add Concept Class/i)).toBeInTheDocument();
 
     userEvent.click(getByLabelText("publish-to-database"));
     userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.PublishAll}-yes`));
@@ -121,11 +134,12 @@ describe("Modeling Page", () => {
     expect(getByText("Instances")).toBeInTheDocument();
     expect(getByText("Last Processed")).toBeInTheDocument();
 
-    expect(getByLabelText("add-entity")).toBeDisabled();
+    let buttonContainer: HTMLElement = getByLabelText("add-entity-type-concept-class");
+    expect(buttonContainer.getElementsByTagName("button")[0]).toBeDisabled();
 
     // test add, save, revert icons display correct tooltip when disabled
     fireEvent.mouseOver(getByText("Add"));
-    await wait(() => expect(getByText(ModelingTooltips.addNewEntity + " " + ModelingTooltips.noWriteAccess)).toBeInTheDocument());
+    await wait(() => expect(getByText(ModelingTooltips.noWriteAccess)).toBeInTheDocument());
     fireEvent.mouseOver(getByText("Publish"));
     await wait(() => expect(getByText(ModelingTooltips.publish + " " + ModelingTooltips.noWriteAccess)).toBeInTheDocument());
     expect(queryByLabelText("entity-modified-alert")).toBeNull();
@@ -150,7 +164,7 @@ describe("Modeling Page", () => {
     expect(queryByText("Instances")).toBeNull();
     expect(queryByText("Last Processed")).toBeNull();
 
-    expect(queryByLabelText("add-entity")).toBeNull();
+    expect(queryByLabelText("add-entity-type-concept-class")).toBeNull();
     expect(queryByLabelText("publish-to-database")).toBeNull();
     expect(queryByLabelText("entity-modified-alert")).toBeNull();
   });
@@ -171,7 +185,7 @@ describe("Modeling Page", () => {
 
     await expect(mockPrimaryEntityType).toHaveBeenCalled();
 
-    expect(getByLabelText("add-entity")).toBeEnabled();
+    expect(getByLabelText("add-entity-type-concept-class")).toBeEnabled();
   });
 
   test("Modeling: add button should be enabled if user has entity model writer role", async () => {
@@ -193,7 +207,8 @@ describe("Modeling Page", () => {
 
     await wait(() => expect(mockPrimaryEntityType).toHaveBeenCalledTimes(2));
 
-    expect(getByLabelText("add-entity")).toBeDisabled();
+    let buttonContainer: HTMLElement = getByLabelText("add-entity-type-concept-class");
+    expect(buttonContainer.getElementsByTagName("button")[0]).toBeDisabled();
   });
 });
 
@@ -371,12 +386,12 @@ describe("Graph view page", () => {
     expect(addEntityOrRelationshipBtn).toBeInTheDocument();
     expect(publishToDatabaseBtn).toBeInTheDocument();
     expect(graphExportIcon).toBeInTheDocument();
-    expect(queryByLabelText("add-entity")).not.toBeInTheDocument();
+    expect(queryByLabelText("add-entity-type-concept-class")).not.toBeInTheDocument();
     expect(queryByLabelText("Instances")).not.toBeInTheDocument();
 
     userEvent.click(tableViewButton); // switch to table view
     rerender(renderView("table"));
-    expect(getByLabelText("add-entity")).toBeInTheDocument();
+    expect(getByLabelText("add-entity-type-concept-class")).toBeInTheDocument();
     expect(getByText("Instances")).toBeInTheDocument();
     expect(getByText("Last Processed")).toBeInTheDocument();
     expect(queryByLabelText("graph-view-filter-input")).not.toBeInTheDocument();

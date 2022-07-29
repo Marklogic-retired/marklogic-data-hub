@@ -5,7 +5,8 @@ import {
   graphViewSidePanel,
   graphView,
   conceptClassModal,
-  relationshipModal
+  relationshipModal,
+  entityTypeTable
 } from "../../support/components/model/index";
 import {confirmationModal, toolbar} from "../../support/components/common/index";
 import {Application} from "../../support/application.config";
@@ -202,6 +203,7 @@ describe("Concept classes in Modeling screen", () => {
     relationshipModal.verifyEntityOption("ShoeStyle").should("be.visible");
     relationshipModal.selectTargetEntityOption("ShoeStyle");
     relationshipModal.editRelationshipName("hasStyle");
+    relationshipModal.editSourceProperty("id");
     relationshipModal.toggleOptional();
     relationshipModal.verifyVisibleOptionalBlock();
     relationshipModal.verifyExpressionPlaceholder().should("be.visible");
@@ -210,6 +212,26 @@ describe("Concept classes in Modeling screen", () => {
     cy.waitForAsyncRequest();
     relationshipModal.getModalHeader().should("not.exist");
 
+    modelPage.selectView("project-diagram");
+
+    modelPage.scrollPageBottom();
+    cy.wait(6000);
+
+    //reopen modal to verify previous updates
+    graphVis.getPositionOfEdgeBetween("Person,ShoeStyle").then((edgePosition: any) => {
+      cy.wait(150);
+      graphVis.getGraphVisCanvas().click(edgePosition.x, edgePosition.y, {force: true});
+    });
+
+    relationshipModal.verifyRelationshipValue("hasStyle");
+    relationshipModal.verifySourcePropertyValue("id");
+
+    cy.log("Verify that the relationship type toggle is disabled in the Edit mode");
+    relationshipModal.getEntityToEntityViewOption().trigger("mouseover", {force: true});
+    relationshipModal.getDisabledRelationshipTypeTooltip().should("be.visible");
+
+    relationshipModal.cancelModal();
+
   });
 
   it("Delete a concept class from graph view and publish the changes", {defaultCommandTimeout: 120000}, () => {
@@ -217,6 +239,53 @@ describe("Concept classes in Modeling screen", () => {
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     modelPage.scrollPageBottom();
     cy.wait(6000);
+
+    graphVis.getPositionsOfNodes().then((nodePositions: any) => {
+      let shoeStyleCoordinates: any = nodePositions["ShoeStyle"];
+      cy.wait(150);
+      cy.waitUntil(() => graphVis.getGraphVisCanvas().click(shoeStyleCoordinates.x, shoeStyleCoordinates.y, {force: true}));
+    });
+    cy.wait(1500);
+
+    graphViewSidePanel.getDeleteIcon("ShoeStyle").scrollIntoView().click({force: true});
+    confirmationModal.getDeleteConceptClassWithRelationshipsText().should("exist");
+    confirmationModal.getCloseButton(ConfirmationType.DeleteConceptClassWithRelatedEntityTypes).click();
+    graphViewSidePanel.getSelectedConceptClassHeading("ShoeStyle").should("exist");
+
+    graphViewSidePanel.closeSidePanel();
+    graphViewSidePanel.getSelectedConceptClassHeading("ShoeStyle").should("not.exist");
+
+    modelPage.scrollPageBottom();
+    cy.wait(6000);
+
+    //reopen modal to verify previous updates
+    graphVis.getPositionOfEdgeBetween("Product,ShoeStyle").then((edgePosition: any) => {
+      cy.wait(150);
+      graphVis.getGraphVisCanvas().click(edgePosition.x, edgePosition.y, {force: true});
+    });
+
+    cy.log("Deleting relationship between Product and ShoeStyle");
+    relationshipModal.getDeleteRelationshipIcon().click();
+    confirmationModal.getDeletePropertyStepWarnText().should("exist");
+    confirmationModal.getYesButton(ConfirmationType.DeletePropertyStepWarn);
+    confirmationModal.getDeletePropertyStepWarnText().should("not.exist");
+
+    cy.wait(3000);
+
+    cy.log("Deleting relationship between Person and ShoeStyle");
+    //reopen modal to verify previous updates
+    graphVis.getPositionOfEdgeBetween("Person,ShoeStyle").then((edgePosition: any) => {
+      cy.wait(150);
+      graphVis.getGraphVisCanvas().click(edgePosition.x, edgePosition.y, {force: true});
+    });
+
+    relationshipModal.getDeleteRelationshipIcon().click();
+    confirmationModal.getDeletePropertyStepWarnText().should("exist");
+    confirmationModal.getYesButton(ConfirmationType.DeletePropertyStepWarn);
+    confirmationModal.getDeletePropertyStepWarnText().should("not.exist");
+
+    cy.waitForAsyncRequest();
+
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
       let shoeStyleCoordinates: any = nodePositions["ShoeStyle"];
       cy.wait(150);
@@ -227,11 +296,69 @@ describe("Concept classes in Modeling screen", () => {
     graphViewSidePanel.getDeleteIcon("ShoeStyle").scrollIntoView().click({force: true});
     confirmationModal.getYesButton(ConfirmationType.DeleteConceptClass);
     confirmationModal.getDeleteConceptClassText().should("not.exist");
+
     cy.waitForAsyncRequest();
     graphViewSidePanel.getSelectedConceptClassHeading("ShoeStyle").should("not.exist");
     cy.wait(150);
     //Publish the changes
     cy.publishDataModel();
+  });
+
+  it("Create/Edit and verify new concept class from Table view", {defaultCommandTimeout: 120000}, () => {
+    cy.log("Add new concept class from table view");
+    cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
+    modelPage.selectView("table");
+    entityTypeTable.waitForTableToLoad();
+    cy.waitUntil(() => modelPage.getAddButton()).click();
+    modelPage.getAddConceptClassOption().should("be.visible").click({force: true});
+    conceptClassModal.newConceptClassName("TestConcept");
+    conceptClassModal.newConceptClassDescription("Test description.");
+
+    modelPage.openIconSelector("TestConcept");
+    modelPage.selectIcon("TestConcept", "FaAccessibleIcon");
+    modelPage.toggleColorSelector("TestConcept");
+    modelPage.selectColorFromPicker("#D5D3DD").click();
+    modelPage.toggleColorSelector("TestConcept");
+    if (Cypress.isBrowser("!firefox")) {
+      graphViewSidePanel.getConceptClassColor("TestConcept").should("have.css", "background", "rgb(213, 211, 221) none repeat scroll 0% 0% / auto padding-box border-box");
+    }
+    if (Cypress.isBrowser("firefox")) {
+      graphViewSidePanel.getConceptClassColor("TestConcept").should("have.css", "background-color", "rgb(213, 211, 221)");
+    }
+
+    modelPage.getIconSelected("TestConcept", "FaAccessibleIcon").should("exist");
+    cy.waitUntil(() => conceptClassModal.getAddButton().click());
+    conceptClassModal.getAddButton().should("not.exist");
+
+    //verify color and icon is reflected in the table
+    modelPage.getColorSelected("TestConcept", "#d5d3dd").should("exist");
+    modelPage.getIconSelected("TestConcept", "FaAccessibleIcon").should("exist");
+
+    cy.log("**Edit concept class and verify that its updated**");
+    entityTypeTable.getConceptClass("TestConcept").click();
+    conceptClassModal.clearConceptClassDescription();
+    conceptClassModal.newConceptClassDescription("Description has changed");
+    cy.waitUntil(() => conceptClassModal.getAddButton().click());
+    conceptClassModal.getAddButton().should("not.exist");
+    // check edited concept class description
+    entityTypeTable.getConceptClass("TestConcept").click();
+    conceptClassModal.getConceptClassDescription().should("have.value", "Description has changed");
+    conceptClassModal.getCancelButton().click();
+
+    cy.log("Verify that navigate to graph view link works for concept class in the table view");
+    entityTypeTable.viewEntityInGraphView("TestConcept");
+    graphViewSidePanel.getDeleteIcon("TestConcept").should("exist");
+    graphViewSidePanel.getSelectedEntityHeading("TestConcept").should("exist");
+
+    cy.log("Delete concept class from Table view and verify that it is not available anymore");
+    modelPage.selectView("table");
+    entityTypeTable.waitForTableToLoad();
+    entityTypeTable.getDeleteConceptClassIcon("TestConcept").should("be.visible").click({force: true});
+    confirmationModal.getDeleteConceptClassText().should("exist");
+    confirmationModal.getYesButton(ConfirmationType.DeleteConceptClass);
+    confirmationModal.getDeleteConceptClassText().should("not.exist");
+    cy.waitForAsyncRequest();
+    entityTypeTable.getConceptClass("TestConcept").should("not.exist");
   });
 
 });

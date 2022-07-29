@@ -61,6 +61,9 @@ class ConfirmationModal {
   getDeleteConceptClassText() {
     return cy.findByLabelText("delete-text", {timeout: 20000});
   }
+  getDeleteConceptClassWithRelationshipsText() {
+    return cy.findByLabelText("delete-concept-class-related-entities-text", {timeout: 20000});
+  }
 }
 
 const confirmationModal = new ConfirmationModal();

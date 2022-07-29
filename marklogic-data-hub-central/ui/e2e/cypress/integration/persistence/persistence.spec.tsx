@@ -291,7 +291,8 @@ describe("Validate persistence across Hub Central", () => {
     modelPage.selectView("table");
 
     cy.log("**Creates new Entity**");
-    modelPage.getAddEntityButton().click();
+    cy.waitUntil(() => modelPage.getAddButton()).click();
+    modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});
     entityTypeModal.newEntityName(entityName);
     entityTypeModal.newEntityDescription("Test Entity");
     entityTypeModal.getAddButton().click();

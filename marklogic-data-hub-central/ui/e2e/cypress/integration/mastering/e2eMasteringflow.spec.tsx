@@ -103,7 +103,8 @@ describe("Validate E2E Mastering Flow", () => {
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
-    cy.waitUntil(() => modelPage.getAddEntityButton()).click();
+    cy.waitUntil(() => modelPage.getAddButton()).click();
+    modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});
     entityTypeModal.newEntityName("Patient");
     entityTypeModal.newEntityDescription("An entity for patients");
     entityTypeModal.getAddButton().click();

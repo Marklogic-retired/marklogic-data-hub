@@ -34,9 +34,10 @@ interface Props {
   onExpand?: (record: any, expanded: boolean, rowIndex?: number) => void;
   onTableChange?: (type: string, newState: any) => void;
   rowEvents?: any;
+  expandColumnRenderer?: ({expanded, rowKey, expandable}) => React.ReactNode;
 }
 
-function HCTable({className, rowStyle, childrenIndent, data, keyUtil, component, expandedRowKeys, nestedParams, pagination, rowClassName, baseIndent = 0, showHeader = true, showExpandIndicator = false, onExpand, expandedRowRender, ...props}: Props): JSX.Element {
+function HCTable({className, rowStyle, childrenIndent, data, keyUtil, component, expandedRowKeys, nestedParams, pagination, rowClassName, baseIndent = 0, showHeader = true, showExpandIndicator = false, onExpand, expandedRowRender, expandColumnRenderer, ...props}: Props): JSX.Element {
   const expandConfig = {
     className: `${showHeader ? styles.expandedRowWrapper : ""} ${props.subTableHeader ? styles.subTableNested : ""} ${childrenIndent ? styles.childrenIndentExpanded : ""}${props.expandedContainerClassName || ""}`,
     expanded: expandedRowKeys,
@@ -44,9 +45,8 @@ function HCTable({className, rowStyle, childrenIndent, data, keyUtil, component,
     expandByColumnOnly: !!showExpandIndicator,
     onExpand,
     renderer: expandedRowRender,
-    expandColumnRenderer: ({expanded, rowKey, expandable}) => {
+    expandColumnRenderer: expandColumnRenderer ? expandColumnRenderer : ({expanded, rowKey, expandable}) => {
       let bordered;
-
       if (!expandable || !showHeader) {
         return null;
       }

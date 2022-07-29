@@ -18,8 +18,16 @@ class ModelPage {
     return cy.findByLabelText("closeGraphViewSidePanel").click({force: true});
   }
 
-  getAddEntityButton() {
-    return cy.findByLabelText("add-entity");
+  getAddButton() {
+    return cy.get(`[aria-label="add-entity-type-concept-class"] > button`);
+  }
+
+  getAddEntityTypeOption() {
+    return cy.get(`[aria-label="add-entity-type"]`);
+  }
+
+  getAddConceptClassOption() {
+    return cy.get(`[aria-label="add-concept-class"]`);
   }
 
   getPublishButton() {

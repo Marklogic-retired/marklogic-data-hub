@@ -20,7 +20,7 @@ import {getViewSettings, setViewSettings} from "@util/user-context";
 import {colorExistsForNode, iconExistsForNode, getCategoryWithinModel} from "@util/modeling-utils";
 
 type Props = {
-  entityTypes: any;
+  dataModel: any;
   canReadEntityModel: any;
   canWriteEntityModel: any;
   deleteEntityType: (entityName: string) => void;
@@ -30,7 +30,7 @@ type Props = {
   toggleRelationshipModal: any;
   toggleShowEntityModal: any;
   toggleIsEditModal: any;
-  setEntityTypesFromServer: any;
+  setDataModelFromServer: any;
   toggleConfirmModal: any;
   toggleRevertConfirmModal: any;
   setConfirmType: any;
@@ -40,7 +40,6 @@ type Props = {
   setRevertUnpublishedChanges: (flag: boolean) => void;
   toggleShowConceptClassModal: any;
   toggleIsEditConceptClassModal: any;
-  addConceptClass: any;
   updateConceptClassAndHideModal: (conceptClassName: string, description: string) => void;
   deleteConceptClass: (conceptClassName: string) => void;
 };
@@ -65,13 +64,13 @@ const GraphView: React.FC<Props> = (props) => {
   }, [coordsChanged]);
 
   useEffect(() => {
-    if (props.entityTypes) {
-      props.entityTypes.map((element) => {
+    if (props.dataModel) {
+      props.dataModel.map((element) => {
         element.label = element.hasOwnProperty("conceptName") ? element.conceptName : element.entityName;
       });
     }
-    setFilterMenuSuggestions(props.entityTypes);
-  }, [props.entityTypes]);
+    setFilterMenuSuggestions(props.dataModel);
+  }, [props.dataModel]);
 
   useEffect(() => {
     if (props.revertUnpublishedChanges) {
@@ -288,7 +287,7 @@ const GraphView: React.FC<Props> = (props) => {
       </div>
       <div>
         <GraphVis
-          entityTypes={props.entityTypes}
+          dataModel={props.dataModel}
           handleEntitySelection={handleEntitySelection}
           filteredEntityTypes={filterMenuSuggestions}
           entitySelected={entityFiltered}
@@ -328,7 +327,7 @@ const GraphView: React.FC<Props> = (props) => {
         {graphViewMainPanel}
         <div>
           <GraphViewSidePanel
-            entityTypes={props.entityTypes}
+            dataModel={props.dataModel}
             onCloseSidePanel={onCloseSidePanel}
             deleteEntityClicked={deleteEntityClicked}
             canReadEntityModel={props.canReadEntityModel}

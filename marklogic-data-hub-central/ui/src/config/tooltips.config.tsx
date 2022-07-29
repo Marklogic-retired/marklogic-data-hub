@@ -26,7 +26,7 @@ const ModelingTooltips = {
   addProperty: 'Add properties to this entity type.',
 
   /* Values made into links */
-  entityTypeName: 'Click to view or edit settings for this entity type.',
+  nodeName: (nodeType: string) => `Click to view or edit settings for this ${nodeType}.`,
   instanceNumber: 'Click to view all instances of this entity type.',
   lastProcessed: 'Click to view all instances of this entity type that were processed by the job that ended at this time.',
   entityPropertyName: 'Click to view or edit settings for this property.',
@@ -35,7 +35,7 @@ const ModelingTooltips = {
   saveIcon: 'Save changes to this entity type.',
   revertIcon: 'Discard unsaved changes to this entity type.',
   deleteIcon: (isConceptNode?: boolean) => !isConceptNode ? 'Delete this entity type.' : 'Delete this concept class.',
-  viewGraph: 'View entity in graph view.',
+  viewGraph: (isConceptNode?: boolean) => !isConceptNode ? 'View entity in graph view.' : 'View concept class in graph view.',
 
   /* Icons for entity properties */
   addStructuredProperty: 'Add a property to this structured property.',

@@ -51,7 +51,8 @@ describe("Mapping", () => {
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
-    cy.waitUntil(() => modelPage.getAddEntityButton()).click();
+    cy.waitUntil(() => modelPage.getAddButton()).click({force: true});
+    modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});
     entityTypeModal.newEntityName("Relation");
     entityTypeModal.getAddButton().click();
     propertyTable.getAddPropertyButton("Relation").scrollIntoView().should("be.visible").click();

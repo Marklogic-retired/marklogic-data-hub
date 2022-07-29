@@ -118,6 +118,10 @@ class RelationshipModal {
   getDisabledRelationshipTypeTooltip() {
     return cy.get(`[aria-label="relationshipTypeToggleDisabledInfo"]`);
   }
+
+  getDeleteRelationshipIcon() {
+    return cy.get(`[data-testid="delete-relationship"]`);
+  }
 }
 
 const relationshipModal = new RelationshipModal();

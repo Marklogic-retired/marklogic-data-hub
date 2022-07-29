@@ -27,14 +27,14 @@ describe("Graph View Component", () => {
     let isModifiedUpdated = {...isModified, modelingOptions: {...isModified.modelingOptions, selectedEntity: entityName, entityTypeNamesArray: entityTypeNamesArrayUpdated}};
     return (<ModelingContext.Provider value={isModifiedUpdated}>
       <GraphView
-        entityTypes={getEntityTypes}
+        dataModel={getEntityTypes}
         canReadEntityModel={true}
         canWriteEntityModel={true}
         deleteEntityType={jest.fn()}
         relationshipModalVisible={false}
         toggleRelationshipModal={jest.fn()}
         updateSavedEntity={jest.fn()}
-        setEntityTypesFromServer={jest.fn()}
+        setDataModelFromServer={jest.fn()}
         hubCentralConfig={hubCentralConfig}
         updateHubCentralConfig={jest.fn()}
         setConfirmType={jest.fn()}
@@ -51,14 +51,14 @@ describe("Graph View Component", () => {
     const {getByTestId, getByLabelText, queryByLabelText, rerender} =  render(
       <ModelingContext.Provider value={isModified}>
         <GraphView
-          entityTypes={getEntityTypes}
+          dataModel={getEntityTypes}
           canReadEntityModel={true}
           canWriteEntityModel={true}
           deleteEntityType={mockDeleteEntity}
           relationshipModalVisible={false}
           toggleRelationshipModal={jest.fn()}
           updateSavedEntity={jest.fn()}
-          setEntityTypesFromServer={jest.fn()}
+          setDataModelFromServer={jest.fn()}
           hubCentralConfig={hubCentralConfig}
           updateHubCentralConfig={jest.fn()}
         />
@@ -90,14 +90,14 @@ describe("Graph View Component", () => {
     const {getByTestId, getByLabelText, queryByLabelText, rerender, queryByPlaceholderText} =  render(
       <ModelingContext.Provider value={isModified}>
         <GraphView
-          entityTypes={getEntityTypes}
+          dataModel={getEntityTypes}
           canReadEntityModel={true}
           canWriteEntityModel={true}
           deleteEntityType={mockDeleteEntity}
           relationshipModalVisible={false}
           toggleRelationshipModal={jest.fn()}
           updateSavedEntity={jest.fn()}
-          setEntityTypesFromServer={jest.fn()}
+          setDataModelFromServer={jest.fn()}
           hubCentralConfig={hubCentralConfig}
           updateHubCentralConfig={jest.fn()}
         />
@@ -136,14 +136,14 @@ describe("Graph View Component", () => {
     const {getByLabelText} =  render(
       <ModelingContext.Provider value={isModified}>
         <GraphView
-          entityTypes={getEntityTypes}
+          dataModel={getEntityTypes}
           canReadEntityModel={true}
           canWriteEntityModel={false}
           deleteEntityType={mockDeleteEntity}
           relationshipModalVisible={false}
           toggleRelationshipModal={jest.fn()}
           updateSavedEntity={jest.fn()}
-          setEntityTypesFromServer={jest.fn()}
+          setDataModelFromServer={jest.fn()}
           hubCentralConfig={hubCentralConfig}
           updateHubCentralConfig={jest.fn()}
         />
@@ -160,14 +160,14 @@ describe("Graph View Component", () => {
     const {getByText, getByLabelText, queryByLabelText, rerender, getAllByLabelText} =  render(
       <ModelingContext.Provider value={isModified}>
         <GraphView
-          entityTypes={getEntityTypes}
+          dataModel={getEntityTypes}
           canReadEntityModel={true}
           canWriteEntityModel={true}
           deleteEntityType={mockDeleteEntity}
           relationshipModalVisible={false}
           toggleRelationshipModal={jest.fn()}
           updateSavedEntity={jest.fn()}
-          setEntityTypesFromServer={jest.fn()}
+          setDataModelFromServer={jest.fn()}
           hubCentralConfig={hubCentralConfig}
           updateHubCentralConfig={jest.fn()}
         />
