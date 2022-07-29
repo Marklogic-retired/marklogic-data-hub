@@ -498,6 +498,7 @@ function addDocumentMetadataToSearchResults(searchResponse) {
     }
     result["documentSize"] = getDocumentSize(cts.doc(docUri));
     result["hubMetadata"] = hubMetadata;
+    result["notifiedDoc"] = docUri.startsWith("/com.marklogic.smart-mastering/matcher/notifications");
   });
 }
 

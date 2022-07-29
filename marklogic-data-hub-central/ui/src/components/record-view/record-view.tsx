@@ -16,6 +16,7 @@ import {Download, FileEarmark, ArrowRightSquare} from "react-bootstrap-icons";
 import {HCCard, HCTooltip} from "@components/common";
 import Popover from "react-bootstrap/Popover";
 import {OverlayTrigger} from "react-bootstrap";
+import {RiMergeCellsHorizontal} from "react-icons/ri";
 
 const RecordCardView = (props) => {
   const authorityService = useContext(AuthoritiesContext);  // eslint-disable-line @typescript-eslint/no-unused-vars
@@ -232,9 +233,17 @@ const RecordCardView = (props) => {
                 <div className={styles.snippetContainer} data-testid={elem.uri + "-snippet"} >
                   {displaySnippet(elem)}
                 </div>
+                {
+                  elem.notifiedDoc ?
+                    <div className={styles.mergeIconDiv}>
+                      <HCTooltip text={"Merge Documents"} id="merge-icon" placement="top-end">
+                        <i><RiMergeCellsHorizontal className={styles.mergeIcon} data-testid={"merge-icon"}/></i>
+                      </HCTooltip>
+                    </div>
+                    : null}
                 <span className={styles.downloadIcon}>
                   <HCTooltip text={displayFileSize(elem)} id="download-icon-tooltip" placement="bottom" >
-                    <Download onClick={() => download(elem.uri)} data-testid={elem.uri + "-download-icon"}  size={13} />
+                    <Download onClick={() => download(elem.uri)} data-testid={elem.uri + "-download-icon"}  size={18} />
                   </HCTooltip>
                 </span>
               </HCCard>
