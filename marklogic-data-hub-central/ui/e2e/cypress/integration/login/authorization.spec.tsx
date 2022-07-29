@@ -11,6 +11,7 @@ import curatePage from "../../support/pages/curate";
 import explorePage from "../../support/pages/explore";
 import {generateUniqueName} from "../../support/helper";
 import browsePage from "../../support/pages/browse";
+import {mappingStepDetail} from "../../support/components/mapping";
 
 describe("login", () => {
 
@@ -212,26 +213,64 @@ describe("login", () => {
     loadPage.stepName(stepName).should("not.exist");
   });
 
-  it("should only enable Curate and Explorer tile for hub-central-mapping-reader", () => {
+  it("Verify hub-central-mapping-reader role privileges", () => {
     let entityTypeId = "Customer";
-    let mapStepName = "mapCustomersXML";
-    cy.loginAsTestUserWithRoles("hub-central-mapping-reader").withUI()
-      .url().should("include", "/tiles");
+    let mapStepName = "mapCustomersJSON";
+    cy.loginAsTestUserWithRoles("hub-central-mapping-reader").withRequest();
+    loginPage.postLogin();
     //All tiles but Explore and Model, should show a tooltip that says contact your administrator
     ["Load", "Model", "Run"].forEach((tile) => {
       toolbar.getToolBarIcon(tile).should("have.attr", {style: "cursor: not-allowed"});
     });
 
+    cy.log("**Navigates to Curate and opens EntityTypeId name**");
     toolbar.getCurateToolbarIcon().click();
     curatePage.toggleEntityTypeId(entityTypeId);
     curatePage.verifyTabs(entityTypeId, "be.visible", "not.exist");
+
+    cy.log("**User cannot see Matching tab**");
+    curatePage.verifyMatchingTab(entityTypeId, "not.exist");
+
+    cy.log("**User cannot add a new mapping step**");
     curatePage.addNewStepDisabled(entityTypeId).should("be.visible");
+
+    cy.log("**User can view step info but cannot edit it**");
     curatePage.editStep(mapStepName).click();
     curatePage.verifyStepNameIsVisibleEdit(mapStepName);
     curatePage.saveEdit().should("be.disabled");
     curatePage.cancelEdit().click();
+
+    cy.log("**User cannot delete a step**");
     curatePage.deleteDisabled().should("exist");
     curatePage.noEntityType().should("not.exist");
+
+    cy.log("**User can view step details**");
+    curatePage.openStepDetails(mapStepName);
+
+    cy.log("**verify that clear/test button are enabled**");
+    curatePage.verifyStepDetailsOpen(mapStepName);
+    mappingStepDetail.clearMap().should("be.enabled");
+    mappingStepDetail.testMap().should("be.enabled");
+
+    cy.log("**verify that xpath expressions can be edited**");
+    curatePage.xpathExpression("customerId").should("be.disabled");
+    curatePage.xpathExpression("name").should("be.disabled");
+    curatePage.xpathExpression("email").should("be.disabled");
+    curatePage.xpathExpression("pin").should("be.disabled");
+    curatePage.xpathExpression("nicknames").should("be.disabled");
+    curatePage.xpathExpression("shipping").should("be.disabled");
+    curatePage.xpathExpression("billing").should("be.disabled");
+    curatePage.xpathExpression("birthDate").should("be.disabled");
+    curatePage.xpathExpression("status").should("be.disabled");
+    curatePage.xpathExpression("customerSince").should("be.disabled");
+
+    cy.log("**verify that URI can be edited**");
+    curatePage.verifyStepDetailsOpen(mapStepName);
+    mappingStepDetail.getURI().trigger("mouseover");
+    mappingStepDetail.getEditIcon().should("be.visible").click();
+    mappingStepDetail.getCheckIcon().should("be.visible");
+    mappingStepDetail.getCloseIcon().should("be.visible").click();
+
   });
 
   it("should only enable Run and Explorer tile for hub-central-step-runner", () => {

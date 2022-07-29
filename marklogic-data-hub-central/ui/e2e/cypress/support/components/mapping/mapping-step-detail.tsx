@@ -15,6 +15,22 @@ class MappingStepDetail {
     return cy.findByTestId("navigate-uris-left");
   }
 
+  getURI() {
+    return cy.get("[data-testid=\"uri-edit\"]");
+  }
+
+  getEditIcon() {
+    return cy.get("[data-testid=\"pencil-icon\"]");
+  }
+
+  getCheckIcon() {
+    return cy.get("[aria-label=\"icon: check\"]");
+  }
+
+  getCloseIcon() {
+    return cy.get("[aria-label=\"icon: close\"]");
+  }
+
   getPaginationPageSizeOptions(entityName: string) {
     return cy.get(`[data-testid=${entityName}-table] > :nth-child(2) > .row > :nth-child(1) > .test > .sizePageSelector > #size-per-page`);
   }
