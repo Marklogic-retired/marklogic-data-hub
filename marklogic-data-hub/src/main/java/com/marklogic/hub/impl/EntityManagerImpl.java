@@ -195,6 +195,11 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         List<JsonNode> entities = new ArrayList<>(getAllLegacyEntities());
         Path entitiesPath = hubConfig.getHubEntitiesDir();
         File[] entityDefs = entitiesPath.toFile().listFiles(pathname -> pathname.toString().endsWith(ENTITY_FILE_EXTENSION) && !pathname.isHidden());
+        Arrays.sort(entityDefs, new Comparator<File>() {
+            public int compare(File a, File b) {
+                return a.getName().compareTo(b.getName());
+            }
+        });
         if (entityDefs != null) {
             ObjectMapper objectMapper = new ObjectMapper();
             for (File entityDef : entityDefs) {
