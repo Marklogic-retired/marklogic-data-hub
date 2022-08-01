@@ -10,9 +10,17 @@
 
 .overviewContainer {
     line-height: 1.4;
-    color: #333;
-    background: #fff;
+    color: $text-color;
+    background: $white;
     margin: 20px 40px 0px 40px;
+    height: calc(100% - 60px);
+    overflow-y: auto;
+    .overviewSubContainer {
+        background-color: $white;
+        position: sticky;
+        top: 0px;
+        z-index: 9;
+    }
     .title {
         font-size: 42px;
         font-weight: bold;
@@ -21,12 +29,13 @@
         margin: 20px 0 40px 0;
         width: 80%;
         font-size: 18px;
+        padding-bottom: 10px;
     }
     .spacer {
         margin-top: 20px;
     }
     .note {
-        color:#777777;
+        color: $secondary-gray;
         font-weight: 600;
     }
     .cardsContainer {
@@ -37,6 +46,7 @@
             grid-template-columns: 20% 20% 20% 25%;
             grid-gap: 40px;
             margin-bottom: 5px;
+            padding-bottom: 10px;
             .subtitle {
                 padding: 10px 10px 10px 44px;
                 font-size: 16pt;
@@ -87,7 +97,7 @@
             .cardCurate.enabled:focus,
             .cardExplore.enabled:focus,
             .cardRun.enabled:focus {
-                border: 2px solid #7f86b5;
+                border: 2px solid $span-hover;
                 outline: none;
             }
 
@@ -103,12 +113,12 @@
             .cardModel.disabled,
             .cardCurate.disabled {
                 .head {
-                    background-color: #FAFBFC;
+                    background-color: $bg-soft;
                 }
             }
             .cardExplore.disabled,
             .cardRun.disabled {
-                background-color: #FAFBFC;
+                background-color: $bg-soft;
             }
 
             .cardLoad.disabled:focus,
@@ -116,7 +126,7 @@
             .cardCurate.disabled:focus,
             .cardExplore.disabled:focus,
             .cardRun.disabled:focus {
-                border: 2px solid #7f86b5;
+                border: 2px solid $span-hover;
                 outline: none;
             }
 
@@ -126,7 +136,7 @@
                 padding-top: 24px;
                 font-size: 9pt;
                 bottom: 5px;
-                color: #777;
+                color: $secondary-gray;
                 font-weight: 600;
             }
             .permissionsRun {
@@ -139,20 +149,20 @@
             .cardLoad {
                 position: relative;
                 border-radius: 4px;
-                border: 1px solid #DEE0E0;
-                box-shadow: 0 4px 4px #ccc;
+                border: 1px solid $border-light;
+                box-shadow: 0 4px 4px $light;
                 .head {
                     min-height: 20vh;
-                    border-bottom: 1px solid #f4f4f4;
+                    border-bottom: 1px solid $border-bottom;
                     background-image: url("../assets/load-overview.svg");
                     background-repeat:no-repeat;
                     background-position:center;
-                    background-color: #F2F0FA;
+                    background-color: $background-head;
                     border-radius: 4px 4px 0 0;
                 }
                 .subtitle {
                     i {
-                        color: #520339;
+                        color: $subtitle;
                         padding-right: 12px;
                         padding-left: 4px;
                     }
@@ -162,20 +172,20 @@
             .cardModel {
                 position: relative;
                 border-radius: 4px;
-                border: 1px solid #DEE0E0;
-                box-shadow: 0 4px 4px #ccc;
+                border: 1px solid $border-light;
+                box-shadow: 0 4px 4px $light;
                 .head {
                     min-height: 20vh;
-                    border-bottom: 1px solid #f4f4f4;
+                    border-bottom: 1px solid $border-bottom;
                     background-image: url("../assets/model-overview.svg");
                     background-repeat:no-repeat;
                     background-position:center;
-                    background-color: #EDF3FB;
+                    background-color: $background-model;
                     border-radius: 4px 4px 0 0;
                 }
                 .subtitle {
                     i {
-                        color: #003A8C;
+                        color: $card-subtitle;
                         padding-right: 11px;
                         padding-left: 2px;
                     }
@@ -185,20 +195,20 @@
             .cardCurate {
                 position: relative;
                 border-radius: 4px;
-                border: 1px solid #DEE0E0;
-                box-shadow: 0 4px 4px #ccc;
+                border: 1px solid $border-light;
+                box-shadow: 0 4px 4px $light;
                 .head {
                     min-height: 20vh;
-                    border-bottom: 1px solid #f4f4f4;
+                    border-bottom: 1px solid $border-bottom;
                     background-image: url("../assets/curate-overview.svg");
                     background-repeat:no-repeat;
                     background-position:center;
-                    background-color: #E3F4F9;
+                    background-color: $head;
                     border-radius: 4px 4px 0 0;
                 }
                 .subtitle {
                     i {
-                        color: #BC811D;
+                        color: $subtitle-i;
                     }
                 }
             }
@@ -207,20 +217,20 @@
                 grid-row-start: 1;
                 grid-row-end: 3;
                 grid-column: 4;
-                background-color: #ECFAF7;
+                background-color: $background-explore;
                 background-image: url("../assets/explore-overview.svg");
                 background-repeat:no-repeat;
                 background-position: 50% 25%;
                 background-size: 45%;
                 position: relative;
-                border: 1px solid #DEE0E0;
-                box-shadow: 0 4px 4px #ccc;
+                border: 1px solid $border-light;
+                box-shadow: 0 4px 4px $light;
                 border-radius: 4px 4px 0 0;
                 .head {
                     min-height: 20vh;
                     width: 100%;
-                    border-top: 1px solid #f4f4f4;
-                    background-color: #FFF;
+                    border-top: 1px solid $border-bottom;
+                    background-color: $white;
                     border-radius: 4px 4px 0 0;
                     position: absolute;
                     bottom: 0px;
@@ -232,23 +242,23 @@
                 grid-row: 2;
                 grid-column-start: 1;
                 grid-column-end: 4;
-                background-color: #FAF2FC;
+                background-color: $background-run;
                 background-image: url("../assets/run-overview.svg");
                 background-repeat:no-repeat;
                 background-position: 70% 45%;
-                border: 1px solid #DEE0E0;
-                box-shadow: 0 4px 4px #ccc;
+                border: 1px solid $border-run;
+                box-shadow: 0 4px 4px $light;
                 border-radius: 4px 4px 0 0;
                 .head {
                     width: 30%;
-                    border-right: 1px solid #f4f4f4;
+                    border-right: 1px solid $border-bottom;
                     min-height: 20vh;
-                    background-color: #FFF;
+                    background-color: $white;
                     border-radius: 4px 4px 0 0;
                 }
                 .subtitle {
                     i {
-                        color: #061178;
+                        color: $subtitle-run-i;
                         padding-right: 11px;
                         padding-left: 2px;
                     }
@@ -260,11 +270,11 @@
 }
 
 .active {
-    background-color: #FFF;
-    border: 2px solid #7F86B5;
+    background-color: $white;
+    border: 2px solid $span-hover;
 }
 .inactive {
-    background-color: #FAFBFC;
+    background-color: $bg-soft;
 }
 
 a {
@@ -280,14 +290,14 @@ a {
     font-family: FontAwesome;
     font-size: 18px;
     padding: 0 5px 0 0;
-    color:  #333333;
+    color: $text-color;
 }
 .videoicon:before {
     content: "\f03d";
     font-family: FontAwesome;
     font-size: 18px;
     padding: 0 5px 0 0;
-    color:  #333333;
+    color: $text-color;
 }
 .infoBulbIcon {
     float: right;
@@ -295,7 +305,7 @@ a {
     margin-right: 1vw;
 }
 .homeInfoPopover {
-    background-color: #E9F7FE;
+    background-color: $item-light;
     box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
     border-radius: 2px;
     padding: 16px;
