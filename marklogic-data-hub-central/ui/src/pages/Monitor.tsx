@@ -109,7 +109,7 @@ const Monitor: React.FC = () => {
         />
       </HCSider>
       <div className={styles.content} id="monitorContent">
-        <div>
+        <div className={styles.mainContainer}>
           {canAccessMonitor ?
             <div className={styles.monitorContainer}>
               <p className={styles.intro}>{tiles.monitor.intro}</p>

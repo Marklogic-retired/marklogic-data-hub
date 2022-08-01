@@ -11,8 +11,8 @@ import {OverlayTrigger} from "react-bootstrap";
 import {parseVersion} from "@util/environment";
 
 interface Props {
-    enabled: any;
-    environment: any;
+  enabled: any;
+  environment: any;
 }
 
 const Overview: React.FC<Props> = (props) => {
@@ -145,20 +145,22 @@ const Overview: React.FC<Props> = (props) => {
 
   return (
     <div className={styles.overviewContainer} aria-label="overview">
-      <div className={styles.title}>Welcome to MarkLogic Data Hub Central
-        {<span className={styles.infoBulbIcon} id="homePagePopover">
-          <OverlayTrigger
-            show={helpInfoVisible}
-            overlay={homePageInfo}
-            trigger="click"
-            placement="bottom-end"
-            rootClose
-            onToggle={helpInfoViewChange}
-          >
-            <span className={styles.helpInfoIcon} aria-label="homePageInfoIcon"><img src={modelingInfoIcon}/></span>
-          </OverlayTrigger>
-        </span>}</div>
-      <div className={styles.introText} aria-label={"introText"}>MarkLogic Data Hub Central makes it easy to manage your data. You can load, curate, and manage your data, or explore and export your data — all within Hub Central.</div>
+      <div className={styles.overviewSubContainer}>
+        <div className={styles.title}>Welcome to MarkLogic Data Hub Central
+          {<span className={styles.infoBulbIcon} id="homePagePopover">
+            <OverlayTrigger
+              show={helpInfoVisible}
+              overlay={homePageInfo}
+              trigger="click"
+              placement="bottom-end"
+              rootClose
+              onToggle={helpInfoViewChange}
+            >
+              <span className={styles.helpInfoIcon} aria-label="homePageInfoIcon"><img src={modelingInfoIcon} /></span>
+            </OverlayTrigger>
+          </span>}</div>
+        <div className={styles.introText} aria-label={"introText"}>MarkLogic Data Hub Central makes it easy to manage your data. You can load, curate, and manage your data, or explore and export your data — all within Hub Central.</div>
+      </div>
       <div className={styles.cardsContainer}>
         <div className={styles.cards}>
           <div
@@ -177,8 +179,8 @@ const Overview: React.FC<Props> = (props) => {
               <div className={styles.vidLink}>
                 <span onClick={(e) => { openVideo(e, "load"); }}>Video Tutorial</span>
               </div>
-              { props.enabled && !props.enabled.includes("load") &&
-                            <div className={styles.permissions}>*additional permissions required</div> }
+              {props.enabled && !props.enabled.includes("load") &&
+                <div className={styles.permissions}>*additional permissions required</div>}
             </div>
           </div>
 
@@ -198,8 +200,8 @@ const Overview: React.FC<Props> = (props) => {
               <div className={styles.vidLink}>
                 <span onClick={(e) => { openVideo(e, "model"); }}>Video Tutorial</span>
               </div>
-              { props.enabled && !props.enabled.includes("model") &&
-                            <div className={styles.permissions}>*additional permissions required</div> }
+              {props.enabled && !props.enabled.includes("model") &&
+                <div className={styles.permissions}>*additional permissions required</div>}
             </div>
           </div>
 
@@ -219,8 +221,8 @@ const Overview: React.FC<Props> = (props) => {
               <div className={styles.vidLink}>
                 <span onClick={(e) => { openVideo(e, "curate"); }}>Video Tutorial</span>
               </div>
-              { props.enabled && !props.enabled.includes("curate") &&
-                            <div className={styles.permissions}>*additional permissions required</div> }
+              {props.enabled && !props.enabled.includes("curate") &&
+                <div className={styles.permissions}>*additional permissions required</div>}
             </div>
           </div>
 
@@ -240,8 +242,8 @@ const Overview: React.FC<Props> = (props) => {
                 <div className={styles.vidLink}>
                   <span onClick={(e) => { openVideo(e, "run"); }}>Video Tutorial</span>
                 </div>
-                { props.enabled && !props.enabled.includes("run") &&
-                                <div className={styles.permissionsRun}>*additional permissions required</div> }
+                {props.enabled && !props.enabled.includes("run") &&
+                  <div className={styles.permissionsRun}>*additional permissions required</div>}
               </div>
             </div>
           </div>
@@ -261,8 +263,8 @@ const Overview: React.FC<Props> = (props) => {
                 <div className={styles.vidLink}>
                   <span onClick={(e) => { openVideo(e, "explore"); }}>Video Tutorial</span>
                 </div>
-                { props.enabled && !props.enabled.includes("explore") &&
-                                <div className={styles.permissionsExplore}>*additional permissions required</div> }
+                {props.enabled && !props.enabled.includes("explore") &&
+                  <div className={styles.permissionsExplore}>*additional permissions required</div>}
               </div>
             </div>
           </div>
