@@ -1,24 +1,37 @@
 const common = require("/data-hub/5/mastering/common.sjs");
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 
 'use strict';
 
 /*
  * A class that encapsulates the configurable portions of the merging process.
  */
-const {requireFunction, normalizeToArray} = require("../../impl/hub-utils.sjs");
+const {requireFunction, normalizeToArray, parsePermissions} = require("../../impl/hub-utils.sjs");
 const consts = require("../../impl/consts.sjs");
+const sem = require("/MarkLogic/semantics.xqy");
+const mergingDebugTraceEnabled = xdmp.traceEnabled(consts.TRACE_MERGING_DEBUG);
+const mergingTraceEnabled = xdmp.traceEnabled(consts.TRACE_MERGING) || mergingDebugTraceEnabled;
+const mergingTraceEvent = xdmp.traceEnabled(consts.TRACE_MERGING) ? consts.TRACE_MERGING : consts.TRACE_MERGING_DEBUG;
 const {merge} = require("../../../third-party/fast-xml-parser/src/util");
 
 class Mergeable {
 
-  constructor(mergeStep, options) {
-    this.mergeStep = mergeStep;
-    this.options = options;
+  constructor(mergeStep, stepExecutionContext) {
+    if (stepExecutionContext != null && stepExecutionContext.flowExecutionContext != null) {
+      this.memoryContent = stepExecutionContext.flowExecutionContext.matchingStepContentArray;
+    }
+    if (mergeStep.merging) {
+      const updateMergeOptions = requireFunction("/data-hub/5/data-services/mastering/updateMergeOptionsLib.sjs", "updateMergeOptions");
+      this.mergeStep = updateMergeOptions(mergeStep);
+    } else {
+      this.mergeStep = mergeStep;
+    }
     const targetEntityType = this.mergeStep.targetEntityType;
     if (targetEntityType) {
-      const getEntityModel = hubUtils.requireFunction("/data-hub/core/models/entities.sjs", "getEntityModel");
+      const getEntityModel = requireFunction("/data-hub/core/models/entities.sjs", "getEntityModel");
       this._model = getEntityModel(targetEntityType);
+      if (this._model && this._model.primaryEntityTypeIRI() !== targetEntityType) {
+        this.mergeStep.targetEntityType = this._model.primaryEntityTypeIRI();
+      }
     }
     if (!this._model) {
       this._model = new common.GenericMatchModel(this.mergeStep, {collection: targetEntityType ? targetEntityType.substring(targetEntityType.lastIndexOf("/") + 1):null});
@@ -33,7 +46,7 @@ class Mergeable {
    */
   mergeRuleDefinitions() {
     if (!this._mergeRuleDefinitions) {
-      this._mergeRuleDefinitions = this.mergeStep.mergeRules.map((mergeRule) => {
+      this._mergeRuleDefinitions = (this.mergeStep.mergeRules || []).map((mergeRule) => {
         if (mergeRule.mergeStrategyName) {
           const mergeStrategy = (this.mergeStep.mergeStrategies || []).find((strategy) => strategy.strategyName === mergeRule.mergeStrategyName);
           Object.assign(mergeRule, mergeStrategy);
@@ -51,7 +64,7 @@ class Mergeable {
    */
   defaultMergeRuleDefinition() {
     if (!this._defaultMergeRuleDefinition) {
-      const defaultRule = (this.mergeStep.mergeStrategies || []).find((strategy) => (strategy.default) || {});
+      const defaultRule = (this.mergeStep.mergeStrategies || []).find((strategy) => strategy.default)|| {};
       this._defaultMergeRuleDefinition = new MergeRuleDefinition(defaultRule, this);
     }
     return this._defaultMergeRuleDefinition;
@@ -59,21 +72,24 @@ class Mergeable {
 
   /*
    * Returns a contentObject after processing multiple contentObjects
+   * @param contentObjects
    * @return contentObject
    * @since 5.8.0
    */
-  buildMergeDocument(contentObjects) {
+  buildMergeDocument(contentObjects, id) {
+    if (mergingTraceEnabled) {
+      xdmp.trace(mergingTraceEvent, `Building merge document with mergeable: ${xdmp.toJsonString(this.mergeStep)} and content: ${xdmp.toJsonString(contentObjects)}`);
+    }
     const format = xdmp.uriFormat(contentObjects[0].uri);
-    const documentNodes = contentObjects.map(contentObj => contentObj.value);
     const properties = [];
     // get properties that have rules defined for them
     for (const mergeRuleDefinition of this.mergeRuleDefinitions()) {
-      const mergedProperties = mergeRuleDefinition.mergeProperties(documentNodes);
+      const mergedProperties = mergeRuleDefinition.mergeProperties(contentObjects);
       const mergeXPathInformation = mergeRuleDefinition.xpathInformation();
       properties.push([mergeXPathInformation, mergedProperties]);
     }
     // set defaults for entity properties not explicitly set
-    const defaultRule = (this.mergeStep.mergeStrategies || []).find((strategy) => (strategy.default) || {});
+    const defaultRule = (this.mergeStep.mergeStrategies || []).find((strategy) => strategy.default) || {};
     for (const topModelProperty of this.model().topLevelProperties()) {
       const existingEntity = properties.find(
         prop => prop[0].entityPropertyPath &&
@@ -81,14 +97,207 @@ class Mergeable {
       );
       if (!existingEntity) {
         const mergeRuleDefinition = new MergeRuleDefinition(Object.assign({entityPropertyPath: topModelProperty}, defaultRule), this);
-        const mergedProperties = mergeRuleDefinition.mergeProperties(documentNodes);
+        const mergedProperties = mergeRuleDefinition.mergeProperties(contentObjects);
         const mergeXPathInformation = mergeRuleDefinition.xpathInformation();
         properties.push([mergeXPathInformation, mergedProperties]);
       }
     }
-    return format === "json" ? this.mergeJsonDocuments(documentNodes, properties):  this.mergeXmlDocuments(documentNodes, properties);
+    const documentNodes = normalizeToArray(contentObjects).map(contentObj => contentObj.value);
+    const distinctHeaderNodeNames = fn.distinctValues(Sequence.from(documentNodes.map((doc) => doc.xpath("*:envelope/*:headers/* ! fn:node-name(.)"))));
+    // merge headers
+    for (const topHeader of distinctHeaderNodeNames) {
+      const nameString = String(topHeader);
+      const prefix = fn.contains(nameString, ":") ? nameString.substring(0, nameString.indexOf(":")): "";
+      const mergeRuleDefinition = new MergeRuleDefinition(Object.assign({documentXPath: `/(es:envelope|envelope)/(es:headers|headers)/${nameString}`, namespaces: { es: "http://marklogic.com/entity-services", [prefix]: fn.namespaceUriFromQName(topHeader)}}, defaultRule), this);
+      const mergedProperties = mergeRuleDefinition.mergeProperties(contentObjects);
+      const mergeXPathInformation = mergeRuleDefinition.xpathInformation();
+      properties.push([mergeXPathInformation, mergedProperties]);
+    }
+    let triples = null;
+    if (this.mergeStep.tripleMerge) {
+      const tripleMergeFunction = requireFunction(tripleMerge.at, tripleMerge.function);
+      triples = tripleMergeFunction(this.mergeStep, documentNodes, properties.map(prop => prop[1].sources), this.mergeStep.tripleMerge);
+    } else {
+      triples = fn.distinctValues(Sequence.from(documentNodes.map(doc => doc.xpath("/*:envelope/*:triples/(object-node()|.//sem:triple) ! sem:triple(.)", {sem: "http://marklogic.com/semantics"}))));
+    }
+    return format === "json" ? this.mergeJsonDocuments(documentNodes, properties, id, triples):  this.mergeXmlDocuments(documentNodes, properties, id, triples);
   }
 
+  /*
+   * Returns a contentObject for a notification document
+   * @param uri - uri for notification
+   * @param thresholdName
+   * @param payload - cts.query or uris
+   * @return contentObject
+   * @since 5.8.0
+   */
+  buildNotification(uri, thresholdName, payload) {
+    const nodeBuilder = new NodeBuilder();
+    nodeBuilder
+      .startElement("sm:notification", "http://marklogic.com/smart-mastering")
+      .startElement("sm:meta", "http://marklogic.com/smart-mastering")
+      .startElement("sm:dateTime", "http://marklogic.com/smart-mastering")
+      .addText(fn.string(fn.currentDateTime()))
+      .endElement()
+      .startElement("sm:user", "http://marklogic.com/smart-mastering")
+      .addText(xdmp.getCurrentUser())
+      .endElement()
+      .startElement("sm:status", "http://marklogic.com/smart-mastering")
+      .addText("unread")
+      .endElement()
+      .endElement()
+      .startElement("sm:threshold-label", "http://marklogic.com/smart-mastering")
+      .addText(thresholdName)
+      .endElement();
+    if (payload instanceof cts.query) {
+      nodeBuilder.startElement("sm:query", "http://marklogic.com/smart-mastering");
+      nodeBuilder.addNode(payload);
+      nodeBuilder.endElement();
+    } else {
+      nodeBuilder.startElement("sm:document-uris", "http://marklogic.com/smart-mastering");
+      for (const uri of payload) {
+        nodeBuilder.startElement("sm:document-uris", "http://marklogic.com/smart-mastering");
+        nodeBuilder.addText(uri);
+        nodeBuilder.endElement();
+      }
+      nodeBuilder.endElement();
+    }
+    nodeBuilder.endElement();
+    return {
+      uri,
+      value: nodeBuilder.toNode(),
+      context: {
+        collections: [],
+        permissions: [xdmp.permission("data-hub-common","read"),xdmp.permission("data-hub-common","update")]
+      }
+    }
+  }
+
+  /*
+ * Returns a contentObject for an auditing document
+ * @param uri - uri
+ * @param thresholdName
+ * @param payload - cts.query or uris
+ * @return contentObject
+ * @since 5.8.0
+ */
+  buildAuditDocument(newUri, previousUris, action) {
+    const prefix = "http://marklogic.com/smart-mastering/auditing#";
+    const dateTime = fn.string(fn.currentDateTime());
+    const username = xdmp.getCurrentUser();
+    const newEntityId = `${prefix}${newUri}`;
+    const activityId = `${prefix}${action}-${newUri}-${xdmp.request()}`;
+    const userId = `${prefix}user-${username}`
+    const nodeBuilder = new NodeBuilder();
+    nodeBuilder
+      .startElement("prov:document", "http://www.w3.org/ns/prov#")
+      .addAttribute("xmlns:xsd","http://www.w3.org/2001/XMLSchema")
+      .addAttribute("xmlns:xsi","http://www.w3.org/2001/XMLSchema-instance")
+      .addAttribute("xmlns:foaf","http://xmlns.com/foaf/0.1/")
+      .startElement("auditing:new-uri", "http://marklogic.com/smart-mastering/auditing")
+      .addText(newUri)
+      .endElement();
+    nodeBuilder
+      .startElement("prov:collection", "http://www.w3.org/ns/prov#")
+      .startElement("prov:id", "http://www.w3.org/ns/prov#")
+      .addText(newEntityId)
+      .endElement()
+      .startElement("prov:type", "http://www.w3.org/ns/prov#")
+      .addAttribute("xsi:type","xsd:string")
+      .addText(`result record for ${action}`)
+      .endElement()
+      .startElement("prov:label", "http://www.w3.org/ns/prov#")
+      .addText(newUri)
+      .endElement()
+      .endElement();
+    for (const uri of previousUris) {
+      nodeBuilder
+        .startElement("auditing:previous-uri", "http://marklogic.com/smart-mastering/auditing")
+        .addText(uri)
+        .endElement();
+      const contribId = prefix + uri;
+      nodeBuilder
+        .startElement("prov:collection", "http://www.w3.org/ns/prov#")
+        .startElement("prov:id", "http://www.w3.org/ns/prov#")
+        .addText(contribId)
+        .endElement()
+        .startElement("prov:type", "http://www.w3.org/ns/prov#")
+        .addAttribute("xsi:type","xsd:string")
+        .addText(`contributing record for ${action}`)
+        .endElement()
+        .startElement("prov:label", "http://www.w3.org/ns/prov#")
+        .addText(uri)
+        .endElement()
+        .endElement();
+      nodeBuilder
+        .startElement("prov:wasDerivedFrom", "http://www.w3.org/ns/prov#")
+        .startElement("prov:generatedEntity", "http://www.w3.org/ns/prov#")
+        .addAttribute("prov:ref", newEntityId)
+        .endElement()
+        .startElement("prov:usedEntity", "http://www.w3.org/ns/prov#")
+        .addAttribute("prov:ref", contribId)
+        .endElement()
+        .startElement("prov:activity", "http://www.w3.org/ns/prov#")
+        .addAttribute("prov:ref", activityId)
+        .endElement()
+        .endElement();
+    }
+    nodeBuilder
+      .startElement("prov:agent", "http://www.w3.org/ns/prov#")
+      .addAttribute("prov:id", userId)
+      .startElement("prov:type", "http://www.w3.org/ns/prov#")
+      .addAttribute("xsi:type","xsd:QName")
+      .addText("foaf:OnlineAccount")
+      .endElement()
+      .startElement("foaf:accountName", "http://xmlns.com/foaf/0.1/")
+      .addText(username)
+      .endElement()
+      .endElement();
+    nodeBuilder
+      .startElement("prov:wasAttributedTo", "http://www.w3.org/ns/prov#")
+      .startElement("prov:entity", "http://www.w3.org/ns/prov#")
+      .addAttribute("prov:ref", newEntityId)
+      .endElement()
+      .startElement("prov:agent", "http://www.w3.org/ns/prov#")
+      .addAttribute("prov:ref", userId)
+      .endElement()
+      .endElement();
+    nodeBuilder
+      .startElement("prov:activity", "http://www.w3.org/ns/prov#")
+      .startElement("prov:id", "http://www.w3.org/ns/prov#")
+      .addText(activityId)
+      .endElement()
+      .startElement("prov:type", "http://www.w3.org/ns/prov#")
+      .addText(action)
+      .endElement()
+      .startElement("prov:label", "http://www.w3.org/ns/prov#")
+      .addText(`${action} by ${username}`)
+      .endElement()
+      .endElement();
+    nodeBuilder
+      .startElement("prov:wasGeneratedBy", "http://www.w3.org/ns/prov#")
+      .startElement("prov:entity", "http://www.w3.org/ns/prov#")
+      .addAttribute("prov:ref", newEntityId)
+      .endElement()
+      .startElement("prov:activity", "http://www.w3.org/ns/prov#")
+      .addAttribute("prov:ref", activityId)
+      .endElement()
+      .startElement("prov:activity", "http://www.w3.org/ns/prov#")
+      .addText(dateTime)
+      .endElement()
+      .endElement();
+    nodeBuilder.endElement();
+    return {
+      // hidden so we don't create Data Hub provenance for these provenance documents
+      hidden: true,
+      uri: `/com.marklogic.smart-mastering/auditing/${action}/${sem.uuidString()}.xml`,
+      value: nodeBuilder.toNode(),
+      context: {
+        collections: [],
+        permissions: [xdmp.permission("data-hub-common","read"),xdmp.permission("data-hub-common","update")]
+      }
+    }
+  }
 
   /*
    * Returns contentObject after applying respective actions to it
@@ -96,28 +305,65 @@ class Mergeable {
    * @since 5.8.0
    */
   applyDocumentContext(contentObject, actionDetails) {
-    const targetEntity = this.options.targetEntityType || this.options.targetEntityTitle;
+    const targetEntity = this.mergeStep.targetEntityType ? this.mergeStep.targetEntityType.substring(this.mergeStep.targetEntityType.lastIndexOf("/") + 1): "content";
+    const targetCollections = this.mergeStep.targetCollections;
+    const targetPermissions = this.mergeStep.targetPermissions;
+    let eventName = null;
     switch (actionDetails.action) {
       case "merge" :
         contentObject.context.collections.push(`sm-${targetEntity}-merged`);
         contentObject.context.collections.push(`sm-${targetEntity}-mastered`);
+        eventName = "onMerge";
         break;
       case "notify":
         contentObject.context.collections.push(`sm-${targetEntity}-notification`);
+        eventName = "onNotification";
+        break;
+      case "archive":
+        contentObject.context.collections.push(`sm-${targetEntity}-archived`);
+        eventName = "onArchive";
+        break;
+      case "audit":
+        contentObject.context.collections.push(`sm-${targetEntity}-auditing`);
+        eventName = "onAuditing";
         break;
       case "no-action":
         contentObject.context.collections.push(`sm-${targetEntity}-mastered`);
+        eventName = "onNoMatch";
         break;
       default:
+    }
+    // set collections
+    if (targetCollections && targetCollections[eventName] && targetCollections[eventName].add) {
+      for (const coll of targetCollections[eventName].add) {
+        if (!contentObject.context.collections.includes(coll)) {
+          contentObject.context.collections.push(coll);
+        }
+      }
+    }
+    if (targetCollections && targetCollections[eventName] && targetCollections[eventName].remove) {
+      contentObject.context.collections = contentObject.context.collections.filter(coll => !targetCollections[eventName].remove.includes(coll));
+    }
+    // set permissions
+    if (targetPermissions && targetPermissions[eventName] && targetPermissions[eventName].add) {
+      for (const perm of parsePermissions(targetPermissions[eventName].add)) {
+        if (!contentObject.context.permissions.includes(perm)) {
+          contentObject.context.permissions.push(perm);
+        }
+      }
+    }
+    if (targetPermissions && targetPermissions[eventName] && targetPermissions[eventName].remove) {
+      const removePermissions = parsePermissions(targetPermissions[eventName].remove);
+      contentObject.context.permissions = contentObject.context.permissions.filter(perm => !removePermissions.includes(perm));
     }
     return common.applyInterceptors("Apply Document context interceptor", contentObject, this.mergeStep.customApplyDocumentContextInterceptors, actionDetails, targetEntity);
   }
 
   lastTimestamp(documentNode) {
     const lastUpdatedMetadata = xdmp.nodeMetadataValue(documentNode, consts.CREATED_ON);
-    if (this.mergeStep.lastUpdatedLocation || !lastUpdatedMetadata) {
-      if (!this.mergeStep.lastUpdatedLocation) {
-        this.mergeStep.lastUpdatedLocation = {documentXPath: "/*:envelope/*:headers/createdOn"}
+    if (this.mergeStep.lastUpdatedLocation && this.mergeStep.lastUpdatedLocation.documentXPath || !lastUpdatedMetadata) {
+      if (!(this.mergeStep.lastUpdatedLocation && this.mergeStep.lastUpdatedLocation.documentXPath)) {
+        this.mergeStep.lastUpdatedLocation = {documentXPath: "/*:envelope/*:headers/createdOn"};
       }
       return fn.string(fn.head(documentNode.xpath(this.mergeStep.lastUpdatedLocation.documentXPath, this.mergeStep.lastUpdatedLocation.namespaces)));
     }
@@ -128,23 +374,23 @@ class Mergeable {
     return this._model;
   }
 
-  mergeJsonDocuments(documentNodes, properties) {
+  mergeJsonDocuments(documentNodes, properties, id, triples) {
     const newMergeDocument = { envelope: {
         headers: {
+          id,
           merges: {}
         },
         instance: {},
-        triples: []
+        triples
       }
     };
     const merges = newMergeDocument.envelope.headers.merges;
-    const instance = newMergeDocument.envelope.instance;
     for (const property of properties) {
       const [propertyXPathInfo, propertyOutput] = property;
       if (fn.exists(propertyOutput)) {
-        const instanceXPath = String(propertyXPathInfo.documentXPath).replace(/^\/\(es:envelope\|envelope\)\/\(es:instance\|instance\)\//, "");
+        const instanceXPath = String(propertyXPathInfo.documentXPath);
         const propertyDefinitions = common.propertyDefinitionsFromXPath(instanceXPath,propertyXPathInfo.namespaces);
-        let placeInInstance = instance, lastPropertyName = "", pathCount = 0;
+        let placeInInstance = newMergeDocument, lastPropertyName = "", pathCount = 0;
         for (const propertyDefinition of propertyDefinitions) {
           lastPropertyName = propertyDefinition.localname;
           placeInInstance[lastPropertyName] = placeInInstance[lastPropertyName] || {};
@@ -154,20 +400,28 @@ class Mergeable {
           pathCount++;
         }
         let values = [];
-        for (const output of hubUtils.normalizeToArray(propertyOutput)) {
-          values = values.concat(hubUtils.normalizeToArray(output.values));
+        for (const output of normalizeToArray(propertyOutput)) {
+          values = values.concat(normalizeToArray(output.values));
           this.setMergeInformation(merges, instanceXPath, output);
         }
-        if (values.length <= 1) {
+        if (values.length <= 1 && !propertyOutput.retainArray) {
           values = values[0];
         }
         placeInInstance[lastPropertyName] = values;
       }
     }
+    if (this.mergeStep.targetEntityType) {
+      const targetEntityType = this.mergeStep.targetEntityType;
+      const iriParts = targetEntityType.split("/");
+      newMergeDocument.envelope.instance.info = {
+        title: iriParts[iriParts.length - 1],
+        version: iriParts[iriParts.length - 2] ? iriParts[iriParts.length - 2].split("-")[1]:"0.0.1",
+      };
+    }
     return new NodeBuilder().addNode(newMergeDocument).toNode();
   }
 
-  mergeXmlDocuments(documentNodes, properties) {
+  mergeXmlDocuments(documentNodes, properties, id, triples) {
     const nodeBuilder = new NodeBuilder();
     nodeBuilder.startDocument();
     nodeBuilder.startElement("es:envelope", "http://marklogic.com/entity-services");
@@ -181,7 +435,7 @@ class Mergeable {
       // end es:title
       nodeBuilder.endElement();
       nodeBuilder.startElement("es:version", "http://marklogic.com/entity-services");
-      nodeBuilder.addText(iriParts[iriParts.length - 2].split("-")[1]);
+      nodeBuilder.addText(iriParts[iriParts.length - 2] ? iriParts[iriParts.length - 2].split("-")[1]:"0.0.1");
       // end es:version
       nodeBuilder.endElement();
       // end es:info
@@ -189,11 +443,41 @@ class Mergeable {
 
     }
     const merges = {};
+    const sortedProperties = properties.sort((a,b)=> a[0].documentXPath.localeCompare(b[0].documentXPath));
+    this.mergePropertiesIntoXML(nodeBuilder, sortedProperties, /^\/(\(es:envelope\|envelope\)|(es\:)?envelope)\/(\(es:instance\|instance\)|(es\:)?instance)\//, merges);
+    // end instance
+    nodeBuilder.endElement();
+    nodeBuilder.startElement("es:headers", "http://marklogic.com/entity-services");
+    this.mergePropertiesIntoXML(nodeBuilder, sortedProperties, /^\/(\(es:envelope\|envelope\)|(es\:)?envelope)\/(\(es:headers\|headers\)|(es\:)?headers)\//, merges);
+    nodeBuilder.startElement("sm:id", "http://marklogic.com/smart-mastering");
+    if (id) {
+      nodeBuilder.addText(id);
+    }
+    nodeBuilder.endElement();
+    nodeBuilder.startElement("merges", "");
+    this.jsonToJsonXML(nodeBuilder, merges);
+    // end merges
+    nodeBuilder.endElement();
+    // end headers
+    nodeBuilder.endElement();
+    nodeBuilder.startElement("es:triples", "http://marklogic.com/entity-services");
+    if (triples) {
+      nodeBuilder.addNode(sem.rdfSerialize(triples, ["triplexml"]));
+    }
+    // end triples
+    nodeBuilder.endElement();
+    // end envelope
+    nodeBuilder.endElement();
+    nodeBuilder.endDocument();
+    return nodeBuilder.toNode();
+  }
+
+  mergePropertiesIntoXML(nodeBuilder, sortedProperties, prefixRegex, merges) {
     const placeInXml = [];
-    for (const property of properties.sort((a,b)=> a[0].documentXPath.localeCompare(b[0].documentXPath))) {
+    for (const property of sortedProperties.filter((prop) => prefixRegex.test(prop[0].documentXPath))) {
       const [propertyXPathInfo, propertyOutput] = property;
       if (fn.exists(propertyOutput)) {
-        const instanceXPath = propertyXPathInfo.documentXPath.replace(/^\/\(es:envelope\|envelope\)\/\(es:instance\|instance\)\//, "");
+        const instanceXPath = propertyXPathInfo.documentXPath.replace(prefixRegex, "");
         const propertyDefinitions = common.propertyDefinitionsFromXPath(instanceXPath,propertyXPathInfo.namespaces);
         // don't want the last property definition to be included as it will come as part of addNode.
         propertyDefinitions.pop();
@@ -215,8 +499,8 @@ class Mergeable {
           propDefIndex++;
         }
         // add values
-        for (const output of hubUtils.normalizeToArray(propertyOutput)) {
-          for (const value of hubUtils.normalizeToArray(output.values)) {
+        for (const output of normalizeToArray(propertyOutput)) {
+          for (const value of normalizeToArray(output.values)) {
             nodeBuilder.addNode(value);
           }
           this.setMergeInformation(merges, instanceXPath, output);
@@ -226,19 +510,6 @@ class Mergeable {
     for (const place of placeInXml) {
       nodeBuilder.endElement();
     }
-    // end instance
-    nodeBuilder.endElement();
-    nodeBuilder.startElement("es:headers", "http://marklogic.com/entity-services");
-    nodeBuilder.startElement("merges", "");
-    this.jsonToJsonXML(nodeBuilder, merges);
-    // end merges
-    nodeBuilder.endElement();
-    // end headers
-    nodeBuilder.endElement();
-    // end envelope
-    nodeBuilder.endElement();
-    nodeBuilder.endDocument();
-    return nodeBuilder.toNode();
   }
 
   jsonToJsonXML(nodeBuilder, json) {
@@ -248,7 +519,7 @@ class Mergeable {
         this.jsonToJsonXML(nodeBuilder, item);
       }
       nodeBuilder.endElement();
-    } else if (typeof json === "object") {
+    } else if (json && typeof json === "object") {
       nodeBuilder.startElement("json:object", "http://marklogic.com/xdmp/json");
       nodeBuilder.addAttribute("xmlns:xs","http://www.w3.org/2001/XMLSchema");
       for (const key of Object.keys(json)) {
@@ -260,7 +531,7 @@ class Mergeable {
         nodeBuilder.endElement();
       }
       nodeBuilder.endElement();
-    } else {
+    } else if (json) {
       const type = xdmp.type(json);
       nodeBuilder.startElement("json:value", "http://marklogic.com/xdmp/json");
       nodeBuilder.addAttribute("xsi:type",`xs:${fn.string(type)}`, "http://www.w3.org/2001/XMLSchema-instance");
@@ -305,19 +576,24 @@ class MergeRuleDefinition {
   }
   /*
    * Returns an array of MergeRuleDefinitions class instances that describe the rule sets for merging
-   * @param {[]DocumentNode}
+   * @param {[]ContentObject}
    * @return {[]PropertySpecifications} - {  }
    * @since 5.8.0
    */
-  mergeProperties(documentNodes) {
+  mergeProperties(contentObjects) {
     let mergeModulePath = "/com.marklogic.smart-mastering/survivorship/merging/standard.xqy", mergeModuleFunction = "standard";
     if (this.mergeRule.mergeModulePath) {
       mergeModulePath = this.mergeRule.mergeModulePath;
       mergeModuleFunction = this.mergeRule.mergeModuleFunction;
     }
     const convertToNode = /\.xq[yml]?$/.test(mergeModulePath);
-    let propertiesByDocument = documentNodes.map((documentNode) => {
-      const documentUri = xdmp.nodeUri(documentNode);
+    let isArray = false;
+    let propertiesByDocument = normalizeToArray(contentObjects).map((contentObject) => {
+      const documentUri = contentObject.uri;
+      const documentNode = fn.head(contentObject.value);
+      if (fn.empty(documentNode)) {
+        return null;
+      }
       let nodeValues;
       if (this.mergeRule.documentXPath) {
         nodeValues = documentNode.xpath(this.mergeRule.documentXPath, this.mergeRule.namespaces);
@@ -327,21 +603,28 @@ class MergeRuleDefinition {
       if (fn.empty(nodeValues)) {
         return null;
       }
+      isArray = isArray || nodeValues.toArray().some(node => fn.exists(node.xpath('parent::array-node()')));
       const dateTime = this.mergeable.lastTimestamp(documentNode) || fn.string(fn.currentDateTime());
-      const datahubSourceNamesFromXML = fn.distinctValues(documentNode.xpath(".//*:datahubSourceName"));
+      const datahubSourceNamesFromXML = fn.distinctValues(documentNode.xpath("./*:envelope/*:headers//(*:datahubSourceName|*:sources/*:name)"));
       const names = fn.exists(datahubSourceNamesFromXML) ? datahubSourceNamesFromXML: xdmp.nodeMetadataValue(documentNode, "datahubSourceName");
-      const sources = normalizeToArray(names).map((name) => {
+      let sources = normalizeToArray(names).map((name) => {
         let sourceObject = { documentUri, name, dateTime };
         if (convertToNode) {
           sourceObject = new NodeBuilder().addNode(sourceObject).toNode();
         }
         return sourceObject;
       })
-      return {
-        sources: convertToNode ? Sequence.from(sources): sources,
-        values: nodeValues
-      };
+      sources = convertToNode ? Sequence.from(sources): sources;
+      const properties = []
+      for (const nodeValue of nodeValues) {
+        properties.push({
+          sources,
+          values: nodeValue
+        });
+      }
+      return properties;
     }).filter((properties) => properties)
+      .reduce((prev, curr) => prev.concat(curr), [])
     if (!propertiesByDocument.length) {
       return [];
     }
@@ -352,7 +635,9 @@ class MergeRuleDefinition {
       propertiesByDocument = Sequence.from(propertiesByDocument);
     }
     const mergeFunction = requireFunction(mergeModulePath, mergeModuleFunction);
-    return normalizeToArray(mergeFunction(propertyName, propertiesByDocument, passMergeRule));
+    const results = normalizeToArray(mergeFunction(propertyName, propertiesByDocument, passMergeRule));
+    results.retainArray = isArray;
+    return results;
   }
 
   raw() {

@@ -8,14 +8,13 @@ function testMergeableClass() {
   const mergeableInstance = new Mergeable({mergeStep}, {options});
   return [
     test.assertExists(mergeableInstance, "Mergeable class instance should exist."),
-    test.assertExists(mergeableInstance.mergeStep, "Mergeable class instance mergeStep object should exist."),
-    test.assertExists(mergeableInstance.options, "Mergeable class instance options object should exist."),
+    test.assertExists(mergeableInstance.mergeStep, "Mergeable class instance mergeStep object should exist.")
   ];
 }
 
 function testApplyContext() {
-  let mergeStep = {};
-  let options = {targetEntityTitle: "Customer"};
+  let mergeStep = {targetEntityType: "http://example.org/Customer-0.0.1/Customer"};
+  let options = {};
   const mergeableInstance = new Mergeable(mergeStep, options);
 
   const contentObject =
@@ -43,8 +42,8 @@ function testApplyContext() {
 }
 
 function testApplyContextInterceptor() {
-  let mergeStep = {};
-  let options = {targetEntityTitle: "Customer"};
+  let mergeStep = {targetEntityType: "http://example.org/Customer-0.0.1/Customer"};
+  let options = {};
 
   const contentObject =
     {
@@ -176,7 +175,8 @@ function testMergeRuleDefinitions() {
   const assertions = [
     test.assertEqual(mergeStep.mergeRules.length, mergeRuleDefinitions.length, "Should have the correct number of Merge Rule Definitions."),
   ];
-  const mergeDocuments = hubUtils.normalizeToArray(fn.doc(["/content/CustMatchMerge1.json","/content/CustMatchMerge2.json","/content/CustMatchMerge3.json"]));
+  const mergeDocuments = hubUtils.normalizeToArray(fn.doc(["/content/CustMatchMerge1.json","/content/CustMatchMerge2.json","/content/CustMatchMerge3.json"]))
+    .map(doc => ({ uri: xdmp.nodeUri(doc), value: doc}));
   for (const mergeRuleDefinition of mergeRuleDefinitions) {
     let mergedProperties = mergeRuleDefinition.mergeProperties(mergeDocuments);
     if (mergeRuleDefinition.name() === "name") {

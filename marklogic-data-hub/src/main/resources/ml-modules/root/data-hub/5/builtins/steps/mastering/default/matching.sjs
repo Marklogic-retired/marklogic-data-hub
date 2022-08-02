@@ -13,7 +13,6 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-const mastering = require("/com.marklogic.smart-mastering/process-records.xqy");
 const masteringStepLib = require("/data-hub/5/builtins/steps/mastering/default/lib.sjs");
 const quickStartRequiredOptionProperty = 'matchOptions';
 const hubCentralRequiredOptionProperty = 'matchRulesets';
@@ -98,8 +97,10 @@ function main(content, options, stepExecutionContext) {
   if (fn.count(filteredContent) === 0) {
     return emptySequence;
   }
+  const matchOptions = options.matchOptions || options;
+  matchOptions.targetEntityType = matchOptions.targetEntityType || options.targetEntityType || options.targetEntity;
   let matchSummaryJson = buildMatchSummary(
-    new Matchable(options.matchOptions || options),
+    new Matchable(matchOptions),
     filteredContent
   );
   return buildResult(matchSummaryJson, options, collections);

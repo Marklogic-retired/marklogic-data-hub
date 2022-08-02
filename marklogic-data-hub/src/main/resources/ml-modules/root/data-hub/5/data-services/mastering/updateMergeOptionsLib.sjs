@@ -5,6 +5,7 @@ function updateMergeOptions(opt)
   let mergeRules = [];
   let mergeStrategies = [];
   let newOpt = {
+    targetEntityType: opt.targetEntityType || opt.targetEntity,
     mergeStrategies: mergeStrategies,
     mergeRules: mergeRules
   };

@@ -56,6 +56,7 @@ const expectedMergedDocUri = "/com.marklogic.smart-mastering/merged/1e3ec6e5e621
 // Verify the merged doc first
 const mergedRecord = hubTest.getRecord(expectedMergedDocUri);
 const mergedDoc = mergedRecord.document.envelope;
+const merges = mergedDoc.headers.merges[Object.keys(mergedDoc.headers.merges)[0]];
 assertions.push(
   // Verify headers
   test.assertEqual(true, mergedDoc.headers.headerFromMappingStep, 
@@ -66,10 +67,10 @@ assertions.push(
     "The header from the matching customer should have been merged"),
   test.assertEqual(expectedMergedDocUri, mergedDoc.headers.id, 
     "Merging is expected to store the merged document URI in the 'id' header"),
-  test.assertEqual(2, mergedDoc.headers.merges.length, 
+  test.assertEqual(2, merges.length,
     "The merges array should have one entry for each of the 2 merged documents"),
-  test.assertEqual("/content/matchingCustomer.json", mergedDoc.headers.merges[0]["document-uri"]),
-  test.assertEqual("/incomingCustomer.json", mergedDoc.headers.merges[1]["document-uri"]),
+  test.assertTrue(merges.some(merge => "/content/matchingCustomer.json" === merge.documentUri), `merges: ${xdmp.toJsonString(merges)}`),
+  test.assertTrue(merges.some(merge => "/incomingCustomer.json" === merge.documentUri), `merges: ${xdmp.toJsonString(merges)}`),
 
   // Verify triples
   // The matching customer has 2 triples, and the incoming customer has 2 triples; one of those 2 triples is a duplicate, so there should be 3 total
@@ -80,7 +81,6 @@ assertions.push(
   // Verify instance
   test.assertEqual("Customer", mergedDoc.instance.info.title),
   test.assertEqual("0.0.1", mergedDoc.instance.info.version),
-  test.assertEqual("http://example.org/", mergedDoc.instance.info.baseUri),
   test.assertEqual(1, mergedDoc.instance.Customer.customerId,
     "The customerId should be merged"),
   test.assertEqual("Existing nickname", mergedDoc.instance.Customer.nicknames[0],
@@ -96,7 +96,6 @@ assertions.push(
   test.assertTrue(mergedRecord.collections.includes("merged-customer")),
   test.assertTrue(mergedRecord.collections.includes("sm-Customer-merged")),
   test.assertTrue(mergedRecord.collections.includes("sm-Customer-mastered")),
-  test.assertTrue(mergedRecord.collections.includes("http://example.org/Customer-0.0.1/Customer")),
   test.assertTrue(mergedRecord.collections.includes("raw-content")),
   test.assertTrue(mergedRecord.collections.includes("Customer"), 
     "Customer should be from the incoming record (the mapping step added it to that record)")

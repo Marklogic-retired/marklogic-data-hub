@@ -74,12 +74,19 @@ class GenericMatchModel {
         }
         return this._indexesByPath[propertyPath];
     }
+
+    topLevelProperties() {
+        return [];
+    }
 }
 
 function propertyDefinitionsFromXPath(xpath, namespaces) {
     const xpathSteps = xpath.split("/").filter((step) => step);
     return xpathSteps
       .map((xpathStep, index) => {
+          if (/\(.+\|.+\)/.test(xpathStep)) {
+              xpathStep = xpathStep.replace(/\((.+)\|.+\)/, "$1");
+          }
           if (xpathStep.includes(":")) {
               const [nsPrefix, localname] = xpathStep.split(":");
               return {
