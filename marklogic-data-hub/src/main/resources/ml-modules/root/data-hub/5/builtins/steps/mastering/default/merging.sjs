@@ -13,26 +13,17 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
- const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
- const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
- const mastering = require("/com.marklogic.smart-mastering/process-records.xqy");
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+const merger = require("/data-hub/5/mastering/merging/merger.sjs");
 const masteringStepLib = require("/data-hub/5/builtins/steps/mastering/default/lib.sjs");
-const utilImpl = require("/com.marklogic.smart-mastering/impl/util.xqy");
+const {Mergeable} = require("/data-hub/5/mastering/merging/mergeable.sjs");
 
 const quickStartRequiredOptionProperty = 'mergeOptions';
 const hubCentralRequiredOptionProperty = 'mergeRules';
 const requiredOptionProperties = [[quickStartRequiredOptionProperty, hubCentralRequiredOptionProperty]];
 
 function main(content, options, stepExecutionContext) {
-
-  let matchingStepContentExists = false;
-  if (stepExecutionContext != null && stepExecutionContext.flowExecutionContext != null) {
-    const contentArray = stepExecutionContext.flowExecutionContext.matchingStepContentArray;
-    if (contentArray && Array.isArray(contentArray)) {
-      matchingStepContentExists = true;
-      addMatchingStepContentToCache(contentArray);
-    }
-  }
 
   // These index references can't be out this function scope or the jobReport will error, since they don't exist for the jobs DB
   if (options.stepId) {
@@ -46,12 +37,14 @@ function main(content, options, stepExecutionContext) {
       httpUtils.throwBadRequestWithArray([`Could not find step with stepId ${options.stepId}`]);
     }
   }
-  
+
+  const mergeOptions = options.mergeOptions || options;
+  mergeOptions.targetEntityType = mergeOptions.targetEntityType || options.targetEntityType || options.targetEntity;
+  const mergeable = new Mergeable(mergeOptions, stepExecutionContext);
+  const matchingStepContentExists = !!mergeable.memoryContent;
   const urisPathReference = cts.pathReference('/matchSummary/URIsToProcess', ['type=string', 'collation=http://marklogic.com/collation/']);
   const datahubCreatedOnRef = cts.fieldReference('datahubCreatedOn', ['type=dateTime']);
   const thisMatchSummaryURI = content.uri;
-  masteringStepLib.checkOptions(null, options, null, requiredOptionProperties);
-  hubUtils.hubTrace("SM-MERGE", `Merge options: ${xdmp.toJsonString(options)}`);
   const matchSummaryCollection = `datahubMasteringMatchSummary${options.targetEntityType ? `-${options.targetEntityType}` : ''}`;
   const collectionQuery = cts.collectionQuery(matchSummaryCollection);
 
@@ -120,10 +113,10 @@ function main(content, options, stepExecutionContext) {
   }
   let results = [];
   if (urisToProcess.length) {
-    results = mastering.buildContentObjectsFromMatchSummary(
-        Sequence.from(urisToProcess),
+    results = merger.buildContentObjectsFromMatchSummary(
+        urisToProcess,
         thisMatchSummary,
-        options,
+        mergeable,
         stepExecutionContext != null ? stepExecutionContext.fineProvenanceIsEnabled() : false
     );  
   }
@@ -156,23 +149,6 @@ function applyPermissionsFromOptions(results, options) {
 
 function jobReport(jobID, stepResponse, options, outputContentArray) {
   return masteringStepLib.jobReport(jobID, stepResponse, options, outputContentArray, requiredOptionProperties);
-}
-
-/**
- * If matching step content exists from the flowExecutionContext, then we want to add that to the
- * "write object" catch in util.xqy so that calls to retrieve-write-object will find it, as opposed
- * to checking the database.
- * 
- * @param contentArray
- */
- function addMatchingStepContentToCache(contentArray) {
-  contentArray.forEach(contentObject => {
-    // Collections must be converted to a sequence so that it's handled properly in XQuery 
-    if (contentObject.context && contentObject.context.collections) {
-      contentObject.context.collections = Sequence.from(contentObject.context.collections);
-    }
-  });
-  utilImpl.addAllWriteObjects(contentArray);  
 }
 
 module.exports = {

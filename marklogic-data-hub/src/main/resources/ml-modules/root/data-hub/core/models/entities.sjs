@@ -5,14 +5,14 @@ const {throwBadRequest} = require("/data-hub/5/impl/http-utils.sjs");
 const entityModelCollection = "http://marklogic.com/entity-services/models";
 const entityModelsByIRI = {};
 
-function getEntityModel(entityModelIRI) {
-    if (!entityModelsByIRI[entityModelIRI]) {
-        const entityModelNode = getEntityModelDescriptor(entityModelIRI);
+function getEntityModel(entityModelIriOrTitle) {
+    if (!entityModelsByIRI[entityModelIriOrTitle]) {
+        const entityModelNode = getEntityModelDescriptor(entityModelIriOrTitle);
         if (entityModelNode) {
-          entityModelsByIRI[entityModelIRI] = new EntityModel(entityModelNode.toObject());
+          entityModelsByIRI[entityModelIriOrTitle] = new EntityModel(entityModelNode.toObject());
         }
     }
-    return entityModelsByIRI[entityModelIRI];
+    return entityModelsByIRI[entityModelIriOrTitle];
 }
 
 function getTitleAndParentIRI(iri) {
@@ -26,14 +26,20 @@ function getTitleAndParentIRI(iri) {
     }
 }
 
-function getEntityModelDescriptor(entityModelIRI) {
-  return fn.head(cts.search(getEntityModelQuery(entityModelIRI)));
+function getEntityModelDescriptor(entityModelIriOrTitle) {
+  return fn.head(cts.search(getEntityModelQuery(entityModelIriOrTitle)));
 }
 
-function getEntityModelQuery(entityModelIRI) {
+function getEntityModelQuery(entityModelIriOrTitle) {
   return cts.andQuery([
     cts.collectionQuery(entityModelCollection),
-    cts.tripleRangeQuery(sem.iri(entityModelIRI), sem.iri('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), [sem.iri('http://marklogic.com/entity-services#Model'),sem.iri('http://marklogic.com/entity-services#EntityType')], '=')
+    cts.orQuery([
+      cts.tripleRangeQuery(sem.iri(entityModelIriOrTitle), sem.iri('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), [sem.iri('http://marklogic.com/entity-services#Model'),sem.iri('http://marklogic.com/entity-services#EntityType')], '='),
+      cts.jsonPropertyScopeQuery(
+        "info",
+        cts.jsonPropertyValueQuery("title",entityModelIriOrTitle)
+      )
+    ])
   ]);
 }
 

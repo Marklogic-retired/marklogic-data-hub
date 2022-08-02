@@ -106,5 +106,7 @@ module.exports = {
   TRACE_ENTITY_DEBUG: "hub-entity-debug",
   TRACE_MAPPING_DEBUG: "hub-mapping-debug",
   TRACE_MATCHING: "hub-matching",
-  TRACE_MATCHING_DEBUG: "hub-matching-debug"
+  TRACE_MATCHING_DEBUG: "hub-matching-debug",
+  TRACE_MERGING: "hub-merging",
+  TRACE_MERGING_DEBUG: "hub-merging-debug"
 };

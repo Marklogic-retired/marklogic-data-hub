@@ -317,6 +317,7 @@ function buildMatchSummary(matchable, content) {
   urisToActOn = urisToActOn.concat(Object.keys(allActionDetails));
   const matchSummary = {
     matchSummary: {
+      matchStepId: matchable.matchStep.stepId,
       URIsToProcess: urisToActOn,
       actionDetails: allActionDetails
     }
