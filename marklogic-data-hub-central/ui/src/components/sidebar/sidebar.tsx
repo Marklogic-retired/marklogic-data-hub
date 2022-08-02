@@ -11,7 +11,6 @@ import {facetParser, deepCopy, entityFromJSON} from "@util/data-conversion";
 import hubPropertiesConfig from "@config/hub-properties.config";
 import tooltipsConfig from "@config/explorer-tooltips.config";
 import styles from "./sidebar.module.scss";
-import StepsConfig from "@config/steps.config";
 import {getUserPreferences, updateUserPreferences} from "../../services/user-preferences";
 import {UserContext} from "@util/user-context";
 import reactSelectThemeConfig from "@config/react-select-theme.config";
@@ -50,8 +49,8 @@ interface Props {
 const PLACEHOLDER: string = "Select a saved query";
 
 const Sidebar: React.FC<Props> = (props) => {
-  const stagingDbName: string = getEnvironment().stagingDb ? getEnvironment().stagingDb : StepsConfig.stagingDb;
-  const finalDbName: string = getEnvironment().finalDb ? getEnvironment().finalDb : StepsConfig.finalDb;
+  const stagingDbName: string = getEnvironment().stagingDb ? getEnvironment().stagingDb : "Staging";
+  const finalDbName: string = getEnvironment().finalDb ? getEnvironment().finalDb : "Final";
 
   const componentIsMounted = useRef(true);
   const entitiesArrayRef = useRef<any[]>();
@@ -436,6 +435,18 @@ const Sidebar: React.FC<Props> = (props) => {
       let parsedPreferences = JSON.parse(defaultPreferences);
       parsedPreferences?.preselectedFacets && setAllGreyedOptions(parsedPreferences.preselectedFacets);
     }
+  };
+
+  const getFinalDbLabel = () => {
+    let finalDbLabel = finalDbName;
+    if (finalDbLabel && finalDbLabel.toLowerCase().includes("final")) finalDbLabel = "Final";
+    return finalDbLabel;
+  };
+
+  const getStagingDbLabel = () => {
+    let stagingDbLabel = stagingDbName;
+    if (stagingDbLabel.toLowerCase().includes("staging")) stagingDbLabel = "Staging";
+    return stagingDbLabel;
   };
 
   const deleteGreyFacetLS = (facetName, valueKey, val) => {
@@ -828,7 +839,7 @@ const Sidebar: React.FC<Props> = (props) => {
                 onChange={e => props.setDatabasePreferences(e.target.value)}
                 aria-label="switch-database-final"
                 label={<HCTooltip text={finalDbName} id={`${finalDbName}-tooltip`} placement="top-start">
-                  <span>{finalDbName}</span>
+                  <span>{getFinalDbLabel()}</span>
                 </HCTooltip>}
                 className={`mb-0 p-0 ${styles.databaseSwitch}`}
               />
@@ -842,7 +853,7 @@ const Sidebar: React.FC<Props> = (props) => {
                 onChange={e => props.setDatabasePreferences(e.target.value)}
                 aria-label="switch-database-staging"
                 label={<HCTooltip text={stagingDbName} id={`${stagingDbName}-tooltip`} placement="top-start">
-                  <span>{stagingDbName}</span>
+                  <span>{getStagingDbLabel()}</span>
                 </HCTooltip>}
                 className={`mb-0 p-0 ${styles.databaseSwitch}`}
               />
