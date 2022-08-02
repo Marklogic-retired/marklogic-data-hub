@@ -27,7 +27,7 @@ assertions.push(
   test.assertTrue(currentDatetime != null),
   test.assertTrue(mapFuncs["fn:sum"] == null, "'fn:' has been stripped from the function name and signature"),
   test.assertTrue(isAlphabeticallySorted()),
-  test.assertTrue(mapFuncsWithoutMLFunctions.length < mapFuncs.length && mapFuncsWithoutMLFunctions.length > 80, fn.string(mapFuncsWithoutMLFunctions.length)),
+  test.assertTrue(mapFuncsWithoutMLFunctions.length < mapFuncs.length && mapFuncsWithoutMLFunctions.length > 80, fn.string(mapFuncsWithoutMLFunctions.length))
 );
 
 const functionsThatDontWork = esMappingLib.getXpathFunctionsThatDoNotWorkInMappingExpressions();
