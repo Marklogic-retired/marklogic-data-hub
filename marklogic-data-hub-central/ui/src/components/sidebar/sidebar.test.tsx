@@ -5,11 +5,7 @@ import searchPayloadFacets from "../../assets/mock-data/explore/search-payload-f
 import {entityFromJSON, entityParser} from "../../util/data-conversion";
 import {modelResponse} from "../../assets/mock-data/explore/model-response";
 import userEvent from "@testing-library/user-event";
-import StepsConfig from "@config/steps.config";
 import {getEnvironment} from "@util/environment";
-
-const stagingDbName: string = getEnvironment().stagingDb ? getEnvironment().stagingDb : StepsConfig.stagingDb;
-const finalDbName: string = getEnvironment().finalDb ? getEnvironment().finalDb : StepsConfig.finalDb;
 
 const entityIndicatorData = {
   max: 10,
@@ -127,9 +123,22 @@ describe("Sidebar createdOn face time window dropdown", () => {
       />
     );
 
-    // Check Final/Staging buttons show the custon database names
-    const finalDatabaseButton = getByText(finalDbName);
-    const stagingDatabaseButton = getByText(stagingDbName);
+    // Check Final/Staging buttons show the custom database names
+
+    const getFinalDbLabel = () => {
+      let finalDbLabel =  getEnvironment().finalDb ? getEnvironment().finalDb : "Final";
+      if (finalDbLabel.toLowerCase().includes("final")) finalDbLabel = "Final";
+      return finalDbLabel;
+    };
+
+    const getStagingDbLabel = () => {
+      let stagingDbLabel =  getEnvironment().stagingDb ? getEnvironment().stagingDb : "Staging";
+      if (stagingDbLabel.toLowerCase().includes("staging")) stagingDbLabel = "Staging";
+      return stagingDbLabel;
+    };
+
+    const finalDatabaseButton = getByText(getFinalDbLabel());
+    const stagingDatabaseButton = getByText(getStagingDbLabel());
     finalDatabaseButton.onclick = jest.fn();
     stagingDatabaseButton.onclick = jest.fn();
     fireEvent.click(finalDatabaseButton);
@@ -225,6 +234,4 @@ describe("Sidebar createdOn face time window dropdown", () => {
     expect(includeHubArtifactsSwitch.onclick).toHaveBeenCalled();
 
   });
-
-
 });

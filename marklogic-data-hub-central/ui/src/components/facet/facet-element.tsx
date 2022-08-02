@@ -14,17 +14,15 @@ export const FacetName = (props) => {
   const facetLabel = props.category && props.category === "concept" ? <span><DynamicIcons name={defaultConceptIcon}/> {props.facet.name}</span> : props.facet.value;
   return (
     <div className={styles.checkContainer} key={props.index} data-testid={props.facet.value} data-cy={stringConverter(props.name) + "-facet-item"}>
-      <span className={styles.checkbox}>
-        <HCCheckbox
-          id={id}
-          handleClick={props.handleClick}
-          value={props.facet.value}
-          label={facetLabel}
-          checked={isActive}
-          dataTestId={id}
-          tooltip={facetValue}
-        />
-      </span>
+      <HCCheckbox
+        id={id}
+        handleClick={props.handleClick}
+        value={props.facet.value}
+        label={facetLabel}
+        checked={isActive}
+        dataTestId={id}
+        tooltip={facetValue}
+      />
       <div
         className={styles.count}
         data-cy={`${stringConverter(props.name)}-${props.facet.value}-count`}

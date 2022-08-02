@@ -183,7 +183,7 @@ const Facet: React.FC<Props> = (props) => {
           </div>
         </div>
       </div>}
-      <div style={{display: (show) ? "block" : "none"}}>
+      <div style={{display: (show) ? "block" : "none", marginLeft: "5px"}}>
         {renderValues}
         <div
           className={styles.more}
