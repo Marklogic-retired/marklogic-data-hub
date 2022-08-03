@@ -481,18 +481,22 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
      * Because dataHub.upgradeHub initializes the project first, we don't have a way of skipping this if the file
      * didn't already exist.
      */
-    private void upgradeFinalDatabaseXmlFile() {
-        File finalDbFile = getUserConfigDir().resolve("database-fields").resolve("final-database.xml").toFile();
-        try {
-            String fileContents = new String(FileCopyUtils.copyToByteArray(finalDbFile));
-            String upgradedFileContents = new FinalDatabaseXmlFileUpgrader().updateFinalDatabaseXmlFile(fileContents);
-            FileCopyUtils.copy(upgradedFileContents.getBytes(), finalDbFile);
+    public void upgradeFinalDatabaseXmlFile() {
+        Path userDatabaseFieldsDir =  getUserConfigDir().resolve("database-fields");
+        Path fileDatabasePath = userDatabaseFieldsDir.resolve("final-database.xml");
+        if (fileDatabasePath.toFile().exists()) {
+            File finalDbFile = userDatabaseFieldsDir.resolve("final-database.xml").toFile();
+            try {
+                String fileContents = new String(FileCopyUtils.copyToByteArray(finalDbFile));
+                String upgradedFileContents = new FinalDatabaseXmlFileUpgrader().updateFinalDatabaseXmlFile(fileContents);
+                FileCopyUtils.copy(upgradedFileContents.getBytes(), finalDbFile);
+            } catch (Exception e) {
+                throw new DataHubProjectException("Error while upgrading project; was not able to add /matchSummary/actionDetails/*/uris " +
+                        "path range index to final-database.xml file; cause: " + e.getMessage(), e);
+            }
+        } else {
+            writeResourceFile("ml-config/database-fields/final-database.xml", fileDatabasePath, false);
         }
-        catch (Exception e) {
-            throw new DataHubProjectException("Error while upgrading project; was not able to add /matchSummary/actionDetails/*/uris " +
-                "path range index to final-database.xml file; cause: " + e.getMessage(), e);
-        }
-
     }
 
     @Override

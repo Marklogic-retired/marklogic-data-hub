@@ -18,6 +18,7 @@
 package com.marklogic.gradle.task
 
 import com.marklogic.hub.DataHub
+import com.marklogic.hub.impl.HubProjectImpl
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskExecutionException
 
@@ -25,6 +26,9 @@ class PreinstallCheckTask extends HubTask {
 
     @TaskAction
     void runPreinstallCheck() {
+        print("Ensure Final database indexes are up to date.\n")
+        HubProjectImpl hubProjectImpl = (HubProjectImpl) getHubProject()
+        hubProjectImpl.upgradeFinalDatabaseXmlFile();
         DataHub dh = getDataHub();
         def preInstallCheck = dh.runPreInstallCheck()
         if (preInstallCheck.get("safeToInstall")) {
@@ -55,7 +59,6 @@ class PreinstallCheckTask extends HubTask {
                 sb.append("- PROBLEM: Job Port " + hubConfig.jobPort + " already in use by: [" + preInstallCheck.get("jobPortInUseBy") + "]\n")
                 .append("      FIX: Change the [mlJobPort] property in gradle.properties to a free port\n")
             }
-
             throw new TaskExecutionException(this, new Throwable(sb.toString()))
         }
     }
