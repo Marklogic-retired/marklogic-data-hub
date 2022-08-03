@@ -4,7 +4,11 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.hub.DatabaseKind;
 import org.junit.jupiter.api.Assertions;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.hub.central.controllers.ConceptController;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.function.Consumer;
@@ -16,6 +20,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class PublishModelsTest extends ModelTest {
     String entityCollection = "http://marklogic.com/entity-services/models";
     String draftEntityCollection = entityCollection + "/draft";
+    String conceptCollection = "http://marklogic.com/data-hub/concept";
+    String draftConceptCollection = conceptCollection + "/draft";
+
+    @Autowired
+    ConceptController conceptController;
+
     @Test
     @WithMockUser(roles = {"writeEntityModel"})
     void testPublishingModels() {
@@ -81,6 +91,21 @@ public class PublishModelsTest extends ModelTest {
             assertion.accept(documentManager.exists("/entities/Customer.entity.xsd"));
             assertion.accept(documentManager.exists("/tde/Customer-" + version + ".tdex"));
         });
+    }
+
+    @Test
+    @WithMockUser(roles = {"writeEntityModel"})
+    private void testClearConceptModels() {
+
+        runAsTestUserWithRoles("hub-central-entity-model-writer");
+        ObjectNode input = objectMapper.createObjectNode();
+        input.put("name", "ShoeType");
+        JsonNode model = conceptController.createDraftModel(input).getBody();
+        assertEquals(1, getStagingDocCount(draftConceptCollection), "There should be one concept in draft for staging database");
+        assertEquals(1, getFinalDocCount(draftConceptCollection), "There should be one concept in draft for final database");
+        clearDraftModels();
+        assertEquals(0, getStagingDocCount(draftConceptCollection), "There should be no concepts in draft for staging database");
+        assertEquals(0, getFinalDocCount(draftConceptCollection), "There should be no concepts in draft for final database");
     }
 
 }

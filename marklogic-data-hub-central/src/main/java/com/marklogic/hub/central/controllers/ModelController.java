@@ -228,12 +228,14 @@ public class ModelController extends BaseController {
     }
 
     private void deleteDraftsInDB(DatabaseClient client) {
+        //clearing the draft in respective databases
         QueryManager qm = client.newQueryManager();
-        //publish models to ES collection
         DeleteQueryDefinition def=qm.newDeleteDefinition();
         def.setCollections("http://marklogic.com/entity-services/models/draft");
-        //clearing the draft in respective databases
         qm.delete(def);
+        DeleteQueryDefinition defConcept =qm.newDeleteDefinition();
+        defConcept.setCollections("http://marklogic.com/data-hub/concept/draft");
+        qm.delete(defConcept);
     }
 
     void deployModelConfigs() {

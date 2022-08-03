@@ -165,7 +165,7 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
       <TreeSelect
         showSearch={false}
         aria-label={finalIdentifier}
-        data-testId={finalIdentifier}
+        data-testid={finalIdentifier}
         id={finalIdentifier}
         className={styles.matchTypeSelect}
         placeholder="Select property"

@@ -8,6 +8,7 @@ import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.central.AbstractHubCentralTest;
+import com.marklogic.hub.central.controllers.ConceptController;
 import com.marklogic.hub.central.controllers.ModelController;
 import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
 import com.marklogic.hub.test.Customer;
