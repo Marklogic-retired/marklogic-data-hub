@@ -144,6 +144,10 @@ class CuratePage {
   runStepInCardView(stepName: string) {
     return cy.findByTestId(`${stepName}-run`);
   }
+  getDisabledRunButton(stepName: string) {
+    return cy.get(`[data-testid=${stepName}-disabled-run]`);
+
+  }
 
   runInNewFlow(stepName: string) {
     return cy.findByTestId(`${stepName}-run-toNewFlow`);
@@ -155,6 +159,9 @@ class CuratePage {
 
   selectFlowToRunIn(flowName: string) {
     cy.findByTestId(`${flowName}-run-step`).click();
+  }
+  getFlowList(stepName: string) {
+    return cy.get(`#${stepName}-flowsList`);
   }
 
   verifyStepNameIsVisible(stepName: string) {
@@ -281,6 +288,13 @@ class CuratePage {
   getPageSizeOption(pageSizeOption: string) {
     return cy.findByText(pageSizeOption);
   }
+  getStepCard(entity: string, stepName: string) {
+    return cy.get(`div[data-testid="${entity}-${stepName}-step"]`);
+  }
+  getTooltip() {
+    return cy.get(".tooltip-inner");
+  }
+
 }
 
 const curatePage = new CuratePage();
