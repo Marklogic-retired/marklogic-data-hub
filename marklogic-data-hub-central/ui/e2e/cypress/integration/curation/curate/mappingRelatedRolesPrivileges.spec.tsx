@@ -8,7 +8,6 @@ import {generateUniqueName} from "../../../support/helper";
 import runPage from "../../../support/pages/run";
 import loginPage from "../../../support/pages/login";
 
-
 describe("Mapping", () => {
   before(() => {
     cy.visit("/");
@@ -26,7 +25,7 @@ describe("Mapping", () => {
     let loadStep = "loadCustomersJSON";
     let mapStepName = generateUniqueName("map-").substring(0, 20);
 
-    cy.log("**loggin in as user with role hub-central-mapping-writer**");
+    cy.log("**Login in as user with role hub-central-mapping-writer**");
     cy.loginAsTestUserWithRoles("hub-central-mapping-writer").withRequest();
     loginPage.postLogin();
 
@@ -97,5 +96,37 @@ describe("Mapping", () => {
     curatePage.getEntityMappingStep(entityTypeId, mapStepName).should("be.visible");
     curatePage.deleteMappingStepButton(mapStepName).should("be.visible").click();
     curatePage.deleteConfirmation("Yes").click();
+  });
+  it("Data hub operator cannot add mapping steps to a flow", () => {
+    let stepName = "map-orders";
+    cy.log("**Login as an operator**");
+    cy.loginAsOperator().withRequest();
+    loginPage.postLogin();
+
+    cy.log("**Go to Curate Tile**");
+    toolbar.getCurateToolbarIcon().click();
+    curatePage.getEntityTypePanel("Order").should("be.visible");
+
+    cy.log("**Open Order to see steps**");
+    curatePage.getEntityTypePanel("Order").should("be.visible").click({force: true});
+
+
+    cy.log("**Verify the flow list is disabled and a tooltip appears**");
+    curatePage.addToNewFlowDisabled("Order", stepName);
+    curatePage.getExistingFlowDropdown(stepName).trigger("mouseover").then(() => {
+      curatePage.getTooltip().should("contain", "Contact your security administrator for access.");
+      curatePage.getFlowList(stepName).should("be.disabled");
+    });
+    curatePage.getStepCard("Order", stepName).should("be.visible").trigger("mouseover", "top");
+
+
+    cy.log("**verify that the step is not runnable and a tooltip appears**");
+    curatePage.getDisabledRunButton(stepName).should("be.visible").trigger("mouseover").then(() => {
+      curatePage.getTooltip().should("contain", "Contact your security administrator for access.");
+      curatePage.getDisabledRunButton(stepName).click({force: true});
+      curatePage.runStepSelectFlowConfirmation().should("not.exist");
+    });
+
+
   });
 });
