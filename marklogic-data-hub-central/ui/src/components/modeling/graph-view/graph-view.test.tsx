@@ -1,5 +1,5 @@
 import React from "react";
-import {render, screen, wait, cleanup} from "@testing-library/react";
+import {render, screen, wait, cleanup, act} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import GraphView from "./graph-view";
 import {ModelingContext} from "../../../util/modeling-context";
@@ -37,6 +37,8 @@ describe("Graph View Component", () => {
         setEntityTypesFromServer={jest.fn()}
         hubCentralConfig={hubCentralConfig}
         updateHubCentralConfig={jest.fn()}
+        setConfirmType={jest.fn()}
+        toggleConfirmModal={() => true}
       />
     </ModelingContext.Provider>
     );
@@ -149,5 +151,59 @@ describe("Graph View Component", () => {
     );
 
     expect(getByLabelText("publish-to-database")).toBeDisabled();
+  });
+
+  test("Validates modeling Graph UI text ", async () => {
+
+    const mockDeleteEntity = jest.fn();
+
+    const {getByText, getByLabelText, queryByLabelText, rerender, getAllByLabelText} =  render(
+      <ModelingContext.Provider value={isModified}>
+        <GraphView
+          entityTypes={getEntityTypes}
+          canReadEntityModel={true}
+          canWriteEntityModel={true}
+          deleteEntityType={mockDeleteEntity}
+          relationshipModalVisible={false}
+          toggleRelationshipModal={jest.fn()}
+          updateSavedEntity={jest.fn()}
+          setEntityTypesFromServer={jest.fn()}
+          hubCentralConfig={hubCentralConfig}
+          updateHubCentralConfig={jest.fn()}
+        />
+      </ModelingContext.Provider>
+    );
+
+    expect(queryByLabelText("Product-selectedEntity")).not.toBeInTheDocument();
+
+    // Opens side panel
+    rerender(withEntityAs("Product"));
+    await wait(() => expect(getByLabelText("Product-selectedEntity")).toBeInTheDocument());
+
+    // Verifies side panel content
+    const entityTypeTab = getByText("Entity Type");
+    expect(entityTypeTab).toBeInTheDocument();
+    act(() => {
+      userEvent.click(entityTypeTab);
+    });
+
+    // Hovers over color question icon to see tooltip
+    const tooltips = getAllByLabelText("icon: question-circle");
+    act(() => {
+      // color tooltip has index 1 in the array
+      userEvent.hover(tooltips[1]);
+    });
+    expect(document.querySelector("[class='tooltip-inner']")?.firstChild?.textContent).toEqual("Select a color to associate it with the Product entity throughout your project.");
+
+    // Clicks on Add dropdown
+    const addDropdown = getByText("Add");
+    expect(addDropdown).toBeInTheDocument();
+    act(() => {
+      userEvent.click(addDropdown);
+    });
+    // Clicks on Add new relationship
+    userEvent.click(getByText("Add new relationship"));
+    expect(document.querySelector("#hc-alert-component-content")?.firstChild?.textContent)
+      .toEqual("To add a relationship to the data model, drag the source entity type to the target entity type or a concept class. You can also click the source entity type to configure a relationship. Press Esc to exit this mode.");
   });
 });

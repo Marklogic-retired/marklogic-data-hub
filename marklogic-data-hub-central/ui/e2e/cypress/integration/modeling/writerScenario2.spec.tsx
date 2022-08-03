@@ -261,6 +261,8 @@ describe("Entity Modeling: Writer Role", () => {
     cy.log("**Reloading the page so the change appears");
     cy.reload();
     cy.waitForAsyncRequest();
+    // TODO: graph re-renders after reloading the page. Bug: DHFPROD-9174
+    cy.wait(1000);
     modelPage.selectView("table");
     propertyTable.getExpandIcon("AddEntity").scrollIntoView().click();
     propertyTable.getExpandIcon("address").scrollIntoView().click();
