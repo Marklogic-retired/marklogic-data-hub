@@ -392,6 +392,24 @@ describe("Graph view page", () => {
     // expect(publishToDatabaseBtn).toBeVisible();
     // expect(graphExportIcon).toBeVisible();
   });
+
+  test("Modeling: alert shows correctly when modified", async () => {
+    const {getByLabelText} = render(
+      <AuthoritiesContext.Provider value={mockDevRolesService}>
+        <ModelingContext.Provider value={isModified}>
+          <Router>
+            <Modeling/>
+          </Router>
+        </ModelingContext.Provider>
+      </AuthoritiesContext.Provider>
+    );
+
+    act(() => {
+      userEvent.click(getByLabelText("publish-to-database"));
+    });
+    expect(screen.getByLabelText("save-entity-confirm").textContent).toEqual("You have unpublished changes that are only available in the Model screen. Publish changes to apply changes to the rest of your project. Publishing changes could trigger a reindex of your data.");
+  });
+
 });
 
 
