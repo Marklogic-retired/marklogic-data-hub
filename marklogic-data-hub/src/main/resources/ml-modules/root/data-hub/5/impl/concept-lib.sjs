@@ -274,9 +274,14 @@ function otherModelsWithConceptReferencesRemoved(entityModelUri, referencedConce
 
       Object.keys(model.definitions)
         .forEach(definition => {
-          const refConceptModified =  model.definitions[definition].relatedConcepts.filter(item => item["conceptClass"] !== referencedConcept);
-          model.definitions[definition].relatedConcepts = refConceptModified;
-          affectedModels.add(model);
+          if(model.definitions[definition] !== undefined && model.definitions[definition].toString().length > 0) {
+            if(model.definitions[definition].relatedConcepts !== undefined && model.definitions[definition].relatedConcepts.toString().length > 0) {
+              const refConceptModified =  model.definitions[definition].relatedConcepts.filter(item => item["conceptClass"] !== referencedConcept);
+              model.definitions[definition].relatedConcepts = refConceptModified;
+              affectedModels.add(model);
+            }
+          }
+
 
         });
     });
