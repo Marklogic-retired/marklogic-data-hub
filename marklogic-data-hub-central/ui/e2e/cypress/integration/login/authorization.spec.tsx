@@ -165,7 +165,7 @@ describe("login", () => {
     loadPage.cancelButton().click();
 
     cy.log("**Hovers the card**");
-    loadPage.stepName(stepName).trigger("mouseover");
+    loadPage.stepName(stepName).trigger("mouseover", "top");
     loadPage.addToNewFlow(stepName).click({force: true});
     runPage.newFlowModal().should("not.exist");
     loadPage.existingFlowsList(stepName).click({force: true});

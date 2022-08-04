@@ -149,7 +149,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     cy.log("**Cancel add to new flow**");
     curatePage.addToNewFlow("Order", mapStep);
     cy.findByText("New Flow").should("be.visible");
-    loadPage.confirmationOptions("Cancel").click();
+    loadPage.confirmationOptions("Cancel").should("be.visible").click({force: true});
     //should route user back to curate page
     cy.visit("/tiles/curate");
     cy.waitUntil(() => curatePage.getEntityTypePanel("Order").should("be.visible").click());
