@@ -126,6 +126,11 @@ class RelationshipModal {
   getDeleteRelationshipIcon() {
     return cy.get(`[data-testid="delete-relationship"]`);
   }
+
+  selectRelationOptionForeignKey(option:string) {
+    cy.get(`[aria-label="${option}"]`).click();
+  }
+
 }
 
 const relationshipModal = new RelationshipModal();

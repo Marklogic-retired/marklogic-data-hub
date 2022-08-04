@@ -105,6 +105,15 @@ class PropertyModal {
   verifyPropertyNameError() {
     return cy.findByTestId("property-name-error").should("be.visible");
   }
+
+  addTextInput(input:string, text:string) {
+    cy.findByTestId(`${input}`).type(text);
+  }
+
+  confirmDeleteProperty(ariaLabel:string) {
+    cy.get(`[aria-label="confirm-${ariaLabel}"]`).click();
+  }
+
 }
 
 const propertyModal = new PropertyModal();

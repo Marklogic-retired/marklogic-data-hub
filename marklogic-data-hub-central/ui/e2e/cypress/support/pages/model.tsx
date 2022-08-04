@@ -22,6 +22,10 @@ class ModelPage {
     return cy.get(`[aria-label="add-entity-type-concept-class"] > button`);
   }
 
+  getAddEntityButton() {
+    return cy.findByLabelText("add-entity");
+  }
+
   getAddEntityTypeOption() {
     return cy.get(`[aria-label="add-entity-type"]`);
   }
