@@ -138,6 +138,7 @@
 
 .databaseSwitch {
   width: 50%;
+
   label {
     height: 30px;
     width: 100%;
@@ -146,6 +147,7 @@
     text-overflow: ellipsis;
     overflow: hidden;
     display: flex !important;
+
     span {
       box-sizing: border-box;
       min-width: 100%;
@@ -158,6 +160,7 @@
 
 .datasourceSwitch {
   width: 50%;
+
   label {
     height: 30px;
     width: 100%;
@@ -166,6 +169,7 @@
     text-overflow: ellipsis;
     overflow: hidden;
     display: flex !important;
+
     span {
       display: flex;
 

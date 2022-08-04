@@ -5,7 +5,7 @@ export type IconType = 'fa' | 'custom';
 export type ControlType = 'menu' | 'newTab' | 'maximize' | 'minimize' | 'close';
 export type Tiles =  Record<TileId, TileItem>;
 
-interface TileItem {
+export interface TileItem {
     title: string;
     iconType: IconType;
     icon: any;

@@ -394,12 +394,6 @@
   background-color: transparent !important;
 }
 
-.tableContainer {
-  [class~=ant-table-body]{
-    overflow: visible !important;
-  }
-}
-
 .sourceDrop { 
   cursor: pointer;
   width: 22px;

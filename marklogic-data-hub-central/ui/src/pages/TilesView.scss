@@ -22,11 +22,6 @@ div.mosaic-container div.mosaic-tile {
     padding: 0;
     margin: 0;
 }
-
-div.ant-collapse-item {
-    background: white;
-}
-
 div.mosaic-container-explore div.mosaic-tile {
     border-color: #00474F;
 }
@@ -57,10 +52,6 @@ div.mosaic-container-detail div.mosaic-window-body {
     }
 }
 
-.ant-layout.ant-layout-has-sider > .ant-layout, .ant-layout.ant-layout-has-sider > .ant-layout-content {
-    overflow-x: scroll;
-}
-
 div.mosaic-container-load div.mosaic-tile,
 div.mosaic-container-model div.mosaic-tile,
 div.mosaic-container-curate div.mosaic-tile,
@@ -69,8 +60,4 @@ div.mosaic-container-monitor div.mosaic-tile,
 div.mosaic-container-explore div.mosaic-tile {
     border-color: #BFBFBF;
     border-radius: 2px;
-}
-
-footer.ant-layout-footer {
-    margin-top: 0;
 }

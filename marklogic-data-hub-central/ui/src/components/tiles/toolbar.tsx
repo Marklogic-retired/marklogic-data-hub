@@ -1,18 +1,17 @@
-import React, {CSSProperties, useContext, useState} from "react";
-import {Link, useLocation} from "react-router-dom";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import React, {RefObject, useContext, useState} from "react";
+import {useLocation} from "react-router-dom";
 
 import styles from "./toolbar.module.scss";
-import "./toolbar.scss";
 import ConfirmationModal from "../confirmation-modal/confirmation-modal";
 import {ConfirmationType} from "../../types/common-types";
 import {ModelingContext} from "@util/modeling-context";
-import {HCTooltip} from "@components/common";
-
+import ToolbarIcon from "./toolbar-icon";
+import {Tiles, TileId} from "@config/tiles.config";
+import {HCDivider} from "@components/common";
 
 interface Props {
-    tiles: any;
-    enabled: any;
+  tiles: Tiles;
+  enabled: any;
 }
 
 const Toolbar: React.FC<Props> = (props) => {
@@ -27,59 +26,39 @@ const Toolbar: React.FC<Props> = (props) => {
   }
 
   // array of references used to set focus
-  let tileRefs : any[] = [];
+  let tileRefs: RefObject<any>[] = [];
   for (let i = 0; i < Object.keys(tiles).length; ++i) tileRefs.push(React.createRef<HTMLDivElement>());
 
   const [showConfirmModal, toggleConfirmModal] = useState(false);
   const {modelingOptions} = useContext(ModelingContext);
   const [tileInfo, setTileInfo] = useState({});
-  const location:any = useLocation();
+  const location: any = useLocation();
   const activeTile = location.pathname.split("/").pop();
 
-
-  const getTooltip = (id) => {
-    if (props.enabled && props.enabled.includes(id)) {
-      return tiles[id]["title"];
-    } else {
-      return `${tiles[id]["title"]}: Contact your security administrator to get the roles and permissions required to access this functionality.`;
-    }
+  const linkKeyDownHandler = (event: React.KeyboardEvent<any>, index: number) => {
+    if (event.key === "ArrowUp" && index > 0) tileRefs[index - 1].current.focus();
+    if (event.key === "ArrowDown" && index < (Object.keys(tiles).length - 1)) tileRefs[index + 1].current.focus();
   };
 
-
-  const linkKeyDownHandler = (event, id, index) => {
-    if (event.key === "ArrowUp" && index > 0) tileRefs[index-1].current.focus();
-    if (event.key === "ArrowDown" && index < (Object.keys(tiles).length - 1)) tileRefs[index+1].current.focus();
-  };
-
-  const tileOnClickHandler = (id, index) => {
+  const tileOnClickHandler = (id: TileId, index: number) => {
     if (modelingOptions.isModified) {
       let previousRouteId = location.pathname.split("/").pop();
-      if (id !== "model" && previousRouteId === "model") {
+      if (id !== ("model" as TileId) && previousRouteId === ("model" as TileId)) {
         setTileInfo({id: id, index: index});
         toggleConfirmModal(true);
       } else {
-        if (props.enabled && props.enabled.includes(id)) tileRefs[index].current.click();
+        tileRefs[index].current.click();
       }
     } else {
-      if (props.enabled && props.enabled.includes(id)) tileRefs[index].current.click();
+      tileRefs[index].current.click();
     }
-  };
-
-  const linkOnClickHandler = (event, id) => {
-    if (!props.enabled || !props.enabled.includes(id)) event.preventDefault();
   };
 
   /*
         structure of the toolbar:
-            <wrapper>
                 <tool>
                     <link/>
                 </tool>
-            </wrapper>
-
-        the wrapper is used for spacing on the toolbar.  every wrapper (except curate) is 80px tall,
-            leaving 40px of space between each tool icon.  this is defined in "./toolbar.module.scss".
-            this object cannot be tabbed to.
 
         the tool div object is used for highlights.  when the link inside is in focus, a shadow is
             is drawn around the icon to signify that it is currently selected.  this is defined in
@@ -95,80 +74,38 @@ const Toolbar: React.FC<Props> = (props) => {
     */
 
 
-  const getIconStyle = (id) => {
-    let disabled: CSSProperties = {
-      color: "grey",
-      opacity: "0.5",
-      cursor: "not-allowed"
-    };
-    let enabled: CSSProperties = {
-      color: tiles[id]["color"],
-      cursor: "pointer"
-    };
-    return (props.enabled && props.enabled.includes(id)) ? enabled : disabled;
-  };
-
   const confirmTileClick = () => {
     toggleConfirmModal(false);
     if (tileInfo) {
       if (props.enabled && props.enabled.includes(tileInfo["id"])) tileRefs[tileInfo["index"]].current.click();
     }
   };
+  const tilesIcons = Object.keys(tiles).map((id, i) => {
+    return (
+      <ToolbarIcon
+        tileId={id as TileId}
+        tile={tiles[id]}
+        tileRef={tileRefs[i]}
+        enabled={(props.enabled && props.enabled.includes(id))}
+        i={i}
+        isActive={(activeTile === id)}
+        onClick={tileOnClickHandler}
+        onKeyDown={linkKeyDownHandler}
+      />
+    );
+  }
+  );
 
   return (
-    <div id={styles.toolbar} aria-label={"toolbar"}>
-      {Object.keys(tiles).map((id, i) => {
-        if (tiles[id]["iconType"] === "custom") {
-          return (
-            <div className={(tiles[id]["title"] === "Explore" || tiles[id]["title"] ===  "Curate") ? styles.toolTallWrapper : styles.toolWrapper} aria-label={`tool-${id}-wrapper`} key={`tool-${id}-wrapper`} tabIndex={-1}>
-              <HCTooltip text={getTooltip(id)} id={getTooltip(id)+"-tooltip"} placement="left-start" key={i}>
-                <div
-                  className={`toolbarIcon ${tiles[id]["icon"]} ${(activeTile === id) && "selected"} ${(props.enabled && props.enabled.includes(id)) ? "enabled" : "disabled"}`}
-                  aria-label={"tool-" + id}
-                  tabIndex={-1}
-                  onClick={(e) => tileOnClickHandler(id, i)}
-                >
-                  <Link to={
-                    {pathname: `/tiles/${id}`,
-                      state: {
-                        tileIconClicked: true
-                      }}}
-                  aria-label={"tool-" + id + "-link"}
-                  tabIndex={0}
-                  ref={tileRefs[i]}
-                  onClick={(e) => linkOnClickHandler(e, id)}
-                  onKeyDown={(e) => linkKeyDownHandler(e, id, i)}
-                  />
-                </div>
-              </HCTooltip>
-            </div>
-          );
-        } else {
-          return (
-            <div className={styles.toolWrapper} aria-label={"tool-" + id + "-wrapper"} tabIndex={-1}>
-              <HCTooltip text={getTooltip(id)} id={getTooltip(id)+"-tooltip"} placement="left-start" key={i}>
-                <i
-                  className={styles.tool}
-                  aria-label={"tool-" + id}
-                  style={getIconStyle(id)}
-                  tabIndex={-1}
-                  onClick={(e) => tileOnClickHandler(id, i)}
-                >
-                  <Link to={"/tiles/" + id}
-                    aria-label={"tool-" + id + "-link"}
-                    tabIndex={0}
-                    ref={tileRefs[i]}
-                    onClick={(e) => linkOnClickHandler(e, id)}
-                    onKeyDown={(e) => linkKeyDownHandler(e, id, i)}
-                  />
-                  <FontAwesomeIcon icon={tiles[id]["icon"]} size="lg" />
-                </i>
-              </HCTooltip>
-            </div>
-          );
-        }
-      }
-      )}
+    <div id={styles.toolbarContainer} aria-label={"toolbar"}>
+      {tilesIcons[0]}
+      {tilesIcons[1]}
+      {tilesIcons[2]}
+      <HCDivider/>
+      {tilesIcons[3]}
+      {tilesIcons[4]}
+      <HCDivider/>
+      {tilesIcons[5]}
       <ConfirmationModal
         isVisible={showConfirmModal}
         type={ConfirmationType.NavigationWarn}
