@@ -15,6 +15,10 @@ class GraphViewSidePanel {
     return cy.findByTestId(`${entityName}-delete`);
   }
 
+  getRelatedConceptClassesDeleteIcon(relationshipName: string, conceptClass: string) {
+    return cy.findByTestId(`${relationshipName}-${conceptClass}-delete`);
+  }
+
   closeSidePanel() {
     return cy.findByLabelText("closeGraphViewSidePanel").scrollIntoView().trigger("mouseover").click({force: true});
   }
@@ -28,8 +32,17 @@ class GraphViewSidePanel {
   }
 
   getEntityTypeTabContent() {
-    return cy.get(`[id="entityType-tab-content"`);
+    return cy.get(`[id="entityType-tab-content"]`);
   }
+
+  getRelatedConceptClassesTab() {
+    return cy.get(`[data-rr-ui-event-key="relatedConceptClasses"]`);
+  }
+
+  getRelatedConceptClassesTabContent() {
+    return cy.get(`[id="relatedConceptClasses"]`);
+  }
+
   getEntityTypeName(entityName: string) {
     return cy.findByTestId(`${entityName}`);
   }
@@ -39,7 +52,6 @@ class GraphViewSidePanel {
   getEntityTypeColor(entityName: string) {
     return cy.get(`[id="${entityName}-color-button"] > div`);
   }
-
   getPropertyTableHeader(headerName: string) {
     return cy.findByLabelText(`${headerName}-header`);
   }
@@ -102,6 +114,9 @@ class GraphViewSidePanel {
 
   getConceptClassColor(conceptClassName: string) {
     return cy.get(`[id="${conceptClassName}-color-button"] > div`);
+  }
+  getConfirmationModal() {
+    return cy.findByTestId("confirmation-modal");
   }
 }
 

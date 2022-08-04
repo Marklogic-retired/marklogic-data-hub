@@ -107,6 +107,7 @@ describe("Concepts", () => {
     cy.wait(5000); // The canvas takes some more time animating
 
     entitiesSidebar.toggleRelatedConceptsPanel();
+    // entitiesSidebar.showMoreRelatedConcept().click();
     browsePage.getFacetItemCheckbox("relatedconcepts", "Sneakers").click();
     browsePage.getSelectedFacets().should("exist");
     browsePage.getGreySelectedFacets("Sneakers").should("exist");

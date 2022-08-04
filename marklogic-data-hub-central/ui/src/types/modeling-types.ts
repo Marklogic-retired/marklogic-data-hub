@@ -36,7 +36,8 @@ export interface Definition {
   pii?: string[],
   required?: string[],
   wordLexicon?: string[],
-  properties: Property[]
+  properties: Property[],
+  relatedConcepts?:[]
 }
 
 export interface Property {

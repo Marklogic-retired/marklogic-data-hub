@@ -337,6 +337,8 @@ const GraphView: React.FC<Props> = (props) => {
             updateSavedEntity={props.updateSavedEntity}
             hubCentralConfig={props.hubCentralConfig}
             updateHubCentralConfig={props.updateHubCentralConfig}
+            relationshipModalVisible={props.relationshipModalVisible}
+            toggleRelationshipModal={props.toggleRelationshipModal}
             getColor={getColor}
             getIcon={getIcon}
             setNodeNeedRedraw={setNodeNeedRedraw}

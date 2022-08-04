@@ -72,6 +72,7 @@ const ConfirmationModal: React.FC<Props> = (props) => {
   return (
     <Modal
       show={props.isVisible}
+      data-testid={"confirmation-modal"}
     >
       <Modal.Header className={"bb-none"}>
         <button type="button" className="btn-close" aria-label="Close" onClick={closeModal}></button>

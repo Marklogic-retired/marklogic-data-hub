@@ -75,6 +75,22 @@ describe("Graph Validations", () => {
       graphViewSidePanel.getEntityTypeColor("Person").should("have.css", "background-color", "rgb(213, 211, 221)");
     }
   });
+  it("can view and works with the Related Concept Classes tab in the side panel", {defaultCommandTimeout: 120000}, () => {
+    cy.log("**Visit Product entity**");
+    entityTypeTable.viewEntityInGraphView("Product");
+
+    cy.log("**Select Related Concept Classes tab**");
+    graphViewSidePanel.getRelatedConceptClassesTab().click();
+    graphViewSidePanel.getPropertyTableHeader("relationshipName").should("exist");
+    graphViewSidePanel.getPropertyTableHeader("conceptClass").should("exist");
+    graphViewSidePanel.getPropertyTableHeader("delete").should("exist");
+
+    cy.log("**Check if an element could be eliminated**");
+    graphViewSidePanel.getRelatedConceptClassesDeleteIcon("isCategory", "ShoeType").click();
+    graphViewSidePanel.getConfirmationModal().should("exist");
+
+
+  });
 
   it("can filter and select entity type in graph view", {defaultCommandTimeout: 120000}, () => {
     modelPage.selectView("project-diagram");

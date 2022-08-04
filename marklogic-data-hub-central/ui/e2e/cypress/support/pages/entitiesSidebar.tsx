@@ -84,6 +84,9 @@ class BaseEntitySidebar {
   showMoreEntities() {
     return cy.get(`[data-cy="show-more-base-entities"]`);
   }
+  showMoreRelatedConcept() {
+    return cy.get(`[data-testid="show-more-relatedconcepts"]`);
+  }
 
   getDateFacetPicker(options?: { time?: string }) {
     const pickerTestId = options && options.time ? options.time : "facet-datetime-picker-date";
