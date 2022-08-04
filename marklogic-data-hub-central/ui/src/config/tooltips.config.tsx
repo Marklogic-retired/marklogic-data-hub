@@ -153,7 +153,7 @@ const ModelingTooltips = {
   entityDescription: 'A description of this entity type.',
 
   /* TO BE DEPRECATED. Use ModelingMessages.entityEditedAlert. */
-  entityEditedAlert: 'You have unsaved changes for one or more entity types. You can individually save each modified entity type or save all.',
+  entityEditedAlert: 'You have unsaved changes for one or more objects (entity types, concepts, etc.). You can save your changes by publishing the data model.',
 
   /* TO BE DEPRECATED. Use ModelingMessages.saveEntityConfirm. */
   saveEntityConfirm: 'You have unsaved changes. Saving changes to the entity model could impact features that depend on it or on data that require reindexing due to the changes.',

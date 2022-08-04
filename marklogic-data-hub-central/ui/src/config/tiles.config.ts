@@ -40,7 +40,7 @@ const tiles: Tiles = {
         border: '#BFBFBF',
         controlColor: '#777',
         controls: ['close'],
-        intro: 'Define the entity models that describe and standardize your data. You need these entity models to curate your data.',
+        intro: 'Define the objects (entity types, concepts, etc.) that describe and standardize your data. You must model your objects before curating them.',
         toolbar: true
     },
     curate: {
