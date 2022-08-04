@@ -36,7 +36,7 @@ public class MappingController extends BaseController {
     @RequestMapping(value = "/functions", method = RequestMethod.GET)
     @ResponseBody
     @Secured("ROLE_readMapping")
-    public ResponseEntity<JsonNode> getMappingFunctions(@RequestParam(value = "excludeMLMappingFunctions", required = false) Boolean excludeMLMappingFunctions) {
+    public ResponseEntity<JsonNode> getMappingFunctions(@RequestParam(value = "false", required = false) boolean excludeMLMappingFunctions) {
         return new ResponseEntity<>(getMappingService().getMappingFunctions(excludeMLMappingFunctions), HttpStatus.OK);
     }
 

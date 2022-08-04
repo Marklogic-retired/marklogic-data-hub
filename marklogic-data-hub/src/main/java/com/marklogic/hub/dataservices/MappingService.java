@@ -165,11 +165,19 @@ public interface MappingService {
             }
 
             @Override
+            public com.fasterxml.jackson.databind.JsonNode getMappingFunctions() {
+                return getMappingFunctions(
+                    this.req_getMappingFunctions.on(this.dbClient), false
+                    );
+            }
+
+            @Override
             public com.fasterxml.jackson.databind.JsonNode getMappingFunctions(Boolean excludeMLMappingFunctions) {
                 return getMappingFunctions(
                     this.req_getMappingFunctions.on(this.dbClient), excludeMLMappingFunctions
-                    );
+                );
             }
+
             private com.fasterxml.jackson.databind.JsonNode getMappingFunctions(BaseProxy.DBFunctionRequest request, Boolean excludeMLMappingFunctions) {
               return BaseProxy.JsonDocumentType.toJsonNode(
                 request
@@ -219,7 +227,7 @@ public interface MappingService {
     com.fasterxml.jackson.databind.JsonNode getDocument(String stepName, String uri);
 
   /**
-   * Gets the list of URIs that match the 'sourceQuery' from source db  associated with given step name. The uri count is specified by 'limit' parameter 
+   * Gets the list of URIs that match the 'sourceQuery' from source db  associated with given step name. The uri count is specified by 'limit' parameter
    *
    * @param stepName	provides input
    * @param limit	provides input
@@ -230,8 +238,8 @@ public interface MappingService {
   /**
    * Generates a transform in the modules database for each legacy mapping or mapping step
    *
-   * 
-   * 
+   *
+   *
    */
     void generateMappingTransforms();
 
@@ -242,5 +250,14 @@ public interface MappingService {
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode getMappingFunctions(Boolean excludeMLMappingFunctions);
+
+    /**
+     * Invokes the getMappingFunctions operation on the database server. This will include ML Mapping Functions.
+     * Keeping this method for compatibility with DHCCE.
+     *
+     * @param excludeMLMappingFunctions	provides input
+     * @return	as output
+     */
+    com.fasterxml.jackson.databind.JsonNode getMappingFunctions();
 
 }
