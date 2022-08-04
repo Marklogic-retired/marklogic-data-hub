@@ -9,7 +9,7 @@ class PropertyTable {
   }
 
   getEntityInstanceCount(entityName: string) {
-    return cy.findByTestId(`${entityName}-instance-count`).then(function(value) {
+    return cy.findByTestId(`${entityName}-instance-count`).then(function (value) {
       return parseInt(value.text().replace(",", ""));
     });
   }
@@ -93,6 +93,11 @@ class PropertyTable {
   getTooltipForDeletePropertyIcon(entity: string, propertyName: string) {
     return cy.get(`[id=delete-${entity}-${propertyName}-tooltip]`);
   }
+
+  getEntityToDelete(testId:string) {
+    return cy.findByTestId(`${testId}`);
+  }
+
 }
 
 const propertyTable = new PropertyTable();

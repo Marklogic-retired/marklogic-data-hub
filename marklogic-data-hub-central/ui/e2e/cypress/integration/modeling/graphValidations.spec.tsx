@@ -4,6 +4,7 @@ import modelPage from "../../support/pages/model";
 import {
   entityTypeTable,
   graphViewSidePanel,
+  propertyModal,
   relationshipModal,
 } from "../../support/components/model/index";
 import {confirmationModal, toolbar} from "../../support/components/common/index";
@@ -12,6 +13,7 @@ import LoginPage from "../../support/pages/login";
 import "cypress-wait-until";
 import graphVis from "../../support/components/model/graph-vis";
 import {ConfirmationType} from "../../support/types/modeling-types";
+import {entityTypeModal, propertyTable} from "../../support/components/model/index";
 
 describe("Graph Validations", () => {
 
@@ -200,7 +202,60 @@ describe("Graph Validations", () => {
     //   graphVis.getGraphVisCanvas().trigger("pointermove", clientCoords.x+10, clientCoords.y+10, {button: 0});
     //   graphVis.getGraphVisCanvas().trigger("pointerup", clientCoords.x+20, clientCoords.y+20, {button: 0});
     // });
+  });
 
+  it("Add entities, a relation, publish, delete the relation and check if is possible delete entity", () => {
+    cy.get("#switch-view-table").click({force: true});
+
+    cy.log("**Creating new entity Test2 in table view**");
+    modelPage.getAddButton().click();
+    modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});//.should("exist").click();
+    entityTypeModal.newEntityName("Test2");
+    entityTypeModal.newEntityDescription("Entity description test2");
+    cy.waitUntil(() => entityTypeModal.getAddButton().click());
+
+    cy.log("**Add attributes to Test2**");
+    propertyTable.getAddPropertyButton("Test2").scrollIntoView().click();
+    propertyModal.addTextInput("hc-input-component", "id");
+    propertyModal.openPropertyDropdown();
+    propertyModal.getTypeFromDropdown("string").click();
+    propertyModal.getSubmitButton().click();
+
+    cy.log("**Creating new entity Test1 in table view**");
+    modelPage.getAddButton().click();
+    modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});
+    entityTypeModal.newEntityName("Test1");
+    entityTypeModal.newEntityDescription("Entity description test1");
+    entityTypeModal.getAddButton().click();
+
+    cy.log("**Creating new entity Test1 in graph view**");
+    propertyTable.getAddPropertyButton("Test1").scrollIntoView().click();
+    propertyModal.addTextInput("hc-input-component", "id");
+    propertyModal.openPropertyDropdown();
+    propertyModal.getTypeFromDropdown("string").click();
+    propertyModal.getSubmitButton().click();
+
+    cy.log("**Creating relation**");
+    propertyTable.getAddPropertyButton("Test1").scrollIntoView().click();
+    propertyModal.addTextInput("hc-input-component", "relTest1Test2");
+    propertyModal.openPropertyDropdown();
+    propertyModal.getTypeFromDropdown("Related Entity").click();
+    propertyModal.getCascadedTypeFromDropdown("Test2").click();
+    propertyModal.getForeignKeySelectWrapper().click();
+    relationshipModal.selectRelationOptionForeignKey("id-option");
+
+    cy.log("**Publishing**");
+    propertyModal.getSubmitButton().click();
+    cy.publishDataModel();
+
+    cy.log("**Deleting relation, entities and publish**");
+    propertyModal.getDeleteIcon("Test1-relTest1Test2").click();
+    propertyModal.confirmDeleteProperty("deletePropertyWarn-yes");
+    propertyTable.getEntityToDelete("Test2-trash-icon").click();
+    propertyModal.confirmDeleteProperty("deleteEntity-yes");
+    propertyTable.getEntityToDelete("Test1-trash-icon").click();
+    propertyModal.confirmDeleteProperty("deleteEntity-yes");
+    cy.publishDataModel();
   });
 
 });
