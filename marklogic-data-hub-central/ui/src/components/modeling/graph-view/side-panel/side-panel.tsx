@@ -1,14 +1,14 @@
 import React, {useContext, useEffect, useState} from "react";
 import {Row, Col, Form, FormLabel, Tab, Tabs} from "react-bootstrap";
 import {QuestionCircleFill, XLg} from "react-bootstrap-icons";
-import {EntityTypeColorPicker, HCTooltip, HCInput, HCIconPicker, HCDivider} from "@components/common";
+import {EntityTypeColorPicker, HCTooltip, HCInput, HCIconPicker, HCDivider, HCTable, DynamicIcons} from "@components/common";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styles from "./side-panel.module.scss";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {ModelingTooltips, SecurityTooltips} from "@config/tooltips.config";
 import {ModelingContext} from "@util/modeling-context";
 import PropertiesTab from "../properties-tab/properties-tab";
-import {primaryEntityTypes, updateConceptClass, updateModelInfo} from "@api/modeling";
+import {entityReferences, primaryEntityTypes, updateConceptClass, updateModelInfo} from "@api/modeling";
 import {getViewSettings, setViewSettings, UserContext} from "@util/user-context";
 import {EntityModified, Definition} from "../../../../types/modeling-types";
 import {defaultHubCentralConfig} from "@config/modeling.config";
@@ -21,6 +21,11 @@ import {entityFromJSON, entityParser, definitionsParser} from "@util/data-conver
 import {convertArrayOfEntitiesToObject} from "@util/modeling-utils";
 import EntityPropertyTreeSelect from "../../../entity-property-tree-select/entity-property-tree-select";
 import {getEntities} from "@api/queries";
+import AddEditRelationship from "../relationship-modal/add-edit-relationship";
+import {getSystemInfo} from "@api/environment";
+import {ConfirmationType} from "../../../../types/common-types";
+import ConfirmationModal from "@components/confirmation-modal/confirmation-modal";
+import {getMappingFunctions} from "@api/mapping";
 
 type Props = {
   entityTypes: any;
@@ -29,13 +34,15 @@ type Props = {
   canWriteEntityModel: any;
   canReadEntityModel: any;
   updateEntities: any;
-  updateSavedEntity: (entity: EntityModified) => void;
+  updateSavedEntity: (entity: EntityModified[]) => void;
   hubCentralConfig: any;
   updateHubCentralConfig: (hubCentralConfig: any) => void;
+  toggleRelationshipModal: any;
+  relationshipModalVisible: any;
   getColor: any;
   getIcon: any;
   setNodeNeedRedraw: any;
-  deleteConceptClass:(conceptClassName) => void;
+  deleteConceptClass: (conceptClassName) => void;
 };
 
 const DEFAULT_TAB = "properties";
@@ -43,7 +50,7 @@ const DEFAULT_TAB = "properties";
 const GraphViewSidePanel: React.FC<Props> = (props) => {
   const viewSettings = getViewSettings();
   const [currentTab, setCurrentTab] = useState(viewSettings.model?.currentTab || DEFAULT_TAB);
-  const {modelingOptions, setSelectedEntity} = useContext(ModelingContext);
+  const {modelingOptions, setSelectedEntity, updateEntityModified} = useContext(ModelingContext);
   const {entityDefinitionsArray, setEntityDefinitionsArray} = useContext(SearchContext);
   const {handleError} = useContext(UserContext);
   const [selectedEntityDescription, setSelectedEntityDescription] = useState("");
@@ -65,6 +72,17 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
 
   const [selectedEntityInfo, setSelectedEntityInfo] = useState<any>({});
   const [isConceptNode, setIsConceptNode] = useState(false);
+
+  //relationship modals
+  const [openRelationshipModal, setOpenRelationshipModal] = useState(false);
+  const [selectedRelationship, setSelectedRelationship] = useState<any>({});
+  const [modifiedEntity, setModifiedEntity] = useState<EntityModified>({entityName: "", modelDefinition: ""});
+  const [showConfirmModal, toggleConfirmModal] = useState(false);
+  const [confirmBoldTextArray, setConfirmBoldTextArray] = useState<string[]>([]);
+  const [stepValuesArray, setStepValuesArray] = useState<string[]>([]);
+  const [confirmType, setConfirmType] = useState<ConfirmationType>(ConfirmationType.Identifer);
+  const [mapFunctions, setMapFunctions] = useState<any>([]);
+  //-----------------------
 
   const handleTabChange = (key) => {
     const currentTabSetting = {
@@ -249,12 +267,21 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
   };
 
   useEffect(() => {
+    (async () => {
+      let mappingFuncResponse = await getMappingFunctions(true);
+      if (mappingFuncResponse) {
+        setMapFunctions(mappingFuncResponse.data);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
     if (modelingOptions.selectedEntity) {
       setErrorServer("");
       getEntityInfo();
       //initializeEntityColorIcon();
     }
-  }, [modelingOptions.selectedEntity]);
+  }, [modelingOptions]);
 
   useEffect(() => {
     let loaded = true;
@@ -286,7 +313,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
       let entityTypeDefinition: Definition = tmpDefinitions.find(entityDefinition => entityDefinition.name === modelingOptions.selectedEntity) || defaultEntityDefinition;
       setEntityTypeDefinition(entityTypeDefinition);
     }
-  }, [modelingOptions.selectedEntity, entityModels]);
+  }, [modelingOptions, entityModels]);
 
   const handleColorChange = color => {
     setColorSelected(color.hex);
@@ -342,19 +369,162 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
     }
   };
 
-  const MenuList  = (selector, props) => (
+  const MenuList = (selector, props) => (
     <div id={`${selector}-select-MenuList`}>
       <SelectComponents.MenuList {...props} />
     </div>
   );
 
   const renderOptions = () => {
-    let entityTypeDef:any = entityDefinitionsArray.find(entity => entity.name === modelingOptions.selectedEntity);
-    const options:any = entityTypeDef?.properties?.filter(property => property.ref === "").map(item => ({value: item?.name, label: item?.name}));
+    let entityTypeDef: any = entityDefinitionsArray.find(entity => entity.name === modelingOptions.selectedEntity);
+    const options: any = entityTypeDef?.properties?.filter(property => property.ref === "").map(item => ({value: item?.name, label: item?.name}));
     return options;
+  };
+  const handleRelatedConceptClassesClick = (row) => {
+    const selectedRelation = {
+      edgeId: `${entityTypeDefinition?.name}-${row?.predicate}-${row?.conceptClass}-via-${row?.context}`,
+      sourceNodeName: entityTypeDefinition?.name,
+      sourceNodeColor: props.getColor(modelingOptions.selectedEntity, false),
+      targetNodeName: row?.conceptClass,
+      targetNodeColor: props.getColor(row?.conceptClass, true),
+      relationshipName: row?.predicate,
+      joinPropertyName: row?.context,
+      isConcept: true,
+      conceptExpression: row?.conceptExpression
+    };
+    setSelectedRelationship(selectedRelation);
+    setOpenRelationshipModal(true);
+  };
+
+  const handleRelationshipDeletion = async (row) => {
+    const relationshipInfo = {
+      edgeId: `${entityTypeDefinition?.name}-${row?.predicate}-${row?.conceptClass}-via-${row?.context}`,
+      sourceNodeName: entityTypeDefinition?.name ? entityTypeDefinition.name : "",
+      sourceNodeColor: props.getColor(modelingOptions.selectedEntity, false),
+      targetNodeName: row?.conceptClass,
+      targetNodeColor: props.getColor(row?.conceptClass, true),
+      relationshipName: row?.predicate,
+      joinPropertyName: row?.context,
+      isConcept: true,
+      conceptExpression: row?.conceptExpression
+    };
+    let entityName = relationshipInfo.sourceNodeName;
+    let propertyName = relationshipInfo.relationshipName;
+    const response = await entityReferences(entityName || "", propertyName);
+    if (response !== undefined && response["status"] === 200) {
+      let newConfirmType = ConfirmationType.DeletePropertyWarn;
+      let boldText: string[] = [propertyName];
+      if (response["data"]["entityNamesWithForeignKeyReferences"].length > 0) {
+        boldText.push(entityName || "");
+        newConfirmType = ConfirmationType.DeleteEntityPropertyWithForeignKeyReferences;
+        setStepValuesArray(response["data"]["entityNamesWithForeignKeyReferences"]);
+      } else if (response["data"]["stepNames"].length > 0) {
+        boldText.push(entityName || "");
+        newConfirmType = ConfirmationType.DeletePropertyStepWarn;
+        setStepValuesArray(response["data"]["stepNames"]);
+      }
+      setConfirmBoldTextArray(boldText);
+      setConfirmType(newConfirmType);
+      toggleConfirmModal(true);
+    }
+    let sourceEntityName = relationshipInfo.sourceNodeName;
+    let entityTypeDefinitionTemp;
+    let updatedDefinitions;
+    for (let i = 0; i < props.entityTypes.length; i++) {
+      if (props.entityTypes[i].entityName === sourceEntityName) {
+        updatedDefinitions = {...props.entityTypes[i].model};
+        entityTypeDefinitionTemp = props.entityTypes[i].model.definitions[sourceEntityName];
+      }
+    }
+    let itemIndex = entityTypeDefinitionTemp["relatedConcepts"].findIndex(obj => obj.predicate === propertyName && obj.conceptClass === relationshipInfo.targetNodeName);
+    entityTypeDefinitionTemp["relatedConcepts"].splice(itemIndex, 1);
+
+    updatedDefinitions[sourceEntityName] = entityTypeDefinitionTemp;
+    let entityModifiedInfo: EntityModified = {
+      entityName: sourceEntityName,
+      modelDefinition: updatedDefinitions.definitions
+    };
+    setModifiedEntity(entityModifiedInfo);
+  };
+
+
+  const confirmAction = async () => {
+    updateEntityModified(modifiedEntity);
+    await props.updateSavedEntity([modifiedEntity]);
+    await getSystemInfo();
+    toggleConfirmModal(false);
+  };
+  const renderRelatedConceptClasses = () => {
+    const columns = [
+      {
+        width: "60%",
+        text: "Relationship Name",
+        dataField: "relationshipName",
+        key: "relationshipName",
+        headerFormatter: () => <span aria-label="relationshipName-header">Relationship Name</span>,
+        formatter: (_, row) => {
+          return <span onClick={() => handleRelatedConceptClassesClick(row)} className={styles.link}>{row?.predicate}</span>;
+        }
+      },
+      {
+        width: "30%",
+        text: "Concept Class",
+        dataField: "conceptClass",
+        key: "conceptClass",
+        headerFormatter: () => <span aria-label="conceptClass-header">Concept Class</span>,
+        formatter: (_, row) => {
+          const icon = props?.hubCentralConfig?.modeling?.concepts[row?.conceptClass] ? props.hubCentralConfig.modeling.concepts[row?.conceptClass].icon : "FaShapes";
+          return <span><DynamicIcons name={icon} />  {row?.conceptClass}</span>;
+        }
+      },
+      {
+        width: "10%",
+        text: "Delete",
+        dataField: "delete",
+        headerFormatter: () => <span aria-label="delete-header">Delete</span>,
+        key: "delete",
+        formatter: (_, row) => {
+          const id = `${row?.predicate}-${row?.conceptClass}-delete`;
+          return <FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} onClick={() => handleRelationshipDeletion(row)} data-testid={id} />;
+        }
+      }
+    ];
+    return (
+      <>
+        <div className="p-3">
+          <HCTable pagination={true} childrenIndent={true} data={entityTypeDefinition?.relatedConcepts || []} columns={columns} data-testid="related-concept-table" rowKey="key" />
+        </div>
+        <AddEditRelationship
+          openRelationshipModal={openRelationshipModal}
+          setOpenRelationshipModal={setOpenRelationshipModal}
+          isEditing={true}
+          relationshipInfo={selectedRelationship}
+          entityTypes={props.entityTypes}
+          updateSavedEntity={props.updateSavedEntity}
+          relationshipModalVisible={props.relationshipModalVisible}
+          toggleRelationshipModal={props.toggleRelationshipModal}
+          canReadEntityModel={props.canReadEntityModel}
+          canWriteEntityModel={props.canWriteEntityModel}
+          hubCentralConfig={props.hubCentralConfig}
+          getColor={props.getColor}
+          mapFunctions={mapFunctions}
+        />
+        <ConfirmationModal
+          isVisible={showConfirmModal}
+          type={confirmType}
+          boldTextArray={confirmBoldTextArray}
+          arrayValues={stepValuesArray}
+          toggleModal={toggleConfirmModal}
+          confirmAction={confirmAction}
+        />
+      </>
+    );
   };
 
   const displayPanelContent = () => {
+    if (currentTab === "relatedConceptClasses" && !isConceptNode) {
+      return renderRelatedConceptClasses();
+    }
     return currentTab === "entityType" || isConceptNode ? <div id="entityType-tab-content">
       <Form className={"container-fluid"}>
         <Row className={"mb-3"}>
@@ -585,6 +755,13 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
             title={<span className={styles.sidePanelTabLabel}>Entity Type</span>}
             tabClassName={`${styles.tab}
           ${currentTab === "entityType" && styles.active}`}></Tab>
+          <Tab
+            eventKey="relatedConceptClasses"
+            aria-label="relatedConceptClassesTabInSidePanel"
+            id="relatedConceptClassesTabInSidePanel"
+            title={<span className={styles.sidePanelTabLabel}>Related Concept Classes</span>}
+            tabClassName={`${styles.tab}
+          ${currentTab === "relatedConceptClasses" && styles.active}`}></Tab>
         </Tabs>
       </div>}
       {isConceptNode && <HCDivider className={"mt-2 mb-2"} style={{backgroundColor: "#ccc"}} />}

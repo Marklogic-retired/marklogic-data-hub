@@ -14,14 +14,21 @@
         vertical-align: middle;
         margin-bottom: 20px;
     }
+    .link {
+        color: $info;
+    }
+    .link:hover {
+        color: var(--hoverColor);
+        cursor: pointer;
+    }
     .deleteIcon {
         color: $info;
-        font-size: 24px;
+        font-size: 21px;
     }
 
     .deleteIconDisabled {
         color: #cccccc;
-        font-size: 24px;
+        font-size: 21px;
     }
 
     .deleteIcon:hover {
