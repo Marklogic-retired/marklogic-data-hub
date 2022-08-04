@@ -58,14 +58,14 @@ describe("Entity display settings in model tile", () => {
     cy.log("**Go to graph view in model tile**");
     homePage.getModelCard().click();
     modelPage.selectView("project-diagram");
-    cy.wait(2500);
+    cy.wait(5000);
 
     cy.log(`**Click on ${defaultEntityTypeData.name} entity to open side bar**`);
     graphVis.getPositionsOfNodes(defaultEntityTypeData.name).then((nodePositions: any) => {
       let babyRegistryCoordinates: any = nodePositions[defaultEntityTypeData.name];
       graphVis.getGraphVisCanvas().trigger("mouseover", babyRegistryCoordinates.x, babyRegistryCoordinates.y, {force: true}).click(babyRegistryCoordinates.x, babyRegistryCoordinates.y, {force: true});
     });
-    cy.wait(500);
+    cy.wait(1000);
 
     /**graphVis.getPositionsOfNodes(defaultEntityTypeData.name).then((nodePositions: any) => {
       let babyRegistryCoordinates: any = nodePositions[defaultEntityTypeData.name];

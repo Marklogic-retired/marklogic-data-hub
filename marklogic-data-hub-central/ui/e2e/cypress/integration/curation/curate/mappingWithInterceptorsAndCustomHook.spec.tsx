@@ -178,10 +178,12 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     mappingStepDetail.lessLink().click();
     mappingStepDetail.searchIcon("Order").click({force: true});
     mappingStepDetail.resetEntitySearch().click();
+    cy.saveLocalStorage();
   });
   it("Edit Map step", () => {
-    //Go back to curate homepage
-    mappingStepDetail.goBackToCurateHomePage();
+    //Go back to curate
+    cy.visit("/");
+    toolbar.getCurateToolbarIcon().click();
     curatePage.toggleEntityTypeId("Order");
     // Open step details and switch to Advanced tab in step settings
     curatePage.openStepDetails(mapStep);
@@ -253,6 +255,9 @@ describe("Create and verify load steps, map step and flows with interceptors & c
 
 
   it("Verify mapping step with duplicate name cannot be created", () => {
+    //Go back to curate homepage
+    cy.visit("/");
+    toolbar.getCurateToolbarIcon().click();
     curatePage.toggleEntityTypeId("Order");
     cy.waitUntil(() => curatePage.addNewStep("Order").click());
     createEditMappingDialog.setMappingName(mapStep);
