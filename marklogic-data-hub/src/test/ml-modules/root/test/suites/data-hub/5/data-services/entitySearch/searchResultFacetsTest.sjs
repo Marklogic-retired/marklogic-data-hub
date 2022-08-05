@@ -33,7 +33,16 @@ function unmergeTransformTest() {
   ];
 }
 
+function manualMergeTransformTest() {
+  const searchResultsTransform = require('/marklogic.rest.transform/hubAllDataSearchTransform/assets/transform.sjs');
+  const transformedResults = searchResultsTransform.transform({}, {}, xdmp.toJSON({ results: [{uri: "/content/smNotifiedDoc.xml"}]}));
+  return[
+    test.assertTrue(transformedResults.results[0].merge, `Notifed documents should merge.`),
+  ];
+}
+
 []
   .concat(datahubSourceNameAndTypeFacetsTest())
   .concat(selectedPropertiesTransformTest())
-  .concat(unmergeTransformTest());
+  .concat(unmergeTransformTest())
+  .concat(manualMergeTransformTest());

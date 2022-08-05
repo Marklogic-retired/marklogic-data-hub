@@ -25,5 +25,14 @@ try {
   assertions.push(test.assertEqual("The step referenced must be a merging step. Step type: matching", e.data[1], xdmp.toJsonString(e)));
 }
 
+const validMergeParamsWithoutStep = { flowName: "CurateCustomerJSON", uri: ["/content/customer1.json", "/content/customer2.json"] };
+
+const validResultsWithoutStep = mlSmMergeRest.POST(context, validMergeParamsWithoutStep, emptyDocument);
+
+assertions.push(
+  test.assertTrue(validResultsWithoutStep.success,"Merge should be successful"),
+  test.assertEqual(2, validResultsWithoutStep.mergedURIs.length),
+  test.assertTrue(validResultsWithoutStep.mergedDocument.value.envelope.headers.interceptorCalled, "Interceptor should be called on merge.")
+);
 
 assertions;

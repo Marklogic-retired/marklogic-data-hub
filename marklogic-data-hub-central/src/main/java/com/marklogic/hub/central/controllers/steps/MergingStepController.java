@@ -1,6 +1,7 @@
 package com.marklogic.hub.central.controllers.steps;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.MasteringManager;
 import com.marklogic.hub.central.controllers.BaseController;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/api/steps/merging")
@@ -99,6 +101,19 @@ public class MergingStepController extends BaseController {
     public ResponseEntity<JsonNode> unmergeDocument(@PathVariable String mergeDocumentURI, @RequestParam(required = false, defaultValue = "true") Boolean retainAuditTrail, @RequestParam(required = false, defaultValue = "true") Boolean blockFutureMerges) {
         MasteringManager mgr = new MasteringManagerImpl(getHubClient());
         return ResponseEntity.ok(mgr.unmerge(mergeDocumentURI, retainAuditTrail, blockFutureMerges));
+    }
+
+    @RequestMapping(value = "/merge", method = RequestMethod.PUT)
+    @Secured("ROLE_readMerging")
+    public ResponseEntity<JsonNode> mergeDocument(@RequestParam List<String> mergeURIs, @RequestParam String flowName, @RequestParam(required = false)  String stepNumber, @RequestParam(required = false, defaultValue = "false") Boolean preview, @RequestParam(required = false, defaultValue = "{}") String options) {
+        MasteringManager mgr = new MasteringManagerImpl(getHubClient());
+        try {
+            JsonNode node = new ObjectMapper().readTree(options);
+            return ResponseEntity.ok(mgr.merge(mergeURIs, flowName, stepNumber, preview, node));
+        }
+        catch (Exception e) {
+            throw new RuntimeException("Unable to Manually merge docs cause " + e.getMessage(), e);
+        }
     }
 
     private StepService newService() {
