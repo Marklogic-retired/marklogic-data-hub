@@ -42,7 +42,7 @@ describe("Merging cards view component", () => {
     jest.clearAllMocks();
   });
 
-  it("can render/edit merging steps with writeMatchMerge authority", async () => {
+  it("can render merging steps with writeMatchMerge authority", async () => {
     const deleteMergingArtifact = jest.fn(() => {});
     const {getByText, getByLabelText, getByTestId, queryAllByRole} =  render(
       <Router>
@@ -73,7 +73,7 @@ describe("Merging cards view component", () => {
     expect(deleteMergingArtifact).toBeCalled();
   });
 
-  it("cannot edit/delete merging step without writeMatchMerge authority", async () => {
+  it("cannot delete merging step without writeMatchMerge authority", async () => {
     const deleteMergingArtifact = jest.fn(() => {});
     const {getByText, getByTestId, queryAllByText, queryAllByRole, queryByLabelText, getByLabelText} =  render(
       <Router>
@@ -108,8 +108,8 @@ describe("Merging cards view component", () => {
     userEvent.click(disabledDeleteIcon);
     expect(queryAllByText("Yes")).toHaveLength(0);
     expect(deleteMergingArtifact).not.toBeCalled();
-  });
 
+  });
 
   it("can render/edit merge steps with writeMatchMerge authority", async () => {
     const deleteMergingArtifact = jest.fn();
@@ -256,7 +256,7 @@ describe("Merging cards view component", () => {
     wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
   });
 
-  it("can open step settings and navigate to merge step details", async () => {
+  it("can open step settings, edit and navigate to merge step details with WriteMatchMerge authority", async () => {
     const {getByText, getByTestId, getByLabelText} =  render(
       <Router>
         <MergingCard {...defaultProps}/>
@@ -266,12 +266,34 @@ describe("Merging cards view component", () => {
     expect(getByText("mergeCustomers")).toBeInTheDocument();
     //open step settings
     userEvent.click(getByTestId("mergeCustomers-edit"));
-    await wait(() => { expect(getByText("Merging Step Settings")).toBeInTheDocument(); });
+    await wait(() => {
+      expect(getByText("Merging Step Settings")).toBeInTheDocument();
+      expect(getByTestId("merging-dialog-save")).toBeEnabled();
+    });
     userEvent.click(getByLabelText("Cancel"));
 
     //open step details
     userEvent.click(getByTestId("mergeCustomers-stepDetails"));
 
     wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/curate/merge"); });
+  });
+
+  it("cannot edit merging step with ReadMatchMerge authority but the modal is enabled for view", async () => {
+    const {getByTestId, getByText} =  render(
+      <Router>
+        <MergingCard
+          {...defaultProps}
+          canWriteMatchMerge={false}
+        />
+      </Router>
+    );
+
+    // check if save button in edit modal is disabled
+    userEvent.click(getByTestId("mergeCustomers-edit"));
+    await wait(() => {
+      expect(getByText("Merging Step Settings")).toBeInTheDocument();
+      expect(getByTestId("merging-dialog-save")).toBeDisabled();
+    });
+    userEvent.click(getByTestId("merging-dialog-cancel"));
   });
 });
