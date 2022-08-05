@@ -23,6 +23,15 @@ describe("Concepts", () => {
     //Restoring Local Storage to Preserve Session
     cy.restoreLocalStorage();
   });
+  afterEach(() => {
+    // update local storage
+    cy.saveLocalStorage();
+  });
+  after(() => {
+    cy.loginAsDeveloper().withRequest();
+    cy.resetTestUser();
+    cy.waitForAsyncRequest();
+  });
 
   it("Validate that the concepts toggle works correctly", () => {
     //Graph view

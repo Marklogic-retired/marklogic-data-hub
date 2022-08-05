@@ -85,6 +85,15 @@ describe("Entity Type Settings Modal", () => {
     cy.log("**Go to Explore section**");
     toolbar.getExploreToolbarIcon().click({force: true});
   });
+  afterEach(() => {
+    // update local storage
+    cy.saveLocalStorage();
+  });
+  after(() => {
+    cy.loginAsDeveloper().withRequest();
+    cy.resetTestUser();
+    cy.waitForAsyncRequest();
+  });
 
   it("Open settings modal, check default values, select new ones cancel and check that the defaults values are keep", () => {
     browsePage.waitForSpinnerToDisappear();

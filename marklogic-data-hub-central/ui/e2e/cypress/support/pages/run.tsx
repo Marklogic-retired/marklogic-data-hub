@@ -174,7 +174,7 @@ class RunPage {
   }
 
   verifyStepRunResult(stepName: string, jobSatus: string) {
-    cy.get(`[data-testid="${stepName}-${jobSatus}"]`).should("exist");
+    cy.get(`[data-testid="${stepName}-${jobSatus}"]`).should("be.visible");
   }
 
   verifyDisabledRunButton(stepName: string) {

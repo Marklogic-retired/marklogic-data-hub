@@ -50,6 +50,9 @@ class ExplorePage {
   scrollSideBarTop() {
     return cy.get("#hc-sider-content").scrollTo("top", {ensureScrollable: false});
   }
+  scrollSideBarBottom() {
+    return cy.get("#hc-sider-content").scrollTo("bottom", {ensureScrollable: false});
+  }
   backToResults() {
     cy.get("#back-button").click({force: true});
   }
