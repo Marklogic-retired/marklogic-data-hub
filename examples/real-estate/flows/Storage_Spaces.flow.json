@@ -1,0 +1,24 @@
+{
+  "name": "Storage_Spaces",
+  "steps": {
+    "1": {
+      "stepId": "loadStorageSpaces_JSON-ingestion"
+    },
+    "2": {
+      "stepId": "loadStorageSpaces_XML-ingestion"
+    },
+    "3": {
+      "stepId": "map_Storage_Spaces_JSON-mapping"
+    },
+    "4": {
+      "stepId": "map_Storage_Spaces_XML-mapping"
+    },
+    "5": {
+      "stepId": "match_Storage_Spaces-matching"
+    },
+    "6": {
+      "stepId": "merge_Storage_Spaces-merging"
+    }
+  },
+  "lastUpdated": "2022-08-03T19:52:40.236643-07:00"
+}

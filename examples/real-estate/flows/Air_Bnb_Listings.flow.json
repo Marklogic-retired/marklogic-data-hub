@@ -1,0 +1,24 @@
+{
+  "name": "Air_Bnb_Listings",
+  "steps": {
+    "1": {
+      "stepId": "loadAirBnbListings_JSON-ingestion"
+    },
+    "2": {
+      "stepId": "loadAirBnbListings_XML-ingestion"
+    },
+    "3": {
+      "stepId": "map_Air_Bnb_Listings_JSON-mapping"
+    },
+    "4": {
+      "stepId": "map_Air_Bnb_Listings_XML-mapping"
+    },
+    "5": {
+      "stepId": "match_Air_Bnb_Listings-matching"
+    },
+    "6": {
+      "stepId": "merge_Air_Bnb_Listings-merging"
+    }
+  },
+  "lastUpdated": "2022-08-02T14:44:39.637835-07:00"
+}

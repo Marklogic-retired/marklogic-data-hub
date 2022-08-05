@@ -1,0 +1,18 @@
+{
+  "name": "Environmental_Risk",
+  "steps": {
+    "1": {
+      "stepId": "loadEnvironmentalRisk_JSON-ingestion"
+    },
+    "2": {
+      "stepId": "loadEnvironmentalRisks_XML-ingestion"
+    },
+    "3": {
+      "stepId": "map_Environmental_Risk_JSON-mapping"
+    },
+    "4": {
+      "stepId": "map_Environmental_Risk_XML-mapping"
+    }
+  },
+  "lastUpdated": "2022-08-03T17:12:39.240305-07:00"
+}

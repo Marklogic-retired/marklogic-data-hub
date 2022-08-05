@@ -27,7 +27,7 @@
           "collation": "http://marklogic.com/collation/codepoint"
         },
         "Distance_Miles": {
-          "datatype": "integer",
+          "datatype": "string",
           "facetable": false,
           "sortable": false,
           "collation": "http://marklogic.com/collation/codepoint"

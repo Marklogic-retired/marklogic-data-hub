@@ -1,0 +1,24 @@
+{
+  "name": "Parks_and_Recreation",
+  "steps": {
+    "1": {
+      "stepId": "loadParksandRecreation_JSON-ingestion"
+    },
+    "2": {
+      "stepId": "loadParksandRecreation_XML-ingestion"
+    },
+    "3": {
+      "stepId": "map_Parks_and_Recreation_JSON-mapping"
+    },
+    "4": {
+      "stepId": "map_Parks_and_Recreation_XML-mapping"
+    },
+    "5": {
+      "stepId": "match_Parks_and_Recreation-matching"
+    },
+    "6": {
+      "stepId": "merge_Parks_and_Recreation-merging"
+    }
+  },
+  "lastUpdated": "2022-08-03T19:09:04.725014-07:00"
+}

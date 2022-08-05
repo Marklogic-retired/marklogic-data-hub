@@ -1,0 +1,30 @@
+{
+  "name": "Car_Wash",
+  "steps": {
+    "1": {
+      "stepId": "loadCarWash_JSON-ingestion"
+    },
+    "2": {
+      "stepId": "loadCarWash_XML-ingestion"
+    },
+    "3": {
+      "stepId": "map_Car_Wash_JSON-mapping"
+    },
+    "4": {
+      "stepId": "map_Car_Wash_XML-mapping"
+    },
+    "5": {
+      "stepId": "match_Car_Wash_JSON-matching"
+    },
+    "6": {
+      "stepId": "match_Car_Wash_XML-matching"
+    },
+    "7": {
+      "stepId": "merge_Car_Wash_JSON-merging"
+    },
+    "8": {
+      "stepId": "merge_Car_Wash_XML-merging"
+    }
+  },
+  "lastUpdated": "2022-08-03T16:21:04.304351-07:00"
+}

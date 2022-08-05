@@ -1,0 +1,24 @@
+{
+  "name": "Post_Offices",
+  "steps": {
+    "1": {
+      "stepId": "loadPostOffices_JSON-ingestion"
+    },
+    "2": {
+      "stepId": "loadPostOffices_XML-ingestion"
+    },
+    "3": {
+      "stepId": "map_Post_Offices_JSON-mapping"
+    },
+    "4": {
+      "stepId": "map_Post_Offices_XML-mapping"
+    },
+    "5": {
+      "stepId": "match_Post_Offices-matching"
+    },
+    "6": {
+      "stepId": "merge_Post_Offices-merging"
+    }
+  },
+  "lastUpdated": "2022-08-03T19:25:53.933052-07:00"
+}

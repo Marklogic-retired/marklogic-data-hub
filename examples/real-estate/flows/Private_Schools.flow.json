@@ -1,0 +1,24 @@
+{
+  "name": "Private_Schools",
+  "steps": {
+    "1": {
+      "stepId": "loadPrivateSchools_JSON-ingestion"
+    },
+    "2": {
+      "stepId": "loadPrivateSchools_XML-ingestion"
+    },
+    "3": {
+      "stepId": "map_Private_Schools_JSON-mapping"
+    },
+    "4": {
+      "stepId": "map_Private_Schools_XML-mapping"
+    },
+    "5": {
+      "stepId": "match_Private_Schools-matching"
+    },
+    "6": {
+      "stepId": "merge_Private_Schools-merging"
+    }
+  },
+  "lastUpdated": "2022-08-03T19:32:23.937241-07:00"
+}

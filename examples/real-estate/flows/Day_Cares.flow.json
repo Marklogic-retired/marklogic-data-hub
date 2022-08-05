@@ -1,0 +1,27 @@
+{
+  "name": "Day_Cares",
+  "steps": {
+    "1": {
+      "stepId": "loadDayCares_JSON-ingestion"
+    },
+    "2": {
+      "stepId": "loadDayCares_XML-ingestion"
+    },
+    "3": {
+      "stepId": "map_Day_Cares_JSON-mapping"
+    },
+    "4": {
+      "stepId": "map_Day_Cares_XML-mapping"
+    },
+    "5": {
+      "stepId": "match_Day_Care_Synonym-matching"
+    },
+    "6": {
+      "stepId": "match_Day_Cares-matching"
+    },
+    "7": {
+      "stepId": "merge_Day_Cares-merging"
+    }
+  },
+  "lastUpdated": "2022-08-03T16:31:06.207287-07:00"
+}

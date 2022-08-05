@@ -1,0 +1,27 @@
+{
+  "name": "Public_Schools",
+  "steps": {
+    "1": {
+      "stepId": "loadPublicSchools_JSON-ingestion"
+    },
+    "2": {
+      "stepId": "loadPublicSchools_XML-ingestion"
+    },
+    "3": {
+      "stepId": "map_Public_Schools_JSON-mapping"
+    },
+    "4": {
+      "stepId": "map_Public_Schools_XML-mapping"
+    },
+    "5": {
+      "stepId": "match_Public_Schools-matching"
+    },
+    "6": {
+      "stepId": "match_Public_Schools_Synonym-matching"
+    },
+    "7": {
+      "stepId": "merge_Public_Schools-merging"
+    }
+  },
+  "lastUpdated": "2022-08-03T19:38:57.235133-07:00"
+}

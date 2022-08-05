@@ -1,0 +1,24 @@
+{
+  "name": "Airports",
+  "steps": {
+    "1": {
+      "stepId": "loadAirports_JSON-ingestion"
+    },
+    "2": {
+      "stepId": "loadAirports_XML-ingestion"
+    },
+    "3": {
+      "stepId": "map_Airports_JSON-mapping"
+    },
+    "4": {
+      "stepId": "map_Airports_XML-mapping"
+    },
+    "5": {
+      "stepId": "match_Airports-matching"
+    },
+    "6": {
+      "stepId": "merge_Airports-merging"
+    }
+  },
+  "lastUpdated": "2022-08-02T14:46:14.375076-07:00"
+}

@@ -1,0 +1,24 @@
+{
+  "name": "Locations_Near",
+  "steps": {
+    "1": {
+      "stepId": "loadLocationsNear_JSON-ingestion"
+    },
+    "2": {
+      "stepId": "loadLocationsNear_XML-ingestion"
+    },
+    "3": {
+      "stepId": "map_Locations_Near_JSON-mapping"
+    },
+    "4": {
+      "stepId": "map_Locations_Near_XML-mapping"
+    },
+    "5": {
+      "stepId": "match_Locations_Near-matching"
+    },
+    "6": {
+      "stepId": "merge_Locations_Near-merging"
+    }
+  },
+  "lastUpdated": "2022-08-03T18:55:42.33612-07:00"
+}

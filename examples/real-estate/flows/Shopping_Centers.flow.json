@@ -1,0 +1,24 @@
+{
+  "name": "Shopping_Centers",
+  "steps": {
+    "1": {
+      "stepId": "loadShoppingCenters_JSON-ingestion"
+    },
+    "2": {
+      "stepId": "loadShoppingCenters_XML-ingestion"
+    },
+    "3": {
+      "stepId": "map_Shoping_Centers_XML-mapping"
+    },
+    "4": {
+      "stepId": "map_Shopping_Centers_JSON-mapping"
+    },
+    "5": {
+      "stepId": "match_Shopping_Centers-matching"
+    },
+    "6": {
+      "stepId": "merge_Shopping_Centers-merging"
+    }
+  },
+  "lastUpdated": "2022-08-03T19:49:15.390414-07:00"
+}

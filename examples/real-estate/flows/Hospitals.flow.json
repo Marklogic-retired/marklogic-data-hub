@@ -1,0 +1,24 @@
+{
+  "name": "Hospitals",
+  "steps": {
+    "1": {
+      "stepId": "loadHospitals_JSON-ingestion"
+    },
+    "2": {
+      "stepId": "loadHospitals_XML-ingestion"
+    },
+    "3": {
+      "stepId": "map_Hospitals_JSON-mapping"
+    },
+    "4": {
+      "stepId": "map_Hospitals_XML-mapping"
+    },
+    "5": {
+      "stepId": "match_Hospitals-matching"
+    },
+    "6": {
+      "stepId": "merge_Hospitals-merging"
+    }
+  },
+  "lastUpdated": "2022-08-03T18:29:45.414927-07:00"
+}
