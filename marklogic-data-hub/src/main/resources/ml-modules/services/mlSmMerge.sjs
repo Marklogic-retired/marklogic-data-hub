@@ -31,8 +31,10 @@ function post(context, params, input) {
   let flowName = 'manual-merge-mastering';
   let stepNumber = 1;
   let refFlowName = params.flowName;
-  let refStepNumber = params.step || '1';
-  let flow = Artifacts.getFullFlow(refFlowName, refStepNumber);
+  let flow = Artifacts.getFullFlow(refFlowName);
+  // make the first merge step in a flow the default
+  let firstMergeStep = Object.keys(flow.steps || {}).find((stepNumber) => flow.steps[stepNumber].stepDefinitionType.toLowerCase() === "merging");
+  let refStepNumber = params.step || firstMergeStep || '1';
   let stepRef = flow.steps[refStepNumber];
   if (!(stepRef.stepDefinitionType.toLowerCase() === "merging" || stepRef.stepDefinitionType.toLowerCase() === "mastering")) {
     httpUtils.throwBadRequest(`The step referenced must be a merging step. Step type: ${stepRef.stepDefinitionType}`);

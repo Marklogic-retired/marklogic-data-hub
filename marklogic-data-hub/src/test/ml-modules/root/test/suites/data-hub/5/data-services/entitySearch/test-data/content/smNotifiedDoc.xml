@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sm:notification xmlns:sm="http://marklogic.com/entity-services">
+    <sm:meta>
+        <sm:dateTime>2022-08-03T10:44:46.789751-07:00</sm:dateTime>
+        <sm:user>hc-developer</sm:user>
+        <sm:status>unread</sm:status>
+    </sm:meta>
+    <sm:threshold-label>Likely Match</sm:threshold-label>
+    <sm:document-uris>
+        <sm:document-uri>/orig/jane1.json</sm:document-uri>
+        <sm:document-uri>/orig/jane2.json</sm:document-uri>
+    </sm:document-uris>
+</sm:notification>
