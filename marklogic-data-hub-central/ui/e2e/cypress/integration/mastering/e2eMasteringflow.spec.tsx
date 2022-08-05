@@ -89,13 +89,13 @@ describe("Validate E2E Mastering Flow", () => {
     runPage.verifyStepRunResult(loadStepName, "success");
 
     // Verify step name appears as a collection facet in explorer
-    runPage.explorerLink(loadStepName).should("exist").click({force: true});
+    runPage.explorerLink(loadStepName).should("be.visible").click({force: true});
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     browsePage.waitForCardToLoad();
     browsePage.getTotalDocuments().should("eq", 14);
-    browsePage.getFacet("collection").should("exist");
-    browsePage.getFacetItemCheckbox("collection", loadStepName).should("to.exist");
+    browsePage.getFacet("collection").should("be.visible");
+    browsePage.getFacetItemCheckbox("collection", loadStepName).should("be.visible");
     cy.wait(3000);
     /* });*/
     //add back in using storage saving with DHFPROD-8523
@@ -154,7 +154,7 @@ describe("Validate E2E Mastering Flow", () => {
     modelPage.getPublishButton().click({force: true});
     confirmationModal.getYesButton(ConfirmationType.PublishAll);
     cy.waitForAsyncRequest();
-    confirmationModal.getSaveAllEntityText().should("exist");
+    confirmationModal.getSaveAllEntityText().should("be.visible");
     confirmationModal.getSaveAllEntityText().should("not.exist");
     modelPage.getEntityModifiedAlert().should("not.exist");
   });
@@ -202,8 +202,8 @@ describe("Validate E2E Mastering Flow", () => {
     browsePage.waitForHCTableToLoad();
     browsePage.getTotalDocuments().should("eq", 14);
     browsePage.getHubPropertiesExpanded();
-    browsePage.getFacet("collection").should("exist");
-    browsePage.getFacetItemCheckbox("collection", mapStep).should("to.exist");
+    browsePage.getFacet("collection").should("be.visible");
+    browsePage.getFacetItemCheckbox("collection", mapStep).should("be.visible");
   });
   it("Create a new match step", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
@@ -361,7 +361,7 @@ describe("Validate E2E Mastering Flow", () => {
     mergeStrategyModal.getModalDialog().should("not.exist");
     cy.waitForAsyncRequest();
     cy.waitUntil(() => cy.findAllByText("retain-single-value").should("have.length.gt", 0));
-    cy.findByText("retain-single-value").should("exist");
+    cy.findByText("retain-single-value").should("be.visible");
   });
   it("add merge rules ", () => {
     mergingStepDetail.addMergeRuleButton().click();
@@ -404,9 +404,9 @@ describe("Validate E2E Mastering Flow", () => {
     browsePage.waitForHCTableToLoad();
     browsePage.getTotalDocuments().should("eq", 2);
     browsePage.getHubPropertiesExpanded();
-    browsePage.getFacet("collection").should("exist");
-    browsePage.getFacetItemCheckbox("collection", mergeStep).should("to.exist");
-    cy.findByTestId("clear-sm-Patient-merged").should("to.exist");
+    browsePage.getFacet("collection").should("be.visible");
+    browsePage.getFacetItemCheckbox("collection", mergeStep).should("be.visible");
+    cy.findByTestId("clear-sm-Patient-merged").should("be.visible");
   });
   it.skip("Explore other collections", () => {   //THIS FAILS UNTIL ENTITY SPECIFIC FACETS PR IS IN (DHFPROD-7950), needs to use entity specific panel facets instead entity properties panel
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();

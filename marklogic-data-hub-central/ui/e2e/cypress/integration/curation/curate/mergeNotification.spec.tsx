@@ -44,7 +44,8 @@ describe("Merge Notification Functionality From Explore Card View", () => {
     explorePage.getAllDataButton().click();
     cy.log("**filter for notification collection and verify merge icon**");
     browsePage.getShowMoreLink("collection").click();
-    browsePage.getFacetItemCheckbox("collection", "sm-Person-notification").scrollIntoView().click({force: true});
+    explorePage.scrollSideBarBottom();
+    browsePage.getFacetItemCheckbox("collection", "sm-Person-notification").should("be.visible").scrollIntoView().click({force: true});
     browsePage.getSelectedFacets().should("exist");
     browsePage.getFacetApplyButton().click();
     browsePage.waitForSpinnerToDisappear();

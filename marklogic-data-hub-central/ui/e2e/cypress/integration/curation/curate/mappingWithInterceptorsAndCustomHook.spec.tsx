@@ -182,8 +182,9 @@ describe("Create and verify load steps, map step and flows with interceptors & c
   });
   it("Edit Map step", () => {
     //Go back to curate
-    cy.visit("/");
-    toolbar.getCurateToolbarIcon().click();
+    cy.visit("/tiles/curate");
+    cy.waitForAsyncRequest();
+    curatePage.getEntityTypePanel("Order").should("be.visible");
     curatePage.toggleEntityTypeId("Order");
     // Open step details and switch to Advanced tab in step settings
     curatePage.openStepDetails(mapStep);
