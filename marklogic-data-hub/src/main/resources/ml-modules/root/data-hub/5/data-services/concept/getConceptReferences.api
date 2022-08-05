@@ -1,0 +1,14 @@
+{
+  "functionName": "getConceptReferences",
+  "desc": "Returns a json containing the names of the entities that reference the given concept class.",
+  "params": [
+    {
+      "name": "conceptName",
+      "datatype": "string"
+    }
+  ],
+  "return": {
+    "datatype": "jsonDocument",
+    "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+  }
+}

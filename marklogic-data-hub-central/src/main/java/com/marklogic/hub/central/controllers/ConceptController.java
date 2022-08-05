@@ -61,6 +61,12 @@ public class ConceptController extends BaseController {
     }
 
 
+    @RequestMapping(value = "/{conceptName}/references", method = RequestMethod.GET)
+    @ApiOperation(value = "Get entities names that refer to this concept class.", response = ModelController.ModelReferencesInfo.class)
+    public ResponseEntity<JsonNode> getModelReferences(@PathVariable String conceptName) {
+        return ResponseEntity.ok(newService().getModelReferences(conceptName));
+    }
+
     private ConceptService newService() {
         return ConceptService.on(getHubClient().getStagingClient());
     }
