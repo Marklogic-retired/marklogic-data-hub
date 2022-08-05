@@ -1,0 +1,30 @@
+{
+  "name": "Gas_Stations",
+  "steps": {
+    "1": {
+      "stepId": "loadGasStations_JSON-ingestion"
+    },
+    "2": {
+      "stepId": "loadGasStations_XML-ingestion"
+    },
+    "3": {
+      "stepId": "map_Gas_Stations_JSON-mapping"
+    },
+    "4": {
+      "stepId": "map_Gas_Stations_XML-mapping"
+    },
+    "5": {
+      "stepId": "match_Gas_Stations-matching"
+    },
+    "6": {
+      "stepId": "match_Gas_Stations_XML-matching"
+    },
+    "7": {
+      "stepId": "merge_Gas_Stations-merging"
+    },
+    "8": {
+      "stepId": "merge_Gas_Stations_NS_XML-merging"
+    }
+  },
+  "lastUpdated": "2022-08-03T18:17:45.985325-07:00"
+}

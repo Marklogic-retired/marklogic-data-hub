@@ -69,7 +69,7 @@
           "collation": "http://marklogic.com/collation/codepoint"
         },
         "Lease_End_Date": {
-          "datatype": "dateTime",
+          "datatype": "date",
           "facetable": false,
           "sortable": false,
           "collation": "http://marklogic.com/collation/codepoint"

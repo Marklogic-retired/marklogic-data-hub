@@ -1,0 +1,24 @@
+{
+  "name": "US_Zips",
+  "steps": {
+    "1": {
+      "stepId": "loadUSZips_JSON-ingestion"
+    },
+    "2": {
+      "stepId": "loadUSZips_XML-ingestion"
+    },
+    "3": {
+      "stepId": "map_USZips_JSON-mapping"
+    },
+    "4": {
+      "stepId": "map_USZips_XML-mapping"
+    },
+    "5": {
+      "stepId": "match_USZips-matching"
+    },
+    "6": {
+      "stepId": "merge_USZips-merging"
+    }
+  },
+  "lastUpdated": "2022-08-03T20:06:05.908983-07:00"
+}

@@ -1,0 +1,18 @@
+{
+  "name": "Pollution_Quality_Index",
+  "steps": {
+    "1": {
+      "stepId": "loadPollutionQuality_JSON-ingestion"
+    },
+    "2": {
+      "stepId": "loadPollutionQuality_XML-ingestion"
+    },
+    "3": {
+      "stepId": "map_Pollution_Quality_Index_JSON-mapping"
+    },
+    "4": {
+      "stepId": "map_Pollution_Quality_Index_XML-mapping"
+    }
+  },
+  "lastUpdated": "2022-08-03T19:16:14.382785-07:00"
+}

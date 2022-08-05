@@ -1,0 +1,18 @@
+{
+  "name": "Annual_Climatic_Conditions",
+  "steps": {
+    "1": {
+      "stepId": "loadAnnualClimaticConditions_JSON-ingestion"
+    },
+    "2": {
+      "stepId": "loadAnnualClimaticConditions_XML-ingestion"
+    },
+    "3": {
+      "stepId": "map_Annual_Climatic_Conditions_JSON-mapping"
+    },
+    "4": {
+      "stepId": "map_Annual_Climatic_Conditions_XML-mapping"
+    }
+  },
+  "lastUpdated": "2022-08-03T15:58:15.438506-07:00"
+}

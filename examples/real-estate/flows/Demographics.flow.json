@@ -1,0 +1,18 @@
+{
+  "name": "Demographics",
+  "steps": {
+    "1": {
+      "stepId": "loadDemographics_JSON-ingestion"
+    },
+    "2": {
+      "stepId": "loadDemographics_XML-ingestion"
+    },
+    "3": {
+      "stepId": "map_Demographics_JSON-mapping"
+    },
+    "4": {
+      "stepId": "map_Demographics_XML-mapping"
+    }
+  },
+  "lastUpdated": "2022-08-03T17:17:59.192541-07:00"
+}

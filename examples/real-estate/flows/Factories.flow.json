@@ -1,0 +1,24 @@
+{
+  "name": "Factories",
+  "steps": {
+    "1": {
+      "stepId": "loadFactories_JSON-ingestion"
+    },
+    "2": {
+      "stepId": "loadFactories_XML-ingestion"
+    },
+    "3": {
+      "stepId": "map_Factories_JSON-mapping"
+    },
+    "4": {
+      "stepId": "map_Factories_XML-mapping"
+    },
+    "5": {
+      "stepId": "match_Factories-matching"
+    },
+    "6": {
+      "stepId": "merge_Factories-merging"
+    }
+  },
+  "lastUpdated": "2022-08-03T18:13:38.134159-07:00"
+}

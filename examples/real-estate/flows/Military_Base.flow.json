@@ -1,0 +1,24 @@
+{
+  "name": "Military_Base",
+  "steps": {
+    "1": {
+      "stepId": "loadMilitaryBase_JSON-ingestion"
+    },
+    "2": {
+      "stepId": "loadMilitaryBase_XML-ingestion"
+    },
+    "3": {
+      "stepId": "map_Military_Base_JSON-mapping"
+    },
+    "4": {
+      "stepId": "map_Military_Base_XML-mapping"
+    },
+    "5": {
+      "stepId": "match_Military_Base-matching"
+    },
+    "6": {
+      "stepId": "merge_Military_Base-merging"
+    }
+  },
+  "lastUpdated": "2022-08-03T19:02:03.003206-07:00"
+}

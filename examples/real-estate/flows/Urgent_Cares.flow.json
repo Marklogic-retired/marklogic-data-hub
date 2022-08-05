@@ -1,0 +1,24 @@
+{
+  "name": "Urgent_Cares",
+  "steps": {
+    "1": {
+      "stepId": "loadUrgentCares_JSON-ingestion"
+    },
+    "2": {
+      "stepId": "loadUrgentCares_XML-ingestion"
+    },
+    "3": {
+      "stepId": "map_Urgent_Cares_JSON-mapping"
+    },
+    "4": {
+      "stepId": "map_Urgent_Cares_XML-mapping"
+    },
+    "5": {
+      "stepId": "match_Urgent_Cares-matching"
+    },
+    "6": {
+      "stepId": "merge_Urgent_cares-merging"
+    }
+  },
+  "lastUpdated": "2022-08-03T20:02:00.387965-07:00"
+}

@@ -1,0 +1,24 @@
+{
+  "name": "Theatres",
+  "steps": {
+    "1": {
+      "stepId": "loadTheatres_JSON-ingestion"
+    },
+    "2": {
+      "stepId": "loadTheatres_XML-ingestion"
+    },
+    "3": {
+      "stepId": "map_Theatres_JSON-mapping"
+    },
+    "4": {
+      "stepId": "map_Theatres_XML-mapping"
+    },
+    "5": {
+      "stepId": "match_Theatres-matching"
+    },
+    "6": {
+      "stepId": "merge_Theatres-merging"
+    }
+  },
+  "lastUpdated": "2022-08-03T19:56:47.955298-07:00"
+}

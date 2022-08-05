@@ -21,7 +21,7 @@
           "collation": "http://marklogic.com/collation/codepoint"
         },
         "Min_Rate_Month": {
-          "datatype": "integer",
+          "datatype": "string",
           "facetable": false,
           "sortable": false,
           "collation": "http://marklogic.com/collation/codepoint"

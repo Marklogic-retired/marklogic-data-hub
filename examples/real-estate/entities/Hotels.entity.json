@@ -39,7 +39,7 @@
           "collation": "http://marklogic.com/collation/codepoint"
         },
         "Min_Rate_per_Night": {
-          "datatype": "decimal",
+          "datatype": "string",
           "facetable": false,
           "sortable": false,
           "collation": "http://marklogic.com/collation/codepoint"

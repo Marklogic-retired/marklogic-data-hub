@@ -1,0 +1,18 @@
+{
+  "name": "Ratings",
+  "steps": {
+    "1": {
+      "stepId": "loadRatings_JSON-ingestion"
+    },
+    "2": {
+      "stepId": "loadRatings_XML-ingestion"
+    },
+    "3": {
+      "stepId": "map_Ratings_JSON-mapping"
+    },
+    "4": {
+      "stepId": "map_Ratings_XML-mapping"
+    }
+  },
+  "lastUpdated": "2022-08-03T19:44:23.57879-07:00"
+}

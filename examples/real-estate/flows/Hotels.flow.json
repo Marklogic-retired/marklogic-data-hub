@@ -1,0 +1,24 @@
+{
+  "name": "Hotels",
+  "steps": {
+    "1": {
+      "stepId": "loadHotels_JSON-ingestion"
+    },
+    "2": {
+      "stepId": "loadHotels_XML-ingestion"
+    },
+    "3": {
+      "stepId": "map_Hotels_JSON-mapping"
+    },
+    "4": {
+      "stepId": "map_Hotels_XML-mapping"
+    },
+    "5": {
+      "stepId": "match_Hotels-matching"
+    },
+    "6": {
+      "stepId": "merge_Hotels-merging"
+    }
+  },
+  "lastUpdated": "2022-08-03T18:41:18.812978-07:00"
+}

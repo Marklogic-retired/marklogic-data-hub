@@ -1,0 +1,27 @@
+{
+  "name": "Restaurants",
+  "steps": {
+    "1": {
+      "stepId": "loadRestaurants_JSON-ingestion"
+    },
+    "2": {
+      "stepId": "loadRestaurants_XML-ingestion"
+    },
+    "3": {
+      "stepId": "map_Restaurants_JSON-mapping"
+    },
+    "4": {
+      "stepId": "map_Restaurants_XML-mapping"
+    },
+    "5": {
+      "stepId": "match_Restaurants-matching"
+    },
+    "6": {
+      "stepId": "match_Restaurants_Synonym-matching"
+    },
+    "7": {
+      "stepId": "merge_Restaurants-merging"
+    }
+  },
+  "lastUpdated": "2022-08-03T19:47:02.233512-07:00"
+}
