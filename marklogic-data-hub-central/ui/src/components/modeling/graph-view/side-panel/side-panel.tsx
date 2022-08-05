@@ -544,6 +544,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
               value={selectedEntityDescription ? selectedEntityDescription : " "}
               onChange={handlePropertyChange}
               onBlur={onSubmit}
+              className={styles.input}
             />
             <div className={"p-2 d-flex align-items-center"}>
               <HCTooltip text={!isConceptNode ? ModelingTooltips.entityDescription : ModelingTooltips.conceptClassDescription} id="description-tooltip" placement="top-end">
@@ -607,7 +608,8 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
                 value={selectedEntityVersion}
                 onChange={handlePropertyChange}
                 onBlur={onSubmit}
-                style={{width: "50px", verticalAlign: "text-bottom"}}
+                className={styles.input}
+                style={{verticalAlign: "text-bottom"}}
               />
               <div className={"d-flex align-items-center"}>
                 <HCTooltip id="colo-selector" text={ModelingTooltips.versionField} placement="right">

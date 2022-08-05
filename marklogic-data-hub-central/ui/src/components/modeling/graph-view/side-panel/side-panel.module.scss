@@ -31,86 +31,105 @@
         font-size: 21px;
     }
 
-    .deleteIcon:hover {
-        color: var(--hoverColor);
-        cursor: pointer;
+  .conceptHeadingInfo {
+    font-size: 18px;
+    color: $secondary-gray;
+    vertical-align: middle;
+    margin-bottom: 20px;
+  }
+
+  .deleteIcon {
+    color: $info;
+    font-size: 24px;
+  }
+
+  .deleteIconDisabled {
+    color: #cccccc;
+    font-size: 24px;
+  }
+
+  .deleteIcon:hover {
+    color: var(--hoverColor);
+    cursor: pointer;
+  }
+
+  .deleteIconDisabled:hover {
+    cursor: not-allowed;
+  }
+
+  .close {
+    position: relative;
+    float: right;
+    font-size: 20px;
+    height: 28px;
+    cursor: pointer;
+  }
+
+  .tabs {
+    padding: 10px 0px 10px 0px;
+
+    .sidePanelTabLabel {
+      font-size: 18px;
     }
 
-    .deleteIconDisabled:hover {
-        cursor: not-allowed;
+    div[class=tab-content] {
+      display: none;
     }
-
-    .close {
-        position: relative;
-        float: right;
-        font-size: 20px;
-        height: 28px;
-        cursor: pointer;
-    }
-
-    .tabs {
-        padding: 10px 0px 10px 0px;
-        .sidePanelTabLabel {
-            font-size: 18px;
-        }
-        div[class=tab-content] {
-            display: none;
-        } 
-    }
+  }
 }
 
 
 .formItem {
-    display: flex;
-    margin-left: 0.4vw;
-    margin-bottom: 1vh;
+  display: flex;
+  margin-left: 0.4vw;
+  margin-bottom: 1vh;
 }
 
 .icon {
-    font-size: 12px;
-    color: #7f86b5;
+  font-size: 12px;
+  color: #7f86b5;
 }
 
 .colorsIcon {
-    margin-left: 12px;
+  margin-left: 12px;
 }
 
 .editIconReadOnly {
-    font-size: 26px;
-    color: #cccccc;
-    background-color: #f8f8f8;
-    padding: 5px 3px 5px 3px;
-    margin-bottom: -2px;
-    margin-right: -3px;
-    cursor: not-allowed;
+  font-size: 26px;
+  color: #cccccc;
+  background-color: #f8f8f8;
+  padding: 5px 3px 5px 3px;
+  margin-bottom: -2px;
+  margin-right: -3px;
+  cursor: not-allowed;
 }
 
 .editIcon {
-    font-size: 26px;
-    color: $primary;
-    background-color: #f8f8f8;
-    padding: 5px 3px 5px 3px;
-    margin-bottom: -2px;
-    margin-right: -3px;
-    cursor: pointer;
+  font-size: 26px;
+  color: $primary;
+  background-color: #f8f8f8;
+  padding: 5px 3px 5px 3px;
+  margin-bottom: -2px;
+  margin-right: -3px;
+  cursor: pointer;
 }
 
 .editIcon:hover {
-    color: #7fade3;
+  color: #7fade3;
 }
 
 .questionCircle {
-    font-size: 12px;
-    vertical-align: top;
-    margin-top: 8px;
-    margin-left: 10px;
-    color: #7f86b5;
+  font-size: 12px;
+  vertical-align: top;
+  margin-top: 8px;
+  margin-left: 10px;
+  color: #7f86b5;
 }
 
 .colorContainer {
-    display: flex;
-    flex-direction: row;
-    margin-top: 2px;
+  display: flex;
+  flex-direction: row;
+  margin-top: 2px;
 }
 
 .iconContainer {
@@ -125,89 +144,100 @@
   margin-top: 17px;
 }
 
-.iconPickerTooltip{
+.iconPickerTooltip {
   margin-left: 12px;
 }
 
 .colorSquare {
-    width: 24px;
-    height: 26px;
-    background: red;
-    margin-top: 4px;
+  width: 24px;
+  height: 26px;
+  background: red;
+  margin-top: 4px;
 }
 
 .colorPickerBorder {
-    border-style: solid;
-    border-radius: 4px;
-    border-width: 1px;
+  border-style: solid;
+  border-radius: 4px;
+  border-width: 1px;
 }
 
 .colorPickerContainer {
-    width: 276px;
-    margin-top: -56px;
-    margin-left: 29%;
+  width: 276px;
+  margin-top: -56px;
+  margin-left: 29%;
 }
 
 .prefixLabel {
-    display: inline-flex;
-    line-height: 32px;
+  display: inline-flex;
+  line-height: 32px;
 }
 
 .prefixInput {
-    margin-left: -1vw;
+  margin-left: -1vw;
 }
 
 .errorServer {
-    color: $danger;
-    line-height: 20px;
-    margin-left: 1.5vw;
+  color: $danger;
+  line-height: 20px;
+  margin-left: 1.5vw;
 }
 
 ul.tabsContainer {
-    width: 100%;
-    margin-left: 0.5rem !important;
-    font-size: 14px;
-    display: flex;
-    align-items: flex-end;
-    justify-content: flex-start;
-    margin-left: 0;
+  width: 100%;
+  margin-left: 0.5rem !important;
+  font-size: 14px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  margin-left: 0;
 
-    button.tab {
-        border: 0 !important;
-        border-bottom: 2px solid transparent !important;
-        margin-right: -1px;
-        &:hover {
-            border-bottom: 2px solid $info !important;
-            color: $info !important;
-        }
+  button.tab {
+    border: 0 !important;
+    border-bottom: 2px solid transparent !important;
+    margin-right: -1px;
+
+    &:hover {
+      border-bottom: 2px solid $info  !important;
+      color: $info  !important;
     }
+  }
+}
+
+.input {
+  input {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
 }
 
 button.tab {
-    color: $text-color !important;
-    transition: color 0.3s cubic-bezier(0.645, 0.045, 0.355, 1),
-        border-color 0.3s cubic-bezier(0.645, 0.045, 0.355, 1) !important;
-    padding: 10px 20px !important;
-    height: 49px;
+  color: $text-color  !important;
+  transition: color 0.3s cubic-bezier(0.645, 0.045, 0.355, 1),
+    border-color 0.3s cubic-bezier(0.645, 0.045, 0.355, 1) !important;
+  padding: 10px 20px !important;
+  height: 49px;
+  display: flex;
+  align-items: center;
+
+  &.active {
+    border-bottom: 2px solid $info  !important;
+    color: $info  !important;
+  }
+
+  >span {
     display: flex;
     align-items: center;
-    &.active {
-        border-bottom: 2px solid $info !important;
-        color: $info !important;
-    }
-    > span {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        font-size: 14px;
-    }
+    justify-content: center;
+    gap: 10px;
+    font-size: 14px;
+  }
 }
 
 .validationError {
-    @extend .validationError;
+  @extend .validationError;
 }
 
 .displaySettings {
-    font-size: 18px;
+  font-size: 18px;
 }
