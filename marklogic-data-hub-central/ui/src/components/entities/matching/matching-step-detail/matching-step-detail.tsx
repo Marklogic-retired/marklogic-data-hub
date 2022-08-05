@@ -1084,6 +1084,11 @@ const MatchingStepDetail: React.FC = () => {
         previewMatchActivity={previewMatchedActivity}
         entityDefinitionsArray={curationOptions.entityDefinitionsArray}
         uris={uris}
+        isPreview={true}
+        isMerge={false}
+        mergeUris={() => void 0}
+        unmergeUri={() => void 0}
+        originalUri=""
       />
       <ThresholdModal
         isVisible={showThresholdModal}

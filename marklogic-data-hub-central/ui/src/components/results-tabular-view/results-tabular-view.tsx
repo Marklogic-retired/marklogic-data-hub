@@ -12,6 +12,9 @@ import {dateConverter} from "@util/date-conversion";
 import {HCTooltip, HCTable} from "@components/common";
 import {themeColors} from "@config/themes.config";
 import tooltipsConfig from "@config/explorer-tooltips.config";
+import CompareValuesModal from "../../components/entities/matching/compare-values-modal/compare-values-modal";
+import {previewMatchingActivity, getDocFromURI} from "@api/matching";
+import {mergeUris, unmergeUri} from "@api/merging";
 
 /* eslint-disable */
 interface Props {
@@ -77,7 +80,12 @@ const ResultsTabularView = (props) => {
   const [primaryKey, setPrimaryKey] = useState<string>("");
   const [expandedNestedTableRows, setExpandedNestedTableRows] = useState<string[]>([]);
   const [expandedNestedTableColumn, setExpandedNestedTableColumn] = useState<string[]>([]);
-
+  const [compareModalVisible, setCompareModalVisible] = useState(false);
+  const [previewMatchedActivity, setPreviewMatchedActivity] = useState<{}>({sampleSize: 100, uris: [], actionPreview: []});
+  const [activeEntityArray, setActiveEntityArray] = useState<any>([]);
+  const [activeEntityUris, setActiveEntityUris] = useState<string[]>([]);
+  const [uriInfo, setUriInfo] = useState<any>();
+  const [originalUri, setOriginalUri] = useState<string>("");
   const {
     searchOptions,
     setSelectedTableProperties,
@@ -372,7 +380,7 @@ const ResultsTabularView = (props) => {
           item.unmerge ?
             <div className={styles.unMergeIcon}>
               <HCTooltip text={"Unmerge Documents"} id="unmerge-icon-tooltip" placement="top-end">
-                <i><RiSplitCellsHorizontal className={styles.unMergeIcon} data-testid={`unmergeIcon`} aria-label={`unmerge-icon`}/></i>
+                <i><RiSplitCellsHorizontal className={styles.unMergeIcon} data-testid={`unmergeIcon`} aria-label={`unmerge-icon`} onClick={() => openUnmergeCompare(item)}/></i>
               </HCTooltip>
             </div>
             : null
@@ -419,6 +427,50 @@ const ResultsTabularView = (props) => {
     }
 
     return dataObj;
+  };
+
+  const openUnmergeCompare = async (item) => {
+    let arrayUris;
+    let activeEntityIndex = props.entityDefArray.findIndex((entity) => entity.name === item["entityName"]);
+    setActiveEntityArray([props.entityDefArray[activeEntityIndex]]);
+    if (typeof item.unmergeUris[0] === "string") {
+      arrayUris = item.unmergeUris;
+    } else {
+      arrayUris = item.unmergeUris.map((obj) => { return obj["document-uri"]; });
+    }
+    setActiveEntityUris(arrayUris);
+    setOriginalUri(item.uri);
+    await fetchCompareData(arrayUris);
+    setCompareModalVisible(true);
+  };
+
+  const fetchCompareData = async (array) => {
+    const result1 = await getDocFromURI(array[0]);
+    const result2 = await getDocFromURI(array[1]);
+
+    if (result1.status === 200 && result2.status === 200) {
+      let result1Instance = result1.data.data.envelope.instance;
+      let result2Instance = result2.data.data.envelope.instance;
+      await setUriInfo([{result1Instance}, {result2Instance}]);
+    }
+
+    let testMatchData = {
+      restrictToUris: true,
+      uris: activeEntityUris,
+      sampleSize: 100,
+      stepName: "match-person"
+    };
+
+    let previewMatchActivity = await previewMatchingActivity(testMatchData);
+    if (previewMatchActivity) {
+      // setToggleLoading(false);
+      setPreviewMatchedActivity(previewMatchActivity);
+    }
+
+  };
+
+  const submitUnmergeUri = async (payload) => {
+    await unmergeUri(payload);
   };
 
   const generateTableData = (item, dataObj = {}) => {
@@ -632,6 +684,22 @@ const ResultsTabularView = (props) => {
           dynamicSortColumns
         />}
       </div>
+      <CompareValuesModal
+        isVisible={compareModalVisible}
+        toggleModal={setCompareModalVisible}
+        uriInfo={uriInfo}
+        activeStepDetails={activeEntityArray}
+        entityProperties={{}}
+        uriCompared={activeEntityUris}
+        previewMatchActivity={previewMatchedActivity}
+        entityDefinitionsArray={activeEntityArray}
+        uris={activeEntityUris}
+        isPreview={false}
+        isMerge={false}
+        mergeUris={mergeUris}
+        unmergeUri={submitUnmergeUri}
+        originalUri={originalUri}
+      />
     </>
   );
 };

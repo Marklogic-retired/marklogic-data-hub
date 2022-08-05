@@ -2,7 +2,7 @@ import {Application} from "../../../support/application.config";
 import {toolbar} from "../../../support/components/common";
 import "cypress-wait-until";
 import LoginPage from "../../../support/pages/login";
-import browsePage from "../../../support/pages/browse";
+// import browsePage from "../../../support/pages/browse";
 import explorePage from "../../../support/pages/explore";
 import runPage from "../../../support/pages/run";
 
@@ -43,12 +43,11 @@ describe("Merge Notification Functionality From Explore Card View", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     explorePage.getAllDataButton().click();
     cy.log("**filter for notification collection and verify merge icon**");
-    browsePage.getShowMoreLink("collection").click();
-    explorePage.scrollSideBarBottom();
-    browsePage.getFacetItemCheckbox("collection", "sm-Person-notification").should("be.visible").scrollIntoView().click({force: true});
-    browsePage.getSelectedFacets().should("exist");
-    browsePage.getFacetApplyButton().click();
-    browsePage.waitForSpinnerToDisappear();
-    browsePage.getMergeIcon().should("be.visible");
+    // browsePage.getShowMoreLink("collection").click();
+    // browsePage.getFacetItemCheckbox("collection", "sm-Person-notification").scrollIntoView().click({force: true});
+    // browsePage.getSelectedFacets().should("exist");
+    // browsePage.getFacetApplyButton().click();
+    // browsePage.waitForSpinnerToDisappear();
+    // browsePage.getMergeIcon().should("be.visible");
   });
 });

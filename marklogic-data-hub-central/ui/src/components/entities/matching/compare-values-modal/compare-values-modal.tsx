@@ -5,7 +5,9 @@ import styles from "./compare-values-modal.module.scss";
 import {Definition} from "../../../../types/modeling-types";
 import {CurationContext} from "@util/curation-context";
 import backgroundImage from "../../../../assets/white-for-dark-bg.png";
-import {HCTable} from "@components/common";
+import {HCTable, HCButton} from "@components/common";
+// import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
+// import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 interface Props {
   isVisible: any;
@@ -17,6 +19,11 @@ interface Props {
   uriCompared: any;
   entityDefinitionsArray: any;
   uris: any
+  isPreview: boolean;
+  isMerge: boolean;
+  mergeUris: any;
+  unmergeUri: any;
+  originalUri: string;
 }
 
 const CompareValuesModal: React.FC<Props> = (props) => {
@@ -25,6 +32,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
   const [matchedProperties, setMatchedProperties] = useState<any[]>([]);
   const [compareValuesTableData, setCompareValuesTableData] = useState<any[]>([]);
   const [expandedRows, setExpandedRows] = useState<string[]>([]);
+  const [confirmModalVisible, setConfirmModalVisible] = useState(false); // eslint-disable-line @typescript-eslint/no-unused-vars
 
   useEffect(() => {
     if (props.isVisible && props.uriInfo) {
@@ -116,15 +124,16 @@ const CompareValuesModal: React.FC<Props> = (props) => {
   };
 
   const parseDefinitionsToTable = (entityDefinitionsArray: Definition[]) => {
-    let entityTypeDefinition: Definition = entityDefinitionsArray.find(definition => definition.name === props.activeStepDetails.entityName) || DEFAULT_ENTITY_DEFINITION;
+    let activeEntityName = props.isPreview ? props.activeStepDetails.entityName : props.activeStepDetails[0].name;
+    let entityTypeDefinition: Definition = entityDefinitionsArray.find(definition =>  definition.name === activeEntityName) || DEFAULT_ENTITY_DEFINITION;
     return entityTypeDefinition?.properties.map((property, index) => {
       let propertyRow: any = {};
       let counter = 0;
       let propertyValueInURI1 = "";
       let propertyValueInURI2 = "";
       if (props.uriInfo) {
-        property1 = props.uriInfo[0]["result1Instance"][props.activeStepDetails.entityName];
-        property2 = props.uriInfo[1]["result2Instance"][props.activeStepDetails.entityName];
+        property1 = props.uriInfo[0]["result1Instance"][activeEntityName];
+        property2 = props.uriInfo[1]["result2Instance"][activeEntityName];
       }
       if (property.datatype === "structured") {
         const parseStructuredProperty = (entityDefinitionsArray, property, parentDefinitionName, parentKey, parentKeys, allParentKeys, propertyPath, indexArray?: number, localParentKey?: string) => {
@@ -386,7 +395,52 @@ const CompareValuesModal: React.FC<Props> = (props) => {
     return {};
   };
 
-  return <Modal
+
+  //TO BE ADDED WITH DHFPROD-9136
+
+  // const onMergeUnmerge = async () => {
+  // let payload = {
+  //   mergeDocumentURI: props.originalUri
+  // }
+
+  // if(!props.isMerge) {
+  //   console.log("calling")
+  //   await props.unmergeUri(payload);
+  // } else {
+  //   await props.mergeUris(payload);
+  // }
+  // setConfirmModalVisible(false);
+  // closeModal();
+  // };
+
+  // const mergeUnmergeConfirmation = (
+  //   <Modal show={confirmModalVisible} dialogClassName={styles.confirmationModal}>
+  //     <Modal.Body>
+  //       <div style={{display: "flex"}}>
+  //         <div style={{padding: "24px 0px 0px 15px"}}>
+  //           <FontAwesomeIcon icon={faExclamationTriangle} size="lg" style={{color: "rgb(188, 129, 29)"}}></FontAwesomeIcon>
+  //         </div>
+  //         <div style={{fontSize: "16px", padding: "20px 20px 20px 20px"}}>
+  //           {props.isMerge ?
+  //             "Are you sure you want to merge these documents? Doing so will combine them to form one single document. The original documents will be moved to the archive collection."
+  //             :
+  //             "Are you sure you want to unmerge this document? Doing so will return the original documents out of the archive collection."
+  //           }
+  //         </div>
+  //       </div>
+  //     </Modal.Body>
+  //     <Modal.Footer>
+  //       <HCButton variant="outline-light" onClick={() => setConfirmModalVisible(false)}>
+  //         <div aria-label="No">No</div>
+  //       </HCButton>
+  //       <HCButton variant="primary" onClick={() => onMergeUnmerge()}>
+  //         <div aria-label="Yes">Yes</div>
+  //       </HCButton>
+  //     </Modal.Footer>
+  //   </Modal>
+  // );
+
+  return <><Modal
     show={props.isVisible}
     size={"lg"}
     dialogClassName={styles.modal1400w}
@@ -398,8 +452,8 @@ const CompareValuesModal: React.FC<Props> = (props) => {
     <Modal.Body>
       <div>
         <div>
-          <span className={styles.customer1}>Customer 1</span>
-          <span className={styles.customer2}>Customer 2</span>
+          <span className={styles.entity1}>{props.entityDefinitionsArray[0]?.name} 1</span>
+          <span className={styles.entity2}>{props.entityDefinitionsArray[0]?.name} 2</span>
         </div>
         <div className={styles.compareTableHeader}>
           <span className={styles.uri1}>{props.uriCompared[0]}</span>
@@ -426,7 +480,20 @@ const CompareValuesModal: React.FC<Props> = (props) => {
         />
       </div>
     </Modal.Body>
-  </Modal>;
+    {!props.isPreview ?
+      <Modal.Footer>
+        <HCButton variant="outline-light" onClick={() => closeModal()}>
+          <div aria-label="Cancel">Cancel</div>
+        </HCButton>
+        <HCButton variant="primary" onClick={() => setConfirmModalVisible(true)}>
+          {
+            props.isMerge ? <div aria-label="confirm-merge">Merge</div> : <div aria-label="confirm-unmerge">Unmerge</div>
+          }
+        </HCButton>
+      </Modal.Footer> : null}
+  </Modal>
+  {/* {mergeUnmergeConfirmation} */}
+  </>;
 };
 
 export default CompareValuesModal;
