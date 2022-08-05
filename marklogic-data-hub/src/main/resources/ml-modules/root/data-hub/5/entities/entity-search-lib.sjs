@@ -386,6 +386,7 @@ function addEntitySpecificProperties(result, entityName, entityModel, selectedPr
   }
 
   result.unmerge = fn.exists(doc.xpath("/*:envelope/*:headers/*:merges"));
+  result.unmergeUris = doc instanceof XMLDocument ? doc.xpath("/*:envelope/*:headers/*:merges/*:document-uri/text()") : doc.xpath("/*:envelope/*:headers/*:merges");
   result.entityInstance = entityProperties;
   result.sources = getEntitySources(doc);
   result.entityName = entityName;
@@ -439,6 +440,8 @@ function addGenericEntityProperties(result) {
   result.entityInstance = entityProperties;
   result.sources = getEntitySources(doc);
   result.entityName = entityName;
+  result.unmerge = fn.exists(doc.xpath("/*:envelope/*:headers/*:merges"));
+  result.unmergeUris = doc instanceof XMLDocument ? doc.xpath("/*:envelope/*:headers/*:merges/*:document-uri/text()") : doc.xpath("/*:envelope/*:headers/*:merges");
 }
 
 function addPrimaryKeyToResult(result, entityInstance, entityDef) {
