@@ -16,6 +16,7 @@ declare namespace host = "http://marklogic.com/xdmp/status/host";
 declare variable $TYPE-TO-COLLECTION-MAP := map:new((
   map:entry("flows", "http://marklogic.com/data-hub/flow"),
   map:entry("entities", "http://marklogic.com/entity-services/models"),
+  map:entry("concepts", "http://marklogic.com/data-hub/concept"),
   map:entry("mappings", "http://marklogic.com/data-hub/mappings"),
   map:entry("steps/ingestion", ("http://marklogic.com/data-hub/steps/ingestion","http://marklogic.com/data-hub/steps")),
   map:entry("steps/mapping", ("http://marklogic.com/data-hub/mappings","http://marklogic.com/data-hub/steps/mapping","http://marklogic.com/data-hub/steps")),
@@ -29,6 +30,7 @@ declare variable $TYPE-TO-COLLECTION-MAP := map:new((
 
 declare variable $TYPE-TO-PERMISSIONS-MAP := map:new((
   map:entry("entities", (xdmp:permission("data-hub-entity-model-reader", "read"), xdmp:permission("data-hub-entity-model-writer", "update"))),
+  map:entry("concepts", (xdmp:permission("data-hub-entity-model-reader", "read"), xdmp:permission("data-hub-entity-model-writer", "update"))),
   map:entry("flows", (xdmp:permission("data-hub-flow-reader", "read"), xdmp:permission("data-hub-flow-writer", "update"))),
   map:entry("mappings", (xdmp:permission("data-hub-mapping-reader", "read"), xdmp:permission("data-hub-mapping-writer", "update"))),
   map:entry("steps/ingestion", (xdmp:permission("data-hub-ingestion-reader", "read"), xdmp:permission("data-hub-ingestion-writer", "update"))),
@@ -83,6 +85,11 @@ two separate tasks.
 declare function load-entities($caller-path as xs:string) as xs:string*
 {
   load-artifacts("entities", $caller-path)
+};
+
+declare function load-concepts($caller-path as xs:string) as xs:string*
+{
+  load-artifacts("concepts", $caller-path)
 };
 
 declare function load-non-entities($caller-path as xs:string) as xs:string*
@@ -254,7 +261,7 @@ declare function get-prov-documents($database-name as xs:string)
 
 declare function get-final-schema($uri as xs:string)
 {
-  xdmp:eval("fn:doc('" || $uri || "')", (), 
+  xdmp:eval("fn:doc('" || $uri || "')", (),
     <options xmlns="xdmp:eval">
       <database>{xdmp:database("data-hub-final-SCHEMAS")}</database>
     </options>

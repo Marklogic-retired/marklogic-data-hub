@@ -346,6 +346,31 @@ function deleteDraftConceptModel(conceptName) {
   writeDraftModel(conceptName, model)
 }
 
+function findConceptReferencesInEntities(conceptName){
+  const affectedModels = new Set();
+
+  const queries = [];
+  queries.push(cts.collectionQuery([entityLib.getDraftModelCollection(),entityLib.getModelCollection()]));
+  queries.push(cts.jsonPropertyValueQuery("conceptClass", conceptName, "case-insensitive"));
+
+  const entityModels = cts.search(cts.andQuery(queries)).toArray().map(entityModel => entityModel.toObject());
+  const entityModelsToBeDeleted = entityModels.filter((model) => model.info.draftDeleted).map((model) => getModelName(model));
+  const entityModelsDraftWithoutRelatedConcept = cts.search(cts.andNotQuery(cts.collectionQuery([entityLib.getDraftModelCollection()]),
+    cts.jsonPropertyValueQuery("conceptClass", conceptName, "case-insensitive"))).toArray().map(entityModel =>getModelName(entityModel.toObject()));
+  entityModels
+    .filter((model) => !entityModelsDraftWithoutRelatedConcept.includes(getModelName(model)))
+    .filter((model) => !entityModelsToBeDeleted.includes(getModelName(model)))
+    .forEach((model) => affectedModels.add(getModelName(model)));
+  return [...affectedModels];
+}
+
+function getModelName(model) {
+  if (model.info) {
+    return model.info.title;
+  }
+  return null;
+}
+
 module.exports = {
   findDraftModelByConceptName,
   findModelByConceptName,
@@ -360,5 +385,6 @@ module.exports = {
   deleteDraftConceptModel,
   findConceptModelReferencesInEntities,
   writeModel,
-  publishDraftConcepts
+  publishDraftConcepts,
+  findConceptReferencesInEntities
 };
