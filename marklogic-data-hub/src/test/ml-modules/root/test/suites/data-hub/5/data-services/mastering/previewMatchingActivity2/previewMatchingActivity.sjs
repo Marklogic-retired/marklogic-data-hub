@@ -10,7 +10,7 @@ for (let uri of cts.uriMatch("/content/5*.json")) {
 const options = cts.doc("/steps/matching/patientMatch.step.json").root;
 const sourceQuery = xdmp.eval(options.sourceQuery);
 
-let results = pma.previewMatchingActivity(options, sourceQuery, uris, false, 0);
+let results = pma.previewMatchingActivity(options, sourceQuery, uris, false, false, 0);
 
 [
   test.assertEqual(20, results.actionPreview.length, "There should be 20 matching pairs")

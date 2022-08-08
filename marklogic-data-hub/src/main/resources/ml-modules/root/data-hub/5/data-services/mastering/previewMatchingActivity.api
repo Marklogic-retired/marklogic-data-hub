@@ -18,6 +18,10 @@
   {
     "name": "restrictToUris",
     "datatype": "boolean"
+  },
+  {
+     "name": "nonMatches",
+     "datatype": "boolean"
   }],
   "return":
   {

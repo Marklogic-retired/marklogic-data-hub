@@ -1,0 +1,96 @@
+{
+  "envelope": {
+    "headers": {
+      "sources": [
+        {
+          "name": "source 2"
+        }
+      ],
+      "createdOn": "2020-08-20T05:27:43.360675Z",
+      "createdBy": "admin"
+    },
+    "triples": [],
+    "instance": {
+      "info": {
+        "title": "Customer",
+        "version": "0.0.1",
+        "baseUri": "http://example.org/"
+      },
+      "Customer": {
+        "customerId": 105,
+        "name": "Hollan Welles",
+        "birthDate": "1985-01-01",
+        "shipping": [
+          {
+            "Address": {
+              "street": [
+                "Hanover Place"
+              ],
+              "city": "Marshall",
+              "state": "Oklahoma",
+              "zip": {
+                "Zip": {
+                  "fiveDigit": "19111",
+                  "plusFour": "1001"
+                }
+              }
+            }
+          },
+          {
+            "Address": {
+              "street": [
+                "1800 Tysons Blvd"
+              ],
+              "city": "McLean",
+              "state": "Virginia",
+              "zip": {
+                "Zip": {
+                  "fiveDigit": "22102",
+                  "plusFour": "2021"
+                }
+              }
+            }
+          }
+        ],
+        "billing": {
+          "Address": {
+            "street": [
+              "Sunnyside Avenue"
+            ],
+            "city": "Brutus",
+            "state": "Wisconsin",
+            "zip": {
+              "Zip": {
+                "fiveDigit": "30706",
+                "plusFour": "8854"
+              }
+            }
+          }
+        }
+      }
+    },
+    "attachments": {
+      "envelope": {
+        "headers": {
+          "sources": [
+            {
+              "name": "loadCustomersJSON"
+            }
+          ],
+          "createdOn": "2020-08-20T05:27:43.360675Z",
+          "createdBy": "admin"
+        },
+        "triples": [],
+        "instance": {
+          "CustomerID": 105,
+          "Name": {
+            "FirstName": "Hollan",
+            "LastName": "Welles"
+          },
+          "Phone": "(555) 867-5309"
+        },
+        "attachments": null
+      }
+    }
+  }
+}

@@ -155,19 +155,20 @@ public interface MasteringService {
             }
 
             @Override
-            public com.fasterxml.jackson.databind.JsonNode previewMatchingActivity(Integer sampleSize, Stream<String> uris, String stepName, Boolean restrictToUris) {
+            public com.fasterxml.jackson.databind.JsonNode previewMatchingActivity(Integer sampleSize, Stream<String> uris, String stepName, Boolean restrictToUris, Boolean nonMatches) {
                 return previewMatchingActivity(
-                    this.req_previewMatchingActivity.on(this.dbClient), sampleSize, uris, stepName, restrictToUris
+                    this.req_previewMatchingActivity.on(this.dbClient), sampleSize, uris, stepName, restrictToUris, nonMatches
                     );
             }
-            private com.fasterxml.jackson.databind.JsonNode previewMatchingActivity(BaseProxy.DBFunctionRequest request, Integer sampleSize, Stream<String> uris, String stepName, Boolean restrictToUris) {
+            private com.fasterxml.jackson.databind.JsonNode previewMatchingActivity(BaseProxy.DBFunctionRequest request, Integer sampleSize, Stream<String> uris, String stepName, Boolean restrictToUris, Boolean nonMatches) {
               return BaseProxy.JsonDocumentType.toJsonNode(
                 request
                       .withParams(
                           BaseProxy.atomicParam("sampleSize", false, BaseProxy.IntegerType.fromInteger(sampleSize)),
                           BaseProxy.atomicParam("uris", true, BaseProxy.StringType.fromString(uris)),
                           BaseProxy.atomicParam("stepName", false, BaseProxy.StringType.fromString(stepName)),
-                          BaseProxy.atomicParam("restrictToUris", false, BaseProxy.BooleanType.fromBoolean(restrictToUris))
+                          BaseProxy.atomicParam("restrictToUris", false, BaseProxy.BooleanType.fromBoolean(restrictToUris)),
+                          BaseProxy.atomicParam("nonMatches", false, BaseProxy.BooleanType.fromBoolean(nonMatches))
                           ).responseSingle(false, Format.JSON)
                 );
             }
@@ -255,9 +256,10 @@ public interface MasteringService {
    * @param uris	provides input
    * @param stepName	provides input
    * @param restrictToUris	provides input
+   * @param nonMatches	provides input
    * @return	as output
    */
-    com.fasterxml.jackson.databind.JsonNode previewMatchingActivity(Integer sampleSize, Stream<String> uris, String stepName, Boolean restrictToUris);
+    com.fasterxml.jackson.databind.JsonNode previewMatchingActivity(Integer sampleSize, Stream<String> uris, String stepName, Boolean restrictToUris, Boolean nonMatches);
 
   /**
    * Invokes the getDefaultCollections operation on the database server

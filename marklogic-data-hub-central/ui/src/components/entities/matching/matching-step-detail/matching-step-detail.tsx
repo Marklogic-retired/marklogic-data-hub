@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext, useRef} from "react";
 import {useHistory} from "react-router-dom";
-import {Row, Col, Accordion, Card, FormCheck} from "react-bootstrap";
+import {Row, Col, Accordion, Card, FormCheck, Tabs, Tab} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlusSquare} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
@@ -65,6 +65,8 @@ const MatchingStepDetail: React.FC = () => {
   const rulesetDataStorage = storage.match?.rulesetData ? storage.match.rulesetData : [{rulesetName: "", actionPreviewData: [{name: "", action: "", uris: ["", ""]}], score: 0}];
   const previewDataStorage = storage.match?.previewMatchedDataActivity ? storage.match.previewMatchedDataActivity : {sampleSize: 100, uris: [], actionPreview: []};
   const previewDataValueStorage = storage.match?.previewMatchedDataValue == 0 ? storage.match.previewMatchedDataValue : -1;  // eslint-disable-line
+  const previewNonMatchDataStorage = storage.match?.previewNonMatchedDataActivity ? storage.match.previewNonMatchedDataActivity : {sampleSize: 100, uris: [], actionPreview: []};
+  const previewNonMatchDataValueStorage = storage.match?.previewNonMatchedDataValue == 0 ? storage.match.previewNonMatchedDataValue : -1;  // eslint-disable-line
   const uriTestStorage = storage.match?.uriTestClicked ? storage.match.uriTestClicked : false;
   const uriData1Storage = storage.match?.uriTableData1 ? storage.match.uriTableData1 : [];
   const uriData2Storage = storage.match?.uriTableData2 ? storage.match.uriTableData2 : [];
@@ -91,7 +93,7 @@ const MatchingStepDetail: React.FC = () => {
   const [uriContent2, setUriContent2] = useState("");
   const [inputUriDisabled, setInputUriDisabled] = useState(inputUriDisabledStorage);
   const [inputUriDisabled2, setInputUriDisabled2] = useState(inputUriDisabled2Storage);
-  const [testMatchTab] = useState("matched");
+  const [testMatchTab, setTestMatchTab] = useState("matched");
   const [duplicateUriWarning, setDuplicateUriWarning] = useState(false);
   const [duplicateUriWarning2, setDuplicateUriWarning2] = useState(false);
   const [singleUriWarning, setSingleUriWarning] = useState(false);
@@ -103,9 +105,11 @@ const MatchingStepDetail: React.FC = () => {
   const [testUrisAllDataSelected, setTestUrisAllDataSelected] = useState(false);
   const [testMatchedData, setTestMatchedData] = useState<any>({stepName: "", sampleSize: 100, uris: []});
   const [previewMatchedActivity, setPreviewMatchedActivity] = useState<any>(previewDataStorage);
+  const [previewNonMatchedActivity, setPreviewNonMatchedActivity] = useState<any>(previewNonMatchDataStorage);
   const [showRulesetMultipleModal, toggleShowRulesetMultipleModal] = useState(false);
 
   const [rulesetDataList, setRulesetDataList] = useState<any>(rulesetDataStorage);
+  const [rulesetNonMatchedDataList, setRulesetNonMatchedDataList] = useState<any>(rulesetDataStorage);
   const [activeMatchedRuleset, setActiveMatchedRuleset] = useState<string[]>([]);
   const [activeMatchedUri, setActiveMatchedUri] = useState<string[]>([]);
   const [allRulesetNames] = useState<string[]>([]);
@@ -115,9 +119,11 @@ const MatchingStepDetail: React.FC = () => {
   const [urisCompared, setUrisCompared] = useState<string[]>([]);
   const [uris, setUris] = useState<string[]>([]);
   const [previewMatchedData, setPreviewMatchedData] = useState(previewDataValueStorage);
+  const [previewNonMatchedData, setPreviewNonMatchedData] = useState(previewNonMatchDataValueStorage);
   const [expandRuleset, setExpandRuleset] = useState(expandedRulesetStorage);
   const [colourElementAdded, setColourElementAdded] = useState(false);
   const [colourElementAdded2, setColourElementAdded2] = useState(false);
+  const notMatchedThreshold = [{thresholdName: "Not Matched", action: "none", score: 0}];
 
   //To handle timeline display
   const [rulesetItems, setRulesetItems] = useState<any[]>([]);
@@ -176,29 +182,32 @@ const MatchingStepDetail: React.FC = () => {
       testRadioSelection: value,
       previewMatchedDataValue: previewMatchedData,
       previewMatchedDataActivity: previewMatchedActivity,
+      previewNonMatchedDataValue: previewNonMatchedData,
+      previewNonMatchedDataActivity: previewNonMatchedActivity,
       uriTestClicked: uriTestMatchClicked,
       rulesetData: rulesetDataList,
+      rulesetNonMatchedData: rulesetNonMatchedDataList,
       inputUriState: inputUriDisabled,
       inputUri2State: inputUriDisabled2,
       uriTableData1: UriTableData,
       uriTableData2: UriTableData2}});
-  }, [expandRuleset, displayRulesetTimeline, displayThresholdTimeline, moreRulesetText, moreThresholdText, value, previewMatchedActivity, uriTestMatchClicked, rulesetDataList, inputUriDisabled, inputUriDisabled2, previewMatchedData, UriTableData, UriTableData2]);
+  }, [expandRuleset, displayRulesetTimeline, displayThresholdTimeline, moreRulesetText, moreThresholdText, value, previewMatchedActivity, previewNonMatchedActivity, uriTestMatchClicked, rulesetDataList, inputUriDisabled, inputUriDisabled2, previewMatchedData, UriTableData, UriTableData2]);
 
   const handleMatchingActivity = async (matchStepName) => {
     let matchActivity = await calculateMatchingActivity(matchStepName);
     setMatchingActivity(matchActivity);
   };
 
-  const handlePreviewMatchingActivity = async (testMatchData) => {
+  const handlePreviewMatchingActivity = async (testMatchData, previewActivity = previewMatchedActivity, thresholds = curationOptions.activeStep.stepArtifact.thresholds, setDataFunction = setPreviewMatchedData, setActivityFunction = setPreviewMatchedActivity, setDataList = setRulesetDataList, localRulesetDataList = rulesetDataList) => {
     const test = () => {
-      for (let i = 0; i < curationOptions.activeStep.stepArtifact.thresholds.length; i++) {
-        let ruleset = curationOptions.activeStep.stepArtifact.thresholds[i].thresholdName.concat(" - ") + curationOptions.activeStep.stepArtifact.thresholds[i].action;
-        let score = curationOptions.activeStep.stepArtifact.thresholds[i].score;
+      for (let i = 0; i < thresholds.length; i++) {
+        let ruleset = thresholds[i].thresholdName.concat(" - ") + thresholds[i].action;
+        let score = thresholds[i].score;
         let actionPreviewList = [{}];
-        if (previewMatchActivity === undefined) previewMatchActivity = {actionPreview: []};
-        for (let j = 0; j < previewMatchActivity.actionPreview.length; j++) {
-          if (curationOptions.activeStep.stepArtifact.thresholds[i].thresholdName === previewMatchActivity.actionPreview[j].name && curationOptions.activeStep.stepArtifact.thresholds[i].action === previewMatchActivity.actionPreview[j].action) {
-            actionPreviewList.push(previewMatchActivity.actionPreview[j]);
+        if (previewActivity === undefined) previewActivity = {actionPreview: []};
+        for (let j = 0; j < previewActivity.actionPreview.length; j++) {
+          if (thresholds[i].thresholdName === previewActivity.actionPreview[j].name && thresholds[i].action === previewActivity.actionPreview[j].action) {
+            actionPreviewList.push(previewActivity.actionPreview[j]);
           }
         }
         actionPreviewList.shift();
@@ -208,20 +217,24 @@ const MatchingStepDetail: React.FC = () => {
         localData.actionPreviewData = actionPreviewList;
         allRulesetNames.push(ruleset);
         if (localData.actionPreviewData.length > 0) {
-          rulesetDataList.push(localData);
+          localRulesetDataList.push(localData);
         }
       }
-      rulesetDataList.shift();
+      localRulesetDataList.shift();
     };
-    let previewMatchActivity = await previewMatchingActivity(testMatchData);
-    if (previewMatchActivity) {
+    previewActivity = await previewMatchingActivity(testMatchData);
+    if (previewActivity) {
       setToggleLoading(false);
-      setPreviewMatchedData(previewMatchActivity.actionPreview.length);
+      setDataFunction(previewActivity.actionPreview.length);
       await test();
-      setPreviewMatchedActivity(previewMatchActivity);
-      setRulesetDataList(rulesetDataList);
+      setActivityFunction(previewActivity);
+      setDataList(localRulesetDataList);
     }
 
+  };
+
+  const handlePreviewNonMatchingActivity = async (testMatchData) => {
+    await handlePreviewMatchingActivity(Object.assign({nonMatches: true}, testMatchedData), previewNonMatchedActivity, notMatchedThreshold, setPreviewNonMatchedData, setPreviewNonMatchedActivity, setRulesetNonMatchedDataList, rulesetNonMatchedDataList);
   };
 
   const getKeysToExpandFromTable = async () => {
@@ -393,11 +406,13 @@ const MatchingStepDetail: React.FC = () => {
     setSingleUriWarning2(false);
     setUriTestMatchClicked(false);
     setRulesetDataList([{rulesetName: "", actionPreviewData: [{name: "", action: "", uris: ["", ""], matchRulesets: [""]}], score: 0}]);
+    setRulesetNonMatchedDataList([{rulesetName: "", actionPreviewData: [{name: "", action: "", uris: ["", ""], matchRulesets: [""]}], score: 0}]);
   };
 
   const handleTestButtonClick = async () => {
     testMatchedData.uris = [];
     setRulesetDataList([{rulesetName: "", actionPreviewData: [{name: "", action: "", uris: ["", ""], matchRulesets: [""]}], score: 0}]);
+    setRulesetNonMatchedDataList([{rulesetName: "", actionPreviewData: [{name: "", action: "", uris: ["", ""], matchRulesets: [""]}], score: 0}]);
     setActiveMatchedUri([]);
     setActiveMatchedRuleset([]);
     if (UriTableData.length < 2 && !allDataSelected && !testUrisAllDataSelected) {
@@ -420,6 +435,7 @@ const MatchingStepDetail: React.FC = () => {
         else testMatchedData.restrictToUris = false;
         setTestMatchedData(testMatchedData);
         await handlePreviewMatchingActivity(testMatchedData);
+        await handlePreviewNonMatchingActivity(testMatchedData);
       }
     }
 
@@ -433,6 +449,7 @@ const MatchingStepDetail: React.FC = () => {
         testMatchedData.restrictToUris = false;
         setTestMatchedData(testMatchedData);
         await handlePreviewMatchingActivity(testMatchedData);
+        await handlePreviewNonMatchingActivity(testMatchedData);
       }
     }
   };
@@ -1003,66 +1020,122 @@ const MatchingStepDetail: React.FC = () => {
             <HCButton variant="primary" type="submit" onClick={handleTestButtonClick} aria-label="testMatchUriButton" loading={loading}>Test</HCButton>
           </div>
         </div>
-        {/*<div className={styles.matchedTab}>*/}
-        {/*  <Menu onClick={handleTestMatchTab} selectedKeys={[testMatchTab]} mode="horizontal" aria-label="testMatchTab">*/}
-        {/*    <Menu.Item key="matched">Matched Entities</Menu.Item>*/}
-        {/*    <Menu.Item key="notMatched">Not Matched</Menu.Item>*/}
-        {/*  </Menu>*/}
-        {/*</div>*/}
-        {(previewMatchedData === 0) && <div className={styles.noMatchedDataView} aria-label="noMatchedDataView"><span>No matches found. You can try: </span><br />
-          <div className={styles.noMatchedDataContent}>
-            <span> Selecting a different test case</span><br />
-            <span> Changing or adding more URIs</span><br />
-            <span> Changing your match configuration. Preview matches in the Possible Combinations box</span>
-          </div>
-        </div>}
-        {previewMatchedActivity.actionPreview.length > 0 && testMatchTab === "matched" && uriTestMatchClicked ?
-          <div className={styles.UriMatchedDataTable}>
-            <div className={styles.modalTitleLegend} aria-label="modalTitleLegend">
-              <div className={styles.expandCollapseIcon}><ExpandCollapse handleSelection={(id) => handleExpandCollapse(id)} currentSelection={"collapse"} aria-label="expandCollapseIcon" /></div>
-            </div>
-            {rulesetDataList.map((rulesetDataList, index) => (
-              <Accordion id="testMatchedPanel" className={"w-100"} flush key={index} activeKey={activeMatchedRuleset.includes(rulesetDataList.rulesetName) ? rulesetDataList.rulesetName : ""} defaultActiveKey={activeMatchedRuleset.includes(rulesetDataList.rulesetName) ? rulesetDataList.rulesetName : ""}>
-                <Accordion.Item eventKey={rulesetDataList.rulesetName} style={{paddingBottom: index === Object.keys(rulesetDataList).length - 1 ? 20 : 0}}>
-                  <Card>
-                    <div className={"p-0 d-flex"}>
-                      <Accordion.Button onClick={() => handleRulesetAccordionChange(rulesetDataList.rulesetName)}>
-                        <span>
-                          <span className={"text-info fw-bold"}>{rulesetDataList.rulesetName}</span>
-                          <span className={"text-dark fw-bold"}> (Threshold: {rulesetDataList.score})</span>
-                          <span className={"d-block"}>{rulesetDataList.actionPreviewData.length} pair matches</span>
-                        </span>
-                      </Accordion.Button>
+        <div className={styles.matchedTab}>
+          { uriTestMatchClicked ?
+            <Tabs defaultActiveKey={testMatchTab} onSelect={(eventKey) => setTestMatchTab(eventKey ? eventKey:"matched")} className={styles.previewTabs}>
+              <Tab title="Matched Entities" eventKey="matched">
+                {(previewMatchedData === 0) && <div className={styles.noMatchedDataView} aria-label="noMatchedDataView"><span>No matches found. You can try: </span><br />
+                  <div className={styles.noMatchedDataContent}>
+                    <span> Selecting a different test case</span><br />
+                    <span> Changing or adding more URIs</span><br />
+                    <span> Changing your match configuration. Preview matches in the Possible Combinations box</span>
+                  </div>
+                </div>}
+                {previewMatchedActivity.actionPreview.length > 0 && testMatchTab === "matched" ?
+                  <div className={styles.UriMatchedDataTable}>
+                    <div className={styles.modalTitleLegend} aria-label="modalTitleLegend">
+                      <div className={styles.expandCollapseIcon}><ExpandCollapse handleSelection={(id) => handleExpandCollapse(id)} currentSelection={"collapse"} aria-label="expandCollapseIcon" /></div>
                     </div>
-                    <Accordion.Body className={"pt-1"}>
-                      {rulesetDataList.actionPreviewData.map((actionPreviewData, idx) => {
-                        const itemKey = actionPreviewData.name.concat(" - ") + actionPreviewData.action.concat("/") + idx;
-                        return (
-                          <Accordion id="testMatchedUriDataPanel" className={"w-100"} flush key={idx} activeKey={activeMatchedUri.includes(itemKey) ? itemKey : ""} defaultActiveKey={activeMatchedUri.includes(itemKey) ? itemKey : ""}>
-                            <Accordion.Item eventKey={itemKey}>
-                              <div className={"d-flex"}>
-                                <Accordion.Button onClick={() => handleUrisAccordionChange(itemKey)}>
-                                  <span onClick={e => e.stopPropagation()} className={"text-info"}>
-                                    <span className={"d-block"}>{actionPreviewData.uris[0]}<span className={"text-dark"}>  (Score: {actionPreviewData.score})</span></span>
-                                    <span className={"d-block"}>{actionPreviewData.uris[1]}</span>
-                                  </span>
-                                </Accordion.Button>
-                                <div className={"p-2"}>
-                                  <HCButton size="sm" variant="primary" onClick={() => { handleCompareButton([actionPreviewData.uris[0], actionPreviewData.uris[1]]); }} aria-label={actionPreviewData.uris[0].substr(0, 41) + " compareButton"}>Compare</HCButton>
-                                </div>
-                              </div>
-                              <Accordion.Body>
-                                <span aria-label="expandedTableView"><ExpandableTableView rowData={actionPreviewData} allRuleset={curationOptions.activeStep.stepArtifact.matchRulesets} entityData={curationOptions.activeStep} /></span>
-                              </Accordion.Body>
-                            </Accordion.Item>
-                          </Accordion>);
-                      })}
-                    </Accordion.Body>
-                  </Card>
-                </Accordion.Item>
-              </Accordion>
-            ))}
-          </div> : ""}
+                    {rulesetDataList.map((rulesetDataList, index) => (
+                      <Accordion id="testMatchedPanel" className={"w-100"} flush key={index} activeKey={activeMatchedRuleset.includes(rulesetDataList.rulesetName) ? rulesetDataList.rulesetName : ""} defaultActiveKey={activeMatchedRuleset.includes(rulesetDataList.rulesetName) ? rulesetDataList.rulesetName : ""}>
+                        <Accordion.Item eventKey={rulesetDataList.rulesetName} style={{paddingBottom: index === Object.keys(rulesetDataList).length - 1 ? 20 : 0}}>
+                          <Card>
+                            <div className={"p-0 d-flex"}>
+                              <Accordion.Button onClick={() => handleRulesetAccordionChange(rulesetDataList.rulesetName)}>
+                                <span>
+                                  <span className={"text-info fw-bold"}>{rulesetDataList.rulesetName}</span>
+                                  <span className={"text-dark fw-bold"}> (Threshold: {rulesetDataList.score})</span>
+                                  <span className={"d-block"}>{rulesetDataList.actionPreviewData.length} pair matches</span>
+                                </span>
+                              </Accordion.Button>
+                            </div>
+                            <Accordion.Body className={"pt-1"}>
+                              {rulesetDataList.actionPreviewData.map((actionPreviewData, idx) => {
+                                const itemKey = actionPreviewData.name.concat(" - ") + actionPreviewData.action.concat("/") + idx;
+                                return (
+                                  <Accordion id="testMatchedUriDataPanel" className={"w-100"} flush key={idx} activeKey={activeMatchedUri.includes(itemKey) ? itemKey : ""} defaultActiveKey={activeMatchedUri.includes(itemKey) ? itemKey : ""}>
+                                    <Accordion.Item eventKey={itemKey}>
+                                      <div className={"d-flex"}>
+                                        <Accordion.Button onClick={() => handleUrisAccordionChange(itemKey)}>
+                                          <span onClick={e => e.stopPropagation()} className={"text-info"}>
+                                            <span className={"d-block"}>{actionPreviewData.uris[0]}<span className={"text-dark"}>  (Score: {actionPreviewData.score})</span></span>
+                                            <span className={"d-block"}>{actionPreviewData.uris[1]}</span>
+                                          </span>
+                                        </Accordion.Button>
+                                        <div className={"p-2"}>
+                                          <HCButton size="sm" variant="primary" onClick={() => { handleCompareButton([actionPreviewData.uris[0], actionPreviewData.uris[1]]); }} aria-label={actionPreviewData.uris[0].substr(0, 41) + " compareButton"}>Compare</HCButton>
+                                        </div>
+                                      </div>
+                                      <Accordion.Body>
+                                        <span aria-label="expandedTableView"><ExpandableTableView rowData={actionPreviewData} allRuleset={curationOptions.activeStep.stepArtifact.matchRulesets} entityData={curationOptions.activeStep} /></span>
+                                      </Accordion.Body>
+                                    </Accordion.Item>
+                                  </Accordion>);
+                              })}
+                            </Accordion.Body>
+                          </Card>
+                        </Accordion.Item>
+                      </Accordion>
+                    ))}
+                  </div> : ""}
+              </Tab>
+              <Tab title="Not Matched" eventKey="notMatched">
+                {(previewNonMatchedData === 0) && <div className={styles.noNotMatchedDataView} aria-label="noNotMatchedDataView"><span>No non-matches found. You can try: </span><br />
+                  <div className={styles.noMatchedDataContent}>
+                    <span> Selecting a different test case</span><br />
+                    <span> Changing or adding more URIs</span><br />
+                    <span> Changing your match configuration. Preview matches in the Possible Combinations box</span>
+                  </div>
+                </div>}
+                {previewNonMatchedActivity.actionPreview.length > 0 && testMatchTab === "notMatched" ?
+                  <div className={styles.UriMatchedDataTable}>
+                    <div className={styles.modalTitleLegend} aria-label="modalTitleLegend">
+                      <div className={styles.expandCollapseIcon}><ExpandCollapse handleSelection={(id) => handleExpandCollapse(id)} currentSelection={"collapse"} aria-label="expandCollapseIcon" /></div>
+                    </div>
+                    {rulesetNonMatchedDataList.map((rulesetDataList, index) => (
+                      <Accordion id="testNotMatchedPanel" className={"w-100"} flush key={index} activeKey={activeMatchedRuleset.includes(rulesetDataList.rulesetName) ? rulesetDataList.rulesetName : ""} defaultActiveKey={activeMatchedRuleset.includes(rulesetDataList.rulesetName) ? rulesetDataList.rulesetName : ""}>
+                        <Accordion.Item eventKey={rulesetDataList.rulesetName} style={{paddingBottom: index === Object.keys(rulesetDataList).length - 1 ? 20 : 0}}>
+                          <Card>
+                            <div className={"p-0 d-flex"}>
+                              <Accordion.Button onClick={() => handleRulesetAccordionChange(rulesetDataList.rulesetName)}>
+                                <span>
+                                  <span className={"text-info fw-bold"}>{rulesetDataList.rulesetName}</span>
+                                  <span className={"d-block"}>{rulesetDataList.actionPreviewData.length} pair matches</span>
+                                </span>
+                              </Accordion.Button>
+                            </div>
+                            <Accordion.Body className={"pt-1"}>
+                              {rulesetDataList.actionPreviewData.map((actionPreviewData, idx) => {
+                                const itemKey = actionPreviewData.name.concat(" - ") + actionPreviewData.action.concat("/") + idx;
+                                return (
+                                  <Accordion id="testMatchedUriDataPanel" className={"w-100"} flush key={idx} activeKey={activeMatchedUri.includes(itemKey) ? itemKey : ""} defaultActiveKey={activeMatchedUri.includes(itemKey) ? itemKey : ""}>
+                                    <Accordion.Item eventKey={itemKey}>
+                                      <div className={"d-flex"}>
+                                        <Accordion.Button onClick={() => handleUrisAccordionChange(itemKey)}>
+                                          <span onClick={e => e.stopPropagation()} className={"text-info"}>
+                                            <span className={"d-block"}>{actionPreviewData.uris[0]}<span className={"text-dark"}>  (Score: {actionPreviewData.score})</span></span>
+                                            <span className={"d-block"}>{actionPreviewData.uris[1]}</span>
+                                          </span>
+                                        </Accordion.Button>
+                                        <div className={"p-2"}>
+                                          <HCButton size="sm" variant="primary" onClick={() => { handleCompareButton([actionPreviewData.uris[0], actionPreviewData.uris[1]]); }} aria-label={actionPreviewData.uris[0].substr(0, 41) + " compareButton"}>Compare</HCButton>
+                                        </div>
+                                      </div>
+                                      <Accordion.Body>
+                                        <span aria-label="expandedTableView"><ExpandableTableView rowData={actionPreviewData} allRuleset={curationOptions.activeStep.stepArtifact.matchRulesets} entityData={curationOptions.activeStep} /></span>
+                                      </Accordion.Body>
+                                    </Accordion.Item>
+                                  </Accordion>);
+                              })}
+                            </Accordion.Body>
+                          </Card>
+                        </Accordion.Item>
+                      </Accordion>
+                    ))}
+                  </div> : ""}
+              </Tab>
+            </Tabs>: ""}
+        </div>
       </div>
       <RulesetSingleModal
         isVisible={showRulesetSingleModal}

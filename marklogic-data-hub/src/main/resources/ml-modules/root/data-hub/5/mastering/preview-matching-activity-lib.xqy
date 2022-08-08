@@ -5,19 +5,21 @@ module namespace pma = "http://marklogic.com/smart-mastering/preview-matching-ac
 import module namespace hent = "http://marklogic.com/data-hub/hub-entities"
   at "/data-hub/5/impl/hub-entities.xqy";
 import module namespace matcher = "http://marklogic.com/smart-mastering/matcher"
-at "/com.marklogic.smart-mastering/matcher.xqy";
+  at "/com.marklogic.smart-mastering/matcher.xqy";
+import module namespace match-impl = "http://marklogic.com/smart-mastering/matcher-impl"
+  at "/com.marklogic.smart-mastering/matcher-impl/matcher-impl.xqy";
 
 declare variable $PMA-MAX-RESULTS := 100;
 declare variable $DEFAULT-URI-SAMPLE-SIZE := 20;
 
 declare option xdmp:mapping "false";
 
-declare function pma:match-within-uris($uris as xs:string*, $options as object-node())
+declare function pma:match-within-uris($uris as xs:string*, $original-options as object-node(), $options as object-node(), $non-matches as xs:boolean)
 {
-  pma:match-within-uris($uris, $options, 0)
+  pma:match-within-uris($uris, $original-options, $options, $non-matches, 0)
 };
 
-declare function pma:match-within-uris($uris as xs:string*, $options as object-node(), $count as xs:integer)
+declare function pma:match-within-uris($uris as xs:string*, $original-options as object-node(), $options as object-node(), $non-matches as xs:boolean, $count as xs:integer)
   as element(results)*
 {
   if (fn:count($uris) > 1) then
@@ -28,14 +30,20 @@ declare function pma:match-within-uris($uris as xs:string*, $options as object-n
                           cts:and-query((cts:query($options/filterQuery), $uris-query))
                         else
                           $uris-query
-    let $results := matcher:find-document-matches-by-options($doc1, $options, 1, 10000, fn:true(), $filter-query)
+    let $results := if ($non-matches) then
+        let $match-query := match-impl:find-document-matches-by-options($doc1, $original-options, 1, 10000, fn:min($original-options/thresholds/score ! fn:number(.)), fn:true(), $filter-query, fn:false())/match-query/schema-element(cts:query) ! cts:query(.)
+        let $exclude-uris := cts:uris((), (), $match-query)
+        let $filter-query := if (fn:exists($exclude-uris)) then cts:and-not-query($filter-query, cts:document-query($exclude-uris)) else $filter-query
+        return matcher:find-document-matches-by-options($doc1, $options, 1, 10000, fn:true(), $filter-query)
+      else
+        matcher:find-document-matches-by-options($doc1, $options, 1, 10000, fn:true(), $filter-query)
     let $count := $count + fn:count($results/result)
     let $results := pma:transform-results($results, $uri1)
     return
     (
       $results,
       if (fn:count($uris) > 2 and $count < $PMA-MAX-RESULTS) then
-        pma:match-within-uris(fn:tail($uris), $options, $count)
+        pma:match-within-uris(fn:tail($uris), $original-options, $options, $non-matches, $count)
       else
         ()
     )
@@ -49,7 +57,9 @@ declare function pma:match-within-uris($uris as xs:string*, $options as object-n
 :)
 declare function pma:match-against-source-query-docs(
   $uris as xs:string*,
+  $original-options as object-node(),
   $options as object-node(),
+  $non-matches as xs:boolean,
   $source-query as cts:query,
   $previous-count as xs:integer,
   $all-results as element(results)*
@@ -60,7 +70,9 @@ declare function pma:match-against-source-query-docs(
   else
     pma:match-against-source-query-docs(
       fn:tail($uris),
+      $original-options,
       $options,
+      $non-matches,
       $source-query,
       $previous-count,
       (
@@ -72,7 +84,13 @@ declare function pma:match-against-source-query-docs(
             1,
             $PMA-MAX-RESULTS - (fn:count($all-results) + $previous-count),
             fn:true(),
-            $source-query
+            if ($non-matches) then
+              let $match-query := match-impl:find-document-matches-by-options(fn:doc(fn:head($uris)), $original-options, 1, 10000, fn:min($options/thresholds/score ! fn:number(.)), fn:true(), $source-query, fn:false())/match-query/schema-element(cts:query) ! cts:query(.)
+              let $exclude-uris := cts:uris((), (), $match-query)
+              let $filter-query := if (fn:exists($exclude-uris)) then cts:and-not-query($source-query, cts:document-query($exclude-uris)) else $source-query
+              return $filter-query
+            else
+              $source-query
           ),
           fn:head($uris)
         )
@@ -81,7 +99,7 @@ declare function pma:match-against-source-query-docs(
 };
 
 (: main purpose of this transform is to store the URI used for the match in the results element :)
-declare function pma:transform-results($results as element(results), $uri as xs:string)
+declare function pma:transform-results($results as element(results)?, $uri as xs:string)
 {
   element results {
     $results/@*,
@@ -133,6 +151,22 @@ declare function pma:get-uri-sample($source-query as cts:query, $sample-size as 
     return $uri
 };
 
+declare function pma:preview-matching-activity(
+  $original-options as object-node(),
+  $source-query as cts:query,
+  $uris as xs:string*,
+  $restrict-to-uris as xs:boolean,
+  $sample-size as xs:integer?)
+  as object-node()
+{
+  pma:preview-matching-activity(
+    $original-options,
+    $source-query,
+    $uris,
+    $restrict-to-uris,
+    fn:false(),
+    $sample-size)
+};
 (:
   The XQuery entry point function for the previewMatchingActivity API.
   If there are at least two $uris, we first match within $uris, sorted descending by score.
@@ -144,13 +178,24 @@ declare function pma:get-uri-sample($source-query as cts:query, $sample-size as 
   To support the "All Data" option in the UI, pass a very large $sample-size.
 :)
 declare function pma:preview-matching-activity(
-  $options as object-node(),
+  $original-options as object-node(),
   $source-query as cts:query,
   $uris as xs:string*,
   $restrict-to-uris as xs:boolean,
+  $non-matches as xs:boolean,
   $sample-size as xs:integer?)
   as object-node()
 {
+  let $options :=
+    if ($non-matches) then
+      let $min-score := fn:min($original-options/matchRulesets/weight)
+      let $new-threshold := json:object() => map:with("thresholdName", "Not Matched") => map:with("score", $min-score) => map:with("action", "none")
+      return xdmp:to-json(
+        xdmp:from-json($original-options) =>
+            map:with("thresholds", json:array() => json:array-with($new-threshold))
+        )/object-node()
+    else
+      $original-options
   let $obj := json:object()
   let $source-query :=
     if (fn:exists($options/filterQuery[*])) then
@@ -164,7 +209,7 @@ declare function pma:preview-matching-activity(
       pma:get-uri-sample($source-query, $sample-size)
   let $results-within-uris :=
     pma:consolidate-preview-results(
-      pma:match-within-uris($uris, $options)
+      pma:match-within-uris($uris, $original-options, $options, $non-matches)
     )
   let $previous-count := fn:count($results-within-uris)
   let $results-against-source-query-docs :=
@@ -172,7 +217,7 @@ declare function pma:preview-matching-activity(
       ()
     else
       pma:consolidate-preview-results(
-        pma:match-against-source-query-docs($uris, $options, cts:and-not-query($source-query, cts:document-query($uris)), $previous-count, ())
+        pma:match-against-source-query-docs($uris, $original-options, $options, $non-matches, cts:and-not-query($source-query, cts:document-query($uris)), $previous-count, ())
       )
   let $all-results := fn:subsequence(($results-within-uris, $results-against-source-query-docs), 1, $PMA-MAX-RESULTS)
   let $all-uris := fn:distinct-values(($all-results ! ( json:array-values(map:get(., "uris")))))

@@ -264,6 +264,13 @@
     margin-top: 4vh;
 }
 
+.noNotMatchedDataView {
+    border: 1px solid lightgrey;
+    padding: 1em;
+    margin-left: 2.3%;
+    margin-top: 4vh;
+}
+
 .noMatchedDataContent {
     margin-top: 1vh;
     :before {
@@ -407,4 +414,11 @@
     margin-left: -2.2em;
     margin-top: 5px;
   }
+}
+
+ul.previewTabs {
+    width: 100%;
+    margin-left: 1rem;
+    justify-content: flex-start;
+    font-size: 14px;
 }
