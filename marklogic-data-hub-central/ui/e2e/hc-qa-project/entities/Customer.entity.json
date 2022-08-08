@@ -2,17 +2,13 @@
   "info": {
     "title": "Customer",
     "version": "0.0.1",
-"baseUri": "http://example.org/",
-"draft": false
+    "baseUri": "http://example.org/",
+    "draft": false
   },
   "definitions": {
     "Customer": {
-      "required": [
-        "name"
-      ],
-      "pii": [
-        "pin"
-      ],
+      "required": ["name"],
+      "pii": ["pin"],
       "primaryKey": "customerId",
       "properties": {
         "customerId": {
@@ -76,16 +72,28 @@
           "items": {
             "$ref": "http://example.org/Order-0.0.1/Order"
           }
+        },
+        "hasShoe": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
         }
+      },
+      "relatedConcepts": [
+        {
+          "context": "hasShoe",
+          "predicate": "shoes",
+          "conceptExpression": "sem:iri(\"http://www.example.com/Category/\" || fn:replace(fn:string(.),'\\s+', ''))",
+          "conceptClass": "ShoeType"
+        }
+      ],
+      "description": ""
     },
-"description": ""
-},
     "Address": {
-      "required": [ ],
-      "pii": [ ],
-      "elementRangeIndex": [ ],
-      "rangeIndex": [ ],
-      "wordLexicon": [ ],
+      "required": [],
+      "pii": [],
+      "elementRangeIndex": [],
+      "rangeIndex": [],
+      "wordLexicon": [],
       "properties": {
         "street": {
           "datatype": "array",
@@ -108,7 +116,7 @@
       }
     },
     "Zip": {
-      "required": [ ],
+      "required": [],
       "properties": {
         "fiveDigit": {
           "datatype": "string",
@@ -120,5 +128,5 @@
         }
       }
     }
-}
+  }
 }

@@ -38,6 +38,9 @@ class GraphViewSidePanel {
   getRelatedConceptClassesTab() {
     return cy.get(`[data-rr-ui-event-key="relatedConceptClasses"]`);
   }
+  getRelatedConceptPropertyName(propertyName:string) {
+    return cy.get(`[data-testid="relationship-name-${propertyName}"]`);
+  }
 
   getRelatedConceptClassesTabContent() {
     return cy.get(`[id="relatedConceptClasses"]`);

@@ -109,7 +109,7 @@ describe("Concept classes in Modeling screen", () => {
     relationshipModal.verifyTargetNode("ShoeStyle").should("be.visible");
 
     //add relationship properties and save
-    relationshipModal.editRelationshipName("isCategory");
+    relationshipModal.editRelationshipName("quarter");
 
     //open Optional line to edit foreign key field
     relationshipModal.toggleOptional();
@@ -129,7 +129,7 @@ describe("Concept classes in Modeling screen", () => {
       graphVis.getGraphVisCanvas().click(edgePosition.x, edgePosition.y, {force: true});
     });
 
-    relationshipModal.verifyRelationshipValue("isCategory");
+    relationshipModal.verifyRelationshipValue("quarter");
     relationshipModal.verifySourcePropertyValue("category");
 
     cy.log("Verify that the relationship type toggle is disabled in the Edit mode");
