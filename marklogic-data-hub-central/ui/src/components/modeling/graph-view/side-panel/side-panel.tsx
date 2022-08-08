@@ -463,7 +463,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
         key: "relationshipName",
         headerFormatter: () => <span aria-label="relationshipName-header">Relationship Name</span>,
         formatter: (_, row) => {
-          return <span onClick={() => handleRelatedConceptClassesClick(row)} className={styles.link}>{row?.predicate}</span>;
+          return <span data-testid={`relationship-name-${row?.predicate}`} onClick={() => handleRelatedConceptClassesClick(row)} className={styles.link}>{row?.predicate}</span>;
         }
       },
       {

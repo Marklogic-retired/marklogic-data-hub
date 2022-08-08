@@ -86,6 +86,10 @@ class RelationshipModal {
     cy.findByText(option).click({force: true});
   }
 
+  getSourcePropertyListIcon() {
+    return cy.get(`[data-testid="sourcePropertylistIcon"]`);
+  }
+
   getSourcePropertySelectWrapper() {
     return cy.get("#property-dropdown-wrapper");
   }

@@ -4,6 +4,7 @@ import modelPage from "../../support/pages/model";
 import {
   entityTypeTable,
   graphViewSidePanel,
+  relationshipModal,
 } from "../../support/components/model/index";
 import {confirmationModal, toolbar} from "../../support/components/common/index";
 import {Application} from "../../support/application.config";
@@ -90,6 +91,24 @@ describe("Graph Validations", () => {
     graphViewSidePanel.getConfirmationModal().should("exist");
 
 
+  });
+  it("can view and works with the Optional section and select source property dropdown", {defaultCommandTimeout: 120000}, () => {
+    cy.log("**Visit Customer entity**");
+    entityTypeTable.viewEntityInGraphView("Customer");
+
+    cy.log("**Select Related Concept Classes tab**");
+    graphViewSidePanel.getRelatedConceptClassesTab().click();
+    graphViewSidePanel.getPropertyTableHeader("relationshipName").should("exist");
+    graphViewSidePanel.getPropertyTableHeader("conceptClass").should("exist");
+
+    cy.log("**Open relationship modal**");
+    graphViewSidePanel.getRelatedConceptPropertyName("shoes").click();
+
+    cy.log("**Open relationship modal**");
+    relationshipModal.toggleOptional();
+    relationshipModal.getSourcePropertyListIcon().should("exist");
+    relationshipModal.getSourcePropertyListIcon().click();
+    relationshipModal.verifyEntityOption("nicknames").should("exist");
   });
 
   it("can filter and select entity type in graph view", {defaultCommandTimeout: 120000}, () => {

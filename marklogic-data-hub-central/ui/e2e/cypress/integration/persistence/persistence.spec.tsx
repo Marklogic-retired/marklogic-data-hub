@@ -190,7 +190,7 @@ describe("Validate persistence across Hub Central", () => {
   });
 
   it("Validate that the table records on shown in the UI are sorted desc", () => {
-    expect(JSON.stringify(entityNamesDesc)).equal(JSON.stringify(entityNamesAsc.reverse()));
+    expect(JSON.stringify(entityNamesDesc)).equal(JSON.stringify(entityNamesDesc.sort().reverse()));
   });
 
   // Persistence of mapping step details is disabled temporarily. DHFPROD-7466
@@ -317,7 +317,7 @@ describe("Validate persistence across Hub Central", () => {
     modelPage.selectView("table");
 
     cy.log("**Confirms that the property added is still there**");
-    propertyTable.getProperty(propertyName).should("be.visible");
+    propertyTable.getProperty(propertyName).scrollIntoView().should("be.visible");
 
     cy.log("**Deletes the entity added by the test**");
     cy.deleteEntities([entityName]);
