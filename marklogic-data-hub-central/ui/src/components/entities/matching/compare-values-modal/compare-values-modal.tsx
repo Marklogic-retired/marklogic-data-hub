@@ -6,8 +6,10 @@ import {Definition} from "../../../../types/modeling-types";
 import {CurationContext} from "@util/curation-context";
 import backgroundImage from "../../../../assets/white-for-dark-bg.png";
 import {HCTable, HCButton} from "@components/common";
-// import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
-// import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {SearchContext} from "@util/search-context";
+import {isArray, isObject} from "util";
 
 interface Props {
   isVisible: any;
@@ -24,6 +26,7 @@ interface Props {
   mergeUris: any;
   unmergeUri: any;
   originalUri: string;
+  flowName: string;
 }
 
 const CompareValuesModal: React.FC<Props> = (props) => {
@@ -32,7 +35,12 @@ const CompareValuesModal: React.FC<Props> = (props) => {
   const [matchedProperties, setMatchedProperties] = useState<any[]>([]);
   const [compareValuesTableData, setCompareValuesTableData] = useState<any[]>([]);
   const [expandedRows, setExpandedRows] = useState<string[]>([]);
-  const [confirmModalVisible, setConfirmModalVisible] = useState(false); // eslint-disable-line @typescript-eslint/no-unused-vars
+  const [confirmModalVisible, setConfirmModalVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const {
+    searchOptions,
+    toggleMergeUnmerge,
+  } = useContext(SearchContext);
 
   useEffect(() => {
     if (props.isVisible && props.uriInfo) {
@@ -274,7 +282,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
         if (props.uriInfo !== undefined) {
           propertyValueInURI1 = property1[property.name];
           propertyValueInURI2 = property2[property.name];
-          if (propertyValueInURI1 === undefined || propertyValueInURI2 === undefined) {
+          if (propertyValueInURI1 === undefined || propertyValueInURI2 === undefined || isArray(propertyValueInURI1) || isArray(propertyValueInURI2) || isObject(propertyValueInURI1) || isObject(propertyValueInURI2)) {
             propertyValueInURI1 = "";
             propertyValueInURI2 = "";
           }
@@ -396,54 +404,60 @@ const CompareValuesModal: React.FC<Props> = (props) => {
   };
 
 
-  //TO BE ADDED WITH DHFPROD-9136
+  const onMergeUnmerge = async () => {
+    setIsLoading(true);
+    setConfirmModalVisible(false);
 
-  // const onMergeUnmerge = async () => {
-  // let payload = {
-  //   mergeDocumentURI: props.originalUri
-  // }
+    if (!props.isMerge) {
+      let payload = {
+        mergeDocumentURI: props.originalUri
+      };
+      await props.unmergeUri(payload);
+      setIsLoading(false);
+    } else {
+      let payload = {
+        mergeURIs: props.uris,
+        flowName: props.flowName
+      };
+      await props.mergeUris(payload);
+      setIsLoading(false);
+    }
+    closeModal();
+    toggleMergeUnmerge(searchOptions.mergeUnmerge);
+  };
 
-  // if(!props.isMerge) {
-  //   console.log("calling")
-  //   await props.unmergeUri(payload);
-  // } else {
-  //   await props.mergeUris(payload);
-  // }
-  // setConfirmModalVisible(false);
-  // closeModal();
-  // };
-
-  // const mergeUnmergeConfirmation = (
-  //   <Modal show={confirmModalVisible} dialogClassName={styles.confirmationModal}>
-  //     <Modal.Body>
-  //       <div style={{display: "flex"}}>
-  //         <div style={{padding: "24px 0px 0px 15px"}}>
-  //           <FontAwesomeIcon icon={faExclamationTriangle} size="lg" style={{color: "rgb(188, 129, 29)"}}></FontAwesomeIcon>
-  //         </div>
-  //         <div style={{fontSize: "16px", padding: "20px 20px 20px 20px"}}>
-  //           {props.isMerge ?
-  //             "Are you sure you want to merge these documents? Doing so will combine them to form one single document. The original documents will be moved to the archive collection."
-  //             :
-  //             "Are you sure you want to unmerge this document? Doing so will return the original documents out of the archive collection."
-  //           }
-  //         </div>
-  //       </div>
-  //     </Modal.Body>
-  //     <Modal.Footer>
-  //       <HCButton variant="outline-light" onClick={() => setConfirmModalVisible(false)}>
-  //         <div aria-label="No">No</div>
-  //       </HCButton>
-  //       <HCButton variant="primary" onClick={() => onMergeUnmerge()}>
-  //         <div aria-label="Yes">Yes</div>
-  //       </HCButton>
-  //     </Modal.Footer>
-  //   </Modal>
-  // );
+  const mergeUnmergeConfirmation = (
+    <Modal show={confirmModalVisible} dialogClassName={styles.confirmationModal}>
+      <Modal.Body>
+        <div style={{display: "flex"}}>
+          <div style={{padding: "24px 0px 0px 15px"}}>
+            <FontAwesomeIcon icon={faExclamationTriangle} size="lg" style={{color: "rgb(188, 129, 29)"}}></FontAwesomeIcon>
+          </div>
+          <div style={{fontSize: "16px", padding: "20px 20px 20px 20px"}}>
+            {props.isMerge ?
+              "Are you sure you want to merge these documents? Doing so will combine them to form one single document. The original documents will be moved to the archive collection."
+              :
+              "Are you sure you want to unmerge this document? Doing so will move the original documents out of the archive collection."
+            }
+          </div>
+        </div>
+      </Modal.Body>
+      <Modal.Footer>
+        <HCButton variant="outline-light" onClick={() => setConfirmModalVisible(false)}>
+          <div aria-label="No">No</div>
+        </HCButton>
+        <HCButton variant="primary" onClick={() => onMergeUnmerge()}>
+          <div aria-label="Yes">Yes</div>
+        </HCButton>
+      </Modal.Footer>
+    </Modal>
+  );
 
   return <><Modal
     show={props.isVisible}
     size={"lg"}
     dialogClassName={styles.modal1400w}
+    aria-label={"compare-values-modal"}
   >
     <Modal.Header className={"bb-none"}>
       <span className={styles.compareValuesModalHeading}>Compare</span>
@@ -485,14 +499,12 @@ const CompareValuesModal: React.FC<Props> = (props) => {
         <HCButton variant="outline-light" onClick={() => closeModal()}>
           <div aria-label="Cancel">Cancel</div>
         </HCButton>
-        <HCButton variant="primary" onClick={() => setConfirmModalVisible(true)}>
-          {
-            props.isMerge ? <div aria-label="confirm-merge">Merge</div> : <div aria-label="confirm-unmerge">Unmerge</div>
-          }
+        <HCButton variant="primary" loading={isLoading}  aria-label="confirm-merge-unmerge" onClick={() => setConfirmModalVisible(true)}>
+          {props.isMerge ? "Merge" : "Unmerge"}
         </HCButton>
       </Modal.Footer> : null}
   </Modal>
-  {/* {mergeUnmergeConfirmation} */}
+  {mergeUnmergeConfirmation}
   </>;
 };
 

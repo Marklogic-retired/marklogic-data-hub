@@ -7,6 +7,7 @@ import axiosMock from "axios";
 import {MemoryRouter} from "react-router-dom";
 import {SearchContext} from "../../util/search-context";
 import testData from "../../assets/mock-data/explore/Non-entity-document-payload";
+import {AuthoritiesService, AuthoritiesContext} from "../../util/authorities";
 
 jest.mock("axios");
 
@@ -90,19 +91,23 @@ describe("Raw data card view component", () => {
   });
 
   test("Verify file download and merge on Raw data card ", async () => {
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(["readMerging", "readMatching"]);
     axiosMock.get["mockImplementationOnce"](jest.fn(() => Promise.resolve(testData.allDataRecordDownloadResponse)));
 
     const {getByTestId, getByText} = render(<MemoryRouter>
-      <SearchContext.Provider value={{
-        searchOptions: defaultSearchOptions,
-        greyedOptions: defaultSearchOptions,
-        setEntity: jest.fn(),
-        applySaveQuery: jest.fn()
-      }}>
-        <RecordCardView
-          data={entitySearch.results}
-        />
-      </SearchContext.Provider></MemoryRouter>);
+      <AuthoritiesContext.Provider value={authorityService}>
+        <SearchContext.Provider value={{
+          searchOptions: defaultSearchOptions,
+          greyedOptions: defaultSearchOptions,
+          setEntity: jest.fn(),
+          applySaveQuery: jest.fn()
+        }}>
+          <RecordCardView
+            data={entitySearch.results}
+          />
+        </SearchContext.Provider>
+      </AuthoritiesContext.Provider></MemoryRouter>);
 
     //verify merge icon tooltip
     fireEvent.mouseOver(getByTestId("merge-icon"));

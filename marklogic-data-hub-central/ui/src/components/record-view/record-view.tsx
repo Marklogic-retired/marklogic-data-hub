@@ -1,4 +1,4 @@
-import React, {CSSProperties, useContext} from "react";
+import React, {CSSProperties, useContext, useState} from "react";
 import styles from "./record-view.module.scss";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -15,15 +15,26 @@ import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import {Download, FileEarmark, ArrowRightSquare} from "react-bootstrap-icons";
 import {HCCard, HCTooltip} from "@components/common";
 import Popover from "react-bootstrap/Popover";
-import {OverlayTrigger} from "react-bootstrap";
+import {OverlayTrigger, Spinner} from "react-bootstrap";
+import {SecurityTooltips} from "@config/tooltips.config";
 import {RiMergeCellsHorizontal} from "react-icons/ri";
+import {previewMatchingActivity, getDocFromURI} from "@api/matching";
+import {mergeUris} from "@api/merging";
+import CompareValuesModal from "../../components/entities/matching/compare-values-modal/compare-values-modal";
 
 const RecordCardView = (props) => {
-  const authorityService = useContext(AuthoritiesContext);  // eslint-disable-line @typescript-eslint/no-unused-vars
+  const authorityService = useContext(AuthoritiesContext);
   const {
     searchOptions
   } = useContext(SearchContext);
-
+  const [loading, setToggleLoading] = useState<string>("");
+  const [compareModalVisible, setCompareModalVisible] = useState(false);
+  const [previewMatchedActivity, setPreviewMatchedActivity] = useState<{}>({sampleSize: 100, uris: [], actionPreview: []});
+  const [activeEntityArray, setActiveEntityArray] = useState<any>([]);
+  const [activeEntityUris, setActiveEntityUris] = useState<string[]>([]);
+  const [uriInfo, setUriInfo] = useState<any>();
+  const [flowName, setFlowname] = useState<string>("");
+  const canReadMatchMerge = authorityService.canReadMatchMerge();
   const handleDetailViewNavigation = () => { }; // eslint-disable-line @typescript-eslint/no-unused-vars
 
   // Custom CSS for source Format
@@ -180,6 +191,46 @@ const RecordCardView = (props) => {
     return `Download (${size} ${unit})`;
   };
 
+  const openMergeCompare = async (item) => {
+    let arrayUris = item.notifiedDocumentUris;
+    let activeEntityIndex = props.entityDefArray.findIndex((entity) => entity.name === item["entityName"]);
+    setFlowname(item.hubMetadata.lastProcessedByFlow);
+    setActiveEntityArray([props.entityDefArray[activeEntityIndex]]);
+    setActiveEntityUris(arrayUris);
+    setToggleLoading(item.uri);
+    await fetchCompareData(arrayUris, item);
+    setCompareModalVisible(true);
+  };
+
+  const fetchCompareData = async (array, item) => {
+    const result1 = await getDocFromURI(array[0]);
+    const result2 = await getDocFromURI(array[1]);
+
+    if (result1.status === 200 && result2.status === 200) {
+      let result1Instance = {[item.entityName]: result1.data.entityInstanceProperties};
+      let result2Instance = {[item.entityName]: result2.data.entityInstanceProperties};
+      await setUriInfo([{result1Instance}, {result2Instance}]);
+    }
+
+    let testMatchData = {
+      restrictToUris: true,
+      uris: activeEntityUris,
+      sampleSize: 100,
+      stepName: item.matchStepName
+    };
+
+    let previewMatchActivity = await previewMatchingActivity(testMatchData);
+    if (previewMatchActivity) {
+      setToggleLoading("");
+      setPreviewMatchedActivity(previewMatchActivity);
+    }
+
+  };
+
+  const submitMergeUri = async (payload) => {
+    await mergeUris(payload);
+  };
+
   return (
     <div id="record-data-card" aria-label="record-data-card" className={styles.recordDataCard}>
       <Row className="w-100 m-0">
@@ -236,9 +287,29 @@ const RecordCardView = (props) => {
                 {
                   elem.notifiedDoc ?
                     <div className={styles.mergeIconDiv}>
-                      <HCTooltip text={"Merge Documents"} id="merge-icon" placement="top-end">
-                        <i><RiMergeCellsHorizontal className={styles.mergeIcon} data-testid={"merge-icon"}/></i>
-                      </HCTooltip>
+                      {
+                        loading === elem.uri ?
+                          <Spinner
+                            data-testid="hc-button-component-spinner"
+                            as="span"
+                            animation="border"
+                            size="sm"
+                            role="status"
+                            aria-hidden="true"
+                            className={styles.spinner}
+                          /> : null
+                      }
+                      {
+                        canReadMatchMerge ?
+                          <HCTooltip text={"Merge Documents"} id="merge-icon" placement="top-end">
+                            <i><RiMergeCellsHorizontal className={styles.mergeIcon} data-testid={"merge-icon"} onClick={() => openMergeCompare(elem)}/></i>
+                          </HCTooltip>
+                          :
+                          <HCTooltip text={SecurityTooltips.missingPermission} id="missing-permission-tooltip" placement="top-end">
+                            <i><RiMergeCellsHorizontal className={styles.mergeIconDisabled} data-testid={"merge-icon"}/></i>
+                          </HCTooltip>
+                      }
+
                     </div>
                     : null}
                 <span className={styles.downloadIcon}>
@@ -250,6 +321,23 @@ const RecordCardView = (props) => {
             </div>
           </Col>)) : <span></span>}
       </Row>
+      <CompareValuesModal
+        isVisible={compareModalVisible}
+        toggleModal={setCompareModalVisible}
+        uriInfo={uriInfo}
+        activeStepDetails={activeEntityArray}
+        entityProperties={{}}
+        uriCompared={activeEntityUris}
+        previewMatchActivity={previewMatchedActivity}
+        entityDefinitionsArray={activeEntityArray}
+        uris={activeEntityUris}
+        isPreview={false}
+        isMerge={true}
+        flowName={flowName}
+        mergeUris={submitMergeUri}
+        unmergeUri={{}}
+        originalUri={""}
+      />
     </div>
   );
 };

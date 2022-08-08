@@ -35,9 +35,11 @@ function unmergeTransformTest() {
 
 function manualMergeTransformTest() {
   const searchResultsTransform = require('/marklogic.rest.transform/hubAllDataSearchTransform/assets/transform.sjs');
-  const transformedResults = searchResultsTransform.transform({}, {}, xdmp.toJSON({ results: [{uri: "/content/smNotifiedDoc.xml"}]}));
+  const transformedResults = searchResultsTransform.transform({}, {}, xdmp.toJSON({ results: [{uri: "/com.marklogic.smart-mastering/matcher/notifications/1.xml"}]}));
   return[
-    test.assertTrue(transformedResults.results[0].merge, `Notifed documents should merge.`),
+    test.assertTrue(transformedResults.results[0].merge, `Notified documents should merge.`),
+    test.assertEqual("Customer", transformedResults.results[0].entityName, `Notified documents should have entity name.`),
+    test.assertEqual("matchingCustomer", transformedResults.results[0].matchStepName, `Notified documents should have step name.`)
   ];
 }
 

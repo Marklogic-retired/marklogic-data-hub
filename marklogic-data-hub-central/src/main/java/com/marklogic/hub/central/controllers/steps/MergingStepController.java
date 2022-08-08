@@ -16,7 +16,12 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,24 +101,28 @@ public class MergingStepController extends BaseController {
         return ResponseEntity.ok(MasteringService.on(getHubClient().getFinalClient()).validateMergingStep(stepName, view, entityPropertyPath));
     }
 
-    @RequestMapping(value = "/unmerge", method = RequestMethod.PUT)
-    @Secured("ROLE_readMerging")
-    public ResponseEntity<JsonNode> unmergeDocument(@PathVariable String mergeDocumentURI, @RequestParam(required = false, defaultValue = "true") Boolean retainAuditTrail, @RequestParam(required = false, defaultValue = "true") Boolean blockFutureMerges) {
-        MasteringManager mgr = new MasteringManagerImpl(getHubClient());
-        return ResponseEntity.ok(mgr.unmerge(mergeDocumentURI, retainAuditTrail, blockFutureMerges));
-    }
-
     @RequestMapping(value = "/merge", method = RequestMethod.PUT)
     @Secured("ROLE_readMerging")
-    public ResponseEntity<JsonNode> mergeDocument(@RequestParam List<String> mergeURIs, @RequestParam String flowName, @RequestParam(required = false)  String stepNumber, @RequestParam(required = false, defaultValue = "false") Boolean preview, @RequestParam(required = false, defaultValue = "{}") String options) {
+    public ResponseEntity<JsonNode> mergeDocument(@RequestBody JsonNode request) {
         MasteringManager mgr = new MasteringManagerImpl(getHubClient());
         try {
-            JsonNode node = new ObjectMapper().readTree(options);
-            return ResponseEntity.ok(mgr.merge(mergeURIs, flowName, stepNumber, preview, node));
+            List<String> mergeURIs = new ObjectMapper().readerForListOf(String.class).readValue(request.get("mergeURIs"));
+            String flowName = request.path("flowName").asText();
+            String stepNumber = request.path("stepNumber").asText();
+            boolean preview = request.path("preview").asBoolean();
+            JsonNode options = request.path("options");
+            return ResponseEntity.ok(mgr.merge(mergeURIs, flowName, stepNumber, preview, options));
         }
         catch (Exception e) {
             throw new RuntimeException("Unable to Manually merge docs cause " + e.getMessage(), e);
         }
+    }
+
+    @RequestMapping(value = "/unmerge", method = RequestMethod.PUT)
+    @Secured("ROLE_readMerging")
+    public ResponseEntity<JsonNode> unmergeDocument(@RequestParam String mergeDocumentURI, @RequestParam(required = false, defaultValue = "true") Boolean retainAuditTrail, @RequestParam(required = false, defaultValue = "true") Boolean blockFutureMerges) {        
+        MasteringManager mgr = new MasteringManagerImpl(getHubClient());
+        return ResponseEntity.ok(mgr.unmerge(mergeDocumentURI, retainAuditTrail, blockFutureMerges));
     }
 
     private StepService newService() {

@@ -164,7 +164,23 @@ xdmp:document-insert("/exp/doc2",
         map:map()
           => map:with("datahubCreatedInFlow", "my-flow-2")
           => map:with("datahubCreatedByStep", "my-step-2")
-        ));
+        )),
+  xdmp:document-insert("/com.marklogic.smart-mastering/matcher/notifications/1.xml",
+    <sm:notification xmlns:sm="http://marklogic.com/smart-mastering">
+        <sm:meta>
+            <sm:dateTime>2022-08-03T10:44:46.789751-07:00</sm:dateTime>
+            <sm:user>hc-developer</sm:user>
+            <sm:status>unread</sm:status>
+        </sm:meta>
+        <sm:threshold-label>Likely Match</sm:threshold-label>
+        <sm:document-uris>
+            <sm:document-uri>/content/jane.json</sm:document-uri>
+            <sm:document-uri>/content/jane.xml</sm:document-uri>
+        </sm:document-uris>
+    </sm:notification>,
+    map:map()
+      => map:with("permissions", $default-permissions)
+      => map:with("collections", "sm-Customer-notification"));
 
 xdmp:document-set-properties(
          "/exp/doc1",

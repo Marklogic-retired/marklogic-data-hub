@@ -12,6 +12,10 @@ import {ChevronDown, ChevronRight} from "react-bootstrap-icons";
 import {HCTooltip} from "@components/common";
 import CompareValuesModal from "../entities/matching/compare-values-modal/compare-values-modal";
 import {previewMatchingActivity, getDocFromURI} from "@api/matching";
+import {unmergeUri} from "@api/merging";
+import {AuthoritiesContext} from "@util/authorities";
+import {Spinner} from "react-bootstrap";
+import {SecurityTooltips} from "@config/tooltips.config";
 
 interface Props extends RouteComponentProps {
     item: any;
@@ -32,6 +36,9 @@ const SearchResult: React.FC<Props> = (props) => {
   const [uriInfo, setUriInfo] = useState<any>();
   const [previewMatchedActivity, setPreviewMatchedActivity] = useState<{}>({sampleSize: 100, uris: [], actionPreview: []});
   const [compareModalVisible, setCompareModalVisible] = useState(false);
+  const [loading, setToggleLoading] = useState("");
+  const authorityService = useContext(AuthoritiesContext);
+  const canReadMatchMerge = authorityService.canReadMatchMerge();
 
   let itemEntityName: string[] = [];
   let primaryKey: any = "-";
@@ -62,6 +69,10 @@ const SearchResult: React.FC<Props> = (props) => {
       return src.datahubSourceName;
     }).join(", ");
   }
+
+  const submitUnmergeUri = async (payload) => {
+    await unmergeUri(payload);
+  };
 
   function getSnippet() {
     let str = "";
@@ -102,17 +113,18 @@ const SearchResult: React.FC<Props> = (props) => {
       arrayUris = item.unmergeUris.map((obj) => { return obj["document-uri"]; });
     }
     setActiveEntityUris(arrayUris);
-    await fetchCompareData(arrayUris);
+    setToggleLoading(item.uri);
+    await fetchCompareData(arrayUris, item);
     setCompareModalVisible(true);
   };
 
-  const fetchCompareData = async (array) => {
+  const fetchCompareData = async (array, item) => {
     const result1 = await getDocFromURI(array[0]);
     const result2 = await getDocFromURI(array[1]);
 
     if (result1.status === 200 && result2.status === 200) {
-      let result1Instance = result1.data.data.envelope.instance;
-      let result2Instance = result2.data.data.envelope.instance;
+      let result1Instance = {[item.entityName]: result1.data.entityInstanceProperties};
+      let result2Instance = {[item.entityName]: result2.data.entityInstanceProperties};
       await setUriInfo([{result1Instance}, {result2Instance}]);
     }
 
@@ -125,7 +137,7 @@ const SearchResult: React.FC<Props> = (props) => {
 
     let previewMatchActivity = await previewMatchingActivity(testMatchData);
     if (previewMatchActivity) {
-      // setToggleLoading(false);
+      setToggleLoading("");
       setPreviewMatchedActivity(previewMatchActivity);
     }
   };
@@ -187,12 +199,33 @@ const SearchResult: React.FC<Props> = (props) => {
             </div>
             {
               props.item.unmerge ?
-                <div className={styles.unMergeIcon}>
-                  <HCTooltip text={"Unmerge Documents"} id="unmerge-icon-tooltip" placement="top-end">
-                    <i><RiSplitCellsHorizontal className={styles.unMergeIcon} data-testid={`unmerge-icon`} aria-label={`unmerge-icon`} onClick={(e) => openUnmergeCompare(props.item, e)}/></i>
-                  </HCTooltip>
-                </div>
-                : null
+                <div>
+                  <div className={styles.unMergeIcon}>
+                    {
+                      canReadMatchMerge ?
+                        <HCTooltip text={"Unmerge Documents"} id="unmerge-icon-tooltip" placement="top-end">
+                          <i><RiSplitCellsHorizontal className={styles.unMergeIcon} data-testid={`unmerge-icon`} aria-label={`unmerge-icon`} onClick={(e) => openUnmergeCompare(props.item, e)}/></i>
+                        </HCTooltip>
+                        :
+                        <HCTooltip text={SecurityTooltips.missingPermission} id="missing-permission-tooltip" placement="top-end">
+                          <i><RiSplitCellsHorizontal className={styles.unMergeIconDisabled} data-testid={`unmerge-icon`} aria-label={`unmerge-icon`}/></i>
+                        </HCTooltip>
+                    }
+
+                  </div>
+                  {
+                    loading === props.item.uri ?
+                      <Spinner
+                        data-testid="hc-button-component-spinner"
+                        as="span"
+                        animation="border"
+                        size="sm"
+                        role="status"
+                        aria-hidden="true"
+                        className={styles.spinner}
+                      /> : null
+                  }
+                </div> : null
             }
           </div>
         </div>
@@ -236,8 +269,9 @@ const SearchResult: React.FC<Props> = (props) => {
         isPreview={false}
         isMerge={false}
         mergeUris={() => void 0}
-        unmergeUri={() => void 0}
+        unmergeUri={submitUnmergeUri}
         originalUri={props.item.uri}
+        flowName={""}
       />
     </>
   );

@@ -56,7 +56,8 @@ const expectedMergedDocUri = "/com.marklogic.smart-mastering/merged/1e3ec6e5e621
 // Verify the merged doc first
 const mergedRecord = hubTest.getRecord(expectedMergedDocUri);
 const mergedDoc = mergedRecord.document.envelope;
-const merges = mergedDoc.headers.merges[Object.keys(mergedDoc.headers.merges)[0]];
+const merges = mergedDoc.headers.merges;
+
 assertions.push(
   // Verify headers
   test.assertEqual(true, mergedDoc.headers.headerFromMappingStep, 
@@ -69,8 +70,8 @@ assertions.push(
     "Merging is expected to store the merged document URI in the 'id' header"),
   test.assertEqual(2, merges.length,
     "The merges array should have one entry for each of the 2 merged documents"),
-  test.assertTrue(merges.some(merge => "/content/matchingCustomer.json" === merge.documentUri), `merges: ${xdmp.toJsonString(merges)}`),
-  test.assertTrue(merges.some(merge => "/incomingCustomer.json" === merge.documentUri), `merges: ${xdmp.toJsonString(merges)}`),
+  test.assertTrue(merges.some(merge => "/content/matchingCustomer.json" === merge["document-uri"]), `merges: ${xdmp.toJsonString(merges)}`),
+  test.assertTrue(merges.some(merge => "/incomingCustomer.json" === merge["document-uri"]), `merges: ${xdmp.toJsonString(merges)}`),
 
   // Verify triples
   // The matching customer has 2 triples, and the incoming customer has 2 triples; one of those 2 triples is a duplicate, so there should be 3 total

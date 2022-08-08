@@ -23,6 +23,7 @@ export const entitySearch = {
       "mimetype": "application/json",
       "format": "json",
       "unmerge": true,
+      "merge": true,
       "matches": [
         {
           "path": "fn:doc(\"/Customer/Cust1.json\")/object-node()",

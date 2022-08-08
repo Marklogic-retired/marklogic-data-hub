@@ -6,6 +6,7 @@ import {entityFromJSON, entityParser} from "../../util/data-conversion";
 import {modelResponse} from "../../assets/mock-data/explore/model-response";
 import searchPayloadResults from "../../assets/mock-data/explore/search-payload-results";
 import {SearchContext} from "../../util/search-context";
+import {AuthoritiesService, AuthoritiesContext} from "../../util/authorities";
 
 
 describe("Search Result view component", () => {
@@ -30,13 +31,17 @@ describe("Search Result view component", () => {
   };
 
   test("Source and instance tooltips render", async () => {
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(["readMerging", "readMatching"]);
     const {getByText, getByTestId} = render(
       <Router>
-        <SearchResult
-          entityDefArray={entityDefArray}
-          item={searchPayloadResults[0]}
-          tableView={false}
-        />
+        <AuthoritiesContext.Provider value={authorityService}>
+          <SearchResult
+            entityDefArray={entityDefArray}
+            item={searchPayloadResults[0]}
+            tableView={false}
+          />
+        </AuthoritiesContext.Provider>
       </Router>
     );
     expect(getByTestId("source-icon")).toBeInTheDocument();

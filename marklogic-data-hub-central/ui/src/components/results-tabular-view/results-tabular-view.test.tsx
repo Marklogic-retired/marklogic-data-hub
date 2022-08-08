@@ -6,6 +6,7 @@ import {BrowserRouter as Router} from "react-router-dom";
 import {validateTableRow} from "../../util/test-utils";
 import dayjs from "dayjs";
 import {SearchContext} from "../../util/search-context";
+import {AuthoritiesService, AuthoritiesContext} from "../../util/authorities";
 
 describe("Results Table view component", () => {
   const defaultSearchOptions = {
@@ -128,6 +129,8 @@ describe("Results Table view component", () => {
   });
 
   test("Results table with data renders when All Entities option is selected", async () => {
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(["readMerging", "readMatching"]);
     const {getByText, getByTestId} = render(
       <SearchContext.Provider value={{
         searchOptions: defaultSearchOptions,
@@ -137,15 +140,17 @@ describe("Results Table view component", () => {
         applySaveQuery: jest.fn()
       }}>
         <Router>
-          <ResultsTabularView
-            data={entitySearchAllEntities.results}
-            entityPropertyDefinitions={[]}
-            selectedPropertyDefinitions={[]}
-            entityDefArray={entityDefArray}
-            columns={[]}
-            hasStructured={false}
-            selectedEntities={["Customer", "Order"]}
-          />
+          <AuthoritiesContext.Provider value={authorityService}>
+            <ResultsTabularView
+              data={entitySearchAllEntities.results}
+              entityPropertyDefinitions={[]}
+              selectedPropertyDefinitions={[]}
+              entityDefArray={entityDefArray}
+              columns={[]}
+              hasStructured={false}
+              selectedEntities={["Customer", "Order"]}
+            />
+          </AuthoritiesContext.Provider>
         </Router>
       </SearchContext.Provider>
     );
