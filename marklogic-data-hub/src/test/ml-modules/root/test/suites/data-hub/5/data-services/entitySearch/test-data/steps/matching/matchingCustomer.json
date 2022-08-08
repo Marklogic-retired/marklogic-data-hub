@@ -1,0 +1,6 @@
+{
+  "name": "matchingCustomer",
+  "stepId": "matchingCustomer-matching",
+  "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+  "matchRulesets": []
+}

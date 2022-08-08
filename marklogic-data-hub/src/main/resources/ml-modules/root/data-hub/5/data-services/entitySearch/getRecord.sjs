@@ -38,7 +38,8 @@ let permissions = xdmp.documentGetPermissions(docUri);
 if (permissions) {
   permissions.forEach(permission => { permission.roleName = xdmp.roleName(permission.roleId)})
 }
-
+const recordType = getDocumentType(xdmp.nodeKind(doc.root));
+const entityInstanceProperties = entitySearchLib.getEntityInstanceProperties(doc);
 const record = {
   "data": doc,
   "docUri": docUri,

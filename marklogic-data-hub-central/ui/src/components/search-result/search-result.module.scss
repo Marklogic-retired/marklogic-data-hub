@@ -58,6 +58,24 @@
 	align-items: center;
 }
 
+.unMergeIconDisabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.unmergeContainer {
+  display: flex;
+  flex-direction: row;
+}
+
+.spinner {
+  font-size: 19px;
+  color: #44499c;
+  margin-top: 2px;
+  margin-left: 7px;
+  position: absolute;
+}
+
 .unMergeIcon {
   color: #44499c;
   font-size: 22px;

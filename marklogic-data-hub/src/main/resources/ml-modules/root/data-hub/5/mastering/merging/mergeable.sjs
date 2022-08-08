@@ -156,7 +156,7 @@ class Mergeable {
     } else {
       nodeBuilder.startElement("sm:document-uris", "http://marklogic.com/smart-mastering");
       for (const uri of payload) {
-        nodeBuilder.startElement("sm:document-uris", "http://marklogic.com/smart-mastering");
+        nodeBuilder.startElement("sm:document-uri", "http://marklogic.com/smart-mastering");
         nodeBuilder.addText(uri);
         nodeBuilder.endElement();
       }
@@ -378,7 +378,7 @@ class Mergeable {
     const newMergeDocument = { envelope: {
         headers: {
           id,
-          merges: {}
+          merges: []
         },
         instance: {},
         triples
@@ -442,7 +442,7 @@ class Mergeable {
       nodeBuilder.endElement();
 
     }
-    const merges = {};
+    const merges = [];
     const sortedProperties = properties.sort((a,b)=> a[0].documentXPath.localeCompare(b[0].documentXPath));
     this.mergePropertiesIntoXML(nodeBuilder, sortedProperties, /^\/(\(es:envelope\|envelope\)|(es\:)?envelope)\/(\(es:instance\|instance\)|(es\:)?instance)\//, merges);
     // end instance
@@ -454,15 +454,22 @@ class Mergeable {
       nodeBuilder.addText(id);
     }
     nodeBuilder.endElement();
-    nodeBuilder.startElement("merges", "");
-    this.jsonToJsonXML(nodeBuilder, merges);
+    nodeBuilder.startElement("sm:merges", "http://marklogic.com/smart-mastering");
+    for (const merge of merges) {
+      nodeBuilder.startElement("sm:document-uri", "http://marklogic.com/smart-mastering");
+      nodeBuilder.addAttribute("last-merge", merge["last-merge"]);
+      nodeBuilder.addText(merge["document-uri"]);
+      nodeBuilder.endElement();
+    }
     // end merges
     nodeBuilder.endElement();
     // end headers
     nodeBuilder.endElement();
     nodeBuilder.startElement("es:triples", "http://marklogic.com/entity-services");
     if (triples) {
-      nodeBuilder.addNode(sem.rdfSerialize(triples, ["triplexml"]));
+      for (const tripleNode of sem.rdfSerialize(triples, ["triplexml"]).xpath("descendant-or-self::sem:triple", {sem: "http://marklogic.com/semantics"})) {
+        nodeBuilder.addNode(tripleNode);
+      }
     }
     // end triples
     nodeBuilder.endElement();
@@ -543,12 +550,11 @@ class Mergeable {
   setMergeInformation(merges, instanceXPath, output) {
     for (const source of output.sources) {
       const {documentUri, dateTime, name} = source instanceof Node ? source.toObject() : source;
-      merges[dateTime] = merges[dateTime] || [];
-      const existingEntry = merges[dateTime].find((entry) => entry.documentUri === documentUri && entry.name === name);
+      const existingEntry = merges.find((entry) => entry["document-uri"] === documentUri && entry.name === name);
       if (existingEntry) {
         existingEntry.contributions.push(instanceXPath);
       } else {
-        merges[dateTime].push({documentUri, name, contributions: [ instanceXPath ]});
+        merges.push({ "document-uri": documentUri, "last-merge": dateTime, name, contributions: [ instanceXPath ]});
       }
     }
   }

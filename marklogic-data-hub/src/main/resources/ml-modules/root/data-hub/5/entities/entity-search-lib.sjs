@@ -1,12 +1,9 @@
 /**
  Copyright (c) 2021 MarkLogic Corporation
-
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
  You may obtain a copy of the License at
-
  http://www.apache.org/licenses/LICENSE-2.0
-
  Unless required by applicable law or agreed to in writing, software
  distributed under the License is distributed on an "AS IS" BASIS,
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,6 +18,7 @@ const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
 const esInstance = require('/MarkLogic/entity-services/entity-services-instance');
 const ext = require("/data-hub/extensions/entity/get-entity-details.sjs");
 const prov = require("/data-hub/5/impl/prov.sjs");
+const {requireFunction} = require("../impl/hub-utils.sjs");
 
 /**
  * If the entity instance cannot be found for any search result, that fact is logged instead of an error being thrown or
@@ -297,7 +295,7 @@ function getPropertyValues(currentProperty, entityInstance) {
 
     // OR condition is to handle the merged instances where datatype is object but there are array of objects after merge
     if(currentProperty.multiple || Array.isArray(entityInstance[propertyName])) {
-      entityInstance = entityInstance[propertyName];
+      entityInstance = entityInstance[propertyName].filter(instance => instance);      
       entityInstance.forEach((instance) => {
         let currentPropertyValueArray = [];
         let childPropertyName = Object.keys(instance)[0];
@@ -489,7 +487,8 @@ function addDocumentMetadataToSearchResults(searchResponse) {
     let hubMetadata = {};
     const docUri = result.uri;
     const documentMetadata = xdmp.documentGetMetadata(docUri);
-    const sources = getEntitySources(cts.doc(docUri));
+    const doc = cts.doc(docUri);
+    const sources = getEntitySources(doc);
     if(documentMetadata) {
       hubMetadata["lastProcessedByFlow"] = documentMetadata.datahubCreatedInFlow;
       hubMetadata["lastProcessedByStep"] = documentMetadata.datahubCreatedByStep;
@@ -499,9 +498,29 @@ function addDocumentMetadataToSearchResults(searchResponse) {
     if(sources.length) {
       hubMetadata["sources"] = sources;
     }
-    result["documentSize"] = getDocumentSize(cts.doc(docUri));
+    result["documentSize"] = getDocumentSize(doc);
     result["hubMetadata"] = hubMetadata;
     result["notifiedDoc"] = docUri.startsWith("/com.marklogic.smart-mastering/matcher/notifications");
+    if (docUri.startsWith("/com.marklogic.smart-mastering/")) {
+      let entityRelatedDoc = doc;
+      if (result["notifiedDoc"]) {
+        result["notifiedDocumentUris"] = doc.xpath("/*:notification/*:document-uris/*:document-uri/text()");
+        const contributingUri = fn.head(result["notifiedDocumentUris"]);
+        entityRelatedDoc = cts.doc(contributingUri);
+      }
+      const entityNameMode = fn.head(entityRelatedDoc.xpath("/*:envelope/*:instance/*:info/*:title"));
+      if (fn.exists(entityNameMode)) {
+        const entityName = fn.string(entityNameMode);
+        result["entityName"] = entityName;
+        const getEntityModel = requireFunction("/data-hub/core/models/entities.sjs", "getEntityModel");
+        const entityModel = getEntityModel(entityName);
+        const primaryEntityTypeIRI = entityModel && entityModel.primaryEntityTypeIRI() !== entityName ? entityModel.primaryEntityTypeIRI() : entityName;
+        const matchStep = fn.head(cts.search(cts.andQuery([cts.collectionQuery("http://marklogic.com/data-hub/steps/matching"), cts.jsonPropertyValueQuery("targetEntityType", [entityName, primaryEntityTypeIRI])])));
+        if (matchStep) {
+          result["matchStepName"] = matchStep.toObject().name;
+        }
+      }
+    }
   });
 }
 

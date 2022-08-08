@@ -113,6 +113,7 @@ const Browse: React.FC<Props> = ({location}) => {
     searchOptions.nextEntityType,
     searchOptions.query,
     searchOptions.selectedFacets,
+    searchOptions.mergeUnmerge,
     user.error.type,
     hideDataHubArtifacts
   ];
@@ -798,6 +799,7 @@ const Browse: React.FC<Props> = ({location}) => {
                       data={data}
                       entityPropertyDefinitions={entityPropertyDefinitions}
                       selectedPropertyDefinitions={selectedPropertyDefinitions}
+                      entityDefArray={entityDefArray}
                     />
                     : viewOptions.graphView ?
                       <div>

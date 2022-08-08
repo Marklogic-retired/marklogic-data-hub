@@ -127,6 +127,7 @@
   font-size: 24px;
   display: flex;
   justify-content: flex-end;
+  flex-direction: row;
   position: absolute;
   bottom: -2px;
   right: 28px;
@@ -135,6 +136,18 @@
 .mergeIcon:hover {
   color: var(--hoverColor);
   cursor: pointer;
+}
+
+.mergeIconDisabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.spinner {
+  font-size: 19px;
+  color: #44499c;
+  margin-top: 12px;
+  margin-right: 5px;
 }
 
 .downloadIcon {
