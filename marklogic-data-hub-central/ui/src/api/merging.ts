@@ -33,7 +33,7 @@ export const getMergingRulesWarnings = async (merging, newMergeRule) => {
 
 export const mergeUris  = async (payload) => {
   try {
-    let response = await axios.post(`/api/steps/merging/merge`, payload);
+    let response = await axios.put(`/api/steps/merging/merge`, payload);
     if (response.status === 200) {
       return response;
     } else {

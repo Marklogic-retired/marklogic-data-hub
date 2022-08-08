@@ -27,6 +27,28 @@ function getDocumentType(nodeKind) {
   return 'binary';
 }
 
+function entityXmlToJson(xmlNode) {
+  const childrenNodes = xmlNode.xpath("*");
+  if (fn.exists(childrenNodes)) {
+    const currentObject = {};
+    for (const childNode of childrenNodes) {
+      const childNodeValue = entityXmlToJson(childNode);
+      const name = fn.localName(childNode);
+      if (currentObject[name]) {
+        if (!Array.isArray(currentObject[name])) {
+          currentObject[name] = [currentObject[name]];
+        }
+        currentObject[name].push(childNodeValue);
+      } else {
+        currentObject[name] = childNodeValue;
+      }
+    }
+    return currentObject;
+  } else {
+    return fn.data(xmlNode);
+  }
+}
+
 var docUri;
 
 const doc = cts.doc(docUri);
@@ -38,17 +60,18 @@ let permissions = xdmp.documentGetPermissions(docUri);
 if (permissions) {
   permissions.forEach(permission => { permission.roleName = xdmp.roleName(permission.roleId)})
 }
-
+const recordType = getDocumentType(xdmp.nodeKind(doc.root));
+const entityInstanceProperties = entitySearchLib.getEntityInstanceProperties(doc);
 const record = {
-  "data": doc,
+  "data": recordType === "xml" && entityInstanceProperties ? entityXmlToJson(doc) : doc,
   "docUri": docUri,
-  "recordType": getDocumentType(xdmp.nodeKind(doc.root)),
+  "recordType": recordType,
   "recordMetadata": xdmp.documentGetMetadata(docUri),
   "collections": xdmp.documentGetCollections(docUri),
   "permissions": permissions,
   "quality": cts.quality(doc),
   "documentProperties": xdmp.documentProperties(docUri),
-  "entityInstanceProperties": entitySearchLib.getEntityInstanceProperties(doc),
+  "entityInstanceProperties": entityInstanceProperties,
   "sources": entitySearchLib.getEntitySources(doc),
   "history": entitySearchLib.getRecordHistory(docUri),
   "documentSize": entitySearchLib.getDocumentSize(doc)

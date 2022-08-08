@@ -1088,7 +1088,8 @@ const MatchingStepDetail: React.FC = () => {
         isMerge={false}
         mergeUris={() => void 0}
         unmergeUri={() => void 0}
-        originalUri=""
+        originalUri={""}
+        flowName={""}
       />
       <ThresholdModal
         isVisible={showThresholdModal}

@@ -12,9 +12,11 @@ import {dateConverter} from "@util/date-conversion";
 import {HCTooltip, HCTable} from "@components/common";
 import {themeColors} from "@config/themes.config";
 import tooltipsConfig from "@config/explorer-tooltips.config";
+import {SecurityTooltips} from "@config/tooltips.config";
 import CompareValuesModal from "../../components/entities/matching/compare-values-modal/compare-values-modal";
 import {previewMatchingActivity, getDocFromURI} from "@api/matching";
-import {mergeUris, unmergeUri} from "@api/merging";
+import {unmergeUri} from "@api/merging";
+import {Spinner} from "react-bootstrap";
 
 /* eslint-disable */
 interface Props {
@@ -75,7 +77,6 @@ const DEFAULT_ALL_ENTITIES_HEADER = [
 ];
 
 const ResultsTabularView = (props) => {
-
   const [popoverVisibility, setPopoverVisibility] = useState<boolean>(false);
   const [primaryKey, setPrimaryKey] = useState<string>("");
   const [expandedNestedTableRows, setExpandedNestedTableRows] = useState<string[]>([]);
@@ -85,6 +86,7 @@ const ResultsTabularView = (props) => {
   const [activeEntityArray, setActiveEntityArray] = useState<any>([]);
   const [activeEntityUris, setActiveEntityUris] = useState<string[]>([]);
   const [uriInfo, setUriInfo] = useState<any>();
+  const [loading, setToggleLoading] = useState("");
   const [originalUri, setOriginalUri] = useState<string>("");
   const {
     searchOptions,
@@ -95,6 +97,7 @@ const ResultsTabularView = (props) => {
   } = useContext(SearchContext);
 
   const authorityService = useContext(AuthoritiesContext);
+  const canReadMatchMerge = authorityService.canReadMatchMerge();
   const canExportQuery = authorityService.canExportEntityInstances();
   let counter = 0;
 
@@ -378,10 +381,32 @@ const ResultsTabularView = (props) => {
         </div>
         {
           item.unmerge ?
-            <div className={styles.unMergeIcon}>
-              <HCTooltip text={"Unmerge Documents"} id="unmerge-icon-tooltip" placement="top-end">
-                <i><RiSplitCellsHorizontal className={styles.unMergeIcon} data-testid={`unmergeIcon`} aria-label={`unmerge-icon`} onClick={() => openUnmergeCompare(item)}/></i>
-              </HCTooltip>
+            <div className={styles.unmergeContainer}>
+              {canReadMatchMerge ?
+                <div className={styles.unMergeIcon}>
+                  <HCTooltip text={"Unmerge Documents"} id="unmerge-icon-tooltip" placement="top-end">
+                    <i><RiSplitCellsHorizontal className={styles.unMergeIcon} data-testid={`unmergeIcon`} aria-label={`unmerge-icon`} onClick={() => openUnmergeCompare(item)}/></i>
+                  </HCTooltip>
+                </div>
+                :
+                <div className={styles.unMergeIcon}>
+                  <HCTooltip text={SecurityTooltips.missingPermission} id="missing-permission-tooltip" placement="top-end">
+                    <i><RiSplitCellsHorizontal className={styles.unMergeIconDisabled} data-testid={`unmergeIcon`} aria-label={`unmerge-icon`}/></i>
+                  </HCTooltip>
+                </div>
+              }
+              {
+                loading === item.uri ?
+                  <Spinner
+                    data-testid="hc-button-component-spinner"
+                    as="span"
+                    animation="border"
+                    size="sm"
+                    role="status"
+                    aria-hidden="true"
+                    className={styles.spinner}
+                  /> : null
+              }
             </div>
             : null
         }
@@ -440,6 +465,7 @@ const ResultsTabularView = (props) => {
     }
     setActiveEntityUris(arrayUris);
     setOriginalUri(item.uri);
+    setToggleLoading(item.uri);
     await fetchCompareData(arrayUris);
     setCompareModalVisible(true);
   };
@@ -463,7 +489,7 @@ const ResultsTabularView = (props) => {
 
     let previewMatchActivity = await previewMatchingActivity(testMatchData);
     if (previewMatchActivity) {
-      // setToggleLoading(false);
+      setToggleLoading("");
       setPreviewMatchedActivity(previewMatchActivity);
     }
 
@@ -696,9 +722,10 @@ const ResultsTabularView = (props) => {
         uris={activeEntityUris}
         isPreview={false}
         isMerge={false}
-        mergeUris={mergeUris}
+        mergeUris={{}}
         unmergeUri={submitUnmergeUri}
         originalUri={originalUri}
+        flowName={""}
       />
     </>
   );

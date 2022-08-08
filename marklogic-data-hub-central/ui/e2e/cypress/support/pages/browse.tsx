@@ -145,6 +145,21 @@ class BrowsePage {
    * available facets are 'collection', 'created-on', 'job-id', 'flow', 'step'
    */
 
+  getCollectionPopover() {
+    return cy.get(`[aria-label="Collection-popover-search-label"]`);
+  }
+
+  collectionPopoverInput() {
+    return cy.get(`[aria-label="Collection-popover-input-field"]`);
+  }
+
+  getPopoverFacetCheckbox(facetName: string) {
+    return cy.get(`[aria-label="${facetName}-popover-checkbox"]`);
+  }
+
+  submitPopoverSearch() {
+    return cy.get(`[aria-label="icon: check-square-o"]`).click();
+  }
   // common
   getFacet(facet: string) {
     return cy.get("[data-cy=\"" + facet + "-facet\"]");

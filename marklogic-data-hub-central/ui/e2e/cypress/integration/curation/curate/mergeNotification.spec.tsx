@@ -2,9 +2,10 @@ import {Application} from "../../../support/application.config";
 import {toolbar} from "../../../support/components/common";
 import "cypress-wait-until";
 import LoginPage from "../../../support/pages/login";
-// import browsePage from "../../../support/pages/browse";
+import browsePage from "../../../support/pages/browse";
 import explorePage from "../../../support/pages/explore";
 import runPage from "../../../support/pages/run";
+import {compareValuesModal} from "../../../support/components/matching";
 
 describe("Merge Notification Functionality From Explore Card View", () => {
 
@@ -43,11 +44,25 @@ describe("Merge Notification Functionality From Explore Card View", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     explorePage.getAllDataButton().click();
     cy.log("**filter for notification collection and verify merge icon**");
-    // browsePage.getShowMoreLink("collection").click();
-    // browsePage.getFacetItemCheckbox("collection", "sm-Person-notification").scrollIntoView().click({force: true});
-    // browsePage.getSelectedFacets().should("exist");
-    // browsePage.getFacetApplyButton().click();
-    // browsePage.waitForSpinnerToDisappear();
-    // browsePage.getMergeIcon().should("be.visible");
+    explorePage.scrollSideBarBottom();
+    browsePage.getCollectionPopover().scrollIntoView().click();
+    browsePage.collectionPopoverInput().type("notification");
+    browsePage.getPopoverFacetCheckbox("sm-Person-notification").click();
+    browsePage.submitPopoverSearch();
+    browsePage.getSelectedFacets().should("exist");
+    browsePage.getFacetApplyButton().click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getMergeIcon().should("be.visible");
+
+    browsePage.getMergeIcon().first().click();
+    compareValuesModal.getModal().should("be.visible");
+    compareValuesModal.getMergeButton().should("be.visible");
+
+    cy.log("** cancel button closes modal **");
+    compareValuesModal.getCancelButton().click();
+    compareValuesModal.getModal().should("not.exist");
+    browsePage.getMergeIcon().first().click();
+    compareValuesModal.confirmationYes().click();
+    compareValuesModal.getModal().should("not.exist");
   });
 });

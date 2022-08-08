@@ -11,6 +11,7 @@ type SearchContextInterface = {
   nextEntityType: string, //This can change to a boolean for the All Data/All Entities toggle.
   start: number,
   pageNumber: number,
+  mergeUnmerge: boolean,
   pageLength: number,
   pageSize: number,
   selectedFacets: any,
@@ -34,6 +35,7 @@ const defaultSearchOptions = {
   nextEntityType: "",
   start: 1,
   pageNumber: 1,
+  mergeUnmerge: false,
   pageLength: 20,
   pageSize: 20,
   selectedFacets: {},
@@ -56,6 +58,7 @@ interface ISearchContextInterface {
   setQuery: (searchString: string) => void;
   setPage: (pageNumber: number, totalDocuments: number) => void;
   setPageLength: (current: number, pageSize: number) => void;
+  toggleMergeUnmerge: (current: boolean) => void;
   setSearchFacets: (constraint: string, vals: string[]) => void;
   setEntity: () => void;
   setEntityTypeIds: (setEntityIds: string[]) => void;
@@ -115,6 +118,7 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setSearchFromUserPref: () => { },
   setQuery: () => { },
   setPage: () => { },
+  toggleMergeUnmerge: () => { },
   setPageLength: () => { },
   setSearchFacets: () => { },
   setEntity: () => { },
@@ -228,6 +232,12 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     });
   };
 
+  const toggleMergeUnmerge = (current: boolean) => {
+    setSearchOptions({
+      ...searchOptions,
+      mergeUnmerge: !current
+    });
+  };
 
   const setSearchFacets = (constraint: string, vals: string[]) => {
     let facets = {};
@@ -763,6 +773,7 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       setQuery,
       setPage,
       setPageLength,
+      toggleMergeUnmerge,
       setSearchFacets,
       setEntity,
       setNextEntity,

@@ -297,7 +297,7 @@ function getPropertyValues(currentProperty, entityInstance) {
 
     // OR condition is to handle the merged instances where datatype is object but there are array of objects after merge
     if(currentProperty.multiple || Array.isArray(entityInstance[propertyName])) {
-      entityInstance = entityInstance[propertyName];
+      entityInstance = entityInstance[propertyName].filter(instance => instance);      
       entityInstance.forEach((instance) => {
         let currentPropertyValueArray = [];
         let childPropertyName = Object.keys(instance)[0];
@@ -502,6 +502,15 @@ function addDocumentMetadataToSearchResults(searchResponse) {
     result["documentSize"] = getDocumentSize(cts.doc(docUri));
     result["hubMetadata"] = hubMetadata;
     result["notifiedDoc"] = docUri.startsWith("/com.marklogic.smart-mastering/matcher/notifications");
+
+    const doc = cts.doc(docUri);
+    result["notifiedDocumentUris"] = doc.xpath("/*:notification/*:document-uris/*:document-uri/text()");
+
+    const documentUri = fn.string(fn.head(doc.xpath("/*:notification/*:document-uris/*:document-uri/text()")));
+    xdmp.log("DOCUMENT URI ERROR XPATH" + debugVar);
+    const doc1 = cts.doc(documentUri);
+    const name = doc1.xpath("/*:envelope/*:instance/*:info/*:title");
+    result["entityName"] = name;
   });
 }
 
