@@ -1,0 +1,73 @@
+{
+  "envelope": {
+    "headers": {
+      "sources": [
+        {
+          "name": "source 1"
+        }
+      ],
+      "createdOn": "2020-08-20T05:27:43.360675Z",
+      "createdBy": "admin"
+    },
+    "triples": [],
+    "instance": {
+      "info": {
+        "title": "Customer",
+        "version": "0.0.1",
+        "baseUri": "http://example.org/"
+      },
+      "Customer": {
+        "customerId": 546115,
+        "name": "Mark Snell",
+        "birthDate": "1969-06-01",
+        "billing": {
+          "Address": {
+            "street": [
+              "123 Billing Ave"
+            ],
+            "city": "Random9238459038745",
+            "state": "Florida",
+            "zip": {
+              "Zip": {
+                "fiveDigit": "02134",
+                "plusFour": "1234"
+              }
+            }
+          }
+        },
+        "shipping": [
+          {
+            "Address": {
+              "street": [
+                "123 Shipping Ave"
+              ],
+              "city": "San Carlos",
+              "state": "California",
+              "zip": {
+                "Zip": {
+                  "fiveDigit": "02134",
+                  "plusFour": "1234"
+                }
+              }
+            }
+          },
+          {
+            "Address": {
+              "street": [
+                "This city and state should match doc 3"
+              ],
+              "city": "Northport",
+              "state": "Florida",
+              "zip": {
+                "Zip": {
+                  "fiveDigit": "34292",
+                  "plusFour": "1234"
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "envelope": {
+    "headers": {
+      "sources": [
+        {
+          "name": "source 1"
+        }
+      ],
+      "createdOn": "2020-08-20T05:27:43.360675Z",
+      "createdBy": "admin"
+    },
+    "triples": [],
+    "instance": {
+      "info": {
+        "title": "Customer",
+        "version": "0.0.1",
+        "baseUri": "http://example.org/"
+      },
+      "Customer": {
+        "customerId": 546114,
+        "name": "Cooper Snell",
+        "birthDate": "1971-01-01",
+        "billing": {
+          "Address": {
+            "street": [
+              "123 Billing Ave"
+            ],
+            "city": "Random123451298364",
+            "state": "Florida",
+            "zip": {
+              "Zip": {
+                "fiveDigit": "02134",
+                "plusFour": "1234"
+              }
+            }
+          }
+        },
+        "shipping": [
+          {
+            "Address": {
+              "street": [
+                "This city and state should match doc 2"
+              ],
+              "city": "Venice",
+              "state": "Florida",
+              "zip": {
+                "Zip": {
+                  "fiveDigit": "34292",
+                  "plusFour": "1234"
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

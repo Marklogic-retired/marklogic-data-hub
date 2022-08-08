@@ -81,13 +81,14 @@ public class MatchingStepController extends BaseController {
     public ResponseEntity<JsonNode> previewMatchingActivity(@PathVariable String stepName,
                                                             @RequestParam(value = "uris", required = false) String[] uris,
                                                             @RequestParam(value = "sampleSize", required = true) int sampleSize,
-                                                            @RequestParam(value = "restrictToUris", required = false, defaultValue = "false") boolean restrictToUris) {
+                                                            @RequestParam(value = "restrictToUris", required = false, defaultValue = "false") boolean restrictToUris,
+                                                            @RequestParam(value = "nonMatches", required = false, defaultValue = "false") boolean nonMatches) {
         Stream<String> urisStream = null;
         if (uris != null) {
             urisStream = Arrays.stream(uris);
         }
         // Using final client as content to match against will most likely be in final, reducing the number of invokes needed
-        return ResponseEntity.ok(MasteringService.on(getHubClient().getFinalClient()).previewMatchingActivity(sampleSize, urisStream, stepName, restrictToUris));
+        return ResponseEntity.ok(MasteringService.on(getHubClient().getFinalClient()).previewMatchingActivity(sampleSize, urisStream, stepName, restrictToUris, nonMatches));
     }
 
     @RequestMapping(value = "/{stepName}/validate", method = RequestMethod.GET)
