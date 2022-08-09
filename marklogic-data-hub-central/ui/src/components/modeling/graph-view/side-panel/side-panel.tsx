@@ -430,10 +430,10 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
     let sourceEntityName = relationshipInfo.sourceNodeName;
     let entityTypeDefinitionTemp;
     let updatedDefinitions;
-    for (let i = 0; i < props.entityTypes.length; i++) {
-      if (props.entityTypes[i].entityName === sourceEntityName) {
-        updatedDefinitions = {...props.entityTypes[i].model};
-        entityTypeDefinitionTemp = props.entityTypes[i].model.definitions[sourceEntityName];
+    for (let i = 0; i < props.dataModel.length; i++) {
+      if (props.dataModel[i].entityName === sourceEntityName) {
+        updatedDefinitions = {...props.dataModel[i].model};
+        entityTypeDefinitionTemp = props.dataModel[i].model.definitions[sourceEntityName];
       }
     }
     let itemIndex = entityTypeDefinitionTemp["relatedConcepts"].findIndex(obj => obj.predicate === propertyName && obj.conceptClass === relationshipInfo.targetNodeName);
@@ -499,7 +499,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
           setOpenRelationshipModal={setOpenRelationshipModal}
           isEditing={true}
           relationshipInfo={selectedRelationship}
-          entityTypes={props.entityTypes}
+          dataModel={props.dataModel}
           updateSavedEntity={props.updateSavedEntity}
           relationshipModalVisible={props.relationshipModalVisible}
           toggleRelationshipModal={props.toggleRelationshipModal}
