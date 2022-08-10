@@ -335,10 +335,7 @@ function findForeignKeyReferencesInOtherModels(entityModel, propertyName){
   }
   const entityModels = cts.search(cts.andQuery(queries)).toArray().map(entityModel => entityModel.toObject());
   const entityModelsToBeDeleted = entityModels.filter((model) => model.info.draftDeleted).map((model) => getModelName(model));
-  const entityModelsDraftWithoutRelated = cts.search(cts.andNotQuery(cts.collectionQuery([getDraftModelCollection()]),
-    cts.jsonPropertyValueQuery("relatedEntityType", entityTypeId, "case-insensitive"))).toArray().map(entityModel =>getModelName(entityModel.toObject()));
   entityModels
-    .filter((model) => !entityModelsDraftWithoutRelated.includes(getModelName(model)))
     .filter((model) => !entityModelsToBeDeleted.includes(getModelName(model)))
     .forEach((model) => affectedModels.add(getModelName(model)));
   return [...affectedModels];
