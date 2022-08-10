@@ -559,6 +559,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
               <Col className={isErrorOfType("namespace") ? "d-flex has-error" : "d-flex"}>
                 <HCInput
                   id="namespace"
+                  dataTestid="namespace"
                   data-testid="namespace"
                   placeholder="Example: http://example.org/es/gs"
                   disabled={props.canReadEntityModel && !props.canWriteEntityModel}
