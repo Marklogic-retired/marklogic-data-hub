@@ -166,7 +166,7 @@ describe("login", () => {
 
     cy.log("**Hovers the card**");
     loadPage.stepName(stepName).trigger("mouseover", "top");
-    loadPage.addToNewFlow(stepName).click({force: true});
+    loadPage.addToNewFlow(stepName).click("top", {force: true});
     runPage.newFlowModal().should("not.exist");
     loadPage.existingFlowsList(stepName).click({force: true});
 
@@ -374,9 +374,9 @@ describe("login", () => {
       .url().should("include", "/tiles");
 
     // To verify on click operation works as expected
-    toolbar.getHomePageInfoIcon().click();
+    toolbar.getHomePageInfoIcon().scrollIntoView().click();
     toolbar.getHomePageInfoPopover().should("exist");
-    toolbar.getHomePageInfoIcon().click();
+    toolbar.getHomePageInfoIcon().scrollIntoView().click();
     toolbar.getHomePageInfoPopover().should("not.exist");
 
     toolbar.getModelToolbarIcon().trigger("mouseover").click();
