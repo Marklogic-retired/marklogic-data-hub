@@ -17,7 +17,7 @@ describe("Graph View Component", () => {
     cleanup();
   });
 
-  const withEntityAs = (entityName) => {
+  const withEntityAs = (entityName: string, canReadEntityModel: boolean, canWriteEntityModel: boolean) => {
     let entityTypeNamesArrayUpdated = [...isModified.modelingOptions.entityTypeNamesArray,
       {
         name: entityName,
@@ -28,8 +28,8 @@ describe("Graph View Component", () => {
     return (<ModelingContext.Provider value={isModifiedUpdated}>
       <GraphView
         dataModel={getEntityTypes}
-        canReadEntityModel={true}
-        canWriteEntityModel={true}
+        canReadEntityModel={canReadEntityModel}
+        canWriteEntityModel={canWriteEntityModel}
         deleteEntityType={jest.fn()}
         relationshipModalVisible={false}
         toggleRelationshipModal={jest.fn()}
@@ -67,7 +67,7 @@ describe("Graph View Component", () => {
 
     expect(queryByLabelText("Product-selectedEntity")).not.toBeInTheDocument();
 
-    rerender(withEntityAs("Product"));
+    rerender(withEntityAs("Product", true, true));
     await wait(() => expect(getByLabelText("Product-selectedEntity")).toBeInTheDocument());
 
     //Verify side panel content
@@ -106,7 +106,7 @@ describe("Graph View Component", () => {
 
     expect(queryByLabelText("Product-selectedEntity")).not.toBeInTheDocument();
 
-    rerender(withEntityAs("Product"));
+    rerender(withEntityAs("Product", true, true));
     await wait(() => expect(getByLabelText("Product-selectedEntity")).toBeInTheDocument());
 
     //Verify side panel content
@@ -114,7 +114,7 @@ describe("Graph View Component", () => {
 
     //Render new entity and verify side panel content
     expect(queryByLabelText("Order-selectedEntity")).not.toBeInTheDocument();
-    rerender(withEntityAs("Order"));
+    rerender(withEntityAs("Order", true, true));
     await wait(() => expect(getByLabelText("Order-selectedEntity")).toBeInTheDocument());
     expect(queryByPlaceholderText("Enter description"));
 
@@ -177,7 +177,7 @@ describe("Graph View Component", () => {
     expect(queryByLabelText("Product-selectedEntity")).not.toBeInTheDocument();
 
     // Opens side panel
-    rerender(withEntityAs("Product"));
+    rerender(withEntityAs("Product", true, true));
     await wait(() => expect(getByLabelText("Product-selectedEntity")).toBeInTheDocument());
 
     // Verifies side panel content
@@ -205,5 +205,30 @@ describe("Graph View Component", () => {
     userEvent.click(getByText("Add new relationship"));
     expect(document.querySelector("#hc-alert-component-content")?.firstChild?.textContent)
       .toEqual("To add a relationship to the data model, drag the source entity type to the target entity type or a concept class. You can also click the source entity type to configure a relationship. Press Esc to exit this mode.");
+  });
+
+  test("Ready-only user should not be able to edit entity type description and namespace", async () => {
+    const {getByText, getByLabelText, getByTestId} =  render(withEntityAs("Product", true, false));
+
+    // Opens side panel
+    await wait(() => expect(getByLabelText("Product-selectedEntity")).toBeInTheDocument());
+
+    // Verifies side panel content
+    const entityTypeTab = getByText("Entity Type");
+    expect(entityTypeTab).toBeInTheDocument();
+    act(() => {
+      userEvent.click(entityTypeTab);
+    });
+
+    // Verifies description field is not editable
+    const descriptionField = getByTestId("description");
+    expect(descriptionField).toBeInTheDocument();
+    expect(descriptionField).toBeDisabled();
+
+    // Verifies namespace field is not editable
+    const namespaceField = getByTestId("namespace");
+    expect(namespaceField).toBeInTheDocument();
+    expect(namespaceField).toBeDisabled();
+
   });
 });
