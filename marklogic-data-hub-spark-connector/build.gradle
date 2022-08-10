@@ -70,7 +70,7 @@ shadowJar {
     classifier "needs-to-be-fixed"
     // Relocate packages of classes that the ML Java Client needs; it can't use the versions provided by Spark
     relocate('okio', 'marklogic.okio')
-
+    relocate('org.springframework', 'marklogic.org.springframework')
     relocate('com.fasterxml.jackson', 'marklogic.com.fasterxml.jackson')
 }
 
