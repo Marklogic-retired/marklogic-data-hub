@@ -111,7 +111,7 @@ describe("Entity display settings in model tile", () => {
       let baby_registry_3039_nodeposition: any = nodePositions[ExploreGraphNodes.BABY_REGISTRY_3039];
       graphExplore.getGraphVisCanvas().trigger("mouseover", baby_registry_3039_nodeposition.x, baby_registry_3039_nodeposition.y);
     });
-    cy.wait(500);
+    cy.wait(1000);
 
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.BABY_REGISTRY_3039).then((nodePositions: any) => {
       let baby_registry_3039_nodeposition: any = nodePositions[ExploreGraphNodes.BABY_REGISTRY_3039];
