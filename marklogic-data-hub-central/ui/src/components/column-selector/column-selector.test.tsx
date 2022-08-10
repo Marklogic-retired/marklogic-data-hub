@@ -67,5 +67,46 @@ describe("Column selector component", () => {
     await(waitForElement(() => (getByText("The column identified as the unique identifier must always be displayed."))));
   });
 
+  test("Verify that if a character is typed and no property has it, no results should be returned", () => {
+    const {getByPlaceholderText} = render(<ColumnSelector {...defaultProps} />);
+    const searchInput = getByPlaceholderText("Search") as HTMLInputElement;
+    expect(searchInput).toBeInTheDocument();
+
+    // verify that every property is displayed
+    const propertyList = document.querySelector("[class=\"rc-tree-list-holder-inner\"]")?.children.length;
+    let countDisplayNone = document.querySelectorAll("[style=\"display: none;\"]").length;
+    expect(countDisplayNone).toBe(0);
+
+    // Type a character that doesn't match any property name. q in this case.
+    fireEvent.change(searchInput, {target: {value: "q"}});
+    expect(searchInput.value).toBe("q");
+
+    // Verify that no results are returned
+    countDisplayNone = document.querySelectorAll("[style=\"display: none;\"]").length;
+    expect(countDisplayNone).toBe(propertyList);
+  });
+
+  test("Verify that if a character typed is in a property name (structured or not), it should be returned", () => {
+    const {getByPlaceholderText, getAllByTestId, getByTestId} = render(<ColumnSelector {...defaultProps} />);
+    const searchInput = getByPlaceholderText("Search") as HTMLInputElement;
+    expect(searchInput).toBeInTheDocument();
+    fireEvent.change(searchInput, {target: {value: "c"}});
+    expect(searchInput.value).toBe("c");
+
+    // opens structured properties
+    const structuredDataButtons = document.querySelectorAll("[class=\"rc-tree-switcher rc-tree-switcher_close\"]");
+    fireEvent.click(structuredDataButtons[0]);
+    fireEvent.click(structuredDataButtons[1]);
+
+    // checks that the properties are displayed
+    getAllByTestId("node-city").map(element => {
+      expect(element).toBeInTheDocument();
+    });
+    expect(getByTestId("node-customerId")).toBeInTheDocument();
+    expect(getByTestId("node-customerSince")).toBeInTheDocument();
+    expect(getByTestId("node-nicknames")).toBeInTheDocument();
+
+  });
+
 });
 
