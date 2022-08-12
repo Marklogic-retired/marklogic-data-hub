@@ -155,6 +155,7 @@ class InstalledTests extends BaseTest {
 
     def "createHarmonizeFlow with useES flag"() {
         given:
+        def originalPropertiesFileText = propertiesFile.getText("UTF-8")
         propertiesFile << """
             ext {
                 entityName=Employee
@@ -178,11 +179,13 @@ class InstalledTests extends BaseTest {
         entityDir.isDirectory() == true
         File contentPlugin = Paths.get(testProjectDir.toString(), "plugins", "entities", "Employee", "harmonize", "my-new-harmonize-flow", "content.sjs").toFile()
         contentPlugin.text.contains("extractInstanceEmployee")
+        propertiesFile.write(originalPropertiesFileText)
+
     }
 
     def "runHarmonizeFlow with bad sourceDB"() {
         given:
-
+        def originalPropertiesFileText = propertiesFile.getText("UTF-8")
         println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy', '-PuseES=false').getOutput())
         println(runTask('hubDeployUserModules'))
 
@@ -210,5 +213,6 @@ class InstalledTests extends BaseTest {
         notThrown(UnexpectedBuildFailure)
         result.getOutput().contains('No such database 12345678')
         result.task(":hubRunLegacyFlow").outcome == SUCCESS
+        propertiesFile.write(originalPropertiesFileText)
     }
 }
