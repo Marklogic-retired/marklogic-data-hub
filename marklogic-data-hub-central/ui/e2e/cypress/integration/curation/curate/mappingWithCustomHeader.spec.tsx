@@ -153,6 +153,9 @@ describe("Create and verify load steps, map step and flows with a custom header"
     //should route user back to curate page
     cy.visit("/tiles/curate");
     cy.waitUntil(() => curatePage.getEntityTypePanel("Order").should("be.visible").click());
+
+    // TODO: Need to wait do to a second re-render. BUG: DHFPROD-9222
+    cy.wait(1000);
     curatePage.openExistingFlowDropdownAndTooltip("Order", mapStep);
     curatePage.getExistingFlowFromDropdown(mapStep, flowName).click();
     curatePage.addStepToFlowConfirmationMessage();
