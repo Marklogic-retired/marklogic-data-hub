@@ -2,6 +2,9 @@ const detailConfig  = {
 
     // Detail view
     detail: {
+        "entityType": {
+            "path": "entityType"
+        },
         "entities": {
           "person": {
             "heading": {

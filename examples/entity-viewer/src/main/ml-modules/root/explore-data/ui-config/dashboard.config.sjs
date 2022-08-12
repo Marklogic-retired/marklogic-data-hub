@@ -102,6 +102,9 @@ const dashboardConfig  = {
             "maxEntries": 100,
             "maxTime": 1440,
             "config": {
+                "entityType": {
+                    "path": "entityType"
+                },
                 "entities": {
                     "person": {
                         "thumbnail": {

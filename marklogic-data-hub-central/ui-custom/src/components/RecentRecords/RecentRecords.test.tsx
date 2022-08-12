@@ -2,6 +2,7 @@ import RecentRecords from "./RecentRecords";
 import { DetailContext } from "../../store/DetailContext";
 import { render } from "@testing-library/react";
 import userEvent from '@testing-library/user-event'
+import _ from "lodash";
 
 const recentConfig = {
 
@@ -50,6 +51,9 @@ const recentConfig = {
     }
 };
 
+const recentConfigCustomEntity = _.cloneDeep(recentConfig);
+recentConfigCustomEntity.config['entityType'] = {"path": "entityTypeCustom"};
+
 const recent = [{
     "uri": "doc1.xml",
     "entityType": "person",
@@ -68,6 +72,10 @@ const recent = [{
 }];
 
 const recentEmpty = [];
+
+const recentCustomEntity = _.cloneDeep(recent);
+delete recentCustomEntity[0]['entityType'];
+recentCustomEntity[0]['entityTypeCustom'] = "person"; // For testing custom entity definition (not "entityType")
 
 const EXPANDIDS = {
     membership: true,
@@ -118,6 +126,17 @@ describe("RecentRecords component", () => {
             </DetailContext.Provider>
         );
         expect(getByText("No recently visited records found.")).toBeInTheDocument();
+    });
+
+    test("Verify list items appear when custom entity path defined", () => {
+        const {getByText} = render(
+            <DetailContext.Provider value={detailContextValue}>
+                <RecentRecords data={recentCustomEntity} config={recentConfigCustomEntity.config} />
+            </DetailContext.Provider>
+        );
+        expect(getByText(recent[0].person.id)).toBeInTheDocument(); // Title
+        expect(getByText(recent[0].person.email[0].value)).toBeInTheDocument(); // Email
+        expect(getByText(recent[0].person.sources[0].source)).toBeInTheDocument(); // Source
     });
 
 });

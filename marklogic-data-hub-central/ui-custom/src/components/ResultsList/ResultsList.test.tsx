@@ -64,6 +64,47 @@ const resultsListConfig = {
    
 };
 
+const resultsListConfigCustomEntity = {...resultsListConfig, entityType: {
+    "path": "entityTypeCustom", 
+    "rootRelative": false
+}};
+const resultsListConfigCustomEntityRoot = {...resultsListConfig, entityType: {
+    "path": "entityTypeCustomRoot",
+    "rootRelative": true
+}};
+
+const resultsListConfigEntityAsKey = {
+    defaultIcon:{color: "lightgrey", type: "faCircle"},
+    entityType: { "path": "$.*~" }, // Gets root key value in result
+    entities: {
+        person: {
+            title: {
+                id: {
+                    path: "uri"
+                },
+                component: "Value",
+                config: {
+                    path: "person.extracted.person.name"
+                }
+            },
+            items: []
+        },
+        organization: {
+            title: {
+                id: {
+                    path: "uri"
+                },
+                component: "Value",
+                config: {
+                    path: "organization.extracted.organization.name"
+                }
+            },
+            items: []
+        }
+    }
+   
+};
+
 const searchResults = {
     "result": [
         {
@@ -140,6 +181,63 @@ const searchResultsNoEntity = {
     ]
 };
 
+const searchResultsCustomEntity = {
+    "result": [
+        {
+            "extracted": {
+                "person": {
+                    "id": "101",
+                    "name": "John Doe Custom",
+                }
+            },
+            "entityTypeCustom": "person",
+            "uri": "/person/101.xml"
+        }
+    ]
+};
+
+const searchResultsCustomEntityRoot = {
+    "entityTypeCustomRoot": "person",
+    "result": [
+        {
+            "extracted": {
+                "person": {
+                    "id": "101",
+                    "name": "John Doe Custom",
+                }
+            },
+            "uri": "/person/101.xml"
+        }
+    ]
+};
+
+const searchResultsEntityAsKey: any = {
+    "result": [
+        {
+            "person": {
+                "extracted": {
+                    "person": {
+                        "id": "101",
+                        "name": "John Doe Root",
+                    }
+                },
+                "uri": "/person/101.xml"
+            }
+        },
+        {
+            "organization": {
+                "extracted": {
+                    "organization": {
+                        "id": "102",
+                        "name": "My Org Root",
+                    }
+                },
+                "uri": "/organization/102.xml"
+            }
+        }
+    ]
+};
+
 const searchContextValue = {
     qtext: "",
     entityType: "",
@@ -172,6 +270,12 @@ const searchResultsEmpty = {};
 const searchContextValueEmpty = Object.assign({}, searchContextValue, {searchResults: searchResultsEmpty});
 
 const searchContextNoEntity = Object.assign({}, searchContextValue, {searchResults: searchResultsNoEntity});
+
+const searchContextCustomEntity = Object.assign({}, searchContextValue, {searchResults: searchResultsCustomEntity});
+
+const searchContextCustomEntityRoot = Object.assign({}, searchContextValue, {searchResults: searchResultsCustomEntityRoot});
+
+const searchContextEntityAsKey = Object.assign({}, searchContextValue, {searchResults: searchResultsEntityAsKey});
 
 const EXPANDIDS = {
     membership: true,
@@ -241,6 +345,40 @@ describe("ResultsList component", () => {
         );
         expect(getByText(searchResultsNoEntity.result[0].uri)).toBeInTheDocument();
         expect(getByText("foo")).toBeInTheDocument();
+    });
+
+    test("Verify result appears when custom entity path defined (relative to search results)", () => {
+        const {getByText} = render(
+            <SearchContext.Provider value={searchContextCustomEntity}>
+                <DetailContext.Provider value={detailContextValue}>
+                    <ResultsList config={resultsListConfigCustomEntity} />
+                </DetailContext.Provider>
+            </SearchContext.Provider>
+        );
+        expect(getByText(searchResultsCustomEntity.result[0].extracted.person.name)).toBeInTheDocument();
+    });
+
+    test("Verify result appears when custom entity path defined (relative to payload root)", () => {
+        const {getByText} = render(
+            <SearchContext.Provider value={searchContextCustomEntityRoot}>
+                <DetailContext.Provider value={detailContextValue}>
+                    <ResultsList config={resultsListConfigCustomEntityRoot} />
+                </DetailContext.Provider>
+            </SearchContext.Provider>
+        );
+        expect(getByText(searchResultsCustomEntity.result[0].extracted.person.name)).toBeInTheDocument();
+    });
+
+    test("Verify results appear when entity type is a key in the result payload", () => {
+        const {getByText} = render(
+            <SearchContext.Provider value={searchContextEntityAsKey}>
+                <DetailContext.Provider value={detailContextValue}>
+                    <ResultsList config={resultsListConfigEntityAsKey} />
+                </DetailContext.Provider>
+            </SearchContext.Provider>
+        );
+        expect(getByText(searchResultsEntityAsKey['result'][0]['person']['extracted']['person']['name'])).toBeInTheDocument();
+        expect(getByText(searchResultsEntityAsKey['result'][1]['organization']['extracted']['organization']['name'])).toBeInTheDocument();
     });
 
 });
