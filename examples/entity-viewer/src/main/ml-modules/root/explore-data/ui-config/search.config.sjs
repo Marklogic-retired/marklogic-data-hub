@@ -66,6 +66,10 @@ const searchConfig  = {
         "results": {
             "component": "ResultsList",
             "config": {
+                "entityType": {
+                    "path": "entityType",
+                    "rootRelative": false
+                },
                 "pageLengths": [10, 20, 40, 80],
                 "defaultIcon" : {
                     "type": "faCircle",
@@ -80,8 +84,8 @@ const searchConfig  = {
                 "entities": {
                     "person": {
                         "icon": {
-                        "type": "faUser",
-                        "color": "#8C85DE"
+                            "type": "faUser",
+                            "color": "#8C85DE"
                         },
                         "thumbnail": {
                             "component": "Image",
@@ -111,7 +115,7 @@ const searchConfig  = {
                                     {
                                         "arrayPath": "extracted.person.nameGroup",
                                         "path": "surname.value"
-                                    }
+                                    } 
                                 ]
                             }
                         },
@@ -137,6 +141,7 @@ const searchConfig  = {
                             "config": {
                                 //"path": "extracted.person.phone",
                                 "path": "extracted.person.contacts..[?(@[`type`] === 'phone')].value",
+                                //"path": "extracted.person.contacts..value",
                                 "className": "phone"
                             }
                         },

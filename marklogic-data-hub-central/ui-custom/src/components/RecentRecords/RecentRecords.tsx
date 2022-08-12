@@ -91,9 +91,11 @@ const RecentRecords: React.FC<Props> = (props) => {
 
   const getRecent = () => {
     let res = props.data.map((recent, index) => {
-      const configEntityType = recent.entityType && props.config.entities[recent.entityType];
+      // Get entity type via configured path or at default property "entityType"
+      const entityType = props.config.entityType ? getValByConfig(recent, props.config.entityType) : recent.entityType;
+      const configEntityType = entityType && props.config.entities[entityType];
       // Don't show if no configuration for entity type
-      if (!props.config.entities[recent.entityType]) return;
+      if (!configEntityType) return;
       let titleValue: any, idValue: any;
       if (configEntityType.title?.component && configEntityType.title?.config) {
         titleValue = (<span>

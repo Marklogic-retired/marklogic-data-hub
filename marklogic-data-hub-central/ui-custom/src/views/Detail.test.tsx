@@ -3,6 +3,7 @@ import {BrowserRouter as Router} from "react-router-dom";
 import {render, act} from "@testing-library/react";
 import {UserContext} from "../store/UserContext";
 import {DetailContext} from "../store/DetailContext";
+import _ from "lodash";
 //import config from '../../../src/main/resources/explore-data/ui-config/config.json';
 
 // TODO temporarily use custom config without relationships to avoid visjs graph breaking
@@ -37,6 +38,9 @@ const config = {
     }
 }
 
+const configCustomEntity = _.cloneDeep(config);
+configCustomEntity.detail['entityType'] = {"path": "entityTypeCustom"};
+
 const detail = {
     "result": [
         {
@@ -53,6 +57,10 @@ const detail = {
     "uri": "/person/10001.xml"
 
 };
+
+const detailCustomEntity = _.cloneDeep(detail);
+delete detailCustomEntity['entityType'];
+detailCustomEntity['entityTypeCustom'] = "person"; // For testing custom entity definition (not "entityType")
 
 const EXPANDIDS = {
     membership: true,
@@ -77,6 +85,8 @@ const detailContextValue = {
     hasSavedRecords: jest.fn()
 };
 
+const detailContextValueCustomEntity = {...detailContextValue, detail: detailCustomEntity};
+
 const userContextValue = {
     userid: "",
     loginAddress: "",
@@ -88,6 +98,8 @@ const userContextValue = {
 };
 
 const userContextValueEmptyConfig = {...userContextValue, config: {}};
+
+const userContextValueCustomEntity = {...userContextValue, config: configCustomEntity};
 
 describe("Detail view", () => {
 
@@ -123,6 +135,25 @@ describe("Detail view", () => {
             );
         });
         expect(document.querySelector(".loading")).toBeInTheDocument();
+    });
+
+    test("Renders configured content when custom entity path defined", async () => {
+        let getByText;
+        await act(async () => {
+            const renderResults = render(
+                <Router>
+                    <UserContext.Provider value={userContextValueCustomEntity}>
+                        <DetailContext.Provider value={detailContextValueCustomEntity}>
+                            <Detail />
+                        </DetailContext.Provider>
+                    </UserContext.Provider>
+                </Router>
+            );
+            getByText = renderResults.getByText;
+        });
+        expect(document.querySelector(".heading")).toBeInTheDocument();
+        expect(getByText(detail.result[0].extracted.person.name[0])).toBeInTheDocument();
+        expect(getByText(config.detail.entities.person.info.items[0].config.title)).toBeInTheDocument();
     });
 
 });

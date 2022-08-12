@@ -65,12 +65,11 @@ const Detail: React.FC<Props> = (props) => {
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [config, setConfig] = useState<any>(null);
+  const [entityType, setEntityType] = useState<any>(null);
   const [favorite, setFavorite] = useState<any>(false);
   const [expand, setExpand] = useState<any>(true);
 
   const id = searchParams.get("recordId");
-  const entityType = detailContext?.detail?.entityType;
-
   const handleExpandClick = () => {
     if (expand) {
       handleExpandIds(
@@ -118,6 +117,12 @@ const Detail: React.FC<Props> = (props) => {
       detailContext.handleSaveRecent();
     } else {
       detailContext.handleSaveRecentLocal();
+    }
+    // Get entity type via configured path or at default property "entityType"
+    if (userContext.config.detail?.entityType) {
+        setEntityType(getValByConfig(detailContext.detail, userContext.config.detail.entityType));
+    } else {
+        setEntityType(detailContext.detail.entityType);
     }
   }, [detailContext.detail]);
 

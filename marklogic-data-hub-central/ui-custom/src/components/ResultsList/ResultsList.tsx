@@ -113,7 +113,12 @@ const ResultsList: React.FC<Props> = (props) => {
     }
   };
   const handleTitleClick = (id) => {
-    detailContext.handleGetDetail(id);
+    // id could be an event object if valueId undefined
+    if (_.isObjectLike(id)) {
+        detailContext.handleGetDetail(id.target.id);
+    } else {
+        detailContext.handleGetDetail(id);
+    }
   };
 
   const handleChangePage = (page: number) => {
@@ -163,7 +168,12 @@ const ResultsList: React.FC<Props> = (props) => {
 
   const getResults = () => {
     let results = searchContext.searchResults.result.map((results, index) => {
-      const configEntityType = results.entityType && props.config.entities[results.entityType];
+      // Get entity type via configured path (root relative if configured) or at default property "entityType"
+      const entityType = props.config.entityType ? 
+        (props.config.entityType.rootRelative ? getValByConfig(searchContext.searchResults, props.config.entityType) :
+        getValByConfig(results, props.config.entityType)) :
+        results.entityType;
+      const configEntityType = entityType && props.config.entities[entityType];
       if (!configEntityType) {
           return getResultNoEntity(results, index);
       }
