@@ -27,6 +27,7 @@ const Relationships: React.FC<Props> = (props) => {
     const [network, setNetwork] = useState<any>(null);
     const [graph, setGraph] = useState({ nodes: [], edges: [] });
     const [relationshipsStyle, setRelationshipsStyle] = useState({});
+    const [links, setLinks] = useState({}); // Store which nodes are clickable links
     const initNetworkInstance = (networkInstance) => {
         setNetwork(networkInstance);
     };
@@ -110,16 +111,21 @@ const Relationships: React.FC<Props> = (props) => {
         if (type === "text") {
             let rootLabel = getValByConfig(data, rootConfig.label, true);
             rootLabel = _.isNil(rootLabel) ? null : (Array.isArray(rootLabel) ? rootLabel[0] : rootLabel);
-            rootObj = { id: rootId, label: rootLabel, shape: "box", borderWidth: 0, color: "#D4DEFF", title: rootPopover};
+            rootObj = { id: rootId, label: rootLabel, shape: "box", borderWidth: 0, 
+                color: rootConfig.style?.color ? rootConfig.style?.color : "#D4DEFF", title: rootPopover};
         } else if (type === "image") {
             let rootImgSrc = getValByConfig(data, rootConfig.imgSrc, true);
             rootImgSrc = _.isNil(rootImgSrc) ? null : (Array.isArray(rootImgSrc) ? rootImgSrc[0] : rootImgSrc);
             rootObj = { id: rootId, shape: "image", size: 30, image: rootImgSrc, title: rootPopover};
         }
+        if (rootConfig.link) {
+            setLinks(links => ({...links, [rootId]: true}));
+        }
         return rootObj;
     }
 
     const getRelationNode = (data, relationsConfig, type) => {
+        const relId = getValByConfig(data, relationsConfig.id, true);
         let relObj: any;
         let relItems: any = [];
         relationsConfig?.popover?.items.forEach(item => {
@@ -129,21 +135,24 @@ const Relationships: React.FC<Props> = (props) => {
         })
         if (type === "text") {
             relObj = { 
-                id: getValByConfig(data, relationsConfig.id, true), 
+                id: relId, 
                 label: getValByConfig(data, relationsConfig.label, true),
                 shape: "box",
                 borderWidth: 0, 
-                color: "#D4DEFF",
+                color: relationsConfig.style?.color ? relationsConfig.style?.color : "#D4DEFF",
                 title: getPopover(relItems) 
             }
         } else if (type === "image") {
             relObj = { 
-                id: getValByConfig(data, relationsConfig.id, true), 
+                id: relId, 
                 image: getValByConfig(data, relationsConfig.imgSrc, true),
                 shape: "image", 
-                size: 30, 
+                size: relationsConfig.style?.size ? relationsConfig.style?.size : 30, 
                 title: getPopover(relItems) 
             }
+        }
+        if (relationsConfig.link) {
+            setLinks(links => ({...links, [relId]: true}));
         }
         return relObj;
     }
@@ -151,30 +160,29 @@ const Relationships: React.FC<Props> = (props) => {
     useEffect(() => {
         const nodeSize = props.config.size ? props.config.size : 30;
         const rootId = getValByConfig(props.data, props.config.root.id, true);
-
-        // Set up related entities
-        let relations = getValByConfig(props.data, props.config.relations, false);
-        relations = _.isNil(relations) ? null : (Array.isArray(relations) ? relations : [relations]);
-
-        // if no relations, minimize container and return
-        if (!relations) {
-            setRelationshipsStyle({...relationshipsStyle, height: "32px"});
-            return;
-        }
-
-        // Add root, relation nodes
-        const nodes: any = [getRootNode(props.data, props.config.root, props.config.type)];
-        relations.forEach(rel => {
-            nodes.push(getRelationNode(rel, props.config.relations, props.config.type));
-        });
-
-        // Construct edges from root
         const edges: any = [];
-        relations.forEach(rel => {
-            edges.push({ 
-                from: rootId, 
-                to: getValByConfig(rel, props.config.relations.id, true), 
-                label: getValByConfig(rel, props.config.relations.predicate, true)
+        const links: any = ["foo"];
+        let relations;
+
+        // Add root node
+        const nodes: any = [getRootNode(props.data, props.config.root, props.config.type)];
+
+        // Cycle through relationship sets
+        const relSets = _.isArray(props.config.relations) ? props.config.relations : [props.config.relations];
+        relSets.forEach(relSet => {
+            relations = getValByConfig(props.data, relSet, false);
+            relations = _.isNil(relations) ? null : (Array.isArray(relations) ? relations : [relations]);
+            // Add relation nodes
+            relations.forEach(rel => {
+                nodes.push(getRelationNode(rel, relSet, props.config.type));
+            });
+            // Construct edges from root
+            relations.forEach(rel => {
+                edges.push({ 
+                    from: rootId, 
+                    to: getValByConfig(rel, relSet.id, true), 
+                    label: getValByConfig(rel, relSet.predicate, true)
+                });
             });
         });
 
@@ -187,7 +195,10 @@ const Relationships: React.FC<Props> = (props) => {
     const events = {
         select: ({ nodes, edges }) => {
             if (nodes && nodes[0]) {
-                detailContext.handleGetDetail(nodes[0]);
+                // Only handle if node is a link
+                if (links[nodes[0]]) {
+                    detailContext.handleGetDetail(nodes[0]);
+                }
             }
         },
         hoverNode: (event) => {
