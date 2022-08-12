@@ -354,6 +354,9 @@ const detailConfig  = {
                     "arrayPath": "person.images.image",
                     "path": "url"
                   },
+                  style: {
+                    "color": "rgb(250, 233, 211)"
+                  },
                   "popover": {
                     "items": [
                       {
@@ -373,37 +376,68 @@ const detailConfig  = {
                     ]
                   }
                 },
-                "relations": {
-                  "arrayPath": "person.relations.relation",
-                  "id": {
-                    "path": "id"
-                  },
-                  "predicate": {
-                    "path": "predicate"
-                  },
-                  "label": {
-                    "path": "fullname"
-                  },
-                  "imgSrc": {
-                    "path": "imageSrc"
-                  },
-                  "popover": {
-                    "items": [
-                      {
-                        "label": "Name",
-                        "path": "fullname"
-                      },
-                      {
-                        "label": "City",
-                        "path": "city"
-                      },
-                      {
-                        "label": "State",
-                        "path": "state"
-                      }
-                    ]
-                  }
-                },
+                "relations": [
+                    {
+                        "arrayPath": "person.relations.relation",
+                        "id": {
+                            "path": "id"
+                        },
+                        "link": true,
+                        "predicate": {
+                            "path": "predicate"
+                        },
+                        "label": {
+                            "path": "fullname"
+                        },
+                        "imgSrc": {
+                            "path": "imageSrc"
+                        },
+                        "popover": {
+                            "items": [
+                                {
+                                    "label": "Name",
+                                    "path": "fullname"
+                                },
+                                {
+                                    "label": "City",
+                                    "path": "city"
+                                },
+                                {
+                                    "label": "State",
+                                    "path": "state"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "arrayPath": "person.activities.activity",
+                        "id": {
+                            "path": "place"
+                        },
+                        "link": false,
+                        "predicate": {
+                            "path": "predicate"
+                        },
+                        "label": {
+                            "path": "place"
+                        },
+                        style: {
+                            "color": "rgb(240, 246, 217)"
+                        },
+                        "popover": {
+                            "items": [
+                                {
+                                    "label": "Name",
+                                    "path": "place"
+                                },
+                                {
+                                    "label": "Time",
+                                    "path": "ts"
+                                }
+                            ]
+                        }
+                    }
+                ],
                 "options": {} // override vis.js network options
               }
             },
