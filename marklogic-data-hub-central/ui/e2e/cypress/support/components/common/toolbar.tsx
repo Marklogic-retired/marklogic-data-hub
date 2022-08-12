@@ -29,7 +29,7 @@ class Toolbar {
   }
 
   getHomePageInfoPopover() {
-    return cy.findByLabelText("homePageInfoPopover");
+    return cy.get("[class^=Overview_popoverHomePageInfoBody]");
   }
 
   getHomePageInfoIcon() {

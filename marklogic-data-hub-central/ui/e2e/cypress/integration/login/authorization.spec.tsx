@@ -375,12 +375,11 @@ describe("login", () => {
       .url().should("include", "/tiles");
 
     // To verify on click operation works as expected
-    toolbar.getHomePageInfoIcon().scrollIntoView().click();
+    cy.reload();
+    toolbar.getHomePageInfoIcon().scrollIntoView().should("be.visible").click({force: true});
     toolbar.getHomePageInfoPopover().should("exist");
-    toolbar.getHomePageInfoIcon().scrollIntoView().click();
-    toolbar.getHomePageInfoPopover().should("not.exist");
 
-    toolbar.getModelToolbarIcon().trigger("mouseover").click();
+    toolbar.getModelToolbarIcon().trigger("mouseover").click({force: true});
     cy.url().should("include", "/tiles/model");
     tiles.getModelTile().should("exist");
     cy.get(`#user-dropdown`).click();

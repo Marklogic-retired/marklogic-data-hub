@@ -102,9 +102,9 @@ describe("Entity display settings in model tile", () => {
     homePage.getTileCloseButton().click();
     homePage.getExploreCard().click();
 
-    cy.log("**Click on babyRegistry node and verify thae properties on hover show up in the tooltip**");
+    cy.log("**Click on babyRegistry node and verify that properties on hover show up in the tooltip**");
     graphExplore.getGraphVisCanvas().should("exist");
-    cy.wait(1000);
+    cy.wait(3000);
     graphExplore.stopStabilization();
     graphExplore.focusNode(ExploreGraphNodes.BABY_REGISTRY_3039);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.BABY_REGISTRY_3039).then((nodePositions: any) => {
