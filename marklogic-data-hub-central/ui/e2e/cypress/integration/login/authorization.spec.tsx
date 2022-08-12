@@ -169,10 +169,11 @@ describe("login", () => {
     loadPage.addToNewFlow(stepName).click("top", {force: true});
     runPage.newFlowModal().should("not.exist");
     loadPage.existingFlowsList(stepName).click({force: true});
-
-    cy.log("**Clicks on Delete button**");
-    loadPage.deleteStep(stepName).should("be.visible").click();
-    loadPage.deleteConfirmation("No").click();
+    loadPage.addToNewFlow(stepName).click("top", {force: true}).then(() => {
+      cy.log("**Clicks on Delete button**");
+      loadPage.deleteStep(stepName).should("be.visible").click();
+      loadPage.deleteConfirmation("No").click();
+    });
 
     cy.log("**Table view**");
     loadPage.loadView("table").click();
