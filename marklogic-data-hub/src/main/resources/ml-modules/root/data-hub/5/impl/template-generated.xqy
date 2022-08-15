@@ -299,7 +299,12 @@ declare function extraction-template-generate(
                           for $concept in json:array-values($map-related-concepts)
                           let $predicate_concept:=map:get($concept, "predicate")
                           let $context:=map:get($concept, "context")
-                          let $conceptExpression:=map:get($concept, "conceptExpression")
+                           let $defaultValueExpression:="sem:iri(fn:replace(fn:string(.),'\\s+', ''))"
+                          let $expression:=map:get($concept, "conceptExpression")
+                           let $conceptExpression :=
+                                 if (fn:string($expression) eq "")
+                                 then $defaultValueExpression
+                                 else $expression
                           let $concept_class:=map:get($concept, "conceptClass")
                           where exists($has-related-concepts)
                           return
