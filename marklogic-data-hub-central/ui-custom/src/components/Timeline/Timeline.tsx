@@ -29,25 +29,21 @@ const COMPONENTS = {
  */
 const Timeline: React.FC<Props> = (props) => {
 
-    let data: any = [];
-    data = getValByConfig(props.data, props.config);
-    data = _.isNil(data) ? null : (Array.isArray(data) ? data : [data]);
+    let data: any = [], items : any[]=[];
 
-    let timelineData : any[]=[];
-
-    const getItems = (d) => {
+    const getPopover = (d, popoverConfig) => {
         let result = [];
-        result = props.config.popover.items.map((item, index) => {
+        result = popoverConfig.items.map((item, i) => {
             if (!item) return null;
-            return (<div className="popover-row" key={"item-" + index}>
+            return (<div className="popover-row" key={"item-" + i}>
                 <span className="popover-label">{item.label}</span>
                 {(item.component) ?
-                    <span key={"item-" + index} className="popover-value">
+                    <span key={"item-" + i} className="popover-value">
                         {React.createElement(COMPONENTS[item.component],
                             { config: item.config, data: d, style: item.style}, null
                         )}
                     </span> :
-                    <span><span key={"item-" + index} className="popover-value">
+                    <span><span key={"item-" + i} className="popover-value">
                         <Value data={d} config={item} getFirst={true}/>
                     </span></span>
                 }
@@ -56,28 +52,35 @@ const Timeline: React.FC<Props> = (props) => {
         return result;
     }
 
-    data?.map((activity, id) => {
-        let obj={content: "", start: null, id: "", title: "", type:""};
-        obj.content = getValByPath(activity, props.config.marker.label.path, true)
-        obj.start = getValByPath(activity, props.config.marker.ts.path, true)
-        obj.id = getValByPath(activity, props.config.marker.label.path, true) + id;
-        obj.title = ReactDOMServer.renderToString(
-            <span>{getItems(data[id])}</span>)
-        timelineData.push(obj);
-    })
-
+    // Cycle through timeline sets
+    const markerSets = _.isArray(props.config.markers) ? props.config.markers : [props.config.markers];
     let minDate = new Date(), maxDate = new Date, currItemDate;
-    data?.map((activity) => {
-        let date = getValByPath(activity, props.config.marker.ts.path);
+    markerSets.forEach(markerSet => {
+        data = getValByConfig(props.data, markerSet);
+        data = _.isNil(data) ? null : (Array.isArray(data) ? data : [data]);
+        data?.map((d, i) => {
+            const item={};
+            item['content'] = getValByPath(d, markerSet.label.path, true);
+            item['start'] = getValByPath(d, markerSet.start.path, true);
+            item['end'] = markerSet.end?.path ? getValByPath(d, markerSet.end.path, true) : null;
+            item['id'] = getValByPath(d, markerSet.label.path, true) + i;
+            item['style'] = markerSet.style ? markerSet.style : 'background-color: #D4DEFF;';
+            item['title'] = ReactDOMServer.renderToString(
+                <span>{getPopover(d, markerSet.popover)}</span>)
+            items.push(item);
+        })
+        data?.map((d) => {
+            let date = getValByPath(d, markerSet.start.path);
+            currItemDate = new Date(date);
+            if(currItemDate < minDate) {
+                minDate = currItemDate;
+            }
+            else if(currItemDate > maxDate) {
+                maxDate = currItemDate;
+            }
+        })
+    });
 
-        currItemDate = new Date(date);
-        if(currItemDate < minDate) {
-            minDate = currItemDate;
-        }
-        else if(currItemDate > maxDate) {
-            maxDate = currItemDate;
-        }
-    })
     let boundaryRange = (maxDate.getTime() - minDate.getTime())/(1000 * 3600 * 24 * 30);
     minDate.setMonth(minDate.getMonth() - boundaryRange/20);
     maxDate.setMonth(maxDate.getMonth() + boundaryRange/20);
@@ -96,20 +99,14 @@ const Timeline: React.FC<Props> = (props) => {
     // Any option overrides from config
     timelineOptions = Object.assign(timelineOptions, props?.config?.options);
 
-    const renderActivityTimeline = () => {
-        return <div data-testid={"activity-info-timeline"}>
-            <TimelineVis
-                items={timelineData}
-                options={timelineOptions}
-                borderMargin="14px"
-            />
-        </div>;
-    };
-
     return (
         <div className="timeline">
-            {data && data.length > 0 && <div>
-                {renderActivityTimeline()}
+            {data && data.length > 0 && <div data-testid={"activity-info-timeline"}>
+                <TimelineVis
+                    items={items}
+                    options={timelineOptions}
+                    borderMargin="14px"
+                />
             </div>}
         </div>
     );

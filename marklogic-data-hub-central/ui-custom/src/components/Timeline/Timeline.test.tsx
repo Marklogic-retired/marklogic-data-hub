@@ -6,48 +6,65 @@ const configMultiple = {
     component: "Timeline",
     config: {
         title: "Activities",
-        arrayPath: "person.activities.activity",
-        marker: {
-          label: {
-            path: "predplace"
-          },
-          ts: {
-            path: "ts"
-          }
+        markers: [{
+            arrayPath: "person.activities.activity",
+            label: {
+                path: "predplace"
+            },
+            start: {
+                path: "ts"
+            },
+            popover: {
+                placement: "right",
+                items: [
+                    {
+                        component: "DateTime",
+                        label: "Activity date",
+                        config: {
+                            path: "ts",
+                            format: "MMMM dd, yyyy"
+                        }
+                    },
+                    {
+                        label: "Source",
+                        path: "source.name"
+                    }
+                ]
+            }
         },
-        popover: {
-            placement: "right",
-            items: [
-                {
-                    component: "DateTime",
-                    label: "Activity date",
-                    config: {
-                        path: "ts",
-                        format: "MMMM dd, yyyy"
-                    }
-                },
-                {
-                    label: "Source",
-                    path: "source.name"
-                },
-                {
-                    component: "DateTime",
-                    label: "Source date",
-                    config: {
-                        path: "source.ts",
-                        format: "MMMM dd, yyyy"
-                    }
-                },
-                {
-                    label: "Created by",
-                    path: "source.createdBy"
-                },
-                {
-                    label: "Approved by",
-                    path: "source.approvedBy"
-                }
-            ]
-        }
+        {
+            arrayPath: "person.events.event",
+            label: {
+                path: "predplace"
+            },
+            start: {
+                path: "start"
+            },
+            end: {
+                path: "end"
+            },
+            popover: {
+                placement: "right",
+                items: [
+                    {
+                        component: "DateTime",
+                        label: "Event start",
+                        config: {
+                            path: "start",
+                            format: "MMMM dd, yyyy"
+                        }
+                    },
+                    {
+                        component: "DateTime",
+                        label: "Event end",
+                        config: {
+                            path: "end",
+                            format: "MMMM dd, yyyy"
+                        }
+                    },
+                ]
+            }
+        }]
     }
 };
 
@@ -61,10 +78,7 @@ const detail = {
             predplace: "endedAt Tekfly",
             ts: "2018-02-06T09:37:46Z",
             source : {
-                approvedBy: "Dian Aslam",
-                createdBy: "Hugues Sink",
                 name: "USA Today",
-                ts: "2018-02-06T09:37:46Z"
             }
         },
         {
@@ -73,24 +87,20 @@ const detail = {
             predplace: "startedAt Babblestorm",
             ts: "2018-05-27T22:28:59Z",
               source : {
-                 approvedBy: "Benedikt Caudray",
-                 createdBy: "Arny Karpol",
                  name: "New York Times",
-                 ts: "2018-05-27T22:28:59Z"
             }
         },
+      ]
+    },
+    events: {
+        event: [
         {
-            place: "Realblab",
-            predicate: "endedAt",
-            predplace: "endedAt Realblab",
-            ts: "2018-05-27T22:28:59Z",
-            source : {
-                approvedBy: "Phillie Petrie",
-                createdBy: "Harriett Stanislaw",
-                name: "Chicago Tribune",
-                ts: "2018-05-27T22:28:59Z"
-            }
-        },
+            place: "Canada",
+            predicate: "servedIn",
+            predplace: "servedIn Canada",
+            start: "2015-02-06T09:37:46Z",
+            end: "2019-02-06T09:37:46Z"
+        }
       ]
     }
   }
