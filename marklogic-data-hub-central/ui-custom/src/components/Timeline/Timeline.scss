@@ -26,7 +26,7 @@
     }
   }
   .vis-item {
-    background-color: #D4DEFF !important;
+    // background-color: #D4DEFF !important;
     color: #111 !important;
     opacity: 0.8 !important;
     cursor: pointer;
@@ -35,6 +35,9 @@
     height: 28px;
     padding-left: 3px;
     padding-right: 3px;
+  }
+  .vis-item.vis-range, .vis-item.vis-range.vis-selected {
+    border: 0 !important;
   }
 
   .vis-item .vis-item-content {

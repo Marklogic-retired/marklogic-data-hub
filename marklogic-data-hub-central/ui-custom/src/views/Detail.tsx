@@ -323,7 +323,7 @@ const Detail: React.FC<Props> = (props) => {
           {configEntityType.timeline && <div className="row">
             <div className="col-12">
               <Section
-                title="Timeline"
+                title={configEntityType.timeline.config?.title || "Timeline"}
                 data-test="timelineSection"
                 collapsible={true}
                 expand={expandIds.timeline}

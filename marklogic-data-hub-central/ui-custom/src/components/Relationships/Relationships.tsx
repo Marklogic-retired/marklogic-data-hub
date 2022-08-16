@@ -161,7 +161,6 @@ const Relationships: React.FC<Props> = (props) => {
         const nodeSize = props.config.size ? props.config.size : 30;
         const rootId = getValByConfig(props.data, props.config.root.id, true);
         const edges: any = [];
-        const links: any = ["foo"];
         let relations;
 
         // Add root node

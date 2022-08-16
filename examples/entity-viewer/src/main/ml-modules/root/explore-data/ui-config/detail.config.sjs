@@ -493,49 +493,90 @@ const detailConfig  = {
             "timeline": {
               "component": "Timeline",
               "config": {
-                "title": "Activities",
-                "arrayPath": "person.activities.activity",
-                "marker": {
-                  "label": {
-                    "path": "predplace"
-                  },
-                  "ts": {
-                    "path": "ts"
-                  }
-                },
-                "popover": {
-                  "placement": "right",
-                  "items": [
+                "title": "Activities and Events",
+                "markers": [
                     {
-                      "component": "DateTime",
-                      "label": "Activity date",
-                      "config": {
-                        "path": "ts",
-                        "format": "MMMM dd, yyyy"
-                      }
+                        "arrayPath": "person.activities.activity",
+                        "label": {
+                            "path": "predplace"
+                        },
+                        "start": {
+                            "path": "ts"
+                        },
+                        "style": "background-color: rgb(240, 246, 217);",
+                        "popover": {
+                            "placement": "right",
+                            "items": [
+                                {
+                                    "component": "DateTime",
+                                    "label": "Activity date",
+                                    "config": {
+                                        "path": "ts",
+                                        "format": "MMMM dd, yyyy"
+                                    }
+                                },
+                                {
+                                    "label": "Source",
+                                    "path": "source.name"
+                                },
+                                {
+                                    "component": "DateTime",
+                                    "label": "Source date",
+                                    "config": {
+                                        "path": "source.ts",
+                                        "format": "MMMM dd, yyyy"
+                                    }
+                                },
+                                {
+                                    "label": "Created by",
+                                    "path": "source.createdBy"
+                                },
+                                {
+                                    "label": "Approved by",
+                                    "path": "source.approvedBy"
+                                }
+                            ]
+                        }
                     },
                     {
-                      "label": "Source",
-                      "path": "source.name"
-                    },
-                    {
-                      "component": "DateTime",
-                      "label": "Source date",
-                      "config": {
-                        "path": "source.ts",
-                        "format": "MMMM dd, yyyy"
-                      }
-                    },
-                    {
-                      "label": "Created by",
-                      "path": "source.createdBy"
-                    },
-                    {
-                      "label": "Approved by",
-                      "path": "source.approvedBy"
+                        "arrayPath": "person.events.event",
+                        "label": {
+                            "path": "predplace"
+                        },
+                        "start": {
+                            "path": "start"
+                        },
+                        "end": {
+                            "path": "end"
+                        },
+                        "style": "background-color: rgb(213, 225, 222);",
+                        "popover": {
+                            "placement": "right",
+                            "items": [
+                                {
+                                    "label": "Event",
+                                    "path": "predplace"
+                                },
+                                {
+                                    "component": "DateTime",
+                                    "label": "Start date",
+                                    "config": {
+                                        "path": "start",
+                                        "format": "MMMM dd, yyyy"
+                                    }
+                                },
+                                {
+                                    "component": "DateTime",
+                                    "label": "End date",
+                                    "config": {
+                                        "path": "end",
+                                        "format": "MMMM dd, yyyy"
+                                    }
+                                }
+                            ]
+                        }
                     }
-                  ]
-                },
+                ],
                 options: {} // override vis.js timeline options
               }
             },
