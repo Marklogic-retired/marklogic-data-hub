@@ -179,14 +179,12 @@ const Flows: React.FC<Props> = ({
     }
 
     if (flows !== undefined || flows !== null) {
-      {
-        setFlowsDeepCopy(_.cloneDeep(flows));
-        flows.map((flow) => (
-          flow?.steps && flow.steps.map((step) => {
-            controlsCheckboxes(step, step.stepDefinitionType?.toLowerCase(), flow.name);
-          })
-        ));
-      }
+      setFlowsDeepCopy(_.cloneDeep(flows));
+      flows.map((flow) => (
+        flow?.steps && flow.steps.map((step) => {
+          controlsCheckboxes(step, step.stepDefinitionType?.toLowerCase(), flow.name);
+        })
+      ));
 
       //Getting local storage in the load of the page if it exists
       if (getUserPreferencesLS() && getUserPreferencesLS()?.loadSelectedStepsUser) {
@@ -401,9 +399,9 @@ const Flows: React.FC<Props> = ({
     // setSelectedStepOptions(newObject);
 
     resetSelectedFlow(flowName);
-    deleteStep(flowName, stepNumber);
     setStepDialogVisible(false);
     saveLocalStoragePreferences(true, true);
+    deleteStep(flowName, stepNumber);
   };
 
   const onConfirmOk = () => {
@@ -606,9 +604,6 @@ const Flows: React.FC<Props> = ({
     } else {
 
       let originRender = event !== "default" ? true : false;
-
-
-
       let data = {stepName: "", stepNumber: -1, stepDefinitionType: "", isChecked: false, flowName: "", stepId: "", sourceFormat: ""};
 
       data.stepName = checkedValues;
@@ -649,6 +644,7 @@ const Flows: React.FC<Props> = ({
       setSelectedStepDetails(obj);
       selectedStepOptions[flowNames + "_" + checkedValues + "_" + stepDefinitionType?.toLowerCase()] = true;
       setSelectedStepOptions({...selectedStepOptions, [flowNames + "_" + checkedValues + "_" + stepDefinitionType?.toLowerCase()]: originRender ? event.target.checked : true});
+      //saveLocalStoragePreferences(true, true);
       if (originRender) event.stopPropagation();
     }
   };
@@ -863,6 +859,20 @@ const Flows: React.FC<Props> = ({
     );
   };
 
+  //Double check steps to run
+  const controlStepNumbers = (stepNumbers: any) => {
+    const findElement = (name: string, number: string) => {
+      let found = flows?.find(el => el?.name === name && el?.steps.find(a => a?.stepNumber === number));
+      return found;
+    };
+    for (let i = stepNumbers?.length - 1; i >= 0; i--) {
+      if (!findElement(runningFlow, stepNumbers[i]?.stepNumber)) {
+        stepNumbers.splice(i, 1);
+      }
+    }
+    return stepNumbers;
+  };
+
   const handleRunFlow = async (index, name) => {
     //setRunFlowClicked(true);
     const setKey = async () => {
@@ -890,7 +900,8 @@ const Flows: React.FC<Props> = ({
       stepNumbers = selectedStepDetails.filter(function (obj) {
         return obj.flowName === name && obj.isChecked === true;
       });
-      await runFlowSteps(name, stepNumbers)
+
+      await runFlowSteps(name, controlStepNumbers(stepNumbers))
         .then(() => {
           // setSelectedStepOptions({});
           // setSelectedStepDetails([{stepName: "", stepNumber: -1, stepDefinitionType: "", isChecked: false}]);
@@ -1115,7 +1126,7 @@ const Flows: React.FC<Props> = ({
           return obj.flowName === runningFlow && obj.isChecked === true;
         });
 
-        await runFlowSteps(runningFlow, stepNumbers, formData)
+        await runFlowSteps(runningFlow, controlStepNumbers(stepNumbers), formData)
           .then(resp => {
             setShowUploadError(true);
             setFileList([]);

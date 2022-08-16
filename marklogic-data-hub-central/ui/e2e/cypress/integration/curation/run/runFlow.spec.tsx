@@ -102,6 +102,47 @@ describe("Run Tile tests", () => {
     runPage.verifyStepRunResult("merge-xml-person", "success");
     runPage.verifyFlowModalCompleted(flowName);
     runPage.closeFlowStatusModal(flowName);
+
+    cy.log("**Adding new step to delete**");
+    runPage.addStep(flowName);
+    runPage.addStepToFlow("map-orders");
+    runPage.verifyStepInFlow("Mapping", "map-orders", flowName, true);
+    //confirm the first load step is no longer visible because panel scrolled to the end
+    cy.get("#testPersonXML").within(() => {
+      cy.findByText("loadPersonXML").should("not.be.visible");
+    });
+
+    cy.log("**Run flow**");
+    cy.intercept("GET", "/api/jobs/**").as("runResponse");
+    runPage.runFlow(flowName);
+    cy.uploadFile("input/person.xml");
+    cy.wait("@runResponse");
+    cy.wait(3000);
+
+    cy.log("**Checking the modal**");
+    runPage.verifyStepRunResult("mapPersonXML", "success");
+    runPage.verifyStepRunResult("match-xml-person", "success");
+    runPage.verifyStepRunResult("merge-xml-person", "success");
+    runPage.verifyFlowModalCompleted(flowName);
+    runPage.closeFlowStatusModal(flowName);
+
+    cy.log("**Deleting last step added**");
+    runPage.deleteStep("map-orders", flowName).click();
+    runPage.deleteStepConfirmationMessage("map-orders", flowName);
+    cy.findByLabelText("Yes").click();
+
+    cy.intercept("GET", "/api/jobs/**").as("runResponse");
+    runPage.runFlow(flowName);
+    cy.uploadFile("input/person.xml");
+    cy.wait("@runResponse");
+    cy.wait(3000);
+
+    cy.log("**Checking the modal**");
+    runPage.verifyStepRunResult("mapPersonXML", "success");
+    runPage.verifyStepRunResult("match-xml-person", "success");
+    runPage.verifyStepRunResult("merge-xml-person", "success");
+    runPage.verifyFlowModalCompleted(flowName);
+    runPage.closeFlowStatusModal(flowName);
   });
 
   it("Verify if no step is selected in run flow dropdown; all steps are executed ", () => {

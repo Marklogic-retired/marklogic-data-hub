@@ -69,12 +69,16 @@ class RunPage {
     return cy.get(`[aria-label="addStep-${stepName}"]`);
   }
 
-  verifyStepInFlow(stepType: string, stepName: string, flowName: string) {
+  verifyStepInFlow(stepType: string, stepName: string, flowName: string, scroll?: boolean) {
     cy.waitForModalToDisappear();
     cy.wait(1500);
     cy.get(`#${flowName} ${this.flowBodyContainer}`).findAllByText(stepType).first().scrollIntoView().should("exist");
     cy.get(`#${flowName} ${this.flowBodyContainer}`).findAllByText(stepType).first().scrollIntoView().should("be.visible");
-    cy.get(`#${flowName} ${this.flowBodyContainer}`).findAllByText(stepName).first().should("be.visible");
+    if (scroll) {
+      cy.get(`#${flowName} ${this.flowBodyContainer}`).findAllByText(stepName).first().scrollIntoView().should("be.visible");
+    } else {
+      cy.get(`#${flowName} ${this.flowBodyContainer}`).findAllByText(stepName).first().should("be.visible");
+    }
   }
 
   getFlowStatusModal() {
