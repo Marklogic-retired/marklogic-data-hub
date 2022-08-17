@@ -795,7 +795,7 @@ const Sidebar: React.FC<Props> = (props) => {
           id="switch-datasource-entities"
           name="switch-datasource"
           type={"radio"}
-          defaultChecked={searchOptions.datasource === "entities"}
+          checked={searchOptions.datasource === "entities"}
           onChange={e => setDatasourcePreferences(e.target.value)}
           aria-label="switch-datasource-entities"
           label={<span>
@@ -811,7 +811,7 @@ const Sidebar: React.FC<Props> = (props) => {
           name="switch-datasource"
           type={"radio"}
           value={"all-data"}
-          defaultChecked={searchOptions.datasource === "all-data"}
+          checked={searchOptions.datasource === "all-data"}
           onChange={e => setDatasourcePreferences(e.target.value)}
           aria-label="switch-datasource-all-data"
           label={<span>
