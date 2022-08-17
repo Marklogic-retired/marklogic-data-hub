@@ -203,7 +203,15 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStop
       text: "Action",
       key: "action",
       dataField: "successfulEvents",
-      headerFormatter: (column) => <span className={styles.actionHeader}><strong>Action</strong><HCTooltip text={RunToolTips.exploreStepData} id="explore-data" placement="top"><FontAwesomeIcon icon={faInfoCircle} size="1x" aria-label="icon: info-circle" className={styles.infoIcon}/></HCTooltip></span>,
+      headerFormatter: (column) =>
+        <span className={styles.actionHeader}>
+          <strong>Action</strong>
+          <HCTooltip text={RunToolTips.exploreStepData} id="explore-data" placement="top">
+            <i>
+              <FontAwesomeIcon icon={faInfoCircle} size="1x" aria-label="icon: info-circle" className={styles.infoIcon}/>
+            </i>
+          </HCTooltip>
+        </span>,
       formatter: (successfulEvents, response) => {
         const {targetEntityType, targetDatabase, stepDefinitionType, stepName, stepEndTime} = response;
         const stepIsFinished = stepEndTime && stepEndTime !== "N/A";

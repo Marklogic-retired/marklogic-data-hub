@@ -8,6 +8,7 @@ import {CurationContext} from "../../util/curation-context";
 import {curationContextMock} from "../../assets/mock-data/curation/curation-context-mock";
 import dayjs from "dayjs";
 import curateData from "../../assets/mock-data/curation/flows.data";
+import userEvent from "@testing-library/user-event";
 
 jest.mock("axios");
 
@@ -212,5 +213,35 @@ describe("Job response modal", () => {
     expect(getByText("666f23f6-7fc7-492e-980f-8b2ba21a4b94")).toBeInTheDocument();
     expect(getByText("merge-person")).toBeInTheDocument();
     expect(getByText("generate-dictionary")).toBeInTheDocument();
+  });
+
+  test("Verify that action tooltip apears when hover on the info icon", async () => {
+    mocks.runAPI(axiosMock);
+    let getByRole;
+    let getByText;
+    let getByLabelText;
+    const stopRun = jest.fn();
+    act(() => {
+      ({getByRole, getByText, getByLabelText} = render(
+        <Router>
+          <CurationContext.Provider value={curationContextMock}>
+            <JobResponse
+              jobId={"666f23f6-7fc7-492e-980f-8b2ba21a4b94"}
+              setOpenJobResponse={() => { }}
+              stopRun={stopRun}
+            />
+          </CurationContext.Provider>
+        </Router>
+      ));
+    });
+
+    expect(await (waitForElement(() => getByText((content, node) => {
+      return getSubElements(content, node, "The flow testFlow was canceled");
+    })))).toBeInTheDocument();
+
+    const infoIcon = getByLabelText("icon: info-circle");
+    expect(infoIcon).toBeInTheDocument();
+    userEvent.hover(infoIcon);
+    expect(getByRole("tooltip")).toBeInTheDocument();
   });
 });
