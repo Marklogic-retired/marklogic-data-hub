@@ -36,8 +36,6 @@ public class DeleteModelTest extends ModelTest {
         deleteEntity2Model();
         publishDraftModels();
         verifyEntity2BasedArtifactsDontExist();
-        verifyReferencesToEntity2DontExistInEntity1();
-
         deleteEntity1Model();
         publishDraftModels();
     }
@@ -69,11 +67,6 @@ public class DeleteModelTest extends ModelTest {
 
     private void removeReferencesToEntity() {
         removeDocuments("/steps/matching/matching-step.step.json", "/steps/mapping/testMap2.step.json");
-    }
-
-    private void verifyReferencesToEntity2DontExistInEntity1() {
-        assertFalse(getFinalDoc("/entities/Entity1.entity.json").toString().contains("Entity2"), "Expected the properties that refer to Entity2 to be deleted from Entity1.");
-        assertFalse(getStagingDoc("/entities/Entity1.entity.json").toString().contains("Entity2"), "Expected the properties that refer to Entity2 to be deleted from Entity1.");
     }
 
     private void verifyEntity2BasedArtifactsDontExist() {
