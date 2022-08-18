@@ -335,7 +335,10 @@ function findForeignKeyReferencesInOtherModels(entityModel, propertyName){
   }
   const entityModels = cts.search(cts.andQuery(queries)).toArray().map(entityModel => entityModel.toObject());
   const entityModelsToBeDeleted = entityModels.filter((model) => model.info.draftDeleted).map((model) => getModelName(model));
+  const entityModelsDraftWithoutRelated = cts.search(cts.andNotQuery(cts.collectionQuery([getDraftModelCollection()]),
+    cts.jsonPropertyValueQuery("relatedEntityType", entityTypeId, "case-insensitive"))).toArray().map(entityModel =>getModelName(entityModel.toObject()))
   entityModels
+    .filter((model) => !entityModelsDraftWithoutRelated.includes(getModelName(model)))
     .filter((model) => !entityModelsToBeDeleted.includes(getModelName(model)))
     .forEach((model) => affectedModels.add(getModelName(model)));
   return [...affectedModels];
@@ -481,45 +484,18 @@ function publishDraftModels() {
   const draftModels = hubUtils.invokeFunction(() => cts.search(cts.collectionQuery(consts.DRAFT_ENTITY_MODEL_COLLECTION)), xdmp.databaseName(xdmp.database()));
   hubUtils.hubTrace(consts.TRACE_ENTITY,`Publishing draft models: ${xdmp.toJsonString(draftModels)}`);
   const inMemoryModelsUpdated = {};
-  const urisOfModelsBeingDeleted = draftModels.toArray()
-    .map((model) => model.toObject())
-    .filter((modelObject) => modelObject.info.draftDeleted)
-    .map((modelObject) => getModelUri(modelObject.info.title));
+
   for (const draftModel of draftModels) {
     let modelObject = draftModel.toObject();
-
     modelObject.info.draft = false;
-
     if(modelObject.info.draftDeleted) {
-      const entityTypeId = getEntityTypeId(modelObject, modelObject.info.title);
-      const entityModelUri = getModelUri(modelObject.info.title);
-
       hubUtils.hubTrace(consts.TRACE_ENTITY,`deleting draft model: ${modelObject.info.title}`);
       deleteModel(modelObject.info.title);
       hubUtils.hubTrace(consts.TRACE_ENTITY,`deleted draft model: ${modelObject.info.title}`);
-
-      hubUtils.hubTrace(consts.TRACE_ENTITY,`deleting draft model references: ${modelObject.info.title}`);
-      const entityURIsToIgnore = urisOfModelsBeingDeleted.concat([entityModelUri]);
-      // update models in memory with necessary reference updates
-      otherModelsWithModelReferencesRemoved(entityURIsToIgnore, entityTypeId, inMemoryModelsUpdated).forEach((model) => {
-        inMemoryModelsUpdated[model.info.title] = model;
-      });
-      hubUtils.hubTrace(consts.TRACE_ENTITY,`deleted draft model references: ${modelObject.info.title}`);
     } else {
       // if the draft changes aren't already picked up by reference updates, add them here.
       if (!inMemoryModelsUpdated[modelObject.info.title]) {
         inMemoryModelsUpdated[modelObject.info.title] = modelObject;
-      }
-    }
-  }
-  for (const draftModel of draftModels) {
-    for (let relatedModelRef of draftModel.xpath("/definitions/*/properties/*//relatedEntityType")) {
-      const relatedModel = findModelForEntityTypeId(fn.string(relatedModelRef));
-      if (relatedModel) {
-        const relatedModelObj = relatedModel.toObject();
-        if (!inMemoryModelsUpdated[relatedModelObj.info.title]) {
-          inMemoryModelsUpdated[relatedModelObj.info.title] = relatedModelObj;
-        }
       }
     }
   }
