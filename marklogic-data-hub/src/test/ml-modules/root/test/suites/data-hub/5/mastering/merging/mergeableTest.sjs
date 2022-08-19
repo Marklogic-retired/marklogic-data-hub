@@ -204,6 +204,9 @@ function testBuildMergeDocumentJson() {
   }));
   const mergedDocument = mergeableInstance.buildMergeDocument(mergeContentObjects);
   const assertions = [];
+  assertions.push(
+    test.assertTrue(fn.exists(mergedDocument.xpath("/*:envelope/*:headers/*:merge-options/*:value")), `Should have merge options. Merge document: ${xdmp.toJsonString(mergedDocument)}`)
+  );
   const name = mergedDocument.xpath("/envelope/instance/Customer/name");
   assertions.push(
     test.assertEqual(1, fn.count(name), `Name should have one property. Merge document: ${xdmp.toJsonString(mergedDocument)}`),
@@ -227,6 +230,9 @@ function testBuildMergeDocumentXml() {
   }));
   const mergedDocument = mergeableInstance.buildMergeDocument(mergeContentObjects);
   const assertions = [];
+  assertions.push(
+    test.assertTrue(fn.exists(mergedDocument.xpath("/*:envelope/*:headers/*:merge-options/*:value")), `Should have merge options. Merge document: ${xdmp.toJsonString(mergedDocument)}`)
+  );
   const name = mergedDocument.xpath("/*:envelope/*:instance/*:NamespacedCustomer/*:name");
   assertions.push(
     test.assertEqual(1, fn.count(mergedDocument.xpath("/*:envelope/*:instance/*:NamespacedCustomer")), `Should only have 1 root entity instance. Merge document: ${xdmp.toJsonString(mergedDocument)}`)

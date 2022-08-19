@@ -484,7 +484,7 @@ const ResultsTabularView = (props) => {
       restrictToUris: true,
       uris: activeEntityUris,
       sampleSize: 100,
-      stepName: "match-person"
+      stepName: item.matchStepName
     };
 
     let previewMatchActivity = await previewMatchingActivity(testMatchData);
