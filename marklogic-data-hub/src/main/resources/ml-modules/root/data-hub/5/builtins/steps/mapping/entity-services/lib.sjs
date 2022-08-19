@@ -462,6 +462,7 @@ function validateAndTestUriExpressions(mapping, validatedMappingsArray, sourceIn
   const namespaces = fetchNamespacesFromMappingStep(mapping);
   const functionImports = retrieveFunctionImports();
   const mappingParameters = makeParameterElements(mapping, userParameterNames);
+  let uriExpressionList = [];
   validatedMappingsArray.forEach((entityMapping, mappingIndex) =>{
     const xmlMapping = xdmp.unquote(`
     <m:mapping xmlns:m="http://marklogic.com/entity-services/mapping" xmlns:instance="http://marklogic.com/datahub/entityInstance" xmlns:map="http://marklogic.com/xdmp/map" ${namespaces.join(' ')}>
@@ -491,8 +492,15 @@ function validateAndTestUriExpressions(mapping, validatedMappingsArray, sourceIn
     }
     try {
       if(!response){
-        const uriString = String(fn.head(testXmlMapping(xmlMapping, sourceInstance, parameterMap)).xpath('*:uris/*:uri[1]/text()'));
-        response = flowUtils.properExtensionURI(uriString, fn.lowerCase(mapping.targetFormat));
+        if (uriExpressionList.includes(entityMapping.uriExpression)){
+          response = "Mapping expression returns a duplicate Uniform Resource Identifier (URI). URIs must be unique to each entity.";
+          errorEvaluatingExpression = true;
+        }
+        else {
+          uriExpressionList.push(entityMapping.uriExpression);
+          const uriString = String(fn.head(testXmlMapping(xmlMapping, sourceInstance, parameterMap)).xpath('*:uris/*:uri[1]/text()'));
+          response = flowUtils.properExtensionURI(uriString, fn.lowerCase(mapping.targetFormat));
+        }
       }
     }
     catch(e){
@@ -668,7 +676,7 @@ function testMapping(mapping, sourceInstance, userParameterNames, parameterMap,
         mappedProperty["errorMessage"] = resp.errorMessage;
       }
     }
-    
+
     let propertiesPath = paths.map((p) => { return '["' +p + '"]' });
     eval(`delete propMapping${propertiesPath.join("")}`) ;
     paths.pop();
