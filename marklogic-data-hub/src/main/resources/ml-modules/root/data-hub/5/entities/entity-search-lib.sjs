@@ -385,6 +385,15 @@ function addEntitySpecificProperties(result, entityName, entityModel, selectedPr
 
   result.unmerge = fn.exists(doc.xpath("/*:envelope/*:headers/*:merges"));
   result.unmergeUris = doc instanceof XMLDocument ? doc.xpath("/*:envelope/*:headers/*:merges/*:document-uri/text()") : doc.xpath("/*:envelope/*:headers/*:merges");
+  if (result.unmerge) {
+    const getEntityModel = requireFunction("/data-hub/core/models/entities.sjs", "getEntityModel");
+    const entityModelClass = getEntityModel(entityName);
+    const primaryEntityTypeIRI = entityModelClass && entityModelClass.primaryEntityTypeIRI() !== entityName ? entityModelClass.primaryEntityTypeIRI() : entityName;
+    const matchStep = fn.head(cts.search(cts.andQuery([cts.collectionQuery("http://marklogic.com/data-hub/steps/matching"), cts.jsonPropertyValueQuery("targetEntityType", [entityName, primaryEntityTypeIRI])])));
+    if (matchStep) {
+      result.matchStepName = matchStep.toObject().name;
+    }
+  }
   result.entityInstance = entityProperties;
   result.sources = getEntitySources(doc);
   result.entityName = entityName;
@@ -440,6 +449,15 @@ function addGenericEntityProperties(result) {
   result.entityName = entityName;
   result.unmerge = fn.exists(doc.xpath("/*:envelope/*:headers/*:merges"));
   result.unmergeUris = doc instanceof XMLDocument ? doc.xpath("/*:envelope/*:headers/*:merges/*:document-uri/text()") : doc.xpath("/*:envelope/*:headers/*:merges");
+  if (result.unmerge) {
+    const getEntityModel = requireFunction("/data-hub/core/models/entities.sjs", "getEntityModel");
+    const entityModelClass = getEntityModel(entityName);
+    const primaryEntityTypeIRI = entityModelClass && entityModelClass.primaryEntityTypeIRI() !== entityName ? entityModelClass.primaryEntityTypeIRI() : entityName;
+    const matchStep = fn.head(cts.search(cts.andQuery([cts.collectionQuery("http://marklogic.com/data-hub/steps/matching"), cts.jsonPropertyValueQuery("targetEntityType", [entityName, primaryEntityTypeIRI])])));
+    if (matchStep) {
+      result.matchStepName = matchStep.toObject().name;
+    }
+  }
 }
 
 function addPrimaryKeyToResult(result, entityInstance, entityDef) {

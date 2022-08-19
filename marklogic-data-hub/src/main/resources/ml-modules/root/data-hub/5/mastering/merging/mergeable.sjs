@@ -378,7 +378,11 @@ class Mergeable {
     const newMergeDocument = { envelope: {
         headers: {
           id,
-          merges: []
+          merges: [],
+          "merge-options": {
+            lang: "zxx",
+            value: this.mergeStepToCompressedHex()
+          }
         },
         instance: {},
         triples
@@ -419,6 +423,10 @@ class Mergeable {
       };
     }
     return new NodeBuilder().addNode(newMergeDocument).toNode();
+  }
+
+  mergeStepToCompressedHex() {
+    return fn.string(xdmp.zipCreate([{ "path": "merge-options.json"}], xdmp.toJSON(this.mergeStep)));
   }
 
   mergeXmlDocuments(documentNodes, properties, id, triples) {
@@ -462,6 +470,12 @@ class Mergeable {
       nodeBuilder.endElement();
     }
     // end merges
+    nodeBuilder.endElement();
+    nodeBuilder.startElement("sm:merge-options", "http://marklogic.com/smart-mastering");
+    nodeBuilder.startElement("sm:value", "http://marklogic.com/smart-mastering");
+    nodeBuilder.addAttribute("xml:lang", "zxx");
+    nodeBuilder.addText(this.mergeStepToCompressedHex());
+    nodeBuilder.endElement();
     nodeBuilder.endElement();
     // end headers
     nodeBuilder.endElement();
@@ -515,34 +529,6 @@ class Mergeable {
       }
     }
     for (const place of placeInXml) {
-      nodeBuilder.endElement();
-    }
-  }
-
-  jsonToJsonXML(nodeBuilder, json) {
-    if (Array.isArray(json)) {
-      nodeBuilder.startElement("json:array", "http://marklogic.com/xdmp/json");
-      for (const item of json) {
-        this.jsonToJsonXML(nodeBuilder, item);
-      }
-      nodeBuilder.endElement();
-    } else if (json && typeof json === "object") {
-      nodeBuilder.startElement("json:object", "http://marklogic.com/xdmp/json");
-      nodeBuilder.addAttribute("xmlns:xs","http://www.w3.org/2001/XMLSchema");
-      for (const key of Object.keys(json)) {
-        nodeBuilder.startElement("json:entry", "http://marklogic.com/xdmp/json");
-        nodeBuilder.startElement("json:key", "http://marklogic.com/xdmp/json");
-        nodeBuilder.addText(key);
-        nodeBuilder.endElement();
-        this.jsonToJsonXML(nodeBuilder, json[key]);
-        nodeBuilder.endElement();
-      }
-      nodeBuilder.endElement();
-    } else if (json) {
-      const type = xdmp.type(json);
-      nodeBuilder.startElement("json:value", "http://marklogic.com/xdmp/json");
-      nodeBuilder.addAttribute("xsi:type",`xs:${fn.string(type)}`, "http://www.w3.org/2001/XMLSchema-instance");
-      nodeBuilder.addText(json);
       nodeBuilder.endElement();
     }
   }
