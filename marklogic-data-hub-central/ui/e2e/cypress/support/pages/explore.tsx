@@ -94,6 +94,12 @@ class ExplorePage {
     cy.get("[aria-label=explore-settingsIcon-menu]").should("exist");
     return cy.get("[aria-label=explore-settingsIcon-menu]").click({force: true});
   }
+  getColumnHeader(columnName: string) {
+    return cy.get(`[data-testid='resultsTableColumn-${columnName}']`);
+  }
+  getHeaderSortArrow(columnName: string) {
+    return this.getColumnHeader(columnName).siblings("[class^=\"hc-table_caretContainer\"]");
+  }
 }
 
 export default new ExplorePage();

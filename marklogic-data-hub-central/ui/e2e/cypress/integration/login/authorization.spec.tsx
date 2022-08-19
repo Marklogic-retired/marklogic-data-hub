@@ -379,7 +379,7 @@ describe("login", () => {
     toolbar.getHomePageInfoIcon().scrollIntoView().should("be.visible").click({force: true});
     toolbar.getHomePageInfoPopover().should("exist");
 
-    toolbar.getModelToolbarIcon().trigger("mouseover").click({force: true});
+    toolbar.getModelToolbarIcon().should("be.visible").trigger("mouseover", {force: true}).click({force: true});
     cy.url().should("include", "/tiles/model");
     tiles.getModelTile().should("exist");
     cy.get(`#user-dropdown`).click();
