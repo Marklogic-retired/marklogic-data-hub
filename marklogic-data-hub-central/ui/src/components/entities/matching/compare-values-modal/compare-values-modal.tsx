@@ -6,7 +6,9 @@ import {Definition} from "../../../../types/modeling-types";
 import {CurationContext} from "@util/curation-context";
 import backgroundImage from "../../../../assets/white-for-dark-bg.png";
 import {HCTable, HCButton} from "@components/common";
-import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
+import {faExclamationTriangle, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
+import {Overlay} from "react-bootstrap";
+import Popover from "react-bootstrap/Popover";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {SearchContext} from "@util/search-context";
 import {isArray, isObject} from "util";
@@ -36,6 +38,8 @@ const CompareValuesModal: React.FC<Props> = (props) => {
   const [compareValuesTableData, setCompareValuesTableData] = useState<any[]>([]);
   const [expandedRows, setExpandedRows] = useState<string[]>([]);
   const [confirmModalVisible, setConfirmModalVisible] = useState(false);
+  const [showUrisPopover, setShowUrisPopover] = useState(false);
+  const [targetUrisPopover, setTargetUrisPopover] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const {
     searchOptions,
@@ -426,6 +430,34 @@ const CompareValuesModal: React.FC<Props> = (props) => {
     toggleMergeUnmerge(searchOptions.mergeUnmerge);
   };
 
+  const handleShowUrisPopover = (event) => {
+    setShowUrisPopover(!showUrisPopover);
+    setTargetUrisPopover(event.target);
+  };
+
+  const moreUrisInfo = (
+    <Overlay
+      show={showUrisPopover}
+      target={targetUrisPopover}
+      placement="right"
+    >
+      <Popover id={`more-uris-tooltip`} className={styles.moreUrisPopover}
+        onMouseEnter={() => setShowUrisPopover(true)}
+        onMouseLeave={() => setShowUrisPopover(false)}>
+        <Popover.Body className={styles.moreUrisPopover}>
+          {props.uriCompared.length < 30 ?
+            <div className={styles.moreUrisInfo} aria-label="more-uri-info">All URIs included in this {props.isMerge? "merge" : "unmerge"} are displayed below (<strong>{props.uriCompared.length} total</strong>): <br/><br/>{props.uriCompared.map((uri, index) => { return <span className={styles.uriText} aria-label={`${uri}-uri`}>{uri}<br/></span>; })}</div>
+            :
+            <div>
+              <div className={styles.moreUrisInfo} aria-label="more-uri-info-limit">The first <strong>30</strong> URIs included in this {props.isMerge? "merge" : "unmerge"} are displayed below (<strong>{props.uriCompared.length} total</strong>): <br/><br/>{props.uriCompared.map((uri, index) => { return index < 30 ? <span className={styles.uriText} aria-label={`${uri}-uri`}>{uri}<br/></span> : null; })}</div>
+              <span>...</span>
+            </div>
+          }
+        </Popover.Body>
+      </Popover>
+    </Overlay>
+  );
+
   const mergeUnmergeConfirmation = (
     <Modal show={confirmModalVisible} dialogClassName={styles.confirmationModal}>
       <Modal.Body>
@@ -461,6 +493,16 @@ const CompareValuesModal: React.FC<Props> = (props) => {
   >
     <Modal.Header className={"bb-none"}>
       <span className={styles.compareValuesModalHeading}>Compare</span>
+      {
+        props.uriCompared.length > 2 ?
+          <div className={styles.moreUrisTrigger}>
+            {moreUrisInfo}
+            <FontAwesomeIcon icon={faInfoCircle} aria-label="icon: info-circle" className={styles.infoIcon} onMouseEnter={handleShowUrisPopover} onMouseLeave={() => setShowUrisPopover(false)}/>
+          </div>
+          :
+          null
+      }
+
       <button type="button" className="btn-close" aria-label="Close" onClick={closeModal}></button>
     </Modal.Header>
     <Modal.Body>

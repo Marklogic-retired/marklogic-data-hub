@@ -43,7 +43,8 @@
     cursor: pointer;
     &:hover {
       color: var(--hoverColor);
-    }  }
+    }  
+  }
 
   .disabledDeleteIcon {
     color: rgba(0, 0, 0, 0.65);
