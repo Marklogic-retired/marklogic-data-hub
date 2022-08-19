@@ -43,6 +43,39 @@
     margin-left: 34.8%;
 }
 
+.moreUrisPopover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+  border: 0px !important;
+  font-size: 14px !important;
+  min-width: 670px !important;
+}
+
+.uriText {
+  max-width: 90%;
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  font-family: "monospace";
+  text-overflow: ellipsis;
+}
+
+.uriText:hover{
+  overflow: visible; 
+  white-space: normal; 
+}
+
+.infoIcon {
+  position: absolute;
+  top: 21px;
+  font-size: 18px;
+  margin-left: 8px;
+  color: $primary;
+  cursor: pointer;
+  &:hover {
+    color: var(--hoverColor);
+  }  
+}
+
 .uri1 {
     font-weight: bold;
     color: $info;

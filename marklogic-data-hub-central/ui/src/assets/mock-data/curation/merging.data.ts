@@ -199,10 +199,37 @@ const mergeStrategyDataProps = {
   toggleIsEditStrategy: jest.fn()
 };
 
+const compareModal = {
+  isVisible: true,
+  toggleModal: jest.fn(),
+  previewMatchActivity: {},
+  uriInfo: [],
+  activeStepDetails: [
+    {
+      "properties": [{name: "customerId", datatype: "integer", ref: ""}]
+    }
+  ],
+  entityDefinitionsArray: [
+    {
+      "name": "Customer",
+      "properties": [{name: "customerId", datatype: "integer", ref: ""}]
+    }
+  ],
+  uriCompared: [],
+  entityProperties: [],
+  uris: [],
+  isPreview: false,
+  isMerge: false,
+  mergeUris: jest.fn(),
+  unmergeUri: jest.fn(),
+  originalUri: "/com.marklogic.smart-mastering/merged/8a0b71b0a525ca7449611b2e9786d0cf.json",
+  flowName: ""
+};
 
 const data = {
   mergeRuleDataProps,
-  mergeStrategyDataProps
+  mergeStrategyDataProps,
+  compareModal
 };
 
 export default data;
