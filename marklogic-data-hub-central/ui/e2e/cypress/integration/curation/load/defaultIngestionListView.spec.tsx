@@ -147,10 +147,18 @@ describe("Validate CRUD functionality from list view", () => {
     loadPage.selectFlowToRunIn(flowName);
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Loading", stepName, flowName);
+
     //Upload file to start running, test with invalid input
     cy.uploadFile("input/test-1.json");
 
     runPage.verifyStepRunResult(stepName, "success");
+
+    //only the load step should have run and not the other steps in flow
+    runPage.verifyNoStepRunResult("mapPersonJSON", "success");
+    runPage.verifyNoStepRunResult("match-person", "success");
+    runPage.verifyNoStepRunResult("merge-person", "success");
+    runPage.verifyNoStepRunResult("master-person", "success");
+
     runPage.closeFlowStatusModal(flowName);
   });
   it("Delete the flow", () => {
@@ -195,6 +203,13 @@ describe("Validate CRUD functionality from list view", () => {
     cy.verifyStepAddedToFlow("Loading", stepName, flowName);
     cy.uploadFile("input/test-1.json");
     runPage.verifyStepRunResult(stepName, "success");
+
+    //only the load step should have run and not the other steps in flow
+    runPage.verifyNoStepRunResult("mapPersonJSON", "success");
+    runPage.verifyNoStepRunResult("match-person", "success");
+    runPage.verifyNoStepRunResult("merge-person", "success");
+    runPage.verifyNoStepRunResult("master-person", "success");
+
     runPage.closeFlowStatusModal(flowName);
   });
   it("Add step to a new flow and Verify Run Load step where step exists in multiple flows", {defaultCommandTimeout: 120000}, () => {

@@ -180,6 +180,8 @@ describe("Create and verify load steps, map step and flows with a custom header"
     cy.wait("@runResponse");
     //Step should automatically run
     runPage.verifyStepRunResult(mapStep, "success");
+    //only the map step should have run and not the other steps in flow
+    runPage.verifyNoStepRunResult("loadOrder", "success");
     runPage.closeFlowStatusModal(flowName);
   });
   it("Delete the flow and Verify Run Map step in a new Flow", {defaultCommandTimeout: 120000}, () => {
@@ -224,6 +226,9 @@ describe("Create and verify load steps, map step and flows with a custom header"
     cy.waitForAsyncRequest();
     runPage.getFlowName(flowName).first().should("be.visible");
     runPage.verifyStepRunResult(mapStep, "success");
+    //only the map step should have run and not the other steps in flow
+    runPage.verifyNoStepRunResult("loadOrder", "success");
+
     runPage.closeFlowStatusModal(flowName);
     cy.verifyStepAddedToFlow("Mapping", mapStep, flowName);
   });

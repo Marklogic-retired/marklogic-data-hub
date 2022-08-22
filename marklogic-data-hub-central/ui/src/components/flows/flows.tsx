@@ -225,6 +225,7 @@ const Flows: React.FC<Props> = ({
               setShowUploadError(false);
               setRunningStep(stepsInFlow[stepsInFlow.length - 1]);
               setRunningFlow(newStepToFlowOptions?.flowName);
+              setSingleIngest(true);
               openFilePicker();
               setStartRun(false);
             } else {
@@ -240,6 +241,7 @@ const Flows: React.FC<Props> = ({
               setShowUploadError(false);
               setRunningStep(stepsInFlow[runStepNum]);
               setRunningFlow(newStepToFlowOptions?.flowName);
+              setSingleIngest(true);
               openFilePicker();
               setStartRun(false);
             } else {
@@ -264,6 +266,7 @@ const Flows: React.FC<Props> = ({
         if (flows[indexFlow].steps[indexStep].stepDefinitionType.toLowerCase() === "ingestion") {
           setShowUploadError(false);
           setRunningStep(flows[indexFlow].steps[indexStep]);
+          setSingleIngest(true);
           setRunningFlow(addedFlowName);
           openFilePicker();
         } else {
