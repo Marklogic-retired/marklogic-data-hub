@@ -18,7 +18,7 @@ snyk {
 dependencies {
     api "org.junit.jupiter:junit-jupiter:5.7.2"
     api "org.slf4j:slf4j-api:1.7.31"
-    api "org.springframework:spring-test:5.3.18"
+    api "org.springframework:spring-test:5.3.22"
     api project(":marklogic-data-hub")
 
     api "com.marklogic:marklogic-unit-test-client:1.1.0"
