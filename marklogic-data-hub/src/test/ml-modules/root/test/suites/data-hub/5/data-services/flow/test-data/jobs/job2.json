@@ -3,11 +3,11 @@
     "jobId": "293c638e-21e9-45b6-98cc-223d834f9222",
     "flow": "flowWithStepDetails",
     "user": "admin",
-    "lastAttemptedStep": "2",
-    "lastCompletedStep": "2",
+    "lastAttemptedStep": "3",
+    "lastCompletedStep": "3",
     "jobStatus": "finished",
-    "timeStarted": "2020-06-26T23:11:22.802106Z",
-    "timeEnded": "2020-06-26T23:11:33.026434Z",
+    "timeStarted": "2022-06-26T23:11:22.802106Z",
+    "timeEnded": "2022-06-26T23:11:33.026434Z",
     "stepResponses": {
       "1": {
         "flowName": "flowWithStepDetails",
@@ -23,8 +23,8 @@
         "successfulBatches": 9,
         "failedBatches": 0,
         "success": true,
-        "stepStartTime": "2020-06-26T23:11:22.836606Z",
-        "stepEndTime": "2020-06-26T23:11:27.462273Z"
+        "stepStartTime": "2022-06-26T23:11:22.836606Z",
+        "stepEndTime": "2022-06-26T23:11:27.462273Z"
       },
       "3": {
         "flowName": "flowWithStepDetails",
@@ -41,8 +41,8 @@
         "successfulBatches": 1,
         "failedBatches": 1,
         "success": false,
-        "stepStartTime": "2020-06-26T23:11:28.836606Z",
-        "stepEndTime": "2020-06-26T23:11:32.836606Z"
+        "stepStartTime": "2022-06-26T23:11:28.836606Z",
+        "stepEndTime": "2022-06-26T23:11:32.836606Z"
       }
     }
   }
