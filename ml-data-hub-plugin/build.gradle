@@ -38,7 +38,7 @@ snyk {
 dependencies {
     implementation gradleApi()
     implementation (project(':marklogic-data-hub'))
-    implementation 'com.marklogic:ml-gradle:4.3.4'
+    implementation 'com.marklogic:ml-gradle:4.3.5'
     implementation "org.apache.commons:commons-lang3:3.12.0"
     implementation "com.fasterxml.jackson.core:jackson-databind:2.11.1"
     implementation 'commons-io:commons-io:2.11.0'
@@ -53,7 +53,7 @@ dependencies {
     testImplementation('org.spockframework:spock-core:2.0-groovy-3.0') {
         exclude module: 'groovy-all'
     }
-    testImplementation 'org.springframework:spring-test:5.3.9'
+    testImplementation 'org.springframework:spring-test:5.3.22'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
     testImplementation 'org.jdom:jdom2:2.0.6'
 

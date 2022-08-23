@@ -3,7 +3,7 @@ plugins {
     id 'java-library'
     id 'java-test-fixtures'
     id 'maven-publish'
-    id 'com.marklogic.ml-gradle' version '4.3.4'
+    id 'com.marklogic.ml-gradle' version '4.3.5'
     id "com.github.node-gradle.node" version "2.2.4"
     id 'com.marklogic.ml-development-tools' version '5.5.0'
 
@@ -50,15 +50,15 @@ dependencies {
     implementation 'com.marklogic:marklogic-data-movement-components:2.4.0'
 
     implementation 'commons-io:commons-io:2.11.0'
-    
+
     constraints {
-        implementation('org.springframework:spring-beans:5.3.20') {
+        implementation('org.springframework:spring-beans:5.3.22') {
             because 'spring-beans:5.3.7 is vulnerable to remote code execution and other critical security vulnerabilities'
         }
-        implementation('org.springframework:spring-jcl:5.3.20') {
+        implementation('org.springframework:spring-jcl:5.3.22') {
             because 'spring-jcl:5.3.7 is vulnerable to remote code execution and other critical security vulnerabilities'
         }
-        implementation('org.springframework:spring-core:5.3.20') {
+        implementation('org.springframework:spring-core:5.3.22') {
             because 'spring-core:5.3.7 is vulnerable to remote code execution and other critical security vulnerabilities'
         }
     }
@@ -73,7 +73,7 @@ dependencies {
     testImplementation files("src/testFixtures/resources")
 
     testImplementation "org.junit.jupiter:junit-jupiter:5.7.2"
-    testImplementation "org.springframework:spring-test:5.3.20"
+    testImplementation "org.springframework:spring-test:5.3.22"
 
     // For managing a pool of HubConfigImpl objects
     testFixturesApi "org.apache.commons:commons-pool2:2.10.0"
