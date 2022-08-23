@@ -1181,11 +1181,13 @@ const Flows: React.FC<Props> = ({
       );
     } else if (step.lastRunStatus === "completed step " + step.stepNumber) {
       return (
-        <HCTooltip text={RunToolTips.stepCompleted(stepEndTime)} id="success-tooltip" placement="bottom">
-          <span>
-            <i><FontAwesomeIcon aria-label="icon: check-circle" icon={faCheckCircle} className={styles.successfulRun} size="lg" data-testid={`check-circle-${step.stepName}`} /></i>
-          </span>
-        </HCTooltip>
+        <span>
+          <HCTooltip text={RunToolTips.stepCompleted(stepEndTime)} id="success-tooltip" placement="bottom">
+            <span>
+              <i><FontAwesomeIcon aria-label="icon: check-circle" icon={faCheckCircle} className={styles.successfulRun} size="lg" data-testid={`check-circle-${step.stepName}`} /></i>
+            </span>
+          </HCTooltip>
+        </span>
       );
 
     } else if (step.lastRunStatus === "completed with errors step " + step.stepNumber) {
@@ -1306,6 +1308,7 @@ const Flows: React.FC<Props> = ({
         let viewStepId = `${flowName}-${stepNumber}`;
         let stepDefinitionType = step.stepDefinitionType ? step.stepDefinitionType.toLowerCase() : "";
         let stepDefinitionTypeTitle = StepDefinitionTypeTitles[stepDefinitionType];
+        let stepWithJobDetail = latestJobData && latestJobData[flowName] && latestJobData[flowName] ? latestJobData[flowName].find(el => el.stepId === step.stepId) : null;
         return (
           <div key={viewStepId} id="flowSettings">
             <HCCard
@@ -1331,10 +1334,7 @@ const Flows: React.FC<Props> = ({
                   }
                   <div className={styles.reorderRight}>
                     <div className={styles.stepResponse}>
-                      {latestJobData && latestJobData[flowName] && latestJobData[flowName][index]
-                        ? lastRunResponse(latestJobData[flowName][index], flowName)
-                        : ""
-                      }
+                      {stepWithJobDetail ? lastRunResponse(stepWithJobDetail, flowName) : ""}
                     </div>
                     {index < flow.steps.length - 1 && canWriteFlow &&
                       <HCTooltip aria-label="icon: right" text="Move right" id="move-right-tooltip" placement="bottom" >
