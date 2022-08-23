@@ -49,12 +49,6 @@ describe("Concept classes in Modeling screen", () => {
 
     cy.wait(5000);
     cy.log("**View and edit concept class in the side panel**");
-    graphVis.getPositionsOfNodes().then((nodePositions: any) => {
-      let shoeStyleCoordinates: any = nodePositions["ShoeStyle"];
-      cy.wait(150);
-      graphVis.getGraphVisCanvas().trigger("mouseover", shoeStyleCoordinates.x, shoeStyleCoordinates.y, {force: true}).click(shoeStyleCoordinates.x, shoeStyleCoordinates.y, {force: true});
-      // side panel heading shows concept name and info
-    });
     graphViewSidePanel.getSelectedConceptClassHeading("ShoeStyle").should("exist");
     graphViewSidePanel.getSelectedConceptClassHeadingInfo("ShoeStyle").should("exist");
     graphViewSidePanel.getConceptClassDescription().should("be.visible");

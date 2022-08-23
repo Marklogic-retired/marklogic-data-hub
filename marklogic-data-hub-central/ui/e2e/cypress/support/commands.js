@@ -299,9 +299,9 @@ Cypress.Commands.add("publishDataModel", () => {
         modelPage.getPublishButton().click({force: true});
       }
     });
+  confirmationModal.getSaveAllEntityText().should("exist");
   confirmationModal.getYesButton(ConfirmationType.PublishAll);
   cy.waitForAsyncRequest();
-  confirmationModal.getSaveAllEntityText().should("exist");
   confirmationModal.getSaveAllEntityText().should("not.exist");
   modelPage.getEntityModifiedAlert().should("not.exist");
 });
