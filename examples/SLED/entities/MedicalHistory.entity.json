@@ -19,7 +19,7 @@
           "sortable": false,
           "items": {
             "datatype": "integer",
-            "relatedEntityType": "http://example.org/Ilness-1.0.0/Ilness",
+            "relatedEntityType": "http://example.org/Ilness-1.0.0/Illness",
             "joinPropertyName": "illnessID"
           }
         },

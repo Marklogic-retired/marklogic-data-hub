@@ -135,7 +135,11 @@ function addMappableEntityToResponse(entityName, entityProperties, entityRespons
 }
 
 function getEntityModel(entityName){
-  return modelArray.find(model => model.info.title == entityName);
+  const model = modelArray.find(model => model.info.title == entityName);
+  if (!model) {
+    throw new Error(`Cannot find referenced model: ${entityName}`);
+  }
+  return model;
 }
 
 function expandStructuredProperties(entityModel, entityName) {
