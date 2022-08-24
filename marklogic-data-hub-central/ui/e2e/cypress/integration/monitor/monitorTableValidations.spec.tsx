@@ -298,6 +298,13 @@ describe("Monitor Tile", () => {
     let lastStepType = firstPageTableCellsStepType[firstPageTableCellsStepType.length - 1];
     let compareStepType = firstStepType.toString().localeCompare(lastStepType.toString());
     expect(compareStepType).not.to.be.gt(0);
+
+    cy.log("**Applying facet search and controlling the expanded row after coming back**");
+    monitorPage.selectAndApplyFacet("step-type", 1);
+    monitorPage.getExpandAllTableRows().scrollIntoView().click({force: true});
+    toolbar.getLoadToolbarIcon().click();
+    toolbar.getMonitorToolbarIcon().click();
+    monitorPage.clearFacets();
   });
 
   it("apply facet search and verify docs", () => {

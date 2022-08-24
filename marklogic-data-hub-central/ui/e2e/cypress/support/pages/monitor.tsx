@@ -38,8 +38,13 @@ class MonitorPage {
   getPageSizeOption(pageSizeOption: string) {
     return cy.findByText(pageSizeOption);
   }
-  checkCurrentPage(page:number) {
+  checkCurrentPage(page: number) {
     cy.get(`#pagination-item-${page}`).first().scrollIntoView().contains(page).should("exist");
+  }
+
+  selectAndApplyFacet(testId:string, index:number) {
+    cy.get(`[data-testid=${testId}-facet] input`).eq(index).check();
+    cy.findByTestId("facet-apply-button").click({force: true});
   }
 
   validateAppliedFacetTableRows(facetType: string, index: number) {
@@ -98,6 +103,10 @@ class MonitorPage {
     cy.waitForAsyncRequest();
   }
 
+  clearFacets() {
+    cy.get(`[aria-label="clear-facets-button"]`).click();
+  }
+
   getStartTimeDropDown() {
     return cy.get("#date-select");
   }
@@ -122,7 +131,7 @@ class MonitorPage {
     return cy.get(`th[class^="hc-table_header"]`);
   }
 
-  verifyVisibilityTableHeader(headerName:string, visible: boolean) {
+  verifyVisibilityTableHeader(headerName: string, visible: boolean) {
     if (visible) cy.get("thead").should("include.text", headerName);
     else cy.get("thead").should("not.include.text", headerName);
   }
@@ -194,7 +203,7 @@ class MonitorPage {
     return cy.get("#collapseIcon path");
   }
 
-  getRowByIndex(rowIndex:number) {
+  getRowByIndex(rowIndex: number) {
     return cy.get("*[class^=\"hc-table_iconIndicator\"]").eq(rowIndex).scrollIntoView().should("be.visible");
   }
 
@@ -211,7 +220,7 @@ class MonitorPage {
   }
 
   getRowData(JobId, value: string) {
-    return cy.get(`.reset-expansion-style:eq(" `+ this.searchBiggerRowIndex(JobId) + `") .${value}`);
+    return cy.get(`.reset-expansion-style:eq(" ` + this.searchBiggerRowIndex(JobId) + `") .${value}`);
   }
 
   searchBiggerRowIndex(array: any) {
