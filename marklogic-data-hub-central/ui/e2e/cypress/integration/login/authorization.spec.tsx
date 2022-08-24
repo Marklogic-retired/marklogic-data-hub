@@ -20,6 +20,12 @@ describe("login", () => {
     cy.waitForAsyncRequest();
   });
 
+  afterEach(() => {
+    //resetting the test user back to only have 'hub-central-user' role
+    cy.resetTestUser();
+    cy.waitForAsyncRequest();
+  });
+
   after(() => {
     //resetting the test user back to only have 'hub-central-user' role
     cy.resetTestUser();
@@ -375,7 +381,6 @@ describe("login", () => {
       .url().should("include", "/tiles");
 
     // To verify on click operation works as expected
-    cy.reload();
     toolbar.getHomePageInfoIcon().scrollIntoView().should("be.visible").click({force: true});
     toolbar.getHomePageInfoPopover().should("exist");
 

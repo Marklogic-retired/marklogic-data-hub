@@ -83,12 +83,13 @@
     "sockjs-client": "^1.4.0",
     "stompjs": "^2.3.3",
     "typescript": "^3.8.0",
-    "url-parse": "1.5.10",
+    "url-parse": "^1.5.10",
     "use-deep-compare-effect": "^1.3.1",
     "use-dynamic-refs": "^1.0.0",
     "vis": "^4.21.0-EOL",
     "vis-timeline": "7.3.6",
-    "xml-formatter": "^2.4.0"
+    "xml-formatter": "^2.4.0",
+    "eventsource": "1.1.2"
   },
   "scripts": {
     "start": "react-app-rewired start",
@@ -121,7 +122,8 @@
     "lodash.pick": "4.3.0",
     "lodash.uniq": "4.4.0",
     "lodash._reinterpolate": "2.4.1",
-    "url-parse": "1.5.10"
+    "url-parse": "^1.5.10",
+    "eventsource": "1.1.2"
   },
   "jest": {
     "snapshotSerializers": [
@@ -210,6 +212,7 @@
     "lodash.pick": "4.3.0",
     "lodash.uniq": "4.4.0",
     "lodash._reinterpolate": "2.4.1",
-    "url-parse": "1.5.10"
+    "url-parse": "^1.5.10",
+    "eventsource": "1.1.2"
   }
 }
