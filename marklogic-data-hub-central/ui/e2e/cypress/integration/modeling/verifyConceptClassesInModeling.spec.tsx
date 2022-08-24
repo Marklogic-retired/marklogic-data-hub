@@ -42,37 +42,37 @@ describe("Concept classes in Modeling screen", () => {
     cy.wait(5000);
     graphView.getAddButton().click();
     graphView.getAddConceptClassOption().should("be.visible").click({force: true});
-    conceptClassModal.newConceptClassName("ShoeStyle");
+    conceptClassModal.newConceptClassName("testShoeStyle");
     conceptClassModal.newConceptClassDescription("Different categories of shoe styles.");
     cy.waitUntil(() => conceptClassModal.getAddButton().click());
     conceptClassModal.getAddButton().should("not.exist");
 
     cy.wait(5000);
     cy.log("**View and edit concept class in the side panel**");
-    graphViewSidePanel.getSelectedConceptClassHeading("ShoeStyle").should("exist");
-    graphViewSidePanel.getSelectedConceptClassHeadingInfo("ShoeStyle").should("exist");
+    graphViewSidePanel.getSelectedConceptClassHeading("testShoeStyle").should("exist");
+    graphViewSidePanel.getSelectedConceptClassHeadingInfo("testShoeStyle").should("exist");
     graphViewSidePanel.getConceptClassDescription().should("be.visible");
     graphViewSidePanel.getConceptClassDescription().should("have.value", "Different categories of shoe styles.");
 
-    modelPage.toggleColorSelector("ShoeStyle");
+    modelPage.toggleColorSelector("testShoeStyle");
     modelPage.selectColorFromPicker("#D5D3DD").click();
     if (Cypress.isBrowser("!firefox")) {
-      graphViewSidePanel.getConceptClassColor("ShoeStyle").should("have.css", "background", "rgb(213, 211, 221) none repeat scroll 0% 0% / auto padding-box border-box");
+      graphViewSidePanel.getConceptClassColor("testShoeStyle").should("have.css", "background", "rgb(213, 211, 221) none repeat scroll 0% 0% / auto padding-box border-box");
     }
     if (Cypress.isBrowser("firefox")) {
-      graphViewSidePanel.getConceptClassColor("ShoeStyle").should("have.css", "background-color", "rgb(213, 211, 221)");
+      graphViewSidePanel.getConceptClassColor("testShoeStyle").should("have.css", "background-color", "rgb(213, 211, 221)");
     }
 
-    modelPage.openIconSelector("ShoeStyle");
-    modelPage.selectIcon("ShoeStyle", "FaAccessibleIcon");
-    modelPage.getIconSelected("ShoeStyle", "FaAccessibleIcon").should("exist");
+    modelPage.openIconSelector("testShoeStyle");
+    modelPage.selectIcon("testShoeStyle", "FaAccessibleIcon");
+    modelPage.getIconSelected("testShoeStyle", "FaAccessibleIcon").should("exist");
     graphViewSidePanel.closeSidePanel();
-    graphViewSidePanel.getSelectedConceptClassHeading("ShoeStyle").should("not.exist");
+    graphViewSidePanel.getSelectedConceptClassHeading("testShoeStyle").should("not.exist");
 
     cy.log("**Verify duplicate concept name error**");
     graphView.getAddButton().click();
     graphView.getAddConceptClassOption().should("be.visible").click({force: true});
-    conceptClassModal.newConceptClassName("ShoeStyle");
+    conceptClassModal.newConceptClassName("testShoeStyle");
     cy.waitUntil(() => conceptClassModal.getAddButton().click());
     cy.waitUntil(() => conceptClassModal.conceptClassNameError().should("exist"));
     conceptClassModal.getCancelButton().click();
@@ -91,16 +91,16 @@ describe("Concept classes in Modeling screen", () => {
     // the graph needs to stabilize before we interact with it
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
       let ProductCoordinates: any = nodePositions["Product"];
-      let ShoeStyleCoordinates: any = nodePositions["ShoeStyle"];
+      let testShoeStyleCoordinates: any = nodePositions["testShoeStyle"];
       cy.wait(150);
       graphVis.getGraphVisCanvas().trigger("pointerdown", ProductCoordinates.x, ProductCoordinates.y, {button: 0, scrollBehavior: "bottom"});
-      graphVis.getGraphVisCanvas().trigger("pointermove", ShoeStyleCoordinates.x, ShoeStyleCoordinates.y, {button: 0, force: true, scrollBehavior: "bottom"});
-      graphVis.getGraphVisCanvas().trigger("pointerup", ShoeStyleCoordinates.x, ShoeStyleCoordinates.y, {button: 0, scrollBehavior: "bottom"});
+      graphVis.getGraphVisCanvas().trigger("pointermove", testShoeStyleCoordinates.x, testShoeStyleCoordinates.y, {button: 0, force: true, scrollBehavior: "bottom"});
+      graphVis.getGraphVisCanvas().trigger("pointerup", testShoeStyleCoordinates.x, testShoeStyleCoordinates.y, {button: 0, scrollBehavior: "bottom"});
     });
 
     //relationship modal should open with proper source and target nodes in place
     relationshipModal.verifySourceEntity("Product").should("be.visible");
-    relationshipModal.verifyTargetNode("ShoeStyle").should("be.visible");
+    relationshipModal.verifyTargetNode("testShoeStyle").should("be.visible");
 
     //add relationship properties and save
     relationshipModal.editRelationshipName("quarter");
@@ -118,7 +118,7 @@ describe("Concept classes in Modeling screen", () => {
     cy.wait(6000);
 
     //reopen modal to verify previous updates
-    graphVis.getPositionOfEdgeBetween("Product,ShoeStyle").then((edgePosition: any) => {
+    graphVis.getPositionOfEdgeBetween("Product,testShoeStyle").then((edgePosition: any) => {
       cy.wait(150);
       graphVis.getGraphVisCanvas().click(edgePosition.x, edgePosition.y, {force: true});
     });
@@ -146,15 +146,15 @@ describe("Concept classes in Modeling screen", () => {
 
     cy.log("Verify the Invalid source error when choosing Concept class as Source type");
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
-      let shoeStyleCoordinates: any = nodePositions["ShoeStyle"];
-      graphVis.getGraphVisCanvas().trigger("mouseover", shoeStyleCoordinates.x, shoeStyleCoordinates.y);
+      let testShoeStyleCoordinates: any = nodePositions["testShoeStyle"];
+      graphVis.getGraphVisCanvas().trigger("mouseover", testShoeStyleCoordinates.x, testShoeStyleCoordinates.y);
       cy.wait(150);
-      graphVis.getGraphVisCanvas().click(shoeStyleCoordinates.x, shoeStyleCoordinates.y, {force: true});
+      graphVis.getGraphVisCanvas().click(testShoeStyleCoordinates.x, testShoeStyleCoordinates.y, {force: true});
     });
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
-      let shoeStyleCoordinates: any = nodePositions["ShoeStyle"];
+      let testShoeStyleCoordinates: any = nodePositions["testShoeStyle"];
       cy.wait(150);
-      graphVis.getGraphVisCanvas().click(shoeStyleCoordinates.x, shoeStyleCoordinates.y, {force: true});
+      graphVis.getGraphVisCanvas().click(testShoeStyleCoordinates.x, testShoeStyleCoordinates.y, {force: true});
     });
     graphVis.getInvalidSourceTypeError().should("be.visible");
     graphVis.closeInvalidSourceTypeErrorModal();
@@ -194,8 +194,8 @@ describe("Concept classes in Modeling screen", () => {
     relationshipModal.verifyTargetNode("Select a concept class*").should("be.visible");
 
     relationshipModal.targetEntityDropdown().click();
-    relationshipModal.verifyEntityOption("ShoeStyle").should("be.visible");
-    relationshipModal.selectTargetEntityOption("ShoeStyle");
+    relationshipModal.verifyEntityOption("testShoeStyle").should("be.visible");
+    relationshipModal.selectTargetEntityOption("testShoeStyle");
     relationshipModal.editRelationshipName("hasStyle");
     relationshipModal.editSourceProperty("id");
     relationshipModal.toggleOptional();
@@ -212,7 +212,7 @@ describe("Concept classes in Modeling screen", () => {
     cy.wait(6000);
 
     //reopen modal to verify previous updates
-    graphVis.getPositionOfEdgeBetween("Person,ShoeStyle").then((edgePosition: any) => {
+    graphVis.getPositionOfEdgeBetween("Person,testShoeStyle").then((edgePosition: any) => {
       cy.wait(150);
       graphVis.getGraphVisCanvas().click(edgePosition.x, edgePosition.y, {force: true});
     });
@@ -235,30 +235,30 @@ describe("Concept classes in Modeling screen", () => {
     cy.wait(6000);
 
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
-      let shoeStyleCoordinates: any = nodePositions["ShoeStyle"];
+      let testShoeStyleCoordinates: any = nodePositions["testShoeStyle"];
       cy.wait(150);
-      cy.waitUntil(() => graphVis.getGraphVisCanvas().click(shoeStyleCoordinates.x, shoeStyleCoordinates.y, {force: true}));
+      cy.waitUntil(() => graphVis.getGraphVisCanvas().click(testShoeStyleCoordinates.x, testShoeStyleCoordinates.y, {force: true}));
     });
     cy.wait(1500);
 
-    graphViewSidePanel.getDeleteIcon("ShoeStyle").scrollIntoView().click({force: true});
+    graphViewSidePanel.getDeleteIcon("testShoeStyle").scrollIntoView().click({force: true});
     confirmationModal.getDeleteConceptClassWithRelationshipsText().should("exist");
     confirmationModal.getCloseButton(ConfirmationType.DeleteConceptClassWithRelatedEntityTypes).click();
-    graphViewSidePanel.getSelectedConceptClassHeading("ShoeStyle").should("exist");
+    graphViewSidePanel.getSelectedConceptClassHeading("testShoeStyle").should("exist");
 
     graphViewSidePanel.closeSidePanel();
-    graphViewSidePanel.getSelectedConceptClassHeading("ShoeStyle").should("not.exist");
+    graphViewSidePanel.getSelectedConceptClassHeading("testShoeStyle").should("not.exist");
 
     modelPage.scrollPageBottom();
     cy.wait(6000);
 
     //reopen modal to verify previous updates
-    graphVis.getPositionOfEdgeBetween("Product,ShoeStyle").then((edgePosition: any) => {
+    graphVis.getPositionOfEdgeBetween("Product,testShoeStyle").then((edgePosition: any) => {
       cy.wait(150);
       graphVis.getGraphVisCanvas().click(edgePosition.x, edgePosition.y, {force: true});
     });
 
-    cy.log("Deleting relationship between Product and ShoeStyle");
+    cy.log("Deleting relationship between Product and testShoeStyle");
     relationshipModal.getDeleteRelationshipIcon().click();
     confirmationModal.getDeletePropertyStepWarnText().should("exist");
     confirmationModal.getYesButton(ConfirmationType.DeletePropertyStepWarn);
@@ -266,9 +266,9 @@ describe("Concept classes in Modeling screen", () => {
 
     cy.wait(3000);
 
-    cy.log("Deleting relationship between Person and ShoeStyle");
+    cy.log("Deleting relationship between Person and testShoeStyle");
     //reopen modal to verify previous updates
-    graphVis.getPositionOfEdgeBetween("Person,ShoeStyle").then((edgePosition: any) => {
+    graphVis.getPositionOfEdgeBetween("Person,testShoeStyle").then((edgePosition: any) => {
       cy.wait(150);
       graphVis.getGraphVisCanvas().click(edgePosition.x, edgePosition.y, {force: true});
     });
@@ -281,18 +281,18 @@ describe("Concept classes in Modeling screen", () => {
     cy.waitForAsyncRequest();
 
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
-      let shoeStyleCoordinates: any = nodePositions["ShoeStyle"];
+      let testShoeStyleCoordinates: any = nodePositions["testShoeStyle"];
       cy.wait(150);
-      cy.waitUntil(() => graphVis.getGraphVisCanvas().click(shoeStyleCoordinates.x, shoeStyleCoordinates.y, {force: true}));
+      cy.waitUntil(() => graphVis.getGraphVisCanvas().click(testShoeStyleCoordinates.x, testShoeStyleCoordinates.y, {force: true}));
     });
     cy.wait(1500);
 
-    graphViewSidePanel.getDeleteIcon("ShoeStyle").scrollIntoView().click({force: true});
+    graphViewSidePanel.getDeleteIcon("testShoeStyle").scrollIntoView().click({force: true});
     confirmationModal.getYesButton(ConfirmationType.DeleteConceptClass);
     confirmationModal.getDeleteConceptClassText().should("not.exist");
 
     cy.waitForAsyncRequest();
-    graphViewSidePanel.getSelectedConceptClassHeading("ShoeStyle").should("not.exist");
+    graphViewSidePanel.getSelectedConceptClassHeading("testShoeStyle").should("not.exist");
     cy.wait(150);
     //Publish the changes
     cy.publishDataModel();
