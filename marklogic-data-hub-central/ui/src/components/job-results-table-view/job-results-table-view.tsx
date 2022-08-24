@@ -38,7 +38,6 @@ const JobResultsTableView = ({data}) => {
   const user = "User";
 
   const {
-    monitorOptions,
     setMonitorSortOrder
   } = useContext(MonitorContext);
   let sorting = true;
@@ -446,12 +445,6 @@ const JobResultsTableView = ({data}) => {
   useEffect(() => {
     filterArraybyDistinctJobId();
   }, [data]);
-
-  useEffect(() => {
-    if (JSON.stringify(monitorOptions.selectedFacets) !== "{}") {
-      setExpandCollapseIdRows(expandCollapseIdRowsOriginal);
-    }
-  }, [monitorOptions]);
 
   const [expandCollapseIdRows, setExpandCollapseIdRows] = useState<any[]>([]);
   const [expandCollapseIdRowsOriginal, setExpandCollapseIdRowsOriginal] = useState<any[]>([]);
