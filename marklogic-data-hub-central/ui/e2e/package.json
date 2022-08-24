@@ -21,7 +21,9 @@
     "@cypress/webpack-preprocessor": "^4.1.3",
     "ts-loader": "^6.2.0",
     "typescript": "^3.6.3",
-    "webpack": "^4.41.0"
+    "webpack": "^4.41.0",
+    "minimist": "1.2.6",
+    "json-schema": "^0.4.0"
   },
   "devDependencies": {
     "@testing-library/cypress": "^6.0.0",
@@ -31,6 +33,8 @@
     "cypress-plugin-tab": "^1.0.5",
     "cypress-wait-until": "^1.7.1",
     "mochawesome": "^4.1.0",
-    "mochawesome-merge": "^4.0.0"
+    "mochawesome-merge": "^4.0.0",
+    "minimist": "1.2.6",
+    "json-schema": "^0.4.0"
   }
 }
