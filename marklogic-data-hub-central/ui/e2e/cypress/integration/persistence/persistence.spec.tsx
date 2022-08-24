@@ -1,23 +1,26 @@
-import {Application} from "../../support/application.config";
 import {confirmationModal, toolbar} from "../../support/components/common";
-import propertyTable from "../../support/components/model/property-table";
-import curatePage from "../../support/pages/curate";
-import loadPage from "../../support/pages/load";
-import graphVis from "../../support/components/model/graph-vis";
-import LoginPage from "../../support/pages/login";
-import modelPage from "../../support/pages/model";
-import {ConfirmationType} from "../../support/types/modeling-types";
 import {
   entityTypeModal,
   entityTypeTable,
   graphViewSidePanel,
   propertyModal
 } from "../../support/components/model/index";
-import multiSlider from "../../support/components/common/multi-slider";
+
+import {Application} from "../../support/application.config";
+import {ConfirmationType} from "../../support/types/modeling-types";
+import LoginPage from "../../support/pages/login";
+import curatePage from "../../support/pages/curate";
+import explore from "../../support/pages/browse";
+import {generateUniqueName} from "../../support/helper";
+import graphView from "../../support/components/explore/graph-view";
+import graphVis from "../../support/components/model/graph-vis";
+import loadPage from "../../support/pages/load";
 import {matchingStepDetail} from "../../support/components/matching";
 import mergingStepDetail from "../../support/components/merging/merging-step-detail";
+import modelPage from "../../support/pages/model";
+import multiSlider from "../../support/components/common/multi-slider";
+import propertyTable from "../../support/components/model/property-table";
 import tables from "../../support/components/common/tables";
-import {generateUniqueName} from "../../support/helper";
 
 describe("Validate persistence across Hub Central", () => {
   let entityNamesAsc: string[] = [];
@@ -52,7 +55,29 @@ describe("Validate persistence across Hub Central", () => {
     cy.waitUntil(() => cy.findByTestId("loadTableName").click());
     cy.get("[aria-label=\"icon: caret-up\"]").should("have.attr", "class").and("match", /hc-table_activeCaret/);
   });
+  it(" Explore tile: the graph view switches settings should be preserved", () => {
+    toolbar.getExploreToolbarIcon().click();
+    explore.getGraphView().click();
 
+    cy.log("**Switch off all the toggles**");
+    graphView.getConceptToggle().click();
+    graphView.getConceptToggle().should("have.value", "false");
+
+    graphView.getPhysicsAnimationToggle().click();
+    graphView.getPhysicsAnimationToggle().should("have.value", "false");
+
+    graphView.getRelationshipLabelsToggle().click();
+    graphView.getRelationshipLabelsToggle().should("have.value", "false");
+
+    cy.log("**Switch Tile and come back, toggle value should be the same**");
+    toolbar.getCurateToolbarIcon().click();
+    toolbar.getExploreToolbarIcon().click();
+    graphView.getRelationshipLabelsToggle().should("have.value", "false");
+    graphView.getPhysicsAnimationToggle().should("have.value", "false");
+    graphView.getPhysicsAnimationToggle().should("have.value", "false");
+
+
+  });
   it("Go to curate tile, and validate that the accordion and tabs are kept when switching between pages", () => {
     toolbar.getCurateToolbarIcon().click();
     curatePage.getAccordionButton(0).click();
@@ -323,4 +348,5 @@ describe("Validate persistence across Hub Central", () => {
     cy.deleteEntities([entityName]);
     cy.waitForAsyncRequest();
   });
+
 });
