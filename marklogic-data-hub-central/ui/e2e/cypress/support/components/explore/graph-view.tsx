@@ -11,6 +11,10 @@ class GraphView {
   getPhysicsAnimationTooltip() {
     return cy.get("[id=\"physics-animation-tooltip\"]");
   }
+
+  getRelationshipLabelsToggle() {
+    return cy.get("[id=\"relationship-label-id\"]");
+  }
 }
 
 const graphView = new GraphView();

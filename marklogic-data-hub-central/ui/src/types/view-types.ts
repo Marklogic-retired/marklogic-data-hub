@@ -94,5 +94,12 @@ export type ViewSettingsType = {
         pageNumberTable?: number,
         sortColumnName: string,
         sortColumn: string
+    },
+    explore?: {
+        graphView?:{
+            relationshipLabels?: boolean,
+            concepts?: boolean,
+            physicsAnimation?: boolean,
         }
+    }
 };

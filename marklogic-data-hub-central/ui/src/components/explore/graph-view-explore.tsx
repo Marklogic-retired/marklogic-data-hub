@@ -1,18 +1,19 @@
-import React, {CSSProperties, useContext, useState} from "react";
-import styles from "./graph-view-explore.module.scss";
-import FormCheck from "react-bootstrap/FormCheck";
-import SplitPane from "react-split-pane";
-import GraphVisExplore from "./graph-vis-explore/graph-vis-explore";
 import {HCCheckbox, HCTooltip} from "@components/common";
-import GraphExploreSidePanel from "./graph-explore-side-panel/graph-explore-side-panel";
-import {SearchContext} from "@util/search-context";
-import {ModelingTooltips} from "@config/tooltips.config";
+import React, {CSSProperties, useContext, useState} from "react";
+import {getViewSettings, setViewSettings} from "@util/user-context";
+
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faFileExport} from "@fortawesome/free-solid-svg-icons";
+import FormCheck from "react-bootstrap/FormCheck";
+import GraphExploreSidePanel from "./graph-explore-side-panel/graph-explore-side-panel";
+import GraphVisExplore from "./graph-vis-explore/graph-vis-explore";
+import {ModelingTooltips} from "@config/tooltips.config";
 import {QuestionCircleFill} from "react-bootstrap-icons";
+import {SearchContext} from "@util/search-context";
+import SplitPane from "react-split-pane";
+import {faFileExport} from "@fortawesome/free-solid-svg-icons";
+import styles from "./graph-view-explore.module.scss";
 import {themeColors} from "@config/themes.config";
 import tooltipsConfig from "@config/explorer-tooltips.config";
-
 
 type Props = {
   entityTypeInstances: any;
@@ -24,12 +25,13 @@ type Props = {
 const {graphViewTooltips} = tooltipsConfig;
 
 const GraphViewExplore: React.FC<Props> = (props) => {
+  const storage = getViewSettings();
   const {entityTypeInstances, graphView, setGraphPageInfo} = props;
 
-  const [viewRelationshipLabels, toggleRelationShipLabels] = useState(true);
+  const [viewRelationshipLabels, toggleRelationShipLabels] = useState(storage.explore?.graphView?.relationshipLabels !== undefined ? storage.explore?.graphView?.relationshipLabels : true);
   const [exportPngButtonClicked, setExportPngButtonClicked] = useState(false);
-  const [viewConcepts, toggleConcepts] = useState(true);
-  const [physicsAnimation, togglePhysicsAnimation] = useState(true);
+  const [viewConcepts, toggleConcepts] = useState(storage.explore?.graphView?.concepts !== undefined ? storage.explore?.graphView?.concepts : true);
+  const [physicsAnimation, togglePhysicsAnimation] = useState(storage.explore?.graphView?.physicsAnimation !== undefined? storage.explore?.graphView?.physicsAnimation : true);
 
   const {
     savedNode,
@@ -38,7 +40,7 @@ const GraphViewExplore: React.FC<Props> = (props) => {
 
   const headerButtons = <span className={styles.buttons}>
     <HCTooltip text={ModelingTooltips.exportGraph} id="export-graph-icon-tooltip" placement="top">
-      <i>{<FontAwesomeIcon className={styles.graphExportIcon} icon={faFileExport} aria-label="graph-export" onClick={() => { setExportPngButtonClicked(true); }}/>}</i>
+      <i>{<FontAwesomeIcon className={styles.graphExportIcon} icon={faFileExport} aria-label="graph-export" onClick={() => { setExportPngButtonClicked(true); }} />}</i>
     </HCTooltip>
   </span>;
 
@@ -72,15 +74,36 @@ const GraphViewExplore: React.FC<Props> = (props) => {
   };
 
   const handleRelationshipLabelView = (e) => {
+    setViewSettings({
+      ...storage,
+      explore: {
+        ...storage.explore,
+        graphView: {...storage.explore?.graphView, relationshipLabels: e.target.checked}
+      }
+    });
     toggleRelationShipLabels(e.target.checked);
   };
 
   const handleConceptsView = (e) => {
+    setViewSettings({
+      ...storage,
+      explore: {
+        ...storage.explore,
+        graphView: {...storage.explore?.graphView, concepts: e.target.checked}
+      }
+    });
     toggleConcepts(e.target.checked);
     onCloseSidePanel();
   };
 
   const handlePhysicsAnimation = (e) => {
+    setViewSettings({
+      ...storage,
+      explore: {
+        ...storage.explore,
+        graphView: {...storage.explore?.graphView, physicsAnimation: e.target.checked}
+      }
+    });
     togglePhysicsAnimation(e.target.checked);
   };
 
@@ -170,9 +193,9 @@ const GraphViewExplore: React.FC<Props> = (props) => {
             entityTypeInstances={entityTypeInstances}
             graphView={graphView}
             viewRelationshipLabels={viewRelationshipLabels}
-            exportPngButtonClicked = {exportPngButtonClicked}
-            setExportPngButtonClicked = {setExportPngButtonClicked}
-            setGraphPageInfo = {setGraphPageInfo}
+            exportPngButtonClicked={exportPngButtonClicked}
+            setExportPngButtonClicked={setExportPngButtonClicked}
+            setGraphPageInfo={setGraphPageInfo}
             viewConcepts={viewConcepts}
             physicsAnimation={physicsAnimation}
           />
@@ -186,7 +209,7 @@ const GraphViewExplore: React.FC<Props> = (props) => {
   };
 
   const sidePanel = (<div>
-    <GraphExploreSidePanel onCloseSidePanel={onCloseSidePanel} graphView={graphView}/>
+    <GraphExploreSidePanel onCloseSidePanel={onCloseSidePanel} graphView={graphView} />
   </div>);
 
   return (
