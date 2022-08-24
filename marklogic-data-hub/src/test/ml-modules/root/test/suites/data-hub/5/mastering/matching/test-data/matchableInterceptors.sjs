@@ -1,3 +1,6 @@
+const test = require("/test/test-helper.xqy");
+const {match} = require("../../../smart-mastering/lib/masteringTestLib.sjs");
+
 function baselineQueryInterceptorA(baselineQuery) {
   return cts.andQuery([baselineQuery, cts.collectionQuery("InterceptorA")]);
 }
@@ -32,7 +35,8 @@ function customMatchSequenceInterceptor() {
   return seq;
 }
 
-function customMatchArrayInterceptor() {
+function customMatchArrayInterceptor(values, matchRule) {
+  test.assertTrue(fn.exists(matchRule.xpath("ancestor::matchRulesets/weight")), "Should pass node as match rule.");
   //return any array
   let arr = [-1,"abc",3];
   return arr;

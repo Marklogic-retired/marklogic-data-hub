@@ -156,6 +156,7 @@ function testMatchRulesetDefinitions() {
       },
       {
         name: "name - custom",
+        weight: 10,
         matchRules: [{
             entityPropertyPath: "name",
             matchType: "custom",
@@ -184,41 +185,37 @@ function testMatchRulesetDefinitions() {
     test.assertEqual(matchStep.matchRulesets.length, matchRulesetDefinitions.length, "Count of match ruleset definitions should match count of objects in the step.")
   ];
   for (let i = 0; i < matchStep.matchRulesets.length; i++) {
+    let matchRulesetDefinition = matchRulesetDefinitions[i];
+    let matchRulesetNode = fn.head(fn.subsequence(matchable.matchStepNode.xpath("matchRulesets"), i + 1,1));
     assertions.push(test.assertEqual(matchStep.matchRulesets[i].name, matchRulesetDefinitions[i].name(), "Name should be set for MatchRulesetDefinition"));
     assertions.push(test.assertEqualJson(matchStep.matchRulesets[i], matchRulesetDefinitions[i].raw(), "Raw value should be set for MatchRulesetDefinition"));
     matchRulesetDefinitions[i].buildCtsQuery(docA);
     if(matchStep.matchRulesets[i].name === "name - custom") {
-      let isQuery = matchRulesetDefinitions[i].buildCtsQuery(docA) instanceof cts.query;
+      let isQuery = matchRulesetDefinition.buildCtsQuery(docA) instanceof cts.query;
       assertions.push(test.assertEqual(isQuery, true, "Cts query is created for matched rule when custom match function returns atomic value"));
     }
     if(matchStep.matchRulesets[i].name === "name - synonym") {
-      const matchRulesetDefinitions = new MatchRulesetDefinition(matchStep.matchRulesets[i],matchable);
-      let matchingTerms = matchRulesetDefinitions.synonymMatchFunction("Robert", matchStep.matchRulesets[i].matchRules[0], matchStep);
+      let matchingTerms = matchRulesetDefinition.synonymMatchFunction("Robert", fn.head(matchRulesetNode.xpath("matchRules")), matchStep);
       assertions.push(test.assertEqual(2, matchingTerms.length), "Original term and matching synonym qualifier is returned");
     }
     if(matchStep.matchRulesets[i].name === "name - synonym - noMatchQualifier") {
-      const matchRulesetDefinitions = new MatchRulesetDefinition(matchStep.matchRulesets[i],matchable);
-      let matchingTerms = matchRulesetDefinitions.synonymMatchFunction("Robert", matchStep.matchRulesets[i].matchRules[0], matchStep);
+      let matchingTerms = matchRulesetDefinition.synonymMatchFunction("Robert", fn.head(matchRulesetNode.xpath("matchRules")), matchStep);
       assertions.push(test.assertEqual(0, matchingTerms.length, "No matching qualifier was found"));
     }
     if(matchStep.matchRulesets[i].name === "name - double metaphone") {
-      const matchRulesetDefinitions = new MatchRulesetDefinition(matchStep.matchRulesets[i],matchable);
-      let matchingTerms = matchRulesetDefinitions.doubleMetaphoneMatchFunction("Robert", matchStep.matchRulesets[i].matchRules[0], matchStep);
+      let matchingTerms = matchRulesetDefinition.doubleMetaphoneMatchFunction("Robert", fn.head(matchRulesetNode.xpath("matchRules")), matchStep);
       assertions.push(test.assertEqual(3, Sequence.from(matchingTerms).toArray().length, "3 words are returned that have distanceThreshold less than equal to 100"));
     }
     if(matchStep.matchRulesets[i].name === "name - double metaphone - noMatch") {
-      const matchRulesetDefinitions = new MatchRulesetDefinition(matchStep.matchRulesets[i],matchable);
-      let matchingTerms = matchRulesetDefinitions.doubleMetaphoneMatchFunction("jhons", matchStep.matchRulesets[i].matchRules[0], matchStep);
+      let matchingTerms = matchRulesetDefinition.doubleMetaphoneMatchFunction("jhons", fn.head(matchRulesetNode.xpath("matchRules")), matchStep);
       assertions.push(test.assertEqual(0, Sequence.from(matchingTerms).toArray().length, "No word is returned that have distanceThreshold less than equal to 100"));
     }
     if(matchStep.matchRulesets[i].name === "name - zip - 5digit") {
-      const matchRulesetDefinitions = new MatchRulesetDefinition(matchStep.matchRulesets[i],matchable);
-      let matchingTerms = matchRulesetDefinitions.zipMatchFunction("95101", matchStep.matchRulesets[i].matchRules[0], matchStep)
+      let matchingTerms = matchRulesetDefinition.zipMatchFunction("95101", fn.head(matchRulesetNode.xpath("matchRules")), matchStep)
       assertions.push(test.assertEqual(["95101","95101-*"], matchingTerms, "Original 5 digits zip value and wildcard entry is returned"));
     }
     if(matchStep.matchRulesets[i].name === "name - zip - 9digit") {
-      const matchRulesetDefinitions = new MatchRulesetDefinition(matchStep.matchRulesets[i],matchable);
-      let matchingTerms = matchRulesetDefinitions.zipMatchFunction("95101-1210", matchStep.matchRulesets[i].matchRules[0], matchStep)
+      let matchingTerms = matchRulesetDefinition.zipMatchFunction("95101-1210", matchStep.matchRulesets[i].matchRules[0], matchStep)
       assertions.push(test.assertEqual(["95101-1210","95101"], matchingTerms, "Original 9 digits zip value and trimmed 5 digits zip is returned"));
     }
   }

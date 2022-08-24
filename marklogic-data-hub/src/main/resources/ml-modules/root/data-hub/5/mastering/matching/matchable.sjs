@@ -23,6 +23,7 @@ class Matchable {
     } else {
       this.matchStep = matchStep;
     }
+    this.matchStepNode = xdmp.toJSON(this.matchStep).root;
     this.stepContext = stepContext;
     const targetEntityType = this.matchStep.targetEntityType;
     if (targetEntityType) {
@@ -65,8 +66,8 @@ class Matchable {
    */
   matchRulesetDefinitions() {
     if (!this._matchRulesetDefinitions) {
-      this._matchRulesetDefinitions = (this.matchStep.matchRulesets || [])
-        .map((ruleset) => new MatchRulesetDefinition(ruleset, this))
+      this._matchRulesetDefinitions = this.matchStepNode.xpath("matchRulesets").toArray()
+        .map((rulesetNode) => new MatchRulesetDefinition(rulesetNode, this))
         .sort((a, b) => b.weight() - a.weight());
       if (matchingTraceEnabled) {
         xdmp.trace(matchingTraceEvent, `Initializing the match ruleset definitions: ${xdmp.toJsonString(this._matchRulesetDefinitions.map((def) => def.raw()))}`);
@@ -285,8 +286,9 @@ class Matchable {
 }
 
 class MatchRulesetDefinition {
-  constructor(matchRuleset, matchable) {
-    this.matchRuleset = matchRuleset;
+  constructor(matchRulesetNode, matchable) {
+    this.matchRulesetNode = matchRulesetNode
+    this.matchRuleset = matchRulesetNode.toObject();
     this.matchable = matchable;
     this._matchRuleFunctions = [];
   }
@@ -311,10 +313,11 @@ class MatchRulesetDefinition {
   }
 
   synonymMatchFunction(value, passMatchRule) {
-    let thesaurus = passMatchRule.options.thesaurusURI;
+    let matchRule = passMatchRule.toObject();
+    let thesaurus = matchRule.options.thesaurusURI;
     let expandOptions = hubUtils.normalizeToArray(value).map((val) => fn.string(val).toLowerCase());
     let entries = thsr.queryLookup(thesaurus, cts.elementValueQuery(fn.QName("http://marklogic.com/xdmp/thesaurus", "term"), expandOptions, "case-insensitive"), "elements");
-    let options = passMatchRule.options;
+    let options = matchRule.options;
     let allEntries = [];
     let filterNode;
     //check if filter is present in options
@@ -347,9 +350,10 @@ class MatchRulesetDefinition {
 
 
   doubleMetaphoneMatchFunction(value, passMatchRule) {
-    let dictionary = passMatchRule.options.dictionaryURI;
+    let matchRule = passMatchRule.toObject();
+    let dictionary = matchRule.options.dictionaryURI;
     let spellOption = {
-      distanceThreshold : passMatchRule.options.distanceThreshold
+      distanceThreshold : matchRule.options.distanceThreshold
     };
     let results = hubUtils.normalizeToArray(value).map((val) => spell.suggest(dictionary, fn.string(val), spellOption));
     return Sequence.from(results);
@@ -371,8 +375,8 @@ class MatchRulesetDefinition {
 
   _matchFunction(matchRule, model) {
     if (!matchRule._matchFunction) {
-      let passMatchRule = matchRule;
-      let passMatchStep = this.matchable.matchStep;
+      let passMatchRule = matchRule.node;
+      let passMatchStep = this.matchable.matchStepNode;
       let convertToNode = false;
       let matchFunction;
       let propertyQueryFunction = (values) => this.matchable.propertyQuery(matchRule.entityPropertyPath, values);
@@ -403,10 +407,6 @@ class MatchRulesetDefinition {
         default:
           httpUtils.throwBadRequest(`Undefined match type "${matchRule.matchType}" provided.`);
       }
-      if (convertToNode) {
-        passMatchRule = new NodeBuilder().addNode(passMatchRule).toNode();
-        passMatchStep = new NodeBuilder().addNode(passMatchStep).toNode();
-      }
       const groupQueries = hubUtils.requireFunction("/data-hub/5/mastering/matching/matcher.sjs", "groupQueries");
       matchRule._matchFunction = (values) => {
         const results = matchFunction(values, passMatchRule, passMatchStep);
@@ -426,7 +426,12 @@ class MatchRulesetDefinition {
     const query = this.buildCtsQuery(contentObjectA.value);
     const model = this.matchable.model();
 
+    let pos = 1;
     for (const matchRule of this.matchRuleset.matchRules) {
+      if (!matchRule.node) {
+        matchRule.node = fn.head(fn.subsequence(this.matchRulesetNode.xpath("matchRules"), pos, 1));
+      }
+      pos++;
       const valueFunction = this._valueFunction(matchRule, model);
       const matchFunction = this._matchFunction(matchRule, model);
       const values = valueFunction(contentObjectA.value);
@@ -457,7 +462,12 @@ class MatchRulesetDefinition {
     const queries = [];
     const model = this.matchable.model();
     const groupQueries = hubUtils.requireFunction("/data-hub/5/mastering/matching/matcher.sjs", "groupQueries");
+    let pos = 1;
     for (const matchRule of this.matchRuleset.matchRules) {
+      if (!matchRule.node) {
+        matchRule.node = fn.head(fn.subsequence(this.matchRulesetNode.xpath("matchRules"), pos, 1));
+      }
+      pos++;
       const valueFunction = this._valueFunction(matchRule, model);
       const matchFunction = this._matchFunction(matchRule, model);
       const values = valueFunction(documentNode);
