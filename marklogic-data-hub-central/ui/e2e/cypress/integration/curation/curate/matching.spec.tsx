@@ -26,8 +26,8 @@ const allDataMatchedResults = [{ruleset: "lname - Exact", matchType: "Exact 0", 
 
 const urisMerged = ["/json/persons/first-name-double-metaphone1.json", "/json/persons/first-name-double-metaphone2.json"];
 const uris = ["/json/persons/first-name-double-metaphone1.json", "/json/persons/first-name-double-metaphone2.json", "/json/persons/last-name-plus-zip-boost1.json", "/json/persons/last-name-plus-zip-boost2.json", "/json/persons/last-name-dob-custom1.json", "/json/persons/last-name-dob-custom2.json", "/json/persons/first-name-synonym1.json", "/json/persons/first-name-synonym2.json"];
-const compareValuesData = [{propertyName: "id", uriValue1: "empty", uriValue2: "empty"}, {propertyName: "fname", uriValue1: "Alexandria", uriValue2: "Alexandria"}, // eslint-disable-line @typescript-eslint/no-unused-vars
-  {propertyName: "lname", uriValue1: "Wilson", uriValue2: "Wilson"}, {propertyName: "Address", uriValue1: "123 Wilson Rd", uriValue2: "123 Wilson Rd"}];
+const compareValuesData = [{propertyName: "id", uriValue1: "empty", uriValue2: "empty"}, {propertyName: "fname", uriValue1: "Alexandra", uriValue2: "Alexandria"}, // eslint-disable-line @typescript-eslint/no-unused-vars
+  {propertyName: "lname", uriValue1: "Wilson", uriValue2: "Wilson"}, {propertyName: "Address", uriValue1: "123 Wilson St", uriValue2: "123 Wilson Rd"}];
 
 describe("Matching", () => {
   before(() => {
@@ -458,8 +458,8 @@ describe("Matching", () => {
     cy.findAllByLabelText("/json/persons/first-name-double-metaphone compareButton").first().scrollIntoView().click();
     for (let i in compareValuesData) {
       cy.findByLabelText(compareValuesData[i].propertyName).should("have.length.gt", 0);
-      cy.findAllByLabelText(compareValuesData[i].uriValue1).should("have.length.gt", 0);
-      cy.findAllByLabelText(compareValuesData[i].uriValue2).should("have.length.gt", 0);
+      cy.findAllByLabelText(`${compareValuesData[i].uriValue1}-cell1`).should("have.length.gt", 0);
+      cy.findAllByLabelText(`${compareValuesData[i].uriValue2}-cell2`).should("have.length.gt", 0);
     }
     compareValuesModal.getTableHeader().should("not.be.visible"); // Added as per DHFPROD-8322
 
