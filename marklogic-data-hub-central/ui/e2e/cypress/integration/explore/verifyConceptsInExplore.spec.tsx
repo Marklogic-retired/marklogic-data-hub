@@ -107,15 +107,16 @@ describe("Concepts", () => {
     cy.wait(5000); // The canvas takes some more time animating
 
     entitiesSidebar.toggleRelatedConceptsPanel();
-    // entitiesSidebar.showMoreRelatedConcept().click();
+    entitiesSidebar.showMoreRelatedConcept().click();
     browsePage.getFacetItemCheckbox("relatedconcepts", "Sneakers").click();
     browsePage.getSelectedFacets().should("exist");
     browsePage.getGreySelectedFacets("Sneakers").should("exist");
     browsePage.getFacetApplyButton().click();
     browsePage.waitForSpinnerToDisappear();
     cy.wait(3000);
+  });
 
-    cy.log("**Verify Kettle concept node is not visible in the canvas anymore**");
+  it("Verify Kettle concept node is not visible in the canvas anymore", () => {
     graphExplore.focusNode(ExploreGraphNodes.CONCEPT_KETTLE);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_KETTLE).then((nodePositions: any) => {
       let kettleCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_KETTLE];
@@ -135,8 +136,8 @@ describe("Concepts", () => {
       canvas.click(sneakersCoordinates.x, sneakersCoordinates.y, {force: true});
       graphExploreSidePanel.getSidePanel().should("exist");
     });
-
-    cy.log("**Verify Kettle concept node should be visible when selected as facet**");
+  });
+  it("Verify Kettle concept node should be visible when selected as facet", () => {
     browsePage.clickMoreLink("relatedconcepts");
     browsePage.getFacetItemCheckbox("relatedconcepts", "Kettle").click();
     browsePage.getSelectedFacets().should("exist");
@@ -157,7 +158,6 @@ describe("Concepts", () => {
       graphExploreSidePanel.getSidePanel().should("exist");
     });
   });
-
   it("Validate that the physics animation toggle is visible and the tooltip works on it", () => {
     //Graph view
     cy.log("**Go to graph view**");
