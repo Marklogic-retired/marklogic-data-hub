@@ -260,7 +260,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     cy.visit("/");
     toolbar.getCurateToolbarIcon().click();
     curatePage.toggleEntityTypeId("Order");
-    cy.waitUntil(() => curatePage.addNewStep("Order").click());
+    curatePage.addNewStep("Order").should("be.visible").click({force: true});
     createEditMappingDialog.setMappingName(mapStep);
     createEditMappingDialog.setSourceRadio("Query");
     createEditMappingDialog.setQueryInput("test");

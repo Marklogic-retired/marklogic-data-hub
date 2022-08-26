@@ -81,9 +81,6 @@ describe("Entity Type Settings Modal", () => {
   beforeEach(() => {
     //Restoring Local Storage to Preserve Session
     cy.restoreLocalStorage();
-    cy.visit("/");
-    cy.log("**Go to Explore section**");
-    toolbar.getExploreToolbarIcon().click({force: true});
   });
   afterEach(() => {
     // update local storage
@@ -98,6 +95,7 @@ describe("Entity Type Settings Modal", () => {
   it("Open settings modal, check default values, select new ones cancel and check that the defaults values are keep", () => {
     browsePage.waitForSpinnerToDisappear();
     cy.wait(3000);
+    toolbar.getExploreToolbarIcon().should("be.visible").click({force: true});
     cy.log("**Select Graph view and open explore settings modal**");
     browsePage.clickGraphView();
     browsePage.waitForSpinnerToDisappear();

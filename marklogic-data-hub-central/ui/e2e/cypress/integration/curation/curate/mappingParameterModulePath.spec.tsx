@@ -34,9 +34,9 @@ describe("Create and Edit Mapping Steps with Parameter Module Path", () => {
 
   it("Create mapping step with parameter module path", () => {
     toolbar.getCurateToolbarIcon().click();
-    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
+    curatePage.getEntityTypePanel("Customer").should("be.visible");
     curatePage.toggleEntityTypeId("Order");
-    cy.waitUntil(() => curatePage.addNewStep("Order").click());
+    curatePage.addNewStep("Order").should("be.visible").click();
     createEditMappingDialog.setMappingName(mapStep);
     createEditMappingDialog.setMappingDescription("An order mapping with custom header");
     createEditMappingDialog.setSourceRadio("Query");
@@ -47,14 +47,14 @@ describe("Create and Edit Mapping Steps with Parameter Module Path", () => {
     advancedSettingsDialog.setParameterModulePath("faultyPath");
 
     cy.log("**Save settings and verify error message with invalid module path**");
-    cy.waitUntil(() => advancedSettingsDialog.saveButton().click({force: true}));
+    advancedSettingsDialog.saveButton().should("be.visible").click({force: true});
     advancedSettingsDialog.verifyInvalidPathError().should("be.visible");
     advancedSettingsDialog.confirmError();
 
     cy.log("**Fix error and verify step is saved**");
     advancedSettingsDialog.setParameterModulePath("/custom-modules/custom/user-params.sjs");
 
-    cy.waitUntil(() => advancedSettingsDialog.saveButton().click({force: true}));
+    advancedSettingsDialog.saveButton().should("be.visible").click({force: true});
     curatePage.verifyStepDetailsOpen(mapStep);
   });
   it("Edit Mapping step with parameter module path", () => {
@@ -67,19 +67,19 @@ describe("Create and Edit Mapping Steps with Parameter Module Path", () => {
     curatePage.getEntityTypePanel("Order").should("be.visible").click({force: true});
 
     cy.log("**Open step settings and switch to Advanced tab**");
-    cy.waitUntil(() => curatePage.editStep(mapStep).click());
-    curatePage.switchEditAdvanced().click();
+    curatePage.editStep(mapStep).should("be.visible").click({force: true});
+    curatePage.switchEditAdvanced().should("be.visible").click({force: true});
 
     cy.log("**Save settings and verify error message with invalid module path**");
     advancedSettingsDialog.setParameterModulePath("faultyPath");
-    cy.waitUntil(() => advancedSettingsDialog.saveButton().click({force: true}));
+    advancedSettingsDialog.saveButton().should("be.visible").click({force: true});
     advancedSettingsDialog.verifyInvalidPathError().should("be.visible");
     advancedSettingsDialog.confirmError();
 
     cy.log("**Fix error and verify step is saved**");
     advancedSettingsDialog.setParameterModulePath("/custom-modules/custom/user-params.sjs");
 
-    cy.waitUntil(() => advancedSettingsDialog.saveButton().click({force: true}));
+    advancedSettingsDialog.saveButton().should("be.visible").click({force: true});
     advancedSettingsDialog.verifyInvalidPathError().should("not.exist");
   });
 });
