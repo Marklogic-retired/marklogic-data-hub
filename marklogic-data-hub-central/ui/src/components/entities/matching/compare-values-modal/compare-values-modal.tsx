@@ -34,7 +34,6 @@ interface Props {
 const CompareValuesModal: React.FC<Props> = (props) => {
   let property1, property2;
   const {curationOptions} = useContext(CurationContext);
-  const [matchedProperties, setMatchedProperties] = useState<any[]>([]);
   const [compareValuesTableData, setCompareValuesTableData] = useState<any[]>([]);
   const [expandedRows, setExpandedRows] = useState<string[]>([]);
   const [confirmModalVisible, setConfirmModalVisible] = useState(false);
@@ -48,11 +47,8 @@ const CompareValuesModal: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (props.isVisible && props.uriInfo) {
-      getMatchedProperties();
-      let parsedData = parseDefinitionsToTable(props.entityDefinitionsArray);
+      let parsedData = parseDefinitionsToTable(props.entityDefinitionsArray, getMatchedProperties());
       setCompareValuesTableData(parsedData);
-    } else {
-      setMatchedProperties([]);
     }
   }, [props.isVisible]);
 
@@ -62,6 +58,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
   };
 
   const getMatchedProperties = () => {
+    let matchedPropArray: any = [];
     for (let i in props.previewMatchActivity.actionPreview) {
       let allUris = props.previewMatchActivity.actionPreview[i].uris;
       if (allUris.includes(props.uris[0]) && allUris.includes(props.uris[1])) {
@@ -69,13 +66,13 @@ const CompareValuesModal: React.FC<Props> = (props) => {
           let matchRuleset = props.previewMatchActivity.actionPreview[i].matchRulesets[j];
           let name = matchRuleset.split(" - ");
           if (name.length > 1) {
-            matchedProperties.push(name[0]);
+            matchedPropArray.push(name[0]);
           } else {
             for (let i = 0; i < curationOptions.activeStep.stepArtifact.matchRulesets.length; i++) {
               let ruleset = curationOptions.activeStep.stepArtifact.matchRulesets[i];
               if (ruleset.name === matchRuleset) {
                 for (let j = 0; j < ruleset.matchRules.length; j++) {
-                  matchedProperties.push(ruleset.matchRules[j].entityPropertyPath);
+                  matchedPropArray.push(ruleset.matchRules[j].entityPropertyPath);
                 }
               }
             }
@@ -83,6 +80,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
         }
       }
     }
+    return matchedPropArray;
   };
 
   const closeModal = () => {
@@ -135,7 +133,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
     return propertyPath;
   };
 
-  const parseDefinitionsToTable = (entityDefinitionsArray: Definition[]) => {
+  const parseDefinitionsToTable = (entityDefinitionsArray: Definition[], matchedPropertiesArray) => {
     let activeEntityName = props.isPreview ? props.activeStepDetails.entityName : props.activeStepDetails[0].name;
     let entityTypeDefinition: Definition = entityDefinitionsArray.find(definition =>  definition.name === activeEntityName) || DEFAULT_ENTITY_DEFINITION;
     return entityTypeDefinition?.properties.map((property, index) => {
@@ -195,7 +193,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
                     let propertyValueInURI1 = propertyValueFromPath(updatedPropertyPath, property1);
                     let propertyValueInURI2 = propertyValueFromPath(updatedPropertyPath, property2);
                     let localPropertyPath = getPropertyPathForStructuredProperties(allParentKeysArray, structProperty.name);
-                    let matchedRow = propertyValueInURI1 && propertyValueInURI2 ? matchedProperties.includes(localPropertyPath) : false;
+                    let matchedRow = propertyValueInURI1 && propertyValueInURI2 ? matchedPropertiesArray.includes(localPropertyPath) : false;
                     return {
                       key: property.name + "," + index + structIndex + counter + i,
                       propertyValueInURI1: {value: propertyValueInURI1, matchedRow: matchedRow},
@@ -217,7 +215,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
                   propertyValueInURI1: {value: propertyValueInURI1, matchedRow: false},
                   propertyValueInURI2: {value: propertyValueInURI2, matchedRow: false},
                   structured: structuredType.name,
-                  propertyName: {name: (i + 1) + " " + structuredType.name, matchedRow: matchedProperties.includes(property.name)},
+                  propertyName: {name: (i + 1) + " " + structuredType.name, matchedRow: matchedPropertiesArray.includes(property.name)},
                   propertyPath: getPropertyPath(parentKeysArray, structuredType.name, structuredType.name, propertyPath, i),
                   children: structTypeProperties,
                   hasChildren: true,
@@ -243,7 +241,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
                   let propertyValueInURI1 = propertyValueFromPath(updatedPropertyPath, property1);
                   let propertyValueInURI2 = propertyValueFromPath(updatedPropertyPath, property2);
                   let localPropertyPath = getPropertyPathForStructuredProperties(allParentKeysArray, structProperty.name);
-                  let matchedRow = !propertyValueInURI1 || !propertyValueInURI2 ? false : matchedProperties.includes(localPropertyPath);
+                  let matchedRow = !propertyValueInURI1 || !propertyValueInURI2 ? false : matchedPropertiesArray.includes(localPropertyPath);
                   return {
                     key: property.name + "," + index + structIndex + counter,
                     propertyValueInURI1: {value: propertyValueInURI1, matchedRow: matchedRow},
@@ -268,7 +266,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
               structured: structuredType.name,
               propertyValueInURI1: {value: "", matchedRow: false},
               propertyValueInURI2: {value: "", matchedRow: false},
-              propertyName: {name: property.name, matchedRow: matchedProperties.includes(property.name)},
+              propertyName: {name: property.name, matchedRow: matchedPropertiesArray.includes(property.name)},
               propertyPath: hasParent ? getPropertyPath(parentKeys, structuredType.name, property.name, propertyPath) : property.name,
               multiple: property.multiple ? property.name : "",
               type: property.ref.split("/").pop(),
@@ -291,7 +289,8 @@ const CompareValuesModal: React.FC<Props> = (props) => {
             propertyValueInURI2 = "";
           }
         }
-        let matchedRow = !propertyValueInURI1 || !propertyValueInURI2 ? false : matchedProperties.includes(property.name);
+        let matchedRow = !propertyValueInURI1 || !propertyValueInURI2 ? false : matchedPropertiesArray.includes(property.name);
+
         propertyRow = {
           key: property.name + "," + index,
           propertyValueInURI1: {value: propertyValueInURI1, matchedRow: matchedRow},
@@ -353,7 +352,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
         };
       },
       formatter: (property, key) => {
-        return <span key={key} aria-label={(property.value && property.value.length > 0) ? property.value : "empty"}>{property.value}</span>;
+        return <span key={key} aria-label={(property.value && property.value.length > 0) ? `${property.value}-cell1` : "empty-cell1"}>{property.value}</span>;
       }
     },
     {
@@ -376,7 +375,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
         };
       },
       formatter: (property, key) => {
-        return <span key={key} aria-label={(property.value && property.value.length > 0) ? property.value : "empty"}>{property.value}</span>;
+        return <span key={key} aria-label={(property.value && property.value.length > 0) ? `${property.value}-cell2` : "empty-cell2"}>{property.value}</span>;
       }
     },
   ];

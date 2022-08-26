@@ -16,6 +16,13 @@ class CompareValuesModal {
     return cy.get(`[aria-label="confirm-merge-unmerge"]`);
   }
 
+  getMatchOneCell(propertyValue: string) {
+    return cy.get(`[aria-label="${propertyValue}-cell1"]`);
+  }
+
+  getMatchTwoCell(propertyValue: string) {
+    return cy.get(`[aria-label="${propertyValue}-cell2"]`);
+  }
   getCancelButton() {
     return cy.get(`[aria-label="Cancel"]`);
   }

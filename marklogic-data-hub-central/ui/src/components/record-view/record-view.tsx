@@ -214,7 +214,7 @@ const RecordCardView = (props) => {
 
     let testMatchData = {
       restrictToUris: true,
-      uris: activeEntityUris,
+      uris: array,
       sampleSize: 100,
       stepName: item.matchStepName
     };
