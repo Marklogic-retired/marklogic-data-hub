@@ -65,10 +65,10 @@ assertions.concat([
 ]);
 
 resultsTest4.nodes.forEach(node => {
-  if(node.id === "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/3039") {
-    assertions.push(test.assertFalse(node.hasRelationships), "BabyRegistry 3039 must have relationships flag in false.");
+  if(node.id === "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/3039-42") {
+    assertions.push(test.assertFalse(node.hasRelationships), "BabyRegistry 3039-42 must have relationships flag in false.");
   }
-  else if(node.id === "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/3039-Product") {
+  else if(node.id === "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/3039-42-Product") {
     assertions.push(test.assertFalse(node.hasRelationships), "Product group node must have relationships flag in false.");
   }
   else if(node.id === "http://example.org/Customer-0.0.1/Customer/301") {
@@ -92,8 +92,8 @@ assertions.concat([
 ]);
 
 resultsTest5.nodes.forEach(node => {
-  if(node.id === "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/3039") {
-    assertions.push(test.assertFalse(node.hasRelationships), "BabyRegistry 3039 must have relationships flag in false.");
+  if(node.id === "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/3039-42") {
+    assertions.push(test.assertFalse(node.hasRelationships), "BabyRegistry 3039-42 must have relationships flag in false.");
   }
   else if(node.id === "http://example.org/Customer-0.0.1/Customer/301") {
     assertions.push(test.assertTrue(node.hasRelationships), "Customer 301 node must have relationships flag in true.");

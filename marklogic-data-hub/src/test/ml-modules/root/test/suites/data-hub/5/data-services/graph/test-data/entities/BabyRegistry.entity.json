@@ -10,7 +10,7 @@
       "primaryKey": "babyRegistryId",
       "properties": {
         "babyRegistryId": {
-          "datatype": "integer"
+          "datatype": "string"
         },
         "arrivalDate": {
           "datatype": "date"

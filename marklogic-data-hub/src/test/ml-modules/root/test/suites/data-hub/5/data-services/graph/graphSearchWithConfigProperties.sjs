@@ -43,14 +43,14 @@ assertions.concat([
 ]);
 
 resultsTest4.nodes.forEach(node => {
-  if(node.id == "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/3039") {
-    assertions.push(test.assertEqual("2021-01-07-08:00",node.label.toString()), "BabyRegistry 3039 must have arrivalDate value as label.");
+  if(node.id == "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/3039-42") {
+    assertions.push(test.assertEqual("2021-01-07-08:00",node.label.toString()), "BabyRegistry 3039-42 must have arrivalDate value as label.");
   }
-  if(node.id == "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/3039") {
-    assertions.push(test.assertFalse("30039" === node.label.toString()), "BabyRegistry 3039 must have arrivalDate value as label  not primaryKey.");
+  if(node.id == "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/3039-42") {
+    assertions.push(test.assertFalse("30039" === node.label.toString()), "BabyRegistry 3039-42 must have arrivalDate value as label  not primaryKey.");
   }
 
-  if(node.id == "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/3039") {
+  if(node.id == "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/3039-42") {
     assertions.push(test.assertTrue(node.propertiesOnHover.length == 2));
   }
 })

@@ -33,7 +33,7 @@ function nodeExpandWithLimit4(queryOptions) {
 }
 
 const expandQuery1 = {
-  "parentIRI": "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/3039-Product",
+  "parentIRI": "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/3039-42-Product",
   "lastObjectIRI": null,
   "predicateFilter": "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/includes"
 };
@@ -46,7 +46,7 @@ let assertions = [
 ];
 
 const expandQuery2 = {
-  "parentIRI": "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/3039",
+  "parentIRI": "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/3039-42",
 };
 const resultsTest2 = nodeExpand(expandQuery2);
 
@@ -58,7 +58,7 @@ assertions.concat([
 
 
 const expandQuery3 = {
-  "parentIRI": "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/3039-Product",
+  "parentIRI": "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/3039-42-Product",
   "predicateFilter": "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/includes"
 };
 const resultsTest3 = nodeExpandWithLimit4(expandQuery3);
