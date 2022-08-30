@@ -446,7 +446,7 @@ const GraphVis: React.FC<Props> = (props) => {
             boxWidth = boxWidth < defaultBoxWidth ? defaultBoxWidth : boxWidth;
             const drawNode = () => {
 
-              roundedRect(ctx, x - boxWidth/2, y - boxHeight/2, boxWidth, boxHeight, boxRadius);
+              roundedRect(ctx, x - boxWidth / 2, y - boxHeight / 2, boxWidth, boxHeight, boxRadius);
               ctx.lineWidth = nodeName === modelingOptions.selectedEntity && props.entitySelected ? 2 : isConcept ? 2 : 0;
               if (isConcept) {
                 ctx.setLineDash([5, 5]);
@@ -477,7 +477,7 @@ const GraphVis: React.FC<Props> = (props) => {
               ctx.fillStyle = "Black";
               ctx.textAlign = "left";
               ctx.textBaseline = "middle";
-              const textOffsetX = x - boxWidth/2 + boxPadding + iconWidth + iconRightMargin;
+              const textOffsetX = x - boxWidth / 2 + boxPadding + iconWidth + iconRightMargin;
               ctx.fillText(boxLabel, textOffsetX, y);
               let img = new Image();   // Create new img element
               img.src = `data:image/svg+xml,${encodeURIComponent(renderToStaticMarkup(createElement(FontIcon[iconName])))}`;
@@ -726,15 +726,14 @@ const GraphVis: React.FC<Props> = (props) => {
     height: networkHeight,
     physics: {
       enabled: physicsEnabled,
-      barnesHut: {
-        springLength: 200,
-        springConstant: 1,
-        avoidOverlap: 1
+      repulsion: {
+        nodeDistance: 150
       },
+      minVelocity: 0.75,
+      solver: "repulsion",
       stabilization: {
-        enabled: true,
-        iterations: 1,
-      }
+        fit: true
+      },
     },
     interaction: {
       navigationButtons: true,
@@ -842,7 +841,7 @@ const GraphVis: React.FC<Props> = (props) => {
         let nodeObjectExists = !!allNodeCoordinates[modelCategory][nodeName];
         if (!nodeObjectExists ||
           (nodeObjectExists && !allNodeCoordinates[modelCategory][nodeName].hasOwnProperty("graphX") &&
-          !allNodeCoordinates[modelCategory][nodeName].hasOwnProperty("graphY"))
+            !allNodeCoordinates[modelCategory][nodeName].hasOwnProperty("graphY"))
         ) {
           coordsExist = false;
           break;
