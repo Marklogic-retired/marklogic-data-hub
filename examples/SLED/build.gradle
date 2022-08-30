@@ -87,6 +87,23 @@ task loadImages(type: com.marklogic.gradle.task.MlcpTask) {
   ]
 }
 
+task loadICD(type: com.marklogic.gradle.task.MlcpTask) {
+    doFirst {
+        database = mlFinalDbName
+        port = mlFinalPort.toInteger()
+    }
+    classpath = configurations.mlcp
+    command = "IMPORT"
+    args = [
+            "-input_file_path", "$project.projectDir/data/ICD/",
+            "-input_file_type", "rdf",
+            "-output_collections", "ICD-10",
+            "-output_permissions", "data-hub-operator,read",
+            "-output_uri_replace", ".*data,''",
+            "-modules_root", "/",
+    ]
+}
+
 task resetDBs(type: com.marklogic.gradle.task.ServerEvalTask) {
   javascript = 'xdmp.invoke("/envision/system/resetSystem.sjs")'
 }
@@ -98,6 +115,8 @@ loadImages.mustRunAfter resetDBs
 loadImages.mustRunAfter mlLoadModules
 createDictionaries.mustRunAfter resetDBs
 createDictionaries.mustRunAfter mlLoadModules
+loadICD.mustRunAfter resetDBs
+loadICD.mustRunAfter mlLoadModules
 
 import com.marklogic.client.io.DocumentMetadataHandle
 import com.marklogic.client.io.StringHandle
@@ -127,7 +146,7 @@ task createRedactionRules(type: com.marklogic.gradle.task.HubTask) {
     if (file.exists()) {
       def meta = new DocumentMetadataHandle()
       meta.getCollections().addAll("redactionRules");
-		  meta.getPermissions().add("rest-reader", DocumentMetadataHandle.Capability.READ);
+	  meta.getPermissions().add("rest-reader", DocumentMetadataHandle.Capability.READ);
       getFinalClient().newDocumentManager().write("/redactionRules2Roles.json", meta, new StringHandle(file.text))
     }
   }
@@ -137,12 +156,28 @@ createRedactionRules.mustRunAfter mlLoadModules
 
 mlLoadModules.mustRunAfter mlDeploy
 
+["Member","Claims", "CMSProvider", "CMSHospital", "CMSOrganization", "CMSServiceLocation", "Mastering"].each {theFlowName ->
+    task "run${theFlowName}" (type: com.marklogic.gradle.task.RunFlowTask, group: "Run flow") {
+        description = "Run the ingestion and mapping steps for flow ${theFlowName}"
+        flowName = theFlowName
+    }
+}
+
+task runFlows() {
+    def tasks = [runMember, runClaims, runCMSProvider, runCMSHospital, runCMSOrganization, runCMSServiceLocation, runMastering]
+    for (int i = 0; i < tasks.size() - 1; i++) {
+        tasks[i + 1].mustRunAfter(tasks[i])
+    }
+    dependsOn(tasks)
+}
+
 
 task resetDemo {
   dependsOn resetDBs
   dependsOn loadImages
   dependsOn createDictionaries
   dependsOn createRedactionRules
+  dependsOn loadICD
 }
 
 task install {
@@ -152,6 +187,8 @@ task install {
   dependsOn createRedactionRules
   dependsOn loadImages
   dependsOn createDictionaries
+  dependsOn loadICD
+  dependsOn runFlows
 }
 
 ext {

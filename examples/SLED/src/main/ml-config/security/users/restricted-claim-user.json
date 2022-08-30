@@ -1,0 +1,12 @@
+{
+  "user-name": "restricted-claim-user",
+  "description": "User that can see claims with no PII",
+  "password": "demo",
+  "role": [
+    "claim-viewer",
+    "hub-central-user",
+    "hub-central-explorer"
+  ],
+  "permission": [
+  ]
+}

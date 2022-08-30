@@ -1,0 +1,12 @@
+{
+  "user-name": "restricted-member-user",
+  "description": "User that can see members with no PII",
+  "password": "demo",
+  "role": [
+    "member-viewer",
+    "hub-central-user",
+    "hub-central-explorer"
+  ],
+  "permission": [
+  ]
+}

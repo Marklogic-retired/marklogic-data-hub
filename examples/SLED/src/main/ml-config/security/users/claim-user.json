@@ -1,0 +1,13 @@
+{
+  "user-name": "claim-user",
+  "description": "User that can see claims with PII",
+  "password": "demo",
+  "role": [
+    "pii-reader",
+    "claim-viewer",
+    "hub-central-user",
+    "hub-central-explorer"
+  ],
+  "permission": [
+  ]
+}

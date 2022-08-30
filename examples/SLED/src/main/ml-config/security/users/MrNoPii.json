@@ -2,6 +2,11 @@
     "user-name": "MrNoPii",
     "description": "No PII reading ",
     "password": "demo",
-    "role": ["envision","hub-central-operator","hub-central-developer"],
-    "permission": [{"role-name":"envision", "capability":"update"}, {"role-name":"envision", "capability":"read"}]
+    "role": [
+        "data-viewer",
+        "hub-central-user",
+        "hub-central-explorer"
+    ],
+    "permission": [
+    ]
 }

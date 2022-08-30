@@ -1,0 +1,79 @@
+{
+  "name": "Model",
+  "nodes": {
+    "member": {
+      "label": "Member",
+      "entityName": "Member",
+      "type": "entity",
+      "id": "member",
+      "version": "0.0.1",
+      "baseUri": "http://marklogic.com/",
+      "description": "Member Entity Final DB",
+      "properties": [],
+      "idField": "memberID",
+      "labelField": "FirstName"
+    },
+    "claimfhir": {
+      "label": "ClaimFHIR",
+      "entityName": "ClaimFHIR",
+      "type": "entity",
+      "id": "claimfhir",
+      "version": "0.0.1",
+      "baseUri": "http://marklogic.com/",
+      "properties": [],
+      "idField": "identifier",
+      "labelField": "identifier"
+    },
+    "claimitem": {
+      "id": "claimitem",
+      "x": 67,
+      "y": -44,
+      "label": "ClaimItem",
+      "entityName": "ClaimItem",
+      "type": "entity",
+      "baseUri": "http://marklogic.com/",
+      "version": "0.0.1",
+      "properties": [],
+      "labelField": "productOrService",
+      "idField": "claimId"
+    }
+  },
+  "edges": {
+    "member-hasdependent-member": {
+      "id": "member-hasdependent-member",
+      "from": "member",
+      "label": "hasDependent",
+      "to": "member",
+      "cardinality": "1:Many",
+      "keyFrom": "memberID",
+      "keyTo": "PrimaryInsuredId",
+      "smooth": {
+        "roundness": 0.35
+      }
+    },
+    "member-hasclaim-claimfhir": {
+      "id": "member-hasclaim-claimfhir",
+      "from": "member",
+      "label": "hasClaim",
+      "to": "claimfhir",
+      "cardinality": "1:Many",
+      "keyFrom": "memberID",
+      "keyTo": "patient",
+      "smooth": {
+        "roundness": 0.35
+      }
+    },
+    "claimfhir-hasitem-claimitem": {
+      "id": "claimfhir-hasitem-claimitem",
+      "from": "claimfhir",
+      "label": "hasItem",
+      "to": "claimitem",
+      "cardinality": "1:Many",
+      "keyFrom": "identifier",
+      "keyTo": "claimId",
+      "smooth": {
+        "roundness": 0.35
+      }
+    }
+  }
+}

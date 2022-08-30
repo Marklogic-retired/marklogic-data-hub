@@ -1,0 +1,59 @@
+{
+  "collections": [
+    "ProviderToUSCorePractitionerRole",
+    "USCorePractitionerRole"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "JSON",
+  "name": "ProviderToUSCorePractitionerRole",
+  "targetEntityType": "http://example.org/USCorePractitionerRole-1.0.0/USCorePractitionerRole",
+  "description": "",
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['pretransformed-ProviderRole'])",
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "coarse",
+  "customHook": { },
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "ProviderToUSCorePractitionerRole-mapping",
+  "lastUpdated": "2022-10-17T22:33:54.27455Z",
+  "uriExpression": "\"test\"",
+  "properties": {
+    "id": {
+      "sourcedFrom": "instance/ServiceLocation/NPIAndAddressId"
+    },
+    "location": {
+      "sourcedFrom": "instance/ServiceLocation",
+      "properties": {
+        "type": {
+          "sourcedFrom": "\"Location\""
+        },
+        "reference": {
+          "sourcedFrom": "concat(\"Location/\", AddressId)"
+        }
+      },
+      "targetEntityType": "#/definitions/Reference"
+    },
+    "practitioner": {
+      "sourcedFrom": "instance/ServiceLocation",
+      "properties": {
+        "type": {
+          "sourcedFrom": "\"Practitioner\""
+        },
+        "reference": {
+          "sourcedFrom": "concat(\"Practitioner/\", ProviderNPI)"
+        }
+      },
+      "targetEntityType": "#/definitions/Reference"
+    },
+    "resourceType": {
+      "sourcedFrom": "\"PractitionerRole\""
+    }
+  }
+}

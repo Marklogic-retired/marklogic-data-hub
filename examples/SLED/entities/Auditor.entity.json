@@ -28,7 +28,7 @@
         },
         "hasClaimHeader": {
           "datatype": "string",
-          "relatedEntityType": "http://marklogic.com/envision/ClaimFHIR-0.0.1/ClaimFHIR",
+          "relatedEntityType": "http://marklogic.com/ClaimFHIR-0.0.1/ClaimFHIR",
           "joinPropertyName": "",
           "$ref": ""
         }

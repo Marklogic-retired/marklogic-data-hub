@@ -2,7 +2,7 @@
   "info": {
     "title": "ClaimItem",
     "version": "0.0.1",
-    "baseUri": "http://marklogic.com/envision/",
+    "baseUri": "http://marklogic.com/",
     "draft": false
   },
   "definitions": {
@@ -30,6 +30,8 @@
         },
         "provider": {
           "datatype": "string",
+          "facetable": false,
+          "sortable": false,
           "collation": "http://marklogic.com/collation/codepoint"
         },
         "sequence": {
@@ -48,20 +50,13 @@
           "datatype": "string",
           "collation": "http://marklogic.com/collation/codepoint"
         },
-        "hasProvider": {
+        "hasCMSProvider": {
           "datatype": "string",
-          "relatedEntityType": "http://marklogic.com/envision/Provider-0.0.1/Provider",
-          "joinPropertyName": "ProviderName"
+          "relatedEntityType": "http://marklogic.com/CMSProvider-0.0.1/CMSProvider",
+          "joinPropertyName": "ProviderNPI"
         }
       },
-      "description": ""
-    }
-  },
-  "hubCentral": {
-    "modeling": {
-      "color": "#EEEFF1",
-      "graphX": 231,
-      "graphY": -72
+      "primaryKey": "provider"
     }
   }
 }

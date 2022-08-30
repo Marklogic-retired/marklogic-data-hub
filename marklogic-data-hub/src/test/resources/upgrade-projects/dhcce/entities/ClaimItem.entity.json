@@ -1,0 +1,57 @@
+{
+  "info": {
+    "title": "ClaimItem",
+    "version": "0.0.1",
+    "baseUri": "http://marklogic.com/",
+    "draft": false
+  },
+  "definitions": {
+    "ClaimItem": {
+      "required": [ ],
+      "pii": [
+        "patient"
+      ],
+      "wordLexicon": [ ],
+      "properties": {
+        "claimId": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "modifier": {
+          "datatype": "array",
+          "items": {
+            "datatype": "string",
+            "collation": "http://marklogic.com/collation/codepoint"
+          }
+        },
+        "productOrService": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "provider": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "sequence": {
+          "datatype": "positiveInteger",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "serviceDescription": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "unitPrice": {
+          "datatype": "decimal",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "patient": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      },
+      "primaryKey": "provider"
+    }
+  }
+}

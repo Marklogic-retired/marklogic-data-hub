@@ -1,0 +1,12 @@
+{
+  "role-name": "developer",
+  "description": "",
+  "role": [
+    "qconsole-user",
+    "hub-central-user",
+    "hub-central-explorer"
+  ],
+  "permission": [ ],
+  "privilege": [ ],
+  "external-name": ["cn=User,ou=Groups,dc=hhs,dc=nj,dc=gov"]
+}

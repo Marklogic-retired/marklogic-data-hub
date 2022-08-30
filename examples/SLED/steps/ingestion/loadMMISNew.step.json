@@ -1,0 +1,40 @@
+{
+  "stepId": "loadMMISNew-ingestion",
+  "name": "loadMMISNew",
+  "description": "load MMIS New Member from CSV source",
+  "batchSize": 100,
+  "threadCount": 4,
+  "stepDefinitionName": "default-ingestion",
+  "stepDefinitionType": "INGESTION",
+  "fileLocations": {
+    "inputFileType": "csv",
+    "inputFilePath": "./data/Member-MMIS-New",
+    "outputURIReplacement": ".*data/Member-MMIS,'/mmis-new/member'",
+    "separator": ","
+  },
+  "stepNumber": "1",
+  "inputFileType": "csv",
+  "inputFilePath": "./data/Member-MMIS-New",
+  "outputURIReplacement": ".*data/Member-MMIS,'/mmis-new/member'",
+  "separator": ",",
+  "headers": {
+    "sources": [
+      {
+        "name": "MMIS"
+      }
+    ],
+    "createdOn": "currentDateTime",
+    "createdBy": "currentUser"
+  },
+  "sourceQuery": "cts.collectionQuery([])",
+  "collections": [
+    "loadMMIS-New"
+  ],
+  "permissions": "data-hub-operator,read,data-hub-operator,update",
+  "outputFormat": "json",
+  "targetDatabase": "data-hub-STAGING",
+  "additionalCollections": [ ],
+  "targetFormat": "json",
+  "sourceFormat": "csv",
+  "lastUpdated": "2022-10-17T22:33:54.826337Z"
+}

@@ -1,0 +1,38 @@
+{
+  "info": {
+    "title": "HospitalAffiliation",
+    "version": "0.0.1",
+    "baseUri": "http://marklogic.com/"
+  },
+  "definitions": {
+    "HospitalAffiliation": {
+      "required": [ ],
+      "pii": [ ],
+      "wordLexicon": [ ],
+      "properties": {
+        "HospitalAffiliationCCN": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "HospitalAffiliationName": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint",
+          "facetable": true
+        },
+        "HospitalCCNAndProviderNPI": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "ProviderNPI": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "PrimarySpeciality": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint",
+          "facetable": true
+        }
+      }
+    }
+  }
+}

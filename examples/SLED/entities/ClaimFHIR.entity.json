@@ -2,7 +2,7 @@
   "info": {
     "title": "ClaimFHIR",
     "version": "0.0.1",
-    "baseUri": "http://marklogic.com/envision/",
+    "baseUri": "http://marklogic.com/",
     "draft": false
   },
   "definitions": {
@@ -36,6 +36,8 @@
         },
         "identifier": {
           "datatype": "string",
+          "facetable": false,
+          "sortable": false,
           "collation": "http://marklogic.com/collation/codepoint"
         },
         "insurer": {
@@ -83,25 +85,37 @@
           "datatype": "string",
           "collation": "http://marklogic.com/collation/codepoint"
         },
-        "hasItem": {
+        "hasClaimItem": {
           "datatype": "array",
           "facetable": false,
           "sortable": false,
           "items": {
             "datatype": "string",
-            "relatedEntityType": "http://marklogic.com/envision/ClaimItem-0.0.1/ClaimItem",
+            "relatedEntityType": "http://marklogic.com/ClaimItem-0.0.1/ClaimItem",
             "joinPropertyName": "claimId"
           }
+        },
+        "hasMedicaidMember": {
+          "datatype": "string",
+          "relatedEntityType": "http://marklogic.com/Member-0.0.1/Member",
+          "joinPropertyName": "memberID"
+        },
+        "diagnosisIRI": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
         }
       },
-      "description": ""
-    }
-  },
-  "hubCentral": {
-    "modeling": {
-      "color": "#EEEFF1",
-      "graphX": -206,
-      "graphY": -243
+      "primaryKey": "identifier",
+      "relatedConcepts": [
+        {
+          "conceptClass": "Medical",
+          "conceptExpression": "sem:iri(.)",
+          "context": "diagnosisIRI",
+          "predicate": "hasDiagnosis"
+        }
+      ]
     }
   }
 }

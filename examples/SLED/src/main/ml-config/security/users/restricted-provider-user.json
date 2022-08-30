@@ -1,0 +1,12 @@
+{
+  "user-name": "restricted-provider-user",
+  "description": "User that can see providers with no PII",
+  "password": "demo",
+  "role": [
+    "provider-viewer",
+    "hub-central-user",
+    "hub-central-explorer"
+  ],
+  "permission": [
+  ]
+}

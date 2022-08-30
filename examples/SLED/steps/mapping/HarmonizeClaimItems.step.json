@@ -1,60 +1,64 @@
 {
-  "stepId" : "HarmonizeClaimItems-mapping",
-  "name" : "HarmonizeClaimItems",
-  "description" : "",
-  "customHook" : {
-    "module" : "/customHooks/extractClaimItems.sjs",
-    "parameters" : { },
-    "user" : "",
-    "runBefore" : true
+  "stepId": "HarmonizeClaimItems-mapping",
+  "name": "HarmonizeClaimItems",
+  "description": "",
+  "customHook": {
+    "module": "/customHooks/extractClaimItems.sjs",
+    "parameters": { },
+    "user": "",
+    "runBefore": true
   },
-  "batchSize" : 100,
-  "threadCount" : 4,
-  "stepDefinitionName" : "entity-services-mapping",
-  "stepDefinitionType" : "MAPPING",
-  "stepNumber" : "3",
-  "sourceQuery" : "cts.collectionQuery([\"LoadClaims\"])",
-  "mapping" : {
-    "name" : "HarmonizeClaimItems"
+  "batchSize": 100,
+  "threadCount": 4,
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "MAPPING",
+  "stepNumber": "3",
+  "sourceQuery": "cts.collectionQuery([\"LoadClaims\"])",
+  "mapping": {
+    "name": "HarmonizeClaimItems"
   },
-  "sourceDatabase" : "data-hub-STAGING",
-  "collections" : [ "HarmonizeClaimItems", "ClaimItem" ],
-  "targetEntityType" : "http://marklogic.com/envision/ClaimItem-0.0.1/ClaimItem",
-  "permissions" : "data-hub-operator,read,data-hub-operator,update",
-  "validateEntity" : false,
-  "outputFormat" : "json",
-  "targetDatabase" : "data-hub-FINAL",
-  "namespaces" : { },
-  "additionalCollections" : [ ],
-  "targetFormat" : "json",
-  "properties" : {
-    "unitPrice" : {
-      "sourcedFrom" : "CPT_Charges"
+  "sourceDatabase": "data-hub-STAGING",
+  "collections": [
+    "HarmonizeClaimItems",
+    "ClaimItem"
+  ],
+  "targetEntityType": "http://marklogic.com/envision/ClaimItem-0.0.1/ClaimItem",
+  "permissions": "data-hub-operator,read,data-hub-operator,update",
+  "validateEntity": false,
+  "outputFormat": "json",
+  "targetDatabase": "data-hub-FINAL",
+  "namespaces": { },
+  "additionalCollections": [ ],
+  "targetFormat": "json",
+  "properties": {
+    "unitPrice": {
+      "sourcedFrom": "CPT_Charges"
     },
-    "sequence" : {
-      "sourcedFrom" : "Sequence"
+    "sequence": {
+      "sourcedFrom": "Sequence"
     },
-    "hasProvider" : {
-      "sourcedFrom" : ""
+    "hasProvider": {
+      "sourcedFrom": ""
     },
-    "provider" : {
-      "sourcedFrom" : "NPI"
+    "provider": {
+      "sourcedFrom": "NPI"
     },
-    "patient" : {
-      "sourcedFrom" : "PatientAccountNumber"
+    "patient": {
+      "sourcedFrom": "PatientAccountNumber"
     },
-    "modifier" : {
-      "sourcedFrom" : "CPT_Mod1|CPT_Mod2|CPT_Mod3|CPT_Mod4"
+    "modifier": {
+      "sourcedFrom": "CPT_Mod1|CPT_Mod2|CPT_Mod3|CPT_Mod4"
     },
-    "serviceDescription" : {
-      "sourcedFrom" : "documentLookup(CPT, '/referenceData/cptCodes.json')"
+    "serviceDescription": {
+      "sourcedFrom": "documentLookup(CPT, '/referenceData/cptCodes.json')"
     },
-    "claimId" : {
-      "sourcedFrom" : "ClaimIdentifier"
+    "claimId": {
+      "sourcedFrom": "ClaimIdentifier"
     },
-    "productOrService" : {
-      "sourcedFrom" : "CPT"
+    "productOrService": {
+      "sourcedFrom": "CPT"
     }
   },
-  "selectedSource" : "query"
+  "selectedSource": "query",
+  "lastUpdated": "2022-10-17T22:33:54.66876Z"
 }

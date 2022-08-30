@@ -1,0 +1,74 @@
+{
+  "info": {
+    "title": "ServiceLocation",
+    "version": "0.0.1",
+    "baseUri": "http://marklogic.com/"
+  },
+  "definitions": {
+    "ServiceLocation": {
+      "required": [ ],
+      "pii": [ ],
+      "wordLexicon": [ ],
+      "properties": {
+        "Addressline1": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Addressline2": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "City": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "State": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Zip5": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint",
+          "facetable": true
+        },
+        "Zip4": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "PhoneNumber": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Latitude": {
+          "datatype": "decimal",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Longitude": {
+          "datatype": "decimal",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "ProviderNPI": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "AddressId": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "NPIAndAddressId": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "CityLocation": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "PrimarySpeciality": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint",
+          "facetable": true
+        }
+      }
+    }
+  }
+}

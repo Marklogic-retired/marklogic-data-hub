@@ -23,6 +23,56 @@
       <search:element ns="http://marklogic.com/entity-services" name="title"/>
     </search:value>
   </search:constraint>
+  <search:constraint name="USCorePractitionerRole">
+    <search:container>
+      <search:json-property>USCorePractitionerRole</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="USCorePractitionerRole-xml">
+    <search:container>
+      <search:element ns="" name="USCorePractitionerRole"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Coding">
+    <search:container>
+      <search:json-property>Coding</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Coding-xml">
+    <search:container>
+      <search:element ns="" name="Coding"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Meta">
+    <search:container>
+      <search:json-property>Meta</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Meta-xml">
+    <search:container>
+      <search:element ns="" name="Meta"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="USCorePatient">
+    <search:container>
+      <search:json-property>USCorePatient</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="USCorePatient-xml">
+    <search:container>
+      <search:element ns="" name="USCorePatient"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="HumanName">
+    <search:container>
+      <search:json-property>HumanName</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="HumanName-xml">
+    <search:container>
+      <search:element ns="" name="HumanName"/>
+    </search:container>
+  </search:constraint>
   <search:constraint name="LaboratoryExam">
     <search:container>
       <search:json-property>LaboratoryExam</search:json-property>
@@ -50,6 +100,28 @@
       <search:facet-option>limit=25</search:facet-option>
     </search:range>
   </search:constraint>
+  <search:constraint name="HospitalAffiliation">
+    <search:container>
+      <search:json-property>HospitalAffiliation</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="HospitalAffiliation-xml">
+    <search:container>
+      <search:element ns="" name="HospitalAffiliation"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="HospitalAffiliation.HospitalAffiliationName">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/HospitalAffiliation/HospitalAffiliationName</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="HospitalAffiliation.PrimarySpeciality">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/HospitalAffiliation/PrimarySpeciality</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
+  </search:constraint>
   <search:constraint name="PaymentPlan">
     <search:container>
       <search:json-property>PaymentPlan</search:json-property>
@@ -65,6 +137,40 @@
       <search:element ns="" name="planID"/>
     </search:value>
   </search:constraint>
+  <search:constraint name="CMSProvider">
+    <search:container>
+      <search:json-property>CMSProvider</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="CMSProvider-xml">
+    <search:container>
+      <search:element ns="" name="CMSProvider"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="CMSProvider.ProviderNPI">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/CMSProvider/ProviderNPI</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="CMSProvider.ProviderFullName">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/CMSProvider/ProviderFullName</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="CMSProvider.PrimarySpeciality">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/CMSProvider/PrimarySpeciality</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="CMSProvider.ClinicianMedicareAssignment">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/CMSProvider/ClinicianMedicareAssignment</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
+  </search:constraint>
   <search:constraint name="Member">
     <search:container>
       <search:json-property>Member</search:json-property>
@@ -75,9 +181,9 @@
       <search:element ns="" name="Member"/>
     </search:container>
   </search:constraint>
-  <search:constraint name="uid">
+  <search:constraint name="memberID">
     <search:value>
-      <search:element ns="" name="uid"/>
+      <search:element ns="" name="memberID"/>
     </search:value>
   </search:constraint>
   <search:constraint name="Member.FullName">
@@ -128,15 +234,36 @@
       <search:facet-option>limit=25</search:facet-option>
     </search:range>
   </search:constraint>
-  <search:constraint name="Provider">
+  <search:constraint name="Narrative">
     <search:container>
-      <search:json-property>Provider</search:json-property>
+      <search:json-property>Narrative</search:json-property>
     </search:container>
   </search:constraint>
-  <search:constraint name="Provider-xml">
+  <search:constraint name="Narrative-xml">
     <search:container>
-      <search:element ns="" name="Provider"/>
+      <search:element ns="" name="Narrative"/>
     </search:container>
+  </search:constraint>
+  <search:constraint name="WeightMeasurement">
+    <search:container>
+      <search:json-property>WeightMeasurement</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="WeightMeasurement-xml">
+    <search:container>
+      <search:element ns="" name="WeightMeasurement"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="WeightMeasurementID">
+    <search:value>
+      <search:element ns="" name="WeightMeasurementID"/>
+    </search:value>
+  </search:constraint>
+  <search:constraint name="WeightMeasurement.date">
+    <search:range type="xs:dateTime" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/WeightMeasurement/date</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
   </search:constraint>
   <search:constraint name="MedicalEquipment">
     <search:container>
@@ -174,6 +301,11 @@
     <search:container>
       <search:element ns="" name="ClaimFHIR"/>
     </search:container>
+  </search:constraint>
+  <search:constraint name="identifier">
+    <search:value>
+      <search:element ns="" name="identifier"/>
+    </search:value>
   </search:constraint>
   <search:constraint name="ExamResult">
     <search:container>
@@ -233,6 +365,70 @@
       <search:element ns="" name="time"/>
     </search:container>
   </search:constraint>
+  <search:constraint name="ServiceLocation">
+    <search:container>
+      <search:json-property>ServiceLocation</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="ServiceLocation-xml">
+    <search:container>
+      <search:element ns="" name="ServiceLocation"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="ServiceLocation.Zip5">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/ServiceLocation/Zip5</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="ServiceLocation.PrimarySpeciality">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/ServiceLocation/PrimarySpeciality</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="ClaimItem">
+    <search:container>
+      <search:json-property>ClaimItem</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="ClaimItem-xml">
+    <search:container>
+      <search:element ns="" name="ClaimItem"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="provider">
+    <search:value>
+      <search:element ns="" name="provider"/>
+    </search:value>
+  </search:constraint>
+  <search:constraint name="BloodMeasurement">
+    <search:container>
+      <search:json-property>BloodMeasurement</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="BloodMeasurement-xml">
+    <search:container>
+      <search:element ns="" name="BloodMeasurement"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="bloodSugarID">
+    <search:value>
+      <search:element ns="" name="bloodSugarID"/>
+    </search:value>
+  </search:constraint>
+  <search:constraint name="BloodMeasurement.value">
+    <search:range type="xs:double" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/BloodMeasurement/value</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="BloodMeasurement.date">
+    <search:range type="xs:dateTime" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/BloodMeasurement/date</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
+  </search:constraint>
   <search:constraint name="Surgery">
     <search:container>
       <search:json-property>Surgery</search:json-property>
@@ -266,64 +462,6 @@
       <search:facet-option>limit=25</search:facet-option>
     </search:range>
   </search:constraint>
-  <search:constraint name="ClaimItem">
-    <search:container>
-      <search:json-property>ClaimItem</search:json-property>
-    </search:container>
-  </search:constraint>
-  <search:constraint name="ClaimItem-xml">
-    <search:container>
-      <search:element ns="" name="ClaimItem"/>
-    </search:container>
-  </search:constraint>
-  <search:constraint name="BloodMeasurement">
-    <search:container>
-      <search:json-property>BloodMeasurement</search:json-property>
-    </search:container>
-  </search:constraint>
-  <search:constraint name="BloodMeasurement-xml">
-    <search:container>
-      <search:element ns="" name="BloodMeasurement"/>
-    </search:container>
-  </search:constraint>
-  <search:constraint name="bloodSugarID">
-    <search:value>
-      <search:element ns="" name="bloodSugarID"/>
-    </search:value>
-  </search:constraint>
-  <search:constraint name="BloodMeasurement.value">
-    <search:range type="xs:double" facet="true">
-      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/BloodMeasurement/value</search:path-index>
-      <search:facet-option>limit=25</search:facet-option>
-    </search:range>
-  </search:constraint>
-  <search:constraint name="BloodMeasurement.date">
-    <search:range type="xs:dateTime" facet="true">
-      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/BloodMeasurement/date</search:path-index>
-      <search:facet-option>limit=25</search:facet-option>
-    </search:range>
-  </search:constraint>
-  <search:constraint name="WeightMeasurement">
-    <search:container>
-      <search:json-property>WeightMeasurement</search:json-property>
-    </search:container>
-  </search:constraint>
-  <search:constraint name="WeightMeasurement-xml">
-    <search:container>
-      <search:element ns="" name="WeightMeasurement"/>
-    </search:container>
-  </search:constraint>
-  <search:constraint name="WeightMeasurementID">
-    <search:value>
-      <search:element ns="" name="WeightMeasurementID"/>
-    </search:value>
-  </search:constraint>
-  <search:constraint name="WeightMeasurement.date">
-    <search:range type="xs:dateTime" facet="true">
-      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/WeightMeasurement/date</search:path-index>
-      <search:facet-option>limit=25</search:facet-option>
-    </search:range>
-  </search:constraint>
   <search:constraint name="PlanInformation">
     <search:container>
       <search:json-property>PlanInformation</search:json-property>
@@ -332,6 +470,36 @@
   <search:constraint name="PlanInformation-xml">
     <search:container>
       <search:element ns="" name="PlanInformation"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="ContactPoint">
+    <search:container>
+      <search:json-property>ContactPoint</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="ContactPoint-xml">
+    <search:container>
+      <search:element ns="" name="ContactPoint"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Identifier">
+    <search:container>
+      <search:json-property>Identifier</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Identifier-xml">
+    <search:container>
+      <search:element ns="" name="Identifier"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="USCoreLocation">
+    <search:container>
+      <search:json-property>USCoreLocation</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="USCoreLocation-xml">
+    <search:container>
+      <search:element ns="" name="USCoreLocation"/>
     </search:container>
   </search:constraint>
   <search:constraint name="Allergy">
@@ -361,6 +529,46 @@
       <search:facet-option>limit=25</search:facet-option>
     </search:range>
   </search:constraint>
+  <search:constraint name="Period">
+    <search:container>
+      <search:json-property>Period</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Period-xml">
+    <search:container>
+      <search:element ns="" name="Period"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="HoursOfOperation">
+    <search:container>
+      <search:json-property>HoursOfOperation</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="HoursOfOperation-xml">
+    <search:container>
+      <search:element ns="" name="HoursOfOperation"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Attachment">
+    <search:container>
+      <search:json-property>Attachment</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Attachment-xml">
+    <search:container>
+      <search:element ns="" name="Attachment"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Communication">
+    <search:container>
+      <search:json-property>Communication</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Communication-xml">
+    <search:container>
+      <search:element ns="" name="Communication"/>
+    </search:container>
+  </search:constraint>
   <search:constraint name="Treatment">
     <search:container>
       <search:json-property>Treatment</search:json-property>
@@ -381,6 +589,26 @@
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Treatment/description</search:path-index>
       <search:facet-option>limit=25</search:facet-option>
     </search:range>
+  </search:constraint>
+  <search:constraint name="Position">
+    <search:container>
+      <search:json-property>Position</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Position-xml">
+    <search:container>
+      <search:element ns="" name="Position"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Qualification">
+    <search:container>
+      <search:json-property>Qualification</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Qualification-xml">
+    <search:container>
+      <search:element ns="" name="Qualification"/>
+    </search:container>
   </search:constraint>
   <search:constraint name="OverTimeAssignment">
     <search:container>
@@ -457,6 +685,16 @@
       <search:facet-option>limit=25</search:facet-option>
     </search:range>
   </search:constraint>
+  <search:constraint name="CodeableConcept">
+    <search:container>
+      <search:json-property>CodeableConcept</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="CodeableConcept-xml">
+    <search:container>
+      <search:element ns="" name="CodeableConcept"/>
+    </search:container>
+  </search:constraint>
   <search:constraint name="BloodPressureMeasurement">
     <search:container>
       <search:json-property>BloodPressureMeasurement</search:json-property>
@@ -481,6 +719,34 @@
   <search:constraint name="BloodPressureMeasurement.date">
     <search:range type="xs:dateTime" facet="true">
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/BloodPressureMeasurement/date</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="OrgAssociation">
+    <search:container>
+      <search:json-property>OrgAssociation</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="OrgAssociation-xml">
+    <search:container>
+      <search:element ns="" name="OrgAssociation"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="OrgAssociation.OrgPACID">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/OrgAssociation/OrgPACID</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="OrgAssociation.OrgLegalName">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/OrgAssociation/OrgLegalName</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="OrgAssociation.PrimarySpeciality">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/OrgAssociation/PrimarySpeciality</search:path-index>
       <search:facet-option>limit=25</search:facet-option>
     </search:range>
   </search:constraint>
@@ -511,6 +777,16 @@
       <search:facet-option>limit=25</search:facet-option>
     </search:range>
   </search:constraint>
+  <search:constraint name="Address">
+    <search:container>
+      <search:json-property>Address</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Address-xml">
+    <search:container>
+      <search:element ns="" name="Address"/>
+    </search:container>
+  </search:constraint>
   <search:constraint name="MedicalHistory">
     <search:container>
       <search:json-property>MedicalHistory</search:json-property>
@@ -519,6 +795,16 @@
   <search:constraint name="MedicalHistory-xml">
     <search:container>
       <search:element ns="" name="MedicalHistory"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Reference">
+    <search:container>
+      <search:json-property>Reference</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Reference-xml">
+    <search:container>
+      <search:element ns="" name="Reference"/>
     </search:container>
   </search:constraint>
   <search:constraint name="Auditor">
@@ -548,6 +834,16 @@
       <search:facet-option>limit=25</search:facet-option>
     </search:range>
   </search:constraint>
+  <search:constraint name="Contact">
+    <search:container>
+      <search:json-property>Contact</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Contact-xml">
+    <search:container>
+      <search:element ns="" name="Contact"/>
+    </search:container>
+  </search:constraint>
   <search:constraint name="Medication">
     <search:container>
       <search:json-property>Medication</search:json-property>
@@ -568,6 +864,16 @@
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Medication/name</search:path-index>
       <search:facet-option>limit=25</search:facet-option>
     </search:range>
+  </search:constraint>
+  <search:constraint name="USCorePractitioner">
+    <search:container>
+      <search:json-property>USCorePractitioner</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="USCorePractitioner-xml">
+    <search:container>
+      <search:element ns="" name="USCorePractitioner"/>
+    </search:container>
   </search:constraint>
   <search:constraint name="LaboratoryExamAppointment">
     <search:container>
@@ -598,6 +904,28 @@
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/LaboratoryExam/descriptionExam</search:path-index>
     </search:range>
   </search:tuples>
+  <search:tuples name="HospitalAffiliation">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/HospitalAffiliation/HospitalAffiliationName</search:path-index>
+    </search:range>
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/HospitalAffiliation/PrimarySpeciality</search:path-index>
+    </search:range>
+  </search:tuples>
+  <search:tuples name="CMSProvider">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/CMSProvider/ProviderNPI</search:path-index>
+    </search:range>
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/CMSProvider/ProviderFullName</search:path-index>
+    </search:range>
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/CMSProvider/PrimarySpeciality</search:path-index>
+    </search:range>
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/CMSProvider/ClinicianMedicareAssignment</search:path-index>
+    </search:range>
+  </search:tuples>
   <search:tuples name="Member">
     <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Member/FullName</search:path-index>
@@ -624,6 +952,11 @@
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Member/Zip5</search:path-index>
     </search:range>
   </search:tuples>
+  <search:values name="WeightMeasurement">
+    <search:range type="xs:dateTime" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/WeightMeasurement/date</search:path-index>
+    </search:range>
+  </search:values>
   <search:tuples name="MedicalEquipment">
     <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/MedicalEquipment/name</search:path-index>
@@ -645,6 +978,22 @@
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Illness/description</search:path-index>
     </search:range>
   </search:tuples>
+  <search:tuples name="ServiceLocation">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/ServiceLocation/Zip5</search:path-index>
+    </search:range>
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/ServiceLocation/PrimarySpeciality</search:path-index>
+    </search:range>
+  </search:tuples>
+  <search:tuples name="BloodMeasurement">
+    <search:range type="xs:double" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/BloodMeasurement/value</search:path-index>
+    </search:range>
+    <search:range type="xs:dateTime" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/BloodMeasurement/date</search:path-index>
+    </search:range>
+  </search:tuples>
   <search:tuples name="Surgery">
     <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Surgery/name</search:path-index>
@@ -656,19 +1005,6 @@
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Surgery/description</search:path-index>
     </search:range>
   </search:tuples>
-  <search:tuples name="BloodMeasurement">
-    <search:range type="xs:double" facet="true">
-      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/BloodMeasurement/value</search:path-index>
-    </search:range>
-    <search:range type="xs:dateTime" facet="true">
-      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/BloodMeasurement/date</search:path-index>
-    </search:range>
-  </search:tuples>
-  <search:values name="WeightMeasurement">
-    <search:range type="xs:dateTime" facet="true">
-      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/WeightMeasurement/date</search:path-index>
-    </search:range>
-  </search:values>
   <search:tuples name="Allergy">
     <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Allergy/name</search:path-index>
@@ -711,6 +1047,17 @@
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/BloodPressureMeasurement/date</search:path-index>
     </search:range>
   </search:tuples>
+  <search:tuples name="OrgAssociation">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/OrgAssociation/OrgPACID</search:path-index>
+    </search:range>
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/OrgAssociation/OrgLegalName</search:path-index>
+    </search:range>
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/OrgAssociation/PrimarySpeciality</search:path-index>
+    </search:range>
+  </search:tuples>
   <search:tuples name="Specialization">
     <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Specialization/name</search:path-index>
@@ -749,7 +1096,7 @@
   <search:search-option>unfiltered</search:search-option>
   <!--Modify document extraction to change results returned-->
   <search:extract-document-data selected="include">
-    <search:extract-path xmlns:es="http://marklogic.com/entity-services">//*:instance/(LaboratoryExam|PaymentPlan|Member|Provider|MedicalEquipment|ClaimFHIR|ExamResult|Illness|time|Surgery|ClaimItem|BloodMeasurement|WeightMeasurement|PlanInformation|Allergy|Treatment|OverTimeAssignment|Appointment|CholesterolMeasurement|BloodPressureMeasurement|Specialization|MedicalHistory|Auditor|Medication|LaboratoryExamAppointment)</search:extract-path>
+    <search:extract-path xmlns:es="http://marklogic.com/entity-services">//*:instance/(USCorePractitionerRole|Coding|Meta|USCorePatient|HumanName|LaboratoryExam|HospitalAffiliation|PaymentPlan|CMSProvider|Member|Narrative|WeightMeasurement|MedicalEquipment|ClaimFHIR|ExamResult|Illness|time|ServiceLocation|ClaimItem|BloodMeasurement|Surgery|PlanInformation|ContactPoint|Identifier|USCoreLocation|Allergy|Period|HoursOfOperation|Attachment|Communication|Treatment|Position|Qualification|OverTimeAssignment|Appointment|CholesterolMeasurement|CodeableConcept|BloodPressureMeasurement|OrgAssociation|Specialization|Address|MedicalHistory|Reference|Auditor|Contact|Medication|USCorePractitioner|LaboratoryExamAppointment)</search:extract-path>
   </search:extract-document-data>
   <!--Change or remove this additional-query to broaden search beyond entity instance documents-->
   <!--To return facets, change this option to 'true' and edit constraints-->

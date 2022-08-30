@@ -37,6 +37,7 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -468,9 +469,166 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
             }
         }
 
+        convertHubCommunityProject();
+
         removeEmptyRangeElementIndexArrayFromFinalDatabaseFile();
         upgradeFinalDatabaseXmlFile();
         updateStepDefinitionTypeForInlineMappingSteps(flowManager);
+    }
+
+    private JsonNode retrieveEntityFromCommunityNode(String modelName, JsonNode modelNodes, Map<String, JsonNode> entityModels) throws IOException {
+        if (!entityModels.containsKey(modelName)) {
+            Path newEntitiesDirPath = this.getHubEntitiesDir();
+            JsonNode communityModelNode = modelNodes.path(modelName);
+            String entityName = communityModelNode.path("entityName").asText();
+            File entityFile = newEntitiesDirPath.resolve(entityName + ".entity.json").toFile();
+            if (entityFile.exists()) {
+                entityModels.put(modelName, ObjectMapperFactory.getObjectMapper().readTree(entityFile));
+            }
+        }
+        return entityModels.get(modelName);
+    }
+
+    // This function migrates information from DHCCE connector models into Entity Service Models and Hub Central configuration
+    private void convertHubCommunityProject() {
+        Path conceptConnectorModelsDir = this.getProjectDir().resolve("conceptConnectorModels");
+        File hubConfigFile = this.getHubCentralConfigPath().resolve("hubCentral.json").toFile();
+        JsonNode hubConfigNode = null;
+        if (hubConfigFile.exists()) {
+            try {
+                hubConfigNode = ObjectMapperFactory.getObjectMapper().readTree(hubConfigFile);
+            } catch (Exception ex) {
+                logger.warn("Unable to parse Hub Central Config " + hubConfigFile.getName() + "; exception: " + ex.toString());
+            }
+        } else {
+            hubConfigNode = ObjectMapperFactory.getObjectMapper().createObjectNode();
+        }
+        JsonNode hubConfigEntitiesNode = hubConfigNode.path("modeling").path("entities");
+        if (hubConfigEntitiesNode.isMissingNode()) {
+            hubConfigEntitiesNode = ObjectMapperFactory.getObjectMapper().createObjectNode();
+        }
+        File[] communityModelFiles = conceptConnectorModelsDir.toFile().listFiles((File file, String name) -> name.endsWith(".json"));
+        if (communityModelFiles != null) {
+            Path newEntitiesDirPath = this.getHubEntitiesDir();
+            Map<String, JsonNode> entityModels = new HashMap<>();
+            for (File communityModelFile : communityModelFiles) {
+                try {
+                    JsonNode communityModel = ObjectMapperFactory.getObjectMapper().readTree(communityModelFile);
+                    JsonNode modelNodes = communityModel.path("nodes");
+                    JsonNode modelEdges = communityModel.path("edges");
+                    for (Iterator<JsonNode> it = modelNodes.elements(); it.hasNext(); ) {
+                        JsonNode communityModelNode = it.next();
+                        JsonNode communityModelLabel = communityModelNode.path("labelField");
+                        if (!communityModelLabel.isMissingNode() && "entity".equals(communityModelNode.path("type").asText())) {
+                            String modelFrom = communityModelNode.path("entityName").asText();
+                            if (!hubConfigEntitiesNode.hasNonNull(modelFrom)) {
+                                ((ObjectNode) hubConfigEntitiesNode).set(modelFrom, ObjectMapperFactory.getObjectMapper().createObjectNode());
+                            }
+                            JsonNode hubCentralNode = hubConfigEntitiesNode.path(modelFrom);
+                            ((ObjectNode) hubCentralNode).set("label", communityModelLabel);
+                        }
+                    }
+                    for (Iterator<JsonNode> it = modelEdges.elements(); it.hasNext(); ) {
+                        JsonNode edge = it.next();
+                        String modelFromName = edge.path("from").asText();
+                        if (!entityModels.containsKey(modelFromName)) {
+                            JsonNode communityModelNode = modelNodes.path(modelFromName);
+                            String modelFrom = communityModelNode.path("entityName").asText();
+                            File entityFile = newEntitiesDirPath.resolve(modelFrom + ".entity.json").toFile();
+                            if (entityFile.exists()) {
+                                entityModels.put(modelFromName, ObjectMapperFactory.getObjectMapper().readTree(entityFile));
+                            }
+                        }
+                        JsonNode modelFromNode = retrieveEntityFromCommunityNode(modelFromName, modelNodes, entityModels);
+                        String edgeLabel =  edge.path("label").asText();
+                        String modelToName = edge.path("to").asText();
+                        JsonNode modelToNode = retrieveEntityFromCommunityNode(modelToName, modelNodes, entityModels);
+                        if (!(modelFromNode == null || modelToNode == null)) {
+                            JsonNode fromEntityNode = entityModels.get(modelFromName);
+                            String modelFromTitle = fromEntityNode.path("info").path("title").asText();
+                            String modelToTitle = modelToNode.path("info").path("title").asText();
+                            String[] modelFromPropertyPath = edge.path("keyFrom").asText("").split("/");
+                            String[] modelToPropertyPath = edge.path("keyTo").asText("").split("/");
+                            if (modelFromPropertyPath.length > 1) {
+                                modelFromTitle = modelFromPropertyPath[modelFromPropertyPath.length - 2];
+                            }
+                            if (modelToPropertyPath.length > 1) {
+                                modelToTitle = modelFromPropertyPath[modelToPropertyPath.length - 2];
+                            }
+                            String modelFromProperty = modelFromPropertyPath[modelFromPropertyPath.length - 1];
+                            String modelToProperty = modelToPropertyPath[modelToPropertyPath.length - 1];
+                            JsonNode modelFromTypeNode = modelFromNode.path("definitions").path(modelFromTitle);
+                            if ("concept".equals(modelToNode.path("type").asText())) {
+                                ArrayNode relatedConcepts = modelFromTypeNode.withArray("relatedConcepts");
+                                boolean conceptExists = false;
+                                String context = edge.path("keyFrom").isNull() ?  modelToProperty: modelFromProperty;
+                                for (Iterator<JsonNode> iter = relatedConcepts.elements(); iter.hasNext(); ) {
+                                    JsonNode related = iter.next();
+                                    if (context.equals(related.path("context").asText())) {
+                                        conceptExists = true;
+                                        break;
+                                    }
+                                }
+                                if (!conceptExists) {
+                                    ObjectNode relatedConcept = relatedConcepts.addObject();
+                                    relatedConcept.put("context", context);
+                                    relatedConcept.set("predicate", edge.get("label"));
+                                    relatedConcept.put("conceptClass", modelToTitle);
+                                }
+                            } else {
+                                String modelToBaseUri = modelToNode.path("info").path("baseUri").asText();
+                                String modelToVersion = modelToNode.path("info").path("version").asText();
+                                String modelToIRI = modelToBaseUri + modelToTitle + "-" + modelToVersion;
+                                String typeToIRI = modelToIRI + "/" + modelToTitle;
+                                JsonNode modelFromProperties = modelFromTypeNode.path("properties");
+                                JsonNode modelFromPropertyNode = modelFromProperties.hasNonNull(edgeLabel) ? modelFromProperties.path(edgeLabel): modelFromProperties.path(modelFromProperty);
+                                if (modelFromPropertyNode.hasNonNull("items")) {
+                                    modelFromPropertyNode = modelFromPropertyNode.get("items");
+                                }
+                                if (modelFromPropertyNode.isObject() && !modelFromPropertyNode.hasNonNull("relatedEntityType")) {
+                                    ((ObjectNode) modelFromPropertyNode).put("relatedEntityType", typeToIRI);
+                                    ((ObjectNode) modelFromPropertyNode).put("joinPropertyName", modelToProperty);
+                                    if (modelFromPropertyNode.hasNonNull("$ref")) {
+                                        ((ObjectNode) modelFromPropertyNode).remove("$ref");
+                                    }
+                                    if (!modelFromPropertyNode.hasNonNull("datatype")) {
+                                        JsonNode modelToPropertyNode = modelToNode.path("definitions").path(modelToTitle).path("properties").path(modelToProperty);
+                                        if (modelToPropertyNode.hasNonNull("items")) {
+                                            modelToPropertyNode = modelToPropertyNode.path("items");
+                                        }
+                                        ((ObjectNode) modelFromPropertyNode).put("datatype", modelToPropertyNode.path("datatype").asText(""));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } catch (Exception ex) {
+                    logger.warn("Unable to parse Hub Community Model " + communityModelFile.getName() + "; exception: " + ex.toString());
+                }
+                for (JsonNode entityNode: entityModels.values()) {
+                    String title = entityNode.path("info").path("title").asText();
+                    File entityFile = newEntitiesDirPath.resolve(title + ".entity.json").toFile();
+                    try {
+                        ObjectMapperFactory.getObjectMapper().writeValue(entityFile, entityNode);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                if (hubConfigNode.path("modeling").isMissingNode()) {
+                    ((ObjectNode) hubConfigNode).set("modeling", ObjectMapperFactory.getObjectMapper().createObjectNode());
+                }
+                ((ObjectNode) hubConfigNode.path("modeling")).set("entities", hubConfigEntitiesNode);
+                try {
+                    if (!hubConfigFile.exists()) {
+                        hubConfigFile.getParentFile().mkdirs();
+                        hubConfigFile.createNewFile();
+                    }
+                    ObjectMapperFactory.getObjectMapper().writeValue(hubConfigFile, hubConfigNode);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
     }
 
     /**

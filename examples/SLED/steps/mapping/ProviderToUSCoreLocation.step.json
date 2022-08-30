@@ -1,0 +1,71 @@
+{
+  "collections": [
+    "ProviderToUSCoreLocation",
+    "USCoreLocation"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "JSON",
+  "name": "ProviderToUSCoreLocation",
+  "targetEntityType": "http://example.org/USCoreLocation-1.0.0/USCoreLocation",
+  "description": "",
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['pretransformed-ProviderLocation'])",
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "coarse",
+  "customHook": { },
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "ProviderToUSCoreLocation-mapping",
+  "lastUpdated": "2022-10-17T22:33:54.373Z",
+  "uriExpression": "\"test\"",
+  "properties": {
+    "address": {
+      "sourcedFrom": "instance/ServiceLocation",
+      "properties": {
+        "line": {
+          "sourcedFrom": "(Addressline1, Addressline2)"
+        },
+        "city": {
+          "sourcedFrom": "City"
+        },
+        "state": {
+          "sourcedFrom": "State"
+        },
+        "postalCode": {
+          "sourcedFrom": "Zip5"
+        },
+        "country": {
+          "sourcedFrom": "\"USA\""
+        }
+      },
+      "targetEntityType": "#/definitions/Address"
+    },
+    "name": {
+      "sourcedFrom": "normalize-space(concat(instance/ServiceLocation/AddressLine1, \" \", instance/ServiceLocation/AddressLine2, \", \", instance/ServiceLocation/City, \", \", replace(instance/ServiceLocation/State,\"\\.\",\"\"), \" \", instance/ServiceLocation/Zip5))"
+    },
+    "resourceType": {
+      "sourcedFrom": "\"Location\""
+    },
+    "language": {
+      "sourcedFrom": "\"en-us\""
+    },
+    "id": {
+      "sourcedFrom": "instance/ServiceLocation/AddressId"
+    },
+    "meta": {
+      "sourcedFrom": ".",
+      "properties": {
+        "profile": {
+          "sourcedFrom": "\"http://hl7.org/fhir/us/core/StructureDefinition/us-core-location\""
+        }
+      },
+      "targetEntityType": "#/definitions/Meta"
+    }
+  }
+}

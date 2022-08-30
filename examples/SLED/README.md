@@ -60,13 +60,15 @@ Entities:
  
 ## Predefined Flows
 
-The project has flows predefined for integrating the Member data and claims.
+The project has flows predefined for integrating the Member data and claims. All flows are run as part of the `./gradlew install` command.
 
 - **Curam**: Has steps for ingesting and mapping Member data from CURAM system.
 - **Mmis**: Has steps for ingesting and mapping Member data from MMIS system.
 - **Claims**: Has steps for ingesting and mapping Claims Header and Claim Items data.
 - **ProviderData**: Has steps for ingesting and mapping Provider data.
 - **Mastering**: Has a mastering step for matching and merging duplicate data across the systems.
+
+Custom Gradle tasks are available to run each flow with the pattern `./gradlew run<FlowName>` (e.g., `./gradlew runProviderData`).
 
 ## How to Integrate the Data
 
@@ -88,6 +90,8 @@ The project has flows predefined for integrating the Member data and claims.
 16. With the Provider data ingested, view the `MapProvider` step to see the mapping expressions that have been configured.
 17. Run the `MapProvider` step in the `ProviderData` flow. This harmonizes the 1,004 member documents into the final database. You can view the documents in the Browse Data view.
 18. Run the `matchMember` step and then `mergeMember` step in `Mastering` flow to master the Member, Claims and Provider data. This merges documents in the final database. You can view the results in the Browse Data view resulting in 123 mastered records.
+
+``
 
 ## Example Member Data
 
@@ -138,3 +142,21 @@ The project has flows predefined for integrating the Member data and claims.
       }
     }
 ```
+## ICD-10 Ontology Concepts
+
+The International Classification of Diseases (Version 10) Ontology is a standardized vocabulary for describing medical conditions. 
+
+The custom mapping function `lookupICD10` is used to find a semantic IRI for a given diagnosis code in the `HarmonizeClaims` mapping step.
+
+The relationship defined in the `ClaimFHIR` model to the `Medical` Concept creates a triple relationship between `ClaimFHIR` and a diagnosis in the ICD-10 Ontology.
+
+````javascript
+const config = require('/com.marklogic.hub/config.sjs')
+const sem = require("/MarkLogic/semantics.xqy");
+
+// this function looks for a triple in the ICD-10 Ontology with a code value and returns the subject IRI as a string
+function lookupICD10(code) {
+  const triple = fn.head(xdmp.invokeFunction(() => cts.triples(null, null, fn.string(code), "=", [], cts.collectionQuery("ICD-10")), { database: xdmp.database(config.FINALDATABASE) }));
+  return fn.exists(triple) ? fn.string(sem.tripleSubject(triple)): "";
+}
+````

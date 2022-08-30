@@ -1,0 +1,69 @@
+{
+  "collections": [
+    "mapServiceLocation",
+    "ServiceLocation"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "provider-viewer,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "JSON",
+  "attachSourceDocument": false,
+  "name": "mapServiceLocation",
+  "targetEntityType": "http://marklogic.envision.com/ServiceLocation-0.0.1/ServiceLocation",
+  "description": "",
+  "selectedSource": "query",
+  "sourceQuery": "cts.andQuery([cts.collectionQuery(\"CMS-Provider.csv\"), cts.jsonPropertyValueQuery(\"st\", [\"MD\",\"VA\",\"DC\"])])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "mapServiceLocation-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-10-17T22:33:54.599319Z",
+  "uriExpression": "concat('/NPI/',NPI,'/ServiceLocation/',adrs_id,'.json')",
+  "properties": {
+    "AddressId": {
+      "sourcedFrom": "adrs_id"
+    },
+    "Addressline1": {
+      "sourcedFrom": "getStringNormalized(adr_ln_1)"
+    },
+    "Addressline2": {
+      "sourcedFrom": "getStringNormalized(adr_ln_2)"
+    },
+    "City": {
+      "sourcedFrom": "getStringNormalized(cty)"
+    },
+    "State": {
+      "sourcedFrom": "st"
+    },
+    "Zip5": {
+      "sourcedFrom": "substring(zip,1,5)"
+    },
+    "Zip4": {
+      "sourcedFrom": "substring(zip,6,4)"
+    },
+    "PhoneNumber": {
+      "sourcedFrom": "phn_numbr"
+    },
+    "ProviderNPI": {
+      "sourcedFrom": "NPI"
+    },
+    "NPIAndAddressId": {
+      "sourcedFrom": "concat(NPI,'-',adrs_id)"
+    },
+    "CityLocation": {
+      "sourcedFrom": "concat(getStringNormalized(cty),'-',getStringNormalized(adr_ln_1))"
+    },
+    "PrimarySpeciality": {
+      "sourcedFrom": "getStringNormalized(pri_spec)"
+    }
+  },
+  "sourceRecordScope": "instanceOnly",
+  "mappingParametersModulePath": ""
+}

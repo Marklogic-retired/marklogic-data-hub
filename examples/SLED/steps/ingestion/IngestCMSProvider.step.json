@@ -1,0 +1,28 @@
+{
+  "headers": { },
+  "collections": [
+    "IngestCMSProvider"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "name": "IngestCMSProvider",
+  "description": "Ingest Provider Data downloaded from https://data.cms.gov/provider-data/dataset/mj5m-pzi6",
+  "sourceFormat": "csv",
+  "separator": ",",
+  "targetFormat": "JSON",
+  "sourceName": "CMS",
+  "sourceType": "CSV",
+  "outputURIPrefix": "",
+  "inputFilePath": "./data/CMS-Provider-Data",
+  "additionalCollections": [
+    "CMS-Provider.csv"
+  ],
+  "targetDatabase": "data-hub-STAGING",
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "stepDefinitionName": "default-ingestion",
+  "stepDefinitionType": "ingestion",
+  "stepId": "IngestCMSProvider-ingestion",
+  "lastUpdated": "2022-10-17T22:33:54.790155Z"
+}
