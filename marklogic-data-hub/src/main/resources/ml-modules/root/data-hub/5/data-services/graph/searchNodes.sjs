@@ -158,8 +158,8 @@ result.map(item => {
   }
   const group = item.subjectIRI.toString().substring(0, item.subjectIRI.toString().length - subjectLabel.length - 1);
   let nodeOrigin = {};
-  if (!nodes[item.subjectIRI] && (item.objectConcept.toString().length == 0)) {
-    nodeOrigin.id = item.subjectIRI;
+  if (!nodes[item.docURI] && (item.objectConcept.toString().length == 0)) {
+    nodeOrigin.id = item.docURI;
     nodeOrigin.docUri = item.docURI;
     if (newLabel.toString().length === 0) {
       nodeOrigin.label = subjectLabel;
@@ -172,12 +172,12 @@ result.map(item => {
     nodeOrigin.hasRelationships = false;
     nodeOrigin.count = 1;
     nodeOrigin.propertiesOnHover=resultPropertiesOnHover;
-    nodes[item.subjectIRI] = nodeOrigin;
+    nodes[item.docURI] = nodeOrigin;
   }else{
     if((item.objectConcept !== undefined && item.objectConcept.toString().length > 0 && !nodes[item.objectConcept]) ){
       let objectConceptArr = item.objectConcept.toString().split("/");
       let conceptLabel = objectConceptArr[objectConceptArr.length - 1];
-      nodeOrigin.id = item.objectConcept;
+      nodeOrigin.id = item.docURI;
       nodeOrigin.docUri = item.docURI;
       nodeOrigin.label = conceptLabel;
       nodeOrigin.additionalProperties = null;
@@ -219,20 +219,23 @@ result.map(item => {
     let edgeLabel = predicateArr[predicateArr.length - 1];
     edge.predicate = item.predicateIRI;
     edge.label = edgeLabel;
-    edge.from = item.subjectIRI;
-    edge.to = objectId;
+    edge.from = item.docURI;
+    const toId = item.nodeCount === 1 ? objectUri: objectId;
+    edge.to = toId;
     edges.push(edge);
-    if (!nodes[objectId]) {
+    if (!nodes[toId]) {
       let objectNode = {};
-      objectNode.id = objectId;
       if (item.nodeCount === 1) {
+        objectNode.id = objectUri;
         objectNode.docUri = objectUri;
+      } else {
+        objectNode.id = objectId;
       }
       let newLabelNode = "";
       let configurationLabel = getLabelFromHubConfigByEntityType(objectIRIArr[objectIRIArr.length - 2]);
       if(configurationLabel.toString().length > 0){
         //getting the value of the configuration property
-        newLabelNode =getValueFromProperty(configurationLabel,objectUri,objectIRIArr[objectIRIArr.length - 2]);
+        newLabelNode = getValueFromProperty(configurationLabel,objectUri,objectIRIArr[objectIRIArr.length - 2]);
       }
 
       if (newLabelNode.toString().length === 0) {
@@ -246,17 +249,18 @@ result.map(item => {
       objectNode.isConcept = false;
       objectNode.count = item.nodeCount;
       objectNode.hasRelationships = hasRelationships;
-      nodes[objectId] = objectNode;
+      nodes[toId] = objectNode;
     }
   }
   else if (item.predicateIRI !== undefined && item.predicateIRI.toString().length > 0){
     let edge = {};
     let predicateArr = item.predicateIRI.toString().split("/");
     let edgeLabel = predicateArr[predicateArr.length - 1];
-    edge.id = "edge-" + item.subjectIRI + "-" + item.predicateIRI + "-" + item.objectIRI;
+    const subjectId = item.docURI || item.subjectIRI;
+    edge.id = "edge-" + subjectId + "-" + item.predicateIRI + "-" + item.objectIRI;
     edge.predicate = item.predicateIRI;
     edge.label = edgeLabel;
-    edge.from = item.subjectIRI.toString();
+    edge.from = subjectId;
     edge.to = item.objectIRI;
     edges.push(edge);
   }
