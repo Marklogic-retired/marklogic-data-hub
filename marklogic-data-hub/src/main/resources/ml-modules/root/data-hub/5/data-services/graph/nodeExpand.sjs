@@ -107,32 +107,49 @@ let entityId = entityIRIArr[entityIRIArr.length - 1];
 const entityIdSplit = entityId.split("-");
 let result;
 let totalEstimate = 0;
-
 if(!isConcept){
   if(entityIdSplit.length == 1) {
     //has relationship option
     const entityType = entityIRIArr[entityIRIArr.length - 2];
     result = handleBySubjectIRI(entityType, nodeToExpand);
     totalEstimate = fn.count(cts.triples(sem.iri(nodeToExpand), hashmapPredicate.get(entityType), null));
-  } else if(entityIdSplit.length == 2) {
-    //by predicate option
-    let entityTypeName = entityIdSplit[1];
-    let predicateIRI = null;
-    if(queryObj.predicateFilter !== undefined && queryObj.predicateFilter.length > 0) {
-      predicateIRI = sem.iri(queryObj.predicateFilter);
+  } else {
+    let entityTypeName = entityIdSplit[entityIdSplit.length - 1];
+    let isByPredicate = false;
+    //Validate that the last "-" is actually an entity and not part of the IRI.
+    const modelCollection = fn.collection(entityLib.getModelCollection()).toArray();
+    for(var i = 0; i < modelCollection.length; i++){
+      const model = modelCollection[i].toObject();
+      const modelName = model.info.title;
+      if (modelName == entityTypeName) {
+        isByPredicate = true;
+        break;
+      }
     }
-    isByEntityType = true;
-    const rootNode = sem.iri(nodeToExpand.substring(0, nodeToExpand.length - entityTypeName.length - 1));
-    totalEstimate = fn.count(cts.triples(rootNode, predicateIRI, null));
-    //as the total is only one more than limit, we dont create an a additional node with remaining count, we show a real node DHFPROD-8377
-    let limitNumberPlusOne= Number(limit);
-    limitNumberPlusOne ++;
-    if(limitNumberPlusOne === totalEstimate){
-      limit = limitNumberPlusOne;
+    if(isByPredicate) {
+      //by predicate option
+      let predicateIRI = null;
+      if(queryObj.predicateFilter !== undefined && queryObj.predicateFilter.length > 0) {
+        predicateIRI = sem.iri(queryObj.predicateFilter);
+      }
+      isByEntityType = true;
+      const rootNode = sem.iri(nodeToExpand.substring(0, nodeToExpand.length - entityTypeName.length - 1));
+      totalEstimate = fn.count(cts.triples(rootNode, predicateIRI, null));
+      //as the total is only one more than limit, we dont create an a additional node with remaining count, we show a real node DHFPROD-8377
+      let limitNumberPlusOne= Number(limit);
+      limitNumberPlusOne ++;
+      if(limitNumberPlusOne === totalEstimate){
+        limit = limitNumberPlusOne;
+      }
+      result = handleByPredicate(entityTypeName, predicateIRI);
+    } else {
+      //has relationship option and entityIRI contains "-"
+      const entityType = entityIRIArr[entityIRIArr.length - 2];
+      result = handleBySubjectIRI(entityType, nodeToExpand);
+      totalEstimate = fn.count(cts.triples(sem.iri(nodeToExpand), hashmapPredicate.get(entityType), null));
     }
-    result = handleByPredicate(entityTypeName, predicateIRI);
   }
-}else{
+} else {
    //is concept
   const parentEntityType = entityIRIArr[entityIRIArr.length - 2];
   let objectConcept = sem.iri(queryObj.objectConcept);

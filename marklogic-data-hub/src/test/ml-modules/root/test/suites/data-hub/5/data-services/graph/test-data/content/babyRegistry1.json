@@ -17,7 +17,7 @@
         "baseUri": "http://marklogic.com/example/"
       },
       "BabyRegistry": {
-        "babyRegistryId": 3039,
+        "babyRegistryId": "3039-42",
         "arrivalDate": "2021-01-07-08:00",
         "ownedBy": 301,
         "includes": [
