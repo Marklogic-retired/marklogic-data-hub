@@ -1,0 +1,8 @@
+{
+  "role-name": "member-viewer",
+  "description": "Allows users to view Members",
+  "role": [ ],
+  "permission": [ ],
+  "privilege": [ ],
+  "external-name": ["cn=member-viewer,ou=Groups,dc=hhs,dc=nj,dc=gov"]
+}

@@ -1,0 +1,27 @@
+{
+  "name": "CMSHospital",
+  "description": "",
+  "batchSize": 100,
+  "threadCount": 4,
+  "stopOnError": false,
+  "options": { },
+  "version": 0,
+  "steps": {
+    "1": {
+      "stepId": "mapHospitalAffiliation1-mapping"
+    },
+    "2": {
+      "stepId": "mapHospitalAffiliation2-mapping"
+    },
+    "3": {
+      "stepId": "mapHospitalAffiliation3-mapping"
+    },
+    "4": {
+      "stepId": "mapHospitalAffiliation4-mapping"
+    },
+    "5": {
+      "stepId": "mapHospitalAffiliation5-mapping"
+    }
+  },
+  "lastUpdated": "2022-10-17T22:33:53.98956Z"
+}

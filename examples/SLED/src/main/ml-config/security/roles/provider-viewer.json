@@ -1,0 +1,8 @@
+{
+  "role-name": "provider-viewer",
+  "description": "Allows users to view Providers and their affilitations",
+  "role": [ ],
+  "permission": [ ],
+  "privilege": [ ],
+  "external-name": ["cn=provider-viewer,ou=Groups,dc=hhs,dc=nj,dc=gov"]
+}

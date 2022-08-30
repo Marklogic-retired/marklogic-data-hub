@@ -1,0 +1,14 @@
+{
+  "role-name": "developer",
+  "description": "",
+  "role": [
+    "qconsole-user",
+    "pii-reader",
+    "data-viewer",
+    "redaction-user",
+    "hub-central-developer"
+  ],
+  "permission": [ ],
+  "privilege": [ ],
+  "external-name": ["cn=Developer,ou=Groups,dc=hhs,dc=nj,dc=gov"]
+}

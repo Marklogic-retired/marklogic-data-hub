@@ -1,0 +1,48 @@
+{
+  "collections": [
+    "mapOrgAssociation",
+    "OrgAssociation"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "provider-viewer,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "JSON",
+  "attachSourceDocument": false,
+  "name": "mapOrgAssociation",
+  "targetEntityType": "http://marklogic.envision.com/OrgAssociation-0.0.1/OrgAssociation",
+  "description": "Map Org Association",
+  "selectedSource": "query",
+  "sourceQuery": "cts.andNotQuery(cts.andQuery([cts.collectionQuery('CMS-Provider.csv'), cts.jsonPropertyValueQuery('st', ['MD','VA','DC'])]),cts.jsonPropertyValueQuery('org_nm', ''))",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "mapOrgAssociation-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-10-17T22:33:54.569486Z",
+  "uriExpression": "concat('/OrgPACID/',org_pac_id,'/NPI/',NPI,'.json')",
+  "properties": {
+    "OrgPACIDAndNPI": {
+      "sourcedFrom": "concat('/OrgPACID/',org_pac_id,'-',NPI)"
+    },
+    "OrgPACID": {
+      "sourcedFrom": "org_pac_id"
+    },
+    "OrgLegalName": {
+      "sourcedFrom": "getStringNormalized(org_nm)"
+    },
+    "ProviderNPI": {
+      "sourcedFrom": "NPI"
+    },
+    "PrimarySpeciality": {
+      "sourcedFrom": "getStringNormalized(pri_spec)"
+    }
+  },
+  "sourceRecordScope": "instanceOnly",
+  "mappingParametersModulePath": ""
+}

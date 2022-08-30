@@ -1,0 +1,51 @@
+{
+  "collections": [
+    "mapHospitalAffiliation2",
+    "HospitalAffiliation"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "provider-viewer,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "JSON",
+  "attachSourceDocument": false,
+  "name": "mapHospitalAffiliation2",
+  "targetEntityType": "http://marklogic.envision.com/HospitalAffiliation-0.0.1/HospitalAffiliation",
+  "description": "Map Hospital-2 Affiliation",
+  "selectedSource": "query",
+  "sourceQuery": "cts.andNotQuery(cts.andQuery([cts.collectionQuery('CMS-Provider.csv'), cts.jsonPropertyValueQuery('st', ['MD','VA','DC'])]),cts.jsonPropertyValueQuery('hosp_afl_2', ''))",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "mapHospitalAffiliation2-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2022-10-17T22:33:54.515701Z",
+  "properties": {
+    "HospitalAffiliationCCN": {
+      "sourcedFrom": "hosp_afl_2"
+    },
+    "HospitalAffiliationName": {
+      "sourcedFrom": "getStringNormalized(hosp_afl_lbn_2)"
+    },
+    "ProviderNPI": {
+      "sourcedFrom": "NPI"
+    },
+    "HospitalCCNAndProviderNPI": {
+      "sourcedFrom": "concat(hosp_afl_2,'-',NPI)"
+    },
+    "ProviderNPIAndAddrId": {
+      "sourcedFrom": "concat(NPI,'-',adrs_id)"
+    },
+    "PrimarySpeciality": {
+      "sourcedFrom": "getStringNormalized(pri_spec)"
+    }
+  },
+  "uriExpression": "concat('/HospitalCCN/',hosp_afl_2,'/NPI/',NPI)",
+  "sourceRecordScope": "instanceOnly",
+  "mappingParametersModulePath": ""
+}

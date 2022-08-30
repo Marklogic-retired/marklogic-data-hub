@@ -32,7 +32,7 @@
           "sortable": false,
           "items": {
             "datatype": "integer",
-            "relatedEntityType": "http://marklogic.com/envision/Provider-0.0.1/Provider",
+            "relatedEntityType": "http://marklogic.com/Provider-0.0.1/Provider",
             "joinPropertyName": "NPI"
           }
         }

@@ -1,0 +1,13 @@
+{
+  "user-name": "member-user",
+  "description": "User that can see members with PII",
+  "password": "demo",
+  "role": [
+    "pii-reader",
+    "member-viewer",
+    "hub-central-user",
+    "hub-central-explorer"
+  ],
+  "permission": [
+  ]
+}

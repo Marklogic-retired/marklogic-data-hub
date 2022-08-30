@@ -1,0 +1,103 @@
+{
+  "info": {
+    "title": "CMSProvider",
+    "version": "0.0.1",
+    "baseUri": "http://marklogic.com/",
+    "draft": false
+  },
+  "definitions": {
+    "CMSProvider": {
+      "required": [ ],
+      "pii": [ ],
+      "wordLexicon": [ ],
+      "properties": {
+        "ProviderNPI": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint",
+          "facetable": true
+        },
+        "ProviderLastName": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "ProviderFirstName": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "ProviderMiddleName": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "ProviderFullName": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint",
+          "facetable": true
+        },
+        "ProviderSuffix": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "ProviderGender": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "ProviderCredential": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "MedSchoolName": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "GraduationYear": {
+          "datatype": "integer",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "PrimarySpeciality": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint",
+          "facetable": true
+        },
+        "SecondarySpecialityAll": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "ClinicianMedicareAssignment": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint",
+          "facetable": true
+        },
+        "hasServiceLocationAt": {
+          "datatype": "array",
+          "facetable": false,
+          "sortable": false,
+          "items": {
+            "datatype": "string",
+            "relatedEntityType": "http://marklogic.com/ServiceLocation-0.0.1/ServiceLocation",
+            "joinPropertyName": "ProviderNPI"
+          }
+        },
+        "hasHospitalAffiliationWith": {
+          "datatype": "array",
+          "facetable": false,
+          "sortable": false,
+          "items": {
+            "datatype": "string",
+            "relatedEntityType": "http://marklogic.com/HospitalAffiliation-0.0.1/HospitalAffiliation",
+            "joinPropertyName": "ProviderNPI"
+          }
+        },
+        "hasAssociationWithOrg": {
+          "datatype": "array",
+          "facetable": false,
+          "sortable": false,
+          "items": {
+            "datatype": "string",
+            "relatedEntityType": "http://marklogic.com/OrgAssociation-0.0.1/OrgAssociation",
+            "joinPropertyName": "ProviderNPI"
+          }
+        }
+      }
+    }
+  }
+}

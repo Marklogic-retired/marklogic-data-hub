@@ -1,0 +1,13 @@
+{
+  "name": "MemberNew",
+  "steps": {
+    "1": {
+      "stepId": "loadMMISNew-ingestion"
+    },
+    "2": {
+      "stepId": "mapMMISNew-mapping"
+    }
+  },
+  "description": "Ingest and Map - New Member data for MPIN use case",
+  "lastUpdated": "2022-10-17T22:33:54.019424Z"
+}

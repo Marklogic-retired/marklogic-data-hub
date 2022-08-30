@@ -1,0 +1,13 @@
+{
+  "user-name": "provider-user",
+  "description": "User that can see providers with PII",
+  "password": "demo",
+  "role": [
+    "pii-reader",
+    "provider-viewer",
+    "hub-central-user",
+    "hub-central-explorer"
+  ],
+  "permission": [
+  ]
+}

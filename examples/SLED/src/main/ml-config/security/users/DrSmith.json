@@ -3,21 +3,18 @@
   "description": "Doctor with PII reading permission",
   "password": "demo",
   "role": [
-    "envision",
-    "data-hub-operator",
-    "hub-central-operator",
-    "hub-central-developer",
     "pii-reader",
-    "member-reader",
-    "redaction-user"
+    "data-viewer",
+    "redaction-user",
+    "hub-central-developer"
   ],
   "permission": [
     {
-      "role-name": "envision",
+      "role-name": "data-hub-common",
       "capability": "update"
     },
     {
-      "role-name": "envision",
+      "role-name": "data-hub-common",
       "capability": "read"
     }
   ]

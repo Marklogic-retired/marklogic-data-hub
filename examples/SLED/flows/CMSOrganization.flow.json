@@ -1,0 +1,15 @@
+{
+  "name": "CMSOrganization",
+  "description": "",
+  "batchSize": 100,
+  "threadCount": 4,
+  "stopOnError": false,
+  "options": { },
+  "version": 0,
+  "steps": {
+    "1": {
+      "stepId": "mapOrgAssociation-mapping"
+    }
+  },
+  "lastUpdated": "2022-10-17T22:33:53.964281Z"
+}

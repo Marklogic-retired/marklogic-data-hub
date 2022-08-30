@@ -1,5 +1,6 @@
 package com.marklogic.hub.impl;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.AbstractHubCoreTest;
@@ -136,6 +137,38 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
         assertTrue(hubProject.getProjectDir().resolve("entities").toFile().exists());
         assertTrue(hubProject.getProjectDir().resolve("step-definitions").toFile().exists());
         assertTrue(hubProject.getProjectDir().resolve("steps").toFile().exists());
+    }
+
+    @Test
+    public void upgradeDhcceToCurrentVersion() throws IOException {
+        final File projectDir = copyTestProjectToTempDirectory("dhcce");
+        final HubProject hubProject = getHubProject();
+
+        hubProject.upgradeProject(flowManager);
+
+        File conceptConnectorModelsDir = new File(projectDir, "conceptConnectorModels");
+        verifyDirContents(conceptConnectorModelsDir, 1);
+        File entitiesDir = new File(projectDir, "entities");
+        verifyDirContents(entitiesDir, 3);
+        File claimFhir = entitiesDir.toPath().resolve("ClaimFHIR.entity.json").toFile();
+        JsonNode claimFhirNode = ObjectMapperFactory.getObjectMapper().readTree(claimFhir);
+        JsonNode hasItem = claimFhirNode.path("definitions").path("ClaimFHIR")
+                .path("properties").path("hasItem");
+        assertEquals("http://marklogic.com/ClaimItem-0.0.1/ClaimItem", hasItem.path("items").path("relatedEntityType").asText());
+        assertEquals("claimId", hasItem.path("items").path("joinPropertyName").asText());
+        assertEquals("string", hasItem.path("items").path("datatype").asText());
+        File member = entitiesDir.toPath().resolve("Member.entity.json").toFile();
+        JsonNode memberNode = ObjectMapperFactory.getObjectMapper().readTree(member);
+        JsonNode hasDependent = memberNode.path("definitions").path("Member")
+                .path("properties").path("hasDependent");
+        assertEquals("http://marklogic.com/Member-0.0.1/Member", hasDependent.path("items").path("relatedEntityType").asText());
+        assertEquals("PrimaryInsuredId", hasDependent.path("items").path("joinPropertyName").asText());
+        assertEquals("string", hasDependent.path("items").path("datatype").asText());
+        JsonNode hasClaim = memberNode.path("definitions").path("Member")
+                .path("properties").path("hasClaim");
+        assertEquals("http://marklogic.com/ClaimFHIR-0.0.1/ClaimFHIR", hasClaim.path("items").path("relatedEntityType").asText());
+        assertEquals("patient", hasClaim.path("items").path("joinPropertyName").asText());
+        assertEquals("string", hasClaim.path("items").path("datatype").asText());
     }
 
     @Test

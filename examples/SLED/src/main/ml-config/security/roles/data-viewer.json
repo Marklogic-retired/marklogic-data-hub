@@ -1,0 +1,12 @@
+{
+  "role-name": "data-viewer",
+  "description": "Allows users to view all data",
+  "role": [
+    "member-viewer",
+    "claim-viewer",
+    "provider-viewer"
+  ],
+  "permission": [ ],
+  "privilege": [ ],
+  "external-name": ["cn=data-viewer,ou=Groups,dc=hhs,dc=nj,dc=gov"]
+}

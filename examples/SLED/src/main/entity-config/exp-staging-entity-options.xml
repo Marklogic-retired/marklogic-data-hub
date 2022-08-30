@@ -392,14 +392,62 @@
       <search:facet-option>descending</search:facet-option>
     </search:range>
   </search:constraint>
+  <search:constraint name="HospitalAffiliation.HospitalAffiliationName">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/HospitalAffiliation/HospitalAffiliationName</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>frequency-order</search:facet-option>
+      <search:facet-option>descending</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="HospitalAffiliation.PrimarySpeciality">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/HospitalAffiliation/PrimarySpeciality</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>frequency-order</search:facet-option>
+      <search:facet-option>descending</search:facet-option>
+    </search:range>
+  </search:constraint>
   <search:constraint name="planID">
     <search:value>
       <search:element ns="" name="planID"/>
     </search:value>
   </search:constraint>
-  <search:constraint name="uid">
+  <search:constraint name="CMSProvider.ProviderNPI">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/CMSProvider/ProviderNPI</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>frequency-order</search:facet-option>
+      <search:facet-option>descending</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="CMSProvider.ProviderFullName">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/CMSProvider/ProviderFullName</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>frequency-order</search:facet-option>
+      <search:facet-option>descending</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="CMSProvider.PrimarySpeciality">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/CMSProvider/PrimarySpeciality</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>frequency-order</search:facet-option>
+      <search:facet-option>descending</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="CMSProvider.ClinicianMedicareAssignment">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/CMSProvider/ClinicianMedicareAssignment</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>frequency-order</search:facet-option>
+      <search:facet-option>descending</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="memberID">
     <search:value>
-      <search:element ns="" name="uid"/>
+      <search:element ns="" name="memberID"/>
     </search:value>
   </search:constraint>
   <search:constraint name="Member.FullName">
@@ -466,6 +514,19 @@
       <search:facet-option>descending</search:facet-option>
     </search:range>
   </search:constraint>
+  <search:constraint name="WeightMeasurementID">
+    <search:value>
+      <search:element ns="" name="WeightMeasurementID"/>
+    </search:value>
+  </search:constraint>
+  <search:constraint name="WeightMeasurement.date">
+    <search:range type="xs:dateTime" facet="false">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/WeightMeasurement/date</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>frequency-order</search:facet-option>
+      <search:facet-option>descending</search:facet-option>
+    </search:range>
+  </search:constraint>
   <search:constraint name="medicalEquipmentID">
     <search:value>
       <search:element ns="" name="medicalEquipmentID"/>
@@ -486,6 +547,11 @@
       <search:facet-option>frequency-order</search:facet-option>
       <search:facet-option>descending</search:facet-option>
     </search:range>
+  </search:constraint>
+  <search:constraint name="identifier">
+    <search:value>
+      <search:element ns="" name="identifier"/>
+    </search:value>
   </search:constraint>
   <search:constraint name="examResultID">
     <search:value>
@@ -521,6 +587,48 @@
       <search:facet-option>descending</search:facet-option>
     </search:range>
   </search:constraint>
+  <search:constraint name="ServiceLocation.Zip5">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/ServiceLocation/Zip5</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>frequency-order</search:facet-option>
+      <search:facet-option>descending</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="ServiceLocation.PrimarySpeciality">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/ServiceLocation/PrimarySpeciality</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>frequency-order</search:facet-option>
+      <search:facet-option>descending</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="provider">
+    <search:value>
+      <search:element ns="" name="provider"/>
+    </search:value>
+  </search:constraint>
+  <search:constraint name="bloodSugarID">
+    <search:value>
+      <search:element ns="" name="bloodSugarID"/>
+    </search:value>
+  </search:constraint>
+  <search:constraint name="BloodMeasurement.value">
+    <search:range type="xs:double" facet="false">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/BloodMeasurement/value</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>frequency-order</search:facet-option>
+      <search:facet-option>descending</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="BloodMeasurement.date">
+    <search:range type="xs:dateTime" facet="false">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/BloodMeasurement/date</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>frequency-order</search:facet-option>
+      <search:facet-option>descending</search:facet-option>
+    </search:range>
+  </search:constraint>
   <search:constraint name="surgeryID">
     <search:value>
       <search:element ns="" name="surgeryID"/>
@@ -545,40 +653,6 @@
   <search:constraint name="Surgery.description">
     <search:range type="xs:string" collation="http://marklogic.com/collation/codepoint" facet="false">
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Surgery/description</search:path-index>
-      <search:facet-option>limit=25</search:facet-option>
-      <search:facet-option>frequency-order</search:facet-option>
-      <search:facet-option>descending</search:facet-option>
-    </search:range>
-  </search:constraint>
-  <search:constraint name="bloodSugarID">
-    <search:value>
-      <search:element ns="" name="bloodSugarID"/>
-    </search:value>
-  </search:constraint>
-  <search:constraint name="BloodMeasurement.value">
-    <search:range type="xs:double" facet="false">
-      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/BloodMeasurement/value</search:path-index>
-      <search:facet-option>limit=25</search:facet-option>
-      <search:facet-option>frequency-order</search:facet-option>
-      <search:facet-option>descending</search:facet-option>
-    </search:range>
-  </search:constraint>
-  <search:constraint name="BloodMeasurement.date">
-    <search:range type="xs:dateTime" facet="false">
-      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/BloodMeasurement/date</search:path-index>
-      <search:facet-option>limit=25</search:facet-option>
-      <search:facet-option>frequency-order</search:facet-option>
-      <search:facet-option>descending</search:facet-option>
-    </search:range>
-  </search:constraint>
-  <search:constraint name="WeightMeasurementID">
-    <search:value>
-      <search:element ns="" name="WeightMeasurementID"/>
-    </search:value>
-  </search:constraint>
-  <search:constraint name="WeightMeasurement.date">
-    <search:range type="xs:dateTime" facet="false">
-      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/WeightMeasurement/date</search:path-index>
       <search:facet-option>limit=25</search:facet-option>
       <search:facet-option>frequency-order</search:facet-option>
       <search:facet-option>descending</search:facet-option>
@@ -694,6 +768,30 @@
       <search:facet-option>descending</search:facet-option>
     </search:range>
   </search:constraint>
+  <search:constraint name="OrgAssociation.OrgPACID">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/OrgAssociation/OrgPACID</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>frequency-order</search:facet-option>
+      <search:facet-option>descending</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="OrgAssociation.OrgLegalName">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/OrgAssociation/OrgLegalName</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>frequency-order</search:facet-option>
+      <search:facet-option>descending</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="OrgAssociation.PrimarySpeciality">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/OrgAssociation/PrimarySpeciality</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+      <search:facet-option>frequency-order</search:facet-option>
+      <search:facet-option>descending</search:facet-option>
+    </search:range>
+  </search:constraint>
   <search:constraint name="specializationID">
     <search:value>
       <search:element ns="" name="specializationID"/>
@@ -770,6 +868,28 @@
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/LaboratoryExam/descriptionExam</search:path-index>
     </search:range>
   </search:tuples>
+  <search:tuples name="HospitalAffiliation">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/HospitalAffiliation/HospitalAffiliationName</search:path-index>
+    </search:range>
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/HospitalAffiliation/PrimarySpeciality</search:path-index>
+    </search:range>
+  </search:tuples>
+  <search:tuples name="CMSProvider">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/CMSProvider/ProviderNPI</search:path-index>
+    </search:range>
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/CMSProvider/ProviderFullName</search:path-index>
+    </search:range>
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/CMSProvider/PrimarySpeciality</search:path-index>
+    </search:range>
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/CMSProvider/ClinicianMedicareAssignment</search:path-index>
+    </search:range>
+  </search:tuples>
   <search:tuples name="Member">
     <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Member/FullName</search:path-index>
@@ -796,6 +916,11 @@
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Member/Zip5</search:path-index>
     </search:range>
   </search:tuples>
+  <search:values name="WeightMeasurement">
+    <search:range type="xs:dateTime" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/WeightMeasurement/date</search:path-index>
+    </search:range>
+  </search:values>
   <search:tuples name="MedicalEquipment">
     <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/MedicalEquipment/name</search:path-index>
@@ -817,6 +942,22 @@
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Illness/description</search:path-index>
     </search:range>
   </search:tuples>
+  <search:tuples name="ServiceLocation">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/ServiceLocation/Zip5</search:path-index>
+    </search:range>
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/ServiceLocation/PrimarySpeciality</search:path-index>
+    </search:range>
+  </search:tuples>
+  <search:tuples name="BloodMeasurement">
+    <search:range type="xs:double" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/BloodMeasurement/value</search:path-index>
+    </search:range>
+    <search:range type="xs:dateTime" facet="true">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/BloodMeasurement/date</search:path-index>
+    </search:range>
+  </search:tuples>
   <search:tuples name="Surgery">
     <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Surgery/name</search:path-index>
@@ -828,19 +969,6 @@
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Surgery/description</search:path-index>
     </search:range>
   </search:tuples>
-  <search:tuples name="BloodMeasurement">
-    <search:range type="xs:double" facet="true">
-      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/BloodMeasurement/value</search:path-index>
-    </search:range>
-    <search:range type="xs:dateTime" facet="true">
-      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/BloodMeasurement/date</search:path-index>
-    </search:range>
-  </search:tuples>
-  <search:values name="WeightMeasurement">
-    <search:range type="xs:dateTime" facet="true">
-      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/WeightMeasurement/date</search:path-index>
-    </search:range>
-  </search:values>
   <search:tuples name="Allergy">
     <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Allergy/name</search:path-index>
@@ -881,6 +1009,17 @@
     </search:range>
     <search:range type="xs:dateTime" facet="true">
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/BloodPressureMeasurement/date</search:path-index>
+    </search:range>
+  </search:tuples>
+  <search:tuples name="OrgAssociation">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/OrgAssociation/OrgPACID</search:path-index>
+    </search:range>
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/OrgAssociation/OrgLegalName</search:path-index>
+    </search:range>
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/OrgAssociation/PrimarySpeciality</search:path-index>
     </search:range>
   </search:tuples>
   <search:tuples name="Specialization">

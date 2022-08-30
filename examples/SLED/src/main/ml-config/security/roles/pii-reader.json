@@ -1,0 +1,8 @@
+{
+  "role-name": "pii-reader",
+  "description": "Allows users to view Providers and their affilitations",
+  "role": [ ],
+  "permission": [ ],
+  "privilege": [ ],
+  "external-name": ["cn=PIIReader,ou=Groups,dc=hhs,dc=nj,dc=gov"]
+}

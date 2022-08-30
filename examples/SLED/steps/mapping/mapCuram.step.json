@@ -1,145 +1,148 @@
 {
-  "collections" : [ "mapCuram", "Member" ],
-  "additionalCollections" : [ ],
-  "permissions" : "data-hub-operator,read,data-hub-operator,update",
-  "batchSize" : 100,
-  "validateEntity" : false,
-  "targetFormat" : "json",
-  "attachSourceDocument" : true,
-  "name" : "mapCuram",
-  "description" : "Map Curam source to Member Entity",
-  "threadCount" : 4,
-  "stepDefinitionName" : "entity-services-mapping",
-  "stepDefinitionType" : "MAPPING",
-  "sourceQuery" : "cts.collectionQuery([\"ingestCuram\"])",
-  "sourceDatabase" : "data-hub-STAGING",
-  "targetDatabase" : "data-hub-FINAL",
-  "targetEntityType" : "http://marklogic.com/envision/Member-0.0.1/Member",
-  "properties" : {
-    "FullAddress" : {
-      "sourcedFrom" : "concat(getAddress1Normalized(//ADDRESSELEMENT/ELEMENTVALUE),', ', //ADDRESSES/ADDRESSELEMENT/ZIP)"
+  "collections": [
+    "mapCuram",
+    "Member"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-operator,read,data-hub-operator,update",
+  "batchSize": 100,
+  "validateEntity": false,
+  "targetFormat": "json",
+  "attachSourceDocument": true,
+  "name": "mapCuram",
+  "description": "Map Curam source to Member Entity",
+  "threadCount": 4,
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "MAPPING",
+  "sourceQuery": "cts.collectionQuery([\"ingestCuram\"])",
+  "sourceDatabase": "data-hub-STAGING",
+  "targetDatabase": "data-hub-FINAL",
+  "targetEntityType": "http://marklogic.com/envision/Member-0.0.1/Member",
+  "properties": {
+    "FullAddress": {
+      "sourcedFrom": "concat(getAddress1Normalized(//ADDRESSELEMENT/ELEMENTVALUE),', ', //ADDRESSES/ADDRESSELEMENT/ZIP)"
     },
-    "idCard" : {
-      "sourcedFrom" : ""
+    "idCard": {
+      "sourcedFrom": ""
     },
-    "PrimaryInsuredRelationship" : {
-      "sourcedFrom" : ""
+    "PrimaryInsuredRelationship": {
+      "sourcedFrom": ""
     },
-    "Gender" : {
-      "sourcedFrom" : "//PERSON/GENDER"
+    "Gender": {
+      "sourcedFrom": "//PERSON/GENDER"
     },
-    "DayOfDOB" : {
-      "sourcedFrom" : "getDayOfDOB(//DATEOFBIRTH)"
+    "DayOfDOB": {
+      "sourcedFrom": "getDayOfDOB(//DATEOFBIRTH)"
     },
-    "ScenarioDesc" : {
-      "sourcedFrom" : ""
+    "ScenarioDesc": {
+      "sourcedFrom": ""
     },
-    "LastNameHistory" : {
-      "sourcedFrom" : "getLastNameNormalized(CURAM/MMELIGIBILITYDECISIONDETAILS/CONCERNROLE/PERSON/ALTERNATENAMES/ALTERNATENAME/SURNAME)"
+    "LastNameHistory": {
+      "sourcedFrom": "getLastNameNormalized(CURAM/MMELIGIBILITYDECISIONDETAILS/CONCERNROLE/PERSON/ALTERNATENAMES/ALTERNATENAME/SURNAME)"
     },
-    "uid" : {
-      "sourcedFrom" : "generate-id()"
+    "uid": {
+      "sourcedFrom": "generate-id()"
     },
-    "hasClaim" : {
-      "sourcedFrom" : ""
+    "hasClaim": {
+      "sourcedFrom": ""
     },
-    "SSNHistory" : {
-      "sourcedFrom" : "CURAM/MMELIGIBILITYDECISIONDETAILS/alternateId/value"
+    "SSNHistory": {
+      "sourcedFrom": "CURAM/MMELIGIBILITYDECISIONDETAILS/alternateId/value"
     },
-    "DOB" : {
-      "sourcedFrom" : "//DATEOFBIRTH"
+    "DOB": {
+      "sourcedFrom": "//DATEOFBIRTH"
     },
-    "Race" : {
-      "sourcedFrom" : "CURAM/MMELIGIBILITYDECISIONDETAILS/CONCERNROLE/PERSON/RACE"
+    "Race": {
+      "sourcedFrom": "CURAM/MMELIGIBILITYDECISIONDETAILS/CONCERNROLE/PERSON/RACE"
     },
-    "primaryInsuredMemberID" : {
-      "sourcedFrom" : ""
+    "primaryInsuredMemberID": {
+      "sourcedFrom": ""
     },
-    "DOBHistory" : {
-      "sourcedFrom" : "//DATEOFBIRTH"
+    "DOBHistory": {
+      "sourcedFrom": "//DATEOFBIRTH"
     },
-    "PrimaryInsuredId" : {
-      "sourcedFrom" : ""
+    "PrimaryInsuredId": {
+      "sourcedFrom": ""
     },
-    "IsDependent" : {
-      "sourcedFrom" : ""
+    "IsDependent": {
+      "sourcedFrom": ""
     },
-    "hasDependent" : {
-      "sourcedFrom" : ""
+    "hasDependent": {
+      "sourcedFrom": ""
     },
-    "origAddress1" : {
-      "sourcedFrom" : "CURAM/MMELIGIBILITYDECISIONDETAILS/CONCERNROLE/ADDRESSES/ADDRESSELEMENT/ELEMENTVALUE"
+    "origAddress1": {
+      "sourcedFrom": "CURAM/MMELIGIBILITYDECISIONDETAILS/CONCERNROLE/ADDRESSES/ADDRESSELEMENT/ELEMENTVALUE"
     },
-    "FirstName" : {
-      "sourcedFrom" : "//FIRSTFORENAME"
+    "FirstName": {
+      "sourcedFrom": "//FIRSTFORENAME"
     },
-    "origQuadrant" : {
-      "sourcedFrom" : ""
+    "origQuadrant": {
+      "sourcedFrom": ""
     },
-    "SourceFormat" : {
-      "sourcedFrom" : "\"XML\""
+    "SourceFormat": {
+      "sourcedFrom": "\"XML\""
     },
-    "Address2" : {
-      "sourcedFrom" : ""
+    "Address2": {
+      "sourcedFrom": ""
     },
-    "Quadrant" : {
-      "sourcedFrom" : ""
+    "Quadrant": {
+      "sourcedFrom": ""
     },
-    "FirstLastNameSorted" : {
-      "sourcedFrom" : "getFirstLastNameSorted(\n  //FIRSTFORENAME,\n  getLastNameNormalized(\n  //SURNAME))"
+    "FirstLastNameSorted": {
+      "sourcedFrom": "getFirstLastNameSorted(\n  //FIRSTFORENAME,\n  getLastNameNormalized(\n  //SURNAME))"
     },
-    "Address1" : {
-      "sourcedFrom" : "getAddress1Normalized(//ADDRESSELEMENT/ELEMENTVALUE)"
+    "Address1": {
+      "sourcedFrom": "getAddress1Normalized(//ADDRESSELEMENT/ELEMENTVALUE)"
     },
-    "MiddleName" : {
-      "sourcedFrom" : ""
+    "MiddleName": {
+      "sourcedFrom": ""
     },
-    "YearOfDOB" : {
-      "sourcedFrom" : "getYearOfDOB(CURAM/MMELIGIBILITYDECISIONDETAILS/CONCERNROLE/PERSON/DATEOFBIRTH)"
+    "YearOfDOB": {
+      "sourcedFrom": "getYearOfDOB(CURAM/MMELIGIBILITYDECISIONDETAILS/CONCERNROLE/PERSON/DATEOFBIRTH)"
     },
-    "Zip5History" : {
-      "sourcedFrom" : "CURAM/MMELIGIBILITYDECISIONDETAILS/CONCERNROLE/ADDRESSES/ADDRESSELEMENT/ZIP"
+    "Zip5History": {
+      "sourcedFrom": "CURAM/MMELIGIBILITYDECISIONDETAILS/CONCERNROLE/ADDRESSES/ADDRESSELEMENT/ZIP"
     },
-    "SSN" : {
-      "sourcedFrom" : "CURAM/MMELIGIBILITYDECISIONDETAILS/alternateId/value"
+    "SSN": {
+      "sourcedFrom": "CURAM/MMELIGIBILITYDECISIONDETAILS/alternateId/value"
     },
-    "DataSource" : {
-      "sourcedFrom" : "\"CURAM\""
+    "DataSource": {
+      "sourcedFrom": "\"CURAM\""
     },
-    "ScenarioNumber" : {
-      "sourcedFrom" : ""
+    "ScenarioNumber": {
+      "sourcedFrom": ""
     },
-    "Suffix" : {
-      "sourcedFrom" : ""
+    "Suffix": {
+      "sourcedFrom": ""
     },
-    "FullName" : {
-      "sourcedFrom" : "//CONCERNROLE/CONCERNROLENAME"
+    "FullName": {
+      "sourcedFrom": "//CONCERNROLE/CONCERNROLENAME"
     },
-    "MonthOfDOB" : {
-      "sourcedFrom" : "getMonthOfDOB(CURAM/MMELIGIBILITYDECISIONDETAILS/CONCERNROLE/PERSON/DATEOFBIRTH)"
+    "MonthOfDOB": {
+      "sourcedFrom": "getMonthOfDOB(CURAM/MMELIGIBILITYDECISIONDETAILS/CONCERNROLE/PERSON/DATEOFBIRTH)"
     },
-    "Zip4" : {
-      "sourcedFrom" : ""
+    "Zip4": {
+      "sourcedFrom": ""
     },
-    "LastName" : {
-      "sourcedFrom" : "getLastNameNormalized(CURAM/MMELIGIBILITYDECISIONDETAILS/CONCERNROLE/PERSON/ALTERNATENAMES/ALTERNATENAME/SURNAME)"
+    "LastName": {
+      "sourcedFrom": "getLastNameNormalized(CURAM/MMELIGIBILITYDECISIONDETAILS/CONCERNROLE/PERSON/ALTERNATENAMES/ALTERNATENAME/SURNAME)"
     },
-    "Zip5" : {
-      "sourcedFrom" : "CURAM/MMELIGIBILITYDECISIONDETAILS/CONCERNROLE/ADDRESSES/ADDRESSELEMENT/ZIP"
+    "Zip5": {
+      "sourcedFrom": "CURAM/MMELIGIBILITYDECISIONDETAILS/CONCERNROLE/ADDRESSES/ADDRESSELEMENT/ZIP"
     },
-    "memberID" : {
-      "sourcedFrom" : "customHash64(CURAM/MMELIGIBILITYDECISIONDETAILS/alternateId/value)"
+    "memberID": {
+      "sourcedFrom": "customHash64(CURAM/MMELIGIBILITYDECISIONDETAILS/alternateId/value)"
     }
   },
-  "namespaces" : { },
-  "selectedSource" : "query",
-  "stepId" : "mapCuram-mapping",
-  "acceptsBatch" : true,
-  "provenanceGranularityLevel" : "off",
-  "lastUpdated" : "2021-06-30T23:49:49.788714-07:00",
-  "stepNumber" : "2",
-  "mapping" : {
-    "name" : "mapCuram"
+  "namespaces": { },
+  "selectedSource": "query",
+  "stepId": "mapCuram-mapping",
+  "acceptsBatch": true,
+  "provenanceGranularityLevel": "off",
+  "lastUpdated": "2022-10-17T22:33:54.442359Z",
+  "stepNumber": "2",
+  "mapping": {
+    "name": "mapCuram"
   },
-  "outputFormat" : "json"
+  "outputFormat": "json"
 }

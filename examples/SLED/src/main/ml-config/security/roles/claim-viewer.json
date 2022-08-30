@@ -1,0 +1,8 @@
+{
+  "role-name": "claim-viewer",
+  "description": "Allows users to view Claims and Claim Line Items",
+  "role": [ ],
+  "permission": [ ],
+  "privilege": [ ],
+  "external-name": ["cn=claim-viewer,ou=Groups,dc=hhs,dc=nj,dc=gov"]
+}

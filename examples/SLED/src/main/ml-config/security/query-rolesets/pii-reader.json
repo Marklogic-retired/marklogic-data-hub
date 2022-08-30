@@ -1,3 +1,5 @@
 {
-  "role-name" : [ "pii-reader" ]
+  "role-name": [
+    "pii-reader"
+  ]
 }
