@@ -36,7 +36,7 @@ function testApplyContext() {
   };
   let applyDocumentContext = mergeableInstance.applyDocumentContext(contentObject, actionDetails["/content/CustNoMatch.json"]);
   return [
-    test.assertEqual(applyDocumentContext.context.collections.length, 3, "Collection is pushed for respective action"),
+    test.assertEqual(applyDocumentContext.context.collections.length, 3, `Collection is pushed for respective action. Collections: ${xdmp.toJsonString(applyDocumentContext.context.collections)}`),
     test.assertEqual(applyDocumentContext.context.collections[2], "sm-Customer-notification", "Collection is pushed for respective action")
   ];
 }
@@ -74,7 +74,7 @@ function testApplyContextInterceptor() {
   }, mergeStep), options);
   const applyDocumentContextInterceptor = contextObjectMergeable.applyDocumentContext(contentObject, actionDetails["/content/CustNoMatch.json"]);
   return [
-    test.assertEqual(applyDocumentContextInterceptor.context.collections.length, 4, "Additional Collection is pushed for respective action vis interceptor"),
+    test.assertEqual(applyDocumentContextInterceptor.context.collections.length, 4, `Additional Collection is pushed for respective action vis interceptor. Collections: ${xdmp.toJsonString(applyDocumentContextInterceptor.context.collections)}`),
     test.assertEqual(applyDocumentContextInterceptor.context.collections[2], "sm-Customer-notification", "Collection created for notify action before interceptor"),
     test.assertEqual(applyDocumentContextInterceptor.context.collections[3], "sm-Customer-notification-intercepted", "Collection created for notify action after interceptor")
   ];

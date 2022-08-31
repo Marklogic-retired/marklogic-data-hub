@@ -33,6 +33,25 @@ class Mergeable {
         this.mergeStep.targetEntityType = this._model.primaryEntityTypeIRI();
       }
       this.entityName = this.mergeStep.targetEntityType.substring(this.mergeStep.targetEntityType.lastIndexOf("/") + 1);
+      const targetEntityTitle = this.mergeStep.targetEntityType.substring(this.mergeStep.targetEntityType.lastIndexOf("/") + 1);
+      this.mergeStep.targetCollections = this.mergeStep.targetCollections || {};
+
+      this.mergeStep.targetCollections.onMerge = this.mergeStep.targetCollections.onMerge || {};
+      this.mergeStep.targetCollections.onMerge.add = [`sm-${targetEntityTitle}-merged`, `sm-${targetEntityTitle}-mastered`, targetEntityTitle].concat(this.mergeStep.targetCollections.onMerge.add || []);
+
+      this.mergeStep.targetCollections.onNoMatch = this.mergeStep.targetCollections.onNoMatch || {};
+      this.mergeStep.targetCollections.onNoMatch.add = [`sm-${targetEntityTitle}-mastered`, targetEntityTitle].concat(this.mergeStep.targetCollections.onNoMatch.add || []);
+      this.mergeStep.targetCollections.onNoMatch.remove = [`sm-${targetEntityTitle}-archived`].concat(this.mergeStep.targetCollections.onMerge.remove || []);
+
+      this.mergeStep.targetCollections.onNotification = this.mergeStep.targetCollections.onNotification || {};
+      this.mergeStep.targetCollections.onNotification.add = [`sm-${targetEntityTitle}-notification`].concat(this.mergeStep.targetCollections.onNotification.add || []);
+
+      this.mergeStep.targetCollections.onArchive = this.mergeStep.targetCollections.onArchive || {};
+      this.mergeStep.targetCollections.onArchive.add = [`sm-${targetEntityTitle}-archived`].concat(this.mergeStep.targetCollections.onArchive.add || []);
+      this.mergeStep.targetCollections.onArchive.remove = [`sm-${targetEntityTitle}-mastered`, targetEntityTitle].concat(this.mergeStep.targetCollections.onArchive.remove || []);
+
+      this.mergeStep.targetCollections.onAuditing = this.mergeStep.targetCollections.onAuditing || {};
+      this.mergeStep.targetCollections.onAuditing.add = [`sm-${targetEntityTitle}-auditing`].concat(this.mergeStep.targetCollections.onAuditing.add || []);
     }
     if (!this._model) {
       this._model = new common.GenericMatchModel(this.mergeStep, {collection: targetEntityType ? targetEntityType.substring(targetEntityType.lastIndexOf("/") + 1):null});
@@ -315,24 +334,18 @@ class Mergeable {
     let eventName = null;
     switch (actionDetails.action) {
       case "merge" :
-        contentObject.context.collections.push(`sm-${targetEntity}-merged`);
-        contentObject.context.collections.push(`sm-${targetEntity}-mastered`);
         eventName = "onMerge";
         break;
       case "notify":
-        contentObject.context.collections.push(`sm-${targetEntity}-notification`);
         eventName = "onNotification";
         break;
       case "archive":
-        contentObject.context.collections.push(`sm-${targetEntity}-archived`);
         eventName = "onArchive";
         break;
       case "audit":
-        contentObject.context.collections.push(`sm-${targetEntity}-auditing`);
         eventName = "onAuditing";
         break;
       case "no-action":
-        contentObject.context.collections.push(`sm-${targetEntity}-mastered`);
         eventName = "onNoMatch";
         break;
       default:
