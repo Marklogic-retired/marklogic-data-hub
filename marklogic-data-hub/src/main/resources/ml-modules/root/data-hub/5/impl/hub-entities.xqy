@@ -893,12 +893,16 @@ declare function hent:json-schema-generate($entity-title as xs:string, $uber-mod
     let $property-items := $property => map:get("items")
     let $datatype := $property => map:get("datatype")
     let $_set-types := (
-      $property => map:put("type", if ($datatype = $number-types) then "number" else if ($datatype = $string-types) then "string" else $datatype),
+      if (fn:exists($datatype)) then
+        $property => map:put("type", if ($datatype = $number-types) then "number" else if ($datatype = $string-types) then "string" else $datatype)
+      else (),
       $property => map:delete("datatype"),
       if ($property-items instance of map:map) then (
-        let $items-datatype := $property => map:get("datatype")
+        let $items-datatype := $property-items => map:get("datatype")
         return (
-          $property-items => map:put("type", if ($items-datatype = $number-types) then "number" else if ($items-datatype = $string-types) then "string" else $datatype),
+          if (fn:exists($items-datatype)) then
+            $property-items => map:put("type", if ($items-datatype = $number-types) then "number" else if ($items-datatype = $string-types) then "string" else $items-datatype)
+          else (),
           $property-items => map:delete("datatype"))
       ) else ()
     )
