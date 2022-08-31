@@ -36,16 +36,16 @@ describe("Validate E2E Mastering Flow", () => {
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
-    cy.waitForAsyncRequest();
+    //Saving Local Storage to preserve session
+    cy.saveLocalStorage();
   });
   beforeEach(() => {
-    cy.loginAsDeveloper().withRequest();
-    cy.intercept("/api/jobs/**").as("getJobs");
-    cy.waitForAsyncRequest();
+    //Restoring Local Storage to Preserve Session
+    cy.restoreLocalStorage();
   });
   afterEach(() => {
-    cy.resetTestUser();
-    cy.waitForAsyncRequest();
+    // update local storage
+    cy.saveLocalStorage();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();

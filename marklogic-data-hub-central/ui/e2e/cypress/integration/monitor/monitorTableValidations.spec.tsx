@@ -19,20 +19,17 @@ describe("Monitor Tile", () => {
     //Saving Local Storage to preserve session
     cy.saveLocalStorage();
   });
-
   beforeEach(() => {
-    cy.loginAsTestUserWithRoles("hub-central-job-monitor").withRequest();
-    cy.waitUntil(() => toolbar.getMonitorToolbarIcon()).click();
-    monitorPage.waitForMonitorTableToLoad();
     //Restoring Local Storage to Preserve Session
     cy.restoreLocalStorage();
+    cy.visit("/");
+    cy.waitUntil(() => toolbar.getMonitorToolbarIcon()).should("be.visible").click({force: true});
+    monitorPage.waitForMonitorTableToLoad();
   });
-
   afterEach(() => {
     // update local storage
     cy.saveLocalStorage();
   });
-
   after(() => {
     cy.resetTestUser();
     cy.waitForAsyncRequest();
@@ -63,7 +60,7 @@ describe("Monitor Tile", () => {
     });
 
     cy.log("**click first column to get ASC order and get jod id data**");
-    monitorPage.getOrderColumnMonitorTable("Step Name").scrollIntoView().click().then(() => {
+    monitorPage.getOrderColumnMonitorTable("Step Name").scrollIntoView().should("be.visible").click({force: true}).then(() => {
       monitorPage.getTableRows().then(($els) => {
         return (
           Cypress.$.makeArray($els)
@@ -81,7 +78,7 @@ describe("Monitor Tile", () => {
     monitorPage.getTableNestedRows().should("be.visible");
 
     cy.log("**click second column to get ASC order and get step type data**");
-    monitorPage.getOrderColumnMonitorTable("Step Type").scrollIntoView().click().then(() => {
+    monitorPage.getOrderColumnMonitorTable("Step Type").scrollIntoView().should("be.visible").click({force: true}).then(() => {
       monitorPage.getRowData(firstPageTableCellsJobId, "stepType").then(($row) => {
         Cypress.$.makeArray($row)
           .map((el) => firstPageTableCellsStepType.push(el.innerText.toString().replace(/\t/g, "").split("\r\n")));
@@ -308,15 +305,21 @@ describe("Monitor Tile", () => {
   });
 
   it("apply facet search and verify docs", () => {
+    // There's a re-render.
+    cy.wait(1500);
     monitorPage.validateAppliedFacetTableRows("step-type", 1);
   });
 
   it("apply facet search and clear individual grey facet", () => {
     monitorPage.getExpandAllTableRows().scrollIntoView().click({force: true});
+    // There's a re-render.
+    cy.wait(1500);
     monitorPage.validateClearGreyFacet("step-type", 0);
   });
 
   it("apply facet search and clear all grey facets", () => {
+    // There's a re-render.
+    cy.wait(1000);
     monitorPage.validateGreyFacet("step-type", 0);
     monitorPage.validateGreyFacet("flow", 0);
     browsePage.getClearGreyFacets().click();
@@ -326,6 +329,8 @@ describe("Monitor Tile", () => {
     //verify no facets selected case.
     browsePage.getClearAllFacetsButton().should("be.disabled");
     browsePage.getApplyFacetsButton().should("be.disabled");
+    // There's a re-render.
+    cy.wait(1000);
     //verify selecting facets case.
     monitorPage.validateGreyFacet("step-type", 0);
     browsePage.getClearAllFacetsButton().should("not.be.disabled");
@@ -344,6 +349,8 @@ describe("Monitor Tile", () => {
   });
 
   it("Verify step status faceting", () => {
+    // There's a re-render.
+    cy.wait(1000);
     monitorSidebar.verifyFacetCategory("status");
 
     cy.log("**verify status faceting**");
@@ -367,7 +374,9 @@ describe("Monitor Tile", () => {
   it("Verify job ID link opens status modal", () => {
 
     cy.log("*** open status modal via jobs link ***");
-    monitorPage.getAllJobIdLink().first().click();
+    // There's a re-render.
+    cy.wait(1000);
+    monitorPage.getAllJobIdLink().first().should("be.visible").click();
     runPage.getFlowStatusModal().should("be.visible");
 
     cy.log("*** verify step result content inside status modal ***");

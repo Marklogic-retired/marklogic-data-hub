@@ -32,14 +32,16 @@ describe("Validate persistence across Hub Central", () => {
     LoginPage.postLogin();
     //Setup hubCentral config for testing
     cy.setupHubCentralConfig();
+    //Saving Local Storage to preserve session
+    cy.saveLocalStorage();
   });
   beforeEach(() => {
-    cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-match-merge-writer", "hub-central-mapping-writer", "hub-central-load-writer", "hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
-    cy.waitForAsyncRequest();
+    //Restoring Local Storage to Preserve Session
+    cy.restoreLocalStorage();
   });
   afterEach(() => {
-    cy.resetTestUser();
-    cy.waitForAsyncRequest();
+    // update local storage
+    cy.saveLocalStorage();
   });
   after(() => {
     cy.resetTestUser();
@@ -324,7 +326,7 @@ describe("Validate persistence across Hub Central", () => {
     cy.waitForAsyncRequest();
 
     cy.log("**Add a new property to the Entity**");
-    propertyTable.getAddPropertyButton(entityName).should("be.visible").click();
+    propertyTable.getAddPropertyButton(entityName).scrollIntoView().should("be.visible").click();
     propertyModal.newPropertyName(propertyName);
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("string").click();
