@@ -258,7 +258,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
   it("Verify mapping step with duplicate name cannot be created", () => {
     //Go back to curate homepage
     cy.visit("/");
-    toolbar.getCurateToolbarIcon().click();
+    toolbar.getCurateToolbarIcon().should("be.visible").click();
     curatePage.toggleEntityTypeId("Order");
     curatePage.addNewStep("Order").should("be.visible").click({force: true});
     createEditMappingDialog.setMappingName(mapStep);
