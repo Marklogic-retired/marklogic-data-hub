@@ -18,12 +18,14 @@ describe("Monitor Tile", () => {
   });
   beforeEach(() => {
     //Restoring Local Storage to Preserve Session
-    Cypress.Cookies.preserveOnce("HubCentralSession");
     cy.restoreLocalStorage();
     cy.waitUntil(() => toolbar.getMonitorToolbarIcon()).click();
     monitorPage.waitForMonitorTableToLoad();
   });
-
+  afterEach(() => {
+    // update local storage
+    cy.saveLocalStorage();
+  });
   after(() => {
     cy.resetTestUser();
     cy.waitForAsyncRequest();

@@ -243,6 +243,7 @@ describe("Entity Type Settings Modal", () => {
     });
 
     cy.log("**Click on customer node and verify that label in side bar**");
+    cy.wait(2000);
     graphExplore.stopStabilization();
     graphExplore.focusNode(ExploreGraphNodes.CUSTOMER_102);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {

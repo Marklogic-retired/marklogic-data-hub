@@ -43,7 +43,9 @@ class MonitorPage {
   }
 
   selectAndApplyFacet(testId:string, index:number) {
-    cy.get(`[data-testid=${testId}-facet] input`).eq(index).check();
+    // BUG: The page it's re-rendering twice. There's no request to intercept.
+    cy.wait(1000);
+    cy.get(`[data-testid=${testId}-facet] input`).eq(index).should("be.visible").check();
     cy.findByTestId("facet-apply-button").click({force: true});
   }
 
