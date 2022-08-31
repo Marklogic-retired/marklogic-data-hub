@@ -115,9 +115,7 @@ assertions.push(
 // to make some update to collections on every document that it processes.
 const incomingCustomer = hubTest.getRecord("/incomingCustomer.json");
 assertions.push(
-  test.assertTrue(incomingCustomer.collections.includes("Customer"), 
-    "Customer should have been added by the mapping step"),
-  test.assertTrue(incomingCustomer.collections.includes("merged-customer"), 
+  test.assertTrue(incomingCustomer.collections.includes("merged-customer"),
     "merged-customer should have been added by the merging step"),
   test.assertTrue(incomingCustomer.collections.includes("sm-Customer-archived"))
 );
