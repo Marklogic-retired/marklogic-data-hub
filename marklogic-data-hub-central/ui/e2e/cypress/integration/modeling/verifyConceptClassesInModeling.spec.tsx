@@ -86,8 +86,6 @@ describe("Concept classes in Modeling screen", () => {
     graphView.addNewRelationship().should("be.visible").click({force: true});
     graphView.verifyEditInfoMessage().should("exist");
 
-    modelPage.scrollPageBottom();
-
     // the graph needs to stabilize before we interact with it
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
       let ProductCoordinates: any = nodePositions["Product"];
@@ -325,29 +323,29 @@ describe("Concept classes in Modeling screen", () => {
     conceptClassModal.getAddButton().should("not.exist");
 
     //verify color and icon is reflected in the table
-    modelPage.getColorSelected("TestConcept", "#d5d3dd").should("exist");
+    modelPage.getColorSelected("TestConcept", "#d5d3dd").scrollIntoView().should("exist");
     modelPage.getIconSelected("TestConcept", "FaAccessibleIcon").should("exist");
 
     cy.log("**Edit concept class and verify that its updated**");
-    entityTypeTable.getConceptClass("TestConcept").click();
+    entityTypeTable.getConceptClass("TestConcept").scrollIntoView().click();
     conceptClassModal.clearConceptClassDescription();
     conceptClassModal.newConceptClassDescription("Description has changed");
     cy.waitUntil(() => conceptClassModal.getAddButton().click());
     conceptClassModal.getAddButton().should("not.exist");
     // check edited concept class description
-    entityTypeTable.getConceptClass("TestConcept").click();
+    entityTypeTable.getConceptClass("TestConcept").scrollIntoView().click();
     conceptClassModal.getConceptClassDescription().should("have.value", "Description has changed");
     conceptClassModal.getCancelButton().click();
 
-    cy.log("Verify that navigate to graph view link works for concept class in the table view");
+    cy.log("**Verify that navigate to graph view link works for concept class in the table view**");
     entityTypeTable.viewEntityInGraphView("TestConcept");
     graphViewSidePanel.getDeleteIcon("TestConcept").should("exist");
     graphViewSidePanel.getSelectedEntityHeading("TestConcept").should("exist");
 
-    cy.log("Delete concept class from Table view and verify that it is not available anymore");
+    cy.log("**Delete concept class from Table view and verify that it is not available anymore**");
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
-    entityTypeTable.getDeleteConceptClassIcon("TestConcept").should("be.visible").click({force: true});
+    entityTypeTable.getDeleteConceptClassIcon("TestConcept").scrollIntoView().should("be.visible").click({force: true});
     confirmationModal.getDeleteConceptClassText().should("exist");
     confirmationModal.getYesButton(ConfirmationType.DeleteConceptClass);
     confirmationModal.getDeleteConceptClassText().should("not.exist");
