@@ -40,7 +40,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
   } = props;
   const [expandedNodeData, setExpandedNodeData] = useState({});
   let graphData = {nodes: [], edges: []};
-  const [menuPosition, setMenuPosition] = useState<{x: number, y: number}>({x: 0, y: 0});
+  const [menuPosition, setMenuPosition] = useState<{ x: number, y: number }>({x: 0, y: 0});
   const [physicsEnabled, setPhysicsEnabled] = useState(false);
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
   const [clickedNode, setClickedNode] = useState({});
@@ -391,14 +391,14 @@ const GraphVisExplore: React.FC<Props> = (props) => {
               ctx.fillStyle = defaultColor;
 
               ctx.drawImage(img, x - 12, imagePositionY, 24, 24);
-
               let customLabel = e.count >= 2 ? entityType : nodeLabel;
               ctx.fillText(customLabel, x, y + 10);
-            }
-            if (e.hasRelationships && !isExpandedLeaf(nodeId)) {
-              ctx.font = "14pt calibre";
-              ctx.fillStyle = "#777";
-              ctx.fillText("...", x, imagePositionY + 50);
+
+              if (e.hasRelationships && !isExpandedLeaf(nodeId)) {
+                let imgLeaf = new Image();
+                imgLeaf.src = `data:image/svg+xml,${encodeURIComponent(renderToStaticMarkup(createElement(FontIcon["FaProjectDiagram"])))}`;
+                ctx.drawImage(imgLeaf, x - 7, y + 18, 14, 14);
+              }
             }
             if (e.count >= 2 && displayLabel) {
               //Creating the group node badge
