@@ -38,8 +38,8 @@ fn.head(hubUtils.invokeFunction(function() {
     if(latestJob) {
       latestJob = latestJob.toObject();
       let stepRunResponses = latestJob.job.stepResponses;
-      if (stepRunResponses && Object.values(stepRunResponses).length > 0) {
-        let stepRunResponse = Object.values(stepRunResponses).find(
+      if (stepRunResponses && hubUtils.getObjectValues(stepRunResponses).length > 0) {
+        let stepRunResponse = hubUtils.getObjectValues(stepRunResponses).find(
           (el) => el.stepName === step.stepName
         );
         if (stepRunResponse) {

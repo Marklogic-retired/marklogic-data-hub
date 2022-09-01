@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <search:options xml:lang="zxx" xmlns:search="http://marklogic.com/appservices/search">
   <search:constraint name="Collection">
     <search:collection/>
@@ -60,22 +61,6 @@
       <search:facet-option>limit=25</search:facet-option>
     </search:range>
   </search:constraint>
-  <search:constraint name="Restaurants">
-    <search:container>
-      <search:json-property>Restaurants</search:json-property>
-    </search:container>
-  </search:constraint>
-  <search:constraint name="Restaurants-xml">
-    <search:container>
-      <search:element ns="" name="Restaurants"/>
-    </search:container>
-  </search:constraint>
-  <search:constraint name="Restaurants.Restaurant_Name">
-    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
-      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Restaurants/Restaurant_Name</search:path-index>
-      <search:facet-option>limit=25</search:facet-option>
-    </search:range>
-  </search:constraint>
   <search:constraint name="Emergency_Services">
     <search:container>
       <search:json-property>Emergency_Services</search:json-property>
@@ -95,6 +80,22 @@
   <search:constraint name="Emergency_Services.Distance_Miles">
     <search:range type="xs:decimal" facet="true">
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Emergency_Services/Distance_Miles</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="Restaurants">
+    <search:container>
+      <search:json-property>Restaurants</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Restaurants-xml">
+    <search:container>
+      <search:element ns="" name="Restaurants"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Restaurants.Restaurant_Name">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Restaurants/Restaurant_Name</search:path-index>
       <search:facet-option>limit=25</search:facet-option>
     </search:range>
   </search:constraint>
@@ -185,16 +186,6 @@
       <search:element ns="" name="PropertyInfo"/>
     </search:container>
   </search:constraint>
-  <search:constraint name="Pharmacy">
-    <search:container>
-      <search:json-property>Pharmacy</search:json-property>
-    </search:container>
-  </search:constraint>
-  <search:constraint name="Pharmacy-xml">
-    <search:container>
-      <search:element ns="" name="Pharmacy"/>
-    </search:container>
-  </search:constraint>
   <search:constraint name="Hospitals">
     <search:container>
       <search:json-property>Hospitals</search:json-property>
@@ -203,6 +194,16 @@
   <search:constraint name="Hospitals-xml">
     <search:container>
       <search:element ns="" name="Hospitals"/>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Pharmacy">
+    <search:container>
+      <search:json-property>Pharmacy</search:json-property>
+    </search:container>
+  </search:constraint>
+  <search:constraint name="Pharmacy-xml">
+    <search:container>
+      <search:element ns="" name="Pharmacy"/>
     </search:container>
   </search:constraint>
   <search:constraint name="Post_Offices">
@@ -791,11 +792,6 @@
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Factories/Name</search:path-index>
     </search:range>
   </search:tuples>
-  <search:values name="Restaurants">
-    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
-      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Restaurants/Restaurant_Name</search:path-index>
-    </search:range>
-  </search:values>
   <search:tuples name="Emergency_Services">
     <search:range type="xs:decimal" facet="true">
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Emergency_Services/Area_ID</search:path-index>
@@ -804,6 +800,11 @@
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Emergency_Services/Distance_Miles</search:path-index>
     </search:range>
   </search:tuples>
+  <search:values name="Restaurants">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Restaurants/Restaurant_Name</search:path-index>
+    </search:range>
+  </search:values>
   <search:values name="Environmental_Risk">
     <search:range type="xs:decimal" facet="true">
       <search:path-index xmlns:es="http://marklogic.com/entity-services">/(es:envelope|envelope)/(es:instance|instance)/Environmental_Risk/Area_ID</search:path-index>
@@ -924,7 +925,7 @@
   <search:search-option>unfiltered</search:search-option>
   <!--Modify document extraction to change results returned-->
   <search:extract-document-data selected="include">
-    <search:extract-path xmlns:es="http://marklogic.com/entity-services" xmlns:cwsh="http://carwashes.org/" xmlns:crvs="http://carservices.com/" xmlns:gstn="http://gasstations.org/" xmlns:awse="http://Areawise.org/">//*:instance/(cwsh:Car_Wash_NS_XML|Factories|Restaurants|Emergency_Services|Environmental_Risk|Locations_Near|LandDetails|ShopsDetails|Bank|Dog_Parks|PropertyInfo|Pharmacy|Hospitals|Post_Offices|Property_Details|Annual_Climatic_Conditions|TenantDetails|Hiking_Places|crvs:Car_Services_NS_XML|Air_Bnb_Listings|USZips|StreetAddress|Swimming_Pools|Car_Wash|Hotels|Colleges|PropertyDetails|Lands|Storage_Spaces|Commercial_Properties|Gyms|Airports|Shopping_Centers|Theatres|Urgent_Cares|Demographics|Car_Services|Military_Base|Public_Schools|gstn:Gas_Stations_NS_XML|Local_Legal_Protections|Parks_and_Recreation|Pollution_Quality_Index|PropertyAddress|awse:Ratings_NS_XML|MultipleProperties|Car_Rentals|Ratings|Gas_Stations|Day_Cares|Private_Schools)</search:extract-path>
+    <search:extract-path xmlns:es="http://marklogic.com/entity-services" xmlns:cwsh="http://carwashes.org/" xmlns:crvs="http://carservices.com/" xmlns:gstn="http://gasstations.org/" xmlns:awse="http://Areawise.org/">//*:instance/(cwsh:Car_Wash_NS_XML|Factories|Emergency_Services|Restaurants|Environmental_Risk|Locations_Near|LandDetails|ShopsDetails|Bank|Dog_Parks|PropertyInfo|Hospitals|Pharmacy|Post_Offices|Property_Details|Annual_Climatic_Conditions|TenantDetails|Hiking_Places|crvs:Car_Services_NS_XML|Air_Bnb_Listings|USZips|StreetAddress|Swimming_Pools|Car_Wash|Hotels|Colleges|PropertyDetails|Lands|Storage_Spaces|Commercial_Properties|Gyms|Airports|Shopping_Centers|Theatres|Urgent_Cares|Demographics|Car_Services|Military_Base|Public_Schools|gstn:Gas_Stations_NS_XML|Local_Legal_Protections|Parks_and_Recreation|Pollution_Quality_Index|PropertyAddress|awse:Ratings_NS_XML|MultipleProperties|Car_Rentals|Ratings|Gas_Stations|Day_Cares|Private_Schools)</search:extract-path>
   </search:extract-document-data>
   <!--Change or remove this additional-query to broaden search beyond entity instance documents-->
   <!--To return facets, change this option to 'true' and edit constraints-->

@@ -15,9 +15,9 @@
           "datatype": "dateTime"
         },
         "orderedBy": {
-          "datatype": "integer",
+          "datatype": "string",
           "relatedEntityType": "http://example.org/Customer-0.0.1/Customer",
-          "joinPropertyName": "customerId"
+          "joinPropertyName": "FirstName"
         },
         "deliveredTo": {
           "datatype": "integer"
