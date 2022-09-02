@@ -134,11 +134,7 @@ function publishDraftConcepts() {
   const draftModels = hubUtils.invokeFunction(() => cts.search(cts.collectionQuery(consts.DRAFT_CONCEPT_COLLECTION)), xdmp.databaseName(xdmp.database()));
   hubUtils.hubTrace(consts.TRACE_CONCEPT,`Publishing draft models: ${xdmp.toJsonString(draftModels)}`);
   const inMemoryModelsUpdated = {};
-  const inMemoryEntityUpdated = {};
-  const urisOfModelsBeingDeleted = draftModels.toArray()
-    .map((model) => model.toObject())
-    .filter((modelObject) => modelObject.info.draftDeleted)
-    .map((modelObject) => getConceptModelUri(modelObject.info.name));
+
 
   for (const draftModel of draftModels) {
     let modelObject = draftModel.toObject();
@@ -151,14 +147,7 @@ function publishDraftConcepts() {
       deleteModel(modelObject.info.name);
       hubUtils.hubTrace(consts.TRACE_CONCEPT,`deleted draft model: ${conceptClassName}`);
 
-      hubUtils.hubTrace(consts.TRACE_CONCEPT,`deleting draft model references: ${conceptClassName}`);
-      const entityURIsToIgnore = urisOfModelsBeingDeleted.concat([conceptModelUri]);
 
-      // update models in memory with necessary reference updates
-      otherModelsWithConceptReferencesRemoved(entityURIsToIgnore, conceptClassName, inMemoryEntityUpdated).forEach((model) => {
-        inMemoryEntityUpdated[model.info.title] = model;
-      });
-      hubUtils.hubTrace(consts.TRACE_CONCEPT,`deleted draft model references: ${modelObject.info.name}`);
 
     } else {
       // if the draft changes aren't already picked up by reference updates, add them here.
@@ -174,11 +163,6 @@ function publishDraftConcepts() {
     hubUtils.hubTrace(consts.TRACE_CONCEPT,`draft model written: ${modelName}`);
   }
 
-  for (const entityName in inMemoryEntityUpdated) {
-    hubUtils.hubTrace(consts.TRACE_CONCEPT,`writing draft model: ${entityName}`);
-    entityLib.writeModel(entityName, inMemoryEntityUpdated[entityName]);
-    hubUtils.hubTrace(consts.TRACE_CONCEPT,`draft model written: ${entityName}`);
-  }
   const deleteDraftsOperation = () => {
     hubUtils.hubTrace(consts.TRACE_CONCEPT,"deleting draft collection");
     xdmp.collectionDelete(consts.DRAFT_CONCEPT_COLLECTION);
