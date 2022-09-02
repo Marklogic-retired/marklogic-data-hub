@@ -21,6 +21,11 @@
         top: 0px;
         z-index: 9;
     }
+    .titleContainer {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
     .title {
         font-size: 42px;
         font-weight: bold;
@@ -300,9 +305,8 @@ a {
     color: $text-color;
 }
 .infoBulbIcon {
-    float: right;
-    margin-top: -2vh;
-    margin-right: 1vw;
+    line-height: 1.4;
+    margin-top: 10px;
 }
 .homeInfoPopover {
     background-color: $item-light;
