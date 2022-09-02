@@ -18,6 +18,7 @@
         "baseUri": "http://example.org/"
       },
       "Product": {
+        "uuid": "28bbf4e6-45ea-49b6-a347-656e98dfcdb5",
         "productId": 70,
         "productName": "name 70",
         "category": "Basketball Shoes"
