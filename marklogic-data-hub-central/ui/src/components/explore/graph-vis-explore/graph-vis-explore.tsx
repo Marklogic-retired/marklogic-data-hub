@@ -887,7 +887,8 @@ const GraphVisExplore: React.FC<Props> = (props) => {
   };
 
   const isLeafNode = () => {
-    return clickedNode && clickedNode["hasRelationships"];
+    const currentEntityTypeSelected = clickedNode["entityName"];
+    return clickedNode && !isGroupNode() && !searchOptions.entityTypeIds.includes(currentEntityTypeSelected);
   };
 
   const isClusterFocused = () => {
@@ -911,7 +912,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
             Open related {entityType} records in a table
           </div>
         }
-        {isLeafNode() && !isExpandedLeaf() &&
+        {isLeafNode() &&
           <div id="showRelated" key="2" className={styles.contextMenuItem}>
             Show related
           </div>

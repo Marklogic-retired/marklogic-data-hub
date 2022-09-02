@@ -1,0 +1,8 @@
+{
+  "functionName" : "getModelRelationships",
+  "return" : {
+    "datatype" : "jsonDocument",
+    "$javaClass" : "com.fasterxml.jackson.databind.JsonNode",
+    "desc" : "The relationships between entity models"
+  }
+}

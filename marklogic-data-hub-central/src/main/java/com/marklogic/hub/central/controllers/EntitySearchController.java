@@ -62,6 +62,12 @@ public class EntitySearchController extends BaseController {
         return getEntitySearchService(database).getRecord(docUri);
     }
 
+    @RequestMapping(value = "/relationships", method = RequestMethod.GET)
+    @ResponseBody
+    public JsonNode getModelRelationships(@RequestParam(defaultValue = "final") String database) {
+        return getEntitySearchService(database).getModelRelationships();
+    }
+
     @RequestMapping(value = "/facet-values", method = RequestMethod.POST)
     @ResponseBody
     @ApiImplicitParam(name = "facetValuesQuery", required = true, paramType = "body", dataTypeClass = FacetValuesQuery.class)

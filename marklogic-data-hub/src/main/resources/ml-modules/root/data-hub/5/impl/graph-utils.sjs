@@ -2,17 +2,17 @@
  Copyright (c) 2021 MarkLogic Corporation
 
  Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
 
-http://www.apache.org/licenses/LICENSE-2.0
+ http://www.apache.org/licenses/LICENSE-2.0
 
-  Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-limitations under the License.
-*/
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 
 'use strict';
 
@@ -90,6 +90,16 @@ function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predic
             }
         }
         GROUP BY ?subjectIRI ?predicateIRI ?predicateLabel
+      } UNION {
+        SELECT ?subjectIRI ?predicateIRI ?predicateLabel (MIN(?objectIRI) AS ?firstObjectIRI) (MIN(?docURI) AS ?firstDocURI) (COUNT(DISTINCT(?objectIRI)) AS ?nodeCount) WHERE {
+            ?objectIRI rdf:type @entityTypeOrConceptIRI;
+            rdfs:isDefinedBy ?docURI.
+            ?objectIRI ?predicateIRI ?subjectIRI.
+            OPTIONAL {
+              ?predicateIRI @labelIRI ?predicateLabel.
+            }
+        }
+        GROUP BY ?subjectIRI ?predicateIRI ?predicateLabel
       }
       }
   `);
@@ -141,17 +151,27 @@ function getEntityNodes(entityTypeIRI, predicateIRI, relatedTypeIRIs, limit) {
       SELECT * WHERE {
       {
         SELECT ?subjectIRI ?docURI ?predicateIRI ?predicateLabel ?objectIRI (COUNT(?objectIRI) AS ?nodeCount) WHERE {
-            ?objectIRI rdf:type @relatedTypeIRIs;
-            rdfs:isDefinedBy ?docURI.
-            ?subjectIRI ?predicateIRI ?objectIRI.
-            OPTIONAL {
-              ?predicateIRI @labelIRI ?predicateLabel.
+            {
+              ?objectIRI rdf:type @relatedTypeIRIs;
+              rdfs:isDefinedBy ?docURI.
+              ?subjectIRI ?predicateIRI ?objectIRI.
+              OPTIONAL {
+                ?predicateIRI @labelIRI ?predicateLabel.
+              }
+            } UNION {
+              ?objectIRI rdf:type @relatedTypeIRIs;
+              rdfs:isDefinedBy ?docURI.
+              ?objectIRI ?predicateIRI ?subjectIRI.
+              OPTIONAL {
+                ?predicateIRI @labelIRI ?predicateLabel.
+              }
             }
+            FILTER isIRI(?subjectIRI)
         }
         GROUP BY ?subjectIRI ?predicateIRI ?predicateLabel ?objectIRI
       }
       }
-  `).where(op.eq(op.col('subjectIRI'), entityTypeIRI)).where(op.eq(op.col('predicateIRI'), predicateIRI)).limit(limit);
+  `).where(op.eq(op.col('subjectIRI'), sem.iri(entityTypeIRI))).where(op.eq(op.col('predicateIRI'), sem.iri(predicateIRI))).limit(limit);
   return subjectPlan.result(null, {relatedTypeIRIs: relatedTypeIRIs.concat(getRdfConceptTypes()), labelIRI: getOrderedLabelPredicates()}).toArray();
 
 }
@@ -161,13 +181,22 @@ function getEntityNodesExpandingConcept(entityTypeIRIs, objectConceptIRI, limit)
   const getNodeByConcept =  op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                  SELECT ?subjectIRI ?predicateIRI ?objectIRI (?objectIRI AS ?objectConcept) ?docURI  WHERE {
+                    {
                         ?subjectIRI rdf:type @entityTypeIRIs;
                         ?predicateIRI  ?objectIRI;
                         rdfs:isDefinedBy ?docURI.
                         FILTER EXISTS {
-                        ?subjectIRI ?predicateIRI @objectConceptIRI.
+                            ?subjectIRI ?predicateIRI @objectConceptIRI.
                         }
-                        }`).limit(limit);
+                    } UNION {
+                        ?objectIRI rdf:type @entityTypeIRIs;
+                            ?predicateIRI  ?subjectIRI.
+                        ?subjectIRI rdfs:isDefinedBy ?docURI.
+                        FILTER EXISTS {
+                            @objectConceptIRI ?predicateIRI ?subjectIRI.
+                        }
+                    }
+                 }`).limit(limit);
   return getNodeByConcept .result(null, {objectConceptIRI, entityTypeIRIs }).toArray();
 
 }
@@ -178,12 +207,19 @@ function getEntityNodesBySubject(entityTypeIRI, relatedEntityTypeIRIs, limit) {
       PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
       SELECT * WHERE {
       {
-        SELECT ?subjectIRI ?docURI ?predicateIRI ?predicateLabel (MIN(?objectIRI) AS ?firstObjectIRI) (MIN(?docURI) AS ?firstDocURI) (COUNT(DISTINCT(?objectIRI)) AS ?nodeCount) WHERE {
-            ?objectIRI rdf:type @entityTypeOrConceptIRI.
-            @entityTypeIRI ?predicateIRI ?objectIRI;
-            rdfs:isDefinedBy ?docURI.
-            OPTIONAL {
-              ?predicateIRI @labelIRI ?predicateLabel.
+        SELECT ?subjectIRI ?predicateIRI ?predicateLabel (MIN(?objectIRI) AS ?firstObjectIRI) (COUNT(DISTINCT(?objectIRI)) AS ?nodeCount) WHERE {
+            {
+              ?objectIRI rdf:type @entityTypeOrConceptIRI.
+              @entityTypeIRI ?predicateIRI ?objectIRI.
+              OPTIONAL {
+                ?predicateIRI @labelIRI ?predicateLabel.
+              }
+            } UNION {
+              ?objectIRI rdf:type @entityTypeOrConceptIRI;
+                ?predicateIRI @entityTypeIRI.
+              OPTIONAL {
+                ?predicateIRI @labelIRI ?predicateLabel.
+              }
             }
         }
         GROUP BY ?subjectIRI ?predicateIRI ?predicateLabel
@@ -195,17 +231,25 @@ function getEntityNodesBySubject(entityTypeIRI, relatedEntityTypeIRIs, limit) {
       PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
       PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
       SELECT * WHERE {
-      {
-        SELECT DISTINCT(?subjectIRI AS ?subjectNew) (?docURI AS ?docRelated)  WHERE {
-            ?subjectIRI rdf:type @entityTypeOrConceptIRI.
-            ?subjectIRI ?predicateIRI ?objectIRI;
-            rdfs:isDefinedBy ?docURI.
-            OPTIONAL {
-              ?predicateIRI @labelIRI ?predicateLabel.
-            }
+        {
+          SELECT DISTINCT(?subjectIRI AS ?subjectNew) (?docURI AS ?docRelated)  WHERE {
+              ?subjectIRI rdf:type @entityTypeOrConceptIRI;
+                ?predicateIRI ?objectIRI;
+                rdfs:isDefinedBy ?docURI.
+              OPTIONAL {
+                ?predicateIRI @labelIRI ?predicateLabel.
+              }
+          }
+        } UNION {
+          SELECT DISTINCT(?subjectIRI AS ?subjectNew) (?docURI AS ?docRelated)  WHERE {
+              ?objectIRI rdf:type @entityTypeOrConceptIRI;
+                ?predicateIRI ?subjectIRI.
+              ?subjectIRI rdfs:isDefinedBy ?docURI.
+              OPTIONAL {
+                ?predicateIRI @labelIRI ?predicateLabel.
+              }
+          }
         }
-
-      }
       }
   `)
 
@@ -220,7 +264,7 @@ function getRelatedEntitiesCounting(allRelatedPredicateList,ctsQueryCustom) {
   /* TODO: Investigate why mapping bindings for predicates weren't giving accurate docUri count */
   const totalCountRelated = sem.sparql(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-SELECT (COUNT(DISTINCT(?docUri)) as ?total) WHERE {
+SELECT (COUNT(?docUri) as ?total) WHERE {
     ?s ${allRelatedPredicateList.map(pred => `<${fn.string(pred)}>`).join("|")} ?o.
     ?o rdfs:isDefinedBy ?docUri.
 } `, {}, [], ctsQueryCustom);
@@ -294,9 +338,15 @@ function getRelatedEntityInstancesCount(semanticConceptIRI) {
   const relatedEntityInstancesCount = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
     SELECT (COUNT(DISTINCT(?subjectIRI)) AS ?total) ?entityTypeIRI  WHERE {
-    ?subjectIRI ?p @semanticConceptIRI;
-     rdf:type ?entityTypeIRI.
-      ?entityTypeIRI rdf:type <http://marklogic.com/entity-services#EntityType>
+        {
+            ?subjectIRI ?p @semanticConceptIRI;
+                rdf:type ?entityTypeIRI.
+            ?entityTypeIRI rdf:type <http://marklogic.com/entity-services#EntityType>.
+        } UNION {
+            @semanticConceptIRI ?p ?subjectIRI.
+            ?subjectIRI rdf:type ?entityTypeIRI.
+            ?entityTypeIRI rdf:type <http://marklogic.com/entity-services#EntityType>.
+        }
     }
     GROUP BY ?entityTypeIRI`
   )

@@ -76,6 +76,23 @@ resultsTest4.nodes.forEach(node => {
   }
 })
 
+// The relationship is defined in BabyRegistry model. But when searched for Customer, since there is a relation between
+// Customer and Baby Registry, BabyRegistry's related nodes and edges should be returned.
+const customerQuery = {
+  "searchText": "",
+  "entityTypeIds": [ "Customer" ],
+  "relatedEntityTypeIds": ["BabyRegistry"],
+  "selectedFacets": {}
+};
+const resultsTest6 = searchNodes(customerQuery);
+assertions.concat([
+  test.assertEqual(2, resultsTest6.total),
+  test.assertEqual(2, resultsTest6.nodes.length, xdmp.toJsonString(resultsTest6)),
+  test.assertEqual(1, resultsTest6.edges.length),
+  test.assertEqual("http://example.org/Customer-0.0.1/Customer/301", resultsTest6.edges[0]["from"]),
+  test.assertEqual("http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/3039-42", resultsTest6.edges[0]["to"])
+]);
+
 
 const nodeLeafQuery = {
   "searchText": "",

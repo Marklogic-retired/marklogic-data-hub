@@ -52,8 +52,8 @@ const resultsTest2 = nodeExpand(expandQuery2);
 
 assertions.concat([
   test.assertEqual(7, resultsTest2.total),
-  test.assertEqual(2, resultsTest2.nodes.length, xdmp.toJsonString(resultsTest2)),
-  test.assertEqual(2, resultsTest2.edges.length)
+  test.assertEqual(3, resultsTest2.nodes.length, xdmp.toJsonString(resultsTest2)),
+  test.assertEqual(3, resultsTest2.edges.length)
 ]);
 
 

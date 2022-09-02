@@ -44,6 +44,7 @@ interface Props {
   setCurrentRelatedEntities: (entity: Map<string, any>) => void;
   entityIndicatorData: any;
   entitiesWithRelatedConcepts: any;
+  entityRelationships: any;
 }
 
 const PLACEHOLDER: string = "Select a saved query";
@@ -122,7 +123,8 @@ const Sidebar: React.FC<Props> = (props) => {
     let relatedEntitiesList = new Map();
     if (props.currentBaseEntities.length !== props.entityDefArray.length) {
       props.currentBaseEntities.forEach(base => {
-        base.relatedEntities.map(entityName => {
+        let entityName = base["name"];
+        props.entityRelationships[entityName].map(entityName => {
           const relEntity = props.entityDefArray.find(entity => entity.name === entityName);
           relatedEntitiesList.set(entityName, {...relEntity, checked: true});
         });
