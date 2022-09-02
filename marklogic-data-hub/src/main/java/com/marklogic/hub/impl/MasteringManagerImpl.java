@@ -72,6 +72,11 @@ public class MasteringManagerImpl implements MasteringManager {
         return getNotificationsResource(DatabaseKind.FINAL).notifications(start, pageLength) ;
     }
 
+    @Override
+    public JsonNode deleteNotifications(List<String> uris)  {
+        return getNotificationsResource(DatabaseKind.FINAL).deleteNotifications(uris) ;
+    }
+
     private MergeResource getMergeResource(DatabaseKind databaseKind) {
         return new MergeResource(getSrcClient(databaseKind), hubConfig.getDbName(databaseKind));
     }
@@ -207,6 +212,15 @@ public class MasteringManagerImpl implements MasteringManager {
             params.put("start", String.valueOf(start));
             params.put("pageLength", String.valueOf(pageLength));
             resp = this.getServices().get(params, new JacksonHandle()).get();
+            return resp;
+        }
+
+        public JsonNode deleteNotifications(List<String> uris) {
+            JsonNode resp;
+
+            RequestParameters params = new RequestParameters();
+            params.put("uri", uris);
+            resp = this.getServices().delete(params, new JacksonHandle()).get();
             return resp;
         }
     }

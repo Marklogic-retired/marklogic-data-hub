@@ -291,7 +291,8 @@ declare function notify-impl:notification-to-json(
       "dateTime": $notification/sm:meta/sm:dateTime/fn:string(),
       "user": $notification/sm:meta/sm:user/fn:string(),
       "uri": fn:base-uri($notification),
-      "status": $notification/sm:meta/sm:status/fn:string()
+      "status": $notification/sm:meta/sm:status/fn:string(),
+      "entityName": fn:string($notification/sm:meta/sm:entityName)
     },
     "thresholdLabel": $notification/sm:threshold-label/fn:string(),
     "uris": array-node {

@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.FailedRequestException;
+import com.marklogic.client.ResourceNotFoundException;
 import org.apache.catalina.connector.ClientAbortException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,6 +78,17 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         errJson.put("message", exception.getMessage());
         errJson.put("suggestion", "Log in as a MarkLogic user with authority to perform this action.");
         return new ResponseEntity<>(errJson, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    protected ResponseEntity<JsonNode> handleResourceNotFoundException(ResourceNotFoundException exception) {
+        logger.error(exception.getMessage(), exception);
+
+        ObjectNode errJson = mapper.createObjectNode();
+        errJson.put("code", 404);
+        errJson.put("message", exception.getMessage());
+        errJson.put("suggestion", "Requested resource could not be found in the database.");
+        return new ResponseEntity<>(errJson, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
