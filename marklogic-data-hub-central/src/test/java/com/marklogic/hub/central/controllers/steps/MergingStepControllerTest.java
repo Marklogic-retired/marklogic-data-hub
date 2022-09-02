@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import java.util.Arrays;
 import java.util.List;
@@ -55,6 +57,15 @@ public class MergingStepControllerTest extends AbstractStepControllerTest {
         });
         postJson(PATH, newDefaultMergingStep("secondStep"));
 
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.put("uri", Arrays.asList("/non-existing-notification.xml"));
+        delete(PATH + "/notifications", params)
+                .andDo(result -> {
+                    MockHttpServletResponse response = result.getResponse();
+                    assertEquals(HttpStatus.NOT_FOUND.value(), response.getStatus());
+                });
+
         loginAsTestUserWithRoles("hub-central-match-merge-reader");
 
         getJson(PATH)
@@ -93,6 +104,11 @@ public class MergingStepControllerTest extends AbstractStepControllerTest {
                     assertEquals(HttpStatus.OK.value(), response.getStatus());
                 });
         getJson(PATH + "/firstStep/validate")
+                .andDo(result -> {
+                    MockHttpServletResponse response = result.getResponse();
+                    assertEquals(HttpStatus.OK.value(), response.getStatus());
+                });
+        getJson(PATH + "/notifications")
                 .andDo(result -> {
                     MockHttpServletResponse response = result.getResponse();
                     assertEquals(HttpStatus.OK.value(), response.getStatus());

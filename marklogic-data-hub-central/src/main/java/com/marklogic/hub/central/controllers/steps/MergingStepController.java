@@ -125,6 +125,20 @@ public class MergingStepController extends BaseController {
         return ResponseEntity.ok(mgr.unmerge(mergeDocumentURI, retainAuditTrail, blockFutureMerges));
     }
 
+    @RequestMapping(value = "/notifications", method = RequestMethod.GET)
+    @Secured("ROLE_readMerging")
+    public ResponseEntity<JsonNode> getNotifications(@RequestParam(defaultValue = "1") Integer start, @RequestParam(defaultValue = "10") Integer pageLength) {
+        MasteringManager mgr = new MasteringManagerImpl(getHubClient());
+        return ResponseEntity.ok(mgr.notifications(start, pageLength));
+    }
+
+    @RequestMapping(value = "/notifications", method = RequestMethod.DELETE)
+    @Secured("ROLE_writeMerging")
+    public ResponseEntity<JsonNode> deleteNotifications(@RequestParam(name = "uri") List<String> uri) {
+        MasteringManager mgr = new MasteringManagerImpl(getHubClient());
+        return ResponseEntity.ok(mgr.deleteNotifications(uri));
+    }
+
     private StepService newService() {
         return StepService.on(getHubClient().getStagingClient());
     }

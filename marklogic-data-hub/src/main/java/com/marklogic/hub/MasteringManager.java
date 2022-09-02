@@ -79,4 +79,10 @@ public interface MasteringManager {
      * @return - a JsonNode with the notifications
      */
     public JsonNode notifications(int start, int pageLength);
+
+    /**
+     * @param uris - notification document URIs to delete
+     * @return - a JsonNode with the notifications delete response
+     */
+    public JsonNode deleteNotifications(List<String> uris);
 }

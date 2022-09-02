@@ -32,6 +32,7 @@ class Mergeable {
       if (this._model && this._model.primaryEntityTypeIRI() !== targetEntityType) {
         this.mergeStep.targetEntityType = this._model.primaryEntityTypeIRI();
       }
+      this.entityName = this.mergeStep.targetEntityType.substring(this.mergeStep.targetEntityType.lastIndexOf("/") + 1);
     }
     if (!this._model) {
       this._model = new common.GenericMatchModel(this.mergeStep, {collection: targetEntityType ? targetEntityType.substring(targetEntityType.lastIndexOf("/") + 1):null});
@@ -144,6 +145,9 @@ class Mergeable {
       .endElement()
       .startElement("sm:status", "http://marklogic.com/smart-mastering")
       .addText("unread")
+      .endElement()
+      .startElement("sm:entityName", "http://marklogic.com/smart-mastering")
+      .addText(this.entityName || "")
       .endElement()
       .endElement()
       .startElement("sm:threshold-label", "http://marklogic.com/smart-mastering")
