@@ -217,17 +217,21 @@ function getEntityNodesBySubject(entityTypeIRI, relatedEntityTypeIRIs, limit) {
 
 
 function getRelatedEntitiesCounting(allRelatedPredicateList,ctsQueryCustom) {
-  const totalCountRelated = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-SELECT (COUNT(DISTINCT(?o)) AS ?total)  WHERE {
-?s @allRelatedPredicateList ?o } `).where(ctsQueryCustom);
-  return totalCountRelated.result(null,{allRelatedPredicateList});
+  /* TODO: Investigate why mapping bindings for predicates weren't giving accurate docUri count */
+  const totalCountRelated = sem.sparql(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT (COUNT(DISTINCT(?docUri)) as ?total) WHERE {
+    ?s ${allRelatedPredicateList.map(pred => `<${fn.string(pred)}>`).join("|")} ?o.
+    ?o rdfs:isDefinedBy ?docUri.
+} `, {}, [], ctsQueryCustom);
+  return totalCountRelated;
 }
 
 function getEntityTypeIRIsCounting(entityTypeIRIs,ctsQueryCustom) {
   const totalCountEntityBaseEntities = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-SELECT (COUNT(DISTINCT(?subjectIRI)) AS ?total)  WHERE {
-?subjectIRI rdf:type @entityTypeIRIs.
-?subjectIRI ?p ?o
+SELECT (COUNT(DISTINCT(?docUri)) AS ?total)  WHERE {
+?subjectIRI rdf:type @entityTypeIRIs;
+    rdfs:isDefinedBy ?docUri.
 } `).where(ctsQueryCustom);
 
   return totalCountEntityBaseEntities.result(null,{entityTypeIRIs});

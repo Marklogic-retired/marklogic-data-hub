@@ -566,7 +566,7 @@ function getPredicatesByModel(model) {
   const entityName = model.info.title;
   const entityNameIri = getEntityTypeId(model, entityName);
   if(model.definitions[entityName] !== undefined && model.definitions[entityName].toString().length > 0) {
-  let entityProperties = model.definitions[entityName].properties;
+    let entityProperties = model.definitions[entityName].properties;
     for(let entityPropertyName in entityProperties){
       let entityPropertyValue = entityProperties[entityPropertyName];
       if(entityPropertyValue["relatedEntityType"] != null){
@@ -580,7 +580,7 @@ function getPredicatesByModel(model) {
         }
       }
     }
-}
+  }
   return predicateList;
 }
 

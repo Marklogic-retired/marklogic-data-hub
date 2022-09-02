@@ -18,6 +18,7 @@
         "baseUri": "http://example.org/"
       },
       "Product": {
+        "uuid": "28bbf4e6-45ea-49b6-a347-656e98dfcdb3",
         "productId": 50,
         "productName": "Alepo Baby Beanie Hat, Infant Newborn Toddler Kids Winter Warm Knit Cap for Boys Girls",
         "category": "Basketball Shoes",

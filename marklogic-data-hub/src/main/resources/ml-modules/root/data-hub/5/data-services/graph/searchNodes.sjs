@@ -72,6 +72,8 @@ let predicateConceptList = [];
 start = start || 0;
 pageLength = pageLength || 1000;
 let hashmapPredicate = new Map();
+const docUriToSubjectIri = {};
+const edgesByID = {};
 let qrySearch;
 const hubCentralConfig = cts.doc("/config/hubCentral.json")
 
@@ -133,8 +135,20 @@ if(queryObj.conceptsFilterTypeIds != null){
 
 const result = graphUtils.getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predicateConceptList, entitiesDifferentsFromBaseAndRelated, conceptFacetList, ctsQuery, pageLength);
 
-let nodes = [];
-let edges = [];
+let nodes = {};
+
+for (const item of result) {
+  const subjectIri = item.subjectIRI.toString();
+  const subjectUri = item.docURI.toString();
+  docUriToSubjectIri[subjectUri] = docUriToSubjectIri[subjectUri] || [];
+  docUriToSubjectIri[subjectUri].push(subjectIri);
+  if (item.nodeCount === 1 && !item.objectConcept) {
+    const objectUri = item.firstDocURI.toString();
+    const objectIri = item.firstObjectIRI.toString();
+    docUriToSubjectIri[objectUri] = docUriToSubjectIri[objectUri] || [];
+    docUriToSubjectIri[objectUri].push(objectIri);
+  }
+}
 
 result.map(item => {
 
@@ -151,15 +165,16 @@ result.map(item => {
     //check if we have in central config new label loaded
     if(configurationLabel.toString().length > 0){
       //getting the value of the configuration property
-      newLabel =getValueFromProperty(configurationLabel,item.docURI,entityType);
+      newLabel = getValueFromProperty(configurationLabel,item.docURI,entityType);
     }
     //check if we have in central config properties on hover loaded
     resultPropertiesOnHover = entityLib.getValuesPropertiesOnHover(item.docURI,entityType,hubCentralConfig);
   }
   const group = item.subjectIRI.toString().substring(0, item.subjectIRI.toString().length - subjectLabel.length - 1);
   let nodeOrigin = {};
-  if (!nodes[item.subjectIRI] && (item.objectConcept.toString().length == 0)) {
-    nodeOrigin.id = item.subjectIRI;
+  const subjectIri = docUriToSubjectIri[item.docURI][0];
+  if (!nodes[subjectIri] && (item.objectConcept.toString().length == 0)) {
+    nodeOrigin.id = subjectIri;
     nodeOrigin.docUri = item.docURI;
     if (newLabel.toString().length === 0) {
       nodeOrigin.label = subjectLabel;
@@ -172,9 +187,9 @@ result.map(item => {
     nodeOrigin.hasRelationships = false;
     nodeOrigin.count = 1;
     nodeOrigin.propertiesOnHover=resultPropertiesOnHover;
-    nodes[item.subjectIRI] = nodeOrigin;
-  }else{
-    if((item.objectConcept !== undefined && item.objectConcept.toString().length > 0 && !nodes[item.objectConcept]) ){
+    nodes[subjectIri] = nodeOrigin;
+  } else {
+    if ((item.objectConcept !== undefined && item.objectConcept.toString().length > 0 && !nodes[item.objectConcept])) {
       let objectConceptArr = item.objectConcept.toString().split("/");
       let conceptLabel = objectConceptArr[objectConceptArr.length - 1];
       nodeOrigin.id = item.objectConcept;
@@ -185,8 +200,8 @@ result.map(item => {
       nodeOrigin.isConcept = true;
       nodeOrigin.conceptClassName = item.conceptClassName;
       let hastRelationShip = false
-      if(item.countRelationsWithOtherEntity !== undefined && item.countRelationsWithOtherEntity !== null){
-        if(item.countRelationsWithOtherEntity == 1){
+      if (item.countRelationsWithOtherEntity !== undefined && item.countRelationsWithOtherEntity !== null) {
+        if (item.countRelationsWithOtherEntity == 1) {
           hastRelationShip = true;
         }
       }
@@ -210,29 +225,33 @@ result.map(item => {
     let edge = {};
     if (item.nodeCount > 1) {
       let entityType = objectIRIArr[objectIRIArr.length - 2];
-      objectId = item.subjectIRI.toString() + "-" + objectIRIArr[objectIRIArr.length - 2];
-      edge.id = "edge-" + item.subjectIRI + "-" + item.predicateIRI + "-" + entityType;
+      objectId = subjectIri + "-" + objectIRIArr[objectIRIArr.length - 2];
+      edge.id = "edge-" + subjectIri + "-" + item.predicateIRI + "-" + entityType;
     } else {
-      edge.id = "edge-" + item.subjectIRI + "-" + item.predicateIRI + "-" + objectIRI;
+      edge.id = "edge-" + subjectIri + "-" + item.predicateIRI + "-" + objectIRI;
     }
-    let predicateArr = item.predicateIRI.toString().split("/");
-    let edgeLabel = predicateArr[predicateArr.length - 1];
-    edge.predicate = item.predicateIRI;
-    edge.label = edgeLabel;
-    edge.from = item.subjectIRI;
-    edge.to = objectId;
-    edges.push(edge);
+    if (!edgesByID[edge.id]) {
+      let predicateArr = item.predicateIRI.toString().split("/");
+      let edgeLabel = predicateArr[predicateArr.length - 1];
+      edge.predicate = item.predicateIRI;
+      edge.label = edgeLabel;
+      edge.from = subjectIri;
+      edge.to = objectId;
+      edgesByID[edge.id] = edge;
+    }
     if (!nodes[objectId]) {
       let objectNode = {};
-      objectNode.id = objectId;
       if (item.nodeCount === 1) {
+        objectNode.id = objectId;
         objectNode.docUri = objectUri;
+      } else {
+        objectNode.id = objectId;
       }
       let newLabelNode = "";
       let configurationLabel = getLabelFromHubConfigByEntityType(objectIRIArr[objectIRIArr.length - 2]);
       if(configurationLabel.toString().length > 0){
         //getting the value of the configuration property
-        newLabelNode =getValueFromProperty(configurationLabel,objectUri,objectIRIArr[objectIRIArr.length - 2]);
+        newLabelNode = getValueFromProperty(configurationLabel,objectUri,objectIRIArr[objectIRIArr.length - 2]);
       }
 
       if (newLabelNode.toString().length === 0) {
@@ -249,18 +268,23 @@ result.map(item => {
       nodes[objectId] = objectNode;
     }
   }
-  else if (item.predicateIRI !== undefined && item.predicateIRI.toString().length > 0){
-    let edge = {};
+  else if (item.predicateIRI !== undefined && item.predicateIRI.toString().length > 0) {
     let predicateArr = item.predicateIRI.toString().split("/");
     let edgeLabel = predicateArr[predicateArr.length - 1];
-    edge.id = "edge-" + item.subjectIRI + "-" + item.predicateIRI + "-" + item.objectIRI;
-    edge.predicate = item.predicateIRI;
-    edge.label = edgeLabel;
-    edge.from = item.subjectIRI.toString();
-    edge.to = item.objectIRI;
-    edges.push(edge);
+    const subjectId = docUriToSubjectIri[item.docURI][0] || subjectIri;
+    const objectId = item.objectIRI;
+    const edgeId = "edge-" + subjectId + "-" + item.predicateIRI + "-" + objectId;
+    if (!edgesByID[edgeId]) {
+      edgesByID[edgeId] = {
+        id: edgeId,
+        predicate: item.predicateIRI,
+        label: edgeLabel,
+        from: subjectId,
+        to: objectId
+      };
+    }
   }
-})
+});
 
 //get total from base entities
 let resultBaseCounting = graphUtils.getEntityTypeIRIsCounting(entityTypeIRIs, ctsQuery);
@@ -279,14 +303,15 @@ if (predicateConceptList.length) {
 }
 
 const totalEstimate = totalCount;
-const nodesValues = hubUtils.getObjectValues(nodes)
+const nodesValues = hubUtils.getObjectValues(nodes);
+const edgeValues = hubUtils.getObjectValues(edgesByID);
 
 const response = {
   'total': totalEstimate,
   'start': start,
   'limit': nodesValues.length,
   'nodes': nodesValues,
-  'edges': edges
+  'edges': edgeValues
 };
 
 function getLabelFromHubConfigByEntityType(entityType) {
@@ -306,9 +331,9 @@ function getPropertiesOnHoverFromHubConfigByEntityType(entityType) {
 }
 
 function getValueFromProperty(propertyName, docUri,entityType) {
-  const doc = cts.doc(docUri);
-  if(fn.exists(doc.xpath(".//*:envelope/*:instance/*:"+entityType+"/*:"+propertyName))){
-    return fn.data(doc.xpath(".//*:envelope/*:instance/*:"+entityType+"/*:"+propertyName));
+  const property = cts.doc(docUri).xpath(`*:envelope/*:instance/*:${entityType}/*:${propertyName}`);
+  if(fn.exists(property)){
+    return fn.data(fn.head(property));
   }
   return "";
 }

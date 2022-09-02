@@ -6,8 +6,11 @@
   },
   "definitions": {
     "Product": {
-      "primaryKey": "productId",
+      "primaryKey": "uuid",
       "properties": {
+        "uuid": {
+          "datatype": "string"
+        },
         "productId": {
           "datatype": "integer"
         },
