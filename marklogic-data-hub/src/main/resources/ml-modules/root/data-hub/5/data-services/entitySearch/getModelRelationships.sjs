@@ -1,5 +1,5 @@
 /**
- Copyright (c) 2021 MarkLogic Corporation
+ Copyright (c) 2022 MarkLogic Corporation
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -16,18 +16,6 @@
 'use strict';
 
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-entity-model", "execute");
-const graphUtils = require("/data-hub/5/impl/graph-utils.sjs");
 
-var semanticConceptIRI;
-
-const finalConceptIRI = sem.iri(semanticConceptIRI);
-
-const conceptInfo = graphUtils.getRelatedEntityInstancesCount(finalConceptIRI);
-const description = graphUtils.describeIRI(finalConceptIRI);
-const semanticConceptInfo = {
-  "semanticConceptIRI": semanticConceptIRI,
-  "data": conceptInfo,
-  description
-};
-
-semanticConceptInfo
+const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
+entityLib.getEntityModelRelationships();

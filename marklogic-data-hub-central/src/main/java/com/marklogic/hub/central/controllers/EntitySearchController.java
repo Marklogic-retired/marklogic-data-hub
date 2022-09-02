@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.RawStructuredQueryDefinition;
-import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.hub.central.entities.search.EntitySearchManager;
 import com.marklogic.hub.central.entities.search.models.DocSearchQueryInfo;
 import com.marklogic.hub.central.entities.search.models.SearchQuery;
@@ -35,7 +34,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
@@ -60,6 +64,12 @@ public class EntitySearchController extends BaseController {
     @ResponseBody
     public JsonNode getRecord(@RequestParam String docUri, @RequestParam(defaultValue = "final") String database) {
         return getEntitySearchService(database).getRecord(docUri);
+    }
+
+    @RequestMapping(value = "/relationships", method = RequestMethod.GET)
+    @ResponseBody
+    public JsonNode getModelRelationships(@RequestParam(defaultValue = "final") String database) {
+        return getEntitySearchService(database).getModelRelationships();
     }
 
     @RequestMapping(value = "/facet-values", method = RequestMethod.POST)
@@ -154,18 +164,24 @@ public class EntitySearchController extends BaseController {
     @ApiOperation(value = "Response is a MarkLogic JSON search response. Please see ./specs/EntitySearchResponse.schema.json for complete information, as swagger-ui does not capture all the details",
         response = EntitySearchResponseSchema.class)
     public JsonNode graphSearch(@RequestBody SearchQuery searchQuery, @RequestParam(defaultValue = "final") String database) {
-        RawStructuredQueryDefinition structuredQueryDefinition = newEntitySearchManager(database).graphSearchQuery(searchQuery);
-        String structuredQuery = null;
-        String queryOptions = null;
-        if (structuredQueryDefinition != null) {
-            logger.info("structuredDefinition found!");
-            logger.info(structuredQueryDefinition.serialize());
-            structuredQuery = structuredQueryDefinition.serialize();
-            queryOptions =  newEntitySearchManager(database).getQueryOptions();
-        }
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode searchJsonNode = mapper.convertValue(searchQuery, JsonNode.class);
-        return getGraphService(database).searchNodes(searchJsonNode, structuredQuery, queryOptions);
+        try {
+            JsonNode searchJsonNode = mapper.convertValue(searchQuery, JsonNode.class);
+            RawStructuredQueryDefinition structuredQueryDefinition = newEntitySearchManager(database).graphSearchQuery(searchQuery);
+            String structuredQuery = null;
+            String queryOptions = null;
+            if (structuredQueryDefinition != null) {
+                structuredQuery = structuredQueryDefinition.serialize();
+                queryOptions = newEntitySearchManager(database).getQueryOptions();
+            }
+            return getGraphService(database).searchNodes(searchJsonNode, structuredQuery, queryOptions);
+        } catch (Exception e) {
+            logger.info("Graph endpoint failed due to exception", e);
+            JsonNode results = mapper.createObjectNode().put("total", 0);
+            results.withArray("nodes");
+            results.withArray("edges");
+            return results;
+        }
     }
 
     @RequestMapping(value = "/graph/semanticConceptInfo", method = RequestMethod.GET)

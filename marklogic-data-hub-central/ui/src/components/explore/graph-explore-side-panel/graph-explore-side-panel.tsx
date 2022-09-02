@@ -43,6 +43,7 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
   const [xml, setXml] = useState();
   const data = useRef<any[]>();
   const [semanticConceptInfo, setSemanticConceptInfo] = useState<any []>([]);
+  const [semanticConceptDescription, setSemanticConceptDescription] = useState<any|null>(null);
 
   const iconContenType = {
     unknown: <span className={"mlcf mlcf-blank fs-2"} aria-label={"icon: filetype-unknown"} />,
@@ -101,6 +102,11 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
           };
           return infoObject;
         });
+        if (resp.data?.description && Object.keys(resp.data?.description).length) {
+          setSemanticConceptDescription(resp.data.description);
+        } else {
+          setSemanticConceptDescription(null);
+        }
         setSemanticConceptInfo(conceptInfo);
       }
     } catch (err) {
@@ -247,7 +253,7 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
         </span>
       </div>
       {
-        !isConcept ? <><div>
+        !isConcept && docUri ? <><div>
           {docUri && <span className={styles.selectedNodeUri} data-testid="uriLabel" aria-label={docUri}>URI: {docUri}</span>}
         </div>
         <Tabs defaultActiveKey={DEFAULT_TAB} activeKey={currentTab} onSelect={handleTabChange} className={styles.tabsContainer}>
@@ -263,8 +269,7 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
             id="recordTabInSidePanel"
             title={RECORD_TITLE}/>
         </Tabs>
-        {displayPanelContent()}</> :
-          conceptInstanceInfo
+        {displayPanelContent()}</> : <>{conceptInstanceInfo}{semanticConceptDescription && <pre data-testid="graphView-json-container">{jsonFormatter(semanticConceptDescription)}</pre>}</>
       }
     </div>
   );

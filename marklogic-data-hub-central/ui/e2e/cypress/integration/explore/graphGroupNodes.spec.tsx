@@ -36,7 +36,7 @@ describe("Group Nodes", () => {
     cy.log("**Select 'Office' entity**");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Office");
-    entitiesSidebar.getBaseEntityOption("Office").should("be.visible");
+    entitiesSidebar.getBaseEntityOption("Office").scrollIntoView().should("be.visible");
     cy.wait(1000);
 
     cy.log("**Picking up Product group node and validate tooltip**");

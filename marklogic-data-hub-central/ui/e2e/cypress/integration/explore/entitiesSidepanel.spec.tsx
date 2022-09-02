@@ -235,6 +235,8 @@ describe("Test '/Explore' left sidebar", () => {
     entitiesSidebar.removeLastSelectedBaseEntity();
     cy.wait(500);
     entitiesSidebar.removeLastSelectedBaseEntity();
+    cy.wait(500);
+    entitiesSidebar.toggleRelatedEntityPanel();
     entitiesSidebar.getRelatedEntity("Customer").should("be.visible");
     entitiesSidebar.getRelatedEntity("Customer").trigger("mouseover");
     entitiesSidebar.getDisabledEntityTooltip().should("not.exist");

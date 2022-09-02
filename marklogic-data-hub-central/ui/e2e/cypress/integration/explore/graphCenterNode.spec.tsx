@@ -29,7 +29,7 @@ describe("Center node on graph", () => {
     cy.log("**Go to graph view**");
     browsePage.clickGraphView();
     graphExplore.getGraphVisCanvas().should("be.visible");
-    cy.wait(5000);
+    cy.wait(7000);
 
     graphExplore.focusNode(ExploreGraphNodes.CUSTOMER_102);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
