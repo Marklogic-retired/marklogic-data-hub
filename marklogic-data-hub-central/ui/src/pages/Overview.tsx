@@ -146,7 +146,8 @@ const Overview: React.FC<Props> = (props) => {
   return (
     <div className={styles.overviewContainer} aria-label="overview">
       <div className={styles.overviewSubContainer}>
-        <div className={styles.title}>Welcome to MarkLogic Data Hub Central
+        <div className={styles.titleContainer}>
+          <span className={styles.title}>Welcome to MarkLogic Data Hub Central</span>
           {<span className={styles.infoBulbIcon} id="homePagePopover">
             <OverlayTrigger
               show={helpInfoVisible}
