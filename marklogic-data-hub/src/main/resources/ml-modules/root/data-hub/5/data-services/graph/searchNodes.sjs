@@ -63,7 +63,7 @@ if(query == null) {
 }
 
 let queryObj = JSON.parse(query);
-let relatedEntityTypeIds = queryObj.relatedEntityTypeIds;
+let relatedEntityTypeIds = queryObj.relatedEntityTypeIds || [];
 let relatedEntityTypeIRIs = [];
 let entityTypeIRIs = [];
 let entitiesDifferentsFromBaseAndRelated = [];
@@ -71,7 +71,6 @@ let allRelatedPredicateList = [];
 let predicateConceptList = [];
 start = start || 0;
 pageLength = pageLength || 1000;
-let hashmapPredicate = new Map();
 const docUriToSubjectIri = {};
 const edgesByID = {};
 let qrySearch;
@@ -90,12 +89,8 @@ fn.collection(entityLib.getModelCollection()).toArray().forEach(model => {
   const entityName = model.info.title;
   const entityNameIri = entityLib.getEntityTypeId(model, entityName);
 
-  if(relatedEntityTypeIds && relatedEntityTypeIds.includes(entityName)) {
+  if (relatedEntityTypeIds.includes(entityName)) {
     relatedEntityTypeIRIs.push(sem.iri(entityNameIri));
-    const predicateList = entityLib.getPredicatesByModel(model);
-    if(predicateList.length >= 1){
-      hashmapPredicate.set(entityName, predicateList);
-    }
   }
   if (queryObj.entityTypeIds.includes(entityName)) {
     //get predicate from concepts
@@ -133,6 +128,24 @@ if(queryObj.conceptsFilterTypeIds != null){
   })
 }
 
+function getNodeLabel(objectIRIArr, objectUri) {
+  let label = "";
+  let configurationLabel = getLabelFromHubConfigByEntityType(objectIRIArr[objectIRIArr.length - 2]);
+  if(configurationLabel.toString().length > 0){
+    //getting the value of the configuration property
+    label = getValueFromProperty(configurationLabel,objectUri,objectIRIArr[objectIRIArr.length - 2]);
+  }
+
+  if (label.toString().length === 0) {
+    label = objectIRIArr[objectIRIArr.length - 1];
+  }
+  return label;
+}
+
+function getUrisByIRI(iri) {
+  return Object.keys(docUriToSubjectIri).filter(key => docUriToSubjectIri[key].includes(iri.toString()));
+}
+
 const result = graphUtils.getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predicateConceptList, entitiesDifferentsFromBaseAndRelated, conceptFacetList, ctsQuery, pageLength);
 
 let nodes = {};
@@ -142,7 +155,7 @@ for (const item of result) {
   const subjectUri = item.docURI.toString();
   docUriToSubjectIri[subjectUri] = docUriToSubjectIri[subjectUri] || [];
   docUriToSubjectIri[subjectUri].push(subjectIri);
-  if (item.nodeCount === 1 && !item.objectConcept) {
+  if (item.nodeCount == 1 && item.firstDocURI) {
     const objectUri = item.firstDocURI.toString();
     const objectIri = item.firstObjectIRI.toString();
     docUriToSubjectIri[objectUri] = docUriToSubjectIri[objectUri] || [];
@@ -151,14 +164,12 @@ for (const item of result) {
 }
 
 result.map(item => {
-
   let resultPropertiesOnHover = [];
-  let subjectLabel = item.subjectLabel;
   let newLabel = "";
+  let subjectArr = item.subjectIRI.toString().split("/");
+  let subjectLabel = subjectArr[subjectArr.length - 1];
+  let entityType = subjectArr.length >= 2 ? subjectArr[subjectArr.length - 2]: "";
   if (item.subjectLabel !== undefined && item.subjectLabel.toString().length === 0) {
-    let subjectArr = item.subjectIRI.toString().split("/");
-    subjectLabel = subjectArr[subjectArr.length - 1];
-    let entityType = subjectArr[subjectArr.length - 2];
     //get configuration values from Hub Central Config
     let configurationLabel = getLabelFromHubConfigByEntityType(entityType);
     let configPropertiesOnHover = getPropertiesOnHoverFromHubConfigByEntityType(entityType);
@@ -172,22 +183,32 @@ result.map(item => {
   }
   const group = item.subjectIRI.toString().substring(0, item.subjectIRI.toString().length - subjectLabel.length - 1);
   let nodeOrigin = {};
-  const subjectIri = docUriToSubjectIri[item.docURI][0];
-  if (!nodes[subjectIri] && (item.objectConcept.toString().length == 0)) {
-    nodeOrigin.id = subjectIri;
+  const subjectIri = docUriToSubjectIri[item.docURI][0] || item.subjectIRI.toString();
+  const objectIRI = item.firstObjectIRI.toString();
+  const objectIRIArr = objectIRI.split("/");
+  const objectUri = item.firstDocURI.toString();
+  const objectId = objectUri || objectIRI;
+
+  const originId = item.docURI || subjectIri;
+  if (!nodes[item.docURI] && (item.objectConcept.toString().length == 0)) {
+    nodeOrigin.id = originId;
     nodeOrigin.docUri = item.docURI;
+    nodeOrigin.docIRI = subjectIri;
     if (newLabel.toString().length === 0) {
       nodeOrigin.label = subjectLabel;
-    }else{
+    } else {
       nodeOrigin.label = newLabel;
     }
     nodeOrigin.additionalProperties = null;
     nodeOrigin.group = group;
     nodeOrigin.isConcept = false;
     nodeOrigin.hasRelationships = false;
+    if (!queryObj.entityTypeIds.includes(entityType)) {
+      nodeOrigin.hasRelationships = docUriToSubjectIri[item.docURI].some(iri => graphUtils.relatedObjHasRelationships(iri));
+    }
     nodeOrigin.count = 1;
-    nodeOrigin.propertiesOnHover=resultPropertiesOnHover;
-    nodes[subjectIri] = nodeOrigin;
+    nodeOrigin.propertiesOnHover = resultPropertiesOnHover;
+    nodes[item.docURI] = nodeOrigin;
   } else {
     if ((item.objectConcept !== undefined && item.objectConcept.toString().length > 0 && !nodes[item.objectConcept])) {
       let objectConceptArr = item.objectConcept.toString().split("/");
@@ -199,89 +220,154 @@ result.map(item => {
       nodeOrigin.group = conceptLabel;
       nodeOrigin.isConcept = true;
       nodeOrigin.conceptClassName = item.conceptClassName;
-      let hastRelationShip = false
+      let hasRelationShips = false
       if (item.countRelationsWithOtherEntity !== undefined && item.countRelationsWithOtherEntity !== null) {
         if (item.countRelationsWithOtherEntity == 1) {
-          hastRelationShip = true;
+          hasRelationShips = true;
         }
       }
-      nodeOrigin.hasRelationships = hastRelationShip;
+      nodeOrigin.hasRelationships = hasRelationShips;
       nodeOrigin.count = 1;
       nodes[item.objectConcept] = nodeOrigin;
     }
   }
-
-  if (item.nodeCount && item.nodeCount >= 1) {
+  //Checking for target nodes
+  if (item.nodeCount && item.nodeCount == 1) {
+    let edge = {};
+    const docUriToNodeKeys = getUrisByIRI(objectIRI);
+    //if the target exists in docUriToSubjectIri we check for multiple nodes
+    if(docUriToNodeKeys && docUriToNodeKeys.length > 0) {
+      docUriToNodeKeys.forEach(key => {
+        let objectIRI = docUriToSubjectIri[key][0];
+        const objectId = key;
+        edge = {};
+        const sortedIds = [originId, objectId].sort();
+        edge.id = "edge-" + sortedIds[0] + "-" + item.predicateIRI + "-" + sortedIds[1];
+        if (!edgesByID[edge.id]) {
+          let predicateArr = item.predicateIRI.toString().split("/");
+          let edgeLabel = predicateArr[predicateArr.length - 1];
+          edge.predicate = item.predicateIRI;
+          edge.label = edgeLabel;
+          edge.from = sortedIds[0];
+          edge.to = sortedIds[1];
+          edgesByID[edge.id] = edge;
+        }
+        if (!nodes[key]) {
+          let objectNode = {};
+          const objectEntityType = objectIRIArr[objectIRIArr.length - 2];
+          objectNode.id = objectId;
+          objectNode.docUri = key;
+          nodeOrigin.docIRI = objectIRI;
+          objectNode.label = getNodeLabel(objectIRIArr, objectUri);
+          resultPropertiesOnHover = entityLib.getValuesPropertiesOnHover(item.docURI,objectEntityType,hubCentralConfig);
+          objectNode.propertiesOnHover=resultPropertiesOnHover;
+          objectNode.group = objectIRI.substring(0, objectIRI.length - objectIRIArr[objectIRIArr.length - 1].length - 1);;
+          objectNode.isConcept = false;
+          objectNode.count = item.nodeCount;
+          objectNode.hasRelationships = false;
+          if (!queryObj.entityTypeIds.includes(objectEntityType)) {
+            objectNode.hasRelationships = docUriToSubjectIri[key].some(iri => graphUtils.relatedObjHasRelationships(iri));
+          }
+          nodes[key] = objectNode;
+        }
+      });
+    } else { //if there isn't a docURI key create the node from item's info
+      const objectGroup = objectIRI.substring(0, objectIRI.length - objectIRIArr[objectIRIArr.length - 1].length - 1);
+      let predicateArr = item.predicateIRI.toString().split("/");
+      let edgeLabel = predicateArr[predicateArr.length - 1];
+      const sortedIds = [originId, objectIRI].sort();
+      edge = {};
+      edge.id = "edge-" + sortedIds[0] + "-" + item.predicateIRI + "-" + sortedIds[1];
+      edge.predicate = item.predicateIRI;
+      edge.label = edgeLabel;
+      edge.from = sortedIds[0];
+      edge.to = sortedIds[1];
+      if (!edgesByID[edge.id]) {
+        edgesByID[edge.id] = edge;
+      }
+      if (!nodes[objectId]) {
+        let objectNode = {};
+        objectNode.id = objectId;
+        objectNode.docUri = objectUri;
+        nodeOrigin.docIRI = objectIRI;
+        objectNode.label = getNodeLabel(objectIRIArr,objectUri);
+        resultPropertiesOnHover = entityLib.getValuesPropertiesOnHover(item.docURI,objectIRIArr[objectIRIArr.length - 2],hubCentralConfig);
+        objectNode.propertiesOnHover = resultPropertiesOnHover;
+        objectNode.group = objectGroup;
+        objectNode.isConcept = false;
+        objectNode.count = item.nodeCount;
+        let hasRelationships = false;
+        if(!queryObj.entityTypeIds.includes(objectIRIArr[objectIRIArr.length - 2])){
+          hasRelationships = graphUtils.relatedObjHasRelationships(objectIRI);
+        }
+        objectNode.hasRelationships = hasRelationships;
+        nodes[objectId] = objectNode;
+      }
+    }
+  } else if (item.nodeCount && item.nodeCount > 1) {
     let objectIRI = item.firstObjectIRI.toString();
     let objectIRIArr = objectIRI.split("/");
-    let objectId = item.firstObjectIRI.toString();
-    let objectUri = item.firstDocURI.toString();
-    let objectGroup = objectIRI.substring(0, objectIRI.length - objectIRIArr[objectIRIArr.length - 1].length - 1);
-    let hasRelationships = false;
-    if(item.nodeCount == 1 && !queryObj.entityTypeIds.includes(objectIRIArr[objectIRIArr.length - 2])){
-      hasRelationships = graphUtils.relatedObjHasRelationships(objectId, hashmapPredicate);
-    }
-    //Override if count is more than 1. We will have a node with badge.
+    let entityType = objectIRIArr[objectIRIArr.length - 2];
+    const objectId = originId + "-" + item.predicateIRI + "-" + entityType;
     let edge = {};
-    if (item.nodeCount > 1) {
-      let entityType = objectIRIArr[objectIRIArr.length - 2];
-      objectId = subjectIri + "-" + objectIRIArr[objectIRIArr.length - 2];
-      edge.id = "edge-" + subjectIri + "-" + item.predicateIRI + "-" + entityType;
-    } else {
-      edge.id = "edge-" + subjectIri + "-" + item.predicateIRI + "-" + objectIRI;
-    }
+    edge.id = "edge-" + objectId;
     if (!edgesByID[edge.id]) {
       let predicateArr = item.predicateIRI.toString().split("/");
       let edgeLabel = predicateArr[predicateArr.length - 1];
       edge.predicate = item.predicateIRI;
       edge.label = edgeLabel;
-      edge.from = subjectIri;
+      edge.from = originId;
       edge.to = objectId;
       edgesByID[edge.id] = edge;
     }
     if (!nodes[objectId]) {
       let objectNode = {};
-      if (item.nodeCount === 1) {
-        objectNode.id = objectId;
-        objectNode.docUri = objectUri;
-      } else {
-        objectNode.id = objectId;
-      }
-      let newLabelNode = "";
-      let configurationLabel = getLabelFromHubConfigByEntityType(objectIRIArr[objectIRIArr.length - 2]);
-      if(configurationLabel.toString().length > 0){
-        //getting the value of the configuration property
-        newLabelNode = getValueFromProperty(configurationLabel,objectUri,objectIRIArr[objectIRIArr.length - 2]);
-      }
-
-      if (newLabelNode.toString().length === 0) {
-        objectNode.label = objectIRIArr[objectIRIArr.length - 1];
-      }else{
-        objectNode.label = newLabelNode;
-      }
-      resultPropertiesOnHover = entityLib.getValuesPropertiesOnHover(item.docURI,objectIRIArr[objectIRIArr.length - 2],hubCentralConfig);
-      objectNode.propertiesOnHover=resultPropertiesOnHover;
-      objectNode.group = objectGroup;
+      objectNode.id = objectId;
+      objectNode.label = objectIRIArr[objectIRIArr.length - 1];
+      resultPropertiesOnHover = entityLib.getValuesPropertiesOnHover(item.docURI, entityType,hubCentralConfig);
+      objectNode.parentDocUri = item.docURI;
+      objectNode.predicateIri = item.predicateIRI;
+      objectNode.propertiesOnHover = resultPropertiesOnHover;
+      objectNode.group = objectIRI.substring(0, objectIRI.length - objectIRIArr[objectIRIArr.length - 1].length - 1);;
       objectNode.isConcept = false;
       objectNode.count = item.nodeCount;
-      objectNode.hasRelationships = hasRelationships;
+      objectNode.hasRelationships = false;
       nodes[objectId] = objectNode;
     }
-  }
-  else if (item.predicateIRI !== undefined && item.predicateIRI.toString().length > 0) {
+  } else if (item.predicateIRI !== undefined && item.predicateIRI.toString().length > 0) {
     let predicateArr = item.predicateIRI.toString().split("/");
     let edgeLabel = predicateArr[predicateArr.length - 1];
-    const subjectId = docUriToSubjectIri[item.docURI][0] || subjectIri;
-    const objectId = item.objectIRI;
-    const edgeId = "edge-" + subjectId + "-" + item.predicateIRI + "-" + objectId;
-    if (!edgesByID[edgeId]) {
-      edgesByID[edgeId] = {
-        id: edgeId,
-        predicate: item.predicateIRI,
-        label: edgeLabel,
-        from: subjectId,
-        to: objectId
-      };
+    const subjectId = item.docURI || subjectIri;
+    const docUriToNodeKeys = getUrisByIRI(item.objectIRI.toString());
+
+    if(docUriToNodeKeys && docUriToNodeKeys.length > 0) {
+      docUriToNodeKeys.forEach(key => {
+        const objectId = key;
+        const sortedIds = [subjectId, objectId].sort();
+        const edgeId = "edge-" + sortedIds[0] + "-" + item.predicateIRI + "-" + sortedIds[1];
+        if (!edgesByID[edgeId]) {
+          edgesByID[edgeId] = {
+            id: edgeId,
+            predicate: item.predicateIRI,
+            label: edgeLabel,
+            from: sortedIds[0],
+            to: sortedIds[1]
+          };
+        }
+      });
+    } else { //target is a concept node
+      const objectId = item.objectIRI.toString()
+      const sortedIds = [subjectId, objectId].sort();
+      const edgeId = "edge-" + sortedIds[0] + "-" + item.predicateIRI + "-" + sortedIds[1];
+      if (!edgesByID[edgeId]) {
+        edgesByID[edgeId] = {
+          id: edgeId,
+          predicate: item.predicateIRI,
+          label: edgeLabel,
+          from: sortedIds[0],
+          to: sortedIds[1]
+        };
+      }
     }
   }
 });
@@ -331,9 +417,11 @@ function getPropertiesOnHoverFromHubConfigByEntityType(entityType) {
 }
 
 function getValueFromProperty(propertyName, docUri,entityType) {
-  const property = cts.doc(docUri).xpath(`*:envelope/*:instance/*:${entityType}/*:${propertyName}`);
-  if(fn.exists(property)){
-    return fn.data(fn.head(property));
+  if (docUri) {
+    const property = cts.doc(docUri).xpath(`*:envelope/*:instance/*:${entityType}/*:${propertyName}`);
+    if (fn.exists(property)) {
+      return fn.data(fn.head(property));
+    }
   }
   return "";
 }

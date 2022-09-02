@@ -178,6 +178,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         getNodePositions: (nodeIds?: any) => { return !nodeIds ? network.getPositions() : network.getPositions(nodeIds); },
         canvasToDOM: (xCoordinate, yCoordinate) => { return network.canvasToDOM({x: xCoordinate, y: yCoordinate}); },
         focus: (nodeId: any) => { network.focus(nodeId); },
+        fit: () => { network.fit(); },
         stopStabilization: () => { network.stopSimulation(); },
       };
     }
@@ -191,7 +192,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         ...parsedPreferences,
         graphViewOptions: {
           groupNodeId: clickedNode["nodeId"],
-          parentIRI: clickedNode["parentIRI"],
+          parentIRI: clickedNode["docIRI"],
           predicateFilter: clickedNode["predicate"]
         }
       };
@@ -251,7 +252,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
   const isExpandedLeaf = (nodeId?) => {
     let expandId = "";
     if (!nodeId) {
-      expandId = clickedNode["leafNodeExpandId"];
+      expandId = clickedNode["leafExpandId"] ? clickedNode["leafExpandId"] : clickedNode["nodeId"];
     } else {
       let predicate = getEdgePredicate(nodeId, network);
       expandId = nodeId + "-" + predicate;
@@ -555,8 +556,8 @@ const GraphVisExplore: React.FC<Props> = (props) => {
   const handleTableViewRecords = (exceededThreshold?: string) => {
     if (network) {
       const selectedNodeType = clickedNode && clickedNode["nodeId"] ? clickedNode["nodeId"].split("/").pop().split("-").pop() : undefined;
-      const predicate = clickedNode && clickedNode["predicateIRI"];
-      const parentNode = clickedNode && clickedNode["parentNode"];
+      const predicate = clickedNode && clickedNode["predicateIri"];
+      const parentNode = clickedNode && clickedNode["docIRI"];
       const relatedView = {
         entityTypeId: selectedNodeType,
         predicateFilter: predicate,
@@ -600,11 +601,21 @@ const GraphVisExplore: React.FC<Props> = (props) => {
 
   const handleGroupNodeExpand = async (payloadData) => {
     setContextMenuVisible(false);
+    let parentDoc = null;
+    let nodeId = null;
+    if (payloadData && payloadData.nodeInfo) {
+      if (!parentDoc) {
+        parentDoc = payloadData.nodeInfo["parentNode"];
+      }
+      if (!nodeId) {
+        nodeId = payloadData.nodeInfo["nodeId"];
+      }
+    }
     let payload = {
       database: searchOptions.database,
       data: {
-        "parentIRI": clickedNode && clickedNode["nodeId"] ? clickedNode["nodeId"] : payloadData.nodeInfo["nodeId"],
-        "predicateFilter": clickedNode && clickedNode["predicateIRI"] ? clickedNode["predicateIRI"] : payloadData.nodeInfo["predicateIRI"]
+        parentIRI: parentDoc || nodeId,
+        "predicateFilter": payloadData.nodeInfo["predicateIri"]
       }
     };
     try {
@@ -626,10 +637,10 @@ const GraphVisExplore: React.FC<Props> = (props) => {
           expandedNodeInfo[expandId] = {
             nodes: response.data.nodes,
             edges: response.data.edges,
-            removedNode: payload.data["parentIRI"]
+            removedNode: nodeId
           };
           setExpandedNodeData(expandedNodeInfo);
-          network.body.data.nodes.remove(payload.data["parentIRI"]);
+          network.body.data.nodes.remove(nodeId);
           await updateGroupAndLeafNodesDataset(response.data.nodes);
           await updateGraphDataWith(response.data.nodes, response.data.edges);
         }
@@ -642,7 +653,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
   const handleCollapse = async () => {
     try {
       let expandId = clickedNode["expandId"];
-      expandId = !expandId ? clickedNode["parentNode"] + "-" + clickedNode["predicateIRI"] : expandId;
+      expandId = !expandId ? clickedNode["parentNode"] + "-" + clickedNode["predicateIri"] : expandId;
       let expandedGroupNodeObject = expandedNodeData[expandId];
       let nodesToDelete = getNodesToDelete(clickedNode["nodeId"]);
       let graphNodesDataTemp = expandedGroupNodeObject?.nodes.map(e => e["id"]);
@@ -699,7 +710,8 @@ const GraphVisExplore: React.FC<Props> = (props) => {
   const getExpandedEdgeIdsToRemove = (leafNodeExpandId, edgeIdsToRemove: any[] = []) => {
     if (expandedNodeData[leafNodeExpandId]) {
       let expandedGroupNodeObject = expandedNodeData[leafNodeExpandId];
-      expandedGroupNodeObject.edges.forEach(e => {
+      const edgesToRemove = expandedGroupNodeObject.edges.filter(e => e["from"] === leafNodeExpandId);
+      edgesToRemove.forEach(e => {
         let id: any = e["id"];
         let predicate = getEdgePredicate(id, network);
         let expandId = id + "-" + predicate;
@@ -713,11 +725,17 @@ const GraphVisExplore: React.FC<Props> = (props) => {
   const handleLeafNodeCollapse = () => {
     try {
       let nodesToDelete = getNodesToDelete(clickedNode["nodeId"]);
-      let graphNodesDataTemp = getExpandedNodeIdsToRemove(clickedNode["leafNodeExpandId"]);
-      let graphEdgesDataTemp = getExpandedEdgeIdsToRemove(clickedNode["leafNodeExpandId"]);
+      let graphNodesDataTemp: any = getExpandedNodeIdsToRemove(clickedNode["nodeId"]);
+
+      if (clickedNode["leafNodeExpandId"]) {
+        const leafExpandIds = getExpandedNodeIdsToRemove(clickedNode["leafNodeExpandId"]);
+        graphNodesDataTemp = graphNodesDataTemp.concat(leafExpandIds.filter(e => !graphNodesDataTemp.includes(e)));
+      }
+
+      let graphEdgesDataTemp = getExpandedEdgeIdsToRemove(clickedNode["leafExpandId"] ? clickedNode["leafExpandId"] : clickedNode["nodeId"]);
       let tempExpandedData = expandedNodeData;
       graphNodesDataTemp.forEach(expandId => delete tempExpandedData[expandId]);
-      delete tempExpandedData[clickedNode["leafNodeExpandId"]];
+      delete tempExpandedData[clickedNode["leafExpandId"] ? clickedNode["leafExpandId"] : clickedNode["nodeId"]];
       setExpandedNodeData(tempExpandedData);
       network.body.data.nodes.remove(graphNodesDataTemp);
       network.body.data.nodes.remove(nodesToDelete);
@@ -730,15 +748,22 @@ const GraphVisExplore: React.FC<Props> = (props) => {
 
   const handleLeafNodeExpansion = async (payloadData) => {
     setContextMenuVisible(false);
+    let parentIRI = null;
+    if (clickedNode) {
+      parentIRI = clickedNode["docUri"] || clickedNode["nodeId"];
+    }
+    if (!parentIRI && payloadData && payloadData.nodeInfo) {
+      parentIRI = payloadData.nodeInfo["docUri"] || payloadData.nodeInfo["nodeId"];
+    }
     let payload = {
       database: searchOptions.database,
       data: {
-        "parentIRI": clickedNode && clickedNode["nodeId"] ? clickedNode["nodeId"] : payloadData.nodeInfo["nodeId"]
+        parentIRI
       }
     };
     if (clickedNode && clickedNode["isConcept"]) {
       payload["data"]["isConcept"] = true;
-      payload["data"]["parentIRI"] = clickedNode["parentNode"];
+      payload["data"]["parentIRI"] = clickedNode["docIRI"];
       payload["data"]["objectConcept"] = clickedNode["nodeId"];
     }
     try {
@@ -751,7 +776,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
 
       if (response.status === 200) {
         let expandedNodeInfo = expandedNodeData;
-        let expandId = payloadData["nodeInfo"] ? payloadData.nodeInfo["leafNodeExpandId"] : clickedNode["leafNodeExpandId"];
+        let expandId = payloadData["nodeInfo"] ? payloadData.nodeInfo["leafNodeExpandId"] : clickedNode["leafExpandId"] ? clickedNode["leafExpandId"] : clickedNode["nodeId"];
         expandedNodeInfo[expandId] = {
           nodes: response.data.nodes,
           edges: response.data.edges,
@@ -830,13 +855,17 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         break;
       }
       case "expand3SampleRecords": {
-        let payloadData = {expandAll: false};
+        const {edgeObject} = getExpandedNodeObject(clickedNode["nodeId"]);
+        let nodeInfo = getNodeObject(clickedNode["nodeId"], edgeObject);
+        let payloadData = {expandAll: false, nodeInfo: nodeInfo};
         handleGroupNodeExpand(payloadData);
         setUserPreferences();
         break;
       }
       case "expandAllRecords": {
-        let payloadData = {expandAll: true};
+        const {edgeObject} = getExpandedNodeObject(clickedNode["nodeId"]);
+        let nodeInfo = getNodeObject(clickedNode["nodeId"], edgeObject);
+        let payloadData = {expandAll: true, nodeInfo: nodeInfo};
         handleGroupNodeExpand(payloadData);
         setUserPreferences();
         break;
@@ -887,7 +916,9 @@ const GraphVisExplore: React.FC<Props> = (props) => {
   };
 
   const isLeafNode = () => {
-    return clickedNode && clickedNode["hasRelationships"];
+    const currentEntityTypeSelected = clickedNode["entityName"];
+    const nodeId = clickedNode["leafExpandId"] ? clickedNode["leafExpandId"] : clickedNode["nodeId"];
+    return clickedNode && !isGroupNode() && !searchOptions.entityTypeIds.includes(currentEntityTypeSelected) && !expandedNodeData.hasOwnProperty(nodeId) && clickedNode["hasRelationships"] === true;
   };
 
   const isClusterFocused = () => {
@@ -911,7 +942,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
             Open related {entityType} records in a table
           </div>
         }
-        {isLeafNode() && !isExpandedLeaf() &&
+        {isLeafNode() &&
           <div id="showRelated" key="2" className={styles.contextMenuItem}>
             Show related
           </div>
@@ -980,6 +1011,10 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       expandedInstanceInfo["nodeObject"] = expandedNodeData[parentNodeExpandId].nodes.find(node => node.id === nodeId);
       expandedInstanceInfo["edgeObject"] = expandedNodeData[parentNodeExpandId].edges.find(edge => edge.id === edgeIdFrom);
       expandedInstanceInfo["parentNodeExpandId"] = parentNodeExpandId;
+    } else if (parentNode && expandedNodeData[parentNode]) {
+      expandedInstanceInfo["nodeObject"] = expandedNodeData[parentNode].nodes.find(node => node.id === nodeId);
+      expandedInstanceInfo["edgeObject"] = expandedNodeData[parentNode].edges.find(edge => edge.id === edgeIdFrom);
+      expandedInstanceInfo["parentNodeExpandId"] = parentNode;
     } else {
       expandedInstanceInfo["nodeObject"] = entityTypeInstances.nodes.find(node => node.id === nodeId);
       expandedInstanceInfo["edgeObject"] = entityTypeInstances.edges.find(edge => edge.id === edgeIdFrom);
@@ -1011,7 +1046,12 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         await handleGroupNodeExpand(payloadData);
         setUserPreferences();
       } else {
-        setSavedNode(nodeObject);
+        if (nodeObject) {
+          setSavedNode(nodeObject);
+        } else {
+          const nodeObject = entityTypeInstances.nodes.find(node => node.id === nodeId);
+          setSavedNode(nodeObject);
+        }
         setGraphViewOptions(node);
       }
     }
@@ -1059,6 +1099,10 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       nodeInfo["count"] = nodeObject && nodeObject["count"] ? nodeObject["count"] : 1;
       nodeInfo["currentNodeExpandId"] = currentNodeExpandId;
       nodeInfo["parentNodeExpandId"] = parentNodeExpandId;
+      nodeInfo["docUri"] = nodeObject && nodeObject["docUri"] ? nodeObject["docUri"] : "";
+      nodeInfo["docIRI"] = nodeObject && nodeObject["docIRI"] ? nodeObject["docIRI"] : "";
+      nodeInfo["parentDocUri"] = nodeObject && nodeObject["parentDocUri"] ? nodeObject["parentDocUri"] : "";
+      nodeInfo["predicateIri"] = nodeObject && nodeObject["predicateIri"] ? nodeObject["predicateIri"] : nodeInfo["predicateIri"];
 
       //Reset ClickedNode upon double click
       setClickedNode({nodeId: undefined, isGroupNode: false});
@@ -1093,17 +1137,17 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     let parentNode = network.getConnectedNodes(nodeId, "from");
     nodeInfo["parentNode"] = parentNode[0];
     if (edgeObject && Object.keys(edgeObject).length) {
-      nodeInfo["predicateIRI"] = edgeObject["predicate"];
+      nodeInfo["predicateIri"] = edgeObject["predicate"];
     } else {
-      nodeInfo["predicateIRI"] = getEdgePredicate(nodeId, network);
+      nodeInfo["predicateIri"] = getEdgePredicate(nodeId, network);
     }
 
     if (groupNodes.hasOwnProperty(nodeId)) {
       nodeInfo["isGroupNode"] = true;
-      nodeInfo["expandId"] = parentNode[0] + "-" + nodeInfo["predicateIRI"];
+      nodeInfo["expandId"] = parentNode[0] + "-" + nodeInfo["predicateIri"];
     } else if (leafNodes.hasOwnProperty(nodeId)) {
       if (edgeObject && Object.keys(edgeObject).length) {
-        nodeInfo["leafNodeExpandId"] = nodeId + "-" + nodeInfo["predicateIRI"];
+        nodeInfo["leafNodeExpandId"] = nodeId + "-" + nodeInfo["predicateIri"];
       }
     }
     return nodeInfo;
@@ -1165,12 +1209,23 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         setMenuPosition({x: event.event.offsetX, y: event.event.offsetY});
         const {nodeObject, edgeObject, currentNodeExpandId, parentNodeExpandId} = getExpandedNodeObject(nodeId);
         let nodeInfo = getNodeObject(nodeId, edgeObject);
+
+        const parentDocUri = nodeObject && nodeObject.hasOwnProperty("parentDocUri") && nodeObject["parentDocUri"];
+        let parentNodeInfo;
+        if (parentDocUri) {
+          parentNodeInfo = parentDocUri && entityTypeInstances.nodes.find(node => node.id === parentDocUri);
+        }
+        if (!parentDocUri && parentNodeExpandId) {
+          const {nodeObject} = getExpandedNodeObject(parentNodeExpandId);
+          parentNodeInfo = nodeObject;
+        }
         nodeInfo["entityName"] = nodeObject && nodeObject["group"] ? nodeObject["group"].split("/").pop() : "";
         nodeInfo["hasRelationships"] = nodeObject && nodeObject["hasRelationships"] ? nodeObject["hasRelationships"] : false;
         nodeInfo["count"] = nodeObject && nodeObject["count"] ? nodeObject["count"] : 1;
         nodeInfo["currentNodeExpandId"] = currentNodeExpandId;
         nodeInfo["parentNodeExpandId"] = parentNodeExpandId;
         nodeInfo["isConcept"] = nodeObject && nodeObject["isConcept"] ? nodeObject["isConcept"] : false;
+        nodeInfo["docIRI"] = parentNodeInfo && parentNodeInfo["docIRI"] ? parentNodeInfo["docIRI"] : "";
         setClickedNode(nodeInfo);
       } else {
         let nodeInfo = {

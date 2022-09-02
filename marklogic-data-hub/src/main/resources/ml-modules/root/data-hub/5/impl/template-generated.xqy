@@ -313,16 +313,21 @@ declare function extraction-template-generate(
                              <tde:context>{ $context}</tde:context>
                             <tde:triples>
                             <tde:triple>
-                              <tde:subject><tde:val>sem:iri("{ $concept_class}")</tde:val></tde:subject>
-                              <tde:predicate><tde:val>$subject-iri</tde:val></tde:predicate>
-                              <tde:object><tde:val>{ $conceptExpression}</tde:val></tde:object>
-                            </tde:triple>
-                            <tde:triple>
                                <tde:subject><tde:val>$subject-iri</tde:val></tde:subject>
                                <tde:predicate><tde:val>sem:iri("{ $predicate_concept}")</tde:val></tde:predicate>
                                 <tde:object><tde:val>{ $conceptExpression}</tde:val></tde:object>
                             </tde:triple>
-                            </tde:triples>
+                             <tde:triple>
+                               <tde:subject><tde:val>sem:iri("{ model-graph-prefix($model) }/{ $entity-type-name }")</tde:val></tde:subject>
+                               <tde:predicate><tde:val>sem:iri("http://www.marklogic.com/data-hub#relatedConcept")</tde:val></tde:predicate>
+                               <tde:object><tde:val>sem:iri("{ $concept_class}")</tde:val></tde:object>
+                             </tde:triple>
+                             <tde:triple>
+                               <tde:subject><tde:val>sem:iri("{ $concept_class}")</tde:val></tde:subject>
+                               <tde:predicate><tde:val>sem:iri("http://www.marklogic.com/data-hub#conceptPredicate")</tde:val></tde:predicate>
+                               <tde:object><tde:val>sem:iri("{ $predicate_concept}")</tde:val></tde:object>
+                             </tde:triple>
+                           </tde:triples>
                             </tde:template>
                       let $referenced-entities :=
                          let $model-type-iri := model-graph-prefix($model) || "/" || $entity-type-name

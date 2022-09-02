@@ -40,6 +40,7 @@ describe("Leaf Nodes", () => {
     entitiesSidebar.getBaseEntityOption("Customer").scrollIntoView().should("be.visible");
     cy.wait(2000);
 
+    graphExplore.fit();
     cy.log("**Clicking Show related on '101' leaf node to expand**");
     graphExplore.focusNode(ExploreGraphNodes.OFFICE_101);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.OFFICE_101).then((nodePositions: any) => {
@@ -49,6 +50,14 @@ describe("Leaf Nodes", () => {
       canvas.click(orderCoordinates.x, orderCoordinates.y, {force: true});
       //Hover to bring focus
       canvas.trigger("mouseover", orderCoordinates.x, orderCoordinates.y, {force: true});
+
+      graphExplore.stopStabilization();
+    });
+
+    graphExplore.focusNode(ExploreGraphNodes.OFFICE_101);
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.OFFICE_101).then((nodePositions: any) => {
+      let orderCoordinates: any = nodePositions[ExploreGraphNodes.OFFICE_101];
+      const canvas = graphExplore.getGraphVisCanvas();
 
       // Right click and expand the remaining records of the node
       canvas.rightclick(orderCoordinates.x, orderCoordinates.y, {force: true});
@@ -105,21 +114,23 @@ describe("Leaf Nodes", () => {
     browsePage.removeBaseEntity("Customer");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Product");
-    entitiesSidebar.getBaseEntityOption("Product").should("be.visible");
+    entitiesSidebar.getBaseEntityOption("Product").scrollIntoView().should("be.visible");
     cy.wait(2000);
 
-    cy.log("**Clicking Show related on 'Jeans' leaf node to expand**");
-    graphExplore.focusNode(ExploreGraphNodes.CONCEPT_JEANS);
-    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_JEANS).then((nodePositions: any) => {
-      let sneakerCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_JEANS];
+    graphExplore.fit();
+    graphExplore.stopStabilization();
+    cy.log("**Verify expanded node leaf node is expanded and expanded node is visible in the canvas**");
+    graphExplore.focusNode(ExploreGraphNodes.OFFICE_101);
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.OFFICE_101).then((nodePositions: any) => {
+      let officeCoordinates: any = nodePositions[ExploreGraphNodes.OFFICE_101];
       const canvas = graphExplore.getGraphVisCanvas();
 
-      canvas.click(sneakerCoordinates.x, sneakerCoordinates.y, {force: true});
       //Hover to bring focus
-      canvas.trigger("mouseover", sneakerCoordinates.x, sneakerCoordinates.y, {force: true});
+      canvas.trigger("mouseover", officeCoordinates.x, officeCoordinates.y, {force: true});
 
       // Right click and expand the remaining records of the node
-      canvas.rightclick(sneakerCoordinates.x, sneakerCoordinates.y, {force: true});
+      canvas.rightclick(officeCoordinates.x, officeCoordinates.y, {force: true});
+
       graphExplore.clickShowRelated();
       graphExplore.stopStabilization();
     });
@@ -132,8 +143,23 @@ describe("Leaf Nodes", () => {
 
       //Click on node to open side panel
       canvas.click(officeCoordinates.x, officeCoordinates.y, {force: true});
-      canvas.click(officeCoordinates.x, officeCoordinates.y, {force: true});
+      cy.wait(2000);
       graphExploreSidePanel.getSidePanel().should("exist");
+    });
+
+    cy.log("**Clicking Show related on 'Jeans' leaf node to expand**");
+    graphExplore.focusNode(ExploreGraphNodes.CONCEPT_JEANS);
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_JEANS).then((nodePositions: any) => {
+      let jeansCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_JEANS];
+      const canvas = graphExplore.getGraphVisCanvas();
+
+      canvas.click(jeansCoordinates.x, jeansCoordinates.y, {force: true});
+      //Hover to bring focus
+      canvas.trigger("mouseover", jeansCoordinates.x, jeansCoordinates.y, {force: true});
+
+      // Right click and expand the remaining records of the node
+      canvas.rightclick(jeansCoordinates.x, jeansCoordinates.y, {force: true});
+      graphExplore.stopStabilization();
     });
   });
 });

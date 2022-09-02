@@ -77,16 +77,34 @@ assertions.concat([
 ]);
 
 resultsTest4.nodes.forEach(node => {
-  if(node.id === "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/3039-42") {
-    assertions.push(test.assertFalse(node.hasRelationships), "BabyRegistry 3039-42 must have relationships flag in false.");
+  if(node.id === "/content/babyRegistry1.json") {
+    assertions.push(test.assertFalse(node.hasRelationships, `BabyRegistry 3039-42 must have relationships flag in false. Result: ${xdmp.toJsonString(node)}`));
   }
-  else if(node.id === "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/3039-42-Product") {
-    assertions.push(test.assertFalse(node.hasRelationships), "Product group node must have relationships flag in false.");
+  else if(node.id === "/content/babyRegistry1.json-Product") {
+    assertions.push(test.assertFalse(node.hasRelationships, `Product group node must have relationships flag in false. Result: ${xdmp.toJsonString(node)}`));
   }
-  else if(node.id === "http://example.org/Customer-0.0.1/Customer/301") {
-    assertions.push(test.assertTrue(node.hasRelationships), "Customer 301 node must have relationships flag in true.");
+  else if(node.id === "/content/customer1.json") {
+    assertions.push(test.assertTrue(node.hasRelationships, `Customer 301 node must have relationships flag in true. Result: ${xdmp.toJsonString(node)}`));
   }
 })
+
+// The relationship is defined in BabyRegistry model. But when searched for Customer, since there is a relation between
+// Customer and Baby Registry, BabyRegistry's related nodes and edges should be returned.
+const customerQuery = {
+  "searchText": "",
+  "entityTypeIds": [ "Customer" ],
+  "relatedEntityTypeIds": ["BabyRegistry"],
+  "selectedFacets": {}
+};
+const resultsTest6 = searchNodes(customerQuery);
+assertions.concat([
+  test.assertEqual(2, resultsTest6.total),
+  test.assertEqual(2, resultsTest6.nodes.length, xdmp.toJsonString(resultsTest6)),
+  test.assertEqual(1, resultsTest6.edges.length),
+  // to and from are in sorted order to support bidirectional queries.
+  test.assertEqual("/content/babyRegistry1.json", resultsTest6.edges[0]["from"]),
+  test.assertEqual("/content/customer1.json", resultsTest6.edges[0]["to"], xdmp.toJsonString(resultsTest6.edges[0]))
+]);
 
 
 const nodeLeafQuery = {
@@ -104,11 +122,11 @@ assertions.concat([
 ]);
 
 resultsTest5.nodes.forEach(node => {
-  if(node.id === "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/3039-42") {
-    assertions.push(test.assertFalse(node.hasRelationships), "BabyRegistry 3039-42 must have relationships flag in false.");
+  if(node.id === "/content/babyRegistry1.json") {
+    assertions.push(test.assertFalse(node.hasRelationships, `BabyRegistry 3039-42 must have relationships flag in false. Result: ${xdmp.toJsonString(node)}`));
   }
-  else if(node.id === "http://example.org/Customer-0.0.1/Customer/301") {
-    assertions.push(test.assertTrue(node.hasRelationships), "Customer 301 node must have relationships flag in true.");
+  else if(node.id === "/content/customer1.json") {
+    assertions.push(test.assertTrue(node.hasRelationships, `Customer 301 node must have relationships flag in true. Result: ${xdmp.toJsonString(node)}`));
   }
 })
 
@@ -181,13 +199,13 @@ const ConceptWithHasRelationship = {
 const resultConceptWithHasRelationship = searchNodes(ConceptWithHasRelationship);
 
 assertions.concat([
-  test.assertEqual(2, resultConceptWithHasRelationship.total),
-  test.assertEqual(2, resultConceptWithHasRelationship.nodes.length, xdmp.toJsonString(resultConceptWithHasRelationship)),
-  test.assertEqual(1, resultConceptWithHasRelationship.edges.length),
+  test.assertEqual(3, resultConceptWithHasRelationship.total),
+  test.assertEqual(3, resultConceptWithHasRelationship.nodes.length, xdmp.toJsonString(resultConceptWithHasRelationship)),
+  test.assertEqual(2, resultConceptWithHasRelationship.edges.length),
 ]);
 
 resultConceptWithHasRelationship.nodes.forEach(node => {
-  if(node.id === "http://example.org/Office-0.0.1/Office/1") {
+  if(node.id === "/content/office1.json") {
     assertions.push(test.assertFalse(node.hasRelationships), "Office 1 must have relationships flag in false.");
     assertions.push(test.assertFalse(node.isConcept), "Office 1 shouldn't be a concept.");
   }

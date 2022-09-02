@@ -120,7 +120,14 @@ export const getSavedQueryPreview = async (id, database) => {
 };
 
 export const graphSearchQuery = async (graphSearchPayload: any) => {
-  return await axios.post(`/api/entitySearch/graph?database=${graphSearchPayload.database}`, graphSearchPayload.data);
+  return await axios.post(`/api/entitySearch/graph?database=${graphSearchPayload.database}`, graphSearchPayload.data)
+    // Catching 400 error that occurs when graph is called before payload is ready
+    .catch((error) => {
+      if (error.response && error.response.status === 400) {
+        return {status: 200, data: {total: 0, nodes: [], edges: []}};
+      }
+      return error;
+    });
 };
 
 export const expandGroupNode = async (payload: any, limit?: number) => {

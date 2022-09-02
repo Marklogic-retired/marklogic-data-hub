@@ -80,6 +80,7 @@ describe("Custom step settings: ", () => {
     advancedSettings.saveSettingsButton(stepName).click();
 
     cy.waitForAsyncRequest();
+    curatePage.toggleEntityTypeId("Customer");
     curatePage.verifyStepNameIsVisible(stepName);
 
     curatePage.editStep(stepName).click();

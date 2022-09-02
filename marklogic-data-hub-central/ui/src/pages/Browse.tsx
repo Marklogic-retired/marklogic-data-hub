@@ -68,6 +68,7 @@ const Browse: React.FC<Props> = ({location}) => {
   const [currentEntitiesIcons, setCurrentEntitiesIcons] = useState<any[]>([]);
   const [currentRelatedEntities, setCurrentRelatedEntities] = useState<Map<string, any>>(new Map());
   const [entityIndicatorData, setEntityIndicatorData] = useState<any>({});
+  const [entityRelationships, setEntityRelationships] = useState<any>({});
   const [entityDefArray, setEntityDefArray] = useState<any[]>([]);
   const [facets, setFacets] = useState<any>();
   const [isLoading, setIsLoading] = useState(true);
@@ -347,6 +348,7 @@ const Browse: React.FC<Props> = ({location}) => {
     (async () => {
       try {
         const modelsResponse = await axios.get(`/api/models`);
+        const relationships = await axios.get(`/api/entitySearch/relationships?database=final`);
         const parsedModelData = entityFromJSON(modelsResponse.data);
         const parsedEntityDef = entityParser(parsedModelData).filter(entity => entity.name && entity);
         const entitiesTypeIds = parsedEntityDef.map(entity => entity.name);
@@ -369,6 +371,7 @@ const Browse: React.FC<Props> = ({location}) => {
           if (searchOptions.entityTypeIds.length === 0 && searchOptions.nextEntityType !== "All Data") {
             setEntityTypeIds(entitiesTypeIds);
           }
+          setEntityRelationships(relationships.data);
           setEntityDefinitionsArray(parsedEntityDef);
           setEntitiesData(modelsResponse.data);
           setEntityDefArray(entitiesWithFullProperties);
@@ -732,6 +735,7 @@ const Browse: React.FC<Props> = ({location}) => {
               setCurrentRelatedEntities={setCurrentRelatedEntities}
               entityIndicatorData={entityIndicatorData}
               entitiesWithRelatedConcepts={entitiesWithRelatedConcepts}
+              entityRelationships={entityRelationships}
             />
           </>
         </HCSider>

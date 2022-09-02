@@ -43,8 +43,14 @@ class GraphExplore {
     })));
   }
 
+  fit() {
+    return new Cypress.Promise((resolve) => resolve(cy.window().then((win: any) => {
+      return win.graphVisExploreApi.fit();
+    })));
+  }
+
   getCenterNodeOption() {
-    return cy.get("[id=\"centerNode\"");
+    return cy.get("#centerNode");
   }
 
   getExpandAll() {

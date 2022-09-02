@@ -45,28 +45,28 @@ let nodes = [];
 
 
 result.map(item => {
-  const objectIRI = item.subjectIRI.toString();
-  let subjectArr = objectIRI.split("/");
-  const objectId = subjectArr[subjectArr.length - 1];
-  const entityType = objectIRI.substring(0, objectIRI.length - objectId.length - 1);
+  const entityType = item.entityTypeIRI.toString();
   const conceptIRI = item.objectConcept.toString();
   const relatedEntitiesCountDataSet = graphUtils.getRelatedEntityInstancesCount([sem.iri(conceptIRI), conceptIRI]);
   const finalObj = relatedEntitiesCountDataSet.find(el => el.entityTypeIRI.toString() === entityType);
-  const conceptInfo = {
-    conceptIRI: conceptIRI,
-    count: finalObj.total,
-    conceptClass: item.conceptClassName
-  };
+  if (finalObj) {
+    const conceptInfo = {
+      entityType,
+      conceptIRI: conceptIRI,
+      count: finalObj.total,
+      conceptClass: fn.string(item.conceptClassName)
+    };
 
-  if(!hashmapEntityType.has(entityType)){
-    let conceptList = [];
-    conceptList.push(conceptInfo);
-    hashmapEntityType.set(entityType,conceptList);
-  }else{
-    let conceptInfoObject = hashmapEntityType.get(entityType).find((elem) => elem.conceptIRI.toString() === item.objectConcept.toString()) || {};
-    //in case that different instance of the same type, has the same Concept type
-    if(!Object.keys(conceptInfoObject).length){
-      hashmapEntityType.set(entityType,hashmapEntityType.get(entityType).concat(conceptInfo));
+    if (!hashmapEntityType.has(entityType)) {
+      let conceptList = [];
+      conceptList.push(conceptInfo);
+      hashmapEntityType.set(entityType, conceptList);
+    } else {
+      let conceptInfoObject = hashmapEntityType.get(entityType).find((elem) => elem.conceptIRI.toString() === conceptIRI) || {};
+      //in case that different instance of the same type, has the same Concept type
+      if (!Object.keys(conceptInfoObject).length) {
+        hashmapEntityType.set(entityType, hashmapEntityType.get(entityType).concat(conceptInfo));
+      }
     }
   }
 })

@@ -55,6 +55,7 @@ public interface EntitySearchService {
             private BaseProxy.DBFunctionRequest req_getSavedQueries;
             private BaseProxy.DBFunctionRequest req_exportSearchAsCSV;
             private BaseProxy.DBFunctionRequest req_getSemanticConceptInfo;
+            private BaseProxy.DBFunctionRequest req_getModelRelationships;
             private BaseProxy.DBFunctionRequest req_getRecord;
             private BaseProxy.DBFunctionRequest req_getMatchingPropertyValues;
 
@@ -76,6 +77,8 @@ public interface EntitySearchService {
                     "exportSearchAsCSV.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
                 this.req_getSemanticConceptInfo = this.baseProxy.request(
                     "getSemanticConceptInfo.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                this.req_getModelRelationships = this.baseProxy.request(
+                    "getModelRelationships.sjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_getRecord = this.baseProxy.request(
                     "getRecord.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_getMatchingPropertyValues = this.baseProxy.request(
@@ -190,6 +193,18 @@ public interface EntitySearchService {
             }
 
             @Override
+            public com.fasterxml.jackson.databind.JsonNode getModelRelationships() {
+                return getModelRelationships(
+                    this.req_getModelRelationships.on(this.dbClient)
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode getModelRelationships(BaseProxy.DBFunctionRequest request) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request.responseSingle(false, Format.JSON)
+                );
+            }
+
+            @Override
             public com.fasterxml.jackson.databind.JsonNode getRecord(String docUri) {
                 return getRecord(
                     this.req_getRecord.on(this.dbClient), docUri
@@ -285,6 +300,14 @@ public interface EntitySearchService {
    * @return	The document with the IRI provided
    */
     com.fasterxml.jackson.databind.JsonNode getSemanticConceptInfo(String semanticConceptIRI);
+
+  /**
+   * Invokes the getModelRelationships operation on the database server
+   *
+   * 
+   * @return	The relationships between entity models
+   */
+    com.fasterxml.jackson.databind.JsonNode getModelRelationships();
 
   /**
    * Invokes the getRecord operation on the database server
