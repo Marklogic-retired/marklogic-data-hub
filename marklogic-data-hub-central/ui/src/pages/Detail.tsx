@@ -483,7 +483,7 @@ const Detail: React.FC<Props> = ({history, location}) => {
     const body = propertyValues.map((value, i) => {
       return (
         <div key={i} className={styles.entityRelationsItems}>
-          <span className="text-info">{value}</span>
+          <span>{value}</span>
         </div>
       );
     });
