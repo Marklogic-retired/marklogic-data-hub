@@ -51,7 +51,7 @@ class MonitorPage {
     // filter by facet
     cy.get(`[data-testid=${facetType}-facet] input`).eq(index).check();
     cy.findByTestId("facet-apply-button").click({force: true});
-    cy.get(`[data-testid=${facetType}-facet] input`).eq(index).then(($btn) => {
+    cy.get(`[data-testid=${facetType}-facet] input`).should("be.visible").eq(index).then(($btn) => {
       let facet = $btn.next("label").text();
       cy.get("#selected-facets [data-cy=\"clear-" + $btn.val() + "\"]").should("exist");
       // On firefox it gets stuck and then tries everything at once
