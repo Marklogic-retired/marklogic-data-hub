@@ -377,8 +377,8 @@ describe("login", () => {
 
   it("can login, navigate to modeling tile, logout, login and auto return to tile view", () => {
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader")
-      .withUI()
-      .url().should("include", "/tiles");
+      .withRequest();
+    loginPage.postLogin();
 
     // To verify on click operation works as expected
     toolbar.getHomePageInfoIcon().scrollIntoView().should("be.visible").click({force: true});
