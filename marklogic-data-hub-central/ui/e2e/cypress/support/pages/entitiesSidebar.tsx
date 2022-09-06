@@ -42,6 +42,9 @@ class BaseEntitySidebar {
     return cy.get(`input[data-testid="name-${name}-checkbox"]`);
   }
 
+  getFacetCheckboxEmail(email: string) {
+    return cy.get(`input[data-testid="email-${email}-checkbox"]`);
+  }
 
   getCollectionCheckbox(facetName:string, name: string) {
     return cy.get(`input[data-testid="${facetName}-${name}-checkbox"]`);
@@ -119,6 +122,9 @@ class BaseEntitySidebar {
 
   getClearQueryTooltip() {
     return cy.get(`[aria-label="clear-query-tooltip"]`);
+  }
+  getClearOneFacet(facetName: String) {
+    return cy.get(`[data-cy="clear-${facetName}"]`);
   }
 
   clearQuery() {

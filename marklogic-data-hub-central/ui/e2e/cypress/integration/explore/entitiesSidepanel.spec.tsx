@@ -113,10 +113,26 @@ describe("Test '/Explore' left sidebar", () => {
     browsePage.clickSwitchToTableView();
     browsePage.getHCTableRows().should("have.length", 2);
 
+    cy.log("**Applying another facet**");
+    entitiesSidebar.getFacetCheckboxEmail("adamscole@nutralab.com").should("be.visible").click();
+    entitiesSidebar.getFacetCheckboxEmail("adamscole@nutralab.com").should("be.checked");
+    browsePage.getGreySelectedFacets("adamscole@nutralab.com").should("exist");
+    entitiesSidebar.clickOnApplyFacetsButton();
+    browsePage.getAppliedFacets("adamscole@nutralab.com").should("exist");
+    entitiesSidebar.getFacetCheckboxEmail("adamscole@nutralab.com").should("be.checked");
+    browsePage.getHCTableRows().should("have.length.below", 2);
+
+    cy.log("**Clear only one facet and confirm it doesn't remove them all**");
+    entitiesSidebar.getClearOneFacet("adamscole@nutralab.com").should("be.visible").click();
+    browsePage.getHCTableRows().should("have.length", 2);
+    browsePage.getAppliedFacets("Adams Cole").should("exist");
+    entitiesSidebar.getFacetCheckbox("Adams Cole").should("be.checked");
+
     cy.log("**Testing date facet**");
     entitiesSidebar.getDateFacetLabel().should("have.text", "birthDate");
     entitiesSidebar.selectDateRange({time: "facet-datetime-picker-date"});
     entitiesSidebar.getDateFacet().should("not.be.empty");
+
     entitiesSidebar.backToMainSidebar();
   });
 
