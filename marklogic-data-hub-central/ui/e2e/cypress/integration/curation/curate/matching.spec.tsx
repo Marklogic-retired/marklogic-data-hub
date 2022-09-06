@@ -42,6 +42,10 @@ describe("Matching", () => {
     //Restoring Local Storage to Preserve Session
     cy.restoreLocalStorage();
   });
+  afterEach(() => {
+    //Saving Local Storage to preserve session
+    cy.saveLocalStorage();
+  });
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.deleteSteps("matching", "matchCustTest");
