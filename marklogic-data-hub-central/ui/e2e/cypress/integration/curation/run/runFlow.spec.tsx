@@ -71,14 +71,6 @@ describe("Run Tile tests", () => {
     runPage.openStepsSelectDropdown(flowName);
 
     cy.log("**Unclick All Steps**");
-    cy.get("#ingest-orders").click();
-    cy.get("#ingest-orders").should("be.disabled");
-    cy.get("#loadPersonXML").click();
-    cy.get("#mapPersonXML").click();
-    cy.get("#match-xml-person").click();
-    cy.get("#merge-xml-person").click();
-    cy.get("#master-person").click();
-    cy.get("#generate-dictionary").click();
     cy.get("#checkAll").click();
     cy.get("#errorMessageEmptySteps").contains("Select at least one step to run a flow.");
 
