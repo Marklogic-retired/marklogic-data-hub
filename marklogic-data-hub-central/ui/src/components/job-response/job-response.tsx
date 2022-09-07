@@ -12,6 +12,8 @@ import {getMappingArtifactByStepName} from "../../api/mapping";
 import {useHistory} from "react-router-dom";
 import Spinner from "react-bootstrap/Spinner";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {getNotifications} from "@api/merging";
+import {NotificationContext} from "@util/notification-context";
 import {faClock, faInfoCircle, faStopCircle, faBan} from "@fortawesome/free-solid-svg-icons";
 import "./job-response.scss";
 import {CheckCircleFill, XCircleFill, ExclamationCircleFill} from "react-bootstrap-icons";
@@ -32,6 +34,7 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStop
   const {handleError} = useContext(UserContext);
   const {setLatestDatabase, setLatestJobFacet} = useContext(SearchContext);
   const history: any = useHistory();
+  const {setNotificationsObj} = useContext(NotificationContext);
 
   useEffect(() => {
     if (jobId) {
@@ -108,6 +111,24 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStop
     </span>
   );
 
+  const fetchNotifications = async () => {
+    await getNotifications()
+      .then((resp) => {
+        if (resp && resp.data) {
+          setNotificationsObj(resp.data.notifications, resp.data.total);
+        } else {
+          setNotificationsObj([], 0);
+        }
+      })
+      .catch((err) => {
+        if (err.response) {
+          setNotificationsObj([], 0);
+        } else {
+          setNotificationsObj([], 0);
+        }
+      });
+  };
+
   const isStepCanceled= (response) => {
     // this step was canceled
     if (response.status?.includes("canceled")) return true;
@@ -117,6 +138,11 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStop
     const responsesKeys = Object.keys(jobResponse.stepResponses);
     return responsesKeys.some(key => (jobResponse.stepResponses[key].status.includes("canceled") && parseInt(key) < parseInt(response.stepNumber)));
 
+  };
+
+  const onCloseModal = async () => {
+    await fetchNotifications();
+    setOpenJobResponse(false);
   };
 
   const responseColumns = [
@@ -326,7 +352,7 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStop
         </span>
         :
         <span className={`fs-5 ${styles.title}`} aria-label={`${jobResponse.flow}-completed`}>The flow <strong>{jobResponse.flow}</strong> {jobResponse.jobStatus==="canceled" ? "was canceled" : "completed"}</span>}
-      <button type="button" className="btn-close" aria-label={`${jobResponse.flow}-close`} data-testid={`${jobResponse.flow}-close`} onClick={() => setOpenJobResponse(false)}></button>
+      <button type="button" className="btn-close" aria-label={`${jobResponse.flow}-close`} data-testid={`${jobResponse.flow}-close`} onClick={() => onCloseModal()}></button>
     </Modal.Header>
     <Modal.Body>
       <div aria-label="jobResponse" id="jobResponse" className={styles.jobResponseContainer} >

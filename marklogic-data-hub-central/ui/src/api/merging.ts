@@ -31,6 +31,21 @@ export const getMergingRulesWarnings = async (merging, newMergeRule) => {
   }
 };
 
+export const getNotifications = async () => {
+  try {
+    let response = await axios.get(`/api/steps/merging/notifications`);
+    if (response.status === 200) {
+      return response;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    let message = error;
+    console.error("Error fetching merge notifications!", message);
+    return message;
+  }
+};
+
 export const mergeUris  = async (payload) => {
   try {
     let response = await axios.put(`/api/steps/merging/merge`, payload);

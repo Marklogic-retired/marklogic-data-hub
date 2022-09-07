@@ -1,0 +1,37 @@
+@import "../../../theme/HCVariables.scss";
+
+
+.notificationModal {
+    top: 1.5em;
+    left: -2em;
+    min-width: 70%;
+}
+
+.title {
+  top: 1.5rem;
+  font-size :24px;
+  font-weight: 500;
+}
+
+.notificationModalBody {
+    height: 750px;
+}
+
+.emptyList {
+  text-align: center;
+  margin-top: 15%;
+}
+
+.emptyText {
+  margin-top: 5%;
+  font-size: 24px;
+}
+
+.emptyListIcon {
+  color: #8d96c8;
+  font-size: 250px;
+}
+
+.notificationModalContainer {
+
+}

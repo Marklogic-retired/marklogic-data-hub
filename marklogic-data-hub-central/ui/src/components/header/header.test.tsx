@@ -1,5 +1,5 @@
 import React from "react";
-import {render, cleanup, waitForElement, getByTestId} from "@testing-library/react";
+import {render, cleanup, waitForElement} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {BrowserRouter as Router} from "react-router-dom";
 import {UserContext} from "../../util/user-context";
@@ -10,6 +10,11 @@ import {Application} from "../../config/application.config";
 import {fireEvent} from "@testing-library/dom";
 
 
+const notificationData = {
+  "notifs": [],
+  "count": 0
+};
+
 describe("Header component", () => {
 
   afterEach(cleanup);
@@ -18,7 +23,7 @@ describe("Header component", () => {
 
     const {getByText, getByLabelText, queryByText} = render(
       <Router>
-        <Header environment={data.environment}/>
+        <Header environment={data.environment} notificationStruct={notificationData}/>
       </Router>
     );
 
@@ -35,7 +40,7 @@ describe("Header component", () => {
     const {getByText, getByLabelText, rerender} = render(
       <Router>
         <UserContext.Provider value={userAuthenticated}>
-          <Header environment = {{...data.environment, dataHubVersion: "5.3-SNAPSHOT"}}/>
+          <Header environment = {{...data.environment, dataHubVersion: "5.3-SNAPSHOT"}} notificationStruct={notificationData}/>
         </UserContext.Provider>
       </Router>
     );
@@ -50,6 +55,9 @@ describe("Header component", () => {
     fireEvent.mouseOver(getByLabelText("icon: user"));
     await waitForElement(() => getByText("User"));
 
+    fireEvent.mouseOver(getByLabelText("icon: notification-bell"));
+    await waitForElement(() => getByText("Merge Notifications"));
+
     fireEvent.mouseOver(getByLabelText("icon: question-circle"));
     await waitForElement(() => getByText("Help"));
 
@@ -63,7 +71,7 @@ describe("Header component", () => {
     rerender(
       <Router>
         <UserContext.Provider value={userAuthenticated}>
-          <Header environment = {{...data.environment, dataHubVersion: "5.2.1"}}/>
+          <Header environment = {{...data.environment, dataHubVersion: "5.2.1"}} notificationStruct={notificationData}/>
         </UserContext.Provider>
       </Router>
     );
@@ -73,7 +81,7 @@ describe("Header component", () => {
     rerender(
       <Router>
         <UserContext.Provider value={userAuthenticated}>
-          <Header environment = {{...data.environment, dataHubVersion: "5.64.123456"}}/>
+          <Header environment = {{...data.environment, dataHubVersion: "5.64.123456"}} notificationStruct={notificationData}/>
         </UserContext.Provider>
       </Router>
     );
@@ -84,10 +92,10 @@ describe("Header component", () => {
   test("verify tabbing and arrow key controls", async () => {
     let i: number;
 
-    const {getByLabelText} = render(
+    const {getByLabelText, getByTestId} = render(
       <Router>
         <UserContext.Provider value={userAuthenticated}>
-          <Header environment = {{...data.environment, dataHubVersion: "5.3-SNAPSHOT"}}/>
+          <Header environment = {{...data.environment, dataHubVersion: "5.3-SNAPSHOT"}} notificationStruct={notificationData}/>
         </UserContext.Provider>
       </Router>
     );

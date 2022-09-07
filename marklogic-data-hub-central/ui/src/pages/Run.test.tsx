@@ -378,7 +378,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     fireEvent.click(getByTestId(`${steps[1].stepName}-failure`));
     fireEvent.click(getByTestId(`${steps[1].stepName}-error-1`));
     expect(getAllByTestId("error-message")[0]).toHaveTextContent("Local message: failed to apply resource at documents");
-    fireEvent.click(getByLabelText(`${data.flows.data[0].name}-close`));
+    await waitForElement(() => fireEvent.click(getByLabelText(`${data.flows.data[0].name}-close`)));
 
     //Matching step failed error
     fireEvent.click(getByLabelText(`runStep-${steps[3].stepName}`));
@@ -389,7 +389,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     fireEvent.click(getByTestId(`${steps[3].stepName}-error-1`));
     expect(getAllByTestId("error-message")[0]).toHaveTextContent("Local message: failed to apply resource at documents");
 
-    fireEvent.click(getByLabelText(`${data.flows.data[0].name}-close`));
+    await waitForElement(() => fireEvent.click(getByLabelText(`${data.flows.data[0].name}-close`)));
 
     //Merging step failed error
     fireEvent.click(getByLabelText(`runStep-${steps[4].stepName}`));
@@ -400,7 +400,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     fireEvent.click(getByTestId(`${steps[4].stepName}-error-1`));
     expect(getAllByTestId("error-message")[0]).toHaveTextContent("Local message: failed to apply resource at documents");
 
-    fireEvent.click(getByLabelText(`${data.flows.data[0].name}-close`));
+    await waitForElement(() => fireEvent.click(getByLabelText(`${data.flows.data[0].name}-close`)));
 
     //Mastering step failed error
 
@@ -412,7 +412,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     fireEvent.click(getByTestId(`${steps[5].stepName}-error-1`));
     expect(getAllByTestId("error-message")[0]).toHaveTextContent("Local message: failed to apply resource at documents");
 
-    fireEvent.click(getByLabelText(`${data.flows.data[0].name}-close`));
+    await waitForElement(() => fireEvent.click(getByLabelText(`${data.flows.data[0].name}-close`)));
 
   });
 
@@ -440,7 +440,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     expect(getAllByText("URI:")[0]).toBeInTheDocument();
     // Error 2 is present
     expect(getByTestId(`${steps[1].stepName}-error-2`)).toBeInTheDocument();
-    fireEvent.click(getByLabelText(`${data.flows.data[0].name}-close`));
+    await waitForElement(() => fireEvent.click(getByLabelText(`${data.flows.data[0].name}-close`)));
 
     //Matching step error
     fireEvent.click(getByLabelText(`runStep-${steps[3].stepName}`));
@@ -456,7 +456,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     expect(getAllByText("URI:")[0]).toBeInTheDocument();
     // Error 2 is present
     expect(getByTestId(`${steps[3].stepName}-error-2`)).toBeInTheDocument();
-    fireEvent.click(getByLabelText(`${data.flows.data[0].name}-close`));
+    await waitForElement(() => fireEvent.click(getByLabelText(`${data.flows.data[0].name}-close`)));
 
     //Merging step error
     fireEvent.click(getByLabelText(`runStep-${steps[4].stepName}`));
@@ -473,7 +473,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     // Error 2 is present
     expect(getByTestId(`${steps[4].stepName}-error-2`)).toBeInTheDocument();
 
-    fireEvent.click(getByLabelText(`${data.flows.data[0].name}-close`));
+    await waitForElement(() => fireEvent.click(getByLabelText(`${data.flows.data[0].name}-close`)));
 
     // Mastering step error
     fireEvent.click(getByLabelText(`runStep-${steps[5].stepName}`));
@@ -490,7 +490,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     // Error 2 is present
     expect(getByTestId(`${steps[5].stepName}-error-2`)).toBeInTheDocument();
 
-    fireEvent.click(getByLabelText(`${data.flows.data[0].name}-close`));
+    await waitForElement(() => fireEvent.click(getByLabelText(`${data.flows.data[0].name}-close`)));
   }, 15000);
 
   test("Check if explore curated data is clicked and exists in history", async () => {
@@ -629,7 +629,7 @@ describe("Verify Add Step function", () => {
     // Check the step run was successful
     expect(await waitForElement(() => getByTestId(`${steps[1].stepName}-success`))).toBeInTheDocument();
 
-    fireEvent.click(getByLabelText(`${data.flows.data[0].name}-close`));
+    await waitForElement(() => fireEvent.click(getByLabelText(`${data.flows.data[0].name}-close`)));
 
     //expect panel to still be open after step is run
     expect(getByText(data.flows.data[0].steps[1].stepName)).toBeInTheDocument();

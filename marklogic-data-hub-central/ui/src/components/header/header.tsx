@@ -1,4 +1,4 @@
-import React, {useContext, useState} from "react";
+import React, {useContext, useState, useEffect} from "react";
 import {RouteComponentProps, withRouter, useHistory, Link} from "react-router-dom";
 import axios from "axios";
 import {UserContext} from "@util/user-context";
@@ -6,23 +6,29 @@ import {parseVersion} from "@util/environment";
 import logo from "./logo.svg";
 import styles from "./header.module.scss";
 import {Application} from "@config/application.config";
-import SystemInfo from "./system-info";
+import SystemInfo from "./system-info/system-info";
 import {Image, Nav, NavDropdown} from "react-bootstrap";
 import {QuestionCircle} from "react-bootstrap-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
+import {faInfoCircle, faBell} from "@fortawesome/free-solid-svg-icons";
 import {faUser} from "@fortawesome/free-regular-svg-icons";
 import {HCButton, HCTooltip} from "@components/common";
+import NotificationBadge from "react-notification-badge";
+import {Effect} from "react-notification-badge";
+import NotificationModal from "./notification-modal/notification-modal";
+import {NotificationContext} from "@util/notification-context";
 
 interface Props extends RouteComponentProps<any> {
   environment: any
+  notificationStruct: {}
 }
 
 const Header:React.FC<Props> = (props) => {
   const {user, userNotAuthenticated, handleError} = useContext(UserContext);
-
+  const {notificationOptions, setNotificationsObj} = useContext(NotificationContext);
   const [systemInfoVisible, setSystemInfoVisible] = useState(false);
   const [showUserDropdown, toggleUserDropdown] = useState(false);
+  const [notificationModalVisible, setNotificationModalVisible] = useState(false);
   const history = useHistory();
 
   const logoRef = React.createRef<HTMLAnchorElement>();
@@ -30,6 +36,10 @@ const Header:React.FC<Props> = (props) => {
   const serviceNameRef = React.createRef<HTMLElement>();
   const helpLinkRef = React.createRef<HTMLAnchorElement>();
   const userDropdownRef = React.createRef<HTMLSpanElement>();
+
+  useEffect(() => {
+    setNotificationsObj(props.notificationStruct["notifs"], props.notificationStruct["count"]);
+  }, [props.notificationStruct]);
 
   const confirmLogout = async () => {
     try {
@@ -142,6 +152,14 @@ const Header:React.FC<Props> = (props) => {
         </Nav.Item>
 
         <Nav.Item>
+          <HCTooltip text="Merge Notifications" id="notification-tooltip" placement="bottom">
+            <Nav.Link aria-label={"notification-link"} onClick={() => setNotificationModalVisible(true)}>
+              <NotificationBadge className={styles.notificationBadge} count={notificationOptions.totalCount} effect={Effect.SCALE}/>
+              <FontAwesomeIcon id="notificationBell" className={styles.notificationBell} icon={faBell} size="2x" aria-label="icon: notification-bell"/>
+            </Nav.Link>
+          </HCTooltip>
+        </Nav.Item>
+        <Nav.Item>
           <Nav.Link id="help-link" aria-label="help-link" className={styles.helpIconLink} href={getVersionLink()} target="_blank" rel="noopener noreferrer"
             tabIndex={1} ref={helpLinkRef} onKeyDown={helpLinkKeyDownHandler} onMouseDown={helpLinkClickHandler} as="a">
             <HCTooltip text="Help" id="help-tooltip" placement="bottom">
@@ -225,6 +243,10 @@ const Header:React.FC<Props> = (props) => {
         marklogicVersion={props.environment.marklogicVersion}
         systemInfoVisible={systemInfoVisible}
         setSystemInfoVisible={setSystemInfoVisible}
+      />
+      <NotificationModal
+        notificationModalVisible={notificationModalVisible}
+        setNotificationModalVisible={setNotificationModalVisible}
       />
     </>
   );

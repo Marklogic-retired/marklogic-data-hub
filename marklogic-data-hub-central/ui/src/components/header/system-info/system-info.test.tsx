@@ -1,15 +1,15 @@
 import React from "react";
 import {render, cleanup, fireEvent, waitForElement, wait} from "@testing-library/react";
 import SystemInfo from "./system-info";
-import {AuthoritiesContext, AuthoritiesService} from "../../util/authorities";
+import {AuthoritiesContext, AuthoritiesService} from "../../../util/authorities";
 import {BrowserRouter as Router} from "react-router-dom";
 import {ClearDataMessages} from "@config/messages.config";
-import data from "../../assets/mock-data/system-info.data";
+import data from "../../../assets/mock-data/system-info.data";
 import axiosMock from "axios";
-import mocks from "../../api/__mocks__/mocks.data";
-import {SecurityTooltips} from "../../config/tooltips.config";
+import mocks from "../../../api/__mocks__/mocks.data";
+import {SecurityTooltips} from "../../../config/tooltips.config";
 import userEvent from "@testing-library/user-event";
-import curateData from "../../assets/mock-data/curation/flows.data";
+import curateData from "../../../assets/mock-data/curation/flows.data";
 
 jest.mock("axios");
 

@@ -126,7 +126,6 @@ public class MergingStepController extends BaseController {
     }
 
     @RequestMapping(value = "/notifications", method = RequestMethod.GET)
-    @Secured("ROLE_readMerging")
     public ResponseEntity<JsonNode> getNotifications(@RequestParam(defaultValue = "1") Integer start, @RequestParam(defaultValue = "10") Integer pageLength) {
         MasteringManager mgr = new MasteringManagerImpl(getHubClient());
         return ResponseEntity.ok(mgr.notifications(start, pageLength));
