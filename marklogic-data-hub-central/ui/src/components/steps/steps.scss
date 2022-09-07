@@ -1,33 +1,40 @@
 @import "../../theme/HCTheme.scss";
 
-.basicTooltip, .advTooltip {
+.basicTooltip,
+.advTooltip {
     max-width: 100%;
 }
 
-.nav-tabs {
-    width: 173px;
-    margin-left: 430px;
-    justify-content: space-around;
+.tabs-container {
 
-    .nav-link, .nav-item.show .nav-link {
-        border: none !important;
-        border-bottom: #e8e8e8;
-        color: $text-color !important;
-        font-size: 16px;
-        padding: 8px;     
 
-        &.active {
-            color: $info !important;
-            border-bottom: 2px solid $info !important;
-            font-weight: 500;
+    .nav-tabs {
+        width: 173px;
+        margin-left: 430px;
+        justify-content: space-around;
+
+        .nav-link,
+        .nav-item.show .nav-link {
+            border: none !important;
+            border-bottom: #e8e8e8;
+            color: $text-color  !important;
+            font-size: 16px;
+            padding: 8px;
+
+            &.active {
+                color: $info  !important;
+                border-bottom: 2px solid $info  !important;
+                font-weight: 500;
+            }
+
+            &:not(.active) {
+                margin-left: -7px !important;
+            }
         }
-        &:not(.active) {
-            margin-left: -7px !important;
-        }
-    }
 
-    .nav-item:last-child .nav-link {
-        margin-left: 1px !important;
+        .nav-item:last-child .nav-link {
+            margin-left: 1px !important;
+        }
     }
 }
 
