@@ -49,7 +49,15 @@ class Toolbar {
   }
 
   closeNotificationModal() {
-    return cy.get(`[aria-label="Close"]`).click();
+    return cy.get(`.modal-body [aria-label="Close"]`).click();
+  }
+
+  getTrashIcon(id: string) {
+    return cy.get(`[data-testid="${id}"]`);
+  }
+
+  getDeleteModalButton(label:string) {
+    return cy.get(`[aria-label="${label}"]`);
   }
 
   existsNotification() {

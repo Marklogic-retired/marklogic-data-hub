@@ -44,7 +44,7 @@ describe("Merge Notification Functionality From Explore Card View", () => {
     toolbar.getNotificationBadgeCount().should("have.text", 2);
 
     cy.log("** Click notification bell icon to open modal **");
-    toolbar.getHomePageNotificationIcon().click();
+    toolbar.getHomePageNotificationIcon().click({force: true});
     toolbar.getNotificationTitle().should("be.visible");
 
     cy.log("** Modal can be closed **");
@@ -57,6 +57,20 @@ describe("Merge Notification Functionality From Explore Card View", () => {
     toolbar.verifyModalContent();
     toolbar.closeNotificationModal();
   });
+
+  it("Delete notification in the table and control the results", () => {
+    toolbar.getHomePageNotificationIcon().click({force: true});
+    toolbar.getNotificationTitle().should("be.visible");
+    cy.log("**clicking delete icon**");
+    toolbar.getTrashIcon("delete-icon2").click();
+    toolbar.getDeleteModalButton("confirm-deleteNotificationRow-yes").click().then(() => {
+      cy.log("**deleting after confirmation**");
+      toolbar.getTrashIcon("delete-icon2").should("not.exist");
+      toolbar.verifyModalContent();
+      toolbar.closeNotificationModal();
+    });
+  });
+
   it("Navigate to Explore tile All Data View", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     explorePage.getAllDataButton().click();
@@ -98,5 +112,19 @@ describe("Merge Notification Functionality From Explore Card View", () => {
     compareValuesModal.getMergeButton().click();
     compareValuesModal.confirmationYes().click();
     compareValuesModal.getModal().should("not.exist");
+  });
+  it("Run Match and Merge steps to generate Notification Docs", () => {
+    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    runPage.getFlowName("personJSON").should("be.visible");
+    runPage.toggleExpandFlow("personJSON");
+    cy.log("** Run Match and Merge Steps **");
+    runPage.runStep("match-person", "personJSON");
+    runPage.verifyStepRunResult("match-person", "success");
+    runPage.getDocumentsWritten("match-person").should("be.greaterThan", 0);
+    runPage.closeFlowStatusModal("personJSON");
+    runPage.runStep("merge-person", "personJSON");
+    runPage.verifyStepRunResult("merge-person", "success");
+    runPage.getDocumentsWritten("merge-person").should("be.greaterThan", 0);
+    runPage.closeFlowStatusModal("personJSON");
   });
 });

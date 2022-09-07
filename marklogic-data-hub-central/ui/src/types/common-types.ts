@@ -23,7 +23,8 @@ export enum ConfirmationType {
   RevertChanges = "revertEntityChanges",
   PropertyName = "propertyName",
   DeleteConceptClass = "deleteConceptClass",
-  DeleteConceptClassWithRelatedEntityTypes = "deleteConceptClassWithRelatedEntityTypes"
+  DeleteConceptClassWithRelatedEntityTypes = "deleteConceptClassWithRelatedEntityTypes",
+  DeleteNotificationRow = "deleteNotificationRow"
 }
 
 declare global {
