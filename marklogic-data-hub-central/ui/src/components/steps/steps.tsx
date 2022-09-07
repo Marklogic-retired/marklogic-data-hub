@@ -315,7 +315,7 @@ const Steps: React.FC<Props> = (props) => {
     </Modal.Header>
     <Modal.Body className={"pt-0 pb-4"}>
       <div aria-label="steps" id="stepSettings" className={styles.stepsContainer}>
-        <div className={styles.tabs}>
+        <div className="tabs-container">
           <Tabs activeKey={currentTab} defaultActiveKey={DEFAULT_TAB} onSelect={handleTabChange} className={"ms-auto me-5"}>
             <Tab title={(
               <HCTooltip text={(!isValid && currentTab !== "1") ? ErrorTooltips.disabledTab : ""} id="basic-tooltip" placement="bottom"><span>Basic</span></HCTooltip>

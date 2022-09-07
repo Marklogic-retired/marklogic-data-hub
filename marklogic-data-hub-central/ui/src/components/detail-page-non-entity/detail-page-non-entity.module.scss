@@ -32,6 +32,8 @@
     .detailContent {
         background: #fff;
         padding: 18px 36px;
+        display: flex;
+        flex-direction: column;
     }
 
     .contentElements {
@@ -75,8 +77,8 @@
 .documentContainer {
     max-height: 56vh;
     overflow: auto;
+    padding-bottom: 40px;
 }
-
 .siderParent {
     overflow: auto;
     //height: '77vh',
@@ -238,10 +240,6 @@
     border-bottom: 2px solid $info !important;
     color: $info !important;
 }
-
-div.siderContainer {
-}
-
 div.contentContainer {
     z-index: 9;
     overflow: auto;
