@@ -14,7 +14,7 @@
 }
 
 .notificationModalBody {
-    height: 750px;
+    //height: 750px;
 }
 
 .emptyList {
@@ -32,6 +32,25 @@
   font-size: 250px;
 }
 
-.notificationModalContainer {
+.mergeIcon {
+  font-size: 25px;
+  margin-top: -3px;
+  margin-left: 2px;
+  cursor: pointer;
+}
+.mergeIcon:hover {
+  color: var(--hoverColor)!important;
+}
+.deleteRow {
+  cursor: pointer;
+}
+.deleteRow:hover {
+  color: var(--hoverColor)!important;
+}
 
+.notificationModalContainer {
+  height: auto;
+  max-height: 550px;
+  overflow-y: auto;
+overflow-x: hidden;
 }
