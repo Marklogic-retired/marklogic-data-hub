@@ -193,6 +193,7 @@ const MatchingStepDetail: React.FC = () => {
       uriTableData2: UriTableData2}});
   }, [expandRuleset, displayRulesetTimeline, displayThresholdTimeline, moreRulesetText, moreThresholdText, value, previewMatchedActivity, previewNonMatchedActivity, uriTestMatchClicked, rulesetDataList, inputUriDisabled, inputUriDisabled2, previewMatchedData, UriTableData, UriTableData2]);
 
+
   const handleMatchingActivity = async (matchStepName) => {
     let matchActivity = await calculateMatchingActivity(matchStepName);
     setMatchingActivity(matchActivity);
@@ -345,9 +346,10 @@ const MatchingStepDetail: React.FC = () => {
     dataField: "uriValue",
     formatter: (text, key) => (
       <span className={styles.tableRow}>{text}<i className={styles.positionDeleteIcon} aria-label="deleteIcon">
-        <FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} onClick={() => handleDeleteUri(key)} size="lg" /></i>
+        <FontAwesomeIcon data-testid={`${text}-delete`} icon={faTrashAlt} className={styles.deleteIcon} onClick={() => handleDeleteUri(key)} size="lg" /></i>
       </span>
     ),
+    formatExtraData: {UriTableData}
   }];
 
   const UriColumns2 = [{
@@ -356,9 +358,10 @@ const MatchingStepDetail: React.FC = () => {
     dataField: "uriValue",
     formatter: (text, key) => (
       <span className={styles.tableRow}>{text}<i className={styles.positionDeleteIcon} aria-label="deleteIcon">
-        <FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} onClick={() => handleDeleteUri2(key)} size="lg" /></i>
+        <FontAwesomeIcon data-testid={`${text}-delete`} icon={faTrashAlt} className={styles.deleteIcon} onClick={() => handleDeleteUri2(key)} size="lg"/></i>
       </span>
     ),
+    formatExtraData: {UriTableData2}
   }];
 
   const handleDeleteUri = (event) => {
@@ -385,6 +388,7 @@ const MatchingStepDetail: React.FC = () => {
         break;
       }
     }
+
     setUriTableData2(data);
     setDuplicateUriWarning2(false);
     setSingleUriWarning2(false);

@@ -72,6 +72,10 @@ class MatchingStepDetail {
     return cy.findAllByLabelText("deleteIcon");
   }
 
+  getUriDeleteIconByDataTestId(text: string) {
+    return cy.get(`[data-testid="${text}-delete"]`);
+  }
+
   getTestMatchUriButton() {
     return cy.findByLabelText("testMatchUriButton").scrollIntoView().click();
   }

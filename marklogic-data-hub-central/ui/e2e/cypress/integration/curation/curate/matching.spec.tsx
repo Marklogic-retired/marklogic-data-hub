@@ -28,6 +28,7 @@ const urisMerged = ["/json/persons/first-name-double-metaphone1.json", "/json/pe
 const uris = ["/json/persons/first-name-double-metaphone1.json", "/json/persons/first-name-double-metaphone2.json", "/json/persons/last-name-plus-zip-boost1.json", "/json/persons/last-name-plus-zip-boost2.json", "/json/persons/last-name-dob-custom1.json", "/json/persons/last-name-dob-custom2.json", "/json/persons/first-name-synonym1.json", "/json/persons/first-name-synonym2.json"];
 const compareValuesData = [{propertyName: "id", uriValue1: "empty", uriValue2: "empty"}, {propertyName: "fname", uriValue1: "Alexandra", uriValue2: "Alexandria"}, // eslint-disable-line @typescript-eslint/no-unused-vars
   {propertyName: "lname", uriValue1: "Wilson", uriValue2: "Wilson"}, {propertyName: "Address", uriValue1: "123 Wilson St", uriValue2: "123 Wilson Rd"}];
+const urisDummy = ["dummy1", "dummy2"];
 
 describe("Matching", () => {
   before(() => {
@@ -407,6 +408,18 @@ describe("Matching", () => {
       cy.waitUntil(() => matchingStepDetail.getUriInputField().clear().type(uris[i]));
       matchingStepDetail.getAddUriIcon().click();
     }
+
+    //To test if correct uri is deleted when clicked on delete button
+    cy.log("**To test if correct uri is deleted when clicked on delete uri button**");
+    for (let i in urisDummy) {
+      cy.waitUntil(() => matchingStepDetail.getUriInputField().clear().type(urisDummy[i]));
+      matchingStepDetail.getAddUriIcon().click();
+    }
+
+    matchingStepDetail.getUriDeleteIconByDataTestId(urisDummy[0]).click();
+    matchingStepDetail.getUriDeleteIconByDataTestId(urisDummy[1]).should("exist");
+    matchingStepDetail.getUriDeleteIconByDataTestId(urisDummy[0]).should("not.exist");
+    matchingStepDetail.getUriDeleteIconByDataTestId(urisDummy[1]).click();
 
     matchingStepDetail.getTableHeader().should("not.be.visible"); // Added as per DHFPROD-8322
     matchingStepDetail.getTestMatchUriButton();
