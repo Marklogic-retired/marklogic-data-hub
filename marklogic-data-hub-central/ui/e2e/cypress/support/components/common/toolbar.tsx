@@ -51,6 +51,41 @@ class Toolbar {
   closeNotificationModal() {
     return cy.get(`[aria-label="Close"]`).click();
   }
+
+  existsNotification() {
+    let exist = false;
+    cy.get("body").then($body => {
+      if ($body.find("[class^=header_notificationBadge]").length > 0) {
+        //evaluates if exists badge/notification
+        exist = true;
+      } else {
+        exist = false;
+      }
+    });
+    return exist;
+  }
+
+  countNotifications(count: number) {
+    if (this.existsNotification()) {
+      this.getNotificationBadgeCount().should("exist").should("have.text", count);//poner 2 como estaba y cambiar  en e lheader tsx
+    } else {
+      cy.log("** 0 notifications **");
+    }
+  }
+
+  verifyModalContent() {
+    if (toolbar.existsNotification()) {
+      cy.get("*[class^=\"header_notificationBadge").then(function ($elem) {
+        if (!$elem.text()) {
+          cy.log("** Verifing modal **");
+        } else {
+          cy.log("** Counting table's rows **");
+          cy.get("#mainTable tbody").find("tr").should("have.length", $elem.text());
+        }
+      });
+    }
+  }
+
 }
 const toolbar = new Toolbar();
 export default toolbar;

@@ -51,6 +51,12 @@ describe("Merge Notification Functionality From Explore Card View", () => {
     toolbar.closeNotificationModal();
     toolbar.getNotificationTitle().should("not.exist");
   });
+  it("Check table render or empty notifications in modal", () => {
+    toolbar.getHomePageNotificationIcon().click({force: true});
+    toolbar.getNotificationTitle().should("be.visible");
+    toolbar.verifyModalContent();
+    toolbar.closeNotificationModal();
+  });
   it("Navigate to Explore tile All Data View", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     explorePage.getAllDataButton().click();
