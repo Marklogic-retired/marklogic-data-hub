@@ -59,6 +59,9 @@ describe("Disabled Merge/Unmerge Permissions on All Screens", () => {
     entitiesSidebar.toggleAllDataView();
     cy.log("** filter for notification collection **");
     explorePage.scrollSideBarBottom();
+    // browsePage.getFacetItemCheckbox("collection", "Person").scrollIntoView().click({force: true});
+    // browsePage.getGreySelectedFacets("Person").should("exist");
+    // browsePage.getFacetApplyButton().click();
     browsePage.getCollectionPopover().scrollIntoView().click();
     browsePage.collectionPopoverInput().type("notification");
     browsePage.getPopoverFacetCheckbox("sm-Person-notification").click();
