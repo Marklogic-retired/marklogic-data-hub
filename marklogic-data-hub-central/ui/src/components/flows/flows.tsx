@@ -12,7 +12,6 @@ import {getViewSettings, setViewSettings} from "@util/user-context";
 import {faArrowAltCircleLeft, faArrowAltCircleRight, faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {faBan, faCheckCircle, faClock, faInfoCircle, faStopCircle} from "@fortawesome/free-solid-svg-icons";
 import {getUserPreferences, updateUserPreferences} from "../../../src/services//user-preferences";
-
 import {AuthoritiesContext} from "@util/authorities";
 import {Flow} from "../../types/run-types";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -98,7 +97,6 @@ const Flows: React.FC<Props> = ({
   const storage = getViewSettings();
   const openFlows = storage?.run?.openFlows;
   const hasDefaultKey = JSON.stringify(newStepToFlowOptions?.flowsDefaultKey) !== JSON.stringify(["-1"]);
-
   const [newFlow, setNewFlow] = useState(false);
   const [addedFlowName, setAddedFlowName] = useState("");
   const [title, setTitle] = useState("");
@@ -914,6 +912,12 @@ const Flows: React.FC<Props> = ({
     saveLocalStoragePreferences(false, true);
   };
 
+
+  const handleRunSingleStep = async (flowName, step) => {
+    setShowUploadError(false);
+    await runStep(flowName, step);
+  };
+
   const stepMenu = (flowName, i) => (
     <Dropdown align="end" >
       <Dropdown.Toggle data-testid={`addStep-${flowName}`} aria-label={`addStep-${flowName}`} disabled={!canWriteFlow} variant="outline-light" className={canWriteFlow ? styles.stepMenu : styles.stepMenuDisabled}>
@@ -1383,8 +1387,7 @@ const Flows: React.FC<Props> = ({
                       <div
                         className={styles.run}
                         onClick={() => {
-                          setShowUploadError(false);
-                          runStep(flowName, step);
+                          handleRunSingleStep(flowName, step);
                         }}
                         aria-label={`runStep-${step.stepName}`}
                         data-testid={"runStep-" + stepNumber}

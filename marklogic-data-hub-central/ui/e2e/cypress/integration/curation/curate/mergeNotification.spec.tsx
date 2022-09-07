@@ -26,7 +26,7 @@ describe("Merge Notification Functionality From Explore Card View", () => {
     cy.resetTestUser();
     cy.waitForAsyncRequest();
   });
-  it("Run Match and Merge steps to generate Notifcation Docs", () => {
+  it("Run Match and Merge steps to generate Notification Docs", () => {
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     runPage.getFlowName("personJSON").should("be.visible");
     runPage.toggleExpandFlow("personJSON");
@@ -39,6 +39,17 @@ describe("Merge Notification Functionality From Explore Card View", () => {
     runPage.verifyStepRunResult("merge-person", "success");
     runPage.getDocumentsWritten("merge-person").should("be.greaterThan", 0);
     runPage.closeFlowStatusModal("personJSON");
+  });
+  it("Check Notifications Present in Header", () => {
+    toolbar.getNotificationBadgeCount().should("have.text", 2);
+
+    cy.log("** Click notification bell icon to open modal **");
+    toolbar.getHomePageNotificationIcon().click();
+    toolbar.getNotificationTitle().should("be.visible");
+
+    cy.log("** Modal can be closed **");
+    toolbar.closeNotificationModal();
+    toolbar.getNotificationTitle().should("not.exist");
   });
   it("Navigate to Explore tile All Data View", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();

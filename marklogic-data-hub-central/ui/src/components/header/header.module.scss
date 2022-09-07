@@ -1,3 +1,5 @@
+@import "../../theme/HCVariables.scss";
+
 div.headerContainer {
     position: fixed;
     z-index: 10;
@@ -56,6 +58,18 @@ div.headerContainer {
             outline-offset: 1.5px;
         }
     }
+}
+
+.notificationBadge {
+  background-color: $primary !important;
+  right: -7px !important;
+}
+
+.notificationBell {
+  color: #b5b8bb;
+  &:hover {
+    color: #fff;
+  }
 }
 
 .serviceName {
