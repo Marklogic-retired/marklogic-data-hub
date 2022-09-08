@@ -55,6 +55,13 @@ public interface MasteringManager {
     public JsonNode merge(List<String> mergeURIs, String flowName, String stepNumber, Boolean preview, JsonNode options);
 
     /**
+     * Manually merges a set of documents
+     * @param flowName - The name of the flow that has the merge settings
+     * @return - a JsonNode for the merge response
+     */
+    public JsonNode mergePreview(String flowName, List<String> uris);
+
+    /**
      * Returns potential candidates for merging with a document
      * @param matchURI - URI of the document to find matches for
      * @param flowName - The name of the flow that has the mastering settings

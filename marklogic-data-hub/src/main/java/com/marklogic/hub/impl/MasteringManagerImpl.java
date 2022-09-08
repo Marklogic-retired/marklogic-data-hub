@@ -16,6 +16,8 @@
 package com.marklogic.hub.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.io.JacksonHandle;
@@ -55,6 +57,11 @@ public class MasteringManagerImpl implements MasteringManager {
     @Override
     public JsonNode merge(List<String> mergeURIs, String flowName, String stepNumber, Boolean preview, JsonNode options) {
         return getMergeResource(DatabaseKind.FINAL).merge(mergeURIs, flowName, stepNumber, preview, options);
+    }
+
+    @Override
+    public JsonNode mergePreview(String flowName, List<String> uris) {
+        return getMergeResource(DatabaseKind.FINAL).mergePreview(flowName, uris);
     }
 
     @Override
@@ -153,6 +160,21 @@ public class MasteringManagerImpl implements MasteringManager {
             JacksonHandle jsonOptions = new JacksonHandle().with(options);
             resp = this.getServices().post(params, jsonOptions, new JacksonHandle()).get();
             return resp;
+        }
+
+        public JsonNode mergePreview(String flowName, List<String> uris) {
+            JsonNode resp;
+
+            JsonNode jsonOptions = new ObjectMapper().createObjectNode();
+            ((ObjectNode) jsonOptions).put("preview", "true");
+            RequestParameters params = new RequestParameters();
+            params.put("flowName", flowName);
+            params.put("uri", uris);
+            params.put("targetDatabase", targetDatabase);
+            params.put("sourceDatabase", targetDatabase);
+
+            resp = this.getServices().post(params, new JacksonHandle(jsonOptions), new JacksonHandle()).get();
+            return resp.get("mergedDocument");
         }
     }
 
