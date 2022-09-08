@@ -169,6 +169,19 @@ public class MasterTest extends AbstractHubCoreTest {
         testDocumentHistory(mergedUri, docsToMerge);
     }
 
+    @Test
+    public void testMergePreview() {
+        String flowName = "myMatchMergeFlow";
+        String[] uris = new String[] {"/person-2-4.json", "/person-2-5.json", "/person-2-6.json", "/person-2-7.json"};
+        makeInputFilePathsAbsoluteInFlow(flowName);
+        runAsDataHubOperator();
+        runFlow(new FlowInputs(flowName, "1", "2", "3", "4"));
+        JsonNode mergedDoc = masteringManager.mergePreview(flowName, Arrays.asList(uris));
+        assertArrayEquals(uris, new ObjectMapper().convertValue(mergedDoc.get("previousUri"), ArrayList.class).toArray());
+        assertEquals("zfortey1@rakuten.co.jp", mergedDoc.get("value").get("envelope").get("instance").get("person").get("email").asText());
+        assertEquals("Fortey", mergedDoc.get("value").get("envelope").get("instance").get("person").get("lastName").asText());
+    }
+
     private void testDocumentHistory(String mergedUri, List<String> docsInMerge) {
         JsonNode documentHistory = masteringManager.documentHistory(mergedUri);
         JsonNode activityInformation = documentHistory.path("activities").path(0);

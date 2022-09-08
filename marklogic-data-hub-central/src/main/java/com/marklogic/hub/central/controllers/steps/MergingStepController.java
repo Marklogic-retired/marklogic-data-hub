@@ -120,7 +120,7 @@ public class MergingStepController extends BaseController {
 
     @RequestMapping(value = "/unmerge", method = RequestMethod.PUT)
     @Secured("ROLE_readMerging")
-    public ResponseEntity<JsonNode> unmergeDocument(@RequestParam String mergeDocumentURI, @RequestParam(required = false, defaultValue = "true") Boolean retainAuditTrail, @RequestParam(required = false, defaultValue = "true") Boolean blockFutureMerges) {        
+    public ResponseEntity<JsonNode> unmergeDocument(@RequestParam String mergeDocumentURI, @RequestParam(required = false, defaultValue = "true") Boolean retainAuditTrail, @RequestParam(required = false, defaultValue = "true") Boolean blockFutureMerges) {
         MasteringManager mgr = new MasteringManagerImpl(getHubClient());
         return ResponseEntity.ok(mgr.unmerge(mergeDocumentURI, retainAuditTrail, blockFutureMerges));
     }
@@ -129,6 +129,14 @@ public class MergingStepController extends BaseController {
     public ResponseEntity<JsonNode> getNotifications(@RequestParam(defaultValue = "1") Integer start, @RequestParam(defaultValue = "10") Integer pageLength) {
         MasteringManager mgr = new MasteringManagerImpl(getHubClient());
         return ResponseEntity.ok(mgr.notifications(start, pageLength));
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/preview")
+    @ResponseBody
+    @Secured("ROLE_writeMerging")
+    public ResponseEntity<JsonNode> getMergingPreview(@RequestParam String flowName, @RequestParam(name = "uri") List<String> uri) {
+        MasteringManager mgr = new MasteringManagerImpl(getHubClient());
+        return ResponseEntity.ok(mgr.mergePreview(flowName, uri));
     }
 
     @RequestMapping(value = "/notifications", method = RequestMethod.DELETE)
