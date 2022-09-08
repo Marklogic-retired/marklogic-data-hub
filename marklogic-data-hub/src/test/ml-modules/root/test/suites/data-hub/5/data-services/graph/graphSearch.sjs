@@ -169,9 +169,9 @@ const ConceptWithHasRelationship = {
 const resultConceptWithHasRelationship = searchNodes(ConceptWithHasRelationship);
 
 assertions.concat([
-  test.assertEqual(2, resultConceptWithHasRelationship.total),
-  test.assertEqual(2, resultConceptWithHasRelationship.nodes.length, xdmp.toJsonString(resultConceptWithHasRelationship)),
-  test.assertEqual(1, resultConceptWithHasRelationship.edges.length),
+  test.assertEqual(3, resultConceptWithHasRelationship.total),
+  test.assertEqual(3, resultConceptWithHasRelationship.nodes.length, xdmp.toJsonString(resultConceptWithHasRelationship)),
+  test.assertEqual(2, resultConceptWithHasRelationship.edges.length),
 ]);
 
 resultConceptWithHasRelationship.nodes.forEach(node => {

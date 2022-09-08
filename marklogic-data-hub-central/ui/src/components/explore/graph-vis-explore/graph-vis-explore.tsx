@@ -600,10 +600,24 @@ const GraphVisExplore: React.FC<Props> = (props) => {
 
   const handleGroupNodeExpand = async (payloadData) => {
     setContextMenuVisible(false);
+    let parentDoc = null;
+    let nodeId = null;
+    if (clickedNode) {
+      parentDoc = clickedNode["parentDocUri"];
+      nodeId = clickedNode["nodeId"];
+    }
+    if (payloadData && payloadData.nodeInfo) {
+      if (!parentDoc) {
+        parentDoc = payloadData.nodeInfo["parentDocUri"];
+      }
+      if (!nodeId) {
+        nodeId = payloadData.nodeInfo["nodeId"];
+      }
+    }
     let payload = {
       database: searchOptions.database,
       data: {
-        "parentIRI": clickedNode && clickedNode["nodeId"] ? clickedNode["nodeId"] : payloadData.nodeInfo["nodeId"],
+        parentIRI: parentDoc || nodeId,
         "predicateFilter": clickedNode && clickedNode["predicateIRI"] ? clickedNode["predicateIRI"] : payloadData.nodeInfo["predicateIRI"]
       }
     };
@@ -626,10 +640,10 @@ const GraphVisExplore: React.FC<Props> = (props) => {
           expandedNodeInfo[expandId] = {
             nodes: response.data.nodes,
             edges: response.data.edges,
-            removedNode: payload.data["parentIRI"]
+            removedNode: nodeId
           };
           setExpandedNodeData(expandedNodeInfo);
-          network.body.data.nodes.remove(payload.data["parentIRI"]);
+          network.body.data.nodes.remove(nodeId);
           await updateGroupAndLeafNodesDataset(response.data.nodes);
           await updateGraphDataWith(response.data.nodes, response.data.edges);
         }
@@ -730,10 +744,17 @@ const GraphVisExplore: React.FC<Props> = (props) => {
 
   const handleLeafNodeExpansion = async (payloadData) => {
     setContextMenuVisible(false);
+    let parentIRI = null;
+    if (clickedNode) {
+      parentIRI = clickedNode["docUri"] || clickedNode["nodeId"];
+    }
+    if (!parentIRI && payloadData && payloadData.nodeInfo) {
+      parentIRI = payloadData.nodeInfo["docUri"] || payloadData.nodeInfo["nodeId"];
+    }
     let payload = {
       database: searchOptions.database,
       data: {
-        "parentIRI": clickedNode && clickedNode["nodeId"] ? clickedNode["nodeId"] : payloadData.nodeInfo["nodeId"]
+        parentIRI
       }
     };
     if (clickedNode && clickedNode["isConcept"]) {
@@ -1059,6 +1080,9 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       nodeInfo["count"] = nodeObject && nodeObject["count"] ? nodeObject["count"] : 1;
       nodeInfo["currentNodeExpandId"] = currentNodeExpandId;
       nodeInfo["parentNodeExpandId"] = parentNodeExpandId;
+      nodeInfo["docUri"] = nodeObject && nodeObject["docUri"] ? nodeObject["docUri"] : "";
+      nodeInfo["parentDocUri"] = nodeObject && nodeObject["parentDocUri"] ? nodeObject["parentDocUri"] : "";
+      nodeInfo["predicateIRI"] = nodeObject && nodeObject["predicateIRI"] ? nodeObject["predicateIRI"] : nodeInfo["predicateIRI"];
 
       //Reset ClickedNode upon double click
       setClickedNode({nodeId: undefined, isGroupNode: false});

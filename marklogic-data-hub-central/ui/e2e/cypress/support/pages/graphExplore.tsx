@@ -44,7 +44,7 @@ class GraphExplore {
   }
 
   getCenterNodeOption() {
-    return cy.get("[id=\"centerNode\"");
+    return cy.get("#centerNode");
   }
 
   getExpandAll() {

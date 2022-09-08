@@ -133,6 +133,29 @@ if(queryObj.conceptsFilterTypeIds != null){
   })
 }
 
+function getNodeLabel(objectIRIArr, objectUri) {
+  let label = "";
+  let configurationLabel = getLabelFromHubConfigByEntityType(objectIRIArr[objectIRIArr.length - 2]);
+  if(configurationLabel.toString().length > 0){
+    //getting the value of the configuration property
+    label = getValueFromProperty(configurationLabel,objectUri,objectIRIArr[objectIRIArr.length - 2]);
+  }
+
+  if (label.toString().length === 0) {
+    label = objectIRIArr[objectIRIArr.length - 1];
+  }
+  return label;
+}
+
+function getUrisByIRI(iri) {
+  return Object.keys(docUriToSubjectIri).filter(key => {
+    if (docUriToSubjectIri[key].includes(iri.toString())) {
+      return true;
+    }
+    return false;
+  });
+}
+
 const result = graphUtils.getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predicateConceptList, entitiesDifferentsFromBaseAndRelated, conceptFacetList, ctsQuery, pageLength);
 
 let nodes = {};
@@ -151,7 +174,6 @@ for (const item of result) {
 }
 
 result.map(item => {
-
   let resultPropertiesOnHover = [];
   let subjectLabel = item.subjectLabel;
   let newLabel = "";
@@ -173,12 +195,18 @@ result.map(item => {
   const group = item.subjectIRI.toString().substring(0, item.subjectIRI.toString().length - subjectLabel.length - 1);
   let nodeOrigin = {};
   const subjectIri = docUriToSubjectIri[item.docURI][0];
-  if (!nodes[subjectIri] && (item.objectConcept.toString().length == 0)) {
-    nodeOrigin.id = subjectIri;
+  const objectIRI = item.firstObjectIRI.toString();
+  const objectIRIArr = objectIRI.split("/");
+  const objectId = item.firstObjectIRI.toString();
+  const objectUri = item.firstDocURI.toString();
+
+  const originId = subjectIri + "_" + item.docURI;
+  if (!nodes[item.docURI] && (item.objectConcept.toString().length == 0)) {
+    nodeOrigin.id = originId;
     nodeOrigin.docUri = item.docURI;
     if (newLabel.toString().length === 0) {
       nodeOrigin.label = subjectLabel;
-    }else{
+    } else {
       nodeOrigin.label = newLabel;
     }
     nodeOrigin.additionalProperties = null;
@@ -187,7 +215,7 @@ result.map(item => {
     nodeOrigin.hasRelationships = false;
     nodeOrigin.count = 1;
     nodeOrigin.propertiesOnHover=resultPropertiesOnHover;
-    nodes[subjectIri] = nodeOrigin;
+    nodes[item.docURI] = nodeOrigin;
   } else {
     if ((item.objectConcept !== undefined && item.objectConcept.toString().length > 0 && !nodes[item.objectConcept])) {
       let objectConceptArr = item.objectConcept.toString().split("/");
@@ -199,89 +227,153 @@ result.map(item => {
       nodeOrigin.group = conceptLabel;
       nodeOrigin.isConcept = true;
       nodeOrigin.conceptClassName = item.conceptClassName;
-      let hastRelationShip = false
+      let hasRelationShips = false
       if (item.countRelationsWithOtherEntity !== undefined && item.countRelationsWithOtherEntity !== null) {
         if (item.countRelationsWithOtherEntity == 1) {
-          hastRelationShip = true;
+          hasRelationShips = true;
         }
       }
-      nodeOrigin.hasRelationships = hastRelationShip;
+      nodeOrigin.hasRelationships = hasRelationShips;
       nodeOrigin.count = 1;
       nodes[item.objectConcept] = nodeOrigin;
     }
   }
-
-  if (item.nodeCount && item.nodeCount >= 1) {
+  //Checking for target nodes
+  if (item.nodeCount && item.nodeCount == 1) {
+    let edge = {};
+    const docUriToNodeKeys = getUrisByIRI(objectUri);
+    //if the target exists in docUriToSubjectIri we check for multiple nodes
+    if(docUriToNodeKeys && docUriToNodeKeys.length > 0) {
+      docUriToNodeKeys.forEach(key => {
+        let objectIRI = docUriToSubjectIri[key][0];
+        const objectId = objectIRI + "_" + key;
+        edge = {};
+        edge.id = "edge-" + originId + "-" + objectIRI;
+        if (!edgesByID[edge.id]) {
+          let predicateArr = item.predicateIRI.toString().split("/");
+          let edgeLabel = predicateArr[predicateArr.length - 1];
+          edge.predicate = item.predicateIRI;
+          edge.label = edgeLabel;
+          edge.from = originId;
+          edge.to = objectId;
+          edgesByID[edge.id] = edge;
+        }
+        if (!nodes[key]) {
+          let objectNode = {};
+          objectNode.id = objectId;
+          objectNode.docUri = objectUri;
+          objectNode.label = getNodeLabel(objectIRIArr, objectUri);
+          resultPropertiesOnHover = entityLib.getValuesPropertiesOnHover(item.docURI,objectIRIArr[objectIRIArr.length - 2],hubCentralConfig);
+          objectNode.propertiesOnHover=resultPropertiesOnHover;
+          objectNode.group = objectIRI.substring(0, objectIRI.length - objectIRIArr[objectIRIArr.length - 1].length - 1);;
+          objectNode.isConcept = false;
+          objectNode.count = item.nodeCount;
+          let hasRelationShips = false
+          if (item.countRelationsWithOtherEntity !== undefined && item.countRelationsWithOtherEntity !== null) {
+            if (item.countRelationsWithOtherEntity == 1) {
+              hasRelationShips = true;
+            }
+          }
+          objectNode.hasRelationships = hasRelationShips;
+          nodes[key] = objectNode;
+        }
+      });
+    } else { //if there isn't a docURI key create the node from item's info
+      const objectGroup = objectIRI.substring(0, objectIRI.length - objectIRIArr[objectIRIArr.length - 1].length - 1);
+      let predicateArr = item.predicateIRI.toString().split("/");
+      let edgeLabel = predicateArr[predicateArr.length - 1];
+      edge = {};
+      edge.id = "edge-" + item.subjectIRI + "-" + item.predicateIRI + "-" + objectIRI;
+      edge.predicate = item.predicateIRI;
+      edge.label = edgeLabel;
+      edge.from = originId;
+      edge.to = objectId;
+      edgesByID[edge.id] = edge;
+      if (!nodes[objectUri]) {
+        let objectNode = {};
+        objectNode.id = objectId;
+        objectNode.docUri = objectUri;
+        objectNode.label = getNodeLabel(objectIRIArr,objectUri);
+        resultPropertiesOnHover = entityLib.getValuesPropertiesOnHover(item.docURI,objectIRIArr[objectIRIArr.length - 2],hubCentralConfig);
+        objectNode.propertiesOnHover = resultPropertiesOnHover;
+        objectNode.group = objectGroup;
+        objectNode.isConcept = false;
+        objectNode.count = item.nodeCount;
+        let hasRelationships = false;
+        if(!queryObj.entityTypeIds.includes(objectIRIArr[objectIRIArr.length - 2])){
+          hasRelationships = graphUtils.relatedObjHasRelationships(objectId, hashmapPredicate);
+        }
+        objectNode.hasRelationships = hasRelationships;
+        nodes[objectUri] = objectNode;
+      }
+    }
+  } else if (item.nodeCount && item.nodeCount > 1) {
     let objectIRI = item.firstObjectIRI.toString();
     let objectIRIArr = objectIRI.split("/");
-    let objectId = item.firstObjectIRI.toString();
-    let objectUri = item.firstDocURI.toString();
-    let objectGroup = objectIRI.substring(0, objectIRI.length - objectIRIArr[objectIRIArr.length - 1].length - 1);
-    let hasRelationships = false;
-    if(item.nodeCount == 1 && !queryObj.entityTypeIds.includes(objectIRIArr[objectIRIArr.length - 2])){
-      hasRelationships = graphUtils.relatedObjHasRelationships(objectId, hashmapPredicate);
-    }
-    //Override if count is more than 1. We will have a node with badge.
+    let entityType = objectIRIArr[objectIRIArr.length - 2];
+    const objectId = originId + "-" + objectIRIArr[objectIRIArr.length - 2];
     let edge = {};
-    if (item.nodeCount > 1) {
-      let entityType = objectIRIArr[objectIRIArr.length - 2];
-      objectId = subjectIri + "-" + objectIRIArr[objectIRIArr.length - 2];
-      edge.id = "edge-" + subjectIri + "-" + item.predicateIRI + "-" + entityType;
-    } else {
-      edge.id = "edge-" + subjectIri + "-" + item.predicateIRI + "-" + objectIRI;
-    }
+    edge.id = "edge-" + originId + "-" + item.predicateIRI + "-" + entityType;
     if (!edgesByID[edge.id]) {
       let predicateArr = item.predicateIRI.toString().split("/");
       let edgeLabel = predicateArr[predicateArr.length - 1];
       edge.predicate = item.predicateIRI;
       edge.label = edgeLabel;
-      edge.from = subjectIri;
+      edge.from = originId;
       edge.to = objectId;
       edgesByID[edge.id] = edge;
     }
     if (!nodes[objectId]) {
       let objectNode = {};
-      if (item.nodeCount === 1) {
-        objectNode.id = objectId;
-        objectNode.docUri = objectUri;
-      } else {
-        objectNode.id = objectId;
-      }
-      let newLabelNode = "";
-      let configurationLabel = getLabelFromHubConfigByEntityType(objectIRIArr[objectIRIArr.length - 2]);
-      if(configurationLabel.toString().length > 0){
-        //getting the value of the configuration property
-        newLabelNode = getValueFromProperty(configurationLabel,objectUri,objectIRIArr[objectIRIArr.length - 2]);
-      }
-
-      if (newLabelNode.toString().length === 0) {
-        objectNode.label = objectIRIArr[objectIRIArr.length - 1];
-      }else{
-        objectNode.label = newLabelNode;
-      }
+      objectNode.id = objectId;
+      objectNode.label = objectIRIArr[objectIRIArr.length - 1];
       resultPropertiesOnHover = entityLib.getValuesPropertiesOnHover(item.docURI,objectIRIArr[objectIRIArr.length - 2],hubCentralConfig);
-      objectNode.propertiesOnHover=resultPropertiesOnHover;
-      objectNode.group = objectGroup;
+      objectNode.parentDocUri = item.docURI;
+      objectNode.predicateIri = item.predicateIRI;
+      objectNode.propertiesOnHover = resultPropertiesOnHover;
+      objectNode.group = objectIRI.substring(0, objectIRI.length - objectIRIArr[objectIRIArr.length - 1].length - 1);;
       objectNode.isConcept = false;
       objectNode.count = item.nodeCount;
+      let hasRelationships = false;
+      if(!queryObj.entityTypeIds.includes(objectIRIArr[objectIRIArr.length - 2])){
+        hasRelationships = graphUtils.relatedObjHasRelationships(objectId, hashmapPredicate);
+      }
       objectNode.hasRelationships = hasRelationships;
       nodes[objectId] = objectNode;
     }
-  }
-  else if (item.predicateIRI !== undefined && item.predicateIRI.toString().length > 0) {
+  } else if (item.predicateIRI !== undefined && item.predicateIRI.toString().length > 0) {
     let predicateArr = item.predicateIRI.toString().split("/");
     let edgeLabel = predicateArr[predicateArr.length - 1];
-    const subjectId = docUriToSubjectIri[item.docURI][0] || subjectIri;
-    const objectId = item.objectIRI;
-    const edgeId = "edge-" + subjectId + "-" + item.predicateIRI + "-" + objectId;
-    if (!edgesByID[edgeId]) {
-      edgesByID[edgeId] = {
-        id: edgeId,
-        predicate: item.predicateIRI,
-        label: edgeLabel,
-        from: subjectId,
-        to: objectId
-      };
+    const subjectId = subjectIri + "_" + item.docURI;
+    const docUriToNodeKeys = getUrisByIRI(item.objectIRI.toString());
+
+    if(docUriToNodeKeys && docUriToNodeKeys.length > 0) {
+      docUriToNodeKeys.forEach(key => {
+        const iri = docUriToSubjectIri[key][0];
+        const objectId = iri + "_" + key;
+        const edgeId = "edge-" + subjectId + "-" + item.predicateIRI + "-" + objectId;
+        if (!edgesByID[edgeId]) {
+          edgesByID[edgeId] = {
+            id: edgeId,
+            predicate: item.predicateIRI,
+            label: edgeLabel,
+            from: subjectId,
+            to: objectId
+          };
+        }
+      });
+    } else { //target is a concept node
+      const objectId = item.objectIRI.toString()
+      const edgeId = "edge-" + subjectId + "-" + item.predicateIRI + "-" + objectId;
+      if (!edgesByID[edgeId]) {
+        edgesByID[edgeId] = {
+          id: edgeId,
+          predicate: item.predicateIRI,
+          label: edgeLabel,
+          from: subjectId,
+          to: objectId
+        };
+      }
     }
   }
 });

@@ -33,7 +33,7 @@ function nodeExpandWithLimit4(queryOptions) {
 }
 
 const expandQuery1 = {
-  "parentIRI": "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/3039-42-Product",
+  "parentIRI": "/content/babyRegistry1.json",
   "lastObjectIRI": null,
   "predicateFilter": "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/includes"
 };
@@ -46,19 +46,19 @@ let assertions = [
 ];
 
 const expandQuery2 = {
-  "parentIRI": "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/3039-42",
+  "parentIRI": "/content/babyRegistry1.json",
 };
 const resultsTest2 = nodeExpand(expandQuery2);
 
 assertions.concat([
-  test.assertEqual(7, resultsTest2.total),
+  test.assertEqual(7, resultsTest2.total, xdmp.toJsonString(resultsTest2)),
   test.assertEqual(2, resultsTest2.nodes.length, xdmp.toJsonString(resultsTest2)),
   test.assertEqual(2, resultsTest2.edges.length)
 ]);
 
 
 const expandQuery3 = {
-  "parentIRI": "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/3039-42-Product",
+  "parentIRI": "/content/babyRegistry1.json",
   "predicateFilter": "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/includes"
 };
 const resultsTest3 = nodeExpandWithLimit4(expandQuery3);
@@ -74,13 +74,13 @@ const expandConceptQuery = {
   "parentIRI": "http://example.org/Office-0.0.1/Office/1",
   "objectConcept": "http://www.example.com/Category/Sneakers"
 };
-const restultConceptExpand = nodeExpandWithLimit4(expandConceptQuery);
+const resultConceptExpand = nodeExpandWithLimit4(expandConceptQuery);
 
 assertions.concat([
-  test.assertEqual(1, restultConceptExpand.total),
-  test.assertEqual(1, restultConceptExpand.nodes.length, xdmp.toJsonString(restultConceptExpand)),
-  test.assertEqual(1, restultConceptExpand.edges.length),
-  test.assertEqual("ProductName60", restultConceptExpand.nodes[0].label)
+  test.assertEqual(1, resultConceptExpand.total, xdmp.toJsonString(resultConceptExpand)),
+  test.assertEqual(1, resultConceptExpand.nodes.length, xdmp.toJsonString(resultConceptExpand)),
+  test.assertEqual(1, resultConceptExpand.edges.length),
+  test.assertEqual("ProductName60", resultConceptExpand.nodes[0].label)
 
 ]);
 
@@ -92,9 +92,9 @@ const expandConceptQueryProduct = {
 const resultConceptQueryProduct = nodeExpandWithLimit4(expandConceptQueryProduct);
 
 assertions.concat([
-  test.assertEqual(1, resultConceptQueryProduct.total),
-  test.assertEqual(1, resultConceptQueryProduct.nodes.length, xdmp.toJsonString(resultConceptQueryProduct)),
-  test.assertEqual(1, resultConceptQueryProduct.edges.length),
+  test.assertEqual(2, resultConceptQueryProduct.total, xdmp.toJsonString(resultConceptQueryProduct)),
+  test.assertEqual(2, resultConceptQueryProduct.nodes.length, xdmp.toJsonString(resultConceptQueryProduct)),
+  test.assertEqual(2, resultConceptQueryProduct.edges.length),
   test.assertEqual("office name", resultConceptQueryProduct.nodes[0].label)
 
 ]);
