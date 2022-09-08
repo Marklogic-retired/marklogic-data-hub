@@ -12,7 +12,11 @@
     "cy:run-sanity": "npm install && cypress run --spec cypress/integration/mastering/e2eMasteringflow.spec.tsx",
     "cy:local": "cypress open --config baseUrl=http://localhost:3000",
     "cy:run-chrome-headed": "npm install && cypress run --browser chrome --headed",
-    "cy:run-firefox-headed": "npm install && cypress run --browser firefox --headed"
+    "cy:run-firefox-headed": "npm install && cypress run --browser firefox --headed",
+    "preinstall": "npx npm-force-resolutions"
+  },
+  "resolutions": {
+    "minimist": "^1.2.6"
   },
   "keywords": [],
   "author": "",
@@ -22,7 +26,7 @@
     "ts-loader": "^6.2.0",
     "typescript": "^3.6.3",
     "webpack": "^4.41.0",
-    "minimist": "1.2.6",
+    "minimist": "^1.2.6",
     "json-schema": "^0.4.0"
   },
   "devDependencies": {
@@ -34,7 +38,7 @@
     "cypress-wait-until": "^1.7.1",
     "mochawesome": "^4.1.0",
     "mochawesome-merge": "^4.0.0",
-    "minimist": "1.2.6",
+    "minimist": "^1.2.6",
     "json-schema": "^0.4.0"
   }
 }
