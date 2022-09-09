@@ -19,7 +19,7 @@ import {OverlayTrigger, Spinner} from "react-bootstrap";
 import {SecurityTooltips} from "@config/tooltips.config";
 import {RiMergeCellsHorizontal} from "react-icons/ri";
 import {previewMatchingActivity, getDocFromURI} from "@api/matching";
-import {mergeUris} from "@api/merging";
+import {deleteNotification, mergeUris} from "@api/merging";
 import CompareValuesModal from "../../components/entities/matching/compare-values-modal/compare-values-modal";
 
 const RecordCardView = (props) => {
@@ -28,6 +28,7 @@ const RecordCardView = (props) => {
     searchOptions
   } = useContext(SearchContext);
   const [loading, setToggleLoading] = useState<string>("");
+  const [activeUri, setActiveUri] = useState<string>("");
   const [compareModalVisible, setCompareModalVisible] = useState(false);
   const [previewMatchedActivity, setPreviewMatchedActivity] = useState<{}>({sampleSize: 100, uris: [], actionPreview: []});
   const [activeEntityArray, setActiveEntityArray] = useState<any>([]);
@@ -197,6 +198,7 @@ const RecordCardView = (props) => {
     setFlowname(item.hubMetadata.lastProcessedByFlow);
     setActiveEntityArray([props.entityDefArray[activeEntityIndex]]);
     setActiveEntityUris(arrayUris);
+    setActiveUri(item.uri);
     setToggleLoading(item.uri);
     await fetchCompareData(arrayUris, item);
     setCompareModalVisible(true);
@@ -227,8 +229,11 @@ const RecordCardView = (props) => {
 
   };
 
-  const submitMergeUri = async (payload) => {
-    await mergeUris(payload);
+  const submitMergeUri = async (uri, payload) => {
+    const documentsHaveMerged = await mergeUris(payload);
+    if (documentsHaveMerged) {
+      await deleteNotification(uri);
+    }
   };
 
   return (
@@ -334,7 +339,7 @@ const RecordCardView = (props) => {
         isPreview={false}
         isMerge={true}
         flowName={flowName}
-        mergeUris={submitMergeUri}
+        mergeUris={async (payload) => submitMergeUri(activeUri, payload)}
         unmergeUri={{}}
         originalUri={""}
       />

@@ -61,3 +61,17 @@ export const unmergeUri  = async (payload) => {
   }
 };
 
+export const deleteNotification  = async (notificationUri) => {
+  try {
+    let response = await axios.delete(`/api/steps/merging/notifications?uri=${encodeURIComponent(notificationUri)}`);
+    if (response.status >= 200 && response.status < 300) {
+      return response;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    let message = error;
+    console.error("Error while unmerging URIs!", message);
+    return message;
+  }
+};
