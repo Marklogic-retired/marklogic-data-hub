@@ -42,7 +42,7 @@ class EntityTypeTable {
   }
 
   viewEntityInGraphView(entityName: string) {
-    cy.findByTestId(`${entityName}-graphView-icon`).should("exist").scrollIntoView().click({force: true});
+    cy.get(`[data-testid=${entityName}-graphView-icon]`).should("exist").scrollIntoView().click({force: true});
     cy.wait(6000);
   }
 
@@ -54,7 +54,7 @@ class EntityTypeTable {
   }
 
   getConceptClass(conceptName: string) {
-    return cy.findByTestId(`${conceptName}-span`);
+    return cy.get(`[data-testid=${conceptName}-span]`);
   }
 
   getDeleteConceptClassIcon(conceptName: string) {
