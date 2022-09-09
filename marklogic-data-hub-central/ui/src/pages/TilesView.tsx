@@ -25,7 +25,6 @@ import {ErrorMessageContext} from "@util/error-message-context";
 import {HCButton} from "@components/common";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTimesCircle} from "@fortawesome/free-regular-svg-icons";
-import {HubCentralConfigContext} from "@util/hubCentralConfig-context";
 
 export type TileId = "load" | "model" | "curate" | "run" | "explore" | "monitor" | "detail";
 export type IconType = "fa" | "custom";
@@ -41,7 +40,6 @@ interface TileItem {
 const INITIAL_SELECTION = ""; // '' for no tile initially
 
 const TilesView = (props) => {
-  const {getHubCentralConfigFromServer} = useContext(HubCentralConfigContext);
   const [selection, setSelection] = useState<TileId | string>(INITIAL_SELECTION);
   const [currentNode, setCurrentNode] = useState<any>(INITIAL_SELECTION);
   const [options, setOptions] = useState<TileItem|null>(null);
@@ -117,10 +115,6 @@ const TilesView = (props) => {
       setOptions(null);
       setView("", null);
     });
-  }, []);
-
-  useEffect(() => {
-    getHubCentralConfigFromServer();
   }, []);
 
   const getNewStepToFlowOptions = () => {
