@@ -205,6 +205,10 @@ class RunPage {
   getStatusModalButton(flowName: string) {
     return cy.get(`[data-testid="${flowName}-flow-status"]`);
   }
+
+  getStepFailureSummary(stepName: string) {
+    return cy.get(`[data-testid="${stepName}-error-list"]`);
+  }
 }
 
 const runPage = new RunPage();
