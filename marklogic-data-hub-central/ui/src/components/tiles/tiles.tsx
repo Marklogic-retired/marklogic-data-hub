@@ -18,6 +18,8 @@ import Popover from "react-bootstrap/Popover";
 import {Dropdown, NavDropdown, OverlayTrigger} from "react-bootstrap";
 import DataModelDisplaySettingsModal from "@components/explore/data-model-display-settings-modal/data-model-display-settings-modal";
 import tooltipsConfig from "@config/explorer-tooltips.config";
+import {convertArrayOfEntitiesToObject} from "@util/modeling-utils";
+import {HubCentralConfigContext} from "@util/hubCentralConfig-context";
 
 interface Props {
   id: string;
@@ -40,6 +42,9 @@ const Tiles: React.FC<Props> = (props) => {
   const [manageQueryModal, setManageQueryModal] = useState(false);
   const [infoVisible, setInfoVisible] = useState(false);
   const [exploreSettingsModal, setExploreSettingsModal] = useState(false);
+
+  const [entityModels, setEntityModels] = useState<any>({});
+  const {getHubCentralConfigFromServer} = useContext(HubCentralConfigContext);
 
   /*** For Manage Queries - Explore tab ****/
   const auth = useContext(AuthoritiesContext);
@@ -86,17 +91,6 @@ const Tiles: React.FC<Props> = (props) => {
     props.onTileClose();
   };
 
-  const getEntities = async () => {
-    try {
-      const res = await primaryEntityTypes();
-      if (res && componentIsMounted.current) {
-        if (res.data.length === 0) setInfoVisible(true);
-      }
-    } catch (error) {
-      let message = error;
-      console.error("Error while getting entities", message);
-    }
-  };
 
   const onMenuClick = () => {
     setManageQueryModal(true);
@@ -110,7 +104,25 @@ const Tiles: React.FC<Props> = (props) => {
   };
 
   useEffect(() => {
-    getEntities();
+    getHubCentralConfigFromServer();
+  }, []);
+
+  useEffect(() => {
+    if (showControl("menu") && viewId !== "monitor") {
+      (async () => {
+        try {
+          const res = await primaryEntityTypes();
+          if (res && componentIsMounted.current) {
+            if (res.data.length !== 0) {
+              setEntityModels({...convertArrayOfEntitiesToObject(res.data)});
+            }
+          }
+        } catch (error) {
+          let message = error;
+          console.error("Error while getting entities", message);
+        }
+      })();
+    }
     return () => { componentIsMounted.current = false; };
   }, []);
 
@@ -155,6 +167,7 @@ const Tiles: React.FC<Props> = (props) => {
 
   const dataModelDisplaySettingsModal = <DataModelDisplaySettingsModal
     isVisible={exploreSettingsModal}
+    entityModels={entityModels}
     toggleModal={setExploreSettingsModal}
     entityDefinitionsArray={entityDefinitionsArray}
   />;
@@ -190,7 +203,7 @@ const Tiles: React.FC<Props> = (props) => {
                 rootClose
                 onToggle={infoViewChange}
               >
-                <span className={styles.infoIcon} aria-label={`${viewId}InfoIcon`}><img src={infoIcon}/></span>
+                <span className={styles.infoIcon} aria-label={`${viewId}InfoIcon`}><img src={infoIcon} /></span>
               </OverlayTrigger>
             </span>}
           </>) : (<>
@@ -233,7 +246,7 @@ const Tiles: React.FC<Props> = (props) => {
             <i className={styles.close} aria-label={"close"} style={{color: options["controlColor"]}} tabIndex={0}
               onClick={onClickClose} onMouseDown={onClickClose} onKeyDown={onKeyDownClose}>
               <HCTooltip text="Close" id="close-tooltip" placement="bottom">
-                <XLg aria-label="close"/>
+                <XLg aria-label="close" />
               </HCTooltip>
             </i>
           ) : null}

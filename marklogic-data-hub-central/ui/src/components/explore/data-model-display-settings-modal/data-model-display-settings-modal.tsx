@@ -7,8 +7,6 @@ import {defaultIcon} from "@config/explore.config";
 import {UserContext} from "@util/user-context";
 import {HubCentralConfigContext} from "@util/hubCentralConfig-context";
 import * as _ from "lodash";
-import {convertArrayOfEntitiesToObject} from "@util/modeling-utils";
-import {primaryEntityTypes} from "@api/modeling";
 import EntityDisplaySettings, {EntityTableColumns} from "./entity-display-settings/entity-display-settings";
 import ConceptsDisplaySettings, {ConceptsTableColumns} from "./concepts-display-settings/concepts-display-settings";
 
@@ -16,6 +14,7 @@ type Props = {
   isVisible: boolean;
   toggleModal: (reloadData: boolean) => void;
   entityDefinitionsArray: any;
+  entityModels: any;
 };
 
 enum eVisibleSettings {
@@ -23,7 +22,7 @@ enum eVisibleSettings {
   Concept
 }
 
-const DataModelDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal, entityDefinitionsArray}) => {
+const DataModelDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal, entityModels, entityDefinitionsArray}) => {
   const {handleError} = useContext(UserContext);
   const [entitiesData, setEntitiesData] = useState({});
   const [entitiesIndexes, setEntitiesIndexes] = useState({});
@@ -32,7 +31,6 @@ const DataModelDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal,
   const [conceptsIndexes, setConceptsIndexes] = useState({});
   const [conceptDisplaySettingsData, setConceptDisplaySettingsData] = useState<any[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
-  const [entityModels, setEntityModels] = useState<any>({});
   const [visibleSettings, setVisibleSettings] = useState<eVisibleSettings>(eVisibleSettings.EntityType);
 
   const {hubCentralConfig, updateHubCentralConfigOnServer} = useContext(HubCentralConfigContext);
@@ -98,22 +96,6 @@ const DataModelDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal,
       setVisibleSettings(eVisibleSettings.EntityType);
     };
   }, [isVisible, hubCentralConfig]);
-
-  useEffect(() => {
-    getEntityModels();
-  }, []);
-
-  const getEntityModels = async () => {
-    try {
-      let response = await primaryEntityTypes();
-      if (response.status === 200) {
-        setEntityModels({...convertArrayOfEntitiesToObject(response.data)});
-      }
-    } catch (error) {
-      console.error("Error fetching entities", error);
-      handleError(error);
-    }
-  };
 
   const closeModal = () => {
     toggleModal(false);

@@ -26,7 +26,7 @@ describe("Entity type display settings modal", () => {
     const {getByLabelText, getAllByLabelText} = render(
       <Router>
         <HubCentralConfigContext.Provider value={defaultContextOptions}>
-          <DataModelDisplaySettingsModal toggleModal={jest.fn()} isVisible={true} entityDefinitionsArray={entityDefinitionsArray}/>
+          <DataModelDisplaySettingsModal entityModels={[]} toggleModal={jest.fn()} isVisible={true} entityDefinitionsArray={entityDefinitionsArray}/>
         </HubCentralConfigContext.Provider>
       </Router>
     );
@@ -41,7 +41,7 @@ describe("Entity type display settings modal", () => {
     const {getByLabelText, queryByLabelText, getByText, getByTitle} = render(
       <Router>
         <HubCentralConfigContext.Provider value={defaultContextOptions}>
-          <DataModelDisplaySettingsModal toggleModal={jest.fn()} isVisible={true} entityDefinitionsArray={entityDefinitionsArray}/>
+          <DataModelDisplaySettingsModal entityModels={[]} toggleModal={jest.fn()} isVisible={true} entityDefinitionsArray={entityDefinitionsArray}/>
         </HubCentralConfigContext.Provider>
       </Router>
     );
