@@ -60,7 +60,9 @@ function consolidateScopeQueries(groupBy, groupByKey, groupByKeys, isJSON, joinF
   let query = null;
   if (shortestMatchingPath === groupByKey || (!groupByKeys.includes(shortestMatchingPath) && groupByKey === groupByKeys.find((gk) => gk.startsWith(shortestMatchingPath)))) {
     const uniqueMatchingPaths = matchingPaths.filter((path, index, array) => array.indexOf(path) === index);
-    uniqueMatchingPaths.push(groupByKey);
+    if (!uniqueMatchingPaths.includes(groupByKey)) {
+      uniqueMatchingPaths.push(groupByKey);
+    }
     if (matchingDebugTraceEnabled) {
       xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Unique matching paths for ${groupByKey}: ${xdmp.toJsonString(uniqueMatchingPaths)}`);
     }
@@ -258,11 +260,12 @@ function buildMatchSummary(matchable, content) {
     }
     const thresholdGroups = {};
     const finalMatchQuery = cts.andQuery([baselineQuery, filterQuery, matchCtsQuery]);
+    const formatOption = `format-${dataFormat}`;
     if (matchingTraceEnabled) {
       xdmp.trace(matchingTraceEvent, `Found ${cts.estimate(finalMatchQuery)} results for ${xdmp.describe(contentObject.value)} with query ${xdmp.describe(finalMatchQuery, Sequence.from([]), Sequence.from([]))}`);
+      xdmp.trace(matchingTraceEvent, `Searching with format option: ${formatOption}.`);
     }
-    const formatOption = `format-${dataFormat}`;
-    for (const matchingDocument of cts.search(finalMatchQuery, [formatOption])) {
+    for (const matchingDocument of cts.search(finalMatchQuery, [formatOption, "filtered"])) {
       const matchingContentObject = {uri: xdmp.nodeUri(matchingDocument), value: matchingDocument};
       const score = matchable.scoreDocument(contentObject, matchingContentObject);
       let currentThresholdDefinition = null;
@@ -272,6 +275,9 @@ function buildMatchSummary(matchable, content) {
         } else {
           break;
         }
+      }
+      if (matchingTraceEnabled) {
+        xdmp.trace(matchingTraceEvent, `${xdmp.describe(contentObject.value)} and ${xdmp.describe(matchingDocument)} placed in the threshold ${currentThresholdDefinition ? currentThresholdDefinition.name(): "null"} with score ${score}.`);
       }
       matchingContentObject.score = score;
       if (currentThresholdDefinition) {

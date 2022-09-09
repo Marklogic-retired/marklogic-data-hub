@@ -1,0 +1,23 @@
+{
+  "envelope": {
+    "headers": {
+      "filterCollection": "docDeterminedCollection"
+    },
+    "triples": [
+      {
+        "triple": {
+          "subject": "/content/docB.json",
+          "predicate": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          "object": "http://example.org/Customer-0.0.1/Customer"
+        }
+      }
+    ],
+    "instance": {
+      "info": { "title": "Customer", "version": "0.0.1" },
+      "Customer": {
+        "name": "John",
+        "nicknames": []
+      }
+    }
+  }
+}

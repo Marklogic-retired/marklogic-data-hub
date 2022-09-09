@@ -207,8 +207,11 @@ function testMatchRulesetDefinitions() {
       assertions.push(test.assertEqual(3, Sequence.from(matchingTerms).toArray().length, "3 words are returned that have distanceThreshold less than equal to 100"));
     }
     if(matchStep.matchRulesets[i].name === "name - double metaphone - noMatch") {
-      let matchingTerms = matchRulesetDefinition.doubleMetaphoneMatchFunction("jhons", fn.head(matchRulesetNode.xpath("matchRules")), matchStep);
+      let matchingTerms = matchRulesetDefinition.doubleMetaphoneMatchFunction("johns", fn.head(matchRulesetNode.xpath("matchRules")), matchStep);
       assertions.push(test.assertEqual(0, Sequence.from(matchingTerms).toArray().length, "No word is returned that have distanceThreshold less than equal to 100"));
+      const docB = cts.doc("/content/docB.json");
+      const ctsQuery = matchRulesetDefinitions[i].buildCtsQuery(docB);
+      assertions.push(test.assertEqual(null, ctsQuery, "double metaphone with no matches should return a null cts query"));
     }
     if(matchStep.matchRulesets[i].name === "name - zip - 5digit") {
       let matchingTerms = matchRulesetDefinition.zipMatchFunction("95101", fn.head(matchRulesetNode.xpath("matchRules")), matchStep)
