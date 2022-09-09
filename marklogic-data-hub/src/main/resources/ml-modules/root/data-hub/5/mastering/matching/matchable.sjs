@@ -10,6 +10,7 @@ const matchingTraceEvent = xdmp.traceEnabled(consts.TRACE_MATCHING) ? consts.TRA
 const thsr = require("/MarkLogic/thesaurus.xqy");
 const spell = require("/MarkLogic/spell.xqy");
 const {propertyDefinitionsFromXPath} = require("../common.sjs");
+const {groupQueries} = require("./matcher.sjs");
 
 /*
  * A class that encapsulates the configurable portions of the matching process.
@@ -221,11 +222,14 @@ class Matchable {
       xdmp.trace(matchingTraceEvent, `Property query for ${propertyPath} with values ${xdmp.describe(values, Sequence.from([]), Sequence.from([]))}`);
     }
     const indexes = this.model().propertyIndexes(propertyPath);
-    const valuesAreQueries = values instanceof cts.query;
+    const valuesAreQueries = hubUtils.normalizeToArray(values).every(val => val instanceof cts.query);
+    if (valuesAreQueries) {
+      return values;
+    }
     if (matchingDebugTraceEnabled) {
       xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Property query for ${propertyPath} has query values? ${valuesAreQueries}`);
     }
-    if (indexes && indexes.length && !valuesAreQueries) {
+    if (indexes && indexes.length) {
       const scalarType = cts.referenceScalarType(indexes[0]);
       const collation = (scalarType === "string") ? cts.referenceCollation(indexes[0]): null;
       let typedValues = [];
@@ -242,6 +246,9 @@ class Matchable {
       const pathParts = propertyPath.split(".").filter((path) => path);
       const propertyDefinitions = pathParts
         .map((propertyPart, index) => this.model().propertyDefinition(pathParts.slice(0,index + 1).join(".")));
+      if (matchingDebugTraceEnabled) {
+        xdmp.trace(matchingTraceEvent, `Property for ${propertyPath} has property definitions ${xdmp.describe(propertyDefinitions, Sequence.from([]), Sequence.from([]))}`);
+      }
       const propertyQuery = this._buildQueryFromPropertyDefinitionsAndValues(propertyDefinitions, values);
       if (matchingTraceEnabled) {
         xdmp.trace(matchingTraceEvent, `Property query for ${propertyPath} is ${xdmp.describe(propertyQuery, Sequence.from([]), Sequence.from([]))}`);
@@ -271,16 +278,32 @@ class Matchable {
   }
 
   _buildQueryFromPropertyDefinitionsAndValues(propertyDefinitions, values) {
-    if(values instanceof Function) return values;
-    const valuesAreQueries = values instanceof cts.query;
+    if (values instanceof Function) return values;
     const lastPropertyDefinitionIndex = propertyDefinitions.length - 1;
     const lastPropertyDefinition = propertyDefinitions[lastPropertyDefinitionIndex];
     const parentPropertyDefinitions = propertyDefinitions.slice(0,lastPropertyDefinitionIndex).reverse();
     const localname = lastPropertyDefinition.localname;
+    const valuesArray = hubUtils.normalizeToArray(values).filter(val => val instanceof cts.query || fn.normalizeSpace(fn.string(val)));
+    if (valuesArray.length === 0) {
+      return null;
+    }
+    const queryValues = valuesArray.filter(val => (val instanceof cts.query));
+    if (queryValues.length === valuesArray.length) {
+      return values;
+    }
+    let atomicValues = valuesArray.filter(val => !(val instanceof cts.query));
+    if (matchingDebugTraceEnabled) {
+      xdmp.trace(matchingTraceEvent, `Parent property definitions for ${localname}: ${JSON.stringify(parentPropertyDefinitions, null, 2)}.`);
+      xdmp.trace(matchingTraceEvent, `Query values for ${localname}: ${xdmp.describe(queryValues, Sequence.from([]), Sequence.from([]))}.`);
+      xdmp.trace(matchingTraceEvent, `Atomic values for ${localname}: ${xdmp.describe(atomicValues, Sequence.from([]), Sequence.from([]))}.`);
+    }
     if (this.matchStep.dataFormat === "json") {
-      return parentPropertyDefinitions.reduce((acc, propertyDef) => propertyDef.localname ? cts.jsonPropertyScopeQuery(propertyDef.localname, acc) : acc, valuesAreQueries ? values : cts.jsonPropertyValueQuery(localname, values));
+      const lastQuery = groupQueries(queryValues.concat(atomicValues.length ? [cts.jsonPropertyValueQuery(localname, atomicValues, ["case-insensitive"])]: []), cts.orQuery);
+      return parentPropertyDefinitions.reduce((acc, propertyDef) => propertyDef.localname ? cts.jsonPropertyScopeQuery(propertyDef.localname, acc) : acc, lastQuery);
     } else {
-      return parentPropertyDefinitions.reduce((acc, propertyDef) => propertyDef.localname ? cts.elementQuery(fn.QName(propertyDef.namespace, propertyDef.localname), acc) : acc, valuesAreQueries ? values : cts.elementValueQuery(fn.QName(lastPropertyDefinition.namespace, localname), hubUtils.normalizeToArray(values).map((val) => (val instanceof cts.query) ? val : fn.string(val)),"case-insensitive"));
+      atomicValues = atomicValues.map((val) => fn.string(val));
+      const lastQuery = groupQueries(queryValues.concat(atomicValues.length ? [cts.elementValueQuery(fn.QName(lastPropertyDefinition.namespace, localname), atomicValues, ["case-insensitive"])]: []), cts.orQuery);
+      return parentPropertyDefinitions.reduce((acc, propertyDef) => propertyDef.localname ? cts.elementQuery(fn.QName(propertyDef.namespace, propertyDef.localname), acc) : acc, lastQuery);
     }
   }
 }
@@ -407,14 +430,10 @@ class MatchRulesetDefinition {
         default:
           httpUtils.throwBadRequest(`Undefined match type "${matchRule.matchType}" provided.`);
       }
-      const groupQueries = hubUtils.requireFunction("/data-hub/5/mastering/matching/matcher.sjs", "groupQueries");
       matchRule._matchFunction = (values) => {
         const results = matchFunction(values, passMatchRule, passMatchStep);
         if (!results) {
           return null;
-        }
-        if (fn.head(results) instanceof cts.query) {
-          return groupQueries(results, cts.orQuery);
         }
         return propertyQueryFunction(results);
       };
