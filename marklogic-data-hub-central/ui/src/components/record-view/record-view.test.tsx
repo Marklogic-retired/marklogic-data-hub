@@ -1,5 +1,5 @@
 import React from "react";
-import {render, fireEvent, waitForElement} from "@testing-library/react";
+import {render, fireEvent, waitForElement, waitForElementToBeRemoved} from "@testing-library/react";
 import {entitySearch} from "../../assets/mock-data/explore/entity-search";
 import {BrowserRouter as Router} from "react-router-dom";
 import RecordCardView from "./record-view";
@@ -95,15 +95,17 @@ describe("Raw data card view component", () => {
     authorityService.setAuthorities(["readMerging", "readMatching"]);
     axiosMock.get["mockImplementationOnce"](jest.fn(() => Promise.resolve(testData.allDataRecordDownloadResponse)));
 
-    const {getByTestId, getByText} = render(<MemoryRouter>
+    const {getByLabelText, getByTestId, getByText} = render(<MemoryRouter>
       <AuthoritiesContext.Provider value={authorityService}>
         <SearchContext.Provider value={{
           searchOptions: defaultSearchOptions,
           greyedOptions: defaultSearchOptions,
           setEntity: jest.fn(),
-          applySaveQuery: jest.fn()
+          applySaveQuery: jest.fn(),
+          toggleMergeUnmerge: jest.fn()
         }}>
           <RecordCardView
+            entityDefArray={[{name: "Customer", properties: []}]}
             data={entitySearch.results}
           />
         </SearchContext.Provider>
@@ -121,5 +123,20 @@ describe("Raw data card view component", () => {
     //click on download icon and verify api call.
     fireEvent.click(getByTestId("/Customer/Cust1.json-download-icon"));
     expect(axiosMock).toHaveBeenCalledWith({"method": "GET", "responseType": "blob", "url": "/api/record/download?docUri=%2FCustomer%2FCust1.json&database=final"});
+
+    jest.clearAllMocks();
+    axiosMock.get["mockImplementation"](jest.fn(() => Promise.resolve({status: 200, data: {}})));
+    axiosMock.put["mockImplementation"](jest.fn(() => Promise.resolve({status: 200})));
+    axiosMock.delete["mockImplementation"](jest.fn(() => {
+      return Promise.resolve({status: 204});
+    }));
+    //click on merge icon and verify api call.
+    fireEvent.click(getByTestId("merge-icon"));
+    await waitForElement(() => getByLabelText("confirm-merge-unmerge"));
+    fireEvent.click(getByLabelText("confirm-merge-unmerge"));
+    await waitForElement(() => getByLabelText("Yes"));
+    fireEvent.click(getByLabelText("Yes"));
+    await waitForElementToBeRemoved(() => getByLabelText("Yes"));
+    expect(axiosMock.delete).toHaveBeenCalledWith("/api/steps/merging/notifications?uri=%2Fcom.marklogic.smart-mastering%2Fmatcher%2Fnotifications%2F613ba6185e0d3a08d6dbfdb01edbe8d3.xml");
   });
 });

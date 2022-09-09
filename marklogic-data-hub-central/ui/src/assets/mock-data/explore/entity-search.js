@@ -793,7 +793,23 @@ export const entitySearch = {
           ]
         }
       ],
-      "notifiedDoc": true
+      "hubMetadata": {
+        "lastProcessedByFlow": "personJSON",
+        "lastProcessedByStep": "mapPersonJSON",
+        "lastProcessedDateTime": "2020-10-09T15:08:29.234563-07:00",
+        "sources": [
+          {
+            "datahubSourceName": "loadPersonJSON",
+            "datahubSourceType": "loadPersonJSONType"
+          }
+        ]
+      },
+      "notifiedDoc": true,
+      "entityName": "Customer",
+      "notifiedDocumentUris": [
+        "/Customer/Cust1.json",
+        "/Customer/Cust1.json"
+      ]
     }
   ],
   "facets": {
