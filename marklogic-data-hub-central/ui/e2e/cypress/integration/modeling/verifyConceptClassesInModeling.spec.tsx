@@ -14,6 +14,7 @@ import {ConfirmationType} from "../../support/types/modeling-types";
 import LoginPage from "../../support/pages/login";
 import "cypress-wait-until";
 import graphVis from "../../support/components/model/graph-vis";
+import table from "../../support/components/common/tables";
 
 describe("Concept classes in Modeling screen", () => {
   //Scenarios: create, edit, and save a new concept class, edit concept class description, duplicate concept class name check
@@ -319,15 +320,21 @@ describe("Concept classes in Modeling screen", () => {
     }
 
     modelPage.getIconSelected("TestConcept", "FaAccessibleIcon").should("exist");
-    cy.waitUntil(() => conceptClassModal.getAddButton().click());
+    conceptClassModal.getAddButton().click();
+    cy.waitForAsyncRequest();
     conceptClassModal.getAddButton().should("not.exist");
+    cy.scrollTo("bottom");
+    table.scrollToFooter();
+    entityTypeTable.getConceptClass("TestConcept").should("exist").scrollIntoView();
+
 
     //verify color and icon is reflected in the table
     modelPage.getColorSelected("TestConcept", "#d5d3dd").scrollIntoView().should("exist");
     modelPage.getIconSelected("TestConcept", "FaAccessibleIcon").should("exist");
+  });
 
-    cy.log("**Edit concept class and verify that its updated**");
-    entityTypeTable.getConceptClass("TestConcept").scrollIntoView().click();
+  it("Edit concept class and verify that its updated", {defaultCommandTimeout: 120000}, () => {
+    entityTypeTable.getConceptClass("TestConcept").scrollIntoView().click({force: true});
     conceptClassModal.clearConceptClassDescription();
     conceptClassModal.newConceptClassDescription("Description has changed");
     cy.waitUntil(() => conceptClassModal.getAddButton().click());

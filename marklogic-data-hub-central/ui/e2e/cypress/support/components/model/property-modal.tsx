@@ -111,7 +111,7 @@ class PropertyModal {
   }
 
   confirmDeleteProperty(ariaLabel:string) {
-    cy.get(`[aria-label="confirm-${ariaLabel}"]`).click();
+    cy.get(`[aria-label="confirm-${ariaLabel}"]`).should("be.visible").click();
   }
 
 }

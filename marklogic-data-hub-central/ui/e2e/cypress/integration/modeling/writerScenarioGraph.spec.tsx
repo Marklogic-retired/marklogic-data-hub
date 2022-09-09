@@ -17,6 +17,7 @@ import {confirmationModal, toolbar} from "../../support/components/common/index"
 import {ConfirmationType} from "../../support/types/modeling-types";
 import {Application} from "../../support/application.config";
 import LoginPage from "../../support/pages/login";
+import table from "../../support/components/common/tables";
 import "cypress-wait-until";
 
 describe("Entity Modeling: Graph View", () => {
@@ -55,11 +56,13 @@ describe("Entity Modeling: Graph View", () => {
     entityTypeModal.newEntityName("ThisIsVeryLongNameHavingMoreThan20Characters");
     entityTypeModal.newEntityDescription("entity description");
     cy.waitUntil(() => entityTypeModal.getAddButton().click());
+    cy.waitForAsyncRequest();
     entityTypeModal.getAddButton().should("not.exist");
 
     //It appears in the next table page
     // entityTypeTable.goToNextTablePage();
-
+    cy.scrollTo("bottom");
+    table.scrollToFooter();
     entityTypeTable.viewEntityInGraphView("ThisIsVeryLongNameHavingMoreThan20Characters");
     cy.wait(5000);
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {

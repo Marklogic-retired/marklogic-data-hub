@@ -204,7 +204,7 @@ describe("Graph Validations", () => {
     // });
   });
 
-  it("Add entities, a relation, publish, delete the relation and check if is possible delete entity", () => {
+  it("Add entities, a relation, publish, delete the relation and check if is possible delete entity", {defaultCommandTimeout: 120000}, () => {
     cy.get("#switch-view-table").click({force: true});
 
     cy.log("**Creating new entity Test2 in table view**");
@@ -247,14 +247,23 @@ describe("Graph Validations", () => {
     cy.log("**Publishing**");
     propertyModal.getSubmitButton().click();
     cy.publishDataModel();
+    cy.waitForAsyncRequest();
+  });
 
-    cy.log("**Deleting relation, entities and publish**");
-    propertyModal.getDeleteIcon("Test1-relTest1Test2").click();
+  it("Deleting relation, entities and publish", () => {
+    entityTypeTable.getExpandEntityIcon("Test1");
+    propertyModal.getDeleteIcon("Test1-relTest1Test2").should("exist").scrollIntoView().should("be.visible").click();
     propertyModal.confirmDeleteProperty("deletePropertyWarn-yes");
-    propertyTable.getEntityToDelete("Test2-trash-icon").click();
+    cy.waitForAsyncRequest();
+    propertyModal.getDeleteIcon("Test1-relTest1Test2").should("not.exist");
+    propertyTable.getEntityToDelete("Test2-trash-icon").should("exist").scrollIntoView().should("be.visible").click();
     propertyModal.confirmDeleteProperty("deleteEntity-yes");
-    propertyTable.getEntityToDelete("Test1-trash-icon").click();
+    cy.waitForAsyncRequest();
+    propertyTable.getEntityToDelete("Test2-trash-icon").should("not.exist");
+    propertyTable.getEntityToDelete("Test1-trash-icon").should("exist").scrollIntoView().should("be.visible").click();
     propertyModal.confirmDeleteProperty("deleteEntity-yes");
+    cy.waitForAsyncRequest();
+    propertyTable.getEntityToDelete("Test1-trash-icon").should("not.exist");
     cy.publishDataModel();
   });
 

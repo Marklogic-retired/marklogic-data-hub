@@ -60,7 +60,7 @@ describe("Monitor Tile", () => {
     });
 
     cy.log("**click first column to get ASC order and get jod id data**");
-    monitorPage.getOrderColumnMonitorTable("Step Name").scrollIntoView().should("be.visible").click({force: true}).then(() => {
+    monitorPage.getOrderColumnMonitorTable("Step Name").should("exist").scrollIntoView().should("be.visible").click({force: true}).then(() => {
       monitorPage.getTableRows().then(($els) => {
         return (
           Cypress.$.makeArray($els)
@@ -78,7 +78,7 @@ describe("Monitor Tile", () => {
     monitorPage.getTableNestedRows().should("be.visible");
 
     cy.log("**click second column to get ASC order and get step type data**");
-    monitorPage.getOrderColumnMonitorTable("Step Type").scrollIntoView().should("be.visible").click({force: true}).then(() => {
+    monitorPage.getOrderColumnMonitorTable("Step Type").should("exist").scrollIntoView().should("be.visible").click({force: true}).then(() => {
       monitorPage.getRowData(firstPageTableCellsJobId, "stepType").then(($row) => {
         Cypress.$.makeArray($row)
           .map((el) => firstPageTableCellsStepType.push(el.innerText.toString().replace(/\t/g, "").split("\r\n")));
@@ -87,7 +87,7 @@ describe("Monitor Tile", () => {
     monitorPage.getTableNestedRows().should("be.visible");
 
     cy.log("**click third column to get ASC order and get status data**");
-    monitorPage.getOrderColumnMonitorTable("Status").scrollIntoView().click().then(() => {
+    monitorPage.getOrderColumnMonitorTable("Status").should("exist").scrollIntoView().should("be.visible").click().then(() => {
       monitorPage.getRowData(firstPageTableCellsJobId, "stepStatus").then(($row) => {
         Cypress.$.makeArray($row)
           .map((el) => {
@@ -98,7 +98,7 @@ describe("Monitor Tile", () => {
     monitorPage.getTableNestedRows().should("be.visible");
 
     cy.log("**click fourth column to get ASC order and get entiy type data**");
-    monitorPage.getOrderColumnMonitorTable("Entity Type").scrollIntoView().click().then(() => {
+    monitorPage.getOrderColumnMonitorTable("Entity Type").should("exist").scrollIntoView().should("be.visible").click().then(() => {
       monitorPage.getRowData(firstPageTableCellsJobId, "stepEntityType").then(($row) => {
         Cypress.$.makeArray($row)
           .map((el) => firstPageTableCellsEntityType.push(el.innerText.toString().replace(/\t/g, "").split("\r\n")));
@@ -117,7 +117,7 @@ describe("Monitor Tile", () => {
     });
 
     cy.log("**click fifth column to get ASC order and get start date and time**");
-    monitorPage.getOrderColumnMonitorTable("Start Date and Time").scrollIntoView().click().then(() => {
+    monitorPage.getOrderColumnMonitorTable("Start Date and Time").should("exist").scrollIntoView().should("be.visible").click().then(() => {
       monitorPage.getRowData(firstPageTableCellsJobId, "stepStartDate").then(($row) => {
         Cypress.$.makeArray($row)
           .map((el) => firstPageTableCellsDateTime.push(el.innerText.toString().replace(/\t/g, "").split("\r\n")));
@@ -174,7 +174,7 @@ describe("Monitor Tile", () => {
   it("Descending order validations for column order for Step Name,	Step Type,	StatusEntity, Type Start, Date and Time ", () => {
 
     cy.log("**check step name order DESC**");
-    monitorPage.getOrderColumnMonitorTable("Step Name").scrollIntoView().dblclick({force: true}).then(() => {
+    monitorPage.getOrderColumnMonitorTable("Step Name").should("exist").scrollIntoView().should("be.visible").dblclick({force: true}).then(() => {
       monitorPage.getTableNestedRows().should("be.visible");
       monitorPage.getRowData(firstPageTableCellsJobId, "stepNameDiv").then(($row) => {
         Cypress.$.makeArray($row)
@@ -187,7 +187,7 @@ describe("Monitor Tile", () => {
     });
 
     cy.log("**check step type order DESC**");
-    monitorPage.getOrderColumnMonitorTable("Step Type").scrollIntoView().dblclick({force: true}).then(() => {
+    monitorPage.getOrderColumnMonitorTable("Step Type").should("exist").scrollIntoView().should("be.visible").dblclick({force: true}).then(() => {
       monitorPage.getTableNestedRows().should("be.visible");
       monitorPage.getRowData(firstPageTableCellsJobId, "stepType").then(($row) => {
         Cypress.$.makeArray($row)
@@ -200,7 +200,7 @@ describe("Monitor Tile", () => {
     });
 
     cy.log("**check step status order DESC**");
-    monitorPage.getOrderColumnMonitorTable("Status").scrollIntoView().dblclick({force: true}).then(() => {
+    monitorPage.getOrderColumnMonitorTable("Status").should("exist").scrollIntoView().should("be.visible").dblclick({force: true}).then(() => {
       monitorPage.getTableNestedRows().should("be.visible");
       monitorPage.getRowData(firstPageTableCellsJobId, "stepStatus").then(($row) => {
         Cypress.$.makeArray($row)
@@ -230,7 +230,7 @@ describe("Monitor Tile", () => {
     });*/
 
     cy.log("**check step datetime order DESC**");
-    monitorPage.getOrderColumnMonitorTable("Start Date and Time").scrollIntoView().dblclick({force: true}).then(() => {
+    monitorPage.getOrderColumnMonitorTable("Start Date and Time").should("exist").scrollIntoView().should("be.visible").dblclick({force: true}).then(() => {
       monitorPage.getTableNestedRows().should("be.visible");
       monitorPage.getRowData(firstPageTableCellsJobId, "stepStartDate").then(($row) => {
         Cypress.$.makeArray($row)
@@ -266,7 +266,7 @@ describe("Monitor Tile", () => {
     monitorPage.getColumnSelectorApplyButton().should("be.visible").click();
 
     cy.log("**click second column to get ASC order and get step type data**");
-    monitorPage.getOrderColumnMonitorTable("Step Type").scrollIntoView().click().then(() => {
+    monitorPage.getOrderColumnMonitorTable("Step Type").should("exist").scrollIntoView().should("be.visible").click().then(() => {
       monitorPage.getRowData(firstPageTableCellsJobId, "stepType").then(($row) => {
         Cypress.$.makeArray($row)
           .map((el) => firstPageTableCellsStepType.push(el.innerText.toString().replace(/\t/g, "").split("\r\n")));

@@ -33,5 +33,8 @@ class Tables {
   getTableCell(rowIndex: number, columnIndex: number) {
     return cy.get(`.hc-table_row:nth-child(${rowIndex}) td:nth-child(${columnIndex}) div`).invoke("text");
   }
+  scrollToFooter() {
+    cy.get("[title='Next Page']").scrollIntoView();
+  }
 }
 export default new Tables();
