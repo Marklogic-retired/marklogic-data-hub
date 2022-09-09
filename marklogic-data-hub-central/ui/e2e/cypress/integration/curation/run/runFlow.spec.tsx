@@ -92,6 +92,8 @@ describe("Run Tile tests", () => {
     runPage.verifyStepRunResult("mapPersonXML", "success");
     runPage.verifyStepRunResult("match-xml-person", "success");
     runPage.verifyStepRunResult("merge-xml-person", "success");
+    runPage.verifyStepRunResult("master-person", "failure");
+    runPage.getStepFailureSummary("master-person").should("be.visible");
     runPage.verifyFlowModalCompleted(flowName);
     runPage.closeFlowStatusModal(flowName);
 
@@ -115,6 +117,7 @@ describe("Run Tile tests", () => {
     runPage.verifyStepRunResult("mapPersonXML", "success");
     runPage.verifyStepRunResult("match-xml-person", "success");
     runPage.verifyStepRunResult("merge-xml-person", "success");
+
     runPage.verifyFlowModalCompleted(flowName);
     runPage.closeFlowStatusModal(flowName);
 
@@ -215,6 +218,12 @@ describe("Run Tile tests", () => {
     cy.waitForAsyncRequest();
 
     cy.log("**Checking the modal**");
+    runPage.verifyStepRunResult("loadPersonXML", "failure");
+    runPage.getStepFailureSummary("loadPersonXML").should("be.visible");
+    runPage.verifyStepRunResult("master-person", "failure");
+    runPage.getStepFailureSummary("master-person").should("be.visible");
+    runPage.verifyStepRunResult("ingest-orders", "failure");
+    runPage.getStepFailureSummary("ingest-orders").should("be.visible");
     runPage.closeFlowStatusModal(flowName);
 
     cy.log("**Change page and return to check the same steps previously selected**");

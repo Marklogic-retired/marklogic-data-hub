@@ -307,9 +307,11 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStop
     if (jobResponse && jobResponse.stepResponses) {
       const responsesArray = Object.values(jobResponse.stepResponses);
       const data = composeData(responsesArray);
+      const indexArray = data.map((step) => { if (step.stepOutput) return step.stepName; });
       return (<HCTable
         data-testid="job-response-table"
-        rowKey={"key"}
+        rowKey={"stepName"}
+        expandedRowKeys={indexArray}
         className={styles.responseTable}
         data={data}
         columns={responseColumns}
@@ -339,6 +341,7 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStop
     size={"lg"}
     data-testid="job-response-modal"
     id="job-response-modal"
+    scrollable={true}
   >
     <Modal.Header className={"bb-none"} aria-label="job-response-modal-header">
       {isFlowRunning(jobResponse) ?
