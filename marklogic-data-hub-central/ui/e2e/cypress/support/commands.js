@@ -237,6 +237,14 @@ Cypress.Commands.add("deleteRecordsInFinal", (...collections) => {
   });
 });
 
+// Delete files
+Cypress.Commands.add("deleteFiles", (dataBase, ...files) => {
+  files.forEach(filePath => {
+    cy.exec(`curl -X DELETE --anyauth -u test-admin-for-data-hub-tests:password "${protocol}://${Cypress.env("mlHost")}:8002/v1/documents?database=data-hub-${dataBase}&uri=${filePath}"`);
+    console.warn(`DELETE FILES  ${filePath} IN ${dataBase}`);
+  });
+});
+
 Cypress.Commands.add("waitForAsyncRequest", () => {
   cy.window().then({
     timeout: 120000

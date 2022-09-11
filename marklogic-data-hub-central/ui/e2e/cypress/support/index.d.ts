@@ -120,6 +120,13 @@ declare namespace Cypress {
       restoreLocalStorage(): Chainable<Element>
 
       /**
+       * Execute CURL to DELETE files in a determined database
+       * @param dataBase
+       * @param files file paths
+       */
+      deleteFiles(dataBase: string, ...files: string[]): Chainable<Element>
+
+      /**
        * Custom command to trigger tab out
        * @example
        * cy.get("input").typeTab()
