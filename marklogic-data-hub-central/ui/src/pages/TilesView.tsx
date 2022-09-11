@@ -5,7 +5,9 @@ import Tiles from "@components/tiles/tiles";
 import styles from "./TilesView.module.scss";
 import "./TilesView.scss";
 import {getEnvironment} from "@util/environment";
-
+import {hubCentralConfig} from "../types/modeling-types";
+import * as _ from "lodash";
+import {UserContext} from "@util/user-context";
 import Overview from "./Overview";
 import Load from "./Load";
 import Modeling from "./Modeling";
@@ -25,6 +27,7 @@ import {ErrorMessageContext} from "@util/error-message-context";
 import {HCButton} from "@components/common";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTimesCircle} from "@fortawesome/free-regular-svg-icons";
+import {HubCentralConfigContext} from "@util/hubCentralConfig-context";
 
 export type TileId = "load" | "model" | "curate" | "run" | "explore" | "monitor" | "detail";
 export type IconType = "fa" | "custom";
@@ -40,6 +43,8 @@ interface TileItem {
 const INITIAL_SELECTION = ""; // '' for no tile initially
 
 const TilesView = (props) => {
+  const {handleError} = useContext(UserContext);
+  const {hubCentralConfig, getHubCentralConfigFromServer, updateHubCentralConfigOnServer} = useContext(HubCentralConfigContext);
   const [selection, setSelection] = useState<TileId | string>(INITIAL_SELECTION);
   const [currentNode, setCurrentNode] = useState<any>(INITIAL_SELECTION);
   const [options, setOptions] = useState<TileItem|null>(null);
@@ -116,6 +121,26 @@ const TilesView = (props) => {
       setView("", null);
     });
   }, []);
+
+  useEffect(() => {
+    getHubCentralConfigFromServer();
+  }, []);
+
+  useEffect(() => {
+    if (hubCentralConfig.hasOwnProperty("modeling") && !hubCentralConfig["modeling"].hasOwnProperty("concepts")) {
+      let updatedPayload = _.cloneDeep(hubCentralConfig);
+      updatedPayload.modeling["concepts"] = {};
+      publishHubCentralConfig(updatedPayload);
+    }
+  }, [hubCentralConfig]);
+
+  const publishHubCentralConfig = async (hubCentralConfig: hubCentralConfig) => {
+    try {
+      updateHubCentralConfigOnServer(hubCentralConfig);
+    } catch (error) {
+      handleError(error);
+    }
+  };
 
   const getNewStepToFlowOptions = () => {
     return {
