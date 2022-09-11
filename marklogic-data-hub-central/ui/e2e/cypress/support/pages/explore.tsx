@@ -32,7 +32,7 @@ class ExplorePage {
     return cy.get(`[class^="rc-tree-checkbox"]`);
   }
   // Snippet view
-  getSnippetViewResults(text:string) {
+  getSnippetViewResults(text: string) {
     return cy.findByLabelText(text);
   }
 
@@ -40,7 +40,7 @@ class ExplorePage {
     return cy.findByLabelText("graph-view-searchSummary");
   }
 
-  getDetailViewURI(uri:string) {
+  getDetailViewURI(uri: string) {
     return cy.findByLabelText(uri);
   }
 
@@ -99,6 +99,24 @@ class ExplorePage {
   }
   getHeaderSortArrow(columnName: string) {
     return this.getColumnHeader(columnName).siblings("[class^=\"hc-table_caretContainer\"]");
+  }
+  getEntityTypeDisplaySettingsDropdown(text: string) {
+    return cy.get("a.dropdown-item").contains(text);
+  }
+  getIconSelector(entity: string) {
+    return cy.get(`#${entity}-icon-picker`);
+  }
+  getEntityTypeFromTable(entity: string) {
+    return cy.get(`[aria-label="${entity}-entityType"]`);
+  }
+  getIcon(icon: string) {
+    return cy.get(`[data-testid="default-${icon}-icon-option"]`);
+  }
+  getCurrentIcon(currentIcon: string) {
+    return cy.get(`[data-testid="default-${currentIcon}-icon-selected"]`);
+  }
+  getDisplaySettingsEntityColor(entity: string) {
+    return cy.get(`[data-testid=${entity}-color]`);
   }
 }
 
