@@ -30,14 +30,14 @@ interface Props {
 }
 
 const CreateEditLoad: React.FC<Props> = (props) => {
-  const [stepName, setStepName] = useState(props.stepData && props.stepData !== {} ? props.stepData.name : "");
-  const [description, setDescription] = useState(props.stepData && props.stepData !== {} ? props.stepData.description : "");
-  const [srcFormat, setSrcFormat] = useState(props.stepData && props.stepData !== {} ? props.stepData.sourceFormat : StepsConfig.defaultSourceFormat);
-  const [tgtFormat, setTgtFormat] = useState(props.stepData && props.stepData !== {} ? props.stepData.targetFormat : StepsConfig.defaultTargetFormat);
-  const [sourceName, setSourceName] = useState(props.stepData && props.stepData !== {} ? props.stepData.sourceName : "");
-  const [sourceType, setSourceType] = useState(props.stepData && props.stepData !== {} ? props.stepData.sourceType : "");
-  const [outputUriPrefix, setOutputUriPrefix] = useState(props.stepData && props.stepData !== {} ? props.stepData.outputURIPrefix : "");
-  const [fieldSeparator, setFieldSeparator] = useState(props.stepData && props.stepData !== {} ? props.stepData.fieldSeparator : StepsConfig.defaultFieldSeparator);
+  const [stepName, setStepName] = useState("");
+  const [description, setDescription] = useState("");
+  const [srcFormat, setSrcFormat] = useState(StepsConfig.defaultSourceFormat);
+  const [tgtFormat, setTgtFormat] = useState(StepsConfig.defaultTargetFormat);
+  const [sourceName, setSourceName] = useState("");
+  const [sourceType, setSourceType] = useState("");
+  const [outputUriPrefix, setOutputUriPrefix] = useState("");
+  const [fieldSeparator, setFieldSeparator] = useState(StepsConfig.defaultFieldSeparator);
   const [otherSeparator, setOtherSeparator] = useState("");
 
   //To check submit validity
@@ -117,7 +117,8 @@ const CreateEditLoad: React.FC<Props> = (props) => {
     setIsValid(true);
     props.setIsValid(true);
     setTobeDisabled(true);
-
+    setSourceName(props.stepData.sourceName);
+    setSourceType(props.stepData.sourceType);
     setDescriptionTouched(false);
     setSrcFormatTouched(false);
     setTgtFormatTouched(false);

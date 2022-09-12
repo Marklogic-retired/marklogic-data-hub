@@ -56,7 +56,7 @@ const LoadCard: React.FC<Props> = (props) => {
 
   const OpenStepSettings = (index) => {
     setIsEditing(true);
-    setStepData(prevState => ({...prevState, ...props.data[index]}));
+    setStepData({...props.data[index]});
     setOpenStepSettings(true);
   };
 
