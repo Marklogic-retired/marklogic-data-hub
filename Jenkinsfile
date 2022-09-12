@@ -16,6 +16,10 @@ mlChHost=""
 cypressChBaseUrl=""
 chsetupcomplete=false
 chtestcomplete=false
+mlChMacHost=""
+cypressChMacBaseUrl=""
+chMacsetupcomplete=false
+chMactestcomplete=false
 
 def loadProperties() {
     node {
@@ -829,6 +833,20 @@ def runFFTests(){
      findText(textFinders: [textFinder('npm error')])
      junit '**/e2e/**/*.xml'
 }
+def cypressE2EOnPremMacChromeTests(){
+    sleep time: 12, unit: 'MINUTES'
+        waitUntil(initialRecurrencePeriod: 120000) {
+             return chMacsetupcomplete
+         }
+    env.cypressChMacBaseUrl=cypressChMacBaseUrl.trim()
+    env.mlChMacHost=mlChMacHost.trim()
+    sh(script:'''
+        cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e
+        npm run cy:run-chrome-headed -- --config baseUrl=${cypressChMacBaseUrl} --env mlHost=${mlChMacHost}   >> e2e_err.log
+    ''')
+    findText(textFinders: [textFinder('npm error')])
+    junit '**/e2e/**/*.xml'
+}
 pipeline{
 	agent none;
 	options {
@@ -1444,30 +1462,24 @@ pipeline{
                         }
                     }
                 }
-
-/*
-                stage('10.0-7-MAC-On-Prem'){
-                    agent { label 'osx-i64-10-test-2'}
-                    environment{
-                        M2_LOCAL_REPO="$WORKSPACE/repository"
-                    }
+                stage('10.0-9-cypress-linux-setup-mac-chrome'){
+                    agent {label 'dhfLinuxAgent'}
                     steps{
-                     timeout(time: 3,  unit: 'HOURS'){
-                        catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){cypressE2EOnPremMacTests("Release","10.0-7.3")}
-                    }}
-                    post{
-                        success {
-                            println("$STAGE_NAME Completed")
-                            sendMail Email,"<h3>$STAGE_NAME Server on Linux Platform</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>",false,"$BRANCH_NAME branch $STAGE_NAME Passed"
-                        }
-                        unstable {
-                            println("$STAGE_NAME Failed")
-                            sendMail Email,"<h3>$STAGE_NAME Server on Linux Platform </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>",false,"$BRANCH_NAME branch $STAGE_NAME Failed"
+                        script{
+                                cypressSetup('Release','10.0-9')
+                                mlChMacHost=sh(returnStdout: true,script: """echo \$HOSTNAME""")
+                                cypressChMacBaseUrl="http://"+mlChHost.trim()+":8080"
+                                chMacsetupcomplete=true
+                                env.chMacsetupcomplete=true
+                                sleep time: 95, unit: 'MINUTES'
+                                timeout(time: 3, unit: 'HOURS') {
+                                    waitUntil(initialRecurrencePeriod: 120000) {
+                                        return chMactestcomplete
+                                    }
+                                }
                         }
                     }
                 }
-                */
-
                 stage('cypress-win-chrome'){
                     agent { label 'w10-dhf-5'}
                     environment{
@@ -1500,8 +1512,15 @@ pipeline{
                         }
                     }
                 }
-
-            }}
-
+                stage('cypress-mac-chrome'){
+                    agent { label 'dhfmacchrome'}
+                    steps{
+                        timeout(time: 4,  unit: 'HOURS'){
+                           catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){cypressE2EOnPremMacChromeTests()}
+                            }
+                        }
+                    }
+            }
+        }
     }
 }
