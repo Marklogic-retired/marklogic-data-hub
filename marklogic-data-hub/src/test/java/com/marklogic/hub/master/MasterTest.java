@@ -182,6 +182,16 @@ public class MasterTest extends AbstractHubCoreTest {
         assertEquals("Fortey", mergedDoc.get("value").get("envelope").get("instance").get("person").get("lastName").asText());
     }
 
+    @Test
+    public void testMatchStepInNotifications() {
+        String flowName = "myMatchMergeFlow";
+        makeInputFilePathsAbsoluteInFlow(flowName);
+        runAsDataHubOperator();
+        runFlow(new FlowInputs(flowName, "1", "2", "3", "4"));
+        JsonNode notifications = masteringManager.notifications(1, 1);
+        assertEquals("match-person", notifications.get("notifications").get(0).get("meta").get("matchStepName").asText());
+    }
+
     private void testDocumentHistory(String mergedUri, List<String> docsInMerge) {
         JsonNode documentHistory = masteringManager.documentHistory(mergedUri);
         JsonNode activityInformation = documentHistory.path("activities").path(0);

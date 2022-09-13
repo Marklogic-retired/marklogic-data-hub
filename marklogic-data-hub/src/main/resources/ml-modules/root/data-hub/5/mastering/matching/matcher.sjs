@@ -324,6 +324,7 @@ function buildMatchSummary(matchable, content) {
   const matchSummary = {
     matchSummary: {
       matchStepId: matchable.matchStep.stepId,
+      matchStepName: matchable.matchStepNode.stepName,
       URIsToProcess: urisToActOn,
       actionDetails: allActionDetails
     }

@@ -101,7 +101,8 @@ function buildContentObjectsFromMatchSummary(
         contentObjects.push(auditDoc);
         break;
       case "notify":
-        currentContentObject = mergeable.buildNotification(uri, uriActionDetails.threshold, uriActionDetails.query ? cts.query(uriActionDetails.query): uriActionDetails.uris)
+        const matchStepName = matchSummary["matchSummary"]["matchStepName"];
+        currentContentObject = mergeable.buildNotification(uri, uriActionDetails.threshold, uriActionDetails.query ? cts.query(uriActionDetails.query): uriActionDetails.uris, matchStepName);
         break;
       case "custom":
         for (const action of uriActionDetails.actions) {
