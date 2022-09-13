@@ -67,8 +67,8 @@ function filterContentAlreadyProcessed(content, summaryCollection, collectionInf
 
 function main(content, options, stepExecutionContext) {
   // Hack to allow for a merging step to be able to access the in-memory content objects
-  // that this step receives. This matching step only returns a content object for the 
-  // match summary that it generates, but the merging step needs access to the content 
+  // that this step receives. This matching step only returns a content object for the
+  // match summary that it generates, but the merging step needs access to the content
   // objects that this step receives.
   if (stepExecutionContext != null && stepExecutionContext.flowExecutionContext != null) {
     stepExecutionContext.flowExecutionContext.matchingStepContentArray = content.toArray();
@@ -99,6 +99,7 @@ function main(content, options, stepExecutionContext) {
   }
   const matchOptions = options.matchOptions || options;
   matchOptions.targetEntityType = matchOptions.targetEntityType || options.targetEntityType || options.targetEntity;
+  matchOptions.stepName = stepExecutionContext && stepExecutionContext["flowStep"] ? stepExecutionContext["flowStep"]["name"] : "";
   let matchSummaryJson = buildMatchSummary(
     new Matchable(matchOptions),
     filteredContent

@@ -151,7 +151,7 @@ class Mergeable {
    * @return contentObject
    * @since 5.8.0
    */
-  buildNotification(uri, thresholdName, payload) {
+  buildNotification(uri, thresholdName, payload, matchStepName) {
     const nodeBuilder = new NodeBuilder();
     nodeBuilder
       .startElement("sm:notification", "http://marklogic.com/smart-mastering")
@@ -167,6 +167,9 @@ class Mergeable {
       .endElement()
       .startElement("sm:entityName", "http://marklogic.com/smart-mastering")
       .addText(this.entityName || "")
+      .endElement()
+      .startElement("sm:matchStepName", "http://marklogic.com/smart-mastering")
+      .addText(matchStepName || "")
       .endElement()
       .endElement()
       .startElement("sm:threshold-label", "http://marklogic.com/smart-mastering")

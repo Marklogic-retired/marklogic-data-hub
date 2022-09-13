@@ -39,6 +39,7 @@
     "3": {
       "stepDefinitionName": "default-matching",
       "stepDefinitionType": "MATCHING",
+      "name": "match-person",
       "options": {
         "targetEntity": "person",
         "sourceQuery": "cts.collectionQuery('person')",
