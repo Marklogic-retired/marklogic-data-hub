@@ -22,12 +22,12 @@ import {Flow} from "../../types/run-types";
 type Props = {
   setOpenJobResponse: (boolean) => void;
   jobId: string;
-  flow?: Flow;
+  runningFlow?: Flow;
   stopRun?: () => Promise<void>;
   setIsStepRunning?: any;
   setUserCanStopFlow?: any;
 }
-const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStopFlow, stopRun, setIsStepRunning, flow}) => {
+const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStopFlow, stopRun, setIsStepRunning, runningFlow}) => {
   const [jobResponse, setJobResponse] = useState<any>({});
   //const [lastSuccessfulStep, setLastSuccessfulStep] = useState<any>(null);
   const [timeoutId, setTimeoutId] = useState<any>();
@@ -291,8 +291,8 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStop
 
   const composeData = (responsesArray) => {
     let data: any[] = [];
-    if (flow===undefined || !flow.steps || flow.steps.length === 0) return responsesArray;
-    for (let step of flow.steps) {
+    if (runningFlow===undefined || !runningFlow.steps || runningFlow.steps.length === 0) return responsesArray;
+    for (let step of runningFlow.steps) {
       const result = responsesArray.find(response => (response.stepName === step.stepName || response.status.includes(`running step ${step.stepNumber}`)));
       if (result === undefined) {
         data.push(step);
@@ -306,14 +306,14 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStop
   const responses = (jobResponse) => {
     if (jobResponse && jobResponse.stepResponses) {
       const responsesArray = Object.values(jobResponse.stepResponses);
-      const data = composeData(responsesArray);
-      const indexArray = data.map((step) => { if (step.stepOutput) return step.stepName; });
+      const composedData = composeData(responsesArray);
+      const indexArray = composedData.map((step) => { if (step.stepOutput) return step.stepName; });
       return (<HCTable
         data-testid="job-response-table"
         rowKey={"stepName"}
         expandedRowKeys={indexArray}
         className={styles.responseTable}
-        data={data}
+        data={composedData}
         columns={responseColumns}
         expandedRowRender={(response) => expandedRowRender(response)}
         pagination={false}

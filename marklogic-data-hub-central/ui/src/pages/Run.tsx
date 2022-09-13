@@ -224,15 +224,20 @@ const Run = (props) => {
     return new Promise(checkStatus);
   }
 
-  const getFlowRunning = (flowName:string, stepNumbers: string[]) => {
+  const getFlowRunning = (flowName: string, stepNumbers: string[]) => {
     const flow = flows.find(flow => flow.name === flowName);
     const _stepsRunning = flow?.steps?.filter(step => { return stepNumbers.includes(step.stepNumber); });
     (flow && _stepsRunning) ? setFlowRunning({...flow, steps: _stepsRunning}) : setFlowRunning(InitialFlow);
   };
 
-  const runFlowSteps = async (flowName: string, steps: Step[], formData:any) => {
+  const finishRun = () => {
+    setIsLoading(false);
+    setFlowRunning(InitialFlow);
+  };
+
+  const runFlowSteps = async (flowName: string, steps: Step[], formData: any) => {
     setIsStepRunning(true);
-    let stepNumbers: string[]= [];
+    let stepNumbers: string[] = [];
     for (let step of steps) {
       stepNumbers.push(step.stepNumber);
     }
@@ -267,14 +272,14 @@ const Run = (props) => {
                 setRunEnded({flowId: flowName, stepId: steps[i].stepNumber});
 
               }
-            }).catch(function(error) {
+            }).catch(function (error) {
               console.error("Flow timeout", error);
               for (let i = 0; i < steps.length; i++) {
                 setRunEnded({flowId: flowName, stepId: steps[i]});
               }
             });
         }, pollConfig.interval);
-        setIsLoading(false);
+        finishRun();
       }
     } catch (error) {
       console.error("Error running step", error);
@@ -319,7 +324,7 @@ const Run = (props) => {
               setRunEnded({flowId: flowName, stepId: stepNumber});
             });
         }, pollConfig.interval);
-        setIsLoading(false);
+        finishRun();
       }
     } catch (error) {
       console.error("Error running step", error);
@@ -407,7 +412,7 @@ const Run = (props) => {
         }
       </div>
       {openJobResponse && <JobResponse setUserCanStopFlow={setUserCanStopFlow}
-        setIsStepRunning={setIsStepRunning} stopRun={stopRun} jobId={jobId} setOpenJobResponse={setOpenJobResponse} flow={flowRunning}/>}
+        setIsStepRunning={setIsStepRunning} stopRun={stopRun} jobId={jobId} setOpenJobResponse={setOpenJobResponse} runningFlow={flowRunning} />}
     </div>
   );
 };
