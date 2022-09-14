@@ -395,11 +395,12 @@ describe("Entity Modeling: Graph View", () => {
     //verify relationship is visible in mapping
     cy.log("**Go to curate and open Person**");
     cy.visit("/tiles/curate");
+    cy.waitForAsyncRequest();
     confirmationModal.getNavigationWarnText().should("not.exist");
 
     //There's a re-rendering so waiting for an element or a request won't work.
     cy.wait(1000);
-    curatePage.getEntityTypePanel("Person").should("be.visible").click({force: true});
+    curatePage.getEntityTypePanel("Person").should("be.visible", {timeout: 5000}).click({force: true});
     curatePage.openStepDetails("mapPersonJSON");
     cy.waitUntil(() => curatePage.dataPresent().should("be.visible"));
 

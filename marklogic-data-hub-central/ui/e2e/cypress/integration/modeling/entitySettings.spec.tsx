@@ -46,6 +46,9 @@ describe("Entity display settings in model tile", () => {
     LoginPage.postLogin();
     //Setup hubCentral config for testing
     cy.setupHubCentralConfig();
+    cy.log("**Go to graph view in model tile**");
+    homePage.getModelCard().click();
+    cy.waitForAsyncRequest();
     //Saving Local Storage to preserve session
     cy.saveLocalStorage();
   });
@@ -55,11 +58,9 @@ describe("Entity display settings in model tile", () => {
     cy.restoreLocalStorage();
   });
   it("can change entity display settings in model tile and change in explore", () => {
-    cy.log("**Go to graph view in model tile**");
-    homePage.getModelCard().click();
     modelPage.selectView("project-diagram");
+    cy.waitForAsyncRequest();
     cy.wait(5000);
-
     cy.log(`**Click on ${defaultEntityTypeData.name} entity to open side bar**`);
     graphVis.getPositionsOfNodes(defaultEntityTypeData.name).then((nodePositions: any) => {
       let babyRegistryCoordinates: any = nodePositions[defaultEntityTypeData.name];
@@ -101,6 +102,7 @@ describe("Entity display settings in model tile", () => {
     cy.log("**Close model tile and go to explore**");
     homePage.getTileCloseButton().click();
     homePage.getExploreCard().click();
+    cy.waitForAsyncRequest();
 
     cy.log("**Click on babyRegistry node and verify that properties on hover show up in the tooltip**");
     graphExplore.getGraphVisCanvas().should("exist");
@@ -170,10 +172,11 @@ describe("Entity display settings in model tile", () => {
     cy.log("**Close explore tile and go to model**");
     homePage.getTileCloseButton().click();
     homePage.getModelCard().click();
+    cy.waitForAsyncRequest();
 
     cy.log("**Go to graph view**");
     modelPage.selectView("project-diagram");
-
+    cy.waitForAsyncRequest();
     cy.wait(2000);
 
     cy.log(`**Click on ${defaultEntityTypeData.name} entity to open side bar**`);

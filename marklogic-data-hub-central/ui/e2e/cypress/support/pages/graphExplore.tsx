@@ -1,4 +1,4 @@
-
+let retry = 0;
 class GraphExplore {
   getGraphVisCanvas() {
     return cy.get("canvas");
@@ -137,6 +137,28 @@ class GraphExplore {
   }
   getViewRecordsInTable() {
     return cy.get("#viewRecordsInTableView");
+  }
+  isElementVisible(selector: any, action1: any, action2: any) {
+    if (retry < 3 && Cypress.$(selector).length === 0) {
+      //Increment retry
+      retry++;
+      //wait 1 seconds
+      cy.wait(1000);
+      //Perforn series of action if the element is not visible
+      action1;
+      //Element is not yet visible, Call the recursive function again
+      cy.then(this.isElementVisible(selector));
+    } else if (retry < 3 && Cypress.$(selector).length === 1) {
+      //Perforn series of action if the element is visible
+      if (action2) {
+        action2;
+      }
+      return;
+    } else {
+      //It excedded required no. of execution
+      cy.log("The element is not visible even after multiple reloads");
+      return;
+    }
   }
 }
 export default new GraphExplore();

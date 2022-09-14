@@ -18,6 +18,7 @@ describe("Concepts", () => {
     cy.log("**Navigate to Explore**");
     toolbar.getExploreToolbarIcon().click();
     browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
   });
   beforeEach(() => {
     //Restoring Local Storage to Preserve Session
@@ -33,10 +34,11 @@ describe("Concepts", () => {
     cy.waitForAsyncRequest();
   });
 
-  it("Validate that the concepts toggle works correctly", () => {
+  it("Validate that the concepts toggle works correctly", {defaultCommandTimeout: 120000}, () => {
     //Graph view
     cy.log("**Go to graph view**");
     browsePage.clickGraphView();
+    cy.waitForAsyncRequest();
     graphExplore.getGraphVisCanvas().should("be.visible");
     graphExplore.stopStabilization();
 
@@ -93,10 +95,11 @@ describe("Concepts", () => {
     });
   });
 
-  it("Validate that the concepts facets are applied properly", () => {
+  it("Validate that the concepts facets are applied properly", {defaultCommandTimeout: 120000}, () => {
     //Graph view
     cy.log("**Go to graph view**");
     browsePage.clickGraphView();
+    cy.waitForAsyncRequest();
     graphExplore.getGraphVisCanvas().should("be.visible");
     graphExplore.stopStabilization();
 
@@ -116,7 +119,7 @@ describe("Concepts", () => {
     cy.wait(3000);
   });
 
-  it("Verify Kettle concept node is not visible in the canvas anymore", () => {
+  it("Verify Kettle concept node is not visible in the canvas anymore", {defaultCommandTimeout: 120000}, () => {
     graphExplore.focusNode(ExploreGraphNodes.CONCEPT_KETTLE);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_KETTLE).then((nodePositions: any) => {
       let kettleCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_KETTLE];
@@ -137,7 +140,7 @@ describe("Concepts", () => {
       graphExploreSidePanel.getSidePanel().should("exist");
     });
   });
-  it("Verify Kettle concept node should be visible when selected as facet", () => {
+  it("Verify Kettle concept node should be visible when selected as facet", {defaultCommandTimeout: 120000}, () => {
     browsePage.clickMoreLink("relatedconcepts");
     browsePage.getFacetItemCheckbox("relatedconcepts", "Kettle").click();
     browsePage.getSelectedFacets().should("exist");
@@ -158,10 +161,11 @@ describe("Concepts", () => {
       graphExploreSidePanel.getSidePanel().should("exist");
     });
   });
-  it("Validate that the physics animation toggle is visible and the tooltip works on it", () => {
+  it("Validate that the physics animation toggle is visible and the tooltip works on it", {defaultCommandTimeout: 120000}, () => {
     //Graph view
     cy.log("**Go to graph view**");
     browsePage.clickGraphView();
+    cy.waitForAsyncRequest();
     graphExplore.getGraphVisCanvas().should("be.visible");
     graphExplore.stopStabilization();
 
