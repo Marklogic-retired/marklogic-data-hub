@@ -175,11 +175,13 @@ const EntityDisplaySettings: React.FC<Props> = ({entityModels, exploreSettingsDa
   ];
 
   return (
-    <HCTable
-      rowKey="entityType"
-      columns={exploreSettingsColumns}
-      data={filteredSettingsData}
-    />
+    <div className={styles.entityTable}>
+      <HCTable
+        rowKey="entityType"
+        columns={exploreSettingsColumns}
+        data={filteredSettingsData}
+      />
+    </div>
   );
 };
 
