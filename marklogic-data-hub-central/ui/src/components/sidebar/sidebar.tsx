@@ -783,6 +783,11 @@ const Sidebar: React.FC<Props> = (props) => {
     setSearchBox(e.target.value);
   };
 
+  const handleSetCurrentBaseEntities = (entities) => {
+    setCheckAll(true);
+    props.setCurrentBaseEntities(entities);
+  };
+
   return (
     <div className={styles.sideBarContainer} id={"sideBarContainer"}>
       <div className={styles.searchInput}>
@@ -870,7 +875,7 @@ const Sidebar: React.FC<Props> = (props) => {
             </div>
             <Accordion.Body>
               <BaseEntitiesFacet
-                setCurrentBaseEntities={props.setCurrentBaseEntities}
+                setCurrentBaseEntities={handleSetCurrentBaseEntities}
                 setEntitySpecificPanel={props.setEntitySpecificPanel}
                 currentBaseEntities={props.currentBaseEntities}
                 entityIndicatorData={props.entityIndicatorData}
