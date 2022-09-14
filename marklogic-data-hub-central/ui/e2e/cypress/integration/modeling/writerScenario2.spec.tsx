@@ -328,6 +328,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.getForeignKey("nicknames").should("not.be.enabled");
     propertyModal.getForeignKey("customerId").click();
     propertyModal.getSubmitButton().click();
+    cy.waitForAsyncRequest();
     propertyTable.getProperty("OrderedBy").should("exist");
   });
   it("Delete a property, a structured property and then the entity", {defaultCommandTimeout: 120000}, () => {
@@ -339,12 +340,12 @@ describe("Entity Modeling: Writer Role", () => {
     cy.waitForAsyncRequest();
     propertyTable.getProperty("streetAlt").should("not.exist");*/
     //Property
-    propertyTable.getDeletePropertyIcon("AddEntity", "alt_address").click({force: true});
+    propertyTable.getDeletePropertyIcon("AddEntity", "alt_address").should("be.visible").click({force: true});
     confirmationModal.getDeletePropertyWarnText().should("exist");
     confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn);
     cy.waitForAsyncRequest();
     propertyTable.getProperty("alt_address").should("not.exist");
-    propertyTable.getDeletePropertyIcon("AddEntity", "OrderedBy").click({force: true});
+    propertyTable.getDeletePropertyIcon("AddEntity", "OrderedBy").should("be.visible").click({force: true});
     confirmationModal.getDeletePropertyWarnText().should("exist");
     confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn);
     cy.waitForAsyncRequest();
@@ -399,7 +400,7 @@ describe("Entity Modeling: Writer Role", () => {
     // });
 
     // "Create Concept entity and add a property"
-    cy.waitUntil(() => modelPage.getAddButton()).click();
+    modelPage.getAddButton().should("be.visible").click();
     modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});
     entityTypeModal.newEntityName("Concept");
     entityTypeModal.newEntityDescription("A concept entity");
@@ -425,6 +426,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getDeletePropertyIcon("Concept", "testing").click({force: true});
     confirmationModal.getDeletePropertyWarnText().should("exist");
     confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn);
+    cy.waitForAsyncRequest();
     propertyTable.getProperty("testing").should("not.exist");
     modelPage.getEntityModifiedAlert().should("exist");
   });

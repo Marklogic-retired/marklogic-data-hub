@@ -74,6 +74,11 @@ describe("Entity Type Settings Modal", () => {
     //Setup hubCentral config for testing
     cy.setupHubCentralConfig();
 
+    browsePage.waitForSpinnerToDisappear();
+    cy.wait(3000);
+    toolbar.getExploreToolbarIcon().should("be.visible").click({force: true});
+    cy.waitForAsyncRequest();
+
     //Saving Local Storage to preserve session
     cy.saveLocalStorage();
   });
@@ -92,13 +97,11 @@ describe("Entity Type Settings Modal", () => {
     cy.waitForAsyncRequest();
   });
 
-  it("Open settings modal, check default values, select new ones cancel and check that the defaults values are keep", () => {
-    browsePage.waitForSpinnerToDisappear();
-    cy.wait(3000);
-    toolbar.getExploreToolbarIcon().should("be.visible").click({force: true});
+  it("Open settings modal, check default values, select new ones cancel and check that the defaults values are keep", {defaultCommandTimeout: 120000}, () => {
     cy.log("**Select Graph view and open explore settings modal**");
     browsePage.clickGraphView();
     browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
     explorePage.clickExploreSettingsMenuIcon();
     browsePage.getEntityTypeDisplaySettingsButton().scrollIntoView().click({force: true});
     dataModelDisplaySettingsModal.getModalBody().should("be.visible");
@@ -156,7 +159,7 @@ describe("Entity Type Settings Modal", () => {
     dataModelDisplaySettingsModal.getModalBody().should("not.exist");
   });
 
-  it("Open settings modal, select new values and save the changes", () => {
+  it("Open settings modal, select new values and save the changes", {defaultCommandTimeout: 120000}, () => {
     browsePage.waitForSpinnerToDisappear();
     cy.wait(1000);
     cy.log("**Select Graph view and open explore settings modal**");
@@ -276,7 +279,7 @@ describe("Entity Type Settings Modal", () => {
     });
   });
 
-  it("Verify settings modal with a selected entity type in the sidebar", () => {
+  it("Verify settings modal with a selected entity type in the sidebar", {defaultCommandTimeout: 120000}, () => {
     browsePage.waitForSpinnerToDisappear();
     cy.wait(1000);
     cy.log("**Select Graph view**");

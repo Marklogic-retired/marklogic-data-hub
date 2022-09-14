@@ -22,8 +22,8 @@ describe("Monitor Tile", () => {
   beforeEach(() => {
     //Restoring Local Storage to Preserve Session
     cy.restoreLocalStorage();
-    cy.visit("/");
     cy.waitUntil(() => toolbar.getMonitorToolbarIcon()).should("be.visible").click({force: true});
+    cy.waitForAsyncRequest();
     monitorPage.waitForMonitorTableToLoad();
   });
   afterEach(() => {

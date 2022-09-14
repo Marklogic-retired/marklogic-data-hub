@@ -9,6 +9,7 @@
     "firefoxGcInterval": { "runMode": 1, "openMode": 1 },
     "ignoreTestFiles": [],
     "reporter": "junit",
+    "animationDistanceThreshold": 0,
     "reporterOptions": {
       "mochaFile": "results/cypress-report[hash].xml",
       "toConsole": true
