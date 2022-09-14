@@ -77,6 +77,19 @@ public class HubCentralTest extends TestObject {
         assertEquals(hubConfig.getStagingSchemasDbName(), "staging-SCHEMAS");
         assertEquals(hubConfig.getFinalTriggersDbName(), "final-TRIGGERS");
         assertEquals(hubConfig.getFinalSchemasDbName(), "final-SCHEMAS");
+
+        // Current Authentication method is basic as returned from hubConfig.json file
+        assertEquals(hubConfig.getStagingAuthMethod(), "basic");
+        // Setting the environment property and creating hubconfig object. The hubconfig object is expected to have
+        // mlStagingAuth to be digest
+        mockEnvironment.setProperty("mlStagingAuth", "digest");
+        mockEnvironment.setProperty("mlStagingPort", "8030");
+        mockEnvironment.setProperty("mlFinalPort", "8031");
+        hubConfig = hubCentral.newHubConfig("test-data-hub-developer", "password");
+        assertEquals("digest", hubConfig.getAuthMethod(DatabaseKind.STAGING));
+        assertEquals(8030, hubConfig.getStagingPort());
+        assertEquals(8031, hubConfig.getFinalPort());
+
         client.newDocumentManager().delete(uri);
     }
 
