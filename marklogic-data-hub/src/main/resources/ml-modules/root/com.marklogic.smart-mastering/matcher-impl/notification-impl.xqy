@@ -293,7 +293,8 @@ declare function notify-impl:notification-to-json(
       "uri": fn:base-uri($notification),
       "status": $notification/sm:meta/sm:status/fn:string(),
       "entityName": fn:string($notification/sm:meta/sm:entityName),
-      "matchStepName": fn:string($notification/sm:meta/sm:matchStepName)
+      "matchStepName": fn:string($notification/sm:meta/sm:matchStepName),
+      "matchStepFlow": fn:string($notification/sm:meta/sm:matchStepFlow)
     },
     "thresholdLabel": $notification/sm:threshold-label/fn:string(),
     "uris": array-node {

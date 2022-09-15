@@ -325,6 +325,7 @@ function buildMatchSummary(matchable, content) {
     matchSummary: {
       matchStepId: matchable.matchStep.stepId,
       matchStepName: matchable.matchStepNode.stepName,
+      matchStepFlow: matchable.matchStep.flow,
       URIsToProcess: urisToActOn,
       actionDetails: allActionDetails
     }
