@@ -14,7 +14,7 @@ import {themeColors} from "@config/themes.config";
 import tooltipsConfig from "@config/explorer-tooltips.config";
 import {SecurityTooltips} from "@config/tooltips.config";
 import CompareValuesModal from "../../components/entities/matching/compare-values-modal/compare-values-modal";
-import {previewMatchingActivity, getDocFromURI} from "@api/matching";
+import {previewMatchingActivity, getDocFromURI, getPreviewFromURIs} from "@api/matching";
 import {unmergeUri} from "@api/merging";
 import {Spinner} from "react-bootstrap";
 
@@ -474,10 +474,14 @@ const ResultsTabularView = (props) => {
     const result1 = await getDocFromURI(array[0]);
     const result2 = await getDocFromURI(array[1]);
 
-    if (result1.status === 200 && result2.status === 200) {
-      let result1Instance = {[item.entityName]: result1.data.entityInstanceProperties};
-      let result2Instance = {[item.entityName]: result2.data.entityInstanceProperties};
-      await setUriInfo([{result1Instance}, {result2Instance}]);
+    const flowName= result1.data.recordMetadata.datahubCreatedInFlow;
+    const preview = (flowName) ? await getPreviewFromURIs(flowName, array) : null;
+
+    if (result1.status === 200 && result2.status === 200 && preview?.status === 200) {
+      let result1Instance = result1?.data?.data?.envelope?.instance;
+      let result2Instance = result2?.data?.data?.envelope?.instance;
+      let previewInstance = preview.data.value.envelope.instance;
+      await setUriInfo([{result1Instance}, {result2Instance}, {previewInstance}]);
     }
 
     let testMatchData = {

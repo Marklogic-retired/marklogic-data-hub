@@ -18,7 +18,7 @@ import Popover from "react-bootstrap/Popover";
 import {OverlayTrigger, Spinner} from "react-bootstrap";
 import {SecurityTooltips} from "@config/tooltips.config";
 import {RiMergeCellsHorizontal} from "react-icons/ri";
-import {previewMatchingActivity, getDocFromURI} from "@api/matching";
+import {previewMatchingActivity, getDocFromURI, getPreviewFromURIs} from "@api/matching";
 import {deleteNotification, mergeUris} from "@api/merging";
 import CompareValuesModal from "../../components/entities/matching/compare-values-modal/compare-values-modal";
 
@@ -208,10 +208,14 @@ const RecordCardView = (props) => {
     const result1 = await getDocFromURI(array[0]);
     const result2 = await getDocFromURI(array[1]);
 
-    if (result1.status === 200 && result2.status === 200) {
-      let result1Instance = {[item.entityName]: result1.data.entityInstanceProperties};
-      let result2Instance = {[item.entityName]: result2.data.entityInstanceProperties};
-      await setUriInfo([{result1Instance}, {result2Instance}]);
+    const flowName= item.hubMetadata.lastProcessedByFlow;
+    const preview = (flowName) ? await getPreviewFromURIs(flowName, array) : null;
+
+    if (result1.status === 200 && result2.status === 200 && preview?.status === 200) {
+      let result1Instance = result1.data.data.envelope.instance;
+      let result2Instance = result2.data.data.envelope.instance;
+      let previewInstance = preview.data.value.envelope.instance;
+      await setUriInfo([{result1Instance}, {result2Instance}, {previewInstance}]);
     }
 
     let testMatchData = {

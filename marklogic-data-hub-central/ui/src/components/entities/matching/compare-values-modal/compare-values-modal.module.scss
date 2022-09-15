@@ -24,8 +24,12 @@
 }
 
 .compareTableHeader {
-    display: flex;
-    align-items: stretch;
+    display: table;
+    width: 100%;
+    > span {
+        padding: 0 16px;
+        display: table-cell;
+    }
 }
 
 .matchIconText {
@@ -33,63 +37,84 @@
     float: right;
 }
 
+.compareHeaderContainer {
+    display: table;
+    width: 100%;
+    > span {
+        padding: 0 16px;
+        display: table-cell;
+    }
+}
+
+.expandCell {
+    width: 50px;
+    min-width: 50px;
+}
+
+.entityPropertiesHeader {
+    width: 25%;
+}
+
 .entity1 {
     font-weight: bold;
-    margin-left: 20%;
+    width: 25%;
 }
 
 .entity2 {
+    width: 25%;
     font-weight: bold;
-    margin-left: 34.8%;
+}
+.entityPreview {
+    font-weight: bold;
+    width: calc(25% - 50px);
 }
 
 .moreUrisPopover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
-  border: 0px !important;
-  font-size: 14px !important;
-  min-width: 670px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+    border: 0px !important;
+    font-size: 14px !important;
+    min-width: 670px !important;
 }
 
 .uriText {
-  max-width: 90%;
-  display: inline-block;
-  overflow: hidden;
-  white-space: nowrap;
-  font-family: "monospace";
-  text-overflow: ellipsis;
+    max-width: 90%;
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    font-family: "monospace";
+    text-overflow: ellipsis;
 }
 
-.uriText:hover{
-  overflow: visible; 
-  white-space: normal; 
+.uriText:hover {
+    overflow: visible;
+    white-space: normal;
 }
 
 .infoIcon {
-  position: absolute;
-  top: 21px;
-  font-size: 18px;
-  margin-left: 8px;
-  color: $primary;
-  cursor: pointer;
-  &:hover {
-    color: var(--hoverColor);
-  }  
+    position: absolute;
+    top: 21px;
+    font-size: 18px;
+    margin-left: 8px;
+    color: $primary;
+    cursor: pointer;
+
+    &:hover {
+        color: var(--hoverColor);
+    }
 }
 
 .uri1 {
     font-weight: bold;
     color: $info;
-    min-width: 39% !important;
-    max-width: 39% !important;
-    margin-left: 20%;
+    width: 25%;
+    word-break: break-all;
 }
 
 .uri2 {
     font-weight: bold;
     color: $info;
-    margin-right: 10%;
-    min-width: 37%;
-    max-width: 37%;
+    width: 25%;
+    word-break: break-all;
 }
 
 .modal1400w {
@@ -102,14 +127,17 @@
 
 .compareValuesModelTable {
     padding-top: 1rem;
+
     tr {
         th {
             height: 54px;
         }
+
         &:hover {
             td {
                 background-color: #e9f7fe !important;
             }
+
             th {
                 background: #fafafa !important;
             }
