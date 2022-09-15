@@ -30,7 +30,7 @@ describe("Test '/Explore' graph right panel", () => {
 
     cy.log("**Verify Graph view is default view**");
     graphExplore.getGraphVisCanvas().should("be.visible");
-    cy.wait(7000); //nodes need to stabilize first, "graphExplore.stopStabilization()" does not seem to work
+    cy.wait(8000); //nodes need to stabilize first, "graphExplore.stopStabilization()" does not seem to work
 
     cy.log("**Picking up a node**");
     graphExplore.focusNode(ExploreGraphNodes.ORDER_10258);
