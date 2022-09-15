@@ -12,7 +12,7 @@ import ThresholdModal from "../threshold-modal/threshold-modal";
 import {CurationContext} from "@util/curation-context";
 import {MatchingStep} from "../../../../types/curation-types";
 import {MatchingStepDetailText, MatchingStepTooltips} from "@config/tooltips.config";
-import {updateMatchingArtifact, calculateMatchingActivity, previewMatchingActivity, getDocFromURI} from "@api/matching";
+import {updateMatchingArtifact, calculateMatchingActivity, previewMatchingActivity, getDocFromURI, getPreviewFromURIs} from "@api/matching";
 import {ChevronDown} from "react-bootstrap-icons";
 import {getViewSettings, setViewSettings, clearSessionStorageOnRefresh} from "@util/user-context";
 import ExpandCollapse from "../../../expand-collapse/expand-collapse";
@@ -537,10 +537,15 @@ const MatchingStepDetail: React.FC = () => {
     const result2 = await getDocFromURI(arr[1]);
     const uris = [arr[0], arr[1]];
     setUris(uris);
-    if (result1.status === 200 && result2.status === 200) {
+
+    const flowName= result1.data.recordMetadata.datahubCreatedInFlow;
+    const preview = (flowName) ? await getPreviewFromURIs(flowName, arr) : null;
+
+    if (result1.status === 200 && result2.status === 200 && preview?.status === 200) {
       let result1Instance = result1.data.data.envelope.instance;
       let result2Instance = result2.data.data.envelope.instance;
-      await setUriInfo([{result1Instance}, {result2Instance}]);
+      let previewInstance = preview.data.value.envelope.instance;
+      await setUriInfo([{result1Instance}, {result2Instance}, {previewInstance}]);
     }
     setCompareModalVisible(true);
     setUrisCompared(uris);

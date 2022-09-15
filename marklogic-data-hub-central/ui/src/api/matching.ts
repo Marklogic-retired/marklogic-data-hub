@@ -42,3 +42,11 @@ export const previewMatchingActivity = async (testMatchData) => {
 export const getDocFromURI = async (uri) => {
   return await axios.get(`/api/entitySearch?docUri=${uri}`);
 };
+
+
+export const getPreviewFromURIs = async (flowName, uris = []) => {
+  // return await axios.get(`/api/entitySearch?docUri=${uri}`);
+  // &uri=/json/persons/last-name-address-reduce1.json&uri=/json/persons/last-name-address-reduce2.json
+  let parameters = uris.map(uri => `uri=${uri}`).join("&");
+  return await axios.get(`/api/steps/merging/preview?flowName=${flowName}&${parameters}`);
+};

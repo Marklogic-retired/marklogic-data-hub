@@ -32,7 +32,7 @@ interface Props {
 }
 
 const CompareValuesModal: React.FC<Props> = (props) => {
-  let property1, property2;
+  let property1, property2, previewValues;
   const {curationOptions} = useContext(CurationContext);
   const [compareValuesTableData, setCompareValuesTableData] = useState<any[]>([]);
   const [expandedRows, setExpandedRows] = useState<string[]>([]);
@@ -135,15 +135,17 @@ const CompareValuesModal: React.FC<Props> = (props) => {
 
   const parseDefinitionsToTable = (entityDefinitionsArray: Definition[], matchedPropertiesArray) => {
     let activeEntityName = props.isPreview ? props.activeStepDetails.entityName : props.activeStepDetails[0].name;
-    let entityTypeDefinition: Definition = entityDefinitionsArray.find(definition =>  definition.name === activeEntityName) || DEFAULT_ENTITY_DEFINITION;
+    let entityTypeDefinition: Definition = entityDefinitionsArray.find(definition => definition.name === activeEntityName) || DEFAULT_ENTITY_DEFINITION;
     return entityTypeDefinition?.properties.map((property, index) => {
       let propertyRow: any = {};
       let counter = 0;
       let propertyValueInURI1 = "";
       let propertyValueInURI2 = "";
+      let propertyValueInReview = "";
       if (props.uriInfo) {
         property1 = props.uriInfo[0]["result1Instance"][activeEntityName];
         property2 = props.uriInfo[1]["result2Instance"][activeEntityName];
+        previewValues = props.uriInfo[2]["previewInstance"][activeEntityName];
       }
       if (property.datatype === "structured") {
         const parseStructuredProperty = (entityDefinitionsArray, property, parentDefinitionName, parentKey, parentKeys, allParentKeys, propertyPath, indexArray?: number, localParentKey?: string) => {
@@ -167,10 +169,22 @@ const CompareValuesModal: React.FC<Props> = (props) => {
             let updatedPropertyPath = propertyPath ? propertyPath : property.name;
             let URI1Value: any = propertyValueFromPath(updatedPropertyPath, property1);
             let URI2Value: any = propertyValueFromPath(updatedPropertyPath, property2);
+            let PREVIEWValue: any = propertyValueFromPath(updatedPropertyPath, previewValues);
             let arrLength = 0;
-            if ((URI1Value && Array.isArray(URI1Value)) || (URI2Value && Array.isArray(URI2Value))) {
-              arrLength = URI1Value.length > URI2Value.length ? URI1Value.length : URI2Value.length;
+            if ((URI1Value && Array.isArray(URI1Value)) || (URI2Value && Array.isArray(URI2Value)) || (PREVIEWValue && Array.isArray(PREVIEWValue))) {
+              // arrLength = URI1Value.length > URI2Value.length ? URI1Value.length : URI2Value.length;
+              arrLength = URI1Value.length;
+              if (URI2Value.length > URI1Value.length) {
+                arrLength = URI2Value;
+              }
+              if (PREVIEWValue.length > URI1Value.length && PREVIEWValue.length > URI2Value.length) {
+                arrLength = PREVIEWValue;
+              }
             }
+
+
+
+
             let structuredType = entityDefinitionsArray.find(entity => entity.name === parsedRef[2]);
             let structuredTypePropertiesArray: any = [];
             let structuredTypeProperties: any;
@@ -192,12 +206,14 @@ const CompareValuesModal: React.FC<Props> = (props) => {
                     let updatedPropertyPath = getPropertyPath(parentKeysTempArray, structuredType.name, structProperty.name, propertyPath, i, property.name);
                     let propertyValueInURI1 = propertyValueFromPath(updatedPropertyPath, property1);
                     let propertyValueInURI2 = propertyValueFromPath(updatedPropertyPath, property2);
+                    let propertyValueInReview = propertyValueFromPath(updatedPropertyPath, previewValues);
                     let localPropertyPath = getPropertyPathForStructuredProperties(allParentKeysArray, structProperty.name);
                     let matchedRow = propertyValueInURI1 && propertyValueInURI2 ? matchedPropertiesArray.includes(localPropertyPath) : false;
                     return {
                       key: property.name + "," + index + structIndex + counter + i,
                       propertyValueInURI1: {value: propertyValueInURI1, matchedRow: matchedRow},
                       propertyValueInURI2: {value: propertyValueInURI2, matchedRow: matchedRow},
+                      propertyValueInReview: {value: propertyValueInReview, matchedRow: matchedRow},
                       structured: structuredType.name,
                       propertyName: {name: structProperty.name, matchedRow: matchedRow},
                       propertyPath: updatedPropertyPath,
@@ -214,6 +230,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
                   key: property.name + "," + index + i + counter,
                   propertyValueInURI1: {value: propertyValueInURI1, matchedRow: false},
                   propertyValueInURI2: {value: propertyValueInURI2, matchedRow: false},
+                  propertyValueInReview: {value: propertyValueInReview, matchedRow: false},
                   structured: structuredType.name,
                   propertyName: {name: (i + 1) + " " + structuredType.name, matchedRow: matchedPropertiesArray.includes(property.name)},
                   propertyPath: getPropertyPath(parentKeysArray, structuredType.name, structuredType.name, propertyPath, i),
@@ -240,12 +257,14 @@ const CompareValuesModal: React.FC<Props> = (props) => {
                   let updatedPropertyPath = getPropertyPath(parentKeys, structuredType.name, structProperty.name, propertyPath);
                   let propertyValueInURI1 = propertyValueFromPath(updatedPropertyPath, property1);
                   let propertyValueInURI2 = propertyValueFromPath(updatedPropertyPath, property2);
+                  let propertyValueInReview = propertyValueFromPath(updatedPropertyPath, previewValues);
                   let localPropertyPath = getPropertyPathForStructuredProperties(allParentKeysArray, structProperty.name);
                   let matchedRow = !propertyValueInURI1 || !propertyValueInURI2 ? false : matchedPropertiesArray.includes(localPropertyPath);
                   return {
                     key: property.name + "," + index + structIndex + counter,
                     propertyValueInURI1: {value: propertyValueInURI1, matchedRow: matchedRow},
                     propertyValueInURI2: {value: propertyValueInURI2, matchedRow: matchedRow},
+                    propertyValueInReview: {value: propertyValueInReview, matchedRow: matchedRow},
                     structured: structuredType.name,
                     propertyName: {name: structProperty.name, matchedRow: matchedRow},
                     propertyPath: getPropertyPath(parentKeysArray, structuredType.name, structProperty.name, propertyPath),
@@ -266,6 +285,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
               structured: structuredType.name,
               propertyValueInURI1: {value: "", matchedRow: false},
               propertyValueInURI2: {value: "", matchedRow: false},
+              propertyValueInReview: {value: "", matchedRow: false},
               propertyName: {name: property.name, matchedRow: matchedPropertiesArray.includes(property.name)},
               propertyPath: hasParent ? getPropertyPath(parentKeys, structuredType.name, property.name, propertyPath) : property.name,
               multiple: property.multiple ? property.name : "",
@@ -284,9 +304,18 @@ const CompareValuesModal: React.FC<Props> = (props) => {
         if (props.uriInfo !== undefined) {
           propertyValueInURI1 = property1[property.name];
           propertyValueInURI2 = property2[property.name];
-          if (propertyValueInURI1 === undefined || propertyValueInURI2 === undefined || isArray(propertyValueInURI1) || isArray(propertyValueInURI2) || isObject(propertyValueInURI1) || isObject(propertyValueInURI2)) {
+          propertyValueInReview = previewValues[property.name];
+          if (
+            propertyValueInURI1 === undefined ||
+            propertyValueInURI2 === undefined ||
+            isArray(propertyValueInURI1) ||
+            isArray(propertyValueInURI2) ||
+            isObject(propertyValueInURI1) ||
+            isObject(propertyValueInURI2)) {
+
             propertyValueInURI1 = "";
             propertyValueInURI2 = "";
+            propertyValueInReview = "";
           }
         }
         let matchedRow = !propertyValueInURI1 || !propertyValueInURI2 ? false : matchedPropertiesArray.includes(property.name);
@@ -295,6 +324,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
           key: property.name + "," + index,
           propertyValueInURI1: {value: propertyValueInURI1, matchedRow: matchedRow},
           propertyValueInURI2: {value: propertyValueInURI2, matchedRow: matchedRow},
+          propertyValueInReview: {value: propertyValueInReview, matchedRow: matchedRow},
           propertyName: {name: property.name, matchedRow: matchedRow},
           propertyPath: property.name,
           type: property.datatype,
@@ -314,18 +344,18 @@ const CompareValuesModal: React.FC<Props> = (props) => {
       key: "propertyPath",
       title: (cell) => `${cell.name}`,
       ellipsis: true,
-      width: "20%",
+      width: "25%",
       style: (property) => {
         if (property?.matchedRow) {
           return {
             backgroundColor: "#85BF97",
-            width: "20%",
+            width: "25%",
             backgroundImage: "url(" + backgroundImage + ")",
           };
         }
         return {
           backgroundColor: "",
-          width: "20%",
+          width: "25%",
         };
       },
       formatter: (text, row) => {
@@ -337,18 +367,18 @@ const CompareValuesModal: React.FC<Props> = (props) => {
       key: "propertyValueInURI1",
       title: (cell) => `${cell.value}`,
       ellipsis: true,
-      width: "40%",
+      width: "25%",
       style: (property) => {
         if (property?.matchedRow) {
           return {
             backgroundColor: "#85BF97",
-            width: "40%",
+            width: "25%",
             backgroundImage: "url(" + backgroundImage + ")",
           };
         }
         return {
           backgroundColor: "",
-          width: "40%",
+          width: "25%",
         };
       },
       formatter: (property, key) => {
@@ -360,18 +390,41 @@ const CompareValuesModal: React.FC<Props> = (props) => {
       key: "propertyValueInURI2",
       title: (cell) => `${cell.value}`,
       ellipsis: true,
-      width: "calc(40% - 50px)",
+      width: "25%",
       style: (property) => {
         if (property?.matchedRow) {
           return {
             backgroundColor: "#85BF97",
-            width: "calc(40% - 50px)",
+            width: "25%",
             backgroundImage: `url(${backgroundImage})`,
           };
         }
         return {
           backgroundColor: "",
-          width: "calc(40% - 50px)",
+          width: "25%",
+        };
+      },
+      formatter: (property, key) => {
+        return <span key={key} aria-label={(property.value && property.value.length > 0) ? `${property.value}-cell2` : "empty-cell2"}>{property.value}</span>;
+      }
+    },
+    {
+      dataField: "propertyValueInReview",
+      key: "propertyValueInReview",
+      title: (cell) => `${cell.value}`,
+      ellipsis: true,
+      width: "calc(25% - 50px)",
+      style: (property) => {
+        if (property?.matchedRow) {
+          return {
+            backgroundColor: "#85BF97",
+            width: "calc(25% - 50px)",
+            backgroundImage: `url(${backgroundImage})`,
+          };
+        }
+        return {
+          backgroundColor: "",
+          width: "calc(25% - 50px)",
         };
       },
       formatter: (property, key) => {
@@ -445,10 +498,10 @@ const CompareValuesModal: React.FC<Props> = (props) => {
         onMouseLeave={() => setShowUrisPopover(false)}>
         <Popover.Body className={styles.moreUrisPopover}>
           {props.uriCompared.length < 30 ?
-            <div className={styles.moreUrisInfo} aria-label="more-uri-info">All URIs included in this {props.isMerge? "merge" : "unmerge"} are displayed below (<strong>{props.uriCompared.length} total</strong>): <br/><br/>{props.uriCompared.map((uri, index) => { return <span className={styles.uriText} aria-label={`${uri}-uri`}>{uri}<br/></span>; })}</div>
+            <div className={styles.moreUrisInfo} aria-label="more-uri-info">All URIs included in this {props.isMerge ? "merge" : "unmerge"} are displayed below (<strong>{props.uriCompared.length} total</strong>): <br /><br />{props.uriCompared.map((uri, index) => { return <span className={styles.uriText} aria-label={`${uri}-uri`}>{uri}<br /></span>; })}</div>
             :
             <div>
-              <div className={styles.moreUrisInfo} aria-label="more-uri-info-limit">The first <strong>30</strong> URIs included in this {props.isMerge? "merge" : "unmerge"} are displayed below (<strong>{props.uriCompared.length} total</strong>): <br/><br/>{props.uriCompared.map((uri, index) => { return index < 30 ? <span className={styles.uriText} aria-label={`${uri}-uri`}>{uri}<br/></span> : null; })}</div>
+              <div className={styles.moreUrisInfo} aria-label="more-uri-info-limit">The first <strong>30</strong> URIs included in this {props.isMerge ? "merge" : "unmerge"} are displayed below (<strong>{props.uriCompared.length} total</strong>): <br /><br />{props.uriCompared.map((uri, index) => { return index < 30 ? <span className={styles.uriText} aria-label={`${uri}-uri`}>{uri}<br /></span> : null; })}</div>
               <span>...</span>
             </div>
           }
@@ -496,7 +549,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
         props.uriCompared.length > 2 ?
           <div className={styles.moreUrisTrigger}>
             {moreUrisInfo}
-            <FontAwesomeIcon icon={faInfoCircle} aria-label="icon: info-circle" className={styles.infoIcon} onMouseEnter={handleShowUrisPopover} onMouseLeave={() => setShowUrisPopover(false)}/>
+            <FontAwesomeIcon icon={faInfoCircle} aria-label="icon: info-circle" className={styles.infoIcon} onMouseEnter={handleShowUrisPopover} onMouseLeave={() => setShowUrisPopover(false)} />
           </div>
           :
           null
@@ -506,13 +559,19 @@ const CompareValuesModal: React.FC<Props> = (props) => {
     </Modal.Header>
     <Modal.Body>
       <div>
-        <div>
+        <div className={styles.compareHeaderContainer}>
+          <span className={styles.expandCell}></span>
+          <span className={styles.entityPropertiesHeader}></span>
           <span className={styles.entity1}>{props.entityDefinitionsArray[0]?.name} 1</span>
           <span className={styles.entity2}>{props.entityDefinitionsArray[0]?.name} 2</span>
+          <span className={styles.entityPreview}>Merged: Preview</span>
         </div>
         <div className={styles.compareTableHeader}>
+          <span className={styles.expandCell}></span>
+          <span className={styles.entityPropertiesHeader}></span>
           <span className={styles.uri1}>{props.uriCompared[0]}</span>
           <span className={styles.uri2}>{props.uriCompared[1]}</span>
+          <span className={styles.entityPreview}>{}</span>
         </div>
         <span><img src={backgroundImage} className={styles.matchIcon}></img></span>
         <span className={styles.matchIconText}>Match</span>
@@ -540,7 +599,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
         <HCButton variant="outline-light" onClick={() => closeModal()}>
           <div aria-label="Cancel">Cancel</div>
         </HCButton>
-        <HCButton variant="primary" loading={isLoading}  aria-label="confirm-merge-unmerge" onClick={() => setConfirmModalVisible(true)}>
+        <HCButton variant="primary" loading={isLoading} aria-label="confirm-merge-unmerge" onClick={() => setConfirmModalVisible(true)}>
           {props.isMerge ? "Merge" : "Unmerge"}
         </HCButton>
       </Modal.Footer> : null}

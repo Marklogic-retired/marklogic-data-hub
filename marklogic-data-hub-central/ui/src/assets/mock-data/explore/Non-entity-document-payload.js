@@ -42,90 +42,91 @@ let xmlInput = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<dictionary xmlns=\"
 let xmlData = {dictionary: {word: ["Alexandra", "Alexandria", "Alice", "Barbara", "Bob", "Gary", "Gerry", "Jane", "Jason", "Jennifer", "Jonathan", "Rachel", "Rebecca", "Robert"]}};
 
 const detailRecordDownloadResponse =
-  {
-    "data": {
+{
+  "data": {
 
-    },
-    "status": 200,
-    "statusText": "OK",
+  },
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "cache-control": "no-cache, no-store, max-age=0, must-revalidate",
+    "connection": "close",
+    "content-disposition": "attachment; filename=loadCustomers.json",
+    "content-type": "application/octet-stream",
+    "date": "Thu, 10 Dec 2020 19:27:05 GMT",
+    "expires": "0",
+    "pragma": "no-cache",
+    "transfer-encoding": "chunked",
+    "x-content-type-options": "nosniff",
+    "x-powered-by": "Express",
+    "x-xss-protection": "1; mode=block"
+  },
+  "config": {
+    "url": "/api/record/download?docUri=/loadCustomers.json&database=staging",
+    "method": "get",
     "headers": {
-      "cache-control": "no-cache, no-store, max-age=0, must-revalidate",
-      "connection": "close",
-      "content-disposition": "attachment; filename=loadCustomers.json",
-      "content-type": "application/octet-stream",
-      "date": "Thu, 10 Dec 2020 19:27:05 GMT",
-      "expires": "0",
-      "pragma": "no-cache",
-      "transfer-encoding": "chunked",
-      "x-content-type-options": "nosniff",
-      "x-powered-by": "Express",
-      "x-xss-protection": "1; mode=block"
+      "Accept": "application/json, text/plain, */*"
     },
-    "config": {
-      "url": "/api/record/download?docUri=/loadCustomers.json&database=staging",
-      "method": "get",
-      "headers": {
-        "Accept": "application/json, text/plain, */*"
-      },
-      "transformRequest": [
-        null
-      ],
-      "transformResponse": [
-        null
-      ],
-      "timeout": 0,
-      "responseType": "blob",
-      "xsrfCookieName": "XSRF-TOKEN",
-      "xsrfHeaderName": "X-XSRF-TOKEN",
-      "maxContentLength": -1
-    },
-    "request": {
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "responseType": "blob",
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1
+  },
+  "request": {
 
-    }
-  };
+  }
+};
 
 const allDataRecordDownloadResponse =
-  {
-    "data": {
-
-    },
-    "status": 200,
-    "statusText": "OK",
+{
+  "data": {
+    "data": {"envelope": {"instance": {}}},
+    "value": {"envelope": {"instance": {}}}
+  },
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "cache-control": "no-cache, no-store, max-age=0, must-revalidate",
+    "connection": "close",
+    "content-disposition": "attachment; filename=Cust1.json",
+    "content-type": "application/octet-stream",
+    "date": "Thu, 10 Dec 2020 18:12:40 GMT",
+    "expires": "0",
+    "pragma": "no-cache",
+    "transfer-encoding": "chunked",
+    "x-content-type-options": "nosniff",
+    "x-powered-by": "Express",
+    "x-xss-protection": "1; mode=block"
+  },
+  "config": {
+    "url": "/api/record/download?docUri=/Customer/Cust1.json&database=final",
+    "method": "get",
     "headers": {
-      "cache-control": "no-cache, no-store, max-age=0, must-revalidate",
-      "connection": "close",
-      "content-disposition": "attachment; filename=Cust1.json",
-      "content-type": "application/octet-stream",
-      "date": "Thu, 10 Dec 2020 18:12:40 GMT",
-      "expires": "0",
-      "pragma": "no-cache",
-      "transfer-encoding": "chunked",
-      "x-content-type-options": "nosniff",
-      "x-powered-by": "Express",
-      "x-xss-protection": "1; mode=block"
+      "Accept": "application/json, text/plain, */*"
     },
-    "config": {
-      "url": "/api/record/download?docUri=/Customer/Cust1.json&database=final",
-      "method": "get",
-      "headers": {
-        "Accept": "application/json, text/plain, */*"
-      },
-      "transformRequest": [
-        null
-      ],
-      "transformResponse": [
-        null
-      ],
-      "timeout": 0,
-      "responseType": "blob",
-      "xsrfCookieName": "XSRF-TOKEN",
-      "xsrfHeaderName": "X-XSRF-TOKEN",
-      "maxContentLength": -1
-    },
-    "request": {
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "responseType": "blob",
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1
+  },
+  "request": {
 
-    }
-  };
+  }
+};
 
 const testData = {
   NonEntityDocumentData: {
