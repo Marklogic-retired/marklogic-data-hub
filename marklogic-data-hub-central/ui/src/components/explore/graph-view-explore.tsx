@@ -45,7 +45,7 @@ const GraphViewExplore: React.FC<Props> = (props) => {
   </span>;
 
   const splitPaneStyles = {
-    pane1: {minWidth: "150px"},
+    pane1: {minWidth: "150px", maxWidth: "99.9%"},
     pane2: {minWidth: "140px", maxWidth: "90%"},
     pane: {overflow: "auto"},
   };
