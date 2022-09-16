@@ -446,7 +446,7 @@ describe("Entity Modeling: Graph View", () => {
 
 
     confirmationModal.deleteRelationship();
-    cy.waitUntil(() => cy.findByLabelText("confirm-deletePropertyStepWarn-yes").click());
+    cy.waitUntil(() => cy.findByLabelText("confirm-deletePropertyWarn-yes").click());
     // To verify that property is not visible
     cy.wait(3000); //graph needs to stabilize before canvas click
     graphVis.getPositionsOfNodes("Person").then((nodePositions: any) => {

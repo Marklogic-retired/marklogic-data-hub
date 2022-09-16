@@ -2,5 +2,9 @@
   "name": "testMap2",
   "selectedSource": "collection",
   "targetEntityType": "http://example.org/Entity2-1.0.0/Entity2",
-  "properties": {}
+  "properties": {
+    "property1": {
+      "sourcedFrom": "property1"
+    }
+  }
 }

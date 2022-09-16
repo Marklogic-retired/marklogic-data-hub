@@ -38,9 +38,24 @@ if (!entityModel) {
 const entityTypeId = entityLib.getEntityTypeId(entityModel, entityName);
 const entityModelUris = [entityLib.getModelUri(entityName),entityLib.getDraftModelUri(entityName)];
 
-const stepNames = entityLib.findModelReferencesInSteps(entityName, entityTypeId);
-const entityNames = entityLib.findModelReferencesInOtherModels(entityModelUris, entityTypeId);
-const entityNamesWithForeignKeyReferences = entityLib.findForeignKeyReferencesInOtherModels(entityModel, propertyName);
+var stepNames;
+var entityNames;
+var entityNamesWithForeignKeyReferences;
+if (propertyName == null || propertyName == undefined) {
+  stepNames = entityLib.findModelReferencesInSteps(entityName, entityTypeId);
+  entityNames = entityLib.findModelReferencesInOtherModels(entityModelUris, entityTypeId);
+  entityNamesWithForeignKeyReferences = entityLib.findForeignKeyReferencesInOtherModels(entityModel, propertyName);
+}else{
+  entityNamesWithForeignKeyReferences = entityLib.findForeignKeyReferencesInOtherModels(entityModel, propertyName);
+  stepNames = entityLib.findModelAndPropertyReferencesInMappingRelatedSteps(entityName, entityTypeId, propertyName);
+  stepNames = stepNames.concat(entityLib.findModelAndPropertyReferencesInMatchingMergingSteps(entityName, propertyName));
+  stepNames = stepNames.concat(entityLib.findModelAndPropertyReferencesInMappingSteps(entityName, entityTypeId, propertyName));
+  //the same property could be loaded on the property section and also in related mapping section
+  stepNames = stepNames.filter((item,index)=>{
+    return stepNames.indexOf(item) === index;
+  })
+
+}
 const result = {stepNames, entityNames, entityNamesWithForeignKeyReferences};
 
 result;
