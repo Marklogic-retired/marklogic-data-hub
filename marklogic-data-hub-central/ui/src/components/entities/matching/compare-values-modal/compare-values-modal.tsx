@@ -5,7 +5,12 @@ import styles from "./compare-values-modal.module.scss";
 import {Definition} from "../../../../types/modeling-types";
 import {CurationContext} from "@util/curation-context";
 import backgroundImage from "../../../../assets/white-for-dark-bg.png";
-import {HCTable, HCButton} from "@components/common";
+import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
+import {themeColors} from "@config/themes.config";
+import {deleteNotification} from "@api/merging";
+import {ConfirmationType} from "../../../../types/common-types";
+import ConfirmationModal from "../../../confirmation-modal/confirmation-modal";
+import {HCTable, HCButton, HCTooltip} from "@components/common";
 import {faExclamationTriangle, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import {Overlay} from "react-bootstrap";
 import Popover from "react-bootstrap/Popover";
@@ -40,6 +45,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
   const [showUrisPopover, setShowUrisPopover] = useState(false);
   const [targetUrisPopover, setTargetUrisPopover] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [showConfirmModal, toggleConfirmModal] = useState(false);
   const {
     searchOptions,
     toggleMergeUnmerge,
@@ -447,6 +453,13 @@ const CompareValuesModal: React.FC<Props> = (props) => {
     setExpandedRows(newExpandedRows);
   };
 
+  const onDelete = async () => {
+    await deleteNotification(props.originalUri).then((resp) => {
+      toggleConfirmModal(false);
+    });
+    closeModal();
+  };
+
   const rowStyle2 = (row) => {
     const {propertyName} = row;
     if (propertyName?.matchedRow) {
@@ -498,10 +511,10 @@ const CompareValuesModal: React.FC<Props> = (props) => {
         onMouseLeave={() => setShowUrisPopover(false)}>
         <Popover.Body className={styles.moreUrisPopover}>
           {props.uriCompared.length < 30 ?
-            <div className={styles.moreUrisInfo} aria-label="more-uri-info">All URIs included in this {props.isMerge ? "merge" : "unmerge"} are displayed below (<strong>{props.uriCompared.length} total</strong>): <br /><br />{props.uriCompared.map((uri, index) => { return <span className={styles.uriText} aria-label={`${uri}-uri`}>{uri}<br /></span>; })}</div>
+            <div className={styles.moreUrisInfo} aria-label="more-uri-info">All URIs included in this {props.isMerge? "merge" : "unmerge"} are displayed below (<strong>{props.uriCompared.length} total</strong>): <br/><br/>{props.uriCompared.map((uri, index) => { return <div><span className={styles.uriText} aria-label={`${uri}-uri`}>{uri}</span><br/></div>; })}</div>
             :
             <div>
-              <div className={styles.moreUrisInfo} aria-label="more-uri-info-limit">The first <strong>30</strong> URIs included in this {props.isMerge ? "merge" : "unmerge"} are displayed below (<strong>{props.uriCompared.length} total</strong>): <br /><br />{props.uriCompared.map((uri, index) => { return index < 30 ? <span className={styles.uriText} aria-label={`${uri}-uri`}>{uri}<br /></span> : null; })}</div>
+              <div className={styles.moreUrisInfo} aria-label="more-uri-info-limit">The first <strong>30</strong> URIs included in this {props.isMerge? "merge" : "unmerge"} are displayed below (<strong>{props.uriCompared.length} total</strong>): <br/><br/>{props.uriCompared.map((uri, index) => { return index < 30 ? <div><span className={styles.uriText} aria-label={`${uri}-uri`}>{uri}</span><br/></div> : null; })}</div>
               <span>...</span>
             </div>
           }
@@ -545,6 +558,13 @@ const CompareValuesModal: React.FC<Props> = (props) => {
   >
     <Modal.Header className={"bb-none"}>
       <span className={styles.compareValuesModalHeading}>Compare</span>
+      {
+        !props.isPreview ?
+          <HCTooltip text={"Delete"} id="delete-icon" placement="top-end">
+            <i><FontAwesomeIcon icon={faTrashAlt} color={themeColors.info} className={styles.deleteMatch} onClick={() => toggleConfirmModal(true)} size="lg" /></i>
+          </HCTooltip>
+          : null
+      }
       {
         props.uriCompared.length > 2 ?
           <div className={styles.moreUrisTrigger}>
@@ -605,6 +625,13 @@ const CompareValuesModal: React.FC<Props> = (props) => {
       </Modal.Footer> : null}
   </Modal>
   {mergeUnmergeConfirmation}
+  <ConfirmationModal
+    isVisible={showConfirmModal}
+    type={ConfirmationType.DeleteNotificationRow}
+    boldTextArray={[]}
+    toggleModal={toggleConfirmModal}
+    confirmAction={onDelete}
+  />
   </>;
 };
 

@@ -21,6 +21,7 @@ import {NotificationContext} from "@util/notification-context";
 interface Props extends RouteComponentProps<any> {
   environment: any
   notificationStruct: {}
+  entityDefArray: any
 }
 
 const Header:React.FC<Props> = (props) => {
@@ -247,6 +248,7 @@ const Header:React.FC<Props> = (props) => {
       <NotificationModal
         notificationModalVisible={notificationModalVisible}
         setNotificationModalVisible={setNotificationModalVisible}
+        entityDefArray={props.entityDefArray}
       />
     </>
   );

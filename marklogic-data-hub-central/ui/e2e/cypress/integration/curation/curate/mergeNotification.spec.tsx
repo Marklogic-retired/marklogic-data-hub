@@ -51,6 +51,35 @@ describe("Merge Notification Functionality From Explore Card View", () => {
     toolbar.closeNotificationModal();
     toolbar.getNotificationTitle().should("not.exist");
   });
+  it("Verify Merge Notification Through Table", () => {
+
+    cy.log("** Click notification bell icon to open modal **");
+    toolbar.getHomePageNotificationIcon().click();
+    toolbar.getNotificationTitle().should("be.visible");
+
+    browsePage.getMergeRowIcon(1).should("be.visible");
+    browsePage.getMergeRowIcon(2).should("be.visible");
+
+    cy.log("** open compare merge modal **");
+    browsePage.getMergeRowIcon(1).click();
+    compareValuesModal.getModal().should("be.visible");
+
+    cy.log("** verify match coloring **");
+    cy.findByTitle("fname").should("have.css", "background-color", "rgb(133, 191, 151)");
+    cy.findByTitle("lname").should("have.css", "background-color", "rgb(133, 191, 151)");
+    cy.findByTitle("Address").should("have.css", "background-color", "rgb(133, 191, 151)");
+    cy.findByTitle("ZipCode").should("not.have.css", "background-color", "rgb(133, 191, 151)");
+
+    compareValuesModal.getMergeButton().should("be.visible");
+
+    cy.log("** merge the notification **");
+    compareValuesModal.getMergeButton().click();
+    compareValuesModal.confirmationYes().click();
+    compareValuesModal.getModal().should("not.exist");
+
+    cy.log("** verify merged notification is removed from notification table **");
+    browsePage.getMergeRowIcon(2).should("not.exist");
+  });
   it("Check table render or empty notifications in modal", () => {
     toolbar.getHomePageNotificationIcon().click({force: true});
     toolbar.getNotificationTitle().should("be.visible");
@@ -62,15 +91,28 @@ describe("Merge Notification Functionality From Explore Card View", () => {
     toolbar.getHomePageNotificationIcon().click({force: true});
     toolbar.getNotificationTitle().should("be.visible");
     cy.log("**clicking delete icon**");
-    toolbar.getTrashIcon("delete-icon2").click();
+    toolbar.getTrashIcon("delete-icon1").click();
     toolbar.getDeleteModalButton("confirm-deleteNotificationRow-yes").click().then(() => {
       cy.log("**deleting after confirmation**");
-      toolbar.getTrashIcon("delete-icon2").should("not.exist");
+      toolbar.getTrashIcon("delete-icon1").should("not.exist");
       toolbar.verifyModalContent();
       toolbar.closeNotificationModal();
     });
   });
-
+  it("Run Match and Merge steps to generate Notification Docs", () => {
+    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    runPage.getFlowName("personJSON").should("be.visible");
+    runPage.toggleExpandFlow("personJSON");
+    cy.log("** Run Match and Merge Steps **");
+    runPage.runStep("match-person", "personJSON");
+    runPage.verifyStepRunResult("match-person", "success");
+    runPage.getDocumentsWritten("match-person").should("be.greaterThan", 0);
+    runPage.closeFlowStatusModal("personJSON");
+    runPage.runStep("merge-person", "personJSON");
+    runPage.verifyStepRunResult("merge-person", "success");
+    runPage.getDocumentsWritten("merge-person").should("be.greaterThan", 0);
+    runPage.closeFlowStatusModal("personJSON");
+  });
   it("Navigate to Explore tile All Data View", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     explorePage.getAllDataButton().click();
@@ -91,10 +133,9 @@ describe("Merge Notification Functionality From Explore Card View", () => {
     compareValuesModal.getModal().should("be.visible");
 
     cy.log("** verify match coloring **");
-    cy.findByTitle("fname").should("have.css", "background-color", "rgb(133, 191, 151)");
     cy.findByTitle("lname").should("have.css", "background-color", "rgb(133, 191, 151)");
-    cy.findByTitle("Address").should("have.css", "background-color", "rgb(133, 191, 151)");
-    cy.findByTitle("ZipCode").should("not.have.css", "background-color", "rgb(133, 191, 151)");
+    // cy.findByTitle("Address").should("have.css", "background-color", "rgb(133, 191, 151)");
+    // cy.findByTitle("ZipCode").should("not.have.css", "background-color", "rgb(133, 191, 151)");
 
     compareValuesModal.getMergeButton().should("be.visible");
 
@@ -104,27 +145,13 @@ describe("Merge Notification Functionality From Explore Card View", () => {
     browsePage.getMergeIcon().first().click();
 
     cy.log("** verify match coloring when reopening modal **");
-    cy.findByTitle("fname").should("have.css", "background-color", "rgb(133, 191, 151)");
-    cy.findByTitle("lname").should("have.css", "background-color", "rgb(133, 191, 151)");
-    cy.findByTitle("Address").should("have.css", "background-color", "rgb(133, 191, 151)");
+    cy.findByTitle("lname").should("not.have.css", "background-color", "rgb(133, 191, 151)");
+    cy.findByTitle("Address").should("not.have.css", "background-color", "rgb(133, 191, 151)");
     cy.findByTitle("ZipCode").should("not.have.css", "background-color", "rgb(133, 191, 151)");
+    cy.findByTitle("DateOfBirth").should("have.css", "background-color", "rgb(133, 191, 151)");
 
     compareValuesModal.getMergeButton().click();
     compareValuesModal.confirmationYes().click();
     compareValuesModal.getModal().should("not.exist");
-  });
-  it("Run Match and Merge steps to generate Notification Docs", () => {
-    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
-    runPage.getFlowName("personJSON").should("be.visible");
-    runPage.toggleExpandFlow("personJSON");
-    cy.log("** Run Match and Merge Steps **");
-    runPage.runStep("match-person", "personJSON");
-    runPage.verifyStepRunResult("match-person", "success");
-    runPage.getDocumentsWritten("match-person").should("be.greaterThan", 0);
-    runPage.closeFlowStatusModal("personJSON");
-    runPage.runStep("merge-person", "personJSON");
-    runPage.verifyStepRunResult("merge-person", "success");
-    runPage.getDocumentsWritten("merge-person").should("be.greaterThan", 0);
-    runPage.closeFlowStatusModal("personJSON");
   });
 });

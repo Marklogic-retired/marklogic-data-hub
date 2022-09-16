@@ -17,27 +17,41 @@
     //height: 750px;
 }
 
+.spinner {
+  font-size: 19px;
+  color: #44499c;
+  margin-left: 11px;
+}
+
 .emptyList {
   text-align: center;
   margin-top: 15%;
 }
 
 .emptyText {
-  margin-top: 5%;
+  margin-top: 3%;
   font-size: 24px;
 }
 
 .emptyListIcon {
   color: #8d96c8;
   font-size: 250px;
+  margin-top: -10%;
 }
 
 .mergeIcon {
   font-size: 25px;
   margin-top: -3px;
   margin-left: 2px;
+  margin-right: 10px;
   cursor: pointer;
 }
+
+.mergeIconDisabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .mergeIcon:hover {
   color: var(--hoverColor)!important;
 }
@@ -48,9 +62,18 @@
   color: var(--hoverColor)!important;
 }
 
+.emptyNotificationModalContainer {
+  height: auto;
+  max-height: 550px;
+  min-height: 500px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
 .notificationModalContainer {
   height: auto;
   max-height: 550px;
   overflow-y: auto;
-overflow-x: hidden;
+  overflow-x: hidden;
+  padding-top: 50px;
 }
