@@ -103,14 +103,14 @@ declare function extraction-template-generate(
                       <tde:column>
                         <tde:name>{ $property-name=>$secure-tde-name() }</tde:name>
                         <tde:scalar-type>{ let $dt := ref-datatype($model, $entity-type-name, $property-name) return if ($dt="iri") then "IRI" else $dt} </tde:scalar-type>
-                        <tde:val>{ $prefix-value }{ $property-name }/{ ref-prefixed-name($model, $entity-type-name, $property-name) }{ let $pk := ref-primary-key-name($model, $entity-type-name, $property-name) return if (empty($pk)) then () else "/"||$pk}</tde:val>
+                        <tde:val>{ if ($prefix-value) then "(" || $prefix-value || $property-name || "|" || $property-name || ")" else $property-name }/{ ref-prefixed-name($model, $entity-type-name, $property-name) }{ let $pk := ref-primary-key-name($model, $entity-type-name, $property-name) return if (empty($pk)) then () else "/"||$pk}</tde:val>
                         {$is-nullable}
                       </tde:column>
                     else
                       <tde:column>
                         <tde:name>{ $property-name=>$secure-tde-name() }</tde:name>
                         <tde:scalar-type>{ if ($datatype="iri") then "IRI" else $datatype }</tde:scalar-type>
-                        <tde:val>{ $prefix-value }{$property-name }</tde:val>
+                        <tde:val>{ if ($prefix-value) then "(" || $prefix-value || $property-name || "|" || $property-name || ")" else $property-name }</tde:val>
                         {$is-nullable}
                       </tde:column>
               }
@@ -134,7 +134,7 @@ declare function extraction-template-generate(
     let $prefix-path :=
       if ((exists($top-entity) and ($top-entity=$entity-type-name)) or
         (empty($top-entity) and empty($maybe-local-refs)))
-      then "./"
+      then ""
       else ".//"
     let $required-properties := ($primary-key-name, json:array-values(map:get($entity-type, "required")))
     let $properties := map:get($entity-type, "properties")
@@ -182,7 +182,7 @@ declare function extraction-template-generate(
       return
         map:put($column-map, $property-name,
           <tde:template>
-            <tde:context>./{ $prefix-value }{ $property-name }{if ($is-ref) then concat("/",$ref-name) else ()}</tde:context>
+            <tde:context>{ if ($prefix-value) then "(" || $prefix-value || $property-name || "|" || $property-name ||")" else $property-name}{if ($is-ref) then concat("/",$ref-name) else ()}</tde:context>
             <tde:rows>
               <tde:row>
                 <tde:schema-name>{ $schema-name=>$secure-tde-name() }</tde:schema-name>
@@ -199,7 +199,7 @@ declare function extraction-template-generate(
                       $entity-type-name } }
                       <tde:name>{ $primary-key-name=>$secure-tde-name() }</tde:name>
                       <tde:scalar-type>{ if ($primary-key-type="iri") then "IRI" else $primary-key-type }</tde:scalar-type>
-                      <tde:val>ancestor::{$entity-type-name}/{ $prefix-value }{ $primary-key-name }</tde:val>
+                      <tde:val>ancestor::{if ($prefix-value) then "(" || $prefix-value || $entity-type-name || "|" || $entity-type-name || ")" else $entity-type-name}/{ if ($prefix-value) then  "("|| $prefix-value || $primary-key-name || "|" || $primary-key-name || ")" else $primary-key-name }</tde:val>
                     </tde:column>,
                   if ($is-local-ref and empty($ref-primary-key))
                   then
@@ -219,7 +219,7 @@ declare function extraction-template-generate(
                       $ref-type-name } }
                       <tde:name>{ $property-name=>$secure-tde-name() || "_" || $ref-primary-key=>$secure-tde-name() }</tde:name>
                       <tde:scalar-type>{ let $dt := ref-datatype($model, $entity-type-name, $property-name) return if ($dt="iri") then "IRI" else $dt }</tde:scalar-type>
-                      <tde:val>{ $prefix-value }{ $ref-primary-key }</tde:val>
+                      <tde:val>{ if ($prefix-value) then "(" || $prefix-value || $ref-primary-key || "|" || $ref-primary-key || ")" else $ref-primary-key }</tde:val>
                     </tde:column>
                   else
                     if ($is-external-ref)
@@ -253,14 +253,14 @@ declare function extraction-template-generate(
           then
             map:put($triples-templates, $entity-type-name,
               <tde:template>
-                <tde:context>{ $prefix-path }{ $prefix-value }{ $entity-type-name }</tde:context>
+                <tde:context>{ if ($prefix-path) then "(" || $prefix-path || $prefix-value || $entity-type-name || "|" || $entity-type-name || ")" else  $entity-type-name}</tde:context>
                 <tde:vars>
                   {
                     if ($primary-key-type eq "string")
                     then (
-                      <tde:var><tde:name>subject-iri</tde:name><tde:val>sem:iri(concat("{ model-graph-prefix($model) }/{ $entity-type-name }/", fn:encode-for-uri(./{ $prefix-value }{ $primary-key-name })))</tde:val></tde:var>
+                      <tde:var><tde:name>subject-iri</tde:name><tde:val>sem:iri(concat("{ model-graph-prefix($model) }/{ $entity-type-name }/", fn:encode-for-uri(./{ if ($prefix-value) then "(" || $prefix-value || $primary-key-name || "|" || $primary-key-name || ")" else $primary-key-name })))</tde:val></tde:var>
                     ) else (
-                      <tde:var><tde:name>subject-iri</tde:name><tde:val>sem:iri(concat("{ model-graph-prefix($model) }/{ $entity-type-name }/", fn:encode-for-uri(xs:string(./{ $prefix-value }{ $primary-key-name }))))</tde:val></tde:var>
+                      <tde:var><tde:name>subject-iri</tde:name><tde:val>sem:iri(concat("{ model-graph-prefix($model) }/{ $entity-type-name }/", fn:encode-for-uri(xs:string(./{ if ($prefix-value) then "(" || $prefix-value || $primary-key-name || "|" || $primary-key-name || ")" else $primary-key-name }))))</tde:val></tde:var>
                     )
                   }
                 </tde:vars>
@@ -288,7 +288,7 @@ declare function extraction-template-generate(
                      <tde:triple>
                        <tde:subject><tde:val>$subject-iri</tde:val></tde:subject>
                        <tde:predicate><tde:val>sem:iri("{ model-graph-prefix($model) }/{ $entity-type-name }/{ $property-name}")</tde:val></tde:predicate>
-                       <tde:object><tde:val>sem:iri(concat("{ $related-entity-type}/", fn:encode-for-uri(xs:string(./{ $property-name}))))</tde:val></tde:object>
+                       <tde:object><tde:val>sem:iri(concat("{ $related-entity-type}/", fn:encode-for-uri(xs:string(./{ if ($prefix-value) then "(" || $prefix-value || $property-name || "|" || $property-name || ")" else $property-name}))))</tde:val></tde:object>
                      </tde:triple>
                   }
                    </tde:triples>
@@ -336,7 +336,7 @@ declare function extraction-template-generate(
                             ))
                          where $reference-to-entity-exists
                          return
-                            let $context := "./"|| $prefix-value || $property-name
+                            let $context := if ($prefix-value) then "("|| $prefix-value || $property-name || "|" || $property-name || ")" else $property-name
                             let $subject :=  "sem:iri(concat(""" ||$model-type-iri || "/"", fn:encode-for-uri(xs:string(.))))"
                             return  <tde:template>
                               <tde:context>{ $context}</tde:context>
@@ -386,7 +386,7 @@ declare function extraction-template-generate(
     let $prefix-path :=
       if ((exists($top-entity) and ($top-entity=$entity-type-name)) or
         (empty($top-entity) and empty($maybe-local-refs)))
-      then "./"
+      then ""
       else ".//"
     return
       if (empty ( ( json:array-values(
@@ -400,7 +400,7 @@ declare function extraction-template-generate(
         (
           map:get($triples-templates, $entity-type-name),
           <tde:template>
-            <tde:context>{ $prefix-path }{ $prefix-value }{ $entity-type-name }</tde:context>
+            <tde:context>{ $prefix-path }{ if ($prefix-value) then "(" || $prefix-value || $entity-type-name || "|" || $entity-type-name || ")" else $entity-type-name }</tde:context>
             {
               map:get($scalar-rows, $entity-type-name),
               if (map:contains($array-rows, $entity-type-name))
@@ -508,7 +508,7 @@ declare %private function ref-prefixed-name(
     let $is-local-ref := is-local-reference($model, $entity-type-name, $property-name)
     return
         if ($namespace-prefix and $is-local-ref)
-        then $namespace-prefix || ":" || $ref-name
+        then "(" || $namespace-prefix || ":" || $ref-name || "|" || $ref-name || ")"
         else $ref-name
 };
 

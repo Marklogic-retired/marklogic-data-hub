@@ -43,8 +43,8 @@ return (
     "The avoidance of wildcards and the use of 'or' for the version check should avoid false positives and thus unnecessary reindexing of documents"
   ),
 
-  test:assert-equal("/(es:envelope|envelope)/(es:instance|instance)[es:info/es:version = '1.0'][oex:TdeContextNamespacedEntity]", 
+  test:assert-equal("/(es:envelope|envelope)/(es:instance|instance)[es:info/es:version = '1.0' or info/version = '1.0'][(oex:TdeContextNamespacedEntity|TdeContextNamespacedEntity)]",
     $namespaced-context,
-    "The avoidance of wildcards and the use of 'or' for the version check should avoid false positives and thus unnecessary reindexing of documents"
+    "The avoidance of wildcards and the use of 'or' for the version check should avoid false positives and thus unnecessary reindexing of documents. Actual: "|| $namespaced-context || " Expected : /(es:envelope|envelope)/(es:instance|instance)[es:info/es:version = '1.0' or info/version = '1.0'][(oex:TdeContextNamespacedEntity|TdeContextNamespacedEntity)]"
   )
 )

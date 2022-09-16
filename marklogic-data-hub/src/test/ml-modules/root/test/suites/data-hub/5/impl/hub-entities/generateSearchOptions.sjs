@@ -186,7 +186,7 @@ function entityDefWithNamespace() {
 
     test.assertEqual("/es:envelope/es:instance/oex:Book/oex:rating", xs.string(fn.head(expOptions.xpath("/*:constraint[contains(@name, 'rating')]/*:range/*:path-index/text()")))),
     test.assertEqual("false", xs.string(fn.head(expOptions.xpath("/*:constraint[contains(@name, 'rating')]/*:range/@facet"))),
-      "A range constraint should exist for rating, but since it's only sortable and not facetable, facet should be 'false'"),
+      `A range constraint should exist for rating, but since it's only sortable and not facetable, facet should be 'false'". Options: ${xdmp.toJsonString(expOptions)}`),
 
     test.assertEqual("descending", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'Book_ratingDescending']/*:sort-order/@direction")))),
     test.assertEqual("/es:envelope/es:instance/oex:Book/oex:rating", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'Book_ratingDescending']/*:sort-order/*:path-index")))),

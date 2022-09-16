@@ -74,7 +74,7 @@ function generateTdeWithViewJoin() {
     const tde = hent.dumpTde(input);
     const tdeDescription = xdmp.describe(tde, Sequence.from([]), Sequence.from([]));
     // testing multi-value join
-    const billingJoinTemplate = fn.head(tde.xpath('//*:templates/*:template[*:context = "./billing/Address"]'));
+    const billingJoinTemplate = fn.head(tde.xpath('//*:templates/*:template[*:context = "billing/Address"]'));
     const billingJoinTemplateExists = fn.exists(billingJoinTemplate)
     const assertions = [
         test.assertTrue(billingJoinTemplateExists, `Billing Join template should exist. TDE: ${tdeDescription}`)
@@ -95,9 +95,11 @@ function generateTdeWithViewJoin() {
     );
     if (zipJoinTemplateExists) {
         for (const columnNode of zipJoinTemplate.xpath("*:rows/*:row/*:columns/*:column")) {
-            const columnNodeDesc = xdmp.describe(columnNode, Sequence.from([]), Sequence.from([]));
-            assertions.push(test.assertTrue(xs.boolean(fn.head(columnNode.xpath('*:nullable'))), `All columns should be nullable. ${columnNodeDesc}`));
-            assertions.push(test.assertEqual('ignore', fn.string(fn.head(columnNode.xpath('*:invalid-values'))), `All columns should ignore invalid values ${columnNodeDesc}`));
+            if (fn.empty(columnNode.xpath("*:name[. = 'DataHubGeneratedPrimaryKey']"))) {
+                const columnNodeDesc = xdmp.describe(columnNode, Sequence.from([]), Sequence.from([]));
+                assertions.push(test.assertTrue(xs.boolean(fn.head(columnNode.xpath('*:nullable'))), `All columns should be nullable. ${columnNodeDesc}`));
+                assertions.push(test.assertEqual('ignore', fn.string(fn.head(columnNode.xpath('*:invalid-values'))), `All columns should ignore invalid values ${columnNodeDesc}`));
+            }
         }
     }
     return assertions;
