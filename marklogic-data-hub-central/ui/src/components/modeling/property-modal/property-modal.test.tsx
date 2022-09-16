@@ -915,7 +915,7 @@ describe("Property Modal Component", () => {
       propertyName: "address"
     };
 
-    const {getByText, getByTestId} =  render(
+    const {getByText, getByTestId, getByLabelText} =  render(
       <ModelingContext.Provider value={entityNamesArray}>
         <PropertyModal
           entityName={entityType?.entityName}
@@ -939,9 +939,10 @@ describe("Property Modal Component", () => {
     expect(mockEntityReferences).toBeCalledTimes(2);
 
     await wait(() =>
-      expect(screen.getByLabelText("delete-property-step-text")).toBeInTheDocument(),
+      expect(getByLabelText("delete-property-step-text")).toBeInTheDocument(),
     );
-    userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeletePropertyStepWarn}-yes`));
+    getByLabelText("delete-property-step-text");
+    userEvent.click(getByLabelText(`confirm-${ConfirmationType.DeletePropertyStepWarn}-yes`));
     expect(deleteMock).toBeCalledTimes(1);
     expect(mockGetSystemInfo).toBeCalledTimes(1);
   });

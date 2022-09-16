@@ -6,7 +6,7 @@ import {
   entityTypeTable,
   propertyModal,
   graphViewSidePanel,
-  propertyTable
+  propertyTable,
 } from "../../support/components/model/index";
 import {confirmationModal, toolbar, tiles} from "../../support/components/common/index";
 import {Application} from "../../support/application.config";

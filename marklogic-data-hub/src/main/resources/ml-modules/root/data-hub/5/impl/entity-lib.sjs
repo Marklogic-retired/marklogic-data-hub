@@ -720,6 +720,59 @@ function getValueFromPropertyPath(path, docUri,entityType,propertyPath) {
   return "";
 }
 
+/**
+ * Returns the matching steps names that contain a reference to the supplied entity and property name in the related mapping section.
+ *
+ * @param entityName
+ * @param entityTypeId
+ * @param propertyName
+ * @returns {[]}
+ */
+function findModelAndPropertyReferencesInMappingRelatedSteps(entityName, entityTypeId, propertyName) {
+  const stepQuery = cts.andQuery([
+    cts.collectionQuery('http://marklogic.com/data-hub/steps'),
+    cts.jsonPropertyValueQuery(["targetEntityType"], [entityTypeId]),
+    cts.jsonPropertyValueQuery(["relatedEntityMappingId"], [entityName+"."+propertyName+":*"],["wildcarded"])
+  ]);
+
+  return cts.search(stepQuery).toArray().map(step => step.toObject().name);
+}
+
+/**
+ * Returns the matching steps names that contain a reference to the supplied entity and property name.
+ *
+ * @param entityName
+ * @param propertyName
+ * @returns {[]}
+ */
+function findModelAndPropertyReferencesInMatchingMergingSteps(entityName, propertyName) {
+  const stepQuery = cts.andQuery([
+    cts.collectionQuery('http://marklogic.com/data-hub/steps'),
+    cts.jsonPropertyValueQuery(["targetEntityType"], [entityName]),
+    cts.jsonPropertyValueQuery(["entityPropertyPath"], [propertyName])
+  ]);
+
+  return cts.search(stepQuery).toArray().map(step => step.toObject().name);
+}
+
+/**
+ * Returns the matching steps names that contain a reference to the supplied entity and property name in properties section.
+ *
+ * @param entityName
+ * @param entityTypeId
+ * @param propertyName
+ * @returns {[]}
+ */
+function findModelAndPropertyReferencesInMappingSteps(entityName, entityTypeId, propertyName) {
+  const stepQuery = cts.andQuery([
+    cts.collectionQuery('http://marklogic.com/data-hub/steps'),
+    cts.jsonPropertyValueQuery(["targetEntityType"], [entityTypeId]),
+    cts.jsonPropertyScopeQuery(propertyName, cts.notQuery(cts.jsonPropertyValueQuery("sourcedFrom", "")))
+  ]);
+
+  return cts.search(stepQuery).toArray().map(step => step.toObject().name);
+}
+
 module.exports = {
   deleteDraftModel,
   findForeignKeyReferencesInOtherModels,
@@ -752,5 +805,8 @@ module.exports = {
   getRefType,
   getLabelFromHubConfigByEntityType,
   getValueFromProperty,
-  getValuesPropertiesOnHover
+  getValuesPropertiesOnHover,
+  findModelAndPropertyReferencesInMappingRelatedSteps,
+  findModelAndPropertyReferencesInMatchingMergingSteps,
+  findModelAndPropertyReferencesInMappingSteps
 };

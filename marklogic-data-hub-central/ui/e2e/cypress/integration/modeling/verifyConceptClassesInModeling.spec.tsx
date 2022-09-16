@@ -259,9 +259,9 @@ describe("Concept classes in Modeling screen", () => {
 
     cy.log("Deleting relationship between Product and testShoeStyle");
     relationshipModal.getDeleteRelationshipIcon().click();
-    confirmationModal.getDeletePropertyStepWarnText().should("exist");
-    confirmationModal.getYesButton(ConfirmationType.DeletePropertyStepWarn);
-    confirmationModal.getDeletePropertyStepWarnText().should("not.exist");
+    confirmationModal.getDeletePropertyWarnText().should("exist");
+    relationshipModal.confirmDeleteRel();
+    confirmationModal.getDeletePropertyWarnText().should("not.exist");
 
     cy.wait(3000);
 
@@ -273,9 +273,9 @@ describe("Concept classes in Modeling screen", () => {
     });
 
     relationshipModal.getDeleteRelationshipIcon().click();
-    confirmationModal.getDeletePropertyStepWarnText().should("exist");
-    confirmationModal.getYesButton(ConfirmationType.DeletePropertyStepWarn);
-    confirmationModal.getDeletePropertyStepWarnText().should("not.exist");
+    confirmationModal.getDeletePropertyWarnText().should("exist");
+    relationshipModal.confirmDeleteRel();
+    confirmationModal.getDeletePropertyWarnText().should("not.exist");
 
     cy.waitForAsyncRequest();
 

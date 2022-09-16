@@ -131,6 +131,14 @@ class RelationshipModal {
     cy.get(`[aria-label="${option}"]`).click();
   }
 
+  closeDeleteRelModal() {
+    cy.get(`.text-center > [data-testid="hc-button-component"]`).should("be.visible").click();
+  }
+
+  confirmDeleteRel() {
+    cy.findByLabelText("confirm-deletePropertyWarn-yes").should("be.visible").click();
+  }
+
 }
 
 const relationshipModal = new RelationshipModal();
