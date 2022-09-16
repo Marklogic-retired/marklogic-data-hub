@@ -733,9 +733,13 @@ class BrowsePage {
     return cy.get(`[aria-label="unmerge-icon"]`);
   }
 
-  //merge icon
   getMergeIcon() {
     return cy.get(`[data-testid="merge-icon"]`);
+  }
+
+  //merge icon
+  getMergeRowIcon(rowNum: number) {
+    return cy.get(`[data-testid="merge-icon${rowNum}"]`);
   }
 }
 

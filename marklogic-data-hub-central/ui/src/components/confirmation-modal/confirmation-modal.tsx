@@ -273,8 +273,9 @@ const ConfirmationModal: React.FC<Props> = (props) => {
 
           {props.type === ConfirmationType.DeleteNotificationRow &&
             <p aria-label="delete-notification-row"
-            >Are you sure you want to delete the match notification?</p>
+            >Are you sure you want to delete this match notification?</p>
           }
+
           {/**
             * Confirmation message for adding a step to a flow
             * @param props.boldTextArray[0] = step name

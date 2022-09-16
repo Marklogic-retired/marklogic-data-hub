@@ -9,6 +9,7 @@ import CurationProvider from "@util/curation-context";
 import LoadingProvider from "@util/loading-context";
 import MonitorProvider from "@util/monitor-context";
 import NotificationProvider from "@util/notification-context";
+import {entityFromJSON, entityParser} from "@util/data-conversion";
 import Header from "@components/header/header";
 import Footer from "@components/footer/footer";
 import Login from "./pages/Login";
@@ -34,6 +35,7 @@ const App: React.FC<Props> = ({history, location}) => {
     handleError
   } = useContext(UserContext);
   const [notificationsResp, setNotificationsResp] = useState<any>({});
+  const [entityDefArray, setEntityDefArray] = useState<any[]>([]);
 
   const PrivateRoute = ({children, ...rest}) => (
     <Route {...rest} render={props => (
@@ -56,6 +58,33 @@ const App: React.FC<Props> = ({history, location}) => {
     } else {
       return user.pageRoute;
     }
+  };
+
+  const fetchNotifications = async () => {
+    await getNotifications()
+      .then((resp) => {
+        if (resp && resp.data) {
+          setNotificationsResp({"notifs": resp.data.notifications, "count": resp.data.total});
+        } else {
+          setNotificationsResp({"notifs": [], "count": 0});
+        }
+      })
+      .catch((err) => {
+        if (err.response) {
+          setNotificationsResp({"notifs": [], "count": 0});
+        } else {
+          setNotificationsResp({"notifs": [], "count": 0});
+        }
+      });
+  };
+
+  const fetchModels = async () => {
+    await axios.get(`/api/models`)
+      .then((modelsResponse) => {
+        const parsedModelData = entityFromJSON(modelsResponse.data);
+        const parsedEntityDef = entityParser(parsedModelData).filter(entity => entity.name && entity);
+        setEntityDefArray(parsedEntityDef);
+      });
   };
 
   useEffect(() => {
@@ -92,25 +121,10 @@ const App: React.FC<Props> = ({history, location}) => {
   }, [location.pathname]);
 
   useEffect(() => {
-    const fetchNotifications = async () => {
-      await getNotifications()
-        .then((resp) => {
-          if (resp && resp.data) {
-            setNotificationsResp({"notifs": resp.data.notifications, "count": resp.data.total});
-          } else {
-            setNotificationsResp({"notifs": [], "count": 0});
-          }
-        })
-        .catch((err) => {
-          if (err.response) {
-            setNotificationsResp({"notifs": [], "count": 0});
-          } else {
-            setNotificationsResp({"notifs": [], "count": 0});
-          }
-        });
-    };
     fetchNotifications();
+    fetchModels();
   }, []);
+
 
   const path = location["pathname"];
   const pageTheme = (themeMap[path]) ? themes[themeMap[path]] : themes["default"];
@@ -127,7 +141,7 @@ const App: React.FC<Props> = ({history, location}) => {
                 <LoadingProvider>
                   <HubCentralConfigProvider>
                     <ErrorMessageProvider>
-                      <Header environment={getEnvironment()} notificationStruct={notificationsResp}/>
+                      <Header environment={getEnvironment()} notificationStruct={notificationsResp} entityDefArray={entityDefArray}/>
                       <ModalStatus />
                       <NavigationPrompt />
                       <main>

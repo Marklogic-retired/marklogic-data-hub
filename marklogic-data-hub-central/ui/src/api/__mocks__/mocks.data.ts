@@ -32,6 +32,8 @@ const loadAPI = (axiosMock) => {
       return Promise.resolve(loadData.loads);
     case "/api/steps/ingestion/" + loadData.loads.data[0].name:
       return Promise.resolve(loadData.loadSettings);
+    case "/api/models":
+      return Promise.resolve(loadData.models);
     default:
       return Promise.reject(new Error("not found"));
     }

@@ -1,5 +1,5 @@
 import {Modal} from "react-bootstrap";
-import React, {useContext, useState, useEffect} from "react"; // eslint-disable-line @typescript-eslint/no-unused-vars
+import React, {useContext, useEffect, useState} from "react"; // eslint-disable-line @typescript-eslint/no-unused-vars
 import {NotificationContext} from "@util/notification-context";
 import styles from "./notification-modal.module.scss";
 import {TbClipboardText} from "react-icons/tb";
@@ -11,10 +11,14 @@ import {dateConverter} from "../../../util/date-conversion";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {themeColors} from "@config/themes.config";
 import {AuthoritiesContext} from "@util/authorities";
-import {deleteNotification} from "@api/merging";
 import ConfirmationModal from "../../confirmation-modal/confirmation-modal";
 import {ConfirmationType} from "../../../types/common-types";
 import {getNotifications} from "@api/merging";
+import {SecurityTooltips} from "@config/tooltips.config";
+import {mergeUris, deleteNotification} from "@api/merging";
+import {Spinner} from "react-bootstrap";
+import {previewMatchingActivity, getDocFromURI, getPreviewFromURIs} from "@api/matching";
+import CompareValuesModal from "../../../components/entities/matching/compare-values-modal/compare-values-modal";
 
 const NotificationModal = (props) => {
 
@@ -24,6 +28,15 @@ const NotificationModal = (props) => {
   const [showConfirmModal, toggleConfirmModal] = useState(false);
   const [rowInformation, setRowInformation] = useState<any>({});
   const {setNotificationsObj} = useContext(NotificationContext);
+  const [activeUri, setActiveUri] = useState<string>("");
+  const [compareModalVisible, setCompareModalVisible] = useState(false);
+  const [activeEntityArray, setActiveEntityArray] = useState<any>([]);
+  const [activeEntityUris, setActiveEntityUris] = useState<string[]>([]);
+  const [flowName, setFlowname] = useState<string>("");
+  const [previewMatchedActivity, setPreviewMatchedActivity] = useState<{}>({sampleSize: 100, uris: [], actionPreview: []});
+  const [loading, setToggleLoading] = useState<string>("");
+  const [uriInfo, setUriInfo] = useState<any>();
+
   let idRow = 0, idRowAux = 0;
 
   const confirmAction = async() => {
@@ -90,20 +103,49 @@ const NotificationModal = (props) => {
       //dataField: "Actions",
       key: "Actions",
       formatter: (text, row) => (
-        <><HCTooltip text={"Merge Documents"} id={`merge-icon${idRow++}`} placement="top-end">
-          <span className={styles.tableRow}>{text}<i aria-label="mergeUnmergeIcon">
-            <RiMergeCellsHorizontal color={themeColors.info} className={styles.mergeIcon} data-testid={`merge-icon${idRow}`} aria-label={`merge-icon`} onClick={() => canReadMatchMerge && openMergeCompare(row)} />
-          </i>
+        <>
+          <span className={styles.tableRow}>{text}
+            {
+              canReadMatchMerge ?
+                <HCTooltip text={"Merge"} id={`merge-icon${idRow++}`} placement="top-end">
+                  <i><RiMergeCellsHorizontal color={themeColors.info} className={styles.mergeIcon} data-testid={`merge-icon${idRow}`} aria-label={`merge-icon`} onClick={() => openMergeCompare(row)}/></i>
+                </HCTooltip>
+                :
+                <HCTooltip text={SecurityTooltips.missingPermission} id="missing-permission-tooltip" placement="top-end">
+                  <i><RiMergeCellsHorizontal color={themeColors.info} className={styles.mergeIconDisabled} data-testid={`disabled-merge-icon`} aria-label={`disabled-merge-icon`}/></i>
+                </HCTooltip>
+            }
           </span>
-        </HCTooltip>
-        <HCTooltip text={"Delete Documents"} id={`delete-icon${idRowAux++}`} placement="top-end">
-          <span className={styles.tableRow}>{text}<i aria-label={`deleteIcon`}>
-            <FontAwesomeIcon icon={faTrashAlt} color={themeColors.info} className={styles.deleteRow} data-testid={`delete-icon${idRowAux}`} onClick={() => onDelete(row)} size="lg" />
-          </i>
+          <span className={styles.tableRow}>{text}
+            {
+              canReadMatchMerge ?
+                <HCTooltip text={"Delete"} id={`delete-icon${idRowAux++}`} placement="top-end">
+                  <i aria-label={`deleteIcon`}><FontAwesomeIcon icon={faTrashAlt} color={themeColors.info} data-testid={`delete-icon${idRowAux}`} className={styles.deleteRow} onClick={() => onDelete(row)} size="lg" /></i>
+                </HCTooltip>
+                :
+                <HCTooltip text={SecurityTooltips.missingPermission} id="disabled-delete-icon" placement="top-end">
+                  <i aria-label={`disabledDeleteIcon`}><FontAwesomeIcon icon={faTrashAlt} color={themeColors.info} data-testid={`delete-icon${idRowAux}-disabled`} className={styles.mergeIconDisabled} size="lg" /></i>
+                </HCTooltip>
+            }
           </span>
-        </HCTooltip>
+          <span className={styles.tableRow}>{text}
+            {
+              loading === row.meta.uri ?
+                <Spinner
+                  data-testid="hc-button-component-spinner"
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                  className={styles.spinner}
+                />
+                : null
+            }
+          </span>
         </>
       ),
+      formatExtraData: {loading}
     },
   ];
 
@@ -123,20 +165,56 @@ const NotificationModal = (props) => {
     setRowInformation(row);
   };
 
+  const submitMergeUri = async (uri, payload) => {
+    const documentsHaveMerged = await mergeUris(payload);
+    if (documentsHaveMerged) {
+      await deleteNotification(activeUri).then((resp) => {
+        fetchNotifications();
+      });
+    }
+  };
+
+
   const openMergeCompare = async (item) => {
-    //setCompareModalVisible(true)
-    // let arrayUris = item.notifiedDocumentUris;
-    // let activeEntityIndex = props.entityDefArray.findIndex((entity) => entity.name === item["entityName"]);
-    // setFlowname(item.hubMetadata.lastProcessedByFlow);
-    // setActiveEntityArray([props.entityDefArray[activeEntityIndex]]);
-    // setActiveEntityUris(arrayUris);
-    // setToggleLoading(item.uri);
-    // await fetchCompareData(arrayUris, item);
-    // setCompareModalVisible(true);
+    let arrayUris = item.uris.map((elem) => { return elem["uri"]; });
+    let activeEntityIndex = props.entityDefArray.findIndex((entity) => entity.name === item.meta.entityName);
+    setActiveEntityArray([props.entityDefArray[activeEntityIndex]]);
+    setActiveEntityUris(arrayUris);
+    setActiveUri(item.meta.uri);
+    setToggleLoading(item.meta.uri);
+    await fetchCompareData(arrayUris, item);
+    setCompareModalVisible(true);
+  };
+
+  const fetchCompareData = async (array, item) => {
+    const result1 = await getDocFromURI(array[0]);
+    const result2 = await getDocFromURI(array[1]);
+    const flowName= result1.data.recordMetadata.datahubCreatedInFlow;
+    const preview = (flowName) ? await getPreviewFromURIs(flowName, array) : null;
+    if (result1.status === 200 && result2.status === 200 && preview?.status === 200) {
+      let result1Instance = result1.data.data.envelope.instance;
+      let result2Instance = result2.data.data.envelope.instance;
+      let previewInstance = preview.data.value.envelope.instance;
+      setFlowname(result1.data.recordMetadata.datahubCreatedInFlow);
+      await setUriInfo([{result1Instance}, {result2Instance}, {previewInstance}]);
+    }
+
+    let testMatchData = {
+      restrictToUris: true,
+      uris: array,
+      sampleSize: 100,
+      stepName: item.meta.matchStepName
+    };
+
+    let previewMatchActivity = await previewMatchingActivity(testMatchData);
+    if (previewMatchActivity) {
+      setToggleLoading("");
+      setPreviewMatchedActivity(previewMatchActivity);
+    }
   };
 
   return (
-    <>
+    <div>
       <Modal
         show={props.notificationModalVisible}
         onHide={() => onCancel()}
@@ -145,17 +223,16 @@ const NotificationModal = (props) => {
         backdrop="static"
         className={props.notificationModalVisible ? styles.disabledMain : ""}
       >
-
         <Modal.Body className={styles.notificationModalBody} >
           <Modal.Header className={"bb-none"}>
             {notificationOptions.totalCount < 1 ? null : <span className={"fs-3"} aria-label={"notification-modal-title"}>{"Merge Notifications"}</span>}
             <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} style={{"marginTop": "-30px"}}>
             </button>
           </Modal.Header>
-          <div className={styles.notificationModalContainer}>
+          <div className={notificationOptions.totalCount < 1 ? styles.emptyNotificationModalContainer : styles.notificationModalContainer}>
             {notificationOptions.totalCount < 1 ?
               <div className={styles.emptyList}>
-                <i><TbClipboardText className={styles.emptyListIcon} aria-label="icon: empty-list" /></i>
+                <i><TbClipboardText className={styles.emptyListIcon} aria-label="icon: empty-list"/></i>
                 <div className={styles.emptyText}><strong>No Merge Notifications Present</strong></div>
               </div>
               :
@@ -176,7 +253,24 @@ const NotificationModal = (props) => {
         toggleModal={toggleConfirmModal}
         confirmAction={confirmAction}
       />
-    </>
+      <CompareValuesModal
+        isVisible={compareModalVisible}
+        toggleModal={setCompareModalVisible}
+        uriInfo={uriInfo}
+        activeStepDetails={activeEntityArray}
+        entityProperties={{}}
+        uriCompared={activeEntityUris}
+        previewMatchActivity={previewMatchedActivity}
+        entityDefinitionsArray={activeEntityArray}
+        uris={activeEntityUris}
+        isPreview={false}
+        isMerge={true}
+        flowName={flowName}
+        mergeUris={async (payload) => submitMergeUri(activeUri, payload)}
+        unmergeUri={{}}
+        originalUri={activeUri}
+      />
+    </div>
   );
 };
 

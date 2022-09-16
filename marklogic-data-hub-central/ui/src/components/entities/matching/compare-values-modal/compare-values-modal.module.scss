@@ -23,6 +23,13 @@
     height: 2vh;
 }
 
+.deleteMatch {
+    margin-left: 10px;
+    &:hover {
+      cursor: pointer;
+    }
+}
+
 .compareTableHeader {
     display: table;
     width: 100%;

@@ -345,7 +345,7 @@ const RecordCardView = (props) => {
         flowName={flowName}
         mergeUris={async (payload) => submitMergeUri(activeUri, payload)}
         unmergeUri={{}}
-        originalUri={""}
+        originalUri={activeUri}
       />
     </div>
   );
