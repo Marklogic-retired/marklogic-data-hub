@@ -593,7 +593,7 @@ declare private function hent:remove-duplicate-range-indexes($database-config as
 };
 
 declare variable $generated-primary-key-column as xs:string := "DataHubGeneratedPrimaryKey";
-declare variable $generated-primary-key-expression as xs:string := "xdmp:node-uri(.) || '#' || fn:position()";
+declare variable $generated-primary-key-expression as xs:string := "xdmp:node-uri(.) || fn:string(fn:node-name(.)) || (fn:count(preceding-sibling::*) + 1)";
 
 declare function hent:dump-tde($entities as json:array)
 {
@@ -610,7 +610,7 @@ declare function hent:dump-tde($entities as json:array)
       $definition => map:put("primaryKey", $generated-primary-key-column),
       $definition => map:get("properties") => map:put($generated-primary-key-column, map:entry("datatype", "string"))
     )
-  let $entity-model-contexts := map:keys($uber-definitions) ! ("./" || .)
+  let $entity-model-contexts := map:keys($uber-definitions)
   let $entity-name := map:get(map:get($uber-model, "info"), "title")
   let $entity-name :=
     if (($uber-model => map:get("definitions") => map:contains($entity-name))) then
@@ -703,8 +703,18 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
           $n/namespace::node(),
           $n/@*,
           let $context-item :=  fn:replace(fn:string($n/tde:context), "^\.//?", "")
+          let $context-item :=
+            if (fn:contains($context-item, "|")) then
+              fn:replace(fn:tokenize($context-item, "\|")[2], "\)$", "")
+            else
+              $context-item
           let $join-prefix := $context-item || "_"
           let $parent-context-item := fn:replace(fn:string($n/../../tde:context), "^\./{1,2}([^\[]+)(\[node\(\)\])?$", "$1")
+          let $parent-context-item :=
+            if (fn:contains($parent-context-item, "|")) then
+              fn:replace(fn:tokenize($parent-context-item, "\|")[2], "\)$", "")
+            else
+              $parent-context-item
           let $is-join-template := $n/tde:rows/tde:row/tde:view-name = $parent-context-item  || "_" || $context-item
           let $rows := $n/tde:rows/tde:row
           return
@@ -721,7 +731,7 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
               let $entityItems := map:get($entityContextItemMap, "items")
               let $relatedEntityType := if (fn:exists($entityItems)) then fn:string(map:get($entityItems, "relatedEntityType")) else ()
               let $primaryKey := fn:string(map:get($entityMap, "primaryKey"))
-              let $ancestorKey := fn:string($rows/tde:columns/tde:column[tde:name = $primaryKey]/tde:val)
+              let $ancestorKey := fn:replace(fn:string($rows/tde:columns/tde:column[tde:name = $primaryKey]/tde:val), "([^:/]+:)?"||$generated-primary-key-column||"(\|"|| $generated-primary-key-column || "\))?$", "("||$generated-primary-key-expression||")")
               return (
               element tde:rows {
                 element tde:row {
@@ -787,7 +797,7 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
       case text() return
         fn:replace(
           fn:replace($n, "^\.\./(.+)$", "(../$1|parent::array-node()/../$1)"),
-          "\./" || $generated-primary-key-column,
+          "\./([^:]+:)?"||$generated-primary-key-column||"(\|"|| $generated-primary-key-column || "\))?",
           $generated-primary-key-expression
         )
       default return $n
@@ -815,17 +825,17 @@ declare private function fix-tde-context(
 
     (: This appears to be for the 'non-root' context elements in a TDE :)
     if ($context = $entity-model-contexts) then
-      fn:replace(fn:replace(fn:string($context),"^\./", ".//"), "(.)$", "$1[node()]")
+      fn:replace(".//" || fn:string($context), "(.)$", "$1[node()]")
 
     else if ($entity-name) then
       let $version := get-version-from-uber-model($uber-model)
       let $ns-prefix := get-namespace-prefix($uber-model, $entity-name)
       return
         if ($ns-prefix) then
-          let $entity-predicate := "[" || $ns-prefix || ":" || $entity-name || "]"
+          let $entity-predicate := "[(" || $ns-prefix || ":" || $entity-name || "|" || $entity-name || ")]"
           return
             if ($version) then
-              "/(es:envelope|envelope)/(es:instance|instance)[es:info/es:version = '" || $version || "']" || $entity-predicate
+              "/(es:envelope|envelope)/(es:instance|instance)[es:info/es:version = '" || $version || "' or info/version = '" || $version || "']" || $entity-predicate
             else
               replace-context-wildcards($context/text()) || $entity-predicate
         else
