@@ -17,11 +17,11 @@ import NotificationBadge from "react-notification-badge";
 import {Effect} from "react-notification-badge";
 import NotificationModal from "./notification-modal/notification-modal";
 import {NotificationContext} from "@util/notification-context";
+import {getNotifications} from "@api/merging";
+import {entityFromJSON, entityParser} from "@util/data-conversion";
 
 interface Props extends RouteComponentProps<any> {
   environment: any
-  notificationStruct: {}
-  entityDefArray: any
 }
 
 const Header:React.FC<Props> = (props) => {
@@ -38,9 +38,41 @@ const Header:React.FC<Props> = (props) => {
   const helpLinkRef = React.createRef<HTMLAnchorElement>();
   const userDropdownRef = React.createRef<HTMLSpanElement>();
 
+  const [entityDefArray, setEntityDefArray] = useState<any[]>([]);
+
+
+  const fetchModels = async () => {
+    await axios.get(`/api/models`)
+      .then((modelsResponse) => {
+        const parsedModelData = entityFromJSON(modelsResponse.data);
+        const parsedEntityDef = entityParser(parsedModelData).filter(entity => entity.name && entity);
+        setEntityDefArray(parsedEntityDef);
+      });
+  };
+
   useEffect(() => {
-    setNotificationsObj(props.notificationStruct["notifs"], props.notificationStruct["count"]);
-  }, [props.notificationStruct]);
+    if (user.authenticated === true) {
+      const fetchNotifications = async () => {
+        await getNotifications(1, notificationOptions.pageLength)
+          .then((resp: any) => {
+            if (resp && resp.data) {
+              setNotificationsObj(resp.data.notifications, resp.data.total, resp.data.pageLength);
+            } else {
+              setNotificationsObj([], 0, 0);
+            }
+          })
+          .catch((err) => {
+            if (err.response) {
+              setNotificationsObj([], 0, 0);
+            } else {
+              setNotificationsObj([], 0, 0);
+            }
+          });
+      };
+      fetchNotifications();
+      fetchModels();
+    }
+  }, [user.authenticated]);
 
   const confirmLogout = async () => {
     try {
@@ -248,7 +280,7 @@ const Header:React.FC<Props> = (props) => {
       <NotificationModal
         notificationModalVisible={notificationModalVisible}
         setNotificationModalVisible={setNotificationModalVisible}
-        entityDefArray={props.entityDefArray}
+        entityDefArray={entityDefArray}
       />
     </>
   );

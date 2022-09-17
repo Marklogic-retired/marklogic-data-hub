@@ -8,7 +8,8 @@ import {notificationsMock} from "../../../assets/mock-data/notification-context-
 const emptyNotificationData = {
   notifications: [],
   totalCount: 0,
-  currentPage: 1
+  currentPage: 1,
+  pageLength: 10
 };
 
 jest.mock("axios");
