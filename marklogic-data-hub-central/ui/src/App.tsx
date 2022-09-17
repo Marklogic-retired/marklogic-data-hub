@@ -1,4 +1,4 @@
-import React, {useEffect, useContext, useState} from "react";
+import React, {useEffect, useContext} from "react";
 import axios from "axios";
 import {Switch} from "react-router";
 import {Route, Redirect, RouteComponentProps, withRouter} from "react-router-dom";
@@ -9,7 +9,6 @@ import CurationProvider from "@util/curation-context";
 import LoadingProvider from "@util/loading-context";
 import MonitorProvider from "@util/monitor-context";
 import NotificationProvider from "@util/notification-context";
-import {entityFromJSON, entityParser} from "@util/data-conversion";
 import Header from "@components/header/header";
 import Footer from "@components/footer/footer";
 import Login from "./pages/Login";
@@ -18,7 +17,6 @@ import NoMatchRedirect from "./pages/noMatchRedirect";
 import NoResponse from "./pages/NoResponse";
 import ModalStatus from "@components/modal-status/modal-status";
 import NavigationPrompt from "@components/navigation-prompt/navigation-prompt";
-import {getNotifications} from "@api/merging";
 import "./App.scss";
 import {Application} from "@config/application.config";
 import {themes, themeMap} from "@config/themes.config";
@@ -34,8 +32,6 @@ const App: React.FC<Props> = ({history, location}) => {
     user,
     handleError
   } = useContext(UserContext);
-  const [notificationsResp, setNotificationsResp] = useState<any>({});
-  const [entityDefArray, setEntityDefArray] = useState<any[]>([]);
 
   const PrivateRoute = ({children, ...rest}) => (
     <Route {...rest} render={props => (
@@ -60,33 +56,6 @@ const App: React.FC<Props> = ({history, location}) => {
     }
   };
 
-  const fetchNotifications = async () => {
-    await getNotifications()
-      .then((resp) => {
-        if (resp && resp.data) {
-          setNotificationsResp({"notifs": resp.data.notifications, "count": resp.data.total});
-        } else {
-          setNotificationsResp({"notifs": [], "count": 0});
-        }
-      })
-      .catch((err) => {
-        if (err.response) {
-          setNotificationsResp({"notifs": [], "count": 0});
-        } else {
-          setNotificationsResp({"notifs": [], "count": 0});
-        }
-      });
-  };
-
-  const fetchModels = async () => {
-    await axios.get(`/api/models`)
-      .then((modelsResponse) => {
-        const parsedModelData = entityFromJSON(modelsResponse.data);
-        const parsedEntityDef = entityParser(parsedModelData).filter(entity => entity.name && entity);
-        setEntityDefArray(parsedEntityDef);
-      });
-  };
-
   useEffect(() => {
     if (user.authenticated) {
       if (location.pathname === "/") {
@@ -108,7 +77,7 @@ const App: React.FC<Props> = ({history, location}) => {
     // On route change...
     if (user.authenticated) {
       axios.get("/api/environment/systemInfo")
-        .then(res => { })
+        .then(() => { })
         // Timeouts throw 401s and are caught here
         .catch(err => {
           if (err.response) {
@@ -119,11 +88,6 @@ const App: React.FC<Props> = ({history, location}) => {
         });
     }
   }, [location.pathname]);
-
-  useEffect(() => {
-    fetchNotifications();
-    fetchModels();
-  }, []);
 
 
   const path = location["pathname"];
@@ -141,7 +105,7 @@ const App: React.FC<Props> = ({history, location}) => {
                 <LoadingProvider>
                   <HubCentralConfigProvider>
                     <ErrorMessageProvider>
-                      <Header environment={getEnvironment()} notificationStruct={notificationsResp} entityDefArray={entityDefArray}/>
+                      <Header environment={getEnvironment()}/>
                       <ModalStatus />
                       <NavigationPrompt />
                       <main>

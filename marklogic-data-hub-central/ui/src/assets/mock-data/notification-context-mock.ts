@@ -32,7 +32,8 @@ export const notificationsMock = {
     ]
     ,
     totalCount: 4,
-    currentPage: 1
+    currentPage: 1,
+    pageLength: 10
   }),
   setNotificationsObj: jest.fn()
 };

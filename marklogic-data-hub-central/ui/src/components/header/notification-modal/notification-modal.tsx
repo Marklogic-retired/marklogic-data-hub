@@ -1,6 +1,6 @@
 import {Modal} from "react-bootstrap";
 import React, {useContext, useEffect, useState} from "react"; // eslint-disable-line @typescript-eslint/no-unused-vars
-import {NotificationContext} from "@util/notification-context";
+import {defaultNotificationOptions, NotificationContext} from "@util/notification-context";
 import styles from "./notification-modal.module.scss";
 import {TbClipboardText} from "react-icons/tb";
 import {HCTable} from "@components/common";
@@ -19,6 +19,7 @@ import {mergeUris, deleteNotification} from "@api/merging";
 import {Spinner} from "react-bootstrap";
 import {previewMatchingActivity, getDocFromURI, getPreviewFromURIs} from "@api/matching";
 import CompareValuesModal from "../../../components/entities/matching/compare-values-modal/compare-values-modal";
+import SearchPaginationSimple from "@components/search-pagination-simple/search-pagination-simple";
 
 const NotificationModal = (props) => {
 
@@ -37,30 +38,33 @@ const NotificationModal = (props) => {
   const [loading, setToggleLoading] = useState<string>("");
   const [uriInfo, setUriInfo] = useState<any>();
 
-  let idRow = 0, idRowAux = 0;
 
-  const confirmAction = async() => {
+  let idRow = 0, idRowAux = 0, pageLength = notificationOptions.pageLength, totalRowsLastPage = notificationOptions.pageLength;
+
+  const confirmAction = async () => {
     let uri = rowInformation && rowInformation?.meta?.uri;
-    await deleteNotification(uri).then((responseDelete:any) => {
+    await deleteNotification(uri).then((responseDelete: any) => {
       if (responseDelete) fetchNotifications();
     });
     toggleConfirmModal(false);
   };
 
-  const fetchNotifications = async () => {
-    await getNotifications()
-      .then((resp:any) => {
+  const {notifications, totalCount, pageLength: defaultPageLength} = defaultNotificationOptions;
+
+  const fetchNotifications = async (page?, pageLength?) => {
+    await getNotifications(page, pageLength)
+      .then((resp: any) => {
         if (resp && resp.data) {
-          setNotificationsObj(resp.data.notifications, resp.data.total);
+          setNotificationsObj(resp.data.notifications, resp.data.total, defaultPageLength);
         } else {
-          setNotificationsObj([], 0);
+          setNotificationsObj(notifications, totalCount, defaultPageLength);
         }
       })
       .catch((err) => {
         if (err.response) {
-          setNotificationsObj([], 0);
+          setNotificationsObj(notifications, totalCount, defaultPageLength);
         } else {
-          setNotificationsObj([], 0);
+          setNotificationsObj(notifications, totalCount, defaultPageLength);
         }
       });
   };
@@ -70,8 +74,7 @@ const NotificationModal = (props) => {
       text: "Label",
       dataField: "label",
       key: "label",
-      sort: true,
-      formatter: (text, key) => (
+      formatter: (text) => (
         <span className={styles.tableRow}>{text}
           Sample text
         </span>
@@ -81,20 +84,17 @@ const NotificationModal = (props) => {
       text: "Entity Type",
       dataField: "meta.entityName",
       key: "meta.entityName",
-      sort: true,
     },
     {
       text: "Matches",
       dataField: "uris.length",
       key: "matches",
-      sort: true,
     },
     {
       text: "Date",
       dataField: "meta.dateTime",
       key: "meta.dateTime",
-      sort: true,
-      formatter: (text, key) => (
+      formatter: (text) => (
         <span className={styles.tableRow}>{dateConverter(text)}</span>
       ),
     },
@@ -108,11 +108,11 @@ const NotificationModal = (props) => {
             {
               canReadMatchMerge ?
                 <HCTooltip text={"Merge"} id={`merge-icon${idRow++}`} placement="top-end">
-                  <i><RiMergeCellsHorizontal color={themeColors.info} className={styles.mergeIcon} data-testid={`merge-icon${idRow}`} aria-label={`merge-icon`} onClick={() => openMergeCompare(row)}/></i>
+                  <i><RiMergeCellsHorizontal color={themeColors.info} className={styles.mergeIcon} data-testid={`merge-icon${idRow}`} aria-label={`merge-icon`} onClick={() => openMergeCompare(row)} /></i>
                 </HCTooltip>
                 :
                 <HCTooltip text={SecurityTooltips.missingPermission} id="missing-permission-tooltip" placement="top-end">
-                  <i><RiMergeCellsHorizontal color={themeColors.info} className={styles.mergeIconDisabled} data-testid={`disabled-merge-icon`} aria-label={`disabled-merge-icon`}/></i>
+                  <i><RiMergeCellsHorizontal color={themeColors.info} className={styles.mergeIconDisabled} data-testid={`disabled-merge-icon`} aria-label={`disabled-merge-icon`} /></i>
                 </HCTooltip>
             }
           </span>
@@ -149,13 +149,6 @@ const NotificationModal = (props) => {
     },
   ];
 
-  const paginationOptions = {
-    defaultCurrent: 1,
-    defaultPageSize: 20,
-    showSizeChanger: true,
-    pageSizeOptions: ["10", "20", "40", "60"]
-  };
-
   const onCancel = () => {
     props.setNotificationModalVisible(false);
   };
@@ -189,7 +182,7 @@ const NotificationModal = (props) => {
   const fetchCompareData = async (array, item) => {
     const result1 = await getDocFromURI(array[0]);
     const result2 = await getDocFromURI(array[1]);
-    const flowName= result1.data.recordMetadata.datahubCreatedInFlow;
+    const flowName = result1.data.recordMetadata.datahubCreatedInFlow;
     const preview = (flowName) ? await getPreviewFromURIs(flowName, array) : null;
     if (result1.status === 200 && result2.status === 200 && preview?.status === 200) {
       let result1Instance = result1.data.data.envelope.instance;
@@ -213,6 +206,23 @@ const NotificationModal = (props) => {
     }
   };
 
+  const [pageTableNotification, setPageTableNotification] = useState(1);
+
+  const updatePage = (p) => {
+    setPageTableNotification(p);
+  };
+
+  useEffect(() => {
+    let totalRows = notificationOptions?.totalCount;
+    let totalPages = Math.floor(totalRows / pageLength);
+    let rem = totalRows % pageLength;
+    if (rem > 0) totalPages = totalPages + 1;
+    if (totalPages === pageTableNotification) {
+      totalRowsLastPage = totalRows - (pageLength * (totalPages - 1));
+    }
+    fetchNotifications(pageTableNotification, totalRowsLastPage);
+  }, [pageTableNotification]);
+
   return (
     <div>
       <Modal
@@ -232,16 +242,24 @@ const NotificationModal = (props) => {
           <div className={notificationOptions.totalCount < 1 ? styles.emptyNotificationModalContainer : styles.notificationModalContainer}>
             {notificationOptions.totalCount < 1 ?
               <div className={styles.emptyList}>
-                <i><TbClipboardText className={styles.emptyListIcon} aria-label="icon: empty-list"/></i>
+                <i><TbClipboardText className={styles.emptyListIcon} aria-label="icon: empty-list" /></i>
                 <div className={styles.emptyText}><strong>No Merge Notifications Present</strong></div>
               </div>
               :
-              notificationOptions?.notifications && <HCTable
-              pagination={paginationOptions}
+              notificationOptions?.notifications && <><HCTable
+              pagination={false}
               columns={columns}
               data={notificationOptions?.notifications}
               rowKey="notificationsTable"
             />
+            <SearchPaginationSimple
+              total={notificationOptions?.totalCount}
+              pageSize={pageLength}
+              pageNumber={pageTableNotification}
+              maxRowsPerPage={pageLength}
+              updatePage={updatePage}
+            />
+            </>
             }
           </div>
         </Modal.Body>

@@ -31,9 +31,10 @@ export const getMergingRulesWarnings = async (merging, newMergeRule) => {
   }
 };
 
-export const getNotifications = async () => {
+export const getNotifications = async (page?, length?) => {
   try {
-    let response = await axios.get(`/api/steps/merging/notifications`);
+    let response = !page ? await axios.get(`/api/steps/merging/notifications`) :
+      await axios.get(`/api/steps/merging/notifications`, {params: {start: page, pageLength: length}});
     if (response.status === 200) {
       return response;
     } else {
@@ -46,7 +47,7 @@ export const getNotifications = async () => {
   }
 };
 
-export const mergeUris  = async (payload) => {
+export const mergeUris = async (payload) => {
   try {
     let response = await axios.put(`/api/steps/merging/merge`, payload);
     if (response.status === 200) {
@@ -61,7 +62,7 @@ export const mergeUris  = async (payload) => {
   }
 };
 
-export const unmergeUri  = async (payload) => {
+export const unmergeUri = async (payload) => {
   try {
     let response = await axios.put(`/api/steps/merging/unmerge?mergeDocumentURI=${payload.mergeDocumentURI}`, payload);
     if (response.status === 200) {
@@ -76,7 +77,7 @@ export const unmergeUri  = async (payload) => {
   }
 };
 
-export const deleteNotification  = async (notificationUri) => {
+export const deleteNotification = async (notificationUri) => {
   try {
     let response = await axios.delete(`/api/steps/merging/notifications?uri=${encodeURIComponent(notificationUri)}`);
     if (response.status >= 200 && response.status < 300) {
