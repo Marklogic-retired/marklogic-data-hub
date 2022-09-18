@@ -138,7 +138,10 @@ class Mergeable {
       const tripleMergeFunction = requireFunction(tripleMerge.at, tripleMerge.function);
       triples = tripleMergeFunction(this.mergeStep, documentNodes, properties.map(prop => prop[1].sources), this.mergeStep.tripleMerge);
     } else {
-      triples = fn.distinctValues(Sequence.from(documentNodes.map(doc => doc.xpath("/*:envelope/*:triples/(object-node()|.//sem:triple) ! sem:triple(.)", {sem: "http://marklogic.com/semantics"}))));
+      triples = fn.distinctValues(Sequence.from(documentNodes.map(doc => doc.xpath("/*:envelope/(es:triples|array-node('triples'))/(object-node()|.//sem:triple) ! sem:triple(.)", { es: "http://marklogic.com/entity-services", sem: "http://marklogic.com/semantics"}))));
+    }
+    if (mergingTraceEnabled) {
+      xdmp.trace(mergingTraceEvent, `Found the follow triples for merge: ${xdmp.describe(triples, Sequence.from([]), Sequence.from([]))}`);
     }
     return format === "json" ? this.mergeJsonDocuments(documentNodes, properties, id, triples):  this.mergeXmlDocuments(documentNodes, properties, id, triples);
   }
