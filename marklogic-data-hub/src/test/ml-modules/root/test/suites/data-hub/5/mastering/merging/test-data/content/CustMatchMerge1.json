@@ -9,7 +9,18 @@
       "createdOn": "2020-08-20T05:27:43.360675Z",
       "createdBy": "admin"
     },
-    "triples": [],
+    "triples": [
+      {
+        "triple":  {
+          "subject": "http://source+1.org/Holland+Wells",
+          "predicate": "http://source+1.org/name",
+          "object": {
+            "datatype": "http://www.w3.org/2001/XMLSchema#string",
+            "value": "Holland Wells"
+          }
+        }
+      }
+    ],
     "instance": {
       "info": {
         "title": "Customer",

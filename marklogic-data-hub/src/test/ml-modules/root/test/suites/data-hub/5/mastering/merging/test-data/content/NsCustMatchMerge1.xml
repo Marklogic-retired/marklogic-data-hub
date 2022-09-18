@@ -7,7 +7,13 @@
         <createdOn xmlns="">2020-08-20T05:27:43.360675Z</createdOn>
         <createdBy xmlns="">admin</createdBy>
     </headers>
-    <triples/>
+    <triples>
+        <sem:triple xmlns:sem="http://marklogic.com/semantics">
+            <sem:subject>http://source+1.org/Holland+Wells</sem:subject>
+            <sem:predicate>http://source+1.org/name</sem:predicate>
+            <sem:object datatype="http://www.w3.org/2001/XMLSchema#string">Holland Wells</sem:object>
+        </sem:triple>
+    </triples>
     <instance>
         <info>
             <title>NamespacedCustomer</title>
