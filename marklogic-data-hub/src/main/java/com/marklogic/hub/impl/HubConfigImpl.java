@@ -177,6 +177,28 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
     }
 
     /**
+     * Provides a minimally-configured instance of HubConfigImpl based on DHF default properties, with no dependency
+     * on Spring or on project files.
+     *
+     * @param host
+     * @param mlUsername
+     * @param mlPassword
+     * @param stagingDbName
+     * @param finalDbName
+     */
+    public HubConfigImpl(String host, String mlUsername, String mlPassword, String stagingDbName, String finalDbName) {
+        this();
+
+        Properties props = new Properties();
+        props.setProperty("mlHost", host);
+        props.setProperty("mlUsername", mlUsername);
+        props.setProperty("mlPassword", mlPassword);
+        props.setProperty("mlStagingDbName", stagingDbName);
+        props.setProperty("mlFinalDbName", finalDbName);
+        applyProperties(new SimplePropertySource(props));
+    }
+
+    /**
      * @return a DatabaseClient that connects to the DHF modules database via the app server identified by
      * mlAppServicesPort. The use case for this is when it's necessary to perform operations against the modules
      * database, but it's not known whether one of the DHF app servers has been created.
