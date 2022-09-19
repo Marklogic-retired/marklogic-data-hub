@@ -41,7 +41,10 @@ public class MasteringManagerImpl implements MasteringManager {
     }
 
     public MasteringManagerImpl(HubClient hubClient) {
-        this.hubConfig = new HubConfigImpl(hubClient.getFinalClient().getHost(), hubClient.getManageClient().getManageConfig().getUsername(), hubClient.getManageClient().getManageConfig().getPassword());
+        VersionInfo versionInfo = VersionInfo.newVersionInfo(hubClient);
+        String stagingDb = versionInfo.getStagingDbName();
+        String finalDb = versionInfo.getFinalDbName();
+        this.hubConfig = new HubConfigImpl(hubClient.getFinalClient().getHost(), hubClient.getManageClient().getManageConfig().getUsername(), hubClient.getManageClient().getManageConfig().getPassword(),stagingDb,finalDb);
     }
 
     @Override
@@ -164,7 +167,6 @@ public class MasteringManagerImpl implements MasteringManager {
 
         public JsonNode mergePreview(String flowName, List<String> uris) {
             JsonNode resp;
-
             JsonNode jsonOptions = new ObjectMapper().createObjectNode();
             ((ObjectNode) jsonOptions).put("preview", "true");
             RequestParameters params = new RequestParameters();
