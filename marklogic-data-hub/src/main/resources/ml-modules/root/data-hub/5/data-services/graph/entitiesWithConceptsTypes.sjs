@@ -49,8 +49,8 @@ result.map(item => {
   let subjectArr = objectIRI.split("/");
   const objectId = subjectArr[subjectArr.length - 1];
   const entityType = objectIRI.substring(0, objectIRI.length - objectId.length - 1);
-  const conceptIRI = sem.iri(item.objectConcept.toString());
-  const relatedEntitiesCountDataSet = graphUtils.getRelatedEntityInstancesCount(conceptIRI);
+  const conceptIRI = item.objectConcept.toString();
+  const relatedEntitiesCountDataSet = graphUtils.getRelatedEntityInstancesCount([sem.iri(conceptIRI), conceptIRI]);
   const finalObj = relatedEntitiesCountDataSet.find(el => el.entityTypeIRI.toString() === entityType);
   const conceptInfo = {
     conceptIRI: conceptIRI,
