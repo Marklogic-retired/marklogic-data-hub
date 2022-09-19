@@ -90,7 +90,7 @@ describe("Mapping", () => {
     curatePage.runInNewFlow(mapStepName).click();
     cy.findByLabelText("Ok").click();
     runPage.newFlowModal().should("not.exist");
-    toolbar.getCurateToolbarIcon().click();
+    toolbar.getCurateToolbarIcon().should("be.visible").click({force: true});
 
     cy.log("**deletes the step**");
     curatePage.getEntityMappingStep(entityTypeId, mapStepName).should("be.visible");

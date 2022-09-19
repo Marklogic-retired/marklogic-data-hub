@@ -159,6 +159,12 @@ const mergeRuleStep = {
       "entityPropertyPath": "birthDate",
       "mergeType": "strategy",
       "mergeStrategyName": "myFavoriteBirthDateSource"
+    },
+    {
+      "entityPropertyPath": "active",
+      "mergeType": "custom",
+      "mergeModulePath": "/test/suites/data-hub/5/mastering/matching/test-data/mergeableInterceptors.sjs",
+      "mergeModuleFunction": "customMerge",
     }
   ]
 };
@@ -189,6 +195,11 @@ function testMergeRuleDefinitions() {
         test.assertEqual(1, mergedProperties.length, "Birth date should have one property."),
         test.assertEqual("1985-01-01", fn.string(mergedProperties[0].values), `Birth date should follow myFavoriteBirthDateSource strategy. Merge properties: ${xdmp.describe(mergedProperties)}`)
       );
+    } else if (mergeRuleDefinition.name() === "active") {
+      assertions.push(
+        test.assertEqual(1, mergedProperties.length, "Active should have one property."),
+        test.assertTrue(mergedProperties[0].values, `Active should return true from customMerge. Merge properties: ${xdmp.describe(mergedProperties)}`)
+      );
     }
   }
   return assertions;
@@ -216,6 +227,11 @@ function testBuildMergeDocumentJson() {
   assertions.push(
     test.assertEqual(1, fn.count(birthDate), `Birth date should have one property. Merge document: ${xdmp.toJsonString(mergedDocument)}`),
     test.assertEqual("1985-01-01", fn.string(birthDate), `Birth date should follow myFavoriteBirthDateSource strategy. Merge properties: ${xdmp.toJsonString(mergedDocument)}`)
+  );
+  const active = mergedDocument.xpath("/envelope/instance/Customer/active");
+  assertions.push(
+    test.assertEqual(1, fn.count(active), `Active should have one property. Merge document: ${xdmp.toJsonString(mergedDocument)}`),
+    test.assertEqual("true", fn.string(active), `Active should be true due to custom function. Merge properties: ${xdmp.toJsonString(mergedDocument)}`)
   );
   assertions.push(
     test.assertEqual(1, fn.count(mergedDocument.xpath("/envelope/triples")), `Should have one triple. Merge document: ${xdmp.toJsonString(mergedDocument)}`)
@@ -248,6 +264,11 @@ function testBuildMergeDocumentXml() {
   assertions.push(
     test.assertEqual(1, fn.count(birthDate), `Birth date should have one property. Merge document: ${xdmp.toJsonString(mergedDocument)}`),
     test.assertEqual("1985-01-01", fn.string(birthDate), `Birth date should follow myFavoriteBirthDateSource strategy. Merge properties: ${xdmp.toJsonString(mergedDocument)}`)
+  );
+  const active = mergedDocument.xpath("/*:envelope/*:instance/*:NamespacedCustomer/*:active");
+  assertions.push(
+    test.assertEqual(1, fn.count(active), `Active should have one property. Merge document: ${xdmp.toJsonString(mergedDocument)}`),
+    test.assertEqual("true", fn.string(active), `Active should be true due to custom function. Merge properties: ${xdmp.toJsonString(mergedDocument)}`)
   );
   assertions.push(
     test.assertEqual(1, fn.count(mergedDocument.xpath("/*:envelope/*:triples/*:triple")), `Should have one triple. Merge document: ${xdmp.toJsonString(mergedDocument)}`)
