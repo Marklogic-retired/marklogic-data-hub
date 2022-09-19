@@ -548,7 +548,13 @@ class Mergeable {
         // add values
         for (const output of normalizeToArray(propertyOutput)) {
           for (const value of normalizeToArray(output.values)) {
-            nodeBuilder.addNode(value);
+            if (value instanceof Node) {
+              nodeBuilder.addNode(value);
+            } else {
+              nodeBuilder.startElement(fn.string(output.propertyName), fn.namespaceUriFromQName(output.propertyName));
+              nodeBuilder.addText(String(value));
+              nodeBuilder.endElement();
+            }
           }
           this.setMergeInformation(merges, instanceXPath, output);
         }
@@ -560,7 +566,7 @@ class Mergeable {
   }
 
   setMergeInformation(merges, instanceXPath, output) {
-    for (const source of output.sources) {
+    for (const source of normalizeToArray(output.sources)) {
       let {documentUri, dateTime, name} = source instanceof Node ? source.toObject() : source;
       // following use of fn.string is so ML 9 will compare the strings properly
       documentUri = fn.string(documentUri), dateTime = fn.string(dateTime), name = fn.string(name);
@@ -626,19 +632,15 @@ class MergeRuleDefinition {
       isArray = isArray || nodeValues.toArray().some(node => fn.exists(node.xpath('parent::array-node()')));
       const dateTime = this.mergeable.lastTimestamp(documentNode) || fn.string(fn.currentDateTime());
       const datahubSourceNamesFromXML = fn.distinctValues(documentNode.xpath("./*:envelope/*:headers//(*:datahubSourceName|*:sources/*:name)"));
-      const names = fn.exists(datahubSourceNamesFromXML) ? datahubSourceNamesFromXML: xdmp.nodeMetadataValue(documentNode, "datahubSourceName");
-      let sources = normalizeToArray(names).map((name) => {
-        let sourceObject = { documentUri, name, dateTime };
-        if (convertToNode) {
-          sourceObject = new NodeBuilder().addNode(sourceObject).toNode();
-        }
-        return sourceObject;
-      })
-      sources = convertToNode ? Sequence.from(sources): sources;
+      const name = fn.exists(datahubSourceNamesFromXML) ? fn.head(datahubSourceNamesFromXML): xdmp.nodeMetadataValue(documentNode, "datahubSourceName");
+      let source = { documentUri, name, dateTime };
+      if (convertToNode) {
+        source = new NodeBuilder().addNode(source).toNode();
+      }
       const properties = []
       for (const nodeValue of nodeValues) {
         properties.push({
-          sources,
+          sources: source,
           values: nodeValue
         });
       }
