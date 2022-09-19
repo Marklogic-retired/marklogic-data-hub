@@ -157,6 +157,42 @@ describe("EntityTypeModal Component", () => {
 
   });
 
+  test("Sorting in lastProcessed column with a couple of entities without jobs ran", async () => {
+    const {getByText, getByTestId} =  render(
+      <Router>
+        <EntityTypeTable
+          allEntityTypesData={getEntityTypes}
+          canReadEntityModel={true}
+          canWriteEntityModel={true}
+          autoExpand=""
+          editEntityTypeDescription={jest.fn()}
+          updateEntities={jest.fn()}
+          updateSavedEntity={jest.fn()}
+          hubCentralConfig={hubCentralConfig}
+          editConceptClassDescription={jest.fn()}
+          deleteConceptClass={jest.fn()}
+        />
+      </Router>);
+
+    expect(getByText(/Customer/i)).toBeInTheDocument();
+    expect(getByText(/1,000/i)).toBeInTheDocument();
+    expect(getByTestId("Customer-last-processed")).toBeInTheDocument();
+
+    //Verify sorting works as expected in entity table
+    let entityTable = document.querySelectorAll(".ant-table-row-level-0");
+
+    //Initial sort should be in descending 'Last Processed' order
+    validateTableRow(entityTable, ["AnotherModel", "Protein", "Product", "Provider", "TestEntityForMapping", "Order", "Customer", "TheOtherConcept", "AnotherConcept"]);
+    //verify sort by ascending 'Last Processed' order is next and works
+    fireEvent.click(getByTestId("lastProcessed"));
+    entityTable = document.querySelectorAll(".ant-table-row-level-0");
+    validateTableRow(entityTable, ["Customer", "Order", "AnotherModel", "Protein", "Product", "Provider", "TestEntityForMapping", "AnotherConcept", "TheOtherConcept"]);
+    //verify third click does not return to default, but returns to descending order
+    fireEvent.click(getByTestId("lastProcessed"));
+    entityTable = document.querySelectorAll(".ant-table-row-level-0");
+    validateTableRow(entityTable, ["AnotherModel", "Protein", "Product", "Provider", "TestEntityForMapping", "Order", "Customer", "AnotherConcept", "TheOtherConcept"]);
+  });
+
   test("Table renders with mock data, with writer role, with auto expanded entity, and can click edit", () => {
     const editMock = jest.fn();
     const {getByTestId} =  render(

@@ -320,6 +320,8 @@ const EntityTypeTable: React.FC<Props> = (props) => {
       sortFunc: (a, b, order) => {
         let [, , splitA] = a.split(",");
         let [, , splitB] = b.split(",");
+        splitA = splitA ? splitA : "undefined";
+        splitB = splitB ? splitB : "undefined";
         return order === "asc" ? splitA.localeCompare(splitB) : splitB.localeCompare(splitA);
       }
     },
