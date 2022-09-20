@@ -190,6 +190,7 @@ public class MasterTest extends AbstractHubCoreTest {
         runFlow(new FlowInputs(flowName, "1", "2", "3", "4"));
         JsonNode notifications = masteringManager.notifications(1, 1);
         assertEquals("match-person", notifications.get("notifications").get(0).get("meta").get("matchStepName").asText());
+        assertNotNull(notifications.get("notifications").get(0).get("meta").get("label"));
     }
 
     private void testDocumentHistory(String mergedUri, List<String> docsInMerge) {

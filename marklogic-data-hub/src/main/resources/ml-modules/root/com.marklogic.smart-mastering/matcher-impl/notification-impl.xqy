@@ -257,11 +257,11 @@ as element(sm:notification)
           attribute uri { $uri },
           for $key in map:keys($extractions)
           let $xpath := "$doc//*:" || map:get($extractions, $key)
-          let $value := xdmp:value($xpath)
+          let $value := fn:head(xdmp:value($xpath))
           return
             element sm:extraction {
               attribute name { $key },
-              $value
+              fn:string($value)
             }
         }
   }
@@ -290,11 +290,12 @@ declare function notify-impl:notification-to-json(
     "meta": object-node {
       "dateTime": $notification/sm:meta/sm:dateTime/fn:string(),
       "user": $notification/sm:meta/sm:user/fn:string(),
-      "uri": fn:base-uri($notification),
+      "uri": fn:string($notification/sm:meta/sm:uri),
       "status": $notification/sm:meta/sm:status/fn:string(),
       "entityName": fn:string($notification/sm:meta/sm:entityName),
       "matchStepName": fn:string($notification/sm:meta/sm:matchStepName),
-      "matchStepFlow": fn:string($notification/sm:meta/sm:matchStepFlow)
+      "matchStepFlow": fn:string($notification/sm:meta/sm:matchStepFlow),
+      "label": fn:string($notification/sm:meta/sm:label)
     },
     "thresholdLabel": $notification/sm:threshold-label/fn:string(),
     "uris": array-node {
@@ -328,8 +329,54 @@ declare function notify-impl:get-notifications-as-xml(
 as element(sm:notification)*
 {
   for $n in cts:search(/sm:notification, cts:true-query(), "unfiltered")[$start to $end]
+    let $notification-uri := fn:base-uri($n)
+    let $entity-name := $n/sm:meta/sm:entityName/text()
+    return if(fn:compare($entity-name, "") ne 0) then
+      let $entity-model-uri := fn:concat("/entities/", $entity-name, ".entity.json")
+      let $model := fn:doc($entity-model-uri)
+      let $primary-key := xdmp:value(fn:concat("$model/*:definitions/", $entity-name, "/*:primaryKey"))
+      let $uris := $n/sm:document-uris/sm:document-uri/text()
+      let $label-seq := for $uri in $uris
+        let $doc := fn:doc($uri)
+        let $xpath := fn:concat("$doc//*:", "envelope/*:instance/*:", $entity-name, "/*:",$primary-key)
+        let $value := fn:head(xdmp:value($xpath))
+        return fn:string($value)
+      let $updated-label-seq := for $label in $label-seq
+        return if(fn:compare($label, "") eq 0) then
+          "undefined"
+        else
+          $label
+      let $updated-notifications := notify-impl:insert-notification-labels($n, fn:string-join(($updated-label-seq),", "), $notification-uri)
+      return notify-impl:enhance-notification-xml($updated-notifications, $extractions)
+    else
+      notify-impl:enhance-notification-xml($n, $extractions)
+};
+
+declare %private function notify-impl:insert-notification-labels(
+  $nodes as node()*,
+  $label as xs:string,
+  $notification-uri as xs:string
+)
+{
+  for $node in $nodes
   return
-    notify-impl:enhance-notification-xml($n, $extractions)
+    typeswitch($node)
+      case element(sm:meta)
+        return
+          element { name($node) } {
+            $node/@*,
+            notify-impl:insert-notification-labels($node/node(), $label, $notification-uri),
+            element sm:label { $label },
+            element sm:uri { $notification-uri }
+          }
+      case element()
+        return
+          element { name($node) } {
+            $node/@*,
+            notify-impl:insert-notification-labels($node/node(), $label, $notification-uri)
+          }
+      default
+        return $node
 };
 
 (:
