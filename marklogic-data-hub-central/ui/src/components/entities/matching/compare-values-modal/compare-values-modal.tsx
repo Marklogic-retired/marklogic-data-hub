@@ -312,16 +312,13 @@ const CompareValuesModal: React.FC<Props> = (props) => {
           propertyValueInURI1 = property1[property.name];
           propertyValueInURI2 = property2[property.name];
           propertyValueInReview = previewValues[property.name];
-          if (
-            propertyValueInURI1 === undefined ||
-            propertyValueInURI2 === undefined ||
-            isArray(propertyValueInURI1) ||
-            isArray(propertyValueInURI2) ||
-            isObject(propertyValueInURI1) ||
-            isObject(propertyValueInURI2)) {
-
+          if (propertyValueInURI1 === undefined || (!isArray(propertyValueInURI1) && isObject(propertyValueInURI1))) {
             propertyValueInURI1 = "";
+          }
+          if (propertyValueInURI2 === undefined || (!isArray(propertyValueInURI2) && isObject(propertyValueInURI2))) {
             propertyValueInURI2 = "";
+          }
+          if (propertyValueInReview === undefined || (!isArray(propertyValueInReview) && isObject(propertyValueInReview))) {
             propertyValueInReview = "";
           }
         }
@@ -389,7 +386,13 @@ const CompareValuesModal: React.FC<Props> = (props) => {
         };
       },
       formatter: (property, key) => {
-        return <span key={key} aria-label={(property.value && property.value.length > 0) ? `${property.value}-cell1` : "empty-cell1"}>{property.value}</span>;
+        let mergedOutput;
+        if (isArray(property.value) && property.value.length > 1) {
+          mergedOutput = JSON.stringify(property.value);
+        } else {
+          mergedOutput = property.value;
+        }
+        return <span key={key} aria-label={(property.value && property.value.length > 0) ? `${property.value}-cell1` : "empty-cell1"}>{mergedOutput}</span>;
       }
     },
     {
@@ -412,7 +415,13 @@ const CompareValuesModal: React.FC<Props> = (props) => {
         };
       },
       formatter: (property, key) => {
-        return <span key={key} aria-label={(property.value && property.value.length > 0) ? `${property.value}-cell2` : "empty-cell2"}>{property.value}</span>;
+        let mergedOutput;
+        if (isArray(property.value) && property.value.length > 1) {
+          mergedOutput = JSON.stringify(property.value);
+        } else {
+          mergedOutput = property.value;
+        }
+        return <span key={key} aria-label={(property.value && property.value.length > 0) ? `${property.value}-cell2` : "empty-cell2"}>{mergedOutput}</span>;
       }
     },
     {
