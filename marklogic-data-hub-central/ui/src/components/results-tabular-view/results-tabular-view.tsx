@@ -716,6 +716,7 @@ const ResultsTabularView = (props) => {
       </div>
       <CompareValuesModal
         isVisible={compareModalVisible}
+        fetchNotifications={() => void 0}
         toggleModal={setCompareModalVisible}
         uriInfo={uriInfo}
         activeStepDetails={activeEntityArray}

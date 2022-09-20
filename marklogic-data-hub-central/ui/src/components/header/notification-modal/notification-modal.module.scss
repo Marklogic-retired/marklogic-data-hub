@@ -48,6 +48,10 @@
 }
 
 .mergeIconDisabled {
+  font-size: 25px;
+  margin-top: -3px;
+  margin-left: 2px;
+  margin-right: 10px;
   opacity: 0.45;
   cursor: not-allowed;
 }
@@ -60,6 +64,11 @@
 }
 .deleteRow:hover {
   color: var(--hoverColor)!important;
+}
+
+.deleteRowDisabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 .emptyNotificationModalContainer {

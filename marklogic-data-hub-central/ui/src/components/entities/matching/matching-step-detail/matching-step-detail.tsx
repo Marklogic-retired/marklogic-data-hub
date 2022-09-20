@@ -1158,6 +1158,7 @@ const MatchingStepDetail: React.FC = () => {
       />
       <CompareValuesModal
         isVisible={compareModalVisible}
+        fetchNotifications={() => void 0}
         toggleModal={setCompareModalVisible}
         uriInfo={uriInfo}
         activeStepDetails={curationOptions.activeStep}
