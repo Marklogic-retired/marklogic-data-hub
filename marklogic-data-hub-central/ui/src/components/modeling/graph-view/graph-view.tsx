@@ -17,7 +17,7 @@ import "react-bootstrap-typeahead/css/Typeahead.css";
 import {themeColors} from "@config/themes.config";
 import {defaultConceptIcon, defaultIcon} from "@config/explore.config";
 import {getViewSettings, setViewSettings} from "@util/user-context";
-import {colorExistsForNode, iconExistsForNode, getCategoryWithinModel} from "@util/modeling-utils";
+import {colorExistsForNode, iconExistsForNode, getCategoryWithinModel, colorOfNode} from "@util/modeling-utils";
 
 type Props = {
   dataModel: any;
@@ -247,12 +247,12 @@ const GraphView: React.FC<Props> = (props) => {
     if (colorExistsOnServer && filterMenuSuggestions.length > 0 && !filterMenuSuggestions.includes("a")) {
       let entityDisplayed = filterMenuSuggestions.filter(function (obj) { return obj[!isConcept ? "entityName" : "conceptName"] === nodeName; }).length > 0;
       if (filterMenuSuggestions && entityDisplayed) {
-        color = props.hubCentralConfig.modeling[modelCategory][nodeName]["color"];
+        color = colorOfNode(nodeName, modelCategory, props.hubCentralConfig);
       } else {
-        color = "#F5F5F5";
+        color = colorExistsOnServer ? colorOfNode(nodeName, modelCategory, props.hubCentralConfig) : "#F5F5F5";
       }
     } else if (colorExistsOnServer) {
-      color = props.hubCentralConfig.modeling[modelCategory][nodeName]["color"];
+      color = colorOfNode(nodeName, modelCategory, props.hubCentralConfig);
     } else {
       color = !isConcept ? themeColors.defaults.entityColor: themeColors.defaults.conceptColor;
     }
