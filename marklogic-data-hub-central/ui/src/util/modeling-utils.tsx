@@ -20,6 +20,10 @@ export const convertArrayOfEntitiesToObject = (entities: any[]) => {
   return models;
 };
 
+export const colorOfNode = (nodeName, modelCategory, hubCentralConfig: hubCentralConfig) => {
+  return hubCentralConfig.modeling[modelCategory][nodeName]["color"];
+};
+
 export const colorExistsForNode = (nodeName, isConcept, hubCentralConfig: hubCentralConfig) => {
   let nodeColor = !isConcept ? hubCentralConfig?.modeling?.entities[nodeName]?.color : hubCentralConfig?.modeling?.concepts[nodeName]?.color;
   return (!nodeColor ? false : true);
