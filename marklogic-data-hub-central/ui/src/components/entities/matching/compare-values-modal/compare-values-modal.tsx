@@ -21,6 +21,7 @@ import {isArray, isObject} from "util";
 interface Props {
   isVisible: any;
   toggleModal: (isVisible: boolean) => void;
+  fetchNotifications: () => void;
   previewMatchActivity: any;
   uriInfo: any;
   activeStepDetails: any;
@@ -434,7 +435,13 @@ const CompareValuesModal: React.FC<Props> = (props) => {
         };
       },
       formatter: (property, key) => {
-        return <span key={key} aria-label={(property.value && property.value.length > 0) ? `${property.value}-cell2` : "empty-cell2"}>{property.value}</span>;
+        let mergedOutput;
+        if (isArray(property.value) && property.value.length > 1) {
+          mergedOutput = JSON.stringify(property.value);
+        } else {
+          mergedOutput = property.value;
+        }
+        return <span key={key} aria-label={(property.value && property.value.length > 0) ? `${property.value}-cell2` : "empty-cell2"}>{mergedOutput}</span>;
       }
     },
   ];
@@ -455,6 +462,9 @@ const CompareValuesModal: React.FC<Props> = (props) => {
 
   const onDelete = async () => {
     await deleteNotification(props.originalUri).then((resp) => {
+      if (resp) {
+        props.fetchNotifications();
+      }
       toggleConfirmModal(false);
     });
     closeModal();

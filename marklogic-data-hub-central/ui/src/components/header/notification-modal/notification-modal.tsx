@@ -72,11 +72,10 @@ const NotificationModal = (props) => {
   const columns: any = [
     {
       text: "Label",
-      dataField: "label",
+      dataField: "meta.label",
       key: "label",
       formatter: (text) => (
         <span className={styles.tableRow}>{text}
-          Sample text
         </span>
       ),
     },
@@ -124,7 +123,7 @@ const NotificationModal = (props) => {
                 </HCTooltip>
                 :
                 <HCTooltip text={SecurityTooltips.missingPermission} id="disabled-delete-icon" placement="top-end">
-                  <i aria-label={`disabledDeleteIcon`}><FontAwesomeIcon icon={faTrashAlt} color={themeColors.info} data-testid={`delete-icon${idRowAux}-disabled`} className={styles.mergeIconDisabled} size="lg" /></i>
+                  <i aria-label={`disabledDeleteIcon`}><FontAwesomeIcon icon={faTrashAlt} color={themeColors.info} data-testid={`delete-icon${idRowAux}-disabled`} className={styles.deleteRowDisabled} size="lg" /></i>
                 </HCTooltip>
             }
           </span>
@@ -286,6 +285,7 @@ const NotificationModal = (props) => {
         flowName={flowName}
         mergeUris={async (payload) => submitMergeUri(activeUri, payload)}
         unmergeUri={{}}
+        fetchNotifications={fetchNotifications}
         originalUri={activeUri}
       />
     </div>
