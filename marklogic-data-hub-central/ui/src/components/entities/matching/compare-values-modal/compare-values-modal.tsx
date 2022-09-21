@@ -21,7 +21,7 @@ import {isArray, isObject} from "util";
 interface Props {
   isVisible: any;
   toggleModal: (isVisible: boolean) => void;
-  fetchNotifications: () => void;
+  fetchNotifications: (page: number | undefined, pageLength: number | undefined, updated: boolean) => void;
   previewMatchActivity: any;
   uriInfo: any;
   activeStepDetails: any;
@@ -472,7 +472,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
   const onDelete = async () => {
     await deleteNotification(props.originalUri).then((resp) => {
       if (resp) {
-        props.fetchNotifications();
+        props.fetchNotifications(undefined, undefined, false);
       }
       toggleConfirmModal(false);
     });
