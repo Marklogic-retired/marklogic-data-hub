@@ -1,5 +1,5 @@
 import {Modal} from "react-bootstrap";
-import React, {useContext, useEffect, useState} from "react"; // eslint-disable-line @typescript-eslint/no-unused-vars
+import React, {useContext, useEffect, useState, useRef} from "react"; // eslint-disable-line @typescript-eslint/no-unused-vars
 import {defaultNotificationOptions, NotificationContext} from "@util/notification-context";
 import styles from "./notification-modal.module.scss";
 import {TbClipboardText} from "react-icons/tb";
@@ -40,31 +40,45 @@ const NotificationModal = (props) => {
 
 
   let idRow = 0, idRowAux = 0, pageLength = notificationOptions.pageLength, totalRowsLastPage = notificationOptions.pageLength;
+  const {notifications, totalCount, pageLength: defaultPageLength} = defaultNotificationOptions;
+
+  const checkRowsPerPage = (totalRows) => {
+    let totalPages = Math.floor(totalRows / pageLength);
+    let rem = totalRows % pageLength;
+    if (rem > 0) totalPages = totalPages + 1;
+    if (totalPages === pageTableNotification) {
+      totalRowsLastPage = totalRows - (pageLength * (totalPages - 1));
+    }
+  };
 
   const confirmAction = async () => {
     let uri = rowInformation && rowInformation?.meta?.uri;
     await deleteNotification(uri).then((responseDelete: any) => {
-      if (responseDelete) fetchNotifications();
+      let totalRows = notificationOptions?.totalCount;
+      checkRowsPerPage(totalRows);
+      if (responseDelete) fetchNotifications(pageTableNotification, totalRowsLastPage - 1 === 0 ? defaultPageLength : totalRowsLastPage - 1, false);
+      //if one notification left on the last page and its merged or deleted
+      if (totalRowsLastPage - 1 === 0) {
+        updatePage(pageTableNotification - 1);
+      }
     });
     toggleConfirmModal(false);
   };
 
-  const {notifications, totalCount, pageLength: defaultPageLength} = defaultNotificationOptions;
-
-  const fetchNotifications = async (page?, pageLength?) => {
-    await getNotifications(page, pageLength)
+  const fetchNotifications = async (page?, pageLength?, updated?) => {
+    await getNotifications((page - 1) * 10 + 1, pageLength)
       .then((resp: any) => {
         if (resp && resp.data) {
-          setNotificationsObj(resp.data.notifications, resp.data.total, defaultPageLength);
+          setNotificationsObj(resp.data.notifications, resp.data.total, defaultPageLength, updated);
         } else {
-          setNotificationsObj(notifications, totalCount, defaultPageLength);
+          setNotificationsObj(notifications, totalCount, defaultPageLength, updated);
         }
       })
       .catch((err) => {
         if (err.response) {
-          setNotificationsObj(notifications, totalCount, defaultPageLength);
+          setNotificationsObj(notifications, totalCount, defaultPageLength, updated);
         } else {
-          setNotificationsObj(notifications, totalCount, defaultPageLength);
+          setNotificationsObj(notifications, totalCount, defaultPageLength, updated);
         }
       });
   };
@@ -73,7 +87,7 @@ const NotificationModal = (props) => {
     {
       text: "Label",
       dataField: "meta.label",
-      key: "label",
+      key: "meta.label",
       formatter: (text) => (
         <span className={styles.tableRow}>{text}
         </span>
@@ -161,10 +175,21 @@ const NotificationModal = (props) => {
     const documentsHaveMerged = await mergeUris(payload);
     if (documentsHaveMerged) {
       await deleteNotification(activeUri).then((resp) => {
-        fetchNotifications();
+        let totalRows = notificationOptions?.totalCount;
+        checkRowsPerPage(totalRows);
+        if (resp) fetchNotifications(pageTableNotification, totalRowsLastPage - 1 === 0 ? defaultPageLength : totalRowsLastPage - 1, false);
+        if (totalRowsLastPage - 1 === 0) {
+          updatePage(pageTableNotification - 1);
+        }
       });
     }
   };
+
+  useEffect(() => {
+    if (notificationOptions.runUpdated) {
+      updatePage(1);
+    }
+  }, [notificationOptions]);
 
 
   const openMergeCompare = async (item) => {

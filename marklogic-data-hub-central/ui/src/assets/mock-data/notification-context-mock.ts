@@ -1,7 +1,7 @@
 const emptyNotificationData = {
   notifications: [],
   totalCount: 0,
-  currentPage: 1
+  currentPage: 1,
 };
 
 export const notificationsMock = {
@@ -33,7 +33,8 @@ export const notificationsMock = {
     ,
     totalCount: 4,
     currentPage: 1,
-    pageLength: 10
+    pageLength: 10,
+    runUpdated: true
   }),
   setNotificationsObj: jest.fn()
 };

@@ -115,16 +115,16 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStop
     await getNotifications()
       .then((resp) => {
         if (resp && resp.data) {
-          setNotificationsObj(resp.data.notifications, resp.data.total, resp.data.pageLength);
+          setNotificationsObj(resp.data.notifications, resp.data.total, resp.data.pageLength, true);
         } else {
-          setNotificationsObj([], 0, 0);
+          setNotificationsObj([], 0, 0, false);
         }
       })
       .catch((err) => {
         if (err.response) {
-          setNotificationsObj([], 0, 0);
+          setNotificationsObj([], 0, 0, false);
         } else {
-          setNotificationsObj([], 0, 0);
+          setNotificationsObj([], 0, 0, false);
         }
       });
   };
