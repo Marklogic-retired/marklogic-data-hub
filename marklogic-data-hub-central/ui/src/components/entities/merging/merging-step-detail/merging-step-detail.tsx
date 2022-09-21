@@ -389,14 +389,16 @@ const MergingStepDetail: React.FC = () => {
           };
           priorityOrderStrategyOptions[0] = priorityOrderTimeObject;
         }
-        strategy.priorityOrder.sources.map((key) => {
-          const priorityOrderSourceObject = {
-            id: strategy.strategyName + ":" + key.sourceName,
-            start: key.weight,
-            value: "Source" +" - " +key.sourceName + ":" + key.weight.toString(),
-          };
-          priorityOrderStrategyOptions.push(priorityOrderSourceObject);
-        });
+        if (strategy.priorityOrder.hasOwnProperty("sources")) {
+          strategy.priorityOrder.sources.map((key) => {
+            const priorityOrderSourceObject = {
+              id: strategy.strategyName + ":" + key.sourceName,
+              start: key.weight,
+              value: "Source" +" - " +key.sourceName + ":" + key.weight.toString(),
+            };
+            priorityOrderStrategyOptions.push(priorityOrderSourceObject);
+          });
+        }
         if (strategy.priorityOrder.hasOwnProperty("lengthWeight")) {
           const priorityOrderLengthObject = {
             id: strategy.strategyName + ":Length:",
