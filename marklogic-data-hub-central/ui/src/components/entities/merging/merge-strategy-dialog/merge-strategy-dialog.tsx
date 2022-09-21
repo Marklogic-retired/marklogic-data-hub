@@ -413,13 +413,15 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
             };
             priorityOrderStrategyOptions[0] = priorityOrderTimeObject;
           }
-          for (let key1 of key.priorityOrder.sources) {
-            const priorityOrderSourceObject = {
-              id: "Source - " + key1.sourceName + ":" + key1.weight.toString(),
-              start: key1.weight,
-              value: "Source - "  +key1.sourceName + ":" + key1.weight.toString(),
-            };
-            priorityOrderStrategyOptions.push(priorityOrderSourceObject);
+          if (key.hasOwnProperty("sources")) {
+            for (let key1 of key.priorityOrder.sources) {
+              const priorityOrderSourceObject = {
+                id: "Source - " + key1.sourceName + ":" + key1.weight.toString(),
+                start: key1.weight,
+                value: "Source - "  +key1.sourceName + ":" + key1.weight.toString(),
+              };
+              priorityOrderStrategyOptions.push(priorityOrderSourceObject);
+            }
           }
           if (key.priorityOrder.hasOwnProperty("lengthWeight")) {
             const priorityOrderLengthObject = {
