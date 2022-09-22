@@ -191,6 +191,10 @@ public class MasterTest extends AbstractHubCoreTest {
         JsonNode notifications = masteringManager.notifications(1, 1);
         assertEquals("match-person", notifications.get("notifications").get(0).get("meta").get("matchStepName").asText());
         assertNotNull(notifications.get("notifications").get(0).get("meta").get("label"));
+        String[] labelArray = notifications.get("notifications").get(0).get("meta").get("label").asText().split(",");
+        for(String l: labelArray) {
+            assertEquals("undefined", l.trim(), "label is undefined when there is no primary key");
+        }
     }
 
     private void testDocumentHistory(String mergedUri, List<String> docsInMerge) {

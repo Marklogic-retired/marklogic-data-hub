@@ -337,10 +337,12 @@ as element(sm:notification)*
       let $primary-key := xdmp:value(fn:concat("$model/*:definitions/", $entity-name, "/*:primaryKey"))
       let $uris := $n/sm:document-uris/sm:document-uri/text()
       let $label-seq := for $uri in $uris
-        let $doc := fn:doc($uri)
-        let $xpath := fn:concat("$doc//*:", "envelope/*:instance/*:", $entity-name, "/*:",$primary-key)
-        let $value := fn:head(xdmp:value($xpath))
-        return fn:string($value)
+        return if(fn:compare($primary-key, "") ne 0) then
+          let $doc := fn:doc($uri)
+          let $xpath := fn:concat("$doc//*:", "envelope/*:instance/*:", $entity-name, "/*:",$primary-key)
+          let $value := fn:head(xdmp:value($xpath))
+          return fn:string($value)
+        else ""
       let $updated-label-seq := for $label in $label-seq
         return if(fn:compare($label, "") eq 0) then
           "undefined"
