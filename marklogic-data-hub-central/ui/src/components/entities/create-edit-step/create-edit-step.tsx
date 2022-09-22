@@ -190,17 +190,17 @@ const CreateEditStep: React.FC<Props> = (props) => {
     return result;
   };
 
-  const [showCollectionPopover, setShowCollectionPopover] = useState(false);
-  const [targetCollectionPopover, setTargetCollectionPopover] = useState(null);
+  const [showQueryPopover, setShowQueryPopover] = useState(false);
+  const [targetQueryPopover, setTargetQueryPopover] = useState(null);
 
   const collectionQueryInfo =
   <Overlay
-    show={showCollectionPopover}
-    target={targetCollectionPopover}
+    show={showQueryPopover}
+    target={targetQueryPopover}
     placement="left"
   >
     <Popover id={`popover-create-edit-step`} className={styles.popoverCreateEditStep}><Popover.Body className={styles.popoverCreateEditStepBody}>
-      <div className={styles.collectionQueryInfo}>{CommonStepTooltips.radioCollection}</div></Popover.Body></Popover>
+      <div className={styles.collectionQueryInfo}>{CommonStepTooltips.radioQuery}</div></Popover.Body></Popover>
   </Overlay>;
 
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
@@ -422,9 +422,9 @@ const CreateEditStep: React.FC<Props> = (props) => {
     }
   };
 
-  const handleShowCollectionPopover = (event) => {
-    setShowCollectionPopover(!showCollectionPopover);
-    setTargetCollectionPopover(event.target);
+  const handleShowQueryPopover = (event) => {
+    setShowQueryPopover(!showQueryPopover);
+    setTargetQueryPopover(event.target);
   };
 
   return (
@@ -547,11 +547,10 @@ const CreateEditStep: React.FC<Props> = (props) => {
                   disabled={!props.canReadWrite}
                   className={"mb-0"}
                 />
-                <span id={props.stepType !== StepType.Merging ? "radioCollectionPopover" : "radioCollectionMergePopover" } className={"me-4"}
-                  onMouseEnter={handleShowCollectionPopover} onMouseLeave={() => setShowCollectionPopover(false)}>
-                  {collectionQueryInfo}
-                  <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircleCollection} data-testid="collectionTooltip"/>
-                </span>
+                <span  id={props.stepType !== StepType.Merging ? "radioCollectionPopover" : "radioCollectionMergePopover" } className={"me-4"}>
+                  <HCTooltip text={CommonStepTooltips.radioCollection} id="radio-collection-tooltip" placement={"top"}>
+                    <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircleCollection} data-testid="collectionTooltip"/>
+                  </HCTooltip>  </span>
                 <Form.Check
                   inline
                   id={"query"}
@@ -565,9 +564,10 @@ const CreateEditStep: React.FC<Props> = (props) => {
                   disabled={!props.canReadWrite}
                   className={"mb-0"}
                 />
-                <HCTooltip text={CommonStepTooltips.radioQuery} id="radio-query-tooltip" placement={"top"}>
+                <span onMouseEnter={handleShowQueryPopover} onMouseLeave={() => setShowQueryPopover(false)}>
+                  {collectionQueryInfo}
                   <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircleQuery} data-testid="queryTooltip"/>
-                </HCTooltip>
+                </span>
               </Col>
               <Col xs={12} className={((collections && selectedSource === "collection") || (srcQuery && selectedSource !== "collection") || (!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched)) ? "d-flex pe-4" : "d-flex pe-4 has-error"}>
                 {selectedSource === "collection" ? <div className={"position-relative w-100 pe-3"}>

@@ -115,7 +115,7 @@ const ModelingTooltips = {
   sourcePropertyKeyInfo: "A source entity property can be used as a context in a relationship between an entity type and a concept class.Select a property in the source entity type to connect the source entity type and target concept class. A related concept property cannot allow multiple values, be a structured type property, or be an unpublished property.",
   deleteRelationshipIcon: "Delete this relationship",
   editModeInfo: <span>To add a relationship to the data model, drag the source entity type to the target entity type or a concept class. You can also click the source entity type to configure a relationship. Press <strong>Esc</strong> to exit this mode.</span>,
-  addRelationshipHeader: function (relationshipType: string) { 
+  addRelationshipHeader: function (relationshipType: string) {
     return <span aria-label="addRelationshipHeader">{relationshipType === "entityToConceptClass" ? `Set the relationship type, source property, relationship name, and expression. You are not required to specify the expression to save the relationship.` : `Set the relationship type, relationship name, and foreign key. You are not required to specify a foreign key to save the relationship.`}</span>
 },
   duplicatePropertyError: function (relationshipName) {
@@ -142,7 +142,7 @@ const ModelingTooltips = {
   },
   nameConceptClass: 'The name of this concept class. ' +
     'Names must start with a letter and can contain letters, numbers, hyphens, and underscores.',
-  
+
   conceptClassDescription: 'A description of this concept class.',
   relationshipTypeToggleDisabledInfo: <span aria-label="relationshipTypeToggleDisabledInfo">You can only edit the relationship type of an entity when adding a new relationship to the data model.</span>,
 
@@ -224,8 +224,8 @@ const CommonStepTooltips = {
   customHook: 'A custom module that performs additional processes in its own transaction before or after the core step transaction. Results are saved within a transaction.',
   options: 'Key-value pairs to pass as parameters to the custom module.',
   customModuleURI: 'The path to your custom step module.',
-  radioQuery: 'A single collection that selects the source data to process in this configuration.',
-  radioCollection: <span aria-label="radio-collection-tooltip">The CTS query that selects the source data to process in this configuration. CTS queries can be written in JavaScript or XQuery, and must return the URIs to be processed by the step. For XQuery, the query has to be passed as a string to xdmp.xqueryEval(), as shown in the example below.  Learn more: <a target="_blank" href="https://docs.marklogic.com/guide/search-dev/cts_query" style={{ color: themeColors.info }}>CTS Query.</a><br /><br />
+  radioCollection : 'A single collection that selects the source data to process in this configuration.',
+  radioQuery: <span aria-label="radio-query-tooltip">The CTS query that selects the source data to process in this configuration. CTS queries can be written in JavaScript or XQuery, and must return the URIs to be processed by the step. For XQuery, the query has to be passed as a string to xdmp.xqueryEval(), as shown in the example below.  Learn more: <a target="_blank" href="https://docs.marklogic.com/guide/search-dev/cts_query" style={{ color: themeColors.info }}>CTS Query.</a><br /><br />
     The following example source queries select data from multiple collections.<br /><br />
     JavaScript:<br />
     <span style={{ fontFamily: "monospace" }}>cts.collectionQuery(['collection1', 'collection2'])</span><br /><br />
