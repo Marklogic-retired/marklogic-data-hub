@@ -1,0 +1,21 @@
+<envelope xmlns="http://marklogic.com/entity-services">
+  <headers></headers>
+  <triples></triples>
+  <instance>
+    <info>
+      <baseUri>http://example.org/</baseUri>
+      <title>NamespacedCustomer</title>
+      <version>0.0.1</version>
+    </info>
+    <oex:NamespacedCustomer xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:map="http://marklogic.com/xdmp/map" xmlns:instance="http://marklogic.com/datahub/entityInstance"
+      xmlns:oex="http://example.org/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <oex:customerIdentifier xsi:type="xs:integer">501</oex:customerIdentifier>
+      <oex:name xsi:type="xs:string">Namespaced Person</oex:name>
+      <oex:nicknames datatype="array" xsi:type="xs:string">First Nickname</oex:nicknames>
+      <oex:nicknames datatype="array" xsi:type="xs:string">Second Nickname</oex:nicknames>
+      <oex:dateOfBirth xsi:type="xs:date">1980-01-01</oex:dateOfBirth>
+      <oex:status xsi:type="xs:string">New Record</oex:status>
+    </oex:NamespacedCustomer>
+  </instance>
+  <attachments></attachments>
+</envelope>
