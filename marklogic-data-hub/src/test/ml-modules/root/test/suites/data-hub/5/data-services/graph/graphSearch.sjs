@@ -33,6 +33,18 @@ assertions.concat([
   test.assertEqual(0, resultsTest2.edges.length)
 ]);
 
+const nsCustomerQuery = {
+  "searchText": "",
+  "entityTypeIds": [ "NamespacedCustomer"],
+  "selectedFacets": {}
+};
+const nsCustomerQueryResults = searchNodes(nsCustomerQuery);
+assertions.concat([
+  test.assertEqual(2, nsCustomerQueryResults.total),
+  test.assertEqual(2, nsCustomerQueryResults.nodes.length, xdmp.toJsonString(nsCustomerQueryResults)),
+  test.assertEqual(1, nsCustomerQueryResults.edges.length)
+]);
+
 const multipleQuery = {
   "searchText": "",
   "entityTypeIds": [ "BabyRegistry", "Product" ]

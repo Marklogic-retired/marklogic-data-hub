@@ -199,7 +199,7 @@ declare function extraction-template-generate(
                       $entity-type-name } }
                       <tde:name>{ $primary-key-name=>$secure-tde-name() }</tde:name>
                       <tde:scalar-type>{ if ($primary-key-type="iri") then "IRI" else $primary-key-type }</tde:scalar-type>
-                      <tde:val>ancestor::{if ($prefix-value) then "(" || $prefix-value || $entity-type-name || "|" || $entity-type-name || ")" else $entity-type-name}/{ if ($prefix-value) then  "("|| $prefix-value || $primary-key-name || "|" || $primary-key-name || ")" else $primary-key-name }</tde:val>
+                      <tde:val>{if ($prefix-value) then "(ancestor::" || $prefix-value || $entity-type-name || "|" || "ancestor::" || $entity-type-name || ")" else "(ancestor::" || $entity-type-name || ")"}/{ if ($prefix-value) then  "("|| $prefix-value || $primary-key-name || "|" || $primary-key-name || ")" else $primary-key-name }</tde:val>
                     </tde:column>,
                   if ($is-local-ref and empty($ref-primary-key))
                   then
@@ -253,7 +253,7 @@ declare function extraction-template-generate(
           then
             map:put($triples-templates, $entity-type-name,
               <tde:template>
-                <tde:context>{ if ($prefix-path) then "(" || $prefix-path || $prefix-value || $entity-type-name || "|" || $entity-type-name || ")" else  $entity-type-name}</tde:context>
+                <tde:context>{ $prefix-path || (if ($prefix-value) then "(" || $prefix-value || $entity-type-name || "|" || $entity-type-name || ")" else  $entity-type-name)}</tde:context>
                 <tde:vars>
                   {
                     if ($primary-key-type eq "string")
@@ -298,11 +298,12 @@ declare function extraction-template-generate(
                           let $map-related-concepts := map:get($entity-type, "relatedConcepts")
                           for $concept in json:array-values($map-related-concepts)
                           let $predicate_concept:=map:get($concept, "predicate")
-                          let $context:=map:get($concept, "context")
+                          let $concept-context:=map:get($concept, "context")
+                          let $context:=if ($prefix-value) then "("|| $prefix-value || $concept-context || "|" || $concept-context || ")" else $concept-context
                            let $defaultValueExpression:="sem:iri(fn:replace(fn:string(.),'\\s+', ''))"
                           let $expression:=map:get($concept, "conceptExpression")
                            let $conceptExpression :=
-                                 if (fn:string($expression) eq "")
+                                 if (fn:string($expression) eq "" or fn:empty($expression))
                                  then $defaultValueExpression
                                  else $expression
                           let $concept_class:=map:get($concept, "conceptClass")
