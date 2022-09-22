@@ -270,9 +270,9 @@ describe("Create Edit Step Dialog component", () => {
     const {getByText, getByTestId, getByLabelText} = render(<CreateEditStep {...data.editMerging} />);
 
     fireEvent.mouseOver(getByTestId("collectionTooltip"));
-    await wait(() => expect(getByLabelText("radio-collection-tooltip")).toBeInTheDocument());
+    await wait(() => expect(getByText(CommonStepTooltips.radioCollection)).toBeInTheDocument());
 
     fireEvent.mouseOver(getByTestId("queryTooltip"));
-    await wait(() => expect(getByText(CommonStepTooltips.radioQuery)).toBeInTheDocument());
+    await wait(() => expect(getByLabelText("radio-query-tooltip")).toBeInTheDocument());
   });
 });
