@@ -16,7 +16,7 @@ import {Overlay} from "react-bootstrap";
 import Popover from "react-bootstrap/Popover";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {SearchContext} from "@util/search-context";
-import {isArray, isObject} from "util";
+import {isArray} from "util";
 
 interface Props {
   isVisible: any;
@@ -312,13 +312,13 @@ const CompareValuesModal: React.FC<Props> = (props) => {
           propertyValueInURI1 = property1[property.name];
           propertyValueInURI2 = property2[property.name];
           propertyValueInReview = previewValues[property.name];
-          if (propertyValueInURI1 === undefined || (!isArray(propertyValueInURI1) && isObject(propertyValueInURI1))) {
+          if (propertyValueInURI1 === undefined) {
             propertyValueInURI1 = "";
           }
-          if (propertyValueInURI2 === undefined || (!isArray(propertyValueInURI2) && isObject(propertyValueInURI2))) {
+          if (propertyValueInURI2 === undefined) {
             propertyValueInURI2 = "";
           }
-          if (propertyValueInReview === undefined || (!isArray(propertyValueInReview) && isObject(propertyValueInReview))) {
+          if (propertyValueInReview === undefined) {
             propertyValueInReview = "";
           }
         }
@@ -355,11 +355,13 @@ const CompareValuesModal: React.FC<Props> = (props) => {
             backgroundColor: "#85BF97",
             width: "25%",
             backgroundImage: "url(" + backgroundImage + ")",
+            verticalAlign: "top"
           };
         }
         return {
           backgroundColor: "",
           width: "25%",
+          verticalAlign: "top"
         };
       },
       formatter: (text, row) => {
@@ -378,19 +380,33 @@ const CompareValuesModal: React.FC<Props> = (props) => {
             backgroundColor: "#85BF97",
             width: "25%",
             backgroundImage: "url(" + backgroundImage + ")",
+            verticalAlign: "top"
           };
         }
         return {
           backgroundColor: "",
           width: "25%",
+          verticalAlign: "top"
         };
       },
       formatter: (property, key) => {
         let mergedOutput;
         if (isArray(property.value) && property.value.length > 1) {
-          mergedOutput = JSON.stringify(property.value);
+          if (property.value.some(ele => { return (typeof ele === "object" && ele !== null); })) {
+            //pretty print JSON if array of objects
+            mergedOutput = <pre className={styles.objectNotation}>{JSON.stringify(property.value, null, 2)}</pre>;
+          } else {
+            //format normal arrays
+            mergedOutput = JSON.stringify(property.value, null, 2);
+          }
         } else {
-          mergedOutput = property.value;
+          if (typeof property.value === "object" && property.value !== null) {
+            //pretty print JSON if singular object
+            mergedOutput = <pre className={styles.objectNotation}>{JSON.stringify(property.value, null, 2)}</pre>;
+          } else {
+            //remove "" if empty value, show string values in quotes
+            mergedOutput = property.value === "" ? null : JSON.stringify(property.value, null, 2);
+          }
         }
         return <span key={key} aria-label={(property.value && property.value.length > 0) ? `${property.value}-cell1` : "empty-cell1"}>{mergedOutput}</span>;
       }
@@ -407,19 +423,33 @@ const CompareValuesModal: React.FC<Props> = (props) => {
             backgroundColor: "#85BF97",
             width: "25%",
             backgroundImage: `url(${backgroundImage})`,
+            verticalAlign: "top"
           };
         }
         return {
           backgroundColor: "",
           width: "25%",
+          verticalAlign: "top"
         };
       },
       formatter: (property, key) => {
         let mergedOutput;
         if (isArray(property.value) && property.value.length > 1) {
-          mergedOutput = JSON.stringify(property.value);
+          if (property.value.some(ele => { return (typeof ele === "object" && ele !== null); })) {
+            //pretty print JSON if array of objects
+            mergedOutput = <pre className={styles.objectNotation}>{JSON.stringify(property.value, null, 2)}</pre>;
+          } else {
+            //format normal arrays
+            mergedOutput = JSON.stringify(property.value, null, 2);
+          }
         } else {
-          mergedOutput = property.value;
+          if (typeof property.value === "object" && property.value !== null) {
+            //pretty print JSON if singular object
+            mergedOutput = <pre className={styles.objectNotation}>{JSON.stringify(property.value, null, 2)}</pre>;
+          } else {
+            //remove "" if empty value, show string values in quotes
+            mergedOutput = property.value === "" ? null : JSON.stringify(property.value, null, 2);
+          }
         }
         return <span key={key} aria-label={(property.value && property.value.length > 0) ? `${property.value}-cell2` : "empty-cell2"}>{mergedOutput}</span>;
       }
@@ -436,19 +466,33 @@ const CompareValuesModal: React.FC<Props> = (props) => {
             backgroundColor: "#85BF97",
             width: "calc(25% - 50px)",
             backgroundImage: `url(${backgroundImage})`,
+            verticalAlign: "top"
           };
         }
         return {
           backgroundColor: "",
           width: "calc(25% - 50px)",
+          verticalAlign: "top"
         };
       },
       formatter: (property, key) => {
         let mergedOutput;
         if (isArray(property.value) && property.value.length > 1) {
-          mergedOutput = JSON.stringify(property.value);
+          if (property.value.some(ele => { return (typeof ele === "object" && ele !== null); })) {
+            //pretty print JSON if array of objects
+            mergedOutput = <pre className={styles.objectNotation}>{JSON.stringify(property.value, null, 2)}</pre>;
+          } else {
+            //format normal arrays
+            mergedOutput = JSON.stringify(property.value, null, 2);
+          }
         } else {
-          mergedOutput = property.value;
+          if (typeof property.value === "object" && property.value !== null) {
+            //pretty print JSON if singular object
+            mergedOutput = <pre className={styles.objectNotation}>{JSON.stringify(property.value, null, 2)}</pre>;
+          } else {
+            //remove "" if empty value, show string values in quotes
+            mergedOutput = property.value === "" ? null : JSON.stringify(property.value, null, 2);
+          }
         }
         return <span key={key} aria-label={(property.value && property.value.length > 0) ? `${property.value}-cell2` : "empty-cell2"}>{mergedOutput}</span>;
       }
