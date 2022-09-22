@@ -30,8 +30,7 @@
         "email": {
           "datatype": "string"
         }
-      },
-      "primaryKey": "id"
+      }
     }
   }
 }
