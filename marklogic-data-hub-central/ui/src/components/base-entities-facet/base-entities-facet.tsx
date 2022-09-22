@@ -213,13 +213,13 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
                   </span>
                   <span className={styles.entityAmount} aria-label={`base-entities-${name}-filter`}>
                     <span className={styles.entityAmountFilter}>
-                      {isNotEmptyIndicatorData && entityIndicatorData.entities[name].filter !== 0 && showFilter(entityIndicatorData.entities[name].filter)}
+                      {isNotEmptyIndicatorData && entityIndicatorData?.entities && entityIndicatorData.entities[name]?.filter !== 0 && showFilter(entityIndicatorData?.entities[name]?.filter)}
                     </span>
-                    {isNotEmptyIndicatorData && entityIndicatorData.entities[name].amount}
+                    {isNotEmptyIndicatorData && entityIndicatorData?.entities && entityIndicatorData.entities[name]?.amount}
                   </span>
                   {isNotEmptyIndicatorData &&
                     <span className={styles.indicatorContainer} aria-label={`base-entities-${name}-amountbar`}>
-                      <HCFacetIndicator percentage={isNaN(entityIndicatorData.max) ? 0 : entityIndicatorData.entities[name].amount*100/entityIndicatorData.max} isActive={true} />
+                      <HCFacetIndicator percentage={isNaN(entityIndicatorData.max) ? 0 : entityIndicatorData?.entities && entityIndicatorData.entities[name]?.amount*100/entityIndicatorData?.max} isActive={true} />
                     </span>
                   }
                 </div></HCTooltip>
