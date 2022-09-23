@@ -237,10 +237,10 @@ const Run = (props) => {
 
   const runFlowSteps = async (flowName: string, steps: Step[], formData: any) => {
     setIsStepRunning(true);
-    let stepNumbers: string[] = [];
-    for (let step of steps) {
-      stepNumbers.push(step.stepNumber);
-    }
+    let stepNumbers: string[] = steps.map((step) => {
+      return step.stepNumber;
+    });
+
     getFlowRunning(flowName, stepNumbers);
     let response;
     try {

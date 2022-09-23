@@ -13,7 +13,7 @@ import {faArrowAltCircleLeft, faArrowAltCircleRight, faTrashAlt} from "@fortawes
 import {faBan, faCheckCircle, faClock, faInfoCircle, faStopCircle} from "@fortawesome/free-solid-svg-icons";
 import {getUserPreferences, updateUserPreferences} from "../../../src/services//user-preferences";
 import {AuthoritiesContext} from "@util/authorities";
-import {Flow} from "../../types/run-types";
+import {Flow, Step} from "../../types/run-types";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import NewFlowDialog from "./new-flow-dialog/new-flow-dialog";
 import axios from "axios";
@@ -191,7 +191,6 @@ const Flows: React.FC<Props> = ({
 
         }
       }
-      saveLocalStoragePreferences(true);
     }
   }, [flows]);
 
@@ -574,7 +573,6 @@ const Flows: React.FC<Props> = ({
   );
 
   const onCheckboxChange = (event, checkedValues?, stepNumber?, stepDefinitionType?, flowNames?, stepId?, sourceFormat?, fromCheckAll?) => {
-
     let checkAllAux;
     if (event !== "default" && fromCheckAll) {
       checkAllAux = checkAll[flowNames] ? false : true;
@@ -628,7 +626,7 @@ const Flows: React.FC<Props> = ({
       }
     } else {
 
-      let originRender = event !== "default" ? true : false;
+      let originRender = event !== "default";
       let data = {stepName: "", stepNumber: -1, stepDefinitionType: "", isChecked: false, flowName: "", stepId: "", sourceFormat: ""};
 
       data.stepName = checkedValues;
@@ -641,7 +639,7 @@ const Flows: React.FC<Props> = ({
 
 
 
-      let obj = selectedStepDetails;
+      let obj = [...selectedStepDetails];
       if (data.isChecked) {
         let checkDuplicateObject = selectedStepDetails?.find((obj) => obj.stepId === data.stepId && obj.flowName === data.flowName);
         const isLoadingStepAdded = selectedStepDetails.find((element) => element.flowName === data.flowName && element.stepDefinitionType.toLowerCase() === "ingestion");
@@ -920,28 +918,14 @@ const Flows: React.FC<Props> = ({
     );
   };
 
-  //Double check steps to run
-  const controlStepNumbers = (stepNumbers: any) => {
-    const findElement = (name: string, number: string) => {
-      let found = flows?.find(el => el?.name === name && el?.steps.find(a => a?.stepNumber === number));
-      return found;
-    };
-    for (let i = stepNumbers?.length - 1; i >= 0; i--) {
-      if (!findElement(runningFlow, stepNumbers[i]?.stepNumber)) {
-        stepNumbers.splice(i, 1);
-      }
-    }
-    return stepNumbers;
-  };
-
   const handleRunFlow = async (index, name) => {
     //setRunFlowClicked(true);
+    saveLocalStoragePreferences(false, true);
     const setKey = async () => {
       await setActiveKeys(`${index}`);
     };
     setRunningFlow(name);
     let flag = false;
-
     await selectedStepDetails.map(async step => {
       if (step.stepDefinitionType.toLowerCase() === "ingestion" && step.flowName === name && step.isChecked) {
         flag = true;
@@ -957,19 +941,19 @@ const Flows: React.FC<Props> = ({
       await openFilePicker();
     }
     if (!flag) {
-      let stepNumbers = [{}];
-      stepNumbers = selectedStepDetails.filter(function (obj) {
-        return obj.flowName === name && obj.isChecked === true;
+      let _selectedStepDetails= [...selectedStepDetails];
+      let _selectedSteps: Step[] = _selectedStepDetails.filter((step) => {
+        return (step.flowName === name && step.isChecked === true);
       });
 
-      await runFlowSteps(name, controlStepNumbers(stepNumbers))
+      await runFlowSteps(name, _selectedSteps)
         .then(() => {
           // setSelectedStepOptions({});
           // setSelectedStepDetails([{stepName: "", stepNumber: -1, stepDefinitionType: "", isChecked: false}]);
           // setArrayLoadChecksSteps([{flowName: "", stepNumber: -1}]);
         });
     }
-    saveLocalStoragePreferences(false, true);
+
   };
 
 
@@ -1189,11 +1173,11 @@ const Flows: React.FC<Props> = ({
       } else {
         let stepNumbers = [{}];
 
-        stepNumbers = selectedStepDetails.filter(function (obj) {
-          return obj.flowName === runningFlow && obj.isChecked === true;
+        stepNumbers = selectedStepDetails.filter(function (step) {
+          return step.flowName === runningFlow && step.isChecked === true;
         });
 
-        await runFlowSteps(runningFlow, controlStepNumbers(stepNumbers), formData)
+        await runFlowSteps(runningFlow, stepNumbers, formData)
           .then(resp => {
             setShowUploadError(true);
             setFileList([]);
@@ -1278,13 +1262,10 @@ const Flows: React.FC<Props> = ({
 
   const resetSelectedFlow = (flowName) => {
     let arrayObjectsStepDetails = [...selectedStepDetails];
-    const arrayObjectsStepDetailsAux = arrayObjectsStepDetails.reduce((acc, el) => {
-      if (el.flowName === flowName) {
-        return acc;
-      }
-      acc.push(el);
-      return acc;
-    }, []);
+    const arrayObjectsStepDetailsAux = arrayObjectsStepDetails.filter((step) => {
+      return step.flowName === flowName;
+    });
+    setSelectedStepDetails(arrayObjectsStepDetailsAux);
 
     let arrayObjectsLoadChecksSteps = [...arrayLoadChecksSteps];
     for (let i = 0; i < arrayObjectsLoadChecksSteps?.length; i++) {
@@ -1292,15 +1273,15 @@ const Flows: React.FC<Props> = ({
         arrayObjectsLoadChecksSteps.splice(i, 1);
       }
     }
+    setArrayLoadChecksSteps(arrayObjectsLoadChecksSteps);
 
     let arraySelectedStepOptions = {...selectedStepOptions};
     for (let key in arraySelectedStepOptions) if (key.startsWith(flowName + "-")) delete arraySelectedStepOptions[key];
-
-    setSelectedStepDetails(arrayObjectsStepDetailsAux);
-    setArrayLoadChecksSteps(arrayObjectsLoadChecksSteps);
     setSelectedStepOptions(arraySelectedStepOptions);
-  };
 
+
+
+  };
   const reorderFlow = (id, flowName, direction: ReorderFlowOrderDirection) => {
     let flowNum = flows.findIndex((flow) => flow.name === flowName);
     let flowDesc = flows[flowNum]["description"];
@@ -1325,19 +1306,19 @@ const Flows: React.FC<Props> = ({
       }
     }
 
-    let steps: string[] = [];
+    let _steps: string[] = [];
     for (let i = 0; i < newSteps.length; i++) {
       newSteps[i].stepNumber = String(i + 1);
-      steps.push(newSteps[i].stepId);
+      _steps.push(newSteps[i].stepId);
     }
 
     resetSelectedFlow(flowName);
-
     saveLocalStoragePreferences(true, true);
+
 
     const reorderedList = [...newSteps];
     onReorderFlow(flowNum, reorderedList);
-    updateFlow(flowName, flowDesc, steps);
+    updateFlow(flowName, flowDesc, _steps);
 
   };
 

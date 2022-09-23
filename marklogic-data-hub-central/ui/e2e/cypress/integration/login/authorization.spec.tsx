@@ -195,7 +195,8 @@ describe("login", () => {
     loadPage.addToNewFlow(stepName).click({force: true});
     runPage.newFlowModal().should("not.exist");
     cy.findByLabelText("Ok").click();
-    toolbar.getLoadToolbarIcon().click();
+    cy.wait(500);
+    toolbar.getLoadToolbarIcon().click({force: true});
 
     cy.log("**Edits step description**");
     loadPage.stepName(stepName).click();
@@ -211,7 +212,8 @@ describe("login", () => {
     loadPage.runInNewFlow(stepName).click();
     cy.findByLabelText("Ok").click();
     runPage.newFlowModal().should("not.exist");
-    toolbar.getLoadToolbarIcon().click();
+    cy.wait(500);
+    toolbar.getLoadToolbarIcon().click({force: true});
 
     cy.log("**Clicks on Delete button and deletes the step**");
     loadPage.deleteStep(stepName).should("exist").click();
@@ -303,6 +305,13 @@ describe("login", () => {
     runPage.editSave().should("be.disabled");
     runPage.editCancel().click();
 
+    runPage.openStepsSelectDropdown("personJSON");
+
+    cy.log("**Change selected steps**");
+    runPage.clickStepInsidePopover("#loadPersonJSON");
+    runPage.clickStepInsidePopover("#mapPersonJSON");
+    runPage.clickStepInsidePopover("#mapPersonJSON");
+
     cy.log("**This user can run the flow**");
     runPage.getRunFlowButton(flowName).should("be.enabled");
 
@@ -331,6 +340,14 @@ describe("login", () => {
     });
 
     toolbar.getRunToolbarIcon().click();
+
+    runPage.openStepsSelectDropdown("personJSON");
+
+    cy.log("**Change selected steps**");
+    runPage.clickStepInsidePopover("#loadPersonJSON");
+    runPage.clickStepInsidePopover("#mapPersonJSON");
+    runPage.clickStepInsidePopover("#mapPersonJSON");
+
     runPage.createFlowButton().should("be.enabled");
     cy.findByText(flowName).should("be.visible");
     runPage.deleteFlow(flowName).should("exist");
