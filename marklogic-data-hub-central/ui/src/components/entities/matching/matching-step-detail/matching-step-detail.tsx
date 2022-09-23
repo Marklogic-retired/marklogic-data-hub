@@ -774,6 +774,12 @@ const MatchingStepDetail: React.FC = () => {
     </DropdownButton>
   );
 
+  const testButton = (
+    <div className={styles.testButton}>
+      <HCButton variant="primary" type="submit" onClick={handleTestButtonClick} aria-label="testMatchUriButton" loading={loading} disabled={thresholdItems.length === 0}>Test</HCButton>
+    </div>
+  );
+
 
   return (
     <>
@@ -854,7 +860,8 @@ const MatchingStepDetail: React.FC = () => {
                 <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.scaleTooltip} data-testid={"info-tooltip-threshold"} />
               </HCTooltip>
               <br />
-            </span></div>
+            </span>
+          </div>
           {displayThresholdTimeline ? renderThresholdTimeline() : renderDefaultThresholdTimeline()}
         </div>
 
@@ -1025,9 +1032,13 @@ const MatchingStepDetail: React.FC = () => {
               Select All Data in your source query in order to preview matching activity against all URIs up to 100 displayed pair matches. It is best practice to test with a smaller-sized source query.
             </div>
           </label>
-          <div className={styles.testButton}>
-            <HCButton variant="primary" type="submit" onClick={handleTestButtonClick} aria-label="testMatchUriButton" loading={loading}>Test</HCButton>
-          </div>
+          {thresholdItems.length === 0 ?
+            <HCTooltip text={MatchingStepTooltips.testDisabled} id="threshold-scale-tooltip" placement="right">
+              {testButton}
+            </HCTooltip>
+            :
+            testButton
+          }
         </div>
         <div className={styles.matchedTab}>
           { uriTestMatchClicked ?
@@ -1040,12 +1051,12 @@ const MatchingStepDetail: React.FC = () => {
                     <span> Changing your match configuration. Preview matches in the Possible Combinations box</span>
                   </div>
                 </div>}
-                {previewMatchedActivity.actionPreview.length > 0 && testMatchTab === "matched" ?
+                {previewMatchedActivity?.actionPreview && testMatchTab === "matched" ?
                   <div className={styles.UriMatchedDataTable}>
                     <div className={styles.modalTitleLegend} aria-label="modalTitleLegend">
                       <div className={styles.expandCollapseIcon}><ExpandCollapse handleSelection={(id) => handleExpandCollapse(id)} currentSelection={"collapse"} aria-label="expandCollapseIcon" /></div>
                     </div>
-                    {rulesetDataList.map((rulesetDataList, index) => (
+                    {rulesetDataList.length > 0 && rulesetDataList.map((rulesetDataList, index) => (
                       <Accordion id="testMatchedPanel" className={"w-100"} flush key={index} activeKey={activeMatchedRuleset.includes(rulesetDataList.rulesetName) ? rulesetDataList.rulesetName : ""} defaultActiveKey={activeMatchedRuleset.includes(rulesetDataList.rulesetName) ? rulesetDataList.rulesetName : ""}>
                         <Accordion.Item eventKey={rulesetDataList.rulesetName} style={{paddingBottom: index === Object.keys(rulesetDataList).length - 1 ? 20 : 0}}>
                           <Card>
@@ -1059,7 +1070,7 @@ const MatchingStepDetail: React.FC = () => {
                               </Accordion.Button>
                             </div>
                             <Accordion.Body className={"pt-1"}>
-                              {rulesetDataList.actionPreviewData.map((actionPreviewData, idx) => {
+                              {rulesetDataList?.actionPreviewData?.map((actionPreviewData, idx) => {
                                 const itemKey = actionPreviewData.name.concat(" - ") + actionPreviewData.action.concat("/") + idx;
                                 return (
                                   <Accordion id="testMatchedUriDataPanel" className={"w-100"} flush key={idx} activeKey={activeMatchedUri.includes(itemKey) ? itemKey : ""} defaultActiveKey={activeMatchedUri.includes(itemKey) ? itemKey : ""}>
@@ -1075,9 +1086,13 @@ const MatchingStepDetail: React.FC = () => {
                                           <HCButton size="sm" variant="primary" onClick={() => { handleCompareButton([actionPreviewData.uris[0], actionPreviewData.uris[1]]); }} aria-label={actionPreviewData.uris[0].substr(0, 41) + " compareButton"}>Compare</HCButton>
                                         </div>
                                       </div>
-                                      <Accordion.Body>
-                                        <span aria-label="expandedTableView"><ExpandableTableView rowData={actionPreviewData} allRuleset={curationOptions.activeStep.stepArtifact.matchRulesets} entityData={curationOptions.activeStep} /></span>
-                                      </Accordion.Body>
+                                      {curationOptions.activeStep?.stepArtifact?.matchRulesets &&
+                                        <Accordion.Body>
+                                          <span aria-label="expandedTableView">
+                                            <ExpandableTableView rowData={actionPreviewData} allRuleset={curationOptions.activeStep?.stepArtifact?.matchRulesets} entityData={curationOptions.activeStep} />
+                                          </span>
+                                        </Accordion.Body>
+                                      }
                                     </Accordion.Item>
                                   </Accordion>);
                               })}
@@ -1101,7 +1116,7 @@ const MatchingStepDetail: React.FC = () => {
                     <div className={styles.modalTitleLegend} aria-label="modalTitleLegend">
                       <div className={styles.expandCollapseIcon}><ExpandCollapse handleSelection={(id) => handleExpandCollapse(id)} currentSelection={"collapse"} aria-label="expandCollapseIcon" /></div>
                     </div>
-                    {rulesetNonMatchedDataList.map((rulesetDataList, index) => (
+                    {rulesetNonMatchedDataList?.map((rulesetDataList, index) => (
                       <Accordion id="testNotMatchedPanel" className={"w-100"} flush key={index} activeKey={activeMatchedRuleset.includes(rulesetDataList.rulesetName) ? rulesetDataList.rulesetName : ""} defaultActiveKey={activeMatchedRuleset.includes(rulesetDataList.rulesetName) ? rulesetDataList.rulesetName : ""}>
                         <Accordion.Item eventKey={rulesetDataList.rulesetName} style={{paddingBottom: index === Object.keys(rulesetDataList).length - 1 ? 20 : 0}}>
                           <Card>
@@ -1114,7 +1129,7 @@ const MatchingStepDetail: React.FC = () => {
                               </Accordion.Button>
                             </div>
                             <Accordion.Body className={"pt-1"}>
-                              {rulesetDataList.actionPreviewData.map((actionPreviewData, idx) => {
+                              {rulesetDataList?.actionPreviewData?.map((actionPreviewData, idx) => {
                                 const itemKey = actionPreviewData.name.concat(" - ") + actionPreviewData.action.concat("/") + idx;
                                 return (
                                   <Accordion id="testMatchedUriDataPanel" className={"w-100"} flush key={idx} activeKey={activeMatchedUri.includes(itemKey) ? itemKey : ""} defaultActiveKey={activeMatchedUri.includes(itemKey) ? itemKey : ""}>
@@ -1130,9 +1145,13 @@ const MatchingStepDetail: React.FC = () => {
                                           <HCButton size="sm" variant="primary" onClick={() => { handleCompareButton([actionPreviewData.uris[0], actionPreviewData.uris[1]]); }} aria-label={actionPreviewData.uris[0].substr(0, 41) + " compareButton"}>Compare</HCButton>
                                         </div>
                                       </div>
-                                      <Accordion.Body>
-                                        <span aria-label="expandedTableView"><ExpandableTableView rowData={actionPreviewData} allRuleset={curationOptions.activeStep.stepArtifact.matchRulesets} entityData={curationOptions.activeStep} /></span>
-                                      </Accordion.Body>
+                                      {curationOptions.activeStep?.stepArtifact?.matchRulesets &&
+                                        <Accordion.Body>
+                                          <span aria-label="expandedTableView">
+                                            <ExpandableTableView rowData={actionPreviewData} allRuleset={curationOptions.activeStep?.stepArtifact?.matchRulesets} entityData={curationOptions.activeStep} />
+                                          </span>
+                                        </Accordion.Body>
+                                      }
                                     </Accordion.Item>
                                   </Accordion>);
                               })}

@@ -58,12 +58,14 @@ describe("Matching Step Detail view component", () => {
     expect(getByLabelText("UriInput")).toBeInTheDocument();
     expect(getByLabelText("addUriIcon")).toBeInTheDocument();
     expect(getByText("Test")).toBeInTheDocument();
+    expect(getByText("Test")).toBeDisabled();
 
     userEvent.click(getByLabelText("allDataRadio"));
     expect(getByLabelText("allDataContent")).toBeInTheDocument();
     expect(getAllByPlaceholderText("Enter URI or Paste URIs")[0]).toBeDisabled();
     expect(getAllByPlaceholderText("Enter URI or Paste URIs")[1]).toBeDisabled();
     // expect(getByLabelText("testMatchTab")).toBeInTheDocument();
+
   });
 
   it("can render matching step with rulesets and thresholds and click add single ruleset", async() => {
@@ -103,6 +105,7 @@ describe("Matching Step Detail view component", () => {
     expect(getAllByPlaceholderText("Enter URI or Paste URIs")[0]).toBeDisabled();
     expect(getByLabelText("UriInput")).toBeInTheDocument();
     expect(getByText("Test")).toBeInTheDocument();
+    expect(getByText("Test")).toBeEnabled();
 
     userEvent.click(getByLabelText("allDataRadio"));
     expect(getByLabelText("allDataContent")).toBeInTheDocument();
