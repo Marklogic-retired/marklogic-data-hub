@@ -71,7 +71,15 @@ describe("Run Tile tests", () => {
     runPage.openStepsSelectDropdown(flowName);
 
     cy.log("**Unclick All Steps**");
-    cy.get("#checkAll").click();
+    // cy.get("#checkAll").click();
+
+    //manually uncheck all instead of hitting checkall
+    cy.get("#generate-dictionary").click();
+    cy.get("#loadPersonXML").click();
+    cy.get("#mapPersonXML").click();
+    cy.get("#master-person").click();
+    cy.get("#match-xml-person").click();
+    cy.get("#merge-xml-person").click();
     cy.get("#errorMessageEmptySteps").contains("Select at least one step to run a flow.");
 
     cy.log("**Click Necessary Steps and Run**");
@@ -209,6 +217,13 @@ describe("Run Tile tests", () => {
     runPage.clickStepInsidePopover("#loadPersonXML");
     runPage.clickStepInsidePopover("#mapPersonXML");
     runPage.clickStepInsidePopover("#match-xml-person");
+    runPage.clickStepInsidePopover("#generate-dictionary");
+    runPage.clickStepInsidePopover("#master-person");
+    runPage.clickStepInsidePopover("#merge-xml-person");
+
+    runPage.clickStepInsidePopover("#mapPersonXML");
+    runPage.clickStepInsidePopover("#match-xml-person");
+    runPage.clickStepInsidePopover("#master-person");
 
     cy.log("**Run Flow with selected steps**");
     cy.intercept("GET", "/api/jobs/**").as("runResponse");
@@ -218,12 +233,13 @@ describe("Run Tile tests", () => {
     cy.waitForAsyncRequest();
 
     cy.log("**Checking the modal**");
-    runPage.verifyStepRunResult("loadPersonXML", "failure");
-    runPage.getStepFailureSummary("loadPersonXML").should("be.visible");
+    runPage.getStepFailureSummary("loadPersonXML").should("not.exist");
+    runPage.getStepFailureSummary("ingest-orders").should("not.exist");
+
+    runPage.verifyStepRunResult("mapPersonXML", "success");
+    runPage.verifyStepRunResult("match-xml-person", "success");
     runPage.verifyStepRunResult("master-person", "failure");
     runPage.getStepFailureSummary("master-person").should("be.visible");
-    runPage.verifyStepRunResult("ingest-orders", "failure");
-    runPage.getStepFailureSummary("ingest-orders").should("be.visible");
     runPage.closeFlowStatusModal(flowName);
 
     cy.log("**Change page and return to check the same steps previously selected**");
@@ -231,8 +247,8 @@ describe("Run Tile tests", () => {
     toolbar.getRunToolbarIcon().click({force: true});
     runPage.openStepsSelectDropdown("testPersonXML");
     runPage.controlUncheckedStep("#loadPersonXML");
-    runPage.controlUncheckedStep("#mapPersonXML");
-    runPage.controlUncheckedStep("#match-xml-person");
+    runPage.controlUncheckedStep("#ingest-orders");
+    runPage.controlUncheckedStep("#merge-xml-person");
     runPage.openStepsSelectDropdown("testPersonXML");
 
     cy.log("**Reload page and check the same steps previously selected**");
@@ -242,8 +258,8 @@ describe("Run Tile tests", () => {
     cy.wait(3000);
     runPage.openStepsSelectDropdown("testPersonXML");
     runPage.controlUncheckedStep("#loadPersonXML");
-    runPage.controlUncheckedStep("#mapPersonXML");
-    runPage.controlUncheckedStep("#match-xml-person");
+    runPage.controlUncheckedStep("#ingest-orders");
+    runPage.controlUncheckedStep("#merge-xml-person");
   });
 
   it("Login with other user and check other step options are checked in a flow", () => {

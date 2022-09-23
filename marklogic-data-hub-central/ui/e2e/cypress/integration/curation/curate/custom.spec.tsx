@@ -70,7 +70,6 @@ describe("Custom step settings: ", () => {
   it("Verify Additional Settings saves correctly", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
-    curatePage.toggleEntityTypeId("Customer");
     curatePage.selectCustomTab("Customer");
 
     // enter custom props
@@ -79,9 +78,20 @@ describe("Custom step settings: ", () => {
     advancedSettings.additionalSettingsInput().clear().type(`{{}"prop":"value", "foo":"bar"{}}`, {timeout: 2000});
     advancedSettings.saveSettingsButton(stepName).click();
 
+    cy.findByTestId("Customer").then(($ele) => {
+      if ($ele.hasClass("collapsed")) {
+        curatePage.toggleEntityTypeId("Customer");
+      }
+    });
+
     cy.waitForAsyncRequest();
     curatePage.verifyStepNameIsVisible(stepName);
 
+    cy.findByTestId("Customer").then(($ele) => {
+      if ($ele.hasClass("collapsed")) {
+        curatePage.toggleEntityTypeId("Customer");
+      }
+    });
     curatePage.editStep(stepName).click();
     curatePage.switchEditAdvanced().click();
     advancedSettings.additionalSettingsInput().should("contain.value", `"prop": "value"`);
@@ -91,8 +101,20 @@ describe("Custom step settings: ", () => {
     advancedSettings.additionalSettingsInput().clear().type(`{{}"prop":"value"{}}`, {timeout: 2000});
     advancedSettings.saveSettingsButton(stepName).click();
     cy.waitForAsyncRequest();
+
+    cy.findByTestId("Customer").then(($ele) => {
+      if ($ele.hasClass("collapsed")) {
+        curatePage.toggleEntityTypeId("Customer");
+      }
+    });
+
     curatePage.verifyStepNameIsVisible(stepName);
 
+    cy.findByTestId("Customer").then(($ele) => {
+      if ($ele.hasClass("collapsed")) {
+        curatePage.toggleEntityTypeId("Customer");
+      }
+    });
     curatePage.editStep(stepName).click();
     curatePage.switchEditAdvanced().click();
     advancedSettings.additionalSettingsInput().should("contain.value", `"prop": "value"`);

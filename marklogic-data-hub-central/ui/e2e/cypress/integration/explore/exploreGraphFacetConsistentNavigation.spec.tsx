@@ -46,8 +46,9 @@ describe("Test navigation with facets from graph side panel to details twice", (
     graphExploreSidePanel.getSidePanel().should("be.visible");
 
     cy.log("**Go to details page and back twice to check navigation**");
+    cy.wait(1500);
     Cypress._.times(2, () => {
-      graphExploreSidePanel.getInstanceViewIcon().scrollIntoView().click();
+      graphExploreSidePanel.getInstanceViewIcon().scrollIntoView().click({force: true});
       detailPage.getDocumentID().should("be.visible");
       detailPage.clickBackButton();
       cy.intercept("/api/entitySearch/**").as("entitySearch");

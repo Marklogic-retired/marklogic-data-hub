@@ -5,7 +5,6 @@ import {createEditMappingDialog, mappingStepDetail} from "../../../support/compo
 import curatePage from "../../../support/pages/curate";
 import "cypress-wait-until";
 import {generateUniqueName} from "../../../support/helper";
-import runPage from "../../../support/pages/run";
 import loginPage from "../../../support/pages/login";
 
 describe("Mapping", () => {
@@ -85,12 +84,6 @@ describe("Mapping", () => {
     curatePage.addToNewFlowDisabled(entityTypeId, mapStepName);
     curatePage.getExistingFlowDropdown(mapStepName).trigger("mouseover");
     cy.get(`#${mapStepName}-flowsList`).should("be.disabled");
-    curatePage.runStepInCardView(mapStepName).should("be.visible").click({force: true});
-    curatePage.runStepSelectFlowConfirmation().should("be.visible");
-    curatePage.runInNewFlow(mapStepName).click();
-    cy.findByLabelText("Ok").click();
-    runPage.newFlowModal().should("not.exist");
-    toolbar.getCurateToolbarIcon().should("be.visible").click({force: true});
 
     cy.log("**deletes the step**");
     curatePage.getEntityMappingStep(entityTypeId, mapStepName).should("be.visible");
