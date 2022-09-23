@@ -365,7 +365,8 @@ const MatchingStepTooltips = {
   testAllData: 'Tests the configuration on all the URIs in your source query with each other',
   reduceToggle: 'The Reduce match type reduces the weight of a match and makes the weight negative for the entire ruleset. Use the Reduce match type when a combination of matching properties suggests a match when there should be none. When toggled on, no other match type may be selected.',
   thresholdScale: 'Enable the scale to position, edit or delete thresholds.',
-  rulesetScale: 'Enable the scale to position, edit or delete rulesets.'
+  rulesetScale: 'Enable the scale to position, edit or delete rulesets.',
+  testDisabled: 'A threshold configuration above is required before testing.',
 };
 
 const MatchingStepPlaceholders = {
