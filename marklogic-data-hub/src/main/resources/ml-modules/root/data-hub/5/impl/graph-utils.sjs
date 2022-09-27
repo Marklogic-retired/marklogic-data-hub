@@ -53,10 +53,14 @@ function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predic
                         }`).where(ctsQueryCustom);
   const conceptClass = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                 SELECT (?subjectIRI AS ?conceptClassName) (?predicateIRI AS ?entityID) ?objectIRI ?docURI  WHERE {
+                 SELECT (?subjectIRI AS ?conceptClassName) (?predicateIRI AS ?entityID) (MIN(?anyConceptLabel) AS ?conceptLabel) ?objectIRI ?docURI  WHERE {
                         ?predicateIRI rdf:type @entityTypeIRIs.
                         ?subjectIRI ?predicateIRI ?objectIRI.
-                 }`);
+                        OPTIONAL {
+                          ?subjectIRI @labelIRI ?anyConceptLabel.
+                        }
+                 }
+                 GROUP BY ?conceptClassName ?entityID ?objectIRI ?docURI`);
   let joinOnConceptClass = op.on(op.col("subjectIRI"),op.col("entityID"));
   subjectPlanConcept = subjectPlanConcept.joinLeftOuter(conceptClass, joinOnConceptClass);
 
@@ -85,7 +89,7 @@ function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predic
   const firstLevelConnectionsPlan = op.fromSPARQL(`
       PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
       PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-      SELECT ?subjectIRI ?predicateIRI ?predicateLabel (MIN(?objectIRI) AS ?firstObjectIRI) (MIN(?docURI) AS ?firstDocURI) (COUNT(DISTINCT(?objectIRI)) AS ?nodeCount) WHERE {
+      SELECT ?subjectIRI ?predicateIRI (MIN(?anyPredicateLabel) AS ?predicateLabel) (MIN(?objectIRI) AS ?firstObjectIRI) (MIN(?docURI) AS ?firstDocURI) (COUNT(DISTINCT(?objectIRI)) AS ?nodeCount) WHERE {
           {
               ?subjectIRI ?predicateIRI ?objectIRI.
           } UNION {
@@ -94,10 +98,10 @@ function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predic
           ?objectIRI rdf:type @entityTypeOrConceptIRI;
               rdfs:isDefinedBy ?docURI.
           OPTIONAL {
-            ?predicateIRI @labelIRI ?predicateLabel.
+            ?predicateIRI @labelIRI ?anyPredicateLabel.
           }
       }
-      GROUP BY ?subjectIRI ?predicateIRI ?predicateLabel
+      GROUP BY ?subjectIRI ?predicateIRI
   `);
   let joinOn = op.on(op.col("subjectIRI"),op.col("subjectIRI"));
   let joinOnObjectIri = op.on(op.col("objectIRI"),op.col("objectIRI"));

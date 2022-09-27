@@ -83,4 +83,16 @@ assertions.concat([
   test.assertTrue(resultConceptExpand.nodes.some(node => "ProductName60" === fn.string(node.label)))
 ]);
 
+const expandQuery4 = {
+  "parentIRI": "/content/product60.json",
+};
+const resultsTest4 = nodeExpand(expandQuery4);
+
+assertions.concat([
+  test.assertEqual(2, resultsTest4.total, xdmp.toJsonString(resultsTest4)),
+  test.assertEqual(2, resultsTest4.nodes.length, xdmp.toJsonString(resultsTest4)),
+  test.assertEqual(2, resultsTest4.edges.length, xdmp.toJsonString(resultsTest4)),
+  test.assertTrue(resultsTest4.nodes.some(node => node.isConcept), xdmp.toJsonString(resultsTest4))
+]);
+
 assertions;
