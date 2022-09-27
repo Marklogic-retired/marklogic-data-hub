@@ -53,12 +53,10 @@ const Run = (props) => {
   };
 
   useEffect(() => {
-    getFlows();
-    getSteps();
-    return (() => {
-      setFlows([]);
-      setSteps([]);
-    });
+    if (!isLoading) {
+      getFlows();
+      getSteps();
+    }
   }, [isLoading]);
 
   const getFlows = async () => {
@@ -178,13 +176,6 @@ const Run = (props) => {
       setIsLoading(false);
       handleError(error);
     }
-  };
-
-  const onReorderFlow = (flowIndex: number, newSteps: Array<any>) => {
-    const newFlow = {...flows[flowIndex], steps: newSteps};
-    const newFlows = [...flows];
-    newFlows[flowIndex] = newFlow;
-    setFlows(newFlows);
   };
 
   function showStepRunResponse(jobId) {
@@ -371,7 +362,7 @@ const Run = (props) => {
       <div className={styles.runContainer}>
         {
           canAccessRun ?
-            [
+            <>
               <div className={styles.intro} key={"run-intro"}>
                 <p>{tiles.run.intro}</p>
                 {/* ---------------------------------------------------------------------------------------- */}
@@ -380,7 +371,7 @@ const Run = (props) => {
                   <div className={styles.runningLabel}>Running...</div>
                 </div> */}
                 {/* ---------------------------------------------------------------------------------------- */}
-              </div>,
+              </div>
               <Flows
                 key={"run-flows-list"}
                 flows={flows}
@@ -401,12 +392,12 @@ const Run = (props) => {
                 addStepToFlow={addStepToFlow}
                 flowsDefaultActiveKey={flowsDefaultActiveKey}
                 runEnded={runEnded}
-                onReorderFlow={onReorderFlow}
                 setJobId={setJobId}
                 setOpenJobResponse={setOpenJobResponse}
                 isStepRunning={isStepRunning}
                 canUserStopFlow={userCanStopFlow}
-              />]
+              />
+            </>
             :
             <p>{MissingPagePermission}</p>
         }

@@ -62,7 +62,7 @@ describe("Run Tile tests", () => {
     runPage.verifyStepInFlow("Custom", "generate-dictionary", flowName);
     //confirm the first load step is no longer visible because panel scrolled to the end
     cy.get("#testPersonXML").within(() => {
-      cy.findByText("loadPersonXML").should("not.be.visible");
+      cy.get("#testPersonXML-loadPersonXML-card").should("not.be.visible");
     });
   });
 
@@ -111,7 +111,7 @@ describe("Run Tile tests", () => {
     runPage.verifyStepInFlow("Mapping", "map-orders", flowName, true);
     //confirm the first load step is no longer visible because panel scrolled to the end
     cy.get("#testPersonXML").within(() => {
-      cy.findByText("loadPersonXML").should("not.be.visible");
+      cy.get("#testPersonXML-loadPersonXML-card").should("not.be.visible");
     });
 
     cy.log("**Run flow**");
@@ -201,7 +201,7 @@ describe("Run Tile tests", () => {
     cy.contains("123 Wilson Rd").should("be.visible");
   });
 
-  it("Execute certain steps in a flow and control that it is being saved to local storage for a user ", {defaultCommandTimeout: 120000}, () => {
+  it.skip("Execute certain steps in a flow and control that it is being saved to local storage for a user ", {defaultCommandTimeout: 120000}, () => {
     cy.logout();
     cy.loginAsTestUserWithRoles("hub-central-flow-writer").withRequest();
 

@@ -237,7 +237,7 @@ describe("Tiles View component tests for Developer user", () => {
     fireEvent.click(getByText("Cancel"));
     // test run
     fireEvent.click(document.querySelector(".accordion-button"));
-    expect(getByTestId("runStep-1")).toBeInTheDocument();
+    expect(getByTestId("runStep-failedIngest")).toBeInTheDocument();
   });
 
   // TODO DHFPROD-7711 skipping failing tests to enable component replacement
@@ -302,12 +302,12 @@ describe("Tiles View component tests for Developer user", () => {
     await wait(() => expect(getByLabelText("icon-run")).toBeInTheDocument());
     // test run
     fireEvent.click(document.querySelector(".accordion-button"));
-    expect(getByTestId("runStep-1")).toBeInTheDocument();
-    expect(getByTestId("runStep-2")).toBeInTheDocument();
-    expect(getByTestId("runStep-3")).toBeInTheDocument();
-    expect(getByTestId("runStep-4")).toBeInTheDocument();
-    expect(getByTestId("runStep-5")).toBeInTheDocument();
-    expect(getByTestId("runStep-6")).toBeInTheDocument();
+    expect(getByTestId("runStep-failedIngest")).toBeInTheDocument();
+    expect(getByTestId("runStep-Mapping1")).toBeInTheDocument();
+    expect(getByTestId("runStep-custom1")).toBeInTheDocument();
+    expect(getByTestId("runStep-match-customer")).toBeInTheDocument();
+    expect(getByTestId("runStep-merge-customer")).toBeInTheDocument();
+    expect(getByTestId("runStep-master-customer")).toBeInTheDocument();
   });
 
   test("Verify Run tile does not load from toolbar without readFlow authority", async () => {

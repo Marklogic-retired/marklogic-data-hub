@@ -173,8 +173,8 @@ describe("Validate persistence across Hub Central", () => {
     propertyTable.getProperty("shipping-city").scrollIntoView();
 
   });
-
-  it("Go to run tile, expand flows and then visit another tile. When returning to the rrun tile, the expanded flows are persisted.", () => {
+  /* Skipping until the Run flow persistance functionality is restored on DHFPROD-9456 */
+  it.skip("Go to run tile, expand flows and then visit another tile. When returning to the rrun tile, the expanded flows are persisted.", () => {
     // "Switch to run view, expand flows, and then visit another tile. When returning to run tile, the expanded flows are persisted."
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     cy.get("body")

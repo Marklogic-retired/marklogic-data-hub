@@ -1,4 +1,6 @@
 import commonData from "./common.data";
+import {Flow} from "../../../types/run-types";
+
 const response = {"data": {"jobId": "350da405-c1e9-4fa7-8269-d9aefe3b4b9a"}, "status": 200};
 
 let stepFailedWithError = [
@@ -490,7 +492,7 @@ const entityTypes = [
   }
 ];
 
-const flows = {
+const flows: {data: Flow[], status: number} = {
   "data": [{
     "name": "testFlow",
     "description": "",
@@ -542,6 +544,40 @@ const flows = {
         "stepName": "Ingestion1",
         "stepDefinitionType": "ingestion",
         "stepNumber": "7",
+        "targetEntityType": "http://example.org/Customer-0.0.1/Customer"
+      },
+    ]
+  },
+  {
+    "name": "testFlow2",
+    "description": "",
+    "steps": [
+      {
+        "stepId": "Mapping3-mapping",
+        "stepName": "Mapping3",
+        "stepDefinitionType": "mapping",
+        "stepNumber": "1",
+        "targetFormat": "json",
+        "targetEntityType": "http://example.org/Customer-0.0.1/Customer"
+      },
+      {
+        "stepId": "custom2-custom",
+        "stepName": "custom2",
+        "stepDefinitionType": "custom",
+        "stepNumber": "2",
+      },
+      {
+        "stepNumber": "4",
+        "stepId": "match-person-matching",
+        "stepName": "match-person",
+        "stepDefinitionType": "matching",
+        "targetEntityType": "http://example.org/Customer-0.0.1/Customer"
+      },
+      {
+        "stepNumber": "5",
+        "stepId": "merge-person-merging",
+        "stepName": "merge-person",
+        "stepDefinitionType": "merging",
         "targetEntityType": "http://example.org/Customer-0.0.1/Customer"
       },
     ]

@@ -29,7 +29,6 @@ type Props = {
 }
 const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStopFlow, stopRun, setIsStepRunning, runningFlow}) => {
   const [jobResponse, setJobResponse] = useState<any>({});
-  //const [lastSuccessfulStep, setLastSuccessfulStep] = useState<any>(null);
   const [timeoutId, setTimeoutId] = useState<any>();
   const {handleError} = useContext(UserContext);
   const {setLatestDatabase, setLatestJobFacet} = useContext(SearchContext);
@@ -50,11 +49,6 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStop
         setJobResponse(response.data);
         const _canStopFlow = canStopFlow(response.data);
         setUserCanStopFlow && setUserCanStopFlow(_canStopFlow);
-        /*  const successfulSteps = response.data.stepResponses ? Object.values(response.data.stepResponses).filter((stepResponse: any) => {
-          return stepResponse.success;
-         }) : []; */
-        //const successfulStep = successfulSteps[successfulSteps.length - 1];
-        //setLastSuccessfulStep(successfulStep);
         if (isFlowRunning(response.data)) {
           const duration = durationFromDateTime(response.data.timeStarted);
           setJobResponse(Object.assign({}, response.data, {duration}));
@@ -113,7 +107,7 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStop
 
   const fetchNotifications = async () => {
     await getNotifications()
-      .then((resp) => {
+      .then((resp: any) => {
         if (resp && resp.data) {
           setNotificationsObj(resp.data.notifications, resp.data.total, resp.data.pageLength, true);
         } else {
@@ -228,7 +222,7 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStop
     {
       text: "Action",
       key: "action",
-      dataField: "successfulEvents",
+      dataField: "",
       headerFormatter: (column) =>
         <span className={styles.actionHeader}>
           <strong>Action</strong>
@@ -238,8 +232,8 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStop
             </i>
           </HCTooltip>
         </span>,
-      formatter: (successfulEvents, response) => {
-        const {targetEntityType, targetDatabase, stepDefinitionType, stepName, stepEndTime} = response;
+      formatter: (_, response) => {
+        const {targetEntityType, targetDatabase, stepDefinitionType, stepName, stepEndTime, successfulEvents} = response;
         const stepIsFinished = stepEndTime && stepEndTime !== "N/A";
         const isButtonDisabled = stepDefinitionType === "matching" || stepDefinitionType === "custom" || successfulEvents === 0 || isStepCanceled(response);
         if (stepIsFinished) {
