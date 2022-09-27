@@ -74,8 +74,13 @@ public class FixCreatedByStepTest extends AbstractHubCoreTest {
         // Can crank this up for manual performance tests
         long start = System.currentTimeMillis();
         for (int i = 1; i <= 100; i++) {
-            project.createRawCustomer(i, "Customer " + i);
+            try {
+                project.createRawCustomer(i, "Customer " + i);
+            } catch (Error e) {
+                logger.error("Error creating Raw Customer " + i + ": " + e.getMessage());
+            }
             customerUris.add("/echo/customer" + i + ".json");
+
         }
         logger.info("Insert time: " + (System.currentTimeMillis() - start));
 
