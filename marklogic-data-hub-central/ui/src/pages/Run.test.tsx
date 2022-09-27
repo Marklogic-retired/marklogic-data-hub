@@ -312,13 +312,11 @@ describe("Verify Run CRUD operations", () => {
     // Create new flow
     expect(axiosMock.post).toHaveBeenNthCalledWith(1, "/api/flows", newFlowValues);
     const newStepValues = {stepDefinitionType: data.newStepToFlowOptions.stepDefinitionType, stepName: data.newStepToFlowOptions.newStepName};
-    // Add step to new flow
+    // Add step to new flow and Run step
     await wait(() => {
       expect(axiosMock.post).toHaveBeenNthCalledWith(2, `/api/flows/${newFlowValues.name}/steps`, newStepValues);
-    });
-    // Run step
-    await wait(() => {
-      expect(axiosMock.post).toHaveBeenNthCalledWith(3, `/api/flows/${newFlowValues.name}/steps/2`);
+    }).then(() => {
+      () => expect(axiosMock.post).toHaveBeenNthCalledWith(3, `/api/flows/${newFlowValues.name}/steps/2`);
     });
   });
 
@@ -372,7 +370,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     //Mapping step failed error
     fireEvent.click(getByLabelText(`runStep-${steps[1].stepName}`));
 
-    await waitForElement(() =>  getByLabelText("jobResponse"));
+    await waitForElement(() => getByLabelText("jobResponse"));
     expect(getByLabelText("jobResponse")).toBeInTheDocument();
     expect(getByTestId(`${steps[1].stepName}-failure`)).toBeInTheDocument();
     fireEvent.click(getByTestId(`${steps[1].stepName}-failure`));
@@ -382,7 +380,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
 
     //Matching step failed error
     fireEvent.click(getByLabelText(`runStep-${steps[3].stepName}`));
-    await waitForElement(() =>  getByLabelText("jobResponse"));
+    await waitForElement(() => getByLabelText("jobResponse"));
     expect(getByLabelText("jobResponse")).toBeInTheDocument();
     expect(getByTestId(`${steps[3].stepName}-failure`)).toBeInTheDocument();
     fireEvent.click(getByTestId(`${steps[3].stepName}-failure`));
@@ -393,7 +391,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
 
     //Merging step failed error
     fireEvent.click(getByLabelText(`runStep-${steps[4].stepName}`));
-    await waitForElement(() =>  getByLabelText("jobResponse"));
+    await waitForElement(() => getByLabelText("jobResponse"));
     expect(getByLabelText("jobResponse")).toBeInTheDocument();
     expect(getByTestId(`${steps[4].stepName}-failure`)).toBeInTheDocument();
     fireEvent.click(getByTestId(`${steps[4].stepName}-failure`));
@@ -405,7 +403,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     //Mastering step failed error
 
     fireEvent.click(getByLabelText(`runStep-${steps[5].stepName}`));
-    await waitForElement(() =>  getByLabelText("jobResponse"));
+    await waitForElement(() => getByLabelText("jobResponse"));
     expect(getByLabelText("jobResponse")).toBeInTheDocument();
     expect(getByTestId(`${steps[5].stepName}-failure`)).toBeInTheDocument();
     fireEvent.click(getByTestId(`${steps[5].stepName}-failure`));
@@ -428,7 +426,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     //Mapping step error
     fireEvent.click(getByLabelText(`runStep-${steps[1].stepName}`));
     // New Modal with Error message, uri and details is opened
-    await waitForElement(() =>  getByLabelText("jobResponse"));
+    await waitForElement(() => getByLabelText("jobResponse"));
     expect(getByLabelText("jobResponse")).toBeInTheDocument();
     expect(await waitForElement(() => (getByTestId(`${steps[1].stepName}-failure`)))).toBeInTheDocument();
     fireEvent.click(getByTestId(`${steps[1].stepName}-failure`));
@@ -445,7 +443,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     //Matching step error
     fireEvent.click(getByLabelText(`runStep-${steps[3].stepName}`));
     // New Modal with Error message, uri and details is opened
-    await waitForElement(() =>  getByLabelText("jobResponse"));
+    await waitForElement(() => getByLabelText("jobResponse"));
     expect(getByLabelText("jobResponse")).toBeInTheDocument();
     expect(getByTestId(`${steps[3].stepName}-failure`)).toBeInTheDocument();
     fireEvent.click(getByTestId(`${steps[3].stepName}-failure`));
@@ -461,7 +459,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     //Merging step error
     fireEvent.click(getByLabelText(`runStep-${steps[4].stepName}`));
     // New Modal with Error message, uri and details is opened
-    await waitForElement(() =>  getByLabelText("jobResponse"));
+    await waitForElement(() => getByLabelText("jobResponse"));
     expect(getByLabelText("jobResponse")).toBeInTheDocument();
     expect(getByTestId(`${steps[4].stepName}-failure`)).toBeInTheDocument();
     fireEvent.click(getByTestId(`${steps[4].stepName}-failure`));
@@ -478,7 +476,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     // Mastering step error
     fireEvent.click(getByLabelText(`runStep-${steps[5].stepName}`));
     // New Modal with Error message, uri and details is opened
-    await waitForElement(() =>  getByLabelText("jobResponse"));
+    await waitForElement(() => getByLabelText("jobResponse"));
     expect(getByLabelText("jobResponse")).toBeInTheDocument();
     expect(getByTestId(`${steps[5].stepName}-failure`)).toBeInTheDocument();
     fireEvent.click(getByTestId(`${steps[5].stepName}-failure`));
@@ -624,7 +622,7 @@ describe("Verify Add Step function", () => {
     let runButton = getByLabelText(`runStep-${steps[1].stepName}`);
     fireEvent.click(runButton);
     // Check the response modal opens after run
-    await waitForElement(() =>  getByLabelText("jobResponse"));
+    await waitForElement(() => getByLabelText("jobResponse"));
     expect(getByLabelText("jobResponse")).toBeInTheDocument();
     // Check the step run was successful
     expect(await waitForElement(() => getByTestId(`${steps[1].stepName}-success`))).toBeInTheDocument();

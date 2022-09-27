@@ -1,6 +1,6 @@
 export interface Flow {
     name: string,
-    steps?: Step[],
+    steps: Step[],
     description?: string
 }
 
@@ -10,11 +10,11 @@ export const InitialFlow: Flow = {
 };
 
 export interface Step {
-    flowName: string,
-    isChecked: boolean,
-    sourceFormat: any,
+    sourceFormat?: any,
     stepDefinitionType: string,
     stepId: string,
     stepName: string,
     stepNumber: string,
+    targetEntityType?: string,
+    targetFormat?: string
 }

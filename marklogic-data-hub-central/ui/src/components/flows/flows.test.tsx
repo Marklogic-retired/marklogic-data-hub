@@ -5,18 +5,19 @@ import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
 import {createMemoryHistory} from "history";
 const history = createMemoryHistory();
+import {Flow} from "../../types/run-types";
 import axiosMock from "axios";
 import data from "../../assets/mock-data/curation/flows.data";
 import Flows, {Props} from "./flows";
-import {SecurityTooltips, RunToolTips} from "../../config/tooltips.config";
-import {getViewSettings} from "../../util/user-context";
+import {SecurityTooltips} from "../../config/tooltips.config";
+// import {getViewSettings} from "../../util/user-context";
 
 jest.mock("axios");
 
 describe("Flows component", () => {
 
   let flowsProps: Props = {
-    flows: data.flows.data,
+    flows: data.flows.data as Flow[],
     steps: data.steps.data,
     deleteFlow: () => null,
     createFlow: () => null,
@@ -30,7 +31,6 @@ describe("Flows component", () => {
     addStepToFlow: () => null,
     flowsDefaultActiveKey: [],
     runEnded: {},
-    onReorderFlow: () => null,
     setJobId: () => null,
     setOpenJobResponse: () => null,
     isStepRunning: false,
@@ -41,6 +41,7 @@ describe("Flows component", () => {
     hasOperatorRole: true,
   };
   const flowName = data.flows.data[0].name;
+  // @ts-ignore
   const flowStepName = data.flows.data[0].steps[1].stepName;
   const addStepName = data.steps.data["ingestionSteps"][0].name;
 
@@ -74,7 +75,7 @@ describe("Flows component", () => {
     const {getByText} = render(
       <Router history={history}>
         <Flows {...flowsProps}
-          flows={allKindsOfIngestInAFlow}
+          flows={allKindsOfIngestInAFlow as Flow[]}
         />
       </Router>);
     let flowButton = document.querySelector(".accordion-button")!;
@@ -86,33 +87,14 @@ describe("Flows component", () => {
   });
 
   it("user with flow read, write, and operator privileges can view, edit, and run", async () => {
-    const {getByText, getByLabelText, getAllByText} = render(
+    const {getByText, getByLabelText} = render(
       <Router history={history}><Flows
         {...flowsProps}
       /></Router>
     );
 
-    let flowButton = document.querySelector(".accordion-button")!;
     expect(getByText(flowName)).toBeInTheDocument();
     expect(getByLabelText("create-flow")).toBeInTheDocument();
-    expect(getByLabelText("deleteFlow-"+flowName)).toBeInTheDocument();
-
-    // check if delete tooltip appears
-    fireEvent.mouseOver(getByLabelText("deleteFlow-"+flowName));
-    expect(getByText("Delete Flow")).toBeInTheDocument();
-
-
-    // Open flow
-    fireEvent.click(flowButton);
-    expect(getByText(flowStepName)).toBeInTheDocument();
-    expect(getByLabelText("runStep-"+flowStepName)).toBeInTheDocument();
-    expect(getByLabelText("deleteStep-"+flowStepName)).toBeInTheDocument();
-
-    // Open Add Step
-    let addStep = getAllByText("Add Step")[0];
-    fireEvent.click(addStep);
-    expect(getByText(addStepName)).toBeInTheDocument();
-
   });
 
   it("user without flow write privileges cannot edit", async () => {
@@ -219,47 +201,6 @@ describe("Flows component", () => {
 
   });
 
-  it("verify conditionally disabled run flow buttons", async () => {
-    const {getByText, getByLabelText, getByTestId} = render(
-      <Router history={history}><Flows
-        {...flowsProps}
-      /></Router>
-    );
-
-    //verify both runFlow and settings button disabled when flow is empty
-    expect(getByTestId("runFlow-emptyFlow")).toBeDisabled();
-    expect(getByLabelText("stepSettings-emptyFlow").parentElement).toBeDisabled();
-    fireEvent.mouseOver(getByTestId("runFlow-emptyFlow"));
-    await wait(() => expect(getByText(RunToolTips.runEmptyFlow)).toBeInTheDocument());
-
-    // verify only runFlow button is disabled when steps exist but none selected
-    fireEvent.click(getByLabelText("stepSettings-testFlow"));
-    await wait(() => expect(getByText("Deselect All")).toBeInTheDocument());
-    fireEvent.click(getByTestId("select-all-toggle"));
-    await wait(() => expect(getByText(RunToolTips.selectAStep)).toBeInTheDocument());
-
-    expect(getByTestId("runFlow-emptyFlow")).toBeDisabled();
-    expect(getByLabelText("stepSettings-emptyFlow")).not.toBeDisabled();
-  });
-
-  it("links for steps lead to correct path", async () => {
-    const {getByLabelText} = render(
-      <Router history={history}><Flows
-        {...flowsProps}
-      /></Router>
-    );
-
-    let i : number;
-    let flowButton = document.querySelector(".accordion-button")!;
-    userEvent.click(flowButton);
-    for (i = 1; i < data.flows.data[0].steps.length + 1; ++i) {
-      const pathname = `http://localhost/tiles/${data.flows.data[0].steps[i-1]["stepDefinitionType"] === "ingestion" ? "load": "curate"}`;
-      expect(getByLabelText(`${flowName}-${i}-cardlink`).firstChild?.href).toBe(pathname);
-    }
-
-  });
-
-
   it("user with write privileges can reorder a flow", () => {
     const {getByText, getByLabelText, queryByLabelText} = render(
       <Router history={history}><Flows
@@ -276,11 +217,13 @@ describe("Flows component", () => {
     expect(getByLabelText("leftArrow-"+flowStepName)).toBeInTheDocument();
 
     // First step only has right arrow, and no left arrow
+    // @ts-ignore
     const firstFlowStep = data.flows.data[0].steps[0].stepName;
     expect(getByLabelText("rightArrow-"+firstFlowStep)).toBeInTheDocument();
     expect(queryByLabelText("leftArrow-"+firstFlowStep)).not.toBeInTheDocument();
 
     // Last step only has left arrow, and no right arrow
+    // @ts-ignore
     const lastFlowStep = data.flows.data[0].steps[data.flows.data[0].steps.length-1].stepName;
     expect(getByLabelText("leftArrow-"+lastFlowStep)).toBeInTheDocument();
     expect(queryByLabelText("rightArrow-"+lastFlowStep)).not.toBeInTheDocument();
@@ -301,47 +244,9 @@ describe("Flows component", () => {
     expect(queryByLabelText("rightArrow-"+flowStepName)).not.toBeInTheDocument();
     expect(queryByLabelText("leftArrow-"+flowStepName)).not.toBeInTheDocument();
   });
-
-  it("reorder flow buttons can be focused and pressed by keyboard", async () => {
-    const {getByLabelText} = render(
-      <Router history={history}><Flows
-        {...flowsProps}
-      /></Router>
-    );
-    let flowButton = document.querySelector(".accordion-button")!;
-    fireEvent.click(flowButton);
-
-    const rightArrowButton = getByLabelText("rightArrow-"+flowStepName);
-    expect(rightArrowButton).toBeInTheDocument();
-    rightArrowButton.focus();
-    expect(rightArrowButton).toHaveFocus();
-
-    userEvent.tab();
-    expect(rightArrowButton).not.toHaveFocus();
-    userEvent.tab({shift: true});
-    expect(rightArrowButton).toHaveFocus();
-
-    const leftArrowButton = getByLabelText("leftArrow-"+flowStepName);
-    expect(leftArrowButton).toBeInTheDocument();
-    leftArrowButton.focus();
-    expect(leftArrowButton).toHaveFocus();
-
-    userEvent.tab();
-    expect(leftArrowButton).not.toHaveFocus();
-    userEvent.tab({shift: true});
-    expect(leftArrowButton).toHaveFocus();
-
-    // Verifying a user can press enter to reorder steps in a flow
-    rightArrowButton.onkeydown = jest.fn();
-    fireEvent.keyDown(rightArrowButton, {key: "Enter", code: "Enter"});
-    expect(rightArrowButton.onkeydown).toHaveBeenCalledTimes(1);
-
-    leftArrowButton.onkeydown = jest.fn();
-    fireEvent.keyDown(leftArrowButton, {key: "Enter", code: "Enter"});
-    expect(leftArrowButton.onkeydown).toHaveBeenCalledTimes(1);
-  });
 });
 
+/*  Commenting Local Storage testing util local storage functionality is re added
 describe("getViewSettings", () => {
   beforeEach(() => {
     window.sessionStorage.clear();
@@ -396,3 +301,4 @@ describe("getViewSettings", () => {
   });
 
 });
+ */
