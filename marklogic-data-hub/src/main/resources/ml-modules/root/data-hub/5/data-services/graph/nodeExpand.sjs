@@ -93,12 +93,12 @@ if (isConcept) {
     const group = objectIRI.substring(0, objectIRI.length - objectId.length - 1);
     let entityType =   subjectArr[subjectArr.length - 2];
     const nodeIsConcept = !docUriExists;
-    let newLabel = docUriExists ? getCustomLabel(entityType,  item.docURI) : "";
+    let newLabel = docUriExists ? getCustomLabel(entityType,  item.docURI) : (fn.head(item.conceptLabel) || fn.head(item.predicateLabel));
     let nodeExpanded = {};
     nodeExpanded.id = docUriExists ? item.docURI : objectIRI;
     nodeExpanded.docURI = item.docURI;
     nodeExpanded.docIRI = objectIRI;
-    if (newLabel.toString().length === 0) {
+    if (fn.string(newLabel).length === 0) {
       nodeExpanded.label = objectId;
     }else{
       nodeExpanded.label = newLabel;
@@ -148,11 +148,11 @@ if (isConcept) {
 
     let hasRelationships = false;
     if(item.nodeCount === 1) {
-      hasRelationships = nodeDocUri ? docUriToSubjectIri[nodeDocUri].some(iri => graphUtils.relatedObjHasRelationships(iri)): graphUtils.relatedObjHasRelationships(objectIRI);
+      hasRelationships = docUriExists ? docUriToSubjectIri[nodeDocUri].some(iri => graphUtils.relatedObjHasRelationships(iri)): graphUtils.relatedObjHasRelationships(objectIRI);
     }
 
-    let customLabel = nodeDocUri ? getCustomLabel(entityType, nodeDocUri): "";
-    if (customLabel.toString().length !== 0) {
+    let customLabel = docUriExists ? getCustomLabel(entityType, nodeDocUri): (fn.head(item.conceptLabel) || fn.head(item.predicateLabel));
+    if (fn.string(customLabel).length !== 0) {
       nodeLabel = customLabel;
     }
     let resultPropertiesOnHover = nodeDocUri ? entityLib.getValuesPropertiesOnHover(nodeDocUri,entityType,hubCentralConfig): {};

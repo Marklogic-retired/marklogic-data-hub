@@ -174,9 +174,11 @@ result.map(item => {
     let configurationLabel = getLabelFromHubConfigByEntityType(entityType);
     let configPropertiesOnHover = getPropertiesOnHoverFromHubConfigByEntityType(entityType);
     //check if we have in central config new label loaded
-    if(configurationLabel.toString().length > 0){
+    if(item.docURI && configurationLabel.toString().length > 0){
       //getting the value of the configuration property
       newLabel = getValueFromProperty(configurationLabel,item.docURI,entityType);
+    } else {
+      newLabel = item.predicateLabel;
     }
     //check if we have in central config properties on hover loaded
     resultPropertiesOnHover = entityLib.getValuesPropertiesOnHover(item.docURI,entityType,hubCentralConfig);
@@ -212,7 +214,7 @@ result.map(item => {
   } else {
     if ((item.objectConcept !== undefined && item.objectConcept.toString().length > 0 && !nodes[item.objectConcept])) {
       let objectConceptArr = item.objectConcept.toString().split("/");
-      let conceptLabel = objectConceptArr[objectConceptArr.length - 1];
+      let conceptLabel = fn.exists(item.conceptLabel) ? fn.string(item.conceptLabel): objectConceptArr[objectConceptArr.length - 1];
       nodeOrigin.id = item.objectConcept;
       nodeOrigin.docUri = item.docURI;
       nodeOrigin.label = conceptLabel;
@@ -258,7 +260,7 @@ result.map(item => {
           objectNode.id = objectId;
           objectNode.docUri = key;
           nodeOrigin.docIRI = objectIRI;
-          objectNode.label = getNodeLabel(objectIRIArr, objectUri);
+          objectNode.label = fn.exists(item.conceptLabel) ? fn.string(item.conceptLabel): getNodeLabel(objectIRIArr, objectUri);
           resultPropertiesOnHover = entityLib.getValuesPropertiesOnHover(item.docURI,objectEntityType,hubCentralConfig);
           objectNode.propertiesOnHover=resultPropertiesOnHover;
           objectNode.group = objectIRI.substring(0, objectIRI.length - objectIRIArr[objectIRIArr.length - 1].length - 1);;
@@ -290,7 +292,7 @@ result.map(item => {
         objectNode.id = objectId;
         objectNode.docUri = objectUri;
         nodeOrigin.docIRI = objectIRI;
-        objectNode.label = getNodeLabel(objectIRIArr,objectUri);
+        objectNode.label = fn.exists(item.conceptLabel) ? fn.string(item.conceptLabel): getNodeLabel(objectIRIArr,objectUri);
         resultPropertiesOnHover = entityLib.getValuesPropertiesOnHover(item.docURI,objectIRIArr[objectIRIArr.length - 2],hubCentralConfig);
         objectNode.propertiesOnHover = resultPropertiesOnHover;
         objectNode.group = objectGroup;

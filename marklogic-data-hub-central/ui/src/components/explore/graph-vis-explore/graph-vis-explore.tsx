@@ -320,7 +320,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
           nodeObj[nodeId] = e;
         }
       }
-      let tempLabel = e.label !== "" ? e.label : e.docUri;
+      let tempLabel = e.label !== "" ? e.label : (e.docUri || nodeId);
       let nodeLabel = tempLabel.length > 9 ? tempLabel.substring(0, 6) + "..." : tempLabel;
       if (e.hasRelationships) {
         if (!leafNodesObj.hasOwnProperty(nodeId)) {
