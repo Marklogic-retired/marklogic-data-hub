@@ -48,12 +48,16 @@ class MonitorPage {
     cy.get(`[data-testid=${testId}-facet] input`).eq(index).should("be.visible").check();
     cy.findByTestId("facet-apply-button").click({force: true});
   }
+  getFacetCheckbox(facetType: string, facetName: string) {
+    return cy.get(`[data-testid=${facetType}-${facetName}-checkbox]`);
+  }
 
-  validateAppliedFacetTableRows(facetType: string, index: number) {
-    // filter by facet
-    cy.get(`[data-testid=${facetType}-facet] input`).eq(index).check();
+  validateAppliedFacetTableRows(facetType: string, index: number, facetName: string) {
+    // filter by checking "mapping" facet
+    this.getFacetCheckbox(facetType, facetName).should("be.visible").check();
     cy.findByTestId("facet-apply-button").click({force: true});
-    cy.get(`[data-testid=${facetType}-facet] input`).should("be.visible").eq(index).then(($btn) => {
+
+    cy.get(`[data-testid=${facetType}-${facetName}-checkbox]`).should("be.visible").then(($btn) => {
       let facet = $btn.next("label").text();
       cy.get("#selected-facets [data-cy=\"clear-" + $btn.val() + "\"]").should("exist");
       // On firefox it gets stuck and then tries everything at once
