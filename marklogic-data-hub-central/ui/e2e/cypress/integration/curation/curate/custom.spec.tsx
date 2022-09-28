@@ -25,6 +25,11 @@ describe("Custom step settings: ", () => {
     cy.restoreLocalStorage();
   });
 
+  afterEach(() => {
+    //Saving Local Storage to preserve session
+    cy.saveLocalStorage();
+  });
+
   it("Navigate to Curate tile -> Customer entity -> custom tab", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
@@ -68,31 +73,21 @@ describe("Custom step settings: ", () => {
   });
 
   it("Verify Additional Settings saves correctly", () => {
+    cy.log("**Open Customer entity**");
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
     curatePage.selectCustomTab("Customer");
 
-    // enter custom props
+    cy.log("**Enter custom properties**");
     curatePage.editStep(stepName).click();
     curatePage.switchEditAdvanced().click();
     advancedSettings.additionalSettingsInput().clear().type(`{{}"prop":"value", "foo":"bar"{}}`, {timeout: 2000});
     advancedSettings.saveSettingsButton(stepName).click();
 
-    cy.findByTestId("Customer").then(($ele) => {
-      if ($ele.hasClass("collapsed")) {
-        curatePage.toggleEntityTypeId("Customer");
-      }
-    });
-
+    cy.log("**Verify step names are visible**");
     cy.waitForAsyncRequest();
-    curatePage.toggleEntityTypeId("Customer");
     curatePage.verifyStepNameIsVisible(stepName);
 
-    cy.findByTestId("Customer").then(($ele) => {
-      if ($ele.hasClass("collapsed")) {
-        curatePage.toggleEntityTypeId("Customer");
-      }
-    });
     curatePage.editStep(stepName).click();
     curatePage.switchEditAdvanced().click();
     advancedSettings.additionalSettingsInput().should("contain.value", `"prop": "value"`);
@@ -103,19 +98,8 @@ describe("Custom step settings: ", () => {
     advancedSettings.saveSettingsButton(stepName).click();
     cy.waitForAsyncRequest();
 
-    cy.findByTestId("Customer").then(($ele) => {
-      if ($ele.hasClass("collapsed")) {
-        curatePage.toggleEntityTypeId("Customer");
-      }
-    });
-
     curatePage.verifyStepNameIsVisible(stepName);
 
-    cy.findByTestId("Customer").then(($ele) => {
-      if ($ele.hasClass("collapsed")) {
-        curatePage.toggleEntityTypeId("Customer");
-      }
-    });
     curatePage.editStep(stepName).click();
     curatePage.switchEditAdvanced().click();
     advancedSettings.additionalSettingsInput().should("contain.value", `"prop": "value"`);

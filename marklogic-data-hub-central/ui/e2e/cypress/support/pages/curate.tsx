@@ -166,8 +166,7 @@ class CuratePage {
 
   verifyStepNameIsVisible(stepName: string) {
     // cy.get('#name').should('be.visible');
-    cy.waitUntil(() => cy.findByLabelText(`${stepName}-step-label`).should("have.length.gt", 0));
-    cy.findByLabelText(`${stepName}-step-label`).should("be.visible");
+    cy.waitUntil(() => cy.findByLabelText(`${stepName}-step-label`).should("have.length.gt", 0).should("be.visible"));
     cy.findByText(stepName).should("be.visible");
   }
 

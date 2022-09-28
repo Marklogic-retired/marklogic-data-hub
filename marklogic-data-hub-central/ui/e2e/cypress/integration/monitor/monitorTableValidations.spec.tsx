@@ -307,7 +307,8 @@ describe("Monitor Tile", () => {
   it("apply facet search and verify docs", () => {
     // There's a re-render.
     cy.wait(1500);
-    monitorPage.validateAppliedFacetTableRows("step-type", 1);
+    browsePage.getShowMoreLink("step-type").click();
+    monitorPage.validateAppliedFacetTableRows("step-type", 1, "mapping");
   });
 
   it("apply facet search and clear individual grey facet", () => {
