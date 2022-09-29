@@ -74,7 +74,7 @@ function generateTdeWithViewJoin() {
     const tde = hent.dumpTde(input);
     const tdeDescription = xdmp.describe(tde, Sequence.from([]), Sequence.from([]));
     // testing multi-value join
-    const billingJoinTemplate = fn.head(tde.xpath('//*:templates/*:template[*:context = "billing/Address"]'));
+    const billingJoinTemplate = fn.head(tde.xpath(`//*:templates/*:template[*:context = 'billing/Address[fn:string(.) ne ""]']`));
     const billingJoinTemplateExists = fn.exists(billingJoinTemplate)
     const assertions = [
         test.assertTrue(billingJoinTemplateExists, `Billing Join template should exist. TDE: ${tdeDescription}`)

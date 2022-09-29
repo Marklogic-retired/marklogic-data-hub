@@ -46,7 +46,7 @@ let nodes = [];
 
 result.map(item => {
   const entityType = item.entityTypeIRI.toString();
-  const conceptIRI = item.objectConcept.toString();
+  const conceptIRI = item.objectIRI.toString();
   const relatedEntitiesCountDataSet = graphUtils.getRelatedEntityInstancesCount([sem.iri(conceptIRI), conceptIRI]);
   const finalObj = relatedEntitiesCountDataSet.find(el => el.entityTypeIRI.toString() === entityType);
   if (finalObj) {

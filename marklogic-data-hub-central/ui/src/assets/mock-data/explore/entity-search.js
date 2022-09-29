@@ -1905,7 +1905,6 @@ export const groupNodeSearchResponse = {
 
 export const groupNodeSearchPayload = {
   query: {
-    searchText: "",
     entityTypeIds: ["Product"],
     selectedFacets: {},
     hideHubArtifacts: true,

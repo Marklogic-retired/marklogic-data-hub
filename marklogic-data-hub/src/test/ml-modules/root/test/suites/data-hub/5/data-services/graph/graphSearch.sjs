@@ -144,8 +144,7 @@ assertions.concat([
 ]);
 
 resultsTestSearchBy.nodes.forEach(node => {
-  test.assertTrue((node.group.toString().includes("Product") || node.group.toString().includes("BasketballShoes") || node.group.toString().includes("test concept instanc")));
-  test.assertFalse(node.hasRelationships)
+  test.assertTrue((node.group.toString().includes("Product") || node.group.toString().includes("BasketballShoes") || node.group.toString().includes("test concept instanc")), xdmp.toJsonString(node));
 })
 
 const conceptFilterQuery = {

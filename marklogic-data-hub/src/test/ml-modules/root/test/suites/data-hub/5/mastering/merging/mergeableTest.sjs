@@ -234,7 +234,7 @@ function testBuildMergeDocumentJson() {
     test.assertEqual("true", fn.string(active), `Active should be true due to custom function. Merge properties: ${xdmp.toJsonString(mergedDocument)}`)
   );
   assertions.push(
-    test.assertEqual(1, fn.count(mergedDocument.xpath("/envelope/triples")), `Should have one triple. Merge document: ${xdmp.toJsonString(mergedDocument)}`)
+    test.assertEqual(15, fn.count(mergedDocument.xpath("/envelope/triples")), `Should have 15 triples (1 from raw + 14 from TDEs). Merge document: ${xdmp.toJsonString(mergedDocument)}`)
   );
   return assertions;
 }
@@ -271,7 +271,7 @@ function testBuildMergeDocumentXml() {
     test.assertEqual("true", fn.string(active), `Active should be true due to custom function. Merge properties: ${xdmp.toJsonString(mergedDocument)}`)
   );
   assertions.push(
-    test.assertEqual(1, fn.count(mergedDocument.xpath("/*:envelope/*:triples/*:triple")), `Should have one triple. Merge document: ${xdmp.toJsonString(mergedDocument)}`)
+    test.assertEqual(1, fn.count(mergedDocument.xpath("/*:envelope/*:triples/*:triple")), `Should have 1 triple. Merge document: ${xdmp.toJsonString(mergedDocument)}`)
   );
   return assertions;
 }

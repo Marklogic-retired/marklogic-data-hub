@@ -557,7 +557,8 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     if (network) {
       const selectedNodeType = clickedNode && clickedNode["nodeId"] ? clickedNode["nodeId"].split("/").pop().split("-").pop() : undefined;
       const predicate = clickedNode && clickedNode["predicateIri"];
-      const parentNode = clickedNode && clickedNode["docIRI"];
+      const {nodeObject} = clickedNode && clickedNode["parentNode"] && getExpandedNodeObject(clickedNode["parentNode"]);
+      const parentNode = nodeObject["docIRI"];
       const relatedView = {
         entityTypeId: selectedNodeType,
         predicateFilter: predicate,
@@ -850,7 +851,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         break;
       case "showRelated": {
         let payloadData = {expandAll: true};
-        handleLeafNodeExpansion(payloadData);
+        await handleLeafNodeExpansion(payloadData);
         setUserPreferences();
         break;
       }
@@ -858,7 +859,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         const {edgeObject} = getExpandedNodeObject(clickedNode["nodeId"]);
         let nodeInfo = getNodeObject(clickedNode["nodeId"], edgeObject);
         let payloadData = {expandAll: false, nodeInfo: nodeInfo};
-        handleGroupNodeExpand(payloadData);
+        await handleGroupNodeExpand(payloadData);
         setUserPreferences();
         break;
       }
@@ -916,9 +917,8 @@ const GraphVisExplore: React.FC<Props> = (props) => {
   };
 
   const isLeafNode = () => {
-    const currentEntityTypeSelected = clickedNode["entityName"];
     const nodeId = clickedNode["leafExpandId"] ? clickedNode["leafExpandId"] : clickedNode["nodeId"];
-    return clickedNode && !isGroupNode() && !searchOptions.entityTypeIds.includes(currentEntityTypeSelected) && !expandedNodeData.hasOwnProperty(nodeId) && clickedNode["hasRelationships"] === true;
+    return clickedNode && !isGroupNode() && !expandedNodeData.hasOwnProperty(nodeId) && clickedNode["hasRelationships"];
   };
 
   const isClusterFocused = () => {
@@ -1003,6 +1003,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     let currentNodePredicate = predicates[edgeIdFrom];
     let parentNodeExpandId = parentNode + "-" + parentNodePredicate;
     let currentNodeExpandId = parentNode + "-" + currentNodePredicate;
+    expandedInstanceInfo["parentNode"] = parentNode;
     if (parentNode && expandedNodeData[currentNodeExpandId]) {
       expandedInstanceInfo["nodeObject"] = expandedNodeData[currentNodeExpandId].nodes.find(node => node.id === nodeId);
       expandedInstanceInfo["edgeObject"] = expandedNodeData[currentNodeExpandId].edges.find(edge => edge.id === edgeIdFrom);

@@ -89,9 +89,27 @@ function testNodeExtraction() {
   }).endDocument().toNode();
   const tdeExtract = fn.head(hubUtils.invokeFunction(() => tde.nodeDataExtract([instanceNode]))).document1;
   const assertions = [
-    test.assertTrue(tdeExtract.some(extract => extract instanceof sem.triple && fn.string(sem.tripleObject(extract)) === "http://example.org/Product-1.0.0/Product/123"), `Product ID should have triple generated. Full template: ${xdmp.describe(tdeExtract, Sequence.from([]), Sequence.from([]))}`),
-    test.assertFalse(tdeExtract.some(extract => extract instanceof sem.triple && fn.string(sem.tripleSubject(extract)) === "http://marklogic.com/example/Order-0.0.1/Order/"), `Order subject IRI should be unique. Full template: ${xdmp.describe(tdeExtract, Sequence.from([]), Sequence.from([]))}`),
-    test.assertTrue(tdeExtract.some(extract => extract instanceof sem.triple && fn.string(sem.tripleSubject(extract)).startsWith("http://marklogic.com/example/Order-0.0.1/Order/")), `Order subject IRI should have expected prefix. Full template: ${xdmp.describe(tdeExtract, Sequence.from([]), Sequence.from([]))}`)
+    test.assertTrue(tdeExtract.some(extract => {
+      try {
+        return fn.string(sem.tripleObject(extract)) === "http://example.org/Product-1.0.0/Product/123";
+      } catch(e) {
+        return false;
+      }
+    }), `Product ID should have triple generated. Full template: ${xdmp.describe(tdeExtract, Sequence.from([]), Sequence.from([]))}`),
+    test.assertFalse(tdeExtract.some(extract => {
+      try {
+        return fn.string(sem.tripleSubject(extract)) === "http://marklogic.com/example/Order-0.0.1/Order/";
+      } catch(e) {
+        return false;
+      }
+    }), `Order subject IRI should be unique. Full template: ${xdmp.describe(tdeExtract, Sequence.from([]), Sequence.from([]))}`),
+    test.assertTrue(tdeExtract.some(extract => {
+      try {
+        return fn.string(sem.tripleSubject(extract)).startsWith("http://marklogic.com/example/Order-0.0.1/Order/");
+      } catch(e) {
+        return false;
+      }
+    }), `Order subject IRI should have expected prefix. Full template: ${xdmp.describe(tdeExtract, Sequence.from([]), Sequence.from([]))}`)
   ];
   return assertions;
 }

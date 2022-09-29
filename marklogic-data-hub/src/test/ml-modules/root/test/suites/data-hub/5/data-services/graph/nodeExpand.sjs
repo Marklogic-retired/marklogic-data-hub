@@ -1,24 +1,4 @@
 const test = require("/test/test-helper.xqy");
-const config = require("/com.marklogic.hub/config.sjs");
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-
-
-const hubCentralConfig = {
-  "modeling": {
-    "entities": {
-      "BabyRegistry": { x: 10, y: 15, "label":"arrivalDate","propertiesOnHover": ["ownedBy", "babyRegistryId"] },
-      "Office": { x: 12, y: 16, "label":"name"},
-      "Product": {
-        "graphX": 63,
-        "graphY": -57,
-        "label": "productName",
-        "propertiesOnHover": [
-          "productId"
-        ]
-      }
-    }
-  }
-};
 
 function invoke(module, args) {
   return fn.head(xdmp.invoke("/data-hub/5/data-services/graph/" + module, args));
@@ -28,7 +8,6 @@ function nodeExpand(queryOptions) {
   return invoke("nodeExpand.sjs", {nodeInfo: JSON.stringify(queryOptions), start: 0, limit: 20});
 }
 function nodeExpandWithLimit4(queryOptions) {
-  hubUtils.writeDocument("/config/hubCentral.json", hubCentralConfig, [xdmp.permission("data-hub-common", "read"),xdmp.permission("data-hub-common-writer", "update")], [], config.FINALDATABASE);
   return invoke("nodeExpand.sjs", {nodeInfo: JSON.stringify(queryOptions), start: 0, limit: 4});
 }
 
@@ -53,7 +32,7 @@ const resultsTest2 = nodeExpand(expandQuery2);
 assertions.concat([
   test.assertEqual(7, resultsTest2.total),
   test.assertEqual(2, resultsTest2.nodes.length, xdmp.toJsonString(resultsTest2)),
-  test.assertEqual(2, resultsTest2.edges.length, xdmp.toJsonString(resultsTest2))
+  test.assertEqual(5, resultsTest2.edges.length, `2 edges for new nodes + 3 edges from the new nodes so they'll connect if already on the graph. Output: ${xdmp.toJsonString(resultsTest2)}`)
 ]);
 
 
@@ -79,8 +58,8 @@ assertions.concat([
   test.assertEqual(3, resultConceptExpand.total, xdmp.toJsonString(resultConceptExpand)),
   test.assertEqual(3, resultConceptExpand.nodes.length, xdmp.toJsonString(resultConceptExpand)),
   test.assertEqual(3, resultConceptExpand.edges.length),
-  test.assertTrue(resultConceptExpand.nodes.some(node => "office name" === fn.string(node.label))),
-  test.assertTrue(resultConceptExpand.nodes.some(node => "ProductName60" === fn.string(node.label)))
+  test.assertTrue(resultConceptExpand.nodes.some(node => "office name" === fn.string(node.label)), xdmp.toJsonString(resultConceptExpand.nodes)),
+  test.assertTrue(resultConceptExpand.nodes.some(node => "ProductName60" === fn.string(node.label)), xdmp.toJsonString(resultConceptExpand.nodes))
 ]);
 
 const expandQuery4 = {
@@ -91,7 +70,7 @@ const resultsTest4 = nodeExpand(expandQuery4);
 assertions.concat([
   test.assertEqual(2, resultsTest4.total, xdmp.toJsonString(resultsTest4)),
   test.assertEqual(2, resultsTest4.nodes.length, xdmp.toJsonString(resultsTest4)),
-  test.assertEqual(2, resultsTest4.edges.length, xdmp.toJsonString(resultsTest4)),
+  test.assertEqual(8, resultsTest4.edges.length, `2 edges for new nodes + 6 edges from the new nodes so they'll connect if already on the graph. Output: ${xdmp.toJsonString(resultsTest4.edges)}`),
   test.assertTrue(resultsTest4.nodes.some(node => node.isConcept), xdmp.toJsonString(resultsTest4))
 ]);
 

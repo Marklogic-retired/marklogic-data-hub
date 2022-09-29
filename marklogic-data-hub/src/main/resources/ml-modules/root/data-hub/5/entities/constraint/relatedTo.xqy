@@ -28,15 +28,16 @@ declare function parse(
   $options as element(search:options)
 ) as schema-element(cts:query)?
 {
-  let $subjects := get-data($query-elem/search:docIRI)
+  let $docIRI := get-data($query-elem/search:docIRI)
   let $predicates := get-data($query-elem/search:predicate)
-  let $objects := cts:triples($subjects, $predicates) ! sem:triple-object(.)
+  let $objects := cts:triples($docIRI, $predicates) ! sem:triple-object(.)
+  let $subjects := cts:triples((), $predicates, $docIRI) ! sem:triple-subject(.)
   return document{
-    if (fn:empty($objects)) then
+    if (fn:empty(($subjects,$objects))) then
       cts:false-query()
     else
       cts:triple-range-query(
-        ($objects),
+        ($subjects, $objects),
         (),
         ()
       )

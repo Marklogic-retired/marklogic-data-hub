@@ -585,6 +585,18 @@ function findEntityIdentifiers(uris, entityType) {
   return fn.head(hent.findEntityIdentifiers(hubUtils.normalizeToSequence(uris), entityType));
 }
 
+function populatePredicateListWithReferencePredicates(entityNameIri, referencingModels, predicateList) {
+  for (const referencingModel of referencingModels) {
+    const modelId = getModelId(referencingModel.toObject());
+    const separator = modelId.endsWith("/") ? "" : "/";
+    for (const propertyReferencing of referencingModel.xpath(`/definitions/*/properties/*[(relatedEntityType|items/relatedEntityType) = "${entityNameIri}"]`)) {
+      const entityName = fn.string(fn.nodeName(fn.head(propertyReferencing.xpath("../.."))));
+      const propertyName = fn.string(fn.nodeName(propertyReferencing));
+      predicateList.push(sem.iri(modelId + separator + entityName + "/" + propertyName));
+    }
+  }
+}
+
 function getPredicatesByModel(model, includeConceptPredicates = false) {
   const predicateList = [];
   // predicates in model document
@@ -615,15 +627,7 @@ function getPredicatesByModel(model, includeConceptPredicates = false) {
   // predicates referencing model document
   const entityNameIri = getEntityTypeId(model, model.info.title);
   const referencingModels = cts.search(cts.andQuery([cts.collectionQuery(getModelCollection()), cts.jsonPropertyValueQuery("relatedEntityType", entityNameIri)]));
-  for (const referencingModel of referencingModels) {
-    const modelId = getModelId(referencingModel.toObject());
-    const separator = modelId.endsWith("/") ? "" : "/";
-    for (const propertyReferencing of referencingModel.xpath(`/definitions/*/properties/*[(relatedEntityType|items/relatedEntityType) = "${entityNameIri}"]`)) {
-      const entityName = fn.string(fn.nodeName(fn.head(propertyReferencing.xpath("../.."))));
-      const propertyName = fn.string(fn.nodeName(propertyReferencing));
-      predicateList.push(sem.iri(modelId + separator + entityName + "/" + propertyName));
-    }
-  }
+  populatePredicateListWithReferencePredicates(entityNameIri, referencingModels, predicateList);
   return predicateList;
 }
 
@@ -699,15 +703,7 @@ function getPredicatesByModelAndBaseEntities(model,relatedEntityTypeIds) {
   // predicates referencing model document
   let referencingModels = cts.search(cts.andQuery([cts.collectionQuery(getModelCollection()), cts.jsonPropertyValueQuery("relatedEntityType", entityNameIri)]));
   referencingModels = referencingModels.toArray().filter(model => relatedEntityTypeIds.includes(model.toObject().info.title));
-  for (const referencingModel of referencingModels) {
-    const modelId = getModelId(referencingModel.toObject());
-    const separator = modelId.endsWith("/") ? "" : "/";
-    for (const propertyReferencing of referencingModel.xpath(`/definitions/*/properties/*[(relatedEntityType|items/relatedEntityType) = "${entityNameIri}"]`)) {
-      const entityName = fn.string(fn.nodeName(fn.head(propertyReferencing.xpath("../.."))));
-      const propertyName = fn.string(fn.nodeName(propertyReferencing));
-      predicateList.push(sem.iri(modelId + separator + entityName + "/" + propertyName));
-    }
-  }
+  populatePredicateListWithReferencePredicates(entityNameIri, referencingModels, predicateList);
 
   return predicateList;
 }
@@ -751,11 +747,11 @@ function getValuesPropertiesOnHover(docUri,entityType, hubCentralConfig) {
 
         let propertyVec = entityPropertyName.split(".");
         let objPropertyOnHover = new Object();
-        const entityModel = entityLib.findEntityTypeByEntityName(entityType);
+        const entityModel = findEntityTypeByEntityName(entityType);
         let newPath = "";
         for (let j = 0; j < propertyVec.length; j++) {
           if (j < propertyVec.length -1) {
-            newPath  += "/*:" + propertyVec[j] + "/*:" + entityLib.getRefType(entityModel,propertyVec[j]);
+            newPath  += "/*:" + propertyVec[j] + "/*:" + getRefType(entityModel,propertyVec[j]);
           } else {
             newPath  += "/*:" + propertyVec[j];
           }

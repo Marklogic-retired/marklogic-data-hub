@@ -101,7 +101,7 @@ function generateTdeReferencedByRelatedEntityType() {
     ];
 
   const tde = fn.head(hubUtils.invokeFunction(() => hent.dumpTde(input)));
-  const productIdTemplate = fn.head(tde.xpath('.//*:templates/*:template[*:context = "productId"]'));
+  const productIdTemplate = fn.head(tde.xpath('.//*:templates/*:template[*:context = "productId[xs:string(.) ne """"]"]'));
   const assertions = [
     test.assertTrue(fn.exists(productIdTemplate), `Product ID template should exist. Full template: ${xdmp.describe(tde, Sequence.from([]), Sequence.from([]))}`)
   ];

@@ -61,14 +61,12 @@ const TableViewGroupNodes: React.FC<Props> = (props) => {
   }, []);
 
   const getSearchResultsForGroupNode = async (relatedTableData: any, pageProperties) => {
-    let searchText = searchOptions?.query;
     try {
       setIsLoading(true);
       let searchPayload = {
         database: searchOptions?.database,
         data: {
           query: {
-            searchText,
             entityTypeIds: [relatedTableData.entityTypeId],
             selectedFacets: {},
             hideHubArtifacts: true,
