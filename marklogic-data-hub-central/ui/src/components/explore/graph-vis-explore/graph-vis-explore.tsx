@@ -918,7 +918,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
   const isLeafNode = () => {
     const currentEntityTypeSelected = clickedNode["entityName"];
     const nodeId = clickedNode["leafExpandId"] ? clickedNode["leafExpandId"] : clickedNode["nodeId"];
-    return clickedNode && !isGroupNode() && !searchOptions.entityTypeIds.includes(currentEntityTypeSelected) && !expandedNodeData.hasOwnProperty(nodeId) && clickedNode["hasRelationships"] === true;
+    return clickedNode && !isGroupNode();
   };
 
   const isClusterFocused = () => {

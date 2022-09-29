@@ -121,7 +121,7 @@ const Sidebar: React.FC<Props> = (props) => {
 
   useEffect(() => {
     let relatedEntitiesList = new Map();
-    if (props.currentBaseEntities.length !== props.entityDefArray.length) {
+    // if (props.currentBaseEntities.length !== props.entityDefArray.length) {
       props.currentBaseEntities.forEach(base => {
         let entityName = base["name"];
         props.entityRelationships[entityName].map(entityName => {
@@ -129,7 +129,7 @@ const Sidebar: React.FC<Props> = (props) => {
           relatedEntitiesList.set(entityName, {...relEntity, checked: true});
         });
       });
-    }
+    // }
     const values = Array.from(relatedEntitiesList.values());
     const checkedValues = values.filter(({checked}) => checked);
     setRelatedEntityTypeIds(checkedValues.map(function (i) { return i.name; }));
