@@ -43,7 +43,7 @@ public class HubCentralTest extends TestObject {
 
     @Test
     void newHubConfigWithCustomProperties() throws IOException {
-        setupEnvironment("application.properties");
+        setupEnvironment("application-dummy.properties");
         String uri = "/data-hub/5/datahubConfig.json";
 
         // Writing the datahub config into the modules database
@@ -56,6 +56,7 @@ public class HubCentralTest extends TestObject {
 
         HubConfigImpl hubConfig = hubCentral.newHubConfig("test-data-hub-developer", "password");
         assertEquals(hubConfig.getUsername(), "test-data-hub-developer");
+        assertEquals("any-user-name", mockEnvironment.getProperty("mlUsername"));
 
         assertEquals(hubConfig.getStagingDbName(), "staging");
         assertEquals(hubConfig.getStagingPort(), 8020);

@@ -22,14 +22,12 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.util.RequestParameters;
-import com.marklogic.hub.DatabaseKind;
-import com.marklogic.hub.HubClient;
-import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.MasteringManager;
+import com.marklogic.hub.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Properties;
 
 @Component
 public class MasteringManagerImpl implements MasteringManager {
@@ -41,10 +39,7 @@ public class MasteringManagerImpl implements MasteringManager {
     }
 
     public MasteringManagerImpl(HubClient hubClient) {
-        VersionInfo versionInfo = VersionInfo.newVersionInfo(hubClient);
-        String stagingDb = versionInfo.getStagingDbName();
-        String finalDb = versionInfo.getFinalDbName();
-        this.hubConfig = new HubConfigImpl(hubClient.getFinalClient().getHost(), hubClient.getManageClient().getManageConfig().getUsername(), hubClient.getManageClient().getManageConfig().getPassword(),stagingDb,finalDb);
+        this.hubConfig = (HubConfig) hubClient.getHubClientConfig();
     }
 
     @Override

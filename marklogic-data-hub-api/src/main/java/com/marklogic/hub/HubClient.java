@@ -48,4 +48,6 @@ public interface HubClient {
      * @return
      */
     ManageClient getManageClient();
+
+    HubClientConfig getHubClientConfig();
 }
