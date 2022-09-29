@@ -75,8 +75,7 @@ public class HubCentral extends LoggingObject implements InitializingBean {
 
         return propertyName -> {
             String value = primaryProperties.getProperty(propertyName);
-
-            if (environment.getProperty(propertyName) != null) {
+            if (!propertyName.equals("mlUsername") && !propertyName.equals("mlPassword") && environment.getProperty(propertyName) != null) {
                 value = environment.getProperty(propertyName);
             }
             return value;
