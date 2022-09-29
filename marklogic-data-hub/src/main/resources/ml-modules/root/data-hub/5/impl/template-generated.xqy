@@ -255,14 +255,8 @@ declare function extraction-template-generate(
               <tde:template>
                 <tde:context>{ $prefix-path || (if ($prefix-value) then "(" || $prefix-value || $entity-type-name || "|" || $entity-type-name || ")" else  $entity-type-name)}</tde:context>
                 <tde:vars>
-                  {
-                    if ($primary-key-type eq "string")
-                    then (
-                      <tde:var><tde:name>subject-iri</tde:name><tde:val>sem:iri(concat("{ model-graph-prefix($model) }/{ $entity-type-name }/", fn:encode-for-uri(./{ if ($prefix-value) then "(" || $prefix-value || $primary-key-name || "|" || $primary-key-name || ")" else $primary-key-name })))</tde:val></tde:var>
-                    ) else (
-                      <tde:var><tde:name>subject-iri</tde:name><tde:val>sem:iri(concat("{ model-graph-prefix($model) }/{ $entity-type-name }/", fn:encode-for-uri(xs:string(./{ if ($prefix-value) then "(" || $prefix-value || $primary-key-name || "|" || $primary-key-name || ")" else $primary-key-name }))))</tde:val></tde:var>
-                    )
-                  }
+                  <tde:var><tde:name>primary-key-val</tde:name><tde:val>fn:encode-for-uri(xs:string(./{ if ($prefix-value) then "(" || 	$prefix-value || $primary-key-name || "|" || $primary-key-name || ")" else $primary-key-name }))</tde:val></tde:var>
+                  <tde:var><tde:name>subject-iri</tde:name><tde:val>sem:iri(concat("{ model-graph-prefix($model) }/{ $entity-type-name }/", if (fn:empty($primary-key-val) or ($primary-key-val eq "") then sem:uuid-string() else $primary-key-val))</tde:val></tde:var>
                 </tde:vars>
                 <tde:triples>
                   <tde:triple>
