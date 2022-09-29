@@ -34,7 +34,9 @@ let assertions = [
 ];
 
 resultsTest.nodes.forEach(node => {
-  assertions.push(test.assertTrue(node.docUri.toString().includes("product")));
+  if (node.docUri) {
+    assertions.push(test.assertTrue(node.docUri.includes("product")));
+  }
 })
 
 assertions;

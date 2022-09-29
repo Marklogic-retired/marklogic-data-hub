@@ -61,8 +61,8 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
 
   useEffect(() => {
     let uri;
-    if (savedNode && !docUri && !label) { // case where exploring from table/snippet
-      uri = savedNode["uri"];
+    if (savedNode && !docUri) { // case where exploring from table/snippet
+      uri = savedNode["docIRI"];
     } else {
       uri = docUri;
     }
@@ -103,7 +103,11 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
           return infoObject;
         });
         if (resp.data?.description && Object.keys(resp.data?.description).length) {
-          setSemanticConceptDescription(resp.data.description);
+          const properties: any = {};
+          Object.keys(resp.data?.description).forEach((key) => {
+            properties[key.substring(Math.max(key.lastIndexOf("/"), key.lastIndexOf("#")) + 1)] = resp.data.description[key];
+          });
+          setSemanticConceptDescription(properties);
         } else {
           setSemanticConceptDescription(null);
         }
@@ -269,7 +273,9 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
             id="recordTabInSidePanel"
             title={RECORD_TITLE}/>
         </Tabs>
-        {displayPanelContent()}</> : <>{conceptInstanceInfo}{semanticConceptDescription && <pre data-testid="graphView-json-container">{jsonFormatter(semanticConceptDescription)}</pre>}</>
+        {displayPanelContent()}</> : <>{conceptInstanceInfo}{semanticConceptDescription && <div aria-label="instance-view">
+          <TableView document={semanticConceptDescription} contentType="json" location={{}} isEntityInstance={false} isSidePanel={true}/>
+        </div>}</>
       }
     </div>
   );

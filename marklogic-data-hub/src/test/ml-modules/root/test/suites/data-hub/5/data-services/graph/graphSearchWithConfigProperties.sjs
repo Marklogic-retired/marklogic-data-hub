@@ -1,25 +1,6 @@
 const test = require("/test/test-helper.xqy");
-const config = require("/com.marklogic.hub/config.sjs");
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 
-const hubCentralConfig = {
-  "modeling": {
-    "entities": {
-      "BabyRegistry": { x: 10, y: 15, "label":"arrivalDate","propertiesOnHover": ["ownedBy", "babyRegistryId"] },
-      "Customer": {
-        "graphX": 63,
-        "graphY": -57,
-        "propertiesOnHover": [
-          "shipping",
-          "shipping.city",
-          "billing.city"
-        ]
-      }
-    }
-  }
-};
 function invoke(module, args) {
-  hubUtils.writeDocument("/config/hubCentral.json", hubCentralConfig, [xdmp.permission("data-hub-common", "read"),xdmp.permission("data-hub-common-writer", "update")], [], config.FINALDATABASE);
   return fn.head(xdmp.invoke("/data-hub/5/data-services/graph/" + module, args));
 }
 

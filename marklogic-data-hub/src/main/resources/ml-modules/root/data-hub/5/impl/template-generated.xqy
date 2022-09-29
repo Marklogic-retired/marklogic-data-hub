@@ -182,7 +182,7 @@ declare function extraction-template-generate(
       return
         map:put($column-map, $property-name,
           <tde:template>
-            <tde:context>{ if ($prefix-value) then "(" || $prefix-value || $property-name || "|" || $property-name ||")" else $property-name}{if ($is-ref) then concat("/",$ref-name) else ()}</tde:context>
+            <tde:context>{ if ($prefix-value) then "(" || $prefix-value || $property-name || "|" || $property-name ||")" else $property-name}{if ($is-ref) then concat("/",$ref-name) else ()}[fn:string(.) ne ""]</tde:context>
             <tde:rows>
               <tde:row>
                 <tde:schema-name>{ $schema-name=>$secure-tde-name() }</tde:schema-name>
@@ -199,7 +199,7 @@ declare function extraction-template-generate(
                       $entity-type-name } }
                       <tde:name>{ $primary-key-name=>$secure-tde-name() }</tde:name>
                       <tde:scalar-type>{ if ($primary-key-type="iri") then "IRI" else $primary-key-type }</tde:scalar-type>
-                      <tde:val>{if ($prefix-value) then "(ancestor::" || $prefix-value || $entity-type-name || "|" || "ancestor::" || $entity-type-name || ")" else "(ancestor::" || $entity-type-name || ")"}/{ if ($prefix-value) then  "("|| $prefix-value || $primary-key-name || "|" || $primary-key-name || ")" else $primary-key-name }</tde:val>
+                      <tde:val>fn:head({if ($prefix-value) then "(ancestor::" || $prefix-value || $entity-type-name || "|" || "ancestor::" || $entity-type-name || ")" else "(ancestor::" || $entity-type-name || ")"}/{ if ($prefix-value) then  "("|| $prefix-value || $primary-key-name || "|" || $primary-key-name || ")" else $primary-key-name }[xs:string(.) ne ""])</tde:val>
                     </tde:column>,
                   if ($is-local-ref and empty($ref-primary-key))
                   then
@@ -247,6 +247,11 @@ declare function extraction-template-generate(
             </tde:rows>
           </tde:template>
         )
+   let $related-entity-type-property-names := for $property-name in map:keys($properties)
+                                 let $property-info := map:get($properties, $property-name)
+                                 let $related-entity-type := map:get($property-info, "relatedEntityType" )
+                                 where exists($related-entity-type)
+                                 return $property-name
    return
         (
           if (exists($primary-key-name))
@@ -255,13 +260,15 @@ declare function extraction-template-generate(
               <tde:template>
                 <tde:context>{ $prefix-path || (if ($prefix-value) then "(" || $prefix-value || $entity-type-name || "|" || $entity-type-name || ")" else  $entity-type-name)}</tde:context>
                 <tde:vars>
+                  <tde:var><tde:name>primary-key-val</tde:name><tde:val>fn:encode-for-uri(fn:head(./{ if ($prefix-value) then "(" || 	$prefix-value || $primary-key-name || "|" || $primary-key-name || ")" else $primary-key-name } ! xs:string(.)[. ne ""]))</tde:val></tde:var>
+                  <tde:var><tde:name>subject-iri</tde:name><tde:val>sem:iri(concat("{ model-graph-prefix($model) }/{ $entity-type-name }/", if (fn:empty($primary-key-val) or $primary-key-val eq "") then sem:uuid-string() else $primary-key-val))</tde:val></tde:var>
                   {
-                    if ($primary-key-type eq "string")
-                    then (
-                      <tde:var><tde:name>subject-iri</tde:name><tde:val>sem:iri(concat("{ model-graph-prefix($model) }/{ $entity-type-name }/", fn:encode-for-uri(./{ if ($prefix-value) then "(" || $prefix-value || $primary-key-name || "|" || $primary-key-name || ")" else $primary-key-name })))</tde:val></tde:var>
-                    ) else (
-                      <tde:var><tde:name>subject-iri</tde:name><tde:val>sem:iri(concat("{ model-graph-prefix($model) }/{ $entity-type-name }/", fn:encode-for-uri(xs:string(./{ if ($prefix-value) then "(" || $prefix-value || $primary-key-name || "|" || $primary-key-name || ")" else $primary-key-name }))))</tde:val></tde:var>
-                    )
+                    for $related-property-name in $related-entity-type-property-names
+                    return
+                      <tde:var>
+                        <tde:name>related-{$related-property-name}</tde:name>
+                        <tde:val>fn:encode-for-uri(xs:string(./{ if ($prefix-value) then "(" || 	$prefix-value || $related-property-name || "|" || $related-property-name || ")" else $related-property-name }))</tde:val>
+                      </tde:var>
                   }
                 </tde:vars>
                 <tde:triples>
@@ -277,10 +284,8 @@ declare function extraction-template-generate(
                   </tde:triple>
 
                 {
-
-
-                 for $property-name in map:keys($properties)
-                 let $property-info :=map:get($properties, $property-name)
+                 for $property-name in $related-entity-type-property-names
+                 let $property-info := map:get($properties, $property-name)
                  let $is-related-entity-type := map:contains($property-info, "relatedEntityType" )
                  let $related-entity-type := map:get($property-info, "relatedEntityType" )
                  where exists($related-entity-type)
@@ -288,7 +293,7 @@ declare function extraction-template-generate(
                      <tde:triple>
                        <tde:subject><tde:val>$subject-iri</tde:val></tde:subject>
                        <tde:predicate><tde:val>sem:iri("{ model-graph-prefix($model) }/{ $entity-type-name }/{ $property-name}")</tde:val></tde:predicate>
-                       <tde:object><tde:val>sem:iri(concat("{ $related-entity-type}/", fn:encode-for-uri(xs:string(./{ if ($prefix-value) then "(" || $prefix-value || $property-name || "|" || $property-name || ")" else $property-name}))))</tde:val></tde:object>
+                       <tde:object><tde:val>sem:iri(concat("{ $related-entity-type}/", if (fn:empty($related-{$property-name}) or $related-{$property-name} eq "") then sem:uuid-string() else $related-{$property-name}))</tde:val></tde:object>
                      </tde:triple>
                   }
                    </tde:triples>
@@ -345,7 +350,7 @@ declare function extraction-template-generate(
                             let $context := if ($prefix-value) then "("|| $prefix-value || $property-name || "|" || $property-name || ")" else $property-name
                             let $subject :=  "sem:iri(concat(""" ||$model-type-iri || "/"", fn:encode-for-uri(xs:string(.))))"
                             return  <tde:template>
-                              <tde:context>{ $context}</tde:context>
+                              <tde:context>{ $context}[xs:string(.) ne ""]</tde:context>
                               <tde:vars>
                                 <tde:var>
                                   <tde:name>RDF</tde:name><tde:val>"http://www.w3.org/1999/02/22-rdf-syntax-ns#"</tde:val>

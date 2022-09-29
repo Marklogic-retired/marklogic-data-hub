@@ -12,6 +12,9 @@ const mergingDebugTraceEnabled = xdmp.traceEnabled(consts.TRACE_MERGING_DEBUG);
 const mergingTraceEnabled = xdmp.traceEnabled(consts.TRACE_MERGING) || mergingDebugTraceEnabled;
 const mergingTraceEvent = xdmp.traceEnabled(consts.TRACE_MERGING) ? consts.TRACE_MERGING : consts.TRACE_MERGING_DEBUG;
 const {merge} = require("../../../third-party/fast-xml-parser/src/util");
+const rdfType = sem.curieExpand("rdf:type");
+const rdfsIsDefinedBy = sem.curieExpand("rdfs:isDefinedBy");
+
 
 class Mergeable {
 
@@ -96,7 +99,7 @@ class Mergeable {
    * @return contentObject
    * @since 5.8.0
    */
-  buildMergeDocument(contentObjects, id) {
+  buildMergeDocument(contentObjects, id = "newMergeURI") {
     if (mergingTraceEnabled) {
       xdmp.trace(mergingTraceEvent, `Building merge document with mergeable: ${xdmp.toJsonString(this.mergeStep)} and content: ${xdmp.toJsonString(contentObjects)}`);
     }
@@ -138,7 +141,21 @@ class Mergeable {
       const tripleMergeFunction = requireFunction(tripleMerge.at, tripleMerge.function);
       triples = tripleMergeFunction(this.mergeStep, documentNodes, properties.map(prop => prop[1].sources), this.mergeStep.tripleMerge);
     } else {
-      triples = fn.distinctValues(Sequence.from(documentNodes.map(doc => doc.xpath("/*:envelope/(es:triples|array-node('triples'))/(object-node()|.//sem:triple) ! sem:triple(.)", { es: "http://marklogic.com/entity-services", sem: "http://marklogic.com/semantics"}))));
+      const triplesArray = [
+        Sequence.from(documentNodes.map(doc => doc.xpath("/*:envelope/(es:triples|array-node('triples'))/(object-node()|.//sem:triple) ! sem:triple(.)", { es: "http://marklogic.com/entity-services", sem: "http://marklogic.com/semantics"}))),
+      ];
+      const uris = normalizeToArray(contentObjects).map(contentObj => contentObj.uri);
+      const tdeTriples = cts.triples(null, [rdfType, rdfsIsDefinedBy], null, ["=","=","="], [], cts.documentQuery(uris));
+      for (const tdeTriple of tdeTriples) {
+        if (!fn.string(sem.tripleObject(tdeTriple)).startsWith("http://marklogic.com/view/")) {
+          if (fn.string(sem.triplePredicate(tdeTriple)) === fn.string(rdfsIsDefinedBy)) {
+            triplesArray.push(sem.triple(sem.tripleSubject(tdeTriple), rdfsIsDefinedBy, id));
+          } else {
+            triplesArray.push(tdeTriple);
+          }
+        }
+      }
+      triples = fn.distinctValues(Sequence.from(triplesArray));
     }
     if (mergingTraceEnabled) {
       xdmp.trace(mergingTraceEvent, `Found the follow triples for merge: ${xdmp.describe(triples, Sequence.from([]), Sequence.from([]))}`);

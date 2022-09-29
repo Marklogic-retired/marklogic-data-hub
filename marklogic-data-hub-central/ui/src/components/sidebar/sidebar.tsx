@@ -121,15 +121,13 @@ const Sidebar: React.FC<Props> = (props) => {
 
   useEffect(() => {
     let relatedEntitiesList = new Map();
-    if (props.currentBaseEntities.length !== props.entityDefArray.length) {
-      props.currentBaseEntities.forEach(base => {
-        let entityName = base["name"];
-        props.entityRelationships[entityName].map(entityName => {
-          const relEntity = props.entityDefArray.find(entity => entity.name === entityName);
-          relatedEntitiesList.set(entityName, {...relEntity, checked: true});
-        });
+    props.currentBaseEntities.forEach(base => {
+      let entityName = base["name"];
+      props.entityRelationships[entityName].map(entityName => {
+        const relEntity = props.entityDefArray.find(entity => entity.name === entityName);
+        relatedEntitiesList.set(entityName, {...relEntity, checked: true});
       });
-    }
+    });
     const values = Array.from(relatedEntitiesList.values());
     const checkedValues = values.filter(({checked}) => checked);
     setRelatedEntityTypeIds(checkedValues.map(function (i) { return i.name; }));

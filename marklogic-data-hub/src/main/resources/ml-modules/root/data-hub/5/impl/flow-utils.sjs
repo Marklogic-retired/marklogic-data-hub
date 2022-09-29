@@ -737,6 +737,7 @@ function writeContentArray(contentArray, databaseName, provenanceQueue) {
 }
 
 function handleWriteErrors(error, contentArray) {
+  xdmp.log(xdmp.toJsonString(error));
   switch (error.name) {
     case 'XDMP-CONFLICTINGUPDATES':
       let data = error.data[0];
@@ -744,7 +745,7 @@ function handleWriteErrors(error, contentArray) {
       let uri = parseUriRegex.test(data) ? data.replace(parseUriRegex, '$1'): null;
       throw new Error(`Attempted to write to the same URI multiple times in the same transaction. ${ uri ? 'URI: ' + uri : ''}`);
     case 'TDE-INDEX':
-      let isFailOnSubjectIRI = error.data.includes('$subject-iri');
+      let isFailOnSubjectIRI = error.data.includes('$subject-iri') || error.data.includes("$primary-key-val");
       if (isFailOnSubjectIRI) {
         let failedContentObject = contentArray.find((contentObj) => error.data.includes(contentObj.uri));
         if (failedContentObject) {

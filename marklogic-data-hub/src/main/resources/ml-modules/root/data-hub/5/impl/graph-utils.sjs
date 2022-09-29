@@ -16,6 +16,9 @@
 
 'use strict';
 
+const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
+const hubCentralConfig = cts.doc("/config/hubCentral.json");
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const sem = require("/MarkLogic/semantics.xqy");
 const op = require('/MarkLogic/optic');
 const {getPredicatesByModel} = require("./entity-lib.sjs");
@@ -41,40 +44,42 @@ function getOrderedLabelPredicates() {
 }
 
 function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predicateConceptList, entitiesDifferentFromBaseAndRelated, conceptFacetList, ctsQueryCustom, limit) {
+  let collectionQuery = cts.collectionQuery(getAllEntityIds());
+  ctsQueryCustom = cts.andQuery([collectionQuery, ctsQueryCustom]);
   let subjectPlanConcept = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                 SELECT ?subjectIRI ?predicateIRI ?objectIRI (?objectIRI AS ?objectConcept) ?docURI  WHERE {
+                 SELECT ?subjectIRI ?predicateIRI ?firstObjectIRI ?docURI  WHERE {
                         ?subjectIRI rdf:type @entityTypeIRIs;
-                          ?predicateIRI  ?objectIRI;
+                          ?predicateIRI  ?firstObjectIRI;
                           rdfs:isDefinedBy ?docURI.
                         FILTER EXISTS {
-                          ?subjectIRI @predicateConceptList ?objectIRI.
+                          ?subjectIRI @predicateConceptList ?firstObjectIRI.
                         }
                         }`).where(ctsQueryCustom);
   const conceptClass = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                 SELECT (?subjectIRI AS ?conceptClassName) (?predicateIRI AS ?entityID) (MIN(?anyConceptLabel) AS ?conceptLabel) ?objectIRI ?docURI  WHERE {
+                 SELECT (?subjectIRI AS ?conceptClassName) (?predicateIRI AS ?entityID) (MIN(?anyConceptLabel) AS ?conceptLabel) ?firstObjectIRI  WHERE {
                         ?predicateIRI rdf:type @entityTypeIRIs.
-                        ?subjectIRI ?predicateIRI ?objectIRI.
+                        ?subjectIRI ?predicateIRI ?firstObjectIRI.
                         OPTIONAL {
                           ?subjectIRI @labelIRI ?anyConceptLabel.
                         }
                  }
-                 GROUP BY ?conceptClassName ?entityID ?objectIRI ?docURI`);
+                 GROUP BY ?conceptClassName ?entityID ?firstObjectIRI`);
   let joinOnConceptClass = op.on(op.col("subjectIRI"),op.col("entityID"));
   subjectPlanConcept = subjectPlanConcept.joinLeftOuter(conceptClass, joinOnConceptClass);
 
   const countConceptRelationsWithOtherEntity = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                 SELECT ?objectIRI (COUNT(?objectIRI) AS ?countRelationsWithOtherEntity)   WHERE {
+                 SELECT ?firstObjectIRI (COUNT(?firstObjectIRI) AS ?countRelationsWithOtherEntity)   WHERE {
                         ?subjectIRI rdf:type @entitiesDifferentFromBaseAndRelated;
-                        ?predicateIRI  ?objectIRI;
+                        ?predicateIRI  ?firstObjectIRI;
                         rdfs:isDefinedBy ?docURI.
                         FILTER EXISTS {
-                        ?subjectIRI @predicateConceptList ?objectIRI.
+                        ?subjectIRI @predicateConceptList ?firstObjectIRI.
                         }
                        }
-                       GROUP BY ?objectIRI
+                       GROUP BY ?firstObjectIRI
 `);
 
   const subjectPlan = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -102,17 +107,17 @@ function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predic
           }
       }
       GROUP BY ?subjectIRI ?predicateIRI
-  `);
+  `).where(collectionQuery);
   let joinOn = op.on(op.col("subjectIRI"),op.col("subjectIRI"));
-  let joinOnObjectIri = op.on(op.col("objectIRI"),op.col("objectIRI"));
+  let joinOnObjectIri = op.on(op.col("firstObjectIRI"),op.col("firstObjectIRI"));
   let fullPlan = subjectPlan.joinLeftOuter(firstLevelConnectionsPlan, joinOn).limit(limit);
   let fullPlanConcept = subjectPlanConcept.joinLeftOuter(countConceptRelationsWithOtherEntity, joinOnObjectIri);
   if(conceptFacetList != null && conceptFacetList.length >= 1){
     const filterConceptsQuery = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                 SELECT ?subjectIRI ?predicateIRI ?objectIRI (?objectIRI AS ?objectConcept) ?docURI  WHERE {
+                 SELECT ?subjectIRI ?predicateIRI ?firstObjectIRI ?docURI  WHERE {
                         ?subjectIRI rdf:type @entityTypeIRIs;
-                        ?predicateIRI  ?objectIRI;
+                        ?predicateIRI  ?firstObjectIRI;
                         rdfs:isDefinedBy ?docURI.
                         FILTER EXISTS {
                          ?subjectIRI ?predicateIRI @conceptFacetList.
@@ -124,20 +129,20 @@ function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predic
   if (entityTypeIRIs.length > 1) {
     let otherEntityIRIs = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                 SELECT ?subjectIRI ?docURI ?predicateIRI  (MIN(?anyPredicateLabel) as ?predicateLabel)  ?objectIRI  (MIN(?anyObjectLabel) as ?objectLabel) WHERE {
+                 SELECT ?subjectIRI ?docURI ?predicateIRI  (MIN(?anyPredicateLabel) as ?predicateLabel)  ?firstObjectIRI  (MIN(?anyObjectLabel) as ?objectLabel) WHERE {
                     ?subjectIRI rdf:type @entityTypeIRIs;
                     rdfs:isDefinedBy ?docURI;
-                    ?predicateIRI ?objectIRI.
-                    ?objectIRI rdf:type @entityTypeIRIs.
+                    ?predicateIRI ?firstObjectIRI.
+                    ?firstObjectIRI rdf:type @entityTypeIRIs.
                     OPTIONAL {
                       ?predicateIRI @labelIRI ?anyPredicateLabel.
                     }
                     OPTIONAL {
-                      ?objectIRI @labelIRI ?anyObjectLabel.
+                      ?firstObjectIRI @labelIRI ?anyObjectLabel.
                     }
                   }
-                  GROUP BY ?subjectIRI ?docURI ?predicateIRI ?objectIRI
-                `).where(ctsQuery);
+                  GROUP BY ?subjectIRI ?docURI ?predicateIRI ?firstObjectIRI
+                `);
     fullPlan = fullPlan.union(subjectPlan.joinLeftOuter(otherEntityIRIs, joinOn).limit(limit));
   }
 
@@ -146,26 +151,39 @@ function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predic
   return fullPlan.result(null, {conceptFacetList, entitiesDifferentFromBaseAndRelated, entityTypeIRIs, predicateConceptList, entityTypeOrConceptIRI: relatedEntityTypeIRIs.concat(getRdfConceptTypes()), labelIRI: getOrderedLabelPredicates()}).toArray();
 }
 
+let _allEntityIds = null;
+
+function getAllEntityIds() {
+  if (!_allEntityIds) {
+    _allEntityIds = fn.collection(entityLib.getModelCollection()).toArray().map(model => model.toObject().info.title);
+  }
+  return _allEntityIds;
+}
+
 function getEntityNodes(documentUri, predicateIRI, lastObjectIRI, limit) {
   const subjectPlan = op.fromSPARQL(`
       PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
       PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-      SELECT ?subjectIRI ?firstDocURI ?predicateIRI (MIN(?anyPredicateLabel) as ?predicateLabel) ?firstObjectIRI WHERE {
-        ?subjectIRI rdfs:isDefinedBy @parentDocURI.
+      SELECT ?subjectIRI ?docURI ?firstDocURI ?predicateIRI (MIN(?anyPredicateLabel) as ?predicateLabel) ?firstObjectIRI WHERE {
+        ?subjectIRI rdfs:isDefinedBy ?docURI.
         {
             ?subjectIRI ?predicateIRI ?firstObjectIRI.
         } UNION {
             ?firstObjectIRI ?predicateIRI ?subjectIRI.
         }
-        ?firstObjectIRI rdfs:isDefinedBy ?firstDocURI.
+        OPTIONAL {
+            ?firstObjectIRI rdfs:isDefinedBy ?firstDocURI.
+        }
         OPTIONAL {
             ?predicateIRI @labelIRI ?anyPredicateLabel.
         }
+        FILTER (isLiteral(?docURI) && ?docURI = @parentDocURI)
         ${lastObjectIRI ? "FILTER ?subjectIRI > @lastObjectIRI" : ""}
       }
       GROUP BY ?subjectIRI ?docURI ?predicateIRI ?firstObjectIRI
       ORDER BY ?subjectIRI
-`).where(op.eq(op.col('predicateIRI'), predicateIRI)).limit(limit);
+`).where(cts.collectionQuery(getAllEntityIds()))
+    .where(op.eq(op.col('predicateIRI'), predicateIRI)).limit(limit);
   return subjectPlan.result(null, { parentDocURI: documentUri, lastObjectIRI, labelIRI: getOrderedLabelPredicates()}).toArray();
 
 }
@@ -174,66 +192,336 @@ function getEntityNodesExpandingConcept(objectConceptIRI, limit) {
 
   const getNodeByConcept =  op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                 SELECT ?subjectIRI ?predicateIRI ?objectIRI ?docURI  WHERE {
+                 SELECT ?subjectIRI ?predicateIRI ?firstObjectIRI ?docURI ?firstDocURI  WHERE {
                     {
-                        ?subjectIRI ?predicateIRI  ?objectIRI.
+                        ?subjectIRI ?predicateIRI  ?firstObjectIRI.
                     } UNION {
-                        ?objectIRI ?predicateIRI ?subjectIRI.
+                        ?firstObjectIRI ?predicateIRI ?subjectIRI.
                     }
-                    FILTER (isIRI(?objectIRI) && ?objectIRI = @objectConceptIRI)
+                    FILTER (isIRI(?firstObjectIRI) && ?firstObjectIRI = @objectConceptIRI)
                     OPTIONAL {
                         ?subjectIRI rdfs:isDefinedBy ?docURI.
                     }
-                    FILTER isIRI(?subjectIRI)
+                    OPTIONAL {
+                        ?firstObjectIRI rdfs:isDefinedBy ?firstDocURI.
+                    }
                  }`).limit(limit);
   return getNodeByConcept.result(null, {objectConceptIRI }).toArray();
 
 }
 
+
+
 function getEntityNodesByDocument(docURI, limit) {
   const subjectPlan = op.fromSPARQL(`
       PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
       PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-      SELECT ?subjectIRI ?predicateIRI (MIN(?anyPredicateLabel) AS ?predicateLabel) (MIN(?objectIRI) AS ?firstObjectIRI) (MIN(?objectDocUri) AS ?firstDocURI) (COUNT(DISTINCT(?objectIRI)) AS ?nodeCount) WHERE {
-          ?subjectIRI rdfs:isDefinedBy @docURI.
-          {
-              ?subjectIRI ?predicateIRI ?objectIRI
-          } UNION {
-              ?objectIRI ?predicateIRI ?subjectIRI
+      SELECT * WHERE {
+        {
+          SELECT ?subjectIRI ?docURI ?predicateIRI (MIN(?anyPredicateLabel) AS ?predicateLabel) (MIN(?objectIRI) AS ?firstObjectIRI) (COUNT(DISTINCT(?objectIRI)) AS ?nodeCount) WHERE {
+              ?subjectIRI rdfs:isDefinedBy ?docURI.
+              {
+                  ?subjectIRI ?predicateIRI ?objectIRI
+              } UNION {
+                  ?objectIRI ?predicateIRI ?subjectIRI
+              }
+              OPTIONAL {
+                ?predicateIRI @labelIRI ?anyPredicateLabel.
+              }
+              FILTER EXISTS {
+                {
+                    ?subjectIRI @allPredicates ?objectIRI
+                } UNION {
+                    ?objectIRI @allPredicates ?subjectIRI
+                }
+              }
+              FILTER (isLiteral(?docURI) && ?docURI = @parentDocURI)
           }
-          OPTIONAL {
-              ?objectIRI rdfs:isDefinedBy ?objectDocUri.
-          }
-          OPTIONAL {
-            ?predicateIRI @labelIRI ?anyPredicateLabel.
-          }
-          FILTER EXISTS {
-            {
-                ?subjectIRI @allPredicates ?objectIRI
-            } UNION {
-                ?objectIRI @allPredicates ?subjectIRI
-            }
-          }
+          GROUP BY ?subjectIRI ?predicateIRI
+        }
+        OPTIONAL {
+            ?firstObjectIRI rdfs:isDefinedBy ?firstDocURI.
+        }
       }
-      GROUP BY ?subjectIRI ?predicateIRI
-  `).limit(limit);
+  `).where(cts.collectionQuery(getAllEntityIds())).limit(limit);
 
   const relatedPlan = op.fromSPARQL(`
       PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
       PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-      SELECT DISTINCT(?subjectIRI AS ?subjectNew) ?docRelated  WHERE {
+      SELECT DISTINCT(?subjectIRI AS ?firstObjectIRI) ?additionalEdge ?additionalIRI ?docRelated  WHERE {
           ?subjectIRI rdf:type ?entityTypeOrConceptIRI.
-          ?subjectIRI ?predicateIRI ?objectIRI;
-          rdfs:isDefinedBy ?docRelated.
+          {
+            ?subjectIRI ?additionalEdge ?additionalIRI. 
+          } UNION {
+            ?additionalIRI ?additionalEdge ?subjectIRI. 
+          }
+          OPTIONAL {
+            ?additionalIRI rdfs:isDefinedBy ?docRelated.
+          }
+          FILTER EXISTS {
+            {
+              ?subjectIRI @allPredicates ?additionalIRI. 
+            } UNION {
+              ?additionalIRI @allPredicates ?subjectIRI. 
+            }
+          }
       }
   `)
 
-  let joinOn = op.on(op.col("firstObjectIRI"),op.col("subjectNew"));
+  let joinOn = op.on(op.col("firstObjectIRI"),op.col("firstObjectIRI"));
   let fullPlan = subjectPlan.joinLeftOuter(relatedPlan, joinOn);
 
-  return fullPlan.result(null, {docURI, labelIRI: getOrderedLabelPredicates(), allPredicates: getAllPredicates()}).toArray();
+  return fullPlan.result(null, {parentDocURI: docURI, labelIRI: getOrderedLabelPredicates(), allPredicates: getAllPredicates()}).toArray();
 }
 
+function getNodeLabel(objectIRIArr, objectUri) {
+  let label = "";
+  let configurationLabel = getLabelFromHubConfigByEntityType(objectIRIArr[objectIRIArr.length - 2]);
+  if(configurationLabel.length > 0){
+    //getting the value of the configuration property
+    label = fn.string(getValueFromProperty(configurationLabel,objectUri,objectIRIArr[objectIRIArr.length - 2]));
+  }
+
+  if (label.length === 0) {
+    label = objectIRIArr[objectIRIArr.length - 1];
+  }
+  return label;
+}
+
+function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true, excludeOriginNode = false) {
+  const nodesByID = {};
+  const edgesByID = {};
+  const docUriToSubjectIri = {};
+  const subjectUris = [];
+  for (const item of result) {
+    if (fn.exists(item.docURI)) {
+      const subjectIri = fn.string(item.subjectIRI);
+      const subjectUri = fn.string(item.docURI);
+      if (!subjectUris.includes(subjectUri)) {
+        subjectUris.push(subjectUri);
+      }
+      docUriToSubjectIri[subjectUri] = docUriToSubjectIri[subjectUri] || [];
+      docUriToSubjectIri[subjectUri].push(subjectIri);
+    }
+    if ((fn.empty(item.nodeCount) || item.nodeCount === 1) && fn.exists(item.firstDocURI)) {
+      const objectUri = fn.string(item.firstDocURI);
+      const objectIri = fn.string(item.firstObjectIRI);
+      docUriToSubjectIri[objectUri] = docUriToSubjectIri[objectUri] || [];
+      docUriToSubjectIri[objectUri].push(objectIri);
+    }
+  }
+
+  const getUrisByIRI = (iri) => Object.keys(docUriToSubjectIri).filter(key => docUriToSubjectIri[key].includes(iri));
+
+  for (const item of result) {
+    let resultPropertiesOnHover = [];
+    let newLabel = "";
+    const docUri = fn.string(item.docURI);
+    const subjectIri = docUriToSubjectIri[docUri] ? docUriToSubjectIri[docUri][0] : fn.string(item.subjectIRI);
+    const subjectArr = subjectIri.split("/");
+    let subjectLabel = subjectArr[subjectArr.length - 1];
+    const originHasDoc = docUri !== "";
+    const group = originHasDoc ? subjectIri.substring(0, subjectIri.length - subjectLabel.length - 1): subjectIri;
+    let entityType = subjectArr.length >= 2 ? subjectArr[subjectArr.length - 2]: "";
+    if (!item.subjectLabel || fn.string(item.subjectLabel).length === 0) {
+      //check if we have in central config new label loaded
+      if(originHasDoc) {
+        //get configuration values from Hub Central Config
+        let configurationLabel = getLabelFromHubConfigByEntityType(entityType);
+        //getting the value of the configuration property
+        newLabel = getValueFromProperty(configurationLabel, docUri, entityType);
+        //check if we have in central config properties on hover loaded
+        resultPropertiesOnHover = entityLib.getValuesPropertiesOnHover(docUri,entityType,hubCentralConfig);
+      } else {
+        newLabel = fn.string(item.predicateLabel);
+      }
+    } else {
+      newLabel = fn.string(item.subjectLabel);
+    }
+    const objectIRI = fn.string(item.firstObjectIRI);
+    const objectIRIArr = objectIRI.split("/");
+    const objectUri = fn.string(item.firstDocURI);
+    const objectHasDoc = objectUri !== "";
+    const originId = originHasDoc ? docUri : subjectIri;
+    const predicateArr = fn.string(item.predicateIRI).split("/");
+    const edgeLabel = predicateArr[predicateArr.length - 1];
+    if (!(nodesByID[originId] || excludeOriginNode)) {
+      const nodeOrigin = {};
+      nodeOrigin.id = originId;
+      nodeOrigin.docUri = docUri;
+      nodeOrigin.docIRI = subjectIri;
+      if (!newLabel || newLabel.length === 0) {
+        nodeOrigin.label = subjectLabel;
+      } else {
+        nodeOrigin.label = newLabel;
+      }
+      nodeOrigin.additionalProperties = null;
+      nodeOrigin.group = group;
+      nodeOrigin.isConcept = false;
+      nodeOrigin.hasRelationships = false;
+      if (!(entityTypeIds.includes(entityType) && isSearch)) {
+        nodeOrigin.hasRelationships = docUriToSubjectIri[item.docURI] ? docUriToSubjectIri[item.docURI].some(iri => relatedObjHasRelationships(iri)): relatedObjHasRelationships(subjectIri);
+      }
+      nodeOrigin.count = 1;
+      nodeOrigin.propertiesOnHover = resultPropertiesOnHover;
+      nodesByID[item.docURI] = nodeOrigin;
+    }
+    if (fn.exists(item.firstObjectIRI)) {
+      //Checking for target nodes
+      if (fn.empty(item.nodeCount) || fn.head(item.nodeCount) === 1) {
+        let edge = {};
+        const docUriToNodeKeys = getUrisByIRI(objectIRI);
+        const buildNodesAndEdgesFunction = key => {
+          const objectIRI = docUriToSubjectIri[key] ? docUriToSubjectIri[key][0] : key;
+          const objectIRIArr = objectIRI.split("/");
+          const isDocument = cts.exists(cts.documentQuery(key));
+          const objectEntityType = objectIRIArr[objectIRIArr.length - 2];
+          const objectGroup = (isDocument || entityTypeIds.includes(objectEntityType)) ? objectIRI.substring(0, objectIRI.length - objectIRIArr[objectIRIArr.length - 1].length - 1): objectIRI;
+          edge = {};
+          const sortedIds = [originId, key].sort();
+          edge.id = "edge-" + sortedIds[0] + "-" + item.predicateIRI + "-" + sortedIds[1];
+          if (!edgesByID[edge.id]) {
+            edge.predicate = item.predicateIRI;
+            edge.label = edgeLabel;
+            edge.from = sortedIds[0];
+            edge.to = sortedIds[1];
+            edgesByID[edge.id] = edge;
+          }
+          if (!nodesByID[key]) {
+            let objectNode = {};
+            objectNode.id = key;
+            objectNode.docUri = isDocument ? key : null;
+            objectNode.docIRI = objectIRI;
+            objectNode.label = isDocument ? getNodeLabel(objectIRIArr, key): (fn.string(item.conceptLabel) || objectIRIArr[objectIRIArr.length - 1]);
+            resultPropertiesOnHover = isDocument ? entityLib.getValuesPropertiesOnHover(key, objectEntityType, hubCentralConfig) : "";
+            objectNode.propertiesOnHover = resultPropertiesOnHover;
+            objectNode.group = objectGroup;
+            objectNode.isConcept = !(isDocument || entityTypeIds.includes(objectEntityType));
+            objectNode.count = item.nodeCount;
+            objectNode.hasRelationships = false;
+            if (!(subjectUris.includes(objectNode.docUri) && isSearch)) {
+              objectNode.hasRelationships = docUriToSubjectIri[item.docURI] ? docUriToSubjectIri[item.docURI].some(iri => relatedObjHasRelationships(iri)): relatedObjHasRelationships(subjectIri);
+            }
+            objectNode.hasRelationships = docUriToSubjectIri[key] ? docUriToSubjectIri[key].some(iri => relatedObjHasRelationships(iri)) : relatedObjHasRelationships(objectIRI, objectNode.isConcept);
+            nodesByID[key] = objectNode;
+          }
+        };
+        //if the target exists in docUriToSubjectIri we check for multiple nodes
+        if (docUriToNodeKeys && docUriToNodeKeys.length > 0) {
+          docUriToNodeKeys.forEach(buildNodesAndEdgesFunction);
+        } else { //if there isn't a docURI key create the node from item's info
+          buildNodesAndEdgesFunction(objectHasDoc ? objectUri : objectIRI);
+        }
+        if (fn.exists(item.additionalEdge) && item.additionalEdge.toString().length > 0) {
+          const objectId = objectHasDoc ? objectUri : objectIRI;
+          const additionalId = fn.exists(item.docRelated) ? item.docRelated : item.additionalIRI;
+          const sortedIds = [objectId, additionalId].sort();
+          const edgeId = "edge-" + sortedIds[0] + "-" + item.predicateIRI + "-" + sortedIds[1];
+          const predicateArr = item.additionalEdge.toString().split("/");
+          const edgeLabel = predicateArr[predicateArr.length - 1];
+          if (!edgesByID[edgeId]) {
+            edgesByID[edgeId] = {
+              id: edgeId,
+              predicate: item.additionalEdge,
+              label: edgeLabel,
+              from: sortedIds[0],
+              to: sortedIds[1]
+            };
+          }
+        }
+      } else if (fn.exists(item.nodeCount) && fn.head(item.nodeCount) > 1) {
+        const entityType = objectIRIArr[objectIRIArr.length - 2];
+        const objectId = originId + "-" + item.predicateIRI + "-" + entityType;
+        let edge = {};
+        edge.id = "edge-" + objectId;
+        if (!edgesByID[edge.id]) {
+          edge.predicate = item.predicateIRI;
+          edge.label = edgeLabel;
+          edge.from = originId;
+          edge.to = objectId;
+          edgesByID[edge.id] = edge;
+        }
+        if (!nodesByID[objectId]) {
+          let objectNode = {};
+          objectNode.id = objectId;
+          objectNode.label = objectIRIArr[objectIRIArr.length - 1];
+          objectNode.parentDocUri = item.docURI;
+          objectNode.predicateIri = item.predicateIRI;
+          objectNode.propertiesOnHover = "";
+          objectNode.group = objectIRI.substring(0, objectIRI.length - objectIRIArr[objectIRIArr.length - 1].length - 1);
+          ;
+          objectNode.isConcept = false;
+          objectNode.count = item.nodeCount;
+          objectNode.hasRelationships = false;
+          nodesByID[objectId] = objectNode;
+        }
+      } else if (item.predicateIRI !== undefined && item.predicateIRI.toString().length > 0) {
+        const docUriToNodeKeys = getUrisByIRI(objectIRI);
+        const edgeFunction = key => {
+          const objectId = key;
+          const sortedIds = [originId, objectId].sort();
+          const edgeId = "edge-" + sortedIds[0] + "-" + item.predicateIRI + "-" + sortedIds[1];
+          if (!edgesByID[edgeId]) {
+            edgesByID[edgeId] = {
+              id: edgeId,
+              predicate: item.predicateIRI,
+              label: edgeLabel,
+              from: sortedIds[0],
+              to: sortedIds[1]
+            };
+          }
+        };
+        if (docUriToNodeKeys && docUriToNodeKeys.length > 0) {
+          docUriToNodeKeys.forEach(edgeFunction);
+        } else { //target is a concept node
+          edgeFunction(objectHasDoc ? objectUri: objectIRI);
+        }
+      }
+    }
+  }
+  return {
+    nodes: hubUtils.getObjectValues(nodesByID),
+    edges: hubUtils.getObjectValues(edgesByID)
+  };
+}
+
+const labelsByEntityType = {};
+
+function getLabelFromHubConfigByEntityType(entityType) {
+  if (labelsByEntityType[entityType] === undefined) {
+    const labelXPath = `/modeling/entities/${entityType}/label`;
+    if (hubCentralConfig != null && cts.validExtractPath(labelXPath)) {
+      labelsByEntityType[entityType] = fn.string(fn.head(hubCentralConfig.xpath(labelXPath)));
+    } else {
+      labelsByEntityType[entityType] = "";
+    }
+  }
+  return labelsByEntityType[entityType];
+}
+
+const propertiesOnHoverByEntityType = {};
+
+function getPropertiesOnHoverFromHubConfigByEntityType(entityType) {
+  if (labelsByEntityType[entityType] === undefined) {
+      if (hubCentralConfig != null && fn.exists(hubCentralConfig.xpath("/modeling/entities/" + entityType +"/propertiesOnHover"))) {
+        const obj = JSON.parse(hubCentralConfig);
+        propertiesOnHoverByEntityType[entityType] = obj.modeling.entities[entityType].propertiesOnHover;
+      } else {
+        propertiesOnHoverByEntityType[entityType] = "";
+      }
+  }
+  return propertiesOnHoverByEntityType[entityType];
+}
+
+function getValueFromProperty(propertyName, docUri, entityType) {
+  if (fn.exists(docUri) && entityType && propertyName) {
+    const property = cts.doc(docUri).xpath(`*:envelope/*:instance/*:${entityType}/*:${propertyName}`);
+    if (fn.exists(property)) {
+      return fn.data(fn.head(property));
+    }
+  }
+  return "";
+}
 
 function getRelatedEntitiesCounting(allRelatedPredicateList,ctsQueryCustom) {
   /* TODO: Investigate why mapping bindings for predicates weren't giving accurate docUri count */
@@ -269,20 +557,18 @@ function getConceptCounting(entityTypeIRIs, predicateConceptList, ctsQueryCustom
   return totalConcepts.result(null,{entityTypeIRIs,predicateConceptList});
 }
 
-function relatedObjHasRelationships(objectIRI) {
+function relatedObjHasRelationships(objectIRI, isConcept = false) {
   let predicatesMap = getPredicatesMap();
   let hasRelationships = false;
   const objectIRIArr = objectIRI.split("/");
   const objectEntityName = objectIRIArr[objectIRIArr.length - 2];
-  if (predicatesMap.has(objectEntityName)) {
-    const predicates = predicatesMap.get(objectEntityName);
+  if (predicatesMap.has(objectEntityName) || isConcept) {
+    const predicates = isConcept ? null: predicatesMap.get(objectEntityName);
     const relationshipsFirstObjectCount = cts.estimate(cts.orQuery([
       cts.tripleRangeQuery(sem.iri(objectIRI), predicates, null),
       cts.tripleRangeQuery(null, predicates, sem.iri(objectIRI))
     ]));
-    if (relationshipsFirstObjectCount >= 1) {
-      hasRelationships = true;
-    }
+    hasRelationships = relationshipsFirstObjectCount >= 1;
   }
   return hasRelationships;
 }
@@ -317,17 +603,17 @@ function getEntityWithConcepts(entityTypeIRIs, predicateConceptList) {
                  PREFIX mlDH: <http://www.marklogic.com/data-hub#>
                  PREFIX es: <http://marklogic.com/entity-services#>
 
-                 SELECT DISTINCT ?objectIRI ?objectConcept ?conceptClassName ?entityTypeIRI WHERE {
+                 SELECT DISTINCT ?objectIRI ?conceptClassName ?entityTypeIRI WHERE {
                         ?entityTypeIRI rdf:type es:EntityType;
                               mlDH:relatedConcept ?conceptClassName.
                         ?conceptClassName mlDH:conceptPredicate ?conceptPredicate.
                         {
-                            ?subjectIRI ?conceptPredicate ?objectConcept.
+                            ?subjectIRI ?conceptPredicate ?objectIRI.
                         } UNION {
-                            ?objectConcept ?conceptPredicate ?subjectIRI.
+                            ?objectIRI ?conceptPredicate ?subjectIRI.
                         }
                         FILTER EXISTS {
-                            ?subjectIRI @predicateConceptList ?objectConcept;
+                            ?subjectIRI @predicateConceptList ?objectIRI;
                                 rdf:type @entityTypeIRIs.
                         }
                  }`);
@@ -359,6 +645,7 @@ function describeIRI(semanticConceptIRI) {
 
 module.exports = {
   describeIRI,
+  getAllEntityIds,
   getAllPredicates,
   getEntityNodesWithRelated,
   getEntityNodes,
@@ -367,7 +654,7 @@ module.exports = {
   getEntityTypeIRIsCounting,
   getRelatedEntitiesCounting,
   getConceptCounting,
-  relatedObjHasRelationships,
   getRelatedEntityInstancesCount,
-  getEntityWithConcepts
+  getEntityWithConcepts,
+  graphResultsToNodesAndEdges
 }

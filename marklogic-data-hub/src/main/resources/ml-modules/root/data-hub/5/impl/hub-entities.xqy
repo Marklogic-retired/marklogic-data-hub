@@ -704,18 +704,27 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
           $n/@*,
           let $context-item :=  fn:replace(fn:string($n/tde:context), "^\.//?", "")
           let $context-item :=
-            if (fn:contains($context-item, "|")) then
-              fn:replace(fn:tokenize($context-item, "\|")[2], "\)$", "")
-            else
-              $context-item
+            fn:replace(
+              if (fn:contains($context-item, "|")) then
+                fn:replace(fn:tokenize($context-item, "\|")[2], "\)$", "")
+              else
+                $context-item,
+              "\[(fn|xs):string\(\.\) ne &quot;&quot;\]",
+              ""
+            )
           let $join-prefix := $context-item || "_"
           let $parent-context-item := fn:replace(fn:string($n/../../tde:context), "^\./{1,2}([^\[]+)(\[node\(\)\])?$", "$1")
           let $parent-context-item :=
-            if (fn:contains($parent-context-item, "|")) then
-              fn:replace(fn:tokenize($parent-context-item, "\|")[2], "\)$", "")
-            else
-              $parent-context-item
-          let $is-join-template := $n/tde:rows/tde:row/tde:view-name = $parent-context-item  || "_" || $context-item
+            fn:replace(
+              if (fn:contains($parent-context-item, "|")) then
+                fn:replace(fn:tokenize($parent-context-item, "\|")[2], "\)$", "")
+              else
+                $parent-context-item,
+              "\[(fn|xs):string\(\.\) ne &quot;&quot;\]",
+              ""
+            )
+          let $join-view-name := fn:string-join(($parent-context-item, $context-item), "_")
+          let $is-join-template := $n/tde:rows/tde:row/tde:view-name = $join-view-name
           let $rows := $n/tde:rows/tde:row
           return
             if ($is-join-template) then (
