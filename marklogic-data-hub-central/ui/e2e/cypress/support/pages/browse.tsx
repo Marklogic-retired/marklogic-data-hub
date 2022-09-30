@@ -329,7 +329,7 @@ class BrowsePage {
 
   // common
   clickMoreLink(facetType: string) {
-    cy.findByTestId(`show-more-${facetType}`).click();
+    cy.findByTestId(`show-more-${facetType}`).click({force: true});
   }
 
   // common

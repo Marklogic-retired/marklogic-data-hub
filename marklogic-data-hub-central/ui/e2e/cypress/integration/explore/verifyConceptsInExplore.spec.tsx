@@ -40,12 +40,16 @@ describe("Concepts", () => {
     browsePage.clickGraphView();
     cy.waitForAsyncRequest();
     graphExplore.getGraphVisCanvas().should("be.visible");
+
+    graphView.getPhysicsAnimationToggle().scrollIntoView().should("have.value", "true");
+    graphView.getPhysicsAnimationToggle().scrollIntoView().trigger("mouseover").click();
+    graphView.getPhysicsAnimationToggle().scrollIntoView().should("have.value", "false");
     graphExplore.stopStabilization();
 
     cy.log("**Select 'Product' entity**");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Product");
-    entitiesSidebar.getBaseEntityOption("Product").should("be.visible");
+    entitiesSidebar.getBaseEntityOption("Product").scrollIntoView().should("be.visible");
     cy.wait(5000); // The canvas takes some more time animating
 
     cy.log("**Picking up a concept node**");
@@ -142,6 +146,7 @@ describe("Concepts", () => {
   });
   it("Verify Kettle concept node should be visible when selected as facet", {defaultCommandTimeout: 120000}, () => {
     browsePage.clickMoreLink("relatedconcepts");
+    entitiesSidebar.showMoreRelatedConcept().click();
     browsePage.getFacetItemCheckbox("relatedconcepts", "Kettle").click();
     browsePage.getSelectedFacets().should("exist");
     browsePage.getGreySelectedFacets("Kettle").should("exist");
@@ -172,11 +177,6 @@ describe("Concepts", () => {
     //Verify if the tooltip is visible
     graphView.getPhysicsAnimationHelpIcon().trigger("mouseover", {force: true});
     graphView.getPhysicsAnimationTooltip().should("be.visible");
-
-    graphView.getPhysicsAnimationToggle().should("have.value", "true");
-
-    graphView.getPhysicsAnimationToggle().scrollIntoView().trigger("mouseover").click();
-    graphView.getPhysicsAnimationToggle().should("have.value", "false");
   });
 
 });

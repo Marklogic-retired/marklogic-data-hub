@@ -98,11 +98,11 @@ class CuratePage {
   }
 
   selectMergeTab(entityTypeId: string) {
-    cy.waitUntil(() => cy.get(`#${entityTypeId} [data-rr-ui-event-key="merge"]`)).click();
+    cy.get(`#${entityTypeId} [data-rr-ui-event-key="merge"]`).click();
   }
 
   selectMatchTab(entityTypeId: string) {
-    cy.waitUntil(() => cy.get(`#${entityTypeId} [data-rr-ui-event-key="match"]`)).click({force: true});
+    cy.get(`#${entityTypeId} [data-rr-ui-event-key="match"]`).click({force: true});
   }
 
   selectCustomTab(entityTypeId: string) {
