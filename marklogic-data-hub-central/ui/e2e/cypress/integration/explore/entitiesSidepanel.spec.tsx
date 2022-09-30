@@ -114,6 +114,9 @@ describe("Test '/Explore' left sidebar", () => {
     browsePage.getHCTableRows().should("have.length", 2);
 
     cy.log("**Applying another facet**");
+    //Should be commented once DHFPROD-9525 is fixed
+    entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
+
     entitiesSidebar.getFacetCheckboxEmail("adamscole@nutralab.com").should("be.visible").click();
     entitiesSidebar.getFacetCheckboxEmail("adamscole@nutralab.com").should("be.checked");
     browsePage.getGreySelectedFacets("adamscole@nutralab.com").should("exist");

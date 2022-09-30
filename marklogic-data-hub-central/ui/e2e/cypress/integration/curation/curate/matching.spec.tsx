@@ -372,6 +372,7 @@ describe("Matching", () => {
 
   it("Show matched results for test match", () => {
     cy.visit("/tiles/curate");
+    cy.waitForAsyncRequest();
     curatePage.toggleEntityTypeId("Person");
     curatePage.selectMatchTab("Person");
     curatePage.openStepDetails("match-person");
