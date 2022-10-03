@@ -303,7 +303,9 @@ const GraphVis: React.FC<Props> = (props) => {
   //turn on edit mode
   useEffect(() => {
     if (props.graphEditMode) {
-      network.addEdgeMode();
+      if (network) {
+        network.addEdgeMode();
+      }
       // setPhysicsEnabled(false);
     }
   }, [props.graphEditMode]);
@@ -311,7 +313,9 @@ const GraphVis: React.FC<Props> = (props) => {
   //turn off edit mode on cancel modal
   useEffect(() => {
     if (!openRelationshipModal && props.graphEditMode) {
-      network.disableEditMode();
+      if (network) {
+        network.disableEditMode();
+      }
       props.setGraphEditMode(false);
       // network.addEdgeMode();
     }
