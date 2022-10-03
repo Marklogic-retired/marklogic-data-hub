@@ -107,7 +107,12 @@ describe("Concept classes in Modeling screen", () => {
     //open Optional line to edit foreign key field
     relationshipModal.toggleOptional();
     relationshipModal.verifyVisibleOptionalBlock();
-    relationshipModal.editSourceProperty("category");
+    cy.log("**None property should not be visible anymore**");
+    relationshipModal.getSourcePropertySelectWrapper().click();
+    relationshipModal.sourceProperty("None").should("not.exist");
+    relationshipModal.sourceProperty("instance").should("be.visible");
+
+    relationshipModal.sourceProperty("category").click();
     relationshipModal.addRelationshipSubmit();
 
     cy.waitForAsyncRequest();

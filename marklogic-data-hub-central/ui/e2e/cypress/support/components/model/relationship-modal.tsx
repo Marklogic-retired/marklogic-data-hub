@@ -104,7 +104,11 @@ class RelationshipModal {
 
   editSourceProperty(propertyName: string) {
     this.getSourcePropertySelectWrapper().click();
-    cy.get(`#foreignKey-dropdown-MenuList [aria-label="${propertyName}-option"]`).click();
+    this.sourceProperty(propertyName).click();
+  }
+
+  sourceProperty(propertyName: string) {
+    return cy.get(`#foreignKey-dropdown-MenuList [aria-label="${propertyName}-option"]`);
   }
 
   getEntityToConceptClassViewOption() {
