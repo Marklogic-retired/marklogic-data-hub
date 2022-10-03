@@ -108,6 +108,7 @@ const ModelingTooltips = {
   /* Graph view */
   exportGraph: "Export graph as PNG",
   relationshipEmpty: "Relationship name is required",
+  propertyNameEmpty: "Property is required",
   targetEntityEmpty: function (nodeType: string) {
     return <span aria-label="targetNodeEmpty">Target {nodeType} is required</span>;
   },

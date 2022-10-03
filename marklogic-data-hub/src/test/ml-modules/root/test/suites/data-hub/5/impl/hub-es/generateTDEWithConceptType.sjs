@@ -27,9 +27,16 @@ function generateTdeWithRelatedEntityType() {
               },
               "relatedConcepts": [
                 {
+                  "conceptClass": "testConceptClass",
                   "context": "category",
                   "predicate": "isCategory",
                   "conceptExpression": "sem:iri(\"http://www.example.com/Category/\" || fn:replace(fn:string(.),'\\s+', ''))"
+                },
+                {
+                  "conceptClass": "testConceptClass",
+                  "context": ".",
+                  "predicate": "hasConcept",
+                  "conceptExpression": ""
                 }
               ]
             }
@@ -39,9 +46,12 @@ function generateTdeWithRelatedEntityType() {
 
     const tde = hent.dumpTde(input);
     const contextTemplate = fn.head(tde.xpath('.//*:templates/*:template[*:context = ".//Product[node()]"]/*:templates/*:template[*:context = "category"]'));
+  const contextTemplateWithDot = fn.head(tde.xpath('.//*:templates/*:template[*:context = ".//Product[node()]"]/*:templates/*:template[*:context = "."]'));
     const contextTemplateExists = fn.exists(contextTemplate);
+  const contextTemplatewithDotExists = fn.exists(contextTemplateWithDot);
     const assertions = [
-    test.assertTrue(contextTemplateExists, `Context template should exist.`)
+    test.assertTrue(contextTemplateExists, `Context template should exist.`),
+    test.assertTrue(contextTemplatewithDotExists, `Context template with dot should exist.`)
     ];
 
   assertions.push(
