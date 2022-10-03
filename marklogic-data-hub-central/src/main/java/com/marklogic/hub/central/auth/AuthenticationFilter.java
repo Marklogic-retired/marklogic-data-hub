@@ -21,6 +21,7 @@ import com.marklogic.client.FailedRequestException;
 import com.marklogic.hub.central.HttpSessionHubClientProvider;
 import com.marklogic.hub.central.HubCentral;
 import com.marklogic.hub.dataservices.HubCentralService;
+import com.marklogic.hub.impl.HubConfigImpl;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
@@ -84,7 +85,9 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
 
         username = username.trim();
 
-        hubClientProvider.setHubClientDelegate(hubCentral.newHubConfig(username, password).newHubClient());
+        HubConfigImpl hubClientConfig = hubCentral.newHubConfig(username, password);
+        hubClientProvider.setHubClientConfig(hubClientConfig);
+        hubClientProvider.setHubClientDelegate(hubClientConfig.newHubClient());
         List<GrantedAuthority> authorities = new ArrayList<>();
         JsonNode response;
         try {
