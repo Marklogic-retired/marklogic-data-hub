@@ -275,6 +275,10 @@ describe("Entity Modeling: Graph View", () => {
 
   it("can edit graph edit mode and add edge relationships (with foreign key scenario) via drag/drop", () => {
     entityTypeTable.viewEntityInGraphView("Person");
+    graphView.getAddButton().click();
+    graphView.addNewRelationship().should("be.visible").click({force: true});
+
+    cy.log("** ensure side panel can be closed in add edge mode **");
     modelPage.closeSidePanel();
     cy.wait(6000);
     graphView.getAddButton().click();
