@@ -58,9 +58,6 @@ describe("Entity Modeling: Graph View", () => {
     cy.waitUntil(() => entityTypeModal.getAddButton().click());
     cy.waitForAsyncRequest();
     entityTypeModal.getAddButton().should("not.exist");
-
-    //It appears in the next table page
-    // entityTypeTable.goToNextTablePage();
     cy.scrollTo("bottom");
     table.scrollToFooter();
     entityTypeTable.viewEntityInGraphView("ThisIsVeryLongNameHavingMoreThan20Characters");

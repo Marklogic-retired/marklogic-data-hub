@@ -87,6 +87,18 @@ declare function entity-validate($entity-uri as xs:string) {
             else
               $prop => map:put("$ref", $entity-uri)
         )
+
+      let $properties-empty-dataset :=
+        for $definition-type in map:keys($definitions)
+        let $definition-properties := $definitions => map:get($definition-type) => map:get("properties")
+        for $property-name in map:keys($definition-properties)
+        let $property := $definition-properties => map:get($property-name)
+        let $datatype := $property => map:get("datatype")
+        return
+            if (fn:exists($datatype) and fn:string($datatype) eq "") then
+              map:put($property, "datatype", "string")
+            else()
+
       let $info-map as map:map := $entity-def-map => map:get("info")
       (: build uber model with original info :)
       return hent:uber-model((xdmp:to-json($entity-def-map)/object-node(), $supporting-entity-defs)) => map:with("info", $info-map)

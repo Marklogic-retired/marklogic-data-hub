@@ -391,7 +391,7 @@ export const definitionsParser = (definitions: any): Definition[] => {
             sortable: defProp["sortable"] || false
           };
 
-          if (defProp["datatype"]) {
+          if (defProp["datatype"] || defProp["datatype"] === "") {
             // Handle join props if present
             property.relatedEntityType = defProp["relatedEntityType"];
             property.joinPropertyName = defProp["joinPropertyName"];
