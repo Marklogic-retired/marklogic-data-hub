@@ -82,6 +82,15 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyModal.getSubmitButton().click();
     propertyTable.getMultipleIcon("user").should("exist");
   });
+  it("Add a property related to Person but no foreign key", () => {
+    propertyTable.getAddPropertyButton("Buyer").should("be.visible").click();
+    propertyModal.newPropertyName("personNoKey");
+    propertyModal.openPropertyDropdown();
+    propertyModal.getTypeFromDropdown("Related Entity").click();
+    propertyModal.getCascadedTypeFromDropdown("Person").click();
+    propertyModal.getSubmitButton().click();
+    propertyTable.verifyRelationshipIcon("personNoKey").should("exist");
+  });
   it("edit entity description then edit property name with Related Entity type", () => {
     entityTypeTable.getEntity("Buyer").click();
     entityTypeModal.clearEntityDescription();
@@ -102,7 +111,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     entityTypeModal.getEntityVersion().should("have.value", "3.0.1");
     entityTypeModal.getCancelButton().click();
   });
-  it("Add cascaded type with identifer", () => {
+  it("Add cascaded type with identifier", () => {
     propertyTable.getAddPropertyButton("Buyer").click();
     propertyModal.clearPropertyName();
     propertyModal.newPropertyName("newId");
