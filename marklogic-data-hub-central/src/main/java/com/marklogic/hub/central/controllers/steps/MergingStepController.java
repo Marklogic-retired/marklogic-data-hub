@@ -104,7 +104,7 @@ public class MergingStepController extends BaseController {
     @RequestMapping(value = "/merge", method = RequestMethod.PUT)
     @Secured("ROLE_readMerging")
     public ResponseEntity<JsonNode> mergeDocument(@RequestBody JsonNode request) {
-        MasteringManager mgr = new MasteringManagerImpl(getHubClient());
+        MasteringManager mgr = new MasteringManagerImpl(getHubClientConfig());
         try {
             List<String> mergeURIs = new ObjectMapper().readerForListOf(String.class).readValue(request.get("mergeURIs"));
             String flowName = request.path("flowName").asText();
@@ -121,13 +121,13 @@ public class MergingStepController extends BaseController {
     @RequestMapping(value = "/unmerge", method = RequestMethod.PUT)
     @Secured("ROLE_readMerging")
     public ResponseEntity<JsonNode> unmergeDocument(@RequestParam String mergeDocumentURI, @RequestParam(required = false, defaultValue = "true") Boolean retainAuditTrail, @RequestParam(required = false, defaultValue = "true") Boolean blockFutureMerges) {
-        MasteringManager mgr = new MasteringManagerImpl(getHubClient());
+        MasteringManager mgr = new MasteringManagerImpl(getHubClientConfig());
         return ResponseEntity.ok(mgr.unmerge(mergeDocumentURI, retainAuditTrail, blockFutureMerges));
     }
 
     @RequestMapping(value = "/notifications", method = RequestMethod.GET)
     public ResponseEntity<JsonNode> getNotifications(@RequestParam(defaultValue = "1") Integer start, @RequestParam(defaultValue = "10") Integer pageLength) {
-        MasteringManager mgr = new MasteringManagerImpl(getHubClient());
+        MasteringManager mgr = new MasteringManagerImpl(getHubClientConfig());
         return ResponseEntity.ok(mgr.notifications(start, pageLength));
     }
 
@@ -135,14 +135,14 @@ public class MergingStepController extends BaseController {
     @ResponseBody
     @Secured("ROLE_writeMerging")
     public ResponseEntity<JsonNode> getMergingPreview(@RequestParam String flowName, @RequestParam(name = "uri") List<String> uri) {
-        MasteringManager mgr = new MasteringManagerImpl(getHubClient());
+        MasteringManager mgr = new MasteringManagerImpl(getHubClientConfig());
         return ResponseEntity.ok(mgr.mergePreview(flowName, uri));
     }
 
     @RequestMapping(value = "/notifications", method = RequestMethod.DELETE)
     @Secured("ROLE_writeMerging")
     public ResponseEntity<JsonNode> deleteNotifications(@RequestParam(name = "uri") List<String> uri) {
-        MasteringManager mgr = new MasteringManagerImpl(getHubClient());
+        MasteringManager mgr = new MasteringManagerImpl(getHubClientConfig());
         return ResponseEntity.ok(mgr.deleteNotifications(uri));
     }
 

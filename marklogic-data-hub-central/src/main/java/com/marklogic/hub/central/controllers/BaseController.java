@@ -3,6 +3,7 @@ package com.marklogic.hub.central.controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.HubClient;
+import com.marklogic.hub.HubClientConfig;
 import com.marklogic.hub.central.HttpSessionHubClientProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,10 @@ public abstract class BaseController extends LoggingObject {
 
     protected HubClient getHubClient() {
         return hubClientProvider.getHubClient();
+    }
+
+    protected HubClientConfig getHubClientConfig() {
+        return hubClientProvider.getHubClientConfig();
     }
 
     protected ResponseEntity<Void> emptyOk() {

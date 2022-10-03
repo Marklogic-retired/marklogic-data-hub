@@ -1,6 +1,7 @@
 package com.marklogic.hub.central;
 
 import com.marklogic.hub.HubClient;
+import com.marklogic.hub.HubClientConfig;
 
 /**
  * Abstracts how a HubClient is obtained. The intent is for Hub Central controllers to be bound to this interface
@@ -11,5 +12,7 @@ import com.marklogic.hub.HubClient;
 public interface HubClientProvider {
 
     HubClient getHubClient();
+
+    HubClientConfig getHubClientConfig();
 
 }

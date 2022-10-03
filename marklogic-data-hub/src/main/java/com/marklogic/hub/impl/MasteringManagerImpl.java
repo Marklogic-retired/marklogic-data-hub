@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Properties;
 
 @Component
 public class MasteringManagerImpl implements MasteringManager {
@@ -38,8 +37,8 @@ public class MasteringManagerImpl implements MasteringManager {
         this.hubConfig = hubConfig;
     }
 
-    public MasteringManagerImpl(HubClient hubClient) {
-        this.hubConfig = (HubConfig) hubClient.getHubClientConfig();
+    public MasteringManagerImpl(HubClientConfig hubClientConfig) {
+        this.hubConfig = (HubConfig) hubClientConfig;
     }
 
     @Override
