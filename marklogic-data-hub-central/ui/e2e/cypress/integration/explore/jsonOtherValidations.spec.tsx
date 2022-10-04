@@ -24,6 +24,10 @@ describe("Verify numeric/date facet can be applied", () => {
     //Restoring Local Storage to Preserve Session
     cy.restoreLocalStorage();
   });
+  afterEach(() => {
+    // update local storage
+    cy.saveLocalStorage();
+  });
   after(() => {
     cy.resetTestUser();
   });
