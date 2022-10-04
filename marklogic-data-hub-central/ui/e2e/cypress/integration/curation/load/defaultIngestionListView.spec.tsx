@@ -50,7 +50,7 @@ describe("Validate CRUD functionality from list view", () => {
     loadPage.selectSourceFormat("XML");
     loadPage.selectTargetFormat("XML");
     loadPage.uriPrefixInput().type("/e2eLoad/");
-    loadPage.saveButton().click();
+    loadPage.saveButton().should("be.visible").click();
     cy.findByText(stepName).should("be.visible");
   });
   it("Verify Edit", () => {
