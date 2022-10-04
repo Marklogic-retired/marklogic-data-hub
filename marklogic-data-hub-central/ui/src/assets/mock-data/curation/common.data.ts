@@ -1573,6 +1573,33 @@ const xmlSourceDataMultipleSiblings = {
   "format": "XML"
 };
 
+const xmlNamespacedSourceData = {
+  "data": {
+    "org:example:test": {
+      "org:example:hello": "world",
+    },
+  },
+  "format": "XML",
+  "namespaces": {
+    "entity-services": "http://marklogic.com/entity-services",
+    "org:example": "org:example",
+  },
+  "sourceProperties": [
+    {
+      "level": 0,
+      "name": "org:example:test",
+      "struct": true,
+      "xpath": "/org:example:test"
+    },
+    {
+      "level": 1,
+      "name": "org:example:hello",
+      "struct": false,
+      "xpath": "/org:example:test/org:example:hello"
+    }
+  ]
+};
+
 const xmlSourceDataDefault = {
   "data": {
     "sampleProtein": {
@@ -2028,6 +2055,7 @@ const data = {
   dropDownWithSearch: dropDownWithSearch,
   xmlSourceData: xmlSourceData,
   xmlSourceDataMultipleSiblings: xmlSourceDataMultipleSiblings,
+  xmlNamespacedSourceData: xmlNamespacedSourceData,
   jsonSourceDataMultipleSiblings: jsonSourceDataMultipleSiblings,
   jsonSourceDataMultipleSiblingsEntireRecord: jsonSourceDataMultipleSiblingsEntireRecord,
   JSONSourceDataToTruncate: JSONSourceDataToTruncate,

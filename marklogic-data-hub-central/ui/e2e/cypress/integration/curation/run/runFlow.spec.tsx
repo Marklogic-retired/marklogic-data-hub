@@ -25,7 +25,7 @@ describe("Run Tile tests", () => {
   after(() => {
     // Skipped since it tests functionality on DHFPROD-7187 (run selected flows)
     // cy.deleteRecordsInFinal("master-xml-person", "mapPersonXML");
-    // cy.deleteFlows(flowName);
+    cy.deleteFlows(flowName);
     cy.resetTestUser();
   });
   it("can create flow and add steps to flow, should load xml merged document and display content", {defaultCommandTimeout: 120000}, () => {
@@ -66,7 +66,7 @@ describe("Run Tile tests", () => {
     });
   });
 
-  it("Verify selected steps in run flow dropdown are executed successfully ", () => {
+  it("Verify selected steps in run flow dropdown are executed successfully ", {defaultCommandTimeout: 120000}, () => {
     cy.log("**Verify selected steps executed successfully**");
     runPage.openStepsSelectDropdown(flowName);
 
@@ -148,7 +148,7 @@ describe("Run Tile tests", () => {
     runPage.closeFlowStatusModal(flowName);
   });
 
-  it("Verify if no step is selected in run flow dropdown; all steps are executed ", () => {
+  it("Verify if no step is selected in run flow dropdown; all steps are executed ", {defaultCommandTimeout: 120000}, () => {
     cy.intercept("GET", "/api/jobs/**").as("runResponse");
     runPage.expandFlow("testCustomFlow");
     runPage.runFlow("testCustomFlow");
@@ -160,7 +160,7 @@ describe("Run Tile tests", () => {
     runPage.closeFlowStatusModal("testCustomFlow");
   });
 
-  it("Run map,match and merge steps for Person entity individually using xml documents ", () => {
+  it("Run map,match and merge steps for Person entity individually using xml documents ", {defaultCommandTimeout: 120000}, () => {
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer").withRequest();
     LoginPage.postLogin();
     toolbar.getRunToolbarIcon().should("be.visible").click();
@@ -201,7 +201,7 @@ describe("Run Tile tests", () => {
     cy.contains("123 Wilson Rd").should("be.visible");
   });
 
-  it("Execute certain steps in a flow and control that it is being saved to local storage for a user ", () => {
+  it("Execute certain steps in a flow and control that it is being saved to local storage for a user ", {defaultCommandTimeout: 120000}, () => {
     cy.logout();
     cy.loginAsTestUserWithRoles("hub-central-flow-writer").withRequest();
 
@@ -262,7 +262,7 @@ describe("Run Tile tests", () => {
     runPage.controlUncheckedStep("#merge-xml-person");
   });
 
-  it("Login with other user and check other step options are checked in a flow", () => {
+  it("Login with other user and check other step options are checked in a flow", {defaultCommandTimeout: 120000}, () => {
     cy.logout();
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer").withRequest();
     LoginPage.postLogin();
@@ -278,7 +278,7 @@ describe("Run Tile tests", () => {
     runPage.controlCheckedStep("#match-xml-person");
   });
 
-  it("show all entity instances in Explorer after running mapping with related entities", () => {
+  it("show all entity instances in Explorer after running mapping with related entities", {defaultCommandTimeout: 120000}, () => {
 
     const flowName = "CurateCustomerWithRelatedEntitiesJSON";
     const stepName = "mapCustomersWithRelatedEntitiesJSON";
@@ -312,7 +312,7 @@ describe("Run Tile tests", () => {
     browsePage.getSelectedFacet("createdByJob").should("exist");
   });
 
-  it("Explore results after run two map steps being the second one with related entities", () => {
+  it("Explore results after run two map steps being the second one with related entities", {defaultCommandTimeout: 120000}, () => {
     const firstFlowName = "personJSON";
     const firstStepName = "mapPersonJSON";
     const secondFlowName = "CurateCustomerWithRelatedEntitiesJSON";

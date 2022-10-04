@@ -37,6 +37,7 @@ describe("save/manage queries scenarios, developer role", () => {
     cy.wait(4000);
     browsePage.databaseSwitch("staging").click();
     explorePage.getAllDataButton().click();
+    cy.waitForAsyncRequest();
     // Open facet's popover search
     browsePage.getPopOverLabel("Collection").click();
     // Start typing values and check them

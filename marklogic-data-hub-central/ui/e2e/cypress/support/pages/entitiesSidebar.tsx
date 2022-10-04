@@ -76,11 +76,11 @@ class BaseEntitySidebar {
 
   openBaseEntityDropdown() {
     cy.wait(2000);
-    return cy.get("#entitiesSidebar-select-wrapper").scrollIntoView().click("right");
+    cy.get("#entitiesSidebar-select-wrapper").scrollIntoView().click("right");
   }
 
   selectBaseEntityOption(entityName: string) {
-    return cy.get(`[aria-label="base-option-${entityName}"]`).scrollIntoView().click();
+    cy.get(`[aria-label="base-option-${entityName}"]`).scrollIntoView().click();
   }
 
 

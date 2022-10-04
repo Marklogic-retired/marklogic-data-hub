@@ -482,6 +482,33 @@ describe("RTL Source-to-entity map tests", () => {
     expect(queryByText("LastName")).not.toBeInTheDocument();
   });
 
+  test("Rendering of XML Namespaced Source Data", async () => {
+    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
+    mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
+    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.xmlNamespacedSourceData});
+    mockGetNestedEntities.mockResolvedValue({status: 200, data: personNestedEntityDef});
+
+    let getByText, getAllByText, getByTestId;
+    await act(async () => {
+      const renderResults = defaultRender(personMappingStepWithData);
+      getByText = renderResults.getByText;
+      getAllByText = renderResults.getAllByText;
+      getByTestId = renderResults.getByTestId;
+    });
+
+    let namespacePrefixes = getAllByText("org:example:");
+    expect(namespacePrefixes).toHaveLength(2);
+    expect(getByTestId("test-namespaced-value")).toBeInTheDocument();
+    expect(getByTestId("hello-namespaced-value")).toBeInTheDocument();
+    expect(getByText("world")).toBeInTheDocument();
+
+    fireEvent.mouseOver(namespacePrefixes[0]);
+    await wait(() => expect(getByText(`org:example = "org:example"`)).toBeInTheDocument());
+
+    fireEvent.mouseOver(namespacePrefixes[1]);
+    await wait(() => expect(getAllByText(`org:example = "org:example"`)).toHaveLength(2));
+  });
+
   test("Filtering Name column in related entity tables", async () => {
     mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
     mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});

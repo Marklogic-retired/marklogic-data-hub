@@ -45,7 +45,7 @@ describe("Concepts", () => {
     cy.log("**Select 'Product' entity**");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Product");
-    entitiesSidebar.getBaseEntityOption("Product").should("be.visible");
+    entitiesSidebar.getBaseEntityOption("Product").scrollIntoView().should("be.visible");
     cy.wait(5000); // The canvas takes some more time animating
 
     cy.log("**Picking up a concept node**");
@@ -106,7 +106,7 @@ describe("Concepts", () => {
     cy.log("**Select 'Product' entity**");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Product");
-    entitiesSidebar.getBaseEntityOption("Product").should("be.visible");
+    entitiesSidebar.getBaseEntityOption("Product").scrollIntoView().should("be.visible");
     cy.wait(5000); // The canvas takes some more time animating
 
     entitiesSidebar.toggleRelatedConceptsPanel();

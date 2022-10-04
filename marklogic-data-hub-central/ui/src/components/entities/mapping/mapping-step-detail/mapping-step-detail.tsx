@@ -1096,9 +1096,47 @@ const MappingStepDetail: React.FC = () => {
       // sorter: (a: any, b: any) => a.key?.localeCompare(b.key),
       width: "55%",
       formatter: (text, row, index, extraData) => {
-        let textToSearchInto = text?.split(":").length > 1 ? text?.split(":")[0] + ": " + text?.split(":")[1] : text;
-        let valueToDisplay = sourceFormat === "xml" && row.rowKey === 1 ? <div>
-          <span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><HCTooltip text={text?.split(":")[0] + " = \"" + namespaces[text?.split(":")[0]] + "\""} id="xml-source-name-tooltip" placement="top"><span className={styles.namespace}>{text?.split(":")[0] + ": "}</span></HCTooltip><span>{text?.split(":")[1]}</span></span> : text}</span></div> : <span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><HCTooltip text={text?.split(":")[0] + " = \"" + namespaces[text?.split(":")[0]] + "\""} id="source-name-tooltip" placement="top"><span className={styles.namespace}>{text?.split(":")[0] + ": "}</span></HCTooltip><span>{text?.split(":")[1]}</span></span> : text}</span>;
+        let textHaveDotsSeparator: boolean = text?.split(":").length === 2;
+        let textHaveMultDotsSeparator: boolean = text?.split(":").length > 2;
+        let prefix, suffix;
+        if (textHaveMultDotsSeparator) {
+          let partArray = text?.split(":");
+          suffix = partArray.pop();
+          prefix = partArray.join(":");
+        }
+        let textToSearchInto;
+        if (textHaveDotsSeparator) {
+          textToSearchInto = text?.split(":")[0] + ": " + text?.split(":")[1];
+        } else if (textHaveMultDotsSeparator) {
+          textToSearchInto = prefix + ": " + suffix;
+        } else {
+          textToSearchInto = text;
+        }
+        let valueToDisplay = sourceFormat === "xml" && row.rowKey === 1 ?
+          <div>
+            <span className={styles.sourceName}>
+              {textHaveDotsSeparator ?
+                <span>
+                  <HCTooltip text={text?.split(":")[0] + " = \"" + namespaces[text?.split(":")[0]] + "\""} id="xml-source-name-tooltip" placement="top"><span className={styles.namespace} data-testid={`${text?.split(":")[0] + ":"}-namespace-prefix`}>{text?.split(":")[0] + ": "}</span>
+                  </HCTooltip>
+                  <span data-testid={`${text?.split(":")[1]}-namespaced-value`}>
+                    {text?.split(":")[1]}
+                  </span>
+                </span>
+                :
+                textHaveMultDotsSeparator ?
+                  <span>
+                    <HCTooltip text={prefix + " = \"" + namespaces[prefix] + "\""} id="xml-source-name-tooltip" placement="top"><span className={styles.namespace} data-testid={`${prefix + ":"}-namespace-prefix`}>{prefix + ": "}</span>
+                    </HCTooltip>
+                    <span data-testid={`${suffix}-namespaced-value`}>
+                      {suffix}
+                    </span>
+                  </span>
+                  :
+                  text}
+            </span>
+          </div>
+          : <span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><HCTooltip text={text?.split(":")[0] + " = \"" + namespaces[text?.split(":")[0]] + "\""} id="source-name-tooltip" placement="top"><span className={styles.namespace}>{text?.split(":")[0] + ": "}</span></HCTooltip><span>{text?.split(":")[1]}</span></span> : text}</span>;
         return getRenderOutput(textToSearchInto, valueToDisplay, "key", row.rowKey);
       },
       formatExtraData: {filterActive}
@@ -1127,7 +1165,14 @@ const MappingStepDetail: React.FC = () => {
       key: "rowKey",
       width: "55%",
       formatter: (text, row, index, extraData) => {
-        let textHaveTwoDotsSeparator: boolean = text?.split(":").length > 1;
+        let textHaveDotsSeparator: boolean = text?.split(":").length === 2;
+        let textHaveMultDotsSeparator: boolean = text?.split(":").length > 2;
+        let prefix, suffix;
+        if (textHaveMultDotsSeparator) {
+          let partArray = text?.split(":");
+          suffix = partArray.pop();
+          prefix = partArray.join(":");
+        }
         let renderText = (textToSearchInto, textToHighlight) => getRenderOutput(textToSearchInto, textToHighlight, "key", row.rowKey);
         return <div>
           {sourceFormat === "xml" && row.rowKey !== 1 && firstLevelKeysXML.includes(row.rowKey) ?
@@ -1142,18 +1187,29 @@ const MappingStepDetail: React.FC = () => {
             : null
           }
           <span className={styles.sourceName}>
-            {textHaveTwoDotsSeparator ?
+            {textHaveDotsSeparator ?
               <span>
                 <HCTooltip text={text?.split(":")[0] + " = \"" + namespaces[text?.split(":")[0]] + "\""} id={sourceFormat === "xml" && row.rowKey !== 1 ? "xml-source-name-tooltip" : "source-name-tooltip"} placement="top">
-                  <span className={styles.namespace}>
+                  <span className={styles.namespace} data-testid={`${text?.split(":")[0] + ": "}-namespace-prefix`}>
                     {renderText(text?.split(":")[0] + ": ", text?.split(":")[0] + ": ")}
                   </span>
                 </HCTooltip>
-                <span>
+                <span data-testid={`${text?.split(":")[1]}-namespaced-value`}>
                   {renderText(text?.split(":")[1], text?.split(":")[1])}
                 </span>
               </span>
-              : renderText(text, text)
+              : textHaveMultDotsSeparator ?
+                <span>
+                  <HCTooltip text={prefix + " = \"" + namespaces[prefix] + "\""} id={sourceFormat === "xml" && row.rowKey !== 1 ? "xml-source-name-tooltip" : "source-name-tooltip"} placement="top">
+                    <span className={styles.namespace} data-testid={`${prefix + ":"}-namespace-prefix`}>
+                      {renderText(prefix + ": ", prefix + ": ")}
+                    </span>
+                  </HCTooltip>
+                  <span data-testid={`${suffix}-namespaced-value`}>
+                    {renderText(suffix, suffix)}
+                  </span>
+                </span>
+                : renderText(text, text)
             }
           </span>
         </div>;
