@@ -17,7 +17,7 @@ import {HCCard, HCTooltip} from "@components/common";
 import Popover from "react-bootstrap/Popover";
 import {OverlayTrigger, Spinner} from "react-bootstrap";
 import {SecurityTooltips} from "@config/tooltips.config";
-import {RiMergeCellsHorizontal} from "react-icons/ri";
+import {MdCallMerge} from "react-icons/md";
 import {previewMatchingActivity, getDocFromURI, getPreviewFromURIs} from "@api/matching";
 import {deleteNotification, mergeUris} from "@api/merging";
 import CompareValuesModal from "../../components/entities/matching/compare-values-modal/compare-values-modal";
@@ -311,11 +311,11 @@ const RecordCardView = (props) => {
                       {
                         canReadMatchMerge ?
                           <HCTooltip text={"Merge Documents"} id="merge-icon" placement="top-end">
-                            <i><RiMergeCellsHorizontal className={styles.mergeIcon} data-testid={"merge-icon"} onClick={() => openMergeCompare(elem)}/></i>
+                            <i><MdCallMerge className={styles.mergeIcon} data-testid={"merge-icon"} onClick={() => openMergeCompare(elem)}/></i>
                           </HCTooltip>
                           :
                           <HCTooltip text={SecurityTooltips.missingPermission} id="missing-permission-tooltip" placement="top-end">
-                            <i><RiMergeCellsHorizontal className={styles.mergeIconDisabled} data-testid={"merge-icon"}/></i>
+                            <i><MdCallMerge className={styles.mergeIconDisabled} data-testid={"merge-icon"}/></i>
                           </HCTooltip>
                       }
 

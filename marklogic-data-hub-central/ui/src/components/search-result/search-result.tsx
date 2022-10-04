@@ -6,7 +6,7 @@ import {dateConverter} from "@util/date-conversion";
 import ExpandableTableView from "../expandable-table-view/expandable-table-view";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faThList, faCode, faProjectDiagram} from "@fortawesome/free-solid-svg-icons";
-import {RiSplitCellsHorizontal} from "react-icons/ri";
+import {MdCallSplit} from "react-icons/md";
 import {SearchContext} from "@util/search-context";
 import {ChevronDown, ChevronRight} from "react-bootstrap-icons";
 import {HCTooltip} from "@components/common";
@@ -208,11 +208,11 @@ const SearchResult: React.FC<Props> = (props) => {
                     {
                       canReadMatchMerge ?
                         <HCTooltip text={"Unmerge Documents"} id="unmerge-icon-tooltip" placement="top-end">
-                          <i><RiSplitCellsHorizontal className={styles.unMergeIcon} data-testid={`unmerge-icon`} aria-label={`unmerge-icon`} onClick={(e) => openUnmergeCompare(props.item, e)}/></i>
+                          <i><MdCallSplit className={styles.unMergeIcon} data-testid={`unmerge-icon`} aria-label={`unmerge-icon`} onClick={(e) => openUnmergeCompare(props.item, e)}/></i>
                         </HCTooltip>
                         :
                         <HCTooltip text={SecurityTooltips.missingPermission} id="missing-permission-tooltip" placement="top-end">
-                          <i><RiSplitCellsHorizontal className={styles.unMergeIconDisabled} data-testid={`unmerge-icon`} aria-label={`unmerge-icon`}/></i>
+                          <i><MdCallSplit className={styles.unMergeIconDisabled} data-testid={`unmerge-icon`} aria-label={`unmerge-icon`}/></i>
                         </HCTooltip>
                     }
 

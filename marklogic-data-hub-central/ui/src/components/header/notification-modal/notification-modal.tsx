@@ -5,7 +5,7 @@ import styles from "./notification-modal.module.scss";
 import {TbClipboardText} from "react-icons/tb";
 import {HCTable} from "@components/common";
 import {HCTooltip} from "@components/common";
-import {RiMergeCellsHorizontal} from "react-icons/ri";
+import {MdCallMerge} from "react-icons/md";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {dateConverter} from "../../../util/date-conversion";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
@@ -121,11 +121,11 @@ const NotificationModal = (props) => {
             {
               canReadMatchMerge ?
                 <HCTooltip text={"Merge"} id={`merge-icon${idRow++}`} placement="top-end">
-                  <i><RiMergeCellsHorizontal color={themeColors.info} className={styles.mergeIcon} data-testid={`merge-icon${idRow}`} aria-label={`merge-icon`} onClick={() => openMergeCompare(row)} /></i>
+                  <i><MdCallMerge color={themeColors.info} className={styles.mergeIcon} data-testid={`merge-icon${idRow}`} aria-label={`merge-icon`} onClick={() => openMergeCompare(row)} /></i>
                 </HCTooltip>
                 :
                 <HCTooltip text={SecurityTooltips.missingPermission} id="missing-permission-tooltip" placement="top-end">
-                  <i><RiMergeCellsHorizontal color={themeColors.info} className={styles.mergeIconDisabled} data-testid={`disabled-merge-icon`} aria-label={`disabled-merge-icon`} /></i>
+                  <i><MdCallMerge color={themeColors.info} className={styles.mergeIconDisabled} data-testid={`disabled-merge-icon`} aria-label={`disabled-merge-icon`} /></i>
                 </HCTooltip>
             }
           </span>
