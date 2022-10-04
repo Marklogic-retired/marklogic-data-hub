@@ -279,7 +279,7 @@ class BrowsePage {
   }
 
   setInputField(facetName: string, str: string) {
-    cy.get(`[aria-label=${facetName}-popover-input-field]`).clear().type(str);
+    cy.get(`[aria-label=${facetName}-popover-input-field]`).clear().type(str, {force: true});
   }
 
   getPopOverCheckbox(str: string) {
