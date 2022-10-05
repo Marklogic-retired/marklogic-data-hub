@@ -252,12 +252,11 @@ const GraphVisExplore: React.FC<Props> = (props) => {
   const isExpandedLeaf = (nodeId?) => {
     let expandId = "";
     if (!nodeId) {
-      expandId = clickedNode["leafExpandId"] ? clickedNode["leafExpandId"] : clickedNode["nodeId"];
+      expandId = clickedNode["nodeId"];
     } else {
-      let predicate = getEdgePredicate(nodeId, network);
-      expandId = nodeId + "-" + predicate;
+      expandId = nodeId ;
     }
-    return expandedNodeData.hasOwnProperty(expandId);
+    return expandedNodeData.hasOwnProperty(expandId) && !expandedNodeData[expandId].hasOwnProperty("removedNode");
   };
 
   const createTitleWithPropertiesOnHover = propertiesOnHover => {
@@ -395,7 +394,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
               let customLabel = e.count >= 2 ? entityType : nodeLabel;
               ctx.fillText(customLabel, x, y + 10);
 
-              if (e.hasRelationships && !isExpandedLeaf(nodeId)) {
+              if (e.hasRelationships) {
                 let imgLeaf = new Image();
                 imgLeaf.src = `data:image/svg+xml,${encodeURIComponent(renderToStaticMarkup(createElement(FontIcon["FaProjectDiagram"])))}`;
                 ctx.drawImage(imgLeaf, x - 7, y + 18, 14, 14);
@@ -634,11 +633,11 @@ const GraphVisExplore: React.FC<Props> = (props) => {
           handleTableViewRecords("exceededThreshold");
         } else {
           let expandedNodeInfo = expandedNodeData;
-          let expandId = payloadData["nodeInfo"] ? payloadData.nodeInfo["expandId"] : clickedNode["expandId"];
+          let expandId = payloadData["nodeInfo"] ? payloadData.nodeInfo["nodeId"] : clickedNode["nodeId"];
           expandedNodeInfo[expandId] = {
             nodes: response.data.nodes,
             edges: response.data.edges,
-            removedNode: nodeId
+            removedNode: nodeId,
           };
           setExpandedNodeData(expandedNodeInfo);
           network.body.data.nodes.remove(nodeId);
@@ -653,23 +652,28 @@ const GraphVisExplore: React.FC<Props> = (props) => {
 
   const handleCollapse = async () => {
     try {
-      let expandId = clickedNode["expandId"];
-      expandId = !expandId ? clickedNode["parentNode"] + "-" + clickedNode["predicateIri"] : expandId;
+      let nodeId = clickedNode["nodeId"];
+      let expandId;
+      for (let key in expandedNodeData) {
+        let expandedNode = expandedNodeData[key];
+        let nodes = expandedNode["nodes"];
+        let nodeIds = nodes.map(node => node["id"]);
+        if (nodeIds.includes(nodeId) && expandedNodeData[key]["removedNode"]) {
+          expandId = key;
+          break;
+        }
+      }
       let expandedGroupNodeObject = expandedNodeData[expandId];
-      let nodesToDelete = getNodesToDelete(clickedNode["nodeId"]);
       let graphNodesDataTemp = expandedGroupNodeObject?.nodes.map(e => e["id"]);
       let graphEdgesDataTemp = expandedGroupNodeObject?.edges.map(e => e["id"]);
       let removedNodeIRI = expandedGroupNodeObject?.removedNode;
 
-      let tempExpandedData = expandedNodeData;
-      if (graphNodesDataTemp) {
-        graphNodesDataTemp.forEach(nodeId => delete tempExpandedData[nodeId]);
+      let tempExpandedData = {...expandedNodeData};
+      if (tempExpandedData && tempExpandedData[expandId]) {
         delete tempExpandedData[expandId];
       }
-
       setExpandedNodeData(tempExpandedData);
       network.body.data.nodes.remove(graphNodesDataTemp);
-      network.body.data.nodes.remove(nodesToDelete);
       network.body.data.edges.remove(graphEdgesDataTemp);
       let removedNode = getNodes([groupNodes[removedNodeIRI]]);
       updateNodesData(removedNode);
@@ -679,30 +683,19 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     }
   };
 
-  const getNodesToDelete = (nodeId, nodesToDelete: any[] = []) => {
-    let nodeIds = network.getConnectedNodes(nodeId, "to");
 
-    if (nodeIds.length) {
-      nodeIds.forEach(nodeId => {
-        nodesToDelete.push(nodeId);
-        getNodesToDelete(nodeId, nodesToDelete);
-      });
-    }
-    return nodesToDelete;
-  };
-
-  const getExpandedNodeIdsToRemove = (leafNodeExpandId, nodeIdsToRemove: any[] = []) => {
+  const getExpandedNodeIdsToRemove = (leafNodeExpandId, nodeIdsToRemove: any[] = [], _MainNodeID) => {
     if (expandedNodeData[leafNodeExpandId]) {
       let expandedGroupNodeObject = expandedNodeData[leafNodeExpandId];
       expandedGroupNodeObject.nodes.forEach(e => {
-        let id: any = e["id"];
-        let predicate = getEdgePredicate(id, network);
-        let expandId = predicate ? id + "-" + predicate : id;
-        nodeIdsToRemove.push(expandId);
-        if (clickedNode && clickedNode["isConcept"]) {
-          nodeIdsToRemove.push(id);
+        let expandId: any = e["id"];
+        if (expandId && expandId !== _MainNodeID && !nodeIdsToRemove.includes(expandId)) {
+          nodeIdsToRemove.push(expandId);
+          if (clickedNode && clickedNode["isConcept"]) {
+            nodeIdsToRemove.push(expandId);
+          }
+          return getExpandedNodeIdsToRemove(expandId, nodeIdsToRemove, _MainNodeID);
         }
-        return getExpandedNodeIdsToRemove(expandId, nodeIdsToRemove);
       });
     }
     return nodeIdsToRemove;
@@ -725,21 +718,14 @@ const GraphVisExplore: React.FC<Props> = (props) => {
 
   const handleLeafNodeCollapse = () => {
     try {
-      let nodesToDelete = getNodesToDelete(clickedNode["nodeId"]);
-      let graphNodesDataTemp: any = getExpandedNodeIdsToRemove(clickedNode["nodeId"]);
+      let graphNodesDataTemp: any = getExpandedNodeIdsToRemove(clickedNode["nodeId"], [], clickedNode["nodeId"]);
 
-      if (clickedNode["leafNodeExpandId"]) {
-        const leafExpandIds = getExpandedNodeIdsToRemove(clickedNode["leafNodeExpandId"]);
-        graphNodesDataTemp = graphNodesDataTemp.concat(leafExpandIds.filter(e => !graphNodesDataTemp.includes(e)));
-      }
-
-      let graphEdgesDataTemp = getExpandedEdgeIdsToRemove(clickedNode["leafExpandId"] ? clickedNode["leafExpandId"] : clickedNode["nodeId"]);
+      let graphEdgesDataTemp = getExpandedEdgeIdsToRemove(clickedNode["nodeId"]);
       let tempExpandedData = expandedNodeData;
       graphNodesDataTemp.forEach(expandId => delete tempExpandedData[expandId]);
-      delete tempExpandedData[clickedNode["leafExpandId"] ? clickedNode["leafExpandId"] : clickedNode["nodeId"]];
+      delete tempExpandedData[clickedNode["nodeId"]];
       setExpandedNodeData(tempExpandedData);
       network.body.data.nodes.remove(graphNodesDataTemp);
-      network.body.data.nodes.remove(nodesToDelete);
       network.body.data.edges.remove(graphEdgesDataTemp);
       updateGraphPageInfo();
     } catch (error) {
@@ -777,17 +763,50 @@ const GraphVisExplore: React.FC<Props> = (props) => {
 
       if (response.status === 200) {
         let expandedNodeInfo = expandedNodeData;
-        let expandId = payloadData["nodeInfo"] ? payloadData.nodeInfo["leafNodeExpandId"] : clickedNode["leafExpandId"] ? clickedNode["leafExpandId"] : clickedNode["nodeId"];
+        let expandId = payloadData["nodeInfo"] ? payloadData.nodeInfo["nodeId"] : clickedNode["nodeId"];
+        let cleanedNode: string[] = [];
+
+        let filteredNodes = response.data.nodes.filter(node => {
+          if (node.count && node.count > 1) {
+            const group = node.group;
+            if (group) {
+              const entityGroup = group.split("/").pop();
+              if (searchOptions.entityTypeIds.includes(entityGroup)) {
+                cleanedNode.push(node["id"]);
+                return false;
+              }
+            }
+          }
+
+          if (expandedNodeInfo[node.id]) {
+            cleanedNode.push(node["id"]);
+            return false;
+          }
+          if (network.body.data.nodes.get(node["id"])) {
+            cleanedNode.push(node["id"]);
+            return false;
+          }
+          return true;
+        });
+
+        let filteredEdges = response.data.edges.filter(edge => {
+          if (cleanedNode.includes(edge.from) || cleanedNode.includes(edge.to)) {
+            if (network.body.data.edges.get(edge["id"])) {
+              return false;
+            }
+          }
+          return true;
+        });
         expandedNodeInfo[expandId] = {
-          nodes: response.data.nodes,
-          edges: response.data.edges,
+          nodes: filteredNodes,
+          edges: filteredEdges,
         };
         setExpandedNodeData(expandedNodeInfo);
-        let nodes = getNodes(response.data.nodes);
-        let edges = getEdges(response.data.edges);
+        let nodes = getNodes(filteredNodes);
+        let edges = getEdges(filteredEdges);
         network.body.data.nodes.update(nodes);
         network.body.data.edges.update(edges);
-        await updateGroupAndLeafNodesDataset(response.data.nodes);
+        await updateGroupAndLeafNodesDataset(filteredNodes);
         updateGraphPageInfo();
       }
     } catch (error) {
@@ -892,16 +911,20 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     if (expandedNodeIds.length === 0) {
       return false;
     } else {
-      let parentId = clickedNode["parentNode"];
-      let predicate = getEdgePredicate(clickedNode["nodeId"], network);
-      let expandId = clickedNode["currentNodeExpandId"] || clickedNode["leafNodeExpandId"];
-      expandId = !expandId ? parentId + "-" + predicate : expandId;
-      let expandedNodeObject = expandedNodeData[expandId];
-      if (parentId && expandId && expandedNodeObject) {
-        let expandedNodeChildren = expandedNodeObject.nodes;
-        let nodeId = clickedNode["nodeId"];
-        let childIndex = expandedNodeChildren.findIndex(node => node.id === nodeId);
-        return expandedNodeIds.includes(expandId) && childIndex !== -1;
+      let nodeId = clickedNode["nodeId"];
+      let groupId;
+      for (let key in expandedNodeData) {
+        let expandedNode = expandedNodeData[key];
+        let nodes = expandedNode["nodes"];
+        let nodeIds = nodes.map(node => node["id"]);
+        if (nodeIds.includes(nodeId) && expandedNodeData[key]["removedNode"]) {
+          groupId = key;
+          break;
+        }
+      }
+
+      if (groupId && expandedNodeData[groupId]) {
+        return true;
       } else {
         return false;
       }
@@ -994,31 +1017,25 @@ const GraphVisExplore: React.FC<Props> = (props) => {
 
   const getExpandedNodeObject = (nodeId) => {
     let expandedInstanceInfo = {nodeObject: {}, edgeObject: {}, currentNodeExpandId: "", parentNodeExpandId: ""};
-    let parentNodes = network.getConnectedNodes(nodeId, "from");
-    let parentNodesTo = network.getConnectedNodes(nodeId, "to");
-    let edgesFrom = network.getConnectedEdges(nodeId);
-    let parentNode = !parentNodes[0] ? parentNodesTo[0] : parentNodes[0];
-    let edgeIdFrom = edgesFrom[0];
-    let parentNodePredicate = getEdgePredicate(parentNode, network);
-    let currentNodePredicate = predicates[edgeIdFrom];
-    let parentNodeExpandId = parentNode + "-" + parentNodePredicate;
-    let currentNodeExpandId = parentNode + "-" + currentNodePredicate;
-    expandedInstanceInfo["parentNode"] = parentNode;
-    if (parentNode && expandedNodeData[currentNodeExpandId]) {
-      expandedInstanceInfo["nodeObject"] = expandedNodeData[currentNodeExpandId].nodes.find(node => node.id === nodeId);
-      expandedInstanceInfo["edgeObject"] = expandedNodeData[currentNodeExpandId].edges.find(edge => edge.id === edgeIdFrom);
-      expandedInstanceInfo["currentNodeExpandId"] = currentNodeExpandId;
-    } else if (parentNode && expandedNodeData[parentNodeExpandId]) {
-      expandedInstanceInfo["nodeObject"] = expandedNodeData[parentNodeExpandId].nodes.find(node => node.id === nodeId);
-      expandedInstanceInfo["edgeObject"] = expandedNodeData[parentNodeExpandId].edges.find(edge => edge.id === edgeIdFrom);
-      expandedInstanceInfo["parentNodeExpandId"] = parentNodeExpandId;
-    } else if (parentNode && expandedNodeData[parentNode]) {
-      expandedInstanceInfo["nodeObject"] = expandedNodeData[parentNode].nodes.find(node => node.id === nodeId);
-      expandedInstanceInfo["edgeObject"] = expandedNodeData[parentNode].edges.find(edge => edge.id === edgeIdFrom);
-      expandedInstanceInfo["parentNodeExpandId"] = parentNode;
+
+    let expandId;
+    for (let key in expandedNodeData) {
+      let expandedNode = expandedNodeData[key];
+      let nodes = expandedNode["nodes"];
+      let nodeIds = nodes.map(node => node["id"]);
+      if (nodeIds.includes(nodeId)) {
+        expandId = key;
+        break;
+      }
+    }
+
+    if (expandId && expandedNodeData[expandId]) {
+      expandedInstanceInfo["nodeObject"] = expandedNodeData[expandId].nodes.find(node => node.id === nodeId);
+      expandedInstanceInfo["edgeObject"] = expandedNodeData[expandId].edges.find(edge => edge.to === nodeId || edge.from === nodeId);
+      expandedInstanceInfo["parentNodeExpandId"] = expandId;
     } else {
       expandedInstanceInfo["nodeObject"] = entityTypeInstances.nodes.find(node => node.id === nodeId);
-      expandedInstanceInfo["edgeObject"] = entityTypeInstances.edges.find(edge => edge.id === edgeIdFrom);
+      expandedInstanceInfo["edgeObject"] = entityTypeInstances.edges.find(edge => edge.to === nodeId || edge.from === nodeId);
     }
     return expandedInstanceInfo;
   };
@@ -1146,10 +1163,6 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     if (groupNodes.hasOwnProperty(nodeId)) {
       nodeInfo["isGroupNode"] = true;
       nodeInfo["expandId"] = parentNode[0] + "-" + nodeInfo["predicateIri"];
-    } else if (leafNodes.hasOwnProperty(nodeId)) {
-      if (edgeObject && Object.keys(edgeObject).length) {
-        nodeInfo["leafNodeExpandId"] = nodeId + "-" + nodeInfo["predicateIri"];
-      }
     }
     return nodeInfo;
   };
