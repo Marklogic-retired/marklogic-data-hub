@@ -4,19 +4,29 @@ function updateMatchOptions(opt)
 {
   let matchRulesets = [];
   let thresholds = [];
+  // a lookup object for properties (name -> object)
+  let properties = {};
+  let propertyDefsWithIndexes = []
+  if (opt.propertyDefs && opt.propertyDefs.property) {
+    opt.propertyDefs.property.forEach((prop) => {
+      properties[prop.name] = prop;
+      if (prop.indexReferences && prop.indexReferences.length) {
+        propertyDefsWithIndexes.push(prop);
+      }
+    });
+  }
   let newOpt = {
     targetEntityType: opt.targetEntityType || opt.targetEntity,
     matchRulesets: matchRulesets,
     thresholds: thresholds
   };
 
+  if (propertyDefsWithIndexes.length) {
+    newOpt.propertyDefs = { properties: propertyDefsWithIndexes};
+  }
+
   let maxWeight = maxWeightValue(opt);
 
-  // a lookup object for properties (name -> object)
-  let properties = {};
-  if (opt.propertyDefs && opt.propertyDefs.property) {
-    opt.propertyDefs.property.forEach((prop) => { properties[prop.name] = prop; });
-  }
 
   // a lookup object for algorithms (name -> object)
   let algorithms = {};
@@ -27,7 +37,13 @@ function updateMatchOptions(opt)
   // a lookup object for actions (name -> object)
   let actions = {};
   if (opt.actions && opt.actions.action) {
-    opt.actions.action.forEach((action) => { actions[action.name] = action; });
+    if (Array.isArray(opt.actions.action)) {
+      opt.actions.action.forEach((action) => {
+        actions[action.name] = action;
+      });
+    } else {
+      actions[opt.actions.action.name] = opt.actions.action;
+    }
   }
 
   if (opt.scoring) {
@@ -38,13 +54,17 @@ function updateMatchOptions(opt)
       opt.scoring.expand.forEach((item) =>
         {
           if (item.algorithmRef) {
-            if (item.algorithmRef === "zip-match") {
+            let algorithmRef = item.algorithmRef;
+            if (algorithms.hasOwnProperty(algorithmRef) && !algorithms[algorithmRef].at) {
+              algorithmRef = algorithms[algorithmRef].function;
+            }
+            if (algorithmRef === "zip-match") {
               matchRulesets.push(zipRuleset(item, properties, maxWeight));
             }
-            else if (item.algorithmRef === "double-metaphone") {
+            else if (algorithmRef === "double-metaphone") {
               matchRulesets.push(doubleMetaphoneRuleset(item, properties, maxWeight));
             }
-            else if (item.algorithmRef === "thesaurus") {
+            else if (algorithmRef === "thesaurus") {
               matchRulesets.push(synonymRuleset(item, properties, maxWeight));
             }
             // custom algorithm

@@ -284,6 +284,17 @@ const largeInput =
         {
           "localname": "localnameForName",
           "name": "name"
+        },
+        {
+          "name": "indexedSurname",
+          "indexReferences" : [ {
+            "jsonPropertyReference" : {
+              "property" : "personSurName",
+              "scalarType" : "string",
+              "collation" : "http://marklogic.com/collation/",
+              "nullable" : false
+            }
+          } ]
         }
       ]
     },
@@ -294,6 +305,10 @@ const largeInput =
           "function": "nameMatch",
           "at": "/custom-modules/matching/nameMatch.xqy",
           "namespace": "http://example.org/custom-modules/matching/nameMatch"
+        },
+        {
+          "name": "dbl-metaphone",
+          "function": "double-metaphone"
         }
       ]
     },
@@ -314,7 +329,7 @@ const largeInput =
       "expand": [
         {
           "propertyName": "name",
-          "algorithmRef": "double-metaphone",
+          "algorithmRef": "dbl-metaphone",
           "weight": "2.5",
           "dictionary": "/nameDictionary.json",
           "distanceThreshold": "100"
@@ -340,14 +355,13 @@ const largeInput =
       ]
     },
     "actions": {
-      "action": [
+      "action":
         {
           "name": "household-action",
           "function": "household-action",
           "namespace": "http://marklogic.com/smart-mastering/action",
           "at": "/custom-modules/matching/custom-action.xqy"
         }
-      ]
     },
     "thresholds": {
       "threshold": [
@@ -363,6 +377,21 @@ const largeInput =
 
 const largeExpected =
   {
+    "propertyDefs": {
+      "properties": [
+        {
+          "name": "indexedSurname",
+          "indexReferences" : [ {
+            "jsonPropertyReference" : {
+              "property" : "personSurName",
+              "scalarType" : "string",
+              "collation" : "http://marklogic.com/collation/",
+              "nullable" : false
+            }
+          }]
+        }
+      ]
+    },
     "matchRulesets": [
       {
         "name": "name - Exact",
