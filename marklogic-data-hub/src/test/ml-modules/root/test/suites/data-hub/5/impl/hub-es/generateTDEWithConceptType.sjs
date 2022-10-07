@@ -45,13 +45,13 @@ function generateTdeWithRelatedEntityType() {
         ];
 
     const tde = hent.dumpTde(input);
-    const contextTemplate = fn.head(tde.xpath('.//*:templates/*:template[*:context = ".//Product[node()]"]/*:templates/*:template[*:context = "category"]'));
-  const contextTemplateWithDot = fn.head(tde.xpath('.//*:templates/*:template[*:context = ".//Product[node()]"]/*:templates/*:template[*:context = "."]'));
-    const contextTemplateExists = fn.exists(contextTemplate);
+  const contextTemplate = fn.head(tde.xpath('.//*:templates/*:template[*:context = "category[xs:string(.) ne """"]"]'));
+  const contextTemplateWithDot = fn.head(tde.xpath(`.//*:templates/*:template[*:context = ".//Product[node()]"]/*:templates/*:template[*:context = '.[xs:string(.) ne ""]']`));
+  const contextTemplateExists = fn.exists(contextTemplate);
   const contextTemplatewithDotExists = fn.exists(contextTemplateWithDot);
     const assertions = [
     test.assertTrue(contextTemplateExists, `Context template should exist.`),
-    test.assertTrue(contextTemplatewithDotExists, `Context template with dot should exist.`)
+    test.assertTrue(contextTemplatewithDotExists, `Context template with dot should exist. ${xdmp.describe(tde, Sequence.from([]), Sequence.from([]))}`)
     ];
 
   assertions.push(

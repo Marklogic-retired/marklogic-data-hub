@@ -1,12 +1,9 @@
 (:
   Copyright (c) 2021 MarkLogic Corporation
-
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-
      http://www.apache.org/licenses/LICENSE-2.0
-
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -283,19 +280,6 @@ declare function extraction-template-generate(
                     <tde:object><tde:val>fn:base-uri(.)</tde:val></tde:object>
                   </tde:triple>
 
-                {
-                 for $property-name in $related-entity-type-property-names
-                 let $property-info := map:get($properties, $property-name)
-                 let $is-related-entity-type := map:contains($property-info, "relatedEntityType" )
-                 let $related-entity-type := map:get($property-info, "relatedEntityType" )
-                 where exists($related-entity-type)
-                 return
-                     <tde:triple>
-                       <tde:subject><tde:val>$subject-iri</tde:val></tde:subject>
-                       <tde:predicate><tde:val>sem:iri("{ model-graph-prefix($model) }/{ $entity-type-name }/{ $property-name}")</tde:val></tde:predicate>
-                       <tde:object><tde:val>sem:iri(concat("{ $related-entity-type}/", if (fn:empty($related-{$property-name}) or $related-{$property-name} eq "") then sem:uuid-string() else $related-{$property-name}))</tde:val></tde:object>
-                     </tde:triple>
-                  }
                    </tde:triples>
                    {
                       let $related-concepts :=
@@ -315,7 +299,7 @@ declare function extraction-template-generate(
                           where exists($has-related-concepts)
                           return
                             <tde:template>
-                             <tde:context>{ $context}</tde:context>
+                             <tde:context>{ $context}[xs:string(.) ne ""]</tde:context>
                             <tde:triples>
                             <tde:triple>
                                <tde:subject><tde:val>$subject-iri</tde:val></tde:subject>
@@ -373,8 +357,25 @@ declare function extraction-template-generate(
                               </tde:triple>
                               </tde:triples>
                               </tde:template>
-                      where fn:exists(($related-concepts,$referenced-entities))
-                      return <tde:templates>{($related-concepts,$referenced-entities)}</tde:templates>
+                      let $related-properties :=
+                                       for $property-name in $related-entity-type-property-names
+                                       let $property-info := map:get($properties, $property-name)
+                                       let $is-related-entity-type := map:contains($property-info, "relatedEntityType" )
+                                       let $related-entity-type := map:get($property-info, "relatedEntityType" )
+                                       where exists($related-entity-type)
+                                       return
+                                          <tde:template>
+                                            <tde:context>{$property-name}[xs:string(.) ne ""]</tde:context>
+                                            <tde:triples>
+                                           <tde:triple>
+                                             <tde:subject><tde:val>$subject-iri</tde:val></tde:subject>
+                                             <tde:predicate><tde:val>sem:iri("{ model-graph-prefix($model) }/{ $entity-type-name }/{ $property-name}")</tde:val></tde:predicate>
+                                             <tde:object><tde:val>sem:iri(concat("{ $related-entity-type}/", fn:encode-for-uri(fn:string(.))))</tde:val></tde:object>
+                                           </tde:triple>
+                                           </tde:triples>
+                                           </tde:template>
+                      where fn:exists(($related-concepts,$referenced-entities,$related-properties))
+                      return <tde:templates>{($related-concepts,$referenced-entities,$related-properties)}</tde:templates>
                    }
               </tde:template>)
 
@@ -816,13 +817,9 @@ declare function model-to-json-schema(
        "$schema": "http://json-schema.org/draft-07/schema#" (if no $schema)
        "properties": { <$entity-name> : {"$ref": "#/definitions/<$entity-name>"} },
        "required": [<$entity-name>]
-
        If there is no definition with that name, error.
-
        If there is a info/baseUri property, add equivalent $id (if no $id)
-
        Fix external references.
-
        [53510] put primaryKey into required array if it is not there already
     :)
     let $new-model := fix-primary-keys(fix-references($model))
@@ -903,12 +900,9 @@ declare function model-to-json-schema(
          },
          ...
        ]
-
        If there are no definitions, error.
-
        If there is only one definition, just add it directly instead of the
        "oneOf"
-
        If there is a info/baseUri property, add equivalent $id (if no $id)
        [53510] put primaryKey into required array if it is not there already
     :)
@@ -994,7 +988,6 @@ walk-to-fix-references($top-id as xs:string?, $model as map:map) as empty-sequen
     properties: {"E1": {"$ref":"#definitions/properties/E1"}},
     required: ["E1"]
   }
-
   With one required top level entity
  :)
 declare function
