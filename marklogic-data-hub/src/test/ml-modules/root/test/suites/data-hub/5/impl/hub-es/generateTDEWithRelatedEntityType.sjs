@@ -51,16 +51,16 @@ const orderModel = {
 
 function generateTdeWithRelatedEntityType() {
     const input = [ orderModel ];
-
     const tde = hent.dumpTde(input);
-    const orderTemplate = fn.head(tde.xpath('.//*:templates/*:template[*:context = ".//Order[node()]"]'));
+
+    const orderTemplate = fn.head(tde.xpath('.//*:templates/*:template[*:context = "orderedBy[xs:string(.) ne """"]"]'));
     const orderTemplateExists = fn.exists(orderTemplate);
     const assertions = [
     test.assertTrue(orderTemplateExists, `Order template should exist.`)
     ];
 
   assertions.push(
-    test.assertEqual(3, fn.count(orderTemplate.xpath("*:triples/*:triple")), "has to exists three rows of triple")
+    test.assertEqual(1, fn.count(orderTemplate.xpath("*:triples/*:triple")), "has to exists one row of triple")
   );
 
   var existsNewTriple = false;
