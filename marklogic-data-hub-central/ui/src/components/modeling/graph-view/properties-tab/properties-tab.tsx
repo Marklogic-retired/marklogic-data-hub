@@ -4,6 +4,7 @@ import ModelingLegend from "../../modeling-legend/modeling-legend";
 
 interface Props {
   entityTypeData: any;
+  dataModel: any;
   canWriteEntityModel: any;
   canReadEntityModel: any;
   updateSavedEntity: any;
@@ -11,17 +12,19 @@ interface Props {
 
 
 const PropertiesTab: React.FC<Props> = (props) => {
+  const {entityTypeData, dataModel, canWriteEntityModel, canReadEntityModel, updateSavedEntity} = props;
 
   return (
     <div className={`divPropertyTable`}>
       <div><ModelingLegend/></div>
       <PropertyTable
-        entityName={props.entityTypeData?.entityName}
-        definitions={props.entityTypeData?.model.definitions}
-        canReadEntityModel={props.canReadEntityModel}
-        canWriteEntityModel={props.canWriteEntityModel}
+        entityName={entityTypeData?.entityName}
+        definitions={entityTypeData?.model.definitions}
+        canReadEntityModel={canReadEntityModel}
+        canWriteEntityModel={canWriteEntityModel}
         sidePanelView={true}
-        updateSavedEntity={props.updateSavedEntity}
+        updateSavedEntity={updateSavedEntity}
+        dataModel={dataModel}
       />
     </div>
   );

@@ -49,17 +49,20 @@ const EntityTypeTable: React.FC<Props> = (props) => {
   const [confirmType, setConfirmType] = useState<ConfirmationType>(ConfirmationType.DeleteEntity);
   const [sortedCol, setSortedCol] = useState<{ columnKey?: string, order?: string }>();
 
+  const {allEntityTypesData, canReadEntityModel, canWriteEntityModel, autoExpand, editEntityTypeDescription,
+    editConceptClassDescription, hubCentralConfig, deleteConceptClass} = props;
+
   useEffect(() => {
     const sortOrder = getViewSettings().model?.sortOrder;
     setSortedCol(sortOrder);
   }, []);
 
   useEffect(() => {
-    if (props.autoExpand) {
-      setExpandedRows([props.autoExpand]);
-      setExpandedNewRows([+props.autoExpand]);
+    if (autoExpand) {
+      setExpandedRows([autoExpand]);
+      setExpandedNewRows([+autoExpand]);
     }
-  }, [props.autoExpand]);
+  }, [autoExpand]);
 
   useEffect(() => {
     if (expandedRows === null) {
@@ -74,9 +77,9 @@ const EntityTypeTable: React.FC<Props> = (props) => {
   }, [expandedRows, expandedNewRows]);
 
   useEffect(() => {
-    // Deep copying props.allEntityTypesData since we dont want the prop to be mutated
-    if (props.allEntityTypesData.length > 0) {
-      let newEntityTypes = deepCopy(props.allEntityTypesData);
+    // Deep copying allEntityTypesData since we dont want the prop to be mutated
+    if (allEntityTypesData.length > 0) {
+      let newEntityTypes = deepCopy(allEntityTypesData);
 
       if (modelingOptions.isModified && modelingOptions.modifiedEntitiesArray.length > 0) {
         let modifiedEntitiesMap = {};
@@ -97,7 +100,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     } else {
       setAllEntityTypes([]);
     }
-  }, [JSON.stringify(props.allEntityTypesData), JSON.stringify(modelingOptions.modifiedEntitiesArray)]);
+  }, [JSON.stringify(allEntityTypesData), JSON.stringify(modelingOptions.modifiedEntitiesArray)]);
 
   const deepCopy = (object) => {
     return JSON.parse(JSON.stringify(object));
@@ -189,12 +192,12 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         let nodeType = row.nodeType === "Concept Class" ? "concept class" : "entity";
         return (
           <>
-            {props.canWriteEntityModel && props.canReadEntityModel ? (
+            {canWriteEntityModel && canReadEntityModel ? (
               <HCTooltip text={ModelingTooltips.nodeName(nodeType)} id="entity-name-tooltip" placement="top">
                 <span data-testid={entityName + "-span"} className={styles.link}
                   onClick={() => {
                     if (!isConceptClass) {
-                      props.editEntityTypeDescription(
+                      editEntityTypeDescription(
                         entityName,
                         getEntityTypeProp(entityName, "description", isConceptClass),
                         getEntityTypeProp(entityName, "namespace", isConceptClass),
@@ -204,7 +207,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
                         getEntityTypeProp(entityName, "icon", isConceptClass),
                       );
                     } else {
-                      props.editConceptClassDescription(
+                      editConceptClassDescription(
                         entityName,
                         getEntityTypeProp(entityName, "description", isConceptClass),
                         getEntityTypeProp(entityName, "color", isConceptClass),
@@ -381,20 +384,20 @@ const EntityTypeTable: React.FC<Props> = (props) => {
                   onClick={() => navigateToGraphView(text)}
                 /></span>
             </HCTooltip>
-            <HCTooltip text={props.canWriteEntityModel ? ModelingTooltips.deleteIcon(isConceptClass) : (!isConceptClass ? "Delete Entity: " : "Delete Concept Class: ") + SecurityTooltips.missingPermission} id="trash-icon-tooltip" placement="top">
+            <HCTooltip text={canWriteEntityModel ? ModelingTooltips.deleteIcon(isConceptClass) : (!isConceptClass ? "Delete Entity: " : "Delete Concept Class: ") + SecurityTooltips.missingPermission} id="trash-icon-tooltip" placement="top">
               <span className="p-2 inline-block cursor-pointer">
                 <FontAwesomeIcon
                   data-testid={text + "-trash-icon"}
-                  className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconTrashReadOnly : styles.iconTrash}
+                  className={!canWriteEntityModel && canReadEntityModel ? styles.iconTrashReadOnly : styles.iconTrash}
                   icon={faTrashAlt}
                   onClick={(event) => {
-                    if (!props.canWriteEntityModel && props.canReadEntityModel) {
+                    if (!canWriteEntityModel && canReadEntityModel) {
                       return event.preventDefault();
                     } else {
                       if (row.nodeType === "Entity Type") {
                         getEntityReferences(text);
                       } else {
-                        props.deleteConceptClass(text);
+                        deleteConceptClass(text);
                       }
                     }
                   }}
@@ -436,10 +439,11 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     return !isConcept ? <PropertyTable
       entityName={entity.nodeName.split(",")[0]}
       definitions={entity.definitions}
-      canReadEntityModel={props.canReadEntityModel}
-      canWriteEntityModel={props.canWriteEntityModel}
+      canReadEntityModel={canReadEntityModel}
+      canWriteEntityModel={canWriteEntityModel}
       sidePanelView={false}
       updateSavedEntity={props.updateSavedEntity}
+      dataModel={allEntityTypesData}
     /> : undefined;
   };
 
@@ -477,9 +481,9 @@ const EntityTypeTable: React.FC<Props> = (props) => {
   const getColor = (nodeName, isConcept: boolean) => {
     let color = themeColors.defaults.entityColor;
     let modelCategory = getCategoryWithinModel(isConcept);
-    let colorExistsOnServer = colorExistsForNode(nodeName, isConcept, props.hubCentralConfig);
+    let colorExistsOnServer = colorExistsForNode(nodeName, isConcept, hubCentralConfig);
     if (colorExistsOnServer) {
-      color = props.hubCentralConfig.modeling[modelCategory][nodeName]["color"];
+      color = hubCentralConfig.modeling[modelCategory][nodeName]["color"];
     } else {
       color = !isConcept ? themeColors.defaults.entityColor: themeColors.defaults.conceptColor;
     }
@@ -490,9 +494,9 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     let defaultNodeIcon = isConcept ? defaultConceptIcon : defaultIcon;
     let icon = defaultNodeIcon;
     let modelCategory = getCategoryWithinModel(isConcept);
-    let iconExistsOnServer = iconExistsForNode(nodeName, isConcept, props.hubCentralConfig);
+    let iconExistsOnServer = iconExistsForNode(nodeName, isConcept, hubCentralConfig);
     if (iconExistsOnServer) {
-      icon = props.hubCentralConfig.modeling[modelCategory][nodeName]["icon"];
+      icon = hubCentralConfig.modeling[modelCategory][nodeName]["icon"];
     } else {
       icon = defaultNodeIcon;
     }

@@ -37,6 +37,11 @@ class ConfirmationModal {
   getDeletePropertyWarnText() {
     return cy.findByLabelText("delete-property-text");
   }
+
+  getDeletePropertyForeignKeyWarnText() {
+    return cy.findByLabelText("delete-property-foreign-key-text");
+  }
+
   getDeletePropertyStepWarnText() {
     return cy.findByLabelText("delete-property-step-text");
   }

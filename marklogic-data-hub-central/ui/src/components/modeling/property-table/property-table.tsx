@@ -47,6 +47,7 @@ type Props = {
   definitions: any;
   sidePanelView: boolean;
   updateSavedEntity: any;
+  dataModel: any[];
 }
 
 const DEFAULT_ENTITY_DEFINITION: Definition = {
@@ -109,6 +110,8 @@ const PropertyTable: React.FC<Props> = (props) => {
   const [expandedNestedRows, setExpandedNestedRows] = useState<string[]>([]);
   const [parentTopProperty, setParentTopProperty] = useState<string | null>(null);
 
+  const {canReadEntityModel, canWriteEntityModel, entityName, sidePanelView, dataModel} = props;
+
   useEffect(() => {
     updateEntityDefinitionsAndRenderTable(props.definitions);
   }, [props.definitions]);
@@ -144,7 +147,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     {
       text: "Property Name",
       dataField: "propertyName",
-      width: props.sidePanelView ? "60%" : "20%",
+      width: sidePanelView ? "60%" : "20%",
       headerFormatter: () => <span aria-label="propertyName-header">Property Name</span>,
       formatter: (text, record) => {
         let renderText = text;
@@ -153,7 +156,7 @@ const PropertyTable: React.FC<Props> = (props) => {
           let recordArray = record.key.split(",");
           recordKey = recordArray[0] + "-";
         }
-        if (props.canWriteEntityModel && props.canReadEntityModel) {
+        if (canWriteEntityModel && canReadEntityModel) {
           renderText = <span
             data-testid={`${recordKey}` + text + "-span"}
             aria-label="property-name-header"
@@ -193,7 +196,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     {
       text: "Type",
       dataField: "type",
-      width: props.sidePanelView ? "20%" : "10%",
+      width: sidePanelView ? "20%" : "10%",
       headerFormatter: () => <span aria-label="type-header">Type</span>,
       formatter: (text, record) => {
         let renderText = text;
@@ -363,12 +366,12 @@ const PropertyTable: React.FC<Props> = (props) => {
 
         return <HCTooltip text={ModelingTooltips.deleteProperty} id={`${id}-tooltip`} placement="top-end">
           <span className="p-2 inline-block cursor-pointer">
-            <FontAwesomeIcon className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconTrashReadOnly : props.sidePanelView ? styles.iconTrashSidePanel : styles.iconTrash}
+            <FontAwesomeIcon className={!canWriteEntityModel && canReadEntityModel ? styles.iconTrashReadOnly : sidePanelView ? styles.iconTrashSidePanel : styles.iconTrash}
               icon={faTrashAlt}
               size="2x"
               data-testid={id}
               onClick={(event) => {
-                if (!props.canWriteEntityModel && props.canReadEntityModel) {
+                if (!canWriteEntityModel && canReadEntityModel) {
                   return event.preventDefault();
                 } else {
                   deletePropertyShowModal(text, record, definitionName);
@@ -438,12 +441,12 @@ const PropertyTable: React.FC<Props> = (props) => {
   const updateEntityDefinitionsAndRenderTable = (definitions: Definition) => {
     let entityDefinitionsArray = definitionsParser(definitions);
     let renderTableData = parseDefinitionsToTable(entityDefinitionsArray);
-    if (props.sidePanelView) {
+    if (sidePanelView) {
       //remove unneeded middle columns if table is in side panel view
       columns.splice(2, 5);
     }
     if (entityDefinitionsArray.length === 1) {
-      setHeaderColumns(props.sidePanelView ? columns.slice(0, 3) : columns.slice(0, 8));
+      setHeaderColumns(sidePanelView ? columns.slice(0, 3) : columns.slice(0, 8));
     } else if (entityDefinitionsArray.length > 1) {
       setHeaderColumns(columns);
     }
@@ -464,14 +467,14 @@ const PropertyTable: React.FC<Props> = (props) => {
           let childRow = row["children"].find(childRow => childRow.type === structuredNames[1]);
 
           if (childRow && childRow.hasOwnProperty("key")) {
-            if (props.sidePanelView) {
+            if (sidePanelView) {
               setSourceExpandedKeys([row.key, childRow.key]);
             } else {
               setExpandedRows([row.key, childRow.key]);
               setExpandedNestedRows([childRow.key]);
             }
           } else {
-            if (props.sidePanelView) {
+            if (sidePanelView) {
               setSourceExpandedKeys([row.key]);
             } else {
               setExpandedRows([row.key]);
@@ -481,7 +484,7 @@ const PropertyTable: React.FC<Props> = (props) => {
         }
 
       } else {
-        if (props.sidePanelView) {
+        if (sidePanelView) {
           setSourceExpandedKeys([row.key]);
         } else {
           setExpandedRows([row.key]);
@@ -494,13 +497,15 @@ const PropertyTable: React.FC<Props> = (props) => {
     setTableData(renderTableData);
   };
 
-  const saveAndUpdateModifiedEntity = async (newDefinitions: Definition, entityModified: EntityModified, errorHandler: Function | undefined) => {
+  const saveAndUpdateModifiedEntity = async (entityModified: EntityModified, relatedModified: EntityModified[], errorHandler: Function | undefined) => {
     try {
+      //Check relationships related to entity
       if (props.updateSavedEntity) {
-        const response = await props.updateSavedEntity([entityModified], errorHandler);
+        relatedModified.push(entityModified);
+        const response = await props.updateSavedEntity(relatedModified, errorHandler);
         if (response["status"] === 200) {
           updateEntityModified(entityModified);
-          updateEntityDefinitionsAndRenderTable(newDefinitions);
+          updateEntityDefinitionsAndRenderTable(entityModified.modelDefinition);
         }
       }
     } catch (error) {
@@ -518,11 +523,11 @@ const PropertyTable: React.FC<Props> = (props) => {
     };
     let newDefinitions = {...definitions, ...newStructuredType};
     let entityModified: EntityModified = {
-      entityName: props.entityName,
+      entityName: entityName,
       modelDefinition: newDefinitions
     };
 
-    await saveAndUpdateModifiedEntity(newDefinitions, entityModified, errorHandler);
+    await saveAndUpdateModifiedEntity(entityModified, [], errorHandler);
   };
 
   const createPropertyDefinitionPayload = (propertyOptions: PropertyOptions) => {
@@ -594,7 +599,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     let updatedDefinitions = {...definitions};
     let entityTypeDefinition = updatedDefinitions[parseDefinitionName];
     let newProperty = createPropertyDefinitionPayload(propertyOptions);
-    let newRowKey = "scroll-" + encrypt(props.entityName) + "-" + encrypt(propertyName);
+    let newRowKey = "scroll-" + encrypt(entityName) + "-" + encrypt(propertyName);
 
     if (propertyOptions.identifier === "yes") {
       entityTypeDefinition["primaryKey"] = propertyName;
@@ -620,18 +625,18 @@ const PropertyTable: React.FC<Props> = (props) => {
 
     if (structuredTypeOptions.isStructured) {
       let structuredString = structuredTypeOptions.name.split(",").map(item => encrypt(item)).join("-");
-      newRowKey = "scroll-" + encrypt(props.entityName) + "-" + structuredString;
+      newRowKey = "scroll-" + encrypt(entityName) + "-" + structuredString;
     }
 
     entityTypeDefinition["properties"][propertyName] = newProperty;
     updatedDefinitions[parseDefinitionName] = entityTypeDefinition;
 
     let entityModified: EntityModified = {
-      entityName: props.entityName,
+      entityName: entityName,
       modelDefinition: updatedDefinitions
     };
 
-    await saveAndUpdateModifiedEntity(updatedDefinitions, entityModified, undefined);
+    await saveAndUpdateModifiedEntity(entityModified, [], undefined);
     setNewRowKey(newRowKey);
   };
 
@@ -708,7 +713,36 @@ const PropertyTable: React.FC<Props> = (props) => {
     let updatedDefinitions = {...definitions};
     let entityTypeDefinition = updatedDefinitions[parseDefinitionName];
     let newProperty = createPropertyDefinitionPayload(editPropertyOptions.propertyOptions);
+    let entitiesRelated: any[] = [];
 
+    if (entityTypeDefinition["properties"][propertyName] && definitionName === entityName) {
+      try {
+        const response = await entityReferences(definitionName, propertyName);
+        if (response["status"] === 200) {
+          const entityNamesWithForeignKeyReferences = response["data"]["entityNamesWithForeignKeyReferences"];
+          if (entityNamesWithForeignKeyReferences.length > 0) {
+            const dataModelFiltered = dataModel.filter(entity => entityNamesWithForeignKeyReferences.includes(entity.entityName));
+            entitiesRelated = dataModelFiltered.map((entity) => {
+              let properties: any = Object.keys(entity.model.definitions[entity.entityName].properties);
+              properties.forEach((p, i) => {
+                let pObj = entity.model.definitions[entity.entityName].properties[p];
+                if (pObj.joinPropertyName && pObj.joinPropertyName === propertyName) {
+                  pObj.joinPropertyName = editPropertyOptions.name;
+                } else if (pObj.items?.joinPropertyName && pObj.items?.joinPropertyName === propertyName) {
+                  pObj.items.joinPropertyName = editPropertyOptions.name;
+                }
+              });
+              return  {
+                entityName: entity.entityName,
+                modelDefinition: entity.model.definitions
+              };
+            });
+          }
+        }
+      } catch (error) {
+        handleError(error);
+      }
+    }
     entityTypeDefinition["properties"][propertyName] = newProperty;
 
     if (editPropertyOptions.propertyOptions.identifier === "yes") {
@@ -785,11 +819,11 @@ const PropertyTable: React.FC<Props> = (props) => {
     updatedDefinitions[parseDefinitionName] = entityTypeDefinition;
 
     let entityModified: EntityModified = {
-      entityName: props.entityName,
+      entityName: entityName,
       modelDefinition: updatedDefinitions
     };
 
-    await saveAndUpdateModifiedEntity(updatedDefinitions, entityModified, undefined);
+    await saveAndUpdateModifiedEntity(entityModified, entitiesRelated, undefined);
   };
 
   const deletePropertyShowModal = async (text: string, record: any, definitionName: string) => {
@@ -858,7 +892,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     updatedDefinitions[parseDefinitionName] = entityTypeDefinition;
 
     let entityModified: EntityModified = {
-      entityName: props.entityName,
+      entityName: entityName,
       modelDefinition: updatedDefinitions
     };
 
@@ -872,7 +906,7 @@ const PropertyTable: React.FC<Props> = (props) => {
   };
 
   const parseDefinitionsToTable = (entityDefinitionsArray: Definition[]) => {
-    let entityTypeDefinition: Definition = entityDefinitionsArray.find(definition => definition.name === props.entityName) || DEFAULT_ENTITY_DEFINITION;
+    let entityTypeDefinition: Definition = entityDefinitionsArray.find(definition => definition.name === entityName) || DEFAULT_ENTITY_DEFINITION;
     return entityTypeDefinition?.properties.map((property, index) => {
       let propertyRow: any = {};
       let counter = 0;
@@ -1031,12 +1065,12 @@ const PropertyTable: React.FC<Props> = (props) => {
 
   // Check if entity name has no matching definition
   const titleNoDefinition = () => {
-    return props.definitions ? !props.definitions.hasOwnProperty(props.entityName) : false;
+    return props.definitions ? !props.definitions.hasOwnProperty(entityName) : false;
   };
 
   const addPropertyButton = <HCButton
     variant="primary"
-    aria-label={props.entityName + "-add-property"}
+    aria-label={entityName + "-add-property"}
     disabled={!props.canWriteEntityModel || titleNoDefinition()}
     size="sm"
     className={(!props.canWriteEntityModel || titleNoDefinition()) ? styles.disabledButton : styles.addPropertyButton}
@@ -1046,7 +1080,7 @@ const PropertyTable: React.FC<Props> = (props) => {
   return (
     <div className="ms-5 mt-3 me-2">
       <div className={styles.extraButtonContainer} id="extraButtonsContainer">
-        {props.sidePanelView && !titleNoDefinition() ?
+        {sidePanelView && !titleNoDefinition() ?
           <span className={styles.expandCollapseBtns}><ExpandCollapse handleSelection={(id) => handleSourceExpandCollapse(id)} currentSelection={""} /></span> : ""
         }
         {props.canWriteEntityModel ?
@@ -1060,7 +1094,7 @@ const PropertyTable: React.FC<Props> = (props) => {
         }
       </div>
       {showPropertyModal && <PropertyModal
-        entityName={props.entityName}
+        entityName={entityName}
         entityDefinitionsArray={entityDefinitionsArray}
         isVisible={showPropertyModal}
         editPropertyOptions={editPropertyOptions}
@@ -1084,24 +1118,24 @@ const PropertyTable: React.FC<Props> = (props) => {
         <>
           {headerColumns.length ?
             <HCTable
-              rowKey={props.sidePanelView ? "key" : "propertyName"}
+              rowKey={sidePanelView ? "key" : "propertyName"}
               rowClassName={(record) => {
                 let propertyName = record.hasOwnProperty("add") && record.add !== "" ? record.add.split(",").map(item => encrypt(item)).join("-") : encrypt(record.propertyName);
-                return "scroll-" + encrypt(props.entityName) + "-" + propertyName + " hc-table_row";
+                return "scroll-" + encrypt(entityName) + "-" + propertyName + " hc-table_row";
               }}
               columns={headerColumns}
               data={tableData}
-              onExpand={props.sidePanelView ? (record, expanded) => toggleSourceRowExpanded(record, expanded, "key") : onExpand}
-              expandedRowKeys={props.sidePanelView ? sourceExpandedKeys : expandedRows}
+              onExpand={sidePanelView ? (record, expanded) => toggleSourceRowExpanded(record, expanded, "key") : onExpand}
+              expandedRowKeys={sidePanelView ? sourceExpandedKeys : expandedRows}
               keyUtil={"key"}
               baseIndent={20}
               pagination={false}
               component={"property"}
               showExpandIndicator={{bordered: true}}
               childrenIndent={true}
-              subTableHeader={!props.sidePanelView}
-              nestedParams={{headerColumns, iconCellList: ["identifier", "multiple", "sortable", "delete", "add"], state: props.sidePanelView ? [sourceExpandedKeys, setSourceExpandedKeys] : [expandedNestedRows, setExpandedNestedRows]}}
-              className={props.sidePanelView ? "side-panel" : ""}
+              subTableHeader={!sidePanelView}
+              nestedParams={{headerColumns, iconCellList: ["identifier", "multiple", "sortable", "delete", "add"], state: sidePanelView ? [sourceExpandedKeys, setSourceExpandedKeys] : [expandedNestedRows, setExpandedNestedRows]}}
+              className={sidePanelView ? "side-panel" : ""}
             /> : null}
         </>
       }
