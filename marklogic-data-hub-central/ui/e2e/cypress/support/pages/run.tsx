@@ -209,6 +209,9 @@ class RunPage {
   getStepFailureSummary(stepName: string) {
     return cy.get(`[data-testid="${stepName}-error-list"]`);
   }
+  getPatientFlowAccordion() {
+    return cy.get(`#patientFlow div[class^="accordion-collapse collapse"]`);
+  }
 }
 
 const runPage = new RunPage();
