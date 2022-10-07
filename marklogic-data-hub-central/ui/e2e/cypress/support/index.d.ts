@@ -109,6 +109,8 @@ declare namespace Cypress {
 
       publishDataModel(): Chainable<Element>
 
+      revertDataModel(): Chainable<Element>
+
       /**
        * Save Local Storage Data
        */

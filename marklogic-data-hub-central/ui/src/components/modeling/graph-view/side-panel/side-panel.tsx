@@ -716,6 +716,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
         canWriteEntityModel={props.canWriteEntityModel}
         canReadEntityModel={props.canReadEntityModel}
         updateSavedEntity={props.updateSavedEntity}
+        dataModel={props.dataModel}
       />;
   };
 

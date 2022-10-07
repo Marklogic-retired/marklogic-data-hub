@@ -324,6 +324,17 @@ Cypress.Commands.add("publishDataModelOnce", () => {
   confirmationModal.getSaveAllEntityText().should("not.exist");
   modelPage.getEntityModifiedAlert().should("not.exist");
 });
+Cypress.Commands.add("revertDataModel", () => {
+  modelPage.getRevertButton().click();
+  cy.waitForAsyncRequest();
+  cy.wait(1000);
+
+  confirmationModal.getYesButton(ConfirmationType.RevertChanges);
+  cy.waitForAsyncRequest();
+  confirmationModal.getSaveAllEntityText().should("exist");
+  confirmationModal.getSaveAllEntityText().should("not.exist");
+  modelPage.getEntityModifiedAlert().should("not.exist");
+});
 Cypress.Commands.add("typeTab", (shiftKey, ctrlKey) => {
   cy.focused().trigger("keydown", {
     keyCode: 9,

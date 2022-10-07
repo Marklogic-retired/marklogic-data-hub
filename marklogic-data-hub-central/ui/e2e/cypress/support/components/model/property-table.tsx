@@ -36,6 +36,10 @@ class PropertyTable {
     return cy.findByTestId(`sort-${propertyName}`);
   }
 
+  getSortButton(propertyName: string) {
+    return cy.get(`[data-testid=${propertyName}]`);
+  }
+
   getFacetIcon(propertyName: string) {
     return cy.findByTestId(`facet-${propertyName}`);
   }

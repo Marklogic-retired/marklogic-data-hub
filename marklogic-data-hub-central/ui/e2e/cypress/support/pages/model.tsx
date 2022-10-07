@@ -39,7 +39,7 @@ class ModelPage {
   }
 
   getRevertButton() {
-    return cy.get("[aria-label=\"revert-changes-table-view\"]");
+    return cy.get("[aria-label=\"revert-changes-table-view\"]").scrollIntoView();
   }
 
   getPublishButtonDisabledTooltip() {

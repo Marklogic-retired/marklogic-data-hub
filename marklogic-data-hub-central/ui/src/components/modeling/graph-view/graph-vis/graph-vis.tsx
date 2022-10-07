@@ -590,6 +590,8 @@ const GraphVis: React.FC<Props> = (props) => {
               from: e.entityName,
               to: parts[parts.length - 1],
               label: relationshipName,
+              predicate: p,
+              joinPropertyName: pObj.joinPropertyName,
               id: e.entityName + "-" + p + "-" + parts[parts.length - 1] + "-via-" + pObj.joinPropertyName,
               title: title,
               arrows: {
@@ -619,6 +621,8 @@ const GraphVis: React.FC<Props> = (props) => {
               from: e.entityName,
               to: parts[parts.length - 1],
               label: relationshipName,
+              predicate: p,
+              joinPropertyName: pObj.items.joinPropertyName,
               id: e.entityName + "-" + p + "-" + parts[parts.length - 1] + "-via-" + pObj.items.joinPropertyName,
               title: title,
               arrowStrikethrough: true,
@@ -643,13 +647,14 @@ const GraphVis: React.FC<Props> = (props) => {
         if (e.model.definitions[e.entityName].hasOwnProperty("relatedConcepts")) {
           let relatedConcepts: any = e.model.definitions[e.entityName].relatedConcepts;
           relatedConcepts.forEach(obj => {
-            let conceptClassName = obj.conceptClass || "ShoeStyle";
             edges.push({
               ...graphConfig.defaultEdgeProps,
               from: e.entityName,
-              to: conceptClassName,
+              to: obj.conceptClass,
               label: obj.predicate,
-              id: e.entityName + "-" + obj.predicate + "-" + conceptClassName + "-via-" + obj.context,
+              predicate: obj.predicate,
+              joinPropertyName: obj.context,
+              id: e.entityName + "-" + obj.predicate + "-" + obj.conceptClass + "-via-" + obj.context,
               title: title,
               arrows: {
                 to: {
@@ -668,7 +673,7 @@ const GraphVis: React.FC<Props> = (props) => {
                 edge: onChosen,
                 node: false
               },
-              smooth: getSmoothOpts(e.entityName, conceptClassName, edges),
+              smooth: getSmoothOpts(e.entityName, obj.conceptClass, edges),
               conceptExpression: obj.conceptExpression
             });
           });
@@ -694,25 +699,25 @@ const GraphVis: React.FC<Props> = (props) => {
     }
   };
 
-  const getRelationshipInfo = (node1, node2, event) => {
-    let sourceNodeName = node1;
-    let targetNodeName = node2;
+  const getRelationshipInfo = (sourceNodeName, targetNodeName, event) => {
     let targetNodeColor;
     let edgeInfo = event && event.edges?.length > 0 ? event.edges[0] : "";
-    let isConcept = isConceptNode(node2);
-    if (node2 === "Select target entity type*") {
+    const edge = network.body.data.edges.get(edgeInfo);
+    const sourceName = sourceNodeName? sourceNodeName : edge.from;
+    let isConcept = isConceptNode(targetNodeName);
+    if (targetNodeName === "Select target entity type*") {
       targetNodeColor = "#ececec";
     } else {
       targetNodeColor = props.getColor(targetNodeName, isConcept);
     }
     let relationshipInfo = {
       edgeId: edgeInfo,
-      sourceNodeName: sourceNodeName,
-      sourceNodeColor: props.getColor(sourceNodeName),
+      sourceNodeName: sourceName,
+      sourceNodeColor: props.getColor(sourceName),
       targetNodeName: targetNodeName,
       targetNodeColor: targetNodeColor,
-      relationshipName: edgeInfo.length > 0 ? edgeInfo.split("-")[1] : "",
-      joinPropertyName: edgeInfo.length > 0 ? edgeInfo.split("-")[4] : "",
+      relationshipName: edge && edge.predicate ? edge.predicate : "",
+      joinPropertyName: edge && edge.joinPropertyName ? edge.joinPropertyName : "",
       isConcept: isConcept
     };
     if (isConcept) {
