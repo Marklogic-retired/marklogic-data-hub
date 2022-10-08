@@ -16,13 +16,17 @@
 
 'use strict';
 
+const consts = require("/data-hub/5/impl/consts.sjs");
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
 const hubCentralConfig = cts.doc("/config/hubCentral.json");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const sem = require("/MarkLogic/semantics.xqy");
 const op = require('/MarkLogic/optic');
 const {getPredicatesByModel} = require("./entity-lib.sjs");
-const {val} = require("../../third-party/fast-xml-parser/src/xmlNode");
+const graphDebugTraceEnabled = xdmp.traceEnabled(consts.TRACE_GRAPH_DEBUG);
+const graphTraceEnabled = xdmp.traceEnabled(consts.TRACE_GRAPH) || graphDebugTraceEnabled;
+const graphTraceEvent = xdmp.traceEnabled(consts.TRACE_GRAPH) ? consts.TRACE_GRAPH : consts.TRACE_GRAPH_DEBUG;
+
 const ctsQuery = cts.trueQuery();
 
 // Alterations to rdf:type values that qualify as Concepts in Hub Central graph views go in this function.
@@ -161,10 +165,13 @@ function getAllEntityIds() {
 }
 
 function getEntityNodes(documentUri, predicateIRI, lastObjectIRI, limit) {
-  const subjectPlan = op.fromSPARQL(`
+  if (graphTraceEnabled) {
+    xdmp.trace(graphTraceEvent, `Creating plan for graph nodes and edges for '${documentUri}' ${predicateIRI ? `with predicate '${predicateIRI}'`: ""}and limit of ${limit}`);
+  }
+  const results = sem.sparql(`
       PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
       PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-      SELECT ?subjectIRI ?docURI ?firstDocURI ?predicateIRI (MIN(?anyPredicateLabel) as ?predicateLabel) ?firstObjectIRI WHERE {
+      SELECT ?subjectIRI ?docURI ?firstDocURI ?predicateIRI (MIN(?anyPredicateLabel) AS ?predicateLabel) ?firstObjectIRI WHERE {
         ?subjectIRI rdfs:isDefinedBy ?docURI.
         {
             ?subjectIRI ?predicateIRI ?firstObjectIRI.
@@ -177,20 +184,28 @@ function getEntityNodes(documentUri, predicateIRI, lastObjectIRI, limit) {
         OPTIONAL {
             ?predicateIRI @labelIRI ?anyPredicateLabel.
         }
-        FILTER (isLiteral(?docURI) && ?docURI = @parentDocURI)
-        ${lastObjectIRI ? "FILTER ?subjectIRI > @lastObjectIRI" : ""}
+        FILTER (isLiteral(?docURI) && ?docURI = $parentDocURI && isIRI(?predicateIRI) && ?predicateIRI = $matchPredicate)
+        ${lastObjectIRI ? "FILTER ?subjectIRI > $lastObjectIRI" : ""}
       }
       GROUP BY ?subjectIRI ?docURI ?predicateIRI ?firstObjectIRI
       ORDER BY ?subjectIRI
-`).where(cts.collectionQuery(getAllEntityIds()))
-    .where(op.eq(op.col('predicateIRI'), predicateIRI)).limit(limit);
-  return subjectPlan.result(null, { parentDocURI: documentUri, lastObjectIRI, labelIRI: getOrderedLabelPredicates()}).toArray();
+      LIMIT $limit
+`, { parentDocURI: documentUri, lastObjectIRI, matchPredicate: predicateIRI, labelIRI: getOrderedLabelPredicates(), limit }, [], cts.collectionQuery(getAllEntityIds()));
+  if (graphTraceEnabled) {
+    xdmp.trace(graphTraceEvent, `Retrieved ${fn.count(results)} rows for document '${documentUri}' ${predicateIRI ? `with predicate '${predicateIRI}'`: ""}and limit of ${limit}`);
+  }
+  if (graphDebugTraceEnabled) {
+    xdmp.trace(graphTraceEvent, `Results for node expand '${xdmp.describe(results, Sequence.from([]), Sequence.from([]))}'`);
+  }
+  return results.toArray();
 
 }
 
 function getEntityNodesExpandingConcept(objectConceptIRI, limit) {
-
-  const getNodeByConcept =  op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+  if (graphTraceEnabled) {
+    xdmp.trace(graphTraceEvent, `Creating plan for graph nodes and edges for concept '${objectConceptIRI}' with limit of ${limit}`);
+  }
+  const results =  sem.sparql(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                  SELECT ?subjectIRI ?predicateIRI ?firstObjectIRI ?docURI ?firstDocURI  WHERE {
                     {
@@ -198,22 +213,36 @@ function getEntityNodesExpandingConcept(objectConceptIRI, limit) {
                     } UNION {
                         ?firstObjectIRI ?predicateIRI ?subjectIRI.
                     }
-                    FILTER (isIRI(?firstObjectIRI) && ?firstObjectIRI = @objectConceptIRI)
+                    FILTER (isIRI(?firstObjectIRI) && ?firstObjectIRI = $objectConceptIRI)
                     OPTIONAL {
                         ?subjectIRI rdfs:isDefinedBy ?docURI.
                     }
                     OPTIONAL {
                         ?firstObjectIRI rdfs:isDefinedBy ?firstDocURI.
                     }
-                 }`).limit(limit);
-  return getNodeByConcept.result(null, {objectConceptIRI }).toArray();
+                 }
+                 LIMIT $limit
+    `, {objectConceptIRI, limit}, []);
+  if (graphTraceEnabled) {
+    xdmp.trace(graphTraceEvent, `Retrieved ${fn.count(results)} rows for concept '${objectConceptIRI}' with limit of ${limit}`);
+  }
+  if (graphDebugTraceEnabled) {
+    xdmp.trace(graphTraceEvent, `Results for node expand '${xdmp.describe(results, Sequence.from([]), Sequence.from([]))}'`);
+  }
+  return results.toArray();
 
 }
 
 
 
 function getEntityNodesByDocument(docURI, limit) {
-  const subjectPlan = op.fromSPARQL(`
+  if (graphTraceEnabled) {
+    xdmp.trace(graphTraceEvent, `Creating plan for graph nodes and edges for document '${docURI}' with limit of ${limit}`);
+  }
+  // Using separate sem.sparql calls, instead of an Optic join to avoid a seg fault with ML 10.0-7
+  const bindings = {parentDocURI: docURI, labelIRI: getOrderedLabelPredicates(), allPredicates: getAllPredicates(), limit};
+  const collectionQuery = cts.collectionQuery(getAllEntityIds());
+  const subjectResults = sem.sparql(`
       PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
       PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
       SELECT * WHERE {
@@ -235,7 +264,7 @@ function getEntityNodesByDocument(docURI, limit) {
                     ?objectIRI @allPredicates ?subjectIRI
                 }
               }
-              FILTER (isLiteral(?docURI) && ?docURI = @parentDocURI)
+              FILTER (isLiteral(?docURI) && ?docURI = $parentDocURI)
           }
           GROUP BY ?subjectIRI ?predicateIRI
         }
@@ -243,35 +272,78 @@ function getEntityNodesByDocument(docURI, limit) {
             ?firstObjectIRI rdfs:isDefinedBy ?firstDocURI.
         }
       }
-  `).where(cts.collectionQuery(getAllEntityIds())).limit(limit);
-
-  const relatedPlan = op.fromSPARQL(`
+      LIMIT $limit
+  `, bindings, [], collectionQuery).toArray();
+  if (graphDebugTraceEnabled) {
+    xdmp.trace(graphTraceEvent, `Subject (${docURI}) results for  node expand '${xdmp.describe(subjectResults, Sequence.from([]), Sequence.from([]))}'`);
+  }
+  if (subjectResults.length === 0) {
+    return subjectResults;
+  }
+  const allPredicates = bindings.allPredicates;
+  const firstObjectIRIs = subjectResults.map(result => result.firstObjectIRI);
+  const relatedQuery = cts.orQuery([
+    cts.tripleRangeQuery(firstObjectIRIs, allPredicates, []),
+    cts.tripleRangeQuery([], allPredicates, firstObjectIRIs)
+  ]);
+  const relatedConnections = sem.sparql(`
       PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
       PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-      SELECT DISTINCT(?subjectIRI AS ?firstObjectIRI) ?additionalEdge ?additionalIRI ?docRelated  WHERE {
-          ?subjectIRI rdf:type ?entityTypeOrConceptIRI.
+      SELECT ?firstObjectIRI ?additionalEdge ?additionalIRI ?docRelated  WHERE {
+          ?firstObjectIRI rdf:type ?entityTypeOrConceptIRI.
           {
-            ?subjectIRI ?additionalEdge ?additionalIRI. 
+            ?firstObjectIRI ?additionalEdge ?additionalIRI. 
           } UNION {
-            ?additionalIRI ?additionalEdge ?subjectIRI. 
-          }
-          OPTIONAL {
-            ?additionalIRI rdfs:isDefinedBy ?docRelated.
+            ?additionalIRI ?additionalEdge ?firstObjectIRI. 
           }
           FILTER EXISTS {
             {
-              ?subjectIRI @allPredicates ?additionalIRI. 
+              ?firstObjectIRI $allPredicates ?additionalIRI. 
             } UNION {
-              ?additionalIRI @allPredicates ?subjectIRI. 
+              ?additionalIRI $allPredicates ?firstObjectIRI. 
             }
           }
       }
-  `)
-
-  let joinOn = op.on(op.col("firstObjectIRI"),op.col("firstObjectIRI"));
-  let fullPlan = subjectPlan.joinLeftOuter(relatedPlan, joinOn);
-
-  return fullPlan.result(null, {parentDocURI: docURI, labelIRI: getOrderedLabelPredicates(), allPredicates: getAllPredicates()}).toArray();
+  `, bindings, [], relatedQuery).toArray();
+  if (graphDebugTraceEnabled) {
+    xdmp.trace(graphTraceEvent, `Additional connections (${docURI}) results for  node expand '${xdmp.describe(relatedConnections, Sequence.from([]), Sequence.from([]))}'`);
+  }
+  if (relatedConnections.length === 0) {
+    return subjectResults;
+  }
+  const combinedResults = [];
+  const rdfsIsDefinedBy = sem.curieExpand("rdfs:isDefinedBy");
+  for (const subject of subjectResults) {
+    const firstObjectIriStr = fn.string(subject.firstObjectIRI);
+    const additionalEdges = relatedConnections.filter(row => firstObjectIriStr === fn.string(row.firstObjectIRI));
+    if (additionalEdges.length === 0) {
+      combinedResults.push(subject);
+    } else {
+      if (graphDebugTraceEnabled) {
+        xdmp.trace(graphTraceEvent, `Additional edges found for (${firstObjectIriStr}) additional edges: '${xdmp.describe(additionalEdges, Sequence.from([]), Sequence.from([]))}'`);
+      }
+      for (const additionalEdge of additionalEdges) {
+        const definedByTriples = cts.triples(additionalEdge.additionalIRI, rdfsIsDefinedBy);
+        if (fn.exists(definedByTriples)) {
+          if (graphDebugTraceEnabled) {
+            xdmp.trace(graphTraceEvent, `Additional documents found for (${additionalEdge.additionalIRI}): '${xdmp.describe(definedByTriples, Sequence.from([]), Sequence.from([]))}'`);
+          }
+          for (const triple of definedByTriples) {
+            combinedResults.push(Object.assign({docRelated: sem.tripleObject(triple)}, additionalEdge, subject));
+          }
+        } else {
+          combinedResults.push(Object.assign({}, additionalEdge, subject));
+        }
+      }
+    }
+  }
+  if (graphDebugTraceEnabled) {
+    xdmp.trace(graphTraceEvent, `Combined (${docURI}) results for  node expand '${xdmp.describe(combinedResults, Sequence.from([]), Sequence.from([]))}'`);
+  }
+  if (graphTraceEnabled) {
+    xdmp.trace(graphTraceEvent, `Created plan for document '${docURI}' with limit of ${limit}`);
+  }
+  return combinedResults;
 }
 
 function getNodeLabel(objectIRIArr, objectUri) {
