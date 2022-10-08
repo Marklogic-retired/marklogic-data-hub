@@ -70,7 +70,7 @@ const resultsTest4 = nodeExpand(expandQuery4);
 assertions.concat([
   test.assertEqual(2, resultsTest4.total, xdmp.toJsonString(resultsTest4)),
   test.assertEqual(2, resultsTest4.nodes.length, xdmp.toJsonString(resultsTest4)),
-  test.assertEqual(8, resultsTest4.edges.length, `2 edges for new nodes + 6 edges from the new nodes so they'll connect if already on the graph. Output: ${xdmp.toJsonString(resultsTest4.edges)}`),
+  test.assertEqual(9, resultsTest4.edges.length, `2 edges for new nodes + 7 edges from the new nodes so they'll connect if already on the graph. Output: ${xdmp.toJsonString(resultsTest4.edges)}`),
   test.assertTrue(resultsTest4.nodes.some(node => node.isConcept), xdmp.toJsonString(resultsTest4))
 ]);
 
