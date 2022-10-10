@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import javax.ws.rs.core.MediaType;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.OffsetDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
@@ -130,7 +131,7 @@ public class FlowControllerTest extends AbstractMvcTest {
         loginAsDataHubDeveloper();
         final String[] ingestionJobId = new String[1];
         MockMultipartFile file1 = new MockMultipartFile("files","file1.json", MediaType.APPLICATION_JSON, "{\"name\": \"Joe\"}".getBytes(StandardCharsets.UTF_8));
-        mockMvc.perform(multipart(PATH + "/{flowName}/steps/{stepNumber}", flowName, "1")
+        mockMvc.perform(multipart(PATH + "/{flowName}/steps/{stepName}", flowName, "myIngester")
             .file(file1)
             .session(mockHttpSession))
             .andExpect(status().isOk())
@@ -154,7 +155,7 @@ public class FlowControllerTest extends AbstractMvcTest {
         // Run step 2 as "data-hub-operator"
         loginAsUser("test-data-hub-operator");
         final String[] mappingJobId = new String[1];
-        postJson(flowPath + "/steps/2", "{}")
+        postJson(flowPath + "/steps/myMapper", "{}")
             .andExpect(status().isOk())
             .andDo(result -> {
                 JsonNode response = parseJsonResponse(result);
@@ -223,14 +224,14 @@ public class FlowControllerTest extends AbstractMvcTest {
         flowController.setFlowRunnerConsumer((FlowRunner::awaitCompletion));
         MockMultipartFile file1 = new MockMultipartFile("files","file1.json", MediaType.APPLICATION_JSON, "{\"name\": \"Joe\"}".getBytes(StandardCharsets.UTF_8));
         MockMultipartFile file2 = new MockMultipartFile("files","file2.json", MediaType.APPLICATION_JSON, "{\"name\": \"John\"}".getBytes(StandardCharsets.UTF_8));
-        mockMvc.perform(multipart(PATH + "/{flowName}/steps/{stepNumber}", flowName, "1")
+        mockMvc.perform(multipart(PATH + "/{flowName}/steps/{stepName}", flowName, "testLoadData")
                 .file(file1)
                 .file(file2)
             .session(mockHttpSession))
             .andExpect(status().isOk());
 
         final String[] jobIds = new String[1];
-        postJson(flowPath + "/steps/2", "{}")
+        postJson(flowPath + "/steps/testStep", "{}")
             .andExpect(status().isOk())
             .andDo(result -> {
                 JsonNode response = parseJsonResponse(result);
@@ -262,7 +263,7 @@ public class FlowControllerTest extends AbstractMvcTest {
         flowController.setFlowRunnerConsumer((FlowRunner::awaitCompletion));
         final String[] jobIds = new String[1];
         MockMultipartFile file1 = new MockMultipartFile("files","file1.csv", MediaType.TEXT_PLAIN, csvContentWithThousandLines.getBytes(StandardCharsets.UTF_8));
-        mockMvc.perform(multipart(PATH + "/{flowName}/steps/{stepNumber}", flowName, "1")
+        mockMvc.perform(multipart(PATH + "/{flowName}/steps/{stepName}", flowName, "testLoadCsvAsXml")
                 .file(file1)
                 .session(mockHttpSession))
             .andExpect(status().isOk())
@@ -340,11 +341,11 @@ public class FlowControllerTest extends AbstractMvcTest {
 
         final String flowPath = PATH + "/ingestToFinal";
         // run ingestion step
-        postJson(flowPath + "/steps/1", "{}")
+        postJson(flowPath + "/steps/ingest", "{}")
             .andExpect(status().isOk());
 
         // run mapping step
-        postJson(flowPath + "/steps/2", "{}")
+        postJson(flowPath + "/steps/map", "{}")
             .andExpect(status().isOk());
     }
 
@@ -356,7 +357,7 @@ public class FlowControllerTest extends AbstractMvcTest {
 
         final String flowPath = PATH + "/ingestToFinal";
         // run step
-        postJson(flowPath + "/steps/1", "{}")
+        postJson(flowPath + "/steps/ingest", "{}")
             .andExpect(status().isForbidden());
 
     }
@@ -369,7 +370,7 @@ public class FlowControllerTest extends AbstractMvcTest {
         MockMultipartFile file1 = new MockMultipartFile("files","file1.json", MediaType.APPLICATION_JSON, "{\"name\": \"Joe\"}".getBytes(StandardCharsets.UTF_8));
         MockMultipartFile file2 = new MockMultipartFile("files","file2.json", MediaType.APPLICATION_JSON, "{\"name\": \"John\"}".getBytes(StandardCharsets.UTF_8));
         flowController.setFlowRunnerConsumer((FlowRunner::awaitCompletion));
-        mockMvc.perform(multipart(PATH + "/{flowName}/steps/{stepNumber}", "ingestToFinal", "1")
+        mockMvc.perform(multipart(PATH + "/{flowName}/steps/{stepName}", "ingestToFinal", "ingest")
             .file(file1)
             .file(file2)
             .session(mockHttpSession))
@@ -383,7 +384,7 @@ public class FlowControllerTest extends AbstractMvcTest {
         assertEquals("John", rawDoc.get("envelope").get("instance").get("name").asText(),
             "Verifying that 2 docs were ingested into the final database");
 
-        mockMvc.perform(multipart(PATH + "/{flowName}/steps/{stepNumber}", "ingestToFinal", "2")
+        mockMvc.perform(multipart(PATH + "/{flowName}/steps/{stepName}", "ingestToFinal", "map")
             .session(mockHttpSession))
             .andExpect(status().isOk());
 
@@ -391,6 +392,45 @@ public class FlowControllerTest extends AbstractMvcTest {
         assertNotNull(mappedDoc);
         mappedDoc = getStagingDoc("/customers/file2.json");
         assertNotNull(mappedDoc);
+    }
+
+    @Test
+    public void runFlowByStepNames() throws Exception {
+        runAsDataHubDeveloper();
+        installProjectInFolder("test-projects/run-flow-test");
+
+        flowController.setFlowRunnerConsumer((FlowRunner::awaitCompletion));
+
+        postWithParamList(PATH + "/CurateCustomerJSON/run", "stepNames", "match-customers", "mapCustomersJSON")
+            .andExpect(status().isOk())
+            .andDo(result -> {
+                JsonNode response = parseJsonResponse(result);
+                String step2StartTime = response.get("stepResponses").get("2").get("stepStartTime").asText();
+                String step3StartTime = response.get("stepResponses").get("3").get("stepStartTime").asText();
+                OffsetDateTime step2Odt = OffsetDateTime.parse(step2StartTime);
+                OffsetDateTime step3Odt = OffsetDateTime.parse(step3StartTime);
+
+                assertEquals("2", response.get("lastAttemptedStep").asText());
+                assertEquals(1, step2Odt.compareTo(step3Odt), "Step2 should run after Step3 as provided in input");
+            });
+
+        postWithParamList(PATH + "/CurateCustomerJSON/run", "stepNames", "")
+            .andExpect(status().isOk());
+
+        postWithParamList(PATH + "/CurateCustomerJSON/run", "stepNames", "non-existent-step")
+            .andExpect(status().isBadRequest());
+
+        postJson(PATH + "/CurateCustomerJSON/steps/mapCustomersJSON", "{}")
+            .andExpect(status().isOk())
+            .andDo(result -> {
+                JsonNode response = parseJsonResponse(result);
+                String step2StartTime = response.get("stepResponses").get("2").get("stepStartTime").asText();
+                assertNotNull(step2StartTime);
+                assertEquals("2", response.get("lastAttemptedStep").asText());
+            });
+
+        postJson(PATH + "/CurateCustomerJSON/steps/non-existent-step", "{}")
+            .andExpect(status().isBadRequest());
     }
 
     private FlowController.FlowsWithStepDetails parseFlowsWithStepDetails(MvcResult result) throws Exception {

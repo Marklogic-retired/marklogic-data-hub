@@ -23,25 +23,30 @@ import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowInputs;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.RunFlowResponse;
+import com.marklogic.hub.flow.impl.FlowImpl;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
-import com.marklogic.hub.flow.impl.JobStatus;
+import com.marklogic.hub.step.impl.Step;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/api/flows")
@@ -110,17 +115,19 @@ public class FlowController extends BaseController {
         return ResponseEntity.ok(newFlowService().removeStepFromFlow(flowName, stepNumber));
     }
 
-    @RequestMapping(value = "/{flowName}/steps/{stepNumber}", method = RequestMethod.POST)
+    @RequestMapping(value = "/{flowName}/steps/{stepName}", method = RequestMethod.POST)
     @ResponseBody
     @Secured("ROLE_runStep")
-    public ResponseEntity<RunFlowResponse> runStep(@PathVariable String flowName, @PathVariable String stepNumber, @RequestPart(value = "files", required = false) MultipartFile[] uploadedFiles) {
-        return ResponseEntity.ok(runStepsInAFlow(flowName, uploadedFiles, new String[] {stepNumber}));
+    public ResponseEntity<RunFlowResponse> runStep(@PathVariable String flowName, @PathVariable String stepName, @RequestPart(value = "files", required = false) MultipartFile[] uploadedFiles) {
+        String[] stepNumbers = getStepNumbers(flowName, stepName);
+        return ResponseEntity.ok(runStepsInAFlow(flowName, uploadedFiles, stepNumbers));
     }
 
     @RequestMapping(value = "/{flowName}/run", method = RequestMethod.POST)
     @ResponseBody
     @Secured("ROLE_runStep")
-    public ResponseEntity<?> runFlow(@PathVariable String flowName, @RequestParam(value = "stepNumbers", required = false) String[] stepNumbers, @RequestPart(value = "files", required = false) MultipartFile[] uploadedFiles ) {
+    public ResponseEntity<?> runFlow(@PathVariable String flowName, @RequestParam(value = "stepNames", required = false) String[] stepNames, @RequestPart(value = "files", required = false) MultipartFile[] uploadedFiles ) {
+        String[] stepNumbers = getStepNumbers(flowName, stepNames);
         return ResponseEntity.ok(runStepsInAFlow(flowName, uploadedFiles, stepNumbers));
     }
 
@@ -148,9 +155,9 @@ public class FlowController extends BaseController {
         }
     }
 
-    private RunFlowResponse runStepsInAFlow(String flowName, MultipartFile[] uploadedFiles, String ... stepNumbers) {
+    private RunFlowResponse runStepsInAFlow(String flowName, MultipartFile[] uploadedFiles, String[] stepNumbers) {
         FlowInputs inputs;
-        if(stepNumbers == null || stepNumbers.length == 0){
+        if(ArrayUtils.isEmpty(stepNumbers)){
             inputs = new FlowInputs(flowName);
         }
         else{
@@ -185,6 +192,31 @@ public class FlowController extends BaseController {
         }
 
         return runFlowResponse;
+    }
+
+    private String[] getStepNumbers(String flowName, String... stepNames) {
+        if(ArrayUtils.isEmpty(stepNames)) {
+            return null;
+        }
+
+        JsonNode jsonFlow = FlowService.on(getHubClient().getStagingClient()).getFullFlow(flowName);
+        Flow flow = new FlowImpl().deserialize(jsonFlow);
+        Map<String, Step> steps = flow.getSteps();
+
+        List<String> stepNamesList = Arrays.asList(stepNames);
+        Map<String, String> stepNameAndNumbers = steps.keySet()
+            .stream()
+            .filter(stepNumber -> stepNamesList.contains(steps.get(stepNumber).getName()))
+            .collect(Collectors.toMap(stepNumber -> steps.get(stepNumber).getName(), stepNumber -> stepNumber));
+
+        List<String> stepNumbers = new LinkedList<>();
+        for(String stepName: stepNames) {
+            if(stepNameAndNumbers.get(stepName) == null) {
+                throw new HttpClientErrorException(String.format("StepName %s doesn't exist in the flow %s", stepName, flowName), HttpStatus.BAD_REQUEST, null, null, null, null);
+            }
+            stepNumbers.add(stepNameAndNumbers.get(stepName));
+        }
+        return stepNumbers.toArray(new String[0]);
     }
 
     //Included for testing purposes.

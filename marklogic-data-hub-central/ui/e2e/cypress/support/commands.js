@@ -198,10 +198,10 @@ Cypress.Commands.add("deleteFlows", (...flowNames) => {
   });
 });
 
-Cypress.Commands.add("runStep", (flowName, stepNumber) => {
+Cypress.Commands.add("runStep", (flowName, stepName) => {
   cy.request({
     method: "POST",
-    url: `/api/flows/${flowName}/steps/${stepNumber}`
+    url: `/api/flows/${flowName}/steps/${stepName}`
   }).then(response => {
     console.warn(`RUN FLOW ${flowName}: ${JSON.stringify(response.statusText)}`);
   });

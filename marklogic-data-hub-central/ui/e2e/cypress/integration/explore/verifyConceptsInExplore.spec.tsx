@@ -50,7 +50,9 @@ describe("Concepts", () => {
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Product");
     entitiesSidebar.getBaseEntityOption("Product").scrollIntoView().should("be.visible");
+    graphView.getPhysicsAnimationToggle().scrollIntoView().trigger("mouseover").click({force: true});
     cy.wait(5000); // The canvas takes some more time animating
+    graphView.getPhysicsAnimationToggle().scrollIntoView().trigger("mouseover").click({force: true});
 
     cy.log("**Picking up a concept node**");
     graphExplore.focusNode(ExploreGraphNodes.CONCEPT_KETTLE);
@@ -152,7 +154,9 @@ describe("Concepts", () => {
     browsePage.getGreySelectedFacets("Kettle").should("exist");
     browsePage.getFacetApplyButton().click();
     browsePage.waitForSpinnerToDisappear();
-    cy.wait(3000);
+    graphView.getPhysicsAnimationToggle().scrollIntoView().trigger("mouseover").click({force: true});
+    cy.wait(3000); // The canvas takes some more time animating
+    graphView.getPhysicsAnimationToggle().scrollIntoView().trigger("mouseover").click({force: true});
 
     cy.log("**Verify Kettle concept node is visible again**");
     graphExplore.focusNode(ExploreGraphNodes.CONCEPT_KETTLE);
