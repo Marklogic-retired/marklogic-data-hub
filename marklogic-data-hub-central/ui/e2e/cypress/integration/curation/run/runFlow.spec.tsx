@@ -201,7 +201,7 @@ describe("Run Tile tests", () => {
     cy.contains("123 Wilson Rd").should("be.visible");
   });
 
-  it.skip("Execute certain steps in a flow and control that it is being saved to local storage for a user ", {defaultCommandTimeout: 120000}, () => {
+  it("Execute certain steps in a flow and control that it is being saved to local storage for a user ", {defaultCommandTimeout: 120000}, () => {
     cy.logout();
     cy.loginAsTestUserWithRoles("hub-central-flow-writer").withRequest();
 
