@@ -4,7 +4,7 @@ import {useLocation} from "react-router-dom";
 import {SecurityTooltips} from "@config/tooltips.config";
 import React, {createRef, useEffect, useState} from "react";
 import {getViewSettings} from "@util/user-context";
-// import {getUserPreferences, updateUserPreferences} from "../../../src/services//user-preferences";
+import {getUserPreferences, updateUserPreferences} from "../../../src/services//user-preferences";
 import {Flow} from "../../types/run-types";
 import NewFlowDialog from "./new-flow-dialog/new-flow-dialog";
 import axios from "axios";
@@ -100,7 +100,6 @@ const Flows: React.FC<Props> = ({
   const [addExternalFlowDirty, setExternalAddFlowDirty] = useState(true);
   const [hasQueriedInitialJobData, setHasQueriedInitialJobData] = useState(false);
   const location = useLocation();
-
   const [allSelectedSteps, setAllSelectedSteps] = useState<SelectedSteps>({});
   // maintain a list of panel refs
   const flowPanelsRef: any = flows.reduce((p, n) => ({...p, ...{[n.name]: createRef()}}), {});
@@ -114,6 +113,31 @@ const Flows: React.FC<Props> = ({
       setViewSettings(newStorage);
     }, [openFlows]);
   */
+
+  const tryParseJson = (userPreferences) => {
+    try {
+      return JSON.parse(userPreferences);
+    } catch (e) {
+      return false;
+    }
+  };
+
+  const getUserPreferencesLS = () => {
+    let userPreferences, oldOptions;
+    const sessionUser = localStorage.getItem("dataHubUser");
+    if (sessionUser) {
+      userPreferences = getUserPreferences(sessionUser);
+      if (userPreferences) {
+        oldOptions = tryParseJson(userPreferences);
+      } else { return false; }
+    }
+    return oldOptions;
+  };
+
+  let getLSFlows;
+  if (getUserPreferencesLS()) {
+    getLSFlows = getUserPreferencesLS()?.selectedStepsDataUser;
+  }
 
   // If a step was just added scroll the flow step panel fully to the right
   useEffect(() => {
@@ -243,14 +267,7 @@ const Flows: React.FC<Props> = ({
       setStartRun(true);
     }
   }, [newStepToFlowOptions]);
-  /*
-    useEffect(() => {
-      //When Refreshing or leaving the page, save the flag to get the local storage
-      return () => {
-        //saveLocalStoragePreferences(true);
-      };
-    }, []);
-   */
+
   useEffect(() => {
     acceptedFiles.forEach(file => {
       setFileList(prevState => [...prevState, file]);
@@ -300,9 +317,21 @@ const Flows: React.FC<Props> = ({
     setDialogVisible(false);
   };
 
-  const onStepOk = (flowName, stepNumber) => {
+  const deleteStepInArray = () => {
+    let newSelectedSteps = [...allSelectedSteps[flowName]];
+    newSelectedSteps = newSelectedSteps.filter((stepAux) => {
+      return stepAux.stepName !== stepName;
+    });
+    const allSelectedStepsAux = {
+      ...allSelectedSteps,
+      [flowName]: [...newSelectedSteps]
+    };
+    saveLocalStoragePreferences(allSelectedStepsAux);
+  };
+
+  const onDeleteStepOk = (flowName, stepNumber) => {
+    deleteStepInArray();
     setStepDialogVisible(false);
-    //saveLocalStoragePreferences(true, true);
     deleteStep(flowName, stepNumber);
   };
 
@@ -343,77 +372,22 @@ const Flows: React.FC<Props> = ({
     setStartRun(false);
   };
 
-  /* Commenting all local storage settings, to be refactored and readded
-
-  const getLocalStorageDataUser = () => {
-
-    if (getUserPreferencesLS()) {
-      if (getUserPreferencesLS()?.selectedStepsDataUser?.selectedStepOptions) {
-        setSelectedStepOptions(getUserPreferencesLS().selectedStepsDataUser.selectedStepOptions);
-      }
-      if (getUserPreferencesLS()?.selectedStepsDataUser?.arrayLoadChecksSteps) {
-        setArrayLoadChecksSteps(getUserPreferencesLS().selectedStepsDataUser.arrayLoadChecksSteps);
-      }
-      if (getUserPreferencesLS()?.selectedStepsDataUser?.allSelectedSteps) {
-        setAllSelectedSteps(getUserPreferencesLS().selectedStepsDataUser.allSelectedSteps);
-      }
-    }
-  };
-
-  const tryParseJson = (userPreferences) => {
-    try {
-      return JSON.parse(userPreferences);
-    } catch (e) {
-      return false;
-    }
-  };
-
-  const getUserPreferencesLS = () => {
-    let userPreferences, oldOptions;
-    const sessionUser = localStorage.getItem("dataHubUser");
-
-    if (sessionUser) {
-      userPreferences = getUserPreferences(sessionUser);
-      if (userPreferences) {
-        oldOptions = tryParseJson(userPreferences);
-      } else { return false; }
-    }
-
-    return oldOptions;
-  };
-
-
-
-  const saveLocalStoragePreferences = (value: boolean, saveSelectedStepsDataUser?: boolean) => {
-
+  const saveLocalStoragePreferences = (obj?: any) => {
     const sessionUser = localStorage.getItem("dataHubUser");
     if (getUserPreferencesLS()) {
       let oldOptions = getUserPreferencesLS();
       let newOptions = {
         ...oldOptions,
-        loadSelectedStepsUser: value,
+        selectedStepsDataUser: obj ? obj : allSelectedSteps,
       };
-
-      if (saveSelectedStepsDataUser) {
-        let newSelectedStepsDataUser = {
-          selectedStepOptions: selectedStepOptions,
-          arrayLoadChecksSteps: arrayLoadChecksSteps,
-          allSelectedSteps: allSelectedSteps
-        };
-
-        newOptions = {
-          ...oldOptions,
-          loadSelectedStepsUser: value,
-          selectedStepsDataUser: newSelectedStepsDataUser,
-        };
-      }
       updateUserPreferences(sessionUser ?? "", newOptions);
     }
-  }; */
+  };
 
   const handleRunFlow = async (index, name) => {
     //setRunFlowClicked(true);
-    //saveLocalStoragePreferences(false, true);
+    //Saving in LS
+    saveLocalStoragePreferences();
     const setKey = async () => {
       await setOpenFlows(`${index}`);
     };
@@ -604,6 +578,7 @@ const Flows: React.FC<Props> = ({
               setTitle={setTitle}
               setOpenFlows={setOpenFlows}
               openFlows={openFlows}
+              getLSFlows={getLSFlows}
             />);
           })}
           <NewFlowDialog
@@ -621,7 +596,7 @@ const Flows: React.FC<Props> = ({
             setOpenNewFlow={setOpenNewFlow}
           />
           {deleteConfirmationModal(dialogVisible, flowName, onDeleteFlowOk, onCancel)}
-          {deleteStepConfirmationModal(stepDialogVisible, stepName, stepNumber, flowName, onStepOk, onCancel)}
+          {deleteStepConfirmationModal(stepDialogVisible, stepName, stepNumber, flowName, onDeleteStepOk, onCancel)}
           {addStepConfirmationModal(addStepDialogVisible, onAddStepOk, onCancel, flowName, stepName, stepType, isStepInFlow)}
           {addExistingStepConfirmationModal(addExistingStepDialogVisible, stepName, flowName, onConfirmOk, onCancel)}
         </> :

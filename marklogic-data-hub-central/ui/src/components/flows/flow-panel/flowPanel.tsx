@@ -53,6 +53,7 @@ export interface Props {
   setTitle: React.Dispatch<React.SetStateAction<string>>;
   setOpenFlows: React.Dispatch<any>;
   openFlows: any;
+  getLSFlows: object;
 }
 
 const FlowPanel: React.FC<Props> = ({
@@ -92,41 +93,58 @@ const FlowPanel: React.FC<Props> = ({
   setOpenJobResponse,
   setNewFlow,
   setFlowData,
-  setTitle
+  setTitle,
+  getLSFlows
 }) => {
   const [showLinks, setShowLinks] = useState("");
   const [allChecked, setAllChecked] = useState<boolean>(true);
   let loadTypeCountAux = 0;
+  let originLStorage = false;
 
   useEffect(() => {
     getFlowWithJobInfo(idx);
-    setSelectedSteps(flow?.steps ? handleLoadByDefault(flow) : []);
+    setSelectedSteps(flow?.steps ? handleLoadByDefault(flow, true) : []);
   }, [flow]);
-
-  const handleLoadByDefault = (flow) => {
-    let stepsByDefault: any[] = [];
-    let skipStep = true;
-
-    for (let i = 0; i < flow?.steps?.length; i++) {
-      let step = flow.steps[i];
-      if (step?.stepDefinitionType?.toLowerCase() === "ingestion") {
-        loadTypeCountAux++;
-        skipStep = handleLoadStepInArray(stepsByDefault);
-        if (!skipStep) {
-          stepsByDefault.push(step);
-        }
-      } else {
-        stepsByDefault.push(step);
-      }
-    }
-    return stepsByDefault;
-  };
 
   const handleLoadStepInArray = (arraySteps) => {
     return arraySteps?.find(stepAux => stepAux?.stepDefinitionType.toLowerCase() === "ingestion");
   };
 
-  const [selectedSteps, setSelectedSteps] = useState<any>(flow?.steps ? handleLoadByDefault(flow) : []);
+  const addStepsToArray = (step: any, stepsByDefault: any, skipStep: boolean, loadCounter: boolean, flowName?: string) => {
+    if (step?.stepDefinitionType?.toLowerCase() === "ingestion") {
+      loadCounter && loadTypeCountAux++;
+      skipStep = handleLoadStepInArray(stepsByDefault);
+      if (!skipStep) {
+        stepsByDefault.push(step);
+      }
+    } else {
+      stepsByDefault.push(step);
+    }
+    return stepsByDefault;
+  };
+
+  const handleLoadByDefault = (flow: any, originLS?: boolean) => {
+    let stepsByDefault: any[] = [];
+    let skipStep = true;
+
+    //There is Local Storage data
+    if (getLSFlows && Object.keys(getLSFlows).length !== 0 && originLS && getLSFlows[flow?.name]) {
+      for (let i = 0; i < getLSFlows[flow?.name].length; i++) {
+        let step = getLSFlows[flow?.name][i];
+        stepsByDefault = addStepsToArray(step, stepsByDefault, skipStep, false);
+      }
+      originLStorage = true;
+    } else {
+      //Set configuration by default
+      for (let i = 0; i < flow?.steps?.length; i++) {
+        let step = flow.steps[i];
+        stepsByDefault = addStepsToArray(step, stepsByDefault, skipStep, true, flow?.name);
+      }
+    }
+    return stepsByDefault;
+  };
+
+  const [selectedSteps, setSelectedSteps] = useState<any>(flow?.steps ? handleLoadByDefault(flow, true) : []);
 
   useEffect(() => {
     setAllSelectedSteps(prevState => {
@@ -136,8 +154,14 @@ const FlowPanel: React.FC<Props> = ({
       };
     });
     if (flow.steps === undefined) return;
-    const unselectedLoadSteps = loadTypeCountAux !== 0 ? loadTypeCountAux - 1 : 0;
-    if (selectedSteps.length === flow.steps.length - unselectedLoadSteps) {
+
+    //Count load steps if by local storage or with default
+    const countIngestionSteps = originLStorage === true ? flow?.steps?.reduce((acc, cur) =>
+    cur?.stepDefinitionType.toLowerCase() === "ingestion" ? ++acc : acc, 0) : loadTypeCountAux;
+
+    let hasLoadSteps =  countIngestionSteps === 0 ? 1: countIngestionSteps === 1 ? 1:countIngestionSteps;
+
+    if (selectedSteps.length === flow.steps.length - hasLoadSteps + 1) {
       setAllChecked(true);
     } else {
       setAllChecked(false);
@@ -148,7 +172,7 @@ const FlowPanel: React.FC<Props> = ({
     if (flow.steps === undefined) return;
     if (!allChecked) {
       // check all and 1 load type
-      setSelectedSteps(handleLoadByDefault(flow));
+      setSelectedSteps(handleLoadByDefault(flow, false));
     } else {
       // uncheck all
       setSelectedSteps([]);
