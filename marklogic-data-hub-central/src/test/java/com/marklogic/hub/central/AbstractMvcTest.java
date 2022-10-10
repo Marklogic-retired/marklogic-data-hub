@@ -136,6 +136,14 @@ public abstract class AbstractMvcTest extends AbstractHubCentralTest {
         return mockMvc.perform(builder);
     }
 
+    protected ResultActions postWithParamList(String url, String name, String... values) throws Exception {
+        MockHttpServletRequestBuilder builder = post(url).contentType(MediaType.APPLICATION_JSON).param(name, values);
+        if (mockHttpSession != null) {
+            builder.session(mockHttpSession);
+        }
+        return mockMvc.perform(builder);
+    }
+
     protected ResultActions delete(String url) throws Exception {
         return delete(url, new LinkedMultiValueMap<>());
     }

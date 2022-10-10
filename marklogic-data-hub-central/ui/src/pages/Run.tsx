@@ -228,22 +228,24 @@ const Run = (props) => {
 
   const runFlowSteps = async (flowName: string, steps: Step[], formData: any) => {
     setIsStepRunning(true);
-    let stepNumbers: string[] = steps.map((step) => {
+    const stepNames: string[] = steps.map((step) => {
+      return step.stepName;
+    });
+    const stepNumbers = steps.map((step) => {
       return step.stepNumber;
     });
-
     getFlowRunning(flowName, stepNumbers);
     let response;
     try {
       setIsLoading(true);
       if (formData) {
-        response = await axios.post("/api/flows/" + flowName + `/run?stepNumbers=${stepNumbers}`, formData, {
+        response = await axios.post("/api/flows/" + flowName + `/run?stepNames=${stepNames}`, formData, {
           headers: {
             "Content-Type": "multipart/form-data; boundary=${formData._boundary}", crossorigin: true
           }
         });
       } else {
-        response = await axios.post("/api/flows/" + flowName + `/run?stepNumbers=${stepNumbers}`);
+        response = await axios.post("/api/flows/" + flowName + `/run?stepNames=${stepNames}`);
       }
       if (response.status === 200) {
         let jobId = response.data.jobId;
@@ -284,21 +286,21 @@ const Run = (props) => {
   };
 
   // POST /flows​/{flowId}​/steps​/{stepId}
-  const runStep = async (flowName, stepDetails, formData) => {
-    const stepNumber = stepDetails.stepNumber;
-    getFlowRunning(flowName, [stepNumber]);
+  const runStep = async (flowName, step: Step, formData) => {
+
+    getFlowRunning(flowName, [step.stepNumber]);
     setIsStepRunning(true);
     let response;
     try {
       setUploadError("");
       if (formData) {
-        response = await axios.post("/api/flows/" + flowName + "/steps/" + stepNumber, formData, {
+        response = await axios.post("/api/flows/" + flowName + "/steps/" + step.stepName, formData, {
           headers: {
             "Content-Type": "multipart/form-data; boundary=${formData._boundary}", crossorigin: true
           }
         });
       } else {
-        response = await axios.post("/api/flows/" + flowName + "/steps/" + stepNumber);
+        response = await axios.post("/api/flows/" + flowName + "/steps/" + step.stepName);
       }
       if (response.status === 200) {
         let jobId = response.data.jobId;
@@ -309,17 +311,17 @@ const Run = (props) => {
             return res;
           }, pollConfig.interval)
             .then(function (response: any) {
-              setRunEnded({flowId: flowName, stepId: stepNumber});
+              setRunEnded({flowId: flowName, stepId: step.stepNumber});
             }).catch(function (error) {
               console.error("Flow timeout", error);
-              setRunEnded({flowId: flowName, stepId: stepNumber});
+              setRunEnded({flowId: flowName, stepId: step.stepNumber});
             });
         }, pollConfig.interval);
         finishRun();
       }
     } catch (error) {
       console.error("Error running step", error);
-      setRunEnded({flowId: flowName, stepId: stepNumber});
+      setRunEnded({flowId: flowName, stepId: step.stepNumber});
       setIsStepRunning(false);
       if (error.response && error.response.data && (error.response.data.message.includes("The total size of all files in a single upload must be 100MB or less.") || error.response.data.message.includes("Uploading files to server failed"))) {
         setUploadError(error.response.data.message);

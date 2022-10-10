@@ -1,0 +1,159 @@
+{
+  "name": "CurateCustomerJSON",
+  "steps": {
+    "1": {
+      "name": "loadCustomersJSON",
+      "stepDefinitionName": "default-ingestion",
+      "stepDefinitionType": "ingestion",
+      "description": "",
+      "sourceFormat": "json",
+      "targetFormat": "json",
+      "fileLocations": {
+        "inputFilePath": "input/json",
+        "outputURIReplacement": ".*data/json,'/Customer'"
+      },
+      "options": {
+        "sourceDatabase": null,
+        "targetDatabase": "data-hub-STAGING",
+        "permissions": "data-hub-common,read,data-hub-common,update",
+        "collections": [
+          "loadCustomersJSON"
+        ],
+        "provenanceGranularityLevel": "coarse"
+      }
+    },
+    "2": {
+      "name": "mapCustomersJSON",
+      "description": "",
+      "stepDefinitionName": "entity-services-mapping",
+      "stepDefinitionType": "mapping",
+      "options": {
+        "sourceQuery": "cts.collectionQuery(['loadCustomersJSON'])",
+        "mapping": {
+          "name": "CurateCustomerJSONMapping",
+          "version": 1
+        },
+        "sourceDatabase": "data-hub-STAGING",
+        "targetDatabase": "data-hub-FINAL",
+        "collections": [
+          "Customer",
+          "mapCustomersJSON"
+        ],
+        "additionalCollections": [ ],
+        "permissions": "data-hub-common,read,data-hub-operator,update",
+        "provenanceGranularityLevel": "coarse",
+        "outputFormat": "json",
+        "targetEntityType": "Customer"
+      },
+      "customHook": null
+    },
+    "3": {
+      "name": "match-customers",
+      "stepDefinitionName": "default-matching",
+      "stepDefinitionType": "MATCHING",
+      "options": {
+        "sourceQuery": "cts.collectionQuery('mapCustomersJSON')",
+        "acceptsBatch": true,
+        "targetEntity": "Customer",
+        "sourceDatabase": "data-hub-FINAL",
+        "collections": [
+          "matched-customers"
+        ],
+        "matchOptions": {
+          "dataFormat": "json",
+          "propertyDefs": {
+            "property": [
+              {
+                "localname": "customerId",
+                "name": "customerId"
+              }
+            ]
+          },
+          "scoring": {
+            "add": [
+              {
+                "propertyName": "customerId",
+                "weight": "10"
+              }
+            ]
+          },
+          "thresholds": {
+            "threshold": [
+              {
+                "above": "10",
+                "label": "Definitive Match",
+                "action": "merge"
+              }
+            ]
+          },
+          "tuning": {
+            "maxScan": 200
+          }
+        },
+        "targetDatabase": "data-hub-FINAL"
+      }
+    },
+    "4": {
+      "name": "merge-customers",
+      "stepDefinitionName": "default-merging",
+      "stepDefinitionType": "MERGING",
+      "options": {
+        "sourceQuery": "cts.collectionQuery('matched-customers')",
+        "targetEntity": "Customer",
+        "sourceDatabase": "data-hub-FINAL",
+        "collections": [
+          "merged-customer"
+        ],
+        "mergeOptions": {
+          "propertyDefs": {
+            "properties": [
+              {
+                "namespace": "",
+                "localname": "customerId",
+                "name": "customerId"
+              },
+              {
+                "namespace": "",
+                "localname": "name",
+                "name": "name"
+              }
+            ]
+          },
+          "algorithms": {
+            "stdAlgorithm": {
+              "timestamp": {
+                "path": ""
+              }
+            },
+            "collections": {
+              "onNoMatch": {
+                "add": {
+                  "collection": [
+                    ""
+                  ]
+                },
+                "remove": {
+                  "collection": [
+                    ""
+                  ]
+                },
+                "set": {
+                  "collection": [
+                    ""
+                  ]
+                }
+              }
+            }
+          },
+          "merging": [
+            {
+              "propertyName": "CustomerID",
+              "sourceWeights": []
+            }
+          ]
+        }
+      }
+    }
+  },
+  "lastUpdated": "2020-06-04T23:01:35.566392Z"
+}
