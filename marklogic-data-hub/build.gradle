@@ -52,13 +52,13 @@ dependencies {
     implementation 'commons-io:commons-io:2.11.0'
 
     constraints {
-        implementation('org.springframework:spring-beans:5.3.22') {
+        implementation('org.springframework:spring-beans:5.3.23') {
             because 'spring-beans:5.3.7 is vulnerable to remote code execution and other critical security vulnerabilities'
         }
-        implementation('org.springframework:spring-jcl:5.3.22') {
+        implementation('org.springframework:spring-jcl:5.3.23') {
             because 'spring-jcl:5.3.7 is vulnerable to remote code execution and other critical security vulnerabilities'
         }
-        implementation('org.springframework:spring-core:5.3.22') {
+        implementation('org.springframework:spring-core:5.3.23') {
             because 'spring-core:5.3.7 is vulnerable to remote code execution and other critical security vulnerabilities'
         }
     }
