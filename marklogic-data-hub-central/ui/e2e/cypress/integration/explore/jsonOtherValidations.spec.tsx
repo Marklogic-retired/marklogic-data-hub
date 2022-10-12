@@ -117,6 +117,7 @@ describe("Verify numeric/date facet can be applied", () => {
     //verify gray facets don't persist when switching between browse and run views.
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Person");
+    entitiesSidebar.showMoreEntities().click({force: true});
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.PERSON);
     browsePage.clickMoreLink("fname");
     browsePage.getFacetItemCheckbox("fname", "Alice").click();

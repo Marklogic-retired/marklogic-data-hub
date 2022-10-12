@@ -6,6 +6,7 @@ import {ExploreGraphNodes} from "../../support/types/explore-graph-nodes";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import graphExploreSidePanel from "../../support/components/explore/graph-explore-side-panel";
 import tables from "../../support/components/common/tables";
+import graphView from "../../support/components/explore/graph-view";
 
 describe("Group Nodes", () => {
   before(() => {
@@ -142,6 +143,7 @@ describe("Group Nodes", () => {
 
     // Wait needed for the graph to get stabilized
     cy.wait(1000);
+    graphView.getPhysicsAnimationToggle().scrollIntoView().trigger("mouseover").click();
     cy.log("**Click Product node '90' to open side panel and validate productID**");
     graphExplore.focusNode(ExploreGraphNodes.PRODUCT_90);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.PRODUCT_90).then((nodePositions: any) => {

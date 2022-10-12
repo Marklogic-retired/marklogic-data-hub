@@ -53,7 +53,7 @@ describe("Validate E2E Mastering Flow", () => {
     cy.deleteSteps("mapping", "patientMap");
     cy.deleteSteps("matching", "patientMatch");
     cy.deleteSteps("merging", "patientMerge");
-    cy.deleteFlows("patientFlow");
+    cy.deleteFlows(flowName);
     cy.deleteEntities("Patient");
     cy.deleteRecordsInFinal("loadPatient", "patientMap", "patientMatch", "patientMerge");
     cy.deleteRecordsInFinal("sm-Patient-archived", "sm-Patient-mastered", "sm-Patient-merged", "sm-Patient-auditing", "sm-Patient-notification");
@@ -82,7 +82,7 @@ describe("Validate E2E Mastering Flow", () => {
     loadPage.confirmationOptions("Save").click();
     cy.waitForAsyncRequest();
     //Fix for Windows, if accordion it's not collapsed
-    runPage.getPatientFlowAccordion().then(($ele) => {
+    runPage.getPatientFlowAccordion(flowName).then(($ele) => {
       if (!$ele.hasClass("show")) {
         cy.log("**Toggling accordion because it was closed.**");
         runPage.toggleExpandFlow(flowName);

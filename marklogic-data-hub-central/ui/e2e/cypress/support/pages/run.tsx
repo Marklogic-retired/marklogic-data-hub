@@ -7,7 +7,7 @@ class RunPage {
   }
 
   toggleExpandFlow(flowName: string) {
-    return cy.get(`[data-testid="accordion-${flowName}"]`).click();
+    cy.get(`[data-testid="accordion-${flowName}"]`).click({force: true});
   }
 
   toggleFlowConfig(flowName: string) {
@@ -209,8 +209,8 @@ class RunPage {
   getStepFailureSummary(stepName: string) {
     return cy.get(`[data-testid="${stepName}-error-list"]`);
   }
-  getPatientFlowAccordion() {
-    return cy.get(`#patientFlow div[class^="accordion-collapse collapse"]`);
+  getPatientFlowAccordion(flowName: string) {
+    return cy.get(`#${flowName} div[class^="accordion-collapse collapse"]`);
   }
 }
 
