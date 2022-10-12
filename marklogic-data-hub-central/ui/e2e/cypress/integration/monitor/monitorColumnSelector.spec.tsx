@@ -34,7 +34,7 @@ describe("Monitor Tile", () => {
   it("Navigate to Monitor Tile and verify that the column selector works", () => {
     cy.log("** Click on the column selector and check that the popover appears **");
     monitorPage.getColumnSelectorIcon().click({force: true});
-    monitorPage.getColumnSelectorPopover().should("be.visible");
+    monitorPage.getColumnSelectorPopover().scrollIntoView().should("be.visible");
 
     cy.log("** Get the columns and check that are present in the table **");
     monitorPage.getColumnSelectorColumns().should("have.length.gt", 0).then($options => {

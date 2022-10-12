@@ -17,7 +17,7 @@ class ExplorePage {
   }
 
   getColumnSelectorPopover() {
-    return cy.get(`[data-testid="column-selector-popover"]`).scrollIntoView();
+    return cy.get(`[data-testid="column-selector-popover"]`);
   }
 
   getColumnSelectorColumns() {

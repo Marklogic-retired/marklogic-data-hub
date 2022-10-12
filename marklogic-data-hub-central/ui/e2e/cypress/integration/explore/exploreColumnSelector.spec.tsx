@@ -42,7 +42,7 @@ describe("Monitor Tile", () => {
 
     cy.log("**Click on the column selector and check that the popover appears**");
     browsePage.getColumnSelectorIcon().click();
-    explorePage.getColumnSelectorPopover().should("be.visible");
+    explorePage.getColumnSelectorPopover().scrollIntoView().should("be.visible");
 
     cy.log("**Get the columns and check that are present in the table**");
     explorePage.getColumnSelectorColumns().should("have.length.gt", 0).then($options => {
