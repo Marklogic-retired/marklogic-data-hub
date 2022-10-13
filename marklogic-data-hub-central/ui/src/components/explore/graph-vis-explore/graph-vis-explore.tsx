@@ -514,22 +514,25 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     ...graphConfig.defaultOptions,
     height: networkHeight,
     autoResize: true,
+    edges: {
+      smooth: {
+        type: "continuous",
+        forceDirection: "none",
+        roundness: 0
+      }
+    },
     physics: {
       enabled: physicsAnimation,
-      forceAtlas2Based: {
-        gravitationalConstant: -26,
-        centralGravity: 0.005,
-        springLength: 230,
-        springConstant: 0.18,
-        avoidOverlap: 1
+      hierarchicalRepulsion: {
+        centralGravity: 0,
+        springLength: 270,
+        springConstant: 0.01,
+        avoidOverlap: null
       },
-      maxVelocity: 146,
-      solver: "forceAtlas2Based",
+      solver: "heirarchicalRepulsion",
       timestep: 0.35,
       stabilization: {
-        enabled: true,
-        iterations: 2000,
-        updateInterval: 25,
+        fit: true
       },
     },
     interaction: {
