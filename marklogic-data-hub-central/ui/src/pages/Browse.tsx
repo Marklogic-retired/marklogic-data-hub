@@ -680,7 +680,7 @@ const Browse: React.FC<Props> = ({location}) => {
     </span>
   );
 
-  const numberOfResultsBanner = Object.keys(graphPageInfo).length > 0 && <span className={styles.graphViewSummaryIcon}>Viewing {graphPageInfo["pageLength"]} of {graphPageInfo["total"]} results {helpIcon()}</span>;
+  const numberOfResultsBanner = Object.keys(graphPageInfo).length > 0 && <span aria-label="results-count" className={styles.graphViewSummaryIcon}>Viewing {graphPageInfo["pageLength"]} of {graphPageInfo["total"]} results {helpIcon()}</span>;
 
   return (
     <div className={styles.layout}>

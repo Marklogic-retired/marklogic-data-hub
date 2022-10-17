@@ -34,6 +34,19 @@ describe("Concepts", () => {
     cy.waitForAsyncRequest();
   });
 
+  it("Validate record counts changes when toggling concepts", () => {
+    //Graph view
+    cy.log("**Go to graph view**");
+    browsePage.clickGraphView();
+    cy.waitForAsyncRequest();
+    graphExplore.getGraphVisCanvas().should("be.visible");
+    cy.log("**Verify results number change**");
+    cy.log("**Turn off concepts on graph**");
+    graphView.getConceptToggle().scrollIntoView().trigger("mouseover").click();
+    graphExplore.getViewingResultsCount().should("be.lessThan", 68);
+    cy.log("**Turn on concepts on graph**");
+    graphView.getConceptToggle().scrollIntoView().trigger("mouseover").click();
+  });
   it("Validate that the concepts toggle works correctly", {defaultCommandTimeout: 120000}, () => {
     //Graph view
     cy.log("**Go to graph view**");
@@ -69,6 +82,7 @@ describe("Concepts", () => {
 
     cy.log("**Turn OFF concepts toggle**");
     graphView.getConceptToggle().scrollIntoView().trigger("mouseover").click();
+
 
     cy.wait(4000);
 

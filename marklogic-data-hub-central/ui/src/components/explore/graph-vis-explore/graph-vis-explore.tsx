@@ -126,6 +126,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       //Initialize graph view position
       if (network) {
         updateGraphSettings();
+        updateGraphPageInfo();
       }
     }
     return () => {
@@ -254,7 +255,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     if (!nodeId) {
       expandId = clickedNode["nodeId"];
     } else {
-      expandId = nodeId ;
+      expandId = nodeId;
     }
     return expandedNodeData.hasOwnProperty(expandId) && !expandedNodeData[expandId].hasOwnProperty("removedNode");
   };
@@ -591,10 +592,15 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     setLeafNodes(leafNodeObj);
   };
 
-  const updateGraphPageInfo = () => {
+  const updateGraphPageInfo = (nodesToHide=[]) => {
+    const hiddenNodesCount = nodesToHide.length;
+    const visibleNodesCount = network.body.data.nodes.length - hiddenNodesCount;
+
+    const total = network.body.data.nodes.length < entityTypeInstances.total ? entityTypeInstances.total : network.body.data.nodes.length;
+
     let pageInfo = {
-      pageLength: network.body.data.nodes.length,
-      total: entityTypeInstances?.total
+      pageLength: visibleNodesCount || 0,
+      total: total
     };
     setGraphPageInfo(pageInfo);
   };
@@ -682,7 +688,6 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       handleError(error);
     }
   };
-
 
   const getExpandedNodeIdsToRemove = (leafNodeExpandId, nodeIdsToRemove: any[] = [], _MainNodeID) => {
     if (expandedNodeData[leafNodeExpandId]) {
@@ -841,11 +846,11 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     let nodesToHide = network.body.data.nodes.get({
       filter: (node) => !nodesInCluster.hasOwnProperty(node.id)
     });
-
     nodesToHide.forEach(node => node["hidden"] = true);
     setNodesDefocussed(nodesToHide);
     resetSavedNode();
     updateNodesData(nodesToHide);
+    updateGraphPageInfo(nodesToHide);
   };
 
   const handleDefocusCluster = () => {
@@ -853,6 +858,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     resetSavedNode();
     updateNodesData(nodesDefocussed);
     setNodesDefocussed([]);
+    updateGraphPageInfo();
   };
 
   const handleMenuClick = async (event) => {

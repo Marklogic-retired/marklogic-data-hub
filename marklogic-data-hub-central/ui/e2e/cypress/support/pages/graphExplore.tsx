@@ -144,6 +144,21 @@ class GraphExplore {
   getViewRecordsInTable() {
     return cy.get("#viewRecordsInTableView");
   }
+  getTotalResultsCount() {
+    let count = "";
+    cy.get(`[aria-label="results-count"]`).then(element => {
+      count = element.text();
+    });
+    return parseInt(count.split(" ")[3]);
+  }
+
+  getViewingResultsCount() {
+    return cy.get(`[aria-label=results-count]`).then(value => {
+      return parseInt(value.first().text().split(" ")[1]);
+    });
+  }
+
+
   isElementVisible(selector: any, action1: any, action2: any) {
     if (retry < 3 && Cypress.$(selector).length === 0) {
       //Increment retry
