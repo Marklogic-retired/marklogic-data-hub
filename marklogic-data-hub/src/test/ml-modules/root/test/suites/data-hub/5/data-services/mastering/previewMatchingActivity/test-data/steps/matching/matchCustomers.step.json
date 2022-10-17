@@ -28,15 +28,14 @@
       ]
     },
     {
-      "name": "name",
+      "name": "nameWithoutDistanceThreshold",
       "weight": 3.5,
       "matchRules": [
         {
           "entityPropertyPath": "name",
           "matchType": "doubleMetaphone",
           "options": {
-            "dictionaryURI": "/content/nameDictionary.json",
-            "distanceThreshold": 100
+            "dictionaryURI": "/content/nameDictionary.json"
           }
         }
       ]

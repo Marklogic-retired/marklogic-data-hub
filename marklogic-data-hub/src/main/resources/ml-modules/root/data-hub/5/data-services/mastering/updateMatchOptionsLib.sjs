@@ -189,7 +189,7 @@ function doubleMetaphoneRuleset(item, properties, maxWeight)
         "matchType": "doubleMetaphone",
         "options": {
           "dictionaryURI": item.dictionary,
-          "distanceThreshold": Number(item.distanceThreshold)
+          "distanceThreshold": item.distanceThreshold ? Number(item.distanceThreshold) : item.distanceThreshold
         }
       }
     ]
