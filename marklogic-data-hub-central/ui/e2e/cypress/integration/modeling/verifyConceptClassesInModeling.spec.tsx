@@ -110,7 +110,7 @@ describe("Concept classes in Modeling screen", () => {
     cy.log("**None property should not be visible anymore**");
     relationshipModal.getSourcePropertySelectWrapper().click();
     relationshipModal.sourceProperty("None").should("not.exist");
-    relationshipModal.sourceProperty("instance").should("be.visible");
+    relationshipModal.sourceProperty(".").should("be.visible");
 
     relationshipModal.sourceProperty("category").click();
     relationshipModal.addRelationshipSubmit();

@@ -22,7 +22,8 @@ import {
   EntityModified
 } from "../../../../types/modeling-types";
 import {ChevronDown, QuestionCircleFill} from "react-bootstrap-icons";
-import {HCButton, HCInput, HCTooltip, HCCard, DynamicIcons, HCDivider, DropDownWithSearch} from "@components/common";
+import {HCButton, HCInput, HCTooltip, HCCard, DynamicIcons, HCDivider} from "@components/common";
+import DropDownWithSearch from "../../../common/dropdown-with-search/dropdownWithSearch";
 import {themeColors} from "@config/themes.config";
 import {defaultIcon, defaultConceptIcon} from "@config/explore.config";
 import {getCategoryWithinModel, iconExistsForNode} from "@util/modeling-utils";
@@ -389,8 +390,8 @@ const AddEditRelationship: React.FC<Props> = (props) => {
 
   const onSubmit = () => {
     setSubmitClicked(true);
-    if (errorMessage === ""  && !emptyTargetEntity) {
-      if (visibleSettings === eVisibleSettings.EntityToConceptClass  && propertyErrorMessage !== "") return;
+    if (errorMessage === "" && !emptyTargetEntity) {
+      if (visibleSettings === eVisibleSettings.EntityToConceptClass && propertyErrorMessage !== "") return;
       let sourceEntityIdx = props.dataModel.findIndex(obj => obj.entityName === props.relationshipInfo.sourceNodeName);
       let sourceProperties = props.dataModel[sourceEntityIdx].model.definitions[props.relationshipInfo.sourceNodeName].properties;
       let propertyNamesArray = props.isEditing ? Object.keys(sourceProperties).filter(propertyName => propertyName !== props.relationshipInfo.relationshipName) : Object.keys(sourceProperties);
@@ -455,14 +456,12 @@ const AddEditRelationship: React.FC<Props> = (props) => {
       modelUpdated = entityUpdated.modelDefinition[props.relationshipInfo.targetNodeName];
     }
     menuProps = getJoinMenuProps(model, modelUpdated, definitions, "");
-    //menuProps.unshift({value: "None", label: "None", type: "string"});
+
     if (menuProps) {
       if (!isConceptClassJoinView) {
-        menuProps.unshift({value: "None", label: "None", type: "string"});
-      } else {
-        menuProps.unshift({value: ".", label: "instance", type: "string"});
+        menuProps.unshift({value: "None", key: "None", label: "None", type: "string"});
       }
-      //menuProps.unshift({value: "None", label: "None", type: "string"});
+
       !isConceptClassJoinView ? setTargetNodeJoinProperties(menuProps) : setSourceNodeJoinProperties(menuProps);
     } else {
       !isConceptClassJoinView ? setTargetNodeJoinProperties([]) : setSourceNodeJoinProperties([]);
@@ -584,10 +583,6 @@ const AddEditRelationship: React.FC<Props> = (props) => {
     setJoinPropertyValue(selectedItem.value);
   };
 
-  const handlePropertySelect = (selectedItem) => {
-    setSourcePropertyValue(selectedItem.value);
-    setPropertyErrorMessage("");
-  };
 
   function handleMenuClick(event) {
     let model, menuProps, entityName, entityIdx, definitions;
@@ -708,44 +703,83 @@ const AddEditRelationship: React.FC<Props> = (props) => {
     />
   );
 
-  const propertyDropdown = (
-    <div className={styles.propertySelectorContainer}>
-      <Select
-        id="property-dropdown-wrapper"
-        inputId="property-dropdown"
-        components={{MenuList}}
-        placeholder="Select property*"
-        value={sourcePropertyOptions.find(oItem => oItem.value === sourcePropertyValue)}
-        onChange={handlePropertySelect}
-        aria-label="property-dropdown"
-        options={sourcePropertyOptions}
-        className={styles.propertySelectDropdown}
-        styles={{
-          ...reactSelectThemeConfig,
-          control: (provided, state) => ({
-            ...provided,
-            minHeight: "25px"
-          }),
-          dropdownIndicator: (provided, state) => ({
-            ...provided,
-            height: "25px",
-            marginTop: "-10px"
-          })
-        }}
-        formatOptionLabel={({value, label}) => {
-          return (
-            <span aria-label={`${label}-option`}>
-              {label === "None" ? "- " + label + " -" : label}
-            </span>
-          );
-        }}
-      />
-      {propertyErrorMessage && submitClicked  ?
-        <HCTooltip text={propertyErrorMessage} placement={"bottom"} id="exclamation-property-tooltip">
-          <i data-testid="error-property-circle"><FontAwesomeIcon icon={faExclamationCircle} size="1x" className={styles.propertyErrorIcon} /></i>
-        </HCTooltip> : ""}
-    </div>
-  );
+
+  //new property select
+  const [displayPropertyMenu, setDisplayPropertyMenu] = useState(false);
+  const [displayPropertyList, setDisplayPropertyList] = useState(false);
+
+  const handleEntityPropertyList = async (e) => {
+    let name = e.target.value;
+    setSourcePropertyValue(name);
+    if (!displayPropertyList && !displayPropertyMenu) {
+      setSourcePropertyValue("");
+      setDisplayPropertyList(true);
+      setDisplayPropertyMenu(true);
+    } else {
+      setDisplayPropertyList(false);
+      setDisplayPropertyMenu(false);
+    }
+  };
+
+  const onEntityPropertySelect = ({value}) => {
+    setSourcePropertyValue(value);
+    setDisplayPropertyList(false);
+    setDisplayPropertyMenu(false);
+    setPropertyErrorMessage("");
+    //simulate a click event to handle simultaneous event propagation of dropdown and select
+    simulateMouseClick(dummyNode.current);
+  };
+
+
+
+
+  const propertyDropdown = () => {
+    const dataOptions = [{value: ".", key: ".", label: " - instance - ", type: "string"}, ...sourcePropertyOptions];
+    const listIdent = dataOptions.reduce((acc, element) => {
+      if (!element.key) {
+        acc.push(0);
+      } else {
+        acc.push(20 * (element.key.split("/").length - 1));
+      }
+      return acc;
+    }, []);
+    return (
+      <div className={styles.propertySelectorContainer}>
+        <Dropdown className="m-0 w-100" as={ButtonGroup} autoClose="outside">
+          <Dropdown.Toggle id="property-dropdown-wrapper" variant="outline-light" className="p-0 ps-2 pe-2 w-100 d-flex justify-content-between align-items-center" style={{height: "24px"}} size="sm">
+            <span id="property-dropdown" className="d-inline-block text-truncate">{sourcePropertyValue ? sourcePropertyValue : "select property*"}</span>
+            <i id="listIcon" data-testid={"sourceProperty-listIcon"}>
+              <FontAwesomeIcon
+                icon={faChevronDown}
+                data-testid="propertyDropdownChevronDown"
+                className={styles.chevronDown}
+              />
+            </i>
+          </Dropdown.Toggle>
+          <Dropdown.Menu className="p-0 m-0 border-0 bg-transparent rounded-0">
+            <Dropdown.Item className={styles.dropdownMenuItem}>
+              <DropDownWithSearch
+                displayMenu={displayPropertyMenu}
+                setDisplayMenu={setDisplayPropertyMenu}
+                setDisplaySelectList={setDisplayPropertyList}
+                displaySelectList={displayPropertyList}
+                itemValue={sourcePropertyValue}
+                onItemSelect={onEntityPropertySelect}
+                srcData={dataOptions}
+                propName={sourcePropName}
+                handleDropdownMenu={handleEntityPropertyList}
+                indentList={listIdent}
+                modelling={false} />
+            </Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
+        {propertyErrorMessage && submitClicked ?
+          <HCTooltip text={propertyErrorMessage} placement={"bottom"} id="exclamation-property-tooltip">
+            <i data-testid="error-property-circle"><FontAwesomeIcon icon={faExclamationCircle} size="1x" className={styles.propertyErrorIcon} /></i>
+          </HCTooltip> : ""}
+      </div>
+    );
+  };
 
 
   const handleRelationshipDeletion = async () => {
@@ -1089,9 +1123,9 @@ const AddEditRelationship: React.FC<Props> = (props) => {
             </HCCard>
           </div>
           {visibleSettings === eVisibleSettings.EntityToConceptClass && <><div className={`mx-0.75 ${styles.propertyContainer}`}>
-            {propertyDropdown}
+            {propertyDropdown()}
             <HCTooltip id="sourceProperty-key-tooltip" text={ModelingTooltips.sourcePropertyKeyInfo} placement={"right"}>
-              <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} style={{marginBottom: "-6px"}} data-testid={"foreign-key-tooltip"} />
+              <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} data-testid={"foreign-key-tooltip"} />
             </HCTooltip>
           </div>
           <hr className={styles.horizontalLineBeforeName}></hr>

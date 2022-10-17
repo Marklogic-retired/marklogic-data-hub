@@ -78,13 +78,13 @@ const DropDownWithSearch = (props) => {
 
   const optionsStyle = (index) => {
     if (props.indentList) {
-      return {lineHeight: "2vh", textOverflow: "clip", paddingLeft: props.indentList[index]+"px"};
+      return {lineHeight: "2vh", textOverflow: "clip", paddingLeft: props.indentList[index] + "px"};
     } else {
       return {lineHeight: "2vh", textOverflow: "clip"};
     }
   };
 
-  const MenuList  = (selector, props) => (
+  const MenuList = (selector, props) => (
     <div id={`${selector}-select-MenuList`}>
       <SelectComponents.MenuList {...props} />
     </div>
@@ -93,14 +93,32 @@ const DropDownWithSearch = (props) => {
   const DropdownIndicator = innerProps => {
     return (
       <SelectComponents.DropdownIndicator {...innerProps}>
-        <FontAwesomeIcon icon={faSearch} size="2x" className={styles.searchIcon}/>
+        <FontAwesomeIcon icon={faSearch} size="2x" className={styles.searchIcon} />
       </SelectComponents.DropdownIndicator>
     );
   };
-
+  let selectedValue = {};
   const dropdownListOptions = props.srcData.map((element, index) => {
     let value = formatDropdownText(element.value, index);
-    return {value: element.key, testId: element.value, label: value, index, struct: element.struct, isDisabled: element.isDisabled};
+    if (element.key && element.key === props.itemValue) {
+      selectedValue = {
+        value: element.key,
+        testId: element.value,
+        label: element.label ? element.label : value,
+        index,
+        struct: element.struct,
+        isDisabled: element.isDisabled
+      };
+      return selectedValue;
+    }
+    return {
+      value: element.key,
+      testId: element.value,
+      label: element.label ? element.label : value,
+      index,
+      struct: element.struct,
+      isDisabled: element.isDisabled
+    };
   });
 
   /* props.srcData requires an array of tuple instead of a flat array to handle duplicate values */
@@ -114,6 +132,7 @@ const DropDownWithSearch = (props) => {
         menuIsOpen={selList}
         aria-label="dropdownList-select-wrapper"
         isSearchable
+        value={selectedValue}
         onChange={props.onItemSelect}
         options={dropdownListOptions}
         formatOptionLabel={(element: any) => {
@@ -121,12 +140,13 @@ const DropDownWithSearch = (props) => {
             <span data-testid={element.testId + "-option"} style={optionsStyle(element.index)} role={"option"}>
               {element.label}
               {<HCTooltip text="Multiple" data-testid={element.testId + "Multiple-option-tooltip"} id="multiple-option-tooltip" placement="top">
-                <img data-testid={element.testId + "-optionIcon"} src={element.struct ? arrayIcon : "" } alt={""}/>
+                <img data-testid={element.testId + "-optionIcon"} src={element.struct ? arrayIcon : ""} alt={""} />
               </HCTooltip>}
             </span>
           );
         }}
-        styles={{...reactSelectThemeConfig,
+        styles={{
+          ...reactSelectThemeConfig,
           container: (provided, state) => ({
             ...provided,
             width: calcDropdownWidth(),
