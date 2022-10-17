@@ -54,6 +54,11 @@
           "relatedEntityType": "http://example.org/Office-0.0.1/Office",
           "joinPropertyName": "officeId"
         },
+        "hasOfficeByName": {
+          "datatype": "integer",
+          "relatedEntityType": "http://example.org/Office-0.0.1/Office",
+          "joinPropertyName": "name"
+        },
         "shipping": {
           "datatype": "array",
           "description": "Example of a multi-value property of structured values",

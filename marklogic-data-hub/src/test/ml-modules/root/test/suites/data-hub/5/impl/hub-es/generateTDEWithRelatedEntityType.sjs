@@ -106,7 +106,7 @@ function generateTdeReferencedByRelatedEntityType() {
     test.assertTrue(fn.exists(productIdTemplate), `Product ID template should exist. Full template: ${xdmp.describe(tde, Sequence.from([]), Sequence.from([]))}`)
   ];
   assertions.push(
-    test.assertEqual(2, fn.count(productIdTemplate.xpath("*:triples/*:triple")), `has to exists 2 rows of triples. ProductId template: ${xdmp.describe(productIdTemplate, Sequence.from([]), Sequence.from([]))}`)
+    test.assertEqual(3, fn.count(productIdTemplate.xpath("*:triples/*:triple")), `has to exists 3 rows of triples. ProductId template: ${xdmp.describe(productIdTemplate, Sequence.from([]), Sequence.from([]))}`)
   );
   return assertions;
 }
