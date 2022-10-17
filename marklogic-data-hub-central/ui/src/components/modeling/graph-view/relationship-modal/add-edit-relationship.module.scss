@@ -154,10 +154,12 @@
 }
 
 .propertyErrorIcon {
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    color: #C00;
+  position: absolute;
+  right: 6px;
+  top: 5px;
+  color: #C00;
+  z-index: 999;
+  background: #fff;
 }
 .headerWarning {
     padding-right: 10px;
@@ -288,6 +290,17 @@
   margin-top: 30px;
 }
 
+.chevronDown {
+  // color: $primary;
+  background: transparent;
+  border: 0 !important;
+  margin-top: 4px;
+  padding: 0 !important;
+  font-size: 12px;
+  &:hover{
+    // color: var(--hoverColor);
+  }
+}
 .listIcon {
   color: $primary;
   background: transparent;

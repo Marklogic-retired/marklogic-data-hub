@@ -108,7 +108,7 @@ class RelationshipModal {
   }
 
   sourceProperty(propertyName: string) {
-    return cy.get(`#foreignKey-dropdown-MenuList [aria-label="${propertyName}-option"]`);
+    return cy.get(`#dropdownList-select-MenuList [data-testid="${propertyName}-option"]`);
   }
 
   getEntityToConceptClassViewOption() {
