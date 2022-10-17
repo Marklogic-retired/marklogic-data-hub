@@ -147,6 +147,21 @@ resultsTestSearchBy.nodes.forEach(node => {
   test.assertTrue((node.group.toString().includes("Product") || node.group.toString().includes("BasketballShoes") || node.group.toString().includes("test concept instanc")), xdmp.toJsonString(node));
 })
 
+
+const RelatedByPropertyDifferentFromID = {
+  "searchText": "",
+  "entityTypeIds": [ "Customer" ],
+  "relatedEntityTypeIds": ["Office"]
+};
+
+const ResultRelatedByPropertyDifferentFromID = searchNodes(RelatedByPropertyDifferentFromID);
+
+assertions.concat([
+  test.assertEqual(6, ResultRelatedByPropertyDifferentFromID.total),
+  test.assertEqual(3, ResultRelatedByPropertyDifferentFromID.nodes.length, xdmp.toJsonString(ResultRelatedByPropertyDifferentFromID)),
+  test.assertEqual(3, ResultRelatedByPropertyDifferentFromID.edges.length),
+]);
+
 const conceptFilterQuery = {
   "searchText": "",
   "entityTypeIds": [ "Product" ],

@@ -45,8 +45,8 @@ function generateTdeWithRelatedEntityType() {
         ];
 
     const tde = hent.dumpTde(input);
-  const contextTemplate = fn.head(tde.xpath('.//*:templates/*:template[*:context = "category[xs:string(.) ne """"]"]'));
-  const contextTemplateWithDot = fn.head(tde.xpath(`.//*:templates/*:template[*:context = ".//Product[node()]"]/*:templates/*:template[*:context = '.[xs:string(.) ne ""]']`));
+  const contextTemplate = fn.head(tde.xpath('.//*:templates/*:template[*:context = "category[  xs:string(.) ne """"]"]'));
+  const contextTemplateWithDot = fn.head(tde.xpath(`.//*:templates/*:template[*:context = ".//Product[node()]"]/*:templates/*:template[*:context = '.']`));
   const contextTemplateExists = fn.exists(contextTemplate);
   const contextTemplatewithDotExists = fn.exists(contextTemplateWithDot);
     const assertions = [

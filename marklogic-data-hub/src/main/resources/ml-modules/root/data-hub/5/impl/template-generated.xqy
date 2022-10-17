@@ -295,11 +295,15 @@ declare function extraction-template-generate(
                                  if (fn:string($expression) eq "" or fn:empty($expression))
                                  then $defaultValueExpression
                                  else $expression
+                           let $contextWithValidation :=
+                                 if (fn:string($context) eq ".")
+                                 then $context
+                                 else $context || "[  xs:string(.) ne """"]"
                           let $concept_class:=map:get($concept, "conceptClass")
                           where exists($has-related-concepts)
                           return
                             <tde:template>
-                             <tde:context>{ $context}[xs:string(.) ne ""]</tde:context>
+                             <tde:context>{ $contextWithValidation}</tde:context>
                             <tde:triples>
                             <tde:triple>
                                <tde:subject><tde:val>$subject-iri</tde:val></tde:subject>
@@ -354,6 +358,11 @@ declare function extraction-template-generate(
                                 <tde:subject><tde:val>$related-subject-iri</tde:val></tde:subject>
                                 <tde:predicate><tde:val>sem:iri("http://www.w3.org/2000/01/rdf-schema#isDefinedBy")</tde:val></tde:predicate>
                                 <tde:object><tde:val>fn:base-uri(.)</tde:val></tde:object>
+                              </tde:triple>
+                              <tde:triple>
+                                <tde:subject><tde:val>fn:encode-for-uri(fn:head(./*:{$property-name} ! xs:string(.)[. ne ""]))</tde:val></tde:subject>
+                                <tde:predicate><tde:val>$RDF_TYPE</tde:val></tde:predicate>
+                                <tde:object><tde:val>$model-type-iri</tde:val></tde:object>
                               </tde:triple>
                               </tde:triples>
                               </tde:template>
