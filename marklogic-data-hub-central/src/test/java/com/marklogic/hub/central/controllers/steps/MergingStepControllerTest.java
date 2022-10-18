@@ -141,7 +141,7 @@ public class MergingStepControllerTest extends AbstractStepControllerTest {
             .andDo(result -> {
                 JsonNode response = parseJsonResponse(result);
                 assertNotNull(response.get("onMerge"));
-                assertEquals(response.get("onMerge").size(), 2);
+                assertEquals(response.get("onMerge").size(), 4);
                 assertTrue(response.get("onMerge").get(0).asText().startsWith("sm-Customer-"));
                 assertNotNull(response.get("onNoMatch"));
                 assertNotNull(response.get("onArchive"));
