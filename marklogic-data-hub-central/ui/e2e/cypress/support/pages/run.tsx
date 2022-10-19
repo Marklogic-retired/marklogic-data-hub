@@ -212,6 +212,10 @@ class RunPage {
   getPatientFlowAccordion(flowName: string) {
     return cy.get(`#${flowName} div[class^="accordion-collapse collapse"]`);
   }
+
+  getSpinner() {
+    return cy.get("[data-testid='spinner']");
+  }
 }
 
 const runPage = new RunPage();

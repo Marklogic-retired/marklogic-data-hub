@@ -13,6 +13,7 @@ import {useDropzone} from "react-dropzone";
 import {deleteConfirmationModal, deleteStepConfirmationModal, addStepConfirmationModal, addExistingStepConfirmationModal} from "./confirmation-modals";
 import FlowPanel from "./flow-panel/flowPanel";
 import {ReorderFlowOrderDirection, SelectedSteps} from "./types";
+import Spinner from "react-bootstrap/Spinner";
 export interface Props {
   flows: Flow[];
   steps: any;
@@ -36,6 +37,7 @@ export interface Props {
   setOpenJobResponse: React.Dispatch<React.SetStateAction<boolean>>;
   isStepRunning: boolean;
   canUserStopFlow: boolean;
+  isLoading?: boolean;
 }
 
 const Flows: React.FC<Props> = ({
@@ -61,6 +63,7 @@ const Flows: React.FC<Props> = ({
   setOpenJobResponse,
   isStepRunning,
   canUserStopFlow,
+  isLoading,
 }) => {
   // Setup for file upload
   const {getRootProps, getInputProps, open, acceptedFiles} = useDropzone({
@@ -564,7 +567,8 @@ const Flows: React.FC<Props> = ({
                 </HCTooltip>
             }
           </div>
-          {flows && flows.map((flow, i) => {
+          {isLoading && <div className={styles.spinnerContainer}><Spinner animation="border" data-testid="spinner" variant="primary" /></div>}
+          {flows?.map((flow, i) => {
             return (<FlowPanel
               key={i}
               idx={i}

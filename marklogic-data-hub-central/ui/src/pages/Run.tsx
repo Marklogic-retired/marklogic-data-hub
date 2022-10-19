@@ -27,6 +27,7 @@ const Run = (props) => {
   const {handleError} = useContext(UserContext);
   const {setErrorMessageOptions} = useContext(ErrorMessageContext);
   const [isLoading, setIsLoading] = useState(false);
+  const [fetchLoad, setFetchLoad] = useState(true);
   const [flows, setFlows] = useState<Flow[]>([]);
   const [steps, setSteps] = useState<any>({});
   const [runEnded, setRunEnded] = useState<any>({});
@@ -61,6 +62,7 @@ const Run = (props) => {
 
   const getFlows = async () => {
     try {
+      setFetchLoad(true);
       let response = await axios.get("/api/flows");
       if (response.status === 200) {
         if (newFlowName) {
@@ -77,11 +79,14 @@ const Run = (props) => {
           message: error.response.data.message
         });
       }
+    } finally {
+      setFetchLoad(false);
     }
   };
 
   const getSteps = async () => {
     try {
+      setFetchLoad(true);
       let response = await axios.get("/api/steps");
       if (response.status === 200) {
         setSteps(response.data);
@@ -89,6 +94,8 @@ const Run = (props) => {
     } catch (error) {
       console.error("Error getting steps", error);
       handleError(error);
+    } finally {
+      setFetchLoad(false);
     }
   };
 
@@ -398,6 +405,7 @@ const Run = (props) => {
                 setOpenJobResponse={setOpenJobResponse}
                 isStepRunning={isStepRunning}
                 canUserStopFlow={userCanStopFlow}
+                isLoading={fetchLoad}
               />
             </>
             :
