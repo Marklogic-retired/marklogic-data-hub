@@ -133,7 +133,9 @@ describe("Monitor Tile", () => {
 
     cy.log("**compare order job id and check expanded table**");
     firstPageTableCellsJobIdAux.forEach(element => cy.log(element));
-    expect(firstPageTableCellsJobId).to.deep.eq(firstPageTableCellsJobIdAux);
+    let firstPageTableCellsJobIdVar = firstPageTableCellsJobId.toString().replace(/\n/g, "");
+    let firstPageTableCellsJobIdAuxVar = firstPageTableCellsJobIdAux.toString().replace(/\n/g, "");
+    expect(firstPageTableCellsJobIdVar).to.deep.eq(firstPageTableCellsJobIdAuxVar);
 
     cy.log("**check step name order ASC**");
     firstPageTableCellsStepName.forEach(element => cy.log(element));

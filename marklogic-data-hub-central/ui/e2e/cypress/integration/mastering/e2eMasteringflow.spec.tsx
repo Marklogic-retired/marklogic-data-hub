@@ -61,8 +61,9 @@ describe("Validate E2E Mastering Flow", () => {
     cy.waitForAsyncRequest();
   });
   it("Create a load Step", () => {
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
-    cy.waitUntil(() => loadPage.stepName("ingestion-step").should("be.visible"));
+    toolbar.getLoadToolbarIcon().click({force: true});
+    cy.waitForAsyncRequest();
+    loadPage.stepName("ingestion-step").should("be.visible");
     loadPage.loadView("th-large").click();
     loadPage.addNewButton("card").click();
     loadPage.stepNameInput().clear().type(loadStepName);

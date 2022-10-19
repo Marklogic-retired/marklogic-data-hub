@@ -22,6 +22,7 @@ describe("Entity Modeling: Writer Role", () => {
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-mapping-writer", "hub-central-saved-query-user").withRequest();
     LoginPage.postLogin();
+    cy.waitForAsyncRequest();
 
     //Setup hubCentral config for testing
     cy.setupHubCentralConfig();
@@ -38,21 +39,22 @@ describe("Entity Modeling: Writer Role", () => {
     cy.resetTestUser();
   });
   it("Create an entity with property that already exists", {defaultCommandTimeout: 120000}, () => {
-    cy.waitUntil(() => toolbar.getModelToolbarIcon()).click({force: true});
+    toolbar.getModelToolbarIcon().click({force: true});
+    cy.waitForAsyncRequest();
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
-    cy.waitUntil(() => modelPage.getAddButton()).click();
+    modelPage.getAddButton().should("be.visible").click({force: true});
     modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});
     entityTypeModal.newEntityName("AddEntity");
     entityTypeModal.newEntityDescription("An entity for User");
-    entityTypeModal.getAddButton().click();
+    entityTypeModal.getAddButton().should("be.visible").click({force: true});
     propertyTable.getAddPropertyButton("AddEntity").scrollIntoView().click();
     propertyModal.newPropertyName("Address");
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Structured").click();
     propertyModal.getCascadedTypeFromDropdown("New Property Type").click();
     structuredTypeModal.newName("Address");
-    structuredTypeModal.getAddButton().click();
+    structuredTypeModal.getAddButton().should("be.visible").click({force: true});
     propertyModal.getYesRadio("multiple").click();
     propertyModal.getSubmitButton().click();
     propertyModal.verifyPropertyNameError();
@@ -77,7 +79,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getPiiIcon("street").should("exist");
   });
   it("Create a property with name 'rowId' and get confirmation modal", () => {
-    propertyTable.getAddPropertyButton("AddEntity").should("be.visible").click();
+    propertyTable.getAddPropertyButton("AddEntity").should("be.visible").click({force: true});
     propertyModal.clearPropertyName();
     propertyModal.newPropertyName("rowId");
     propertyModal.openPropertyDropdown();
@@ -358,7 +360,7 @@ describe("Entity Modeling: Writer Role", () => {
     // entityTypeTable.getEntity("AddEntity").should("not.exist");
 
     // "Delete entity", {defaultCommandTimeout: 120000}, () => {
-    entityTypeTable.getDeleteEntityIcon("AddEntity").should("be.visible").click({force: true});
+    entityTypeTable.getDeleteEntityIcon("AddEntity").click({force: true});
     confirmationModal.getDeleteEntityText().should("be.visible");
     confirmationModal.getYesButton(ConfirmationType.DeleteEntity);
     cy.waitForAsyncRequest();
