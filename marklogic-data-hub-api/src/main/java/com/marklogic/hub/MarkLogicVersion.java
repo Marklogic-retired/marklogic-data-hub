@@ -109,19 +109,19 @@ public class MarkLogicVersion {
         try {
             int major = Integer.parseInt(versionString.replaceAll("([^.]+)\\..*", "$1"));
             int minor = 0;
-            boolean isNightly = versionString.matches("[^-]+-(\\d{4})(\\d{2})(\\d{2})");
+            boolean isNightly = versionString.matches("[^-]+[-|.](\\d{4})(\\d{2})(\\d{2})($|-\\d{1})");
 
             if (isNightly) {
-                this.dateString = versionString.replaceAll("[^-]+-(\\d{4})(\\d{2})(\\d{2})", "$1-$2-$3");
+                this.dateString = versionString.replaceAll("[^-]+[-|.](\\d{4})(\\d{2})(\\d{2})($|-\\d{1})", "$1-$2-$3");
                 this.nightly = true;
             }
             else {
                 //Extract minor version in cases where versions is of type 9.0-6 or 9.0-6.2
-                if (versionString.matches("^.*-(.+)\\..*")) {
-                    minor = Integer.parseInt(versionString.replaceAll("^.*-(.+)\\..*", "$1"));
+                if (versionString.matches("^.*[-|.](.+)\\..*")) {
+                    minor = Integer.parseInt(versionString.replaceAll("^.*[-|.](.+)\\..*", "$1"));
                 }
-                else if (versionString.matches("^.*-(.+)$")) {
-                    minor = Integer.parseInt(versionString.replaceAll("^.*-(.+)$", "$1"));
+                else if (versionString.matches("^.*[-|.](.+)$")) {
+                    minor = Integer.parseInt(versionString.replaceAll("^.*[-|.](.+)$", "$1"));
                 }
                 //left pad minor version with 0 if it is < 10
                 String modifiedMinor = minor < 10 ? StringUtils.leftPad(String.valueOf(minor), 2, "0") : String.valueOf(minor);
@@ -129,8 +129,8 @@ public class MarkLogicVersion {
                 int hotFixNum = 0;
 
                 //Extract hotfix in cases where versions is of type 9.0-6.2, if not it will be 0
-                if (versionString.matches("^.*-(.+)\\.(.*)")) {
-                    hotFixNum = Integer.parseInt(versionString.replaceAll("^.*-(.+)\\.(.*)", "$2"));
+                if (versionString.matches("^.*[-|.](.+)\\.(.*)")) {
+                    hotFixNum = Integer.parseInt(versionString.replaceAll("^.*[-|.](.+)\\.(.*)", "$2"));
                 }
                 //left pad minor version with 0 if it is < 10
                 String modifiedHotFixNum = hotFixNum < 10 ? StringUtils.leftPad(String.valueOf(hotFixNum), 2, "0") : String.valueOf(hotFixNum);

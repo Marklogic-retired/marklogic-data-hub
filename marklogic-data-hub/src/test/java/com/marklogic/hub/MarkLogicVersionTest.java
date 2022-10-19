@@ -42,6 +42,20 @@ public class MarkLogicVersionTest {
     }
 
     @Test
+    void nightly11() {
+        MarkLogicVersion version = new MarkLogicVersion("11.0.20220909");
+        assertTrue(version.isNightly());
+        assertEquals("2022-09-09", version.getDateString());
+        assertEquals(11, version.getMajor());
+
+        // Linux Nightly Version
+        version = new MarkLogicVersion("11.0.20220909-1");
+        assertTrue(version.isNightly());
+        assertEquals("2022-09-09", version.getDateString());
+        assertEquals(11, version.getMajor());
+    }
+
+    @Test
     void isVersionCompatibleWith520Roles() {
         Map<String, Boolean> versionMap = new HashMap<>();
         versionMap.put("9.0-20200909", false);
@@ -50,7 +64,10 @@ public class MarkLogicVersionTest {
         versionMap.put("10.0-2.1", false);
         versionMap.put("10.0-3", true);
         versionMap.put("10.0-3.1", true);
-        versionMap.put("11.0-10.2", true);
+        versionMap.put("11.0.0", true);
+        versionMap.put("11.0.2", true);
+        versionMap.put("11.2.2", true);
+        versionMap.put("11.0.20221019", true);
         versionMap.forEach((version, aBoolean) -> assertEquals(new MarkLogicVersion(version).isVersionCompatibleWith520Roles(), aBoolean, "Expected " + aBoolean + " for " + version));
     }
 
@@ -63,7 +80,9 @@ public class MarkLogicVersionTest {
         versionMap.put("10.0-3.1", false);
         versionMap.put("10.0-4", true);
         versionMap.put("10.0-4.1", true);
-        versionMap.put("11.0-10.2", true);
+        versionMap.put("11.0.0", true);
+        versionMap.put("11.0.2", true);
+        versionMap.put("11.2.2", true);
         versionMap.forEach((version, aBoolean) -> assertEquals(new MarkLogicVersion(version).supportsRangeIndexConstraints(), aBoolean, "Expected " + aBoolean + " for " + version));
     }
 
@@ -78,7 +97,9 @@ public class MarkLogicVersionTest {
         versionMap.put("10.0-2", false);
         versionMap.put("10.0-2.1", true);
         versionMap.put("10.0-4.1", true);
-        versionMap.put("11.0-10.2", true);
+        versionMap.put("11.0.0", true);
+        versionMap.put("11.0.5", true);
+        versionMap.put("11.1.2", true);
         versionMap.forEach((version, aBoolean) -> assertEquals(new MarkLogicVersion(version).supportsDataHubFramework(), aBoolean, "Expected " + aBoolean + " for " + version));
     }
 
@@ -90,7 +111,7 @@ public class MarkLogicVersionTest {
         versionMap.put("10.0-20200909", false);
         versionMap.put("10.0-2.1", false);
         versionMap.put("10.0-4.4", true);
-        versionMap.put("11.0-10.2", false);
+        versionMap.put("11.0.2", false);
         versionMap.forEach((version, aBoolean) -> assertEquals(new MarkLogicVersion(version).cannotUpdateAmps(), aBoolean, "Expected " + aBoolean + " for " + version));
     }
 }
