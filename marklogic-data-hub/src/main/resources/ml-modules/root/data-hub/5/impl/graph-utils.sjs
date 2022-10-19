@@ -62,15 +62,16 @@ function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predic
                         }`).where(ctsQueryCustom);
   const conceptClass = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                 SELECT (?subjectIRI AS ?conceptClassName) (?predicateIRI AS ?entityID) (MIN(?anyConceptLabel) AS ?conceptLabel) ?firstObjectIRI  WHERE {
-                        ?predicateIRI rdf:type @entityTypeIRIs.
+                 SELECT ?subjectIRI ?conceptClassName (MIN(?anyConceptLabel) AS ?conceptLabel) ?firstObjectIRI  WHERE {
+                        @entityTypeIRIs <http://www.marklogic.com/data-hub#relatedConcept> ?conceptClassName.
+                        ?conceptClassName <http://www.marklogic.com/data-hub#conceptPredicate> ?predicateIRI.
                         ?subjectIRI ?predicateIRI ?firstObjectIRI.
                         OPTIONAL {
-                          ?subjectIRI @labelIRI ?anyConceptLabel.
+                          ?firstObjectIRI @labelIRI ?anyConceptLabel.
                         }
                  }
-                 GROUP BY ?conceptClassName ?entityID ?firstObjectIRI`);
-  let joinOnConceptClass = op.on(op.col("subjectIRI"),op.col("entityID"));
+                 GROUP BY ?conceptClassName ?subjectIRI ?firstObjectIRI`);
+  let joinOnConceptClass = op.on(op.col("subjectIRI"),op.col("subjectIRI"));
   subjectPlanConcept = subjectPlanConcept.joinLeftOuter(conceptClass, joinOnConceptClass);
 
   const countConceptRelationsWithOtherEntity = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -271,6 +272,11 @@ function getEntityNodesByDocument(docURI, limit) {
         OPTIONAL {
             ?firstObjectIRI rdfs:isDefinedBy ?firstDocURI.
         }
+        OPTIONAL {
+          ?subjectIRI rdf:type ?entityType.
+          ?entityType <http://www.marklogic.com/data-hub#relatedConcept> ?conceptClassName.
+          ?conceptClassName <http://www.marklogic.com/data-hub#conceptPredicate> ?predicateIRI.
+        }
       }
       LIMIT $limit
   `, bindings, [], collectionQuery).toArray();
@@ -469,6 +475,7 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
             objectNode.propertiesOnHover = resultPropertiesOnHover;
             objectNode.group = objectGroup;
             objectNode.isConcept = !(isDocument || entityTypeIds.includes(objectEntityType));
+            objectNode.conceptClassName = item.conceptClassName;
             objectNode.count = item.nodeCount;
             objectNode.hasRelationships = false;
             if (!(subjectUris.includes(objectNode.docUri) && isSearch)) {
