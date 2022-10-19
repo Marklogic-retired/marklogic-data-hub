@@ -7,7 +7,22 @@ import {QuestionCircleFill} from "react-bootstrap-icons";
 import {HCInput, HCButton, HCTooltip} from "@components/common";
 import {themeColors} from "@config/themes.config";
 
-const NewFlowDialog = (props) => {
+interface Props {
+  newFlow: any;
+  title: string;
+  setNewFlow: React.Dispatch<React.SetStateAction<boolean>>;
+  setAddedFlowName:React.Dispatch<React.SetStateAction<string>>;
+  createFlow: (payload: any)=>void;
+  createAdd: boolean;
+  updateFlow: (name: any, description: any, steps?: any) => Promise<void>;
+  flowData: any;
+  canWriteFlow: boolean;
+  addStepToFlow: (artifactName: any, flowName: string, stepDefinitionType: string)=>void;
+  newStepToFlowOptions: any;
+  setOpenNewFlow: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const NewFlowDialog: React.FC<Props> = (props) => {
 
   const [flowName, setFlowName] = useState("");
   const [description, setDescription] = useState(props.flowData && props.flowData !== {} ? props.flowData.description : "");

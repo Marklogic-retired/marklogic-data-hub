@@ -627,14 +627,6 @@ const Browse: React.FC<Props> = ({location}) => {
     setGreyFacets(facets);
   };
 
-  const handleEntitySpecificPanelDisplay = () => {
-    if (entitySpecificPanel && entitySpecificPanel.hasOwnProperty("name")) {
-      if (searchOptions.relatedEntityTypeIds.includes(entitySpecificPanel.name)) {
-        setShowEntitySpecificPanel(false);
-      }
-    }
-  };
-
   const handleViewChange = (view) => {
     let tableView = "";
     if (view === "graph") {
@@ -642,11 +634,9 @@ const Browse: React.FC<Props> = ({location}) => {
       tableView = "graph";
     } else if (view === "snippet") {
       setViewOptions({graphView: false, tableView: false});
-      handleEntitySpecificPanelDisplay();
       tableView = "snippet";
     } else {
       setViewOptions({graphView: false, tableView: true});
-      handleEntitySpecificPanelDisplay();
       tableView = "table";
     }
     setUserPreferences(tableView);

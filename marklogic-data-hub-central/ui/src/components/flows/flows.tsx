@@ -19,7 +19,7 @@ export interface Props {
   steps: any;
   deleteFlow: any;
   createFlow: any;
-  updateFlow: (name: any, description: any, steps: any) => Promise<void>;
+  updateFlow: (name: any, description: any, steps?: any) => Promise<void>;
   deleteStep: any;
   runStep: any;
   stopRun: () => Promise<void>;
@@ -154,7 +154,7 @@ const Flows: React.FC<Props> = ({
     };
     if (!flows.length) return;
     const currentFlow = flows.filter(({name}) => name === flowName).shift();
-    if (!currentFlow?.steps) return;
+    if (!currentFlow?.steps || currentFlow === undefined) return;
     if (currentFlow?.steps?.length > addFlowDirty[flowName]) {
       // Scrolling should happen on the last update after the number of steps in the flow has been updated
       scrollToEnd(flowName);
@@ -237,7 +237,7 @@ const Flows: React.FC<Props> = ({
     //run step after step is added to a new flow
     if (newStepToFlowOptions && !newStepToFlowOptions.existingFlow && startRun && addedFlowName) {
       let indexFlow = flows?.findIndex(i => i.name === addedFlowName);
-      const _steps = flows[indexFlow].steps;
+      const _steps = flows[indexFlow]?.steps;
       if (_steps === undefined) return;
 
       if (_steps.length > 0) {
