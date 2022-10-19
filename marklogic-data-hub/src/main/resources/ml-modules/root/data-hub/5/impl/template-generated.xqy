@@ -288,7 +288,7 @@ declare function extraction-template-generate(
                           for $concept in json:array-values($map-related-concepts)
                           let $predicate_concept:=map:get($concept, "predicate")
                           let $concept-context:=map:get($concept, "context")
-                          let $context:=if ($prefix-value) then "("|| $prefix-value || $concept-context || "|" || $concept-context || ")" else $concept-context
+                          let $context := get-property-xpath($model, $entity-type-name, fn:tokenize($concept-context, "/"))
                            let $defaultValueExpression:="sem:iri(fn:replace(fn:string(.),'\\s+', ''))"
                           let $expression:=map:get($concept, "conceptExpression")
                            let $conceptExpression :=
@@ -506,7 +506,28 @@ declare function model-graph-prefix(
                map:get($info, "version")))
 };
 
+declare %private function get-property-xpath($model as map:map, $entity-type-name as xs:string, $property-names)
+{
+  let $xpath := if(fn:empty($property-names)) then ""
+  else
+    let $curr-prop-name := $property-names[1]
+    let $new-prop-names := fn:remove($property-names, 1)
+    let $type := ref-type-name($model, $entity-type-name, $curr-prop-name)
 
+    let $entity-type := $model=>map:get("definitions")=>map:get($entity-type-name)
+    let $namespace-prefix := $entity-type=>map:get("namespacePrefix")
+    let $prefix-value := if ($namespace-prefix) then $namespace-prefix || ":" else ""
+
+    let $prop-name-with-ns := if ($prefix-value) then "("|| $prefix-value || $curr-prop-name || "|" || $curr-prop-name || ")" else $curr-prop-name
+    let $type-with-ns := if ($prefix-value) then "("|| $prefix-value || $type || "|" || $type || ")" else $type
+
+    let $curr-path := get-property-xpath($model, $type, $new-prop-names)
+    return if(fn:empty($curr-path) or fn:string($curr-path) eq "") then
+      if(fn:empty($type) or fn:string($type) eq "") then $prop-name-with-ns
+      else fn:concat($prop-name-with-ns, "/", $type-with-ns)
+    else fn:concat($prop-name-with-ns, "/", $type-with-ns, "/", $curr-path)
+  return $xpath
+};
 
 declare %private function ref-prefixed-name(
     $model as map:map,

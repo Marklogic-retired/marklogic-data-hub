@@ -43,8 +43,8 @@ const withStructurePropertiesOnHover = {
 const resultsWithStructureProperties = searchNodes(withStructurePropertiesOnHover);
 
 assertions.concat([
-  test.assertEqual(1, resultsWithStructureProperties.total, `wrong total: ${xdmp.toJsonString(resultsWithStructureProperties)}`),
-  test.assertEqual(1, resultsWithStructureProperties.nodes.length, `wrong nodes length: ${xdmp.toJsonString(resultsWithStructureProperties)}`)
+  test.assertEqual(2, resultsWithStructureProperties.total, `wrong total: ${xdmp.toJsonString(resultsWithStructureProperties)}`),
+  test.assertEqual(2, resultsWithStructureProperties.nodes.length, `wrong nodes length: ${xdmp.toJsonString(resultsWithStructureProperties)}`)
 ]);
 
 resultsWithStructureProperties.nodes.forEach(node => {
@@ -54,7 +54,8 @@ resultsWithStructureProperties.nodes.forEach(node => {
   if(node.id == "http://example.org/Customer-0.0.1/Customer/301") {
     assertions.push(test.assertTrue(node.propertiesOnHover.length == 3));
   }
-  node.propertiesOnHover.forEach(propertyOnHover => {
+
+  (!node.isConcept) && node.propertiesOnHover.forEach(propertyOnHover => {
     if(JSON.stringify(propertyOnHover).toString().includes("shipping.Address.city")){
       assertions.push(test.assertEqual("{\"shipping.Address.city\":\"Columbus\"}",JSON.stringify(propertyOnHover).toString()), "Customer 301 must have Columbus as shipping.Address.city.");
     }

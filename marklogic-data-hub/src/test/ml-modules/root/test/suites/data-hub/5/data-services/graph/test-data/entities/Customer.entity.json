@@ -83,7 +83,15 @@
           }
         }
       },
-      "description": ""
+      "description": "",
+      "relatedConcepts": [
+        {
+          "conceptClass": "zipConcept",
+          "conceptExpression": "",
+          "context": "shipping/zip/fiveDigit",
+          "predicate": "zipValue"
+        }
+      ]
     },
     "Address": {
       "required": [],

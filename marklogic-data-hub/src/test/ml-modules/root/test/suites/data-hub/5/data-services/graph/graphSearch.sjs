@@ -98,9 +98,9 @@ const customerQuery = {
 };
 const resultsTest6 = searchNodes(customerQuery);
 assertions.concat([
-  test.assertEqual(2, resultsTest6.total),
-  test.assertEqual(2, resultsTest6.nodes.length, xdmp.toJsonString(resultsTest6)),
-  test.assertEqual(1, resultsTest6.edges.length),
+  test.assertEqual(3, resultsTest6.total),
+  test.assertEqual(3, resultsTest6.nodes.length, xdmp.toJsonString(resultsTest6)),
+  test.assertEqual(2, resultsTest6.edges.length),
   // to and from are in sorted order to support bidirectional queries.
   test.assertEqual("/content/babyRegistry1.json", resultsTest6.edges[0]["from"]),
   test.assertEqual("/content/customer1.json", resultsTest6.edges[0]["to"], xdmp.toJsonString(resultsTest6.edges[0]))
@@ -214,5 +214,16 @@ resultConceptWithHasRelationship.nodes.forEach(node => {
   }
 })
 
+const structuredConceptQuery = {
+  "searchText": "",
+  "entityTypeIds": [ "Customer"],
+  "selectedFacets": {}
+};
+const structuredConceptQueryResults = searchNodes(structuredConceptQuery);
+assertions.concat([
+  test.assertEqual(2, structuredConceptQueryResults.total, "Includes 1 customer node and 1 structured property concept node"),
+  test.assertEqual(2, structuredConceptQueryResults.nodes.length, xdmp.toJsonString(structuredConceptQueryResults)),
+  test.assertEqual(1, structuredConceptQueryResults.edges.length, "One edge between concept node and structured property concept node")
+]);
 
 assertions;
