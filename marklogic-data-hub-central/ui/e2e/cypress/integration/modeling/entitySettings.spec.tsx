@@ -14,7 +14,7 @@ import homePage from "../../support/pages/home";
 import graphExploreSidePanel from "../../support/components/explore/graph-explore-side-panel";
 import dataModelDisplaySettingsModal from "../../support/components/explore/data-model-display-settings-modal";
 import explorePage from "../../support/pages/explore";
-
+import graphView from "../../support/components/explore/graph-view";
 
 const defaultSelectLabel = "Select...";
 const defaultSelectProperty = "Select property";
@@ -106,8 +106,10 @@ describe("Entity display settings in model tile", () => {
 
     cy.log("**Click on babyRegistry node and verify that properties on hover show up in the tooltip**");
     graphExplore.getGraphVisCanvas().should("exist");
-    cy.wait(5000);
     graphExplore.stopStabilization();
+    graphView.getPhysicsAnimationToggle().scrollIntoView().trigger("mouseover").click({force: true});
+    cy.wait(5000); // The canvas takes some more time animating
+    graphView.getPhysicsAnimationToggle().scrollIntoView().trigger("mouseover").click({force: true});
     graphExplore.focusNode(ExploreGraphNodes.BABY_REGISTRY_3039);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.BABY_REGISTRY_3039).then((nodePositions: any) => {
       let baby_registry_3039_nodeposition: any = nodePositions[ExploreGraphNodes.BABY_REGISTRY_3039];
@@ -132,8 +134,9 @@ describe("Entity display settings in model tile", () => {
 
     cy.log("**Click on babyRegistry node to open the side panel**");
     graphExplore.getGraphVisCanvas().should("exist");
-    cy.wait(2000);
-    graphExplore.stopStabilization();
+    graphView.getPhysicsAnimationToggle().scrollIntoView().trigger("mouseover").click({force: true});
+    cy.wait(5000); // The canvas takes some more time animating
+    graphView.getPhysicsAnimationToggle().scrollIntoView().trigger("mouseover").click({force: true});
     graphExplore.focusNode(ExploreGraphNodes.BABY_REGISTRY_3039);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.BABY_REGISTRY_3039).then((nodePositions: any) => {
       let baby_registry_3039_nodeposition: any = nodePositions[ExploreGraphNodes.BABY_REGISTRY_3039];
@@ -177,7 +180,7 @@ describe("Entity display settings in model tile", () => {
     cy.log("**Go to graph view**");
     modelPage.selectView("project-diagram");
     cy.waitForAsyncRequest();
-    cy.wait(2000);
+    cy.wait(5000);
 
     cy.log(`**Click on ${defaultEntityTypeData.name} entity to open side bar**`);
     graphVis.getPositionsOfNodes(defaultEntityTypeData.name).then((nodePositions: any) => {

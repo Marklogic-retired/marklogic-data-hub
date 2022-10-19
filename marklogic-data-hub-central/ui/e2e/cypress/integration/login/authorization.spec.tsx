@@ -396,9 +396,11 @@ describe("login", () => {
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader")
       .withRequest();
     loginPage.postLogin();
+    cy.waitForAsyncRequest();
 
     // To verify on click operation works as expected
-    toolbar.getHomePageInfoIcon().scrollIntoView().should("be.visible").click({force: true});
+    cy.scrollTo("top");
+    toolbar.getHomePageInfoIcon().should("be.visible").scrollIntoView().click({force: true});
     toolbar.getHomePageInfoPopover().should("exist");
 
     toolbar.getModelToolbarIcon().should("be.visible").trigger("mouseover", {force: true}).click({force: true});
