@@ -32,7 +32,7 @@ const resultsTest2 = nodeExpand(expandQuery2);
 assertions.concat([
   test.assertEqual(7, resultsTest2.total),
   test.assertEqual(2, resultsTest2.nodes.length, xdmp.toJsonString(resultsTest2)),
-  test.assertEqual(5, resultsTest2.edges.length, `2 edges for new nodes + 3 edges from the new nodes so they'll connect if already on the graph. Output: ${xdmp.toJsonString(resultsTest2)}`)
+  test.assertEqual(6, resultsTest2.edges.length, `2 edges for new nodes + 1 edge for structured property concept + 3 edges from the new nodes so they'll connect if already on the graph. Output: ${xdmp.toJsonString(resultsTest2)}`)
 ]);
 
 
