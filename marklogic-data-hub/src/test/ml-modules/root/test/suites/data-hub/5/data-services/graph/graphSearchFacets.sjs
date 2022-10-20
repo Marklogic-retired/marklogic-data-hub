@@ -1,3 +1,4 @@
+const graphUtils = require("/data-hub/5/impl/graph-utils.sjs");
 const test = require("/test/test-helper.xqy");
 
 function invoke(module, args) {
@@ -25,12 +26,14 @@ const productQuery = {
   "entityTypeIds": [ "Product", "BabyRegistry", "Customer" ],
 };
 const resultsTest = searchNodes(productQuery);
+let expectedNodeCount = graphUtils.supportsGraphConceptsSearch() ? 9 : 6;
+let expectedEdgeCount = graphUtils.supportsGraphConceptsSearch() ? 4 : 0;
 
 let assertions = [
-  test.assertEqual(9, resultsTest.total),
-  test.assertEqual(9, resultsTest.nodes.length),
-  test.assertEqual(4, resultsTest.edges.length),
-  test.assertFalse(resultsTest.nodes[0].hasRelationships),
+  test.assertEqual(expectedNodeCount, resultsTest.total),
+  test.assertEqual(expectedNodeCount, resultsTest.nodes.length),
+  test.assertEqual(expectedEdgeCount, resultsTest.edges.length),
+  test.assertTrue(resultsTest.nodes[0].hasRelationships)
 ];
 
 resultsTest.nodes.forEach(node => {

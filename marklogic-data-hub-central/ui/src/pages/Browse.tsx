@@ -445,7 +445,9 @@ const Browse: React.FC<Props> = ({location}) => {
         graphSearchData.nodes.forEach(node => {
           if (!node.isConcept) {
             let tmpEntityType = node.group.split("/").pop();
-            tmpEntities[tmpEntityType].amount++;
+            if (tmpEntities[tmpEntityType]) {
+              tmpEntities[tmpEntityType].amount++;
+            }
           }
         });
       } else if (data.length > 0) {

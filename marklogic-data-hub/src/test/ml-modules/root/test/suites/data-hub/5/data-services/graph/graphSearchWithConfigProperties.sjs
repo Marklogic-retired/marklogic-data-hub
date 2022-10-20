@@ -1,3 +1,4 @@
+const graphUtils = require("/data-hub/5/impl/graph-utils.sjs");
 const test = require("/test/test-helper.xqy");
 
 function invoke(module, args) {
@@ -41,10 +42,10 @@ const withStructurePropertiesOnHover = {
   "entityTypeIds": [ "Customer" ]
 };
 const resultsWithStructureProperties = searchNodes(withStructurePropertiesOnHover);
-
+let expectedCount = graphUtils.supportsGraphConceptsSearch() ? 2 : 1;
 assertions.concat([
-  test.assertEqual(2, resultsWithStructureProperties.total, `wrong total: ${xdmp.toJsonString(resultsWithStructureProperties)}`),
-  test.assertEqual(2, resultsWithStructureProperties.nodes.length, `wrong nodes length: ${xdmp.toJsonString(resultsWithStructureProperties)}`)
+  test.assertEqual(expectedCount, resultsWithStructureProperties.total, `wrong total: ${xdmp.toJsonString(resultsWithStructureProperties)}`),
+  test.assertEqual(expectedCount, resultsWithStructureProperties.nodes.length, `wrong nodes length: ${xdmp.toJsonString(resultsWithStructureProperties)}`)
 ]);
 
 resultsWithStructureProperties.nodes.forEach(node => {

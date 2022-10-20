@@ -71,14 +71,17 @@ result.map(item => {
   }
 })
 
+const supportsGraphConceptsSearch = graphUtils.supportsGraphConceptsSearch();
+
 hashmapEntityType.forEach (function(relatedConcepts, entityType) {
   let entityNode = {};
   entityNode.entityType = entityType;
-  entityNode.relatedConcepts = relatedConcepts;
+  entityNode.relatedConcepts = supportsGraphConceptsSearch ? relatedConcepts: [];
   nodes.push(entityNode);
 })
 
 const response = {
+  supportsGraphConceptsSearch,
   'entitites': nodes
 };
 

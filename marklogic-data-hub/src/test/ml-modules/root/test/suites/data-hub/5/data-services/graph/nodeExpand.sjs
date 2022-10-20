@@ -55,9 +55,9 @@ const expandConceptQuery = {
 const resultConceptExpand = nodeExpandWithLimit4(expandConceptQuery);
 
 assertions.concat([
-  test.assertEqual(3, resultConceptExpand.total, xdmp.toJsonString(resultConceptExpand)),
-  test.assertEqual(3, resultConceptExpand.nodes.length, xdmp.toJsonString(resultConceptExpand)),
-  test.assertEqual(3, resultConceptExpand.edges.length),
+  test.assertEqual(4, resultConceptExpand.total, xdmp.toJsonString(resultConceptExpand)),
+  test.assertEqual(4, resultConceptExpand.nodes.length, xdmp.toJsonString(resultConceptExpand)),
+  test.assertEqual(4, resultConceptExpand.edges.length),
   test.assertTrue(resultConceptExpand.nodes.some(node => "office name" === fn.string(node.label)), xdmp.toJsonString(resultConceptExpand.nodes)),
   test.assertTrue(resultConceptExpand.nodes.some(node => "ProductName60" === fn.string(node.label)), xdmp.toJsonString(resultConceptExpand.nodes))
 ]);

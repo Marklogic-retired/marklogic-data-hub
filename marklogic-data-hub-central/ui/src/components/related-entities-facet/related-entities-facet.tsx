@@ -127,12 +127,12 @@ const RelatedEntitiesFacet: React.FC<Props> = (props) => {
                     </span>
                     <span className={styles.entityAmount} aria-label={`related-entity-${name}-filter`}>
                       {filter && SHOW_FILTER(filter)}
-                      {isNotEmptyIndicatorData && entityIndicatorData.entities[name].amount}
+                      {isNotEmptyIndicatorData && entityIndicatorData.entities[name]?.amount}
                     </span>
                   </HCCheckbox>
                   {isNotEmptyIndicatorData &&
                     <span className={styles.indicatorContainer} aria-label={`related-entity-${name}-amountbar`}>
-                      <HCFacetIndicator percentage={isNaN(entityIndicatorData.max) ? 0 : entityIndicatorData.entities[name].amount*100/entityIndicatorData.max} isActive={checked} />
+                      <HCFacetIndicator percentage={isNaN(entityIndicatorData.max) ? 0 : entityIndicatorData.entities[name]?.amount*100/entityIndicatorData.max} isActive={checked} />
                     </span>
                   }
                 </div>

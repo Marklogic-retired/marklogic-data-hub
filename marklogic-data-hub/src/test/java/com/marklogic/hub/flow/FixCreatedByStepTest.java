@@ -73,16 +73,18 @@ public class FixCreatedByStepTest extends AbstractHubCoreTest {
         // it at least causes the QueryBatcher in the implementation to do some multi-threading work.
         // Can crank this up for manual performance tests
         long start = System.currentTimeMillis();
-        for (int i = 1; i <= 100; i++) {
+        int customerCount = 100;
+        for (int i = 1; i <= customerCount; i++) {
             try {
                 project.createRawCustomer(i, "Customer " + i);
+                customerUris.add("/echo/customer" + i + ".json");
             } catch (Error e) {
                 logger.error("Error creating Raw Customer " + i + ": " + e.getMessage());
             }
-            customerUris.add("/echo/customer" + i + ".json");
 
         }
         logger.info("Insert time: " + (System.currentTimeMillis() - start));
+        logger.info(customerUris.size() + " of " + customerCount + " customers inserted.");
 
 
         String provString = readStringFromClasspath("entity-reference-model/legacyProvenanceRecord2.xml");
