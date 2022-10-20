@@ -98,7 +98,13 @@ public class GetRecordTest extends AbstractHubCoreTest {
         flowRunner.awaitCompletion();
 
         RunStepResponse mappingStepResponse = flowResponse.getStepResponses().get("2");
-        assertEquals(true, mappingStepResponse.isSuccess());
+        try {
+            RunStepResponse mappingStepResponseLog = flowResponse.getStepResponses().get("2");
+        } catch (Error e) {
+            logger.error("Error getting step "  + e.getMessage());
+        }
+
+        assertEquals(true, mappingStepResponse.isSuccess(), "mappingStepResponse: " + mappingStepResponse.toString() );
         assertNull( mappingStepResponse.getStepOutput());
 
         ObjectNode response = (ObjectNode) service.getRecord("/customers/customer1.json");
