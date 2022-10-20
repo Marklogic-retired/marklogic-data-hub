@@ -10,7 +10,7 @@
   "targetFormat": "JSON",
   "attachSourceDocument": false,
   "name": "mapServiceLocation",
-  "targetEntityType": "http://marklogic.envision.com/ServiceLocation-0.0.1/ServiceLocation",
+  "targetEntityType": "http://marklogic.com/ServiceLocation-0.0.1/ServiceLocation",
   "description": "",
   "selectedSource": "query",
   "sourceQuery": "cts.andQuery([cts.collectionQuery(\"CMS-Provider.csv\"), cts.jsonPropertyValueQuery(\"st\", [\"MD\",\"VA\",\"DC\"])])",

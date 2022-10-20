@@ -17,7 +17,7 @@
   "sourceQuery": "cts.collectionQuery([\"ingestCuram\"])",
   "sourceDatabase": "data-hub-STAGING",
   "targetDatabase": "data-hub-FINAL",
-  "targetEntityType": "http://marklogic.com/envision/Member-0.0.1/Member",
+  "targetEntityType": "http://marklogic.com/Member-0.0.1/Member",
   "properties": {
     "FullAddress": {
       "sourcedFrom": "concat(getAddress1Normalized(//ADDRESSELEMENT/ELEMENTVALUE),', ', //ADDRESSES/ADDRESSELEMENT/ZIP)"

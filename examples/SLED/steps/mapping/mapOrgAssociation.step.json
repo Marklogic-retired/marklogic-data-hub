@@ -10,7 +10,7 @@
   "targetFormat": "JSON",
   "attachSourceDocument": false,
   "name": "mapOrgAssociation",
-  "targetEntityType": "http://marklogic.envision.com/OrgAssociation-0.0.1/OrgAssociation",
+  "targetEntityType": "http://marklogic.com/OrgAssociation-0.0.1/OrgAssociation",
   "description": "Map Org Association",
   "selectedSource": "query",
   "sourceQuery": "cts.andNotQuery(cts.andQuery([cts.collectionQuery('CMS-Provider.csv'), cts.jsonPropertyValueQuery('st', ['MD','VA','DC'])]),cts.jsonPropertyValueQuery('org_nm', ''))",

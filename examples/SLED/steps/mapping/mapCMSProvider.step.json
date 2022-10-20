@@ -10,7 +10,7 @@
   "targetFormat": "JSON",
   "attachSourceDocument": false,
   "name": "mapCMSProvider",
-  "targetEntityType": "http://marklogic.envision.com/CMSProvider-0.0.1/CMSProvider",
+  "targetEntityType": "http://marklogic.com/CMSProvider-0.0.1/CMSProvider",
   "description": "Map CMSProvider from CMS Provider CSV source",
   "selectedSource": "collection",
   "sourceQuery": "cts.collectionQuery(['CMS-Provider.csv'])",
