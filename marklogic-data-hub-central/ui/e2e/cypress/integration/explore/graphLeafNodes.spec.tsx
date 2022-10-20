@@ -158,7 +158,6 @@ describe("Leaf Nodes", () => {
       graphExploreSidePanel.getSidePanel().should("exist");
     });
 
-    cy.log("**Clicking Show related on 'Jeans' leaf node to expand**");
     graphExplore.focusNode(ExploreGraphNodes.CONCEPT_JEANS);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_JEANS).then((nodePositions: any) => {
       let jeansCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_JEANS];

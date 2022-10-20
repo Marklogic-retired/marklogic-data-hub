@@ -128,13 +128,14 @@ const result = graphUtils.getEntityNodesWithRelated(entityTypeIRIs, relatedEntit
 //get total from base entities
 let resultBaseCounting = graphUtils.getEntityTypeIRIsCounting(entityTypeIRIs, ctsQuery);
 let totalCount = fn.head(resultBaseCounting).total;
+
 if (relatedEntityTypeIRIs.length) {
   //get total from related entities
   let totalRelatedEntities = graphUtils.getRelatedEntitiesCounting(allRelatedPredicateList, ctsQuery);
   let totalRelated = fn.head(totalRelatedEntities).total;
   totalCount += totalRelated;
 }
-if (predicateConceptList.length) {
+if (graphUtils.supportsGraphConceptsSearch() && predicateConceptList.length) {
   //get total Concepts
   let totalConcepts = graphUtils.getConceptCounting(entityTypeIRIs, predicateConceptList, ctsQuery);
   let totalConcept = fn.head(totalConcepts).total;
@@ -144,8 +145,10 @@ if (predicateConceptList.length) {
 const totalEstimate = totalCount;
 const {nodes, edges} = graphUtils.graphResultsToNodesAndEdges(result, queryObj.entityTypeIds);
 
+const supportsGraphConceptsSearch = graphUtils.supportsGraphConceptsSearch();
 const response = {
-  'total': totalEstimate,
+  supportsGraphConceptsSearch,
+  'total': (start === 0 && (!pageLength || totalEstimate < pageLength)) ? nodes.length: totalEstimate,
   'start': start,
   'limit': nodes.length,
   'nodes': nodes,

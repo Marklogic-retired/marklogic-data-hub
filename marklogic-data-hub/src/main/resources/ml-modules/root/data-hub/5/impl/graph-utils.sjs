@@ -48,46 +48,8 @@ function getOrderedLabelPredicates() {
 }
 
 function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predicateConceptList, entitiesDifferentFromBaseAndRelated, conceptFacetList, ctsQueryCustom, limit) {
-  let collectionQuery = cts.collectionQuery(getAllEntityIds());
-  ctsQueryCustom = cts.andQuery([collectionQuery, ctsQueryCustom]);
-  let subjectPlanConcept = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-                 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                 SELECT ?subjectIRI ?predicateIRI ?firstObjectIRI ?docURI  WHERE {
-                        ?subjectIRI rdf:type @entityTypeIRIs;
-                          ?predicateIRI  ?firstObjectIRI;
-                          rdfs:isDefinedBy ?docURI.
-                        FILTER EXISTS {
-                          ?subjectIRI @predicateConceptList ?firstObjectIRI.
-                        }
-                        }`).where(ctsQueryCustom);
-  const conceptClass = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-                 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                 SELECT ?subjectIRI ?conceptClassName (MIN(?anyConceptLabel) AS ?conceptLabel) ?firstObjectIRI  WHERE {
-                        @entityTypeIRIs <http://www.marklogic.com/data-hub#relatedConcept> ?conceptClassName.
-                        ?conceptClassName <http://www.marklogic.com/data-hub#conceptPredicate> ?predicateIRI.
-                        ?subjectIRI ?predicateIRI ?firstObjectIRI.
-                        OPTIONAL {
-                          ?firstObjectIRI @labelIRI ?anyConceptLabel.
-                        }
-                 }
-                 GROUP BY ?conceptClassName ?subjectIRI ?firstObjectIRI`);
-  let joinOnConceptClass = op.on(op.col("subjectIRI"),op.col("subjectIRI"));
-  subjectPlanConcept = subjectPlanConcept.joinLeftOuter(conceptClass, joinOnConceptClass);
-
-  const countConceptRelationsWithOtherEntity = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-                 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                 SELECT ?firstObjectIRI (COUNT(?firstObjectIRI) AS ?countRelationsWithOtherEntity)   WHERE {
-                        ?subjectIRI rdf:type @entitiesDifferentFromBaseAndRelated;
-                        ?predicateIRI  ?firstObjectIRI;
-                        rdfs:isDefinedBy ?docURI.
-                        FILTER EXISTS {
-                        ?subjectIRI @predicateConceptList ?firstObjectIRI.
-                        }
-                       }
-                       GROUP BY ?firstObjectIRI
-`);
-
-  const subjectPlan = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+  let collectionQuery = cts.query({ collectionQuery: { uris: getAllEntityIds()}});
+  let subjectPlan = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                  SELECT ?subjectIRI ?subjectLabel ?docURI WHERE {
                     ?subjectIRI rdf:type @entityTypeIRIs;
@@ -95,7 +57,10 @@ function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predic
                     OPTIONAL {
                       ?subjectIRI @labelIRI ?subjectLabel.
                     }
-                  }`).where(ctsQueryCustom);
+                  }`)
+  if (ctsQueryCustom instanceof cts.query) {
+    subjectPlan = subjectPlan.where(ctsQueryCustom);
+  }
   const firstLevelConnectionsPlan = op.fromSPARQL(`
       PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
       PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -116,21 +81,6 @@ function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predic
   let joinOn = op.on(op.col("subjectIRI"),op.col("subjectIRI"));
   let joinOnObjectIri = op.on(op.col("firstObjectIRI"),op.col("firstObjectIRI"));
   let fullPlan = subjectPlan.joinLeftOuter(firstLevelConnectionsPlan, joinOn).limit(limit);
-  let fullPlanConcept = subjectPlanConcept.joinLeftOuter(countConceptRelationsWithOtherEntity, joinOnObjectIri);
-  if(conceptFacetList != null && conceptFacetList.length >= 1){
-    const filterConceptsQuery = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-                 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                 SELECT ?subjectIRI ?predicateIRI ?firstObjectIRI ?docURI  WHERE {
-                        ?subjectIRI rdf:type @entityTypeIRIs;
-                        ?predicateIRI  ?firstObjectIRI;
-                        rdfs:isDefinedBy ?docURI.
-                        FILTER EXISTS {
-                         ?subjectIRI ?predicateIRI @conceptFacetList.
-                        }
-                        }`)
-    fullPlanConcept = filterConceptsQuery.joinLeftOuter(fullPlanConcept, joinOn);
-
-  }
   if (entityTypeIRIs.length > 1) {
     let otherEntityIRIs = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -150,9 +100,58 @@ function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predic
                 `);
     fullPlan = fullPlan.union(subjectPlan.joinLeftOuter(otherEntityIRIs, joinOn).limit(limit));
   }
+  // Can't run concept specific queries before ML 10.0-9 due to BugTrack https://bugtrack.marklogic.com/57077
+  if (supportsGraphConceptsSearch()) {
+    let subjectPlanConcept = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+                 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                 SELECT ?subjectIRI ?predicateIRI ?firstObjectIRI ?docURI  WHERE {
+                        ?subjectIRI rdf:type @entityTypeIRIs;
+                          ?predicateIRI  ?firstObjectIRI;
+                          rdfs:isDefinedBy ?docURI.
+                        FILTER (isIRI(?predicateIRI) && ?predicateIRI = @predicateConceptList)
+                        }`)
+    if (ctsQueryCustom instanceof cts.query) {
+      subjectPlanConcept = subjectPlanConcept.where(ctsQueryCustom);
+    }
+    const conceptClass = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+                 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                 SELECT ?subjectIRI ?conceptClassName (MIN(?anyConceptLabel) AS ?conceptLabel) ?firstObjectIRI  WHERE {
+                        @entityTypeIRIs <http://www.marklogic.com/data-hub#relatedConcept> ?conceptClassName.
+                        ?conceptClassName <http://www.marklogic.com/data-hub#conceptPredicate> ?predicateIRI.
+                        ?subjectIRI ?predicateIRI ?firstObjectIRI.
+                        OPTIONAL {
+                          ?firstObjectIRI @labelIRI ?anyConceptLabel.
+                        }
+                 }
+                 GROUP BY ?conceptClassName ?subjectIRI ?firstObjectIRI`);
+    let joinOnConceptClass = op.on(op.col("subjectIRI"), op.col("subjectIRI"));
+    subjectPlanConcept = subjectPlanConcept.joinLeftOuter(conceptClass, joinOnConceptClass);
 
-  fullPlanConcept = fullPlanConcept.joinInner(subjectPlan, joinOn);
-  fullPlan = fullPlan.union(fullPlanConcept);
+    const countConceptRelationsWithOtherEntity = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+                 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                 SELECT ?firstObjectIRI (COUNT(?firstObjectIRI) AS ?countRelationsWithOtherEntity)   WHERE {
+                        ?subjectIRI rdf:type @entitiesDifferentFromBaseAndRelated;
+                        ?predicateIRI  ?firstObjectIRI;
+                        rdfs:isDefinedBy ?docURI.
+                        FILTER (isIRI(?predicateIRI) && ?predicateIRI = @predicateConceptList)
+                       }
+                       GROUP BY ?firstObjectIRI
+    `);
+    let fullPlanConcept = subjectPlanConcept.joinLeftOuter(countConceptRelationsWithOtherEntity, joinOnObjectIri);
+    if(conceptFacetList != null && conceptFacetList.length >= 1){
+      const filterConceptsQuery = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+                 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                 SELECT ?subjectIRI ?predicateIRI ?firstObjectIRI ?docURI  WHERE {
+                        ?subjectIRI rdf:type @entityTypeIRIs;
+                        ?predicateIRI  ?firstObjectIRI;
+                        rdfs:isDefinedBy ?docURI.
+                        FILTER (isIRI(?firstObjectIRI) && ?firstObjectIRI = @conceptFacetList)
+                        }`)
+      fullPlanConcept = filterConceptsQuery.joinLeftOuter(fullPlanConcept, joinOn);
+    }
+    fullPlanConcept = fullPlanConcept.joinInner(subjectPlan, joinOn);
+    fullPlan = fullPlan.union(fullPlanConcept);
+  }
   return fullPlan.result(null, {conceptFacetList, entitiesDifferentFromBaseAndRelated, entityTypeIRIs, predicateConceptList, entityTypeOrConceptIRI: relatedEntityTypeIRIs.concat(getRdfConceptTypes()), labelIRI: getOrderedLabelPredicates()}).toArray();
 }
 
@@ -209,7 +208,11 @@ function getEntityNodesExpandingConcept(objectConceptIRI, limit) {
   const results =  sem.sparql(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                  SELECT ?subjectIRI ?predicateIRI ?firstObjectIRI ?docURI ?firstDocURI  WHERE {
-                    ?firstObjectIRI ?predicateIRI ?subjectIRI.
+                    {
+                        ?firstObjectIRI ?predicateIRI ?subjectIRI.
+                    } UNION {
+                        ?subjectIRI ?predicateIRI ?firstObjectIRI.
+                    }
                     FILTER (isIRI(?firstObjectIRI) && isIRI(?subjectIRI) && ?subjectIRI = $objectConceptIRI)
                     OPTIONAL {
                         ?subjectIRI rdfs:isDefinedBy ?docURI.
@@ -240,7 +243,7 @@ function getEntityNodesByDocument(docURI, limit) {
   const bindings = {parentDocURI: docURI, labelIRI: getOrderedLabelPredicates(), allPredicates: getAllPredicates(), limit};
   const collectionQuery = cts.collectionQuery(getAllEntityIds());
   const subjectResults = sem.sparql(`
-      PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
       PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
       SELECT * WHERE {
         {
@@ -252,16 +255,9 @@ function getEntityNodesByDocument(docURI, limit) {
                   ?objectIRI ?predicateIRI ?subjectIRI
               }
               OPTIONAL {
-                ?predicateIRI @labelIRI ?anyPredicateLabel.
+                ?predicateIRI $labelIRI ?anyPredicateLabel.
               }
-              FILTER EXISTS {
-                {
-                    ?subjectIRI @allPredicates ?objectIRI
-                } UNION {
-                    ?objectIRI @allPredicates ?subjectIRI
-                }
-              }
-              FILTER (isLiteral(?docURI) && ?docURI = $parentDocURI)
+              FILTER (isLiteral(?docURI) && ?docURI = $parentDocURI && ?predicateIRI = $allPredicates)
           }
           GROUP BY ?subjectIRI ?predicateIRI
         }
@@ -274,7 +270,6 @@ function getEntityNodesByDocument(docURI, limit) {
           ?conceptClassName <http://www.marklogic.com/data-hub#conceptPredicate> ?predicateIRI.
         }
       }
-      LIMIT $limit
   `, bindings, [], collectionQuery).toArray();
   if (graphDebugTraceEnabled) {
     xdmp.trace(graphTraceEvent, `Subject (${docURI}) results for  node expand '${xdmp.describe(subjectResults, Sequence.from([]), Sequence.from([]))}'`);
@@ -298,13 +293,7 @@ function getEntityNodesByDocument(docURI, limit) {
           } UNION {
             ?additionalIRI ?additionalEdge ?firstObjectIRI. 
           }
-          FILTER EXISTS {
-            {
-              ?firstObjectIRI $allPredicates ?additionalIRI. 
-            } UNION {
-              ?additionalIRI $allPredicates ?firstObjectIRI. 
-            }
-          }
+          FILTER (isIRI(?additionalEdge) && ?additionalEdge = $allPredicates)
       }
   `, bindings, [], relatedQuery).toArray();
   if (graphDebugTraceEnabled) {
@@ -366,10 +355,13 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
   const nodesByID = {};
   const edgesByID = {};
   const docUriToSubjectIri = {};
-  const subjectUris = [];
   const distinctIriPredicateCombos = {};
+  const groupNodeCount = {};
   const getEdgeCount = (iri) => {
-    return distinctIriPredicateCombos[iri] ? distinctIriPredicateCombos[iri].size : 0;
+    if (!distinctIriPredicateCombos[iri]) {
+      return 0;
+    }
+    return distinctIriPredicateCombos[iri].size + (groupNodeCount[iri] || 0);
   };
   for (const item of result) {
     const subjectIri = fn.string(item.subjectIRI);
@@ -380,21 +372,26 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
     const objectIri = fn.string(item.firstObjectIRI);
     if (fn.exists(item.docURI)) {
       const subjectUri = fn.string(item.docURI);
-      if (!subjectUris.includes(subjectUri)) {
-        subjectUris.push(subjectUri);
-      }
       docUriToSubjectIri[subjectUri] = docUriToSubjectIri[subjectUri] || [];
-      docUriToSubjectIri[subjectUri].push(subjectIri);
+      if (!docUriToSubjectIri[subjectUri].includes(subjectIri)) {
+        docUriToSubjectIri[subjectUri].push(subjectIri);
+      }
     }
-    if ((fn.empty(item.nodeCount) || item.nodeCount === 1) && fn.exists(item.firstDocURI)) {
+    if ((fn.empty(item.nodeCount) || fn.head(item.nodeCount) === 1) && objectIri) {
       if (!distinctIriPredicateCombos[objectIri]) {
         distinctIriPredicateCombos[objectIri] = new Set();
       }
       distinctIriPredicateCombos[objectIri].add(`${predicateIri}-${subjectIri}`);
       distinctIriPredicateCombos[subjectIri].add(`${predicateIri}-${objectIri}`);
-      const objectUri = fn.string(item.firstDocURI);
-      docUriToSubjectIri[objectUri] = docUriToSubjectIri[objectUri] || [];
-      docUriToSubjectIri[objectUri].push(objectIri);
+      if (fn.exists(item.firstDocURI)) {
+        const objectUri = fn.string(item.firstDocURI);
+        docUriToSubjectIri[objectUri] = docUriToSubjectIri[objectUri] || [];
+        if (!docUriToSubjectIri[objectUri].includes(objectIri)) {
+          docUriToSubjectIri[objectUri].push(objectIri);
+        }
+      }
+    } else {
+      groupNodeCount[subjectIri] = (groupNodeCount[subjectIri] || 0) + fn.head(item.nodeCount);
     }
   }
 
@@ -445,10 +442,9 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
       nodeOrigin.additionalProperties = null;
       nodeOrigin.group = group;
       nodeOrigin.isConcept = false;
-      nodeOrigin.hasRelationships = false;
-      if (!(entityTypeIds.includes(entityType) && isSearch)) {
-        nodeOrigin.hasRelationships = docUriToSubjectIri[item.docURI] ? docUriToSubjectIri[item.docURI].some(iri => relatedObjHasRelationships(iri, getEdgeCount(iri))): relatedObjHasRelationships(subjectIri, getEdgeCount(subjectIri));
-      }
+      const edgeCount = docUriToSubjectIri[item.docURI] ? docUriToSubjectIri[item.docURI].reduce((total, iri) => total + getEdgeCount(iri), 0): getEdgeCount(subjectIri);
+      nodeOrigin.edgeCount = edgeCount;
+      nodeOrigin.hasRelationships = docUriToSubjectIri[item.docURI] ? docUriToSubjectIri[item.docURI].some(iri => relatedObjHasRelationships(iri, edgeCount)): relatedObjHasRelationships(subjectIri, edgeCount);
       nodeOrigin.count = 1;
       nodeOrigin.propertiesOnHover = resultPropertiesOnHover;
       nodesByID[item.docURI] = nodeOrigin;
@@ -486,10 +482,9 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
             objectNode.isConcept = !(isDocument || entityTypeIds.includes(objectEntityType));
             objectNode.conceptClassName = item.conceptClassName;
             objectNode.count = item.nodeCount;
-            objectNode.hasRelationships = false;
-            if (!(subjectUris.includes(objectNode.docUri) && isSearch)) {
-              objectNode.hasRelationships = docUriToSubjectIri[objectNode.docUri] ? docUriToSubjectIri[objectNode.docUri].some(iri => relatedObjHasRelationships(iri, getEdgeCount(iri))): relatedObjHasRelationships(objectIRI, getEdgeCount(objectIRI), objectNode.isConcept);
-            }
+            const edgeCount = docUriToSubjectIri[objectNode.docUri] ? docUriToSubjectIri[objectNode.docUri].reduce((total, iri) => total + getEdgeCount(iri), 0): getEdgeCount(objectIRI);
+            objectNode.edgeCount = edgeCount;
+            objectNode.hasRelationships = docUriToSubjectIri[objectNode.docUri] ? docUriToSubjectIri[objectNode.docUri].some(iri => relatedObjHasRelationships(iri, edgeCount)): relatedObjHasRelationships(objectIRI, edgeCount, objectNode.isConcept);
             nodesByID[key] = objectNode;
           }
         };
@@ -536,7 +531,6 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
           objectNode.predicateIri = item.predicateIRI;
           objectNode.propertiesOnHover = "";
           objectNode.group = objectIRI.substring(0, objectIRI.length - objectIRIArr[objectIRIArr.length - 1].length - 1);
-          ;
           objectNode.isConcept = false;
           objectNode.count = item.nodeCount;
           objectNode.hasRelationships = false;
@@ -621,27 +615,25 @@ SELECT (COUNT(?docUri) as ?total) WHERE {
   return totalCountRelated;
 }
 
-function getEntityTypeIRIsCounting(entityTypeIRIs,ctsQueryCustom) {
-  const totalCountEntityBaseEntities = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+function getEntityTypeIRIsCounting(entityTypeIRIs, ctsQueryCustom) {
+  const totalCountEntityBaseEntities = sem.sparql(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 SELECT (COUNT(DISTINCT(?docUri)) AS ?total)  WHERE {
-?subjectIRI rdf:type @entityTypeIRIs;
+?subjectIRI rdf:type $entityTypeIRIs;
     rdfs:isDefinedBy ?docUri.
-} `).where(ctsQueryCustom);
+} `,{entityTypeIRIs}, [], ctsQueryCustom);
 
-  return totalCountEntityBaseEntities.result(null,{entityTypeIRIs});
+  return totalCountEntityBaseEntities;
 }
 
 function getConceptCounting(entityTypeIRIs, predicateConceptList, ctsQueryCustom) {
-  const totalConcepts = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+  const totalConcepts = sem.sparql(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                  SELECT (COUNT(DISTINCT(?objectIRI)) AS ?total) WHERE {
-                        ?subjectIRI rdf:type @entityTypeIRIs;
+                        ?subjectIRI rdf:type $entityTypeIRIs;
                         ?predicateIRI  ?objectIRI;
-                        FILTER EXISTS {
-                        ?subjectIRI @predicateConceptList ?objectIRI.
-                        }
-                        }`).where(ctsQueryCustom);
-  return totalConcepts.result(null,{entityTypeIRIs,predicateConceptList});
+                        FILTER (isIRI(?predicateIRI) && ?predicateIRI = $predicateConceptList)
+                        }`, {entityTypeIRIs,predicateConceptList}, [], ctsQueryCustom);
+  return totalConcepts;
 }
 
 function relatedObjHasRelationships(objectIRI, baseCount = 0, isConcept = false) {
@@ -651,12 +643,8 @@ function relatedObjHasRelationships(objectIRI, baseCount = 0, isConcept = false)
   const objectEntityName = objectIRIArr[objectIRIArr.length - 2];
   if (predicatesMap.has(objectEntityName) || isConcept) {
     const predicates = isConcept ? null: predicatesMap.get(objectEntityName);
-    const fromQuery = cts.tripleRangeQuery(sem.iri(objectIRI), predicates, null);
-    const query = isConcept ? fromQuery : cts.orQuery([
-      fromQuery,
-      cts.tripleRangeQuery(null, predicates, sem.iri(objectIRI))
-    ]);
-    const relationshipsFirstObjectCount = cts.estimate(query, [], 0, null, baseCount + 1);
+    const maxCount = baseCount + 1;
+    const relationshipsFirstObjectCount = fn.count(cts.triples(sem.iri(objectIRI), predicates, null), maxCount) + fn.count(cts.triples(null, predicates, sem.iri(objectIRI)), maxCount);
     hasRelationships = relationshipsFirstObjectCount > baseCount;
   }
   return hasRelationships;
@@ -687,7 +675,7 @@ function getAllPredicates() {
 
 
 function getEntityWithConcepts(entityTypeIRIs, predicateConceptList) {
-  const subjectPlanConcept = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+  const subjectPlanConcept = sem.sparql(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                  PREFIX mlDH: <http://www.marklogic.com/data-hub#>
                  PREFIX es: <http://marklogic.com/entity-services#>
@@ -696,31 +684,24 @@ function getEntityWithConcepts(entityTypeIRIs, predicateConceptList) {
                         ?entityTypeIRI rdf:type es:EntityType;
                               mlDH:relatedConcept ?conceptClassName.
                         ?conceptClassName mlDH:conceptPredicate ?conceptPredicate.
-                        {
-                            ?subjectIRI ?conceptPredicate ?objectIRI.
-                        } UNION {
-                            ?objectIRI ?conceptPredicate ?subjectIRI.
-                        }
-                        FILTER EXISTS {
-                            ?subjectIRI @predicateConceptList ?objectIRI;
-                                rdf:type @entityTypeIRIs.
-                        }
-                 }`);
+                        ?subjectIRI ?conceptPredicate ?objectIRI.
+                        FILTER (isIRI(?entityTypeIRI) && ?entityTypeIRI = $entityTypeIRIs && isIRI(?conceptPredicate) && ?conceptPredicate = $predicateConceptList)
+                 }`, {entityTypeIRIs, predicateConceptList});
 
-  return subjectPlanConcept.result(null, {entityTypeIRIs, predicateConceptList}).toArray();
+  return subjectPlanConcept.toArray();
 }
 
 function getRelatedEntityInstancesCount(semanticConceptIRI) {
-  const relatedEntityInstancesCount = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+  const relatedEntityInstancesCount = sem.sparql(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
     SELECT (COUNT(DISTINCT(?subjectIRI)) AS ?total) ?entityTypeIRI  WHERE {
         ?entityTypeIRI rdf:type <http://marklogic.com/entity-services#EntityType>.
-        ?subjectIRI ?p @semanticConceptIRI;
+        ?subjectIRI ?p $semanticConceptIRI;
             rdf:type ?entityTypeIRI.
     }
-    GROUP BY ?entityTypeIRI`
-  )
-  return relatedEntityInstancesCount.result(null, { semanticConceptIRI }).toObject();
+    GROUP BY ?entityTypeIRI`, { semanticConceptIRI }
+  );
+  return relatedEntityInstancesCount.toObject();
 }
 
 function describeIRI(semanticConceptIRI) {
@@ -730,6 +711,11 @@ function describeIRI(semanticConceptIRI) {
     description[fn.string(sem.triplePredicate(triple))] = fn.string(sem.tripleObject(triple));
   }
   return description;
+}
+
+function supportsGraphConceptsSearch() {
+  //
+  return xdmp.effectiveVersion() >= 10000900;
 }
 
 module.exports = {
@@ -745,5 +731,6 @@ module.exports = {
   getConceptCounting,
   getRelatedEntityInstancesCount,
   getEntityWithConcepts,
-  graphResultsToNodesAndEdges
+  graphResultsToNodesAndEdges,
+  supportsGraphConceptsSearch
 }

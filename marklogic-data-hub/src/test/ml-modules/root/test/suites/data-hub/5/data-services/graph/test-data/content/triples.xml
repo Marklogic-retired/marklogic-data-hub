@@ -1,0 +1,12 @@
+<sem:triples xmlns:sem="http://marklogic.com/semantics">
+    <sem:triple>
+        <sem:subject>http://www.example.com/Category/BasketballShoes</sem:subject>
+        <sem:predicate>broader</sem:predicate>
+        <sem:object>http://www.example.com/Category</sem:object>
+    </sem:triple>
+    <sem:triple>
+        <sem:subject>http://www.example.com/Category/Sneakers</sem:subject>
+        <sem:predicate>broader</sem:predicate>
+        <sem:object>http://www.example.com/Category</sem:object>
+    </sem:triple>
+</sem:triples>

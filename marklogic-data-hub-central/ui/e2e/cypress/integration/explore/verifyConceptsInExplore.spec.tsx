@@ -158,6 +158,7 @@ describe("Concepts", () => {
       graphExploreSidePanel.getSidePanel().should("exist");
     });
   });
+
   it("Verify Kettle concept node should be visible when selected as facet", {defaultCommandTimeout: 120000}, () => {
     browsePage.clickMoreLink("relatedconcepts");
     entitiesSidebar.showMoreRelatedConcept().click();
@@ -180,6 +181,7 @@ describe("Concepts", () => {
       graphExploreSidePanel.getSidePanel().should("exist");
     });
   });
+
   it("Validate that the physics animation toggle is visible and the tooltip works on it", {defaultCommandTimeout: 120000}, () => {
     //Graph view
     cy.log("**Go to graph view**");
