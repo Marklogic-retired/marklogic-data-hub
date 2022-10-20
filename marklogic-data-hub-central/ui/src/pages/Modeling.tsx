@@ -587,6 +587,7 @@ const Modeling: React.FC = () => {
           icon={icon}
           updateHubCentralConfig={publishHubCentralConfig}
           hubCentralConfig={hubCentralConfig}
+          dataModel={dataModel}
         />
         <ConceptClassModal
           isVisible={showConceptClassModal}
@@ -599,6 +600,7 @@ const Modeling: React.FC = () => {
           icon={conceptClassIcon}
           updateHubCentralConfig={publishHubCentralConfig}
           hubCentralConfig={hubCentralConfig}
+          dataModel={dataModel}
         />
       </div>
     );

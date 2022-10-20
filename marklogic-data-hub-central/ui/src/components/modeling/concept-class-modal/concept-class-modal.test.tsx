@@ -26,6 +26,10 @@ const defaultModalOptions = {
   description: "",
   updateHubCentralConfig: jest.fn(),
   hubCentralConfig: defaultHubCentralConfig,
+  dataModel: [
+    {entityName: "Client"},
+    {conceptName: "ClothStyle"}
+  ]
 };
 
 let hubCentralConfig = defaultHubCentralConfig;
@@ -37,7 +41,7 @@ describe("ConceptClassModal Component", () => {
 
   test("Modal is not visible", () => {
     const {queryByText} = render(
-      <ConceptClassModal {...defaultModalOptions} isVisible={false} color="" icon=""/>
+      <ConceptClassModal {...defaultModalOptions} isVisible={false} color="" icon="" />
     );
     expect(queryByText("Add Concept Class")).toBeNull();
   });
@@ -46,7 +50,7 @@ describe("ConceptClassModal Component", () => {
     axiosMock.post["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 201, data: createConceptsResponse})));
 
     const {getByText, getByPlaceholderText, getByTestId, getByTitle} = render(
-      <ConceptClassModal {...defaultModalOptions} color="" icon=""/>
+      <ConceptClassModal {...defaultModalOptions} color="" icon="" />
     );
 
     let url = "/api/concepts";
@@ -77,9 +81,25 @@ describe("ConceptClassModal Component", () => {
     expect(defaultModalOptions.updateHubCentralConfig).toHaveBeenCalledTimes(1);
   });
 
+  test("Adding a new ConceptClass with an existing name should show an error message", async () => {
+    const {getByText, getByPlaceholderText, getByLabelText} = render(
+      <ConceptClassModal {...defaultModalOptions} color="" icon="" />
+    );
+    expect(getByText(/Add Concept Class/i)).toBeInTheDocument();
+
+    userEvent.type(getByPlaceholderText(placeholders.name), "ClothStyle");
+    userEvent.type(getByPlaceholderText(placeholders.description), "Test concept description");
+
+    await wait(() => {
+      userEvent.click(getByText("Add"));
+    });
+
+    await wait(() => { expect(getByLabelText("concept-class-name-error")).toBeInTheDocument(); });
+  });
+
   test("Adding an invalid concept class name shows error message", async () => {
     const {getByText, getByPlaceholderText} = render(
-      <ConceptClassModal {...defaultModalOptions} color="" icon=""/>
+      <ConceptClassModal {...defaultModalOptions} color="" icon="" />
     );
     expect(getByText(/Add Concept Class/i)).toBeInTheDocument();
 
@@ -95,7 +115,7 @@ describe("ConceptClassModal Component", () => {
 
   test("Edit modal is not visible", () => {
     const {queryByText} = render(
-      <ConceptClassModal {...defaultModalOptions} isVisible={false} isEditModal={true} color="" icon=""/>
+      <ConceptClassModal {...defaultModalOptions} isVisible={false} isEditModal={true} color="" icon="" />
     );
     expect(queryByText("Edit Concept Class")).toBeNull();
   });
@@ -103,7 +123,7 @@ describe("ConceptClassModal Component", () => {
   test("Edit modal is visible", async () => {
     const {getByText, getByDisplayValue, queryByText, getByTestId, getByLabelText} = render(
       <ConceptClassModal {...defaultModalOptions} isEditModal={true}
-        name={"ModelName"} description={"Model description"} color="#CEE0ED" icon="FaUserAlt"/>
+        name={"ModelName"} description={"Model description"} color="#CEE0ED" icon="FaUserAlt" />
     );
 
     expect(getByText("Edit Concept Class")).toBeInTheDocument();
