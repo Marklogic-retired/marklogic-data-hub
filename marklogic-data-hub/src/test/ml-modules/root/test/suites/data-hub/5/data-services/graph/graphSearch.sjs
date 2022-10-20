@@ -209,7 +209,7 @@ resultConceptWithHasRelationship.nodes.forEach(node => {
     assertions.push(test.assertFalse(node.isConcept, "Office 1 shouldn't be a concept."));
   }
   else if(node.id === "http://www.example.com/Category/Sneakers") {
-    assertions.push(test.assertTrue(node.hasRelationships, "Should have relationships flag in true."));
+    assertions.push(test.assertFalse(node.hasRelationships), "Should have relationships flag in false because the only connection is already returned in the results.");
     assertions.push(test.assertTrue(node.isConcept, "Sneakers should be a concept."));
     assertions.push(test.assertEqual("ClothType", fn.string(node.conceptClassName), "Sneakers should have a concept class name of ShoeType."));
   }

@@ -209,12 +209,8 @@ function getEntityNodesExpandingConcept(objectConceptIRI, limit) {
   const results =  sem.sparql(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                  SELECT ?subjectIRI ?predicateIRI ?firstObjectIRI ?docURI ?firstDocURI  WHERE {
-                    {
-                        ?subjectIRI ?predicateIRI  ?firstObjectIRI.
-                    } UNION {
-                        ?firstObjectIRI ?predicateIRI ?subjectIRI.
-                    }
-                    FILTER (isIRI(?firstObjectIRI) && ?firstObjectIRI = $objectConceptIRI)
+                    ?firstObjectIRI ?predicateIRI ?subjectIRI.
+                    FILTER (isIRI(?firstObjectIRI) && isIRI(?subjectIRI) && ?subjectIRI = $objectConceptIRI)
                     OPTIONAL {
                         ?subjectIRI rdfs:isDefinedBy ?docURI.
                     }
@@ -371,9 +367,18 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
   const edgesByID = {};
   const docUriToSubjectIri = {};
   const subjectUris = [];
+  const distinctIriPredicateCombos = {};
+  const getEdgeCount = (iri) => {
+    return distinctIriPredicateCombos[iri] ? distinctIriPredicateCombos[iri].size : 0;
+  };
   for (const item of result) {
+    const subjectIri = fn.string(item.subjectIRI);
+    if (!distinctIriPredicateCombos[subjectIri]) {
+      distinctIriPredicateCombos[subjectIri] = new Set();
+    }
+    const predicateIri = fn.string(item.predicateIRI);
+    const objectIri = fn.string(item.firstObjectIRI);
     if (fn.exists(item.docURI)) {
-      const subjectIri = fn.string(item.subjectIRI);
       const subjectUri = fn.string(item.docURI);
       if (!subjectUris.includes(subjectUri)) {
         subjectUris.push(subjectUri);
@@ -382,8 +387,12 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
       docUriToSubjectIri[subjectUri].push(subjectIri);
     }
     if ((fn.empty(item.nodeCount) || item.nodeCount === 1) && fn.exists(item.firstDocURI)) {
+      if (!distinctIriPredicateCombos[objectIri]) {
+        distinctIriPredicateCombos[objectIri] = new Set();
+      }
+      distinctIriPredicateCombos[objectIri].add(`${predicateIri}-${subjectIri}`);
+      distinctIriPredicateCombos[subjectIri].add(`${predicateIri}-${objectIri}`);
       const objectUri = fn.string(item.firstDocURI);
-      const objectIri = fn.string(item.firstObjectIRI);
       docUriToSubjectIri[objectUri] = docUriToSubjectIri[objectUri] || [];
       docUriToSubjectIri[objectUri].push(objectIri);
     }
@@ -438,7 +447,7 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
       nodeOrigin.isConcept = false;
       nodeOrigin.hasRelationships = false;
       if (!(entityTypeIds.includes(entityType) && isSearch)) {
-        nodeOrigin.hasRelationships = docUriToSubjectIri[item.docURI] ? docUriToSubjectIri[item.docURI].some(iri => relatedObjHasRelationships(iri)): relatedObjHasRelationships(subjectIri);
+        nodeOrigin.hasRelationships = docUriToSubjectIri[item.docURI] ? docUriToSubjectIri[item.docURI].some(iri => relatedObjHasRelationships(iri, getEdgeCount(iri))): relatedObjHasRelationships(subjectIri, getEdgeCount(subjectIri));
       }
       nodeOrigin.count = 1;
       nodeOrigin.propertiesOnHover = resultPropertiesOnHover;
@@ -479,9 +488,8 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
             objectNode.count = item.nodeCount;
             objectNode.hasRelationships = false;
             if (!(subjectUris.includes(objectNode.docUri) && isSearch)) {
-              objectNode.hasRelationships = docUriToSubjectIri[item.docURI] ? docUriToSubjectIri[item.docURI].some(iri => relatedObjHasRelationships(iri)): relatedObjHasRelationships(subjectIri);
+              objectNode.hasRelationships = docUriToSubjectIri[objectNode.docUri] ? docUriToSubjectIri[objectNode.docUri].some(iri => relatedObjHasRelationships(iri, getEdgeCount(iri))): relatedObjHasRelationships(objectIRI, getEdgeCount(objectIRI), objectNode.isConcept);
             }
-            objectNode.hasRelationships = docUriToSubjectIri[key] ? docUriToSubjectIri[key].some(iri => relatedObjHasRelationships(iri)) : relatedObjHasRelationships(objectIRI, objectNode.isConcept);
             nodesByID[key] = objectNode;
           }
         };
@@ -636,18 +644,20 @@ function getConceptCounting(entityTypeIRIs, predicateConceptList, ctsQueryCustom
   return totalConcepts.result(null,{entityTypeIRIs,predicateConceptList});
 }
 
-function relatedObjHasRelationships(objectIRI, isConcept = false) {
+function relatedObjHasRelationships(objectIRI, baseCount = 0, isConcept = false) {
   let predicatesMap = getPredicatesMap();
   let hasRelationships = false;
   const objectIRIArr = objectIRI.split("/");
   const objectEntityName = objectIRIArr[objectIRIArr.length - 2];
   if (predicatesMap.has(objectEntityName) || isConcept) {
     const predicates = isConcept ? null: predicatesMap.get(objectEntityName);
-    const relationshipsFirstObjectCount = cts.estimate(cts.orQuery([
-      cts.tripleRangeQuery(sem.iri(objectIRI), predicates, null),
+    const fromQuery = cts.tripleRangeQuery(sem.iri(objectIRI), predicates, null);
+    const query = isConcept ? fromQuery : cts.orQuery([
+      fromQuery,
       cts.tripleRangeQuery(null, predicates, sem.iri(objectIRI))
-    ]));
-    hasRelationships = relationshipsFirstObjectCount >= 1;
+    ]);
+    const relationshipsFirstObjectCount = cts.estimate(query, [], 0, null, baseCount + 1);
+    hasRelationships = relationshipsFirstObjectCount > baseCount;
   }
   return hasRelationships;
 }

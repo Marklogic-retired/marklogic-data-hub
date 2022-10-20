@@ -69,9 +69,8 @@ if(!isConcept) {
   result = graphUtils.getEntityNodesExpandingConcept(objectConceptIRI, limit);
 }
 
-let {nodes, edges} = graphUtils.graphResultsToNodesAndEdges(result, entityTypeIds, false, !isConcept);
+let {nodes, edges} = graphUtils.graphResultsToNodesAndEdges(result, entityTypeIds, false, true);
 if (isConcept) {
-  nodes = nodes.filter(node => node.id !== queryObj.objectConcept);
   totalEstimate = nodes.length;
 } else if (hasPredicateFilter && limit < totalEstimate) {
   const objectIRI = nodes[0].docIRI;
