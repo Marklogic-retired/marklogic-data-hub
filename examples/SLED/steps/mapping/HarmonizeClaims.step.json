@@ -22,7 +22,7 @@
   "validateEntity": false,
   "targetDatabase": "data-hub-FINAL",
   "targetFormat": "json",
-  "targetEntityType": "http://marklogic.com/envision/ClaimFHIR-0.0.1/ClaimFHIR",
+  "targetEntityType": "http://marklogic.com/ClaimFHIR-0.0.1/ClaimFHIR",
   "properties": {
     "identifier": {
       "sourcedFrom": "ClaimIdentifier"

@@ -10,7 +10,7 @@
   "targetFormat": "JSON",
   "attachSourceDocument": false,
   "name": "mapHospitalAffiliation1",
-  "targetEntityType": "http://marklogic.envision.com/HospitalAffiliation-0.0.1/HospitalAffiliation",
+  "targetEntityType": "http://marklogic.com/HospitalAffiliation-0.0.1/HospitalAffiliation",
   "description": "Map Hospital1 Affiliation",
   "selectedSource": "query",
   "sourceQuery": "cts.andNotQuery(cts.andQuery([cts.collectionQuery('CMS-Provider.csv'), cts.jsonPropertyValueQuery('st', ['MD','VA','DC'])]),cts.jsonPropertyValueQuery('hosp_afl_1', ''))",

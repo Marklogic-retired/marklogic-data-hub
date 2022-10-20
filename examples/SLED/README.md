@@ -102,7 +102,7 @@ Custom Gradle tasks are available to run each flow with the pattern `./gradlew r
       "info": {
         "title": "Member",
         "version": "0.0.1",
-        "baseUri": "http://marklogic.com/envision/",
+        "baseUri": "http://marklogic.com/",
         "description": "Member Entity Final DB"
       },
       "Member": {
