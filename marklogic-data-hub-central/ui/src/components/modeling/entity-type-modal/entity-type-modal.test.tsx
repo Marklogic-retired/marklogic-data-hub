@@ -34,7 +34,11 @@ const defaultModalOptions = {
   namespace: "",
   prefix: "",
   updateHubCentralConfig: jest.fn(),
-  hubCentralConfig: defaultHubCentralConfig
+  hubCentralConfig: defaultHubCentralConfig,
+  dataModel: [
+    {entityName: "Client"},
+    {conceptName: "ClothStyle"}
+  ]
 };
 
 let hubCentralConfig = defaultHubCentralConfig;
@@ -85,6 +89,22 @@ describe("EntityTypeModal Component", () => {
 
     expect(defaultModalOptions.updateHubCentralConfig).toHaveBeenCalledWith(hubCentralConfig);
     expect(defaultModalOptions.updateHubCentralConfig).toHaveBeenCalledTimes(1);
+  });
+
+  test("Adding a new Entity with an existing name should show an error message", async () => {
+    const {getByText, getByPlaceholderText, getByLabelText} = render(
+      <EntityTypeModal {...defaultModalOptions} color="" icon=""/>
+    );
+    expect(getByText(/Add Entity Type/i)).toBeInTheDocument();
+
+    userEvent.type(getByPlaceholderText(placeholders.name), "Client");
+    userEvent.type(getByPlaceholderText(placeholders.description), "Product entity description");
+
+    await wait(() => {
+      userEvent.click(getByText("Add"));
+    });
+
+    await wait(() => { expect(getByLabelText("entity-name-error")).toBeInTheDocument(); });
   });
 
   test("Adding an invalid Entity name shows error message", async () => {

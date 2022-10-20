@@ -25,6 +25,7 @@ type Props = {
   updateEntityTypesAndHideModal: (entityName: string, description: string) => void;
   updateHubCentralConfig: (hubCentralConfig: any) => void;
   hubCentralConfig: hubCentralConfig;
+  dataModel: Array<any>;
 };
 
 const EntityTypeModal: React.FC<Props> = (props) => {
@@ -83,6 +84,9 @@ const EntityTypeModal: React.FC<Props> = (props) => {
       } else {
         toggleIsNameDisabled(false);
         setErrorName("");
+        if (errorMessage) {
+          setErrorMessage("");
+        }
       }
       setName(event.target.value);
     }
@@ -244,8 +248,16 @@ const EntityTypeModal: React.FC<Props> = (props) => {
       toggleLoading(true);
       handleSubmit();
     } else {
+      let existEntityName = false;
+      props.dataModel.map((entity) => {
+        if (entity?.entityName === name || entity?.conceptName === name) {
+          existEntityName = true;
+        }
+      });
       if (!NAME_REGEX.test(name)) {
         setErrorName(ModelingTooltips.nameRegex);
+      } else if (existEntityName) {
+        setErrorMessage("name-error");
       } else {
         toggleLoading(true);
         addNewEntityType(name, description);

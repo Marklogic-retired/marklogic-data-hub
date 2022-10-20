@@ -22,6 +22,7 @@ type Props = {
   updateConceptClassAndHideModal: (conceptClass: string, description: string) => void;
   updateHubCentralConfig: (hubCentralConfig: any) => void;
   hubCentralConfig: hubCentralConfig;
+  dataModel: Array<any>;
 };
 
 const ConceptClassModal: React.FC<Props> = (props) => {
@@ -35,7 +36,8 @@ const ConceptClassModal: React.FC<Props> = (props) => {
     toggleModal,
     updateConceptClassAndHideModal,
     updateHubCentralConfig,
-    hubCentralConfig
+    hubCentralConfig,
+    dataModel
   } = props;
   const {handleError} = useContext(UserContext);
   const NAME_REGEX = new RegExp("^[A-Za-z][A-Za-z0-9_-]*$");
@@ -80,6 +82,9 @@ const ConceptClassModal: React.FC<Props> = (props) => {
       } else {
         toggleIsNameDisabled(false);
         setErrorName("");
+        if (errorMessage) {
+          setErrorMessage("");
+        }
       }
       setConceptName(event.target.value);
     }
@@ -195,8 +200,16 @@ const ConceptClassModal: React.FC<Props> = (props) => {
       toggleLoading(true);
       handleSubmit();
     } else {
+      let existEntityName = false;
+      dataModel.map((entity) => {
+        if (entity["entityName"] === conceptName || entity["conceptName"] === conceptName) {
+          existEntityName = true;
+        }
+      });
       if (!NAME_REGEX.test(conceptName)) {
         setErrorName(ModelingTooltips.nameConceptClass);
+      } else if (existEntityName) {
+        setErrorMessage("name-error");
       } else {
         toggleLoading(true);
         addNewConceptClass(conceptName, conceptDescription);
@@ -292,7 +305,7 @@ const ConceptClassModal: React.FC<Props> = (props) => {
             </div>
             <div className={"p-2 ps-3 d-flex align-items-center"}>
               <HCTooltip id="select-color-tooltip" text={isEditModal ? <span>The selected color will be associated with the <b>{conceptName}</b> concept class throughout your project</span> : <span>The selected color will be associated with this concept class throughout your project</span>} placement={"right"}>
-                <QuestionCircleFill className={styles.questionCircle} size={13}/>
+                <QuestionCircleFill className={styles.questionCircle} size={13} />
               </HCTooltip>
             </div>
           </Col>
