@@ -377,6 +377,7 @@ describe("save/manage queries scenarios, developer role", () => {
   });
   it("Save query button should not show up in all entities view", () => {
     browsePage.getClearAllFacetsButton().click();
+    cy.waitForAsyncRequest();
     entitiesSidebar.clearQuery();
     browsePage.getResetConfirmationNoClick();
     entitiesSidebar.openBaseEntityDropdown();

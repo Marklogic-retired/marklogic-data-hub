@@ -64,7 +64,7 @@ describe("Entity display settings in model tile", () => {
     cy.log(`**Click on ${defaultEntityTypeData.name} entity to open side bar**`);
     graphVis.getPositionsOfNodes(defaultEntityTypeData.name).then((nodePositions: any) => {
       let babyRegistryCoordinates: any = nodePositions[defaultEntityTypeData.name];
-      graphVis.getGraphVisCanvas().trigger("mouseover", babyRegistryCoordinates.x, babyRegistryCoordinates.y, {force: true}).click(babyRegistryCoordinates.x, babyRegistryCoordinates.y, {force: true});
+      graphVis.getGraphVisCanvas().scrollTo(babyRegistryCoordinates.x, babyRegistryCoordinates.y, {ensureScrollable: false}).trigger("mouseover", babyRegistryCoordinates.x, babyRegistryCoordinates.y, {force: true}).click(babyRegistryCoordinates.x, babyRegistryCoordinates.y, {force: true});
     });
     cy.wait(1000);
 
@@ -78,7 +78,7 @@ describe("Entity display settings in model tile", () => {
     });*/
 
     cy.log("**Change side bar tab to Entity Type**");
-    graphViewSidePanel.getEntityTypeTab().click();
+    graphViewSidePanel.getEntityTypeTab().scrollIntoView().click({force: true});
     graphViewSidePanel.getEntityDescription().should("be.visible");
 
     cy.log("**Verify no label are selected, select new one and check the selection**");
@@ -107,13 +107,11 @@ describe("Entity display settings in model tile", () => {
     cy.log("**Click on babyRegistry node and verify that properties on hover show up in the tooltip**");
     graphExplore.getGraphVisCanvas().should("exist");
     graphExplore.stopStabilization();
-    graphView.getPhysicsAnimationToggle().scrollIntoView().trigger("mouseover").click({force: true});
-    cy.wait(5000); // The canvas takes some more time animating
-    graphView.getPhysicsAnimationToggle().scrollIntoView().trigger("mouseover").click({force: true});
+    cy.wait(3000);
     graphExplore.focusNode(ExploreGraphNodes.BABY_REGISTRY_3039);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.BABY_REGISTRY_3039).then((nodePositions: any) => {
       let baby_registry_3039_nodeposition: any = nodePositions[ExploreGraphNodes.BABY_REGISTRY_3039];
-      graphExplore.getGraphVisCanvas().trigger("mouseover", baby_registry_3039_nodeposition.x, baby_registry_3039_nodeposition.y);
+      graphExplore.getGraphVisCanvas().scrollTo(baby_registry_3039_nodeposition.x, baby_registry_3039_nodeposition.y, {ensureScrollable: false}).trigger("mouseover", baby_registry_3039_nodeposition.x, baby_registry_3039_nodeposition.y);
     });
     cy.wait(1000);
 
@@ -134,13 +132,11 @@ describe("Entity display settings in model tile", () => {
 
     cy.log("**Click on babyRegistry node to open the side panel**");
     graphExplore.getGraphVisCanvas().should("exist");
-    graphView.getPhysicsAnimationToggle().scrollIntoView().trigger("mouseover").click({force: true});
-    cy.wait(5000); // The canvas takes some more time animating
-    graphView.getPhysicsAnimationToggle().scrollIntoView().trigger("mouseover").click({force: true});
+    graphView.physicsAnimationToggle();
     graphExplore.focusNode(ExploreGraphNodes.BABY_REGISTRY_3039);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.BABY_REGISTRY_3039).then((nodePositions: any) => {
       let baby_registry_3039_nodeposition: any = nodePositions[ExploreGraphNodes.BABY_REGISTRY_3039];
-      graphExplore.getGraphVisCanvas().trigger("mouseover", baby_registry_3039_nodeposition.x, baby_registry_3039_nodeposition.y, {force: true});
+      graphExplore.getGraphVisCanvas().scrollTo(baby_registry_3039_nodeposition.x, baby_registry_3039_nodeposition.y, {ensureScrollable: false}).trigger("mouseover", baby_registry_3039_nodeposition.x, baby_registry_3039_nodeposition.y, {force: true});
       graphExplore.getGraphVisCanvas().click(baby_registry_3039_nodeposition.x, baby_registry_3039_nodeposition.y, {force: true});
     });
 

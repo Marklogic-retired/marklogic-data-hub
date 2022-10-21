@@ -15,6 +15,20 @@ class GraphView {
   getRelationshipLabelsToggle() {
     return cy.get("[id=\"relationship-label-id\"]");
   }
+  physicsAnimationToggle() {
+    this.getPhysicsAnimationToggle().invoke("attr", "value")
+      .then(val => {
+        if (val === "true") {
+          cy.wait(5000);
+          graphView.getPhysicsAnimationToggle().scrollIntoView().trigger("mouseover").click({force: true});
+        } else {
+          graphView.getPhysicsAnimationToggle().scrollIntoView().trigger("mouseover").click({force: true});
+          cy.wait(5000);
+          graphView.getPhysicsAnimationToggle().scrollIntoView().trigger("mouseover").click({force: true});
+        }
+      }
+      );
+  }
 }
 
 const graphView = new GraphView();

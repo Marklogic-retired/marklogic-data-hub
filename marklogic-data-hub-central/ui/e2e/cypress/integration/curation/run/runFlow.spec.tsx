@@ -15,6 +15,7 @@ describe("Run Tile tests", () => {
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer").withRequest();
     LoginPage.postLogin();
+    cy.waitForAsyncRequest();
     //Saving Local Storage to preserve session
     cy.saveLocalStorage();
   });
@@ -31,7 +32,7 @@ describe("Run Tile tests", () => {
   it("can create flow and add steps to flow, should load xml merged document and display content", {defaultCommandTimeout: 120000}, () => {
     //Verify create flow and add all user-defined steps to flow via Run tile
     toolbar.getRunToolbarIcon().should("be.visible").click();
-    runPage.getSpinner().should("be.visible");
+    cy.waitForAsyncRequest();
     runPage.getFlowName("personJSON").should("be.visible");
     runPage.getSpinner().should("not.exist");
     runPage.createFlowButton().should("exist").click({force: true});
