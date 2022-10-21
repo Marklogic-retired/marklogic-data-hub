@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<search:options xmlns:search="http://marklogic.com/appservices/search">
+<search:options xml:lang="zxx" xmlns:search="http://marklogic.com/appservices/search">
   <search:constraint name="Collection">
     <search:collection/>
+  </search:constraint>
+  <search:constraint name="createdByJob">
+    <search:value>
+      <search:field name="datahubCreatedByJob"/>
+    </search:value>
+  </search:constraint>
+  <search:constraint name="createdByStep">
+    <search:value>
+      <search:field name="datahubCreatedByStep"/>
+    </search:value>
   </search:constraint>
   <search:constraint name="entity-type">
     <search:value>
@@ -16,25 +26,15 @@
   <!--The name of this constraint is a duplicate in the generated XML. It is within a comment so that the XML may be valid, but you may need to edit for your use case.
  <search:constraint name="id" xmlns:search="http://marklogic.com/appservices/search">
   <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
-    <search:path-index xmlns:es="http://marklogic.com/entity-services">//es:instance/Order/id</search:path-index>
-  </search:range>
-</search:constraint> 
--->
-  <!--The name of this constraint is a duplicate in the generated XML. It is within a comment so that the XML may be valid, but you may need to edit for your use case.
- <search:constraint name="id" xmlns:search="http://marklogic.com/appservices/search">
-  <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
     <search:element ns="" name="id" xmlns:es="http://marklogic.com/entity-services"/>
   </search:range>
 </search:constraint> 
 -->
-  <search:tuples name="Order">
-    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
-      <search:path-index xmlns:es="http://marklogic.com/entity-services">//*:instance/Order/id</search:path-index>
-    </search:range>
+  <search:values name="Order">
     <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
       <search:element ns="" name="id" xmlns:es="http://marklogic.com/entity-services"/>
     </search:range>
-  </search:tuples>
+  </search:values>
   <!--Uncomment to return no results for a blank search, rather than the default of all results
  <search:term xmlns:search="http://marklogic.com/appservices/search">
   <search:empty apply="no-results"/>

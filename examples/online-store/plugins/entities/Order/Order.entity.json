@@ -1,7 +1,8 @@
 {
   "info" : {
     "title" : "Order",
-    "version" : "0.0.1"
+    "version" : "0.0.1",
+    "baseUri":"http://example.org/"
   },
   "definitions" : {
     "Order" : {
@@ -9,7 +10,7 @@
       "required" : [ ],
       "pii" : [ ],
       "elementRangeIndex" : [ "id"  ],
-      "rangeIndex" : [ "id" ],
+      "rangeIndex" : [ ],
       "wordLexicon" : [ ],
       "properties" : {
         "id" : {
