@@ -31,9 +31,7 @@ describe("Run Tile tests", () => {
   it("can create flow and add steps to flow, should load xml merged document and display content", {defaultCommandTimeout: 120000}, () => {
     //Verify create flow and add all user-defined steps to flow via Run tile
     toolbar.getRunToolbarIcon().should("be.visible").click();
-    runPage.getSpinner().should("be.visible");
     runPage.getFlowName("personJSON").should("be.visible");
-    runPage.getSpinner().should("not.exist");
     runPage.createFlowButton().should("exist").click({force: true});
     runPage.newFlowModal().should("be.visible");
     runPage.setFlowName(flowName);
