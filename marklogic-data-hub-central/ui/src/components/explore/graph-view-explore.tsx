@@ -1,5 +1,5 @@
 import {HCCheckbox, HCTooltip} from "@components/common";
-import React, {CSSProperties, useContext, useState} from "react";
+import React, {CSSProperties, useEffect, useContext, useState} from "react";
 import {getViewSettings, setViewSettings} from "@util/user-context";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -18,6 +18,7 @@ import tooltipsConfig from "@config/explorer-tooltips.config";
 type Props = {
   entityTypeInstances: any;
   graphView: any;
+  setViewConcepts: (viewConcepts: boolean) => void;
   setGraphPageInfo: (pageInfo: any) => void;
   entitiesWithRelatedConcepts: any;
 };
@@ -54,6 +55,10 @@ const GraphViewExplore: React.FC<Props> = (props) => {
     position: "relative",
     height: "none",
   };
+
+  useEffect(() => {
+    props.setViewConcepts(viewConcepts);
+  }, [viewConcepts]);
 
   const splitPaneProps = () => {
     let defaultProps: any = {

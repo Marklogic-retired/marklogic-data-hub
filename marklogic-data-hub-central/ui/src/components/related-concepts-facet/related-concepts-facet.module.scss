@@ -1,0 +1,43 @@
+.conceptItem, .entityItemDisabled {
+  position: relative;
+  padding: 10px;
+  margin-block: 8px;
+  width: 100%;
+  color: #777 !important;
+  border-radius: 4px;
+  
+  label {
+    font-size: 13px;
+  }
+
+  .conceptName {
+      font-weight: bold;
+  }
+
+  .conceptAmount {
+      margin-top: 2px;
+      margin-left: auto;
+      font-size: 13px;
+  }
+}
+
+.conceptItem {
+cursor: pointer;
+}
+
+.more {
+  position: relative;
+  top: 3px;
+  font-size: 12px;
+  text-decoration: underline;
+  cursor: pointer;
+  &:hover{
+      color: var(--hoverColor);
+  }
+}
+
+.indicatorContainer {
+  position: absolute;
+  bottom: -6px;
+  right: 0;
+}

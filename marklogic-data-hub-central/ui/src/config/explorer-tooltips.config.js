@@ -21,7 +21,8 @@ const tooltipsConfig = {
     relatedEntities:
       "Related entity filters only filter on their respective entity type and will not affect base entity results.",
     disabledRelatedEntities: "Related entities are only available in the Graph View",
-    disabledRelatedConcepts: "Related concepts are only available in the Graph View"
+    disabledRelatedConcepts: "Related concepts are only available in the Graph View",
+    relatedConceptsToggledOff: "Concepts have been toggled off in the Graph View"
   },
   exploreSidebarQueries: {
     saveNewQuery: "Save the current query",

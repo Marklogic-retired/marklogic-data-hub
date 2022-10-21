@@ -155,6 +155,7 @@ class BaseEntitySidebar {
     return cy.get(`[aria-label="disabled-entity-tooltip"]`);
   }
 
+
   //Actions
   openBaseEntityFacets(entity: string) {
     cy.get(`div[aria-label="base-entities-selection"] div[aria-label="base-entities-${entity}"]`).click();
@@ -189,8 +190,20 @@ class BaseEntitySidebar {
     return cy.get(`[aria-label="base-entities-${entityName}-amountbar"]`);
   }
 
-  toggleRelatedConceptsPanel() {
-    return cy.get("#related-concepts .accordion-button").click({force: true});
+  getRelatedConceptsPanel() {
+    return cy.get("#related-concepts .accordion-button");
+  }
+
+  getDisabledRelatedConceptsTooltip() {
+    return cy.get(`[aria-label="disabled-related-concept-tooltip"]`);
+  }
+
+  getAllRelatedConceptsCheckbox() {
+    return cy.get(`[aria-label="related-concepts-checkbox"]`);
+  }
+
+  getSingleConceptCheckbox(conceptName: string) {
+    return cy.get(`[aria-label="related-concept-check-${conceptName}"]`);
   }
 }
 export default new BaseEntitySidebar();

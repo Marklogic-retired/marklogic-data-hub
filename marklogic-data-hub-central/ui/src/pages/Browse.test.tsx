@@ -56,6 +56,8 @@ describe("Explorer Browse page tests ", () => {
         searchOptions: defaultSearchOptions,
         greyedOptions: defaultSearchOptions,
         setRelatedEntityTypeIds: jest.fn(),
+        setConceptFilterTypeIds: jest.fn(),
+        setAllFilterTypeIds: jest.fn(),
         setEntity: jest.fn(),
         applySaveQuery: jest.fn(),
         savedNode: undefined,
@@ -76,7 +78,9 @@ describe("Explorer Browse page tests ", () => {
       <SearchContext.Provider value={{
         searchOptions: defaultSearchOptions,
         greyedOptions: defaultSearchOptions,
+        setConceptFilterTypeIds: jest.fn(),
         setRelatedEntityTypeIds: jest.fn(),
+        setAllFilterTypeIds: jest.fn(),
         setEntity: jest.fn(),
         applySaveQuery: jest.fn(),
         savedNode: undefined,

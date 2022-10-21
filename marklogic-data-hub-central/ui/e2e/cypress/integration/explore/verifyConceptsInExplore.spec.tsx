@@ -87,7 +87,6 @@ describe("Concepts", () => {
     cy.wait(4000);
 
     cy.log("**Verify Kettle concept node is not visible in the canvas anymore**");
-    graphExplore.focusNode(ExploreGraphNodes.CONCEPT_KETTLE);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_KETTLE).then((nodePositions: any) => {
       let kettleCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_KETTLE];
       //it should not exist because the leaf node was collapsed
@@ -95,8 +94,14 @@ describe("Concepts", () => {
       expect(kettleCoordinates).to.be.undefined;
     });
 
+    cy.log("**Verify that Related Concepts Filter in sidebar is disabled since concepts are toggled OFF**");
+    entitiesSidebar.getRelatedConceptsPanel().trigger("mouseover");
+    entitiesSidebar.getDisabledRelatedConceptsTooltip().should("be.visible");
+    entitiesSidebar.getAllRelatedConceptsCheckbox().should("be.disabled");
+
     cy.log("**Turn ON concepts toggle**");
     graphView.getConceptToggle().scrollIntoView().trigger("mouseover").click();
+    entitiesSidebar.getAllRelatedConceptsCheckbox().should("be.checked");
 
     cy.wait(4000);
 
@@ -113,7 +118,7 @@ describe("Concepts", () => {
     });
   });
 
-  it("Validate that the concepts facets are applied properly", {defaultCommandTimeout: 120000}, () => {
+  it("Validate default related concepts filter in sidebar", {defaultCommandTimeout: 120000}, () => {
     //Graph view
     cy.log("**Go to graph view**");
     browsePage.clickGraphView();
@@ -121,24 +126,103 @@ describe("Concepts", () => {
     graphExplore.getGraphVisCanvas().should("be.visible");
     graphExplore.stopStabilization();
 
+    cy.log("**All checkboxes should be checked by default since concepts are all being displayed**");
+    entitiesSidebar.removeSelectedBaseEntity();
+    entitiesSidebar.getRelatedConceptsPanel().click({force: true});
+    entitiesSidebar.getAllRelatedConceptsCheckbox().should("be.checked");
+    entitiesSidebar.getSingleConceptCheckbox("BasketballShoes").should("be.checked");
+    entitiesSidebar.getSingleConceptCheckbox("Kettle").should("be.checked");
+    entitiesSidebar.getSingleConceptCheckbox("SlowCooker").should("be.checked");
+    entitiesSidebar.getSingleConceptCheckbox("Sneakers").should("be.checked");
+    entitiesSidebar.getSingleConceptCheckbox("Jeans").should("be.checked");
+
+    cy.log("**Confirm all concepts are being displayed**");
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_KETTLE).then((nodePositions: any) => {
+      let kettleCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_KETTLE];
+      //it should not exist because the facet is applied only for Sneakers
+      expect(kettleCoordinates).not.to.be.undefined;
+    });
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_BASKETBALLSHOES).then((nodePositions: any) => {
+      let basketballShoesCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_BASKETBALLSHOES];
+      //it should not exist because the facet is applied only for Sneakers
+      expect(basketballShoesCoordinates).not.to.be.undefined;
+    });
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_SLOWCOOKER).then((nodePositions: any) => {
+      let slowCookerCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_SLOWCOOKER];
+      //it should not exist because the facet is applied only for Sneakers
+      expect(slowCookerCoordinates).not.to.be.undefined;
+    });
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_JEANS).then((nodePositions: any) => {
+      let jeansCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_JEANS];
+      //it should not exist because the facet is applied only for Sneakers
+      expect(jeansCoordinates).not.to.be.undefined;
+    });
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_SNEAKERS).then((nodePositions: any) => {
+      let sneakersCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_SNEAKERS];
+      //it should not exist because the facet is applied only for Sneakers
+      expect(sneakersCoordinates).not.to.be.undefined;
+    });
+
+    cy.log("**Verify uncheck all checkbox works**");
+    entitiesSidebar.getAllRelatedConceptsCheckbox().click();
+    entitiesSidebar.getAllRelatedConceptsCheckbox().should("not.be.checked");
+    entitiesSidebar.getSingleConceptCheckbox("BasketballShoes").should("not.be.checked");
+    entitiesSidebar.getSingleConceptCheckbox("Kettle").should("not.be.checked");
+    entitiesSidebar.getSingleConceptCheckbox("SlowCooker").should("not.be.checked");
+    entitiesSidebar.getSingleConceptCheckbox("Sneakers").should("not.be.checked");
+    entitiesSidebar.getSingleConceptCheckbox("Jeans").should("not.be.checked");
+
+    cy.log("**Confirm no concepts are being displayed**");
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_KETTLE).then((nodePositions: any) => {
+      let kettleCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_KETTLE];
+      //it should not exist because the facet is applied only for Sneakers
+      expect(kettleCoordinates).to.be.undefined;
+    });
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_BASKETBALLSHOES).then((nodePositions: any) => {
+      let basketballShoesCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_BASKETBALLSHOES];
+      //it should not exist because the facet is applied only for Sneakers
+      expect(basketballShoesCoordinates).to.be.undefined;
+    });
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_SLOWCOOKER).then((nodePositions: any) => {
+      let slowCookerCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_SLOWCOOKER];
+      //it should not exist because the facet is applied only for Sneakers
+      expect(slowCookerCoordinates).to.be.undefined;
+    });
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_JEANS).then((nodePositions: any) => {
+      let jeansCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_JEANS];
+      //it should not exist because the facet is applied only for Sneakers
+      expect(jeansCoordinates).to.be.undefined;
+    });
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_SNEAKERS).then((nodePositions: any) => {
+      let sneakersCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_SNEAKERS];
+      //it should not exist because the facet is applied only for Sneakers
+      expect(sneakersCoordinates).to.be.undefined;
+    });
+  });
+
+  it("Verify concepts reflect base entity selection", {defaultCommandTimeout: 120000}, () => {
+
     cy.log("**Select 'Product' entity**");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Product");
     entitiesSidebar.getBaseEntityOption("Product").scrollIntoView().should("be.visible");
     cy.wait(5000); // The canvas takes some more time animating
 
-    entitiesSidebar.toggleRelatedConceptsPanel();
-    entitiesSidebar.showMoreRelatedConcept().click();
-    browsePage.getFacetItemCheckbox("relatedconcepts", "Sneakers").click();
-    browsePage.getSelectedFacets().should("exist");
-    browsePage.getGreySelectedFacets("Sneakers").should("exist");
-    browsePage.getFacetApplyButton().click();
-    browsePage.waitForSpinnerToDisappear();
-    cy.wait(3000);
+    cy.log("**Verify only Product concepts are present and checked by default since they are shown**");
+
+    entitiesSidebar.getAllRelatedConceptsCheckbox().should("be.checked");
+    //concepts related to Product present
+    entitiesSidebar.getSingleConceptCheckbox("BasketballShoes").should("be.checked");
+    entitiesSidebar.getSingleConceptCheckbox("Kettle").should("be.checked");
+    entitiesSidebar.getSingleConceptCheckbox("SlowCooker").should("be.checked");
+    entitiesSidebar.getSingleConceptCheckbox("Sneakers").should("be.checked");
+    //Jeans concept is not present
+    entitiesSidebar.getSingleConceptCheckbox("Jeans").should("not.exist");
   });
 
-  it("Verify Kettle concept node is not visible in the canvas anymore", {defaultCommandTimeout: 120000}, () => {
-    graphExplore.focusNode(ExploreGraphNodes.CONCEPT_KETTLE);
+  it("Uncheck Kettle concept node and verify it is not visible in the canvas anymore", {defaultCommandTimeout: 120000}, () => {
+    entitiesSidebar.getSingleConceptCheckbox("Kettle").click();
+    cy.wait(2000);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_KETTLE).then((nodePositions: any) => {
       let kettleCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_KETTLE];
       //it should not exist because the facet is applied only for Sneakers
@@ -158,14 +242,9 @@ describe("Concepts", () => {
       graphExploreSidePanel.getSidePanel().should("exist");
     });
   });
+  it("Verify Kettle concept node should be visible again when selected in the filter", {defaultCommandTimeout: 120000}, () => {
+    entitiesSidebar.getSingleConceptCheckbox("Kettle").click();
 
-  it("Verify Kettle concept node should be visible when selected as facet", {defaultCommandTimeout: 120000}, () => {
-    browsePage.clickMoreLink("relatedconcepts");
-    entitiesSidebar.showMoreRelatedConcept().click();
-    browsePage.getFacetItemCheckbox("relatedconcepts", "Kettle").click();
-    browsePage.getSelectedFacets().should("exist");
-    browsePage.getGreySelectedFacets("Kettle").should("exist");
-    browsePage.getFacetApplyButton().click();
     browsePage.waitForSpinnerToDisappear();
     graphView.physicsAnimationToggle();
 

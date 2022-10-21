@@ -16,6 +16,7 @@ import {UserContext} from "@util/user-context";
 import reactSelectThemeConfig from "@config/react-select-theme.config";
 import BaseEntitiesFacet from "../base-entities-facet/base-entities-facet";
 import RelatedEntitiesFacet from "../related-entities-facet/related-entities-facet";
+import RelatedConceptsFacets from "../related-concepts-facet/related-concepts-facet";
 import {ExploreGraphViewToolTips} from "@config/tooltips.config";
 import {HCDivider} from "@components/common";
 import {graphSearchQuery, getEntities, searchResultsQuery} from "@api/queries";
@@ -40,6 +41,9 @@ interface Props {
   setEntitySpecificPanel: (entity: any) => void;
   currentBaseEntities: any[];
   setCurrentBaseEntities: (entity: any[]) => void;
+  currentRelatedConcepts: Map<string, any>;
+  viewConcepts: boolean;
+  setCurrentRelatedConcepts: (entity: Map<string, any>) => void;
   currentRelatedEntities: Map<string, any>;
   setCurrentRelatedEntities: (entity: Map<string, any>) => void;
   entityIndicatorData: any;
@@ -67,6 +71,8 @@ const Sidebar: React.FC<Props> = (props) => {
     setDatasource,
     setQueryGreyedOptions,
     setRelatedEntityTypeIds,
+    setConceptFilterTypeIds,
+    setAllFilterTypeIds,
     setDatabaseAndDatasource
   } = useContext(SearchContext);
   const {
@@ -82,17 +88,18 @@ const Sidebar: React.FC<Props> = (props) => {
   const [searchBox, setSearchBox] = useState(searchOptions.query);
   const [currentQueryName, setCurrentQueryName] = useState(PLACEHOLDER); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [activeRelatedEntities, setActiveRelatedEntities] = useState(true);
+  const [activeRelatedConcepts, setActiveRelatedConcepts] = useState(true);
 
   let integers = ["int", "integer", "short", "long"];
   let decimals = ["decimal", "double", "float"];
   const dateRangeOptions = ["Today", "This Week", "This Month", "Custom"];
   const [activeKey, setActiveKey] = useState<any[]>([]);
   const [userPreferences, setUserPreferences] = useState({});
-  const [checkAll, setCheckAll] = useState(true);
+  const [checkAllRelatedEntities, setCheckAllRelatedEntities] = useState(true);
 
   //Concept Facet related
-  const [relatedConceptList, setRelatedConceptsList] = useState({});
-  const [checkAllRelatedConcepts, setCheckAllRelatedConcepts] = useState(false);
+  const [relatedConceptsValues, setRelatedConceptsValues] = useState({});
+  const [checkAllRelatedConcepts, setCheckAllRelatedConcepts] = useState(true);
 
   useEffect(() => {
     searchOptions.sidebarQuery && setCurrentQueryName(searchOptions.sidebarQuery);
@@ -121,6 +128,8 @@ const Sidebar: React.FC<Props> = (props) => {
 
   useEffect(() => {
     let relatedEntitiesList = new Map();
+    let relatedConceptsList = new Map();
+
     props.currentBaseEntities.forEach(base => {
       let entityName = base["name"];
       props.entityRelationships[entityName].map(entityName => {
@@ -128,21 +137,38 @@ const Sidebar: React.FC<Props> = (props) => {
         relatedEntitiesList.set(entityName, {...relEntity, checked: true});
       });
     });
+
     const values = Array.from(relatedEntitiesList.values());
     const checkedValues = values.filter(({checked}) => checked);
-    setRelatedEntityTypeIds(checkedValues.map(function (i) { return i.name; }));
+
+    if (relatedConceptsValues.hasOwnProperty("facetValues")) {
+      relatedConceptsValues["facetValues"].map((obj) => {
+        relatedConceptsList.set(obj.name, {...obj, checked: true});
+      });
+    }
+
+    const conceptsValues = Array.from(relatedConceptsList.values());
+    const checkedConceptsValues = conceptsValues.filter(({checked}) => checked);
+    setAllFilterTypeIds(checkedValues.map(function (i) { return i.name; }), checkedConceptsValues.map(function (i) { return i.value; }));
+    props.setCurrentRelatedConcepts(relatedConceptsList);
     props.setCurrentRelatedEntities(relatedEntitiesList);
+  }, [props.currentBaseEntities, relatedConceptsValues]);
+
+  useEffect(() => {
     getByDefaultCheckedFacetsLS();
   }, [props.currentBaseEntities]);
 
+  const onSettingRelatedEntitiesCheckedList = (list) => {
+    setCheckAllRelatedEntities(list.length === props.currentRelatedEntities.size);
+  };
 
-  const onSettingCheckedList = (list) => {
-    setCheckAll(list.length === props.currentRelatedEntities.size);
+  const onSettingRelatedConceptsCheckedList = (list) => {
+    setCheckAllRelatedConcepts(list.length === props.currentRelatedConcepts.size);
   };
 
   const onCheckAllChanges = ({target}) => {
     const {checked} = target;
-    setCheckAll(checked);
+    setCheckAllRelatedEntities(checked);
     let relatedEntitiesList = new Map();
     Array.from(props.currentRelatedEntities.values()).forEach(entity => {
       relatedEntitiesList.set(entity.name, {...entity, checked});
@@ -156,34 +182,20 @@ const Sidebar: React.FC<Props> = (props) => {
   const onCheckAllRelatedConcepts = ({target}) => {
     const {checked} = target;
     setCheckAllRelatedConcepts(checked);
-    let facets = {...allSelectedFacets};
-    let greyFacets = {...greyedOptions.selectedFacets};
-    let facetName = "RelatedConcepts";
-    if (checked) {
-      if (relatedConceptList["facetValues"].length > 0) {
-        let facetValues = relatedConceptList["facetValues"].map(facet => facet.value);
-        facets = {
-          ...facets,
-          [facetName]: {
-            dataType: "xs:string",
-            stringValues: facetValues
-          }
-        };
-        greyFacets = {
-          ...greyFacets,
-          [facetName]: {
-            dataType: "xs:string",
-            stringValues: facetValues
-          }
-        };
-      } else {
-        delete facets[facetName];
-      }
-      setAllSelectedFacets(facets);
-      setAllGreyedOptions(greyFacets);
-    } else {
-      clearConstraint("RelatedConcepts");
+    let relatedConceptsList = new Map();
+    if (relatedConceptsValues.hasOwnProperty("facetValues")) {
+      relatedConceptsValues["facetValues"].map((obj) => {
+        relatedConceptsList.set(obj.name, {...obj, checked: checked});
+      });
     }
+    const values = Array.from(relatedConceptsList.values());
+    const checkedValues = values.filter(({checked}) => checked);
+    if (checkedValues.length) {
+      setConceptFilterTypeIds(checkedValues.map(function (i) { return i.value; }));
+    } else {
+      setConceptFilterTypeIds(["#"]);
+    }
+    props.setCurrentRelatedConcepts(relatedConceptsList);
   };
 
 
@@ -229,6 +241,7 @@ const Sidebar: React.FC<Props> = (props) => {
       }
 
       let entityFacets: any[] = [];
+      let relatedConceptsObj: any = [], result = 0; // eslint-disable-line @typescript-eslint/no-unused-vars
       if (searchOptions.entityTypeIds?.length) {
         let newEntityFacets = parsedFacets.filter(facet => facet.facetName.split(".")[0] === searchOptions.entityTypeIds[0]);
         const entityDef = props.entityDefArray.find(entity => entity.name === searchOptions.entityTypeIds[0]);
@@ -242,16 +255,24 @@ const Sidebar: React.FC<Props> = (props) => {
         }
         entityFacets = newEntityFacets ? newEntityFacets.filter(item => item !== false) : [];
         setEntityFacets(entityFacets);
-        let relatedConceptsObj = props.entitiesWithRelatedConcepts?.entitites?.find(obj => searchOptions.entityTypeIds.includes(obj.entityType.split("/").pop()));
-        if (relatedConceptsObj?.relatedConcepts && relatedConceptsObj?.relatedConcepts.length) {
+
+        result = props.entitiesWithRelatedConcepts?.entitites?.forEach(obj => { // eslint-disable-line @typescript-eslint/no-unused-vars
+          if (searchOptions.entityTypeIds.includes(obj.entityType.split("/").pop())) {
+            for (let conceptIdx in obj.relatedConcepts) {
+              relatedConceptsObj.push(obj.relatedConcepts[conceptIdx]);
+            }
+          }
+        });
+
+        if (relatedConceptsObj && relatedConceptsObj.length) {
           if (activeKey.includes("related-concepts")) {
             setActiveKey([...defaultActiveKeys, "related-concepts"]);
           }
-          if (relatedConceptsObj.relatedConcepts.length === searchOptions.selectedFacets?.RelatedConcepts?.stringValues?.length) {
+          if (relatedConceptsObj.length === searchOptions.selectedFacets?.RelatedConcepts?.stringValues?.length) {
             setCheckAllRelatedConcepts(true);
           }
         }
-        let conceptFacets = relatedConceptsObj?.relatedConcepts.map(concept => {
+        let conceptFacets = relatedConceptsObj.map(concept => {
           let facetName = concept.conceptIRI.split("/").pop();
           return {
             max: 1,
@@ -266,7 +287,7 @@ const Sidebar: React.FC<Props> = (props) => {
           facetValues: conceptFacets,
           entityTypeId: searchOptions.entityTypeIds
         };
-        setRelatedConceptsList(finalConcepts);
+        setRelatedConceptsValues(finalConcepts);
       }
 
       if (Object.entries(searchOptions.selectedFacets).length !== 0) {
@@ -417,7 +438,9 @@ const Sidebar: React.FC<Props> = (props) => {
         response = await searchResultsQuery(payload);
       } else {
         payload.data.query["relatedEntityTypeIds"] = searchOptions.relatedEntityTypeIds;
-
+        if (searchOptions.conceptFilterTypeIds.length) {
+          payload["data"]["query"]["conceptsFilterTypeIds"] = searchOptions.conceptFilterTypeIds;
+        }
         response = await graphSearchQuery(payload);
       }
       if (componentIsMounted.current && response.data) {
@@ -533,7 +556,7 @@ const Sidebar: React.FC<Props> = (props) => {
       setAllSelectedFacets(facets);
       setAllGreyedOptions(greyFacets);
       if (facetName === "RelatedConcepts") {
-        if (facets[facetName][valueKey].length === relatedConceptList["facetValues"].length) {
+        if (facets[facetName][valueKey].length === relatedConceptsValues["facetValues"].length) {
           setCheckAllRelatedConcepts(true);
         }
       }
@@ -784,7 +807,8 @@ const Sidebar: React.FC<Props> = (props) => {
   };
 
   const handleSetCurrentBaseEntities = (entities) => {
-    setCheckAll(true);
+    setCheckAllRelatedEntities(true);
+    setCheckAllRelatedConcepts(true);
     props.setCurrentBaseEntities(entities);
   };
 
@@ -887,21 +911,21 @@ const Sidebar: React.FC<Props> = (props) => {
           </Accordion.Item>
         </Accordion>
         <HCDivider className={"mt-0 mb-2"} style={{backgroundColor: "#ccc"}} />
-        {props.currentRelatedEntities.size > 0 &&
+        {props.currentRelatedEntities?.size > 0 &&
           <div className={styles.relatedEntityPanel}>
             <HCTooltip text={!props.graphView ? exploreSidebar.disabledRelatedEntities : ""} aria-label="disabled-related-entity-tooltip" id="disabled-related-entity-tooltip" placement="bottom">
               <Accordion id="related-entities" data-testid={"related-entity-panel"} className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("related-entities") && props.graphView ? "related-entities" : ""} defaultActiveKey={activeKey.includes("related-entities") ? "related-entities" : ""}>
                 <Accordion.Item eventKey="related-entities" className={"bg-transparent"}>
                   <div className={"p-0 d-flex"}>
                     <Accordion.Button className={!props.graphView ? `after-indicator ${styles.disabledTitleCheckbox}` : `after-indicator ${styles.titleCheckbox}`} onClick={() => setActiveAccordion("related-entities")}>{
-                      panelTitle(<span><span className={!activeRelatedEntities ? styles.disabledCheckbox : ""}><HCCheckbox id="check-all" value="check-all" disabled={!props.graphView} cursorDisabled={!activeRelatedEntities} handleClick={activeRelatedEntities ? onCheckAllChanges : () => { return; }} checked={checkAll} /></span>related entities</span>, ExploreGraphViewToolTips.relatedEntities)}
+                      panelTitle(<span><span className={!activeRelatedEntities ? styles.disabledCheckbox : ""}><HCCheckbox ariaLabel="related-entities-checkbox" id="check-all" value="check-all" disabled={!props.graphView} cursorDisabled={!activeRelatedEntities} handleClick={activeRelatedEntities ? onCheckAllChanges : () => { return; }} checked={checkAllRelatedEntities} /></span>related entities</span>, ExploreGraphViewToolTips.relatedEntities)}
                     </Accordion.Button>
                   </div>
                   <Accordion.Body>
                     <RelatedEntitiesFacet
                       currentRelatedEntities={props.currentRelatedEntities}
                       setCurrentRelatedEntities={props.setCurrentRelatedEntities}
-                      onSettingCheckedList={onSettingCheckedList}
+                      onSettingCheckedList={onSettingRelatedEntitiesCheckedList}
                       setEntitySpecificPanel={props.setEntitySpecificPanel}
                       setActiveRelatedEntities={setActiveRelatedEntities}
                       entityIndicatorData={props.entityIndicatorData}
@@ -913,33 +937,24 @@ const Sidebar: React.FC<Props> = (props) => {
             <HCDivider className={"mt-0 mb-2"} style={{backgroundColor: "#ccc"}} />
           </div>
         }
-        {props.entitiesWithRelatedConcepts && Object.keys(props.entitiesWithRelatedConcepts).length > 0 && relatedConceptList && relatedConceptList["facetValues"]?.length > 0 &&
+        {props.currentRelatedConcepts?.size > 0 &&
           <div className={styles.relatedEntityPanel}>
-            <HCTooltip text={!props.graphView ? exploreSidebar.disabledRelatedConcepts : ""} aria-label="disabled-related-concept-tooltip" id="disabled-related-concept-tooltip" placement="bottom">
-              <Accordion id="related-concepts" data-testid={"related-concept-panel"} className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("related-concepts") && props.graphView ? "related-concepts" : ""} defaultActiveKey={activeKey.includes("related-concepts") ? "related-concepts" : ""}>
+            <HCTooltip text={!props.graphView ? exploreSidebar.disabledRelatedConcepts : !props.viewConcepts ? exploreSidebar.relatedConceptsToggledOff : ""} aria-label="disabled-related-concept-tooltip" id="disabled-related-concept-tooltip" placement="bottom">
+              <Accordion id="related-concepts" data-testid={"related-concept-panel"} className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("related-concepts") && props.graphView && props.viewConcepts? "related-concepts" : ""} defaultActiveKey={activeKey.includes("related-concepts") ? "related-concepts" : ""}>
                 <Accordion.Item eventKey="related-concepts" className={"bg-transparent"}>
                   <div className={"p-0 d-flex"}>
-                    <Accordion.Button className={!props.graphView ? `after-indicator ${styles.disabledTitleCheckbox}` : `after-indicator ${styles.titleCheckbox}`} onClick={() => setActiveAccordion("related-concepts")}>{
-                      panelTitle(<span><span><HCCheckbox id="related-concepts-check-all" value="check-all" disabled={!props.graphView} handleClick={onCheckAllRelatedConcepts} checked={checkAllRelatedConcepts} /></span>related concepts</span>, ExploreGraphViewToolTips.relatedConcepts)}
+                    <Accordion.Button className={(!props.graphView || !props.viewConcepts) ? `after-indicator ${styles.disabledTitleCheckbox}` : `after-indicator ${styles.titleCheckbox}`} onClick={() => setActiveAccordion("related-concepts")}>{
+                      panelTitle(<span><span className={!activeRelatedConcepts ? styles.disabledCheckbox : ""}><HCCheckbox ariaLabel="related-concepts-checkbox" id="check-all" value="check-all" disabled={!props.graphView || !props.viewConcepts} cursorDisabled={!activeRelatedConcepts} handleClick={activeRelatedConcepts ? onCheckAllRelatedConcepts : () => { return; }} checked={checkAllRelatedConcepts} /></span>related concepts</span>, ExploreGraphViewToolTips.relatedConcepts)}
                     </Accordion.Button>
                   </div>
                   <Accordion.Body>
-                    {relatedConceptList && <Facet
-                      name={"relatedConcepts"}
-                      constraint={relatedConceptList["facetName"]}
-                      facetValues={relatedConceptList["facetValues"]}
-                      key={relatedConceptList["facetName"]}
-                      tooltip={relatedConceptList["facetName"]}
-                      facetType={relatedConceptList["type"]}
-                      facetCategory="concept"
-                      updateSelectedFacets={updateSelectedFacets}
-                      addFacetValues={addFacetValues}
-                      referenceType=""
-                      entityTypeId={relatedConceptList["entityTypeId"]}
-                      propertyPath=""
-                      maxQuantityOnFacets={maxQuantityOnFacets}
+                    <RelatedConceptsFacets
+                      currentRelatedConcepts={props.currentRelatedConcepts}
+                      setCurrentRelatedConcepts={props.setCurrentRelatedConcepts}
+                      onSettingCheckedList={onSettingRelatedConceptsCheckedList}
+                      setActiveRelatedConcepts={setActiveRelatedConcepts}
+                      entityIndicatorData={props.entityIndicatorData}
                     />
-                    }
                   </Accordion.Body>
                 </Accordion.Item>
               </Accordion>

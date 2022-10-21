@@ -8,6 +8,7 @@ type SearchContextInterface = {
   entityTypeIds: string[],
   baseEntities: any[], //list of entities
   relatedEntityTypeIds: string[],
+  conceptFilterTypeIds: string[],
   nextEntityType: string, //This can change to a boolean for the All Data/All Entities toggle.
   start: number,
   pageNumber: number,
@@ -32,6 +33,7 @@ const defaultSearchOptions = {
   entityTypeIds: [],
   baseEntities: [],
   relatedEntityTypeIds: [],
+  conceptFilterTypeIds: [],
   nextEntityType: "",
   start: 1,
   pageNumber: 1,
@@ -64,6 +66,8 @@ interface ISearchContextInterface {
   setEntityTypeIds: (setEntityIds: string[]) => void;
   setNextEntity: (option: string) => void;
   setRelatedEntityTypeIds: (option: any[]) => void;
+  setConceptFilterTypeIds: (option: any[]) => void;
+  setAllFilterTypeIds: (entities: any[], concepts: any[]) => void;
   setEntityClearQuery: (option: string) => void;
   setLatestJobFacet: (vals: string, entityName: string, stepName: string, targetDatabase?: string, collectionVals?: string) => void;
   clearFacet: (constraint: string, val: string) => void;
@@ -125,6 +129,8 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setEntityTypeIds: () => { },
   setNextEntity: () => { },
   setRelatedEntityTypeIds: () => { },
+  setConceptFilterTypeIds: () => { },
+  setAllFilterTypeIds: () => { },
   setEntityClearQuery: () => { },
   setLatestJobFacet: () => { },
   clearFacet: () => { },
@@ -296,6 +302,21 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     setSearchOptions({
       ...searchOptions,
       relatedEntityTypeIds: option
+    });
+  };
+
+  const setConceptFilterTypeIds = (option: any[]) => {
+    setSearchOptions({
+      ...searchOptions,
+      conceptFilterTypeIds: option
+    });
+  };
+
+  const setAllFilterTypeIds = (entities: any[], concepts: any[]) => {
+    setSearchOptions({
+      ...searchOptions,
+      relatedEntityTypeIds: entities,
+      conceptFilterTypeIds: concepts
     });
   };
 
@@ -778,6 +799,8 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       setEntity,
       setNextEntity,
       setRelatedEntityTypeIds,
+      setConceptFilterTypeIds,
+      setAllFilterTypeIds,
       setEntityClearQuery,
       clearFacet,
       clearAllFacets,

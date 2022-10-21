@@ -67,6 +67,7 @@ const Browse: React.FC<Props> = ({location}) => {
   const [currentBaseEntities, setCurrentBaseEntities] = useState<any[]>([]);
   const [currentEntitiesIcons, setCurrentEntitiesIcons] = useState<any[]>([]);
   const [currentRelatedEntities, setCurrentRelatedEntities] = useState<Map<string, any>>(new Map());
+  const [currentRelatedConcepts, setCurrentRelatedConcepts] = useState<Map<string, any>>(new Map());
   const [entityIndicatorData, setEntityIndicatorData] = useState<any>({});
   const [entityRelationships, setEntityRelationships] = useState<any>({});
   const [entityDefArray, setEntityDefArray] = useState<any[]>([]);
@@ -102,6 +103,7 @@ const Browse: React.FC<Props> = ({location}) => {
   const [parsedFacets, setParsedFacets] = React.useState<any[]>([]);
   const [selectedView, setSelectedView] = useState<ViewType>(viewOptions.graphView ? ViewType.graph : (viewOptions.tableView ? ViewType.table : ViewType.snippet));
   const [entitiesWithRelatedConcepts, setEntitiesWithRelatedConcepts] = useState({});
+  const [viewConcepts, setViewConcepts] = useState(true);
 
   const searchResultDependencies = [
     searchOptions.pageLength,
@@ -186,11 +188,7 @@ const Browse: React.FC<Props> = ({location}) => {
   const getGraphSearchResult = async (allEntities: any[]) => {
     try {
       let conceptFilterTypeIds: any = [];
-      let filteredSelectedFacets = {};
-      if (searchOptions.selectedFacets.hasOwnProperty("RelatedConcepts")) {
-        filteredSelectedFacets = getAllFacetsExceptConcepts();
-        conceptFilterTypeIds = searchOptions.selectedFacets["RelatedConcepts"]["stringValues"];
-      }
+      conceptFilterTypeIds = searchOptions.conceptFilterTypeIds;
 
       let payload = {
         "database": searchOptions.database,
@@ -198,7 +196,7 @@ const Browse: React.FC<Props> = ({location}) => {
           "query": {
             "searchText": searchOptions.query,
             "entityTypeIds": allEntities,
-            "selectedFacets": !conceptFilterTypeIds.length ? searchOptions.selectedFacets : filteredSelectedFacets,
+            "selectedFacets": searchOptions.selectedFacets,
             "relatedEntityTypeIds": searchOptions.relatedEntityTypeIds
           },
           "start": 0,
@@ -206,7 +204,7 @@ const Browse: React.FC<Props> = ({location}) => {
         }
       };
       if (conceptFilterTypeIds.length) {
-        payload["data"]["query"]["conceptsFilterTypeIds"] = searchOptions.selectedFacets["RelatedConcepts"]["stringValues"];
+        payload["data"]["query"]["conceptsFilterTypeIds"] = searchOptions.conceptFilterTypeIds;
       }
       const response = await graphSearchQuery(payload);
       if (componentIsMounted.current && response.data) {
@@ -426,7 +424,7 @@ const Browse: React.FC<Props> = ({location}) => {
     return () => {
       setGraphSearchData({});
     };
-  }, [viewOptions.graphView, searchOptions.entityTypeIds, searchOptions.relatedEntityTypeIds, searchOptions.database, searchOptions.datasource, searchOptions.query, searchOptions.selectedFacets, user.error.type, hideDataHubArtifacts, hubCentralConfig]);
+  }, [viewOptions.graphView, searchOptions.entityTypeIds, searchOptions.relatedEntityTypeIds, searchOptions.conceptFilterTypeIds, searchOptions.database, searchOptions.datasource, searchOptions.query, searchOptions.selectedFacets, user.error.type, hideDataHubArtifacts, hubCentralConfig]);
 
   useEffect(() => {
     let state: any = location.state;
@@ -719,12 +717,15 @@ const Browse: React.FC<Props> = ({location}) => {
               setHubArtifactsVisibilityPreferences={setHubArtifactsVisibilityPreferences}
               hideDataHubArtifacts={hideDataHubArtifacts}
               cardView={cardView}
+              viewConcepts={viewConcepts}
               graphView={viewOptions.graphView}
               setEntitySpecificPanel={handleEntitySelected}
               currentBaseEntities={currentBaseEntities}
               setCurrentBaseEntities={setCurrentBaseEntities}
               currentRelatedEntities={currentRelatedEntities}
               setCurrentRelatedEntities={setCurrentRelatedEntities}
+              currentRelatedConcepts={currentRelatedConcepts}
+              setCurrentRelatedConcepts={setCurrentRelatedConcepts}
               entityIndicatorData={entityIndicatorData}
               entitiesWithRelatedConcepts={entitiesWithRelatedConcepts}
               entityRelationships={entityRelationships}
@@ -802,6 +803,7 @@ const Browse: React.FC<Props> = ({location}) => {
                         <GraphViewExplore
                           entityTypeInstances={graphSearchData}
                           graphView={viewOptions.graphView}
+                          setViewConcepts={setViewConcepts}
                           setGraphPageInfo={setGraphPageInfo}
                           entitiesWithRelatedConcepts={entitiesWithRelatedConcepts}
                         />
