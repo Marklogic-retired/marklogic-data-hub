@@ -5,6 +5,7 @@ import LoginPage from "../../support/pages/login";
 import {ExploreGraphNodes} from "../../support/types/explore-graph-nodes";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import graphExploreSidePanel from "../../support/components/explore/graph-explore-side-panel";
+import graphView from "../../support/components/explore/graph-view";
 
 describe("Leaf Nodes", () => {
   before(() => {
@@ -31,12 +32,14 @@ describe("Leaf Nodes", () => {
     //Graph view
     cy.log("**Go to graph view**");
     browsePage.clickGraphView();
+    cy.waitForAsyncRequest();
     graphExplore.getGraphVisCanvas().should("be.visible");
     graphExplore.stopStabilization();
 
     cy.log("**Select 'Customer' entity**");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
+    cy.waitForAsyncRequest();
     entitiesSidebar.getBaseEntityOption("Customer").scrollIntoView().should("be.visible");
     cy.wait(2000);
 
@@ -52,6 +55,7 @@ describe("Leaf Nodes", () => {
       canvas.trigger("mouseover", orderCoordinates.x, orderCoordinates.y, {force: true});
 
       graphExplore.stopStabilization();
+      graphView.physicsAnimationToggle();
     });
 
     graphExplore.focusNode(ExploreGraphNodes.OFFICE_101);
@@ -63,6 +67,7 @@ describe("Leaf Nodes", () => {
       canvas.rightclick(orderCoordinates.x, orderCoordinates.y, {force: true});
       graphExplore.clickShowRelated();
       graphExplore.stopStabilization();
+      graphView.physicsAnimationToggle();
     });
 
     // TODO: COMMENTED SINCE WE NEED TO PERFORM A CLICK AND HOVER TO MAKE THE TOOLTIP APPEARS
@@ -101,6 +106,7 @@ describe("Leaf Nodes", () => {
 
     // Wait needed for the graph to get stabilized
     cy.wait(2000);
+    graphView.physicsAnimationToggle();
     cy.log("**Try opening the Product Node to make sure it's was collapsed**");
     graphExplore.focusNode(ExploreGraphNodes.PRODUCT_GROUP);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.PRODUCT_GROUP).then((nodePositions: any) => {
@@ -116,9 +122,11 @@ describe("Leaf Nodes", () => {
     entitiesSidebar.selectBaseEntityOption("Product");
     entitiesSidebar.getBaseEntityOption("Product").scrollIntoView().should("be.visible");
     cy.wait(2000);
+    cy.waitForAsyncRequest();
 
     graphExplore.fit();
     graphExplore.stopStabilization();
+    graphView.physicsAnimationToggle();
     cy.log("**Verify expanded node leaf node is expanded and expanded node is visible in the canvas**");
     graphExplore.focusNode(ExploreGraphNodes.OFFICE_101);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.OFFICE_101).then((nodePositions: any) => {
@@ -130,9 +138,11 @@ describe("Leaf Nodes", () => {
 
       // Right click and expand the remaining records of the node
       canvas.rightclick(officeCoordinates.x, officeCoordinates.y, {force: true});
+      graphView.physicsAnimationToggle();
 
       graphExplore.clickShowRelated();
       graphExplore.stopStabilization();
+      graphView.physicsAnimationToggle();
     });
 
     cy.log("**Verify expanded node leaf node is expanded and expanded node is visible in the canvas**");
@@ -144,6 +154,7 @@ describe("Leaf Nodes", () => {
       //Click on node to open side panel
       canvas.click(officeCoordinates.x, officeCoordinates.y, {force: true});
       cy.wait(2000);
+      graphView.physicsAnimationToggle();
       graphExploreSidePanel.getSidePanel().should("exist");
     });
 

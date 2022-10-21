@@ -31,6 +31,7 @@ describe("Group Nodes", () => {
     //Graph view
     cy.log("**Go to graph view**");
     browsePage.clickGraphView();
+    cy.waitForAsyncRequest();
     graphExplore.getGraphVisCanvas().should("be.visible");
     graphExplore.stopStabilization();
 
@@ -39,6 +40,7 @@ describe("Group Nodes", () => {
     entitiesSidebar.selectBaseEntityOption("Office");
     entitiesSidebar.getBaseEntityOption("Office").scrollIntoView().should("be.visible");
     cy.wait(1000);
+    graphView.physicsAnimationToggle();
 
     cy.log("**Picking up Product group node and validate tooltip**");
     graphExplore.focusNode(ExploreGraphNodes.PRODUCT_GROUP);
@@ -71,6 +73,7 @@ describe("Group Nodes", () => {
     });
     // Wait needed for the graph to get stabilized
     cy.wait(3000);
+    graphView.physicsAnimationToggle();
     cy.log("**Validating the record's IDs that have been expanded in the side panel**");
 
     cy.log("**Click Product node '50' to open side panel and validate productID**");
@@ -129,6 +132,7 @@ describe("Group Nodes", () => {
 
     // Wait needed for the graph to get stabilized
     cy.wait(1000);
+    graphView.physicsAnimationToggle();
     cy.log("**Click Product node '80' to open side panel and validate productID**");
     graphExplore.focusNode(ExploreGraphNodes.PRODUCT_80);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.PRODUCT_80).then((nodePositions: any) => {
@@ -143,7 +147,6 @@ describe("Group Nodes", () => {
 
     // Wait needed for the graph to get stabilized
     cy.wait(1000);
-    graphView.getPhysicsAnimationToggle().scrollIntoView().trigger("mouseover").click();
     cy.log("**Click Product node '90' to open side panel and validate productID**");
     graphExplore.focusNode(ExploreGraphNodes.PRODUCT_90);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.PRODUCT_90).then((nodePositions: any) => {
@@ -172,6 +175,7 @@ describe("Group Nodes", () => {
     });
 
     cy.wait(1000);
+    graphView.physicsAnimationToggle();
     cy.log("**Picking up Product group node and validate tooltip to confirm it has been collapsed**");
     graphExplore.focusNode(ExploreGraphNodes.PRODUCT_GROUP);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.PRODUCT_GROUP).then((nodePositions: any) => {
