@@ -11,5 +11,7 @@ export enum ExploreGraphNodes {
     BABY_REGISTRY_3039 = "/BabyRegistry/3039.json",
     CONCEPT_KETTLE = "http://www.example.com/Category/Kettle",
     CONCEPT_SNEAKERS = "http://www.example.com/Category/Sneakers",
-    CONCEPT_JEANS = "http://www.example.com/Category/Jeans"
+    CONCEPT_JEANS = "http://www.example.com/Category/Jeans",
+    CONCEPT_BASKETBALLSHOES = "http://www.example.com/Category/BasketballShoes",
+    CONCEPT_SLOWCOOKER = "http://www.example.com/Category/SlowCooker"
 }

@@ -138,7 +138,7 @@ describe("Test '/Explore' left sidebar", () => {
   });
 
   it("Base Entity Filtering from side panel", () => {
-    cy.log("Navigate to Graph View and verify all entities displayed");
+    cy.log("**Navigate to Graph View and verify all entities displayed**");
     cy.wait(5000);
     browsePage.getClearAllFacetsButton().click({force: true});
     browsePage.clickGraphView();
@@ -152,7 +152,7 @@ describe("Test '/Explore' left sidebar", () => {
       expect(orderCoordinates).to.not.equal(undefined);
     });
 
-    cy.log("Select Order Entity from dropdown and verify Customer node is gone");
+    cy.log("**Select Order Entity from dropdown and verify Customer node is gone**");
     entitiesSidebar.getBaseEntityDropdown().click();
     entitiesSidebar.selectBaseEntityOption("Order");
     cy.wait(1000);
@@ -166,7 +166,7 @@ describe("Test '/Explore' left sidebar", () => {
       expect(orderCoordinates).to.not.equal(undefined);
     });
 
-    cy.log("Navigate to Table View and verify Order filtered with entity-specific columns");
+    cy.log("**Navigate to Table View and verify Order filtered with entity-specific columns**");
     browsePage.getTableView().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
@@ -178,7 +178,7 @@ describe("Test '/Explore' left sidebar", () => {
     browsePage.getTableViewCell("10248").should("have.length.gt", 0);
     browsePage.getTableViewCell("101").should("not.have.length.gt", 0);
 
-    cy.log("Select Customer Entity and verify default table columns since > 1 entity filtered");
+    cy.log("**Select Customer Entity and verify default table columns since > 1 entity filtered**");
     entitiesSidebar.getBaseEntityDropdown().click();
     entitiesSidebar.selectBaseEntityOption("Customer");
     browsePage.waitForSpinnerToDisappear();
@@ -192,15 +192,24 @@ describe("Test '/Explore' left sidebar", () => {
     browsePage.getTableViewCell("10248").should("have.length.gt", 0);
     browsePage.getTableViewCell("101").should("have.length.gt", 0);
 
-    cy.log("Verify related entity icons are disabled in table view");
+    cy.log("**Verify related entity icons are disabled in table view**");
     entitiesSidebar.openBaseEntityFacets("Customer");
     entitiesSidebar.getEntityIconFromList("Customer").should("be.visible");
     entitiesSidebar.getRelatedEntityIcon("Office").should("be.visible");
     entitiesSidebar.getRelatedEntityIcon("Office").trigger("mouseover");
     entitiesSidebar.getDisabledRelatedEntityTooltip().should("be.visible");
-    entitiesSidebar.backToMainSidebar();
 
-    cy.log("Select BabyRegistry and verify related entities panel appears but is disabled in table view");
+    cy.log("**Verify related concepts are disabled in table view**");
+    entitiesSidebar.backToMainSidebar();
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Product");
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.waitForHCTableToLoad();
+    entitiesSidebar.getRelatedConceptsPanel().trigger("mouseover");
+    entitiesSidebar.getDisabledRelatedConceptsTooltip().should("be.visible");
+    entitiesSidebar.getAllRelatedConceptsCheckbox().should("be.disabled");
+
+    cy.log("**Select BabyRegistry and verify related entities panel appears but is disabled in table view**");
     entitiesSidebar.getBaseEntityDropdown().click("right");
     entitiesSidebar.selectBaseEntityOption("BabyRegistry");
     entitiesSidebar.getRelatedEntityPanel().should("be.visible");
@@ -209,7 +218,7 @@ describe("Test '/Explore' left sidebar", () => {
     //related entity panel should remain collapsed
     entitiesSidebar.verifyCollapsedRelatedEntityPanel().should("exist");
 
-    cy.log("verify both Customer and Order nodes are still present in graph");
+    cy.log("**verify both Customer and Order nodes are still present in graph**");
     browsePage.clickGraphView();
     cy.wait(1000);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
@@ -221,22 +230,24 @@ describe("Test '/Explore' left sidebar", () => {
       expect(orderCoordinates).to.not.equal(undefined);
     });
 
-    cy.log("verify that related entity panel is collapsed due to related entity (Customer) being selected as a base");
+    cy.log("**verify that related entity panel is collapsed due to related entity (Customer) being selected as a base**");
     entitiesSidebar.getRelatedEntity("Customer").should("not.be.visible");
 
-    cy.log("related entity panel is expandable and disabled tooltip applies to each item");
+    cy.log("**related entity panel is expandable and disabled tooltip applies to each item**");
     entitiesSidebar.toggleRelatedEntityPanel();
     entitiesSidebar.getRelatedEntity("Customer").should("be.visible");
     entitiesSidebar.getRelatedEntity("Customer").trigger("mouseover");
     entitiesSidebar.getDisabledEntityTooltip().should("exist");
     browsePage.getClearAllFacetsButton().trigger("mouseover", {force: true});
+    cy.wait(1000);
 
-    cy.log("verify related entity panel is enabled when Customer is deselected as a base entity");
+    cy.log("**verify related entity panel is enabled when Customer is deselected as a base entity**");
     explorePage.scrollSideBarTop();
-    entitiesSidebar.removeLastSelectedBaseEntity();
-    cy.wait(500);
-    entitiesSidebar.removeLastSelectedBaseEntity();
-    cy.wait(500);
+    entitiesSidebar.getBaseEntityDropdown().click("right");
+    entitiesSidebar.selectBaseEntityOption("All Entities");
+    entitiesSidebar.getBaseEntityDropdown().click("right");
+    entitiesSidebar.selectBaseEntityOption("BabyRegistry");
+    cy.wait(2000);
     entitiesSidebar.toggleRelatedEntityPanel();
     entitiesSidebar.getRelatedEntity("Customer").should("be.visible");
     entitiesSidebar.getRelatedEntity("Customer").trigger("mouseover");
