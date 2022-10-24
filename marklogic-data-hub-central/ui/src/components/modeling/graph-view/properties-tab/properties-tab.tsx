@@ -13,7 +13,6 @@ interface Props {
 
 const PropertiesTab: React.FC<Props> = (props) => {
   const {entityTypeData, dataModel, canWriteEntityModel, canReadEntityModel, updateSavedEntity} = props;
-
   return (
     <div className={`divPropertyTable`}>
       <div><ModelingLegend/></div>

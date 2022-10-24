@@ -47,7 +47,22 @@ type Props = {
 
 const DEFAULT_TAB = "properties";
 
-const GraphViewSidePanel: React.FC<Props> = (props) => {
+const GraphViewSidePanel: React.FC<Props> = ({dataModel,
+  onCloseSidePanel,
+  deleteEntityClicked,
+  canWriteEntityModel,
+  canReadEntityModel,
+  updateEntities,
+  updateSavedEntity,
+  hubCentralConfig,
+  updateHubCentralConfig,
+  toggleRelationshipModal,
+  relationshipModalVisible,
+  getColor,
+  getIcon,
+  setNodeNeedRedraw,
+  deleteConceptClass}) => {
+
   const viewSettings = getViewSettings();
   const [currentTab, setCurrentTab] = useState(viewSettings.model?.currentTab || DEFAULT_TAB);
   const {modelingOptions, setSelectedEntity, updateEntityModified} = useContext(ModelingContext);
@@ -143,8 +158,8 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
   };
 
   const initializeEntityColorIcon = (isConcept: boolean = false) => {
-    let entColor = props.getColor(modelingOptions.selectedEntity, isConcept);
-    let entIcon = props.getIcon(modelingOptions.selectedEntity, isConcept);
+    let entColor = getColor(modelingOptions.selectedEntity, isConcept);
+    let entIcon = getIcon(modelingOptions.selectedEntity, isConcept);
     if (entColor) {
       setColorSelected(entColor);
     } else {
@@ -159,8 +174,8 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
   };
 
   const initializeEntityDisplayProps = () => {
-    if (modelingOptions.selectedEntity && props.hubCentralConfig.modeling) {
-      const entityData = props.hubCentralConfig.modeling?.entities[modelingOptions.selectedEntity];
+    if (modelingOptions.selectedEntity && hubCentralConfig.modeling) {
+      const entityData = hubCentralConfig.modeling?.entities[modelingOptions.selectedEntity];
       if (entityData) {
         setSelectedEntityLabel(entityData.label || "");
         setSelectedEntityPropOnHover(entityData.propertiesOnHover || []);
@@ -211,7 +226,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
   };
 
   const setEntityTypesFromServer = async (entityName) => {
-    await props.updateEntities().then((resp => {
+    await updateEntities().then((resp => {
       let isDraft = true;
       setSelectedEntity(entityName, isDraft);
     }));
@@ -301,7 +316,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
     return () => {
       loaded = false;
     };
-  }, [props.hubCentralConfig]);
+  }, [hubCentralConfig]);
 
   useEffect(() => {
     if (modelingOptions.selectedEntity && !isConceptNode) {
@@ -317,31 +332,31 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
 
   const handleColorChange = color => {
     setColorSelected(color.hex);
-    props.setNodeNeedRedraw(true);
-    updateHubCentralConfig({color: color.hex});
+    setNodeNeedRedraw(true);
+    handleUpdateHubCentralConfig({color: color.hex});
   };
 
   const handleIconChange = iconSelected => {
     setIconSelected(iconSelected);
-    props.setNodeNeedRedraw(true);
-    updateHubCentralConfig({icon: iconSelected});
+    setNodeNeedRedraw(true);
+    handleUpdateHubCentralConfig({icon: iconSelected});
   };
 
   const handleLabelChange = (e) => {
     setSelectedEntityLabel(e.value || "");
-    updateHubCentralConfig({label: e.value || ""});
+    handleUpdateHubCentralConfig({label: e.value || ""});
   };
 
   const handlePropertiesOnHoverChange = (e) => {
     const propertiesOnHover = e.map(property => property.replaceAll(" > ", "."));
     setSelectedEntityPropOnHover(propertiesOnHover);
-    updateHubCentralConfig({propertiesOnHover});
+    handleUpdateHubCentralConfig({propertiesOnHover});
   };
 
-  const updateHubCentralConfig = propToUpdate => {
+  const handleUpdateHubCentralConfig = propToUpdate => {
     try {
       if (modelingOptions.selectedEntity !== undefined) {
-        let hubCentralPayload = props.hubCentralConfig || defaultHubCentralConfig;
+        let hubCentralPayload = hubCentralConfig || defaultHubCentralConfig;
         let modelCategory = "entities";
         if (Object.keys(hubCentralPayload.modeling.concepts).length > 0 && hubCentralPayload.modeling.concepts.hasOwnProperty(modelingOptions.selectedEntity)) {
           modelCategory = "concepts";
@@ -355,7 +370,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
         } else if (propToUpdate.hasOwnProperty("propertiesOnHover")) {
           hubCentralPayload.modeling[modelCategory][modelingOptions.selectedEntity]["propertiesOnHover"] = propToUpdate.propertiesOnHover;
         }
-        props.updateHubCentralConfig(hubCentralPayload);
+        updateHubCentralConfig(hubCentralPayload);
         setErrorServer("");
       }
     } catch (error) {
@@ -384,9 +399,9 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
     const selectedRelation = {
       edgeId: `${entityTypeDefinition?.name}-${row?.predicate}-${row?.conceptClass}-via-${row?.context}`,
       sourceNodeName: entityTypeDefinition?.name,
-      sourceNodeColor: props.getColor(modelingOptions.selectedEntity, false),
+      sourceNodeColor: getColor(modelingOptions.selectedEntity, false),
       targetNodeName: row?.conceptClass,
-      targetNodeColor: props.getColor(row?.conceptClass, true),
+      targetNodeColor: getColor(row?.conceptClass, true),
       relationshipName: row?.predicate,
       joinPropertyName: row?.context,
       isConcept: true,
@@ -400,9 +415,9 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
     const relationshipInfo = {
       edgeId: `${entityTypeDefinition?.name}-${row?.predicate}-${row?.conceptClass}-via-${row?.context}`,
       sourceNodeName: entityTypeDefinition?.name ? entityTypeDefinition.name : "",
-      sourceNodeColor: props.getColor(modelingOptions.selectedEntity, false),
+      sourceNodeColor: getColor(modelingOptions.selectedEntity, false),
       targetNodeName: row?.conceptClass,
-      targetNodeColor: props.getColor(row?.conceptClass, true),
+      targetNodeColor: getColor(row?.conceptClass, true),
       relationshipName: row?.predicate,
       joinPropertyName: row?.context,
       isConcept: true,
@@ -430,10 +445,10 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
     let sourceEntityName = relationshipInfo.sourceNodeName;
     let entityTypeDefinitionTemp;
     let updatedDefinitions;
-    for (let i = 0; i < props.dataModel.length; i++) {
-      if (props.dataModel[i].entityName === sourceEntityName) {
-        updatedDefinitions = {...props.dataModel[i].model};
-        entityTypeDefinitionTemp = props.dataModel[i].model.definitions[sourceEntityName];
+    for (let i = 0; i < dataModel.length; i++) {
+      if (dataModel[i].entityName === sourceEntityName) {
+        updatedDefinitions = {...dataModel[i].model};
+        entityTypeDefinitionTemp = dataModel[i].model.definitions[sourceEntityName];
       }
     }
     let itemIndex = entityTypeDefinitionTemp["relatedConcepts"].findIndex(obj => obj.predicate === propertyName && obj.conceptClass === relationshipInfo.targetNodeName);
@@ -450,7 +465,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
 
   const confirmAction = async () => {
     updateEntityModified(modifiedEntity);
-    await props.updateSavedEntity([modifiedEntity]);
+    await updateSavedEntity([modifiedEntity]);
     await getSystemInfo();
     toggleConfirmModal(false);
   };
@@ -473,7 +488,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
         key: "conceptClass",
         headerFormatter: () => <span aria-label="conceptClass-header">Concept Class</span>,
         formatter: (_, row) => {
-          const icon = props?.hubCentralConfig?.modeling?.concepts[row?.conceptClass] ? props.hubCentralConfig.modeling.concepts[row?.conceptClass].icon : "FaShapes";
+          const icon = hubCentralConfig?.modeling?.concepts[row?.conceptClass] ? hubCentralConfig.modeling.concepts[row?.conceptClass].icon : "FaShapes";
           return <span><DynamicIcons name={icon} />  {row?.conceptClass}</span>;
         }
       },
@@ -499,14 +514,14 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
           setOpenRelationshipModal={setOpenRelationshipModal}
           isEditing={true}
           relationshipInfo={selectedRelationship}
-          dataModel={props.dataModel}
-          updateSavedEntity={props.updateSavedEntity}
-          relationshipModalVisible={props.relationshipModalVisible}
-          toggleRelationshipModal={props.toggleRelationshipModal}
-          canReadEntityModel={props.canReadEntityModel}
-          canWriteEntityModel={props.canWriteEntityModel}
-          hubCentralConfig={props.hubCentralConfig}
-          getColor={props.getColor}
+          dataModel={dataModel}
+          updateSavedEntity={updateSavedEntity}
+          relationshipModalVisible={relationshipModalVisible}
+          toggleRelationshipModal={toggleRelationshipModal}
+          canReadEntityModel={canReadEntityModel}
+          canWriteEntityModel={canWriteEntityModel}
+          hubCentralConfig={hubCentralConfig}
+          getColor={getColor}
           mapFunctions={mapFunctions}
         />
         <ConfirmationModal
@@ -524,168 +539,168 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
   const displayPanelContent = () => {
     if (currentTab === "relatedConceptClasses" && !isConceptNode) {
       return renderRelatedConceptClasses();
-    }
-    return currentTab === "entityType" || isConceptNode ? <div id="entityType-tab-content">
-      <Form className={"container-fluid"}>
-        <Row className={"mb-3"}>
-          <FormLabel column lg={3}>{"Name:"}</FormLabel>
-          <Col className={"d-flex align-items-center"} data-testid={modelingOptions.selectedEntity}>
-            {modelingOptions.selectedEntity}
-          </Col>
-        </Row>
-        <Row className={"mb-3"}>
-          <FormLabel column lg={3}>{"Description:"}</FormLabel>
-          <Col className={"d-flex"}>
-            <HCInput
-              id="description"
-              dataTestid="description"
-              disabled={props.canReadEntityModel && !props.canWriteEntityModel}
-              placeholder="Enter description"
-              value={selectedEntityDescription ? selectedEntityDescription : " "}
-              onChange={handlePropertyChange}
-              onBlur={onSubmit}
-              className={styles.input}
-            />
-            <div className={"p-2 d-flex align-items-center"}>
-              <HCTooltip text={!isConceptNode ? ModelingTooltips.entityDescription : ModelingTooltips.conceptClassDescription} id="description-tooltip" placement="top-end">
-                <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.icon} data-testid="entityDescriptionTooltip" />
-              </HCTooltip>
-            </div>
-          </Col>
-        </Row>
-        {!isConceptNode && <Row className={"mb-3"}>
-          <FormLabel column lg={3}>{"Namespace URI:"}</FormLabel>
-          <Col>
-            <Row>
-              <Col className={isErrorOfType("namespace") ? "d-flex has-error" : "d-flex"}>
-                <HCInput
-                  id="namespace"
-                  dataTestid="namespace"
-                  data-testid="namespace"
-                  placeholder="Example: http://example.org/es/gs"
-                  disabled={props.canReadEntityModel && !props.canWriteEntityModel}
-                  className={styles.input}
-                  value={selectedEntityNamespace}
-                  onChange={handlePropertyChange}
-                  onBlur={onSubmit}
-                />
-              </Col>
-              <Col className={"col-auto pe-4"}>
-                <span className={styles.prefixLabel}>Prefix:</span>
-              </Col>
-              <Col className={isErrorOfType("namespacePrefix") ? "d-flex col-auto pe-2 has-error" : "d-flex col-auto pe-2"}>
-                <HCInput
-                  id="prefix"
-                  data-testid="prefix"
-                  placeholder="Example: esgs"
-                  className={styles.prefixInput}
-                  disabled={props.canReadEntityModel && !props.canWriteEntityModel}
-                  value={selectedEntityNamespacePrefix}
-                  onChange={handlePropertyChange}
-                  onBlur={onSubmit}
-                  style={{width: "108px", verticalAlign: "text-bottom"}}
-                />
-              </Col>
-              <div className={"col-auto p-1 ps-0 pe-3 me-1 align-items-center"}>
-                <HCTooltip text={ModelingTooltips.namespace} id="prefix-tooltip" placement="left">
-                  <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.icon} data-testid="entityPrefixTooltip" />
-                </HCTooltip>
-              </div>
-              <Col xs={12} className={styles.validationError}>
-                {errorServer ? <p className={styles.errorServer}>{errorServer}</p> : null}
-              </Col>
-            </Row>
-          </Col>
-        </Row>}
-        {!isConceptNode && <Row>
-          <FormLabel column lg={3} style={{marginTop: "20px"}}>{"Version:"}</FormLabel>
-          <Col className={"d-flex align-items-center"}>
-            <div className={styles.versionContainer}>
+    } else if (currentTab === "entityType" || isConceptNode) {
+      return (<div id="entityType-tab-content">
+        <Form className={"container-fluid"}>
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>{"Name:"}</FormLabel>
+            <Col className={"d-flex align-items-center"} data-testid={modelingOptions.selectedEntity}>
+              {modelingOptions.selectedEntity}
+            </Col>
+          </Row>
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>{"Description:"}</FormLabel>
+            <Col className={"d-flex"}>
               <HCInput
-                id="version"
-                data-testid="version"
-                placeholder="0.0.1"
-                disabled={props.canReadEntityModel && !props.canWriteEntityModel}
-                value={selectedEntityVersion}
+                id="description"
+                dataTestid="description"
+                disabled={canReadEntityModel && !canWriteEntityModel}
+                placeholder="Enter description"
+                value={selectedEntityDescription ? selectedEntityDescription : " "}
                 onChange={handlePropertyChange}
                 onBlur={onSubmit}
                 className={styles.input}
-                style={{verticalAlign: "text-bottom"}}
               />
-              <div className={"d-flex align-items-center"}>
-                <HCTooltip id="colo-selector" text={ModelingTooltips.versionField} placement="right">
-                  <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.colorsIcon} />
+              <div className={"p-2 d-flex align-items-center"}>
+                <HCTooltip text={!isConceptNode ? ModelingTooltips.entityDescription : ModelingTooltips.conceptClassDescription} id="description-tooltip" placement="top-end">
+                  <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.icon} data-testid="entityDescriptionTooltip" />
                 </HCTooltip>
               </div>
-            </div>
-          </Col>
-        </Row>}
-        {/* Display settings section  */}
-        <Row className={"mb-3 mt-4"}>
-          <Col className={"d-flex align-items-center"}>
-            <h3 className={styles.displaySettings}>{"Display Settings"}</h3>
-          </Col>
-        </Row>
-        <Row className={"mb-3"}>
-          <FormLabel column lg={3} style={{marginTop: "10px"}}>{"Color:"}</FormLabel>
-          <Col className={"d-flex align-items-center"}>
-            <div className={styles.colorContainer}>
-              {modelingOptions.selectedEntity &&
+            </Col>
+          </Row>
+          {!isConceptNode && <Row className={"mb-3"}>
+            <FormLabel column lg={3}>{"Namespace URI:"}</FormLabel>
+            <Col>
+              <Row>
+                <Col className={isErrorOfType("namespace") ? "d-flex has-error" : "d-flex"}>
+                  <HCInput
+                    id="namespace"
+                    dataTestid="namespace"
+                    data-testid="namespace"
+                    placeholder="Example: http://example.org/es/gs"
+                    disabled={canReadEntityModel && !canWriteEntityModel}
+                    className={styles.input}
+                    value={selectedEntityNamespace}
+                    onChange={handlePropertyChange}
+                    onBlur={onSubmit}
+                  />
+                </Col>
+                <Col className={"col-auto pe-4"}>
+                  <span className={styles.prefixLabel}>Prefix:</span>
+                </Col>
+                <Col className={isErrorOfType("namespacePrefix") ? "d-flex col-auto pe-2 has-error" : "d-flex col-auto pe-2"}>
+                  <HCInput
+                    id="prefix"
+                    data-testid="prefix"
+                    placeholder="Example: esgs"
+                    className={styles.prefixInput}
+                    disabled={canReadEntityModel && !canWriteEntityModel}
+                    value={selectedEntityNamespacePrefix}
+                    onChange={handlePropertyChange}
+                    onBlur={onSubmit}
+                    style={{width: "108px", verticalAlign: "text-bottom"}}
+                  />
+                </Col>
+                <div className={"col-auto p-1 ps-0 pe-3 me-1 align-items-center"}>
+                  <HCTooltip text={ModelingTooltips.namespace} id="prefix-tooltip" placement="left">
+                    <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.icon} data-testid="entityPrefixTooltip" />
+                  </HCTooltip>
+                </div>
+                <Col xs={12} className={styles.validationError}>
+                  {errorServer ? <p className={styles.errorServer}>{errorServer}</p> : null}
+                </Col>
+              </Row>
+            </Col>
+          </Row>}
+          {!isConceptNode && <Row>
+            <FormLabel column lg={3} style={{marginTop: "20px"}}>{"Version:"}</FormLabel>
+            <Col className={"d-flex align-items-center"}>
+              <div className={styles.versionContainer}>
+                <HCInput
+                  id="version"
+                  data-testid="version"
+                  placeholder="0.0.1"
+                  disabled={canReadEntityModel && !canWriteEntityModel}
+                  value={selectedEntityVersion}
+                  onChange={handlePropertyChange}
+                  onBlur={onSubmit}
+                  className={styles.input}
+                  style={{verticalAlign: "text-bottom"}}
+                />
+                <div className={"d-flex align-items-center"}>
+                  <HCTooltip id="colo-selector" text={ModelingTooltips.versionField} placement="right">
+                    <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.colorsIcon} />
+                  </HCTooltip>
+                </div>
+              </div>
+            </Col>
+          </Row>}
+          {/* Display settings section  */}
+          <Row className={"mb-3 mt-4"}>
+            <Col className={"d-flex align-items-center"}>
+              <h3 className={styles.displaySettings}>{"Display Settings"}</h3>
+            </Col>
+          </Row>
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3} style={{marginTop: "10px"}}>{"Color:"}</FormLabel>
+            <Col className={"d-flex align-items-center"}>
+              <div className={styles.colorContainer}>
+                {modelingOptions.selectedEntity &&
                 <EntityTypeColorPicker color={colorSelected} entityType={modelingOptions.selectedEntity} handleColorChange={handleColorChange} />
-              }
-              <div className={"d-flex align-items-center"}>
-                <HCTooltip id="colo-selector" text={ModelingTooltips.colorField(modelingOptions.selectedEntity, isConceptNode)} placement="right">
-                  <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.colorsIcon} />
+                }
+                <div className={"d-flex align-items-center"}>
+                  <HCTooltip id="colo-selector" text={ModelingTooltips.colorField(modelingOptions.selectedEntity, isConceptNode)} placement="right">
+                    <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.colorsIcon} />
+                  </HCTooltip>
+                </div>
+              </div>
+            </Col>
+          </Row>
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3} style={{marginTop: "11px"}}>{"Icon:"}</FormLabel>
+            <Col className={"d-flex align-items-center"}>
+              <div className={styles.iconContainer}>
+                <div data-testid={`${modelingOptions.selectedEntity}-icon-selector`} aria-label={`${modelingOptions.selectedEntity}-${iconSelected}-icon`}>
+                  <HCIconPicker identifier={modelingOptions.selectedEntity} value={iconSelected} onChange={(value) => handleIconChange(value)} />
+                </div>
+                <div className={"d-flex align-items-center"}>
+                  <HCTooltip id="icon-selector" text={ModelingTooltips.iconField(modelingOptions.selectedEntity, isConceptNode)} placement="right">
+                    <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.iconPickerTooltip} />
+                  </HCTooltip>
+                </div>
+              </div>
+            </Col>
+          </Row>
+          {!isConceptNode && <Row className={"mb-3"}>
+            <FormLabel column lg={3}>{"Record Label:"}</FormLabel>
+            <Col className={"d-flex"}>
+              <Select
+                id={`${modelingOptions.selectedEntity}-entityLabel-select-wrapper`}
+                inputId={`${modelingOptions.selectedEntity}-entityLabel-select`}
+                components={{MenuList: props => MenuList(`${modelingOptions.selectedEntity}-entityLabel`, props)}}
+                defaultValue={selectedEntityLabel ? {label: selectedEntityLabel, value: selectedEntityLabel} : null}
+                value={selectedEntityLabel ? {label: selectedEntityLabel, value: selectedEntityLabel} : null}
+                options={renderOptions()}
+                onChange={handleLabelChange}
+                classNamePrefix="select"
+                aria-label={`${modelingOptions.selectedEntity}-label-select-dropdown`}
+                formatOptionLabel={({value, label}) => {
+                  return (
+                    <span data-testid={`${modelingOptions.selectedEntity}-labelOption-${value}`} aria-label={`${modelingOptions.selectedEntity}-labelOption-${value}`}>
+                      {label}
+                    </span>
+                  );
+                }}
+                styles={reactSelectThemeConfig}
+              />
+              <div className={"p-2 d-flex align-items-center"}>
+                <HCTooltip text={ModelingTooltips.labelField(modelingOptions.selectedEntity)} id="entityLabel-tooltip" placement="top-end">
+                  <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.icon} data-testid="entityLabelTooltip" />
                 </HCTooltip>
               </div>
-            </div>
-          </Col>
-        </Row>
-        <Row className={"mb-3"}>
-          <FormLabel column lg={3} style={{marginTop: "11px"}}>{"Icon:"}</FormLabel>
-          <Col className={"d-flex align-items-center"}>
-            <div className={styles.iconContainer}>
-              <div data-testid={`${modelingOptions.selectedEntity}-icon-selector`} aria-label={`${modelingOptions.selectedEntity}-${iconSelected}-icon`}>
-                <HCIconPicker identifier={modelingOptions.selectedEntity} value={iconSelected} onChange={(value) => handleIconChange(value)} />
-              </div>
-              <div className={"d-flex align-items-center"}>
-                <HCTooltip id="icon-selector" text={ModelingTooltips.iconField(modelingOptions.selectedEntity, isConceptNode)} placement="right">
-                  <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.iconPickerTooltip} />
-                </HCTooltip>
-              </div>
-            </div>
-          </Col>
-        </Row>
-        {!isConceptNode && <Row className={"mb-3"}>
-          <FormLabel column lg={3}>{"Record Label:"}</FormLabel>
-          <Col className={"d-flex"}>
-            <Select
-              id={`${modelingOptions.selectedEntity}-entityLabel-select-wrapper`}
-              inputId={`${modelingOptions.selectedEntity}-entityLabel-select`}
-              components={{MenuList: props => MenuList(`${modelingOptions.selectedEntity}-entityLabel`, props)}}
-              defaultValue={selectedEntityLabel ? {label: selectedEntityLabel, value: selectedEntityLabel} : null}
-              value={selectedEntityLabel ? {label: selectedEntityLabel, value: selectedEntityLabel} : null}
-              options={renderOptions()}
-              onChange={handleLabelChange}
-              classNamePrefix="select"
-              aria-label={`${modelingOptions.selectedEntity}-label-select-dropdown`}
-              formatOptionLabel={({value, label}) => {
-                return (
-                  <span data-testid={`${modelingOptions.selectedEntity}-labelOption-${value}`} aria-label={`${modelingOptions.selectedEntity}-labelOption-${value}`}>
-                    {label}
-                  </span>
-                );
-              }}
-              styles={reactSelectThemeConfig}
-            />
-            <div className={"p-2 d-flex align-items-center"}>
-              <HCTooltip text={ModelingTooltips.labelField(modelingOptions.selectedEntity)} id="entityLabel-tooltip" placement="top-end">
-                <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.icon} data-testid="entityLabelTooltip" />
-              </HCTooltip>
-            </div>
-          </Col>
-        </Row>}
-        {!isConceptNode && entityTypeDefinition?.properties &&
+            </Col>
+          </Row>}
+          {!isConceptNode && entityTypeDefinition?.properties &&
           <Row className={"mb-3"}>
             <FormLabel column lg={3}>{"Properties on Hover:"}</FormLabel>
             <Col className={"d-flex"}>
@@ -707,40 +722,41 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
               </div>
             </Col>
           </Row>
-        }
-      </Form>
-    </div>
-      :
-      <PropertiesTab
-        entityTypeData={props.dataModel.find(e => e.entityName === modelingOptions.selectedEntity)}
-        canWriteEntityModel={props.canWriteEntityModel}
-        canReadEntityModel={props.canReadEntityModel}
-        updateSavedEntity={props.updateSavedEntity}
-        dataModel={props.dataModel}
-      />;
+          }
+        </Form>
+      </div>);
+    } else {
+      return (<PropertiesTab
+        entityTypeData={dataModel.find(e => e.entityName === modelingOptions.selectedEntity)}
+        canWriteEntityModel={canWriteEntityModel}
+        canReadEntityModel={canReadEntityModel}
+        updateSavedEntity={updateSavedEntity}
+        dataModel={dataModel}
+      />);
+    }
   };
 
   return (
     <div id="sidePanel" className={styles.sidePanel}>
       <div>
         <span className={styles.selectedEntityHeading} aria-label={`${modelingOptions.selectedEntity}-selectedEntity`}>{modelingOptions.selectedEntity} {isConceptNode && <span className={styles.conceptHeadingInfo} aria-label={`${modelingOptions.selectedEntity}-conceptHeadingInfo`}>(Concept Class)</span>}</span>
-        <span><HCTooltip text={!props.canWriteEntityModel && props.canReadEntityModel ? "Delete Entity: " + SecurityTooltips.missingPermission : ModelingTooltips.deleteIcon(isConceptNode)} id="delete-tooltip" placement="top">
+        <span><HCTooltip text={!canWriteEntityModel && canReadEntityModel ? "Delete Entity: " + SecurityTooltips.missingPermission : ModelingTooltips.deleteIcon(isConceptNode)} id="delete-tooltip" placement="top">
           <i key="last" role="delete-entity button" data-testid={modelingOptions.selectedEntity + "-delete"} onClick={(event) => {
-            if (!props.canWriteEntityModel && props.canReadEntityModel) {
+            if (!canWriteEntityModel && canReadEntityModel) {
               return event.preventDefault();
             } else {
               if (!isConceptNode) {
-                props.deleteEntityClicked(modelingOptions.selectedEntity);
+                deleteEntityClicked(modelingOptions.selectedEntity);
               } else {
-                props.deleteConceptClass(modelingOptions.selectedEntity);
+                deleteConceptClass(modelingOptions.selectedEntity);
               }
             }
           }}>
-            <FontAwesomeIcon icon={faTrashAlt} className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.deleteIconDisabled : styles.deleteIcon} size="lg" />
+            <FontAwesomeIcon icon={faTrashAlt} className={!canWriteEntityModel && canReadEntityModel ? styles.deleteIconDisabled : styles.deleteIcon} size="lg" />
           </i>
         </HCTooltip></span>
         <span><i className={styles.close} aria-label={"closeGraphViewSidePanel"}
-          onClick={props.onCloseSidePanel}>
+          onClick={onCloseSidePanel}>
           <XLg />
         </i></span>
       </div>
