@@ -421,6 +421,39 @@ describe("Entity Modeling: Graph View", () => {
 
   });
 
+  it("Delete a relationship from graph view, cancel deletion", {defaultCommandTimeout: 120000}, () => {
+    toolbar.getModelToolbarIcon().click();
+    modelPage.selectView("project-diagram");
+
+    modelPage.scrollPageBottom();
+    // To delete a relation
+    cy.wait(1000);
+    graphVis.getPositionOfEdgeBetween("Person,Order").then((edgePosition: any) => {
+      graphVis.getGraphVisCanvas().click(edgePosition.x, edgePosition.y);
+    });
+
+    cy.wait(150);
+    graphVis.getPositionOfEdgeBetween("Person,Order").then((edgePosition: any) => {
+      graphVis.getGraphVisCanvas().click(edgePosition.x, edgePosition.y, {force: true});
+    });
+
+    cy.wait(1000);
+
+    graphVis.getPositionOfEdgeBetween("Person,Order").then((edgePosition: any) => {
+      graphVis.getGraphVisCanvas().click(edgePosition.x, edgePosition.y, {force: true});
+    });
+
+    confirmationModal.deleteRelationship();
+    cy.waitUntil(() => cy.findByLabelText("confirm-deletePropertyWarn-no").click());
+    relationshipModal.cancelModal();
+    // To verify that property is still visible
+    cy.wait(3000); //graph needs to stabilize before canvas click
+    graphVis.getPositionsOfNodes("Person").then((nodePositions: any) => {
+      let personCoordinates: any = nodePositions["Person"];
+      cy.waitUntil(() => graphVis.getGraphVisCanvas().click(personCoordinates.x, personCoordinates.y));
+    });
+    graphViewSidePanel.getPropertyName("purchased").should("exist");
+  });
 
   it("Delete a relationship from graph view", {defaultCommandTimeout: 120000}, () => {
     toolbar.getModelToolbarIcon().click();

@@ -52,10 +52,24 @@ enum eVisibleSettings {
   EntityToConceptClass
 }
 
-const AddEditRelationship: React.FC<Props> = (props) => {
+const AddEditRelationship: React.FC<Props> = ({
+  openRelationshipModal,
+  setOpenRelationshipModal,
+  isEditing,
+  relationshipInfo,
+  dataModel,
+  relationshipModalVisible,
+  toggleRelationshipModal,
+  updateSavedEntity,
+  canReadEntityModel,
+  canWriteEntityModel,
+  hubCentralConfig,
+  getColor,
+  mapFunctions,
+}) => {
 
-  const [visibleSettings, setVisibleSettings] = useState<eVisibleSettings>(props.relationshipInfo.isConcept ? eVisibleSettings.EntityToConceptClass : eVisibleSettings.EntityToEntity);
-  const headerText = !props.isEditing ? visibleSettings === eVisibleSettings.EntityToConceptClass ? ModelingTooltips.addRelationshipHeader("entityToConceptClass") : ModelingTooltips.addRelationshipHeader("entityToEntity") : "";
+  const [visibleSettings, setVisibleSettings] = useState<eVisibleSettings>(relationshipInfo.isConcept ? eVisibleSettings.EntityToConceptClass : eVisibleSettings.EntityToEntity);
+  const headerText = !isEditing ? visibleSettings === eVisibleSettings.EntityToConceptClass ? ModelingTooltips.addRelationshipHeader("entityToConceptClass") : ModelingTooltips.addRelationshipHeader("entityToEntity") : "";
 
   const [relationshipName, setRelationshipName] = useState(""); //set default value when editing
   const [joinPropertyValue, setJoinPropertyValue] = useState("");  //set default value when editing
@@ -96,25 +110,25 @@ const AddEditRelationship: React.FC<Props> = (props) => {
   const dummyNode: any = useRef();
 
   const initRelationship = (sourceEntityIdx) => {
-    let sourceEntityDetails = props.dataModel[sourceEntityIdx];
-    if (props.relationshipInfo.relationshipName !== "") {
-      setRelationshipName(props.relationshipInfo.relationshipName);
+    let sourceEntityDetails = dataModel[sourceEntityIdx];
+    if (relationshipInfo.relationshipName !== "") {
+      setRelationshipName(relationshipInfo.relationshipName);
       setErrorMessage("");
     } else {
       setRelationshipName("");
       setErrorMessage(ModelingTooltips.relationshipEmpty);
     }
-    if (props.relationshipInfo.joinPropertyName !== "") {
+    if (relationshipInfo.joinPropertyName !== "") {
       setPropertyErrorMessage("");
     } else {
       setPropertyErrorMessage(ModelingTooltips.propertyNameEmpty);
     }
-    if (props.relationshipInfo.joinPropertyName && props.relationshipInfo.joinPropertyName !== "undefined") {
-      if (props.relationshipInfo.isConcept) {
-        setSourcePropertyValue(props.relationshipInfo.joinPropertyName);
-        setRelationshipExpression(props.relationshipInfo.conceptExpression);
+    if (relationshipInfo.joinPropertyName && relationshipInfo.joinPropertyName !== "undefined") {
+      if (relationshipInfo.isConcept) {
+        setSourcePropertyValue(relationshipInfo.joinPropertyName);
+        setRelationshipExpression(relationshipInfo.conceptExpression);
       } else {
-        setJoinPropertyValue(props.relationshipInfo.joinPropertyName);
+        setJoinPropertyValue(relationshipInfo.joinPropertyName);
         setOptionalCollapsed(false);
       }
     } else {
@@ -122,25 +136,25 @@ const AddEditRelationship: React.FC<Props> = (props) => {
       setSourcePropertyValue("");
       setRelationshipExpression("");
     }
-    setTargetEntityName(props.relationshipInfo.targetNodeName);
-    setTargetEntityColor(props.relationshipInfo.targetNodeColor);
+    setTargetEntityName(relationshipInfo.targetNodeName);
+    setTargetEntityColor(relationshipInfo.targetNodeColor);
     setOneToManySelected(false);
-    if (sourceEntityDetails.model.definitions[props.relationshipInfo.sourceNodeName]?.properties[props.relationshipInfo.relationshipName]?.hasOwnProperty("items")) {
+    if (sourceEntityDetails.model.definitions[relationshipInfo.sourceNodeName]?.properties[relationshipInfo.relationshipName]?.hasOwnProperty("items")) {
       //set cardinality selection to "multiple"
       setOneToManySelected(true);
     }
   };
 
   useEffect(() => {
-    if (props.dataModel.length > 0 && JSON.stringify(props.relationshipInfo) !== "{}") {
-      let isConcept = props.relationshipInfo.isConcept;
+    if (dataModel.length > 0 && JSON.stringify(relationshipInfo) !== "{}") {
+      let isConcept = relationshipInfo.isConcept;
       setVisibleSettings(!isConcept ? eVisibleSettings.EntityToEntity : eVisibleSettings.EntityToConceptClass);
-      let targetEntityIdx = props.dataModel.findIndex(obj => isConcept ? obj.conceptName === props.relationshipInfo.targetNodeName : obj.entityName === props.relationshipInfo.targetNodeName);
-      let sourceEntityIdx = props.dataModel.findIndex(obj => obj.entityName === props.relationshipInfo.sourceNodeName);
+      let targetEntityIdx = dataModel.findIndex(obj => isConcept ? obj.conceptName === relationshipInfo.targetNodeName : obj.entityName === relationshipInfo.targetNodeName);
+      let sourceEntityIdx = dataModel.findIndex(obj => obj.entityName === relationshipInfo.sourceNodeName);
 
       initRelationship(sourceEntityIdx);
       if (!isConcept) {
-        if (props.relationshipInfo.targetNodeName !== "Select target entity type*") {
+        if (relationshipInfo.targetNodeName !== "Select target entity type*") {
           setEmptyTargetEntity(false);
           createJoinMenu(targetEntityIdx);
         } else {
@@ -148,7 +162,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
           setEmptyTargetEntity(true);
         }
       } else {
-        if (props.relationshipInfo.targetNodeName !== "Select a concept class*") {
+        if (relationshipInfo.targetNodeName !== "Select a concept class*") {
           setEmptyTargetEntity(false);
           createJoinMenu(sourceEntityIdx);
         } else {
@@ -157,26 +171,26 @@ const AddEditRelationship: React.FC<Props> = (props) => {
         }
       }
     }
-  }, [props.dataModel, props.relationshipInfo]);
+  }, [dataModel, relationshipInfo]);
 
   useEffect(() => {
     if (visibleSettings === eVisibleSettings.EntityToConceptClass) {
-      let sourceEntityIdx = props.dataModel.findIndex(obj => obj.entityName === props.relationshipInfo.sourceNodeName);
+      let sourceEntityIdx = dataModel.findIndex(obj => obj.entityName === relationshipInfo.sourceNodeName);
       createJoinMenu(sourceEntityIdx);
     }
   }, [visibleSettings]);
 
   useEffect(() => {
-    if (!props.relationshipModalVisible) {
+    if (!relationshipModalVisible) {
       toggleLoading(false);
-      props.setOpenRelationshipModal(false);
-      props.toggleRelationshipModal(true);
+      setOpenRelationshipModal(false);
+      toggleRelationshipModal(true);
     }
-  }, [props.relationshipModalVisible]);
+  }, [relationshipModalVisible]);
 
   const getPropertyType = (joinPropName, targetNodeName) => {
-    let targetEntityIdx = props.dataModel.findIndex(obj => obj.entityName === targetNodeName);
-    let targetEntityDetails = props.dataModel[targetEntityIdx];
+    let targetEntityIdx = dataModel.findIndex(obj => obj.entityName === targetNodeName);
+    let targetEntityDetails = dataModel[targetEntityIdx];
     if (joinPropName && joinPropName !== "") {
       return targetEntityDetails.model.definitions[targetNodeName].properties[joinPropName].datatype;
     } else {
@@ -190,7 +204,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
     let sortable = propertyOptions.sortable;
 
     if (propertyOptions.propertyType === PropertyType.RelatedEntity && !multiple) {
-      let externalEntity = props.dataModel.find(entity => entity.entityName === propertyOptions.type);
+      let externalEntity = dataModel.find(entity => entity.entityName === propertyOptions.type);
       if (propertyOptions.joinPropertyType === "") {
         return {
           datatype: "string",
@@ -206,7 +220,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
       }
 
     } else if (propertyOptions.propertyType === PropertyType.RelatedEntity && multiple) {
-      let externalEntity = props.dataModel.find(entity => entity.entityName === propertyOptions.type);
+      let externalEntity = dataModel.find(entity => entity.entityName === propertyOptions.type);
       if (propertyOptions.joinPropertyType === "") {
         return {
           datatype: "array",
@@ -269,7 +283,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
   const editPropertyUpdateDefinition = async (entityIdx: number, definitionName: string, propertyName: string, editPropertyOptions) => {
     let parseName = definitionName.split(",");
     let parseDefinitionName = parseName[parseName.length - 1];
-    let updatedDefinitions = {...props.dataModel[entityIdx].model.definitions};
+    let updatedDefinitions = {...dataModel[entityIdx].model.definitions};
     let entityTypeDefinition = updatedDefinitions[parseDefinitionName];
     let newProperty = createPropertyDefinitionPayload(editPropertyOptions.propertyOptions);
 
@@ -335,8 +349,8 @@ const AddEditRelationship: React.FC<Props> = (props) => {
       entityName: definitionName,
       modelDefinition: updatedDefinitions
     };
-    if (props.updateSavedEntity) {
-      await props.updateSavedEntity([modifiedEntityStruct]);
+    if (updateSavedEntity) {
+      await updateSavedEntity([modifiedEntityStruct]);
     }
 
     return modifiedEntityStruct;
@@ -345,7 +359,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
   const editRelatedConceptUpdateEntityType = async (entityIdx: number, definitionName: string, editRelatedConceptOptions) => {
     let parseName = definitionName.split(",");
     let parseDefinitionName = parseName[parseName.length - 1];
-    let updatedDefinitions = {...props.dataModel[entityIdx].model.definitions};
+    let updatedDefinitions = {...dataModel[entityIdx].model.definitions};
     let entityTypeDefinition = updatedDefinitions[parseDefinitionName];
     let conceptClassName = editRelatedConceptOptions.conceptClass;
     if (entityTypeDefinition.hasOwnProperty("relatedConcepts")) {
@@ -365,8 +379,8 @@ const AddEditRelationship: React.FC<Props> = (props) => {
       entityName: definitionName,
       modelDefinition: updatedDefinitions
     };
-    if (props.updateSavedEntity) {
-      await props.updateSavedEntity([modifiedEntityStruct]);
+    if (updateSavedEntity) {
+      await updateSavedEntity([modifiedEntityStruct]);
     }
 
     return modifiedEntityStruct;
@@ -375,8 +389,8 @@ const AddEditRelationship: React.FC<Props> = (props) => {
   const onCancel = () => {
     if (!loading) {
       setErrorMessage("");
-      props.toggleRelationshipModal(true);
-      props.setOpenRelationshipModal(false);
+      toggleRelationshipModal(true);
+      setOpenRelationshipModal(false);
       setSubmitClicked(false);
       setTargetEntityName("");
       setTargetEntityColor("");
@@ -392,25 +406,25 @@ const AddEditRelationship: React.FC<Props> = (props) => {
     setSubmitClicked(true);
     if (errorMessage === "" && !emptyTargetEntity) {
       if (visibleSettings === eVisibleSettings.EntityToConceptClass && propertyErrorMessage !== "") return;
-      let sourceEntityIdx = props.dataModel.findIndex(obj => obj.entityName === props.relationshipInfo.sourceNodeName);
-      let sourceProperties = props.dataModel[sourceEntityIdx].model.definitions[props.relationshipInfo.sourceNodeName].properties;
-      let propertyNamesArray = props.isEditing ? Object.keys(sourceProperties).filter(propertyName => propertyName !== props.relationshipInfo.relationshipName) : Object.keys(sourceProperties);
+      let sourceEntityIdx = dataModel.findIndex(obj => obj.entityName === relationshipInfo.sourceNodeName);
+      let sourceProperties = dataModel[sourceEntityIdx].model.definitions[relationshipInfo.sourceNodeName].properties;
+      let propertyNamesArray = isEditing ? Object.keys(sourceProperties).filter(propertyName => propertyName !== relationshipInfo.relationshipName) : Object.keys(sourceProperties);
       let joinPropertyVal = joinPropertyValue === "None" ? "" : joinPropertyValue;
-      if (propertyNamesArray.includes(relationshipName) || props.relationshipInfo.sourceNodeName === relationshipName) {
+      if (propertyNamesArray.includes(relationshipName) || relationshipInfo.sourceNodeName === relationshipName) {
         setErrorMessage("name-error");
       } else {
 
         //do not enter loading save if no changes have been made
-        if (joinPropertyValue === props.relationshipInfo.joinPropertyName && relationshipName === props.relationshipInfo.relationshipName && !cardinalityToggled) {
+        if (joinPropertyValue === relationshipInfo.joinPropertyName && relationshipName === relationshipInfo.relationshipName && !cardinalityToggled) {
           toggleLoading(false);
-          props.setOpenRelationshipModal(false);
+          setOpenRelationshipModal(false);
         } else {
           toggleLoading(true);
           let entityModified: any;
           if (visibleSettings === eVisibleSettings.EntityToEntity) {
             const newEditPropertyOptions = {
               name: relationshipName,
-              isEdit: props.isEditing,
+              isEdit: isEditing,
               propertyOptions: {
                 facetable: false,
                 identifier: "no",
@@ -423,7 +437,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
                 type: targetEntityName
               }
             };
-            entityModified = editPropertyUpdateDefinition(sourceEntityIdx, props.relationshipInfo.sourceNodeName, props.relationshipInfo.relationshipName, newEditPropertyOptions);
+            entityModified = editPropertyUpdateDefinition(sourceEntityIdx, relationshipInfo.sourceNodeName, relationshipInfo.relationshipName, newEditPropertyOptions);
           } else {
             let newRelatedConceptPayload = {
               conceptClass: targetEntityName,
@@ -431,7 +445,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
               context: sourcePropertyValue,
               predicate: relationshipName
             };
-            entityModified = editRelatedConceptUpdateEntityType(sourceEntityIdx, props.relationshipInfo.sourceNodeName, newRelatedConceptPayload);
+            entityModified = editRelatedConceptUpdateEntityType(sourceEntityIdx, relationshipInfo.sourceNodeName, newRelatedConceptPayload);
           }
           updateEntityModified(entityModified);
         }
@@ -446,14 +460,14 @@ const AddEditRelationship: React.FC<Props> = (props) => {
 
   const createJoinMenu = (entityIdx) => {
     let targetEntityDetails, entityUpdated, modelUpdated, menuProps, model, definitions;
-    targetEntityDetails = props.dataModel[entityIdx];
+    targetEntityDetails = dataModel[entityIdx];
     let isConceptClassJoinView = visibleSettings === eVisibleSettings.EntityToConceptClass;
-    model = isConceptClassJoinView ? targetEntityDetails.model.definitions[props.relationshipInfo.sourceNodeName] : targetEntityDetails.model.definitions[props.relationshipInfo.targetNodeName];
+    model = isConceptClassJoinView ? targetEntityDetails.model.definitions[relationshipInfo.sourceNodeName] : targetEntityDetails.model.definitions[relationshipInfo.targetNodeName];
     definitions = isConceptClassJoinView ? targetEntityDetails.model.definitions : targetEntityDetails.model.definitions;
-    entityUpdated = modelingOptions.modifiedEntitiesArray.find(ent => ent.entityName === props.relationshipInfo.targetNodeName);
+    entityUpdated = modelingOptions.modifiedEntitiesArray.find(ent => ent.entityName === relationshipInfo.targetNodeName);
     // Modified model data (if present)
     if (entityUpdated) {
-      modelUpdated = entityUpdated.modelDefinition[props.relationshipInfo.targetNodeName];
+      modelUpdated = entityUpdated.modelDefinition[relationshipInfo.targetNodeName];
     }
     menuProps = getJoinMenuProps(model, modelUpdated, definitions, "");
 
@@ -592,9 +606,9 @@ const AddEditRelationship: React.FC<Props> = (props) => {
     let isConcept = visibleSettings === eVisibleSettings.EntityToConceptClass;
     let nodeName = !isConcept ? "entityName" : "conceptName";
     if (!isConcept) {
-      entityIdx = props.dataModel.findIndex(entity => entity[nodeName] === entityName);
-      model = props.dataModel[entityIdx].model.definitions[entityName];
-      definitions = props.dataModel[entityIdx].model.definitions;
+      entityIdx = dataModel.findIndex(entity => entity[nodeName] === entityName);
+      model = dataModel[entityIdx].model.definitions[entityName];
+      definitions = dataModel[entityIdx].model.definitions;
       menuProps = getJoinMenuProps(model, "", definitions, "");
       menuProps.unshift({value: "None", label: "None", type: "string"});
       if (menuProps) {
@@ -608,7 +622,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
     //update target entity name and color,
     setTargetEntityName(entityName);
     let category = !isConcept ? "entities" : "concepts";
-    let nodeColor = props.getColor(entityName, isConcept) || props.hubCentralConfig.modeling[category][entityName].color;
+    let nodeColor = getColor(entityName, isConcept) || hubCentralConfig.modeling[category][entityName].color;
     setTargetEntityColor(nodeColor);
   }
 
@@ -637,7 +651,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
       suffix={<FontAwesomeIcon icon={faSearch} className={styles.searchIcon} />}
     />
     {
-      entityTypesToTuples(props.dataModel)
+      entityTypesToTuples(dataModel)
         .filter(oElement => !filterEntity || (oElement.value && oElement.value.toLowerCase().includes(filterEntity.toLowerCase())))
         .map((item, index) =>
           <Dropdown.Item
@@ -783,8 +797,8 @@ const AddEditRelationship: React.FC<Props> = (props) => {
 
 
   const handleRelationshipDeletion = async () => {
-    let entityName = props.relationshipInfo.sourceNodeName;
-    let propertyName = props.relationshipInfo.relationshipName;
+    let entityName = relationshipInfo.sourceNodeName;
+    let propertyName = relationshipInfo.relationshipName;
     const response = await entityReferences(entityName, propertyName);
     if (response !== undefined && response["status"] === 200) {
       let newConfirmType = ConfirmationType.DeletePropertyWarn;
@@ -802,38 +816,16 @@ const AddEditRelationship: React.FC<Props> = (props) => {
       setConfirmType(newConfirmType);
       toggleConfirmModal(true);
     }
-    let sourceEntityName = props.relationshipInfo.sourceNodeName;
-    let entityTypeDefinition;
-    let updatedDefinitions;
-    for (let i = 0; i < props.dataModel.length; i++) {
-      if (props.dataModel[i].entityName === sourceEntityName) {
-        updatedDefinitions = {...props.dataModel[i].model};
-        entityTypeDefinition = props.dataModel[i].model.definitions[sourceEntityName];
-      }
-    }
-    if (visibleSettings === eVisibleSettings.EntityToEntity) {
-      delete entityTypeDefinition["properties"][propertyName];
-    } else {
-      let itemIndex = entityTypeDefinition["relatedConcepts"].findIndex(obj => obj.predicate === propertyName && obj.conceptClass === targetEntityName);
-      entityTypeDefinition["relatedConcepts"].splice(itemIndex, 1);
-    }
-    updatedDefinitions[sourceEntityName] = entityTypeDefinition;
-    let entityModifiedInfo: EntityModified = {
-      entityName: sourceEntityName,
-      modelDefinition: updatedDefinitions.definitions
-    };
-    setModifiedEntity(entityModifiedInfo);
-    updateEntityModified(modifiedEntity);
   };
 
   const modalFooter = <>
     <div className={styles.deleteTooltip}>
       <HCTooltip text={ModelingTooltips.deleteRelationshipIcon} id="delete-relationship-tooltip" placement="top">
         <i key="last" role="delete-entity button" data-testid={"delete-relationship"}>
-          <FontAwesomeIcon className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconTrashReadOnly : styles.deleteIcon} size="lg"
+          <FontAwesomeIcon className={!canWriteEntityModel && canReadEntityModel ? styles.iconTrashReadOnly : styles.deleteIcon} size="lg"
             icon={faTrashAlt}
             onClick={(event) => {
-              if (!props.canWriteEntityModel && props.canReadEntityModel) {
+              if (!canWriteEntityModel && canReadEntityModel) {
                 return event.preventDefault();
               } else {
                 handleRelationshipDeletion();
@@ -856,12 +848,35 @@ const AddEditRelationship: React.FC<Props> = (props) => {
         type="submit"
         loading={loading}
         onClick={onSubmit}
-      >{props.isEditing ? "Save" : "Add"}</HCButton>
+      >{isEditing ? "Save" : "Add"}</HCButton>
     </div>
   </>;
 
   const confirmAction = async () => {
-    await props.updateSavedEntity([modifiedEntity]);
+    let propertyName = relationshipInfo.relationshipName;
+    let sourceEntityName = relationshipInfo.sourceNodeName;
+    let entityTypeDefinition;
+    let updatedDefinitions;
+    for (let i = 0; i < dataModel.length; i++) {
+      if (dataModel[i].entityName === sourceEntityName) {
+        updatedDefinitions = {...dataModel[i].model};
+        entityTypeDefinition = dataModel[i].model.definitions[sourceEntityName];
+      }
+    }
+    if (visibleSettings === eVisibleSettings.EntityToEntity) {
+      delete entityTypeDefinition["properties"][propertyName];
+    } else {
+      let itemIndex = entityTypeDefinition["relatedConcepts"].findIndex(obj => obj.predicate === propertyName && obj.conceptClass === targetEntityName);
+      entityTypeDefinition["relatedConcepts"].splice(itemIndex, 1);
+    }
+    updatedDefinitions[sourceEntityName] = entityTypeDefinition;
+    let entityModifiedInfo: EntityModified = {
+      entityName: sourceEntityName,
+      modelDefinition: updatedDefinitions.definitions
+    };
+    setModifiedEntity(entityModifiedInfo);
+    updateEntityModified(modifiedEntity);
+    await updateSavedEntity([entityModifiedInfo]);
     await getSystemInfo();
     toggleConfirmModal(false);
   };
@@ -870,8 +885,8 @@ const AddEditRelationship: React.FC<Props> = (props) => {
     let defaultNodeIcon = isConceptTarget ? defaultConceptIcon : defaultIcon;
     let icon = defaultNodeIcon;
     let modelCategory = getCategoryWithinModel(isConceptTarget);
-    let iconExistsOnServer = iconExistsForNode(nodeName, isConceptTarget, props.hubCentralConfig);
-    return iconExistsOnServer ? props.hubCentralConfig.modeling[modelCategory][nodeName].icon
+    let iconExistsOnServer = iconExistsForNode(nodeName, isConceptTarget, hubCentralConfig);
+    return iconExistsOnServer ? hubCentralConfig.modeling[modelCategory][nodeName].icon
       : icon;
   };
 
@@ -907,7 +922,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
   };
 
   const functionsDef = (functionName) => {
-    return props.mapFunctions.find(func => {
+    return mapFunctions.find(func => {
       return func.functionName === functionName;
     }).signature;
   };
@@ -925,7 +940,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
   /* Insert Function signature in expression */
   const handleFunctionsList = async () => {
     let funcArr: any[] = [];
-    props.mapFunctions.forEach(element => {
+    mapFunctions.forEach(element => {
       funcArr.push({"key": element.functionName, "value": element.functionName});
     });
     setPropListForDropDown(funcArr);
@@ -1058,11 +1073,11 @@ const AddEditRelationship: React.FC<Props> = (props) => {
   </div>;
 
   return (<Modal
-    show={props.openRelationshipModal}
+    show={openRelationshipModal}
     dialogClassName={styles.dialog960w}
   >
     <Modal.Header className={"pe-4"}>
-      <span aria-label="relationshipHeader" className={"fs-3"}>{props.isEditing ? "Edit Relationship" : "Add a Relationship"}</span>
+      <span aria-label="relationshipHeader" className={"fs-3"}>{isEditing ? "Edit Relationship" : "Add a Relationship"}</span>
       <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
     </Modal.Header>
     <Modal.Body className={"py-4"}>
@@ -1072,8 +1087,8 @@ const AddEditRelationship: React.FC<Props> = (props) => {
             {headerText}
           </div>
         }
-        <HCTooltip id="relationshipTypeToggleDisabled-tooltip" text={props.isEditing ? ModelingTooltips.relationshipTypeToggleDisabledInfo : ""} placement={"bottom"}>
-          <div id={props.isEditing ? "relationshipTypeToggleDisabled" : "relationshipTypeToggle"} className={props.isEditing ? styles.relationshipTypeToggleDisabled : ""}>
+        <HCTooltip id="relationshipTypeToggleDisabled-tooltip" text={isEditing ? ModelingTooltips.relationshipTypeToggleDisabledInfo : ""} placement={"bottom"}>
+          <div id={isEditing ? "relationshipTypeToggleDisabled" : "relationshipTypeToggle"} className={isEditing ? styles.relationshipTypeToggleDisabled : ""}>
             <Row>
               <Col className={"d-flex mb-2 mt-3 align-items-center"} id="srcType">
                 <Form.Check
@@ -1087,8 +1102,8 @@ const AddEditRelationship: React.FC<Props> = (props) => {
                   value={eVisibleSettings[eVisibleSettings.EntityToEntity]}
                   aria-label={"entityToEntity"}
                   className={"mb-0"}
-                  style={props.isEditing ? {cursor: "not-allowed"} : {cursor: "default"}}
-                //disabled={props.isEditing}
+                  style={isEditing ? {cursor: "not-allowed"} : {cursor: "default"}}
+                //disabled={isEditing}
                 />
                 <Form.Check
                   inline
@@ -1102,7 +1117,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
                   aria-label={"entityToConceptClass"}
                   className={"mb-0"}
                   style={{cursor: "not-allowed"}}
-                //disabled={props.isEditing}
+                //disabled={isEditing}
                 />
               </Col>
             </Row>
@@ -1113,11 +1128,11 @@ const AddEditRelationship: React.FC<Props> = (props) => {
           <div ref={dummyNode}></div>
           <div className={styles.nodeDisplay}>
             <span className={styles.nodeLabel}>SOURCE</span>
-            <HCCard data-testid={"sourceEntityNode"} style={{width: 240, backgroundColor: props.relationshipInfo.sourceNodeColor}} bodyClassName={styles.cardBody} className={styles.cardContainer}>
+            <HCCard data-testid={"sourceEntityNode"} style={{width: 240, backgroundColor: relationshipInfo.sourceNodeColor}} bodyClassName={styles.cardBody} className={styles.cardContainer}>
               <div className={`${styles.cardText} w-100 h-100 d-flex justify-content-center align-items-center`}>
-                <p data-testid={`${props.relationshipInfo.sourceNodeName}-sourceNodeName`} className={"m-0 text-center"}>
-                  <DynamicIcons name={getEntityTypeIcon(props.relationshipInfo.sourceNodeName)} />
-                  <b>{props.relationshipInfo.sourceNodeName}</b>
+                <p data-testid={`${relationshipInfo.sourceNodeName}-sourceNodeName`} className={"m-0 text-center"}>
+                  <DynamicIcons name={getEntityTypeIcon(relationshipInfo.sourceNodeName)} />
+                  <b>{relationshipInfo.sourceNodeName}</b>
                 </p>
               </div>
             </HCCard>
@@ -1145,7 +1160,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
               <HCTooltip text={errorMessage === "name-error" ? ModelingTooltips.duplicatePropertyError(relationshipName) : errorMessage} placement={"bottom"} id="exclamation-tooltip">
                 <i data-testid="error-circle"><FontAwesomeIcon icon={faExclamationCircle} size="1x" className={styles.errorIcon} /></i>
               </HCTooltip> : ""}
-            <HCTooltip text={ModelingTooltips.relationshipNameInfo(props.relationshipInfo.sourceNodeName)} placement={"bottom"} id="relationship-name-tooltip">
+            <HCTooltip text={ModelingTooltips.relationshipNameInfo(relationshipInfo.sourceNodeName)} placement={"bottom"} id="relationship-name-tooltip">
               <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
             </HCTooltip>
           </div>
@@ -1172,7 +1187,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
                   </p>
                 </div>
               </HCCard>
-              {!props.isEditing ?
+              {!isEditing ?
                 <Dropdown>
                   <Dropdown.Toggle data-testid={"targetEntityDropdown"} className={`p-0 border-none rounded-0 ${styles.dropdownButtonMenu}`}>
                     <ChevronDown />
