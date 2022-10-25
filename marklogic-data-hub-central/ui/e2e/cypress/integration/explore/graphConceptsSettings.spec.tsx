@@ -86,26 +86,6 @@ describe("Entity Type Settings Modal", () => {
     dataModelDisplaySettingsModal.getConceptIconMenu(defaultConceptData.name).find("svg").last().click();
     dataModelDisplaySettingsModal.getConceptIconButtonWrapper(defaultConceptData.name).should("have.attr", "data-icon", newConceptData.icon);
 
-    cy.log("**Expand concept class row to edit concept instance**");
-    dataModelDisplaySettingsModal.getConceptExpandRow(defaultConceptData.name).click();
-
-    cy.log("**Change the color and icon to one an concept instance");
-    cy.log("**(Concept instance) Verify default color it's selected, select new one and check the selection**");
-    dataModelDisplaySettingsModal.getConceptColorButton(defaultConceptData.rowKey).should("have.attr", "data-color").then(color => {
-      expect(Cypress._.toLower(color)).equal(Cypress._.toLower(defaultConceptData.color.HEX));
-    });
-    dataModelDisplaySettingsModal.getConceptColorButton(defaultConceptData.rowKey).click();
-    dataModelDisplaySettingsModal.getColorInPicket(newConceptData.semanticConcept.color.HEX).click();
-    dataModelDisplaySettingsModal.getConceptColorButton(defaultConceptData.rowKey).should("have.attr", "data-color", Cypress._.toLower(newConceptData.semanticConcept.color.HEX));
-
-    cy.log("**(Concept instance) Verify default icon it's selected, select new one and check the selection**");
-    dataModelDisplaySettingsModal.getConceptIconButtonWrapper(defaultConceptData.rowKey).should("have.attr", "data-icon", defaultConceptData.icon);
-    dataModelDisplaySettingsModal.getConceptIconButton(defaultConceptData.rowKey).click();
-    dataModelDisplaySettingsModal.getConceptIconSearchInput(defaultConceptData.rowKey).type(newConceptData.semanticConcept.icon);
-    dataModelDisplaySettingsModal.getConceptIconMenu(defaultConceptData.rowKey).find("svg").last().click();
-    dataModelDisplaySettingsModal.getConceptIconButtonWrapper(defaultConceptData.rowKey).should("have.attr", "data-icon", newConceptData.semanticConcept.icon);
-
-
 
     cy.log("**Cancel the edition and verify that the modal close**");
     dataModelDisplaySettingsModal.getModalCancelButton().click();
@@ -120,12 +100,6 @@ describe("Entity Type Settings Modal", () => {
       expect(Cypress._.toLower(color)).equal(Cypress._.toLower(defaultConceptData.color.HEX));
     });
     dataModelDisplaySettingsModal.getConceptIconButtonWrapper(defaultConceptData.name).should("have.attr", "data-icon", defaultConceptData.icon);
-    cy.log("**Expand concept class row**");
-    dataModelDisplaySettingsModal.getConceptExpandRow(defaultConceptData.name).click();
-    dataModelDisplaySettingsModal.getConceptColorButton(defaultConceptData.rowKey).should("have.attr", "data-color").then(color => {
-      expect(Cypress._.toLower(color)).equal(Cypress._.toLower(defaultConceptData.color.HEX));
-    });
-    dataModelDisplaySettingsModal.getConceptIconButtonWrapper(defaultConceptData.rowKey).should("have.attr", "data-icon", defaultConceptData.icon);
 
     cy.log("**Close the modal**");
     dataModelDisplaySettingsModal.getModalCloseButton().click();
@@ -161,24 +135,6 @@ describe("Entity Type Settings Modal", () => {
     dataModelDisplaySettingsModal.getConceptIconMenu(defaultConceptData.name).find("svg").last().click();
     dataModelDisplaySettingsModal.getConceptIconButtonWrapper(defaultConceptData.name).should("have.attr", "data-icon", newConceptData.icon);
 
-    cy.log("**Expand concept class row to edit concept instance**");
-    dataModelDisplaySettingsModal.getConceptExpandRow(defaultConceptData.name).click();
-
-    cy.log("**Change the color and icon to one an concept instance");
-    cy.log("**(Concept instance) Verify default color it's selected, select new one and check the selection**");
-    dataModelDisplaySettingsModal.getConceptColorButton(defaultConceptData.rowKey).should("have.attr", "data-color").then(color => {
-      expect(Cypress._.toLower(color)).equal(Cypress._.toLower(defaultConceptData.color.HEX));
-    });
-    dataModelDisplaySettingsModal.getConceptColorButton(defaultConceptData.rowKey).click();
-    dataModelDisplaySettingsModal.getColorInPicket(newConceptData.semanticConcept.color.HEX).click();
-    dataModelDisplaySettingsModal.getConceptColorButton(defaultConceptData.rowKey).should("have.attr", "data-color", Cypress._.toLower(newConceptData.semanticConcept.color.HEX));
-
-    cy.log("**(Concept instance) Verify default icon it's selected, select new one and check the selection**");
-    dataModelDisplaySettingsModal.getConceptIconButtonWrapper(defaultConceptData.rowKey).should("have.attr", "data-icon", defaultConceptData.icon);
-    dataModelDisplaySettingsModal.getConceptIconButton(defaultConceptData.rowKey).click();
-    dataModelDisplaySettingsModal.getConceptIconSearchInput(defaultConceptData.rowKey).type(newConceptData.semanticConcept.icon);
-    dataModelDisplaySettingsModal.getConceptIconMenu(defaultConceptData.rowKey).find("svg").last().click();
-    dataModelDisplaySettingsModal.getConceptIconButtonWrapper(defaultConceptData.rowKey).should("have.attr", "data-icon", newConceptData.semanticConcept.icon);
 
     cy.log("**Save the changes**");
     dataModelDisplaySettingsModal.getModalSaveButton().click();
@@ -191,10 +147,6 @@ describe("Entity Type Settings Modal", () => {
     dataModelDisplaySettingsModal.getConceptRadioButtopn().click();
     dataModelDisplaySettingsModal.getConceptColorButton(defaultConceptData.name).should("have.attr", "data-color", Cypress._.toLower(newConceptData.color.HEX));
     dataModelDisplaySettingsModal.getConceptIconButtonWrapper(defaultConceptData.name).should("have.attr", "data-icon", newConceptData.icon);
-    cy.log("**Expand concept class row**");
-    dataModelDisplaySettingsModal.getConceptExpandRow(defaultConceptData.name).click();
-    dataModelDisplaySettingsModal.getConceptColorButton(defaultConceptData.rowKey).should("have.attr", "data-color", Cypress._.toLower(newConceptData.semanticConcept.color.HEX));
-    dataModelDisplaySettingsModal.getConceptIconButtonWrapper(defaultConceptData.rowKey).should("have.attr", "data-icon", newConceptData.semanticConcept.icon);
 
     cy.log("**Close the modal**");
     dataModelDisplaySettingsModal.getModalCloseButton().click();
