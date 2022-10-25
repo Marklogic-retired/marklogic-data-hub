@@ -42,6 +42,7 @@ describe("Mapping", () => {
     cy.loginAsDeveloper().withRequest();
     cy.deleteSteps("mapping", "mapRelation");
     cy.deleteEntities("Relation");
+    cy.deleteEntities("TestEntity");
     cy.deleteFlows("relationFlow");
     cy.deleteRecordsInFinal("mapRelation");
     cy.resetTestUser();
@@ -68,6 +69,24 @@ describe("Mapping", () => {
     //Save Changes
     cy.publishDataModel();
     propertyTable.getForeignIcon("relatedTo").should("exist");
+  });
+  it("Create new entity and check if there is no message in curate tile", {defaultCommandTimeout: 120000}, () => {
+    cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
+    modelPage.selectView("table");
+    entityTypeTable.waitForTableToLoad();
+    cy.waitUntil(() => modelPage.getAddButton()).click({force: true});
+    modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});
+    entityTypeModal.newEntityName("TestEntity");
+    entityTypeModal.getAddButton().click();
+    cy.waitForAsyncRequest();
+    cy.wait(1000);
+    //Save Changes
+    cy.publishDataModel();
+    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
+    cy.waitUntil(() => curatePage.getEntityTypePanel("TestEntity")).should("be.visible");
+    curatePage.getEntityTypePanel("TestEntity").should("exist");
+    curatePage.toggleEntityTypeId("TestEntity");
+    cy.contains("This functionality is not implemented yet.").should("not.exist");
   });
   it("Create new mapping in Curate", {defaultCommandTimeout: 120000}, () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();

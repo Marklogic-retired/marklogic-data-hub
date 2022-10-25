@@ -97,7 +97,12 @@ const EntityTiles = (props) => {
       }
     }
 
-    if (dataHubViewSettings && dataHubViewSettings?.activeTabs?.length) {
+    const entityKeys =  Object.keys(props.entityModels);
+    const activeTab = dataHubViewSettings?.activeTabs.map(stepName => stepName && stepName.split("-").pop());
+    const filterValues = entityKeys?.filter(key => !activeTab?.includes(key));
+
+    if (dataHubViewSettings && dataHubViewSettings?.activeTabs?.length
+        && !(filterValues.length && entityKeys.length)) {
       setViewData(dataHubViewSettings?.activeTabs);
     } else {
       let tempView: string[] = [];
@@ -107,6 +112,7 @@ const EntityTiles = (props) => {
       setViewData([...tempView]);
     }
   }, [props, location]);
+
 
   const updateView = (index, artifactType, entityType) => {
     let tempView: string[];
@@ -476,7 +482,7 @@ const EntityTiles = (props) => {
           />
         </div>;
     } else {
-      output = <div><br />This functionality implemented yet.</div>;
+      output = <div><br />This functionality is not implemented yet.</div>;
     }
     return output;
   };
