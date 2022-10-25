@@ -113,9 +113,6 @@ const ConceptsDisplaySettings: React.FC<Props> = ({conceptsSettingsData, onConce
         rowKey="rowKey"
         columns={exploreSettingsColumns}
         data={filteredSettingsData}
-        showExpandIndicator={{bordered: true}}
-        childrenIndent={true}
-        baseIndent={20}
         component={"property"}
         nestedParams={{headerColumns: exploreSettingsColumns, iconCellList: [], state: [tableExpandedKeys, setTableExpandedKeys]}}
       />

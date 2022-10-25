@@ -306,8 +306,8 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         entity = hubCentralConfig?.modeling?.entities[entityType];
       } else {
         let conceptClassName = e.conceptClassName;
-        if (conceptClassName && hubCentralConfig?.modeling?.concepts[conceptClassName]?.semanticConcepts) {
-          entity = hubCentralConfig?.modeling?.concepts[conceptClassName]?.semanticConcepts[entityType];
+        if (conceptClassName && hubCentralConfig?.modeling?.concepts[conceptClassName]) {
+          entity = hubCentralConfig?.modeling?.concepts[conceptClassName];
         }
       }
       let iconName = entity?.icon || (e.isConcept ? defaultConceptIcon : defaultIcon);
