@@ -1095,7 +1095,7 @@ pipeline{
 		stage('rh7_cluster_11.0-Nightly'){
 			agent { label 'dhfLinuxAgent'}
 			steps{
-            timeout(time: 4,  unit: 'HOURS'){
+            timeout(time: 5,  unit: 'HOURS'){
                 catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhflinuxTests("11.0","Latest")}
             }}
 			post{
@@ -1175,7 +1175,7 @@ pipeline{
              stage('rh7_cluster_10.0-8'){
                agent { label 'dhfLinuxAgent'}
                steps{
-                timeout(time: 4,  unit: 'HOURS'){
+                timeout(time: 5,  unit: 'HOURS'){
                  catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhflinuxTests("10.0-8.3","Release")}
                }}
                post{
