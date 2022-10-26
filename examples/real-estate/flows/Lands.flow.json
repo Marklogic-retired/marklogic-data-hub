@@ -2,21 +2,15 @@
   "name": "Lands",
   "steps": {
     "1": {
-      "stepId": "loadLands_JSON-ingestion"
-    },
-    "2": {
       "stepId": "loadLands_XML-ingestion"
     },
-    "3": {
-      "stepId": "map_Lands_JSON-mapping"
-    },
-    "4": {
+    "2": {
       "stepId": "map_Lands_XML-mapping"
     },
-    "5": {
+    "3": {
       "stepId": "match_lands-matching"
     },
-    "6": {
+    "4": {
       "stepId": "merge_Lands-merging"
     }
   },

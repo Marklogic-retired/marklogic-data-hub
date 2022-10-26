@@ -20,5 +20,6 @@
   "stepDefinitionName": "default-ingestion",
   "stepDefinitionType": "ingestion",
   "stepId": "loadAirBnbListings_JSON-ingestion",
-  "lastUpdated": "2022-07-07T11:06:46.154995-07:00"
+  "lastUpdated": "2022-07-07T11:06:46.154995-07:00",
+  "inputFilePath": "dataset/JSON/Air-Bnb_Listings/"
 }

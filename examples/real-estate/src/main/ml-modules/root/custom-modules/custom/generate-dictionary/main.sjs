@@ -19,13 +19,13 @@ const spell = require("/MarkLogic/spell");
 function main(content, options) {
 
   const values = cts.values(cts.pathReference(
-    '/(es:envelope|envelope)/(es:instance|instance)/Restaurants/Restaurant_Name',
+    '/(es:envelope|envelope)/(es:instance|instance)/Car_Rentals/Name',
     ["collation=http://marklogic.com/collation/codepoint"],
     {"es": "http://marklogic.com/entity-services"}
   )).toArray();
 
   const dictionary = spell.makeDictionary(values, "element");
-  const uri = "/dictionary/restaurant-names.xml";
+  const uri = "/dictionary/car-rental-names.xml";
 
   console.log("Generating dictionary of " + values.length + " first names at URI: " + uri);
 

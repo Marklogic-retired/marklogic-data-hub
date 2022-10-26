@@ -20,5 +20,6 @@
   "stepDefinitionName": "default-ingestion",
   "stepDefinitionType": "ingestion",
   "stepId": "loadEmergencyServices_JSON-ingestion",
-  "lastUpdated": "2022-07-07T11:06:46.666876-07:00"
+  "lastUpdated": "2022-07-07T11:06:46.666876-07:00",
+  "inputFilePath": "dataset/JSON/Emergency_Services/"
 }
