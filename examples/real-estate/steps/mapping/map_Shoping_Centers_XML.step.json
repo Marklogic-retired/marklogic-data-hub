@@ -43,7 +43,7 @@
           "sourcedFrom": "Name"
         },
         "Rating": {
-          "sourcedFrom": "Rating"
+          "sourcedFrom": "string(Rating)"
         },
         "Lease_End_Date": {
           "sourcedFrom": "xs:date(format-dateTime(Lease_End, \"[Y0001]-[M01]-[D01]\"))"

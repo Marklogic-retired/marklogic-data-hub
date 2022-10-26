@@ -14,9 +14,12 @@
       "stepId": "map_Car_Rentals_XML-mapping"
     },
     "5": {
-      "stepId": "match_Car_Rentals-matching"
+      "stepId": "generate-dictionary-custom"
     },
     "6": {
+      "stepId": "match_Car_Rentals-matching"
+    },
+    "7": {
       "stepId": "merge_Car_Rentals-merging"
     }
   },

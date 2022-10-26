@@ -21,5 +21,6 @@
   "stepDefinitionName": "default-ingestion",
   "stepDefinitionType": "ingestion",
   "stepId": "loadUSZips_XML-ingestion",
-  "lastUpdated": "2022-07-07T11:06:47.055781-07:00"
+  "lastUpdated": "2022-07-07T11:06:47.055781-07:00",
+  "inputFilePath": "CSV/"
 }

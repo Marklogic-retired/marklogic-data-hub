@@ -20,5 +20,6 @@
   "stepDefinitionName": "default-ingestion",
   "stepDefinitionType": "ingestion",
   "stepId": "loadPollutionQuality_XML-ingestion",
-  "lastUpdated": "2022-07-07T11:06:46.691592-07:00"
+  "lastUpdated": "2022-07-07T11:06:46.691592-07:00",
+  "inputFilePath": "dataset/XML-2/Pollution_Quality_Index/"
 }

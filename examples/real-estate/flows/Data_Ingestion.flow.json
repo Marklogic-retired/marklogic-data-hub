@@ -26,214 +26,205 @@
       "stepId": "loadColleges_JSON-ingestion"
     },
     "9": {
-      "stepId": "loadCommercialProperties_JSON-ingestion"
-    },
-    "10": {
       "stepId": "loadDayCares_JSON-ingestion"
     },
-    "11": {
+    "10": {
       "stepId": "loadDemographics_JSON-ingestion"
     },
-    "12": {
+    "11": {
       "stepId": "loadDogParks_JSON-ingestion"
     },
-    "13": {
+    "12": {
       "stepId": "loadEmergencyServices_JSON-ingestion"
     },
-    "14": {
+    "13": {
       "stepId": "loadEnvironmentalRisk_JSON-ingestion"
     },
-    "15": {
+    "14": {
       "stepId": "loadFactories_JSON-ingestion"
     },
-    "16": {
+    "15": {
       "stepId": "loadGasStations_JSON-ingestion"
     },
-    "17": {
+    "16": {
       "stepId": "loadGyms_JSON-ingestion"
     },
-    "18": {
+    "17": {
       "stepId": "loadHikingPlaces_JSON-ingestion"
     },
-    "19": {
+    "18": {
       "stepId": "loadHospitals_JSON-ingestion"
     },
-    "20": {
+    "19": {
       "stepId": "loadHotels_JSON-ingestion"
     },
-    "21": {
-      "stepId": "loadLands_JSON-ingestion"
-    },
-    "22": {
+    "20": {
       "stepId": "loadLegalProtections_JSON-ingestion"
     },
-    "23": {
+    "21": {
       "stepId": "loadLocationsNear_JSON-ingestion"
     },
-    "24": {
+    "22": {
       "stepId": "loadMilitaryBase_JSON-ingestion"
     },
-    "25": {
+    "23": {
       "stepId": "loadParksandRecreation_JSON-ingestion"
     },
-    "26": {
+    "24": {
       "stepId": "loadPharmacies_JSON-ingestion"
     },
-    "27": {
+    "25": {
       "stepId": "loadPollutionQuality_JSON-ingestion"
     },
-    "28": {
+    "26": {
       "stepId": "loadPostOffices_JSON-ingestion"
     },
-    "29": {
+    "27": {
       "stepId": "loadPrivateSchools_JSON-ingestion"
     },
-    "30": {
+    "28": {
       "stepId": "loadPublicSchools_JSON-ingestion"
     },
-    "31": {
+    "29": {
       "stepId": "loadRatings_JSON-ingestion"
     },
-    "32": {
+    "30": {
       "stepId": "loadRestaurants_JSON-ingestion"
     },
-    "33": {
+    "31": {
       "stepId": "loadShoppingCenters_JSON-ingestion"
     },
-    "34": {
+    "32": {
       "stepId": "loadStorageSpaces_JSON-ingestion"
     },
-    "35": {
+    "33": {
       "stepId": "loadSwimmingPools_JSON-ingestion"
     },
-    "36": {
+    "34": {
       "stepId": "loadTheatres_JSON-ingestion"
     },
-    "37": {
+    "35": {
       "stepId": "loadUrgentCares_JSON-ingestion"
     },
-    "38": {
+    "36": {
       "stepId": "loadUSZips_JSON-ingestion"
     },
-    "39": {
+    "37": {
       "stepId": "loadAirBnbListings_XML-ingestion"
     },
-    "40": {
+    "38": {
       "stepId": "loadAirports_XML-ingestion"
     },
-    "41": {
+    "39": {
       "stepId": "loadAnnualClimaticConditions_XML-ingestion"
     },
-    "42": {
+    "40": {
       "stepId": "loadBanks_XML-ingestion"
     },
-    "43": {
+    "41": {
       "stepId": "loadCarRentals_XML-ingestion"
     },
-    "44": {
+    "42": {
       "stepId": "loadCarServices_XML-ingestion"
     },
-    "45": {
+    "43": {
       "stepId": "loadCarWash_XML-ingestion"
     },
-    "46": {
+    "44": {
       "stepId": "loadColleges_XML-ingestion"
     },
-    "47": {
+    "45": {
       "stepId": "loadCommercialProperties_XML-ingestion"
     },
-    "48": {
+    "46": {
       "stepId": "loadDayCares_XML-ingestion"
     },
-    "49": {
+    "47": {
       "stepId": "loadDemographics_XML-ingestion"
     },
-    "50": {
+    "48": {
       "stepId": "loadDogParks_XML-ingestion"
     },
-    "51": {
+    "49": {
       "stepId": "loadEmergencyServices_XML-ingestion"
     },
-    "52": {
+    "50": {
       "stepId": "loadEnvironmentalRisks_XML-ingestion"
     },
-    "53": {
+    "51": {
       "stepId": "loadFactories_XML-ingestion"
     },
-    "54": {
+    "52": {
       "stepId": "loadGasStations_XML-ingestion"
     },
-    "55": {
+    "53": {
       "stepId": "loadGyms_XML-ingestion"
     },
-    "56": {
+    "54": {
       "stepId": "loadHikingPlaces_XML-ingestion"
     },
-    "57": {
+    "55": {
       "stepId": "loadHospitals_XML-ingestion"
     },
-    "58": {
+    "56": {
       "stepId": "loadHotels_XML-ingestion"
     },
-    "59": {
+    "57": {
       "stepId": "loadLands_XML-ingestion"
     },
-    "60": {
+    "58": {
       "stepId": "loadLegalProtections_XML-ingestion"
     },
-    "61": {
+    "59": {
       "stepId": "loadLocationsNear_XML-ingestion"
     },
-    "62": {
+    "60": {
       "stepId": "loadMilitaryBase_XML-ingestion"
     },
-    "63": {
+    "61": {
       "stepId": "loadParksandRecreation_XML-ingestion"
     },
-    "64": {
+    "62": {
       "stepId": "loadPharmacies_XML-ingestion"
     },
-    "65": {
+    "63": {
       "stepId": "loadPollutionQuality_XML-ingestion"
     },
-    "66": {
+    "64": {
       "stepId": "loadPostOffices_XML-ingestion"
     },
-    "67": {
+    "65": {
       "stepId": "loadPrivateSchools_XML-ingestion"
     },
-    "68": {
+    "66": {
       "stepId": "loadPublicSchools_XML-ingestion"
     },
-    "69": {
+    "67": {
       "stepId": "loadRatings_XML-ingestion"
     },
-    "70": {
+    "68": {
       "stepId": "loadRestaurants_XML-ingestion"
     },
-    "71": {
+    "69": {
       "stepId": "loadShoppingCenters_XML-ingestion"
     },
-    "72": {
+    "70": {
       "stepId": "loadStorageSpaces_XML-ingestion"
     },
-    "73": {
+    "71": {
       "stepId": "loadSwimmingPools_XML-ingestion"
     },
-    "74": {
+    "72": {
       "stepId": "loadTheatres_XML-ingestion"
     },
-    "75": {
+    "73": {
       "stepId": "loadUrgentCares_XML-ingestion"
     },
-    "76": {
+    "74": {
       "stepId": "loadUSZips_XML-ingestion"
     },
-    "77": {
+    "75": {
       "stepId": "Gyms-ingestion"
-    },
-    "78": {
-      "stepId": "loadMultipleProperties_JSON-ingestion"
     }
   },
   "description": "Ingesting Real Estate Data",

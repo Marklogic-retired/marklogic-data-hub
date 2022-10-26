@@ -29,6 +29,27 @@ dependencies {
     mlcp files("lib")
 }
 
+task extractData(type: Copy) {
+    fileTree(dir: 'dataset', includes: ['**/*.zip']).each { zipFile ->
+        from zipTree(zipFile)
+    }
+    into 'dataset'
+}
+
+["Data_Ingestion", "Data_Mapping", "Generate_Dictonaries", "Data_Matching", "Data_Merging"].each {theFlowName ->
+    task "run${theFlowName}" (type: com.marklogic.gradle.task.RunFlowTask, group: "Run flow") {
+        description = "Run the ingestion and mapping steps for flow ${theFlowName}"
+        flowName = theFlowName
+    }
+}
+
+task runFlows() {
+    def tasks = [runData_Ingestion, runData_Mapping, runGenerate_Dictonaries, runData_Matching, runData_Merging]
+    for (int i = 1; i < tasks.size(); i++) {
+        tasks[i].mustRunAfter(tasks[i-1])
+    }
+    dependsOn(tasks)
+}
 
 task loadThesaurus(type: com.marklogic.gradle.task.MlcpTask) {
     classpath = configurations.mlcp
@@ -43,4 +64,5 @@ task loadThesaurus(type: com.marklogic.gradle.task.MlcpTask) {
 }
 
 mlPostDeploy.dependsOn loadThesaurus
+mlPostDeploy.dependsOn extractData
 

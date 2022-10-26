@@ -20,5 +20,6 @@
   "stepDefinitionName": "default-ingestion",
   "stepDefinitionType": "ingestion",
   "stepId": "loadShoppingCenters_XML-ingestion",
-  "lastUpdated": "2022-07-07T11:06:46.554601-07:00"
+  "lastUpdated": "2022-07-07T11:06:46.554601-07:00",
+  "inputFilePath": "dataset/XML-1/Shopping_Centers/"
 }

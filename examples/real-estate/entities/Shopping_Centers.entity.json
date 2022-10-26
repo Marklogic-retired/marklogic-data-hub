@@ -63,7 +63,7 @@
           "collation": "http://marklogic.com/collation/codepoint"
         },
         "Rating": {
-          "datatype": "decimal",
+          "datatype": "string",
           "facetable": false,
           "sortable": false,
           "collation": "http://marklogic.com/collation/codepoint"

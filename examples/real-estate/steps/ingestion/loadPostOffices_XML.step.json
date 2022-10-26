@@ -20,5 +20,6 @@
   "stepDefinitionName": "default-ingestion",
   "stepDefinitionType": "ingestion",
   "stepId": "loadPostOffices_XML-ingestion",
-  "lastUpdated": "2022-07-07T11:06:46.540002-07:00"
+  "lastUpdated": "2022-07-07T11:06:46.540002-07:00",
+  "inputFilePath": "dataset/XML-2/Post_Offices/"
 }

@@ -43,7 +43,7 @@
       "sourcedFrom": "record/Distance"
     },
     "Located_In": {
-      "sourcedFrom": "record/Located_In"
+      "sourcedFrom": "string(record/Located_In)"
     },
     "Speciality": {
       "sourcedFrom": "record/Speciality"

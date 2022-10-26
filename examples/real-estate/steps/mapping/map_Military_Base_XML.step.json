@@ -40,7 +40,7 @@
       "sourcedFrom": "record/Distance"
     },
     "Located_In": {
-      "sourcedFrom": "record/Located_In"
+      "sourcedFrom": "string(record/Located_In)"
     },
     "LocatedNear": {
       "sourcedFrom": "record/Area_ID"

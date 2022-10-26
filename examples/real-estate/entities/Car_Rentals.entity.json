@@ -33,9 +33,14 @@
           "collation": "http://marklogic.com/collation/codepoint"
         },
         "CarRentalsOf": {
-          "datatype": "integer",
-          "relatedEntityType": "http://example.org/USZips-1.0.0/USZips",
-          "joinPropertyName": "Area_ID"
+          "datatype": "array",
+          "facetable": false,
+          "sortable": false,
+          "items": {
+            "datatype": "integer",
+            "relatedEntityType": "http://example.org/USZips-1.0.0/USZips",
+            "joinPropertyName": "Area_ID"
+          }
         }
       },
       "description": "Car Rentals area wise in US"

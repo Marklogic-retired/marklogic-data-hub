@@ -2,21 +2,15 @@
   "name": "Commercial_Properties",
   "steps": {
     "1": {
-      "stepId": "loadCommercialProperties_JSON-ingestion"
-    },
-    "2": {
       "stepId": "loadCommercialProperties_XML-ingestion"
     },
-    "3": {
-      "stepId": "map_Commercial_Properties_JSON-mapping"
-    },
-    "4": {
+    "2": {
       "stepId": "map_Commercial_Properties_XML-mapping"
     },
-    "5": {
+    "3": {
       "stepId": "match_Commercial_properties-matching"
     },
-    "6": {
+    "4": {
       "stepId": "merge_Commercial_Properties-merging"
     }
   },
