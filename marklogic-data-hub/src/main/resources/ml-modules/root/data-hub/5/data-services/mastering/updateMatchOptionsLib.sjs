@@ -18,7 +18,8 @@ function updateMatchOptions(opt)
   let newOpt = {
     targetEntityType: opt.targetEntityType || opt.targetEntity,
     matchRulesets: matchRulesets,
-    thresholds: thresholds
+    thresholds: thresholds,
+    tuning: opt.tuning
   };
 
   if (propertyDefsWithIndexes.length) {

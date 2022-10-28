@@ -177,6 +177,18 @@ function testMatchRulesetDefinitions() {
         }
         ]
       },
+      {
+        name: "name - custom empty sequence",
+        weight: 10,
+        matchRules: [
+          {
+            entityPropertyPath: "name",
+            matchType: "custom",
+            algorithmModulePath: "/test/suites/data-hub/5/mastering/matching/test-data/matchableInterceptors.sjs",
+            algorithmFunction: "customMatchEmptySequenceInterceptor"
+          }
+        ]
+      }
     ]
   };
   const matchable = new Matchable(matchStep, {});
@@ -193,6 +205,10 @@ function testMatchRulesetDefinitions() {
     if(matchStep.matchRulesets[i].name === "name - custom") {
       let isQuery = matchRulesetDefinition.buildCtsQuery(docA) instanceof cts.query;
       assertions.push(test.assertEqual(isQuery, true, "Cts query is created for matched rule when custom match function returns atomic value"));
+    }
+    if(matchStep.matchRulesets[i].name === "name - custom empty sequence") {
+      let isQuery = matchRulesetDefinition.buildCtsQuery(docA) instanceof cts.query;
+      assertions.push(test.assertFalse(isQuery, "Cts query is not created for matched rule when custom match function returns empty sequence"));
     }
     if(matchStep.matchRulesets[i].name === "name - synonym") {
       let matchingTerms = matchRulesetDefinition.synonymMatchFunction("Robert", fn.head(matchRulesetNode.xpath("matchRules")), matchStep);

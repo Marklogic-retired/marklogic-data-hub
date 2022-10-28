@@ -36,7 +36,7 @@ class GenericMatchModel {
         this._indexesByPath = {};
         this._propertyDefinitionMap = {};
         this._namespaces = this.matchStep.propertyDefs.namespaces || {};
-        const allProperties = this.matchStep.propertyDefs.property ? this.matchStep.propertyDefs.property: this.matchStep.propertyDefs.properties;
+        const allProperties = this.matchStep.propertyDefs.hasOwnProperty("property") ? this.matchStep.propertyDefs.property: this.matchStep.propertyDefs.properties;
         for (const propertyDefinition of allProperties) {
             this._propertyDefinitionMap[propertyDefinition.name] = propertyDefinition;
         }
@@ -62,9 +62,9 @@ class GenericMatchModel {
             const pathIndexes = [];
             const propertyDefinition = this._propertyDefinitionMap[propertyPath];
             if (propertyDefinition && propertyDefinition.indexReferences && propertyDefinition.indexReferences.length) {
-                for (const indexReference of  propertyDefinition.indexReferences) {
+                for (const indexReference of propertyDefinition.indexReferences) {
                     try {
-                        pathIndexes.push(cts.reference(indexReference));
+                        pathIndexes.push(cts.referenceParse(indexReference));
                     } catch (e) {
                         xdmp.log(`Couldn't use index for property path '${propertyPath}' Reason: ${xdmp.toJsonString(e)}`);
                     }

@@ -1,4 +1,7 @@
 {
     "functionName": "createCustomRewriters",
-    "desc": "Creates custom rewriter modules for the staging and job app servers"
+    "desc": "Creates custom rewriter modules for the staging and job app servers",
+    "return": {
+      "datatype": "xmlDocument"
+    }
 }

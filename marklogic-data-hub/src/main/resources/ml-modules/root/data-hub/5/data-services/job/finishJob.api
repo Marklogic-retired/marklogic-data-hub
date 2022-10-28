@@ -10,5 +10,10 @@
             "name": "jobStatus",
             "datatype": "string"
         }
-    ]
+    ],
+    "return": {
+       "desc": "The finished Job document",
+       "datatype": "jsonDocument",
+       "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+    }
 }

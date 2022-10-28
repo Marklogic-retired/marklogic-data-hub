@@ -489,7 +489,8 @@ const largeExpected =
         "action": "merge",
         "score": 12
       }
-    ]
+    ],
+    "tuning":{"maxScan":200}
   };
 
 [

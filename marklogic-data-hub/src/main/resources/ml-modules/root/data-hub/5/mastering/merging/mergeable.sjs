@@ -142,7 +142,16 @@ class Mergeable {
       triples = tripleMergeFunction(this.mergeStep, documentNodes, properties.map(prop => prop[1].sources), this.mergeStep.tripleMerge);
     } else {
       const triplesArray = [
-        Sequence.from(documentNodes.map(doc => doc.xpath("/*:envelope/(es:triples|array-node('triples'))/(object-node()|.//sem:triple) ! sem:triple(.)", { es: "http://marklogic.com/entity-services", sem: "http://marklogic.com/semantics"}))),
+        Sequence.from(documentNodes.map(doc => {
+          try {
+            return doc.xpath("/*:envelope/(es:triples|array-node('triples'))/(object-node()|.//sem:triple) ! sem:triple(.)", {
+              es: "http://marklogic.com/entity-services",
+              sem: "http://marklogic.com/semantics"
+            });
+          } catch (e) {
+            return Sequence.from([]);
+          }
+      }))
       ];
       const uris = normalizeToArray(contentObjects).map(contentObj => contentObj.uri);
       const tdeTriples = cts.triples(null, [rdfType, rdfsIsDefinedBy], null, ["=","=","="], [], cts.documentQuery(uris));
