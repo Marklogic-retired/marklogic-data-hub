@@ -110,6 +110,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     } finally {
       updateNodesData(getNodes());
       updateEdgesData(getEdges());
+      setExpandedNodeData({});
       setGraphDataLoaded(true);
     }
   };
@@ -709,13 +710,10 @@ const GraphVisExplore: React.FC<Props> = (props) => {
   const getExpandedEdgeIdsToRemove = (leafNodeExpandId, edgeIdsToRemove: any[] = []) => {
     if (expandedNodeData[leafNodeExpandId]) {
       let expandedGroupNodeObject = expandedNodeData[leafNodeExpandId];
-      const edgesToRemove = expandedGroupNodeObject.edges.filter(e => e["from"] === leafNodeExpandId);
+      const edgesToRemove = expandedGroupNodeObject.edges.filter(e => e["from"] === leafNodeExpandId || e["to"] === leafNodeExpandId);
       edgesToRemove.forEach(e => {
         let id: any = e["id"];
-        let predicate = getEdgePredicate(id, network);
-        let expandId = id + "-" + predicate;
         edgeIdsToRemove.push(id);
-        getExpandedEdgeIdsToRemove(expandId, edgeIdsToRemove);
       });
     }
     return edgeIdsToRemove;
