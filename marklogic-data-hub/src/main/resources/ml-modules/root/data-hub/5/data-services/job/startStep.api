@@ -22,5 +22,10 @@
             "nullable": true,
             "$javaClass":"com.fasterxml.jackson.databind.JsonNode"
         }
-    ]
+    ],
+    "return": {
+       "desc": "The updated Job document",
+       "datatype": "jsonDocument",
+       "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+    }
 }

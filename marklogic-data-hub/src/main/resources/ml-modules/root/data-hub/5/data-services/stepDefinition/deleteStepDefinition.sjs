@@ -16,6 +16,8 @@
 'use strict';
 
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-flow", "execute");
+const consts = require("/data-hub/5/impl/consts.sjs");
 
 var name;
 require('/data-hub/5/artifacts/core.sjs').deleteArtifact("stepDefinition", name);
+xdmp.trace(consts.TRACE_STEP, `Finished deleting step definition ${name}`);

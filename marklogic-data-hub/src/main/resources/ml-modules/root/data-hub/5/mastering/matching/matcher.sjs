@@ -27,17 +27,17 @@ function consolidateScopeQueries(groupBy, groupByKey, groupByKeys, isJSON, joinF
   if (isJSON) {
     prefix = `json:${pathJoinString}`;
     scopeQueryFunction = (stepParts, query) => {
-      const queryHead = fn.head(query);
-      return queryHead instanceof cts.query && !(queryHead instanceof xs.string)?
-        cts.jsonPropertyScopeQuery(stepParts, groupQueries(query, joinFunction)) : cts.jsonPropertyValueQuery(stepParts, query);
+      const isScope = hubUtils.normalizeToArray(query).some(q => q instanceof cts.query && !(q instanceof xs.string));
+      return isScope ?
+        cts.jsonPropertyScopeQuery(stepParts, groupQueries(query, joinFunction)) : cts.jsonPropertyValueQuery(stepParts, fn.distinctValues(Sequence.from(query)));
     }
   } else {
     prefix = `element:${pathJoinString}`;
     scopeQueryFunction = (stepParts, query) => {
       const qnames = stepParts.map((stepPart) => xdmp.QNameFromKey(stepPart));
-      const queryHead = fn.head(query);
-      return queryHead instanceof cts.query && !(queryHead instanceof xs.string)?
-        cts.elementQuery(qnames, groupQueries(query, joinFunction)): cts.elementValueQuery(qnames, query);
+      const isScope = hubUtils.normalizeToArray(query).some(q => q instanceof cts.query && !(q instanceof xs.string));
+      return isScope ?
+        cts.elementQuery(qnames, groupQueries(query, joinFunction)): cts.elementValueQuery(qnames, fn.distinctValues(Sequence.from(query)));
     };
   }
   const suffix = groupByKey.substring(prefix.length);
@@ -124,7 +124,7 @@ function optimizeCtsQueries(ctsQuery) {
             xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Flattening query: ${xdmp.describe(query)}`);
           }
           queries.splice(i, 1, hubUtils.normalizeToArray(queriesFunction(query)));
-          i--
+          i--;
         } else {
           groupBy.other.push(optimizeCtsQueries(query));
         }
@@ -164,13 +164,45 @@ function optimizeCtsQueries(ctsQuery) {
           }
         };
         groupFunction(query);
-      } else {
+      } else if (query instanceof cts.jsonPropertyValueQuery && isOrQuery) {
         if (matchingDebugTraceEnabled) {
-          xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Other query found: ${xdmp.describe(query)}`);
+          xdmp.trace(consts.TRACE_MATCHING_DEBUG, `JSON property value query found to group: ${xdmp.describe(query)}`);
         }
-        groupBy.other.push(query);
+        let key = `json:${pathJoinString}${cts.jsonPropertyValueQueryPropertyName(query).toArray().join(stepJoinString)}`;
+        groupBy[key] = groupBy[key] || [];
+        const value = cts.jsonPropertyValueQueryValue(query);
+        if (!groupBy[key].includes(value)) {
+          groupBy[key].push(value);
+        }
+      } else if (query instanceof cts.elementValueQuery && isOrQuery) {
+        if (matchingDebugTraceEnabled) {
+          xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Element value query found to group: ${xdmp.describe(query)}`);
+        }
+        let key = `element:${pathJoinString}${cts.elementValueQueryElementName(query).toArray().map((qname) => xdmp.keyFromQName(qname)).join(stepJoinString)}`;
+        groupBy[key] = groupBy[key] || [];
+        const value = cts.elementValueQueryText(query);
+        if (!groupBy[key].includes(value)) {
+          groupBy[key].push(value);
+        }
+      } else if (query instanceof cts.rangeQuery && isOrQuery) {
+        if (matchingDebugTraceEnabled) {
+          xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Range query found to group: ${xdmp.describe(query)}`);
+        }
+        const index = cts.rangeQueryIndex(query);
+        const operator = cts.rangeQueryOperator(query);
+        let key = `range:${xdmp.describe(index, Sequence.from([]), Sequence.from([]))}${xdmp.describe(operator, Sequence.from([]), Sequence.from([]))}`;
+        groupBy[key] = groupBy[key] || { index, operator, values: []};
+        const value = cts.rangeQueryValue(query);
+        if (!groupBy[key].values.includes(value)) {
+          groupBy[key].values.push(value);
+        }
+      } else {
+          if (matchingDebugTraceEnabled) {
+            xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Other query found: ${xdmp.describe(query)}`);
+          }
+          groupBy.other.push(query);
+        }
       }
-    }
     if (matchingDebugTraceEnabled) {
       xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Grouped queries for optimization: ${xdmp.toJsonString(groupBy)}`);
     }
@@ -184,6 +216,9 @@ function optimizeCtsQueries(ctsQuery) {
         finalQueries = finalQueries.concat(consolidateScopeQueries(groupBy, groupByKey, groupByKeys, false, joinFunction));
       } else if (groupByKey.startsWith(`json:${pathJoinString}`)) {
         finalQueries = finalQueries.concat(consolidateScopeQueries(groupBy, groupByKey, groupByKeys, true, joinFunction));
+      } else if (groupByKey.startsWith("range:")) {
+        const rangeInfo = groupBy[groupByKey];
+        finalQueries.push(cts.rangeQuery(rangeInfo.index, rangeInfo.operator, rangeInfo.values));
       }
     }
     finalQueries = finalQueries.concat(groupBy.other);
@@ -248,11 +283,12 @@ function buildMatchSummary(matchable, content) {
   for (const contentObject of content) {
     let documentIsMerged = false;
     const filterQuery = matchable.filterQuery(contentObject.value);
-    const matchCtsQuery = groupQueries(
-      minimumRulesetCombinations.map((minimumRulesetCombination) => buildQueryFromMatchRuleset(contentObject.value, minimumRulesetCombination)),
+    const matchCtsQuery = optimizeCtsQueries(groupQueries(
+      minimumRulesetCombinations
+        .map((minimumRulesetCombination) => buildQueryFromMatchRuleset(contentObject.value, minimumRulesetCombination)),
       cts.orQuery
-    );
-    if (!matchCtsQuery) {
+    ));
+    if (fn.empty(matchCtsQuery)) {
       if (matchingTraceEnabled) {
         xdmp.trace(matchingTraceEvent, `No minimum match query for ${xdmp.describe(contentObject.value)}`);
       }
@@ -261,11 +297,16 @@ function buildMatchSummary(matchable, content) {
     const thresholdGroups = {};
     const finalMatchQuery = cts.andQuery([baselineQuery, filterQuery, matchCtsQuery]);
     const formatOption = `format-${dataFormat}`;
+    const total = cts.estimate(finalMatchQuery);
     if (matchingTraceEnabled) {
-      xdmp.trace(matchingTraceEvent, `Found ${cts.estimate(finalMatchQuery)} results for ${xdmp.describe(contentObject.value)} with query ${xdmp.describe(finalMatchQuery, Sequence.from([]), Sequence.from([]))}`);
+      xdmp.trace(matchingTraceEvent, `Found ${total} results for ${xdmp.describe(contentObject.value)} with query ${xdmp.describe(finalMatchQuery, Sequence.from([]), Sequence.from([]))}`);
       xdmp.trace(matchingTraceEvent, `Searching with format option: ${formatOption}.`);
     }
-    for (const matchingDocument of cts.search(finalMatchQuery, [formatOption, "filtered"])) {
+    const maxScan = matchable.maxScan();
+    if (total > maxScan) {
+      xdmp.log(`Large number of documents (${total}) matching ${xdmp.describe(finalMatchQuery, Sequence.from([]), Sequence.from([]))}`);
+    }
+    for (const matchingDocument of fn.subsequence(cts.search(finalMatchQuery, [formatOption, "filtered", "score-zero"], 0), 1, maxScan)) {
       const matchingContentObject = {uri: xdmp.nodeUri(matchingDocument), value: matchingDocument};
       const score = matchable.scoreDocument(contentObject, matchingContentObject);
       let currentThresholdDefinition = null;

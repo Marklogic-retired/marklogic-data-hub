@@ -12,7 +12,6 @@ import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.MarkLogicVersion;
 import com.marklogic.mgmt.ManageClient;
-import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.configuration.Configuration;
 import com.marklogic.mgmt.api.configuration.Configurations;
@@ -28,7 +27,12 @@ import com.marklogic.mgmt.resource.security.RoleManager;
 import com.marklogic.rest.util.ResourcesFragment;
 import org.jdom2.Namespace;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Command for creating granular privileges after the resources that these privileges depend on have been created.
@@ -163,7 +167,7 @@ public class CreateGranularPrivilegesCommand extends LoggingObject implements Co
                         "  where fn:not($db-exists)\n" +
                         "  return sec:remove-privilege($action, \"execute\")\n" +
                         "}, map:entry(\"database\", xdmp:security-database()))\n";
-                client.newServerEval().xquery(xquery).eval();
+                client.newServerEval().xquery(xquery).eval().close();
             } catch (FailedRequestException e) {
                 throw new RuntimeException("Unable to fix broken granular privileges", e);
             }

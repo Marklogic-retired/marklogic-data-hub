@@ -20,6 +20,7 @@ declareUpdate();
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-entity-model", "execute");
 
 const config = require("/com.marklogic.hub/config.sjs");
+const consts = require("/data-hub/5/impl/consts.sjs");
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
@@ -57,4 +58,5 @@ do {
   }
   taskCheckCount++;
 } while(!tasksFinished && taskCheckCount < 100);
+xdmp.trace(consts.TRACE_ENTITY, "Finished saving models");
 

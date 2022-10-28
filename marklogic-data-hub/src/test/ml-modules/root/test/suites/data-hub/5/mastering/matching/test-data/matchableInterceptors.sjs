@@ -35,6 +35,12 @@ function customMatchSequenceInterceptor() {
   return seq;
 }
 
+function customMatchEmptySequenceInterceptor() {
+  //return any sequence
+  let seq = Sequence.from([]);
+  return seq;
+}
+
 function customMatchArrayInterceptor(values, matchRule) {
   test.assertTrue(fn.exists(matchRule.xpath("ancestor::matchRulesets/weight")), "Should pass node as match rule.");
   //return any array
@@ -61,6 +67,7 @@ module.exports = {
   scoreDocumentInterceptor,
   customMatchStringInterceptor,
   customMatchSequenceInterceptor,
+  customMatchEmptySequenceInterceptor,
   customMatchArrayInterceptor,
   customLastNameInterceptor,
   customFalseLastNameInterceptor

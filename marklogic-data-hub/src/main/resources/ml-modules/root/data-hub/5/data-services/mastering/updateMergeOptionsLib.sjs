@@ -141,15 +141,6 @@ function strategy(item, algorithms) {
 function mergeRule(item, algorithms, properties, namespaces) {
   let mr = {};
 
-  xdmp.log("item:");
-  xdmp.log(item);
-  xdmp.log("algorithms:");
-  xdmp.log(algorithms);
-  xdmp.log("properties:");
-  xdmp.log(properties);
-  xdmp.log("namespaces:");
-  xdmp.log(namespaces);
-
   if (item.propertyName) {
     let prop = properties[item.propertyName];
     if (prop) {

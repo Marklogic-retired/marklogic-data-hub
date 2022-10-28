@@ -27,7 +27,7 @@ function getTitleAndParentIRI(iri) {
 }
 
 function getEntityModelDescriptor(entityModelIriOrTitle) {
-  return fn.head(cts.search(getEntityModelQuery(entityModelIriOrTitle)));
+  return fn.head(cts.search(getEntityModelQuery(entityModelIriOrTitle), ["format-json", "score-zero", "unfiltered"], 0));
 }
 
 function getEntityModelQuery(entityModelIriOrTitle) {

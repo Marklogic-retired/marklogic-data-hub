@@ -9,7 +9,6 @@ const matchingTraceEnabled = xdmp.traceEnabled(consts.TRACE_MATCHING) || matchin
 const matchingTraceEvent = xdmp.traceEnabled(consts.TRACE_MATCHING) ? consts.TRACE_MATCHING : consts.TRACE_MATCHING_DEBUG;
 const thsr = require("/MarkLogic/thesaurus.xqy");
 const spell = require("/MarkLogic/spell.xqy");
-const {propertyDefinitionsFromXPath} = require("../common.sjs");
 const {groupQueries} = require("./matcher.sjs");
 
 /*
@@ -27,12 +26,13 @@ class Matchable {
     this.matchStepNode = xdmp.toJSON(this.matchStep).root;
     this.stepContext = stepContext;
     const targetEntityType = this.matchStep.targetEntityType;
+    this._genericModel = new common.GenericMatchModel(this.matchStep, {collection: targetEntityType ? targetEntityType.substring(targetEntityType.lastIndexOf("/") + 1):null});
     if (targetEntityType) {
       const getEntityModel = hubUtils.requireFunction("/data-hub/core/models/entities.sjs", "getEntityModel");
       this._model = getEntityModel(targetEntityType);
     }
     if (!this._model) {
-      this._model = new common.GenericMatchModel(this.matchStep, {collection: targetEntityType ? targetEntityType.substring(targetEntityType.lastIndexOf("/") + 1):null});
+      this._model = this._genericModel;
     }
   }
 
@@ -136,7 +136,7 @@ class Matchable {
     const matchingRulesetDefinitions = this.matchRulesetDefinitions();
     let defaultScore = 0;
     for (const matchRuleset of matchingRulesetDefinitions) {
-      const rulesetScore = Math.max(matchRuleset.score(contentObjectA, contentObjectB), matchRuleset.score(contentObjectB, contentObjectA));
+      const rulesetScore = matchRuleset.score(contentObjectA, contentObjectB);
       if (matchingDebugTraceEnabled) {
         xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Applying rule ${matchRuleset.name()} for ${xdmp.describe(contentObjectA.value, Sequence.from([]), Sequence.from([]))} and ${xdmp.describe(contentObjectB.value, Sequence.from([]), Sequence.from([]))} with score ${rulesetScore}`);
       }
@@ -221,7 +221,10 @@ class Matchable {
     if (matchingTraceEnabled) {
       xdmp.trace(matchingTraceEvent, `Property query for ${propertyPath} with values ${xdmp.describe(values, Sequence.from([]), Sequence.from([]))}`);
     }
-    const indexes = this.model().propertyIndexes(propertyPath);
+    let indexes = this.model().propertyIndexes(propertyPath);
+    if (this._genericModel && !(indexes && indexes.length)) {
+      indexes = this._genericModel.propertyIndexes(propertyPath);
+    }
     const valuesAreQueries = hubUtils.normalizeToArray(values).every(val => val instanceof cts.query);
     if (valuesAreQueries) {
       return values;
@@ -238,10 +241,13 @@ class Matchable {
           typedValues.push(xs[scalarType](value));
         }
       }
-      if (collation) {
-        typedValues = cts.valueMatch(indexes, typedValues, "case-insensitive");
+      if (typedValues.length === 0) {
+        return values;
       }
-      return cts.rangeQuery(indexes, typedValues)
+      if (collation) {
+        typedValues = cts.valueMatch(indexes, Sequence.from(typedValues), ["case-insensitive"]);
+      }
+      return cts.rangeQuery(indexes, "=", typedValues);
     } else {
       const pathParts = propertyPath.split(".").filter((path) => path);
       const propertyDefinitions = pathParts
@@ -277,6 +283,18 @@ class Matchable {
     return xpathQuery;
   }
 
+  /*
+ * Returns the max scan size.
+ * @return {integer}
+ * @since 5.8.0
+ */
+  maxScan() {
+    if (!this._maxScan) {
+      this._maxScan = fn.number((this.matchStep.tuning && this.matchStep.tuning.maxScan) || 500);
+    }
+    return this._maxScan;
+  }
+
   _buildQueryFromPropertyDefinitionsAndValues(propertyDefinitions, values) {
     if (values instanceof Function) return values;
     const lastPropertyDefinitionIndex = propertyDefinitions.length - 1;
@@ -308,12 +326,15 @@ class Matchable {
   }
 }
 
+const cachedPropertyValues = {};
+
 class MatchRulesetDefinition {
   constructor(matchRulesetNode, matchable) {
     this.matchRulesetNode = matchRulesetNode
     this.matchRuleset = matchRulesetNode.toObject();
     this.matchable = matchable;
     this._matchRuleFunctions = [];
+    this._cachedCtsQueries = {};
   }
 
   name() {
@@ -326,10 +347,16 @@ class MatchRulesetDefinition {
 
   _valueFunction(matchRule, model) {
     if (!matchRule._valueFunction) {
-      if (matchRule.documentXPath) {
-        matchRule._valueFunction = (documentNode) => documentNode.xpath(matchRule.documentXPath, matchRule.namespaces);
-      } else {
-        matchRule._valueFunction = (documentNode) => model.propertyValues(matchRule.entityPropertyPath, documentNode);
+      matchRule._valueFunction = (documentNode) => {
+        const key = `${xdmp.nodeUri(documentNode)}:${matchRule.documentXPath || matchRule.entityPropertyPath}`;
+        if (!cachedPropertyValues[key]) {
+          if (matchRule.documentXPath) {
+            cachedPropertyValues[key] = documentNode.xpath(matchRule.documentXPath, matchRule.namespaces);
+          } else {
+            cachedPropertyValues[key] = model.propertyValues(matchRule.entityPropertyPath, documentNode);
+          }
+        }
+        return cachedPropertyValues[key];
       }
     }
     return matchRule._valueFunction;
@@ -478,35 +505,39 @@ class MatchRulesetDefinition {
     if (matchingTraceEnabled) {
       xdmp.trace(matchingTraceEvent, `Building cts.query for ${xdmp.describe(documentNode)} with match ruleset ${this.name()}`);
     }
-    const queries = [];
-    const model = this.matchable.model();
-    const groupQueries = hubUtils.requireFunction("/data-hub/5/mastering/matching/matcher.sjs", "groupQueries");
-    let pos = 1;
-    for (const matchRule of this.matchRuleset.matchRules) {
-      if (!matchRule.node) {
-        matchRule.node = fn.head(fn.subsequence(this.matchRulesetNode.xpath("matchRules"), pos, 1));
+    const uri = xdmp.nodeUri(documentNode);
+    if (!this._cachedCtsQueries[uri]) {
+      const queries = [];
+      const model = this.matchable.model();
+      const groupQueries = hubUtils.requireFunction("/data-hub/5/mastering/matching/matcher.sjs", "groupQueries");
+      let pos = 1;
+      for (const matchRule of this.matchRuleset.matchRules) {
+        if (!matchRule.node) {
+          matchRule.node = fn.head(fn.subsequence(this.matchRulesetNode.xpath("matchRules"), pos, 1));
+        }
+        pos++;
+        const valueFunction = this._valueFunction(matchRule, model);
+        const matchFunction = this._matchFunction(matchRule, model);
+        const values = valueFunction(documentNode);
+        const query = fn.exists(values) ? matchFunction(values) : null;
+        if (fn.empty(query)) {
+          return null;
+        }
+        if (query instanceof cts.query) {
+          queries.push(query);
+        }
       }
-      pos++;
-      const valueFunction = this._valueFunction(matchRule, model);
-      const matchFunction = this._matchFunction(matchRule, model);
-      const values = valueFunction(documentNode);
-      const query = fn.exists(values) ? matchFunction(values): null;
-      if (!query) {
-        return null;
+      if (matchingDebugTraceEnabled) {
+        xdmp.trace(consts.TRACE_MATCHING_DEBUG, `cts.query for ${xdmp.describe(documentNode)} with match ruleset ${this.name()} before optimization is ${xdmp.describe(queries)}`);
       }
-      if(query instanceof cts.query) {
-        queries.push(query);
+      const optimizeCtsQueries = hubUtils.requireFunction("/data-hub/5/mastering/matching/matcher.sjs", "optimizeCtsQueries");
+      const optimizedCtsQuery = optimizeCtsQueries(groupQueries(queries, cts.andQuery));
+      if (matchingTraceEnabled) {
+        xdmp.trace(matchingTraceEvent, `cts.query for ${xdmp.describe(documentNode)} with match ruleset ${this.name()} returned ${xdmp.describe(optimizedCtsQuery, Sequence.from([]), Sequence.from([]))}`);
       }
+      this._cachedCtsQueries[uri] = optimizedCtsQuery;
     }
-    if (matchingDebugTraceEnabled) {
-      xdmp.trace(consts.TRACE_MATCHING_DEBUG, `cts.query for ${xdmp.describe(documentNode)} with match ruleset ${this.name()} before optimization is ${xdmp.describe(queries)}`);
-    }
-    const optimizeCtsQueries = hubUtils.requireFunction("/data-hub/5/mastering/matching/matcher.sjs", "optimizeCtsQueries");
-    const optimizedCtsQuery = optimizeCtsQueries(groupQueries(queries, cts.andQuery));
-    if (matchingTraceEnabled) {
-      xdmp.trace(matchingTraceEvent, `cts.query for ${xdmp.describe(documentNode)} with match ruleset ${this.name()} returned ${xdmp.describe(optimizedCtsQuery, Sequence.from([]), Sequence.from([]))}`);
-    }
-    return optimizedCtsQuery;
+    return this._cachedCtsQueries[uri];
   }
 
   weight() {

@@ -2,13 +2,12 @@ package com.marklogic.hub.dataservices;
 
 // IMPORTANT: Do not edit. This file is generated.
 
-import com.marklogic.client.io.Format;
-
-
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.impl.BaseProxy;
+import com.marklogic.client.io.Format;
 import com.marklogic.client.io.marker.JSONWriteHandle;
 
-import com.marklogic.client.impl.BaseProxy;
+import java.io.Reader;
 
 /**
  * Provides a set of operations on the database server
@@ -79,13 +78,15 @@ public interface SystemService {
             }
 
             @Override
-            public void createCustomRewriters() {
-                createCustomRewriters(
+            public Reader createCustomRewriters() {
+                return createCustomRewriters(
                     this.req_createCustomRewriters.on(this.dbClient)
                     );
             }
-            private void createCustomRewriters(BaseProxy.DBFunctionRequest request) {
-              request.responseNone();
+            private Reader createCustomRewriters(BaseProxy.DBFunctionRequest request) {
+              return BaseProxy.XmlDocumentType.toReader(
+                request.responseSingle(false, Format.XML)
+                );
             }
 
             @Override
@@ -126,9 +127,9 @@ public interface SystemService {
    * Creates custom rewriter modules for the staging and job app servers
    *
    * 
-   * 
+   * @return	as output
    */
-    void createCustomRewriters();
+    Reader createCustomRewriters();
 
   /**
    * Invokes the finishHubDeployment operation on the database server
