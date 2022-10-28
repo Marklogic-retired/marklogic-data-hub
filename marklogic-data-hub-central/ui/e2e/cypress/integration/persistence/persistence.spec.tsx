@@ -62,13 +62,13 @@ describe("Validate persistence across Hub Central", () => {
     explore.getGraphView().click();
 
     cy.log("**Switch off all the toggles**");
-    graphView.getConceptToggle().click();
+    graphView.getConceptToggle().scrollIntoView().trigger("mouseover").click({force: true});
     graphView.getConceptToggle().should("have.value", "false");
 
-    graphView.getPhysicsAnimationToggle().click();
+    graphView.getPhysicsAnimationToggle().scrollIntoView().trigger("mouseover").click({force: true});
     graphView.getPhysicsAnimationToggle().should("have.value", "false");
 
-    graphView.getRelationshipLabelsToggle().click();
+    graphView.getRelationshipLabelsToggle().scrollIntoView().trigger("mouseover").click({force: true});
     graphView.getRelationshipLabelsToggle().should("have.value", "false");
 
     cy.log("**Switch Tile and come back, toggle value should be the same**");
