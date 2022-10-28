@@ -14,7 +14,6 @@ import homePage from "../../support/pages/home";
 import graphExploreSidePanel from "../../support/components/explore/graph-explore-side-panel";
 import dataModelDisplaySettingsModal from "../../support/components/explore/data-model-display-settings-modal";
 import explorePage from "../../support/pages/explore";
-import graphView from "../../support/components/explore/graph-view";
 
 const defaultSelectLabel = "Select...";
 const defaultSelectProperty = "Select property";
@@ -132,7 +131,7 @@ describe("Entity display settings in model tile", () => {
 
     cy.log("**Click on babyRegistry node to open the side panel**");
     graphExplore.getGraphVisCanvas().should("exist");
-    graphView.physicsAnimationToggle();
+    cy.wait(3000);
     graphExplore.focusNode(ExploreGraphNodes.BABY_REGISTRY_3039);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.BABY_REGISTRY_3039).then((nodePositions: any) => {
       let baby_registry_3039_nodeposition: any = nodePositions[ExploreGraphNodes.BABY_REGISTRY_3039];
