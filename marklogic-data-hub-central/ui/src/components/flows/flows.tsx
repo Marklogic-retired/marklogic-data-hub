@@ -4,7 +4,7 @@ import {useLocation} from "react-router-dom";
 import {SecurityTooltips} from "@config/tooltips.config";
 import React, {createRef, useEffect, useState} from "react";
 import {getViewSettings} from "@util/user-context";
-import {getUserPreferences, updateUserPreferences} from "../../../src/services//user-preferences";
+import {getUserPreferences, updateUserPreferences} from "../../../src/services/user-preferences";
 import {Flow} from "../../types/run-types";
 import NewFlowDialog from "./new-flow-dialog/new-flow-dialog";
 import axios from "axios";
@@ -453,7 +453,7 @@ const Flows: React.FC<Props> = ({
     let newSteps = [...steps];
 
     if (direction === ReorderFlowOrderDirection.RIGHT) {
-      if (stepNumber <= steps.length - 2) {
+      if (stepNumber <= steps.length - 1) {
         const oldLeftStep = newSteps[stepIndex];
         const oldRightStep = newSteps[stepIndex + 1];
         newSteps[stepIndex] = oldRightStep;

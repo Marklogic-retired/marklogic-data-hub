@@ -5,11 +5,9 @@ import axios from "axios";
 import {AuthoritiesContext} from "@util/authorities";
 import {UserContext} from "@util/user-context";
 import tiles from "../config/tiles.config";
-//import {getFromPath} from "../util/json-utils";
 import {MissingPagePermission} from "@config/messages.config";
 import JobResponse from "@components/job-response/job-response";
 import {ErrorMessageContext} from "@util/error-message-context";
-//import Spinner from "react-bootstrap/Spinner";
 import {Flow, InitialFlow, Step} from "../types/run-types";
 
 interface PollConfig {
