@@ -5,7 +5,7 @@ import styles from "./query-export-modal.module.scss";
 import {SearchContext} from "@util/search-context";
 import {UserContext} from "@util/user-context";
 import {exportQuery, exportSavedQuery} from "@api/queries";
-import {HCInput, HCAlert, HCButton} from "@components/common";
+import {HCInput, HCAlert, HCButton, HCModal} from "@components/common";
 
 const QueryExportModal = (props) => {
 
@@ -59,9 +59,10 @@ const QueryExportModal = (props) => {
   };
 
   return (
-    <Modal
+    <HCModal
       show={props.exportModalVisibility}
       size={"lg"}
+      onHide={onClose}
     >
       <Modal.Header>
         <span className={"fs-5"}>{"Export"}</span>
@@ -162,7 +163,7 @@ const QueryExportModal = (props) => {
           Export
         </HCButton>
       </Modal.Footer>
-    </Modal>
+    </HCModal>
   );
 };
 

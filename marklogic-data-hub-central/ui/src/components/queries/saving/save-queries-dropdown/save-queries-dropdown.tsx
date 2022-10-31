@@ -3,7 +3,7 @@ import {Modal} from "react-bootstrap";
 import Select, {components as SelectComponents} from "react-select";
 import reactSelectThemeConfig from "@config/react-select-theme.config";
 import {SearchContext} from "@util/search-context";
-import {HCButton} from "@components/common";
+import {HCButton, HCModal} from "@components/common";
 
 export const SELECT_QUERY_PLACEHOLDER = "select a query";
 interface Props {
@@ -130,8 +130,9 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
           );
         }}
       />
-      <Modal
+      <HCModal
         show={showConfirmation}
+        onHide={onCancel}
       >
         <Modal.Header className={"bb-none"}>
           <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
@@ -148,7 +149,7 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
             </HCButton>
           </div>
         </Modal.Body>
-      </Modal>
+      </HCModal>
     </div>
   );
 };

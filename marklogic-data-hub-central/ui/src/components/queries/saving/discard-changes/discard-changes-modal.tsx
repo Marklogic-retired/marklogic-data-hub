@@ -4,7 +4,7 @@ import {SearchContext} from "@util/search-context";
 import {UserContext} from "@util/user-context";
 import axios from "axios";
 import {QueryOptions} from "../../../../types/query-types";
-import {HCButton} from "@components/common";
+import {HCButton, HCModal} from "@components/common";
 
 interface Props {
     setDiscardChangesModalVisibility: () => void;
@@ -65,8 +65,9 @@ const DiscardChangesModal: React.FC<Props> = (props) => {
 
   return (
     <>
-      <Modal
+      <HCModal
         show={true}
+        onHide={onCancel}
       >
         <Modal.Header className={"bb-none"}>
           <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
@@ -82,7 +83,7 @@ const DiscardChangesModal: React.FC<Props> = (props) => {
             </HCButton>
           </div>
         </Modal.Body>
-      </Modal>
+      </HCModal>
     </>
   );
 };

@@ -3,7 +3,7 @@ import {Row, Col, Modal, Form, FormLabel} from "react-bootstrap";
 import styles from "./edit-query-dialog.module.scss";
 import {UserContext} from "@util/user-context";
 import {SearchContext} from "@util/search-context";
-import {HCInput, HCButton} from "@components/common";
+import {HCInput, HCButton, HCModal} from "@components/common";
 
 const EditQueryDialog = (props) => {
   const {
@@ -89,8 +89,9 @@ const EditQueryDialog = (props) => {
 
   return (
     <div>
-      <Modal
+      <HCModal
         show={props.editModalVisibility}
+        onHide={onCancel}
       >
         <Modal.Header className={"bb-none"}>
           <span className={styles.title}>{"Edit Query"}</span>
@@ -140,7 +141,7 @@ const EditQueryDialog = (props) => {
             </Row>
           </Form>
         </Modal.Body>
-      </Modal>
+      </HCModal>
     </div>
   );
 };

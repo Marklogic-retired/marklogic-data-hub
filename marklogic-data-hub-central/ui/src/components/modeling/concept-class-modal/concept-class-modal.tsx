@@ -6,7 +6,7 @@ import {ModelingTooltips, ErrorTooltips} from "@config/tooltips.config";
 import {createConceptClass, updateConceptClass} from "@api/modeling";
 import {defaultHubCentralConfig} from "@config/modeling.config";
 import {QuestionCircleFill} from "react-bootstrap-icons";
-import {EntityTypeColorPicker, HCButton, HCInput, HCTooltip, HCIconPicker} from "@components/common";
+import {EntityTypeColorPicker, HCButton, HCInput, HCTooltip, HCIconPicker, HCModal} from "@components/common";
 import {themeColors} from "@config/themes.config";
 import {defaultConceptIcon} from "@config/explore.config";
 import {hubCentralConfig} from "../../../types/modeling-types";
@@ -240,9 +240,10 @@ const ConceptClassModal: React.FC<Props> = (props) => {
     }
   };
 
-  return (<Modal
+  return (<HCModal
     show={isVisible}
     size={"lg"}
+    onHide={onCancel}
   >
     <Modal.Header className={"pe-4"}>
       <span className={"fs-3"}>{isEditModal ? "Edit Concept Class" : "Add Concept Class"}</span>
@@ -333,7 +334,7 @@ const ConceptClassModal: React.FC<Props> = (props) => {
         {isEditModal ? "OK" : "Add"}
       </HCButton>
     </Modal.Footer>
-  </Modal>
+  </HCModal>
   );
 };
 

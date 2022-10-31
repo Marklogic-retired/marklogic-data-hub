@@ -3,7 +3,7 @@ import {Row, Col, Modal, Form, FormLabel} from "react-bootstrap";
 import {SearchContext} from "@util/search-context";
 import styles from "./save-query-modal.module.scss";
 import {QueryOptions} from "../../../../types/query-types";
-import {HCInput, HCButton} from "@components/common";
+import {HCInput, HCButton, HCModal} from "@components/common";
 
 interface Props {
   setSaveModalVisibility: () => void;
@@ -117,8 +117,9 @@ const SaveQueryModal: React.FC<Props> = (props) => {
   };
 
   return (
-    <Modal
+    <HCModal
       show={true}
+      onHide={onCancel}
     >
       <Modal.Header>
         <span className={"fs-5"}>{"Save Query"}</span>
@@ -205,7 +206,7 @@ const SaveQueryModal: React.FC<Props> = (props) => {
           </Row>
         </Form>
       </Modal.Body>
-    </Modal>
+    </HCModal>
   );
 };
 

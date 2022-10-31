@@ -24,7 +24,7 @@ import {useHistory, useLocation} from "react-router-dom";
 import MergingStepDetail from "@components/entities/merging/merging-step-detail/merging-step-detail";
 import MappingStepDetail from "@components/entities/mapping/mapping-step-detail/mapping-step-detail";
 import {ErrorMessageContext} from "@util/error-message-context";
-import {HCButton} from "@components/common";
+import {HCButton, HCModal} from "@components/common";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTimesCircle} from "@fortawesome/free-regular-svg-icons";
 import {HubCentralConfigContext} from "@util/hubCentralConfig-context";
@@ -179,8 +179,9 @@ const TilesView = (props) => {
         <Overview enabled={enabled} environment={getEnvironment()}/>
       }
       <Toolbar tiles={tiles} enabled={enabled} />
-      <Modal
+      <HCModal
         show={errorMessageOptions.isVisible}
+        onHide={() => setErrorMessageOptions({isVisible: false, message: ""})}
       >
         <Modal.Body className={"pt-5 pb-4"}>
           <div className={"d-flex align-items-start justify-content-center"}>
@@ -192,7 +193,7 @@ const TilesView = (props) => {
             </HCButton>
           </div>
         </Modal.Body>
-      </Modal>
+      </HCModal>
     </>
   );
 };

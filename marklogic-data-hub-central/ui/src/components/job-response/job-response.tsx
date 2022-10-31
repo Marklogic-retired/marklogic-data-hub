@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {HCButton, HCTable, HCTooltip} from "@components/common";
+import {HCButton, HCTable, HCTooltip, HCModal} from "@components/common";
 import {Modal, Accordion} from "react-bootstrap";
 import {RunToolTips} from "@config/tooltips.config";
 import {SearchContext} from "@util/search-context";
@@ -330,12 +330,13 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStop
     history.push({pathname: "/tiles/explore"});
   };
 
-  return (<Modal
+  return (<HCModal
     show={jobResponse.jobStatus !== undefined}
     size={"lg"}
     data-testid="job-response-modal"
     id="job-response-modal"
     scrollable={true}
+    onHide={onCloseModal}
   >
     <Modal.Header className={"bb-none"} aria-label="job-response-modal-header">
       {isFlowRunning(jobResponse) ?
@@ -366,7 +367,7 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStop
 
       </div>
     </Modal.Body>
-  </Modal>);
+  </HCModal>);
 };
 
 export default JobResponse;

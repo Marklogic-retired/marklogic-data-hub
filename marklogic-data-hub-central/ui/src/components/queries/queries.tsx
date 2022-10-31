@@ -12,7 +12,7 @@ import EditQueryDetails from "./saving/edit-save-query/edit-query-details";
 import SaveChangesModal from "./saving/edit-save-query/save-changes-modal";
 import DiscardChangesModal from "./saving/discard-changes/discard-changes-modal";
 import {QueryOptions} from "../../types/query-types";
-import {HCButton, HCTooltip} from "@components/common";
+import {HCButton, HCTooltip, HCModal} from "@components/common";
 import {themeColors} from "@config/themes.config";
 import tooltipsConfig from "@config/explorer-tooltips.config";
 interface Props {
@@ -168,8 +168,9 @@ const Query: React.FC<Props> = (props) => {
   );
 
 
-  const deleteConfirmation = <Modal
+  const deleteConfirmation = <HCModal
     show={deleteModalVisibility}
+    onClick={() => setDeleteModalVisibility(false)}
   >
     <Modal.Header className={"bb-none"}>
       <button type="button" className="btn-close" aria-label="Close" onClick={() => setDeleteModalVisibility(false)}></button>
@@ -187,7 +188,7 @@ const Query: React.FC<Props> = (props) => {
         </HCButton>
       </div>
     </Modal.Body>
-  </Modal>;
+  </HCModal>;
 
 
   const getSaveQueryWithId = async (key) => {
@@ -622,8 +623,9 @@ const Query: React.FC<Props> = (props) => {
                 {clearQueryOption(false)}
               </span>
             }
-            <Modal
+            <HCModal
               show={showResetQueryEditedConfirmation || showResetQueryNewConfirmation}
+              onHide={onResetCancel}
             >
               <Modal.Header className={"bb-none"}>
                 <button type="button" className="btn-close" aria-label="Close" onClick={onResetCancel}></button>
@@ -643,7 +645,7 @@ const Query: React.FC<Props> = (props) => {
                   </HCButton>
                 </div>
               </Modal.Body>
-            </Modal>
+            </HCModal>
           </div>
         </div>}
       </div>

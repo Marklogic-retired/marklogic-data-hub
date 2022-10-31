@@ -10,48 +10,6 @@ import {createMemoryHistory} from "history";
 const history = createMemoryHistory();
 
 
-const mockSelectedSteps = {
-  testFlow: [
-    {
-      "stepId": "Mapping1-mapping",
-      "stepName": "Mapping1",
-      "stepDefinitionType": "mapping",
-      "stepNumber": "2",
-      "targetFormat": "json",
-      "targetEntityType": "http://example.org/Customer-0.0.1/Customer"
-    },
-    {
-      "stepId": "custom1-custom",
-      "stepName": "custom1",
-      "stepDefinitionType": "custom",
-      "stepNumber": "3",
-    },
-    {
-      "stepNumber": "4",
-      "stepId": "match-customer-matching",
-      "stepName": "match-customer",
-      "stepDefinitionType": "matching",
-      "targetEntityType": "http://example.org/Customer-0.0.1/Customer"
-    },
-  ],
-  testFlow2: [
-    {
-      "stepNumber": "4",
-      "stepId": "match-person-matching",
-      "stepName": "match-person",
-      "stepDefinitionType": "matching",
-      "targetEntityType": "http://example.org/Customer-0.0.1/Customer"
-    },
-    {
-      "stepNumber": "5",
-      "stepId": "merge-person-merging",
-      "stepName": "merge-person",
-      "stepDefinitionType": "merging",
-      "targetEntityType": "http://example.org/Customer-0.0.1/Customer"
-    },
-  ]
-};
-
 jest.mock("axios");
 
 const defaultProps: Props = {
@@ -61,7 +19,7 @@ const defaultProps: Props = {
   steps: data.steps.data,
   idx: 1,
   latestJobData: "",
-  allSelectedSteps: mockSelectedSteps,
+  getLSFlows: jest.fn(),
   setAllSelectedSteps: jest.fn(),
   openFilePicker: jest.fn(),
   setRunningStep: jest.fn(),
@@ -166,7 +124,6 @@ describe("Flow Panel test suite", () => {
         <FlowPanel
           {...defaultProps}
           flow={data.flows.data[0]}
-          allSelectedSteps={{}}
         /></Router>
     );
 
@@ -174,5 +131,6 @@ describe("Flow Panel test suite", () => {
     fireEvent.click(getByLabelText("stepSettings-testFlow"));
     fireEvent.click(getByTestId("select-all-toggle"));
     expect(getByText(RunToolTips.selectAStep)).toBeInTheDocument();
+    expect(getByTestId("runFlow-testFlow")).toBeDisabled();
   });
 });

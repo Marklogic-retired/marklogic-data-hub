@@ -12,7 +12,7 @@ import {convertDateFromISO} from "@util/conversionFunctions";
 import Steps from "../steps/steps";
 import {AdvLoadTooltips, SecurityTooltips, RunToolTips} from "@config/tooltips.config";
 import {PlayCircleFill, PlusCircleFill} from "react-bootstrap-icons";
-import {HCButton, HCCard, HCDivider, HCTooltip} from "@components/common";
+import {HCButton, HCCard, HCDivider, HCTooltip, HCModal} from "@components/common";
 
 interface Props {
   data: any;
@@ -237,8 +237,9 @@ const LoadCard: React.FC<Props> = (props) => {
   };
 
   const deleteConfirmation = (
-    <Modal
+    <HCModal
       show={dialogVisible}
+      onHide={onCancel}
     >
       <Modal.Header className={"bb-none"}>
         <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
@@ -256,12 +257,13 @@ const LoadCard: React.FC<Props> = (props) => {
           </HCButton>
         </div>
       </Modal.Body>
-    </Modal>
+    </HCModal>
   );
 
   const addConfirmation = (
-    <Modal
+    <HCModal
       show={addDialogVisible}
+      onHide={onCancel}
     >
       <Modal.Header className={"bb-none"}>
         <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
@@ -282,12 +284,13 @@ const LoadCard: React.FC<Props> = (props) => {
           </HCButton>
         </div>
       </Modal.Body>
-    </Modal>
+    </HCModal>
   );
 
   const addExistingStepConfirmation = (
-    <Modal
+    <HCModal
       show={addExistingStepDialogVisible}
+      onHide={onCancel}
     >
       <Modal.Header className={"bb-none"}>
         <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
@@ -304,13 +307,14 @@ const LoadCard: React.FC<Props> = (props) => {
           </HCButton>
         </div>
       </Modal.Body>
-    </Modal>
+    </HCModal>
   );
 
   const runNoFlowsConfirmation = (
-    <Modal
+    <HCModal
       show={runNoFlowsDialogVisible}
       size={"lg"}
+      onHide={onCancel}
     >
       <Modal.Header className={"bb-none"}>
         <div aria-label="step-in-no-flows-confirmation" style={{fontSize: "16px"}}>Choose the flow in which to add and run the step <strong>{loadArtifactName}</strong>.</div><button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
@@ -343,12 +347,13 @@ const LoadCard: React.FC<Props> = (props) => {
           Cancel
         </HCButton>
       </Modal.Footer>
-    </Modal>
+    </HCModal>
   );
 
   const runOneFlowConfirmation = (
-    <Modal
+    <HCModal
       show={runOneFlowDialogVisible}
+      onHide={onCancel}
     >
       <Modal.Header className={"bb-none"}>
         <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
@@ -368,12 +373,13 @@ const LoadCard: React.FC<Props> = (props) => {
           Continue
         </HCButton>
       </Modal.Footer>
-    </Modal>
+    </HCModal>
   );
 
   const runMultFlowsConfirmation = (
-    <Modal
+    <HCModal
       show={runMultFlowsDialogVisible}
+      onHide={onCancel}
     >
       <Modal.Header className={"bb-none"}>
         <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
@@ -402,7 +408,7 @@ const LoadCard: React.FC<Props> = (props) => {
           Cancel
         </HCButton>
       </Modal.Footer>
-    </Modal>
+    </HCModal>
   );
 
   const flowOptions = props.flows?.length > 0 ? props.flows.map((f, i) => ({value: f.name, label: f.name})) : {};
