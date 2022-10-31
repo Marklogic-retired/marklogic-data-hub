@@ -19,7 +19,9 @@ type Props = {
   entityTypeInstances: any;
   graphView: any;
   setViewConcepts: (viewConcepts: boolean) => void;
+  setPhysicsAnimation: (physicsAnimation: boolean) => void;
   setGraphPageInfo: (pageInfo: any) => void;
+  setIsLoading: (loading: boolean) => void;
   entitiesWithRelatedConcepts: any;
 };
 
@@ -27,7 +29,7 @@ const {graphViewTooltips} = tooltipsConfig;
 
 const GraphViewExplore: React.FC<Props> = (props) => {
   const storage = getViewSettings();
-  const {entityTypeInstances, graphView, setGraphPageInfo} = props;
+  const {entityTypeInstances, graphView, setGraphPageInfo, setIsLoading} = props;
 
   const [viewRelationshipLabels, toggleRelationShipLabels] = useState(storage.explore?.graphView?.relationshipLabels !== undefined ? storage.explore?.graphView?.relationshipLabels : true);
   const [exportPngButtonClicked, setExportPngButtonClicked] = useState(false);
@@ -54,11 +56,16 @@ const GraphViewExplore: React.FC<Props> = (props) => {
   const splitStyle: CSSProperties = {
     position: "relative",
     height: "none",
+    backgroundColor: "#fff",
   };
 
   useEffect(() => {
     props.setViewConcepts(viewConcepts);
   }, [viewConcepts]);
+
+  useEffect(() => {
+    props.setPhysicsAnimation(physicsAnimation);
+  }, [physicsAnimation]);
 
   const splitPaneProps = () => {
     let defaultProps: any = {
@@ -203,6 +210,7 @@ const GraphViewExplore: React.FC<Props> = (props) => {
             setGraphPageInfo={setGraphPageInfo}
             viewConcepts={viewConcepts}
             physicsAnimation={physicsAnimation}
+            setIsLoading={setIsLoading}
           />
         </div>
       </div>

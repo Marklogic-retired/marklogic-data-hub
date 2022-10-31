@@ -25,6 +25,7 @@ type Props = {
   setGraphPageInfo: (pageInfo: any) => void;
   viewConcepts: boolean;
   physicsAnimation: boolean;
+  setIsLoading: (loading: boolean) => void;
 };
 
 const GraphVisExplore: React.FC<Props> = (props) => {
@@ -36,11 +37,12 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     setExportPngButtonClicked,
     setGraphPageInfo,
     viewConcepts,
-    physicsAnimation
+    physicsAnimation,
+    setIsLoading
   } = props;
   const [expandedNodeData, setExpandedNodeData] = useState({});
   let graphData = {nodes: [], edges: []};
-  const [menuPosition, setMenuPosition] = useState<{ x: number, y: number }>({x: 0, y: 0});
+  const [menuPosition, setMenuPosition] = useState<{x: number, y: number}>({x: 0, y: 0});
   const [physicsEnabled, setPhysicsEnabled] = useState(false);
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
   const [clickedNode, setClickedNode] = useState({});
@@ -61,6 +63,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
   // Get network instance on init
   const [network, setNetwork] = useState<any>(null);
   const initNetworkInstance = (networkInstance) => {
+    setIsLoading(false);
     setNetwork(networkInstance);
   };
 
@@ -108,6 +111,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     } catch (err) {
       console.error("Error clearing the graph data before reset.");
     } finally {
+      setIsLoading(true);
       updateNodesData(getNodes());
       updateEdgesData(getEdges());
       setExpandedNodeData({});
@@ -1207,6 +1211,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     stabilized: (event) => {
       // NOTE if user doesn't manipulate graph on load, stabilize event
       // fires forever. This avoids reacting to infinite events
+      setIsLoading(false);
       if (hasStabilized) return;
       if (network) {
         let positions = network.getPositions();

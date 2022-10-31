@@ -47,7 +47,7 @@ describe("Concepts", () => {
     cy.log("**Turn on concepts on graph**");
     graphView.getConceptToggle().scrollIntoView().trigger("mouseover").click();
   });
-  it("Validate that the concepts toggle works correctly", {defaultCommandTimeout: 120000}, () => {
+  it("Validate that the concepts toggle works correctly", {defaultCommandTimeout: 200000}, () => {
     //Graph view
     cy.log("**Go to graph view**");
     browsePage.clickGraphView();
@@ -118,13 +118,13 @@ describe("Concepts", () => {
     });
   });
 
-  it("Validate default related concepts filter in sidebar", {defaultCommandTimeout: 120000}, () => {
+  it("Validate default related concepts filter in sidebar", {defaultCommandTimeout: 200000}, () => {
     //Graph view
     cy.log("**Go to graph view**");
     browsePage.clickGraphView();
     cy.waitForAsyncRequest();
-    graphExplore.getGraphVisCanvas().should("be.visible");
     graphExplore.stopStabilization();
+    graphExplore.getGraphVisCanvas().should("be.visible");
 
     cy.log("**All checkboxes should be checked by default since concepts are all being displayed**");
     entitiesSidebar.removeSelectedBaseEntity();
@@ -200,7 +200,7 @@ describe("Concepts", () => {
     });
   });
 
-  it("Verify concepts reflect base entity selection", {defaultCommandTimeout: 120000}, () => {
+  it("Verify concepts reflect base entity selection", {defaultCommandTimeout: 200000}, () => {
 
     cy.log("**Select 'Product' entity**");
     entitiesSidebar.openBaseEntityDropdown();
@@ -220,7 +220,7 @@ describe("Concepts", () => {
     entitiesSidebar.getSingleConceptCheckbox("Jeans").should("not.exist");
   });
 
-  it("Uncheck Kettle concept node and verify it is not visible in the canvas anymore", {defaultCommandTimeout: 120000}, () => {
+  it("Uncheck Kettle concept node and verify it is not visible in the canvas anymore", {defaultCommandTimeout: 200000}, () => {
     entitiesSidebar.getSingleConceptCheckbox("Kettle").click();
     cy.wait(2000);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_KETTLE).then((nodePositions: any) => {
@@ -242,7 +242,7 @@ describe("Concepts", () => {
       graphExploreSidePanel.getSidePanel().should("exist");
     });
   });
-  it("Verify Kettle concept node should be visible again when selected in the filter", {defaultCommandTimeout: 120000}, () => {
+  it("Verify Kettle concept node should be visible again when selected in the filter", {defaultCommandTimeout: 200000}, () => {
     entitiesSidebar.getSingleConceptCheckbox("Kettle").click();
 
     browsePage.waitForSpinnerToDisappear();
@@ -261,7 +261,7 @@ describe("Concepts", () => {
     });
   });
 
-  it("Validate that the physics animation toggle is visible and the tooltip works on it", {defaultCommandTimeout: 120000}, () => {
+  it("Validate that the physics animation toggle is visible and the tooltip works on it", {defaultCommandTimeout: 200000}, () => {
     //Graph view
     cy.log("**Go to graph view**");
     browsePage.clickGraphView();
