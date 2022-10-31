@@ -6,9 +6,9 @@ export interface HCButtonProps extends ButtonProps {
   loading?: boolean
 }
 
-const HCButton: React.FC<HCButtonProps> = ({loading, children, ...others}) => {
+const HCButton= React.forwardRef<HTMLButtonElement, HCButtonProps>(({loading, children, ...others}, ref) => {
   return (
-    <Button data-testid="hc-button-component" disabled={loading ?? loading} {...others}>
+    <Button data-testid="hc-button-component" disabled={loading ?? loading} {...others} ref={ref}>
       {children}
       {loading ? <Spinner
         data-testid="hc-button-component-spinner"
@@ -21,6 +21,6 @@ const HCButton: React.FC<HCButtonProps> = ({loading, children, ...others}) => {
       /> : null}
     </Button>
   );
-};
+});
 
 export default HCButton;

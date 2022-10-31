@@ -512,8 +512,8 @@ const JobResultsTableView = ({data}) => {
               return obj.jobId === row.jobId;
             });
 
-            return sortRows(nestedFlowRows).map((row) => (
-              <div className="row rowExpandedDetail" style={{margin: 0}}>
+            return sortRows(nestedFlowRows).map((row, index) => (
+              <div className="row rowExpandedDetail" style={{margin: 0}} key={index}>
                 <div style={{width: 50}}></div>
                 <div className="stepNameDiv" id={row.jobId + "_" + row.stepName} data-testid={`${row.stepName}-result`}>{row.stepName}</div>
                 <div className="stepType" id={row.jobId + "_" + row.stepName}>{StepDefinitionTypeTitles[row.stepDefinitionType]}</div>
