@@ -251,7 +251,7 @@ function HCTable({className, rowStyle, childrenIndent, data, keyUtil, component,
       let carets = (<><CaretUpFill className={styles.caret} aria-label="icon: caret-up" /><CaretDownFill className={styles.caret} aria-label="icon: caret-down" /></>);
 
       if (order === "asc") {
-        carets = (<><CaretUpFill className={styles.activeCaret} aria-label="icon: caret-up" /><CaretDownFill className={styles.caret} aria-abel="icon: caret-down" /></>);
+        carets = (<><CaretUpFill className={styles.activeCaret} aria-label="icon: caret-up" /><CaretDownFill className={styles.caret} aria-label="icon: caret-down" /></>);
       } else if (order === "desc") {
         carets = (<><CaretUpFill className={styles.caret} aria-label="icon: caret-up" /><CaretDownFill className={styles.activeCaret} aria-label="icon: caret-down" /></>);
       }
