@@ -289,9 +289,9 @@ function getEntityNodesByDocument(docURI, limit) {
       SELECT ?firstObjectIRI ?additionalEdge ?additionalIRI ?docRelated  WHERE {
           ?firstObjectIRI rdf:type ?entityTypeOrConceptIRI.
           {
-            ?firstObjectIRI ?additionalEdge ?additionalIRI. 
+            ?firstObjectIRI ?additionalEdge ?additionalIRI.
           } UNION {
-            ?additionalIRI ?additionalEdge ?firstObjectIRI. 
+            ?additionalIRI ?additionalEdge ?firstObjectIRI.
           }
           FILTER (isIRI(?additionalEdge) && ?additionalEdge = $allPredicates)
       }
@@ -357,6 +357,7 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
   const docUriToSubjectIri = {};
   const distinctIriPredicateCombos = {};
   const groupNodeCount = {};
+  let allEntitiesAreSelected = entityTypeIds.length === fn.count(fn.collection(entityLib.getModelCollection()));
   const getEdgeCount = (iri) => {
     if (!distinctIriPredicateCombos[iri]) {
       return 0;
@@ -511,7 +512,7 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
             };
           }
         }
-      } else if (fn.exists(item.nodeCount) && fn.head(item.nodeCount) > 1) {
+      } else if (fn.exists(item.nodeCount) && fn.head(item.nodeCount) > 1 && !(allEntitiesAreSelected === true && isSearch === true )) {
         const entityType = objectIRIArr[objectIRIArr.length - 2];
         const objectId = originId + "-" + item.predicateIRI + "-" + entityType;
         let edge = {};
