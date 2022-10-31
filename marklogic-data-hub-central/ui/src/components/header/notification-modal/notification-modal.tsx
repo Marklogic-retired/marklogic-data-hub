@@ -1,10 +1,9 @@
 import {Modal} from "react-bootstrap";
-import React, {useContext, useEffect, useState, useRef} from "react"; // eslint-disable-line @typescript-eslint/no-unused-vars
+import React, {useContext, useEffect, useState} from "react";
 import {defaultNotificationOptions, NotificationContext} from "@util/notification-context";
 import styles from "./notification-modal.module.scss";
 import {TbClipboardText} from "react-icons/tb";
-import {HCTable} from "@components/common";
-import {HCTooltip} from "@components/common";
+import {HCTable, HCTooltip, HCModal} from "@components/common";
 import {MdCallMerge} from "react-icons/md";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {dateConverter} from "../../../util/date-conversion";
@@ -20,6 +19,7 @@ import {Spinner} from "react-bootstrap";
 import {previewMatchingActivity, getDocFromURI, getPreviewFromURIs} from "@api/matching";
 import CompareValuesModal from "../../../components/entities/matching/compare-values-modal/compare-values-modal";
 import SearchPaginationSimple from "@components/search-pagination-simple/search-pagination-simple";
+
 
 const NotificationModal = (props) => {
 
@@ -249,9 +249,9 @@ const NotificationModal = (props) => {
 
   return (
     <div>
-      <Modal
+      <HCModal
         show={props.notificationModalVisible}
-        onHide={() => onCancel()}
+        onHide={onCancel}
         dialogClassName={styles.notificationModal}
         keyboard={true}
         backdrop="static"
@@ -287,7 +287,7 @@ const NotificationModal = (props) => {
             }
           </div>
         </Modal.Body>
-      </Modal>
+      </HCModal>
       <ConfirmationModal
         isVisible={showConfirmModal}
         type={ConfirmationType.DeleteNotificationRow}

@@ -4,7 +4,7 @@ import styles from "./structured-type-modal.module.scss";
 import {ModelingContext} from "@util/modeling-context";
 import {ModelingTooltips} from "@config/tooltips.config";
 import {UserContext} from "@util/user-context";
-import {HCButton, HCInput, HCTooltip} from "@components/common";
+import {HCButton, HCInput, HCTooltip, HCModal} from "@components/common";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {themeColors} from "@config/themes.config";
 
@@ -162,8 +162,9 @@ const StructuredTypeModal: React.FC<Props> = (props) => {
     >Add</HCButton>
   </div>;
 
-  return (<Modal
+  return (<HCModal
     show={props.isVisible}
+    onHide={onCancel}
   >
     <Modal.Header className={"pe-4"}>
       <span className={"fs-4"}>{"Add New Structured Property Type"}</span>
@@ -241,7 +242,7 @@ const StructuredTypeModal: React.FC<Props> = (props) => {
     <Modal.Footer className={"py-2"}>
       {modalFooter}
     </Modal.Footer>
-  </Modal>
+  </HCModal>
   );
 };
 

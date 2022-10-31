@@ -1,4 +1,4 @@
-import {HCTable, HCTooltip} from "@components/common";
+import {HCTable, HCTooltip, HCModal} from "@components/common";
 import React, {useContext, useEffect, useState} from "react";
 import {faFileExport, faPencilAlt} from "@fortawesome/free-solid-svg-icons";
 import {fetchQueries, removeQuery} from "@api/queries";
@@ -321,8 +321,9 @@ const QueryModal = (props) => {
     setData(data);
   };
 
-  const deleteConfirmation = <Modal
+  const deleteConfirmation = <HCModal
     show={deleteModalVisibility}
+    onHide={onCancel}
   >
     <Modal.Header className={"bb-none"}>
       <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
@@ -340,7 +341,7 @@ const QueryModal = (props) => {
         </HCButton>
       </div>
     </Modal.Body>
-  </Modal>;
+  </HCModal>;
 
   const getPreview = async (id) => {
     try {
@@ -374,10 +375,11 @@ const QueryModal = (props) => {
   return (
     <div>
       <ExportQueryModal hasStructured={hasStructured} queries={queries} tableColumns={tableColumns} tableData={tableData} recordID={recordID} exportModalVisibility={exportModalVisibility} setExportModalVisibility={setExportModalVisibility} />
-      <Modal
+      <HCModal
         show={props.modalVisibility}
         size={"lg"}
         dialogClassName={styles.modal1000w}
+        onHide={onClose}
       >
         <Modal.Header className={"bb-none"} data-testid="manage-queries-modal">
           <span className={styles.title}>{"Manage Queries"}</span>
@@ -392,7 +394,7 @@ const QueryModal = (props) => {
             rowKey="QueryManageKey"
           />
         </Modal.Body>
-      </Modal>
+      </HCModal>
       <EditQueryDialog
         currentQueryName={currentQueryName}
         setCurrentQueryName={setCurrentQueryName}

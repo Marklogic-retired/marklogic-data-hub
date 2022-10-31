@@ -865,7 +865,7 @@ const PropertyModal: React.FC<Props> = (props) => {
     show={props.isVisible}
     size={"lg"}
     aria-label="property-modal"
-    onHide={() => props.toggleModal(false)}
+    onHide={onCancel}
   >
     <Modal.Header className={"pe-4"}>
       <span className={"fs-3"}>{modalTitle}</span>

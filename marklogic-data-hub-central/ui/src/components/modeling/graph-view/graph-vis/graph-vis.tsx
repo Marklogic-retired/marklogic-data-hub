@@ -20,7 +20,7 @@ import * as FontIcon from "react-icons/fa";
 import {renderToStaticMarkup} from "react-dom/server";
 import {DEFAULT_NODE_CONFIG} from "@config/modeling.config";
 import {themeColors} from "@config/themes.config";
-import {HCAlert} from "@components/common";
+import {HCAlert, HCModal} from "@components/common";
 import {Modal} from "react-bootstrap";
 import {ModelingMessages} from "@config/tooltips.config";
 import {getMappingFunctions} from "@api/mapping";
@@ -1009,8 +1009,9 @@ const GraphVis: React.FC<Props> = (props) => {
     setInvalidSource(false);
   };
 
-  const invalidAlert = () => <Modal
+  const invalidAlert = () => <HCModal
     show={invalidSource}
+    onHide={closeInvalidSourceAlert}
     dialogClassName={styles.dialog960w}
     centered
   >
@@ -1027,7 +1028,7 @@ const GraphVis: React.FC<Props> = (props) => {
       >{"Invalid Relationship"}</HCAlert>
       <p aria-label="invalidSourceTypeError">{ModelingMessages.invalidSourceTypeError}</p>
     </Modal.Body>
-  </Modal>;
+  </HCModal>;
 
   return (
     <div id="graphVis">

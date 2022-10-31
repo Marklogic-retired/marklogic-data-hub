@@ -4,7 +4,7 @@ import styles from "./new-flow-dialog.module.scss";
 import {NewFlowTooltips} from "@config/tooltips.config";
 import {useHistory} from "react-router-dom";
 import {QuestionCircleFill} from "react-bootstrap-icons";
-import {HCInput, HCButton, HCTooltip} from "@components/common";
+import {HCInput, HCButton, HCTooltip, HCModal} from "@components/common";
 import {themeColors} from "@config/themes.config";
 
 interface Props {
@@ -144,9 +144,10 @@ const NewFlowDialog: React.FC<Props> = ({
     }
   };
 
-  return (<Modal
+  return (<HCModal
     show={newFlow}
     dialogClassName={styles.modal700w}
+    onHide={onCancel}
   >
     <Modal.Header className={"bb-none"}>
       <span className={"fs-3"}>{title || "New Flow"}</span>
@@ -231,7 +232,7 @@ const NewFlowDialog: React.FC<Props> = ({
         </Form>
       </div>
     </Modal.Body>
-  </Modal>);
+  </HCModal>);
 };
 
 export default NewFlowDialog;

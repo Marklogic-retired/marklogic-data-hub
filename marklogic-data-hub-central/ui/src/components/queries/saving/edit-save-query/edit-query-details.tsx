@@ -4,7 +4,7 @@ import styles from "../save-query-modal/save-query-modal.module.scss";
 import axios from "axios";
 import {UserContext} from "@util/user-context";
 import {SearchContext} from "@util/search-context";
-import {HCInput, HCButton} from "@components/common";
+import {HCInput, HCButton, HCModal} from "@components/common";
 
 interface Props {
   setEditQueryDetailVisibility: () => void;
@@ -79,8 +79,9 @@ const EditQueryDetails: React.FC<Props> = (props) => {
   };
 
   return (
-    <Modal
+    <HCModal
       show={true}
+      onHide={onCancel}
     >
       <Modal.Header>
         <span className={"fs-5"}>{"Edit Query Details"}</span>
@@ -131,7 +132,7 @@ const EditQueryDetails: React.FC<Props> = (props) => {
           </Row>
         </Form>
       </Modal.Body>
-    </Modal>
+    </HCModal>
   );
 };
 

@@ -11,6 +11,7 @@ import {getTableProperties} from "@util/data-conversion";
 import {UserContext} from "@util/user-context";
 import {expandThresholdExceededWarning, graphViewConfig} from "@config/explore.config";
 import {pagePropertiesType} from "types/query-types";
+import {HCModal} from "@components/common";
 
 type Props = {
   isVisible: boolean;
@@ -272,10 +273,11 @@ const TableViewGroupNodes: React.FC<Props> = (props) => {
   };
 
   return (
-    <Modal
+    <HCModal
       show={isVisible}
       size={"lg"}
       dialogClassName={styles.modalDialog}
+      onHide={closeModal}
     >
       <div className={styles.modalInfoContainer}>
         <Modal.Header className={"bb-none align-items-start"}>
@@ -302,7 +304,7 @@ const TableViewGroupNodes: React.FC<Props> = (props) => {
         </div>
         {modalFooter}
       </Modal.Body>
-    </Modal>
+    </HCModal>
   );
 };
 

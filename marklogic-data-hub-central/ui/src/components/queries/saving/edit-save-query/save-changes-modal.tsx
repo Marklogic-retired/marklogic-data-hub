@@ -5,7 +5,7 @@ import styles from "../save-query-modal/save-query-modal.module.scss";
 import axios from "axios";
 import {UserContext} from "@util/user-context";
 import {QueryOptions} from "../../../../types/query-types";
-import {HCInput, HCButton} from "@components/common";
+import {HCInput, HCButton, HCModal} from "@components/common";
 
 interface Props {
   setSaveChangesModalVisibility: () => void;
@@ -168,8 +168,9 @@ const SaveChangesModal: React.FC<Props> = (props) => {
   };
 
   return (
-    <Modal
+    <HCModal
       show={true}
+      onHide={onCancel}
     >
       <Modal.Header>
         <span className={"fs-5"}>{"Save Query"}</span>
@@ -259,7 +260,7 @@ const SaveChangesModal: React.FC<Props> = (props) => {
           </Row>
         </Form>
       </Modal.Body>
-    </Modal>
+    </HCModal>
   );
 };
 

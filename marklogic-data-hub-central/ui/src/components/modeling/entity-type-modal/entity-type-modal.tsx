@@ -6,7 +6,7 @@ import {ModelingTooltips, ErrorTooltips} from "@config/tooltips.config";
 import {createEntityType, updateModelInfo} from "@api/modeling";
 import {defaultHubCentralConfig} from "@config/modeling.config";
 import {QuestionCircleFill} from "react-bootstrap-icons";
-import {EntityTypeColorPicker, HCButton, HCInput, HCTooltip, HCIconPicker} from "@components/common";
+import {EntityTypeColorPicker, HCButton, HCInput, HCTooltip, HCIconPicker, HCModal} from "@components/common";
 import {themeColors} from "@config/themes.config";
 import {defaultIcon} from "@config/explore.config";
 import {hubCentralConfig} from "../../../types/modeling-types";
@@ -288,9 +288,10 @@ const EntityTypeModal: React.FC<Props> = (props) => {
     }
   };
 
-  return (<Modal
+  return (<HCModal
     show={props.isVisible}
     size={"lg"}
+    onHide={onCancel}
   >
     <Modal.Header className={"pe-4"}>
       <span className={"fs-3"}>{props.isEditModal ? "Edit Entity Type" : "Add Entity Type"}</span>
@@ -434,7 +435,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
         {props.isEditModal ? "OK" : "Add"}
       </HCButton>
     </Modal.Footer>
-  </Modal>
+  </HCModal>
   );
 };
 

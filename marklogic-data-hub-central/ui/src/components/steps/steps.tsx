@@ -5,7 +5,7 @@ import CreateEditStep from "../entities/create-edit-step/create-edit-step";
 import AdvancedSettings from "../advanced-settings/advanced-settings";
 import styles from "./steps.module.scss";
 import "./steps.scss";
-import {HCButton} from "@components/common";
+import {HCButton, HCModal} from "@components/common";
 import {faTimesCircle} from "@fortawesome/free-solid-svg-icons";
 import {StepType} from "../../types/curation-types";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -97,8 +97,10 @@ const Steps: React.FC<Props> = (props) => {
     setErrorModalVisible(false);
   };
 
-  const errorModal = <Modal
-    show={errorModalVisible}>
+  const errorModal = <HCModal
+    show={errorModalVisible}
+    onHide={onErrorCancel}
+  >
     <Modal.Header className={"bb-none"}>
       <button type="button" className="btn-close" aria-label="Close" onClick={onErrorCancel}></button>
     </Modal.Header>
@@ -114,7 +116,7 @@ const Steps: React.FC<Props> = (props) => {
         </HCButton>
       </div>
     </Modal.Body>
-  </Modal>;
+  </HCModal>;
 
   const resetTabs = () => {
     setCurrentTab(DEFAULT_TAB);
@@ -304,10 +306,11 @@ const Steps: React.FC<Props> = (props) => {
     if (setLoadModalClickedCalled !== undefined) setLoadModalClickedCalled(true);
   };
 
-  return <Modal
+  return <HCModal
     show={props.openStepSettings}
     size={"lg"}
     onClick={() => handleIsModelClicked()}
+    onHide={onCancel}
   >
     <Modal.Header className={"bb-none pb-0"}>
       <div className={`fs-3 position-absolute ${styles.title}`}>{getTitle()}</div>
@@ -361,7 +364,7 @@ const Steps: React.FC<Props> = (props) => {
         {errorModal}
       </div>
     </Modal.Body>
-  </Modal>;
+  </HCModal>;
 };
 
 export default Steps;

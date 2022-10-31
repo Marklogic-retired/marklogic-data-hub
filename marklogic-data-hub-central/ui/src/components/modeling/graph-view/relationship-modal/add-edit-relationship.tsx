@@ -22,7 +22,7 @@ import {
   EntityModified
 } from "../../../../types/modeling-types";
 import {ChevronDown, QuestionCircleFill} from "react-bootstrap-icons";
-import {HCButton, HCInput, HCTooltip, HCCard, DynamicIcons, HCDivider} from "@components/common";
+import {HCButton, HCInput, HCTooltip, HCCard, DynamicIcons, HCDivider, HCModal} from "@components/common";
 import DropDownWithSearch from "../../../common/dropdown-with-search/dropdownWithSearch";
 import {themeColors} from "@config/themes.config";
 import {defaultIcon, defaultConceptIcon} from "@config/explore.config";
@@ -1072,9 +1072,10 @@ const AddEditRelationship: React.FC<Props> = ({
     <span>{functionDropdown()}</span>
   </div>;
 
-  return (<Modal
+  return (<HCModal
     show={openRelationshipModal}
     dialogClassName={styles.dialog960w}
+    onHide={onCancel}
   >
     <Modal.Header className={"pe-4"}>
       <span aria-label="relationshipHeader" className={"fs-3"}>{isEditing ? "Edit Relationship" : "Add a Relationship"}</span>
@@ -1233,7 +1234,7 @@ const AddEditRelationship: React.FC<Props> = ({
     <Modal.Footer className={"d-flex justify-content-between py-2"}>
       {modalFooter}
     </Modal.Footer>
-  </Modal>);
+  </HCModal>);
 
 };
 

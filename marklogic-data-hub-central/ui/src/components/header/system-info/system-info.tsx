@@ -1,6 +1,6 @@
 import {ClearDataMessages, SystemInfoMessages} from "@config/messages.config";
 import {Col, Form, FormLabel, Modal, Row} from "react-bootstrap";
-import {HCAlert, HCButton, HCCard, HCTooltip} from "@components/common";
+import {HCAlert, HCButton, HCCard, HCTooltip, HCModal} from "@components/common";
 import React, {useContext, useEffect, useState} from "react";
 import Select, {components as SelectComponents} from "react-select";
 import {faCopy, faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
@@ -277,7 +277,7 @@ const SystemInfo = (props) => {
   };
 
   const clearDataConfirmation = (
-    <Modal show={clearDataVisible} dialogClassName={styles.confirmationModal}>
+    <HCModal show={clearDataVisible} dialogClassName={styles.confirmationModal} onHide={onClearCancel}>
       <Modal.Body>
         <div style={{display: "flex"}}>
           <div style={{padding: "24px 0px 0px 15px"}}>
@@ -300,7 +300,7 @@ const SystemInfo = (props) => {
           <div aria-label="Yes">Yes</div>
         </HCButton>
       </Modal.Footer>
-    </Modal>
+    </HCModal>
   );
 
   const downloadHCFilesButton = (
@@ -316,9 +316,9 @@ const SystemInfo = (props) => {
   );
 
   return (
-    <Modal
+    <HCModal
       show={props.systemInfoVisible}
-      onHide={() => onCancel()}
+      onHide={onCancel}
       dialogClassName={styles.systemModal}
       keyboard={true}
       backdrop="static"
@@ -542,7 +542,7 @@ const SystemInfo = (props) => {
         </div>
       </Modal.Body>
       {clearDataConfirmation}
-    </Modal>
+    </HCModal>
   );
 };
 

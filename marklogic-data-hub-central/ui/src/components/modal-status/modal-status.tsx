@@ -7,7 +7,7 @@ import {UserContext} from "@util/user-context";
 import {useInterval} from "../../hooks/use-interval";
 import {MAX_SESSION_TIME, SESSION_WARNING_COUNTDOWN} from "@config/application.config";
 import {getSystemInfo} from "@api/environment";
-import {HCButton} from "@components/common";
+import {HCButton, HCModal} from "@components/common";
 
 interface Props extends RouteComponentProps<any>{
 }
@@ -135,9 +135,10 @@ const ModalStatus: React.FC<Props> = (props) => {
   };
 
   return (
-    <Modal
+    <HCModal
       show={showModal}
       style={{zIndex: "5000"}}
+      onHide={onCancel}
     >
       <Modal.Header className={"pe-4"}>
         <span className={"fs-4"}>{title}</span>
@@ -155,7 +156,7 @@ const ModalStatus: React.FC<Props> = (props) => {
           {buttonText.ok}
         </HCButton>
       </Modal.Footer>
-    </Modal>
+    </HCModal>
   );
 };
 
