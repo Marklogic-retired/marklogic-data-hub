@@ -256,7 +256,7 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getResetConfirmationNoClick();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Person");
-    entitiesSidebar.getBaseEntityOption("Person").should("be.visible");
+    entitiesSidebar.getBaseEntityOption("Person").scrollIntoView().should("be.visible");
     entitiesSidebar.openBaseEntityFacets("Person");
     browsePage.getFacetItemCheckbox("lname", "Bates").click();
     browsePage.getSelectedFacets().should("exist");

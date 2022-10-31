@@ -25,7 +25,8 @@ const versions = {
   finalDbName: config.FINALDATABASE,
   jobsDbName: config.JOBDATABASE,
   markLogicVersion: xdmp.version(),
-  clusterName: xdmp.clusterName()
+  clusterName: xdmp.clusterName(),
+  supportConcepts: xdmp.effectiveVersion() >= 10000900
 };
 
 versions

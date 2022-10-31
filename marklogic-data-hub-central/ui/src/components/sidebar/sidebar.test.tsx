@@ -1,5 +1,5 @@
 import React from "react";
-import {fireEvent, render} from "@testing-library/react";
+import {fireEvent, render, wait} from "@testing-library/react";
 import Sidebar from "./sidebar";
 import searchPayloadFacets from "../../assets/mock-data/explore/search-payload-facets";
 import {entityFromJSON, entityParser} from "../../util/data-conversion";
@@ -48,8 +48,70 @@ describe("Sidebar createdOn face time window dropdown", () => {
       currentBaseEntities={[]}
       setCurrentBaseEntities={jest.fn()}
       entityIndicatorData={entityIndicatorData}
+      graphConceptsSearchSupported={true}
     />);
     expect(getByText("Select time")).toBeInTheDocument();
+  });
+
+  test("Verify version disabled/enabled concepts", async () => {
+    const {getByTestId, getByLabelText, rerender, queryByLabelText} = render(<Sidebar
+      entityDefArray={entityDefArray}
+      facets={searchPayloadFacets}
+      selectedEntities={[]}
+      facetRender = {jest.fn()}
+      checkFacetRender = {jest.fn()}
+      currentRelatedEntities={new Map<string, any>()}
+      currentRelatedConcepts={conceptsMap}
+      viewConcepts={true}
+      setCurrentRelatedConcepts={jest.fn()}
+      setHubArtifactsVisibilityPreferences={jest.fn()}
+      hideDataHubArtifacts={false}
+      graphView={true}
+      cardView={false}
+      setDatabasePreferences={jest.fn()}
+      greyFacets={[]}
+      setEntitySpecificPanel={jest.fn()}
+      entitiesWithRelatedConcepts={{}}
+      entityRelationships={{}}
+      setCurrentRelatedEntities={jest.fn()}
+      currentBaseEntities={[]}
+      setCurrentBaseEntities={jest.fn()}
+      entityIndicatorData={entityIndicatorData}
+      graphConceptsSearchSupported={false}
+    />);
+    fireEvent.mouseOver(getByTestId("related-concepts-panel"));
+    await wait(() => expect(getByLabelText(`concepts-version-tooltip`)).toBeInTheDocument());
+    expect(getByLabelText("related-concepts-checkbox")).toBeDisabled();
+
+    //verify positive scenario where concepts are enabled
+    rerender(<Sidebar
+      entityDefArray={entityDefArray}
+      facets={searchPayloadFacets}
+      selectedEntities={[]}
+      facetRender = {jest.fn()}
+      checkFacetRender = {jest.fn()}
+      currentRelatedEntities={new Map<string, any>()}
+      currentRelatedConcepts={conceptsMap}
+      viewConcepts={true}
+      setCurrentRelatedConcepts={jest.fn()}
+      setHubArtifactsVisibilityPreferences={jest.fn()}
+      hideDataHubArtifacts={false}
+      graphView={true}
+      cardView={false}
+      setDatabasePreferences={jest.fn()}
+      greyFacets={[]}
+      setEntitySpecificPanel={jest.fn()}
+      entitiesWithRelatedConcepts={{}}
+      entityRelationships={{}}
+      setCurrentRelatedEntities={jest.fn()}
+      currentBaseEntities={[]}
+      setCurrentBaseEntities={jest.fn()}
+      entityIndicatorData={entityIndicatorData}
+      graphConceptsSearchSupported={true}
+    />);
+
+    fireEvent.mouseOver(getByTestId("related-concepts-panel"));
+    await wait(() => expect(queryByLabelText(`concepts-version-tooltip`)).not.toBeInTheDocument());
   });
 
   test("Verify createdOn dropdown is selected", () => {
@@ -76,6 +138,7 @@ describe("Sidebar createdOn face time window dropdown", () => {
       currentBaseEntities={[]}
       setCurrentBaseEntities={jest.fn()}
       entityIndicatorData={entityIndicatorData}
+      graphConceptsSearchSupported={true}
     />);
     expect(getByText("Select time")).toBeInTheDocument();
     fireEvent.keyDown(getByLabelText("date-select"), {key: "ArrowDown"});
@@ -108,6 +171,7 @@ describe("Sidebar createdOn face time window dropdown", () => {
       currentBaseEntities={[]}
       setCurrentBaseEntities={jest.fn()}
       entityIndicatorData={entityIndicatorData}
+      graphConceptsSearchSupported={true}
     />);
     expect(document.querySelector("#hub-properties .accordion-button")).toHaveAttribute("aria-expanded", "true");
     userEvent.click(getByText("Hub Properties"));
@@ -169,6 +233,7 @@ describe("Sidebar createdOn face time window dropdown", () => {
         currentBaseEntities={[]}
         setCurrentBaseEntities={jest.fn()}
         entityIndicatorData={entityIndicatorData}
+        graphConceptsSearchSupported={true}
       />
     );
 
@@ -221,6 +286,7 @@ describe("Sidebar createdOn face time window dropdown", () => {
         currentBaseEntities={[]}
         setCurrentBaseEntities={jest.fn()}
         entityIndicatorData={entityIndicatorData}
+        graphConceptsSearchSupported={true}
       />
     );
     expect(document.querySelector("#database .accordion-button.after-indicator")).toHaveAttribute("aria-expanded", "true");
@@ -261,6 +327,7 @@ describe("Sidebar createdOn face time window dropdown", () => {
         currentBaseEntities={[]}
         setCurrentBaseEntities={jest.fn()}
         entityIndicatorData={entityIndicatorData}
+        graphConceptsSearchSupported={true}
       />
     );
     expect(document.querySelector("#database .accordion-button.after-indicator")).toHaveAttribute("aria-expanded", "true");
@@ -296,6 +363,7 @@ describe("Sidebar createdOn face time window dropdown", () => {
         currentBaseEntities={[]}
         setCurrentBaseEntities={jest.fn()}
         entityIndicatorData={entityIndicatorData}
+        graphConceptsSearchSupported={true}
       />
     );
 

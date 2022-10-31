@@ -123,7 +123,7 @@ describe("json scenario for table on browse documents page", () => {
     entitiesSidebar.getMainPanelSearchInput("10248");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("All Entities");
-    entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
+    entitiesSidebar.getBaseEntityOption("All Entities").scrollIntoView().should("be.visible");
     entitiesSidebar.getApplyFacetsButton().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.totalNumberDocuments("1");

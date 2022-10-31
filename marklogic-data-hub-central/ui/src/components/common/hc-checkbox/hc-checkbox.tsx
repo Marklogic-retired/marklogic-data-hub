@@ -4,7 +4,7 @@ import HCTooltip from "../hc-tooltip/hc-tooltip";
 
 interface Props {
   id: string;
-  tooltip?: string;
+  tooltip?: any;
   handleClick: Function;
   value: any;
   label?: string;
@@ -42,16 +42,30 @@ const HCCheckbox: React.FC<Props> = (props) => {
         style={cursorDisabled ? {marginTop: "0", verticalAlign: "middle", cursor: "not-allowed"} : {marginTop: "0", verticalAlign: "middle"}}
       />
       :
-      <FormCheck.Input
-        type="checkbox"
-        value={value}
-        checked={checked}
-        onChange={(e) => handleClick(e)}
-        onClick={(e) => e.stopPropagation()}
-        data-testid={dataTestId}
-        aria-label={ariaLabel}
-        style={cursorDisabled ? {marginTop: "0", verticalAlign: "middle", cursor: "not-allowed"} : {marginTop: "0", verticalAlign: "middle"}}
-      />
+      tooltip ?
+        <HCTooltip text={tooltip} placement={placementTooltip ? placementTooltip: "top"} id={`${id}-tooltip`}>
+          <FormCheck.Input
+            type="checkbox"
+            value={value}
+            checked={checked}
+            onChange={(e) => handleClick(e)}
+            onClick={(e) => e.stopPropagation()}
+            data-testid={dataTestId}
+            aria-label={ariaLabel}
+            style={cursorDisabled ? {marginTop: "0", verticalAlign: "middle", cursor: "not-allowed"} : {marginTop: "0", verticalAlign: "middle"}}
+          />
+        </HCTooltip>
+        :
+        <FormCheck.Input
+          type="checkbox"
+          value={value}
+          checked={checked}
+          onChange={(e) => handleClick(e)}
+          onClick={(e) => e.stopPropagation()}
+          data-testid={dataTestId}
+          aria-label={ariaLabel}
+          style={cursorDisabled ? {marginTop: "0", verticalAlign: "middle", cursor: "not-allowed"} : {marginTop: "0", verticalAlign: "middle"}}
+        />
     }
     {label ? getLabel() : children}
   </FormCheck>;

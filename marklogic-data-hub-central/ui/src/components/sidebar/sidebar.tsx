@@ -34,6 +34,7 @@ interface Props {
   checkFacetRender: (facets: any) => void;
   setDatabasePreferences: (option: string) => void;
   greyFacets: any;
+  graphConceptsSearchSupported: boolean;
   setHubArtifactsVisibilityPreferences: any;
   hideDataHubArtifacts: boolean;
   cardView: boolean;
@@ -56,7 +57,6 @@ const PLACEHOLDER: string = "Select a saved query";
 const Sidebar: React.FC<Props> = (props) => {
   const stagingDbName: string = getEnvironment().stagingDb ? getEnvironment().stagingDb : "Staging";
   const finalDbName: string = getEnvironment().finalDb ? getEnvironment().finalDb : "Final";
-
   const componentIsMounted = useRef(true);
   const entitiesArrayRef = useRef<any[]>();
 
@@ -937,10 +937,26 @@ const Sidebar: React.FC<Props> = (props) => {
             <HCDivider className={"mt-0 mb-2"} style={{backgroundColor: "#ccc"}} />
           </div>
         }
-        {props.currentRelatedConcepts?.size > 0 &&
+        {!props.graphConceptsSearchSupported ?
+          <div className={styles.relatedEntityPanel}>
+            <HCTooltip text={exploreSidebar.versionLimitedConcepts(getEnvironment().marklogicVersion)} aria-label="disabled-related-concept-tooltip" id="disabled-related-concept-tooltip" placement="bottom">
+              <Accordion id="related-concepts" data-testid={"related-concepts-panel"} className={"w-100 accordion-sidebar"} flush activeKey={""} defaultActiveKey={activeKey.includes("related-concepts") ? "related-concepts" : ""}>
+                <Accordion.Item eventKey="related-concepts" className={"bg-transparent"}>
+                  <div className={"p-0 d-flex"}>
+                    <Accordion.Button className={`after-indicator ${styles.disabledTitleCheckbox}`}>{
+                      panelTitle(<span><span className={styles.disabledCheckbox}><HCCheckbox ariaLabel="related-concepts-checkbox" id="check-all" value="check-all" disabled={!props.graphConceptsSearchSupported} cursorDisabled={!props.graphConceptsSearchSupported} handleClick={() => { return; }} checked={true} /></span>related concepts</span>, ExploreGraphViewToolTips.relatedConcepts)}
+                    </Accordion.Button>
+                  </div>
+                </Accordion.Item>
+              </Accordion>
+            </HCTooltip>
+            <HCDivider className={"mt-0 mb-2"} style={{backgroundColor: "#ccc"}} />
+          </div>
+          :
+        props.currentRelatedConcepts?.size > 0 &&
           <div className={styles.relatedEntityPanel}>
             <HCTooltip text={!props.graphView ? exploreSidebar.disabledRelatedConcepts : !props.viewConcepts ? exploreSidebar.relatedConceptsToggledOff : ""} aria-label="disabled-related-concept-tooltip" id="disabled-related-concept-tooltip" placement="bottom">
-              <Accordion id="related-concepts" data-testid={"related-concept-panel"} className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("related-concepts") && props.graphView && props.viewConcepts? "related-concepts" : ""} defaultActiveKey={activeKey.includes("related-concepts") ? "related-concepts" : ""}>
+              <Accordion id="related-concepts" data-testid={"related-concepts-panel"} className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("related-concepts") && props.graphView && props.viewConcepts? "related-concepts" : ""} defaultActiveKey={activeKey.includes("related-concepts") ? "related-concepts" : ""}>
                 <Accordion.Item eventKey="related-concepts" className={"bg-transparent"}>
                   <div className={"p-0 d-flex"}>
                     <Accordion.Button className={(!props.graphView || !props.viewConcepts) ? `after-indicator ${styles.disabledTitleCheckbox}` : `after-indicator ${styles.titleCheckbox}`} onClick={() => setActiveAccordion("related-concepts")}>{

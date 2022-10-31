@@ -96,6 +96,7 @@ public class EnvironmentController extends BaseController {
         info.stagingDb = versionInfo.getStagingDbName();
         info.finalDb = versionInfo.getFinalDbName();
         info.jobsDb = versionInfo.getJobsDbName();
+        info.supportConcepts = versionInfo.getSupportConcepts();
         info.pendoKey = pendoKeyProvider.getPendoKey();
         info.sessionTimeout = environment.getProperty("server.servlet.session.timeout");
         Object hubCentralSessionToken = session.getAttribute("hubCentralSessionToken");
@@ -121,6 +122,7 @@ public class EnvironmentController extends BaseController {
         public String sessionTimeout;
         public String sessionToken;
         public String pendoKey;
+        public Boolean supportConcepts;
     }
 }
 
