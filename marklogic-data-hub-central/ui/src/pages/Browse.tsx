@@ -104,6 +104,8 @@ const Browse: React.FC<Props> = ({location}) => {
   const [selectedView, setSelectedView] = useState<ViewType>(viewOptions.graphView ? ViewType.graph : (viewOptions.tableView ? ViewType.table : ViewType.snippet));
   const [entitiesWithRelatedConcepts, setEntitiesWithRelatedConcepts] = useState({});
   const [viewConcepts, setViewConcepts] = useState(true);
+  const [physicsAnimation, setPhysicsAnimation] = useState(true);
+  const [graphLoading, setGraphLoading] = useState(false);
 
   const searchResultDependencies = [
     searchOptions.pageLength,
@@ -180,6 +182,12 @@ const Browse: React.FC<Props> = ({location}) => {
       setFacetsEntitySpecificPanel(entityFacets);
     }
   }, [parsedFacets]);
+
+  useEffect(() => {
+    if (!physicsAnimation) {
+      setGraphLoading(false);
+    }
+  }, [physicsAnimation]);
 
   const getAllFacetsExceptConcepts = () => {
     return Object.fromEntries(Object.entries(searchOptions.selectedFacets).filter(([key, value]) => key !== "RelatedConcepts"));
@@ -420,6 +428,9 @@ const Browse: React.FC<Props> = ({location}) => {
         setSavedNode(undefined);
       }
       getGraphSearchResult(searchOptions.entityTypeIds);
+    }
+    if (physicsAnimation) {
+      setGraphLoading(true);
     }
     return () => {
       setGraphSearchData({});
@@ -772,7 +783,7 @@ const Browse: React.FC<Props> = ({location}) => {
                         {isGraphView() && <div className={styles.graphViewSearchSummary} aria-label={"graph-view-searchSummary"}>
                           {numberOfResultsBanner}
                         </div>}
-                        {isLoading && <div className={styles.spinnerContainer}><Spinner animation="border" data-testid="spinner" variant="primary" /></div>}
+                        {isLoading && !isGraphView() && <div className={styles.spinnerContainer}><Spinner animation="border" data-testid="spinner" variant="primary" /></div>}
                         {!cardView ? <ViewSwitch handleViewChange={handleViewChange} selectedView={selectedView} snippetView /> : ""}
                       </div>
                     </div></span>}
@@ -799,14 +810,26 @@ const Browse: React.FC<Props> = ({location}) => {
                       entityDefArray={entityDefArray}
                     />
                     : viewOptions.graphView ?
-                      <div>
-                        <GraphViewExplore
-                          entityTypeInstances={graphSearchData}
-                          graphView={viewOptions.graphView}
-                          setViewConcepts={setViewConcepts}
-                          setGraphPageInfo={setGraphPageInfo}
-                          entitiesWithRelatedConcepts={entitiesWithRelatedConcepts}
-                        />
+                      <div className="position-relative">
+                        {graphLoading && physicsAnimation &&
+                          <div className={styles.loadingContainer} aria-label={"spinner-message-container"}>
+                            <div className={styles.spinnerContainer}><Spinner animation="border" data-testid="spinner" variant="primary" /></div>
+                            <div className={styles.loadingMsg}>Graph Loading...</div>
+                            <br/>
+                            <div className={styles.loadingMsgSubtext}>(This process may take longer depending on the size of your data)</div>
+                          </div>
+                        }
+                        <div style={{opacity: graphLoading && physicsAnimation ? 0 : 1}}>
+                          <GraphViewExplore
+                            entityTypeInstances={graphSearchData}
+                            graphView={viewOptions.graphView}
+                            setViewConcepts={setViewConcepts}
+                            setGraphPageInfo={setGraphPageInfo}
+                            setIsLoading={setGraphLoading}
+                            setPhysicsAnimation={setPhysicsAnimation}
+                            entitiesWithRelatedConcepts={entitiesWithRelatedConcepts}
+                          />
+                        </div>
                       </div> :
                       (viewOptions.tableView ?
                         <div className={styles.tableViewResult}>

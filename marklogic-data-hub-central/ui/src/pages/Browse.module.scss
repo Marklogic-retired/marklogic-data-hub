@@ -1,3 +1,5 @@
+@import "../theme/HCVariables.scss";
+
 .layout {
   height: 100%;
   display: flex;
@@ -9,6 +11,28 @@
   max-height: 100vh;
   overflow-y: auto;
   width: 100%;
+}
+
+.loadingContainer {
+  z-index: 5;
+  position: absolute;
+  left: 30%;
+  top: 30%;
+  transform: translate(-30px, -30px);
+}
+
+.loadingMsg {
+  text-align: center;
+  color: $primary;
+  font-size: 30px;
+  padding-top: 10px;
+}
+
+.loadingMsgSubtext {
+  font-size: 15px;
+  text-align: center;
+  color: $secondary-gray;
+  margin-top: -10px;
 }
 
 .stickyHeader{

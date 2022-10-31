@@ -28,6 +28,8 @@ describe("Test navigation with facets from graph side panel to details twice", (
     cy.log("**Go to Explore section?**");
     toolbar.getExploreToolbarIcon().click();
 
+    cy.log("**Verify loading indicator in the graph**");
+    browsePage.getGraphLoader().should("be.visible");
     cy.log("**Select Graph view**");
     browsePage.clickGraphView();
     browsePage.waitForSpinnerToDisappear();
