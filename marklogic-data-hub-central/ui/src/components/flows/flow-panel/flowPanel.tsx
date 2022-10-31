@@ -256,7 +256,7 @@ const FlowPanel: React.FC<Props> = ({
   const OpenEditFlowDialog = (e, index) => {
     e.stopPropagation();
     setTitle("Edit Flow");
-    setFlowData(prevState => ({...prevState, ...flows[index]}));
+    setFlowData(prevState => ({...prevState, ...flows[index], description: flows[index].description ? flows[index].description : ""}));
     setNewFlow(true);
   };
 

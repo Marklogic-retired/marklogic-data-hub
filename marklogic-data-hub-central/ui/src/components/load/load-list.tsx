@@ -386,7 +386,7 @@ const LoadList: React.FC<Props> = (props) => {
           </HCTooltip>}
       </Dropdown.Toggle>
       <Dropdown.Menu className={styles.dropdownMenu}>
-        <Dropdown.Item className={styles.DropdownMenuItem} eventKey="0" key="0">
+        <Dropdown.Item className={styles.DropdownMenuItem} eventKey="0" key="0" as="div">
           {<Link data-testid="link" id="tiles-run-add" to={
             {
               pathname: "/tiles/run/add",

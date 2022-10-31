@@ -22,10 +22,25 @@ interface Props {
   setOpenNewFlow: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const NewFlowDialog: React.FC<Props> = (props) => {
+const NewFlowDialog: React.FC<Props> = ({
+  newFlow,
+  title,
+  setNewFlow,
+  setAddedFlowName,
+  createFlow,
+  createAdd,
+  updateFlow,
+  flowData,
+  canWriteFlow,
+  addStepToFlow,
+  newStepToFlowOptions,
+  setOpenNewFlow
+}) => {
 
-  const [flowName, setFlowName] = useState("");
-  const [description, setDescription] = useState(props.flowData && props.flowData !== {} ? props.flowData.description : "");
+  const isNewFlow = title === "New Flow";
+
+  const [flowName, setFlowName] = useState(isNewFlow ? "" : flowData?.name);
+  const [description, setDescription] = useState(isNewFlow ? "" : flowData?.description);
 
   const [isFlowNameTouched, setFlowNameTouched] = useState(false);
 
@@ -34,10 +49,11 @@ const NewFlowDialog: React.FC<Props> = (props) => {
   const [invalidChars, setInvalidChars] = useState(false);
 
   let history = useHistory();
+
   useEffect(() => {
-    if (props.flowData && JSON.stringify(props.flowData) !== JSON.stringify({}) && props.title === "Edit Flow") {
-      setFlowName(props.flowData.name);
-      setDescription(props.flowData.description);
+    if (flowData && title === "Edit Flow") {
+      setFlowName(flowData.name);
+      setDescription(flowData.description);
       setIsLoading(true);
       setTobeDisabled(true);
     } else {
@@ -45,33 +61,31 @@ const NewFlowDialog: React.FC<Props> = (props) => {
       setFlowNameTouched(false);
       setDescription("");
     }
-
     return (() => {
       setFlowName("");
       setFlowNameTouched(false);
       setDescription("");
       setTobeDisabled(false);
     });
-
-  }, [props.title, props.newFlow]);
+  }, [title, newFlow]);
 
   const onCancel = () => {
-    props.setNewFlow(false);
-    if (props.newStepToFlowOptions && props.newStepToFlowOptions.addingStepToFlow) {
-      props.setOpenNewFlow(false);
+    setNewFlow(false);
+    if (newStepToFlowOptions && newStepToFlowOptions.addingStepToFlow) {
+      setOpenNewFlow(false);
     }
 
     //add information about mapping step, load card, load list, pagination.
-    if (props.newStepToFlowOptions && !props.newStepToFlowOptions.existingFlow) {
+    if (newStepToFlowOptions && !newStepToFlowOptions.existingFlow) {
       history.push({
-        pathname: `/tiles/${props.newStepToFlowOptions.stepDefinitionType === "ingestion" ? "load" : "curate"}`,
+        pathname: `/tiles/${newStepToFlowOptions.stepDefinitionType === "ingestion" ? "load" : "curate"}`,
         state: {
-          stepDefinitionType: props.newStepToFlowOptions.stepDefinitionType,
-          targetEntityType: props.newStepToFlowOptions.targetEntityType,
-          viewMode: props.newStepToFlowOptions.viewMode,
-          pageSize: props.newStepToFlowOptions.pageSize,
-          sortOrderInfo: props.newStepToFlowOptions.sortOrderInfo,
-          page: props.newStepToFlowOptions.page
+          stepDefinitionType: newStepToFlowOptions.stepDefinitionType,
+          targetEntityType: newStepToFlowOptions.targetEntityType,
+          viewMode: newStepToFlowOptions.viewMode,
+          pageSize: newStepToFlowOptions.pageSize,
+          sortOrderInfo: newStepToFlowOptions.sortOrderInfo,
+          page: newStepToFlowOptions.page
         }
       });
     }
@@ -91,17 +105,17 @@ const NewFlowDialog: React.FC<Props> = (props) => {
       description: description
     };
     setIsLoading(true);
-    if (props.title === "Edit Flow") {
-      await props.updateFlow(flowName, description);
+    if (title === "Edit Flow") {
+      await updateFlow(flowName, description);
     } else {
-      await props.createFlow(dataPayload);
-      if (props.createAdd && props.newStepToFlowOptions && props.newStepToFlowOptions.addingStepToFlow) {
-        props.setAddedFlowName(flowName);
-        await props.addStepToFlow(props.newStepToFlowOptions.newStepName, flowName, props.newStepToFlowOptions.stepDefinitionType);
-        props.setOpenNewFlow(false);
+      await createFlow(dataPayload);
+      if (createAdd && newStepToFlowOptions && newStepToFlowOptions.addingStepToFlow) {
+        setAddedFlowName(flowName);
+        await addStepToFlow(newStepToFlowOptions.newStepName, flowName, newStepToFlowOptions.stepDefinitionType);
+        setOpenNewFlow(false);
       }
     }
-    props.setNewFlow(false);
+    setNewFlow(false);
   };
 
   const handleChange = (event) => {
@@ -131,11 +145,11 @@ const NewFlowDialog: React.FC<Props> = (props) => {
   };
 
   return (<Modal
-    show={props.newFlow}
+    show={newFlow}
     dialogClassName={styles.modal700w}
   >
     <Modal.Header className={"bb-none"}>
-      <span className={"fs-3"}>{props.title || "New Flow"}</span>
+      <span className={"fs-3"}>{title || "New Flow"}</span>
       <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} style={{"marginTop": "-30px"}}></button>
     </Modal.Header>
     <Modal.Body className={"py-2"}>
@@ -188,7 +202,7 @@ const NewFlowDialog: React.FC<Props> = (props) => {
                 dataTestid={"new-flow-description"}
                 value={description}
                 onChange={handleChange}
-                disabled={!props.canWriteFlow}
+                disabled={!canWriteFlow}
                 className={styles.input}
               />
               <div className={"p-2 d-flex"}>
@@ -207,7 +221,7 @@ const NewFlowDialog: React.FC<Props> = (props) => {
                 aria-label="Save"
                 variant="primary"
                 type="submit"
-                disabled={!props.canWriteFlow}
+                disabled={!canWriteFlow}
                 onClick={handleSubmit}
               >
                 Save
