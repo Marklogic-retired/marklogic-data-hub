@@ -165,11 +165,12 @@ const RelatedByPropertyDifferentFromID = {
 };
 
 const ResultRelatedByPropertyDifferentFromID = searchNodes(RelatedByPropertyDifferentFromID);
+expectedCountDifferentFromID = graphUtils.supportsGraphConceptsSearch() ? 3 : 2;
 
 assertions.concat([
-  test.assertEqual(3, ResultRelatedByPropertyDifferentFromID.total),
-  test.assertEqual(3, ResultRelatedByPropertyDifferentFromID.nodes.length, xdmp.toJsonString(ResultRelatedByPropertyDifferentFromID)),
-  test.assertEqual(3, ResultRelatedByPropertyDifferentFromID.edges.length),
+  test.assertEqual(expectedCountDifferentFromID, ResultRelatedByPropertyDifferentFromID.total),
+  test.assertEqual(expectedCountDifferentFromID, ResultRelatedByPropertyDifferentFromID.nodes.length, xdmp.toJsonString(ResultRelatedByPropertyDifferentFromID)),
+  test.assertEqual(expectedCountDifferentFromID, ResultRelatedByPropertyDifferentFromID.edges.length),
 ]);
 
 const conceptFilterQuery = {
@@ -259,5 +260,19 @@ assertions.concat([
   test.assertEqual(expectedNodeCount, structuredConceptQueryResults.nodes.length, xdmp.toJsonString(structuredConceptQueryResults)),
   test.assertEqual(expectedEdgeCount, structuredConceptQueryResults.edges.length, "One edge between concept node and structured property concept node")
 ]);
+
+const withAllEntitiesSelectedQuery = {
+  "searchText": "",
+  "entityTypeIds": [ "BabyRegistry","Product", "Customer", "NamespacedCustomer", "Office"]
+
+};
+const resultsAllEntitiesSelected = searchNodes(withAllEntitiesSelectedQuery);
+
+
+resultsAllEntitiesSelected.nodes.forEach(node => {
+    if(node.count != null && node.count > 1){
+      test.assertFail("a node with count greater than 1 must not exists");
+    }
+})
 
 assertions;
