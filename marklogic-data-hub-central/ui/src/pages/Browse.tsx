@@ -23,7 +23,7 @@ import Spinner from "react-bootstrap/Spinner";
 import RecordCardView from "@components/record-view/record-view";
 import SidebarFooter from "@components/sidebar-footer/sidebar-footer";
 import {CSSProperties} from "react";
-import GraphViewExplore from "@components/explore/graph-view-explore";
+import GraphViewExplore from "@components/explore/graph-view-explore/graph-view-explore";
 import {HCTooltip, HCSider} from "@components/common";
 import {graphSearchQuery, searchResultsQuery} from "@api/queries";
 import SelectedFacets from "@components/selected-facets/selected-facets";
@@ -35,6 +35,7 @@ import {themeColors} from "@config/themes.config";
 import {HubCentralConfigContext} from "@util/hubCentralConfig-context";
 import {baseEntitiesSorting} from "@util/entities-sorting";
 import {getRelatedConcepts} from "@api/facets";
+import {getEnvironment} from "@util/environment";
 
 interface Props extends RouteComponentProps<any> {
 }
@@ -106,6 +107,7 @@ const Browse: React.FC<Props> = ({location}) => {
   const [viewConcepts, setViewConcepts] = useState(true);
   const [physicsAnimation, setPhysicsAnimation] = useState(true);
   const [graphLoading, setGraphLoading] = useState(false);
+  const conceptsSupport: boolean = getEnvironment().supportConcepts ? getEnvironment().supportConcepts : false;
 
   const searchResultDependencies = [
     searchOptions.pageLength,
@@ -445,7 +447,7 @@ const Browse: React.FC<Props> = ({location}) => {
   }, []);
 
   const getClearEnititesObject = entities => Object.keys(entities).reduce((previousValue, entityType) => ({...previousValue, [entityType]: {filter: 0, amount: 0}}), {});
-  const getMaxOnEntitiesObject = entities => Object.keys(entities).reduce((previousValue, entityType) => previousValue < entities[entityType].amount ? entities[entityType].amount : previousValue, 0);
+  const getMaxOnEntitiesObject = entities => Object.keys(entities).reduce((previousValue, entityType) => entities && entities.hasOwnProperty(entityType) && previousValue < entities[entityType].amount ? entities[entityType].amount : previousValue, 0);
 
   useEffect(() => {
     if (hubCentralConfig.modeling && Object.keys(hubCentralConfig.modeling?.entities).length > 0) {
@@ -727,6 +729,7 @@ const Browse: React.FC<Props> = ({location}) => {
               greyFacets={greyFacets}
               setHubArtifactsVisibilityPreferences={setHubArtifactsVisibilityPreferences}
               hideDataHubArtifacts={hideDataHubArtifacts}
+              graphConceptsSearchSupported={conceptsSupport}
               cardView={cardView}
               viewConcepts={viewConcepts}
               graphView={viewOptions.graphView}
@@ -828,6 +831,7 @@ const Browse: React.FC<Props> = ({location}) => {
                             setIsLoading={setGraphLoading}
                             setPhysicsAnimation={setPhysicsAnimation}
                             entitiesWithRelatedConcepts={entitiesWithRelatedConcepts}
+                            graphConceptsSearchSupported={conceptsSupport}
                           />
                         </div>
                       </div> :

@@ -20,15 +20,18 @@ const tooltipsConfig = {
     baseEntities: "Base entities filters will filter out related entities.",
     relatedEntities:
       "Related entity filters only filter on their respective entity type and will not affect base entity results.",
-    disabledRelatedEntities: "Related entities are only available in the Graph View",
-    disabledRelatedConcepts: "Related concepts are only available in the Graph View",
-    relatedConceptsToggledOff: "Concepts have been toggled off in the Graph View"
+    disabledRelatedEntities: "Related entities are only available in the Graph View.",
+    disabledRelatedConcepts: "Related concepts are only available in the Graph View.",
+    relatedConceptsToggledOff: "Concepts have been toggled off in the Graph View.",
+    versionLimitedConcepts: function (versionNum) {
+      return <span aria-label="concepts-version-tooltip">Concepts are limited in the current version of Marklogic <strong>{(versionNum)}</strong>. Please upgrade the Marklogic version to at least <strong>10.0-9</strong> for the full functionality.</span>
+    },
   },
   exploreSidebarQueries: {
-    saveNewQuery: "Save the current query",
-    saveChanges: "Save changes",
+    saveNewQuery: "Save the current query.",
+    saveChanges: "Save changes.",
     disabledSaveButton: "You cannot save a query because you have not created one. To save a query, start a query by selecting an option below and clicking 'Search'.",
-    saveWithoutPermisions: "Save Query: Contact your security administrator to get the roles and permissions to access this functionality"
+    saveWithoutPermisions: "Save Query: Contact your security administrator to get the roles and permissions to access this functionality."
   },
   manageQueries: {
     disabledExport: "You cannot export your data because there are no results that match your query. Please try another query."

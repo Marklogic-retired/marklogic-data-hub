@@ -4,8 +4,8 @@ import {getViewSettings, setViewSettings} from "@util/user-context";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import FormCheck from "react-bootstrap/FormCheck";
-import GraphExploreSidePanel from "./graph-explore-side-panel/graph-explore-side-panel";
-import GraphVisExplore from "./graph-vis-explore/graph-vis-explore";
+import GraphExploreSidePanel from "../graph-explore-side-panel/graph-explore-side-panel";
+import GraphVisExplore from "../graph-vis-explore/graph-vis-explore";
 import {ModelingTooltips} from "@config/tooltips.config";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {SearchContext} from "@util/search-context";
@@ -14,9 +14,11 @@ import {faFileExport} from "@fortawesome/free-solid-svg-icons";
 import styles from "./graph-view-explore.module.scss";
 import {themeColors} from "@config/themes.config";
 import tooltipsConfig from "@config/explorer-tooltips.config";
+import {getEnvironment} from "@util/environment";
 
 type Props = {
   entityTypeInstances: any;
+  graphConceptsSearchSupported: boolean;
   graphView: any;
   setViewConcepts: (viewConcepts: boolean) => void;
   setPhysicsAnimation: (physicsAnimation: boolean) => void;
@@ -35,6 +37,8 @@ const GraphViewExplore: React.FC<Props> = (props) => {
   const [exportPngButtonClicked, setExportPngButtonClicked] = useState(false);
   const [viewConcepts, toggleConcepts] = useState(storage.explore?.graphView?.concepts !== undefined ? storage.explore?.graphView?.concepts : true);
   const [physicsAnimation, togglePhysicsAnimation] = useState(storage.explore?.graphView?.physicsAnimation !== undefined? storage.explore?.graphView?.physicsAnimation : true);
+  const {exploreSidebar} = tooltipsConfig;
+
 
   const {
     savedNode,
@@ -141,13 +145,28 @@ const GraphViewExplore: React.FC<Props> = (props) => {
     id="toggle-concepts"
     type="switch"
   >
-    <HCCheckbox
-      id="concepts-switch"
-      label="Concepts"
-      value={viewConcepts}
-      checked={viewConcepts}
-      handleClick={(e) => handleConceptsView(e)}
-    />
+    {!props.graphConceptsSearchSupported ?
+      <HCCheckbox
+        id="concepts-switch"
+        label="Concepts"
+        ariaLabel="concepts-switch"
+        value={false}
+        checked={false}
+        cursorDisabled={true}
+        tooltip={exploreSidebar.versionLimitedConcepts(getEnvironment().marklogicVersion)}
+        handleClick={() => { return; }}
+      />
+      :
+      <HCCheckbox
+        id="concepts-switch"
+        label="Concepts"
+        ariaLabel="concepts-switch"
+        tooltip={null}
+        value={viewConcepts}
+        checked={viewConcepts}
+        handleClick={(e) => handleConceptsView(e)}
+      />
+    }
   </FormCheck>
   <HCTooltip id="concept" text={graphViewTooltips.concept} placement="top">
     <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.infoIcon} />

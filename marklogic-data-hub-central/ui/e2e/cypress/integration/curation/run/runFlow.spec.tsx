@@ -225,8 +225,8 @@ describe("Run Tile tests", () => {
     runPage.clickStepInsidePopover("#merge-xml-person");
 
     runPage.clickStepInsidePopover("#mapPersonXML");
-    runPage.clickStepInsidePopover("#match-xml-person");
     runPage.clickStepInsidePopover("#master-person");
+    runPage.clickStepInsidePopover("#match-xml-person");
 
     cy.log("**Run Flow with selected steps**");
     cy.intercept("GET", "/api/jobs/**").as("runResponse");
