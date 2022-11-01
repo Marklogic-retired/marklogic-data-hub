@@ -1,4 +1,3 @@
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const mergeOptions = require('/com.marklogic.smart-mastering/survivorship/merging/options.xqy');
 const test = require("/test/test-helper.xqy");
 

@@ -11,7 +11,6 @@ const sem = require("/MarkLogic/semantics.xqy");
 const mergingDebugTraceEnabled = xdmp.traceEnabled(consts.TRACE_MERGING_DEBUG);
 const mergingTraceEnabled = xdmp.traceEnabled(consts.TRACE_MERGING) || mergingDebugTraceEnabled;
 const mergingTraceEvent = xdmp.traceEnabled(consts.TRACE_MERGING) ? consts.TRACE_MERGING : consts.TRACE_MERGING_DEBUG;
-const {merge} = require("../../../third-party/fast-xml-parser/src/util");
 const rdfType = sem.curieExpand("rdf:type");
 const rdfsIsDefinedBy = sem.curieExpand("rdfs:isDefinedBy");
 

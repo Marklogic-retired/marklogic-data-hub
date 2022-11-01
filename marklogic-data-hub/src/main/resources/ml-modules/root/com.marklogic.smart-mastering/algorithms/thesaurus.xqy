@@ -26,7 +26,7 @@ declare function algorithms:thesaurus(
 {
   let $expand-options := fn:head(($expand/options, $expand))
   let $thesaurus := $expand-options/(*:thesaurus|thesaurusURI)
-  let $original-values := $expand-values ! fn:string(.)[. ne '']
+  let $original-values := $expand-values ! fn:string(.) ! (., fn:lower-case(.))[. ne '']
   where fn:exists($thesaurus) and fn:exists($original-values)
   return
     let $expand-options := fn:head(($expand/options, $expand))

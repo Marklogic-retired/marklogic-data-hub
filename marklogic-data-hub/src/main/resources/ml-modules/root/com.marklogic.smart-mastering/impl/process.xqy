@@ -369,7 +369,7 @@ declare function proc-impl:build-match-summary(
   let $archived-collection := coll:archived-collections($match-options-node)
   let $normalized-input :=
     if ($input instance of xs:string*) then
-      for $doc in cts:search(fn:doc(), cts:and-not-query(cts:document-query($input), cts:collection-query($archived-collection)), "unfiltered")
+      for $doc in cts:search(fn:doc(), cts:and-not-query(cts:document-query($input), cts:collection-query($archived-collection)), ("unfiltered", "score-zero"), 0)
       return
         util-impl:build-write-object-for-doc($doc)
     else if ($input instance of map:map*) then
@@ -648,6 +648,8 @@ declare function proc-impl:build-match-summary(
       => map:with(
         "matchSummary",
         map:map()
+        => map:with("matchStepFlow", fn:string($match-options-node/flow))
+        => map:with("matchStepName", fn:string($match-options-node/stepName))
         => map:with("URIsToProcess",
           json:to-array(fn:distinct-values(($no-matches-uris,map:keys($action-details)))))
         => map:with("actionDetails", $action-details)
@@ -682,7 +684,7 @@ declare function proc-impl:process-match-and-merge-with-options(
   let $archived-collection := coll:archived-collections($matching-options)
   let $normalized-input :=
     if ($input instance of xs:string*) then
-      for $doc in cts:search(fn:doc(), cts:and-not-query(cts:document-query($input), cts:collection-query($archived-collection)), "unfiltered")
+      for $doc in cts:search(fn:doc(), cts:and-not-query(cts:document-query($input), cts:collection-query($archived-collection)), ("unfiltered", "score-zero"), 0)
       return
         util-impl:build-write-object-for-doc($doc)
     else if ($input instance of map:map*) then

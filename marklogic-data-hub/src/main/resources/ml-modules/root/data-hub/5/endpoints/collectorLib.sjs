@@ -50,7 +50,7 @@ function prepareSourceQuery(combinedOptions, stepDefinition) {
     return sourceQuery;
   }
 
-  return sourceQueryLimit ? `cts.uris(null, 'limit=${sourceQueryLimit}' , ${sourceQuery})` : `cts.uris(null, null, ${sourceQuery})`;
+  return sourceQueryLimit ? `cts.uris(null, ['limit=${sourceQueryLimit}', 'score-zero'], ${sourceQuery}, 0)` : `cts.uris(null, ['score-zero'], ${sourceQuery}, 0)`;
 }
 
 

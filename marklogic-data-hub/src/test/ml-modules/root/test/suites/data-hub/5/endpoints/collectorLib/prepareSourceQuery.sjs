@@ -13,7 +13,7 @@ let sourceQuery = collectorLib.prepareSourceQuery(
 );
 assertions.push(
   test.assertEqual(
-    "cts.uris(null, null, cts.andQuery([cts.fieldWordQuery('datahubCreatedByJob', 'job123'), cts.collectionQuery('test')]))",
+    "cts.uris(null, ['score-zero'], cts.andQuery([cts.fieldWordQuery('datahubCreatedByJob', 'job123'), cts.collectionQuery('test')]), 0)",
     sourceQuery,
     "When constrainSourceQueryToJob is set to true, and a jobId is set, then the sourceQuery is and'ed with a " +
     "query on datahubCreatedByJob (the contents of the step definition don't matter)"
@@ -29,7 +29,7 @@ options.sourceQuery = 'cts.collectionQuery("test")';
 sourceQuery = collectorLib.prepareSourceQuery(options, {});
 assertions.push(
   test.assertEqual(
-    "cts.uris(null, null, cts.andQuery([cts.fieldWordQuery('datahubCreatedByJob', 'job123'), cts.collectionQuery(\"test\")]))",
+    "cts.uris(null, ['score-zero'], cts.andQuery([cts.fieldWordQuery('datahubCreatedByJob', 'job123'), cts.collectionQuery(\"test\")]), 0)",
     sourceQuery,
     "Just verifying that if the user's query has double quotes on it, things still work"
   )
@@ -44,7 +44,7 @@ sourceQuery = collectorLib.prepareSourceQuery(
 );
 assertions.push(
   test.assertEqual(
-    "cts.uris(null, null, cts.collectionQuery('test'))",
+    "cts.uris(null, ['score-zero'], cts.collectionQuery('test'), 0)",
     sourceQuery,
     "If no jobId is provided in the options, then the query won't be constrained by a job"
   )

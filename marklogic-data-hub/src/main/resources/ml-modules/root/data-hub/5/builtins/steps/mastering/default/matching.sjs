@@ -13,14 +13,13 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
+const mastering = require("/com.marklogic.smart-mastering/process-records.xqy");
 const masteringStepLib = require("/data-hub/5/builtins/steps/mastering/default/lib.sjs");
 const quickStartRequiredOptionProperty = 'matchOptions';
 const hubCentralRequiredOptionProperty = 'matchRulesets';
 const emptySequence = Sequence.from([]);
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const { Matchable } = require('/data-hub/5/mastering/matching/matchable.sjs');
-const { buildMatchSummary } = require('/data-hub/5/mastering/matching/matcher.sjs');
 
 /**
  * Filters out content that has either already been processed by the running Job or are side-car documents not intended for matching against
@@ -31,8 +30,6 @@ const { buildMatchSummary } = require('/data-hub/5/mastering/matching/matcher.sj
  */
 function filterContentAlreadyProcessed(content, summaryCollection, collectionInfo, jobId) {
   const filteredContent = [];
-  const collectionQuery = cts.collectionQuery(summaryCollection);
-  const jobIdQuery = cts.fieldWordQuery('datahubCreatedByJob', jobId);
   let auditingNotificationsInSourceQuery = false;
   for (let item of content) {
     const collections = item.context ? item.context.originalCollections || [] : [];
@@ -41,21 +38,6 @@ function filterContentAlreadyProcessed(content, summaryCollection, collectionInf
     if (auditingOrNotificationDoc) {
       auditingNotificationsInSourceQuery = auditingNotificationsInSourceQuery || auditingOrNotificationDoc;
       continue;
-    }
-    // skip documents already set to be merged
-    const actionDetailQuery = cts.andQuery([cts.jsonPropertyValueQuery("uris", item.uri, "exact"),cts.jsonPropertyValueQuery("action", "merge", "exact")]);
-    const documentQuery = cts.andQuery([collectionQuery,jobIdQuery,cts.jsonPropertyScopeQuery("actionDetails",actionDetailQuery)]);
-    if (cts.exists(documentQuery)) {
-      let falsePositive = true;
-      for (const matchedDoc of cts.search(documentQuery)) {
-        if (cts.contains(matchedDoc.xpath("/matchSummary/actionDetails/*"), actionDetailQuery)) {
-          falsePositive = false;
-          break;
-        }
-      }
-      if (!falsePositive) {
-        continue;
-      }
     }
     filteredContent.push(item);
   }
@@ -100,9 +82,11 @@ function main(content, options, stepExecutionContext) {
   const matchOptions = options.matchOptions || options;
   matchOptions.targetEntityType = matchOptions.targetEntityType || options.targetEntityType || options.targetEntity;
   matchOptions.stepName = stepExecutionContext && stepExecutionContext["flowStep"] ? stepExecutionContext["flowStep"]["name"] : "";
-  let matchSummaryJson = buildMatchSummary(
-    new Matchable(matchOptions),
-    filteredContent
+  let matchSummaryJson = mastering.buildMatchSummary(
+    filteredContent,
+    options,
+    options.filterQuery ? cts.query(options.filterQuery) : cts.trueQuery(),
+    stepExecutionContext != null ? stepExecutionContext.fineProvenanceIsEnabled() : false
   );
   return buildResult(matchSummaryJson, options, collections);
 }

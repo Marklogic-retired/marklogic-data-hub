@@ -52,7 +52,7 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
         return new HubAmpManager(context.getManageClient());
     }
 
-    class HubAmpManager extends AmpManager {
+    static class HubAmpManager extends AmpManager {
 
         public HubAmpManager(ManageClient client) {
             super(client);

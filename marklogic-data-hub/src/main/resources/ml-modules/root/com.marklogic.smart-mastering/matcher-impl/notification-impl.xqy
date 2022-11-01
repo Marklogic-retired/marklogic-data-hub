@@ -328,7 +328,7 @@ declare function notify-impl:get-notifications-as-xml(
   $extractions as map:map)
 as element(sm:notification)*
 {
-  for $n in cts:search(/sm:notification, cts:true-query(), "unfiltered")[$start to $end]
+  for $n in cts:search(/sm:notification, cts:true-query(), "unfiltered", 0)[$start to $end]
     let $notification-uri := fn:base-uri($n)
     let $entity-name := $n/sm:meta/sm:entityName/text()
     return if(fn:compare($entity-name, "") ne 0) then

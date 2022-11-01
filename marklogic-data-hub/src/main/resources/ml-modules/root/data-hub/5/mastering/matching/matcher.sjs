@@ -267,47 +267,81 @@ function buildMatchSummary(matchable, content) {
   if (matchingTraceEnabled) {
     xdmp.trace(matchingTraceEvent, `Building match summary with matchable: ${xdmp.describe(matchable, Sequence.from([]), Sequence.from([]))} and content: ${xdmp.toJsonString(content)}`);
   }
+  const urisToContentObjects = {};
+  for (const contentObject of content) {
+    urisToContentObjects[contentObject.uri] = contentObject;
+  }
   matchable.matchStep.dataFormat = xdmp.uriFormat(fn.head(content).uri);
+  const allUris = hubUtils.normalizeToArray(content).map((c) => c.uri);
   const dataFormat = matchable.matchStep.dataFormat;
   let urisToActOn = [];
   const allActionDetails = {};
   const uriToMerged = {};
-  const baselineQuery = matchable.baselineQuery();
+  const baselineQuery = cts.registeredQuery(cts.register(matchable.baselineQuery()));
   // get thresholds with actions associated with them
   const thresholdDefinitions = matchable.thresholdDefinitions().filter((def => def.action()));
-  const lowestThresholdDefinition = thresholdDefinitions[0];
-  const minimumRulesetCombinations = lowestThresholdDefinition.minimumMatchCombinations();
+  const thresholdQueryFunctions =  thresholdDefinitions.map((def, index, array) => {
+    const nextDef = array[index + 1];
+    const notQuery = (nextDef) ? nextDef.minimumMatchCombinations(): null;
+    return (doc) => {
+      const positiveQuery = groupQueries(def.minimumMatchCombinations().map(ruleset => buildQueryFromMatchRuleset(doc, ruleset)), cts.orQuery);
+      if (notQuery) {
+        return cts.andNotQuery(
+              positiveQuery,
+              groupQueries(notQuery.map(ruleset => buildQueryFromMatchRuleset(doc, ruleset)), cts.orQuery)
+          );
+        } else {
+          return positiveQuery;
+        }
+    }
+  });
   // prime triple cache on blocked merges
-  getBlocksOfUris(Sequence.from(hubUtils.normalizeToArray(content).map((c) => c.uri)));
+  getBlocksOfUris(Sequence.from(allUris));
 
   for (const contentObject of content) {
     let documentIsMerged = false;
     const filterQuery = matchable.filterQuery(contentObject.value);
-    const matchCtsQuery = optimizeCtsQueries(groupQueries(
-      minimumRulesetCombinations
-        .map((minimumRulesetCombination) => buildQueryFromMatchRuleset(contentObject.value, minimumRulesetCombination)),
-      cts.orQuery
-    ));
-    if (fn.empty(matchCtsQuery)) {
-      if (matchingTraceEnabled) {
-        xdmp.trace(matchingTraceEvent, `No minimum match query for ${xdmp.describe(contentObject.value)}`);
-      }
-      continue;
-    }
     const thresholdGroups = {};
-    const finalMatchQuery = cts.andQuery([baselineQuery, filterQuery, matchCtsQuery]);
-    const formatOption = `format-${dataFormat}`;
-    const total = cts.estimate(finalMatchQuery);
-    if (matchingTraceEnabled) {
-      xdmp.trace(matchingTraceEvent, `Found ${total} results for ${xdmp.describe(contentObject.value)} with query ${xdmp.describe(finalMatchQuery, Sequence.from([]), Sequence.from([]))}`);
-      xdmp.trace(matchingTraceEvent, `Searching with format option: ${formatOption}.`);
+    let allMatchingBatchUris = [];
+    for (const thresholdQueryFunction of thresholdQueryFunctions) {
+      const finalMatchQuery = optimizeCtsQueries(cts.andQuery([baselineQuery, filterQuery, thresholdQueryFunction(contentObject.value)]));
+      const total = cts.estimate(finalMatchQuery);
+      if (matchingTraceEnabled) {
+        xdmp.trace(matchingTraceEvent, `Found ${total} results for ${xdmp.describe(contentObject.value)} with query ${xdmp.describe(finalMatchQuery, Sequence.from([]), Sequence.from([]))}`);
+        xdmp.trace(matchingTraceEvent, `Searching with format option: ${formatOption}.`);
+      }
+      const maxScan = Math.min(matchable.maxScan(), total);
+      let matchingUris;
+      let uriOptions = [`limit=${maxScan}`, "ascending", "score-zero", "concurrent"];
+      if (total > matchable.maxScan()) {
+        if (matchingDebugTraceEnabled) {
+          xdmp.trace(matchingTraceEvent, `Large number of documents (${total}) matching ${xdmp.describe(finalMatchQuery, Sequence.from([]), Sequence.from([]))}`);
+        }
+        const allThresholdMatchingUris = cts.uris(null, ["score-zero", "descending", "concurrent"], finalMatchQuery, 0).toArray();
+        const urisPathReference = cts.pathReference("/matchSummary/actionDetails/*/uris");
+        const processedUris = cts.values(urisPathReference, null, ["score-zero", "descending", "concurrent"], cts.rangeQuery(urisPathReference, "=", allThresholdMatchingUris, ["score-function=zero"], 0), 0).toArray();
+        let begin = (allThresholdMatchingUris.filter((uri) => processedUris.includes(uri)).length) - 1;
+        if (begin < 0) {
+          begin = 0;
+        }
+        const end = begin + maxScan + 1;
+        matchingUris = allThresholdMatchingUris.slice(begin, end);
+      } else {
+        matchingUris = cts.uris(null, uriOptions, finalMatchQuery, 0).toArray();
+      }
+      allMatchingBatchUris = allMatchingBatchUris.concat(matchingUris);
     }
-    const maxScan = matchable.maxScan();
-    if (total > maxScan) {
-      xdmp.log(`Large number of documents (${total}) matching ${xdmp.describe(finalMatchQuery, Sequence.from([]), Sequence.from([]))}`);
+    const urisToSearch = allMatchingBatchUris.filter(uri => !allUris.includes(uri));
+    if (urisToSearch.length > 0) {
+      hubUtils
+        .documentsToContentDescriptorArray(fn.doc(urisToSearch))
+        .forEach((contentObj) => urisToContentObjects[contentObj.uri] = contentObj);
     }
-    for (const matchingDocument of fn.subsequence(cts.search(finalMatchQuery, [formatOption, "filtered", "score-zero"], 0), 1, maxScan)) {
-      const matchingContentObject = {uri: xdmp.nodeUri(matchingDocument), value: matchingDocument};
+    for (const matchingUri of allMatchingBatchUris) {
+      if (!(dataFormat === xdmp.uriFormat(matchingUri))) {
+        continue;
+      }
+      const matchingContentObject = urisToContentObjects[matchingUri];
       const score = matchable.scoreDocument(contentObject, matchingContentObject);
       let currentThresholdDefinition = null;
       for (const thresholdDefinition of thresholdDefinitions) {
@@ -318,7 +352,7 @@ function buildMatchSummary(matchable, content) {
         }
       }
       if (matchingTraceEnabled) {
-        xdmp.trace(matchingTraceEvent, `${xdmp.describe(contentObject.value)} and ${xdmp.describe(matchingDocument)} placed in the threshold ${currentThresholdDefinition ? currentThresholdDefinition.name(): "null"} with score ${score}.`);
+        xdmp.trace(matchingTraceEvent, `${xdmp.describe(contentObject.value)} and ${xdmp.describe(matchingContentObject.value)} placed in the threshold ${currentThresholdDefinition ? currentThresholdDefinition.name(): "null"} with score ${score}.`);
       }
       matchingContentObject.score = score;
       if (currentThresholdDefinition) {

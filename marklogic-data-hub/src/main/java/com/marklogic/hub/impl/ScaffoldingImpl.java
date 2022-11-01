@@ -448,7 +448,7 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
         return output.toString();
     }
 
-    public class ContentPlugin extends ResourceManager {
+    public static class ContentPlugin extends ResourceManager {
         private static final String NAME = "mlScaffoldContent";
 
         private RequestParameters params = new RequestParameters();

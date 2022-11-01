@@ -415,8 +415,7 @@ declare function matcher:get-notifications-as-xml($start as xs:int, $end as xs:i
 declare function matcher:get-notifications-as-json($start as xs:int, $end as xs:int, $extractions as map:map)
   as array-node()
 {
-  notify-impl:get-notifications-as-json($start, $end, $extractions),
-  xdmp:log("DEPRECATED: matcher:get-notifications-as-json() has been deprecated; call matcher:get-notifications() with $const:FORMAT-JSON instead")
+  notify-impl:get-notifications-as-json($start, $end, $extractions)
 };
 
 (:

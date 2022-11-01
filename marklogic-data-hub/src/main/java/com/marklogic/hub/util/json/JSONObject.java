@@ -360,8 +360,8 @@ public class JSONObject {
      * @param map a map of (String, Object)
      */
     public void putMap(Map<String, Object> map) {
-        for (String key : map.keySet()) {
-            put(key, map.get(key));
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            put(entry.getKey(), entry.getValue());
         }
     }
 

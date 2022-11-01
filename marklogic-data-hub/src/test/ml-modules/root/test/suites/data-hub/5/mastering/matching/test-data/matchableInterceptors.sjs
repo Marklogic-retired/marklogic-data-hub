@@ -14,13 +14,14 @@ function filterQueryInterceptor(filterQuery, docNode) {
 }
 
 function scoreDocumentInterceptor(defaultScore, contentObjectA, contentObjectB, matchingRulesetDefinitions) {
-  let score = 0;
-  for (const matchRuleset of matchingRulesetDefinitions) {
+  let score = 10;
+/*  for (const matchRuleset of matchingRulesetDefinitions) {
     const matchRulesetScore = matchRuleset.score(contentObjectA, contentObjectB);
     if (matchRulesetScore > score) {
       score = matchRulesetScore;
     }
   }
+ */
   return score;
 }
 

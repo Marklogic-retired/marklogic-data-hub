@@ -3,13 +3,11 @@ const consts = require("/data-hub/5/impl/consts.sjs");
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const common = require("/data-hub/5/mastering/common.sjs");
-const getBlocks = hubUtils.requireFunction("/com.marklogic.smart-mastering/matcher-impl/blocks-impl.xqy", "getBlocks");
 const matchingDebugTraceEnabled = xdmp.traceEnabled(consts.TRACE_MATCHING_DEBUG);
 const matchingTraceEnabled = xdmp.traceEnabled(consts.TRACE_MATCHING) || matchingDebugTraceEnabled;
 const matchingTraceEvent = xdmp.traceEnabled(consts.TRACE_MATCHING) ? consts.TRACE_MATCHING : consts.TRACE_MATCHING_DEBUG;
-const thsr = require("/MarkLogic/thesaurus.xqy");
-const spell = require("/MarkLogic/spell.xqy");
 const {groupQueries} = require("./matcher.sjs");
+const {requireFunction} = require("../../impl/hub-utils.sjs");
 
 /*
  * A class that encapsulates the configurable portions of the matching process.
@@ -34,6 +32,7 @@ class Matchable {
     if (!this._model) {
       this._model = this._genericModel;
     }
+    this._propertyQueryFunctions = {};
   }
 
   /*
@@ -104,7 +103,9 @@ class Matchable {
    */
   filterQuery(documentNode) {
     let filterQuery, notDocumentQuery, stepFilterQuery;
-    let excludeDocuments = Sequence.from([xdmp.nodeUri(documentNode), getBlocks(fn.baseUri(documentNode)).xpath("text()")]);
+    const uri = xdmp.nodeUri(documentNode);
+    const getBlocks = hubUtils.requireFunction("/com.marklogic.smart-mastering/matcher-impl/blocks-impl.xqy", "getBlocks");
+    const excludeDocuments = fn.exists(uri) ? Sequence.from([uri, Sequence.from(getBlocks(uri))]): null;
     if (fn.exists(excludeDocuments)) {
       notDocumentQuery = cts.documentQuery(excludeDocuments.toArray());
     }
@@ -221,46 +222,57 @@ class Matchable {
     if (matchingTraceEnabled) {
       xdmp.trace(matchingTraceEvent, `Property query for ${propertyPath} with values ${xdmp.describe(values, Sequence.from([]), Sequence.from([]))}`);
     }
-    let indexes = this.model().propertyIndexes(propertyPath);
-    if (this._genericModel && !(indexes && indexes.length)) {
-      indexes = this._genericModel.propertyIndexes(propertyPath);
-    }
     const valuesAreQueries = hubUtils.normalizeToArray(values).every(val => val instanceof cts.query);
-    if (valuesAreQueries) {
-      return values;
-    }
     if (matchingDebugTraceEnabled) {
       xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Property query for ${propertyPath} has query values? ${valuesAreQueries}`);
     }
-    if (indexes && indexes.length) {
-      const scalarType = cts.referenceScalarType(indexes[0]);
-      const collation = (scalarType === "string") ? cts.referenceCollation(indexes[0]): null;
-      let typedValues = [];
-      for (const value of values) {
-        if (xdmp.castableAs("http://www.w3.org/2001/XMLSchema", scalarType, value)) {
-          typedValues.push(xs[scalarType](value));
-        }
-      }
-      if (typedValues.length === 0) {
-        return values;
-      }
-      if (collation) {
-        typedValues = cts.valueMatch(indexes, Sequence.from(typedValues), ["case-insensitive"]);
-      }
-      return cts.rangeQuery(indexes, "=", typedValues);
-    } else {
-      const pathParts = propertyPath.split(".").filter((path) => path);
-      const propertyDefinitions = pathParts
-        .map((propertyPart, index) => this.model().propertyDefinition(pathParts.slice(0,index + 1).join(".")));
-      if (matchingDebugTraceEnabled) {
-        xdmp.trace(matchingTraceEvent, `Property for ${propertyPath} has property definitions ${xdmp.describe(propertyDefinitions, Sequence.from([]), Sequence.from([]))}`);
-      }
-      const propertyQuery = this._buildQueryFromPropertyDefinitionsAndValues(propertyDefinitions, values);
-      if (matchingTraceEnabled) {
-        xdmp.trace(matchingTraceEvent, `Property query for ${propertyPath} is ${xdmp.describe(propertyQuery, Sequence.from([]), Sequence.from([]))}`);
-      }
-      return propertyQuery;
+    if (valuesAreQueries) {
+      return values;
     }
+    if (!this._propertyQueryFunctions[propertyPath]) {
+      let indexes = this.model().propertyIndexes(propertyPath);
+      if (this._genericModel && !(indexes && indexes.length)) {
+        indexes = this._genericModel.propertyIndexes(propertyPath);
+      }
+      if (indexes && indexes.length) {
+        const scalarType = cts.referenceScalarType(indexes[0]);
+        const collation = (scalarType === "string") ? cts.referenceCollation(indexes[0]) : null;
+        this._propertyQueryFunctions[propertyPath] = (values) => {
+          let typedValues = [];
+          for (const value of values) {
+            if (xdmp.castableAs("http://www.w3.org/2001/XMLSchema", scalarType, value)) {
+              typedValues.push(xs[scalarType](value));
+            }
+          }
+          if (typedValues.length === 0) {
+            return values;
+          }
+          if (collation) {
+            const extendedValues = [];
+            for (const value of typedValues) {
+              extendedValues.push(cts.valueMatch(indexes, value, ["case-insensitive"]));
+            }
+            typedValues = Sequence.from(extendedValues);
+          }
+          return cts.rangeQuery(indexes, "=", typedValues)
+        };
+      } else {
+        const pathParts = propertyPath.split(".").filter((path) => path);
+        const propertyDefinitions = pathParts
+          .map((propertyPart, index) => this.model().propertyDefinition(pathParts.slice(0, index + 1).join(".")));
+        if (matchingDebugTraceEnabled) {
+          xdmp.trace(matchingTraceEvent, `Property for ${propertyPath} has property definitions ${xdmp.describe(propertyDefinitions, Sequence.from([]), Sequence.from([]))}`);
+        }
+        this._propertyQueryFunctions[propertyPath] = (values) => {
+          const propertyQuery = this._buildQueryFromPropertyDefinitionsAndValues(propertyDefinitions, values);
+          if (matchingTraceEnabled) {
+            xdmp.trace(matchingTraceEvent, `Property query for ${propertyPath} is ${xdmp.describe(propertyQuery, Sequence.from([]), Sequence.from([]))}`);
+          }
+          return propertyQuery;
+        };
+      }
+    }
+    return this._propertyQueryFunctions[propertyPath](values);
   }
 
   /*
@@ -290,7 +302,7 @@ class Matchable {
  */
   maxScan() {
     if (!this._maxScan) {
-      this._maxScan = fn.number((this.matchStep.tuning && this.matchStep.tuning.maxScan) || 500);
+      this._maxScan = 25;//fn.number((this.matchStep.tuning && this.matchStep.tuning.maxScan) || 500);
     }
     return this._maxScan;
   }
@@ -331,6 +343,7 @@ const cachedPropertyValues = {};
 class MatchRulesetDefinition {
   constructor(matchRulesetNode, matchable) {
     this.matchRulesetNode = matchRulesetNode
+    this.matchRulesNodes = this.matchRulesetNode.xpath("matchRules");
     this.matchRuleset = matchRulesetNode.toObject();
     this.matchable = matchable;
     this._matchRuleFunctions = [];
@@ -366,7 +379,8 @@ class MatchRulesetDefinition {
     let matchRule = passMatchRule.toObject();
     let thesaurus = matchRule.options.thesaurusURI;
     let expandOptions = hubUtils.normalizeToArray(value).map((val) => fn.string(val).toLowerCase());
-    let entries = thsr.queryLookup(thesaurus, cts.elementValueQuery(fn.QName("http://marklogic.com/xdmp/thesaurus", "term"), expandOptions, "case-insensitive"), "elements");
+    const queryLookup = requireFunction("/MarkLogic/thesaurus.xqy", "queryLookup");
+    let entries = queryLookup(thesaurus, cts.elementValueQuery(fn.QName("http://marklogic.com/xdmp/thesaurus", "term"), expandOptions, "case-insensitive"), "elements");
     let options = matchRule.options;
     let allEntries = [];
     let filterNode;
@@ -388,9 +402,8 @@ class MatchRulesetDefinition {
         meetsQualifier = true;
       }
       if (meetsQualifier) {
-        allEntries.push(fn.string(entry.xpath("*:term")));
-        for (let syn of entry.xpath("*:synonym")) {
-          allEntries.push(fn.string(syn.xpath("*:term")));
+        for (let syn of entry.xpath("(thsr:term|thsr:synonym/thsr:term)", {thsr: "http://marklogic.com/xdmp/thesaurus"})) {
+          allEntries.push(fn.string(syn));
         }
       }
     }
@@ -405,7 +418,8 @@ class MatchRulesetDefinition {
     let spellOption = {
       distanceThreshold : matchRule.options.distanceThreshold
     };
-    let results = hubUtils.normalizeToArray(value).map((val) => spell.suggest(dictionary, fn.string(val), spellOption));
+    const suggest = requireFunction("/MarkLogic/spell.xqy", "suggest");
+    let results = hubUtils.normalizeToArray(value).map((val) => suggest(dictionary, fn.string(val), spellOption));
     return Sequence.from(results);
   }
 
@@ -475,7 +489,7 @@ class MatchRulesetDefinition {
     let pos = 1;
     for (const matchRule of this.matchRuleset.matchRules) {
       if (!matchRule.node) {
-        matchRule.node = fn.head(fn.subsequence(this.matchRulesetNode.xpath("matchRules"), pos, 1));
+        matchRule.node = fn.head(fn.subsequence(this.matchRulesNodes, pos, 1));
       }
       pos++;
       const valueFunction = this._valueFunction(matchRule, model);
@@ -513,7 +527,7 @@ class MatchRulesetDefinition {
       let pos = 1;
       for (const matchRule of this.matchRuleset.matchRules) {
         if (!matchRule.node) {
-          matchRule.node = fn.head(fn.subsequence(this.matchRulesetNode.xpath("matchRules"), pos, 1));
+          matchRule.node = fn.head(fn.subsequence(this.matchRulesNodes, pos, 1));
         }
         pos++;
         const valueFunction = this._valueFunction(matchRule, model);

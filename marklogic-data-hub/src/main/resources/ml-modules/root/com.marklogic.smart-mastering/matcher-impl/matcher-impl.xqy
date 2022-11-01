@@ -149,7 +149,7 @@ declare function match-impl:find-document-matches-by-options(
       for $query-set in $compiled-options => map:get("minimumThresholdCombinations")
       let $query-maps := $query-set => map:get("queries")
       let $not-query-maps := $query-set => map:get("notQueries")
-      let $queries :=
+      let $algorithm-results :=
         for $query-map in $query-maps
         let $_trace :=
           if ($match-trace-is-enabled) then
@@ -159,27 +159,36 @@ declare function match-impl:find-document-matches-by-options(
 
 
         (: if there are no values from the document for a query, then match-impl:query-map-to-query returns an empty sequence  :)
-        let $queries := match-impl:query-map-to-query($document, $query-map, $values-by-property-name, $cached-queries, $query-prov, $target-entity-type)
-        return if (fn:count($queries) gt 1) then
-        (: if a match ruleset has multiple queries, be sure to AND them :)
-          helper-impl:group-queries-by-scope($queries, cts:and-query#1)
-        else
-          $queries
+        let $algorithm-results := match-impl:query-map-to-query($document, $query-map, $values-by-property-name, $cached-queries, $query-prov, $target-entity-type)
+        let $queries := $algorithm-results[. instance of cts:query]
+        let $functions := $algorithm-results[. instance of function(*) or . instance of xdmp:function]
+        return (
+          if (fn:count($queries) gt 1) then
+          (: if a match ruleset has multiple queries, be sure to AND them :)
+            helper-impl:group-queries-by-scope($queries, cts:and-query#1)
+          else
+            $queries,
+          if (fn:empty($queries) and fn:exists($functions)) then
+            fn:true()
+          else ()
+        )
 
-
+      let $queries := $algorithm-results[. instance of cts:query]
       let $not-queries :=
         for $not-query-map in $not-query-maps
         (: if there are no values from the document for a query, then match-impl:query-map-to-query returns an empty sequence  :)
-        let $queries := match-impl:query-map-to-query($document, $not-query-map, $values-by-property-name, $cached-queries, (), $target-entity-type)
-        return if (fn:count($queries) gt 1) then
-        (: if a match ruleset has multiple queries, be sure to AND them :)
-          helper-impl:group-queries-by-scope($queries, cts:and-query#1)
-        else
-          $queries
-
+        let $algorithm-results := match-impl:query-map-to-query($document, $not-query-map, $values-by-property-name, $cached-queries, (), $target-entity-type)
+        let $queries := $algorithm-results[. instance of cts:query]
+        return (
+          if (fn:count($queries) gt 1) then
+          (: if a match ruleset has multiple queries, be sure to AND them :)
+            helper-impl:group-queries-by-scope($queries, cts:and-query#1)
+          else
+            $queries
+        )
 
       (: We want to be certain that we have values for each of the queries in a min threshold combo :)
-      where fn:exists($queries) and fn:count($queries) eq fn:count($query-maps)
+      where fn:exists($queries) and fn:count($algorithm-results) eq fn:count($query-maps)
       return
         let $positive-query :=
           if (fn:count($queries) gt 1) then
@@ -226,7 +235,7 @@ declare function match-impl:find-document-matches-by-options(
       else
         ()
     let $match-base-query := cts:and-query((
-      $compiled-options => map:get("baseContentQuery"),
+      ($compiled-options => map:get("baseContentQuery")) ! cts:registered-query(cts:register(.)),
       $minimum-threshold-combinations-query
     ))
     let $match-query :=
@@ -237,9 +246,15 @@ declare function match-impl:find-document-matches-by-options(
         )
       else
         $match-base-query
+    let $filter-query-interceptor := $compiled-options => map:get("filterQueryInterceptor")
+    let $filter-query :=
+      if (fn:exists($filter-query-interceptor)) then
+        $filter-query-interceptor($filter-query, $document)
+      else
+        $filter-query
     let $match-query :=
       match-impl:instance-query-wrapper(
-          if (fn:not($filter-query instance of cts:true-query)) then
+          if ($filter-query instance of cts:query+ and fn:not($filter-query instance of cts:true-query)) then
             cts:and-query((
               $filter-query,
               $match-query
@@ -276,23 +291,27 @@ declare function match-impl:find-document-matches-by-options(
             if ($include-results and $estimate gt 0) then
               let $queries-for-scoring :=
                 for $query-map in map:get($compiled-options, "queries")
-                let $query := match-impl:query-map-to-query($document, $query-map, $values-by-property-name, $cached-queries, $query-prov, $target-entity-type)
+                let $algorithm-results := match-impl:query-map-to-query($document, $query-map, $values-by-property-name, $cached-queries, $query-prov, $target-entity-type)
+                let $query := $algorithm-results[. instance of cts:query]
+                let $functions := $algorithm-results[. instance of function(*) or . instance of xdmp:function]
                 let $_trace :=
                   if ($match-trace-is-enabled) then
-                    xdmp:trace($const:TRACE-MATCH-RESULTS, "'"|| $query-map => map:get("name") ||"' query:" || xdmp:describe($query,(),()))
+                    xdmp:trace($const:TRACE-MATCH-RESULTS, "'"|| $query-map => map:get("name") ||"' query:" || xdmp:describe($algorithm-results,(),()))
                   else ()
                 (: query may not exist if there weren't values passed, etc. :)
-                where fn:exists($query)
+                where fn:exists($algorithm-results)
                 return
                   map:map()
                   => map:with("name", $query-map => map:get("name"))
                   => map:with("weight", $query-map => map:get("weight"))
                   => map:with("matchRules", $query-map => map:get("matchRules"))
-                  => map:with("query",
+                  => map:with("query", (
                       if (fn:count($query) gt 1) then
                         helper-impl:group-queries-by-scope($query, cts:and-query#1)
                       else
-                        $query
+                        $query,
+                      $functions
+                    )
                   )
               let $_trace :=
                 if ($match-trace-is-enabled) then
@@ -300,6 +319,7 @@ declare function match-impl:find-document-matches-by-options(
                 else ()
               return
                 match-impl:search(
+                    $document,
                     $match-query,
                     $queries-for-scoring,
                     $minimum-threshold,
@@ -364,7 +384,7 @@ declare function match-impl:query-map-to-query(
     let $sub-query-maps := map:get($query-map, "matchQueries")
     let $non-multi-struct-queries :=
       for $sub-query-map in $sub-query-maps
-      let $queries :=
+      let $algorithm-results :=
         if ($sub-query-map => map:get("type") = "reduce") then
           ($sub-query-map => map:get("valuesToQueryFunction"))($document)
         else
@@ -373,40 +393,43 @@ declare function match-impl:query-map-to-query(
           where fn:exists($values) and fn:not(map:get($sub-query-map, "isMultiStructPropMultiValueComponent"))
           return
             ($sub-query-map => map:get("valuesToQueryFunction"))($values)
+      let $queries := $algorithm-results[. instance of cts:query]
+      let $functions := $algorithm-results[. instance of function(*) or . instance of xdmp:function]
       let $query :=
         if (fn:count($queries) gt 1) then
         (: if a query function returns multiple queries without explict ANDing them, we're assuming that they should be ORed :)
           helper-impl:group-queries-by-scope($queries, cts:or-query#1)
         else
           $queries
+      where fn:exists($algorithm-results)
       return (
         if (fn:exists($query-prov)) then
           for $query-hash in document {$query}//schema-element(cts:query) ! xdmp:md5(document{.})
           where fn:not(map:contains($query-prov, $query-hash)) or ((map:get($query-prov, $query-hash) => map:get("type")) = "reduce")
           return map:put($query-prov, $query-hash, $sub-query-map)
         else (),
-        $query
+        map:entry("values", ($query, $functions))
       )
-    let $queries := (
-      $non-multi-struct-queries,
-      match-impl:multi-struct-prop-multi-value-queries($query-map, $document, $target-entity)
-    )
     let $multi-struct-prop-map := map:get($query-map, "multiStructPropMultiValueMap")
-    let $attempted-query-count := fn:count($sub-query-maps)
     (: Determining the number of queries by counting queries from non-multi-struct-multi-value quers and the key values in the
       multi-struct-multi-values map.
     :)
     let $query-count := fn:sum(($multi-struct-prop-map ! map:count(.), fn:count($non-multi-struct-queries)))
+    let $attempted-query-count := fn:count($sub-query-maps)
+    let $queries := (
+      $non-multi-struct-queries ! (if (. instance of map:map) then map:get(., "values") else .),
+      match-impl:multi-struct-prop-multi-value-queries($query-map, $document, $target-entity)
+    )
     (: Only return the queries if we get the expected count back, so we don't count null/empty values as matches :)
     let $no-missing-values := $query-count eq $attempted-query-count
     where $no-missing-values
     return (
-    (: no caching in the structured properties case (yet) :)
-    if (fn:empty($multi-struct-prop-map)) then
-      map:put($cached-queries, $query-map => map:get("matchRulesetId"), $queries)
-    else ()
-    ,
-    $queries
+      (: no caching in the structured properties case (yet) :)
+      if (fn:empty($multi-struct-prop-map)) then
+        map:put($cached-queries, $query-map => map:get("matchRulesetId"), $queries)
+      else ()
+      ,
+      $queries
     ))
 
 };
@@ -493,6 +516,7 @@ declare function match-impl:values-by-property-name(
 
 (:
  : Execute the generated search and construct the response.
+ : @param $document the document node that is being searched with
  : @param $match-query  a query built such that any matches will score at least
  :                      high enough to reach the lowest threshold
  : @param $queries-for-scoring  a sequence of query maps that are used to score matches
@@ -508,6 +532,7 @@ declare function match-impl:values-by-property-name(
  : @return results specify document URIs that matches for provided document
  :)
 declare function match-impl:search(
+    $document as node()?,
     $match-query,
     $queries-for-scoring,
     $min-threshold as xs:double,
@@ -521,9 +546,10 @@ declare function match-impl:search(
   let $range := $start to ($start + $page-length - 1)
   let $cts-walk-query :=
     if ($include-matches) then
-      cts:or-query($queries-for-scoring ! map:get(., "query"))
+      cts:or-query($queries-for-scoring ! map:get(., "query")[. instance of cts:query])
     else ()
   let $thresholds := $compiled-options => map:get("orderedThresholds")
+  let $score-document-interceptor := $compiled-options => map:get("scoreDocumentInterceptor")
   for $result at $pos in cts:search(
       fn:collection(),
       $match-query,
@@ -533,11 +559,14 @@ declare function match-impl:search(
   let $uri := xdmp:node-uri($result)
   let $matching-query-maps :=
     for $query-map in $queries-for-scoring
-    let $query := $query-map => map:get("query")
-    let $contains := cts:contains($result,$query)
+    let $algorithm-results := $query-map => map:get("query")
+    let $query := $algorithm-results[. instance of cts:query]
+    let $functions := $algorithm-results[. instance of function(*) or . instance of xdmp:function]
+    let $contains := fn:exists($algorithm-results) and (fn:empty($query) or cts:contains($result,$query)) and
+      (fn:empty($functions) or (every $fun in $functions satisfies xdmp:apply($fun, $result)))
     let $weight := $query-map => map:get("weight")
     let $weight :=
-      if (fn:empty($weight)) then
+      if (fn:empty($weight) and fn:exists($query)) then
       (: This allows a weight to not be specified for a match ruleset and then the weight of the cts:queries will determine the weight.
           See https://project.marklogic.com/jira/browse/DHFPROD-7234.:)
         let $custom-weight := match-impl:score-from-cts-query($result, $query)
@@ -546,11 +575,10 @@ declare function match-impl:search(
         $weight
     let $_trace :=
       if ($match-trace-is-enabled) then
-
         let $name := $query-map => map:get("name")
         return (
           xdmp:trace($const:TRACE-MATCH-RESULTS, "Checking cts.doc('" || $uri ||"') for match against ruleset '" || $name || " with weight "|| fn:string($weight) ||": " || $contains),
-          xdmp:trace($const:TRACE-MATCH-RESULTS, "Ruleset '" || $name || "' query: " || xdmp:describe($query, (),()))
+          xdmp:trace($const:TRACE-MATCH-RESULTS, "Ruleset '" || $name || "' query: " || xdmp:describe($algorithm-results, (),()))
         )
       else ()
     where $contains
@@ -562,6 +590,15 @@ declare function match-impl:search(
   let $_trace := if ($match-trace-is-enabled) then
     xdmp:trace($const:TRACE-MATCH-RESULTS, "cts.doc('" || $uri || "') score: " || $score || " minimum-threshold: " || $min-threshold)
   else ()
+  let $score := if (fn:exists($score-document-interceptor)) then
+      $score-document-interceptor(
+        $score,
+        map:entry("value", $document) => map:with("uri", xdmp:node-uri($document)),
+        map:entry("value", $result) => map:with("uri", $uri),
+        json:to-array($queries-for-scoring)
+      )
+    else
+      $score
   where $score ge $min-threshold
   return
     element result {

@@ -30,7 +30,7 @@ function verifyResults(content, results) {
         test.assertTrue(notifyActionObject.uris.some((uri) => /CustMatchNotify\./.test(uri)), `notify action should have URI matching "CustMatchNotify.". Results: ${JSON.stringify(notifyActionObject)}`),
         test.assertEqual(1, customActionObject.actions[0].matchResults.length, `custom action should be only on 1 match result for household. Results: ${JSON.stringify(customActionObject)}`),
         test.assertTrue(/CustMatchHousehold\./.test(customActionMatchResults.uri), `custom action should have URI matching "CustMatchHousehold." Action URI ${customURI}. Results: ${JSON.stringify(customActionObject)}`),
-        test.assertEqual(8.5, customActionMatchResults.score, `custom action match score should be 8.5 (lastName: 2.5 + billingAddress: 5 + shippingAddress: 2 + reduce for household: -1). Results: ${JSON.stringify(customActionMatchResults)}`)
+        test.assertEqual(8.5, fn.number(customActionMatchResults.score), `custom action match score should be 8.5 (lastName: 2.5 + billingAddress: 5 + shippingAddress: 2 + reduce for household: -1). Results: ${JSON.stringify(customActionMatchResults)}`)
     ]);
 }
 function testJsonMatches() {

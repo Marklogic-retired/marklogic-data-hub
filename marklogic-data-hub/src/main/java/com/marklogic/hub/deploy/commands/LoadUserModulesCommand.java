@@ -197,7 +197,7 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
         DatabaseClient finalClient = hubConfig.newFinalClient();
 
         Path userModulesPath = hubConfig.getHubPluginsDir();
-        String baseDir = new String();
+        String baseDir = "";
         String EncodedBaseDir = userModulesPath.normalize().toAbsolutePath().toString();
         Path startPath = userModulesPath.resolve("entities");
 

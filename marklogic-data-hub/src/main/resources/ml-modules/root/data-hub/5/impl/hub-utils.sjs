@@ -105,27 +105,46 @@ function parsePermissions(permissionsString = "") {
   }
 }
 
+function documentToContentDescriptor(doc, options = {}) {
+   return {
+      uri: xdmp.nodeUri(doc),
+      value: doc,
+      context: {
+        metadata: xdmp.nodeMetadata(doc),
+        permissions: options.permissions ? parsePermissions(options.permissions) : xdmp.nodePermissions(doc),
+        // provide original collections, should a step like to read them
+        originalCollections: xdmp.nodeCollections(doc)
+      }
+    };
+}
+
 function queryToContentDescriptorArray(query, options = {}, database) {
   let contentArray = [];
   invokeFunction(function () {
-    let results = cts.search(query, cts.indexOrder(cts.uriReference()));
-
+    let results = cts.search(query, [cts.indexOrder(cts.uriReference()), "score-zero"], 0);
     for (let doc of results) {
-      contentArray.push({
-        uri: xdmp.nodeUri(doc),
-        value: doc,
-        context: {
-          metadata: xdmp.nodeMetadata(doc),
-          permissions: options.permissions ? parsePermissions(options.permissions) : xdmp.nodePermissions(doc),
-          // provide original collections, should a step like to read them
-          originalCollections: xdmp.nodeCollections(doc)
-        }
-      });
+      contentArray.push(documentToContentDescriptor(doc, options));
     }
   }, database);
   return contentArray;
 }
 
+function documentsToContentDescriptorArray(documents, options = {}) {
+  let contentArray = [];
+  for (let doc of documents) {
+    contentArray.push(documentToContentDescriptor(doc, options));
+  }
+  return contentArray;
+}
+
+function queryToContentDescriptorArray(query, options = {}, database) {
+  return documentsToContentDescriptorArray(
+    invokeFunction(function () {
+      return cts.search(query, [cts.indexOrder(cts.uriReference()), "score-zero"], 0);
+    }, database),
+    options
+  );
+}
 /**
  * This was originally addressed via DHFPROD-3193 - based on an update to ML 10.0-2, "lang" must now be used instead
  * of "language".
@@ -196,6 +215,8 @@ function requireFunction(modulePath, functionName) {
 module.exports = {
   capitalize,
   deleteDocument,
+  documentsToContentDescriptorArray,
+  documentToContentDescriptor,
   error,
   evalInDatabase: module.amp(evalInDatabase),
   getErrorMessage,
