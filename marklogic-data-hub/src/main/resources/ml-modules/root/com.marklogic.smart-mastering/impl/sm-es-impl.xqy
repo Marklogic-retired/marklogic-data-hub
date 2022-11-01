@@ -181,7 +181,7 @@ declare function es-impl:get-entity-property-info($entity-type-iri as xs:string)
       $entity-properties-by-model-iri => map:get($entity-model-iri) => map:get($entity-type-title)
     else
       let $entity-model-descriptor := fn:head(cts:search(fn:collection("http://marklogic.com/entity-services/models"),
-        cts:triple-range-query(sem:iri($entity-type-iri), sem:curie-expand("rdf:type"), sem:iri("http://marklogic.com/entity-services#EntityType"), "=")))
+        cts:triple-range-query(sem:iri($entity-type-iri), sem:curie-expand("rdf:type"), sem:iri("http://marklogic.com/entity-services#EntityType"), "="), ("score-zero"), 0))
       let $entity-descriptor-maps := map:map()
       let $entity-property-info := es-impl:get-definition-properties($entity-model-descriptor, $entity-descriptor-maps, $entity-type-title, get-entity-type-namespaces($entity-type-iri))
       return (

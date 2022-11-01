@@ -133,7 +133,8 @@ public class MasterTest extends AbstractHubCoreTest {
         RunFlowResponse flowMergeResponse = runFlow(new FlowInputs("myMatchMergeFlow", "4"));
         RunStepResponse mergeJob = flowMergeResponse.getStepResponses().get("4");
         assertTrue(mergeJob.isSuccess(), "Merging job failed! Message: " + ((mergeJob.stepOutput != null) ? mergeJob.stepOutput.toString(): ""));
-        assertTrue(getFinalDocCount("sm-person-merged") >= 10, "At least 10 merges occur");
+        int mergedCount = getFinalDocCount("sm-person-merged");
+        assertTrue(mergedCount >= 10, "At least 10 merges occur. Merged count: " + mergedCount);
         assertEquals(209, getFinalDocCount("sm-person-mastered"), "We end with the correct amount of final docs");
         // Setting this to 40 or greater as occasionally we get 41 in the pipeline. See bug https://project.marklogic.com/jira/browse/DHFPROD-3178
         assertTrue(getFinalDocCount("sm-person-notification") >= 40, "Not enough notifications are created");

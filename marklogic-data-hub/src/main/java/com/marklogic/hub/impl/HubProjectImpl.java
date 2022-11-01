@@ -29,7 +29,15 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.FileCopyUtils;
-import java.io.*;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -403,12 +411,11 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
                 logger.debug("Getting file with replace: " + srcFile);
                 inputStream = HubProject.class.getClassLoader().getResourceAsStream(srcFile);
 
-                String fileContents = IOUtils.toString(inputStream);
-                for (String key : customTokens.keySet()) {
-
-                    String value = customTokens.get(key);
+                String fileContents = IOUtils.toString(inputStream, Charset.defaultCharset());
+                for (Map.Entry<String, String> entry : customTokens.entrySet()) {
+                    String value = entry.getValue();
                     if (value != null) {
-                        fileContents = fileContents.replace(key, value);
+                        fileContents = fileContents.replace(entry.getKey(), value);
                     }
                 }
                 try(FileWriter writer = new FileWriter(dstFile.toFile())) {

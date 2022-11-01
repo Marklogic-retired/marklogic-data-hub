@@ -145,7 +145,7 @@ declare function pma:get-uri-sample($source-query as cts:query, $sample-size as 
     else
       $DEFAULT-URI-SAMPLE-SIZE
   return
-    for $doc in cts:search(doc(), $source-query, ("unfiltered", "score-random"))[1 to $sample-size]
+    for $doc in cts:search(doc(), $source-query, ("unfiltered", "score-random"), 0)[1 to $sample-size]
     let $uri := xdmp:node-uri($doc)
     order by $uri
     return $uri

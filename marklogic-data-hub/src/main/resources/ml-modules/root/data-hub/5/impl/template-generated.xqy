@@ -264,7 +264,7 @@ declare function extraction-template-generate(
                     return
                       <tde:var>
                         <tde:name>related-{$related-property-name}</tde:name>
-                        <tde:val>fn:encode-for-uri(xs:string(./{ if ($prefix-value) then "(" || 	$prefix-value || $related-property-name || "|" || $related-property-name || ")" else $related-property-name }))</tde:val>
+                        <tde:val>fn:encode-for-uri(xs:string(fn:head(./{ if ($prefix-value) then "(" || 	$prefix-value || $related-property-name || "|" || $related-property-name || ")" else $related-property-name })))</tde:val>
                       </tde:var>
                   }
                 </tde:vars>

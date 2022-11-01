@@ -64,8 +64,8 @@ function main(content, options, stepExecutionContext) {
     if (!matchingStepContentExists) {
       // don't process this "URIsToProcess" URI unless we are processing the last matchSummary document
       // (in URI order) that contains it
-      let lastSummaryWithURI = cts.uris(null, ["descending", "limit=1"],
-        cts.pathRangeQuery("/matchSummary/URIsToProcess", "=" , uriToProcess));
+      let lastSummaryWithURI = cts.uris(null, ["descending", "limit=1", "score-zero"],
+        cts.pathRangeQuery("/matchSummary/URIsToProcess", "=" , uriToProcess, ['score-function=zero'], 0), 0);
       if (lastSummaryWithURI != thisMatchSummaryURI) {
         continue;
       }
@@ -74,7 +74,7 @@ function main(content, options, stepExecutionContext) {
     let uriActionDetails = thisMatchSummary.matchSummary.actionDetails[uriToProcess];
     // If the action is merge, ensure we create the merge with the most URIs
     if (uriActionDetails && uriActionDetails.action === 'merge') {
-      const urisQuery = cts.pathRangeQuery('/matchSummary/actionDetails/*/uris', '=', uriActionDetails.uris)
+      const urisQuery = cts.pathRangeQuery('/matchSummary/actionDetails/*/uris', '=', uriActionDetails.uris, ['score-function=zero'], 0)
       const positiveQuery =
         cts.andQuery([
           cts.jsonPropertyValueQuery('action', 'merge'),
@@ -85,9 +85,10 @@ function main(content, options, stepExecutionContext) {
         cts.search(
           cts.andNotQuery(
             positiveQuery,
-            cts.rangeQuery(urisPathReference, '=', uriToProcess)
+            cts.rangeQuery(urisPathReference, '=', uriToProcess, ['score-function=zero'], 0)
           ),
-          ['unfiltered',cts.indexOrder(datahubCreatedOnRef, 'descending')]
+          ['unfiltered',cts.indexOrder(datahubCreatedOnRef, 'descending'), 'score-zero'],
+          0
         ).toArray()
           // get the actionNode for the URI
           .map(
@@ -97,8 +98,13 @@ function main(content, options, stepExecutionContext) {
           // filter out false positives that don't have merge actions for the given URI
           .filter((actionNode) => !!actionNode)
           // convert node to JSON object
-          .map((actionNode) => actionNode.toObject());
-      if (otherMergesForURI.some((otherMerge) => otherMerge.uris.length > uriActionDetails.uris.length)) {
+          .map((actionNode) => {
+            const uriToActOn = fn.string(fn.nodeName(actionNode));
+            const actionNodeObj = actionNode.toObject();
+            actionNodeObj.uriToActOn = uriToActOn;
+            return actionNodeObj;
+          });
+      if (otherMergesForURI.some((otherMerge) => otherMerge.uris.length > uriActionDetails.uris.length || (otherMerge.uris.length === uriActionDetails.uris.length && otherMerge.uriToActOn.localeCompare(uriToProcess) < 0))) {
         continue;
       }
       otherMergesForURI.forEach((actionDetails) => actionDetails.uris.forEach(

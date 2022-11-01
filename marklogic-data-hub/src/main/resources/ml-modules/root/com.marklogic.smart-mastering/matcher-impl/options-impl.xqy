@@ -477,7 +477,17 @@ declare function opt-impl:compile-match-options(
                 if (fn:exists($algorithm)) then
                   let $converted-match-rule := opt-impl:convert-match-rule-for-custom-module($match-rule, $match-options, $custom-algorithm)
                   let $converted-match-options := opt-impl:convert-options-for-custom-module($match-options, $custom-algorithm)
-                  return algorithms:execute-algorithm($algorithm, ?, $converted-match-rule, $converted-match-options)
+                  return function ($values) {
+                    let $results := algorithms:execute-algorithm($algorithm, $values, $converted-match-rule, $converted-match-options)
+                    let $atomic-items := $results[fn:not(. instance of cts:query or . instance of function(*) or . instance of xdmp:function)]
+                    let $non-atomic-items := $results[. instance of cts:query or . instance of function(*) or . instance of xdmp:function]
+                    return (
+                      if (fn:exists($atomic-items)) then
+                        helper-impl:property-name-to-query($match-options, $full-property-name)($atomic-items, $weight)
+                      else (),
+                      $non-atomic-items
+                    )
+                  }
                 else
                   util-impl:handle-option-messages("error", "Function for the match query not found:" || fn:string($algorithm-ref), $message-output)
             else if ($type eq "reduce") then
@@ -532,6 +542,8 @@ declare function opt-impl:compile-match-options(
             return $minimum-threshold-positive-combination => map:with("notQueries", $negative-combinations)
           else
             $minimum-threshold-positive-combination
+    let $score-document-interceptors := $match-options/scoreDocumentInterceptors ! xdmp:function(fn:QName("", fn:string(function)), fn:string(path))
+    let $filter-query-interceptors := $match-options/filterQueryInterceptors ! xdmp:function(fn:QName("", fn:string(function)), fn:string(path))
     let $compiled-match-options := map:new((
         if (fn:exists($match-options/(dataFormat|matcher:data-format))) then
           map:entry("dataFormat", fn:string($match-options/(dataFormat|matcher:data-format)))
@@ -547,8 +559,24 @@ declare function opt-impl:compile-match-options(
         map:entry("orderedThresholds", $ordered-thresholds),
         map:entry("minimumThresholdCombinations", $minimum-threshold-combinations),
         map:entry("propertyNamesToValues", $property-names-to-values),
-        map:entry("baseContentQuery", opt-impl:build-base-query($match-options, $target-entity-type-def, $target-entity-type-iri))
-      ))
+        map:entry("baseContentQuery", opt-impl:build-base-query($match-options, $target-entity-type-def, $target-entity-type-iri)),
+        map:entry("scoreDocumentInterceptor",
+          if (fn:exists($score-document-interceptors)) then (
+            function ($defaultScore, $contentObjectA, $contentObjectB, $rulesets) {
+              let $local-score-document-interceptors := $score-document-interceptors ! xdmp:apply(., ?, $contentObjectA, $contentObjectB, $rulesets)
+              return fn:fold-left(function($score, $fun) { $fun($score) }, $defaultScore, $local-score-document-interceptors)
+            }
+          ) else ()
+        ),
+        map:entry("filterQueryInterceptor",
+          if (fn:exists($filter-query-interceptors)) then (
+            function ($filterQuery, $docNode) {
+              let $local-filter-query-interceptors := $filter-query-interceptors ! xdmp:apply(.,?, $docNode)
+              return fn:fold-left(function($filterQuery, $fun) { $fun($filterQuery) }, $filterQuery, $local-filter-query-interceptors)
+            }
+          ) else ()
+        )
+    ))
     let $cache-ids := (
       $cache-id,
       if (fn:empty($original-minimum-threshold)) then
@@ -593,7 +621,13 @@ declare function opt-impl:build-base-query($match-options as item()?, $target-en
           ))
     else
       opt-impl:build-collection-query(coll:content-collections($match-options))
-  return cts:registered-query(cts:register($base-query))
+  let $baseline-query-interceptors := $match-options/baselineQueryInterceptors ! xdmp:apply(xdmp:function(fn:QName("", fn:string(function)), fn:string(path)), ?)
+  let $base-query :=
+    if (fn:exists($baseline-query-interceptors)) then
+      fn:fold-left(function($base-query, $fun) { $fun($base-query) }, $base-query, $baseline-query-interceptors)
+    else
+      $base-query
+  return $base-query
 };
 
 declare function opt-impl:convert-match-rule-for-custom-module($match-rule, $match-options, $custom-algorithm)

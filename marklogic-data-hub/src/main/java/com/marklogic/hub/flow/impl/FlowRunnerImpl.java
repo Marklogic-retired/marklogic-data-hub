@@ -595,7 +595,7 @@ public class FlowRunnerImpl implements FlowRunner {
         return this.runningFlow;
     }
 
-    class FlowContext {
+    static class FlowContext {
         boolean jobOutputIsEnabled = true;
         JobService jobService;
 

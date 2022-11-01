@@ -459,8 +459,8 @@ public class DataHubImpl implements DataHub, InitializingBean {
     public List<Command> buildListOfCommands() {
         Map<String, List<Command>> commandMap = buildCommandMap();
         List<Command> commands = new ArrayList<>();
-        for (String name : commandMap.keySet()) {
-            commands.addAll(commandMap.get(name));
+        for (Map.Entry<String, List<Command>> entry: commandMap.entrySet()) {
+            commands.addAll(entry.getValue());
         }
         return commands;
     }
@@ -468,8 +468,8 @@ public class DataHubImpl implements DataHub, InitializingBean {
     public List<Command> getSecurityCommandList() {
         Map<String, List<Command>> commandMap = getSecurityCommands();
         List<Command> commands = new ArrayList<>();
-        for (String name : commandMap.keySet()) {
-            commands.addAll(commandMap.get(name));
+        for (Map.Entry<String, List<Command>> entry: commandMap.entrySet()) {
+            commands.addAll(entry.getValue());
         }
         return commands;
     }
