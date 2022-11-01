@@ -961,12 +961,13 @@ describe("RTL Source-to-entity map tests", () => {
     mockUpdateMapArtifact.mockResolvedValueOnce({status: 200, data: true});
     mockGetMappingValidationResp.mockResolvedValue({status: 200, data: mappingStepPerson.artifacts[5]});
 
-    let getByTestId, getByText, queryByTestId;
+    let getByTestId, getByText, queryByTestId, getByLabelText;
     await act(async () => {
       const renderResults = renderWithRouter(personMappingStepWithRelatedEntityData, authorityService);
       getByTestId = renderResults.getByTestId;
       getByText = renderResults.getByText;
       queryByTestId = renderResults.queryByTestId;
+      getByLabelText = renderResults.getByLabelText;
     });
 
     // URI field should exist for primary entity table and have default value
@@ -1006,7 +1007,7 @@ describe("RTL Source-to-entity map tests", () => {
 
     //Verify error message in evaluated URI expression for related entity table
     await (() => expect(getByTestId("BabyRegistry (ownedBy Person)-URI-value")).toHaveTextContent(""));
-    await (() => getByText("Invalid XPath expression: ###"));
+    await (() => getByLabelText("invalid-uri-text").toBeInTheDocument());
 
   });
 

@@ -22,6 +22,8 @@ import Popover from "react-bootstrap/Popover";
 import {OverlayTrigger, Overlay} from "react-bootstrap";
 import {themeColors} from "@config/themes.config";
 import {getViewSettings, setViewSettings} from "@util/user-context";
+import {MappingStepDetailsMessages} from "@config/messages.config";
+
 
 interface Props {
   setScrollRef: any;
@@ -978,7 +980,8 @@ const EntityMapTable: React.FC<Props> = (props) => {
       if (props.mapResp && props.mapResp["uriExpression"] && propName === "URI" && !isProperty) { //if value is from the URI and not an actual property
         let prop = props.mapResp["uriExpression"];
         if (prop && prop["errorMessage"]) {
-          return prop["errorMessage"];
+          return MappingStepDetailsMessages.uriError;
+
         } else if (prop["output"]) {
           return prop["output"];
         }
