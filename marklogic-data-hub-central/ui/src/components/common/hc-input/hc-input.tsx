@@ -84,60 +84,62 @@ const HCInput = React.forwardRef<HTMLInputElement, Props>((props, ref?) => {
 
   return (
     <>
-      <InputGroup style={props?.style} className={[props.className, props?.disabled ? styles.inputGroupWrapperDisabled :
+      <Form.Group>
+        <InputGroup style={props?.style} className={[props.className, props?.disabled ? styles.inputGroupWrapperDisabled :
         props?.error && showIconClear && focusedInput ? styles.inputGroupWrapper :
           focusedInput && props?.error ? styles.inputGroupWrapperErrorFocus :
             props?.error ? styles.inputGroupWrapperError :
               focusedInput ? styles.inputGroupWrapperFocus : styles.inputGroupWrapper].join(" ")}>
 
-        {props?.prefix ? <InputGroup.Text style={{backgroundColor: !props?.disabled ? "white" : ""}} className={[props.classNameFull, styles.noBorders].join(" ")} data-testid={"hc-input-prefix"}>{props.prefix}
-        </InputGroup.Text> : null}
+          {props?.prefix ? <InputGroup.Text style={{backgroundColor: !props?.disabled ? "white" : ""}} className={[props.classNameFull, styles.noBorders].join(" ")} data-testid={"hc-input-prefix"}>{props.prefix}
+          </InputGroup.Text> : null}
 
-        {props?.addonBefore ? typeof props.addonBefore === "string" ? <InputGroup.Text data-testid={"hc-input-addonBefore"}>{props.addonBefore}</InputGroup.Text> :
-          props.addonBefore : null}
+          {props?.addonBefore ? typeof props.addonBefore === "string" ? <InputGroup.Text data-testid={"hc-input-addonBefore"}>{props.addonBefore}</InputGroup.Text> :
+            props.addonBefore : null}
 
-        <Form.Control
-          id={props?.id}
-          value={message}
-          className={[props?.classNameFull, styles.noBorders].join(" ")}
-          style={{paddingLeft: 5}}
-          size={props?.size}
-          placeholder={props?.placeholder}
-          type={props?.type}
-          min={props?.min}
-          aria-label={props?.ariaLabel}
-          data-testid={props?.dataTestid ? props.dataTestid : "hc-input-component"}
-          data-cy={props?.dataCy}
-          onBlur={(event) => handleOnBlur(event, props?.onBlur)}
-          onFocus={(event) => handleOnFocus(event, props?.onFocus)}
-          onChange={(event) => handleMessage(event, props?.onChange)}
-          onKeyPress={(event) => props?.onPressEnter ? handleKeyPressEnter(event) ? props?.onPressEnter(true) : false : props?.onKeyPress}
-          ref={ref}
-          disabled={props?.disabled}
-          tabIndex={props.tabIndex}
-          onKeyDown={(event) => handleOnKeyDown(event, props?.onKeyDown)}
-        />
+          <Form.Control
+            id={props?.id}
+            value={message}
+            className={[props?.classNameFull, styles.noBorders].join(" ")}
+            style={{paddingLeft: 5}}
+            size={props?.size}
+            placeholder={props?.placeholder}
+            type={props?.type}
+            min={props?.min}
+            aria-label={props?.ariaLabel}
+            data-testid={props?.dataTestid ? props.dataTestid : "hc-input-component"}
+            data-cy={props?.dataCy}
+            onBlur={(event) => handleOnBlur(event, props?.onBlur)}
+            onFocus={(event) => handleOnFocus(event, props?.onFocus)}
+            onChange={(event) => handleMessage(event, props?.onChange)}
+            onKeyPress={(event) => props?.onPressEnter ? handleKeyPressEnter(event) ? props?.onPressEnter(true) : false : props?.onKeyPress}
+            ref={ref}
+            disabled={props?.disabled}
+            tabIndex={props.tabIndex}
+            onKeyDown={(event) => handleOnKeyDown(event, props?.onKeyDown)}
+          />
 
-        {props?.allowClear && !props?.disabled && <InputGroup.Text
-          style={{backgroundColor: "white", padding: props?.suffix ? 2 : ""}}
-          className={[props.classNameFull, styles.noBorders].join(" ")}
-        >
-          {showIconClear ? <XCircleFill className={styles.cleanIcon} onClick={() => { if (showIconClear) setMessage(""); setShowIconClear(false); }} data-testid={"hc-input-allowClear"} />
-            : <XCircleFill className={styles.cleanIconHide} />}</InputGroup.Text>
-        }
+          {props?.allowClear && !props?.disabled && <InputGroup.Text
+            style={{backgroundColor: "white", padding: props?.suffix ? 2 : ""}}
+            className={[props.classNameFull, styles.noBorders].join(" ")}
+          >
+            {showIconClear ? <XCircleFill className={styles.cleanIcon} onClick={() => { if (showIconClear) setMessage(""); setShowIconClear(false); }} data-testid={"hc-input-allowClear"} />
+              : <XCircleFill className={styles.cleanIconHide} />}</InputGroup.Text>
+          }
 
-        {!props?.allowClear && !props?.disabled && props?.error && <InputGroup.Text
-          style={{backgroundColor: "white", padding: props?.suffix ? 2 : ""}}
-          className={[props.classNameFull, styles.noBorders].join(" ")}
-        >
-          {props?.error && !showIconClear ? <XCircleFill className={styles.warningIcon} />
-            : null}</InputGroup.Text>
-        }
+          {!props?.allowClear && !props?.disabled && props?.error && <InputGroup.Text
+            style={{backgroundColor: "white", padding: props?.suffix ? 2 : ""}}
+            className={[props.classNameFull, styles.noBorders].join(" ")}
+          >
+            {props?.error && !showIconClear ? <XCircleFill className={styles.warningIcon} />
+              : null}</InputGroup.Text>
+          }
 
-        {props?.suffix ? <InputGroup.Text style={{backgroundColor: !props?.disabled ? "white" : ""}} className={[props.classNameFull, styles.noBorders].join(" ")} data-testid={"hc-input-suffix"} >
-          {props.suffix}</InputGroup.Text> : null}
-      </InputGroup>
-      {props?.errorMessage && !showIconClear && <span className={[styles.errorMessage, props?.classNameErrorMessage].join(" ")}>{props.errorMessage}</span>}
+          {props?.suffix ? <InputGroup.Text style={{backgroundColor: !props?.disabled ? "white" : ""}} className={[props.classNameFull, styles.noBorders].join(" ")} data-testid={"hc-input-suffix"} >
+            {props.suffix}</InputGroup.Text> : null}
+        </InputGroup>
+        {props?.errorMessage && !showIconClear && <span className={[styles.errorMessage, props?.classNameErrorMessage].join(" ")}>{props.errorMessage}</span>}
+      </Form.Group>
     </>
   );
 });
