@@ -13,7 +13,7 @@ import {entityReferences, primaryEntityTypes} from "@api/modeling";
 import {getSystemInfo} from "@api/environment";
 import {faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {HCAlert, HCButton, HCTooltip, HCInput} from "@components/common";
+import {HCAlert, HCButton, HCTooltip, HCInput, HCModal} from "@components/common";
 import StructuredTypeModal from "../structured-type-modal/structured-type-modal";
 import ConfirmationModal from "../../confirmation-modal/confirmation-modal";
 import {EditPropertyOptions, PropertyOptions, PropertyType, StructuredTypeOptions} from "../../../types/modeling-types";
@@ -861,10 +861,11 @@ const PropertyModal: React.FC<Props> = (props) => {
     </div>
   );
 
-  return (<Modal
+  return (<HCModal
     show={props.isVisible}
     size={"lg"}
     aria-label="property-modal"
+    onHide={() => props.toggleModal(false)}
   >
     <Modal.Header className={"pe-4"}>
       <span className={"fs-3"}>{modalTitle}</span>
@@ -1055,7 +1056,7 @@ const PropertyModal: React.FC<Props> = (props) => {
     <Modal.Footer className={"py-2"}>
       {modalFooter}
     </Modal.Footer>
-  </Modal>
+  </HCModal>
   );
 };
 

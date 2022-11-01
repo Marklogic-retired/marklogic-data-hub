@@ -8,7 +8,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCog} from "@fortawesome/free-solid-svg-icons";
 import {Link, useHistory} from "react-router-dom";
 import {CustomStepTooltips, SecurityTooltips} from "@config/tooltips.config";
-import {HCTooltip, HCCard, HCButton} from "@components/common";
+import {HCTooltip, HCCard, HCButton, HCModal} from "@components/common";
 import Steps from "../../steps/steps";
 
 interface Props {
@@ -107,8 +107,9 @@ const CustomCard: React.FC<Props> = (props) => {
   };
 
   const addConfirmation = (
-    <Modal
+    <HCModal
       show={addDialogVisible}
+      onHide={onCancel}
     >
       <Modal.Header className={"bb-none"}>
         <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
@@ -129,7 +130,7 @@ const CustomCard: React.FC<Props> = (props) => {
           </HCButton>
         </div>
       </Modal.Body>
-    </Modal>
+    </HCModal>
   );
 
   // select dropdown when adding step

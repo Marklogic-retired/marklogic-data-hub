@@ -16,7 +16,7 @@ import {MatchingStep, MatchRule, MatchRuleset} from "../../../../types/curation-
 import {updateMatchingArtifact} from "@api/matching";
 import DeleteModal from "../delete-modal/delete-modal";
 import {QuestionCircleFill} from "react-bootstrap-icons";
-import {ConfirmYesNo, HCAlert, HCInput, HCButton, HCTag, HCTooltip, HCTable} from "@components/common";
+import {ConfirmYesNo, HCAlert, HCInput, HCButton, HCTag, HCTooltip, HCTable, HCModal} from "@components/common";
 import {HCSelect} from "@components/common";
 import {themeColors} from "@config/themes.config";
 
@@ -1256,10 +1256,11 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
   };
 
   return (
-    <Modal
+    <HCModal
       show={props.isVisible}
       dialogClassName={styles.modal1400w}
       onEntered={hideCheckboxes}
+      onHide={closeModal}
     >
       <Modal.Header className={"bb-none align-items-start"}>
         {modalTitle}
@@ -1355,7 +1356,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
           confirmAction={confirmAction}
         />
       </Modal.Body>
-    </Modal>
+    </HCModal>
   );
 };
 

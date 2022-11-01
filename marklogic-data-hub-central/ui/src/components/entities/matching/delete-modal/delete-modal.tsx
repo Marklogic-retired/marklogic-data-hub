@@ -2,7 +2,7 @@ import React, {useContext} from "react";
 import {Modal} from "react-bootstrap";
 import {updateMatchingArtifact} from "@api/matching";
 import {CurationContext} from "@util/curation-context";
-import {HCButton} from "@components/common";
+import {HCButton, HCModal} from "@components/common";
 
 
 type Props = {
@@ -42,8 +42,9 @@ const DeleteModal: React.FC<Props> = (props) => {
   };
 
   return (
-    <Modal
+    <HCModal
       show={props.isVisible}
+      onHide={closeModal}
     >
       <Modal.Header className={"bb-none"}>
         <button type="button" className="btn-close" aria-label="Close" onClick={closeModal}></button>
@@ -66,7 +67,7 @@ const DeleteModal: React.FC<Props> = (props) => {
           >Yes</HCButton>
         </div>
       </Modal.Body>
-    </Modal>
+    </HCModal>
   );
 };
 

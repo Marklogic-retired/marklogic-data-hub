@@ -2,6 +2,7 @@ import React from "react";
 import {Modal} from "react-bootstrap";
 import {ConfirmYesNoMessages} from "@config/messages.config";
 import HCButton from "../hc-button/hc-button";
+import {HCModal} from "@components/common";
 
 type Props = {
     visible: boolean;
@@ -14,9 +15,10 @@ type Props = {
 
 const ConfirmYesNo: React.FC<Props> = (props) => {
   return (
-    <Modal
+    <HCModal
       show={props.visible}
       size="sm"
+      onHide={props.onNo}
     >
       <Modal.Body>
         <div aria-label="confirm-body" className={"text-center"}>{ConfirmYesNoMessages[props.type]}</div>
@@ -29,7 +31,7 @@ const ConfirmYesNo: React.FC<Props> = (props) => {
           </HCButton>
         </div>
       </Modal.Body>
-    </Modal>
+    </HCModal>
   );
 };
 

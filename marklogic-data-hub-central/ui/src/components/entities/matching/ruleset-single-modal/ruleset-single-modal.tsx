@@ -17,7 +17,7 @@ import {MatchingStepTooltips} from "@config/tooltips.config";
 import {updateMatchingArtifact} from "@api/matching";
 import DeleteModal from "../delete-modal/delete-modal";
 import {QuestionCircleFill} from "react-bootstrap-icons";
-import {ConfirmYesNo, HCInput, HCButton, HCTooltip} from "@components/common";
+import {ConfirmYesNo, HCInput, HCButton, HCTooltip, HCModal} from "@components/common";
 import {themeColors} from "@config/themes.config";
 
 type Props = {
@@ -743,9 +743,10 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
   );
 
   return (
-    <Modal
+    <HCModal
       show={props.isVisible}
       size={"lg"}
+      onHide={closeModal}
     >
       <Modal.Header className={"pb-0"}>
         <div>
@@ -850,7 +851,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
           confirmAction={confirmAction}
         />
       </Modal.Body>
-    </Modal>
+    </HCModal>
   );
 };
 

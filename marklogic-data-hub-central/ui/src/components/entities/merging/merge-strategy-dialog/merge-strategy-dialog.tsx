@@ -9,7 +9,7 @@ import {addSliderOptions, parsePriorityOrder, handleDeleteSliderOptions} from "@
 import {MergingStep, defaultPriorityOption} from "../../../../types/curation-types";
 import {updateMergingArtifact} from "@api/merging";
 import {QuestionCircleFill} from "react-bootstrap-icons";
-import {ConfirmYesNo, HCInput, HCButton, HCTooltip} from "@components/common";
+import {ConfirmYesNo, HCInput, HCButton, HCTooltip, HCModal} from "@components/common";
 import dayjs from "dayjs";
 import TimelineVis from "../../matching/matching-step-detail/timeline-vis/timeline-vis";
 import TimelineVisDefault from "../../matching/matching-step-detail/timeline-vis-default/timeline-vis-default";
@@ -466,9 +466,10 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
   };
 
   return (
-    <Modal
+    <HCModal
       show={props.createEditMergeStrategyDialog}
       size={"xl"}
+      onHide={onCancel}
     >
       <Modal.Header>
         <span className={"fs-5"}>
@@ -641,7 +642,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
         </Form>
         {discardChanges}
       </Modal.Body>
-    </Modal>
+    </HCModal>
   );
 };
 

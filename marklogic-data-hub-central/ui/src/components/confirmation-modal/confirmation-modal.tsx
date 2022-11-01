@@ -3,7 +3,7 @@ import {Modal} from "react-bootstrap";
 import styles from "./confirmation-modal.module.scss";
 import {ModelingMessages} from "@config/tooltips.config";
 import {ConfirmationType} from "../../types/common-types";
-import {HCAlert, HCButton} from "@components/common";
+import {HCAlert, HCButton, HCModal} from "@components/common";
 
 type Props = {
   isVisible: boolean;
@@ -70,9 +70,10 @@ const ConfirmationModal: React.FC<Props> = (props) => {
   </div>;
 
   return (
-    <Modal
+    <HCModal
       show={props.isVisible}
       data-testid={"confirmation-modal"}
+      onHide={closeModal}
     >
       <Modal.Header className={"bb-none"}>
         <button type="button" className="btn-close" aria-label="Close" onClick={closeModal}></button>
@@ -321,7 +322,7 @@ const ConfirmationModal: React.FC<Props> = (props) => {
           || props.type === ConfirmationType.DeleteEntityPropertyWithForeignKeyReferences
           || props.type === ConfirmationType.DeleteConceptClassWithRelatedEntityTypes) ? modalFooterClose : modalFooter}
       </Modal.Body>
-    </Modal>
+    </HCModal>
   );
 };
 

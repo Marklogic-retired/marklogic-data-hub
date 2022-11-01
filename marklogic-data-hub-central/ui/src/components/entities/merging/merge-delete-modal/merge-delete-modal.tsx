@@ -1,6 +1,6 @@
 import React from "react";
 import {Modal} from "react-bootstrap";
-import {HCButton} from "@components/common";
+import {HCButton, HCModal} from "@components/common";
 import styles from "../merge-strategy-dialog/merge-strategy-dialog.module.scss";
 
 
@@ -23,7 +23,7 @@ const MergeDeleteModal: React.FC<Props> = (props) => {
   };
 
   return (
-    <Modal show={props.isVisible}>
+    <HCModal show={props.isVisible} onHide={closeModal}>
       <Modal.Header className={"bb-none"}>
         <button type="button" className="btn-close" aria-label="Close" onClick={closeModal}></button>
       </Modal.Header>
@@ -43,7 +43,7 @@ const MergeDeleteModal: React.FC<Props> = (props) => {
           onClick={() => confirmAction()}
         >Yes</HCButton>
       </div>
-    </Modal>
+    </HCModal>
   );
 };
 

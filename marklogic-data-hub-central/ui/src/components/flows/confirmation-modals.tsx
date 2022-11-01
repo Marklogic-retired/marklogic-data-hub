@@ -1,11 +1,12 @@
 import React from "react";
 import {Modal} from "react-bootstrap";
-import {HCButton} from "@components/common";
+import {HCButton, HCModal} from "@components/common";
 import styles from "./flows.module.scss";
 
 export const deleteConfirmationModal = (isVisible: boolean, flowName: string, onOk, onCancel) => {
-  return (<Modal
+  return (<HCModal
     show={isVisible}
+    onHide={onCancel}
   >
     <Modal.Header className={"bb-none"}>
       <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
@@ -21,12 +22,13 @@ export const deleteConfirmationModal = (isVisible: boolean, flowName: string, on
         </HCButton>
       </div>
     </Modal.Body>
-  </Modal>);
+  </HCModal>);
 };
 
 export const deleteStepConfirmationModal = (isVisible: boolean, stepName, stepNumber, flowName: string, onOk, onCancel) => {
-  return (<Modal
+  return (<HCModal
     show={isVisible}
+    onHide={onCancel}
   >
     <Modal.Header className={"bb-none"}>
       <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
@@ -42,12 +44,13 @@ export const deleteStepConfirmationModal = (isVisible: boolean, stepName, stepNu
         </HCButton>
       </div>
     </Modal.Body>
-  </Modal>);
+  </HCModal>);
 };
 
 export const addStepConfirmationModal = (isVisible: boolean, onOk, onCancel, flowName: string, stepName: string, stepType: string, isStepInFlow) => {
-  return (<Modal
+  return (<HCModal
     show={isVisible}
+    onHide={onCancel}
   >
     <Modal.Header className={"bb-none"}>
       <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
@@ -71,12 +74,13 @@ export const addStepConfirmationModal = (isVisible: boolean, onOk, onCancel, flo
         </HCButton>
       </div>
     </Modal.Body>
-  </Modal>);
+  </HCModal>);
 };
 
 export const addExistingStepConfirmationModal = (isVisible: boolean, stepName, flowName: string, onOk, onCancel,) => {
-  return (<Modal
+  return (<HCModal
     show={isVisible}
+    onHide={onCancel}
   >
     <Modal.Header className={"bb-none"}>
       <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
@@ -93,5 +97,5 @@ export const addExistingStepConfirmationModal = (isVisible: boolean, stepName, f
         </HCButton>
       </div>
     </Modal.Body>
-  </Modal>);
+  </HCModal>);
 };
