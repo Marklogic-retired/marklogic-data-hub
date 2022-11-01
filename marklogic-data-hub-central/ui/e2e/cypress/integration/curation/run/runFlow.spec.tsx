@@ -61,6 +61,39 @@ describe("Run Tile tests", () => {
     runPage.verifyStepInFlow("Mastering", "master-person", flowName);
     runPage.addStep(flowName);
     runPage.addStepToFlow("generate-dictionary");
+
+    cy.log("**Verify all steps are selected (just one Load step selected)**");
+    runPage.openStepsSelectDropdown("testPersonXML");
+    runPage.controlCheckedStep("#loadPersonXML");
+    runPage.controlCheckedStep("#mapPersonXML");
+    runPage.controlCheckedStep("#match-xml-person");
+    runPage.controlCheckedStep("#merge-xml-person");
+    runPage.controlCheckedStep("#master-person");
+    runPage.controlCheckedStep("#generate-dictionary");
+    runPage.controlUncheckedStep("#ingest-orders");
+
+    cy.log("**Deselect all**");
+    runPage.getSelectAll().parent().should("have.text", "Deselect All");
+    runPage.getSelectAll().click();
+    runPage.controlUncheckedStep("#loadPersonXML");
+    runPage.controlUncheckedStep("#mapPersonXML");
+    runPage.controlUncheckedStep("#match-xml-person");
+    runPage.controlUncheckedStep("#merge-xml-person");
+    runPage.controlUncheckedStep("#master-person");
+    runPage.controlUncheckedStep("#generate-dictionary");
+    runPage.controlUncheckedStep("#ingest-orders");
+
+    cy.log("**Select all (just one Load step should be selected)**");
+    runPage.getSelectAll().parent().should("have.text", "Select All");
+    runPage.getSelectAll().click();
+    runPage.controlCheckedStep("#loadPersonXML");
+    runPage.controlCheckedStep("#mapPersonXML");
+    runPage.controlCheckedStep("#match-xml-person");
+    runPage.controlCheckedStep("#merge-xml-person");
+    runPage.controlCheckedStep("#master-person");
+    runPage.controlCheckedStep("#generate-dictionary");
+    runPage.controlUncheckedStep("#ingest-orders");
+
     //Verify scrolling, last step should still be visible in the flow panel
     runPage.verifyStepInFlow("Custom", "generate-dictionary", flowName);
     //confirm the first load step is no longer visible because panel scrolled to the end
@@ -71,8 +104,6 @@ describe("Run Tile tests", () => {
 
   it("Verify selected steps in run flow dropdown are executed successfully ", {defaultCommandTimeout: 120000}, () => {
     cy.log("**Verify selected steps executed successfully**");
-    runPage.openStepsSelectDropdown(flowName);
-
     cy.log("**Unclick All Steps**");
     // cy.get("#checkAll").click();
 
