@@ -216,6 +216,10 @@ class RunPage {
   getSpinner() {
     return cy.get("[data-testid='spinner']");
   }
+
+  getSelectAll() {
+    return cy.get("[data-testid='select-all-toggle']");
+  }
 }
 
 const runPage = new RunPage();
