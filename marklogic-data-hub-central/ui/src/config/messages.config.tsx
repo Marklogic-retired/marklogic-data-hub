@@ -1,4 +1,5 @@
 import React from "react";
+import styles from "./messages.module.scss";
 
 const AdvancedSettingsMessages = {
     'targetPermissions': {
@@ -64,10 +65,15 @@ const SystemInfoMessages = {
 
 const MissingPagePermission = "You do not have permission to view this page.";
 
+const MappingStepDetailsMessages = {
+   uriError: <span aria-label="invalid-uri-text" className={styles.uriError}>Incorrect syntax. You may only include valid URI characters in the XPath expression. Please see <a href="https://help.marklogic.com/Knowledgebase/Article/View/valid-characters-in-a-marklogic-document-uri" target="_blank">Valid Characters in a Marklogic Document URI</a> for more information.</span>
+}
+
 export {
     AdvancedSettingsMessages,
     ClearDataMessages,
     ConfirmYesNoMessages,
     SystemInfoMessages,
-    MissingPagePermission
+    MissingPagePermission,
+    MappingStepDetailsMessages
 };
