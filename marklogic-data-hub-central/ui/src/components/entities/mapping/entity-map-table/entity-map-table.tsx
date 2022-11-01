@@ -17,7 +17,7 @@ import {paginationMapping} from "@config/mapping.config";
 import {ModelingTooltips, MappingDetailsTooltips} from "@config/tooltips.config";
 import StepsConfig from "@config/steps.config";
 import {QuestionCircleFill, XLg, ChevronDown, ChevronRight} from "react-bootstrap-icons";
-import {DropDownWithSearch, HCButton, HCTooltip, HCTable, HCPopoverSearch} from "@components/common";
+import {DropDownWithSearch, HCButton, HCTooltip, HCTable, HCPopoverSearch, HCModal} from "@components/common";
 import Popover from "react-bootstrap/Popover";
 import {OverlayTrigger, Overlay} from "react-bootstrap";
 import {themeColors} from "@config/themes.config";
@@ -1467,8 +1467,9 @@ const EntityMapTable: React.FC<Props> = (props) => {
     setDeleteFromTable(true);
   };
 
-  const deleteConfirmation = <Modal
+  const deleteConfirmation = <HCModal
     show={deleteDialogVisible}
+    onHide={onCancel}
   >
     <Modal.Header className={"bb-none"}>
       <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
@@ -1488,7 +1489,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
         </HCButton>
       </div>
     </Modal.Body>
-  </Modal>;
+  </HCModal>;
 
   const entityColumns = [
     {

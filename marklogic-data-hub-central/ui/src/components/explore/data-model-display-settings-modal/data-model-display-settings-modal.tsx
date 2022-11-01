@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext} from "react";
 import {Alert, Modal, Row, Col, Form} from "react-bootstrap";
 import styles from "./data-model-display-settings-modal.module.scss";
-import {HCButton, HCDivider} from "@components/common";
+import {HCButton, HCDivider, HCModal} from "@components/common";
 import {themeColors} from "@config/themes.config";
 import {defaultIcon} from "@config/explore.config";
 import {UserContext} from "@util/user-context";
@@ -216,9 +216,10 @@ const DataModelDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal,
   );
 
   return (
-    <Modal
+    <HCModal
       show={isVisible}
       dialogClassName={styles.modal1400w}
+      onHide={() => closeModal()}
     >
       <Modal.Header className={"bb-none align-items-start"}>
         <span className={"fs-4"}>
@@ -280,7 +281,7 @@ const DataModelDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal,
         </div>
         {modalFooter}
       </Modal.Body>
-    </Modal>
+    </HCModal>
   );
 };
 

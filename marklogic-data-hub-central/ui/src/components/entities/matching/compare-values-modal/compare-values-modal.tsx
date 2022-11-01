@@ -10,7 +10,7 @@ import {themeColors} from "@config/themes.config";
 import {deleteNotification} from "@api/merging";
 import {ConfirmationType} from "../../../../types/common-types";
 import ConfirmationModal from "../../../confirmation-modal/confirmation-modal";
-import {HCTable, HCButton, HCTooltip} from "@components/common";
+import {HCTable, HCButton, HCTooltip, HCModal} from "@components/common";
 import {faExclamationTriangle, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import {Overlay} from "react-bootstrap";
 import Popover from "react-bootstrap/Popover";
@@ -587,7 +587,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
   );
 
   const mergeUnmergeConfirmation = (
-    <Modal show={confirmModalVisible} dialogClassName={styles.confirmationModal}>
+    <HCModal show={confirmModalVisible} onHide={() => setConfirmModalVisible(false)} dialogClassName={styles.confirmationModal}>
       <Modal.Body>
         <div style={{display: "flex"}}>
           <div style={{padding: "24px 0px 0px 15px"}}>
@@ -610,14 +610,15 @@ const CompareValuesModal: React.FC<Props> = (props) => {
           <div aria-label="Yes">Yes</div>
         </HCButton>
       </Modal.Footer>
-    </Modal>
+    </HCModal>
   );
 
-  return <><Modal
+  return <><HCModal
     show={props.isVisible}
     size={"lg"}
     dialogClassName={styles.modal1400w}
     aria-label={"compare-values-modal"}
+    onHide={closeModal}
   >
     <Modal.Header className={"bb-none"}>
       <span className={styles.compareValuesModalHeading}>Compare</span>
@@ -686,7 +687,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
           {props.isMerge ? "Merge" : "Unmerge"}
         </HCButton>
       </Modal.Footer> : null}
-  </Modal>
+  </HCModal>
   {mergeUnmergeConfirmation}
   <ConfirmationModal
     isVisible={showConfirmModal}

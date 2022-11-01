@@ -16,7 +16,7 @@ import {MergingStep, StepType} from "../../../types/curation-types";
 import {getViewSettings, setViewSettings} from "@util/user-context";
 import Steps from "../../steps/steps";
 import {PlayCircleFill, PlusCircleFill} from "react-bootstrap-icons";
-import {HCCard, HCButton, HCDivider, HCTooltip} from "@components/common";
+import {HCCard, HCButton, HCDivider, HCTooltip, HCModal} from "@components/common";
 interface Props {
   mergingStepsArray: any;
   flows: any;
@@ -237,8 +237,9 @@ const MergingCard: React.FC<Props> = (props) => {
   };
 
   const renderAddConfirmation = (
-    <Modal
+    <HCModal
       show={addToFlowVisible}
+      onHide={onAddCancel}
     >
       <Modal.Header className={"bb-none"}>
         <button type="button" className="btn-close" aria-label="Close" onClick={onAddCancel}></button>
@@ -259,13 +260,14 @@ const MergingCard: React.FC<Props> = (props) => {
           </HCButton>
         </div>
       </Modal.Body>
-    </Modal>
+    </HCModal>
   );
 
 
   const addExistingStepConfirmation = (
-    <Modal
+    <HCModal
       show={addExistingStepDialogVisible}
+      onHide={onAddCancel}
     >
       <Modal.Header className={"bb-none"}>
         <button type="button" className="btn-close" aria-label="Close" onClick={onAddCancel}></button>
@@ -282,14 +284,15 @@ const MergingCard: React.FC<Props> = (props) => {
           </HCButton>
         </div>
       </Modal.Body>
-    </Modal>
+    </HCModal>
   );
 
 
   const runNoFlowsConfirmation = (
-    <Modal
+    <HCModal
       show={runNoFlowsDialogVisible}
       size={"lg"}
+      onHide={onAddCancel}
     >
       <Modal.Header className={"bb-none"}>
         <div aria-label="step-in-no-flows-confirmation" style={{fontSize: "16px"}}>Choose the flow in which to add and run the step <strong>{mergingArtifactName}</strong>.</div>
@@ -321,12 +324,13 @@ const MergingCard: React.FC<Props> = (props) => {
           Cancel
         </HCButton>
       </Modal.Footer>
-    </Modal>
+    </HCModal>
   );
 
   const runOneFlowConfirmation = (
-    <Modal
+    <HCModal
       show={runOneFlowDialogVisible}
+      onHide={onAddCancel}
     >
       <Modal.Header className={"bb-none"}>
         <button type="button" className="btn-close" aria-label="Close" onClick={onAddCancel}></button>
@@ -346,12 +350,13 @@ const MergingCard: React.FC<Props> = (props) => {
           Continue
         </HCButton>
       </Modal.Footer>
-    </Modal>
+    </HCModal>
   );
 
   const runMultFlowsConfirmation = (
-    <Modal
+    <HCModal
       show={runMultFlowsDialogVisible}
+      onHide={onAddCancel}
     >
       <Modal.Header className={"bb-none"}>
         <button type="button" className="btn-close" aria-label="Close" onClick={onAddCancel}></button>
@@ -378,7 +383,7 @@ const MergingCard: React.FC<Props> = (props) => {
           Cancel
         </HCButton>
       </Modal.Footer>
-    </Modal>
+    </HCModal>
   );
 
   const renderCardActions = (step, index) => {

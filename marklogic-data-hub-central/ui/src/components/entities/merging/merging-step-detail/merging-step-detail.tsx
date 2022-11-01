@@ -1,6 +1,6 @@
 import "./merging-step-detail.scss";
 
-import {HCButton, HCTable, HCTooltip} from "@components/common";
+import {HCButton, HCModal, HCTable, HCTooltip} from "@components/common";
 import {MergeStrategyTooltips, MergingStepIntros, multiSliderTooltips} from "@config/tooltips.config";
 import {
   MergingStep,
@@ -429,8 +429,9 @@ const MergingStepDetail: React.FC = () => {
   };
 
   const deleteModal = (
-    <Modal
+    <HCModal
       show={deleteModalVisibility}
+      onHide={() => setDeleteModalVisibility(false)}
     >
       <Modal.Header className={"bb-none"}>
         <button type="button" className="btn-close" aria-label="Close" onClick={() => setDeleteModalVisibility(false)}></button>
@@ -453,7 +454,7 @@ const MergingStepDetail: React.FC = () => {
           >Yes</HCButton>
         </div>
       </Modal.Body>
-    </Modal>
+    </HCModal>
   );
 
   const onDelete = (currentObj) => {

@@ -44,11 +44,14 @@ const validateTableRow = (dataTable, uris) => {
   });
 };
 
+const onHideMock = jest.fn();
+
 export {
   validateMappingTableRow,
   onClosestTableRow,
   onClosestTableBody,
   onClosestTable,
   onClosestDiv,
-  validateTableRow
+  validateTableRow,
+  onHideMock
 };

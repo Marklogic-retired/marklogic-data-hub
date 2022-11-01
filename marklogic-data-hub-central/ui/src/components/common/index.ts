@@ -19,3 +19,4 @@ export {default as HCIconPicker} from "./hc-icon-picker/hc-icon-picker";
 export {default as DynamicIcons} from "./dynamic-icons/dynamic-icons";
 export {default as HCPopoverSearch} from "./hc-popover-search/hc-popover-search";
 export {default as HCFacetIndicator} from "./hc-facet-indicator/hc-facet-indicator";
+export {default as HCModal} from "./hc-modal/hc-modal";

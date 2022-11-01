@@ -14,7 +14,7 @@ import {MergingStep, defaultPriorityOption} from "../../../../types/curation-typ
 import {updateMergingArtifact, getMergingRulesWarnings} from "@api/merging";
 import {addSliderOptions, parsePriorityOrder, handleDeleteSliderOptions} from "@util/priority-order-conversion";
 import {QuestionCircleFill} from "react-bootstrap-icons";
-import {ConfirmYesNo, HCInput, HCAlert, HCButton, HCTooltip} from "@components/common";
+import {ConfirmYesNo, HCInput, HCAlert, HCButton, HCTooltip, HCModal} from "@components/common";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import TimelineVis from "../../matching/matching-step-detail/timeline-vis/timeline-vis";
@@ -658,9 +658,10 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
   const mergeStrategyOptions = mergeStrategyNames.map(strategyName => ({value: strategyName, label: strategyName}));
 
   return (
-    <Modal
+    <HCModal
       show={props.createEditMergeRuleDialog}
       size={"xl"}
+      onHide={onCancel}
     >
       <Modal.Header>
         <span className={"fs-5"}>
@@ -980,7 +981,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
           {discardChanges}
         </div>
       </Modal.Body>
-    </Modal>
+    </HCModal>
   );
 };
 

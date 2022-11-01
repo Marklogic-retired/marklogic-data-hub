@@ -12,7 +12,7 @@ import DeleteModal from "../delete-modal/delete-modal";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {QuestionCircleFill} from "react-bootstrap-icons";
-import {ConfirmYesNo, HCInput, HCButton, HCTooltip} from "@components/common";
+import {ConfirmYesNo, HCInput, HCButton, HCTooltip, HCModal} from "@components/common";
 import {themeColors} from "@config/themes.config";
 
 type Props = {
@@ -446,10 +446,11 @@ const ThresholdModal: React.FC<Props> = (props) => {
   };
 
   return (
-    <Modal
+    <HCModal
       show={props.isVisible}
       size={"lg"}
       data-testid="match-threshold-modal"
+      onHide={closeModal}
     >
       <Modal.Header>
         <span className={"fs-5"}>{Object.keys(props.editThreshold).length === 0 ? "Add Match Threshold" : "Edit Match Threshold"}</span>
@@ -523,7 +524,7 @@ const ThresholdModal: React.FC<Props> = (props) => {
           confirmAction={confirmAction}
         />
       </Modal.Body>
-    </Modal>
+    </HCModal>
   );
 };
 

@@ -1,6 +1,6 @@
 import {AdvMapTooltips, RunToolTips, SecurityTooltips} from "@config/tooltips.config";
 import {Col, Modal, Row} from "react-bootstrap";
-import {HCButton, HCCard, HCDivider, HCTooltip} from "@components/common";
+import {HCButton, HCCard, HCDivider, HCModal, HCTooltip} from "@components/common";
 import {Link, useHistory} from "react-router-dom";
 import {PlayCircleFill, PlusCircleFill} from "react-bootstrap-icons";
 import React, {useContext, useEffect, useState} from "react";
@@ -124,8 +124,9 @@ const MappingCard: React.FC<Props> = (props) => {
     setSelectVisible(false);
   }
 
-  const deleteConfirmation = <Modal
+  const deleteConfirmation = <HCModal
     show={dialogVisible}
+    onHide={onCancel}
   >
     <Modal.Header className={"bb-none"}>
       <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
@@ -141,7 +142,7 @@ const MappingCard: React.FC<Props> = (props) => {
         </HCButton>
       </div>
     </Modal.Body>
-  </Modal>;
+  </HCModal>;
 
   const openStepDetails = (name) => {
     // need step's name and array index to option mapping details
@@ -270,8 +271,9 @@ const MappingCard: React.FC<Props> = (props) => {
   };
 
   const addConfirmation = (
-    <Modal
+    <HCModal
       show={addDialogVisible}
+      onHide={onCancel}
     >
       <Modal.Header className={"bb-none"}>
         <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
@@ -291,12 +293,13 @@ const MappingCard: React.FC<Props> = (props) => {
           </HCButton>
         </div>
       </Modal.Body>
-    </Modal>
+    </HCModal>
   );
 
   const addExistingStepConfirmation = (
-    <Modal
+    <HCModal
       show={addExistingStepDialogVisible}
+      onHide={onConfirmOk}
     >
       <Modal.Header className={"bb-none"}>
         <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
@@ -313,14 +316,15 @@ const MappingCard: React.FC<Props> = (props) => {
           </HCButton>
         </div>
       </Modal.Body>
-    </Modal>
+    </HCModal>
   );
 
 
   const runNoFlowsConfirmation = (
-    <Modal
+    <HCModal
       show={runNoFlowsDialogVisible}
       size={"lg"}
+      onHide={onCancel}
     >
       <Modal.Header className={"bb-none"}>
         <div aria-label="step-in-no-flows-confirmation" style={{fontSize: "16px"}}>Choose the flow in which to add and run the step <strong>{mappingArtifactName}</strong>.</div>
@@ -355,12 +359,13 @@ const MappingCard: React.FC<Props> = (props) => {
           Cancel
         </HCButton>
       </Modal.Footer>
-    </Modal>
+    </HCModal>
   );
 
   const runOneFlowConfirmation = (
-    <Modal
+    <HCModal
       show={runOneFlowDialogVisible}
+      onHide={onCancel}
     >
       <Modal.Header className={"bb-none"}>
         <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
@@ -380,12 +385,13 @@ const MappingCard: React.FC<Props> = (props) => {
           Continue
         </HCButton>
       </Modal.Footer>
-    </Modal>
+    </HCModal>
   );
 
   const runMultFlowsConfirmation = (
-    <Modal
+    <HCModal
       show={runMultFlowsDialogVisible}
+      onHide={onCancel}
     >
       <Modal.Header className={"bb-none"}>
         <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
@@ -415,7 +421,7 @@ const MappingCard: React.FC<Props> = (props) => {
           Cancel
         </HCButton>
       </Modal.Footer>
-    </Modal>
+    </HCModal>
   );
 
   const flowOptions = props.flows?.length > 0 ? props.flows.map((f, i) => ({value: f.name, label: f.name})) : {};

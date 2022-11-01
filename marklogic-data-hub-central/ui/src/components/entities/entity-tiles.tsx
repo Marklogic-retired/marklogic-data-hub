@@ -8,7 +8,7 @@ import {createStep, deleteStep, getSteps, updateStep} from "@api/steps";
 import {CurationContext} from "@util/curation-context";
 import CustomCard from "./custom/custom-card";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {HCButton} from "@components/common";
+import {HCButton, HCModal} from "@components/common";
 import MappingCard from "./mapping/mapping-card";
 import {MappingStepMessages} from "@config/tooltips.config";
 import MatchingCard from "./matching/matching-card";
@@ -591,8 +591,9 @@ const EntityTiles = (props) => {
             </Card>
           </Accordion.Item>
         </Accordion> : null}
-      <Modal
+      <HCModal
         show={modalError.isVisible}
+        onHide={() => setModalError({isVisible: false, message: ""})}
       >
         <Modal.Body className={"pt-5 pb-4"}>
           <div className={"d-flex align-items-start justify-content-center"}>
@@ -604,7 +605,7 @@ const EntityTiles = (props) => {
             </HCButton>
           </div>
         </Modal.Body>
-      </Modal>
+      </HCModal>
     </div>
   );
 
