@@ -38,7 +38,6 @@ describe("Concepts", () => {
     //Graph view
     cy.log("**Go to graph view**");
     browsePage.clickGraphView();
-    cy.waitForAsyncRequest();
     graphExplore.getGraphVisCanvas().should("be.visible");
     cy.log("**Verify results number change**");
     cy.log("**Turn off concepts on graph**");
@@ -51,7 +50,6 @@ describe("Concepts", () => {
     //Graph view
     cy.log("**Go to graph view**");
     browsePage.clickGraphView();
-    cy.waitForAsyncRequest();
     graphExplore.getGraphVisCanvas().should("be.visible");
 
     graphView.getPhysicsAnimationToggle().scrollIntoView().should("have.value", "true");
@@ -122,7 +120,7 @@ describe("Concepts", () => {
     //Graph view
     cy.log("**Go to graph view**");
     browsePage.clickGraphView();
-    cy.waitForAsyncRequest();
+    graphExplore.getGraphVisCanvas().should("be.visible");
     graphExplore.stopStabilization();
     graphExplore.getGraphVisCanvas().should("be.visible");
 
@@ -265,7 +263,6 @@ describe("Concepts", () => {
     //Graph view
     cy.log("**Go to graph view**");
     browsePage.clickGraphView();
-    cy.waitForAsyncRequest();
     graphExplore.getGraphVisCanvas().should("be.visible");
     graphExplore.stopStabilization();
 

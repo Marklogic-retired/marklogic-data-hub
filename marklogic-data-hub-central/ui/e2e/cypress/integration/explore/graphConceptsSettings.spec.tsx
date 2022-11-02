@@ -62,7 +62,6 @@ describe("Entity Type Settings Modal", () => {
     cy.wait(3000);
     cy.log("**Select Graph view and open explore settings modal**");
     browsePage.clickGraphView();
-    browsePage.waitForSpinnerToDisappear();
     explorePage.clickExploreSettingsMenuIcon();
     browsePage.getEntityTypeDisplaySettingsButton().scrollIntoView().click({force: true});
     dataModelDisplaySettingsModal.getModalBody().should("be.visible");
@@ -111,7 +110,6 @@ describe("Entity Type Settings Modal", () => {
     cy.wait(3000);
     cy.log("**Select Graph view and open explore settings modal**");
     browsePage.clickGraphView();
-    browsePage.waitForSpinnerToDisappear();
     explorePage.clickExploreSettingsMenuIcon();
     browsePage.getEntityTypeDisplaySettingsButton().scrollIntoView().click({force: true});
     dataModelDisplaySettingsModal.getModalBody().should("be.visible");

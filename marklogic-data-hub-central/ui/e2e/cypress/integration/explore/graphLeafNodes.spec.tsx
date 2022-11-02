@@ -32,7 +32,6 @@ describe("Leaf Nodes", () => {
     //Graph view
     cy.log("**Go to graph view**");
     browsePage.clickGraphView();
-    cy.waitForAsyncRequest();
     graphExplore.getGraphVisCanvas().should("be.visible");
     graphExplore.stopStabilization();
 
