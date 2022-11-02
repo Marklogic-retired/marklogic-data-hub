@@ -184,7 +184,6 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     //Go back to curate
     cy.visit("/tiles/curate");
     cy.waitForAsyncRequest();
-    curatePage.getEntityTypePanel("Order").should("be.visible");
     curatePage.toggleEntityTypeId("Order");
     // Open step details and switch to Advanced tab in step settings
     curatePage.openStepDetails(mapStep);
