@@ -26,66 +26,66 @@ const testMatchedUriTableColumns = [
   },
   {
     text: "Exact",
-    dataField: "matchedRulesetType",
-    key: "matchedRulesetType " + (counter++) + " exact",
+    dataField: "matchedRulesetTypeExact",
+    key: "matchedRulesetType" + (counter++) + "exact",
     width: "6%",
-    formatter: (matchedRulesetType, key, index) => (matchedRulesetType.map(rulesetType => {
-      return (rulesetType && rulesetType.toLowerCase() === "exact") && <span className={styles.testMatchedColumns} key={key} aria-label={matchedRulesetType + " " + (index)}>
+    formatter: (matchedRulesetType, row, index) => (row.matchedRulesetType.map(rulesetType => {
+      return (rulesetType && rulesetType.toLowerCase() === "exact") && <span className={styles.testMatchedColumns} key={row} aria-label={row.matchedRulesetType + " " + (index)}>
         <FontAwesomeIcon className={styles.checkIcon} icon={faCheck} data-testid={"facet-" + rulesetType} />
       </span>;
     }))
   },
   {
     text: "Synonym",
-    dataField: "matchedRulesetType",
+    dataField: "matchedRulesetTypeSynonym",
     key: "matchedRulesetType " + (counter++) + " synonym",
     width: "8%",
-    formatter: (matchedRulesetType, key, index) => (matchedRulesetType.map(rulesetType => {
-      return (rulesetType && rulesetType.toLowerCase() === "synonym") && <span className={styles.testMatchedColumns} key={key} aria-label={matchedRulesetType + " " + (index)}>
+    formatter: (matchedRulesetType, row, index) => (row.matchedRulesetType.map(rulesetType => {
+      return (rulesetType && rulesetType.toLowerCase() === "synonym") && <span className={styles.testMatchedColumns} key={row} aria-label={row.matchedRulesetType + " " + (index)}>
         <FontAwesomeIcon className={styles.checkIcon} icon={faCheck} data-testid={"facet-" + rulesetType}/>
       </span>;
     }))
   },
   {
     text: "Double Metaphone",
-    dataField: "matchedRulesetType",
+    dataField: "matchedRulesetTypeMetaphone",
     width: "10%",
     key: "matchedRulesetType " + (counter++) + " metaphone",
-    formatter: (matchedRulesetType, key, index) => (matchedRulesetType.map(rulesetType => {
-      return (rulesetType && rulesetType.toLowerCase() === "double metaphone") && <span className={styles.testMatchedColumns} key={key} aria-label={matchedRulesetType + " " + (index)}>
+    formatter: (matchedRulesetType, row, index) => (row.matchedRulesetType.map(rulesetType => {
+      return (rulesetType && rulesetType.toLowerCase() === "double metaphone") && <span className={styles.testMatchedColumns} key={row} aria-label={row.matchedRulesetType + " " + (index)}>
         <FontAwesomeIcon className={styles.checkIcon} icon={faCheck} data-testid={"facet-" + rulesetType}/>
       </span>;
     }))
   },
   {
     text: "Zip",
-    dataField: "matchedRulesetType",
+    dataField: "matchedRulesetTypeZip",
     key: "matchedRulesetType " + (counter++) + " zip",
     width: "6%",
-    formatter: (matchedRulesetType, key, index) => (matchedRulesetType.map(rulesetType => {
-      return (rulesetType && rulesetType.toLowerCase() === "zip") && <span className={styles.testMatchedColumns} key={key} aria-label={matchedRulesetType + " " + (index)}>
+    formatter: (matchedRulesetType, row, index) => (row.matchedRulesetType.map(rulesetType => {
+      return (rulesetType && rulesetType.toLowerCase() === "zip") && <span className={styles.testMatchedColumns} key={row} aria-label={row.matchedRulesetType + " " + (index)}>
         <FontAwesomeIcon className={styles.checkIcon} icon={faCheck} data-testid={"facet-" + rulesetType}/>
       </span>;
     }))
   },
   {
     text: "Reduce",
-    dataField: "matchedRulesetType",
+    dataField: "matchedRulesetTypeReduce",
     key: "matchedRulesetType " + (counter++) + " reduce",
     width: "7%",
-    formatter: (matchedRulesetType, key, index) => (matchedRulesetType.map(rulesetType => {
-      return (rulesetType && rulesetType.toLowerCase() === "reduce") && <span className={styles.testMatchedColumns} key={key} aria-label={matchedRulesetType + " " + (index)}>
+    formatter: (matchedRulesetType, row, index) => (row.matchedRulesetType.map(rulesetType => {
+      return (rulesetType && rulesetType.toLowerCase() === "reduce") && <span className={styles.testMatchedColumns} key={row} aria-label={row.matchedRulesetType + " " + (index)}>
         <FontAwesomeIcon className={styles.checkIcon} icon={faCheck} data-testid={"facet-" + rulesetType}/>
       </span>;
     }))
   },
   {
     text: "Custom",
-    dataField: "matchedRulesetType",
+    dataField: "matchedRulesetTypeCustom",
     key: "matchedRulesetType " + (counter++) + " custom",
     width: "8%",
-    formatter: (matchedRulesetType, key, index) => (matchedRulesetType.map(rulesetType => {
-      return (rulesetType && rulesetType.toLowerCase() === "custom") && <span className={styles.testMatchedColumns} key={key} aria-label={matchedRulesetType + " " + (index)}>
+    formatter: (matchedRulesetType, row, index) => (row.matchedRulesetType.map(rulesetType => {
+      return (rulesetType && rulesetType.toLowerCase() === "custom") && <span className={styles.testMatchedColumns} key={row} aria-label={row.matchedRulesetType + " " + (index)}>
         <FontAwesomeIcon className={styles.checkIcon} icon={faCheck} data-testid={"facet-" + rulesetType}/>
       </span>;
     }))

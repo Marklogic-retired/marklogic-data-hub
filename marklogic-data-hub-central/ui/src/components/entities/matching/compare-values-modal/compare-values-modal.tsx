@@ -574,7 +574,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
         onMouseLeave={() => setShowUrisPopover(false)}>
         <Popover.Body className={styles.moreUrisPopover}>
           {props.uriCompared.length < 30 ?
-            <div className={styles.moreUrisInfo} aria-label="more-uri-info">All URIs included in this {props.isMerge? "merge" : "unmerge"} are displayed below (<strong>{props.uriCompared.length} total</strong>): <br/><br/>{props.uriCompared.map((uri, index) => { return <div><span className={styles.uriText} aria-label={`${uri}-uri`}>{uri}</span><br/></div>; })}</div>
+            <div className={styles.moreUrisInfo} aria-label="more-uri-info">All URIs included in this {props.isMerge? "merge" : "unmerge"} are displayed below (<strong>{props.uriCompared.length} total</strong>): <br/><br/>{props.uriCompared.map((uri, index) => { return <div key={index}><span className={styles.uriText} aria-label={`${uri}-uri`}>{uri}</span><br/></div>; })}</div>
             :
             <div>
               <div className={styles.moreUrisInfo} aria-label="more-uri-info-limit">The first <strong>30</strong> URIs included in this {props.isMerge? "merge" : "unmerge"} are displayed below (<strong>{props.uriCompared.length} total</strong>): <br/><br/>{props.uriCompared.map((uri, index) => { return index < 30 ? <div><span className={styles.uriText} aria-label={`${uri}-uri`}>{uri}</span><br/></div> : null; })}</div>
