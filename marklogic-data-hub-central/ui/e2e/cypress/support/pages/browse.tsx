@@ -373,7 +373,9 @@ class BrowsePage {
 
   // common
   clickGraphView() {
-    return this.getGraphView().click();
+    this.getGraphView().click();
+    this.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
   }
 
   // common

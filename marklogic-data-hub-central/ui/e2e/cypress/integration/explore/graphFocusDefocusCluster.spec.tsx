@@ -31,7 +31,7 @@ describe("Focus Defocus clusters", () => {
     cy.log("**Go to graph view**");
     browsePage.clickGraphView();
     graphExplore.getGraphVisCanvas().should("be.visible");
-    cy.wait(5000);
+    cy.wait(2000);
 
     cy.log("**Picking up customer node and validate it is available in canvas**");
     graphExplore.focusNode(ExploreGraphNodes.CUSTOMER_102);

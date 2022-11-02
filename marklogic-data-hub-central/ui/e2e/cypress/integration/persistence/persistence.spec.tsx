@@ -10,7 +10,6 @@ import {Application} from "../../support/application.config";
 import {ConfirmationType} from "../../support/types/modeling-types";
 import LoginPage from "../../support/pages/login";
 import curatePage from "../../support/pages/curate";
-import explore from "../../support/pages/browse";
 import {generateUniqueName} from "../../support/helper";
 import graphView from "../../support/components/explore/graph-view";
 import graphVis from "../../support/components/model/graph-vis";
@@ -21,6 +20,7 @@ import modelPage from "../../support/pages/model";
 import multiSlider from "../../support/components/common/multi-slider";
 import propertyTable from "../../support/components/model/property-table";
 import tables from "../../support/components/common/tables";
+import browsePage from "../../support/pages/browse";
 
 describe("Validate persistence across Hub Central", () => {
   let entityNamesAsc: string[] = [];
@@ -59,16 +59,16 @@ describe("Validate persistence across Hub Central", () => {
   });
   it(" Explore tile: the graph view switches settings should be preserved", () => {
     toolbar.getExploreToolbarIcon().click();
-    explore.getGraphView().click();
+    browsePage.clickGraphView();
 
     cy.log("**Switch off all the toggles**");
-    graphView.getConceptToggle().scrollIntoView().trigger("mouseover").click({force: true});
-    graphView.getConceptToggle().should("have.value", "false");
-
-    graphView.getPhysicsAnimationToggle().scrollIntoView().trigger("mouseover").click({force: true});
+    graphView.getPhysicsAnimationToggle().scrollIntoView().click({force: true});
     graphView.getPhysicsAnimationToggle().should("have.value", "false");
 
-    graphView.getRelationshipLabelsToggle().scrollIntoView().trigger("mouseover").click({force: true});
+    graphView.getConceptToggle().scrollIntoView().click({force: true});
+    graphView.getConceptToggle().should("have.value", "false");
+
+    graphView.getRelationshipLabelsToggle().scrollIntoView().click({force: true});
     graphView.getRelationshipLabelsToggle().should("have.value", "false");
 
     cy.log("**Switch Tile and come back, toggle value should be the same**");

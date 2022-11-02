@@ -32,7 +32,6 @@ describe("Test navigation with facets from graph side panel to details twice", (
     browsePage.getGraphLoader().should("be.visible");
     cy.log("**Select Graph view**");
     browsePage.clickGraphView();
-    browsePage.waitForSpinnerToDisappear();
     graphExplore.getGraphVisCanvas().should("be.visible");
     graphExplore.stopStabilization();
 

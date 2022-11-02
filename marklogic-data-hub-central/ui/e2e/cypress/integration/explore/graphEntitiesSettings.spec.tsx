@@ -100,8 +100,6 @@ describe("Entity Type Settings Modal", () => {
   it("Open settings modal, check default values, select new ones cancel and check that the defaults values are keep", {defaultCommandTimeout: 120000}, () => {
     cy.log("**Select Graph view and open explore settings modal**");
     browsePage.clickGraphView();
-    browsePage.waitForSpinnerToDisappear();
-    cy.waitForAsyncRequest();
     explorePage.clickExploreSettingsMenuIcon();
     browsePage.getEntityTypeDisplaySettingsButton().scrollIntoView().click({force: true});
     dataModelDisplaySettingsModal.getModalBody().should("be.visible");
@@ -164,7 +162,6 @@ describe("Entity Type Settings Modal", () => {
     cy.wait(1000);
     cy.log("**Select Graph view and open explore settings modal**");
     browsePage.clickGraphView();
-    browsePage.waitForSpinnerToDisappear();
     cy.wait(2000);
     explorePage.clickExploreSettingsMenuIcon();
     browsePage.getEntityTypeDisplaySettingsButton().scrollIntoView().click({force: true});
@@ -284,7 +281,6 @@ describe("Entity Type Settings Modal", () => {
     cy.wait(1000);
     cy.log("**Select Graph view**");
     browsePage.clickGraphView();
-    browsePage.waitForSpinnerToDisappear();
     cy.wait(2000);
 
     cy.log("**Go to specific entity panel and check icon, title and background color**");

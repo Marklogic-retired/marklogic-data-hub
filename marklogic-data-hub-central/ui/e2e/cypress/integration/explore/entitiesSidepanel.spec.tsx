@@ -142,7 +142,6 @@ describe("Test '/Explore' left sidebar", () => {
     cy.wait(5000);
     browsePage.getClearAllFacetsButton().click({force: true});
     browsePage.clickGraphView();
-    cy.wait(5000);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
       let custCoordinates: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
       expect(custCoordinates).to.not.equal(undefined);
@@ -220,7 +219,6 @@ describe("Test '/Explore' left sidebar", () => {
 
     cy.log("**verify both Customer and Order nodes are still present in graph**");
     browsePage.clickGraphView();
-    cy.wait(1000);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
       let custCoordinates: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
       expect(custCoordinates).to.not.equal(undefined);
