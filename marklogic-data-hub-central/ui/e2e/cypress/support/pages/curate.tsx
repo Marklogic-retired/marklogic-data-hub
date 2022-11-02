@@ -60,7 +60,7 @@ class CuratePage {
   }
 
   openStepDetails(stepName: string) {
-    cy.findByTestId(`${stepName}-stepDetails`).should("be.visible", {timeout: 5000}).click();
+    cy.findByTestId(`${stepName}-stepDetails`).should("be.visible", {timeout: 5000}).click({force: true});
   }
 
   /**

@@ -457,7 +457,7 @@ class MappingStepDetail {
     cy.get(`#${idEntity} .${classLayer}`).then($elements => {
       countOfCards = $elements.length;
     }).then(() => {
-      cy.get(`#${idEntity} [id$=${idLayer}]`).should("have.text", `${tab} (${countOfCards})`);
+      cy.get(`#${idEntity} [id$=${idLayer}]`).should("be.visible").should("have.text", `${tab} (${countOfCards})`);
     });
   }
   getHighlightedWordInSourceData() {
