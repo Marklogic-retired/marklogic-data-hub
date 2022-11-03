@@ -29,10 +29,11 @@ describe("Test navigation with facets from graph side panel to details twice", (
     toolbar.getExploreToolbarIcon().click();
 
     cy.log("**Verify loading indicator in the graph**");
-    browsePage.getGraphLoader().should("be.visible");
+    graphExplore.getGraphLoader().should("be.visible");
     cy.log("**Select Graph view**");
     browsePage.clickGraphView();
     graphExplore.getGraphVisCanvas().should("be.visible");
+    graphExplore.getStabilizationAlert().should("be.visible");
     graphExplore.stopStabilization();
 
     cy.log("**Enter text in search field and apply facets**");

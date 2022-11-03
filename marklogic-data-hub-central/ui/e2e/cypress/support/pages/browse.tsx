@@ -744,10 +744,6 @@ class BrowsePage {
     return cy.get(`[data-testid="merge-icon${rowNum}"]`);
   }
 
-  //loading spinner and message container
-  getGraphLoader() {
-    return cy.get(`[aria-label="spinner-message-container"]`);
-  }
 }
 
 const browsePage = new BrowsePage();

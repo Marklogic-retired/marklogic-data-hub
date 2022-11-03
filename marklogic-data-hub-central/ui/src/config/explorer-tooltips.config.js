@@ -15,7 +15,6 @@ const tooltipsConfig = {
       "Artifacts contain the default and user-defined configuration settings for Data Hub, including entity models, flows, step definitions, and steps.",
     // Tooltips for other hub properties in hub-properties.config.js
   },
-
   exploreSidebar: {
     baseEntities: "Base entities filters will filter out related entities.",
     relatedEntities:
@@ -44,7 +43,8 @@ const tooltipsConfig = {
   graphViewTooltips: {
     relationshipLabel: "A relationship name identifies a relationship between two two entity types. To add or edit relationship names, go to the Model screen.",
     concept: "A concept is simply an abstract subject within a vocabulary or an ontology.",
-    physicsAnimation: "Toggle the switch to remove all automatic movement between nodes. When this button is switched to 'OFF', the nodes become still and must be moved manually."
+    physicsAnimation: "Toggle the switch to remove all automatic movement between nodes. When this button is switched to 'OFF', the nodes become still and must be moved manually.",
+    graphStabilizationMessage: "The graph stabilization process causes the graph nodes to move automatically. To skip this process and view a static configuration, toggle OFF “Physics animation”."
   },
   graphVis: {
     groupNode: (entityType) => (`Group of ${entityType} records

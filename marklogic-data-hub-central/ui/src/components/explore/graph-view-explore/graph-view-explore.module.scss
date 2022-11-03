@@ -2,6 +2,11 @@
     padding: 10px 10px 0px 0px;
 
     .graphHeader {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .graphButtons {
         display: flex;
         justify-content: space-between;
         width: 100%;

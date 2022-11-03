@@ -100,6 +100,7 @@ const MatchingStepDetail: React.FC = () => {
   const [singleUriWarning2, setSingleUriWarning2] = useState(false);
   const [uriTestMatchClicked, setUriTestMatchClicked] = useState(uriTestStorage);
   const [loading, setToggleLoading] = useState(false);
+  const [compareBtnLoading, setCompareBtnLoading] = useState<any>([]);
   const [allDataSelected, setAllDataSelected] = useState(false);
   const [testUrisOnlySelected, setTestUrisOnlySelected] = useState(true);
   const [testUrisAllDataSelected, setTestUrisAllDataSelected] = useState(false);
@@ -199,8 +200,9 @@ const MatchingStepDetail: React.FC = () => {
     setMatchingActivity(matchActivity);
   };
 
-  const handlePreviewMatchingActivity = async (testMatchData, previewActivity = previewMatchedActivity, thresholds = curationOptions.activeStep.stepArtifact.thresholds, setDataFunction = setPreviewMatchedData, setActivityFunction = setPreviewMatchedActivity, setDataList = setRulesetDataList, localRulesetDataList = rulesetDataList) => {
+  const handlePreviewMatchingActivity = async (testMatchData, previewActivity = previewMatchedActivity, thresholds = curationOptions.activeStep.stepArtifact.thresholds, setDataFunction = setPreviewMatchedData, setActivityFunction = setPreviewMatchedActivity, setDataList = setRulesetDataList) => {
     const test = () => {
+      let localRulesetDataList:any = [];
       for (let i = 0; i < thresholds.length; i++) {
         let ruleset = thresholds[i].thresholdName.concat(" - ") + thresholds[i].action;
         let score = thresholds[i].score;
@@ -221,21 +223,21 @@ const MatchingStepDetail: React.FC = () => {
           localRulesetDataList.push(localData);
         }
       }
-      localRulesetDataList.shift();
+      return localRulesetDataList;
     };
     previewActivity = await previewMatchingActivity(testMatchData);
     if (previewActivity) {
       setToggleLoading(false);
+      let updatedRulesetList = await test();
       setDataFunction(previewActivity.actionPreview.length);
-      await test();
       setActivityFunction(previewActivity);
-      setDataList(localRulesetDataList);
+      setDataList(updatedRulesetList);
     }
 
   };
 
   const handlePreviewNonMatchingActivity = async (testMatchData) => {
-    await handlePreviewMatchingActivity(Object.assign({nonMatches: true}, testMatchedData), previewNonMatchedActivity, notMatchedThreshold, setPreviewNonMatchedData, setPreviewNonMatchedActivity, setRulesetNonMatchedDataList, rulesetNonMatchedDataList);
+    await handlePreviewMatchingActivity(Object.assign({nonMatches: true}, testMatchedData), previewNonMatchedActivity, notMatchedThreshold, setPreviewNonMatchedData, setPreviewNonMatchedActivity, setRulesetNonMatchedDataList);
   };
 
   const getKeysToExpandFromTable = async () => {
@@ -531,7 +533,8 @@ const MatchingStepDetail: React.FC = () => {
     setActiveMatchedUri(tmpActiveMatchedUri);
   };
 
-  const handleCompareButton = async (arr) => {
+  const handleCompareButton = async (e, rulesetName, arr) => {
+    setCompareBtnLoading([e.target.id, rulesetName]);
     setEntityProperties(curationOptions.entityDefinitionsArray[0].properties);
     const result1 = await getDocFromURI(arr[0]);
     const result2 = await getDocFromURI(arr[1]);
@@ -547,6 +550,7 @@ const MatchingStepDetail: React.FC = () => {
       let previewInstance = preview.data.value.envelope.instance;
       await setUriInfo([{result1Instance}, {result2Instance}, {previewInstance}]);
     }
+    setCompareBtnLoading(["#", "#"]);
     setCompareModalVisible(true);
     setUrisCompared(uris);
   };
@@ -1083,7 +1087,7 @@ const MatchingStepDetail: React.FC = () => {
                                           </span>
                                         </Accordion.Button>
                                         <div className={"p-2"}>
-                                          <HCButton size="sm" variant="primary" onClick={() => { handleCompareButton([actionPreviewData.uris[0], actionPreviewData.uris[1]]); }} aria-label={actionPreviewData.uris[0].substr(0, 41) + " compareButton"}>Compare</HCButton>
+                                          <HCButton size="sm" variant="primary" id={idx} className={styles.compareTestButton} onClick={(e) => { handleCompareButton(e, rulesetDataList.rulesetName, [actionPreviewData.uris[0], actionPreviewData.uris[1]]); }} loading={compareBtnLoading[0]?.toString() === idx.toString() && compareBtnLoading[1] === rulesetDataList.rulesetName ? true : false} aria-label={actionPreviewData.uris[0].substr(0, 41) + " compareButton"}>Compare</HCButton>
                                         </div>
                                       </div>
                                       {curationOptions.activeStep?.stepArtifact?.matchRulesets &&
@@ -1142,7 +1146,7 @@ const MatchingStepDetail: React.FC = () => {
                                           </span>
                                         </Accordion.Button>
                                         <div className={"p-2"}>
-                                          <HCButton size="sm" variant="primary" onClick={() => { handleCompareButton([actionPreviewData.uris[0], actionPreviewData.uris[1]]); }} aria-label={actionPreviewData.uris[0].substr(0, 41) + " compareButton"}>Compare</HCButton>
+                                          <HCButton size="sm" className={styles.compareTestButton} id={idx} variant="primary" onClick={(e) => { handleCompareButton(e, rulesetDataList.rulesetName, [actionPreviewData.uris[0], actionPreviewData.uris[1]]); }} loading={compareBtnLoading[0]?.toString() === idx.toString() && compareBtnLoading[1] === rulesetDataList.rulesetName ? true : false} aria-label={actionPreviewData.uris[0].substr(0, 41) + " compareButton"}>Compare</HCButton>
                                         </div>
                                       </div>
                                       {curationOptions.activeStep?.stepArtifact?.matchRulesets &&

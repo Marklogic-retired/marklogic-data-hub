@@ -111,7 +111,11 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     } catch (err) {
       console.error("Error clearing the graph data before reset.");
     } finally {
-      setIsLoading(true);
+
+      //**turn this back on to investigate how to show loading while nodes are bouncing/stabilizing**/
+      // setIsLoading(true);
+      //****************************** */
+
       updateNodesData(getNodes());
       updateEdgesData(getEdges());
       setExpandedNodeData({});
