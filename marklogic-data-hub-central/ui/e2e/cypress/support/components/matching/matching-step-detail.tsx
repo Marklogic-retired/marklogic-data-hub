@@ -108,6 +108,10 @@ class MatchingStepDetail {
     return cy.findByLabelText("inputUriRadio");
   }
 
+  getUriOnlyRadio() {
+    return cy.findByLabelText("inputUriOnlyRadio");
+  }
+
   verifyURIAdded(name: string) {
     return cy.findByText(name).scrollIntoView().should("be.visible");
   }

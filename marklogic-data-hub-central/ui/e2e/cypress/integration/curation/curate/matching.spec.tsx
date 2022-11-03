@@ -395,9 +395,37 @@ describe("Matching", () => {
     // cy.findByTestId("ruleSet-slider-ticks").find(`div[style*="left: 19.1919%;"]`).trigger("mousemove", {force: true});
     // multiSlider.getHandleName("testMultipleProperty").trigger("mouseup", {force: true});
 
+    cy.log("**Test when user clicks on test button after adding/deleting URI's in 'Test Uris'**");
+    matchingStepDetail.getUriOnlyRadio().click();
+    for (let i = 0; i < 2; i++) {
+      cy.waitUntil(() => matchingStepDetail.getUriOnlyInputField().clear().type(uris[i]));
+      matchingStepDetail.getAddUriOnlyIcon().click();
+    }
+    //test two truthy URI matches
+    matchingStepDetail.getTestMatchUriButton();
+    cy.findByLabelText("noMatchedDataView").should("have.length.lt", 1);
+    cy.get(`[id="testMatchedPanel"]`).contains(uriMatchedResults[0].ruleName).should("have.length.gt", 0);
+    cy.findByText("(Threshold: " + uriMatchedResults[0].threshold + ")").should("have.length.gt", 0);
+
+    //delete one and test two faulty URI matches
+    matchingStepDetail.getUriDeleteIcon().last().click();
+    cy.waitUntil(() => matchingStepDetail.getUriOnlyInputField().clear().type("/json/persons/faulty-metaphone.json"));
+    matchingStepDetail.getAddUriOnlyIcon().click();
+    matchingStepDetail.getTestMatchUriButton();
+    cy.findByLabelText("noMatchedDataView").should("have.length.gt", 0);
+
+    //test two truthy URI matches again
+    matchingStepDetail.getUriDeleteIcon().last().click();
+    cy.waitUntil(() => matchingStepDetail.getUriOnlyInputField().clear().type("/json/persons/first-name-double-metaphone2.json"));
+    matchingStepDetail.getAddUriOnlyIcon().click();
+    matchingStepDetail.getTestMatchUriButton();
+    cy.findByLabelText("noMatchedDataView").should("have.length.lt", 1);
+    cy.get(`[id="testMatchedPanel"]`).contains(uriMatchedResults[0].ruleName).should("have.length.gt", 0);
+    cy.findByText("(Threshold: " + uriMatchedResults[0].threshold + ")").should("have.length.gt", 0);
+
     //To test when users click on test button and no data is returned
     cy.log("**To test when users click on test button and no data is returned**");
-    cy.findByLabelText("inputUriRadio").scrollIntoView({duration: 2000});
+    cy.findByLabelText("inputUriRadio").scrollIntoView({duration: 2000}).click();
     cy.waitUntil(() => matchingStepDetail.getUriInputField().scrollIntoView().type("/json/noDataUri"));
     matchingStepDetail.getAddUriIcon().click();
     matchingStepDetail.getTestMatchUriButton();

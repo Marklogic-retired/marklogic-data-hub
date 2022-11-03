@@ -1,4 +1,4 @@
-import {HCCheckbox, HCTooltip} from "@components/common";
+import {HCCheckbox, HCTooltip, HCAlert} from "@components/common";
 import React, {CSSProperties, useEffect, useContext, useState} from "react";
 import {getViewSettings, setViewSettings} from "@util/user-context";
 
@@ -215,8 +215,15 @@ const GraphViewExplore: React.FC<Props> = (props) => {
       ? <span></span>
       : (<div className={styles.graphViewExploreContainer}>
         <div className={styles.graphHeader}>
-          {graphSwitches}
-          {headerButtons}
+          <HCAlert
+            variant="info"
+            aria-label="graph-stabilization-alert"
+            showIcon
+          >{graphViewTooltips.graphStabilizationMessage}</HCAlert>
+          <div className={styles.graphButtons}>
+            {graphSwitches}
+            {headerButtons}
+          </div>
         </div>
         <div className={styles.borderBelowHeader}></div>
         <div>

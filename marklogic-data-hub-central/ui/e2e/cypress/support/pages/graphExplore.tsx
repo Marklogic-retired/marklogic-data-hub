@@ -111,6 +111,15 @@ class GraphExplore {
   getTooltip() {
     return cy.get(`div.vis-tooltip`);
   }
+  getStabilizationAlert() {
+    return cy.get(`[aria-label="graph-stabilization-alert"]`);
+  }
+
+  //loading spinner and message container
+  getGraphLoader() {
+    return cy.get(`[aria-label="spinner-message-container"]`);
+  }
+
   getContextMenu() {
     return cy.waitUntil(() => cy.get("#contextMenu"));
   }
