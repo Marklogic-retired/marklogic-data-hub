@@ -27,7 +27,7 @@
     "@angular/platform-browser": "6.0.2",
     "@angular/platform-browser-dynamic": "6.0.2",
     "@angular/router": "6.0.2",
-    "@types/codemirror": "0.0.55",
+    "@types/codemirror": "0.0.109",
     "classlist.js": "1.1.20150312",
     "clipboard": "1.7.1",
     "codemirror": "5.49.0",
