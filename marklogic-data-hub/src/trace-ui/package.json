@@ -42,7 +42,7 @@
     "ngx-bootstrap": "3.3.0",
     "node-sass": "4.14.1",
     "rxjs": "6.5.3",
-    "rxjs-compat": "6.5.3",
+    "rxjs-compat": "6.6.7",
     "semver": "5.7.1",
     "sockjs-client": "1.4.0",
     "stompjs": "2.3.3",
