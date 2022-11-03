@@ -14,12 +14,12 @@ import {fetchSemanticConceptInfo} from "@api/queries";
 import {FileEarmarkBinary, FileEarmarkText} from "react-bootstrap-icons";
 
 type Props = {
-    onCloseSidePanel:() => void;
-    graphView: boolean,
+  onCloseSidePanel: () => void;
+  graphView: boolean,
 };
 
 const DEFAULT_TAB = "instance";
-const INSTANCE_TITLE =  <span aria-label="instanceTab"><i><FontAwesomeIcon icon={faThList} size="sm" /></i> Instance</span>;
+const INSTANCE_TITLE = <span aria-label="instanceTab"><i><FontAwesomeIcon icon={faThList} size="sm" /></i> Instance</span>;
 
 const GraphExploreSidePanel: React.FC<Props> = (props) => {
   const {onCloseSidePanel, graphView} = props;
@@ -28,22 +28,21 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
     searchOptions,
     savedNode
   } = useContext(SearchContext);
-  const  {database, entityTypeIds, selectedFacets, query, sortOrder} = searchOptions;
+  const {database, entityTypeIds, selectedFacets, query, sortOrder} = searchOptions;
   const {entityName, group, primaryKey, sources, entityInstance, label, isConcept, id} = savedNode;
   const docUri = savedNode["docURI"] || savedNode["docUri"] || savedNode["uri"];
   const [currentTab, setCurrentTab] = useState(DEFAULT_TAB);
   const [details, setDetails] = useState<any>(null);
   const entityInstanceTitle = group ? group.split("/").pop() : entityName;
   const conceptTitle = id?.split("/").pop();
-  const [currentLabel, setCurrentLabel] = useState<string>("");
 
   //To view record info on graph instance view side panel
   const [content, setContent] = useState<any>(null);
   const [contentType, setContentType] = useState<string>("");
   const [xml, setXml] = useState();
   const data = useRef<any[]>();
-  const [semanticConceptInfo, setSemanticConceptInfo] = useState<any []>([]);
-  const [semanticConceptDescription, setSemanticConceptDescription] = useState<any|null>(null);
+  const [semanticConceptInfo, setSemanticConceptInfo] = useState<any[]>([]);
+  const [semanticConceptDescription, setSemanticConceptDescription] = useState<any | null>(null);
 
   const iconContenType = {
     unknown: <span className={"mlcf mlcf-blank fs-2"} aria-label={"icon: filetype-unknown"} />,
@@ -53,24 +52,17 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
     bin: <FileEarmarkBinary className={"d-inline-block fs-2"} aria-label={"icon: filetype-bin"} />,
     csv: <span className={"mlcf mlcf-csv fs-2"} aria-label={"icon: filetype-csv"} />
   };
-  const RECORD_TITLE =  <span aria-label="recordTab" className="d-flex align-items-center">
+  const RECORD_TITLE = <span aria-label="recordTab" className="d-flex align-items-center">
     {iconContenType[contentType.toLowerCase()] || iconContenType.unknown}
     {contentType ? contentType.toUpperCase() : ""}
   </span>;
 
 
   useEffect(() => {
-    let uri;
-    if (savedNode && !docUri) { // case where exploring from table/snippet
-      uri = savedNode["docIRI"];
+    if (isConcept) {
+      getSemanticConceptsInfo();
     } else {
-      uri = docUri;
-    }
-    if (uri && label !== currentLabel) {
-      if (isConcept) {
-        getSemanticConceptsInfo();
-      } else {
-        setCurrentLabel(label);
+      if (docUri) {
         const getNodeData = async (uri, database) => {
           try {
             const result = await getDetails(uri, database);
@@ -84,11 +76,11 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
             console.error("Unable to fetch document details.", err, JSON.stringify(savedNode));
           }
         };
-        getNodeData(uri, database);
+        getNodeData(docUri, database);
       }
     }
 
-  }, [details, label, currentLabel]);
+  }, [id]);
 
   const getSemanticConceptsInfo = async () => {
     try {
@@ -125,13 +117,13 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
   //To set the respective record type data(json, xml and text)
   const setContentData = () => {
     const info = data.current!;
-    let recordType=info["recordType"];
+    let recordType = info["recordType"];
     if (recordType === "json") {
       setContentType("json");
       setContent(info);
     } else if (recordType === "xml") {
       setContentType("xml");
-      let xmlData=info["data"];
+      let xmlData = info["data"];
       const decodedXml = xmlDecoder(xmlData);
       const document = xmlParser(decodedXml);
       setContent(document);
@@ -147,7 +139,7 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
     if (currentTab === DEFAULT_TAB) {
       return (
         <div aria-label="instance-view">
-          <TableView document={details} contentType="json" location={{}} isEntityInstance={true} isSidePanel={true}/>
+          <TableView document={details} contentType="json" location={{}} isEntityInstance={true} isSidePanel={true} />
         </div>
       );
     } else {
@@ -163,7 +155,7 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
   };
 
   const pathname = "/tiles/explore/detail"
-  ;
+    ;
   let primaryKeyValue;
   if (primaryKey && Object.keys(primaryKey).length) {
     primaryKeyValue = primaryKey.propertyValue;
@@ -234,9 +226,9 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
       <div className={styles.headingContainer}>
         <span>
           {
-            !isConcept  ? <span className={styles.selectedEntityHeading}  data-testid="entityHeading">
+            !isConcept ? <span className={styles.selectedEntityHeading} data-testid="entityHeading">
               {entityInstanceTitle}
-              {<ChevronRight className={styles.arrowRight}/>}
+              {<ChevronRight className={styles.arrowRight} />}
               {entityInstanceLabel}
             </span> :
               <div>
@@ -246,7 +238,7 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
           }
           {!isConcept && <HCTooltip text="View full details" id="processed-data-tooltip" placement="top-end">
             <Link to={{pathname, state}} id="instance" data-cy="instance">
-              <ArrowRightSquare className={styles.arrowRightSquare} aria-label="graphViewRightArrow"/>
+              <ArrowRightSquare className={styles.arrowRightSquare} aria-label="graphViewRightArrow" />
             </Link>
           </HCTooltip>}
         </span>
@@ -266,15 +258,15 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
             aria-label="instanceTabInSidePanel"
             id="instanceTabInSidePanel"
             title={INSTANCE_TITLE}
-            className={styles.instanceTabContainer}/>
+            className={styles.instanceTabContainer} />
           <Tab
             eventKey="record"
             aria-label="recordTabInSidePanel"
             id="recordTabInSidePanel"
-            title={RECORD_TITLE}/>
+            title={RECORD_TITLE} />
         </Tabs>
         {displayPanelContent()}</> : <>{conceptInstanceInfo}{semanticConceptDescription && <div aria-label="instance-view">
-          <TableView document={semanticConceptDescription} contentType="json" location={{}} isEntityInstance={false} isSidePanel={true}/>
+          <TableView document={semanticConceptDescription} contentType="json" location={{}} isEntityInstance={false} isSidePanel={true} />
         </div>}</>
       }
     </div>
