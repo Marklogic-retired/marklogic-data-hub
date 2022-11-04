@@ -955,12 +955,12 @@ const PropertyModal: React.FC<Props> = (props) => {
                   aria-label="type-dropdown"
                   placeholder="Select the property type"
                   options={dropdownOptions}
-                  displayRender={label => {
+                  displayRender={(label, selectedOption) => {
                     if (label[label.length - 1]) {
                       if (label[0] === "Related Entity") {
                         return "Relationship: " + label[label.length - 1];
                       } else if (label[0] === "Structured") {
-                        return "Structured: " + label[label.length - 1];
+                        return "Structured: " + selectedOption[selectedOption.length - 1].value;
                       } else {
                         return label[label.length - 1];
                       }

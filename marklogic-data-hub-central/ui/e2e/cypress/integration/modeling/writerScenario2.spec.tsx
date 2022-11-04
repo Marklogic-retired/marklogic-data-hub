@@ -62,6 +62,9 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.newPropertyName("address");
     propertyModal.getSubmitButton().click();
     propertyTable.getMultipleIcon("address").should("exist");
+    propertyTable.editProperty("address-address");
+    cy.get("[title=\"Structured: Address\"]").should("exist");
+    propertyModal.getCancelButton();
   });
   it("Add basic property to structured type", () => {
     propertyTable.getAddPropertyToStructureType("address").should("be.visible").click();
