@@ -60,6 +60,29 @@ class RulesetSingleModal {
     return cy.findByLabelText("reduceToggle");
   }
 
+  getElementWithID(id: string) {
+    return cy.get(`#${id}`);
+  }
+
+  saveModalButton(label: string) {
+    return cy.get(`[aria-label=${label}]`).click();
+  }
+
+  addListTitle(id: string, title: string) {
+    cy.get(`[id$=${id}]`).type(title);
+  }
+
+  addValuesToListToIgnore(word: string) {
+    cy.get(`*[class^="rbt-input-main"]`).click();
+    cy.get(`*[class^="rbt-input-main"]`).type(word).then(() => {
+      cy.get(`[id^=custom-selections-item]`).click();
+    });
+  }
+
+  editFirstList() {
+    return cy.get("[id^=edit-]").first();
+  }
+
 }
 
 const rulesetSingleModal = new RulesetSingleModal();

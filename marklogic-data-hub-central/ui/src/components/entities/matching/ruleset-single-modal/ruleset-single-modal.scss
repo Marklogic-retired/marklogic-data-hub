@@ -1,3 +1,5 @@
+@import "../../../../theme/HCVariables.scss";
+
 #matching-single-ruleset {
     .ant-tooltip-inner {
         width: 450px;
@@ -8,11 +10,19 @@
 }
 
 #createNewListOption {
-    color: #44499C;
+    color: $th-color;
     padding-left: 10px;
     cursor: pointer;
-    
     &:hover {
-      color: #7FADE3;
+      color: $hover-link;
     }
-}  
+}
+
+.rbt-input-multi.focus {
+    border-color: $border-input !important;
+    border: 1px solid $border-input !important;
+    box-shadow: 0 0 0 2px rgba(91, 105, 175, 0.2);
+    -webkit-box-shadow: 0 0 0 2px rgba(91, 105, 175, 0.2);
+    -moz-box-shadow: 0 0 0 2px rgba(91, 105, 175, 0.2);
+    border-radius: 4px !important;
+}
