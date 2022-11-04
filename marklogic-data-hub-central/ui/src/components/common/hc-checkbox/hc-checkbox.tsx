@@ -7,7 +7,7 @@ interface Props {
   tooltip?: any;
   handleClick: Function;
   value: any;
-  label?: string;
+  label?: JSX.Element | string;
   checked?: boolean;
   dataTestId?: string;
   ariaLabel?: string;
