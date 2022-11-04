@@ -683,7 +683,7 @@ const AddEditRelationship: React.FC<Props> = ({
     return flatArray;
   };
 
-  const foreignKeyOptions = targetNodeJoinProperties.length > 0 ? targetNodeJoinProperties.map((prop, index) => ({value: prop.value, label: prop.label, isDisabled: prop.disabled})) : [];
+  const foreignKeyOptions = targetNodeJoinProperties.length > 0 ? targetNodeJoinProperties.map((prop, index) => ({value: prop.value, label: prop.label, isDisabled: prop.hasOwnProperty("children") || prop.array})) : [];
   const sourcePropertyOptions = sourceNodeJoinProperties.length > 0 ? flattenSourceArray([...sourceNodeJoinProperties], []) : [];
   const listIdent = sourcePropertyOptions.reduce((acc, element) => {
     if (!element.key) {
