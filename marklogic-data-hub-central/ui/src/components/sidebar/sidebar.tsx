@@ -51,9 +51,6 @@ interface Props {
   entitiesWithRelatedConcepts: any;
   entityRelationships: any;
 }
-
-const PLACEHOLDER: string = "Select a saved query";
-
 const Sidebar: React.FC<Props> = (props) => {
   const stagingDbName: string = getEnvironment().stagingDb ? getEnvironment().stagingDb : "Staging";
   const finalDbName: string = getEnvironment().finalDb ? getEnvironment().finalDb : "Final";
@@ -67,7 +64,6 @@ const Sidebar: React.FC<Props> = (props) => {
     clearGreyFacet,
     greyedOptions,
     setAllGreyedOptions,
-    setSidebarQuery,
     setDatasource,
     setQueryGreyedOptions,
     setRelatedEntityTypeIds,
@@ -86,7 +82,6 @@ const Sidebar: React.FC<Props> = (props) => {
   const [datePickerValue, setDatePickerValue] = useState<any[]>([null, null]);
   const [dateRangeValue, setDateRangeValue] = useState<string>();
   const [searchBox, setSearchBox] = useState(searchOptions.query);
-  const [currentQueryName, setCurrentQueryName] = useState(PLACEHOLDER); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [activeRelatedEntities, setActiveRelatedEntities] = useState(true);
   const [activeRelatedConcepts, setActiveRelatedConcepts] = useState(true);
 
@@ -100,10 +95,6 @@ const Sidebar: React.FC<Props> = (props) => {
   //Concept Facet related
   const [relatedConceptsValues, setRelatedConceptsValues] = useState({});
   const [checkAllRelatedConcepts, setCheckAllRelatedConcepts] = useState(true);
-
-  useEffect(() => {
-    searchOptions.sidebarQuery && setCurrentQueryName(searchOptions.sidebarQuery);
-  }, [searchOptions.sidebarQuery]);
 
   useEffect(() => {
     let facets = {...greyedOptions.selectedFacets};
@@ -196,12 +187,6 @@ const Sidebar: React.FC<Props> = (props) => {
       setConceptFilterTypeIds(["#"]);
     }
     props.setCurrentRelatedConcepts(relatedConceptsList);
-  };
-
-
-  const clearSelectedQuery = () => { // eslint-disable-line @typescript-eslint/no-unused-vars
-    setCurrentQueryName(PLACEHOLDER);
-    setSidebarQuery(PLACEHOLDER);
   };
 
   useEffect(() => {
