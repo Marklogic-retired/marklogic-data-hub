@@ -1,6 +1,6 @@
 import React, {useState, useContext, useEffect} from "react";
 import {SearchContext} from "@util/search-context";
-import {FacetName} from "./facet-element";
+import FacetName from "./facet-name";
 import styles from "./facet.module.scss";
 import {stringConverter} from "@util/string-conversion";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
@@ -11,11 +11,11 @@ import {HCTooltip} from "@components/common";
 
 interface Props {
   name: string;
-  facetType: any;
   constraint: string;
+  facetCategory: string;
+  facetType: any;
   facetValues: any[];
   tooltip: string;
-  facetCategory: string;
   referenceType: string;
   entityTypeId: any;
   propertyPath: any;
@@ -24,7 +24,7 @@ interface Props {
   addFacetValues: (constraint: string, vals: string[], datatype: string, facetCategory: string) => void;
 }
 
-const Facet: React.FC<Props> = (props) => {
+const Facet: React.FC<Props> = ({name, facetType, facetCategory, facetValues, constraint, tooltip, referenceType, entityTypeId, updateSelectedFacets, addFacetValues, propertyPath, maxQuantityOnFacets}) => {
   const SHOW_MINIMUM = 3;
   const SEARCH_MINIMUM = 20;
 
@@ -38,10 +38,10 @@ const Facet: React.FC<Props> = (props) => {
 
   const setCheckedOptions = (selectedOptions) => {
     let facetName: string = "";
-    if (selectedOptions.selectedFacets.hasOwnProperty(props.constraint)) {
-      facetName = props.constraint;
-    } else if (selectedOptions.selectedFacets.hasOwnProperty(props.propertyPath) && props.constraint !== props.propertyPath) {
-      facetName = props.propertyPath;
+    if (selectedOptions.selectedFacets.hasOwnProperty(constraint)) {
+      facetName = constraint;
+    } else if (selectedOptions.selectedFacets.hasOwnProperty(propertyPath) && constraint !== propertyPath) {
+      facetName = propertyPath;
     }
     if (facetName) {
       if (searchOptions.selectedFacets.length === 0) { setChecked([]); }
@@ -67,15 +67,15 @@ const Facet: React.FC<Props> = (props) => {
   };
 
   useEffect(() => {
-    if (Object.entries(searchOptions.selectedFacets).length !== 0 && searchOptions.selectedFacets.hasOwnProperty(props.constraint)) {
+    if (Object.entries(searchOptions.selectedFacets).length !== 0 && searchOptions.selectedFacets.hasOwnProperty(constraint)) {
       setCheckedOptions(searchOptions);
-    } else if ((Object.entries(greyedOptions.selectedFacets).length === 0 || (!greyedOptions.selectedFacets.hasOwnProperty(props.constraint)))) {
+    } else if ((Object.entries(greyedOptions.selectedFacets).length === 0 || (!greyedOptions.selectedFacets.hasOwnProperty(constraint)))) {
       setChecked([]);
     }
   }, [searchOptions]);
 
   useEffect(() => {
-    if (Object.entries(greyedOptions.selectedFacets).length !== 0 && greyedOptions.selectedFacets.hasOwnProperty(props.constraint)) {
+    if (Object.entries(greyedOptions.selectedFacets).length !== 0 && greyedOptions.selectedFacets.hasOwnProperty(constraint)) {
       setCheckedOptions(greyedOptions);
     } else { setCheckedOptions(searchOptions); }
   }, [greyedOptions]);
@@ -86,61 +86,61 @@ const Facet: React.FC<Props> = (props) => {
       if (updatedChecked.indexOf(value) === -1) { updatedChecked.push(value); }
     }
     setChecked(updatedChecked);
-    props.addFacetValues(props.constraint, updatedChecked, props.facetType, props.facetCategory);
+    addFacetValues(constraint, updatedChecked, facetType, facetCategory);
   };
 
   const handleClick = (e, constraint?, value?, facetType?) => {
 
     if (e?.target) {
       let index = checked.indexOf(e.target.value);
-      let isNested = props.constraint === props.propertyPath ? false : true;
+      let isNested = constraint === propertyPath ? false : true;
       // Selection
       if (e.target.checked && index === -1) {
         setChecked([...checked, e.target.value]);
-        props.updateSelectedFacets(props.constraint, [...checked, e.target.value], props.facetType, isNested);
+        updateSelectedFacets(constraint, [...checked, e.target.value], facetType, isNested);
       } else if (index !== -1) {     // Deselection
         let remChecked = [e.target.value];
-        props.updateSelectedFacets(props.constraint, remChecked, props.facetType, isNested, true, false);
+        updateSelectedFacets(constraint, remChecked, facetType, isNested, true, false);
       }
     } else {
-      let isNested = props.constraint === props.propertyPath ? false : true;
+      let isNested = constraint === propertyPath ? false : true;
       setChecked([...checked, value]);
-      props.updateSelectedFacets(constraint, [...checked, value], facetType, isNested);
+      updateSelectedFacets(constraint, [...checked, value], facetType, isNested);
     }
   };
 
   const handleClear = () => {
     setChecked([]);
-    props.updateSelectedFacets(props.constraint, checked, props.facetType, false, false, true);
+    updateSelectedFacets(constraint, checked, facetType, false, false, true);
   };
 
   const showMore = () => {
     let toggle = !more;
     let showNumber = SHOW_MINIMUM;
-    if (toggle && props.facetValues.length > SHOW_MINIMUM) {
-      showNumber = props.facetValues.length;
+    if (toggle && facetValues.length > SHOW_MINIMUM) {
+      showNumber = facetValues.length;
     }
     toggleMore(!more);
     setShowFacets(showNumber);
   };
 
-  if (props.facetValues?.length === 0 && checked.length > 0) {
+  if (facetValues?.length === 0 && checked.length > 0) {
     checkedFacets = checked.map(item => {
       return {name: item, count: 0, value: item};
     });
-  } else if (props.facetValues?.length > 0) {
-    checkedFacets = props.facetValues;
+  } else if (facetValues?.length > 0) {
+    checkedFacets = facetValues;
   }
 
   const renderValues = checkedFacets.slice(0, showFacets).map((facet, index) => {
-    facet.max = props.maxQuantityOnFacets;
+    facet.max = maxQuantityOnFacets;
     return (
-      <FacetName facet={facet} index={index} key={index} handleClick={handleClick} name={props.name} checked={checked} category={props.facetCategory} />
+      <FacetName facet={facet} index={index} key={index} handleClick={handleClick} name={name} checked={checked} category={facetCategory} />
     );
   });
 
   const formatTitle = () => {
-    let objects = props.name.split(".");
+    let objects = name.split(".");
     if (objects.length > 2) {
       let first = objects[0];
       let last = objects.slice(-1);
@@ -151,34 +151,34 @@ const Facet: React.FC<Props> = (props) => {
       let last = objects.slice(-1);
       return <p>{first} &gt; <b>{last}</b></p>;
     }
-    return <b>{props.name}</b>;
+    return <b>{name}</b>;
   };
 
   return (
-    <div className={styles.facetContainer} data-cy={stringConverter(props.name) + "-facet-block"}>
-      {props.facetCategory !== "concept" && <div className={styles.header}>
+    <div className={styles.facetContainer} data-cy={stringConverter(name) + "-facet-block"}>
+      {facetCategory !== "concept" && <div className={styles.header}>
         <div
           className={styles.name}
-          data-cy={stringConverter(props.name) + "-facet"}
-          data-testid={stringConverter(props.name) + "-facet"}
+          data-cy={stringConverter(name) + "-facet"}
+          data-testid={stringConverter(name) + "-facet"}
         >
-          <HCTooltip text={props.name.replace(/\./g, " > ")} id="name-prop-tooltip" placement="top">{formatTitle()}</HCTooltip>
-          <HCTooltip text={props.tooltip} id="props-tooltip" placement="top-start">
-            <span>{props.tooltip ?
-              <i><FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" data-testid={`info-tooltip-${props.name}`} /></i> : ""}
+          <HCTooltip text={name.replace(/\./g, " > ")} id="name-prop-tooltip" placement="top">{formatTitle()}</HCTooltip>
+          <HCTooltip text={tooltip} id="props-tooltip" placement="top-start">
+            <span>{tooltip ?
+              <i><FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" data-testid={`info-tooltip-${name}`} /></i> : ""}
             </span>
           </HCTooltip>
         </div>
         <div className={styles.summary}>
           {checked.length > 0 ? <div className={styles.selected}
-            data-cy={stringConverter(props.name) + "-selected-count"}>{checked.length} selected</div> : ""}
+            data-cy={stringConverter(name) + "-selected-count"}>{checked.length} selected</div> : ""}
           <div
             className={(checked.length > 0 ? styles.clearActive : styles.clearInactive)}
             onClick={() => handleClear()}
-            data-cy={stringConverter(props.name) + "-clear"}
+            data-cy={stringConverter(name) + "-clear"}
           >Clear
           </div>
-          <div className={styles.toggle} onClick={() => toggleShow(!show)} data-testid={stringConverter(props.name) + "-toggle"}>
+          <div className={styles.toggle} onClick={() => toggleShow(!show)} data-testid={stringConverter(name) + "-toggle"}>
             {show ? <ChevronDown className={styles.toggleIcon} aria-label="icon: chevron-down" /> : <ChevronRight className={styles.toggleIcon} aria-label="icon: chevron-right" />}
           </div>
         </div>
@@ -187,21 +187,21 @@ const Facet: React.FC<Props> = (props) => {
         {renderValues}
         <div
           className={styles.more}
-          style={{display: (props.facetValues?.length > SHOW_MINIMUM) ? "block" : "none"}}
+          style={{display: (facetValues?.length > SHOW_MINIMUM) ? "block" : "none"}}
           onClick={() => showMore()}
           data-cy="show-more"
-          data-testid={`show-more-${stringConverter(props.name)}`}
+          data-testid={`show-more-${stringConverter(name)}`}
         >{(more) ? "<< less" : "more >>"}</div>
-        {(props.facetType === "xs:string" || "collection") && (checkedFacets.length >= SEARCH_MINIMUM) &&
+        {(facetType === "xs:string" || "collection") && (checkedFacets.length >= SEARCH_MINIMUM) &&
           <div className={styles.searchValues}>
             <PopOverSearch
-              referenceType={props.referenceType}
-              entityTypeId={props.entityTypeId}
-              propertyPath={props.propertyPath}
+              referenceType={referenceType}
+              entityTypeId={entityTypeId}
+              propertyPath={propertyPath}
               checkFacetValues={checkFacetValues}
               popOvercheckedValues={checked}
               facetValues={checkedFacets}
-              facetName={props.name}
+              facetName={name}
             />
           </div>}
       </div>
