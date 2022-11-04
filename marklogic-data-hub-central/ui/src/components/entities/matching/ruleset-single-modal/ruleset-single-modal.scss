@@ -6,3 +6,13 @@
         width: 95% !important;
     }
 }
+
+#createNewListOption {
+    color: #44499C;
+    padding-left: 10px;
+    cursor: pointer;
+    
+    &:hover {
+      color: #7FADE3;
+    }
+}  

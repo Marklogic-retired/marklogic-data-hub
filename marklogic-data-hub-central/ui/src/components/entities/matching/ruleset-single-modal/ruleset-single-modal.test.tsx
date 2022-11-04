@@ -52,6 +52,12 @@ describe("Matching Ruleset Single Modal component", () => {
     expect(queryByText("Add Match Ruleset for Single Property")).toBeInTheDocument();
     expect(getByText("Reduce Weight")).toBeInTheDocument();
     expect(getByLabelText("reduceToggle")).toBeInTheDocument();
+    expect(getByText("Values to Ignore:")).toBeInTheDocument();
+    expect(getByText("Search previous lists")).toBeInTheDocument();
+
+    let reduceInfoCircleIcon = screen.getByLabelText("icon: question-circle-values-ignore");
+    userEvent.hover(reduceInfoCircleIcon);
+    expect(screen.getByLabelText("values-ignore-tooltip-text"));
 
     userEvent.click(getByTestId("property-to-match-dropdown"));
     wait(() => { userEvent.click(getByText("customerId")); });

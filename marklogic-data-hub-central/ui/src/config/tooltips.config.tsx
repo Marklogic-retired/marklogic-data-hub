@@ -368,8 +368,8 @@ const MatchingStepTooltips = {
   thresholdScale: 'Enable the scale to position, edit or delete thresholds.',
   rulesetScale: 'Enable the scale to position, edit or delete rulesets.',
   testDisabled: 'A threshold configuration above is required before testing.',
-  fuzzyMatching: 'Toggle this functionality to allow matching values based on Double Metaphones to increase your matching efficiency.'
-
+  fuzzyMatching: 'Toggle this functionality to allow matching values based on Double Metaphones to increase your matching efficiency.',
+  valuesToIgnore: 'Documents containing the values provided in these lists for the above property will be ignored in matching.',
 };
 
 const MatchingStepPlaceholders = {

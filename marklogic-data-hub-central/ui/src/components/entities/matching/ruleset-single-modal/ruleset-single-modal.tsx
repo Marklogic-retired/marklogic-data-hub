@@ -1,15 +1,13 @@
 import React, {useState, useEffect, useContext} from "react";
 import {Row, Col, Modal, Form, FormLabel, FormCheck} from "react-bootstrap";
-import Select, {components as SelectComponents} from "react-select";
+import Select, {components as SelectComponents, components, /*OptionProps*/} from "react-select";
 import reactSelectThemeConfig from "@config/react-select-theme.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLayerGroup, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import styles from "./ruleset-single-modal.module.scss";
 import "./ruleset-single-modal.scss";
 import arrayIcon from "../../../../assets/icon_array.png";
-
 import EntityPropertyTreeSelect from "../../../entity-property-tree-select/entity-property-tree-select";
-
 import {CurationContext} from "@util/curation-context";
 import {MatchingStep, MatchRule, MatchRuleset} from "../../../../types/curation-types";
 import {Definition} from "../../../../types/modeling-types";
@@ -19,6 +17,8 @@ import DeleteModal from "../delete-modal/delete-modal";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {ConfirmYesNo, HCInput, HCButton, HCTooltip, HCModal} from "@components/common";
 import {themeColors} from "@config/themes.config";
+import {faCopy, faPencilAlt} from "@fortawesome/free-solid-svg-icons";
+//import ListModal from "../list-modal/list-modal";
 
 type Props = {
   editRuleset: any;
@@ -81,6 +81,8 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
   const [discardChangesVisible, setDiscardChangesVisible] = useState(false);
   const [reduceValue, setReduceValue] = useState(false);
   const [fuzzyMatching, setFuzzyMatching] = useState(false);
+  //const [showListModal, setShowListModal] = useState(false);
+  //const [actionListModal, setActionListModal] = useState("C");
 
   let curationRuleset = props.editRuleset;
   if (props.editRuleset.hasOwnProperty("index")) {
@@ -755,11 +757,36 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     resetModal();
   };
 
-  const MenuList  = (selector, props) => (
+  const MenuList = (selector, props) => (
     <div id={`${selector}-select-MenuList`}>
       <SelectComponents.MenuList {...props} />
     </div>
   );
+
+  const handleClick = (event) => {
+    //setShowListModal(true);
+    event.stopPropagation();
+  };
+
+  const Option = (renderMatchOptions) => {
+    return (
+      <div>
+        {renderMatchOptions.data.label === "Preset List 0" && <components.MenuList {...renderMatchOptions} >
+          <div className={styles.createNewListOption} id="createNewListOption" onClick={(event) => { handleClick(event); }}>Create new list</div>
+        </components.MenuList>}
+        {renderMatchOptions.data.label !== "Preset List 0" &&
+          <components.Option {...renderMatchOptions} >
+            {renderMatchOptions.data.label}
+            <div className={styles.optionsList}>
+              <i><FontAwesomeIcon className={styles.iconHover} icon={faPencilAlt} color={themeColors.info} size="sm" onClick={(event) => { handleClick(event); }} /></i>
+              <i><FontAwesomeIcon className={styles.iconHover} icon={faCopy} color={themeColors.info} size="sm" onClick={(event) => { handleClick(event); }} /></i>
+              <i><FontAwesomeIcon className={styles.iconHover} icon={faTrashAlt} color={themeColors.info} size="sm" onClick={(event) => { handleClick(event); }} /></i>
+            </div>
+          </components.Option>
+        }
+      </div>
+    );
+  };
 
   return (
     <HCModal
@@ -874,6 +901,48 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
               </Row>
             </Col>
           </Row>
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>{"Values to Ignore:"}</FormLabel>
+            <Col>
+              <Row>
+                <Col className={matchTypeErrorMessage ? "d-flex has-error" : "d-flex"}>
+                  <div className={styles.input}>
+                    <Select
+                      inputId="valuesToIgnore"
+                      data-testid="valuesToIgnore"
+                      isMulti
+                      closeMenuOnSelect={false}
+                      isClearable={true}
+                      isSearchable={true}
+                      components={{Option}}
+                      placeholder="Search previous lists"
+                      options={[
+                        {value: "Preset List 0", label: "Preset List 0"},
+                        {value: "Preset List 1", label: "Preset List 1"},
+                        {value: "Preset List 2", label: "Preset List 2"},
+                        {value: "Preset List 3", label: "Preset List 3"}
+                      ]}
+                      styles={reactSelectThemeConfig}
+                      formatOptionLabel={({value, label}) => {
+                        return (
+                          <span aria-label={`${value}-option`} style={{backgroundColor: "silver", width: "100%"}}>
+                            <div>
+                              {label}
+                            </div>
+                          </span>
+                        );
+                      }}
+                    />
+                  </div>
+                  <div className={"p-2 d-flex align-items-center"}>
+                    <HCTooltip text={<span aria-label="values-ignore-tooltip-text">{MatchingStepTooltips.valuesToIgnore}</span>} id="reduce-tooltip" placement="top">
+                      <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} aria-label="icon: question-circle-values-ignore" />
+                    </HCTooltip>
+                  </div>
+                </Col>
+              </Row>
+            </Col>
+          </Row>
 
           {matchType === "synonym" && renderSynonymOptions}
           {matchType === "doubleMetaphone" && renderDoubleMetaphoneOptions}
@@ -881,6 +950,12 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
           {modalFooter}
         </Form>
         {discardChanges}
+        {/* <ListModal
+          isVisible={showListModal}
+          toggleModal={setShowListModal}
+          action={actionListModal}
+          confirmAction={confirmAction}
+        /> */}
         <DeleteModal
           isVisible={showDeleteConfirmModal}
           toggleModal={toggleDeleteConfirmModal}
