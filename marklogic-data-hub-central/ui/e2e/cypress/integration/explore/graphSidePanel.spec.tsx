@@ -4,6 +4,7 @@ import graphExploreSidePanel from "../../support/components/explore/graph-explor
 import graphExplore from "../../support/pages/graphExplore";
 import LoginPage from "../../support/pages/login";
 import {ExploreGraphNodes} from "../../support/types/explore-graph-nodes";
+import browsePage from "../../support/pages/browse";
 
 const TABLE_HEADERS = ["Property", "Value"];
 
@@ -31,6 +32,7 @@ describe("Test '/Explore' graph right panel", () => {
     cy.log("**Verify Graph view is default view**");
     graphExplore.getGraphVisCanvas().should("be.visible");
     cy.wait(8000); //nodes need to stabilize first, "graphExplore.stopStabilization()" does not seem to work
+    browsePage.waitForSpinnerToDisappear();
 
     cy.log("**Picking up a node**");
     graphExplore.focusNode(ExploreGraphNodes.ORDER_10258);

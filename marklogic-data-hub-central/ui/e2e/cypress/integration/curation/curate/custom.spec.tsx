@@ -16,6 +16,8 @@ describe("Custom step settings: ", () => {
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-match-merge-writer", "hub-central-mapping-writer", "hub-central-load-writer", "hub-central-custom-writer").withRequest();
     LoginPage.postLogin();
+    toolbar.getCurateToolbarIcon().click();
+    curatePage.getEntityTypePanel("Customer").should("be.visible");
     //Saving Local Storage to preserve session
     cy.saveLocalStorage();
   });
@@ -30,14 +32,9 @@ describe("Custom step settings: ", () => {
     cy.saveLocalStorage();
   });
 
-  it("Navigate to Curate tile -> Customer entity -> custom tab", () => {
-    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
-    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
+  it("Validate step name is disabled, changes are discarded on cancel", () => {
     curatePage.toggleEntityTypeId("Customer");
     curatePage.selectCustomTab("Customer");
-  });
-
-  it("Validate step name is disabled, changes are discarded on cancel", () => {
     curatePage.editStep(stepName).click();
     createEditStepDialog.stepNameInput().should("be.disabled");
     createEditStepDialog.stepDescriptionInput().should("be.enabled");

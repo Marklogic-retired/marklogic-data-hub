@@ -11,7 +11,7 @@ class BrowsePage {
   // common spinners
   // Can be moved to a common components
   waitForSpinnerToDisappear() {
-    cy.waitUntil(() => this.getSpinner().should("have.length", 0));
+    cy.waitUntil(() => this.getSpinner().should("have.length", 0, {timeout: 30000}));
   }
 
   // Common table
@@ -396,7 +396,7 @@ class BrowsePage {
 
   // common
   removeBaseEntity(entity: string) {
-    cy.get(`[aria-label='Remove ${entity}']`).scrollIntoView().click();
+    cy.get(`[aria-label='Remove ${entity}']`).scrollIntoView().click({force: true});
   }
   // common
   getSortIndicatorAsc() {

@@ -48,6 +48,7 @@ describe("Entity display settings in model tile", () => {
     cy.log("**Go to graph view in model tile**");
     homePage.getModelCard().click();
     cy.waitForAsyncRequest();
+    browsePage.waitForSpinnerToDisappear();
     //Saving Local Storage to preserve session
     cy.saveLocalStorage();
   });
@@ -57,6 +58,8 @@ describe("Entity display settings in model tile", () => {
     cy.restoreLocalStorage();
   });
   it("can change entity display settings in model tile and change in explore", () => {
+    //TempFix
+    modelPage.selectView("table");
     modelPage.selectView("project-diagram");
     cy.waitForAsyncRequest();
     cy.wait(5000);
@@ -102,11 +105,13 @@ describe("Entity display settings in model tile", () => {
     homePage.getTileCloseButton().click();
     homePage.getExploreCard().click();
     cy.waitForAsyncRequest();
+    browsePage.waitForSpinnerToDisappear();
 
     cy.log("**Click on babyRegistry node and verify that properties on hover show up in the tooltip**");
     graphExplore.getGraphVisCanvas().should("exist");
     graphExplore.stopStabilization();
     cy.wait(3000);
+    browsePage.waitForSpinnerToDisappear();
     graphExplore.focusNode(ExploreGraphNodes.BABY_REGISTRY_3039);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.BABY_REGISTRY_3039).then((nodePositions: any) => {
       let baby_registry_3039_nodeposition: any = nodePositions[ExploreGraphNodes.BABY_REGISTRY_3039];
@@ -171,11 +176,13 @@ describe("Entity display settings in model tile", () => {
     homePage.getTileCloseButton().click();
     homePage.getModelCard().click();
     cy.waitForAsyncRequest();
+    browsePage.waitForSpinnerToDisappear();
 
     cy.log("**Go to graph view**");
     modelPage.selectView("project-diagram");
     cy.waitForAsyncRequest();
     cy.wait(5000);
+    browsePage.waitForSpinnerToDisappear();
 
     cy.log(`**Click on ${defaultEntityTypeData.name} entity to open side bar**`);
     graphVis.getPositionsOfNodes(defaultEntityTypeData.name).then((nodePositions: any) => {

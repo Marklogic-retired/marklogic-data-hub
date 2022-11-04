@@ -106,7 +106,7 @@ class CuratePage {
   }
 
   selectCustomTab(entityTypeId: string) {
-    cy.waitUntil(() => cy.get(`#${entityTypeId} [data-rr-ui-event-key="custom"]`)).click();
+    cy.get(`#${entityTypeId} [data-rr-ui-event-key="custom"]`).click();
   }
 
   addNewStep(curateTabId: string) {
