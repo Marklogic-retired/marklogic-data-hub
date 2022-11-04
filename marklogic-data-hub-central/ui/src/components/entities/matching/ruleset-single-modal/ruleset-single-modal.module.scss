@@ -43,13 +43,13 @@
 }
 
 .footerNewRuleset {
-    display: flex;
-    justify-content: flex-end;
-    margin-left: auto;
+  display: flex;
+  justify-content: flex-end;
+  margin-left: auto;
 
-    .saveButton {
-        margin-left: 5px;
-    }
+  .saveButton {
+    margin-left: 5px;
+  }
 }
 
 .input {
@@ -78,14 +78,15 @@
 }
 
 .trashIcon {
-    font-size: 20px;
-    color: $trash-icon;
-    &:hover{
-        color: var(--hoverColor);
-    }
+  font-size: 20px;
+  color: $trash-icon;
+
+  &:hover {
+    color: var(--hoverColor);
+  }
 }
 
-.editFooter{
+.editFooter {
   display: flex;
   justify-content: space-between;
 }
@@ -93,6 +94,19 @@
 .validationError {
   @extend .validationError;
 }
+
 .switchReduceToggle {
   font-size: 1.5em;
+}
+
+.optionsList {
+  float: right;
+}
+
+.optionsList svg {
+  margin-left: 5px;
+}
+
+.optionsList svg:hover {
+  color: var(--hoverColor);
 }
