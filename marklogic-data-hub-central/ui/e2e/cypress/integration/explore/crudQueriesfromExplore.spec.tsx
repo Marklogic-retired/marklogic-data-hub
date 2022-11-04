@@ -65,7 +65,6 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.waitForHCTableToLoad();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
-    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     entitiesSidebar.openBaseEntityFacets("Customer");
     browsePage.getFacetItemCheckbox("name", "Adams Cole").click();
     browsePage.getSelectedFacets().should("exist");
@@ -114,7 +113,6 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
-    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.getTableCell(1, 2).should("contain", "102");
     browsePage.getTableCell(2, 2).should("contain", "103");
     //Refresh the browser page.
@@ -126,7 +124,6 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getSelectedQueryDescription().should("contain", "new-query-2 description");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
-    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.getTableCell(1, 2).should("contain", "102");
     browsePage.getTableCell(2, 2).should("contain", "103");
 
@@ -256,7 +253,6 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getResetConfirmationNoClick();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Person");
-    entitiesSidebar.getBaseEntityOption("Person").scrollIntoView().should("be.visible");
     entitiesSidebar.openBaseEntityFacets("Person");
     browsePage.getFacetItemCheckbox("lname", "Bates").click();
     browsePage.getSelectedFacets().should("exist");
@@ -292,9 +288,6 @@ describe("save/manage queries scenarios, developer role", () => {
     // creating query 1 with customer entity
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
-    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
-    cy.waitForModalToDisappear();
-    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.waitForSpinnerToDisappear();
     browsePage.getHubPropertiesExpanded();
     browsePage.getFacetItemCheckbox("collection", "mapCustomersJSON").click({force: true});
@@ -333,11 +326,8 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getClearFacetSearchSelection("Adams Cole").click();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Person");
-    entitiesSidebar.getBaseEntityOption("Person").should("be.visible");
-    entitiesSidebar.getBaseEntityOption("Person").should("be.visible");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
-    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.getSelectedQuery().should("contain", "select a query");
     browsePage.selectQuery("new-query");
     browsePage.getFacetItemCheckbox("email", "adamscole@nutralab.com").click();
@@ -361,11 +351,9 @@ describe("save/manage queries scenarios, developer role", () => {
   it.skip("Switching between entities when there are saved queries", () => {
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
-    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     entitiesSidebar.removeSelectedBaseEntity();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Person");
-    entitiesSidebar.getBaseEntityOption("Person").should("be.visible");
     browsePage.getSaveQueriesDropdown().should("exist");
     browsePage.getSelectedQuery().should("contain", "select a query");
     //Checking if you are in person entity,select a saved query related to customer and shifting back to person
@@ -373,7 +361,6 @@ describe("save/manage queries scenarios, developer role", () => {
     entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Person");
-    entitiesSidebar.getBaseEntityOption("Person").should("be.visible");
   });
   it("Save query button should not show up in all entities view", () => {
     browsePage.getClearAllFacetsButton().click();
@@ -382,7 +369,6 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getResetConfirmationNoClick();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("All Entities");
-    entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
     browsePage.getSaveQueriesDropdown().should("exist");
     browsePage.getSelectedQuery().should("contain", "select a query");
     // Should comment below line after DHFPROD-5392 is done
@@ -397,7 +383,6 @@ describe("save/manage queries scenarios, developer role", () => {
     entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
-    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     entitiesSidebar.openBaseEntityFacets("Customer");
     browsePage.getFacetItemCheckbox("name", "Adams Cole").click();
     browsePage.getSelectedFacets().should("exist");
@@ -415,7 +400,6 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getSaveQueryButton().click();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
-    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.selectQuery("reset-query");
     browsePage.waitForSpinnerToDisappear();
     browsePage.getAppliedFacets("Adams Cole").should("exist");
@@ -428,7 +412,6 @@ describe("save/manage queries scenarios, developer role", () => {
     // Select saved query, make changes, click on reset opens a confirmation
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
-    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.getSaveQueriesDropdown().should("exist");
     browsePage.selectQuery("reset-query");
     browsePage.getSelectedQuery().should("contain", "reset-query");
@@ -442,7 +425,6 @@ describe("save/manage queries scenarios, developer role", () => {
     //selecting yes will update the query and navigates to zero state
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
-    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.selectQuery("reset-query");
     table.clickColumnTitle(2);
     browsePage.waitForSpinnerToDisappear();
@@ -454,7 +436,6 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getTotalDocuments();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
-    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.selectQuery("reset-query");
     cy.waitForAsyncRequest();
     browsePage.getAppliedFacets("Adams Cole").should("exist");
@@ -467,7 +448,6 @@ describe("save/manage queries scenarios, developer role", () => {
     //verifying the confirmation modal displays if no query selected and selected columns changed
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
-    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.getColumnSelectorIcon().should("be.visible");
     browsePage.getColumnSelectorIcon().click();
     browsePage.getColumnSelector().should("be.visible");
@@ -475,13 +455,11 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getColumnSelectorApply().click({force: true});
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Person");
-    entitiesSidebar.getBaseEntityOption("Person").should("be.visible");
     //verifying the confirmation modal appearing and selection cancel
     browsePage.getEntityConfirmationNoClick().click();
     // Select saved query, make changes, click on reset opens a confirmation
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
-    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.getSaveQueriesDropdown().should("be.visible");
     browsePage.selectQuery("reset-query");
     //changing the selecte column list should trigger modal confirmation
@@ -497,7 +475,6 @@ describe("save/manage queries scenarios, developer role", () => {
     //verify no confirmation modal after reset.
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
-    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.getSaveQueriesDropdown().should("be.visible");
     browsePage.selectQuery("reset-query");
     browsePage.getResetQueryButton().click();
@@ -510,7 +487,6 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getResetConfirmationNoClick();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Person");
-    entitiesSidebar.getBaseEntityOption("Person").should("be.visible");
     entitiesSidebar.openBaseEntityFacets("Person");
     browsePage.getFacetItemCheckbox("lname", "Bates").click();
     browsePage.getFacetItemCheckbox("lname", "Bates").should("be.checked");
@@ -554,7 +530,6 @@ describe("save/manage queries scenarios, developer role", () => {
   it.skip("Verify facets checked on sidebar", () => {
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("All Entities");
-    entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
     browsePage.getFacetItemCheckbox("collection", "Person").click();

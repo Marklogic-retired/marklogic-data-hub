@@ -40,7 +40,6 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.waitForHCTableToLoad();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
-    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     entitiesSidebar.openBaseEntityFacets("Customer");
     browsePage.getFacetItemCheckbox("name", "Adams Cole").click();
     browsePage.getSelectedFacets().should("exist");
@@ -99,8 +98,7 @@ describe("manage queries modal scenarios, developer role", () => {
     entitiesSidebar.removeSelectedBaseEntity();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Person");
-    entitiesSidebar.getBaseEntityOption("Person").should("be.visible");
-    cy.waitUntil(() => browsePage.getDetailInstanceViewIcon("/json/persons/last-name-dob-custom1.json"), {timeout: 10000}).click({force: true});
+    browsePage.getDetailInstanceViewIcon("/json/persons/last-name-dob-custom1.json").should("be.visible", {timeout: 10000}).click({force: true});
     browsePage.waitForSpinnerToDisappear();
   });
   it("Navigate to detail page and verify if manage query modal opens up.", () => {
@@ -158,10 +156,8 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.waitForHCTableToLoad();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("All Entities");
-    entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Person");
-    entitiesSidebar.getBaseEntityOption("Person").should("be.visible");
     entitiesSidebar.openBaseEntityFacets("Person");
     browsePage.getShowMoreLink("fname").should("be.visible").click();
     browsePage.getFacetItemCheckbox("fname", "Alice").click();
@@ -211,7 +207,6 @@ describe("manage queries modal scenarios, developer role", () => {
     //create a query first
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Person");
-    entitiesSidebar.getBaseEntityOption("Person").should("be.visible");
     entitiesSidebar.openBaseEntityFacets("Person");
     browsePage.getShowMoreLink("fname").should("be.visible").click();
     browsePage.getFacetItemCheckbox("fname", "Alice").click();
@@ -256,7 +251,6 @@ describe("manage queries modal scenarios, developer role", () => {
     entitiesSidebar.toggleEntitiesView();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Person");
-    entitiesSidebar.getBaseEntityOption("Person").should("be.visible");
     //create a query
     entitiesSidebar.openBaseEntityFacets("Person");
     browsePage.getShowMoreLink("fname").should("be.visible").click();
@@ -278,7 +272,6 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.getClearAllFacetsButton().click();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
-    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     cy.get("#instance").first().click({force: true});
     cy.waitForAsyncRequest();
     browsePage.waitForSpinnerToDisappear();

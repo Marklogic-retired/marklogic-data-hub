@@ -30,8 +30,10 @@ describe("Focus Defocus clusters", () => {
     //Graph view
     cy.log("**Go to graph view**");
     browsePage.clickGraphView();
+    browsePage.waitForSpinnerToDisappear();
     graphExplore.getGraphVisCanvas().should("be.visible");
     cy.wait(2000);
+    browsePage.waitForSpinnerToDisappear();
 
     cy.log("**Picking up customer node and validate it is available in canvas**");
     graphExplore.focusNode(ExploreGraphNodes.CUSTOMER_102);
@@ -59,7 +61,7 @@ describe("Focus Defocus clusters", () => {
     });
 
     cy.log("**Focussing on the cluster with baby registry node**");
-    graphExplore.getContextMenu().should("be.visible");
+    graphExplore.getContextMenu().scrollIntoView().should("be.visible");
     graphExplore.showRecordsInCluster();
 
     graphExploreSidePanel.getSidePanel().should("not.exist");
@@ -87,7 +89,7 @@ describe("Focus Defocus clusters", () => {
     });
 
     cy.log("**Show all records from the query**");
-    graphExplore.getContextMenu().should("be.visible");
+    graphExplore.getContextMenu().scrollIntoView().should("be.visible");
     graphExplore.showAllRecordsFromQuery();
 
     cy.log("**Verify Customer node exists in the canvas now**");

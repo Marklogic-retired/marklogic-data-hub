@@ -14,7 +14,7 @@ class GraphExploreSidePanel {
     return cy.get(`[title="${text}"]`).next();
   }
   closeGraphExploreSidePanel() {
-    return cy.get(`[aria-label="closeGraphExploreSidePanel"]`);
+    cy.get(`[aria-label="closeGraphExploreSidePanel"]`).scrollIntoView().click({force: true});
   }
   getSidePanelConceptHeading(conceptName: string) {
     return cy.get(`[aria-label="${conceptName}-conceptHeading"]`);
