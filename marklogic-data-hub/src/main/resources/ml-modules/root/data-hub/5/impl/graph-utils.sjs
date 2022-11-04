@@ -150,7 +150,7 @@ function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predic
       fullPlanConcept = filterConceptsQuery.joinLeftOuter(fullPlanConcept, joinOn);
     }
     fullPlanConcept = fullPlanConcept.joinInner(subjectPlan, joinOn);
-    fullPlan = fullPlan.union(fullPlanConcept);
+    fullPlan = fullPlan.union(fullPlanConcept).limit(limit);
   }
   return fullPlan.result(null, {conceptFacetList, entitiesDifferentFromBaseAndRelated, entityTypeIRIs, predicateConceptList, entityTypeOrConceptIRI: relatedEntityTypeIRIs.concat(getRdfConceptTypes()), labelIRI: getOrderedLabelPredicates()}).toArray();
 }
