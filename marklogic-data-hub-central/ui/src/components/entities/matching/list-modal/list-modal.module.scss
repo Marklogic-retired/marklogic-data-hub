@@ -22,8 +22,50 @@
     @extend .validationError;
 }
 
-.typeaheadList{
+.validationErrorIgnore {
+    @extend .validationError;
+    padding-left: 20px !important;
+}
+
+.typeaheadList {
     width: 100% !important;
+    div {
+        padding-left: 2px !important;
+    }
+    div div div {
+        background-color: $tag-input !important;
+        color: $text-color;
+        height: 22px;
+        font-size: 85%;
+        padding-left: 10px !important;
+        margin-right: 6px;
+    }
+    button {
+        background-color: $tag-button-input;
+        margin-right: -3px !important;
+        border: 0px;
+        border-radius: 3px;
+        margin-top: 2px;
+        height: 22px;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: $tag-bg-close !important;
+        color: $tag-remove-option;
+    }
+    input {
+        background-color: white !important;
+        height: 22px;
+        margin: 0px !important;
+        color: $text-color;
+        cursor: auto;
+        font-size: 0.875rem;
+    }
+}
+
+.inputTitle {
+    padding-left:10px !important;
+    width: 92% !important;
 }
 
 .footer {

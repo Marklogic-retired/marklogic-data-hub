@@ -42,7 +42,7 @@ $subtitle-run-i: #061178;
 $card-subtitle: #003a8c;
 $head: #e3f4f9;
 
-// Toolbar icon colors
+//Toolbar icon colors
 $model-icon: #304F7F;
 $load-icon: #3D409C;
 $curate-icon: #184B5A;
@@ -50,7 +50,7 @@ $run-icon: #82388A;
 $explore-icon: #376F63;
 $monitor-icon: #f09022;
 
-//backgrounds
+//Backgrounds
 $bg-clean: #e8e8e8;
 $bg-soft: #fafbfc;
 
@@ -61,7 +61,7 @@ $bg-header-table: #f1f1f1;
 $bg-header-table-hover: #e0e0e0;
 $bg-nested-table: #fafafa;
 
-// this is used to map colors. change accordingly.
+//This is used to map colors, change accordingly.
 $theme-colors: (
     primary: $primary,
     secondary: $secondary,
@@ -73,7 +73,7 @@ $theme-colors: (
     dark: $dark,
 );
 
-//fonts
+//Fonts
 $body-color: $text-color !default;
 $font-size-base: 0.875rem !default;
 $font-family-sans-serif: "Helvetica Neue", Helvetica, Arial, system-ui,
@@ -81,22 +81,22 @@ $font-family-sans-serif: "Helvetica Neue", Helvetica, Arial, system-ui,
     sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
     "Noto Color Emoji" !default;
 
-// Label
+//Label
 $label-font-size: 14px;
 
-// Alert
+//Alert
 $alert-padding-y: 0.7rem;
 $alert-padding-x: 0.7rem;
 $alert-bg-scale: -90% !default;
 $alert-border-scale: -50% !default;
 $alert-color-scale: 70.9 !default;
 
-// Tooltip
+//Tooltip
 $tooltip-bg: #373737 !default;
 $tooltip-opacity: 1 !default;
 $tooltip-max-width: 250px !default;
 
-//accordion
+//Accordion
 $accordion-button-padding-y: 0.5rem !default;
 $accordion-button-focus-box-shadow: shade-color($secondary, 10%) !default;
 $accordion-icon-width: 0.875rem;
@@ -114,7 +114,7 @@ $input-border-color: #ccc;
 $input-border-width: 1px;
 $input-border-radius: 2px;
 
-// Switch Radio with button style
+//Switch Radio with button style
 $disabled-color: #f5f5f5;
 
 //Tree
@@ -123,3 +123,12 @@ $tree-animation: all .2s cubic-bezier(.12,.4,.29,1.46) .1s;
 //Tree select
 $active-color-remove-option: #DE350B;
 $active-background-remove-option: #FFBDAD;
+
+//Modal
+$modal-bottom-header: #dee2e6;
+
+//Typeahead
+$tag-input: #dee2e6;
+$tag-button-input: #dee2e6;
+$tag-bg-close: #ebbdad;
+$tag-remove-option: #DE350B;

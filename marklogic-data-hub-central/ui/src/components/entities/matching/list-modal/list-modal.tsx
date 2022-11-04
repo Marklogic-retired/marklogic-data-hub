@@ -1,17 +1,43 @@
-import React, {/*useState*/} from "react";
-import {Modal} from "react-bootstrap";
+import React, {useState, useEffect} from "react";
+import styles from "./list-modal.module.scss";
+import {Modal, Row, Col, Form, FormLabel} from "react-bootstrap";
+import {QuestionCircleFill} from "react-bootstrap-icons";
+import {themeColors} from "@config/themes.config";
+import {HCTooltip} from "@components/common";
 import {HCButton} from "@components/common";
+import {Typeahead} from "react-bootstrap-typeahead";
+import {HCInput} from "@components/common";
 
 type Props = {
   isVisible: boolean;
   toggleModal: (isVisible: boolean) => void;
   action: string;
-  confirmAction: () => void
+  listName?: string;
+  listValues?: string[];
+  confirmAction: () => void;
 };
 
 const ListModal: React.FC<Props> = (props) => {
-  let text = "";
+  const [listNameErrorMessage, setListNameErrorMessage] = useState("");
+  const [listValuesErrorMessage, setListValuesErrorMessage] = useState("");
+  const [listName, setListName] = useState(props?.listName);
+  const [listValues, setListValues] = useState<any>(props?.listValues);
+  let textModalHeader = "";
+
+  const onSubmit = (event) => {
+    resetModalValuesIgnore();
+    let formError = false;
+    if (!listName) { setListNameErrorMessage("A name is required"); formError = true; }
+    if (!listValues || listValues.length === 0) { setListValuesErrorMessage("At least one value is required"); formError = true; }
+    if (formError) {
+      event.stopPropagation();
+    } else {
+      confirmAction();
+    }
+  };
+
   const closeModal = () => {
+    resetModalValuesIgnore();
     props.toggleModal(false);
   };
 
@@ -30,40 +56,108 @@ const ListModal: React.FC<Props> = (props) => {
 
   if (props.action) {
     if (props.action === "A") {
-      text = "add";
+      textModalHeader = "Create New";
     } else if (props.action === "C") {
-      text = "copy";
+      textModalHeader = "";
     } else if (props.action === "E") {
-      text = "edit";
+      textModalHeader = "Edit";
     } else if (props.action === "D") {
-      text = "delete";
+      textModalHeader = "Delete";
     }
   }
+
+  const resetModalValuesIgnore = () => {
+    setListNameErrorMessage("");
+    setListValuesErrorMessage("");
+  };
+
+  useEffect(() => {
+    setListValues(props.listValues);
+  }, [props?.listValues]);
+
+  useEffect(() => {
+    setListName(props.listName);
+  }, [props?.listName]);
 
   return (
     <Modal
       show={props.isVisible}
+      data-testid="modal-list-ignore"
     >
-      <Modal.Header className={"bb-none"}>
+      <Modal.Header className={`bb-none ${styles.modalHeader}`}>
+        <div className={`flex-column ${styles.modalTitleLegend}`}>{`${textModalHeader} List`}</div>
         <button type="button" className="btn-close" aria-label="Close" onClick={closeModal}></button>
       </Modal.Header>
-      <Modal.Body className={"pt-0 px-4"}>
-        <p aria-label="delete-slider-text" >{`Are you sure you want to ${text} a list`}
-          <b></b> ?
-        </p>
-        <div className={"d-flex justify-content-center pt-4 pb-2"}>
-          <HCButton
-            aria-label={`confirm-test-no`}
-            variant="outline-light"
-            className={"me-2"}
-            onClick={closeModal}
-          >No</HCButton>
-          <HCButton
-            aria-label={`confirm-test-yes`}
-            variant="primary"
-            onClick={() => confirmAction()}
-          >Yes</HCButton>
-        </div>
+
+      <Modal.Body className={"pt-4 px-3"}>
+        <Form
+          id="form-modal-values-to-ignore"
+          onSubmit={() => {}}
+          className={"container-fluid"}
+        >
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>{"Title:"}<span className={styles.asterisk}>*</span></FormLabel>
+            <Col className={listNameErrorMessage ? "d-flex has-error" : "d-flex"}>
+              <HCInput
+                id={`${textModalHeader}-values-to-ignore-input`}
+                ariaLabel={`${textModalHeader}-values-to-ignore-input`}
+                placeholder="Enter title"
+                className={styles.inputTitle}
+                value={props?.listName ? props.listName : ""}
+                onChange={(e) => setListName(e.target.value.trim())}
+              />
+            </Col>
+            <Row>
+              <Col xs={3}></Col>
+              <Col xs={9} className={styles.validationErrorIgnore} id="errorListName">{listNameErrorMessage}</Col>
+            </Row>
+          </Row>
+
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>{"List values:"}<span className={styles.asterisk}>*</span></FormLabel>
+
+            <Col className={"d-flex align-items-center"}>
+              {/* const CustomSelectionsExample = () => ( */}
+              <Typeahead
+                className={styles.typeaheadList}
+                allowNew
+                id="custom-selections"
+                multiple
+                defaultSelected={props.action !== "E" ? [] :
+                  props?.listValues ? props.listValues : []}
+                newSelectionPrefix="Add the new value: "
+                options={[]}
+                placeholder="Enter values to remove"
+                onChange={setListValues}
+              />
+
+              <div className={"p-2 d-flex align-items-center"}>
+                <HCTooltip text={<span aria-label="reduce-tooltip-text">{"Add values to ignore."}</span>} id="list-tooltip" placement="top">
+                  <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} aria-label="icon: question-circle" />
+                </HCTooltip>
+              </div>
+            </Col>
+            <Row>
+              <Col xs={3}></Col>
+              <Col xs={9} className={styles.validationErrorIgnore} id="errorListValues">{listValuesErrorMessage}</Col>
+            </Row>
+          </Row>
+          <div className={styles.footer}>
+            <HCButton
+              size="sm"
+              variant="outline-light"
+              aria-label={`cancel-list-ignore`}
+              onClick={closeModal}
+            >Cancel</HCButton>
+            <HCButton
+              className={styles.saveButton}
+              aria-label={`confirm-list-ignore`}
+              variant="primary"
+              size="sm"
+              onClick={(e) => onSubmit(e)}
+            >Save</HCButton>
+          </div>
+        </Form>
       </Modal.Body>
     </Modal>
   );
