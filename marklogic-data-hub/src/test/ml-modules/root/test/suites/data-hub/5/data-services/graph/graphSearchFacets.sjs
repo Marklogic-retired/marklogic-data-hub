@@ -32,14 +32,25 @@ let expectedEdgeCount = graphUtils.supportsGraphConceptsSearch() ? 4 : 0;
 let assertions = [
   test.assertEqual(expectedNodeCount, resultsTest.total),
   test.assertEqual(expectedNodeCount, resultsTest.nodes.length),
-  test.assertEqual(expectedEdgeCount, resultsTest.edges.length),
-  test.assertTrue(resultsTest.nodes[0].hasRelationships)
+  test.assertEqual(expectedEdgeCount, resultsTest.edges.length)
 ];
 
+
 resultsTest.nodes.forEach(node => {
-  if (node.docUri) {
-    assertions.push(test.assertTrue(node.docUri.includes("product")));
-  }
+  resultsTest.nodes.forEach(node => {
+    if(node.id === "/content/product100.json") {
+      assertions.push(test.assertTrue(node.hasRelationships, `Product 100 must have relationships flag in true. Result: ${xdmp.toJsonString(node)}`));
+    }
+    else if(node.id === "/content/product50.json") {
+      assertions.push(test.assertFalse(node.hasRelationships, `Product 50 must have relationships flag in false. Result: ${xdmp.toJsonString(node)}`));
+    }
+    else if(node.id === "/content/product60.json") {
+      assertions.push(test.assertFalse(node.hasRelationships, `Product 60 must have relationships flag in false. Result: ${xdmp.toJsonString(node)}`));
+    }
+    if (!node.isConcept) {
+      assertions.push(test.assertTrue(node.docUri.includes("product")));
+    }
+  })
 })
 
 assertions;
