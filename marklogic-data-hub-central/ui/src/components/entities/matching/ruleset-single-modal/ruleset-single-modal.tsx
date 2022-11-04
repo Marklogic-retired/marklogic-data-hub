@@ -18,7 +18,7 @@ import {QuestionCircleFill} from "react-bootstrap-icons";
 import {ConfirmYesNo, HCInput, HCButton, HCTooltip, HCModal} from "@components/common";
 import {themeColors} from "@config/themes.config";
 import {faCopy, faPencilAlt} from "@fortawesome/free-solid-svg-icons";
-//import ListModal from "../list-modal/list-modal";
+import ListModal from "../list-modal/list-modal";
 
 type Props = {
   editRuleset: any;
@@ -81,8 +81,11 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
   const [discardChangesVisible, setDiscardChangesVisible] = useState(false);
   const [reduceValue, setReduceValue] = useState(false);
   const [fuzzyMatching, setFuzzyMatching] = useState(false);
-  //const [showListModal, setShowListModal] = useState(false);
-  //const [actionListModal, setActionListModal] = useState("C");
+
+  const [showListModal, setShowListModal] = useState(false);
+  const [actionListModal, setActionListModal] = useState("C");
+  const [listName, setListName] = useState("");
+  const [listValues, setListValues] = useState<string[]>([]);
 
   let curationRuleset = props.editRuleset;
   if (props.editRuleset.hasOwnProperty("index")) {
@@ -203,6 +206,11 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
       resetModal();
       props.toggleModal(false);
     }
+  };
+
+  const resetModalValuesIgnore = () => {
+    setListName("");
+    setListValues([]);
   };
 
   const resetModal = () => {
@@ -763,8 +771,22 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     </div>
   );
 
-  const handleClick = (event) => {
-    //setShowListModal(true);
+  const handleClick = (event, btn) => {
+    setShowListModal(true);
+    if (btn === "A") {
+      setActionListModal("A");
+      resetModalValuesIgnore();
+    } else if (btn === "C") {
+      setActionListModal("C");
+      resetModalValuesIgnore();
+    } else if (btn === "E") {
+      setListName("Preset List 1");
+      setListValues(["Word 1", "word 2", "word 3"]);
+      setActionListModal("E");
+    } else if (btn === "D") {
+      setActionListModal("D");
+      resetModalValuesIgnore();
+    }
     event.stopPropagation();
   };
 
@@ -772,17 +794,16 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     return (
       <div>
         {renderMatchOptions.data.label === "Preset List 0" && <components.MenuList {...renderMatchOptions} >
-          <div className={styles.createNewListOption} id="createNewListOption" onClick={(event) => { handleClick(event); }}>Create new list</div>
+          <div className={styles.createNewListOption} id="createNewListOption" data-test-id="createNewListOption" onClick={(event) => { handleClick(event, "A"); }}>Create new list</div>
         </components.MenuList>}
-        {renderMatchOptions.data.label !== "Preset List 0" &&
-          <components.Option {...renderMatchOptions} >
-            {renderMatchOptions.data.label}
-            <div className={styles.optionsList}>
-              <i><FontAwesomeIcon className={styles.iconHover} icon={faPencilAlt} color={themeColors.info} size="sm" onClick={(event) => { handleClick(event); }} /></i>
-              <i><FontAwesomeIcon className={styles.iconHover} icon={faCopy} color={themeColors.info} size="sm" onClick={(event) => { handleClick(event); }} /></i>
-              <i><FontAwesomeIcon className={styles.iconHover} icon={faTrashAlt} color={themeColors.info} size="sm" onClick={(event) => { handleClick(event); }} /></i>
-            </div>
-          </components.Option>
+        {renderMatchOptions.data.label !== "Preset List 0" && <components.Option {...renderMatchOptions} >
+          {renderMatchOptions.data.label}
+          <div className={styles.optionsList}>
+            <i><FontAwesomeIcon className={styles.iconHover} id={`edit-${renderMatchOptions.data.label}`} icon={faPencilAlt} color={themeColors.info} size="sm" onClick={(event) => { handleClick(event, "E"); }} /></i>
+            <i><FontAwesomeIcon className={styles.iconHover} id={`copy-${renderMatchOptions.data.label}`} icon={faCopy} color={themeColors.info} size="sm" onClick={(event) => { handleClick(event, "C"); }} /></i>
+            <i><FontAwesomeIcon className={styles.iconHover} id={`delete-${renderMatchOptions.data.label}`} icon={faTrashAlt} color={themeColors.info} size="sm" onClick={(event) => { handleClick(event, "D"); }} /></i>
+          </div>
+        </components.Option>
         }
       </div>
     );
@@ -906,7 +927,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
             <Col>
               <Row>
                 <Col className={matchTypeErrorMessage ? "d-flex has-error" : "d-flex"}>
-                  <div className={styles.input}>
+                  <div className={styles.selectIgnore}>
                     <Select
                       inputId="valuesToIgnore"
                       data-testid="valuesToIgnore"
@@ -916,6 +937,9 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
                       isSearchable={true}
                       components={{Option}}
                       placeholder="Search previous lists"
+                      //value={renderMatchOptions.find(oItem => oItem.value === matchType)}
+                      //onChange={onMatchTypeSelect}
+                      //options={renderMatchOptions}
                       options={[
                         {value: "Preset List 0", label: "Preset List 0"},
                         {value: "Preset List 1", label: "Preset List 1"},
@@ -950,12 +974,14 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
           {modalFooter}
         </Form>
         {discardChanges}
-        {/* <ListModal
+        <ListModal
           isVisible={showListModal}
           toggleModal={setShowListModal}
           action={actionListModal}
+          listName={listName}
+          listValues={listValues}
           confirmAction={confirmAction}
-        /> */}
+        />
         <DeleteModal
           isVisible={showDeleteConfirmModal}
           toggleModal={toggleDeleteConfirmModal}

@@ -207,11 +207,29 @@ describe("Matching", () => {
     matchingStepDetail.getSinglePropertyOption();
     rulesetSingleModal.selectPropertyToMatch("email");
     rulesetSingleModal.selectMatchTypeDropdown("exact");
+
+    cy.log("**Create new list**");
+    rulesetSingleModal.getElementWithID("valuesToIgnore").click({force: true});
+    rulesetSingleModal.getElementWithID("createNewListOption").click();
+    rulesetSingleModal.saveModalButton("confirm-list-ignore");
+    rulesetSingleModal.getElementWithID("errorListName").should("exist");
+    rulesetSingleModal.getElementWithID("errorListValues").should("exist");
+    rulesetSingleModal.addListTitle("values-to-ignore-input", "Title list 1");
+    rulesetSingleModal.addValuesToListToIgnore("Word 1");
+    rulesetSingleModal.addValuesToListToIgnore("Word 2");
+    rulesetSingleModal.saveModalButton("confirm-list-ignore");
+
+    //cy.log("**Edit existing list - commented until the Backend is available**");
+    // rulesetSingleModal.getElementWithID("valuesToIgnore").click({force: true});
+    // rulesetSingleModal.editFirstList().click({force: true});
+    // rulesetSingleModal.getElementWithID("errorListName").should("not.contain", "A name is required");
+    // rulesetSingleModal.getElementWithID("errorListValues").should("not.contain", "At least one value is required");
+    // rulesetSingleModal.saveModalButton("confirm-list-ignore");
+
     rulesetSingleModal.saveButton().click();
     cy.waitForAsyncRequest();
     cy.waitUntil(() => cy.contains("email - Exact").should("have.length.gt", 0));
     multiSlider.getRulesetHandleNameAndType("email", "Exact").should("exist");
-    //multiSlider.getHandleName("email").should("be.visible");
   });
   xit("When we work on the spike story to update multi-slider componenens using cypress", () => {
     multiSlider.getHandleName("email").trigger("mousedown", {force: true});
