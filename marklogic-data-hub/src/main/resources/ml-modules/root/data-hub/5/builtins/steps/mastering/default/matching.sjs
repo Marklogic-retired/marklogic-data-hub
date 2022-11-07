@@ -29,6 +29,8 @@ const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
  * @param {string} jobId
  */
 function filterContentAlreadyProcessed(content, summaryCollection, collectionInfo, jobId) {
+  const collectionQuery = cts.collectionQuery(summaryCollection);
+  const jobIdQuery = cts.fieldWordQuery('datahubCreatedByJob', jobId);
   const filteredContent = [];
   let auditingNotificationsInSourceQuery = false;
   for (let item of content) {
@@ -38,6 +40,21 @@ function filterContentAlreadyProcessed(content, summaryCollection, collectionInf
     if (auditingOrNotificationDoc) {
       auditingNotificationsInSourceQuery = auditingNotificationsInSourceQuery || auditingOrNotificationDoc;
       continue;
+    }
+    // skip documents already set to be merged
+    const actionDetailQuery = cts.andQuery([cts.jsonPropertyValueQuery("uris", item.uri, "exact"),cts.jsonPropertyValueQuery("action", "merge", "exact")]);
+    const documentQuery = cts.andQuery([collectionQuery,jobIdQuery,cts.jsonPropertyScopeQuery("actionDetails",actionDetailQuery)]);
+    if (cts.exists(documentQuery)) {
+      let falsePositive = true;
+      for (const matchedDoc of cts.search(documentQuery, ["unfiltered", "score-zero"], 0)) {
+        if (cts.contains(matchedDoc.xpath("/matchSummary/actionDetails/*"), actionDetailQuery)) {
+          falsePositive = false;
+          break;
+        }
+      }
+      if (!falsePositive) {
+        continue;
+      }
     }
     filteredContent.push(item);
   }
