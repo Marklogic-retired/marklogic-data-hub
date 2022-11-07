@@ -577,12 +577,10 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
     }
 
     protected int getDocCount(String database, String collection) {
-        String collectionName = "";
-        if (collection != null) {
-            collectionName = "'" + collection + "'";
+        String collectionString = collection == null || "".equals(collection) ? "" :"'" + collection + "'";
+        try (EvalResultIterator val = getClientByName(database).newServerEval().xquery("xdmp:estimate(fn:collection(" + collectionString + "))").eval()) {
+            return val.next().getNumber().intValue();
         }
-        String val = getClientByName(database).newServerEval().xquery("xdmp:estimate(fn:collection(" + collectionName + "))").evalAs(String.class);
-        return Integer.parseInt(val);
     }
 
     protected DatabaseClient getClientByName(String databaseName) {
@@ -609,7 +607,7 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
     }
 
     protected JsonNode findFirstBatchDocument(String jobId) {
-        String query = format("collection('Batch')[/batch/jobId = '%s']", jobId);
+        String query = format("head(collection('Batch')[batch/jobId = '%s'])", jobId);
         return getHubClient().getJobsClient().newServerEval().xquery(query).eval(new JacksonHandle()).get();
     }
 
