@@ -82,22 +82,22 @@ function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predic
   let joinOnObjectIri = op.on(op.col("firstObjectIRI"),op.col("firstObjectIRI"));
   let fullPlan = subjectPlan.joinLeftOuter(firstLevelConnectionsPlan, joinOn).limit(limit);
   if (entityTypeIRIs.length > 1) {
-    let otherEntityIRIs = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-                 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                 SELECT ?subjectIRI ?docURI ?predicateIRI  (MIN(?anyPredicateLabel) as ?predicateLabel)  ?firstObjectIRI  (MIN(?anyObjectLabel) as ?objectLabel) WHERE {
-                    ?subjectIRI rdf:type @entityTypeIRIs;
-                    rdfs:isDefinedBy ?docURI;
-                    ?predicateIRI ?firstObjectIRI.
-                    ?firstObjectIRI rdf:type @entityTypeIRIs.
-                    OPTIONAL {
-                      ?predicateIRI @labelIRI ?anyPredicateLabel.
-                    }
-                    OPTIONAL {
-                      ?firstObjectIRI @labelIRI ?anyObjectLabel.
-                    }
-                  }
-                  GROUP BY ?subjectIRI ?docURI ?predicateIRI ?firstObjectIRI
-                `);
+    let otherEntityIRIs = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>             PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>             SELECT ?subjectIRI ?docURI ?predicateIRI  (MIN(?anyPredicateLabel) as ?predicateLabel)  ?firstObjectIRI  (MIN(?docObjectURI) AS ?firstDocURI) (MIN(?anyObjectLabel) as ?objectLabel) WHERE {
+                ?subjectIRI rdf:type @entityTypeIRIs;
+                rdfs:isDefinedBy ?docURI;
+                ?predicateIRI ?firstObjectIRI.
+                ?firstObjectIRI rdf:type @entityTypeIRIs.
+                ?firstObjectIRI rdf:type @entityTypeIRIs;
+                    rdfs:isDefinedBy ?docObjectURI.
+                OPTIONAL {
+                  ?predicateIRI @labelIRI ?anyPredicateLabel.
+                }
+                OPTIONAL {
+                  ?firstObjectIRI @labelIRI ?anyObjectLabel.
+                }
+              }
+              GROUP BY ?subjectIRI ?docURI ?predicateIRI ?firstObjectIRI
+            `);
     fullPlan = fullPlan.union(subjectPlan.joinLeftOuter(otherEntityIRIs, joinOn).limit(limit));
   }
   // Can't run concept specific queries before ML 10.0-9 due to BugTrack https://bugtrack.marklogic.com/57077
@@ -351,13 +351,18 @@ function getNodeLabel(objectIRIArr, objectUri) {
   return label;
 }
 
+function shouldCreateGroupNode(item, entityType, entityTypeIds, isSearch) {
+  let allEntitiesAreSelected = entityTypeIds.length === fn.count(fn.collection(entityLib.getModelCollection()));
+  return fn.exists(item.nodeCount) && fn.head(item.nodeCount) > 1
+      && !(allEntitiesAreSelected === true && isSearch === true ) && !(entityTypeIds.includes(entityType) && isSearch === true);
+}
+
 function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true, excludeOriginNode = false) {
   const nodesByID = {};
   const edgesByID = {};
   const docUriToSubjectIri = {};
   const distinctIriPredicateCombos = {};
   const groupNodeCount = {};
-  let allEntitiesAreSelected = entityTypeIds.length === fn.count(fn.collection(entityLib.getModelCollection()));
   const getEdgeCount = (iri) => {
     if (!distinctIriPredicateCombos[iri]) {
       return 0;
@@ -397,7 +402,6 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
   }
 
   const getUrisByIRI = (iri) => Object.keys(docUriToSubjectIri).filter(key => docUriToSubjectIri[key].includes(iri));
-
   for (const item of result) {
     let resultPropertiesOnHover = [];
     let newLabel = "";
@@ -474,7 +478,7 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
           if (!nodesByID[key]) {
             let objectNode = {};
             objectNode.id = key;
-            objectNode.docUri = isDocument ? key : null;
+            objectNode.docUri = isDocument ? key : item.firstDocURI ? item.firstDocURI : null;
             objectNode.docIRI = objectIRI;
             objectNode.label = isDocument ? getNodeLabel(objectIRIArr, key): (fn.string(item.conceptLabel) || objectIRIArr[objectIRIArr.length - 1]);
             resultPropertiesOnHover = isDocument ? entityLib.getValuesPropertiesOnHover(key, objectEntityType, hubCentralConfig) : "";
@@ -512,7 +516,7 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
             };
           }
         }
-      } else if (fn.exists(item.nodeCount) && fn.head(item.nodeCount) > 1 && !(allEntitiesAreSelected === true && isSearch === true )) {
+      } else if (shouldCreateGroupNode(item, objectIRIArr[objectIRIArr.length - 2], entityTypeIds, isSearch)) {
         const entityType = objectIRIArr[objectIRIArr.length - 2];
         const objectId = originId + "-" + item.predicateIRI + "-" + entityType;
         let edge = {};
