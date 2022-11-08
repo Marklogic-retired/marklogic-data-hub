@@ -19,7 +19,7 @@ import {Spinner} from "react-bootstrap";
 import {previewMatchingActivity, getDocFromURI, getPreviewFromURIs} from "@api/matching";
 import CompareValuesModal from "../../../components/entities/matching/compare-values-modal/compare-values-modal";
 import SearchPaginationSimple from "@components/search-pagination-simple/search-pagination-simple";
-
+import {UserContext} from "@util/user-context";
 
 const NotificationModal = (props) => {
 
@@ -38,6 +38,7 @@ const NotificationModal = (props) => {
   const [loading, setToggleLoading] = useState<string>("");
   const [uriInfo, setUriInfo] = useState<any>();
 
+  const {user} = useContext(UserContext);
 
   let idRow = 0, idRowAux = 0, pageLength = notificationOptions.pageLength, totalRowsLastPage = notificationOptions.pageLength;
   const {notifications, totalCount, pageLength: defaultPageLength} = defaultNotificationOptions;
@@ -66,7 +67,7 @@ const NotificationModal = (props) => {
   };
 
   const fetchNotifications = async (page?, pageLength?, updated?) => {
-    await getNotifications((page - 1) * 10 + 1, pageLength)
+    user.authenticated === true && await getNotifications((page - 1) * 10 + 1, pageLength)
       .then((resp: any) => {
         if (resp && resp.data) {
           setNotificationsObj(resp.data.notifications, resp.data.total, defaultPageLength, updated);
@@ -81,6 +82,12 @@ const NotificationModal = (props) => {
           setNotificationsObj(notifications, totalCount, defaultPageLength, updated);
         }
       });
+  };
+
+  const addUniqueKeyToNotificationObject = (notifications) => {
+    let idx = 0;
+    notifications.forEach(notification => notification["unique_key"] = idx++);
+    return notifications;
   };
 
   const columns: any = [
@@ -113,7 +120,7 @@ const NotificationModal = (props) => {
     },
     {
       text: "Actions",
-      //dataField: "Actions",
+      dataField: "Actions",
       key: "Actions",
       formatter: (text, row) => (
         <>
@@ -273,8 +280,8 @@ const NotificationModal = (props) => {
               notificationOptions?.notifications && <><HCTable
               pagination={false}
               columns={columns}
-              data={notificationOptions?.notifications}
-              rowKey="notificationsTable"
+              data={addUniqueKeyToNotificationObject(notificationOptions?.notifications)}
+              rowKey="unique_key"
             />
             <SearchPaginationSimple
               total={notificationOptions?.totalCount}
