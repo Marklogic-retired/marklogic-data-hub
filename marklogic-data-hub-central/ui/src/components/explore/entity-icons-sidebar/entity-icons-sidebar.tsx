@@ -51,7 +51,7 @@ const EntityIconsSidebar: React.FC<Props> = (props) => {
         {currentRelatedEntitiesArray.length > 0 &&
         <div className={!graphView ? styles.relatedEntityIconListDisabled : styles.relatedEntityIconList} aria-label="related-entity-icons-list">
           {currentRelatedEntitiesArray.map(({color, icon, name}, index) => name &&
-          <HCTooltip text={!props.graphView ? exploreSidebar.disabledRelatedEntities: ""} aria-label="disabled-related-entity-tooltip" id="disabled-related-entity-tooltip" placement="bottom">
+          <HCTooltip key={index} text={!props.graphView ? exploreSidebar.disabledRelatedEntities: ""} aria-label="disabled-related-entity-tooltip" id="disabled-related-entity-tooltip" placement="bottom">
             <div key={name} aria-label={`related-entity-icon-${name}`} style={{backgroundColor: color}} className={!graphView ? styles.entityIconListItemDisabled : styles.entityIconListItem} onClick={(e) => !graphView ? e.preventDefault() : handleRelatedEntityClicked(index)}>
               {icon ? <DynamicIcons name={icon} /> : <DynamicIcons name={defaultIcon} />}
             </div>

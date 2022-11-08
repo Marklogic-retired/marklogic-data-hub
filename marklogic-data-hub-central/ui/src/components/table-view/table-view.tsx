@@ -47,7 +47,6 @@ const TableView: React.FC<Props> = (props) => {
   const columns = [
     {
       text: "Property",
-      title: "Property",
       dataField: "property",
       key: "property",
       width: props.isEntityInstance ? "20%" : "40%",
@@ -57,7 +56,6 @@ const TableView: React.FC<Props> = (props) => {
     },
     {
       text: "Value",
-      title: "Value",
       dataField: "value",
       key: "value",
       formatter: (value) => {

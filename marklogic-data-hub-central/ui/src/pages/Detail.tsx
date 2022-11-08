@@ -269,10 +269,10 @@ const Detail: React.FC<Props> = ({history, location}) => {
 
   const collectionColumns = [
     {
-      title: "Collection",
       text: "Collection",
       dataIndex: "collection",
       key: "collection",
+      dataField: "collection",
       formatter: (_, row) => {
         return <span>{row?.collection}</span>;
       }
@@ -293,19 +293,19 @@ const Detail: React.FC<Props> = ({history, location}) => {
 
   const recordMetadataColumns = [
     {
-      title: "Property",
       text: "Property",
       dataIndex: "property",
       key: "property",
+      dataField: "property",
       formatter: (_, row) => {
         return <span>{row?.property}</span>;
       }
     },
     {
-      title: "Value",
       text: "Value",
       dataIndex: "value",
       key: "value",
+      dataField: "value",
       formatter: (_, row) => {
         return <span>{row?.value}</span>;
       }
@@ -328,19 +328,19 @@ const Detail: React.FC<Props> = ({history, location}) => {
 
   const recordPermissionsColumns = [
     {
-      title: "Role",
       text: "Role",
       dataIndex: "role",
       key: "role",
+      dataField: "role",
       formatter: (_, row) => {
         return <span>{row?.role}</span>;
       }
     },
     {
-      title: "Capability",
       text: "Capability",
       dataIndex: "capability",
       key: "capability",
+      dataField: "capability",
       formatter: (_, row) => {
         return <span>{row?.capability}</span>;
       }
