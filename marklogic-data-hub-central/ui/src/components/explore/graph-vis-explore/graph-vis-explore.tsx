@@ -1178,6 +1178,10 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     }
     return nodeInfo;
   };
+  const [stabilizeAux, setStabilizeAux] = useState(true);
+  useEffect(() => {
+    setHasStabilized(true);
+  }, [stabilizeAux]);
 
   const events = {
     select: (event) => {
@@ -1221,7 +1225,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         let positions = network.getPositions();
         // When graph is stabilized, nodePositions no longer empty
         if (positions && Object.keys(positions).length) {
-          setHasStabilized(true);
+          setStabilizeAux(true);
           if (physicsEnabled) {
             setPhysicsEnabled(false);
             return false;

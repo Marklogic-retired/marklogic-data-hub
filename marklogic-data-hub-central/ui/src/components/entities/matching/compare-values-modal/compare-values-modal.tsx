@@ -346,6 +346,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
     {
       dataField: "propertyName",
       key: "propertyPath",
+      text: "",
       title: (cell) => `${cell.name}`,
       ellipsis: true,
       width: "25%",
@@ -371,6 +372,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
     {
       dataField: "propertyValueInURI1",
       key: "propertyValueInURI1",
+      text: "",
       title: (cell) => `${cell.value}`,
       ellipsis: true,
       width: "25%",
@@ -414,6 +416,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
     {
       dataField: "propertyValueInURI2",
       key: "propertyValueInURI2",
+      text: "",
       title: (cell) => `${cell.value}`,
       ellipsis: true,
       width: "25%",
@@ -457,6 +460,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
     {
       dataField: "propertyValueInReview",
       key: "propertyValueInReview",
+      text: "",
       title: (cell) => `${cell.value}`,
       ellipsis: true,
       width: "calc(25% - 50px)",
