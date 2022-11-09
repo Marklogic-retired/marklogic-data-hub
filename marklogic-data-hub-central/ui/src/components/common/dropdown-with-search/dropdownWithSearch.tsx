@@ -7,8 +7,17 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSearch} from "@fortawesome/free-solid-svg-icons";
 import HCTooltip from "../hc-tooltip/hc-tooltip";
 
-const DropDownWithSearch = (props) => {
-
+interface Props{
+  setDisplaySelectList?:((displaySelectList: boolean) => void) | any;
+  setDisplayMenu:(displayMenu:boolean) => void;
+  onItemSelect:(itemSelect:any) => void;
+  indentList?:Array<any>;
+  srcData:Array<any>;
+  modelling?:boolean;
+  itemValue:string;
+}
+const DropDownWithSearch: React.FC<Props> = (props) => {
+  const {setDisplaySelectList, setDisplayMenu, onItemSelect, indentList, modelling, srcData, itemValue} = props;
   const node: any = useRef();
   const [selList, setSelList] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
@@ -18,8 +27,8 @@ const DropDownWithSearch = (props) => {
   const handleOuterClick = useCallback(
     e => {
       if (node.current && !node.current.contains(e.target)) {
-        props.setDisplaySelectList(prev => false);
-        props.setDisplayMenu(prev => false);
+        setDisplaySelectList(false);
+        setDisplayMenu(false);
         setEventValid(prev => false);
       }
     }, []
@@ -31,14 +40,14 @@ const DropDownWithSearch = (props) => {
 
   // calculates width of dropdown in 'px' based on length of displayed elements
   const calcDropdownWidth = () => {
-    if (props.indentList && props.srcData) {
+    if (indentList && srcData) {
       let maxStringLengthInPx = 0;
-      props.srcData.map((element, index) => maxStringLengthInPx = Math.max(maxStringLengthInPx, element.value.length * charToPxScalingFactor + props.indentList[index]));
+      srcData.map((element, index) => maxStringLengthInPx = Math.max(maxStringLengthInPx, element.value.length * charToPxScalingFactor + indentList[index]));
       if (maxStringLengthInPx > maxWidth) return maxWidth.toString() + "px";
       if (maxStringLengthInPx < minWidth) return minWidth.toString() + "px";
       return maxStringLengthInPx.toString() + "px";
     }
-    if (props.modelling) {
+    if (modelling) {
       let cardWidth = "204px";
       return cardWidth;
     }
@@ -48,7 +57,7 @@ const DropDownWithSearch = (props) => {
   // truncates and adds ellipsis for dropdown text
   const formatDropdownText = (text, index) => {
     let indentVal;
-    props.indentList ? indentVal = props.indentList[index] : indentVal = 0;
+    indentList ? indentVal = indentList[index] : indentVal = 0;
     if ((text.length * charToPxScalingFactor) + indentVal > maxWidth) {
       for (let i = text.length; i > 0; i--) {
         if (((i + 3) * charToPxScalingFactor) + indentVal < maxWidth) return text.substring(0, i) + "...";
@@ -58,12 +67,12 @@ const DropDownWithSearch = (props) => {
   };
 
   useEffect(() => {
-    setSelList(prev => props.setDisplaySelectList);
-    setMenuVisible(prev => props.setDisplayMenu);
-    if (props.setDisplaySelectList) {
+    setSelList(true);
+    setMenuVisible(true);
+    if (setDisplaySelectList) {
       setEventValid(prev => true);
     }
-  }, [props.setDisplaySelectList, props.setDisplayMenu]);
+  }, [setDisplaySelectList, setDisplayMenu]);
 
   //Handling click event outside the Dropdown Menu
   useEffect(() => {
@@ -77,8 +86,8 @@ const DropDownWithSearch = (props) => {
   });
 
   const optionsStyle = (index) => {
-    if (props.indentList) {
-      return {lineHeight: "2vh", textOverflow: "clip", paddingLeft: props.indentList[index] + "px"};
+    if (indentList) {
+      return {lineHeight: "2vh", textOverflow: "clip", paddingLeft: indentList[index] + "px"};
     } else {
       return {lineHeight: "2vh", textOverflow: "clip"};
     }
@@ -98,9 +107,9 @@ const DropDownWithSearch = (props) => {
     );
   };
   let selectedValue = {};
-  const dropdownListOptions = props.srcData.map((element, index) => {
+  const dropdownListOptions = srcData.map((element, index) => {
     let value = formatDropdownText(element.value, index);
-    if (element.key && element.key === props.itemValue) {
+    if (element.key && element.key === itemValue) {
       selectedValue = {
         value: element.key,
         testId: element.value,
@@ -121,7 +130,7 @@ const DropDownWithSearch = (props) => {
     };
   });
 
-  /* props.srcData requires an array of tuple instead of a flat array to handle duplicate values */
+  /* srcData requires an array of tuple instead of a flat array to handle duplicate values */
   return (
     <div ref={node}>
       {menuVisible && <Select
@@ -133,7 +142,7 @@ const DropDownWithSearch = (props) => {
         aria-label="dropdownList-select-wrapper"
         isSearchable
         value={selectedValue}
-        onChange={props.onItemSelect}
+        onChange={onItemSelect}
         options={dropdownListOptions}
         formatOptionLabel={(element: any) => {
           return (

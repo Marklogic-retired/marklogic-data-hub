@@ -129,7 +129,6 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const [refValue, setRefValue] = useState("");
   const [propListForDropDown, setPropListForDropDown] = useState<any>([]);
   const [displaySelectList, setDisplaySelectList] = useState(false);
-  const [displayRefList, setDisplayRefList] = useState(false);
   const [displayFuncMenu, setDisplayFuncMenu] = useState(false);
   const [displayRefMenu, setDisplayRefMenu] = useState(false);
   const [caretPosition, setCaretPosition] = useState(0);
@@ -138,7 +137,6 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const [refPropListForDropDown, setRefPropListForDropDown] = useState<any>([]);
 
   const [selectedRow, setSelectedRow] = useState<any>([]);
-  const [sourcePropName, setSourcePropName] = useState("");
   const [sourceValue, setSourceValue] = useState("");
   const [displaySourceMenu, setDisplaySourceMenu] = useState(false);
   const [displaySourceList, setDisplaySourceList] = useState(false);
@@ -902,7 +900,6 @@ const EntityMapTable: React.FC<Props> = (props) => {
       props.flatArray.forEach(element => indentList.push(20 * (element.key.split("/").length - 1)));
       setSourcePropListForDropDown(props.flatArray);
       setSourceIndentForDropDown(indentList);
-      setSourcePropName(name);
       if (!displaySourceList && !displaySourceMenu) {
         setSourceValue("");
         await setDisplaySourceList(true);
@@ -1074,15 +1071,11 @@ const EntityMapTable: React.FC<Props> = (props) => {
 
   const sourceMenu = (
     <DropDownWithSearch
-      displayMenu={displaySourceMenu}
       setDisplayMenu={setDisplaySourceMenu}
       setDisplaySelectList={setDisplaySourceList}
-      displaySelectList={displaySourceList}
       itemValue={sourceValue}
       onItemSelect={onSourceSelect}
       srcData={sourcePropListForDropDown}
-      propName={sourcePropName}
-      handleDropdownMenu={handleSourceList}
       indentList={sourceIndentForDropDown}
       modelling={false} />
   );
@@ -1147,15 +1140,11 @@ const EntityMapTable: React.FC<Props> = (props) => {
 
   const functionMenu = (
     <DropDownWithSearch
-      displayMenu={displayFuncMenu}
       setDisplayMenu={setDisplayFuncMenu}
       setDisplaySelectList={setDisplaySelectList}
-      displaySelectList={displaySelectList}
       itemValue={functionValue}
       onItemSelect={onFunctionSelect}
       srcData={propListForDropDown}
-      propName={propName}
-      handleDropdownMenu={handleFunctionsList}
     />
   );
 
@@ -1192,15 +1181,10 @@ const EntityMapTable: React.FC<Props> = (props) => {
 
   const refMenu = (
     <DropDownWithSearch
-      displayMenu={displayFuncMenu}
       setDisplayMenu={setDisplayRefMenu}
-      setDisplaySelectList={setDisplayRefList}
-      displaySelectList={displayRefList}
       itemValue={refValue}
       onItemSelect={onRefSelect}
       srcData={refPropListForDropDown}
-      propName={propName}
-      handleDropdownMenu={handleRefList}
     />
   );
 

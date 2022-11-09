@@ -105,7 +105,6 @@ const AddEditRelationship: React.FC<Props> = ({
   const [displaySourceMenu, setDisplaySourceMenu] = useState(false);
   const [displaySourceList, setDisplaySourceList] = useState(false);
   const [sourceValue, setSourceValue] = useState("");
-  const [sourcePropName, setSourcePropName] = useState("");
   //Dummy ref node to simulate a click event
   const dummyNode: any = useRef();
 
@@ -719,21 +718,10 @@ const AddEditRelationship: React.FC<Props> = ({
 
 
   //new property select
-  const [displayPropertyMenu, setDisplayPropertyMenu] = useState(false);
-  const [displayPropertyList, setDisplayPropertyList] = useState(false);
+  const [, setDisplayPropertyMenu] = useState(false);
+  const [, setDisplayPropertyList] = useState(false);
 
-  const handleEntityPropertyList = async (e) => {
-    let name = e.target.value;
-    setSourcePropertyValue(name);
-    if (!displayPropertyList && !displayPropertyMenu) {
-      setSourcePropertyValue("");
-      setDisplayPropertyList(true);
-      setDisplayPropertyMenu(true);
-    } else {
-      setDisplayPropertyList(false);
-      setDisplayPropertyMenu(false);
-    }
-  };
+
 
   const onEntityPropertySelect = ({value}) => {
     setSourcePropertyValue(value);
@@ -773,15 +761,11 @@ const AddEditRelationship: React.FC<Props> = ({
           <Dropdown.Menu className="p-0 m-0 border-0 bg-transparent rounded-0">
             <Dropdown.Item className={styles.dropdownMenuItem}>
               <DropDownWithSearch
-                displayMenu={displayPropertyMenu}
                 setDisplayMenu={setDisplayPropertyMenu}
                 setDisplaySelectList={setDisplayPropertyList}
-                displaySelectList={displayPropertyList}
                 itemValue={sourcePropertyValue}
                 onItemSelect={onEntityPropertySelect}
                 srcData={dataOptions}
-                propName={sourcePropName}
-                handleDropdownMenu={handleEntityPropertyList}
                 indentList={listIdent}
                 modelling={false} />
             </Dropdown.Item>
@@ -955,8 +939,6 @@ const AddEditRelationship: React.FC<Props> = ({
   };
 
   const handleSourceList = async (e) => {
-    let name = e.target.value;
-    setSourcePropName(name);
     if (!displaySourceList && !displaySourceMenu) {
       setSourceValue("");
       await setDisplaySourceList(true);
@@ -969,15 +951,11 @@ const AddEditRelationship: React.FC<Props> = ({
 
   const functionMenu = (
     <DropDownWithSearch
-      displayMenu={displayFuncMenu}
       setDisplayMenu={setDisplayFuncMenu}
       setDisplaySelectList={setDisplaySelectList}
-      displaySelectList={displaySelectList}
       itemValue={functionValue}
       onItemSelect={onFunctionSelect}
       srcData={propListForDropDown}
-      propName={"relationshipExpression"}
-      handleDropdownMenu={handleFunctionsList}
     />
   );
 
@@ -1013,15 +991,11 @@ const AddEditRelationship: React.FC<Props> = ({
 
   const sourceMenu = (
     <DropDownWithSearch
-      displayMenu={displaySourceMenu}
       setDisplayMenu={setDisplaySourceMenu}
       setDisplaySelectList={setDisplaySourceList}
-      displaySelectList={displaySourceList}
       itemValue={sourceValue}
       onItemSelect={onSourcePropertySelect}
       srcData={sourcePropertyOptions}
-      propName={sourcePropName}
-      handleDropdownMenu={handleSourceList}
       indentList={listIdent}
       modelling={false} />
   );
