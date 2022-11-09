@@ -30,9 +30,7 @@
 .optionalContainer, .foreignKeyContainer, .expressionContainer {
   display: flex;
   flex-direction: column;
-  height: 100px;
   margin-left: 30px;
-  margin-top: -22px;
   margin-bottom: 50px;
   border: 1px dashed lightgrey;
 }
@@ -215,7 +213,7 @@
   display: flex;
   flex-direction: row;
   margin-top: -20px;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 }
 
 .optionalText, .optionalIcon:hover {
@@ -280,7 +278,9 @@
 .optionalExpressionContainer {
   margin: 1.5rem 0.25rem;
   display: flex;
-  justify-content: space-around;
+  gap: 10px;
+  align-items: center;
+  padding: 0 5px;
 }
 
 .propertyContainer {

@@ -366,7 +366,6 @@ const EntityTypeModal: React.FC<Props> = (props) => {
                   value={prefix}
                   onChange={handleChange}
                   onBlur={handleChange}
-                  style={{width: "170px"}}
                 />
                 <div className={"p-2 d-flex align-items-center"}>
                   <HCTooltip text={ModelingTooltips.namespace} id="prefix-tooltip" placement="top">

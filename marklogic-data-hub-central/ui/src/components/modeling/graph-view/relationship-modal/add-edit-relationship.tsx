@@ -983,7 +983,7 @@ const AddEditRelationship: React.FC<Props> = ({
 
   const functionDropdown = () => {
     return (
-      <Dropdown className="ms-1 me-2 mt-2" as={ButtonGroup} autoClose="outside"
+      <Dropdown as={ButtonGroup} autoClose="outside"
         onToggle={(show) => {
           show && handleFunctionsList();
         }}
@@ -1029,7 +1029,7 @@ const AddEditRelationship: React.FC<Props> = ({
   const sourceDropdown = () => {
     return (
 
-      <Dropdown className="mx-2 mt-2" as={ButtonGroup} autoClose="outside"
+      <Dropdown  as={ButtonGroup} autoClose="outside"
       >
         <Dropdown.Toggle id="sourcePropertyIcon" variant="outline-light" className={styles.sourceDrop}
           size="sm">
@@ -1060,11 +1060,10 @@ const AddEditRelationship: React.FC<Props> = ({
   };
 
   const optionalExpressionField = <div className={styles.optionalExpressionContainer}>
-    <FormLabel column lg={1} className={"pl-2 mt-1"}>{"Expression:"}</FormLabel>
+    <FormLabel column lg={1}>{"Expression:"}</FormLabel>
     <HCInput
       value={relationshipExpression}
       id="relationshipExpression"
-      className={`mx-2 my-1 w-100`}
       placeholder="Enter the expression to create a custom concept IRI"
       onChange={handleRelationshipExpression}
     />
@@ -1211,7 +1210,7 @@ const AddEditRelationship: React.FC<Props> = ({
         {!optionalCollapsed && visibleSettings === eVisibleSettings.EntityToConceptClass && <div data-testid={"optionalContent"} className={styles.expressionContainer}>{optionalExpressionField}</div>}
         {!optionalCollapsed && visibleSettings === eVisibleSettings.EntityToEntity && (<div data-testid={"optionalContent"} className={styles.foreignKeyContainer}>
           <span className={styles.foreignKeyText}>You can select the foreign key now or later:</span>
-          <div className={`mx-3 ${styles.foreignKeyDropdownContainer}`}>
+          <div className={`mx-3 mb-3 ${styles.foreignKeyDropdownContainer}`}>
             {foreignKeyDropdown}
             <HCTooltip id="foreign-key-tooltip" text={ModelingTooltips.foreignKeyInfo} placement={"right"}>
               <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} data-testid={"foreign-key-tooltip"} />
