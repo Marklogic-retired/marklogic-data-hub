@@ -84,7 +84,7 @@ const HCInput = React.forwardRef<HTMLInputElement, Props>((props, ref?) => {
 
   return (
     <>
-      <Form.Group>
+      <Form.Group className="w-100">
         <InputGroup style={props?.style} className={[props.className, props?.disabled ? styles.inputGroupWrapperDisabled :
         props?.error && showIconClear && focusedInput ? styles.inputGroupWrapper :
           focusedInput && props?.error ? styles.inputGroupWrapperErrorFocus :
