@@ -162,7 +162,7 @@ const EntityDisplaySettings: React.FC<Props> = ({entityModels, exploreSettingsDa
             isForMerge={true}
             propertyDropdownOptions={entityTypeDefinition.properties}
             entityDefinitionsArray={definitions}
-            value={row.propertiesOnHover?.length ? row.propertiesOnHover.map(property => property.replaceAll(".", " > ")) : undefined}
+            value={row.propertiesOnHover?.length ? row.propertiesOnHover.map(property => property.split(".").join(" > ")) : undefined}
             onValueSelected={(value) => {
               onEntityColumnValueChange(row, value, EntityTableColumns.PropertiesOnHover);
             }}

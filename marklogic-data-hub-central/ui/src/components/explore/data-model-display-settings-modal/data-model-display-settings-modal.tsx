@@ -114,7 +114,7 @@ const DataModelDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal,
         entityData.label = e.value;
         break;
       case EntityTableColumns.PropertiesOnHover:
-        entityData.propertiesOnHover = e.map(property => property.replaceAll(" > ", "."));
+        entityData.propertiesOnHover = e.map(property => property.split(" > ").join("."));
         break;
       }
     };

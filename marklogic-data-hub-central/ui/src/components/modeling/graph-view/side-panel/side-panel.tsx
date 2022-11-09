@@ -348,7 +348,7 @@ const GraphViewSidePanel: React.FC<Props> = ({dataModel,
   };
 
   const handlePropertiesOnHoverChange = (e) => {
-    const propertiesOnHover = e.map(property => property.replaceAll(" > ", "."));
+    const propertiesOnHover = e.map(property => property.split(" > ").join("."));
     setSelectedEntityPropOnHover(propertiesOnHover);
     handleUpdateHubCentralConfig({propertiesOnHover});
   };
@@ -709,7 +709,7 @@ const GraphViewSidePanel: React.FC<Props> = ({dataModel,
                   isForMerge={true}
                   propertyDropdownOptions={entityTypeDefinition?.properties}
                   entityDefinitionsArray={definitions}
-                  value={selectedEntityPropOnHover?.length ? selectedEntityPropOnHover.map(property => property.replaceAll(".", " > ")) : undefined}
+                  value={selectedEntityPropOnHover?.length ? selectedEntityPropOnHover.map(property => property.split(".").join(" > ")) : undefined}
                   onValueSelected={handlePropertiesOnHoverChange}
                   multiple={true}
                   identifier={modelingOptions.selectedEntity}
