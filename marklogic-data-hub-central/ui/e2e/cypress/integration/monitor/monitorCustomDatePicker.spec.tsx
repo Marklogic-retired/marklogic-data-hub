@@ -23,7 +23,6 @@ describe("Monitor Tile", () => {
   beforeEach(() => {
     //Restoring Local Storage to Preserve Session
     cy.restoreLocalStorage();
-    //cy.wrap(idJob).as('idJob');
   });
   afterEach(() => {
     // update local storage
@@ -54,7 +53,6 @@ describe("Monitor Tile", () => {
     monitorPage.getJobIdValueModal("jobIdValueModal").then($element => {
       jobId = $element.text();
     });
-
     monitorPage.getStepTypeValueModal().then($element => {
       stepType = $element.text();
     });
