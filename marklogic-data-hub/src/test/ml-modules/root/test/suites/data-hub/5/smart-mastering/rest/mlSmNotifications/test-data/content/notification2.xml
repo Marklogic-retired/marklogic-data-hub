@@ -1,11 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <sm:notification xmlns:sm="http://marklogic.com/smart-mastering">
   <sm:meta>
-    <sm:dateTime>2021-09-17T17:38:02.8277585-03:00</sm:dateTime>
+    <sm:dateTime>2022-11-09T12:14:48.973891-08:00</sm:dateTime>
     <sm:user>hub-developer</sm:user>
     <sm:status>unread</sm:status>
+    <sm:entityName>Customer</sm:entityName>
+    <sm:matchStepName>matchCustomers</sm:matchStepName>
+    <sm:matchStepFlow>Mastering</sm:matchStepFlow>
   </sm:meta>
-  <sm:threshold-label>firstname</sm:threshold-label>
+  <sm:threshold-label>lastname</sm:threshold-label>
   <sm:document-uris>
     <sm:document-uri>/content/customer1.json</sm:document-uri>
     <sm:document-uri>/content/customer2.json</sm:document-uri>
