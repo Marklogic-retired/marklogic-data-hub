@@ -42,7 +42,7 @@ class MonitorPage {
     cy.get(`#pagination-item-${page}`).first().scrollIntoView().contains(page).should("exist");
   }
 
-  selectAndApplyFacet(testId:string, index:number) {
+  selectAndApplyFacet(testId: string, index: number) {
     // BUG: The page it's re-rendering twice. There's no request to intercept.
     cy.wait(1000);
     cy.get(`[data-testid=${testId}-facet] input`).eq(index).should("be.visible").check();
@@ -225,7 +225,7 @@ class MonitorPage {
     return cy.get(`.rowExpandedDetail > div`);
   }
 
-  getRowData(JobId, value: string) {
+  getRowData(JobId:any, value: string) {
     return cy.get(`.reset-expansion-style:eq(" ` + this.searchBiggerRowIndex(JobId) + `") .${value}`);
   }
 
@@ -242,6 +242,22 @@ class MonitorPage {
       }
     });
     return indexAux;
+  }
+
+  getExpandoRowIconByJobId(jobId: string) {
+    return cy.get(`[data-testid="${jobId}-expand-icon"]`);
+  }
+
+  getJobIdValueModal(jobIdValueModal: string) {
+    return cy.get(`[data-testid="${jobIdValueModal}"]`);
+  }
+
+  getStepTypeValueModal() {
+    return cy.get(`[class^="job-response_stepType"]`);
+  }
+
+  getElementByClass(className:string) {
+    return cy.get(className);
   }
 
 }
