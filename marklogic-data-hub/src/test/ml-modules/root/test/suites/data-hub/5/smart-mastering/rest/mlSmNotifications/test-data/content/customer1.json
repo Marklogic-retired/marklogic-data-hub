@@ -7,7 +7,7 @@
       },
       "Customer": {
         "customerId": 1,
-        "fistname": "Test",
+        "firstname": "Test",
         "lastname": "Unit"
       }
     }
