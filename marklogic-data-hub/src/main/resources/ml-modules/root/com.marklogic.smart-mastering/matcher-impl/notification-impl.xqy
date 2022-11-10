@@ -328,13 +328,18 @@ declare function notify-impl:get-notifications-as-xml(
   $extractions as map:map)
 as element(sm:notification)*
 {
+  let $hc-config := fn:doc("/config/hubCentral.json")
   for $n in cts:search(/sm:notification, cts:true-query(), "unfiltered", 0)[$start to $end]
     let $notification-uri := fn:base-uri($n)
     let $entity-name := $n/sm:meta/sm:entityName/text()
     return if(fn:compare($entity-name, "") ne 0) then
       let $entity-model-uri := fn:concat("/entities/", $entity-name, ".entity.json")
       let $model := fn:doc($entity-model-uri)
-      let $primary-key := xdmp:value(fn:concat("$model/*:definitions/", $entity-name, "/*:primaryKey"))
+      let $entity-label := $hc-config/modeling/entities/*[name()=$entity-name]/label
+      let $primary-key :=
+        if(fn:compare($entity-label, "") eq 0 or fn:empty($entity-label)) then
+          xdmp:value(fn:concat("$model/*:definitions/", $entity-name, "/*:primaryKey"))
+        else $entity-label
       let $uris := $n/sm:document-uris/sm:document-uri/text()
       let $label-seq := for $uri in $uris
         return if(fn:compare($primary-key, "") ne 0) then

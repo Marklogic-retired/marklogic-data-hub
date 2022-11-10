@@ -11,6 +11,14 @@ hub-test:load-artifacts($test:__CALLER_FILE__)
 
 ;
 
+xquery version "1.0-ml";
+xdmp:document-insert("/config/hubCentral.json", xdmp:unquote('{"modeling":{"entities":{"Customer":{"label":"firstname"}}}}'),
+map:map() => map:with("collections", ("http://marklogic.com/hub-central/ui-config"))
+=> map:with("permissions", (xdmp:permission("data-hub-common", "update", "object"),
+xdmp:permission("data-hub-common", "read", "object"))))
+
+;
+
 xdmp:document-add-collections("/content/customer1.json",("sm-Mastering-mastered")),
 xdmp:document-set-metadata("/content/customer1.json",map:entry("datahubCreatedOn", fn:current-dateTime())),
 xdmp:document-add-collections("/content/customer2.json",("sm-Mastering-mastered")),
