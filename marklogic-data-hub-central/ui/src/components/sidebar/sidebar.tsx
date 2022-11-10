@@ -69,6 +69,7 @@ const Sidebar: React.FC<Props> = (props) => {
     setAllGreyedOptions,
     setSidebarQuery,
     setDatasource,
+    setSearchOptions,
     setQueryGreyedOptions,
     setRelatedEntityTypeIds,
     setConceptFilterTypeIds,
@@ -812,10 +813,31 @@ const Sidebar: React.FC<Props> = (props) => {
     props.setCurrentBaseEntities(entities);
   };
 
+  const handleSearchFromInput = () => {
+    setSearchOptions({...searchOptions, query: greyedOptions.query});
+  };
+
   return (
     <div className={styles.sideBarContainer} id={"sideBarContainer"}>
       <div className={styles.searchInput}>
-        <HCInput id="graph-view-filter-input" dataCy="search-bar" dataTestid="search-bar" value={searchBox} onChange={handleSearchBox} suffix={<FontAwesomeIcon icon={faSearch} size="sm" className={styles.searchIcon} />} placeholder="Search" size="sm" />
+        <HCInput
+          id="graph-view-filter-input"
+          dataCy="search-bar"
+          dataTestid="search-bar"
+          value={searchBox}
+          onChange={handleSearchBox}
+          onPressEnter={handleSearchFromInput}
+          suffix={
+            <FontAwesomeIcon
+              icon={faSearch}
+              data-testid="search-icon"
+              size="sm"
+              className={Object.keys(greyedOptions.selectedFacets).length === 0  && greyedOptions.query === searchOptions.query ? styles.disabledSearchIcon : styles.searchIcon}
+              onClick={handleSearchFromInput}
+            />
+          }
+          placeholder="Search"
+          size="sm" />
       </div>
 
       <Form className={"m-3 switch-button-group"}>
