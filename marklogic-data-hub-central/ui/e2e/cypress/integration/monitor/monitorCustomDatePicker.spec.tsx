@@ -7,7 +7,8 @@ import "cypress-wait-until";
 import {toolbar} from "../../support/components/common";
 import LoginPage from "../../support/pages/login";
 
-let flowName= "testPersonJSON";
+let flowName = "testPersonJSON";
+let stepName = "mapPersonJSON";
 
 describe("Monitor Tile", () => {
   before(() => {
@@ -22,18 +23,20 @@ describe("Monitor Tile", () => {
   beforeEach(() => {
     //Restoring Local Storage to Preserve Session
     cy.restoreLocalStorage();
+    //cy.wrap(idJob).as('idJob');
   });
   afterEach(() => {
     // update local storage
     cy.saveLocalStorage();
   });
   after(() => {
-    cy.deleteRecordsInFinal("mapPersonJSON");
+    cy.deleteRecordsInFinal(stepName);
     cy.deleteFlows(flowName);
     cy.resetTestUser();
     cy.waitForAsyncRequest();
   });
 
+  let jobId: any; let stepType: any; let stepTypeAux: any; let stepNameAux = ""; let stepStatus = "completed";
   it("Create a flow, add steps to flow and run it", {defaultCommandTimeout: 120000}, () => {
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     cy.waitUntil(() => runPage.getFlowName("personJSON").should("be.visible"));
@@ -42,18 +45,45 @@ describe("Monitor Tile", () => {
     runPage.setFlowName(flowName);
     loadPage.confirmationOptions("Save").click();
     runPage.addStep(flowName);
-    runPage.addStepToFlow("mapPersonJSON");
-    runPage.verifyStepInFlow("Mapping", "mapPersonJSON", flowName);
-    runPage.runStep("mapPersonJSON", flowName);
-    runPage.verifyStepRunResult("mapPersonJSON", "success");
+    runPage.addStepToFlow(stepName);
+    runPage.verifyStepInFlow("Mapping", stepName, flowName);
+    runPage.runStep(stepName, flowName);
+    runPage.verifyStepRunResult(stepName, "success");
+
+    cy.log("**Getting Data From Modal**");
+    monitorPage.getJobIdValueModal("jobIdValueModal").then($element => {
+      jobId = $element.text();
+    });
+
+    monitorPage.getStepTypeValueModal().then($element => {
+      stepType = $element.text();
+    });
+
     runPage.closeFlowStatusModal(flowName);
     cy.waitForAsyncRequest();
   });
 
   it("Navigate to Monitor Tile and verify that the custom time picker works", () => {
-    cy.log("**Click on the select time, select custom option and check that the input appears**");
     cy.waitUntil(() => toolbar.getMonitorToolbarIcon()).click();
     monitorPage.waitForMonitorTableToLoad();
+
+    cy.log("***Expand related row by JobId and get the data***");
+    monitorPage.getExpandoRowIconByJobId(jobId).click();
+
+    monitorPage.getElementByClass(`.stepNameDiv`).then($element => {
+      stepNameAux = $element.text();
+      expect(stepName).equal(stepNameAux);
+    });
+
+    monitorPage.getElementByClass(`.stepType`).then($element => {
+      stepTypeAux = $element.text();
+      expect(stepType).equal(stepTypeAux.toLowerCase());
+    });
+
+    cy.log("***Compare modal values and row***");
+    monitorPage.getElementByClass(`.stepStatus`).invoke("data", "testid").then(dataId => expect(stepStatus).equal(dataId));
+
+    cy.log("**Click on the select time, select custom option and check that the input appears**");
     monitorSidebar.getStartTimeSelect().click();
     monitorSidebar.getStartTimeSelectOption("Custom").click();
     monitorSidebar.getDateRangePicker().should("be.visible").click();

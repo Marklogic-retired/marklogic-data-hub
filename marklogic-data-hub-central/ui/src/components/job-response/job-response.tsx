@@ -356,7 +356,7 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStop
       <div aria-label="jobResponse" id="jobResponse" className={styles.jobResponseContainer} >
         <div>
           <div className={styles.descriptionContainer}>
-            <div key={"jobId"}><span className={styles.descriptionLabel}>Job ID:</span><strong>{jobId}</strong></div>
+            <div key={"jobId"}><span className={styles.descriptionLabel}>Job ID:</span><strong data-testid="jobIdValueModal">{jobId}</strong></div>
             <div key={"startTime"}><span className={styles.descriptionLabel}>Start Time:</span><strong>{dateConverter(jobResponse.timeStarted)}</strong></div>
             <div key={"duration"}><span className={styles.descriptionLabel}>Duration:</span><strong>{renderDuration(jobResponse.duration)}</strong></div>
           </div>
