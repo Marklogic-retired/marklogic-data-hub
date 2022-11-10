@@ -380,5 +380,10 @@ describe("Sidebar createdOn face time window dropdown", () => {
     expect(includeHubArtifactsSwitch).not.toBeChecked();
     expect(includeHubArtifactsSwitch.onclick).toHaveBeenCalled();
 
+    const magnifyingGlassSearchIcon = getByTestId("search-icon"); //Clicking on search icon
+    magnifyingGlassSearchIcon.onclick = jest.fn();
+    userEvent.click(magnifyingGlassSearchIcon);
+    expect(magnifyingGlassSearchIcon.onclick).toHaveBeenCalled();
+
   });
 });
