@@ -18,6 +18,7 @@
 
 const consts = require("/data-hub/5/impl/consts.sjs");
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
+const entitySearchLib = require("/data-hub/5/entities/entity-search-lib.sjs");
 const hubCentralConfig = cts.doc("/config/hubCentral.json");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const sem = require("/MarkLogic/semantics.xqy");
@@ -452,6 +453,12 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
       nodeOrigin.hasRelationships = docUriToSubjectIri[item.docURI] ? docUriToSubjectIri[item.docURI].some(iri => relatedObjHasRelationships(iri, edgeCount)): relatedObjHasRelationships(subjectIri, edgeCount);
       nodeOrigin.count = 1;
       nodeOrigin.propertiesOnHover = resultPropertiesOnHover;
+
+      const doc = cts.doc(docUri);
+      const unmergeDetails = entitySearchLib.fetchUnmergeDetails(doc, entityType);
+      nodeOrigin.unmerge = unmergeDetails["unmerge"];
+      nodeOrigin.unmergeUris = unmergeDetails["unmergeUris"];
+      nodeOrigin.matchStepName = unmergeDetails["matchStepName"] ? unmergeDetails["matchStepName"] : undefined;
       nodesByID[item.docURI] = nodeOrigin;
     }
     if (fn.exists(item.firstObjectIRI)) {
