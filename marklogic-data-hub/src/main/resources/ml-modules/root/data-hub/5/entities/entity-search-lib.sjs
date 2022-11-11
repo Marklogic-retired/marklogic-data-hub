@@ -253,8 +253,12 @@ function buildAndCacheSelectedPropertyMetadata(selectedPropertyName, selectedPro
  * envelope/instance/(entity type name))
  */
 function getEntityInstanceProperties(doc) {
-  const details = ext.getEntityDetails(doc);
+  const details = getEntityInstanceDetails(doc);
   return details != null ? details.properties : null;
+}
+
+function getEntityInstanceDetails(doc) {
+  return ext.getEntityDetails(doc);
 }
 
 
@@ -295,7 +299,7 @@ function getPropertyValues(currentProperty, entityInstance) {
 
     // OR condition is to handle the merged instances where datatype is object but there are array of objects after merge
     if(currentProperty.multiple || Array.isArray(entityInstance[propertyName])) {
-      entityInstance = entityInstance[propertyName].filter(instance => instance);      
+      entityInstance = entityInstance[propertyName].filter(instance => instance);
       entityInstance.forEach((instance) => {
         let currentPropertyValueArray = [];
         let childPropertyName = Object.keys(instance)[0];
@@ -383,17 +387,10 @@ function addEntitySpecificProperties(result, entityName, entityModel, selectedPr
     result.createdBy = metadata.datahubCreatedBy;
   }
 
-  result.unmerge = fn.exists(doc.xpath("/*:envelope/*:headers/*:merges"));
-  result.unmergeUris = doc instanceof XMLDocument ? doc.xpath("/*:envelope/*:headers/*:merges/*:document-uri/text()") : doc.xpath("/*:envelope/*:headers/*:merges");
-  if (result.unmerge) {
-    const getEntityModel = requireFunction("/data-hub/core/models/entities.sjs", "getEntityModel");
-    const entityModelClass = getEntityModel(entityName);
-    const primaryEntityTypeIRI = entityModelClass && entityModelClass.primaryEntityTypeIRI() !== entityName ? entityModelClass.primaryEntityTypeIRI() : entityName;
-    const matchStep = fn.head(cts.search(cts.andQuery([cts.collectionQuery("http://marklogic.com/data-hub/steps/matching"), cts.jsonPropertyValueQuery("targetEntityType", [entityName, primaryEntityTypeIRI])])));
-    if (matchStep) {
-      result.matchStepName = matchStep.toObject().name;
-    }
-  }
+  const unmergeDetails = fetchUnmergeDetails(doc, entityName);
+  result.unmerge = unmergeDetails["unmerge"];
+  result.unmergeUris = unmergeDetails["unmergeUris"];
+  result.matchStepName = unmergeDetails["matchStepName"] ? unmergeDetails["matchStepName"] : undefined;
   result.entityInstance = entityProperties;
   result.sources = getEntitySources(doc);
   result.entityName = entityName;
@@ -447,17 +444,21 @@ function addGenericEntityProperties(result) {
   result.entityInstance = entityProperties;
   result.sources = getEntitySources(doc);
   result.entityName = entityName;
-  result.unmerge = fn.exists(doc.xpath("/*:envelope/*:headers/*:merges"));
-  result.unmergeUris = doc instanceof XMLDocument ? doc.xpath("/*:envelope/*:headers/*:merges/*:document-uri/text()") : doc.xpath("/*:envelope/*:headers/*:merges");
-  if (result.unmerge) {
-    const getEntityModel = requireFunction("/data-hub/core/models/entities.sjs", "getEntityModel");
-    const entityModelClass = getEntityModel(entityName);
-    const primaryEntityTypeIRI = entityModelClass && entityModelClass.primaryEntityTypeIRI() !== entityName ? entityModelClass.primaryEntityTypeIRI() : entityName;
-    const matchStep = fn.head(cts.search(cts.andQuery([cts.collectionQuery("http://marklogic.com/data-hub/steps/matching"), cts.jsonPropertyValueQuery("targetEntityType", [entityName, primaryEntityTypeIRI])])));
-    if (matchStep) {
-      result.matchStepName = matchStep.toObject().name;
-    }
+
+  const unmergeDetails = fetchUnmergeDetails(doc, entityName);
+  result.unmerge = unmergeDetails["unmerge"];
+  result.unmergeUris = unmergeDetails["unmergeUris"];
+  result.matchStepName = unmergeDetails["matchStepName"] ? unmergeDetails["matchStepName"] : undefined;
+}
+
+function fetchUnmergeDetails(doc, entityName) {
+  let unmergeDetails = {};
+  unmergeDetails.unmerge = fn.exists(doc.xpath("/*:envelope/*:headers/*:merges"));
+  unmergeDetails.unmergeUris = doc instanceof XMLDocument ? doc.xpath("/*:envelope/*:headers/*:merges/*:document-uri/text()") : doc.xpath("/*:envelope/*:headers/*:merges");
+  if (unmergeDetails.unmerge) {
+    unmergeDetails.matchStepName = getMatchStepFromModelName(entityName);
   }
+  return unmergeDetails;
 }
 
 function addPrimaryKeyToResult(result, entityInstance, entityDef) {
@@ -530,16 +531,18 @@ function addDocumentMetadataToSearchResults(searchResponse) {
       if (fn.exists(entityNameMode)) {
         const entityName = fn.string(entityNameMode);
         result["entityName"] = entityName;
-        const getEntityModel = requireFunction("/data-hub/core/models/entities.sjs", "getEntityModel");
-        const entityModel = getEntityModel(entityName);
-        const primaryEntityTypeIRI = entityModel && entityModel.primaryEntityTypeIRI() !== entityName ? entityModel.primaryEntityTypeIRI() : entityName;
-        const matchStep = fn.head(cts.search(cts.andQuery([cts.collectionQuery("http://marklogic.com/data-hub/steps/matching"), cts.jsonPropertyValueQuery("targetEntityType", [entityName, primaryEntityTypeIRI])])));
-        if (matchStep) {
-          result["matchStepName"] = matchStep.toObject().name;
-        }
+        result["matchStepName"] = getMatchStepFromModelName(entityName);
       }
     }
   });
+}
+
+function getMatchStepFromModelName(entityName) {
+  const getEntityModel = requireFunction("/data-hub/core/models/entities.sjs", "getEntityModel");
+  const entityModel = getEntityModel(entityName);
+  const primaryEntityTypeIRI = entityModel && entityModel.primaryEntityTypeIRI() !== entityName ? entityModel.primaryEntityTypeIRI() : entityName;
+  const matchStep = fn.head(cts.search(cts.andQuery([cts.collectionQuery("http://marklogic.com/data-hub/steps/matching"), cts.jsonPropertyValueQuery("targetEntityType", [entityName, primaryEntityTypeIRI])])));
+  return matchStep ? matchStep.toObject().name : undefined;
 }
 
 function getRecordHistory(docUri) {
@@ -681,7 +684,9 @@ module.exports = {
   addDocumentMetadataToSearchResults,
   addPropertiesToSearchResponse,
   buildPropertyMetadata,
+  fetchUnmergeDetails,
   getDocumentSize,
+  getEntityInstanceDetails,
   getEntityInstanceProperties,
   getEntitySources,
   getRecordHistory

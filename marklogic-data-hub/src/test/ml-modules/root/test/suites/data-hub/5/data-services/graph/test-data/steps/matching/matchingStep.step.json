@@ -1,0 +1,4 @@
+{
+  "name" : "matchingStep",
+  "targetEntityType" : "http://example.org/Customer-0.0.1/Customer"
+}

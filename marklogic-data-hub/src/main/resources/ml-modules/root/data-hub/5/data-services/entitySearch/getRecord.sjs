@@ -39,20 +39,30 @@ if (permissions) {
   permissions.forEach(permission => { permission.roleName = xdmp.roleName(permission.roleId)})
 }
 const recordType = getDocumentType(xdmp.nodeKind(doc.root));
-const entityInstanceProperties = entitySearchLib.getEntityInstanceProperties(doc);
+const entityInstanceDetails = entitySearchLib.getEntityInstanceDetails(doc);
+const entityInstanceProperties = entityInstanceDetails != null ? entityInstanceDetails.properties : null;
+const entityName = entityInstanceDetails ? entityInstanceDetails["entityName"] : null;
+
 const record = {
   "data": doc,
   "docUri": docUri,
-  "recordType": getDocumentType(xdmp.nodeKind(doc.root)),
+  "recordType": recordType,
   "recordMetadata": xdmp.documentGetMetadata(docUri),
   "collections": xdmp.documentGetCollections(docUri),
   "permissions": permissions,
   "quality": cts.quality(doc),
   "documentProperties": xdmp.documentProperties(docUri),
-  "entityInstanceProperties": entitySearchLib.getEntityInstanceProperties(doc),
+  "entityInstanceProperties": entityInstanceProperties,
   "sources": entitySearchLib.getEntitySources(doc),
   "history": entitySearchLib.getRecordHistory(docUri),
   "documentSize": entitySearchLib.getDocumentSize(doc)
 };
+
+if(entityName) {
+  const unmergeDetails = entitySearchLib.fetchUnmergeDetails(doc, entityName);
+  record["unmerge"] = unmergeDetails["unmerge"];
+  record["unmergeUris"] = unmergeDetails["unmergeUris"];
+  record["matchStepName"] = unmergeDetails["matchStepName"] ? unmergeDetails["matchStepName"] : undefined;
+}
 
 record;
