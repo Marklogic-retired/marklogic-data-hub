@@ -7,7 +7,22 @@
         }
       ],
       "createdOn": "2021-11-22T01:35:36.267443-08:00",
-      "createdBy": "admin"
+      "createdBy": "admin",
+      "merges": [
+        {
+          "document-uri": "/com.marklogic.smart-mastering/merged/9cee177e850d7a2fd46be6fa3d65853a.json",
+          "last-merge": "2022-11-11T08:34:04.405208-08:00"
+        },
+        {
+          "document-uri": "/Customer/Cust5-merge.json",
+          "last-merge": "2022-11-11T08:34:04.405208-08:00"
+        },
+        {
+          "document-uri": "/Customer/Cust5.json",
+          "last-merge": "2022-11-11T08:34:04.405208-08:00"
+        }
+      ],
+      "id": "9cee177e850d7a2fd46be6fa3d65853a"
     },
     "triples": [],
     "instance": {
