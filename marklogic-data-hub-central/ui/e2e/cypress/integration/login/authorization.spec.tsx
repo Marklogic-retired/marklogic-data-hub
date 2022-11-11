@@ -37,6 +37,18 @@ describe("login", () => {
     cy.contains("Privacy");
   });
 
+
+  it("user dropdown should disappear when clicked away", () => {
+    loginPage.getUsername().type("hc-test-user");
+    loginPage.getPassword().type("password");
+    loginPage.getLoginButton().click();
+    cy.get(`#user-dropdown`).click();
+    cy.waitUntil(() => cy.get("#logOut").should("be.visible"));
+    cy.wait(2000);
+    cy.contains(`Welcome to MarkLogic Data Hub Central`).click();
+    cy.waitUntil(() => cy.get("#logOut").should("not.be.visible"));
+  });
+
   it("should verify all the error conditions for login", () => {
     //Verify username/password is required and login button is enabled
     loginPage.getUsername().type("{enter}").blur();
