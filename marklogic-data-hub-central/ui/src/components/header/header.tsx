@@ -37,7 +37,7 @@ const Header:React.FC<Props> = (props) => {
   const serviceNameRef = React.createRef<HTMLElement>();
   const helpLinkRef = React.createRef<HTMLAnchorElement>();
   const userDropdownRef = React.createRef<HTMLSpanElement>();
-
+  const [isAutoClose, setAutoClose] = useState(false);
   const [entityDefArray, setEntityDefArray] = useState<any[]>([]);
 
 
@@ -73,6 +73,21 @@ const Header:React.FC<Props> = (props) => {
       fetchModels();
     }
   }, [user.authenticated]);
+
+  useEffect(() => {
+    function handleClickOutside(event: any) {
+      // @ts-ignore
+      if (userDropdownRef.current && !userDropdownRef.current.contains(event.target)) {
+        setAutoClose(true);
+      } else {
+        setAutoClose(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [userDropdownRef]);
 
   const confirmLogout = async () => {
     try {
@@ -199,7 +214,7 @@ const Header:React.FC<Props> = (props) => {
               <QuestionCircle color={"rgba(255, 255, 255, 0.65)"} size={24} aria-label="icon: question-circle" />
             </HCTooltip></Nav.Link>
         </Nav.Item>
-        <NavDropdown autoClose={false} title={
+        <NavDropdown autoClose={isAutoClose} title={
           <HCTooltip text="User" id="user-tooltip" placement="bottom">
             <i>
               <FontAwesomeIcon icon={faUser} size="2x" aria-label="icon: user" />
