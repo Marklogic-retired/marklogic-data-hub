@@ -106,13 +106,17 @@ const resultsTest6 = searchNodes(customerQuery);
 expectedNodeCount = graphUtils.supportsGraphConceptsSearch() ? 3 : 2;
 expectedEdgeCount = graphUtils.supportsGraphConceptsSearch() ? 2 : 1;
 const testEdge = resultsTest6.edges.find((edge) => edge.to === "/content/customer1.json");
+const mergedNode = resultsTest6.nodes.find(node => node.id === "/content/customer1.json");
 assertions.concat([
   test.assertEqual(expectedNodeCount, resultsTest6.total),
   test.assertEqual(expectedNodeCount, resultsTest6.nodes.length, xdmp.toJsonString(resultsTest6)),
   test.assertEqual(expectedEdgeCount, resultsTest6.edges.length),
   // to and from are in sorted order to support bidirectional queries.
   test.assertEqual("/content/babyRegistry1.json", testEdge.from),
-  test.assertEqual("/content/customer1.json", testEdge.to, xdmp.toJsonString(testEdge))
+  test.assertEqual("/content/customer1.json", testEdge.to, xdmp.toJsonString(testEdge)),
+  test.assertTrue(mergedNode.unmerge),
+  test.assertNotEqual(null, mergedNode.unmergeUris),
+  test.assertEqual("matchingStep", mergedNode.matchStepName)
 ]);
 
 
