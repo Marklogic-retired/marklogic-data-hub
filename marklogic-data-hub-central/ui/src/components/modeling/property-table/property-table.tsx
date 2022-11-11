@@ -198,39 +198,39 @@ const PropertyTable: React.FC<Props> = (props) => {
       dataField: "type",
       width: sidePanelView ? "20%" : "10%",
       headerFormatter: () => <span aria-label="type-header">Type</span>,
-      formatter: (text, record) => {
-        let renderText = text;
+      formatter: (type, record) => {
+        let renderText = type;
         if (record.joinPropertyType) {
+
           if (record.joinPropertyName) {
             //relationship complete with foreign key populated
             let foreignKeyTooltip = ModelingTooltips.foreignKeyModeling(record.joinPropertyType, record.joinPropertyName, record.delete);
             let completeRelationshipTooltip = ModelingTooltips.completeRelationship(record.joinPropertyType, record.delete);
-            renderText =
-              <div>
-                {renderText = renderText.concat(" (" + record.joinPropertyType + ")")}
-                <div className={styles.dualIconsContainer}>
-                  <HCTooltip className={styles.relationshipTooltip} text={completeRelationshipTooltip} data-testid={"relationship-tooltip"} id={"relationshipTooltip-" + record.propertyName} placement="bottom">
-                    <span className={styles.modeledRelationshipIcon} data-testid={"relationship-" + record.propertyName} />
-                  </HCTooltip>
-                  <HCTooltip text={foreignKeyTooltip} id={"foreignKeyTooltip-" + record.propertyName} placement="bottom" >
-                    <span>
-                      <FontAwesomeIcon className={styles.foreignKeyRelationshipIcon} icon={faKey} data-testid={"foreign-" + record.propertyName} />
-                    </span>
-                  </HCTooltip>
-                </div>
-              </div>;
+            renderText= <div>
+              {renderText}
+              <div className={styles.dualIconsContainer}>
+                <HCTooltip className={styles.relationshipTooltip} text={completeRelationshipTooltip} data-testid={"relationship-tooltip"} id={"relationshipTooltip-" + record.propertyName} placement="bottom">
+                  <span className={styles.modeledRelationshipIcon} data-testid={"relationship-" + record.propertyName} />
+                </HCTooltip>
+                <HCTooltip text={foreignKeyTooltip} id={"foreignKeyTooltip-" + record.propertyName} placement="bottom" >
+                  <span>
+                    <FontAwesomeIcon className={styles.foreignKeyRelationshipIcon} icon={faKey} data-testid={"foreign-" + record.propertyName} />
+                  </span>
+                </HCTooltip>
+              </div>
+            </div>;
           } else {
             //relationship complete with no foreign key populated
             let tooltip = ModelingTooltips.relationshipNoForeignKey(record.joinPropertyType, record.delete);
-            renderText =
-              <span>
-                {renderText = renderText.concat(" (" + record.joinPropertyType + ")")}
-                <div className={styles.relationshipIconContainer}>
-                  <HCTooltip className={styles.relationshipTooltip} text={tooltip} data-testid={"relationship-tooltip"} id={"relationshipTooltip-" + record.propertyName} placement="bottom">
-                    <span className={styles.modeledRelationshipIconNoKey} data-testid={"relationship-" + record.propertyName} />
-                  </HCTooltip>
-                </div>
-              </span>;
+
+            renderText= <span>
+              {sidePanelView ? " (" + record.joinPropertyType + ")" : renderText}
+              <div className={styles.relationshipIconContainer}>
+                <HCTooltip className={styles.relationshipTooltip} text={tooltip} data-testid={"relationship-tooltip"} id={"relationshipTooltip-" + record.propertyName} placement="bottom">
+                  <span className={styles.modeledRelationshipIconNoKey} data-testid={"relationship-" + record.propertyName} />
+                </HCTooltip>
+              </div>
+            </span>;
           }
         }
         return renderText;
@@ -732,7 +732,7 @@ const PropertyTable: React.FC<Props> = (props) => {
                   pObj.items.joinPropertyName = editPropertyOptions.name;
                 }
               });
-              return  {
+              return {
                 entityName: entity.entityName,
                 modelDefinition: entity.model.definitions
               };
