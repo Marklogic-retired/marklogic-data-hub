@@ -82,11 +82,17 @@ const Modeling: React.FC = () => {
     }
   }, [modelingOptions.view]);
 
+  let isMounted;
   useEffect(() => {
+    isMounted = true;
     if (canReadEntityModel) {
       setDataModelFromServer();
       updateUserPreferencesFromConfig();
     }
+    return () => {
+      //When component unmounts
+      isMounted = false;
+    };
   }, []);
 
   useEffect(() => {
@@ -116,7 +122,9 @@ const Modeling: React.FC = () => {
             isDraft = true;
           }
         });
-        setDataModel(model);
+        if (isMounted) {
+          setDataModel(model);
+        }
         if (response["data"].length > 0) {
           setEntityTypeNamesArray(entityTypesArray, isDraft);
         }
