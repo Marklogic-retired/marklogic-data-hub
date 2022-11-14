@@ -30,6 +30,10 @@ class CompareValuesModal {
   confirmationYes() {
     return cy.get(`[aria-label="Yes"]`);
   }
+
+  getUnmergedPreview(index: number) {
+    return cy.findByText(`Unmerged: Preview ${index}`);
+  }
 }
 
 const compareValuesModal = new CompareValuesModal();
