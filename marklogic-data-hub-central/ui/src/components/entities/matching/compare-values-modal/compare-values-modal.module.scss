@@ -115,6 +115,13 @@
     }
 }
 
+.originalUri {
+  font-weight: bold;
+  color: $info;
+  width: 22%;
+  word-break: break-all;
+}
+
 .uri1 {
     font-weight: bold;
     color: $info;

@@ -10,7 +10,7 @@ import {themeColors} from "@config/themes.config";
 import {deleteNotification} from "@api/merging";
 import {ConfirmationType} from "../../../../types/common-types";
 import ConfirmationModal from "../../../confirmation-modal/confirmation-modal";
-import {HCTable, HCButton, HCTooltip, HCModal} from "@components/common";
+import {HCTable, HCButton, HCTooltip, HCModal, HCCheckbox} from "@components/common";
 import {faExclamationTriangle, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import {Overlay} from "react-bootstrap";
 import Popover from "react-bootstrap/Popover";
@@ -47,6 +47,8 @@ const CompareValuesModal: React.FC<Props> = (props) => {
   const [targetUrisPopover, setTargetUrisPopover] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showConfirmModal, toggleConfirmModal] = useState(false);
+  const [includeUnmerged, setIncludeUnmerged] = useState(false);
+
   const {
     searchOptions,
     toggleMergeUnmerge,
@@ -91,6 +93,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
   };
 
   const closeModal = () => {
+    setIncludeUnmerged(false);
     props.toggleModal(false);
   };
 
@@ -370,9 +373,8 @@ const CompareValuesModal: React.FC<Props> = (props) => {
       },
     },
     {
-      dataField: "propertyValueInURI1",
-      text: "propertyValueInURI1",
-      key: "propertyValueInURI1",
+      dataField: props.isMerge ?  "propertyValueInURI1" : "propertyValueInReview",
+      key: props.isMerge ? "propertyValueInURI1" : "propertyValueInReview",
       title: (cell) => `${cell.value}`,
       ellipsis: true,
       width: "25%",
@@ -458,9 +460,8 @@ const CompareValuesModal: React.FC<Props> = (props) => {
       }
     },
     {
-      dataField: "propertyValueInReview",
-      text: "propertyValueInReview",
-      key: "propertyValueInReview",
+      dataField: props.isMerge ? "propertyValueInReview" : "propertyValueInURI1",
+      key: props.isMerge ? "propertyValueInReview" : "propertyValueInURI1",
       title: (cell) => `${cell.value}`,
       ellipsis: true,
       width: "calc(25% - 50px)",
@@ -546,7 +547,8 @@ const CompareValuesModal: React.FC<Props> = (props) => {
 
     if (!props.isMerge) {
       let payload = {
-        mergeDocumentURI: props.originalUri
+        mergeDocumentURI: props.originalUri,
+        blockFutureMerges: !includeUnmerged
       };
       await props.unmergeUri(payload);
       setIsLoading(false);
@@ -647,20 +649,42 @@ const CompareValuesModal: React.FC<Props> = (props) => {
     </Modal.Header>
     <Modal.Body>
       <div>
-        <div className={styles.compareHeaderContainer}>
-          <span className={styles.expandCell}></span>
-          <span className={styles.entityPropertiesHeader}></span>
-          <span className={styles.entity1}>{props.entityDefinitionsArray[0]?.name} 1</span>
-          <span className={styles.entity2}>{props.entityDefinitionsArray[0]?.name} 2</span>
-          <span className={styles.entityPreview}>Merged: Preview</span>
-        </div>
-        <div className={styles.compareTableHeader}>
-          <span className={styles.expandCell}></span>
-          <span className={styles.entityPropertiesHeader}></span>
-          <span className={styles.uri1}>{props.uriCompared[0]}</span>
-          <span className={styles.uri2}>{props.uriCompared[1]}</span>
-          <span className={styles.entityPreview}>{}</span>
-        </div>
+        {
+          props.isMerge ?
+            <div className={styles.compareHeaderContainer}>
+              <span className={styles.expandCell}></span>
+              <span className={styles.entityPropertiesHeader}></span>
+              <span className={styles.entity1}>{props.entityDefinitionsArray[0]?.name} 1</span>
+              <span className={styles.entity2}>{props.entityDefinitionsArray[0]?.name} 2</span>
+              <span className={styles.entityPreview}>Merged: Preview</span>
+            </div>
+            :
+            <div className={styles.compareHeaderContainer}>
+              <span className={styles.expandCell}></span>
+              <span className={styles.entityPropertiesHeader}></span>
+              <span className={styles.entityPreview}>{props.entityDefinitionsArray[0]?.name}</span>
+              <span className={styles.entity1}>Unmerged: Preview 1</span>
+              <span className={styles.entity2}>Unmerged: Preview 2</span>
+            </div>
+        }
+        {
+          props.isMerge ?
+            <div className={styles.compareTableHeader}>
+              <span className={styles.expandCell}></span>
+              <span className={styles.entityPropertiesHeader}></span>
+              <span className={styles.uri1}>{props.uriCompared[0]}</span>
+              <span className={styles.uri2}>{props.uriCompared[1]}</span>
+              <span className={styles.entityPreview}>{}</span>
+            </div>
+            :
+            <div className={styles.compareTableHeader}>
+              <span className={styles.expandCell}></span>
+              <span className={styles.entityPropertiesHeader}></span>
+              <span className={styles.originalUri}>{props.originalUri}</span>
+              <span className={styles.uri1}>{props.uriCompared[0]}</span>
+              <span className={styles.uri2}>{props.uriCompared[1]}</span>
+            </div>
+        }
         <span><img src={backgroundImage} className={styles.matchIcon}></img></span>
         <span className={styles.matchIconText}>Match</span>
       </div>
@@ -684,6 +708,18 @@ const CompareValuesModal: React.FC<Props> = (props) => {
     </Modal.Body>
     {!props.isPreview ?
       <Modal.Footer>
+        {!props.isMerge ?
+          <HCCheckbox
+            id={`unmerge-inclusion-checkbox`}
+            value={includeUnmerged}
+            handleClick={(e) => setIncludeUnmerged(!includeUnmerged)}
+            checked={includeUnmerged}
+            data-testid={`unmerge-inclusion-checkbox`}
+            ariaLabel={`unmerge-inclusion-checkbox`}
+          >Include unmerged documents in future matches
+          </HCCheckbox>
+          : null
+        }
         <HCButton variant="outline-light" onClick={() => closeModal()}>
           <div aria-label="Cancel">Cancel</div>
         </HCButton>
