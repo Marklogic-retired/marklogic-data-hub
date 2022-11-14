@@ -9,6 +9,8 @@ import {HubCentralConfigContext} from "@util/hubCentralConfig-context";
 import * as _ from "lodash";
 import EntityDisplaySettings, {EntityTableColumns} from "./entity-display-settings/entity-display-settings";
 import ConceptsDisplaySettings, {ConceptsTableColumns} from "./concepts-display-settings/concepts-display-settings";
+import {NotificationContext} from "@util/notification-context";
+import {getNotifications} from "@api/merging";
 
 type Props = {
   isVisible: boolean;
@@ -34,6 +36,7 @@ const DataModelDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal,
   const [visibleSettings, setVisibleSettings] = useState<eVisibleSettings>(eVisibleSettings.EntityType);
 
   const {hubCentralConfig, updateHubCentralConfigOnServer} = useContext(HubCentralConfigContext);
+  const {setNotificationsObj} = useContext(NotificationContext);
 
   useEffect(() => {
     if (isVisible && hubCentralConfig) {
@@ -132,6 +135,24 @@ const DataModelDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal,
     });
   };
 
+  const fetchNotifications = async () => {
+    await getNotifications()
+      .then((resp: any) => {
+        if (resp && resp.data) {
+          setNotificationsObj(resp.data.notifications, resp.data.total, resp.data.pageLength, true);
+        } else {
+          setNotificationsObj([], 0, 0, false);
+        }
+      })
+      .catch((err) => {
+        if (err.response) {
+          setNotificationsObj([], 0, 0, false);
+        } else {
+          setNotificationsObj([], 0, 0, false);
+        }
+      });
+  };
+
   const onConceptsColumnValueChange = (row, e, column: ConceptsTableColumns) => {
     const updateValue = (concepts) => {
       switch (column) {
@@ -171,6 +192,7 @@ const DataModelDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal,
       let updatedPayload = _.cloneDeep(hubCentralConfig);
       updatedPayload.modeling.entities = Object.assign({}, entitiesData);
       updatedPayload.modeling.concepts = Object.assign({}, conceptsData);
+      fetchNotifications();
       updateHubCentralConfigOnServer(updatedPayload);
       closeModal();
     } catch (error) {

@@ -1,7 +1,8 @@
 import React from "react";
-import {render, fireEvent, waitForElement} from "@testing-library/react";
+import {render, fireEvent, waitForElement, wait} from "@testing-library/react";
 import CompareValuesModal from "./compare-values-modal";
 import data from "../../../../assets/mock-data/curation/merging.data";
+
 
 
 describe("Compare Values Modal component", () => {
@@ -16,6 +17,8 @@ describe("Compare Values Modal component", () => {
 
   const overflowedUris = [...comparedUris, "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32"];
 
+  const mockUnmergeUri = jest.fn();
+
   const getSubElements=(content, node, title) => {
     const hasText = node => node.textContent === title;
     const nodeHasText = hasText(node);
@@ -25,10 +28,10 @@ describe("Compare Values Modal component", () => {
     return nodeHasText && childrenDontHaveText;
   };
 
-  test("Unmerge Modal renders with popup info for showing all URIs", async() => {
+  test("Unmerge Modal renders with popup info for showing all URIs and verify block future merges", async() => {
 
-    const {getByLabelText, getByText} =  render(
-      <CompareValuesModal {...data.compareModal} uris={comparedUris} uriCompared={comparedUris}/>
+    const {getByLabelText, getByText, rerender} =  render(
+      <CompareValuesModal {...data.compareModal} unmergeUri={mockUnmergeUri} uris={comparedUris} uriCompared={comparedUris}/>
     );
 
     fireEvent.mouseOver(getByLabelText("icon: info-circle"));
@@ -39,6 +42,34 @@ describe("Compare Values Modal component", () => {
     expect(getByLabelText(`${comparedUris[0]}-uri`)).toBeInTheDocument();
     expect(getByLabelText(`${comparedUris[11]}-uri`)).toBeInTheDocument();
 
+    //verify blockFutureMerges is added when checkbox is not selected
+
+    let payload = {
+      "blockFutureMerges": true,
+      "mergeDocumentURI": "/com.marklogic.smart-mastering/merged/8a0b71b0a525ca7449611b2e9786d0cf.json"
+    };
+    fireEvent.click(getByLabelText("confirm-merge-unmerge"));
+    await wait(() => {
+      fireEvent.click(getByLabelText("Yes"));
+    });
+    expect(mockUnmergeUri).toHaveBeenCalledWith(payload);
+    expect(mockUnmergeUri).toHaveBeenCalledTimes(1);
+
+
+    //verify blockFutureMerges is false when checkboox is selected
+    rerender(<CompareValuesModal {...data.compareModal} unmergeUri={mockUnmergeUri} uris={comparedUris} uriCompared={comparedUris}/>);
+    fireEvent.click(getByLabelText("unmerge-inclusion-checkbox"));
+    fireEvent.click(getByLabelText("confirm-merge-unmerge"));
+    await wait(() => {
+      fireEvent.click(getByLabelText("Yes"));
+    });
+
+    let payload2 = {
+      "blockFutureMerges": false,
+      "mergeDocumentURI": "/com.marklogic.smart-mastering/merged/8a0b71b0a525ca7449611b2e9786d0cf.json"
+    };
+
+    expect(mockUnmergeUri).toHaveBeenLastCalledWith(payload2);
   });
 
 
