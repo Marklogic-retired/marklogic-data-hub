@@ -11,7 +11,7 @@ describe("UnMerge Functionality in Table and Snippet View", () => {
   before(() => {
     cy.visit("/");
     cy.contains(Application.title);
-    cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-match-merge-reader", "hub-central-mapping-writer", "hub-central-load-writer").withRequest();
+    cy.loginAsTestUserWithRoles("hub-central-developer", "hub-central-flow-writer", "hub-central-match-merge-reader", "hub-central-mapping-writer", "hub-central-load-writer").withRequest();
     LoginPage.postLogin();
     //Saving Local Storage to preserve session
     cy.saveLocalStorage();
@@ -36,6 +36,9 @@ describe("UnMerge Functionality in Table and Snippet View", () => {
     browsePage.getUnmergeIcon().should("have.length.gt", 3);
     browsePage.getUnmergeIcon().first().click();
     compareValuesModal.getModal().should("be.visible");
+    cy.log("** unmerged previews and original doc uri should exist **");
+    compareValuesModal.getUnmergedPreview(1).should("be.visible");
+    compareValuesModal.getUnmergedPreview(2).should("be.visible");
     compareValuesModal.getUnmergeButton().should("be.visible");
 
     cy.log("** cancel button closes modal **");

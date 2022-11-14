@@ -26,6 +26,8 @@ import {getSystemInfo} from "@api/environment";
 import {ConfirmationType} from "../../../../types/common-types";
 import ConfirmationModal from "@components/confirmation-modal/confirmation-modal";
 import {getMappingFunctions} from "@api/mapping";
+import {NotificationContext} from "@util/notification-context";
+import {getNotifications} from "@api/merging";
 
 type Props = {
   dataModel: any;
@@ -98,6 +100,8 @@ const GraphViewSidePanel: React.FC<Props> = ({dataModel,
   const [confirmType, setConfirmType] = useState<ConfirmationType>(ConfirmationType.Identifer);
   const [mapFunctions, setMapFunctions] = useState<any>([]);
   //-----------------------
+  const {setNotificationsObj} = useContext(NotificationContext);
+
 
   const handleTabChange = (key) => {
     const currentTabSetting = {
@@ -155,6 +159,24 @@ const GraphViewSidePanel: React.FC<Props> = ({dataModel,
     } catch (error) {
       handleError(error);
     }
+  };
+
+  const fetchNotifications = async () => {
+    await getNotifications()
+      .then((resp: any) => {
+        if (resp && resp.data) {
+          setNotificationsObj(resp.data.notifications, resp.data.total, resp.data.pageLength, true);
+        } else {
+          setNotificationsObj([], 0, 0, false);
+        }
+      })
+      .catch((err) => {
+        if (err.response) {
+          setNotificationsObj([], 0, 0, false);
+        } else {
+          setNotificationsObj([], 0, 0, false);
+        }
+      });
   };
 
   const initializeEntityColorIcon = (isConcept: boolean = false) => {
@@ -345,6 +367,7 @@ const GraphViewSidePanel: React.FC<Props> = ({dataModel,
   const handleLabelChange = (e) => {
     setSelectedEntityLabel(e.value || "");
     handleUpdateHubCentralConfig({label: e.value || ""});
+    fetchNotifications();
   };
 
   const handlePropertiesOnHoverChange = (e) => {

@@ -504,8 +504,8 @@ describe("Matching", () => {
     cy.findAllByLabelText("/json/persons/first-name-double-metaphone compareButton").first().scrollIntoView().click();
     for (let i in compareValuesData) {
       cy.findByLabelText(compareValuesData[i].propertyName).should("have.length.gt", 0);
-      cy.findAllByLabelText(`${compareValuesData[i].uriValue1}-cell1`).should("have.length.gt", 0);
-      cy.findAllByLabelText(`${compareValuesData[i].uriValue2}-cell2`).should("have.length.gt", 0);
+      cy.findAllByLabelText(`${compareValuesData[i].uriValue1}-cell2`).should("have.length.gt", 0);
+      //cy.findAllByLabelText(`${compareValuesData[i].uriValue2}-cell2`).should("have.length.gt", 0);
     }
     compareValuesModal.getTableHeader().should("not.be.visible"); // Added as per DHFPROD-8322
 
