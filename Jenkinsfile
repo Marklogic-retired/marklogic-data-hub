@@ -302,7 +302,7 @@ void RTLTests(String type,String mlVersion){
 
       export PATH=$JAVA_HOME/bin:$PATH
       cd $WORKSPACE/data-hub
-      ./gradlew -g ./cache-build --continue clean marklogic-data-hub:bootstrap :marklogic-data-hub-central:testUI :marklogic-data-hub-central:lintUI |& tee console.log
+      ./gradlew -g ./cache-build --continue clean marklogic-data-hub:bootstrap :marklogic-data-hub-central:testUI |& tee console.log
 
     '''
 

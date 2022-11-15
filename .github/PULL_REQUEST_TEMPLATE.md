@@ -11,7 +11,6 @@
 - [ ] PR title is in the format JIRA_ID:Title
 - [ ] Rebase the branch with upstream
 - [ ] Squashed all commits into a single commit
-- [ ] Code passes ESLint tests
 - [ ] Added Tests
 - [ ] Ran cypress tests on firefox locally
   
