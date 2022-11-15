@@ -69,19 +69,19 @@ describe("Add Custom step to a flow", () => {
   it("Add custom steps from Curate tile and Run steps", {defaultCommandTimeout: 120000}, () => {
     cy.intercept("/api/jobs/**").as("getJobs");
     toolbar.getCurateToolbarIcon().should("be.visible").click();
-    curatePage.getEntityTypePanel("Customer").should("be.visible");
-    curatePage.toggleEntityTypeId("Customer");
-    curatePage.selectCustomTab("Customer");
+    curatePage.getEntityTypePanel("Customerzzzz").should("be.visible");
+    curatePage.toggleEntityTypeId("Customerzzz");
+    curatePage.selectCustomTab("Customerzzz");
 
     curatePage.openExistingFlowDropdown("Customer", stepName);
     curatePage.getExistingFlowFromDropdown(stepName, flowName).scrollIntoView().click({force: true});
     curatePage.confirmAddStepToFlow(stepName, flowName);
 
-    toolbar.getRunToolbarIcon().should("be.visible").click();
+    toolbar.getRunToolbarIcon().should("not.be.visible").click();
     runPage.expandFlow(flowName);
 
     runPage.verifyStepInFlow(stepType, stepName, flowName);
-    toolbar.getRunToolbarIcon().should("be.visible").click();
+    toolbar.getRunToolbarIcon().should("not.be.visible").click();
     runPage.expandFlow(flowName);
 
     runPage.runStep(stepName, flowName);
