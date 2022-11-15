@@ -118,7 +118,10 @@ describe("Concept classes in Modeling screen", () => {
     modelPage.selectView("project-diagram");
 
     modelPage.scrollPageBottom();
-    cy.wait(6000);
+
+    //Publish the changes (DHFPROD-9333)
+    cy.log("**Publish the Data Model**");
+    cy.publishDataModel();
 
     //reopen modal to verify previous updates
     graphVis.getPositionOfEdgeBetween("Product,testShoeStyle").then((edgePosition: any) => {
@@ -330,7 +333,6 @@ describe("Concept classes in Modeling screen", () => {
     entityTypeTable.sortByNodeTypeConcept();
     entityTypeTable.getConceptClass("TestConcept").should("exist").scrollIntoView();
 
-
     //verify color and icon is reflected in the table
     modelPage.getColorSelected("TestConcept", "#d5d3dd").scrollIntoView().should("exist");
     modelPage.getIconSelected("TestConcept", "FaAccessibleIcon").should("exist");
@@ -355,6 +357,7 @@ describe("Concept classes in Modeling screen", () => {
     cy.log("**Delete concept class from Table view and verify that it is not available anymore**");
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
+    cy.get(`[data-testid="nodeType"]`).scrollIntoView().should("be.visible").click();
     entityTypeTable.getDeleteConceptClassIcon("TestConcept").scrollIntoView().should("be.visible").click({force: true});
     confirmationModal.getDeleteConceptClassText().should("exist");
     confirmationModal.getYesButton(ConfirmationType.DeleteConceptClass);
@@ -362,5 +365,4 @@ describe("Concept classes in Modeling screen", () => {
     cy.waitForAsyncRequest();
     entityTypeTable.getConceptClass("TestConcept").should("not.exist");
   });
-
 });
