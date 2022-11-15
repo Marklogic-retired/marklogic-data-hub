@@ -230,6 +230,8 @@ task testUI(type: NpmTask, dependsOn: installDependencies, group: taskGroup){
     execOverrides { it.workingDir = reactUiPath }
 }
 
+buildUi.dependsOn lintUI
+
 build.dependsOn buildRpm
 
 processTestResources {
