@@ -1,9 +1,8 @@
 package com.marklogic.hub.central.controllers.steps;
 
-import java.util.Arrays;
-import java.util.List;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.FailedRequestException;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -12,12 +11,12 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import javax.ws.rs.core.MediaType;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class MatchingStepControllerTest extends AbstractStepControllerTest {
@@ -76,6 +75,25 @@ public class MatchingStepControllerTest extends AbstractStepControllerTest {
                 assertTrue(actual.contains("firstStep"));
                 assertTrue(actual.contains("secondStep"));
             });
+    }
+
+    @Test
+    void createAndReadExclusionLists() throws Exception {
+        installOnlyReferenceModelEntities();
+        loginAsTestUserWithRoles("hub-central-match-merge-writer");
+        ObjectNode myList = objectMapper.createObjectNode().put("name", "myList");
+        myList.putArray("values").add("null");
+        putJson(PATH + "/exclusionList/myList", myList);
+
+        loginAsTestUserWithRoles("hub-central-match-merge-reader");
+
+        getJson(PATH + "/exclusionList")
+                .andExpect(status().isOk())
+                .andDo(result -> {
+                    ArrayNode array = (ArrayNode) parseJsonResponse(result);
+                    assertEquals(1, array.size());
+                    assertEquals("null", array.get(0).path("values").get(0).asText());
+                });
     }
 
     @Test

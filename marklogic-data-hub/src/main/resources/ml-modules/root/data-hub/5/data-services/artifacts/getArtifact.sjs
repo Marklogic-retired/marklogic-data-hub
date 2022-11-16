@@ -18,20 +18,19 @@
 const Artifacts = require('/data-hub/5/artifacts/core.sjs');
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
-var artifactType, artifactName, artifact, dirFileName;
+var artifactType, artifactName;
 
 if ("ingestion" === artifactType) {
-  xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-ingestion", "execute");
+  xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-ingestion", "execute");
 } else if ("mapping" === artifactType) {
-  xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-mapping", "execute");
-} else if ("matching" === artifactType || "merging" === artifactType || "exclusionList" === artifactType) {
-  xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-match-merge", "execute");
-} else if ("custom" === artifactType) {
-  xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-custom", "execute");
+  xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-mapping", "execute");
+} else if ("matching" === artifactType || "merging" === artifactType ||"exclusionList" === artifactType) {
+  xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-match-merge", "execute");
 } else if ("flow" === artifactType || "stepDefinition" === artifactType) {
-  xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-flow", "execute");
+  xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-flow", "execute");
 } else {
   httpUtils.throwBadRequest("Unsupported artifact type: " + artifactType);
 }
 
-Artifacts.setArtifact(artifactType, artifactName, artifact.toObject(), dirFileName);
+Artifacts.getArtifact(artifactType, artifactName);
+

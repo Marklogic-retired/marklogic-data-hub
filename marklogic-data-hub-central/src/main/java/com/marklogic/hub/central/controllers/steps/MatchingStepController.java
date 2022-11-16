@@ -50,6 +50,31 @@ public class MatchingStepController extends BaseController {
         return emptyOk();
     }
 
+    @RequestMapping(value = "/exclusionList/{listName}", method = RequestMethod.PUT)
+    @ResponseBody
+    @ApiOperation(value = "Set an exclusion list")
+    @Secured("ROLE_writeMatching")
+    public ResponseEntity<JsonNode> createUpdateExclusionList(@PathVariable String listName,
+                                                            @RequestBody JsonNode exclusionList) {
+        return ResponseEntity.ok(ArtifactService.on(getHubClient().getFinalClient()).setArtifact("exclusionList", listName, exclusionList, "/exclusionLists/"));
+    }
+
+    @RequestMapping(value = "/exclusionList", method = RequestMethod.GET)
+    @ResponseBody
+    @ApiOperation(value = "Get all exclusion lists")
+    @Secured("ROLE_readMatching")
+    public ResponseEntity<JsonNode> getExclusionLists() {
+        return ResponseEntity.ok(ArtifactService.on(getHubClient().getFinalClient()).getList("exclusionList"));
+    }
+
+    @RequestMapping(value = "/exclusionList/{listName}", method = RequestMethod.GET)
+    @ResponseBody
+    @ApiOperation(value = "Get an exclusion list")
+    @Secured("ROLE_readMatching")
+    public ResponseEntity<JsonNode> getExclusionList(@PathVariable String listName) {
+        return ResponseEntity.ok(ArtifactService.on(getHubClient().getFinalClient()).getArtifact("exclusionList", listName));
+    }
+
     @RequestMapping(value = "/{stepName}", method = RequestMethod.PUT)
     @ApiImplicitParam(name = "step", required = true, paramType = "body", dataTypeClass = StepSchema.class)
     @Secured("ROLE_writeMatching")
