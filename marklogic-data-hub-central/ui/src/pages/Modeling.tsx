@@ -82,16 +82,16 @@ const Modeling: React.FC = () => {
     }
   }, [modelingOptions.view]);
 
-  let isMounted;
+  let isMountedRef = React.useRef(false);
   useEffect(() => {
-    isMounted = true;
+    isMountedRef.current = true;
     if (canReadEntityModel) {
       setDataModelFromServer();
       updateUserPreferencesFromConfig();
     }
     return () => {
       //When component unmounts
-      isMounted = false;
+      isMountedRef.current = false;
     };
   }, []);
 
@@ -109,7 +109,7 @@ const Modeling: React.FC = () => {
       const response = await primaryEntityTypes();
       if (response) {
         let model: any = [];
-        let entityTypesArray:any = [];
+        let entityTypesArray: any = [];
         let isDraft = false;
         await response["data"].forEach(entity => {
           if (!entity.model.info.draftDeleted) {
@@ -122,7 +122,7 @@ const Modeling: React.FC = () => {
             isDraft = true;
           }
         });
-        if (isMounted) {
+        if (isMountedRef.current) {
           setDataModel(model);
         }
         if (response["data"].length > 0) {
@@ -147,7 +147,7 @@ const Modeling: React.FC = () => {
     }
   };
 
-  const saveAllEntitiesToServer = async (entitiesArray, errorHandler: Function|undefined) => {
+  const saveAllEntitiesToServer = async (entitiesArray, errorHandler: Function | undefined) => {
     let isSuccess = true;
     try {
       let response;
@@ -229,7 +229,7 @@ const Modeling: React.FC = () => {
 
   const updateEntityTypesAndHideModal = async (entityName: string, description: string) => {
     if (!isEditModal) {
-      setAutoExpand(entityName+"-Entity Type");
+      setAutoExpand(entityName + "-Entity Type");
     }
     toggleShowEntityModal(false);
     await setDataModelFromServer().then((resp => {
@@ -378,25 +378,25 @@ const Modeling: React.FC = () => {
   };
 
   const addButton =
-  <span className={styles.publishButtonParent}>
-    <span className={`${styles.publishButtonContainer} ${!canWriteEntityModel ? styles.addButton : undefined}`}>
-      <DropdownButton
-        aria-label="add-entity-type-concept-class"
-        align="end"
-        size="sm"
-        title={<span>Add<ChevronDown className="ms-2" /></span>}
-        onSelect={handleAddMenu}
-        className={!canWriteEntityModel ? styles.disabledPointerEvents : undefined}
-        disabled={!canWriteEntityModel}>
-        <Dropdown.Item eventKey="addNewEntityType">
-          <span aria-label={"add-entity-type"}>Add new entity type</span>
-        </Dropdown.Item>
-        <Dropdown.Item eventKey="addNewConceptClass">
-          <span aria-label={"add-concept-class"}>Add new concept class</span>
-        </Dropdown.Item>
-      </DropdownButton>
-    </span>
-  </span>;
+    <span className={styles.publishButtonParent}>
+      <span className={`${styles.publishButtonContainer} ${!canWriteEntityModel ? styles.addButton : undefined}`}>
+        <DropdownButton
+          aria-label="add-entity-type-concept-class"
+          align="end"
+          size="sm"
+          title={<span>Add<ChevronDown className="ms-2" /></span>}
+          onSelect={handleAddMenu}
+          className={!canWriteEntityModel ? styles.disabledPointerEvents : undefined}
+          disabled={!canWriteEntityModel}>
+          <Dropdown.Item eventKey="addNewEntityType">
+            <span aria-label={"add-entity-type"}>Add new entity type</span>
+          </Dropdown.Item>
+          <Dropdown.Item eventKey="addNewConceptClass">
+            <span aria-label={"add-concept-class"}>Add new concept class</span>
+          </Dropdown.Item>
+        </DropdownButton>
+      </span>
+    </span>;
 
   const publishIconStyle: CSSProperties = {
     width: "15px",
@@ -434,7 +434,7 @@ const Modeling: React.FC = () => {
     size="sm"
   >
     <span className={styles.publishButtonContainer}>
-      <FontAwesomeIcon icon={faUndoAlt} className={styles.revertButton}/>
+      <FontAwesomeIcon icon={faUndoAlt} className={styles.revertButton} />
       <span className={styles.publishButtonText}>Revert</span>
     </span>
   </HCButton>
@@ -455,7 +455,7 @@ const Modeling: React.FC = () => {
           <div className={styles.stickyHeader} style={{width: width - 138, maxWidth: width - 138}}>
             <div className={styles.intro}>
               <p>{tiles.model.intro}</p>
-              {<ViewSwitch handleViewChange={handleViewChange} selectedView={modelingOptions.view}/>}
+              {<ViewSwitch handleViewChange={handleViewChange} selectedView={modelingOptions.view} />}
             </div>
             {modelingOptions.isModified && (
               <div className={modelingOptions.isModified ? styles.alertContainer : ""}>
@@ -470,7 +470,7 @@ const Modeling: React.FC = () => {
               <div className={styles.header}>
                 <h1>Data Model</h1>
                 <div className={styles.buttonContainer}>
-                  <ModelingLegend/>
+                  <ModelingLegend />
                   <div style={{float: "right"}}>
                     {canWriteEntityModel ?
                       <span>{addButton}</span>
@@ -511,7 +511,7 @@ const Modeling: React.FC = () => {
           </div> : <>
             <div className={styles.intro}>
               <p>{tiles.model.intro}</p>
-              {<ViewSwitch handleViewChange={handleViewChange} selectedView={modelingOptions.view}/>}
+              {<ViewSwitch handleViewChange={handleViewChange} selectedView={modelingOptions.view} />}
             </div>
             {modelingOptions.isModified && (
               <div className={modelingOptions.isModified ? styles.alertContainer : ""}>
@@ -537,7 +537,7 @@ const Modeling: React.FC = () => {
               toggleIsEditModal={toggleIsEditModal}
               setDataModelFromServer={setDataModelFromServer}
               toggleConfirmModal={toggleConfirmModal}
-              toggleRevertConfirmModal = {toggleRevertConfirmModal}
+              toggleRevertConfirmModal={toggleRevertConfirmModal}
               setConfirmType={setConfirmType}
               hubCentralConfig={hubCentralConfig}
               updateHubCentralConfig={publishHubCentralConfig}
