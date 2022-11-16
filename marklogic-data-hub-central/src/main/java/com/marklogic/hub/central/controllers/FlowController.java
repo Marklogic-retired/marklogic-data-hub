@@ -41,10 +41,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -201,21 +204,26 @@ public class FlowController extends BaseController {
 
         JsonNode jsonFlow = FlowService.on(getHubClient().getStagingClient()).getFullFlow(flowName);
         Flow flow = new FlowImpl().deserialize(jsonFlow);
+
         Map<String, Step> steps = flow.getSteps();
-
-        List<String> stepNamesList = Arrays.asList(stepNames);
-        Map<String, String> stepNameAndNumbers = steps.keySet()
+        Set<String> stepNamesSet = new HashSet<>(Arrays.asList(stepNames));
+        List<String> stepNumbers = steps.keySet()
             .stream()
-            .filter(stepNumber -> stepNamesList.contains(steps.get(stepNumber).getName()))
-            .collect(Collectors.toMap(stepNumber -> steps.get(stepNumber).getName(), stepNumber -> stepNumber));
+            .filter(stepNumber -> {
+                String stepName = steps.get(stepNumber).getName();
+                if(stepNamesSet.contains(stepName)) {
+                    stepNamesSet.remove(stepName);
+                    return true;
+                }
+                return false;
+            })
+            .collect(Collectors.toList());
 
-        List<String> stepNumbers = new LinkedList<>();
-        for(String stepName: stepNames) {
-            if(stepNameAndNumbers.get(stepName) == null) {
-                throw new HttpClientErrorException(String.format("StepName %s doesn't exist in the flow %s", stepName, flowName), HttpStatus.BAD_REQUEST, null, null, null, null);
-            }
-            stepNumbers.add(stepNameAndNumbers.get(stepName));
+        if(stepNamesSet.size() > 0) {
+            throw new HttpClientErrorException(String.format("StepName %s doesn't exist in the flow %s",
+                String.join(", ", stepNamesSet), flowName), HttpStatus.BAD_REQUEST, null, null, null, null);
         }
+        Collections.sort(stepNumbers, Comparator.comparingInt(Integer::parseInt));
         return stepNumbers.toArray(new String[0]);
     }
 

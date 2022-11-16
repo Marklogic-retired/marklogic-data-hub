@@ -410,8 +410,8 @@ public class FlowControllerTest extends AbstractMvcTest {
                 OffsetDateTime step2Odt = OffsetDateTime.parse(step2StartTime);
                 OffsetDateTime step3Odt = OffsetDateTime.parse(step3StartTime);
 
-                assertEquals("2", response.get("lastAttemptedStep").asText());
-                assertEquals(1, step2Odt.compareTo(step3Odt), "Step2 should run after Step3 as provided in input");
+                assertEquals("3", response.get("lastAttemptedStep").asText());
+                assertEquals(1, step3Odt.compareTo(step2Odt), "Step3 should run after Step2 as defined in flow");
             });
 
         postWithParamList(PATH + "/CurateCustomerJSON/run", "stepNames", "")
