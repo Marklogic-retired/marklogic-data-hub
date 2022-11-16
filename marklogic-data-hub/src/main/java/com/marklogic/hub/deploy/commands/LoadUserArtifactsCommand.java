@@ -116,9 +116,10 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
             loadFlows(hubClient);
             loadStepDefinitions(hubClient);
             loadSteps(hubClient);
+            loadExclusionLists(hubClient);
             loadHubCentralConfig(hubClient);
             loadHubCentralConcepts(hubClient);
-            logger.info("Loaded flows, mappings, step definitions, steps, hubcentral config and concepts, time: " + (System.currentTimeMillis() - start) + "ms");
+            logger.info("Loaded flows, mappings, step definitions, steps, exclusion lists, hubcentral config, and concepts. time: " + (System.currentTimeMillis() - start) + "ms");
         }
         catch (IOException e) {
             throw new RuntimeException("Unable to load user artifacts, cause: " + e.getMessage(), e);
@@ -315,6 +316,22 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                 final String flowName = flow.get("name").asText();
                 logger.info(format("Loading flow with name '%s'", flowName));
                 service.setArtifact("flow", flowName, flow, "");
+            }
+        }
+    }
+
+    private void loadExclusionLists(HubClient hubClient) {
+        final Path listsPath = hubConfig.getHubProject().getProjectDir().resolve("exclusionLists");
+        if (listsPath.toFile().exists()) {
+            ArtifactService service = ArtifactService.on(hubClient.getStagingClient());
+            for (File file : listsPath.toFile().listFiles(f -> f.isFile() && f.getName().endsWith(".exclusionList.json"))) {
+                JsonNode exclusionList = readArtifact(file);
+                if (!exclusionList.has("name")) {
+                    throw new RuntimeException("Unable to load exclusion list from file: " + file + "; no 'name' property found");
+                }
+                final String listName = exclusionList.get("name").asText();
+                logger.info(format("Loading exclusion list with name '%s'", listName));
+                service.setArtifact("exclusionList", listName, exclusionList, "/exclusionLists/");
             }
         }
     }

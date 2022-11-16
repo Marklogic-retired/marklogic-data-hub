@@ -51,6 +51,7 @@ public interface ArtifactService {
             private BaseProxy.DBFunctionRequest req_setArtifact;
             private BaseProxy.DBFunctionRequest req_clearUserArtifacts;
             private BaseProxy.DBFunctionRequest req_getList;
+            private BaseProxy.DBFunctionRequest req_getArtifact;
 
             private ArtifactServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
@@ -64,6 +65,8 @@ public interface ArtifactService {
                     "clearUserArtifacts.sjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_getList = this.baseProxy.request(
                     "getList.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                this.req_getArtifact = this.baseProxy.request(
+                    "getArtifact.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
             }
 
             @Override
@@ -120,6 +123,22 @@ public interface ArtifactService {
                           ).responseSingle(false, Format.JSON)
                 );
             }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode getArtifact(String artifactType, String artifactName) {
+                return getArtifact(
+                    this.req_getArtifact.on(this.dbClient), artifactType, artifactName
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode getArtifact(BaseProxy.DBFunctionRequest request, String artifactType, String artifactName) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.atomicParam("artifactType", false, BaseProxy.StringType.fromString(artifactType)),
+                          BaseProxy.atomicParam("artifactName", false, BaseProxy.StringType.fromString(artifactName))
+                          ).responseSingle(false, Format.JSON)
+                );
+            }
         }
 
         return new ArtifactServiceImpl(db, serviceDeclaration);
@@ -159,5 +178,14 @@ public interface ArtifactService {
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode getList(String artifactType);
+
+  /**
+   * Invokes the getArtifact operation on the database server
+   *
+   * @param artifactType	provides input
+   * @param artifactName	provides input
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode getArtifact(String artifactType, String artifactName);
 
 }

@@ -21,6 +21,7 @@ const LoadData = require('./loadData');
 const Mapping = require('./mapping');
 const Matching = require('./matching');
 const Merging = require('./merging');
+const ExclusionList = require('./exclusionList');
 const Mastering = require('./mastering');
 const StepDef = require('./stepDefinition');
 const CustomStep = require('./customStep')
@@ -39,7 +40,8 @@ const registeredArtifactTypes = {
     matching: Matching,
     merging: Merging,
     mastering: Mastering,
-    custom: CustomStep
+    custom: CustomStep,
+    exclusionList: ExclusionList
 };
 
 const entityServiceDrivenArtifactTypes = ['mapping', 'custom', 'matching', 'merging'];
