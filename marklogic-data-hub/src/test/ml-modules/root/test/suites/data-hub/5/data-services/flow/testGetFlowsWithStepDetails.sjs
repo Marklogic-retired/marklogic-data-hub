@@ -15,10 +15,10 @@ flowService.addStepToFlow(flowName, "mapping", mappingName);
 stepService.createDefaultIngestionStep(ingestionName);
 flowService.addStepToFlow(flowName, "ingestion", ingestionName);
 const flows = flowService.getFlowsWithStepDetails();
-const flow = flows[0];
+const flow = flows.filter(flow => flow.name === "flowWithStepDetails")[0];
 
 [
-  test.assertEqual(1, flows.length, "Expecting just the single flow"),
+  test.assertEqual(2, flows.length, "Expecting two flows"),
   test.assertEqual(flowName, flow.name),
   test.assertFalse(flow.hasOwnProperty("description"), "Descripton isn't present because the flow doesn't have one"),
 
