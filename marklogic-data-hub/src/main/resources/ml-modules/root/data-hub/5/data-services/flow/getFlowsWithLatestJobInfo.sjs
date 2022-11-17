@@ -19,8 +19,13 @@
 
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-flow", "execute");
 
+const Artifacts = require('/data-hub/5/artifacts/core.sjs');
 const flowUtils = require("./flow-lib.sjs");
 
-var name;
+let flows = Artifacts.getArtifacts("flow");
+const flowsWithLatestJobInfo = [];
+flows.forEach(flow => {
+  flowsWithLatestJobInfo.push(flowUtils.getFlowWithLatestJobInfo(flow.name));
+});
 
-flowUtils.getFlowWithLatestJobInfo(name);
+flowsWithLatestJobInfo;

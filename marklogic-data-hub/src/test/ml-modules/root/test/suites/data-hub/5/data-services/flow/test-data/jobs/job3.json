@@ -1,0 +1,31 @@
+{
+  "job": {
+    "jobId": "350da405-c1e9-4fa7-8269-d9aefe3b4bzz",
+    "flow": "flowWithStepDetails2",
+    "user": "admin",
+    "lastAttemptedStep": "1",
+    "lastCompletedStep": "1",
+    "jobStatus": "finished",
+    "timeStarted": "2019-06-26T23:11:22.802106Z",
+    "timeEnded": "2019-06-26T23:11:33.026434Z",
+    "stepResponses": {
+      "1": {
+        "flowName": "flowWithStepDetails2",
+        "stepName": "testIngestion",
+        "stepDefinitionName": "default-ingestion",
+        "stepDefinitionType": "ingestion",
+        "stepOutput": null,
+        "fullOutput": null,
+        "status": "completed step 1",
+        "totalEvents": 829,
+        "successfulEvents": 829,
+        "failedEvents": 0,
+        "successfulBatches": 9,
+        "failedBatches": 0,
+        "success": true,
+        "stepStartTime": "2019-06-26T23:11:22.836606Z",
+        "stepEndTime": "2019-06-26T23:11:27.462273Z"
+      }
+    }
+  }
+}
