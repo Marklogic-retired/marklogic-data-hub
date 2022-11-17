@@ -15,6 +15,8 @@
  */
 'use strict';
 const Artifacts = require('/data-hub/5/artifacts/core.sjs');
+const config = require("/com.marklogic.hub/config.sjs");
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
 const stepMap = {};
@@ -103,6 +105,38 @@ function buildStepMap(flows){
   }
 }
 
+function getFlowWithLatestJobInfo(flowName) {
+  let flowWithStepDetails = getFlowsWithStepDetails(flowName);
+  fn.head(hubUtils.invokeFunction(function() {
+    flowWithStepDetails["steps"].forEach((step) => {
+      const jobQueries = [];
+      jobQueries.push(cts.collectionQuery('Job'));
+      jobQueries.push(cts.jsonPropertyValueQuery("flow",flowWithStepDetails.name));
+      jobQueries.push(cts.jsonPropertyValueQuery("stepName",step.stepName));
+      //A flow may contain same step more then once. 'status' in step response always contains step number
+      // jobQueries.push(cts.jsonPropertyWordQuery("status",step.stepNumber));
+
+      let latestJob = fn.head(fn.subsequence(cts.search(cts.andQuery(jobQueries),[cts.indexOrder(cts.jsonPropertyReference("timeStarted"), "descending")]), 1, 1));
+      if(latestJob) {
+        latestJob = latestJob.toObject();
+        let stepRunResponses = latestJob.job.stepResponses;
+        if (stepRunResponses && hubUtils.getObjectValues(stepRunResponses).length > 0) {
+          let stepRunResponse = hubUtils.getObjectValues(stepRunResponses).find(
+            (el) => el.stepName === step.stepName
+          );
+          if (stepRunResponse) {
+            step.jobId = latestJob.job.jobId;
+            step.lastRunStatus = stepRunResponse.status;
+            step.stepEndTime = stepRunResponse.stepEndTime;
+          }
+        }
+      }
+    });
+  }, config.JOBDATABASE));
+  return flowWithStepDetails;
+}
+
 module.exports = {
-  getFlowsWithStepDetails
+  getFlowsWithStepDetails,
+  getFlowWithLatestJobInfo
 };

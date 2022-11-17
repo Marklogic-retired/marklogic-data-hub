@@ -26,6 +26,10 @@ function getFlowWithLatestJobInfo(name) {
   return invoke("getFlowWithLatestJobInfo.sjs", {name});
 }
 
+function getFlowsWithLatestJobInfo(name) {
+  return invoke("getFlowsWithLatestJobInfo.sjs", {});
+}
+
 function getFullFlow(flowName) {
   return invoke("getFullFlow.sjs", {flowName});
 }
@@ -47,5 +51,6 @@ module.exports = {
   getFullFlow,
   removeStepFromFlow,
   updateFlow,
-  getFlowWithLatestJobInfo
+  getFlowWithLatestJobInfo,
+  getFlowsWithLatestJobInfo
 };
