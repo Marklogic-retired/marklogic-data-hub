@@ -89,7 +89,7 @@ const Facet: React.FC<Props> = ({name, facetType, facetCategory, facetValues, co
     addFacetValues(constraint, updatedChecked, facetType, facetCategory);
   };
 
-  const handleClick = (e, constraint?, value?, facetType?) => {
+  const handleClick = (e, _constraint?, value?, _facetType?) => {
 
     if (e?.target) {
       let index = checked.indexOf(e.target.value);
@@ -105,7 +105,7 @@ const Facet: React.FC<Props> = ({name, facetType, facetCategory, facetValues, co
     } else {
       let isNested = constraint === propertyPath ? false : true;
       setChecked([...checked, value]);
-      updateSelectedFacets(constraint, [...checked, value], facetType, isNested);
+      updateSelectedFacets(_constraint, [...checked, value], _facetType, isNested);
     }
   };
 

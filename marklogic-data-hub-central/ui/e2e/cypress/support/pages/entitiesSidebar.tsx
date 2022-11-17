@@ -80,7 +80,7 @@ class BaseEntitySidebar {
   }
 
   selectBaseEntityOption(entityName: string) {
-    cy.get(`[aria-label="base-option-${entityName}"]`).should("be.visible").scrollIntoView().click();
+    cy.get(`[aria-label="base-option-${entityName}"]`).scrollIntoView().should("be.visible").click();
   }
 
 
