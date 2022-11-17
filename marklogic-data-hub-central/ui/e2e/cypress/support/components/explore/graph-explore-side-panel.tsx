@@ -11,7 +11,7 @@ class GraphExploreSidePanel {
     return cy.get("[data-cy=instance]");
   }
   getTableCellValueByName(text : String) {
-    return cy.get(`[title="${text}"]`).next();
+    return cy.get(".hc-table_tableCell__1pdIz").contains(`${text}`).parent().next();
   }
   closeGraphExploreSidePanel() {
     cy.get(`[aria-label="closeGraphExploreSidePanel"]`).scrollIntoView().click({force: true});

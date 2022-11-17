@@ -82,16 +82,16 @@ const Modeling: React.FC = () => {
     }
   }, [modelingOptions.view]);
 
-  let isMounted;
+  let isMountedRef = React.useRef(false);
   useEffect(() => {
-    isMounted = true;
+    isMountedRef.current = true;
     if (canReadEntityModel) {
       setDataModelFromServer();
       updateUserPreferencesFromConfig();
     }
     return () => {
       //When component unmounts
-      isMounted = false;
+      isMountedRef.current = false;
     };
   }, []);
 
@@ -122,7 +122,7 @@ const Modeling: React.FC = () => {
             isDraft = true;
           }
         });
-        if (isMounted) {
+        if (isMountedRef.current) {
           setDataModel(model);
         }
         if (response["data"].length > 0) {
