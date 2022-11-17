@@ -39,7 +39,6 @@ describe("Leaf Nodes", () => {
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
     cy.waitForAsyncRequest();
-    entitiesSidebar.getBaseEntityOption("Customer").scrollIntoView().should("be.visible");
     cy.wait(2000);
 
     graphExplore.fit();
@@ -119,7 +118,6 @@ describe("Leaf Nodes", () => {
     browsePage.removeBaseEntity("Customer");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Product");
-    entitiesSidebar.getBaseEntityOption("Product").scrollIntoView().should("be.visible");
     cy.wait(2000);
     cy.waitForAsyncRequest();
 

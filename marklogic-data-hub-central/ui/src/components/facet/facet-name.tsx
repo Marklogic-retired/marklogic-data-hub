@@ -6,7 +6,6 @@ import {DynamicIcons, HCCheckbox, HCFacetIndicator} from "@components/common";
 import {defaultConceptIcon} from "@config/explore.config";
 
 interface Props {
-  key: number;
   category?:string;
   name: string;
   facet: {value: string, count: number, max?: any, name: string};
@@ -15,7 +14,7 @@ interface Props {
   handleClick: (e:any, constraint?: any, value?: any, facetType?: any)=>void;
 }
 
-const FacetName: React.FC<Props> = ({key, category, name, facet, checked, index, handleClick}) => {
+const FacetName: React.FC<Props> = ({category, name, facet, checked, index, handleClick}) => {
   const facetValue: string = category && category === "concept" ? facet.value.split("/").pop()! : facet.value;
   const id = `${stringConverter(name)}-${facetValue}-checkbox`;
   const percentage = isNaN(facet.max) ? 0 : facet.count*100/facet.max;
