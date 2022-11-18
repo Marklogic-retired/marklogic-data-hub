@@ -166,7 +166,21 @@ const mergeRuleStep = {
       "mergeModulePath": "/test/suites/data-hub/5/mastering/matching/test-data/mergeableInterceptors.sjs",
       "mergeModuleFunction": "customMerge",
     }
-  ]
+  ],
+  "targetCollections": {
+    "onMerge": {
+      "add": [""],
+      "remove": []
+    },
+    "onNoMatch": {
+      "add": [""],
+      "remove": []
+    },
+    "onNotification": {
+      "add": [""],
+      "remove": []
+    }
+  }
 };
 
 function copyStep(step) {
@@ -235,6 +249,36 @@ function testBuildMergeDocumentJson() {
   );
   assertions.push(
     test.assertEqual(15, fn.count(mergedDocument.xpath("/envelope/triples")), `Should have 15 triples (1 from raw + 14 from TDEs). Merge document: ${xdmp.toJsonString(mergedDocument)}`)
+  );
+  assertions.push(
+    test.assertEqual(15, fn.count(mergedDocument.xpath("/envelope/triples")), `Should have 15 triples (1 from raw + 14 from TDEs). Merge document: ${xdmp.toJsonString(mergedDocument)}`)
+  );
+  const mergeContentObject = {context: {collections: [], permissions: []}};
+  mergeableInstance.applyDocumentContext(mergeContentObject, {action:"merge"});
+  assertions.push(
+    test.assertEqual(3, mergeContentObject.context.collections.length),
+    test.assertTrue(mergeContentObject.context.collections.includes("sm-Customer-merged")),
+    test.assertTrue(mergeContentObject.context.collections.includes("sm-Customer-mastered")),
+    test.assertTrue(mergeContentObject.context.collections.includes("Customer"))
+  );
+  const noMatchContentObject = {context: {collections: [], permissions: []}};
+  mergeableInstance.applyDocumentContext(noMatchContentObject, {action:"no-action"});
+  assertions.push(
+    test.assertEqual(2, noMatchContentObject.context.collections.length),
+    test.assertTrue(noMatchContentObject.context.collections.includes("sm-Customer-mastered")),
+    test.assertTrue(noMatchContentObject.context.collections.includes("Customer"))
+  );
+  const archivedContentObject = {context: {collections: [], permissions: []}};
+  mergeableInstance.applyDocumentContext(archivedContentObject, {action:"archive"});
+  assertions.push(
+    test.assertEqual(1, archivedContentObject.context.collections.length),
+    test.assertTrue(archivedContentObject.context.collections.includes("sm-Customer-archived"))
+  );
+  const notifyContentObject = {context: {collections: [], permissions: []}};
+  mergeableInstance.applyDocumentContext(notifyContentObject, {action:"notify"});
+  assertions.push(
+    test.assertEqual(1, notifyContentObject.context.collections.length),
+    test.assertTrue(notifyContentObject.context.collections.includes("sm-Customer-notification"))
   );
   return assertions;
 }
