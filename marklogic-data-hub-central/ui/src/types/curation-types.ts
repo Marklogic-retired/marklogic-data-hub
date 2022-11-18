@@ -70,7 +70,8 @@ export interface MatchRuleset {
   name: string,
   weight: number,
   matchRules: MatchRule[],
-  rulesetType? : string
+  rulesetType? : string,
+  fuzzyMatch?: boolean
 }
 
 export interface MatchRule {

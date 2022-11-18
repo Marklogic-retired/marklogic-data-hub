@@ -89,6 +89,11 @@
   font-weight: 900;
 }
 
+.fuzzyText {
+  font-weight: 900;
+  margin-left: 40px;
+}
+
 .reduceToggle {
   margin-left: 12px !important;
 }
@@ -198,4 +203,9 @@ margin-bottom: 40px;
 
 .switchReduceToggle {
   font-size: 1.5em;
+}
+
+.switchFuzzy {
+  font-size: 1.5em;
+  margin-left: 20px;
 }

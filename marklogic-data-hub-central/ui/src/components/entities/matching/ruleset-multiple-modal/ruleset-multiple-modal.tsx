@@ -82,6 +82,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
   const [discardChangesVisible, setDiscardChangesVisible] = useState(false);
 
   const [reduceValue, setReduceValue] = useState(false);
+  const [fuzzyMatching, setFuzzyMatching] = useState(false);
 
   const [multipleRulesetsData, setMultipleRulesetsData] = useState<any[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
@@ -112,6 +113,9 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       let editRuleset = curationRuleset;
       if (editRuleset.reduce) {
         setReduceValue(true);
+      }
+      if (editRuleset.fuzzyMatch) {
+        setFuzzyMatching(true);
       }
 
       if (editRuleset.name) {
@@ -340,6 +344,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     setMatchTypeErrorMessages({});
     setSelectedRowKeys([]);
     setReduceValue(false);
+    setFuzzyMatching(false);
     setThesaurusValues({});
     setThesaurusErrorMessages({});
     setFilterValues({});
@@ -369,6 +374,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     setIsFunctionTouched(false);
     setIsNamespaceTouched(false);
     setReduceValue(false);
+    setFuzzyMatching(false);
   };
 
   const updateStepArtifact = async (matchRuleset: MatchRuleset) => {
@@ -536,6 +542,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
             name: rulesetName,
             weight: Object.keys(curationRuleset).length !== 0 ? curationRuleset["weight"] : 0,
             ...({reduce: reduceValue}),
+            fuzzyMatch: fuzzyMatching,
             matchRules: matchRules,
             rulesetType: "multiple"
           };
@@ -859,6 +866,15 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       </div>
     </div>
   );
+
+  const onFuzzyMatching = ({target}) => {
+    const {checked} = target;
+    if (checked) {
+      setFuzzyMatching(true);
+    } else {
+      setFuzzyMatching(false);
+    }
+  };
 
   const onToggleReduce = ({target}) => {
     const {checked} = target;
@@ -1307,6 +1323,21 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
               <div className={"p-2 d-flex"}>
                 <HCTooltip text={<span aria-label="reduce-tooltip-text">{MatchingStepTooltips.reduceToggle}</span>} id="reduce-weight-tooltip" placement="right">
                   <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} className={styles.icon} size={13} />
+                </HCTooltip>
+              </div>
+
+              <FormLabel column lg={"auto"} className={styles.fuzzyText}>{"Fuzzy Matching"}</FormLabel>
+              <FormCheck
+                type="switch"
+                data-testid="fuzzyMatchingMultiple"
+                defaultChecked={props.editRuleset.fuzzyMatch}
+                className={styles.switchFuzzy}
+                onChange={onFuzzyMatching}
+                aria-label="fuzzyMatchingMultiple"
+              />
+              <div className={"p-2 d-flex"}>
+                <HCTooltip text={<span aria-label="fuzzy-multiple-tooltip-text">{MatchingStepTooltips.fuzzyMatching}</span>} id="fuzzy-multiple-matching-tooltip" placement="right">
+                  <QuestionCircleFill aria-label="icon: question-circle-fuzzy" color={themeColors.defaults.questionCircle} className={styles.icon} size={13} />
                 </HCTooltip>
               </div>
             </Col>

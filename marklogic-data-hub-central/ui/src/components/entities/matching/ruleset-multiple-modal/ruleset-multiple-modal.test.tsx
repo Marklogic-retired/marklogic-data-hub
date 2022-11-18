@@ -53,7 +53,9 @@ describe("Matching Multiple Rulesets Modal component", () => {
     expect(getByLabelText("titleDescription")).toBeInTheDocument();
     expect(getByLabelText("rulesetName-input")).toBeInTheDocument();
     expect(getByText("Reduce Weight")).toBeInTheDocument();
+    expect(getByText("Fuzzy Matching")).toBeInTheDocument();
     expect(getByLabelText("reduceToggle")).toBeInTheDocument();
+    expect(getByLabelText("fuzzyMatchingMultiple")).toBeInTheDocument();
 
     // To verify delete icon is not present for new add multiple ruleset modal
     expect(queryByLabelText("editMultipleRulesetDeleteIcon")).not.toBeInTheDocument();
@@ -61,6 +63,10 @@ describe("Matching Multiple Rulesets Modal component", () => {
     let reduceInfoCircleIcon = screen.getByLabelText("icon: question-circle");
     userEvent.hover(reduceInfoCircleIcon);
     await wait(() => expect(screen.getByLabelText("reduce-tooltip-text")));
+
+    let reduceInfoCircleIconFuzzy = screen.getByLabelText("icon: question-circle-fuzzy");
+    userEvent.hover(reduceInfoCircleIconFuzzy);
+    await (() => expect(screen.getByLabelText("fuzzy-multiple-tooltip-text")));
 
     expect(getByText("Match on:")).toBeInTheDocument();
     expect(getByLabelText("modalTitleLegend")).toBeInTheDocument();
