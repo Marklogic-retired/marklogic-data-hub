@@ -51,9 +51,7 @@
   ],
   "targetCollections": {
     "onMerge": {
-      "add": [
-        ""
-      ],
+      "add": [],
       "remove": [
         "no-match",
         "likely-match"
@@ -63,17 +61,13 @@
       "add": [
         "no-match"
       ],
-      "remove": [
-        ""
-      ]
+      "remove": []
     },
     "onNotification": {
       "add": [
         "likely-match"
       ],
-      "remove": [
-        ""
-      ]
+      "remove": []
     }
   },
   "name": "merge-persons",
