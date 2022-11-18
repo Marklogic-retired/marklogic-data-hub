@@ -33,6 +33,7 @@ describe("Test '/Explore' graph right panel", () => {
     graphExplore.getGraphVisCanvas().should("be.visible");
     cy.wait(8000); //nodes need to stabilize first, "graphExplore.stopStabilization()" does not seem to work
     browsePage.waitForSpinnerToDisappear();
+    browsePage.search("10258");
 
     cy.log("**Picking up a node**");
     graphExplore.focusNode(ExploreGraphNodes.ORDER_10258);
@@ -89,6 +90,7 @@ describe("Test '/Explore' graph right panel", () => {
 
     cy.log("**Close side panel**");
     graphExploreSidePanel.closeGraphExploreSidePanel();
+    browsePage.search("Kettle");
 
     cy.log("**Picking up a concept node**");
     graphExplore.focusNode(ExploreGraphNodes.CONCEPT_KETTLE);
