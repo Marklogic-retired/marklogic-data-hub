@@ -647,11 +647,16 @@ const GraphVis: React.FC<Props> = (props) => {
         if (e.model.definitions[e.entityName].hasOwnProperty("relatedConcepts")) {
           let relatedConcepts: any = e.model.definitions[e.entityName].relatedConcepts;
           relatedConcepts.forEach(obj => {
+            let relationshipName = obj.predicate;
+            if (relationshipName.length > 20) {
+              relationshipName = relationshipName.substring(0, 20) + "...";
+              if (title !== undefined) title = obj.relationshipName + "\n" + title;
+            }
             edges.push({
               ...graphConfig.defaultEdgeProps,
               from: e.entityName,
               to: obj.conceptClass,
-              label: obj.predicate,
+              label: relationshipName,
               predicate: obj.predicate,
               joinPropertyName: obj.context,
               id: e.entityName + "-" + obj.predicate + "-" + obj.conceptClass + "-via-" + obj.context,
