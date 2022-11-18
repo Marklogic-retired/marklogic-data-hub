@@ -80,6 +80,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
   const [isNamespaceTouched, setIsNamespaceTouched] = useState(false);
   const [discardChangesVisible, setDiscardChangesVisible] = useState(false);
   const [reduceValue, setReduceValue] = useState(false);
+  const [fuzzyMatching, setFuzzyMatching] = useState(false);
 
   let curationRuleset = props.editRuleset;
   if (props.editRuleset.hasOwnProperty("index")) {
@@ -99,6 +100,9 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
       let matchType = editRuleset["matchRules"][0]["matchType"];
       if (editRuleset.reduce) {
         setReduceValue(true);
+      }
+      if (editRuleset.fuzzyMatch) {
+        setFuzzyMatching(true);
       }
       setMatchType(matchType);
       if (matchType === "custom") {
@@ -203,6 +207,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     setSelectedProperty(undefined);
     setMatchType(undefined);
     setReduceValue(false);
+    setFuzzyMatching(false);
     setPropertyTypeErrorMessage("");
     setMatchTypeErrorMessage("");
     setThesaurusValue("");
@@ -232,6 +237,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     setIsFunctionTouched(false);
     setIsNamespaceTouched(false);
     setReduceValue(false);
+    setFuzzyMatching(false);
   };
 
   const getSelectedPropertyValue = (selectedProperty) => {
@@ -268,6 +274,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
         name: rulesetName,
         weight: Object.keys(curationRuleset).length !== 0 ? curationRuleset["weight"] : 0,
         ...({reduce: reduceValue}),
+        fuzzyMatch: fuzzyMatching,
         matchRules: [matchRule]
       };
 
@@ -299,6 +306,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
         name: rulesetName,
         weight: Object.keys(curationRuleset).length !== 0 ? curationRuleset["weight"] : 0,
         ...({reduce: reduceValue}),
+        fuzzyMatch: fuzzyMatching,
         matchRules: [synonymMatchRule]
       };
 
@@ -338,6 +346,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
         name: rulesetName,
         weight: Object.keys(curationRuleset).length !== 0 ? curationRuleset["weight"] : 0,
         ...({reduce: reduceValue}),
+        fuzzyMatch: fuzzyMatching,
         matchRules: [doubleMetaphoneMatchRule]
       };
 
@@ -376,6 +385,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
         name: rulesetName,
         weight: Object.keys(curationRuleset).length !== 0 ? curationRuleset["weight"] : 0,
         ...({reduce: reduceValue}),
+        fuzzyMatch: fuzzyMatching,
         matchRules: [customMatchRule]
       };
 
@@ -525,7 +535,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
                 id="thesaurus-uri-input"
                 ariaLabel="thesaurus-uri-input"
                 placeholder="Enter thesaurus URI"
-                className={styles.input}
+                className={styles.inputAux}
                 value={thesaurusValue}
                 onChange={handleInputChange}
                 onBlur={handleInputChange}
@@ -550,7 +560,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
             id="filter-input"
             ariaLabel="filter-input"
             placeholder="Enter a node in the thesaurus to use as a filter"
-            className={styles.input}
+            className={styles.inputAux}
             value={filterValue}
             onChange={handleInputChange}
             onBlur={handleInputChange}
@@ -576,7 +586,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
                 id="dictionary-uri-input"
                 ariaLabel="dictionary-uri-input"
                 placeholder="Enter dictionary URI"
-                className={styles.input}
+                className={styles.inputDictionaryUriAndDistance}
                 value={dictionaryValue}
                 onChange={handleInputChange}
                 onBlur={handleInputChange}
@@ -603,7 +613,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
                 id="distance-threshold-input"
                 ariaLabel="distance-threshold-input"
                 placeholder="Enter distance threshold"
-                className={styles.input}
+                className={styles.inputDictionaryUriAndDistance}
                 value={distanceThresholdValue}
                 onChange={handleInputChange}
                 onBlur={handleInputChange}
@@ -731,6 +741,15 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     }
   };
 
+  const onFuzzyMatching = ({target}) => {
+    const {checked} = target;
+    if (checked) {
+      setFuzzyMatching(true);
+    } else {
+      setFuzzyMatching(false);
+    }
+  };
+
   const confirmAction = () => {
     props.toggleModal(false);
     resetModal();
@@ -779,6 +798,24 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
               />
               <div className={"p-2 d-flex align-items-center"}>
                 <HCTooltip text={<span aria-label="reduce-tooltip-text">{MatchingStepTooltips.reduceToggle}</span>} id="reduce-tooltip" placement="top">
+                  <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} aria-label="icon: question-circle-reduce" />
+                </HCTooltip>
+              </div>
+            </Col>
+          </Row>
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3} className={styles.reduceWeightText}>{"Fuzzy Matching"}</FormLabel>
+            <Col className={"d-flex align-items-center"}>
+              <FormCheck
+                type="switch"
+                data-testid="fuzzyMatching"
+                defaultChecked={props.editRuleset.fuzzyMatch}
+                className={styles.switchReduceToggle}
+                onChange={onFuzzyMatching}
+                aria-label="fuzzyMatching"
+              />
+              <div className={"p-2 d-flex align-items-center"}>
+                <HCTooltip text={<span aria-label="fuzzy-tooltip-text">{MatchingStepTooltips.fuzzyMatching}</span>} id="fuzzy-tooltip" placement="top">
                   <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} aria-label="icon: question-circle" />
                 </HCTooltip>
               </div>
@@ -810,7 +847,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
             <Col>
               <Row>
                 <Col className={matchTypeErrorMessage ? "d-flex has-error" : "d-flex"}>
-                  <div className={styles.input}>
+                  <div className={styles.inputMatchType}>
                     <Select
                       id="match-type-select-wrapper"
                       inputId="match-type"

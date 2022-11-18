@@ -240,7 +240,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
     expect(queryByText("Add Match Ruleset for Single Property")).toBeInTheDocument();
     expect(getByText("Reduce Weight")).toBeInTheDocument();
-    let reduceInfoCircleIcon = screen.getByLabelText("icon: question-circle");
+    let reduceInfoCircleIcon = screen.getByLabelText("icon: question-circle-reduce");
     userEvent.hover(reduceInfoCircleIcon);
     expect(screen.getByLabelText("reduce-tooltip-text"));
 
