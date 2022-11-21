@@ -82,7 +82,8 @@
     "client": "react-app-rewired start",
     "lint": "eslint --ext .js,.ts,.tsx",
     "eject": "react-scripts eject",
-    "preinstall": "npx npm-force-resolutions"
+    "preinstall": "npx npm-force-resolutions",
+    "prepare": "cd ../../ && husky install ./marklogic-data-hub-central/ui/.husky"
   },
   "resolutions": {
     "shell-quote": "^1.7.3",
@@ -163,7 +164,9 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-react": "^7.21.3",
     "eslint-plugin-standard": "^4.0.1",
+    "husky": "^8.0.2",
     "jest-canvas-mock": "^2.3.1",
+    "lint-staged": "^13.0.3",
     "path": "^0.12.7",
     "readable-stream": "3.5.0",
     "nan": "2.14.1",

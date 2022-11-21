@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+cd marklogic-data-hub-central/ui
+npx lint-staged --quiet
