@@ -88,54 +88,57 @@ public class GetRecordTest extends AbstractHubCoreTest {
 
     @Test
     public void testRecordHistoryWithTwoProvenanceRecords() {
-        installProjectInFolder("test-projects/provenance-test" );
-        String path = "test-projects/provenance-test/data/customers";
+        synchronized(this) {
+            installProjectInFolder("test-projects/provenance-test" );
+            String path = "test-projects/provenance-test/data/customers";
+            RunStepResponse mappingStepResponse = null;
+            FlowInputs inputs = null;
+            FlowRunner flowRunner = null;
 
-        FlowInputs inputs = new FlowInputs("inline");
-        inputs.setInputFilePath(readFileFromClasspath(path).getAbsolutePath());
-        FlowRunner flowRunner = new FlowRunnerImpl(getHubClient());
-        RunFlowResponse flowResponse = flowRunner.runFlow(inputs);
-        flowRunner.awaitCompletion();
+            try {
+                   inputs = new FlowInputs("inline");
+                   inputs.setInputFilePath(readFileFromClasspath(path).getAbsolutePath());
+                   flowRunner = new FlowRunnerImpl(getHubClient());
+                   RunFlowResponse flowResponse = flowRunner.runFlow(inputs);
+                   flowRunner.awaitCompletion();
+                   mappingStepResponse = flowResponse.getStepResponses().get("2");
+            } catch (Error e) {
+                    logger.error("Error getting step " + e.getMessage());
+            }
 
-        RunStepResponse mappingStepResponse = flowResponse.getStepResponses().get("2");
-        try {
-            RunStepResponse mappingStepResponseLog = flowResponse.getStepResponses().get("2");
-        } catch (Error e) {
-            logger.error("Error getting step "  + e.getMessage());
+            assertEquals(true, mappingStepResponse.isSuccess(), "mappingStepResponse: " + mappingStepResponse.toString() );
+            assertNull( mappingStepResponse.getStepOutput());
+
+            ObjectNode response = (ObjectNode) service.getRecord("/customers/customer1.json");
+            ArrayNode history = (ArrayNode) response.get("history");
+            assertEquals(2, history.size());
+            assertNotNull(history.get(0).get("updatedTime"));
+            assertEquals("inline", history.get(0).get("flow").asText());
+            assertEquals("map", history.get(0).get("step").asText());
+            assertEquals(getHubConfig().getMlUsername(), history.get(0).get("user").asText());
+            assertNotNull(history.get(1).get("updatedTime"));
+            assertEquals("inline", history.get(1).get("flow").asText());
+            assertEquals("ingest", history.get(1).get("step").asText());
+            assertEquals(getHubConfig().getMlUsername(), history.get(1).get("user").asText());
+
+            inputs.setFlowName("referenced");
+            inputs.setInputFilePath(readFileFromClasspath(path).getAbsolutePath());
+            flowRunner = new FlowRunnerImpl(getHubClient());
+            flowRunner.runFlow(inputs);
+            flowRunner.awaitCompletion();
+
+            response = (ObjectNode) service.getRecord("/history-test/customer1.json");
+            history = (ArrayNode) response.get("history");
+            assertEquals(2, history.size());
+            assertNotNull(history.get(0).get("updatedTime"));
+            assertEquals("referenced", history.get(0).get("flow").asText());
+            assertEquals("map-customer", history.get(0).get("step").asText());
+            assertEquals(getHubConfig().getMlUsername(), history.get(0).get("user").asText());
+            assertNotNull(history.get(1).get("updatedTime"));
+            assertEquals("referenced", history.get(1).get("flow").asText());
+            assertEquals("ingest-customer", history.get(1).get("step").asText());
+            assertEquals(getHubConfig().getMlUsername(), history.get(1).get("user").asText());
         }
-
-        assertEquals(true, mappingStepResponse.isSuccess(), "mappingStepResponse: " + mappingStepResponse.toString() );
-        assertNull( mappingStepResponse.getStepOutput());
-
-        ObjectNode response = (ObjectNode) service.getRecord("/customers/customer1.json");
-        ArrayNode history = (ArrayNode) response.get("history");
-        assertEquals(2, history.size());
-        assertNotNull(history.get(0).get("updatedTime"));
-        assertEquals("inline", history.get(0).get("flow").asText());
-        assertEquals("map", history.get(0).get("step").asText());
-        assertEquals(getHubConfig().getMlUsername(), history.get(0).get("user").asText());
-        assertNotNull(history.get(1).get("updatedTime"));
-        assertEquals("inline", history.get(1).get("flow").asText());
-        assertEquals("ingest", history.get(1).get("step").asText());
-        assertEquals(getHubConfig().getMlUsername(), history.get(1).get("user").asText());
-
-        inputs.setFlowName("referenced");
-        inputs.setInputFilePath(readFileFromClasspath(path).getAbsolutePath());
-        flowRunner = new FlowRunnerImpl(getHubClient());
-        flowRunner.runFlow(inputs);
-        flowRunner.awaitCompletion();
-
-        response = (ObjectNode) service.getRecord("/history-test/customer1.json");
-        history = (ArrayNode) response.get("history");
-        assertEquals(2, history.size());
-        assertNotNull(history.get(0).get("updatedTime"));
-        assertEquals("referenced", history.get(0).get("flow").asText());
-        assertEquals("map-customer", history.get(0).get("step").asText());
-        assertEquals(getHubConfig().getMlUsername(), history.get(0).get("user").asText());
-        assertNotNull(history.get(1).get("updatedTime"));
-        assertEquals("referenced", history.get(1).get("flow").asText());
-        assertEquals("ingest-customer", history.get(1).get("step").asText());
-        assertEquals(getHubConfig().getMlUsername(), history.get(1).get("user").asText());
     }
 
     @Test
