@@ -109,6 +109,7 @@ describe("Entity display settings in model tile", () => {
 
     cy.log("**Click on babyRegistry node and verify that properties on hover show up in the tooltip**");
     graphExplore.getGraphVisCanvas().should("exist");
+    browsePage.search("3039");
     graphExplore.stopStabilization();
     cy.wait(3000);
     browsePage.waitForSpinnerToDisappear();
