@@ -46,6 +46,16 @@ declare function extraction-template-generate(
     if (count($entity-type-names)=1) then ()
     else local-references($model)
   let $top-entity := top-entity($model, false())
+     let $top-entity-type := $model=>map:get("definitions")=>map:get($top-entity)
+     let $top-primary-key-name := map:get($top-entity-type, "primaryKey")
+      let $namespace-prefix := $top-entity-type=>map:get("namespacePrefix")
+         let $namespace-uri := $top-entity-type=>map:get("namespace")
+         let $prefix-value :=
+           if ($namespace-uri)
+           then
+             $namespace-prefix || ":"
+           else ""
+
   let $maybe-local-refs :=
     if (exists($top-entity)) then () else local-references($model)
   let $_ :=
@@ -377,8 +387,8 @@ declare function extraction-template-generate(
                                             <tde:context>{$property-name}[xs:string(.) ne ""]</tde:context>
                                             <tde:triples>
                                            <tde:triple>
-                                             <tde:subject><tde:val>$subject-iri</tde:val></tde:subject>
-                                             <tde:predicate><tde:val>sem:iri("{ model-graph-prefix($model) }/{ $entity-type-name }/{ $property-name}")</tde:val></tde:predicate>
+                                             <tde:subject><tde:val>$top-subject-iri</tde:val></tde:subject>
+                                             <tde:predicate><tde:val>sem:iri("{ model-graph-prefix($model) }/{ $entity-type-name }/{$property-name}")</tde:val></tde:predicate>
                                              <tde:object><tde:val>sem:iri(concat("{ $related-entity-type}/", fn:encode-for-uri(fn:string(.))))</tde:val></tde:object>
                                            </tde:triple>
                                            </tde:triples>
@@ -454,6 +464,8 @@ declare function extraction-template-generate(
       <tde:vars>
         <tde:var><tde:name>RDF</tde:name><tde:val>"http://www.w3.org/1999/02/22-rdf-syntax-ns#"</tde:val></tde:var>
         <tde:var><tde:name>RDF_TYPE</tde:name><tde:val>sem:iri(concat($RDF, "type"))</tde:val></tde:var>
+         <tde:var><tde:name>top-primary-key-val</tde:name><tde:val>fn:encode-for-uri(fn:head(./{ if ($prefix-value) then "(" || $prefix-value || $top-entity || "|" || $top-entity || ")" else $top-entity }/{ if ($prefix-value) then "(" || 	$prefix-value || $top-primary-key-name || "|" || $top-primary-key-name || ")" else $top-primary-key-name } ! xs:string(.)[. ne ""]))</tde:val></tde:var>
+         <tde:var><tde:name>top-subject-iri</tde:name><tde:val>sem:iri(concat("{ model-graph-prefix($model) }/{ $top-entity }/", if (fn:empty($top-primary-key-val) or $top-primary-key-val eq "") then sem:uuid-string() else $top-primary-key-val))</tde:val></tde:var>
       </tde:vars>
       <tde:path-namespaces>
         <tde:path-namespace>
