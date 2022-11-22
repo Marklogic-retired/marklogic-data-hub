@@ -15,7 +15,12 @@ import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -146,10 +151,10 @@ public class HubClientConfig {
         if (propertyConsumerMap == null) {
             initializePropertyConsumerMap();
         }
-        for (String propertyName : propertyConsumerMap.keySet()) {
-            String value = propertySource.apply(propertyName);
+        for (Map.Entry<String, Consumer<String>> propertyEntry : propertyConsumerMap.entrySet()) {
+            String value = propertySource.apply(propertyEntry.getKey());
             if (value != null) {
-                propertyConsumerMap.get(propertyName).accept(value);
+                propertyEntry.getValue().accept(value);
             }
         }
         instantiateSslObjects();
