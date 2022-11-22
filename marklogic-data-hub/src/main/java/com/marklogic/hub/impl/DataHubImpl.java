@@ -62,6 +62,7 @@ import com.marklogic.hub.HubProject;
 import com.marklogic.hub.InstallInfo;
 import com.marklogic.hub.MarkLogicVersion;
 import com.marklogic.hub.dataservices.ArtifactService;
+import com.marklogic.hub.deploy.commands.CheckSecurityConfiguration;
 import com.marklogic.hub.deploy.commands.CreateGranularPrivilegesCommand;
 import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
 import com.marklogic.hub.deploy.commands.DeployHubTriggersCommand;
@@ -805,6 +806,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
     private Map<String, List<Command>> getSecurityCommands() {
         Map<String, List<Command>> commandMap = new HashMap<>();
         List<Command> securityCommands = new ArrayList<Command>();
+        securityCommands.add(new CheckSecurityConfiguration(this.getHubConfig()));
         securityCommands.add(new DeployRolesCommand());
         securityCommands.add(new DeployUsersCommand());
         securityCommands.add(new DeployCertificateTemplatesCommand());
