@@ -507,7 +507,13 @@ const GraphViewSidePanel: React.FC<Props> = ({dataModel,
     return (
       <>
         <div className="p-3">
-          <HCTable pagination={true} childrenIndent={true} data={entityTypeDefinition?.relatedConcepts || []} columns={columns} data-testid="related-concept-table" rowKey="key" />
+          <HCTable
+            pagination={true}
+            data={entityTypeDefinition?.relatedConcepts || []}
+            columns={columns}
+            data-testid="related-concept-table"
+            rowKey="conceptClass"
+          />
         </div>
         <AddEditRelationship
           openRelationshipModal={openRelationshipModal}
