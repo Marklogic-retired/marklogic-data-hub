@@ -743,7 +743,7 @@ function handleWriteErrors(error, contentArray) {
       let data = error.data[0];
       let parseUriRegex = /^xdmp\.documentInsert\("([^"]+)".*$/
       let uri = parseUriRegex.test(data) ? data.replace(parseUriRegex, '$1'): null;
-      throw new Error(`Attempted to write to the same URI multiple times in the same transaction. ${ uri ? 'URI: ' + uri : ''}`);
+      httpUtils.throwBadRequest(`Attempted to write to the same URI multiple times in the same transaction. ${ uri ? 'URI: ' + uri : ''}`);
     case 'TDE-INDEX':
       let isFailOnSubjectIRI = error.data.includes('$subject-iri') || error.data.includes("$primary-key-val");
       if (isFailOnSubjectIRI) {
@@ -756,7 +756,7 @@ function handleWriteErrors(error, contentArray) {
           } else {
             entityTitle = contentValue.envelope.instance.info.title;
           }
-          throw new Error(`Cannot write ${entityTitle} instance with multiple values for identifier property. URI: ${failedContentObject.uri}`);
+          httpUtils.throwBadRequest(`Cannot write ${entityTitle} instance with multiple values for identifier property. URI: ${failedContentObject.uri}`);
         }
       }
     default:
