@@ -4,7 +4,12 @@ import {Modal, ModalProps} from "react-bootstrap";
 const HCModal: React.FC<ModalProps> = (props) => {
   return (
     <>
-      <Modal keyboard {...props} data-testid={props["data-testid"] || "hc-modal-component"}>
+      <Modal
+        keyboard
+        {...props}
+        data-testid={props["data-testid"] || "hc-modal-component"}
+        scrollable={props.scrollable ? props.scrollable : false}
+      >
         {props.children}
       </Modal>
     </>

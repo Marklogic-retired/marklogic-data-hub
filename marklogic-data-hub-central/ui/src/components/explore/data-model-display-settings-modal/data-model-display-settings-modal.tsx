@@ -220,6 +220,7 @@ const DataModelDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal,
       show={isVisible}
       dialogClassName={styles.modal1400w}
       onHide={() => closeModal()}
+      scrollable={true}
     >
       <Modal.Header className={"bb-none align-items-start"}>
         <span className={"fs-4"}>
@@ -279,8 +280,11 @@ const DataModelDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal,
             />
           }
         </div>
-        {modalFooter}
       </Modal.Body>
+      <Modal.Footer>
+        {modalFooter}
+      </Modal.Footer>
+
     </HCModal>
   );
 };
