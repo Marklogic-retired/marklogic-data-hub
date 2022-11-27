@@ -1277,12 +1277,11 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       dialogClassName={styles.modal1400w}
       onEntered={hideCheckboxes}
       onHide={closeModal}
+      scrollable={true}
     >
-      <Modal.Header className={"bb-none align-items-start"}>
+      <Modal.Header className={"bb-none align-items-start headerModal"}>
         {modalTitle}
         <button type="button" className="btn-close" aria-label="Close" onClick={closeModal}></button>
-      </Modal.Header>
-      <Modal.Body>
         <Form
           id="matching-multiple-ruleset"
           onSubmit={onSubmit}
@@ -1356,29 +1355,32 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
             <div className={`d-flex align-items-center ${styles.legendText}`}><FontAwesomeIcon className={`me-1 ${styles.structuredIcon}`} icon={faLayerGroup} /> Structured Type</div>
             <div className={styles.expandCollapseIcon}><ExpandCollapse handleSelection={(id) => handleExpandCollapse(id)} currentSelection={""} /></div>
           </div>
-
-          <div id="multipleRulesetsTableContainer" data-testid="multipleRulesetsTableContainer">
-            <HCTable
-              pagination={paginationOptions}
-              className={styles.entityTable}
-              onExpand={(record, expanded) => toggleRowExpanded(expanded, record)}
-              expandedRowKeys={expandedRowKeys}
-              rowClassName={() => styles.entityTableRows}
-              rowSelection={{...rowSelection}}
-              columns={multipleRulesetsTableColumns}
-              data={multipleRulesetsData}
-              rowKey="propertyPath"
-              component="ruleset-multiple-modal"
-              showExpandIndicator={true}
-              childrenIndent={true}
-              nestedParams={{headerColumns: multipleRulesetsTableColumns, state: [expandedRowKeys, setExpandedRowKeys]}}
-              keyUtil="key"
-              baseIndent={18}
-              subTableHeader={true}
-            />
-          </div>
-          {modalFooter}
         </Form>
+      </Modal.Header>
+      <Modal.Body>
+
+        <div id="multipleRulesetsTableContainer" data-testid="multipleRulesetsTableContainer">
+          <HCTable
+            pagination={paginationOptions}
+            className={styles.entityTable}
+            onExpand={(record, expanded) => toggleRowExpanded(expanded, record)}
+            expandedRowKeys={expandedRowKeys}
+            rowClassName={() => styles.entityTableRows}
+            rowSelection={{...rowSelection}}
+            columns={multipleRulesetsTableColumns}
+            data={multipleRulesetsData}
+            rowKey="propertyPath"
+            component="ruleset-multiple-modal"
+            showExpandIndicator={true}
+            childrenIndent={true}
+            nestedParams={{headerColumns: multipleRulesetsTableColumns, state: [expandedRowKeys, setExpandedRowKeys]}}
+            keyUtil="key"
+            baseIndent={18}
+            subTableHeader={true}
+          />
+        </div>
+
+
         {discardChanges}
         <DeleteModal
           isVisible={showDeleteConfirmModal}
@@ -1387,6 +1389,9 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
           confirmAction={confirmAction}
         />
       </Modal.Body>
+      <Modal.Footer>
+        {modalFooter}
+      </Modal.Footer>
     </HCModal>
   );
 };
