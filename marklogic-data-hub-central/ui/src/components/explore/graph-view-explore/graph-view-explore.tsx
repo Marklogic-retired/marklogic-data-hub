@@ -15,6 +15,10 @@ import styles from "./graph-view-explore.module.scss";
 import {themeColors} from "@config/themes.config";
 import tooltipsConfig from "@config/explorer-tooltips.config";
 import {getEnvironment} from "@util/environment";
+import {previewMatchingActivity, getDocFromURI, getPreviewFromURIs} from "@api/matching";
+import {unmergeUri} from "@api/merging";
+import CompareValuesModal from "@components/entities/matching/compare-values-modal/compare-values-modal";
+import {AuthoritiesContext} from "@util/authorities";
 
 type Props = {
   entityTypeInstances: any;
@@ -25,6 +29,8 @@ type Props = {
   setGraphPageInfo: (pageInfo: any) => void;
   setIsLoading: (loading: boolean) => void;
   entitiesWithRelatedConcepts: any;
+  data:any;
+  entityDefArray:any[]
 };
 
 const {graphViewTooltips} = tooltipsConfig;
@@ -37,8 +43,19 @@ const GraphViewExplore: React.FC<Props> = (props) => {
   const [exportPngButtonClicked, setExportPngButtonClicked] = useState(false);
   const [viewConcepts, toggleConcepts] = useState(storage.explore?.graphView?.concepts !== undefined ? storage.explore?.graphView?.concepts : true);
   const [physicsAnimation, togglePhysicsAnimation] = useState(storage.explore?.graphView?.physicsAnimation !== undefined? storage.explore?.graphView?.physicsAnimation : true);
+  const [activeEntityArray, setActiveEntityArray] = useState<any>([]);
+  const [activeEntityUris, setActiveEntityUris] = useState<string[]>([]);
+  const [uriInfo, setUriInfo] = useState<any>();
+  const [loading, setToggleLoading] = useState("");
+  const [originalUri, setOriginalUri] = useState<string>("");
+  const [previewMatchedActivity, setPreviewMatchedActivity] = useState<{}>({sampleSize: 100, uris: [], actionPreview: []});
+  const [compareModalVisible, setCompareModalVisible] = useState(false);
+
   const {exploreSidebar} = tooltipsConfig;
 
+
+  const authorityService = useContext(AuthoritiesContext);
+  const canReadMatchMerge = authorityService.canReadMatchMerge();
 
   const {
     savedNode,
@@ -121,6 +138,68 @@ const GraphViewExplore: React.FC<Props> = (props) => {
       }
     });
     togglePhysicsAnimation(e.target.checked);
+  };
+
+  const isUnmergeAvailable = (nodeId) => {
+    if (Object.keys(props.entityTypeInstances).length === 0) return false;
+    const filteredData= props.entityTypeInstances.nodes.filter((item) => item["id"] === nodeId);
+    if (filteredData.length === 0) return false;
+    const item = props.data.filter((item) => item.uri === filteredData[0].docUri);
+    if (item.length === 0) return false;
+    if (filteredData.length >0 && canReadMatchMerge) {
+      return filteredData[0].unmerge;
+    }
+    return false;
+  };
+
+  const openUnmergeCompare = async (uri) => {
+    const item = props.data.filter((item) => item.uri=== uri)[0];
+    let arrayUris;
+    let activeEntityIndex = props.entityDefArray.findIndex((entity) => entity.name === item["entityName"]);
+    setActiveEntityArray([props.entityDefArray[activeEntityIndex]]);
+    if (typeof item.unmergeUris[0] === "string") {
+      arrayUris = item.unmergeUris;
+    } else {
+      arrayUris = item.unmergeUris.map((obj) => { return obj["document-uri"]; });
+    }
+    setActiveEntityUris(arrayUris);
+    setOriginalUri(item.uri);
+    setToggleLoading(item.uri);
+    await fetchCompareData(arrayUris, item);
+    setCompareModalVisible(true);
+  };
+
+  const fetchCompareData = async (array, item) => {
+    const result1 = await getDocFromURI(array[0]);
+    const result2 = await getDocFromURI(array[1]);
+
+    const flowName= result1.data.recordMetadata.datahubCreatedInFlow;
+    const preview = (flowName) ? await getPreviewFromURIs(flowName, array) : null;
+
+    if (result1.status === 200 && result2.status === 200 && preview?.status === 200) {
+      let result1Instance = result1?.data?.data?.envelope?.instance;
+      let result2Instance = result2?.data?.data?.envelope?.instance;
+      let previewInstance = preview.data.value.envelope.instance;
+      await setUriInfo([{result1Instance}, {result2Instance}, {previewInstance}]);
+    }
+
+    let testMatchData = {
+      restrictToUris: true,
+      uris: array,
+      sampleSize: 100,
+      stepName: item.matchStepName
+    };
+
+    let previewMatchActivity = await previewMatchingActivity(testMatchData);
+    if (previewMatchActivity) {
+      setToggleLoading("");
+      setPreviewMatchedActivity(previewMatchActivity);
+    }
+
+  };
+
+  const submitUnmergeUri = async (payload) => {
+    await unmergeUri(payload);
   };
 
   const relationshipLabelsSwitch = <div className={styles.switchContainer}><FormCheck
@@ -237,6 +316,10 @@ const GraphViewExplore: React.FC<Props> = (props) => {
             viewConcepts={viewConcepts}
             physicsAnimation={physicsAnimation}
             setIsLoading={setIsLoading}
+            entityDefArray={props.entityDefArray}
+            data={props.data}
+            openUnmergeCompare={openUnmergeCompare}
+            isUnmergeAvailable={isUnmergeAvailable}
           />
         </div>
       </div>
@@ -248,16 +331,42 @@ const GraphViewExplore: React.FC<Props> = (props) => {
   };
 
   const sidePanel = (<div>
-    <GraphExploreSidePanel onCloseSidePanel={onCloseSidePanel} graphView={graphView} />
+    <GraphExploreSidePanel
+      onCloseSidePanel={onCloseSidePanel}
+      graphView={graphView}
+      openUnmergeCompare={openUnmergeCompare}
+      loadingCompare={loading}
+      data={props.data}
+      isUnmergeAvailable={isUnmergeAvailable}/>
   </div>);
 
   return (
-    <SplitPane
-      {...splitPaneProps()}
-    >
-      {graphViewExploreMainPanel}
-      {savedNode ? sidePanel : <></>}
-    </SplitPane>
+    <>
+      <SplitPane
+        {...splitPaneProps()}
+      >
+        {graphViewExploreMainPanel}
+        {savedNode ? sidePanel : <></>}
+      </SplitPane>
+      <CompareValuesModal
+        isVisible={compareModalVisible}
+        fetchNotifications={() => void 0}
+        toggleModal={setCompareModalVisible}
+        uriInfo={uriInfo}
+        activeStepDetails={activeEntityArray}
+        entityProperties={{}}
+        uriCompared={activeEntityUris}
+        previewMatchActivity={previewMatchedActivity}
+        entityDefinitionsArray={activeEntityArray}
+        uris={activeEntityUris}
+        isPreview={false}
+        isMerge={false}
+        mergeUris={{}}
+        unmergeUri={submitUnmergeUri}
+        originalUri={originalUri}
+        flowName={""}
+      />
+    </>
   );
 };
 

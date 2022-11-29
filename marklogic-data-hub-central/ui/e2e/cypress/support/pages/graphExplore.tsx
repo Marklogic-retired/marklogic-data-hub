@@ -97,6 +97,26 @@ class GraphExplore {
     return cy.findByLabelText("graphViewRightArrow");
   }
 
+  getUnmergeIcon() {
+    return cy.findByTestId("unmergeIcon");
+  }
+
+  getUnmergeOption() {
+    return cy.findByTestId("UnmergeOption");
+  }
+
+  getUnmergeSpinner() {
+    return cy.findByTestId("hc-button-component-spinner");
+  }
+
+  getMergeModal() {
+    return cy.findAllByTestId("compareTitle");
+  }
+
+  getCloseCompareModal() {
+    return cy.get(`[aria-label="Close"]`);
+  }
+
   getJsonTypeDetailView() {
     return cy.findByLabelText("jsonTypeData");
   }
@@ -165,6 +185,35 @@ class GraphExplore {
     return cy.get(`[aria-label=results-count]`).then(value => {
       return parseInt(value.first().text().split(" ")[1]);
     });
+  }
+
+  getRunTile() {
+    return cy.get(`[aria-label="tool-run"]`);
+  }
+
+  getPersonJSONacordeon() {
+    return cy.findAllByTestId("accordion-personJSON");
+  }
+
+  getRunButtonMatchPerson() {
+    return cy.findAllByTestId("runStep-match-person");
+  }
+
+  getCloseModalMatchPerson() {
+    return cy.findAllByTestId("personJSON-close");
+  }
+
+  getRunButtonMergePerson() {
+    return cy.findAllByTestId("runStep-merge-person");
+  }
+
+
+  getTitleApp() {
+    return cy.get(`[aria-label="title-container"]`);
+  }
+
+  getCloseModalMergePerson() {
+    return cy.get(`[aria-label="personJSON-close"]`);
   }
 
 

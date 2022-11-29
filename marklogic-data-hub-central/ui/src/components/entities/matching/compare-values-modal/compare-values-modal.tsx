@@ -626,8 +626,8 @@ const CompareValuesModal: React.FC<Props> = (props) => {
     aria-label={"compare-values-modal"}
     onHide={closeModal}
   >
-    <Modal.Header className={"bb-none"}>
-      <span className={styles.compareValuesModalHeading}>Compare</span>
+    <Modal.Header className={"bb-none"} >
+      <span className={styles.compareValuesModalHeading} data-testid="compareTitle">Compare</span>
       {
         !props.isPreview ?
           <HCTooltip text={"Delete"} id="delete-icon" placement="top-end">

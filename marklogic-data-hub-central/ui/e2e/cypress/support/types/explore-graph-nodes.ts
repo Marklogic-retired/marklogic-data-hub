@@ -13,5 +13,6 @@ export enum ExploreGraphNodes {
     CONCEPT_SNEAKERS = "http://www.example.com/Category/Sneakers",
     CONCEPT_JEANS = "http://www.example.com/Category/Jeans",
     CONCEPT_BASKETBALLSHOES = "http://www.example.com/Category/BasketballShoes",
-    CONCEPT_SLOWCOOKER = "http://www.example.com/Category/SlowCooker"
+    CONCEPT_SLOWCOOKER = "http://www.example.com/Category/SlowCooker",
+    MERGED_RECORD = "/com.marklogic.smart-mastering/merged/5d13591e40294bef92f453cf63940962.json"
 }
