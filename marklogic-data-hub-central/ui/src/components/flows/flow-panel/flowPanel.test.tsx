@@ -133,4 +133,19 @@ describe("Flow Panel test suite", () => {
     expect(getByText(RunToolTips.selectAStep)).toBeInTheDocument();
     expect(getByTestId("runFlow-testFlow")).toBeDisabled();
   });
+
+  it("Verify if text is displayed on an empty flow", () => {
+    const {getByText, getByTestId} = render(
+      <Router history={history}>
+        <FlowPanel
+          {...defaultProps}
+          flow={data.flows.data[2]}
+        /></Router>
+    );
+    // Open flow
+    const flowButton = getByTestId("accordion-emptyFlow");
+    fireEvent.click(flowButton);
+    //Check for text
+    expect(getByText("There are no steps in this flow. Add a step here to populate and run the flow.")).toBeInTheDocument();
+  });
 });
