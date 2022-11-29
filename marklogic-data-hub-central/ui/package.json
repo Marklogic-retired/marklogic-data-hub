@@ -58,7 +58,7 @@
     "react-overflow": "^0.2.1",
     "react-resizable": "^1.10.1",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "^3.3.0",
+    "react-scripts": "^5.0.1",
     "react-select": "^5.2.1",
     "react-split-pane": "^0.1.91",
     "react-visjs-timeline": "^1.6.0",
