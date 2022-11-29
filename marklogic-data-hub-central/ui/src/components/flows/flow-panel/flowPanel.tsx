@@ -483,6 +483,7 @@ const FlowPanel: React.FC<Props> = ({
             {panelActions(flow.name, idx)}
           </Card.Header>
           <Accordion.Body className={styles.panelContent} ref={flowRef}>
+            <div> {isFlowEmpty() ? "There are no steps in this flow. Add a step here to populate and run the flow." : null} </div>
             {flow.steps !== undefined && flow.steps?.sort((a, b) => {
               if (parseInt(a.stepNumber) > parseInt(b.stepNumber)) {
                 return 1;
