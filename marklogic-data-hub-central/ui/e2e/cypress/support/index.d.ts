@@ -13,12 +13,23 @@ declare namespace Cypress {
       loginAsDeveloper(): Chainable<Element>
 
       /**
+       * Custom command to login as a developer
+       * @example
+       * cy.loginAsDeveloperV2().withRequest()
+       * cy.loginAsDeveloperV2().withUI()
+      */
+
+      loginAsDeveloperV2(): Chainable<Element>
+
+      /**
        * Custom command to login as a operator
        * @example
        * cy.loginAsOperator().withRequest()
        * cy.loginAsOperator().withUI()
       */
       loginAsOperator(): Chainable<Element>
+
+      
 
       /**
        * Custom command to login as a test user "hc-test-user" with hub-central-user role.

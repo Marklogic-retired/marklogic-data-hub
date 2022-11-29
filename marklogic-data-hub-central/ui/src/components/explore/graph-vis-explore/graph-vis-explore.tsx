@@ -15,6 +15,7 @@ import {expandGroupNode} from "@api/queries";
 import TableViewGroupNodes from "../table-view-group-nodes/table-view-group-nodes";
 import {themeColors} from "@config/themes.config";
 import {nodeType} from "types/explore-types";
+import {AuthoritiesContext} from "@util/authorities";
 
 type Props = {
   entityTypeInstances: any;
@@ -26,6 +27,10 @@ type Props = {
   viewConcepts: boolean;
   physicsAnimation: boolean;
   setIsLoading: (loading: boolean) => void;
+  entityDefArray: any[];
+  data:any[];
+  openUnmergeCompare:(item: object)=>void;
+  isUnmergeAvailable:(nodeId:string)=>boolean;
 };
 
 const GraphVisExplore: React.FC<Props> = (props) => {
@@ -47,6 +52,10 @@ const GraphVisExplore: React.FC<Props> = (props) => {
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
   const [clickedNode, setClickedNode] = useState({});
   const [hasStabilized, setHasStabilized] = useState(false);
+
+
+  const authorityService = useContext(AuthoritiesContext);
+  const canReadMatchMerge = authorityService.canReadMatchMerge();
 
   const {
     searchOptions,
@@ -914,6 +923,13 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         await network.focus(clickedNode["nodeId"]);
         break;
       }
+      case "Unmerge": {
+        const filteredData= props.data.filter((item) => item["uri"] === clickedNode["nodeId"]);
+        if (filteredData.length >0 && canReadMatchMerge) {
+          props.openUnmergeCompare(filteredData[0].uri);
+        }
+        break;
+      }
       }
     }
   };
@@ -1012,7 +1028,12 @@ const GraphVisExplore: React.FC<Props> = (props) => {
             Show all records
           </div>
         }
-        <div id="centerNode" key="9" className={styles.contextMenuItem}>
+        {props.isUnmergeAvailable(clickedNode["nodeId"]) &&
+          <div id="Unmerge" key="9" className={styles.contextMenuItem} data-testid="UnmergeOption">
+            Unmerge this record
+          </div>
+        }
+        <div id="centerNode" key="10" className={styles.contextMenuItem}>
           Center this record
         </div>
       </div>

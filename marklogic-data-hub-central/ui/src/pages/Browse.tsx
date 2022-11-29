@@ -832,6 +832,8 @@ const Browse: React.FC<Props> = ({location}) => {
                             setPhysicsAnimation={setPhysicsAnimation}
                             entitiesWithRelatedConcepts={entitiesWithRelatedConcepts}
                             graphConceptsSearchSupported={conceptsSupport}
+                            data={data}
+                            entityDefArray={entityDefArray}
                           />
                         </div>
                       </div> :
