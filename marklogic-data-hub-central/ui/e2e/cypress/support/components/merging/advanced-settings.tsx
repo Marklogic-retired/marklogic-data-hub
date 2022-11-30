@@ -1,11 +1,11 @@
 class AdvancedSettings {
 
-  setTargetCollection(event: string, value: string) {
-    cy.get(`[data-testid="${event}-edit"]`).click();
-    cy.get(`[aria-label="additionalColl-select-${event}"]`)
+  setTargetCollection(event: string, value: string, action: string, column:string) {
+    cy.get(`[data-testid="${event}-${action}"]`).click();
+    cy.get(`[aria-label="${column}Coll-select-${event}"]`)
       .parent()
       .click();
-    cy.get(`[aria-label="additionalColl-select-${event}"]`)
+    cy.get(`[aria-label="${column}Coll-select-${event}"]`)
       .should("exist")
       .type(value, {force: true})
       .type("{enter}");
@@ -15,8 +15,16 @@ class AdvancedSettings {
     cy.findByTestId(`${event}-keep`).click();
   }
 
+  keepRemovedCollections(event: string) {
+    cy.get(`[data-testid="${event}-keepRemoved"]`).click();
+  }
+
   discardTargetCollection(event: string) {
     cy.findByTestId(`${event}-discard`).click();
+  }
+
+  discardRemovedCollections(event: string) {
+    cy.get(`[data-testid="${event}-discardRemoved"]`).click();
   }
 
   additionalSettingsInput() {
