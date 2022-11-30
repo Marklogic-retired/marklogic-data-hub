@@ -776,7 +776,7 @@ def cypressSetup(String type, String mlVersion){
         sh 'rm -rf $WORKSPACE/xdmp/src/*'
         copyRPM type,mlVersion
         setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
-        copyArtifacts filter: '**/*central*.war', fingerprintArtifacts: true, flatten: true, projectName: 'Datahub_CI/develop', selector: specific('${BUILD_NUMBER}')
+        copyArtifacts filter: '**/*central*.war', fingerprintArtifacts: true, flatten: true, projectName: '${JOB_NAME}', selector: specific('${BUILD_NUMBER}')
         sh '''
            cd $WORKSPACE
            WAR_NAME=$(basename *central*.war )
