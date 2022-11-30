@@ -52,13 +52,13 @@ describe("Validate Merge warnings", () => {
   it("Navigate to merge step and validate warning messages", () => {
     cy.waitUntil(() => curatePage.editStep(mergeStep).click({force: true}));
     cy.waitUntil(() => curatePage.switchEditAdvanced().click());
-    advancedSettings.setTargetCollection("onMerge", "match-person");
+    advancedSettings.setTargetCollection("onMerge", "match-person", "edit", "additional");
     advancedSettings.keepTargetCollection("onMerge");
     curatePage.saveSettings(mergeStep).click();
     curatePage.alertContent().eq(0).contains("Warning: Target Collections includes the source collection match-person");
     curatePage.alertContent().eq(0).contains("Please remove source collection from target collections");
     cy.wait(1000);
-    advancedSettings.setTargetCollection("onMerge", "Person");
+    advancedSettings.setTargetCollection("onMerge", "Person", "edit", "additional");
     advancedSettings.keepTargetCollection("onMerge");
     curatePage.switchEditAdvanced().click();
     curatePage.saveSettings(mergeStep).click();

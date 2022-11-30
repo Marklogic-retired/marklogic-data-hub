@@ -308,7 +308,7 @@ const Steps: React.FC<Props> = (props) => {
 
   return <HCModal
     show={props.openStepSettings}
-    size={"lg"}
+    size={"xl"}
     onClick={() => handleIsModelClicked()}
     onHide={onCancel}
   >
