@@ -52,13 +52,13 @@ describe("Validate Merge warnings", () => {
   it("Navigate to merge step and validate warning messages", () => {
     cy.waitUntil(() => curatePage.editStep(mergeStep).click({force: true}));
     cy.waitUntil(() => curatePage.switchEditAdvanced().click());
-    advancedSettings.setTargetCollection("onMerge", "match-person");
+    advancedSettings.setTargetCollection("onMerge", "match-person", "edit", "additional");
     advancedSettings.keepTargetCollection("onMerge");
     curatePage.saveSettings(mergeStep).click();
     curatePage.alertContent().eq(0).contains("Warning: Target Collections includes the source collection match-person");
     curatePage.alertContent().eq(0).contains("Please remove source collection from target collections");
     cy.wait(1000);
-    advancedSettings.setTargetCollection("onMerge", "Person");
+    advancedSettings.setTargetCollection("onMerge", "Person", "edit", "additional");
     advancedSettings.keepTargetCollection("onMerge");
     curatePage.switchEditAdvanced().click();
     curatePage.saveSettings(mergeStep).click();
@@ -95,9 +95,14 @@ describe("Validate Merge warnings", () => {
     cy.wait(1000);
   });
   it("Reopen the merge settings", () => {
-    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
-    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
-    curatePage.toggleEntityTypeId("Person");
+    toolbar.getCurateToolbarIcon().click();
+    curatePage.getEntityTypePanel("Customer").should("be.visible");
+    curatePage.getEntityTypePanel("Person").then(($ele) => {
+      if ($ele.hasClass("accordion-button collapsed")) {
+        cy.log("**Toggling Entity because it was closed.**");
+        curatePage.toggleEntityTypeId("Person");
+      }
+    });
     curatePage.selectMergeTab("Person");
     cy.waitUntil(() => curatePage.addNewStep("Person"));
     cy.waitUntil(() => curatePage.editStep(mergeStep).should("be.visible")).click({force: true});

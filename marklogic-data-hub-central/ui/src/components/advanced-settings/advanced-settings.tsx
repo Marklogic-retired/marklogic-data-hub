@@ -901,7 +901,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
           <FormLabel column lg={3}>{"Target Database:"}</FormLabel>
           <Col className={"d-flex"}>
             <OverlayTrigger overlay={<Tooltip id="button-tooltip-TgtDatabase">{keyboardNavigationTooltips.dropdownUserInfo}</Tooltip>} placement="left" show={tgtDatabaseTooltipVisible}>
-              <span className={styles.tooltipRef} tabIndex={0} ref={tgtDatabaseTooltipRef} style={{width: "100%", marginLeft: "-1px"}} onKeyDown={(e) => serviceNameKeyDownHandler(e, "tgtDatabase")}>
+              <span tabIndex={0} ref={tgtDatabaseTooltipRef} style={{width: "100%", marginRight: "-1px"}} onKeyDown={(e) => serviceNameKeyDownHandler(e, "tgtDatabase")}>
                 <Select
                   id="targetDatabase-select-wrapper"
                   inputId="targetDatabase"
@@ -953,7 +953,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
           <Row className={"mb-3"}>
             <FormLabel column lg={3}>{"Target Collections:"}</FormLabel>
             <Col className={"d-flex"} data-testid={"target-collections"}>
-              <span className={styles.tooltipRef} tabIndex={0} ref={tgtCollectionTooltipRef} style={{width: "100%", marginLeft: "-1px"}} onKeyDown={(e) => serviceNameKeyDownHandler(e, "tgtCollection")}>
+              <span className={styles.tooltipRef} tabIndex={0} ref={tgtCollectionTooltipRef} style={{width: "100%"}} onKeyDown={(e) => serviceNameKeyDownHandler(e, "tgtCollection")}>
                 <OverlayTrigger overlay={<Tooltip id="button-tooltip-addCol">{keyboardNavigationTooltips.dropdownUserInfo}</Tooltip>} placement="left" show={tgtCollectionTooltipVisible}>
                   <CreatableSelect
                     id="additionalColl-select-wrapper"
@@ -971,7 +971,9 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                     onBlur={sendPayload}
                     options={additionalCollectionsOptions}
                     styles={reactSelectThemeConfig}
-                  /></OverlayTrigger> </span>
+                  />
+                </OverlayTrigger>
+              </span>
               <span tabIndex={0} ref={tgtCollectionTooltipRef2} onKeyDown={(e) => serviceNameKeyDownHandler(e, "tgtCollectionTooltip")} className={styles.tooltipRef}>
                 <div className={"p-2 d-flex"}>
                   <HCTooltip
@@ -982,7 +984,8 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                   >
                     <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
                   </HCTooltip>
-                </div></span>
+                </div>
+              </span>
             </Col>
           </Row>
         }
@@ -1000,7 +1003,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
           <FormLabel column lg={3}>{"Target Permissions:"}</FormLabel>
           <Col>
             <Row>
-              <Col xs={12} className={"d-flex"}>
+              <Col className={"d-flex"}>
                 <HCInput
                   id="targetPermissions"
                   ref={tgtPermissionRef}
@@ -1011,7 +1014,6 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   disabled={!canReadWrite}
-                  className={styles.inputWithTooltip}
                 />
                 <span tabIndex={0} ref={tgtPermissionTooltipRef} onKeyDown={(e) => serviceNameKeyDownHandler(e, "tgtPermissionTooltip")} className={styles.tooltipRef}>
                   <div className={"p-2 d-flex"}>
@@ -1272,11 +1274,11 @@ const AdvancedSettings: React.FC<Props> = (props) => {
               onBlur={sendPayload}
             />
             <div tabIndex={0} ref={batchSizeTooltipRef} onKeyDown={(e) => serviceNameKeyDownHandler(e, "batchSizeTooltip")} className={styles.tooltipRef}>
-              <div className={"p-2 d-flex"}>
+              <div className={"p-2 d-flex align-items-center"}>
                 <HCTooltip
                   text={tooltips.batchSize}
                   id="batch-size-tooltip"
-                  placement="right"
+                  placement="left"
                   show={batchSizeTooltipVisible ? batchSizeTooltipVisible : undefined}
                 >
                   <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />

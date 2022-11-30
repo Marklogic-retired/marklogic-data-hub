@@ -12,12 +12,11 @@ class BaseEntitySidebar {
     return cy.get(`[aria-label="base-option-${entity}"]`);
   }
   removeSelectedBaseEntity() {
-    cy.get(`[class="css-xb97g8"]`).should("be.visible");
-    return cy.get(`[class="css-xb97g8"]`).first().click();
+    cy.get(`[class="css-xb97g8"]`).first().scrollIntoView().should("be.visible").click({force: true});
   }
 
   removeLastSelectedBaseEntity() {
-    return cy.get(`[class="css-xb97g8"]`).last().scrollIntoView().should("be.visible").click();
+    cy.get(`[class="css-xb97g8"]`).last().scrollIntoView().should("be.visible").click();
   }
 
   selectEntity(entity: string) {
@@ -128,7 +127,7 @@ class BaseEntitySidebar {
   }
 
   clearQuery() {
-    return this.getClearQuery().click();
+    this.getClearQuery().click();
   }
 
   getRelatedEntityPanel() {
@@ -136,11 +135,11 @@ class BaseEntitySidebar {
   }
 
   toggleAllDataView() {
-    return cy.get(`[aria-label="switch-datasource-all-data"] ~ label`).scrollIntoView().click();
+    cy.get(`[aria-label="switch-datasource-all-data"] ~ label`).scrollIntoView().click();
   }
 
   toggleEntitiesView() {
-    return cy.get(`[aria-label="switch-datasource-entities"] ~ label`).click();
+    cy.get(`[aria-label="switch-datasource-entities"] ~ label`).click();
   }
 
   verifyCollapsedRelatedEntityPanel() {
@@ -148,7 +147,7 @@ class BaseEntitySidebar {
   }
 
   toggleRelatedEntityPanel() {
-    return cy.get("#related-entities .accordion-button").click({force: true});
+    cy.get("#related-entities .accordion-button").click({force: true});
   }
 
   getDisabledEntityTooltip() {
@@ -161,16 +160,16 @@ class BaseEntitySidebar {
     cy.get(`div[aria-label="base-entities-selection"] div[aria-label="base-entities-${entity}"]`).click();
   }
   clickFacetCheckbox(name: string) {
-    return this.getFacetCheckbox(name).click();
+    this.getFacetCheckbox(name).click();
   }
   clickOnApplyFacetsButton() {
-    return this.getApplyFacetsButton().click();
+    this.getApplyFacetsButton().click();
   }
   clickOnClearFacetsButton() {
-    return this.getClearFacetsButton().click();
+    this.getClearFacetsButton().click();
   }
   clickOnRelatedEntity(entity: string) {
-    return this.getRelatedEntity(entity).click();
+    this.getRelatedEntity(entity).click();
   }
 
   getRelatedEntityIcon(entityName: string) {

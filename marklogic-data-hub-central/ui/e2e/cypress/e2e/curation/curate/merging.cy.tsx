@@ -92,8 +92,10 @@ describe("Merging", () => {
   });
   it("Set Target Collection in advanced settings and click cancel ", () => {
     curatePage.switchEditAdvanced().click();
-    advancedSettings.setTargetCollection("onMerge", "discardedMerged");
+    advancedSettings.setTargetCollection("onMerge", "discardedMerged", "edit", "additional");
     advancedSettings.discardTargetCollection("onMerge");
+    advancedSettings.setTargetCollection("onMerge", "discardedMerged", "remove", "remove");
+    advancedSettings.discardRemovedCollections("onMerge");
     cy.waitUntil(() => cy.findAllByText("discardedMerged").should("have.length", 0));
     cy.findAllByText("discardedMerged").should("not.exist");
     advancedSettings.cancelSettingsButton(mergeStep).click();
@@ -102,8 +104,10 @@ describe("Merging", () => {
   it("Save Target Collection in advanced settings ", () => {
     curatePage.editStep(mergeStep).click();
     curatePage.switchEditAdvanced().click();
-    advancedSettings.setTargetCollection("onMerge", "keptMerged");
+    advancedSettings.setTargetCollection("onMerge", "keptMerged", "edit", "additional");
     advancedSettings.keepTargetCollection("onMerge");
+    advancedSettings.setTargetCollection("onMerge", "keptMerged1", "remove", "remove");
+    advancedSettings.keepRemovedCollections("onMerge");
     cy.waitUntil(() => cy.findAllByText("keptMerged").should("have.length.gt", 0));
     cy.findAllByText("keptMerged").should("exist");
   });
