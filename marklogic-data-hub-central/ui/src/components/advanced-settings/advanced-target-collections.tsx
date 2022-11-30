@@ -101,11 +101,11 @@ const defaultTargetCollectionHeaders = [
       if (action.event) {
         if (action.mode === "edit") {
           return <div className={styles.keepDiscard}>
-            <span data-testid={action.event+"-keep"} className={styles.iconLink + " fa-layers fa-fw"} onClick={action.save}>
+            <span data-testid={action.event+"-keep"} className={styles.iconLink + " fa-layers fa-fw"} onClick={action.saveEdit}>
               <FontAwesomeIcon size={"2x"} icon={faSquare}></FontAwesomeIcon>
               <FontAwesomeIcon className={styles.checkIcon} size={"lg"}  icon={faCheck} inverse></FontAwesomeIcon>
             </span>
-            <span data-testid={action.event+"-discard"} className={styles.iconLink + " fa-layers fa-fw"} onClick={action.discard}>
+            <span data-testid={action.event+"-discard"} className={styles.iconLink + " fa-layers fa-fw"} onClick={action.discardEdit}>
               <FontAwesomeIcon size={"2x"} icon={faSquare}></FontAwesomeIcon>
               <FontAwesomeIcon className={styles.timesIcon} size={"lg"}  icon={faTimes} inverse></FontAwesomeIcon>
             </span>
@@ -119,39 +119,151 @@ const defaultTargetCollectionHeaders = [
         }
       }
     }
-  }
+  },
+  {
+    text: "Remove Collections",
+    headerFormatter: () => <span>Remove Collections <HCTooltip text="Use this column to filter out the collections you do not want to merge." id="remove-collections-tooltip" placement="top"><QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle}/></HCTooltip></span>,
+    dataField: "removeCollectionsField",
+    key: "removeCollectionsField",
+    visible: true,
+    attrs: (_, row, index) => {
+      return {"data-coll-event": row.event};
+    },
+    formatter: removeCollectionsField => {
+      if (removeCollectionsField.event !== "onNotification" || removeCollectionsField.event === "Notification") {
+        if (removeCollectionsField.mode === "remove") {
+          return <CreatableSelect
+            id={`removeColl-${removeCollectionsField.event}-select-wrapper`}
+            inputId={`removeColl-${removeCollectionsField.event}`}
+            components={{MultiValueContainer, MultiValueRemove, MenuList: internProps => MenuList(`removeColl-${removeCollectionsField.event}`, internProps)}}
+            isMulti
+            isClearable={false}
+            placeholder="Please add target collections"
+            value={removeCollectionsField.values.map(d => ({value: d, label: d}))}
+            onChange={(values) => {
+              removeCollectionsField.values = values.map(option => option.value);
+              removeCollectionsField.toggleRefresh();
+            }}
+            onCreateOption={values => {
+              removeCollectionsField.values = removeCollectionsField.values.concat(values);
+              removeCollectionsField.toggleRefresh();
+            }}
+            aria-label={"removeColl-select-" + removeCollectionsField.event}
+            options={removeCollectionsField.values.map(d => ({value: d, label: d}))}
+            styles={reactSelectThemeConfig}
+            formatOptionLabel={({value, label}) => {
+              return (
+                <span data-testid={`removeColl-${value}-option`}>
+                  {label}
+                </span>
+              );
+            }}
+          />;
+        } else {
+          return <div className={styles.preWrap}>{removeCollectionsField.values.join(breakLine)}</div>;
+        }
+      } else {
+        return <>N/A</>;
+      }
+    }
+  },
+  {
+    text: "",
+    dataField: "removeAction",
+    key: "removeAction",
+    visible: true,
+    formatter: removeAction => {
+      if (removeAction.event !== "onNotification" || removeAction.event === "Notification") {
+        if (removeAction.mode === "remove") {
+          return <div className={styles.keepDiscard}>
+            <span data-testid={removeAction.event+"-keepRemoved"} className={styles.iconLink + " fa-layers fa-fw"} onClick={removeAction.saveRemove}>
+              <FontAwesomeIcon size={"2x"} icon={faSquare}></FontAwesomeIcon>
+              <FontAwesomeIcon className={styles.checkIcon} size={"lg"}  icon={faCheck} inverse></FontAwesomeIcon>
+            </span>
+            <span data-testid={removeAction.event+"-discardRemoved"} className={styles.iconLink + " fa-layers fa-fw"} onClick={removeAction.discardRemove}>
+              <FontAwesomeIcon size={"2x"} icon={faSquare}></FontAwesomeIcon>
+              <FontAwesomeIcon className={styles.timesIcon} size={"lg"}  icon={faTimes} inverse></FontAwesomeIcon>
+            </span>
+          </div>;
+        } else {
+          return <HCTooltip text="Edit" id="remove-tooltip" placement="bottom">
+            <i role="remove-collections button" key="last">
+              <FontAwesomeIcon className={styles.iconLink} size={"lg"} icon={faPencilAlt} data-testid={removeAction.event+"-remove"} onClick={removeAction.toggle}/>
+            </i>
+          </HCTooltip>;
+        }
+      }
+    }
+  },
 ];
 
 const AdvancedTargetCollections = (props) => {
   const [rowDataset, setRowDataset] = useState<any[]>([]);
   const [eventEditModes, setEventEditModes] = useState<any>({});
+  const [eventRemoveModes, setEventRemoveModes] = useState<any>({});
   const [refresh, setRefresh] = useState<boolean>(false);
   const toggleRefresh = () => setRefresh(!refresh);
 
   const canReadWrite = props.canWrite;
-  const handleEventCollections = (event, additionalCollections, updateTarget = true) => {
+
+  const handleEventCollections = (event, additionalCollections, collectionsRemoved, updateTarget = true) => {
     props.targetCollections[event] = props.targetCollections[event] || {};
     props.targetCollections[event].add =  additionalCollections;
+    if ((event !== "onNotification" && event !== "Notification")) {
+      props.targetCollections[event].remove = collectionsRemoved;
+    }
     props.defaultTargetCollections[event] = props.defaultTargetCollections[event] || [];
     const defaultCollections = props.defaultTargetCollections[event];
     const eventEditMode = eventEditModes[event];
+    const eventRemoveMode = eventRemoveModes[event];
     const existingIndex = rowDataset.findIndex((r) => r.event === event);
     const existingRow = rowDataset[existingIndex];
     const values = existingRow ? existingRow.additionalCollectionsField.values : [...additionalCollections];
     const additionalCollectionsField = {event, toggleRefresh, mode: eventEditMode, values};
+    const removedValues = existingRow ? existingRow.removeCollectionsField.values : [...collectionsRemoved];
+    const removeCollectionsField = {event, toggleRefresh, mode: eventRemoveMode, values: removedValues};
+
     const toggleEdit = () => {
-      eventEditModes[event] === "edit" ? eventEditModes[event] = "view": eventEditModes[event] = "edit";
-      setEventEditModes({...eventEditModes});
+      const newEventEditModes = {...eventEditModes};
+      newEventEditModes[event] = "edit";
+      setEventEditModes({...newEventEditModes});
     };
-    const save = () => {
-      handleEventCollections(event, additionalCollectionsField.values);
-      toggleEdit();
+
+    const toggleRemove = () => {
+      const eventRemoveModesAux = {...eventRemoveModes};
+      eventRemoveModesAux[event] = "remove";
+      setEventRemoveModes({...eventRemoveModesAux});
     };
-    const discard = () => {
+
+    const saveEdit = () => {
+      handleEventCollections(event, additionalCollectionsField.values, removeCollectionsField.values);
+      const newEventEditModes = {...eventEditModes};
+      newEventEditModes[event] = "view";
+      setEventEditModes({...newEventEditModes});
+    };
+
+    const saveRemove = () => {
+      handleEventCollections(event, additionalCollectionsField.values, removeCollectionsField.values);
+      const newEventRemoveModes = {...eventRemoveModes};
+      newEventRemoveModes[event] = "view";
+      setEventRemoveModes({...newEventRemoveModes});
+    };
+
+    const discardEdit = () => {
       additionalCollectionsField.values = [...additionalCollections];
-      toggleEdit();
+      const newEventEditModes = {...eventEditModes};
+      newEventEditModes[event] = "view";
+      setEventEditModes({...newEventEditModes});
     };
-    const row = {event, defaultCollections, additionalCollectionsField, action: canReadWrite ? {event, mode: eventEditMode, toggle: toggleEdit, discard, save} : {}};
+
+    const discardRemove = () => {
+      removeCollectionsField.values = [...collectionsRemoved];
+      const newEventRemoveModes = {...eventRemoveModes};
+      newEventRemoveModes[event] = "view";
+      setEventRemoveModes({...newEventRemoveModes});
+    };
+
+    const row = {event, defaultCollections, additionalCollectionsField, action: canReadWrite ? {event, mode: eventEditMode, toggle: toggleEdit, discardEdit, saveEdit} : {}, removeCollectionsField, removeAction: canReadWrite ? {event, mode: eventRemoveMode, toggle: toggleRemove, discardRemove, saveRemove} : {}};
     if (existingIndex > -1) {
       rowDataset[existingIndex] = row;
     } else {
@@ -167,13 +279,14 @@ const AdvancedTargetCollections = (props) => {
     if (props.targetCollections) {
       events.forEach((event) => {
         const targetCollections = (props.targetCollections[event] && props.targetCollections[event].add) || [];
-        handleEventCollections(event, targetCollections, false);
+        const removedCollections = (props.targetCollections[event] && props.targetCollections[event].remove) || [];
+        handleEventCollections(event, targetCollections, removedCollections, false);
       });
     }
     return () => {};
-  }, [props.targetCollections, props.defaultTargetCollections, eventEditModes, refresh]);
+  }, [props.targetCollections, props.defaultTargetCollections, eventEditModes, refresh, eventRemoveModes]);
 
-  return <div aria-label="advanced-target-collections">
+  return <div aria-label="advanced-target-collections" className="w-100">
     <HCTable
       rowKey="event"
       data={rowDataset}
