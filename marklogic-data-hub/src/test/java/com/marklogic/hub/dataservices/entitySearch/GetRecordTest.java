@@ -26,6 +26,8 @@ public class GetRecordTest extends AbstractHubCoreTest {
 
     @BeforeEach
     void beforeEach() {
+        resetDatabases();
+        runAsAdmin();
         service = EntitySearchService.on(getHubClient().getFinalClient());
         flowService = FlowService.on(getHubClient().getFinalClient());
     }
