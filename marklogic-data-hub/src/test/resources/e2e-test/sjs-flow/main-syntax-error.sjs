@@ -1,4 +1,4 @@
-const dhf = require('/data-hub/4/dhf.sjs');
+const dhf = require('/data-hub/4/dhf.mjs');
 
 const contentPlugin = require('./content.sjs');
 const headersPlugin = require('./headers.sjs');

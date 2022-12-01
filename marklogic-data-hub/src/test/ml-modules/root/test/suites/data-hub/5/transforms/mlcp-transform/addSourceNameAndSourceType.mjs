@@ -1,5 +1,5 @@
 const test = require("/test/test-helper.xqy");
-const mlcpTransform = require("/data-hub/5/transforms/mlcp-flow-transform.sjs");
+import {transform} from "/data-hub/5/transforms/mlcp-flow-transform.mjs"
 
 function testAddSourceNameAndSourceType() {
   const assertions = [];
@@ -22,14 +22,14 @@ function testAddSourceNameAndSourceType() {
   );
 
   context.transform_param = "flow-name=default-ingestion,step=1,sourceName=test-sourceName";
-  result = fn.head(mlcpTransform.transform(content, context));
+  result = fn.head(transform(content, context));
   assertions.push(
     test.assertEqual("test-sourceName", result.value.envelope.headers.sources[0].datahubSourceName),
     test.assertEqual(null, result.value.envelope.headers.sources[0].datahubSourceType)
   );
 
   context.transform_param = "flow-name=default-ingestion,step=1,sourceType=test-sourceType";
-  result = fn.head(mlcpTransform.transform(content, context));
+  result = fn.head(transform(content, context));
   assertions.push(
     test.assertEqual(null, result.value.envelope.headers.sources[0].datahubSourceName),
     test.assertEqual("test-sourceType", result.value.envelope.headers.sources[0].datahubSourceType)
@@ -52,7 +52,7 @@ function testEmptySourceNameAndSourceType() {
     "collections": ["input"]
   };
 
-  let result = fn.head(mlcpTransform.transform(content, context));
+  let result = fn.head(transform(content, context));
   assertions.push(test.assertEqual(null, result.value.envelope.headers.sources));
   return assertions
 }

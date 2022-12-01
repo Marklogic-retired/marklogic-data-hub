@@ -14,7 +14,7 @@
   limitations under the License.
 */
 
-const flowlib = require("/data-hub/4/impl/flow-lib.sjs");
+const flowlib = require("/data-hub/4/impl/flow-lib.mjs");
 const tracelib = require("/data-hub/4/impl/trace-lib.sjs");
 
 const _requireCache = {};

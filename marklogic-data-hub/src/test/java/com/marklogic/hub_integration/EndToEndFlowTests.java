@@ -823,7 +823,7 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
                     "\"document_type\":\"\\\"" + dataFormat.toString() + "\\\"\",";
             if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
                 optionsJson +=
-                    "\"transform_module\":\"\\\"/data-hub/4/transforms/mlcp-flow-transform.sjs\\\"\"," +
+                    "\"transform_module\":\"\\\"/data-hub/4/transforms/mlcp-flow-transform.mjs\\\"\"," +
                     "\"transform_function\":\"transform\",";
             }
             else {

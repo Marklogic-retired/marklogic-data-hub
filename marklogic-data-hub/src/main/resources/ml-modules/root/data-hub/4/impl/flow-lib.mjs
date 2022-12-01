@@ -22,7 +22,7 @@ if (!this.rfc) {
   this.rfc = require("/data-hub/4/impl/run-flow-context.sjs");
 }
 const tracelib = require("/data-hub/4/impl/trace-lib.sjs");
-const flowlib = require("/data-hub/4/impl/flow-lib.xqy");
+const flowLib = require("/data-hub/4/impl/flow-lib.xqy");
 
 const ns = {hub: "http://marklogic.com/data-hub"};
 
@@ -48,7 +48,7 @@ function getFlow(entityName, flowName, flowType) {
   let key = FLOW_CACHE_KEY_PREFIX + entityName + flowName + flowType;
   let flow =  fn.head(hul.fromFieldCacheOrEmpty(key, duration));
   if (!flow) {
-    let xmlFlow = fn.head(flowlib.getFlowNocache(entityName, flowName, flowType));
+    let xmlFlow = fn.head(flowLib.getFlowNocache(entityName, flowName, flowType));
     let config = json.config('custom');
     config['camel-case'] = true;
     config.whitespace = 'ignore';
@@ -64,7 +64,7 @@ function getFlow(entityName, flowName, flowType) {
 }
 
 function getFlows(entityName) {
-  return flowlib.getFlows(entityName);
+  return flowLib.getFlows(entityName);
 }
 
 function runFlow(jobId, flow, identifier, content, options, mainFunc) {
@@ -215,7 +215,7 @@ function makeEnvelope(content, headers, triples, dataFormat) {
       if(content['$attachments'] instanceof Element){
         let config = json.config('custom');
         config['element-namespace'] = "http://marklogic.com/entity-services";
-        attachments = json.transformToJson(flowlib.cleanXmlForJson(content['$attachments']), config);
+        attachments = json.transformToJson(flowLib.cleanXmlForJson(content['$attachments']), config);
       } else {
         attachments = content['$attachments'];
       }
@@ -563,7 +563,7 @@ function queueWriter(writerFunction, identifier, envelope, options) {
 function runWriters(identifiers) {
   let updatedSettings =
     fn.head(xdmp.eval(
-    '  let flowlib = require("/data-hub/4/impl/flow-lib.sjs"); ' +
+    '  let flowLib = require("/data-hub/4/impl/flow-lib.mjs"); ' +
     '  let rfc = require("/data-hub/4/impl/run-flow-context.sjs"); ' +
     '  let tracelib = require("/data-hub/4/impl/trace-lib.sjs"); ' +
     '  rfc.setGlobalContext(rfcContext); ' +
@@ -572,7 +572,7 @@ function runWriters(identifiers) {
     '    let itemContext = contextQueue[identifier]; ' +
     '    let writerInfo = writerQueue[identifier]; ' +
     '    if (writerInfo) { ' +
-    '      flowlib.runWriter( ' +
+    '      flowLib.runWriter( ' +
     '        writerInfo.writerFunction, ' +
     '        itemContext, ' +
     '        identifier, ' +

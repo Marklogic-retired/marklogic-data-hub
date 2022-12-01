@@ -147,4 +147,4 @@ function parseOptionsString(optionsString, contentUri) {
   }
 }
 
-exports.transform = transform;
+export { parseOptionsString, buildContentArray, transform};

@@ -38,7 +38,7 @@ For information on DHS roles, refer to the [DHS documentation](https://internal.
     * `./gradlew mlUpdateIndexes -PenvironmentName=dhs`
 5. Run the input flow in either ways below
     * `./gradlew importAllCustomers -PenvironmentName=dhs` OR
-    * `mlcp.sh import -mode "local" -host "`**Ingest/Flows endpoint**`" -port "8010" -username "`**Your username here**`" -password "`**Your password here**`" -input_file_path "`**path to DHS/input/json/customers/**`" -input_file_type "documents" -output_collections "Customer,DHS" -output_permissions "rest-reader,read,rest-writer,update" -output_uri_replace "`**path to DHS/input/json**`,''" -document_type "json" -transform_module "/data-hub/4/transforms/mlcp-flow-transform.sjs" -transform_namespace "http://marklogic.com/data-hub/mlcp-flow-transform" -transform_param "entity-name=Customer,flow-name=customerInput" -ssl true`
+    * `mlcp.sh import -mode "local" -host "`**Ingest/Flows endpoint**`" -port "8010" -username "`**Your username here**`" -password "`**Your password here**`" -input_file_path "`**path to DHS/input/json/customers/**`" -input_file_type "documents" -output_collections "Customer,DHS" -output_permissions "rest-reader,read,rest-writer,update" -output_uri_replace "`**path to DHS/input/json**`,''" -document_type "json" -transform_module "/data-hub/4/transforms/mlcp-flow-transform.mjs" -transform_namespace "http://marklogic.com/data-hub/mlcp-flow-transform" -transform_param "entity-name=Customer,flow-name=customerInput" -ssl true`
     * Verify there are 11 documents in data-hub-STAGING:
         ___https://CURATION_ENDPOINT:8011/v1/search?database=data-hub-STAGING___
 6. Run the harmonization flow

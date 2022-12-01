@@ -847,7 +847,7 @@ Story
 - defaults are missing on hub init tab [\#833](https://github.com/marklogic/marklogic-data-hub/issues/833)
 - Getting Started Tutorial: More issues [\#818](https://github.com/marklogic/marklogic-data-hub/issues/818)
 - Running input flow produces error "MISSING\_CURRENT\_TRACE" and the documents are not loaded [\#814](https://github.com/marklogic/marklogic-data-hub/issues/814)
-- Missing dhf.sjs when creating a new flow \(blocker\) [\#813](https://github.com/marklogic/marklogic-data-hub/issues/813)
+- Missing dhf.mjs when creating a new flow \(blocker\) [\#813](https://github.com/marklogic/marklogic-data-hub/issues/813)
 - Upgrade npmVersion to 5.6.0 on build.gradle to avoid error on Windows [\#804](https://github.com/marklogic/marklogic-data-hub/issues/804)
 - Tutorial link hard coded to old \(2.0.3\) release [\#801](https://github.com/marklogic/marklogic-data-hub/issues/801)
 - Reverse DB EndToEndFlowTests fail on AWS [\#800](https://github.com/marklogic/marklogic-data-hub/issues/800)

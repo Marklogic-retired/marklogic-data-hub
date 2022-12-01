@@ -17,7 +17,7 @@
 
 const config = require("/com.marklogic.hub/config.sjs");
 const consts = require("/data-hub/4/impl/consts.sjs");
-const flowlib = require("/data-hub/4/impl/flow-lib.sjs");
+const flowlib = require("/data-hub/4/impl/flow-lib.mjs");
 const tracelib = require("/data-hub/4/impl/trace-lib.sjs");
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
