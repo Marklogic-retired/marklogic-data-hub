@@ -1761,13 +1761,13 @@ const MappingStepDetail: React.FC = () => {
                 <Spinner animation="border" data-testid="spinTest" variant="primary" />
               </div> :
                 emptyData ?
-                  <div id="noData" style={{paddingTop: "80px"}}>
+                  <div id="noData" data-testid="noData" style={{paddingTop: "80px"}}>
                     <HCAlert
                       className={styles.interceptorFailureAlert}
                       showIcon={true}
                       variant="info"
                     >
-                      <span aria-label="emptyTextMessage" id="emptyTextMessage"><p>Unable to find source records using the specified collection or query.</p>
+                      <span aria-label="emptyTextMessage" id="emptyTextMessage" data-testid="emptyTextMessage"><p>Unable to find source records using the specified collection or query.</p>
                         <p>Load some data that mapping can use as reference and/or edit the step
                           settings to use a source collection or query that will return some results.</p>
                       </span>
@@ -1793,7 +1793,7 @@ const MappingStepDetail: React.FC = () => {
                       </HCAlert>
                     </div>
                     :
-                    <div id="dataPresent">
+                    <div id="dataPresent"  data-testid="dataPresent">
                       {!isLoading && !emptyData && interceptorExecuted && interceptorExecutionError === "" ?
                         <HCAlert
                           className={styles.interceptorSuccessAlert}
