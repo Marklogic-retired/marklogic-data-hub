@@ -37,7 +37,6 @@ describe("Merging Step Detail view component", () => {
       <CurationContext.Provider value={customerMergingStepEmpty}>
         <MergingStepDetail />
       </CurationContext.Provider>
-
     );
     expect(getByText("mergeCustomersEmpty")).toBeInTheDocument();
     expect(getByText("Define merge strategies")).toBeInTheDocument();

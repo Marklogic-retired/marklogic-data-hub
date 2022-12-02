@@ -22,7 +22,7 @@ describe("<NumericFacet/>", () => {
     });
   });
 
-  test("Numeric component renders with mock data", async (done) => {
+  test("Numeric component renders with mock data", async () => {
     const {getByTestId, getByDisplayValue} = render(<NumericFacet
       name={"age"}
       step={1}
@@ -42,7 +42,6 @@ describe("<NumericFacet/>", () => {
         expect(getByDisplayValue("11")).toBeInTheDocument();
         //verify range slider max value
         expect(getByDisplayValue("110")).toBeInTheDocument();
-        done();
       });
     });
   });

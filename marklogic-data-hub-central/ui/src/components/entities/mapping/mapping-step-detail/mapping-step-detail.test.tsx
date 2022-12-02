@@ -280,7 +280,7 @@ describe("RTL Source-to-entity map tests", () => {
 
     await act(async () => { fireEvent.click(getByLabelText("filterIcon-srcName")); });
     fireEvent.change(getByLabelText("searchInput-source"), {target: {value: "protein"}});
-    await act(async () => { fireEvent.click(document.querySelector("#submitSearch-source")); });
+    await act(async () => { fireEvent.click(document.querySelector("#submitSearch-source")!); });
 
     expect(getAllByText("protein")).toHaveLength(4);
     expect(queryByText("whitespaceValue")).not.toBeInTheDocument();
@@ -331,7 +331,7 @@ describe("RTL Source-to-entity map tests", () => {
     await act(async () => { fireEvent.change(inputSearchSource, {target: {value: "first"}}); }); //Enter a case-insensitive value in inputSearch fiel
     expect(inputSearchSource).toHaveValue("first");
     let submitSearchSource = document.querySelector("#submitSearch-source");
-    await act(async () => { fireEvent.click(submitSearchSource); }); //Click on Search button to apply the filter with the desired strin
+    await act(async () => { submitSearchSource && fireEvent.click(submitSearchSource); }); //Click on Search button to apply the filter with the desired strin
 
     //Check if the expected values are available/not available in search result.
     expect(getAllByText("nutFreeName").length).toEqual(2);
@@ -356,7 +356,7 @@ describe("RTL Source-to-entity map tests", () => {
     //Reset the search filter on Source table
     await act(async () => { fireEvent.click(sourcefilterIcon); });
     let resetSourceSearch = document.querySelector("#resetSearch-source");
-    await act(async () => { fireEvent.click(resetSourceSearch); });
+    await act(async () => { resetSourceSearch && fireEvent.click(resetSourceSearch); });
 
     //Check if the table goes back to the default state after resetting the filter on source table.
     expect(getByText("proteinId")).toBeInTheDocument();
@@ -389,7 +389,7 @@ describe("RTL Source-to-entity map tests", () => {
 
     await act(async () => { fireEvent.change(inputSearchEntity, {target: {value: "craft"}}); }); //Enter a case-insensitive value in inputEntitySearch fiel}
     expect(inputSearchEntity).toHaveValue("craft");
-    await act(async () => { fireEvent.click(document.querySelector("#submitSearch-entity")); }); //Click on Search button to apply the filter with the desired strin})
+    await act(async () => { fireEvent.click(document.querySelector("#submitSearch-entity")!); }); //Click on Search button to apply the filter with the desired strin})
 
     //Entity type title should remain in the first row after filter is applied
     // let entTableTopRow: any;
@@ -418,7 +418,7 @@ describe("RTL Source-to-entity map tests", () => {
     await act(async () => { fireEvent.click(entityfilterIcon); });
 
     let resetEntitySearch = document.querySelector("#resetSearch-entity");
-    await act(async () => { fireEvent.click(resetEntitySearch); });
+    await act(async () => { resetEntitySearch && fireEvent.click(resetEntitySearch); });
 
     //Check if the table goes back to the default state after resetting the filter on Entity table.
     expect(getByText("propId")).toBeInTheDocument();
@@ -450,7 +450,7 @@ describe("RTL Source-to-entity map tests", () => {
 
     fireEvent.change(inputSourceSearch, {target: {value: "organism"}}); //Enter a case-insensitive value in inputSearch field
     expect(inputSourceSearch).toHaveValue("organism");
-    await act(async () => { fireEvent.click(document.querySelector("#submitSearch-source")); }); //Click on Search button to apply the filter with the desired string
+    await act(async () => { fireEvent.click(document.querySelector("#submitSearch-source")!); }); //Click on Search button to apply the filter with the desired string
 
     //Check if the expected values are available/not available in search result.
     expect(getByText(/withNuts:/)).toBeInTheDocument();
@@ -472,7 +472,7 @@ describe("RTL Source-to-entity map tests", () => {
     //Reset the search filter on Source table
     await act(async () => { fireEvent.click(sourcefilterIcon); });
     let resetSourceSearch = document.querySelector("#resetSearch-source");
-    await act(async () => { fireEvent.click(resetSourceSearch); });
+    await act(async () => { resetSourceSearch && fireEvent.click(resetSourceSearch); });
 
     //Check if the table goes back to the default state after resetting the filter on source table.
     expect(getAllByText(/nutFree:/).length).toEqual(2);
@@ -578,7 +578,7 @@ describe("RTL Source-to-entity map tests", () => {
     let inputSearchEntity = getByLabelText("searchInput-entity");
     await act(async () => { fireEvent.change(inputSearchEntity, {target: {value: "orderId"}}); });
     expect(inputSearchEntity).toHaveValue("orderId");
-    await act(async () => { fireEvent.click(document.querySelector("#submitSearch-entity")); });
+    await act(async () => { fireEvent.click(document.querySelector("#submitSearch-entity")!); });
     expect(getByText("orderId")).toBeInTheDocument();
     expect(getByText("orderId")).toHaveStyle("background-color: yellow");
 
@@ -586,7 +586,7 @@ describe("RTL Source-to-entity map tests", () => {
     inputSearchEntity = getByLabelText("searchInput-entity");
     fireEvent.change(inputSearchEntity, {target: {value: "arrivalDate"}});
     expect(inputSearchEntity).toHaveValue("arrivalDate");
-    await act(async () => { fireEvent.click(document.querySelector("#submitSearch-entity")); });
+    await act(async () => { fireEvent.click(document.querySelector("#submitSearch-entity")!); });
     expect(getByText("arrivalDate")).toBeInTheDocument();
     expect(getByText("arrivalDate")).toHaveStyle("background-color: yellow");
 
@@ -594,7 +594,7 @@ describe("RTL Source-to-entity map tests", () => {
     inputSearchEntity = getByLabelText("searchInput-entity");
     fireEvent.change(inputSearchEntity, {target: {value: "babyRegistryId"}});
     expect(inputSearchEntity).toHaveValue("babyRegistryId");
-    await act(async () => { fireEvent.click(document.querySelector("#submitSearch-entity")); });
+    await act(async () => { fireEvent.click(document.querySelector("#submitSearch-entity")!); });
     expect(getByText("babyRegistryId")).toBeInTheDocument();
     expect(getByText("babyRegistryId")).toHaveStyle("background-color: yellow");
 
@@ -602,7 +602,7 @@ describe("RTL Source-to-entity map tests", () => {
     inputSearchEntity = getByLabelText("searchInput-entity");
     await act(async () => { fireEvent.change(inputSearchEntity, {target: {value: "deliveredTo"}}); });
     expect(inputSearchEntity).toHaveValue("deliveredTo");
-    await act(async () => { fireEvent.click(document.querySelector("#submitSearch-entity")); });
+    await act(async () => { fireEvent.click(document.querySelector("#submitSearch-entity")!); });
     expect(getByText("deliveredTo")).toBeInTheDocument();
     expect(getByText("deliveredTo")).toHaveStyle("background-color: yellow");
 
@@ -610,7 +610,7 @@ describe("RTL Source-to-entity map tests", () => {
     inputSearchEntity = getByLabelText("searchInput-entity");
     await act(async () => { fireEvent.change(inputSearchEntity, {target: {value: "orderedBy"}}); });
     expect(inputSearchEntity).toHaveValue("orderedBy");
-    await act(async () => { fireEvent.click(document.querySelector("#submitSearch-entity")); });
+    await act(async () => { fireEvent.click(document.querySelector("#submitSearch-entity")!); });
     expect(getByText("orderedBy")).toBeInTheDocument();
     expect(getByText("orderedBy")).toHaveStyle("background-color: yellow");
 
@@ -618,7 +618,7 @@ describe("RTL Source-to-entity map tests", () => {
     inputSearchEntity = getByLabelText("searchInput-entity");
     await act(async () => { fireEvent.change(inputSearchEntity, {target: {value: "lineItems"}}); });
     expect(inputSearchEntity).toHaveValue("lineItems");
-    await act(async () => { fireEvent.click(document.querySelector("#submitSearch-entity")); });
+    await act(async () => { fireEvent.click(document.querySelector("#submitSearch-entity")!); });
     expect(getByText("lineItems")).toBeInTheDocument();
     expect(getByText("lineItems")).toHaveStyle("background-color: yellow");
   });
@@ -2226,7 +2226,7 @@ describe("RTL Source Selector/Source Search tests", () => {
     let sourceSelector = getByTestId("itemTypes-listIcon");
 
     //corresponds to 'itemTypes' source selector
-    await act(async () => fireEvent.click(sourceSelector));
+    fireEvent.click(sourceSelector);
 
     await (waitForElement(() => getAllByRole("option"), {"timeout": 200}));
     let lastName = getAllByText("LastName");
@@ -2253,11 +2253,11 @@ describe("RTL Source Selector/Source Search tests", () => {
     expect(nutFreeName.length).toEqual(1);
 
     //Verify tooltip for Array icon
-    await act(async () => fireEvent.mouseOver(getByTestId("LastName-optionIcon")));
-    await waitForElement(() => getByTestId("LastNameMultiple-option-tooltip"));
+    fireEvent.mouseOver(getByTestId("LastName-optionIcon"));
+    await (() => getByTestId("LastNameMultiple-option-tooltip"));
 
     //Click on 'FirstNamePreferred'
-    await act(async () => fireEvent.click(lastName[1]));
+    await act(async () => lastName[1] && fireEvent.click(lastName[1]));
 
     //mapping is saved
     expect(await (waitForElement(() => getByTestId("successMessage"), {"timeout": 200})));
@@ -2268,11 +2268,11 @@ describe("RTL Source Selector/Source Search tests", () => {
 
     //Right Xpath population for namespaced option representing array of values
     sourceSelector = getByTestId("items-listIcon");
-    await act(async () => fireEvent.click(sourceSelector));
+    await act(async () => sourceSelector && fireEvent.click(sourceSelector));
     await (waitForElement(() => getAllByRole("option"), {"timeout": 200}));
     let proteinDogOption = (getAllByTestId("nutFree:proteinDog-option"));
     expect(proteinDogOption.length).toEqual(2);
-    await act(async () => fireEvent.click(proteinDogOption[0]));
+    await act(async () => proteinDogOption[0] && fireEvent.click(proteinDogOption[0]));
     mapExp = getByTestId("items-mapexpression");
     expect(mapExp).toHaveTextContent("sampleProtein/nutFree:proteinDog");
 

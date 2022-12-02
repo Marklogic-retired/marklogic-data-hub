@@ -42,7 +42,14 @@ describe("Load Card component", () => {
             flows={data.flowsAdd}
             canWriteFlow={true}
             addStepToFlow={jest.fn()}
-            addStepToNew={jest.fn()} />
+            addStepToNew={jest.fn()}
+            data={data.loadData.data}
+            deleteLoadArtifact={jest.fn()}
+            createLoadArtifact={jest.fn()}
+            updateLoadArtifact={jest.fn()}
+            canReadOnly={false}
+            canReadWrite={false}
+          />
         </AuthoritiesContext.Provider>
       </MemoryRouter>
     );
@@ -90,7 +97,14 @@ describe("Load Card component", () => {
             flows={data.flowsAdd}
             canWriteFlow={true}
             addStepToFlow={jest.fn()}
-            addStepToNew={jest.fn()} />
+            addStepToNew={jest.fn()}
+            data={data.loadData.data}
+            deleteLoadArtifact={jest.fn()}
+            createLoadArtifact={jest.fn()}
+            updateLoadArtifact={jest.fn()}
+            canReadOnly={false}
+            canReadWrite={true}
+          />
         </AuthoritiesContext.Provider>
       </MemoryRouter>
     );
@@ -122,7 +136,14 @@ describe("Load Card component", () => {
             flows={data.flowsAdd}
             canWriteFlow={true}
             addStepToFlow={jest.fn()}
-            addStepToNew={jest.fn()} />
+            addStepToNew={jest.fn()}
+            data={data.loadData.data}
+            deleteLoadArtifact={jest.fn()}
+            createLoadArtifact={jest.fn()}
+            updateLoadArtifact={jest.fn()}
+            canReadOnly={true}
+            canReadWrite={true}
+          />
         </AuthoritiesContext.Provider>
       </MemoryRouter>
     );
@@ -151,7 +172,14 @@ describe("Load Card component", () => {
             flows={data.flowsAdd}
             canWriteFlow={true}
             addStepToFlow={jest.fn()}
-            addStepToNew={jest.fn()} />
+            addStepToNew={jest.fn()}
+            data={data.loadData.data}
+            deleteLoadArtifact={jest.fn()}
+            createLoadArtifact={jest.fn()}
+            updateLoadArtifact={jest.fn()}
+            canReadOnly={false}
+            canReadWrite={true}
+          />
         </AuthoritiesContext.Provider>
       </MemoryRouter>
     );
@@ -181,7 +209,14 @@ describe("Load Card component", () => {
             flows={data.flowsAdd}
             canWriteFlow={true}
             addStepToFlow={jest.fn()}
-            addStepToNew={jest.fn()} />
+            addStepToNew={jest.fn()}
+            data={data.loadData.data}
+            deleteLoadArtifact={jest.fn()}
+            createLoadArtifact={jest.fn()}
+            updateLoadArtifact={jest.fn()}
+            canReadOnly={false}
+            canReadWrite={true}
+          />
         </AuthoritiesContext.Provider>
       </MemoryRouter>
     );
@@ -212,7 +247,14 @@ describe("Load Card component", () => {
             flows={data.flows}
             canWriteFlow={true}
             addStepToFlow={jest.fn()}
-            addStepToNew={jest.fn()} />
+            addStepToNew={jest.fn()}
+            data={data.loadData.data}
+            deleteLoadArtifact={jest.fn()}
+            createLoadArtifact={jest.fn()}
+            updateLoadArtifact={jest.fn()}
+            canReadOnly={true}
+            canReadWrite={true}
+          />
         </AuthoritiesContext.Provider>
       </MemoryRouter>
     );
@@ -277,7 +319,9 @@ describe("Load Card component", () => {
       createLoadArtifact={mockCreateLoadArtifact}
       data={data.loadData.data}
       deleteLoadArtifact={mockDeleteLoadArtifact}
-      flows={data.flows}/>
+      flows={data.flows}
+      updateLoadArtifact={jest.fn()}
+    />
     </AuthoritiesContext.Provider></MemoryRouter>);
 
     const loadStepName = data.loadData.data[0].name;
@@ -302,7 +346,13 @@ describe("Load Card component", () => {
     const {getByText, queryByTestId, getByTestId, queryByText, queryByLabelText, getByLabelText} = render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><LoadCard
       {...ingestionData.loadCardProps}
       data={data.loadData.data}
-      flows={data.flows}/>
+      flows={data.flows}
+      deleteLoadArtifact={jest.fn()}
+      createLoadArtifact={jest.fn()}
+      updateLoadArtifact={jest.fn()}
+      canReadOnly={false}
+      canReadWrite={false}
+    />
     </AuthoritiesContext.Provider></MemoryRouter>);
 
     fireEvent.mouseOver(getByText(data.loadData.data[0].name));

@@ -21,7 +21,19 @@ export const customerMatchingStep = {
     }
   },
   setActiveStep: jest.fn(),
-  updateActiveStepArtifact: jest.fn()
+  updateActiveStepArtifact: jest.fn(),
+  validateCalled: true,
+  validateMerge: true,
+  loadModalClicked: true,
+  setLoadModalClickedCalled: jest.fn(),
+  setValidateMatchCalled: jest.fn(),
+  setValidateMergeCalled: jest.fn(),
+  setActiveStepWarning: jest.fn(),
+  mappingOptions: MappingOptionsInterface,
+  setOpenStepSettings: jest.fn(),
+  setOpenStep: jest.fn(),
+  setIsEditing: jest.fn(),
+  setStepOpenOptions: jest.fn()
 };
 
 export const customerMatchingStepEmpty = {
@@ -35,7 +47,23 @@ export const customerMatchingStepEmpty = {
     }
   },
   setActiveStep: jest.fn(),
-  updateActiveStepArtifact: jest.fn()
+  updateActiveStepArtifact: jest.fn(),
+  setActiveStepWarning: jest.fn(),
+  setValidateMatchCalled: jest.fn(),
+  setValidateMergeCalled: jest.fn(),
+  mappingOptions: {
+    openStepSettings: false,
+    openStep: {},
+    isEditing: false
+  },
+  setOpenStepSettings: jest.fn(),
+  setOpenStep: jest.fn(),
+  setIsEditing: jest.fn(),
+  setStepOpenOptions: jest.fn(),
+  validateCalled: false,
+  validateMerge: false,
+  loadModalClicked: false,
+  setLoadModalClickedCalled: jest.fn(),
 };
 
 export const customerMergingStep = {
@@ -75,7 +103,20 @@ export const customerMergingStepEmpty = {
     }
   },
   setActiveStep: jest.fn(),
-  updateActiveStepArtifact: jest.fn()
+  updateActiveStepArtifact: jest.fn(),
+
+  validateCalled: true,
+  validateMerge: true,
+  loadModalClicked: true,
+  setLoadModalClickedCalled: jest.fn(),
+  setValidateMatchCalled: jest.fn(),
+  setValidateMergeCalled: jest.fn(),
+  setActiveStepWarning: jest.fn(),
+  mappingOptions: MappingOptionsInterface,
+  setOpenStepSettings: jest.fn(),
+  setOpenStep: jest.fn(),
+  setIsEditing: jest.fn(),
+  setStepOpenOptions: jest.fn()
 };
 
 export const matchThresholdArtifact = {
@@ -134,7 +175,19 @@ export const matchThresholdArtifact = {
     }
   },
   setActiveStep: jest.fn(),
-  updateActiveStepArtifact: jest.fn()
+  updateActiveStepArtifact: jest.fn(),
+  validateCalled: true,
+  validateMerge: true,
+  loadModalClicked: true,
+  setLoadModalClickedCalled: jest.fn(),
+  setValidateMatchCalled: jest.fn(),
+  setValidateMergeCalled: jest.fn(),
+  setActiveStepWarning: jest.fn(),
+  mappingOptions: MappingOptionsInterface,
+  setOpenStepSettings: jest.fn(),
+  setOpenStep: jest.fn(),
+  setIsEditing: jest.fn(),
+  setStepOpenOptions: jest.fn()
 };
 
 export const customerStepWarning = {
@@ -234,7 +287,7 @@ export const personMappingStepEmpty = {
   setOpenStepSettings: jest.fn(),
   setOpenStep: jest.fn(),
   setIsEditing: jest.fn(),
-  setStepOpenOptions: jest.fn()
+  setStepOpenOptions: jest.fn(),
 };
 
 export const personMappingStepWithData = {
@@ -292,5 +345,17 @@ export const customerMatchStepWithLargePropCount = {
     }
   },
   setActiveStep: jest.fn(),
-  updateActiveStepArtifact: jest.fn()
+  updateActiveStepArtifact: jest.fn(),
+  validateCalled: true,
+  validateMerge: true,
+  loadModalClicked: true,
+  setLoadModalClickedCalled: jest.fn(),
+  setValidateMatchCalled: jest.fn(),
+  setValidateMergeCalled: jest.fn(),
+  setActiveStepWarning: jest.fn(),
+  mappingOptions: MappingOptionsInterface,
+  setOpenStepSettings: jest.fn(),
+  setOpenStep: jest.fn(),
+  setIsEditing: jest.fn(),
+  setStepOpenOptions: jest.fn()
 };
