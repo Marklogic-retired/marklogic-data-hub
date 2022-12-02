@@ -8,29 +8,11 @@ import {MemoryRouter} from "react-router-dom";
 import {SearchContext} from "../../util/search-context";
 import testData from "../../assets/mock-data/explore/Non-entity-document-payload";
 import {AuthoritiesService, AuthoritiesContext} from "../../util/authorities";
+import {searchContextInterfaceByDefault} from "@util/uiTestCommonInterface";
 
 jest.mock("axios");
 
 describe("Raw data card view component", () => {
-
-  const defaultSearchOptions = {
-    query: "",
-    entityTypeIds: [],
-    nextEntityTypes: [],
-    start: 1,
-    pageNumber: 1,
-    pageLength: 20,
-    pageSize: 20,
-    selectedFacets: {},
-    maxRowsPerPage: 100,
-    selectedQuery: "select a query",
-    manageQueryModal: false,
-    selectedTableProperties: [],
-    view: null,
-    sortOrder: [],
-    database: "final",
-  };
-
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -97,13 +79,7 @@ describe("Raw data card view component", () => {
 
     const {getByLabelText, getByTestId, getByText} = render(<MemoryRouter>
       <AuthoritiesContext.Provider value={authorityService}>
-        <SearchContext.Provider value={{
-          searchOptions: defaultSearchOptions,
-          greyedOptions: defaultSearchOptions,
-          setEntity: jest.fn(),
-          applySaveQuery: jest.fn(),
-          toggleMergeUnmerge: jest.fn()
-        }}>
+        <SearchContext.Provider value={{...searchContextInterfaceByDefault}}>
           <RecordCardView
             entityDefArray={[{name: "Customer", properties: []}]}
             data={entitySearch.results}

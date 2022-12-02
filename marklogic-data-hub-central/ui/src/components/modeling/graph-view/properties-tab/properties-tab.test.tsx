@@ -20,11 +20,12 @@ describe("Graph Modeling Properties Tab Component", () => {
           entityTypeData={getEntityTypes[0]}
           canWriteEntityModel={true}
           canReadEntityModel={true}
+          updateSavedEntity={""}
+          dataModel={""}
         />
       </Router>);
 
     //Legend should be visible
-
     expect(queryByTestId("relationshipIconLegend")).toBeInTheDocument();
     expect(getByTestId("foreignKeyIconLegend")).toBeInTheDocument();
     expect(getByTestId("multipleIconLegend")).toBeInTheDocument();

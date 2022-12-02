@@ -22,7 +22,7 @@ describe("Footer component", () => {
 
   it("can focus and goto on privacy link", () => {
 
-    global.window = {location: {href: null}};
+    //global.window = {location: {href: null}};
 
     // get the actual link wrapper by traversing DOM tree
     let privacyLink = wrapper.find("#privacy-link");

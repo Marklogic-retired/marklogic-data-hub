@@ -7,28 +7,11 @@ import {modelResponse} from "../../assets/mock-data/explore/model-response";
 import searchPayloadResults from "../../assets/mock-data/explore/search-payload-results";
 import {SearchContext} from "../../util/search-context";
 import {AuthoritiesService, AuthoritiesContext} from "../../util/authorities";
-
+import {searchContextInterfaceByDefault, defaultSearchOptions} from "@util/uiTestCommonInterface";
 
 describe("Search Result view component", () => {
   const parsedModelData = entityFromJSON(modelResponse);
   const entityDefArray = entityParser(parsedModelData);
-
-  const defaultSearchOptions = {
-    query: "",
-    entityTypeIds: [],
-    nextEntityTypes: [],
-    start: 1,
-    pageNumber: 1,
-    pageLength: 20,
-    pageSize: 20,
-    selectedFacets: {},
-    maxRowsPerPage: 100,
-    selectedQuery: "select a query",
-    manageQueryModal: false,
-    selectedTableProperties: [],
-    view: null,
-    sortOrder: []
-  };
 
   test("Source and instance tooltips render", async () => {
     const authorityService = new AuthoritiesService();
@@ -40,6 +23,7 @@ describe("Search Result view component", () => {
             entityDefArray={entityDefArray}
             item={searchPayloadResults[0]}
             tableView={false}
+            handleViewChange={""}
           />
         </AuthoritiesContext.Provider>
       </Router>
@@ -68,12 +52,14 @@ describe("Search Result view component", () => {
 
   test("Verify expandable icon closes if page number changes", async () => {
     const {rerender, getByTestId, getByLabelText} = render(
-      <SearchContext.Provider value={{searchOptions: defaultSearchOptions}}>
+      <SearchContext.Provider value={{...searchContextInterfaceByDefault}
+      }>
         <Router>
           <SearchResult
             entityDefArray={entityDefArray}
             item={searchPayloadResults[0]}
             tableView={false}
+            handleViewChange={""}
           />
         </Router>
       </SearchContext.Provider>
@@ -84,12 +70,14 @@ describe("Search Result view component", () => {
     expect(getByLabelText("icon: chevron-down")).toBeInTheDocument();
 
     rerender(
-      <SearchContext.Provider value={{searchOptions: {...defaultSearchOptions, pageNumber: 2}}}>
+      <SearchContext.Provider value={{...searchContextInterfaceByDefault, searchOptions: {...defaultSearchOptions, pageNumber: 2}}}>
         <Router>
           <SearchResult
             entityDefArray={entityDefArray}
             item={searchPayloadResults[0]}
             tableView={false}
+            handleViewChange={""}
+
           />
         </Router>
       </SearchContext.Provider>

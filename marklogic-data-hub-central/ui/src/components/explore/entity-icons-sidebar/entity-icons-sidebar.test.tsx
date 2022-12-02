@@ -20,6 +20,7 @@ describe("Entity Icons Sidebar component", () => {
         currentBaseEntities={currentBaseEntities}
         onClose={jest.fn()}
         updateSelectedEntity={jest.fn()}
+        graphView={false}
       />
     );
 
@@ -38,6 +39,7 @@ describe("Entity Icons Sidebar component", () => {
         currentRelatedEntities={currentRelatedEntities}
         onClose={jest.fn()}
         updateSelectedEntity={jest.fn()}
+        graphView={false}
       />
     );
 
@@ -45,5 +47,4 @@ describe("Entity Icons Sidebar component", () => {
     const entities = getAllByLabelText(/related-entity-icon-/);
     expect(entities.length).toEqual(2);
   });
-
 });

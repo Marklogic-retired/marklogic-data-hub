@@ -9,7 +9,8 @@ const emptyNotificationData = {
   notifications: [],
   totalCount: 0,
   currentPage: 1,
-  pageLength: 10
+  pageLength: 10,
+  runUpdated: false
 };
 
 jest.mock("axios");

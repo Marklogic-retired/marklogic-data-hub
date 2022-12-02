@@ -57,6 +57,7 @@ export const isModified: ModelingContextInterface = {
 
 export const isModifiedTableView = {
   modelingOptions: {
+    entityPropertiesNamesArray: [],
     isModified: true,
     entityTypeNamesArray: ["Order"],
     modifiedEntitiesArray: [
@@ -94,7 +95,18 @@ export const isModifiedTableView = {
     ],
     view: ViewType.table,
     selectedEntity: "Order",
-    openSidePanelInGraphView: true
+    openSidePanelInGraphView: true,
+
+    toggleIsModified: jest.fn(),
+    setEntityTypeNamesArray: jest.fn(),
+    setEntityPropertiesNamesArray: jest.fn(),
+    updateEntityModified: jest.fn(),
+    removeEntityModified: jest.fn(),
+    clearEntityModified: jest.fn(),
+    setView: jest.fn(),
+    setSelectedEntity: jest.fn(),
+    setGraphViewOptions: jest.fn(),
+    closeSidePanelInGraphView: jest.fn()
   },
   toggleIsModified: jest.fn(),
   setEntityTypeNamesArray: jest.fn(),
@@ -104,12 +116,20 @@ export const isModifiedTableView = {
   setView: jest.fn(),
   setSelectedEntity: jest.fn(),
   setGraphViewOptions: jest.fn(),
-  closeSidePanelInGraphView: jest.fn()
+  closeSidePanelInGraphView: jest.fn(),
+  setEntityPropertiesNamesArray: jest.fn(),
+
 };
 
 export const notModified = {
   modelingOptions: {
-    isModified: false
+    isModified: false,
+    view: "",
+    //view: ViewType.table,
+    entityPropertiesNamesArray: [],
+    entityTypeNamesArray: [],
+    modifiedEntitiesArray: [],
+    openSidePanelInGraphView: true,
   },
   clearEntityModified: jest.fn(),
   toggleIsModified: jest.fn(),
@@ -117,7 +137,10 @@ export const notModified = {
   setView: jest.fn(),
   setSelectedEntity: jest.fn(),
   setGraphViewOptions: jest.fn(),
-  closeSidePanelInGraphView: jest.fn()
+  closeSidePanelInGraphView: jest.fn(),
+  setEntityPropertiesNamesArray: jest.fn(),
+  updateEntityModified: jest.fn(),
+  removeEntityModified: jest.fn(),
 };
 
 export const notModifiedTableView: ModelingContextInterface = {
@@ -159,10 +182,22 @@ export const entityNamesArray = {
     ],
     isModified: false,
     modifiedEntitiesArray: [],
-    entityPropertiesNamesArray: ["Order", "Address", "address", "city", "state", "zip", "OrderDetails"]
+    entityPropertiesNamesArray: ["Order", "Address", "address", "city", "state", "zip", "OrderDetails"],
+
+    view: ViewType.graph,
+    selectedEntity: "",
+    openSidePanelInGraphView: false
   },
   updateEntityModified: jest.fn(),
-  setEntityPropertiesNamesArray: jest.fn()
+  setEntityPropertiesNamesArray: jest.fn(),
+  toggleIsModified: jest.fn(),
+  removeEntityModified: jest.fn(),
+  clearEntityModified: jest.fn(),
+  setView: jest.fn(),
+  setSelectedEntity: jest.fn(),
+  setGraphViewOptions: jest.fn(),
+  closeSidePanelInGraphView: jest.fn(),
+  setEntityTypeNamesArray: jest.fn(),
 };
 
 export const customerEntityNamesArray = {
@@ -173,7 +208,21 @@ export const customerEntityNamesArray = {
         entityTypeId: "http://marklogic.com/example/Customer-0.0.1/Customer"
       }
     ],
-    entityPropertiesNamesArray: ["Customer", "Billing", "address", "city", "state", "zip", "Address", "Zip", "Shipping"]
+    entityPropertiesNamesArray: ["Customer", "Billing", "address", "city", "state", "zip", "Address", "Zip", "Shipping"],
+    isModified: false,
+    modifiedEntitiesArray: [],
+    view: ViewType.graph,
+    selectedEntity: "",
+    openSidePanelInGraphView: false
   },
-  setEntityPropertiesNamesArray: jest.fn()
+  updateEntityModified: jest.fn(),
+  setEntityPropertiesNamesArray: jest.fn(),
+  toggleIsModified: jest.fn(),
+  removeEntityModified: jest.fn(),
+  clearEntityModified: jest.fn(),
+  setView: jest.fn(),
+  setSelectedEntity: jest.fn(),
+  setGraphViewOptions: jest.fn(),
+  closeSidePanelInGraphView: jest.fn(),
+  setEntityTypeNamesArray: jest.fn(),
 };

@@ -4,7 +4,7 @@ import "@testing-library/jest-dom/extend-expect";
 import GraphExploreSidePanel from "./graph-explore-side-panel";
 import {SearchContext} from "../../../util/search-context";
 import {BrowserRouter as Router} from "react-router-dom";
-import {defaultSearchOptions} from "../../../assets/mock-data/explore/entity-search";
+import {searchContextInterfaceByDefault, defaultSearchOptions as defaultSearchOptions} from "@util/uiTestCommonInterface";
 import axios from "axios";
 
 jest.mock("axios");
@@ -14,12 +14,18 @@ describe("Graph view side panel", () => {
 
   afterEach(cleanup);
 
-  const defaultSavedNode ={entityName: "Order", primaryKey: {propertyValue: "1234"}, docUri: "10260.json", sources: "", entityInstance: {}, label: "1234"};
+  const defaultSavedNode = {entityName: "Order", primaryKey: {propertyValue: "1234"}, docUri: "10260.json", sources: "", entityInstance: {}, label: "1234"};
   test("Render graph side bar", () => {
     const {getByTestId} = render(
-      <SearchContext.Provider value={{searchOptions: defaultSearchOptions, savedNode: defaultSavedNode}}>
+      <SearchContext.Provider value={{...searchContextInterfaceByDefault, searchOptions: defaultSearchOptions, savedNode: defaultSavedNode}}>
         <Router>
-          <GraphExploreSidePanel onCloseSidePanel={() => {}} graphView={true}/>
+          <GraphExploreSidePanel onCloseSidePanel={() => { }}
+            graphView={true}
+            openUnmergeCompare={false}
+            loadingCompare={""}
+            data={[]}
+            isUnmergeAvailable={jest.fn()}
+          />
         </Router>
       </SearchContext.Provider>
     );
@@ -35,9 +41,15 @@ describe("Graph view side panel", () => {
 
   test("Render instance tab", () => {
     const {getByLabelText, getByText} = render(
-      <SearchContext.Provider value={{searchOptions: defaultSearchOptions, savedNode: defaultSavedNode}}>
+      <SearchContext.Provider value={{...searchContextInterfaceByDefault, searchOptions: defaultSearchOptions, savedNode: defaultSavedNode}}>
         <Router>
-          <GraphExploreSidePanel onCloseSidePanel={() => {}} graphView={true}/>
+          <GraphExploreSidePanel onCloseSidePanel={() => { }}
+            graphView={true}
+            openUnmergeCompare={false}
+            loadingCompare={""}
+            data={[]}
+            isUnmergeAvailable={jest.fn()}
+          />
         </Router>
       </SearchContext.Provider>
     );
@@ -67,9 +79,15 @@ describe("Graph view side panel", () => {
     axiosMock.get["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200, data: semanticConceptInfo})));
     let url = `/api/entitySearch/graph/semanticConceptInfo?semanticConceptIRI=${semanticConceptIRI}&database=final`;
     const {getByTestId, findByLabelText, queryByLabelText} = render(
-      <SearchContext.Provider value={{searchOptions: defaultSearchOptions, savedNode: savedNodeConcept}}>
+      <SearchContext.Provider value={{...searchContextInterfaceByDefault, searchOptions: defaultSearchOptions, savedNode: savedNodeConcept}}>
         <Router>
-          <GraphExploreSidePanel onCloseSidePanel={() => {}} graphView={true}/>
+          <GraphExploreSidePanel onCloseSidePanel={() => { }}
+            graphView={true}
+            openUnmergeCompare={false}
+            loadingCompare={""}
+            data={[]}
+            isUnmergeAvailable={jest.fn()}
+          />
         </Router>
       </SearchContext.Provider>
     );
@@ -83,5 +101,4 @@ describe("Graph view side panel", () => {
     expect(axiosMock.get).toHaveBeenCalledWith(url);
     expect(axiosMock.get).toHaveBeenCalledTimes(1);
   });
-
 });

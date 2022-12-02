@@ -9,12 +9,6 @@ import {userAuthenticated} from "../../assets/mock-data/user-context-mock";
 import {Application} from "../../config/application.config";
 import {fireEvent} from "@testing-library/dom";
 
-
-const notificationData = {
-  "notifs": [],
-  "count": 0
-};
-
 describe("Header component", () => {
 
   afterEach(cleanup);
@@ -23,7 +17,7 @@ describe("Header component", () => {
 
     const {getByText, getByLabelText, queryByText} = render(
       <Router>
-        <Header environment={data.environment} notificationStruct={notificationData}/>
+        <Header environment={data.environment} /*notificationStruct={notificationData}*/ />
       </Router>
     );
 
@@ -40,7 +34,7 @@ describe("Header component", () => {
     const {getByText, getByLabelText, rerender} = render(
       <Router>
         <UserContext.Provider value={userAuthenticated}>
-          <Header environment = {{...data.environment, dataHubVersion: "5.3-SNAPSHOT"}} notificationStruct={notificationData}/>
+          <Header environment = {{...data.environment, dataHubVersion: "5.3-SNAPSHOT"}} /*notificationStruct={notificationData}*//>
         </UserContext.Provider>
       </Router>
     );
@@ -71,7 +65,7 @@ describe("Header component", () => {
     rerender(
       <Router>
         <UserContext.Provider value={userAuthenticated}>
-          <Header environment = {{...data.environment, dataHubVersion: "5.2.1"}} notificationStruct={notificationData}/>
+          <Header environment = {{...data.environment, dataHubVersion: "5.2.1"}} /*notificationStruct={notificationData}*//>
         </UserContext.Provider>
       </Router>
     );
@@ -81,7 +75,7 @@ describe("Header component", () => {
     rerender(
       <Router>
         <UserContext.Provider value={userAuthenticated}>
-          <Header environment = {{...data.environment, dataHubVersion: "5.64.123456"}} notificationStruct={notificationData}/>
+          <Header environment = {{...data.environment, dataHubVersion: "5.64.123456"}} /*notificationStruct={notificationData}*//>
         </UserContext.Provider>
       </Router>
     );
@@ -95,7 +89,7 @@ describe("Header component", () => {
     const {getByLabelText, getByTestId} = render(
       <Router>
         <UserContext.Provider value={userAuthenticated}>
-          <Header environment = {{...data.environment, dataHubVersion: "5.3-SNAPSHOT"}} notificationStruct={notificationData}/>
+          <Header environment = {{...data.environment, dataHubVersion: "5.3-SNAPSHOT"}} /*notificationStruct={notificationData}*//>
         </UserContext.Provider>
       </Router>
     );

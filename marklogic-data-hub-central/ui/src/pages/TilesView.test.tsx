@@ -236,7 +236,7 @@ describe("Tiles View component tests for Developer user", () => {
     expect(getByText("Save")).not.toBeDisabled();
     fireEvent.click(getByText("Cancel"));
     // test run
-    fireEvent.click(document.querySelector(".accordion-button"));
+    fireEvent.click(document.querySelector(".accordion-button")!);
     expect(getByTestId("runStep-failedIngest")).toBeInTheDocument();
   });
 
@@ -275,7 +275,7 @@ describe("Tiles View component tests for Developer user", () => {
     fireEvent.click(getByText("Cancel"));
 
     // test run
-    fireEvent.click(document.querySelector(".accordion-button"));
+    fireEvent.click(document.querySelector(".accordion-button")!);
     expect(getByTestId("runStepDisabled-1")).toBeInTheDocument();
     expect(getByTestId("runStepDisabled-2")).toBeInTheDocument();
     expect(getByTestId("runStepDisabled-3")).toBeInTheDocument();
@@ -301,7 +301,7 @@ describe("Tiles View component tests for Developer user", () => {
 
     await wait(() => expect(getByLabelText("icon-run")).toBeInTheDocument());
     // test run
-    fireEvent.click(document.querySelector(".accordion-button"));
+    fireEvent.click(document.querySelector(".accordion-button")!);
     expect(getByTestId("runStep-failedIngest")).toBeInTheDocument();
     expect(getByTestId("runStep-Mapping1")).toBeInTheDocument();
     expect(getByTestId("runStep-custom1")).toBeInTheDocument();

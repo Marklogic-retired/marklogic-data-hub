@@ -70,8 +70,8 @@ const DEFAULT_SELECTED_PROPERTY_OPTIONS: PropertyOptions = {
   multiple: "no",
   pii: "no",
   facetable: false,
-  sortable: false
-  //wildcard: false
+  sortable: false,
+  wildcard: false
 };
 
 const DEFAULT_EDIT_PROPERTY_OPTIONS: EditPropertyOptions = {
@@ -699,8 +699,8 @@ const PropertyTable: React.FC<Props> = (props) => {
       multiple: record.multiple ? "yes" : "no",
       pii: record.pii ? "yes" : "no",
       facetable: record.facetable ? true : false,
-      sortable: record.sortable ? true : false
-      //wildcard: record.wildcard ? true : false
+      sortable: record.sortable ? true : false,
+      wildcard: record.wildcard ? true : false
     };
 
     const editPropertyOptions: EditPropertyOptions = {

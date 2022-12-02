@@ -960,7 +960,7 @@ const Sidebar: React.FC<Props> = (props) => {
             <HCDivider className={"mt-0 mb-2"} style={{backgroundColor: "#ccc"}} />
           </div>
           :
-        props.currentRelatedConcepts?.size > 0 &&
+          props.currentRelatedConcepts?.size > 0 &&
           <div className={styles.relatedEntityPanel}>
             <HCTooltip text={!props.graphView ? exploreSidebar.disabledRelatedConcepts : !props.viewConcepts ? exploreSidebar.relatedConceptsToggledOff : ""} aria-label="disabled-related-concept-tooltip" id="disabled-related-concept-tooltip" placement="bottom">
               <Accordion id="related-concepts" data-testid={"related-concepts-panel"} className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("related-concepts") && props.graphView && props.viewConcepts? "related-concepts" : ""} defaultActiveKey={activeKey.includes("related-concepts") ? "related-concepts" : ""}>
