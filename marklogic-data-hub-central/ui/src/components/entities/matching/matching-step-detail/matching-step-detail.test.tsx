@@ -80,17 +80,17 @@ describe("Matching Step Detail view component", () => {
     expect(queryByLabelText("ruleset-more")).toBeInTheDocument();
 
     //Enable threshold switch
-    userEvent.click(queryByLabelText("threshold-scale-switch"));
+    userEvent.click(queryByLabelText("threshold-scale-switch")!);
     expect(queryByLabelText("threshold-scale-switch")).toBeChecked();
     expect(getByTestId("active-threshold-timeline")).toBeInTheDocument();
 
     //Enable ruleset switch
-    userEvent.click(queryByLabelText("ruleset-scale-switch"));
+    userEvent.click(queryByLabelText("ruleset-scale-switch")!);
     expect(queryByLabelText("ruleset-scale-switch")).toBeChecked();
     expect(getByTestId("active-ruleset-timeline")).toBeInTheDocument();
 
 
-    userEvent.click(document.querySelector("#add-ruleset"));
+    userEvent.click(document.querySelector("#add-ruleset")!);
     expect(getByLabelText("multiPropertyRulesetOption")).toBeInTheDocument();
     userEvent.click(getByLabelText("singlePropertyRulesetOption"));
 

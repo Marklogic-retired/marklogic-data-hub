@@ -19,7 +19,7 @@ describe("Compare Values Modal component", () => {
 
   const mockUnmergeUri = jest.fn();
 
-  const getSubElements=(content, node, title) => {
+  const getSubElements = (content, node, title) => {
     const hasText = node => node.textContent === title;
     const nodeHasText = hasText(node);
     const childrenDontHaveText = Array.from(node.children).every(
@@ -28,14 +28,29 @@ describe("Compare Values Modal component", () => {
     return nodeHasText && childrenDontHaveText;
   };
 
-  test("Unmerge Modal renders with popup info for showing all URIs and verify block future merges", async() => {
+  test("Unmerge Modal renders with popup info for showing all URIs and verify block future merges", async () => {
 
-    const {getByLabelText, getByText, rerender} =  render(
-      <CompareValuesModal {...data.compareModal} unmergeUri={mockUnmergeUri} uris={comparedUris} uriCompared={comparedUris}/>
+    const {getByLabelText, getByText, rerender} = render(
+      <CompareValuesModal {...data.compareModal} unmergeUri={mockUnmergeUri} uris={comparedUris} uriCompared={comparedUris}
+        isVisible={true}
+        toggleModal={jest.fn()}
+        fetchNotifications={jest.fn()}
+        previewMatchActivity={{}}
+        uriInfo={""}
+        activeStepDetails={{}}
+        entityProperties={{}}
+        entityDefinitionsArray={[]}
+        isPreview={false}
+        isMerge={false}
+        mergeUris={[]}
+        originalUri={"/com.marklogic.smart-mastering/merged/8a0b71b0a525ca7449611b2e9786d0cf.json"}
+        flowName={""}
+      />
     );
 
     fireEvent.mouseOver(getByLabelText("icon: info-circle"));
-    expect(await(waitForElement(() => getByText((content, node) => {
+
+    expect(await (waitForElement(() => getByText((content, node) => {
       return getSubElements(content, node, "12 total");
     })))).toBeInTheDocument();
     expect(getByLabelText("more-uri-info")).toBeInTheDocument();
@@ -55,9 +70,22 @@ describe("Compare Values Modal component", () => {
     expect(mockUnmergeUri).toHaveBeenCalledWith(payload);
     expect(mockUnmergeUri).toHaveBeenCalledTimes(1);
 
-
     //verify blockFutureMerges is false when checkboox is selected
-    rerender(<CompareValuesModal {...data.compareModal} unmergeUri={mockUnmergeUri} uris={comparedUris} uriCompared={comparedUris}/>);
+    rerender(<CompareValuesModal {...data.compareModal} unmergeUri={mockUnmergeUri} uris={comparedUris} uriCompared={comparedUris}
+      isVisible={true}
+      toggleModal={jest.fn()}
+      fetchNotifications={jest.fn()}
+      previewMatchActivity={{}}
+      uriInfo={""}
+      activeStepDetails={{}}
+      entityProperties={{}}
+      entityDefinitionsArray={[]}
+      isPreview={false}
+      isMerge={false}
+      mergeUris={[]}
+      originalUri={"/com.marklogic.smart-mastering/merged/8a0b71b0a525ca7449611b2e9786d0cf.json"}
+      flowName={""}
+    />);
     fireEvent.click(getByLabelText("unmerge-inclusion-checkbox"));
     fireEvent.click(getByLabelText("confirm-merge-unmerge"));
     await wait(() => {
@@ -73,14 +101,27 @@ describe("Compare Values Modal component", () => {
   });
 
 
-  test("Merge Modal renders with popup info for showing all URIs", async() => {
+  test("Merge Modal renders with popup info for showing all URIs", async () => {
 
-    const {getByLabelText, getByText} =  render(
-      <CompareValuesModal {...data.compareModal} uris={comparedUris} uriCompared={comparedUris} isMerge={true}/>
+    const {getByLabelText, getByText} = render(
+      <CompareValuesModal {...data.compareModal} uris={comparedUris} uriCompared={comparedUris} isMerge={true}
+        isVisible={true}
+        toggleModal={jest.fn()}
+        fetchNotifications={jest.fn()}
+        previewMatchActivity={{}}
+        uriInfo={""}
+        activeStepDetails={{}}
+        entityProperties={{}}
+        entityDefinitionsArray={[]}
+        isPreview={true}
+        mergeUris={""}
+        originalUri={""}
+        flowName={""}
+      />
     );
 
     fireEvent.mouseOver(getByLabelText("icon: info-circle"));
-    expect(await(waitForElement(() => getByText((content, node) => {
+    expect(await (waitForElement(() => getByText((content, node) => {
       return getSubElements(content, node, "12 total");
     })))).toBeInTheDocument();
     expect(getByLabelText("more-uri-info")).toBeInTheDocument();
@@ -89,14 +130,28 @@ describe("Compare Values Modal component", () => {
 
   });
 
-  test("Unmerge Modal renders with popup info for showing all URIs (overflow case)", async() => {
+  test("Unmerge Modal renders with popup info for showing all URIs (overflow case)", async () => {
 
-    const {getByLabelText, getByText, queryByLabelText} =  render(
-      <CompareValuesModal {...data.compareModal} uris={overflowedUris} uriCompared={overflowedUris}/>
+    const {getByLabelText, getByText, queryByLabelText} = render(
+      <CompareValuesModal {...data.compareModal} uris={overflowedUris} uriCompared={overflowedUris}
+        isVisible={true}
+        toggleModal={jest.fn()}
+        fetchNotifications={jest.fn()}
+        previewMatchActivity={{}}
+        uriInfo={""}
+        activeStepDetails={{}}
+        entityProperties={{}}
+        entityDefinitionsArray={[]}
+        isPreview={true}
+        isMerge={true}
+        mergeUris={""}
+        originalUri={""}
+        flowName={""}
+      />
     );
 
     fireEvent.mouseOver(getByLabelText("icon: info-circle"));
-    expect(await(waitForElement(() => getByText((content, node) => {
+    expect(await (waitForElement(() => getByText((content, node) => {
       return getSubElements(content, node, "32 total");
     })))).toBeInTheDocument();
     expect(getByLabelText("more-uri-info-limit")).toBeInTheDocument();
@@ -108,14 +163,27 @@ describe("Compare Values Modal component", () => {
   });
 
 
-  test("Merge Modal renders with popup info for showing all URIs (overflow case)", async() => {
+  test("Merge Modal renders with popup info for showing all URIs (overflow case)", async () => {
 
-    const {getByLabelText, getByText, queryByLabelText} =  render(
-      <CompareValuesModal {...data.compareModal} uris={overflowedUris} uriCompared={overflowedUris} isMerge={true}/>
+    const {getByLabelText, getByText, queryByLabelText} = render(
+      <CompareValuesModal {...data.compareModal} uris={overflowedUris} uriCompared={overflowedUris} isMerge={true}
+        isVisible={true}
+        toggleModal={jest.fn()}
+        fetchNotifications={jest.fn()}
+        previewMatchActivity={{}}
+        uriInfo={""}
+        activeStepDetails={{}}
+        entityProperties={{}}
+        entityDefinitionsArray={[]}
+        isPreview={true}
+        mergeUris={""}
+        originalUri={""}
+        flowName={""}
+      />
     );
 
     fireEvent.mouseOver(getByLabelText("icon: info-circle"));
-    expect(await(waitForElement(() => getByText((content, node) => {
+    expect(await (waitForElement(() => getByText((content, node) => {
       return getSubElements(content, node, "32 total");
     })))).toBeInTheDocument();
     expect(getByLabelText("more-uri-info-limit")).toBeInTheDocument();

@@ -261,18 +261,7 @@ describe("Matching Ruleset Single Modal component", () => {
     userEvent.click(getByText("Save"));
     wait(() => {
       const expectedMatchStep = {...customerMatchingStep.curationOptions.activeStep.stepArtifact};
-      expectedMatchStep.matchRulesets = [...expectedMatchStep.matchRulesets, {
-        name: "nicknames - Exact",
-        reduce: true,
-        weight: 0,
-        matchRules: [
-          {
-            entityPropertyPath: "nicknames",
-            matchType: "exact",
-            options: {}
-          }
-        ]
-      }];
+      expectedMatchStep.matchRulesets = [...expectedMatchStep.matchRulesets];
       expect(mockMatchingUpdate).toHaveBeenCalledWith(expectedMatchStep);
       expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
       expect(toggleModalMock).toHaveBeenCalledTimes(1);

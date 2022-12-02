@@ -60,10 +60,10 @@ describe("Entity type display settings modal", () => {
     //check the icon list it's hiden before click
     expect(document.querySelector(`[aria-label=${entityType}-icon-picker] > div`)?.childElementCount).toBe(1);
     //click icon picker and check that the picker show up
-    fireEvent.click(document.querySelector(`[aria-label=${entityType}-icon-picker] > div`));
+    fireEvent.click(document.querySelector(`[aria-label=${entityType}-icon-picker] > div`)!);
     expect(document.querySelector(`[aria-label=${entityType}-icon-picker] > div`)?.childElementCount).toBe(2);
     //filter the icons typing android on search text
-    fireEvent.input(document.querySelector(`[aria-label=${entityType}-icon-picker] input`), {target: {value: "android"}});
+    fireEvent.input(document.querySelector(`[aria-label=${entityType}-icon-picker] input`)!, {target: {value: "android"}});
     //the options are svg elements and the click event don't work on it
 
     fireEvent.keyDown(getByLabelText(`${entityType}-label-select-dropdown`), {key: "ArrowDown"});
