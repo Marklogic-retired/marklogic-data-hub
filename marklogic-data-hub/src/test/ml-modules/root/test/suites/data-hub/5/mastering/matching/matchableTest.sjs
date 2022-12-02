@@ -112,6 +112,7 @@ function testMatchRulesetDefinitions() {
       },
       {
         name: "name - synonym",
+        fuzzyMatch: true,
         matchRules: [{ entityPropertyPath: "name", matchType: "synonym",
           options: {
             thesaurusURI: "/content/nicknames.xml",
@@ -212,7 +213,9 @@ function testMatchRulesetDefinitions() {
     }
     if(matchStep.matchRulesets[i].name === "name - synonym") {
       let matchingTerms = matchRulesetDefinition.synonymMatchFunction("Robert", fn.head(matchRulesetNode.xpath("matchRules")), matchStep);
-      assertions.push(test.assertEqual(2, matchingTerms.length), "Original term and matching synonym qualifier is returned");
+      const queryHashes = matchRulesetDefinition.queryHashes(docA);
+      assertions.push(test.assertTrue(fn.exists(queryHashes), "Query hashes should exists"));
+      assertions.push(test.assertEqual(2, matchingTerms.length, "Original term and matching synonym qualifier is returned"));
     }
     if(matchStep.matchRulesets[i].name === "name - synonym - noMatchQualifier") {
       let matchingTerms = matchRulesetDefinition.synonymMatchFunction("Robert", fn.head(matchRulesetNode.xpath("matchRules")), matchStep);
@@ -393,7 +396,7 @@ function testScoreDocument() {
             algorithmFunction: "customFalseLastNameInterceptor"
           }
         ]
-      },
+      }
     ]
   };
 
