@@ -7,8 +7,8 @@ const matchingDebugTraceEnabled = xdmp.traceEnabled(consts.TRACE_MATCHING_DEBUG)
 const matchingTraceEnabled = xdmp.traceEnabled(consts.TRACE_MATCHING) || matchingDebugTraceEnabled;
 const matchingTraceEvent = xdmp.traceEnabled(consts.TRACE_MATCHING) ? consts.TRACE_MATCHING : consts.TRACE_MATCHING_DEBUG;
 const {groupQueries} = require("./matcher.sjs");
-const {requireFunction} = require("../../impl/hub-utils.sjs");
 
+const queryHashPredicate = sem.iri("http://marklogic.com/data-hub/mastering#hasMatchingHash");
 /*
  * A class that encapsulates the configurable portions of the matching process.
  */
@@ -181,6 +181,23 @@ class Matchable {
         .reduce((acc, cur) => acc.concat(cur), [])
         .filter((uri, index, uris) => index === uris.indexOf(uri))
         .sort();
+    let hashes;
+    const fuzzyMatchRulesets = thresholdBucket.minimumMatchCombinations()
+      .map((combo) => combo.filter(matchRuleset => matchRuleset.fuzzyMatch()))
+      .filter(combo => combo.length)
+      .reduce((prev, curr) => prev.concat(curr), []);
+    if (fuzzyMatchRulesets.length > 0) {
+      const firstMatchingDoc = matchingDocumentSet[0];
+      const firstMatchingDocUri = firstMatchingDoc.uri;
+      const firstMatchingDocNode = firstMatchingDoc.value;
+      hashes = [];
+      for (const fuzzyMatchRuleset of fuzzyMatchRulesets) {
+        for (const queryHash of fuzzyMatchRuleset.queryHashes(firstMatchingDocNode)) {
+          hashes.push(sem.triple(firstMatchingDocUri, queryHashPredicate, queryHash));
+        }
+      }
+      hashes = fn.distinctValues(Sequence.from(hashes));
+    }
     let actionBody;
     // TODO: when we refactor merging code we can likely clean up the awkward "function", "at" property names and remove the namespace property
     if (action === "custom") {
@@ -195,14 +212,16 @@ class Matchable {
             "namespace": thresholdBucket.actionModuleNamespace(),
             matchResults: matchingDocumentSet.filter((match) => match.uri !== actionUri)
           }
-        ]
+        ],
+        hashes
       };
     } else {
       actionBody = {
         action,
         // TODO This should be consistent with thresholdName in custom actions
         threshold: thresholdName,
-        uris
+        uris,
+        hashes
       };
     }
     return {
@@ -348,6 +367,7 @@ class MatchRulesetDefinition {
     this.matchable = matchable;
     this._matchRuleFunctions = [];
     this._cachedCtsQueries = {};
+    this._cachedQueryHashes = {};
   }
 
   name() {
@@ -379,7 +399,7 @@ class MatchRulesetDefinition {
     let matchRule = passMatchRule.toObject();
     let thesaurus = matchRule.options.thesaurusURI;
     let expandOptions = hubUtils.normalizeToArray(value).map((val) => fn.string(val).toLowerCase());
-    const queryLookup = requireFunction("/MarkLogic/thesaurus.xqy", "queryLookup");
+    const queryLookup = hubUtils.requireFunction("/MarkLogic/thesaurus.xqy", "queryLookup");
     let entries = queryLookup(thesaurus, cts.elementValueQuery(fn.QName("http://marklogic.com/xdmp/thesaurus", "term"), expandOptions, "case-insensitive"), "elements");
     let options = matchRule.options;
     let allEntries = [];
@@ -418,7 +438,7 @@ class MatchRulesetDefinition {
     let spellOption = {
       distanceThreshold : matchRule.options.distanceThreshold
     };
-    const suggest = requireFunction("/MarkLogic/spell.xqy", "suggest");
+    const suggest = hubUtils.requireFunction("/MarkLogic/spell.xqy", "suggest");
     let results = hubUtils.normalizeToArray(value).map((val) => suggest(dictionary, fn.string(val), spellOption));
     return Sequence.from(results);
   }
@@ -554,8 +574,22 @@ class MatchRulesetDefinition {
     return this._cachedCtsQueries[uri];
   }
 
+  queryHashes(documentNode) {
+    const uri = xdmp.nodeUri(documentNode);
+    if (!this._cachedQueryHashes[uri]) {
+      const query = this.buildCtsQuery(documentNode);
+      const queryHasher = hubUtils.requireFunction("/data-hub/5/mastering/matching/queryHasher.xqy", "queryToHashes");
+      this._cachedQueryHashes[uri] = queryHasher(query);
+    }
+    return this._cachedQueryHashes[uri];
+  }
+
   weight() {
     return fn.number(this.matchRuleset.weight);
+  }
+
+  fuzzyMatch() {
+    return !!this.matchRuleset.fuzzyMatch;
   }
 
   raw() {
