@@ -95,9 +95,14 @@ describe("Validate Merge warnings", () => {
     cy.wait(1000);
   });
   it("Reopen the merge settings", () => {
-    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
-    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
-    curatePage.toggleEntityTypeId("Person");
+    toolbar.getCurateToolbarIcon().click();
+    curatePage.getEntityTypePanel("Customer").should("be.visible");
+    curatePage.getEntityTypePanel("Person").then(($ele) => {
+      if ($ele.hasClass("accordion-button collapsed")) {
+        cy.log("**Toggling Entity because it was closed.**");
+        curatePage.toggleEntityTypeId("Person");
+      }
+    });
     curatePage.selectMergeTab("Person");
     cy.waitUntil(() => curatePage.addNewStep("Person"));
     cy.waitUntil(() => curatePage.editStep(mergeStep).should("be.visible")).click({force: true});
