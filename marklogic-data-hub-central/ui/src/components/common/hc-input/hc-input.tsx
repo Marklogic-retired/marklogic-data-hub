@@ -86,10 +86,10 @@ const HCInput = React.forwardRef<HTMLInputElement, Props>((props, ref?) => {
     <>
       <Form.Group className="w-100">
         <InputGroup style={props?.style} className={[props.className, props?.disabled ? styles.inputGroupWrapperDisabled :
-        props?.error && showIconClear && focusedInput ? styles.inputGroupWrapper :
-          focusedInput && props?.error ? styles.inputGroupWrapperErrorFocus :
-            props?.error ? styles.inputGroupWrapperError :
-              focusedInput ? styles.inputGroupWrapperFocus : styles.inputGroupWrapper].join(" ")}>
+          props?.error && showIconClear && focusedInput ? styles.inputGroupWrapper :
+            focusedInput && props?.error ? styles.inputGroupWrapperErrorFocus :
+              props?.error ? styles.inputGroupWrapperError :
+                focusedInput ? styles.inputGroupWrapperFocus : styles.inputGroupWrapper].join(" ")}>
 
           {props?.prefix ? <InputGroup.Text style={{backgroundColor: !props?.disabled ? "white" : ""}} className={[props.classNameFull, styles.noBorders].join(" ")} data-testid={"hc-input-prefix"}>{props.prefix}
           </InputGroup.Text> : null}

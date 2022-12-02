@@ -89,4 +89,3 @@ describe("Structured Type Modal Component", () => {
     expect(toggleModal).toHaveBeenCalledTimes(1);
   });
 });
-

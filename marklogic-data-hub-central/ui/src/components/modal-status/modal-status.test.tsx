@@ -48,7 +48,7 @@ describe("Modal Status Component", () => {
       userEvent.click(getByText("Continue Session"));
     });
     expect(axiosMock.get).toHaveBeenCalledTimes(1);
-  });
+  }, 30000);
 
   test("Modal session status renders and can click logout", async () => {
     axiosMock.get["mockImplementation"](() => Promise.resolve({status: 200}));
@@ -66,7 +66,7 @@ describe("Modal Status Component", () => {
       userEvent.click(getByText("Log Out"));
     });
     expect(axiosMock.get).toHaveBeenCalledTimes(1);
-  });
+  }, 30000);
 
   test("Modal can render 500 error and can click OK", async () => {
     mocks.systemInfoAPI(axiosMock);

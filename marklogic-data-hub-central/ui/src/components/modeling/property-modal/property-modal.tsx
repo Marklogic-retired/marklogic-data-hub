@@ -106,8 +106,8 @@ const DEFAULT_SELECTED_PROPERTY_OPTIONS: PropertyOptions = {
   multiple: "no",
   pii: "no",
   facetable: false,
-  sortable: false
-  //wildcard: false
+  sortable: false,
+  wildcard: false
 };
 
 const NAME_REGEX = new RegExp("^[A-Za-z][A-Za-z0-9_-]*$");

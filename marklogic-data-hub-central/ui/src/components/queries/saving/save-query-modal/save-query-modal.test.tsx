@@ -19,6 +19,9 @@ describe("<SaveQueryModal/>", () => {
       currentQueryDescription={""}
       setCurrentQueryDescription={jest.fn()}
       setSaveNewIconVisibility={jest.fn()}
+      resetYesClicked={false}
+      setColumnSelectorTouched={jest.fn()}
+      existingQueryYesClicked={false}
     />);
     queryField = getByPlaceholderText("Enter query name");
     fireEvent.change(queryField, {target: {value: "save new query"}});

@@ -13,7 +13,7 @@ describe("Table view component", () => {
   let wrapper;
   describe("Using JSON document payload", () => {
     beforeEach(() => {
-      wrapper = mount(<TableView document={jsonDocPayload.data.envelope.instance.Product} contentType="json" />);
+      wrapper = mount(<TableView document={jsonDocPayload.data.envelope.instance.Product} contentType="json" location={""} isEntityInstance={false} isSidePanel={false}/>);
     });
 
     test("renders", () => {
@@ -30,7 +30,7 @@ describe("Table view component", () => {
 describe("Table view detail component - RTL", () => {
   test("Table detail view with No data renders", async () => {
     const {getByText} = render(
-      <TableView document={{}} contentType="json" />
+      <TableView document={{}} contentType="json" location={""} isEntityInstance={false} isSidePanel={false}/>
     );
       // Check for Empty Table
     expect(getByText(/No Data/i)).toBeInTheDocument();
@@ -45,7 +45,7 @@ describe("Unmerge record", () => {
     authorityService.setAuthorities(["readMatching", "readMerging"]);
     const {queryByTestId} = render(
       <AuthoritiesContext.Provider value={authorityService}>
-        <TableView document={{}} contentType="json" isSidePanel={true} data={{unmerge: false}} />
+        <TableView document={{}} contentType="json" isSidePanel={true} data={{unmerge: false}} location={""} isEntityInstance={false} />
       </AuthoritiesContext.Provider>
     );
     expect(queryByTestId("unmergeIcon")).toBeNull();
@@ -56,7 +56,7 @@ describe("Unmerge record", () => {
     authorityService.setAuthorities(["readMatching", "readMerging"]);
     const {queryByTestId} = render(
       <AuthoritiesContext.Provider value={authorityService}>
-        <TableView document={{}} contentType="json" isSidePanel={true} data={{unmerge: true}} loadingCompare="" isUnmergeAvailable={() => true}/>
+        <TableView document={{}} contentType="json" isSidePanel={true} data={{unmerge: true}} loadingCompare="" isUnmergeAvailable={() => true} location={""} isEntityInstance={false}/>
       </AuthoritiesContext.Provider>
     );
     expect(queryByTestId("unmergeIcon")).toBeInTheDocument();
@@ -68,7 +68,7 @@ describe("Unmerge record", () => {
     authorityService.setAuthorities(["readMatching", "readMerging"]);
     const {queryByTestId} = render(
       <AuthoritiesContext.Provider value={authorityService}>
-        <TableView document={{}} contentType="json" isSidePanel={true} data={{unmerge: true}} loadingCompare="abcd" isUnmergeAvailable={() => true} />
+        <TableView document={{}} contentType="json" isSidePanel={true} data={{unmerge: true}} loadingCompare="abcd" isUnmergeAvailable={() => true} location={""} isEntityInstance={false} />
       </AuthoritiesContext.Provider>
     );
     expect(queryByTestId("hc-button-component-spinner")).toBeInTheDocument();

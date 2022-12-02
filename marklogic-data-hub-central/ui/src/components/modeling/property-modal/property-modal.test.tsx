@@ -41,7 +41,9 @@ const DEFAULT_SELECTED_PROPERTY_OPTIONS: PropertyOptions = {
   pii: "no",
   sortable: false,
   facetable: false,
-  wildcard: false
+  wildcard: false,
+  joinPropertyName: "",
+  joinPropertyType: "",
 };
 
 const DEFAULT_EDIT_PROPERTY_OPTIONS: EditPropertyOptions = {
@@ -524,7 +526,9 @@ describe("Property Modal Component", () => {
       pii: "yes",
       sortable: false,
       facetable: false,
-      wildcard: true
+      wildcard: true,
+      joinPropertyName: "",
+      joinPropertyType: "",
     };
 
     const editPropertyOptions: EditPropertyOptions = {
@@ -608,8 +612,8 @@ describe("Property Modal Component", () => {
       multiple: "yes",
       pii: "no",
       sortable: false,
-      facetable: false
-      //wildcard: false
+      facetable: false,
+      wildcard: false
     };
 
     const editPropertyOptions: EditPropertyOptions = {
@@ -680,8 +684,10 @@ describe("Property Modal Component", () => {
       multiple: "yes",
       pii: "no",
       sortable: false,
-      facetable: false
-      //wildcard: false
+      facetable: false,
+      wildcard: false,
+      joinPropertyName: "",
+      joinPropertyType: "",
     };
 
     const editPropertyOptions: EditPropertyOptions = {
@@ -765,8 +771,10 @@ describe("Property Modal Component", () => {
       multiple: "no",
       pii: "yes",
       sortable: false,
-      facetable: false
-      //wildcard: true
+      facetable: false,
+      wildcard: true,
+      joinPropertyName: "",
+      joinPropertyType: "",
     };
 
     const editPropertyOptions: EditPropertyOptions = {
@@ -842,8 +850,10 @@ describe("Property Modal Component", () => {
       multiple: "no",
       pii: "yes",
       sortable: false,
-      facetable: false
-      //wildcard: true
+      facetable: false,
+      wildcard: true,
+      joinPropertyName: "",
+      joinPropertyType: "",
     };
 
     const editPropertyOptions: EditPropertyOptions = {
@@ -898,8 +908,10 @@ describe("Property Modal Component", () => {
       multiple: "yes",
       pii: "no",
       sortable: false,
-      facetable: false
-      //wildcard: false
+      facetable: false,
+      wildcard: false,
+      joinPropertyName: "",
+      joinPropertyType: "",
     };
 
     const editPropertyOptions: EditPropertyOptions = {
@@ -963,7 +975,9 @@ describe("Property Modal Component", () => {
       pii: "no",
       sortable: false,
       facetable: false,
-      wildcard: false
+      wildcard: false,
+      joinPropertyName: "",
+      joinPropertyType: "",
     };
 
     const editPropertyOptions: EditPropertyOptions = {

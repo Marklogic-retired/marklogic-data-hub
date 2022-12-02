@@ -6,7 +6,7 @@ import {stringSearchResponse} from "../../assets/mock-data/explore/facet-props";
 jest.mock("axios");
 import {MemoryRouter} from "react-router-dom";
 import {SearchContext} from "../../util/search-context";
-
+import {searchContextInterfaceByDefault, defaultSearchOptions} from "@util/uiTestCommonInterface";
 
 describe("<PopOverSearch/>", () => {
   afterEach(() => {
@@ -17,19 +17,15 @@ describe("<PopOverSearch/>", () => {
     axiosMock.post["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200, data: stringSearchResponse})));
     const {getByText, getByPlaceholderText, getByLabelText} = render(
       <MemoryRouter>
-        <SearchContext.Provider value={{
-          searchOptions: {tileId: "explore",
-            database: "final"}
-        }}>
+        <SearchContext.Provider value={{...searchContextInterfaceByDefault}}>
           <PopOverSearch
             referenceType={"path"}
             entityTypeId={"http://example.org/Customer-0.0.1/Customer"}
             propertyPath={"name"}
             checkFacetValues={jest.fn()}
             popOvercheckedValues={[]}
-            facetValues= {[]}
+            facetValues={[]}
             facetName={""}
-            database="final"
           />);
         </SearchContext.Provider></MemoryRouter>);
 
@@ -58,7 +54,8 @@ describe("<PopOverSearch/>", () => {
     const {getByText, getByPlaceholderText, getByLabelText} = render(
       <MemoryRouter>
         <SearchContext.Provider value={{
-          searchOptions: {tileId: "monitor"}
+          ...searchContextInterfaceByDefault,
+          ...searchContextInterfaceByDefault, searchOptions: {...defaultSearchOptions, tileId: "monitor"}
         }}>
           <PopOverSearch
             referenceType={""}
@@ -66,7 +63,7 @@ describe("<PopOverSearch/>", () => {
             propertyPath={""}
             checkFacetValues={jest.fn()}
             popOvercheckedValues={[]}
-            facetValues= {[]}
+            facetValues={[]}
             facetName={"stepName"}
           />);
         </SearchContext.Provider></MemoryRouter>);
@@ -86,8 +83,6 @@ describe("<PopOverSearch/>", () => {
     expect(getByText("Adams Cole")).toBeInTheDocument();
     expect(getByLabelText("icon: check-square-o")).toBeInTheDocument();
   });
-
-
 });
 
 

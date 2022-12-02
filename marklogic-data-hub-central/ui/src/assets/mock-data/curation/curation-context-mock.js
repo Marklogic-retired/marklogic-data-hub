@@ -208,7 +208,11 @@ export const customerMappingStep = {
   setOpenStepSettings: jest.fn(),
   setOpenStep: jest.fn(),
   setIsEditing: jest.fn(),
-  setStepOpenOptions: jest.fn()
+  setStepOpenOptions: jest.fn(),
+  validateCalled: false,
+  validateMerge: false,
+  loadModalClicked: false,
+  setLoadModalClickedCalled: jest.fn(),
 };
 
 export const personMappingStepEmpty = {

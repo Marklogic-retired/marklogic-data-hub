@@ -39,6 +39,16 @@ describe("Graph View Component", () => {
         updateHubCentralConfig={jest.fn()}
         setConfirmType={jest.fn()}
         toggleConfirmModal={() => true}
+        toggleRevertConfirmModal={""}
+        revertUnpublishedChanges={false}
+        setRevertUnpublishedChanges={jest.fn()}
+        toggleShowConceptClassModal={""}
+        toggleIsEditConceptClassModal={""}
+        updateConceptClassAndHideModal={jest.fn()}
+        deleteConceptClass={jest.fn()}
+        updateEntities={""}
+        toggleShowEntityModal={""}
+        toggleIsEditModal={""}
       />
     </ModelingContext.Provider>
     );
@@ -48,7 +58,7 @@ describe("Graph View Component", () => {
 
     const mockDeleteEntity = jest.fn();
 
-    const {getByTestId, getByLabelText, queryByLabelText, rerender} =  render(
+    const {getByTestId, getByLabelText, queryByLabelText, rerender} = render(
       <ModelingContext.Provider value={isModified}>
         <GraphView
           dataModel={getEntityTypes}
@@ -61,6 +71,18 @@ describe("Graph View Component", () => {
           setDataModelFromServer={jest.fn()}
           hubCentralConfig={hubCentralConfig}
           updateHubCentralConfig={jest.fn()}
+          setConfirmType={jest.fn()}
+          toggleConfirmModal={() => true}
+          toggleRevertConfirmModal={""}
+          revertUnpublishedChanges={false}
+          setRevertUnpublishedChanges={jest.fn()}
+          toggleShowConceptClassModal={""}
+          toggleIsEditConceptClassModal={""}
+          updateConceptClassAndHideModal={jest.fn()}
+          deleteConceptClass={jest.fn()}
+          updateEntities={""}
+          toggleShowEntityModal={""}
+          toggleIsEditModal={""}
         />
       </ModelingContext.Provider>
     );
@@ -71,7 +93,6 @@ describe("Graph View Component", () => {
     await wait(() => expect(getByLabelText("Product-selectedEntity")).toBeInTheDocument());
 
     //Verify side panel content
-
     userEvent.hover(getByTestId("Product-delete"));
     await wait(() => expect(screen.getByText(ModelingTooltips.deleteIcon())).toBeInTheDocument());
 
@@ -87,7 +108,7 @@ describe("Graph View Component", () => {
 
     const mockDeleteEntity = jest.fn();
 
-    const {getByTestId, getByLabelText, queryByLabelText, rerender, queryByPlaceholderText} =  render(
+    const {getByTestId, getByLabelText, queryByLabelText, rerender, queryByPlaceholderText} = render(
       <ModelingContext.Provider value={isModified}>
         <GraphView
           dataModel={getEntityTypes}
@@ -100,6 +121,18 @@ describe("Graph View Component", () => {
           setDataModelFromServer={jest.fn()}
           hubCentralConfig={hubCentralConfig}
           updateHubCentralConfig={jest.fn()}
+          setConfirmType={jest.fn()}
+          toggleConfirmModal={() => true}
+          toggleRevertConfirmModal={""}
+          revertUnpublishedChanges={false}
+          setRevertUnpublishedChanges={jest.fn()}
+          toggleShowConceptClassModal={""}
+          toggleIsEditConceptClassModal={""}
+          updateConceptClassAndHideModal={jest.fn()}
+          deleteConceptClass={jest.fn()}
+          updateEntities={""}
+          toggleShowEntityModal={""}
+          toggleIsEditModal={""}
         />
       </ModelingContext.Provider>
     );
@@ -119,7 +152,7 @@ describe("Graph View Component", () => {
     expect(queryByPlaceholderText("Enter description"));
 
     userEvent.hover(getByTestId("Order-delete"));
-    await wait(() => expect(screen.getByText(ModelingTooltips.deleteIcon())).toBeInTheDocument());
+    await (() => expect(screen.getByText(ModelingTooltips.deleteIcon())).toBeInTheDocument());
 
     expect(getByLabelText("closeGraphViewSidePanel")).toBeInTheDocument();
     expect(getByLabelText("propertiesTabInSidePanel")).toBeInTheDocument();
@@ -133,7 +166,7 @@ describe("Graph View Component", () => {
 
     const mockDeleteEntity = jest.fn();
 
-    const {getByLabelText} =  render(
+    const {getByLabelText} = render(
       <ModelingContext.Provider value={isModified}>
         <GraphView
           dataModel={getEntityTypes}
@@ -146,6 +179,18 @@ describe("Graph View Component", () => {
           setDataModelFromServer={jest.fn()}
           hubCentralConfig={hubCentralConfig}
           updateHubCentralConfig={jest.fn()}
+          setConfirmType={jest.fn()}
+          toggleConfirmModal={() => true}
+          toggleRevertConfirmModal={""}
+          revertUnpublishedChanges={false}
+          setRevertUnpublishedChanges={jest.fn()}
+          toggleShowConceptClassModal={""}
+          toggleIsEditConceptClassModal={""}
+          updateConceptClassAndHideModal={jest.fn()}
+          deleteConceptClass={jest.fn()}
+          updateEntities={""}
+          toggleShowEntityModal={""}
+          toggleIsEditModal={""}
         />
       </ModelingContext.Provider>
     );
@@ -157,7 +202,7 @@ describe("Graph View Component", () => {
 
     const mockDeleteEntity = jest.fn();
 
-    const {getByText, getByLabelText, queryByLabelText, rerender, getAllByLabelText} =  render(
+    const {getByText, getByLabelText, queryByLabelText, rerender, getAllByLabelText} = render(
       <ModelingContext.Provider value={isModified}>
         <GraphView
           dataModel={getEntityTypes}
@@ -170,6 +215,18 @@ describe("Graph View Component", () => {
           setDataModelFromServer={jest.fn()}
           hubCentralConfig={hubCentralConfig}
           updateHubCentralConfig={jest.fn()}
+          setConfirmType={jest.fn()}
+          toggleConfirmModal={() => true}
+          toggleRevertConfirmModal={""}
+          revertUnpublishedChanges={false}
+          setRevertUnpublishedChanges={jest.fn()}
+          toggleShowConceptClassModal={""}
+          toggleIsEditConceptClassModal={""}
+          updateConceptClassAndHideModal={jest.fn()}
+          deleteConceptClass={jest.fn()}
+          updateEntities={""}
+          toggleShowEntityModal={""}
+          toggleIsEditModal={""}
         />
       </ModelingContext.Provider>
     );
@@ -208,7 +265,7 @@ describe("Graph View Component", () => {
   });
 
   test("Ready-only user should not be able to edit entity type description and namespace", async () => {
-    const {getByText, getByLabelText, getByTestId} =  render(withEntityAs("Product", true, false));
+    const {getByText, getByLabelText, getByTestId} = render(withEntityAs("Product", true, false));
 
     // Opens side panel
     await wait(() => expect(getByLabelText("Product-selectedEntity")).toBeInTheDocument());
@@ -229,6 +286,5 @@ describe("Graph View Component", () => {
     const namespaceField = getByTestId("namespace");
     expect(namespaceField).toBeInTheDocument();
     expect(namespaceField).toBeDisabled();
-
   });
 });
