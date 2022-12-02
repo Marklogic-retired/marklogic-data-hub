@@ -334,8 +334,8 @@ class BrowsePage {
 
   // common
   getHubPropertiesExpanded() {
-    cy.wait(500);
-    cy.get("#hub-properties .accordion-button").click({force: true});
+    cy.wait(1000);
+    cy.get("#hub-properties .accordion-button").scrollIntoView().should("be.visible").click({force: true});
   }
 
   // common
