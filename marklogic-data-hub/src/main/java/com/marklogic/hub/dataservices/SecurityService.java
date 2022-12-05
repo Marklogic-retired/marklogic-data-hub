@@ -55,9 +55,9 @@ public interface SecurityService {
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/security/", servDecl);
 
                 this.req_describeRole = this.baseProxy.request(
-                    "describeRole.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                    "describeRole.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_describeUser = this.baseProxy.request(
-                    "describeUser.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                    "describeUser.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
             }
 
             @Override

@@ -56,13 +56,13 @@ public interface SystemService {
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/system/", servDecl);
 
                 this.req_getVersions = this.baseProxy.request(
-                    "getVersions.sjs", BaseProxy.ParameterValuesKind.NONE);
+                    "getVersions.mjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_createCustomRewriters = this.baseProxy.request(
                     "createCustomRewriters.xqy", BaseProxy.ParameterValuesKind.NONE);
                 this.req_finishHubDeployment = this.baseProxy.request(
-                    "finishHubDeployment.sjs", BaseProxy.ParameterValuesKind.NONE);
+                    "finishHubDeployment.mjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_getDataHubConfig = this.baseProxy.request(
-                    "getDataHubConfig.sjs", BaseProxy.ParameterValuesKind.NONE);
+                    "getDataHubConfig.mjs", BaseProxy.ParameterValuesKind.NONE);
             }
 
             @Override
@@ -118,7 +118,7 @@ public interface SystemService {
   /**
    * Invokes the getVersions operation on the database server
    *
-   * 
+   *
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode getVersions();
@@ -126,7 +126,7 @@ public interface SystemService {
   /**
    * Creates custom rewriter modules for the staging and job app servers
    *
-   * 
+   *
    * @return	as output
    */
     Reader createCustomRewriters();
@@ -134,15 +134,15 @@ public interface SystemService {
   /**
    * Invokes the finishHubDeployment operation on the database server
    *
-   * 
-   * 
+   *
+   *
    */
     void finishHubDeployment();
 
   /**
    * Invokes the getDataHubConfig operation on the database server
    *
-   * 
+   *
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode getDataHubConfig();

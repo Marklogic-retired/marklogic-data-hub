@@ -58,15 +58,15 @@ public interface ArtifactService {
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/artifacts/", servDecl);
 
                 this.req_getArtifactsWithProjectPaths = this.baseProxy.request(
-                    "getArtifactsWithProjectPaths.sjs", BaseProxy.ParameterValuesKind.NONE);
+                    "getArtifactsWithProjectPaths.mjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_setArtifact = this.baseProxy.request(
-                    "setArtifact.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
+                    "setArtifact.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
                 this.req_clearUserArtifacts = this.baseProxy.request(
-                    "clearUserArtifacts.sjs", BaseProxy.ParameterValuesKind.NONE);
+                    "clearUserArtifacts.mjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_getList = this.baseProxy.request(
-                    "getList.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                    "getList.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_getArtifact = this.baseProxy.request(
-                    "getArtifact.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                    "getArtifact.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
             }
 
             @Override
@@ -147,7 +147,7 @@ public interface ArtifactService {
   /**
    * Returns a JSON array with an entry for each project artifact and its file path within a project
    *
-   * 
+   *
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode getArtifactsWithProjectPaths();
@@ -166,8 +166,8 @@ public interface ArtifactService {
   /**
    * Invokes the clearUserArtifacts operation on the database server
    *
-   * 
-   * 
+   *
+   *
    */
     void clearUserArtifacts();
 

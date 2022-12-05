@@ -54,7 +54,7 @@ public interface HubCentralService {
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/hubCentral/", servDecl);
 
                 this.req_getAuthorities = this.baseProxy.request(
-                    "getAuthorities.sjs", BaseProxy.ParameterValuesKind.NONE);
+                    "getAuthorities.mjs", BaseProxy.ParameterValuesKind.NONE);
             }
 
             @Override
@@ -76,7 +76,7 @@ public interface HubCentralService {
   /**
    * Invokes the getAuthorities operation on the database server
    *
-   * 
+   *
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode getAuthorities();

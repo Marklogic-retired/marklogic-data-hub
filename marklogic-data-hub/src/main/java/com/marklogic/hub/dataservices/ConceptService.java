@@ -58,15 +58,15 @@ public interface ConceptService {
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/concept/", servDecl);
 
                 this.req_updateDraftModelInfo = this.baseProxy.request(
-                    "updateDraftConceptModelInfo.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
+                    "updateDraftConceptModelInfo.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
                 this.req_deleteDraftModel = this.baseProxy.request(
-                    "deleteDraftConceptModel.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                    "deleteDraftConceptModel.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_saveConceptModels = this.baseProxy.request(
-                    "saveConceptModels.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                    "saveConceptModels.mjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_createDraftModel = this.baseProxy.request(
-                    "createDraftConceptModel.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                    "createDraftConceptModel.mjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_getModelReferences = this.baseProxy.request(
-                    "getConceptReferences.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                    "getConceptReferences.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
             }
 
             @Override

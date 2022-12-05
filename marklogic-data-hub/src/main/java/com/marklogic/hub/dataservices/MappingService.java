@@ -60,19 +60,19 @@ public interface MappingService {
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/mapping/", servDecl);
 
                 this.req_getReferences = this.baseProxy.request(
-                    "getReferences.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                    "getReferences.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_getEntitiesForMapping = this.baseProxy.request(
                     "getEntitiesForMapping.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_testMapping = this.baseProxy.request(
-                    "testMapping.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
+                    "testMapping.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
                 this.req_getDocument = this.baseProxy.request(
                     "getDocument.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_getUris = this.baseProxy.request(
-                    "getUris.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                    "getUris.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_generateMappingTransforms = this.baseProxy.request(
-                    "generateMappingTransforms.sjs", BaseProxy.ParameterValuesKind.NONE);
+                    "generateMappingTransforms.mjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_getMappingFunctions = this.baseProxy.request(
-                    "getMappingFunctions.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                    "getMappingFunctions.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
             }
 
             @Override

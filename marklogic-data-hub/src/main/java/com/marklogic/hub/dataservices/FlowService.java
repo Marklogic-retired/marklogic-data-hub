@@ -63,25 +63,25 @@ public interface FlowService {
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/flow/", servDecl);
 
                 this.req_updateFlow = this.baseProxy.request(
-                    "updateFlow.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
+                    "updateFlow.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
                 this.req_getFlow = this.baseProxy.request(
-                    "getFlow.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                    "getFlow.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_deleteFlow = this.baseProxy.request(
-                    "deleteFlow.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                    "deleteFlow.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_addStepToFlow = this.baseProxy.request(
-                    "addStepToFlow.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                    "addStepToFlow.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_getFlowsWithStepDetails = this.baseProxy.request(
-                    "getFlowsWithStepDetails.sjs", BaseProxy.ParameterValuesKind.NONE);
+                    "getFlowsWithStepDetails.mjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_getFlowWithLatestJobInfo = this.baseProxy.request(
-                    "getFlowWithLatestJobInfo.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                    "getFlowWithLatestJobInfo.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_getFlowsWithLatestJobInfo = this.baseProxy.request(
-                    "getFlowsWithLatestJobInfo.sjs", BaseProxy.ParameterValuesKind.NONE);
+                    "getFlowsWithLatestJobInfo.mjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_removeStepFromFlow = this.baseProxy.request(
-                    "removeStepFromFlow.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                    "removeStepFromFlow.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_createFlow = this.baseProxy.request(
-                    "createFlow.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                    "createFlow.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_getFullFlow = this.baseProxy.request(
-                    "getFullFlow.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                    "getFullFlow.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
             }
 
             @Override
@@ -258,7 +258,7 @@ public interface FlowService {
    * Invokes the deleteFlow operation on the database server
    *
    * @param name	provides input
-   * 
+   *
    */
     void deleteFlow(String name);
 
@@ -275,7 +275,7 @@ public interface FlowService {
   /**
    * Invokes the getFlowsWithStepDetails operation on the database server
    *
-   * 
+   *
    * @return	Return an array of flow documents, where each step has a few identifying data points and abstracts whether it's inline or referenced
    */
     com.fasterxml.jackson.databind.JsonNode getFlowsWithStepDetails();
@@ -291,7 +291,7 @@ public interface FlowService {
   /**
    * Invokes the getFlowsWithLatestJobInfo operation on the database server
    *
-   * 
+   *
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode getFlowsWithLatestJobInfo();
