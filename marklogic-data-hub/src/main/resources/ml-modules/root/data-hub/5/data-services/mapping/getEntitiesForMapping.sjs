@@ -17,8 +17,8 @@
 
 xdmp.securityAssert('http://marklogic.com/data-hub/privileges/read-mapping', 'execute');
 
-var entityName;
+const entityName = external.entityName;
 
-const mappableEntityLib = require("/data-hub/5/data-services/mapping/mappable-entity-lib.sjs");
+const mappableEntityLib = require("/data-hub/5/data-services/mapping/mappable-entity-lib.mjs");
 
 mappableEntityLib.getEntitiesForUI(entityName);

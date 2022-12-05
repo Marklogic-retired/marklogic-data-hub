@@ -55,9 +55,9 @@ public interface StepDefinitionService {
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/stepDefinition/", servDecl);
 
                 this.req_getStepDefinition = this.baseProxy.request(
-                    "getStepDefinition.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                    "getStepDefinition.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_deleteStepDefinition = this.baseProxy.request(
-                    "deleteStepDefinition.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                    "deleteStepDefinition.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
             }
 
             @Override
@@ -106,7 +106,7 @@ public interface StepDefinitionService {
    * Invokes the deleteStepDefinition operation on the database server
    *
    * @param name	provides input
-   * 
+   *
    */
     void deleteStepDefinition(String name);
 

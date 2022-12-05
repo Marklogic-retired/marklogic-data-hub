@@ -56,11 +56,11 @@ public interface CustomStepService {
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/customStep/", servDecl);
 
                 this.req_getCustomStep = this.baseProxy.request(
-                    "getCustomStep.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                    "getCustomStep.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_getCustomSteps = this.baseProxy.request(
-                    "getCustomSteps.sjs", BaseProxy.ParameterValuesKind.NONE);
+                    "getCustomSteps.mjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_updateCustomStep = this.baseProxy.request(
-                    "updateCustomStep.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                    "updateCustomStep.mjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
             }
 
             @Override
@@ -120,7 +120,7 @@ public interface CustomStepService {
   /**
    * Invokes the getCustomSteps operation on the database server
    *
-   * 
+   *
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode getCustomSteps();
