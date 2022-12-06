@@ -15,14 +15,14 @@
  */
 'use strict';
 
-const Artifacts = require('/data-hub/5/artifacts/core.sjs');
-const consts = require("/data-hub/5/impl/consts.sjs");
-const FlowExecutionContext = require("flowExecutionContext.sjs");
-const flowProvenance = require("flowProvenance.sjs");
-const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const provLib = require("/data-hub/5/impl/prov.sjs");
-const WriteQueue = require("/data-hub/5/flow/writeQueue.sjs");
+import Artifacts from '/data-hub/5/artifacts/core.mjs';
+import consts from "/data-hub/5/impl/consts.mjs";
+import FlowExecutionContext from "/ml-modules/root/data-hub/5/flow/flowExecutionContext.mjs";
+import flowProvenance from "./flowProvenance.mjs";
+import flowUtils from "/data-hub/5/impl/flow-utils.mjs";
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
+import provLib from "/data-hub/5/impl/prov.mjs";
+import WriteQueue from "/data-hub/5/flow/writeQueue.mjs";
 
 const INFO_EVENT = consts.TRACE_FLOW;
 const DEBUG_EVENT = consts.TRACE_FLOW_DEBUG;
@@ -112,7 +112,7 @@ function runStepAgainstSourceDatabase(stepExecutionContext, contentArray, writeQ
       xdmp.invokeFunction(function () {
         return runStep(stepExecutionContext, contentArray, writeQueue);
       }, {
-        // These are the same options that were originally specified in flow.sjs
+        // These are the same options that were originally specified in flow.mjs
         database: xdmp.database(stepExecutionContext.getSourceDatabase()),
         update: stepExecutionContext.combinedOptions.stepUpdate ? 'true' : 'false',
         commit: 'auto',
@@ -441,7 +441,7 @@ function finishFlowExecution(flowExecutionContext, writeQueue) {
   }
 }
 
-module.exports = {
+export {
   copyContentObject,
   invokeInterceptors,
   prepareContentBeforeStepIsRun,
