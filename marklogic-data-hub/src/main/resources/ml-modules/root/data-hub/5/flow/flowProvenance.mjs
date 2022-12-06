@@ -16,14 +16,14 @@
 'use strict';
 
 /**
- * This module contains functions that used to be in data-hub/5/impl/flow.sjs, but they needed to be reused by
- * flowRunner.sjs without having to instantiate a "Flow" object. If you need to see the history of the logic in here,
- * please look at the version history of the flow.sjs file.
+ * This module contains functions that used to be in data-hub/5/impl/flow.mjs, but they needed to be reused by
+ * flowRunner.mjs without having to instantiate a "Flow" object. If you need to see the history of the logic in here,
+ * please look at the version history of the flow.mjs file.
  */
 
-const consts = require("/data-hub/5/impl/consts.sjs");
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const provLib = require("/data-hub/5/impl/prov.sjs");
+import consts from "/data-hub/5/impl/consts.mjs";
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
+import provLib from "/data-hub/5/impl/prov.mjs";
 
 
 /**
@@ -151,7 +151,7 @@ function buildFineProvenanceData(jobId, flowName, stepName, stepDefName, stepDef
   return provLib.createStepDocumentAlterationRecord(jobId, flowName, stepName, stepDefName, stepDefType, newDocURI, docProvIDs, newPropertyProvIDs, info);
 }
 
-module.exports = {
+export {
   queueProvenanceData,
   writeProvenanceData
 }
