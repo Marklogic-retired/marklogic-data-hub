@@ -16,17 +16,17 @@
 'use strict';
 
 const config = require("/com.marklogic.hub/config.sjs");
-const consts = require("/data-hub/5/impl/consts.sjs");
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const jobs = require("/data-hub/5/impl/jobs.sjs");
+import consts from "/data-hub/5/impl/consts.mjs";
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
+import jobs from "/data-hub/5/impl/jobs.mjs";
 
 /**
  * Encapsulates a Batch object and provides convenience operations for updating the object and persisting it
  * to the jobs database.
- * 
+ *
  * Note that nothing is written to the database until the "persist" function is called.
  */
-class Batch {
+export class Batch {
 
   constructor(jobId, flowName) {
     const timestamp = xdmp.requestTimestamp() ? xdmp.timestampToWallclock(xdmp.requestTimestamp()) : fn.currentDateTime();
@@ -44,7 +44,7 @@ class Batch {
   }
 
   /**
-   * 
+   *
    * @param writeInfos For connected steps, this can be an array of zero to many writeInfo objects
    */
   persist(writeInfos) {
@@ -81,10 +81,10 @@ class Batch {
 
   /**
    * Intended for independent steps.
-   * 
+   *
    * @param stepExecutionContext
-   * @param batchItems 
-   * @param writeTransactionInfo 
+   * @param batchItems
+   * @param writeTransactionInfo
    */
   addSingleStepResult(stepExecutionContext, batchItems, writeTransactionInfo) {
     const batch = this.data.batch;
@@ -95,10 +95,10 @@ class Batch {
   }
 
   /**
-   * 
+   *
    * @param target expected to be a Batch object or a step result object (for connected steps)
-   * @param stepExecutionContext 
-   * @param batchItems 
+   * @param stepExecutionContext
+   * @param batchItems
    */
   _addStepSecificData(target, stepExecutionContext, batchItems) {
     const flowStep = stepExecutionContext.flowStep;
@@ -149,5 +149,3 @@ class Batch {
 
   }
 }
-
-module.exports = Batch;

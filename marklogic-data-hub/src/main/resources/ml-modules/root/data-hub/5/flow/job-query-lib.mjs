@@ -16,7 +16,7 @@
 'use strict';
 
 const op = require('/MarkLogic/optic');
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 const config = require("/com.marklogic.hub/config.sjs");
 
 function findStepResponses(query) {
@@ -415,7 +415,7 @@ function insertDocument(uri, content, permissions, collections, targetDatabase) 
   )
 }
 
-module.exports = {
+export {
   findJobs,
   findStepResponses,
   getMatchingPropertyValues,

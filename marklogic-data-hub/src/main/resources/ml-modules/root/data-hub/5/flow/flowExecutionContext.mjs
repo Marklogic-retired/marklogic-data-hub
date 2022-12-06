@@ -15,22 +15,22 @@
 */
 'use strict';
 
-const Batch = require("batch.sjs");
-const consts = require("/data-hub/5/impl/consts.sjs");
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const Job = require("job.sjs");
-const StepExecutionContext = require("stepExecutionContext.sjs");
+import Batch from "ml-modules/root/data-hub/5/flow/batch.mjs";
+import consts from "/data-hub/5/impl/consts.mjs";
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
+import Job from "./job.mjs";
+import StepExecutionContext from "./stepExecutionContext.mjs";
 
 const INFO_EVENT = consts.TRACE_FLOW;
 
 /**
- * Captures state associated with the execution of a flow. Provides methods for updating the flowResponse and, if job 
+ * Captures state associated with the execution of a flow. Provides methods for updating the flowResponse and, if job
  * output is not disabled, the associated Job document.
  */
-class FlowExecutionContext {
+export class FlowExecutionContext {
 
   /**
-   * 
+   *
    * @param {object} flow The flow to execute
    * @param {string} jobId Optional job identifier; if not set, a UUID is used
    * @param {object} runtimeOptions Optional options to modify how the flow and steps are run
@@ -60,7 +60,7 @@ class FlowExecutionContext {
   getRuntimeOptions() {
     return this.runtimeOptions;
   }
-  
+
   describe() {
     return `flow '${this.flow.name}' and jobId '${this.jobId}'`;
   }
@@ -80,11 +80,11 @@ class FlowExecutionContext {
   }
 
   /**
-   * 
-   * @param stepExecutionContext 
-   * @param stepResponse 
-   * @param batchItems 
-   * @param outputContentArray 
+   *
+   * @param stepExecutionContext
+   * @param stepResponse
+   * @param batchItems
+   * @param outputContentArray
    * @param writeQueue {object} included so that if a step wants to create a job report, it can be added to this instead of being written right away
    */
   finishStep(stepExecutionContext, stepResponse, batchItems, outputContentArray, writeQueue) {
@@ -106,8 +106,8 @@ class FlowExecutionContext {
   }
 
   addFlowError(error) {
-    // The error has other keys, but the 3 below seem to suffice. stack/stackFrames both have a large amount of content that is 
-    // unlikely to help with debugging. The main thing the user needs to see is what document failed and why did it fail; the 3 
+    // The error has other keys, but the 3 below seem to suffice. stack/stackFrames both have a large amount of content that is
+    // unlikely to help with debugging. The main thing the user needs to see is what document failed and why did it fail; the 3
     // keys below answer those questions.
     const flowError = {
       name: error.name,
@@ -134,7 +134,7 @@ class FlowExecutionContext {
         }
         if (stepStatus.startsWith("completed with errors")) {
           return "finished_with_errors";
-        }  
+        }
       }
     }
     return "finished";
@@ -146,8 +146,8 @@ class FlowExecutionContext {
 
   /**
    * Update the flowResponse and also save Job/Batch documents if enabled.
-   * 
-   * @param writeInfos 
+   *
+   * @param writeInfos
    */
   finishAndSaveJob(writeInfos) {
     this.flowResponse.timeEnded = fn.currentDateTime().add(xdmp.elapsedTime());
@@ -166,5 +166,3 @@ class FlowExecutionContext {
     hubUtils.hubTrace(INFO_EVENT, `Finished processing content with flow ${this.flow.name}`);
   }
 }
-
-module.exports = FlowExecutionContext;

@@ -15,9 +15,9 @@
 */
 'use strict';
 
-const consts = require("/data-hub/5/impl/consts.sjs");
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const jobs = require("/data-hub/5/impl/jobs.sjs");
+import consts from "/data-hub/5/impl/consts.mjs";
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
+import jobs from "/data-hub/5/impl/jobs.mjs";
 
 /**
  * Encapsulates a Job object and provides convenience operations for updating the object and persisting it
@@ -26,7 +26,7 @@ const jobs = require("/data-hub/5/impl/jobs.sjs");
  * Note that nothing is written to the database unless either "create" or "update"
  * is invoked.
  */
-class Job {
+export class Job {
 
   static newJob(flowName, jobId) {
     const job = jobs.buildNewJob(jobId, flowName);
@@ -120,4 +120,3 @@ class Job {
   }
 }
 
-module.exports = Job;
