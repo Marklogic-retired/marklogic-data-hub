@@ -17,12 +17,12 @@
 
 const consts = require("/data-hub/5/impl/consts.sjs");
 
-const Flow = require("/data-hub/5/impl/flow.sjs");
+import Flow from "/data-hub/5/impl/flow.mjs";
 const Perf = require("/data-hub/5/impl/perf.sjs");
 const Debug = require("/data-hub/5/impl/debug.sjs");
 const defaultConfig = require("/com.marklogic.hub/config.sjs");
 
-class DataHub {
+export class DataHub {
 
   constructor(config = null){
     if(!config) {
@@ -43,5 +43,3 @@ class DataHub {
   }
 
 }
-
-module.exports = DataHub;

@@ -16,11 +16,11 @@
 'use strict';
 
 const Artifacts = require('/data-hub/5/artifacts/core.sjs');
-const Batch = require("/data-hub/5/flow/batch.sjs");
+import Batch from "/data-hub/5/flow/batch.mjs";
 const defaultConfig = require("/com.marklogic.hub/config.sjs")
 const flowProvenance = require("/data-hub/5/flow/flowProvenance.sjs");
 const provLib = require("/data-hub/5/impl/prov.sjs");
-const flowRunner = require("/data-hub/5/flow/flowRunner.sjs");
+import flowRunner from "/data-hub/5/flow/flowRunner.mjs";
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const jobs = require("/data-hub/5/impl/jobs.sjs");
 const StepExecutionContext = require('/data-hub/5/flow/stepExecutionContext.sjs');
