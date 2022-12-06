@@ -16,16 +16,16 @@
 'use strict';
 
 const config = require("/com.marklogic.hub/config.sjs");
-const consts = require("/data-hub/5/impl/consts.sjs");
-const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
-const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const StepDefinition = require("/data-hub/5/impl/stepDefinition.sjs");
+import consts from "/data-hub/5/impl/consts.mjs";
+import flowUtils from "/data-hub/5/impl/flow-utils.mjs";
+import httpUtils from "/data-hub/5/impl/http-utils.mjs";
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
+import StepDefinition from "/data-hub/5/impl/stepDefinition.mjs";
 
 /**
  * Captures state associated with the execution of a step.
  */
-class StepExecutionContext {
+export class StepExecutionContext {
 
   /**
    * Factory method for the normal approach of creating a step execution context, which uses data from the given
@@ -83,7 +83,7 @@ class StepExecutionContext {
 
     this.combinedOptions = flowUtils.makeCombinedOptions(flow, stepDefinition, stepNumber, runtimeOptions);
 
-    // This was moved here from flow.sjs; it's the original code for combining collections
+    // This was moved here from flow.mjs; it's the original code for combining collections
     this.collectionsFromOptions = [
       runtimeOptions.collections,
       ((this.flowStep.options || {}).collections || (stepDefinition.options || {}).collections),
@@ -93,7 +93,7 @@ class StepExecutionContext {
       .filter(col => !!col); // filter out any null/empty collections that may exist
 
     // Remove duplicates from the collections; this can occur when the runtimeOptions argument is actually already
-    // a set of combined options, which is the case when this is invoked from flow.sjs
+    // a set of combined options, which is the case when this is invoked from flow.mjs
     this.collectionsFromOptions = [...new Set(this.collectionsFromOptions)];
 
     this.completedItems = [];
@@ -416,5 +416,3 @@ class StepExecutionContext {
     return null;
   }
 }
-
-module.exports = StepExecutionContext;
