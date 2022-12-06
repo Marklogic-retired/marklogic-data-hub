@@ -15,10 +15,10 @@
  */
 'use strict';
 
-const consts = require("/data-hub/5/impl/consts.sjs");
-const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const provLib = require("/data-hub/5/impl/prov.sjs");
+import consts from "/data-hub/5/impl/consts.mjs";
+import flowUtils from "/data-hub/5/impl/flow-utils.mjs";
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
+import provLib from "/data-hub/5/impl/prov.mjs";
 
 /**
  * Captures the content objects that should be written to a database after one or more steps
@@ -31,7 +31,7 @@ const provLib = require("/data-hub/5/impl/prov.sjs");
  * one step to replace the output of a previous step. Trace logging is used to record this so that a
  * user can have visibility into when this happens.
  */
-class WriteQueue {
+export class WriteQueue {
 
   constructor() {
     this.databaseToContentMap = {};
@@ -103,5 +103,3 @@ class WriteQueue {
     return writeInfos;
   }
 }
-
-module.exports = WriteQueue;
