@@ -23,7 +23,7 @@ import {ConfirmationType} from "../../../types/common-types";
 import {entityReferences} from "@api/modeling";
 import {getViewSettings, setViewSettings, UserContext} from "@util/user-context";
 import {ModelingContext} from "@util/modeling-context";
-import {definitionsParser} from "@util/data-conversion";
+import {definitionsParser, trimText} from "@util/data-conversion";
 import {ModelingTooltips} from "@config/tooltips.config";
 import {ModelingMessages} from "@config/tooltips.config";
 import {getSystemInfo} from "@api/environment";
@@ -143,6 +143,12 @@ const PropertyTable: React.FC<Props> = (props) => {
     }
   }, [newRowKey]);
 
+  const textTooltip = (name) => (
+    <div>
+      {ModelingTooltips.entityPropertyName} <br />
+      {name.length > 20 ? name:null}
+    </div>
+  );
   const columns = [
     {
       text: "Property Name",
@@ -162,10 +168,10 @@ const PropertyTable: React.FC<Props> = (props) => {
             aria-label="property-name-header"
             className={styles.link}
             onClick={() => {
-              editPropertyShowModal(text, record);
+              editPropertyShowModal(record.propertyName, record);
             }}>
-            <HCTooltip text={ModelingTooltips.entityPropertyName} id={`property-${text}-tooltip`} placement="top">
-              <span data-testid={`${recordKey}` + text + "-tooltip-trigger"} className={`p-2 inline-block cursor-pointer ${record.joinPropertyType && record.joinPropertyType !== "" ? "fst-italic" : ""}`}>{text}</span>
+            <HCTooltip text={textTooltip(record.propertyName) } id={`property-${text}-tooltip`} placement="top">
+              <span data-testid={`${recordKey}` + text + "-tooltip-trigger"} className={`p-2 inline-block cursor-pointer ${record.joinPropertyType && record.joinPropertyType !== "" ? "fst-italic" : ""}`}>{record.propertyNameUI}</span>
             </HCTooltip>
             {record.multiple === record.propertyName &&
               <HCTooltip text={"Multiple"} id={"tooltip-" + record.propertyName} placement={"bottom"}>
@@ -1063,6 +1069,17 @@ const PropertyTable: React.FC<Props> = (props) => {
     }
   };
 
+  const handlePropertyNames = (data) => {
+    if (data.length !== 0) {
+      return data.map((item) => {
+        item.propertyNameUI = trimText(item.propertyName);
+        return item;
+      });
+    }
+    return [];
+
+  };
+
   // Check if entity name has no matching definition
   const titleNoDefinition = () => {
     return props.definitions ? !props.definitions.hasOwnProperty(entityName) : false;
@@ -1124,7 +1141,7 @@ const PropertyTable: React.FC<Props> = (props) => {
                 return "scroll-" + encrypt(entityName) + "-" + propertyName + " hc-table_row";
               }}
               columns={headerColumns}
-              data={tableData}
+              data={handlePropertyNames(tableData)}
               onExpand={sidePanelView ? (record, expanded) => toggleSourceRowExpanded(record, expanded, "key") : onExpand}
               expandedRowKeys={sidePanelView ? sourceExpandedKeys : expandedRows}
               keyUtil={"key"}

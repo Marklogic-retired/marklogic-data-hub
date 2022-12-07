@@ -536,6 +536,12 @@ export const getCheckedKeys = (entityPropertyDefinitions: any[], selectedPropert
   return parser(selectedPropertyDefinitions);
 };
 
+export const trimText  = (text) => {
+  if (text.length>20) {
+    text= text.slice(0, 19) +"...";
+  }
+  return text;
+};
 
 const findKey = (entityPropertyDefinitions: any[], propertyPath: string) => {
   let key: string;

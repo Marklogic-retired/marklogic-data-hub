@@ -17,7 +17,7 @@ import {defaultIcon, defaultEntityDefinition} from "@config/explore.config";
 import Select, {components as SelectComponents} from "react-select";
 import reactSelectThemeConfig from "@config/react-select-theme.config";
 import {SearchContext} from "@util/search-context";
-import {entityFromJSON, entityParser, definitionsParser} from "@util/data-conversion";
+import {entityFromJSON, entityParser, definitionsParser, trimText} from "@util/data-conversion";
 import {convertArrayOfEntitiesToObject} from "@util/modeling-utils";
 import EntityPropertyTreeSelect from "../../../entity-property-tree-select/entity-property-tree-select";
 import {getEntities} from "@api/queries";
@@ -484,7 +484,15 @@ const GraphViewSidePanel: React.FC<Props> = ({dataModel,
     };
     setModifiedEntity(entityModifiedInfo);
   };
-
+  const handleDataToRelatedConcept = (data) => {
+    if (data.length !== 0) {
+      return data.map((item) => {
+        item.predicateUI = trimText(item.predicate);
+        return item;
+      });
+    }
+    return [];
+  };
 
   const confirmAction = async () => {
     updateEntityModified(modifiedEntity);
@@ -501,7 +509,16 @@ const GraphViewSidePanel: React.FC<Props> = ({dataModel,
         key: "relationshipName",
         headerFormatter: () => <span aria-label="relationshipName-header">Relationship Name</span>,
         formatter: (_, row) => {
-          return <span data-testid={`relationship-name-${row?.predicate}`} onClick={() => handleRelatedConceptClassesClick(row)} className={styles.link}>{row?.predicate}</span>;
+          if (row?.predicate.length>20) {
+            let render = <div>
+              <HCTooltip text={row?.predicate} id={`property-tooltip`} placement="top">
+                <span data-testid={`relationship-name-${row?.predicate}`} onClick={() => handleRelatedConceptClassesClick(row)} className={styles.link}>{row?.predicateUI}</span>
+              </HCTooltip>
+            </div>;
+            return render;
+          }
+
+          return <span data-testid={`relationship-name-${row?.predicate}`} onClick={() => handleRelatedConceptClassesClick(row)} className={styles.link}>{row?.predicateUI}</span>;
         }
       },
       {
@@ -532,7 +549,7 @@ const GraphViewSidePanel: React.FC<Props> = ({dataModel,
         <div className="p-3">
           <HCTable
             pagination={true}
-            data={entityTypeDefinition?.relatedConcepts || []}
+            data={handleDataToRelatedConcept(entityTypeDefinition?.relatedConcepts || [])}
             columns={columns}
             data-testid="related-concept-table"
             rowKey="conceptClass"
