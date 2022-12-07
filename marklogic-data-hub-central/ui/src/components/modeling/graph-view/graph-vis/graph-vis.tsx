@@ -572,11 +572,11 @@ const GraphVis: React.FC<Props> = (props) => {
           return [];
         }
 
-        let title = !props.canWriteEntityModel && props.canReadEntityModel ? undefined : "Edit Relationship";
 
         let properties: any = Object.keys(e.model.definitions[e.entityName].properties);
         properties.forEach((p, i) => {
           let pObj = e.model.definitions[e.entityName].properties[p];
+          let title = !props.canWriteEntityModel && props.canReadEntityModel ? undefined :"Edit Relationship";
           let relationshipName = p;
           if (relationshipName.length > 20) {
             relationshipName = relationshipName.substring(0, 20) + "...";
@@ -648,9 +648,10 @@ const GraphVis: React.FC<Props> = (props) => {
           let relatedConcepts: any = e.model.definitions[e.entityName].relatedConcepts;
           relatedConcepts.forEach(obj => {
             let relationshipName = obj.predicate;
-            if (relationshipName.length > 20) {
+            let title = !props.canWriteEntityModel && props.canReadEntityModel ? undefined :"Edit Relationship";
+            if (obj.predicate.length > 20) {
               relationshipName = relationshipName.substring(0, 20) + "...";
-              if (title !== undefined) title = obj.relationshipName + "\n" + title;
+              title = obj.predicate + "\n" + (title || "");
             }
             edges.push({
               ...graphConfig.defaultEdgeProps,
