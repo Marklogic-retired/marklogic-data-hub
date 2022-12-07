@@ -1,43 +1,62 @@
 import React from "react";
-import {mount} from "enzyme";
-import SearchPaginationSimple from "./search-pagination-simple";
+import {render, cleanup} from "@testing-library/react";
+import "@testing-library/jest-dom/extend-expect";
+import SearchPaginationSimple from "@components/search-pagination-simple/search-pagination-simple";
 
-describe("Search Pagination Simple Component ", () => {
-  let wrapper;
+describe("Search Pagination Simple Component", () => {
+
+  afterEach(cleanup);
 
   describe("Count number of elements to change page ", () => {
 
     test("Renders pagination with 5 rows ", () => {
-      wrapper = mount(
+      const {getByTestId, getByText, getAllByRole} = render(
         <SearchPaginationSimple
           total={5}
           pageSize={2}
           pageNumber={1}
           maxRowsPerPage={2}
         />);
-      expect(wrapper.find("#pagination ul li")).toHaveLength(5);
+      expect(getByTestId("pagination")).toBeInTheDocument();
+      expect(getByTestId("pagination-item-1")).toBeInTheDocument();
+      expect(getByTestId("pagination-item-2")).toBeInTheDocument();
+      expect(getByTestId("pagination-item-3")).toBeInTheDocument();
+      expect(getByText("Next")).toBeInTheDocument();
+      expect(getByText("Previous")).toBeInTheDocument();
+      // Includes the Previous and Next in the list.
+      expect(getAllByRole("listitem").length).toBe(5);
     });
 
     test("Renders pagination with 10 rows ", () => {
-      wrapper = mount(
+      const {getByTestId, getByText, getAllByRole} = render(
         <SearchPaginationSimple
           total={10}
           pageSize={2}
           pageNumber={1}
           maxRowsPerPage={2}
         />);
-      expect(wrapper.find("#pagination ul li")).toHaveLength(7);
+      expect(getByTestId("pagination")).toBeInTheDocument();
+      expect(getByTestId("pagination-item-1")).toBeInTheDocument();
+      expect(getByTestId("pagination-item-2")).toBeInTheDocument();
+      expect(getByTestId("pagination-item-3")).toBeInTheDocument();
+      expect(getByTestId("pagination-item-4")).toBeInTheDocument();
+      expect(getByTestId("pagination-item-5")).toBeInTheDocument();
+      expect(getByText("Next")).toBeInTheDocument();
+      expect(getByText("Previous")).toBeInTheDocument();
+      // Includes the Previous and Next in the list.
+      expect(getAllByRole("listitem").length).toBe(7);
     });
 
-    test("verify not showing pagination controls if not necessary ", () => {
-      wrapper = mount(
+    test("Verify not showing pagination controls if not necessary", () => {
+      const {queryByTestId} = render(
         <SearchPaginationSimple
           total={5}
           pageSize={5}
           pageNumber={1}
           maxRowsPerPage={5}
         />);
-      expect(wrapper.find("#pagination ul li")).toHaveLength(0);
+
+      expect(queryByTestId("pagination")).toBeNull();
     });
   });
 });
