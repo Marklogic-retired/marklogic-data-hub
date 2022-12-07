@@ -29,6 +29,8 @@ public class FixCreatedByStepTest extends AbstractHubCoreTest {
 
     @BeforeEach
     void beforeEach() {
+        resetDatabases();
+        runAsAdmin();
         developerClient = getHubClient();
         finalDatabaseName = developerClient.getDbName(DatabaseKind.FINAL);
         createdByStepFixer = new CreatedByStepFixer(developerClient);
