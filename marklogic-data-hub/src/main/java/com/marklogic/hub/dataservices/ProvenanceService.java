@@ -57,11 +57,11 @@ public interface ProvenanceService {
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/provenance/", servDecl);
 
                 this.req_getProvenanceGraph = this.baseProxy.request(
-                    "getProvenanceGraph.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                    "getProvenanceGraph.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_migrateProvenance = this.baseProxy.request(
-                    "migrateProvenance.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_NODES);
+                    "migrateProvenance.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_NODES);
                 this.req_deleteProvenance = this.baseProxy.request(
-                    "deleteProvenance.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_NODES);
+                    "deleteProvenance.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_NODES);
             }
 
             @Override
